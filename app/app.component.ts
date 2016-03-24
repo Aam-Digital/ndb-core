@@ -1,7 +1,10 @@
 import { Component } from 'angular2/core';
 import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
-import { DashboardComponent } from './dashboard.component';
+import { FooterComponent } from './footer.component';
+import { NavigationComponent } from './navigation/navigation.component';
+import { AlertsComponent } from "./alerts/alerts.component";
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 
 @RouteConfig([
@@ -15,16 +18,13 @@ import { DashboardComponent } from './dashboard.component';
 
 @Component({
     selector: 'ndb-app',
-    template: `
-        <h1>{{title}}</h1>
-        <nav>
-            <a [routerLink]="['Dashboard']">Dashboard</a>
-        </nav>
-        <router-outlet></router-outlet>
-      `,
-    styleUrls: ['app/app.component.css'],
+    templateUrl: 'app/app.component.html',
+    styleUrls: ['app/sb-admin-2.css', 'app/app.component.css'], //TODO: use sass for css?
     directives: [
-        ROUTER_DIRECTIVES
+        ROUTER_DIRECTIVES,
+        FooterComponent,
+        NavigationComponent,
+        AlertsComponent
     ],
     providers: [
         ROUTER_PROVIDERS
@@ -32,4 +32,5 @@ import { DashboardComponent } from './dashboard.component';
 })
 export class AppComponent {
     title = 'NDB';
+    loggedIn = true; //TODO: use some UserService to get authentication status
 }

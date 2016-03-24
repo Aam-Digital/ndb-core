@@ -1,8 +1,8 @@
 app-config.js
 
 # TypeScript
-app/*.js
-app/*.js.map
+app/**/*.js
+app/**/*.js.map
 
 
 # Logs

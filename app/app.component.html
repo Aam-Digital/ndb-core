@@ -1,0 +1,25 @@
+<div id="wrapper">
+
+
+    <div class="navbar-default sidebar sidebar-left" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">{{title}}</a>
+        </div>
+
+        <ndb-navigation *ngIf="loggedIn" class="sidebar-menu"></ndb-navigation>
+
+        <!-- TODO: create and include the user-menu at the bottom of sidebar -->
+    </div>
+
+
+    <div id="page-wrapper">
+        <router-outlet *ngIf="loggedIn"></router-outlet>
+        <!-- TODO: create LoginComponent and include in `directives` array
+        <ndb-login *ngIf="!loggedIn"></ndb-login>
+        -->
+    </div>
+
+    <ndb-alerts></ndb-alerts>
+
+    <ndb-footer></ndb-footer>
+</div>

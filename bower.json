@@ -1,0 +1,19 @@
+{
+  "name": "ndb-core",
+  "description": "",
+  "main": "",
+  "homepage": "https://github.com/NGO-DB/ndb-core",
+  "moduleType": [],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "font-awesome": "^4.5.0"
+  }
+}
