@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ActionLanguage="http://www.omg.org/spec/ALF/20120827/ActionLanguage-Profile" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xsi:schemaLocation="http://www.omg.org/spec/ALF/20120827/ActionLanguage-Profile pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#_Kv8EIKFXEeS_KNX0nfvIVQ">
+  <uml:Model xmi:id="_wmpB4GE2EeWEKJP0QRu-7g" name="App" visibility="public">
+    <packagedElement xmi:type="uml:Class" xmi:id="_yTdJAGE2EeWEKJP0QRu-7g" name="Child">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_FfKZQHHoEeWJo8agd7zj1A" name="getFamilyMembers"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_G6Dp8HHoEeWJo8agd7zj1A" name="getEnrollments"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_JPkv0HHoEeWJo8agd7zj1A" name="getCurrentEnrollment"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_N8smQHHoEeWJo8agd7zj1A" name="getPhoto"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_DW6qAGE3EeWEKJP0QRu-7g" name="User">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_EGlzcGE3EeWEKJP0QRu-7g" name="socialworker" visibility="public">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_QaDo0GE6EeWEKJP0QRu-7g" name="name">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_R-nL0GE6EeWEKJP0QRu-7g" name="password">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_Zkm6AHHnEeWJo8agd7zj1A" name="login"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_cifncHHnEeWJo8agd7zj1A" name="changePassword"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_jQK6kGE3EeWEKJP0QRu-7g" name="School">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_NEyBAGE4EeWEKJP0QRu-7g" name="name" visibility="public">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_O1nsgGE4EeWEKJP0QRu-7g" name="medium" visibility="public">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_m6ZJkGE3EeWEKJP0QRu-7g" name="FamilyMember">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_o49IAGE3EeWEKJP0QRu-7g" name="relationship" visibility="public">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_s6sfIGE3EeWEKJP0QRu-7g" name="isGuardian" visibility="public">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_z9sGkHHnEeWJo8agd7zj1A" name="name" visibility="public">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_TRhQEGE4EeWEKJP0QRu-7g" name="Enrollment">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_qOqhQGE4EeWEKJP0QRu-7g" name="grade" visibility="public">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_vqsFEGE4EeWEKJP0QRu-7g" name="from" visibility="public">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_4OEbYGE4EeWEKJP0QRu-7g" name="until" visibility="public">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_qrMWMOk1EeWbk8Qz24mstQ" memberEnd="_qrPZgOk1EeWbk8Qz24mstQ _qrQAkOk1EeWbk8Qz24mstQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_qrOycOk1EeWbk8Qz24mstQ" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_qrOycek1EeWbk8Qz24mstQ" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_qrPZgOk1EeWbk8Qz24mstQ" name="enrollment" type="_TRhQEGE4EeWEKJP0QRu-7g" association="_qrMWMOk1EeWbk8Qz24mstQ">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_wBTfQOk1EeWbk8Qz24mstQ"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_wBVUcOk1EeWbk8Qz24mstQ" value="*"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_qrQAkOk1EeWbk8Qz24mstQ" name="student" type="_yTdJAGE2EeWEKJP0QRu-7g" association="_qrMWMOk1EeWbk8Qz24mstQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_z6CrYOk1EeWbk8Qz24mstQ" memberEnd="_z6DScek1EeWbk8Qz24mstQ _z6D5gOk1EeWbk8Qz24mstQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_z6CrYek1EeWbk8Qz24mstQ" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_z6DScOk1EeWbk8Qz24mstQ" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_z6D5gOk1EeWbk8Qz24mstQ" name="school" type="_jQK6kGE3EeWEKJP0QRu-7g" association="_z6CrYOk1EeWbk8Qz24mstQ"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_z6DScek1EeWbk8Qz24mstQ" name="enrollment" type="_TRhQEGE4EeWEKJP0QRu-7g" association="_z6CrYOk1EeWbk8Qz24mstQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_55WicOk1EeWbk8Qz24mstQ" memberEnd="_55XJguk1EeWbk8Qz24mstQ _55XwkOk1EeWbk8Qz24mstQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_55XJgOk1EeWbk8Qz24mstQ" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_55XJgek1EeWbk8Qz24mstQ" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_55XwkOk1EeWbk8Qz24mstQ" name="responsibleSocialworker" type="_DW6qAGE3EeWEKJP0QRu-7g" association="_55WicOk1EeWbk8Qz24mstQ"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_55XJguk1EeWbk8Qz24mstQ" name="child" type="_yTdJAGE2EeWEKJP0QRu-7g" association="_55WicOk1EeWbk8Qz24mstQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_AbVBsOk2EeWbk8Qz24mstQ" memberEnd="_AbVowek2EeWbk8Qz24mstQ _AbVowuk2EeWbk8Qz24mstQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_AbVBsek2EeWbk8Qz24mstQ" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_AbVowOk2EeWbk8Qz24mstQ" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_AbVowuk2EeWbk8Qz24mstQ" name="child" type="_yTdJAGE2EeWEKJP0QRu-7g" association="_AbVBsOk2EeWbk8Qz24mstQ"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_AbVowek2EeWbk8Qz24mstQ" name="familymember" type="_m6ZJkGE3EeWEKJP0QRu-7g" association="_AbVBsOk2EeWbk8Qz24mstQ">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_EWw8gOk2EeWbk8Qz24mstQ"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_EWyxsOk2EeWbk8Qz24mstQ" value="*"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_P_rgYOk2EeWbk8Qz24mstQ" name="AttendanceReport">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_T8CoQOk2EeWbk8Qz24mstQ" name="date">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_jFq50Ok2EeWbk8Qz24mstQ" name="attendanceStatus">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_o7SCUOk2EeWbk8Qz24mstQ" visibility="public" memberEnd="_o7SpYuk2EeWbk8Qz24mstQ _o7TQcOk2EeWbk8Qz24mstQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_o7SpYOk2EeWbk8Qz24mstQ" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_o7SpYek2EeWbk8Qz24mstQ" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_o7TQcOk2EeWbk8Qz24mstQ" name="student" type="_yTdJAGE2EeWEKJP0QRu-7g" association="_o7SCUOk2EeWbk8Qz24mstQ"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_o7SpYuk2EeWbk8Qz24mstQ" name="attendance" type="_P_rgYOk2EeWbk8Qz24mstQ" association="_o7SCUOk2EeWbk8Qz24mstQ">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_tUwkAOk2EeWbk8Qz24mstQ"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_tUznUOk2EeWbk8Qz24mstQ" value="*"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_w3kjcOk2EeWbk8Qz24mstQ" name="HomeVisitReport">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_w3kjcek2EeWbk8Qz24mstQ" name="date">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_w3kjcuk2EeWbk8Qz24mstQ" name="report">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_w3kjc-k2EeWbk8Qz24mstQ" name="student" type="_yTdJAGE2EeWEKJP0QRu-7g"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_51jyIOk2EeWbk8Qz24mstQ" memberEnd="_51kZMuk2EeWbk8Qz24mstQ _51lAQOk2EeWbk8Qz24mstQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_51kZMOk2EeWbk8Qz24mstQ" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_51kZMek2EeWbk8Qz24mstQ" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_51kZMuk2EeWbk8Qz24mstQ" name="homevisit" type="_w3kjcOk2EeWbk8Qz24mstQ" association="_51jyIOk2EeWbk8Qz24mstQ"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_51lAQOk2EeWbk8Qz24mstQ" name="visiting socialworker" type="_DW6qAGE3EeWEKJP0QRu-7g" association="_51jyIOk2EeWbk8Qz24mstQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_-m298Ok2EeWbk8Qz24mstQ" memberEnd="_-m3lAuk2EeWbk8Qz24mstQ _-m4MEOk2EeWbk8Qz24mstQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_-m3lAOk2EeWbk8Qz24mstQ" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_-m3lAek2EeWbk8Qz24mstQ" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_-m4MEOk2EeWbk8Qz24mstQ" name="child" type="_yTdJAGE2EeWEKJP0QRu-7g" association="_-m298Ok2EeWbk8Qz24mstQ"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_-m3lAuk2EeWbk8Qz24mstQ" name="report" type="_w3kjcOk2EeWbk8Qz24mstQ" association="_-m298Ok2EeWbk8Qz24mstQ">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__t5egOk2EeWbk8Qz24mstQ"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__t6soOk2EeWbk8Qz24mstQ" value="*"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_S59DsOk3EeWbk8Qz24mstQ" name="Core">
+      <packagedElement xmi:type="uml:Dependency" xmi:id="_8VGrgO99EeWu2fEX36yd4g" client="_WJKxsOk3EeWbk8Qz24mstQ" supplier="_qMC0YO99EeWu2fEX36yd4g"/>
+      <packagedElement xmi:type="uml:Package" xmi:id="_WiNRkO9-EeWu2fEX36yd4g" name="Presentation">
+        <packagedElement xmi:type="uml:Class" xmi:id="_SEtrMO-BEeWu2fEX36yd4g" name="Alerts"/>
+        <packagedElement xmi:type="uml:Class" xmi:id="_Z-GCQO-BEeWu2fEX36yd4g" name="index.html"/>
+        <packagedElement xmi:type="uml:Class" xmi:id="_hs458O-BEeWu2fEX36yd4g" name="Navigation"/>
+        <packagedElement xmi:type="uml:Package" xmi:id="_GgyfkO-CEeWu2fEX36yd4g" name="User">
+          <packagedElement xmi:type="uml:Class" xmi:id="_tAhKUO-BEeWu2fEX36yd4g" name="UserAccount"/>
+          <packagedElement xmi:type="uml:Class" xmi:id="_6vRZUO-BEeWu2fEX36yd4g" name="Logout"/>
+          <packagedElement xmi:type="uml:Class" xmi:id="_najnYO-BEeWu2fEX36yd4g" name="Login"/>
+          <packagedElement xmi:type="uml:Class" xmi:id="_UUWykO-BEeWu2fEX36yd4g" name="UserManager"/>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Class" xmi:id="_kg7SYO-CEeWu2fEX36yd4g" name="EntityList" isAbstract="true"/>
+        <packagedElement xmi:type="uml:Class" xmi:id="_qAvKAO-CEeWu2fEX36yd4g" name="CopyOf_EntityList_1" isAbstract="true"/>
+        <packagedElement xmi:type="uml:Class" xmi:id="_rx93EO-CEeWu2fEX36yd4g" name="EntityDetails" isAbstract="true"/>
+        <packagedElement xmi:type="uml:Dependency" xmi:id="_XgpdgO-DEeWu2fEX36yd4g" client="_Z-GCQO-BEeWu2fEX36yd4g" supplier="_Io17wO-DEeWu2fEX36yd4g"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Package" xmi:id="_M7dZwO9-EeWu2fEX36yd4g" name="Domain">
+        <ownedComment xmi:type="uml:Comment" xmi:id="_of8lUO-FEeWu2fEX36yd4g">
+          <body>maybe the User for authentication should NOT be mixed
+with the user of the domain (i.e. the social worker)</body>
+        </ownedComment>
+        <ownedComment xmi:type="uml:Comment" xmi:id="_14gh4O-FEeWu2fEX36yd4g">
+          <body>generic model for &quot;Reports&quot; here?!?</body>
+        </ownedComment>
+        <packagedElement xmi:type="uml:Class" xmi:id="_ZOwsgO-AEeWu2fEX36yd4g" name="User">
+          <generalization xmi:type="uml:Generalization" xmi:id="_jAxZIO-AEeWu2fEX36yd4g" general="_dpYdsO-AEeWu2fEX36yd4g"/>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Class" xmi:id="_dpYdsO-AEeWu2fEX36yd4g" name="Entity" isAbstract="true"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Package" xmi:id="_Klfn8O9-EeWu2fEX36yd4g" name="Data Source">
+        <packagedElement xmi:type="uml:Class" xmi:id="_WJKxsOk3EeWbk8Qz24mstQ" name="appDB"/>
+        <packagedElement xmi:type="uml:Class" xmi:id="_tTFBUO9-EeWu2fEX36yd4g" name="DbManager"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Component" xmi:id="_qMC0YO99EeWu2fEX36yd4g" name="pouchdb"/>
+    <packagedElement xmi:type="uml:Association" xmi:id="_ACwMgO9_EeWu2fEX36yd4g" memberEnd="_ACz24O9_EeWu2fEX36yd4g _ACz24e9_EeWu2fEX36yd4g" navigableOwnedEnd="_ACz24O9_EeWu2fEX36yd4g">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_ACyowO9_EeWu2fEX36yd4g" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_ACyowe9_EeWu2fEX36yd4g" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_ACz24e9_EeWu2fEX36yd4g" name="dbmanager" type="_tTFBUO9-EeWu2fEX36yd4g" association="_ACwMgO9_EeWu2fEX36yd4g"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_ACz24O9_EeWu2fEX36yd4g" name="appdb" type="_WJKxsOk3EeWbk8Qz24mstQ" association="_ACwMgO9_EeWu2fEX36yd4g"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Component" xmi:id="_Io17wO-DEeWu2fEX36yd4g" name="LatestChangesPopup"/>
+    <packagedElement xmi:type="uml:Package" xmi:id="_dNtuAO-DEeWu2fEX36yd4g" name="HELGO DB">
+      <packagedElement xmi:type="uml:Package" xmi:id="_j3OYoO-DEeWu2fEX36yd4g" name="Domain">
+        <packagedElement xmi:type="uml:Class" xmi:id="_sSD28O-DEeWu2fEX36yd4g" name="Child">
+          <generalization xmi:type="uml:Generalization" xmi:id="_02Z2kO-DEeWu2fEX36yd4g" general="_dpYdsO-AEeWu2fEX36yd4g"/>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Class" xmi:id="_vnF5EO-DEeWu2fEX36yd4g" name="School">
+          <generalization xmi:type="uml:Generalization" xmi:id="_z-W0QO-DEeWu2fEX36yd4g" general="_dpYdsO-AEeWu2fEX36yd4g"/>
+        </packagedElement>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Package" xmi:id="_oIGX8O-DEeWu2fEX36yd4g" name="Presentation">
+        <packagedElement xmi:type="uml:Class" xmi:id="_hhUbwO-EEeWu2fEX36yd4g" name="ChildList">
+          <generalization xmi:type="uml:Generalization" xmi:id="_lEOh0O-EEeWu2fEX36yd4g" general="_kg7SYO-CEeWu2fEX36yd4g"/>
+        </packagedElement>
+        <packagedElement xmi:type="uml:Class" xmi:id="_jGfCwO-EEeWu2fEX36yd4g" name="ChildDetails">
+          <generalization xmi:type="uml:Generalization" xmi:id="_mAadQO-EEeWu2fEX36yd4g" general="_rx93EO-CEeWu2fEX36yd4g"/>
+        </packagedElement>
+      </packagedElement>
+    </packagedElement>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_G_nPAGE3EeWEKJP0QRu-7g">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_G_pEMGE3EeWEKJP0QRu-7g" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#_Kv8EIKFXEeS_KNX0nfvIVQ"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#ActionLanguage"/>
+    </profileApplication>
+  </uml:Model>
+  <ActionLanguage:TextualRepresentation xmi:id="_YR7DYOk2EeWbk8Qz24mstQ" language="org.eclipse.papyrus.uml.textedit.property.xtext.UmlProperty"/>
+</xmi:XMI>
