@@ -5,6 +5,7 @@ import { FooterComponent } from './footer.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { AlertsComponent } from "./alerts/alerts.component";
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { SessionService } from "./user/session.service";
 
 
 @RouteConfig([
@@ -27,10 +28,14 @@ import { DashboardComponent } from './dashboard/dashboard.component';
         AlertsComponent
     ],
     providers: [
-        ROUTER_PROVIDERS
+        ROUTER_PROVIDERS,
+        SessionService
     ]
 })
 export class AppComponent {
+
+    constructor(private _sessionService: SessionService) { }
+
     title = 'NDB';
-    loggedIn = true; //TODO: use some UserService to get authentication status
+    loggedIn = this._sessionService.isLoggedIn();
 }
