@@ -6,7 +6,7 @@
             <a class="navbar-brand" href="/">{{title}}</a>
         </div>
 
-        <ndb-navigation *ngIf="loggedIn" class="sidebar-menu"></ndb-navigation>
+        <ndb-navigation *ngIf="isLoggedIn()" class="sidebar-menu"></ndb-navigation>
 
         <!-- TODO: create and include the user-menu at the bottom of sidebar -->
     </div>
