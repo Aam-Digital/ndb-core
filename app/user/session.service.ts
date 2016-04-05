@@ -5,7 +5,7 @@ import { User } from "./user";
 
 @Injectable()
 export class SessionService {
-    currentUser: User = null;
+    currentUser: User = new User();
 
     tmp = 0;
 
@@ -29,5 +29,9 @@ export class SessionService {
         //TODO: login on remote database
 
         return Promise.resolve();
+    }
+
+    logout() {
+        this.currentUser = null;
     }
 }
