@@ -1,0 +1,32 @@
+<div class="row">
+    <div class="col-md-4 col-md-offset-4">
+        <div class="login-panel panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Please Sign In</h3>
+            </div>
+
+            <div class="panel-body">
+                <form role="form" (ngSubmit)="login()" #loginForm="ngForm">
+                    <fieldset>
+                        <div *ngIf="errorMessage" class="form-group alert alert-danger">
+                            {{ errorMessage }}
+                        </div>
+
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Username"
+                                   [(ngModel)]="username" required autofocus>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" placeholder="Password"
+                                   [(ngModel)]="password" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-lg btn-success btn-block"
+                                [disabled]="loginInProgress">Login</button>
+                    </fieldset>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

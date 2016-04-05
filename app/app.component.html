@@ -13,10 +13,8 @@
 
 
     <div id="page-wrapper">
-        <router-outlet *ngIf="loggedIn"></router-outlet>
-        <!-- TODO: create LoginComponent and include in `directives` array
-        <ndb-login *ngIf="!loggedIn"></ndb-login>
-        -->
+        <router-outlet *ngIf="isLoggedIn()"></router-outlet>
+        <ndb-login *ngIf="!isLoggedIn()"></ndb-login>
     </div>
 
     <ndb-alerts></ndb-alerts>

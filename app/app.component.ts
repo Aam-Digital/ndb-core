@@ -4,6 +4,7 @@ import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/route
 import { FooterComponent } from './footer.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { AlertsComponent } from "./alerts/alerts.component";
+import { LoginComponent } from './user/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { SessionService } from "./user/session.service";
 
@@ -25,7 +26,8 @@ import { SessionService } from "./user/session.service";
         ROUTER_DIRECTIVES,
         FooterComponent,
         NavigationComponent,
-        AlertsComponent
+        AlertsComponent,
+        LoginComponent
     ],
     providers: [
         ROUTER_PROVIDERS,
@@ -37,5 +39,7 @@ export class AppComponent {
     constructor(private _sessionService: SessionService) { }
 
     title = 'NDB';
-    loggedIn = this._sessionService.isLoggedIn();
+    isLoggedIn() {
+        return this._sessionService.isLoggedIn();
+    }
 }
