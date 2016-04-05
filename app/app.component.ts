@@ -7,6 +7,7 @@ import { AlertsComponent } from "./alerts/alerts.component";
 import { LoginComponent } from './user/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { SessionService } from "./user/session.service";
+import { UserAccountComponent } from "./user/user-account.component";
 
 
 @RouteConfig([
@@ -15,6 +16,11 @@ import { SessionService } from "./user/session.service";
         name: 'Dashboard',
         component: DashboardComponent,
         useAsDefault: true
+    },
+    {
+        path: '/user',
+        name: 'User',
+        component: UserAccountComponent
     }
 ])
 
