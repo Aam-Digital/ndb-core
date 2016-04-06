@@ -1,5 +1,5 @@
 import { Component } from 'angular2/core';
-import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
+import { RouteConfig, ROUTER_DIRECTIVES } from 'angular2/router';
 
 import { FooterComponent } from './footer.component';
 import { NavigationComponent } from './navigation/navigation.component';
@@ -13,7 +13,7 @@ import { UserAccountComponent } from "./user/user-account.component";
 @RouteConfig([
     {
         path: '/',
-        name: 'Dashboard',
+        name: 'Home',
         component: DashboardComponent,
         useAsDefault: true
     },
@@ -36,7 +36,6 @@ import { UserAccountComponent } from "./user/user-account.component";
         LoginComponent
     ],
     providers: [
-        ROUTER_PROVIDERS,
         SessionService
     ]
 })

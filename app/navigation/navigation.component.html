@@ -2,7 +2,7 @@
     <ul class="nav" id="side-menu">
 
         <li *ngFor="#item of menu_main">
-            <a [href]="item.url"><i class="fa fa-{{item.icon}} fa-fw"></i> {{item.title}}</a>
+            <a [routerLink]="item.routerLinkParameters"><i class="fa fa-{{item.icon}} fa-fw"></i> {{item.label}}</a>
         </li>
 
         <li class="divider"></li>
@@ -14,7 +14,7 @@
         <li class="divider"></li>
 
         <li>
-            <a [routerLink]="['Dashboard']" (click)="logout()"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+            <a [routerLink]="['Home']" (click)="logout()"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
         </li>
     </ul>
 </div>

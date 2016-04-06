@@ -2,6 +2,8 @@ import { Component } from 'angular2/core';
 import { RouterLink } from "angular2/router";
 
 import { SessionService } from "../user/session.service";
+import { NavigationItemsService } from "./navigation-items.service";
+import { MenuItem } from "./menu-item";
 
 
 @Component({
@@ -11,13 +13,15 @@ import { SessionService } from "../user/session.service";
     directives: [RouterLink]
 })
 export class NavigationComponent {
-    constructor(
-        private _sessionService: SessionService) { }
+    public menu_main: MenuItem[];
 
-    menu_main = [
-        {title: "menu1", icon: "home", url: "/1"},
-        {title: "menu2", icon: "child", url: "/2"}
-    ];
+    constructor(
+        private _sessionService: SessionService,
+        private _navigationItemService: NavigationItemsService) {
+
+        this.menu_main = this._navigationItemService.getMenuItems();
+    }
+
 
     logout() {
         this._sessionService.logout();

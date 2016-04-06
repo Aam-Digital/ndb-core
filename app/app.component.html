@@ -3,7 +3,7 @@
 
     <div class="navbar-default sidebar sidebar-left" role="navigation">
         <div class="navbar-header">
-            <a class="navbar-brand" href="/">{{title}}</a>
+            <a class="navbar-brand" [routerLink]="['Home']">{{title}}</a>
         </div>
 
         <ndb-navigation *ngIf="isLoggedIn()" class="sidebar-menu"></ndb-navigation>
