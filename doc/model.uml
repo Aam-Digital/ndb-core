@@ -190,6 +190,35 @@ with the user of the domain (i.e. the social worker)</body>
         </packagedElement>
       </packagedElement>
     </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_VcQGgPytEeWwbdGBEJWDJQ" name="NDB Core">
+      <packagedElement xmi:type="uml:Class" xmi:id="_oAVswPytEeWwbdGBEJWDJQ" name="AppComponent"/>
+      <packagedElement xmi:type="uml:Package" xmi:id="_ta-wgPytEeWwbdGBEJWDJQ" name="User">
+        <packagedElement xmi:type="uml:Class" xmi:id="_w1PQ4PytEeWwbdGBEJWDJQ" name="LoginComponent"/>
+        <packagedElement xmi:type="uml:Class" xmi:id="_z41kwPytEeWwbdGBEJWDJQ" name="UserAccountComponent"/>
+        <packagedElement xmi:type="uml:Class" xmi:id="_3jXVwPytEeWwbdGBEJWDJQ" name="User"/>
+        <packagedElement xmi:type="uml:Class" xmi:id="_5eN44PytEeWwbdGBEJWDJQ" name="SessionService"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Package" xmi:id="_-2lrwPytEeWwbdGBEJWDJQ" name="Navigation">
+        <packagedElement xmi:type="uml:Class" xmi:id="_CLJz0PyuEeWwbdGBEJWDJQ" name="NavigationComponent"/>
+        <packagedElement xmi:type="uml:Class" xmi:id="_GRHjoPyuEeWwbdGBEJWDJQ" name="MenuItem"/>
+        <packagedElement xmi:type="uml:Class" xmi:id="_H97DsPyuEeWwbdGBEJWDJQ" name="NavigationItemsService"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Package" xmi:id="_Nrm_QPyuEeWwbdGBEJWDJQ" name="Alerts">
+        <packagedElement xmi:type="uml:Class" xmi:id="_XEuqwPyuEeWwbdGBEJWDJQ" name="AlertsComponent"/>
+        <packagedElement xmi:type="uml:Class" xmi:id="_Y7q-QPyuEeWwbdGBEJWDJQ" name="AlertsService"/>
+        <packagedElement xmi:type="uml:Class" xmi:id="_afikwPyuEeWwbdGBEJWDJQ" name="Alert"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Package" xmi:id="_2b9MUPyuEeWwbdGBEJWDJQ" name="Dashboard">
+        <ownedComment xmi:type="uml:Comment" xmi:id="_-JFQEPyuEeWwbdGBEJWDJQ">
+          <body>maybe the User for authentication should NOT be mixed
+with the user of the domain (i.e. the social worker)</body>
+        </ownedComment>
+        <ownedComment xmi:type="uml:Comment" xmi:id="_BiBh0PyvEeWwbdGBEJWDJQ">
+          <body>DashboardWidget?</body>
+        </ownedComment>
+        <packagedElement xmi:type="uml:Class" xmi:id="_5ERSYPyuEeWwbdGBEJWDJQ" name="DashboardComponent"/>
+      </packagedElement>
+    </packagedElement>
     <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_G_nPAGE3EeWEKJP0QRu-7g">
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_G_pEMGE3EeWEKJP0QRu-7g" source="http://www.eclipse.org/uml2/2.0.0/UML">
         <references xmi:type="ecore:EPackage" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#_Kv8EIKFXEeS_KNX0nfvIVQ"/>
