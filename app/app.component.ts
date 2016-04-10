@@ -9,7 +9,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { SessionService } from "./user/session.service";
 import { UserAccountComponent } from "./user/user-account.component";
 import {ConfigService} from "./config/config.service";
-import {AppDBService} from "./db/appdb.service";
+import { DatabaseManagerService, databaseServiceProvider } from "./database/database-manager.service";
 
 
 @RouteConfig([
@@ -40,7 +40,8 @@ import {AppDBService} from "./db/appdb.service";
     providers: [
         SessionService,
         ConfigService,
-        AppDBService
+        DatabaseManagerService,
+        databaseServiceProvider
     ]
 })
 export class AppComponent {

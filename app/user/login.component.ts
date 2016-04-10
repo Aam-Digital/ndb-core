@@ -1,7 +1,6 @@
-import {Component, ViewEncapsulation} from 'angular2/core';
+import {Component} from 'angular2/core';
 
 import {SessionService} from "./session.service";
-import {AppDBService} from "../db/appdb.service";
 
 
 @Component({
@@ -14,7 +13,7 @@ export class LoginComponent {
     password:string;
     errorMessage:string;
 
-    constructor(private _sessionService:SessionService, private _appDB:AppDBService) {
+    constructor(private _sessionService:SessionService) {
     }
 
     login() {
