@@ -1,6 +1,7 @@
-import { Component, ViewEncapsulation } from 'angular2/core';
+import {Component, ViewEncapsulation} from 'angular2/core';
 
-import { SessionService } from "./session.service";
+import {SessionService} from "./session.service";
+import {AppDBService} from "../db/appdb.service";
 
 
 @Component({
@@ -9,18 +10,18 @@ import { SessionService } from "./session.service";
 })
 export class LoginComponent {
     loginInProgress = false;
-    username: string;
-    password: string;
-    errorMessage: string;
+    username:string;
+    password:string;
+    errorMessage:string;
 
-    constructor(
-        private _sessionService: SessionService) { }
+    constructor(private _sessionService:SessionService, private _appDB:AppDBService) {
+    }
 
     login() {
         this.loginInProgress = true;
         this._sessionService.login(this.username, this.password)
-            .then( result => this.onLoginSuccess() )
-            .catch( reason => this.onLoginFailure(reason) );
+            .then(result => this.onLoginSuccess())
+            .catch(reason => this.onLoginFailure(reason));
     }
 
     private onLoginSuccess() {

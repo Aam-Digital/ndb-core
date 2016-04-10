@@ -8,6 +8,8 @@ import { LoginComponent } from './user/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { SessionService } from "./user/session.service";
 import { UserAccountComponent } from "./user/user-account.component";
+import {ConfigService} from "./config/config.service";
+import {AppDBService} from "./db/appdb.service";
 
 
 @RouteConfig([
@@ -36,7 +38,9 @@ import { UserAccountComponent } from "./user/user-account.component";
         LoginComponent
     ],
     providers: [
-        SessionService
+        SessionService,
+        ConfigService,
+        AppDBService
     ]
 })
 export class AppComponent {
