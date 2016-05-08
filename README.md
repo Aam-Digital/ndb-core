@@ -3,7 +3,9 @@ Empowering NGOs' social workers with simple to use (database) software.
 
 For a project outline, free demo system, etc. visit [ngo-db.sinnfragen.org](http://ngo-db.sinnfragen.org/)
 
-> This is an Angular2/Typescript based rewrite of [HELGO DB](https://github.com/NGO-DB/helgo_db)
+**This is an Angular2/Typescript based rewrite of [HELGO DB](https://github.com/NGO-DB/helgo_db)**
+
+**For an example how to build a concrete application on top of ndb-core, see the [ndb-sample repository](https://github.com/NGO-DB/ndb-sample)**
 
 
 ## Installation
