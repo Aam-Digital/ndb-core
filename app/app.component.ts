@@ -10,7 +10,7 @@ import { SessionService } from "./user/session.service";
 import { UserAccountComponent } from "./user/user-account.component";
 import {ConfigService} from "./config/config.service";
 import { DatabaseManagerService, databaseServiceProvider } from "./database/database-manager.service";
-
+import { AlertService } from "./alerts/alert.service";
 
 @RouteConfig([
     {
@@ -41,12 +41,15 @@ import { DatabaseManagerService, databaseServiceProvider } from "./database/data
         SessionService,
         ConfigService,
         DatabaseManagerService,
-        databaseServiceProvider
+        databaseServiceProvider,
+        AlertService
     ]
 })
 export class AppComponent {
 
-    constructor(private _sessionService: SessionService) { }
+    constructor(
+        private _sessionService: SessionService
+    ) { }
 
     title = 'NDB';
     isLoggedIn() {

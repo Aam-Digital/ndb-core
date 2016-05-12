@@ -1,5 +1,5 @@
 import { Injectable } from "angular2/core";
-import { Database } from "database";
+import { Database } from "./database";
 
 /**
  * The default generic DataMapper for Entity and any subclass.
