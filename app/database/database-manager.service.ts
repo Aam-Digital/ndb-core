@@ -1,26 +1,17 @@
-import { Injectable, provide } from "angular2/core";
+import { provide } from "angular2/core";
 import { Database } from "./database";
 
 /**
  * DatabaseManagerService takes care of "background" actions of the database (e.g. sync, authentication, etc.).
  *
- * To put/get actual data from the database inject `Database` instead, which will be provided by DatabaseManagerService.
+ * To put/get actual data from the database inject `Database` instead, which will be provided through DatabaseManagerService.
  */
-@Injectable()
-export class DatabaseManagerService {
+export abstract class DatabaseManagerService {
 
+    abstract login(username: string, password: string);
+    abstract logout();
 
-    login(username: string, password: string) {
-
-    }
-
-    logout():void {
-
-    }
-
-    getDatabase(): Database {
-        return null;
-    }
+    abstract getDatabase(): Database;
 }
 
 

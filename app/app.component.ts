@@ -1,4 +1,4 @@
-import { Component } from 'angular2/core';
+import { Component, provide } from 'angular2/core';
 import { RouteConfig, ROUTER_DIRECTIVES } from 'angular2/router';
 
 import { FooterComponent } from './footer.component';
@@ -10,6 +10,7 @@ import { SessionService } from "./user/session.service";
 import { UserAccountComponent } from "./user/user-account.component";
 import {ConfigService} from "./config/config.service";
 import { DatabaseManagerService, databaseServiceProvider } from "./database/database-manager.service";
+import { PouchDatabaseManagerService } from "./database/pouch-database-manager.service";
 
 
 @RouteConfig([
@@ -40,13 +41,15 @@ import { DatabaseManagerService, databaseServiceProvider } from "./database/data
     providers: [
         SessionService,
         ConfigService,
-        DatabaseManagerService,
+        provide(DatabaseManagerService, {useClass: PouchDatabaseManagerService}),
         databaseServiceProvider
     ]
 })
 export class AppComponent {
 
-    constructor(private _sessionService: SessionService) { }
+    constructor(private _sessionService: SessionService) {
+
+    }
 
     title = 'NDB';
     isLoggedIn() {

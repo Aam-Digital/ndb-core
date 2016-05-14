@@ -1,12 +1,12 @@
 /**
  * An implementation of this interface provides functions for direct database access.
- * The interface is compatible with PouchDB.
- * A `Database` instance is injected into the app through DatabaseManager.
+ * The interface is an extension of the [PouchDB API](https://pouchdb.com/api.html).
+ * A `Database` instance is injected into the app through `DatabaseManagerService`.
  */
 export abstract class Database {
 
     abstract get(id: string);
-    abstract allDocs(options: any);
+    abstract allDocs(options?: any);
     abstract put(object: any);
     abstract remove(object: any);
 
