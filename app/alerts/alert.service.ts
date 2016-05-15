@@ -6,16 +6,15 @@ export class AlertService {
 
     addAlert(alert: Alert) {
         this.alerts.push(alert);
-        let that = this;
+        this.setAutoRemoveTimeout(alert);
+    }
+
+    private setAutoRemoveTimeout(alert: Alert) {
         if (alert.type === Alert.ALERT_SUCCESS ||
-            alert.type === Alert.ALERT_INFO) {
-            setTimeout(function () {
-                that.removeAlert(alert);
-            }, 3000);
+                alert.type === Alert.ALERT_INFO) {
+            setTimeout(( () => this.removeAlert(alert) ), 3000);
         } else if (alert.type === Alert.ALERT_WARNING) {
-            setTimeout(function () {
-                that.removeAlert(alert);
-            }, 5000);
+            setTimeout(( () => this.removeAlert(alert) ), 5000);
         }
     }
 
