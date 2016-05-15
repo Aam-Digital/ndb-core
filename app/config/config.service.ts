@@ -3,12 +3,7 @@ import {Injectable} from "angular2/core";
 @Injectable()
 export class ConfigService {
 
-    version = "1.0.2";
-
-    github = {
-        user: "sebastian-leidig",
-        repository: "helgo_db"
-    };
+    version = "2.0.0";
 
     database = {
         name: "dev",
