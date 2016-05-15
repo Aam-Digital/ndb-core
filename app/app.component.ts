@@ -10,6 +10,7 @@ import { SessionService } from "./user/session.service";
 import { UserAccountComponent } from "./user/user-account.component";
 import {ConfigService} from "./config/config.service";
 import { DatabaseManagerService, databaseServiceProvider } from "./database/database-manager.service";
+import { AlertService } from "./alerts/alert.service";
 import { PouchDatabaseManagerService } from "./database/pouch-database-manager.service";
 
 
@@ -41,6 +42,7 @@ import { PouchDatabaseManagerService } from "./database/pouch-database-manager.s
     providers: [
         SessionService,
         ConfigService,
+        AlertService,
         provide(DatabaseManagerService, {useClass: PouchDatabaseManagerService}),
         databaseServiceProvider
     ]
