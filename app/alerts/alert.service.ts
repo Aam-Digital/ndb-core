@@ -10,10 +10,10 @@ export class AlertService {
     }
 
     private setAutoRemoveTimeout(alert: Alert) {
-        if (alert.type === Alert.ALERT_SUCCESS ||
-                alert.type === Alert.ALERT_INFO) {
+        if (alert.type === Alert.SUCCESS ||
+                alert.type === Alert.INFO) {
             setTimeout(( () => this.removeAlert(alert) ), 3000);
-        } else if (alert.type === Alert.ALERT_WARNING) {
+        } else if (alert.type === Alert.WARNING) {
             setTimeout(( () => this.removeAlert(alert) ), 5000);
         }
     }
