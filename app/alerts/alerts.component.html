@@ -1,3 +1,3 @@
-<div *ngFor='#alert of alerts' class="alert {{alert.type}}" role="alert" (click)="deleteAlert(alert)">
+<div *ngFor='let alert of alerts' class="alert {{alert.type}}" role="alert" (click)="deleteAlert(alert)">
     {{alert.message}}
 </div>
