@@ -1,4 +1,5 @@
-import { Injectable } from "angular2/core";
+import { Injectable } from "@angular/core";
+
 import { Database } from "./database";
 import { ConfigService } from "../config/config.service";
 import { PouchDatabase } from "./pouch-database";
