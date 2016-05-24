@@ -14,9 +14,6 @@ export class AlertService {
                 alert.type === Alert.INFO) {
             setTimeout(( () => this.removeAlert(alert) ), 5000);
         }
-//      else if (alert.type === Alert.WARNING) {
-//          setTimeout(( () => this.removeAlert(alert) ), 10000);
-//      }
     }
 
     removeAlert(alert: Alert) {

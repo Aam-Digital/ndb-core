@@ -5,6 +5,7 @@
 (function(global) {
     // map tells the System loader where to look for things
     var map = {
+        'moment':                     'node_modules/moment/min/moment.min.js',
         'app':                        'app', // 'dist',
         '@angular':                   'node_modules/@angular',
         'rxjs':                       'node_modules/rxjs'

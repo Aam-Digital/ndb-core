@@ -1,8 +1,8 @@
 export class Alert {
-    static SUCCESS = 'alert-success';
-    static INFO = 'alert-info';
-    static WARNING = 'alert-warning';
-    static DANGER = 'alert-danger';
+    static SUCCESS = 'success';
+    static INFO = 'info';
+    static WARNING = 'warning';
+    static DANGER = 'danger';
 
     constructor(
         public message: string,
