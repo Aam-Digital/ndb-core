@@ -1,5 +1,5 @@
-import { Component, provide } from 'angular2/core';
-import { RouteConfig, ROUTER_DIRECTIVES } from 'angular2/router';
+import { Component, provide } from '@angular/core';
+import { ROUTER_DIRECTIVES, RouteConfig } from '@angular/router-deprecated';
 
 import { FooterComponent } from './footer.component';
 import { NavigationComponent } from './navigation/navigation.component';
@@ -8,8 +8,9 @@ import { LoginComponent } from './user/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { SessionService } from "./user/session.service";
 import { UserAccountComponent } from "./user/user-account.component";
-import {ConfigService} from "./config/config.service";
+import { ConfigService } from "./config/config.service";
 import { DatabaseManagerService, databaseServiceProvider } from "./database/database-manager.service";
+import { AlertService } from "./alerts/alert.service";
 import { PouchDatabaseManagerService } from "./database/pouch-database-manager.service";
 
 
@@ -41,6 +42,7 @@ import { PouchDatabaseManagerService } from "./database/pouch-database-manager.s
     providers: [
         SessionService,
         ConfigService,
+        AlertService,
         provide(DatabaseManagerService, {useClass: PouchDatabaseManagerService}),
         databaseServiceProvider
     ]

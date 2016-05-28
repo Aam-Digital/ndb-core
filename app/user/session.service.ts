@@ -1,4 +1,4 @@
-import { Injectable } from 'angular2/core';
+import { Injectable } from '@angular/core';
 
 import { User } from "./user";
 import { DatabaseManagerService } from "../database/database-manager.service";
