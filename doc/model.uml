@@ -128,7 +128,6 @@
     </ownedEnd>
   </packagedElement>
   <packagedElement xmi:type="uml:Package" xmi:id="_S59DsOk3EeWbk8Qz24mstQ" name="Core">
-    <packagedElement xmi:type="uml:Dependency" xmi:id="_8VGrgO99EeWu2fEX36yd4g" client="_WJKxsOk3EeWbk8Qz24mstQ" supplier="_qMC0YO99EeWu2fEX36yd4g"/>
     <packagedElement xmi:type="uml:Package" xmi:id="_WiNRkO9-EeWu2fEX36yd4g" name="Presentation">
       <packagedElement xmi:type="uml:Class" xmi:id="_kg7SYO-CEeWu2fEX36yd4g" name="EntityList" isAbstract="true"/>
       <packagedElement xmi:type="uml:Class" xmi:id="_qAvKAO-CEeWu2fEX36yd4g" name="CopyOf_EntityList_1" isAbstract="true"/>
@@ -148,17 +147,28 @@ with the user of the domain (i.e. the social worker)</body>
       <packagedElement xmi:type="uml:Class" xmi:id="_dpYdsO-AEeWu2fEX36yd4g" name="Entity" isAbstract="true"/>
     </packagedElement>
     <packagedElement xmi:type="uml:Package" xmi:id="_Klfn8O9-EeWu2fEX36yd4g" name="Database">
-      <packagedElement xmi:type="uml:Class" xmi:id="_WJKxsOk3EeWbk8Qz24mstQ" name="DatabaseManagerService"/>
       <packagedElement xmi:type="uml:Component" xmi:id="_eUnNAApQEeaRdK8ZkSrKNQ" name="Database"/>
-      <packagedElement xmi:type="uml:Dependency" xmi:id="_vkVoYApQEeaRdK8ZkSrKNQ" client="_WJKxsOk3EeWbk8Qz24mstQ" supplier="_eUnNAApQEeaRdK8ZkSrKNQ"/>
-      <packagedElement xmi:type="uml:Dependency" xmi:id="_B4NoYApREeaRdK8ZkSrKNQ" client="_WJKxsOk3EeWbk8Qz24mstQ" supplier="_eUnNAApQEeaRdK8ZkSrKNQ"/>
+      <packagedElement xmi:type="uml:Class" xmi:id="_e4924CThEeadx8kOKijbvw" name="EntityMapperService">
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_rwyd4CThEeadx8kOKijbvw" name="load" visibility="public">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_xVT2YCThEeadx8kOKijbvw" name="id">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_-nTQ4CThEeadx8kOKijbvw" name="save">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_C8PQ0CTiEeadx8kOKijbvw" name="entity" type="_Dl35gApQEeaRdK8ZkSrKNQ"/>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_IdujcCTiEeadx8kOKijbvw" name="remove">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_MBlrwCTiEeadx8kOKijbvw" name="entity" type="_Dl35gApQEeaRdK8ZkSrKNQ"/>
+        </ownedOperation>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Dependency" xmi:id="_pzS2cCThEeadx8kOKijbvw" client="_e4924CThEeadx8kOKijbvw" supplier="_eUnNAApQEeaRdK8ZkSrKNQ"/>
+      <packagedElement xmi:type="uml:Dependency" xmi:id="_bvAm4CTiEeadx8kOKijbvw" client="_e4924CThEeadx8kOKijbvw" supplier="_dpYdsO-AEeWu2fEX36yd4g"/>
     </packagedElement>
     <packagedElement xmi:type="uml:Component" xmi:id="_F8LNEApREeaRdK8ZkSrKNQ" name="User"/>
     <packagedElement xmi:type="uml:Component" xmi:id="_M2kzYApREeaRdK8ZkSrKNQ" name="Navigation"/>
     <packagedElement xmi:type="uml:Component" xmi:id="_YtKm4ApREeaRdK8ZkSrKNQ" name="Dashboard"/>
     <packagedElement xmi:type="uml:Component" xmi:id="_HKmIAApREeaRdK8ZkSrKNQ" name="Alerts"/>
     <packagedElement xmi:type="uml:Component" xmi:id="_RgEuEApREeaRdK8ZkSrKNQ" name="Config"/>
-    <packagedElement xmi:type="uml:Component" xmi:id="_qMC0YO99EeWu2fEX36yd4g" name="pouchdb"/>
   </packagedElement>
   <packagedElement xmi:type="uml:Package" xmi:id="_dNtuAO-DEeWu2fEX36yd4g" name="HELGO DB">
     <packagedElement xmi:type="uml:Package" xmi:id="_j3OYoO-DEeWu2fEX36yd4g" name="Domain">
@@ -185,8 +195,13 @@ with the user of the domain (i.e. the social worker)</body>
     <packagedElement xmi:type="uml:Package" xmi:id="_ta-wgPytEeWwbdGBEJWDJQ" name="User">
       <packagedElement xmi:type="uml:Class" xmi:id="_w1PQ4PytEeWwbdGBEJWDJQ" name="LoginComponent"/>
       <packagedElement xmi:type="uml:Class" xmi:id="_z41kwPytEeWwbdGBEJWDJQ" name="UserAccountComponent"/>
-      <packagedElement xmi:type="uml:Class" xmi:id="_3jXVwPytEeWwbdGBEJWDJQ" name="User"/>
+      <packagedElement xmi:type="uml:Class" xmi:id="_3jXVwPytEeWwbdGBEJWDJQ" name="User">
+        <generalization xmi:type="uml:Generalization" xmi:id="_oZV2YCTgEeadx8kOKijbvw" general="_Dl35gApQEeaRdK8ZkSrKNQ"/>
+      </packagedElement>
       <packagedElement xmi:type="uml:Class" xmi:id="_5eN44PytEeWwbdGBEJWDJQ" name="SessionService"/>
+      <packagedElement xmi:type="uml:Dependency" xmi:id="_Kz2d0B0BEeaz3bVNHusf-w" client="_5eN44PytEeWwbdGBEJWDJQ" supplier="_Il-WUApQEeaRdK8ZkSrKNQ"/>
+      <packagedElement xmi:type="uml:Dependency" xmi:id="_QQK28CTgEeadx8kOKijbvw" client="_5eN44PytEeWwbdGBEJWDJQ" supplier="_3jXVwPytEeWwbdGBEJWDJQ"/>
+      <packagedElement xmi:type="uml:Dependency" xmi:id="_SnEc4CTgEeadx8kOKijbvw" client="_w1PQ4PytEeWwbdGBEJWDJQ" supplier="_5eN44PytEeWwbdGBEJWDJQ"/>
     </packagedElement>
     <packagedElement xmi:type="uml:Package" xmi:id="_-2lrwPytEeWwbdGBEJWDJQ" name="Navigation">
       <packagedElement xmi:type="uml:Class" xmi:id="_CLJz0PyuEeWwbdGBEJWDJQ" name="NavigationComponent"/>
@@ -215,9 +230,21 @@ with the user of the domain (i.e. the social worker)</body>
       <packagedElement xmi:type="uml:Class" xmi:id="_Dl35gApQEeaRdK8ZkSrKNQ" name="Entity"/>
     </packagedElement>
     <packagedElement xmi:type="uml:Package" xmi:id="_GpgCkApQEeaRdK8ZkSrKNQ" name="Database">
-      <packagedElement xmi:type="uml:Class" xmi:id="_Il-WUApQEeaRdK8ZkSrKNQ" name="DatabaseManagerService"/>
+      <packagedElement xmi:type="uml:Class" xmi:id="_Il-WUApQEeaRdK8ZkSrKNQ" name="DatabaseManagerService">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_v5yEEB0AEeaz3bVNHusf-w" name="database" type="_KZqhgApQEeaRdK8ZkSrKNQ"/>
+      </packagedElement>
       <packagedElement xmi:type="uml:Class" xmi:id="_KZqhgApQEeaRdK8ZkSrKNQ" name="Database"/>
       <packagedElement xmi:type="uml:Class" xmi:id="_Ldeu8ApQEeaRdK8ZkSrKNQ" name="EntityMapper"/>
+      <packagedElement xmi:type="uml:Class" xmi:id="_Yj0DMB0AEeaz3bVNHusf-w" name="PouchDatabase">
+        <generalization xmi:type="uml:Generalization" xmi:id="_nsWIkB0AEeaz3bVNHusf-w" general="_KZqhgApQEeaRdK8ZkSrKNQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_a6V1sB0AEeaz3bVNHusf-w" name="PouchDatabaseManager">
+        <generalization xmi:type="uml:Generalization" xmi:id="_qySl0B0AEeaz3bVNHusf-w" general="_Il-WUApQEeaRdK8ZkSrKNQ"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Dependency" xmi:id="_55ufAB0AEeaz3bVNHusf-w" client="_Il-WUApQEeaRdK8ZkSrKNQ" supplier="_KZqhgApQEeaRdK8ZkSrKNQ"/>
+      <packagedElement xmi:type="uml:Dependency" xmi:id="_FGDNgB0BEeaz3bVNHusf-w" client="_Ldeu8ApQEeaRdK8ZkSrKNQ" supplier="_KZqhgApQEeaRdK8ZkSrKNQ"/>
+      <packagedElement xmi:type="uml:Dependency" xmi:id="_fT574CTgEeadx8kOKijbvw" client="_KZqhgApQEeaRdK8ZkSrKNQ" supplier="_Il-WUApQEeaRdK8ZkSrKNQ"/>
+      <packagedElement xmi:type="uml:Dependency" xmi:id="_34Bx8CTgEeadx8kOKijbvw" client="_Ldeu8ApQEeaRdK8ZkSrKNQ" supplier="_Dl35gApQEeaRdK8ZkSrKNQ"/>
     </packagedElement>
   </packagedElement>
   <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_G_nPAGE3EeWEKJP0QRu-7g">
