@@ -4,7 +4,6 @@ import { User } from "./user";
 import { DatabaseManagerService } from "../database/database-manager.service";
 import { AlertService } from "../alerts/alert.service";
 import { EntityMapperService } from "../database/entity-mapper.service";
-import { Alert } from "../alerts/alert";
 
 
 @Injectable()
@@ -60,7 +59,6 @@ export class SessionService {
 
 
     private remoteDatabaseLogin(username:string, password:string): Promise<boolean> {
-
         let self = this;
         return this._dbManager.login(username, password)
             .then(function(loginSuccess) {
@@ -79,7 +77,7 @@ export class SessionService {
     }
 
     private onRemoteLoginFailed() {
-        this._alertService.addWarning("Could not connect to remote database.");
+        this._alertService.addWarning("Could not connect to remote database. Data cannot be synchronized at the moment.");
     }
 
 

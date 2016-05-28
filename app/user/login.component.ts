@@ -24,6 +24,7 @@ export class LoginComponent {
     }
 
     private onLoginSuccess() {
+        this.reset();
         // login component is automatically hidden based on _sessionService.isLoggedIn()
 
         //TODO: show progress of downloading database (if necessary)
@@ -32,7 +33,12 @@ export class LoginComponent {
     }
 
     private onLoginFailure(reason) {
+        this.reset();
         this.errorMessage = reason;
+    }
+
+    private reset() {
+        this.errorMessage = "";
         this.password = "";
         this.loginInProgress = false;
     }
