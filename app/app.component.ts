@@ -12,6 +12,7 @@ import { ConfigService } from "./config/config.service";
 import { DatabaseManagerService, databaseServiceProvider } from "./database/database-manager.service";
 import { AlertService } from "./alerts/alert.service";
 import { PouchDatabaseManagerService } from "./database/pouch-database-manager.service";
+import { EntityMapperService } from "./database/entity-mapper.service";
 
 
 @RouteConfig([
@@ -44,7 +45,8 @@ import { PouchDatabaseManagerService } from "./database/pouch-database-manager.s
         ConfigService,
         AlertService,
         provide(DatabaseManagerService, {useClass: PouchDatabaseManagerService}),
-        databaseServiceProvider
+        databaseServiceProvider,
+        EntityMapperService
     ]
 })
 export class AppComponent {
