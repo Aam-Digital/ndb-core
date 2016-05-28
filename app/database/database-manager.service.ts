@@ -8,7 +8,7 @@ import { Database } from "./database";
  */
 export abstract class DatabaseManagerService {
 
-    abstract login(username: string, password: string);
+    abstract login(username: string, password: string): Promise<boolean>;
     abstract logout();
 
     abstract getDatabase(): Database;

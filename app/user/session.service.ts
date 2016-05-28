@@ -1,37 +1,65 @@
 import { Injectable } from 'angular2/core';
 
 import { User } from "./user";
+import { DatabaseManagerService } from "../database/database-manager.service";
 
 
 @Injectable()
 export class SessionService {
-    currentUser: User = new User();
+    currentUser: User;
 
-    tmp = 0;
+    constructor(private _dbManager: DatabaseManagerService) {
 
-    isLoggedIn() : boolean {
+    }
+
+
+    public isLoggedIn() : boolean {
         return this.currentUser != null;
     }
 
-    login(username:string, password:string) {
-        //TODO: remove login demo
-        if(password && this.tmp < 1) {
-            this.tmp++;
-            return Promise.reject( "Login failed. Try again (this mock login will pass on second try)" );
-        }
+    public login(username:string, password:string): Promise<boolean> {
+        let promise: Promise<boolean>;
 
-        this.currentUser = new User();
-        this.currentUser.name = username;
+        //promise = this.authenticateLocalUser();
 
+        promise = this.remoteDatabaseLogin(username, password);
 
-
-        //TODO: login on local database
-        //TODO: login on remote database
-
-        return Promise.resolve();
+        return promise;
     }
 
-    logout() {
+
+    private authenticateLocalUser(): Promise<boolean> {
+        return new Promise<boolean>();
+    }
+
+
+    private remoteDatabaseLogin(username:string, password:string): Promise<boolean> {
+        //TODO: Maybe this should move to a separate service that deals with a progress bar etc.
+
+        let self = this;
+        return this._dbManager.login(username, password)
+            .then(function(loginSuccess) {
+                if(loginSuccess) {
+                    self.onRemoteLoginSuccessfull();
+                }
+                else {
+                    self.onRemoteLoginFailed();
+                }
+                return loginSuccess;
+            });
+    }
+
+    private onRemoteLoginSuccessfull() {
+        console.info("remote login successfull");
+    }
+
+    private onRemoteLoginFailed() {
+        console.warn("remote login failed");
+    }
+
+
+
+    public logout() {
         this.currentUser = null;
     }
 }

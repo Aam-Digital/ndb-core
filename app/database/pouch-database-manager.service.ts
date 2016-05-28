@@ -32,7 +32,7 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
         });
     }
 
-    login(username: string, password: string) {
+    login(username: string, password: string): Promise<boolean> {
         var ajaxOpts = {
             ajax: {
                 headers: {
@@ -42,13 +42,18 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
         };
 
         let self = this;
-        this._remoteDatabase.login(username, password, ajaxOpts).then(
+        return this._remoteDatabase.login(username, password, ajaxOpts).then(
             function () {
-                console.debug("Remote login successful.");
                 self.sync();
+                return true;
             },
             function (error) {
-                console.error("Could not log in to the remote database. (" + error.message + ")");
+                if(error.status == 401) {
+                    return false;
+                } else {
+                    console.error("Failed to connect to the remote database.", error);
+                    throw error;
+                }
             });
     }
 

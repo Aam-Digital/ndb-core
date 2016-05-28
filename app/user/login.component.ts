@@ -19,7 +19,7 @@ export class LoginComponent {
     login() {
         this.loginInProgress = true;
         this._sessionService.login(this.username, this.password)
-            .then(result => this.onLoginSuccess())
+            .then(success => success ? this.onLoginSuccess() : this.onLoginFailure("username or password incorrect"))
             .catch(reason => this.onLoginFailure(reason));
     }
 
