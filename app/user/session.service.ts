@@ -2,13 +2,16 @@ import { Injectable } from '@angular/core';
 
 import { User } from "./user";
 import { DatabaseManagerService } from "../database/database-manager.service";
+import { AlertService } from "../alerts/alert.service";
+import { Alert } from "../alerts/alert";
 
 
 @Injectable()
 export class SessionService {
     currentUser: User;
 
-    constructor(private _dbManager: DatabaseManagerService) {
+    constructor(private _dbManager: DatabaseManagerService,
+                private _alertService: AlertService) {
 
     }
 
@@ -50,11 +53,11 @@ export class SessionService {
     }
 
     private onRemoteLoginSuccessfull() {
-        console.info("remote login successfull");
+        this._alertService.addInfo("Connected to remote database.");
     }
 
     private onRemoteLoginFailed() {
-        console.warn("remote login failed");
+        this._alertService.addWarning("Could not connect to remote database.");
     }
 
 
