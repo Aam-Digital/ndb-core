@@ -9,6 +9,19 @@ export class AlertService {
         this.setAutoRemoveTimeout(alert);
     }
 
+    public addInfo(message: string) {
+        this.addAlert(new Alert(message, Alert.INFO));
+    }
+    public addSuccess(message: string) {
+        this.addAlert(new Alert(message, Alert.SUCCESS));
+    }
+    public addWarning(message: string) {
+        this.addAlert(new Alert(message, Alert.WARNING));
+    }
+    public addDanger(message: string) {
+        this.addAlert(new Alert(message, Alert.DANGER));
+    }
+
     private setAutoRemoveTimeout(alert: Alert) {
         if (alert.type === Alert.SUCCESS ||
                 alert.type === Alert.INFO) {

@@ -1,37 +1,88 @@
 import { Injectable } from '@angular/core';
 
 import { User } from "./user";
+import { DatabaseManagerService } from "../database/database-manager.service";
+import { AlertService } from "../alerts/alert.service";
+import { EntityMapperService } from "../database/entity-mapper.service";
 
 
 @Injectable()
 export class SessionService {
-    currentUser: User = new User();
+    currentUser: User;
 
-    tmp = 0;
+    constructor(private _dbManager: DatabaseManagerService,
+                private _entityMapper: EntityMapperService,
+                private _alertService: AlertService) {
 
-    isLoggedIn() : boolean {
+    }
+
+
+    public isLoggedIn() : boolean {
         return this.currentUser != null;
     }
 
-    login(username:string, password:string) {
-        //TODO: remove login demo
-        if(password && this.tmp < 1) {
-            this.tmp++;
-            return Promise.reject( "Login failed. Try again (this mock login will pass on second try)" );
-        }
+    public login(username:string, password:string): Promise<boolean> {
+        let promise: Promise<boolean>;
 
-        this.currentUser = new User();
-        this.currentUser.name = username;
+        promise = this.authenticateLocalUser(username, password);
+        this.remoteDatabaseLogin(username, password);
 
-
-
-        //TODO: login on local database
-        //TODO: login on remote database
-
-        return Promise.resolve();
+        return promise;
     }
 
-    logout() {
+
+    private authenticateLocalUser(username: string, password: string): Promise<boolean> {
+        let self = this;
+        return this._entityMapper.load<User>(username, new User())
+            .then(function(userEntity) {
+                if(userEntity.checkPassword(password)) {
+                    self.onLocalLoginSuccessfull(userEntity);
+                    return true;
+                } else {
+                    self.onLocalLoginFailed({status: 401});
+                    return false;
+                }
+            })
+            .catch(function(error) {
+                self.onLocalLoginFailed(error);
+                return false;
+            });
+    }
+
+    private onLocalLoginSuccessfull(user: User) {
+        this.currentUser = user;
+    }
+
+    private onLocalLoginFailed(error) {
+        return error;
+    }
+
+
+    private remoteDatabaseLogin(username:string, password:string): Promise<boolean> {
+        let self = this;
+        return this._dbManager.login(username, password)
+            .then(function(loginSuccess) {
+                if(loginSuccess) {
+                    self.onRemoteLoginSuccessfull();
+                }
+                else {
+                    self.onRemoteLoginFailed();
+                }
+                return loginSuccess;
+            });
+    }
+
+    private onRemoteLoginSuccessfull() {
+        this._alertService.addInfo("Connected to remote database.");
+    }
+
+    private onRemoteLoginFailed() {
+        this._alertService.addWarning("Could not connect to remote database. Data cannot be synchronized at the moment.");
+    }
+
+
+
+    public logout() {
         this.currentUser = null;
     }
 }
