@@ -1,6 +1,5 @@
 <div id="wrapper">
 
-
     <div class="navbar-default sidebar sidebar-left" role="navigation">
         <div class="navbar-header">
             <a class="navbar-brand" [routerLink]="['Home']">{{title}}</a>
@@ -11,13 +10,13 @@
         <!-- TODO: create and include the user-menu at the bottom of sidebar -->
     </div>
 
-
     <div id="page-wrapper">
         <router-outlet *ngIf="isLoggedIn()"></router-outlet>
         <ndb-login *ngIf="!isLoggedIn()"></ndb-login>
     </div>
 
     <ndb-alerts></ndb-alerts>
+    <ndb-sync-status></ndb-sync-status>
 
     <ndb-footer></ndb-footer>
 </div>

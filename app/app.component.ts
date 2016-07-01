@@ -1,4 +1,4 @@
-import { Component, provide } from '@angular/core';
+import { Component, provide, ViewContainerRef } from '@angular/core';
 import { ROUTER_DIRECTIVES, RouteConfig } from '@angular/router-deprecated';
 
 import { FooterComponent } from './footer.component';
@@ -13,6 +13,7 @@ import { DatabaseManagerService, databaseServiceProvider } from "./database/data
 import { AlertService } from "./alerts/alert.service";
 import { PouchDatabaseManagerService } from "./database/pouch-database-manager.service";
 import { EntityMapperService } from "./database/entity-mapper.service";
+import { SyncStatusComponent } from "./sync-status/sync-status.component";
 
 
 @RouteConfig([
@@ -38,7 +39,8 @@ import { EntityMapperService } from "./database/entity-mapper.service";
         FooterComponent,
         NavigationComponent,
         AlertsComponent,
-        LoginComponent
+        LoginComponent,
+        SyncStatusComponent
     ],
     providers: [
         SessionService,
@@ -50,12 +52,13 @@ import { EntityMapperService } from "./database/entity-mapper.service";
     ]
 })
 export class AppComponent {
-
-    constructor(private _sessionService: SessionService) {
-
+    constructor(private _sessionService:SessionService,
+                viewContainerRef:ViewContainerRef) {
+        this.viewContainerRef = viewContainerRef;
     }
 
     title = 'NDB';
+    viewContainerRef:ViewContainerRef;
     isLoggedIn() {
         return this._sessionService.isLoggedIn();
     }
