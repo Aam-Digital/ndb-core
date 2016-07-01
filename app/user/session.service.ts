@@ -21,10 +21,17 @@ export class SessionService {
         return this.currentUser != null;
     }
 
+    /**
+     * Authenticates the given user with local and remote database.
+     * If successful, the user is set as currentUser for this session.
+     *
+     * WARNING: This method returns false immediately if the user cannot be authenticated with the local database.
+     */
     public login(username:string, password:string): Promise<boolean> {
         let promise: Promise<boolean>;
 
         promise = this.authenticateLocalUser(username, password);
+
         this.remoteDatabaseLogin(username, password);
 
         return promise;
