@@ -1,6 +1,6 @@
-import { provide } from "@angular/core";
-
+import { provide, EventEmitter } from "@angular/core";
 import { Database } from "./database";
+import { DatabaseSyncStatus } from "./database-sync-status";
 
 /**
  * DatabaseManagerService takes care of "background" actions of the database (e.g. sync, authentication, etc.).
@@ -13,6 +13,15 @@ export abstract class DatabaseManagerService {
     abstract logout();
 
     abstract getDatabase(): Database;
+
+
+    _onSyncStatusChanged: EventEmitter<DatabaseSyncStatus>;
+    get onSyncStatusChanged() {
+        if(this._onSyncStatusChanged == null) {
+            this._onSyncStatusChanged = new EventEmitter<DatabaseSyncStatus>(true);
+        }
+        return this._onSyncStatusChanged;
+    }
 }
 
 

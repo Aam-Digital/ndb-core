@@ -4,6 +4,7 @@ import { Database } from "./database";
 import { ConfigService } from "../config/config.service";
 import { PouchDatabase } from "./pouch-database";
 import { DatabaseManagerService } from "./database-manager.service";
+import { DatabaseSyncStatus } from "./database-sync-status";
 
 /**
  * DatabaseManagerService takes care of "background" actions of the database (e.g. sync, authentication, etc.).
@@ -63,17 +64,19 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
     }
 
     private sync() {
-        return this._localDatabase.sync(this._remoteDatabase, {live: true, retry: true}).then(
+        this.onSyncStatusChanged.emit(DatabaseSyncStatus.started);
+
+        let self = this;
+        //do NOT use liveSync because then the promise is never resolved
+        //TODO: retrigger sync continuously
+        return this._localDatabase.sync(this._remoteDatabase).then(
             function () {
-                console.debug("sync successfully");
+                self.onSyncStatusChanged.emit(DatabaseSyncStatus.completed);
             },
             function (err) {
                 console.debug("sync failed:");
                 console.debug(err);
-            },
-            function (notify) {
-                console.debug("sync notification:");
-                console.debug(notify);
+                self.onSyncStatusChanged.emit(DatabaseSyncStatus.failed);
             });
     }
 
