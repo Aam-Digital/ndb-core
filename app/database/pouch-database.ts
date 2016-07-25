@@ -7,7 +7,7 @@ import { Database } from "./database";
 export class PouchDatabase extends Database {
 
     constructor(private _pouchDB) {
-
+        super();
     }
 
     get(id: string) {
