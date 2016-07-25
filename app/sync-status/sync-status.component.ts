@@ -1,14 +1,14 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CORE_DIRECTIVES } from '@angular/common';
 
-import { MODAL_DIRECTVES, BS_VIEW_PROVIDERS, AlertComponent } from 'ng2-bootstrap/ng2-bootstrap';
+import { MODAL_DIRECTIVES, BS_VIEW_PROVIDERS, AlertComponent } from 'ng2-bootstrap/ng2-bootstrap';
 import { DatabaseManagerService } from "../database/database-manager.service";
 import { DatabaseSyncStatus } from "../database/database-sync-status";
 import { SessionService } from "../user/session.service";
 
 @Component({
     selector: 'ndb-sync-status',
-    directives: [MODAL_DIRECTVES, CORE_DIRECTIVES, AlertComponent],
+    directives: [MODAL_DIRECTIVES, CORE_DIRECTIVES, AlertComponent],
     viewProviders: [BS_VIEW_PROVIDERS],
     templateUrl: 'app/sync-status/sync-status.component.html'
 })
