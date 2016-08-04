@@ -8,6 +8,8 @@ app/**/*.js.map
 # Logs
 logs
 *.log
+/test-results/
+/test-coverage/
 
 # Sass template
 .sass-cache/

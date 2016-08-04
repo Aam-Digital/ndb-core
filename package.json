@@ -8,10 +8,8 @@
     "lite": "lite-server",
     "typings": "typings",
     "postinstall": "typings install",
-    "pretest": "npm run tsc",
-    "test": "karma start karma.conf.js",
-    "posttest": "node_modules/.bin/remap-istanbul -i coverage/coverage-final.json -o coverage -t html",
-    "coverage": "http-server -c-1 -o -p 9875 ./coverage"
+    "test": "tsc && concurrently \"tsc -w\" \"karma start karma.conf.js\"",
+    "test-once": "tsc && karma start karma.conf.js --single-run"
   },
   "license": "ISC",
   "dependencies": {
@@ -44,7 +42,9 @@
     "jasmine-core": "2.4.1",
     "karma": "^1.1.2",
     "karma-chrome-launcher": "^1.0.1",
+    "karma-cli": "^1.0.1",
     "karma-coverage": "^1.1.1",
+    "karma-htmlfile-reporter": "^0.3.4",
     "karma-jasmine": "^1.0.2",
     "karma-mocha-reporter": "^2.1.0",
     "karma-systemjs": "^0.14.0",
