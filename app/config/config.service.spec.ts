@@ -7,8 +7,8 @@ describe('config tests', () => {
         configService = new ConfigService();
     });
 
-
-    it('true is true', () => expect(true).toEqual(true));
     it('version is defined', () => expect(configService.version).toBeDefined());
+
     it('database name is defined', () => expect(configService.database.name).toBeDefined());
+    it('database name is defined', () => expect(configService.database.remote_url).toBeDefined());
 });
