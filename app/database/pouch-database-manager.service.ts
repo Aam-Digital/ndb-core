@@ -27,13 +27,13 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
 
     private initRemoteDatabase() {
         //noinspection TypeScriptUnresolvedFunction
-        return new PouchDB(this._appConfig.database.remote_url + this._appConfig.database.name, {
+        /*return new PouchDB(this._appConfig.database.remote_url + this._appConfig.database.name, {
             skipSetup: true,
             ajax: {
                 rejectUnauthorized: false,
                 timeout: this._appConfig.database.timeout
             }
-        });
+        });*/
     }
 
     login(username: string, password: string): Promise<boolean> {

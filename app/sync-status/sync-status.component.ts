@@ -28,13 +28,13 @@ export class SyncStatusComponent {
             case DatabaseSyncStatus.started:
                 this.syncInProgress = true;
                 if (!this._sessionService.isLoggedIn()) {
-                    this.modal.show();
+                    //this.modal.show();
                 }
                 break;
             case DatabaseSyncStatus.completed:
             case DatabaseSyncStatus.failed:
                 this.syncInProgress = false;
-                this.modal.hide();
+                //this.modal.hide();
                 break;
         }
     }
