@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { User } from "./user";
 import { DatabaseManagerService } from "../database/database-manager.service";
 import { AlertService } from "../alerts/alert.service";
-import { EntityMapperService } from "../database/entity-mapper.service";
+import { EntityMapperService } from "../model/entity-mapper.service";
 
 
 @Injectable()
@@ -61,6 +61,7 @@ export class SessionService {
     }
 
     private onLocalLoginFailed(error) {
+        this.currentUser = null;
         return error;
     }
 
