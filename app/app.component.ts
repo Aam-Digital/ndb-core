@@ -12,9 +12,6 @@ import { AlertService } from "./alerts/alert.service";
 import { PouchDatabaseManagerService } from "./database/pouch-database-manager.service";
 import { EntityMapperService } from "./database/entity-mapper.service";
 import { SyncStatusComponent } from "./sync-status/sync-status.component";
-import { LoggedInGuard } from "./user/logged-in.guard";
-import { appRouterProviders } from "./app.routes";
-import { NavigationItemsService } from "./navigation/navigation-items.service";
 
 
 @Component({
@@ -30,15 +27,6 @@ import { NavigationItemsService } from "./navigation/navigation-items.service";
         SyncStatusComponent
     ],
     providers: [
-        SessionService,
-        ConfigService,
-        AlertService,
-        { provide: DatabaseManagerService, useClass: PouchDatabaseManagerService },
-        databaseServiceProvider,
-        EntityMapperService,
-        appRouterProviders,
-        LoggedInGuard,
-        NavigationItemsService
     ]
 })
 export class AppComponent {
