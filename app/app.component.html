@@ -11,7 +11,9 @@
     </div>
 
     <div id="page-wrapper">
-        <router-outlet ngShow="isLoggedIn()"></router-outlet>
+        <div [style.visibility]="isLoggedIn() ? 'visible': 'collapse'">
+            <router-outlet></router-outlet>
+        </div>
         <ndb-login *ngIf="!isLoggedIn()"></ndb-login>
     </div>
 
