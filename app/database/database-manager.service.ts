@@ -30,7 +30,7 @@ let databaseServiceFactory = (_databaseManagerService: DatabaseManagerService) =
 };
 
 export let databaseServiceProvider =
-    provide(Database, {
+    {   provide: Database,
         useFactory: databaseServiceFactory,
         deps: [DatabaseManagerService]
-    });
+    };

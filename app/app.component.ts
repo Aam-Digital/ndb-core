@@ -30,7 +30,7 @@ import { SyncStatusComponent } from "./sync-status/sync-status.component";
         SessionService,
         ConfigService,
         AlertService,
-        provide(DatabaseManagerService, {useClass: PouchDatabaseManagerService}),
+        { provide: DatabaseManagerService, useClass: PouchDatabaseManagerService },
         databaseServiceProvider,
         EntityMapperService
     ]
