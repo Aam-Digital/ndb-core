@@ -27,12 +27,6 @@ import { SyncStatusComponent } from "./sync-status/sync-status.component";
         SyncStatusComponent
     ],
     providers: [
-        SessionService,
-        ConfigService,
-        AlertService,
-        provide(DatabaseManagerService, {useClass: PouchDatabaseManagerService}),
-        databaseServiceProvider,
-        EntityMapperService
     ]
 })
 export class AppComponent {
