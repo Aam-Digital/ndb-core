@@ -40,7 +40,7 @@ export class SessionService {
 
     private authenticateLocalUser(username: string, password: string): Promise<boolean> {
         let self = this;
-        return this._entityMapper.load<User>(username, new User())
+        return this._entityMapper.load<User>(new User(username))
             .then(function(userEntity) {
                 if(userEntity.checkPassword(password)) {
                     self.onLocalLoginSuccessfull(userEntity);

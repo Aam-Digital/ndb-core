@@ -8,8 +8,21 @@ export class Entity {
 
     private _id: string;
 
+    constructor(id: string) {
+        this.setId(id);
+    }
 
 
+    public getId(): string {
+        return this._id;
+    }
+
+    private setId(id: string) {
+        if (!id.startsWith(this.getPrefix())) {
+            id = this.getPrefix() + id;
+        }
+        this._id = id;
+    }
 
     public getPrefix(): string {
         return "";

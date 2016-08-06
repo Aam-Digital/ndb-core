@@ -15,16 +15,11 @@ export class EntityMapperService {
 
     /**
      * Loads an Entity from the database into the given resultEntity instance.
-     * @param id The _id of the object in the database. If id doesn't start with the Entity type's prefix it will be added.
-     * @param resultEntity An (empty) instance of an Entity class. (This is necessary because TypeScript generic types are not available at runtime.)
+     * @param resultEntity An (empty) instance of an Entity class with its ID set to the one to be searched. (This is necessary because TypeScript generic types are not available at runtime.)
      * @returns A Promise containing the resultEntity filled with its data.
      */
-    public load<T extends Entity>(id: string, resultEntity: T): Promise<T> {
-        if(!id.startsWith(resultEntity.getPrefix())) {
-            id = resultEntity.getPrefix() + id;
-        }
-
-        return this._db.get(id).then(
+    public load<T extends Entity>(resultEntity: T): Promise<T> {
+        return this._db.get(resultEntity.getId()).then(
             function(result) {
                 Object.assign(resultEntity, result);
                 return resultEntity;

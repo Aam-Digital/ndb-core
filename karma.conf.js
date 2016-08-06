@@ -36,8 +36,6 @@ module.exports = function (config) {
             'node_modules/zone.js/dist/async-test.js',
             'node_modules/zone.js/dist/fake-async-test.js',
 
-            "node_modules/pouchdb/dist/pouchdb.min.js",
-
             // RxJs.
             { pattern: 'node_modules/rxjs/**/*.js', included: false, watched: false },
             { pattern: 'node_modules/rxjs/**/*.js.map', included: false, watched: false },
@@ -48,6 +46,11 @@ module.exports = function (config) {
 
             {pattern: 'systemjs.config.js', included: false, watched: false},
             'karma-test-shim.js',
+
+
+            // project dependencies
+            "node_modules/pouchdb/dist/pouchdb.min.js",
+            "node_modules/crypto-js/crypto-js.js",
 
             // transpiled application & spec code paths loaded via module imports
             {pattern: appBase + '**/*.js', included: false, watched: true},
