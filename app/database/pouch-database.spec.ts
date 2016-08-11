@@ -9,8 +9,11 @@ describe('pouch-database tests', () => {
         pouchDatabase = new PouchDatabase(pouch);
     });
 
-    afterEach(() => {
-        pouch.destroy();
+    afterEach((done) => {
+        pouch.destroy().then(
+            function () {
+                done();
+            });
     });
 
 

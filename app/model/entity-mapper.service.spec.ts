@@ -20,8 +20,11 @@ describe('entity-mapper tests', () => {
         entityMapper = new EntityMapperService(testDatabase);
     });
 
-    afterEach(() => {
-        pouch.destroy();
+    afterEach((done) => {
+        pouch.destroy().then(
+            function () {
+                done();
+            });
     });
 
 
