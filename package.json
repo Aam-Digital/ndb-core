@@ -7,7 +7,9 @@
     "tsc:w": "tsc -w",
     "lite": "lite-server",
     "typings": "typings",
-    "postinstall": "typings install"
+    "postinstall": "typings install",
+    "test": "tsc && concurrently \"tsc -w\" \"karma start karma.conf.js\"",
+    "test-once": "tsc && karma start karma.conf.js --single-run"
   },
   "license": "ISC",
   "dependencies": {
@@ -23,6 +25,7 @@
     "bower": "^1.7.7",
     "core-js": "^2.4.0",
     "crypto-js": "^3.1.6",
+    "es6-module-loader": "^0.17.11",
     "font-awesome": "^4.6.3",
     "moment": "^2.13.0",
     "ng2-bootstrap": "^1.0.17",
@@ -35,8 +38,19 @@
   },
   "devDependencies": {
     "concurrently": "^2.0.0",
+    "http-server": "^0.9.0",
+    "jasmine-core": "2.4.1",
+    "karma": "^1.1.2",
+    "karma-chrome-launcher": "^1.0.1",
+    "karma-cli": "^1.0.1",
+    "karma-coverage": "^1.1.1",
+    "karma-htmlfile-reporter": "^0.3.4",
+    "karma-jasmine": "^1.0.2",
+    "karma-mocha-reporter": "^2.1.0",
+    "karma-systemjs": "^0.14.0",
     "lite-server": "^2.1.0",
+    "remap-istanbul": "^0.6.4",
     "typescript": "^1.8.9",
-    "typings": "^0.7.9"
+    "typings": "^1.3.2"
   }
 }

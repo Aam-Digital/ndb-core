@@ -1,4 +1,4 @@
-import { provide, EventEmitter } from "@angular/core";
+import { EventEmitter } from "@angular/core";
 import { Database } from "./database";
 import { DatabaseSyncStatus } from "./database-sync-status";
 
@@ -30,7 +30,8 @@ let databaseServiceFactory = (_databaseManagerService: DatabaseManagerService) =
 };
 
 export let databaseServiceProvider =
-    {   provide: Database,
-        useFactory: databaseServiceFactory,
-        deps: [DatabaseManagerService]
-    };
+{
+    provide: Database,
+    useFactory: databaseServiceFactory,
+    deps: [DatabaseManagerService]
+};

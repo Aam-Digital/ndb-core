@@ -19,16 +19,13 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
     constructor(private _appConfig: ConfigService) {
         super();
 
-        //noinspection TypeScriptUnresolvedFunction
         this._localDatabase = new PouchDB(this._appConfig.database.name);
         this._remoteDatabase = this.initRemoteDatabase();
     }
 
 
     private initRemoteDatabase() {
-        //noinspection TypeScriptUnresolvedFunction
         return new PouchDB(this._appConfig.database.remote_url + this._appConfig.database.name, {
-            skipSetup: true,
             ajax: {
                 rejectUnauthorized: false,
                 timeout: this._appConfig.database.timeout

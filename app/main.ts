@@ -10,7 +10,7 @@ import { ConfigService } from "./config/config.service";
 import { AlertService } from "./alerts/alert.service";
 import { DatabaseManagerService, databaseServiceProvider } from "./database/database-manager.service";
 import { PouchDatabaseManagerService } from "./database/pouch-database-manager.service";
-import { EntityMapperService } from "./database/entity-mapper.service";
+import { EntityMapperService } from "./model/entity-mapper.service";
 
 bootstrap(AppComponent, [
     disableDeprecatedForms(),
