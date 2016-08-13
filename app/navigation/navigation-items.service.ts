@@ -7,8 +7,8 @@ export class NavigationItemsService {
 
     public getMenuItems() : MenuItem[] {
         return [
-            new MenuItem("Dashboard", "home", ['Home']),
-            new MenuItem("Test", "child", ['Home'])
+            new MenuItem("Dashboard", "home", ['/']),
+            new MenuItem("Test", "child", ['/'])
         ];
     }
 }

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { User } from "./user";
 import { DatabaseManagerService } from "../database/database-manager.service";
 import { AlertService } from "../alerts/alert.service";
-import { EntityMapperService } from "../database/entity-mapper.service";
+import { EntityMapperService } from "../model/entity-mapper.service";
 
 
 @Injectable()
@@ -40,7 +40,7 @@ export class SessionService {
 
     private authenticateLocalUser(username: string, password: string): Promise<boolean> {
         let self = this;
-        return this._entityMapper.load<User>(username, new User())
+        return this._entityMapper.load<User>(new User(username))
             .then(function(userEntity) {
                 if(userEntity.checkPassword(password)) {
                     self.onLocalLoginSuccessfull(userEntity);
@@ -61,6 +61,7 @@ export class SessionService {
     }
 
     private onLocalLoginFailed(error) {
+        this.currentUser = null;
         return error;
     }
 
