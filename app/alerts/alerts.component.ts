@@ -6,7 +6,8 @@ import { AlertComponent } from "ng2-bootstrap/ng2-bootstrap";
 
 @Component({
     selector: 'ndb-alerts',
-    templateUrl: 'app/alerts/alerts.component.html',
+    //templateUrl: 'app/alerts/alerts.component.html',
+    template: '<alert *ngFor="let alert of alerts" [type]="alert.type" dismissible="true" (close)="deleteAlert(alert)">{{ alert.message }}</alert>',
     styleUrls: ['app/alerts/alerts.component.css'],
     directives: [
         AlertComponent
