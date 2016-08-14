@@ -3,6 +3,7 @@ app-config.js
 # TypeScript
 app/**/*.js
 app/**/*.js.map
+*.d.ts
 
 
 # Logs
