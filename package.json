@@ -10,7 +10,7 @@
     "postinstall": "typings install",
     "test": "tsc && concurrently \"tsc -w\" \"karma start karma.conf.js\"",
     "test-once": "tsc && karma start karma.conf.js --single-run",
-    "prepublish": "tsc"
+    "prepublish": "gulp inline-templates && tsc"
   },
   "license": "ISC",
   "dependencies": {
@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "concurrently": "^2.0.0",
+    "gulp-inline-ng2-template": "^3.0.0",
     "http-server": "^0.9.0",
     "jasmine-core": "2.4.1",
     "karma": "^1.1.2",
