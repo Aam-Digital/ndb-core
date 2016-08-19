@@ -22,7 +22,6 @@ export class NavigationComponent {
         this.menu_main = this._navigationItemService.getMenuItems();
     }
 
-
     logout() {
         this._sessionService.logout();
     }
