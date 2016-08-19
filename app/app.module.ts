@@ -6,11 +6,7 @@ import {AppComponent} from './app.component';
 import {routing} from "./app.routes";
 import {SessionService} from "./session/session.service";
 import {LoggedInGuard} from "./session/logged-in.guard";
-<<<<<<< HEAD
-import {NavigationItemsService} from "./navigation/navigation-items.service";
-=======
 import {EntityMapperService} from "./model/entity-mapper.service";
->>>>>>> acfcea4... Add navigation module
 import {LoginComponent} from "./session/login.component";
 import {FooterComponent} from "./footer.component";
 import {AlertsModule} from "./alerts/alerts.module";
@@ -44,6 +40,9 @@ import {NavigationModule} from "./navigation/navigation.module";
     ],
     bootstrap: [AppComponent],
     providers: [
+        SessionService,
+        LoggedInGuard,
+        EntityMapperService
     ]
 })
 export class AppModule {
