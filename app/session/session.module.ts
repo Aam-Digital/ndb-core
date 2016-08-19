@@ -14,7 +14,7 @@ import {CommonModule} from "@angular/common";
     exports: [LoginComponent],
     providers: [SessionService, LoggedInGuard]
 })
-export default class SessionModule {
+export class SessionModule {
 }
 
 export {SessionService} from "./session.service";
