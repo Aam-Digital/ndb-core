@@ -12,7 +12,8 @@ import { AlertService } from "./alerts/alert.service";
 import { PouchDatabaseManagerService } from "./database/pouch-database-manager.service";
 import { EntityMapperService } from "./model/entity-mapper.service";
 import { SyncStatusComponent } from "./sync-status/sync-status.component";
-
+import {MenuItem} from "./navigation/menu-item";
+import {NavigationItemsService} from "./navigation/navigation-items.service";
 
 @Component({
     selector: 'ndb-app',
@@ -31,8 +32,15 @@ import { SyncStatusComponent } from "./sync-status/sync-status.component";
 })
 export class AppComponent {
     constructor(private _sessionService:SessionService,
-                viewContainerRef:ViewContainerRef) {
+                viewContainerRef:ViewContainerRef,
+                private _navigationItemsService:NavigationItemsService) {
         this.viewContainerRef = viewContainerRef;
+
+        let menuItems = [
+            new MenuItem("Dashboard", "home", ['/']),
+            new MenuItem("Test_", "child", ['/'])
+        ];
+        _navigationItemsService.setMenuItems(menuItems);
     }
 
     title = 'NDB';

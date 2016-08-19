@@ -3,7 +3,6 @@ import { DashboardComponent } from "./dashboard/dashboard.component";
 import { UserAccountComponent } from "./user/user-account.component";
 import { LoggedInGuard } from "./user/logged-in.guard";
 
-
 const routes:RouterConfig = [
     {
         path: 'user',
