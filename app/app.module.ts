@@ -15,13 +15,13 @@ import {AlertsModule} from "./alerts/alerts.module";
 import {NG2BootstrapModule} from "./ng2-bootstrap.module";
 import {DatabaseModule} from "./database/database.module";
 import {ConfigModule} from "./config/config.module";
+import SessionModule from "./session/session.module";
 
 @NgModule({
     declarations: [
         AppComponent,
         FooterComponent,
         NavigationComponent,
-        LoginComponent,
         SyncStatusComponent
     ],
     imports: [
@@ -31,14 +31,13 @@ import {ConfigModule} from "./config/config.module";
         AlertsModule,
         NG2BootstrapModule,
         DatabaseModule,
-        ConfigModule
+        ConfigModule,
+        SessionModule
         // UserModule is lazy loaded
     ],
     bootstrap: [AppComponent],
     providers: [
-        SessionService,
-        LoggedInGuard,
-        NavigationItemsService,
+        NavigationItemsService
     ]
 })
 export class AppModule {
