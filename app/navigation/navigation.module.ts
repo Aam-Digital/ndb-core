@@ -6,10 +6,12 @@ import {routing} from "../app.routes";
 import {SessionService} from "../session/session.service";
 import {DashboardModule} from "../dashboard/dashboard.module";
 import {CommonModule} from "@angular/common";
+import {MenuItem} from "./menu-item";
+import SessionModule from "../session/session.module";
 
 @NgModule({
     imports: [
-        UserModule,
+        SessionModule,
         routing,
         DashboardModule,
         CommonModule
