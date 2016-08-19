@@ -1,10 +1,10 @@
-import { provideRouter, RouterConfig }  from '@angular/router';
-import { DashboardComponent } from "./dashboard/dashboard.component";
-import { UserAccountComponent } from "./user/user-account.component";
-import { LoggedInGuard } from "./user/logged-in.guard";
+import {Routes, RouterModule}  from '@angular/router';
+import {DashboardComponent} from "./dashboard/dashboard.component";
+import {UserAccountComponent} from "./user/user-account.component";
+import {LoggedInGuard} from "./user/logged-in.guard";
 
 
-const routes:RouterConfig = [
+export const routes: Routes = [
     {
         path: 'user',
         component: UserAccountComponent,
@@ -16,6 +16,4 @@ const routes:RouterConfig = [
     }
 ];
 
-export const appRouterProviders = [
-    provideRouter(routes)
-];
+export const routing = RouterModule.forRoot(routes);

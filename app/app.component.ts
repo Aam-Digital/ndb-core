@@ -18,16 +18,7 @@ import { SyncStatusComponent } from "./sync-status/sync-status.component";
     selector: 'ndb-app',
     templateUrl: 'app/app.component.html',
     styleUrls: ['app/sb-admin-2.css', 'app/app.component.css'], //TODO: use sass for css?
-    directives: [
-        ROUTER_DIRECTIVES,
-        FooterComponent,
-        NavigationComponent,
-        AlertsComponent,
-        LoginComponent,
-        SyncStatusComponent
-    ],
-    providers: [
-    ]
+
 })
 export class AppComponent {
     constructor(private _sessionService:SessionService,
