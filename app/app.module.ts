@@ -6,10 +6,13 @@ import {AppComponent} from './app.component';
 import {routing} from "./app.routes";
 import {SessionService} from "./session/session.service";
 import {LoggedInGuard} from "./session/logged-in.guard";
+<<<<<<< HEAD
 import {NavigationItemsService} from "./navigation/navigation-items.service";
+=======
+import {EntityMapperService} from "./model/entity-mapper.service";
+>>>>>>> acfcea4... Add navigation module
 import {LoginComponent} from "./session/login.component";
 import {FooterComponent} from "./footer.component";
-import {NavigationComponent} from "./navigation/navigation.component";
 import {AlertsModule} from "./alerts/alerts.module";
 import {NG2BootstrapModule} from "./ng2-bootstrap.module";
 import {DatabaseModule} from "./database/database.module";
@@ -17,12 +20,13 @@ import {ConfigModule} from "./config/config.module";
 import SessionModule from "./session/session.module";
 import {SyncStatusModule} from "./sync-status/sync-status.module";
 import {DashboardModule} from "./dashboard/dashboard.module";
+import {NavigationModule} from "./navigation/navigation.module";
 
 @NgModule({
     declarations: [
         AppComponent,
         FooterComponent,
-        NavigationComponent
+        LoginComponent
     ],
     imports: [
         BrowserModule,
@@ -34,12 +38,12 @@ import {DashboardModule} from "./dashboard/dashboard.module";
         ConfigModule,
         SessionModule,
         SyncStatusModule,
-        DashboardModule
+        DashboardModule,
+        NavigationModule
         // UserModule is lazy loaded
     ],
     bootstrap: [AppComponent],
     providers: [
-        NavigationItemsService
     ]
 })
 export class AppModule {

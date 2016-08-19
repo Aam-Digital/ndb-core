@@ -1,7 +1,7 @@
 import {Component, ViewContainerRef} from '@angular/core';
-
 import {SessionService} from "./session/session.service";
-
+import {NavigationItemsService} from "./navigation/navigation-items.service";
+import {MenuItem} from "./navigation/menu-item";
 
 @Component({
     selector: 'ndb-app',
@@ -11,8 +11,15 @@ import {SessionService} from "./session/session.service";
 })
 export class AppComponent {
     constructor(private _sessionService: SessionService,
-                viewContainerRef: ViewContainerRef) {
+                viewContainerRef: ViewContainerRef,
+                private _navigationItemsService: NavigationItemsService) {
         this.viewContainerRef = viewContainerRef;
+
+        let menuItems = [
+            new MenuItem("Dashboard", "home", ['/']),
+            new MenuItem("Test", "child", ['/'])
+        ];
+        _navigationItemsService.setMenuItems(menuItems);
     }
 
     title = 'NDB';
