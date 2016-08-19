@@ -1,5 +1,6 @@
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
+
 import {AppComponent} from './app.component';
 import {routing} from "./app.routes";
 import {SessionService} from "./user/session.service";
@@ -10,7 +11,6 @@ import {PouchDatabaseManagerService} from "./database/pouch-database-manager.ser
 import {AlertService} from "./alerts/alert.service";
 import {NavigationItemsService} from "./navigation/navigation-items.service";
 import {ConfigService} from "./config/config.service";
-import {RouterModule} from "@angular/router";
 import {FormsModule} from "@angular/forms";
 import {SyncStatusComponent} from "./sync-status/sync-status.component";
 import {LoginComponent} from "./user/login.component";
@@ -19,7 +19,14 @@ import {NavigationComponent} from "./navigation/navigation.component";
 import {AlertsComponent} from "./alerts/alerts.component";
 
 @NgModule({
-    declarations: [AppComponent],
+    declarations: [
+        AppComponent,
+        FooterComponent,
+        NavigationComponent,
+        AlertsComponent,
+        LoginComponent,
+        SyncStatusComponent
+    ],
     imports: [BrowserModule, routing, FormsModule],
     bootstrap: [AppComponent],
     providers: [
@@ -31,13 +38,6 @@ import {AlertsComponent} from "./alerts/alerts.component";
         {provide: DatabaseManagerService, useClass: PouchDatabaseManagerService},
         databaseServiceProvider,
         EntityMapperService
-    ],
-    declarations: [
-        FooterComponent,
-        NavigationComponent,
-        AlertsComponent,
-        LoginComponent,
-        SyncStatusComponent
     ]
 })
 export class AppModule {

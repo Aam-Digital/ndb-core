@@ -2,6 +2,7 @@ import {Routes, RouterModule}  from '@angular/router';
 import {DashboardComponent} from "./dashboard/dashboard.component";
 import {UserAccountComponent} from "./user/user-account.component";
 import {LoggedInGuard} from "./user/logged-in.guard";
+import {ModuleWithProviders} from "@angular/core";
 
 
 export const routes: Routes = [
@@ -16,4 +17,4 @@ export const routes: Routes = [
     }
 ];
 
-export const routing = RouterModule.forRoot(routes);
+export const routing: ModuleWithProviders = RouterModule.forRoot(routes);
