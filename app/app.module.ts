@@ -6,8 +6,6 @@ import {routing} from "./app.routes";
 import {SessionService} from "./session/session.service";
 import {LoggedInGuard} from "./session/logged-in.guard";
 import {EntityMapperService} from "./model/entity-mapper.service";
-import {databaseServiceProvider, DatabaseManagerService} from "./database/database-manager.service";
-import {PouchDatabaseManagerService} from "./database/pouch-database-manager.service";
 import {NavigationItemsService} from "./navigation/navigation-items.service";
 import {ConfigService} from "./config/config.service";
 import {FormsModule} from "@angular/forms";
@@ -17,6 +15,7 @@ import {FooterComponent} from "./footer.component";
 import {NavigationComponent} from "./navigation/navigation.component";
 import {AlertsModule} from "./alerts/alerts.module";
 import {NG2BootstrapModule} from "./ng2-bootstrap.module";
+import {DatabaseModule} from "./database/database.module";
 
 @NgModule({
     declarations: [
@@ -26,15 +25,20 @@ import {NG2BootstrapModule} from "./ng2-bootstrap.module";
         LoginComponent,
         SyncStatusComponent
     ],
-    imports: [BrowserModule, routing, FormsModule, AlertsModule, NG2BootstrapModule],
+    imports: [
+        BrowserModule,
+        routing,
+        FormsModule,
+        AlertsModule,
+        NG2BootstrapModule,
+        DatabaseModule
+    ],
     bootstrap: [AppComponent],
     providers: [
         SessionService,
         LoggedInGuard,
         NavigationItemsService,
         ConfigService,
-        {provide: DatabaseManagerService, useClass: PouchDatabaseManagerService},
-        databaseServiceProvider,
         EntityMapperService
     ]
 })
