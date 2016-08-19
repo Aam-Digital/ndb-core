@@ -1,6 +1,6 @@
 import {Component, ViewContainerRef} from '@angular/core';
 
-import {SessionService} from "./user/session.service";
+import {SessionService} from "./session/session.service";
 
 
 @Component({

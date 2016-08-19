@@ -1,5 +1,5 @@
 import { SessionService } from "./session.service";
-import { User } from "./user";
+import { User } from "../user/user";
 
 describe('session service tests', () => {
     let sessionService: SessionService;
