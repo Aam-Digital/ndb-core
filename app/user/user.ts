@@ -1,4 +1,4 @@
-import { Entity } from "../model/entity";
+import { Entity } from "../entity/entity";
 
 
 export class User extends Entity {

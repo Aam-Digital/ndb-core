@@ -6,7 +6,6 @@ import {AppComponent} from './app.component';
 import {routing} from "./app.routes";
 import {SessionService} from "./session/session.service";
 import {LoggedInGuard} from "./session/logged-in.guard";
-import {EntityMapperService} from "./model/entity-mapper.service";
 import {NavigationItemsService} from "./navigation/navigation-items.service";
 import {SyncStatusComponent} from "./sync-status/sync-status.component";
 import {LoginComponent} from "./session/login.component";
@@ -40,7 +39,6 @@ import {ConfigModule} from "./config/config.module";
         SessionService,
         LoggedInGuard,
         NavigationItemsService,
-        EntityMapperService
     ]
 })
 export class AppModule {
