@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 
-import { User } from "./user";
+import { User } from "../user/user";
 import { DatabaseManagerService } from "../database/database-manager.service";
 import { AlertService } from "../alerts/alert.service";
-import { EntityMapperService } from "../model/entity-mapper.service";
+import { EntityMapperService } from "../entity/entity-mapper.service";
 
 
 @Injectable()

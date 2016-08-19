@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ROUTER_DIRECTIVES } from "@angular/router";
 
-import { SessionService } from "../user/session.service";
+import { SessionService } from "../session/session.service";
 import { NavigationItemsService } from "./navigation-items.service";
 import { MenuItem } from "./menu-item";
 
