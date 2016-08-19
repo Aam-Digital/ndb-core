@@ -6,7 +6,7 @@ import {MenuItem} from "../navigation/menu-item";
 @Component({
     selector: 'ndb-ui',
     templateUrl: 'app/ui/ui.component.html',
-    styleUrls: ['app/ui/sb-admin-2.css', 'app/ui/ui.component.css'], //TODO: use sass for css?
+    styleUrls: ['app/ui/ui.component.css'], //TODO: use sass for css?
 
 })
 export class UIComponent {
