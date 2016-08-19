@@ -1,10 +1,10 @@
-import { Injectable } from "@angular/core";
+import {Injectable} from "@angular/core";
 
-import { Database } from "./database";
-import { ConfigService } from "../config/config.service";
-import { PouchDatabase } from "./pouch-database";
-import { DatabaseManagerService } from "./database-manager.service";
-import { DatabaseSyncStatus } from "./database-sync-status";
+import {Database} from "./database";
+import {PouchDatabase} from "./pouch-database";
+import {DatabaseManagerService} from "./database-manager.service";
+import {DatabaseSyncStatus} from "./database-sync-status";
+import {ConfigService} from "../config/config.service";
 
 /**
  * DatabaseManagerService takes care of "background" actions of the database (e.g. sync, authentication, etc.).
@@ -49,7 +49,7 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
                 return true;
             },
             function (error) {
-                if(error.status == 401) {
+                if (error.status == 401) {
                     return false;
                 } else {
                     console.error("Failed to connect to the remote database.", error);

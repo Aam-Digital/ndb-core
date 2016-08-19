@@ -1,4 +1,4 @@
-import { ConfigService } from "./config.service";
+import {ConfigService} from "./config.service";
 
 describe('config tests', () => {
     let configService: ConfigService;

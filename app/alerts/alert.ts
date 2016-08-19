@@ -4,8 +4,7 @@ export class Alert {
     static WARNING = 'warning';
     static DANGER = 'danger';
 
-    constructor(
-        public message: string,
-        public type: string
-    ) {}
+    constructor(public message: string,
+                public type: string) {
+    }
 }
