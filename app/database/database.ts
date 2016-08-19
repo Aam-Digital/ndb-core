@@ -6,8 +6,11 @@
 export abstract class Database {
 
     abstract get(id: string);
+
     abstract allDocs(options?: any);
+
     abstract put(object: any);
+
     abstract remove(object: any);
 
     getAll(prefix = ""): any[] {

@@ -1,4 +1,4 @@
-import { PouchDatabase } from "./pouch-database";
+import {PouchDatabase} from "./pouch-database";
 
 describe('pouch-database tests', () => {
     let pouchDatabase: PouchDatabase;

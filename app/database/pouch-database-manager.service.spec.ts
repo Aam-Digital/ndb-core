@@ -1,4 +1,4 @@
-import { PouchDatabaseManagerService } from "./pouch-database-manager.service";
+import {PouchDatabaseManagerService} from "./pouch-database-manager.service";
 
 describe('pouch-database-manager tests', () => {
     let dbManager: PouchDatabaseManagerService;

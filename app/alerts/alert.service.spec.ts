@@ -1,4 +1,4 @@
-import { AlertService } from "./alert.service";
+import {AlertService} from "./alert.service";
 import {Alert} from "./alert";
 
 describe('alert-service tests', () => {
