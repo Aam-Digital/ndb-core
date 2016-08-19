@@ -32,6 +32,7 @@ import {DatabaseModule} from "./database/database.module";
         AlertsModule,
         NG2BootstrapModule,
         DatabaseModule
+        // UserModule is lazy loaded
     ],
     bootstrap: [AppComponent],
     providers: [
