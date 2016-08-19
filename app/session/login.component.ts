@@ -7,7 +7,7 @@ import { DatabaseSyncStatus } from "../database/database-sync-status";
 
 @Component({
     selector: 'ndb-login',
-    templateUrl: 'app/user/login.component.html'
+    templateUrl: 'app/session/login.component.html'
 })
 export class LoginComponent {
     loginInProgress = false;

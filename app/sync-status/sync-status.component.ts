@@ -4,7 +4,7 @@ import { CORE_DIRECTIVES } from '@angular/common';
 import { MODAL_DIRECTIVES, BS_VIEW_PROVIDERS, AlertComponent, ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 import { DatabaseManagerService } from "../database/database-manager.service";
 import { DatabaseSyncStatus } from "../database/database-sync-status";
-import { SessionService } from "../user/session.service";
+import { SessionService } from "../session/session.service";
 
 @Component({
     selector: 'ndb-sync-status',
