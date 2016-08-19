@@ -8,7 +8,6 @@ import {SessionService} from "./session/session.service";
 import {LoggedInGuard} from "./session/logged-in.guard";
 import {EntityMapperService} from "./model/entity-mapper.service";
 import {NavigationItemsService} from "./navigation/navigation-items.service";
-import {SyncStatusComponent} from "./sync-status/sync-status.component";
 import {LoginComponent} from "./session/login.component";
 import {FooterComponent} from "./footer.component";
 import {NavigationComponent} from "./navigation/navigation.component";
@@ -16,14 +15,15 @@ import {AlertsModule} from "./alerts/alerts.module";
 import {NG2BootstrapModule} from "./ng2-bootstrap.module";
 import {DatabaseModule} from "./database/database.module";
 import {ConfigModule} from "./config/config.module";
+import {SyncStatusModule} from "./sync-status/sync-status.module";
+import {DashboardModule} from "./dashboard/dashboard.module";
 
 @NgModule({
     declarations: [
         AppComponent,
         FooterComponent,
         NavigationComponent,
-        LoginComponent,
-        SyncStatusComponent
+        LoginComponent
     ],
     imports: [
         BrowserModule,
@@ -32,7 +32,9 @@ import {ConfigModule} from "./config/config.module";
         AlertsModule,
         NG2BootstrapModule,
         DatabaseModule,
-        ConfigModule
+        ConfigModule,
+        SyncStatusModule,
+        DashboardModule
         // UserModule is lazy loaded
     ],
     bootstrap: [AppComponent],
