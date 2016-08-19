@@ -1,5 +1,5 @@
-import {NgModule}           from '@angular/core';
-import {CommonModule}       from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 
 import {NG2BootstrapModule} from "../ng2-bootstrap.module";
 import {SyncStatusComponent} from "./sync-status.component";

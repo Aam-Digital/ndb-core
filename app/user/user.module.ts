@@ -1,6 +1,6 @@
-import { NgModule }           from '@angular/core';
-import { UserAccountComponent } from "./user-account.component";
-import { routing } from "./user.routing";
+import {NgModule} from '@angular/core';
+import {UserAccountComponent} from "./user-account.component";
+import {routing} from "./user.routing";
 
 @NgModule({
     imports: [routing],

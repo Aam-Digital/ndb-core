@@ -6,6 +6,7 @@ import {routing} from "../app.routes";
 import {SessionService} from "../session/session.service";
 import {DashboardModule} from "../dashboard/dashboard.module";
 import {CommonModule} from "@angular/common";
+
 @NgModule({
     imports: [
         UserModule,
@@ -26,3 +27,6 @@ import {CommonModule} from "@angular/common";
 })
 export class NavigationModule {
 }
+
+export {NavigationItemsService} from "./navigation-items.service";
+export {NavigationComponent} from "./navigation.component";

@@ -5,7 +5,6 @@ import {AlertsComponent} from "./alerts.component";
 import {AlertService} from "./alert.service";
 import {NG2BootstrapModule} from "../ng2-bootstrap.module";
 
-
 @NgModule({
     imports: [CommonModule, NG2BootstrapModule],
     declarations: [AlertsComponent],
@@ -15,3 +14,6 @@ import {NG2BootstrapModule} from "../ng2-bootstrap.module";
 export class AlertsModule {
 
 }
+
+export {AlertsComponent} from "./alerts.component";
+export {AlertService} from "./alert.service";

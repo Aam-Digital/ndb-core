@@ -10,3 +10,5 @@ import {ConfigService} from "./config.service";
 })
 export class ConfigModule {
 }
+
+export {ConfigService} from "./config.service";

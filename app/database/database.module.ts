@@ -17,3 +17,6 @@ import {ConfigModule} from "../config/config.module";
 })
 export class DatabaseModule {
 }
+
+export {DatabaseManagerService} from "./database-manager.service";
+export {Database} from "./database";
