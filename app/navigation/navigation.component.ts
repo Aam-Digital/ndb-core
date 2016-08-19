@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { ROUTER_DIRECTIVES } from "@angular/router";
 
 import { SessionService } from "../session/session.service";
 import { NavigationItemsService } from "./navigation-items.service";
@@ -10,7 +9,6 @@ import { MenuItem } from "./menu-item";
     selector: 'ndb-navigation',
     templateUrl: 'app/navigation/navigation.component.html',
     styleUrls: ['app/navigation/navigation.component.css'],
-    directives: [ROUTER_DIRECTIVES]
 })
 export class NavigationComponent {
     public menu_main: MenuItem[];

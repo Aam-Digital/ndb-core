@@ -1,12 +1,7 @@
 import {Component, ViewContainerRef} from '@angular/core';
-<<<<<<< dec6842c2d43870cc6fb007b10511aa6bb5a9905
-
 import {SessionService} from "./session/session.service";
-=======
-import {SessionService} from "./user/session.service";
 import {NavigationItemsService} from "./navigation/navigation-items.service";
 import {MenuItem} from "./navigation/menu-item";
->>>>>>> Provide extendable navigation bar as a service
 
 @Component({
     selector: 'ndb-app',
@@ -22,7 +17,7 @@ export class AppComponent {
 
         let menuItems = [
             new MenuItem("Dashboard", "home", ['/']),
-            new MenuItem("Test_", "child", ['/'])
+            new MenuItem("Test", "child", ['/'])
         ];
         _navigationItemsService.setMenuItems(menuItems);
     }
