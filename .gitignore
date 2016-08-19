@@ -4,6 +4,8 @@ app-config.js
 app/**/*.js
 app/**/*.js.map
 *.d.ts
+*.js.map
+index.js
 
 
 # Logs
