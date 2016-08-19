@@ -22,7 +22,6 @@ import {NavigationModule} from "./navigation/navigation.module";
     declarations: [
         AppComponent,
         FooterComponent,
-        LoginComponent
     ],
     imports: [
         BrowserModule,
@@ -40,7 +39,6 @@ import {NavigationModule} from "./navigation/navigation.module";
     ],
     bootstrap: [AppComponent],
     providers: [
-        SessionService,
         LoggedInGuard,
         EntityMapperService
     ]
