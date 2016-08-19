@@ -74,7 +74,6 @@ crashlytics.properties
 crashlytics-build.properties
 
 /tools/**/*.js
-gulpfile.js
 dist
 dev
 docs
