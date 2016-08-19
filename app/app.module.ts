@@ -8,7 +8,6 @@ import {LoggedInGuard} from "./user/logged-in.guard";
 import {EntityMapperService} from "./model/entity-mapper.service";
 import {databaseServiceProvider, DatabaseManagerService} from "./database/database-manager.service";
 import {PouchDatabaseManagerService} from "./database/pouch-database-manager.service";
-import {AlertService} from "./alerts/alert.service";
 import {NavigationItemsService} from "./navigation/navigation-items.service";
 import {ConfigService} from "./config/config.service";
 import {FormsModule} from "@angular/forms";
@@ -16,25 +15,24 @@ import {SyncStatusComponent} from "./sync-status/sync-status.component";
 import {LoginComponent} from "./user/login.component";
 import {FooterComponent} from "./footer.component";
 import {NavigationComponent} from "./navigation/navigation.component";
-import {AlertsComponent} from "./alerts/alerts.component";
+import {AlertsModule} from "./alerts/alerts.module";
+import {NG2BootstrapModule} from "./ng2-bootstrap.module";
 
 @NgModule({
     declarations: [
         AppComponent,
         FooterComponent,
         NavigationComponent,
-        AlertsComponent,
         LoginComponent,
         SyncStatusComponent
     ],
-    imports: [BrowserModule, routing, FormsModule],
+    imports: [BrowserModule, routing, FormsModule, AlertsModule, NG2BootstrapModule],
     bootstrap: [AppComponent],
     providers: [
         SessionService,
         LoggedInGuard,
         NavigationItemsService,
         ConfigService,
-        AlertService,
         {provide: DatabaseManagerService, useClass: PouchDatabaseManagerService},
         databaseServiceProvider,
         EntityMapperService
