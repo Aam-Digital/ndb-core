@@ -30,3 +30,4 @@ export class NavigationModule {
 
 export {NavigationItemsService} from "./navigation-items.service";
 export {NavigationComponent} from "./navigation.component";
+export { MenuItem } from "./menu-item";
