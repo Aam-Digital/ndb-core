@@ -8,7 +8,8 @@ import {EntityMapperService} from "./entity-mapper.service";
     exports: [],
     providers: [EntityMapperService]
 })
-export default class EntityModule {
+export class EntityModule {
 }
 
 export {EntityMapperService} from "./entity-mapper.service";
+export { Entity } from "./entity";
