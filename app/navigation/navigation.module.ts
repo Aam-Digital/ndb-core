@@ -2,7 +2,7 @@ import {NgModule} from "@angular/core";
 import UserModule from "../user/user.module";
 import {NavigationComponent} from "./navigation.component";
 import {NavigationItemsService} from "./navigation-items.service";
-import {routing} from "../app.routes";
+import { routing } from "../app.routing";
 import {SessionService} from "../session/session.service";
 import {DashboardModule} from "../dashboard/dashboard.module";
 import {CommonModule} from "@angular/common";

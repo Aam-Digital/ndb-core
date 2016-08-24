@@ -3,7 +3,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {FormsModule} from "@angular/forms";
 
 import {AppComponent} from './app.component';
-import {routing} from "./app.routes";
+import { routing } from "./app.routing";
 import {AlertsModule} from "./alerts/alerts.module";
 import {NG2BootstrapModule} from "./ng2-bootstrap.module";
 import {DatabaseModule} from "./database/database.module";
