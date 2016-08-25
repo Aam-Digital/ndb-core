@@ -1,19 +1,15 @@
 import {NgModule} from "@angular/core";
-import UserModule from "../user/user.module";
 import {NavigationComponent} from "./navigation.component";
 import {NavigationItemsService} from "./navigation-items.service";
-import { routing } from "../app.routing";
-import {SessionService} from "../session/session.service";
-import {DashboardModule} from "../dashboard/dashboard.module";
 import {CommonModule} from "@angular/common";
 import {MenuItem} from "./menu-item";
 import {SessionModule} from "../session/session.module";
+import { RouterModule } from "@angular/router";
 
 @NgModule({
     imports: [
         SessionModule,
-        routing,
-        DashboardModule,
+        RouterModule,
         CommonModule
     ],
     declarations: [
@@ -23,8 +19,7 @@ import {SessionModule} from "../session/session.module";
         NavigationComponent
     ],
     providers: [
-        NavigationItemsService,
-        SessionService
+        NavigationItemsService
     ]
 })
 export class NavigationModule {
