@@ -7,7 +7,7 @@ import {SessionService} from "../session/session.service";
 import {DashboardModule} from "../dashboard/dashboard.module";
 import {CommonModule} from "@angular/common";
 import {MenuItem} from "./menu-item";
-import SessionModule from "../session/session.module";
+import {SessionModule} from "../session/session.module";
 
 @NgModule({
     imports: [
@@ -32,4 +32,4 @@ export class NavigationModule {
 
 export {NavigationItemsService} from "./navigation-items.service";
 export {NavigationComponent} from "./navigation.component";
-export { MenuItem } from "./menu-item";
+export {MenuItem} from "./menu-item";

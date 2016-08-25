@@ -11,8 +11,8 @@ export class NavigationItemsService {
         return this.menuItems;
     }
 
-    public addMenuItem(label: string, icon: string, routerLinkParameters: any[]) {
-        this.menuItems.push(new MenuItem(label, icon, routerLinkParameters));
+    public addMenuItem(menuItem: MenuItem) {
+        this.menuItems.push(menuItem);
     }
 
     public setMenuItems(items : MenuItem[]) {
