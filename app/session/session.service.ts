@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
+import {Injectable, EventEmitter} from '@angular/core';
 
-import { User } from "../user/user";
-import { DatabaseManagerService } from "../database/database-manager.service";
-import { AlertService } from "../alerts/alert.service";
-import { EntityMapperService } from "../entity/entity-mapper.service";
+import {User} from "../user/user";
+import {DatabaseManagerService} from "../database/database-manager.service";
+import {AlertService} from "../alerts/alert.service";
+import {EntityMapperService} from "../entity/entity-mapper.service";
+import {SessionStatus} from "./session-status";
 
 
 @Injectable()
@@ -16,8 +17,15 @@ export class SessionService {
 
     }
 
+    _onSessionStatusChanged: EventEmitter<SessionStatus>;
+    get onSessionStatusChanged() {
+        if (this._onSessionStatusChanged == null) {
+            this._onSessionStatusChanged = new EventEmitter<SessionStatus>(true);
+        }
+        return this._onSessionStatusChanged;
+    }
 
-    public isLoggedIn() : boolean {
+    public isLoggedIn(): boolean {
         return this.currentUser != null;
     }
 
@@ -27,7 +35,7 @@ export class SessionService {
      *
      * WARNING: This method returns false immediately if the user cannot be authenticated with the local database.
      */
-    public login(username:string, password:string): Promise<boolean> {
+    public login(username: string, password: string): Promise<boolean> {
         let promise: Promise<boolean>;
 
         promise = this.authenticateLocalUser(username, password);
@@ -37,41 +45,48 @@ export class SessionService {
         return promise;
     }
 
+    public logout() {
+        this.currentUser = null;
+        this.onSessionStatusChanged.emit(SessionStatus.loggedOut);
+    }
+
 
     private authenticateLocalUser(username: string, password: string): Promise<boolean> {
         let self = this;
         return this._entityMapper.load<User>(new User(username))
-            .then(function(userEntity) {
-                if(userEntity.checkPassword(password)) {
-                    self.onLocalLoginSuccessfull(userEntity);
+            .then(function (userEntity) {
+                if (userEntity.checkPassword(password)) {
+                    self.onLocalLoginSuccessful(userEntity);
                     return true;
                 } else {
                     self.onLocalLoginFailed({status: 401});
                     return false;
                 }
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 self.onLocalLoginFailed(error);
                 return false;
             });
     }
 
-    private onLocalLoginSuccessfull(user: User) {
+    private onLocalLoginSuccessful(user: User) {
         this.currentUser = user;
+        this.onSessionStatusChanged.emit(SessionStatus.loggedIn);
     }
 
     private onLocalLoginFailed(error) {
         this.currentUser = null;
+        this.onSessionStatusChanged.emit(SessionStatus.loginFailed);
         return error;
     }
 
 
-    private remoteDatabaseLogin(username:string, password:string): Promise<boolean> {
+    private remoteDatabaseLogin(username: string, password: string): Promise<boolean> {
         let self = this;
         return this._dbManager.login(username, password)
-            .then(function(loginSuccess) {
-                if(loginSuccess) {
-                    self.onRemoteLoginSuccessfull();
+            .then(function (loginSuccess) {
+                if (loginSuccess) {
+                    self.onRemoteLoginSuccessful();
                 }
                 else {
                     self.onRemoteLoginFailed();
@@ -80,7 +95,7 @@ export class SessionService {
             });
     }
 
-    private onRemoteLoginSuccessfull() {
+    private onRemoteLoginSuccessful() {
         this._alertService.addInfo("Connected to remote database.");
     }
 
@@ -88,9 +103,4 @@ export class SessionService {
         this._alertService.addWarning("Could not connect to remote database. Data cannot be synchronized at the moment.");
     }
 
-
-
-    public logout() {
-        this.currentUser = null;
-    }
 }
