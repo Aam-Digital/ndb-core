@@ -9,3 +9,4 @@ export * from './app/session/session.module';
 export * from './app/sync-status/sync-status.module';
 export * from './app/user/user.module';
 export * from './app/ui/ui.module';
+export * from './app/navigation/navigation.module';

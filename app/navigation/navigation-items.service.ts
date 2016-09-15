@@ -11,7 +11,7 @@ export class NavigationItemsService {
         return this.menuItems;
     }
 
-    public addMenuItem(menuItem : MenuItem) {
+    public addMenuItem(menuItem: MenuItem) {
         this.menuItems.push(menuItem);
     }
 

@@ -4,7 +4,7 @@ import {SessionService} from "./session.service";
 import {LoggedInGuard} from "./logged-in.guard";
 import {DatabaseModule} from "../database/database.module";
 import {AlertsModule} from "../alerts/alerts.module";
-import EntityModule from "../entity/entity.module";
+import { EntityModule } from "../entity/entity.module";
 import {FormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
 
