@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
+
+import './rxjs-operators';
+
 
 @Component({
     selector: 'ndb-app',

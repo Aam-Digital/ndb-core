@@ -13,10 +13,13 @@ import {SyncStatusModule} from "./sync-status/sync-status.module";
 import {DashboardModule} from "./dashboard/dashboard.module";
 import {NavigationModule} from "./navigation/navigation.module";
 import {UIModule} from "./ui/ui.module";
+import {LatestChangesModule} from "./latest-changes/latest-changes.module";
+import {HttpModule} from "@angular/http";
 
 @NgModule({
     imports: [
         BrowserModule,
+        HttpModule,
         routing,
         FormsModule,
         AlertsModule,
@@ -27,7 +30,8 @@ import {UIModule} from "./ui/ui.module";
         SyncStatusModule,
         DashboardModule,
         NavigationModule,
-        UIModule
+        UIModule,
+        LatestChangesModule
         // UserModule is lazy loaded
     ],
     declarations: [AppComponent],
