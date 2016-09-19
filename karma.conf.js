@@ -1,103 +1,136 @@
+// Karma configuration
+// Generated on Wed Jul 15 2015 09:44:02 GMT+0200 (Romance Daylight Time)
+'use strict';
+
+var argv = require('yargs').argv;
+
 module.exports = function (config) {
+  config.set({
 
-    var appBase = 'app/';      // transpiled app JS files
-    var appAssets = '/base/app/'; // component assets fetched by Angular's compiler
-
-    config.set({
-        basePath: '',
-        frameworks: ['jasmine'],
-        plugins: [
-            require('karma-jasmine'),
-            require('karma-chrome-launcher'),
-            require('karma-htmlfile-reporter'),
-            require('karma-mocha-reporter'),
-            require('karma-coverage')
-        ],
-
-        customLaunchers: {
-            // From the CLI. Not used here but interesting
-            // chrome setup for travis CI using chromium
-            Chrome_travis_ci: {
-                base: 'Chrome',
-                flags: ['--no-sandbox']
-            }
-        },
-        files: [
-            // System.js for module loading
-            'node_modules/systemjs/dist/system.src.js',
-
-            // Polyfills
-            'node_modules/core-js/client/shim.js',
-
-            // Reflect and Zone.js
-            'node_modules/reflect-metadata/Reflect.js',
-            'node_modules/zone.js/dist/zone.js',
-            'node_modules/zone.js/dist/jasmine-patch.js',
-            'node_modules/zone.js/dist/async-test.js',
-            'node_modules/zone.js/dist/fake-async-test.js',
-
-            // RxJs.
-            { pattern: 'node_modules/rxjs/**/*.js', included: false, watched: false },
-            { pattern: 'node_modules/rxjs/**/*.js.map', included: false, watched: false },
-
-            // Angular 2 itself and the testing library
-            {pattern: 'node_modules/@angular/**/*.js', included: false, watched: false},
-            {pattern: 'node_modules/@angular/**/*.js.map', included: false, watched: false},
-
-            {pattern: 'systemjs.config.js', included: false, watched: false},
-            'karma-test-shim.js',
+    // base path that will be used to resolve all patterns (eg. files, exclude)
+    basePath: './',
 
 
-            // project dependencies
-            "node_modules/pouchdb/dist/pouchdb.min.js",
-            "node_modules/crypto-js/crypto-js.js",
+    // frameworks to use
+    // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
+    frameworks: ['jasmine'],
 
-            // transpiled application & spec code paths loaded via module imports
-            {pattern: appBase + '**/*.js', included: false, watched: true},
 
-            // asset (HTML & CSS) paths loaded via Angular's component compiler
-            // (these paths need to be rewritten, see proxies section)
-            {pattern: appBase + '**/*.html', included: false, watched: true},
-            {pattern: appBase + '**/*.css', included: false, watched: true},
+    // list of files / patterns to load in the browser
+    files: [
+      // Polyfills.
+      'node_modules/core-js/client/shim.min.js',
 
-            // paths for debugging with source maps in dev tools
-            {pattern: appBase + '**/*.ts', included: false, watched: false},
-            {pattern: appBase + '**/*.js.map', included: false, watched: false}
-        ],
+      'node_modules/traceur/bin/traceur.js',
 
-        // proxied base paths for loading assets
-        proxies: {
-            // required for component assets fetched by Angular's compiler
-            "/app/": appAssets
-        },
+      // System.js for module loading
+      'node_modules/systemjs/dist/system.src.js',
 
-        exclude: [],
-        preprocessors: {
-            //TODO: preprocessor for coverage somehow breaks to test run
-            //'app/**/!(*spec).js': ['coverage']
-        },
-        reporters: ['progress', 'html', 'mocha', 'coverage'],
+      // Zone.js dependencies
+      'node_modules/zone.js/dist/zone.js',
+      'node_modules/zone.js/dist/long-stack-trace-zone.js',
+      'node_modules/zone.js/dist/async-test.js',
+      'node_modules/zone.js/dist/fake-async-test.js',
+      'node_modules/zone.js/dist/sync-test.js',
+      'node_modules/zone.js/dist/proxy.js',
+      'node_modules/zone.js/dist/jasmine-patch.js',
 
-        // HtmlReporter configuration
-        htmlReporter: {
-            // Open this file to see results in browser
-            outputFile: 'test-results/tests.html',
+      // RxJs.
+      { pattern: 'node_modules/rxjs/**/*.js', included: false, watched: false },
+      { pattern: 'node_modules/rxjs/**/*.js.map', included: false, watched: false },
 
-            // Optional
-            pageTitle: 'Unit Tests',
-            subPageTitle: __dirname
-        },
+      // paths loaded via module imports
+      // Angular itself
+      { pattern: 'node_modules/@angular/**/*.js', included: false, watched: true },
+      { pattern: 'node_modules/@angular/**/*.js.map', included: false, watched: false },
 
-        coverageReporter: {
-            type: 'html',
-            dir: 'test-coverage/'
-        },
+      { pattern: 'dist/dev/**/*.js', included: false, watched: true },
+      { pattern: 'dist/dev/**/*.html', included: false, watched: true, served: true },
+      { pattern: 'dist/dev/**/*.css', included: false, watched: true, served: true },
+      { pattern: 'node_modules/systemjs/dist/system-polyfills.js', included: false, watched: false }, // PhantomJS2 (and possibly others) might require it
 
-        port: 9876,
-        colors: true,
-        logLevel: config.LOG_INFO,
-        autoWatch: true,
-        browsers: ['Chrome'],
-        singleRun: false
-    })
+      // suppress annoying 404 warnings for resources, images, etc.
+      { pattern: 'dist/dev/assets/**/*', watched: false, included: false, served: true },
+
+      // project dependencies
+      "node_modules/pouchdb/dist/pouchdb.min.js",
+      "node_modules/crypto-js/crypto-js.js",
+
+      'test-config.js',
+      'dist/dev/app/system-config.js',
+      'test-main.js'
+    ],
+
+    // must go along with above, suppress annoying 404 warnings.
+    proxies: {
+      '/assets/': '/base/dist/dev/assets/'
+    },
+
+    // list of files to exclude
+    exclude: [
+      'node_modules/**/*spec.js'
+    ],
+
+
+    // preprocess matching files before serving them to the browser
+    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
+
+    // test results reporter to use
+    // possible values: 'dots', 'progress'
+    // available reporters: https://npmjs.org/browse/keyword/karma-reporter
+    reporters: ['mocha'],
+
+
+    // web server port
+    port: 9876,
+
+
+    // enable / disable colors in the output (reporters and logs)
+    colors: true,
+
+
+    // level of logging
+    // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+    logLevel: config.LOG_INFO,
+
+
+    // enable / disable watching file and executing tests whenever any file changes
+    autoWatch: true,
+
+
+    // start these browsers
+    // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
+    browsers: [
+      'Chrome'
+    ],
+
+
+    customLaunchers: {
+      Chrome_travis_ci: {
+        base: 'Chrome',
+        flags: ['--no-sandbox']
+      }
+    },
+
+    // Continuous Integration mode
+    // if true, Karma captures browsers, runs the tests and exits
+    singleRun: false,
+
+    // Passing command line arguments to tests
+    client: {
+      files: argv.files
+    }
+  });
+
+  if (process.env.APPVEYOR) {
+    config.browsers = ['IE'];
+    config.singleRun = true;
+    config.browserNoActivityTimeout = 90000; // Note: default value (10000) is not enough
+  }
+
+  if (process.env.TRAVIS || process.env.CIRCLECI) {
+    config.browsers = ['Chrome_travis_ci'];
+    config.singleRun = true;
+    config.browserNoActivityTimeout = 90000;
+  }
 };
