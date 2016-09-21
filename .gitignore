@@ -1,22 +1,6 @@
-app-config.js
-
-# TypeScript
-app/**/*.js
-app/**/*.js.map
-*.d.ts
-*.js.map
-index.js
-
-
 # Logs
 logs
 *.log
-/test-results/
-/test-coverage/
-
-# Sass template
-.sass-cache/
-*.css.map
 
 # Runtime data
 pids
@@ -46,34 +30,10 @@ build/Release
 .tsdrc
 .typingsrc
 
-# IDE configuration files
+#IDE configuration files
 .idea
 .vscode
 *.iml
-.project
-.settings/*
-.tern-project
-!.gitkeep
-
-## File-based project format:
-*.ipr
-*.iws
-
-## Plugin-specific files:
-
-# IntelliJ
-/out/
-
-# mpeltonen/sbt-idea plugin
-.idea_modules/
-
-# JIRA plugin
-atlassian-ide-plugin.xml
-
-# Crashlytics plugin (for Android Studio and IntelliJ)
-com_crashlytics_export_strings.xml
-crashlytics.properties
-crashlytics-build.properties
 
 /tools/**/*.js
 dist
@@ -83,70 +43,9 @@ lib
 test
 tmp
 
+gulpfile.js
+gulpfile.js.map
 
-### OSX template
+# OS X trash files
 .DS_Store
-.AppleDouble
-.LSOverride
 
-# Icon must end with two \r
-Icon
-
-# Thumbnails
-._*
-
-# Files that might appear in the root of a volume
-.DocumentRevisions-V100
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-.VolumeIcon.icns
-
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
-
-
-### Windows template
-# Windows image file caches
-Thumbs.db
-ehthumbs.db
-
-# Folder config file
-Desktop.ini
-
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
-
-# Windows Installer files
-*.cab
-*.msi
-*.msm
-*.msp
-
-# Windows shortcuts
-*.lnk
-
-
-### Linux template
-*~
-
-# KDE directory preferences
-.directory
-
-# Linux trash folder which might appear on any partition or disk
-.Trash-*
-
-
-### Yeoman template
-node_modules/
-/typings/
-bower_components/
-*.log
-
-build/
-dist/
