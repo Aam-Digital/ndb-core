@@ -1,11 +1,11 @@
 import {Component, ViewChild} from '@angular/core';
-import {ModalDirective} from "ng2-bootstrap/ng2-bootstrap";
-import {SessionService} from "../session/session.service";
-import {LatestChangesService} from "./latest-changes.service";
-import {SessionStatus} from "../session/session-status";
-import {Changelog} from "./changelog";
-import {ConfigService} from "../config/config.service";
-import {AlertService} from "../alerts/alert.service";
+import {ModalDirective} from 'ng2-bootstrap/ng2-bootstrap';
+import {SessionService} from '../session/session.service';
+import {LatestChangesService} from './latest-changes.service';
+import {SessionStatus} from '../session/session-status';
+import {Changelog} from './changelog';
+import {ConfigService} from '../config/config.service';
+import {AlertService} from '../alerts/alert.service';
 
 @Component({
     selector: 'ndb-latest-changes',
@@ -33,12 +33,12 @@ export class LatestChangesComponent {
 
         this._sessionService.onSessionStatusChanged.subscribe(
             function sessionStatus(sessionStatus: SessionStatus) {
-                if (sessionStatus == SessionStatus.loggedIn) {
+                if (sessionStatus === SessionStatus.loggedIn) {
                     // TODO if new version available call showLatestChanges()
                     // however, we need some kind of user service which returns the latest known version
                 }
             }
-        )
+        );
     }
 
 

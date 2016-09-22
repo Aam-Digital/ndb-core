@@ -1,10 +1,10 @@
 import {Injectable, EventEmitter} from '@angular/core';
 
-import {User} from "../user/user";
-import {DatabaseManagerService} from "../database/database-manager.service";
-import {AlertService} from "../alerts/alert.service";
-import {EntityMapperService} from "../entity/entity-mapper.service";
-import {SessionStatus} from "./session-status";
+import {User} from '../user/user';
+import {DatabaseManagerService} from '../database/database-manager.service';
+import {AlertService} from '../alerts/alert.service';
+import {EntityMapperService} from '../entity/entity-mapper.service';
+import {SessionStatus} from './session-status';
 
 
 @Injectable()
@@ -87,8 +87,7 @@ export class SessionService {
             .then(function (loginSuccess) {
                 if (loginSuccess) {
                     self.onRemoteLoginSuccessful();
-                }
-                else {
+                } else {
                     self.onRemoteLoginFailed();
                 }
                 return loginSuccess;
@@ -96,7 +95,7 @@ export class SessionService {
     }
 
     private onRemoteLoginSuccessful() {
-        this._alertService.addInfo("Connected to remote database.");
+        this._alertService.addInfo('Connected to remote database.');
     }
 
     private onRemoteLoginFailed() {
