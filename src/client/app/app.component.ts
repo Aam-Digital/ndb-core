@@ -1,6 +1,7 @@
 import {Component, ViewContainerRef} from '@angular/core';
 
 @Component({
+    moduleId: module.id,
     selector: 'ndb-app',
     template: '<ndb-ui></ndb-ui>'
 })
