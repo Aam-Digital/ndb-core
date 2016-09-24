@@ -1,11 +1,15 @@
 import {Component, ViewContainerRef} from '@angular/core';
 
+import './rxjs-operators';
+
+
 @Component({
     moduleId: module.id,
     selector: 'ndb-app',
     template: '<ndb-ui></ndb-ui>'
 })
 export class AppComponent {
+
     private viewContainerRef: ViewContainerRef;
 
     public constructor(viewContainerRef: ViewContainerRef) {
