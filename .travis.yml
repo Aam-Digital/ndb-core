@@ -7,7 +7,7 @@ sudo: false
 
 os:
   - linux
-  - osx
+#  - osx
 
 matrix:
   exclude:
@@ -53,6 +53,6 @@ cache:
 script:
   - npm run gulp tslint
   - npm test
-# E2E tests currently not working (build not working)
-#  - npm run e2e.cli
+  - npm run e2e.ci
+
 
