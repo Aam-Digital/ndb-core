@@ -4,9 +4,10 @@ import {NavigationItemsService} from '../navigation/navigation-items.service';
 import {MenuItem} from '../navigation/menu-item';
 
 @Component({
+    moduleId: module.id,
     selector: 'ndb-ui',
-    templateUrl: 'app/ui/ui.component.html',
-    styleUrls: ['app/ui/ui.component.css'], //TODO: use sass for css?
+    templateUrl: 'ui.component.html',
+    styleUrls: ['ui.component.css'], //TODO: use sass for css?
 
 })
 export class UIComponent {

@@ -4,9 +4,10 @@ import {Alert} from './alert';
 import {AlertService} from './alert.service';
 
 @Component({
+    moduleId: module.id,
     selector: 'ndb-alerts',
-    templateUrl: 'app/alerts/alerts.component.html',
-    styleUrls: ['app/alerts/alerts.component.css']
+    templateUrl: './alerts.component.html',
+    styleUrls: ['./alerts.component.css']
 
 })
 export class AlertsComponent implements OnInit {

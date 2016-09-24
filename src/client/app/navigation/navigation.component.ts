@@ -6,9 +6,10 @@ import { MenuItem } from './menu-item';
 
 
 @Component({
+    moduleId: module.id,
     selector: 'ndb-navigation',
-    templateUrl: 'app/navigation/navigation.component.html',
-    styleUrls: ['app/navigation/navigation.component.css'],
+    templateUrl: 'navigation.component.html',
+    styleUrls: ['navigation.component.css'],
 })
 export class NavigationComponent {
     public menu_main: MenuItem[];
