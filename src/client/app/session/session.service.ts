@@ -10,7 +10,7 @@ import {SessionStatus} from './session-status';
 @Injectable()
 export class SessionService {
     currentUser: User = null;
-    _onSessionStatusChanged: EventEmitter<SessionStatus> = null;
+    private _onSessionStatusChanged: EventEmitter<SessionStatus>;
 
     constructor(private _dbManager: DatabaseManagerService,
                 private _entityMapper: EntityMapperService,

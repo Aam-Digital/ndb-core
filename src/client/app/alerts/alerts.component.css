@@ -1,24 +1,24 @@
 .alert {
-    line-height: 30px;
-    list-style: none;
-    box-sizing: border-box;
+  line-height: 30px;
+  list-style: none;
+  box-sizing: border-box;
 }
 
 .alert.ng-move,
 .alert.ng-enter,
 .alert.ng-leave {
-    -webkit-transition: 0.5s linear all;
-    transition: 0.5s linear all;
+  -webkit-transition: 0.5s linear all;
+  transition: 0.5s linear all;
 }
 
 .alert.ng-leave.ng-leave-active,
 .alert.ng-move,
 .alert.ng-enter {
-    opacity: 0;
+  opacity: 0;
 }
 
 .alert.ng-leave,
 .alert.ng-move.ng-move-active,
 .alert.ng-enter.ng-enter-active {
-    opacity: 1;
+  opacity: 1;
 }
