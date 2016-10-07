@@ -10,6 +10,7 @@ import {SessionStatus} from './session-status';
 @Injectable()
 export class SessionService {
     currentUser: User = null;
+    _onSessionStatusChanged: EventEmitter<SessionStatus> = null;
 
     constructor(private _dbManager: DatabaseManagerService,
                 private _entityMapper: EntityMapperService,
@@ -17,9 +18,8 @@ export class SessionService {
 
     }
 
-    _onSessionStatusChanged: EventEmitter<SessionStatus>;
     get onSessionStatusChanged() {
-        if (this._onSessionStatusChanged == null) {
+        if (this._onSessionStatusChanged === null) {
             this._onSessionStatusChanged = new EventEmitter<SessionStatus>(true);
         }
         return this._onSessionStatusChanged;
