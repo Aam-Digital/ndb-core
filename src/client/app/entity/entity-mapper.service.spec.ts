@@ -13,12 +13,15 @@ export function main() {
             label: 'entity from database'
         };
 
-        beforeEach(() => {
+        beforeEach((done) => {
             pouch = new PouchDB('unit-test');
-            pouch.put(existingEntity);
-            testDatabase = new PouchDatabase(pouch);
+            pouch.put(existingEntity).then(function() {
 
-            entityMapper = new EntityMapperService(testDatabase);
+                testDatabase = new PouchDatabase(pouch);
+                entityMapper = new EntityMapperService(testDatabase);
+
+                done();
+            });
         });
 
         afterEach((done) => {
