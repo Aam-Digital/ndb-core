@@ -8,8 +8,9 @@ import {ConfigService} from '../config/config.service';
 import {AlertService} from '../alerts/alert.service';
 
 @Component({
+    moduleId: module.id,
     selector: 'ndb-latest-changes',
-    templateUrl: 'app/latest-changes/latest-changes.component.html'
+    templateUrl: 'latest-changes.component.html'
 })
 export class LatestChangesComponent {
 
