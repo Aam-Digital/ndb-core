@@ -1,15 +1,24 @@
-import {Injectable, EventEmitter} from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 
-import {User} from '../user/user';
-import {DatabaseManagerService} from '../database/database-manager.service';
-import {AlertService} from '../alerts/alert.service';
-import {EntityMapperService} from '../entity/entity-mapper.service';
-import {SessionStatus} from './session-status';
+import { User } from '../user/user';
+import { DatabaseManagerService } from '../database/database-manager.service';
+import { AlertService } from '../alerts/alert.service';
+import { EntityMapperService } from '../entity/entity-mapper.service';
+import { SessionStatus } from './session-status';
 
 
 @Injectable()
 export class SessionService {
     currentUser: User = null;
+
+    private _onSessionStatusChanged: EventEmitter<SessionStatus>;
+    get onSessionStatusChanged() {
+        if (this._onSessionStatusChanged === undefined) {
+            this._onSessionStatusChanged = new EventEmitter<SessionStatus>(true);
+        }
+        return this._onSessionStatusChanged;
+    }
+
 
     constructor(private _dbManager: DatabaseManagerService,
                 private _entityMapper: EntityMapperService,
@@ -17,15 +26,8 @@ export class SessionService {
 
     }
 
-    _onSessionStatusChanged: EventEmitter<SessionStatus>;
-    get onSessionStatusChanged() {
-        if (this._onSessionStatusChanged == null) {
-            this._onSessionStatusChanged = new EventEmitter<SessionStatus>(true);
-        }
-        return this._onSessionStatusChanged;
-    }
 
-    public isLoggedIn() : boolean {
+    public isLoggedIn(): boolean {
         return this.currentUser !== null;
     }
 
@@ -63,7 +65,7 @@ export class SessionService {
                     return false;
                 }
             })
-            .catch(function(error: any) {
+            .catch(function (error: any) {
                 self.onLocalLoginFailed(error);
                 return false;
             });

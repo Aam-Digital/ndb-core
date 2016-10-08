@@ -1,3 +1,6 @@
+// Do not report empty logout() method block
+/* tslint:disable:no-empty */
+
 import { SessionService } from './session.service';
 import { User } from '../user/user';
 

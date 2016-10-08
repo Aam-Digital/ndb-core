@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/NGO-DB/ndb-core.svg?branch=master)](https://travis-ci.org/NGO-DB/ndb-core)
+
 # NGO DB
 Empowering NGOs' social workers with simple to use (database) software.
 

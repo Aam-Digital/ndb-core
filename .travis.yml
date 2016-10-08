@@ -1,6 +1,5 @@
 language: node_js
 node_js:
-  - 4
   - 5
   - stable
 
@@ -8,7 +7,7 @@ sudo: false
 
 os:
   - linux
-  - osx
+#  - osx
 
 matrix:
   exclude:
@@ -52,4 +51,8 @@ cache:
   directories: node_modules
 
 script:
-  - npm run tests.all
+  - npm run gulp tslint
+  - npm test
+  - npm run e2e.ci
+
+
