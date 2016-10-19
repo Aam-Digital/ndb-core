@@ -4,7 +4,7 @@ import { SessionService } from './session.service';
 
 @Injectable()
 export class LoggedInGuard implements CanActivate {
-    constructor(private _sessionService:SessionService) {
+    constructor(private _sessionService: SessionService) {
     }
 
     canActivate() {

@@ -1,4 +1,3 @@
-
 /**
  * Entity is a base class for all domain model classes.
  *

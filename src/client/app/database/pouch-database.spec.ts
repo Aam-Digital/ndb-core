@@ -1,4 +1,4 @@
-import {PouchDatabase} from './pouch-database';
+import { PouchDatabase } from './pouch-database';
 
 export function main() {
     describe('pouch-database tests', () => {

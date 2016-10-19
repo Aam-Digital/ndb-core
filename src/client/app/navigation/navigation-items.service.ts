@@ -5,9 +5,9 @@ import { MenuItem } from './menu-item';
 @Injectable()
 export class NavigationItemsService {
 
-    menuItems : MenuItem[] = [];
+    menuItems: MenuItem[] = [];
 
-    public getMenuItems() : MenuItem[] {
+    public getMenuItems(): MenuItem[] {
         return this.menuItems;
     }
 
@@ -15,7 +15,7 @@ export class NavigationItemsService {
         this.menuItems.push(menuItem);
     }
 
-    public setMenuItems(items : MenuItem[]) {
+    public setMenuItems(items: MenuItem[]) {
         this.menuItems = items;
     }
 }

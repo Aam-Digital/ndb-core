@@ -1,9 +1,9 @@
-import {Injectable} from '@angular/core';
-import {Http} from '@angular/http';
-import {Observable} from 'rxjs/Observable';
+import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
+import { Observable } from 'rxjs/Observable';
 
 import '../rxjs-operators';
-import {Changelog} from './changelog';
+import { Changelog } from './changelog';
 
 @Injectable()
 export class LatestChangesService {

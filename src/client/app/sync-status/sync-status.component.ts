@@ -13,15 +13,15 @@ import { SessionService } from '../session/session.service';
 export class SyncStatusComponent {
 
     @ViewChild('lgModal') modal: ModalDirective;
-    syncInProgress:boolean;
+    syncInProgress: boolean;
 
-    constructor(private _dbManager:DatabaseManagerService,
-                private _sessionService:SessionService) {
-        this._dbManager.onSyncStatusChanged.subscribe( (status: any) => this.handleSyncStatus(status));
+    constructor(private _dbManager: DatabaseManagerService,
+                private _sessionService: SessionService) {
+        this._dbManager.onSyncStatusChanged.subscribe((status: any) => this.handleSyncStatus(status));
     }
 
 
-    private handleSyncStatus(status:DatabaseSyncStatus) {
+    private handleSyncStatus(status: DatabaseSyncStatus) {
         switch (status) {
             case DatabaseSyncStatus.started:
                 this.syncInProgress = true;

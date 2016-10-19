@@ -1,8 +1,8 @@
-import {NgModule} from '@angular/core';
-import {NavigationComponent} from './navigation.component';
-import {NavigationItemsService} from './navigation-items.service';
-import {CommonModule} from '@angular/common';
-import {SessionModule} from '../session/session.module';
+import { NgModule } from '@angular/core';
+import { NavigationComponent } from './navigation.component';
+import { NavigationItemsService } from './navigation-items.service';
+import { CommonModule } from '@angular/common';
+import { SessionModule } from '../session/session.module';
 import { RouterModule } from '@angular/router';
 
 @NgModule({
@@ -24,6 +24,6 @@ import { RouterModule } from '@angular/router';
 export class NavigationModule {
 }
 
-export {NavigationItemsService} from './navigation-items.service';
-export {NavigationComponent} from './navigation.component';
-export {MenuItem} from './menu-item';
+export { NavigationItemsService } from './navigation-items.service';
+export { NavigationComponent } from './navigation.component';
+export { MenuItem } from './menu-item';

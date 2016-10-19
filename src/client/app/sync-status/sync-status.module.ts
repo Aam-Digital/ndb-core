@@ -1,7 +1,7 @@
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
-import {SyncStatusComponent} from './sync-status.component';
+import { SyncStatusComponent } from './sync-status.component';
 import { SessionModule } from '../session/session.module';
 import { DatabaseModule } from '../database/database.module';
 import { AlertModule, ModalModule } from 'ng2-bootstrap/ng2-bootstrap';

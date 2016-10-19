@@ -1,7 +1,7 @@
-import {Component, ViewContainerRef} from '@angular/core';
-import {SessionService} from '../session/session.service';
-import {NavigationItemsService} from '../navigation/navigation-items.service';
-import {MenuItem} from '../navigation/menu-item';
+import { Component, ViewContainerRef } from '@angular/core';
+import { SessionService } from '../session/session.service';
+import { NavigationItemsService } from '../navigation/navigation-items.service';
+import { MenuItem } from '../navigation/menu-item';
 
 @Component({
     moduleId: module.id,

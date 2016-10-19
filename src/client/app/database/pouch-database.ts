@@ -1,4 +1,4 @@
-import {Database} from './database';
+import { Database } from './database';
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from that external library.

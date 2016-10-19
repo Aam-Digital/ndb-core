@@ -1,10 +1,10 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 
-import {Database} from './database';
-import {PouchDatabase} from './pouch-database';
-import {DatabaseManagerService} from './database-manager.service';
-import {DatabaseSyncStatus} from './database-sync-status';
-import {ConfigService} from '../config/config.service';
+import { Database } from './database';
+import { PouchDatabase } from './pouch-database';
+import { DatabaseManagerService } from './database-manager.service';
+import { DatabaseSyncStatus } from './database-sync-status';
+import { ConfigService } from '../config/config.service';
 
 /**
  * DatabaseManagerService takes care of 'background' actions of the database (e.g. sync, authentication, etc.).
@@ -21,7 +21,7 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
 
         this._localDatabase = new PouchDB(this._appConfig.database.name);
         this._remoteDatabase = new PouchDB(this._appConfig.database.remote_url + this._appConfig.database.name,
-            { ajax: { rejectUnauthorized: false, timeout: this._appConfig.database.timeout } });
+            {ajax: {rejectUnauthorized: false, timeout: this._appConfig.database.timeout}});
     }
 
 

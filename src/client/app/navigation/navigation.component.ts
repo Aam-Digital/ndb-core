@@ -14,9 +14,8 @@ import { MenuItem } from './menu-item';
 export class NavigationComponent {
     public menu_main: MenuItem[];
 
-    constructor(
-        private _sessionService: SessionService,
-        private _navigationItemService: NavigationItemsService) {
+    constructor(private _sessionService: SessionService,
+                private _navigationItemService: NavigationItemsService) {
 
         this.menu_main = this._navigationItemService.getMenuItems();
     }

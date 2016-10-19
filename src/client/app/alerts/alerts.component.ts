@@ -1,7 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-import {Alert} from './alert';
-import {AlertService} from './alert.service';
+import { Alert } from './alert';
+import { AlertService } from './alert.service';
 
 @Component({
     moduleId: module.id,

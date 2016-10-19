@@ -14,8 +14,8 @@ export class DashboardComponent implements OnInit {
     }
 
     /*
-        TODO: how to "configure" or extend the dashboard dynamically rather than hard-code the template?
-        different "widgets" (e.g. the panels "Children", "Schools" in HELGO DB)
-        could be added through a "Service" that provides a list which we are using here in this Component
-    */
+     TODO: how to "configure" or extend the dashboard dynamically rather than hard-code the template?
+     different "widgets" (e.g. the panels "Children", "Schools" in HELGO DB)
+     could be added through a "Service" that provides a list which we are using here in this Component
+     */
 }

@@ -15,7 +15,7 @@ export function main() {
 
         beforeEach((done) => {
             pouch = new PouchDB('unit-test');
-            pouch.put(existingEntity).then(function() {
+            pouch.put(existingEntity).then(function () {
 
                 testDatabase = new PouchDatabase(pouch);
                 entityMapper = new EntityMapperService(testDatabase);

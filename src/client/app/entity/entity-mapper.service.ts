@@ -10,7 +10,8 @@ import { Entity } from './entity';
 @Injectable()
 export class EntityMapperService {
 
-    constructor(private _db: Database) { }
+    constructor(private _db: Database) {
+    }
 
 
     /**
@@ -21,11 +22,11 @@ export class EntityMapperService {
      */
     public load<T extends Entity>(resultEntity: T): Promise<T> {
         return this._db.get(resultEntity.getId()).then(
-            function(result: any) {
+            function (result: any) {
                 Object.assign(resultEntity, result);
                 return resultEntity;
             },
-            function(error: any) {
+            function (error: any) {
                 throw error;
             }
         );

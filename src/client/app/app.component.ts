@@ -1,4 +1,4 @@
-import {Component, ViewContainerRef} from '@angular/core';
+import { Component, ViewContainerRef } from '@angular/core';
 
 import './rxjs-operators';
 

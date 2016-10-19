@@ -12,17 +12,17 @@ import { DatabaseSyncStatus } from '../database/database-sync-status';
 })
 export class LoginComponent {
     loginInProgress = false;
-    username:string;
-    password:string;
-    errorMessage:string;
+    username: string;
+    password: string;
+    errorMessage: string;
 
     private retryLoginSubscription: any;
     private isRetriedLogin = false;
-    private _lastPassword:string;
+    private _lastPassword: string;
 
 
-    constructor(private _sessionService:SessionService,
-                private _dbManager:DatabaseManagerService) {
+    constructor(private _sessionService: SessionService,
+                private _dbManager: DatabaseManagerService) {
     }
 
 
@@ -44,7 +44,7 @@ export class LoginComponent {
     }
 
     private onLoginFailure(reason: any) {
-        if(!this.isRetriedLogin) {
+        if (!this.isRetriedLogin) {
             this._lastPassword = this.password;
             this.retryLoginAfterSync();
         }
@@ -67,7 +67,7 @@ export class LoginComponent {
 
         let self = this;
         this.retryLoginSubscription = this._dbManager.onSyncStatusChanged.subscribe(
-            function(syncStatus:DatabaseSyncStatus) {
+            function (syncStatus: DatabaseSyncStatus) {
                 if (syncStatus === DatabaseSyncStatus.completed) {
                     self.password = self._lastPassword;
                     self.login();
