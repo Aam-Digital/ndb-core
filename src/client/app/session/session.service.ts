@@ -26,7 +26,6 @@ export class SessionService {
 
     }
 
-
     public isLoggedIn(): boolean {
         return this.currentUser !== null;
     }

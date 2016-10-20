@@ -6,6 +6,7 @@ import { SessionStatus } from '../session/session-status';
 import { Changelog } from './changelog';
 import { ConfigService } from '../config/config.service';
 import { AlertService } from '../alerts/alert.service';
+import { EntityMapperService } from '../entity/entity-mapper.service';
 
 @Component({
     moduleId: module.id,
@@ -23,7 +24,8 @@ export class LatestChangesComponent {
     constructor(private _sessionService: SessionService,
                 private _latestChangesService: LatestChangesService,
                 private _configService: ConfigService,
-                private _alertService: AlertService) {
+                private _alertService: AlertService,
+                private _entityMapperService: EntityMapperService) {
 
         this.currentVersion = this._configService.version;
 
@@ -32,11 +34,16 @@ export class LatestChangesComponent {
             error => _alertService.addDanger(error)
         );
 
+
+        let self = this;
         this._sessionService.onSessionStatusChanged.subscribe(
             function sessionStatus(sessionStatus: SessionStatus) {
                 if (sessionStatus === SessionStatus.loggedIn) {
-                    // TODO if new version available call showLatestChanges()
-                    // however, we need some kind of user service which returns the latest known version
+                    if (self._sessionService.currentUser.lastUsedVersion !== self.currentVersion) {
+                        self._sessionService.currentUser.lastUsedVersion = self.currentVersion;
+                        self._entityMapperService.save(self._sessionService.currentUser);
+                        self.showLatestChanges();
+                    }
                 }
             }
         );

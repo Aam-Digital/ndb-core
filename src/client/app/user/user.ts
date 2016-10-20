@@ -4,6 +4,7 @@ import { Entity } from '../entity/entity';
 export class User extends Entity {
 
     public name: string;
+    public lastUsedVersion: string;
     private password: any;
 
     public getPrefix(): string {
