@@ -6,6 +6,7 @@ import { HttpModule } from '@angular/http';
 import { AppComponent } from './app.component';
 import { UiModule } from './ui/ui.module';
 import { ConfigModule } from './config/config.module';
+import { DatabaseModule } from './database/database.module';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { ConfigModule } from './config/config.module';
     FormsModule,
     HttpModule,
     ConfigModule,
+    DatabaseModule,
     UiModule
   ],
   providers: [],
