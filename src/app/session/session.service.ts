@@ -3,6 +3,7 @@ import { SessionStatus } from './session-status';
 import { DatabaseManagerService } from '../database/database-manager.service';
 import { EntityMapperService } from '../entity/entity-mapper.service';
 import { AlertService } from '../alerts/alert.service';
+import { User } from '../user/user';
 
 @Injectable()
 export class SessionService {
