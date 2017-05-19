@@ -12,11 +12,10 @@ export class User extends Entity {
     return 'user:';
   }
 
-
   public setNewPassword(password: string) {
     var cryptKeySize = 256 / 32;
     var cryptIterations = 128;
-    var cryptSalt = CryptoJS.lib.WordArray.random(128 / 8).toString();
+    var cryptSalt = "test"; // TODO CryptoJS.lib.WordArray.random(128 / 8).toString();
     var hash = CryptoJS.PBKDF2(password, cryptSalt, {
       keySize: cryptKeySize,
       iterations: cryptIterations

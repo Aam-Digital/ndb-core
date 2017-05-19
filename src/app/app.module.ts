@@ -7,6 +7,13 @@ import { AppComponent } from './app.component';
 import { UiModule } from './ui/ui.module';
 import { ConfigModule } from './config/config.module';
 import { DatabaseModule } from './database/database.module';
+import { routing } from './app.routing';
+import { AlertsModule } from './alerts/alerts.module';
+import { SessionModule } from './session/session.module';
+import { SyncStatusModule } from './sync-status/sync-status.module';
+import { DashboardModule } from "app/dashboard/dashboard.module";
+import { NavigationModule } from './navigation/navigation.module';
+import { LatestChangesModule } from './latest-changes/latest-changes.module';
 
 @NgModule({
   declarations: [
@@ -14,11 +21,19 @@ import { DatabaseModule } from './database/database.module';
   ],
   imports: [
     BrowserModule,
-    FormsModule,
     HttpModule,
-    ConfigModule,
+    routing,
+    FormsModule,
+    AlertsModule,
     DatabaseModule,
-    UiModule
+    ConfigModule,
+    SessionModule,
+    SyncStatusModule,
+    DashboardModule,
+    NavigationModule,
+    UiModule,
+    LatestChangesModule
+    // UserModule is lazy loaded
   ],
   providers: [],
   bootstrap: [AppComponent]
