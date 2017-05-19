@@ -5,6 +5,8 @@ import { ConfigService } from '../../config/config.service';
 import { LatestChangesService } from '../latest-changes.service';
 import { ModalDirective } from 'ng2-bootstrap';
 import { Changelog } from '../changelog';
+import { SessionStatus } from '../../session/session-status';
+import { SessionService } from '../../session/session.service';
 
 @Component({
   selector: 'app-latest-changes',

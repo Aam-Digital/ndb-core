@@ -5,6 +5,7 @@ import { AlertsModule } from '../alerts/alerts.module';
 import { HttpModule } from '@angular/http';
 import { ModalModule } from 'ng2-bootstrap';
 import { LatestChangesService } from './latest-changes.service';
+import { SessionModule } from '../session/session.module';
 
 @NgModule({
   imports: [
