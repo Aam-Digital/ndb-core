@@ -1,0 +1,18 @@
+<alert *ngIf="syncInProgress" type="INFO" style="width:150px; position:fixed; right:30px; bottom:10px; z-index:1000;">
+  <span class="glyphicon glyphicon-time"></span> syncing ...
+</alert>
+
+<div bsModal #lgModal="bs-modal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Synchronizing with remote database</h4>
+      </div>
+      <div class="modal-body">
+        <div class="progress">
+          <div class="progress-bar progress-bar-info progress-bar-striped active" style="width: 100%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
