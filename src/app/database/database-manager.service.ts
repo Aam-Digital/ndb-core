@@ -28,9 +28,9 @@ export abstract class DatabaseManagerService {
 
 }
 
-export let databaseServiceFactory = (_databaseManagerService: DatabaseManagerService) => {
+export function databaseServiceFactory(_databaseManagerService: DatabaseManagerService) {
   return _databaseManagerService.getDatabase();
-};
+}
 
 export let databaseServiceProvider = {
   provide: Database,
