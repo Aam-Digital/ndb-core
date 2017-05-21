@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewContainerRef } from '@angular/core';
+import { SessionService } from '../../session/session.service';
+import { NavigationItemsService } from '../../navigation/navigation-items.service';
+import { MenuItem } from '../../navigation/menu-item';
 
 @Component({
   moduleId: module.id,
@@ -11,24 +14,23 @@ export class UiComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  /* TODO
-   title = 'NDB';
-   viewContainerRef: ViewContainerRef;
+  title = 'NDB';
+  viewContainerRef: ViewContainerRef;
 
-   constructor(private _sessionService: SessionService,
-   viewContainerRef: ViewContainerRef,
-   private _navigationItemsService: NavigationItemsService) {
-   this.viewContainerRef = viewContainerRef;
+  constructor(private _sessionService: SessionService,
+              viewContainerRef: ViewContainerRef,
+              private _navigationItemsService: NavigationItemsService) {
+    this.viewContainerRef = viewContainerRef;
 
-   let menuItems = [
-   new MenuItem('Dashboard', 'home', ['/']),
-   new MenuItem('Test', 'child', ['/'])
-   ];
-   _navigationItemsService.setMenuItems(menuItems);
-   }
+    let menuItems = [
+      new MenuItem('Dashboard', 'home', ['/']),
+      new MenuItem('Test', 'child', ['/'])
+    ];
+    _navigationItemsService.setMenuItems(menuItems);
+  }
 
-   isLoggedIn() {
-   return this._sessionService.isLoggedIn();
-   }*/
+  isLoggedIn() {
+    return this._sessionService.isLoggedIn();
+  }
 
 }

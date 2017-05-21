@@ -11,7 +11,7 @@ import { SessionModule } from '../session/session.module';
   imports: [
     CommonModule,
     AlertsModule,
-    ModalModule,
+    ModalModule.forRoot(),
     SessionModule,
     HttpModule
   ],

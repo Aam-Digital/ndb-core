@@ -9,7 +9,7 @@ import { SessionModule } from '../session/session.module';
   imports: [
     CommonModule,
     AlertModule,
-    ModalModule,
+    ModalModule.forRoot(),
     SessionModule,
     DatabaseModule
   ],
