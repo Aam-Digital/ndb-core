@@ -6,6 +6,8 @@ import { DatabaseSyncStatus } from './database-sync-status.enum';
 import { Database } from './database';
 import { PouchDatabase } from './pouch-database';
 
+PouchDB.plugin(require('pouchdb-authentication'));
+
 /**
  * DatabaseManagerService takes care of 'background' actions
  * of the database (e.g. sync, authentication, etc.).
