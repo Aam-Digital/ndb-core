@@ -16,6 +16,3 @@ import { AlertService } from './alert.service';
 })
 export class AlertsModule {
 }
-
-export { AlertsComponent };
-export { AlertService };

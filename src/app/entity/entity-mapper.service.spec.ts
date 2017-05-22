@@ -3,6 +3,7 @@ import { TestBed, inject } from '@angular/core/testing';
 import { EntityMapperService } from './entity-mapper.service';
 import { PouchDatabase } from '../database/pouch-database';
 import { Entity } from './entity';
+import * as PouchDB from 'pouchdb';
 
 describe('EntityMapperService', () => {
   let entityMapper: EntityMapperService;
