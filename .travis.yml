@@ -45,7 +45,7 @@ cache:
 
 script:
   - ng lint
-  - karma start config/karma.conf.js --single-run # Instead of ng test
+  - karma start karma.conf.js --single-run # Instead of ng test
   - ng e2e
   - ng build
   - ng build --prod
