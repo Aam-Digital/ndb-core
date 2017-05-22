@@ -13,7 +13,7 @@ export class AlertService {
   }
 
   removeAlert(alert: Alert) {
-    let index = this.alerts.indexOf(alert, 0);
+    const index = this.alerts.indexOf(alert, 0);
     if (index > -1) {
       this.alerts.splice(index, 1);
     }

@@ -34,7 +34,7 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
   }
 
   login(username: string, password: string): Promise<boolean> {
-    var ajaxOpts = {
+    const ajaxOpts = {
       ajax: {
         headers: {
           Authorization: 'Basic ' + window.btoa(username + ':' + password)
@@ -42,7 +42,7 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
       }
     };
 
-    let self = this;
+    const self = this;
     return this._remoteDatabase.login(username, password, ajaxOpts).then(
       function () {
         self.sync();
@@ -65,16 +65,16 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
   private sync() {
     this.onSyncStatusChanged.emit(DatabaseSyncStatus.started);
 
-    let self = this;
-    //do NOT use liveSync because then the promise is never resolved
-    //TODO: retrigger sync continuously
+    const self = this;
+    // do NOT use liveSync because then the promise is never resolved
+    // TODO: retrigger sync continuously
     return this._localDatabase.sync(this._remoteDatabase).then(
       function () {
         self.onSyncStatusChanged.emit(DatabaseSyncStatus.completed);
       },
       function (err: any) {
-        console.debug('sync failed:');
-        console.debug(err);
+        console.error('sync failed:');
+        console.error(err);
         self.onSyncStatusChanged.emit(DatabaseSyncStatus.failed);
       });
   }

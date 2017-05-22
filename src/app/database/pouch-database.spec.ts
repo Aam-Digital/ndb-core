@@ -18,10 +18,10 @@ describe('PouchDatabase tests', () => {
   });
 
   it('get object by _id after put into database', function (done) {
-    let id = 'test_id';
-    let name = 'test';
-    let count = 42;
-    let testData = {_id: id, name: name, count: count};
+    const id = 'test_id';
+    const name = 'test';
+    const count = 42;
+    const testData = {_id: id, name: name, count: count};
 
     pouchDatabase.put(testData).then(
       function () {

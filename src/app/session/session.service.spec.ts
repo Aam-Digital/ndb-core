@@ -1,6 +1,7 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { SessionService } from './session.service';
+import { User } from '../user/user';
 
 describe('SessionService', () => {
   let sessionService: SessionService;
@@ -8,9 +9,9 @@ describe('SessionService', () => {
   let entityMapper: any;
   let alertService: any;
 
-  let username = 'testuser';
-  let password = 'testpass';
-  let user = new User(username);
+  const username = 'testuser';
+  const password = 'testpass';
+  const user = new User(username);
   user.setNewPassword(password);
 
   beforeEach(() => {
@@ -20,15 +21,15 @@ describe('SessionService', () => {
         if (loginName === username && user.checkPassword(loginPassword)) {
           this.loggedIn = true;
           return Promise.resolve(true);
-        } else
+        } else {
           return Promise.resolve(false);
+        }
       },
 
       logout: function () {
       }
     };
     spyOn(databaseManager, 'login').and.callThrough();
-
 
     entityMapper = {
       load: function (resultEntity: User): Promise<User> {
@@ -42,9 +43,7 @@ describe('SessionService', () => {
       }
     };
 
-
     alertService = jasmine.createSpyObj('alertService', ['addInfo', 'addSuccess', 'addWarning', 'addDanger']);
-
     sessionService = new SessionService(databaseManager, entityMapper, alertService);
   });
 
@@ -97,13 +96,14 @@ describe('SessionService', () => {
           // simulate synced database
           Object.assign(requestedUser, user);
           return Promise.resolve<User>(requestedUser);
-        } else
+        } else {
           return Promise.reject<User>('not found');
+        }
       }
     );
 
     entityMapper.load(user).catch(
-      //expect entityMapper to NOT load user
+      // expect entityMapper to NOT load user
       function () {
         sessionService.login(username, password).then(
           function (result) {
@@ -122,9 +122,7 @@ describe('SessionService', () => {
     sessionService.login(username, password).then(
       function () {
         expect(sessionService.isLoggedIn()).toBeTruthy();
-
         sessionService.logout();
-
         expect(sessionService.isLoggedIn()).toBeFalsy();
         done();
       }
@@ -133,9 +131,7 @@ describe('SessionService', () => {
 
   it('can logout when not logged in', function () {
     expect(sessionService.isLoggedIn()).toBeFalsy();
-
     sessionService.logout();
-
     expect(sessionService.isLoggedIn()).toBeFalsy();
   });
 });

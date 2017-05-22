@@ -40,9 +40,9 @@ export class LoginComponent implements OnInit {
     this.reset();
     // login component is automatically hidden based on _sessionService.isLoggedIn()
 
-    //TODO: show progress of downloading database (if necessary)
-    //TODO: call service to check and warn about outdated database
-    //TODO: call service to check version and display changelog of updates
+    // TODO: show progress of downloading database (if necessary)
+    // TODO: call service to check and warn about outdated database
+    // TODO: call service to check version and display changelog of updates
   }
 
   private onLoginFailure(reason: any) {
@@ -67,7 +67,7 @@ export class LoginComponent implements OnInit {
   private retryLoginAfterSync() {
     this.isRetriedLogin = true;
 
-    let self = this;
+    const self = this;
     this.retryLoginSubscription = this._dbManager.onSyncStatusChanged.subscribe(
       function (syncStatus: DatabaseSyncStatus) {
         if (syncStatus === DatabaseSyncStatus.completed) {

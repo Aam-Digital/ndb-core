@@ -20,7 +20,7 @@ describe('PouchDatabaseManagerService', () => {
   });
 
   it('returns database', function () {
-    let db = dbManager.getDatabase();
+    const db = dbManager.getDatabase();
     expect(db).toBeDefined();
   });
 });

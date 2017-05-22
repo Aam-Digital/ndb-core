@@ -11,9 +11,6 @@ import { MenuItem } from '../../navigation/menu-item';
 })
 export class UiComponent implements OnInit {
 
-  ngOnInit(): void {
-  }
-
   title = 'NDB';
   viewContainerRef: ViewContainerRef;
 
@@ -22,11 +19,14 @@ export class UiComponent implements OnInit {
               private _navigationItemsService: NavigationItemsService) {
     this.viewContainerRef = viewContainerRef;
 
-    let menuItems = [
+    const menuItems = [
       new MenuItem('Dashboard', 'home', ['/']),
       new MenuItem('Test', 'child', ['/'])
     ];
     _navigationItemsService.setMenuItems(menuItems);
+  }
+
+  ngOnInit(): void {
   }
 
   isLoggedIn() {

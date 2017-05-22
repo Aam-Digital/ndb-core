@@ -11,7 +11,7 @@ describe('AlertService', () => {
   });
 
   it('add info alert', function () {
-    let message = 'info alert';
+    const message = 'info alert';
     alertService.addInfo(message);
 
     expect(alertService.alerts[0].message).toEqual(message);
@@ -19,7 +19,7 @@ describe('AlertService', () => {
   });
 
   it('add success alert', function () {
-    let message = 'success alert';
+    const message = 'success alert';
     alertService.addSuccess(message);
 
     expect(alertService.alerts[0].message).toEqual(message);
@@ -27,7 +27,7 @@ describe('AlertService', () => {
   });
 
   it('add warning alert', function () {
-    let message = 'warning alert';
+    const message = 'warning alert';
     alertService.addWarning(message);
 
     expect(alertService.alerts[0].message).toEqual(message);
@@ -35,7 +35,7 @@ describe('AlertService', () => {
   });
 
   it('add danger alert', function () {
-    let message = 'danger alert';
+    const message = 'danger alert';
     alertService.addDanger(message);
 
     expect(alertService.alerts[0].message).toEqual(message);
@@ -43,7 +43,7 @@ describe('AlertService', () => {
   });
 
   it('removes alert', function () {
-    let alert = new Alert('test message', Alert.DANGER);
+    const alert = new Alert('test message', Alert.DANGER);
     alertService.addAlert(alert);
     alertService.removeAlert(alert);
 

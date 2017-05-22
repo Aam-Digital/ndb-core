@@ -13,10 +13,10 @@ export class User extends Entity {
   }
 
   public setNewPassword(password: string) {
-    var cryptKeySize = 256 / 32;
-    var cryptIterations = 128;
-    var cryptSalt = "test"; // TODO CryptoJS.lib.WordArray.random(128 / 8).toString();
-    var hash = CryptoJS.PBKDF2(password, cryptSalt, {
+    const cryptKeySize = 256 / 32;
+    const cryptIterations = 128;
+    const cryptSalt = 'test'; // TODO CryptoJS.lib.WordArray.random(128 / 8).toString();
+    const hash = CryptoJS.PBKDF2(password, cryptSalt, {
       keySize: cryptKeySize,
       iterations: cryptIterations
     }).toString();
@@ -29,7 +29,7 @@ export class User extends Entity {
   }
 
   private hashPassword(givenPassword: string): string {
-    let options = {
+    const options = {
       keySize: this.password.keysize,
       iterations: this.password.iterations
     };

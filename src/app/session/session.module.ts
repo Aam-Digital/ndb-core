@@ -6,7 +6,7 @@ import { DatabaseModule } from '../database/database.module';
 import { AlertsModule } from '../alerts/alerts.module';
 import { EntityModule } from '../entity/entity.module';
 import { LoggedInGuard } from './logged-in.guard';
-import { SessionService } from "app/session/session.service";
+import { SessionService } from './session.service';
 
 @NgModule({
   imports: [

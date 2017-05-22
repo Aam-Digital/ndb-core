@@ -33,8 +33,7 @@ export class LatestChangesComponent implements OnInit {
       error => _alertService.addDanger(error)
     );
 
-
-    let self = this;
+    const self = this;
     this._sessionService.onSessionStatusChanged.subscribe(
       function sessionStatus(sessionStatus: SessionStatus) {
         if (sessionStatus === SessionStatus.loggedIn) {
@@ -47,7 +46,6 @@ export class LatestChangesComponent implements OnInit {
       }
     );
   }
-
 
   ngOnInit(): void {
   }

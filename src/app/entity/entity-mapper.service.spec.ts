@@ -9,7 +9,7 @@ describe('EntityMapperService', () => {
   let testDatabase: PouchDatabase;
   let pouch: any;
 
-  let existingEntity = {
+  const existingEntity = {
     _id: 'existing-entity',
     label: 'entity from database'
   };
@@ -52,7 +52,7 @@ describe('EntityMapperService', () => {
 
 
   it('saves new entity and loads it', function (done) {
-    let entity = new Entity('test1');
+    const entity = new Entity('test1');
     entityMapper.save<Entity>(entity).then(
       function () {
         entityMapper.load<Entity>(new Entity(entity.getId())).then(
@@ -66,7 +66,7 @@ describe('EntityMapperService', () => {
   });
 
   it('rejects promise when saving new entity with existing id', function (done) {
-    let duplicateEntity = new Entity(existingEntity._id);
+    const duplicateEntity = new Entity(existingEntity._id);
     entityMapper.save<Entity>(duplicateEntity).catch(
       function (error) {
         expect(error).toBeDefined();
@@ -105,7 +105,7 @@ describe('EntityMapperService', () => {
   });
 
   it('rejects promise removing nonexistent entity', function (done) {
-    let nonexistingEntity = new Entity('nonexistent-entity');
+    const nonexistingEntity = new Entity('nonexistent-entity');
     entityMapper.remove<Entity>(nonexistingEntity).catch(
       function (error) {
         expect(error).toBeDefined();

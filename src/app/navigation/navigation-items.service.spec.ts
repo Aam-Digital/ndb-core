@@ -5,12 +5,12 @@ import { MenuItem } from './menu-item';
 
 describe('NavigationItemsService', () => {
   it('adds menu item', function () {
-    let navigationItemsService = new NavigationItemsService();
-    let item = new MenuItem('test', 'child', ['/']);
+    const navigationItemsService = new NavigationItemsService();
+    const item = new MenuItem('test', 'child', ['/']);
 
     navigationItemsService.addMenuItem(item);
 
-    let items = navigationItemsService.getMenuItems();
+    const items = navigationItemsService.getMenuItems();
 
     expect(items).toBeDefined();
     expect(items.length).toBe(1);

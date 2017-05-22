@@ -37,9 +37,7 @@ export class SessionService {
    */
   public login(username: string, password: string): Promise<boolean> {
     let promise: Promise<boolean>;
-
     promise = this.authenticateLocalUser(username, password);
-
     this.remoteDatabaseLogin(username, password);
 
     return promise;
@@ -52,7 +50,7 @@ export class SessionService {
 
 
   private authenticateLocalUser(username: string, password: string): Promise<boolean> {
-    let self = this;
+    const self = this;
     return this._entityMapper.load<User>(new User(username))
       .then(function (userEntity) {
         if (userEntity.checkPassword(password)) {
@@ -80,9 +78,8 @@ export class SessionService {
     return error;
   }
 
-
   private remoteDatabaseLogin(username: string, password: string): Promise<boolean> {
-    let self = this;
+    const self = this;
     return this._dbManager.login(username, password)
       .then(function (loginSuccess) {
         if (loginSuccess) {
