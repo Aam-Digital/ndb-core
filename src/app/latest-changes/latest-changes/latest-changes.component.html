@@ -1,0 +1,27 @@
+<div class="col-lg-12">
+  <a (click)="showLatestChanges()" style="cursor: pointer">{{currentVersion}}</a>
+</div>
+
+<div bsModal #latestChangesModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+     aria-labelledby="latestChangesModal"
+     aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" style="background: rgba(0, 0, 0, 0)"
+                (click)="latestChangesModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">
+          {{ currentChangelog ? currentChangelog.tag_name : "No Changelog Available" }}
+          <span> {{ (currentChangelog && currentChangelog.name) ? (": " + currentChangelog.name) : ""}}</span>
+        </h4>
+      </div>
+      <div *ngIf="currentChangelog" class="modal-body">
+        <p class="version-changes-date" style="font-style:italic;">
+          {{ currentChangelog.published_at | date }}
+        </p>
+        <p style="white-space: pre-wrap; text-align: left" [innerHTML]="currentChangelog.body"></p></div>
+    </div>
+  </div>
+</div>

@@ -7,13 +7,10 @@ For a project outline, free demo system, etc. visit [ngo-db.sinnfragen.org](http
 
 **This is an Angular2/Typescript based rewrite of [HELGO DB](https://github.com/NGO-DB/helgo_db)**
 
-**For an example how to build a concrete application on top of ndb-core, see the [ndb-sample repository](https://github.com/NGO-DB/ndb-sample)**
-
 
 ## Installation
 The project depends on a couple of tools which are required for development. Please make sure you have the following installed:
 - [npm (NodeJS)](https://www.npmjs.org/)
-- [bower](http://bower.io)
 
 You can simply clone this repository to get all the code with its configuration and requirements.
 Install the dependencies with
@@ -21,43 +18,33 @@ Install the dependencies with
 npm install
 ```
 
-You can then start npm's local development server to run the project with
-```
-npm start
-```
+## Development
 
+### Development server
 
-## Architecture
-This is a rough sketch of the architecture of the core system under discussion:
-![](doc/architecture_core.png)
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-An actual, specific software system to be used will be based on the core and extend it:
-![](doc/architecture_concrete-project.png)
+### Code scaffolding
 
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|module`.
 
-## Working with the Database Services
+### Build
 
-Normally there should be no need to use `Database` (or even `DatabaseManagerService`) anywhere to load/save/remove data in the database.
-This is done using the `EntityMapperService` (or a custom MapperService extending `EntityMapperService` for special entity types).
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
 
-Example: load and save data in the database
+### Running unit tests
 
-    export class ExampleService {
-    
-        // get EntityMapperService through Dependency Injection
-        constructor(private _entityMapper: EntityMapperService) {  }
-    
-        getExampleUser() {
-            // load requires an instance of the Entity (sub)type as second argument
-            this._entityMapper.load<User>("x-user", new User())
-                .then(function(userEntity) {
-                    // userEntity is an instance of class User containing the information from the database
-                    console.info(userEntity);
-                })
-                .catch(function(error) {
-                    if(error.status == 404) {
-                        console.info("no record with this _id in database");
-                    }
-                });
-        }
-    }
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+
+### Running end-to-end tests
+
+Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+Before running the tests make sure you are serving the app via `ng serve`.
+
+### Further help
+
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+## Documentation
+
+The documentation can be found in the [Wiki](https://github.com/NGO-DB/ndb-core/wiki).
