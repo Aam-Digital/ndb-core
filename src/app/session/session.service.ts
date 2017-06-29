@@ -4,6 +4,7 @@ import { DatabaseManagerService } from '../database/database-manager.service';
 import { EntityMapperService } from '../entity/entity-mapper.service';
 import { AlertService } from '../alerts/alert.service';
 import { User } from '../user/user';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class SessionService {
@@ -50,7 +51,18 @@ export class SessionService {
 
 
   private authenticateLocalUser(username: string, password: string): Promise<boolean> {
+
     const self = this;
+
+    // TODO replace by database mockup service for testing
+    // always login locally and create a dummy user if the application runs in testing mode
+    if (!environment.production) {
+      return new Promise((resolve) => {
+        self.onLocalLoginSuccessful(new User("demo"));
+        resolve(true);
+      });
+    }
+
     return this._entityMapper.load<User>(new User(username))
       .then(function (userEntity) {
         if (userEntity.checkPassword(password)) {
