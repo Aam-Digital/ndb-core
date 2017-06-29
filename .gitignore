@@ -181,6 +181,7 @@ crashlytics-build.properties
 fabric.properties
 
 ### VisualStudioCode template
+.vs/*
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json

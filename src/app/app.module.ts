@@ -14,6 +14,7 @@ import { SyncStatusModule } from './sync-status/sync-status.module';
 import { NavigationModule } from './navigation/navigation.module';
 import { LatestChangesModule } from './latest-changes/latest-changes.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { ChildrenModule } from './children/children.module';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { DashboardModule } from './dashboard/dashboard.module';
     DashboardModule,
     NavigationModule,
     UiModule,
-    LatestChangesModule
+    LatestChangesModule,
+    ChildrenModule
     // UserModule is lazy loaded
   ],
   providers: [],
