@@ -54,15 +54,6 @@ export class SessionService {
 
     const self = this;
 
-    // TODO replace by database mockup service for testing
-    // always login locally and create a dummy user if the application runs in testing mode
-    if (!environment.production) {
-      return new Promise((resolve) => {
-        self.onLocalLoginSuccessful(new User("demo"));
-        resolve(true);
-      });
-    }
-
     return this._entityMapper.load<User>(new User(username))
       .then(function (userEntity) {
         if (userEntity.checkPassword(password)) {
