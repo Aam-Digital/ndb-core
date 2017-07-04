@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ModalDirective } from 'ng2-bootstrap';
+import { ModalDirective } from 'ngx-bootstrap';
 import { DatabaseManagerService } from '../../database/database-manager.service';
 import { SessionService } from '../../session/session.service';
 import { DatabaseSyncStatus } from '../../database/database-sync-status.enum';

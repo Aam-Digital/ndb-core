@@ -14,6 +14,7 @@ import { SyncStatusModule } from './sync-status/sync-status.module';
 import { NavigationModule } from './navigation/navigation.module';
 import { LatestChangesModule } from './latest-changes/latest-changes.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { AlertModule } from 'ngx-bootstrap';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     routing,
     FormsModule,
     AlertsModule,
+    AlertModule.forRoot(),
     DatabaseModule,
     ConfigModule,
     SessionModule,
