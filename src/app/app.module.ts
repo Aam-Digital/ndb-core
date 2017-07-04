@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
+import { AlertModule as BootstrapAlertModule } from 'ngx-bootstrap';
+
 import { AppComponent } from './app.component';
 import { UiModule } from './ui/ui.module';
 import { ConfigModule } from './config/config.module';
@@ -14,7 +16,6 @@ import { SyncStatusModule } from './sync-status/sync-status.module';
 import { NavigationModule } from './navigation/navigation.module';
 import { LatestChangesModule } from './latest-changes/latest-changes.module';
 import { DashboardModule } from './dashboard/dashboard.module';
-import { AlertModule } from 'ngx-bootstrap';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,7 @@ import { AlertModule } from 'ngx-bootstrap';
     routing,
     FormsModule,
     AlertsModule,
-    AlertModule.forRoot(),
+    BootstrapAlertModule.forRoot(),
     DatabaseModule,
     ConfigModule,
     SessionModule,
