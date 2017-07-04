@@ -13,7 +13,7 @@ export abstract class Database {
 
   abstract remove(object: any): any;
 
-  getAll(prefix = ''): any[] {
+  getAll(prefix = ''): any {
     return this.allDocs({include_docs: true, startkey: prefix, endkey: prefix + '\ufff0'});
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Database } from '../database/database';
 import { Entity } from './entity';
+import { forEach } from '@angular/router/src/utils/collection';
 
 /**
  * The default generic DataMapper for Entity and any subclass.
@@ -12,9 +13,9 @@ export class EntityMapperService {
   constructor(private _db: Database) {
   }
 
-
   /**
    * Loads an Entity from the database into the given resultEntity instance.
+   *
    * @param resultEntity An (empty) instance of an Entity class with its ID set to the one to be searched.
    *          (This is necessary because TypeScript generic types are not available at runtime.)
    * @returns A Promise containing the resultEntity filled with its data.
@@ -29,6 +30,28 @@ export class EntityMapperService {
         throw error;
       }
     );
+  }
+
+  /**
+   * Loads a list of Entity from the database whose IDs contain the prefix of the given resultEntity class.
+   *
+   * @param resultEntity An (empty) instance of an Entity class. The prefix of this class will be used to load a
+   *          list of Entity from the database.
+   * @returns A Promise containing an array with the entities.
+   */
+  public loadAll<T extends Entity>(resultEntity: T): Promise<T[]> {
+    return this._db.getAll(resultEntity.getPrefix()).then(
+      function (result: any) {
+        let resultArray: Array<T> = [];
+        for (let current of result.rows) {
+          resultArray.push(<T> current.doc);
+        }
+        return resultArray;
+      },
+      function (error: any) {
+        throw error;
+      }
+    )
   }
 
   public save<T extends Entity>(entity: T): Promise<any> {
