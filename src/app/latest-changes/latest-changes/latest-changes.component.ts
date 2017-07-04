@@ -3,7 +3,7 @@ import { EntityMapperService } from '../../entity/entity-mapper.service';
 import { AlertService } from '../../alerts/alert.service';
 import { ConfigService } from '../../config/config.service';
 import { LatestChangesService } from '../latest-changes.service';
-import { ModalDirective } from 'ng2-bootstrap';
+import { ModalDirective } from 'ngx-bootstrap';
 import { Changelog } from '../changelog';
 import { SessionStatus } from '../../session/session-status';
 import { SessionService } from '../../session/session.service';
