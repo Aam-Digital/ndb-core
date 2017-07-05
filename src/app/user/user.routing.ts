@@ -1,7 +1,11 @@
-import { RouterModule } from '@angular/router';
+import { Routes,RouterModule } from '@angular/router';
 import { UserAccountComponent } from './user-account/user-account.component';
 import { ModuleWithProviders } from '@angular/core';
 
-export const routing: ModuleWithProviders = RouterModule.forChild([
-  {path: 'user', component: UserAccountComponent}
-]);
+const routes: Routes = [
+  { path: '', component: UserAccountComponent }
+];
+
+export const routing: ModuleWithProviders = RouterModule.forChild(routes);
+
+
