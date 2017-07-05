@@ -17,6 +17,7 @@
 
 import { Entity } from '../entity/entity';
 import * as CryptoJS from 'crypto-js';
+import CryptoJSStatic = CryptoJS.CryptoJSStatic;
 
 
 export class User extends Entity {
@@ -33,8 +34,7 @@ export class User extends Entity {
     const cryptKeySize = 256 / 32;
     const cryptIterations = 128;
 
-    //noinspection TypeScriptUnresolvedVariable (out-of-date types for crypto-js, lib is a valid field)
-    const cryptSalt = CryptoJS.lib.WordArray.random(128 / 8).toString();
+    const cryptSalt = CryptoJSStatic.lib.WordArray.random(128 / 8).toString();
     const hash = CryptoJS.PBKDF2(password, cryptSalt, {
       keySize: cryptKeySize,
       iterations: cryptIterations
