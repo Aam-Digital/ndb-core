@@ -17,8 +17,8 @@
 
 import { Entity } from '../entity/entity';
 
-declare var require: any;
-var CryptoJS = require("crypto-js");
+declare const require: any;
+const CryptoJS = require('crypto-js');
 
 export class User extends Entity {
 
