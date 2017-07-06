@@ -71,6 +71,14 @@ export class EntityMapperService {
   }
 
   public save<T extends Entity>(entity: T): Promise<any> {
+
+    const symbols: symbol[] = Object.getOwnPropertySymbols(entity);
+
+    for (const symbol of symbols) {
+      console.log("Symbol:");
+      console.log(symbol);
+    }
+
     // TODO: how to save 'references' of this Entity to other Entities?
     //      e.g. a 'Child' may have 'FamilyMember's who are Entity instances of their own
     //      and should be saved separately in the database
