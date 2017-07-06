@@ -21,6 +21,7 @@ import { User } from '../user/user';
 import { PouchDatabase } from './pouch-database';
 import * as PouchDB from 'pouchdb';
 import { Database } from './database';
+import { isNullOrUndefined } from 'util';
 
 @Injectable()
 export class PouchDatabaseManagerTestService extends DatabaseManagerService {
@@ -54,6 +55,6 @@ export class PouchDatabaseManagerTestService extends DatabaseManagerService {
     demoUser.name = 'demo';
     demoUser.setNewPassword('pass');
 
-    this._pouchDatabase.put(demoUser);
+    this._pouchDatabase.get(demoUser.getId()).catch(() => this._pouchDatabase.put(demoUser));
   }
 }
