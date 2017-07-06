@@ -25,6 +25,8 @@ export class User extends Entity {
   public name: string;
   public lastUsedVersion: string;
   private password: any;
+  // TODO remove after testing
+  public test = new Entity("sometestid");
 
   public setNewPassword(password: string) {
     const cryptKeySize = 256 / 32;
