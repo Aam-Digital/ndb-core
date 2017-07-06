@@ -20,15 +20,15 @@ describe('User', () => {
 
   /* TODO fix test case
    it('has ID with correct prefix', function () {
-   const id = 'test1';
-   const user = new User(id);
+   const entityId = 'test1';
+   const user = new User(entityId);
 
-   expect(user.getId()).toBe(user.getPrefix() + id);
+   expect(user.getEntityId()).toBe(user.getPrefix() + entityId);
    });
 
    it('accepts valid password', function () {
-   const id = 'test1';
-   const user = new User(id);
+   const entityId = 'test1';
+   const user = new User(entityId);
    const password = 'pass';
    user.setNewPassword(password);
 
@@ -36,8 +36,8 @@ describe('User', () => {
    });
 
    it('rejects wrong password', function () {
-   const id = 'test1';
-   const user = new User(id);
+   const entityId = 'test1';
+   const user = new User(entityId);
    const password = 'pass';
    user.setNewPassword(password);
 

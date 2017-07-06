@@ -15,8 +15,6 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { TestBed, inject } from '@angular/core/testing';
-
 import { EntityMapperService } from './entity-mapper.service';
 import { PouchDatabase } from '../database/pouch-database';
 import { Entity } from './entity';
@@ -28,19 +26,22 @@ describe('EntityMapperService', () => {
   let pouch: any;
 
   const existingEntity = {
-    _id: 'existing-entity',
+    _id: 'Entity:existing-entity',
+    entityId: 'existing-entity',
+    prefix: 'Entity',
     label: 'entity from database'
   };
 
-  beforeEach((done) => {
-    pouch = new PouchDB('unit-test');
-    pouch.put(existingEntity).then(function () {
+  // beforeAll(done => new PouchDB('unit-test').destroy().then(done()));
 
+  beforeEach((done) => {
+    pouch = new PouchDB('unit-test2');
+    pouch.put(existingEntity).then(function () {
       testDatabase = new PouchDatabase(pouch);
       entityMapper = new EntityMapperService(testDatabase);
 
       done();
-    });
+    }).catch(err => console.log('Failed to insert default entity: ' + err));
   });
 
   afterEach((done) => {
@@ -50,14 +51,19 @@ describe('EntityMapperService', () => {
       });
   });
 
-
   it('loads existing entity', function (done) {
-    entityMapper.load<Entity>(new Entity(existingEntity._id)).then(
+    entityMapper.load<Entity>(new Entity(existingEntity.entityId)).then(
       function (loadedEntity) {
-        expect(loadedEntity.getId()).toBe(existingEntity._id);
+        expect(loadedEntity.getEntityId()).toBe(existingEntity.entityId);
+        expect(loadedEntity.getPrefix()).toBe(existingEntity.prefix);
+        expect(loadedEntity.getIdWithPrefix()).toBe(existingEntity._id);
         done();
       }
-    );
+    ).catch(function (err) {
+      console.log('Failed to load entity');
+      console.log(err);
+      fail();
+    });
   });
 
   it('rejects promise when loading nonexistent entity', function (done) {
@@ -68,14 +74,15 @@ describe('EntityMapperService', () => {
     );
   });
 
-
   it('saves new entity and loads it', function (done) {
     const entity = new Entity('test1');
     entityMapper.save<Entity>(entity).then(
       function () {
-        entityMapper.load<Entity>(new Entity(entity.getId())).then(
+        entityMapper.load<Entity>(new Entity(entity.getEntityId())).then(
           function (loadedEntity) {
-            expect(loadedEntity.getId()).toBe(entity.getId());
+            expect(loadedEntity.getEntityId()).toBe(entity.getEntityId());
+            expect(loadedEntity.getPrefix()).toBe(entity.getPrefix());
+            expect(loadedEntity.getIdWithPrefix()).toBe(entity.getIdWithPrefix());
             done();
           }
         );
@@ -83,8 +90,8 @@ describe('EntityMapperService', () => {
     );
   });
 
-  it('rejects promise when saving new entity with existing id', function (done) {
-    const duplicateEntity = new Entity(existingEntity._id);
+  it('rejects promise when saving new entity with existing entityId', function (done) {
+    const duplicateEntity = new Entity(existingEntity.entityId);
     entityMapper.save<Entity>(duplicateEntity).catch(
       function (error) {
         expect(error).toBeDefined();
@@ -94,12 +101,17 @@ describe('EntityMapperService', () => {
   });
 
   it('saves new version of existing entity', function (done) {
-    entityMapper.load<Entity>(new Entity(existingEntity._id)).then(
+    entityMapper.load<Entity>(new Entity(existingEntity.entityId)).then(
       function (loadedEntity) {
-        expect(loadedEntity.getId()).toBe(existingEntity._id);
+        expect(loadedEntity.getEntityId()).toBe(existingEntity.entityId);
 
-        entityMapper.save<Entity>(loadedEntity);
-        done();
+        entityMapper
+          .save<Entity>(loadedEntity)
+          .then(() => done())
+          .catch((err) => {
+            console.log(err);
+            fail()
+          });
       }
     );
   });
@@ -107,11 +119,11 @@ describe('EntityMapperService', () => {
 
   it('removes existing entity', function (done) {
     // entity needs to be an entity loaded from the database in order to remove it
-    entityMapper.load<Entity>(new Entity(existingEntity._id)).then(
+    entityMapper.load<Entity>(new Entity(existingEntity.entityId)).then(
       function (loadedEntity) {
         entityMapper.remove<Entity>(loadedEntity).then(
           function () {
-            entityMapper.load<Entity>(new Entity(existingEntity._id)).catch(
+            entityMapper.load<Entity>(new Entity(existingEntity.entityId)).catch(
               function () {
                 done();
               }
@@ -131,4 +143,5 @@ describe('EntityMapperService', () => {
       }
     );
   });
-});
+})
+;

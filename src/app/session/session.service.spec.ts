@@ -53,7 +53,7 @@ describe('SessionService', () => {
    entityMapper = {
    load: function (resultEntity: User): Promise<User> {
 
-   if (resultEntity.getId() !== user.getId()) {
+   if (resultEntity.getEntityId() !== user.getEntityId()) {
    return Promise.reject<User>('ID not found');
    } else {
    Object.assign(resultEntity, user);

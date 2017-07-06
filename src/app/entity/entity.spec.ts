@@ -23,7 +23,7 @@ describe('Entity', () => {
     const id = 'test1';
     const entity = new Entity(id);
 
-    expect(entity.getId()).toBe(id);
+    expect(entity.getEntityId()).toBe(id);
   });
 
 });

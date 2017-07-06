@@ -18,7 +18,6 @@
 import { Injectable } from '@angular/core';
 import { Database } from '../database/database';
 import { Entity } from './entity';
-import { forEach } from '@angular/router/src/utils/collection';
 
 /**
  * The default generic DataMapper for Entity and any subclass.
@@ -38,7 +37,7 @@ export class EntityMapperService {
    * @returns A Promise containing the resultEntity filled with its data.
    */
   public load<T extends Entity>(resultEntity: T): Promise<T> {
-    return this._db.get(resultEntity.getId()).then(
+    return this._db.get(resultEntity.getIdWithPrefix()).then(
       function (result: any) {
         Object.assign(resultEntity, result);
         return resultEntity;
@@ -59,8 +58,8 @@ export class EntityMapperService {
   public loadAll<T extends Entity>(resultEntity: T): Promise<T[]> {
     return this._db.getAll(resultEntity.getPrefix()).then(
       function (result: any) {
-        let resultArray: Array<T> = [];
-        for (let current of result.rows) {
+        const resultArray: Array<T> = [];
+        for (const current of result.rows) {
           resultArray.push(<T> current.doc);
         }
         return resultArray;
