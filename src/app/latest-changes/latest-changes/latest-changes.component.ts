@@ -68,6 +68,6 @@ export class LatestChangesComponent implements OnInit {
   }
 
   public showLatestChanges(): void {
-    //this.latestChangesModal.show();
+    this.latestChangesModal.show();
   }
 }
