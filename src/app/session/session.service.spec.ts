@@ -21,12 +21,12 @@ import { SessionService } from './session.service';
 import { User } from '../user/user';
 
 describe('SessionService', () => {
-  let sessionService: SessionService;
-  let databaseManager: any;
-  let entityMapper: any;
-  let alertService: any;
-
   /* TODO fix test cases
+   let sessionService: SessionService;
+   let databaseManager: any;
+   let entityMapper: any;
+   let alertService: any;
+
    const username = 'testuser';
    const password = 'testpass';
    const user = new User(username);
