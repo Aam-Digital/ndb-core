@@ -21,7 +21,7 @@ import { SessionService } from './session.service';
 import { User } from '../user/user';
 
 describe('SessionService', () => {
-  
+
   /* TODO fix test cases
    let sessionService: SessionService;
    let databaseManager: any;
