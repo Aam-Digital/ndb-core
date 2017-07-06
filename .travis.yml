@@ -21,7 +21,13 @@ before_script:
   - npm install -g @angular/cli
   - npm install -g karma
   - npm install
-  - ng build
+
+branches:
+  only: master
+
+cache:
+  directories:
+    - node_modules
 
 script:
   - ng lint
