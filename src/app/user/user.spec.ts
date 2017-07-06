@@ -18,10 +18,9 @@
 import { User } from './user';
 describe('User', () => {
 
-  /* TODO fix test case
-   it('has ID with correct prefix', function () {
-   const entityId = 'test1';
-   const user = new User(entityId);
+  it('has ID with correct prefix', function () {
+    const id = 'test1';
+    const user = new User(id);
 
    expect(user.getEntityId()).toBe(user.getPrefix() + entityId);
    });
@@ -32,16 +31,15 @@ describe('User', () => {
    const password = 'pass';
    user.setNewPassword(password);
 
-   expect(user.checkPassword(password)).toBeTruthy();
-   });
+    expect(user.checkPassword(password)).toBeTruthy();
+  });
 
-   it('rejects wrong password', function () {
-   const entityId = 'test1';
-   const user = new User(entityId);
-   const password = 'pass';
-   user.setNewPassword(password);
+  it('rejects wrong password', function () {
+    const entityId = 'test1';
+    const user = new User(entityId);
+    const password = 'pass';
+    user.setNewPassword(password);
 
-   expect(user.checkPassword(password + 'x')).toBeFalsy();
-   });
-   */
+    expect(user.checkPassword(password + 'x')).toBeFalsy();
+  });
 });
