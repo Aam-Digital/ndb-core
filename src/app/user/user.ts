@@ -33,10 +33,7 @@ export class User extends Entity {
   public setNewPassword(password: string) {
     const cryptKeySize = 256 / 32;
     const cryptIterations = 128;
-
-    const cryptSalt = CryptoJS.WordArray.random(128 / 8).toString();
-
-
+    const cryptSalt = CryptoJS.lib.WordArray.random(128 / 8).toString();
     const hash = CryptoJS.PBKDF2(password, cryptSalt, {
       keySize: cryptKeySize,
       iterations: cryptIterations
