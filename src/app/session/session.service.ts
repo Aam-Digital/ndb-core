@@ -1,3 +1,20 @@
+/*
+ *     This file is part of ndb-core.
+ *
+ *     ndb-core is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     ndb-core is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { EventEmitter, Injectable } from '@angular/core';
 import { SessionStatus } from './session-status';
 import { DatabaseManagerService } from '../database/database-manager.service';
@@ -53,15 +70,6 @@ export class SessionService {
   private authenticateLocalUser(username: string, password: string): Promise<boolean> {
 
     const self = this;
-
-    // TODO replace by database mockup service for testing
-    // always login locally and create a dummy user if the application runs in testing mode
-    if (!environment.production) {
-      return new Promise((resolve) => {
-        self.onLocalLoginSuccessful(new User("demo"));
-        resolve(true);
-      });
-    }
 
     return this._entityMapper.load<User>(new User(username))
       .then(function (userEntity) {
