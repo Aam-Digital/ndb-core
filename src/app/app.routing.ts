@@ -24,7 +24,7 @@ import { ChildDetailsComponent} from './children/child-details/child-details.com
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent },
-  { path: 'user', loadChildren: 'app/user/user.module#UserModule', canActivate: [LoggedInGuard] }
+  { path: 'user', loadChildren: 'app/user/user.module#UserModule', canActivate: [LoggedInGuard] },
   { path: 'child', component: ChildDetailsComponent },
 ];
 
