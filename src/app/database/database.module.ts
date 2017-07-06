@@ -19,6 +19,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DatabaseManagerService, databaseServiceProvider } from './database-manager.service';
 import { PouchDatabaseManagerService } from './pouch-database-manager.service';
+import { PouchDatabaseManagerTestService } from './pouch-database-manager-test.service';
 
 @NgModule({
   imports: [
@@ -26,8 +27,10 @@ import { PouchDatabaseManagerService } from './pouch-database-manager.service';
   ],
   declarations: [],
   providers: [
-    {provide: DatabaseManagerService, useClass: PouchDatabaseManagerService},
+    {provide: DatabaseManagerService, useClass: PouchDatabaseManagerTestService},
+    // {provide: DatabaseManagerService, useClass: PouchDatabaseManagerService},
     databaseServiceProvider,
   ]
 })
-export class DatabaseModule { }
+export class DatabaseModule {
+}
