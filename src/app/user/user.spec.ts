@@ -19,17 +19,18 @@ import { User } from './user';
 describe('User', () => {
 
   it('has ID with correct prefix', function () {
-    const id = 'test1';
-    const user = new User(id);
+    const entityId = 'test1';
+    const user = new User(entityId);
 
-   expect(user.getEntityId()).toBe(user.getPrefix() + entityId);
-   });
+    expect(user.getIdWithPrefix()).toBe(user.getPrefix() + ':' + entityId);
+    expect(user.getPrefix()).toBe('User');
+  });
 
-   it('accepts valid password', function () {
-   const entityId = 'test1';
-   const user = new User(entityId);
-   const password = 'pass';
-   user.setNewPassword(password);
+  it('accepts valid password', function () {
+    const entityId = 'test1';
+    const user = new User(entityId);
+    const password = 'pass';
+    user.setNewPassword(password);
 
     expect(user.checkPassword(password)).toBeTruthy();
   });

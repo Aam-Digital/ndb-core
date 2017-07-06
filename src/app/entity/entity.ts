@@ -24,12 +24,12 @@
 export class Entity {
 
   /**
-   * The database entityId in the form <code><prefix>:<entityId></code>
+   * The database id in the form <code>prefix:entityId</code>
    */
   private readonly _id: string;
 
   /**
-   * The unique entityId of this entity.
+   * The unique id of this entity.
    */
   private readonly entityId: string;
 
@@ -39,10 +39,10 @@ export class Entity {
   private readonly prefix: string;
 
   /**
-   * Creates an entity object with the given entityId. This entityId is fixed and won't be changeable after this object has been
+   * Creates an entity object with the given id. This id is final and won't be changeable after this object has been
    * created.
    *
-   * @param id a unique entityId
+   * @param id a unique id for this entity
    */
   constructor(id: string) {
     this.entityId = id;
@@ -51,12 +51,12 @@ export class Entity {
   }
 
   /**
-   * Returns the ID of this given entity.
+   * Returns the id of this entity.
    *
-   * Note that an ID is final and can't be changed after the object has been instantiated, hence there is no
+   * Note that an id is final and can't be changed after the object has been instantiated, hence there is no
    * <code>setId()</code> method.
    *
-   * @returns {string} the unique entityId of this entity
+   * @returns {string} the unique id of this entity
    */
   public getEntityId(): string {
     return this.entityId;
@@ -65,16 +65,18 @@ export class Entity {
   /**
    * Returns the prefix which is used to categorize this entity in the database.
    *
-   * @returns {string} the prefix of this entity.
+   * <b>Important: Do not overwrite this method! Prefixes are handled internally now.</b>
+   *
+   * @returns {string} the prefix of this entity type (which is the class name).
    */
   public getPrefix(): string {
     return this.prefix;
   }
 
   /**
-   * Returns the entityId including a prefix to store this entity in the database.
+   * Returns the id of this entity including a prefix to store this entity in the database.
    *
-   * @returns {string} the entity's entityId including a prefix in the form <code><prefix>:<entityId></code>.
+   * @returns {string} the entity's id including a prefix in the form <code>prefix:entityId</code>
    */
   public getIdWithPrefix(): string {
     return this._id;

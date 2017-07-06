@@ -15,35 +15,32 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { TestBed, inject } from '@angular/core/testing';
-
 import { SessionService } from './session.service';
 import { User } from '../user/user';
 
 describe('SessionService', () => {
 
-  /* TODO fix test cases
-   let sessionService: SessionService;
-   let databaseManager: any;
-   let entityMapper: any;
-   let alertService: any;
+  let sessionService: SessionService;
+  let databaseManager: any;
+  let entityMapper: any;
+  let alertService: any;
 
-   const username = 'testuser';
-   const password = 'testpass';
-   const user = new User(username);
-   user.setNewPassword(password);
+  const username = 'testuser';
+  const password = 'testpass';
+  const user = new User(username);
+  user.setNewPassword(password);
 
-   beforeEach(() => {
-   databaseManager = {
-   loggedIn: false,
-   login: function (loginName: string, loginPassword: string): Promise<boolean> {
-   if (loginName === username && user.checkPassword(loginPassword)) {
-   this.loggedIn = true;
-   return Promise.resolve(true);
-   } else {
-   return Promise.resolve(false);
-   }
-   },
+  beforeEach(() => {
+    databaseManager = {
+      loggedIn: false,
+      login: function (loginName: string, loginPassword: string): Promise<boolean> {
+        if (loginName === username && user.checkPassword(loginPassword)) {
+          this.loggedIn = true;
+          return Promise.resolve(true);
+        } else {
+          return Promise.resolve(false);
+        }
+      },
 
       logout: function () {
       }
@@ -53,14 +50,14 @@ describe('SessionService', () => {
     entityMapper = {
       load: function (resultEntity: User): Promise<User> {
 
-   if (resultEntity.getEntityId() !== user.getEntityId()) {
-   return Promise.reject<User>('ID not found');
-   } else {
-   Object.assign(resultEntity, user);
-   return Promise.resolve<User>(resultEntity);
-   }
-   }
-   };
+        if (resultEntity.getEntityId() !== user.getEntityId()) {
+          return Promise.reject<User>('ID not found');
+        } else {
+          Object.assign(resultEntity, user);
+          return Promise.resolve<User>(resultEntity);
+        }
+      }
+    };
 
     alertService = jasmine.createSpyObj('alertService', ['addInfo', 'addSuccess', 'addWarning', 'addDanger']);
     sessionService = new SessionService(databaseManager, entityMapper, alertService);
