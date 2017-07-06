@@ -48,6 +48,22 @@ export class EntityMapperService {
     );
   }
 
+  public loadAll<T extends Entity>(resultEntity: T): Promise<T[]> {
+    return this._db.getAll(resultEntity.getPrefix()).then(
+      function (result: any) {
+        const resultArray: Array<T> = [];
+        for (const current of result.rows) {
+          resultArray.push(<T> current.doc);
+        }
+        return resultArray;
+      },
+      function (error: any) {
+        throw error;
+      }
+    )
+}
+
+
   public save<T extends Entity>(entity: T): Promise<any> {
     // TODO: how to save 'references' of this Entity to other Entities?
     //      e.g. a 'Child' may have 'FamilyMember's who are Entity instances of their own

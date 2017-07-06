@@ -34,6 +34,8 @@ import { NavigationModule } from './navigation/navigation.module';
 import { LatestChangesModule } from './latest-changes/latest-changes.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ChildrenModule } from './children/children.module';
+import { Ng2TableModule } from 'ng2-table/ng2-table';
+
 
 @NgModule({
   declarations: [
@@ -54,7 +56,8 @@ import { ChildrenModule } from './children/children.module';
     NavigationModule,
     UiModule,
     LatestChangesModule,
-    ChildrenModule
+    ChildrenModule,
+    Ng2TableModule
     // UserModule is lazy loaded
   ],
   providers: [],
