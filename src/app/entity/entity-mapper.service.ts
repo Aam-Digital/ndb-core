@@ -18,7 +18,6 @@
 import { Injectable } from '@angular/core';
 import { Database } from '../database/database';
 import { Entity } from './entity';
-import { User } from '../user/user';
 
 /**
  * The default generic DataMapper for Entity and any subclass.
@@ -72,22 +71,6 @@ export class EntityMapperService {
   }
 
   public save<T extends Entity>(entity: T): Promise<any> {
-    const references: string[] = [];
-    const fieldNames = Object.getOwnPropertyNames(entity);
-
-    for (let fieldName of fieldNames) {
-      const currentProperty = Object.getOwnPropertyDescriptor(entity, fieldName);
-      console.log(currentProperty);
-      if (currentProperty.value.hasOwnProperty("_id")) {
-        console.log("currentProperty");
-        console.log(currentProperty);
-        references.push(currentProperty.value._id);
-        console.log("pushing: " + currentProperty.value._id);
-      }
-    }
-
-    console.log(references);
-
     // TODO: how to save 'references' of this Entity to other Entities?
     //      e.g. a 'Child' may have 'FamilyMember's who are Entity instances of their own
     //      and should be saved separately in the database
