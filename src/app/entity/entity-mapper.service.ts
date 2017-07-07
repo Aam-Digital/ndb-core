@@ -51,16 +51,17 @@ export class EntityMapperService {
   /**
    * Loads a list of Entity from the database whose IDs contain the prefix of the given resultEntity class.
    *
-   * @param resultEntity An (empty) instance of an Entity class. The prefix of this class will be used to load a
-   *          list of Entity from the database.
+   * @param entityType the entity's class type (this would just be <code>Entity</code> for a pure entity).
    * @returns A Promise containing an array with the entities.
    */
-  public loadAll<T extends Entity>(resultEntity: T): Promise<T[]> {
-    return this._db.getAll(resultEntity.getPrefix()).then(
+  public loadAll<T extends Entity>(entityType: { new(id: string): T; }): Promise<T[]> {
+    let newEntity = new entityType('');
+    return this._db.getAll(newEntity.getPrefix()).then(
       function (result: any) {
         const resultArray: Array<T> = [];
         for (const current of result.rows) {
-          resultArray.push(<T> current.doc);
+          resultArray.push(Object.assign(newEntity, current.doc));
+          newEntity = new entityType('');
         }
         return resultArray;
       },
