@@ -18,7 +18,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { databaseServiceProvider } from './database-manager.service';
-import { databaseManagerProvider } from './database-manager.service.provider';
+import { databaseManagerServiceProvider } from './database-manager.service.provider';
 
 @NgModule({
   imports: [
@@ -26,7 +26,7 @@ import { databaseManagerProvider } from './database-manager.service.provider';
   ],
   declarations: [],
   providers: [
-    databaseManagerProvider,
+    databaseManagerServiceProvider,
     databaseServiceProvider,
   ]
 })
