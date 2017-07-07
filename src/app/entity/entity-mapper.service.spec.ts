@@ -61,8 +61,6 @@ describe('EntityMapperService', () => {
   it('loads existing entity', function (done) {
     entityMapper.load<Entity>(new Entity(existingEntity.entityId)).then(
       function (loadedEntity) {
-        console.log(typeof loadedEntity);
-
         expect(loadedEntity.getEntityId()).toBe(existingEntity.entityId);
         expect(loadedEntity.getPrefix()).toBe(existingEntity.prefix);
         expect(loadedEntity.getIdWithPrefix()).toBe(existingEntity._id);
@@ -108,7 +106,7 @@ describe('EntityMapperService', () => {
   it('returns empty array when loading non existing entity type ', function (done) {
     class TestEntity extends Entity {
     }
-    entityMapper.loadAll(TestEntity).then((result) => {
+    entityMapper.loadAll<TestEntity>(TestEntity).then((result) => {
       expect(result.length).toBe(0);
       done()
     });
