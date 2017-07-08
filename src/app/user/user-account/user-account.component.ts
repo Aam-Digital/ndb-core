@@ -16,7 +16,7 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-
+import { ChangePasswordService } from '../../service/change-password.service';
 @Component({
   selector: 'app-user-account',
   templateUrl: './user-account.component.html',
@@ -26,9 +26,14 @@ export class UserAccountComponent implements OnInit {
 
   // TODO implement
 
-  constructor() { }
+  constructor( private ChangePasswordService : ChangePasswordService) { }
 
   ngOnInit() {
   }
 
+  changePassword(pwd,rpwd){
+    if(pwd == rpwd){
+      this.ChangePasswordService.setNewPassword(pwd);
+    }
+  }
 }
