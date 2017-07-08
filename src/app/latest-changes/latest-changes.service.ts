@@ -27,7 +27,7 @@ export class LatestChangesService {
   }
 
   getChangelog(): Observable<Changelog[]> {
-    return this.http.get('app/changelog.json')
+    return this.http.get('assets/changelog.json')
       .map((response) => response.json())
       .catch((error) => Observable.throw('Could not load latest changes.'));
   }
