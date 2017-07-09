@@ -34,6 +34,8 @@ import { NavigationModule } from './navigation/navigation.module';
 import { LatestChangesModule } from './latest-changes/latest-changes.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ChangePasswordService } from './service/change-password.service';
+import {DataTableModule} from 'angular2-datatable';
+import { UserviewModule } from './userview/userview.module';
 @NgModule({
   declarations: [
     AppComponent
@@ -52,7 +54,9 @@ import { ChangePasswordService } from './service/change-password.service';
     DashboardModule,
     NavigationModule,
     UiModule,
-    LatestChangesModule
+    LatestChangesModule,
+    DataTableModule,
+    UserviewModule
     // UserModule is lazy loaded
   ],
   providers: [ ChangePasswordService ],
