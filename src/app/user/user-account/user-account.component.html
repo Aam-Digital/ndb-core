@@ -15,6 +15,42 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<p>
-  user-account works!
-</p>
+<!--
+  ~     This file is part of ndb-core.
+  ~
+  ~     ndb-core is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     (at your option) any later version.
+  ~
+  ~     ndb-core is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<div class="row">
+    <span class="col-md-12 passwordChange">Change Password</span>
+</div>
+<div class="form-group row">
+    <label class="col-md-3 control-label">New Password:</label>
+    <div class="col-md-5">
+        <input class="form-control" type="password" value="11111122333" #pwd>
+    </div>
+</div>
+<div class="form-group row">
+    <label class="col-md-3 control-label">Confirm password:</label>
+    <div class="col-md-5">
+        <input class="form-control" type="password" value="11111122333" #rpwd>
+    </div>
+</div>
+<div class="form-group row">
+    <label class="col-md-3 control-label"></label>
+    <div class="col-md-5">
+        <input type="button" class="btn btn-primary" value="Save Changes" (click)="changePassword(pwd.value,rpwd.value)">
+        <span></span>
+        <input type="reset" class="btn btn-default" value="Cancel">
+    </div>
+</div>

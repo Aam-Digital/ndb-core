@@ -19,10 +19,12 @@ import { Routes, RouterModule } from '@angular/router';
 import { LoggedInGuard } from './session/logged-in.guard';
 import { ModuleWithProviders } from '@angular/core';
 import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
+import { UserviewComponent } from './userview/userview.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent },
+  { path: 'userlist', component: UserviewComponent },
   { path: 'user', loadChildren: 'app/user/user.module#UserModule', canActivate: [LoggedInGuard] }
 ];
 
