@@ -26,14 +26,14 @@ export class UserAccountComponent implements OnInit {
 
   // TODO implement
 
-  constructor( private ChangePasswordService : ChangePasswordService) { }
+  constructor( private ChangePasswordService: ChangePasswordService ) { }
 
   ngOnInit() {
   }
 
-  changePassword(pwd,rpwd){
-    if(pwd == rpwd){
-      this.ChangePasswordService.setNewPassword(pwd);
+  changePassword( pwd , rpwd ) {
+    if ( pwd === rpwd ) {
+      this.ChangePasswordService.setNewPassword( pwd );
     }
   }
 }

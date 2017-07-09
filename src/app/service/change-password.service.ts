@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Entity } from '../entity/entity';
-import {Http,Headers} from '@angular/http';
+import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 declare const require: any;
 const CryptoJS = require('crypto-js');
 @Injectable()
 export class ChangePasswordService {
 
-  constructor() { }
-
   public name: string;
   public lastUsedVersion: string;
   private password: any;
+
+  constructor() { }
 
   public getPrefix(): string {
     return 'user:';
