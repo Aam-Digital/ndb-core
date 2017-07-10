@@ -47,7 +47,7 @@ export class Entity {
   constructor(id: string) {
     this.entityId = id;
     this.prefix = this.constructor.name;
-    this._id = this.prefix + ':' + this.entityId;
+    this._id = Entity.getDatabaseId(this.prefix, this.entityId);
   }
 
   /**
@@ -58,7 +58,7 @@ export class Entity {
    *
    * @returns {string} the unique id of this entity
    */
-  public getEntityId(): string {
+  public getId(): string {
     return this.entityId;
   }
 
@@ -73,12 +73,7 @@ export class Entity {
     return this.prefix;
   }
 
-  /**
-   * Returns the id of this entity including a prefix to store this entity in the database.
-   *
-   * @returns {string} the entity's id including a prefix in the form <code>prefix:entityId</code>
-   */
-  public getIdWithPrefix(): string {
-    return this._id;
+  public static getDatabaseId(prefix: string, id: string) {
+    return prefix + ":" + id;
   }
 }

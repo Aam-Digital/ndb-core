@@ -16,13 +16,14 @@
  */
 
 import { User } from './user';
+import { Entity } from '../entity/entity';
 describe('User', () => {
 
   it('has ID with correct prefix', function () {
     const entityId = 'test1';
     const user = new User(entityId);
 
-    expect(user.getIdWithPrefix()).toBe(user.getPrefix() + ':' + entityId);
+    expect(Entity.getDatabaseId(user.getPrefix(), entityId)).toBe(user.getPrefix() + ':' + entityId);
     expect(user.getPrefix()).toBe('User');
   });
 

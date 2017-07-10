@@ -36,8 +36,9 @@ export class EntityMapperService {
    *          (This is necessary because TypeScript generic types are not available at runtime.)
    * @returns A Promise containing the resultEntity filled with its data.
    */
-  public load<T extends Entity>(resultEntity: T): Promise<T> {
-    return this._db.get(resultEntity.getIdWithPrefix()).then(
+  public load<T extends Entity>(entityType: { new(id: string): T; }, id: string): Promise<T> {
+    let resultEntity = new entityType('');
+    return this._db.get(Entity.getDatabaseId(resultEntity.getPrefix(), id)).then(
       function (result: any) {
         Object.assign(resultEntity, result);
         return resultEntity;
@@ -55,13 +56,13 @@ export class EntityMapperService {
    * @returns A Promise containing an array with the entities.
    */
   public loadAll<T extends Entity>(entityType: { new(id: string): T; }): Promise<T[]> {
-    let newEntity = new entityType('');
-    return this._db.getAll(newEntity.getPrefix()).then(
+    let resultEntity = new entityType('');
+    return this._db.getAll(resultEntity.getPrefix()).then(
       function (result: any) {
         const resultArray: Array<T> = [];
         for (const current of result.rows) {
-          resultArray.push(Object.assign(newEntity, current.doc));
-          newEntity = new entityType('');
+          resultArray.push(Object.assign(resultEntity, current.doc));
+          resultEntity = new entityType('');
         }
         return resultArray;
       },
