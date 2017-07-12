@@ -24,11 +24,6 @@
 export class Entity {
 
   /**
-   * The database id in the form <code>prefix:entityId</code>
-   */
-  // private readonly _id: string;
-
-  /**
    * The unique id of this entity.
    */
   private readonly entityId: string;
@@ -47,7 +42,6 @@ export class Entity {
   constructor(id: string) {
     this.entityId = id;
     this.prefix = this.constructor.name;
-    //this._id = Entity.getDatabaseId(this.prefix, this.entityId);
   }
 
   /**
@@ -72,8 +66,4 @@ export class Entity {
   public getPrefix(): string {
     return this.prefix;
   }
-
-  /*public static getDatabaseId(prefix: string, id: string) {
-    return prefix + ":" + id;
-  }*/
 }

@@ -26,20 +26,26 @@ import { Entity } from './entity';
 @Injectable()
 export class EntityMapperService {
 
+  private static getDatabaseIdByEntity<T extends Entity>(entity: T): string {
+    return EntityMapperService.getDatabaseId(entity.getPrefix(), entity.getId());
+  }
+
+  private static getDatabaseId(prefix: string, id: string): string {
+    return prefix + ':' + id;
+  }
+
   constructor(private _db: Database) {
   }
 
-  // TODO documentation
-
   /**
-   * Loads an Entity from the database into the given resultEntity instance.
+   * Loads an Entity from the database with the given id.
    *
-   * @param resultEntity An (empty) instance of an Entity class with its ID set to the one to be searched.
-   *          (This is necessary because TypeScript generic types are not available at runtime.)
+   * @param entityType a class that implements <code>Entity</code>.
+   * @param id the id of the entity to load.
    * @returns A Promise containing the resultEntity filled with its data.
    */
   public load<T extends Entity>(entityType: { new(id: string): T; }, id: string): Promise<T> {
-    let resultEntity = new entityType('');
+    const resultEntity = new entityType('');
     return this._db.get(EntityMapperService.getDatabaseId(resultEntity.getPrefix(), id)).then(
       function (result: any) {
         Object.assign(resultEntity, result);
@@ -52,10 +58,10 @@ export class EntityMapperService {
   }
 
   /**
-   * Loads a list of Entity from the database whose IDs contain the prefix of the given resultEntity class.
+   * Loads a list of Entity from the database of the given type (for example a list of entities of the type User).
    *
-   * @param entityType the entity's class type (this would just be <code>Entity</code> for a pure entity).
-   * @returns A Promise containing an array with the entities.
+   * @param entityType a class that implements <code>Entity</code>.
+   * @returns A Promise containing an array with the loaded entities.
    */
   public loadAll<T extends Entity>(entityType: { new(id: string): T; }): Promise<T[]> {
     let resultEntity = new entityType('');
@@ -83,11 +89,4 @@ export class EntityMapperService {
     return this._db.remove(entity);
   }
 
-  private static getDatabaseIdByEntity<T extends Entity>(entity: T): string {
-    return EntityMapperService.getDatabaseId(entity.getPrefix(), entity.getId());
-  }
-
-  private static getDatabaseId(prefix: string, id: string): string {
-    return prefix + ":" + id;
-  }
 }
