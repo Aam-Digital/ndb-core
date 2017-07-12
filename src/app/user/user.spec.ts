@@ -20,13 +20,13 @@ import { EntityMapperService } from '../entity/entity-mapper.service';
 
 describe('User', () => {
 
-  it('has ID with correct prefix', function () {
+  it('has ID with correct type', function () {
     const entityId = 'test1';
     const user = new User(entityId);
 
-    expect((EntityMapperService as any).getDatabaseId(user.getPrefix(), entityId))
-      .toBe(user.getPrefix() + ':' + entityId);
-    expect(user.getPrefix()).toBe('User');
+    expect((EntityMapperService as any).getDatabaseId(user.getType(), entityId))
+      .toBe(user.getType() + ':' + entityId);
+    expect(user.getType()).toBe('User');
   });
 
   it('accepts valid password', function () {

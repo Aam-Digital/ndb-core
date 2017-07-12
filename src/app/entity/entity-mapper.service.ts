@@ -27,11 +27,11 @@ import { Entity } from './entity';
 export class EntityMapperService {
 
   private static getDatabaseIdByEntity<T extends Entity>(entity: T): string {
-    return EntityMapperService.getDatabaseId(entity.getPrefix(), entity.getId());
+    return EntityMapperService.getDatabaseId(entity.getType(), entity.getId());
   }
 
-  private static getDatabaseId(prefix: string, id: string): string {
-    return prefix + ':' + id;
+  private static getDatabaseId(type: string, id: string): string {
+    return type + ':' + id;
   }
 
   constructor(private _db: Database) {
@@ -46,7 +46,7 @@ export class EntityMapperService {
    */
   public load<T extends Entity>(entityType: { new(id: string): T; }, id: string): Promise<T> {
     const resultEntity = new entityType('');
-    return this._db.get(EntityMapperService.getDatabaseId(resultEntity.getPrefix(), id)).then(
+    return this._db.get(EntityMapperService.getDatabaseId(resultEntity.getType(), id)).then(
       function (result: any) {
         Object.assign(resultEntity, result);
         return resultEntity;
@@ -58,14 +58,14 @@ export class EntityMapperService {
   }
 
   /**
-   * Loads a list of Entity from the database of the given type (for example a list of entities of the type User).
+   * Loads all entities from the database of the given type (for example a list of entities of the type User).
    *
    * @param entityType a class that implements <code>Entity</code>.
    * @returns A Promise containing an array with the loaded entities.
    */
-  public loadAll<T extends Entity>(entityType: { new(id: string): T; }): Promise<T[]> {
+  public loadType<T extends Entity>(entityType: { new(id: string): T; }): Promise<T[]> {
     let resultEntity = new entityType('');
-    return this._db.getAll(resultEntity.getPrefix()).then(
+    return this._db.getAll(resultEntity.getType()).then(
       function (result: any) {
         const resultArray: Array<T> = [];
         for (const current of result.rows) {

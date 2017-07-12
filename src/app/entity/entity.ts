@@ -29,9 +29,9 @@ export class Entity {
   private readonly entityId: string;
 
   /**
-   * The prefix for this entity type.
+   * The entity's type.
    */
-  private readonly prefix: string;
+  private readonly type: string;
 
   /**
    * Creates an entity object with the given id. This id is final and won't be changeable after this object has been
@@ -41,7 +41,7 @@ export class Entity {
    */
   constructor(id: string) {
     this.entityId = id;
-    this.prefix = this.constructor.name;
+    this.type = this.constructor.name;
   }
 
   /**
@@ -57,13 +57,13 @@ export class Entity {
   }
 
   /**
-   * Returns the prefix which is used to categorize this entity in the database.
+   * Returns the type which is used to categorize this entity in the database.
    *
-   * <b>Important: Do not overwrite this method! Prefixes are handled internally now.</b>
+   * <b>Important: Do not overwrite this method! Types are handled internally.</b>
    *
-   * @returns {string} the prefix of this entity type (which is the class name).
+   * @returns {string} the entity's type (which is the class name).
    */
-  public getPrefix(): string {
-    return this.prefix;
+  public getType(): string {
+    return this.type;
   }
 }
