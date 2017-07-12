@@ -38,7 +38,7 @@ export class EntityMapperService {
    */
   public load<T extends Entity>(entityType: { new(id: string): T; }, id: string): Promise<T> {
     let resultEntity = new entityType('');
-    return this._db.get(Entity.getDatabaseId(resultEntity.getPrefix(), id)).then(
+    return this._db.get(EntityMapperService.getDatabaseId(resultEntity.getPrefix(), id)).then(
       function (result: any) {
         Object.assign(resultEntity, result);
         return resultEntity;
@@ -73,9 +73,7 @@ export class EntityMapperService {
   }
 
   public save<T extends Entity>(entity: T): Promise<any> {
-    // TODO: how to save 'references' of this Entity to other Entities?
-    //      e.g. a 'Child' may have 'FamilyMember's who are Entity instances of their own
-    //      and should be saved separately in the database
+    entity['_id'] = EntityMapperService.getDatabaseIdByEntity(entity);
     return this._db.put(entity);
   }
 
@@ -83,4 +81,11 @@ export class EntityMapperService {
     return this._db.remove(entity);
   }
 
+  private static getDatabaseIdByEntity<T extends Entity>(entity: T): string {
+    return EntityMapperService.getDatabaseId(entity.getPrefix(), entity.getId());
+  }
+
+  private static getDatabaseId(prefix: string, id: string): string {
+    return prefix + ":" + id;
+  }
 }
