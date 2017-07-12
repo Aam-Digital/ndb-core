@@ -17,10 +17,10 @@
 
 import { SessionService } from './session.service';
 import { User } from '../user/user';
+import { Entity } from '../entity/entity';
 
 describe('SessionService', () => {
 
-  /*
   let sessionService: SessionService;
   let databaseManager: any;
   let entityMapper: any;
@@ -149,5 +149,5 @@ describe('SessionService', () => {
     expect(sessionService.isLoggedIn()).toBeFalsy();
     sessionService.logout();
     expect(sessionService.isLoggedIn()).toBeFalsy();
-  });*/
+  });
 });

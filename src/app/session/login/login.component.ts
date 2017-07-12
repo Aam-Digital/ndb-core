@@ -77,8 +77,7 @@ export class LoginComponent implements OnInit {
     this.errorMessage = '';
     this.password = '';
     this.loginInProgress = false;
-    // TODO this is invalid here, as it will be always reset in onLoginFailure
-    // this.isRetriedLogin = false;
+    this.isRetriedLogin = false;
   }
 
 

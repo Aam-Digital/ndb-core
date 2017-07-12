@@ -16,14 +16,16 @@
  */
 
 import { User } from './user';
-import { Entity } from '../entity/entity';
+import { EntityMapperService } from '../entity/entity-mapper.service';
+
 describe('User', () => {
 
   it('has ID with correct prefix', function () {
     const entityId = 'test1';
     const user = new User(entityId);
 
-    expect(Entity.getDatabaseId(user.getPrefix(), entityId)).toBe(user.getPrefix() + ':' + entityId);
+    expect((EntityMapperService as any).getDatabaseId(user.getPrefix(), entityId))
+      .toBe(user.getPrefix() + ':' + entityId);
     expect(user.getPrefix()).toBe('User');
   });
 

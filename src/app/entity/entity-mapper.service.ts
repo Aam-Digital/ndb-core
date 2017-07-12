@@ -29,6 +29,8 @@ export class EntityMapperService {
   constructor(private _db: Database) {
   }
 
+  // TODO documentation
+
   /**
    * Loads an Entity from the database into the given resultEntity instance.
    *
