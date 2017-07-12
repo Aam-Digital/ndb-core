@@ -17,7 +17,6 @@
 
 import { SessionService } from './session.service';
 import { User } from '../user/user';
-import { Entity } from '../entity/entity';
 
 describe('SessionService', () => {
 
@@ -49,9 +48,10 @@ describe('SessionService', () => {
     spyOn(databaseManager, 'login').and.callThrough();
 
     entityMapper = {
-      load: function (resultEntity: User): Promise<User> {
+      load: function (entityType: { new(id: string): User; }, id: string): Promise<User> {
+        const resultEntity = new entityType('');
 
-        if (resultEntity.getId() !== user.getId()) {
+        if (id !== user.getId()) {
           return Promise.reject<User>('ID not found');
         } else {
           Object.assign(resultEntity, user);
