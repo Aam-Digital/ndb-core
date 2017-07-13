@@ -18,6 +18,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Child } from '../child';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
 
 @Component({
   selector: 'app-child-details',
@@ -27,6 +28,64 @@ import { EntityMapperService } from '../../entity/entity-mapper.service';
 export class ChildDetailsComponent implements OnInit {
 
   child: Child;
+  centers: String[] = ['', 'Tikiapara', 'Liluah'];
+  FamiliyTableSettings = {
+    hideSubHeader: true,
+    actions: false,
+    columns: {
+      name: {
+        title: 'Name'
+      },
+      guardian: {
+        title: "Guardian"
+      },
+      age: {
+        title: "Age"
+      },
+      relationship:{
+        title: "Relationship"
+      },
+      mobileNo: {
+        title: "Mo. Number"
+      },
+      remarks: {
+        title: "Remarks"
+      }
+    }
+  };
+
+  SchoolTableSettings = {
+    hideSubHeader: true,
+    actions: false,
+    columns: {
+      date: {
+        title: 'Date'
+      },
+      class: {
+        title: "Class"
+      },
+      school: {
+        title: "School"
+      },
+      medium: {
+        title: "Medium"
+      },
+    }
+  };
+
+  data = [
+    {
+      name: "hana",
+      guardian: "ich",
+      age: "45",
+      relationship: "mother",
+      mobileNo: "089765123",
+      remarks: "test",
+    },
+  ]
+
+  //TODO Anlegen einer eigenen Klasse socialworker als subklasse von User
+  socialworkers: String[];
 
   constructor(private entityMapperService: EntityMapperService) {
     this.child = new Child('child:1');
@@ -35,7 +94,7 @@ export class ChildDetailsComponent implements OnInit {
 
   ngOnInit() {
 
-    this.entityMapperService.load(new Child('child:35')).then(child => this.child = child);
+    this.entityMapperService.load(new Child('child:2')).then(child => this.child = child);
   }
 
 }

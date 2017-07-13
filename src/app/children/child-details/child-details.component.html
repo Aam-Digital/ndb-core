@@ -35,25 +35,26 @@
     <form role="form">
       <div class="row">
         <div class="col-lg-2">
-          <!-- <div class="form-group" ng-mouseover="photoEditLink=true" ng-mouseleave="photoEditLink=false">
-               <img class="form-foto" ng-if="childPhoto" data-ng-src="{{childPhoto}}"/>
+            <div class="form-group" ng-mouseover="photoEditLink=true" ng-mouseleave="photoEditLink=false">
+              <!-- richtige Bilder einbinden -->
+               <img class="form-foto" ng-if="childPhoto" src='http://www.bundesverband-gewaltpraevention.de/assets/images/Selbstvertrauen_8.jpg' height="180px" width="100px"/>
                <img class="form-foto" ng-if="!childPhoto" src="images/child.png"/>
-               <input type="file" class="form-foto-edit" ng-if="photoEditLink"
-                      onchange="angular.element(this).scope().changePhoto(this);"/>
-           </div>
-           -->
+               <!-- <input type="file" class="form-foto-edit" ng-if="photoEditLink"
+                      onchange="angular.element(this).scope().changePhoto(this);"/> -->
+            </div>
+        
           <div class="form-group">
             <label>Project Status</label>
             <input class="form-control" ng-model="child.currentStatus.projectStatus">
           </div>
-          <!--
+          
             <div class="form-group">
                 <label>Responsible Social Worker</label>
                 <select class="form-control" ng-model="child.currentStatus.socialworker">
-                    <option ng-repeat="sw in socialworkers">{{ sw.name }}</option>
+                    <option *ngFor="let sw of socialworkers">{{ sw.name }}</option>
                 </select>
             </div>
-          -->
+        
         </div>
 
         <div class="col-lg-10">
@@ -76,9 +77,9 @@
             <div class="col-lg-2">
               <div class="form-group">
                 <label>Age</label>
-                <!-- <input class="form-control" value="{{ child.age() }}"
+                <input class="form-control" value="{{ child.age() }}"
                        uib-tooltip="Age is automatically calculated based on the date of birth."
-                       readonly> -->
+                       readonly> 
               </div>
             </div>
           </div>
@@ -95,16 +96,16 @@
 
               <div class="form-group">
                 <label>Date of Birth</label>
-                <!--
+                
                   <p class="input-group">
-                      <input type="text" class="form-control" //uib-datepicker-popup="{{format}}"
-                             ng-model="child.dateOfBirth" is-open="dateDoB.opened"/>
+                      <input type="text" class="form-control" 
+                             ng-model="child.dateOfBirth" is-open="dateDoB.opened"/> <!-- //uib-datepicker-popup="{{format}}" -->
                       <span class="input-group-btn">
                           <button type="button" class="btn btn-default" ng-click="dateDoB.opened=true"><i
                                   class="fa fa-calendar"></i></button>
                        </span>
                   </p>
-                -->
+              
               </div>
 
               <div class="form-group">
@@ -116,17 +117,17 @@
             <div class="col-lg-3">
               <div class="form-group">
                 <label>Admission Date</label>
-                <!--
+                
                   <p class="input-group">
-                      <input type="text" class="form-control" uib-datepicker-popup="{{format}}"
-                             ng-model="child.admission" is-open="dateAdmission.opened"/>
+                      <input type="text" class="form-control"
+                             ng-model="child.admission" is-open="dateAdmission.opened"/> <!--uib-datepicker-popup="{{format}}"-->
                       <span class="input-group-btn">
                           <button type="button" class="btn btn-default"
                                   ng-click="dateAdmission.opened=true"><i
                                   class="fa fa-calendar"></i></button>
                        </span>
                   </p>
-                -->
+              
               </div>
 
               <div class="form-group">
@@ -144,9 +145,9 @@
 
               <div class="form-group">
                 <label>Center</label>
-                <!-- <select class="form-control" ng-model="child.center">
-                  <option ng-repeat="center in centers">{{ center }}</option>
-                </select> -->
+                <select class="form-control" ng-model="child.center">
+                  <option *ngFor="let center of centers">{{ center }}</option>
+                </select>
               </div>
 
               <div class="form-group">
@@ -203,7 +204,7 @@
     <!-- /.panel Address -->
   </div>
 
-  <!--
+  
 
       <div class="col-lg-6">
           <div class="panel panel-default">
@@ -217,35 +218,13 @@
                       </div>
                   </div>
               </div>
-              <! /.panel-heading ->
+              <!-- /.panel-heading -->
               <div class="panel-body">
-                  <table ng-table="tableFamily" class="table table-condensed table-bordered table-striped"
-                         show-filter="true">
-                      <tr ng-repeat="fam in $data" ng-click="showFamilyMember(fam)" class="link-row">
-                          <td title="'Name'" sortable="'name'">
-                              {{fam.name}}
-                          </td>
-                          <td title="'Guardian'" sortable="'isGuardian'">
-                              <input type="checkbox" ng-checked="fam.isGuardian" disabled/>
-                          </td>
-                          <td title="'Relationship'" sortable="'relationship'">
-                              {{fam.relationship}}
-                          </td>
-                          <td title="'Age'" sortable="'age()'">
-                              {{fam.age()}}
-                          </td>
-                          <td title="'Mobile No.'" sortable="'mobile'">
-                              {{fam.mobile}}
-                          </td>
-                          <td title="'Remarks'" sortable="'remarks'">
-                              {{fam.remarks}}
-                          </td>
-                      </tr>
-                  </table>
+                  <ng2-smart-table [settings]="FamiliyTableSettings" [source]="data"></ng2-smart-table>
               </div>
-              <!- /.panel-body ->
+              <!-- /.panel-body -->
           </div>
-          <!- /.panel Family->
+          <!-- /.panel Family -->
       </div>
   </div>
 
@@ -261,30 +240,13 @@
               </div>
           </div>
       </div>
-      <!- /.panel-heading ->
+      <!-- /.panel-heading -->
       <div class="panel-body">
-          <table ng-table="tableEnrollments" class="table table-condensed table-bordered table-striped"
-                 show-filter="true">
-              <tr ng-repeat="enrollment in $data" ng-click="showEnrollment(enrollment)" class="link-row">
-                  <td title="'Date'" sortable="'from'">
-                      {{enrollment.from | date:'MM/yyyy' }}
-                      <span ng-if="enrollment.until"> - {{ enrollment.until | date:'MM/yyyy' }}</span>
-                  </td>
-                  <td title="'Class'" sortable="'grade'">
-                      {{enrollment.grade}}
-                  </td>
-                  <td title="'School'" sortable="'school.name'">
-                      {{enrollment.school.name}}
-                  </td>
-                  <td title="'Medium'" sortable="'school.medium'">
-                      {{enrollment.school.medium}}
-                  </td>
-              </tr>
-          </table>
+        <ng2-smart-table [settings]="SchoolTableSettings" [source]=""></ng2-smart-table>
       </div>
-      <!- /.panel-body School ->
+      <!-- /.panel-body School -->
   </div>
-  <- /.panel ->
+  <!-- /.panel -->
 
 
   <div class="row">
@@ -292,4 +254,4 @@
           <button type="button" class="btn btn-success" ng-click="save();">Save</button>
           <button type="button" class="btn btn-warning" ng-click="cancel()">Cancel</button>
       </div>
-  </div> -->
+  </div> 

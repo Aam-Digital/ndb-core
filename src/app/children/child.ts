@@ -22,7 +22,7 @@ export class Child extends Entity {
   pn: Number; // project number
   religion: String;
   gender: Boolean; // M or F
-  dateOfBirth: Date;
+  dateOfBirth: string;
   motherTongue: String;
   admission: Date;
   placeOfBirth: String;
@@ -42,4 +42,14 @@ export class Child extends Entity {
     return 'child:';
   }
 
+  age(): number {
+     if (this.dateOfBirth) {
+                    var now = new Date();
+                    var birthdate = new Date(this.dateOfBirth);
+                    var diff = now.getTime() - birthdate.getTime();
+                    return Math.floor(diff / (1000 * 3600 * 24 * 365));
+                }
+      return null;
+  }
 }
+  
