@@ -16,7 +16,9 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { ChangePasswordService } from '../../service/change-password.service';
+import { User } from '../user';
+import {SessionService} from '../../session/session.service';
+
 @Component({
   selector: 'app-user-account',
   templateUrl: './user-account.component.html',
@@ -24,14 +26,18 @@ import { ChangePasswordService } from '../../service/change-password.service';
 })
 export class UserAccountComponent implements OnInit {
 
-  constructor( private ChangePasswordService: ChangePasswordService ) { }
+  private user: User;
+
+  constructor( private sessionService: SessionService ) { }
 
   ngOnInit() {
+    this.user = this.sessionService.getCurrentUser();
   }
 
   changePassword( pwd , rpwd ) {
     if ( pwd === rpwd ) {
-      this.ChangePasswordService.setNewPassword( pwd );
+      // TODO: update the password for this remote database user first and deny the password change if that fails
+      this.user.setNewPassword( pwd );
     }
   }
 }

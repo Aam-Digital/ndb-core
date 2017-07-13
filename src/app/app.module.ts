@@ -33,7 +33,7 @@ import { SyncStatusModule } from './sync-status/sync-status.module';
 import { NavigationModule } from './navigation/navigation.module';
 import { LatestChangesModule } from './latest-changes/latest-changes.module';
 import { DashboardModule } from './dashboard/dashboard.module';
-import { ChangePasswordService } from './service/change-password.service';
+
 @NgModule({
   declarations: [
     AppComponent
@@ -55,7 +55,7 @@ import { ChangePasswordService } from './service/change-password.service';
     LatestChangesModule
     // UserModule is lazy loaded
   ],
-  providers: [ ChangePasswordService ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule {
