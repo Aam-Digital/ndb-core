@@ -18,7 +18,6 @@
 import { Routes, RouterModule } from '@angular/router';
 import { UserAccountComponent } from './user-account/user-account.component';
 import { ModuleWithProviders } from '@angular/core';
-import { User } from './user';
 
 const routes: Routes = [
   {path: '', component: UserAccountComponent}
