@@ -11,4 +11,6 @@ import { Ng2TableModule } from 'ng2-table/ng2-table'; //Import Module for Child-
 })
 export class ChildListComponent implements OnInit {
 
+  ngOnInit(){}
+
 }
