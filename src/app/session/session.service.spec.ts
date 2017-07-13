@@ -151,4 +151,28 @@ describe('SessionService', () => {
     sessionService.logout();
     expect(sessionService.isLoggedIn()).toBeFalsy();
   });
+
+  it('getCurrentUser returns user object after correct local login', function (done) {
+    expect(sessionService.isLoggedIn()).toBeFalsy();
+
+    sessionService.login(username, password).then(
+      function (result) {
+        expect(result).toBeTruthy();
+        expect(sessionService.getCurrentUser().getId()).toBe(user.getId());
+        done();
+      }
+    );
+  });
+
+  it('getCurrentUser returns null after failed local login', function (done) {
+    expect(sessionService.isLoggedIn()).toBeFalsy();
+
+    sessionService.login(username, password + 'x').then(
+      function (result) {
+        expect(result).toBeFalsy();
+        expect(sessionService.getCurrentUser()).toBeNull();
+        done();
+      }
+    );
+  });
 });

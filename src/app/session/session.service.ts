@@ -46,6 +46,10 @@ export class SessionService {
     return this.currentUser !== null;
   }
 
+  public getCurrentUser(): User {
+    return this.currentUser;
+  }
+
   /**
    * Authenticates the given user with local and remote database.
    * If successful, the user is set as currentUser for this session.
