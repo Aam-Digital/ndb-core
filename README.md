@@ -47,4 +47,4 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ## Documentation
 
-The documentation can be found in the [Wiki](https://github.com/NGO-DB/ndb-core/wiki).
+The documentation can be found in the [Wiki](https://github.com/NGO-DB/ndb-core/wiki). Please read through the [Contribution Guidelines](https://github.com/NGO-DB/ndb-core/wiki/Contribution-Guidelines) if you want to contribute code.
