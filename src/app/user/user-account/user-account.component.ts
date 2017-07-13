@@ -24,8 +24,6 @@ import { ChangePasswordService } from '../../service/change-password.service';
 })
 export class UserAccountComponent implements OnInit {
 
-  // TODO implement
-
   constructor( private ChangePasswordService: ChangePasswordService ) { }
 
   ngOnInit() {

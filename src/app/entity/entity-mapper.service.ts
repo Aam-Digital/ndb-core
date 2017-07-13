@@ -49,9 +49,6 @@ export class EntityMapperService {
   }
 
   public save<T extends Entity>(entity: T): Promise<any> {
-    // TODO: how to save 'references' of this Entity to other Entities?
-    //      e.g. a 'Child' may have 'FamilyMember's who are Entity instances of their own
-    //      and should be saved separately in the database
     return this._db.put(entity);
   }
 
