@@ -24,7 +24,7 @@ describe('User', () => {
     const entityId = 'test1';
     const user = new User(entityId);
 
-    expect((EntityMapperService as any).getDatabaseId(user.getType(), entityId))
+    expect((EntityMapperService as any).createDatabaseId(user.getType(), entityId))
       .toBe(user.getType() + ':' + entityId);
     expect(user.getType()).toBe('User');
   });

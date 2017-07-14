@@ -26,11 +26,11 @@ import { Entity } from './entity';
 @Injectable()
 export class EntityMapperService {
 
-  private static getDatabaseIdByEntity<T extends Entity>(entity: T): string {
-    return EntityMapperService.getDatabaseId(entity.getType(), entity.getId());
+  private static createDatabaseIdByEntity<T extends Entity>(entity: T): string {
+    return EntityMapperService.createDatabaseId(entity.getType(), entity.getId());
   }
 
-  private static getDatabaseId(type: string, id: string): string {
+  private static createDatabaseId(type: string, id: string): string {
     return type + ':' + id;
   }
 
@@ -46,7 +46,7 @@ export class EntityMapperService {
    */
   public load<T extends Entity>(entityType: { new(id: string): T; }, id: string): Promise<T> {
     const resultEntity = new entityType('');
-    return this._db.get(EntityMapperService.getDatabaseId(resultEntity.getType(), id)).then(
+    return this._db.get(EntityMapperService.createDatabaseId(resultEntity.getType(), id)).then(
       function (result: any) {
         Object.assign(resultEntity, result);
         return resultEntity;
@@ -81,7 +81,7 @@ export class EntityMapperService {
   }
 
   public save<T extends Entity>(entity: T): Promise<any> {
-    entity['_id'] = EntityMapperService.getDatabaseIdByEntity(entity);
+    entity['_id'] = EntityMapperService.createDatabaseIdByEntity(entity);
     return this._db.put(entity);
   }
 

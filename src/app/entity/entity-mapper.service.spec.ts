@@ -63,7 +63,7 @@ describe('EntityMapperService', () => {
       function (loadedEntity) {
         expect(loadedEntity.getId()).toBe(existingEntity.entityId);
         expect(loadedEntity.getType()).toBe(existingEntity.type);
-        expect((EntityMapperService as any).getDatabaseId(loadedEntity.getType(), loadedEntity.getId()))
+        expect((EntityMapperService as any).createDatabaseId(loadedEntity.getType(), loadedEntity.getId()))
           .toBe(existingEntity._id);
         done();
       }
