@@ -20,7 +20,7 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class ConfigService {
 
-  version = '2.0.0';
+  version = '2.0.14';
 
   database = {
     name: 'dev',

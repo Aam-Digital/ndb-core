@@ -26,10 +26,6 @@ export class User extends Entity {
   public lastUsedVersion: string;
   private password: any;
 
-  public getPrefix(): string {
-    return 'user:';
-  }
-
   public setNewPassword(password: string) {
     const cryptKeySize = 256 / 32;
     const cryptIterations = 128;

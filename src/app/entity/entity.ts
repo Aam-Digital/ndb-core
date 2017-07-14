@@ -23,25 +23,47 @@
  */
 export class Entity {
 
-  private _id: string;
+  /**
+   * The unique id of this entity.
+   */
+  private readonly entityId: string;
 
+  /**
+   * The entity's type.
+   */
+  private readonly type: string;
+
+  /**
+   * Creates an entity object with the given id. This id is final and won't be changeable after this object has been
+   * created.
+   *
+   * @param id a unique id for this entity
+   */
   constructor(id: string) {
-    this.setId(id);
+    this.entityId = id;
+    this.type = this.constructor.name;
   }
 
-
-  public getPrefix(): string {
-    return '';
-  }
-
+  /**
+   * Returns the id of this entity.
+   *
+   * Note that an id is final and can't be changed after the object has been instantiated, hence there is no
+   * <code>setId()</code> method.
+   *
+   * @returns {string} the unique id of this entity
+   */
   public getId(): string {
-    return this._id;
+    return this.entityId;
   }
 
-  private setId(id: string) {
-    if (!id.startsWith(this.getPrefix())) {
-      id = this.getPrefix() + id;
-    }
-    this._id = id;
+  /**
+   * Returns the type which is used to categorize this entity in the database.
+   *
+   * <b>Important: Do not overwrite this method! Types are handled internally.</b>
+   *
+   * @returns {string} the entity's type (which is the class name).
+   */
+  public getType(): string {
+    return this.type;
   }
 }
