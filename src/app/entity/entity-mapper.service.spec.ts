@@ -28,14 +28,14 @@ describe('EntityMapperService', () => {
   const existingEntity = {
     _id: 'Entity:existing-entity',
     entityId: 'existing-entity',
-    prefix: 'Entity',
+    type: 'Entity',
     label: 'entity from database'
   };
 
   const existingEntity2 = {
     _id: 'Entity:existing-entity2',
     entityId: 'existing-entity2',
-    prefix: 'Entity',
+    type: 'Entity',
     label: 'entity 2 from database'
   };
 
@@ -62,8 +62,8 @@ describe('EntityMapperService', () => {
     entityMapper.load<Entity>(Entity, existingEntity.entityId).then(
       function (loadedEntity) {
         expect(loadedEntity.getId()).toBe(existingEntity.entityId);
-        expect(loadedEntity.getPrefix()).toBe(existingEntity.prefix);
-        expect((EntityMapperService as any).getDatabaseId(loadedEntity.getPrefix(), loadedEntity.getId()))
+        expect(loadedEntity.getType()).toBe(existingEntity.type);
+        expect((EntityMapperService as any).createDatabaseId(loadedEntity.getType(), loadedEntity.getId()))
           .toBe(existingEntity._id);
         done();
       }
@@ -75,7 +75,7 @@ describe('EntityMapperService', () => {
   });
 
   it('load multiple entities', function (done) {
-    entityMapper.loadAll<Entity>(Entity).then(
+    entityMapper.loadType<Entity>(Entity).then(
       function (loadedEntities) {
         expect(loadedEntities.length).toBe(2);
 
@@ -83,12 +83,12 @@ describe('EntityMapperService', () => {
         const entity2 = loadedEntities[1];
 
         expect(entity1.getId()).toBe(existingEntity.entityId);
-        expect(entity1.getPrefix()).toBe(existingEntity.prefix);
+        expect(entity1.getType()).toBe(existingEntity.type);
         expect(entity1['_id']).toBe(existingEntity._id);
         expect(entity1 instanceof Entity).toBe(true);
 
         expect(entity2.getId()).toBe(existingEntity2.entityId);
-        expect(entity2.getPrefix()).toBe(existingEntity2.prefix);
+        expect(entity2.getType()).toBe(existingEntity2.type);
         expect(entity2['_id']).toBe(existingEntity2._id);
         expect(entity2 instanceof Entity).toBe(true);
         done();
@@ -107,7 +107,7 @@ describe('EntityMapperService', () => {
   it('returns empty array when loading non existing entity type ', function (done) {
     class TestEntity extends Entity {
     }
-    entityMapper.loadAll<TestEntity>(TestEntity).then((result) => {
+    entityMapper.loadType<TestEntity>(TestEntity).then((result) => {
       expect(result.length).toBe(0);
       done()
     });
@@ -120,7 +120,7 @@ describe('EntityMapperService', () => {
         entityMapper.load<Entity>(Entity, entity.getId()).then(
           function (loadedEntity) {
             expect(loadedEntity.getId()).toBe(entity.getId());
-            expect(loadedEntity.getPrefix()).toBe(entity.getPrefix());
+            expect(loadedEntity.getType()).toBe(entity.getType());
             expect(loadedEntity['_id']).toBe(entity['_id']);
             done();
           }

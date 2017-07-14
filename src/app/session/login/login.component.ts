@@ -56,10 +56,6 @@ export class LoginComponent implements OnInit {
   private onLoginSuccess() {
     this.reset();
     // login component is automatically hidden based on _sessionService.isLoggedIn()
-
-    // TODO: show progress of downloading database (if necessary)
-    // TODO: call service to check and warn about outdated database
-    // TODO: call service to check version and display changelog of updates
   }
 
   private onLoginFailure(reason: any) {
