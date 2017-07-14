@@ -16,6 +16,7 @@
  */
 
 import { Database } from './database';
+import { Entity } from '../entity/entity';
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -38,8 +39,8 @@ export class PouchDatabase extends Database {
     return this._pouchDB.allDocs(options);
   }
 
-  put(object: any) {
-    return this._pouchDB.put(object);
+  put(object: Entity) {
+    return this._pouchDB.rel.save(object.getType(), object);
   }
 
   remove(object: any) {

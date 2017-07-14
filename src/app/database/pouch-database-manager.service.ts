@@ -23,7 +23,7 @@ import { DatabaseSyncStatus } from './database-sync-status.enum';
 import { Database } from './database';
 import { PouchDatabase } from './pouch-database';
 
-declare var require: any;
+declare const require: any;
 PouchDB.plugin(require('pouchdb-authentication'));
 PouchDB.plugin(require('relational-pouch'));
 

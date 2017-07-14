@@ -21,7 +21,10 @@ import { User } from '../user/user';
 import { PouchDatabase } from './pouch-database';
 import * as PouchDB from 'pouchdb';
 import { Database } from './database';
-import { isNullOrUndefined } from 'util';
+
+declare const require: any;
+PouchDB.plugin(require('pouchdb-authentication'));
+PouchDB.plugin(require('relational-pouch'));
 
 @Injectable()
 export class PouchDatabaseManagerTestService extends DatabaseManagerService {
@@ -32,7 +35,7 @@ export class PouchDatabaseManagerTestService extends DatabaseManagerService {
   constructor() {
     super();
 
-    this._pouchDB = new PouchDB('ndb-test');
+    this._pouchDB = new PouchDB('ndb-test2');
     this._pouchDatabase = new PouchDatabase(this._pouchDB);
     this.initDB();
   }
@@ -51,10 +54,18 @@ export class PouchDatabaseManagerTestService extends DatabaseManagerService {
   }
 
   private initDB(): void {
+
+    this._pouchDB.setSchema([
+      {singular: 'User', plural: 'users'},
+      {singular: 'child', plural: 'children', relations: {school: {belongsTo: 'school'}}},
+      {singular: 'school', plural: 'schools', relations: {children: {hasMany: 'child'}}}
+    ]);
+
+
     const demoUser = new User('demo');
     demoUser.name = 'demo';
     demoUser.setNewPassword('pass');
-
-    this._pouchDatabase.get(demoUser.getId()).catch(() => this._pouchDatabase.put(demoUser));
+    this._pouchDatabase.put(demoUser);
+    //this._pouchDatabase.get(demoUser.getId()).catch(() => );
   }
 }
