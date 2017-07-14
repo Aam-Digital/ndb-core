@@ -25,6 +25,7 @@ import { PouchDatabase } from './pouch-database';
 
 declare var require: any;
 PouchDB.plugin(require('pouchdb-authentication'));
+PouchDB.plugin(require('relational-pouch'));
 
 /**
  * DatabaseManagerService takes care of 'background' actions

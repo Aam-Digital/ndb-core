@@ -27,6 +27,7 @@
     "ngx-bootstrap": "^1.7.1",
     "pouchdb": "^6.2.0",
     "pouchdb-authentication": "^0.5.5",
+    "relational-pouch": "^1.4.5",
     "rxjs": "^5.4.1",
     "zone.js": "^0.8.12"
   },
