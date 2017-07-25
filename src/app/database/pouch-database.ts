@@ -17,6 +17,7 @@
 
 import { Database } from './database';
 import { Entity } from '../entity/entity';
+import { serialize } from 'class-transformer';
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -31,16 +32,16 @@ export class PouchDatabase extends Database {
     super();
   }
 
-  get(id: string) {
-    return this._pouchDB.get(id);
+  get(type: string, id: string) {
+    return this._pouchDB.rel.find(type, id);
   }
 
   allDocs(options?: any) {
     return this._pouchDB.allDocs(options);
   }
 
-  put(object: Entity) {
-    return this._pouchDB.rel.save(object.getType(), object);
+  put(entity: Entity) {
+    return this._pouchDB.rel.save(entity.getType(), serialize(entity));
   }
 
   remove(object: any) {

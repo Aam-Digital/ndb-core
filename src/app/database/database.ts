@@ -22,7 +22,7 @@
  */
 export abstract class Database {
 
-  abstract get(id: string): any;
+  abstract get(type: string, id: string): any;
 
   abstract allDocs(options?: any): any;
 
