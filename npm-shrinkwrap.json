@@ -238,7 +238,8 @@
     "@types/crypto-js": {
       "version": "3.1.33",
       "resolved": "https://registry.npmjs.org/@types/crypto-js/-/crypto-js-3.1.33.tgz",
-      "integrity": "sha1-fmyRYDUz4M2fJ5qEBam543mIDF0="
+      "integrity": "sha1-fmyRYDUz4M2fJ5qEBam543mIDF0=",
+      "dev": true
     },
     "@types/debug": {
       "version": "0.0.29",

@@ -52,7 +52,7 @@ export class LatestChangesComponent implements OnInit {
 
     const self = this;
     this._sessionService.onSessionStatusChanged.subscribe(
-      function sessionStatus(sessionStatus: SessionStatus) {
+      (sessionStatus: SessionStatus) => {
         if (sessionStatus === SessionStatus.loggedIn) {
           if (self._sessionService.currentUser.lastUsedVersion !== self.currentVersion) {
             self._sessionService.currentUser.lastUsedVersion = self.currentVersion;

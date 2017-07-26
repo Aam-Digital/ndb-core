@@ -107,6 +107,7 @@ describe('EntityMapperService', () => {
   it('returns empty array when loading non existing entity type ', function (done) {
     class TestEntity extends Entity {
     }
+
     entityMapper.loadType<TestEntity>(TestEntity).then((result) => {
       expect(result.length).toBe(0);
       done()
