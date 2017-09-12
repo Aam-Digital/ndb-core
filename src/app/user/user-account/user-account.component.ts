@@ -16,17 +16,58 @@
  */
 
 import { Component, OnInit } from '@angular/core';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
+
+
 
 @Component({
   selector: 'app-user-account',
   templateUrl: './user-account.component.html',
   styleUrls: ['./user-account.component.css']
 })
+
 export class UserAccountComponent implements OnInit {
 
   constructor() { }
-
+  
   ngOnInit() {
+    
   }
 
+  settings = {
+    class : "name",
+    columns: {
+      name: {
+        title: 'Full Name'
+      },
+      username: {
+        title: 'User Name'
+      },
+      email: {
+        title: 'Email'
+      }
+    }
+  };
+
+  data = [
+    {
+      name: "Leanne Graham",
+      username: "Bret",
+      email: "Sincere@april.biz"
+    },
+    {
+      name: "Ervin Howell",
+      username: "Antonette",
+      email: "Shanna@melissa.tv"
+    },
+    
+    // ... list of items
+    
+    {
+      name: "Nicholas DuBuque",
+      username: "Nicholas.Stanton",
+      email: "Rey.Padberg@rosamond.biz"
+    }
+  ];
+  
 }

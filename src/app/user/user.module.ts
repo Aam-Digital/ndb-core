@@ -19,10 +19,11 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserAccountComponent } from './user-account/user-account.component';
 import { routing } from './user.routing';
-
+import { Ng2SmartTableModule } from 'ng2-smart-table';
 @NgModule({
   imports: [
-    routing
+    routing,
+    Ng2SmartTableModule
   ],
   declarations: [UserAccountComponent]
 })
