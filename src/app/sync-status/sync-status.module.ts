@@ -36,4 +36,5 @@ import { SessionModule } from '../session/session.module';
   exports: [SyncStatusComponent],
   providers: []
 })
-export class SyncStatusModule { }
+export class SyncStatusModule {
+}

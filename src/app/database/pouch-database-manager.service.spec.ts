@@ -15,8 +15,6 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { TestBed, inject } from '@angular/core/testing';
-
 import { PouchDatabaseManagerService } from './pouch-database-manager.service';
 
 describe('PouchDatabaseManagerService', () => {
