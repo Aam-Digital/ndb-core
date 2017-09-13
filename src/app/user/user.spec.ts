@@ -16,18 +16,22 @@
  */
 
 import { User } from './user';
+import { EntityMapperService } from '../entity/entity-mapper.service';
+
 describe('User', () => {
 
-  it('has ID with correct prefix', function () {
-    const id = 'test1';
-    const user = new User(id);
+  it('has ID with correct type', function () {
+    const entityId = 'test1';
+    const user = new User(entityId);
 
-    expect(user.getId()).toBe(user.getPrefix() + id);
+    expect((EntityMapperService as any).createDatabaseId(user.getType(), entityId))
+      .toBe(user.getType() + ':' + entityId);
+    expect(user.getType()).toBe('User');
   });
 
   it('accepts valid password', function () {
-    const id = 'test1';
-    const user = new User(id);
+    const entityId = 'test1';
+    const user = new User(entityId);
     const password = 'pass';
     user.setNewPassword(password);
 
@@ -35,8 +39,8 @@ describe('User', () => {
   });
 
   it('rejects wrong password', function () {
-    const id = 'test1';
-    const user = new User(id);
+    const entityId = 'test1';
+    const user = new User(entityId);
     const password = 'pass';
     user.setNewPassword(password);
 

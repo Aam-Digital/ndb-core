@@ -17,7 +17,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { User } from '../user';
-import {SessionService} from '../../session/session.service';
+import { SessionService } from '../../session/session.service';
 
 @Component({
   selector: 'app-user-account',

@@ -28,4 +28,5 @@ import { EntityMapperService } from './entity-mapper.service';
   declarations: [],
   providers: [EntityMapperService]
 })
-export class EntityModule { }
+export class EntityModule {
+}
