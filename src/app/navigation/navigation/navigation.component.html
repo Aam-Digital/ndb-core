@@ -22,6 +22,12 @@
       <a [routerLink]="item.routerLinkParameters"><i class="fa fa-{{item.icon}} fa-fw"></i> {{item.label}}</a>
     </li>
 
+    <md-nav-list>
+      <md-list-item *ngFor="let item of menu_main" >
+        <a [routerLink]="item.routerLinkParameters"><i class="fa fa-{{item.icon}} fa-fw"></i> {{item.label}}</a>
+      </md-list-item>
+    </md-nav-list>
+
     <li class="divider"></li>
 
     <li>
