@@ -94,7 +94,7 @@ export class ChildDetailsComponent implements OnInit {
 
   ngOnInit() {
 
-    this.entityMapperService.load(new Child('child:2')).then(child => this.child = child);
+    this.entityMapperService.load(Child, 'child:2').then(child => this.child = child);
   }
 
 }
