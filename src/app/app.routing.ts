@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { LoggedInGuard } from './session/logged-in.guard';
 import { ModuleWithProviders } from '@angular/core';
 import { DashboardComponent } from './dashboard/dashboard/dashboard.component';

@@ -24,9 +24,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UserAccountComponent implements OnInit {
 
-  // TODO implement
-
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
   }

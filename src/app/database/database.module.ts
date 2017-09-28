@@ -30,4 +30,5 @@ import { PouchDatabaseManagerService } from './pouch-database-manager.service';
     databaseServiceProvider,
   ]
 })
-export class DatabaseModule { }
+export class DatabaseModule {
+}

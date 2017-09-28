@@ -1,9 +1,10 @@
 [![Build Status](https://travis-ci.org/NGO-DB/ndb-core.svg?branch=master)](https://travis-ci.org/NGO-DB/ndb-core)
+[![Code Climate](https://codeclimate.com/github/NGO-DB/ndb-core/badges/gpa.svg)](https://codeclimate.com/github/NGO-DB/ndb-core)
 
 # NGO DB
 Empowering NGOs' social workers with simple to use (database) software.
 
-For a project outline, free demo system, etc. visit [ngo-db.sinnfragen.org](http://ngo-db.sinnfragen.org/)
+For a project outline, free demo system, etc. visit [www.aam-digital.com](http://www.aam-digital.com)
 
 **This is an Angular2/Typescript based rewrite of [HELGO DB](https://github.com/NGO-DB/helgo_db)**
 
@@ -47,4 +48,4 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ## Documentation
 
-The documentation can be found in the [Wiki](https://github.com/NGO-DB/ndb-core/wiki).
+The documentation can be found in the [Wiki](https://github.com/NGO-DB/ndb-core/wiki). Please read through the [Contribution Guidelines](https://github.com/NGO-DB/ndb-core/wiki/Contribution-Guidelines) if you want to contribute code.

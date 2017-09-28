@@ -64,7 +64,7 @@ describe('PouchDatabase tests', () => {
     }
   });
 
-  it('fails to get by not existing id', function (done) {
+  it('fails to get by not existing entityId', function (done) {
     pouchDatabase.get('some_id').then(
       function () {
         expect(true).toBe(false, 'retrieved object despite get on non-existing _id');
