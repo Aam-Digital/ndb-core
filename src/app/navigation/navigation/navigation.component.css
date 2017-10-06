@@ -15,7 +15,6 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
 .divider {
   background-color: #e5e5e5;

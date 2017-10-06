@@ -15,25 +15,19 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { NavigationComponent } from './navigation/navigation.component';
-import { SessionModule } from '../session/session.module';
-import { RouterModule } from '@angular/router';
-import { NavigationItemsService } from './navigation-items.service';
-import {MdListModule} from "@angular/material";
+import { Component, OnInit } from '@angular/core';
 
-
-@NgModule({
-  imports: [
-    CommonModule,
-    SessionModule,
-    RouterModule,
-    MdListModule
-  ],
-  declarations: [NavigationComponent],
-  exports: [NavigationComponent],
-  providers: [NavigationItemsService]
+@Component({
+  selector: 'app-header',
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.css']
 })
-export class NavigationModule {
+export class HeaderComponent implements OnInit {
+
+  constructor() {
+  }
+
+  ngOnInit() {
+  }
+
 }

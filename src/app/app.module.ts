@@ -34,7 +34,7 @@ import { SyncStatusModule } from './sync-status/sync-status.module';
 import { NavigationModule } from './navigation/navigation.module';
 import { LatestChangesModule } from './latest-changes/latest-changes.module';
 import { DashboardModule } from './dashboard/dashboard.module';
-import {MatListModule, MdListModule,} from '@angular/material';
+import {MatListModule, MatSidenavModule, MatMenuModule} from '@angular/material';
 
 
 @NgModule({
@@ -58,7 +58,8 @@ import {MatListModule, MdListModule,} from '@angular/material';
     UiModule,
     LatestChangesModule,
     MatListModule,
-    MdListModule
+    MatSidenavModule,
+    MatMenuModule
     // UserModule is lazy loaded
   ],
   providers: [],
