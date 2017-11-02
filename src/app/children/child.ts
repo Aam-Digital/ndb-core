@@ -18,6 +18,7 @@
 import { Entity } from '../entity/entity';
 
 export class Child extends Entity {
+
   name: String;
   pn: Number; // project number
   religion: String;
@@ -36,7 +37,24 @@ export class Child extends Entity {
       visit: String;
       villageAddress: String;
     }
-  };
+  }
+
+  /*constructor(name: String, pn: Number, religion: String, gender: Boolean, dateOfBirth: string, motherTongue: String, admission: Date, placeOfBirth: String,
+  center: String, birthCertificate: String){
+    this.name=name;
+    this.pn=pn;
+    this.religion= religion;
+    this.gender=gender;
+    this.dateOfBirth=dateOfBirth;
+    this.motherTongue=motherTongue;
+    this.admission=Date;
+    this.placeOfBirth=placeOfBirth;
+    this.center=center;
+    this.birthCertificate=birthCertificate;
+  }
+
+   Not sure if constructor is needed or if Setter-Methods make more sense.
+  */
 
   getPrefix(): string {
     return 'child:';
@@ -51,5 +69,27 @@ export class Child extends Entity {
                 }
       return null;
   }
+
+  setName(name: String){
+    this.name=name;
+  }
+  setPN(pn: Number){
+    this.pn=pn;
+  }
+
+  setReligion(religion: String){
+    this.religion=religion;
+  }
+
+  setGender(gender: Boolean){
+    this.gender=gender;
+  }
+
+  setPoB(pob: String){ //set Place of Birth
+    this.placeOfBirth=pob;
+  }
+
+  setDoB(dob: string){
+    this.dateOfBirth=dob;
+  }
 }
-  

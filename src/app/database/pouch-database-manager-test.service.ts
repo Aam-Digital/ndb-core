@@ -21,6 +21,9 @@ import { User } from '../user/user';
 import { PouchDatabase } from './pouch-database';
 import * as PouchDB from 'pouchdb';
 import { Database } from './database';
+import {Child} from '../children/child';
+import {School} from '../school/school';
+import {Guardian} from '../guardians/guardian';
 import { isNullOrUndefined } from 'util';
 
 @Injectable()
@@ -55,6 +58,26 @@ export class PouchDatabaseManagerTestService extends DatabaseManagerService {
     demoUser.name = 'demo';
     demoUser.setNewPassword('pass');
 
+    const demoChild1 = new Child('child');
+    demoChild1.setName("Fabian Kneissl");
+    demoChild1.setReligion("katholisch");
+    demoChild1.setPN(3);
+    demoChild1.setPoB("Stuttgart");
+    demoChild1.setGender(true);
+    demoChild1.setDoB("30.12.1995");
+
+    const demoChild2 = new Child('child');
+    demoChild1.setName("Jonas Mügge");
+    demoChild1.setReligion("kA");
+    demoChild1.setPN(4);
+    demoChild1.setPoB("Paderborn");
+    demoChild1.setGender(true);
+    demoChild1.setDoB("01.01.2000");
+
+    const demoSchool = new School("KIT", "German");
+    const demoGuardian = new Guardian ("Max Mustermann", "Father", "01.01.1995", "+49176444110101", "No Remarks");
+
+    
     this._pouchDatabase.get(demoUser.getId()).catch(() => this._pouchDatabase.put(demoUser));
   }
 }
