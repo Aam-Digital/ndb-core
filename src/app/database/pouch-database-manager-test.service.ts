@@ -21,10 +21,34 @@ import { User } from '../user/user';
 import { PouchDatabase } from './pouch-database';
 import * as PouchDB from 'pouchdb';
 import { Database } from './database';
+import { Entity } from '../entity/entity';
 
 declare const require: any;
 PouchDB.plugin(require('pouchdb-authentication'));
 PouchDB.plugin(require('relational-pouch'));
+
+
+export class Child extends Entity {
+
+  public name: String;
+  public school: School;
+
+  constructor(id: string, name: String, school: School) {
+    super(id);
+    this.name = name;
+  }
+}
+
+export class School extends Entity {
+  public name: String;
+  public children: Child[];
+
+  constructor(id: string, name: String) {
+    super(id);
+    this.name = name;
+  }
+}
+
 
 @Injectable()
 export class PouchDatabaseManagerTestService extends DatabaseManagerService {
@@ -65,7 +89,22 @@ export class PouchDatabaseManagerTestService extends DatabaseManagerService {
     const demoUser = new User('demo');
     demoUser.name = 'demo';
     demoUser.setNewPassword('pass');
+
+    this._pouchDB.rel.save(demoUser);
+
     this._pouchDatabase.put(demoUser);
     //this._pouchDatabase.get(demoUser.getId()).catch(() => );
+
+    const demoSchool = new School(1, "Some School");
+    const demoChild1 = new Child(1, "child1", demoSchool);
+
+    this._pouchDatabase.put(demoSchool);
+    this._pouchDatabase.put(demoChild1);
+
+    // TODO put: ids have to be integers, don't need a prefix, relational-pouch will take care of it
+
+    // TODO load: will return a list with related objects, need to find out the type, parse it and add it to the original object manually
+    // TODO load alternative: create nested json objects manually by parsing the ids and replacing them with the corresponding json object
+
   }
 }
