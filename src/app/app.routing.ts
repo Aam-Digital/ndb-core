@@ -15,15 +15,19 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { LoggedInGuard } from './session/logged-in.guard';
 import { ModuleWithProviders } from '@angular/core';
 import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
+import { ChildDetailsComponent} from './children/child-details/child-details.component';
+import {ChildListComponent} from './children/child-list/child-list.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent },
-  { path: 'user', loadChildren: 'app/user/user.module#UserModule', canActivate: [LoggedInGuard] }
+  { path: 'user', loadChildren: 'app/user/user.module#UserModule', canActivate: [LoggedInGuard] },
+  { path: 'child', component: ChildDetailsComponent },
+  {path: 'child-list', component: ChildListComponent}
 ];
 
 export const routing: ModuleWithProviders = RouterModule.forRoot(routes);

@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { UserAccountComponent } from './user-account/user-account.component';
 import { ModuleWithProviders } from '@angular/core';
 

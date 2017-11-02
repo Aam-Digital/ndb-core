@@ -15,20 +15,18 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { TestBed } from '@angular/core/testing';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ChildDetailsComponent } from './child-details/child-details.component';
+import {ChildListComponent} from './child-list/child-list.component';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
 
-import { LoggedInGuard } from './logged-in.guard';
 
-describe('LoggedInGuard', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [LoggedInGuard]
-    });
-  });
-
-  /* TODO fix test case
-   it('should ...', inject([LoggedInGuard], (guard: LoggedInGuard) => {
-   expect(guard).toBeTruthy();
-   }));
-   */
-});
+@NgModule({
+  imports: [
+    CommonModule,
+    Ng2SmartTableModule
+  ],
+  declarations: [ChildDetailsComponent, ChildListComponent]
+})
+export class ChildrenModule { }

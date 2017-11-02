@@ -25,9 +25,9 @@ describe('LatestChangesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LatestChangesComponent ]
+      declarations: [LatestChangesComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

@@ -26,18 +26,27 @@ import { Entity } from './entity';
 @Injectable()
 export class EntityMapperService {
 
+  private static createDatabaseIdByEntity<T extends Entity>(entity: T): string {
+    return EntityMapperService.createDatabaseId(entity.getType(), entity.getId());
+  }
+
+  private static createDatabaseId(type: string, id: string): string {
+    return type + ':' + id;
+  }
+
   constructor(private _db: Database) {
   }
 
-
   /**
-   * Loads an Entity from the database into the given resultEntity instance.
-   * @param resultEntity An (empty) instance of an Entity class with its ID set to the one to be searched.
-   *          (This is necessary because TypeScript generic types are not available at runtime.)
+   * Loads an Entity from the database with the given id.
+   *
+   * @param entityType a class that implements <code>Entity</code>.
+   * @param id the id of the entity to load.
    * @returns A Promise containing the resultEntity filled with its data.
    */
-  public load<T extends Entity>(resultEntity: T): Promise<T> {
-    return this._db.get(resultEntity.getId()).then(
+  public load<T extends Entity>(entityType: { new(id: string): T; }, id: string): Promise<T> {
+    const resultEntity = new entityType('');
+    return this._db.get(EntityMapperService.createDatabaseId(resultEntity.getType(), id)).then(
       function (result: any) {
         Object.assign(resultEntity, result);
         return resultEntity;
@@ -48,10 +57,31 @@ export class EntityMapperService {
     );
   }
 
+  /**
+   * Loads all entities from the database of the given type (for example a list of entities of the type User).
+   *
+   * @param entityType a class that implements <code>Entity</code>.
+   * @returns A Promise containing an array with the loaded entities.
+   */
+  public loadType<T extends Entity>(entityType: { new(id: string): T; }): Promise<T[]> {
+    let resultEntity = new entityType('');
+    return this._db.getAll(resultEntity.getType()).then(
+      function (result: any) {
+        const resultArray: Array<T> = [];
+        for (const current of result.rows) {
+          resultArray.push(Object.assign(resultEntity, current.doc));
+          resultEntity = new entityType('');
+        }
+        return resultArray;
+      },
+      function (error: any) {
+        throw error;
+      }
+    )
+  }
+
   public save<T extends Entity>(entity: T): Promise<any> {
-    // TODO: how to save 'references' of this Entity to other Entities?
-    //      e.g. a 'Child' may have 'FamilyMember's who are Entity instances of their own
-    //      and should be saved separately in the database
+    entity['_id'] = EntityMapperService.createDatabaseIdByEntity(entity);
     return this._db.put(entity);
   }
 

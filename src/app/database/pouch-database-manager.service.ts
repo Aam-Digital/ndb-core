@@ -85,7 +85,7 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
 
     const self = this;
     // do NOT use liveSync because then the promise is never resolved
-    // TODO: retrigger sync continuously
+    // we need to trigger the live sync after the sync has completed once
     return this._localDatabase.sync(this._remoteDatabase).then(
       function () {
         self.onSyncStatusChanged.emit(DatabaseSyncStatus.completed);

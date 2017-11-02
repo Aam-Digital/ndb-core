@@ -21,7 +21,6 @@ import { DatabaseManagerService } from '../database/database-manager.service';
 import { EntityMapperService } from '../entity/entity-mapper.service';
 import { AlertService } from '../alerts/alert.service';
 import { User } from '../user/user';
-import { environment } from '../../environments/environment';
 
 @Injectable()
 export class SessionService {
@@ -71,7 +70,7 @@ export class SessionService {
 
     const self = this;
 
-    return this._entityMapper.load<User>(new User(username))
+    return this._entityMapper.load<User>(User, username)
       .then(function (userEntity) {
         if (userEntity.checkPassword(password)) {
           self.onLocalLoginSuccessful(userEntity);

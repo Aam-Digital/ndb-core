@@ -15,20 +15,28 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LoggedInGuard } from './logged-in.guard';
+import { ChildDetailsComponent } from './child-details.component';
 
-describe('LoggedInGuard', () => {
-  beforeEach(() => {
+describe('ChildDetailsComponent', () => {
+  let component: ChildDetailsComponent;
+  let fixture: ComponentFixture<ChildDetailsComponent>;
+
+  beforeEach(async(() => {
     TestBed.configureTestingModule({
-      providers: [LoggedInGuard]
-    });
+      declarations: [ ChildDetailsComponent ]
+    })
+    .compileComponents();
+  }));
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(ChildDetailsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
-  /* TODO fix test case
-   it('should ...', inject([LoggedInGuard], (guard: LoggedInGuard) => {
-   expect(guard).toBeTruthy();
-   }));
-   */
+  it('should be created', () => {
+    expect(component).toBeTruthy();
+  });
 });
