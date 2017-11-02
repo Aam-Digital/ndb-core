@@ -21,6 +21,34 @@ import { Entity } from './entity';
 import * as PouchDB from 'pouchdb';
 
 describe('EntityMapperService', () => {
+/* TODO test cases
+
+  class TestEntityHasMany extends Entity {
+
+    private _manyEntities: TestEntityBelongsTo[];
+
+    get manyEntities(): TestEntityBelongsTo[] {
+      return this._manyEntities;
+    }
+
+    set manyEntities(value: TestEntityBelongsTo[]) {
+      this._manyEntities = value;
+    }
+  }
+
+  class TestEntityBelongsTo extends Entity {
+
+    private _belongsToEntity: TestEntityHasMany;
+
+    get belongsToEntity(): TestEntityHasMany {
+      return this._belongsToEntity;
+    }
+
+    set belongsToEntity(value: TestEntityHasMany) {
+      this._belongsToEntity = value;
+    }
+  }
+
   let entityMapper: EntityMapperService;
   let testDatabase: PouchDatabase;
   let pouch: any;
@@ -41,14 +69,42 @@ describe('EntityMapperService', () => {
 
   beforeEach((done) => {
     pouch = new PouchDB('unit-test');
-    pouch.put(existingEntity).then(function () {
-      pouch.put(existingEntity2).then(function () {
-        testDatabase = new PouchDatabase(pouch);
-        entityMapper = new EntityMapperService(testDatabase);
+    pouch.setSchema([
+      {
+        singular: 'Entity',
+        plural: 'Entities'
+      },
+      {
+        singular: 'TestEntityHasMany',
+        plural: 'TestEntitiesHasMany',
+        relations: {_manyEntities: {hasMany: 'TestEntityBelongsTo'}}
+      },
+      {
+        singular: 'TestEntityBelongsTo',
+        plural: 'TestEntitiesBelongsTo',
+        relations: {_belongsToEntity: {belongsTo: 'TestEntityHasMany'}}
+      }
+    ]);
 
-        done();
-      }).catch(err => console.log('Failed to insert second entity: ' + err));
-    }).catch(err => console.log('Failed to insert default entity: ' + err));
+    testDatabase = new PouchDatabase(pouch);
+    entityMapper = new EntityMapperService(testDatabase);
+
+    /*
+        pouch.put(existingEntity).then(function () {
+          pouch.put(existingEntity2).then(function () {
+            testDatabase = new PouchDatabase(pouch);
+            entityMapper = new EntityMapperService(testDatabase);
+
+            done();
+          }).catch(err => console.log('Failed to insert second entity: ' + err));
+        }).catch(err => console.log('Failed to insert default entity: ' + err));
+      */
+
+
+
+
+
+/*
   });
 
   afterEach((done) => {
@@ -58,127 +114,151 @@ describe('EntityMapperService', () => {
       });
   });
 
-  it('loads existing entity', function (done) {
-    entityMapper.load<Entity>(Entity, existingEntity.entityId).then(
-      function (loadedEntity) {
-        expect(loadedEntity.getId()).toBe(existingEntity.entityId);
-        expect(loadedEntity.getType()).toBe(existingEntity.type);
-        expect((EntityMapperService as any).createDatabaseId(loadedEntity.getType(), loadedEntity.getId()))
-          .toBe(existingEntity._id);
+  it('save and load entity', (done) => {
+
+    const testEntity = new Entity('test');
+    entityMapper.save(testEntity).then((res) => {
+      console.log(res);
+      entityMapper.load(Entity, 'test').then((res) => {
+        console.log(res);
         done();
-      }
-    ).catch(function (err) {
-      console.log('Failed to load entity');
-      console.log(err);
-      fail();
+      });
     });
   });
 
-  it('load multiple entities', function (done) {
-    entityMapper.loadType<Entity>(Entity).then(
-      function (loadedEntities) {
-        expect(loadedEntities.length).toBe(2);
+  */
 
-        const entity1 = loadedEntities[0];
-        const entity2 = loadedEntities[1];
 
-        expect(entity1.getId()).toBe(existingEntity.entityId);
-        expect(entity1.getType()).toBe(existingEntity.type);
-        expect(entity1['_id']).toBe(existingEntity._id);
-        expect(entity1 instanceof Entity).toBe(true);
 
-        expect(entity2.getId()).toBe(existingEntity2.entityId);
-        expect(entity2.getType()).toBe(existingEntity2.type);
-        expect(entity2['_id']).toBe(existingEntity2._id);
-        expect(entity2 instanceof Entity).toBe(true);
-        done();
-      }
-    )
-  });
 
-  it('rejects promise when loading nonexistent entity', function (done) {
-    entityMapper.load<Entity>(Entity, 'nonexistent_id').catch(
-      function () {
-        done();
-      }
-    );
-  });
 
-  it('returns empty array when loading non existing entity type ', function (done) {
-    class TestEntity extends Entity {
-    }
-    entityMapper.loadType<TestEntity>(TestEntity).then((result) => {
-      expect(result.length).toBe(0);
-      done()
+
+
+
+  /*
+    it('loads existing entity', function (done) {
+      entityMapper.load<Entity>(Entity, existingEntity.entityId).then(
+        function (loadedEntity) {
+          expect(loadedEntity.getId()).toBe(existingEntity.entityId);
+          expect(loadedEntity.getType()).toBe(existingEntity.type);
+          expect((EntityMapperService as any).createDatabaseId(loadedEntity.getType(), loadedEntity.getId()))
+            .toBe(existingEntity._id);
+          done();
+        }
+      ).catch(function (err) {
+        console.log('Failed to load entity');
+        console.log(err);
+        fail();
+      });
     });
-  });
 
-  it('saves new entity and loads it', function (done) {
-    const entity = new Entity('test1');
-    entityMapper.save<Entity>(entity).then(
-      function () {
-        entityMapper.load<Entity>(Entity, entity.getId()).then(
-          function (loadedEntity) {
-            expect(loadedEntity.getId()).toBe(entity.getId());
-            expect(loadedEntity.getType()).toBe(entity.getType());
-            expect(loadedEntity['_id']).toBe(entity['_id']);
-            done();
-          }
-        );
+    it('load multiple entities', function (done) {
+      entityMapper.loadType<Entity>(Entity).then(
+        function (loadedEntities) {
+          expect(loadedEntities.length).toBe(2);
+
+          const entity1 = loadedEntities[0];
+          const entity2 = loadedEntities[1];
+
+          expect(entity1.getId()).toBe(existingEntity.entityId);
+          expect(entity1.getType()).toBe(existingEntity.type);
+          expect(entity1['_id']).toBe(existingEntity._id);
+          expect(entity1 instanceof Entity).toBe(true);
+
+          expect(entity2.getId()).toBe(existingEntity2.entityId);
+          expect(entity2.getType()).toBe(existingEntity2.type);
+          expect(entity2['_id']).toBe(existingEntity2._id);
+          expect(entity2 instanceof Entity).toBe(true);
+          done();
+        }
+      )
+    });
+
+    it('rejects promise when loading nonexistent entity', function (done) {
+      entityMapper.load<Entity>(Entity, 'nonexistent_id').catch(
+        function () {
+          done();
+        }
+      );
+    });
+
+    it('returns empty array when loading non existing entity type ', function (done) {
+      class TestEntity extends Entity {
       }
-    );
-  });
 
-  it('rejects promise when saving new entity with existing entityId', function (done) {
-    const duplicateEntity = new Entity(existingEntity.entityId);
-    entityMapper.save<Entity>(duplicateEntity).catch(
-      function (error) {
-        expect(error).toBeDefined();
-        done();
-      }
-    );
-  });
+      entityMapper.loadType<TestEntity>(TestEntity).then((result) => {
+        expect(result.length).toBe(0);
+        done()
+      });
+    });
 
-  it('saves new version of existing entity', function (done) {
-    entityMapper.load<Entity>(Entity, existingEntity.entityId).then(
-      function (loadedEntity) {
-        expect(loadedEntity.getId()).toBe(existingEntity.entityId);
+    it('saves new entity and loads it', function (done) {
+      const entity = new Entity('test1');
+      entityMapper.save<Entity>(entity).then(
+        function () {
+          entityMapper.load<Entity>(Entity, entity.getId()).then(
+            function (loadedEntity) {
+              expect(loadedEntity.getId()).toBe(entity.getId());
+              expect(loadedEntity.getType()).toBe(entity.getType());
+              expect(loadedEntity['_id']).toBe(entity['_id']);
+              done();
+            }
+          );
+        }
+      );
+    });
 
-        entityMapper
-          .save<Entity>(loadedEntity)
-          .then(() => done())
-          .catch((err) => {
-            console.log(err);
-            fail()
-          });
-      }
-    );
-  });
+    it('rejects promise when saving new entity with existing entityId', function (done) {
+      const duplicateEntity = new Entity(existingEntity.entityId);
+      entityMapper.save<Entity>(duplicateEntity).catch(
+        function (error) {
+          expect(error).toBeDefined();
+          done();
+        }
+      );
+    });
 
-  it('removes existing entity', function (done) {
-    // entity needs to be an entity loaded from the database in order to remove it
-    entityMapper.load<Entity>(Entity, existingEntity.entityId).then(
-      function (loadedEntity) {
-        entityMapper.remove<Entity>(loadedEntity).then(
-          function () {
-            entityMapper.load<Entity>(Entity, existingEntity.entityId).catch(
-              function () {
-                done();
-              }
-            );
-          }
-        );
-      }
-    );
-  });
+    it('saves new version of existing entity', function (done) {
+      entityMapper.load<Entity>(Entity, existingEntity.entityId).then(
+        function (loadedEntity) {
+          expect(loadedEntity.getId()).toBe(existingEntity.entityId);
 
-  it('rejects promise removing nonexistent entity', function (done) {
-    const nonexistingEntity = new Entity('nonexistent-entity');
-    entityMapper.remove<Entity>(nonexistingEntity).catch(
-      function (error) {
-        expect(error).toBeDefined();
-        done();
-      }
-    );
-  });
+          entityMapper
+            .save<Entity>(loadedEntity)
+            .then(() => done())
+            .catch((err) => {
+              console.log(err);
+              fail()
+            });
+        }
+      );
+    });
+
+    it('removes existing entity', function (done) {
+      // entity needs to be an entity loaded from the database in order to remove it
+      entityMapper.load<Entity>(Entity, existingEntity.entityId).then(
+        function (loadedEntity) {
+          entityMapper.remove<Entity>(loadedEntity).then(
+            function () {
+              entityMapper.load<Entity>(Entity, existingEntity.entityId).catch(
+                function () {
+                  done();
+                }
+              );
+            }
+          );
+        }
+      );
+    });
+
+    it('rejects promise removing nonexistent entity', function (done) {
+      const nonexistingEntity = new Entity('nonexistent-entity');
+      entityMapper.remove<Entity>(nonexistingEntity).catch(
+        function (error) {
+          expect(error).toBeDefined();
+          done();
+        }
+      );
+    });
+    */
 });

@@ -18,6 +18,7 @@
 import { Injectable } from '@angular/core';
 import { Database } from '../database/database';
 import { Entity } from './entity';
+import { plainToClass } from 'class-transformer';
 
 /**
  * The default generic DataMapper for Entity and any subclass.
@@ -45,11 +46,13 @@ export class EntityMapperService {
    * @returns A Promise containing the resultEntity filled with its data.
    */
   public load<T extends Entity>(entityType: { new(id: string): T; }, id: string): Promise<T> {
-    const resultEntity = new entityType('');
-    return this._db.get(EntityMapperService.createDatabaseId(resultEntity.getType(), id)).then(
+    return this._db.get(new entityType('').getType(), id).then(
       function (result: any) {
-        Object.assign(resultEntity, result);
-        return resultEntity;
+        const resultObject = plainToClass(entityType, result);
+        console.log("Converted result: ");
+        console.log(resultObject);
+        console.log(JSON.stringify(resultObject));
+        return resultObject;
       },
       function (error: any) {
         throw error;
@@ -81,7 +84,6 @@ export class EntityMapperService {
   }
 
   public save<T extends Entity>(entity: T): Promise<any> {
-    entity['_id'] = EntityMapperService.createDatabaseIdByEntity(entity);
     return this._db.put(entity);
   }
 

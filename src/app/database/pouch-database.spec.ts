@@ -17,13 +17,57 @@
 
 import { PouchDatabase } from './pouch-database';
 import * as PouchDB from 'pouchdb';
+import { Entity } from '../entity/entity';
 
 describe('PouchDatabase tests', () => {
+  /*
+    class TestEntityHasMany extends Entity {
+
+      private _manyEntities: TestEntityBelongsTo[];
+
+      get manyEntities(): TestEntityBelongsTo[] {
+        return this._manyEntities;
+      }
+
+      set manyEntities(value: TestEntityBelongsTo[]) {
+        this._manyEntities = value;
+      }
+    }
+
+    class TestEntityBelongsTo extends Entity {
+
+      private _belongsToEntity: TestEntityHasMany;
+
+      get belongsToEntity(): TestEntityHasMany {
+        return this._belongsToEntity;
+      }
+
+      set belongsToEntity(value: TestEntityHasMany) {
+        this._belongsToEntity = value;
+      }
+    }*/
+
   let pouchDatabase: PouchDatabase;
   let pouch: any;
 
   beforeEach(() => {
-    pouch = new PouchDB('unit-test-db');
+    pouch = new PouchDB('unit-test');
+    pouch.setSchema([
+      {
+        singular: 'Entity',
+        plural: 'Entities'
+      },
+      {
+        singular: 'TestEntityHasMany',
+        plural: 'TestEntitiesHasMany',
+        relations: {_manyEntities: {hasMany: 'TestEntityBelongsTo'}}
+      },
+      {
+        singular: 'TestEntityBelongsTo',
+        plural: 'TestEntitiesBelongsTo',
+        relations: {_belongsToEntity: {belongsTo: 'TestEntityHasMany'}}
+      }
+    ]);
     pouchDatabase = new PouchDatabase(pouch);
   });
 
@@ -34,6 +78,13 @@ describe('PouchDatabase tests', () => {
       });
   });
 
+  it('add object to database', function (done) {
+    pouchDatabase.put(new Entity("testentity")).then(
+      done(),
+    ).catch(err => console.log(err));
+  });
+
+  /*
   it('get object by _id after put into database', function (done) {
     const id = 'test_id';
     const name = 'test';
@@ -74,6 +125,5 @@ describe('PouchDatabase tests', () => {
         done();
       }
     );
-  });
-
+  });*/
 });
