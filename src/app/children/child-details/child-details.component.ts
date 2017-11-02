@@ -18,7 +18,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Child } from '../child';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
-import { Ng2SmartTableModule } from 'ng2-smart-table';
+
 
 @Component({
   selector: 'app-child-details',

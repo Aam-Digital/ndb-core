@@ -42,19 +42,19 @@
                <!-- <input type="file" class="form-foto-edit" ng-if="photoEditLink"
                       onchange="angular.element(this).scope().changePhoto(this);"/> -->
             </div>
-        
+
           <div class="form-group">
             <label>Project Status</label>
             <input class="form-control" ng-model="child.currentStatus.projectStatus">
           </div>
-          
+
             <div class="form-group">
                 <label>Responsible Social Worker</label>
                 <select class="form-control" ng-model="child.currentStatus.socialworker">
                     <option *ngFor="let sw of socialworkers">{{ sw.name }}</option>
                 </select>
             </div>
-        
+
         </div>
 
         <div class="col-lg-10">
@@ -79,7 +79,7 @@
                 <label>Age</label>
                 <input class="form-control" value="{{ child.age() }}"
                        uib-tooltip="Age is automatically calculated based on the date of birth."
-                       readonly> 
+                       readonly>
               </div>
             </div>
           </div>
@@ -96,16 +96,16 @@
 
               <div class="form-group">
                 <label>Date of Birth</label>
-                
+
                   <p class="input-group">
-                      <input type="text" class="form-control" 
+                      <input type="text" class="form-control"
                              ng-model="child.dateOfBirth" is-open="dateDoB.opened"/> <!-- //uib-datepicker-popup="{{format}}" -->
                       <span class="input-group-btn">
                           <button type="button" class="btn btn-default" ng-click="dateDoB.opened=true"><i
                                   class="fa fa-calendar"></i></button>
                        </span>
                   </p>
-              
+
               </div>
 
               <div class="form-group">
@@ -117,7 +117,7 @@
             <div class="col-lg-3">
               <div class="form-group">
                 <label>Admission Date</label>
-                
+
                   <p class="input-group">
                       <input type="text" class="form-control"
                              ng-model="child.admission" is-open="dateAdmission.opened"/> <!--uib-datepicker-popup="{{format}}"-->
@@ -127,7 +127,7 @@
                                   class="fa fa-calendar"></i></button>
                        </span>
                   </p>
-              
+
               </div>
 
               <div class="form-group">
@@ -204,7 +204,7 @@
     <!-- /.panel Address -->
   </div>
 
-  
+
 
       <div class="col-lg-6">
           <div class="panel panel-default">
@@ -220,7 +220,7 @@
               </div>
               <!-- /.panel-heading -->
               <div class="panel-body">
-                  <ng2-smart-table [settings]="FamiliyTableSettings" [source]="data"></ng2-smart-table>
+                <!--  <ng2-smart-table [settings]="FamiliyTableSettings" [source]="data"></ng2-smart-table> -->
               </div>
               <!-- /.panel-body -->
           </div>
@@ -242,7 +242,7 @@
       </div>
       <!-- /.panel-heading -->
       <div class="panel-body">
-        <ng2-smart-table [settings]="SchoolTableSettings" [source]=""></ng2-smart-table>
+       <!-- <ng2-smart-table [settings]="SchoolTableSettings" [source]=""></ng2-smart-table> -->
       </div>
       <!-- /.panel-body School -->
   </div>
@@ -254,4 +254,4 @@
           <button type="button" class="btn btn-success" ng-click="save();">Save</button>
           <button type="button" class="btn btn-warning" ng-click="cancel()">Cancel</button>
       </div>
-  </div> 
+  </div>

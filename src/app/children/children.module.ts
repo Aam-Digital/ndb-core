@@ -19,13 +19,11 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChildDetailsComponent } from './child-details/child-details.component';
 import {ChildListComponent} from './child-list/child-list.component';
-import { Ng2SmartTableModule } from 'ng2-smart-table';
 
 
 @NgModule({
   imports: [
-    CommonModule,
-    Ng2SmartTableModule
+    CommonModule
   ],
   declarations: [ChildDetailsComponent, ChildListComponent]
 })

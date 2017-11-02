@@ -33,8 +33,7 @@ import { SyncStatusModule } from './sync-status/sync-status.module';
 import { NavigationModule } from './navigation/navigation.module';
 import { LatestChangesModule } from './latest-changes/latest-changes.module';
 import { DashboardModule } from './dashboard/dashboard.module';
-import { ChildrenModule } from './children/children.module';
-import { Ng2TableModule } from 'ng2-table/ng2-table';
+import { ChildrenModule} from "./children/children.module";
 
 
 @NgModule({
@@ -56,8 +55,7 @@ import { Ng2TableModule } from 'ng2-table/ng2-table';
     NavigationModule,
     UiModule,
     LatestChangesModule,
-    ChildrenModule,
-    Ng2TableModule
+    ChildrenModule
     // UserModule is lazy loaded
   ],
   providers: [],
