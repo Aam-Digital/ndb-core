@@ -15,20 +15,28 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { databaseServiceProvider } from './database-manager.service';
-import { databaseManagerServiceProvider } from './database-manager.service.provider';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-@NgModule({
-  imports: [
-    CommonModule
-  ],
-  declarations: [],
-  providers: [
-    databaseManagerServiceProvider,
-    databaseServiceProvider,
-  ]
-})
-export class DatabaseModule {
-}
+import { ChildDetailsComponent } from './child-details.component';
+
+describe('ChildDetailsComponent', () => {
+  let component: ChildDetailsComponent;
+  let fixture: ComponentFixture<ChildDetailsComponent>;
+
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [ ChildDetailsComponent ]
+    })
+    .compileComponents();
+  }));
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(ChildDetailsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should be created', () => {
+    expect(component).toBeTruthy();
+  });
+});

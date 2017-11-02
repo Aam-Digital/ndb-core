@@ -17,18 +17,16 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { databaseServiceProvider } from './database-manager.service';
-import { databaseManagerServiceProvider } from './database-manager.service.provider';
+import { ChildDetailsComponent } from './child-details/child-details.component';
+import {ChildListComponent} from './child-list/child-list.component';
+//import { Ng2SmartTableModule } from 'ng2-smart-table';
+
 
 @NgModule({
   imports: [
-    CommonModule
+    CommonModule,
+    //Ng2SmartTableModule
   ],
-  declarations: [],
-  providers: [
-    databaseManagerServiceProvider,
-    databaseServiceProvider,
-  ]
+  declarations: [ChildDetailsComponent, ChildListComponent]
 })
-export class DatabaseModule {
-}
+export class ChildrenModule { }
