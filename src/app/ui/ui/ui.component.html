@@ -15,17 +15,22 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<div id="wrapper">
+<app-header>
+</app-header>
 
+<md-sidenav-container>
+  <!--
   <div class="navbar-default sidebar sidebar-left" role="navigation">
     <div class="navbar-header">
       <a class="navbar-brand" [routerLink]="['']">{{title}}</a>
     </div>
 
-    <app-navigation *ngIf="isLoggedIn()" class="sidebar-menu"></app-navigation>
-
-    <!-- TODO: create and include the user-menu at the bottom of sidebar -->
+    <!-- TODO: create and include the user-menu at the bottom of sidebar --
   </div>
+ -->
+  <md-sidenav *ngIf="isLoggedIn()" #sidenav mode="side" opened="true" disableClose="true" class="sidebar-nav-neu">
+    <app-navigation></app-navigation>
+  </md-sidenav>
 
   <div id="page-wrapper">
     <div [style.visibility]="isLoggedIn() ? 'visible': 'collapse'">
@@ -38,5 +43,5 @@
 
   <app-sync-status></app-sync-status>
 
-  <app-footer></app-footer>
-</div>
+</md-sidenav-container>
+<app-footer></app-footer>

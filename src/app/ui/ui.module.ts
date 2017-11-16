@@ -21,11 +21,13 @@ import { CommonModule } from '@angular/common';
 import { AlertsModule } from '../alerts/alerts.module';
 import { UiComponent } from './ui/ui.component';
 import { FooterComponent } from './footer/footer.component';
+import { HeaderComponent } from './header/header.component';
 import { NavigationModule } from '../navigation/navigation.module';
 import { SessionModule } from '../session/session.module';
 import { SyncStatusModule } from '../sync-status/sync-status.module';
 import { RouterModule } from '@angular/router';
 import { LatestChangesModule } from '../latest-changes/latest-changes.module';
+import { MatSidenavModule } from '@angular/material';
 
 @NgModule({
   imports: [
@@ -35,9 +37,10 @@ import { LatestChangesModule } from '../latest-changes/latest-changes.module';
     NavigationModule,
     RouterModule,
     SessionModule,
-    SyncStatusModule
+    SyncStatusModule,
+    MatSidenavModule
   ],
-  declarations: [UiComponent, FooterComponent],
+  declarations: [UiComponent, FooterComponent, HeaderComponent],
   exports: [UiComponent]
 })
 export class UiModule {

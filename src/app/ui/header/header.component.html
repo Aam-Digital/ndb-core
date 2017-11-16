@@ -15,26 +15,8 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-    <!-- <a [routerLink]="item.routerLinkParameters" ><i class="fa fa-{{item.icon}} fa-fw"></i> {{item.label}}</a> -->
 
-    <mat-nav-list>
-      <mat-list-item *ngFor="let item of menu_main" >
-        <a [routerLink]="item.routerLinkParameters" ><i class="fa fa-{{item.icon}} fa-fw"></i> {{item.label}}</a>
-      </mat-list-item>
-      <md-divider></md-divider>
-      <mat-list-item>
-        <a [routerLink]="['/user']"><i class="fa fa-user fa-fw"></i> User Account</a>
-      </mat-list-item>
-      <md-divider></md-divider>
-      <mat-list-item>
-        <a [routerLink]="['/']" (click)="logout()"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
-      </mat-list-item>
-    </mat-nav-list>
-
-
-
-
-  <!--
-
-  -->
+  <div  style="background-color: orange; height: 100%">
+    <h3>HDB</h3>
+  </div>
 
