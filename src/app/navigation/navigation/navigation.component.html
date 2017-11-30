@@ -21,11 +21,11 @@
       <mat-list-item *ngFor="let item of menu_main" >
         <a [routerLink]="item.routerLinkParameters" ><i class="fa fa-{{item.icon}} fa-fw"></i> {{item.label}}</a>
       </mat-list-item>
-      <md-divider></md-divider>
+      <mat-divider></mat-divider>
       <mat-list-item>
         <a [routerLink]="['/user']"><i class="fa fa-user fa-fw"></i> User Account</a>
       </mat-list-item>
-      <md-divider></md-divider>
+      <mat-divider></mat-divider>
       <mat-list-item>
         <a [routerLink]="['/']" (click)="logout()"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
       </mat-list-item>
