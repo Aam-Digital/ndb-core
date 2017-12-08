@@ -16,7 +16,7 @@
  */
 
 import { BrowserModule } from '@angular/platform-browser';
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
@@ -34,8 +34,7 @@ import { SyncStatusModule } from './sync-status/sync-status.module';
 import { NavigationModule } from './navigation/navigation.module';
 import { LatestChangesModule } from './latest-changes/latest-changes.module';
 import { DashboardModule } from './dashboard/dashboard.module';
-import { ChildrenModule} from "./children/children.module";
-import {MatListModule, MatSidenavModule, MatMenuModule} from '@angular/material';
+import { MatListModule, MatMenuModule, MatSidenavModule } from '@angular/material';
 
 
 @NgModule({
@@ -58,7 +57,6 @@ import {MatListModule, MatSidenavModule, MatMenuModule} from '@angular/material'
     NavigationModule,
     UiModule,
     LatestChangesModule,
-    ChildrenModule,
     MatListModule,
     MatSidenavModule,
     MatMenuModule
