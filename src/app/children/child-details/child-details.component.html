@@ -170,7 +170,51 @@
   </div>
   <!-- /.panel-body -->
 </div>
-<!-- /.panel Basic Information-->
+<!-- /.panel Basic Information--
+<div class="panel panel-default">
+  <div class="panel-heading">
+    Basic Information
+  </div>
+  <mat-form-field color="blue" headerRowPlaceholder="Basics">
+    <mat-label>Name</mat-label>
+    <input matInput placeholder="Name">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput placeholder="Gender">
+  </mat-form-field>
+</div>
+-->
+<mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
+  <mat-expansion-panel-header color="grey">
+    <mat-panel-title>
+      Basic Information
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <!-- expansion panel content -->
+
+  <mat-form-field>
+    <mat-placeholder>
+      Status
+    </mat-placeholder>
+    <input matInput ng-model="child.currentStatus.projectStatus">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput placeholder="Input">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-select placeholder="social worker" ng.model="child.currentStatus.socialworker">
+      <mat-option *ngFor="let sw of socialworkers">{{ sw.name }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+
+  <mat-form-field>
+    <textarea matInput placeholder="Textarea"></textarea>
+  </mat-form-field>
+
+
+</mat-expansion-panel>
 
 <div class="row">
   <div class="col-lg-6">

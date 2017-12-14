@@ -36,6 +36,7 @@ import { LatestChangesModule } from './latest-changes/latest-changes.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ChildrenModule} from "./children/children.module";
 import {MatListModule, MatSidenavModule, MatMenuModule} from '@angular/material';
+import {MatFormFieldModule} from '@angular/material/form-field';
 
 
 @NgModule({
@@ -61,7 +62,8 @@ import {MatListModule, MatSidenavModule, MatMenuModule} from '@angular/material'
     ChildrenModule,
     MatListModule,
     MatSidenavModule,
-    MatMenuModule
+    MatMenuModule,
+    MatFormFieldModule
     // UserModule is lazy loaded
   ],
   providers: [],

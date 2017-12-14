@@ -20,6 +20,7 @@ import { Child } from '../child';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
 
 
+
 @Component({
   selector: 'app-child-details',
   templateUrl: './child-details.component.html',
