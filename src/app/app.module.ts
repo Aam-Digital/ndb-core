@@ -35,7 +35,7 @@ import { NavigationModule } from './navigation/navigation.module';
 import { LatestChangesModule } from './latest-changes/latest-changes.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { MatListModule, MatMenuModule, MatSidenavModule } from '@angular/material';
-
+import { SchoolsModule } from './schools/schools.module';
 
 @NgModule({
   declarations: [
@@ -59,7 +59,9 @@ import { MatListModule, MatMenuModule, MatSidenavModule } from '@angular/materia
     LatestChangesModule,
     MatListModule,
     MatSidenavModule,
-    MatMenuModule
+    MatMenuModule,
+
+    SchoolsModule
     // UserModule is lazy loaded
   ],
   providers: [],

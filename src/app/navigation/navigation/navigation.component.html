@@ -27,6 +27,10 @@
       </mat-list-item>
       <mat-divider></mat-divider>
       <mat-list-item>
+        <a [routerLink]="['/schools']"><i class="fa fa-schools fa-fw"></i> Schools</a>
+      </mat-list-item>
+      <mat-divider></mat-divider>
+      <mat-list-item>
         <a [routerLink]="['/']" (click)="logout()"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
       </mat-list-item>
     </mat-nav-list>
