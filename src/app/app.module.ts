@@ -34,7 +34,10 @@ import { SyncStatusModule } from './sync-status/sync-status.module';
 import { NavigationModule } from './navigation/navigation.module';
 import { LatestChangesModule } from './latest-changes/latest-changes.module';
 import { DashboardModule } from './dashboard/dashboard.module';
-import { MatListModule, MatMenuModule, MatSidenavModule } from '@angular/material';
+import {
+  MatListModule, MatMenuModule, MatSidenavModule, MatTableModule, MatFormFieldModule,
+  MatInputModule
+} from '@angular/material';
 import { SchoolsModule } from './schools/schools.module';
 
 @NgModule({
@@ -61,6 +64,10 @@ import { SchoolsModule } from './schools/schools.module';
     MatSidenavModule,
     MatMenuModule,
 
+    MatTableModule,
+    MatFormFieldModule,
+    MatInputModule,
+    //MatTableDataSource,
     SchoolsModule
     // UserModule is lazy loaded
   ],
