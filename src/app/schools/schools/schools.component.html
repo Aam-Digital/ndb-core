@@ -1,7 +1,3 @@
-<p>
-  schools works!
-</p>
-
 <div class="example-container mat-elevation-z8">
   <div class="example-header">
     <mat-form-field>
@@ -20,7 +16,7 @@
       <!-- Name Column -->
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+        <mat-cell *matCellDef="let element"><a> {{element.name}} </a></mat-cell>
       </ng-container>
 
       <!-- Weight Column -->
