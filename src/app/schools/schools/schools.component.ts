@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material';
+import {Component, AfterViewInit, ViewChild} from '@angular/core';
+import { MatTableDataSource, MatSort } from '@angular/material';
 
 @Component({
   selector: 'app-schools',
   templateUrl: './schools.component.html',
   styleUrls: ['./schools.component.css']
 })
-export class SchoolsComponent implements OnInit {
+export class SchoolsComponent implements AfterViewInit {
 
   displayedColumns = ['position', 'name', 'weight', 'symbol'];
   dataSource = new MatTableDataSource(ELEMENT_DATA);
@@ -15,12 +15,14 @@ export class SchoolsComponent implements OnInit {
     filterValue = filterValue.trim(); // Remove whitespace
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.dataSource.filter = filterValue;
-
-
   }
-  ngOnInit():void{
 
+  @ViewChild(MatSort) sort: MatSort;
+
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
   }
+
 }
 
 export interface Element {
