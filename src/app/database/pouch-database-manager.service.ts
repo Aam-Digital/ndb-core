@@ -17,14 +17,14 @@
 
 import { Injectable } from '@angular/core';
 import * as PouchDB from 'pouchdb';
+import * as PouchDBAuthentication from 'pouchdb-authentication';
 import { ConfigService } from '../config/config.service';
 import { DatabaseManagerService } from './database-manager.service';
 import { DatabaseSyncStatus } from './database-sync-status.enum';
 import { Database } from './database';
 import { PouchDatabase } from './pouch-database';
 
-declare var require: any;
-PouchDB.plugin(require('pouchdb-authentication'));
+PouchDB.plugin(PouchDBAuthentication);
 
 /**
  * DatabaseManagerService takes care of 'background' actions
