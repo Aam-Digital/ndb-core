@@ -1,5 +1,6 @@
 import {Component, AfterViewInit, ViewChild} from '@angular/core';
 import { MatTableDataSource, MatSort } from '@angular/material';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-schools',
@@ -8,13 +9,26 @@ import { MatTableDataSource, MatSort } from '@angular/material';
 })
 export class SchoolsComponent implements AfterViewInit {
 
-  displayedColumns = ['position', 'name', 'weight', 'symbol'];
+  displayedColumns = ['select', 'position', 'name', 'weight', 'symbol'];
   dataSource = new MatTableDataSource(ELEMENT_DATA);
+  selection = new SelectionModel<Element>(true, []);
 
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim(); // Remove whitespace
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.dataSource.filter = filterValue;
+  }
+
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  masterToggle() {
+    this.isAllSelected() ?
+      this.selection.clear() :
+      this.dataSource.data.forEach(row => this.selection.select(row));
   }
 
   @ViewChild(MatSort) sort: MatSort;
@@ -31,6 +45,10 @@ export interface Element {
   weight: number;
   symbol: string;
 }
+
+// data for angular material table module test
+// TODO implement realtime data loaded out of database
+
 
 const ELEMENT_DATA: Element[] = [
   {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},

@@ -36,7 +36,7 @@ import { LatestChangesModule } from './latest-changes/latest-changes.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import {
   MatListModule, MatMenuModule, MatSidenavModule, MatTableModule, MatFormFieldModule,
-  MatInputModule, MatSortModule
+  MatInputModule, MatSortModule, MatCheckboxModule
 } from '@angular/material';
 import { SchoolsModule } from './schools/schools.module';
 
@@ -69,7 +69,8 @@ import { SchoolsModule } from './schools/schools.module';
     MatFormFieldModule,
     MatInputModule,
     SchoolsModule,
-    MatSortModule
+    MatSortModule,
+    MatCheckboxModule
     // UserModule is lazy loaded
   ],
   providers: [],

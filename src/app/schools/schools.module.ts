@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SchoolsComponent } from './schools/schools.component';
-import {MatTableModule, MatFormFieldModule, MatInputModule, MatSortModule} from "@angular/material";
+import {MatTableModule, MatFormFieldModule, MatInputModule, MatSortModule, MatCheckboxModule} from "@angular/material";
 
 @NgModule({
   imports: [
@@ -9,7 +9,8 @@ import {MatTableModule, MatFormFieldModule, MatInputModule, MatSortModule} from 
     MatTableModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSortModule
+    MatSortModule,
+    MatCheckboxModule
   ],
   declarations: [SchoolsComponent],
   exports: [SchoolsComponent],
