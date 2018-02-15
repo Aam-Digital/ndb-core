@@ -7,6 +7,7 @@ import { Student } from "./students";
 export class SchoolsServices {
   schools: School[];
 
+  //Example dummie data, data schould be loaded from puchdb
   constructor() {
     this.schools = [
       new School(

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Router } from "@angular/router";
 
 import {School} from "../../schoolsShared/school";
 import { SchoolsServices } from "../../schoolsShared/schools.services";
@@ -16,9 +15,9 @@ export class SchoolDetailComponent implements OnInit {
   constructor(
     private ss: SchoolsServices,
     private route: ActivatedRoute,
-    private router: Router,
   ) { }
 
+  //Get school via id in url
   ngOnInit() {
     const params = this.route.snapshot.params;
     this.school = this.ss.getSingle(parseInt(params['id']));

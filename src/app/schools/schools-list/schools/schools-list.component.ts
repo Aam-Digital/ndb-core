@@ -1,7 +1,6 @@
-import {Component, OnInit, Output, EventEmitter} from '@angular/core';
+import {Component, OnInit, Output, EventEmitter, ViewChild} from '@angular/core';
 import { MatTableDataSource, MatSort } from '@angular/material';
 import { School } from "../../schoolsShared/school";
-import { Student } from "../../schoolsShared/students";
 import { SchoolsServices } from "../../schoolsShared/schools.services";
 import { Router } from "@angular/router";
 
@@ -26,13 +25,23 @@ export class SchoolsListComponent implements OnInit {
 
   ngOnInit() {
     this.dataSource.data = this.ss.getAll();
-    this.school = this.ss.getSingle(1);
   }
 
-  showDetails(id) {
+  @ViewChild(MatSort) sort: MatSort;        //Sorting
+
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+  }
+
+  applyFilter(filterValue: string) {        //Filtering
+    filterValue = filterValue.trim();
+    filterValue = filterValue.toLowerCase();
+    this.dataSource.filter = filterValue;
+  }
+
+  showDetails(id) {                         //Routing to schools details
     let route: string;
     route =this.router.url + '/' + id;
-    console.log(route);
     this.router.navigate([route]);
   }
 }
