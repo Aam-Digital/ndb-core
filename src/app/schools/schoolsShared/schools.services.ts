@@ -49,4 +49,8 @@ export class SchoolsServices {
   getAll() {
     return  this.schools;
   }
+
+  getSingle(id) {
+    return this.schools.find(school => school.id === id);
+  }
 }

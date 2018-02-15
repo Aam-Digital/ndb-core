@@ -38,11 +38,12 @@ import {
   MatListModule, MatMenuModule, MatSidenavModule, MatTableModule, MatFormFieldModule,
   MatInputModule, MatSortModule, MatCheckboxModule
 } from '@angular/material';
-import { SchoolsModule } from './schools/schools.module';
+import { SchoolsListModule } from './schools/schools-list/schools-list.module';
+import {SchoolDetailComponent} from "./schools/school-details/school-detail/school-detail.component";
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     BrowserModule,
@@ -68,7 +69,7 @@ import { SchoolsModule } from './schools/schools.module';
     MatTableModule,
     MatFormFieldModule,
     MatInputModule,
-    SchoolsModule,
+    SchoolsListModule,
     MatSortModule,
     MatCheckboxModule
     // UserModule is lazy loaded
