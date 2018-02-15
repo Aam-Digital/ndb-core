@@ -17,7 +17,7 @@
 
 import { Injectable } from '@angular/core';
 import PouchDB from 'pouchdb';
-import * as PouchDBAuthentication from 'pouchdb-authentication';
+import PouchDBAuthentication from 'pouchdb-authentication';
 import { ConfigService } from '../config/config.service';
 import { DatabaseManagerService } from './database-manager.service';
 import { DatabaseSyncStatus } from './database-sync-status.enum';
