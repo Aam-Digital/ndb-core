@@ -16,7 +16,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import * as PouchDB from 'pouchdb';
+import PouchDB from 'pouchdb';
 import * as PouchDBAuthentication from 'pouchdb-authentication';
 import { ConfigService } from '../config/config.service';
 import { DatabaseManagerService } from './database-manager.service';
