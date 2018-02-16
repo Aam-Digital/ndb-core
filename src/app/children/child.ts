@@ -24,7 +24,7 @@ export class Child extends Entity {
   gender: Boolean; // M or F
   dateOfBirth: string;
   motherTongue: String;
-  admission: Date;
+  admission: string;
   placeOfBirth: String;
   center: String;
   birthCertificate: String;
@@ -45,11 +45,10 @@ export class Child extends Entity {
   age(): number {
      if (this.dateOfBirth) {
                     var now = new Date();
-                    var birthdate = new Date(this.dateOfBirth);
-                    var diff = now.getTime() - birthdate.getTime();
+                    var dateOfBirth = new Date(this.dateOfBirth);
+                    var diff = now.getTime() - dateOfBirth.getTime();
                     return Math.floor(diff / (1000 * 3600 * 24 * 365));
                 }
       return null;
   }
 }
-  

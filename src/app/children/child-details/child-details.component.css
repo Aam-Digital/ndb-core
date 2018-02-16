@@ -15,3 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+.mat-extension-panel-header{
+  background-color: grey;
+  height: 1cm;
+}
+.mat-expansion-panel{
+  padding: 0.5cm;
+  margin-top: 1cm;
+}

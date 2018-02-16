@@ -28,8 +28,7 @@ import { EntityMapperService } from '../../entity/entity-mapper.service';
 })
 export class ChildDetailsComponent implements OnInit {
 
-  child: Child;
-  centers: String[] = ['', 'Tikiapara', 'Liluah'];
+  child= new Child('child:2');
   FamiliyTableSettings = {
     hideSubHeader: true,
     actions: false,
@@ -89,13 +88,22 @@ export class ChildDetailsComponent implements OnInit {
   socialworkers: String[];
 
   constructor(private entityMapperService: EntityMapperService) {
-    this.child = new Child('child:1');
-    // this.child.name = "Tim Wiese";
+    //this.child = new Child('child:2');
+    this.child.name = "Tim";
+    this.child.pn = 1234; // project number
+    this.child.religion = "Hindu";
+    this.child.gender = true; // M or F
+    this.child.dateOfBirth = "2000-01-01";
+    this.child.motherTongue = "Hindi";
+    this.child.admission = "2010-10-04";
+    this.child.placeOfBirth = "Kambotsha";
+    this.child.center = "Takatiki";
+    /*this.entityMapperService.save(this.child);*/
   }
 
   ngOnInit() {
 
-    this.entityMapperService.load(Child, 'child:2').then(child => this.child = child);
+    /*this.entityMapperService.load(Child, 'child:2').then(child => this.child = child);*/
   }
 
 }

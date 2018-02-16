@@ -26,21 +26,22 @@
   <!-- /.col-lg-12 -->
 </div>
 
+<!--
 <div class="panel panel-default">
   <div class="panel-heading">
     Basic Information
   </div>
-  <!-- /.panel-heading -->
+  <!-- /.panel-heading --
   <div class="panel-body">
     <form role="form">
       <div class="row">
         <div class="col-lg-2">
             <div class="form-group" ng-mouseover="photoEditLink=true" ng-mouseleave="photoEditLink=false">
-              <!-- richtige Bilder einbinden -->
+              <!-- richtige Bilder einbinden --
                <img class="form-foto" ng-if="childPhoto" src='http://www.bundesverband-gewaltpraevention.de/assets/images/Selbstvertrauen_8.jpg' height="180px" width="100px"/>
                <img class="form-foto" ng-if="!childPhoto" src="images/child.png"/>
                <!-- <input type="file" class="form-foto-edit" ng-if="photoEditLink"
-                      onchange="angular.element(this).scope().changePhoto(this);"/> -->
+                      onchange="angular.element(this).scope().changePhoto(this);"/> --
             </div>
 
           <div class="form-group">
@@ -99,7 +100,7 @@
 
                   <p class="input-group">
                       <input type="text" class="form-control"
-                             ng-model="child.dateOfBirth" is-open="dateDoB.opened"/> <!-- //uib-datepicker-popup="{{format}}" -->
+                             ng-model="child.dateOfBirth" is-open="dateDoB.opened"/> <!-- //uib-datepicker-popup="{{format}}" --
                       <span class="input-group-btn">
                           <button type="button" class="btn btn-default" ng-click="dateDoB.opened=true"><i
                                   class="fa fa-calendar"></i></button>
@@ -120,7 +121,7 @@
 
                   <p class="input-group">
                       <input type="text" class="form-control"
-                             ng-model="child.admission" is-open="dateAdmission.opened"/> <!--uib-datepicker-popup="{{format}}"-->
+                             ng-model="child.admission" is-open="dateAdmission.opened"/> <!--uib-datepicker-popup="{{format}}"--
                       <span class="input-group-btn">
                           <button type="button" class="btn btn-default"
                                   ng-click="dateAdmission.opened=true"><i
@@ -157,7 +158,7 @@
 
                 <p class="form-control-static" ng-if="child.birthCertificate">
                   <!--  <a ng-if="birthCertificate" ng-href="{{birthCertificate}}"
-                       download="{{child.pn}}_{{child.name}}_birth_certificate">Download Document</a> -->
+                       download="{{child.pn}}_{{child.name}}_birth_certificate">Download Document</a> --
                   <input type="file"
                          onchange="angular.element(this).scope().setBirthCertificate(this);"/>
                 </p>
@@ -168,7 +169,7 @@
       </div>
     </form>
   </div>
-  <!-- /.panel-body -->
+  <!-- /.panel-body --
 </div>
 <!-- /.panel Basic Information--
 <div class="panel panel-default">
@@ -183,38 +184,91 @@
     <input matInput placeholder="Gender">
   </mat-form-field>
 </div>
--->
-<mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
-  <mat-expansion-panel-header color="grey">
-    <mat-panel-title>
-      Basic Information
-    </mat-panel-title>
-  </mat-expansion-panel-header>
 
-  <!-- expansion panel content -->
+<mat-accordion hideToggle="true">-->
+  <mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Basic Information
+      </mat-panel-title>
+    </mat-expansion-panel-header>
 
-  <mat-form-field>
-    <mat-placeholder>
-      Status
-    </mat-placeholder>
-    <input matInput ng-model="child.currentStatus.projectStatus">
-  </mat-form-field>
-  <mat-form-field>
-    <input matInput placeholder="Input">
-  </mat-form-field>
-  <mat-form-field>
-    <mat-select placeholder="social worker" ng.model="child.currentStatus.socialworker">
-      <mat-option *ngFor="let sw of socialworkers">{{ sw.name }}</mat-option>
-    </mat-select>
-  </mat-form-field>
+    <!-- expansion panel content -->
+
+    <!-- <mat-form-field>
+      <input matInput placeholder="Project Status" [(value)]="child.currentStatus.projectStatus">
+    </mat-form-field>
+    -->
+    <mat-form-field>
+      <input matInput placeholder="Name" [(value)]="child.name">
+    </mat-form-field>
+
+    <!--<mat-form-field>
+      <mat-placeholder>
+        social worker
+      </mat-placeholder>
+      <mat-select placeholder="social worker" [(value)]="child.currentStatus.socialworker">
+        <mat-option *ngFor="let sw of socialworkers" [value]="sw.pn">{{ sw.name }}</mat-option>
+      </mat-select>
+    </mat-form-field> -->
+
+    <mat-form-field>
+      <mat-label>
+        Gender
+      </mat-label>
+      <mat-select [(value)]="child.gender" >
+        <mat-option>None</mat-option>
+        <mat-option value=true>M</mat-option>
+        <mat-option value=false>F</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Age" [value]=child.age()>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Project Number" [(value)]="child.pn">
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Date of Birth" type="date" [(value)]="child.dateOfBirth">
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Mother Tongue" [(value)]="child.motherTongue">
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Admission Date" type="date" [(value)]="child.admission">
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput title="Religion" type="text" placeholder="Religion" [(value)]="child.religion">
+    </mat-form-field>
+
+    <!--
+    <mat-form-field>
+      <mat-select placeholder="Center" [(value)]="child.center">
+        <mat-option *ngFor="let center of centers" [value]="center.pn">{{center.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-select placeholder="Birth Certificate" [(value)]="child.birthCertificate">
+        <mat-option *ngFor="let center of centers">{{center.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    -->
+<!--
+    <input matInput type="file"> -->
 
 
-  <mat-form-field>
-    <textarea matInput placeholder="Textarea"></textarea>
-  </mat-form-field>
+  </mat-expansion-panel>
+<!--</mat-accordion>-->
 
+<input matInput="Name" placeholder="Name">
 
-</mat-expansion-panel>
 
 <div class="row">
   <div class="col-lg-6">
