@@ -29,6 +29,7 @@ import { EntityMapperService } from '../../entity/entity-mapper.service';
 export class ChildDetailsComponent implements OnInit {
 
   child= new Child('child:2');
+  editable = new Boolean();
   FamiliyTableSettings = {
     hideSubHeader: true,
     actions: false,
@@ -92,13 +93,22 @@ export class ChildDetailsComponent implements OnInit {
     this.child.name = "Tim";
     this.child.pn = 1234; // project number
     this.child.religion = "Hindu";
-    this.child.gender = true; // M or F
+    this.child.gender = true; // M
     this.child.dateOfBirth = "2000-01-01";
     this.child.motherTongue = "Hindi";
     this.child.admission = "2010-10-04";
     this.child.placeOfBirth = "Kambotsha";
     this.child.center = "Takatiki";
     /*this.entityMapperService.save(this.child);*/
+    this.editable = false;
+  }
+
+  switchEdit() {
+    if (this.editable){
+      this.editable = false;
+    } else {
+      this.editable = true;
+    }
   }
 
   ngOnInit() {

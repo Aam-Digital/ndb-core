@@ -187,7 +187,7 @@
 
 <mat-accordion hideToggle="true">-->
   <mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
-    <mat-expansion-panel-header>
+    <mat-expansion-panel-header style="">
       <mat-panel-title>
         Basic Information
       </mat-panel-title>
@@ -200,7 +200,7 @@
     </mat-form-field>
     -->
     <mat-form-field>
-      <input matInput placeholder="Name" [(value)]="child.name">
+      <input matInput placeholder="Name" type="text" [(value)]="child.name" [disabled]="!editable">
     </mat-form-field>
 
     <!--<mat-form-field>
@@ -216,38 +216,38 @@
       <mat-label>
         Gender
       </mat-label>
-      <mat-select [(value)]="child.gender" >
-        <mat-option>None</mat-option>
+      <mat-select [(value)]=child.gender [disabled]="!editable">
         <mat-option value=true>M</mat-option>
         <mat-option value=false>F</mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput placeholder="Age" [value]=child.age()>
+      <input matInput placeholder="Age" type="text" [value]=child.age() [disabled]="!editable">
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput placeholder="Project Number" [(value)]="child.pn">
+      <input matInput placeholder="Project Number" type="text" [(value)]="child.pn" [disabled]="!editable">
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput placeholder="Date of Birth" type="date" [(value)]="child.dateOfBirth">
+      <input matInput placeholder="Date of Birth" type="date" [(value)]="child.dateOfBirth" [disabled]="!editable">
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput placeholder="Mother Tongue" [(value)]="child.motherTongue">
+      <input matInput placeholder="Mother Tongue" type="text" [(value)]="child.motherTongue" [disabled]="!editable">
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput placeholder="Admission Date" type="date" [(value)]="child.admission">
+      <input matInput placeholder="Admission Date" type="date" [(value)]="child.admission" [disabled]="!editable">
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput title="Religion" type="text" placeholder="Religion" [(value)]="child.religion">
+      <input matInput title="Religion" type="text" placeholder="Religion" [(value)]="child.religion" [disabled]="!editable">
     </mat-form-field>
 
     <!--
+    TODO:
     <mat-form-field>
       <mat-select placeholder="Center" [(value)]="child.center">
         <mat-option *ngFor="let center of centers" [value]="center.pn">{{center.name}}</mat-option>
@@ -263,12 +263,26 @@
 <!--
     <input matInput type="file"> -->
 
-
+    <mat-action-row>
+      <button mat-button (click)="switchEdit()">Edit</button>
+    </mat-action-row>
   </mat-expansion-panel>
 <!--</mat-accordion>-->
 
-<input matInput="Name" placeholder="Name">
+<mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
+  <mat-expansion-panel-header>
+    Address
+  </mat-expansion-panel-header>
+  <mat-form-field>
+    <textarea matInput title="Present Address" type="text"></textarea>
+  </mat-form-field>
 
+  <mat-form-field>
+    <mat-label>Visiting Hours</mat-label>
+    <textarea matInput title="Visiting hours" type="text"></textarea>
+  </mat-form-field>
+
+</mat-expansion-panel>
 
 <div class="row">
   <div class="col-lg-6">
