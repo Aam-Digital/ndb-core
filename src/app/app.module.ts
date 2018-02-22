@@ -16,7 +16,7 @@
  */
 
 import { BrowserModule } from '@angular/platform-browser';
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
@@ -38,6 +38,12 @@ import { ChildrenModule} from "./children/children.module";
 import {MatListModule, MatSidenavModule, MatMenuModule} from '@angular/material';
 import {MatFormFieldModule} from '@angular/material/form-field';
 
+import {
+  MatTableModule,
+  MatInputModule, MatSortModule, MatCheckboxModule
+} from '@angular/material';
+import { SchoolsListModule } from './schools/schools-list/schools-list.module';
+import {SchoolDetailComponent} from "./schools/school-details/school-detail/school-detail.component";
 
 @NgModule({
   declarations: [
@@ -63,7 +69,15 @@ import {MatFormFieldModule} from '@angular/material/form-field';
     MatListModule,
     MatSidenavModule,
     MatMenuModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatMenuModule,
+    MatTableModule,
+    MatFormFieldModule,
+    MatInputModule,
+    SchoolsListModule,
+    MatSortModule,
+    MatCheckboxModule,
+    SchoolDetailComponent
     // UserModule is lazy loaded
   ],
   providers: [],
