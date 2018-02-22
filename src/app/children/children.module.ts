@@ -18,7 +18,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChildDetailsComponent } from './child-details/child-details.component';
-import {ChildListComponent} from './child-list/child-list.component';
+// import {ChildListComponent} from './child-list/child-list.component';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';
@@ -33,6 +33,6 @@ import {MatExpansionModule} from '@angular/material/expansion';
     MatInputModule,
     MatExpansionModule
   ],
-  declarations: [ChildDetailsComponent, ChildListComponent]
+  declarations: [ChildDetailsComponent]
 })
 export class ChildrenModule { }

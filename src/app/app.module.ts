@@ -76,8 +76,7 @@ import {SchoolDetailComponent} from "./schools/school-details/school-detail/scho
     MatInputModule,
     SchoolsListModule,
     MatSortModule,
-    MatCheckboxModule,
-    SchoolDetailComponent
+    MatCheckboxModule
     // UserModule is lazy loaded
   ],
   providers: [],
