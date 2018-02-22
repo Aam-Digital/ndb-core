@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SchoolsListComponent } from './schools/schools-list.component';
-import {MatTableModule, MatFormFieldModule, MatInputModule, MatSortModule, MatCheckboxModule} from "@angular/material";
+import {MatTableModule, MatFormFieldModule, MatInputModule, MatSortModule} from "@angular/material";
 import {SchoolsServices} from "../schoolsShared/schools.services";
 import {SchoolDetailComponent} from "../school-details/school-detail/school-detail.component";
 
@@ -11,8 +11,7 @@ import {SchoolDetailComponent} from "../school-details/school-detail/school-deta
     MatTableModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSortModule,
-    MatCheckboxModule
+    MatSortModule
   ],
   declarations: [
     SchoolsListComponent,

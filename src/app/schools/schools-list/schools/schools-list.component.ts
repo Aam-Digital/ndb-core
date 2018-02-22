@@ -1,4 +1,4 @@
-import {Component, OnInit, Output, EventEmitter, ViewChild} from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatSort } from '@angular/material';
 import { School } from "../../schoolsShared/school";
 import { SchoolsServices } from "../../schoolsShared/schools.services";

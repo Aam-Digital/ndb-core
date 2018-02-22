@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-
-import {School} from "../../schoolsShared/school";
+import { MatTableDataSource, MatSort } from "@angular/material";
+import { School } from "../../schoolsShared/school";
 import { SchoolsServices } from "../../schoolsShared/schools.services";
 
 @Component({
@@ -11,6 +11,8 @@ import { SchoolsServices } from "../../schoolsShared/schools.services";
 })
 export class SchoolDetailComponent implements OnInit {
   school: School;
+  displayedColumns = ['id', 'name', 'age'];
+  dataSource = new MatTableDataSource();      //Table with student
 
   constructor(
     private ss: SchoolsServices,
@@ -21,6 +23,20 @@ export class SchoolDetailComponent implements OnInit {
   ngOnInit() {
     const params = this.route.snapshot.params;
     this.school = this.ss.getSingle(parseInt(params['id']));
+    this.dataSource.data = this.school.students;
   }
 
+  //Logic for filter- and sorting
+
+  @ViewChild(MatSort) sort: MatSort;
+
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+  }
+
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim();
+    filterValue = filterValue.toLowerCase();
+    this.dataSource.filter = filterValue;
+  }
 }
