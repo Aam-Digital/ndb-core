@@ -15,6 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 app-ui {
   width: 100%;
   background-color: #f8f8f8;
@@ -151,7 +152,6 @@ body {
 @media (min-width: 768px) {
   #page-wrapper {
     position: inherit;
-    margin: 0 0 0 250px;
     padding: 30px 30px;
     border-left: 1px solid #e7e7e7;
   }
@@ -411,3 +411,8 @@ table.dataTable thead .sorting:after {
 .huge {
   font-size: 40px;
 }
+.sidebar-nav-neu {
+  box-shadow: 3px 0 6px rgba(0, 0, 0, .24);
+}
+
+

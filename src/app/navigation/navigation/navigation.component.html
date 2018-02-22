@@ -15,23 +15,43 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<div class="sidebar-nav navbar-collapse">
-  <ul class="nav" id="side-menu">
+    <!-- <a [routerLink]="item.routerLinkParameters" ><i class="fa fa-{{item.icon}} fa-fw"></i> {{item.label}}</a> -->
 
-    <li *ngFor="let item of menu_main">
-      <a [routerLink]="item.routerLinkParameters"><i class="fa fa-{{item.icon}} fa-fw"></i> {{item.label}}</a>
-    </li>
+    <mat-nav-list>
+      <mat-list-item *ngFor="let item of menu_main" [routerLink]="item.routerLinkParameters" >
+        <a><i class="fa fa-{{item.icon}} fa-fw"></i> {{item.label}}</a>
+      </mat-list-item>
+      <mat-divider></mat-divider>
+      <mat-list-item [routerLink]="['/user']">
+        <a><i class="fa fa-user fa-fw"></i> User Account</a>
+      </mat-list-item>
+      <mat-divider></mat-divider>
+      <mat-list-item [routerLink]="['/schools']">
+        <a><i class="fa fa-schools fa-fw"></i> Schools</a>
+      </mat-list-item>
+      <mat-divider></mat-divider>
+      <mat-list-item [routerLink]="['/']" (click)="logout()">
+        <a><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+      </mat-list-item>
+    </mat-nav-list>
 
-    <li class="divider"></li>
 
-    <li>
-      <a [routerLink]="['/user']"><i class="fa fa-user fa-fw"></i> User Account</a>
-    </li>
 
-    <li class="divider"></li>
 
-    <li>
-      <a [routerLink]="['/']" (click)="logout()"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
-    </li>
-  </ul>
-</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!--
+
+  -->
+

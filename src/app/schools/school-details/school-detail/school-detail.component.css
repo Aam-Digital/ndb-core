@@ -1,0 +1,26 @@
+.example-container {
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+}
+
+.example-header {
+  min-height: 16px;
+  padding: 8px 24px 0;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+.mat-table {
+  overflow: auto;
+  max-height: 500px;
+  width: 100%;
+  height: 100%;
+}
+
+.mat-header-cell.mat-sort-header-sorted {
+  color: black;
+}
