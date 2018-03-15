@@ -16,12 +16,14 @@
  */
 
 import { Entity } from '../entity/entity';
+import { Gender} from "./Gender";
+
 
 export class Child extends Entity {
   name: String;
   pn: Number; // project number
   religion: String;
-  gender: Boolean; // M or F
+  gender: Gender; // M or F
   dateOfBirth: string;
   motherTongue: String;
   admission: string;
@@ -36,7 +38,16 @@ export class Child extends Entity {
       visit: String;
       villageAddress: String;
     }
-  };
+  }
+  remarks: String; //Could also be a feed with text blocks
+  adress: {
+    street: String;
+    housename: String;
+    district: String;
+    city: String;
+    postcode: String;
+  }
+  //feed
 
   getPrefix(): string {
     return 'child:';
@@ -51,4 +62,6 @@ export class Child extends Entity {
                 }
       return null;
   }
+
+
 }

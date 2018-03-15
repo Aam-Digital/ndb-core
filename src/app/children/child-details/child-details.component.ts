@@ -18,6 +18,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Child } from '../child';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
+import {Gender} from "../Gender";
 
 
 
@@ -28,8 +29,11 @@ import { EntityMapperService } from '../../entity/entity-mapper.service';
 })
 export class ChildDetailsComponent implements OnInit {
 
-  child= new Child('child:2');
+  child= new Child("test");
   editable = new Boolean();
+  gender = Gender;
+  genderSelector;
+  selectedGender;
   FamiliyTableSettings = {
     hideSubHeader: true,
     actions: false,
@@ -89,18 +93,8 @@ export class ChildDetailsComponent implements OnInit {
   socialworkers: String[];
 
   constructor(private entityMapperService: EntityMapperService) {
-    //this.child = new Child('child:2');
-    this.child.name = "Tim";
-    this.child.pn = 1234; // project number
-    this.child.religion = "Hindu";
-    this.child.gender = true; // M
-    this.child.dateOfBirth = "2000-01-01";
-    this.child.motherTongue = "Hindi";
-    this.child.admission = "2010-10-04";
-    this.child.placeOfBirth = "Kambotsha";
-    this.child.center = "Takatiki";
-    /*this.entityMapperService.save(this.child);*/
-    this.editable = false;
+
+
   }
 
   switchEdit() {
@@ -112,8 +106,29 @@ export class ChildDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    /*this.entityMapperService.load(Child, 'child:2').then(child => this.child = child);*/
+    this.entityMapperService.load(Child, 'child:4').then( child => {this.child= child})
+    //this.entityMapperService.remove(child).then( (res) => console.log(res)).catch( (err)=> console.log(err + "remove")))
+      .catch(err => {
+        console.log(err + "load");
+        this.child = new Child("child:4");
+        //this.entityMapperService.remove(this.child).then( (res) => console.log(res)).catch( (err)=> console.log(err + "remove"));
+        this.child.name = "Fabi 4";
+        this.child.pn = 4; // project number
+        this.child.religion = "Hindu";
+        this.child.gender = Gender.MALE;
+        this.child.dateOfBirth = "2000-03-01";
+        this.child.motherTongue = "Hindi";
+        this.child.admission = "2013-10-04";
+        this.child.placeOfBirth = "Kambotsha";
+        this.child.center = "Takatiki";
+        this.entityMapperService.save(this.child).then((res) => console.log(res + "fullfilled save")).then((res) =>
+          this.entityMapperService.load(Child, 'child:4').then(child => this.child = child).catch(err => console.log(err + "load2")))
+          .catch((err) => console.log(err + "save"));
+      });
+    // this.editable = false;
+    this.genderSelector = Object.keys(this.gender).filter(k => !isNaN(Number(k)))
+    this.selectedGender = "0";
   }
+
 
 }

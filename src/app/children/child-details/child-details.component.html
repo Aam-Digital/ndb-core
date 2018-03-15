@@ -26,6 +26,8 @@
   <!-- /.col-lg-12 -->
 </div>
 
+
+
 <!--
 <div class="panel panel-default">
   <div class="panel-heading">
@@ -216,9 +218,8 @@
       <mat-label>
         Gender
       </mat-label>
-      <mat-select [(value)]=child.gender [disabled]="!editable">
-        <mat-option value=true>M</mat-option>
-        <mat-option value=false>F</mat-option>
+      <mat-select [disabled]="!editable"  [(value)] = selectedGender>
+        <mat-option *ngFor="let g of genderSelector" [value]="g">{{gender[g]}}</mat-option>
       </mat-select>
     </mat-form-field>
 
