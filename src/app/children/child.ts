@@ -21,16 +21,24 @@ import { Gender} from "./Gender";
 
 export class Child extends Entity {
   name: String;
+  phoneNumber: String;
+  attendance: number;
+  class: string; // ??
+  medium: String; // = motherTongue ?
+  workingDays: number // datatype ?
+  marks: string; // datatype? how many values?
   pn: Number; // project number
-  religion: String;
-  gender: Gender; // M or F
+  //religion: String;
+  gender: Gender;
   dateOfBirth: string;
-  motherTongue: String;
-  admission: string;
-  placeOfBirth: String;
-  center: String;
-  birthCertificate: String;
-  currentStatus: {
+  motherTongue: String;  // = medium ?
+  admission: string;  // old attribute
+  placeOfBirth: String; // old attribute
+  center: String; // old attribute
+  religion: String; // old attribute
+  //birthCertificate: String; // old attribute
+  //photo: String // ??
+  /*currentStatus: {
     projectStatus: String;
     socialworker: String;
     address: {
@@ -38,15 +46,12 @@ export class Child extends Entity {
       visit: String;
       villageAddress: String;
     }
-  }
+  } */
   remarks: String; //Could also be a feed with text blocks
-  adress: {
-    street: String;
-    housename: String;
-    district: String;
-    city: String;
-    postcode: String;
-  }
+  adress: String;
+  // guardian: List; // store id of guardians
+  school: String; // id of school
+
   //feed
 
   getPrefix(): string {
