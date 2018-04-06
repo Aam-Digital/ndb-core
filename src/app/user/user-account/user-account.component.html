@@ -15,7 +15,7 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<div class="row">
+<!-- <div class="row">
     <span class="col-md-12 passwordChange">Change Password</span>
 </div>
 <div class="form-group row">
@@ -37,4 +37,25 @@
         <span></span>
         <input type="reset" class="btn btn-default" value="Cancel">
     </div>
+</div> -->
+<div>
+  <label>Change Password</label>
+</div>
+<div>
+  <mat-form-field>
+    <label for="password1"> New Password:</label>
+    <input matInput="text" id="password1" type="password" value="pass" #pwd>
+  </mat-form-field>
+</div>
+<div>
+  <mat-form-field>
+    <label for="confirm"> Confirm Password:</label>
+    <input matInput="text" id="confirm" type="password" value="pass" #rpwdd>
+  </mat-form-field>
+</div>
+<div>
+  <mat-form-field>
+    <input type="button" class="btn btn-primary" value="Save Changes" (click)="changePassword(pwd.value,rpwd.value)">
+    <input type="reset" class="btn btn-default" value="Cancel">
+  </mat-form-field>
 </div>

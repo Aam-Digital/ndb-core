@@ -37,6 +37,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { ChildrenModule} from "./children/children.module";
 import {MatListModule, MatSidenavModule, MatMenuModule} from '@angular/material';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import {UserModule} from "./user/user.module";
 
 
 @NgModule({
@@ -63,8 +64,8 @@ import {MatFormFieldModule} from '@angular/material/form-field';
     MatListModule,
     MatSidenavModule,
     MatMenuModule,
-    MatFormFieldModule
-    // UserModule is lazy loaded
+    MatFormFieldModule,
+    UserModule //is lazy loaded
   ],
   providers: [],
   bootstrap: [AppComponent]
