@@ -38,7 +38,8 @@ export class UiComponent implements OnInit {
 
     const menuItems = [
       new MenuItem('Dashboard', 'home', ['/']),
-      new MenuItem('Test', 'child', ['/'])
+      new MenuItem('child', 'child', ['/child']),
+      new MenuItem('Child-List', 'child-list', ['/child-list'])
     ];
     _navigationItemsService.setMenuItems(menuItems);
   }

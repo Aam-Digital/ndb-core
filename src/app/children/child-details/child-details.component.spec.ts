@@ -15,25 +15,28 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {NavigationComponent} from './navigation/navigation.component';
-import {SessionModule} from '../session/session.module';
-import {RouterModule} from '@angular/router';
-import {NavigationItemsService} from './navigation-items.service';
-import {MatListModule} from "@angular/material";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { ChildDetailsComponent } from './child-details.component';
 
-@NgModule({
-  imports: [
-    CommonModule,
-    SessionModule,
-    RouterModule,
-    MatListModule
-  ],
-  declarations: [NavigationComponent],
-  exports: [NavigationComponent],
-  providers: [NavigationItemsService]
-})
-export class NavigationModule {
-}
+describe('ChildDetailsComponent', () => {
+  let component: ChildDetailsComponent;
+  let fixture: ComponentFixture<ChildDetailsComponent>;
+
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [ ChildDetailsComponent ]
+    })
+    .compileComponents();
+  }));
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(ChildDetailsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should be created', () => {
+    expect(component).toBeTruthy();
+  });
+});
