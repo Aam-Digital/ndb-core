@@ -18,7 +18,7 @@
 import { EntityMapperService } from './entity-mapper.service';
 import { PouchDatabase } from '../database/pouch-database';
 import { Entity } from './entity';
-import * as PouchDB from 'pouchdb';
+import PouchDB from 'pouchdb';
 
 describe('EntityMapperService', () => {
   let entityMapper: EntityMapperService;

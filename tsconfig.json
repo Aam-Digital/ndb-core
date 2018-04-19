@@ -11,10 +11,10 @@
     "target": "es5",
     "types": [ "node" ],
     "typeRoots": [ "../node_modules/@types" ],
+    "allowSyntheticDefaultImports": true,
     "lib": [
       "es2016",
       "dom"
-    ],
-    "skipLibCheck": true // TODO: remove this after RxJS released a fix for https://github.com/ReactiveX/rxjs/issues/2539
+    ]
   }
 }
