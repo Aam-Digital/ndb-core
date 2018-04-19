@@ -22,11 +22,18 @@
       <mat-cell *matCellDef="let school"> {{school.name}} </mat-cell>
     </ng-container>
 
-    <!-- Weight Column -->
-    <ng-container matColumnDef="location">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Location </mat-header-cell>
-      <mat-cell *matCellDef="let school"> {{school.location}} </mat-cell>
+    <!-- Address Column -->
+    <ng-container matColumnDef="address">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Address </mat-header-cell>
+      <mat-cell *matCellDef="let school"> {{school.address}} </mat-cell>
     </ng-container>
+
+    <!-- Medium Column -->
+    <ng-container matColumnDef="medium">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Medium </mat-header-cell>
+      <mat-cell *matCellDef="let school"> {{school.medium}} </mat-cell>
+    </ng-container>
+
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"

@@ -186,6 +186,7 @@
 </div>
 
 <mat-accordion hideToggle="true">-->
+
   <mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
     <mat-expansion-panel-header style="">
       <mat-panel-title>
@@ -193,24 +194,9 @@
       </mat-panel-title>
     </mat-expansion-panel-header>
 
-    <!-- expansion panel content -->
-
-    <!-- <mat-form-field>
-      <input matInput placeholder="Project Status" [(value)]="child.currentStatus.projectStatus">
-    </mat-form-field>
-    -->
     <mat-form-field>
       <input matInput placeholder="Name" type="text" [(value)]="child.name" [disabled]="!editable">
     </mat-form-field>
-
-    <!--<mat-form-field>
-      <mat-placeholder>
-        social worker
-      </mat-placeholder>
-      <mat-select placeholder="social worker" [(value)]="child.currentStatus.socialworker">
-        <mat-option *ngFor="let sw of socialworkers" [value]="sw.pn">{{ sw.name }}</mat-option>
-      </mat-select>
-    </mat-form-field> -->
 
     <mat-form-field>
       <mat-label>
@@ -246,28 +232,12 @@
       <input matInput title="Religion" type="text" placeholder="Religion" [(value)]="child.religion" [disabled]="!editable">
     </mat-form-field>
 
-    <!--
-    TODO:
-    <mat-form-field>
-      <mat-select placeholder="Center" [(value)]="child.center">
-        <mat-option *ngFor="let center of centers" [value]="center.pn">{{center.name}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-select placeholder="Birth Certificate" [(value)]="child.birthCertificate">
-        <mat-option *ngFor="let center of centers">{{center.name}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    -->
-<!--
-    <input matInput type="file"> -->
-
     <mat-action-row>
       <button mat-button (click)="switchEdit()">Edit</button>
     </mat-action-row>
   </mat-expansion-panel>
 <!--</mat-accordion>-->
+
 
 <mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
   <mat-expansion-panel-header>

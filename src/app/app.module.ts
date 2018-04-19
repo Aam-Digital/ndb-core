@@ -35,7 +35,7 @@ import { NavigationModule } from './navigation/navigation.module';
 import { LatestChangesModule } from './latest-changes/latest-changes.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ChildrenModule} from "./children/children.module";
-import {MatListModule, MatSidenavModule, MatMenuModule} from '@angular/material';
+import {MatListModule, MatSidenavModule, MatMenuModule, MatExpansionModule} from '@angular/material';
 import {MatFormFieldModule} from '@angular/material/form-field';
 
 import {
@@ -43,7 +43,6 @@ import {
   MatInputModule, MatSortModule, MatCheckboxModule
 } from '@angular/material';
 import { SchoolsListModule } from './schools/schools-list/schools-list.module';
-import {SchoolDetailComponent} from "./schools/school-details/school-detail/school-detail.component";
 
 @NgModule({
   declarations: [
@@ -76,7 +75,8 @@ import {SchoolDetailComponent} from "./schools/school-details/school-detail/scho
     MatInputModule,
     SchoolsListModule,
     MatSortModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatExpansionModule
     // UserModule is lazy loaded
   ],
   providers: [],

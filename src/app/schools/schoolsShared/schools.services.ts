@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 
+import { Medium } from "./Medium";
 import { School } from "./school";
 import { Student } from "./students";
 
@@ -7,13 +8,13 @@ import { Student } from "./students";
 export class SchoolsServices {
   schools: School[];
 
-  //Example dummie data, data schould be loaded from puchdb
+  //Example dummy data, data should be loaded from puchdb
   constructor() {
     this.schools = [
       new School(
         1,
         'Primary',
-        'India',
+        'India, asdw',
         [
           new Student(
             1,
@@ -25,12 +26,13 @@ export class SchoolsServices {
             'Thomas Müller',
             12
           )
-        ]
+        ],
+        Medium.HINDI
       ),
       new School(
         2,
         'Secondary',
-        'Bangladesh',
+        'India, wasjk',
         [
           new Student(
             3,
@@ -42,7 +44,8 @@ export class SchoolsServices {
             'Rene Adler',
             13
           )
-        ]
+        ],
+        Medium.BENGALI
       )
     ];
   }

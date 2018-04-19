@@ -39,4 +39,8 @@ export class SchoolDetailComponent implements OnInit {
     filterValue = filterValue.toLowerCase();
     this.dataSource.filter = filterValue;
   }
+
+  studentClick(id: number) {
+    console.log("id: " + id);
+  }
 }
