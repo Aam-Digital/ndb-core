@@ -16,6 +16,7 @@
  */
 
 import { BrowserModule } from '@angular/platform-browser';
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
@@ -33,6 +34,10 @@ import { SyncStatusModule } from './sync-status/sync-status.module';
 import { NavigationModule } from './navigation/navigation.module';
 import { LatestChangesModule } from './latest-changes/latest-changes.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { ChildrenModule} from "./children/children.module";
+import {MatListModule, MatSidenavModule, MatMenuModule} from '@angular/material';
+import {MatFormFieldModule} from '@angular/material/form-field';
+
 
 @NgModule({
   declarations: [
@@ -40,6 +45,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     HttpModule,
     routing,
     FormsModule,
@@ -52,7 +58,12 @@ import { DashboardModule } from './dashboard/dashboard.module';
     DashboardModule,
     NavigationModule,
     UiModule,
-    LatestChangesModule
+    LatestChangesModule,
+    ChildrenModule,
+    MatListModule,
+    MatSidenavModule,
+    MatMenuModule,
+    MatFormFieldModule
     // UserModule is lazy loaded
   ],
   providers: [],

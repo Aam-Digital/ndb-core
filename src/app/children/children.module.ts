@@ -15,25 +15,24 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {NavigationComponent} from './navigation/navigation.component';
-import {SessionModule} from '../session/session.module';
-import {RouterModule} from '@angular/router';
-import {NavigationItemsService} from './navigation-items.service';
-import {MatListModule} from "@angular/material";
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ChildDetailsComponent } from './child-details/child-details.component';
+import {ChildListComponent} from './child-list/child-list.component';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatSelectModule} from '@angular/material/select';
+import {MatInputModule} from '@angular/material/input';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 
 @NgModule({
   imports: [
     CommonModule,
-    SessionModule,
-    RouterModule,
-    MatListModule
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    MatExpansionModule
   ],
-  declarations: [NavigationComponent],
-  exports: [NavigationComponent],
-  providers: [NavigationItemsService]
+  declarations: [ChildDetailsComponent, ChildListComponent]
 })
-export class NavigationModule {
-}
+export class ChildrenModule { }
