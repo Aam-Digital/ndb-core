@@ -71,6 +71,7 @@ export class LoginComponent implements OnInit {
 
   private reset() {
     this.errorMessage = '';
+    this._lastPassword = this.password;
     this.password = '';
     this.loginInProgress = false;
     this.isRetriedLogin = false;

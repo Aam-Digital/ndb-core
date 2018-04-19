@@ -44,7 +44,8 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
 
     this._localDatabase = new PouchDB(this._appConfig.database.name);
     this._remoteDatabase = new PouchDB(this._appConfig.database.remote_url + this._appConfig.database.name,
-      {ajax: {rejectUnauthorized: false, timeout: this._appConfig.database.timeout}});
+      { ajax: { rejectUnauthorized: false, timeout: this._appConfig.database.timeout }, skip_setup: true }
+    );
   }
 
   getDatabase(): Database {
@@ -73,7 +74,8 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
           console.error('Failed to connect to the remote database.', error);
           throw error;
         }
-      });
+      }
+    );
   }
 
   logout(): void {
