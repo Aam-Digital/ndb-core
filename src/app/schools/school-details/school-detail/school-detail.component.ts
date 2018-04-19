@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import { MatTableDataSource, MatSort } from "@angular/material";
 import { School } from "../../schoolsShared/school";
 import { SchoolsServices } from "../../schoolsShared/schools.services";
@@ -17,6 +17,7 @@ export class SchoolDetailComponent implements OnInit {
   constructor(
     private ss: SchoolsServices,
     private route: ActivatedRoute,
+    private router: Router
   ) { }
 
   //Get school via id in url
@@ -41,6 +42,8 @@ export class SchoolDetailComponent implements OnInit {
   }
 
   studentClick(id: number) {
-    console.log("id: " + id);
+    let route: string;
+    route = '/child/' + id;
+    this.router.navigate([route]);
   }
 }

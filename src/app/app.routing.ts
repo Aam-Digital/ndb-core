@@ -29,7 +29,8 @@ export const routes: Routes = [
   {path: 'user', loadChildren: 'app/user/user.module#UserModule', canActivate: [LoggedInGuard]},
   {path: 'schools', component: SchoolsListComponent},
   {path: 'schools/:id', component: SchoolDetailComponent},
-  {path: 'child', component: ChildDetailsComponent}
+  //{path: 'child', component: ChildDetailsComponent},
+  {path: 'child/:id', component: ChildDetailsComponent}
 ];
 
 export const routing: ModuleWithProviders = RouterModule.forRoot(routes);

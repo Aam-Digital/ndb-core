@@ -19,6 +19,7 @@ import { Component, OnInit } from '@angular/core';
 import { Child } from '../child';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
 import {Gender} from "../Gender";
+import {ActivatedRoute} from "@angular/router";
 
 
 
@@ -92,7 +93,7 @@ export class ChildDetailsComponent implements OnInit {
   //TODO Anlegen einer eigenen Klasse socialworker als subklasse von User
   socialworkers: String[];
 
-  constructor(private entityMapperService: EntityMapperService) {
+  constructor(private entityMapperService: EntityMapperService, private route: ActivatedRoute) {
 
 
   }
@@ -106,7 +107,10 @@ export class ChildDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.entityMapperService.load(Child, 'child:4').then( child => {this.child= child})
+    const params = this.route.snapshot.params;
+    let id = params['id'];    //Id number of child we want to load
+
+    this.entityMapperService.load(Child, 'child:' + id).then( child => {this.child= child})
     //this.entityMapperService.remove(child).then( (res) => console.log(res)).catch( (err)=> console.log(err + "remove")))
       .catch(err => {
         console.log(err + "load");
