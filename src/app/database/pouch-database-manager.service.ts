@@ -16,15 +16,15 @@
  */
 
 import { Injectable } from '@angular/core';
-import * as PouchDB from 'pouchdb';
+import PouchDB from 'pouchdb';
+import PouchDBAuthentication from 'pouchdb-authentication';
 import { ConfigService } from '../config/config.service';
 import { DatabaseManagerService } from './database-manager.service';
 import { DatabaseSyncStatus } from './database-sync-status.enum';
 import { Database } from './database';
 import { PouchDatabase } from './pouch-database';
 
-declare var require: any;
-PouchDB.plugin(require('pouchdb-authentication'));
+PouchDB.plugin(PouchDBAuthentication);
 
 /**
  * DatabaseManagerService takes care of 'background' actions
@@ -44,7 +44,8 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
 
     this._localDatabase = new PouchDB(this._appConfig.database.name);
     this._remoteDatabase = new PouchDB(this._appConfig.database.remote_url + this._appConfig.database.name,
-      {ajax: {rejectUnauthorized: false, timeout: this._appConfig.database.timeout}});
+      { ajax: { rejectUnauthorized: false, timeout: this._appConfig.database.timeout }, skip_setup: true }
+    );
   }
 
   getDatabase(): Database {
@@ -73,7 +74,8 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
           console.error('Failed to connect to the remote database.', error);
           throw error;
         }
-      });
+      }
+    );
   }
 
   logout(): void {
