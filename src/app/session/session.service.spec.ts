@@ -27,8 +27,7 @@ describe('SessionService', () => {
 
   const username = 'testuser';
   const password = 'testpass';
-  const user = new User(username);
-  user.setNewPassword(password);
+  let user: any;
 
   beforeEach(() => {
     databaseManager = {
@@ -46,6 +45,12 @@ describe('SessionService', () => {
       }
     };
     spyOn(databaseManager, 'login').and.callThrough();
+
+    user = {
+      checkPassword: function (pwd: string) {
+        return password === pwd;
+      }
+    };
 
     entityMapper = {
       load: function (entityType: { new(id: string): User; }, id: string): Promise<User> {
@@ -149,5 +154,29 @@ describe('SessionService', () => {
     expect(sessionService.isLoggedIn()).toBeFalsy();
     sessionService.logout();
     expect(sessionService.isLoggedIn()).toBeFalsy();
+  });
+
+  it('getCurrentUser returns user object after correct local login', function (done) {
+    expect(sessionService.isLoggedIn()).toBeFalsy();
+
+    sessionService.login(username, password).then(
+      function (result) {
+        expect(result).toBeTruthy();
+        expect(sessionService.getCurrentUser().getId()).toBe(user.getId());
+        done();
+      }
+    );
+  });
+
+  it('getCurrentUser returns null after failed local login', function (done) {
+    expect(sessionService.isLoggedIn()).toBeFalsy();
+
+    sessionService.login(username, password + 'x').then(
+      function (result) {
+        expect(result).toBeFalsy();
+        expect(sessionService.getCurrentUser()).toBeNull();
+        done();
+      }
+    );
   });
 });
