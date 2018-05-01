@@ -16,7 +16,7 @@
  */
 
 import { BrowserModule } from '@angular/platform-browser';
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
@@ -38,6 +38,8 @@ import { UserModule } from './user/user.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ChildrenModule } from './children/children.module';
 import { SchoolsListModule } from './schools/schools-list/schools-list.module';
+import { NavigationItemsService } from './navigation/navigation-items.service';
+import { MenuItem } from './navigation/menu-item';
 
 @NgModule({
   declarations: [
@@ -54,17 +56,22 @@ import { SchoolsListModule } from './schools/schools-list/schools-list.module';
     DatabaseModule,
     ConfigModule,
     SessionModule,
-    SyncStatusModule,
-    DashboardModule,
-    NavigationModule,
     UiModule,
+    SyncStatusModule,
     LatestChangesModule,
+    NavigationModule,
+    UserModule,
+    DashboardModule,
     ChildrenModule,
-    SchoolsListModule,
-    UserModule
+    SchoolsListModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule {
+  constructor(private _navigationItemsService: NavigationItemsService) {
+    _navigationItemsService.addMenuItem(new MenuItem('Dashboard', 'home', ['/dashboard']));
+    _navigationItemsService.addMenuItem(new MenuItem('Children', 'face', ['/child']));
+    _navigationItemsService.addMenuItem(new MenuItem('Schools', 'school', ['/school']));
+  }
 }

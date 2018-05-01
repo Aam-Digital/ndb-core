@@ -17,8 +17,6 @@
 
 import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { SessionService } from '../../session/session.service';
-import { NavigationItemsService } from '../../navigation/navigation-items.service';
-import { MenuItem } from '../../navigation/menu-item';
 
 @Component({
   moduleId: module.id,
@@ -32,14 +30,8 @@ export class UiComponent implements OnInit {
   viewContainerRef: ViewContainerRef;
 
   constructor(private _sessionService: SessionService,
-              viewContainerRef: ViewContainerRef,
-              private _navigationItemsService: NavigationItemsService) {
+              viewContainerRef: ViewContainerRef) {
     this.viewContainerRef = viewContainerRef;
-
-    const menuItems = [
-      new MenuItem('Dashboard', 'home', ['/'])
-    ];
-    _navigationItemsService.setMenuItems(menuItems);
   }
 
   ngOnInit(): void {

@@ -21,7 +21,7 @@ import {NavigationComponent} from './navigation/navigation.component';
 import {SessionModule} from '../session/session.module';
 import {RouterModule} from '@angular/router';
 import {NavigationItemsService} from './navigation-items.service';
-import {MatListModule} from "@angular/material";
+import {MatIconModule, MatListModule} from '@angular/material';
 
 
 @NgModule({
@@ -29,7 +29,8 @@ import {MatListModule} from "@angular/material";
     CommonModule,
     SessionModule,
     RouterModule,
-    MatListModule
+    MatListModule,
+    MatIconModule
   ],
   declarations: [NavigationComponent],
   exports: [NavigationComponent],

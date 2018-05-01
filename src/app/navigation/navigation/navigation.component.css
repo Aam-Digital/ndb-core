@@ -22,3 +22,9 @@
   margin: 9px 0;
   overflow: hidden;
 }
+
+.nav-icon {
+  margin-right:5px;
+  position:relative;
+  top:5px;
+}

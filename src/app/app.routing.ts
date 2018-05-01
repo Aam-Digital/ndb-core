@@ -28,8 +28,8 @@ export const routes: Routes = [
   {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
   {path: 'dashboard', component: DashboardComponent},
   {path: 'user', component: UserAccountComponent, canActivate: [LoggedInGuard]},
-  {path: 'schools', component: SchoolsListComponent},
-  {path: 'schools/:id', component: SchoolDetailComponent},
+  {path: 'school', component: SchoolsListComponent},
+  {path: 'school/:id', component: SchoolDetailComponent},
   //{path: 'child', component: ChildDetailsComponent},
   {path: 'child/:id', component: ChildDetailsComponent}
 ];
