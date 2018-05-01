@@ -22,11 +22,12 @@ import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
 import { SchoolsListComponent } from './schools/schools-list/schools/schools-list.component';
 import {SchoolDetailComponent} from "./schools/school-details/school-detail/school-detail.component";
 import {ChildDetailsComponent} from "./children/child-details/child-details.component";
+import {UserAccountComponent} from "./user/user-account/user-account.component";
 
 export const routes: Routes = [
   {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
   {path: 'dashboard', component: DashboardComponent},
-  {path: 'user', loadChildren: 'app/user/user.module#UserModule', canActivate: [LoggedInGuard]},
+  {path: 'user', component: UserAccountComponent, canActivate: [LoggedInGuard]},
   {path: 'schools', component: SchoolsListComponent},
   {path: 'schools/:id', component: SchoolDetailComponent},
   //{path: 'child', component: ChildDetailsComponent},

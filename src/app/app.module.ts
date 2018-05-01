@@ -33,11 +33,11 @@ import { SessionModule } from './session/session.module';
 import { SyncStatusModule } from './sync-status/sync-status.module';
 import { NavigationModule } from './navigation/navigation.module';
 import { LatestChangesModule } from './latest-changes/latest-changes.module';
+import { UserModule } from './user/user.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ChildrenModule } from "./children/children.module";
 import { MatListModule, MatSidenavModule, MatMenuModule, MatExpansionModule, MatTableModule, MatInputModule, MatSortModule, MatCheckboxModule } from '@angular/material';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { UserModule } from "./user/user.module";
 import { SchoolsListModule } from './schools/schools-list/schools-list.module';
 
 @NgModule({
@@ -73,7 +73,7 @@ import { SchoolsListModule } from './schools/schools-list/schools-list.module';
     MatSortModule,
     MatCheckboxModule,
     MatExpansionModule
-    // UserModule is lazy loaded
+    UserModule
   ],
   providers: [],
   bootstrap: [AppComponent]
