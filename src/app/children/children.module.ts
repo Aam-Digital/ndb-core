@@ -15,7 +15,24 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* You can add global styles to this file, and also import other style files */
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ChildDetailsComponent } from './child-details/child-details.component';
+// import {ChildListComponent} from './child-list/child-list.component';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatSelectModule} from '@angular/material/select';
+import {MatInputModule} from '@angular/material/input';
+import {MatExpansionModule} from '@angular/material/expansion';
 
-@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
+@NgModule({
+  imports: [
+    CommonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    MatExpansionModule
+  ],
+  declarations: [ChildDetailsComponent]
+})
+export class ChildrenModule { }

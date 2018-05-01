@@ -15,7 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* You can add global styles to this file, and also import other style files */
-
-@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
-
+.mat-extension-panel-header{
+  background-color: grey;
+  height: 1cm;
+}
+.mat-expansion-panel{
+  padding: 0cm;
+  margin-top: 0cm;
+}

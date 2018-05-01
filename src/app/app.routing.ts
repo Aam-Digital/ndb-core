@@ -19,12 +19,18 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoggedInGuard } from './session/logged-in.guard';
 import { ModuleWithProviders } from '@angular/core';
 import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
-import {UserAccountComponent} from './user/user-account/user-account.component';
+import { SchoolsListComponent } from './schools/schools-list/schools/schools-list.component';
+import {SchoolDetailComponent} from "./schools/school-details/school-detail/school-detail.component";
+import {ChildDetailsComponent} from "./children/child-details/child-details.component";
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'user', component: UserAccountComponent}, // loadChildren: 'app/user/user.module#UserModule', canActivate: [LoggedInGuard] },
+  {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
+  {path: 'dashboard', component: DashboardComponent},
+  {path: 'user', loadChildren: 'app/user/user.module#UserModule', canActivate: [LoggedInGuard]},
+  {path: 'schools', component: SchoolsListComponent},
+  {path: 'schools/:id', component: SchoolDetailComponent},
+  //{path: 'child', component: ChildDetailsComponent},
+  {path: 'child/:id', component: ChildDetailsComponent}
 ];
 
 export const routing: ModuleWithProviders = RouterModule.forRoot(routes);
