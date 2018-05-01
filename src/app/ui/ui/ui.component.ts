@@ -49,4 +49,7 @@ export class UiComponent implements OnInit {
     return this._sessionService.isLoggedIn();
   }
 
+  logout() {
+    this._sessionService.logout();
+  }
 }

@@ -20,14 +20,12 @@ import { CommonModule } from '@angular/common';
 
 import { AlertsModule } from '../alerts/alerts.module';
 import { UiComponent } from './ui/ui.component';
-import { FooterComponent } from './footer/footer.component';
-import { HeaderComponent } from './header/header.component';
 import { NavigationModule } from '../navigation/navigation.module';
 import { SessionModule } from '../session/session.module';
 import { SyncStatusModule } from '../sync-status/sync-status.module';
 import { RouterModule } from '@angular/router';
 import { LatestChangesModule } from '../latest-changes/latest-changes.module';
-import { MatSidenavModule } from '@angular/material';
+import {MatIconModule, MatSidenavModule, MatToolbarModule} from '@angular/material';
 
 @NgModule({
   imports: [
@@ -38,9 +36,11 @@ import { MatSidenavModule } from '@angular/material';
     RouterModule,
     SessionModule,
     SyncStatusModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MatToolbarModule,
+    MatIconModule,
   ],
-  declarations: [UiComponent, FooterComponent, HeaderComponent],
+  declarations: [UiComponent],
   exports: [UiComponent]
 })
 export class UiModule {

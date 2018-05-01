@@ -21,6 +21,20 @@ app-ui {
   background-color: #f8f8f8;
 }
 
+.header-icon {
+  padding: 0 20px;
+  color: white;
+}
+
+.header-spacer {
+  flex: 1 1 auto;
+}
+
+.header-title {
+  color: white;
+  text-decoration: none;
+}
+
 app-alerts {
   position: fixed;
   top: 30px;
@@ -36,6 +50,11 @@ app-alerts {
 
 .navbar-header {
   float: none;
+}
+
+html,
+body {
+  height: 100%;
 }
 
 /* TODO: needs to be cleaned/split up */

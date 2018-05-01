@@ -15,33 +15,38 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<app-header>
-</app-header>
+<!-- HEADER -->
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <span><a class="header-title" [routerLink]="['']">{{title}}</a></span>
+    <span class="header-spacer"></span>
+    <a [routerLink]="['/user']" *ngIf="isLoggedIn()"><mat-icon class="header-icon">account_circle</mat-icon></a>
+    <a [routerLink]="['']" (click)="logout()" *ngIf="isLoggedIn()"><mat-icon class="header-icon">exit_to_app</mat-icon></a>
+  </mat-toolbar-row>
+</mat-toolbar>
 
+
+
+<!-- MAIN NAVIGATION + CONTENT -->
 <mat-sidenav-container>
-  <!--
-  <div class="navbar-default sidebar sidebar-left" role="navigation">
-    <div class="navbar-header">
-      <a class="navbar-brand" [routerLink]="['']">{{title}}</a>
-    </div>
 
-    <!-- TODO: create and include the user-menu at the bottom of sidebar --
-  </div>
- -->
+
   <mat-sidenav *ngIf="isLoggedIn()" #sidenav mode="side" opened="true" disableClose="true" class="sidebar-nav-neu">
     <app-navigation></app-navigation>
+    <app-latest-changes style="position:absolute; bottom:0;"></app-latest-changes>
   </mat-sidenav>
 
-  <div id="page-wrapper">
+
+  <mat-sidenav-content  id="page-wrapper">
     <div [style.visibility]="isLoggedIn() ? 'visible': 'collapse'">
       <router-outlet></router-outlet>
     </div>
     <app-login *ngIf="!isLoggedIn()"></app-login>
-  </div>
 
-  <app-alerts></app-alerts>
 
-  <app-sync-status></app-sync-status>
+    <app-alerts></app-alerts>
+    <app-sync-status></app-sync-status>
+  </mat-sidenav-content>
+
 
 </mat-sidenav-container>
-<app-footer></app-footer>
