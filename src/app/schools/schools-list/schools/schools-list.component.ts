@@ -25,7 +25,7 @@ export class SchoolsListComponent implements OnInit {
   dataSource = new MatTableDataSource();
 
   ngOnInit() {
-    this.dataSource.data = this.ss.getAll();
+    this.dataSource.data = this.ss.schools;
   }
 
   @ViewChild(MatSort) sort: MatSort;        //Sorting

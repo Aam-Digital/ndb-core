@@ -3,55 +3,41 @@ import { Injectable } from "@angular/core";
 import { Medium } from "./Medium";
 import { School } from "./school";
 import { Student } from "./students";
+import {EntityMapperService} from '../../entity/entity-mapper.service';
+import {AlertService} from '../../alerts/alert.service';
 
 @Injectable()
 export class SchoolsServices {
   schools: School[];
 
-  //Example dummy data, data should be loaded from puchdb
-  constructor() {
-    this.schools = [
-      new School(
-        1,
-        'Primary',
-        'India, asdw',
-        [
-          new Student(
-            1,
-            'Max Mustermann',
-            10
-          ),
-          new Student(
-            2,
-            'Thomas Müller',
-            12
-          )
-        ],
-        Medium.HINDI
-      ),
-      new School(
-        2,
-        'Secondary',
-        'India, wasjk',
-        [
-          new Student(
-            3,
-            'Franz Josef',
-            7
-          ),
-          new Student(
-            4,
-            'Rene Adler',
-            13
-          )
-        ],
-        Medium.BENGALI
-      )
-    ];
-  }
+  constructor(private entityMapper: EntityMapperService, private alertService: AlertService) {
+    // example dummy data
+    let s = new School('school:dummy');
+    s.name ='Primary';
+    s.address = 'India, asdw';
+    s.students = [
+        new Student(
+          1,
+          'Max Mustermann',
+          10
+        ),
+        new Student(
+          2,
+          'Thomas Müller',
+          12
+        )
+      ];
+    s.medium = Medium.HINDI;
+    this.schools = [s];
 
-  getAll() {
-    return  this.schools;
+    // data loaded from pouchdb
+    // TODO: make sure loaded school data is fitting the class and then remove dummy data above
+    this.entityMapper.loadType<School>(School).then(
+      loadedEntities => this.schools = this.schools.concat(loadedEntities),
+      reason => this.alertService.addWarning(reason)
+    );
+
+
   }
 
   getSingle(id) {
