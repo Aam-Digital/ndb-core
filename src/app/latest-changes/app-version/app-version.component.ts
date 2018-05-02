@@ -15,33 +15,33 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
 import { AlertService } from '../../alerts/alert.service';
 import { ConfigService } from '../../config/config.service';
 import { LatestChangesService } from '../latest-changes.service';
-import { ModalDirective } from 'ngx-bootstrap';
 import { Changelog } from '../changelog';
 import { SessionStatus } from '../../session/session-status';
 import { SessionService } from '../../session/session.service';
+import {ChangelogComponent} from '../changelog/changelog.component';
+import {MatDialog} from '@angular/material';
 
 @Component({
-  selector: 'app-latest-changes',
-  templateUrl: './latest-changes.component.html',
-  styleUrls: ['./latest-changes.component.css']
+  selector: 'app-version',
+  templateUrl: './app-version.component.html',
+  styleUrls: ['./app-version.component.css']
 })
-export class LatestChangesComponent implements OnInit {
+export class AppVersionComponent {
 
   currentChangelog: Changelog;
   currentVersion: string;
-
-  @ViewChild('latestChangesModal') public latestChangesModal: ModalDirective;
 
   constructor(private _sessionService: SessionService,
               private _latestChangesService: LatestChangesService,
               private _configService: ConfigService,
               private _alertService: AlertService,
-              private _entityMapperService: EntityMapperService) {
+              private _entityMapperService: EntityMapperService,
+              private dialog: MatDialog) {
 
     this.currentVersion = this._configService.version;
 
@@ -64,10 +64,10 @@ export class LatestChangesComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {
-  }
-
   public showLatestChanges(): void {
-    this.latestChangesModal.show();
+    let dialogRef = this.dialog.open(ChangelogComponent, {
+      width: '400px',
+      data: this.currentChangelog
+    });
   }
 }

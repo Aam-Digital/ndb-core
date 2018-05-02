@@ -15,30 +15,25 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {Component, Inject} from '@angular/core';
+import {Changelog} from '../changelog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 
-import { LatestChangesComponent } from './latest-changes.component';
+@Component({
+  templateUrl: './changelog.component.html',
+  styleUrls: ['./changelog.component.css']
+})
+export class ChangelogComponent {
 
-describe('LatestChangesComponent', () => {
-  let component: LatestChangesComponent;
-  let fixture: ComponentFixture<LatestChangesComponent>;
+  currentChangelog: Changelog;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [LatestChangesComponent]
-    })
-      .compileComponents();
-  }));
+  constructor(
+    public dialogRef: MatDialogRef<ChangelogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any) {
+    this.currentChangelog = data;
+  }
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(LatestChangesComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  /* TODO fix test case
-  it('should be created', () => {
-    expect(component).toBeTruthy();
-  });
-  */
-});
+  onCloseClick(): void {
+    this.dialogRef.close();
+  }
+}
