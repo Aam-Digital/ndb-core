@@ -25,14 +25,18 @@
 
 <p>
   <mat-form-field>
-    <input placeholder="New Password" matInput="text" id="password1" type="password" value="pass" #passwordInp>
+    <input placeholder="New Password" matInput="text" id="password1" type="password" value="pass" #passwordInp disabled>
   </mat-form-field>
   <br>
   <mat-form-field>
-    <input placeholder="Confirm New Password" matInput="text" id="confirm" type="password" value="pass" #confirmationInp>
+    <input placeholder="Confirm New Password" matInput="text" id="confirm" type="password" value="pass" #confirmationInp disabled>
   </mat-form-field>
 </p>
 
 <p>
-  <button mat-raised-button (click)="changePassword(passwordInp.value,confirmationInp.value)">Save</button>
+  <i>Changes currently not supported. Please talk to your administrator for password changes.</i>
+</p>
+
+<p>
+  <button mat-raised-button (click)="changePassword(passwordInp.value,confirmationInp.value)" disabled>Save</button>
 </p>
