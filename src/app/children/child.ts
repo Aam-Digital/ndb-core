@@ -16,7 +16,7 @@
  */
 
 import { Entity } from '../entity/entity';
-import { Gender} from "./Gender";
+import { Gender} from './Gender';
 
 
 export class Child extends Entity {
@@ -50,7 +50,7 @@ export class Child extends Entity {
   //feed
 
   getPrefix(): string {
-    return 'child:';
+    return this.getType().toLowerCase();
   }
 
   age(): number {
