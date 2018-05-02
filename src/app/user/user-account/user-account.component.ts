@@ -39,13 +39,8 @@ export class UserAccountComponent implements OnInit {
       // TODO: update the password for this remote database user first and deny the password change if that fails
       this.user.setNewPassword( pwd );
       // TODO: Show success message
-    }
-    else{
+    } else {
       // TODO: Show error message
     }
-  }
-
-  cancel(){
-      //TODO: root to dashboard.
   }
 }

@@ -16,20 +16,20 @@
   -->
 
 <!-- HEADER -->
-<mat-toolbar color="primary">
+<mat-toolbar color="primary" class="mat-typography">
   <mat-toolbar-row>
     <span><a class="header-title" [routerLink]="['']">{{title}}</a></span>
     <span class="header-spacer"></span>
     <app-sync-status></app-sync-status>
-    <a [routerLink]="['/user']" *ngIf="isLoggedIn()"><mat-icon class="header-icon">account_circle</mat-icon></a>
-    <a [routerLink]="['']" (click)="logout()" *ngIf="isLoggedIn()"><mat-icon class="header-icon">exit_to_app</mat-icon></a>
+    <button mat-icon-button [routerLink]="['/user']" *ngIf="isLoggedIn()"><mat-icon class="header-icon">account_circle</mat-icon></button>
+    <button mat-icon-button (click)="logout()" [routerLink]="['']" *ngIf="isLoggedIn()"><mat-icon class="header-icon">exit_to_app</mat-icon></button>
   </mat-toolbar-row>
 </mat-toolbar>
 
 
 
 <!-- MAIN NAVIGATION + CONTENT -->
-<mat-sidenav-container>
+<mat-sidenav-container class="mat-typography">
 
 
   <mat-sidenav *ngIf="isLoggedIn()" #sidenav mode="side" opened="true" disableClose="true"

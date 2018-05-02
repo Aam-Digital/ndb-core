@@ -15,3 +15,9 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+.version-footer {
+  text-align: center;
+  font-size: 0.8em;
+  margin-left:16px;
+  margin-bottom:10px;
+}

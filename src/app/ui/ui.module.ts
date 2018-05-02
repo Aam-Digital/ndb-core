@@ -23,7 +23,7 @@ import { SessionModule } from '../session/session.module';
 import { SyncStatusModule } from '../sync-status/sync-status.module';
 import { RouterModule } from '@angular/router';
 import { LatestChangesModule } from '../latest-changes/latest-changes.module';
-import {MatIconModule, MatSidenavModule, MatToolbarModule} from '@angular/material';
+import {MatButtonModule, MatIconModule, MatSidenavModule, MatToolbarModule} from '@angular/material';
 
 @NgModule({
   imports: [
@@ -36,6 +36,7 @@ import {MatIconModule, MatSidenavModule, MatToolbarModule} from '@angular/materi
     MatSidenavModule,
     MatToolbarModule,
     MatIconModule,
+    MatButtonModule
   ],
   declarations: [UiComponent],
   exports: [UiComponent]

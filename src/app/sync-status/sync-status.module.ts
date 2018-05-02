@@ -21,7 +21,7 @@ import { SyncStatusComponent } from './sync-status/sync-status.component';
 import { DatabaseModule } from '../database/database.module';
 import { SessionModule } from '../session/session.module';
 import {AlertsModule} from '../alerts/alerts.module';
-import {MatIconModule} from '@angular/material';
+import {MatButtonModule, MatIconModule} from '@angular/material';
 
 @NgModule({
   imports: [
@@ -29,7 +29,8 @@ import {MatIconModule} from '@angular/material';
     SessionModule,
     DatabaseModule,
     AlertsModule,
-    MatIconModule
+    MatIconModule,
+    MatButtonModule
   ],
   declarations: [SyncStatusComponent],
   exports: [SyncStatusComponent],

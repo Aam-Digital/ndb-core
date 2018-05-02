@@ -22,8 +22,7 @@ app-ui {
 }
 
 .header-icon {
-  padding: 0 20px;
-  color: white;
+  color: black;
 }
 
 .header-spacer {
@@ -33,15 +32,6 @@ app-ui {
 .header-title {
   color: white;
   text-decoration: none;
-}
-
-app-alerts {
-  position: fixed;
-  top: 30px;
-  right: 30px;
-  width: 300px;
-  height: 100px;
-  z-index: 1000;
 }
 
 .navbar-header {
@@ -111,7 +101,5 @@ body {
   box-shadow: 3px 0 6px rgba(0, 0, 0, .24);
 }
 .sidenav-content {
-  padding-left: 10px;
+  padding: 24px;
 }
-
-
