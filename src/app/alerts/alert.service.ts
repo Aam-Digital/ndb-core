@@ -15,18 +15,30 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
+import {MatSnackBar} from '@angular/material';
 
-import { Alert } from './alert';
+import {Alert} from './alert';
+import {AlertComponent} from './alerts/alert.component';
 
 @Injectable()
 export class AlertService {
 
   alerts: Alert[] = [];
 
+  constructor(public snackBar: MatSnackBar) {}
+
   addAlert(alert: Alert) {
     this.alerts.push(alert);
-    this.setAutoRemoveTimeout(alert);
+    this.openSnackBar(alert);
+  }
+
+  openSnackBar(alert: Alert) {
+    let snackConfig = { data: alert, duration: 1800000, panelClass: 'alerts-snackbar' };
+    if (alert.type === Alert.SUCCESS || alert.type === Alert.INFO) {
+      snackConfig.duration = 5000;
+    }
+    alert.notificationRef = this.snackBar.openFromComponent(AlertComponent, snackConfig);
   }
 
   removeAlert(alert: Alert) {
@@ -50,11 +62,5 @@ export class AlertService {
 
   public addDanger(message: string) {
     this.addAlert(new Alert(message, Alert.DANGER));
-  }
-
-  private setAutoRemoveTimeout(alert: Alert) {
-    if (alert.type === Alert.SUCCESS || alert.type === Alert.INFO) {
-      setTimeout(( () => this.removeAlert(alert) ), 5000);
-    }
   }
 }

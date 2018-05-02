@@ -15,6 +15,10 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<alert *ngFor="let alert of alerts" [type]="alert.type" dismissible="true" (close)="deleteAlert(alert)">
-  {{ alert.message }}
-</alert>
+<div class="ndb-alert ndb-alert-{{alert.type}}">
+    {{ alert.message }}
+
+    <button mat-icon-button (click)="alert.notificationRef.dismiss()" class="ndb-alert-dismiss">
+      <mat-icon class="ndb-alert-dismiss-icon">close</mat-icon>
+    </button>
+</div>

@@ -17,17 +17,17 @@
 
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AlertsComponent } from './alerts.component';
+import { AlertComponent } from './alert.component';
 import { AlertModule as BootstrapAlertModule } from 'ngx-bootstrap';
 import { AlertService } from '../alert.service';
 
-describe('AlertsComponent', () => {
-  let component: AlertsComponent;
-  let fixture: ComponentFixture<AlertsComponent>;
+describe('AlertComponent', () => {
+  let component: AlertComponent;
+  let fixture: ComponentFixture<AlertComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [AlertsComponent],
+      declarations: [AlertComponent],
       providers: [AlertService],
       imports: [BootstrapAlertModule.forRoot()]
     })
@@ -35,7 +35,7 @@ describe('AlertsComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AlertsComponent);
+    fixture = TestBed.createComponent(AlertComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

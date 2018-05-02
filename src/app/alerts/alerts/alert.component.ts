@@ -15,29 +15,24 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from '@angular/core';
+import {Component, Inject} from '@angular/core';
 
 import { Alert } from '../alert';
-import { AlertService } from '../alert.service';
+import {MAT_SNACK_BAR_DATA} from '@angular/material';
 
 @Component({
   moduleId: module.id,
-  selector: 'app-alerts',
-  templateUrl: './alerts.component.html',
-  styleUrls: ['./alerts.component.css']
+  templateUrl: './alert.component.html',
+  styleUrls: ['./alert.component.css'],
 })
-export class AlertsComponent implements OnInit {
+export class AlertComponent {
 
-  alerts: Alert[] = [];
+  alert: Alert;
 
-  constructor(private _alertService: AlertService) {
+  constructor(@Inject(MAT_SNACK_BAR_DATA) public data: any) {
+    this.alert = data;
   }
 
-  ngOnInit() {
-    this.alerts = this._alertService.alerts;
-  }
 
-  deleteAlert(alert: Alert) {
-    this._alertService.removeAlert(alert);
-  }
+
 }

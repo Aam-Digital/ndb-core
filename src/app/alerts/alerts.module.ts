@@ -17,19 +17,23 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AlertModule as BootstrapAlertModule } from 'ngx-bootstrap';
 
-import { AlertsComponent } from './alerts/alerts.component';
+import { AlertComponent } from './alerts/alert.component';
 import { AlertService } from './alert.service';
+import {MatButtonModule, MatCardModule, MatIconModule, MatSnackBarModule} from '@angular/material';
 
 @NgModule({
   imports: [
     CommonModule,
-    BootstrapAlertModule.forRoot()
+    MatSnackBarModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule
   ],
-  declarations: [AlertsComponent],
-  exports: [AlertsComponent],
-  providers: [AlertService]
+  declarations: [AlertComponent],
+  exports: [AlertComponent],
+  providers: [AlertService],
+  entryComponents: [AlertComponent]
 })
 export class AlertsModule {
 }

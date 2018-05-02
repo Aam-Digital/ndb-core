@@ -17,8 +17,6 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { AlertsModule } from '../alerts/alerts.module';
 import { UiComponent } from './ui/ui.component';
 import { NavigationModule } from '../navigation/navigation.module';
 import { SessionModule } from '../session/session.module';
@@ -30,7 +28,6 @@ import {MatIconModule, MatSidenavModule, MatToolbarModule} from '@angular/materi
 @NgModule({
   imports: [
     CommonModule,
-    AlertsModule,
     LatestChangesModule,
     NavigationModule,
     RouterModule,

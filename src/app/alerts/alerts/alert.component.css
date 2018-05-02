@@ -15,27 +15,35 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.alert {
-  line-height: 30px;
-  list-style: none;
-  box-sizing: border-box;
+
+.ndb-alert {
+  padding: 10px;
+  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
+  font-weight: bold;
 }
 
-.alert.ng-move,
-.alert.ng-enter,
-.alert.ng-leave {
-  -webkit-transition: 0.5s linear all;
-  transition: 0.5s linear all;
+.ndb-alert-success {
+  background-color: lightgreen;
+  color: black;
+}
+.ndb-alert-info {
+  background-color: lightblue;
+  color: black;
+}
+.ndb-alert-warning {
+  background-color: orangered;
+  color: black;
+}
+.ndb-alert-danger {
+  background-color: orangered;
+  color: black;
 }
 
-.alert.ng-leave.ng-leave-active,
-.alert.ng-move,
-.alert.ng-enter {
-  opacity: 0;
+.ndb-alert-dismiss {
+  right: 20px;
+  position: absolute;
+  top: 10px;
 }
-
-.alert.ng-leave,
-.alert.ng-move.ng-move-active,
-.alert.ng-enter.ng-enter-active {
-  opacity: 1;
+.ndb-alert-dismiss-icon {
+  font-size: 14px;
 }

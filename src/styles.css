@@ -22,3 +22,10 @@
   margin-left: auto !important;
   margin-right: auto !important;
 }
+
+
+
+
+.alerts-snackbar {
+  background-color: transparent;
+}

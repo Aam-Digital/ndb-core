@@ -21,8 +21,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
-import { AlertModule as BootstrapAlertModule } from 'ngx-bootstrap';
-
 import { AppComponent } from './app.component';
 import { UiModule } from './ui/ui.module';
 import { ConfigModule } from './config/config.module';
@@ -52,7 +50,6 @@ import { MenuItem } from './navigation/menu-item';
     routing,
     FormsModule,
     AlertsModule,
-    BootstrapAlertModule.forRoot(),
     DatabaseModule,
     ConfigModule,
     SessionModule,
