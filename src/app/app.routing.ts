@@ -23,6 +23,7 @@ import {SchoolsListComponent} from './schools/schools-list/schools/schools-list.
 import {SchoolDetailComponent} from './schools/school-details/school-detail/school-detail.component';
 import {ChildDetailsComponent} from './children/child-details/child-details.component';
 import {UserAccountComponent} from './user/user-account/user-account.component';
+import {ChildrenListComponent} from './children/children-list/children-list.component';
 
 export const routes: Routes = [
   {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
@@ -30,7 +31,7 @@ export const routes: Routes = [
   {path: 'user', component: UserAccountComponent, canActivate: [LoggedInGuard]},
   {path: 'school', component: SchoolsListComponent, canActivate: [LoggedInGuard]},
   {path: 'school/:id', component: SchoolDetailComponent, canActivate: [LoggedInGuard]},
-  //{path: 'child', component: ChildDetailsComponent, canActivate: [LoggedInGuard]},
+  {path: 'child', component: ChildrenListComponent, canActivate: [LoggedInGuard]},
   {path: 'child/:id', component: ChildDetailsComponent, canActivate: [LoggedInGuard]}
 ];
 
