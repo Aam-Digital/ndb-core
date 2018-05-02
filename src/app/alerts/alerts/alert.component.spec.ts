@@ -18,8 +18,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AlertComponent } from './alert.component';
-import { AlertModule as BootstrapAlertModule } from 'ngx-bootstrap';
 import { AlertService } from '../alert.service';
+import {MatButtonModule, MatIconModule} from '@angular/material';
 
 describe('AlertComponent', () => {
   let component: AlertComponent;
@@ -29,7 +29,7 @@ describe('AlertComponent', () => {
     TestBed.configureTestingModule({
       declarations: [AlertComponent],
       providers: [AlertService],
-      imports: [BootstrapAlertModule.forRoot()]
+      imports: [MatIconModule, MatButtonModule]
     })
       .compileComponents();
   }));

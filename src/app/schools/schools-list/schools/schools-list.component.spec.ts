@@ -1,20 +1,26 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SchoolsComponent } from './schools-list.component';
+import { SchoolsListComponent } from './schools-list.component';
+import {MatFormFieldModule, MatInputModule, MatSortModule, MatTableModule} from '@angular/material';
 
-describe('SchoolsComponent', () => {
-  let component: SchoolsComponent;
-  let fixture: ComponentFixture<SchoolsComponent>;
+describe('SchoolsListComponent', () => {
+  let component: SchoolsListComponent;
+  let fixture: ComponentFixture<SchoolsListComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SchoolsComponent ]
+      declarations: [ SchoolsListComponent ],
+      imports: [
+        MatTableModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSortModule]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SchoolsComponent);
+    fixture = TestBed.createComponent(SchoolsListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

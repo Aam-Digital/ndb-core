@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SchoolDetailComponent } from './school-detail.component';
+import {MatFormFieldModule, MatSortModule, MatTableModule} from '@angular/material';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 describe('SchoolDetailComponent', () => {
   let component: SchoolDetailComponent;
@@ -8,7 +10,11 @@ describe('SchoolDetailComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SchoolDetailComponent ]
+      declarations: [ SchoolDetailComponent ],
+      imports: [ MatTableModule,
+        MatFormFieldModule,
+        MatSortModule,
+        MatExpansionModule]
     })
     .compileComponents();
   }));

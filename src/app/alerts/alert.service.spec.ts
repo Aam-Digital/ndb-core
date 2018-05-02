@@ -20,9 +20,13 @@ import { Alert } from './alert';
 
 describe('AlertService', () => {
   let alertService: AlertService;
+  let snackBarMock;
 
   beforeEach(() => {
-    alertService = new AlertService();
+    snackBarMock = {
+      openFromComponent: function (component, config) { }
+    };
+    alertService = new AlertService(snackBarMock);
   });
 
   it('add info alert', function () {
