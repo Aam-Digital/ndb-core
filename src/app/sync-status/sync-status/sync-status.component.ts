@@ -15,11 +15,12 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ModalDirective } from 'ngx-bootstrap';
+import { Component, OnInit } from '@angular/core';
 import { DatabaseManagerService } from '../../database/database-manager.service';
 import { SessionService } from '../../session/session.service';
 import { DatabaseSyncStatus } from '../../database/database-sync-status.enum';
+import {AlertService} from '../../alerts/alert.service';
+import {Alert} from '../../alerts/alert';
 
 @Component({
   selector: 'app-sync-status',
@@ -28,11 +29,12 @@ import { DatabaseSyncStatus } from '../../database/database-sync-status.enum';
 })
 export class SyncStatusComponent implements OnInit {
 
-  @ViewChild('lgModal') modal: ModalDirective;
   syncInProgress: boolean;
+  syncAlert: Alert;
 
   constructor(private _dbManager: DatabaseManagerService,
-              private _sessionService: SessionService) {
+              private _sessionService: SessionService,
+              private alertService: AlertService) {
     this._dbManager.onSyncStatusChanged.subscribe((status: any) => this.handleSyncStatus(status));
   }
 
@@ -44,13 +46,17 @@ export class SyncStatusComponent implements OnInit {
       case DatabaseSyncStatus.started:
         this.syncInProgress = true;
         if (!this._sessionService.isLoggedIn()) {
-          this.modal.show();
+          this.syncAlert = new Alert('Synchronizing with remote database. Login may not be possible until this is completed.', Alert.DANGER);
+          this.alertService.addAlert(this.syncAlert);
         }
         break;
       case DatabaseSyncStatus.completed:
+        this.syncInProgress = false;
+        this.alertService.addInfo('Database sync completed.');
+        break;
       case DatabaseSyncStatus.failed:
         this.syncInProgress = false;
-        this.modal.hide();
+        this.alertService.addWarning('Database sync failed.');
         break;
     }
   }

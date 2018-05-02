@@ -20,6 +20,7 @@
   <mat-toolbar-row>
     <span><a class="header-title" [routerLink]="['']">{{title}}</a></span>
     <span class="header-spacer"></span>
+    <app-sync-status></app-sync-status>
     <a [routerLink]="['/user']" *ngIf="isLoggedIn()"><mat-icon class="header-icon">account_circle</mat-icon></a>
     <a [routerLink]="['']" (click)="logout()" *ngIf="isLoggedIn()"><mat-icon class="header-icon">exit_to_app</mat-icon></a>
   </mat-toolbar-row>
@@ -47,7 +48,3 @@
 
 
 </mat-sidenav-container>
-
-
-
-<app-sync-status></app-sync-status>
