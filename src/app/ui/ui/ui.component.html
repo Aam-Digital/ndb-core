@@ -31,13 +31,13 @@
 <mat-sidenav-container>
 
 
-  <mat-sidenav *ngIf="isLoggedIn()" #sidenav mode="side" opened="true" disableClose="true" class="sidebar-nav-neu">
+  <mat-sidenav *ngIf="isLoggedIn()" #sidenav mode="side" opened="true" disableClose="true" class="sidenav-menu">
     <app-navigation></app-navigation>
     <app-latest-changes style="position:absolute; bottom:0;"></app-latest-changes>
   </mat-sidenav>
 
 
-  <mat-sidenav-content  id="page-wrapper">
+  <mat-sidenav-content class="sidenav-content">
     <div [style.visibility]="isLoggedIn() ? 'visible': 'collapse'">
       <router-outlet></router-outlet>
     </div>
