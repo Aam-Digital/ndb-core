@@ -31,7 +31,8 @@
 <mat-sidenav-container>
 
 
-  <mat-sidenav *ngIf="isLoggedIn()" #sidenav mode="side" opened="true" disableClose="true" class="sidenav-menu">
+  <mat-sidenav *ngIf="isLoggedIn()" #sidenav mode="side" opened="true" disableClose="true"
+               [fixedInViewport]="true" class="sidenav-menu">
     <app-navigation></app-navigation>
     <app-latest-changes style="position:absolute; bottom:0;"></app-latest-changes>
   </mat-sidenav>
@@ -42,11 +43,12 @@
       <router-outlet></router-outlet>
     </div>
     <app-login *ngIf="!isLoggedIn()"></app-login>
-
-
-    <app-alerts></app-alerts>
-    <app-sync-status></app-sync-status>
   </mat-sidenav-content>
 
 
 </mat-sidenav-container>
+
+
+
+<app-alerts></app-alerts>
+<app-sync-status></app-sync-status>
