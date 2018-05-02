@@ -18,6 +18,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AppVersionComponent } from './app-version.component';
+import {MatDialogModule} from '@angular/material';
 
 describe('AppVersionComponent', () => {
   let component: AppVersionComponent;
@@ -25,7 +26,8 @@ describe('AppVersionComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [AppVersionComponent]
+      declarations: [AppVersionComponent],
+      imports: [MatDialogModule]
     })
       .compileComponents();
   }));
@@ -36,9 +38,7 @@ describe('AppVersionComponent', () => {
     fixture.detectChanges();
   });
 
-  /* TODO fix test case
   it('should be created', () => {
     expect(component).toBeTruthy();
   });
-  */
 });

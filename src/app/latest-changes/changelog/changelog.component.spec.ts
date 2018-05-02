@@ -17,28 +17,27 @@
 
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AppVersionComponent } from './changelog.component';
+import {ChangelogComponent} from './changelog.component';
 
-describe('AppVersionComponent', () => {
-  let component: AppVersionComponent;
-  let fixture: ComponentFixture<AppVersionComponent>;
+describe('ChangelogComponent', () => {
+  let component: ChangelogComponent;
+  let fixture: ComponentFixture<ChangelogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [AppVersionComponent]
+      declarations: [ChangelogComponent]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AppVersionComponent);
+    fixture = TestBed.createComponent(ChangelogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  /* TODO fix test case
   it('should be created', () => {
     expect(component).toBeTruthy();
   });
-  */
+
 });
