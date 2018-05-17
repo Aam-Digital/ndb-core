@@ -40,6 +40,8 @@ import PouchDBAuthentication from 'pouchdb-authentication';
 import { ConfigService } from '../config/config.service';
 import { Injectable, EventEmitter } from '@angular/core';
 import { User } from '../user/user';
+import { StateHandler } from './state-handler';
+import { ConnectionState } from './connection-state.enum';
 
 PouchDB.plugin(PouchDBAuthentication);
 
@@ -47,15 +49,13 @@ PouchDB.plugin(PouchDBAuthentication);
 export class RemoteSessionService {
   protected database: any;
 
-  protected connectionState: String; // connected, disconnected, offline, failed
-  protected connectionStateChanged: EventEmitter<String> = new EventEmitter<String>();
+  protected connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>();
 
   constructor(private _appConfig: ConfigService) {
     this.database = new PouchDB(this._appConfig.database.name);
   }
 
-  // TODO: return enumeration?
-  protected login(username: string, password: string): Promise<Boolean> {
+  protected login(username: string, password: string): Promise<ConnectionState> {
     const ajaxOpts = {
       ajax: {
         headers: {
@@ -65,12 +65,15 @@ export class RemoteSessionService {
     };
 
     return this.database.login(username, password, ajaxOpts).then(() => {
-      return true;
+      this.connectionState.setState(ConnectionState.connected);
+      return ConnectionState.connected;
     }).catch((error: any) => {
-      if (error.status === 401) {
-        return false;
+      if (error.status === 401) { // TODO: This test is not the best
+        this.connectionState.setState(ConnectionState.rejected);
+        return ConnectionState.rejected;
       } else {
-        throw error;
+        this.connectionState.setState(ConnectionState.offline);
+        return ConnectionState.offline;
       }
     });
   }

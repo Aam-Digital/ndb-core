@@ -47,35 +47,44 @@ import { ConfigService } from '../config/config.service';
 import { EntityMapperService } from '../entity/entity-mapper.service';
 import { User } from '../user/user';
 
+import { SyncState } from './sync-state.enum';
+import { LoginState } from './login-state.enum';
+import { StateHandler, StateChangedEvent } from './state-handler';
+
 @Injectable()
 export class LocalSessionService {
   protected database: any;
 
-  // TODO: Is there a better way to do state-machines? I want the state encapsuled and an event with from- and to-state emitted on change
-  protected loginState: String; // logged in, logged out, login failed
-  protected syncState: String; // assumed in sync, known out of sync, initial (not synced at all)
-  protected loginStateChanged: EventEmitter<String> = new EventEmitter<String>();
-  protected syncStateChanged: EventEmitter<String> = new EventEmitter<String>();
+  protected loginState: StateHandler<LoginState>; // logged in, logged out, login failed
+  protected syncState: StateHandler<SyncState>; // assumed in sync, known out of sync, initial (not synced at all)
 
   constructor(private _appConfig: ConfigService, private _entityMapper: EntityMapperService) {
     this.database = new PouchDB(this._appConfig.database.name);
-    // TODO: restore sync state
+
+    this.loginState = new StateHandler<LoginState>(LoginState.loggedOut);
+    this.syncState = new StateHandler<SyncState>(SyncState[window.sessionStorage.getItem("syncState")]);    // restore sync state
+    this.syncState.getStateChangedStream().subscribe(function(stateChange: StateChangedEvent<SyncState>) {  // save sync state on change
+      window.sessionStorage.setItem("syncState", SyncState[stateChange.toState]);
+    });
   }
 
-  // TODO: return enumeration?, wait for first sync (-> as entitymapper gets its data from the database, i.e. the session, we definitely need to wait)
+  // TODO: wait for first sync (-> as entitymapper gets its data from the database, i.e. the session, we definitely need to wait)
   // TODO: the entityMapper uses the DatabaseService we might not have at this point...
-  protected authenticate(username: string, password: string): Promise<Boolean> {
+  protected authenticate(username: string, password: string): Promise<LoginState> {
     return this._entityMapper.load<User>(User, username).then(userEntity => {
       if (userEntity.checkPassword(password)) {
-        return true;
+        this.loginState.setState(LoginState.loggedIn);
+        return LoginState.loggedIn;
       } else {
-        return false;
+        this.loginState.setState(LoginState.loginFailed);
+        return LoginState.loginFailed;
       }
     }).catch(error => {
       // TODO: one error should be "no entity found for this key", which should return false.
       //       all other cases should throw an error
       console.log(error);
-      return false;
+      this.loginState.setState(LoginState.loginFailed);
+      return LoginState.loginFailed;
     });
   }
 }
