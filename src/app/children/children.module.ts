@@ -23,6 +23,10 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { ChildrenListComponent } from './children-list/children-list.component';
+import {
+  MatButtonModule, MatButtonToggleModule, MatSidenavModule, MatSortModule,
+  MatTableModule
+} from '@angular/material';
 
 
 @NgModule({
@@ -31,7 +35,12 @@ import { ChildrenListComponent } from './children-list/children-list.component';
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatTableModule,
+    MatSortModule,
+    MatSidenavModule,
+    MatButtonModule,
+    MatButtonToggleModule
   ],
   declarations: [ChildDetailsComponent, ChildrenListComponent]
 })

@@ -22,13 +22,18 @@ import { Gender} from './Gender';
 export class Child extends Entity {
   name: String;
   pn: Number; // project number
+
+  center: String = 'N/A';
+  status: String = '';
+  school: any;
+  grade: String = '99';
+
   religion: String;
   gender: Gender; // M or F
   dateOfBirth: string;
   motherTongue: String;
   admission: string;
   placeOfBirth: String;
-  center: String;
   birthCertificate: String;
   currentStatus: {
     projectStatus: String;
@@ -40,7 +45,7 @@ export class Child extends Entity {
     }
   };
   remarks: String; //Could also be a feed with text blocks
-  adress: {
+  address: {
     street: String;
     housename: String;
     district: String;
@@ -49,14 +54,18 @@ export class Child extends Entity {
   };
   //feed
 
-  age(): number {
+  getAge(): number {
      if (this.dateOfBirth) {
-                    var now = new Date();
-                    var dateOfBirth = new Date(this.dateOfBirth);
-                    var diff = now.getTime() - dateOfBirth.getTime();
-                    return Math.floor(diff / (1000 * 3600 * 24 * 365));
-                }
-      return null;
+       let now = new Date();
+       let dateOfBirth = new Date(this.dateOfBirth);
+       let diff = now.getTime() - dateOfBirth.getTime();
+       return Math.floor(diff / (1000 * 3600 * 24 * 365));
+     }
+     return -1;
+  }
+
+  isActive(): boolean {
+    return this.status !== 'dropout';
   }
 
 
