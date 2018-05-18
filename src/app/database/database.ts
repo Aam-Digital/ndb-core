@@ -22,15 +22,15 @@
  */
 export abstract class Database {
 
-  abstract get(id: string): any;
+  abstract get(id: string): Promise<any>;
 
-  abstract allDocs(options?: any): any;
+  abstract allDocs(options?: any): Promise<any>;
 
-  abstract put(object: any): any;
+  abstract put(object: any): Promise<any>;
 
-  abstract remove(object: any): any;
+  abstract remove(object: any): Promise<any>;
 
-  getAll(prefix = ''): any {
+  getAll(prefix = ''): Promise<any> {
     return this.allDocs({include_docs: true, startkey: prefix, endkey: prefix + '\ufff0'});
   }
 }

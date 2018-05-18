@@ -18,43 +18,41 @@
 import { Injectable } from '@angular/core';
 import { DatabaseManagerService } from './database-manager.service';
 import { User } from '../user/user';
-import { PouchDatabase } from './pouch-database';
-import * as PouchDB from 'pouchdb';
 import { Database } from './database';
 import { isNullOrUndefined } from 'util';
+import {MockDatabase} from './mock-database';
 
 @Injectable()
-export class PouchDatabaseManagerTestService extends DatabaseManagerService {
+export class MockDatabaseManagerService extends DatabaseManagerService {
 
-  private _pouchDatabase: PouchDatabase;
-  private _pouchDB: any;
+  private database: MockDatabase;
 
   constructor() {
     super();
 
-    this._pouchDB = new PouchDB('ndb-test');
-    this._pouchDatabase = new PouchDatabase(this._pouchDB);
-    this.initDB();
+    this.database = new MockDatabase();
+    this.initDemoData();
   }
 
+  private initDemoData() {
+    // add demo user
+    const demoUser = new User('demo');
+    demoUser.name = 'demo';
+    demoUser.setNewPassword('pass');
+    const demoUserData = JSON.parse(JSON.stringify(demoUser));
+    demoUserData._id = demoUser.getType() + ':' + demoUser.name;
+    this.database.put(demoUserData);
+  }
+
+
   login(username: string, password: string): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      resolve(true);
-    });
+    return Promise.resolve(true);
   }
 
   logout(): void {
   }
 
   getDatabase(): Database {
-    return this._pouchDatabase;
-  }
-
-  private initDB(): void {
-    const demoUser = new User('demo');
-    demoUser.name = 'demo';
-    demoUser.setNewPassword('pass');
-
-    this._pouchDatabase.get(demoUser.getId()).catch(() => this._pouchDatabase.put(demoUser));
+    return this.database;
   }
 }
