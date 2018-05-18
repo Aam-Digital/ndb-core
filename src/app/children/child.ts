@@ -38,7 +38,7 @@ export class Child extends Entity {
       visit: String;
       villageAddress: String;
     }
-  }
+  };
   remarks: String; //Could also be a feed with text blocks
   adress: {
     street: String;
@@ -46,12 +46,8 @@ export class Child extends Entity {
     district: String;
     city: String;
     postcode: String;
-  }
+  };
   //feed
-
-  getPrefix(): string {
-    return this.getType().toLowerCase();
-  }
 
   age(): number {
      if (this.dateOfBirth) {
