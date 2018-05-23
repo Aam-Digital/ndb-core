@@ -27,6 +27,7 @@ import {
   MatButtonModule, MatButtonToggleModule, MatSidenavModule, MatSortModule,
   MatTableModule
 } from '@angular/material';
+import {ChildrenService} from './children.service';
 
 
 @NgModule({
@@ -42,6 +43,7 @@ import {
     MatButtonModule,
     MatButtonToggleModule
   ],
-  declarations: [ChildDetailsComponent, ChildrenListComponent]
+  declarations: [ChildDetailsComponent, ChildrenListComponent],
+  providers: [ChildrenService]
 })
 export class ChildrenModule { }
