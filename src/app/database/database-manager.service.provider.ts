@@ -21,17 +21,16 @@ import { ConfigService } from '../config/config.service';
 import { PouchDatabaseManagerTestService } from './pouch-database-manager-test.service';
 import { DatabaseManagerService } from './database-manager.service';
 
-export let databaseManagerFactory = function(appConfig: ConfigService) {
+export function databaseManagerServiceFactory(appConfig: ConfigService): DatabaseManagerService {
   if (environment.production) {
     return new PouchDatabaseManagerService(appConfig);
   } else {
     return new PouchDatabaseManagerTestService();
   }
-};
+}
 
-export let databaseManagerProvider =
-  {
-    provide: DatabaseManagerService,
-    useFactory: databaseManagerFactory,
-    deps: [ConfigService]
-  };
+export const databaseManagerProvider = {
+  provide: DatabaseManagerService,
+  useFactory: databaseManagerServiceFactory,
+  deps: [ConfigService]
+};
