@@ -30,7 +30,7 @@ export abstract class Database {
 
   abstract remove(object: any): Promise<any>;
 
-  getAll(prefix = ''): Promise<any> {
+  getAll(prefix = ''): Promise<Array<any>> {
     return this.allDocs({include_docs: true, startkey: prefix, endkey: prefix + '\ufff0'});
   }
 }
