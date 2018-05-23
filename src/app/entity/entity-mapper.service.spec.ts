@@ -16,14 +16,13 @@
  */
 
 import { EntityMapperService } from './entity-mapper.service';
-import { PouchDatabase } from '../database/pouch-database';
 import { Entity } from './entity';
-import PouchDB from 'pouchdb';
+import {MockDatabase} from '../database/mock-database';
+import {Database} from '../database/database';
 
 describe('EntityMapperService', () => {
   let entityMapper: EntityMapperService;
-  let testDatabase: PouchDatabase;
-  let pouch: any;
+  let testDatabase: Database;
 
   const existingEntity = {
     _id: 'Entity:existing-entity',
@@ -40,22 +39,13 @@ describe('EntityMapperService', () => {
   };
 
   beforeEach((done) => {
-    pouch = new PouchDB('unit-test');
-    pouch.put(existingEntity).then(function () {
-      pouch.put(existingEntity2).then(function () {
-        testDatabase = new PouchDatabase(pouch);
-        entityMapper = new EntityMapperService(testDatabase);
-
+    testDatabase = new MockDatabase();
+    entityMapper = new EntityMapperService(testDatabase);
+    testDatabase.put(existingEntity).then(function () {
+      testDatabase.put(existingEntity2).then(function () {
         done();
       }).catch(err => console.log('Failed to insert second entity: ' + err));
     }).catch(err => console.log('Failed to insert default entity: ' + err));
-  });
-
-  afterEach((done) => {
-    pouch.destroy().then(
-      function () {
-        done();
-      });
   });
 
   it('loads existing entity', function (done) {
