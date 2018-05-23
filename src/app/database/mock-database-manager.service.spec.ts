@@ -15,22 +15,17 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * An implementation of this interface provides functions for direct database access.
- * The interface is an extension of the [PouchDB API](https://pouchdb.com/api.html).
- * A `Database` instance is injected into the app through `DatabaseManagerService`.
- */
-export abstract class Database {
+import { MockDatabaseManagerService } from './mock-database-manager.service';
 
-  abstract get(id: string): Promise<any>;
+describe('MockDatabaseManagerService', () => {
+  let dbManager: MockDatabaseManagerService;
 
-  abstract allDocs(options?: any): Promise<any>;
+  beforeEach(() => {
+    dbManager = new MockDatabaseManagerService();
+  });
 
-  abstract put(object: any): Promise<any>;
-
-  abstract remove(object: any): Promise<any>;
-
-  getAll(prefix = ''): Promise<any> {
-    return this.allDocs({include_docs: true, startkey: prefix, endkey: prefix + '\ufff0'});
-  }
-}
+  it('returns database', function () {
+    const db = dbManager.getDatabase();
+    expect(db).toBeDefined();
+  });
+});
