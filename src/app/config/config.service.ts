@@ -24,15 +24,9 @@ export class ConfigService {
 
   database = {
     name: 'dev',
-    remote_url: 'http://demo-db.sinnfragen.org/db/',
+    remote_url: 'https://couchdb.aam-digital.com/',
     timeout: 60000,
     outdated_threshold_days: 0
-  };
-
-  analytics = {
-    enabled: false,
-    piwik_url: 'http://piwik.sinnfragen.org/',
-    site_id: 4
   };
 
 }

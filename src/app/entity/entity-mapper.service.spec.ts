@@ -18,7 +18,7 @@
 import { EntityMapperService } from './entity-mapper.service';
 import { PouchDatabase } from '../database/pouch-database';
 import { Entity } from './entity';
-import * as PouchDB from 'pouchdb';
+import PouchDB from 'pouchdb';
 
 describe('EntityMapperService', () => {
   let entityMapper: EntityMapperService;
@@ -107,6 +107,7 @@ describe('EntityMapperService', () => {
   it('returns empty array when loading non existing entity type ', function (done) {
     class TestEntity extends Entity {
     }
+
     entityMapper.loadType<TestEntity>(TestEntity).then((result) => {
       expect(result.length).toBe(0);
       done()

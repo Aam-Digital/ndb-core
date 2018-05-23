@@ -16,7 +16,7 @@
  */
 
 import { PouchDatabase } from './pouch-database';
-import * as PouchDB from 'pouchdb';
+import PouchDB from 'pouchdb';
 
 describe('PouchDatabase tests', () => {
   let pouchDatabase: PouchDatabase;
