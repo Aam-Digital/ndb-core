@@ -65,7 +65,7 @@ export class EntityMapperService {
    */
   public loadType<T extends Entity>(entityType: { new(id: string): T; }): Promise<T[]> {
     let resultEntity = new entityType('');
-    return this._db.getAll(resultEntity.getType().toLowerCase()).then(
+    return this._db.getAll(resultEntity.getType()).then(
       function (result: any) {
         const resultArray: Array<T> = [];
         for (const current of result) {
