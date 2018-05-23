@@ -29,4 +29,5 @@ export class ConfigService {
     outdated_threshold_days: 0
   };
 
+  useRemoteDatabaseDuringDevelopment = false;
 }

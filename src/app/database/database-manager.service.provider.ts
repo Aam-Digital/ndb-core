@@ -22,7 +22,7 @@ import { MockDatabaseManagerService } from './mock-database-manager.service';
 import { DatabaseManagerService } from './database-manager.service';
 
 export function databaseManagerServiceFactory(appConfig: ConfigService): DatabaseManagerService {
-  if (environment.production) {
+  if (environment.production || appConfig.useRemoteDatabaseDuringDevelopment) {
     return new PouchDatabaseManagerService(appConfig);
   } else {
     return new MockDatabaseManagerService();
