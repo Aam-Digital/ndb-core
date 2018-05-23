@@ -21,10 +21,14 @@ import PouchDB from 'pouchdb';
 describe('PouchDatabase tests', () => {
   let pouchDatabase: PouchDatabase;
   let pouch: any;
+  let originalTimeout;
 
   beforeEach(() => {
     pouch = new PouchDB('unit-test-db');
     pouchDatabase = new PouchDatabase(pouch);
+
+    originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;
   });
 
   afterEach((done) => {
@@ -32,6 +36,8 @@ describe('PouchDatabase tests', () => {
       function () {
         done();
       });
+
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
   });
 
   it('get object by _id after put into database', function (done) {
@@ -74,6 +80,71 @@ describe('PouchDatabase tests', () => {
         done();
       }
     );
+  });
+
+
+
+  it('getAll returns all objects', function (done) {
+    const testData1 = {_id: 'x:test_id', name: 'test', count: 42};
+    const testData2 = {_id: 'y:two', name: 'two'};
+
+    pouchDatabase.put(testData1).then(function () {
+      pouchDatabase.put(testData2).then(function () {
+        pouchDatabase.getAll().then(
+          function (resultData) {
+            expect(resultData.findIndex(o => o._id === testData1._id))
+              .toBeGreaterThan(-1, 'testData1 not found in getAll result');
+            expect(resultData.findIndex(o => o._id === testData2._id))
+              .toBeGreaterThan(-1, 'testData2 not found in getAll result');
+            expect(resultData.length)
+              .toBe(2, 'getAll result has ' + resultData.length + ' not expected number of objects');
+            done();
+          },
+          function (err) {
+            expect(false).toBe(true, 'getAll failed: ' + err);
+            done();
+          });
+        },
+        function (err) {
+          expect(false).toBe(true, 'put failed: ' + err);
+          done();
+        });
+      },
+      function (err) {
+        expect(false).toBe(true, 'put failed: ' + err);
+        done();
+      });
+  });
+
+  it('getAll returns prefixed objects', function (done) {
+    const testData1 = {_id: 'x:test_id', name: 'test', count: 42};
+    const testData2 = {_id: 'y:two', name: 'two'};
+    const prefix = 'x';
+
+    // default options for "getAll()": this.allDocs({include_docs: true, startkey: prefix, endkey: prefix + '\ufff0'});
+    pouchDatabase.put(testData1).then(() => {
+      pouchDatabase.put(testData2).then(() => {
+        pouchDatabase.getAll(prefix).then(
+          function (resultData) {
+            expect(resultData.findIndex(o => o._id === testData1._id))
+              .toBeGreaterThan(-1, 'testData1 not found in getAll result');
+            expect(resultData.findIndex(o => o._id === testData2._id))
+              .toBe(-1, 'testData2 unexpectedly found in getAll result despite other prefix');
+            expect(resultData.length)
+              .toBe(1, 'getAll result has ' + resultData.length + ' not expected number of objects');
+            done();
+          },
+          function (err) {
+            expect(false).toBe(true, 'getAll failed: ' + err);
+          });
+      },
+      function (err) {
+        expect(false).toBe(true, 'put failed: ' + err);
+      });
+    },
+    function (err) {
+      expect(false).toBe(true, 'put failed: ' + err);
+    });
   });
 
 });

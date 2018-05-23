@@ -68,8 +68,8 @@ export class EntityMapperService {
     return this._db.getAll(resultEntity.getType().toLowerCase()).then(
       function (result: any) {
         const resultArray: Array<T> = [];
-        for (const current of result.rows) {
-          resultArray.push(Object.assign(resultEntity, current.doc));
+        for (const current of result) {
+          resultArray.push(Object.assign(resultEntity, current));
           resultEntity = new entityType('');
         }
         return resultArray;
