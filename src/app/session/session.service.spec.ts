@@ -27,7 +27,7 @@ describe('SessionService', () => {
 
   const username = 'testuser';
   const password = 'testpass';
-  let user: any;
+  let user: User;
 
   beforeEach(() => {
     databaseManager = {
@@ -46,11 +46,9 @@ describe('SessionService', () => {
     };
     spyOn(databaseManager, 'login').and.callThrough();
 
-    user = {
-      checkPassword: function (pwd: string) {
-        return password === pwd;
-      }
-    };
+    user = new User(username);
+    user.name = username;
+    user.setNewPassword(password);
 
     entityMapper = {
       load: function (entityType: { new(id: string): User; }, id: string): Promise<User> {
