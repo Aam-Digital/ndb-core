@@ -33,33 +33,58 @@ export class MockDatabase extends Database {
 
 
   get(id: string) {
-    const index = this.data.findIndex(o => o._id === id);
-    if (index > -1) {
-      const result = this.data[index];
-      return Promise.resolve(result);
+    if (!this.exists(id)) {
+      return Promise.reject({'status': 404, 'message': 'object not found'});
     }
 
-    return Promise.reject({'status': 404, 'message': 'object not found'});
+    const index = this.findIndex(id);
+    const result = this.data[index];
+
+    return Promise.resolve(result);
   }
 
   allDocs(options?: any) {
-    const result = this.data;
+    let result = this.data;
+
+    // default options provided through getAll(prefix): {include_docs: true, startkey: prefix, endkey: prefix + '\ufff0'}
+    // MockDatabase ignores endkey and only implements filtering based on startkey/prefix
+    if (options && options.hasOwnProperty('startkey')) {
+      result = this.data.filter(o => o._id.startsWith(options.startkey));
+    }
 
     return Promise.resolve(result);
   }
 
   put(object: any) {
+    // check if unintentionally (no _rev) a duplicate _id is used
+    if (!object._rev && this.exists(object._id)) {
+      return Promise.reject({ 'message': '_id already exists'});
+    }
+
+    object._rev = true;
     const result = this.data.push(object);
 
     return Promise.resolve(result);
   }
 
   remove(object: any) {
-    const index = this.data.indexOf(object);
+    if (!this.exists(object._id)) {
+      return Promise.reject({'status': 404, 'message': 'object not found'});
+    }
+
+    const index = this.findIndex(object._id);
     if (index > -1) {
       this.data.splice(index, 1);
     }
 
     return Promise.resolve(true);
+  }
+
+  private exists(id: string) {
+    return (this.findIndex(id) > -1);
+  }
+
+  private findIndex(id: string) {
+    return this.data.findIndex(o => o._id === id);
   }
 }
