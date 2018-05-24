@@ -1,18 +1,20 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import { MatTableDataSource, MatSort } from "@angular/material";
-import { School } from "../schoolsShared/school";
-import { SchoolsServices } from "../schoolsShared/schools.services";
+import {MatTableDataSource, MatSort} from '@angular/material';
+import {School} from '../schoolsShared/school';
+import {SchoolsServices} from '../schoolsShared/schools.services';
 
 @Component({
   selector: 'app-school-detail',
   templateUrl: './school-detail.component.html',
   styleUrls: ['./school-detail.component.css']
 })
-export class SchoolDetailComponent implements OnInit {
+export class SchoolDetailComponent implements OnInit, AfterViewInit {
   school: School;
+
+  studentDataSource = new MatTableDataSource();
   displayedColumns = ['id', 'name', 'age'];
-  dataSource = new MatTableDataSource();      //Table with student
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private ss: SchoolsServices,
@@ -20,25 +22,20 @@ export class SchoolDetailComponent implements OnInit {
     private router: Router
   ) { }
 
-  //Get school via id in url
   ngOnInit() {
     const params = this.route.snapshot.params;
-    this.school = this.ss.getSingle(parseInt(params['id']));
-    this.dataSource.data = this.school.students;
+    this.school = this.ss.getSingle(parseInt(params['id'], 10));
+    this.studentDataSource.data = this.school.students;
   }
 
-  //Logic for filter- and sorting
-
-  @ViewChild(MatSort) sort: MatSort;
-
   ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
+    this.studentDataSource.sort = this.sort;
   }
 
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase();
-    this.dataSource.filter = filterValue;
+    this.studentDataSource.filter = filterValue;
   }
 
   studentClick(id: number) {

@@ -27,7 +27,7 @@
       <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
     </mat-form-field>
   </div>
-  <mat-table #table [dataSource]="dataSource" matSort>
+  <mat-table #table [dataSource]="studentDataSource" matSort>
 
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->

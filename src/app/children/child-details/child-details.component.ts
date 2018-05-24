@@ -15,13 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { Child } from '../child';
-import { EntityMapperService } from '../../entity/entity-mapper.service';
-import {Gender} from "../Gender";
-import {ActivatedRoute} from "@angular/router";
-
-
+import {Component, OnInit} from '@angular/core';
+import {Child} from '../child';
+import {EntityMapperService} from '../../entity/entity-mapper.service';
+import {Gender} from '../Gender';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-child-details',
@@ -29,9 +27,8 @@ import {ActivatedRoute} from "@angular/router";
   styleUrls: ['./child-details.component.css']
 })
 export class ChildDetailsComponent implements OnInit {
-
-  child= new Child("test");
-  editable = new Boolean();
+  child = new Child('test');
+  editable = true;
   gender = Gender;
   genderSelector;
   selectedGender;
@@ -43,19 +40,19 @@ export class ChildDetailsComponent implements OnInit {
         title: 'Name'
       },
       guardian: {
-        title: "Guardian"
+        title: 'Guardian'
       },
       age: {
-        title: "Age"
+        title: 'Age'
       },
-      relationship:{
-        title: "Relationship"
+      relationship: {
+        title: 'Relationship'
       },
       mobileNo: {
-        title: "Mo. Number"
+        title: 'Mo. Number'
       },
       remarks: {
-        title: "Remarks"
+        title: 'Remarks'
       }
     }
   };
@@ -68,29 +65,29 @@ export class ChildDetailsComponent implements OnInit {
         title: 'Date'
       },
       class: {
-        title: "Class"
+        title: 'Class'
       },
       school: {
-        title: "School"
+        title: 'School'
       },
       medium: {
-        title: "Medium"
+        title: 'Medium'
       },
     }
   };
 
   data = [
     {
-      name: "hana",
-      guardian: "ich",
-      age: "45",
-      relationship: "mother",
-      mobileNo: "089765123",
-      remarks: "test",
+      name: 'hana',
+      guardian: 'ich',
+      age: '45',
+      relationship: 'mother',
+      mobileNo: '089765123',
+      remarks: 'test',
     },
-  ]
+  ];
 
-  //TODO Anlegen einer eigenen Klasse socialworker als subklasse von User
+  // TODO Anlegen einer eigenen Klasse socialworker als subklasse von User
   socialworkers: String[];
 
   constructor(private entityMapperService: EntityMapperService, private route: ActivatedRoute) {
@@ -99,39 +96,37 @@ export class ChildDetailsComponent implements OnInit {
   }
 
   switchEdit() {
-    if (this.editable){
-      this.editable = false;
-    } else {
-      this.editable = true;
-    }
+    this.editable = !this.editable;
   }
 
   ngOnInit() {
     const params = this.route.snapshot.params;
-    let id = params['id'];    //Id number of child we want to load
+    const childId = params['id'];
 
-    this.entityMapperService.load(Child, 'child:' + id).then( child => {this.child= child})
-    //this.entityMapperService.remove(child).then( (res) => console.log(res)).catch( (err)=> console.log(err + "remove")))
+    this.entityMapperService.load(Child, 'child:' + childId)
+      .then(child => this.child = child)
       .catch(err => {
-        console.log(err + "load");
-        this.child = new Child("child:4");
-        //this.entityMapperService.remove(this.child).then( (res) => console.log(res)).catch( (err)=> console.log(err + "remove"));
-        this.child.name = "Fabi 4";
+        console.log(err + 'load');
+        this.child = new Child('child:4');
+        this.child.name = 'Fabi 4';
         this.child.pn = 4; // project number
-        this.child.religion = "Hindu";
+        this.child.religion = 'Hindu';
         this.child.gender = Gender.MALE;
-        this.child.dateOfBirth = "2000-03-01";
-        this.child.motherTongue = "Hindi";
-        this.child.admission = "2013-10-04";
-        this.child.placeOfBirth = "Kambotsha";
-        this.child.center = "Takatiki";
-        this.entityMapperService.save(this.child).then((res) => console.log(res + "fullfilled save")).then((res) =>
-          this.entityMapperService.load(Child, 'child:4').then(child => this.child = child).catch(err => console.log(err + "load2")))
-          .catch((err) => console.log(err + "save"));
+        this.child.dateOfBirth = '2000-03-01';
+        this.child.motherTongue = 'Hindi';
+        this.child.admission = '2013-10-04';
+        this.child.placeOfBirth = 'Kambotsha';
+        this.child.center = 'Takatiki';
+        this.entityMapperService.save(this.child)
+          .then((res) => console.log(res + 'fullfilled save'))
+          .then((res) => this.entityMapperService.load(Child, 'child:4'))
+          .then(child => this.child = child)
+          .catch(errLoad => console.log(errLoad + 'load2'))
+          .catch((errSave) => console.log(errSave + 'save'));
       });
     // this.editable = false;
-    this.genderSelector = Object.keys(this.gender).filter(k => !isNaN(Number(k)))
-    this.selectedGender = "0";
+    this.genderSelector = Object.keys(this.gender).filter(k => !isNaN(Number(k)));
+    this.selectedGender = '0';
   }
 
 

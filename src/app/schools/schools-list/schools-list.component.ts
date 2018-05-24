@@ -1,48 +1,45 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
-import { MatTableDataSource, MatSort } from '@angular/material';
-import { School } from "../schoolsShared/school";
-import { SchoolsServices } from "../schoolsShared/schools.services";
-import { Router } from "@angular/router";
-import {Medium} from "../schoolsShared/Medium";
+import {Component, OnInit, Output, EventEmitter, ViewChild, AfterViewInit} from '@angular/core';
+import {MatTableDataSource, MatSort} from '@angular/material';
+import {School} from '../schoolsShared/school';
+import {SchoolsServices} from '../schoolsShared/schools.services';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-schools',
   templateUrl: './schools-list.component.html',
   styleUrls: ['./schools-list.component.css']
 })
-export class SchoolsListComponent implements OnInit {
+export class SchoolsListComponent implements OnInit, AfterViewInit {
   schools: School[];
   school: School;
 
+  dataSource = new MatTableDataSource();
+  displayedColumns = ['id', 'name', 'address', 'medium'];
+  @ViewChild(MatSort) sort: MatSort;
   @Output() showDetailsEvent = new EventEmitter<School>();
 
-  displayedColumns = ['id', 'name', 'address', 'medium'];
   constructor(
     private ss: SchoolsServices,
     private router: Router
   ) {}
 
-  dataSource = new MatTableDataSource();
-
   ngOnInit() {
     this.dataSource.data = this.ss.schools;
   }
-
-  @ViewChild(MatSort) sort: MatSort;        //Sorting
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
   }
 
-  applyFilter(filterValue: string) {        //Filtering
+  applyFilter(filterValue: string) {
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase();
     this.dataSource.filter = filterValue;
   }
 
-  showDetails(id) {                         //Routing to schools details
+  showDetails(id) {
     let route: string;
-    route =this.router.url + '/' + id;
+    route = this.router.url + '/' + id;
     this.router.navigate([route]);
   }
 }

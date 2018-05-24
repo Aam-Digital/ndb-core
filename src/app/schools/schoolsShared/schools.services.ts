@@ -1,8 +1,5 @@
-import { Injectable } from "@angular/core";
-
-import { Medium } from "./Medium";
-import { School } from "./school";
-import { Student } from "./students";
+import {Injectable} from '@angular/core';
+import {School} from './school';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {AlertService} from '../../alerts/alert.service';
 
@@ -12,22 +9,10 @@ export class SchoolsServices {
 
   constructor(private entityMapper: EntityMapperService, private alertService: AlertService) {
     // example dummy data
-    let s = new School('school:dummy');
-    s.name ='Primary';
+    const s = new School('school:dummy');
+    s.name = 'Primary';
     s.address = 'India, asdw';
-    s.students = [
-        new Student(
-          1,
-          'Max Mustermann',
-          10
-        ),
-        new Student(
-          2,
-          'Thomas Müller',
-          12
-        )
-      ];
-    s.medium = Medium.HINDI;
+    s.medium = 'Hindi';
     this.schools = [s];
 
     // data loaded from pouchdb

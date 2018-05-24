@@ -44,7 +44,7 @@ export class Child extends Entity {
       villageAddress: String;
     }
   };
-  remarks: String; //Could also be a feed with text blocks
+  remarks: String; // could also be a feed with text blocks
   address: {
     street: String;
     housename: String;
@@ -52,13 +52,12 @@ export class Child extends Entity {
     city: String;
     postcode: String;
   };
-  //feed
 
   getAge(): number {
      if (this.dateOfBirth) {
-       let now = new Date();
-       let dateOfBirth = new Date(this.dateOfBirth);
-       let diff = now.getTime() - dateOfBirth.getTime();
+       const now = new Date();
+       const dateOfBirth = new Date(this.dateOfBirth);
+       const diff = now.getTime() - dateOfBirth.getTime();
        return Math.floor(diff / (1000 * 3600 * 24 * 365));
      }
      return -1;

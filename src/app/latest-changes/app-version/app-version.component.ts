@@ -65,7 +65,7 @@ export class AppVersionComponent {
   }
 
   public showLatestChanges(): void {
-    let dialogRef = this.dialog.open(ChangelogComponent, {
+    const dialogRef = this.dialog.open(ChangelogComponent, {
       width: '400px',
       data: this.currentChangelog
     });

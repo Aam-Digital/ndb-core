@@ -34,7 +34,7 @@ export class AlertService {
   }
 
   openSnackBar(alert: Alert) {
-    let snackConfig = { data: alert, duration: 1800000, panelClass: 'alerts-snackbar' };
+    const snackConfig = { data: alert, duration: 1800000, panelClass: 'alerts-snackbar' };
     if (alert.type === Alert.SUCCESS || alert.type === Alert.INFO) {
       snackConfig.duration = 5000;
     }

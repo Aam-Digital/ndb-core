@@ -46,7 +46,8 @@ export class SyncStatusComponent implements OnInit {
       case DatabaseSyncStatus.started:
         this.syncInProgress = true;
         if (!this._sessionService.isLoggedIn()) {
-          this.syncAlert = new Alert('Synchronizing with remote database. Login may not be possible until this is completed.', Alert.DANGER);
+          this.syncAlert = new Alert(
+            'Synchronizing with remote database. Login may not be possible until this is completed.', Alert.DANGER);
           this.alertService.addAlert(this.syncAlert);
         }
         break;

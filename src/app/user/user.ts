@@ -19,26 +19,19 @@ import { Entity } from '../entity/entity';
 
 declare const require: any;
 const CryptoJS = require('crypto-js');
-// needs library crypto-js.
 
 export class User extends Entity {
-
-
-
   private _name: string;
-  public lastUsedVersion: string; //TODO: What is the attribute for?
+  public lastUsedVersion: string; // TODO: What is the attribute for?
   private password: any;
 
-  // set name for this user
   set name(value: string) {
     this._name = value;
   }
-
-  // get name for this user
   get name(): string {
     return this._name;
   }
-  //sets new password for this user
+
   public setNewPassword(password: string) {
     const cryptKeySize = 256 / 32;
     const cryptIterations = 128;
@@ -51,19 +44,17 @@ export class User extends Entity {
     this.password = {'hash': hash, 'salt': cryptSalt, 'iterations': cryptIterations, 'keysize': cryptKeySize};
   }
 
-  //compares given password to the stored one of this user
-  // therefore hashes the given password string and compares it with the sored hash
   public checkPassword(givenPassword: string): boolean {
+    // compares given password to the stored one of this user
+    // therefore hashes the given password string and compares it with the sored hash
     return (this.hashPassword(givenPassword) === this.password.hash);
   }
 
-  // hashes a string with same keysize and iterations as this user
   private hashPassword(givenPassword: string): string {
     const options = {
       keySize: this.password.keysize,
       iterations: this.password.iterations
     };
-
     return CryptoJS.PBKDF2(givenPassword, this.password.salt, options).toString();
   }
 }
