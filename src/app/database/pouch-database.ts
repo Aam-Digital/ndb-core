@@ -35,7 +35,13 @@ export class PouchDatabase extends Database {
   }
 
   allDocs(options?: any) {
-    return this._pouchDB.allDocs(options);
+    return this._pouchDB.allDocs(options).then(result => {
+      const resultArray = [];
+      for (const row of result.rows) {
+        resultArray.push(row.doc);
+      }
+      return resultArray;
+    });
   }
 
   put(object: any) {

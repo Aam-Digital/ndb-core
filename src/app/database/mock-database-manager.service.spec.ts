@@ -15,19 +15,17 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
+import { MockDatabaseManagerService } from './mock-database-manager.service';
 
-@Injectable()
-export class ConfigService {
+describe('MockDatabaseManagerService', () => {
+  let dbManager: MockDatabaseManagerService;
 
-  version = '2.0.14';
+  beforeEach(() => {
+    dbManager = new MockDatabaseManagerService();
+  });
 
-  database = {
-    name: 'dev',
-    remote_url: 'https://couchdb.aam-digital.com/',
-    timeout: 60000,
-    outdated_threshold_days: 0
-  };
-
-  useRemoteDatabaseDuringDevelopment = false;
-}
+  it('returns database', function () {
+    const db = dbManager.getDatabase();
+    expect(db).toBeDefined();
+  });
+});
