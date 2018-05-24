@@ -28,7 +28,7 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class ChildDetailsComponent implements OnInit {
   child = new Child('test');
-  editable = true;
+  editable = false;   // editable schould be enabled by default and be activated by button
   gender = Gender;
   genderSelector;
   selectedGender;
