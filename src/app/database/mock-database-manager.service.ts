@@ -21,8 +21,6 @@ import { User } from '../user/user';
 import { Database } from './database';
 import { isNullOrUndefined } from 'util';
 import {MockDatabase} from './mock-database';
-import {Medium} from '../schools/schoolsShared/Medium';
-import {Gender} from '../children/Gender';
 
 @Injectable()
 export class MockDatabaseManagerService extends DatabaseManagerService {
@@ -50,7 +48,6 @@ export class MockDatabaseManagerService extends DatabaseManagerService {
       'name': 'Max Meyer',
       'pn': '22',
       'religion': 'Hindu',
-      'gender': Gender.MALE,
       'dateOfBirth': '2000-03-01',
       'motherTongue': 'Hindi',
       'admission': '2013-10-04',
@@ -61,7 +58,6 @@ export class MockDatabaseManagerService extends DatabaseManagerService {
       'name': 'Sonia Sagufta',
       'pn': '25',
       'religion': 'Muslim',
-      'gender': Gender.FEMALE,
       'dateOfBirth': '2001-01-01',
       'motherTongue': 'Hindi',
       'admission': '2013-10-04',
@@ -71,12 +67,10 @@ export class MockDatabaseManagerService extends DatabaseManagerService {
     this.database.put({
       '_id': 'School:1',
       'name': 'St. Mary Day School',
-      'medium': Medium.ENGLISH,
     });
     this.database.put({
       '_id': 'School:2',
       'name': 'Public High',
-      'medium': Medium.HINDI,
     });
   }
 
