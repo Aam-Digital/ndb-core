@@ -15,3 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+.passwordChange{
+    font-size: 30px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}

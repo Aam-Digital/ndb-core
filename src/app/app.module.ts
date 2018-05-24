@@ -16,15 +16,14 @@
  */
 
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {APP_INITIALIZER, NgModule} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
-import { AlertModule as BootstrapAlertModule } from 'ngx-bootstrap';
-
 import { AppComponent } from './app.component';
 import { UiModule } from './ui/ui.module';
-import { ConfigModule } from './config/config.module';
+import { AppConfigModule } from './app-config/app-config.module';
 import { DatabaseModule } from './database/database.module';
 import { routing } from './app.routing';
 import { AlertsModule } from './alerts/alerts.module';
@@ -32,7 +31,14 @@ import { SessionModule } from './session/session.module';
 import { SyncStatusModule } from './sync-status/sync-status.module';
 import { NavigationModule } from './navigation/navigation.module';
 import { LatestChangesModule } from './latest-changes/latest-changes.module';
+import { UserModule } from './user/user.module';
+
 import { DashboardModule } from './dashboard/dashboard.module';
+import { ChildrenModule } from './children/children.module';
+import { SchoolsModule } from './schools/schools.module';
+import { NavigationItemsService } from './navigation/navigation-items.service';
+import { MenuItem } from './navigation/menu-item';
+import {AppConfig} from './app-config/app-config';
 
 @NgModule({
   declarations: [
@@ -40,23 +46,38 @@ import { DashboardModule } from './dashboard/dashboard.module';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     HttpModule,
     routing,
     FormsModule,
     AlertsModule,
-    BootstrapAlertModule.forRoot(),
     DatabaseModule,
-    ConfigModule,
+    AppConfigModule,
     SessionModule,
-    SyncStatusModule,
-    DashboardModule,
-    NavigationModule,
     UiModule,
-    LatestChangesModule
-    // UserModule is lazy loaded
+    SyncStatusModule,
+    LatestChangesModule,
+    NavigationModule,
+    UserModule,
+    DashboardModule,
+    ChildrenModule,
+    SchoolsModule
   ],
-  providers: [],
+  providers: [
+    AppConfig,
+    { provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      deps: [AppConfig], multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule {
+  constructor(private _navigationItemsService: NavigationItemsService) {
+    _navigationItemsService.addMenuItem(new MenuItem('Dashboard', 'home', ['/dashboard']));
+    _navigationItemsService.addMenuItem(new MenuItem('Children', 'face', ['/child']));
+    _navigationItemsService.addMenuItem(new MenuItem('Schools', 'school', ['/school']));
+  }
+}
+
+export function initializeApp(appConfig: AppConfig) {
+  return () => appConfig.load();
 }

@@ -16,6 +16,8 @@
  */
 
 import { Component, OnInit } from '@angular/core';
+import { User } from '../user';
+import { SessionService } from '../../session/session.service';
 
 @Component({
   selector: 'app-user-account',
@@ -24,10 +26,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UserAccountComponent implements OnInit {
 
-  constructor() {
-  }
+  user: User;
+
+  constructor( private sessionService: SessionService ) { }
 
   ngOnInit() {
+    this.user = this.sessionService.getCurrentUser();
   }
 
+  changePassword( pwd , rpwd ) {
+    if ( pwd === rpwd ) {
+      // TODO: update the password for this remote database user first and deny the password change if that fails
+      this.user.setNewPassword( pwd );
+      // TODO: Show success message
+    } else {
+      // TODO: Show error message
+    }
+  }
 }

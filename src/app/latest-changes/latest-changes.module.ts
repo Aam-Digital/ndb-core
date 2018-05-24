@@ -17,24 +17,27 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LatestChangesComponent } from './latest-changes/latest-changes.component';
+import { AppVersionComponent } from './app-version/app-version.component';
 import { AlertsModule } from '../alerts/alerts.module';
 import { HttpModule } from '@angular/http';
-import { ModalModule } from 'ngx-bootstrap';
 import { LatestChangesService } from './latest-changes.service';
 import { SessionModule } from '../session/session.module';
+import {MatButtonModule, MatDialogModule} from '@angular/material';
+import {ChangelogComponent} from './changelog/changelog.component';
 
 @NgModule({
   imports: [
     CommonModule,
     AlertsModule,
-    ModalModule.forRoot(),
     SessionModule,
+    MatDialogModule,
+    MatButtonModule,
     HttpModule
   ],
-  declarations: [LatestChangesComponent],
-  exports: [LatestChangesComponent],
-  providers: [LatestChangesService]
+  declarations: [AppVersionComponent, ChangelogComponent],
+  exports: [AppVersionComponent],
+  providers: [LatestChangesService],
+  entryComponents: [ChangelogComponent]
 })
 export class LatestChangesModule {
 }

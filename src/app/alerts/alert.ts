@@ -15,11 +15,16 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {MatSnackBarRef} from '@angular/material';
+import {AlertComponent} from './alerts/alert.component';
+
 export class Alert {
   static SUCCESS = 'success';
   static INFO = 'info';
   static WARNING = 'warning';
   static DANGER = 'danger';
+
+  public notificationRef: MatSnackBarRef<AlertComponent>;
 
   constructor(public message: string,
               public type: string) {

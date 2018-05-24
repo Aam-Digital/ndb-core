@@ -2,7 +2,7 @@ sudo: required
 dist: trusty
 language: node_js
 node_js:
-  - "6"
+  - "8.9"
 
 addons:
 apt:
@@ -22,16 +22,16 @@ before_script:
   - npm install -g karma
   - npm install
 
-branches:
-  only: master
+#branches:
+#  only: master
 
 cache:
   directories:
     - node_modules
 
 script:
-  - ng lint --type-check
-  - karma start karma.conf.js --single-run # Instead of ng test
+  - ng lint
+  - ng test --watch=false
 #  - ng e2e # Not implemented currently
   - ng build
   - ng build --prod

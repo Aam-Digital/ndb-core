@@ -24,6 +24,7 @@ import { AlertsModule } from '../alerts/alerts.module';
 import { EntityModule } from '../entity/entity.module';
 import { LoggedInGuard } from './logged-in.guard';
 import { SessionService } from './session.service';
+import {MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule} from '@angular/material';
 
 @NgModule({
   imports: [
@@ -31,7 +32,11 @@ import { SessionService } from './session.service';
     FormsModule,
     DatabaseModule,
     AlertsModule,
-    EntityModule
+    EntityModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule
   ],
   declarations: [LoginComponent],
   exports: [LoginComponent],

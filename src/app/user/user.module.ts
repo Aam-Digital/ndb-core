@@ -18,10 +18,15 @@
 import { NgModule } from '@angular/core';
 import { UserAccountComponent } from './user-account/user-account.component';
 import { routing } from './user.routing';
+import {MatButtonModule, MatFormFieldModule, MatInputModule} from '@angular/material';
+import {CommonModule} from '@angular/common';
 
 @NgModule({
   imports: [
-    routing
+    CommonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule
   ],
   declarations: [UserAccountComponent]
 })

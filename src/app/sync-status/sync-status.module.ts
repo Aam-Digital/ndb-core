@@ -17,20 +17,20 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { AlertModule as BootstrapAlertModule, ModalModule } from 'ngx-bootstrap';
-
 import { SyncStatusComponent } from './sync-status/sync-status.component';
 import { DatabaseModule } from '../database/database.module';
 import { SessionModule } from '../session/session.module';
+import {AlertsModule} from '../alerts/alerts.module';
+import {MatButtonModule, MatIconModule} from '@angular/material';
 
 @NgModule({
   imports: [
     CommonModule,
-    BootstrapAlertModule,
-    ModalModule.forRoot(),
     SessionModule,
-    DatabaseModule
+    DatabaseModule,
+    AlertsModule,
+    MatIconModule,
+    MatButtonModule
   ],
   declarations: [SyncStatusComponent],
   exports: [SyncStatusComponent],

@@ -21,10 +21,16 @@ declare const require: any;
 const CryptoJS = require('crypto-js');
 
 export class User extends Entity {
-
-  public name: string;
-  public lastUsedVersion: string;
+  private _name: string;
+  public lastUsedVersion: string; // TODO: What is the attribute for?
   private password: any;
+
+  set name(value: string) {
+    this._name = value;
+  }
+  get name(): string {
+    return this._name;
+  }
 
   public setNewPassword(password: string) {
     const cryptKeySize = 256 / 32;
@@ -39,6 +45,8 @@ export class User extends Entity {
   }
 
   public checkPassword(givenPassword: string): boolean {
+    // compares given password to the stored one of this user
+    // therefore hashes the given password string and compares it with the sored hash
     return (this.hashPassword(givenPassword) === this.password.hash);
   }
 
@@ -47,7 +55,6 @@ export class User extends Entity {
       keySize: this.password.keysize,
       iterations: this.password.iterations
     };
-
     return CryptoJS.PBKDF2(givenPassword, this.password.salt, options).toString();
   }
 }

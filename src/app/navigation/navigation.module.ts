@@ -15,18 +15,22 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { NavigationComponent } from './navigation/navigation.component';
-import { SessionModule } from '../session/session.module';
-import { RouterModule } from '@angular/router';
-import { NavigationItemsService } from './navigation-items.service';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {NavigationComponent} from './navigation/navigation.component';
+import {SessionModule} from '../session/session.module';
+import {RouterModule} from '@angular/router';
+import {NavigationItemsService} from './navigation-items.service';
+import {MatIconModule, MatListModule} from '@angular/material';
+
 
 @NgModule({
   imports: [
     CommonModule,
     SessionModule,
-    RouterModule
+    RouterModule,
+    MatListModule,
+    MatIconModule
   ],
   declarations: [NavigationComponent],
   exports: [NavigationComponent],

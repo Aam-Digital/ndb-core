@@ -16,22 +16,23 @@
  */
 
 import { PouchDatabaseManagerService } from './pouch-database-manager.service';
+import {AppConfig} from '../app-config/app-config';
 
 describe('PouchDatabaseManagerService', () => {
   let dbManager: PouchDatabaseManagerService;
-  let testConfigService: any;
 
   beforeEach(() => {
-    testConfigService = {
+    AppConfig.settings = {
       database: {
         name: 'unit-test',
         remote_url: 'remote-',
         timeout: 60000,
         outdated_threshold_days: 0
-      }
+      },
+      version: 'x',
+      dev: { useRemoteDatabaseDuringDevelopment: false },
     };
-
-    dbManager = new PouchDatabaseManagerService(testConfigService);
+    dbManager = new PouchDatabaseManagerService();
   });
 
   it('returns database', function () {
