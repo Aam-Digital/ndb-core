@@ -18,7 +18,7 @@
 import { Injectable } from '@angular/core';
 import PouchDB from 'pouchdb';
 import PouchDBAuthentication from 'pouchdb-authentication';
-import { ConfigService } from '../config/config.service';
+import { AppConfig } from '../app-config/app-config';
 import { DatabaseManagerService } from './database-manager.service';
 import { DatabaseSyncStatus } from './database-sync-status.enum';
 import { Database } from './database';
@@ -39,12 +39,12 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
   private _localDatabase: any;
   private _remoteDatabase: any;
 
-  constructor(private _appConfig: ConfigService) {
+  constructor() {
     super();
 
-    this._localDatabase = new PouchDB(this._appConfig.database.name);
-    this._remoteDatabase = new PouchDB(this._appConfig.database.remote_url + this._appConfig.database.name,
-      { ajax: { rejectUnauthorized: false, timeout: this._appConfig.database.timeout }, skip_setup: true }
+    this._localDatabase = new PouchDB(AppConfig.settings.database.name);
+    this._remoteDatabase = new PouchDB(AppConfig.settings.database.remote_url + AppConfig.settings.database.name,
+      { ajax: { rejectUnauthorized: false, timeout: AppConfig.settings.database.timeout }, skip_setup: true }
     );
   }
 

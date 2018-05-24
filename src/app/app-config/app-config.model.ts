@@ -15,16 +15,18 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ConfigService } from './config.service';
 
-@NgModule({
-  imports: [
-    CommonModule
-  ],
-  declarations: [],
-  providers: [ConfigService]
-})
-export class ConfigModule {
+export interface IAppConfig {
+  version: string;
+
+  database: {
+    name: string;
+    remote_url: string;
+    timeout: number;
+    outdated_threshold_days: number;
+  };
+
+  dev: {
+    useRemoteDatabaseDuringDevelopment: boolean;
+  };
 }
