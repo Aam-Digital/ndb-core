@@ -30,7 +30,7 @@ cache:
     - node_modules
 
 script:
-  - ng lint --type-check
+  - ng lint
   - karma start karma.conf.js --single-run # Instead of ng test
 #  - ng e2e # Not implemented currently
   - ng build
