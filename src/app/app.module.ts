@@ -35,7 +35,7 @@ import { UserModule } from './user/user.module';
 
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ChildrenModule } from './children/children.module';
-import { SchoolsListModule } from './schools/schools-list/schools-list.module';
+import { SchoolsModule } from './schools/schools.module';
 import { NavigationItemsService } from './navigation/navigation-items.service';
 import { MenuItem } from './navigation/menu-item';
 
@@ -60,7 +60,7 @@ import { MenuItem } from './navigation/menu-item';
     UserModule,
     DashboardModule,
     ChildrenModule,
-    SchoolsListModule
+    SchoolsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

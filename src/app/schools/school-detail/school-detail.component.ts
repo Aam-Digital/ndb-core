@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import { MatTableDataSource, MatSort } from "@angular/material";
-import { School } from "../../schoolsShared/school";
-import { SchoolsServices } from "../../schoolsShared/schools.services";
+import { School } from "../schoolsShared/school";
+import { SchoolsServices } from "../schoolsShared/schools.services";
 
 @Component({
   selector: 'app-school-detail',

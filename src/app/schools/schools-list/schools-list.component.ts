@@ -1,9 +1,9 @@
 import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatSort } from '@angular/material';
-import { School } from "../../schoolsShared/school";
-import { SchoolsServices } from "../../schoolsShared/schools.services";
+import { School } from "../schoolsShared/school";
+import { SchoolsServices } from "../schoolsShared/schools.services";
 import { Router } from "@angular/router";
-import {Medium} from "../../schoolsShared/Medium";
+import {Medium} from "../schoolsShared/Medium";
 
 @Component({
   selector: 'app-schools',
