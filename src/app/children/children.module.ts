@@ -24,10 +24,11 @@ import {MatInputModule} from '@angular/material/input';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { ChildrenListComponent } from './children-list/children-list.component';
 import {
-  MatButtonModule, MatButtonToggleModule, MatSidenavModule, MatSortModule,
+  MatButtonModule, MatButtonToggleModule, MatCardModule, MatSidenavModule, MatSortModule,
   MatTableModule
 } from '@angular/material';
 import {ChildrenService} from './children.service';
+import {ChildAttendanceComponent} from './attendance/child-attendance/child-attendance.component';
 
 
 @NgModule({
@@ -41,9 +42,10 @@ import {ChildrenService} from './children.service';
     MatSortModule,
     MatSidenavModule,
     MatButtonModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    MatCardModule,
   ],
-  declarations: [ChildDetailsComponent, ChildrenListComponent],
+  declarations: [ChildDetailsComponent, ChildrenListComponent, ChildAttendanceComponent],
   providers: [ChildrenService]
 })
 export class ChildrenModule { }

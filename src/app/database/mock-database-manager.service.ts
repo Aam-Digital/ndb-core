@@ -22,11 +22,42 @@ import { Database } from './database';
 import { isNullOrUndefined } from 'util';
 import {MockDatabase} from './mock-database';
 import {Gender} from '../children/Gender';
+import {AttendanceMonth} from '../children/attendance/attendance-month';
+import {EntityMapperService} from '../entity/entity-mapper.service';
 
 @Injectable()
 export class MockDatabaseManagerService extends DatabaseManagerService {
 
   private database: MockDatabase;
+
+
+  static getDummyDataAttendance(): AttendanceMonth[] {
+    const data =  new Array<AttendanceMonth>();
+    const a1 = new AttendanceMonth('1');
+    a1.student = '22';
+    a1.month = new Date('2018-01-01');
+    a1.daysWorking = 20;
+    a1.daysAttended = 18;
+    data.push(a1);
+
+    const a2 = new AttendanceMonth('2');
+    a2.student = '22';
+    a2.month = new Date('2018-02-01');
+    a2.daysWorking = 22;
+    a2.daysAttended = 5;
+    data.push(a2);
+
+    const a3 = new AttendanceMonth('3');
+    a3.student = '22';
+    a3.month = new Date('2018-03-01');
+    a3.daysWorking = 19;
+    a3.daysAttended = 11;
+    a3.daysExcused = 3;
+    data.push(a3);
+
+    return data;
+  }
+
 
   constructor() {
     super();
@@ -36,6 +67,8 @@ export class MockDatabaseManagerService extends DatabaseManagerService {
   }
 
   private initDemoData() {
+    const entityMapper = new EntityMapperService(this.database);
+
     // add demo user
     const demoUser = new User('demo');
     demoUser.name = 'demo';
@@ -77,6 +110,9 @@ export class MockDatabaseManagerService extends DatabaseManagerService {
       'name': 'Public High',
       'medium': 'Hindi',
     });
+
+    MockDatabaseManagerService.getDummyDataAttendance()
+      .forEach(d => entityMapper.save(d));
   }
 
 

@@ -1,0 +1,25 @@
+<table mat-table [dataSource]="attendanceRecords" matSort class="mat-elevation-z8 table-list">
+  <ng-container matColumnDef="month">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Month </th>
+    <td mat-cell *matCellDef="let att"> {{att.month | date:'yyyy-MM'}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="attended">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Present </th>
+    <td mat-cell *matCellDef="let att" align="right"> {{att.daysAttended}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="working">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Working </th>
+    <td mat-cell *matCellDef="let att" align="right"> {{att.daysWorking}} <span *ngIf="att.daysExcused>0">- {{att.daysExcused}} </span></td>
+  </ng-container>
+
+  <ng-container matColumnDef="percent">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Attendance </th>
+    <td mat-cell *matCellDef="let att" align="right"> {{att.getAttendancePercentage() | percent:'1.0-0' }} </td>
+  </ng-container>
+
+
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+  <tr mat-row *matRowDef="let att; columns: columnsToDisplay"></tr>
+</table>
