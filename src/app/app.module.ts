@@ -17,13 +17,13 @@
 
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule } from '@angular/core';
+import {APP_INITIALIZER, NgModule} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
 import { UiModule } from './ui/ui.module';
-import { ConfigModule } from './config/config.module';
+import { AppConfigModule } from './app-config/app-config.module';
 import { DatabaseModule } from './database/database.module';
 import { routing } from './app.routing';
 import { AlertsModule } from './alerts/alerts.module';
@@ -38,6 +38,7 @@ import { ChildrenModule } from './children/children.module';
 import { SchoolsModule } from './schools/schools.module';
 import { NavigationItemsService } from './navigation/navigation-items.service';
 import { MenuItem } from './navigation/menu-item';
+import {AppConfig} from './app-config/app-config';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,7 @@ import { MenuItem } from './navigation/menu-item';
     FormsModule,
     AlertsModule,
     DatabaseModule,
-    ConfigModule,
+    AppConfigModule,
     SessionModule,
     UiModule,
     SyncStatusModule,
@@ -62,7 +63,11 @@ import { MenuItem } from './navigation/menu-item';
     ChildrenModule,
     SchoolsModule
   ],
-  providers: [],
+  providers: [
+    AppConfig,
+    { provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      deps: [AppConfig], multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule {
@@ -71,4 +76,8 @@ export class AppModule {
     _navigationItemsService.addMenuItem(new MenuItem('Children', 'face', ['/child']));
     _navigationItemsService.addMenuItem(new MenuItem('Schools', 'school', ['/school']));
   }
+}
+
+export function initializeApp(appConfig: AppConfig) {
+  return () => appConfig.load();
 }

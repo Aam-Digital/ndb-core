@@ -15,19 +15,18 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ConfigService } from './config.service';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {AppConfig} from './app-config';
+import {HttpClientModule} from '@angular/common/http';
 
-describe('ConfigService', () => {
-  describe('config tests', () => {
-    let configService: ConfigService;
-
-    beforeEach(() => {
-      configService = new ConfigService();
-    });
-
-    it('version is defined', () => expect(configService.version).toBeDefined());
-
-    it('database name is defined', () => expect(configService.database.name).toBeDefined());
-    it('database name is defined', () => expect(configService.database.remote_url).toBeDefined());
-  });
-});
+@NgModule({
+  imports: [
+    CommonModule,
+    HttpClientModule,
+  ],
+  declarations: [],
+  providers: [AppConfig]
+})
+export class AppConfigModule {
+}

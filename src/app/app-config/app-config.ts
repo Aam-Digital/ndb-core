@@ -15,19 +15,27 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
+import {IAppConfig} from './app-config.model';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable()
-export class ConfigService {
+export class AppConfig {
+  static settings: IAppConfig;
 
-  version = '2.0.14';
+  constructor(private http: HttpClient) {}
 
-  database = {
-    name: 'dev',
-    remote_url: 'https://couchdb.aam-digital.com/',
-    timeout: 60000,
-    outdated_threshold_days: 0
-  };
-
-  useRemoteDatabaseDuringDevelopment = false;
+  load() {
+    const jsonFile = 'assets/config.json';
+    return new Promise<void>((resolve, reject) => {
+      this.http.get<IAppConfig>(jsonFile).toPromise()
+        .then((result) => {
+          AppConfig.settings = result;
+          resolve();
+        })
+        .catch((response: any) => {
+          reject(`Could not load file '${jsonFile}': ${JSON.stringify(response)}`);
+        });
+    });
+  }
 }

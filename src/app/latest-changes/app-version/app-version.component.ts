@@ -18,7 +18,7 @@
 import { Component } from '@angular/core';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
 import { AlertService } from '../../alerts/alert.service';
-import { ConfigService } from '../../config/config.service';
+import {AppConfig} from '../../app-config/app-config';
 import { LatestChangesService } from '../latest-changes.service';
 import { Changelog } from '../changelog';
 import { SessionStatus } from '../../session/session-status';
@@ -38,12 +38,11 @@ export class AppVersionComponent {
 
   constructor(private _sessionService: SessionService,
               private _latestChangesService: LatestChangesService,
-              private _configService: ConfigService,
               private _alertService: AlertService,
               private _entityMapperService: EntityMapperService,
               private dialog: MatDialog) {
 
-    this.currentVersion = this._configService.version;
+    this.currentVersion = AppConfig.settings.version;
 
     _latestChangesService.getChangelog().subscribe(
       changelog => this.currentChangelog = changelog[0],
