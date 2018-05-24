@@ -17,19 +17,17 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { AlertsModule } from '../alerts/alerts.module';
 import { EntityModule } from '../entity/entity.module';
 import { SessionService } from './session.service';
-import { ConfigModule } from '../config/config.module';
+import { AppConfigModule } from '../app-config/app-config.module';
 
 @NgModule({
   imports: [
     CommonModule,
-    FormsModule,
     AlertsModule,
     EntityModule,
-    ConfigModule
+    AppConfigModule
   ],
   providers: [SessionService]
 })

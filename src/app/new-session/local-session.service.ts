@@ -43,7 +43,7 @@ import PouchDB from 'pouchdb';
 
 import { Injectable, EventEmitter } from '@angular/core';
 
-import { ConfigService } from '../config/config.service';
+import { AppConfig } from '../app-config/app-config';
 import { EntityMapperService } from '../entity/entity-mapper.service';
 import { User } from '../user/user';
 
@@ -58,13 +58,13 @@ export class LocalSessionService {
   protected loginState: StateHandler<LoginState>; // logged in, logged out, login failed
   protected syncState: StateHandler<SyncState>; // assumed in sync, known out of sync, initial (not synced at all)
 
-  constructor(private _appConfig: ConfigService, private _entityMapper: EntityMapperService) {
-    this.database = new PouchDB(this._appConfig.database.name);
+  constructor(private _entityMapper: EntityMapperService) {
+    this.database = new PouchDB(AppConfig.settings.database.name);
 
     this.loginState = new StateHandler<LoginState>(LoginState.loggedOut);
-    this.syncState = new StateHandler<SyncState>(SyncState[window.sessionStorage.getItem("syncState")]);    // restore sync state
-    this.syncState.getStateChangedStream().subscribe(function(stateChange: StateChangedEvent<SyncState>) {  // save sync state on change
-      window.sessionStorage.setItem("syncState", SyncState[stateChange.toState]);
+    this.syncState = new StateHandler<SyncState>(SyncState[window.sessionStorage.getItem('syncState')]);    // restore sync state
+    this.syncState.getStateChangedStream().subscribe((stateChange: StateChangedEvent<SyncState>) => {  // save sync state on change
+      window.sessionStorage.setItem('syncState', SyncState[stateChange.toState]);
     });
   }
 

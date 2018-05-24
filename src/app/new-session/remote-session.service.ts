@@ -37,7 +37,7 @@
 import PouchDB from 'pouchdb';
 import PouchDBAuthentication from 'pouchdb-authentication';
 
-import { ConfigService } from '../config/config.service';
+import { AppConfig } from '../app-config/app-config';
 import { Injectable, EventEmitter } from '@angular/core';
 import { User } from '../user/user';
 import { StateHandler } from './state-handler';
@@ -51,8 +51,8 @@ export class RemoteSessionService {
 
   protected connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>();
 
-  constructor(private _appConfig: ConfigService) {
-    this.database = new PouchDB(this._appConfig.database.name);
+  constructor() {
+    this.database = new PouchDB(AppConfig.settings.database.name);
   }
 
   protected login(username: string, password: string): Promise<ConnectionState> {
