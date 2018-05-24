@@ -26,7 +26,7 @@ import { SessionService } from '../../session/session.service';
 })
 export class UserAccountComponent implements OnInit {
 
-  private user: User;
+  user: User;
 
   constructor( private sessionService: SessionService ) { }
 
