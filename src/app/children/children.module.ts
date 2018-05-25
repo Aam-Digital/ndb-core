@@ -28,6 +28,7 @@ import {
   MatSortModule,
   MatTableModule
 } from '@angular/material';
+import {FlexLayoutModule} from '@angular/flex-layout';
 import {ChildrenService} from './children.service';
 import {AttendanceBlockComponent} from './attendance/attendance-block/attendance-block.component';
 import {ChildAttendanceComponent} from './attendance/child-attendance/child-attendance.component';
@@ -37,6 +38,7 @@ import {UiHelperModule} from '../ui-helper/ui-helper.module';
 @NgModule({
   imports: [
     CommonModule,
+    FlexLayoutModule,
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
