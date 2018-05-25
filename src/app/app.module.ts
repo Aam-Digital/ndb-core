@@ -61,7 +61,7 @@ import {AppConfig} from './app-config/app-config';
     UserModule,
     DashboardModule,
     ChildrenModule,
-    SchoolsModule,
+    SchoolsModule
   ],
   providers: [
     AppConfig,
