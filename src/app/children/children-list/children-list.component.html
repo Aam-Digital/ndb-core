@@ -1,8 +1,8 @@
 <h1>Children List</h1>
 
-<mat-sidenav-container>
-  <mat-sidenav-content class="basic-padding">
+<div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="space-between">
 
+  <div>
     <div>
       <mat-form-field>
         <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
@@ -49,10 +49,10 @@
       <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
       <tr mat-row *matRowDef="let child; columns: columnsToDisplay" (click)="showChildDetails(child)" style="cursor:pointer;"></tr>
     </table>
-  </mat-sidenav-content>
+  </div>
 
 
-  <mat-sidenav mode="side" position="end" opened="true" disableClose="true" class="basic-padding table-list-nav">
+  <div fxFlexAlign="right">
     <mat-expansion-panel expanded="true">
       <mat-expansion-panel-header>
         <mat-panel-title>Details</mat-panel-title>
@@ -73,6 +73,6 @@
         <mat-button-toggle value="dropouts" (click)="displayFilteredList('dropouts')">Dropouts</mat-button-toggle>
       </mat-button-toggle-group>
     </mat-expansion-panel>
+  </div>
 
-  </mat-sidenav>
-</mat-sidenav-container>
+</div>

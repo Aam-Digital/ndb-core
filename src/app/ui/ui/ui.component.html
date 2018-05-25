@@ -40,9 +40,7 @@
 
 
   <mat-sidenav-content class="sidenav-content">
-    <div [style.visibility]="isLoggedIn() ? 'visible': 'collapse'">
-      <router-outlet></router-outlet>
-    </div>
+    <router-outlet [style.visibility]="isLoggedIn() ? 'visible': 'collapse'"></router-outlet>
     <app-login *ngIf="!isLoggedIn()"></app-login>
   </mat-sidenav-content>
 

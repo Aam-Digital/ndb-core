@@ -28,11 +28,13 @@ import {
   MatTableModule
 } from '@angular/material';
 import {ChildrenService} from './children.service';
+import {FlexLayoutModule} from '@angular/flex-layout';
 
 
 @NgModule({
   imports: [
     CommonModule,
+    FlexLayoutModule,
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,

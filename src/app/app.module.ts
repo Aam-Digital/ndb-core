@@ -39,6 +39,7 @@ import { SchoolsModule } from './schools/schools.module';
 import { NavigationItemsService } from './navigation/navigation-items.service';
 import { MenuItem } from './navigation/menu-item';
 import {AppConfig} from './app-config/app-config';
+import {FlexLayoutModule} from '@angular/flex-layout';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import {AppConfig} from './app-config/app-config';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    FlexLayoutModule,
     HttpModule,
     routing,
     FormsModule,
