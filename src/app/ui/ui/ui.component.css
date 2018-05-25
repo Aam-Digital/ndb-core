@@ -21,6 +21,30 @@ app-ui {
   background-color: #f8f8f8;
 }
 
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+
+.app-content {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.sidenav-menu {
+  margin-top: 64px;
+  box-shadow: 3px 0 6px rgba(0, 0, 0, .24);
+}
+.sidenav-content {
+  padding: 24px;
+}
+
 .header-icon {
   color: black;
 }
@@ -32,10 +56,6 @@ app-ui {
 .header-title {
   color: white;
   text-decoration: none;
-}
-
-.navbar-header {
-  float: none;
 }
 
 html,
@@ -94,12 +114,4 @@ body {
   border-radius: 4px;
   padding: 10px;
   width: 220px;
-}
-
-.sidenav-menu {
-  margin-top: 64px;
-  box-shadow: 3px 0 6px rgba(0, 0, 0, .24);
-}
-.sidenav-content {
-  padding: 24px;
 }
