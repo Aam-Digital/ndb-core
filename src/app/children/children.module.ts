@@ -28,6 +28,7 @@ import {
   MatTableModule
 } from '@angular/material';
 import {ChildrenService} from './children.service';
+import {AttendanceBlockComponent} from './attendance/attendance-block/attendance-block.component';
 import {ChildAttendanceComponent} from './attendance/child-attendance/child-attendance.component';
 
 
@@ -45,7 +46,7 @@ import {ChildAttendanceComponent} from './attendance/child-attendance/child-atte
     MatButtonToggleModule,
     MatCardModule,
   ],
-  declarations: [ChildDetailsComponent, ChildrenListComponent, ChildAttendanceComponent],
+  declarations: [AttendanceBlockComponent, ChildDetailsComponent, ChildrenListComponent, ChildAttendanceComponent],
   providers: [ChildrenService]
 })
 export class ChildrenModule { }
