@@ -15,33 +15,30 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* You can add global styles to this file, and also import other style files */
-
-body {
-  margin: 0;
-}
-
-.centered {
-  display: block !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-}
-
-.basic-padding {
-  padding: 10px;
-}
+import { Entity } from '../../entity/entity';
+import {WarningLevel} from './warning-level';
 
 
-.table-list-nav {
-  padding: 10px;
-}
+export class AttendanceMonth extends Entity {
+  student: string; // id of Child entity
+  month: Date;
+  daysWorking: number;
+  daysAttended: number;
+  daysExcused = 0;
+  remarks: string;
 
-td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
-  padding-left: 8px !important;
-}
+  getAttendancePercentage() {
+    return this.daysAttended / (this.daysWorking - this.daysExcused);
+  }
 
-
-
-.alerts-snackbar {
-  background-color: transparent;
+  getWarningLevel() {
+    const attendance = this.getAttendancePercentage();
+    if (attendance < 0.6) {
+      return WarningLevel.URGENT;
+    } else if (attendance < 0.8) {
+      return WarningLevel.WARNING;
+    } else {
+      return WarningLevel.OK;
+    }
+  }
 }

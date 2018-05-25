@@ -13,6 +13,7 @@ import {MockDatabase} from '../../database/mock-database';
 import {Database} from '../../database/database';
 import {RouterTestingModule} from '@angular/router/testing';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {AttendanceBlockComponent} from '../attendance/attendance-block/attendance-block.component';
 
 describe('ChildrenListComponent', () => {
   let component: ChildrenListComponent;
@@ -20,7 +21,7 @@ describe('ChildrenListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ChildrenListComponent ],
+      declarations: [ AttendanceBlockComponent, ChildrenListComponent ],
       imports: [
         CommonModule,
         RouterTestingModule.withRoutes([]),
