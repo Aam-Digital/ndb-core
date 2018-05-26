@@ -12,7 +12,7 @@ import {AttendanceMonth} from '../attendance/attendance-month';
 })
 export class ChildrenListComponent implements OnInit, AfterViewInit {
   childrenList: Child[];
-  attendanceList: Map<string, AttendanceMonth[]>;
+  attendanceList = new Map<string, AttendanceMonth[]>();
   childrenDataSource = new MatTableDataSource();
 
   @ViewChild(MatSort) sort: MatSort;
@@ -78,7 +78,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
 
   showChildDetails(child: Child) {
-    this.router.navigate(['/child', child.pn, 'attendance']);
+    this.router.navigate(['/child', child.getId(), 'attendance']);
   }
 
   displayColumnGroup(columnGroup: string) {
