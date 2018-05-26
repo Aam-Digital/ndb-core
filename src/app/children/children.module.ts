@@ -24,7 +24,8 @@ import {MatInputModule} from '@angular/material/input';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { ChildrenListComponent } from './children-list/children-list.component';
 import {
-  MatButtonModule, MatButtonToggleModule, MatCardModule, MatSidenavModule, MatSortModule,
+  MatButtonModule, MatButtonToggleModule, MatCardModule, MatIconModule, MatSidenavModule, MatSnackBarModule,
+  MatSortModule,
   MatTableModule
 } from '@angular/material';
 import {ChildrenService} from './children.service';
@@ -44,7 +45,9 @@ import {ChildAttendanceComponent} from './attendance/child-attendance/child-atte
     MatSidenavModule,
     MatButtonModule,
     MatButtonToggleModule,
+    MatIconModule,
     MatCardModule,
+    MatSnackBarModule,
   ],
   declarations: [AttendanceBlockComponent, ChildDetailsComponent, ChildrenListComponent, ChildAttendanceComponent],
   providers: [ChildrenService]

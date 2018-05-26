@@ -1,22 +1,89 @@
-<table mat-table [dataSource]="attendanceRecords" matSort class="mat-elevation-z8 table-list">
+<table mat-table [dataSource]="attendanceDataSource" matSort class="mat-elevation-z8 table-list">
   <ng-container matColumnDef="month">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Month </th>
-    <td mat-cell *matCellDef="let att"> {{att.month | date:'yyyy-MM'}} </td>
+    <td mat-cell *matCellDef="let att">
+      <div *ngIf="!recordsEditing.get(att.getId())">
+        {{att.month | date:'yyyy-MM'}}
+      </div>
+      <div *ngIf="recordsEditing.get(att.getId())">
+        <mat-form-field class="attendance-input-month">
+          <input matInput type="month" title="month" [valueAsDate]="att.month" (change)="att.month=$event.srcElement.valueAsDate">
+        </mat-form-field>
+      </div>
+    </td>
   </ng-container>
 
   <ng-container matColumnDef="attended">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Present </th>
-    <td mat-cell *matCellDef="let att" align="right"> {{att.daysAttended}} </td>
+    <td mat-cell *matCellDef="let att" align="right">
+      <div *ngIf="!recordsEditing.get(att.getId())">
+        {{att.daysAttended}}
+      </div>
+      <div *ngIf="recordsEditing.get(att.getId())">
+        <mat-form-field class="attendance-input-number">
+          <input matInput type="number" title="days attended" [value]="att.daysAttended" (change)="att.daysAttended=$event.srcElement.valueAsNumber">
+        </mat-form-field>
+      </div>
+    </td>
   </ng-container>
 
   <ng-container matColumnDef="working">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Working </th>
-    <td mat-cell *matCellDef="let att" align="right"> {{att.daysWorking}} <span *ngIf="att.daysExcused>0">- {{att.daysExcused}} </span></td>
+    <td mat-cell *matCellDef="let att" align="right">
+      <div *ngIf="!recordsEditing.get(att.getId())">
+        {{att.daysWorking}}
+      </div>
+      <div *ngIf="recordsEditing.get(att.getId())">
+        <mat-form-field class="attendance-input-number">
+          <input matInput type="number" title="school working days" [value]="att.daysWorking" (change)="att.daysWorking=$event.srcElement.valueAsNumber">
+        </mat-form-field>
+      </div>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="excused">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Excused </th>
+    <td mat-cell *matCellDef="let att" align="right">
+      <div *ngIf="!recordsEditing.get(att.getId())">
+        {{att.daysExcused}}
+      </div>
+      <div *ngIf="recordsEditing.get(att.getId())">
+        <mat-form-field class="attendance-input-number">
+          <input matInput type="number" title="excused absences" [value]="att.daysExcused" (change)="att.daysExcused=$event.srcElement.valueAsNumber">
+        </mat-form-field>
+      </div>
+    </td>
   </ng-container>
 
   <ng-container matColumnDef="percent">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Attendance </th>
     <td mat-cell *matCellDef="let att" align="right"> {{att.getAttendancePercentage() | percent:'1.0-0' }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="remarks">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Remarks </th>
+    <td mat-cell *matCellDef="let att" align="left">
+      <div *ngIf="!recordsEditing.get(att.getId())">
+        {{att.remarks}}
+      </div>
+      <div *ngIf="recordsEditing.get(att.getId())">
+        <mat-form-field>
+          <textarea matInput placeholder="notes regarding this attendance" [value]="att.remarks" (change)="att.remarks=$event.srcElement.value"></textarea>
+        </mat-form-field>
+      </div>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+      <button mat-stroked-button color="accent" (click)="newAttendanceMonth()"><mat-icon class="table-action-icon" aria-label="add">add_circle</mat-icon>Add New</button>
+    </th>
+    <td mat-cell *matCellDef="let att">
+      <button mat-icon-button *ngIf="!recordsEditing.get(att.getId())" (click)="recordsEditing.set(att.getId(), true)"><mat-icon class="table-action-icon" aria-label="edit">edit</mat-icon></button>
+      <button mat-icon-button *ngIf="recordsEditing.get(att.getId())" (click)="saveAttendanceMonth(att)"><mat-icon class="table-action-icon" aria-label="save">check_circle</mat-icon></button>
+      <button mat-icon-button *ngIf="recordsEditing.get(att.getId())" (click)="resetAttendanceMonthChanges(att)"><mat-icon class="table-action-icon" aria-label="cancel">cancel</mat-icon></button>
+      <button mat-icon-button (click)="deleteAttendanceMonth(att)"><mat-icon class="table-action-icon" aria-label="delete">delete</mat-icon></button>
+    </td>
   </ng-container>
 
 

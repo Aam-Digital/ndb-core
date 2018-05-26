@@ -17,7 +17,7 @@ export class ChildrenService {
     );
   }
 
-  getChild(id: string): Observable<Child>  {
+  getChild(id: string): Observable<Child> {
     return Observable.fromPromise(
       this.entityMapper.load<Child>(Child, id)
         .then(result => { return result; })
@@ -29,5 +29,29 @@ export class ChildrenService {
       this.entityMapper.loadType<AttendanceMonth>(AttendanceMonth)
         .then(loadedEntities => { return loadedEntities; })
     );
+  }
+
+  getAttendancesOfChild(childId: string): Observable<AttendanceMonth[]> {
+    return Observable.fromPromise(
+      this.entityMapper.loadType<AttendanceMonth>(AttendanceMonth)
+        .then(loadedEntities => {
+          return loadedEntities.filter(o => o.student === childId);
+        })
+    );
+  }
+
+  getAttendance(id: string): Observable<AttendanceMonth> {
+    return Observable.fromPromise(
+      this.entityMapper.load<AttendanceMonth>(AttendanceMonth, id)
+        .then(result => { return result; })
+    );
+  }
+
+  saveAttendance(entity: AttendanceMonth) {
+    this.entityMapper.save(entity);
+  }
+
+  removeAttendance(entity: AttendanceMonth) {
+    this.entityMapper.remove(entity);
   }
 }

@@ -25,7 +25,7 @@ export class AttendanceMonth extends Entity {
   daysWorking: number;
   daysAttended: number;
   daysExcused = 0;
-  remarks: string;
+  remarks = '';
 
   getAttendancePercentage() {
     return this.daysAttended / (this.daysWorking - this.daysExcused);
