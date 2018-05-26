@@ -3,5 +3,5 @@ engines:
     enabled: true
     config:
       languages:
-        javascript:
+        typescript:
           mass_threshold: 65
