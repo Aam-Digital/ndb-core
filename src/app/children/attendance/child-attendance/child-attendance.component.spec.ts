@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ChildAttendanceComponent } from './child-attendance.component';
-import {MatTableModule} from '@angular/material';
+import {MatFormFieldModule, MatIconModule, MatSnackBarModule, MatTableModule} from '@angular/material';
 import {ActivatedRoute} from '@angular/router';
 import {Observable} from 'rxjs/Rx';
 import {Child} from '../../child';
@@ -30,7 +30,7 @@ describe('ChildAttendanceComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ ChildAttendanceComponent ],
-      imports: [MatTableModule],
+      imports: [MatTableModule, MatFormFieldModule, MatIconModule, MatSnackBarModule],
       providers: [
         { provide: ActivatedRoute, useValue: {params: Observable.of({id: '22'})} },
         { provide: ChildrenService, useValue: mockChildrenService } ],
