@@ -76,7 +76,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
 
   showChildDetails(child: Child) {
-    this.router.navigate(['/child', child.getId(), 'attendance']);
+    this.router.navigate(['/child', child.getId()]);
   }
 
   displayColumnGroup(columnGroup: string) {
