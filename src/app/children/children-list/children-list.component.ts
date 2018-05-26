@@ -29,11 +29,10 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
   constructor(private childrenService: ChildrenService,
               private router: Router) {
-    const that = this;
     this.childrenService.getChildren().subscribe(data => {
-      that.childrenList = data;
-      that.childrenDataSource.data = data;
-      that.displayFilteredList(that.filterGroupSelection);
+      this.childrenList = data;
+      this.childrenDataSource.data = data;
+      this.displayFilteredList(this.filterGroupSelection);
     });
 
     this.childrenService.getAttendances()
@@ -51,12 +50,11 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
   prepareAttendanceData(loadedEntities: AttendanceMonth[]) {
     this.attendanceList = new Map<string, AttendanceMonth[]>();
-    const that = this;
     loadedEntities.forEach(x => {
-      if (!that.attendanceList.has(x.student)) {
-        that.attendanceList.set(x.student, new Array<AttendanceMonth>());
+      if (!this.attendanceList.has(x.student)) {
+        this.attendanceList.set(x.student, new Array<AttendanceMonth>());
       }
-      that.attendanceList.get(x.student).push(x);
+      this.attendanceList.get(x.student).push(x);
     });
 
     this.attendanceList.forEach(studentsAttendance => {
