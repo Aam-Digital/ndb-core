@@ -58,28 +58,26 @@ export class ChildAttendanceComponent implements OnInit {
         },
         err => {
           if (err.status === 404) {
-            // remove from component's table
-            const index = this.attendanceRecords.findIndex(a => a.getId() === att.getId());
-            if (index > -1) {
-              this.attendanceRecords.splice(index, 1);
-              this.attendanceDataSource.data = this.attendanceRecords;
-            }
+            this.removeFromDataTable(att);
           }
         }
       );
     this.recordsEditing.set(att.getId(), false);
   }
 
-  deleteAttendanceMonth(att: AttendanceMonth) {
-    // delete from database
-    this.childrenService.removeAttendance(att);
-
-    // remove from component's table
+  private removeFromDataTable(att: AttendanceMonth) {
     const index = this.attendanceRecords.findIndex(a => a.getId() === att.getId());
     if (index > -1) {
       this.attendanceRecords.splice(index, 1);
       this.attendanceDataSource.data = this.attendanceRecords;
     }
+  }
+
+  deleteAttendanceMonth(att: AttendanceMonth) {
+    // delete from database
+    this.childrenService.removeAttendance(att);
+
+    this.removeFromDataTable(att);
 
     const snackBarRef = this.snackBar.open('Attendance record deleted', 'Undo', { duration: 8000 });
     snackBarRef.onAction().subscribe(() => {
