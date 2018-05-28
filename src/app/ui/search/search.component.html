@@ -1,0 +1,10 @@
+<div>
+  <mat-form-field>
+    <span matPrefix><mat-icon style="position: relative; top: 10px;">search</mat-icon></span>
+    <input matInput (input)="search()" title="Search" [matAutocomplete]="autoResults" [(ngModel)]="searchText">
+  </mat-form-field>
+
+  <mat-autocomplete #autoResults="matAutocomplete" (optionSelected)="openResult($event.option.value)">
+    <mat-option *ngFor="let res of results" [value]="res.doc">{{res.doc.name}} [{{res.doc.type}}]</mat-option>
+  </mat-autocomplete>
+</div>

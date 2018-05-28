@@ -20,6 +20,7 @@
   <mat-toolbar-row>
     <span><a class="header-title" [routerLink]="['']">{{title}}</a></span>
     <span class="header-spacer"></span>
+    <app-search></app-search>
     <app-sync-status></app-sync-status>
     <button mat-icon-button [routerLink]="['/user']" *ngIf="isLoggedIn()"><mat-icon class="header-icon">account_circle</mat-icon></button>
     <button mat-icon-button (click)="logout()" [routerLink]="['']" *ngIf="isLoggedIn()"><mat-icon class="header-icon">exit_to_app</mat-icon></button>

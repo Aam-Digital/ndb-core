@@ -23,11 +23,18 @@ import { SessionModule } from '../session/session.module';
 import { SyncStatusModule } from '../sync-status/sync-status.module';
 import { RouterModule } from '@angular/router';
 import { LatestChangesModule } from '../latest-changes/latest-changes.module';
-import {MatButtonModule, MatIconModule, MatSidenavModule, MatToolbarModule} from '@angular/material';
+import {
+  MatAutocompleteModule,
+  MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSidenavModule,
+  MatToolbarModule
+} from '@angular/material';
+import { SearchComponent } from './search/search.component';
+import {FormsModule} from '@angular/forms';
 
 @NgModule({
   imports: [
     CommonModule,
+    FormsModule,
     LatestChangesModule,
     NavigationModule,
     RouterModule,
@@ -36,9 +43,12 @@ import {MatButtonModule, MatIconModule, MatSidenavModule, MatToolbarModule} from
     MatSidenavModule,
     MatToolbarModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatAutocompleteModule,
   ],
-  declarations: [UiComponent],
+  declarations: [SearchComponent, UiComponent],
   exports: [UiComponent]
 })
 export class UiModule {
