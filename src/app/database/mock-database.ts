@@ -87,4 +87,14 @@ export class MockDatabase extends Database {
   private findIndex(id: string) {
     return this.data.findIndex(o => o._id === id);
   }
+
+
+  query(fun: (doc: any, emit: any) => void, options: any): Promise<any> {
+    // TODO: implement mock query
+    return Promise.reject('not supported');
+  }
+  saveDatabaseIndex(designDoc) {
+    // TODO: implement mock query
+    return Promise.reject('not supported');
+  }
 }
