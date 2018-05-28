@@ -28,7 +28,7 @@ export class SearchComponent implements OnInit {
         by_name: {
           map: function (doc) {
             if (doc.hasOwnProperty('name')) {
-              emit(doc.name.toLowerCase());
+              doc.name.toLowerCase().split(' ').forEach(word => emit(word));
             }
             if (doc.hasOwnProperty('entityId')) {
               emit(doc.entityId);
