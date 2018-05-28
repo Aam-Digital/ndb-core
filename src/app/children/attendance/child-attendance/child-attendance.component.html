@@ -7,7 +7,7 @@
       </div>
       <div *ngIf="recordsEditing.get(att.getId())">
         <mat-form-field class="attendance-input-month">
-          <input matInput type="month" title="month" [valueAsDate]="att.month" (change)="att.month=$event.srcElement.valueAsDate">
+          <input matInput type="month" title="month" [valueAsDate]="att.month" (change)="att.month=$event.target.valueAsDate">
         </mat-form-field>
       </div>
     </td>
@@ -21,7 +21,7 @@
       </div>
       <div *ngIf="recordsEditing.get(att.getId())">
         <mat-form-field class="attendance-input-number">
-          <input matInput type="number" title="days attended" [value]="att.daysAttended" (change)="att.daysAttended=$event.srcElement.valueAsNumber">
+          <input matInput type="number" min="0" title="days attended" [value]="att.daysAttended" (change)="att.daysAttended=$event.target.valueAsNumber">
         </mat-form-field>
       </div>
     </td>
@@ -35,7 +35,7 @@
       </div>
       <div *ngIf="recordsEditing.get(att.getId())">
         <mat-form-field class="attendance-input-number">
-          <input matInput type="number" title="school working days" [value]="att.daysWorking" (change)="att.daysWorking=$event.srcElement.valueAsNumber">
+          <input matInput type="number" min="0" title="school working days" [value]="att.daysWorking" (change)="att.daysWorking=$event.target.valueAsNumber">
         </mat-form-field>
       </div>
     </td>
@@ -49,7 +49,7 @@
       </div>
       <div *ngIf="recordsEditing.get(att.getId())">
         <mat-form-field class="attendance-input-number">
-          <input matInput type="number" title="excused absences" [value]="att.daysExcused" (change)="att.daysExcused=$event.srcElement.valueAsNumber">
+          <input matInput type="number" min="0" title="excused absences" [value]="att.daysExcused" (change)="att.daysExcused=$event.target.valueAsNumber">
         </mat-form-field>
       </div>
     </td>
@@ -68,7 +68,7 @@
       </div>
       <div *ngIf="recordsEditing.get(att.getId())">
         <mat-form-field>
-          <textarea matInput placeholder="notes regarding this attendance" [value]="att.remarks" (change)="att.remarks=$event.srcElement.value"></textarea>
+          <textarea matInput placeholder="notes regarding this attendance" [value]="att.remarks" (change)="att.remarks=$event.target.value"></textarea>
         </mat-form-field>
       </div>
     </td>
