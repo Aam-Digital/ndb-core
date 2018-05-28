@@ -27,8 +27,9 @@ import {
   MatButtonModule, MatButtonToggleModule, MatSidenavModule, MatSortModule,
   MatTableModule
 } from '@angular/material';
-import {ChildrenService} from './children.service';
 import {FlexLayoutModule} from '@angular/flex-layout';
+import {ChildrenService} from './children.service';
+import { ChildBlockComponent } from './child-block/child-block.component';
 
 
 @NgModule({
@@ -45,7 +46,8 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     MatButtonModule,
     MatButtonToggleModule
   ],
-  declarations: [ChildDetailsComponent, ChildrenListComponent],
-  providers: [ChildrenService]
+  declarations: [ChildBlockComponent, ChildDetailsComponent, ChildrenListComponent],
+  providers: [ChildrenService],
+  exports: [ChildBlockComponent],
 })
 export class ChildrenModule { }

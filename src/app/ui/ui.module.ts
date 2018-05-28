@@ -30,6 +30,8 @@ import {
 } from '@angular/material';
 import { SearchComponent } from './search/search.component';
 import {FormsModule} from '@angular/forms';
+import {ChildrenModule} from '../children/children.module';
+import {SchoolsModule} from '../schools/schools.module';
 
 @NgModule({
   imports: [
@@ -47,6 +49,8 @@ import {FormsModule} from '@angular/forms';
     MatFormFieldModule,
     MatInputModule,
     MatAutocompleteModule,
+    ChildrenModule,
+    SchoolsModule,
   ],
   declarations: [SearchComponent, UiComponent],
   exports: [UiComponent]
