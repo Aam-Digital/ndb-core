@@ -32,6 +32,7 @@ import { SearchComponent } from './search/search.component';
 import {FormsModule} from '@angular/forms';
 import {ChildrenModule} from '../children/children.module';
 import {SchoolsModule} from '../schools/schools.module';
+import {FlexLayoutModule} from '@angular/flex-layout';
 
 @NgModule({
   imports: [
@@ -49,6 +50,7 @@ import {SchoolsModule} from '../schools/schools.module';
     MatFormFieldModule,
     MatInputModule,
     MatAutocompleteModule,
+    FlexLayoutModule,
     ChildrenModule,
     SchoolsModule,
   ],
