@@ -74,6 +74,8 @@ export class ChildAttendanceComponent implements OnInit {
   }
 
   deleteAttendanceMonth(att: AttendanceMonth) {
+   var r = window.confirm("Are you sure you want to delete the attendence?");
+   if(r){
     // delete from database
     this.childrenService.removeAttendance(att);
 
@@ -85,6 +87,8 @@ export class ChildAttendanceComponent implements OnInit {
       this.attendanceRecords.unshift(att);
       this.attendanceDataSource.data = this.attendanceRecords;
     });
+  }
+  
   }
 
   newAttendanceMonth() {
