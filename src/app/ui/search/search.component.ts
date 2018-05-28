@@ -26,7 +26,17 @@ export class SearchComponent implements OnInit {
       _id: '_design/search_index',
       views: {
         by_name: {
-          map: function (doc) { emit(doc.name ? doc.name.toLowerCase() : undefined); }.toString()
+          map: function (doc) {
+            if (doc.hasOwnProperty('name')) {
+              emit(doc.name.toLowerCase());
+            }
+            if (doc.hasOwnProperty('entityId')) {
+              emit(doc.entityId);
+            }
+            if (doc.hasOwnProperty('pn')) {
+              emit(doc.pn);
+            }
+          }.toString()
         }
       }
     };
