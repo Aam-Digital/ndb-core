@@ -22,8 +22,8 @@ before_script:
   - npm install -g karma
   - npm install
 
-#branches:
-#  only: master
+branches:
+  only: master
 
 cache:
   directories:
