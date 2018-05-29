@@ -4,6 +4,7 @@ import {AttendanceMonth} from '../attendance-month';
 import {Child} from '../../child';
 import {ChildrenService} from '../../children.service';
 import {MatSnackBar, MatTableDataSource} from '@angular/material';
+import {ConfirmationDialogService} from '../../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 
 @Component({
   selector: 'app-child-attendance',
@@ -20,7 +21,8 @@ export class ChildAttendanceComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private childrenService: ChildrenService,
-              private snackBar: MatSnackBar) {
+              private snackBar: MatSnackBar,
+              private confirmationDialog: ConfirmationDialogService) {
   }
 
   ngOnInit() {
@@ -74,21 +76,23 @@ export class ChildAttendanceComponent implements OnInit {
   }
 
   deleteAttendanceMonth(att: AttendanceMonth) {
-   var r = window.confirm("Are you sure you want to delete the attendence?");
-   if(r){
-    // delete from database
-    this.childrenService.removeAttendance(att);
+    const dialogRef = this.confirmationDialog
+      .openDialog('Delete?', 'Are you sure you want to delete this attendence record?');
 
-    this.removeFromDataTable(att);
+    dialogRef.afterClosed()
+      .subscribe(confirmed => {
+        if (confirmed) {
+          this.childrenService.removeAttendance(att);
+          this.removeFromDataTable(att);
 
-    const snackBarRef = this.snackBar.open('Attendance record deleted', 'Undo', { duration: 8000 });
-    snackBarRef.onAction().subscribe(() => {
-      this.saveAttendanceMonth(att);
-      this.attendanceRecords.unshift(att);
-      this.attendanceDataSource.data = this.attendanceRecords;
+          const snackBarRef = this.snackBar.open('Attendance record deleted', 'Undo', { duration: 8000 });
+          snackBarRef.onAction().subscribe(() => {
+            this.saveAttendanceMonth(att);
+            this.attendanceRecords.unshift(att);
+            this.attendanceDataSource.data = this.attendanceRecords;
+          });
+        }
     });
-  }
-  
   }
 
   newAttendanceMonth() {

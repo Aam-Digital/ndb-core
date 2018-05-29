@@ -31,6 +31,7 @@ import {
 import {ChildrenService} from './children.service';
 import {AttendanceBlockComponent} from './attendance/attendance-block/attendance-block.component';
 import {ChildAttendanceComponent} from './attendance/child-attendance/child-attendance.component';
+import {UiHelperModule} from '../ui-helper/ui-helper.module';
 
 
 @NgModule({
@@ -48,6 +49,7 @@ import {ChildAttendanceComponent} from './attendance/child-attendance/child-atte
     MatIconModule,
     MatCardModule,
     MatSnackBarModule,
+    UiHelperModule,
   ],
   declarations: [AttendanceBlockComponent, ChildDetailsComponent, ChildrenListComponent, ChildAttendanceComponent],
   providers: [ChildrenService]
