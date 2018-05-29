@@ -4,22 +4,26 @@ import { SearchComponent } from './search.component';
 import {MatAutocompleteModule, MatFormFieldModule, MatIconModule, MatInputModule} from '@angular/material';
 import {FormsModule} from '@angular/forms';
 import {Database} from '../../database/database';
-import {MockDatabase} from '../../database/mock-database';
 import {CommonModule} from '@angular/common';
-import {RouterTestingModule} from '@angular/router/testing';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {PouchDatabase} from '../../database/pouch-database';
+import PouchDB from 'pouchdb';
+import {ChildrenModule} from '../../children/children.module';
+import {SchoolsModule} from '../../schools/schools.module';
 
 describe('SearchComponent', () => {
   let component: SearchComponent;
   let fixture: ComponentFixture<SearchComponent>;
 
   beforeEach(async(() => {
+    const pouchDB = new PouchDatabase(new PouchDB('unit-test-search'));
+
     TestBed.configureTestingModule({
       imports: [MatIconModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule,
         CommonModule, FormsModule, NoopAnimationsModule,
-        RouterTestingModule
+        ChildrenModule, SchoolsModule,
       ],
-      providers: [{ provide: Database, useClass: MockDatabase }],
+      providers: [{ provide: Database, useValue: pouchDB }],
       declarations: [ SearchComponent ]
     })
     .compileComponents();
