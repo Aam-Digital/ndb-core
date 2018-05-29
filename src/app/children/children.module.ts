@@ -24,12 +24,16 @@ import {MatInputModule} from '@angular/material/input';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { ChildrenListComponent } from './children-list/children-list.component';
 import {
-  MatButtonModule, MatButtonToggleModule, MatSidenavModule, MatSortModule,
+  MatButtonModule, MatButtonToggleModule, MatCardModule, MatIconModule, MatSidenavModule, MatSnackBarModule,
+  MatSortModule,
   MatTableModule
 } from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {ChildrenService} from './children.service';
-import { ChildBlockComponent } from './child-block/child-block.component';
+import {AttendanceBlockComponent} from './attendance/attendance-block/attendance-block.component';
+import {ChildAttendanceComponent} from './attendance/child-attendance/child-attendance.component';
+import {UiHelperModule} from '../ui-helper/ui-helper.module';
+import {ChildBlockComponent} from './child-block/child-block.component';
 
 
 @NgModule({
@@ -44,9 +48,18 @@ import { ChildBlockComponent } from './child-block/child-block.component';
     MatSortModule,
     MatSidenavModule,
     MatButtonModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    MatIconModule,
+    MatCardModule,
+    MatSnackBarModule,
+    UiHelperModule,
   ],
-  declarations: [ChildBlockComponent, ChildDetailsComponent, ChildrenListComponent],
+  declarations: [
+    AttendanceBlockComponent,
+    ChildBlockComponent,
+    ChildAttendanceComponent,
+    ChildDetailsComponent,
+    ChildrenListComponent],
   providers: [ChildrenService],
   exports: [ChildBlockComponent],
 })

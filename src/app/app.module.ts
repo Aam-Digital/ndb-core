@@ -63,7 +63,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     UserModule,
     DashboardModule,
     ChildrenModule,
-    SchoolsModule
+    SchoolsModule,
   ],
   providers: [
     AppConfig,

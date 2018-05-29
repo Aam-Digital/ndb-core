@@ -28,7 +28,7 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class ChildDetailsComponent implements OnInit {
   child = new Child('test');
-  editable = true;
+  editable = false;   // editable schould be enabled by default and be activated by button
   gender = Gender;
   genderSelector;
   selectedGender;
@@ -103,10 +103,11 @@ export class ChildDetailsComponent implements OnInit {
     const params = this.route.snapshot.params;
     const childId = params['id'];
 
-    this.entityMapperService.load(Child, 'child:' + childId)
+    this.entityMapperService.load<Child>(Child, childId)
       .then(child => this.child = child)
       .catch(err => {
-        console.log(err + 'load');
+        console.log(childId);
+        console.log('!!!!!' + err + 'load');
         this.child = new Child('child:4');
         this.child.name = 'Fabi 4';
         this.child.pn = 4; // project number

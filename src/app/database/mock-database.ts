@@ -56,15 +56,31 @@ export class MockDatabase extends Database {
   }
 
   put(object: any) {
+    let result;
+
     // check if unintentionally (no _rev) a duplicate _id is used
-    if (!object._rev && this.exists(object._id)) {
-      return Promise.reject({ 'message': '_id already exists'});
+    if (this.exists(object._id)) {
+      if (!object._rev) {
+        return Promise.reject({ 'message': '_id already exists'});
+      } else {
+        result = this.overwriteExisting(object);
+      }
+    } else {
+      object._rev = true;
+      result = Promise.resolve(this.data.push(object));
     }
 
-    object._rev = true;
-    const result = this.data.push(object);
+    return result;
+  }
 
-    return Promise.resolve(result);
+  private overwriteExisting(object: any): Promise<any> {
+    const index = this.data.findIndex(e => e._id === object._id);
+    if (index > -1) {
+      this.data[index] = object;
+      return Promise.resolve(object);
+    } else {
+      return Promise.reject({ 'message': 'failed to overwrite existing object'});
+    }
   }
 
   remove(object: any) {

@@ -210,7 +210,7 @@
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput placeholder="Age" type="text" [value]=child.getAge() [disabled]="!editable">
+      <input matInput placeholder="Age" type="text" [value]=child.getAge() [disabled]="true">
     </mat-form-field>
 
     <mat-form-field>
@@ -330,6 +330,19 @@
       <!-- /.panel-body School -->
   </div>
   <!-- /.panel -->
+
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    Attendance
+  </div>
+  <!-- /.panel-heading -->
+  <div class="panel-body">
+    <app-child-attendance></app-child-attendance>
+  </div>
+  <!-- /.panel-body -->
+</div>
+<!-- /.panel -->
 
 
   <div class="row">
