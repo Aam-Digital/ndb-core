@@ -15,4 +15,10 @@ describe('ChildrenService', () => {
   it('should be created', inject([ChildrenService], (service: ChildrenService) => {
     expect(service).toBeTruthy();
   }));
+
+  // TODO: test getChildren
+
+  // TODO: test getChild
+
+  // TODO: test getAttendances
 });

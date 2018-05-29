@@ -1,0 +1,33 @@
+.attendance-block {
+  padding: 5px;
+  border-radius: 4px;
+  margin: 3px;
+}
+
+.w-OK {
+  background-color: #90ee9040;
+}
+.w-WARNING {
+  background-color: #ffa50080;
+}
+.w-URGENT {
+  background-color: #fd727280;
+}
+
+
+.attendance-tooltip {
+  position: relative;
+  top: -5px;
+  left: 5px;
+
+  padding: 8px;
+  background-color:white;
+}
+.attendance-tooltip-header {
+  text-align: center;
+  font-weight: bold;
+}
+.attendance-tooltip-content {
+  text-align: left;
+  font-size: 0.95em;
+}

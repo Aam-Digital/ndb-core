@@ -3,6 +3,7 @@ import {Child} from '../child';
 import {MatSort, MatTableDataSource} from '@angular/material';
 import {Router} from '@angular/router';
 import {ChildrenService} from '../children.service';
+import {AttendanceMonth} from '../attendance/attendance-month';
 
 @Component({
   selector: 'app-children-list',
@@ -11,13 +12,14 @@ import {ChildrenService} from '../children.service';
 })
 export class ChildrenListComponent implements OnInit, AfterViewInit {
   childrenList: Child[];
+  attendanceList = new Map<string, AttendanceMonth[]>();
   childrenDataSource = new MatTableDataSource();
 
   @ViewChild(MatSort) sort: MatSort;
-  columnGroupSelection = 'basic';
+  columnGroupSelection = 'school';
   columnGroups = {
     'basic': ['pn', 'name', 'age', 'class', 'school', 'center', 'status'],
-    'school': ['pn', 'name', 'age', 'class', 'school'],
+    'school': ['pn', 'name', 'age', 'class', 'school', 'attendance'],
     'status': ['pn', 'name', 'center', 'status'],
   };
   columnsToDisplay: ['pn', 'name'];
@@ -27,12 +29,14 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
   constructor(private childrenService: ChildrenService,
               private router: Router) {
-    const that = this;
     this.childrenService.getChildren().subscribe(data => {
-      that.childrenList = data;
-      that.childrenDataSource.data = data;
-      that.displayFilteredList(that.filterGroupSelection);
+      this.childrenList = data;
+      this.childrenDataSource.data = data;
+      this.displayFilteredList(this.filterGroupSelection);
     });
+
+    this.childrenService.getAttendances()
+      .subscribe(results => this.prepareAttendanceData(results));
   }
 
   ngOnInit() {
@@ -42,6 +46,27 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.childrenDataSource.sort = this.sort;
   }
+
+
+  prepareAttendanceData(loadedEntities: AttendanceMonth[]) {
+    this.attendanceList = new Map<string, AttendanceMonth[]>();
+    loadedEntities.forEach(x => {
+      if (!this.attendanceList.has(x.student)) {
+        this.attendanceList.set(x.student, new Array<AttendanceMonth>());
+      }
+      this.attendanceList.get(x.student).push(x);
+    });
+
+    this.attendanceList.forEach(studentsAttendance => {
+      studentsAttendance.sort((a, b) => {
+        // descending by date
+        if (a.month > b.month) { return -1; }
+        if (a.month < b.month) { return 1; }
+        return 0;
+      });
+    });
+  }
+
 
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim();
