@@ -1,11 +1,13 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { ConfirmationDialogService } from './confirmation-dialog.service';
+import {MatDialogModule} from '@angular/material';
 
 describe('ConfirmationDialogService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [ConfirmationDialogService]
+      providers: [ConfirmationDialogService],
+      imports: [MatDialogModule],
     });
   });
 

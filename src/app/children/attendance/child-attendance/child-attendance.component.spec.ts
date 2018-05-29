@@ -7,6 +7,7 @@ import {Observable} from 'rxjs/Rx';
 import {Child} from '../../child';
 import {MockDatabaseManagerService} from '../../../database/mock-database-manager.service';
 import {ChildrenService} from '../../children.service';
+import {UiHelperModule} from '../../../ui-helper/ui-helper.module';
 
 describe('ChildAttendanceComponent', () => {
   let component: ChildAttendanceComponent;
@@ -30,7 +31,7 @@ describe('ChildAttendanceComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ ChildAttendanceComponent ],
-      imports: [MatTableModule, MatFormFieldModule, MatIconModule, MatSnackBarModule],
+      imports: [MatTableModule, MatFormFieldModule, MatIconModule, MatSnackBarModule, UiHelperModule],
       providers: [
         { provide: ActivatedRoute, useValue: {params: Observable.of({id: '22'})} },
         { provide: ChildrenService, useValue: mockChildrenService } ],
