@@ -19,24 +19,26 @@ export class SearchComponent implements OnInit {
   }
 
   private createSearchIndex() {
-    // defined to avoid Typescript error. Actually `emit` is provided by pouchDB to the `map` function
-    const emit = (x) => {};
+    const emit = (x) => {}; // defined to avoid Typescript error. Actually `emit` is provided by pouchDB to the `map` function
+
+    // `emit(x)` to add x as a key to the index that can be searched
+    function searchMapFunction (doc) {
+      if (doc.hasOwnProperty('name')) {
+        doc.name.toLowerCase().split(' ').forEach(word => emit(word));
+      }
+      if (doc.hasOwnProperty('entityId')) {
+        emit(doc.entityId);
+      }
+      if (doc.hasOwnProperty('pn')) {
+        emit(doc.pn);
+      }
+    }
 
     const designDoc = {
       _id: '_design/search_index',
       views: {
         by_name: {
-          map: function (doc) {
-            if (doc.hasOwnProperty('name')) {
-              doc.name.toLowerCase().split(' ').forEach(word => emit(word));
-            }
-            if (doc.hasOwnProperty('entityId')) {
-              emit(doc.entityId);
-            }
-            if (doc.hasOwnProperty('pn')) {
-              emit(doc.pn);
-            }
-          }.toString()
+          map: searchMapFunction.toString()
         }
       }
     };
