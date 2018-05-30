@@ -21,7 +21,7 @@
     <span fxFlex=""><a class="header-title" [routerLink]="['']">{{title}}</a></span>
     <span fxFlex="grow"></span>
     <span fxFlex="grow"></span>
-    <app-search fxFlex="grow"></app-search>
+    <app-search *ngIf="isLoggedIn()" fxFlex="grow"></app-search>
     <span fxFlex="">
       <app-sync-status ></app-sync-status>
       <button mat-icon-button [routerLink]="['/user']" *ngIf="isLoggedIn()"><mat-icon class="header-icon">account_circle</mat-icon></button>
