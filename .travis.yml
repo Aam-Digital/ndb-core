@@ -3,6 +3,9 @@ dist: trusty
 language: node_js
 node_js:
   - "8.9"
+env:
+  global:
+    - CC_TEST_REPORTER_ID=c658ba82647d4ca17571a84f48c1ccf75d6c18e97f0ef0bfaabec3684e2009ae
 
 addons:
 apt:
@@ -21,6 +24,9 @@ before_script:
   - npm install -g @angular/cli
   - npm install -g karma
   - npm install
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 
 branches:
   only: master
@@ -31,7 +37,10 @@ cache:
 
 script:
   - ng lint
-  - ng test --watch=false
+  - ng test --watch=false --code-coverage
 #  - ng e2e # Not implemented currently
   - ng build
   - ng build --prod
+
+after_script:
+  - ./cc-test-reporter after-build --debug --exit-code $TRAVIS_TEST_RESULT

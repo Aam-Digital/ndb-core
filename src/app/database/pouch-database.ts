@@ -51,4 +51,32 @@ export class PouchDatabase extends Database {
   remove(object: any) {
     return this._pouchDB.remove(object);
   }
+
+  query(fun: (doc: any, emit: any) => void, options: any): Promise<any> {
+    return this._pouchDB.query(fun, options);
+  }
+
+  saveDatabaseIndex(designDoc: any) {
+    this.put(designDoc)
+      .catch(err => {
+        if (err.status === 409) {
+          this.updateIndexIfChanged(designDoc);
+        } else {
+          // unexpected error
+          // TODO: should error reports go to a service instead of just/directly to console?
+          console.warn('database index failed to be added: ', err);
+        }
+      });
+  }
+
+  private updateIndexIfChanged(doc) {
+    this.get(doc._id)
+      .then(existingDoc => {
+        if (JSON.stringify(existingDoc.views) !== JSON.stringify(doc.views)) {
+          doc._rev = existingDoc._rev;
+          console.log('replacing existing database index');
+          this.saveDatabaseIndex(doc);
+        }
+      })
+  }
 }
