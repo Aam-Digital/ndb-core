@@ -22,16 +22,15 @@
  * and use its find/save/delete functions.
  */
 export class Entity {
+  /**
+   * The entity's type.
+   */
+  protected static ENTITY_TYPE = 'Entity';
 
   /**
    * The unique id of this entity.
    */
   private readonly entityId: string;
-
-  /**
-   * The entity's type.
-   */
-  private readonly type: string;
 
   /**
    * Creates an entity object with the given id. This id is final and won't be changeable after this object has been
@@ -41,7 +40,6 @@ export class Entity {
    */
   constructor(id: string) {
     this.entityId = id;
-    this.type = this.constructor.name;
   }
 
   /**
@@ -64,6 +62,7 @@ export class Entity {
    * @returns {string} the entity's type (which is the class name).
    */
   public getType(): string {
-    return this.type;
+    const c = <typeof Entity>this.constructor;
+    return c.ENTITY_TYPE;
   }
 }

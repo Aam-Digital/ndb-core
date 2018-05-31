@@ -15,40 +15,21 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { User } from './user';
+import { Child } from './child';
 
-describe('User', () => {
+describe('Child', () => {
 
   it('has ID', function () {
     const id = 'test1';
-    const entity = new User(id);
+    const entity = new Child(id);
 
     expect(entity.getId()).toBe(id);
   });
 
   it('has correct type/prefix', function () {
     const id = 'test1';
-    const entity = new User(id);
+    const entity = new Child(id);
 
-    expect(entity.getType()).toBe('User');
-  });
-
-
-  it('accepts valid password', function () {
-    const entityId = 'test1';
-    const user = new User(entityId);
-    const password = 'pass';
-    user.setNewPassword(password);
-
-    expect(user.checkPassword(password)).toBeTruthy();
-  });
-
-  it('rejects wrong password', function () {
-    const entityId = 'test1';
-    const user = new User(entityId);
-    const password = 'pass';
-    user.setNewPassword(password);
-
-    expect(user.checkPassword(password + 'x')).toBeFalsy();
+    expect(entity.getType()).toBe('Child');
   });
 });

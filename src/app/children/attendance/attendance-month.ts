@@ -20,6 +20,8 @@ import {WarningLevel} from './warning-level';
 
 
 export class AttendanceMonth extends Entity {
+  protected static ENTITY_TYPE = 'AttendanceMonth';
+
   student: string; // id of Child entity
   month: Date;
   daysWorking: number;
