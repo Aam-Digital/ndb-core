@@ -18,6 +18,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DashboardComponent } from './dashboard.component';
+import {ChildrenModule} from '../../children/children.module';
+import {MockDatabase} from '../../database/mock-database';
+import {Database} from '../../database/database';
+import {EntityMapperService} from '../../entity/entity-mapper.service';
+import {ChildrenService} from '../../children/children.service';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
@@ -25,7 +31,9 @@ describe('DashboardComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [DashboardComponent]
+      declarations: [DashboardComponent],
+      imports: [ChildrenModule, RouterTestingModule],
+      providers: [ChildrenService, EntityMapperService, { provide: Database, useClass: MockDatabase }],
     })
       .compileComponents();
   }));

@@ -34,6 +34,7 @@ import {AttendanceBlockComponent} from './attendance/attendance-block/attendance
 import {ChildAttendanceComponent} from './attendance/child-attendance/child-attendance.component';
 import {UiHelperModule} from '../ui-helper/ui-helper.module';
 import {ChildBlockComponent} from './child-block/child-block.component';
+import { ChildrenCountDashboardComponent } from './children-count-dashboard/children-count-dashboard.component';
 import {FormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 
@@ -63,8 +64,9 @@ import {RouterModule} from '@angular/router';
     ChildBlockComponent,
     ChildAttendanceComponent,
     ChildDetailsComponent,
-    ChildrenListComponent],
+    ChildrenListComponent,
+    ChildrenCountDashboardComponent],
   providers: [ChildrenService],
-  exports: [ChildBlockComponent],
+  exports: [ChildBlockComponent, ChildrenCountDashboardComponent],
 })
 export class ChildrenModule { }
