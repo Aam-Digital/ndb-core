@@ -59,7 +59,7 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 
   height: 48px;
 
-  background-color: #337ab7;
+  background-color: lightgray;
   color: white;
 }
 
@@ -85,4 +85,19 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
   top: 18px;
 
   font-size: 40pt;
+}
+
+
+
+
+.app-child {
+  background-color: #337ab7 !important;
+}
+
+.app-class {
+  background-color: #5cb85c !important;
+}
+
+.app-school {
+  background-color: #f0ad4e !important;
 }
