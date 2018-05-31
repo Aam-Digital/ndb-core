@@ -3,7 +3,8 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChildrenListComponent } from './children-list.component';
 import {
   MatButtonModule, MatButtonToggleModule,
-  MatExpansionModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatSidenavModule, MatSortModule,
+  MatExpansionModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSelectModule, MatSidenavModule,
+  MatSortModule,
   MatTableModule
 } from '@angular/material';
 import {CommonModule} from '@angular/common';
@@ -14,6 +15,7 @@ import {Database} from '../../database/database';
 import {RouterTestingModule} from '@angular/router/testing';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {AttendanceBlockComponent} from '../attendance/attendance-block/attendance-block.component';
+import {FormsModule} from '@angular/forms';
 
 describe('ChildrenListComponent', () => {
   let component: ChildrenListComponent;
@@ -34,7 +36,9 @@ describe('ChildrenListComponent', () => {
         MatSidenavModule,
         MatButtonModule,
         MatButtonToggleModule,
+        MatIconModule,
         NoopAnimationsModule,
+        FormsModule,
       ],
       providers: [ChildrenService, EntityMapperService, { provide: Database, useClass: MockDatabase }],
     })

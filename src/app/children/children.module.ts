@@ -34,12 +34,16 @@ import {AttendanceBlockComponent} from './attendance/attendance-block/attendance
 import {ChildAttendanceComponent} from './attendance/child-attendance/child-attendance.component';
 import {UiHelperModule} from '../ui-helper/ui-helper.module';
 import {ChildBlockComponent} from './child-block/child-block.component';
+import {FormsModule} from '@angular/forms';
+import {RouterModule} from '@angular/router';
 
 
 @NgModule({
   imports: [
     CommonModule,
+    FormsModule,
     FlexLayoutModule,
+    RouterModule,
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
