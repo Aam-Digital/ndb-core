@@ -1,0 +1,20 @@
+.dashboard-table-cell {
+  padding: 10px;
+}
+.dashboard-table-row {
+  border-top: 1px solid black;
+}
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.dashboard-table td:first-child {
+  width: 100%;
+}
+
+.dashboard-desc {
+  padding: 24px;
+  padding-bottom: 0;
+  font-style: italic;
+}

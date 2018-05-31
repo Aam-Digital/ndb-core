@@ -1,0 +1,28 @@
+<mat-card class="dashboard">
+  <mat-card-header class="app-school">
+    <div mat-card-avatar>
+      <mat-icon fontIcon="fa-line-chart"></mat-icon>
+    </div>
+    <mat-card-title>{{overallAttendance | percent:'1.0-0'}}</mat-card-title>
+    <mat-card-subtitle>Average Attendance Last 3 Months</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content style="margin:-24px;">
+    <p class="dashboard-desc">
+      Students above {{ATTENDANCE_THRESHOLD | percent:'1.0-0'}} attendance last month:
+    </p>
+    <table class="dashboard-table">
+      <tr>
+        <th class="dashboard-table-cell"></th>
+        <th class="dashboard-table-cell">last month</th>
+        <th class="dashboard-table-cell">3 months</th>
+        <th class="dashboard-table-cell"></th>
+      </tr>
+      <tr *ngFor="let entry of lastMonthsTopAttendence" class="dashboard-table-row" (click)="goToChild(entry[0].getId())" style="cursor: pointer;">
+        <td class="dashboard-table-cell"><app-child-block *ngIf="entry[0]" [entity]="entry[0]"></app-child-block></td>
+        <td class="dashboard-table-cell" style="text-align: right;">{{entry[2] | percent:'1.0-0'}}</td>
+        <td class="dashboard-table-cell" style="text-align: right;">{{entry[1] | percent:'1.0-0'}}</td>
+        <td class="dashboard-table-cell"><span class="fa fa-external-link-square"></span></td>
+      </tr>
+    </table>
+  </mat-card-content>
+</mat-card>
