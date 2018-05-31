@@ -21,6 +21,7 @@
               "src/favicon.ico"
             ],
             "styles": [
+              "node_modules/font-awesome/scss/font-awesome.scss",
               "src/ndb-theme.scss",
               "src/styles.css"
             ],

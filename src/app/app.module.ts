@@ -40,6 +40,7 @@ import { NavigationItemsService } from './navigation/navigation-items.service';
 import { MenuItem } from './navigation/menu-item';
 import {AppConfig} from './app-config/app-config';
 import {FlexLayoutModule} from '@angular/flex-layout';
+import {MatIconModule, MatIconRegistry} from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -64,19 +65,24 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     DashboardModule,
     ChildrenModule,
     SchoolsModule,
+    MatIconModule,
   ],
   providers: [
     AppConfig,
-    { provide: APP_INITIALIZER,
-      useFactory: initializeApp,
-      deps: [AppConfig], multi: true }],
+    { provide: APP_INITIALIZER, useFactory: initializeApp, deps: [AppConfig], multi: true },
+    MatIconRegistry,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
-  constructor(private _navigationItemsService: NavigationItemsService) {
+  constructor(private _navigationItemsService: NavigationItemsService,
+              public matIconRegistry: MatIconRegistry) {
+    matIconRegistry.registerFontClassAlias('fontawesome', 'fa');
+    matIconRegistry.setDefaultFontSetClass('fa');
+
     _navigationItemsService.addMenuItem(new MenuItem('Dashboard', 'home', ['/dashboard']));
-    _navigationItemsService.addMenuItem(new MenuItem('Children', 'face', ['/child']));
-    _navigationItemsService.addMenuItem(new MenuItem('Schools', 'school', ['/school']));
+    _navigationItemsService.addMenuItem(new MenuItem('Children', 'child', ['/child']));
+    _navigationItemsService.addMenuItem(new MenuItem('Schools', 'university', ['/school']));
   }
 }
 

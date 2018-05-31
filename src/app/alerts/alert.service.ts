@@ -31,6 +31,8 @@ export class AlertService {
   addAlert(alert: Alert) {
     this.alerts.push(alert);
     this.openSnackBar(alert);
+
+    console.log(alert.message);
   }
 
   openSnackBar(alert: Alert) {

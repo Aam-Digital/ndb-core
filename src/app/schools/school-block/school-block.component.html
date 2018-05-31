@@ -1,5 +1,5 @@
 <span (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()">
-  <mat-icon class="school-pic">school</mat-icon> {{entity.name}} <span style="font-size: x-small">({{entity.getId()}})</span>
+  <mat-icon class="school-pic" fontIcon="fa-university"></mat-icon> {{entity.name}} <span style="font-size: x-small">({{entity.getId()}})</span>
 </span>
 
 <div style="position:absolute;" *ngIf="tooltip">
