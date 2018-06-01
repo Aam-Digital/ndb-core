@@ -24,6 +24,7 @@ import {MockDatabase} from './mock-database';
 import {Gender} from '../children/Gender';
 import {AttendanceMonth} from '../children/attendance/attendance-month';
 import {EntityMapperService} from '../entity/entity-mapper.service';
+import {DatabaseSyncStatus} from './database-sync-status.enum';
 
 @Injectable()
 export class MockDatabaseManagerService extends DatabaseManagerService {
@@ -126,4 +127,10 @@ export class MockDatabaseManagerService extends DatabaseManagerService {
   getDatabase(): Database {
     return this.database;
   }
+
+
+  triggerSyncStatusChanged(status: DatabaseSyncStatus) {
+    this.onSyncStatusChanged.emit(status);
+  }
+
 }

@@ -15,21 +15,15 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from './entity';
+import { Component } from '@angular/core';
+import {MatDialogRef} from '@angular/material';
 
-describe('Entity', () => {
+@Component({
+  templateUrl: './initial-sync-dialog.component.html',
+})
+export class InitialSyncDialogComponent {
 
-  it('has ID', function () {
-    const id = 'test1';
-    const entity = new Entity(id);
-
-    expect(entity.getId()).toBe(id);
-  });
-
-  it('has correct type/prefix', function () {
-    const id = 'test1';
-    const entity = new Entity(id);
-
-    expect(entity.getType()).toBe('Entity');
-  });
-});
+  constructor(public dialogRef: MatDialogRef<InitialSyncDialogComponent>) {
+    this.dialogRef.disableClose = true;
+  }
+}

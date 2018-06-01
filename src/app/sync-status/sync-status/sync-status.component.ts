@@ -20,7 +20,8 @@ import { DatabaseManagerService } from '../../database/database-manager.service'
 import { SessionService } from '../../session/session.service';
 import { DatabaseSyncStatus } from '../../database/database-sync-status.enum';
 import {AlertService} from '../../alerts/alert.service';
-import {Alert} from '../../alerts/alert';
+import {MatDialog, MatDialogRef} from '@angular/material';
+import {InitialSyncDialogComponent} from './initial-sync-dialog.component';
 
 @Component({
   selector: 'app-sync-status',
@@ -30,15 +31,16 @@ import {Alert} from '../../alerts/alert';
 export class SyncStatusComponent implements OnInit {
 
   syncInProgress: boolean;
-  syncAlert: Alert;
+  dialogRef: MatDialogRef<InitialSyncDialogComponent>;
 
   constructor(private _dbManager: DatabaseManagerService,
+              public dialog: MatDialog,
               private _sessionService: SessionService,
               private alertService: AlertService) {
-    this._dbManager.onSyncStatusChanged.subscribe((status: any) => this.handleSyncStatus(status));
   }
 
   ngOnInit(): void {
+    this._dbManager.onSyncStatusChanged.subscribe((status: any) => this.handleSyncStatus(status));
   }
 
   private handleSyncStatus(status: DatabaseSyncStatus) {
@@ -46,17 +48,17 @@ export class SyncStatusComponent implements OnInit {
       case DatabaseSyncStatus.started:
         this.syncInProgress = true;
         if (!this._sessionService.isLoggedIn()) {
-          this.syncAlert = new Alert(
-            'Synchronizing with remote database. Login may not be possible until this is completed.', Alert.DANGER);
-          this.alertService.addAlert(this.syncAlert);
+          this.dialogRef = this.dialog.open(InitialSyncDialogComponent);
         }
         break;
       case DatabaseSyncStatus.completed:
         this.syncInProgress = false;
+        this.dialogRef.close();
         this.alertService.addInfo('Database sync completed.');
         break;
       case DatabaseSyncStatus.failed:
         this.syncInProgress = false;
+        this.dialogRef.close();
         this.alertService.addWarning('Database sync failed.');
         break;
     }

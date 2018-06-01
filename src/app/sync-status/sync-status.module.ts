@@ -21,7 +21,8 @@ import { SyncStatusComponent } from './sync-status/sync-status.component';
 import { DatabaseModule } from '../database/database.module';
 import { SessionModule } from '../session/session.module';
 import {AlertsModule} from '../alerts/alerts.module';
-import {MatButtonModule, MatIconModule} from '@angular/material';
+import {MatButtonModule, MatDialogModule, MatIconModule, MatProgressBarModule} from '@angular/material';
+import {InitialSyncDialogComponent} from './sync-status/initial-sync-dialog.component';
 
 @NgModule({
   imports: [
@@ -30,11 +31,14 @@ import {MatButtonModule, MatIconModule} from '@angular/material';
     DatabaseModule,
     AlertsModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    MatDialogModule,
+    MatProgressBarModule,
   ],
-  declarations: [SyncStatusComponent],
+  declarations: [InitialSyncDialogComponent, SyncStatusComponent],
   exports: [SyncStatusComponent],
-  providers: []
+  providers: [],
+  entryComponents: [InitialSyncDialogComponent],
 })
 export class SyncStatusModule {
 }
