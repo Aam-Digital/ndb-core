@@ -25,6 +25,7 @@ import {ChildDetailsComponent} from './children/child-details/child-details.comp
 import {UserAccountComponent} from './user/user-account/user-account.component';
 import {ChildrenListComponent} from './children/children-list/children-list.component';
 import {ChildAttendanceComponent} from './children/attendance/child-attendance/child-attendance.component';
+import {AdminComponent} from './admin/admin/admin.component';
 
 export const routes: Routes = [
   {path: '', component: DashboardComponent, canActivate: [LoggedInGuard]},
@@ -35,6 +36,7 @@ export const routes: Routes = [
   {path: 'child/:id', component: ChildDetailsComponent, canActivate: [LoggedInGuard]},
   {path: 'child/:id/attendance', component: ChildAttendanceComponent, canActivate: [LoggedInGuard]},
   {path: '**', redirectTo: '/', canActivate: [LoggedInGuard]},
+  {path: 'admin', component: AdminComponent},
 ];
 
 export const routing: ModuleWithProviders = RouterModule.forRoot(routes);
