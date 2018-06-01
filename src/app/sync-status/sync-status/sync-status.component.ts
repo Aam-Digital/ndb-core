@@ -53,12 +53,16 @@ export class SyncStatusComponent implements OnInit {
         break;
       case DatabaseSyncStatus.completed:
         this.syncInProgress = false;
-        this.dialogRef.close();
+        if (this.dialogRef) {
+          this.dialogRef.close();
+        }
         this.alertService.addInfo('Database sync completed.');
         break;
       case DatabaseSyncStatus.failed:
         this.syncInProgress = false;
-        this.dialogRef.close();
+        if (this.dialogRef) {
+          this.dialogRef.close();
+        }
         this.alertService.addWarning('Database sync failed.');
         break;
     }
