@@ -88,7 +88,8 @@ describe('EntityMapperService', () => {
 
   it('rejects promise when loading nonexistent entity', function (done) {
     entityMapper.load<Entity>(Entity, 'nonexistent_id').catch(
-      function () {
+      (err) => {
+        expect(err).toBeDefined('"not found" error not defined');
         done();
       }
     );
@@ -153,7 +154,8 @@ describe('EntityMapperService', () => {
         entityMapper.remove<Entity>(loadedEntity).then(
           function () {
             entityMapper.load<Entity>(Entity, existingEntity.entityId).catch(
-              function () {
+              function (err) {
+                expect(err).toBeDefined('"not found" error not defined');
                 done();
               }
             );
