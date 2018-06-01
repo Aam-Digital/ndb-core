@@ -3,6 +3,7 @@ import {ChildrenService} from '../../children.service';
 import {Database} from '../../../database/database';
 import {Child} from '../../child';
 import {Router} from '@angular/router';
+import {AttendanceMonth} from '../attendance-month';
 
 @Component({
   selector: 'app-attendance-average-dashboard',
@@ -10,7 +11,7 @@ import {Router} from '@angular/router';
   styleUrls: ['./attendance-average-dashboard.component.scss']
 })
 export class AttendanceAverageDashboardComponent implements OnInit {
-  readonly ATTENDANCE_THRESHOLD = 0.8;
+  readonly ATTENDANCE_THRESHOLD = AttendanceMonth.THRESHOLD_WARNING;
 
   overallAttendance: number;
   lastMonthsTopAttendence = []; // [[Child, average_last_3_months, last_months_attendance]]
