@@ -38,6 +38,7 @@ import { ChildrenCountDashboardComponent } from './children-count-dashboard/chil
 import {FormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import { AttendanceAverageDashboardComponent } from './attendance/attendance-average-dashboard/attendance-average-dashboard.component';
+import { AttendanceWarningsDashboardComponent } from './attendance/attendance-warnings-dashboard/attendance-warnings-dashboard.component';
 
 
 @NgModule({
@@ -67,8 +68,14 @@ import { AttendanceAverageDashboardComponent } from './attendance/attendance-ave
     ChildDetailsComponent,
     ChildrenListComponent,
     ChildrenCountDashboardComponent,
-    AttendanceAverageDashboardComponent],
+    AttendanceAverageDashboardComponent,
+    AttendanceWarningsDashboardComponent],
   providers: [ChildrenService],
-  exports: [ChildBlockComponent, ChildrenCountDashboardComponent, AttendanceAverageDashboardComponent],
+  exports: [
+    ChildBlockComponent,
+    ChildrenCountDashboardComponent,
+    AttendanceAverageDashboardComponent,
+    AttendanceWarningsDashboardComponent
+  ],
 })
 export class ChildrenModule { }
