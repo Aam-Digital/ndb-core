@@ -18,14 +18,29 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserAccountComponent } from './user-account.component';
+import {MatButtonModule, MatFormFieldModule, MatInputModule} from '@angular/material';
+import {SessionService} from '../../session/session.service';
+import {User} from '../user';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 
 describe('UserAccountComponent', () => {
   let component: UserAccountComponent;
   let fixture: ComponentFixture<UserAccountComponent>;
 
+  let sessionService: SessionService;
+  const user = new User('1');
+  user.name = 'test';
+
   beforeEach(async(() => {
+    sessionService = new SessionService(null, null, null);
+    sessionService.currentUser = user;
+
     TestBed.configureTestingModule({
-      declarations: [UserAccountComponent]
+      declarations: [UserAccountComponent],
+      imports: [MatFormFieldModule, MatInputModule, MatButtonModule, NoopAnimationsModule],
+      providers: [
+        { provide: SessionService, useValue: sessionService },
+      ],
     })
       .compileComponents();
   }));
@@ -36,9 +51,7 @@ describe('UserAccountComponent', () => {
     fixture.detectChanges();
   });
 
-  /* TODO fix test case
-   it('should be created', () => {
-   expect(component).toBeTruthy();
-   });
-   */
+  it('should be created', () => {
+    expect(component).toBeTruthy();
+  });
 });
