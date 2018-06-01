@@ -19,7 +19,8 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AlertComponent } from './alert.component';
 import { AlertService } from '../alert.service';
-import {MatButtonModule, MatIconModule} from '@angular/material';
+import {MAT_SNACK_BAR_DATA, MatButtonModule, MatIconModule} from '@angular/material';
+import {Alert} from '../alert';
 
 describe('AlertComponent', () => {
   let component: AlertComponent;
@@ -28,7 +29,10 @@ describe('AlertComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [AlertComponent],
-      providers: [AlertService],
+      providers: [
+        AlertService,
+        {provide: MAT_SNACK_BAR_DATA, useValue: new Alert('test', Alert.WARNING)}
+      ],
       imports: [MatIconModule, MatButtonModule]
     })
       .compileComponents();
@@ -40,10 +44,9 @@ describe('AlertComponent', () => {
     fixture.detectChanges();
   });
 
-  // TODO: reactivate component test
-  /*
+
   it('should be created', () => {
     expect(component).toBeTruthy();
   });
-  */
+
 });

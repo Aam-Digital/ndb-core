@@ -28,11 +28,4 @@ export class LoggedInGuard implements CanActivate {
   canActivate() {
     return this._sessionService.isLoggedIn();
   }
-
-  /* TODO: needed for new router?
-   canActivate(
-   next: ActivatedRouteSnapshot,
-   state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-   return true;
-   } */
 }

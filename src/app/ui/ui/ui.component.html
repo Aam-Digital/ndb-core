@@ -23,6 +23,7 @@
     <app-sync-status></app-sync-status>
     <button mat-icon-button [routerLink]="['/user']" *ngIf="isLoggedIn()"><mat-icon class="header-icon">account_circle</mat-icon></button>
     <button mat-icon-button (click)="logout()" [routerLink]="['']" *ngIf="isLoggedIn()"><mat-icon class="header-icon">exit_to_app</mat-icon></button>
+
   </mat-toolbar-row>
 </mat-toolbar>
 

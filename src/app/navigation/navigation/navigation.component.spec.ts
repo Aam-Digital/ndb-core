@@ -19,17 +19,32 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NavigationComponent } from './navigation.component';
 import { RouterTestingModule } from '@angular/router/testing';
+import {SessionService} from '../../session/session.service';
+import {NavigationItemsService} from '../navigation-items.service';
+import {MenuItem} from '../menu-item';
+import {MatDividerModule, MatIconModule, MatListModule} from '@angular/material';
 
 describe('NavigationComponent', () => {
   let component: NavigationComponent;
   let fixture: ComponentFixture<NavigationComponent>;
 
+
+  let navigationItemsService: NavigationItemsService;
+  let sessionService: SessionService;
+
   beforeEach(async(() => {
+    sessionService = new SessionService(null, null, null);
+    navigationItemsService = new NavigationItemsService();
+
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
-      declarations: [NavigationComponent]
+      imports: [RouterTestingModule, MatIconModule, MatDividerModule, MatListModule],
+      declarations: [NavigationComponent],
+      providers: [
+        {provide: SessionService, useValue: sessionService},
+        {provide: NavigationItemsService, useValue: navigationItemsService},
+        ],
     })
-      .compileComponents();
+    .compileComponents();
   }));
 
   beforeEach(() => {
@@ -38,9 +53,14 @@ describe('NavigationComponent', () => {
     fixture.detectChanges();
   });
 
-  /* TODO fix test case
+
    it('should be created', () => {
-   expect(component).toBeTruthy();
+     expect(component).toBeTruthy();
    });
-   */
+
+  it('should load navigation items correctly', () => {
+    navigationItemsService.addMenuItem(new MenuItem('test', 'test-icon', []));
+    expect(component.menu_main.length).toBe(1);
+  });
+
 });

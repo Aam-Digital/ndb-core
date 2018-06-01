@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {Child} from '../child';
 import {MatSort, MatTableDataSource} from '@angular/material';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {ChildrenService} from '../children.service';
 import {AttendanceMonth} from '../attendance/attendance-month';
 
@@ -24,11 +24,19 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   };
   columnsToDisplay: ['pn', 'name'];
 
+  filterString = '';
   filterGroupSelection = 'current';
 
 
   constructor(private childrenService: ChildrenService,
-              private router: Router) {
+              private router: Router,
+              private route: ActivatedRoute) {
+    this.route.queryParamMap.subscribe(params => {
+      const paramFilter = params.get('filter');
+      this.filterString = paramFilter ? paramFilter : '';
+      this.applyFilter(this.filterString);
+    });
+
     this.childrenService.getChildren().subscribe(data => {
       this.childrenList = data;
       this.childrenDataSource.data = data;

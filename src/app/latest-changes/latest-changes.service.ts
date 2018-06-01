@@ -19,18 +19,24 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-import { Http } from '@angular/http';
 import { Changelog } from './changelog';
+import {AlertService} from '../alerts/alert.service';
+import {HttpClient} from '@angular/common/http';
+import {ErrorObservable} from 'rxjs-compat/observable/ErrorObservable';
 
 @Injectable()
 export class LatestChangesService {
 
-  constructor(private http: Http) {
+  constructor(private http: HttpClient,
+              private alertService: AlertService) {
   }
 
   getChangelog(): Observable<Changelog[]> {
-    return this.http.get('assets/changelog.json')
-      .map((response) => response.json())
-      .catch((error) => Observable.throw('Could not load latest changes.'));
+    return this.http.get<Changelog[]>('assets/changelog.json')
+      .map((response) => response)
+      .catch((error) => {
+        this.alertService.addWarning('Could not load latest changes: ' + error);
+        return ErrorObservable.create('Could not load latest changes.');
+      });
   }
 }

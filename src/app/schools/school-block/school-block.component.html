@@ -1,0 +1,9 @@
+<span (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()">
+  <mat-icon class="school-pic" fontIcon="fa-university"></mat-icon> {{entity.name}} <span style="font-size: x-small">({{entity.getId()}})</span>
+</span>
+
+<div style="position:absolute;" *ngIf="tooltip">
+  <div class="mat-elevation-z5 school-tooltip" (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()">
+    <div>{{entity.medium}}</div>
+  </div>
+</div>

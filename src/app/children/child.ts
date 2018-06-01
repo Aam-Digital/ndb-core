@@ -20,37 +20,39 @@ import { Gender} from './Gender';
 
 
 export class Child extends Entity {
-  name: String;
+  protected static ENTITY_TYPE = 'Child';
+
+  name: string;
   pn: Number; // project number
 
-  center: String = 'N/A';
-  status: String = '';
+  center = 'N/A';
+  status = '';
   school: any;
-  grade: String = '99';
+  grade = '99';
 
-  religion: String;
+  religion: string;
   gender: Gender; // M or F
   dateOfBirth: string;
-  motherTongue: String;
+  motherTongue: string;
   admission: string;
-  placeOfBirth: String;
-  birthCertificate: String;
+  placeOfBirth: string;
+  birthCertificate: string;
   currentStatus: {
-    projectStatus: String;
-    socialworker: String;
+    projectStatus: string;
+    socialworker: string;
     address: {
-      text: String;
-      visit: String;
-      villageAddress: String;
+      text: string;
+      visit: string;
+      villageAddress: string;
     }
   };
-  remarks: String; // could also be a feed with text blocks
+  remarks: string; // could also be a feed with text blocks
   address: {
-    street: String;
-    housename: String;
-    district: String;
-    city: String;
-    postcode: String;
+    street: string;
+    housename: string;
+    district: string;
+    city: string;
+    postcode: string;
   };
 
   getAge(): number {
