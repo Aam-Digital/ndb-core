@@ -18,17 +18,57 @@
 import { TestBed } from '@angular/core/testing';
 
 import { LatestChangesService } from './latest-changes.service';
+import {AlertService} from '../alerts/alert.service';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs/Rx';
+import {ErrorObservable} from 'rxjs-compat/observable/ErrorObservable';
 
 describe('LatestChangesService', () => {
+
+  let service: LatestChangesService;
+
+  let alertService: AlertService;
+  let http: HttpClient;
+
   beforeEach(() => {
+    alertService = new AlertService(null);
+    http = new HttpClient(null);
+
     TestBed.configureTestingModule({
-      providers: [LatestChangesService]
+      providers: [
+        LatestChangesService,
+        {provide: AlertService, useValue: alertService},
+        {provide: HttpClient, useValue: http},
+      ]
     });
+
+    service = TestBed.get(LatestChangesService);
   });
 
-  /* TODO fix test case
-   it('should be created', inject([LatestChangesService], (service: LatestChangesService) => {
-   expect(service).toBeTruthy();
-   }));
-   */
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+
+  it('should return changelog array', (done) => {
+    spyOn(http, 'get').and
+      .returnValue(Observable.of([{ name: 'test', tag_name: 'v1.0', body: 'latest test', published_at: '2018-01-01'}]));
+    service.getChangelog()
+      .subscribe(result => {
+        expect(result.length).toBe(1);
+        expect(result[0].name).toBe('test');
+        done();
+      });
+  });
+
+  it('should add Alert on failing to get changelog', (done) => {
+    spyOn(http, 'get').and
+      .returnValue(ErrorObservable.create({ status: 404, message: 'not found' }));
+    const alertSpy = spyOn(alertService, 'addAlert');
+    service.getChangelog()
+      .subscribe(() => {}, (err) => {
+        expect(alertSpy.calls.count()).toBe(1, 'no Alert message created');
+        done();
+      });
+  });
 });

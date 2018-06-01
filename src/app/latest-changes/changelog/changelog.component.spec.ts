@@ -18,6 +18,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import {ChangelogComponent} from './changelog.component';
+import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material';
 
 describe('ChangelogComponent', () => {
   let component: ChangelogComponent;
@@ -25,7 +26,12 @@ describe('ChangelogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ChangelogComponent]
+      declarations: [ChangelogComponent],
+      imports: [MatDialogModule],
+      providers: [
+        {provide: MatDialogRef, useValue: {}},
+        {provide: MAT_DIALOG_DATA, useValue: {}}
+        ],
     })
       .compileComponents();
   }));
@@ -36,10 +42,7 @@ describe('ChangelogComponent', () => {
     fixture.detectChanges();
   });
 
-  // TODO: reactivate component test
-  /*
   it('should be created', () => {
     expect(component).toBeTruthy();
   });
-  */
 });

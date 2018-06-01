@@ -19,15 +19,38 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AppVersionComponent } from './app-version.component';
 import {MatDialogModule} from '@angular/material';
+import {SessionService} from '../../session/session.service';
+import {EntityMapperService} from '../../entity/entity-mapper.service';
+import {LatestChangesService} from '../latest-changes.service';
+import {Observable} from 'rxjs/Rx';
+import {SessionStatus} from '../../session/session-status';
 
 describe('AppVersionComponent', () => {
   let component: AppVersionComponent;
   let fixture: ComponentFixture<AppVersionComponent>;
 
+  let latestChangesService: LatestChangesService;
+  let sessionService: SessionService;
+  let entityMapper: EntityMapperService;
+
   beforeEach(async(() => {
+    latestChangesService = new LatestChangesService(null, null);
+    sessionService = new SessionService(null, null, null);
+    entityMapper = new EntityMapperService(null);
+
+    spyOn(latestChangesService, 'getChangelog').and
+      .returnValue(Observable.of([{ name: 'test', tag_name: 'v1.0', body: 'latest test', published_at: '2018-01-01'}]));
+    spyOn(sessionService, 'onSessionStatusChanged').and.returnValue(Observable.of(SessionStatus.loggedIn));
+    spyOn(entityMapper, 'save').and.returnValue(Promise.resolve(true));
+
     TestBed.configureTestingModule({
       declarations: [AppVersionComponent],
-      imports: [MatDialogModule]
+      imports: [MatDialogModule],
+      providers: [
+        {provide: SessionService, useValue: sessionService},
+        {provide: EntityMapperService, useValue: entityMapper},
+        {provide: LatestChangesService, useValue: latestChangesService},
+      ]
     })
       .compileComponents();
   }));
@@ -38,10 +61,9 @@ describe('AppVersionComponent', () => {
     fixture.detectChanges();
   });
 
-  // TODO: reactivate component test
-  /*
+
   it('should be created', () => {
     expect(component).toBeTruthy();
   });
-  */
+
 });
