@@ -45,3 +45,74 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 .alerts-snackbar {
   background-color: transparent;
 }
+
+
+
+
+.dashboard .mat-card-header {
+  margin-top: -24px !important;
+  margin-left: -24px;
+  margin-right: -24px;
+  margin-bottom: 24px;
+  padding: 24px;
+  position: relative;
+
+  height: 48px;
+
+  background-color: lightgray;
+  color: white;
+}
+
+.dashboard .mat-card-title {
+  position: absolute;
+  right: 24px;
+  top: 32px;
+
+  font-size: 40pt;
+}
+
+.dashboard .mat-card-subtitle {
+  position: absolute;
+  right: 24px;
+  bottom: 0px;
+
+  color: white;
+}
+
+.dashboard .mat-card-avatar {
+  position: absolute;
+  left: 24px;
+  top: 18px;
+
+  font-size: 40pt;
+}
+
+
+
+
+.app-child {
+  background-color: #1565C0 !important;
+}
+
+.app-attendance {
+  background-color: #00838F !important;
+}
+
+.app-class {
+  background-color: #2E7D32 !important;
+}
+
+.app-school {
+  background-color: #9E9D24 !important;
+}
+
+
+.w-OK {
+  background-color: #90ee9040;
+}
+.w-WARNING {
+  background-color: #ffa50080;
+}
+.w-URGENT {
+  background-color: #fd727280;
+}

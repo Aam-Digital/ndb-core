@@ -5,7 +5,10 @@
   <div>
     <div>
       <mat-form-field>
-        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
+        <input matInput placeholder="Filter" (ngModelChange)="applyFilter($event)" [(ngModel)]="filterString">
+        <button mat-icon-button *ngIf="filterString" matSuffix aria-label="Clear" (click)="filterString=''; applyFilter('');">
+          <mat-icon fontIcon="fa-times"></mat-icon>
+        </button>
       </mat-form-field>
     </div>
 

@@ -26,4 +26,10 @@ describe('Entity', () => {
     expect(entity.getId()).toBe(id);
   });
 
+  it('has correct type/prefix', function () {
+    const id = 'test1';
+    const entity = new Entity(id);
+
+    expect(entity.getType()).toBe('Entity');
+  });
 });

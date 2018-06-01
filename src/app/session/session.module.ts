@@ -25,6 +25,7 @@ import { EntityModule } from '../entity/entity.module';
 import { LoggedInGuard } from './logged-in.guard';
 import { SessionService } from './session.service';
 import {MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule} from '@angular/material';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   imports: [
@@ -36,7 +37,8 @@ import {MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule} from
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    RouterModule,
   ],
   declarations: [LoginComponent],
   exports: [LoginComponent],

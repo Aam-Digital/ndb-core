@@ -56,11 +56,11 @@ export class PouchDatabase extends Database {
     return this._pouchDB.query(fun, options);
   }
 
-  saveDatabaseIndex(designDoc: any) {
-    this.put(designDoc)
+  saveDatabaseIndex(designDoc: any): Promise<any> {
+    return this.put(designDoc)
       .catch(err => {
         if (err.status === 409) {
-          this.updateIndexIfChanged(designDoc);
+          return this.updateIndexIfChanged(designDoc);
         } else {
           // unexpected error
           // TODO: should error reports go to a service instead of just/directly to console?
@@ -69,13 +69,13 @@ export class PouchDatabase extends Database {
       });
   }
 
-  private updateIndexIfChanged(doc) {
-    this.get(doc._id)
+  private updateIndexIfChanged(doc): Promise<any> {
+    return this.get(doc._id)
       .then(existingDoc => {
         if (JSON.stringify(existingDoc.views) !== JSON.stringify(doc.views)) {
           doc._rev = existingDoc._rev;
           console.log('replacing existing database index');
-          this.saveDatabaseIndex(doc);
+          return this.saveDatabaseIndex(doc);
         }
       })
   }

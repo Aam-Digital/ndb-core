@@ -27,14 +27,14 @@ import {ChildrenListComponent} from './children/children-list/children-list.comp
 import {ChildAttendanceComponent} from './children/attendance/child-attendance/child-attendance.component';
 
 export const routes: Routes = [
-  {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
-  {path: 'dashboard', component: DashboardComponent, canActivate: [LoggedInGuard]},
+  {path: '', component: DashboardComponent, canActivate: [LoggedInGuard]},
   {path: 'user', component: UserAccountComponent, canActivate: [LoggedInGuard]},
   {path: 'school', component: SchoolsListComponent, canActivate: [LoggedInGuard]},
   {path: 'school/:id', component: SchoolDetailComponent, canActivate: [LoggedInGuard]},
   {path: 'child', component: ChildrenListComponent, canActivate: [LoggedInGuard]},
   {path: 'child/:id', component: ChildDetailsComponent, canActivate: [LoggedInGuard]},
-  {path: 'child/:id/attendance', component: ChildAttendanceComponent, canActivate: [LoggedInGuard]}
+  {path: 'child/:id/attendance', component: ChildAttendanceComponent, canActivate: [LoggedInGuard]},
+  {path: '**', redirectTo: '/', canActivate: [LoggedInGuard]},
 ];
 
 export const routing: ModuleWithProviders = RouterModule.forRoot(routes);

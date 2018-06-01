@@ -34,12 +34,19 @@ import {AttendanceBlockComponent} from './attendance/attendance-block/attendance
 import {ChildAttendanceComponent} from './attendance/child-attendance/child-attendance.component';
 import {UiHelperModule} from '../ui-helper/ui-helper.module';
 import {ChildBlockComponent} from './child-block/child-block.component';
+import { ChildrenCountDashboardComponent } from './children-count-dashboard/children-count-dashboard.component';
+import {FormsModule} from '@angular/forms';
+import {RouterModule} from '@angular/router';
+import { AttendanceAverageDashboardComponent } from './attendance/attendance-average-dashboard/attendance-average-dashboard.component';
+import { AttendanceWarningsDashboardComponent } from './attendance/attendance-warnings-dashboard/attendance-warnings-dashboard.component';
 
 
 @NgModule({
   imports: [
     CommonModule,
+    FormsModule,
     FlexLayoutModule,
+    RouterModule,
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
@@ -59,8 +66,16 @@ import {ChildBlockComponent} from './child-block/child-block.component';
     ChildBlockComponent,
     ChildAttendanceComponent,
     ChildDetailsComponent,
-    ChildrenListComponent],
+    ChildrenListComponent,
+    ChildrenCountDashboardComponent,
+    AttendanceAverageDashboardComponent,
+    AttendanceWarningsDashboardComponent],
   providers: [ChildrenService],
-  exports: [ChildBlockComponent],
+  exports: [
+    ChildBlockComponent,
+    ChildrenCountDashboardComponent,
+    AttendanceAverageDashboardComponent,
+    AttendanceWarningsDashboardComponent
+  ],
 })
 export class ChildrenModule { }
