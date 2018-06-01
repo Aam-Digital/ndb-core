@@ -107,10 +107,12 @@ export class MockDatabase extends Database {
 
   query(fun: (doc: any, emit: any) => void, options: any): Promise<any> {
     // TODO: implement mock query
-    return Promise.reject('not supported');
+    console.warn('MockDatabase does not implement "query()"');
+    return Promise.resolve({ rows: []});
   }
   saveDatabaseIndex(designDoc) {
     // TODO: implement mock query
-    return Promise.reject('not supported');
+    console.warn('MockDatabase does not implement "saveDatabaseIndex()"');
+    return Promise.resolve({});
   }
 }

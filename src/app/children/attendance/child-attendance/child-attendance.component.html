@@ -98,5 +98,5 @@
 
 
   <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-  <tr mat-row *matRowDef="let att; columns: columnsToDisplay"></tr>
+  <tr mat-row *matRowDef="let att; columns: columnsToDisplay" class="w-{{att.getWarningLevel()}}"></tr>
 </table>

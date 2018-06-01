@@ -21,6 +21,8 @@ import {WarningLevel} from './warning-level';
 
 export class AttendanceMonth extends Entity {
   protected static ENTITY_TYPE = 'AttendanceMonth';
+  static readonly THRESHOLD_URGENT = 0.6;
+  static readonly THRESHOLD_WARNING = 0.8;
 
   student: string; // id of Child entity
   month: Date;
@@ -35,9 +37,9 @@ export class AttendanceMonth extends Entity {
 
   getWarningLevel() {
     const attendance = this.getAttendancePercentage();
-    if (attendance < 0.6) {
+    if (attendance < AttendanceMonth.THRESHOLD_URGENT) {
       return WarningLevel.URGENT;
-    } else if (attendance < 0.8) {
+    } else if (attendance < AttendanceMonth.THRESHOLD_WARNING) {
       return WarningLevel.WARNING;
     } else {
       return WarningLevel.OK;
