@@ -15,14 +15,15 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { Component } from '@angular/core';
+import {MatDialogRef} from '@angular/material';
 
-.divider {
-  background-color: #e5e5e5;
-  height: 1px;
-  margin: 9px 0;
-  overflow: hidden;
-}
+@Component({
+  templateUrl: './initial-sync-dialog.component.html',
+})
+export class InitialSyncDialogComponent {
 
-.nav-icon {
-
+  constructor(public dialogRef: MatDialogRef<InitialSyncDialogComponent>) {
+    this.dialogRef.disableClose = true;
+  }
 }
