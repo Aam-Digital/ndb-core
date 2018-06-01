@@ -18,12 +18,23 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AppVersionComponent } from './app-version.component';
-import {MatDialogModule} from '@angular/material';
+import {MatDialog, MatDialogModule} from '@angular/material';
 import {SessionService} from '../../session/session.service';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {LatestChangesService} from '../latest-changes.service';
 import {Observable} from 'rxjs/Rx';
 import {SessionStatus} from '../../session/session-status';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {ChangelogComponent} from '../changelog/changelog.component';
+import {NgModule} from '@angular/core';
+
+
+@NgModule({
+  declarations: [ChangelogComponent],
+  imports: [MatDialogModule, NoopAnimationsModule],
+  entryComponents: [ChangelogComponent],
+})
+class TestModule { }
 
 describe('AppVersionComponent', () => {
   let component: AppVersionComponent;
@@ -40,12 +51,13 @@ describe('AppVersionComponent', () => {
 
     spyOn(latestChangesService, 'getChangelog').and
       .returnValue(Observable.of([{ name: 'test', tag_name: 'v1.0', body: 'latest test', published_at: '2018-01-01'}]));
-    spyOn(sessionService, 'onSessionStatusChanged').and.returnValue(Observable.of(SessionStatus.loggedIn));
-    spyOn(entityMapper, 'save').and.returnValue(Promise.resolve(true));
+    spyOn(sessionService, 'onSessionStatusChanged').and
+      .returnValue(Observable.of(SessionStatus.loggedIn));
 
     TestBed.configureTestingModule({
       declarations: [AppVersionComponent],
-      imports: [MatDialogModule],
+      imports: [TestModule,
+        MatDialogModule, NoopAnimationsModule],
       providers: [
         {provide: SessionService, useValue: sessionService},
         {provide: EntityMapperService, useValue: entityMapper},
@@ -64,6 +76,15 @@ describe('AppVersionComponent', () => {
 
   it('should be created', () => {
     expect(component).toBeTruthy();
+  });
+
+
+  it('should open dialog', () => {
+    const dialogService = fixture.debugElement.injector.get(MatDialog);
+    const spy = spyOn(dialogService, 'open').and.callThrough();
+
+    component.showLatestChanges();
+    expect(spy.calls.count()).toBe(1, 'dialog not opened');
   });
 
 });
