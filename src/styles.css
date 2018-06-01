@@ -91,15 +91,19 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 
 
 .app-child {
-  background-color: #337ab7 !important;
+  background-color: #1565C0 !important;
+}
+
+.app-attendance {
+  background-color: #00838F !important;
 }
 
 .app-class {
-  background-color: #5cb85c !important;
+  background-color: #2E7D32 !important;
 }
 
 .app-school {
-  background-color: #f0ad4e !important;
+  background-color: #9E9D24 !important;
 }
 
 
