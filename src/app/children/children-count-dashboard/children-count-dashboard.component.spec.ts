@@ -6,6 +6,7 @@ import {ChildrenService} from '../children.service';
 import {RouterTestingModule} from '@angular/router/testing';
 import {Observable} from 'rxjs/Rx';
 import {Child} from '../child';
+import {MockDatabase} from '../../database/mock-database';
 
 describe('ChildrenCountDashboardComponent', () => {
   let component: ChildrenCountDashboardComponent;
@@ -23,7 +24,7 @@ describe('ChildrenCountDashboardComponent', () => {
   }
 
   beforeEach(async(() => {
-    childrenService = new ChildrenService(null);
+    childrenService = new ChildrenService(null, new MockDatabase());
     spyOn(childrenService, 'getChildren').and
       .returnValue(new Observable((observer) => { childrenObserver = observer; }));
 
