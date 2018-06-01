@@ -31,11 +31,10 @@ export class NavigationComponent implements OnInit {
 
   constructor(private _sessionService: SessionService,
               private _navigationItemService: NavigationItemsService) {
-
-    this.menu_main = this._navigationItemService.getMenuItems();
   }
 
   ngOnInit(): void {
+    this.menu_main = this._navigationItemService.getMenuItems();
   }
 
   logout() {

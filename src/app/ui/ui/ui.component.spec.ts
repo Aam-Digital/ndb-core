@@ -18,6 +18,24 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UiComponent } from './ui.component';
+import {RouterTestingModule} from '@angular/router/testing';
+import {SearchComponent} from '../search/search.component';
+import {
+  MatAutocompleteModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSidenavModule,
+  MatToolbarModule
+} from '@angular/material';
+import {FormsModule} from '@angular/forms';
+import {CommonModule} from '@angular/common';
+import {ChildrenModule} from '../../children/children.module';
+import {SchoolsModule} from '../../schools/schools.module';
+import {SyncStatusModule} from '../../sync-status/sync-status.module';
+import {NavigationModule} from '../../navigation/navigation.module';
+import {LatestChangesModule} from '../../latest-changes/latest-changes.module';
+import {SessionModule} from '../../session/session.module';
+import {AppConfigModule} from '../../app-config/app-config.module';
+import {DatabaseManagerService} from '../../database/database-manager.service';
+import {MockDatabaseManagerService} from '../../database/mock-database-manager.service';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 
 describe('UiComponent', () => {
   let component: UiComponent;
@@ -25,7 +43,11 @@ describe('UiComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [UiComponent]
+      declarations: [SearchComponent, UiComponent],
+      imports: [RouterTestingModule, CommonModule, FormsModule, MatIconModule, MatToolbarModule, MatSidenavModule,
+        MatAutocompleteModule, MatInputModule, MatFormFieldModule, NoopAnimationsModule,
+        ChildrenModule, SchoolsModule, SyncStatusModule, NavigationModule, LatestChangesModule, SessionModule, AppConfigModule],
+      providers: [{provide: DatabaseManagerService, useClass: MockDatabaseManagerService}],
     })
       .compileComponents();
   }));
@@ -36,9 +58,9 @@ describe('UiComponent', () => {
     fixture.detectChanges();
   });
 
-  /* TODO fix test case
+
    it('should be created', () => {
-   expect(component).toBeTruthy();
+     expect(component).toBeTruthy();
    });
-   */
+
 });

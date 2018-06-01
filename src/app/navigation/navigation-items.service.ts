@@ -31,8 +31,4 @@ export class NavigationItemsService {
     this.menuItems.push(menuItem);
   }
 
-  public setMenuItems(items: MenuItem[]) {
-    this.menuItems = items;
-  }
-
 }

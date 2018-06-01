@@ -15,20 +15,38 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { TestBed } from '@angular/core/testing';
+import { TestBed, inject } from '@angular/core/testing';
 
 import { LoggedInGuard } from './logged-in.guard';
+import {SessionService} from './session.service';
 
 describe('LoggedInGuard', () => {
+
+  let sessionService: SessionService;
+
   beforeEach(() => {
+    sessionService = new SessionService(null, null, null);
+
     TestBed.configureTestingModule({
-      providers: [LoggedInGuard]
+      providers: [LoggedInGuard,
+        {provide: SessionService, useValue: sessionService},
+      ]
     });
   });
 
-  /* TODO fix test case
-   it('should ...', inject([LoggedInGuard], (guard: LoggedInGuard) => {
-   expect(guard).toBeTruthy();
+
+   it('should be created', inject([LoggedInGuard], (guard: LoggedInGuard) => {
+    expect(guard).toBeTruthy();
    }));
-   */
+
+  it('should prevent access when logged out', inject([LoggedInGuard], (guard: LoggedInGuard) => {
+    spyOn(sessionService, 'isLoggedIn').and.returnValue(false);
+    expect(guard.canActivate()).toBeFalsy();
+  }));
+
+  it('should allow access when logged out', inject([LoggedInGuard], (guard: LoggedInGuard) => {
+    spyOn(sessionService, 'isLoggedIn').and.returnValue(true);
+    expect(guard.canActivate()).toBeTruthy();
+  }));
+
 });
