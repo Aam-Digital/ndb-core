@@ -37,10 +37,10 @@ export class SyncStatusComponent implements OnInit {
               public dialog: MatDialog,
               private _sessionService: SessionService,
               private alertService: AlertService) {
-    this._dbManager.onSyncStatusChanged.subscribe((status: any) => this.handleSyncStatus(status));
   }
 
   ngOnInit(): void {
+    this._dbManager.onSyncStatusChanged.subscribe((status: any) => this.handleSyncStatus(status));
   }
 
   private handleSyncStatus(status: DatabaseSyncStatus) {
