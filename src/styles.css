@@ -101,3 +101,14 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 .app-school {
   background-color: #f0ad4e !important;
 }
+
+
+.w-OK {
+  background-color: #90ee9040;
+}
+.w-WARNING {
+  background-color: #ffa50080;
+}
+.w-URGENT {
+  background-color: #fd727280;
+}

@@ -11,6 +11,7 @@ import {AttendanceMonth} from '../attendance-month';
 export class AttendanceWarningsDashboardComponent implements OnInit {
   readonly ATTENDANCE_THRESHOLD = AttendanceMonth.THRESHOLD_WARNING;
 
+
   lastMonthsLowAttendence = []; // [[Child, last_months_attendance]]
 
   constructor(private childrenService: ChildrenService,
@@ -29,9 +30,14 @@ export class AttendanceWarningsDashboardComponent implements OnInit {
         queryResults.rows.forEach(studentStat => {
           const att = studentStat.value.sum / studentStat.value.count;
 
+          let urgency = 'WARNING';
+          if (att < AttendanceMonth.THRESHOLD_URGENT) {
+            urgency = 'URGENT';
+          }
+
           if (att < this.ATTENDANCE_THRESHOLD) {
             this.childrenService.getChild(studentStat.key)
-              .subscribe(child => this.lastMonthsLowAttendence.push([child, att]));
+              .subscribe(child => this.lastMonthsLowAttendence.push([child, att, urgency]));
           }
         });
         this.lastMonthsLowAttendence.sort((a, b) => a[1] - b[1]);

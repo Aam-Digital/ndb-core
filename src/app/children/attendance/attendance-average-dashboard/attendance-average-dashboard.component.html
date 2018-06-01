@@ -17,7 +17,7 @@
         <th class="dashboard-table-cell">3 months</th>
         <th class="dashboard-table-cell"></th>
       </tr>
-      <tr *ngFor="let entry of lastMonthsTopAttendence" class="dashboard-table-row" (click)="goToChild(entry[0].getId())" style="cursor: pointer;">
+      <tr *ngFor="let entry of lastMonthsTopAttendence" class="dashboard-table-row w-OK" (click)="goToChild(entry[0].getId())" style="cursor: pointer;">
         <td class="dashboard-table-cell"><app-child-block *ngIf="entry[0]" [entity]="entry[0]"></app-child-block></td>
         <td class="dashboard-table-cell" style="text-align: right;">{{entry[2] | percent:'1.0-0'}}</td>
         <td class="dashboard-table-cell" style="text-align: right;">{{entry[1] | percent:'1.0-0'}}</td>
