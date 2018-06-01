@@ -37,7 +37,7 @@ import {NgModule} from '@angular/core';
 class TestModule { }
 
 
-fdescribe('SyncStatusComponent', () => {
+describe('SyncStatusComponent', () => {
   let component: SyncStatusComponent;
   let fixture: ComponentFixture<SyncStatusComponent>;
 
