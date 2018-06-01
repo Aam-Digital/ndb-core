@@ -16,7 +16,6 @@
  */
 
 import {RouterModule, Routes} from '@angular/router';
-import {LoggedInGuard} from './session/logged-in.guard';
 import {ModuleWithProviders} from '@angular/core';
 import {DashboardComponent} from './dashboard/dashboard/dashboard.component';
 import {SchoolsListComponent} from './schools/schools-list/schools-list.component';
@@ -28,15 +27,15 @@ import {ChildAttendanceComponent} from './children/attendance/child-attendance/c
 import {AdminComponent} from './admin/admin/admin.component';
 
 export const routes: Routes = [
-  {path: '', component: DashboardComponent, canActivate: [LoggedInGuard]},
-  {path: 'user', component: UserAccountComponent, canActivate: [LoggedInGuard]},
-  {path: 'school', component: SchoolsListComponent, canActivate: [LoggedInGuard]},
-  {path: 'school/:id', component: SchoolDetailComponent, canActivate: [LoggedInGuard]},
-  {path: 'child', component: ChildrenListComponent, canActivate: [LoggedInGuard]},
-  {path: 'child/:id', component: ChildDetailsComponent, canActivate: [LoggedInGuard]},
-  {path: 'child/:id/attendance', component: ChildAttendanceComponent, canActivate: [LoggedInGuard]},
-  {path: '**', redirectTo: '/', canActivate: [LoggedInGuard]},
+  {path: '', component: DashboardComponent},
+  {path: 'user', component: UserAccountComponent},
+  {path: 'school', component: SchoolsListComponent},
+  {path: 'school/:id', component: SchoolDetailComponent},
+  {path: 'child', component: ChildrenListComponent},
+  {path: 'child/:id', component: ChildDetailsComponent},
+  {path: 'child/:id/attendance', component: ChildAttendanceComponent},
   {path: 'admin', component: AdminComponent},
+  {path: '**', redirectTo: '/'},
 ];
 
 export const routing: ModuleWithProviders = RouterModule.forRoot(routes);
