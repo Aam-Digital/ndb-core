@@ -40,9 +40,6 @@ import { NavigationItemsService } from './navigation/navigation-items.service';
 import { MenuItem } from './navigation/menu-item';
 import {AppConfig} from './app-config/app-config';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import {ServiceWorkerModule} from '@angular/service-worker';
-import {environment} from '../environments/environment';
-import {MatIconModule, MatIconRegistry} from '@angular/material';
 
 @NgModule({
   declarations: [

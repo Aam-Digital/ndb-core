@@ -44,9 +44,7 @@ import { AttendanceWarningsDashboardComponent } from './attendance/attendance-wa
 @NgModule({
   imports: [
     CommonModule,
-    FormsModule,
     FlexLayoutModule,
-    RouterModule,
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
