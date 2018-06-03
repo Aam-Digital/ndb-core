@@ -64,11 +64,11 @@ export class ChildrenService {
       _id: '_design/avg_attendance_index',
       views: {
         three_months: {
-          map: this.getAverageAttendanceMap().toString(),
+          map: this.getAverageAttendanceMapFunction(),
           reduce: '_stats'
         },
         last_month: {
-          map: this.getLastAverageAttendanceMap().toString(),
+          map: this.getLastAverageAttendanceMapFunction(),
           reduce: '_stats'
         }
       }
@@ -77,57 +77,36 @@ export class ChildrenService {
     return this.db.saveDatabaseIndex(designDoc);
   }
 
-  private getAverageAttendanceMap (): (doc) => void {
-    const emit = (x, y?) => {}; // defined to avoid Typescript error. Actually `emit` is provided by pouchDB to the `map` function
-    // `emit(x)` to add x as a key to the index that can be searched
 
-    return (doc) => {
-      if (!doc._id.startsWith('AttendanceMonth:')) {
-        return;
-      }
-      if (!isWithinLast3Months(new Date(doc.month), new Date())) {
-        return;
-      }
-
-      emit(doc.student, doc.daysAttended / (doc.daysWorking - doc.daysExcused));
-
-      function isWithinLast3Months(date: Date, now: Date) {
-        let months;
-        months = (now.getFullYear() - date.getFullYear()) * 12;
-        months -= date.getMonth();
-        months += now.getMonth();
-
-        if (months < 0) {
-          return false;
-        }
-        return months <= 3;
-      }
-    };
+  private getAverageAttendanceMapFunction () {
+    return '(doc) => {' +
+      'if (!doc._id.startsWith("AttendanceMonth:")) { return; }' +
+      'if (!isWithinLast3Months(new Date(doc.month), new Date())) { return; }' +
+      'emit(doc.student, doc.daysAttended / (doc.daysWorking - doc.daysExcused));' +
+      'function isWithinLast3Months(date, now) {' +
+      '  let months;' +
+      '  months = (now.getFullYear() - date.getFullYear()) * 12;' +
+      '  months -= date.getMonth();' +
+      '  months += now.getMonth();' +
+      '  if (months < 0) { return false; }' +
+      '  return months <= 3;' +
+      '}' +
+      '}';
   }
 
-  private getLastAverageAttendanceMap () {
-    const emit = (x, y?) => {}; // defined to avoid Typescript error. Actually `emit` is provided by pouchDB to the `map` function
-    // `emit(x)` to add x as a key to the index that can be searched
-
-    return (doc) => {
-      if (!doc._id.startsWith('AttendanceMonth:')) {
-        return;
-      }
-      if (!isWithinLastMonth(new Date(doc.month), new Date())) {
-        return;
-      }
-
-      emit(doc.student, doc.daysAttended / (doc.daysWorking - doc.daysExcused));
-
-      function isWithinLastMonth(date: Date, now: Date) {
-        let months;
-        months = (now.getFullYear() - date.getFullYear()) * 12;
-        months -= date.getMonth();
-        months += now.getMonth();
-
-        return months === 1;
-      }
-    };
+  private getLastAverageAttendanceMapFunction () {
+    return '(doc) => {' +
+      'if (!doc._id.startsWith("AttendanceMonth:")) { return; }' +
+      'if (!isWithinLastMonth(new Date(doc.month), new Date())) { return; }' +
+      'emit(doc.student, doc.daysAttended / (doc.daysWorking - doc.daysExcused));' +
+      'function isWithinLastMonth(date, now) {' +
+      '  let months;' +
+      '  months = (now.getFullYear() - date.getFullYear()) * 12;' +
+      '  months -= date.getMonth();' +
+      '  months += now.getMonth();' +
+      '  return months === 1;' +
+      '}' +
+      '}';
   }
 
 }
