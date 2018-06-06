@@ -44,8 +44,19 @@ export class PouchDatabase extends Database {
     });
   }
 
-  put(object: any) {
-    return this._pouchDB.put(object);
+  allDocsRaw(options?: any) {
+    return this._pouchDB.allDocs(options).then(result => {
+      return result;
+    });
+  }
+
+  put(object: any, forceUpdate?: boolean) {
+    const options: any = {};
+    if (forceUpdate) {
+      options.force = true;
+    }
+
+    return this._pouchDB.put(object, options);
   }
 
   remove(object: any) {
