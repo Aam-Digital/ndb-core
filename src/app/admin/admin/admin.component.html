@@ -8,6 +8,23 @@
 </p>
 
 <br><hr>
+<h2>Backup</h2>
+<p>
+  <button (click)="saveBackup()" mat-stroked-button>Download Backup (.json)</button>&nbsp;
+  <button (click)="backupImport.click()" mat-stroked-button>Restore Backup (.json)</button>
+  <input #backupImport type="file" style="display:none" (change)="loadBackup($event.target.files[0])" />
+</p>
+
+<br><hr>
+<h2>Export</h2>
+<p>
+  <button (click)="saveCsvExport()" mat-stroked-button>Download whole database (.csv)</button>&nbsp;
+  <button (click)="csvImport.click()" mat-stroked-button>Import (.csv)</button>
+  <input #csvImport type="file" style="display:none" (change)="loadCsv($event.target.files[0])" />
+</p>
+
+
+<br><hr>
 <h2>AppConfig</h2>
 <p>{{appConfig | json}}</p>
 
@@ -15,6 +32,9 @@
 <h2>Debug the PouchDB</h2>
 <p>
   <button (click)="debugDatabase()" mat-stroked-button>Send to console.log()</button>
+</p>
+<p>
+  <button (click)="clearDatabase()" mat-stroked-button>Empty Database</button>
 </p>
 
 <br><hr>
