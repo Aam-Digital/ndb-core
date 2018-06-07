@@ -27,7 +27,7 @@ export class ChildAttendanceComponent implements OnInit {
 
   ngOnInit() {
     const params = this.route.snapshot.params;
-    const childId = params['id'];
+    const childId = params['id'].toString();
 
     this.childrenService.getChild(childId)
       .subscribe(result => this.child = result);
