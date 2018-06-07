@@ -19,7 +19,6 @@ import { Component, OnInit } from '@angular/core';
 import { DatabaseSyncStatus } from '../../database/database-sync-status.enum';
 import { SessionService } from '../session.service';
 import { DatabaseManagerService } from '../../database/database-manager.service';
-import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -39,8 +38,7 @@ export class LoginComponent implements OnInit {
 
 
   constructor(private _sessionService: SessionService,
-              private _dbManager: DatabaseManagerService,
-              private router: Router) {
+              private _dbManager: DatabaseManagerService) {
   }
 
 
@@ -58,7 +56,6 @@ export class LoginComponent implements OnInit {
   private onLoginSuccess() {
     this.reset();
     // login component is automatically hidden based on _sessionService.isLoggedIn()
-    this.router.navigate(['/']);
   }
 
   private onLoginFailure(reason: any) {
