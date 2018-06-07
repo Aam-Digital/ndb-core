@@ -47,15 +47,15 @@ PouchDB.plugin(PouchDBAuthentication);
 
 @Injectable()
 export class RemoteSessionService {
-  protected database: any;
+  public database: any;
 
-  protected connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>();
+  public connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>();
 
   constructor() {
     this.database = new PouchDB(AppConfig.settings.database.name);
   }
 
-  protected login(username: string, password: string): Promise<ConnectionState> {
+  public login(username: string, password: string): Promise<ConnectionState> {
     const ajaxOpts = {
       ajax: {
         headers: {
@@ -76,5 +76,9 @@ export class RemoteSessionService {
         return ConnectionState.offline;
       }
     });
+  }
+
+  public logout(): void {
+    this.database.logout();
   }
 }

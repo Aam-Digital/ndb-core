@@ -20,4 +20,3 @@ export enum LoginState {
   loggedOut,
   loggedIn,
 }
-  

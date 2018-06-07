@@ -16,8 +16,8 @@
  */
 
 export enum SyncState {
-  initial,        // before any sync. Login can not be determined locally
-  assumedInSync,  // we believe, we are in sync (i.e. no changes on our side are waiting to be synced)
-  knownOutOfSync, // we know, we are out of sync
+  started,
+  completed,
+  failed,
+  unsynced
 }
-  

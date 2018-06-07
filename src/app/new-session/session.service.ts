@@ -33,12 +33,12 @@
  * - local (assumed) in sync, remote disconnected (no internet)
  * - local (known) out of sync, remote connectable
  * - local (assumed) in sync, remote connectable
- * 
+ *
  * - local authenticated, remote authenticated
  * - local authenticated, remote auth failed
  * - local auth failed, remote authenticated
  * - local auth failed, remote auth failed
- * 
+ *
  * --> logged in
  * --> not logged in
  * --> getDB
@@ -46,15 +46,49 @@
 
 import { Injectable } from '@angular/core';
 import { AlertService } from '../alerts/alert.service';
-import { User } from '../user/user';
 
 import { LocalSessionService } from './local-session.service';
 import { RemoteSessionService } from './remote-session.service';
+import { LoginState } from './login-state.enum';
+import { Database } from '../database/database';
+import { PouchDatabase } from '../database/pouch-database';
+import { ConnectionState } from './connection-state.enum';
+import { SyncState } from './sync-state.enum';
 
 @Injectable()
 export class SessionService {
   constructor(private _localSession: LocalSessionService,
               private _remoteSession: RemoteSessionService,
               private _alertService: AlertService) {
+  }
+
+  public isLoggedIn(): boolean {
+    return this._localSession.loginState.getState() === LoginState.loggedIn;
+  }
+
+  public login(username: string, password: string): Promise<any> {
+    const localLogin =  this._localSession.login(username, password);
+    this._remoteSession.login(username, password).then((connectionState: ConnectionState) => {
+      if (connectionState === ConnectionState.connected) {
+        return this.sync();
+      }
+      this._localSession.isInitial().then(isInitial => {
+        if (isInitial) {
+          // Fail the sync in the local session, which will fail the authentication there
+          this._localSession.syncState.setState(SyncState.failed);
+        }
+      });
+      // TODO: If the localDB is out of sync, we might have a login, that should never have been successful
+      // => terminate the local session!
+    });
+    return localLogin;
+  }
+
+  public sync(): Promise<any> {
+    return this._localSession.sync(this._remoteSession.database);
+  }
+
+  public getDatabase(): Database {
+    return new PouchDatabase(this._localSession.database);
   }
 }

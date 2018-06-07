@@ -21,4 +21,3 @@ export enum ConnectionState {
   disconnected, // we are intentionally not connected to the remote db
   connected,    // we are connected to the remote db
 }
-  

@@ -28,8 +28,9 @@
 /**
  * States
  * - Sync -> must be persisted across restarts! we must not authenticate if state was unsynced
- *   - initialized, never synced
- *   - synced
+ *   - started
+ *   - completed
+ *   - failed
  *   - unsynced
  * - Login
  *   - (wait for first sync)
@@ -41,7 +42,7 @@
 
 import PouchDB from 'pouchdb';
 
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 import { AppConfig } from '../app-config/app-config';
 import { EntityMapperService } from '../entity/entity-mapper.service';
@@ -53,25 +54,23 @@ import { StateHandler, StateChangedEvent } from './state-handler';
 
 @Injectable()
 export class LocalSessionService {
-  protected database: any;
+  public database: any;
 
-  protected loginState: StateHandler<LoginState>; // logged in, logged out, login failed
-  protected syncState: StateHandler<SyncState>; // assumed in sync, known out of sync, initial (not synced at all)
+  public loginState: StateHandler<LoginState>; // logged in, logged out, login failed
+  public syncState: StateHandler<SyncState>; // assumed in sync, known out of sync, initial (not synced at all)
 
   constructor(private _entityMapper: EntityMapperService) {
     this.database = new PouchDB(AppConfig.settings.database.name);
 
     this.loginState = new StateHandler<LoginState>(LoginState.loggedOut);
-    this.syncState = new StateHandler<SyncState>(SyncState[window.sessionStorage.getItem('syncState')]);    // restore sync state
-    this.syncState.getStateChangedStream().subscribe((stateChange: StateChangedEvent<SyncState>) => {  // save sync state on change
-      window.sessionStorage.setItem('syncState', SyncState[stateChange.toState]);
-    });
+    this.syncState = new StateHandler<SyncState>(SyncState.unsynced);
   }
 
-  // TODO: wait for first sync (-> as entitymapper gets its data from the database, i.e. the session, we definitely need to wait)
-  // TODO: the entityMapper uses the DatabaseService we might not have at this point...
-  protected authenticate(username: string, password: string): Promise<LoginState> {
-    return this._entityMapper.load<User>(User, username).then(userEntity => {
+  // TODO: the entityMapper uses the DatabaseService, where it should try to get the DB from here
+  public login(username: string, password: string): Promise<LoginState> {
+    return this.waitForFirstSync().then(
+      () => this._entityMapper.load<User>(User, username)
+    ).then(userEntity => {
       if (userEntity.checkPassword(password)) {
         this.loginState.setState(LoginState.loggedIn);
         return LoginState.loggedIn;
@@ -86,5 +85,33 @@ export class LocalSessionService {
       this.loginState.setState(LoginState.loginFailed);
       return LoginState.loginFailed;
     });
+  }
+
+  public sync(remoteDB): Promise<any> {
+    this.syncState.setState(SyncState.started);
+    return this.database.sync(remoteDB).then(() => {
+      this.syncState.setState(SyncState.completed);
+    }).catch(() => {
+      this.syncState.setState(SyncState.failed);
+      throw null; // rethrow, so later stuff lands in .catch, too
+    });
+  }
+
+  public waitForFirstSync(): Promise<void> {
+    return this.isInitial().then(() => {
+      const subscription = this.syncState.getStateChangedStream().subscribe(change => {
+        subscription.unsubscribe(); // only once
+        if (change.toState === SyncState.completed) {
+          return; // resolve the promise
+        } else if (change.toState === SyncState.failed) {
+          throw null; // reject the promise
+        }
+      })
+    });
+  }
+
+  public isInitial(): Promise<Boolean> {
+    // doc_count === 0 => initial is a valid assumptions, as documents for users must always be present, even after db-clean
+    return this.database.info().then(result => result.doc_count === 0);
   }
 }
