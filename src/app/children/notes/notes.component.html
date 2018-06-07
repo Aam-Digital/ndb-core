@@ -1,0 +1,104 @@
+<table mat-table [dataSource]="recordsDataSource" matSort class="mat-elevation-z8 table-list">
+
+  <ng-container matColumnDef="date">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
+    <td mat-cell *matCellDef="let rec">
+      <div *ngIf="!recordsEditing.get(rec.getId())">
+        {{rec.date | date:'yyyy-MM-dd'}}
+      </div>
+      <div *ngIf="recordsEditing.get(rec.getId())">
+        <mat-form-field class="">
+          <input matInput type="date" title="date" [valueAsDate]="rec.date" (change)="rec.date=$event.target.valueAsDate">
+        </mat-form-field>
+      </div>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="subject">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Topic </th>
+    <td mat-cell *matCellDef="let rec">
+      <div *ngIf="!recordsEditing.get(rec.getId())">
+        {{rec.subject}}
+      </div>
+      <div *ngIf="recordsEditing.get(rec.getId())">
+        <mat-form-field class="">
+          <input matInput title="topic" [value]="rec.subject" (change)="rec.subject=$event.target.value">
+        </mat-form-field>
+      </div>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="text">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>  </th>
+    <td mat-cell *matCellDef="let rec">
+      <div *ngIf="!recordsEditing.get(rec.getId())">
+        {{rec.text}}
+      </div>
+      <div *ngIf="recordsEditing.get(rec.getId())">
+        <mat-form-field class="">
+          <textarea matInput placeholder="notes" title="notes" [value]="rec.text" (change)="rec.text=$event.target.value"></textarea>
+        </mat-form-field>
+      </div>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="author">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> SW </th>
+    <td mat-cell *matCellDef="let rec">
+      <div *ngIf="!recordsEditing.get(rec.getId())">
+        {{rec.author}}
+      </div>
+      <div *ngIf="recordsEditing.get(rec.getId())">
+        <mat-form-field class="">
+          <input matInput title="author" [value]="rec.author" (change)="rec.author=$event.target.value">
+        </mat-form-field>
+      </div>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="warning">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+    <td mat-cell *matCellDef="let rec">
+      <div *ngIf="!recordsEditing.get(rec.getId())">
+        <!-- hidden (used for color coding only) -->
+      </div>
+      <div *ngIf="recordsEditing.get(rec.getId())">
+        <mat-form-field class="">
+          <mat-select [(value)]="rec.warningLevel">
+            <mat-option value="OK">Solved</mat-option>
+            <mat-option value="WARNING">Needs Follow-Up</mat-option>
+            <mat-option value="URGENT">Urgent Follow-Up</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </td>
+  </ng-container>
+
+
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>
+      <button mat-stroked-button color="accent" (click)="generateNewRecord()">
+        <mat-icon class="table-action-icon" aria-label="add" fontIcon="fa-plus-circle"></mat-icon>Add New
+      </button>
+    </th>
+    <td mat-cell *matCellDef="let rec">
+      <button mat-icon-button *ngIf="!recordsEditing.get(rec.getId())" (click)="recordsEditing.set(rec.getId(), true)">
+        <mat-icon class="table-action-icon" aria-label="edit" fontIcon="fa-pencil"></mat-icon>
+      </button>
+      <button mat-icon-button *ngIf="recordsEditing.get(rec.getId())" (click)="save(rec)">
+        <mat-icon class="table-action-icon" aria-label="save" fontIcon="fa-check-circle"></mat-icon>
+      </button>
+      <button mat-icon-button *ngIf="recordsEditing.get(rec.getId())" (click)="resetChanges(rec)">
+        <mat-icon class="table-action-icon" aria-label="cancel" fontIcon="fa-times-circle"></mat-icon>
+      </button>
+      <button mat-icon-button (click)="delete(rec)">
+        <mat-icon class="table-action-icon" aria-label="delete" fontIcon="fa-trash"></mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+  <tr mat-row *matRowDef="let rec; columns: columnsToDisplay" class="w-{{rec.warningLevel}}"></tr>
+</table>

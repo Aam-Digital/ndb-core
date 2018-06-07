@@ -4,6 +4,7 @@ import {Child} from './child';
 import {EntityMapperService} from '../entity/entity-mapper.service';
 import {AttendanceMonth} from './attendance/attendance-month';
 import {Database} from '../database/database';
+import {Note} from './notes/note';
 
 @Injectable()
 export class ChildrenService {
@@ -21,6 +22,7 @@ export class ChildrenService {
   getChild(id: string): Observable<Child> {
     return Observable.fromPromise(this.entityMapper.load<Child>(Child, id));
   }
+
 
   getAttendances(): Observable<AttendanceMonth[]> {
     return Observable.fromPromise(this.entityMapper.loadType<AttendanceMonth>(AttendanceMonth));
@@ -109,4 +111,28 @@ export class ChildrenService {
       '}';
   }
 
+
+
+
+
+  getNotesOfChild(childId: string): Observable<Note[]> {
+    return Observable.fromPromise(
+      this.entityMapper.loadType<Note>(Note)
+        .then(loadedEntities => {
+          return loadedEntities.filter(o => o.child === childId);
+        })
+    );
+  }
+
+  getNote(id: string): Observable<Note> {
+    return Observable.fromPromise(this.entityMapper.load<Note>(Note, id));
+  }
+
+  saveNote(entity: Note) {
+    this.entityMapper.save(entity);
+  }
+
+  removeNote(entity: Note) {
+    this.entityMapper.remove(entity);
+  }
 }

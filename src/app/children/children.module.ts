@@ -39,6 +39,7 @@ import {FormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import { AttendanceAverageDashboardComponent } from './attendance/attendance-average-dashboard/attendance-average-dashboard.component';
 import { AttendanceWarningsDashboardComponent } from './attendance/attendance-warnings-dashboard/attendance-warnings-dashboard.component';
+import { NotesComponent } from './notes/notes.component';
 
 
 @NgModule({
@@ -50,6 +51,7 @@ import { AttendanceWarningsDashboardComponent } from './attendance/attendance-wa
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
+    MatSelectModule,
     MatExpansionModule,
     MatTableModule,
     MatSortModule,
@@ -65,11 +67,13 @@ import { AttendanceWarningsDashboardComponent } from './attendance/attendance-wa
     AttendanceBlockComponent,
     ChildBlockComponent,
     ChildAttendanceComponent,
+    NotesComponent,
     ChildDetailsComponent,
     ChildrenListComponent,
     ChildrenCountDashboardComponent,
     AttendanceAverageDashboardComponent,
-    AttendanceWarningsDashboardComponent],
+    AttendanceWarningsDashboardComponent,
+  ],
   providers: [ChildrenService],
   exports: [
     ChildBlockComponent,
