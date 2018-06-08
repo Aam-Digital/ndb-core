@@ -1,13 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NotesComponent } from './notes.component';
-import {
-  MatFormFieldModule,
-  MatIconModule,
-  MatSelectModule,
-  MatSnackBarModule,
-  MatTableModule
-} from '@angular/material';
 import {ChildrenService} from '../children.service';
 import {UiHelperModule} from '../../ui-helper/ui-helper.module';
 import {ActivatedRoute} from '@angular/router';
@@ -15,6 +8,8 @@ import {Child} from '../child';
 import {SessionService} from '../../session/session.service';
 import {User} from '../../user/user';
 import {Observable} from 'rxjs/Observable';
+import {EntityMapperService} from '../../entity/entity-mapper.service';
+import {MockDatabase} from '../../database/mock-database';
 
 describe('NotesComponent', () => {
   let component: NotesComponent;
@@ -28,6 +23,7 @@ describe('NotesComponent', () => {
       return Observable.of([]);
     }
   };
+  let mockEntityMapper;
   let testUser;
 
 
@@ -35,12 +31,15 @@ describe('NotesComponent', () => {
     testUser = new User('tester');
     testUser.name = 'tester';
 
+    mockEntityMapper = new EntityMapperService(new MockDatabase());
+
     TestBed.configureTestingModule({
       declarations: [ NotesComponent ],
-      imports: [MatTableModule, MatFormFieldModule, MatIconModule, MatSnackBarModule, MatSelectModule, UiHelperModule],
+      imports: [UiHelperModule],
       providers: [
         { provide: ActivatedRoute, useValue: {snapshot: {params: {id: '22'}}} },
         { provide: ChildrenService, useValue: mockChildrenService },
+        { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: SessionService, useValue: { getCurrentUser() { return testUser; }} },
         ],
     })

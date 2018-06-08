@@ -1,47 +1,56 @@
 import { Component, OnInit } from '@angular/core';
-import {AbstractChildSubrecordComponent} from '../abstract-child-subrecord.component';
-import {Observable} from 'rxjs/Observable';
 import {Note} from './note';
 import {ChildrenService} from '../children.service';
-import {MatSnackBar} from '@angular/material';
 import {ActivatedRoute} from '@angular/router';
-import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {SessionService} from '../../session/session.service';
+import {ColumnDescription} from '../../ui-helper/entity-subrecord/column-description';
 
 @Component({
   selector: 'app-notes',
-  templateUrl: './notes.component.html',
-  styleUrls: ['./notes.component.scss']
+  template: '<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="generateNewRecordFactory()">' +
+            '</app-entity-subrecord>',
 })
-export class NotesComponent extends AbstractChildSubrecordComponent<Note> implements OnInit {
+export class NotesComponent implements OnInit {
 
-  columnsToDisplay = ['date', 'subject', 'text', 'author', 'warning', 'actions'];
+  childId: string;
+  records: Array<Note>;
 
+  columns: Array<ColumnDescription> = [
+    new ColumnDescription('date', 'Date', 'date', null, (v: Date) => v.toLocaleDateString()),
+    new ColumnDescription('subject', 'Topic', 'text'),
+    new ColumnDescription('text', 'Notes', 'textarea'),
+    new ColumnDescription('author', 'SW', 'text'),
+    new ColumnDescription('warningLevel', '', 'select',
+      [{value: 'OK', label: 'Solved'}, {value: 'WARNING', label: 'Needs Follow-Up'}, {value: 'URGENT', label: 'Urgent Follow-Up'}],
+      (v) => ''),
+  ];
 
-  getRecords(childId: string): Observable<Note[]> { return this.childrenService.getNotesOfChild(childId); }
-  getRecord(recordId: string): Observable<Note> { return this.childrenService.getNote(recordId); };
-  saveRecord(record: Note) { return this.childrenService.saveNote(record); };
-  removeRecord(record: Note) { return this.childrenService.removeNote(record); };
 
   constructor(private route: ActivatedRoute,
-              private childrenService: ChildrenService,
-              private snackBar: MatSnackBar,
-              private confirmationDialog: ConfirmationDialogService,
-              private sessionService: SessionService) {
-    super(route, childrenService, snackBar, confirmationDialog);
+    private childrenService: ChildrenService,
+    private sessionService: SessionService) {
   }
 
   ngOnInit() {
-    this.init();
+    this.childId = this.route.snapshot.params['id'].toString();
+
+    this.childrenService.getNotesOfChild(this.childId)
+      .subscribe(results => this.records = results);
   }
 
 
-  generateNewRecord() {
-    const newNote = new Note(Date.now().toString());
-    newNote.date = new Date();
-    newNote.child = this.child.getId();
-    newNote.author = this.sessionService.getCurrentUser().name;
+  generateNewRecordFactory() {
+    // define values locally because "this" is a different scope after passing a function as input to another component
+    const user = this.sessionService.getCurrentUser().name;
+    const child = this.childId;
 
-    this.new(newNote);
+    return () => {
+      const newNote = new Note(Date.now().toString());
+      newNote.date = new Date();
+      newNote.child = child;
+      newNote.author = user;
+
+      return newNote;
+    };
   }
 }

@@ -15,21 +15,15 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from '../../entity/entity';
-import {WarningLevel} from '../attendance/warning-level';
+export class ColumnDescription {
+  constructor(
+    public name: string,
+    public label: string,
+    public inputType: string,
 
+    public selectValues: Array<{value: any, label: string}> = [],
 
-export class Note extends Entity {
-  protected static ENTITY_TYPE = 'Note';
+    public formatter = (value) => { return value; },
+  ) {}
 
-  child: string; // id of Child entity
-  date: Date;
-  subject = '';
-  text = '';
-  author: string;
-  warningLevel: WarningLevel = WarningLevel.OK;
-
-  getWarningLevel (): WarningLevel {
-    return this.warningLevel;
-  }
 }
