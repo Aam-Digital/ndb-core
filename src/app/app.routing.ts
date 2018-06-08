@@ -25,6 +25,7 @@ import {UserAccountComponent} from './user/user-account/user-account.component';
 import {ChildrenListComponent} from './children/children-list/children-list.component';
 import {ChildAttendanceComponent} from './children/attendance/child-attendance/child-attendance.component';
 import {AdminComponent} from './admin/admin/admin.component';
+import {AdminGuard} from './admin/admin.guard';
 
 export const routes: Routes = [
   {path: '', component: DashboardComponent},
@@ -34,7 +35,7 @@ export const routes: Routes = [
   {path: 'child', component: ChildrenListComponent},
   {path: 'child/:id', component: ChildDetailsComponent},
   {path: 'child/:id/attendance', component: ChildAttendanceComponent},
-  {path: 'admin', component: AdminComponent},
+  {path: 'admin', component: AdminComponent, canActivate: [AdminGuard]},
   {path: '**', redirectTo: '/'},
 ];
 
