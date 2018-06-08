@@ -1,12 +1,18 @@
-<table mat-table [dataSource]="recordsDataSource" matSort class="mat-elevation-z8 table-list">
+<table mat-table [dataSource]="recordsDataSource" matSort class="mat-elevation-z8 subrecord-table">
 
   <ng-container *ngFor="let col of columns" [matColumnDef]="col.name">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> {{col.label}} </th>
     <td mat-cell *matCellDef="let rec">
-      <div *ngIf="!recordsEditing.get(rec.getId())">
+      <div *ngIf="col.inputType === 'function'" class='table-show-number'>
+        {{ col.formatter( rec[col.name]() ) }}
+      </div>
+
+      <div *ngIf="!recordsEditing.get(rec.getId()) && col.inputType !== 'function'"
+           [ngClass]="{ 'table-show-number': col.inputType==='number' }">
         {{ col.formatter(rec[col.name]) }}
       </div>
-      <div *ngIf="recordsEditing.get(rec.getId())">
+
+      <div *ngIf="recordsEditing.get(rec.getId()) && col.inputType !== 'function'">
         <mat-form-field class="">
 
           <input *ngIf="col.inputType === 'text'"

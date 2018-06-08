@@ -1,108 +1,57 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {AttendanceMonth} from '../attendance-month';
-import {Child} from '../../child';
 import {ChildrenService} from '../../children.service';
-import {MatSnackBar, MatTableDataSource} from '@angular/material';
-import {ConfirmationDialogService} from '../../../ui-helper/confirmation-dialog/confirmation-dialog.service';
+import {ColumnDescription} from '../../../ui-helper/entity-subrecord/column-description';
+import {DatePipe, PercentPipe} from '@angular/common';
+
 
 @Component({
   selector: 'app-child-attendance',
-  templateUrl: './child-attendance.component.html',
-  styleUrls: ['./child-attendance.component.scss']
+  template: '<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="generateNewRecordFactory()">' +
+  '</app-entity-subrecord>',
 })
 export class ChildAttendanceComponent implements OnInit {
-  attendanceRecords: Array<AttendanceMonth>;
-  attendanceDataSource = new MatTableDataSource();
-  recordsEditing = new Map<string, boolean>();
-  child: Child;
 
-  columnsToDisplay = ['month', 'attended', 'working', 'percent', 'excused', 'remarks', 'actions'];
+  childId: string;
+  records: Array<AttendanceMonth>;
+
+  columns: Array<ColumnDescription> = [
+    new ColumnDescription('month', 'Month', 'month', null,
+      (v: Date) => this.datePipe.transform(v, 'yyyy-MM')),
+    new ColumnDescription('daysAttended', 'Present', 'number'),
+    new ColumnDescription('daysWorking', 'Working Days', 'number'),
+    new ColumnDescription('getAttendancePercentage', 'Attended', 'function', null,
+      (v: number) => this.percentPipe.transform(v, '1.0-0')),
+    new ColumnDescription('daysExcused', 'Excused', 'number'),
+    new ColumnDescription('remarks', 'Remarks', 'textarea'),
+  ];
+
 
   constructor(private route: ActivatedRoute,
               private childrenService: ChildrenService,
-              private snackBar: MatSnackBar,
-              private confirmationDialog: ConfirmationDialogService) {
+              private datePipe: DatePipe,
+              private percentPipe: PercentPipe) {
   }
 
   ngOnInit() {
-    const params = this.route.snapshot.params;
-    const childId = params['id'].toString();
+    this.childId = this.route.snapshot.params['id'].toString();
 
-    this.childrenService.getChild(childId)
-      .subscribe(result => this.child = result);
-
-    this.childrenService.getAttendancesOfChild(childId)
-      .subscribe(results => {
-        this.attendanceRecords = results;
-        this.attendanceDataSource.data = this.attendanceRecords;
-      });
+    this.childrenService.getAttendancesOfChild(this.childId)
+      .subscribe(results => this.records = results);
   }
 
 
-  saveAttendanceMonth(att: AttendanceMonth) {
-    // update in database
-    this.childrenService.saveAttendance(att);
+  generateNewRecordFactory() {
+    // define values locally because "this" is a different scope after passing a function as input to another component
+    const child = this.childId;
 
-    this.recordsEditing.set(att.getId(), false);
+    return () => {
+      const newAtt = new AttendanceMonth(Date.now().toString()); // TODO: logical way to assign entityId to Attendance?
+      newAtt.month = new Date();
+      newAtt.student = child;
+
+      return newAtt;
+    };
   }
-
-  resetAttendanceMonthChanges(att: AttendanceMonth) {
-    // reload original record from database
-    this.childrenService.getAttendance(att.getId())
-      .subscribe(
-      originalAtt => {
-          const index = this.attendanceRecords.findIndex(a => a.getId() === att.getId());
-          if (index > -1) {
-            this.attendanceRecords[index] = originalAtt;
-            this.attendanceDataSource.data = this.attendanceRecords;
-          }
-        },
-        err => {
-          if (err.status === 404) {
-            this.removeFromDataTable(att);
-          }
-        }
-      );
-    this.recordsEditing.set(att.getId(), false);
-  }
-
-  private removeFromDataTable(att: AttendanceMonth) {
-    const index = this.attendanceRecords.findIndex(a => a.getId() === att.getId());
-    if (index > -1) {
-      this.attendanceRecords.splice(index, 1);
-      this.attendanceDataSource.data = this.attendanceRecords;
-    }
-  }
-
-  deleteAttendanceMonth(att: AttendanceMonth) {
-    const dialogRef = this.confirmationDialog
-      .openDialog('Delete?', 'Are you sure you want to delete this attendence record?');
-
-    dialogRef.afterClosed()
-      .subscribe(confirmed => {
-        if (confirmed) {
-          this.childrenService.removeAttendance(att);
-          this.removeFromDataTable(att);
-
-          const snackBarRef = this.snackBar.open('Attendance record deleted', 'Undo', { duration: 8000 });
-          snackBarRef.onAction().subscribe(() => {
-            this.saveAttendanceMonth(att);
-            this.attendanceRecords.unshift(att);
-            this.attendanceDataSource.data = this.attendanceRecords;
-          });
-        }
-    });
-  }
-
-  newAttendanceMonth() {
-    const att = new AttendanceMonth(Date.now().toString()); // TODO: logical way to assign entityId to Attendance?
-    att.month = new Date();
-    att.student = this.child.getId();
-    this.recordsEditing.set(att.getId(), true);
-
-    this.attendanceRecords.unshift(att);
-    this.attendanceDataSource.data = this.attendanceRecords;
-  }
-
 }

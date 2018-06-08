@@ -10,6 +10,7 @@ import {User} from '../../user/user';
 import {Observable} from 'rxjs/Observable';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {MockDatabase} from '../../database/mock-database';
+import {DatePipe} from '@angular/common';
 
 describe('NotesComponent', () => {
   let component: NotesComponent;
@@ -37,6 +38,7 @@ describe('NotesComponent', () => {
       declarations: [ NotesComponent ],
       imports: [UiHelperModule],
       providers: [
+        DatePipe,
         { provide: ActivatedRoute, useValue: {snapshot: {params: {id: '22'}}} },
         { provide: ChildrenService, useValue: mockChildrenService },
         { provide: EntityMapperService, useValue: mockEntityMapper },

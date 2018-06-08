@@ -4,6 +4,7 @@ import {ChildrenService} from '../children.service';
 import {ActivatedRoute} from '@angular/router';
 import {SessionService} from '../../session/session.service';
 import {ColumnDescription} from '../../ui-helper/entity-subrecord/column-description';
+import {DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-notes',
@@ -16,7 +17,8 @@ export class NotesComponent implements OnInit {
   records: Array<Note>;
 
   columns: Array<ColumnDescription> = [
-    new ColumnDescription('date', 'Date', 'date', null, (v: Date) => v.toLocaleDateString()),
+    new ColumnDescription('date', 'Date', 'date', null,
+      (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
     new ColumnDescription('subject', 'Topic', 'text'),
     new ColumnDescription('text', 'Notes', 'textarea'),
     new ColumnDescription('author', 'SW', 'text'),
@@ -27,8 +29,9 @@ export class NotesComponent implements OnInit {
 
 
   constructor(private route: ActivatedRoute,
-    private childrenService: ChildrenService,
-    private sessionService: SessionService) {
+              private childrenService: ChildrenService,
+              private sessionService: SessionService,
+              private datePipe: DatePipe) {
   }
 
   ngOnInit() {

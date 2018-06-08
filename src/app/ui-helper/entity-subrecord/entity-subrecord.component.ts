@@ -48,7 +48,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
     this._entityMapper.save(record);
 
     // updated backup copies used for reset
-    const i = this.originalRecords.findIndex(e => e.getId() === record.getId());
+    const i = this.originalRecords.findIndex(e => e.entityId === record.getId());
     this.originalRecords[i] = Object.assign({}, record);
 
     this.recordsEditing.set(record.getId(), false);

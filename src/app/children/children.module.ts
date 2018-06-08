@@ -16,7 +16,7 @@
  */
 
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {CommonModule, DatePipe, PercentPipe} from '@angular/common';
 import { ChildDetailsComponent } from './child-details/child-details.component';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
@@ -74,7 +74,7 @@ import { NotesComponent } from './notes/notes.component';
     AttendanceAverageDashboardComponent,
     AttendanceWarningsDashboardComponent,
   ],
-  providers: [ChildrenService],
+  providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
     ChildBlockComponent,
     ChildrenCountDashboardComponent,
