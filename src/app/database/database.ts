@@ -26,7 +26,7 @@ export abstract class Database {
 
   abstract allDocs(options?: any): Promise<any>;
 
-  abstract put(object: any): Promise<any>;
+  abstract put(object: any, forceUpdate?: boolean): Promise<any>;
 
   abstract remove(object: any): Promise<any>;
 

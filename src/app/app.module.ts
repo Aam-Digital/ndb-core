@@ -43,6 +43,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
 import {MatIconModule, MatIconRegistry} from '@angular/material';
+import {AdminModule} from './admin/admin.module';
 
 @NgModule({
   declarations: [
@@ -67,6 +68,7 @@ import {MatIconModule, MatIconRegistry} from '@angular/material';
     DashboardModule,
     ChildrenModule,
     SchoolsModule,
+    AdminModule,
     ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
     MatIconModule,
   ],

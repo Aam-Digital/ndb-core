@@ -55,7 +55,7 @@ export class MockDatabase extends Database {
     return Promise.resolve(result);
   }
 
-  put(object: any) {
+  put(object: any, forceUpdate?: boolean) {
     let result;
 
     // check if unintentionally (no _rev) a duplicate _id is used
