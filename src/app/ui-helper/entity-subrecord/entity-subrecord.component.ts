@@ -16,10 +16,10 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
   @Input() columns: Array<ColumnDescription>;
   @Input() newRecordFactory: () => Entity;
 
-  private recordsDataSource = new MatTableDataSource();
-  private columnsToDisplay = [];
-  private recordsEditing = new Map<string, boolean>();
-  private originalRecords = [];
+  recordsDataSource = new MatTableDataSource();
+  columnsToDisplay = [];
+  recordsEditing = new Map<string, boolean>();
+  originalRecords = [];
 
 
   constructor(private _entityMapper: EntityMapperService,
