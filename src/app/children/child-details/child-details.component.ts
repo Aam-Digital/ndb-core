@@ -104,27 +104,7 @@ export class ChildDetailsComponent implements OnInit {
     const childId = params['id'];
 
     this.entityMapperService.load<Child>(Child, childId)
-      .then(child => this.child = child)
-      .catch(err => {
-        console.log(childId);
-        console.log('!!!!!' + err + 'load');
-        this.child = new Child('child:4');
-        this.child.name = 'Fabi 4';
-        this.child.pn = 4; // project number
-        this.child.religion = 'Hindu';
-        this.child.gender = Gender.MALE;
-        this.child.dateOfBirth = '2000-03-01';
-        this.child.motherTongue = 'Hindi';
-        this.child.admission = '2013-10-04';
-        this.child.placeOfBirth = 'Kambotsha';
-        this.child.center = 'Takatiki';
-        this.entityMapperService.save(this.child)
-          .then((res) => console.log(res + 'fullfilled save'))
-          .then((res) => this.entityMapperService.load(Child, 'child:4'))
-          .then(child => this.child = child)
-          .catch(errLoad => console.log(errLoad + 'load2'))
-          .catch((errSave) => console.log(errSave + 'save'));
-      });
+      .then(child => this.child = child);
     // this.editable = false;
     this.genderSelector = Object.keys(this.gender).filter(k => !isNaN(Number(k)));
     this.selectedGender = '0';
