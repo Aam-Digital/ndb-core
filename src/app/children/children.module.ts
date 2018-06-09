@@ -24,6 +24,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { ChildrenListComponent } from './children-list/children-list.component';
 import {
+  MatAutocompleteModule,
   MatButtonModule,
   MatButtonToggleModule,
   MatCardModule,
@@ -47,6 +48,7 @@ import { AttendanceAverageDashboardComponent } from './attendance/attendance-ave
 import { AttendanceWarningsDashboardComponent } from './attendance/attendance-warnings-dashboard/attendance-warnings-dashboard.component';
 import { NotesComponent } from './notes/notes.component';
 import { NoteDetailsComponent } from './notes/note-details/note-details.component';
+import { ChildSelectComponent } from './child-select/child-select.component';
 
 
 @NgModule({
@@ -69,6 +71,7 @@ import { NoteDetailsComponent } from './notes/note-details/note-details.componen
     MatCardModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatAutocompleteModule,
     UiHelperModule,
   ],
   declarations: [
@@ -82,10 +85,12 @@ import { NoteDetailsComponent } from './notes/note-details/note-details.componen
     AttendanceAverageDashboardComponent,
     AttendanceWarningsDashboardComponent,
     NoteDetailsComponent,
+    ChildSelectComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
     ChildBlockComponent,
+    ChildSelectComponent,
     ChildrenCountDashboardComponent,
     AttendanceAverageDashboardComponent,
     AttendanceWarningsDashboardComponent
