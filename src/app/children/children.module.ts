@@ -24,7 +24,13 @@ import {MatInputModule} from '@angular/material/input';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { ChildrenListComponent } from './children-list/children-list.component';
 import {
-  MatButtonModule, MatButtonToggleModule, MatCardModule, MatIconModule, MatSidenavModule, MatSnackBarModule,
+  MatButtonModule,
+  MatButtonToggleModule,
+  MatCardModule,
+  MatDialogModule,
+  MatIconModule,
+  MatSidenavModule,
+  MatSnackBarModule,
   MatSortModule,
   MatTableModule
 } from '@angular/material';
@@ -40,6 +46,7 @@ import {RouterModule} from '@angular/router';
 import { AttendanceAverageDashboardComponent } from './attendance/attendance-average-dashboard/attendance-average-dashboard.component';
 import { AttendanceWarningsDashboardComponent } from './attendance/attendance-warnings-dashboard/attendance-warnings-dashboard.component';
 import { NotesComponent } from './notes/notes.component';
+import { NoteDetailsComponent } from './notes/note-details/note-details.component';
 
 
 @NgModule({
@@ -61,6 +68,7 @@ import { NotesComponent } from './notes/notes.component';
     MatIconModule,
     MatCardModule,
     MatSnackBarModule,
+    MatDialogModule,
     UiHelperModule,
   ],
   declarations: [
@@ -73,6 +81,7 @@ import { NotesComponent } from './notes/notes.component';
     ChildrenCountDashboardComponent,
     AttendanceAverageDashboardComponent,
     AttendanceWarningsDashboardComponent,
+    NoteDetailsComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
@@ -81,5 +90,6 @@ import { NotesComponent } from './notes/notes.component';
     AttendanceAverageDashboardComponent,
     AttendanceWarningsDashboardComponent
   ],
+  entryComponents: [NoteDetailsComponent],
 })
 export class ChildrenModule { }

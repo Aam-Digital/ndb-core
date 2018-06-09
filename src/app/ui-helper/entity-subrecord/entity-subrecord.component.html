@@ -2,7 +2,9 @@
 
   <ng-container *ngFor="let col of columns" [matColumnDef]="col.name">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> {{col.label}} </th>
-    <td mat-cell *matCellDef="let rec">
+    <td mat-cell *matCellDef="let rec"
+        (click)='showRecord(rec)' [ngClass]="{'table-link': detailsComponent!==undefined}">
+
       <div *ngIf="col.inputType === 'function'" class='table-show-number'>
         {{ col.formatter( rec[col.name]() ) }}
       </div>

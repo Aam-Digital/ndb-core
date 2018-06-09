@@ -26,7 +26,8 @@ export class Note extends Entity {
   date: Date;
   subject = '';
   text = '';
-  author: string;
+  author = '';
+  category = '';
   warningLevel: WarningLevel = WarningLevel.OK;
 
   getWarningLevel (): WarningLevel {

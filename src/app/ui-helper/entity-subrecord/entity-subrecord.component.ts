@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {MatSnackBar, MatTableDataSource} from '@angular/material';
+import {MatDialog, MatSnackBar, MatTableDataSource} from '@angular/material';
 import {ConfirmationDialogService} from '../confirmation-dialog/confirmation-dialog.service';
 import {Entity} from '../../entity/entity';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
@@ -15,6 +15,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
   @Input() records: Array<Entity>;
   @Input() columns: Array<ColumnDescription>;
   @Input() newRecordFactory: () => Entity;
+  @Input() detailsComponent: typeof Component;
 
   recordsDataSource = new MatTableDataSource();
   columnsToDisplay = [];
@@ -24,7 +25,8 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
 
   constructor(private _entityMapper: EntityMapperService,
               private _snackBar: MatSnackBar,
-              private _confirmationDialog: ConfirmationDialogService) {
+              private _confirmationDialog: ConfirmationDialogService,
+              private dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -102,6 +104,15 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
     this.records.unshift(newRecord);
     this.originalRecords.unshift(Object.assign({}, newRecord));
     this.recordsDataSource.data = this.records;
+  }
+
+
+  showRecord(record: Entity) {
+    if (this.detailsComponent === undefined || this.recordsEditing.get(record.getId())) {
+      return;
+    }
+
+    this.dialog.open(this.detailsComponent, {width: '80%', data: {entity: record}});
   }
 
 }
