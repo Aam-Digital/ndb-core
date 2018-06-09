@@ -9,6 +9,7 @@ import {Router} from '@angular/router';
 })
 export class ChildBlockComponent implements OnInit {
   @Input() entity: Child;
+  @Input() linkDisabled: boolean;
   tooltip = false;
   tooltipTimeout;
 
@@ -33,6 +34,10 @@ export class ChildBlockComponent implements OnInit {
   }
 
   showDetailsPage() {
+    if (this.linkDisabled) {
+      return;
+    }
+
     this.router.navigate(['/child', this.entity.getId()]);
   }
 }
