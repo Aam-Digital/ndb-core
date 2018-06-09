@@ -48,12 +48,12 @@ export class NotesComponent implements OnInit {
   generateNewRecordFactory() {
     // define values locally because "this" is a different scope after passing a function as input to another component
     const user = this.sessionService.getCurrentUser().name;
-    const child = this.childId;
+    const childId = this.childId;
 
     return () => {
       const newNote = new Note(Date.now().toString());
       newNote.date = new Date();
-      newNote.child = child;
+      newNote.children = [childId];
       newNote.author = user;
 
       return newNote;

@@ -22,7 +22,7 @@ import {WarningLevel} from '../attendance/warning-level';
 export class Note extends Entity {
   protected static ENTITY_TYPE = 'Note';
 
-  child: string; // id of Child entity
+  children: string[]; // id of Child entity
   date: Date;
   subject = '';
   text = '';
@@ -32,5 +32,9 @@ export class Note extends Entity {
 
   getWarningLevel (): WarningLevel {
     return this.warningLevel;
+  }
+
+  isLinkedWithChild(childId: string) {
+    return (this.children.findIndex(e => e === childId) > -1);
   }
 }

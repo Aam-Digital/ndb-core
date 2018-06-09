@@ -37,18 +37,6 @@ export class ChildrenService {
     );
   }
 
-  getAttendance(id: string): Observable<AttendanceMonth> {
-    return Observable.fromPromise(this.entityMapper.load<AttendanceMonth>(AttendanceMonth, id));
-  }
-
-  saveAttendance(entity: AttendanceMonth) {
-    this.entityMapper.save(entity);
-  }
-
-  removeAttendance(entity: AttendanceMonth) {
-    this.entityMapper.remove(entity);
-  }
-
 
   queryAttendanceLast3Months() {
     return this.attendanceIndicesUpdated
@@ -119,20 +107,8 @@ export class ChildrenService {
     return Observable.fromPromise(
       this.entityMapper.loadType<Note>(Note)
         .then(loadedEntities => {
-          return loadedEntities.filter(o => o.child === childId);
+          return loadedEntities.filter(o => o.children.includes(childId));
         })
     );
-  }
-
-  getNote(id: string): Observable<Note> {
-    return Observable.fromPromise(this.entityMapper.load<Note>(Note, id));
-  }
-
-  saveNote(entity: Note) {
-    this.entityMapper.save(entity);
-  }
-
-  removeNote(entity: Note) {
-    this.entityMapper.remove(entity);
   }
 }
