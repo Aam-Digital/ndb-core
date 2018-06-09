@@ -13,6 +13,7 @@ export class ChildrenService {
   constructor(private entityMapper: EntityMapperService,
               private db: Database) {
     this.attendanceIndicesUpdated = this.createAttendanceAnalysisIndex();
+    this.createNotesIndex();
   }
 
   getChildren(): Observable<Child[]> {
@@ -104,11 +105,29 @@ export class ChildrenService {
 
 
   getNotesOfChild(childId: string): Observable<Note[]> {
-    return Observable.fromPromise(
-      this.entityMapper.loadType<Note>(Note)
-        .then(loadedEntities => {
-          return loadedEntities.filter(o => o.children.includes(childId));
-        })
-    );
+    const promise = this.db.query('notes_index/by_child', {key: childId, include_docs: true})
+      .then(loadedEntities => {
+        return loadedEntities.rows.map(loadedRecord => {
+          let entity = new Note('');
+          entity = Object.assign(entity, loadedRecord.doc);
+          return entity;
+        });
+      });
+
+    return Observable.fromPromise(promise);
   }
+
+  private createNotesIndex(): Promise<any> {
+    const designDoc = {
+      _id: '_design/notes_index',
+      views: {
+        by_child: {
+          map: '(doc) => { doc.children.forEach(childId => emit(childId)); }'
+        }
+      }
+    };
+
+    return this.db.saveDatabaseIndex(designDoc);
+  }
+
 }
