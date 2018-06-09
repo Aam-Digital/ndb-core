@@ -99,11 +99,17 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
   create() {
     const newRecord = this.newRecordFactory();
 
-    this.recordsEditing.set(newRecord.getId(), true);
-
     this.records.unshift(newRecord);
     this.originalRecords.unshift(Object.assign({}, newRecord));
     this.recordsDataSource.data = this.records;
+
+    if (this.detailsComponent === undefined) {
+      // edit inline in table
+      this.recordsEditing.set(newRecord.getId(), true);
+    } else {
+      // open in modal for comfortable editing
+      this.showRecord(newRecord);
+    }
   }
 
 
