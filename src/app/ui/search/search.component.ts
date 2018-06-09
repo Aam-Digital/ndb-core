@@ -45,22 +45,14 @@ export class SearchComponent implements OnInit {
         this.results = queryResults.rows
           .map(r => {
             let resultEntity;
-            if (!r.doc.hasOwnProperty('type')) {
+            if (r.doc._id.startsWith('Child:')) {
+              resultEntity = new Child(r.doc.entityId);
+            } else if (r.doc._id.startsWith('School:')) {
+              resultEntity = new School(r.doc.entityId);
+            } else {
               return;
             }
-            switch (r.doc.type) {
-              case ('Child'): {
-                resultEntity = new Child(r.doc.entityId);
-                break;
-              }
-              case ('School'): {
-                resultEntity = new School(r.doc.entityId);
-                break;
-              }
-              default: {
-                return;
-              }
-            }
+
             Object.assign(resultEntity, r.doc);
             return resultEntity;
           })
