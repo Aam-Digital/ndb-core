@@ -22,38 +22,38 @@ import { Gender} from './Gender';
 export class Child extends Entity {
   protected static ENTITY_TYPE = 'Child';
 
-  name = '';
-  pn = ''; // project number
-
-  center = 'N/A';
-  status = '';
-  school: any;
-  grade = '99';
-
-  religion: string;
+  name: string;
+  projectNumber: string; // project number
   gender: Gender; // M or F
-  dateOfBirth: string;
-  motherTongue: string;
-  admission: string;
-  placeOfBirth: string;
-  birthCertificate: string;
-  currentStatus: {
-    projectStatus: string;
-    socialworker: string;
-    address: {
-      text: string;
-      visit: string;
-      villageAddress: string;
-    }
-  };
-  remarks: string; // could also be a feed with text blocks
-  address: {
-    street: string;
-    housename: string;
-    district: string;
-    city: string;
-    postcode: string;
-  };
+  dateOfBirth: Date;
+  motherTongue = '';
+  religion = '';
+
+  center = '';
+  admissionDate: Date;
+  status = '';
+
+  schoolId: string;
+  schoolClass = '';
+
+  address = '';
+  phone = '';
+  guardianName = '';
+  preferredTimeForGuardianMeeting = '';
+
+  aadhar = '';
+
+  dropoutDate: Date;
+  dropoutType: string;
+  dropoutRemarks: string;
+
+  health_vaccinationStatus: string;
+  health_lastDentalCheckup: Date;
+  health_lastEyeCheckup: Date;
+  health_eyeHealthStatus: string;
+  health_lastVitaminD: Date;
+  health_lastDeworming: Date;
+
 
   getAge(): number {
      if (this.dateOfBirth) {
@@ -66,7 +66,7 @@ export class Child extends Entity {
   }
 
   isActive(): boolean {
-    return this.status !== 'dropout';
+    return this.status !== 'Dropout';
   }
 
 

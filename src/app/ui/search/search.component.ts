@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Database} from '../../database/database';
 import {Child} from '../../children/child';
-import {School} from '../../schools/schoolsShared/school';
+import {School} from '../../schools/school';
 
 @Component({
   selector: 'app-search',
@@ -19,13 +19,11 @@ export class SearchComponent implements OnInit {
   }
 
   private createSearchIndex() {
-    const emit = (x) => {}; // defined to avoid Typescript error. Actually `emit` is provided by pouchDB to the `map` function
-
     // `emit(x)` to add x as a key to the index that can be searched
     const searchMapFunction = 'function searchMapFunction (doc) {' +
 'if (doc.hasOwnProperty("name")) {doc.name.toLowerCase().split(" ").forEach(word => emit(word));}' +
 'if (doc.hasOwnProperty("entityId")) { emit(doc.entityId); }' +
-'if (doc.hasOwnProperty("pn")) { emit(doc.pn); }  }';
+'if (doc.hasOwnProperty("projectNumber")) { emit(doc.projectNumber); }  }';
 
     const designDoc = {
       _id: '_design/search_index',

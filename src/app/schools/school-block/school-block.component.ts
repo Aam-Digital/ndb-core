@@ -1,5 +1,5 @@
 import {Component, HostListener, Input, OnInit} from '@angular/core';
-import {School} from '../schoolsShared/school';
+import {School} from '../school';
 import {Router} from '@angular/router';
 
 @Component({

@@ -17,7 +17,7 @@
 
 <div class="row">
   <div class="col-lg-10">
-    <h1 class="page-header section-child"><i class="fa fa-child fa-fw"></i> {{ child.name }} [{{ child.pn }}]</h1>
+    <h1 class="page-header section-child"><i class="fa fa-child fa-fw"></i> {{ child.name }} [{{ child.projectNumber }}]</h1>
   </div>
   <div class="col-lg-2">
     <div type="button" class="page-header btn btn-success" ng-click="save();">Save</div>
@@ -91,8 +91,8 @@
             <div class="col-lg-3">
               <div class="form-group">
                 <label>Project Number</label>
-                <input type="number" class="form-control" ng-model="child.pn"
-                       value="{{child.pn |number:0}}" ng-readonly="!new"
+                <input type="number" class="form-control" ng-model="child.projectNumber"
+                       value="{{child.projectNumber |number:0}}" ng-readonly="!new"
                        uib-tooltip="Uniquely identifies the child and cannot be changed once the record is created."
                        required>
               </div>
@@ -160,7 +160,7 @@
 
                 <p class="form-control-static" ng-if="child.birthCertificate">
                   <!--  <a ng-if="birthCertificate" ng-href="{{birthCertificate}}"
-                       download="{{child.pn}}_{{child.name}}_birth_certificate">Download Document</a> --
+                       download="{{child.projectNumber}}_{{child.name}}_birth_certificate">Download Document</a> --
                   <input type="file"
                          onchange="angular.element(this).scope().setBirthCertificate(this);"/>
                 </p>
@@ -214,7 +214,7 @@
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput placeholder="Project Number" type="text" [(value)]="child.pn" [disabled]="!editable">
+      <input matInput placeholder="Project Number" type="text" [(value)]="child.projectNumber" [disabled]="!editable">
     </mat-form-field>
 
     <mat-form-field>

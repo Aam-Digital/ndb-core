@@ -2,7 +2,7 @@
   "version": "2.0.14",
 
   "database": {
-    "name": "dev",
+    "name": "helgo",
     "remote_url": "https://couchdb.aam-digital.com/",
     "timeout": 60000,
     "outdated_threshold_days": 0
