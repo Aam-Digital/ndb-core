@@ -35,6 +35,7 @@ export const routes: Routes = [
   {path: 'child/:id', component: ChildDetailsComponent},
   {path: 'child/:id/attendance', component: ChildAttendanceComponent},
   {path: 'admin', component: AdminComponent},
+  {path: 'schooldetail', component: SchoolDetailComponent},
   {path: '**', redirectTo: '/'},
 ];
 
