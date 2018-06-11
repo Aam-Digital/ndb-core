@@ -27,73 +27,15 @@ import {ActivatedRoute} from '@angular/router';
   styleUrls: ['./child-details.component.css']
 })
 export class ChildDetailsComponent implements OnInit {
-  child = new Child('test');
+  child: Child = new Child('');
+
   editable = false;   // editable schould be enabled by default and be activated by button
+
   gender = Gender;
   genderSelector;
   selectedGender;
-  FamiliyTableSettings = {
-    hideSubHeader: true,
-    actions: false,
-    columns: {
-      name: {
-        title: 'Name'
-      },
-      guardian: {
-        title: 'Guardian'
-      },
-      age: {
-        title: 'Age'
-      },
-      relationship: {
-        title: 'Relationship'
-      },
-      mobileNo: {
-        title: 'Mo. Number'
-      },
-      remarks: {
-        title: 'Remarks'
-      }
-    }
-  };
 
-  SchoolTableSettings = {
-    hideSubHeader: true,
-    actions: false,
-    columns: {
-      date: {
-        title: 'Date'
-      },
-      class: {
-        title: 'Class'
-      },
-      school: {
-        title: 'School'
-      },
-      medium: {
-        title: 'Medium'
-      },
-    }
-  };
-
-  data = [
-    {
-      name: 'hana',
-      guardian: 'ich',
-      age: '45',
-      relationship: 'mother',
-      mobileNo: '089765123',
-      remarks: 'test',
-    },
-  ];
-
-  // TODO Anlegen einer eigenen Klasse socialworker als subklasse von User
-  socialworkers: String[];
-
-  constructor(private entityMapperService: EntityMapperService, private route: ActivatedRoute) {
-
-
-  }
+  constructor(private entityMapperService: EntityMapperService, private route: ActivatedRoute) { }
 
   switchEdit() {
     this.editable = !this.editable;
