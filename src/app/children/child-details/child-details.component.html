@@ -17,7 +17,8 @@
 
 <div class="row">
   <div class="col-lg-10">
-    <h1 class="page-header section-child"><i class="fa fa-child fa-fw"></i> {{ child.name }} [{{ child.pn }}]</h1>
+    <h1 *ngIf="!creating" class="page-header section-child"><i class="fa fa-child fa-fw"></i> {{ child.name }} [{{ child.pn }}]</h1>
+    <h1 *ngIf="creating" class="page-header section-child"><i class="fa fa-child fa-fw"></i>Adding new Child</h1>
   </div>
 </div>
 
@@ -203,17 +204,7 @@
         <mat-select [disabled]="!editable" formControlName="gender">
           <mat-option *ngFor="let g of genders()" [value]="gender[g]">{{gender[g].toLowerCase()}}</mat-option>
         </mat-select>
-        <!--<input matInput formControlName="gender" placeholder="Gender" title="gender" type="text">-->
       </mat-form-field>
-
-      <!--<mat-form-field>-->
-      <!--<mat-select [(value)]="selected">-->
-      <!--<mat-option>None</mat-option>-->
-      <!--<mat-option value="option1">Option 1</mat-option>-->
-      <!--<mat-option value="option2">Option 2</mat-option>-->
-      <!--<mat-option value="option3">Option 3</mat-option>-->
-      <!--</mat-select>-->
-      <!--</mat-form-field>-->
 
       <mat-form-field>
         <input matInput formControlName="project" placeholder="Project Number" title="project" type="number">

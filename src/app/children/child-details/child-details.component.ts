@@ -19,7 +19,7 @@ import {Component, Inject} from '@angular/core';
 import {Child} from '../child';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {Gender} from '../Gender';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 declare let require;
@@ -32,7 +32,7 @@ declare let require;
 export class ChildDetailsComponent {
 
 
-  child: Child = new Child("test");
+  child: Child = new Child("testID");
 
   creating: boolean = false;  //set true, if new child
   editable: boolean = false;  //set true, if existing child is edited
@@ -119,13 +119,15 @@ export class ChildDetailsComponent {
   }
 
 
-  constructor(private entityMapperService: EntityMapperService, private route: ActivatedRoute, @Inject(FormBuilder) public fb: FormBuilder) {
+  constructor(private entityMapperService: EntityMapperService, private route: ActivatedRoute,
+              @Inject(FormBuilder) public fb: FormBuilder, public router: Router) {
 
     let id = this.route.snapshot.params['id'];
     if (id == "new") {
       this.creating = true;
       this.editable = true;
       let uniqid = require('uniqid');
+      console.log("id: " + uniqid);
       this.child = new Child(uniqid());
     } else {
       this.entityMapperService.load<Child>(Child, id)
@@ -153,8 +155,14 @@ export class ChildDetailsComponent {
     this.child.admission = this.form.get("admission").value;
     this.entityMapperService.save<Child>(this.child)
       .then(() => {
-        this.editable = !this.editable;
-        this.initializeForm();
+        if (this.creating) {
+          // let route: string = this.router.url;
+          // route = route.substring(0, route.lastIndexOf("/") + 1);  //deleting 'new' at the end
+          // route += this.child.getId(); //Navigating to created child
+          // this.router.navigate([route]); //routing to created child doesn't work
+          this.creating = false;
+        }
+        this.switchEdit();
       })
       .catch((err) => console.log("err " + err))
   }

@@ -98,4 +98,10 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
       this.childrenDataSource.data = this.childrenList.filter(c => !c.isActive());
     }
   }
+
+  addChildClick() {
+    let route: string;
+    route = this.router.url + '/new';
+    this.router.navigate([route]);
+  }
 }
