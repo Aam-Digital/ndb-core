@@ -18,6 +18,7 @@
 import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { SessionService } from '../../session/session.service';
 import {AppConfig} from '../../app-config/app-config';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   moduleId: module.id,
@@ -31,12 +32,14 @@ export class UiComponent implements OnInit {
   viewContainerRef: ViewContainerRef;
 
   constructor(private _sessionService: SessionService,
-              viewContainerRef: ViewContainerRef) {
+              viewContainerRef: ViewContainerRef,
+              private titleService: Title ) {
     this.viewContainerRef = viewContainerRef;
   }
 
   ngOnInit(): void {
     this.title = AppConfig.settings.site_name;
+    this.titleService.setTitle(this.title);
   }
 
   isLoggedIn() {
