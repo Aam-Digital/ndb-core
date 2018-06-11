@@ -45,4 +45,13 @@ export class AttendanceMonth extends Entity {
       return WarningLevel.OK;
     }
   }
+
+
+  public load(data: any) {
+    if (data.month !== undefined && typeof data.month !== typeof new Date()) {
+      data.month = new Date(data.month);
+    }
+
+    return super.load(data);
+  }
 }

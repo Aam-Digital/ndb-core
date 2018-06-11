@@ -65,4 +65,13 @@ export class Entity {
     const c = <typeof Entity>this.constructor;
     return c.ENTITY_TYPE;
   }
+
+
+  public load(data: any) {
+    if (data.entityId) {
+      data.entityId.toString();
+    }
+
+    return Object.assign(this, data);
+  }
 }

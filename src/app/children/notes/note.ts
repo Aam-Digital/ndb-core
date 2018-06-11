@@ -37,4 +37,13 @@ export class Note extends Entity {
   isLinkedWithChild(childId: string) {
     return (this.children.findIndex(e => e === childId) > -1);
   }
+
+
+  public load(data: any) {
+    if (data.date !== undefined && typeof data.date !== typeof new Date()) {
+      data.date = new Date(data.date);
+    }
+
+    return super.load(data);
+  }
 }
