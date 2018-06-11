@@ -35,6 +35,7 @@ describe('NavigationComponent', () => {
   beforeEach(async(() => {
     sessionService = new SessionService(null, null, null);
     navigationItemsService = new NavigationItemsService();
+    navigationItemsService.addMenuItem(new MenuItem('test', 'test-icon', []));
 
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, MatIconModule, MatDividerModule, MatListModule],
@@ -58,9 +59,11 @@ describe('NavigationComponent', () => {
      expect(component).toBeTruthy();
    });
 
-  it('should load navigation items correctly', () => {
-    navigationItemsService.addMenuItem(new MenuItem('test', 'test-icon', []));
-    expect(component.menu_main.length).toBe(1);
+  it('should load navigation items correctly', (done) => {
+    fixture.whenRenderingDone().then( () => {
+      expect(component.menu_main.length).toBe(1);
+      done();
+    });
   });
 
 });

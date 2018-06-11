@@ -19,6 +19,7 @@ import { Component, OnInit } from '@angular/core';
 import { MenuItem } from '../menu-item';
 import { SessionService } from '../../session/session.service';
 import { NavigationItemsService } from '../navigation-items.service';
+import {AdminGuard} from '../../admin/admin.guard';
 
 @Component({
   selector: 'app-navigation',
@@ -30,11 +31,12 @@ export class NavigationComponent implements OnInit {
   public menu_main: MenuItem[];
 
   constructor(private _sessionService: SessionService,
-              private _navigationItemService: NavigationItemsService) {
+              private _navigationItemService: NavigationItemsService,
+              public adminGuard: AdminGuard) {
   }
 
   ngOnInit(): void {
-    this.menu_main = this._navigationItemService.getMenuItems();
+    this.menu_main = this._navigationItemService.getMenuItems().filter(e => !e.requiresAdmin || this.adminGuard.isAdmin());
   }
 
   logout() {

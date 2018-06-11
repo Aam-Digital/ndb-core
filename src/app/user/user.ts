@@ -26,6 +26,7 @@ export class User extends Entity {
   private _name: string;
   public lastUsedVersion: string; // TODO: What is the attribute for?
   private password: any;
+  public admin: boolean;
 
   set name(value: string) {
     this._name = value;
@@ -58,5 +59,10 @@ export class User extends Entity {
       iterations: this.password.iterations
     };
     return CryptoJS.PBKDF2(givenPassword, this.password.salt, options).toString();
+  }
+
+
+  public isAdmin(): boolean {
+    return this.admin;
   }
 }

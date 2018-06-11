@@ -6,6 +6,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {PapaParseModule} from 'ngx-papaparse';
 import {AlertsModule} from '../alerts/alerts.module';
 import {UiHelperModule} from '../ui-helper/ui-helper.module';
+import {AdminGuard} from './admin.guard';
 
 @NgModule({
   imports: [
@@ -17,6 +18,7 @@ import {UiHelperModule} from '../ui-helper/ui-helper.module';
     AlertsModule,
     UiHelperModule,
   ],
-  declarations: [AdminComponent]
+  declarations: [AdminComponent],
+  providers: [AdminGuard],
 })
 export class AdminModule { }
