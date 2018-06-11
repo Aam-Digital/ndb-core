@@ -15,21 +15,35 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject} from '@angular/core';
 import {Child} from '../child';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {Gender} from '../Gender';
 import {ActivatedRoute} from '@angular/router';
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+
+declare let require;
 
 @Component({
   selector: 'app-child-details',
   templateUrl: './child-details.component.html',
   styleUrls: ['./child-details.component.css']
 })
-export class ChildDetailsComponent implements OnInit {
-  child = new Child('test');
-  editable = false;   // editable schould be enabled by default and be activated by button
+export class ChildDetailsComponent {
+
+
+  child: Child = new Child("test");
+
+  creating: boolean = false;  //set true, if new child
+  editable: boolean = false;  //set true, if existing child is edited
+
   gender = Gender;
+
+  genders() : Array<string> {   //Transforms enum into an array for select component
+    let genders = Object.keys(this.gender);
+    return genders.slice(0, genders.length / 2);
+  }
+
   genderSelector;
   selectedGender;
   FamiliyTableSettings = {
@@ -70,7 +84,7 @@ export class ChildDetailsComponent implements OnInit {
       school: {
         title: 'School'
       },
-      medium: {
+      religion: {
         title: 'Medium'
       },
     }
@@ -89,26 +103,59 @@ export class ChildDetailsComponent implements OnInit {
 
   // TODO Anlegen einer eigenen Klasse socialworker als subklasse von User
   socialworkers: String[];
+  form: FormGroup;
 
-  constructor(private entityMapperService: EntityMapperService, private route: ActivatedRoute) {
+
+  initializeForm(){
+    this.form = this.fb.group({
+      name: [{value: this.child.name, disabled:!this.editable}, Validators.required],
+      gender: [{value: this.child.gender, disabled:!this.editable}],
+      project: [{value: this.child.pn, disabled:!this.editable}],
+      birthday: [{value: this.child.dateOfBirth, disabled:!this.editable}],
+      motherTongue: [{value: this.child.motherTongue, disabled:!this.editable}],
+      admission: [{value: this.child.admission, disabled:!this.editable}],
+      religion: [{value: this.child.religion, disabled:!this.editable}]
+    });
+  }
 
 
+  constructor(private entityMapperService: EntityMapperService, private route: ActivatedRoute, @Inject(FormBuilder) public fb: FormBuilder) {
+
+    let id = this.route.snapshot.params['id'];
+    if (id == "new") {
+      this.creating = true;
+      this.editable = true;
+      let uniqid = require('uniqid');
+      this.child = new Child(uniqid());
+    } else {
+      this.entityMapperService.load<Child>(Child, id)
+        .then(child => {
+          this.child = child;
+          this.initializeForm();
+        })
+        .catch(err => console.log(err + "load2"));
+    }
+    this.initializeForm();
   }
 
   switchEdit() {
     this.editable = !this.editable;
+    this.initializeForm();
   }
 
-  ngOnInit() {
-    const params = this.route.snapshot.params;
-    const childId = params['id'];
-
-    this.entityMapperService.load<Child>(Child, childId)
-      .then(child => this.child = child);
-    // this.editable = false;
-    this.genderSelector = Object.keys(this.gender).filter(k => !isNaN(Number(k)));
-    this.selectedGender = '0';
+  save() {
+    this.child.name = this.form.get("name").value;
+    this.child.gender = this.form.get("gender").value;
+    this.child.religion = this.form.get("religion").value;
+    this.child.pn = this.form.get("project").value;
+    this.child.dateOfBirth = this.form.get("birthday").value;
+    this.child.motherTongue = this.form.get("motherTongue").value;
+    this.child.admission = this.form.get("admission").value;
+    this.entityMapperService.save<Child>(this.child)
+      .then(() => {
+        this.editable = !this.editable;
+        this.initializeForm();
+      })
+      .catch((err) => console.log("err " + err))
   }
-
-
 }

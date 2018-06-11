@@ -19,11 +19,6 @@
   <div class="col-lg-10">
     <h1 class="page-header section-child"><i class="fa fa-child fa-fw"></i> {{ child.name }} [{{ child.pn }}]</h1>
   </div>
-  <div class="col-lg-2">
-    <div type="button" class="page-header btn btn-success" ng-click="save();">Save</div>
-    <div type="button" class="page-header btn btn-warning" ng-click="cancel()">Cancel</div>
-  </div>
-  <!-- /.col-lg-12 -->
 </div>
 
 
@@ -196,46 +191,58 @@
       </mat-panel-title>
     </mat-expansion-panel-header>
 
-    <mat-form-field>
-      <input matInput placeholder="Name" type="text" [(value)]="child.name" [disabled]="!editable">
-    </mat-form-field>
+    <form [formGroup]="form">
+      <mat-form-field>
+        <input matInput formControlName="name" placeholder="Name" title="name" type="text">
+      </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>
-        Gender
-      </mat-label>
-      <mat-select [disabled]="!editable"  [(value)] = selectedGender>
-        <mat-option *ngFor="let g of genderSelector" [value]="g">{{gender[g]}}</mat-option>
-      </mat-select>
-    </mat-form-field>
+      <mat-form-field>
+        <mat-label>
+          Gender
+        </mat-label>
+        <mat-select [disabled]="!editable" formControlName="gender">
+          <mat-option *ngFor="let g of genders()" [value]="gender[g]">{{gender[g].toLowerCase()}}</mat-option>
+        </mat-select>
+        <!--<input matInput formControlName="gender" placeholder="Gender" title="gender" type="text">-->
+      </mat-form-field>
 
-    <mat-form-field>
-      <input matInput placeholder="Age" type="text" [value]=child.getAge() [disabled]="true">
-    </mat-form-field>
+      <!--<mat-form-field>-->
+      <!--<mat-select [(value)]="selected">-->
+      <!--<mat-option>None</mat-option>-->
+      <!--<mat-option value="option1">Option 1</mat-option>-->
+      <!--<mat-option value="option2">Option 2</mat-option>-->
+      <!--<mat-option value="option3">Option 3</mat-option>-->
+      <!--</mat-select>-->
+      <!--</mat-form-field>-->
 
-    <mat-form-field>
-      <input matInput placeholder="Project Number" type="text" [(value)]="child.pn" [disabled]="!editable">
-    </mat-form-field>
+      <mat-form-field>
+        <input matInput formControlName="project" placeholder="Project Number" title="project" type="number">
+      </mat-form-field>
 
-    <mat-form-field>
-      <input matInput placeholder="Date of Birth" type="date" [(value)]="child.dateOfBirth" [disabled]="!editable">
-    </mat-form-field>
+      <mat-form-field>
+        <input matInput formControlName="birthday" placeholder="Date of Birth" title="birthday" type="date">
+      </mat-form-field>
 
-    <mat-form-field>
-      <input matInput placeholder="Mother Tongue" type="text" [(value)]="child.motherTongue" [disabled]="!editable">
-    </mat-form-field>
+      <mat-form-field>
+        <input matInput formControlName="motherTongue" placeholder="Mother Tongue" title="motherTongue" type="text">
+      </mat-form-field>
 
-    <mat-form-field>
-      <input matInput placeholder="Admission Date" type="date" [(value)]="child.admission" [disabled]="!editable">
-    </mat-form-field>
+      <mat-form-field>
+        <input matInput formControlName="admission" placeholder="Admission" title="admission" type="date">
+      </mat-form-field>
 
-    <mat-form-field>
-      <input matInput title="Religion" type="text" placeholder="Religion" [(value)]="child.religion" [disabled]="!editable">
-    </mat-form-field>
+      <mat-form-field>
+        <input matInput formControlName="religion" placeholder="Religion" title="religion" type="text">
+      </mat-form-field>
 
-    <mat-action-row>
-      <button mat-button (click)="switchEdit()">Edit</button>
-    </mat-action-row>
+      <mat-action-row>
+        <button *ngIf="creating || editable" mat-button (click)="save()">Save</button>
+
+        <button *ngIf="creating || editable" mat-button (click)="switchEdit()">Cancel</button>
+
+        <button *ngIf="!creating" mat-button (click)="switchEdit()">Edit</button>
+      </mat-action-row>
+    </form>
   </mat-expansion-panel>
 <!--</mat-accordion>-->
 
