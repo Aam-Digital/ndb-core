@@ -20,7 +20,7 @@ import { Gender} from './Gender';
 
 
 export class Child extends Entity {
-  protected static ENTITY_TYPE = 'Child';
+  static ENTITY_TYPE = 'Child';
 
   name: string;
   projectNumber: string; // project number

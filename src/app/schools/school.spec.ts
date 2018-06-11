@@ -30,6 +30,6 @@ describe('School', () => {
     const id = 'test1';
     const entity = new School(id);
 
-    expect(entity.getType()).toBe('School');
+    expect(entity.getType()).toBe(School.ENTITY_TYPE);
   });
 });

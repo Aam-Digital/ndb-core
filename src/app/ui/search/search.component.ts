@@ -45,9 +45,9 @@ export class SearchComponent implements OnInit {
         this.results = queryResults.rows
           .map(r => {
             let resultEntity;
-            if (r.doc._id.startsWith('Child:')) {
+            if (r.doc._id.startsWith(Child.ENTITY_TYPE + ':')) {
               resultEntity = new Child(r.doc.entityId);
-            } else if (r.doc._id.startsWith('School:')) {
+            } else if (r.doc._id.startsWith(School.ENTITY_TYPE + ':')) {
               resultEntity = new School(r.doc.entityId);
             } else {
               return;

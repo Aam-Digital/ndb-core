@@ -20,7 +20,7 @@ import {WarningLevel} from './warning-level';
 
 
 export class AttendanceMonth extends Entity {
-  protected static ENTITY_TYPE = 'AttendanceMonth';
+  static ENTITY_TYPE = 'AttendanceMonth';
   static readonly THRESHOLD_URGENT = 0.6;
   static readonly THRESHOLD_WARNING = 0.8;
 

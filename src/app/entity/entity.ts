@@ -25,7 +25,7 @@ export class Entity {
   /**
    * The entity's type.
    */
-  protected static ENTITY_TYPE = 'Entity';
+  static ENTITY_TYPE = 'Entity';
 
   /**
    * The unique id of this entity.

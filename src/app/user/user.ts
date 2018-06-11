@@ -21,7 +21,7 @@ declare const require: any;
 const CryptoJS = require('crypto-js');
 
 export class User extends Entity {
-  protected static ENTITY_TYPE = 'User';
+  static ENTITY_TYPE = 'User';
 
   private _name: string;
   public lastUsedVersion: string; // TODO: What is the attribute for?
