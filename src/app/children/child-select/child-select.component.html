@@ -1,0 +1,18 @@
+<div>
+  <mat-form-field>
+    <span matPrefix>
+      <span *ngFor='let child of selectedChildren'>
+        <span class='fa fa-minus-square-o' (click)='unselectChild(child)'></span>
+        <app-child-block [entity]='child' [linkDisabled]='true'></app-child-block>
+        &nbsp;
+      </span>
+    </span>
+    <input #inputField matInput (input)='search()' [matAutocomplete]='autoSuggestions' [(ngModel)]='searchText'>
+  </mat-form-field>
+
+  <mat-autocomplete #autoSuggestions='matAutocomplete' (optionSelected)='selectChild($event.option.value)'>
+    <mat-option *ngFor='let res of suggestions' [value]='res'>
+      <app-child-block [entity]='res' [linkDisabled]='true'></app-child-block>
+    </mat-option>
+  </mat-autocomplete>
+</div>
