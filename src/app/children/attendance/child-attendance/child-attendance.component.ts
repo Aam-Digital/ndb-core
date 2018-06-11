@@ -38,7 +38,7 @@ export class ChildAttendanceComponent implements OnInit {
     this.childId = this.route.snapshot.params['id'].toString();
 
     this.childrenService.getAttendancesOfChild(this.childId)
-      .subscribe(results => this.records = results);
+      .subscribe(results => this.records = results.sort((a, b) => b.month.valueOf() - a.month.valueOf()));
   }
 
 

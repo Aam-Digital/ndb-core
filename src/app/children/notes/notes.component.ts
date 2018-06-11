@@ -41,7 +41,7 @@ export class NotesComponent implements OnInit {
     this.childId = this.route.snapshot.params['id'].toString();
 
     this.childrenService.getNotesOfChild(this.childId)
-      .subscribe(results => this.records = results);
+      .subscribe(results => this.records = results.sort((a, b) => { return b.date.valueOf() - a.date.valueOf()}));
   }
 
 
