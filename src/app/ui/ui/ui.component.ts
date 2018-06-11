@@ -17,6 +17,7 @@
 
 import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { SessionService } from '../../session/session.service';
+import {AppConfig} from '../../app-config/app-config';
 
 @Component({
   moduleId: module.id,
@@ -26,7 +27,7 @@ import { SessionService } from '../../session/session.service';
 })
 export class UiComponent implements OnInit {
 
-  title = 'NDB';
+  title: string;
   viewContainerRef: ViewContainerRef;
 
   constructor(private _sessionService: SessionService,
@@ -35,6 +36,7 @@ export class UiComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.title = AppConfig.settings.site_name;
   }
 
   isLoggedIn() {
