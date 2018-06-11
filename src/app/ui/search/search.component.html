@@ -6,7 +6,7 @@
 
   <mat-autocomplete #autoResults="matAutocomplete" (optionSelected)="clickOption($event.option)">
     <mat-option *ngFor="let res of results" [value]="''">
-      <app-child-block *ngIf="res.getType()==='Child'" [entity]="res"></app-child-block>
+      <app-child-block *ngIf="res.getType()==='Child'" [entity]="res" [ngClass]="{'result-inactive': !res.isActive()}"></app-child-block>
       <app-school-block *ngIf="res.getType()==='School'" [entity]="res"></app-school-block>
     </mat-option>
   </mat-autocomplete>

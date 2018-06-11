@@ -56,8 +56,28 @@ export class SearchComponent implements OnInit {
             Object.assign(resultEntity, r.doc);
             return resultEntity;
           })
-          .filter(r => r !== undefined);
+          .filter(r => r !== undefined)
+          .sort(this.sortResults);
       });
+  }
+
+  private sortResults(a, b) {
+    if (a.getType() === Child.ENTITY_TYPE) {
+      if (!a.isActive()) {
+        // inactive always last
+        return 1;
+      } else if (b.getType() === Child.ENTITY_TYPE) {
+        return a.name.localeCompare(b.name);
+      } else {
+        return -1;
+      }
+    } else {
+      if (b.getType() === Child.ENTITY_TYPE) {
+        return 1;
+      } else {
+        return a.getType().localeCompare(b.getType());
+      }
+    }
   }
 
   clickOption(optionElement) {
