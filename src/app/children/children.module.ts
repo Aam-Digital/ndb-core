@@ -49,6 +49,7 @@ import { AttendanceWarningsDashboardComponent } from './attendance/attendance-wa
 import { NotesComponent } from './notes/notes.component';
 import { NoteDetailsComponent } from './notes/note-details/note-details.component';
 import { ChildSelectComponent } from './child-select/child-select.component';
+import {SchoolsModule} from '../schools/schools.module';
 
 
 @NgModule({
@@ -73,6 +74,7 @@ import { ChildSelectComponent } from './child-select/child-select.component';
     MatDialogModule,
     MatAutocompleteModule,
     UiHelperModule,
+    SchoolsModule,
   ],
   declarations: [
     AttendanceBlockComponent,

@@ -87,6 +87,10 @@
   </mat-form-field>
 
   <mat-form-field>
+    <input matInput type="text" placeholder="Phone No." [(ngModel)]="child.phone" [disabled]="!editable">
+  </mat-form-field>
+
+  <mat-form-field>
     <input matInput type="text" placeholder="Guardians" [(ngModel)]="child.guardianName" [disabled]="!editable">
   </mat-form-field>
 
