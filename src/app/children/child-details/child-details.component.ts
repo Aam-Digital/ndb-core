@@ -21,6 +21,7 @@ import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {Gender} from '../Gender';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {MatDialog, MatSnackBar} from "@angular/material";
 
 declare let require;
 
@@ -32,7 +33,7 @@ declare let require;
 export class ChildDetailsComponent {
 
 
-  child: Child = new Child("testID");
+  child: Child = new Child('');
 
   creating: boolean = false;  //set true, if new child
   editable: boolean = false;  //set true, if existing child is edited
@@ -44,65 +45,6 @@ export class ChildDetailsComponent {
     return genders.slice(0, genders.length / 2);
   }
 
-  genderSelector;
-  selectedGender;
-  FamiliyTableSettings = {
-    hideSubHeader: true,
-    actions: false,
-    columns: {
-      name: {
-        title: 'Name'
-      },
-      guardian: {
-        title: 'Guardian'
-      },
-      age: {
-        title: 'Age'
-      },
-      relationship: {
-        title: 'Relationship'
-      },
-      mobileNo: {
-        title: 'Mo. Number'
-      },
-      remarks: {
-        title: 'Remarks'
-      }
-    }
-  };
-
-  SchoolTableSettings = {
-    hideSubHeader: true,
-    actions: false,
-    columns: {
-      date: {
-        title: 'Date'
-      },
-      class: {
-        title: 'Class'
-      },
-      school: {
-        title: 'School'
-      },
-      religion: {
-        title: 'Medium'
-      },
-    }
-  };
-
-  data = [
-    {
-      name: 'hana',
-      guardian: 'ich',
-      age: '45',
-      relationship: 'mother',
-      mobileNo: '089765123',
-      remarks: 'test',
-    },
-  ];
-
-  // TODO Anlegen einer eigenen Klasse socialworker als subklasse von User
-  socialworkers: String[];
   form: FormGroup;
 
 
@@ -120,14 +62,13 @@ export class ChildDetailsComponent {
 
 
   constructor(private entityMapperService: EntityMapperService, private route: ActivatedRoute,
-              @Inject(FormBuilder) public fb: FormBuilder, public router: Router) {
+              @Inject(FormBuilder) public fb: FormBuilder, public router: Router, public snackBar: MatSnackBar) {
 
     let id = this.route.snapshot.params['id'];
     if (id == "new") {
       this.creating = true;
       this.editable = true;
       let uniqid = require('uniqid');
-      console.log("id: " + uniqid);
       this.child = new Child(uniqid());
     } else {
       this.entityMapperService.load<Child>(Child, id)
@@ -165,5 +106,18 @@ export class ChildDetailsComponent {
         this.switchEdit();
       })
       .catch((err) => console.log("err " + err))
+  }
+
+  removeChild() {
+    this.entityMapperService.remove<Child>(this.child)
+      .then(() => {
+        this.router.navigate(["/child"])
+          .then(() => {
+            this.snackBar.open("Deleted child " + this.child.name + " ID: " + this.child.getId(),
+              null, {
+              duration: 4000
+              })
+          })
+      });
   }
 }

@@ -21,170 +21,7 @@
     <h1 *ngIf="creating" class="page-header section-child"><i class="fa fa-child fa-fw"></i>Adding new Child</h1>
   </div>
 </div>
-
-
-
-<!--
-<div class="panel panel-default">
-  <div class="panel-heading">
-    Basic Information
-  </div>
-  <!-- /.panel-heading --
-  <div class="panel-body">
-    <form role="form">
-      <div class="row">
-        <div class="col-lg-2">
-            <div class="form-group" ng-mouseover="photoEditLink=true" ng-mouseleave="photoEditLink=false">
-              <!-- richtige Bilder einbinden --
-               <img class="form-foto" ng-if="childPhoto" src='http://www.bundesverband-gewaltpraevention.de/assets/images/Selbstvertrauen_8.jpg' height="180px" width="100px"/>
-               <img class="form-foto" ng-if="!childPhoto" src="images/child.png"/>
-               <!-- <input type="file" class="form-foto-edit" ng-if="photoEditLink"
-                      onchange="angular.element(this).scope().changePhoto(this);"/> --
-            </div>
-
-          <div class="form-group">
-            <label>Project Status</label>
-            <input class="form-control" ng-model="child.currentStatus.projectStatus">
-          </div>
-
-            <div class="form-group">
-                <label>Responsible Social Worker</label>
-                <select class="form-control" ng-model="child.currentStatus.socialworker">
-                    <option *ngFor="let sw of socialworkers">{{ sw.name }}</option>
-                </select>
-            </div>
-
-        </div>
-
-        <div class="col-lg-10">
-          <div class="row">
-            <div class="col-lg-6">
-              <div class="form-group">
-                <label>Name</label>
-                <input class="form-control" (NgModel)="child.name">
-              </div>
-            </div>
-            <div class="col-lg-2">
-              <div class="form-group">
-                <label>Gender</label>
-                <select class="form-control" ng-model="child.gender">
-                  <option>M</option>
-                  <option>F</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-lg-2">
-              <div class="form-group">
-                <label>Age</label>
-                <input class="form-control" value="{{ child.age() }}"
-                       uib-tooltip="Age is automatically calculated based on the date of birth."
-                       readonly>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-lg-3">
-              <div class="form-group">
-                <label>Project Number</label>
-                <input type="number" class="form-control" ng-model="child.pn"
-                       value="{{child.pn |number:0}}" ng-readonly="!new"
-                       uib-tooltip="Uniquely identifies the child and cannot be changed once the record is created."
-                       required>
-              </div>
-
-              <div class="form-group">
-                <label>Date of Birth</label>
-
-                  <p class="input-group">
-                      <input type="text" class="form-control"
-                             ng-model="child.dateOfBirth" is-open="dateDoB.opened"/> <!-- //uib-datepicker-popup="{{format}}" --
-                      <span class="input-group-btn">
-                          <button type="button" class="btn btn-default" ng-click="dateDoB.opened=true"><i
-                                  class="fa fa-calendar"></i></button>
-                       </span>
-                  </p>
-
-              </div>
-
-              <div class="form-group">
-                <label>Mother Tongue</label>
-                <input class="form-control" ng-model="child.motherTongue">
-              </div>
-            </div>
-
-            <div class="col-lg-3">
-              <div class="form-group">
-                <label>Admission Date</label>
-
-                  <p class="input-group">
-                      <input type="text" class="form-control"
-                             ng-model="child.admission" is-open="dateAdmission.opened"/> <!--uib-datepicker-popup="{{format}}"--
-                      <span class="input-group-btn">
-                          <button type="button" class="btn btn-default"
-                                  ng-click="dateAdmission.opened=true"><i
-                                  class="fa fa-calendar"></i></button>
-                       </span>
-                  </p>
-
-              </div>
-
-              <div class="form-group">
-                <label>Place of Birth</label>
-                <input class="form-control" ng-model="child.placeOfBirth">
-              </div>
-
-              <div class="form-group">
-                <label>Religion</label>
-                <input class="form-control" ng-model="child.religion">
-              </div>
-            </div>
-
-            <div class="col-lg-4">
-
-              <div class="form-group">
-                <label>Center</label>
-                <select class="form-control" ng-model="child.center">
-                  <option *ngFor="let center of centers">{{ center }}</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label>Birth Certificate</label>
-                <select class="form-control" ng-model="child.birthCertificate"
-                        ng-options="cert for cert in birthCertificateType"></select>
-
-                <p class="form-control-static" ng-if="child.birthCertificate">
-                  <!--  <a ng-if="birthCertificate" ng-href="{{birthCertificate}}"
-                       download="{{child.pn}}_{{child.name}}_birth_certificate">Download Document</a> --
-                  <input type="file"
-                         onchange="angular.element(this).scope().setBirthCertificate(this);"/>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
-  <!-- /.panel-body --
-</div>
-<!-- /.panel Basic Information--
-<div class="panel panel-default">
-  <div class="panel-heading">
-    Basic Information
-  </div>
-  <mat-form-field color="blue" headerRowPlaceholder="Basics">
-    <mat-label>Name</mat-label>
-    <input matInput placeholder="Name">
-  </mat-form-field>
-  <mat-form-field>
-    <input matInput placeholder="Gender">
-  </mat-form-field>
-</div>
-
-<mat-accordion hideToggle="true">-->
-
+<mat-accordion>
   <mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
     <mat-expansion-panel-header style="">
       <mat-panel-title>
@@ -231,11 +68,13 @@
 
         <button *ngIf="creating || editable" mat-button (click)="switchEdit()">Cancel</button>
 
+        <button *ngIf="!creating && editable" mat-button style="color:red" (click)="removeChild()">Delete</button>
+
         <button *ngIf="!creating" mat-button (click)="switchEdit()">Edit</button>
       </mat-action-row>
     </form>
   </mat-expansion-panel>
-<!--</mat-accordion>-->
+</mat-accordion>
 
 
 <mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
