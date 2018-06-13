@@ -110,8 +110,8 @@ export class ChildrenService {
     const promise = this.db.query('notes_index/by_child', {key: childId, include_docs: true})
       .then(loadedEntities => {
         return loadedEntities.rows.map(loadedRecord => {
-          let entity = new Note('');
-          entity = Object.assign(entity, loadedRecord.doc);
+          const entity = new Note('');
+          entity.load(loadedRecord.doc);
           return entity;
         });
       });

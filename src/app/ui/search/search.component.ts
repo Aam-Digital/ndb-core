@@ -53,7 +53,7 @@ export class SearchComponent implements OnInit {
               return;
             }
 
-            Object.assign(resultEntity, r.doc);
+            resultEntity.load(r.doc);
             return resultEntity;
           })
           .filter(r => r !== undefined)
