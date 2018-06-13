@@ -21,13 +21,15 @@ export class ChildrenCountDashboardComponent implements OnInit {
 
         const countMap = new Map<string, number>();
         results.forEach(child => {
-          let count = countMap.get(child.center);
-          if (count === undefined) {
-            count = 0;
-          }
+          if (child.isActive()) {
+            let count = countMap.get(child.center);
+            if (count === undefined) {
+              count = 0;
+            }
 
-          count++;
-          countMap.set(child.center, count);
+            count++;
+            countMap.set(child.center, count);
+          }
         });
         this.childrenByCenter = Array.from(countMap.entries()); // direct use of Map creates change detection problems
       });
