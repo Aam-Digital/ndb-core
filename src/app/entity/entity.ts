@@ -74,4 +74,15 @@ export class Entity {
 
     return Object.assign(this, data);
   }
+
+  /**
+   * Returns a string representation or summary of the instance.
+   *
+   * <b>Important: Overwrite this method in subtypes!</b>
+   *
+   * @returns {string} the instance's string representation.
+   */
+  public toString() {
+    return this.getId();
+  }
 }

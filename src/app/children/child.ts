@@ -70,4 +70,8 @@ export class Child extends Entity {
   }
 
 
+  public toString() {
+    return this.name;
+  }
+
 }
