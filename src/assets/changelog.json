@@ -1,5 +1,12 @@
 [
   {
+    "tag_name": "v2.1.1",
+    "name": "",
+    "published_at": "2018-06-14",
+    "body": "Several small bug fixes",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.1.0",
     "name": "",
     "published_at": "2018-06-12",
