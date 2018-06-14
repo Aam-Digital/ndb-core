@@ -72,14 +72,18 @@ export class SessionService {
       if (connectionState === ConnectionState.connected) {
         return this.sync();
       }
+      // If we are not connected, we must check, whether the local database is initial
       this._localSession.isInitial().then(isInitial => {
         if (isInitial) {
           // Fail the sync in the local session, which will fail the authentication there
           this._localSession.syncState.setState(SyncState.failed);
         }
       });
-      // TODO: If the localDB is out of sync, we might have a login, that should never have been successful
-      // => terminate the local session!
+      if (connectionState === ConnectionState.rejected && this._localSession.loginState.getState() === LoginState.loggedIn) {
+        // Someone changed the password remotely --> fail the login
+        this._localSession.loginState.setState(LoginState.loginFailed);
+        // TODO: We might want to alert the alertService
+      }
     });
     return localLogin;
   }
@@ -90,5 +94,10 @@ export class SessionService {
 
   public getDatabase(): Database {
     return new PouchDatabase(this._localSession.database);
+  }
+
+  public logout() {
+    this._localSession.logout();
+    this._remoteSession.logout();
   }
 }

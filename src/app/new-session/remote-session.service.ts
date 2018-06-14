@@ -38,9 +38,8 @@ import PouchDB from 'pouchdb';
 import PouchDBAuthentication from 'pouchdb-authentication';
 
 import { AppConfig } from '../app-config/app-config';
-import { Injectable, EventEmitter } from '@angular/core';
-import { User } from '../user/user';
-import { StateHandler } from './state-handler';
+import { Injectable } from '@angular/core';
+import { StateHandler } from './util/state-handler';
 import { ConnectionState } from './connection-state.enum';
 
 PouchDB.plugin(PouchDBAuthentication);
@@ -55,6 +54,11 @@ export class RemoteSessionService {
     this.database = new PouchDB(AppConfig.settings.database.name);
   }
 
+  /**
+   * Connect to the remote Database. Tries to determine from a possible error whether the login was rejected or the user is offline.
+   * @param username Username
+   * @param password Password
+   */
   public login(username: string, password: string): Promise<ConnectionState> {
     const ajaxOpts = {
       ajax: {
@@ -78,6 +82,9 @@ export class RemoteSessionService {
     });
   }
 
+  /**
+   * Logout
+   */
   public logout(): void {
     this.database.logout();
   }

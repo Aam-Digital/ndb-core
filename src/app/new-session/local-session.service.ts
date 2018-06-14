@@ -50,14 +50,14 @@ import { User } from '../user/user';
 
 import { SyncState } from './sync-state.enum';
 import { LoginState } from './login-state.enum';
-import { StateHandler, StateChangedEvent } from './state-handler';
+import { StateHandler } from './util/state-handler';
 
 @Injectable()
 export class LocalSessionService {
   public database: any;
 
   public loginState: StateHandler<LoginState>; // logged in, logged out, login failed
-  public syncState: StateHandler<SyncState>; // assumed in sync, known out of sync, initial (not synced at all)
+  public syncState: StateHandler<SyncState>; // started, completed, failed, unsynced
 
   constructor(private _entityMapper: EntityMapperService) {
     this.database = new PouchDB(AppConfig.settings.database.name);
@@ -67,6 +67,13 @@ export class LocalSessionService {
   }
 
   // TODO: the entityMapper uses the DatabaseService, where it should try to get the DB from here
+  /**
+   * Get a login at the local session by fetching the user from the local database and validating the password.
+   * Returns a Promise resolving with the loginState.
+   * Attention: This method waits for the first synchronisation of the database (or a fail of said initial sync).
+   * @param username Username
+   * @param password Password
+   */
   public login(username: string, password: string): Promise<LoginState> {
     return this.waitForFirstSync().then(
       () => this._entityMapper.load<User>(User, username)
@@ -87,31 +94,50 @@ export class LocalSessionService {
     });
   }
 
+  /**
+   * Syncs the local DB with any (remote) PouchDB passed to the method.
+   * Updates the sessions SyncState.
+   * Returns a Promise containing the result of database.sync()
+   * @param remoteDB A native PouchDB-object
+   */
   public sync(remoteDB): Promise<any> {
     this.syncState.setState(SyncState.started);
-    return this.database.sync(remoteDB).then(() => {
+    return this.database.sync(remoteDB).then(res => {
       this.syncState.setState(SyncState.completed);
-    }).catch(() => {
+      return res;
+    }).catch(error => {
       this.syncState.setState(SyncState.failed);
-      throw null; // rethrow, so later stuff lands in .catch, too
+      throw error; // rethrow, so later Promise-handling lands in .catch, too
     });
   }
 
-  public waitForFirstSync(): Promise<void> {
-    return this.isInitial().then(() => {
-      const subscription = this.syncState.getStateChangedStream().subscribe(change => {
-        subscription.unsubscribe(); // only once
-        if (change.toState === SyncState.completed) {
-          return; // resolve the promise
-        } else if (change.toState === SyncState.failed) {
-          throw null; // reject the promise
-        }
-      })
+  /**
+   * Wait for the first sync of the database, returns a Promise.
+   * Resolves directly, if the database is not initial, otherwise waits for the first change of the SyncState to completed (or failed)
+   */
+  public waitForFirstSync(): Promise<any> {
+    return this.isInitial().then(bInitial => {
+      // if initial, wait for changes in the syncState
+      if (bInitial) {
+        return this.syncState.waitForChangeTo(SyncState.completed, SyncState.failed);
+      }
+      // otherwise, just do nothing to resolve directly
     });
   }
 
+  /**
+   * Check whether the local database is in an initial state.
+   * This check can only be performed async, so this method returns a Promise
+   */
   public isInitial(): Promise<Boolean> {
     // doc_count === 0 => initial is a valid assumptions, as documents for users must always be present, even after db-clean
     return this.database.info().then(result => result.doc_count === 0);
+  }
+
+  /**
+   * Logout
+   */
+  public logout() {
+    this.loginState.setState(LoginState.loggedOut);
   }
 }
