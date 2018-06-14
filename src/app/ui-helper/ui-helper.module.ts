@@ -6,7 +6,7 @@ import {
   MatDialogModule,
   MatIconModule,
   MatInputModule,
-  MatSelectModule, MatSnackBarModule,
+  MatSelectModule, MatSnackBarModule, MatSortModule,
   MatTableModule
 } from '@angular/material';
 import {ConfirmationDialogService} from './confirmation-dialog/confirmation-dialog.service';
@@ -22,6 +22,7 @@ import { EntitySubrecordComponent } from './entity-subrecord/entity-subrecord.co
     MatSelectModule,
     MatIconModule,
     MatSnackBarModule,
+    MatSortModule,
   ],
   declarations: [ConfirmationDialogComponent, EntitySubrecordComponent],
   exports: [EntitySubrecordComponent],

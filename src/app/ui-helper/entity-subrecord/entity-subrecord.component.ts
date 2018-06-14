@@ -1,5 +1,5 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {MatDialog, MatSnackBar, MatTableDataSource} from '@angular/material';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {MatDialog, MatSnackBar, MatSort, MatTableDataSource} from '@angular/material';
 import {ConfirmationDialogService} from '../confirmation-dialog/confirmation-dialog.service';
 import {Entity} from '../../entity/entity';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
@@ -22,6 +22,8 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
   recordsEditing = new Map<string, boolean>();
   originalRecords = [];
 
+  @ViewChild(MatSort) sort: MatSort;
+
 
   constructor(private _entityMapper: EntityMapperService,
               private _snackBar: MatSnackBar,
@@ -30,7 +32,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-
+    this.recordsDataSource.sort = this.sort;
   }
 
   ngOnChanges(changes: SimpleChanges) {
