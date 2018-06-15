@@ -14,6 +14,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   childrenList: Child[];
   attendanceList = new Map<string, AttendanceMonth[]>();
   childrenDataSource = new MatTableDataSource();
+  centers: string[];
 
   @ViewChild(MatSort) sort: MatSort;
   columnGroupSelection = 'school';
@@ -25,7 +26,10 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   columnsToDisplay: ['pn', 'name'];
 
   filterString = '';
-  filterGroupSelection = 'current';
+  dropoutFilterSelection = 'current';
+  centerFilterSelection = '';
+  filterFunctionDropout: (c: Child) => boolean = (c: Child) => true;
+  filterFunctionCenter: (c: Child) => boolean = (c: Child) => true;
 
 
   constructor(private childrenService: ChildrenService,
@@ -40,7 +44,10 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.childrenService.getChildren().subscribe(data => {
       this.childrenList = data;
       this.childrenDataSource.data = data;
-      this.displayFilteredList(this.filterGroupSelection);
+      this.setDropoutFilteredList(this.dropoutFilterSelection);
+      this.setCenterFilteredList(this.centerFilterSelection);
+
+      this.centers = data.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
     });
 
     this.childrenService.getAttendances()
@@ -91,12 +98,32 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.columnsToDisplay = this.columnGroups[columnGroup];
   }
 
-  displayFilteredList(filteredSelection: string) {
+  applyFilterGroups() {
+    this.childrenDataSource.data = this.childrenList
+      .filter(this.filterFunctionDropout)
+      .filter(this.filterFunctionCenter);
+  }
+
+  setDropoutFilteredList(filteredSelection: string) {
     if (filteredSelection === 'current') {
-      this.childrenDataSource.data = this.childrenList.filter(c => c.isActive());
+      this.filterFunctionDropout = (c) => c.isActive();
     } else if (filteredSelection === 'dropouts') {
-      this.childrenDataSource.data = this.childrenList.filter(c => !c.isActive());
+      this.filterFunctionDropout = (c) => !c.isActive();
+    } else {
+      this.filterFunctionDropout = (c) => true;
     }
+
+    this.applyFilterGroups();
+  }
+
+  setCenterFilteredList(filteredSelection: string) {
+    if (filteredSelection === '') {
+      this.filterFunctionCenter = (c: Child) => true;
+    } else {
+      this.filterFunctionCenter = (c: Child) => c.center === filteredSelection;
+    }
+
+    this.applyFilterGroups();
   }
 
   addChildClick() {
