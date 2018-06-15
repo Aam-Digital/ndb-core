@@ -42,7 +42,7 @@ import {ChildAttendanceComponent} from './attendance/child-attendance/child-atte
 import {UiHelperModule} from '../ui-helper/ui-helper.module';
 import {ChildBlockComponent} from './child-block/child-block.component';
 import { ChildrenCountDashboardComponent } from './children-count-dashboard/children-count-dashboard.component';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import { AttendanceAverageDashboardComponent } from './attendance/attendance-average-dashboard/attendance-average-dashboard.component';
 import { AttendanceWarningsDashboardComponent } from './attendance/attendance-warnings-dashboard/attendance-warnings-dashboard.component';
@@ -73,6 +73,7 @@ import {SchoolsModule} from '../schools/schools.module';
     MatSnackBarModule,
     MatDialogModule,
     MatAutocompleteModule,
+    ReactiveFormsModule,
     UiHelperModule,
     SchoolsModule,
   ],

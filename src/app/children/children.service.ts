@@ -124,7 +124,10 @@ export class ChildrenService {
       _id: '_design/notes_index',
       views: {
         by_child: {
-          map: '(doc) => { doc.children.forEach(childId => emit(childId)); }'
+          map: '(doc) => { ' +
+            'if (!doc._id.startsWith("' + Note.ENTITY_TYPE + '")) return;' +
+            'doc.children.forEach(childId => emit(childId)); ' +
+            '}'
         }
       }
     };

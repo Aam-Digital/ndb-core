@@ -16,109 +16,133 @@
   -->
 
 
-<h1 class="page-header section-child"><i class="fa fa-child fa-fw"></i> {{ child.name }} [{{ child.projectNumber }}]</h1>
+<div fxLayout="row" fxLayoutAlign='space-between'>
+  <div>
+    <h1 class="page-header section-child"><i class="fa fa-child fa-fw"></i>
+      <span *ngIf="!creatingNew">{{ child.name }} [{{ child.pn }}]</span>
+      <span *ngIf="creatingNew">Adding new Child</span>
+    </h1>
+  </div>
 
-<p>
-  <button mat-stroked-button='' (click)="switchEdit()" disabled>Edit</button>
-</p>
+  <div>
+    <button *ngIf="creatingNew || editing" mat-stroked-button class='edit-button' (click)="save()">Save</button>
 
-<mat-expansion-panel hideToggle="true" expanded="true">
-  <mat-expansion-panel-header style="">
-    <mat-panel-title>
-      Basic Information
-    </mat-panel-title>
-  </mat-expansion-panel-header>
+    <button *ngIf="!creatingNew && editing" mat-stroked-button class='edit-button' style="color:red" (click)="removeChild()">Delete</button>
 
-  <mat-form-field>
-    <input matInput placeholder="Name" type="text" [(ngModel)]="child.name" [disabled]="!editable">
-  </mat-form-field>
+    <button *ngIf="creatingNew || editing" mat-stroked-button class='edit-button' (click)="switchEdit()">Cancel</button>
 
-  <mat-form-field>
-    <mat-label>
-      Gender
-    </mat-label>
-    <mat-select [disabled]="!editable"  [(ngModel)] = selectedGender>
-      <mat-option *ngFor="let g of genderSelector" [value]="g">{{gender[g]}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <mat-form-field>
-    <input matInput placeholder="Age" type="text" [value]=child.getAge() [disabled]="true">
-  </mat-form-field>
-
-  <mat-form-field>
-    <input matInput placeholder="Project Number" type="text" [(ngModel)]="child.projectNumber" [disabled]="!editable">
-  </mat-form-field>
-
-  <mat-form-field>
-    <input matInput placeholder="Date of Birth" type="date" [(ngModel)]="child.dateOfBirth" [disabled]="!editable">
-  </mat-form-field>
-
-  <mat-form-field>
-    <input matInput placeholder="Aadhar Status" type="text" [(ngModel)]="child.aadhar" [disabled]="!editable">
-  </mat-form-field>
-
-  <mat-form-field>
-    <input matInput placeholder="Mother Tongue" type="text" [(ngModel)]="child.motherTongue" [disabled]="!editable">
-  </mat-form-field>
-
-  <mat-form-field>
-    <input matInput title="Religion" type="text" placeholder="Religion" [(ngModel)]="child.religion" [disabled]="!editable">
-  </mat-form-field>
+    <button *ngIf="!editing" mat-stroked-button class='edit-button' (click)="switchEdit()">Edit</button>
+  </div>
+</div>
 
 
 
-  <mat-form-field>
-    <input matInput placeholder="Center" type="text" [(ngModel)]="child.center" [disabled]="!editable">
-  </mat-form-field>
+<mat-accordion multi='true'>
+  <form [formGroup]="form">
 
-  <mat-form-field>
-    <input matInput placeholder="Project Status" type="text" [(ngModel)]="child.status" [disabled]="!editable">
-  </mat-form-field>
-
-  <mat-form-field>
-    <input matInput placeholder="Admission Date" type="date" [(ngModel)]="child.admissionDate" [disabled]="!editable">
-  </mat-form-field>
+    <mat-expansion-panel hideToggle="true" [expanded]="child.isActive()">
+      <mat-expansion-panel-header style="">
+        <mat-panel-title>
+          Basic Information
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
 
+      <mat-form-field>
+        <input matInput formControlName="name" placeholder="Name" title="name" type="text">
+      </mat-form-field>
 
-  <mat-form-field>
-    <input matInput type="text" placeholder="Address" [(ngModel)]="child.address" [disabled]="!editable">
-  </mat-form-field>
+      <mat-form-field>
+        <mat-label>
+          Gender
+        </mat-label>
+        <mat-select formControlName="gender" [disabled]='false'>
+          <mat-option *ngFor="let g of genders | keys" [value]="g.value">{{g.key}}</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-  <mat-form-field>
-    <input matInput type="text" placeholder="Phone No." [(ngModel)]="child.phone" [disabled]="!editable">
-  </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Age" type="text" [value]=child.getAge() [disabled]="true">
+      </mat-form-field>
 
-  <mat-form-field>
-    <input matInput type="text" placeholder="Guardians" [(ngModel)]="child.guardianName" [disabled]="!editable">
-  </mat-form-field>
+      <mat-form-field>
+        <input matInput formControlName="projectNumber" placeholder="Project Number" type="text">
+      </mat-form-field>
 
-  <mat-form-field>
-    <input matInput type="text" placeholder="Preferred time for guardians meeting" [(ngModel)]="child.preferredTimeForGuardianMeeting" [disabled]="!editable">
-  </mat-form-field>
-</mat-expansion-panel>
+      <mat-form-field>
+        <input matInput formControlName="dateOfBirth" placeholder="Date of Birth" type="date">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput formControlName="aadhar" placeholder="Aadhar Status" type="text">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput formControlName="motherTongue" placeholder="Mother Tongue" type="text">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput formControlName="religion" placeholder="Religion" title="Religion" type="text">
+      </mat-form-field>
 
 
 
-<mat-expansion-panel expanded="true">
-  <mat-expansion-panel-header>
-    Dropout
-  </mat-expansion-panel-header>
+      <mat-form-field>
+        <input matInput formControlName="center" placeholder="Center" type="text">
+      </mat-form-field>
 
-  <mat-form-field>
-    <input matInput placeholder="Dropout Date" type="date" [(ngModel)]="child.dropoutDate" [disabled]="!editable">
-  </mat-form-field>
+      <mat-form-field>
+        <input matInput formControlName="status" placeholder="Project Status" type="text">
+      </mat-form-field>
 
-  <mat-form-field>
-    <input matInput placeholder="Dropout Type" type="text" [(ngModel)]="child.dropoutType" [disabled]="!editable">
-  </mat-form-field>
+      <mat-form-field>
+        <input matInput formControlName="admissionDate" placeholder="Admission Date" type="date">
+      </mat-form-field>
 
-  <mat-form-field>
-    <textarea matInput placeholder="Dropout Remarks" type="text" [(ngModel)]="child.dropoutRemarks" [disabled]="!editable">
-    </textarea>
-  </mat-form-field>
-</mat-expansion-panel>
+
+
+      <mat-form-field>
+        <input matInput type="text" formControlName="address" placeholder="Address">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput type="text" formControlName="phone" placeholder="Phone No.">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput type="text" formControlName="guardianName" placeholder="Guardians">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput type="text" formControlName="preferredTimeForGuardianMeeting" placeholder="Preferred time for guardians meeting">
+      </mat-form-field>
+
+    </mat-expansion-panel>
+
+
+
+    <mat-expansion-panel [expanded]="!child.isActive()">
+      <mat-expansion-panel-header>
+        Dropout
+      </mat-expansion-panel-header>
+
+      <mat-form-field>
+        <input matInput formControlName="dropoutDate" placeholder="Dropout Date" type="date">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput formControlName="dropoutType" placeholder="Dropout Type" type="text">
+      </mat-form-field>
+
+      <mat-form-field>
+        <textarea matInput formControlName="dropoutRemarks" placeholder="Dropout Remarks" type="text">
+        </textarea>
+      </mat-form-field>
+    </mat-expansion-panel>
+
+  </form>
+</mat-accordion>
+
 
 
 
