@@ -21,7 +21,8 @@ import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {Gender} from '../Gender';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {MatDialog, MatSnackBar} from "@angular/material";
+import {MatSnackBar} from "@angular/material";
+import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 
 declare let require;
 
@@ -61,8 +62,12 @@ export class ChildDetailsComponent {
   }
 
 
-  constructor(private entityMapperService: EntityMapperService, private route: ActivatedRoute,
-              @Inject(FormBuilder) public fb: FormBuilder, public router: Router, public snackBar: MatSnackBar) {
+  constructor(private entityMapperService: EntityMapperService,
+              private route: ActivatedRoute,
+              @Inject(FormBuilder) public fb: FormBuilder,
+              private router: Router,
+              private snackBar: MatSnackBar,
+              private confirmationDialog: ConfirmationDialogService) {
 
     let id = this.route.snapshot.params['id'];
     if (id == "new") {
@@ -109,15 +114,21 @@ export class ChildDetailsComponent {
   }
 
   removeChild() {
-    this.entityMapperService.remove<Child>(this.child)
-      .then(() => {
-        this.router.navigate(["/child"])
-          .then(() => {
-            this.snackBar.open("Deleted child " + this.child.name + " ID: " + this.child.getId(),
-              null, {
-              duration: 4000
-              })
-          })
+    const dialogRef = this.confirmationDialog
+      .openDialog('Delete?', 'Are you sure you want to delete this Child?');
+
+    dialogRef.afterClosed()
+      .subscribe(confirmed => {
+        if (confirmed) {
+          this.entityMapperService.remove<Child>(this.child)
+            .then(() => this.router.navigate(["/child"]));
+
+          const snackBarRef = this.snackBar.open('Deleted Child "' + this.child.name + '"', 'Undo', {duration: 8000});
+          snackBarRef.onAction().subscribe(() => {
+            this.entityMapperService.save(this.child, true);
+            this.router.navigate(["/child", this.child.getId()]);
+          });
+        }
       });
   }
 }

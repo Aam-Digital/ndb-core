@@ -129,7 +129,6 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
 
   showChildDetails(child: Child) {
-    console.log(child);
     this.router.navigate(['/child', child.getId()]);
   }
 }
