@@ -20,9 +20,9 @@ import {WarningLevel} from '../attendance/warning-level';
 
 
 export class Note extends Entity {
-  protected static ENTITY_TYPE = 'Note';
+  public static ENTITY_TYPE = 'Note';
 
-  children: string[]; // id of Child entity
+  children: string[] = []; // id of Child entity
   date: Date;
   subject = '';
   text = '';

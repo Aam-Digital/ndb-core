@@ -32,7 +32,7 @@ export class Child extends Entity {
 
   religion: string;
   gender: Gender; // M or F
-  dateOfBirth: string;
+  dateOfBirth: Date;
   motherTongue: string;
   admission: string;
   placeOfBirth: string;

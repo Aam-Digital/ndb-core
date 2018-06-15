@@ -15,249 +15,93 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<div class="row">
-  <div class="col-lg-10">
-    <h1 class="page-header section-child"><i class="fa fa-child fa-fw"></i> {{ child.name }} [{{ child.pn }}]</h1>
+<div fxLayout="row" fxLayoutAlign='space-between'>
+  <div>
+    <h1 class="page-header section-child"><i class="fa fa-child fa-fw"></i>
+      <span *ngIf="!creatingNew">{{ child.name }} [{{ child.pn }}]</span>
+      <span *ngIf="creatingNew">Adding new Child</span>
+    </h1>
   </div>
-  <div class="col-lg-2">
-    <div type="button" class="page-header btn btn-success" ng-click="save();">Save</div>
-    <div type="button" class="page-header btn btn-warning" ng-click="cancel()">Cancel</div>
+
+  <div>
+    <button *ngIf="creatingNew || editing" mat-stroked-button class='edit-button' (click)="save()">Save</button>
+
+    <button *ngIf="!creatingNew && editing" mat-stroked-button class='edit-button' style="color:red" (click)="removeChild()">Delete</button>
+
+    <button *ngIf="creatingNew || editing" mat-stroked-button class='edit-button' (click)="switchEdit()">Cancel</button>
+
+    <button *ngIf="!editing" mat-stroked-button class='edit-button' (click)="switchEdit()">Edit</button>
   </div>
-  <!-- /.col-lg-12 -->
 </div>
 
 
 
-<!--
-<div class="panel panel-default">
-  <div class="panel-heading">
-    Basic Information
-  </div>
-  <!-- /.panel-heading --
-  <div class="panel-body">
-    <form role="form">
-      <div class="row">
-        <div class="col-lg-2">
-            <div class="form-group" ng-mouseover="photoEditLink=true" ng-mouseleave="photoEditLink=false">
-              <!-- richtige Bilder einbinden --
-               <img class="form-foto" ng-if="childPhoto" src='http://www.bundesverband-gewaltpraevention.de/assets/images/Selbstvertrauen_8.jpg' height="180px" width="100px"/>
-               <img class="form-foto" ng-if="!childPhoto" src="images/child.png"/>
-               <!-- <input type="file" class="form-foto-edit" ng-if="photoEditLink"
-                      onchange="angular.element(this).scope().changePhoto(this);"/> --
-            </div>
+<mat-accordion multi='true'>
+  <form [formGroup]="form">
 
-          <div class="form-group">
-            <label>Project Status</label>
-            <input class="form-control" ng-model="child.currentStatus.projectStatus">
-          </div>
+    <mat-expansion-panel hideToggle="true" expanded="true">
+      <mat-expansion-panel-header style="">
+        <mat-panel-title>
+          Basic Information
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
-            <div class="form-group">
-                <label>Responsible Social Worker</label>
-                <select class="form-control" ng-model="child.currentStatus.socialworker">
-                    <option *ngFor="let sw of socialworkers">{{ sw.name }}</option>
-                </select>
-            </div>
+      <mat-form-field>
+        <input matInput formControlName="name" placeholder="Name" title="name" type="text">
+      </mat-form-field>
 
-        </div>
+      <mat-form-field>
+        <mat-label>
+          Gender
+        </mat-label>
+        <mat-select [attr.disabled]="!editing" formControlName="gender">
+          <mat-option *ngFor="let g of transformGendersEnum()" [value]="gender[g]">{{gender[g].toLowerCase()}}</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-        <div class="col-lg-10">
-          <div class="row">
-            <div class="col-lg-6">
-              <div class="form-group">
-                <label>Name</label>
-                <input class="form-control" (NgModel)="child.name">
-              </div>
-            </div>
-            <div class="col-lg-2">
-              <div class="form-group">
-                <label>Gender</label>
-                <select class="form-control" ng-model="child.gender">
-                  <option>M</option>
-                  <option>F</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-lg-2">
-              <div class="form-group">
-                <label>Age</label>
-                <input class="form-control" value="{{ child.age() }}"
-                       uib-tooltip="Age is automatically calculated based on the date of birth."
-                       readonly>
-              </div>
-            </div>
-          </div>
+      <mat-form-field>
+        <input matInput formControlName="project" placeholder="Project Number" title="project" type="number">
+      </mat-form-field>
 
-          <div class="row">
-            <div class="col-lg-3">
-              <div class="form-group">
-                <label>Project Number</label>
-                <input type="number" class="form-control" ng-model="child.pn"
-                       value="{{child.pn |number:0}}" ng-readonly="!new"
-                       uib-tooltip="Uniquely identifies the child and cannot be changed once the record is created."
-                       required>
-              </div>
+      <mat-form-field>
+        <input matInput formControlName="birthday" placeholder="Date of Birth" title="birthday" type="date">
+      </mat-form-field>
 
-              <div class="form-group">
-                <label>Date of Birth</label>
+      <mat-form-field>
+        <input matInput formControlName="motherTongue" placeholder="Mother Tongue" title="motherTongue" type="text">
+      </mat-form-field>
 
-                  <p class="input-group">
-                      <input type="text" class="form-control"
-                             ng-model="child.dateOfBirth" is-open="dateDoB.opened"/> <!-- //uib-datepicker-popup="{{format}}" --
-                      <span class="input-group-btn">
-                          <button type="button" class="btn btn-default" ng-click="dateDoB.opened=true"><i
-                                  class="fa fa-calendar"></i></button>
-                       </span>
-                  </p>
+      <mat-form-field>
+        <input matInput formControlName="admission" placeholder="Admission" title="admission" type="date">
+      </mat-form-field>
 
-              </div>
-
-              <div class="form-group">
-                <label>Mother Tongue</label>
-                <input class="form-control" ng-model="child.motherTongue">
-              </div>
-            </div>
-
-            <div class="col-lg-3">
-              <div class="form-group">
-                <label>Admission Date</label>
-
-                  <p class="input-group">
-                      <input type="text" class="form-control"
-                             ng-model="child.admission" is-open="dateAdmission.opened"/> <!--uib-datepicker-popup="{{format}}"--
-                      <span class="input-group-btn">
-                          <button type="button" class="btn btn-default"
-                                  ng-click="dateAdmission.opened=true"><i
-                                  class="fa fa-calendar"></i></button>
-                       </span>
-                  </p>
-
-              </div>
-
-              <div class="form-group">
-                <label>Place of Birth</label>
-                <input class="form-control" ng-model="child.placeOfBirth">
-              </div>
-
-              <div class="form-group">
-                <label>Religion</label>
-                <input class="form-control" ng-model="child.religion">
-              </div>
-            </div>
-
-            <div class="col-lg-4">
-
-              <div class="form-group">
-                <label>Center</label>
-                <select class="form-control" ng-model="child.center">
-                  <option *ngFor="let center of centers">{{ center }}</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label>Birth Certificate</label>
-                <select class="form-control" ng-model="child.birthCertificate"
-                        ng-options="cert for cert in birthCertificateType"></select>
-
-                <p class="form-control-static" ng-if="child.birthCertificate">
-                  <!--  <a ng-if="birthCertificate" ng-href="{{birthCertificate}}"
-                       download="{{child.pn}}_{{child.name}}_birth_certificate">Download Document</a> --
-                  <input type="file"
-                         onchange="angular.element(this).scope().setBirthCertificate(this);"/>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
-  <!-- /.panel-body --
-</div>
-<!-- /.panel Basic Information--
-<div class="panel panel-default">
-  <div class="panel-heading">
-    Basic Information
-  </div>
-  <mat-form-field color="blue" headerRowPlaceholder="Basics">
-    <mat-label>Name</mat-label>
-    <input matInput placeholder="Name">
-  </mat-form-field>
-  <mat-form-field>
-    <input matInput placeholder="Gender">
-  </mat-form-field>
-</div>
-
-<mat-accordion hideToggle="true">-->
-
-  <mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
-    <mat-expansion-panel-header style="">
-      <mat-panel-title>
-        Basic Information
-      </mat-panel-title>
-    </mat-expansion-panel-header>
-
-    <mat-form-field>
-      <input matInput placeholder="Name" type="text" [(value)]="child.name" [disabled]="!editable">
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-label>
-        Gender
-      </mat-label>
-      <mat-select [disabled]="!editable"  [(value)] = selectedGender>
-        <mat-option *ngFor="let g of genderSelector" [value]="g">{{gender[g]}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field>
-      <input matInput placeholder="Age" type="text" [value]=child.getAge() [disabled]="true">
-    </mat-form-field>
-
-    <mat-form-field>
-      <input matInput placeholder="Project Number" type="text" [(value)]="child.pn" [disabled]="!editable">
-    </mat-form-field>
-
-    <mat-form-field>
-      <input matInput placeholder="Date of Birth" type="date" [(value)]="child.dateOfBirth" [disabled]="!editable">
-    </mat-form-field>
-
-    <mat-form-field>
-      <input matInput placeholder="Mother Tongue" type="text" [(value)]="child.motherTongue" [disabled]="!editable">
-    </mat-form-field>
-
-    <mat-form-field>
-      <input matInput placeholder="Admission Date" type="date" [(value)]="child.admission" [disabled]="!editable">
-    </mat-form-field>
-
-    <mat-form-field>
-      <input matInput title="Religion" type="text" placeholder="Religion" [(value)]="child.religion" [disabled]="!editable">
-    </mat-form-field>
-
-    <mat-action-row>
-      <button mat-button (click)="switchEdit()">Edit</button>
-    </mat-action-row>
-  </mat-expansion-panel>
-<!--</mat-accordion>-->
+      <mat-form-field>
+        <input matInput formControlName="religion" placeholder="Religion" title="religion" type="text">
+      </mat-form-field>
+    </mat-expansion-panel>
 
 
-<mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
-  <mat-expansion-panel-header>
-    Address
-  </mat-expansion-panel-header>
-  <mat-form-field>
-    <textarea matInput title="Present Address" type="text"></textarea>
-  </mat-form-field>
+    <mat-expansion-panel hideToggle="true" expanded="true">
+      <mat-expansion-panel-header>
+        Address
+      </mat-expansion-panel-header>
+      <mat-form-field>
+        <textarea matInput title="Present Address" type="text"></textarea>
+      </mat-form-field>
 
-  <mat-form-field>
-    <mat-label>Visiting Hours</mat-label>
-    <textarea matInput title="Visiting hours" type="text"></textarea>
-  </mat-form-field>
+      <mat-form-field>
+        <mat-label>Visiting Hours</mat-label>
+        <textarea matInput title="Visiting hours" type="text"></textarea>
+      </mat-form-field>
+    </mat-expansion-panel>
 
-</mat-expansion-panel>
+  </form>
+</mat-accordion>
 
 
 
-<mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
+
+<mat-expansion-panel expanded="true">
   <mat-expansion-panel-header>
     Attendance
   </mat-expansion-panel-header>
@@ -266,7 +110,7 @@
 </mat-expansion-panel>
 
 
-<mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
+<mat-expansion-panel expanded="true">
   <mat-expansion-panel-header>
     Notes & Reports
   </mat-expansion-panel-header>
