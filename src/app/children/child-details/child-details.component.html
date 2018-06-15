@@ -54,7 +54,7 @@
         <mat-label>
           Gender
         </mat-label>
-        <mat-select [disabled]="!editable" formControlName="gender">
+        <mat-select [attr.disabled]="!editable" formControlName="gender">
           <mat-option *ngFor="let g of genders()" [value]="gender[g]">{{gender[g].toLowerCase()}}</mat-option>
         </mat-select>
       </mat-form-field>
