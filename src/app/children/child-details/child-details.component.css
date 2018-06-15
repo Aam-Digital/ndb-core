@@ -23,3 +23,11 @@
   padding: 0cm;
   margin-top: 0cm;
 }
+
+.edit-button {
+  margin-left: 10px;
+}
+
+.mat-input-element:disabled {
+  color: black;
+}
