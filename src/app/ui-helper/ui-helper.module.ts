@@ -11,6 +11,7 @@ import {
 } from '@angular/material';
 import {ConfirmationDialogService} from './confirmation-dialog/confirmation-dialog.service';
 import { EntitySubrecordComponent } from './entity-subrecord/entity-subrecord.component';
+import { KeysPipe } from './keys-pipe/keys.pipe';
 
 @NgModule({
   imports: [
@@ -24,8 +25,8 @@ import { EntitySubrecordComponent } from './entity-subrecord/entity-subrecord.co
     MatSnackBarModule,
     MatSortModule,
   ],
-  declarations: [ConfirmationDialogComponent, EntitySubrecordComponent],
-  exports: [EntitySubrecordComponent],
+  declarations: [ConfirmationDialogComponent, EntitySubrecordComponent, KeysPipe],
+  exports: [EntitySubrecordComponent, KeysPipe],
   providers: [ConfirmationDialogService],
   entryComponents: [ConfirmationDialogComponent],
 })
