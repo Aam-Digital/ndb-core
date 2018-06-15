@@ -16,6 +16,7 @@
  */
 
 import { Database } from './database';
+import {AlertService} from '../alerts/alert.service';
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -26,7 +27,8 @@ import { Database } from './database';
  */
 export class PouchDatabase extends Database {
 
-  constructor(private _pouchDB: any) {
+  constructor(private _pouchDB: any,
+              private alertService: AlertService) {
     super();
   }
 
@@ -74,8 +76,7 @@ export class PouchDatabase extends Database {
           return this.updateIndexIfChanged(designDoc);
         } else {
           // unexpected error
-          // TODO: should error reports go to a service instead of just/directly to console?
-          console.warn('database index failed to be added: ', err);
+          this.alertService.addWarning('database index failed to be added: ' + err);
         }
       });
   }
@@ -85,7 +86,7 @@ export class PouchDatabase extends Database {
       .then(existingDoc => {
         if (JSON.stringify(existingDoc.views) !== JSON.stringify(doc.views)) {
           doc._rev = existingDoc._rev;
-          console.log('replacing existing database index');
+          this.alertService.addDebug('replacing existing database index');
           return this.saveDatabaseIndex(doc);
         }
       })
