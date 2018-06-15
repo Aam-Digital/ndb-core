@@ -89,11 +89,6 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.childrenDataSource.filter = filterValue;
   }
 
-
-  showChildDetails(child: Child) {
-    this.router.navigate(['/child', child.getId()]);
-  }
-
   displayColumnGroup(columnGroup: string) {
     this.columnsToDisplay = this.columnGroups[columnGroup];
   }
@@ -130,5 +125,11 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     let route: string;
     route = this.router.url + '/new';
     this.router.navigate([route]);
+  }
+
+
+  showChildDetails(child: Child) {
+    console.log(child);
+    this.router.navigate(['/child', child.getId()]);
   }
 }

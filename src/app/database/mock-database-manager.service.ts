@@ -25,12 +25,39 @@ import {Gender} from '../children/Gender';
 import {AttendanceMonth} from '../children/attendance/attendance-month';
 import {EntityMapperService} from '../entity/entity-mapper.service';
 import {DatabaseSyncStatus} from './database-sync-status.enum';
+import {Child} from '../children/child';
 
 @Injectable()
 export class MockDatabaseManagerService extends DatabaseManagerService {
 
   private database: MockDatabase;
 
+
+  static getDummyDataChildren(): Child[] {
+    const data =  new Array<Child>();
+
+    const a1 = new Child('1');
+    a1.name = 'Max Meyer';
+    a1.pn = '1';
+    a1.religion = 'Christian';
+    a1.gender = Gender.MALE;
+    a1.dateOfBirth = new Date('2000-03-01');
+    a1.motherTongue = 'German';
+    a1.center = 'Karlsruhe';
+    data.push(a1);
+
+    const a2 = new Child('2');
+    a2.name = 'Sonia Parveen';
+    a2.pn = '23';
+    a2.religion = 'Hindu';
+    a2.gender = Gender.FEMALE;
+    a2.dateOfBirth = new Date('2001-01-01');
+    a2.motherTongue = 'Hindi';
+    a2.center = 'Kolkata';
+    data.push(a2);
+
+    return data;
+  }
 
   static getDummyDataAttendance(): AttendanceMonth[] {
     const data =  new Array<AttendanceMonth>();
@@ -78,28 +105,8 @@ export class MockDatabaseManagerService extends DatabaseManagerService {
     demoUserData._id = demoUser.getType() + ':' + demoUser.name;
     this.database.put(demoUserData);
 
-    this.database.put({
-      '_id': 'Child:22',
-      'name': 'Max Meyer',
-      'pn': '22',
-      'religion': 'Hindu',
-      'gender': Gender.MALE,
-      'dateOfBirth': '2000-03-01',
-      'motherTongue': 'Hindi',
-      'admission': '2013-10-04',
-      'center': 'Tikiapara',
-    });
-    this.database.put({
-      '_id': 'Child:25',
-      'name': 'Sonia Sagufta',
-      'pn': '25',
-      'religion': 'Muslim',
-      'gender': Gender.FEMALE,
-      'dateOfBirth': '2001-01-01',
-      'motherTongue': 'Hindi',
-      'admission': '2013-10-04',
-      'center': 'Tikiapara',
-    });
+    MockDatabaseManagerService.getDummyDataChildren()
+      .forEach(c => entityMapper.save(c));
 
     this.database.put({
       '_id': 'School:1',
