@@ -20,11 +20,13 @@ import {Child} from '../child';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {Gender} from '../Gender';
 import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {MatSnackBar} from "@angular/material";
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {MatSnackBar} from '@angular/material';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 
-declare let require;
+import uniqid from 'uniqid';
+import {AlertService} from '../../alerts/alert.service';
+
 
 @Component({
   selector: 'app-child-details',
@@ -33,31 +35,28 @@ declare let require;
 })
 export class ChildDetailsComponent {
 
-
   child: Child = new Child('');
 
-  creating: boolean = false;  //set true, if new child
-  editable: boolean = false;  //set true, if existing child is edited
+  form: FormGroup;
+  creatingNew = false;
+  editing = false;
 
   gender = Gender;
 
-  genders() : Array<string> {   //Transforms enum into an array for select component
-    let genders = Object.keys(this.gender);
+  transformGendersEnum(): Array<string> {
+    const genders = Object.keys(this.gender);
     return genders.slice(0, genders.length / 2);
   }
 
-  form: FormGroup;
-
-
-  initializeForm(){
+  initializeForm() {
     this.form = this.fb.group({
-      name: [{value: this.child.name, disabled:!this.editable}, Validators.required],
-      gender: [{value: this.child.gender, disabled:!this.editable}],
-      project: [{value: this.child.pn, disabled:!this.editable}],
-      birthday: [{value: this.child.dateOfBirth, disabled:!this.editable}],
-      motherTongue: [{value: this.child.motherTongue, disabled:!this.editable}],
-      admission: [{value: this.child.admission, disabled:!this.editable}],
-      religion: [{value: this.child.religion, disabled:!this.editable}]
+      name:         [{value: this.child.name,         disabled: !this.editing}, Validators.required],
+      gender:       [{value: this.child.gender,       disabled: !this.editing}],
+      project:      [{value: this.child.pn,           disabled: !this.editing}],
+      birthday:     [{value: this.child.dateOfBirth,  disabled: !this.editing}],
+      motherTongue: [{value: this.child.motherTongue, disabled: !this.editing}],
+      admission:    [{value: this.child.admission,    disabled: !this.editing}],
+      religion:     [{value: this.child.religion,     disabled: !this.editing}]
     });
   }
 
@@ -67,50 +66,46 @@ export class ChildDetailsComponent {
               @Inject(FormBuilder) public fb: FormBuilder,
               private router: Router,
               private snackBar: MatSnackBar,
-              private confirmationDialog: ConfirmationDialogService) {
+              private confirmationDialog: ConfirmationDialogService,
+              private alertService: AlertService) {
 
-    let id = this.route.snapshot.params['id'];
-    if (id == "new") {
-      this.creating = true;
-      this.editable = true;
-      let uniqid = require('uniqid');
+    const id = this.route.snapshot.params['id'];
+    if (id === 'new') {
+      this.creatingNew = true;
+      this.editing = true;
       this.child = new Child(uniqid());
     } else {
       this.entityMapperService.load<Child>(Child, id)
         .then(child => {
           this.child = child;
           this.initializeForm();
-        })
-        .catch(err => console.log(err + "load2"));
+        });
     }
     this.initializeForm();
   }
 
   switchEdit() {
-    this.editable = !this.editable;
+    this.editing = !this.editing;
     this.initializeForm();
   }
 
   save() {
-    this.child.name = this.form.get("name").value;
-    this.child.gender = this.form.get("gender").value;
-    this.child.religion = this.form.get("religion").value;
-    this.child.pn = this.form.get("project").value;
-    this.child.dateOfBirth = this.form.get("birthday").value;
-    this.child.motherTongue = this.form.get("motherTongue").value;
-    this.child.admission = this.form.get("admission").value;
+    this.child.name = this.form.get('name').value;
+    this.child.gender = this.form.get('gender').value;
+    this.child.religion = this.form.get('religion').value;
+    this.child.pn = this.form.get('project').value;
+    this.child.dateOfBirth = this.form.get('birthday').value;
+    this.child.motherTongue = this.form.get('motherTongue').value;
+    this.child.admission = this.form.get('admission').value;
+
     this.entityMapperService.save<Child>(this.child)
       .then(() => {
-        if (this.creating) {
-          // let route: string = this.router.url;
-          // route = route.substring(0, route.lastIndexOf("/") + 1);  //deleting 'new' at the end
-          // route += this.child.getId(); //Navigating to created child
-          // this.router.navigate([route]); //routing to created child doesn't work
-          this.creating = false;
+        if (this.creatingNew) {
+          this.router.navigate(['/child', this.child.getId()]);
         }
         this.switchEdit();
       })
-      .catch((err) => console.log("err " + err))
+      .catch((err) => this.alertService.addDanger('Could not save Child "' + this.child.name + '": ' + err));
   }
 
   removeChild() {
@@ -121,12 +116,12 @@ export class ChildDetailsComponent {
       .subscribe(confirmed => {
         if (confirmed) {
           this.entityMapperService.remove<Child>(this.child)
-            .then(() => this.router.navigate(["/child"]));
+            .then(() => this.router.navigate(['/child']));
 
           const snackBarRef = this.snackBar.open('Deleted Child "' + this.child.name + '"', 'Undo', {duration: 8000});
           snackBarRef.onAction().subscribe(() => {
             this.entityMapperService.save(this.child, true);
-            this.router.navigate(["/child", this.child.getId()]);
+            this.router.navigate(['/child', this.child.getId()]);
           });
         }
       });

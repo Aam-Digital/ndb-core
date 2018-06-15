@@ -18,19 +18,19 @@
 <div fxLayout="row" fxLayoutAlign='space-between'>
   <div>
     <h1 class="page-header section-child"><i class="fa fa-child fa-fw"></i>
-      <span *ngIf="!creating">{{ child.name }} [{{ child.pn }}]</span>
-      <span *ngIf="creating">Adding new Child</span>
+      <span *ngIf="!creatingNew">{{ child.name }} [{{ child.pn }}]</span>
+      <span *ngIf="creatingNew">Adding new Child</span>
     </h1>
   </div>
 
   <div>
-    <button *ngIf="creating || editable" mat-stroked-button class='edit-button' (click)="save()">Save</button>
+    <button *ngIf="creatingNew || editing" mat-stroked-button class='edit-button' (click)="save()">Save</button>
 
-    <button *ngIf="!creating && editable" mat-stroked-button class='edit-button' style="color:red" (click)="removeChild()">Delete</button>
+    <button *ngIf="!creatingNew && editing" mat-stroked-button class='edit-button' style="color:red" (click)="removeChild()">Delete</button>
 
-    <button *ngIf="creating || editable" mat-stroked-button class='edit-button' (click)="switchEdit()">Cancel</button>
+    <button *ngIf="creatingNew || editing" mat-stroked-button class='edit-button' (click)="switchEdit()">Cancel</button>
 
-    <button *ngIf="!editable" mat-stroked-button class='edit-button' (click)="switchEdit()">Edit</button>
+    <button *ngIf="!editing" mat-stroked-button class='edit-button' (click)="switchEdit()">Edit</button>
   </div>
 </div>
 
@@ -54,8 +54,8 @@
         <mat-label>
           Gender
         </mat-label>
-        <mat-select [attr.disabled]="!editable" formControlName="gender">
-          <mat-option *ngFor="let g of genders()" [value]="gender[g]">{{gender[g].toLowerCase()}}</mat-option>
+        <mat-select [attr.disabled]="!editing" formControlName="gender">
+          <mat-option *ngFor="let g of transformGendersEnum()" [value]="gender[g]">{{gender[g].toLowerCase()}}</mat-option>
         </mat-select>
       </mat-form-field>
 
