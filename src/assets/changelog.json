@@ -1,5 +1,12 @@
 [
   {
+    "tag_name": "v2.1.2",
+    "name": "",
+    "published_at": "2018-06-18",
+    "body": "Editing and Creating children is now possible",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.1.1",
     "name": "",
     "published_at": "2018-06-14",
