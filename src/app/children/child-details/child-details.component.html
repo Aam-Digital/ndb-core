@@ -54,7 +54,7 @@
         <mat-label>
           Gender
         </mat-label>
-        <mat-select [attr.disabled]="!editing" formControlName="gender">
+        <mat-select [disabled]="!editing" formControlName="gender">
           <mat-option *ngFor="let g of transformGendersEnum()" [value]="gender[g]">{{gender[g].toLowerCase()}}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -77,6 +77,15 @@
 
       <mat-form-field>
         <input matInput formControlName="religion" placeholder="Religion" title="religion" type="text">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>
+          School
+        </mat-label>
+        <mat-select [disabled]="!editing" formControlName="schools">
+          <mat-option *ngFor="let school of school" [value]="school">{{school.name}}</mat-option>
+        </mat-select>
       </mat-form-field>
     </mat-expansion-panel>
 

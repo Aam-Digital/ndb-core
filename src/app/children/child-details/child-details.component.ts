@@ -26,6 +26,7 @@ import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/con
 
 import uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
+import {School} from "../../schools/schoolsShared/school";
 
 
 @Component({
@@ -36,6 +37,7 @@ import {AlertService} from '../../alerts/alert.service';
 export class ChildDetailsComponent {
 
   child: Child = new Child('');
+  schools: School[] = [];
 
   form: FormGroup;
   creatingNew = false;
@@ -56,7 +58,8 @@ export class ChildDetailsComponent {
       birthday:     [{value: this.child.dateOfBirth,  disabled: !this.editing}],
       motherTongue: [{value: this.child.motherTongue, disabled: !this.editing}],
       admission:    [{value: this.child.admission,    disabled: !this.editing}],
-      religion:     [{value: this.child.religion,     disabled: !this.editing}]
+      religion:     [{value: this.child.religion,     disabled: !this.editing}],
+      school:       [{value: this.schools,            disabled: !this.editing}]
     });
   }
 
@@ -78,7 +81,11 @@ export class ChildDetailsComponent {
       this.entityMapperService.load<Child>(Child, id)
         .then(child => {
           this.child = child;
-          this.initializeForm();
+          this.entityMapperService.loadType<School>(School)   //for school selection
+            .then(schools => {
+              this.schools = schools;
+              this.initializeForm();
+            });
         });
     }
     this.initializeForm();
@@ -89,6 +96,16 @@ export class ChildDetailsComponent {
     this.initializeForm();
   }
 
+  switchEditing() {
+    if (this.editing) {
+      this.editing = false;
+    } else {
+      if (this.schools.length == 0) {
+
+      }
+    }
+  }
+
   save() {
     this.child.name = this.form.get('name').value;
     this.child.gender = this.form.get('gender').value;
@@ -97,6 +114,7 @@ export class ChildDetailsComponent {
     this.child.dateOfBirth = this.form.get('birthday').value;
     this.child.motherTongue = this.form.get('motherTongue').value;
     this.child.admission = this.form.get('admission').value;
+    this.child.school = this.form.get('school').value.getId();
 
     this.entityMapperService.save<Child>(this.child)
       .then(() => {

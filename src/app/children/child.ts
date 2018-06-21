@@ -27,7 +27,7 @@ export class Child extends Entity {
 
   center = 'N/A';
   status = '';
-  school: any;
+  school: string;
   grade = '99';
 
   religion: string;
