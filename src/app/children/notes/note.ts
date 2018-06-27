@@ -40,7 +40,9 @@ export class Note extends Entity {
 
 
   public load(data: any) {
-    if (data.date !== undefined && typeof data.date !== typeof new Date()) {
+    if (data.date === undefined) {
+      data.date = new Date();
+    } else if (data.date !== undefined && typeof data.date !== typeof new Date()) {
       data.date = new Date(data.date);
     }
 
