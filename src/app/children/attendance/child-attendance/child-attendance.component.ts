@@ -35,9 +35,14 @@ export class ChildAttendanceComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.childId = this.route.snapshot.params['id'].toString();
+    this.route.paramMap.subscribe(params => {
+      this.childId = params.get('id').toString();
+      this.loadData(this.childId);
+    });
+  }
 
-    this.childrenService.getAttendancesOfChild(this.childId)
+  loadData(id: string) {
+    this.childrenService.getAttendancesOfChild(id)
       .subscribe(results => this.records = results.sort((a, b) => b.month.valueOf() - a.month.valueOf()));
   }
 
