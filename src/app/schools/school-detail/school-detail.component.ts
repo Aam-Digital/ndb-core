@@ -24,9 +24,12 @@ export class SchoolDetailComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
-    const params = this.route.snapshot.params;
+    this.route.paramMap
+      .subscribe(params => this.loadSchool(params.get('id')));
+  }
 
-    this.entityMapper.load(School, params['id'])
+  loadSchool(id: string) {
+    this.entityMapper.load(School, id)
       .then(loadedEntities => this.school = loadedEntities)
       .then(() => this.entityMapper.loadType<Child>(Child))
       .then(children => {

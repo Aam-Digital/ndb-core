@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, Inject} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {Child} from '../child';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {Gender} from '../Gender';
@@ -33,7 +33,7 @@ import {AlertService} from '../../alerts/alert.service';
   templateUrl: './child-details.component.html',
   styleUrls: ['./child-details.component.css']
 })
-export class ChildDetailsComponent {
+export class ChildDetailsComponent implements OnInit {
 
   child: Child = new Child('');
 
@@ -74,9 +74,13 @@ export class ChildDetailsComponent {
               private router: Router,
               private snackBar: MatSnackBar,
               private confirmationDialog: ConfirmationDialogService,
-              private alertService: AlertService) {
+              private alertService: AlertService) { }
 
-    const id = this.route.snapshot.params['id'];
+  ngOnInit() {
+    this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
+  }
+
+  loadChild(id: string) {
     if (id === 'new') {
       this.creatingNew = true;
       this.editing = true;
