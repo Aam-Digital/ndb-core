@@ -17,7 +17,7 @@ export class ChildrenCountDashboardComponent implements OnInit {
   ngOnInit() {
     this.childrenService.getChildren()
       .subscribe(results => {
-        this.totalChildren = results.length;
+        this.totalChildren = 0;
 
         const countMap = new Map<string, number>();
         results.forEach(child => {
@@ -28,6 +28,7 @@ export class ChildrenCountDashboardComponent implements OnInit {
             }
 
             count++;
+            this.totalChildren++;
             countMap.set(child.center, count);
           }
         });
