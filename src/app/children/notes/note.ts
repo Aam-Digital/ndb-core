@@ -22,6 +22,20 @@ import {WarningLevel} from '../attendance/warning-level';
 export class Note extends Entity {
   static ENTITY_TYPE = 'Note';
 
+  static INTERACTION_TYPES = [
+    'Home Visit',
+    'Talk with Guardians',
+    'Talk with Child',
+    'Incident',
+    'Discussion/Decision',
+    'School/Hostel Visit',
+    'Phone Call',
+    'Talk with Coaching Teacher',
+    'Talk with Peer',
+    'Guardians\' Meeting',
+    'Children\'s Meeting',
+  ];
+
   children: string[] = []; // id of Child entity
   date: Date;
   subject = '';

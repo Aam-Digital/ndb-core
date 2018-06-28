@@ -69,7 +69,11 @@
 
   <p>
     <mat-form-field class='input-medium'>
-      <input matInput placeholder="Type of Interaction" name="type" type="text" [(ngModel)]="note.category">
+      <mat-select matInput placeholder="Type of Interaction" name="type" [(ngModel)]="note.category">
+        <mat-option *ngFor="let interaction of interactionTypes" [value]="interaction">
+          {{interaction}}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
   </p>
 </mat-dialog-content>
