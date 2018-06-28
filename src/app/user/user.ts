@@ -23,17 +23,10 @@ const CryptoJS = require('crypto-js');
 export class User extends Entity {
   static ENTITY_TYPE = 'User';
 
-  private _name: string;
-  public lastUsedVersion: string; // TODO: What is the attribute for?
+  public name: string;
+  public lastUsedVersion = ''; // used by AppVersionComponent to notify user after the app was updated to a new version
   private password: any;
   public admin: boolean;
-
-  set name(value: string) {
-    this._name = value;
-  }
-  get name(): string {
-    return this._name;
-  }
 
   public setNewPassword(password: string) {
     const cryptKeySize = 256 / 32;
@@ -64,5 +57,15 @@ export class User extends Entity {
 
   public isAdmin(): boolean {
     return this.admin;
+  }
+
+
+
+  public load(data: any) {
+    if (data.entityId === undefined) {
+      data.entityId = data._id.substring(data._id.indexOf(':') + 1);
+    }
+
+    return super.load(data);
   }
 }
