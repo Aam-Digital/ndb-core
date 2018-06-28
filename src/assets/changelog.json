@@ -1,21 +1,28 @@
 [
   {
+    "tag_name": "v2.1.3",
+    "name": "Bug Fixes",
+    "published_at": "2018-06-28",
+    "body": "- fixed Dashboard children count\n- fixed search results not opening from details page\n- fixed some problems with attendance and reports\n- improved child details layout\n- fixed update notifications",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.1.2",
-    "name": "",
+    "name": "Editing Children",
     "published_at": "2018-06-18",
     "body": "Editing and Creating children is now possible",
     "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
   },
   {
     "tag_name": "v2.1.1",
-    "name": "",
+    "name": "Bug Fixes",
     "published_at": "2018-06-14",
     "body": "Several small bug fixes",
     "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
   },
   {
     "tag_name": "v2.1.0",
-    "name": "",
+    "name": "Pilot Release",
     "published_at": "2018-06-12",
     "body": "Pilot Release: HELGO\nbasic features of handling child information, notes and attendances",
     "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
