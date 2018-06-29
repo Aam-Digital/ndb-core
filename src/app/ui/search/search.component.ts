@@ -40,11 +40,17 @@ export class SearchComponent implements OnInit {
 
   search() {
     this.searchText = this.searchText.toLowerCase();
-    this.db.query('search_index/by_name', {startkey: this.searchText, endkey: this.searchText + '\ufff0', include_docs: true})
-      .then(queryResults => this.results = this.parseRows(queryResults.rows)
-        .filter(r => r !== undefined)
-        .sort((a, b) => this.sortResults(a, b))
-      );
+    const searchTerms = this.searchText.split(' ');
+    this.db.query('search_index/by_name', {startkey: searchTerms[0], endkey: searchTerms[0] + '\ufff0', include_docs: true})
+      .then(queryResults => this.results = this.prepareResults(queryResults.rows, searchTerms));
+  }
+
+  private prepareResults(rows, searchTerms: string[]) {
+    let results = this.parseRows(rows);
+    results = results.filter(r => r !== undefined);
+    results = results.filter(r => this.containsSecondarySearchTerms(r, searchTerms));
+    results = results.sort((a, b) => this.sortResults(a, b));
+    return results;
   }
 
   private parseRows(rows) {
@@ -61,6 +67,16 @@ export class SearchComponent implements OnInit {
         resultEntity.load(r.doc);
         return resultEntity;
       });
+  }
+
+  private containsSecondarySearchTerms(item, searchTerms: string[]) {
+    const itemKey = (item.toString() + ' ' + item.getId()).toLowerCase();
+    for (let i = 1; i < searchTerms.length; i++) {
+      if (!itemKey.includes(searchTerms[i])) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private sortResults(a, b) {
