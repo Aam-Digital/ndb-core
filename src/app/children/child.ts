@@ -56,13 +56,20 @@ export class Child extends Entity {
 
 
   getAge(): number {
-     if (this.dateOfBirth) {
-       const now = new Date();
-       const dateOfBirth = new Date(this.dateOfBirth);
-       const diff = now.getTime() - dateOfBirth.getTime();
-       return Math.floor(diff / (1000 * 3600 * 24 * 365));
+    let age = -1;
+
+   if (this.dateOfBirth) {
+     const now = new Date();
+     const dateOfBirth = new Date(this.dateOfBirth);
+
+     age = now.getFullYear() - dateOfBirth.getFullYear();
+     const m = now.getMonth() - dateOfBirth.getMonth();
+     if (m < 0 || (m === 0 && now.getDate() < dateOfBirth.getDate())) {
+       age--;
      }
-     return -1;
+   }
+
+   return age;
   }
 
   isActive(): boolean {
