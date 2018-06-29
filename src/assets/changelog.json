@@ -1,5 +1,12 @@
 [
   {
+    "tag_name": "v2.1.4",
+    "name": "Improvements & Bug Fixes",
+    "published_at": "2018-06-29",
+    "body": "- added quick action button (bottom left)\n- several minor bug fixes and improvements",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.1.3",
     "name": "Bug Fixes",
     "published_at": "2018-06-28",
