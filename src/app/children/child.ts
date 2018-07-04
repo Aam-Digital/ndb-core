@@ -50,6 +50,7 @@ export class Child extends Entity {
   health_vaccinationStatus: string;
   health_lastDentalCheckup: Date;
   health_lastEyeCheckup: Date;
+  health_lastENTCheckup: Date;
   health_eyeHealthStatus: string;
   health_lastVitaminD: Date;
   health_lastDeworming: Date;

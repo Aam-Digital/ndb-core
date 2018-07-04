@@ -22,7 +22,9 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     'basic': ['projectNumber', 'name', 'age', 'gender', 'class', 'school', 'center', 'status'],
     'school': ['projectNumber', 'name', 'age', 'class', 'school', 'attendance', 'motherTongue'],
     'status': ['projectNumber', 'name', 'center', 'status', 'aadhar', 'admission'],
-    'health': ['projectNumber', 'name', 'center', 'vaccination', 'gender', 'age', 'dateOfBirth'],
+    'health': ['projectNumber', 'name', 'center',
+      'vaccination', 'dentalCheckup', 'eyeCheckup', 'eyeStatus', 'EntCheckup', 'vitaminD', 'deworming',
+      'gender', 'age', 'dateOfBirth'],
   };
   columnsToDisplay: ['projectNumber', 'name'];
 

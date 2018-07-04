@@ -40,7 +40,11 @@ export class ChildDetailsComponent implements OnInit {
   form: FormGroup;
   creatingNew = false;
   editing = false;
+
   genders = Gender;
+  eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
+  vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
+
 
   initializeForm() {
     this.form = this.fb.group({
@@ -60,6 +64,14 @@ export class ChildDetailsComponent implements OnInit {
       phone:          [{value: this.child.phone,          disabled: !this.editing}],
       guardianName:   [{value: this.child.guardianName,   disabled: !this.editing}],
       preferredTimeForGuardianMeeting: [{value: this.child.preferredTimeForGuardianMeeting, disabled: !this.editing}],
+
+      // health_vaccinationStatus:    [{value: this.child.health_vaccinationStatus,    disabled: !this.editing}],
+      health_lastDentalCheckup:   [{value: this.child.health_lastDentalCheckup,    disabled: !this.editing}],
+      health_lastEyeCheckup:      [{value: this.child.health_lastEyeCheckup, disabled: !this.editing}],
+      // health_eyeHealthStatus:   [{value: this.child.health_eyeHealthStatus,    disabled: !this.editing}],
+      health_lastENTCheckup:      [{value: this.child.health_lastENTCheckup,    disabled: !this.editing}],
+      health_lastVitaminD:        [{value: this.child.health_lastVitaminD, disabled: !this.editing}],
+      health_lastDeworming:       [{value: this.child.health_lastDeworming, disabled: !this.editing}],
 
       dropoutDate:    [{value: this.child.dropoutDate,    disabled: !this.editing}],
       dropoutType:    [{value: this.child.dropoutType,    disabled: !this.editing}],

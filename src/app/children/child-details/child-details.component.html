@@ -148,6 +148,59 @@
 
 
 
+
+    <mat-expansion-panel [expanded]="false">
+      <mat-expansion-panel-header class='section-header'>
+        Health
+      </mat-expansion-panel-header>
+
+
+      <div>
+        <mat-form-field>
+          <mat-label>
+            Vaccination Status
+          </mat-label>
+          <mat-select [disabled]='!editing' [(ngModel)]='child.health_vaccinationStatus' [ngModelOptions]="{standalone: true}">
+            <mat-option *ngFor="let value of vaccinationStatusValues" [value]="value">{{value}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>
+            Eye Status
+          </mat-label>
+          <mat-select [disabled]='!editing' [(ngModel)]='child.health_eyeHealthStatus' [ngModelOptions]="{standalone: true}">
+            <mat-option *ngFor="let value of eyeStatusValues" [value]="value">{{value}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-form-field>
+          <input matInput formControlName="health_lastDentalCheckup" placeholder="Last Dental Check-Up" type="date">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput formControlName="health_lastEyeCheckup" placeholder="Last Eye Check-Up" type="date">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput formControlName="health_lastENTCheckup" placeholder="Last ENT Check-Up" type="date">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput formControlName="health_lastVitaminD" placeholder="Last Vitamin D" type="date">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput formControlName="health_lastDeworming" placeholder="Last De-Worming" type="date">
+        </mat-form-field>
+      </div>
+    </mat-expansion-panel>
+
+
+
+
     <mat-expansion-panel [expanded]="!child.isActive()">
       <mat-expansion-panel-header class='section-header'>
         Dropout
