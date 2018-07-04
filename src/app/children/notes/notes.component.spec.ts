@@ -11,6 +11,7 @@ import {Observable} from 'rxjs/Observable';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {MockDatabase} from '../../database/mock-database';
 import {DatePipe} from '@angular/common';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 
 describe('NotesComponent', () => {
   let component: NotesComponent;
@@ -36,10 +37,10 @@ describe('NotesComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [ NotesComponent ],
-      imports: [UiHelperModule],
+      imports: [UiHelperModule, NoopAnimationsModule],
       providers: [
         DatePipe,
-        { provide: ActivatedRoute, useValue: {snapshot: {params: {id: '22'}}} },
+        { provide: ActivatedRoute, useValue: {paramMap: Observable.of({params: {id: '22'}}) } },
         { provide: ChildrenService, useValue: mockChildrenService },
         { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: SessionService, useValue: { getCurrentUser() { return testUser; }} },

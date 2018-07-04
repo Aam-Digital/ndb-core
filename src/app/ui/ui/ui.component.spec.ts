@@ -36,17 +36,30 @@ import {AppConfigModule} from '../../app-config/app-config.module';
 import {DatabaseManagerService} from '../../database/database-manager.service';
 import {MockDatabaseManagerService} from '../../database/mock-database-manager.service';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {UiHelperModule} from '../../ui-helper/ui-helper.module';
+import {PrimaryActionComponent} from '../primary-action/primary-action.component';
+import {AppConfig} from '../../app-config/app-config';
 
 describe('UiComponent', () => {
   let component: UiComponent;
   let fixture: ComponentFixture<UiComponent>;
 
   beforeEach(async(() => {
+    AppConfig.settings.site_name = 'test site';
+
     TestBed.configureTestingModule({
-      declarations: [SearchComponent, UiComponent],
+      declarations: [SearchComponent, PrimaryActionComponent, UiComponent],
       imports: [RouterTestingModule, CommonModule, FormsModule, MatIconModule, MatToolbarModule, MatSidenavModule,
         MatAutocompleteModule, MatInputModule, MatFormFieldModule, NoopAnimationsModule,
-        ChildrenModule, SchoolsModule, SyncStatusModule, NavigationModule, LatestChangesModule, SessionModule, AppConfigModule],
+        AppConfigModule,
+        UiHelperModule,
+        ChildrenModule,
+        SchoolsModule,
+        SyncStatusModule,
+        NavigationModule,
+        LatestChangesModule,
+        SessionModule,
+      ],
       providers: [{provide: DatabaseManagerService, useClass: MockDatabaseManagerService}],
     })
       .compileComponents();
