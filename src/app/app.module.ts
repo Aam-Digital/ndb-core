@@ -88,6 +88,7 @@ export class AppModule {
     _navigationItemsService.addMenuItem(new MenuItem('Dashboard', 'home', ['/dashboard']));
     _navigationItemsService.addMenuItem(new MenuItem('Children', 'child', ['/child']));
     _navigationItemsService.addMenuItem(new MenuItem('Schools', 'university', ['/school']));
+    _navigationItemsService.addMenuItem(new MenuItem('Admin', 'wrench', ['/admin'], true));
   }
 }
 

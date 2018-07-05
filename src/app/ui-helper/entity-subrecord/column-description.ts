@@ -15,11 +15,15 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export class MenuItem {
-  constructor(public label: string,
-              public icon: string,
-              public routerLinkParameters: any[],
-              public requiresAdmin = false) {
+export class ColumnDescription {
+  constructor(
+    public name: string,
+    public label: string,
+    public inputType: string,
 
-  }
+    public selectValues: Array<{value: any, label: string}> = [],
+
+    public formatter = (value) => { return value; },
+  ) {}
+
 }

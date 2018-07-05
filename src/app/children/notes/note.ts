@@ -15,11 +15,26 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export class MenuItem {
-  constructor(public label: string,
-              public icon: string,
-              public routerLinkParameters: any[],
-              public requiresAdmin = false) {
+import { Entity } from '../../entity/entity';
+import {WarningLevel} from '../attendance/warning-level';
 
+
+export class Note extends Entity {
+  public static ENTITY_TYPE = 'Note';
+
+  children: string[] = []; // id of Child entity
+  date: Date;
+  subject = '';
+  text = '';
+  author = '';
+  category = '';
+  warningLevel: WarningLevel = WarningLevel.OK;
+
+  getWarningLevel (): WarningLevel {
+    return this.warningLevel;
+  }
+
+  isLinkedWithChild(childId: string) {
+    return (this.children.findIndex(e => e === childId) > -1);
   }
 }

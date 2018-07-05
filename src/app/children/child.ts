@@ -22,8 +22,8 @@ import { Gender} from './Gender';
 export class Child extends Entity {
   protected static ENTITY_TYPE = 'Child';
 
-  name: string;
-  pn: Number; // project number
+  name = '';
+  pn = ''; // project number
 
   center = 'N/A';
   status = '';
@@ -32,7 +32,7 @@ export class Child extends Entity {
 
   religion: string;
   gender: Gender; // M or F
-  dateOfBirth: string;
+  dateOfBirth: Date;
   motherTongue: string;
   admission: string;
   placeOfBirth: string;
