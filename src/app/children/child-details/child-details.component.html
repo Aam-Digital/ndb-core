@@ -23,7 +23,13 @@
     </h1>
   </div>
 
+
   <div>
+
+    <button mat-stroked-button color="accent" (click)="addSchoolClick()">
+      <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>Add School
+    </button>
+
     <button *ngIf="creatingNew || editing" mat-stroked-button class='edit-button' (click)="save()">Save</button>
 
     <button *ngIf="!creatingNew && editing" mat-stroked-button class='edit-button' style="color:red" (click)="removeChild()">Delete</button>
@@ -79,14 +85,6 @@
         <input matInput formControlName="religion" placeholder="Religion" title="religion" type="text">
       </mat-form-field>
 
-      <mat-form-field>
-        <mat-label>
-          School
-        </mat-label>
-        <mat-select [disabled]="!editing" formControlName="schools">
-          <mat-option *ngFor="let school of school" [value]="school">{{school.name}}</mat-option>
-        </mat-select>
-      </mat-form-field>
     </mat-expansion-panel>
 
 

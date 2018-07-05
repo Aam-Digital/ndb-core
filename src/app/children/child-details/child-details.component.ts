@@ -21,12 +21,14 @@ import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {Gender} from '../Gender';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MatSnackBar} from '@angular/material';
+import {MatDialog, MatSnackBar} from '@angular/material';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
+import {ChildSchoolRelation} from "../childSchoolRelation";
 
 import uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
 import {School} from "../../schools/schoolsShared/school";
+import {AddSchoolDialogComponent} from "../addSchoolDialog/add-school-dialog.component";
 
 
 @Component({
@@ -59,7 +61,7 @@ export class ChildDetailsComponent {
       motherTongue: [{value: this.child.motherTongue, disabled: !this.editing}],
       admission:    [{value: this.child.admission,    disabled: !this.editing}],
       religion:     [{value: this.child.religion,     disabled: !this.editing}],
-      school:       [{value: this.schools,            disabled: !this.editing}]
+      schools:       [{value: this.schools,            disabled: !this.editing}]
     });
   }
 
@@ -70,7 +72,8 @@ export class ChildDetailsComponent {
               private router: Router,
               private snackBar: MatSnackBar,
               private confirmationDialog: ConfirmationDialogService,
-              private alertService: AlertService) {
+              private alertService: AlertService,
+              private dialog: MatDialog) {
 
     const id = this.route.snapshot.params['id'];
     if (id === 'new') {
@@ -81,11 +84,7 @@ export class ChildDetailsComponent {
       this.entityMapperService.load<Child>(Child, id)
         .then(child => {
           this.child = child;
-          this.entityMapperService.loadType<School>(School)   //for school selection
-            .then(schools => {
-              this.schools = schools;
-              this.initializeForm();
-            });
+          this.initializeForm();
         });
     }
     this.initializeForm();
@@ -124,6 +123,8 @@ export class ChildDetailsComponent {
         this.switchEdit();
       })
       .catch((err) => this.alertService.addDanger('Could not save Child "' + this.child.name + '": ' + err));
+
+    let childSchoolRelation: ChildSchoolRelation = new ChildSchoolRelation("ad")
   }
 
   removeChild() {
@@ -143,5 +144,10 @@ export class ChildDetailsComponent {
           });
         }
       });
+  }
+
+  addSchoolClick() {
+    let dialog = this.dialog.open(AddSchoolDialogComponent, {data: {child: this.child}})
+
   }
 }

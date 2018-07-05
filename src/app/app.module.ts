@@ -44,10 +44,11 @@ import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
 import {MatIconModule, MatIconRegistry} from '@angular/material';
 import {AdminModule} from './admin/admin.module';
+import {ChildSchoolRelationModule} from "./childSchoolRelation/child-school-relation.module";
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     BrowserModule,
@@ -77,7 +78,7 @@ import {AdminModule} from './admin/admin.module';
     { provide: APP_INITIALIZER, useFactory: initializeApp, deps: [AppConfig], multi: true },
     MatIconRegistry,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {
   constructor(private _navigationItemsService: NavigationItemsService,
