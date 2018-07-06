@@ -1,4 +1,82 @@
+<h1 class="page-header section-child"><i class="fa fa-child fa-fw"></i> {{ school.name }} [{{ school.id }}]</h1>
 
+
+<mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
+  <mat-expansion-panel-header style="">
+    <mat-panel-title>
+      Basic Information
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <mat-form-field>
+    <input matInput formControlName="name" placeholder="Name" type="text">
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Address" type="text">
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Medium" type="text">
+  </mat-form-field>
+  <mat-checkbox>Private school</mat-checkbox>
+</mat-expansion-panel>
+
+
+<mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
+  <mat-expansion-panel-header style="">
+    <mat-panel-title>
+      Teaching
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <mat-form-field>
+    <input matInput placeholder="School Timing" type="text">
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Working Days" type="text">
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Max Class" type="text">
+  </mat-form-field>
+</mat-expansion-panel>
+
+
+<mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
+  <mat-expansion-panel-header style="">
+    <mat-panel-title>
+      Miscellaneous
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <mat-form-field>
+    <input matInput placeholder="Board" type="text">
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Website" type="text">
+  </mat-form-field>
+
+</mat-expansion-panel>
+
+<mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
+  <mat-expansion-panel-header style="">
+    <mat-panel-title>
+      Remarks
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <mat-form-field>
+    <textarea matInput placeholder="Remarks"></textarea>
+  </mat-form-field>
+
+</mat-expansion-panel>
+
+
+
+<!--
 <h1>HellO!!!!!</h1>
 
 
@@ -34,7 +112,7 @@
     <button mat-button (click)="switchEdit()">Edit</button>
   </mat-action-row>
 </mat-expansion-panel>
-
+--!>
 <!--
 <mat-expansion-panel>
   <mat-form-field>

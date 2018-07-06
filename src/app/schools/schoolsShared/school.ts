@@ -11,4 +11,8 @@ export class School extends Entity {
   public max_class?: number;
   public remarks?: string;
   public board?: string;
+  public schoolTiming : string;
+  public workDays: string;
+  public website: string;
+  public privateSchool: boolean;
 }

@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {SchoolsListComponent} from './schools-list/schools-list.component';
 import {
   MatTableModule, MatFormFieldModule, MatInputModule, MatSortModule, MatExpansionModule,
-  MatIconModule
+  MatIconModule,MatCheckboxModule
 } from '@angular/material';
 import {SchoolsServices} from './schoolsShared/schools.services';
 import {SchoolDetailComponent} from './school-detail/school-detail.component';
@@ -18,6 +18,7 @@ import { SchoolBlockComponent } from './school-block/school-block.component';
     MatSortModule,
     MatExpansionModule,
     MatIconModule,
+    MatCheckboxModule,
   ],
   declarations: [
     SchoolBlockComponent,
