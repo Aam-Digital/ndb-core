@@ -23,6 +23,7 @@ export class Alert {
   static INFO = 'info';
   static WARNING = 'warning';
   static DANGER = 'danger';
+  static DEBUG = 'debug';
 
   public notificationRef: MatSnackBarRef<AlertComponent>;
 

@@ -17,6 +17,7 @@
 
 import { PouchDatabase } from './pouch-database';
 import PouchDB from 'pouchdb';
+import {AlertService} from '../alerts/alert.service';
 
 describe('PouchDatabase tests', () => {
   let pouchDatabase: PouchDatabase;
@@ -25,7 +26,7 @@ describe('PouchDatabase tests', () => {
 
   beforeEach(() => {
     pouch = new PouchDB('unit-test-db');
-    pouchDatabase = new PouchDatabase(pouch);
+    pouchDatabase = new PouchDatabase(pouch, new AlertService(null));
 
     originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;

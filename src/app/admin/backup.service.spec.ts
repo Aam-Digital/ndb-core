@@ -5,13 +5,14 @@ import {PouchDatabase} from '../database/pouch-database';
 import {Database} from '../database/database';
 import PouchDB from 'pouchdb';
 import {PapaParseModule} from 'ngx-papaparse';
+import {AlertService} from '../alerts/alert.service';
 
 describe('BackupService', () => {
   let db: PouchDatabase;
   let service: BackupService;
 
   beforeEach(() => {
-    db = new PouchDatabase(new PouchDB('unit-tests'));
+    db = new PouchDatabase(new PouchDB('unit-tests'), new AlertService(null));
     TestBed.configureTestingModule({
       imports: [PapaParseModule],
       providers: [
@@ -86,7 +87,7 @@ describe('BackupService', () => {
         })
       .then(() => service.importJson(backup, true));
 
-    const check = perform
+    perform
       .then(() => db.getAll())
       .then(res => {
         expect(res.length).toBe(2, 'number of records not matching');

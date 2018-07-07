@@ -17,6 +17,7 @@
 
 import { PouchDatabaseManagerService } from './pouch-database-manager.service';
 import {AppConfig} from '../app-config/app-config';
+import {AlertService} from '../alerts/alert.service';
 
 describe('PouchDatabaseManagerService', () => {
   let dbManager: PouchDatabaseManagerService;
@@ -33,7 +34,7 @@ describe('PouchDatabaseManagerService', () => {
       site_name: '',
       dev: { useRemoteDatabaseDuringDevelopment: false },
     };
-    dbManager = new PouchDatabaseManagerService();
+    dbManager = new PouchDatabaseManagerService(new AlertService(null));
   });
 
   it('returns database', function () {
