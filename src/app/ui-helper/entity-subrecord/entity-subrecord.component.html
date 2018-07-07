@@ -15,7 +15,10 @@
       </div>
 
       <div *ngIf="recordsEditing.get(rec.getId()) && col.inputType !== 'function'">
-        <mat-form-field class="">
+        <mat-form-field [ngClass]="{
+            'table-input-number': col.inputType === 'number',
+            'table-input-month': col.inputType === 'month' || col.inputType === 'date'
+            }">
 
           <input *ngIf="col.inputType === 'text'"
                  matInput type="text" [title]="col.label" [value]="rec[col.name]" (change)="rec[col.name]=$event.target.value">

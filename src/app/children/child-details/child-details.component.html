@@ -133,7 +133,16 @@
         Attendance
       </mat-expansion-panel-header>
 
-      <app-child-attendance></app-child-attendance>
+      <div fxLayout='row' fxLayoutGap='20px'>
+        <div fxFlex='40'>
+          <h3>School Attendance</h3>
+          <app-child-attendance institution='school'></app-child-attendance>
+        </div>
+        <div fxFlex='40'>
+          <h3>Coaching Attendance</h3>
+          <app-child-attendance institution='coaching'></app-child-attendance>
+        </div>
+      </div>
     </mat-expansion-panel>
 
 

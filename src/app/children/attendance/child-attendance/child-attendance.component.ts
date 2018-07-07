@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {AttendanceMonth} from '../attendance-month';
 import {ChildrenService} from '../../children.service';
@@ -15,6 +15,9 @@ export class ChildAttendanceComponent implements OnInit {
 
   childId: string;
   records: Array<AttendanceMonth>;
+
+  @Input() institution: string;
+
 
   columns: Array<ColumnDescription> = [
     new ColumnDescription('month', 'Month', 'month', null,
@@ -43,7 +46,11 @@ export class ChildAttendanceComponent implements OnInit {
 
   loadData(id: string) {
     this.childrenService.getAttendancesOfChild(id)
-      .subscribe(results => this.records = results.sort((a, b) => b.month.valueOf() - a.month.valueOf()));
+      .subscribe(results => {
+        this.records = results
+          .filter(r => this.institution === undefined || r.institution === this.institution)
+          .sort((a, b) => b.month.valueOf() - a.month.valueOf())
+      });
   }
 
 
@@ -55,6 +62,7 @@ export class ChildAttendanceComponent implements OnInit {
       const newAtt = new AttendanceMonth(Date.now().toString()); // TODO: logical way to assign entityId to Attendance?
       newAtt.month = new Date();
       newAtt.student = child;
+      newAtt.institution = this.institution;
 
       return newAtt;
     };
