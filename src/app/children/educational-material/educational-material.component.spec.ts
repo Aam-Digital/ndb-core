@@ -35,7 +35,7 @@ describe('EducationalMaterialComponent', () => {
       imports: [ UiHelperModule, FormsModule, NoopAnimationsModule],
       providers: [
         DatePipe,
-        { provide: ActivatedRoute, useValue: {paramMap: Observable.of({params: {id: '22'}}) } },
+        { provide: ActivatedRoute, useValue: {paramMap: Observable.of({get: () => '22'}) } },
         { provide: ChildrenService, useValue: mockChildrenService },
         { provide: EntityMapperService, useValue: mockEntityMapper },
       ],

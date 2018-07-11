@@ -5,6 +5,7 @@ import {EntityMapperService} from '../entity/entity-mapper.service';
 import {AttendanceMonth} from './attendance/attendance-month';
 import {Database} from '../database/database';
 import {Note} from './notes/note';
+import {EducationalMaterial} from './educational-material/educational-material';
 
 @Injectable()
 export class ChildrenService {
@@ -133,6 +134,19 @@ export class ChildrenService {
     };
 
     return this.db.saveDatabaseIndex(designDoc);
+  }
+
+
+
+
+
+  getEducationalMaterialsOfChild(childId: string): Observable<EducationalMaterial[]> {
+    return Observable.fromPromise(
+      this.entityMapper.loadType<EducationalMaterial>(EducationalMaterial)
+        .then(loadedEntities => {
+          return loadedEntities.filter(o => o.child === childId);
+        })
+    );
   }
 
 }

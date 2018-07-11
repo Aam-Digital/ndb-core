@@ -50,6 +50,7 @@ import { NotesComponent } from './notes/notes.component';
 import { NoteDetailsComponent } from './notes/note-details/note-details.component';
 import { ChildSelectComponent } from './child-select/child-select.component';
 import {SchoolsModule} from '../schools/schools.module';
+import { EducationalMaterialComponent } from './educational-material/educational-material.component';
 
 
 @NgModule({
@@ -89,6 +90,7 @@ import {SchoolsModule} from '../schools/schools.module';
     AttendanceWarningsDashboardComponent,
     NoteDetailsComponent,
     ChildSelectComponent,
+    EducationalMaterialComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [

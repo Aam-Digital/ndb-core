@@ -16,41 +16,21 @@
  */
 
 import { Entity } from '../../entity/entity';
-import {WarningLevel} from './warning-level';
 
 
-export class AttendanceMonth extends Entity {
-  static ENTITY_TYPE = 'AttendanceMonth';
-  static readonly THRESHOLD_URGENT = 0.6;
-  static readonly THRESHOLD_WARNING = 0.8;
+export class EducationalMaterial extends Entity {
+  static ENTITY_TYPE = 'EducationalMaterial';
 
-  student: string; // id of Child entity
-  month: Date;
-  daysWorking: number;
-  daysAttended: number;
-  daysExcused = 0;
-  remarks = '';
-  institution: string;
-
-  getAttendancePercentage() {
-    return this.daysAttended / (this.daysWorking - this.daysExcused);
-  }
-
-  getWarningLevel() {
-    const attendance = this.getAttendancePercentage();
-    if (attendance < AttendanceMonth.THRESHOLD_URGENT) {
-      return WarningLevel.URGENT;
-    } else if (attendance < AttendanceMonth.THRESHOLD_WARNING) {
-      return WarningLevel.WARNING;
-    } else {
-      return WarningLevel.OK;
-    }
-  }
+  child: string; // id of Child entity
+  date: Date;
+  materialType = '';
+  materialAmount: number;
+  description = '';
 
 
   public load(data: any) {
-    if (data.month !== undefined && typeof data.month !== typeof new Date()) {
-      data.month = new Date(data.month);
+    if (data.date !== undefined && typeof data.date !== typeof new Date()) {
+      data.date = new Date(data.date);
     }
 
     return super.load(data);

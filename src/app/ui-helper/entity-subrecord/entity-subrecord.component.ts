@@ -123,4 +123,21 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
     this.dialog.open(this.detailsComponent, {width: '80%', data: {entity: record}});
   }
 
+
+  getWarningStyleClass(rec) {
+    if (typeof rec.getWarningLevel === 'function') {
+      return 'w-' + rec.getWarningLevel();
+    } else {
+      return '';
+    }
+  }
+
+  autocompleteSearch(col, input) {
+    if (col.allSelectValues === undefined) {
+      col.allSelectValues = col.selectValues;
+    }
+
+    col.selectValues = col.allSelectValues.filter(v => v.value.includes(input) || v.label.includes(input));
+  }
+
 }

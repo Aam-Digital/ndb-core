@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {ConfirmationDialogComponent} from './confirmation-dialog/confirmation-dialog.component';
 import {
+  MatAutocompleteModule,
   MatButtonModule,
   MatDialogModule,
   MatIconModule,
@@ -24,6 +25,7 @@ import { KeysPipe } from './keys-pipe/keys.pipe';
     MatIconModule,
     MatSnackBarModule,
     MatSortModule,
+    MatAutocompleteModule,
   ],
   declarations: [ConfirmationDialogComponent, EntitySubrecordComponent, KeysPipe],
   exports: [EntitySubrecordComponent, KeysPipe],

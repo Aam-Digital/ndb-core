@@ -45,7 +45,21 @@ describe('UiComponent', () => {
   let fixture: ComponentFixture<UiComponent>;
 
   beforeEach(async(() => {
-    AppConfig.settings.site_name = 'test site';
+    AppConfig.settings = {
+      'version': '0.0.1',
+      'site_name': 'Testing',
+
+      'database': {
+        'name': 'unit-tests',
+        'remote_url': '',
+        'timeout': 60000,
+        'outdated_threshold_days': 0
+      },
+
+      'dev': {
+        'useRemoteDatabaseDuringDevelopment': false
+      }
+    };
 
     TestBed.configureTestingModule({
       declarations: [SearchComponent, PrimaryActionComponent, UiComponent],
