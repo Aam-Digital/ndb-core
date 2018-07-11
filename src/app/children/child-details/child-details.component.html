@@ -130,6 +130,28 @@
 
     <mat-expansion-panel expanded="false">
       <mat-expansion-panel-header class='section-header'>
+        Education
+      </mat-expansion-panel-header>
+
+      <div>
+        <app-school-block [entity]='school' class='mat-form-field'></app-school-block>
+
+        <mat-form-field>
+          <input matInput type="number" formControlName="schoolClass" placeholder="Class">
+        </mat-form-field>
+      </div>
+
+      <div>
+        <h3>ASER Results</h3>
+        <app-aser></app-aser>
+      </div>
+    </mat-expansion-panel>
+
+
+
+
+    <mat-expansion-panel expanded="false">
+      <mat-expansion-panel-header class='section-header'>
         Attendance
       </mat-expansion-panel-header>
 

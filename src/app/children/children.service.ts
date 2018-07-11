@@ -6,6 +6,7 @@ import {AttendanceMonth} from './attendance/attendance-month';
 import {Database} from '../database/database';
 import {Note} from './notes/note';
 import {EducationalMaterial} from './educational-material/educational-material';
+import {Aser} from './aser/aser';
 
 @Injectable()
 export class ChildrenService {
@@ -143,6 +144,15 @@ export class ChildrenService {
   getEducationalMaterialsOfChild(childId: string): Observable<EducationalMaterial[]> {
     return Observable.fromPromise(
       this.entityMapper.loadType<EducationalMaterial>(EducationalMaterial)
+        .then(loadedEntities => {
+          return loadedEntities.filter(o => o.child === childId);
+        })
+    );
+  }
+
+  getAserResultsOfChild(childId: string): Observable<Aser[]> {
+    return Observable.fromPromise(
+      this.entityMapper.loadType<Aser>(Aser)
         .then(loadedEntities => {
           return loadedEntities.filter(o => o.child === childId);
         })

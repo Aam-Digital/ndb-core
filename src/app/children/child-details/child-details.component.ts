@@ -26,6 +26,7 @@ import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/con
 
 import uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
+import {School} from '../../schools/school';
 
 
 @Component({
@@ -42,6 +43,7 @@ export class ChildDetailsComponent implements OnInit {
   editing = false;
 
   genders = Gender;
+  school = new School('');
   eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
   vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
 
@@ -64,6 +66,8 @@ export class ChildDetailsComponent implements OnInit {
       phone:          [{value: this.child.phone,          disabled: !this.editing}],
       guardianName:   [{value: this.child.guardianName,   disabled: !this.editing}],
       preferredTimeForGuardianMeeting: [{value: this.child.preferredTimeForGuardianMeeting, disabled: !this.editing}],
+
+      schoolClass:    [{value: this.child.schoolClass,    disabled: !this.editing}],
 
       // health_vaccinationStatus:    [{value: this.child.health_vaccinationStatus,    disabled: !this.editing}],
       health_lastDentalCheckup:   [{value: this.child.health_lastDentalCheckup,    disabled: !this.editing}],
@@ -102,6 +106,11 @@ export class ChildDetailsComponent implements OnInit {
         .then(child => {
           this.child = child;
           this.initializeForm();
+
+          this.entityMapperService.load(School, child.schoolId)
+            .then(school => {
+              this.school = school;
+            });
         });
     }
     this.initializeForm();
