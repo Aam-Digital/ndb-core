@@ -15,8 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AlertService } from './alert.service';
-import { Alert } from './alert';
+import {AlertService} from './alert.service';
+import {Alert} from './alert';
+import {RavenOptions} from 'raven-js';
+import {LogLevel} from '../logging/log-level';
+import {LoggingService} from '../logging/logging.service';
 
 describe('AlertService', () => {
   let alertService: AlertService;
@@ -24,9 +27,10 @@ describe('AlertService', () => {
 
   beforeEach(() => {
     snackBarMock = {
-      openFromComponent: function (component, config) { }
+      openFromComponent: function (component, config) {
+      }
     };
-    alertService = new AlertService(snackBarMock);
+    alertService = new AlertService(snackBarMock, new LoggingService());
   });
 
   it('add info alert', function () {

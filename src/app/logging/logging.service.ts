@@ -14,7 +14,7 @@ Raven
 export class LoggingService {
 
   constructor() {
-    Raven.captureMessage('Logging Service up and running!', {level: 'info'})
+    Raven.captureMessage('Logging Service up and running!', {level: 'debug'})
   }
 
   public log(message: string, logLevel: LogLevel) {
