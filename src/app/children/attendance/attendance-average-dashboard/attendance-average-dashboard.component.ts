@@ -53,6 +53,13 @@ export class AttendanceAverageDashboardComponent implements OnInit {
           }
         });
 
+        // remove elements that don't have a matching attendance from last month
+        countMap.forEach((v, k) => {
+          if (v[2] === 0) {
+            countMap.delete(k);
+          }
+        });
+
         this.lastMonthsTopAttendence = Array.from(countMap.values()); // direct use of Map creates change detection problems
       });
   }

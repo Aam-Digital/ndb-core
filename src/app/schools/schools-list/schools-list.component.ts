@@ -1,8 +1,8 @@
 import {Component, OnInit, Output, EventEmitter, ViewChild, AfterViewInit} from '@angular/core';
 import {MatTableDataSource, MatSort} from '@angular/material';
-import {School} from '../schoolsShared/school';
-import {SchoolsServices} from '../schoolsShared/schools.services';
+import {School} from '../school';
 import {Router} from '@angular/router';
+import {EntityMapperService} from '../../entity/entity-mapper.service';
 
 @Component({
   selector: 'app-schools',
@@ -14,17 +14,18 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   school: School;
 
   dataSource = new MatTableDataSource();
-  displayedColumns = ['id', 'name', 'address', 'medium'];
+  displayedColumns = ['name', 'address', 'medium'];
   @ViewChild(MatSort) sort: MatSort;
   @Output() showDetailsEvent = new EventEmitter<School>();
 
   constructor(
-    private ss: SchoolsServices,
+    private entityMapper: EntityMapperService,
     private router: Router
   ) {}
 
   ngOnInit() {
-    this.dataSource.data = this.ss.schools;
+    this.entityMapper.loadType<School>(School)
+      .then(loadedEntities => this.dataSource.data = loadedEntities);
   }
 
   ngAfterViewInit() {

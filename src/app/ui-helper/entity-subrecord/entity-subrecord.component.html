@@ -15,7 +15,10 @@
       </div>
 
       <div *ngIf="recordsEditing.get(rec.getId()) && col.inputType !== 'function'">
-        <mat-form-field class="">
+        <mat-form-field [ngClass]="{
+            'table-input-number': col.inputType === 'number',
+            'table-input-month': col.inputType === 'month' || col.inputType === 'date'
+            }">
 
           <input *ngIf="col.inputType === 'text'"
                  matInput type="text" [title]="col.label" [value]="rec[col.name]" (change)="rec[col.name]=$event.target.value">
@@ -36,6 +39,13 @@
             <mat-option *ngFor='let option of col.selectValues' [value]="option.value">{{option.label}}</mat-option>
           </mat-select>
 
+          <span *ngIf="col.inputType === 'autocomplete'">
+            <input [matAutocomplete]="auto" (input)="autocompleteSearch(suggestions, $event.target.value)"
+                   matInput type="text" [title]="col.label" [value]="rec[col.name]" (change)="rec[col.name]=$event.target.value">
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="rec[col.name]=$event.option.value">
+              <mat-option *ngFor="let option of col.selectValues" [value]="option.value">{{option.label}}</mat-option>
+            </mat-autocomplete>
+          </span>
 
         </mat-form-field>
       </div>
@@ -67,5 +77,5 @@
 
 
   <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-  <tr mat-row *matRowDef="let rec; columns: columnsToDisplay" class="w-{{rec.getWarningLevel()}}"></tr>
+  <tr mat-row *matRowDef="let rec; columns: columnsToDisplay" class="{{getWarningStyleClass(rec)}}"></tr>
 </table>

@@ -1,5 +1,5 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {MatDialog, MatSnackBar, MatTableDataSource} from '@angular/material';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {MatDialog, MatSnackBar, MatSort, MatTableDataSource} from '@angular/material';
 import {ConfirmationDialogService} from '../confirmation-dialog/confirmation-dialog.service';
 import {Entity} from '../../entity/entity';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
@@ -22,6 +22,8 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
   recordsEditing = new Map<string, boolean>();
   originalRecords = [];
 
+  @ViewChild(MatSort) sort: MatSort;
+
 
   constructor(private _entityMapper: EntityMapperService,
               private _snackBar: MatSnackBar,
@@ -30,7 +32,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-
+    this.recordsDataSource.sort = this.sort;
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -61,7 +63,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
     const index = this.records.findIndex(a => a.getId() === record.getId());
     if (index > -1) {
       const originalRecord = this.originalRecords.find(e => e.entityId === record.getId());
-      this.records[index] = Object.assign(record, originalRecord);
+      this.records[index] = record.load(originalRecord);
       this.recordsDataSource.data = this.records;
     }
 
@@ -119,6 +121,23 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
     }
 
     this.dialog.open(this.detailsComponent, {width: '80%', data: {entity: record}});
+  }
+
+
+  getWarningStyleClass(rec) {
+    if (typeof rec.getWarningLevel === 'function') {
+      return 'w-' + rec.getWarningLevel();
+    } else {
+      return '';
+    }
+  }
+
+  autocompleteSearch(col, input) {
+    if (col.allSelectValues === undefined) {
+      col.allSelectValues = col.selectValues;
+    }
+
+    col.selectValues = col.allSelectValues.filter(v => v.value.includes(input) || v.label.includes(input));
   }
 
 }
