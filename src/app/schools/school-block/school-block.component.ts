@@ -33,6 +33,6 @@ export class SchoolBlockComponent implements OnInit {
   }
 
   showDetailsPage() {
-    this.router.navigate(['/school', this.entity.getId()]);
+    this.router.navigate(['/selectedSchool', this.entity.getId()]);
   }
 }

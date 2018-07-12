@@ -9,14 +9,14 @@ export class SchoolsServices {
 
   constructor(private entityMapper: EntityMapperService, private alertService: AlertService) {
     // example dummy data
-    const s = new School('school:dummy');
+    const s = new School('selectedSchool:dummy');
     s.name = 'Primary';
     s.address = 'India, asdw';
     s.medium = 'Hindi';
     this.schools = [s];
 
     // data loaded from pouchdb
-    // TODO: make sure loaded school data is fitting the class and then remove dummy data above
+    // TODO: make sure loaded selectedSchool data is fitting the class and then remove dummy data above
     this.entityMapper.loadType<School>(School).then(
       loadedEntities => this.schools = this.schools.concat(loadedEntities),
       reason => this.alertService.addWarning(reason)

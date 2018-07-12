@@ -30,8 +30,8 @@ import {AdminGuard} from './admin/admin.guard';
 export const routes: Routes = [
   {path: '', component: DashboardComponent},
   {path: 'user', component: UserAccountComponent},
-  {path: 'school', component: SchoolsListComponent},
-  {path: 'school/:id', component: SchoolDetailComponent},
+  {path: 'selectedSchool', component: SchoolsListComponent},
+  {path: 'selectedSchool/:id', component: SchoolDetailComponent},
   {path: 'child', component: ChildrenListComponent},
   {path: 'child/:id', component: ChildDetailsComponent},
   {path: 'child/:id/attendance', component: ChildAttendanceComponent},

@@ -33,7 +33,8 @@ import {
   MatSidenavModule,
   MatSnackBarModule,
   MatSortModule,
-  MatTableModule
+  MatTableModule,
+  MatListModule
 } from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {ChildrenService} from './children.service';
@@ -49,7 +50,8 @@ import { AttendanceWarningsDashboardComponent } from './attendance/attendance-wa
 import { NotesComponent } from './notes/notes.component';
 import { NoteDetailsComponent } from './notes/note-details/note-details.component';
 import { ChildSelectComponent } from './child-select/child-select.component';
-import { AddSchoolDialogComponent } from './addSchoolDialog/add-school-dialog.component';
+import { AddSchoolDialogComponent } from './add-school-dialog/add-school-dialog.component';
+import { ShowSchoolHistoryDialogComponent } from './show-school-history-dialog/show-school-history-dialog.component';
 
 
 @NgModule({
@@ -74,7 +76,8 @@ import { AddSchoolDialogComponent } from './addSchoolDialog/add-school-dialog.co
     MatAutocompleteModule,
     UiHelperModule,
     ReactiveFormsModule,
-    MatDialogModule
+    MatDialogModule,
+    MatListModule
   ],
   declarations: [
     AttendanceBlockComponent,
@@ -88,7 +91,8 @@ import { AddSchoolDialogComponent } from './addSchoolDialog/add-school-dialog.co
     AttendanceWarningsDashboardComponent,
     NoteDetailsComponent,
     ChildSelectComponent,
-    AddSchoolDialogComponent
+    AddSchoolDialogComponent,
+    ShowSchoolHistoryDialogComponent
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
@@ -98,6 +102,6 @@ import { AddSchoolDialogComponent } from './addSchoolDialog/add-school-dialog.co
     AttendanceAverageDashboardComponent,
     AttendanceWarningsDashboardComponent
   ],
-  entryComponents: [NoteDetailsComponent, AddSchoolDialogComponent],
+  entryComponents: [NoteDetailsComponent, AddSchoolDialogComponent, ShowSchoolHistoryDialogComponent],
 })
 export class ChildrenModule { }

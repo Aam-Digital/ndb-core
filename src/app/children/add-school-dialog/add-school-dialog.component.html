@@ -4,7 +4,7 @@
   <mat-label>
     School
   </mat-label>
-  <mat-select [(value)]="childSchoolRelation.school">
+  <mat-select [(value)]="selectedSchool">
     <mat-option *ngFor="let school of schools" [value]="school" >{{school.name}}</mat-option>
   </mat-select>
 </mat-form-field>
@@ -13,4 +13,4 @@
   <input matInput [(ngModel)]="childSchoolRelation.start" placeholder="Started on" title="start" type="date">
 </mat-form-field>
 
-<button [disabled]="childSchoolRelation.school == null">Add School</button>
+<button [disabled]="selectedSchool == null" (click)="addSchoolClick()">Add School</button>

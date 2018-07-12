@@ -28,7 +28,8 @@ import {ChildSchoolRelation} from "../childSchoolRelation";
 import uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
 import {School} from "../../schools/schoolsShared/school";
-import {AddSchoolDialogComponent} from "../addSchoolDialog/add-school-dialog.component";
+import {AddSchoolDialogComponent} from "../add-school-dialog/add-school-dialog.component";
+import {ShowSchoolHistoryDialogComponent} from "../show-school-history-dialog/show-school-history-dialog.component";
 
 
 @Component({
@@ -44,8 +45,8 @@ export class ChildDetailsComponent {
   form: FormGroup;
   creatingNew = false;
   editing = false;
-
   gender = Gender;
+  visitedSchools: ChildSchoolRelation[] = [];
 
   transformGendersEnum(): Array<string> {
     const genders = Object.keys(this.gender);
@@ -75,6 +76,8 @@ export class ChildDetailsComponent {
               private alertService: AlertService,
               private dialog: MatDialog) {
 
+    this.loadVisitedSchools();
+
     const id = this.route.snapshot.params['id'];
     if (id === 'new') {
       this.creatingNew = true;
@@ -88,6 +91,17 @@ export class ChildDetailsComponent {
         });
     }
     this.initializeForm();
+  }
+
+  private loadVisitedSchools() {
+    this.entityMapperService.loadType<ChildSchoolRelation>(ChildSchoolRelation)
+      .then((relations: ChildSchoolRelation[]) => {
+        for (let r of relations) {
+          if (r.childId == this.child.getId()) {
+            this.visitedSchools.push(r);
+          }
+        }
+      })
   }
 
   switchEdit() {
@@ -147,7 +161,10 @@ export class ChildDetailsComponent {
   }
 
   addSchoolClick() {
-    let dialog = this.dialog.open(AddSchoolDialogComponent, {data: {child: this.child}})
+    let dialog = this.dialog.open(AddSchoolDialogComponent, {data: {child: this.child}});
+  }
 
+  showSchoolsClick() {
+    let dialog = this.dialog.open(ShowSchoolHistoryDialogComponent, {data: {visitedSchools: this.visitedSchools}});
   }
 }

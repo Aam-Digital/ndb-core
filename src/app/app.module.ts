@@ -44,7 +44,6 @@ import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
 import {MatIconModule, MatIconRegistry} from '@angular/material';
 import {AdminModule} from './admin/admin.module';
-import {ChildSchoolRelationModule} from "./childSchoolRelation/child-school-relation.module";
 
 @NgModule({
   declarations: [
@@ -88,7 +87,7 @@ export class AppModule {
 
     _navigationItemsService.addMenuItem(new MenuItem('Dashboard', 'home', ['/dashboard']));
     _navigationItemsService.addMenuItem(new MenuItem('Children', 'child', ['/child']));
-    _navigationItemsService.addMenuItem(new MenuItem('Schools', 'university', ['/school']));
+    _navigationItemsService.addMenuItem(new MenuItem('Schools', 'university', ['/selectedSchool']));
     _navigationItemsService.addMenuItem(new MenuItem('Admin', 'wrench', ['/admin'], true));
   }
 }
