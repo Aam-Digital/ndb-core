@@ -33,6 +33,7 @@
     "ngx-papaparse": "^2.1.4",
     "pouchdb": "6.4.x",
     "pouchdb-authentication": "1.1.x",
+    "raven-js": "^3.26.3",
     "rxjs": "^6.1.0",
     "rxjs-compat": "^6.0.0-rc.0",
     "stream": "0.0.2",
