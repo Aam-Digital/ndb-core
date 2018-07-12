@@ -1,5 +1,6 @@
 export enum WarningLevel {
   OK = 'OK',
   WARNING = 'WARNING',
-  URGENT = 'URGENT'
+  URGENT = 'URGENT',
+  NONE = '',
 }

@@ -46,7 +46,7 @@ export class ChildSelectComponent implements OnInit {
     this.searchText = this.searchText.toLowerCase();
 
     this.suggestions = this.allChildren.filter(child => {
-      const key = '' + child.name + ' ' + child.pn;
+      const key = '' + child.name + ' ' + child.projectNumber;
       return key.toLowerCase().includes(this.searchText);
     });
   }

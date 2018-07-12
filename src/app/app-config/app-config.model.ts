@@ -18,6 +18,7 @@
 
 export interface IAppConfig {
   version: string;
+  site_name: string;
 
   database: {
     name: string;

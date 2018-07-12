@@ -7,7 +7,7 @@
         &nbsp;
       </span>
     </span>
-    <input #inputField matInput (input)='search()' [matAutocomplete]='autoSuggestions' [(ngModel)]='searchText'>
+    <input #inputField matInput placeholder='Children' (input)='search()' [matAutocomplete]='autoSuggestions' [(ngModel)]='searchText'>
   </mat-form-field>
 
   <mat-autocomplete #autoSuggestions='matAutocomplete' (optionSelected)='selectChild($event.option.value)'>
