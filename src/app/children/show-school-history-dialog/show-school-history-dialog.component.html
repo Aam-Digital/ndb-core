@@ -1,3 +1,7 @@
 <mat-list *ngFor="let s of viewableSchools">
-  <mat-list-item>{{s.schoolName}} {{s.start}} {{s.end}}</mat-list-item>
+  <mat-list-item>
+    <input matInput [(value)]="s.schoolName" placeholder="Name of school" title="birthday" type="text">
+    <input matInput [(value)]="s.start" placeholder="from" title="start" type="date">
+    <input matInput [(value)]="s.end" placeholder="to" title="end" type="date">
+  </mat-list-item>
 </mat-list>
