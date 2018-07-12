@@ -24,13 +24,16 @@ import {LoggingService} from '../logging/logging.service';
 describe('AlertService', () => {
   let alertService: AlertService;
   let snackBarMock;
-
+  let loggingService: MockLoggingService;
   beforeEach(() => {
+    loggingService = new MockLoggingService();
     snackBarMock = {
       openFromComponent: function (component, config) {
-      }
-    };
-    alertService = new AlertService(snackBarMock, new LoggingService());
+      },
+
+    }
+    ;
+    alertService = new AlertService(snackBarMock, loggingService);
   });
 
   it('add info alert', function () {
@@ -73,3 +76,21 @@ describe('AlertService', () => {
     expect(alertService.alerts.length).toBe(0);
   });
 });
+
+
+class MockLoggingService extends LoggingService {
+  public log(message: string, logLevel: LogLevel) {
+  }
+
+  public debug(message: string) {
+  }
+
+  public info(message: string) {
+  }
+
+  public warn(message: string) {
+  }
+
+  public error(message: string) {
+  }
+}
