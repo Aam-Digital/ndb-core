@@ -12,7 +12,7 @@ import {ChildSchoolRelation} from "../childSchoolRelation";
 })
 export class ShowSchoolHistoryDialogComponent {
   childSchoolRelations: ChildSchoolRelation[] = [];
-  visitedSchools: School[] = [];
+  viewableSchools: ViewableSchool[] = [];
 
 
   constructor(private entityMapperService: EntityMapperService,
@@ -20,9 +20,24 @@ export class ShowSchoolHistoryDialogComponent {
               @Inject(MAT_DIALOG_DATA) public data
   ) {
     this.childSchoolRelations = this.data.visitedSchools;
-    for (let s of this.childSchoolRelations) {
-      this.entityMapperService.load<School>(School, s.schoolId)
-        .then((school: School) => this.visitedSchools.push(school))
+    for (let r of this.childSchoolRelations) {
+      this.entityMapperService.load<School>(School, r.schoolId)
+        .then((school: School) => {
+          console.log("school " + JSON.stringify(school));
+          this.viewableSchools.push(new ViewableSchool(school, r));
+        })
     }
+  }
+}
+
+class ViewableSchool {
+  schoolName: string;
+  start: Date;
+  end: Date;
+
+  constructor(school: School, childSchoolRelation: ChildSchoolRelation) {
+    this.schoolName = school.name;
+    this.start = childSchoolRelation.start;
+    this.end = childSchoolRelation.end;
   }
 }
