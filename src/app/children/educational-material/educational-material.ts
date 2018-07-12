@@ -15,21 +15,24 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { School } from './school';
+import { Entity } from '../../entity/entity';
 
-describe('School', () => {
 
-  it('has ID', function () {
-    const id = 'test1';
-    const entity = new School(id);
+export class EducationalMaterial extends Entity {
+  static ENTITY_TYPE = 'EducationalMaterial';
 
-    expect(entity.getId()).toBe(id);
-  });
+  child: string; // id of Child entity
+  date: Date;
+  materialType = '';
+  materialAmount: number;
+  description = '';
 
-  it('has correct type/prefix', function () {
-    const id = 'test1';
-    const entity = new School(id);
 
-    expect(entity.getType()).toBe('School');
-  });
-});
+  public load(data: any) {
+    if (data.date !== undefined && typeof data.date !== typeof new Date()) {
+      data.date = new Date(data.date);
+    }
+
+    return super.load(data);
+  }
+}

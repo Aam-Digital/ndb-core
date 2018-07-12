@@ -23,9 +23,9 @@
     <span> {{ (currentChangelog && currentChangelog.name) ? (": " + currentChangelog.name) : ""}}</span>
   </h4>
   <p class="version-changes-date" style="font-style:italic;">
-    {{ currentChangelog.published_at | date }}
+    {{ currentChangelog?.published_at | date }}
   </p>
-  <p style="white-space: pre-wrap; text-align: left" [innerHTML]="currentChangelog.body"></p>
+  <p style="white-space: pre-wrap; text-align: left" [innerHTML]="currentChangelog?.body"></p>
 
   <button mat-button (click)="onCloseClick()">Close</button>
 </div>
