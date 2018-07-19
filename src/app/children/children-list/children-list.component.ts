@@ -4,6 +4,8 @@ import {MatSort, MatTableDataSource} from '@angular/material';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ChildrenService} from '../children.service';
 import {AttendanceMonth} from '../attendance/attendance-month';
+import { PlatformLocation } from '@angular/common';
+import { EntityMapperService } from '../../entity/entity-mapper.service';
 
 @Component({
   selector: 'app-children-list',
@@ -15,6 +17,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   attendanceList = new Map<string, AttendanceMonth[]>();
   childrenDataSource = new MatTableDataSource();
   centers: string[];
+  filteredlist: String;
 
   @ViewChild(MatSort) sort: MatSort;
   columnGroupSelection = 'school';
@@ -25,27 +28,27 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   };
   columnsToDisplay: ['pn', 'name'];
 
-  filterString = '';
-  dropoutFilterSelection = 'current';
-  centerFilterSelection = '';
+  filterString;
+  dropoutFilterSelection;
+  centerFilterSelection;
   filterFunctionDropout: (c: Child) => boolean = (c: Child) => true;
   filterFunctionCenter: (c: Child) => boolean = (c: Child) => true;
 
 
   constructor(private childrenService: ChildrenService,
               private router: Router,
-              private route: ActivatedRoute) {
-    this.route.queryParamMap.subscribe(params => {
-      const paramFilter = params.get('filter');
-      this.filterString = paramFilter ? paramFilter : '';
-      this.applyFilter(this.filterString);
-    });
+              private route: ActivatedRoute,
+              private entityMapper: EntityMapperService,
+              location: PlatformLocation) {
+ 
+    this.dropoutFilterSelection='';
+    this.centerFilterSelection='';
+    this.filterString='';          
+
 
     this.childrenService.getChildren().subscribe(data => {
       this.childrenList = data;
       this.childrenDataSource.data = data;
-      this.setDropoutFilteredList(this.dropoutFilterSelection);
-      this.setCenterFilteredList(this.centerFilterSelection);
 
       this.centers = data.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
     });
@@ -55,8 +58,23 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    
+    this.entityMapper.loadType<Child>(Child).then(childrenList => this.childrenList=childrenList);
+    console.log("OnInit")
     this.displayColumnGroup(this.columnGroupSelection);
+      this.route.queryParams.subscribe(params => {
+        console.log(this.router.url);
+        this.dropoutFilterSelection = params['filteredlist'];
+        console.log(this.dropoutFilterSelection);
+        this.centerFilterSelection = params['filteredcenter'];
+        console.log(this.centerFilterSelection);
+        this.setDropoutFilteredList(this.dropoutFilterSelection);
+        this.setCenterFilteredList(this.centerFilterSelection);
+      });
+
+
   }
+
 
   ngAfterViewInit() {
     this.childrenDataSource.sort = this.sort;
@@ -82,6 +100,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     });
   }
 
+ 
 
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim();
@@ -95,11 +114,12 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
   applyFilterGroups() {
     this.childrenDataSource.data = this.childrenList
-      .filter(this.filterFunctionDropout)
-      .filter(this.filterFunctionCenter);
+      .filter(this.filterFunctionCenter)
+      .filter(this.filterFunctionDropout);
   }
 
   setDropoutFilteredList(filteredSelection: string) {
+    this.router.navigate(['/child'], {queryParams: {filteredlist:filteredSelection, filteredcenter:this.centerFilterSelection}});
     if (filteredSelection === 'current') {
       this.filterFunctionDropout = (c) => c.isActive();
     } else if (filteredSelection === 'dropouts') {
@@ -112,23 +132,26 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   }
 
   setCenterFilteredList(filteredSelection: string) {
-    if (filteredSelection === '') {
-      this.filterFunctionCenter = (c: Child) => true;
+    console.log(filteredSelection);
+    this.router.navigate(['/child'], {queryParams: {filteredcenter:filteredSelection, filteredlist:this.dropoutFilterSelection}});
+    if (filteredSelection === undefined) {
+      filteredSelection='All'
+      this.router.navigate(['/child'], {queryParams: {filteredcenter:filteredSelection, filteredlist:this.dropoutFilterSelection}});
+      this.filterFunctionCenter = (c: Child) => c.center===filteredSelection;
     } else {
+      console.log('Aasf');
       this.filterFunctionCenter = (c: Child) => c.center === filteredSelection;
     }
-
-    this.applyFilterGroups();
+   this.applyFilterGroups();
   }
 
   addChildClick() {
     let route: string;
     route = this.router.url + '/new';
-    this.router.navigate([route]);
   }
 
 
   showChildDetails(child: Child) {
-    this.router.navigate(['/child', child.getId()]);
+      this.router.navigate(['/child', child.getId()]);
   }
 }
