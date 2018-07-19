@@ -14,7 +14,6 @@ Raven
 export class LoggingService {
 
   constructor() {
-    Raven.captureMessage('Logging Service up and running!', {level: 'debug'})
   }
 
   public log(message: string, logLevel: LogLevel) {
@@ -22,7 +21,7 @@ export class LoggingService {
     options = {};
     options.level = this.translateLogLevel(logLevel);
 
-    Raven.captureMessage(message, options);
+    this.ravenCaptureMessage(message, options);
   }
 
   public debug(message: string) {
@@ -60,5 +59,10 @@ export class LoggingService {
     }
 
     return retVal;
+  }
+
+  protected ravenCaptureMessage(message: string,
+                                options: RavenOptions) {
+    Raven.captureMessage(message, options);
   }
 }

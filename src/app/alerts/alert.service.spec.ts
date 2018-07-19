@@ -17,7 +17,6 @@
 
 import {AlertService} from './alert.service';
 import {Alert} from './alert';
-import {RavenOptions} from 'raven-js';
 import {LogLevel} from '../logging/log-level';
 import {LoggingService} from '../logging/logging.service';
 
