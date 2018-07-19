@@ -19,18 +19,32 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import {MatCardModule, MatIconModule} from '@angular/material';
+import {
+  MatButtonModule,
+  MatCardModule,
+  MatFormFieldModule,
+  MatIconModule,
+  MatInputModule,
+  MatProgressBarModule
+} from '@angular/material';
 import {ChildrenModule} from '../children/children.module';
+import { ProgressDashboardComponent } from './progress-dashboard/progress-dashboard.component';
+import {FormsModule} from '@angular/forms';
 
 @NgModule({
   imports: [
     CommonModule,
+    FormsModule,
     FlexLayoutModule,
     MatCardModule,
     MatIconModule,
+    MatButtonModule,
+    MatProgressBarModule,
+    MatInputModule,
+    MatFormFieldModule,
     ChildrenModule,
   ],
-  declarations: [DashboardComponent]
+  declarations: [DashboardComponent, ProgressDashboardComponent]
 })
 export class DashboardModule {
 }

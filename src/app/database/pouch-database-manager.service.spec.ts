@@ -31,6 +31,7 @@ describe('PouchDatabaseManagerService', () => {
         outdated_threshold_days: 0
       },
       version: 'x',
+      site_name: '',
       dev: { useRemoteDatabaseDuringDevelopment: false },
     };
     dbManager = new PouchDatabaseManagerService(new AlertService(null, null));

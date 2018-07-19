@@ -2,15 +2,17 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {ConfirmationDialogComponent} from './confirmation-dialog/confirmation-dialog.component';
 import {
+  MatAutocompleteModule,
   MatButtonModule,
   MatDialogModule,
   MatIconModule,
   MatInputModule,
-  MatSelectModule, MatSnackBarModule,
+  MatSelectModule, MatSnackBarModule, MatSortModule,
   MatTableModule
 } from '@angular/material';
 import {ConfirmationDialogService} from './confirmation-dialog/confirmation-dialog.service';
 import { EntitySubrecordComponent } from './entity-subrecord/entity-subrecord.component';
+import { KeysPipe } from './keys-pipe/keys.pipe';
 
 @NgModule({
   imports: [
@@ -22,9 +24,11 @@ import { EntitySubrecordComponent } from './entity-subrecord/entity-subrecord.co
     MatSelectModule,
     MatIconModule,
     MatSnackBarModule,
+    MatSortModule,
+    MatAutocompleteModule,
   ],
-  declarations: [ConfirmationDialogComponent, EntitySubrecordComponent],
-  exports: [EntitySubrecordComponent],
+  declarations: [ConfirmationDialogComponent, EntitySubrecordComponent, KeysPipe],
+  exports: [EntitySubrecordComponent, KeysPipe],
   providers: [ConfirmationDialogService],
   entryComponents: [ConfirmationDialogComponent],
 })
