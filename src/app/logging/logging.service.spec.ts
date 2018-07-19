@@ -15,55 +15,47 @@ class LoggingServiceRavenMock extends LoggingService {
   }
 }
 
+
 describe('LoggingService', () => {
+  const testMessage = 'FANCY_TEST_MESSAGE';
+
   let loggingService: LoggingServiceRavenMock;
   beforeEach(() => {
     loggingService = new LoggingServiceRavenMock();
   });
+
+  function checkReceivedLogMessage(level: Raven.LogLevel) {
+    const receivedLogRequest = loggingService.latestRavenCalls.pop();
+    expect(receivedLogRequest[0]).toEqual(testMessage);
+    expect(receivedLogRequest[1].level).toEqual(level);
+  }
 
   it('should be created', () => {
     expect(loggingService).toBeTruthy();
   });
 
   it('should log a debug message', function () {
-    const message = 'Debug Message';
-    loggingService.debug(message);
+    loggingService.debug(testMessage);
 
-    const receivedLogRequest = loggingService.latestRavenCalls.pop();
-
-    expect(receivedLogRequest[0]).toEqual(message);
-    expect(receivedLogRequest[1].level).toEqual('debug');
+    checkReceivedLogMessage('debug');
   });
 
   it('should log a info message', function () {
-    const message = 'Info Message';
-    loggingService.info(message);
+    loggingService.info(testMessage);
 
-    const receivedLogRequest = loggingService.latestRavenCalls.pop();
-
-    expect(receivedLogRequest[0]).toEqual(message);
-    expect(receivedLogRequest[1].level).toEqual('info');
+    checkReceivedLogMessage('info');
   });
 
   it('should log a warn message', function () {
-    const message = 'Warn Message';
-    loggingService.warn(message);
+    loggingService.warn(testMessage);
 
-    const receivedLogRequest = loggingService.latestRavenCalls.pop();
-
-    expect(receivedLogRequest[0]).toEqual(message);
-    expect(receivedLogRequest[1].level).toEqual('warn');
+    checkReceivedLogMessage('warn');
   });
 
 
   it('should log a error message', function () {
-    const message = 'Error Message';
-    loggingService.error(message);
+    loggingService.error(testMessage);
 
-    const receivedLogRequest = loggingService.latestRavenCalls.pop();
-
-    expect(receivedLogRequest[0]).toEqual(message);
-    expect(receivedLogRequest[1].level).toEqual('error');
+    checkReceivedLogMessage('error');
   });
-
 });
