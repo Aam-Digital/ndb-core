@@ -52,6 +52,14 @@ describe('AlertService', () => {
     alertService = new AlertService(snackBarMock, loggingService);
   });
 
+  it('add debug alert', function () {
+    const message = 'debug alert';
+    alertService.addDebug(message);
+
+    expect(alertService.alerts[0].message).toEqual(message);
+    expect(alertService.alerts[0].type).toEqual('debug');
+  });
+
   it('add info alert', function () {
     const message = 'info alert';
     alertService.addInfo(message);
