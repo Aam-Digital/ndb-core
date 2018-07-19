@@ -21,6 +21,23 @@ import {RavenOptions} from 'raven-js';
 import {LogLevel} from '../logging/log-level';
 import {LoggingService} from '../logging/logging.service';
 
+class MockLoggingService extends LoggingService {
+  public log(message: string, logLevel: LogLevel) {
+  }
+
+  public debug(message: string) {
+  }
+
+  public info(message: string) {
+  }
+
+  public warn(message: string) {
+  }
+
+  public error(message: string) {
+  }
+}
+
 describe('AlertService', () => {
   let alertService: AlertService;
   let snackBarMock;
@@ -30,7 +47,6 @@ describe('AlertService', () => {
     snackBarMock = {
       openFromComponent: function (component, config) {
       },
-
     }
     ;
     alertService = new AlertService(snackBarMock, loggingService);
@@ -77,20 +93,3 @@ describe('AlertService', () => {
   });
 });
 
-
-class MockLoggingService extends LoggingService {
-  public log(message: string, logLevel: LogLevel) {
-  }
-
-  public debug(message: string) {
-  }
-
-  public info(message: string) {
-  }
-
-  public warn(message: string) {
-  }
-
-  public error(message: string) {
-  }
-}
