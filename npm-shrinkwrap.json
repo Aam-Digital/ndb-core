@@ -1,6 +1,6 @@
 {
   "name": "ndb-core",
-  "version": "0.0.0",
+  "version": "0.1.1",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -11650,6 +11650,19 @@
       "integrity": "sha1-yobR/ogoFpsBICCOPchCS524NCw=",
       "dev": true
     },
+    "ng-drag-drop": {
+      "version": "5.0.0",
+      "resolved": "https://registry.npmjs.org/ng-drag-drop/-/ng-drag-drop-5.0.0.tgz",
+      "integrity": "sha1-rsRIMRQ6CVEC3CRQX3EqyInDuYw="
+    },
+    "ngx-filter-pipe": {
+      "version": "2.1.0",
+      "resolved": "https://registry.npmjs.org/ngx-filter-pipe/-/ngx-filter-pipe-2.1.0.tgz",
+      "integrity": "sha512-VtggKAtmWXi6wL32GBs0/Ko+4WaOAfNbP7CkGYIiZ8gu/0aNE+oA7FGc40MvnE+aeukiBBRlzVJ8VINkfTd9xw==",
+      "requires": {
+        "tslib": "1.9.0"
+      }
+    },
     "ngx-papaparse": {
       "version": "2.1.4",
       "resolved": "https://registry.npmjs.org/ngx-papaparse/-/ngx-papaparse-2.1.4.tgz",
@@ -16619,6 +16632,11 @@
           }
         }
       }
+    },
+    "uniqid": {
+      "version": "5.0.3",
+      "resolved": "https://registry.npmjs.org/uniqid/-/uniqid-5.0.3.tgz",
+      "integrity": "sha512-R2qx3X/LYWSdGRaluio4dYrPXAJACTqyUjuyXHoJLBUOIfmMcnYOyY2d6Y4clZcIz5lK6ZaI0Zzmm0cPfsIqzQ=="
     },
     "unique-filename": {
       "version": "1.1.0",

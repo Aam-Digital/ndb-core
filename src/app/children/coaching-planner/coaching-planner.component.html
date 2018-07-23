@@ -1,0 +1,25 @@
+<h1>
+  Coaching Planner
+</h1>
+
+<div fxLayout='row' fxLayoutGap='10px'>
+  <div fxFlex='30' class='coaching-container' *ngFor='let container of containers'
+       droppable (onDrop)="doDrop($event, container)">
+
+    <p>{{(children | filterBy: {'container': container})?.length}} students</p>
+
+    <mat-card *ngFor="let child of children | filterBy: {'container': container}" draggable [dragData]='child'>
+      <mat-card-header>
+        <app-child-block [entity]='child'></app-child-block>
+      </mat-card-header>
+      <mat-card-content>
+        <p>class {{child.schoolClass}}, {{child.getAge()}} years</p>
+        <p><app-aser-block [entity]='child.lastAser'></app-aser-block></p>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+  <div fxFlex='10' droppable (onDrop)='doDrop($event, "")' class='coaching-container-hide'>
+
+  </div>
+</div>

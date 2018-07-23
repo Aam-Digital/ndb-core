@@ -52,7 +52,10 @@ import { ChildSelectComponent } from './child-select/child-select.component';
 import {SchoolsModule} from '../schools/schools.module';
 import { EducationalMaterialComponent } from './educational-material/educational-material.component';
 import {AserComponent} from './aser/aser.component';
+import { CoachingPlannerComponent } from './coaching-planner/coaching-planner.component';
 import { AserBlockComponent } from './aser/aser-block/aser-block.component';
+import {NgDragDropModule} from 'ng-drag-drop';
+import {FilterPipeModule} from 'ngx-filter-pipe';
 
 
 @NgModule({
@@ -77,6 +80,8 @@ import { AserBlockComponent } from './aser/aser-block/aser-block.component';
     MatDialogModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
+    NgDragDropModule.forRoot(),
+    FilterPipeModule,
     UiHelperModule,
     SchoolsModule,
   ],
@@ -94,6 +99,7 @@ import { AserBlockComponent } from './aser/aser-block/aser-block.component';
     ChildSelectComponent,
     EducationalMaterialComponent,
     AserComponent,
+    CoachingPlannerComponent,
     AserBlockComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],

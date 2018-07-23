@@ -82,4 +82,25 @@ export class Child extends Entity {
     return this.name;
   }
 
+  getClassAsNumber() {
+    if (this.schoolClass === undefined || this.schoolClass === '') {
+      return undefined;
+    }
+
+    if (this.schoolClass.toUpperCase().startsWith('KG')) {
+      return 0;
+    } else {
+      return parseInt(this.schoolClass, 10);
+    }
+  }
+
+
+
+  public load(data: any) {
+    if (data.schoolClass !== undefined) {
+      data.schoolClass = data.schoolClass.toString();
+    }
+
+    return super.load(data);
+  }
 }
