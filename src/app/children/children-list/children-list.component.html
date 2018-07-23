@@ -29,15 +29,12 @@
       <mat-button-toggle value="status" (click)="displayColumnGroup('status')">Status</mat-button-toggle>
     </mat-button-toggle-group>
 
-    <mat-button-toggle-group name="dropoutFilterSelection" [(value)]="dropoutFilterSelection">
-      <mat-button-toggle value="current" (click)="setDropoutFilteredList('current')">Current Project Children</mat-button-toggle>
-      <mat-button-toggle value="dropouts" (click)="setDropoutFilteredList('dropouts')">Dropouts</mat-button-toggle>
-      <mat-button-toggle value="" (click)="setDropoutFilteredList('')">All</mat-button-toggle>
-    </mat-button-toggle-group>
-
-    <mat-button-toggle-group name="centerFilterSelection" [(value)]="centerFilterSelection">
-      <mat-button-toggle *ngFor='let center of centers' [value]="center" (click)="setCenterFilteredList(center)">{{center}}</mat-button-toggle>
-      <mat-button-toggle value="" (click)="setCenterFilteredList('')">All</mat-button-toggle>
+    <mat-button-toggle-group *ngFor='let filterSelection of filterSelections'
+      [name]="filterSelection.name" [value]='filterSelection.selectedOption'>
+      <mat-button-toggle *ngFor='let option of filterSelection.options' [value]="option.key"
+                         (click)='filterSelection.selectedOption=option.key; updateFilterSelections();'>
+        {{option.label}}
+      </mat-button-toggle>
     </mat-button-toggle-group>
   </div>
 </mat-expansion-panel>
