@@ -46,7 +46,6 @@ export class Aser extends Entity {
   math = '';
   remarks = '';
 
-
   static isReadingPassedOrNA(level: string) {
     if (level === '' || level === undefined) {
       // not applicable
@@ -76,6 +75,37 @@ export class Aser extends Entity {
       data.date = new Date(data.date);
     }
 
+    if (data.english === 'Read Story') {
+      data.english = 'Read Paragraph';
+    }
+    if (data.hindi === 'Read Story') {
+      data.hindi = 'Read Paragraph';
+    }
+    if (data.bengali === 'Read Story') {
+      data.bengali = 'Read Paragraph';
+    }
+    if (data.english === 'Read Sentences') {
+      data.english = 'Read Sentence';
+    }
+    if (data.hindi === 'Read Sentences') {
+      data.hindi = 'Read Sentence';
+    }
+    if (data.bengali === 'Read Sentences') {
+      data.bengali = 'Read Sentence';
+    }
+    if (data.english === 'Read Nothing') {
+      data.english = 'Nothing';
+    }
+    if (data.hindi === 'Read Nothing') {
+      data.hindi = 'Nothing';
+    }
+    if (data.bengali === 'Read Nothing') {
+      data.bengali = 'Nothing';
+    }
+    if (data.math === 'Subraction') {
+      data.math = 'Subtraction';
+    }
+
     return super.load(data);
   }
 
@@ -91,6 +121,36 @@ export class Aser extends Entity {
     }
 
     return warningLevel;
+  }
+
+
+  getWarningLevelReading (level): WarningLevel {
+    switch (level) {
+      case Aser.ReadingLevels[0]:
+        return WarningLevel.URGENT;
+      case Aser.ReadingLevels[1]:
+        return WarningLevel.URGENT;
+      case Aser.ReadingLevels[2]:
+        return WarningLevel.WARNING;
+      case Aser.ReadingLevels[3]:
+        return WarningLevel.WARNING;
+      case Aser.ReadingLevels[4]:
+        return WarningLevel.OK;
+    }
+  }
+  getWarningLevelMath (level): WarningLevel {
+    switch (level) {
+      case Aser.MathLevels[0]:
+        return WarningLevel.URGENT;
+      case Aser.MathLevels[1]:
+        return WarningLevel.URGENT;
+      case Aser.MathLevels[2]:
+        return WarningLevel.URGENT;
+      case Aser.MathLevels[3]:
+        return WarningLevel.WARNING;
+      case Aser.MathLevels[4]:
+        return WarningLevel.OK;
+    }
   }
 
 }
