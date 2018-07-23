@@ -13,7 +13,7 @@ import { EntityMapperService } from '../../entity/entity-mapper.service';
   styleUrls: ['./children-list.component.scss']
 })
 export class ChildrenListComponent implements OnInit, AfterViewInit {
-  childrenList: Child[];
+  childrenList = new Array<Child>();
   attendanceList = new Map<string, AttendanceMonth[]>();
   childrenDataSource = new MatTableDataSource();
   centers: string[];
