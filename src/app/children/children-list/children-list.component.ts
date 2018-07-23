@@ -4,7 +4,6 @@ import {MatSort, MatTableDataSource} from '@angular/material';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ChildrenService} from '../children.service';
 import {AttendanceMonth} from '../attendance/attendance-month';
-import { PlatformLocation } from '@angular/common';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
 
 @Component({
@@ -28,9 +27,9 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   };
   columnsToDisplay: ['pn', 'name'];
 
-  filterString;
-  dropoutFilterSelection;
-  centerFilterSelection;
+  filterString = '';
+  dropoutFilterSelection = '';
+  centerFilterSelection = '';
   filterFunctionDropout: (c: Child) => boolean = (c: Child) => true;
   filterFunctionCenter: (c: Child) => boolean = (c: Child) => true;
 
@@ -38,14 +37,38 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   constructor(private childrenService: ChildrenService,
               private router: Router,
               private route: ActivatedRoute,
-              private entityMapper: EntityMapperService,
-              location: PlatformLocation) {
- 
-    this.dropoutFilterSelection='';
-    this.centerFilterSelection='';
-    this.filterString='';          
+              private entityMapper: EntityMapperService) {  }
+
+  ngOnInit() {
+    this.loadData();
+
+    console.log("OnInit")
+
+    this.loadUrlParams();
+  }
 
 
+  private loadUrlParams() {
+    // TODO: also encode in / retrieve from URL
+    this.displayColumnGroup(this.columnGroupSelection);
+
+    this.route.queryParams.subscribe(params => {
+      console.log(this.router.url);
+      this.dropoutFilterSelection = params['filteredlist'];
+      console.log(this.dropoutFilterSelection);
+      this.centerFilterSelection = params['filteredcenter'];
+      console.log(this.centerFilterSelection);
+      this.setDropoutFilteredList(this.dropoutFilterSelection);
+      this.setCenterFilteredList(this.centerFilterSelection);
+    });
+  }
+
+  ngAfterViewInit() {
+    this.childrenDataSource.sort = this.sort;
+  }
+
+
+  private loadData() {
     this.childrenService.getChildren().subscribe(data => {
       this.childrenList = data;
       this.childrenDataSource.data = data;
@@ -55,29 +78,6 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
     this.childrenService.getAttendances()
       .subscribe(results => this.prepareAttendanceData(results));
-  }
-
-  ngOnInit() {
-    
-    this.entityMapper.loadType<Child>(Child).then(childrenList => this.childrenList=childrenList);
-    console.log("OnInit")
-    this.displayColumnGroup(this.columnGroupSelection);
-      this.route.queryParams.subscribe(params => {
-        console.log(this.router.url);
-        this.dropoutFilterSelection = params['filteredlist'];
-        console.log(this.dropoutFilterSelection);
-        this.centerFilterSelection = params['filteredcenter'];
-        console.log(this.centerFilterSelection);
-        this.setDropoutFilteredList(this.dropoutFilterSelection);
-        this.setCenterFilteredList(this.centerFilterSelection);
-      });
-
-
-  }
-
-
-  ngAfterViewInit() {
-    this.childrenDataSource.sort = this.sort;
   }
 
 
