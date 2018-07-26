@@ -16,38 +16,7 @@ export class EducationalMaterialComponent implements OnInit {
   childId: string;
   records: Array<EducationalMaterial>;
 
-  materialTypes = [
-    'pencil',
-    'eraser',
-    'sharpener',
-    'pen (black)',
-    'pen (blue)',
-    'oil pastels',
-    'crayons',
-    'sketch pens',
-    'scale (big)',
-    'scale (small)',
-    'geometry box',
-    'copy (single line, small)',
-    'copy (single line, big)',
-    'copy (four line)',
-    'copy (squared)',
-    'copy (plain)',
-    'copy (line-plain)',
-    'copy (drawing)',
-    'copy (practical)',
-    'graph book',
-    'project papers',
-    'project file',
-    'scrap book',
-    'exam board',
-    'Bag',
-    'School Uniform',
-    'School Shoes',
-    'Sports Dress',
-    'Sports Shoes',
-    'Raincoat',
-  ];
+  materialTypes = EducationalMaterial.MATERIAL_ALL;
 
   columns: Array<ColumnDescription> = [
     new ColumnDescription('date', 'Date', 'date', null,
