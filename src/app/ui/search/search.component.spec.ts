@@ -10,13 +10,14 @@ import {PouchDatabase} from '../../database/pouch-database';
 import PouchDB from 'pouchdb';
 import {ChildrenModule} from '../../children/children.module';
 import {SchoolsModule} from '../../schools/schools.module';
+import {AlertService} from '../../alerts/alert.service';
 
 describe('SearchComponent', () => {
   let component: SearchComponent;
   let fixture: ComponentFixture<SearchComponent>;
 
   beforeEach(async(() => {
-    const pouchDB = new PouchDatabase(new PouchDB('unit-test-search'));
+    const pouchDB = new PouchDatabase(new PouchDB('unit-test-search'), new AlertService(null));
 
     TestBed.configureTestingModule({
       imports: [MatIconModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule,

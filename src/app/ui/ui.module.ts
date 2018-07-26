@@ -33,6 +33,7 @@ import {FormsModule} from '@angular/forms';
 import {ChildrenModule} from '../children/children.module';
 import {SchoolsModule} from '../schools/schools.module';
 import {FlexLayoutModule} from '@angular/flex-layout';
+import { PrimaryActionComponent } from './primary-action/primary-action.component';
 
 @NgModule({
   imports: [
@@ -54,7 +55,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     ChildrenModule,
     SchoolsModule,
   ],
-  declarations: [SearchComponent, UiComponent],
+  declarations: [SearchComponent, UiComponent, PrimaryActionComponent],
   exports: [UiComponent]
 })
 export class UiModule {

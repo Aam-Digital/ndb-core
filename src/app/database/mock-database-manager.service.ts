@@ -38,7 +38,7 @@ export class MockDatabaseManagerService extends DatabaseManagerService {
 
     const a1 = new Child('1');
     a1.name = 'Max Meyer';
-    a1.pn = '1';
+    a1.projectNumber = '1';
     a1.religion = 'Christian';
     a1.gender = Gender.MALE;
     a1.dateOfBirth = new Date('2000-03-01');
@@ -48,7 +48,7 @@ export class MockDatabaseManagerService extends DatabaseManagerService {
 
     const a2 = new Child('2');
     a2.name = 'Sonia Parveen';
-    a2.pn = '23';
+    a2.projectNumber = '23';
     a2.religion = 'Hindu';
     a2.gender = Gender.FEMALE;
     a2.dateOfBirth = new Date('2001-01-01');

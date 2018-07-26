@@ -5,6 +5,8 @@ import {EntityMapperService} from '../entity/entity-mapper.service';
 import {AttendanceMonth} from './attendance/attendance-month';
 import {Database} from '../database/database';
 import {Note} from './notes/note';
+import {EducationalMaterial} from './educational-material/educational-material';
+import {Aser} from './aser/aser';
 
 @Injectable()
 export class ChildrenService {
@@ -71,9 +73,10 @@ export class ChildrenService {
 
   private getAverageAttendanceMapFunction () {
     return '(doc) => {' +
-      'if (!doc._id.startsWith("AttendanceMonth:")) { return; }' +
+      'if (!doc._id.startsWith("AttendanceMonth:") ) { return; }' +
       'if (!isWithinLast3Months(new Date(doc.month), new Date())) { return; }' +
-      'emit(doc.student, doc.daysAttended / (doc.daysWorking - doc.daysExcused));' +
+      'var attendance = (doc.daysAttended / (doc.daysWorking - doc.daysExcused));' +
+      'if (!isNaN(attendance)) { emit(doc.student, attendance); }' +
       'function isWithinLast3Months(date, now) {' +
       '  let months;' +
       '  months = (now.getFullYear() - date.getFullYear()) * 12;' +
@@ -89,7 +92,8 @@ export class ChildrenService {
     return '(doc) => {' +
       'if (!doc._id.startsWith("AttendanceMonth:")) { return; }' +
       'if (!isWithinLastMonth(new Date(doc.month), new Date())) { return; }' +
-      'emit(doc.student, doc.daysAttended / (doc.daysWorking - doc.daysExcused));' +
+      'var attendance = (doc.daysAttended / (doc.daysWorking - doc.daysExcused));' +
+      'if (!isNaN(attendance)) { emit(doc.student, attendance); }' +
       'function isWithinLastMonth(date, now) {' +
       '  let months;' +
       '  months = (now.getFullYear() - date.getFullYear()) * 12;' +
@@ -108,8 +112,8 @@ export class ChildrenService {
     const promise = this.db.query('notes_index/by_child', {key: childId, include_docs: true})
       .then(loadedEntities => {
         return loadedEntities.rows.map(loadedRecord => {
-          let entity = new Note('');
-          entity = Object.assign(entity, loadedRecord.doc);
+          const entity = new Note('');
+          entity.load(loadedRecord.doc);
           return entity;
         });
       });
@@ -131,6 +135,28 @@ export class ChildrenService {
     };
 
     return this.db.saveDatabaseIndex(designDoc);
+  }
+
+
+
+
+
+  getEducationalMaterialsOfChild(childId: string): Observable<EducationalMaterial[]> {
+    return Observable.fromPromise(
+      this.entityMapper.loadType<EducationalMaterial>(EducationalMaterial)
+        .then(loadedEntities => {
+          return loadedEntities.filter(o => o.child === childId);
+        })
+    );
+  }
+
+  getAserResultsOfChild(childId: string): Observable<Aser[]> {
+    return Observable.fromPromise(
+      this.entityMapper.loadType<Aser>(Aser)
+        .then(loadedEntities => {
+          return loadedEntities.filter(o => o.child === childId);
+        })
+    );
   }
 
 }

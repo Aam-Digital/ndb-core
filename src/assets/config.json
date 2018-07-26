@@ -1,5 +1,6 @@
 {
-  "version": "2.0.14",
+  "version": "2.1.4",
+  "site_name": "Aam Digital - DEV",
 
   "database": {
     "name": "dev",

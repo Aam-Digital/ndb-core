@@ -19,10 +19,18 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import {ChangelogComponent} from './changelog.component';
 import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material';
+import {LatestChangesService} from '../latest-changes.service';
+import {Observable} from 'rxjs/Observable';
+import {Changelog} from '../changelog';
 
 describe('ChangelogComponent', () => {
   let component: ChangelogComponent;
   let fixture: ComponentFixture<ChangelogComponent>;
+
+  const testChangelog = new Changelog();
+  testChangelog.name = 'test name';
+  testChangelog.body = 'test changes body';
+  testChangelog.published_at = '2018-01-01';
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -30,7 +38,8 @@ describe('ChangelogComponent', () => {
       imports: [MatDialogModule],
       providers: [
         {provide: MatDialogRef, useValue: {}},
-        {provide: MAT_DIALOG_DATA, useValue: {}}
+        {provide: MAT_DIALOG_DATA, useValue: {}},
+        {provide: LatestChangesService, useValue: { getChangelog: () => Observable.of([testChangelog]) } },
         ],
     })
       .compileComponents();

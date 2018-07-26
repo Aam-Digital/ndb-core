@@ -20,54 +20,66 @@ import { Gender} from './Gender';
 
 
 export class Child extends Entity {
-  protected static ENTITY_TYPE = 'Child';
+  static ENTITY_TYPE = 'Child';
 
-  name = '';
-  pn = ''; // project number
-
-  center = 'N/A';
-  status = '';
-  school: any;
-  grade = '99';
-
-  religion: string;
+  name: string;
+  projectNumber: string; // project number
   gender: Gender; // M or F
   dateOfBirth: Date;
-  motherTongue: string;
-  admission: string;
-  placeOfBirth: string;
-  birthCertificate: string;
-  currentStatus: {
-    projectStatus: string;
-    socialworker: string;
-    address: {
-      text: string;
-      visit: string;
-      villageAddress: string;
-    }
-  };
-  remarks: string; // could also be a feed with text blocks
-  address: {
-    street: string;
-    housename: string;
-    district: string;
-    city: string;
-    postcode: string;
-  };
+  motherTongue = '';
+  religion = '';
+
+  center = '';
+  admissionDate: Date;
+  status = '';
+
+  schoolId: string;
+  schoolClass = '';
+
+  address = '';
+  phone = '';
+  guardianName = '';
+  preferredTimeForGuardianMeeting = '';
+
+  aadhar = '';
+
+  dropoutDate: Date;
+  dropoutType: string;
+  dropoutRemarks: string;
+
+  health_vaccinationStatus: string;
+  health_lastDentalCheckup: Date;
+  health_lastEyeCheckup: Date;
+  health_lastENTCheckup: Date;
+  health_eyeHealthStatus: string;
+  health_lastVitaminD: Date;
+  health_lastDeworming: Date;
+
 
   getAge(): number {
-     if (this.dateOfBirth) {
-       const now = new Date();
-       const dateOfBirth = new Date(this.dateOfBirth);
-       const diff = now.getTime() - dateOfBirth.getTime();
-       return Math.floor(diff / (1000 * 3600 * 24 * 365));
+    let age = -1;
+
+   if (this.dateOfBirth) {
+     const now = new Date();
+     const dateOfBirth = new Date(this.dateOfBirth);
+
+     age = now.getFullYear() - dateOfBirth.getFullYear();
+     const m = now.getMonth() - dateOfBirth.getMonth();
+     if (m < 0 || (m === 0 && now.getDate() < dateOfBirth.getDate())) {
+       age--;
      }
-     return -1;
+   }
+
+   return age;
   }
 
   isActive(): boolean {
-    return this.status !== 'dropout';
+    return this.status !== 'Dropout';
   }
 
+
+  public toString() {
+    return this.name;
+  }
 
 }

@@ -32,11 +32,14 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   columnGroupSelection = 'school';
   columnGroups = {
-    'basic': ['pn', 'name', 'age', 'class', 'school', 'center', 'status'],
-    'school': ['pn', 'name', 'age', 'class', 'school', 'attendance'],
-    'status': ['pn', 'name', 'center', 'status'],
+    'basic': ['projectNumber', 'name', 'age', 'gender', 'class', 'school', 'center', 'status'],
+    'school': ['projectNumber', 'name', 'age', 'class', 'school', 'attendance', 'motherTongue'],
+    'status': ['projectNumber', 'name', 'center', 'status', 'aadhar', 'admission'],
+    'health': ['projectNumber', 'name', 'center',
+      'vaccination', 'dentalCheckup', 'eyeCheckup', 'eyeStatus', 'EntCheckup', 'vitaminD', 'deworming',
+      'gender', 'age', 'dateOfBirth'],
   };
-  columnsToDisplay: ['pn', 'name'];
+  columnsToDisplay: ['projectNumber', 'name'];
 
   filterString = '';
 

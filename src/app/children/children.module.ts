@@ -49,6 +49,9 @@ import { AttendanceWarningsDashboardComponent } from './attendance/attendance-wa
 import { NotesComponent } from './notes/notes.component';
 import { NoteDetailsComponent } from './notes/note-details/note-details.component';
 import { ChildSelectComponent } from './child-select/child-select.component';
+import {SchoolsModule} from '../schools/schools.module';
+import { EducationalMaterialComponent } from './educational-material/educational-material.component';
+import {AserComponent} from './aser/aser.component';
 
 
 @NgModule({
@@ -72,8 +75,9 @@ import { ChildSelectComponent } from './child-select/child-select.component';
     MatSnackBarModule,
     MatDialogModule,
     MatAutocompleteModule,
+    ReactiveFormsModule,
     UiHelperModule,
-    ReactiveFormsModule
+    SchoolsModule,
   ],
   declarations: [
     AttendanceBlockComponent,
@@ -87,6 +91,8 @@ import { ChildSelectComponent } from './child-select/child-select.component';
     AttendanceWarningsDashboardComponent,
     NoteDetailsComponent,
     ChildSelectComponent,
+    EducationalMaterialComponent,
+    AserComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
