@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from '../../entity/entity';
+import {Entity} from '../../entity/entity';
 import {WarningLevel} from '../attendance/warning-level';
 
 
@@ -34,6 +34,8 @@ export class Note extends Entity {
     'Talk with Peer',
     'Guardians\' Meeting',
     'Children\'s Meeting',
+    'Daily Routine',
+    'Annual Survey',
   ];
 
   children: string[] = []; // id of Child entity
@@ -54,7 +56,27 @@ export class Note extends Entity {
 
 
   public getColor() {
-    return 'white';
+    if (this.warningLevel === WarningLevel.URGENT) {
+      return '#fd727280';
+    }
+    if (this.warningLevel === WarningLevel.WARNING) {
+      return '#ffa50080';
+    }
+
+    if (this.category === 'Guardians\' Meeting' || this.category === 'Children\'s Meeting') {
+      return '#E1F5FE';
+    }
+    if (this.category === 'Discussion/Decision') {
+      return '#E1BEE7';
+    }
+    if (this.category === 'Annual Survey') {
+      return '#FFFDE7';
+    }
+    if (this.category === 'Daily Routine') {
+      return '#F1F8E9';
+    }
+
+    return '';
   }
 
 
