@@ -8,13 +8,12 @@ import {ChildrenService} from '../children.service';
 
 @Component({
   selector: 'app-educational-material',
-  template: '<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="generateNewRecordFactory()">' +
-  '</app-entity-subrecord>',
+  templateUrl: './educational-material.component.html',
 })
 export class EducationalMaterialComponent implements OnInit {
 
   childId: string;
-  records: Array<EducationalMaterial>;
+  records = new Array<EducationalMaterial>();
 
   materialTypes = EducationalMaterial.MATERIAL_ALL;
 
@@ -62,5 +61,21 @@ export class EducationalMaterialComponent implements OnInit {
 
       return newAtt;
     };
+  }
+
+  getSummary() {
+    if (this.records.length === 0) {
+      return '';
+    }
+
+    const summary = new Map<string, number>();
+    this.records.forEach(m => {
+      const previousValue = summary.has(m.materialType) ? summary.get(m.materialType) : 0;
+      summary.set(m.materialType, previousValue + m.materialAmount);
+    });
+
+    let summaryText = '';
+    summary.forEach((v, k) => summaryText = summaryText + k + ': ' + v + ', ');
+    return summaryText;
   }
 }
