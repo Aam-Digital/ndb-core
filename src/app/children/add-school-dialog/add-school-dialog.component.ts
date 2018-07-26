@@ -1,7 +1,7 @@
 import {Component, Inject} from '@angular/core';
 import {EntityMapperService} from "../../entity/entity-mapper.service";
-import {School} from "../../schools/schoolsShared/school";
 import {ChildSchoolRelation} from "../childSchoolRelation";
+import { School } from "../../schools/school";
 
 import uniqid from 'uniqid';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";

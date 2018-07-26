@@ -98,7 +98,7 @@ import {AserComponent} from './aser/aser.component';
     NoteDetailsComponent,
     ChildSelectComponent,
     AddSchoolDialogComponent,
-    ShowSchoolHistoryDialogComponent
+    ShowSchoolHistoryDialogComponent,
     EducationalMaterialComponent,
     AserComponent,
   ],

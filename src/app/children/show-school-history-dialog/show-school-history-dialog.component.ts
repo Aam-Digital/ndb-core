@@ -2,8 +2,8 @@ import {Component, Inject} from '@angular/core';
 import {EntityMapperService} from "../../entity/entity-mapper.service";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
 import {AddSchoolDialogComponent} from "../add-school-dialog/add-school-dialog.component";
-import {School} from "../../schools/schoolsShared/school";
 import {ChildSchoolRelation} from "../childSchoolRelation";
+import { School } from "../../schools/school";
 
 @Component({
   selector: 'app-show-school-history-dialog',

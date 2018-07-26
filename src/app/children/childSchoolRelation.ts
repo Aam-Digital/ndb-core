@@ -1,7 +1,7 @@
 import {Entity} from "../entity/entity";
 
 export class ChildSchoolRelation extends Entity {
-  protected static ENTITY_TYPE = 'ChildSchoolRelation';
+  static ENTITY_TYPE = 'ChildSchoolRelation';
 
 
   public childId: string;

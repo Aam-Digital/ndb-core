@@ -27,7 +27,6 @@ import {ChildSchoolRelation} from "../childSchoolRelation";
 
 import uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
-import {School} from "../../schools/schoolsShared/school";
 import {AddSchoolDialogComponent} from "../add-school-dialog/add-school-dialog.component";
 import {ShowSchoolHistoryDialogComponent} from "../show-school-history-dialog/show-school-history-dialog.component";
 import {School} from '../../schools/school';
@@ -97,7 +96,7 @@ export class ChildDetailsComponent implements OnInit {
               private router: Router,
               private snackBar: MatSnackBar,
               private confirmationDialog: ConfirmationDialogService,
-              private alertService: AlertService) {
+              private alertService: AlertService, private dialog: MatDialog) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
