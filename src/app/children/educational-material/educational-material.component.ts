@@ -85,7 +85,10 @@ export class EducationalMaterialComponent implements OnInit {
 
     return () => {
       const newAtt = new EducationalMaterial(Date.now().toString());
-      newAtt.date = new Date();
+
+      // use last entered date as default, otherwise today's date
+      newAtt.date = this.records.length > 0 ? this.records[0].date : new Date();
+
       newAtt.child = child;
 
       return newAtt;
