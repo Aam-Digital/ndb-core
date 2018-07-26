@@ -53,6 +53,11 @@ export class Note extends Entity {
   }
 
 
+  public getColor() {
+    return 'white';
+  }
+
+
   public load(data: any) {
     if (data.date === undefined) {
       data.date = new Date();

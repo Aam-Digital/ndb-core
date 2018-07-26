@@ -52,6 +52,7 @@ import { ChildSelectComponent } from './child-select/child-select.component';
 import {SchoolsModule} from '../schools/schools.module';
 import { EducationalMaterialComponent } from './educational-material/educational-material.component';
 import {AserComponent} from './aser/aser.component';
+import { NotesManagerComponent } from './notes/notes-manager/notes-manager.component';
 
 
 @NgModule({
@@ -93,6 +94,7 @@ import {AserComponent} from './aser/aser.component';
     ChildSelectComponent,
     EducationalMaterialComponent,
     AserComponent,
+    NotesManagerComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
