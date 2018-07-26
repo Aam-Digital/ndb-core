@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {AttendanceMonth} from '../attendance-month';
 import {ChildrenService} from '../../children.service';
@@ -15,6 +15,9 @@ export class ChildAttendanceComponent implements OnInit {
 
   childId: string;
   records: Array<AttendanceMonth>;
+
+  @Input() institution: string;
+
 
   columns: Array<ColumnDescription> = [
     new ColumnDescription('month', 'Month', 'month', null,
@@ -35,10 +38,19 @@ export class ChildAttendanceComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.childId = this.route.snapshot.params['id'].toString();
+    this.route.paramMap.subscribe(params => {
+      this.childId = params.get('id').toString();
+      this.loadData(this.childId);
+    });
+  }
 
-    this.childrenService.getAttendancesOfChild(this.childId)
-      .subscribe(results => this.records = results);
+  loadData(id: string) {
+    this.childrenService.getAttendancesOfChild(id)
+      .subscribe(results => {
+        this.records = results
+          .filter(r => this.institution === undefined || r.institution === this.institution)
+          .sort((a, b) => b.month.valueOf() - a.month.valueOf())
+      });
   }
 
 
@@ -50,6 +62,7 @@ export class ChildAttendanceComponent implements OnInit {
       const newAtt = new AttendanceMonth(Date.now().toString()); // TODO: logical way to assign entityId to Attendance?
       newAtt.month = new Date();
       newAtt.student = child;
+      newAtt.institution = this.institution;
 
       return newAtt;
     };

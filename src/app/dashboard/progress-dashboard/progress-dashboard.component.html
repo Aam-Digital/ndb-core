@@ -1,0 +1,66 @@
+<mat-card class="dashboard">
+  <mat-card-header class="app-child">
+    <div mat-card-avatar>
+      <mat-icon fontIcon="fa-list"></mat-icon>
+    </div>
+    <mat-card-title>{{ data.getTotalPercentage() | percent:'1.0-0'}}</mat-card-title>
+    <mat-card-subtitle>{{data.title}}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content style="margin:-24px;">
+    <table class="dashboard-table">
+      <tr *ngFor="let entry of data.parts" class="dashboard-table-row">
+        <td class="dashboard-table-cell">{{entry.label}}</td>
+        <td class="dashboard-table-cell">
+          <mat-progress-bar mode="determinate" [value]="entry.currentValue/entry.targetValue*100" style='width: 100px;'></mat-progress-bar>
+        </td>
+        <td class="dashboard-table-cell">{{entry.currentValue/entry.targetValue | percent:'1.0-0'}}</td>
+        <td class="dashboard-table-cell">{{entry.currentValue}} / {{entry.targetValue}}</td>
+      </tr>
+    </table>
+
+    <div [ngClass]="{'dashboard-config': configure}">
+      <div style='text-align: right;'>
+        <button mat-icon-button (click)='addPart()' *ngIf='configure'>
+          <mat-icon aria-label="add part" fontIcon="fa-plus"></mat-icon>
+        </button>
+        <button mat-icon-button (click)='save()' *ngIf='configure'>
+          <mat-icon aria-label="save" fontIcon="fa-check"></mat-icon>
+        </button>
+        <button mat-icon-button (click)='configure=true' *ngIf='!configure'>
+          <mat-icon aria-label="configure" fontIcon="fa-wrench"></mat-icon>
+        </button>
+      </div>
+
+      <div class="dashboard-table-cell" *ngIf='configure'>
+        <mat-form-field>
+          <input matInput type="text" placeholder="Title" [value]="data.title" (input)='data.title=$event.target.value'>
+        </mat-form-field>
+      </div>
+
+      <table class="dashboard-table" *ngIf='configure'>
+        <tr *ngFor="let entry of data.parts; let i = index" class="dashboard-table-row">
+          <td class="dashboard-table-cell">
+            <mat-form-field style='width: 100px;'>
+              <input matInput type="text" placeholder="Label" [value]="entry.label" (input)="entry.label=$event.target.value">
+            </mat-form-field>
+          </td>
+          <td class="dashboard-table-cell">
+            <mat-form-field style='width: 40px;'>
+              <input matInput type="number" placeholder="Current" [value]="entry.currentValue" (change)="entry.currentValue=$event.target.valueAsNumber">
+            </mat-form-field>
+          </td>
+          <td class="dashboard-table-cell">
+            <mat-form-field style='width: 40px;'>
+              <input matInput type="number" placeholder="Target"  [value]="entry.targetValue" (change)="entry.targetValue=$event.target.valueAsNumber">
+            </mat-form-field>
+          </td>
+          <td>
+            <button mat-icon-button (click)='parts.splice(i, 1)'>
+              <mat-icon aria-label="remove" fontIcon="fa-trash"></mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>

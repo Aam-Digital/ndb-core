@@ -5,7 +5,7 @@ import {
   MAT_DIALOG_DATA,
   MatAutocompleteModule,
   MatDialogModule, MatDialogRef,
-  MatFormFieldModule,
+  MatFormFieldModule, MatIconModule,
   MatInputModule,
   MatSelectModule
 } from '@angular/material';
@@ -20,6 +20,7 @@ import {MockDatabase} from '../../../database/mock-database';
 import {ChildrenService} from '../../children.service';
 import {WarningLevel} from '../../attendance/warning-level';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {SchoolBlockComponent} from '../../../schools/school-block/school-block.component';
 
 describe('NoteDetailsComponent', () => {
   let component: NoteDetailsComponent;
@@ -37,9 +38,9 @@ describe('NoteDetailsComponent', () => {
     note.children = ['1', '2'];
 
     TestBed.configureTestingModule({
-      declarations: [ NoteDetailsComponent, ChildSelectComponent, ChildBlockComponent ],
+      declarations: [ NoteDetailsComponent, ChildSelectComponent, ChildBlockComponent, SchoolBlockComponent ],
       imports: [MatDialogModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule, MatSelectModule,
-        FormsModule, NoopAnimationsModule,
+        FormsModule, NoopAnimationsModule, MatIconModule,
         UiHelperModule, EntityModule],
       providers: [
         {provide: Database, useClass: MockDatabase},

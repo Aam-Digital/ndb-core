@@ -52,6 +52,9 @@ import { NoteDetailsComponent } from './notes/note-details/note-details.componen
 import { ChildSelectComponent } from './child-select/child-select.component';
 import { AddSchoolDialogComponent } from './add-school-dialog/add-school-dialog.component';
 import { ShowSchoolHistoryDialogComponent } from './show-school-history-dialog/show-school-history-dialog.component';
+import {SchoolsModule} from '../schools/schools.module';
+import { EducationalMaterialComponent } from './educational-material/educational-material.component';
+import {AserComponent} from './aser/aser.component';
 
 
 @NgModule({
@@ -63,6 +66,7 @@ import { ShowSchoolHistoryDialogComponent } from './show-school-history-dialog/s
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
+    MatSelectModule,
     MatExpansionModule,
     MatTableModule,
     MatSortModule,
@@ -74,7 +78,9 @@ import { ShowSchoolHistoryDialogComponent } from './show-school-history-dialog/s
     MatSnackBarModule,
     MatDialogModule,
     MatAutocompleteModule,
+    ReactiveFormsModule,
     UiHelperModule,
+    SchoolsModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatListModule
@@ -93,6 +99,8 @@ import { ShowSchoolHistoryDialogComponent } from './show-school-history-dialog/s
     ChildSelectComponent,
     AddSchoolDialogComponent,
     ShowSchoolHistoryDialogComponent
+    EducationalMaterialComponent,
+    AserComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [

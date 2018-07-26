@@ -34,8 +34,8 @@
 
     <!-- Position Column -->
     <ng-container matColumnDef="id">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> ID </mat-header-cell>
-      <mat-cell *matCellDef="let student"> {{student.id}} </mat-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> PN </mat-header-cell>
+      <mat-cell *matCellDef="let student"> {{student.projectNumber}} </mat-cell>
     </ng-container>
 
     <!-- Name Column -->
@@ -47,10 +47,10 @@
     <!-- Age Column -->
     <ng-container matColumnDef="age">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Age </mat-header-cell>
-      <mat-cell *matCellDef="let student"> {{student.age}} </mat-cell>
+      <mat-cell *matCellDef="let student"> {{student.getAge()}} </mat-cell>
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="studentClick(row.id)"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="studentClick(row.getId())"></mat-row>
   </mat-table>
 </div>

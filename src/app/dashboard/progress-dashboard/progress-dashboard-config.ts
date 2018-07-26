@@ -15,21 +15,19 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { School } from './school';
+import { Entity } from '../../entity/entity';
 
-describe('School', () => {
 
-  it('has ID', function () {
-    const id = 'test1';
-    const entity = new School(id);
+export class ProgressDashboardConfig extends Entity {
+  static ENTITY_TYPE = 'ProgressDashboardConfig';
 
-    expect(entity.getId()).toBe(id);
-  });
+  title = 'Progress Widget';
+  parts = [];
 
-  it('has correct type/prefix', function () {
-    const id = 'test1';
-    const entity = new School(id);
 
-    expect(entity.getType()).toBe('School');
-  });
-});
+  getTotalPercentage() {
+    const currentTotal = this.parts.reduce((acc, entry) => acc + entry.currentValue, 0);
+    const targetTotal = this.parts.reduce((acc, entry) => acc + entry.targetValue, 0);
+    return currentTotal / targetTotal;
+  }
+}

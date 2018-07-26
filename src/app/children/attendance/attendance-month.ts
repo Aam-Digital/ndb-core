@@ -20,7 +20,7 @@ import {WarningLevel} from './warning-level';
 
 
 export class AttendanceMonth extends Entity {
-  protected static ENTITY_TYPE = 'AttendanceMonth';
+  static ENTITY_TYPE = 'AttendanceMonth';
   static readonly THRESHOLD_URGENT = 0.6;
   static readonly THRESHOLD_WARNING = 0.8;
 
@@ -30,6 +30,7 @@ export class AttendanceMonth extends Entity {
   daysAttended: number;
   daysExcused = 0;
   remarks = '';
+  institution: string;
 
   getAttendancePercentage() {
     return this.daysAttended / (this.daysWorking - this.daysExcused);
@@ -44,5 +45,14 @@ export class AttendanceMonth extends Entity {
     } else {
       return WarningLevel.OK;
     }
+  }
+
+
+  public load(data: any) {
+    if (data.month !== undefined && typeof data.month !== typeof new Date()) {
+      data.month = new Date(data.month);
+    }
+
+    return super.load(data);
   }
 }

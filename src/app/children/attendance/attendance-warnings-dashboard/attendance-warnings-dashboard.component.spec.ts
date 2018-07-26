@@ -8,6 +8,7 @@ import {MockDatabase} from '../../../database/mock-database';
 import {Database} from '../../../database/database';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
 import {ChildrenService} from '../../children.service';
+import {SchoolBlockComponent} from '../../../schools/school-block/school-block.component';
 
 describe('AttendanceWarningsDashboardComponent', () => {
   let component: AttendanceWarningsDashboardComponent;
@@ -15,7 +16,7 @@ describe('AttendanceWarningsDashboardComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ChildBlockComponent, AttendanceWarningsDashboardComponent ],
+      declarations: [ ChildBlockComponent, SchoolBlockComponent, AttendanceWarningsDashboardComponent ],
       imports: [MatIconModule, MatCardModule, RouterTestingModule],
       providers: [ChildrenService, EntityMapperService, { provide: Database, useClass: MockDatabase }],
     })

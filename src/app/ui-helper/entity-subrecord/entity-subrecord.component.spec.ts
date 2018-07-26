@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EntitySubrecordComponent } from './entity-subrecord.component';
 import {
+  MatAutocompleteModule,
   MatDialogModule,
   MatFormFieldModule,
   MatIconModule,
@@ -24,7 +25,8 @@ describe('EntitySubrecordComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [ EntitySubrecordComponent ],
-      imports: [MatTableModule, MatFormFieldModule, MatIconModule, MatSnackBarModule, MatSelectModule, MatDialogModule],
+      imports: [MatTableModule, MatFormFieldModule, MatIconModule,
+        MatSnackBarModule, MatSelectModule, MatDialogModule, MatAutocompleteModule],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: ConfirmationDialogService, useClass: ConfirmationDialogService },

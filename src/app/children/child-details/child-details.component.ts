@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, Inject} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {Child} from '../child';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {Gender} from '../Gender';
@@ -30,6 +30,7 @@ import {AlertService} from '../../alerts/alert.service';
 import {School} from "../../schools/schoolsShared/school";
 import {AddSchoolDialogComponent} from "../add-school-dialog/add-school-dialog.component";
 import {ShowSchoolHistoryDialogComponent} from "../show-school-history-dialog/show-school-history-dialog.component";
+import {School} from '../../schools/school';
 
 
 @Component({
@@ -37,7 +38,7 @@ import {ShowSchoolHistoryDialogComponent} from "../show-school-history-dialog/sh
   templateUrl: './child-details.component.html',
   styleUrls: ['./child-details.component.css']
 })
-export class ChildDetailsComponent {
+export class ChildDetailsComponent implements OnInit {
 
   child: Child = new Child('');
   schools: School[] = [];
@@ -48,21 +49,44 @@ export class ChildDetailsComponent {
   gender = Gender;
   visitedSchools: ChildSchoolRelation[] = [];
 
-  transformGendersEnum(): Array<string> {
-    const genders = Object.keys(this.gender);
-    return genders.slice(0, genders.length / 2);
-  }
+  genders = Gender;
+  school = new School('');
+  eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
+  vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
+
 
   initializeForm() {
     this.form = this.fb.group({
-      name:         [{value: this.child.name,         disabled: !this.editing}, Validators.required],
-      gender:       [{value: this.child.gender,       disabled: !this.editing}],
-      project:      [{value: this.child.pn,           disabled: !this.editing}],
-      birthday:     [{value: this.child.dateOfBirth,  disabled: !this.editing}],
-      motherTongue: [{value: this.child.motherTongue, disabled: !this.editing}],
-      admission:    [{value: this.child.admission,    disabled: !this.editing}],
-      religion:     [{value: this.child.religion,     disabled: !this.editing}],
-      schools:       [{value: this.schools,            disabled: !this.editing}]
+      name:           [{value: this.child.name,           disabled: !this.editing}, Validators.required],
+      // gender:         [{value: this.child.gender}], // reactive forms seem broken for mat-select, using ngModel instead
+      projectNumber:  [{value: this.child.projectNumber,  disabled: !this.editing}],
+      dateOfBirth:    [{value: this.child.dateOfBirth,    disabled: !this.editing}],
+      aadhar:         [{value: this.child.aadhar,         disabled: !this.editing}],
+      motherTongue:   [{value: this.child.motherTongue,   disabled: !this.editing}],
+      religion:       [{value: this.child.religion,       disabled: !this.editing}],
+
+      center:         [{value: this.child.center,         disabled: !this.editing}],
+      status:         [{value: this.child.status,         disabled: !this.editing}],
+      admissionDate:  [{value: this.child.admissionDate,  disabled: !this.editing}],
+
+      address:        [{value: this.child.address,        disabled: !this.editing}],
+      phone:          [{value: this.child.phone,          disabled: !this.editing}],
+      guardianName:   [{value: this.child.guardianName,   disabled: !this.editing}],
+      preferredTimeForGuardianMeeting: [{value: this.child.preferredTimeForGuardianMeeting, disabled: !this.editing}],
+
+      schoolClass:    [{value: this.child.schoolClass,    disabled: !this.editing}],
+
+      // health_vaccinationStatus:    [{value: this.child.health_vaccinationStatus,    disabled: !this.editing}],
+      health_lastDentalCheckup:   [{value: this.child.health_lastDentalCheckup,    disabled: !this.editing}],
+      health_lastEyeCheckup:      [{value: this.child.health_lastEyeCheckup, disabled: !this.editing}],
+      // health_eyeHealthStatus:   [{value: this.child.health_eyeHealthStatus,    disabled: !this.editing}],
+      health_lastENTCheckup:      [{value: this.child.health_lastENTCheckup,    disabled: !this.editing}],
+      health_lastVitaminD:        [{value: this.child.health_lastVitaminD, disabled: !this.editing}],
+      health_lastDeworming:       [{value: this.child.health_lastDeworming, disabled: !this.editing}],
+
+      dropoutDate:    [{value: this.child.dropoutDate,    disabled: !this.editing}],
+      dropoutType:    [{value: this.child.dropoutType,    disabled: !this.editing}],
+      dropoutRemarks: [{value: this.child.dropoutRemarks, disabled: !this.editing}],
     });
   }
 
@@ -73,12 +97,13 @@ export class ChildDetailsComponent {
               private router: Router,
               private snackBar: MatSnackBar,
               private confirmationDialog: ConfirmationDialogService,
-              private alertService: AlertService,
-              private dialog: MatDialog) {
+              private alertService: AlertService) {
 
-    this.loadVisitedSchools();
+  ngOnInit() {
+    this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
+  }
 
-    const id = this.route.snapshot.params['id'];
+  loadChild(id: string) {
     if (id === 'new') {
       this.creatingNew = true;
       this.editing = true;
@@ -88,6 +113,11 @@ export class ChildDetailsComponent {
         .then(child => {
           this.child = child;
           this.initializeForm();
+
+          this.entityMapperService.load(School, child.schoolId)
+            .then(school => {
+              this.school = school;
+            });
         });
     }
     this.initializeForm();
@@ -120,14 +150,7 @@ export class ChildDetailsComponent {
   }
 
   save() {
-    this.child.name = this.form.get('name').value;
-    this.child.gender = this.form.get('gender').value;
-    this.child.religion = this.form.get('religion').value;
-    this.child.pn = this.form.get('project').value;
-    this.child.dateOfBirth = this.form.get('birthday').value;
-    this.child.motherTongue = this.form.get('motherTongue').value;
-    this.child.admission = this.form.get('admission').value;
-    this.child.school = this.form.get('school').value.getId();
+    this.assignFormValuesToChild(this.child, this.form);
 
     this.entityMapperService.save<Child>(this.child)
       .then(() => {
@@ -140,6 +163,13 @@ export class ChildDetailsComponent {
 
     let childSchoolRelation: ChildSchoolRelation = new ChildSchoolRelation("ad")
   }
+
+  private assignFormValuesToChild(child: Child, form: FormGroup) {
+    Object.keys(form.controls).forEach(key => {
+      child[key] = form.get(key).value;
+    });
+  }
+
 
   removeChild() {
     const dialogRef = this.confirmationDialog
