@@ -1,137 +1,93 @@
-<h1 class="page-header section-child"><i class="fa fa-child fa-fw"></i> {{ school.name }} [{{ school.id }}]</h1>
+
+<div fxLayout="row" fxLayoutAlign='space-between'>
+  <h1 class="page-header section-school"><i class="fa fa-university fa-fw"></i>
+    <span *ngIf="!creatingNew">{{ school.name }}</span>
+    <span *ngIf="creatingNew">Adding new School</span>
+  </h1>
+
+  <div>
+    <button *ngIf="creatingNew || editing" mat-stroked-button class='edit-button' (click)="saveSchool()">Save</button>
+
+    <button *ngIf="!creatingNew && editing" mat-stroked-button class='edit-button' style="color:red" (click)="removeSchool()">Delete</button>
+
+    <button *ngIf="creatingNew || editing" mat-stroked-button class='edit-button' (click)="disableEdit()">Cancel</button>
+
+    <button *ngIf="!editing" mat-stroked-button class='edit-button' (click)="enableEdit()">Edit</button>
+  </div>
+</div>
 
 
-<mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
-  <mat-expansion-panel-header style="">
-    <mat-panel-title>
-      Basic Information
-    </mat-panel-title>
-  </mat-expansion-panel-header>
+<form [formGroup]="form">
+  <mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
+    <mat-expansion-panel-header style="">
+      <mat-panel-title>
+        Basic Information
+      </mat-panel-title>
+    </mat-expansion-panel-header>
 
-  <mat-form-field>
-    <input matInput formControlName="name" placeholder="Name" type="text">
-  </mat-form-field>
+    <mat-form-field>
+      <input matInput formControlName="name" placeholder="Name" type="text">
+    </mat-form-field>
 
-  <mat-form-field>
-    <input matInput placeholder="Address" type="text">
-  </mat-form-field>
+    <mat-form-field>
+      <input matInput formControlName="address" placeholder="Address" type="text">
+    </mat-form-field>
 
-  <mat-form-field>
-    <input matInput placeholder="Medium" type="text">
-  </mat-form-field>
-  <mat-checkbox>Private school</mat-checkbox>
-</mat-expansion-panel>
-
-
-<mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
-  <mat-expansion-panel-header style="">
-    <mat-panel-title>
-      Teaching
-    </mat-panel-title>
-  </mat-expansion-panel-header>
-
-  <mat-form-field>
-    <input matInput placeholder="School Timing" type="text">
-  </mat-form-field>
-
-  <mat-form-field>
-    <input matInput placeholder="Working Days" type="text">
-  </mat-form-field>
-
-  <mat-form-field>
-    <input matInput placeholder="Max Class" type="text">
-  </mat-form-field>
-</mat-expansion-panel>
+    <mat-form-field>
+      <input matInput formControlName="medium" placeholder="Medium" type="text">
+    </mat-form-field>
+    <mat-checkbox formControlName="privateSchool" [disabled]="!editing">Private school</mat-checkbox>
+  </mat-expansion-panel>
 
 
-<mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
-  <mat-expansion-panel-header style="">
-    <mat-panel-title>
-      Miscellaneous
-    </mat-panel-title>
-  </mat-expansion-panel-header>
+  <mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
+    <mat-expansion-panel-header style="">
+      <mat-panel-title>
+        Teaching
+      </mat-panel-title>
+    </mat-expansion-panel-header>
 
-  <mat-form-field>
-    <input matInput placeholder="Board" type="text">
-  </mat-form-field>
+    <mat-form-field>
+      <input matInput formControlName="schoolTiming" placeholder="School Timing" type="text">
+    </mat-form-field>
 
-  <mat-form-field>
-    <input matInput placeholder="Website" type="text">
-  </mat-form-field>
+    <mat-form-field>
+      <input matInput formControlName="workDays" placeholder="Working Days" type="text">
+    </mat-form-field>
 
-</mat-expansion-panel>
-
-<mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
-  <mat-expansion-panel-header style="">
-    <mat-panel-title>
-      Remarks
-    </mat-panel-title>
-  </mat-expansion-panel-header>
-
-  <mat-form-field>
-    <textarea matInput placeholder="Remarks"></textarea>
-  </mat-form-field>
-
-</mat-expansion-panel>
+    <mat-form-field>
+      <input matInput formControlName="maxClass" placeholder="Max Class" type="text">
+    </mat-form-field>
+  </mat-expansion-panel>
 
 
+  <mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
+    <mat-expansion-panel-header style="">
+      <mat-panel-title>
+        Miscellaneous
+      </mat-panel-title>
+    </mat-expansion-panel-header>
 
-<!--
-<h1>HellO!!!!!</h1>
+    <mat-form-field>
+      <input matInput formControlName="board" placeholder="Board" type="text">
+    </mat-form-field>
 
+    <mat-form-field>
+      <input formControlName="website" matInput placeholder="Website" type="text">
+    </mat-form-field>
 
-<mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
-  <mat-expansion-panel-header style="">
-    <mat-panel-title>
-      Basic Information
-    </mat-panel-title>
-  </mat-expansion-panel-header>
+  </mat-expansion-panel>
 
-  <mat-form-field>
-    <input matInput placeholder="id" type="text" disabled="true" [(value)]="school.id">
-  </mat-form-field>
-  <mat-form-field>
-    <input matInput placeholder="Name" type="text" [(value)]="school.name">
-  </mat-form-field>
+  <mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
+    <mat-expansion-panel-header style="">
+      <mat-panel-title>
+        Remarks
+      </mat-panel-title>
+    </mat-expansion-panel-header>
 
+    <mat-form-field>
+      <textarea matInput formControlName="remarks" placeholder="Remarks"></textarea>
+    </mat-form-field>
 
-  <mat-form-field>
-    <input matInput placeholder="address" type="text" [(value)]="school.address">
-  </mat-form-field>
-
-  <mat-form-field>
-    <input matInput placeholder="medium" type="text" [(value)]="school.medium">
-  </mat-form-field>
-
-  <mat-form-field>
-    <input matInput placeholder="max_class" type="text" [(value)]="school.max_class">
-  </mat-form-field>
-
-
-  <mat-action-row>
-    <button mat-button (click)="switchEdit()">Edit</button>
-  </mat-action-row>
-</mat-expansion-panel>
---!>
-<!--
-<mat-expansion-panel>
-  <mat-form-field>
-    <input matInput type="text" placeholder="School Name" value="{{ school.name }}">
-  </mat-form-field>
-  <mat-form-field>
-    <input matInput type="number" placeholder="School-ID" value="{{ school.id }}">
-  </mat-form-field>
-  <mat-form-field>
-    <input matInput type="text" placeholder="Location" value="{{ school.address }}">
-  </mat-form-field>
-  <mat-form-field>
-    <input matInput type="text" placeholder="Medium" value="{{ school.medium.valueOf() }}">
-  </mat-form-field>
-  <mat-action-row>
-    <button mat-button (click)="switchEdit()">Edit</button>
-  </mat-action-row>
-</mat-expansion-panel>
-
-<mat-expansion-panel hideToggle="true" expanded="true" collapse="false"></mat-expansion-panel>
--->
-<!-- Students Table -->
+  </mat-expansion-panel>
+</form>

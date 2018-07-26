@@ -13,7 +13,7 @@
     <!-- Position Column -->
     <ng-container matColumnDef="id">
       <mat-header-cell *matHeaderCellDef mat-sort-header> ID </mat-header-cell>
-      <mat-cell *matCellDef="let school"> {{school.id}} </mat-cell>
+      <mat-cell *matCellDef="let school"> {{school.getId()}} </mat-cell>
     </ng-container>
 
     <!-- Name Column -->
@@ -37,6 +37,6 @@
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"
-                (click)="showDetails(row.id)"></mat-row>
+                (click)="showDetails(row)"></mat-row>
   </mat-table>
 </div>

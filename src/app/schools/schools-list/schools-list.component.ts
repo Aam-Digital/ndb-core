@@ -37,9 +37,7 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = filterValue;
   }
 
-  showDetails(id) {
-    let route: string;
-    route = this.router.url + '/' + id;
-    this.router.navigate([route]);
+  showDetails(school: School) {
+    this.router.navigate(['/school', school.getId()]);
   }
 }
