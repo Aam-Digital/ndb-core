@@ -100,6 +100,7 @@ export class ChildDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
+    this.loadVisitedSchools();
   }
 
   loadChild(id: string) {
