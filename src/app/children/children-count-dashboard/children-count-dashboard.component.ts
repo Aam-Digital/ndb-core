@@ -38,6 +38,6 @@ export class ChildrenCountDashboardComponent implements OnInit {
 
 
   goToChildrenList(filterString: string) {
-    this.router.navigate(['/child'], {queryParams: {filter: filterString}});
+    this.router.navigate(['/child'], {queryParams: {center: filterString.toLocaleLowerCase()}});
   }
 }
