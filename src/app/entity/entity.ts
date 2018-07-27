@@ -85,4 +85,8 @@ export class Entity {
   public toString() {
     return this.getId();
   }
+
+  public getColor() {
+    return '';
+  }
 }

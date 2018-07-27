@@ -78,10 +78,19 @@
     <td mat-cell *matCellDef="let child"> {{child.schoolName}} </td>
   </ng-container>
 
-  <ng-container matColumnDef="attendance">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Attendance </th>
+  <ng-container matColumnDef="attendance-school">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Attendance (School)</th>
     <td mat-cell *matCellDef="let child">
-      <app-attendance-block *ngFor="let att of attendanceList.get(child.projectNumber)" [attendanceData]="att"></app-attendance-block>
+      <app-attendance-block *ngFor="let att of attendanceList.get(child.getId()) | filterBy: {'institution': 'school'} | slice:0:5"
+                            [attendanceData]="att"></app-attendance-block>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="attendance-coaching">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Attendance (Coaching)</th>
+    <td mat-cell *matCellDef="let child">
+      <app-attendance-block *ngFor="let att of attendanceList.get(child.getId()) | filterBy: {'institution': 'coaching'} | slice:0:5"
+                            [attendanceData]="att"></app-attendance-block>
     </td>
   </ng-container>
 
