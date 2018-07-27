@@ -5,7 +5,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {ChildrenService} from '../children.service';
 import {AttendanceMonth} from '../attendance/attendance-month';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
-import {FilterSelection} from './filter-selection';
+import {FilterSelection} from '../../ui-helper/filter-selection';
 
 @Component({
   selector: 'app-children-list',
