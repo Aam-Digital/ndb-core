@@ -53,6 +53,7 @@ import {SchoolsModule} from '../schools/schools.module';
 import { EducationalMaterialComponent } from './educational-material/educational-material.component';
 import {AserComponent} from './aser/aser.component';
 import {FilterPipeModule} from 'ngx-filter-pipe';
+import { NotesManagerComponent } from './notes/notes-manager/notes-manager.component';
 
 
 @NgModule({
@@ -95,6 +96,7 @@ import {FilterPipeModule} from 'ngx-filter-pipe';
     ChildSelectComponent,
     EducationalMaterialComponent,
     AserComponent,
+    NotesManagerComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
