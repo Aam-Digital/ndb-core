@@ -52,6 +52,8 @@ import { ChildSelectComponent } from './child-select/child-select.component';
 import {SchoolsModule} from '../schools/schools.module';
 import { EducationalMaterialComponent } from './educational-material/educational-material.component';
 import {AserComponent} from './aser/aser.component';
+import {FilterPipeModule} from 'ngx-filter-pipe';
+import { NotesManagerComponent } from './notes/notes-manager/notes-manager.component';
 import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/add-month-attendance.component';
 
 
@@ -77,6 +79,7 @@ import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/a
     MatDialogModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
+    FilterPipeModule,
     UiHelperModule,
     SchoolsModule,
   ],
@@ -94,6 +97,7 @@ import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/a
     ChildSelectComponent,
     EducationalMaterialComponent,
     AserComponent,
+    NotesManagerComponent,
     AddMonthAttendanceComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],

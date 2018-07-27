@@ -40,7 +40,7 @@
           </mat-select>
 
           <span *ngIf="col.inputType === 'autocomplete'">
-            <input [matAutocomplete]="auto" (input)="autocompleteSearch(suggestions, $event.target.value)"
+            <input [matAutocomplete]="auto" (input)="autocompleteSearch(col, $event.target.value)"
                    matInput type="text" [title]="col.label" [value]="rec[col.name]" (change)="rec[col.name]=$event.target.value">
             <mat-autocomplete #auto="matAutocomplete" (optionSelected)="rec[col.name]=$event.option.value">
               <mat-option *ngFor="let option of col.selectValues" [value]="option.value">{{option.label}}</mat-option>
@@ -77,5 +77,7 @@
 
 
   <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-  <tr mat-row *matRowDef="let rec; columns: columnsToDisplay" class="{{getWarningStyleClass(rec)}}"></tr>
+  <tr mat-row *matRowDef="let rec; columns: columnsToDisplay"
+      class="{{getWarningStyleClass(rec)}}" [ngStyle]="{'background-color': rec.getColor()}">
+  </tr>
 </table>
