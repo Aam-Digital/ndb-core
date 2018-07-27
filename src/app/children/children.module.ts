@@ -52,6 +52,7 @@ import { ChildSelectComponent } from './child-select/child-select.component';
 import {SchoolsModule} from '../schools/schools.module';
 import { EducationalMaterialComponent } from './educational-material/educational-material.component';
 import {AserComponent} from './aser/aser.component';
+import {FilterPipeModule} from 'ngx-filter-pipe';
 import { NotesManagerComponent } from './notes/notes-manager/notes-manager.component';
 
 
@@ -77,6 +78,7 @@ import { NotesManagerComponent } from './notes/notes-manager/notes-manager.compo
     MatDialogModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
+    FilterPipeModule,
     UiHelperModule,
     SchoolsModule,
   ],

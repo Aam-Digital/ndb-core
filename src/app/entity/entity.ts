@@ -87,6 +87,6 @@ export class Entity {
   }
 
   public getColor() {
-    return 'white';
+    return '';
   }
 }
