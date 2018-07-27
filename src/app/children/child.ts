@@ -82,4 +82,9 @@ export class Child extends Entity {
     return this.name;
   }
 
+
+  public getPhoto() {
+    return 'assets/child-photos/' + this.projectNumber + '.png';
+  }
+
 }
