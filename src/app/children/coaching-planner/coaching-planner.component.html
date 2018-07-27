@@ -2,6 +2,10 @@
   Coaching Planner
 </h1>
 
+<p class='dev-notice'>
+  This feature is currently only a preview. Saving changes and other functionalities are not available yet.
+</p>
+
 <div fxLayout='row' fxLayoutGap='10px'>
   <div fxFlex='30' class='coaching-container' *ngFor='let container of containers'
        droppable (onDrop)="doDrop($event, container)">

@@ -116,3 +116,12 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 .w-URGENT {
   background-color: #fd727280;
 }
+
+
+.dev-notice {
+  padding: 10px;
+  background-color: red;
+  font-style: italic;
+  color: white;
+  font-weight: bold;
+}
