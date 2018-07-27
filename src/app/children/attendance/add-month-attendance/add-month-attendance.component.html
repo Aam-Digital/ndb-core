@@ -1,0 +1,91 @@
+<h1>Add Monthly Attendance Data</h1>
+
+<div fxLayoutGap='10px'>
+  <mat-button-toggle-group name="attendanceType" [(value)]="attendanceType" (valueChange)='loadTable()'>
+    <mat-button-toggle value="school">School</mat-button-toggle>
+    <mat-button-toggle value="coaching">Coaching</mat-button-toggle>
+  </mat-button-toggle-group>
+
+
+  <mat-form-field *ngIf="attendanceType === 'school'" style='width: 300px'>
+    <mat-label>
+      School
+    </mat-label>
+    <mat-select [(value)]='school' (valueChange)='loadTable()'>
+      <mat-option *ngFor="let s of schools" [value]="s.getId()">
+        <app-school-block [entity]='s' [linkDisabled]='true' class='mat-form-field'></app-school-block>
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="attendanceType === 'coaching'">
+    <mat-label>
+      Center
+    </mat-label>
+    <mat-select [(value)]='coachingCenter' (valueChange)='loadTable()'>
+      <mat-option *ngFor="let center of centers" [value]='center'>
+        {{center}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<div fxLayoutGap='10px'>
+  <mat-form-field>
+    <input matInput [(value)]='month' placeholder="Month" type="month">
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput [(value)]='workingDays' placeholder="Working Days" type="number">
+  </mat-form-field>
+</div>
+
+<div>
+  <table mat-table [dataSource]="attendanceDataSource" matSort class="mat-elevation-z8 table-list">
+    <ng-container matColumnDef="student">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Student </th>
+      <td mat-cell *matCellDef="let att"> <app-child-block [entityId]='att.student'></app-child-block></td>
+    </ng-container>
+
+    <ng-container matColumnDef="daysAttended">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Attended </th>
+      <td mat-cell *matCellDef="let att">
+        <mat-form-field>
+          <input matInput [(value)]='att.daysAttended' type="number">
+        </mat-form-field>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="daysExcused">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Excused </th>
+      <td mat-cell *matCellDef="let att">
+        <mat-form-field>
+          <input matInput [(value)]='att.daysExcused' type="number">
+        </mat-form-field>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="remarks">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Remarks </th>
+      <td mat-cell *matCellDef="let att">
+        <mat-form-field>
+          <input matInput [(value)]='att.remarks' type="text">
+        </mat-form-field>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="daysWorking">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Working Days </th>
+      <td mat-cell *matCellDef="let att">
+        <mat-form-field>
+          <input matInput [(value)]='att.daysWorking' type="number">
+        </mat-form-field>
+      </td>
+    </ng-container>
+
+
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    <tr mat-row *matRowDef="let att; columns: columnsToDisplay"></tr>
+  </table>
+
+</div>
