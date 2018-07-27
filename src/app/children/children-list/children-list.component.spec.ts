@@ -18,6 +18,7 @@ import {AttendanceBlockComponent} from '../attendance/attendance-block/attendanc
 import {FormsModule} from '@angular/forms';
 import {ChildBlockComponent} from '../child-block/child-block.component';
 import {SchoolBlockComponent} from '../../schools/school-block/school-block.component';
+import {FilterPipeModule} from 'ngx-filter-pipe';
 
 describe('ChildrenListComponent', () => {
   let component: ChildrenListComponent;
@@ -41,6 +42,7 @@ describe('ChildrenListComponent', () => {
         MatIconModule,
         NoopAnimationsModule,
         FormsModule,
+        FilterPipeModule,
       ],
       providers: [ChildrenService, EntityMapperService, { provide: Database, useClass: MockDatabase }],
     })

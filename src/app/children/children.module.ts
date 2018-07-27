@@ -56,6 +56,7 @@ import { CoachingPlannerComponent } from './coaching-planner/coaching-planner.co
 import { AserBlockComponent } from './aser/aser-block/aser-block.component';
 import {NgDragDropModule} from 'ng-drag-drop';
 import {FilterPipeModule} from 'ngx-filter-pipe';
+import { NotesManagerComponent } from './notes/notes-manager/notes-manager.component';
 
 
 @NgModule({
@@ -101,6 +102,7 @@ import {FilterPipeModule} from 'ngx-filter-pipe';
     AserComponent,
     CoachingPlannerComponent,
     AserBlockComponent,
+    NotesManagerComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [

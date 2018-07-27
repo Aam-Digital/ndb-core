@@ -27,6 +27,7 @@ import {ChildAttendanceComponent} from './children/attendance/child-attendance/c
 import {AdminComponent} from './admin/admin/admin.component';
 import {AdminGuard} from './admin/admin.guard';
 import {CoachingPlannerComponent} from './children/coaching-planner/coaching-planner.component';
+import {NotesManagerComponent} from './children/notes/notes-manager/notes-manager.component';
 
 export const routes: Routes = [
   {path: '', component: DashboardComponent},
@@ -36,6 +37,7 @@ export const routes: Routes = [
   {path: 'child', component: ChildrenListComponent},
   {path: 'child/:id', component: ChildDetailsComponent},
   {path: 'child/:id/attendance', component: ChildAttendanceComponent},
+  {path: 'note', component: NotesManagerComponent},
   {path: 'coachings', component: CoachingPlannerComponent},
   {path: 'admin', component: AdminComponent, canActivate: [AdminGuard]},
   {path: '**', redirectTo: '/'},
