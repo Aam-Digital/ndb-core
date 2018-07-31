@@ -32,6 +32,8 @@ export class AttendanceMonth extends Entity {
   remarks = '';
   institution: string;
 
+  overridden = false; // indicates individual override during bulk adding
+
   getAttendancePercentage() {
     return this.daysAttended / (this.daysWorking - this.daysExcused);
   }
