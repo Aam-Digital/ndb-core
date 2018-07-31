@@ -37,3 +37,11 @@
 .mat-form-field {
   margin-right: 10px;
 }
+
+
+.child-pic {
+  width: 120px;
+  height: 150px;
+  object-fit: contain;
+  border: 1px solid black;
+}
