@@ -60,8 +60,11 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.displayColumnGroup(this.columnGroupSelection);
 
     this.route.queryParams.subscribe(params => {
-      this.filterSelections.forEach(f => {
+        this.filterSelections.forEach(f => {
         f.selectedOption = params[f.name];
+        if (f.selectedOption === undefined) {
+          f.selectedOption = f.options[0].key;
+        }
       });
       this.applyFilterSelections();
     });
