@@ -85,4 +85,9 @@ export class Child extends Entity {
   public toString() {
     return this.name;
   }
+
+  public getPhoto() {
+    return 'assets/child-photos/' + this.projectNumber + '.jpg';
+  }
+
 }
