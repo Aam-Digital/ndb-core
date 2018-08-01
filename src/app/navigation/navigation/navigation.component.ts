@@ -35,7 +35,7 @@ export class NavigationComponent implements OnInit {
   constructor(private _sessionService: SessionService,
               private _navigationItemService: NavigationItemsService,
               public adminGuard: AdminGuard,
-              private location: Location) {
+              public location: Location) {
   }
 
   ngOnInit(): void {
