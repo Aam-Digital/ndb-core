@@ -34,7 +34,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   columnGroups = {
     'basic': ['projectNumber', 'name', 'age', 'gender', 'class', 'school', 'center', 'status'],
     'school': ['projectNumber', 'name', 'age', 'class', 'school', 'attendance-school', 'attendance-coaching', 'motherTongue'],
-    'status': ['projectNumber', 'name', 'center', 'status', 'aadhar', 'admission'],
+    'status': ['projectNumber', 'name', 'center', 'status', 'admission', 'aadhar', 'kanyashree', 'bankAccount', 'rationCard', 'bplCard'],
     'health': ['projectNumber', 'name', 'center',
       'vaccination', 'dentalCheckup', 'eyeCheckup', 'eyeStatus', 'EntCheckup', 'vitaminD', 'deworming',
       'gender', 'age', 'dateOfBirth'],

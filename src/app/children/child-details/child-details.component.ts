@@ -43,6 +43,7 @@ export class ChildDetailsComponent implements OnInit {
   editing = false;
 
   genders = Gender;
+  documentStatus = ['OK (copy with us)', 'OK (copy needed for us)', 'needs correction', 'applied', 'doesn\'t have', 'not eligible', ''];
   school = new School('');
   eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
   vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
@@ -54,7 +55,6 @@ export class ChildDetailsComponent implements OnInit {
       // gender:         [{value: this.child.gender}], // reactive forms seem broken for mat-select, using ngModel instead
       projectNumber:  [{value: this.child.projectNumber,  disabled: !this.editing}],
       dateOfBirth:    [{value: this.child.dateOfBirth,    disabled: !this.editing}],
-      aadhar:         [{value: this.child.aadhar,         disabled: !this.editing}],
       motherTongue:   [{value: this.child.motherTongue,   disabled: !this.editing}],
       religion:       [{value: this.child.religion,       disabled: !this.editing}],
 
@@ -68,6 +68,12 @@ export class ChildDetailsComponent implements OnInit {
       preferredTimeForGuardianMeeting: [{value: this.child.preferredTimeForGuardianMeeting, disabled: !this.editing}],
 
       schoolClass:    [{value: this.child.schoolClass,    disabled: !this.editing}],
+
+      // aadhar:         [{value: this.child.has_aadhar,         disabled: !this.editing}],
+      // kanyashree:     [{value: this.child.has_kanyashree,     disabled: !this.editing}],
+      // bankAccount:    [{value: this.child.has_bankAccount,    disabled: !this.editing}],
+      // rationCard:     [{value: this.child.has_rationCard,     disabled: !this.editing}],
+      // bplCard:        [{value: this.child.has_BplCard,        disabled: !this.editing}],
 
       // health_vaccinationStatus:    [{value: this.child.health_vaccinationStatus,    disabled: !this.editing}],
       health_lastDentalCheckup:   [{value: this.child.health_lastDentalCheckup,    disabled: !this.editing}],

@@ -115,9 +115,30 @@
     <td mat-cell *matCellDef="let child"> {{child.motherTongue}} </td>
   </ng-container>
 
+
   <ng-container matColumnDef="aadhar">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Aadhar </th>
-    <td mat-cell *matCellDef="let child"> {{child.aadhar}} </td>
+    <td mat-cell *matCellDef="let child"> {{child.has_aadhar}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="bankAccount">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Bank Account </th>
+    <td mat-cell *matCellDef="let child"> {{child.has_bankAccount}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="kanyashree">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Kanyashree </th>
+    <td mat-cell *matCellDef="let child"> {{child.has_kanyashree}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="rationCard">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Ration Card </th>
+    <td mat-cell *matCellDef="let child"> {{child.has_rationCard}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="bplCard">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> BPL Card </th>
+    <td mat-cell *matCellDef="let child"> {{child.has_BplCard}}</td>
   </ng-container>
 
 

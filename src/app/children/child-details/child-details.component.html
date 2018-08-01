@@ -100,7 +100,48 @@
         </mat-form-field>
 
         <mat-form-field>
-          <input matInput formControlName="aadhar" placeholder="Aadhar Status" type="text">
+          <mat-label>
+            Aadhar Status
+          </mat-label>
+          <mat-select [disabled]='!editing' [(ngModel)]='child.has_aadhar' [ngModelOptions]="{standalone: true}">
+            <mat-option *ngFor="let s of documentStatus" [value]="s">{{s}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>
+            Kanyashree Status
+          </mat-label>
+          <mat-select [disabled]='!editing' [(ngModel)]='child.has_kanyashree' [ngModelOptions]="{standalone: true}">
+            <mat-option *ngFor="let s of documentStatus" [value]="s">{{s}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>
+            Bank Account Status
+          </mat-label>
+          <mat-select [disabled]='!editing' [(ngModel)]='child.has_bankAccount' [ngModelOptions]="{standalone: true}">
+            <mat-option *ngFor="let s of documentStatus" [value]="s">{{s}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>
+            Ration Card Status
+          </mat-label>
+          <mat-select [disabled]='!editing' [(ngModel)]='child.has_rationCard' [ngModelOptions]="{standalone: true}">
+            <mat-option *ngFor="let s of documentStatus" [value]="s">{{s}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>
+            BPL Card Status
+          </mat-label>
+          <mat-select [disabled]='!editing' [(ngModel)]='child.has_BplCard' [ngModelOptions]="{standalone: true}">
+            <mat-option *ngFor="let s of documentStatus" [value]="s">{{s}}</mat-option>
+          </mat-select>
         </mat-form-field>
       </div>
 

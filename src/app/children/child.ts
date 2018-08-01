@@ -41,7 +41,11 @@ export class Child extends Entity {
   guardianName = '';
   preferredTimeForGuardianMeeting = '';
 
-  aadhar = '';
+  has_aadhar = '';
+  has_bankAccount = '';
+  has_kanyashree = '';
+  has_rationCard = '';
+  has_BplCard = '';
 
   dropoutDate: Date;
   dropoutType: string;
@@ -81,5 +85,4 @@ export class Child extends Entity {
   public toString() {
     return this.name;
   }
-
 }
