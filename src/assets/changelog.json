@@ -1,5 +1,12 @@
 [
   {
+    "tag_name": "v2.3.1",
+    "name": "Hotfixes",
+    "published_at": "2018-08-01",
+    "body": "- several small, urgent bug fixes\n- added additional fields to Child",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.1.4",
     "name": "Improvements & Bug Fixes",
     "published_at": "2018-06-29",
