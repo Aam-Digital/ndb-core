@@ -20,6 +20,8 @@ import { MenuItem } from '../menu-item';
 import { SessionService } from '../../session/session.service';
 import { NavigationItemsService } from '../navigation-items.service';
 import {AdminGuard} from '../../admin/admin.guard';
+import {Title} from '@angular/platform-browser';
+import {Location} from '@angular/common';
 
 @Component({
   selector: 'app-navigation',
@@ -32,7 +34,8 @@ export class NavigationComponent implements OnInit {
 
   constructor(private _sessionService: SessionService,
               private _navigationItemService: NavigationItemsService,
-              public adminGuard: AdminGuard) {
+              public adminGuard: AdminGuard,
+              private location: Location) {
   }
 
   ngOnInit(): void {
