@@ -33,7 +33,7 @@
     <mat-button-toggle-group *ngFor='let filterSelection of filterSelections'
       [name]="filterSelection.name" [value]='filterSelection.selectedOption'>
       <mat-button-toggle *ngFor='let option of filterSelection.options' [value]="option.key"
-                         (click)='filterSelection.selectedOption=option.key; updateFilterSelections();'>
+                         (click)="filterSelection.selectedOption=option.key; applyFilterSelections();">
         {{option.label}}
       </mat-button-toggle>
     </mat-button-toggle-group>

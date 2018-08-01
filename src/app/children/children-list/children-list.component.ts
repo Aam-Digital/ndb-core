@@ -56,13 +56,13 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
 
   private loadUrlParams() {
-    // TODO: also encode in / retrieve from URL
-    this.displayColumnGroup(this.columnGroupSelection);
-
     this.route.queryParams.subscribe(params => {
+        this.columnGroupSelection = params['view'] ? params['view'] : this.columnGroupSelection;
+        this.displayColumnGroup(this.columnGroupSelection);
+
         this.filterSelections.forEach(f => {
         f.selectedOption = params[f.name];
-        if (f.selectedOption === undefined) {
+        if (f.selectedOption === undefined && f.options.length > 0) {
           f.selectedOption = f.options[0].key;
         }
       });
@@ -128,18 +128,21 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   }
 
   displayColumnGroup(columnGroup: string) {
+    this.columnGroupSelection = columnGroup;
     this.columnsToDisplay = this.columnGroups[columnGroup];
+    this.updateUrl();
   }
 
 
-  updateFilterSelections() {
+  updateUrl() {
     const params = {};
     this.filterSelections.forEach(f => {
       params[f.name] = f.selectedOption;
     });
-    this.router.navigate(['child'], { queryParams: params });
 
-    this.applyFilterSelections();
+    params['view'] = this.columnGroupSelection;
+
+    this.router.navigate(['child'], { queryParams: params });
   }
 
   applyFilterSelections() {
@@ -150,6 +153,8 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     });
 
     this.childrenDataSource.data = filteredData;
+
+    this.updateUrl();
   }
 
 
