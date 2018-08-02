@@ -1,5 +1,12 @@
 [
   {
+    "tag_name": "v2.3.2",
+    "name": "Improved 'Add Attendance'",
+    "published_at": "2018-08-02",
+    "body": "- improved performance when adding attendance in bulk",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.3.1",
     "name": "Hotfixes",
     "published_at": "2018-08-01",
