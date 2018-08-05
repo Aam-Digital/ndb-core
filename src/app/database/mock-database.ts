@@ -122,11 +122,11 @@ export class MockDatabase extends Database {
       case 'notes_index/by_child':
         filter = (e: Note) => e.getType() === Note.ENTITY_TYPE && e.children.includes(options.key);
         break;
-      case 'attendences_index/by_child':
+      case 'attendances_index/by_child':
         filter = (e: AttendanceMonth) => e.getType() === AttendanceMonth.ENTITY_TYPE && e.student === options.key;
         break;
-      case 'attendences_index/by_month':
-        filter = (e: AttendanceMonth) => e.getType() === AttendanceMonth.ENTITY_TYPE && e.month === options.month;
+      case 'attendances_index/by_month':
+        filter = (e: AttendanceMonth) => e.getType() === AttendanceMonth.ENTITY_TYPE && e.month === options.key;
         break;
       case 'avg_attendance_index/three_months':
         filter = (e: AttendanceMonth) => e.getType() === AttendanceMonth.ENTITY_TYPE
@@ -150,7 +150,7 @@ export class MockDatabase extends Database {
         });
       } else {
         return this.getAll().then(results => {
-          return { rows: results.filter(filter) }
+          return { rows: results.filter(filter).map(e => { return {doc: e} } ) }
         });
       }
     }
