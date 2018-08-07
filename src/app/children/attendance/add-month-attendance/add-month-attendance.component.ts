@@ -179,7 +179,7 @@ export class AddMonthAttendanceComponent implements OnInit {
   }
 
   private createAttendanceRecord(c: Child, month: Date, attendanceType: string) {
-    const att = new AttendanceMonth((new Date()).getTime().toString());
+    const att = new AttendanceMonth(c.getId() + '_' + (new Date()).getTime().toString());
     att.student = c.getId();
     att.institution = attendanceType;
     att.month = month;
