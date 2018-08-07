@@ -1,5 +1,12 @@
 [
   {
+    "tag_name": "v2.3.3",
+    "name": "Fixed 'Add Attendance' not saving",
+    "published_at": "2018-08-02",
+    "body": "- fixed saving attendance through 'Add Attendance' page",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.3.2",
     "name": "Improved 'Add Attendance'",
     "published_at": "2018-08-02",
