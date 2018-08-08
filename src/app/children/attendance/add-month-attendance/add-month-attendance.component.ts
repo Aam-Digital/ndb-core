@@ -71,6 +71,7 @@ export class AddMonthAttendanceComponent implements OnInit {
   loadTable() {
     const records = new Array<AttendanceMonth>();
     this.getFilteredStudents()
+      .sort((a, b) => a.schoolClass > b.schoolClass ? 1 : -1)
       .forEach((c: Child) => {
         const att = this.createAttendanceRecord(c, this.month, this.attendanceType);
 
