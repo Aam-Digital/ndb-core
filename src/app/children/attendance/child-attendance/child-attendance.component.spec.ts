@@ -10,6 +10,7 @@ import {UiHelperModule} from '../../../ui-helper/ui-helper.module';
 import {DatePipe, PercentPipe} from '@angular/common';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
 import {MockDatabase} from '../../../database/mock-database';
+import {DemoData} from '../../../database/demo-data';
 
 describe('ChildAttendanceComponent', () => {
   let component: ChildAttendanceComponent;
@@ -24,7 +25,7 @@ describe('ChildAttendanceComponent', () => {
     },
     getAttendances: () => {
       return Observable.create(function (observer) {
-        observer.onNext(MockDatabaseManagerService.getDummyDataAttendance());
+        observer.onNext(DemoData.getMonthAttendanceEntities());
         observer.onCompleted();
       });
     }
