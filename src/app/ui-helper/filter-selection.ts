@@ -15,21 +15,32 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { School } from './school';
 
-describe('School', () => {
+export class FilterSelection<T> {
 
-  it('has ID', function () {
-    const id = 'test1';
-    const entity = new School(id);
+  public selectedOption = '';
+  defaultFilterFunction = (c: T) => true;
 
-    expect(entity.getId()).toBe(id);
-  });
+  constructor (public name: string,
+               public options: { key: string, label: string, filterFun: (c: T) => boolean}[] ) {
 
-  it('has correct type/prefix', function () {
-    const id = 'test1';
-    const entity = new School(id);
+  }
 
-    expect(entity.getType()).toBe('School');
-  });
-});
+  getOption(key: string) {
+    return this.options.find((option) => option.key === key);
+  }
+
+  public getFilterFunction(key: string) {
+    const option = this.getOption(key);
+
+    if (!option) {
+      return this.defaultFilterFunction;
+    } else {
+      return option.filterFun;
+    }
+  }
+
+  public getSelectedFilterFunction() {
+    return this.getFilterFunction(this.selectedOption);
+  }
+}

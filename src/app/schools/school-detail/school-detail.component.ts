@@ -1,8 +1,9 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatTableDataSource, MatSort} from '@angular/material';
-import {School} from '../schoolsShared/school';
-import {SchoolsServices} from '../schoolsShared/schools.services';
+import {School} from '../school';
+import {EntityMapperService} from '../../entity/entity-mapper.service';
+import {Child} from '../../children/child';
 
 @Component({
   selector: 'app-school-detail',
@@ -17,15 +18,23 @@ export class SchoolDetailComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
 
   constructor(
-    private ss: SchoolsServices,
+    private entityMapper: EntityMapperService,
     private route: ActivatedRoute,
     private router: Router
   ) { }
 
   ngOnInit() {
-    const params = this.route.snapshot.params;
-    this.school = this.ss.getSingle(parseInt(params['id'], 10));
-    this.studentDataSource.data = this.school.students;
+    this.route.paramMap
+      .subscribe(params => this.loadSchool(params.get('id')));
+  }
+
+  loadSchool(id: string) {
+    this.entityMapper.load(School, id)
+      .then(loadedEntities => this.school = loadedEntities)
+      .then(() => this.entityMapper.loadType<Child>(Child))
+      .then(children => {
+        this.studentDataSource.data = children.filter(c => c.schoolId === this.school.getId());
+      });
   }
 
   ngAfterViewInit() {

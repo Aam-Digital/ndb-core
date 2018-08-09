@@ -13,6 +13,8 @@ export class NoteDetailsComponent implements OnInit {
   @Input() note: Note;
   originalNote: Note;
   @ViewChild('recordForm') form;
+  interactionTypes = Note.INTERACTION_TYPES;
+
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
               public dialogRef: MatDialogRef<NoteDetailsComponent>,
@@ -44,7 +46,7 @@ export class NoteDetailsComponent implements OnInit {
   }
 
   cancel() {
-    this.note = Object.assign(this.note, this.originalNote);
+    this.note = this.note.load(this.originalNote);
     this.dialogRef.close(this.note);
   }
 

@@ -18,15 +18,13 @@
 
 export interface IAppConfig {
   version: string;
+  site_name: string;
 
   database: {
     name: string;
     remote_url: string;
     timeout: number;
     outdated_threshold_days: number;
-  };
-
-  dev: {
-    useRemoteDatabaseDuringDevelopment: boolean;
+    useTemporaryDatabase: boolean;
   };
 }

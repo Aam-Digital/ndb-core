@@ -6,9 +6,9 @@ import {ConfirmationDialogComponent} from './confirmation-dialog.component';
 export class ConfirmationDialogService {
   constructor(public dialog: MatDialog) {}
 
-  openDialog(title: string, text: string): MatDialogRef<ConfirmationDialogComponent> {
+  openDialog(title: string, text: string, yesNoButtons = true): MatDialogRef<ConfirmationDialogComponent> {
     return this.dialog.open(ConfirmationDialogComponent, {
-      data: { title: title, text: text }
+      data: { title: title, text: text, yesNo: yesNoButtons }
     });
   }
 }

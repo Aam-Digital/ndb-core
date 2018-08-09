@@ -43,6 +43,7 @@ app-ui {
 }
 .sidenav-content {
   padding: 24px;
+  overflow: scroll;
 }
 
 .header-icon {

@@ -1,6 +1,7 @@
 import {Component, HostListener, Input, OnInit} from '@angular/core';
-import {School} from '../schoolsShared/school';
+import {School} from '../school';
 import {Router} from '@angular/router';
+import {EntityMapperService} from '../../entity/entity-mapper.service';
 
 @Component({
   selector: 'app-school-block',
@@ -8,13 +9,22 @@ import {Router} from '@angular/router';
   styleUrls: ['./school-block.component.scss']
 })
 export class SchoolBlockComponent implements OnInit {
-  @Input() entity: School;
+  @Input() entity: School = new School('');
+  @Input() entityId: string;
+  @Input() linkDisabled: boolean;
   tooltip = false;
   tooltipTimeout;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router,
+              private entityMapper: EntityMapperService) {
+  }
 
   ngOnInit() {
+    if (this.entityId !== undefined) {
+      this.entityMapper.load(School, this.entityId).then(school => {
+        this.entity = school;
+      });
+    }
   }
 
   showTooltip() {
@@ -33,6 +43,8 @@ export class SchoolBlockComponent implements OnInit {
   }
 
   showDetailsPage() {
-    this.router.navigate(['/school', this.entity.getId()]);
+    if (!this.linkDisabled) {
+      this.router.navigate(['/school', this.entity.getId()]);
+    }
   }
 }

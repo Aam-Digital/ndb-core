@@ -16,6 +16,9 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {AttendanceBlockComponent} from '../attendance/attendance-block/attendance-block.component';
 import {FormsModule} from '@angular/forms';
+import {ChildBlockComponent} from '../child-block/child-block.component';
+import {SchoolBlockComponent} from '../../schools/school-block/school-block.component';
+import {FilterPipeModule} from 'ngx-filter-pipe';
 
 describe('ChildrenListComponent', () => {
   let component: ChildrenListComponent;
@@ -23,7 +26,7 @@ describe('ChildrenListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AttendanceBlockComponent, ChildrenListComponent ],
+      declarations: [ ChildBlockComponent, SchoolBlockComponent, AttendanceBlockComponent, ChildrenListComponent ],
       imports: [
         CommonModule,
         RouterTestingModule.withRoutes([]),
@@ -39,6 +42,7 @@ describe('ChildrenListComponent', () => {
         MatIconModule,
         NoopAnimationsModule,
         FormsModule,
+        FilterPipeModule,
       ],
       providers: [ChildrenService, EntityMapperService, { provide: Database, useClass: MockDatabase }],
     })

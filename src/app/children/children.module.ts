@@ -27,7 +27,7 @@ import {
   MatAutocompleteModule,
   MatButtonModule,
   MatButtonToggleModule,
-  MatCardModule,
+  MatCardModule, MatCheckboxModule,
   MatDialogModule,
   MatIconModule,
   MatSidenavModule,
@@ -49,6 +49,12 @@ import { AttendanceWarningsDashboardComponent } from './attendance/attendance-wa
 import { NotesComponent } from './notes/notes.component';
 import { NoteDetailsComponent } from './notes/note-details/note-details.component';
 import { ChildSelectComponent } from './child-select/child-select.component';
+import {SchoolsModule} from '../schools/schools.module';
+import { EducationalMaterialComponent } from './educational-material/educational-material.component';
+import {AserComponent} from './aser/aser.component';
+import {FilterPipeModule} from 'ngx-filter-pipe';
+import { NotesManagerComponent } from './notes/notes-manager/notes-manager.component';
+import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/add-month-attendance.component';
 
 
 @NgModule({
@@ -60,6 +66,7 @@ import { ChildSelectComponent } from './child-select/child-select.component';
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
+    MatCheckboxModule,
     MatSelectModule,
     MatExpansionModule,
     MatTableModule,
@@ -72,8 +79,10 @@ import { ChildSelectComponent } from './child-select/child-select.component';
     MatSnackBarModule,
     MatDialogModule,
     MatAutocompleteModule,
+    ReactiveFormsModule,
+    FilterPipeModule,
     UiHelperModule,
-    ReactiveFormsModule
+    SchoolsModule,
   ],
   declarations: [
     AttendanceBlockComponent,
@@ -87,6 +96,10 @@ import { ChildSelectComponent } from './child-select/child-select.component';
     AttendanceWarningsDashboardComponent,
     NoteDetailsComponent,
     ChildSelectComponent,
+    EducationalMaterialComponent,
+    AserComponent,
+    NotesManagerComponent,
+    AddMonthAttendanceComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [

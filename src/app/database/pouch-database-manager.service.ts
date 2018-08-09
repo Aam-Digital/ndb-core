@@ -23,6 +23,7 @@ import { DatabaseManagerService } from './database-manager.service';
 import { DatabaseSyncStatus } from './database-sync-status.enum';
 import { Database } from './database';
 import { PouchDatabase } from './pouch-database';
+import {AlertService} from '../alerts/alert.service';
 
 PouchDB.plugin(PouchDBAuthentication);
 
@@ -39,7 +40,7 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
   private _localDatabase: any;
   private _remoteDatabase: any;
 
-  constructor() {
+  constructor(private alertService: AlertService) {
     super();
 
     this._localDatabase = new PouchDB(AppConfig.settings.database.name);
@@ -49,7 +50,7 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
   }
 
   getDatabase(): Database {
-    return new PouchDatabase(this._localDatabase);
+    return new PouchDatabase(this._localDatabase, this.alertService);
   }
 
   login(username: string, password: string): Promise<boolean> {
@@ -61,17 +62,16 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
       }
     };
 
-    const self = this;
     return this._remoteDatabase.login(username, password, ajaxOpts).then(
-      function () {
-        self.sync();
+      () => {
+        this.sync();
         return true;
       },
-      function (error: any) {
+      (error: any) => {
         if (error.status === 401) {
           return false;
         } else {
-          console.error('Failed to connect to the remote database.', error);
+          this.alertService.addWarning('Failed to connect to the remote database: ' + error);
           throw error;
         }
       }
@@ -85,17 +85,15 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
   private sync() {
     this.onSyncStatusChanged.emit(DatabaseSyncStatus.started);
 
-    const self = this;
     // do NOT use liveSync because then the promise is never resolved
     // we need to trigger the live sync after the sync has completed once
     return this._localDatabase.sync(this._remoteDatabase).then(
-      function () {
-        self.onSyncStatusChanged.emit(DatabaseSyncStatus.completed);
+      () => {
+        this.onSyncStatusChanged.emit(DatabaseSyncStatus.completed);
       },
-      function (err: any) {
-        console.error('sync failed:');
-        console.error(err);
-        self.onSyncStatusChanged.emit(DatabaseSyncStatus.failed);
+      (err: any) => {
+        this.alertService.addDebug('Database synchronization failed: ' + err);
+        this.onSyncStatusChanged.emit(DatabaseSyncStatus.failed);
       });
   }
 }

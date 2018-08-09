@@ -17,17 +17,20 @@ export class ChildrenCountDashboardComponent implements OnInit {
   ngOnInit() {
     this.childrenService.getChildren()
       .subscribe(results => {
-        this.totalChildren = results.length;
+        this.totalChildren = 0;
 
         const countMap = new Map<string, number>();
         results.forEach(child => {
-          let count = countMap.get(child.center);
-          if (count === undefined) {
-            count = 0;
-          }
+          if (child.isActive()) {
+            let count = countMap.get(child.center);
+            if (count === undefined) {
+              count = 0;
+            }
 
-          count++;
-          countMap.set(child.center, count);
+            count++;
+            this.totalChildren++;
+            countMap.set(child.center, count);
+          }
         });
         this.childrenByCenter = Array.from(countMap.entries()); // direct use of Map creates change detection problems
       });
@@ -35,6 +38,6 @@ export class ChildrenCountDashboardComponent implements OnInit {
 
 
   goToChildrenList(filterString: string) {
-    this.router.navigate(['/child'], {queryParams: {filter: filterString}});
+    this.router.navigate(['/child'], {queryParams: {center: filterString.toLocaleLowerCase()}});
   }
 }

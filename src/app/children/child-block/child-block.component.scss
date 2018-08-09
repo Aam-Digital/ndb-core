@@ -5,7 +5,9 @@
 
   padding: 8px;
   background-color:white;
+  z-index: 99;
 
+  width: 400px;
 }
 
 .child-pic {
@@ -13,4 +15,11 @@
   width: 24px;
   margin-right: 4px;
   vertical-align: middle;
+}
+
+.child-pic-large {
+  width: 80px;
+  height: 100px;
+  object-fit: cover;
+  border: 1px solid black;
 }

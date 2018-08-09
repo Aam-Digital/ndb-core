@@ -25,7 +25,7 @@ export class Entity {
   /**
    * The entity's type.
    */
-  protected static ENTITY_TYPE = 'Entity';
+  static ENTITY_TYPE = 'Entity';
 
   /**
    * The unique id of this entity.
@@ -64,5 +64,29 @@ export class Entity {
   public getType(): string {
     const c = <typeof Entity>this.constructor;
     return c.ENTITY_TYPE;
+  }
+
+
+  public load(data: any) {
+    if (data.entityId) {
+      data.entityId.toString();
+    }
+
+    return Object.assign(this, data);
+  }
+
+  /**
+   * Returns a string representation or summary of the instance.
+   *
+   * <b>Important: Overwrite this method in subtypes!</b>
+   *
+   * @returns {string} the instance's string representation.
+   */
+  public toString() {
+    return this.getId();
+  }
+
+  public getColor() {
+    return '';
   }
 }

@@ -20,17 +20,18 @@ import { PouchDatabaseManagerService } from './pouch-database-manager.service';
 import { AppConfig } from '../app-config/app-config';
 import { MockDatabaseManagerService } from './mock-database-manager.service';
 import { DatabaseManagerService } from './database-manager.service';
+import {AlertService} from '../alerts/alert.service';
 
-export function databaseManagerServiceFactory(): DatabaseManagerService {
-  if (environment.production || AppConfig.settings.dev.useRemoteDatabaseDuringDevelopment) {
-    return new PouchDatabaseManagerService();
-  } else {
+export function databaseManagerServiceFactory(alertService: AlertService): DatabaseManagerService {
+  if (AppConfig.settings.database.useTemporaryDatabase) {
     return new MockDatabaseManagerService();
+  } else {
+    return new PouchDatabaseManagerService(alertService);
   }
 }
 
 export const databaseManagerProvider = {
   provide: DatabaseManagerService,
   useFactory: databaseManagerServiceFactory,
-  deps: [AppConfig]
+  deps: [AppConfig, AlertService]
 };

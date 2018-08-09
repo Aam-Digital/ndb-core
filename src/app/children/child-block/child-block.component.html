@@ -1,9 +1,19 @@
 <span (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()">
-  <img src="assets/child.png" class="child-pic"> {{entity.name}} <span style="font-size: x-small">({{entity.getId()}})</span>
+  <img [src]="entity?.getPhoto()" class="child-pic" onerror="if (this.src != 'assets/child.png') this.src = 'assets/child.png';">
+  {{entity?.name}} <span style="font-size: x-small">({{entity?.getId()}})</span>
 </span>
 
 <div style="position:absolute;" *ngIf="tooltip">
-  <div class="mat-elevation-z5 child-tooltip" (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()">
-    <div>{{entity.currentStatus}}</div>
+  <div class="mat-elevation-z5 child-tooltip" (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()" fxLayout='row'>
+    <div fxFlex='30'>
+      <img [src]="entity?.getPhoto()" class="child-pic-large" onerror="if (this.src != 'assets/child.png') this.src = 'assets/child.png';">
+    </div>
+    <div fxFlex>
+      <h3>{{entity?.name}}</h3>
+      <p><span class='fa fa-phone'></span> {{entity?.phone}}</p>
+      <p><app-school-block [entityId]='entity?.schoolId'></app-school-block>,
+        class {{entity?.schoolClass}}
+      </p>
+    </div>
   </div>
 </div>

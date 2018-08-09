@@ -15,12 +15,28 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from '../../entity/entity';
+import {Entity} from '../../entity/entity';
 import {WarningLevel} from '../attendance/warning-level';
 
 
 export class Note extends Entity {
-  public static ENTITY_TYPE = 'Note';
+  static ENTITY_TYPE = 'Note';
+
+  static INTERACTION_TYPES = [
+    'Home Visit',
+    'Talk with Guardians',
+    'Talk with Child',
+    'Incident',
+    'Discussion/Decision',
+    'School/Hostel Visit',
+    'Phone Call',
+    'Talk with Coaching Teacher',
+    'Talk with Peer',
+    'Guardians\' Meeting',
+    'Children\'s Meeting',
+    'Daily Routine',
+    'Annual Survey',
+  ];
 
   children: string[] = []; // id of Child entity
   date: Date;
@@ -36,5 +52,41 @@ export class Note extends Entity {
 
   isLinkedWithChild(childId: string) {
     return (this.children.findIndex(e => e === childId) > -1);
+  }
+
+
+  public getColor() {
+    if (this.warningLevel === WarningLevel.URGENT) {
+      return '#fd727280';
+    }
+    if (this.warningLevel === WarningLevel.WARNING) {
+      return '#ffa50080';
+    }
+
+    if (this.category === 'Guardians\' Meeting' || this.category === 'Children\'s Meeting') {
+      return '#E1F5FE';
+    }
+    if (this.category === 'Discussion/Decision') {
+      return '#E1BEE7';
+    }
+    if (this.category === 'Annual Survey') {
+      return '#FFFDE7';
+    }
+    if (this.category === 'Daily Routine') {
+      return '#F1F8E9';
+    }
+
+    return '';
+  }
+
+
+  public load(data: any) {
+    if (data.date === undefined) {
+      data.date = new Date();
+    } else if (data.date !== undefined && typeof data.date !== typeof new Date()) {
+      data.date = new Date(data.date);
+    }
+
+    return super.load(data);
   }
 }

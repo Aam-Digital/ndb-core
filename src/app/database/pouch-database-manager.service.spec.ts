@@ -17,6 +17,7 @@
 
 import { PouchDatabaseManagerService } from './pouch-database-manager.service';
 import {AppConfig} from '../app-config/app-config';
+import {AlertService} from '../alerts/alert.service';
 
 describe('PouchDatabaseManagerService', () => {
   let dbManager: PouchDatabaseManagerService;
@@ -27,12 +28,13 @@ describe('PouchDatabaseManagerService', () => {
         name: 'unit-test',
         remote_url: 'remote-',
         timeout: 60000,
-        outdated_threshold_days: 0
+        outdated_threshold_days: 0,
+        useTemporaryDatabase: false,
       },
       version: 'x',
-      dev: { useRemoteDatabaseDuringDevelopment: false },
+      site_name: '',
     };
-    dbManager = new PouchDatabaseManagerService();
+    dbManager = new PouchDatabaseManagerService(new AlertService(null));
   });
 
   it('returns database', function () {

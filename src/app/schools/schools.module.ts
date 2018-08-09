@@ -5,7 +5,6 @@ import {
   MatTableModule, MatFormFieldModule, MatInputModule, MatSortModule, MatExpansionModule,
   MatIconModule
 } from '@angular/material';
-import {SchoolsServices} from './schoolsShared/schools.services';
 import {SchoolDetailComponent} from './school-detail/school-detail.component';
 import { SchoolBlockComponent } from './school-block/school-block.component';
 
@@ -25,6 +24,6 @@ import { SchoolBlockComponent } from './school-block/school-block.component';
     SchoolDetailComponent,
   ],
   exports: [SchoolBlockComponent],
-  providers: [SchoolsServices]
+  providers: []
 })
 export class SchoolsModule { }
