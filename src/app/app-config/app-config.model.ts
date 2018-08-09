@@ -25,9 +25,6 @@ export interface IAppConfig {
     remote_url: string;
     timeout: number;
     outdated_threshold_days: number;
-  };
-
-  dev: {
-    useRemoteDatabaseDuringDevelopment: boolean;
+    useTemporaryDatabase: boolean;
   };
 }
