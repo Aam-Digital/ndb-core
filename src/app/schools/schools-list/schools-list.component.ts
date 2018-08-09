@@ -9,35 +9,29 @@ import {Router} from '@angular/router';
   templateUrl: './schools-list.component.html',
   styleUrls: ['./schools-list.component.css']
 })
+
 export class SchoolsListComponent implements OnInit, AfterViewInit {
-  schools: School[];
-  school: School;
+  schoolList: School[];
+  schoolDataSource: MatTableDataSource<School>;
 
-  dataSource = new MatTableDataSource();
-  displayedColumns = ['id', 'name', 'address', 'medium'];
-  @ViewChild(MatSort) sort: MatSort;
-  @Output() showDetailsEvent = new EventEmitter<School>();
+  columnsToDisplay: ['name', 'address', 'medium'];
 
-  constructor(
-    private ss: SchoolsServices,
-    private router: Router
-  ) {}
+  constructor(private schoolService: SchoolsServices,
+              private router: Router
+  ) {
+    this.schoolService.getSchools().subscribe(data => {
+      this.schoolList = data;
+      this.schoolDataSource = new MatTableDataSource<School>(data);
+    });
+  }
 
   ngOnInit() {
-    this.dataSource.data = this.ss.schools;
   }
 
   ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
   }
 
-  applyFilter(filterValue: string) {
-    filterValue = filterValue.trim();
-    filterValue = filterValue.toLowerCase();
-    this.dataSource.filter = filterValue;
-  }
-
-  showDetails(school: School) {
+  showSchoolDetails(school: School) {
     this.router.navigate(['/school', school.getId()]);
   }
 }
