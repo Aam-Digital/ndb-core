@@ -30,15 +30,12 @@
       <mat-button-toggle value="health" (click)="displayColumnGroup('health')">Health</mat-button-toggle>
     </mat-button-toggle-group>
 
-    <mat-button-toggle-group name="dropoutFilterSelection" [(value)]="dropoutFilterSelection">
-      <mat-button-toggle value="current" (click)="setDropoutFilteredList('current')">Current Project Children</mat-button-toggle>
-      <mat-button-toggle value="dropouts" (click)="setDropoutFilteredList('dropouts')">Dropouts</mat-button-toggle>
-      <mat-button-toggle value="" (click)="setDropoutFilteredList('')">All</mat-button-toggle>
-    </mat-button-toggle-group>
-
-    <mat-button-toggle-group name="centerFilterSelection" [(value)]="centerFilterSelection">
-      <mat-button-toggle *ngFor='let center of centers' [value]="center" (click)="setCenterFilteredList(center)">{{center}}</mat-button-toggle>
-      <mat-button-toggle value="" (click)="setCenterFilteredList('')">All</mat-button-toggle>
+    <mat-button-toggle-group *ngFor='let filterSelection of filterSelections'
+      [name]="filterSelection.name" [value]='filterSelection.selectedOption'>
+      <mat-button-toggle *ngFor='let option of filterSelection.options' [value]="option.key"
+                         (click)='filterSelection.selectedOption=option.key; updateFilterSelections();'>
+        {{option.label}}
+      </mat-button-toggle>
     </mat-button-toggle-group>
   </div>
 </mat-expansion-panel>
@@ -81,10 +78,19 @@
     <td mat-cell *matCellDef="let child"> {{child.schoolName}} </td>
   </ng-container>
 
-  <ng-container matColumnDef="attendance">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Attendance </th>
+  <ng-container matColumnDef="attendance-school">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Attendance (School)</th>
     <td mat-cell *matCellDef="let child">
-      <app-attendance-block *ngFor="let att of attendanceList.get(child.projectNumber)" [attendanceData]="att"></app-attendance-block>
+      <app-attendance-block *ngFor="let att of attendanceList.get(child.getId()) | filterBy: {'institution': 'school'} | slice:0:5"
+                            [attendanceData]="att"></app-attendance-block>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="attendance-coaching">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Attendance (Coaching)</th>
+    <td mat-cell *matCellDef="let child">
+      <app-attendance-block *ngFor="let att of attendanceList.get(child.getId()) | filterBy: {'institution': 'coaching'} | slice:0:5"
+                            [attendanceData]="att"></app-attendance-block>
     </td>
   </ng-container>
 

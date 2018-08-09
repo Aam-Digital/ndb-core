@@ -10,11 +10,10 @@ import {Aser} from './aser/aser';
 
 @Injectable()
 export class ChildrenService {
-  attendanceIndicesUpdated: Promise<any>;
 
   constructor(private entityMapper: EntityMapperService,
               private db: Database) {
-    this.attendanceIndicesUpdated = this.createAttendanceAnalysisIndex();
+    this.createAttendanceAnalysisIndex();
     this.createNotesIndex();
   }
 
@@ -42,13 +41,11 @@ export class ChildrenService {
 
 
   queryAttendanceLast3Months() {
-    return this.attendanceIndicesUpdated
-      .then(() => this.db.query('avg_attendance_index/three_months', {reduce: true, group: true}));
+    return this.db.query('avg_attendance_index/three_months', {reduce: true, group: true});
   }
 
   queryAttendanceLastMonth() {
-    return this.attendanceIndicesUpdated
-      .then(() => this.db.query('avg_attendance_index/last_month', {reduce: true, group: true}))
+    return this.db.query('avg_attendance_index/last_month', {reduce: true, group: true});
   }
 
 
