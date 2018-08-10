@@ -159,12 +159,11 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
 
   addChildClick() {
-    let route: string;
-    route = this.router.url + '/new';
+    this.router.navigate(['/child', 'new']);
   }
 
 
   showChildDetails(child: Child) {
-      this.router.navigate(['/child', child.getId()]);
+    this.router.navigate(['/child', child.getId()]);
   }
 }
