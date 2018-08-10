@@ -44,7 +44,7 @@ export class ChildDetailsComponent implements OnInit {
 
   genders = Gender;
   documentStatus = ['OK (copy with us)', 'OK (copy needed for us)', 'needs correction', 'applied', 'doesn\'t have', 'not eligible', ''];
-  school = new School('');
+  schools = new Array<School>();
   eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
   vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
 
@@ -100,6 +100,7 @@ export class ChildDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
+    this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
   }
 
   loadChild(id: string) {
@@ -112,11 +113,6 @@ export class ChildDetailsComponent implements OnInit {
         .then(child => {
           this.child = child;
           this.initializeForm();
-
-          this.entityMapperService.load(School, child.schoolId)
-            .then(school => {
-              this.school = school;
-            });
         });
     }
     this.initializeForm();

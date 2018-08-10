@@ -183,7 +183,16 @@
       </mat-expansion-panel-header>
 
       <div>
-        <app-school-block [entity]='school' class='mat-form-field'></app-school-block>
+        <mat-form-field style='width:300px;'>
+          <mat-label>
+            School
+          </mat-label>
+          <mat-select [disabled]='!editing' [(ngModel)]='child.schoolId' [ngModelOptions]="{standalone: true}">
+            <mat-option *ngFor="let s of schools" [value]="s.getId()">
+              <app-school-block [entity]='s' [linkDisabled]='true' class='mat-form-field'></app-school-block>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
         <mat-form-field>
           <input matInput type="number" formControlName="schoolClass" placeholder="Class">

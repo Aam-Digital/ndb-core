@@ -75,7 +75,7 @@
 
   <ng-container matColumnDef="school">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> School </th>
-    <td mat-cell *matCellDef="let child"> {{child.schoolName}} </td>
+    <td mat-cell *matCellDef="let child"><app-school-block [entityId]='child.schoolId'></app-school-block> </td>
   </ng-container>
 
   <ng-container matColumnDef="attendance-school">
