@@ -8,46 +8,14 @@ import {ChildrenService} from '../children.service';
 
 @Component({
   selector: 'app-educational-material',
-  template: '<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="generateNewRecordFactory()">' +
-  '</app-entity-subrecord>',
+  templateUrl: './educational-material.component.html',
 })
 export class EducationalMaterialComponent implements OnInit {
 
   childId: string;
-  records: Array<EducationalMaterial>;
+  records = new Array<EducationalMaterial>();
 
-  materialTypes = [
-    'pencil',
-    'eraser',
-    'sharpener',
-    'pen (black)',
-    'pen (blue)',
-    'oil pastels',
-    'crayons',
-    'sketch pens',
-    'scale (big)',
-    'scale (small)',
-    'geometry box',
-    'copy (single line, small)',
-    'copy (single line, big)',
-    'copy (four line)',
-    'copy (squared)',
-    'copy (plain)',
-    'copy (line-plain)',
-    'copy (drawing)',
-    'copy (practical)',
-    'graph book',
-    'project papers',
-    'project file',
-    'scrap book',
-    'exam board',
-    'Bag',
-    'School Uniform',
-    'School Shoes',
-    'Sports Dress',
-    'Sports Shoes',
-    'Raincoat',
-  ];
+  materialTypes = EducationalMaterial.MATERIAL_ALL;
 
   columns: Array<ColumnDescription> = [
     new ColumnDescription('date', 'Date', 'date', null,
@@ -85,10 +53,29 @@ export class EducationalMaterialComponent implements OnInit {
 
     return () => {
       const newAtt = new EducationalMaterial(Date.now().toString());
-      newAtt.date = new Date();
+
+      // use last entered date as default, otherwise today's date
+      newAtt.date = this.records.length > 0 ? this.records[0].date : new Date();
+
       newAtt.child = child;
 
       return newAtt;
     };
+  }
+
+  getSummary() {
+    if (this.records.length === 0) {
+      return '';
+    }
+
+    const summary = new Map<string, number>();
+    this.records.forEach(m => {
+      const previousValue = summary.has(m.materialType) ? summary.get(m.materialType) : 0;
+      summary.set(m.materialType, previousValue + m.materialAmount);
+    });
+
+    let summaryText = '';
+    summary.forEach((v, k) => summaryText = summaryText + k + ': ' + v + ', ');
+    return summaryText;
   }
 }

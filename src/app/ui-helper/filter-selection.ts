@@ -16,15 +16,31 @@
  */
 
 
-export interface IAppConfig {
-  version: string;
-  site_name: string;
+export class FilterSelection<T> {
 
-  database: {
-    name: string;
-    remote_url: string;
-    timeout: number;
-    outdated_threshold_days: number;
-    useTemporaryDatabase: boolean;
-  };
+  public selectedOption = '';
+  defaultFilterFunction = (c: T) => true;
+
+  constructor (public name: string,
+               public options: { key: string, label: string, filterFun: (c: T) => boolean}[] ) {
+
+  }
+
+  getOption(key: string) {
+    return this.options.find((option) => option.key === key);
+  }
+
+  public getFilterFunction(key: string) {
+    const option = this.getOption(key);
+
+    if (!option) {
+      return this.defaultFilterFunction;
+    } else {
+      return option.filterFun;
+    }
+  }
+
+  public getSelectedFilterFunction() {
+    return this.getFilterFunction(this.selectedOption);
+  }
 }
