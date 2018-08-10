@@ -1,5 +1,12 @@
 [
   {
+    "tag_name": "v2.3.4",
+    "name": "Minor fixes",
+    "published_at": "2018-08-10",
+    "body": "- fixed broken \"Add Child\" link\n- allow changing of school in Child Details\n- fixed broken sort of some columns in Children List",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.3.3",
     "name": "Fixed 'Add Attendance' not saving",
     "published_at": "2018-08-02",
