@@ -59,22 +59,21 @@ export class Child extends Entity {
   health_lastVitaminD: Date;
   health_lastDeworming: Date;
 
-
-  getAge(): number {
+  get age(): number {
     let age = -1;
 
-   if (this.dateOfBirth) {
-     const now = new Date();
-     const dateOfBirth = new Date(this.dateOfBirth);
+    if (this.dateOfBirth) {
+      const now = new Date();
+      const dateOfBirth = new Date(this.dateOfBirth);
 
-     age = now.getFullYear() - dateOfBirth.getFullYear();
-     const m = now.getMonth() - dateOfBirth.getMonth();
-     if (m < 0 || (m === 0 && now.getDate() < dateOfBirth.getDate())) {
-       age--;
-     }
-   }
+      age = now.getFullYear() - dateOfBirth.getFullYear();
+      const m = now.getMonth() - dateOfBirth.getMonth();
+      if (m < 0 || (m === 0 && now.getDate() < dateOfBirth.getDate())) {
+        age--;
+      }
+    }
 
-   return age;
+    return age;
   }
 
   isActive(): boolean {

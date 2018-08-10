@@ -4,7 +4,6 @@ import {MatSort, MatTableDataSource} from '@angular/material';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ChildrenService} from '../children.service';
 import {AttendanceMonth} from '../attendance/attendance-month';
-import { EntityMapperService } from '../../entity/entity-mapper.service';
 import {FilterSelection} from '../../ui-helper/filter-selection';
 
 @Component({
@@ -32,11 +31,13 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   columnGroupSelection = 'school';
   columnGroups = {
-    'basic': ['projectNumber', 'name', 'age', 'gender', 'class', 'school', 'center', 'status'],
-    'school': ['projectNumber', 'name', 'age', 'class', 'school', 'attendance-school', 'attendance-coaching', 'motherTongue'],
-    'status': ['projectNumber', 'name', 'center', 'status', 'admission', 'aadhar', 'kanyashree', 'bankAccount', 'rationCard', 'bplCard'],
+    'basic': ['projectNumber', 'name', 'age', 'gender', 'schoolClass', 'schoolId', 'center', 'status'],
+    'school': ['projectNumber', 'name', 'age', 'schoolClass', 'schoolId', 'attendance-school', 'attendance-coaching', 'motherTongue'],
+    'status': ['projectNumber', 'name', 'center', 'status', 'admissionDate',
+      'has_aadhar', 'has_kanyashree', 'has_bankAccount', 'has_rationCard', 'has_bplCard'],
     'health': ['projectNumber', 'name', 'center',
-      'vaccination', 'dentalCheckup', 'eyeCheckup', 'eyeStatus', 'EntCheckup', 'vitaminD', 'deworming',
+      'health_vaccinationStatus', 'health_LastDentalCheckup', 'health_LastEyeCheckup', 'health_eyeHealthStatus', 'health_LastENTCheckup',
+      'health_lastVitaminD', 'health_LastDeworming',
       'gender', 'age', 'dateOfBirth'],
   };
   columnsToDisplay: ['projectNumber', 'name'];
@@ -46,8 +47,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
   constructor(private childrenService: ChildrenService,
               private router: Router,
-              private route: ActivatedRoute,
-              private entityMapper: EntityMapperService) {  }
+              private route: ActivatedRoute) {  }
 
   ngOnInit() {
     this.loadData();
