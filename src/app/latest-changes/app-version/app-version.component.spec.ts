@@ -52,8 +52,7 @@ describe('AppVersionComponent', () => {
     AppConfig.settings = {
       version: '2.0.1',
       site_name: '',
-      database: { name: 'unit-tests', remote_url: '', timeout: 60000, outdated_threshold_days: 0 },
-      dev: { useRemoteDatabaseDuringDevelopment: true }
+      database: { name: 'unit-tests', remote_url: '', timeout: 60000, outdated_threshold_days: 0, useTemporaryDatabase: true },
     };
 
     spyOn(latestChangesService, 'getChangelog').and

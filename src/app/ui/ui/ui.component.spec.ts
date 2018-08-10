@@ -53,12 +53,9 @@ describe('UiComponent', () => {
         'name': 'unit-tests',
         'remote_url': '',
         'timeout': 60000,
-        'outdated_threshold_days': 0
+        'outdated_threshold_days': 0,
+        'useTemporaryDatabase': true,
       },
-
-      'dev': {
-        'useRemoteDatabaseDuringDevelopment': false
-      }
     };
 
     TestBed.configureTestingModule({
