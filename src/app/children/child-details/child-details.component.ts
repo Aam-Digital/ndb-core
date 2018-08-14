@@ -130,6 +130,7 @@ export class ChildDetailsComponent implements OnInit {
       .then(() => {
         if (this.creatingNew) {
           this.router.navigate(['/child', this.child.getId()]);
+          this.creatingNew = false;
         }
         this.switchEdit();
       })
