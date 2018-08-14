@@ -43,6 +43,9 @@ describe('ChildrenListComponent', () => {
         NoopAnimationsModule,
         FormsModule,
         FilterPipeModule,
+        RouterTestingModule.withRoutes([
+          { path: 'child', component: ChildrenListComponent}
+        ]),
       ],
       providers: [ChildrenService, EntityMapperService, { provide: Database, useClass: MockDatabase }],
     })

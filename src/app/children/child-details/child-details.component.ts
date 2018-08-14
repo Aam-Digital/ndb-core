@@ -43,7 +43,8 @@ export class ChildDetailsComponent implements OnInit {
   editing = false;
 
   genders = Gender;
-  school = new School('');
+  documentStatus = ['OK (copy with us)', 'OK (copy needed for us)', 'needs correction', 'applied', 'doesn\'t have', 'not eligible', ''];
+  schools = new Array<School>();
   eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
   vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
 
@@ -54,7 +55,6 @@ export class ChildDetailsComponent implements OnInit {
       // gender:         [{value: this.child.gender}], // reactive forms seem broken for mat-select, using ngModel instead
       projectNumber:  [{value: this.child.projectNumber,  disabled: !this.editing}],
       dateOfBirth:    [{value: this.child.dateOfBirth,    disabled: !this.editing}],
-      aadhar:         [{value: this.child.aadhar,         disabled: !this.editing}],
       motherTongue:   [{value: this.child.motherTongue,   disabled: !this.editing}],
       religion:       [{value: this.child.religion,       disabled: !this.editing}],
 
@@ -68,6 +68,12 @@ export class ChildDetailsComponent implements OnInit {
       preferredTimeForGuardianMeeting: [{value: this.child.preferredTimeForGuardianMeeting, disabled: !this.editing}],
 
       schoolClass:    [{value: this.child.schoolClass,    disabled: !this.editing}],
+
+      // aadhar:         [{value: this.child.has_aadhar,         disabled: !this.editing}],
+      // kanyashree:     [{value: this.child.has_kanyashree,     disabled: !this.editing}],
+      // bankAccount:    [{value: this.child.has_bankAccount,    disabled: !this.editing}],
+      // rationCard:     [{value: this.child.has_rationCard,     disabled: !this.editing}],
+      // bplCard:        [{value: this.child.has_BplCard,        disabled: !this.editing}],
 
       // health_vaccinationStatus:    [{value: this.child.health_vaccinationStatus,    disabled: !this.editing}],
       health_lastDentalCheckup:   [{value: this.child.health_lastDentalCheckup,    disabled: !this.editing}],
@@ -94,6 +100,7 @@ export class ChildDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
+    this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
   }
 
   loadChild(id: string) {
@@ -106,11 +113,6 @@ export class ChildDetailsComponent implements OnInit {
         .then(child => {
           this.child = child;
           this.initializeForm();
-
-          this.entityMapperService.load(School, child.schoolId)
-            .then(school => {
-              this.school = school;
-            });
         });
     }
     this.initializeForm();
@@ -128,6 +130,7 @@ export class ChildDetailsComponent implements OnInit {
       .then(() => {
         if (this.creatingNew) {
           this.router.navigate(['/child', this.child.getId()]);
+          this.creatingNew = false;
         }
         this.switchEdit();
       })
