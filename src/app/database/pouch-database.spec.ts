@@ -26,7 +26,7 @@ describe('PouchDatabase tests', () => {
 
   beforeEach(() => {
     pouch = new PouchDB('unit-test-db');
-    pouchDatabase = new PouchDatabase(pouch, new AlertService(null));
+    pouchDatabase = new PouchDatabase(pouch, new AlertService(null, null));
 
     originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;

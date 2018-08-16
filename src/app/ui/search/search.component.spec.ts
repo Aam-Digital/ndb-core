@@ -17,7 +17,7 @@ describe('SearchComponent', () => {
   let fixture: ComponentFixture<SearchComponent>;
 
   beforeEach(async(() => {
-    const pouchDB = new PouchDatabase(new PouchDB('unit-test-search'), new AlertService(null));
+    const pouchDB = new PouchDatabase(new PouchDB('unit-test-search'), new AlertService(null, null));
 
     TestBed.configureTestingModule({
       imports: [MatIconModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule,
