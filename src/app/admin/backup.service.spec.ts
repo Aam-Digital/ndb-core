@@ -1,18 +1,16 @@
 import {TestBed} from '@angular/core/testing';
 
-import {BackupService} from './backup.service';
-import {PouchDatabase} from '../database/pouch-database';
+import { BackupService } from './backup.service';
 import {Database} from '../database/database';
-import PouchDB from 'pouchdb';
 import {PapaParseModule} from 'ngx-papaparse';
-import {AlertService} from '../alerts/alert.service';
+import {MockDatabase} from '../database/mock-database';
 
 describe('BackupService', () => {
-  let db: PouchDatabase;
+  let db: Database;
   let service: BackupService;
 
   beforeEach(() => {
-    db = new PouchDatabase(new PouchDB('unit-tests'), new AlertService(null, null));
+    db = new MockDatabase();
     TestBed.configureTestingModule({
       imports: [PapaParseModule],
       providers: [
@@ -22,11 +20,6 @@ describe('BackupService', () => {
     });
 
     service = TestBed.get(BackupService);
-  });
-
-  afterEach((done) => {
-    (new PouchDB('unit-tests')).destroy()
-      .then(() => done());
   });
 
 
