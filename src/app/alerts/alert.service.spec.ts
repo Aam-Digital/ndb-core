@@ -15,18 +15,48 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AlertService } from './alert.service';
-import { Alert } from './alert';
+import {AlertService} from './alert.service';
+import {Alert} from './alert';
+import {LogLevel} from '../logging/log-level';
+import {LoggingService} from '../logging/logging.service';
+
+class MockLoggingService extends LoggingService {
+  public log(message: string, logLevel: LogLevel) {
+  }
+
+  public debug(message: string) {
+  }
+
+  public info(message: string) {
+  }
+
+  public warn(message: string) {
+  }
+
+  public error(message: string) {
+  }
+}
 
 describe('AlertService', () => {
   let alertService: AlertService;
   let snackBarMock;
-
+  let loggingService: MockLoggingService;
   beforeEach(() => {
+    loggingService = new MockLoggingService();
     snackBarMock = {
-      openFromComponent: function (component, config) { }
-    };
-    alertService = new AlertService(snackBarMock);
+      openFromComponent: function (component, config) {
+      },
+    }
+    ;
+    alertService = new AlertService(snackBarMock, loggingService);
+  });
+
+  it('add debug alert', function () {
+    const message = 'debug alert';
+    alertService.addDebug(message);
+
+    expect(alertService.alerts[0].message).toEqual(message);
+    expect(alertService.alerts[0].type).toEqual('debug');
   });
 
   it('add info alert', function () {
@@ -69,3 +99,4 @@ describe('AlertService', () => {
     expect(alertService.alerts.length).toBe(0);
   });
 });
+

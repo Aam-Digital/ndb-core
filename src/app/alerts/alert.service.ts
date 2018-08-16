@@ -20,13 +20,16 @@ import {MatSnackBar} from '@angular/material';
 
 import {Alert} from './alert';
 import {AlertComponent} from './alerts/alert.component';
+import {LoggingService} from '../logging/logging.service';
 
 @Injectable()
 export class AlertService {
 
   alerts: Alert[] = [];
 
-  constructor(public snackBar: MatSnackBar) {}
+  constructor(public snackBar: MatSnackBar,
+              private loggingService: LoggingService) {
+  }
 
   addAlert(alert: Alert) {
     this.alerts.push(alert);
@@ -35,7 +38,7 @@ export class AlertService {
   }
 
   private openSnackBar(alert: Alert) {
-    const snackConfig = { data: alert, duration: 10000, panelClass: 'alerts-snackbar' };
+    const snackConfig = {data: alert, duration: 10000, panelClass: 'alerts-snackbar'};
 
     switch (alert.type) {
       case Alert.DEBUG:
@@ -58,13 +61,16 @@ export class AlertService {
       case Alert.WARNING:
       case Alert.DANGER:
         console.warn(alert.message);
+        this.loggingService.warn(alert.message);
         break;
       case Alert.INFO:
       case Alert.SUCCESS:
         console.log(alert.message);
+        this.loggingService.info(alert.message);
         break;
       case Alert.DEBUG:
         console.log(alert.message);
+        this.loggingService.debug(alert.message);
         break;
     }
   }
