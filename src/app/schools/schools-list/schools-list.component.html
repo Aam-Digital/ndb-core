@@ -1,30 +1,59 @@
 <h1>School List</h1>
 
+<mat-expansion-panel expanded="true" fxLayout="column" fxLayoutGap="10px" class='filter-panel'>
+  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none end">
+    <div fxFlex='50'>
+      <mat-form-field style='width:100%'>
+        <input matInput placeholder="Filter" (ngModelChange)="applyFilter($event)" [(ngModel)]="filterString">
+        <button mat-icon-button *ngIf="filterString" matSuffix aria-label="Clear" (click)="filterString=''; applyFilter('');">
+          <mat-icon fontIcon="fa-times"></mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+
+    <div class='align-form-field'>
+      (Showing {{schoolDataSource.filteredData.length}} children)
+    </div>
+
+    <div class='align-form-field'>
+      <button mat-stroked-button color="accent" (click)="addSchoolClick()">
+        <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>Add New School
+      </button>
+    </div>
+  </div>
+
+  // TODO slector for private school
+  <div fxLayout='row' fxLayoutGap='10px'>
+    <mat-button-toggle-group name="mediumFilterSelection" [(value)]="mediumFilterSelection">
+      <mat-button-toggle *ngFor='let medium of mediums' [value]="medium" (click)="setMediumFilteredList(medium)">{{medium}}</mat-button-toggle>
+      <mat-button-toggle value="" (click)="setMediumFilteredList('')">All</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+</mat-expansion-panel>
 
 <div *ngIf="schoolDataSource">
   <table mat-table [dataSource]="schoolDataSource" matSort class="mat-elevation-z8 table-list" width='100%'>
     <ng-container matColumnDef="name">
-      <th mat-header-cell mat-sort-header> Name</th>
+      <th mat-header-cell mat-sort-header> Name </th>
       <td mat-cell *matCellDef="let school"> {{school.name}}</td>
     </ng-container>
 
     <ng-container matColumnDef="address">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Address</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Address </th>
       <td mat-cell *matCellDef="let school"> {{school.address}}</td>
     </ng-container>
 
     <ng-container matColumnDef="medium">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Medium</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Medium </th>
       <td mat-cell *matCellDef="let school"> {{school.medium}}</td>
     </ng-container>
 
-    <!-- <ng-container matColumnDef="privateSchool">
+    <ng-container matColumnDef="privateSchool">
        <th mat-header-cell *matHeaderCellDef mat-sort-header> Private School </th>
-       <td mat-cell *matCellDef="let school"> {{school.privateSchool}} </td>
-     </ng-container>-->
+       <td mat-cell *matCellDef="let school"> {{school.privateSchool?"✓":"×"}} </td>
+     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-    <tr mat-row *matRowDef="let school; columns: columnsToDisplay" (click)="showSchoolDetails(school)"
-        style="cursor:pointer;"></tr>
+    <tr mat-header-row *matHeaderRowDef=""></tr>
+    <tr mat-row *matRowDef="let school; columns: columnsToDisplay" (click)="showSchoolDetails(school)" style="cursor:pointer;"></tr>
   </table>
 </div>
