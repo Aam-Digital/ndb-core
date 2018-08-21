@@ -1,0 +1,53 @@
+<div>
+  <!-- Week -->
+  <table>
+    <thead>
+      <tr>
+        <th>Mon</th>
+        <th>Tue</th>
+        <th>Wed</th>
+        <th>Thu</th>
+        <th>Fri</th>
+        <th>Sat</th>
+        <th>Sun</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor='let weekRecords of getWeeks()'>
+        <td *ngFor='let record of weekRecords' class='day-cell status-{{record.status}}-cell'
+            (click)='selectCell(record)' [ngClass]="{'selected': (selectedRecord === record)}">
+          <span class='date'>{{record.date.getDate()}}</span>
+          <span class='status'>{{record.status}}</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf='selectedRecord' class='selected form'>
+    <div>
+      {{selectedRecord.date.toLocaleDateString()}}
+    </div>
+
+    <div>
+      <mat-form-field>
+        <mat-select [(ngModel)]='selectedRecord.status'>
+          <mat-option *ngFor="let s of statusValues | keys" [value]="s.value">{{s.key}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field style='width: 100%;'>
+        <textarea matInput placeholder="Remarks" [(ngModel)]="selectedRecord.remarks"></textarea>
+      </mat-form-field>
+    </div>
+
+    <div>
+      <button mat-stroked-button (click)="save()">
+        Save
+      </button>
+      <button mat-stroked-button (click)="cancel()">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>

@@ -17,6 +17,7 @@
 
 import { Entity } from '../../entity/entity';
 import {WarningLevel} from './warning-level';
+import {AttendanceDay} from './attendance-day';
 
 
 export class AttendanceMonth extends Entity {
@@ -33,6 +34,9 @@ export class AttendanceMonth extends Entity {
   institution: string;
 
   overridden = false; // indicates individual override during bulk adding
+
+  dailyRegister = new Array<AttendanceDay>();
+
 
   getAttendancePercentage() {
     return this.daysAttended / (this.daysWorking - this.daysExcused);

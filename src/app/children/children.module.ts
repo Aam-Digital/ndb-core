@@ -55,6 +55,7 @@ import {AserComponent} from './aser/aser.component';
 import {FilterPipeModule} from 'ngx-filter-pipe';
 import { NotesManagerComponent } from './notes/notes-manager/notes-manager.component';
 import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/add-month-attendance.component';
+import { AttendanceDaysComponent } from './attendance/attendance-days/attendance-days.component';
 
 
 @NgModule({
@@ -101,6 +102,7 @@ import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/a
     AserComponent,
     NotesManagerComponent,
     AddMonthAttendanceComponent,
+    AttendanceDaysComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
@@ -108,7 +110,8 @@ import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/a
     ChildSelectComponent,
     ChildrenCountDashboardComponent,
     AttendanceAverageDashboardComponent,
-    AttendanceWarningsDashboardComponent
+    AttendanceWarningsDashboardComponent,
+    AttendanceDaysComponent,
   ],
   entryComponents: [NoteDetailsComponent],
 })

@@ -1,0 +1,49 @@
+.day-cell {
+  background-color: #F5F5F5;
+  width: 60px;
+  height: 40px;
+  position: relative;
+  text-align: center;
+}
+
+.date {
+  font-size: small;
+
+  position: absolute;
+  top: 5px;
+  left: 5px;
+}
+
+.status {
+  font-weight: bold;
+}
+
+.status-P-cell {
+  background-color: #C8E6C9;
+}
+.status-H-cell {
+  background-color: #CFD8DC;
+}
+.status-L-cell {
+  background-color: #FFECB3;
+}
+.status-E-cell {
+  background-color: #D7CCC8;
+}
+.status-A-cell {
+  background-color: #FF8A65;
+}
+
+.selected {
+  border: 5px solid black;
+  box-sizing: border-box;
+}
+
+.form {
+  padding: 10px;
+  width: 420px;
+}
+
+button {
+  margin: 5px;
+}
