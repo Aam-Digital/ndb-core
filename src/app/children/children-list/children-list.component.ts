@@ -4,8 +4,7 @@ import {MatSort, MatTableDataSource} from '@angular/material';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ChildrenService} from '../children.service';
 import {AttendanceMonth} from '../attendance/attendance-month';
-import { EntityMapperService } from '../../entity/entity-mapper.service';
-import {FilterSelection} from './filter-selection';
+import {FilterSelection} from '../../ui-helper/filter-selection';
 
 @Component({
   selector: 'app-children-list',
@@ -32,11 +31,13 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   columnGroupSelection = 'school';
   columnGroups = {
-    'basic': ['projectNumber', 'name', 'age', 'gender', 'class', 'school', 'center', 'status'],
-    'school': ['projectNumber', 'name', 'age', 'class', 'school', 'attendance', 'motherTongue'],
-    'status': ['projectNumber', 'name', 'center', 'status', 'aadhar', 'admission'],
+    'basic': ['projectNumber', 'name', 'age', 'gender', 'schoolClass', 'schoolId', 'center', 'status'],
+    'school': ['projectNumber', 'name', 'age', 'schoolClass', 'schoolId', 'attendance-school', 'attendance-coaching', 'motherTongue'],
+    'status': ['projectNumber', 'name', 'center', 'status', 'admissionDate',
+      'has_aadhar', 'has_kanyashree', 'has_bankAccount', 'has_rationCard', 'has_bplCard'],
     'health': ['projectNumber', 'name', 'center',
-      'vaccination', 'dentalCheckup', 'eyeCheckup', 'eyeStatus', 'EntCheckup', 'vitaminD', 'deworming',
+      'health_vaccinationStatus', 'health_LastDentalCheckup', 'health_LastEyeCheckup', 'health_eyeHealthStatus', 'health_LastENTCheckup',
+      'health_lastVitaminD', 'health_LastDeworming',
       'gender', 'age', 'dateOfBirth'],
   };
   columnsToDisplay: ['projectNumber', 'name'];
@@ -46,8 +47,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
   constructor(private childrenService: ChildrenService,
               private router: Router,
-              private route: ActivatedRoute,
-              private entityMapper: EntityMapperService) {  }
+              private route: ActivatedRoute) {  }
 
   ngOnInit() {
     this.loadData();
@@ -56,12 +56,15 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
 
   private loadUrlParams() {
-    // TODO: also encode in / retrieve from URL
-    this.displayColumnGroup(this.columnGroupSelection);
-
     this.route.queryParams.subscribe(params => {
-      this.filterSelections.forEach(f => {
+        this.columnGroupSelection = params['view'] ? params['view'] : this.columnGroupSelection;
+        this.displayColumnGroup(this.columnGroupSelection);
+
+        this.filterSelections.forEach(f => {
         f.selectedOption = params[f.name];
+        if (f.selectedOption === undefined && f.options.length > 0) {
+          f.selectedOption = f.options[0].key;
+        }
       });
       this.applyFilterSelections();
     });
@@ -125,18 +128,21 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   }
 
   displayColumnGroup(columnGroup: string) {
+    this.columnGroupSelection = columnGroup;
     this.columnsToDisplay = this.columnGroups[columnGroup];
+    this.updateUrl();
   }
 
 
-  updateFilterSelections() {
+  updateUrl() {
     const params = {};
     this.filterSelections.forEach(f => {
       params[f.name] = f.selectedOption;
     });
-    this.router.navigate(['child'], { queryParams: params });
 
-    this.applyFilterSelections();
+    params['view'] = this.columnGroupSelection;
+
+    this.router.navigate(['child'], { queryParams: params });
   }
 
   applyFilterSelections() {
@@ -147,16 +153,17 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     });
 
     this.childrenDataSource.data = filteredData;
+
+    this.updateUrl();
   }
 
 
   addChildClick() {
-    let route: string;
-    route = this.router.url + '/new';
+    this.router.navigate(['/child', 'new']);
   }
 
 
   showChildDetails(child: Child) {
-      this.router.navigate(['/child', child.getId()]);
+    this.router.navigate(['/child', child.getId()]);
   }
 }

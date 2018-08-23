@@ -1,0 +1,101 @@
+<h1>Add Monthly Attendance Data</h1>
+
+<div fxLayoutGap='10px'>
+  <mat-button-toggle-group name="attendanceType" [(ngModel)]="attendanceType" (valueChange)='loadTable()'>
+    <mat-button-toggle value="school">School</mat-button-toggle>
+    <mat-button-toggle value="coaching">Coaching</mat-button-toggle>
+  </mat-button-toggle-group>
+
+
+  <mat-form-field *ngIf="attendanceType === 'school'" style='width: 300px'>
+    <mat-label>
+      School
+    </mat-label>
+    <mat-select [(ngModel)]='school' (selectionChange)='loadTable()'>
+      <mat-option *ngFor="let s of schools" [value]="s.getId()">
+        <app-school-block [entity]='s' [linkDisabled]='true' class='mat-form-field'></app-school-block>
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="attendanceType === 'coaching'">
+    <mat-label>
+      Center
+    </mat-label>
+    <mat-select [(ngModel)]='coachingCenter' (selectionChange)='loadTable()'>
+      <mat-option *ngFor="let center of centers" [value]='center'>
+        {{center}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<div fxLayoutGap='10px'>
+  <mat-form-field>
+    <input matInput placeholder="Month" type="month" (change)='updateMonth($event); loadTable();'>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput [(ngModel)]='workingDays' placeholder="Working Days" type="number" (change)='updateWorkingDays()'>
+  </mat-form-field>
+</div>
+
+<div *ngIf='loadingExistingRecords'>
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  Loading existing attendance records ...
+</div>
+
+<div style='margin-top:20px;'>
+  <table mat-table [dataSource]="attendanceDataSource" matSort class="mat-elevation-z8 table-list">
+    <ng-container matColumnDef="student">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Student </th>
+      <td mat-cell *matCellDef="let att"> <app-child-block [entityId]='att.student'></app-child-block></td>
+    </ng-container>
+
+    <ng-container matColumnDef="daysAttended">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Attended </th>
+      <td mat-cell *matCellDef="let att">
+        <mat-form-field class='input-number'>
+          <input matInput [(ngModel)]='att.daysAttended' type="number">
+        </mat-form-field>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="daysExcused">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Excused </th>
+      <td mat-cell *matCellDef="let att">
+        <mat-form-field class='input-number'>
+          <input matInput [(ngModel)]='att.daysExcused' type="number">
+        </mat-form-field>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="remarks">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Remarks </th>
+      <td mat-cell *matCellDef="let att">
+        <mat-form-field>
+          <input matInput [(ngModel)]='att.remarks' type="text">
+        </mat-form-field>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="daysWorking">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Working Days </th>
+      <td mat-cell *matCellDef="let att" fxLayoutGap='10px'>
+        <mat-checkbox [(ngModel)]='att.overridden' (change)='resetOverriddenWorkingDays(att)'></mat-checkbox>
+        <mat-form-field class='input-number'>
+          <input matInput [(ngModel)]='att.daysWorking' type="number" [disabled]='!att.overridden'>
+        </mat-form-field>
+      </td>
+    </ng-container>
+
+
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    <tr mat-row *matRowDef="let att; columns: columnsToDisplay"></tr>
+  </table>
+
+</div>
+
+<div style='margin-top:20px;'>
+  <button mat-stroked-button (click)='save()'>Save Attendance Records</button>
+</div>

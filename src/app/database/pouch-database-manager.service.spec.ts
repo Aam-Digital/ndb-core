@@ -28,13 +28,13 @@ describe('PouchDatabaseManagerService', () => {
         name: 'unit-test',
         remote_url: 'remote-',
         timeout: 60000,
-        outdated_threshold_days: 0
+        outdated_threshold_days: 0,
+        useTemporaryDatabase: false,
       },
       version: 'x',
       site_name: '',
-      dev: { useRemoteDatabaseDuringDevelopment: false },
     };
-    dbManager = new PouchDatabaseManagerService(new AlertService(null));
+    dbManager = new PouchDatabaseManagerService(new AlertService(null, null));
   });
 
   it('returns database', function () {

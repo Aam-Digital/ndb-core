@@ -27,9 +27,9 @@ import {
   MatAutocompleteModule,
   MatButtonModule,
   MatButtonToggleModule,
-  MatCardModule,
+  MatCardModule, MatCheckboxModule,
   MatDialogModule,
-  MatIconModule,
+  MatIconModule, MatProgressBarModule,
   MatSidenavModule,
   MatSnackBarModule,
   MatSortModule,
@@ -55,6 +55,9 @@ import { ShowSchoolHistoryDialogComponent } from './show-school-history-dialog/s
 import {SchoolsModule} from '../schools/schools.module';
 import { EducationalMaterialComponent } from './educational-material/educational-material.component';
 import {AserComponent} from './aser/aser.component';
+import {FilterPipeModule} from 'ngx-filter-pipe';
+import { NotesManagerComponent } from './notes/notes-manager/notes-manager.component';
+import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/add-month-attendance.component';
 
 
 @NgModule({
@@ -66,6 +69,7 @@ import {AserComponent} from './aser/aser.component';
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
+    MatCheckboxModule,
     MatSelectModule,
     MatExpansionModule,
     MatTableModule,
@@ -77,8 +81,10 @@ import {AserComponent} from './aser/aser.component';
     MatCardModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatProgressBarModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
+    FilterPipeModule,
     UiHelperModule,
     SchoolsModule,
     ReactiveFormsModule,
@@ -101,6 +107,8 @@ import {AserComponent} from './aser/aser.component';
     ShowSchoolHistoryDialogComponent,
     EducationalMaterialComponent,
     AserComponent,
+    NotesManagerComponent,
+    AddMonthAttendanceComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [

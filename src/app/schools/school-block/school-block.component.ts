@@ -10,7 +10,8 @@ import {EntityMapperService} from '../../entity/entity-mapper.service';
 })
 export class SchoolBlockComponent implements OnInit {
   @Input() entity: School = new School('');
-  @Input('entityId') entityId: string;
+  @Input() entityId: string;
+  @Input() linkDisabled: boolean;
   tooltip = false;
   tooltipTimeout;
 
@@ -42,6 +43,8 @@ export class SchoolBlockComponent implements OnInit {
   }
 
   showDetailsPage() {
-    this.router.navigate(['/selectedSchool', this.entity.getId()]);
+    if (!this.linkDisabled) {
+      this.router.navigate(['/school', this.entity.getId()]);
+    }
   }
 }

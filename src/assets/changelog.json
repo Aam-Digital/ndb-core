@@ -1,5 +1,33 @@
 [
   {
+    "tag_name": "v2.3.4",
+    "name": "Minor fixes",
+    "published_at": "2018-08-10",
+    "body": "- fixed broken \"Add Child\" link\n- allow changing of school in Child Details\n- fixed broken sort of some columns in Children List",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.3.3",
+    "name": "Fixed 'Add Attendance' not saving",
+    "published_at": "2018-08-02",
+    "body": "- fixed saving attendance through 'Add Attendance' page",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.3.2",
+    "name": "Improved 'Add Attendance'",
+    "published_at": "2018-08-02",
+    "body": "- improved performance when adding attendance in bulk",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.3.1",
+    "name": "Hotfixes",
+    "published_at": "2018-08-01",
+    "body": "- several small, urgent bug fixes\n- added additional fields to Child",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.1.4",
     "name": "Improvements & Bug Fixes",
     "published_at": "2018-06-29",

@@ -1,32 +1,25 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
 import { BackupService } from './backup.service';
-import {PouchDatabase} from '../database/pouch-database';
 import {Database} from '../database/database';
-import PouchDB from 'pouchdb';
 import {PapaParseModule} from 'ngx-papaparse';
-import {AlertService} from '../alerts/alert.service';
+import {MockDatabase} from '../database/mock-database';
 
 describe('BackupService', () => {
-  let db: PouchDatabase;
+  let db: Database;
   let service: BackupService;
 
   beforeEach(() => {
-    db = new PouchDatabase(new PouchDB('unit-tests'), new AlertService(null));
+    db = new MockDatabase();
     TestBed.configureTestingModule({
       imports: [PapaParseModule],
       providers: [
         BackupService,
-        { provide: Database, useValue: db },
+        {provide: Database, useValue: db},
       ]
     });
 
     service = TestBed.get(BackupService);
-  });
-
-  afterEach((done) => {
-    (new PouchDB('unit-tests')).destroy()
-      .then(() => done());
   });
 
 
@@ -37,22 +30,23 @@ describe('BackupService', () => {
 
   it('clearDatabase should remove all records', (done) => {
     const setup = db.put({_id: 'Test:1', test: 1})
-      .then(() => db.getAll()).then(res => expect(res.length).toBe(1) );
+      .then(() => db.getAll()).then(res => expect(res.length).toBe(1));
 
     setup
       .then(() => service.clearDatabase())
-      .then(() => db.getAll()).then(res => expect(res.length).toBe(0) )
+      .then(() => db.getAll()).then(res => expect(res.length).toBe(0))
       .then(() => done())
       .catch(err => {
         expect(false).toBeTruthy('unexpected error occured: ' + err);
-        done(); });
+        done();
+      });
   });
 
 
   it('getJsonExport should return all records', (done) => {
     const setup = db.put({_id: 'Test:1', test: 1})
       .then(() => db.put({_id: 'Test:2', test: 2}))
-      .then(() => db.getAll()).then(res => expect(res.length).toBe(2) );
+      .then(() => db.getAll()).then(res => expect(res.length).toBe(2));
 
     setup
       .then(() => service.getJsonExport())
@@ -62,9 +56,9 @@ describe('BackupService', () => {
       })
       .catch(err => {
         expect(false).toBeTruthy('unexpected error occured: ' + err);
-        done(); });
+        done();
+      });
   });
-
 
 
   it('getJsonExport | clearDatabase | importJson should restore all records', (done) => {
@@ -84,7 +78,7 @@ describe('BackupService', () => {
       .then(() => service.clearDatabase())
       .catch(err => {
         expect(false).toBeTruthy('1unexpected error occured: ' + err);
-        })
+      })
       .then(() => service.importJson(backup, true));
 
     perform
@@ -99,14 +93,15 @@ describe('BackupService', () => {
       })
       .catch(err => {
         expect(false).toBeTruthy('unexpected error occured: ' + err);
-        done(); });
+        done();
+      });
   });
 
 
   it('getCsvExport should contain a line for every record', (done) => {
     const setup = db.put({_id: 'Test:1', test: 1})
       .then(() => db.put({_id: 'Test:2', test: 2}))
-      .then(() => db.getAll()).then(res => expect(res.length).toBe(2) );
+      .then(() => db.getAll()).then(res => expect(res.length).toBe(2));
 
     setup
       .then(() => service.getCsvExport())
@@ -116,13 +111,14 @@ describe('BackupService', () => {
       })
       .catch(err => {
         expect(false).toBeTruthy('unexpected error occured: ' + err);
-        done(); });
+        done();
+      });
   });
 
   it('getCsvExport should contain a column for every property', (done) => {
     const setup = db.put({_id: 'Test:1', test: 1})
       .then(() => db.put({_id: 'Test:2', other: 2}))
-      .then(() => db.getAll()).then(res => expect(res.length).toBe(2) );
+      .then(() => db.getAll()).then(res => expect(res.length).toBe(2));
 
     setup
       .then(() => service.getCsvExport())
@@ -134,7 +130,8 @@ describe('BackupService', () => {
       })
       .catch(err => {
         expect(false).toBeTruthy('unexpected error occured: ' + err);
-        done(); });
+        done();
+      });
   });
 
 
@@ -152,7 +149,8 @@ describe('BackupService', () => {
       })
       .catch(err => {
         expect(false).toBeTruthy('unexpected error occured: ' + err);
-        done(); });
+        done();
+      });
   });
 
   it('importCsv should not add empty properties to records', (done) => {
@@ -169,8 +167,12 @@ describe('BackupService', () => {
       })
       .catch(err => {
         expect(false).toBeTruthy('unexpected error occured: ' + err);
-        done(); });
+        done();
+      });
   });
 
-  function ignoreRevProperty(x) { delete x._rev; return x; }
+  function ignoreRevProperty(x) {
+    delete x._rev;
+    return x;
+  }
 });

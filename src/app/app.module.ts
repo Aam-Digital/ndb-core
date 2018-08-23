@@ -47,7 +47,7 @@ import {AdminModule} from './admin/admin.module';
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ],
   imports: [
     BrowserModule,
@@ -77,7 +77,7 @@ import {AdminModule} from './admin/admin.module';
     { provide: APP_INITIALIZER, useFactory: initializeApp, deps: [AppConfig], multi: true },
     MatIconRegistry,
   ],
-  bootstrap: [AppComponent],
+  bootstrap: [AppComponent]
 })
 export class AppModule {
   constructor(private _navigationItemsService: NavigationItemsService,
@@ -87,7 +87,9 @@ export class AppModule {
 
     _navigationItemsService.addMenuItem(new MenuItem('Dashboard', 'home', ['/dashboard']));
     _navigationItemsService.addMenuItem(new MenuItem('Children', 'child', ['/child']));
-    _navigationItemsService.addMenuItem(new MenuItem('Schools', 'university', ['/selectedSchool']));
+    _navigationItemsService.addMenuItem(new MenuItem('Schools', 'university', ['/school']));
+    _navigationItemsService.addMenuItem(new MenuItem('Notes', 'file-text', ['/note']));
+    _navigationItemsService.addMenuItem(new MenuItem('Add Attendance', 'table', ['/attendance']));
     _navigationItemsService.addMenuItem(new MenuItem('Admin', 'wrench', ['/admin'], true));
   }
 }

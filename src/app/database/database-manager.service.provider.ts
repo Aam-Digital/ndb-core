@@ -23,10 +23,10 @@ import { DatabaseManagerService } from './database-manager.service';
 import {AlertService} from '../alerts/alert.service';
 
 export function databaseManagerServiceFactory(alertService: AlertService): DatabaseManagerService {
-  if (environment.production || AppConfig.settings.dev.useRemoteDatabaseDuringDevelopment) {
-    return new PouchDatabaseManagerService(alertService);
-  } else {
+  if (AppConfig.settings.database.useTemporaryDatabase) {
     return new MockDatabaseManagerService();
+  } else {
+    return new PouchDatabaseManagerService(alertService);
   }
 }
 

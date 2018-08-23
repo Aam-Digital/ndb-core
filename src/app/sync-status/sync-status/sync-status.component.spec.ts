@@ -47,7 +47,7 @@ describe('SyncStatusComponent', () => {
 
   beforeEach(async(() => {
     sessionService = new SessionService(null, null, null);
-    alertService = new AlertService(null);
+    alertService = new AlertService(null, null);
     dbManager = new MockDatabaseManagerService();
 
     TestBed.configureTestingModule({
