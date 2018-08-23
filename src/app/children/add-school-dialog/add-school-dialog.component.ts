@@ -21,7 +21,6 @@ export class AddSchoolDialogComponent {
               public dialogRef: MatDialogRef<AddSchoolDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data
   ) {
-    console.log("data " + JSON.stringify(this.data))
     this.childSchoolRelation.childId = this.data.child.getId();
     this.entityMapperService.loadType<School>(School)
       .then((schools: School[]) => this.schools = schools)
@@ -29,8 +28,8 @@ export class AddSchoolDialogComponent {
 
   public addSchoolClick() {
     this.childSchoolRelation.schoolId = this.selectedSchool.getId();
-    console.log("relation " + JSON.stringify(this.childSchoolRelation));
-    this.entityMapperService.save<ChildSchoolRelation>(this.childSchoolRelation);
-    this.entityMapperService.loadType<ChildSchoolRelation>(ChildSchoolRelation).then((res: ChildSchoolRelation[]) => console.log(...res));
+    this.entityMapperService.save<ChildSchoolRelation>(this.childSchoolRelation)
+      .then(() => this.dialogRef.close());
   }
 }
+

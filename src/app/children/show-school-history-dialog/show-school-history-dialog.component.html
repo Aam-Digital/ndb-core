@@ -1,7 +1,13 @@
 <mat-list *ngFor="let s of viewableSchools">
   <mat-list-item>
-    <input matInput [(value)]="s.schoolName" placeholder="Name of school" title="birthday" type="text">
-    <input matInput [(value)]="s.start" placeholder="from" title="start" type="date">
-    <input matInput [(value)]="s.end" placeholder="to" title="end" type="date">
+    <input matInput [disabled]="true" [(value)]="s.schoolName" placeholder="Name of school" title="birthday" type="text">
+    <input matInput [disabled]="!editing" [(value)]="s.start" placeholder="from" title="start" type="date">
+    <input matInput [disabled]="!editing" [(value)]="s.end" placeholder="to" title="end" type="date">
   </mat-list-item>
 </mat-list>
+
+<button *ngIf="editing" mat-stroked-button class='edit-button' (click)="save()">Save</button>
+
+<button *ngIf="editing" mat-stroked-button class='edit-button' style="color:red" (click)="cancel()">Cancel</button>
+
+<button mat-stroked-button class='edit-button' (click)="switchEdit()">Edit</button>

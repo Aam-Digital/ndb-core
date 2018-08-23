@@ -100,7 +100,6 @@ export class ChildDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
-    this.loadVisitedSchools();
   }
 
   loadChild(id: string) {
@@ -137,16 +136,6 @@ export class ChildDetailsComponent implements OnInit {
   switchEdit() {
     this.editing = !this.editing;
     this.initializeForm();
-  }
-
-  switchEditing() {
-    if (this.editing) {
-      this.editing = false;
-    } else {
-      if (this.schools.length == 0) {
-
-      }
-    }
   }
 
   save() {
@@ -195,6 +184,6 @@ export class ChildDetailsComponent implements OnInit {
   }
 
   showSchoolsClick() {
-    let dialog = this.dialog.open(ShowSchoolHistoryDialogComponent, {data: {visitedSchools: this.visitedSchools}});
+    let dialog = this.dialog.open(ShowSchoolHistoryDialogComponent, {data: {childId: this.child.getId()}});
   }
 }
