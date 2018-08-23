@@ -45,7 +45,20 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
 
     this._localDatabase = new PouchDB(AppConfig.settings.database.name);
     this._remoteDatabase = new PouchDB(AppConfig.settings.database.remote_url + AppConfig.settings.database.name,
-      { ajax: { rejectUnauthorized: false, timeout: AppConfig.settings.database.timeout }, skip_setup: true }
+      {
+        ajax: {
+          rejectUnauthorized: false, timeout: AppConfig.settings.database.timeout,
+        },
+        // This is a workaround for PouchDB 7.0.0 with pouchdb-authentication 1.1.3:
+        // https://github.com/pouchdb-community/pouchdb-authentication/issues/239
+        // It is necessary, until this merged PR will be published in PouchDB 7.0.1
+        // https://github.com/pouchdb/pouchdb/pull/7395
+        fetch(url, opts) {
+          opts.credentials = 'include';
+          return (PouchDB as any).fetch(url, opts);
+        },
+        skip_setup: true
+      } as PouchDB.Configuration.RemoteDatabaseConfiguration
     );
   }
 
