@@ -33,7 +33,7 @@ import {
   MatSidenavModule,
   MatSnackBarModule,
   MatSortModule,
-  MatTableModule
+  MatTableModule, MatTooltipModule
 } from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {ChildrenService} from './children.service';
@@ -57,6 +57,7 @@ import { NotesManagerComponent } from './notes/notes-manager/notes-manager.compo
 import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/add-month-attendance.component';
 import { AttendanceDaysComponent } from './attendance/attendance-days/attendance-days.component';
 import { AttendanceDetailsComponent } from './attendance/attendance-details/attendance-details.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 
 @NgModule({
@@ -82,6 +83,8 @@ import { AttendanceDetailsComponent } from './attendance/attendance-details/atte
     MatDialogModule,
     MatProgressBarModule,
     MatAutocompleteModule,
+    MatTooltipModule,
+    BrowserAnimationsModule,
     ReactiveFormsModule,
     FilterPipeModule,
     UiHelperModule,

@@ -13,14 +13,16 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor='let weekRecords of getWeeks()'>
-        <td *ngFor='let record of weekRecords' class='day-cell status-{{record.status}}-cell'
-            (click)='selectCell(record)' [ngClass]="{'selected': (selectedRecord === record)}">
+      <tr *ngFor='let weekRecords of getWeeks(); trackBy: weekRecordsTrackByFunction'>
+        <td *ngFor='let record of weekRecords; trackBy: recordTrackByFunction' class='day-cell status-{{record.status}}-cell'
+            (click)='selectCell(record)' [ngClass]="{'selected': (selectedRecord === record)}"
+            [matTooltip]='record.remarks' matTooltipPosition='above'>
           <span class='date' *ngIf='record.date.getMonth() === attendanceMonth.month.getMonth()'>
             {{record.date.getDate()}}
           </span>
           <span class='status'>
             {{record.status}}
+            <span *ngIf='record.remarks'>*</span>
           </span>
         </td>
       </tr>

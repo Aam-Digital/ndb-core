@@ -19,6 +19,9 @@ export class AttendanceDaysComponent implements OnInit {
 
   statusValues = AttendanceStatus;
 
+  weekRecordsTrackByFunction = (index: number, item: any) => item[0].date.getTime();
+  recordTrackByFunction = (index: number, item: any) => item.date.getTime();
+
   constructor(private dialog: ConfirmationDialogService,
               private entityMapper: EntityMapperService) { }
 
