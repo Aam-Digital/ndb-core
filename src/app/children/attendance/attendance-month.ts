@@ -46,6 +46,13 @@ export class AttendanceMonth extends Entity {
   dailyRegister = new Array<AttendanceDay>();
 
 
+  public static createAttendanceMonth(childId: string, institution: string) {
+    const newAtt = new AttendanceMonth(Date.now().toString() + institution); // TODO: logical way to assign entityId to Attendance?
+    newAtt.month = new Date();
+    newAtt.student = childId;
+    newAtt.institution = institution;
+    return newAtt;
+  }
 
   private updateDailyRegister() {
     if (this.month === undefined) {

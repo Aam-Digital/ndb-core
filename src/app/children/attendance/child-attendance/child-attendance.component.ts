@@ -60,14 +60,10 @@ export class ChildAttendanceComponent implements OnInit {
   generateNewRecordFactory() {
     // define values locally because "this" is a different scope after passing a function as input to another component
     const child = this.childId;
+    const institution = this.institution;
 
     return () => {
-      const newAtt = new AttendanceMonth(Date.now().toString()); // TODO: logical way to assign entityId to Attendance?
-      newAtt.month = new Date();
-      newAtt.student = child;
-      newAtt.institution = this.institution;
-
-      return newAtt;
+      return AttendanceMonth.createAttendanceMonth(child, institution);
     };
   }
 }
