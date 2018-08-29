@@ -26,16 +26,49 @@ export class AttendanceMonth extends Entity {
   static readonly THRESHOLD_WARNING = 0.8;
 
   student: string; // id of Child entity
-  month: Date;
   daysWorking: number;
   daysAttended: number;
   daysExcused = 0;
   remarks = '';
   institution: string;
 
+  private _month: Date;
+  get month(): Date {
+    return this._month;
+  }
+  set month(value: Date) {
+    this._month = value;
+    this.updateDailyRegister();
+  }
+
   overridden = false; // indicates individual override during bulk adding
 
   dailyRegister = new Array<AttendanceDay>();
+
+
+
+  private updateDailyRegister() {
+    if (this.month === undefined) {
+      return;
+    }
+
+    const expectedDays = daysInMonth(this.month);
+    const currentDays = this.dailyRegister.length;
+    if (currentDays < expectedDays) {
+      for (let i = currentDays + 1; i <= expectedDays; i++) {
+        const date = new Date(this.month.getFullYear(), this.month.getMonth(), i);
+        const day = new AttendanceDay(date);
+        this.dailyRegister.push(day);
+      }
+    } else if (currentDays > expectedDays) {
+      this.dailyRegister.splice(expectedDays);
+    }
+
+    this.dailyRegister.forEach((day) => {
+      day.date.setMonth(this.month.getMonth());
+      day.date.setFullYear(this.month.getFullYear());
+    });
+  }
 
 
   getAttendancePercentage() {
@@ -61,4 +94,8 @@ export class AttendanceMonth extends Entity {
 
     return super.load(data);
   }
+}
+
+export function daysInMonth (date: Date) {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 }
