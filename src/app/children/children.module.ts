@@ -56,6 +56,7 @@ import {FilterPipeModule} from 'ngx-filter-pipe';
 import { NotesManagerComponent } from './notes/notes-manager/notes-manager.component';
 import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/add-month-attendance.component';
 import { AttendanceDaysComponent } from './attendance/attendance-days/attendance-days.component';
+import { AttendanceDetailsComponent } from './attendance/attendance-details/attendance-details.component';
 
 
 @NgModule({
@@ -103,6 +104,7 @@ import { AttendanceDaysComponent } from './attendance/attendance-days/attendance
     NotesManagerComponent,
     AddMonthAttendanceComponent,
     AttendanceDaysComponent,
+    AttendanceDetailsComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
@@ -113,6 +115,6 @@ import { AttendanceDaysComponent } from './attendance/attendance-days/attendance
     AttendanceWarningsDashboardComponent,
     AttendanceDaysComponent,
   ],
-  entryComponents: [NoteDetailsComponent],
+  entryComponents: [NoteDetailsComponent, AttendanceDetailsComponent],
 })
 export class ChildrenModule { }
