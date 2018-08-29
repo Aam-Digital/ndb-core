@@ -19,7 +19,6 @@ export class ProgressDashboardComponent implements OnInit {
     this.data = new ProgressDashboardConfig(this.dashboardConfigId);
     this.entityMapper.load<ProgressDashboardConfig>(ProgressDashboardConfig, this.dashboardConfigId)
       .then(config => {
-        console.log(config);
         this.data = config;
       })
       .catch(e => console.log(e));
