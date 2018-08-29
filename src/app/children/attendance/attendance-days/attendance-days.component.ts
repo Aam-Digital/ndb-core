@@ -32,7 +32,9 @@ export class AttendanceDaysComponent implements OnInit {
 
     // fill first week with placeholder days if the month doesn't start on a Monday
     const firstDay = this.records[0].date;
-    for (let i = 1; i < firstDay.getDay(); i++) {
+    let daysUntilFirstOfMonth = firstDay.getDay();
+    if (firstDay.getDay() === 0) { daysUntilFirstOfMonth = 7} // workaround if first day of month is Sunday
+    for (let i = 1; i < daysUntilFirstOfMonth; i++) {
       const d = new Date(firstDay.getFullYear(), firstDay.getMonth(), firstDay.getDate() - i);
       currentWeek.unshift(new AttendanceDay(d));
     }
