@@ -15,7 +15,6 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { environment } from '../../environments/environment';
 import { PouchDatabaseManagerService } from './pouch-database-manager.service';
 import { AppConfig } from '../app-config/app-config';
 import { MockDatabaseManagerService } from './mock-database-manager.service';
@@ -33,5 +32,5 @@ export function databaseManagerServiceFactory(alertService: AlertService): Datab
 export const databaseManagerProvider = {
   provide: DatabaseManagerService,
   useFactory: databaseManagerServiceFactory,
-  deps: [AppConfig, AlertService]
+  deps: [AlertService]
 };
