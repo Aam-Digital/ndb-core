@@ -24,35 +24,6 @@ export class AttendanceDaysComponent implements OnInit {
 
   ngOnInit() {
     this.records = this.attendanceMonth.dailyRegister;
-
-    /*
-    for (let i = 1; i < 32; i++) {
-      const r = new AttendanceDay(new Date(2018, 7, i));
-
-      if (r.date.getDay() === 0) {
-        r.status = AttendanceStatus.HOLIDAY;
-      } else {
-        switch (i % 5) {
-          case 0:
-            r.status = AttendanceStatus.ABSENT;
-            break;
-          case 1:
-            r.status = AttendanceStatus.EXCUSED;
-            break;
-          case 2:
-            r.status = AttendanceStatus.PRESENT;
-            break;
-          case 3:
-            r.status = AttendanceStatus.LATE;
-            break;
-          case 4:
-            r.status = AttendanceStatus.UNKNOWN;
-            break;
-        }
-      }
-      this.records.push(r);
-    }
-    */
   }
 
   getWeeks(): AttendanceDay[] {
