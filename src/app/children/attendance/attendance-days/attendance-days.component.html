@@ -16,8 +16,12 @@
       <tr *ngFor='let weekRecords of getWeeks()'>
         <td *ngFor='let record of weekRecords' class='day-cell status-{{record.status}}-cell'
             (click)='selectCell(record)' [ngClass]="{'selected': (selectedRecord === record)}">
-          <span class='date'>{{record.date.getDate()}}</span>
-          <span class='status'>{{record.status}}</span>
+          <span class='date' *ngIf='record.date.getMonth() === attendanceMonth.month.getMonth()'>
+            {{record.date.getDate()}}
+          </span>
+          <span class='status'>
+            {{record.status}}
+          </span>
         </td>
       </tr>
     </tbody>

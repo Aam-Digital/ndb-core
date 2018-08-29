@@ -50,7 +50,9 @@ export class AttendanceDaysComponent implements OnInit {
   }
 
   selectCell(record: AttendanceDay) {
-    if (this.selectedRecord !== undefined) {
+    if (record.date.getMonth() !== this.attendanceMonth.month.getMonth()) {
+      return;
+    } else if (this.selectedRecord !== undefined) {
       this.dialog.openDialog('Unsaved Changes',
         'Please save or cancel the current changes before selecting a new record.',
         false);
