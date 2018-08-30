@@ -16,6 +16,7 @@ export class ShowSchoolHistoryDialogComponent {
   childSchoolRelations: ChildSchoolRelation[] = [];
   viewableSchools: ViewableSchool[] = [];
   editing: boolean = false;
+  dates: any = [];
 
 
   constructor(private entityMapperService: EntityMapperService,
@@ -36,7 +37,9 @@ export class ShowSchoolHistoryDialogComponent {
             this.childSchoolRelations.push(r);
             this.entityMapperService.load<School>(School, r.schoolId)
               .then((school: School) => {
-                this.viewableSchools.push(new ViewableSchool(school, r));
+                let temp: ViewableSchool = new ViewableSchool(school, r);
+                this.viewableSchools.push(temp);
+                this.dates.push({start: temp.start, end: temp.end});
               }).catch(err => console.log("[LOAD_ENTRIES] Error", err))
           }
         }
@@ -45,16 +48,25 @@ export class ShowSchoolHistoryDialogComponent {
 
   switchEdit() {
     this.editing = !this.editing;
+    console.log(this.viewableSchools);
   }
 
   save() {
+    console.log(this.dates);
+
     for (let s of this.viewableSchools) {
       s.childSchoolRelation.start = s.start;
       console.log("end " + s.end + " start " + s.start);
       s.childSchoolRelation.end = s.end;
       console.log(JSON.stringify(s.childSchoolRelation));
 
-      this.entityMapperService.save<ChildSchoolRelation>(s.childSchoolRelation);
+      this.entityMapperService.save<ChildSchoolRelation>(s.childSchoolRelation)
+        .then(res => {
+          console.log("[SAVE]", res)
+        })
+        .catch(err => {
+          console.log("[SAVE_ERROR]", err)
+        });
     }
   }
 
@@ -76,19 +88,51 @@ export class ShowSchoolHistoryDialogComponent {
 }
 
 class ViewableSchool {
-  schoolName: string;
-  childSchoolRelation: ChildSchoolRelation;
-  start: Date = new Date();
-  end: Date = new Date();
+  private _schoolName: string;
+  private _childSchoolRelation: ChildSchoolRelation;
+  private _start: Date;
+  private _end: Date;
+
+  get schoolName(): string {
+    return this._schoolName;
+  }
+
+  set schoolName(value: string) {
+    this._schoolName = value;
+  }
+
+  get childSchoolRelation(): ChildSchoolRelation {
+    return this._childSchoolRelation;
+  }
+
+  set childSchoolRelation(value: ChildSchoolRelation) {
+    this._childSchoolRelation = value;
+  }
+
+  get start(): Date {
+    return this._start;
+  }
+
+  set start(value: Date) {
+    this._start = value;
+  }
+
+  get end(): Date {
+    return this._end;
+  }
+
+  set end(value: Date) {
+    this._end = value;
+  }
 
   constructor(school: School, childSchoolRelation: ChildSchoolRelation) {
-    this.schoolName = school.name;
-    this.childSchoolRelation = childSchoolRelation;
+    this._schoolName = school.name;
+    this._childSchoolRelation = childSchoolRelation;
     if (childSchoolRelation.start != undefined) {
-      this.start = childSchoolRelation.start;
+      this._start = childSchoolRelation.start;
     }
-    if (childSchoolRelation.end != undefined) {
-      this.end = childSchoolRelation.end;
-    }
+    // if (childSchoolRelation.end != undefined) {
+      this._end = childSchoolRelation.end;
+    // }
   }
 }

@@ -50,7 +50,6 @@ export class ChildDetailsComponent implements OnInit {
 
   genders = Gender;
   documentStatus = ['OK (copy with us)', 'OK (copy needed for us)', 'needs correction', 'applied', 'doesn\'t have', 'not eligible', ''];
-  schools = new Array<School>();
   eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
   vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
 

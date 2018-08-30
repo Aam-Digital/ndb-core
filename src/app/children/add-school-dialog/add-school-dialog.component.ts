@@ -28,6 +28,7 @@ export class AddSchoolDialogComponent {
 
   public addSchoolClick() {
     this.childSchoolRelation.schoolId = this.selectedSchool.getId();
+    console.log(this.childSchoolRelation);
     this.entityMapperService.save<ChildSchoolRelation>(this.childSchoolRelation)
       .then(() => this.dialogRef.close());
   }
