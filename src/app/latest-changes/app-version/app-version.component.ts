@@ -44,13 +44,13 @@ export class AppVersionComponent implements OnInit {
     this._sessionService.onSessionStatusChanged.subscribe(
       (sessionStatus: SessionStatus) => {
         if (sessionStatus === SessionStatus.loggedIn) {
-          this.checkForUpdatedVersion();
+          setTimeout(() => this.checkForUpdatedVersion());
         }
       }
     );
 
     // do initial check
-    this.checkForUpdatedVersion();
+    setTimeout(() => this.checkForUpdatedVersion());
   }
 
   checkForUpdatedVersion() {
