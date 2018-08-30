@@ -50,8 +50,7 @@ import { AttendanceWarningsDashboardComponent } from './attendance/attendance-wa
 import { NotesComponent } from './notes/notes.component';
 import { NoteDetailsComponent } from './notes/note-details/note-details.component';
 import { ChildSelectComponent } from './child-select/child-select.component';
-import { AddSchoolDialogComponent } from './add-school-dialog/add-school-dialog.component';
-import { ShowSchoolHistoryDialogComponent } from './show-school-history-dialog/show-school-history-dialog.component';
+import { EditSchoolDialogComponent } from './edit-school-dialog/edit-school-dialog.component';
 import {SchoolsModule} from '../schools/schools.module';
 import { EducationalMaterialComponent } from './educational-material/educational-material.component';
 import {AserComponent} from './aser/aser.component';
@@ -103,8 +102,7 @@ import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/a
     AttendanceWarningsDashboardComponent,
     NoteDetailsComponent,
     ChildSelectComponent,
-    AddSchoolDialogComponent,
-    ShowSchoolHistoryDialogComponent,
+    EditSchoolDialogComponent,
     EducationalMaterialComponent,
     AserComponent,
     NotesManagerComponent,
@@ -118,6 +116,6 @@ import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/a
     AttendanceAverageDashboardComponent,
     AttendanceWarningsDashboardComponent
   ],
-  entryComponents: [NoteDetailsComponent, AddSchoolDialogComponent, ShowSchoolHistoryDialogComponent],
+  entryComponents: [NoteDetailsComponent, EditSchoolDialogComponent],
 })
 export class ChildrenModule { }

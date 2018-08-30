@@ -27,8 +27,7 @@ import {ChildSchoolRelation} from "../childSchoolRelation";
 
 import uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
-import {AddSchoolDialogComponent} from "../add-school-dialog/add-school-dialog.component";
-import {ShowSchoolHistoryDialogComponent} from "../show-school-history-dialog/show-school-history-dialog.component";
+import {EditSchoolDialogComponent} from "../edit-school-dialog/edit-school-dialog.component";
 import {School} from '../../schools/school';
 
 
@@ -53,6 +52,12 @@ export class ChildDetailsComponent implements OnInit {
   eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
   vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
 
+  viewableSchools: {
+    school: School,
+    childSchoolRelation: ChildSchoolRelation;
+  }[] = [];
+
+  childSchoolRelations: ChildSchoolRelation[] = [];
 
   initializeForm() {
     this.form = this.fb.group({
@@ -182,10 +187,49 @@ export class ChildDetailsComponent implements OnInit {
   }
 
   addSchoolClick() {
-    let dialog = this.dialog.open(AddSchoolDialogComponent, {data: {child: this.child}});
+    let dialog = this.dialog.open(EditSchoolDialogComponent, {data: {child: this.child}});
+    dialog.afterClosed().subscribe(res => {
+      if (res) {
+        this.viewableSchools.push({
+          school: res.school,
+          childSchoolRelation: res.childSchoolRelation,
+        })
+      }
+    })
   }
 
-  showSchoolsClick() {
-    let dialog = this.dialog.open(ShowSchoolHistoryDialogComponent, {data: {childId: this.child.getId()}});
+  schoolClicked(viewableSchool) {
+    let dialog = this.dialog.open(EditSchoolDialogComponent, {
+      data: {
+        childSchoolRelation: viewableSchool.childSchoolRelation,
+        child: this.child,
+      }});
+    dialog.afterClosed().subscribe(res => {
+      if (res) {
+        viewableSchool.childSchoolRelation = res.childSchoolRelation;
+        viewableSchool.school = res.school;
+      }
+    })
+  }
+
+
+  public loadSchoolEntries() {
+    this.viewableSchools = [];
+    this.childSchoolRelations = [];
+    this.entityMapperService.loadType<ChildSchoolRelation>(ChildSchoolRelation)
+      .then((relations: ChildSchoolRelation[]) => {
+        for (let r of relations) {
+          if (r.childId == this.child.getId()) {
+            this.childSchoolRelations.push(r);
+            this.entityMapperService.load<School>(School, r.schoolId)
+              .then((school: School) => {
+                this.viewableSchools.push({
+                  school: school,
+                  childSchoolRelation: r,
+                });
+              }).catch(err => console.log("[LOAD_ENTRIES] Error", err))
+          }
+        }
+      })
   }
 }

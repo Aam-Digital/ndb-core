@@ -26,10 +26,6 @@
 
   <div>
 
-    <button mat-stroked-button color="accent" (click)="addSchoolClick()">
-      <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>Add School
-    </button>
-
     <button *ngIf="creatingNew || editing" mat-stroked-button class='edit-button' (click)="save()">Save</button>
 
     <button *ngIf="!creatingNew && editing" mat-stroked-button class='edit-button' style="color:red" (click)="removeChild()">Delete</button>
@@ -239,11 +235,22 @@
   <app-notes></app-notes>
 </mat-expansion-panel>
 
-<mat-expansion-panel expanded="true">
-  <mat-expansion-panel-header>
-    School
+<mat-expansion-panel expanded="false">
+  <mat-expansion-panel-header class="section-header" (click)="loadSchoolEntries()">
+    Schools
   </mat-expansion-panel-header>
-  <button (click)="showSchoolsClick()">Show schools</button>
+
+  <button mat-stroked-button color="accent" (click)="addSchoolClick()">
+    <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>Add School
+  </button>
+
+  <mat-list *ngFor="let s of viewableSchools" (click)="schoolClicked(s)" >
+    <mat-list-item >
+      <label><strong>SchoolName:</strong> {{s.school.name}} </label>
+      <label><strong> From:</strong> {{s.childSchoolRelation.start ? s.childSchoolRelation.start : 'click to enter'}} </label>
+      <label><strong> To:</strong> {{s.childSchoolRelation.end ? s.childSchoolRelation.end : 'click to enter'}} </label>
+    </mat-list-item>
+  </mat-list>
 </mat-expansion-panel>
 
 

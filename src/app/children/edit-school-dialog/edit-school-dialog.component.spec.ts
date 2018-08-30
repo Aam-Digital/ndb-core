@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AddSchoolDialogComponent } from './add-school-dialog.component';
+import { EditSchoolDialogComponent } from './edit-school-dialog.component';
 
-describe('AddSchoolDialogComponent', () => {
-  let component: AddSchoolDialogComponent;
-  let fixture: ComponentFixture<AddSchoolDialogComponent>;
+describe('EditSchoolDialogComponent', () => {
+  let component: EditSchoolDialogComponent;
+  let fixture: ComponentFixture<EditSchoolDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AddSchoolDialogComponent ]
+      declarations: [ EditSchoolDialogComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AddSchoolDialogComponent);
+    fixture = TestBed.createComponent(EditSchoolDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
