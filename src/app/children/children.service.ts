@@ -45,7 +45,8 @@ export class ChildrenService {
   }
 
   getAttendancesOfMonth(month: Date): Observable<AttendanceMonth[]> {
-    const promise = this.db.query('attendances_index/by_month', {key: month, include_docs: true})
+    const monthString = month.getFullYear().toString() + '-' + (month.getMonth() + 1).toString();
+    const promise = this.db.query('attendances_index/by_month', {key: monthString, include_docs: true})
       .then(loadedEntities => {
         return loadedEntities.rows.map(loadedRecord => {
           const entity = new AttendanceMonth('');
@@ -70,7 +71,8 @@ export class ChildrenService {
         by_month: {
           map: '(doc) => { ' +
             'if (!doc._id.startsWith("' + AttendanceMonth.ENTITY_TYPE + '")) return;' +
-            'emit(doc.month); ' +
+            'var date = new Date(doc.month)' +
+            'emit(date.getFullYear().toString() + "-" + (date.getMonth()+1).toString()); ' +
             '}'
         }
       }
