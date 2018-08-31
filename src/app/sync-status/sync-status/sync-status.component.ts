@@ -15,10 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { DatabaseManagerService } from '../../database/database-manager.service';
-import { SessionService } from '../../session/session.service';
-import { DatabaseSyncStatus } from '../../database/database-sync-status.enum';
+import {Component, OnInit} from '@angular/core';
+import {DatabaseManagerService} from '../../database/database-manager.service';
+import {SessionService} from '../../session/session.service';
+import {DatabaseSyncStatus} from '../../database/database-sync-status.enum';
 import {AlertService} from '../../alerts/alert.service';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {InitialSyncDialogComponent} from './initial-sync-dialog.component';
@@ -64,6 +64,16 @@ export class SyncStatusComponent implements OnInit {
           this.dialogRef.close();
         }
         this.alertService.addWarning('Database sync failed.');
+        break;
+
+      case DatabaseSyncStatus.pulledChanges:
+        this.alertService.addInfo('Updated database from server.');
+        this.syncInProgress = true;
+        setTimeout(() => this.syncInProgress = false, 1000);
+        break;
+      case DatabaseSyncStatus.pushedChanges:
+        this.syncInProgress = true;
+        setTimeout(() => this.syncInProgress = false, 1000);
         break;
     }
   }

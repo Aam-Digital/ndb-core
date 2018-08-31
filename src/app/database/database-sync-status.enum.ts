@@ -18,5 +18,7 @@
 export enum DatabaseSyncStatus {
   started,
   completed,
-  failed
+  failed,
+  pushedChanges,
+  pulledChanges
 }
