@@ -19,7 +19,7 @@ import {WarningLevel} from './warning-level';
 
 
 export enum AttendanceStatus {
-  UNKNOWN = '',
+  UNKNOWN = '?',
   HOLIDAY = 'H',
   ABSENT = 'A',
   PRESENT = 'P',

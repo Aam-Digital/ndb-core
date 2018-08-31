@@ -14,16 +14,9 @@
     </thead>
     <tbody>
       <tr *ngFor='let weekRecords of getWeeks(); trackBy: weekRecordsTrackByFunction'>
-        <td *ngFor='let record of weekRecords; trackBy: recordTrackByFunction' class='day-cell attendance-{{record.status}}'
-            (click)='selectCell(record)' [ngClass]="{'selected': (selectedRecord === record)}"
-            [matTooltip]='record.remarks' matTooltipPosition='above'>
-          <span class='date' *ngIf='record.date.getMonth() === attendanceMonth.month.getMonth()'>
-            {{record.date.getDate()}}
-          </span>
-          <span class='status'>
-            {{record.status}}
-            <span *ngIf='record.remarks'>*</span>
-          </span>
+        <td *ngFor='let record of weekRecords; trackBy: recordTrackByFunction'
+            (click)='selectCell(record)' [ngClass]="{'selected': (selectedRecord === record)}">
+          <app-attendance-day-block [entity]='record' [showDate]='record.date.getMonth() === attendanceMonth.month.getMonth()'></app-attendance-day-block>
         </td>
       </tr>
     </tbody>

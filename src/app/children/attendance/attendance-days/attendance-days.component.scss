@@ -4,6 +4,7 @@
   height: 40px;
   position: relative;
   text-align: center;
+  display: flex;
 }
 
 .date {
@@ -16,6 +17,7 @@
 
 .status {
   font-weight: bold;
+  margin-left: 25px;
 }
 
 .selected {

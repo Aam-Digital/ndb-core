@@ -59,6 +59,7 @@ import { AttendanceDaysComponent } from './attendance/attendance-days/attendance
 import { AttendanceDetailsComponent } from './attendance/attendance-details/attendance-details.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { AddDayAttendanceComponent } from './attendance/add-day-attendance/add-day-attendance.component';
+import {AttendanceDayBlockComponent} from './attendance/attendance-days/attendance-day-block.component';
 
 
 @NgModule({
@@ -107,6 +108,7 @@ import { AddDayAttendanceComponent } from './attendance/add-day-attendance/add-d
     AserComponent,
     NotesManagerComponent,
     AddMonthAttendanceComponent,
+    AttendanceDayBlockComponent,
     AttendanceDaysComponent,
     AttendanceDetailsComponent,
     AddDayAttendanceComponent,
