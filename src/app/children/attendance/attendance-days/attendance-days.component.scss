@@ -1,10 +1,15 @@
 .day-cell {
   background-color: #F5F5F5;
   width: 60px;
-  height: 40px;
+  height: 30px;
   position: relative;
   text-align: center;
-  display: flex;
+  display: table-cell;
+}
+
+.day-box {
+  height: 40px;
+  display: table;
 }
 
 .date {
@@ -17,7 +22,8 @@
 
 .status {
   font-weight: bold;
-  margin-left: 25px;
+  margin-top: 0.5em;
+  display: inline-block;
 }
 
 .selected {

@@ -7,6 +7,7 @@ import {MatFormFieldModule, MatInputModule, MatSelectModule, MatTooltipModule} f
 import {FormsModule} from '@angular/forms';
 import {UiHelperModule} from '../../../ui-helper/ui-helper.module';
 import {EntityModule} from '../../../entity/entity.module';
+import {AttendanceDayBlockComponent} from '../attendance-days/attendance-day-block.component';
 
 describe('AttendanceBlockComponent', () => {
   let component: AttendanceBlockComponent;
@@ -14,7 +15,7 @@ describe('AttendanceBlockComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AttendanceBlockComponent, AttendanceDaysComponent ],
+      declarations: [ AttendanceBlockComponent, AttendanceDaysComponent, AttendanceDayBlockComponent ],
       imports: [MatFormFieldModule, MatInputModule, MatSelectModule, MatTooltipModule,
         FormsModule, UiHelperModule, EntityModule,
       ],

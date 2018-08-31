@@ -1,4 +1,4 @@
-<div class='day-cell attendance-{{entity.status}}'
+<div class='day-cell attendance-{{entity.status}}' [ngClass]="{'selected': showHighlighted}"
     [matTooltip]='entity.remarks' matTooltipPosition='above'>
   <span class='date' *ngIf='showDate'>
     {{entity.date.getDate()}}

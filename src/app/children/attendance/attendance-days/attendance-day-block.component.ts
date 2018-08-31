@@ -10,6 +10,7 @@ export class AttendanceDayBlockComponent implements OnInit {
 
   @Input() entity: AttendanceDay;
   @Input() showDate = true;
+  @Input() showHighlighted = false;
 
   constructor() { }
 

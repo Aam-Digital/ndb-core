@@ -15,8 +15,10 @@
     <tbody>
       <tr *ngFor='let weekRecords of getWeeks(); trackBy: weekRecordsTrackByFunction'>
         <td *ngFor='let record of weekRecords; trackBy: recordTrackByFunction'
-            (click)='selectCell(record)' [ngClass]="{'selected': (selectedRecord === record)}">
-          <app-attendance-day-block [entity]='record' [showDate]='record.date.getMonth() === attendanceMonth.month.getMonth()'></app-attendance-day-block>
+            (click)='selectCell(record)'>
+          <app-attendance-day-block [entity]='record' class='day-box'
+                                    [showDate]='record.date.getMonth() === attendanceMonth.month.getMonth()'
+                                    [showHighlighted]='(selectedRecord === record)'></app-attendance-day-block>
         </td>
       </tr>
     </tbody>

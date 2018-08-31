@@ -118,6 +118,41 @@ export class DemoData {
     last2.institution = 'school';
     data.push(last2);
 
+    const current1 = new AttendanceMonth('current1');
+    current1.student = '1';
+    current1.month = new Date();
+    current1.month = new Date(current1.month.getFullYear(), current1.month.getMonth(), current1.month.getDate() - 10);
+    current1.dailyRegister[current1.month.getDate() - 1].status = AttendanceStatus.PRESENT;
+    current1.dailyRegister[current1.month.getDate()].status = AttendanceStatus.LATE;
+    current1.dailyRegister[current1.month.getDate() + 1].status = AttendanceStatus.PRESENT;
+    current1.dailyRegister[current1.month.getDate() + 2].status = AttendanceStatus.PRESENT;
+    current1.dailyRegister[current1.month.getDate() + 3].status = AttendanceStatus.PRESENT;
+    current1.dailyRegister[current1.month.getDate() + 4].status = AttendanceStatus.HOLIDAY;
+    current1.dailyRegister[current1.month.getDate() + 5].status = AttendanceStatus.EXCUSED;
+    current1.dailyRegister[current1.month.getDate() + 6].status = AttendanceStatus.ABSENT;
+    current1.dailyRegister[current1.month.getDate() + 7].status = AttendanceStatus.ABSENT;
+    current1.dailyRegister[current1.month.getDate() + 8].status = AttendanceStatus.EXCUSED;
+    current1.institution = 'coaching';
+    data.push(current1);
+
+    const current2 = new AttendanceMonth('current2');
+    current2.student = '2';
+    current2.month = new Date();
+    current2.month = new Date(current2.month.getFullYear(), current2.month.getMonth(), current2.month.getDate() - 10);
+    current2.institution = 'coaching';
+    current2.dailyRegister[current1.month.getDate() - 1].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[current1.month.getDate()].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[current1.month.getDate()].remarks = 'foo';
+    current2.dailyRegister[current1.month.getDate() + 1].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[current1.month.getDate() + 2].status = AttendanceStatus.PRESENT;
+    current2.dailyRegister[current1.month.getDate() + 3].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[current1.month.getDate() + 4].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[current1.month.getDate() + 5].status = AttendanceStatus.EXCUSED;
+    current2.dailyRegister[current1.month.getDate() + 6].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[current1.month.getDate() + 7].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[current1.month.getDate() + 8].status = AttendanceStatus.EXCUSED;
+    data.push(current2);
+
     return data;
   }
 

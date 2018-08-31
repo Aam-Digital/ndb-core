@@ -1,0 +1,29 @@
+<mat-card class="dashboard">
+  <mat-card-header class="app-attendance">
+    <div mat-card-avatar>
+      <mat-icon fontIcon="fa-exclamation-triangle"></mat-icon>
+    </div>
+    <mat-card-title>{{attendanceRecords?.length}}</mat-card-title>
+    <mat-card-subtitle>Students with absences last week</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content style="margin:-24px;">
+    <p class="dashboard-desc">
+      Students more than one day absent last week:
+    </p>
+    <table class="dashboard-table">
+      <tr *ngFor="let record of attendanceRecords; trackBy: recordTrackByFunction" class="dashboard-table-row w-WARNING" (click)="goToChild(record.child.getId())" style="cursor: pointer;">
+        <td class="dashboard-table-cell"><app-child-block [entity]="record.child"></app-child-block></td>
+        <td class="dashboard-table-cell">
+          <table>
+            <tr><td *ngFor='let day of record.attendanceSchool'>
+              <app-attendance-day-block [entity]='day' [showDate]='false' class='day-box'></app-attendance-day-block>
+            </td></tr>
+            <tr><td *ngFor='let day of record.attendanceCoaching'>
+              <app-attendance-day-block [entity]='day' [showDate]='false' class='day-box'></app-attendance-day-block>
+            </td></tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </mat-card-content>
+</mat-card>

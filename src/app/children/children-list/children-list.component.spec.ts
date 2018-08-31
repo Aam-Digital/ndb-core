@@ -21,6 +21,7 @@ import {SchoolBlockComponent} from '../../schools/school-block/school-block.comp
 import {FilterPipeModule} from 'ngx-filter-pipe';
 import {AttendanceDaysComponent} from '../attendance/attendance-days/attendance-days.component';
 import {UiHelperModule} from '../../ui-helper/ui-helper.module';
+import {AttendanceDayBlockComponent} from '../attendance/attendance-days/attendance-day-block.component';
 
 describe('ChildrenListComponent', () => {
   let component: ChildrenListComponent;
@@ -28,7 +29,8 @@ describe('ChildrenListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ChildBlockComponent, SchoolBlockComponent, AttendanceBlockComponent, ChildrenListComponent, AttendanceDaysComponent ],
+      declarations: [ ChildBlockComponent, SchoolBlockComponent, AttendanceBlockComponent, ChildrenListComponent,
+        AttendanceDaysComponent, AttendanceDayBlockComponent ],
       imports: [
         CommonModule,
         RouterTestingModule.withRoutes([]),

@@ -23,6 +23,7 @@ import {AttendanceMonth} from '../attendance-month';
 import {EntityModule} from '../../../entity/entity.module';
 import {RouterTestingModule} from '@angular/router/testing';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {AttendanceDayBlockComponent} from '../attendance-days/attendance-day-block.component';
 
 describe('AttendanceDetailsComponent', () => {
   let component: AttendanceDetailsComponent;
@@ -33,7 +34,8 @@ describe('AttendanceDetailsComponent', () => {
     att.month = new Date();
 
     TestBed.configureTestingModule({
-      declarations: [ AttendanceDetailsComponent, ChildBlockComponent, AttendanceDaysComponent, SchoolBlockComponent ],
+      declarations: [ AttendanceDetailsComponent, AttendanceDayBlockComponent, AttendanceDaysComponent,
+        ChildBlockComponent, SchoolBlockComponent ],
       imports: [ MatFormFieldModule, MatInputModule, MatDialogModule, MatSelectModule, MatIconModule, MatTooltipModule,
         FormsModule, CommonModule, RouterTestingModule, NoopAnimationsModule,
         UiHelperModule, EntityModule],

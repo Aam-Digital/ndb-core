@@ -8,6 +8,7 @@ import {EntityModule} from '../../../entity/entity.module';
 import {Database} from '../../../database/database';
 import {MockDatabase} from '../../../database/mock-database';
 import {AttendanceMonth} from '../attendance-month';
+import {AttendanceDayBlockComponent} from './attendance-day-block.component';
 
 describe('AttendanceDaysComponent', () => {
   let component: AttendanceDaysComponent;
@@ -21,7 +22,7 @@ describe('AttendanceDaysComponent', () => {
     attendanceMonth.month = new Date('2018-01-01');
 
     TestBed.configureTestingModule({
-      declarations: [ AttendanceDaysComponent ],
+      declarations: [ AttendanceDayBlockComponent, AttendanceDaysComponent ],
       imports: [MatFormFieldModule, MatInputModule, MatSelectModule, MatTooltipModule,
         FormsModule,
         UiHelperModule, EntityModule],
