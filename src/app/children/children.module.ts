@@ -58,6 +58,7 @@ import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/a
 import { AttendanceDaysComponent } from './attendance/attendance-days/attendance-days.component';
 import { AttendanceDetailsComponent } from './attendance/attendance-details/attendance-details.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { AddDayAttendanceComponent } from './attendance/add-day-attendance/add-day-attendance.component';
 
 
 @NgModule({
@@ -108,6 +109,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     AddMonthAttendanceComponent,
     AttendanceDaysComponent,
     AttendanceDetailsComponent,
+    AddDayAttendanceComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
