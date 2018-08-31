@@ -116,3 +116,23 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 .w-URGENT {
   background-color: #fd727280;
 }
+
+
+.attendance-P {
+  background-color: #C8E6C9;
+}
+.attendance-H {
+  background-color: #CFD8DC;
+}
+.attendance-L {
+  background-color: #FFECB3;
+}
+.attendance-E {
+  background-color: #D7CCC8;
+}
+.attendance-A {
+  background-color: #FF8A65;
+}
+.attendance-U {
+  background-color: #DDDDDD;
+}
