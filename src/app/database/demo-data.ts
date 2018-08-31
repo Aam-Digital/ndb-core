@@ -5,6 +5,7 @@ import {Entity} from '../entity/entity';
 import {School} from '../schools/school';
 import {Note} from '../children/notes/note';
 import {WarningLevel} from '../children/attendance/warning-level';
+import {AttendanceStatus} from '../children/attendance/attendance-day';
 
 export class DemoData {
 
@@ -43,6 +44,18 @@ export class DemoData {
     a2.schoolClass = '9';
     data.push(a2);
 
+    const a3 = new Child('3');
+    a3.name = 'Chandan C.';
+    a3.projectNumber = '3';
+    a3.religion = 'Hindu';
+    a3.gender = Gender.MALE;
+    a3.dateOfBirth = new Date('2002-07-29');
+    a3.motherTongue = 'Hindi';
+    a3.center = 'Kolkata';
+    a3.schoolId = '1';
+    a3.schoolClass = '5';
+    data.push(a3);
+
     return data;
   }
 
@@ -55,6 +68,8 @@ export class DemoData {
     a1.daysWorking = 20;
     a1.daysAttended = 18;
     a1.institution = 'coaching';
+    a1.dailyRegister[0].status = AttendanceStatus.PRESENT;
+    a1.dailyRegister[1].status = AttendanceStatus.ABSENT;
     data.push(a1);
 
     const a2 = new AttendanceMonth('2');
