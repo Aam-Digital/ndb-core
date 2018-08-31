@@ -2,6 +2,11 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AttendanceBlockComponent } from './attendance-block.component';
 import {AttendanceMonth} from '../attendance-month';
+import {AttendanceDaysComponent} from '../attendance-days/attendance-days.component';
+import {MatFormFieldModule, MatInputModule, MatSelectModule, MatTooltipModule} from '@angular/material';
+import {FormsModule} from '@angular/forms';
+import {UiHelperModule} from '../../../ui-helper/ui-helper.module';
+import {EntityModule} from '../../../entity/entity.module';
 
 describe('AttendanceBlockComponent', () => {
   let component: AttendanceBlockComponent;
@@ -9,7 +14,10 @@ describe('AttendanceBlockComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AttendanceBlockComponent ]
+      declarations: [ AttendanceBlockComponent, AttendanceDaysComponent ],
+      imports: [MatFormFieldModule, MatInputModule, MatSelectModule, MatTooltipModule,
+        FormsModule, UiHelperModule, EntityModule,
+      ],
     })
     .compileComponents();
   }));

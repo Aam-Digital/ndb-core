@@ -9,7 +9,7 @@ import {
   MatFormFieldModule,
   MatIconModule,
   MatInputModule,
-  MatSelectModule
+  MatSelectModule, MatTooltipModule
 } from '@angular/material';
 import {FormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
@@ -34,7 +34,7 @@ describe('AttendanceDetailsComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [ AttendanceDetailsComponent, ChildBlockComponent, AttendanceDaysComponent, SchoolBlockComponent ],
-      imports: [ MatFormFieldModule, MatInputModule, MatDialogModule, MatSelectModule, MatIconModule,
+      imports: [ MatFormFieldModule, MatInputModule, MatDialogModule, MatSelectModule, MatIconModule, MatTooltipModule,
         FormsModule, CommonModule, RouterTestingModule, NoopAnimationsModule,
         UiHelperModule, EntityModule],
       providers: [
