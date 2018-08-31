@@ -20,7 +20,7 @@ export class AddDayAttendanceComponent implements OnInit {
   studentGroups = new FilterSelection<Child>('Groups', [
     { key: 'all', label: 'All Students', filterFun: (c: Child) => c.center === this.center}
     ]);
-  rollCallList: {child: Child, attendanceDay: AttendanceDay, attendanceMonth: AttendanceMonth}[];
+  rollCallList: {child: Child, attendanceDay: AttendanceDay, attendanceMonth: AttendanceMonth}[] = [];
   rollCallIndex = 0;
 
   centers: string[];
@@ -62,7 +62,7 @@ export class AddDayAttendanceComponent implements OnInit {
   startRollCall(group) {
     const selectedChildren = this.children.filter(group.filterFun);
 
-    this.rollCallList = undefined;
+    this.rollCallList = [];
     this.childrenService.getAttendancesOfMonth(this.day)
       .subscribe(attendances => this.loadMonthAttendanceRecords(selectedChildren, attendances));
 
@@ -70,7 +70,8 @@ export class AddDayAttendanceComponent implements OnInit {
   }
 
   private loadMonthAttendanceRecords(children: Child[], monthsAttendances: AttendanceMonth[]) {
-    const list = [];
+    this.rollCallIndex = 0;
+
     children.forEach(child => {
       let attMonth: AttendanceMonth = monthsAttendances.find(a => a.student === child.getId() && a.institution === this.attendanceType);
       if (attMonth === undefined) {
@@ -81,11 +82,8 @@ export class AddDayAttendanceComponent implements OnInit {
       const attDay = attMonth.dailyRegister.find(d => d.date.getDate() === this.day.getDate()
         && d.date.getMonth() === this.day.getMonth() && d.date.getFullYear() === this.day.getFullYear());
 
-      list.push({child: child, attendanceMonth: attMonth, attendanceDay: attDay})
+      this.rollCallList.push({child: child, attendanceMonth: attMonth, attendanceDay: attDay})
     });
-
-    this.rollCallList = list;
-    this.rollCallIndex = 0;
   }
 
 
