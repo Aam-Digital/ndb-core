@@ -14,7 +14,7 @@
 </mat-form-field>
 
 <mat-form-field>
-  <input matInput [(ngModel)]="childSchoolRelation.end" placeholder="Started on" title="start" type="date">
+  <input matInput [(ngModel)]="childSchoolRelation.end" placeholder="Finished on" title="end" type="date">
 </mat-form-field>
 
 <button [disabled]="selectedSchool == null" (click)="addSchoolClick()">{{creating ? 'Add school' : 'Edit school'}}</button>

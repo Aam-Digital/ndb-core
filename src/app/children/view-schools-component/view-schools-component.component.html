@@ -2,10 +2,22 @@
   <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>Add School
 </button>
 
-<mat-list *ngFor="let s of viewableSchools" (click)="schoolClicked(s)" >
-  <mat-list-item >
-    <label><strong>SchoolName:</strong> {{s.school.name}} </label>
-    <label><strong> From:</strong> {{s.childSchoolRelation.start ? s.childSchoolRelation.start : 'click to enter'}} </label>
-    <label><strong> To:</strong> {{s.childSchoolRelation.end ? s.childSchoolRelation.end : 'click to enter'}} </label>
-  </mat-list-item>
-</mat-list>
+<table mat-table *ngIf="schoolsDataSource.data.length > 0" [dataSource]="schoolsDataSource" matSort class="mat-elevation-z8 table-list">
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+    <td mat-cell *matCellDef="let viewableSchool">{{viewableSchool.school.name}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="from">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>From</th>
+    <td mat-cell *matCellDef="let viewableSchool">{{viewableSchool.childSchoolRelation.start}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="to">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>To</th>
+    <td mat-cell *matCellDef="let viewableSchool">{{viewableSchool.childSchoolRelation.end}}</td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let viewableSchool; columns: displayedColumns;" (click)="schoolClicked(viewableSchool)"></tr>
+</table>

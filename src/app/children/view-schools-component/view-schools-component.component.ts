@@ -1,26 +1,31 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {ChildSchoolRelation} from "../childSchoolRelation";
 import {School} from "../../schools/school";
 import {EditSchoolDialogComponent} from "./edit-school-dialog/edit-school-dialog.component";
 import {EntityMapperService} from "../../entity/entity-mapper.service";
-import {MatDialog} from "@angular/material";
+import {MatDialog, MatTableDataSource, MatSort} from "@angular/material";
 import {Child} from "../child";
+
+export interface ViewableSchool {
+  school: School,
+  childSchoolRelation: ChildSchoolRelation,
+}
 
 @Component({
   selector: 'app-view-schools-component',
   templateUrl: './view-schools-component.component.html',
   styleUrls: ['./view-schools-component.component.scss']
 })
+
 export class ViewSchoolsComponentComponent implements OnInit {
 
   @Input() public child: Child = new Child('');
+  @ViewChild(MatSort) sort: MatSort;
 
-  viewableSchools: {
-    school: School,
-    childSchoolRelation: ChildSchoolRelation;
-  }[] = [];
-
+  schoolsDataSource: MatTableDataSource<ViewableSchool> = new MatTableDataSource();
+  viewableSchools: ViewableSchool[] = [];
   childSchoolRelations: ChildSchoolRelation[] = [];
+  displayedColumns: string[] = ['name', 'from', 'to'];
 
   constructor(private entityMapperService: EntityMapperService,
               private dialog: MatDialog) {
@@ -28,6 +33,21 @@ export class ViewSchoolsComponentComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.schoolsDataSource.sortingDataAccessor = (item, property) => {
+      console.log("sorting " + JSON.stringify(property), item, property);
+      switch(property) {
+        case 'name':
+          return item.school.name;
+        case 'from':
+          return item.childSchoolRelation.start;
+        case 'to':
+          return item.childSchoolRelation.end;
+        default:
+          return item[property];
+      }
+    };
+    this.schoolsDataSource.sort = this.sort;
+
   }
 
   public loadSchoolEntries() {
@@ -44,10 +64,15 @@ export class ViewSchoolsComponentComponent implements OnInit {
                   school: school,
                   childSchoolRelation: r,
                 });
+                this.updateViewableItems();
               }).catch(err => console.log("[LOAD_ENTRIES] Error", err))
           }
         }
       })
+  }
+
+  private updateViewableItems() {
+    this.schoolsDataSource.data = this.viewableSchools;
   }
 
   schoolClicked(viewableSchool) {
@@ -60,6 +85,7 @@ export class ViewSchoolsComponentComponent implements OnInit {
       if (res) {
         viewableSchool.childSchoolRelation = res.childSchoolRelation;
         viewableSchool.school = res.school;
+        this.updateViewableItems();
       }
     })
   }
@@ -71,7 +97,8 @@ export class ViewSchoolsComponentComponent implements OnInit {
         this.viewableSchools.push({
           school: res.school,
           childSchoolRelation: res.childSchoolRelation,
-        })
+        });
+        this.updateViewableItems();
       }
     })
   }
