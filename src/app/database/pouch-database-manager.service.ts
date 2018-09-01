@@ -15,14 +15,14 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import PouchDB from 'pouchdb';
 import PouchDBAuthentication from 'pouchdb-authentication';
-import { AppConfig } from '../app-config/app-config';
-import { DatabaseManagerService } from './database-manager.service';
-import { DatabaseSyncStatus } from './database-sync-status.enum';
-import { Database } from './database';
-import { PouchDatabase } from './pouch-database';
+import {AppConfig} from '../app-config/app-config';
+import {DatabaseManagerService} from './database-manager.service';
+import {DatabaseSyncStatus} from './database-sync-status.enum';
+import {Database} from './database';
+import {PouchDatabase} from './pouch-database';
 import {AlertService} from '../alerts/alert.service';
 
 PouchDB.plugin(PouchDBAuthentication);
@@ -39,6 +39,7 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
 
   private _localDatabase: any;
   private _remoteDatabase: any;
+  private liveSyncHandler;
 
   constructor(private alertService: AlertService) {
     super();
@@ -103,10 +104,33 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
     return this._localDatabase.sync(this._remoteDatabase).then(
       () => {
         this.onSyncStatusChanged.emit(DatabaseSyncStatus.completed);
+
+        // start live replication in the background
+        setTimeout(() => this.syncLive(), 1000);
       },
       (err: any) => {
         this.alertService.addDebug('Database synchronization failed: ' + err);
         this.onSyncStatusChanged.emit(DatabaseSyncStatus.failed);
+        setTimeout(() => this.sync(), 60000);
       });
+  }
+
+  private syncLive() {
+    this.liveSyncHandler = this._localDatabase.sync(this._remoteDatabase, {
+      live: true,
+      retry: true
+    }).on('change', (change) => {
+      if (change.direction === 'push') {
+        this.onSyncStatusChanged.emit(DatabaseSyncStatus.pushedChanges);
+      } else if (change.direction === 'pull') {
+        this.onSyncStatusChanged.emit(DatabaseSyncStatus.pulledChanges);
+      }
+    }).on('error', (err) => {
+      this.alertService.addWarning('Error during database synchronization.');
+      this.alertService.addDebug(err);
+    });
+    // on('paused') and on('active') doesn't work as expected and is triggered after/before every update
+
+    this.alertService.addInfo('Database live synchronization started.');
   }
 }
