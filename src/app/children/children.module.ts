@@ -50,13 +50,14 @@ import { AttendanceWarningsDashboardComponent } from './attendance/attendance-wa
 import { NotesComponent } from './notes/notes.component';
 import { NoteDetailsComponent } from './notes/note-details/note-details.component';
 import { ChildSelectComponent } from './child-select/child-select.component';
-import { EditSchoolDialogComponent } from './edit-school-dialog/edit-school-dialog.component';
+import { EditSchoolDialogComponent } from './view-schools-component/edit-school-dialog/edit-school-dialog.component';
 import {SchoolsModule} from '../schools/schools.module';
 import { EducationalMaterialComponent } from './educational-material/educational-material.component';
 import {AserComponent} from './aser/aser.component';
 import {FilterPipeModule} from 'ngx-filter-pipe';
 import { NotesManagerComponent } from './notes/notes-manager/notes-manager.component';
 import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/add-month-attendance.component';
+import { ViewSchoolsComponentComponent } from './view-schools-component/view-schools-component.component';
 
 
 @NgModule({
@@ -107,6 +108,7 @@ import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/a
     AserComponent,
     NotesManagerComponent,
     AddMonthAttendanceComponent,
+    ViewSchoolsComponentComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
@@ -114,7 +116,8 @@ import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/a
     ChildSelectComponent,
     ChildrenCountDashboardComponent,
     AttendanceAverageDashboardComponent,
-    AttendanceWarningsDashboardComponent
+    AttendanceWarningsDashboardComponent,
+    ViewSchoolsComponentComponent,
   ],
   entryComponents: [NoteDetailsComponent, EditSchoolDialogComponent],
 })

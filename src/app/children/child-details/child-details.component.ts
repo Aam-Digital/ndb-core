@@ -21,13 +21,11 @@ import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {Gender} from '../Gender';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MatDialog, MatSnackBar} from '@angular/material';
+import {MatSnackBar} from '@angular/material';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
-import {ChildSchoolRelation} from "../childSchoolRelation";
 
 import uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
-import {EditSchoolDialogComponent} from "../edit-school-dialog/edit-school-dialog.component";
 import {School} from '../../schools/school';
 
 
@@ -45,19 +43,11 @@ export class ChildDetailsComponent implements OnInit {
   creatingNew = false;
   editing = false;
   gender = Gender;
-  visitedSchools: ChildSchoolRelation[] = [];
 
   genders = Gender;
   documentStatus = ['OK (copy with us)', 'OK (copy needed for us)', 'needs correction', 'applied', 'doesn\'t have', 'not eligible', ''];
   eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
   vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
-
-  viewableSchools: {
-    school: School,
-    childSchoolRelation: ChildSchoolRelation;
-  }[] = [];
-
-  childSchoolRelations: ChildSchoolRelation[] = [];
 
   initializeForm() {
     this.form = this.fb.group({
@@ -106,7 +96,7 @@ export class ChildDetailsComponent implements OnInit {
               private router: Router,
               private snackBar: MatSnackBar,
               private confirmationDialog: ConfirmationDialogService,
-              private alertService: AlertService, private dialog: MatDialog) { }
+              private alertService: AlertService) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
@@ -128,17 +118,6 @@ export class ChildDetailsComponent implements OnInit {
     this.initializeForm();
   }
 
-  private loadVisitedSchools() {
-    this.entityMapperService.loadType<ChildSchoolRelation>(ChildSchoolRelation)
-      .then((relations: ChildSchoolRelation[]) => {
-        for (let r of relations) {
-          if (r.childId == this.child.getId()) {
-            this.visitedSchools.push(r);
-          }
-        }
-      })
-  }
-
   switchEdit() {
     this.editing = !this.editing;
     this.initializeForm();
@@ -156,8 +135,6 @@ export class ChildDetailsComponent implements OnInit {
         this.switchEdit();
       })
       .catch((err) => this.alertService.addDanger('Could not save Child "' + this.child.name + '": ' + err));
-
-    let childSchoolRelation: ChildSchoolRelation = new ChildSchoolRelation("ad")
   }
 
   private assignFormValuesToChild(child: Child, form: FormGroup) {
@@ -186,50 +163,10 @@ export class ChildDetailsComponent implements OnInit {
       });
   }
 
-  addSchoolClick() {
-    let dialog = this.dialog.open(EditSchoolDialogComponent, {data: {child: this.child}});
-    dialog.afterClosed().subscribe(res => {
-      if (res) {
-        this.viewableSchools.push({
-          school: res.school,
-          childSchoolRelation: res.childSchoolRelation,
-        })
-      }
-    })
-  }
-
-  schoolClicked(viewableSchool) {
-    let dialog = this.dialog.open(EditSchoolDialogComponent, {
-      data: {
-        childSchoolRelation: viewableSchool.childSchoolRelation,
-        child: this.child,
-      }});
-    dialog.afterClosed().subscribe(res => {
-      if (res) {
-        viewableSchool.childSchoolRelation = res.childSchoolRelation;
-        viewableSchool.school = res.school;
-      }
-    })
-  }
 
 
-  public loadSchoolEntries() {
-    this.viewableSchools = [];
-    this.childSchoolRelations = [];
-    this.entityMapperService.loadType<ChildSchoolRelation>(ChildSchoolRelation)
-      .then((relations: ChildSchoolRelation[]) => {
-        for (let r of relations) {
-          if (r.childId == this.child.getId()) {
-            this.childSchoolRelations.push(r);
-            this.entityMapperService.load<School>(School, r.schoolId)
-              .then((school: School) => {
-                this.viewableSchools.push({
-                  school: school,
-                  childSchoolRelation: r,
-                });
-              }).catch(err => console.log("[LOAD_ENTRIES] Error", err))
-          }
-        }
-      })
-  }
+
+
+
+
 }

@@ -1,0 +1,11 @@
+<button mat-stroked-button color="accent" (click)="addSchoolClick()">
+  <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>Add School
+</button>
+
+<mat-list *ngFor="let s of viewableSchools" (click)="schoolClicked(s)" >
+  <mat-list-item >
+    <label><strong>SchoolName:</strong> {{s.school.name}} </label>
+    <label><strong> From:</strong> {{s.childSchoolRelation.start ? s.childSchoolRelation.start : 'click to enter'}} </label>
+    <label><strong> To:</strong> {{s.childSchoolRelation.end ? s.childSchoolRelation.end : 'click to enter'}} </label>
+  </mat-list-item>
+</mat-list>
