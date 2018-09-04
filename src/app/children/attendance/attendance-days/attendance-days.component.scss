@@ -34,6 +34,13 @@
 .form {
   padding: 10px;
   width: 420px;
+  position: relative;
+}
+
+.form-close {
+  position:absolute;
+  top: 0;
+  right: 0;
 }
 
 button {

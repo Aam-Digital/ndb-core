@@ -40,7 +40,7 @@ export class AttendanceDetailsComponent implements OnInit {
   }
 
   save() {
-    this.entityMapper.save(this.entity);
+    this.entityMapper.save(this.entity, true);
     this.dialogRef.close(this.entity);
   }
 

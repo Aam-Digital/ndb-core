@@ -1,8 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {AttendanceDay, AttendanceStatus} from '../attendance-day';
 import {ConfirmationDialogService} from '../../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {AttendanceMonth} from '../attendance-month';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
+import {MatSelect} from '@angular/material';
 
 @Component({
   selector: 'app-attendance-days',
@@ -15,7 +16,13 @@ export class AttendanceDaysComponent implements OnInit {
   records = new Array<AttendanceDay>();
 
   selectedRecord: AttendanceDay;
-  selectedRecordOriginal: AttendanceDay;
+  selectedRecordChanged = false;
+
+  private dayStatusSelect: MatSelect;
+  @ViewChild('dayStatusSelect') set content(content: MatSelect) {
+    this.dayStatusSelect = content;
+  }
+
 
   statusValues = AttendanceStatus;
 
@@ -56,25 +63,22 @@ export class AttendanceDaysComponent implements OnInit {
 
   selectCell(record: AttendanceDay) {
     if (record.date.getMonth() !== this.attendanceMonth.month.getMonth()) {
+      this.selectedRecord = undefined;
       return;
-    } else if (this.selectedRecord !== undefined) {
-      this.dialog.openDialog('Unsaved Changes',
-        'Please save or cancel the current changes before selecting a new record.',
-        false);
+    }
+    if (record === this.selectedRecord) {
+      this.selectedRecord = undefined;
     } else {
       this.selectedRecord = record;
-      this.selectedRecordOriginal = Object.assign({}, record);
+      setTimeout(() => this.dayStatusSelect.focus(), 100);
     }
   }
 
   save() {
-    this.entityMapper.save(this.attendanceMonth);
-    this.selectedRecord = undefined;
-  }
-
-  cancel() {
-    Object.assign(this.selectedRecord, this.selectedRecordOriginal);
-    this.selectedRecord = undefined;
+    if (this.selectedRecordChanged) {
+      this.entityMapper.save(this.attendanceMonth, true);
+    }
+    this.selectedRecordChanged = false;
   }
 
 }
