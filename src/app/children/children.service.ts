@@ -71,8 +71,7 @@ export class ChildrenService {
         by_month: {
           map: '(doc) => { ' +
             'if (!doc._id.startsWith("' + AttendanceMonth.ENTITY_TYPE + '")) return;' +
-            'var date = new Date(doc.month);' +
-            'emit(date.getFullYear().toString() + "-" + (date.getMonth()+1).toString()); ' +
+            'emit(doc.month); ' +
             '}'
         }
       }

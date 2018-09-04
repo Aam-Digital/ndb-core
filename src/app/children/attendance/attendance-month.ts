@@ -34,7 +34,7 @@ export class AttendanceMonth extends Entity {
     return this.p_month;
   }
   set month(value: Date) {
-    this.p_month = value;
+    this.p_month = new Date(value);
     this.updateDailyRegister();
   }
 
@@ -177,7 +177,23 @@ export class AttendanceMonth extends Entity {
       data.month = new Date(data.month);
     }
 
+    if (data.dailyRegister !== undefined) {
+      data.dailyRegister.forEach(day => {
+        day.date = new Date(day.date);
+      });
+    }
+
     return super.load(data);
+  }
+
+  public rawData(): any {
+    const raw: any = Object.assign({}, this);
+
+    delete raw.month;
+    delete raw.p_month;
+    raw.month = this.month.getFullYear().toString() + '-' + (this.month.getMonth() + 1).toString();
+
+    return raw;
   }
 
 }

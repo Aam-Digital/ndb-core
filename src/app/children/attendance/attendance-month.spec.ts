@@ -118,4 +118,14 @@ describe('AttendanceMonth', () => {
     }
   });
 
+
+  it('returns month as string in rawData', () => {
+    const month = new Date('2018-01-01');
+    const entity = new AttendanceMonth('');
+    entity.month = month;
+
+    expect(typeof entity.rawData().month).toBe('string');
+    expect(entity.rawData().p_month).toBeUndefined();
+  });
+
 });
