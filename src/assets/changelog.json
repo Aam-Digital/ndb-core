@@ -1,5 +1,12 @@
 [
   {
+    "tag_name": "v2.4.1",
+    "name": "Bug fixes and simplification for Daily Attendance",
+    "published_at": "2018-09-04",
+    "body": "- fixed bug creating duplicate entries for some month when adding daily attendance\n- simplified editing of daily attendance in the calendar view",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.4.0",
     "name": "Daily Attendance & Live Sync",
     "published_at": "2018-09-01",
