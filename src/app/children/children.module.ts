@@ -98,7 +98,6 @@ import {AttendanceDayBlockComponent} from './attendance/attendance-days/attendan
     SchoolsModule,
     ReactiveFormsModule,
     MatDialogModule,
-    MatListModule
   ],
   declarations: [
     AttendanceBlockComponent,
