@@ -15,6 +15,26 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.widget-wrapper > * {
-  margin-bottom: 20px;
+import {WarningLevel} from './warning-level';
+
+
+export enum AttendanceStatus {
+  UNKNOWN = '?',
+  HOLIDAY = 'H',
+  ABSENT = 'A',
+  PRESENT = 'P',
+  LATE = 'L',
+  EXCUSED = 'E'
+}
+
+
+export class AttendanceDay {
+  date: Date;
+  status: AttendanceStatus;
+  remarks = '';
+
+  constructor (date: Date, status: AttendanceStatus = AttendanceStatus.UNKNOWN) {
+    this.date = date;
+    this.status = status;
+  }
 }

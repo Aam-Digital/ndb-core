@@ -73,8 +73,8 @@ export class AddMonthAttendanceComponent implements OnInit {
     this.getFilteredStudents()
       .sort((a, b) => a.schoolClass > b.schoolClass ? 1 : -1)
       .forEach((c: Child) => {
-        const att = this.createAttendanceRecord(c, this.month, this.attendanceType);
-
+        const att = AttendanceMonth.createAttendanceMonth(c.getId(), this.attendanceType);
+        att.month = this.month;
         records.push(att);
       });
     this.loadExistingAttendanceRecordIfAvailable(records, this.month, this.attendanceType);
@@ -177,15 +177,5 @@ export class AddMonthAttendanceComponent implements OnInit {
 
         this.loadingExistingRecords = false;
       });
-  }
-
-  private createAttendanceRecord(c: Child, month: Date, attendanceType: string) {
-    const att = new AttendanceMonth(c.getId() + '_' + (new Date()).getTime().toString());
-    att.student = c.getId();
-    att.institution = attendanceType;
-    att.month = month;
-    att.daysWorking = this.workingDays;
-
-    return att;
   }
 }

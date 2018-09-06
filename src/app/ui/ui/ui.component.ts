@@ -29,6 +29,7 @@ import {Title} from '@angular/platform-browser';
 export class UiComponent implements OnInit {
 
   title: string;
+  showNav = true;
   viewContainerRef: ViewContainerRef;
 
   constructor(private _sessionService: SessionService,
@@ -40,6 +41,10 @@ export class UiComponent implements OnInit {
   ngOnInit(): void {
     this.title = AppConfig.settings.site_name;
     this.titleService.setTitle(this.title);
+
+    if (window.innerWidth < 600) {
+      this.showNav = false;
+    }
   }
 
   isLoggedIn() {

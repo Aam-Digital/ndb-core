@@ -5,6 +5,7 @@ import {Entity} from '../entity/entity';
 import {School} from '../schools/school';
 import {Note} from '../children/notes/note';
 import {WarningLevel} from '../children/attendance/warning-level';
+import {AttendanceStatus} from '../children/attendance/attendance-day';
 
 export class DemoData {
 
@@ -43,6 +44,18 @@ export class DemoData {
     a2.schoolClass = '9';
     data.push(a2);
 
+    const a3 = new Child('3');
+    a3.name = 'Chandan C.';
+    a3.projectNumber = '3';
+    a3.religion = 'Hindu';
+    a3.gender = Gender.MALE;
+    a3.dateOfBirth = new Date('2002-07-29');
+    a3.motherTongue = 'Hindi';
+    a3.center = 'Kolkata';
+    a3.schoolId = '1';
+    a3.schoolClass = '5';
+    data.push(a3);
+
     return data;
   }
 
@@ -55,6 +68,8 @@ export class DemoData {
     a1.daysWorking = 20;
     a1.daysAttended = 18;
     a1.institution = 'coaching';
+    a1.dailyRegister[0].status = AttendanceStatus.PRESENT;
+    a1.dailyRegister[1].status = AttendanceStatus.ABSENT;
     data.push(a1);
 
     const a2 = new AttendanceMonth('2');
@@ -102,6 +117,79 @@ export class DemoData {
     last2.daysExcused = 0;
     last2.institution = 'school';
     data.push(last2);
+
+    const current1 = new AttendanceMonth('current1');
+    current1.student = '1';
+    current1.month = new Date();
+    current1.month = new Date(current1.month.getFullYear(), current1.month.getMonth(), current1.month.getDate() - 10);
+    current1.dailyRegister[1].status = AttendanceStatus.PRESENT;
+    current1.dailyRegister[2].status = AttendanceStatus.PRESENT;
+    current1.dailyRegister[3].status = AttendanceStatus.PRESENT;
+    current1.dailyRegister[4].status = AttendanceStatus.HOLIDAY;
+    current1.dailyRegister[5].status = AttendanceStatus.EXCUSED;
+    current1.dailyRegister[6].status = AttendanceStatus.ABSENT;
+    current1.dailyRegister[7].status = AttendanceStatus.ABSENT;
+    current1.dailyRegister[8].status = AttendanceStatus.EXCUSED;
+    current1.dailyRegister[9].status = AttendanceStatus.PRESENT;
+    current1.dailyRegister[10].status = AttendanceStatus.LATE;
+    current1.dailyRegister[11].status = AttendanceStatus.LATE;
+    current1.dailyRegister[12].status = AttendanceStatus.HOLIDAY;
+    current1.dailyRegister[13].status = AttendanceStatus.ABSENT;
+    current1.dailyRegister[14].status = AttendanceStatus.PRESENT;
+    current1.dailyRegister[15].status = AttendanceStatus.LATE;
+    current1.dailyRegister[16].status = AttendanceStatus.ABSENT;
+    current1.dailyRegister[17].status = AttendanceStatus.ABSENT;
+    current1.dailyRegister[18].status = AttendanceStatus.EXCUSED;
+    current1.dailyRegister[19].status = AttendanceStatus.PRESENT;
+    current1.dailyRegister[20].status = AttendanceStatus.PRESENT;
+    current1.dailyRegister[21].status = AttendanceStatus.PRESENT;
+    current1.dailyRegister[22].status = AttendanceStatus.PRESENT;
+    current1.dailyRegister[23].status = AttendanceStatus.PRESENT;
+    current1.dailyRegister[24].status = AttendanceStatus.PRESENT;
+    current1.dailyRegister[25].status = AttendanceStatus.PRESENT;
+    current1.dailyRegister[26].status = AttendanceStatus.PRESENT;
+    current1.dailyRegister[27].status = AttendanceStatus.PRESENT;
+    current1.dailyRegister[28].status = AttendanceStatus.LATE;
+    current1.institution = 'coaching';
+    data.push(current1);
+
+    const current2 = new AttendanceMonth('current2');
+    current2.student = '2';
+    current2.month = new Date();
+    current2.month = new Date(current2.month.getFullYear(), current2.month.getMonth(), current2.month.getDate() - 10);
+    current2.institution = 'coaching';
+    current2.dailyRegister[current1.month.getDate() - 1].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[current1.month.getDate()].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[current1.month.getDate()].remarks = 'foo';
+    current2.dailyRegister[1].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[2].status = AttendanceStatus.PRESENT;
+    current2.dailyRegister[3].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[4].status = AttendanceStatus.HOLIDAY;
+    current2.dailyRegister[5].status = AttendanceStatus.EXCUSED;
+    current2.dailyRegister[6].status = AttendanceStatus.EXCUSED;
+    current2.dailyRegister[7].status = AttendanceStatus.PRESENT;
+    current2.dailyRegister[8].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[9].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[10].status = AttendanceStatus.HOLIDAY;
+    current2.dailyRegister[11].status = AttendanceStatus.LATE;
+    current2.dailyRegister[12].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[13].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[14].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[15].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[16].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[17].status = AttendanceStatus.HOLIDAY;
+    current2.dailyRegister[18].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[19].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[20].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[21].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[22].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[23].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[24].status = AttendanceStatus.HOLIDAY;
+    current2.dailyRegister[25].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[26].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[27].status = AttendanceStatus.ABSENT;
+    current2.dailyRegister[28].status = AttendanceStatus.ABSENT;
+    data.push(current2);
 
     return data;
   }

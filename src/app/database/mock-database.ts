@@ -126,7 +126,8 @@ export class MockDatabase extends Database {
         filter = (e: AttendanceMonth) => e.getType() === AttendanceMonth.ENTITY_TYPE && e.student === options.key;
         break;
       case 'attendances_index/by_month':
-        filter = (e: AttendanceMonth) => e.getType() === AttendanceMonth.ENTITY_TYPE && e.month === options.key;
+        filter = (e: AttendanceMonth) => e.getType() === AttendanceMonth.ENTITY_TYPE
+          && e.month.getFullYear().toString() + '-' + (e.month.getMonth() + 1).toString() === options.key;
         break;
       case 'avg_attendance_index/three_months':
         filter = (e: AttendanceMonth) => e.getType() === AttendanceMonth.ENTITY_TYPE

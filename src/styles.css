@@ -108,11 +108,31 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 
 
 .w-OK {
-  background-color: #90ee9040;
+  background-color: #90ee9040 !important;
 }
 .w-WARNING {
-  background-color: #ffa50080;
+  background-color: #ffa50080 !important;
 }
 .w-URGENT {
-  background-color: #fd727280;
+  background-color: #fd727280 !important;
+}
+
+
+.attendance-P {
+  background-color: #C8E6C9 !important;
+}
+.attendance-H {
+  background-color: #CFD8DC !important;
+}
+.attendance-L {
+  background-color: #FFECB3 !important;
+}
+.attendance-E {
+  background-color: #D7CCC8 !important;
+}
+.attendance-A {
+  background-color: #FF8A65 !important;
+}
+.attendance-U {
+  background-color: #DDDDDD !important;
 }
