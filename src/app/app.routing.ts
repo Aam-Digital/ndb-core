@@ -28,6 +28,7 @@ import {AdminComponent} from './admin/admin/admin.component';
 import {AdminGuard} from './admin/admin.guard';
 import {NotesManagerComponent} from './children/notes/notes-manager/notes-manager.component';
 import {AddMonthAttendanceComponent} from './children/attendance/add-month-attendance/add-month-attendance.component';
+import {AddDayAttendanceComponent} from './children/attendance/add-day-attendance/add-day-attendance.component';
 
 export const routes: Routes = [
   {path: '', component: DashboardComponent},
@@ -39,6 +40,7 @@ export const routes: Routes = [
   {path: 'child/:id/attendance', component: ChildAttendanceComponent},
   {path: 'note', component: NotesManagerComponent},
   {path: 'attendance', component: AddMonthAttendanceComponent},
+  {path: 'attendance/daily', component: AddDayAttendanceComponent},
   {path: 'admin', component: AdminComponent, canActivate: [AdminGuard]},
   {path: '**', redirectTo: '/'},
 ];

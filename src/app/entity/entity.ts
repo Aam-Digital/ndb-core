@@ -75,6 +75,10 @@ export class Entity {
     return Object.assign(this, data);
   }
 
+  public rawData(): any {
+    return this;
+  }
+
   /**
    * Returns a string representation or summary of the instance.
    *

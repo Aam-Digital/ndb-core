@@ -4,17 +4,20 @@ import {AttendanceMonth} from '../attendance-month';
 import {ChildrenService} from '../../children.service';
 import {ColumnDescription} from '../../../ui-helper/entity-subrecord/column-description';
 import {DatePipe, PercentPipe} from '@angular/common';
+import {AttendanceDetailsComponent} from '../attendance-details/attendance-details.component';
 
 
 @Component({
   selector: 'app-child-attendance',
-  template: '<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="generateNewRecordFactory()">' +
+  template: '<app-entity-subrecord [records]="records" [columns]="columns" ' +
+    '[newRecordFactory]="generateNewRecordFactory()" [detailsComponent]="detailsComponent">>' +
   '</app-entity-subrecord>',
 })
 export class ChildAttendanceComponent implements OnInit {
 
   childId: string;
   records: Array<AttendanceMonth>;
+  detailsComponent = AttendanceDetailsComponent;
 
   @Input() institution: string;
 
@@ -57,14 +60,10 @@ export class ChildAttendanceComponent implements OnInit {
   generateNewRecordFactory() {
     // define values locally because "this" is a different scope after passing a function as input to another component
     const child = this.childId;
+    const institution = this.institution;
 
     return () => {
-      const newAtt = new AttendanceMonth(Date.now().toString()); // TODO: logical way to assign entityId to Attendance?
-      newAtt.month = new Date();
-      newAtt.student = child;
-      newAtt.institution = this.institution;
-
-      return newAtt;
+      return AttendanceMonth.createAttendanceMonth(child, institution);
     };
   }
 }

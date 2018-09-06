@@ -11,5 +11,8 @@
     <div class="attendance-tooltip-content" *ngIf="attendanceData.daysExcused>0">
       (excluding {{attendanceData.daysExcused}} days excused)
     </div>
+    <div>
+      <app-attendance-days [attendanceMonth]='attendanceData'></app-attendance-days>
+    </div>
   </div>
 </div>

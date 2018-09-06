@@ -27,6 +27,8 @@ import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/con
 import uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
 import {School} from '../../schools/school';
+import {AttendanceMonth} from '../attendance/attendance-month';
+import {ChildrenService} from '../children.service';
 
 
 @Component({
@@ -39,6 +41,9 @@ export class ChildDetailsComponent implements OnInit {
   child: Child = new Child('');
   schools: School[] = [];
 
+  currentMonthSchoolAttendance: AttendanceMonth;
+  currentMonthCoachingAttendance: AttendanceMonth;
+
   form: FormGroup;
   creatingNew = false;
   editing = false;
@@ -49,7 +54,8 @@ export class ChildDetailsComponent implements OnInit {
   eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
   vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
 
-  initializeForm() {
+
+  initForm() {
     this.form = this.fb.group({
       name:           [{value: this.child.name,           disabled: !this.editing}, Validators.required],
       // gender:         [{value: this.child.gender}], // reactive forms seem broken for mat-select, using ngModel instead
@@ -91,6 +97,7 @@ export class ChildDetailsComponent implements OnInit {
 
 
   constructor(private entityMapperService: EntityMapperService,
+              private childrenService: ChildrenService,
               private route: ActivatedRoute,
               @Inject(FormBuilder) public fb: FormBuilder,
               private router: Router,
@@ -112,15 +119,37 @@ export class ChildDetailsComponent implements OnInit {
       this.entityMapperService.load<Child>(Child, id)
         .then(child => {
           this.child = child;
-          this.initializeForm();
+          this.initForm();
+          this.initCurrentAttendanceMonth();
         });
     }
-    this.initializeForm();
+    this.initForm();
+  }
+
+  private initCurrentAttendanceMonth() {
+    this.childrenService.getAttendancesOfChild(this.child.getId()).subscribe(results => {
+      const now = new Date();
+      this.currentMonthSchoolAttendance = results.find((att) => att.month.getMonth() === now.getMonth()
+        && att.month.getFullYear() === now.getFullYear()
+        && att.institution === 'school');
+      this.currentMonthCoachingAttendance = results.find((att) => att.month.getMonth() === now.getMonth()
+        && att.month.getFullYear() === now.getFullYear()
+        && att.institution === 'coaching');
+
+      if (this.currentMonthSchoolAttendance === undefined) {
+        this.currentMonthSchoolAttendance = AttendanceMonth.createAttendanceMonth(this.child.getId(), 'school');
+        this.entityMapperService.save(this.currentMonthSchoolAttendance);
+      }
+      if (this.currentMonthCoachingAttendance === undefined) {
+        this.currentMonthCoachingAttendance = AttendanceMonth.createAttendanceMonth(this.child.getId(), 'coaching');
+        this.entityMapperService.save(this.currentMonthCoachingAttendance);
+      }
+    });
   }
 
   switchEdit() {
     this.editing = !this.editing;
-    this.initializeForm();
+    this.initForm();
   }
 
   save() {
@@ -162,11 +191,4 @@ export class ChildDetailsComponent implements OnInit {
         }
       });
   }
-
-
-
-
-
-
-
 }
