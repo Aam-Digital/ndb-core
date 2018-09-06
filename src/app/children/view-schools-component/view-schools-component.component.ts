@@ -5,6 +5,7 @@ import {EditSchoolDialogComponent} from "./edit-school-dialog/edit-school-dialog
 import {EntityMapperService} from "../../entity/entity-mapper.service";
 import {MatDialog, MatTableDataSource, MatSort} from "@angular/material";
 import {Child} from "../child";
+import {LoggingService} from "../../logging/logging.service";
 
 export interface ViewableSchool {
   school: School,
@@ -28,13 +29,12 @@ export class ViewSchoolsComponentComponent implements OnInit {
   displayedColumns: string[] = ['name', 'from', 'to'];
 
   constructor(private entityMapperService: EntityMapperService,
-              private dialog: MatDialog) {
+              private dialog: MatDialog, private loggingService: LoggingService) {
     this.loadSchoolEntries();
   }
 
   ngOnInit() {
     this.schoolsDataSource.sortingDataAccessor = (item, property) => {
-      console.log("sorting " + JSON.stringify(property), item, property);
       switch(property) {
         case 'name':
           return item.school.name;
@@ -47,7 +47,6 @@ export class ViewSchoolsComponentComponent implements OnInit {
       }
     };
     this.schoolsDataSource.sort = this.sort;
-
   }
 
   public loadSchoolEntries() {
@@ -65,14 +64,16 @@ export class ViewSchoolsComponentComponent implements OnInit {
                   childSchoolRelation: r,
                 });
                 this.updateViewableItems();
-              }).catch(err => console.log("[LOAD_ENTRIES] Error", err))
+              })
           }
         }
       })
+      .catch(() => this.loggingService.error("[ViewSchoolsComponent] loading from database error."))
   }
 
   private updateViewableItems() {
     this.schoolsDataSource.data = this.viewableSchools;
+    this.schoolsDataSource.sort = this.sort;
   }
 
   schoolClicked(viewableSchool) {
