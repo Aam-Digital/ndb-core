@@ -1,8 +1,15 @@
 [
   {
+    "tag_name": "v2.4.3",
+    "name": "Current week's absences",
+    "published_at": "2018-09-07",
+    "body": "- new dashboard widget for current week's absences",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.4.2",
     "name": "Bug fixes and improvements for Daily Attendance",
-    "published_at": "2018-09-04",
+    "published_at": "2018-09-05",
     "body": "- only active children are shown during roll call\n- loading indicator",
     "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
   },
