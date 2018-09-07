@@ -83,7 +83,14 @@
     </div>
   </div>
 
-  <div *ngIf='!rollCallList || rollCallIndex>=rollCallList.length'>
+
+  <div *ngIf='rollCallListLoading'>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <div>Loading students ...</div>
+  </div>
+
+
+  <div *ngIf='!rollCallListLoading && rollCallIndex>=rollCallList.length'>
     <div>Roll call completed.</div>
     <div>
       <button mat-stroked-button (click)='currentStage = 0' class='nav-button' fxFlex>Finish</button>
