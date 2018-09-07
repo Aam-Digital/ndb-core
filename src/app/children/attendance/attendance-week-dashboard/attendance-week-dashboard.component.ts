@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ChildrenService} from '../../children.service';
 import {Router} from '@angular/router';
 import {AttendanceMonth} from '../attendance-month';
@@ -13,6 +13,9 @@ import {forkJoin} from 'rxjs';
 })
 export class AttendanceWeekDashboardComponent implements OnInit {
 
+  @Input() daysOffset: number;
+  @Input() periodLabel: string;
+
   attendanceRecordsMap: Map<string,
     { childId: string, child: Child, attendanceSchool: AttendanceDay[], attendanceCoaching: AttendanceDay[],
       schoolAbsences?: number, coachingAbsences?: number}>;
@@ -20,20 +23,21 @@ export class AttendanceWeekDashboardComponent implements OnInit {
   recordTrackByFunction = (index, item) => item.childId;
 
 
+
   constructor(private childrenService: ChildrenService,
               private router: Router) { }
 
   ngOnInit() {
-    this.loadAttendanceOfAbsentees();
+    this.loadAttendanceOfAbsentees(this.daysOffset);
   }
 
 
 
-  loadAttendanceOfAbsentees() {
+  loadAttendanceOfAbsentees(daysOffset = 0) {
     this.attendanceRecordsMap = new Map();
 
     const today = new Date();
-    const previousMonday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay() - 6);
+    const previousMonday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay() - 6 + daysOffset);
     const previousSaturday = new Date(previousMonday.getFullYear(), previousMonday.getMonth(), previousMonday.getDate() + 5);
 
     const o1 = this.childrenService.getAttendancesOfMonth(previousMonday);

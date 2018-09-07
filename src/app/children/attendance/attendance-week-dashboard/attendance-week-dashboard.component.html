@@ -4,11 +4,11 @@
       <mat-icon fontIcon="fa-exclamation-triangle"></mat-icon>
     </div>
     <mat-card-title>{{attendanceRecords?.length}}</mat-card-title>
-    <mat-card-subtitle>Students with absences last week</mat-card-subtitle>
+    <mat-card-subtitle>Students with absences {{periodLabel}}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content style="margin:-24px;">
     <p class="dashboard-desc">
-      Students more than one day absent last week:
+      Students more than one day absent {{periodLabel}}:
     </p>
     <table class="dashboard-table">
       <tr *ngFor="let record of attendanceRecords; trackBy: recordTrackByFunction" class="dashboard-table-row w-WARNING" (click)="goToChild(record.child.getId())" style="cursor: pointer;">
