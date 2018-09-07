@@ -38,7 +38,7 @@ export class AddDayAttendanceComponent implements OnInit {
 
   ngOnInit() {
     this.childrenService.getChildren().subscribe(children => {
-      this.children = children.sort((a, b) => a.schoolClass > b.schoolClass ? 1 : -1);
+      this.children = children.filter(c => c.isActive()).sort((a, b) => a.schoolClass > b.schoolClass ? 1 : -1);
       this.centers = this.children.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
     });
   }
