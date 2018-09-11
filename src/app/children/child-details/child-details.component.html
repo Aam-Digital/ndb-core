@@ -216,13 +216,11 @@
       <div fxLayout='row' fxLayoutGap='20px'>
         <div fxFlex='40'>
           <h3>School Attendance</h3>
-          <app-attendance-days [attendanceMonth]='currentMonthSchoolAttendance' *ngIf='currentMonthSchoolAttendance'></app-attendance-days>
-          <app-child-attendance institution='school'></app-child-attendance>
+          <app-child-attendance institution='school' [showDailyAttendanceOfLatest]='true'></app-child-attendance>
         </div>
         <div fxFlex='40'>
           <h3>Coaching Attendance</h3>
-          <app-attendance-days [attendanceMonth]='currentMonthCoachingAttendance' *ngIf='currentMonthCoachingAttendance'></app-attendance-days>
-          <app-child-attendance institution='coaching'></app-child-attendance>
+          <app-child-attendance institution='coaching' [showDailyAttendanceOfLatest]='true'></app-child-attendance>
         </div>
       </div>
     </mat-expansion-panel>

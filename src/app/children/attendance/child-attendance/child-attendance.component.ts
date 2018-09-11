@@ -9,9 +9,7 @@ import {AttendanceDetailsComponent} from '../attendance-details/attendance-detai
 
 @Component({
   selector: 'app-child-attendance',
-  template: '<app-entity-subrecord [records]="records" [columns]="columns" ' +
-    '[newRecordFactory]="generateNewRecordFactory()" [detailsComponent]="detailsComponent">>' +
-  '</app-entity-subrecord>',
+  templateUrl: './child-attendance.component.html',
 })
 export class ChildAttendanceComponent implements OnInit {
 
@@ -20,6 +18,7 @@ export class ChildAttendanceComponent implements OnInit {
   detailsComponent = AttendanceDetailsComponent;
 
   @Input() institution: string;
+  @Input() showDailyAttendanceOfLatest = false;
 
 
   columns: Array<ColumnDescription> = [
@@ -52,8 +51,20 @@ export class ChildAttendanceComponent implements OnInit {
       .subscribe(results => {
         this.records = results
           .filter(r => this.institution === undefined || r.institution === this.institution)
-          .sort((a, b) => b.month.valueOf() - a.month.valueOf())
+          .sort((a, b) => b.month.valueOf() - a.month.valueOf());
+
+        if (this.showDailyAttendanceOfLatest) {
+          this.createCurrentMonthsAttendanceIfNotExists();
+        }
       });
+  }
+
+  private createCurrentMonthsAttendanceIfNotExists() {
+    const now = new Date();
+    if (this.records.length === 0
+      || this.records[0].month.getFullYear() !== now.getFullYear() || this.records[0].month.getMonth() !== now.getMonth()) {
+      this.records.unshift(AttendanceMonth.createAttendanceMonth(this.childId, this.institution));
+    }
   }
 
 
