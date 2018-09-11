@@ -27,7 +27,6 @@ import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/con
 import uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
 import {School} from '../../schools/school';
-import {AttendanceMonth} from '../attendance/attendance-month';
 import {ChildrenService} from '../children.service';
 
 
@@ -39,9 +38,6 @@ import {ChildrenService} from '../children.service';
 export class ChildDetailsComponent implements OnInit {
 
   child: Child = new Child('');
-
-  currentMonthSchoolAttendance: AttendanceMonth;
-  currentMonthCoachingAttendance: AttendanceMonth;
 
   form: FormGroup;
   creatingNew = false;
@@ -119,31 +115,9 @@ export class ChildDetailsComponent implements OnInit {
         .then(child => {
           this.child = child;
           this.initForm();
-          this.initCurrentAttendanceMonth();
         });
     }
     this.initForm();
-  }
-
-  private initCurrentAttendanceMonth() {
-    this.childrenService.getAttendancesOfChild(this.child.getId()).subscribe(results => {
-      const now = new Date();
-      this.currentMonthSchoolAttendance = results.find((att) => att.month.getMonth() === now.getMonth()
-        && att.month.getFullYear() === now.getFullYear()
-        && att.institution === 'school');
-      this.currentMonthCoachingAttendance = results.find((att) => att.month.getMonth() === now.getMonth()
-        && att.month.getFullYear() === now.getFullYear()
-        && att.institution === 'coaching');
-
-      if (this.currentMonthSchoolAttendance === undefined) {
-        this.currentMonthSchoolAttendance = AttendanceMonth.createAttendanceMonth(this.child.getId(), 'school');
-        this.entityMapperService.save(this.currentMonthSchoolAttendance);
-      }
-      if (this.currentMonthCoachingAttendance === undefined) {
-        this.currentMonthCoachingAttendance = AttendanceMonth.createAttendanceMonth(this.child.getId(), 'coaching');
-        this.entityMapperService.save(this.currentMonthCoachingAttendance);
-      }
-    });
   }
 
   switchEdit() {
