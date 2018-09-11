@@ -5,7 +5,7 @@ import {
   MatButtonModule,
   MatButtonToggleModule,
   MatFormFieldModule, MatIconModule,
-  MatInputModule,
+  MatInputModule, MatProgressBarModule,
   MatSelectModule
 } from '@angular/material';
 import {FormsModule} from '@angular/forms';
@@ -25,7 +25,7 @@ describe('AddDayAttendanceComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ AddDayAttendanceComponent, SchoolBlockComponent, ChildBlockComponent ],
       imports: [FormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatButtonToggleModule,
-        MatIconModule, NoopAnimationsModule,
+        MatIconModule, MatProgressBarModule, NoopAnimationsModule,
         EntityModule],
       providers: [
         {provide: ChildrenService, useClass: ChildrenService},
