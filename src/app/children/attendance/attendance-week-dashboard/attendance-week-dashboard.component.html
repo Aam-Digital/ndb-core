@@ -12,7 +12,9 @@
     </p>
     <table class="dashboard-table">
       <tr *ngFor="let record of attendanceRecords; trackBy: recordTrackByFunction" class="dashboard-table-row w-WARNING" (click)="goToChild(record.child.getId())" style="cursor: pointer;">
-        <td class="dashboard-table-cell"><app-child-block [entity]="record.child"></app-child-block></td>
+        <td class="dashboard-table-first-cell dashboard-table-cell">
+          <app-child-block [entity]="record.child"></app-child-block>
+        </td>
         <td class="dashboard-table-cell">
           <table>
             <tr><td *ngFor='let day of record.attendanceSchool'>
