@@ -29,14 +29,14 @@ import {
   MatButtonToggleModule,
   MatCardModule, MatCheckboxModule,
   MatDialogModule,
-  MatIconModule, MatProgressBarModule,
+  MatProgressBarModule,
   MatSidenavModule,
   MatSnackBarModule,
   MatSortModule,
   MatTableModule,
   MatTooltipModule,
-  // MatListModule,
 } from '@angular/material';
+import { MatIconModule } from "@angular/material/icon";
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {ChildrenService} from './children.service';
 import {AttendanceBlockComponent} from './attendance/attendance-block/attendance-block.component';
