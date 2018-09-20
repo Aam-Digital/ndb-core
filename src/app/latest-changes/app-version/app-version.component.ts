@@ -18,7 +18,7 @@
 import {Component, OnInit} from '@angular/core';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
 import {AppConfig} from '../../app-config/app-config';
-import { SessionStatus } from '../../session/session-status';
+import { LoginState } from '../../session/login-state.enum';
 import { SessionService } from '../../session/session.service';
 import {ChangelogComponent} from '../changelog/changelog.component';
 import {MatDialog, MatDialogRef} from '@angular/material';
@@ -41,9 +41,9 @@ export class AppVersionComponent implements OnInit {
   ngOnInit(): void {
     this.currentVersion = AppConfig.settings.version;
 
-    this._sessionService.onSessionStatusChanged.subscribe(
-      (sessionStatus: SessionStatus) => {
-        if (sessionStatus === SessionStatus.loggedIn) {
+    this._sessionService.getLoginState().getStateChangedStream().subscribe(
+      (loginState: LoginState) => {
+        if (loginState === LoginState.loggedIn) {
           setTimeout(() => this.checkForUpdatedVersion());
         }
       }
@@ -54,13 +54,13 @@ export class AppVersionComponent implements OnInit {
   }
 
   checkForUpdatedVersion() {
-    if (this._sessionService.currentUser === null) {
+    if (this._sessionService.getCurrentUser() === null) {
       return;
     }
 
-    if (this._sessionService.currentUser.lastUsedVersion !== this.currentVersion) {
-      this._sessionService.currentUser.lastUsedVersion = this.currentVersion;
-      this._entityMapperService.save(this._sessionService.currentUser);
+    if (this._sessionService.getCurrentUser().lastUsedVersion !== this.currentVersion) {
+      this._sessionService.getCurrentUser().lastUsedVersion = this.currentVersion;
+      this._entityMapperService.save(this._sessionService.getCurrentUser());
       this.showLatestChanges();
     }
   }

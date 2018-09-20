@@ -16,9 +16,9 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { DatabaseSyncStatus } from '../../database/database-sync-status.enum';
+import { SyncState } from '../sync-state.enum';
 import { SessionService } from '../session.service';
-import { DatabaseManagerService } from '../../database/database-manager.service';
+import { LoginState } from '../login-state.enum';
 
 @Component({
   selector: 'app-login',
@@ -37,8 +37,7 @@ export class LoginComponent implements OnInit {
   private _lastPassword: string;
 
 
-  constructor(private _sessionService: SessionService,
-              private _dbManager: DatabaseManagerService) {
+  constructor(private _sessionService: SessionService) {
   }
 
 
@@ -49,8 +48,9 @@ export class LoginComponent implements OnInit {
     this.loginInProgress = true;
 
     this._sessionService.login(this.username, this.password)
-      .then(success => success ? this.onLoginSuccess() : this.onLoginFailure('username or password incorrect'))
-      .catch(reason => this.onLoginFailure(reason));
+      .then(
+        loginState => (loginState === LoginState.loggedIn) ? this.onLoginSuccess() : this.onLoginFailure('username or password incorrect')
+      ).catch(reason => this.onLoginFailure(reason));
   }
 
   private onLoginSuccess() {
@@ -82,13 +82,13 @@ export class LoginComponent implements OnInit {
     this.isRetriedLogin = true;
 
     const self = this;
-    this.retryLoginSubscription = this._dbManager.onSyncStatusChanged.subscribe(
-      function (syncStatus: DatabaseSyncStatus) {
-        if (syncStatus === DatabaseSyncStatus.completed) {
+    this.retryLoginSubscription = this._sessionService.getSyncState().getStateChangedStream().subscribe(
+      function (syncStatus: SyncState) {
+        if (syncStatus === SyncState.completed) {
           self.password = self._lastPassword;
           self.login();
           self.retryLoginSubscription.unsubscribe();
-        } else if (syncStatus === DatabaseSyncStatus.failed) {
+        } else if (syncStatus === SyncState.failed) {
           self.retryLoginSubscription.unsubscribe();
         }
       }

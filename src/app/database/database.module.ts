@@ -17,9 +17,7 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { databaseServiceProvider } from './database-manager.service';
-import { databaseManagerProvider } from './database-manager.service.provider';
-import {AlertsModule} from '../alerts/alerts.module';
+import { AlertsModule } from '../alerts/alerts.module';
 
 @NgModule({
   imports: [
@@ -27,10 +25,7 @@ import {AlertsModule} from '../alerts/alerts.module';
     AlertsModule,
   ],
   declarations: [],
-  providers: [
-    databaseManagerProvider,
-    databaseServiceProvider,
-  ]
+  providers: []
 })
 export class DatabaseModule {
 }

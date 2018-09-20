@@ -58,6 +58,7 @@ export class LocalSessionService {
 
   public loginState: StateHandler<LoginState>; // logged in, logged out, login failed
   public syncState: StateHandler<SyncState>; // started, completed, failed, unsynced
+  public currentUser: User;
 
   private _entityMapper: EntityMapperService;
 
@@ -86,6 +87,7 @@ export class LocalSessionService {
     }).then(userEntity => {
       if (userEntity.checkPassword(password)) {
         this.loginState.setState(LoginState.loggedIn);
+        this.currentUser = userEntity;
         return LoginState.loggedIn;
       } else {
         this.loginState.setState(LoginState.loginFailed);

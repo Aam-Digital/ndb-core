@@ -21,11 +21,11 @@ import { LoginComponent } from './login/login.component';
 import { FormsModule } from '@angular/forms';
 import { DatabaseModule } from '../database/database.module';
 import { AlertsModule } from '../alerts/alerts.module';
-import { EntityModule } from '../entity/entity.module';
 import { LoggedInGuard } from './logged-in.guard';
 import { SessionService } from './session.service';
-import {MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule} from '@angular/material';
-import {RouterModule} from '@angular/router';
+import { MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule} from '@angular/material';
+import { RouterModule } from '@angular/router';
+import { databaseServiceProvider } from './database-service.provider';
 
 @NgModule({
   imports: [
@@ -33,16 +33,15 @@ import {RouterModule} from '@angular/router';
     FormsModule,
     DatabaseModule,
     AlertsModule,
-    EntityModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    RouterModule,
+    RouterModule
   ],
   declarations: [LoginComponent],
   exports: [LoginComponent],
-  providers: [SessionService, LoggedInGuard]
+  providers: [LoggedInGuard, SessionService, databaseServiceProvider]
 })
 export class SessionModule {
 }

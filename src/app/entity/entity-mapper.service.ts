@@ -18,7 +18,7 @@
 import { Injectable } from '@angular/core';
 import { Database } from '../database/database';
 import { Entity } from './entity';
-import { SessionService } from '../new-session/session.service';
+import { SessionService } from '../session/session.service';
 
 /**
  * The default generic DataMapper for Entity and any subclass.

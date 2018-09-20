@@ -15,110 +15,112 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EventEmitter, Injectable } from '@angular/core';
-import { SessionStatus } from './session-status';
-import { DatabaseManagerService } from '../database/database-manager.service';
-import { EntityMapperService } from '../entity/entity-mapper.service';
+/**
+ * Tasks:
+ * - Hold the remote DB
+ * - Hold credentials
+ * - Keep local and remote state sync
+ * - Handle sync
+ * - Provide unified interface for accessing
+ *   - data (r/w)
+ *   - login state (r)
+ *   - sync state (r)
+ */
+
+/**
+ * States:
+ * - local (known) out of sync, remote disconnected (no internet)
+ * - local (assumed) in sync, remote disconnected (no internet)
+ * - local (known) out of sync, remote connectable
+ * - local (assumed) in sync, remote connectable
+ *
+ * - local authenticated, remote authenticated
+ * - local authenticated, remote auth failed
+ * - local auth failed, remote authenticated
+ * - local auth failed, remote auth failed
+ *
+ * --> logged in
+ * --> not logged in
+ * --> getDB
+ */
+
+import { Injectable } from '@angular/core';
 import { AlertService } from '../alerts/alert.service';
+
+import { LocalSessionService } from './local-session.service';
+import { RemoteSessionService } from './remote-session.service';
+import { LoginState } from './login-state.enum';
+import { Database } from '../database/database';
+import { PouchDatabase } from '../database/pouch-database';
+import { ConnectionState } from './connection-state.enum';
+import { SyncState } from './sync-state.enum';
+import { EntityMapperService } from '../entity/entity-mapper.service';
 import { User } from '../user/user';
 
 @Injectable()
 export class SessionService {
-  currentUser: User = null;
-
-  private _onSessionStatusChanged: EventEmitter<SessionStatus>;
-  get onSessionStatusChanged() {
-    if (this._onSessionStatusChanged === undefined) {
-      this._onSessionStatusChanged = new EventEmitter<SessionStatus>(true);
-    }
-    return this._onSessionStatusChanged;
-  }
-
-
-  constructor(private _dbManager: DatabaseManagerService,
-              private _entityMapper: EntityMapperService,
+  constructor(private _localSession: LocalSessionService,
+              private _remoteSession: RemoteSessionService,
               private _alertService: AlertService) {
-
   }
 
   public isLoggedIn(): boolean {
-    return this.currentUser !== null;
+    return this._localSession.loginState.getState() === LoginState.loggedIn;
+  }
+
+  public login(username: string, password: string): Promise<LoginState> {
+    const localLogin =  this._localSession.login(username, password);
+    this._remoteSession.login(username, password).then((connectionState: ConnectionState) => {
+      if (connectionState === ConnectionState.connected) {
+        return this.sync();
+      }
+
+      // remote rejected but local logged in
+      if (connectionState === ConnectionState.rejected && this._localSession.loginState.getState() === LoginState.loggedIn) {
+        // Someone changed the password remotely --> fail the login
+        this._localSession.loginState.setState(LoginState.loginFailed);
+        // TODO: We might want to alert the alertService
+      }
+
+      // If we are not connected, we must check, whether the local database is initial
+      return this._localSession.isInitial().then(isInitial => {
+        if (isInitial) {
+          // Fail the sync in the local session, which will fail the authentication there
+          this._localSession.syncState.setState(SyncState.failed);
+        }
+      });
+    });
+    return localLogin;
   }
 
   public getCurrentUser(): User {
-    return this.currentUser;
+    return this._localSession.currentUser;
   }
 
-  /**
-   * Authenticates the given user with local and remote database.
-   * If successful, the user is set as currentUser for this session.
-   *
-   * WARNING: This method returns false immediately if the user cannot
-   * be authenticated with the local database.
-   */
-  public login(username: string, password: string): Promise<boolean> {
-    let promise: Promise<boolean>;
-    promise = this.authenticateLocalUser(username, password);
-    this.remoteDatabaseLogin(username, password);
+  public getLoginState() {
+    return this._localSession.loginState;
+  }
+  public getConnectionState() {
+    return this._remoteSession.connectionState;
+  }
+  public getSyncState() {
+    return this._localSession.syncState;
+  }
 
-    return promise;
+  public sync(): Promise<any> {
+    return this._localSession.sync(this._remoteSession.database);
+  }
+
+  public getDatabase(): Database {
+    return new PouchDatabase(this._localSession.database, this._alertService);
   }
 
   public logout() {
-    this.currentUser = null;
-    this.onSessionStatusChanged.emit(SessionStatus.loggedOut);
+    this._localSession.logout();
+    this._remoteSession.logout();
   }
 
-
-  private authenticateLocalUser(username: string, password: string): Promise<boolean> {
-
-    const self = this;
-
-    return this._entityMapper.load<User>(User, username)
-      .then(function (userEntity) {
-        if (userEntity.checkPassword(password)) {
-          self.onLocalLoginSuccessful(userEntity);
-          return true;
-        } else {
-          self.onLocalLoginFailed({status: 401});
-          return false;
-        }
-      })
-      .catch(function (error: any) {
-        self.onLocalLoginFailed(error);
-        return false;
-      });
-  }
-
-  private onLocalLoginSuccessful(user: User) {
-    this.currentUser = user;
-    this.onSessionStatusChanged.emit(SessionStatus.loggedIn);
-  }
-
-  private onLocalLoginFailed(error: any) {
-    this.currentUser = null;
-    this.onSessionStatusChanged.emit(SessionStatus.loginFailed);
-    return error;
-  }
-
-  private remoteDatabaseLogin(username: string, password: string): Promise<boolean> {
-    const self = this;
-    return this._dbManager.login(username, password)
-      .then(function (loginSuccess) {
-        if (loginSuccess) {
-          self.onRemoteLoginSuccessful();
-        } else {
-          self.onRemoteLoginFailed();
-        }
-        return loginSuccess;
-      });
-  }
-
-  private onRemoteLoginSuccessful() {
-    this._alertService.addInfo('Connected to remote database.');
-  }
-
-  private onRemoteLoginFailed() {
-    this._alertService.addWarning('Could not connect to remote database. Data cannot be synchronized at the moment.');
+  public setEntityMapper(em: EntityMapperService) {
+    this._localSession.setEntityMapper(em);
   }
 }

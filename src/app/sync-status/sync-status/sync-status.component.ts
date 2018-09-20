@@ -16,9 +16,8 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {DatabaseManagerService} from '../../database/database-manager.service';
 import {SessionService} from '../../session/session.service';
-import {DatabaseSyncStatus} from '../../database/database-sync-status.enum';
+import {SyncState} from '../../session/sync-state.enum';
 import {AlertService} from '../../alerts/alert.service';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {InitialSyncDialogComponent} from './initial-sync-dialog.component';
@@ -33,32 +32,31 @@ export class SyncStatusComponent implements OnInit {
   syncInProgress: boolean;
   dialogRef: MatDialogRef<InitialSyncDialogComponent>;
 
-  constructor(private _dbManager: DatabaseManagerService,
-              public dialog: MatDialog,
+  constructor(public dialog: MatDialog,
               private _sessionService: SessionService,
               private alertService: AlertService) {
   }
 
   ngOnInit(): void {
-    this._dbManager.onSyncStatusChanged.subscribe((status: any) => this.handleSyncStatus(status));
+    this._sessionService.getSyncState().getStateChangedStream().subscribe((state: SyncState) => this.handleSyncState(state));
   }
 
-  private handleSyncStatus(status: DatabaseSyncStatus) {
-    switch (status) {
-      case DatabaseSyncStatus.started:
+  private handleSyncState(state: SyncState) {
+    switch (state) {
+      case SyncState.started:
         this.syncInProgress = true;
         if (!this._sessionService.isLoggedIn()) {
           this.dialogRef = this.dialog.open(InitialSyncDialogComponent);
         }
         break;
-      case DatabaseSyncStatus.completed:
+      case SyncState.completed:
         this.syncInProgress = false;
         if (this.dialogRef) {
           this.dialogRef.close();
         }
         this.alertService.addInfo('Database sync completed.');
         break;
-      case DatabaseSyncStatus.failed:
+      case SyncState.failed:
         this.syncInProgress = false;
         if (this.dialogRef) {
           this.dialogRef.close();
@@ -66,7 +64,7 @@ export class SyncStatusComponent implements OnInit {
         this.alertService.addWarning('Database sync failed.');
         break;
 
-      case DatabaseSyncStatus.pulledChanges:
+      /*case DatabaseSyncStatus.pulledChanges:
         this.alertService.addInfo('Updated database from server.');
         this.syncInProgress = true;
         setTimeout(() => this.syncInProgress = false, 1000);
@@ -74,7 +72,7 @@ export class SyncStatusComponent implements OnInit {
       case DatabaseSyncStatus.pushedChanges:
         this.syncInProgress = true;
         setTimeout(() => this.syncInProgress = false, 1000);
-        break;
+        break;*/
     }
   }
 }
