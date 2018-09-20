@@ -26,6 +26,8 @@ import { SessionService } from './session.service';
 import { MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule} from '@angular/material';
 import { RouterModule } from '@angular/router';
 import { databaseServiceProvider } from './database-service.provider';
+import { LocalSessionService } from './local-session.service';
+import { RemoteSessionService } from './remote-session.service';
 
 @NgModule({
   imports: [
@@ -41,7 +43,7 @@ import { databaseServiceProvider } from './database-service.provider';
   ],
   declarations: [LoginComponent],
   exports: [LoginComponent],
-  providers: [LoggedInGuard, SessionService, databaseServiceProvider]
+  providers: [LoggedInGuard, SessionService, LocalSessionService, RemoteSessionService, databaseServiceProvider]
 })
 export class SessionModule {
 }
