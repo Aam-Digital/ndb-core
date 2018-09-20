@@ -6,6 +6,7 @@ import {EntityMapperService} from "../../entity/entity-mapper.service";
 import {MatDialog, MatTableDataSource, MatSort} from "@angular/material";
 import {Child} from "../child";
 import {LoggingService} from "../../logging/logging.service";
+import {resolve} from "q";
 
 export interface ViewableSchool {
   school: School,
@@ -91,30 +92,32 @@ export class ViewSchoolsComponentComponent implements OnInit {
 
   private showEditSchoolDialog(data) {
     let dialog = this.dialog.open(EditSchoolDialogComponent, {data: data});
-    dialog.afterClosed().subscribe(res => {
-      switch (res.type) {
-        case "EDIT":
-          const viewableSchool: ViewableSchool = this.viewableSchools.filter(school =>
-            school.childSchoolRelation.getId() === res.childSchoolRelation.getId())[0];
-          viewableSchool.childSchoolRelation = res.childSchoolRelation;
-          viewableSchool.school = res.school;
-          break;
-        case "CREATE":
-          this.viewableSchools.push({
-            school: res.school,
-            childSchoolRelation: res.childSchoolRelation,
-          });
-          break;
-        case "DELETE":
-          this.viewableSchools = this.viewableSchools.filter(school => {
-            console.log('current', school.childSchoolRelation, 'res', res.childSchoolRelation);
-            return school.childSchoolRelation.getId() !== res.childSchoolRelation.getId();
-          });
-          break;
-        default:
-          break;
-      }
-      this.updateViewableItems();
-    })
+    dialog.afterClosed().subscribe(res => this.resolveAction(res));
+  }
+
+  private resolveAction(res) {
+    switch (res.type) {
+      case "EDIT":
+        const viewableSchool: ViewableSchool = this.viewableSchools.filter(school =>
+          school.childSchoolRelation.getId() === res.childSchoolRelation.getId())[0];
+        viewableSchool.childSchoolRelation = res.childSchoolRelation;
+        viewableSchool.school = res.school;
+        break;
+      case "CREATE":
+        this.viewableSchools.push({
+          school: res.school,
+          childSchoolRelation: res.childSchoolRelation,
+        });
+        break;
+      case "DELETE":
+        this.viewableSchools = this.viewableSchools.filter(school => {
+          console.log('current', school.childSchoolRelation, 'res', res.childSchoolRelation);
+          return school.childSchoolRelation.getId() !== res.childSchoolRelation.getId();
+        });
+        break;
+      default:
+        break;
+    }
+    this.updateViewableItems();
   }
 }
