@@ -31,7 +31,7 @@ describe('LatestChangesService', () => {
   let http: HttpClient;
 
   beforeEach(() => {
-    alertService = new AlertService(null);
+    alertService = new AlertService(null, null);
     http = new HttpClient(null);
 
     TestBed.configureTestingModule({

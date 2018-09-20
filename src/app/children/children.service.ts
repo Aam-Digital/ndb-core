@@ -15,6 +15,7 @@ export class ChildrenService {
               private db: Database) {
     this.createAttendanceAnalysisIndex();
     this.createNotesIndex();
+    this.createAttendancesIndex();
   }
 
   getChildren(): Observable<Child[]> {
@@ -31,13 +32,54 @@ export class ChildrenService {
   }
 
   getAttendancesOfChild(childId: string): Observable<AttendanceMonth[]> {
-    return Observable.fromPromise(
-      this.entityMapper.loadType<AttendanceMonth>(AttendanceMonth)
-        .then(loadedEntities => {
-          return loadedEntities.filter(o => o.student === childId);
-        })
-    );
+    const promise = this.db.query('attendances_index/by_child', {key: childId, include_docs: true})
+      .then(loadedEntities => {
+        return loadedEntities.rows.map(loadedRecord => {
+          const entity = new AttendanceMonth('');
+          entity.load(loadedRecord.doc);
+          return entity;
+        });
+      });
+
+    return Observable.fromPromise(promise);
   }
+
+  getAttendancesOfMonth(month: Date): Observable<AttendanceMonth[]> {
+    const monthString = month.getFullYear().toString() + '-' + (month.getMonth() + 1).toString();
+    const promise = this.db.query('attendances_index/by_month', {key: monthString, include_docs: true})
+      .then(loadedEntities => {
+        return loadedEntities.rows.map(loadedRecord => {
+          const entity = new AttendanceMonth('');
+          entity.load(loadedRecord.doc);
+          return entity;
+        });
+      });
+
+    return Observable.fromPromise(promise);
+  }
+
+  private createAttendancesIndex(): Promise<any> {
+    const designDoc = {
+      _id: '_design/attendances_index',
+      views: {
+        by_child: {
+          map: '(doc) => { ' +
+            'if (!doc._id.startsWith("' + AttendanceMonth.ENTITY_TYPE + '")) return;' +
+            'emit(doc.student); ' +
+            '}'
+        },
+        by_month: {
+          map: '(doc) => { ' +
+            'if (!doc._id.startsWith("' + AttendanceMonth.ENTITY_TYPE + '")) return;' +
+            'emit(doc.month); ' +
+            '}'
+        }
+      }
+    };
+
+    return this.db.saveDatabaseIndex(designDoc);
+  }
+
 
 
   queryAttendanceLast3Months() {

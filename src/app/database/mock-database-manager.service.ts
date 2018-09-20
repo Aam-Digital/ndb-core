@@ -45,9 +45,7 @@ export class MockDatabaseManagerService extends DatabaseManagerService {
     const demoUser = new User('demo');
     demoUser.name = 'demo';
     demoUser.setNewPassword('pass');
-    const demoUserData = JSON.parse(JSON.stringify(demoUser));
-    demoUserData._id = demoUser.getType() + ':' + demoUser.name;
-    this.database.put(demoUserData);
+    entityMapper.save(demoUser);
 
     DemoData.getAllDemoEntities()
       .forEach(c => entityMapper.save(c));

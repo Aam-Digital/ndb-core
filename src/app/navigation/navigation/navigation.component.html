@@ -17,6 +17,12 @@
 
     <!-- <a [routerLink]="item.routerLinkParameters" ><i class="fa fa-{{item.icon}} fa-fw"></i> {{item.label}}</a> -->
 
+
+    <div class='nav-history'>
+      <button mat-icon-button (click)='location.back()' matTooltip="Back"><mat-icon fontIcon="fa-arrow-left"></mat-icon></button>
+      <button mat-icon-button (click)='location.forward()' matTooltip="Forward"><mat-icon fontIcon="fa-arrow-right"></mat-icon></button>
+    </div>
+
     <mat-nav-list>
       <mat-list-item *ngFor="let item of menu_main" [routerLink]="item.routerLinkParameters" >
         <a><mat-icon class="nav-icon" fontIcon="fa-{{item.icon}}"></mat-icon>{{item.label}}</a>

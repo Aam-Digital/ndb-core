@@ -18,6 +18,7 @@
 import { Database } from './database';
 import {Note} from '../children/notes/note';
 import {AttendanceMonth} from '../children/attendance/attendance-month';
+import {Entity} from '../entity/entity';
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -120,22 +121,23 @@ export class MockDatabase extends Database {
     let reduce;
     switch (fun) {
       case 'notes_index/by_child':
-        filter = (e: Note) => e.getType() === Note.ENTITY_TYPE && e.children.includes(options.key);
+        filter = (e) => e._id.startsWith( Note.ENTITY_TYPE) && e.children.includes(options.key);
         break;
       case 'attendances_index/by_child':
-        filter = (e: AttendanceMonth) => e.getType() === AttendanceMonth.ENTITY_TYPE && e.student === options.key;
+        filter = (e) => e._id.startsWith( AttendanceMonth.ENTITY_TYPE) && e.student === options.key;
         break;
       case 'attendances_index/by_month':
-        filter = (e: AttendanceMonth) => e.getType() === AttendanceMonth.ENTITY_TYPE && e.month === options.key;
+        filter = (e) => e._id.startsWith( AttendanceMonth.ENTITY_TYPE) && e.month.getFullYear !== undefined
+          && e.month.getFullYear().toString() + '-' + (e.month.getMonth() + 1).toString() === options.key;
         break;
       case 'avg_attendance_index/three_months':
-        filter = (e: AttendanceMonth) => e.getType() === AttendanceMonth.ENTITY_TYPE
+        filter = (e) => e._id.startsWith( AttendanceMonth.ENTITY_TYPE) && e.month.getFullYear !== undefined
           && this.isWithinLastMonths(e.month, new Date(), 3);
         reduce = this.getStatsReduceFun((e: AttendanceMonth) => e.student,
           (e: AttendanceMonth) => (e.daysAttended / (e.daysWorking - e.daysExcused)));
         break;
       case 'avg_attendance_index/last_month':
-        filter = (e: AttendanceMonth) => e.getType() === AttendanceMonth.ENTITY_TYPE
+        filter = (e) => e._id.startsWith( AttendanceMonth.ENTITY_TYPE) && e.month.getFullYear !== undefined
           && this.isWithinLastMonths(e.month, new Date(), 1);
         reduce = this.getStatsReduceFun((e: AttendanceMonth) => e.student,
           (e: AttendanceMonth) => (e.daysAttended / (e.daysWorking - e.daysExcused)));

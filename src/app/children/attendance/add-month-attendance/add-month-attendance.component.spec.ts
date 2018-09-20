@@ -5,7 +5,7 @@ import {
   MatButtonModule,
   MatButtonToggleModule, MatCheckboxModule,
   MatFormFieldModule, MatIconModule,
-  MatInputModule,
+  MatInputModule, MatProgressBarModule,
   MatSelectModule, MatTableModule
 } from '@angular/material';
 import {FormsModule} from '@angular/forms';
@@ -35,6 +35,7 @@ describe('AddMonthAttendanceComponent', () => {
         MatInputModule,
         MatTableModule,
         MatButtonModule,
+        MatProgressBarModule,
         FormsModule,
         UiHelperModule,
         AlertsModule,

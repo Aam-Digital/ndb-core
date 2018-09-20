@@ -82,7 +82,7 @@ export class EntityMapperService {
 
   public save<T extends Entity>(entity: T, forceUpdate: boolean = false): Promise<any> {
     entity['_id'] = EntityMapperService.createDatabaseIdByEntity(entity);
-    return this._db.put(entity, forceUpdate);
+    return this._db.put(entity.rawData(), forceUpdate);
   }
 
   public remove<T extends Entity>(entity: T): Promise<any> {

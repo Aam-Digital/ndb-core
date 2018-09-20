@@ -1,5 +1,82 @@
 [
   {
+    "tag_name": "v2.4.4",
+    "name": "Bug fixes",
+    "published_at": "2018-09-13",
+    "body": "- fixed multiple formating and loading issues",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.4.3",
+    "name": "Current week's absences",
+    "published_at": "2018-09-07",
+    "body": "- new dashboard widget for current week's absences",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.4.2",
+    "name": "Bug fixes and improvements for Daily Attendance",
+    "published_at": "2018-09-05",
+    "body": "- only active children are shown during roll call\n- loading indicator",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.4.1",
+    "name": "Bug fixes and simplification for Daily Attendance",
+    "published_at": "2018-09-04",
+    "body": "- fixed bug creating duplicate entries for some month when adding daily attendance\n- simplified editing of daily attendance in the calendar view",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.4.0",
+    "name": "Daily Attendance & Live Sync",
+    "published_at": "2018-09-01",
+    "body": "- new major feature: manage daily attendance\n- database is continuously syncing with server now (live sync)\n- technical logging information is uploaded for development team in the background",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.3.4",
+    "name": "Minor fixes",
+    "published_at": "2018-08-10",
+    "body": "- fixed broken \"Add Child\" link\n- allow changing of school in Child Details\n- fixed broken sort of some columns in Children List",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.3.3",
+    "name": "Fixed 'Add Attendance' not saving",
+    "published_at": "2018-08-02",
+    "body": "- fixed saving attendance through 'Add Attendance' page",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.3.2",
+    "name": "Improved 'Add Attendance'",
+    "published_at": "2018-08-02",
+    "body": "- improved performance when adding attendance in bulk",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.3.1",
+    "name": "Hotfixes",
+    "published_at": "2018-08-01",
+    "body": "- several small, urgent bug fixes\n- added additional fields to Child",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.3.0",
+    "name": "Attendance, Notes & Coaching Managers",
+    "published_at": "2018-07-28",
+    "body": "- New Feature: Add monthly attendance data for a whole school/coaching batch easily\n- New Feature: Manager for Notes/Reports to be filtered by different criteria\n- Preview: Coaching Planner to easily see learning status of all children and rearrange groups\n- photos of individual children can be displayed\n- Back button can be used to return to previously filtered children list\n- various small improvements and fixes",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.2.0",
+    "name": "Extended Interface & Data",
+    "published_at": "2018-07-11",
+    "body": "- added Health section to Child\n- separate coaching and school attendance data for Child\n- added Materials section to Child\n- added Education & ASER Results section to Child\n- added Progress dashboard widget",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.1.4",
     "name": "Improvements & Bug Fixes",
     "published_at": "2018-06-29",

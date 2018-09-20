@@ -16,10 +16,14 @@ import {ChildrenService} from '../../children.service';
 export class AddMonthAttendanceComponent implements OnInit {
   schools = new Array<School>();
   centers = new Array<string>();
+
   children = new Array<Child>();
+  childrenBySchool = new Map<string, Child[]>();
+  childrenByCenter = new Map<string, Child[]>();
 
   attendanceDataSource = new MatTableDataSource();
   columnsToDisplay = ['student', 'daysAttended', 'daysExcused', 'remarks', 'daysWorking'];
+  loadingExistingRecords = false;
 
   attendanceType = 'school';
   school;
@@ -36,34 +40,62 @@ export class AddMonthAttendanceComponent implements OnInit {
     this.entityMapper.loadType<School>(School).then(schools => this.schools = schools);
     this.entityMapper.loadType<Child>(Child).then(children => {
       this.children = children.filter((c: Child) => c.isActive());
+      this.initChildrenLookupTables(this.children);
+
       this.centers = children.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
+    });
+  }
+
+  private initChildrenLookupTables(children: Child[]) {
+    this.childrenBySchool = new Map<string, Child[]>();
+    this.childrenByCenter = new Map<string, Child[]>();
+
+    children.forEach(c => {
+      let arrS = this.childrenBySchool.get(c.schoolId);
+      if (arrS === undefined) {
+        arrS = [];
+        this.childrenBySchool.set(c.schoolId, arrS);
+      }
+      arrS.push(c);
+
+      let arrC = this.childrenByCenter.get(c.center);
+      if (arrC === undefined) {
+        arrC = [];
+        this.childrenByCenter.set(c.center, arrC);
+      }
+      arrC.push(c);
     });
   }
 
 
   loadTable() {
     const records = new Array<AttendanceMonth>();
-
     this.getFilteredStudents()
+      .sort((a, b) => a.schoolClass > b.schoolClass ? 1 : -1)
       .forEach((c: Child) => {
-        const att = this.createAttendanceRecord(c, this.month, this.attendanceType);
-        this.loadExistingAttendanceRecordIfAvailable(att, c, this.month, this.attendanceType);
-
+        const att = AttendanceMonth.createAttendanceMonth(c.getId(), this.attendanceType);
+        att.month = this.month;
         records.push(att);
       });
+    this.loadExistingAttendanceRecordIfAvailable(records, this.month, this.attendanceType);
 
     this.attendanceDataSource.data = records;
   }
 
   private getFilteredStudents() {
+    let result;
     if (this.attendanceType === 'school') {
-      return this.children.filter((c: Child) => c.schoolId === this.school);
+      result = this.childrenBySchool.get(this.school);
     }
     if (this.attendanceType === 'coaching') {
-      return this.children.filter((c: Child) => c.center === this.coachingCenter);
+      result = this.childrenByCenter.get(this.coachingCenter);
     }
 
-    return [];
+    if (result === undefined) {
+      result = [];
+    }
+
+    return result;
   }
 
 
@@ -125,29 +157,25 @@ export class AddMonthAttendanceComponent implements OnInit {
   }
 
 
-  private loadExistingAttendanceRecordIfAvailable(recordToOverwrite: AttendanceMonth, c: Child, month: Date, attendanceType: string) {
+  private loadExistingAttendanceRecordIfAvailable(recordsToOverwrite: AttendanceMonth[], month: Date, attendanceType: string) {
     if (month === undefined) {
       return;
     }
 
-    this.childrenService.getAttendancesOfChild(c.getId())
+    this.loadingExistingRecords = true;
+
+    this.childrenService.getAttendancesOfMonth(this.month)
       .subscribe(records => {
-        const relevantRecords = records.filter((a: AttendanceMonth) => a.institution === attendanceType &&
-          (a.month.getUTCFullYear() === month.getUTCFullYear() && a.month.getUTCMonth() === month.getUTCMonth()));
-        if (relevantRecords.length > 0) {
-          recordToOverwrite.load(relevantRecords[0]);
-          recordToOverwrite.overridden = true;
-        }
+        recordsToOverwrite.forEach(recordToOverwrite => {
+          const relevantExistingRecords = records.filter((a: AttendanceMonth) => a.student === recordToOverwrite.student
+            && a.institution === attendanceType);
+          if (relevantExistingRecords.length > 0) {
+            recordToOverwrite.load(relevantExistingRecords[0]);
+            recordToOverwrite.overridden = true;
+          }
+        });
+
+        this.loadingExistingRecords = false;
       });
-  }
-
-  private createAttendanceRecord(c: Child, month: Date, attendanceType: string) {
-    const att = new AttendanceMonth((new Date()).getTime().toString());
-    att.student = c.getId();
-    att.institution = attendanceType;
-    att.month = month;
-    att.daysWorking = this.workingDays;
-
-    return att;
   }
 }

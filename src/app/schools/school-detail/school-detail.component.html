@@ -47,7 +47,7 @@
     <!-- Age Column -->
     <ng-container matColumnDef="age">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Age </mat-header-cell>
-      <mat-cell *matCellDef="let student"> {{student.getAge()}} </mat-cell>
+      <mat-cell *matCellDef="let student"> {{student.age}} </mat-cell>
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
