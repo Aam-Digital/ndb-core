@@ -3,7 +3,7 @@ import {EntityMapperService} from "../../../entity/entity-mapper.service";
 import {ChildSchoolRelation} from "../../childSchoolRelation";
 import { School } from "../../../schools/school";
 
-import uniqid from 'uniqid';
+import * as uniqid from 'uniqid';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
 import {Child} from "../../child";
 
@@ -22,9 +22,11 @@ export class EditSchoolDialogComponent {
 
   constructor(private entityMapperService: EntityMapperService,
               public dialogRef: MatDialogRef<EditSchoolDialogComponent>,
-              @Inject(MAT_DIALOG_DATA) public data
-  ) {
+              @Inject(MAT_DIALOG_DATA) public data) { }
+
+  ngOnInit() {
     this.child = this.data.child;
+
     if (this.data.childSchoolRelation) {
       this.entityMapperService.load<ChildSchoolRelation>(ChildSchoolRelation, this.data.childSchoolRelation.getId())
         .then((res: ChildSchoolRelation) => this.childSchoolRelation = res); //fetch a new one to not mutate the displayed object
