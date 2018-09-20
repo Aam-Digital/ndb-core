@@ -27,14 +27,16 @@ import {
   MatAutocompleteModule,
   MatButtonModule,
   MatButtonToggleModule,
-  MatCardModule, MatCheckboxModule,
+  MatCardModule,
+  MatCheckboxModule,
   MatDialogModule,
-  MatIconModule, MatProgressBarModule,
+  MatProgressBarModule,
   MatSidenavModule,
   MatSnackBarModule,
   MatSortModule,
   MatTableModule,
-  MatListModule
+  MatListModule,
+  MatIconModule
 } from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {ChildrenService} from './children.service';
@@ -80,7 +82,6 @@ import { ViewSchoolsComponentComponent } from './view-schools-component/view-sch
     MatIconModule,
     MatCardModule,
     MatSnackBarModule,
-    MatDialogModule,
     MatProgressBarModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
