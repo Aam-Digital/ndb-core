@@ -39,7 +39,7 @@ export class MockDatabaseManagerService extends DatabaseManagerService {
   }
 
   private initDemoData() {
-    const entityMapper = new EntityMapperService(this.database);
+    const entityMapper = new EntityMapperService(this.database, null); // TODO: We need a MockSession here
 
     // add demo user
     const demoUser = new User('demo');

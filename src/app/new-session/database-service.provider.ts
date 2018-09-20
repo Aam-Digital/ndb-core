@@ -15,20 +15,15 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { AlertsModule } from '../alerts/alerts.module';
+import { Database } from '../database/database';
 import { SessionService } from './session.service';
-import { AppConfigModule } from '../app-config/app-config.module';
-import { databaseServiceProvider } from './database-service.provider';
 
-@NgModule({
-  imports: [
-    CommonModule,
-    AlertsModule,
-    AppConfigModule
-  ],
-  providers: [SessionService, databaseServiceProvider]
-})
-export class SessionModule {
+export function databaseServiceFactory(_sessionService: SessionService) {
+  return _sessionService.getDatabase();
+}
+
+export let databaseServiceProvider = {
+  provide: Database,
+  useFactory: databaseServiceFactory,
+  deps: [SessionService]
 }

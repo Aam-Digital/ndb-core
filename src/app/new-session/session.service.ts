@@ -54,6 +54,7 @@ import { Database } from '../database/database';
 import { PouchDatabase } from '../database/pouch-database';
 import { ConnectionState } from './connection-state.enum';
 import { SyncState } from './sync-state.enum';
+import { EntityMapperService } from '../entity/entity-mapper.service';
 
 @Injectable()
 export class SessionService {
@@ -72,18 +73,21 @@ export class SessionService {
       if (connectionState === ConnectionState.connected) {
         return this.sync();
       }
-      // If we are not connected, we must check, whether the local database is initial
-      this._localSession.isInitial().then(isInitial => {
-        if (isInitial) {
-          // Fail the sync in the local session, which will fail the authentication there
-          this._localSession.syncState.setState(SyncState.failed);
-        }
-      });
+
+      // remote rejected but local logged in
       if (connectionState === ConnectionState.rejected && this._localSession.loginState.getState() === LoginState.loggedIn) {
         // Someone changed the password remotely --> fail the login
         this._localSession.loginState.setState(LoginState.loginFailed);
         // TODO: We might want to alert the alertService
       }
+
+      // If we are not connected, we must check, whether the local database is initial
+      return this._localSession.isInitial().then(isInitial => {
+        if (isInitial) {
+          // Fail the sync in the local session, which will fail the authentication there
+          this._localSession.syncState.setState(SyncState.failed);
+        }
+      });
     });
     return localLogin;
   }
@@ -93,11 +97,15 @@ export class SessionService {
   }
 
   public getDatabase(): Database {
-    return new PouchDatabase(this._localSession.database);
+    return new PouchDatabase(this._localSession.database, this._alertService);
   }
 
   public logout() {
     this._localSession.logout();
     this._remoteSession.logout();
+  }
+
+  public setEntityMapper(em: EntityMapperService) {
+    this._localSession.setEntityMapper(em);
   }
 }

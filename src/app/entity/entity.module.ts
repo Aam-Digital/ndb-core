@@ -19,11 +19,13 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DatabaseModule } from '../database/database.module';
 import { EntityMapperService } from './entity-mapper.service';
+import { SessionModule } from '../new-session/new-session.module'
 
 @NgModule({
   imports: [
     CommonModule,
-    DatabaseModule
+    DatabaseModule,
+    SessionModule
   ],
   declarations: [],
   providers: [EntityMapperService]

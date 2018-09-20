@@ -18,6 +18,7 @@
 import { Injectable } from '@angular/core';
 import { Database } from '../database/database';
 import { Entity } from './entity';
+import { SessionService } from '../new-session/session.service';
 
 /**
  * The default generic DataMapper for Entity and any subclass.
@@ -34,7 +35,8 @@ export class EntityMapperService {
     return type + ':' + id;
   }
 
-  constructor(private _db: Database) {
+  constructor(private _db: Database, session: SessionService) {
+    session.setEntityMapper(this);
   }
 
   /**

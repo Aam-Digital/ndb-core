@@ -59,7 +59,9 @@ export class LocalSessionService {
   public loginState: StateHandler<LoginState>; // logged in, logged out, login failed
   public syncState: StateHandler<SyncState>; // started, completed, failed, unsynced
 
-  constructor(private _entityMapper: EntityMapperService) {
+  private _entityMapper: EntityMapperService;
+
+  constructor() {
     this.database = new PouchDB(AppConfig.settings.database.name);
 
     this.loginState = new StateHandler<LoginState>(LoginState.loggedOut);
@@ -75,9 +77,13 @@ export class LocalSessionService {
    * @param password Password
    */
   public login(username: string, password: string): Promise<LoginState> {
-    return this.waitForFirstSync().then(
-      () => this._entityMapper.load<User>(User, username)
-    ).then(userEntity => {
+    return this.waitForFirstSync().then(() => {
+      if (this._entityMapper) {
+        return this._entityMapper.load<User>(User, username);
+      } else {
+        throw new Error('No EntityMapper available.');
+      }
+    }).then(userEntity => {
       if (userEntity.checkPassword(password)) {
         this.loginState.setState(LoginState.loggedIn);
         return LoginState.loggedIn;
@@ -139,5 +145,9 @@ export class LocalSessionService {
    */
   public logout() {
     this.loginState.setState(LoginState.loggedOut);
+  }
+
+  public setEntityMapper(em: EntityMapperService) {
+    this._entityMapper = em;
   }
 }
