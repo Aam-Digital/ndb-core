@@ -77,30 +77,44 @@ export class ViewSchoolsComponentComponent implements OnInit {
   }
 
   schoolClicked(viewableSchool) {
-    let dialog = this.dialog.open(EditSchoolDialogComponent, {
-      data: {
-        childSchoolRelation: viewableSchool.childSchoolRelation,
-        child: this.child,
-      }});
-    dialog.afterClosed().subscribe(res => {
-      if (res) {
-        viewableSchool.childSchoolRelation = res.childSchoolRelation;
-        viewableSchool.school = res.school;
-        this.updateViewableItems();
-      }
-    })
+    const data = {
+          childSchoolRelation: viewableSchool.childSchoolRelation,
+          child: this.child,
+    };
+    this.showEditSchoolDialog(data);
   }
 
+
   addSchoolClick() {
-    let dialog = this.dialog.open(EditSchoolDialogComponent, {data: {child: this.child}});
+    this.showEditSchoolDialog({child: this.child});
+  }
+
+  private showEditSchoolDialog(data) {
+    let dialog = this.dialog.open(EditSchoolDialogComponent, {data: data});
     dialog.afterClosed().subscribe(res => {
-      if (res) {
-        this.viewableSchools.push({
-          school: res.school,
-          childSchoolRelation: res.childSchoolRelation,
-        });
-        this.updateViewableItems();
+      switch (res.type) {
+        case "EDIT":
+          const viewableSchool: ViewableSchool = this.viewableSchools.filter(school =>
+            school.childSchoolRelation.getId() === res.childSchoolRelation.getId())[0];
+          viewableSchool.childSchoolRelation = res.childSchoolRelation;
+          viewableSchool.school = res.school;
+          break;
+        case "CREATE":
+          this.viewableSchools.push({
+            school: res.school,
+            childSchoolRelation: res.childSchoolRelation,
+          });
+          break;
+        case "DELETE":
+          this.viewableSchools = this.viewableSchools.filter(school => {
+            console.log('current', school.childSchoolRelation, 'res', res.childSchoolRelation);
+            return school.childSchoolRelation.getId() !== res.childSchoolRelation.getId();
+          });
+          break;
+        default:
+          break;
       }
+      this.updateViewableItems();
     })
   }
 }

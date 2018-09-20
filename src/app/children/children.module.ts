@@ -36,7 +36,7 @@ import {
   MatSortModule,
   MatTableModule,
   MatListModule,
-  MatIconModule
+  MatIconModule, MatTooltipModule
 } from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {ChildrenService} from './children.service';
@@ -60,6 +60,12 @@ import {FilterPipeModule} from 'ngx-filter-pipe';
 import { NotesManagerComponent } from './notes/notes-manager/notes-manager.component';
 import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/add-month-attendance.component';
 import { ViewSchoolsComponentComponent } from './view-schools-component/view-schools-component.component';
+import { AttendanceDaysComponent } from './attendance/attendance-days/attendance-days.component';
+import { AttendanceDetailsComponent } from './attendance/attendance-details/attendance-details.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { AddDayAttendanceComponent } from './attendance/add-day-attendance/add-day-attendance.component';
+import { AttendanceWeekDashboardComponent } from './attendance/attendance-week-dashboard/attendance-week-dashboard.component';
+import {AttendanceDayBlockComponent} from './attendance/attendance-days/attendance-day-block.component';
 
 
 @NgModule({
@@ -82,8 +88,11 @@ import { ViewSchoolsComponentComponent } from './view-schools-component/view-sch
     MatIconModule,
     MatCardModule,
     MatSnackBarModule,
+    MatDialogModule,
     MatProgressBarModule,
     MatAutocompleteModule,
+    MatTooltipModule,
+    BrowserAnimationsModule,
     ReactiveFormsModule,
     FilterPipeModule,
     UiHelperModule,
@@ -110,6 +119,11 @@ import { ViewSchoolsComponentComponent } from './view-schools-component/view-sch
     NotesManagerComponent,
     AddMonthAttendanceComponent,
     ViewSchoolsComponentComponent,
+    AttendanceDayBlockComponent,
+    AttendanceDaysComponent,
+    AttendanceDetailsComponent,
+    AddDayAttendanceComponent,
+    AttendanceWeekDashboardComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
@@ -119,7 +133,10 @@ import { ViewSchoolsComponentComponent } from './view-schools-component/view-sch
     AttendanceAverageDashboardComponent,
     AttendanceWarningsDashboardComponent,
     ViewSchoolsComponentComponent,
+    AttendanceWarningsDashboardComponent,
+    AttendanceWeekDashboardComponent,
+    AttendanceDaysComponent,
   ],
-  entryComponents: [NoteDetailsComponent, EditSchoolDialogComponent],
+  entryComponents: [NoteDetailsComponent, EditSchoolDialogComponent, AttendanceDetailsComponent],
 })
 export class ChildrenModule { }

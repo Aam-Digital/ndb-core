@@ -22,7 +22,8 @@ export class EditSchoolDialogComponent {
 
   constructor(private entityMapperService: EntityMapperService,
               public dialogRef: MatDialogRef<EditSchoolDialogComponent>,
-              @Inject(MAT_DIALOG_DATA) public data) { }
+              @Inject(MAT_DIALOG_DATA) public data,
+  ) { }
 
   ngOnInit() {
     this.child = this.data.child;
@@ -41,13 +42,23 @@ export class EditSchoolDialogComponent {
       })
   }
 
-  public addSchoolClick() {
+  public editSchoolClick() {
     this.childSchoolRelation.schoolId = this.selectedSchool.getId();
     this.entityMapperService.save<ChildSchoolRelation>(this.childSchoolRelation)
-      .then(() => this.dialogRef.close({
-        childSchoolRelation: this.childSchoolRelation,
-        school: this.selectedSchool,
-      }));
+      .then(() => this.closeAfterEditing(this.creating ? "CREATE" : "EDIT"));
+  }
+
+  public removeSchoolClick() {
+    this.entityMapperService.remove<ChildSchoolRelation>(this.childSchoolRelation)
+      .then(() => this.closeAfterEditing("DELETE"));
+  }
+
+  closeAfterEditing(editType: string) {
+    this.dialogRef.close({
+      childSchoolRelation: this.childSchoolRelation,
+      school: this.selectedSchool,
+      type: editType,
+    });
   }
 }
 
