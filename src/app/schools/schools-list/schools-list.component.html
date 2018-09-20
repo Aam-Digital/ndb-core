@@ -22,11 +22,15 @@
     </div>
   </div>
 
-  // TODO slector for private school
   <div fxLayout='row' fxLayoutGap='10px'>
     <mat-button-toggle-group name="mediumFilterSelection" [(value)]="mediumFilterSelection">
       <mat-button-toggle *ngFor='let medium of mediums' [value]="medium" (click)="setMediumFilteredList(medium)">{{medium}}</mat-button-toggle>
       <mat-button-toggle value="" (click)="setMediumFilteredList('')">All</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <mat-button-toggle-group name="privateSchoolFilterSelection" [(value)]="privateSchoolFilterSelection">
+      <mat-button-toggle *ngFor='let privateSchool of privateSchools' [value]="privateSchool" (click)="setPrivateSchoolFilteredList(privateSchool)">{{privateSchool}}</mat-button-toggle>
+      <mat-button-toggle value="" (click)="setPrivateSchoolFilteredList('')">All</mat-button-toggle>
     </mat-button-toggle-group>
   </div>
 </mat-expansion-panel>

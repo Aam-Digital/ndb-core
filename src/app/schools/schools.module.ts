@@ -54,7 +54,6 @@ import {RouterModule} from '@angular/router';
     MatInputModule,
     MatSelectModule,
     MatExpansionModule,
-    MatTableModule,
     MatSortModule,
     MatSidenavModule,
     MatButtonModule,

@@ -18,6 +18,11 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   columnsToDisplay: string[] = ['name', 'address', 'medium', 'privateSchool'];
   mediums: string[];
   mediumFilterSelection = '';
+
+  privateSchools: string[] = ['Private  School'];
+  privateSchoolFilterSelection = '';
+
+  filterFunctionPrivateSchool: (s: School) => boolean = (s: School) => true;
   filterFunctionMedium: (s: School) => boolean = (s: School) => true;
 
   constructor(private schoolService: SchoolsServices,
@@ -39,6 +44,7 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.columnsToDisplay = ['name', 'address', 'medium', 'privateSchool'];
   }
 
   ngAfterViewInit() {
@@ -47,7 +53,8 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
 
   applyFilterGroups() {
     this.schoolDataSource.data = this.schoolList
-      .filter(this.filterFunctionMedium);
+      .filter(this.filterFunctionMedium)
+      .filter(this.filterFunctionPrivateSchool);
   }
 
   setMediumFilteredList(filteredSelection: string) {
@@ -59,6 +66,18 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
 
     this.applyFilterGroups();
   }
+
+  setPrivateSchoolFilteredList(filteredSelection: string) {
+    if (filteredSelection === '') {
+      this.filterFunctionPrivateSchool = (s: School) => true;
+    } else {
+      this.filterFunctionPrivateSchool = (s: School) => s.privateSchool == true;
+    }
+
+    this.applyFilterGroups();
+  }
+
+
 
   addSchoolClick() {
     let route: string;

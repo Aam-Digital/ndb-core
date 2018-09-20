@@ -23,7 +23,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     'school': ['pn', 'name', 'age', 'class', 'school', 'attendance'],
     'status': ['pn', 'name', 'center', 'status'],
   };
-  columnsToDisplay: ['pn', 'name'];
+  columnsToDisplay: string[] = ['pn', 'name'];
 
   filterString = '';
   dropoutFilterSelection = 'current';
