@@ -34,6 +34,9 @@ export class AttendanceMonth extends Entity {
     return this.p_month;
   }
   set month(value: Date) {
+    if (value.getDate() !== 2) {
+      value.setDate(2);
+    }
     this.p_month = new Date(value);
     this.updateDailyRegister();
   }
@@ -173,7 +176,7 @@ export class AttendanceMonth extends Entity {
 
 
   public load(data: any) {
-    if (data.month !== undefined && typeof data.month !== typeof new Date()) {
+    if (data.month !== undefined) {
       data.month = new Date(data.month);
     }
 

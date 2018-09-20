@@ -22,6 +22,7 @@ export class AddDayAttendanceComponent implements OnInit {
     ]);
   rollCallList: {child: Child, attendanceDay: AttendanceDay, attendanceMonth: AttendanceMonth}[] = [];
   rollCallIndex = 0;
+  rollCallListLoading;
 
   centers: string[];
   children: Child[];
@@ -38,7 +39,7 @@ export class AddDayAttendanceComponent implements OnInit {
 
   ngOnInit() {
     this.childrenService.getChildren().subscribe(children => {
-      this.children = children.sort((a, b) => a.schoolClass > b.schoolClass ? 1 : -1);
+      this.children = children.filter(c => c.isActive()).sort((a, b) => a.schoolClass > b.schoolClass ? 1 : -1);
       this.centers = this.children.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
     });
   }
@@ -63,6 +64,7 @@ export class AddDayAttendanceComponent implements OnInit {
     const selectedChildren = this.children.filter(group.filterFun);
 
     this.rollCallList = [];
+    this.rollCallListLoading = true;
     this.childrenService.getAttendancesOfMonth(this.day)
       .subscribe(attendances => this.loadMonthAttendanceRecords(selectedChildren, attendances));
 
@@ -84,6 +86,8 @@ export class AddDayAttendanceComponent implements OnInit {
 
       this.rollCallList.push({child: child, attendanceMonth: attMonth, attendanceDay: attDay})
     });
+
+    this.rollCallListLoading = false;
   }
 
 
