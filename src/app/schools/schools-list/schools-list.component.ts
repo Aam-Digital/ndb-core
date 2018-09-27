@@ -26,8 +26,7 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   filterFunctionMedium: (s: School) => boolean = (s: School) => true;
 
   constructor(private schoolService: SchoolsServices,
-              private router: Router
-  ) {
+              private router: Router) {
     this.schoolService.getSchools().subscribe(data => {
       this.schoolList = data;
       this.schoolDataSource.data = data;
@@ -35,27 +34,31 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
 
       this.mediums = data.map(s => s.medium).filter((value, index, arr) => arr.indexOf(value) === index);
     });
+  }
+/* // master version
   ngOnInit() {
     this.entityMapper.loadType<School>(School)
       .then(loadedEntities => this.dataSource.data = loadedEntities);
-  }
+  } */
 
+// schoolDetailversion
+  ngOnInit() {
+    this.columnsToDisplay = ['name', 'address', 'medium', 'privateSchool'];
+  }
+/* // master version
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
+  } */
+
+ // schoolDetail version
+  ngAfterViewInit() {
+    this.schoolDataSource.sort = this.sort;
   }
 
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.schoolDataSource.filter = filterValue;
-  }
-
-  ngOnInit() {
-    this.columnsToDisplay = ['name', 'address', 'medium', 'privateSchool'];
-  }
-
-  ngAfterViewInit() {
-    this.schoolDataSource.sort = this.sort;
   }
 
   applyFilterGroups() {

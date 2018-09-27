@@ -1,7 +1,7 @@
 import {Entity} from '../../entity/entity';
 
 export class School extends Entity {
-  protected static ENTITY_TYPE = 'School';
+  public static ENTITY_TYPE = 'School';
 
   public name: string;
   public address: string;
