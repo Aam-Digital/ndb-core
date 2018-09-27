@@ -15,21 +15,26 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { School } from './school';
+import {WarningLevel} from './warning-level';
 
-describe('School', () => {
 
-  it('has ID', function () {
-    const id = 'test1';
-    const entity = new School(id);
+export enum AttendanceStatus {
+  UNKNOWN = '?',
+  HOLIDAY = 'H',
+  ABSENT = 'A',
+  PRESENT = 'P',
+  LATE = 'L',
+  EXCUSED = 'E'
+}
 
-    expect(entity.getId()).toBe(id);
-  });
 
-  it('has correct type/prefix', function () {
-    const id = 'test1';
-    const entity = new School(id);
+export class AttendanceDay {
+  date: Date;
+  status: AttendanceStatus;
+  remarks = '';
 
-    expect(entity.getType()).toBe('School');
-  });
-});
+  constructor (date: Date, status: AttendanceStatus = AttendanceStatus.UNKNOWN) {
+    this.date = date;
+    this.status = status;
+  }
+}

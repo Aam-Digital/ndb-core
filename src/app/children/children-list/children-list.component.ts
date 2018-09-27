@@ -4,6 +4,7 @@ import {MatSort, MatTableDataSource} from '@angular/material';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ChildrenService} from '../children.service';
 import {AttendanceMonth} from '../attendance/attendance-month';
+import {FilterSelection} from '../../ui-helper/filter-selection';
 
 @Component({
   selector: 'app-children-list',
@@ -11,55 +12,91 @@ import {AttendanceMonth} from '../attendance/attendance-month';
   styleUrls: ['./children-list.component.scss']
 })
 export class ChildrenListComponent implements OnInit, AfterViewInit {
-  childrenList: Child[];
+  childrenList = new Array<Child>();
   attendanceList = new Map<string, AttendanceMonth[]>();
   childrenDataSource = new MatTableDataSource();
-  centers: string[];
+
+  centerFS = new FilterSelection('center', []);
+  dropoutFS = new FilterSelection('status', [
+        {key: 'active', label: 'Current Project Children', filterFun: (c: Child) => c.isActive()},
+        {key: 'dropout', label: 'Dropouts', filterFun: (c: Child) => !c.isActive()},
+        {key: '', label: 'All', filterFun: (c: Child) => true},
+      ]);
+  filterSelections = [
+    this.dropoutFS,
+    this.centerFS,
+  ];
+
 
   @ViewChild(MatSort) sort: MatSort;
   columnGroupSelection = 'school';
   columnGroups = {
-    'basic': ['pn', 'name', 'age', 'class', 'school', 'center', 'status'],
-    'school': ['pn', 'name', 'age', 'class', 'school', 'attendance'],
-    'status': ['pn', 'name', 'center', 'status'],
+    'basic': ['projectNumber', 'name', 'age', 'gender', 'schoolClass', 'schoolId', 'center', 'status'],
+    'school': ['projectNumber', 'name', 'age', 'schoolClass', 'schoolId', 'attendance-school', 'attendance-coaching', 'motherTongue'],
+    'status': ['projectNumber', 'name', 'center', 'status', 'admissionDate',
+      'has_aadhar', 'has_kanyashree', 'has_bankAccount', 'has_rationCard', 'has_bplCard'],
+    'health': ['projectNumber', 'name', 'center',
+      'health_vaccinationStatus', 'health_LastDentalCheckup', 'health_LastEyeCheckup', 'health_eyeHealthStatus', 'health_LastENTCheckup',
+      'health_lastVitaminD', 'health_LastDeworming',
+      'gender', 'age', 'dateOfBirth'],
   };
-  columnsToDisplay: string[] = ['pn', 'name'];
+  columnsToDisplay: ['projectNumber', 'name'];
 
   filterString = '';
-  dropoutFilterSelection = 'current';
-  centerFilterSelection = '';
-  filterFunctionDropout: (c: Child) => boolean = (c: Child) => true;
-  filterFunctionCenter: (c: Child) => boolean = (c: Child) => true;
 
 
   constructor(private childrenService: ChildrenService,
               private router: Router,
-              private route: ActivatedRoute) {
-    this.route.queryParamMap.subscribe(params => {
-      const paramFilter = params.get('filter');
-      this.filterString = paramFilter ? paramFilter : '';
-      this.applyFilter(this.filterString);
-    });
+              private route: ActivatedRoute) {  }
 
+  ngOnInit() {
+    this.loadData();
+    this.loadUrlParams();
+  }
+
+
+  private loadUrlParams() {
+    this.route.queryParams.subscribe(params => {
+        this.columnGroupSelection = params['view'] ? params['view'] : this.columnGroupSelection;
+        this.displayColumnGroup(this.columnGroupSelection);
+
+        this.filterSelections.forEach(f => {
+        f.selectedOption = params[f.name];
+        if (f.selectedOption === undefined && f.options.length > 0) {
+          f.selectedOption = f.options[0].key;
+        }
+      });
+      this.applyFilterSelections();
+    });
+  }
+
+  ngAfterViewInit() {
+    this.childrenDataSource.sort = this.sort;
+  }
+
+
+  private loadData() {
     this.childrenService.getChildren().subscribe(data => {
       this.childrenList = data;
-      this.childrenDataSource.data = data;
-      this.setDropoutFilteredList(this.dropoutFilterSelection);
-      this.setCenterFilteredList(this.centerFilterSelection);
 
-      this.centers = data.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
+      const centers = data.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
+      this.initCenterFilterOptions(centers);
+
+      this.applyFilterSelections();
     });
 
     this.childrenService.getAttendances()
       .subscribe(results => this.prepareAttendanceData(results));
   }
 
-  ngOnInit() {
-    this.displayColumnGroup(this.columnGroupSelection);
-  }
+  private initCenterFilterOptions(centers: string[]) {
+    const options = [{key: '', label: 'All', filterFun: (c: Child) => true}];
 
-  ngAfterViewInit() {
-    this.childrenDataSource.sort = this.sort;
+    centers.forEach(center => {
+      options.push({key: center.toLowerCase(), label: center, filterFun: (c: Child) => c.center === center});
+    });
+
+    this.centerFS.options = options;
   }
 
 
@@ -83,6 +120,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   }
 
 
+
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
@@ -90,41 +128,38 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   }
 
   displayColumnGroup(columnGroup: string) {
+    this.columnGroupSelection = columnGroup;
     this.columnsToDisplay = this.columnGroups[columnGroup];
+    this.updateUrl();
   }
 
-  applyFilterGroups() {
-    this.childrenDataSource.data = this.childrenList
-      .filter(this.filterFunctionDropout)
-      .filter(this.filterFunctionCenter);
+
+  updateUrl() {
+    const params = {};
+    this.filterSelections.forEach(f => {
+      params[f.name] = f.selectedOption;
+    });
+
+    params['view'] = this.columnGroupSelection;
+
+    this.router.navigate(['child'], { queryParams: params });
   }
 
-  setDropoutFilteredList(filteredSelection: string) {
-    if (filteredSelection === 'current') {
-      this.filterFunctionDropout = (c) => c.isActive();
-    } else if (filteredSelection === 'dropouts') {
-      this.filterFunctionDropout = (c) => !c.isActive();
-    } else {
-      this.filterFunctionDropout = (c) => true;
-    }
+  applyFilterSelections() {
+    let filteredData = this.childrenList;
 
-    this.applyFilterGroups();
+    this.filterSelections.forEach(f => {
+      filteredData = filteredData.filter(f.getSelectedFilterFunction());
+    });
+
+    this.childrenDataSource.data = filteredData;
+
+    this.updateUrl();
   }
 
-  setCenterFilteredList(filteredSelection: string) {
-    if (filteredSelection === '') {
-      this.filterFunctionCenter = (c: Child) => true;
-    } else {
-      this.filterFunctionCenter = (c: Child) => c.center === filteredSelection;
-    }
-
-    this.applyFilterGroups();
-  }
 
   addChildClick() {
-    let route: string;
-    route = this.router.url + '/new';
-    this.router.navigate([route]);
+    this.router.navigate(['/child', 'new']);
   }
 
 

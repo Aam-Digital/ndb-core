@@ -20,28 +20,61 @@ import {MatSnackBar} from '@angular/material';
 
 import {Alert} from './alert';
 import {AlertComponent} from './alerts/alert.component';
+import {LoggingService} from '../logging/logging.service';
 
 @Injectable()
 export class AlertService {
 
   alerts: Alert[] = [];
 
-  constructor(public snackBar: MatSnackBar) {}
+  constructor(public snackBar: MatSnackBar,
+              private loggingService: LoggingService) {
+  }
 
   addAlert(alert: Alert) {
     this.alerts.push(alert);
     this.openSnackBar(alert);
-
-    console.log(alert.message);
+    this.logToConsole(alert);
   }
 
-  openSnackBar(alert: Alert) {
-    const snackConfig = { data: alert, duration: 1800000, panelClass: 'alerts-snackbar' };
-    if (alert.type === Alert.SUCCESS || alert.type === Alert.INFO) {
-      snackConfig.duration = 5000;
+  private openSnackBar(alert: Alert) {
+    const snackConfig = {data: alert, duration: 10000, panelClass: 'alerts-snackbar'};
+
+    switch (alert.type) {
+      case Alert.DEBUG:
+        return;
+      case Alert.SUCCESS:
+      case Alert.INFO:
+        snackConfig.duration = 5000;
+        break;
+      case Alert.DANGER:
+      case Alert.WARNING:
+        snackConfig.duration = 3600000;
+        break;
     }
+
     alert.notificationRef = this.snackBar.openFromComponent(AlertComponent, snackConfig);
   }
+
+  private logToConsole(alert: Alert) {
+    switch (alert.type) {
+      case Alert.WARNING:
+      case Alert.DANGER:
+        console.warn(alert.message);
+        this.loggingService.warn(alert.message);
+        break;
+      case Alert.INFO:
+      case Alert.SUCCESS:
+        console.log(alert.message);
+        this.loggingService.info(alert.message);
+        break;
+      case Alert.DEBUG:
+        console.log(alert.message);
+        this.loggingService.debug(alert.message);
+        break;
+    }
+  }
+
 
   removeAlert(alert: Alert) {
     const index = this.alerts.indexOf(alert, 0);
@@ -49,6 +82,7 @@ export class AlertService {
       this.alerts.splice(index, 1);
     }
   }
+
 
   public addInfo(message: string) {
     this.addAlert(new Alert(message, Alert.INFO));
@@ -64,5 +98,9 @@ export class AlertService {
 
   public addDanger(message: string) {
     this.addAlert(new Alert(message, Alert.DANGER));
+  }
+
+  public addDebug(message: string) {
+    this.addAlert(new Alert(message, Alert.DEBUG));
   }
 }

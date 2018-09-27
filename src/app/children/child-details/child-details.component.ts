@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, Inject} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {Child} from '../child';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {Gender} from '../Gender';
@@ -26,6 +26,8 @@ import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/con
 
 import uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
+import {School} from '../../schools/school';
+import {ChildrenService} from '../children.service';
 
 
 @Component({
@@ -33,7 +35,7 @@ import {AlertService} from '../../alerts/alert.service';
   templateUrl: './child-details.component.html',
   styleUrls: ['./child-details.component.css']
 })
-export class ChildDetailsComponent {
+export class ChildDetailsComponent implements OnInit {
 
   child: Child = new Child('');
 
@@ -41,35 +43,69 @@ export class ChildDetailsComponent {
   creatingNew = false;
   editing = false;
 
-  gender = Gender;
+  genders = Gender;
+  documentStatus = ['OK (copy with us)', 'OK (copy needed for us)', 'needs correction', 'applied', 'doesn\'t have', 'not eligible', ''];
+  schools = new Array<School>();
+  eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
+  vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
 
-  transformGendersEnum(): Array<string> {
-    const genders = Object.keys(this.gender);
-    return genders.slice(0, genders.length / 2);
-  }
 
-  initializeForm() {
+  initForm() {
     this.form = this.fb.group({
-      name:         [{value: this.child.name,         disabled: !this.editing}, Validators.required],
-      gender:       [{value: this.child.gender,       disabled: !this.editing}],
-      project:      [{value: this.child.pn,           disabled: !this.editing}],
-      birthday:     [{value: this.child.dateOfBirth,  disabled: !this.editing}],
-      motherTongue: [{value: this.child.motherTongue, disabled: !this.editing}],
-      admission:    [{value: this.child.admission,    disabled: !this.editing}],
-      religion:     [{value: this.child.religion,     disabled: !this.editing}]
+      name:           [{value: this.child.name,           disabled: !this.editing}, Validators.required],
+      // gender:         [{value: this.child.gender}], // reactive forms seem broken for mat-select, using ngModel instead
+      projectNumber:  [{value: this.child.projectNumber,  disabled: !this.editing}],
+      dateOfBirth:    [{value: this.child.dateOfBirth,    disabled: !this.editing}],
+      motherTongue:   [{value: this.child.motherTongue,   disabled: !this.editing}],
+      religion:       [{value: this.child.religion,       disabled: !this.editing}],
+
+      center:         [{value: this.child.center,         disabled: !this.editing}],
+      status:         [{value: this.child.status,         disabled: !this.editing}],
+      admissionDate:  [{value: this.child.admissionDate,  disabled: !this.editing}],
+
+      address:        [{value: this.child.address,        disabled: !this.editing}],
+      phone:          [{value: this.child.phone,          disabled: !this.editing}],
+      guardianName:   [{value: this.child.guardianName,   disabled: !this.editing}],
+      preferredTimeForGuardianMeeting: [{value: this.child.preferredTimeForGuardianMeeting, disabled: !this.editing}],
+
+      schoolClass:    [{value: this.child.schoolClass,    disabled: !this.editing}],
+
+      // aadhar:         [{value: this.child.has_aadhar,         disabled: !this.editing}],
+      // kanyashree:     [{value: this.child.has_kanyashree,     disabled: !this.editing}],
+      // bankAccount:    [{value: this.child.has_bankAccount,    disabled: !this.editing}],
+      // rationCard:     [{value: this.child.has_rationCard,     disabled: !this.editing}],
+      // bplCard:        [{value: this.child.has_BplCard,        disabled: !this.editing}],
+
+      // health_vaccinationStatus:    [{value: this.child.health_vaccinationStatus,    disabled: !this.editing}],
+      health_lastDentalCheckup:   [{value: this.child.health_lastDentalCheckup,    disabled: !this.editing}],
+      health_lastEyeCheckup:      [{value: this.child.health_lastEyeCheckup, disabled: !this.editing}],
+      // health_eyeHealthStatus:   [{value: this.child.health_eyeHealthStatus,    disabled: !this.editing}],
+      health_lastENTCheckup:      [{value: this.child.health_lastENTCheckup,    disabled: !this.editing}],
+      health_lastVitaminD:        [{value: this.child.health_lastVitaminD, disabled: !this.editing}],
+      health_lastDeworming:       [{value: this.child.health_lastDeworming, disabled: !this.editing}],
+
+      dropoutDate:    [{value: this.child.dropoutDate,    disabled: !this.editing}],
+      dropoutType:    [{value: this.child.dropoutType,    disabled: !this.editing}],
+      dropoutRemarks: [{value: this.child.dropoutRemarks, disabled: !this.editing}],
     });
   }
 
 
   constructor(private entityMapperService: EntityMapperService,
+              private childrenService: ChildrenService,
               private route: ActivatedRoute,
               @Inject(FormBuilder) public fb: FormBuilder,
               private router: Router,
               private snackBar: MatSnackBar,
               private confirmationDialog: ConfirmationDialogService,
-              private alertService: AlertService) {
+              private alertService: AlertService) { }
 
-    const id = this.route.snapshot.params['id'];
+  ngOnInit() {
+    this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
+    this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
+  }
+
+  loadChild(id: string) {
     if (id === 'new') {
       this.creatingNew = true;
       this.editing = true;
@@ -78,35 +114,37 @@ export class ChildDetailsComponent {
       this.entityMapperService.load<Child>(Child, id)
         .then(child => {
           this.child = child;
-          this.initializeForm();
+          this.initForm();
         });
     }
-    this.initializeForm();
+    this.initForm();
   }
 
   switchEdit() {
     this.editing = !this.editing;
-    this.initializeForm();
+    this.initForm();
   }
 
   save() {
-    this.child.name = this.form.get('name').value;
-    this.child.gender = this.form.get('gender').value;
-    this.child.religion = this.form.get('religion').value;
-    this.child.pn = this.form.get('project').value;
-    this.child.dateOfBirth = this.form.get('birthday').value;
-    this.child.motherTongue = this.form.get('motherTongue').value;
-    this.child.admission = this.form.get('admission').value;
+    this.assignFormValuesToChild(this.child, this.form);
 
     this.entityMapperService.save<Child>(this.child)
       .then(() => {
         if (this.creatingNew) {
           this.router.navigate(['/child', this.child.getId()]);
+          this.creatingNew = false;
         }
         this.switchEdit();
       })
       .catch((err) => this.alertService.addDanger('Could not save Child "' + this.child.name + '": ' + err));
   }
+
+  private assignFormValuesToChild(child: Child, form: FormGroup) {
+    Object.keys(form.controls).forEach(key => {
+      child[key] = form.get(key).value;
+    });
+  }
+
 
   removeChild() {
     const dialogRef = this.confirmationDialog

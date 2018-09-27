@@ -1,5 +1,8 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+
+/src/assets/child-photos
+
 # compiled output
 /dist
 /tmp
@@ -187,5 +190,3 @@ fabric.properties
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-
-/package-lock.json

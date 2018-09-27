@@ -15,10 +15,11 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
+
 <div fxLayout="row" fxLayoutAlign='space-between'>
   <div>
     <h1 class="page-header section-child"><i class="fa fa-child fa-fw"></i>
-      <span *ngIf="!creatingNew">{{ child.name }} [{{ child.pn }}]</span>
+      <span *ngIf="!creatingNew">{{ child.name }} [{{ child.projectNumber }}]</span>
       <span *ngIf="creatingNew">Adding new Child</span>
     </h1>
   </div>
@@ -39,83 +40,285 @@
 <mat-accordion multi='true'>
   <form [formGroup]="form">
 
-    <mat-expansion-panel hideToggle="true" expanded="true">
-      <mat-expansion-panel-header style="">
+    <mat-expansion-panel hideToggle="true" [expanded]="child.isActive()">
+      <mat-expansion-panel-header class='section-header'>
         <mat-panel-title>
           Basic Information
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-      <mat-form-field>
-        <input matInput formControlName="name" placeholder="Name" title="name" type="text">
-      </mat-form-field>
 
-      <mat-form-field>
-        <mat-label>
-          Gender
-        </mat-label>
-        <mat-select [attr.disabled]="!editing" formControlName="gender">
-          <mat-option *ngFor="let g of transformGendersEnum()" [value]="gender[g]">{{gender[g].toLowerCase()}}</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <div fxLayout='row'>
+        <div fxFlex='150px'>
+          <img [src]="child.getPhoto()" class="child-pic" >
+        </div>
 
-      <mat-form-field>
-        <input matInput formControlName="project" placeholder="Project Number" title="project" type="number">
-      </mat-form-field>
 
-      <mat-form-field>
-        <input matInput formControlName="birthday" placeholder="Date of Birth" title="birthday" type="date">
-      </mat-form-field>
 
-      <mat-form-field>
-        <input matInput formControlName="motherTongue" placeholder="Mother Tongue" title="motherTongue" type="text">
-      </mat-form-field>
+        <div fxFlex>
+          <mat-form-field style='width: 300px;'>
+            <input matInput formControlName="name" placeholder="Name" title="name" type="text">
+          </mat-form-field>
 
-      <mat-form-field>
-        <input matInput formControlName="admission" placeholder="Admission" title="admission" type="date">
-      </mat-form-field>
+          <mat-form-field style='width: 100px;'>
+            <input matInput formControlName="projectNumber" placeholder="Project Number" type="text">
+          </mat-form-field>
 
-      <mat-form-field>
-        <input matInput formControlName="religion" placeholder="Religion" title="religion" type="text">
-      </mat-form-field>
+          <mat-form-field>
+            <input matInput formControlName="center" placeholder="Center" type="text">
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput formControlName="status" placeholder="Project Status" type="text">
+          </mat-form-field>
+        </div>
+
+
+        <div>
+          <mat-form-field style='width: 50px;'>
+            <input matInput placeholder="Age" type="text" [value]=child.age [disabled]="true">
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput formControlName="dateOfBirth" placeholder="Date of Birth" type="date">
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>
+              Gender
+            </mat-label>
+            <mat-select [disabled]='!editing' [(ngModel)]='child.gender' [ngModelOptions]="{standalone: true}">
+              <mat-option *ngFor="let g of genders | keys" [value]="g.value">{{g.key}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput formControlName="motherTongue" placeholder="Mother Tongue" type="text">
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput formControlName="religion" placeholder="Religion" title="Religion" type="text">
+          </mat-form-field>
+        </div>
+
+
+        <div>
+          <mat-form-field>
+            <input matInput formControlName="admissionDate" placeholder="Admission Date" type="date">
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>
+              Aadhar Status
+            </mat-label>
+            <mat-select [disabled]='!editing' [(ngModel)]='child.has_aadhar' [ngModelOptions]="{standalone: true}">
+              <mat-option *ngFor="let s of documentStatus" [value]="s">{{s}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>
+              Kanyashree Status
+            </mat-label>
+            <mat-select [disabled]='!editing' [(ngModel)]='child.has_kanyashree' [ngModelOptions]="{standalone: true}">
+              <mat-option *ngFor="let s of documentStatus" [value]="s">{{s}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>
+              Bank Account Status
+            </mat-label>
+            <mat-select [disabled]='!editing' [(ngModel)]='child.has_bankAccount' [ngModelOptions]="{standalone: true}">
+              <mat-option *ngFor="let s of documentStatus" [value]="s">{{s}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>
+              Ration Card Status
+            </mat-label>
+            <mat-select [disabled]='!editing' [(ngModel)]='child.has_rationCard' [ngModelOptions]="{standalone: true}">
+              <mat-option *ngFor="let s of documentStatus" [value]="s">{{s}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>
+              BPL Card Status
+            </mat-label>
+            <mat-select [disabled]='!editing' [(ngModel)]='child.has_BplCard' [ngModelOptions]="{standalone: true}">
+              <mat-option *ngFor="let s of documentStatus" [value]="s">{{s}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+
+        <div>
+          <mat-form-field style='width: 300px;'>
+            <input matInput type="text" formControlName="address" placeholder="Address">
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput type="text" formControlName="phone" placeholder="Phone No.">
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput type="text" formControlName="guardianName" placeholder="Guardians">
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput type="text" formControlName="preferredTimeForGuardianMeeting" placeholder="Preferred time for guardians meeting">
+          </mat-form-field>
+        </div>
+      </div>
+
     </mat-expansion-panel>
 
 
-    <mat-expansion-panel hideToggle="true" expanded="true">
-      <mat-expansion-panel-header>
-        Address
+
+
+    <mat-expansion-panel expanded="false">
+      <mat-expansion-panel-header class='section-header'>
+        Education
       </mat-expansion-panel-header>
+
+      <div>
+        <mat-form-field style='width:300px;'>
+          <mat-label>
+            School
+          </mat-label>
+          <mat-select [disabled]='!editing' [(ngModel)]='child.schoolId' [ngModelOptions]="{standalone: true}">
+            <mat-option *ngFor="let s of schools" [value]="s.getId()">
+              <app-school-block [entity]='s' [linkDisabled]='true' class='mat-form-field'></app-school-block>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="number" formControlName="schoolClass" placeholder="Class">
+        </mat-form-field>
+      </div>
+
+      <div>
+        <h3>ASER Results</h3>
+        <app-aser></app-aser>
+      </div>
+    </mat-expansion-panel>
+
+
+
+
+    <mat-expansion-panel expanded="false">
+      <mat-expansion-panel-header class='section-header'>
+        Attendance
+      </mat-expansion-panel-header>
+
+      <div fxLayout='row' fxLayoutGap='20px'>
+        <div fxFlex='40'>
+          <h3>School Attendance</h3>
+          <app-child-attendance institution='school' [showDailyAttendanceOfLatest]='true'></app-child-attendance>
+        </div>
+        <div fxFlex='40'>
+          <h3>Coaching Attendance</h3>
+          <app-child-attendance institution='coaching' [showDailyAttendanceOfLatest]='true'></app-child-attendance>
+        </div>
+      </div>
+    </mat-expansion-panel>
+
+
+    <mat-expansion-panel expanded="false">
+      <mat-expansion-panel-header class='section-header'>
+        Notes & Reports
+      </mat-expansion-panel-header>
+
+      <app-notes></app-notes>
+    </mat-expansion-panel>
+
+
+
+
+
+    <mat-expansion-panel [expanded]="false">
+      <mat-expansion-panel-header class='section-header'>
+        Health
+      </mat-expansion-panel-header>
+
+
+      <div>
+        <mat-form-field>
+          <mat-label>
+            Vaccination Status
+          </mat-label>
+          <mat-select [disabled]='!editing' [(ngModel)]='child.health_vaccinationStatus' [ngModelOptions]="{standalone: true}">
+            <mat-option *ngFor="let value of vaccinationStatusValues" [value]="value">{{value}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>
+            Eye Status
+          </mat-label>
+          <mat-select [disabled]='!editing' [(ngModel)]='child.health_eyeHealthStatus' [ngModelOptions]="{standalone: true}">
+            <mat-option *ngFor="let value of eyeStatusValues" [value]="value">{{value}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-form-field>
+          <input matInput formControlName="health_lastDentalCheckup" placeholder="Last Dental Check-Up" type="date">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput formControlName="health_lastEyeCheckup" placeholder="Last Eye Check-Up" type="date">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput formControlName="health_lastENTCheckup" placeholder="Last ENT Check-Up" type="date">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput formControlName="health_lastVitaminD" placeholder="Last Vitamin D" type="date">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput formControlName="health_lastDeworming" placeholder="Last De-Worming" type="date">
+        </mat-form-field>
+      </div>
+    </mat-expansion-panel>
+
+
+    <mat-expansion-panel [expanded]="false">
+      <mat-expansion-panel-header class='section-header'>
+        Educational Materials
+      </mat-expansion-panel-header>
+
+      <app-educational-material></app-educational-material>
+    </mat-expansion-panel>
+
+
+
+
+    <mat-expansion-panel [expanded]="!child.isActive()">
+      <mat-expansion-panel-header class='section-header'>
+        Dropout
+      </mat-expansion-panel-header>
+
       <mat-form-field>
-        <textarea matInput title="Present Address" type="text"></textarea>
+        <input matInput formControlName="dropoutDate" placeholder="Dropout Date" type="date">
       </mat-form-field>
 
       <mat-form-field>
-        <mat-label>Visiting Hours</mat-label>
-        <textarea matInput title="Visiting hours" type="text"></textarea>
+        <input matInput formControlName="dropoutType" placeholder="Dropout Type" type="text">
+      </mat-form-field>
+
+      <mat-form-field>
+        <textarea matInput formControlName="dropoutRemarks" placeholder="Dropout Remarks" type="text">
+        </textarea>
       </mat-form-field>
     </mat-expansion-panel>
 
   </form>
 </mat-accordion>
-
-
-
-
-<mat-expansion-panel expanded="true">
-  <mat-expansion-panel-header>
-    Attendance
-  </mat-expansion-panel-header>
-
-  <app-child-attendance></app-child-attendance>
-</mat-expansion-panel>
-
-
-<mat-expansion-panel expanded="true">
-  <mat-expansion-panel-header>
-    Notes & Reports
-  </mat-expansion-panel-header>
-
-  <app-notes></app-notes>
-</mat-expansion-panel>
 
 <p>&nbsp;</p>

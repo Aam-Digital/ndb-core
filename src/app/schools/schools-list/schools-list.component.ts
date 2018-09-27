@@ -3,13 +3,13 @@ import {MatTableDataSource, MatSort} from '@angular/material';
 import {School} from '../schoolsShared/school';
 import {SchoolsServices} from '../schoolsShared/schools.services';
 import {Router} from '@angular/router';
+import {EntityMapperService} from '../../entity/entity-mapper.service';
 
 @Component({
   selector: 'app-schools-list',
   templateUrl: './schools-list.component.html',
   styleUrls: ['./schools-list.component.css']
 })
-
 export class SchoolsListComponent implements OnInit, AfterViewInit {
   schoolList: School[];
   schoolDataSource: MatTableDataSource<School> = new MatTableDataSource<School>();
@@ -35,6 +35,13 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
 
       this.mediums = data.map(s => s.medium).filter((value, index, arr) => arr.indexOf(value) === index);
     });
+  ngOnInit() {
+    this.entityMapper.loadType<School>(School)
+      .then(loadedEntities => this.dataSource.data = loadedEntities);
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
   }
 
   applyFilter(filterValue: string) {

@@ -1,20 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {AttendanceMonth} from '../attendance-month';
 import {ChildrenService} from '../../children.service';
 import {ColumnDescription} from '../../../ui-helper/entity-subrecord/column-description';
 import {DatePipe, PercentPipe} from '@angular/common';
+import {AttendanceDetailsComponent} from '../attendance-details/attendance-details.component';
 
 
 @Component({
   selector: 'app-child-attendance',
-  template: '<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="generateNewRecordFactory()">' +
-  '</app-entity-subrecord>',
+  templateUrl: './child-attendance.component.html',
 })
 export class ChildAttendanceComponent implements OnInit {
 
   childId: string;
   records: Array<AttendanceMonth>;
+  detailsComponent = AttendanceDetailsComponent;
+
+  @Input() institution: string;
+  @Input() showDailyAttendanceOfLatest = false;
+
 
   columns: Array<ColumnDescription> = [
     new ColumnDescription('month', 'Month', 'month', null,
@@ -35,23 +40,41 @@ export class ChildAttendanceComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.childId = this.route.snapshot.params['id'].toString();
+    this.route.paramMap.subscribe(params => {
+      this.childId = params.get('id').toString();
+      this.loadData(this.childId);
+    });
+  }
 
-    this.childrenService.getAttendancesOfChild(this.childId)
-      .subscribe(results => this.records = results);
+  loadData(id: string) {
+    this.childrenService.getAttendancesOfChild(id)
+      .subscribe(results => {
+        this.records = results
+          .filter(r => this.institution === undefined || r.institution === this.institution)
+          .sort((a, b) => b.month.valueOf() - a.month.valueOf());
+
+        if (this.showDailyAttendanceOfLatest) {
+          this.createCurrentMonthsAttendanceIfNotExists();
+        }
+      });
+  }
+
+  private createCurrentMonthsAttendanceIfNotExists() {
+    const now = new Date();
+    if (this.records.length === 0
+      || this.records[0].month.getFullYear() !== now.getFullYear() || this.records[0].month.getMonth() !== now.getMonth()) {
+      this.records.unshift(AttendanceMonth.createAttendanceMonth(this.childId, this.institution));
+    }
   }
 
 
   generateNewRecordFactory() {
     // define values locally because "this" is a different scope after passing a function as input to another component
     const child = this.childId;
+    const institution = this.institution;
 
     return () => {
-      const newAtt = new AttendanceMonth(Date.now().toString()); // TODO: logical way to assign entityId to Attendance?
-      newAtt.month = new Date();
-      newAtt.student = child;
-
-      return newAtt;
+      return AttendanceMonth.createAttendanceMonth(child, institution);
     };
   }
 }

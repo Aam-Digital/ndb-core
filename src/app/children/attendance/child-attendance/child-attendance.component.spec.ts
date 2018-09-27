@@ -4,12 +4,16 @@ import { ChildAttendanceComponent } from './child-attendance.component';
 import {ActivatedRoute} from '@angular/router';
 import {Observable} from 'rxjs/Rx';
 import {Child} from '../../child';
-import {MockDatabaseManagerService} from '../../../database/mock-database-manager.service';
 import {ChildrenService} from '../../children.service';
 import {UiHelperModule} from '../../../ui-helper/ui-helper.module';
 import {DatePipe, PercentPipe} from '@angular/common';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
 import {MockDatabase} from '../../../database/mock-database';
+import {DemoData} from '../../../database/demo-data';
+import {AttendanceDaysComponent} from '../attendance-days/attendance-days.component';
+import {AttendanceDayBlockComponent} from '../attendance-days/attendance-day-block.component';
+import {MatSelectModule, MatTooltipModule} from '@angular/material';
+import {FormsModule} from '@angular/forms';
 
 describe('ChildAttendanceComponent', () => {
   let component: ChildAttendanceComponent;
@@ -24,7 +28,7 @@ describe('ChildAttendanceComponent', () => {
     },
     getAttendances: () => {
       return Observable.create(function (observer) {
-        observer.onNext(MockDatabaseManagerService.getDummyDataAttendance());
+        observer.onNext(DemoData.getMonthAttendanceEntities());
         observer.onCompleted();
       });
     }
@@ -37,8 +41,8 @@ describe('ChildAttendanceComponent', () => {
     mockEntityMapper = new EntityMapperService(new MockDatabase());
 
     TestBed.configureTestingModule({
-      declarations: [ ChildAttendanceComponent ],
-      imports: [UiHelperModule],
+      declarations: [ ChildAttendanceComponent, AttendanceDaysComponent, AttendanceDayBlockComponent ],
+      imports: [UiHelperModule, MatSelectModule, FormsModule, MatTooltipModule],
       providers: [
         DatePipe, PercentPipe,
         { provide: ActivatedRoute, useValue: {params: Observable.of({id: '22'})} },

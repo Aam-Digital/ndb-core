@@ -46,6 +46,14 @@ Before running the tests make sure you are serving the app via `ng serve`.
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
+### Server side logging
+
+The service side logging is performed via the [sentry.io](https://sentry.io/ewb/aam-digital/) logging service. 
+The credentials for the EWB-Account can be found in the `podio` workspace.
+
 ## Documentation
 
 The documentation can be found in the [Wiki](https://github.com/NGO-DB/ndb-core/wiki). Please read through the [Contribution Guidelines](https://github.com/NGO-DB/ndb-core/wiki/Contribution-Guidelines) if you want to contribute code.
+
+
+

@@ -15,21 +15,149 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from '../../entity/entity';
+import {Entity} from '../../entity/entity';
 import {WarningLevel} from './warning-level';
+import {AttendanceDay, AttendanceStatus} from './attendance-day';
 
 
 export class AttendanceMonth extends Entity {
-  protected static ENTITY_TYPE = 'AttendanceMonth';
+  static ENTITY_TYPE = 'AttendanceMonth';
   static readonly THRESHOLD_URGENT = 0.6;
   static readonly THRESHOLD_WARNING = 0.8;
 
   student: string; // id of Child entity
-  month: Date;
-  daysWorking: number;
-  daysAttended: number;
-  daysExcused = 0;
   remarks = '';
+  institution: string;
+
+  private p_month: Date;
+  get month(): Date {
+    return this.p_month;
+  }
+  set month(value: Date) {
+    if (value.getDate() !== 2) {
+      value.setDate(2);
+    }
+    this.p_month = new Date(value);
+    this.updateDailyRegister();
+  }
+
+  daysWorking_manuallyEntered: number;
+  get daysWorking(): number {
+    if (this.daysWorking_manuallyEntered !== undefined) {
+      return this.daysWorking_manuallyEntered;
+    } else {
+      return this.getDaysWorkingFromDailyAttendance();
+    }
+  }
+
+  set daysWorking(value: number) {
+    this.daysWorking_manuallyEntered = value;
+  }
+
+  daysAttended_manuallyEntered: number;
+  get daysAttended(): number {
+    if (this.daysAttended_manuallyEntered !== undefined) {
+      return this.daysAttended_manuallyEntered;
+    } else {
+      return this.getDaysAttendedFromDailyAttendance();
+    }
+  }
+
+  set daysAttended(value: number) {
+    this.daysAttended_manuallyEntered = value;
+  }
+
+  daysExcused_manuallyEntered: number;
+  get daysExcused(): number {
+    if (this.daysExcused_manuallyEntered !== undefined) {
+      return this.daysExcused_manuallyEntered;
+    } else {
+      return this.getDaysExcusedFromDailyAttendance();
+    }
+  }
+
+  set daysExcused(value: number) {
+    this.daysExcused_manuallyEntered = value;
+  }
+
+  daysLate_manuallyEntered: number;
+  get daysLate(): number {
+    if (this.daysLate_manuallyEntered !== undefined) {
+      return this.daysLate_manuallyEntered;
+    } else {
+      return this.calculateFromDailyRegister(AttendanceStatus.LATE);
+    }
+  }
+  set daysLate(value: number) {
+    this.daysLate_manuallyEntered = value;
+  }
+
+  overridden = false; // indicates individual override during bulk adding
+
+  dailyRegister = new Array<AttendanceDay>();
+
+
+  public static createAttendanceMonth(childId: string, institution: string) {
+    // TODO: logical way to assign entityId to Attendance?
+    const newAtt = new AttendanceMonth(childId + '_' + Date.now().toString() + institution);
+    newAtt.month = new Date();
+    newAtt.student = childId;
+    newAtt.institution = institution;
+    return newAtt;
+  }
+
+  private updateDailyRegister() {
+    if (this.month === undefined) {
+      return;
+    }
+
+    const expectedDays = daysInMonth(this.month);
+    const currentDays = this.dailyRegister.length;
+    if (currentDays < expectedDays) {
+      for (let i = currentDays + 1; i <= expectedDays; i++) {
+        const date = new Date(this.month.getFullYear(), this.month.getMonth(), i);
+        const day = new AttendanceDay(date);
+        this.dailyRegister.push(day);
+      }
+    } else if (currentDays > expectedDays) {
+      this.dailyRegister.splice(expectedDays);
+    }
+
+    this.dailyRegister.forEach((day) => {
+      day.date.setMonth(this.month.getMonth());
+      day.date.setFullYear(this.month.getFullYear());
+    });
+  }
+
+
+  private calculateFromDailyRegister(status: AttendanceStatus) {
+    let count = 0;
+    this.dailyRegister.forEach((day) => {
+      if (day.status === status) {
+        count++;
+      }
+    });
+    return count;
+  }
+
+  public getDaysWorkingFromDailyAttendance() {
+    return this.dailyRegister.length
+      - this.calculateFromDailyRegister(AttendanceStatus.HOLIDAY)
+      - this.calculateFromDailyRegister(AttendanceStatus.UNKNOWN);
+  }
+
+  public getDaysAttendedFromDailyAttendance() {
+    return this.calculateFromDailyRegister(AttendanceStatus.PRESENT) + this.calculateFromDailyRegister(AttendanceStatus.LATE);
+  }
+
+  public getDaysExcusedFromDailyAttendance() {
+    return this.calculateFromDailyRegister(AttendanceStatus.EXCUSED);
+  }
+
+  public getDaysLateFromDailyAttendance() {
+    return this.calculateFromDailyRegister(AttendanceStatus.LATE);
+  }
+
 
   getAttendancePercentage() {
     return this.daysAttended / (this.daysWorking - this.daysExcused);
@@ -45,4 +173,34 @@ export class AttendanceMonth extends Entity {
       return WarningLevel.OK;
     }
   }
+
+
+  public load(data: any) {
+    if (data.month !== undefined) {
+      data.month = new Date(data.month);
+    }
+
+    if (data.dailyRegister !== undefined) {
+      data.dailyRegister.forEach(day => {
+        day.date = new Date(day.date);
+      });
+    }
+
+    return super.load(data);
+  }
+
+  public rawData(): any {
+    const raw: any = Object.assign({}, this);
+
+    delete raw.month;
+    delete raw.p_month;
+    raw.month = this.month.getFullYear().toString() + '-' + (this.month.getMonth() + 1).toString();
+
+    return raw;
+  }
+
+}
+
+export function daysInMonth (date: Date) {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 }

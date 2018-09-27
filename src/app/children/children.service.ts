@@ -5,15 +5,17 @@ import {EntityMapperService} from '../entity/entity-mapper.service';
 import {AttendanceMonth} from './attendance/attendance-month';
 import {Database} from '../database/database';
 import {Note} from './notes/note';
+import {EducationalMaterial} from './educational-material/educational-material';
+import {Aser} from './aser/aser';
 
 @Injectable()
 export class ChildrenService {
-  attendanceIndicesUpdated: Promise<any>;
 
   constructor(private entityMapper: EntityMapperService,
               private db: Database) {
-    this.attendanceIndicesUpdated = this.createAttendanceAnalysisIndex();
+    this.createAttendanceAnalysisIndex();
     this.createNotesIndex();
+    this.createAttendancesIndex();
   }
 
   getChildren(): Observable<Child[]> {
@@ -30,23 +32,62 @@ export class ChildrenService {
   }
 
   getAttendancesOfChild(childId: string): Observable<AttendanceMonth[]> {
-    return Observable.fromPromise(
-      this.entityMapper.loadType<AttendanceMonth>(AttendanceMonth)
-        .then(loadedEntities => {
-          return loadedEntities.filter(o => o.student === childId);
-        })
-    );
+    const promise = this.db.query('attendances_index/by_child', {key: childId, include_docs: true})
+      .then(loadedEntities => {
+        return loadedEntities.rows.map(loadedRecord => {
+          const entity = new AttendanceMonth('');
+          entity.load(loadedRecord.doc);
+          return entity;
+        });
+      });
+
+    return Observable.fromPromise(promise);
   }
+
+  getAttendancesOfMonth(month: Date): Observable<AttendanceMonth[]> {
+    const monthString = month.getFullYear().toString() + '-' + (month.getMonth() + 1).toString();
+    const promise = this.db.query('attendances_index/by_month', {key: monthString, include_docs: true})
+      .then(loadedEntities => {
+        return loadedEntities.rows.map(loadedRecord => {
+          const entity = new AttendanceMonth('');
+          entity.load(loadedRecord.doc);
+          return entity;
+        });
+      });
+
+    return Observable.fromPromise(promise);
+  }
+
+  private createAttendancesIndex(): Promise<any> {
+    const designDoc = {
+      _id: '_design/attendances_index',
+      views: {
+        by_child: {
+          map: '(doc) => { ' +
+            'if (!doc._id.startsWith("' + AttendanceMonth.ENTITY_TYPE + '")) return;' +
+            'emit(doc.student); ' +
+            '}'
+        },
+        by_month: {
+          map: '(doc) => { ' +
+            'if (!doc._id.startsWith("' + AttendanceMonth.ENTITY_TYPE + '")) return;' +
+            'emit(doc.month); ' +
+            '}'
+        }
+      }
+    };
+
+    return this.db.saveDatabaseIndex(designDoc);
+  }
+
 
 
   queryAttendanceLast3Months() {
-    return this.attendanceIndicesUpdated
-      .then(() => this.db.query('avg_attendance_index/three_months', {reduce: true, group: true}));
+    return this.db.query('avg_attendance_index/three_months', {reduce: true, group: true});
   }
 
   queryAttendanceLastMonth() {
-    return this.attendanceIndicesUpdated
-      .then(() => this.db.query('avg_attendance_index/last_month', {reduce: true, group: true}))
+    return this.db.query('avg_attendance_index/last_month', {reduce: true, group: true});
   }
 
 
@@ -71,9 +112,10 @@ export class ChildrenService {
 
   private getAverageAttendanceMapFunction () {
     return '(doc) => {' +
-      'if (!doc._id.startsWith("AttendanceMonth:")) { return; }' +
+      'if (!doc._id.startsWith("AttendanceMonth:") ) { return; }' +
       'if (!isWithinLast3Months(new Date(doc.month), new Date())) { return; }' +
-      'emit(doc.student, doc.daysAttended / (doc.daysWorking - doc.daysExcused));' +
+      'var attendance = (doc.daysAttended / (doc.daysWorking - doc.daysExcused));' +
+      'if (!isNaN(attendance)) { emit(doc.student, attendance); }' +
       'function isWithinLast3Months(date, now) {' +
       '  let months;' +
       '  months = (now.getFullYear() - date.getFullYear()) * 12;' +
@@ -89,7 +131,8 @@ export class ChildrenService {
     return '(doc) => {' +
       'if (!doc._id.startsWith("AttendanceMonth:")) { return; }' +
       'if (!isWithinLastMonth(new Date(doc.month), new Date())) { return; }' +
-      'emit(doc.student, doc.daysAttended / (doc.daysWorking - doc.daysExcused));' +
+      'var attendance = (doc.daysAttended / (doc.daysWorking - doc.daysExcused));' +
+      'if (!isNaN(attendance)) { emit(doc.student, attendance); }' +
       'function isWithinLastMonth(date, now) {' +
       '  let months;' +
       '  months = (now.getFullYear() - date.getFullYear()) * 12;' +
@@ -108,8 +151,8 @@ export class ChildrenService {
     const promise = this.db.query('notes_index/by_child', {key: childId, include_docs: true})
       .then(loadedEntities => {
         return loadedEntities.rows.map(loadedRecord => {
-          let entity = new Note('');
-          entity = Object.assign(entity, loadedRecord.doc);
+          const entity = new Note('');
+          entity.load(loadedRecord.doc);
           return entity;
         });
       });
@@ -131,6 +174,28 @@ export class ChildrenService {
     };
 
     return this.db.saveDatabaseIndex(designDoc);
+  }
+
+
+
+
+
+  getEducationalMaterialsOfChild(childId: string): Observable<EducationalMaterial[]> {
+    return Observable.fromPromise(
+      this.entityMapper.loadType<EducationalMaterial>(EducationalMaterial)
+        .then(loadedEntities => {
+          return loadedEntities.filter(o => o.child === childId);
+        })
+    );
+  }
+
+  getAserResultsOfChild(childId: string): Observable<Aser[]> {
+    return Observable.fromPromise(
+      this.entityMapper.loadType<Aser>(Aser)
+        .then(loadedEntities => {
+          return loadedEntities.filter(o => o.child === childId);
+        })
+    );
   }
 
 }

@@ -16,7 +16,6 @@ import {
   MatCardModule,
   MatSidenavModule, MatDialogModule
 } from '@angular/material';
-import {SchoolsServices} from './schoolsShared/schools.services';
 import {SchoolDetailComponent} from './school-detail/school-detail.component';
 import { SchoolBlockComponent } from './school-block/school-block.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -72,6 +71,6 @@ import {RouterModule} from '@angular/router';
     SchoolDetailComponent,
   ],
   exports: [SchoolBlockComponent],
-  providers: [SchoolsServices]
+  providers: []
 })
 export class SchoolsModule { }

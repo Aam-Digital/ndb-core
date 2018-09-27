@@ -4,12 +4,15 @@
 
 <div style="position:absolute;" *ngIf="tooltip">
   <div class="mat-elevation-z5 attendance-tooltip" (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()">
-    <div class="attendance-tooltip-header">{{attendanceData.month | date:'yyyy-MM'}}</div>
+    <div class="attendance-tooltip-header">{{attendanceData.month | date:'yyyy-MM'}} {{attendanceData.institution}}</div>
     <div class="attendance-tooltip-content">
       attended {{attendanceData.daysAttended}} / {{attendanceData.daysWorking-attendanceData.daysExcused}} days
     </div>
     <div class="attendance-tooltip-content" *ngIf="attendanceData.daysExcused>0">
       (excluding {{attendanceData.daysExcused}} days excused)
+    </div>
+    <div>
+      <app-attendance-days [attendanceMonth]='attendanceData'></app-attendance-days>
     </div>
   </div>
 </div>

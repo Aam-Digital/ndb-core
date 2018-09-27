@@ -10,7 +10,7 @@ import {AttendanceMonth} from '../attendance-month';
   styleUrls: ['./attendance-average-dashboard.component.scss']
 })
 export class AttendanceAverageDashboardComponent implements OnInit {
-  readonly ATTENDANCE_THRESHOLD = AttendanceMonth.THRESHOLD_WARNING;
+  readonly ATTENDANCE_THRESHOLD = 0.9;
 
   overallAttendance: number;
   lastMonthsTopAttendence = []; // [[Child, average_last_3_months, last_months_attendance]]
@@ -50,6 +50,13 @@ export class AttendanceAverageDashboardComponent implements OnInit {
               .subscribe(child => record[0] = child);
           } else {
             countMap.delete(studentStat.key);
+          }
+        });
+
+        // remove elements that don't have a matching attendance from last month
+        countMap.forEach((v, k) => {
+          if (v[2] === 0) {
+            countMap.delete(k);
           }
         });
 

@@ -1,0 +1,48 @@
+.day-cell {
+  background-color: #F5F5F5;
+  width: 60px;
+  height: 30px;
+  position: relative;
+  text-align: center;
+  display: table-cell;
+}
+
+.day-box {
+  height: 40px;
+  display: table;
+}
+
+.date {
+  font-size: small;
+
+  position: absolute;
+  top: 5px;
+  left: 5px;
+}
+
+.status {
+  font-weight: bold;
+  margin-top: 0.5em;
+  display: inline-block;
+}
+
+.selected {
+  border: 5px solid black;
+  box-sizing: border-box;
+}
+
+.form {
+  padding: 10px;
+  width: 420px;
+  position: relative;
+}
+
+.form-close {
+  position:absolute;
+  top: 0;
+  right: 0;
+}
+
+button {
+  margin: 5px;
+}

@@ -14,8 +14,8 @@ describe('AdminComponent', () => {
   beforeEach(async(() => {
     AppConfig.settings = {
       version: '',
-      database: {name: 'unit-tests', remote_url: '', timeout: 60000, outdated_threshold_days: 0},
-      dev: {useRemoteDatabaseDuringDevelopment: true}
+      site_name: '',
+      database: {name: 'unit-tests', remote_url: '', timeout: 60000, outdated_threshold_days: 0, useTemporaryDatabase: true},
     };
 
     TestBed.configureTestingModule({

@@ -5,7 +5,7 @@ import {
   MatButtonModule, MatButtonToggleModule,
   MatExpansionModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSelectModule, MatSidenavModule,
   MatSortModule,
-  MatTableModule
+  MatTableModule, MatTooltipModule
 } from '@angular/material';
 import {CommonModule} from '@angular/common';
 import {ChildrenService} from '../children.service';
@@ -16,6 +16,12 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {AttendanceBlockComponent} from '../attendance/attendance-block/attendance-block.component';
 import {FormsModule} from '@angular/forms';
+import {ChildBlockComponent} from '../child-block/child-block.component';
+import {SchoolBlockComponent} from '../../schools/school-block/school-block.component';
+import {FilterPipeModule} from 'ngx-filter-pipe';
+import {AttendanceDaysComponent} from '../attendance/attendance-days/attendance-days.component';
+import {UiHelperModule} from '../../ui-helper/ui-helper.module';
+import {AttendanceDayBlockComponent} from '../attendance/attendance-days/attendance-day-block.component';
 
 describe('ChildrenListComponent', () => {
   let component: ChildrenListComponent;
@@ -23,7 +29,8 @@ describe('ChildrenListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AttendanceBlockComponent, ChildrenListComponent ],
+      declarations: [ ChildBlockComponent, SchoolBlockComponent, AttendanceBlockComponent, ChildrenListComponent,
+        AttendanceDaysComponent, AttendanceDayBlockComponent ],
       imports: [
         CommonModule,
         RouterTestingModule.withRoutes([]),
@@ -37,8 +44,14 @@ describe('ChildrenListComponent', () => {
         MatButtonModule,
         MatButtonToggleModule,
         MatIconModule,
+        MatTooltipModule,
         NoopAnimationsModule,
         FormsModule,
+        FilterPipeModule,
+        RouterTestingModule.withRoutes([
+          { path: 'child', component: ChildrenListComponent}
+        ]),
+        UiHelperModule,
       ],
       providers: [ChildrenService, EntityMapperService, { provide: Database, useClass: MockDatabase }],
     })

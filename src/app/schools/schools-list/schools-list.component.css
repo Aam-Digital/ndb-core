@@ -3,6 +3,10 @@
 }
 .table-list td {
   padding-left: 8px;
+
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
 }
 
 .button-icon {

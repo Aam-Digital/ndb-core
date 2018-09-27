@@ -48,7 +48,7 @@ export class EntityMapperService {
     const resultEntity = new entityType('');
     return this._db.get(EntityMapperService.createDatabaseId(resultEntity.getType(), id)).then(
       function (result: any) {
-        Object.assign(resultEntity, result);
+        resultEntity.load(result);
         return resultEntity;
       },
       function (error: any) {
@@ -69,7 +69,7 @@ export class EntityMapperService {
       function (result: any) {
         const resultArray: Array<T> = [];
         for (const current of result) {
-          resultArray.push(Object.assign(resultEntity, current));
+          resultArray.push(resultEntity.load(current));
           resultEntity = new entityType('');
         }
         return resultArray;
@@ -82,7 +82,7 @@ export class EntityMapperService {
 
   public save<T extends Entity>(entity: T, forceUpdate: boolean = false): Promise<any> {
     entity['_id'] = EntityMapperService.createDatabaseIdByEntity(entity);
-    return this._db.put(entity, forceUpdate);
+    return this._db.put(entity.rawData(), forceUpdate);
   }
 
   public remove<T extends Entity>(entity: T): Promise<any> {

@@ -15,9 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, Inject} from '@angular/core';
+import {Component} from '@angular/core';
 import {Changelog} from '../changelog';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material';
+import {LatestChangesService} from '../latest-changes.service';
 
 @Component({
   templateUrl: './changelog.component.html',
@@ -28,9 +29,11 @@ export class ChangelogComponent {
   currentChangelog: Changelog;
 
   constructor(
-    public dialogRef: MatDialogRef<ChangelogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any) {
-    this.currentChangelog = data;
+    private latestChangesService: LatestChangesService,
+    public dialogRef: MatDialogRef<ChangelogComponent>) {
+
+      this.latestChangesService.getChangelog().subscribe(
+        changelog => this.currentChangelog = changelog[0]);
   }
 
   onCloseClick(): void {

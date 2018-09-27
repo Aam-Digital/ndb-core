@@ -27,13 +27,13 @@ import {
   MatAutocompleteModule,
   MatButtonModule,
   MatButtonToggleModule,
-  MatCardModule,
+  MatCardModule, MatCheckboxModule,
   MatDialogModule,
-  MatIconModule,
+  MatIconModule, MatProgressBarModule,
   MatSidenavModule,
   MatSnackBarModule,
   MatSortModule,
-  MatTableModule
+  MatTableModule, MatTooltipModule
 } from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {ChildrenService} from './children.service';
@@ -49,6 +49,18 @@ import { AttendanceWarningsDashboardComponent } from './attendance/attendance-wa
 import { NotesComponent } from './notes/notes.component';
 import { NoteDetailsComponent } from './notes/note-details/note-details.component';
 import { ChildSelectComponent } from './child-select/child-select.component';
+import {SchoolsModule} from '../schools/schools.module';
+import { EducationalMaterialComponent } from './educational-material/educational-material.component';
+import {AserComponent} from './aser/aser.component';
+import {FilterPipeModule} from 'ngx-filter-pipe';
+import { NotesManagerComponent } from './notes/notes-manager/notes-manager.component';
+import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/add-month-attendance.component';
+import { AttendanceDaysComponent } from './attendance/attendance-days/attendance-days.component';
+import { AttendanceDetailsComponent } from './attendance/attendance-details/attendance-details.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { AddDayAttendanceComponent } from './attendance/add-day-attendance/add-day-attendance.component';
+import { AttendanceWeekDashboardComponent } from './attendance/attendance-week-dashboard/attendance-week-dashboard.component';
+import {AttendanceDayBlockComponent} from './attendance/attendance-days/attendance-day-block.component';
 
 
 @NgModule({
@@ -60,6 +72,7 @@ import { ChildSelectComponent } from './child-select/child-select.component';
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
+    MatCheckboxModule,
     MatSelectModule,
     MatExpansionModule,
     MatTableModule,
@@ -71,9 +84,14 @@ import { ChildSelectComponent } from './child-select/child-select.component';
     MatCardModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatProgressBarModule,
     MatAutocompleteModule,
+    MatTooltipModule,
+    BrowserAnimationsModule,
+    ReactiveFormsModule,
+    FilterPipeModule,
     UiHelperModule,
-    ReactiveFormsModule
+    SchoolsModule,
   ],
   declarations: [
     AttendanceBlockComponent,
@@ -87,6 +105,15 @@ import { ChildSelectComponent } from './child-select/child-select.component';
     AttendanceWarningsDashboardComponent,
     NoteDetailsComponent,
     ChildSelectComponent,
+    EducationalMaterialComponent,
+    AserComponent,
+    NotesManagerComponent,
+    AddMonthAttendanceComponent,
+    AttendanceDayBlockComponent,
+    AttendanceDaysComponent,
+    AttendanceDetailsComponent,
+    AddDayAttendanceComponent,
+    AttendanceWeekDashboardComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
@@ -94,8 +121,10 @@ import { ChildSelectComponent } from './child-select/child-select.component';
     ChildSelectComponent,
     ChildrenCountDashboardComponent,
     AttendanceAverageDashboardComponent,
-    AttendanceWarningsDashboardComponent
+    AttendanceWarningsDashboardComponent,
+    AttendanceWeekDashboardComponent,
+    AttendanceDaysComponent,
   ],
-  entryComponents: [NoteDetailsComponent],
+  entryComponents: [NoteDetailsComponent, AttendanceDetailsComponent],
 })
 export class ChildrenModule { }
