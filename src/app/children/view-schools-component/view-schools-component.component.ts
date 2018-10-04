@@ -1,12 +1,11 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {ChildSchoolRelation} from "../childSchoolRelation";
-import {School} from "../../schools/school";
-import {EditSchoolDialogComponent} from "./edit-school-dialog/edit-school-dialog.component";
-import {EntityMapperService} from "../../entity/entity-mapper.service";
-import {MatDialog, MatTableDataSource, MatSort} from "@angular/material";
-import {Child} from "../child";
-import {LoggingService} from "../../logging/logging.service";
-import {resolve} from "q";
+import {ChildSchoolRelation} from '../childSchoolRelation';
+import {School} from '../../schools/school';
+import {EditSchoolDialogComponent} from './edit-school-dialog/edit-school-dialog.component';
+import {EntityMapperService} from '../../entity/entity-mapper.service';
+import {MatDialog, MatTableDataSource, MatSort} from '@angular/material';
+import {Child} from '../child';
+import {LoggingService} from '../../logging/logging.service';
 
 export interface ViewableSchool {
   school: School,
@@ -36,7 +35,7 @@ export class ViewSchoolsComponentComponent implements OnInit {
 
   ngOnInit() {
     this.schoolsDataSource.sortingDataAccessor = (item, property) => {
-      switch(property) {
+      switch (property) {
         case 'name':
           return item.school.name;
         case 'from':
@@ -55,8 +54,8 @@ export class ViewSchoolsComponentComponent implements OnInit {
     this.childSchoolRelations = [];
     this.entityMapperService.loadType<ChildSchoolRelation>(ChildSchoolRelation)
       .then((relations: ChildSchoolRelation[]) => {
-        for (let r of relations) {
-          if (r.childId == this.child.getId()) {
+        for (const r of relations) {
+          if (r.childId === this.child.getId()) {
             this.childSchoolRelations.push(r);
             this.entityMapperService.load<School>(School, r.schoolId)
               .then((school: School) => {
@@ -69,7 +68,7 @@ export class ViewSchoolsComponentComponent implements OnInit {
           }
         }
       })
-      .catch(() => this.loggingService.error("[ViewSchoolsComponent] loading from database error."))
+      .catch(() => this.loggingService.error('[ViewSchoolsComponent] loading from database error.'))
   }
 
   private updateViewableItems() {
@@ -91,25 +90,25 @@ export class ViewSchoolsComponentComponent implements OnInit {
   }
 
   private showEditSchoolDialog(data) {
-    let dialog = this.dialog.open(EditSchoolDialogComponent, {data: data});
+    const dialog = this.dialog.open(EditSchoolDialogComponent, {data: data});
     dialog.afterClosed().subscribe(res => this.resolveAction(res));
   }
 
   private resolveAction(res) {
     switch (res.type) {
-      case "EDIT":
+      case 'EDIT':
         const viewableSchool: ViewableSchool = this.viewableSchools.filter(school =>
           school.childSchoolRelation.getId() === res.childSchoolRelation.getId())[0];
         viewableSchool.childSchoolRelation = res.childSchoolRelation;
         viewableSchool.school = res.school;
         break;
-      case "CREATE":
+      case 'CREATE':
         this.viewableSchools.push({
           school: res.school,
           childSchoolRelation: res.childSchoolRelation,
         });
         break;
-      case "DELETE":
+      case 'DELETE':
         this.viewableSchools = this.viewableSchools.filter(school => {
           console.log('current', school.childSchoolRelation, 'res', res.childSchoolRelation);
           return school.childSchoolRelation.getId() !== res.childSchoolRelation.getId();

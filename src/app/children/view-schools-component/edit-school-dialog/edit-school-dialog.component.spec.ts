@@ -9,11 +9,11 @@ import {
 } from '@angular/material';
 
 import { EditSchoolDialogComponent } from './edit-school-dialog.component';
-import {FormsModule} from "@angular/forms";
-import {EntityMapperService} from "../../../entity/entity-mapper.service";
-import {MockDatabase} from "../../../database/mock-database";
-import {Child} from "../../child";
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {FormsModule} from '@angular/forms';
+import {EntityMapperService} from '../../../entity/entity-mapper.service';
+import {MockDatabase} from '../../../database/mock-database';
+import {Child} from '../../child';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 describe('EditSchoolDialogComponent', () => {
   let component: EditSchoolDialogComponent;
