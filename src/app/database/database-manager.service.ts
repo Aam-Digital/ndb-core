@@ -20,7 +20,7 @@ import { Database } from './database';
 import { DatabaseSyncStatus } from './database-sync-status.enum';
 
 /**
- * DatabaseManagerService takes care of "background" actions of the
+ * DatabaseManagerService takes care of 'background' actions of the
  * database (e.g. sync, authentication, etc.).
  *
  * To put/get actual data from the database inject `Database` instead,

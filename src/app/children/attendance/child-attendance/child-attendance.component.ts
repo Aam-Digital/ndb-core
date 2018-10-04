@@ -69,7 +69,7 @@ export class ChildAttendanceComponent implements OnInit {
 
 
   generateNewRecordFactory() {
-    // define values locally because "this" is a different scope after passing a function as input to another component
+    // define values locally because 'this' is a different scope after passing a function as input to another component
     const child = this.childId;
     const institution = this.institution;
 

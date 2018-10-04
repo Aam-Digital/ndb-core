@@ -25,6 +25,7 @@
   </div>
 
   <div>
+
     <button *ngIf="creatingNew || editing" mat-stroked-button class='edit-button' (click)="save()">Save</button>
 
     <button *ngIf="!creatingNew && editing" mat-stroked-button class='edit-button' style="color:red" (click)="removeChild()">Delete</button>
@@ -231,8 +232,15 @@
         Notes & Reports
       </mat-expansion-panel-header>
 
-      <app-notes></app-notes>
-    </mat-expansion-panel>
+  <app-notes></app-notes>
+</mat-expansion-panel>
+
+<mat-expansion-panel expanded="false">
+  <mat-expansion-panel-header class="section-header">
+    Schools
+  </mat-expansion-panel-header>
+  <app-view-schools-component [child]="child"></app-view-schools-component>
+</mat-expansion-panel>
 
 
 
