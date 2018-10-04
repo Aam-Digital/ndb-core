@@ -1,4 +1,4 @@
-import {Entity} from "../entity/entity";
+import {Entity} from '../entity/entity';
 
 export class ChildSchoolRelation extends Entity {
   static ENTITY_TYPE = 'ChildSchoolRelation';
