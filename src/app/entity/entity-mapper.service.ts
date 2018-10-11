@@ -35,8 +35,7 @@ export class EntityMapperService {
     return type + ':' + id;
   }
 
-  constructor(private _db: Database, session: SessionService) {
-    session.setEntityMapper(this);
+  constructor(private _db: Database) {
   }
 
   /**

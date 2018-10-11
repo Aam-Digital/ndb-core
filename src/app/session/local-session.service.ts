@@ -42,7 +42,7 @@
 
 import PouchDB from 'pouchdb';
 
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 
 import { AppConfig } from '../app-config/app-config';
 import { EntityMapperService } from '../entity/entity-mapper.service';
@@ -62,11 +62,14 @@ export class LocalSessionService {
 
   private _entityMapper: EntityMapperService;
 
-  constructor() {
+  constructor(injector: Injector) {
     this.database = new PouchDB(AppConfig.settings.database.name);
 
     this.loginState = new StateHandler<LoginState>(LoginState.loggedOut);
     this.syncState = new StateHandler<SyncState>(SyncState.unsynced);
+
+    // https://stackoverflow.com/a/41807414
+    this._entityMapper = injector.get(EntityMapperService);
   }
 
   // TODO: the entityMapper uses the DatabaseService, where it should try to get the DB from here
@@ -147,9 +150,5 @@ export class LocalSessionService {
    */
   public logout() {
     this.loginState.setState(LoginState.loggedOut);
-  }
-
-  public setEntityMapper(em: EntityMapperService) {
-    this._entityMapper = em;
   }
 }

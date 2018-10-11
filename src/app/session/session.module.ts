@@ -28,6 +28,7 @@ import { RouterModule } from '@angular/router';
 import { databaseServiceProvider } from './database-service.provider';
 import { LocalSessionService } from './local-session.service';
 import { RemoteSessionService } from './remote-session.service';
+import { EntityModule } from '../entity/entity.module';
 
 @NgModule({
   imports: [
@@ -39,7 +40,8 @@ import { RemoteSessionService } from './remote-session.service';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    RouterModule
+    RouterModule,
+    EntityModule
   ],
   declarations: [LoginComponent],
   exports: [LoginComponent],

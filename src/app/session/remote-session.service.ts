@@ -48,7 +48,7 @@ PouchDB.plugin(PouchDBAuthentication);
 export class RemoteSessionService {
   public database: any;
 
-  public connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>();
+  public connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>(ConnectionState.disconnected);
 
   constructor() {
     this.database = new PouchDB(AppConfig.settings.database.remote_url + AppConfig.settings.database.name,
@@ -102,5 +102,8 @@ export class RemoteSessionService {
    */
   public logout(): void {
     this.database.logout();
+    this.connectionState.setState(ConnectionState.disconnected);
   }
+
+  // TODO: Methods to retry connection if offline
 }

@@ -76,10 +76,14 @@ export class SessionService {
       }
 
       // remote rejected but local logged in
-      if (connectionState === ConnectionState.rejected && this._localSession.loginState.getState() === LoginState.loggedIn) {
-        // Someone changed the password remotely --> fail the login
-        this._localSession.loginState.setState(LoginState.loginFailed);
-        // TODO: We might want to alert the alertService
+      if (connectionState === ConnectionState.rejected) {
+        localLogin.then(function(loginState: LoginState) {
+          if (loginState === LoginState.loggedIn) {
+            // Someone changed the password remotely --> fail the login
+            this._localSession.loginState.setState(LoginState.loginFailed);
+            // TODO: We might want to alert the alertService
+          }
+        });
       }
 
       // If we are not connected, we must check, whether the local database is initial
@@ -118,9 +122,5 @@ export class SessionService {
   public logout() {
     this._localSession.logout();
     this._remoteSession.logout();
-  }
-
-  public setEntityMapper(em: EntityMapperService) {
-    this._localSession.setEntityMapper(em);
   }
 }
