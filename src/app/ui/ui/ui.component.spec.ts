@@ -46,7 +46,6 @@ describe('UiComponent', () => {
 
   beforeEach(async(() => {
     AppConfig.settings = {
-      'version': '0.0.1',
       'site_name': 'Testing',
 
       'database': {
