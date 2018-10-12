@@ -33,7 +33,11 @@ export class PouchDatabase extends Database {
   }
 
   get(id: string) {
-    return this._pouchDB.get(id);
+    return this._pouchDB.get(id)
+      .catch((err) => {
+        this.notifyError(err);
+        throw err;
+      });
   }
 
   allDocs(options?: any) {
@@ -62,7 +66,11 @@ export class PouchDatabase extends Database {
   }
 
   remove(object: any) {
-    return this._pouchDB.remove(object);
+    return this._pouchDB.remove(object)
+      .catch((err) => {
+        this.notifyError(err);
+        throw err;
+      });
   }
 
   query(fun: (doc: any, emit: any) => void, options: any): Promise<any> {
@@ -81,6 +89,7 @@ export class PouchDatabase extends Database {
       });
   }
 
+
   private updateIndexIfChanged(doc): Promise<any> {
     return this.get(doc._id)
       .then(existingDoc => {
@@ -90,5 +99,8 @@ export class PouchDatabase extends Database {
           return this.saveDatabaseIndex(doc);
         }
       })
+  private notifyError(err) {
+    this.alertService.addWarning(err.message + '(' + err.id + ')');
+  }
   }
 }
