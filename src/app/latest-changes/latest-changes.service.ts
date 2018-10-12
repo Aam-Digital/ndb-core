@@ -31,12 +31,16 @@ export class LatestChangesService {
               private alertService: AlertService) {
   }
 
-  getChangelog(): Observable<Changelog[]> {
+  getChangelogs(): Observable<Changelog[]> {
     return this.http.get<Changelog[]>('assets/changelog.json')
       .map((response) => response)
       .catch((error) => {
         this.alertService.addWarning('Could not load latest changes: ' + error);
         return ErrorObservable.create('Could not load latest changes.');
       });
+  }
+
+  getCurrentVersion(): Observable<string> {
+    return this.getChangelogs().map(changelog => changelog[0].tag_name);
   }
 }
