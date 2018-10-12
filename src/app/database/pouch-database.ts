@@ -78,10 +78,18 @@ export class PouchDatabase extends Database {
   }
 
   saveDatabaseIndex(designDoc: any): Promise<any> {
-    return this.put(designDoc)
+    return this.get(designDoc._id)
+      .then(existingDoc => {
+        if (JSON.stringify(existingDoc.views) !== JSON.stringify(designDoc.views)) {
+          designDoc._rev = existingDoc._rev;
+          this.alertService.addDebug('replacing existing database index');
+          return this.put(designDoc)
+        }
+      })
       .catch(err => {
-        if (err.status === 409) {
-          return this.updateIndexIfChanged(designDoc);
+        if (err.status === 404) {
+          this.alertService.addDebug('creating new database index');
+          return this.put(designDoc);
         } else {
           // unexpected error
           this.alertService.addWarning('database index failed to be added: ' + err);
@@ -90,15 +98,6 @@ export class PouchDatabase extends Database {
   }
 
 
-  private updateIndexIfChanged(doc): Promise<any> {
-    return this.get(doc._id)
-      .then(existingDoc => {
-        if (JSON.stringify(existingDoc.views) !== JSON.stringify(doc.views)) {
-          doc._rev = existingDoc._rev;
-          this.alertService.addDebug('replacing existing database index');
-          return this.saveDatabaseIndex(doc);
-        }
-      })
   private notifyError(err) {
     this.alertService.addWarning(err.message + '(' + err.id + ')');
   }
