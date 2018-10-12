@@ -56,13 +56,21 @@ export class PouchDatabase extends Database {
     });
   }
 
-  put(object: any, forceUpdate?: boolean) {
+  put(object: any, forceOverwrite?: boolean) {
     const options: any = {};
-    if (forceUpdate) {
-      options.force = true;
-    }
+    // if (forceOverwrite) {
+    //   options.force = true;
+    // }
 
-    return this._pouchDB.put(object, options);
+    return this._pouchDB.put(object, options)
+      .catch((err) => {
+        if (err.status === 409) {
+          this.resolveConflict(object, forceOverwrite, err);
+        } else {
+          this.notifyError(err);
+          throw err;
+        }
+      });
   }
 
   remove(object: any) {
@@ -101,5 +109,26 @@ export class PouchDatabase extends Database {
   private notifyError(err) {
     this.alertService.addWarning(err.message + '(' + err.id + ')');
   }
+
+  private resolveConflict(newObject: any, overwriteChanges: boolean, existingError: any) {
+    this.get(newObject._id).then(existingObject => {
+      const resolvedObject = this.mergeObjects(existingObject, newObject);
+      if (resolvedObject) {
+        this.alertService.addDebug('resolved document conflict automatically (' + resolvedObject._id + ')');
+        this.put(resolvedObject);
+      } else if (overwriteChanges) {
+        this.alertService.addDebug('overwriting conflicting document version (' + newObject._id + ')');
+        newObject._rev = existingObject._rev;
+        this.put(newObject);
+      } else {
+          existingError.message = existingError.message + ' (unable to resolve)';
+          throw existingError;
+      }
+    });
+  }
+
+  private mergeObjects(existingObject: any, newObject: any) {
+    // TODO: implement automatic merging of conflicting entity versions
+    return undefined;
   }
 }
