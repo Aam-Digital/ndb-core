@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>{{creating ? 'Add' : 'Edit'}} school for {{child.name}}</h2>
+
+<mat-form-field>
+  <mat-label>
+    School
+  </mat-label>
+  <mat-select [(value)]='selectedSchool'>
+    <mat-option *ngFor='let school of schools' [value]='school' >{{school.name}}</mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field>
+  <input matInput [(ngModel)]='childSchoolRelation.start' placeholder='Started on' title='start' type='date'>
+</mat-form-field>
+
+<mat-form-field>
+  <input matInput [(ngModel)]='childSchoolRelation.end' placeholder='Finished on' title='end' type='date'>
+</mat-form-field>
+<div>
+  <button [disabled]='selectedSchool == null' mat-stroked-button class='edit-button' (click)='editSchoolClick()'>{{creating ? 'Add School' : 'Edit'}}</button>
+  <button *ngIf='!creating' mat-stroked-button class='edit-button' style='color:red' (click)='removeSchoolClick()'>Delete</button>
+</div>
+
