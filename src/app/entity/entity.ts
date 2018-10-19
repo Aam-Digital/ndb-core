@@ -32,6 +32,8 @@ export class Entity {
    */
   private readonly entityId: string;
 
+  _rev: string;
+
   /**
    * Creates an entity object with the given id. This id is final and won't be changeable after this object has been
    * created.

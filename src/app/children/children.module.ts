@@ -66,6 +66,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { AddDayAttendanceComponent } from './attendance/add-day-attendance/add-day-attendance.component';
 import { AttendanceWeekDashboardComponent } from './attendance/attendance-week-dashboard/attendance-week-dashboard.component';
 import {AttendanceDayBlockComponent} from './attendance/attendance-days/attendance-day-block.component';
+import { AttendanceManagerComponent } from './attendance/attendance-manager/attendance-manager.component';
 
 
 @NgModule({
@@ -124,6 +125,7 @@ import {AttendanceDayBlockComponent} from './attendance/attendance-days/attendan
     AttendanceDetailsComponent,
     AddDayAttendanceComponent,
     AttendanceWeekDashboardComponent,
+    AttendanceManagerComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
