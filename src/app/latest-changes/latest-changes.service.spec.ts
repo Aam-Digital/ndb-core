@@ -53,7 +53,7 @@ describe('LatestChangesService', () => {
   it('should return changelog array', (done) => {
     spyOn(http, 'get').and
       .returnValue(Observable.of([{ name: 'test', tag_name: 'v1.0', body: 'latest test', published_at: '2018-01-01'}]));
-    service.getChangelog()
+    service.getChangelogs()
       .subscribe(result => {
         expect(result.length).toBe(1);
         expect(result[0].name).toBe('test');
@@ -65,7 +65,7 @@ describe('LatestChangesService', () => {
     spyOn(http, 'get').and
       .returnValue(ErrorObservable.create({ status: 404, message: 'not found' }));
     const alertSpy = spyOn(alertService, 'addAlert');
-    service.getChangelog()
+    service.getChangelogs()
       .subscribe(() => {}, (err) => {
         expect(alertSpy.calls.count()).toBe(1, 'no Alert message created');
         done();
