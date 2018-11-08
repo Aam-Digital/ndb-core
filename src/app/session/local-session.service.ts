@@ -45,7 +45,6 @@ import PouchDB from 'pouchdb';
 import { Injectable, Injector } from '@angular/core';
 
 import { AppConfig } from '../app-config/app-config';
-import { EntityMapperService } from '../entity/entity-mapper.service';
 import { User } from '../user/user';
 
 import { SyncState } from './sync-state.enum';
@@ -60,16 +59,11 @@ export class LocalSessionService {
   public syncState: StateHandler<SyncState>; // started, completed, failed, unsynced
   public currentUser: User;
 
-  private _entityMapper: EntityMapperService;
-
-  constructor(injector: Injector) {
+  constructor() {
     this.database = new PouchDB(AppConfig.settings.database.name);
 
     this.loginState = new StateHandler<LoginState>(LoginState.loggedOut);
     this.syncState = new StateHandler<SyncState>(SyncState.unsynced);
-
-    // https://stackoverflow.com/a/41807414
-    this._entityMapper = injector.get(EntityMapperService);
   }
 
   // TODO: the entityMapper uses the DatabaseService, where it should try to get the DB from here
@@ -82,11 +76,7 @@ export class LocalSessionService {
    */
   public login(username: string, password: string): Promise<LoginState> {
     return this.waitForFirstSync().then(() => {
-      if (this._entityMapper) {
-        return this._entityMapper.load<User>(User, username);
-      } else {
-        throw new Error('No EntityMapper available.');
-      }
+      return this.loadUser(username);
     }).then(userEntity => {
       if (userEntity.checkPassword(password)) {
         this.loginState.setState(LoginState.loggedIn);
@@ -150,5 +140,12 @@ export class LocalSessionService {
    */
   public logout() {
     this.loginState.setState(LoginState.loggedOut);
+  }
+
+  public async loadUser(userId: string): Promise<User> {
+    const user = new User('');
+    const userData = await this.database.get('User:' + userId);
+    user.load(userData);
+    return user;
   }
 }

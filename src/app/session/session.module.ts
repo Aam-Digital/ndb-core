@@ -28,7 +28,7 @@ import { RouterModule } from '@angular/router';
 import { databaseServiceProvider } from './database-service.provider';
 import { LocalSessionService } from './local-session.service';
 import { RemoteSessionService } from './remote-session.service';
-import { EntityModule } from '../entity/entity.module';
+import { UserModule } from 'app/user/user.module';
 
 @NgModule({
   imports: [
@@ -41,7 +41,7 @@ import { EntityModule } from '../entity/entity.module';
     MatInputModule,
     MatButtonModule,
     RouterModule,
-    EntityModule
+    UserModule
   ],
   declarations: [LoginComponent],
   exports: [LoginComponent],

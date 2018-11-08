@@ -44,6 +44,7 @@ import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
 import {MatIconModule, MatIconRegistry} from '@angular/material';
 import {AdminModule} from './admin/admin.module';
+import { EntityModule } from './entity/entity.module';
 
 @NgModule({
   declarations: [
@@ -60,6 +61,7 @@ import {AdminModule} from './admin/admin.module';
     DatabaseModule,
     AppConfigModule,
     SessionModule,
+    EntityModule,
     UiModule,
     SyncStatusModule,
     LatestChangesModule,
