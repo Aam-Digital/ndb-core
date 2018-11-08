@@ -22,12 +22,10 @@ import { FormsModule } from '@angular/forms';
 import { DatabaseModule } from '../database/database.module';
 import { AlertsModule } from '../alerts/alerts.module';
 import { LoggedInGuard } from './logged-in.guard';
-import { SessionService } from './session.service';
+import { sessionServiceProvider } from './session.service.provider';
 import { MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule} from '@angular/material';
 import { RouterModule } from '@angular/router';
-import { databaseServiceProvider } from './database-service.provider';
-import { LocalSessionService } from './local-session.service';
-import { RemoteSessionService } from './remote-session.service';
+import { databaseServiceProvider } from './database.service.provider';
 import { UserModule } from 'app/user/user.module';
 
 @NgModule({
@@ -45,7 +43,7 @@ import { UserModule } from 'app/user/user.module';
   ],
   declarations: [LoginComponent],
   exports: [LoginComponent],
-  providers: [LoggedInGuard, SessionService, LocalSessionService, RemoteSessionService, databaseServiceProvider]
+  providers: [LoggedInGuard, sessionServiceProvider, databaseServiceProvider]
 })
 export class SessionModule {
 }
