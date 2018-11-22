@@ -37,7 +37,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
       'has_aadhar', 'has_kanyashree', 'has_bankAccount', 'has_rationCard', 'has_bplCard'],
     'health': ['projectNumber', 'name', 'center',
       'health_vaccinationStatus', 'health_LastDentalCheckup', 'health_LastEyeCheckup', 'health_eyeHealthStatus', 'health_LastENTCheckup',
-      'health_lastVitaminD', 'health_LastDeworming',
+      'health_LastVitaminD', 'health_LastDeworming',
       'gender', 'age', 'dateOfBirth'],
   };
   columnsToDisplay: ['projectNumber', 'name'];
