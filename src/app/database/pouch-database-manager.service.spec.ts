@@ -31,7 +31,6 @@ describe('PouchDatabaseManagerService', () => {
         outdated_threshold_days: 0,
         useTemporaryDatabase: false,
       },
-      version: 'x',
       site_name: '',
     };
     dbManager = new PouchDatabaseManagerService(new AlertService(null, null));

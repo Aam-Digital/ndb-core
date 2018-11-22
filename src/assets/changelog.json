@@ -1,5 +1,12 @@
 [
   {
+    "tag_name": "v2.4.5",
+    "name": "Bug fixes: Saving Daily Attendance",
+    "published_at": "2018-10-12",
+    "body": "- fixed problems of changes (Daily Attendance) not getting saved\n- fixed problem showing non-existing children (database prefix bug)\n- improved errors and logs in case of database problems\n- avoid 'image not found' errors in console",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.4.4",
     "name": "Bug fixes",
     "published_at": "2018-09-13",

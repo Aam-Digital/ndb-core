@@ -27,13 +27,16 @@ import {
   MatAutocompleteModule,
   MatButtonModule,
   MatButtonToggleModule,
-  MatCardModule, MatCheckboxModule,
+  MatCardModule,
+  MatCheckboxModule,
   MatDialogModule,
-  MatIconModule, MatProgressBarModule,
+  MatProgressBarModule,
   MatSidenavModule,
   MatSnackBarModule,
   MatSortModule,
-  MatTableModule, MatTooltipModule
+  MatTableModule,
+  MatListModule,
+  MatIconModule, MatTooltipModule
 } from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {ChildrenService} from './children.service';
@@ -49,18 +52,21 @@ import { AttendanceWarningsDashboardComponent } from './attendance/attendance-wa
 import { NotesComponent } from './notes/notes.component';
 import { NoteDetailsComponent } from './notes/note-details/note-details.component';
 import { ChildSelectComponent } from './child-select/child-select.component';
+import { EditSchoolDialogComponent } from './view-schools-component/edit-school-dialog/edit-school-dialog.component';
 import {SchoolsModule} from '../schools/schools.module';
 import { EducationalMaterialComponent } from './educational-material/educational-material.component';
 import {AserComponent} from './aser/aser.component';
 import {FilterPipeModule} from 'ngx-filter-pipe';
 import { NotesManagerComponent } from './notes/notes-manager/notes-manager.component';
 import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/add-month-attendance.component';
+import { ViewSchoolsComponentComponent } from './view-schools-component/view-schools-component.component';
 import { AttendanceDaysComponent } from './attendance/attendance-days/attendance-days.component';
 import { AttendanceDetailsComponent } from './attendance/attendance-details/attendance-details.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { AddDayAttendanceComponent } from './attendance/add-day-attendance/add-day-attendance.component';
 import { AttendanceWeekDashboardComponent } from './attendance/attendance-week-dashboard/attendance-week-dashboard.component';
 import {AttendanceDayBlockComponent} from './attendance/attendance-days/attendance-day-block.component';
+import { AttendanceManagerComponent } from './attendance/attendance-manager/attendance-manager.component';
 
 
 @NgModule({
@@ -92,6 +98,9 @@ import {AttendanceDayBlockComponent} from './attendance/attendance-days/attendan
     FilterPipeModule,
     UiHelperModule,
     SchoolsModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatListModule
   ],
   declarations: [
     AttendanceBlockComponent,
@@ -105,15 +114,18 @@ import {AttendanceDayBlockComponent} from './attendance/attendance-days/attendan
     AttendanceWarningsDashboardComponent,
     NoteDetailsComponent,
     ChildSelectComponent,
+    EditSchoolDialogComponent,
     EducationalMaterialComponent,
     AserComponent,
     NotesManagerComponent,
     AddMonthAttendanceComponent,
+    ViewSchoolsComponentComponent,
     AttendanceDayBlockComponent,
     AttendanceDaysComponent,
     AttendanceDetailsComponent,
     AddDayAttendanceComponent,
     AttendanceWeekDashboardComponent,
+    AttendanceManagerComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
@@ -122,9 +134,11 @@ import {AttendanceDayBlockComponent} from './attendance/attendance-days/attendan
     ChildrenCountDashboardComponent,
     AttendanceAverageDashboardComponent,
     AttendanceWarningsDashboardComponent,
+    ViewSchoolsComponentComponent,
+    AttendanceWarningsDashboardComponent,
     AttendanceWeekDashboardComponent,
     AttendanceDaysComponent,
   ],
-  entryComponents: [NoteDetailsComponent, AttendanceDetailsComponent],
+  entryComponents: [NoteDetailsComponent, EditSchoolDialogComponent, AttendanceDetailsComponent],
 })
 export class ChildrenModule { }

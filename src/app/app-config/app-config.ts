@@ -22,19 +22,26 @@ import {HttpClient} from '@angular/common/http';
 @Injectable()
 export class AppConfig {
   static settings: IAppConfig;
+  readonly DEFAULT_CONFIG_FILE = 'assets/config.default.json';
 
   constructor(private http: HttpClient) {}
 
   load() {
-    const jsonFile = 'assets/config.json';
+    const configFile = 'assets/config.json';
+    return this.loadAppConfigJson(configFile)
+      .then((result) => result,
+        () => this.loadAppConfigJson(this.DEFAULT_CONFIG_FILE));
+  }
+
+  private loadAppConfigJson(jsonFileLocation: string) {
     return new Promise<void>((resolve, reject) => {
-      this.http.get<IAppConfig>(jsonFile).toPromise()
+      this.http.get<IAppConfig>(jsonFileLocation).toPromise()
         .then((result) => {
           AppConfig.settings = result;
           resolve();
         })
         .catch((response: any) => {
-          reject(`Could not load file '${jsonFile}': ${JSON.stringify(response)}`);
+          reject(`Could not load file '${jsonFileLocation}': ${JSON.stringify(response)}`);
         });
     });
   }

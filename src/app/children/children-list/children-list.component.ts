@@ -12,7 +12,7 @@ import {FilterSelection} from '../../ui-helper/filter-selection';
   styleUrls: ['./children-list.component.scss']
 })
 export class ChildrenListComponent implements OnInit, AfterViewInit {
-  childrenList = new Array<Child>();
+  childrenList = [];
   attendanceList = new Map<string, AttendanceMonth[]>();
   childrenDataSource = new MatTableDataSource();
 
