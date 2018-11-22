@@ -6,8 +6,10 @@ import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
-import {MatSnackBar} from '@angular/material';
+import {MatSnackBar, MatTableDataSource} from '@angular/material';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
+import {Child} from '../../children/child';
+import {ChildSchoolRelation} from '../../children/childSchoolRelation';
 
 @Component({
   selector: 'app-school-detail',
@@ -16,6 +18,9 @@ import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/con
 })
 export class SchoolDetailComponent {
   school = new School('');
+  studentDataSource: MatTableDataSource<Child> = new MatTableDataSource();
+  displayedColumns = ['id', 'name', 'age'];
+
 
   form: FormGroup;
   creatingNew = false;
@@ -52,11 +57,7 @@ export class SchoolDetailComponent {
       this.editing = true;
       this.school = new School(uniqid());
     } else {
-      this.entityMapperService.load<School>(School, id)
-        .then(school => {
-          this.school = school;
-          this.initializeForm();
-        }).catch((err) => this.alertService.addDanger('Could not load school with id "' + id + '": ' + err));
+      this.loadSchool(id);
     }
     this.initializeForm();
   }
@@ -69,6 +70,25 @@ export class SchoolDetailComponent {
   disableEdit() {
     this.editing = false;
     this.initializeForm();
+  }
+
+  loadSchool(id: string) {
+    this.entityMapperService.load(School, id)
+      .then(loadedEntities => this.school = loadedEntities)
+      .then(() => this.entityMapperService.loadType<ChildSchoolRelation>(ChildSchoolRelation))
+      .then(childSchoolRelations => childSchoolRelations.filter(relation => relation.schoolId === this.school.getId()))
+      .then(childSchoolRelations =>
+        childSchoolRelations.forEach(relation =>
+          this.entityMapperService.load<Child>(Child, relation.childId)
+            .then(child => {
+              console.log('child', child);
+              this.studentDataSource.data.push(child)
+            }))
+      ).catch((err) => {
+        console.log('Error', err);
+        this.alertService.addDanger('Could not load school with id "' + id + '": ' + err)
+    });
+
   }
 
   removeSchool() {
@@ -90,6 +110,11 @@ export class SchoolDetailComponent {
       });
   }
 
+  studentClick(id: number) {
+    let route: string;
+    route = '/child/' + id;
+    this.router.navigate([route]);
+  }
   saveSchool() {
     this.school.name = this.form.get('name').value;
     this.school.address = this.form.get('address').value;
