@@ -59,7 +59,7 @@
 
   <ng-container matColumnDef="dateOfBirth">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> DoB </th>
-    <td mat-cell *matCellDef="let child"> {{child.dateOfBirth}} </td>
+    <td mat-cell *matCellDef="let child"> {{child.dateOfBirth | date:'longDate'}} </td>
   </ng-container>
 
   <ng-container matColumnDef="gender">
