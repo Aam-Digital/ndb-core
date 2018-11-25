@@ -14,3 +14,11 @@
 .align-form-field {
   padding-bottom: 1.25em;
 }
+
+.filter-button mat-button-toggle:hover{
+  background: #f5f5f5;
+}
+
+.filter-button mat-button-toggle.selected:hover{
+  background: #e0e0e0;
+}
