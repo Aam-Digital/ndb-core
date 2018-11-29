@@ -28,6 +28,9 @@ export class Child extends Entity {
   dateOfBirth: Date;
   motherTongue = '';
   religion = '';
+  school: string;
+
+  hasPhoto = true;
 
   center = '';
   admissionDate: Date;
@@ -86,6 +89,9 @@ export class Child extends Entity {
   }
 
   public getPhoto() {
+    if (!this.hasPhoto) {
+      return 'assets/child.png';
+    }
     return 'assets/child-photos/' + this.projectNumber + '.jpg';
   }
 

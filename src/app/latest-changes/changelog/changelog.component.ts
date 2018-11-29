@@ -32,7 +32,7 @@ export class ChangelogComponent {
     private latestChangesService: LatestChangesService,
     public dialogRef: MatDialogRef<ChangelogComponent>) {
 
-      this.latestChangesService.getChangelog().subscribe(
+      this.latestChangesService.getChangelogs().subscribe(
         changelog => this.currentChangelog = changelog[0]);
   }
 

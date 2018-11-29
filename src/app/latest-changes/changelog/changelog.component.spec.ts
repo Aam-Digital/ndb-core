@@ -39,7 +39,7 @@ describe('ChangelogComponent', () => {
       providers: [
         {provide: MatDialogRef, useValue: {}},
         {provide: MAT_DIALOG_DATA, useValue: {}},
-        {provide: LatestChangesService, useValue: { getChangelog: () => Observable.of([testChangelog]) } },
+        {provide: LatestChangesService, useValue: { getChangelogs: () => Observable.of([testChangelog]) } },
         ],
     })
       .compileComponents();

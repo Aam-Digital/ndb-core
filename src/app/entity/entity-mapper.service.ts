@@ -65,7 +65,7 @@ export class EntityMapperService {
    */
   public loadType<T extends Entity>(entityType: { new(id: string): T; }): Promise<T[]> {
     let resultEntity = new entityType('');
-    return this._db.getAll(resultEntity.getType()).then(
+    return this._db.getAll(resultEntity.getType() + ':').then(
       function (result: any) {
         const resultArray: Array<T> = [];
         for (const current of result) {
@@ -82,7 +82,13 @@ export class EntityMapperService {
 
   public save<T extends Entity>(entity: T, forceUpdate: boolean = false): Promise<any> {
     entity['_id'] = EntityMapperService.createDatabaseIdByEntity(entity);
-    return this._db.put(entity.rawData(), forceUpdate);
+    return this._db.put(entity.rawData(), forceUpdate)
+      .then(result => {
+        if (result.ok) {
+          entity._rev = result.rev;
+        }
+        return result;
+      })
   }
 
   public remove<T extends Entity>(entity: T): Promise<any> {

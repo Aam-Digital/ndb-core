@@ -33,7 +33,11 @@ export class PouchDatabase extends Database {
   }
 
   get(id: string) {
-    return this._pouchDB.get(id);
+    return this._pouchDB.get(id)
+      .catch((err) => {
+        this.notifyError(err);
+        throw err;
+      });
   }
 
   allDocs(options?: any) {
@@ -52,17 +56,29 @@ export class PouchDatabase extends Database {
     });
   }
 
-  put(object: any, forceUpdate?: boolean) {
+  put(object: any, forceOverwrite?: boolean) {
     const options: any = {};
-    if (forceUpdate) {
-      options.force = true;
-    }
+    // if (forceOverwrite) {
+    //   options.force = true;
+    // }
 
-    return this._pouchDB.put(object, options);
+    return this._pouchDB.put(object, options)
+      .catch((err) => {
+        if (err.status === 409) {
+          this.resolveConflict(object, forceOverwrite, err);
+        } else {
+          this.notifyError(err);
+          throw err;
+        }
+      });
   }
 
   remove(object: any) {
-    return this._pouchDB.remove(object);
+    return this._pouchDB.remove(object)
+      .catch((err) => {
+        this.notifyError(err);
+        throw err;
+      });
   }
 
   query(fun: (doc: any, emit: any) => void, options: any): Promise<any> {
@@ -70,10 +86,18 @@ export class PouchDatabase extends Database {
   }
 
   saveDatabaseIndex(designDoc: any): Promise<any> {
-    return this.put(designDoc)
+    return this.get(designDoc._id)
+      .then(existingDoc => {
+        if (JSON.stringify(existingDoc.views) !== JSON.stringify(designDoc.views)) {
+          designDoc._rev = existingDoc._rev;
+          this.alertService.addDebug('replacing existing database index');
+          return this.put(designDoc)
+        }
+      })
       .catch(err => {
-        if (err.status === 409) {
-          return this.updateIndexIfChanged(designDoc);
+        if (err.status === 404) {
+          this.alertService.addDebug('creating new database index');
+          return this.put(designDoc);
         } else {
           // unexpected error
           this.alertService.addWarning('database index failed to be added: ' + err);
@@ -81,14 +105,30 @@ export class PouchDatabase extends Database {
       });
   }
 
-  private updateIndexIfChanged(doc): Promise<any> {
-    return this.get(doc._id)
-      .then(existingDoc => {
-        if (JSON.stringify(existingDoc.views) !== JSON.stringify(doc.views)) {
-          doc._rev = existingDoc._rev;
-          this.alertService.addDebug('replacing existing database index');
-          return this.saveDatabaseIndex(doc);
-        }
-      })
+
+  private notifyError(err) {
+    this.alertService.addWarning(err.message + '(' + err.id + ')');
+  }
+
+  private resolveConflict(newObject: any, overwriteChanges: boolean, existingError: any) {
+    this.get(newObject._id).then(existingObject => {
+      const resolvedObject = this.mergeObjects(existingObject, newObject);
+      if (resolvedObject) {
+        this.alertService.addDebug('resolved document conflict automatically (' + resolvedObject._id + ')');
+        this.put(resolvedObject);
+      } else if (overwriteChanges) {
+        this.alertService.addDebug('overwriting conflicting document version (' + newObject._id + ')');
+        newObject._rev = existingObject._rev;
+        this.put(newObject);
+      } else {
+          existingError.message = existingError.message + ' (unable to resolve)';
+          throw existingError;
+      }
+    });
+  }
+
+  private mergeObjects(existingObject: any, newObject: any) {
+    // TODO: implement automatic merging of conflicting entity versions
+    return undefined;
   }
 }
