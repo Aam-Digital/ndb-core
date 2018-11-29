@@ -57,6 +57,7 @@ export class MockSessionService extends SessionService {
         if (username === 'demo' && password === 'pass') {
             this.loginState.setState(LoginState.loggedIn);
             this.connectionState.setState(ConnectionState.connected);
+            setTimeout(() => this.sync(), 0);
             return Promise.resolve(LoginState.loggedIn);
         }
         this.loginState.setState(LoginState.loginFailed);
@@ -68,6 +69,8 @@ export class MockSessionService extends SessionService {
         this.connectionState.setState(ConnectionState.disconnected);
     }
     public sync(): Promise<any> {
+        this.syncState.setState(SyncState.started);
+        this.syncState.setState(SyncState.completed);
         return Promise.resolve(true);
     }
 }
