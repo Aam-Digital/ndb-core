@@ -6,6 +6,7 @@ import {School} from '../schools/school';
 import {Note} from '../children/notes/note';
 import {WarningLevel} from '../children/attendance/warning-level';
 import {AttendanceStatus} from '../children/attendance/attendance-day';
+import {ChildSchoolRelation} from '../children/childSchoolRelation';
 
 export class DemoData {
 
@@ -14,7 +15,8 @@ export class DemoData {
       .concat(DemoData.getChildEntities())
       .concat(this.getSchoolEntities())
       .concat(this.getMonthAttendanceEntities())
-      .concat(this.getNoteEntities());
+      .concat(this.getNoteEntities())
+      .concat(this.getChildSchoolRelationEntities());
   }
 
   static getChildEntities(): Child[] {
@@ -244,6 +246,28 @@ export class DemoData {
     s2.name = 'Hope High School';
     s2.medium = 'English';
     data.push(s2);
+
+    return data;
+  }
+  static getChildSchoolRelationEntities(): ChildSchoolRelation[] {
+    const data: ChildSchoolRelation[] = [];
+    const rel1: ChildSchoolRelation = new ChildSchoolRelation('1');
+    rel1.childId = '1';
+    rel1.schoolId = '1';
+    rel1.start = new Date();
+    data.push(rel1);
+
+    const rel2: ChildSchoolRelation = new ChildSchoolRelation('2');
+    rel2.childId = '2';
+    rel2.schoolId = '2';
+    rel2.start = new Date();
+    data.push(rel2);
+
+    const rel3: ChildSchoolRelation = new ChildSchoolRelation('3');
+    rel3.childId = '3';
+    rel3.schoolId = '1';
+    rel3.start = new Date();
+    data.push(rel3);
 
     return data;
   }

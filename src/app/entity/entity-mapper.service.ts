@@ -80,6 +80,24 @@ export class EntityMapperService {
     )
   }
 
+  public loadTypeForRelation<T extends Entity, R extends Entity>(
+    returnType: {new(id: string): T; },
+    returnField: string,
+    relationType: { new(id: string): R; },
+    searchField: string,
+    searchId: string,
+  ): Promise<T[]> {
+    return this.loadType<R>(relationType)
+      .then((relations: R[]) =>
+        relations.filter((relation: R) => relation[searchField] === searchId))
+      .then(async (relations: R[]) => {
+        const promises: Promise<T>[] = [];
+        relations.forEach(relation =>
+          promises.push(this.load<T>(returnType, relation[returnField])));
+        return await Promise.all(promises);
+      })
+  }
+
   public save<T extends Entity>(entity: T, forceUpdate: boolean = false): Promise<any> {
     entity['_id'] = EntityMapperService.createDatabaseIdByEntity(entity);
     return this._db.put(entity.rawData(), forceUpdate)
