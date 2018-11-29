@@ -29,7 +29,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
 
   @ViewChild(MatSort) sort: MatSort;
-  columnGroupSelection = 'school';
+  columnGroupSelection = 'School Info';
   columnGroups = {
     'Basic Info': ['projectNumber', 'name', 'age', 'gender', 'schoolClass', 'schoolId', 'center', 'status'],
     'School Info': ['projectNumber', 'name', 'age', 'schoolClass', 'schoolId', 'attendance-school', 'attendance-coaching', 'motherTongue'],
