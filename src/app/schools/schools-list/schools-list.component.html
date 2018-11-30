@@ -32,6 +32,6 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"
              (click)="showDetails(row.getId())"
-             class="list-item"></mat-row>
+             class="list-item" style="cursor:pointer;"></mat-row>
   </mat-table>
 </div>
