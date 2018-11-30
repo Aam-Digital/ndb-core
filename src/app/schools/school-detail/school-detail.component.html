@@ -51,6 +51,8 @@
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="studentClick(row.getId())"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"
+             (click)="studentClick(row.getId())"
+             class="list-item"></mat-row>
   </mat-table>
 </div>
