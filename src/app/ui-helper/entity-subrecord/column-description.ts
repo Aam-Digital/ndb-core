@@ -24,6 +24,7 @@ export class ColumnDescription {
     public selectValues: Array<{value: any, label: string}> = [],
 
     public formatter = (value) => { return value; },
+    public visibileFrom?: string,
   ) {}
 
 }

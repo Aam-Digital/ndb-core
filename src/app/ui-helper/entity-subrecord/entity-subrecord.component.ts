@@ -140,4 +140,8 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
     col.selectValues = col.allSelectValues.filter(v => v.value.includes(input) || v.label.includes(input));
   }
 
+  checkVisisibility(col){
+
+  }
+
 }
