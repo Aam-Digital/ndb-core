@@ -136,3 +136,12 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 .attendance-U {
   background-color: #DDDDDD !important;
 }
+
+/* configures the color of the buttons on hover*/
+.filter-button mat-button-toggle:hover{
+  background: #f5f5f5;
+}
+
+.filter-button mat-button-toggle.selected:hover{
+  background: #e0e0e0;
+}
