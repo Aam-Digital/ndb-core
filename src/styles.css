@@ -87,6 +87,17 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
   font-size: 40pt;
 }
 
+mat-card.dashboard {
+  min-width: 250px;
+  margin: 10px;
+}
+
+@media (max-width: 599px) {
+  mat-card.dashboard {
+    padding: 24px;
+  }
+}
+
 
 
 
