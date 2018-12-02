@@ -11,7 +11,7 @@
       </mat-form-field>
     </div>
 
-    <div fxFlex='25' class='align-form-field'>
+    <div fxFlex='25' fxHide.xs='true' class='align-form-field'>
       (Showing {{childrenDataSource.filteredData.length}} children)
     </div>
 
@@ -22,7 +22,7 @@
     </div>
   </div>
 
-  <div fxLayout='row wrap'  fxLayout.xs='' fxLayoutGap='10px' class="filter-button">
+  <div fxLayout='row wrap' fxLayoutGap='10px' class="filter-button">
     <mat-button-toggle-group name="columnSelection" [(value)]="columnGroupSelection" fxLayout="row wrap">
       <!--<mat-button-toggle value="basic" (click)="displayColumnGroup('basic')">Basic Info</mat-button-toggle>-->
       <!--<mat-button-toggle value="school" (click)="displayColumnGroup('school')">School Info</mat-button-toggle>-->

@@ -43,6 +43,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
       'health_vaccinationStatus', 'health_LastDentalCheckup', 'health_LastEyeCheckup', 'health_eyeHealthStatus', 'health_LastENTCheckup',
       'health_LastVitaminD', 'health_LastDeworming',
       'gender', 'age', 'dateOfBirth'],
+    'Mobile' : ['projectNumber', 'name', 'age', 'schoolId']
   };
   columnsToDisplay: ['projectNumber', 'name'];
   filterString = '';
@@ -58,7 +59,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.loadUrlParams();
     this.watcher = this.media.subscribe((change: MediaChange) => {
       if(change.mqAlias=='xs'){
-        this.displayColumnGroup('Basic Info');
+        this.displayColumnGroup('Mobile');
       }
     });
   }
