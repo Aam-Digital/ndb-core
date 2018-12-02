@@ -82,20 +82,20 @@ export class EntityMapperService {
     )
   }
 
-  public loadTypeForRelation<T extends Entity, R extends Relation>(
-    returnType: PassableEntityConstructor<T>,
-    returnField: string,
+  public loadTypeForRelation<I extends Entity, O extends Entity, R extends Relation>(
+    inputType: typeof Entity | PassableEntityConstructor<I>,
+    outputType: typeof Entity | PassableEntityConstructor<O>,
     relationType: typeof Relation | PassableEntityConstructor<R>,
-    searchField: string,
-    searchId: string,
-  ): Promise<T[]> {
+    inputId: string,
+  ): Promise<O[]> {
+    const inputField: string = (relationType as typeof Relation).getParameterName(inputType as typeof Entity);
+    const outputField: string = (relationType as typeof Relation).getParameterName(outputType as typeof Entity);
     return this.loadType<R>(relationType as PassableEntityConstructor<R>)
-      .then((relations: R[]) =>
-        relations.filter((relation: R) => relation[searchField] === searchId))
+      .then((relations: R[]) => relations.filter((relation: R) => relation[inputField] === inputId))
       .then(async (relations: R[]) => {
-        const promises: Promise<T>[] = [];
+        const promises: Promise<O>[] = [];
         relations.forEach(relation =>
-          promises.push(this.load<T>(returnType, relation[returnField])));
+          promises.push(this.load<O>(outputType as PassableEntityConstructor<O>, relation[outputField])));
         return await Promise.all(promises);
       })
   }

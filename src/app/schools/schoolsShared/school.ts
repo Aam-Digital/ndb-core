@@ -18,11 +18,10 @@ export class School extends Entity {
   public website: string;
   public privateSchool: boolean;
   getStudents(entityMapperService: EntityMapperService): Promise<Child[]> {
-    return entityMapperService.loadTypeForRelation<Child, ChildSchoolRelation>(
+    return entityMapperService.loadTypeForRelation<School, Child, ChildSchoolRelation>(
+      School,
       Child,
-      'childId',
       ChildSchoolRelation,
-      'schoolId',
       this.getId())
   }
 }
