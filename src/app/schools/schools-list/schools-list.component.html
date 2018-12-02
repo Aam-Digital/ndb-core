@@ -9,7 +9,7 @@
   </div>
 
 
-  <mat-table #table [dataSource]="dataSource" matSort>
+  <mat-table #table [dataSource]="schoolDataSource" matSort>
     <!-- Name Column -->
     <ng-container matColumnDef="name">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
@@ -28,10 +28,14 @@
       <mat-cell *matCellDef="let school"> {{school.medium}} </mat-cell>
     </ng-container>
 
+    <ng-container matColumnDef="privateSchool">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Private School </mat-header-cell>
+      <mat-cell *matCellDef="let school"> {{school.privateSchool?"✓":"×"}} </mat-cell>
+    </ng-container>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"
-             (click)="showDetails(row.getId())"
+    <mat-header-row *matHeaderRowDef="columnsToDisplay"></mat-header-row>
+    <mat-row *matRowDef="let school; columns: columnsToDisplay;"
+             (click)="showSchoolDetails(school)"
              class="list-item" style="cursor:pointer;"></mat-row>
   </mat-table>
 </div>

@@ -3,7 +3,6 @@ import {MatTableDataSource, MatSort} from '@angular/material';
 import {School} from '../schoolsShared/school';
 import {SchoolsServices} from '../schoolsShared/schools.services';
 import {Router} from '@angular/router';
-import {EntityMapperService} from '../../entity/entity-mapper.service';
 
 @Component({
   selector: 'app-schools-list',
