@@ -18,6 +18,8 @@
 import { Injectable } from '@angular/core';
 import { Database } from '../database/database';
 import { Entity } from './entity';
+import {Relation} from '../children/childSchoolRelation';
+import {PassableEntityConstructor} from './PassableEntityConstructor';
 
 /**
  * The default generic DataMapper for Entity and any subclass.
@@ -44,7 +46,7 @@ export class EntityMapperService {
    * @param id the id of the entity to load.
    * @returns A Promise containing the resultEntity filled with its data.
    */
-  public load<T extends Entity>(entityType: { new(id: string): T; }, id: string): Promise<T> {
+  public load<T extends Entity>(entityType: PassableEntityConstructor<T>, id: string): Promise<T> {
     const resultEntity = new entityType('');
     return this._db.get(EntityMapperService.createDatabaseId(resultEntity.getType(), id)).then(
       function (result: any) {
@@ -63,7 +65,7 @@ export class EntityMapperService {
    * @param entityType a class that implements <code>Entity</code>.
    * @returns A Promise containing an array with the loaded entities.
    */
-  public loadType<T extends Entity>(entityType: { new(id: string): T; }): Promise<T[]> {
+  public loadType<T extends Entity>(entityType: PassableEntityConstructor<T>): Promise<T[]> {
     let resultEntity = new entityType('');
     return this._db.getAll(resultEntity.getType() + ':').then(
       function (result: any) {
@@ -80,14 +82,14 @@ export class EntityMapperService {
     )
   }
 
-  public loadTypeForRelation<T extends Entity, R extends Entity>(
-    returnType: {new(id: string): T; },
+  public loadTypeForRelation<T extends Entity, R extends Relation>(
+    returnType: PassableEntityConstructor<T>,
     returnField: string,
-    relationType: { new(id: string): R; },
+    relationType: typeof Relation | PassableEntityConstructor<R>,
     searchField: string,
     searchId: string,
   ): Promise<T[]> {
-    return this.loadType<R>(relationType)
+    return this.loadType<R>(relationType as PassableEntityConstructor<R>)
       .then((relations: R[]) =>
         relations.filter((relation: R) => relation[searchField] === searchId))
       .then(async (relations: R[]) => {

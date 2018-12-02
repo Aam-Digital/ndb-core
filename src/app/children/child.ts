@@ -17,6 +17,9 @@
 
 import { Entity } from '../entity/entity';
 import { Gender} from './Gender';
+import {EntityMapperService} from '../entity/entity-mapper.service';
+import {School} from '../schools/school';
+import {ChildSchoolRelation} from './childSchoolRelation';
 
 
 export class Child extends Entity {
@@ -93,6 +96,11 @@ export class Child extends Entity {
       return 'assets/child.png';
     }
     return 'assets/child-photos/' + this.projectNumber + '.jpg';
+  }
+
+  getSchools(entityMapperService: EntityMapperService): Promise<School[]> {
+    console.log('getParameterName', ChildSchoolRelation.getParameterName(School));
+    return null;
   }
 
 }

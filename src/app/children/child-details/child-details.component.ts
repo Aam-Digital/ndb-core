@@ -115,6 +115,7 @@ export class ChildDetailsComponent implements OnInit {
       this.entityMapperService.load<Child>(Child, id)
         .then(child => {
           this.child = child;
+          this.child.getSchools(this.entityMapperService);
           this.initForm();
         });
     }
