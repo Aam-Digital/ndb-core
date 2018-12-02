@@ -12,6 +12,7 @@ import {Entity} from '../../entity/entity';
 export class SearchComponent implements OnInit {
   results;
   searchText = '';
+  showSearchToolbar = false;
 
   constructor(private db: Database) { }
 
@@ -116,4 +117,7 @@ export class SearchComponent implements OnInit {
     optionElement._element.nativeElement.children['0'].children['0'].click();
   }
 
+  toggleSearchToolbar(){
+    this.showSearchToolbar = !this.showSearchToolbar;
+  }
 }

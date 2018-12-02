@@ -1,5 +1,5 @@
-<div>
-  <mat-form-field fxFill>
+<div fxHide.xs="true" fxHide="false">
+  <mat-form-field fxFill class="search-field">
     <span matPrefix><mat-icon class="search-icon" fontIcon="fa-search"></mat-icon>&nbsp;</span>
     <input matInput (input)="search()" title="Search" [matAutocomplete]="autoResults" [(ngModel)]="searchText">
   </mat-form-field>
@@ -11,3 +11,14 @@
     </mat-option>
   </mat-autocomplete>
 </div>
+
+<button mat-icon-button fxHide.xs="false" fxHide="true" (click)="toggleSearchToolbar()">
+  <mat-icon class="header-icon" fontIcon="fa-search"></mat-icon>
+</button>
+
+<mat-toolbar *ngIf="showSearchToolbar" class="search-header mat-elevation-z7 mat-typography">
+  <mat-toolbar-row fxLayout="row">
+    <input fxFlex="grow" matInput (input)="search()" title="Search" [matAutocomplete]="autoResults" [(ngModel)]="searchText">
+    <button mat-icon-button (click)="toggleSearchToolbar()"><mat-icon class="search-icon" fontIcon="fa-times"></mat-icon></button>
+  </mat-toolbar-row>
+</mat-toolbar>
