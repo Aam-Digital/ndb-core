@@ -29,19 +29,18 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
 
   @ViewChild(MatSort) sort: MatSort;
-  columnGroupSelection = 'school';
+  columnGroupSelection = 'School Info';
   columnGroups = {
-    'basic': ['projectNumber', 'name', 'age', 'gender', 'schoolClass', 'schoolId', 'center', 'status'],
-    'school': ['projectNumber', 'name', 'age', 'schoolClass', 'schoolId', 'attendance-school', 'attendance-coaching', 'motherTongue'],
-    'status': ['projectNumber', 'name', 'center', 'status', 'admissionDate',
+    'Basic Info': ['projectNumber', 'name', 'age', 'gender', 'schoolClass', 'schoolId', 'center', 'status'],
+    'School Info': ['projectNumber', 'name', 'age', 'schoolClass', 'schoolId', 'attendance-school', 'attendance-coaching', 'motherTongue'],
+    'Status': ['projectNumber', 'name', 'center', 'status', 'admissionDate',
       'has_aadhar', 'has_kanyashree', 'has_bankAccount', 'has_rationCard', 'has_bplCard'],
-    'health': ['projectNumber', 'name', 'center',
+    'Health': ['projectNumber', 'name', 'center',
       'health_vaccinationStatus', 'health_LastDentalCheckup', 'health_LastEyeCheckup', 'health_eyeHealthStatus', 'health_LastENTCheckup',
-      'health_lastVitaminD', 'health_LastDeworming',
+      'health_LastVitaminD', 'health_LastDeworming',
       'gender', 'age', 'dateOfBirth'],
   };
   columnsToDisplay: ['projectNumber', 'name'];
-
   filterString = '';
 
 
