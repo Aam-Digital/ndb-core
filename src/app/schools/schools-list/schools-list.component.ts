@@ -77,8 +77,6 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
     this.applyFilterGroups();
   }
 
-
-
   addSchoolClick() {
     let route: string;
     route = this.router.url + '/new';

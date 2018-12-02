@@ -132,7 +132,6 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.updateUrl();
   }
 
-
   updateUrl() {
     const params = {};
     this.filterSelections.forEach(f => {
