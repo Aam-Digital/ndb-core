@@ -18,8 +18,8 @@
 import { Injectable } from '@angular/core';
 import { Database } from '../database/database';
 import { Entity } from './entity';
-import {Relation} from '../children/childSchoolRelation';
 import {PassableEntityConstructor} from './PassableEntityConstructor';
+import {EntityRelation} from './EntityRelation';
 
 /**
  * The default generic DataMapper for Entity and any subclass.
@@ -82,14 +82,14 @@ export class EntityMapperService {
     )
   }
 
-  public loadTypeForRelation<I extends Entity, O extends Entity, R extends Relation>(
+  public loadTypeForRelation<I extends Entity, O extends Entity, R extends EntityRelation>(
     inputType: typeof Entity | PassableEntityConstructor<I>,
     outputType: typeof Entity | PassableEntityConstructor<O>,
-    relationType: typeof Relation | PassableEntityConstructor<R>,
+    relationType: typeof EntityRelation | PassableEntityConstructor<R>,
     inputId: string,
   ): Promise<O[]> {
-    const inputField: string = (relationType as typeof Relation).getParameterName(inputType as typeof Entity);
-    const outputField: string = (relationType as typeof Relation).getParameterName(outputType as typeof Entity);
+    const inputField: string = (relationType as typeof EntityRelation).getParameterName(inputType as typeof Entity);
+    const outputField: string = (relationType as typeof EntityRelation).getParameterName(outputType as typeof Entity);
     return this.loadType<R>(relationType as PassableEntityConstructor<R>)
       .then((relations: R[]) => relations.filter((relation: R) => relation[inputField] === inputId))
       .then(async (relations: R[]) => {

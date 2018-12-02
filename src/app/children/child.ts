@@ -18,8 +18,8 @@
 import { Entity } from '../entity/entity';
 import { Gender} from './Gender';
 import {EntityMapperService} from '../entity/entity-mapper.service';
-import {School} from '../schools/school';
 import {ChildSchoolRelation} from './childSchoolRelation';
+import {School} from '../schools/schoolsShared/school';
 
 
 export class Child extends Entity {
@@ -99,8 +99,58 @@ export class Child extends Entity {
   }
 
   getSchools(entityMapperService: EntityMapperService): Promise<School[]> {
-    console.log('getParameterName', ChildSchoolRelation.getParameterName(School));
-    return null;
+    return entityMapperService.loadTypeForRelation<Child, School, ChildSchoolRelation> (
+      Child,
+      School,
+      ChildSchoolRelation,
+      this.getId(),
+    );
+  }
+  getRelations(entityMapperService: EntityMapperService): Promise<ChildSchoolRelation[]> {
+    return entityMapperService.loadType<ChildSchoolRelation>(ChildSchoolRelation).then((relations: ChildSchoolRelation[]) => {
+      return relations.filter(relation => relation.childId === this.getId());
+   })
   }
 
+  getViewableSchools(entityMapperService: EntityMapperService): Promise<ViewableSchool[]> {
+    return this.getRelations(entityMapperService).then((relations: ChildSchoolRelation[]) => {
+      const schools: ViewableSchool[] = [];
+      relations.forEach(async relation => {
+        const school: School = await relation.getSchool(entityMapperService);
+        schools.push(new ViewableSchool(relation, school));
+      });
+      return schools;
+    });
+  }
+}
+
+
+export class ViewableSchool {
+  constructor(private _childSchoolRelation: ChildSchoolRelation, private _school: School) { }
+
+  set childSchoolRelation(value: ChildSchoolRelation) {
+    this._childSchoolRelation = value;
+  }
+
+  set school(value: School) {
+    this._school = value;
+  }
+
+  get childSchoolRelation(): ChildSchoolRelation {
+    return this._childSchoolRelation;
+  }
+
+  get school(): School {
+    return this._school;
+  }
+
+  getSchoolName(): string {
+    return this._school.name;
+  }
+  getStartTime(): string {
+    return this._childSchoolRelation.start;
+  }
+  getEndTime(): string {
+    return this._childSchoolRelation.end;
+  }
 }
