@@ -1,8 +1,8 @@
 import {Component, OnInit, AfterViewInit, ViewChild} from '@angular/core';
 import {MatTableDataSource, MatSort} from '@angular/material';
-import {School} from '../schoolsShared/school';
-import {SchoolsServices} from '../schoolsShared/schools.services';
+import {School} from '../school';
 import {Router} from '@angular/router';
+import {EntityMapperService} from '../../entity/entity-mapper.service';
 
 @Component({
   selector: 'app-schools-list',
@@ -17,6 +17,7 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   columnsToDisplay: string[] = ['name', 'address', 'medium', 'privateSchool'];
   mediums: string[];
   mediumFilterSelection = '';
+  filterString = '';
 
   privateSchools: string[] = ['Private  School'];
   privateSchoolFilterSelection = '';
@@ -24,34 +25,24 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   filterFunctionPrivateSchool: (s: School) => boolean = (s: School) => true;
   filterFunctionMedium: (s: School) => boolean = (s: School) => true;
 
-  constructor(private schoolService: SchoolsServices,
-              private router: Router) {
-    this.schoolService.getSchools().subscribe(data => {
-      this.schoolList = data;
-      this.schoolDataSource.data = data;
-      this.setMediumFilteredList(this.mediumFilterSelection);
+  constructor(private router: Router,
+              private entityMapperService: EntityMapperService) {
 
-      this.mediums = data.map(s => s.medium).filter((value, index, arr) => arr.indexOf(value) === index);
-    });
   }
-/* // master version
-  ngOnInit() {
-    this.entityMapper.loadType<School>(School)
-      .then(loadedEntities => this.dataSource.data = loadedEntities);
-  } */
 
-// schoolDetailversion
   ngOnInit() {
-    this.columnsToDisplay = ['name', 'address', 'medium', 'privateSchool'];
+    this.entityMapperService.loadType<School>(School)
+      .then(data => {
+        this.schoolList = data;
+        this.schoolDataSource.data = data;
+        this.setMediumFilteredList(this.mediumFilterSelection);
+        this.mediums = data.map(s => s.medium).filter((value, index, arr) => arr.indexOf(value) === index);
+      });
+    this.schoolDataSource.sort = this.sort;
   }
-/* // master version
-  ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
-  } */
 
  // schoolDetail version
   ngAfterViewInit() {
-    this.schoolDataSource.sort = this.sort;
   }
 
   applyFilter(filterValue: string) {

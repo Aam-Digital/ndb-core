@@ -1,12 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
-import {School} from '../../../schools/school';
 import {Child} from '../../child';
 import {MatTableDataSource} from '@angular/material';
 import {AttendanceMonth} from '../attendance-month';
 import {ConfirmationDialogService} from '../../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {AlertService} from '../../../alerts/alert.service';
 import {ChildrenService} from '../../children.service';
+import {School} from '../../../schools/school';
 
 @Component({
   selector: 'app-add-month-attendance',

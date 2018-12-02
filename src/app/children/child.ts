@@ -19,7 +19,7 @@ import { Entity } from '../entity/entity';
 import { Gender} from './Gender';
 import {EntityMapperService} from '../entity/entity-mapper.service';
 import {ChildSchoolRelation} from './childSchoolRelation';
-import {School} from '../schools/schoolsShared/school';
+import {School} from '../schools/school';
 
 
 export class Child extends Entity {

@@ -26,8 +26,8 @@ import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/con
 
 import uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
-import {School} from '../../schools/school';
 import {ChildrenService} from '../children.service';
+import {School} from '../../schools/school';
 
 
 @Component({

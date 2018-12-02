@@ -1,25 +1,27 @@
 import {Entity} from '../entity/entity';
+import {EntityMapperService} from '../entity/entity-mapper.service';
+import {Child} from '../children/child';
+import {ChildSchoolRelation} from '../children/childSchoolRelation';
 
 export class School extends Entity {
-  static ENTITY_TYPE = 'School';
+  public static ENTITY_TYPE = 'School';
 
-  name = '';
-  medium = '';
-  governmentSchool: boolean;
-  academicBoard = '';
-  upToClass: number;
+  public name: string;
+  public address: string;
+  public medium: string;
+  public maxClass?: number;
+  public remarks?: string;
+  public board?: string;
+  public schoolTiming: string;
+  public workDays: string;
+  public website: string;
+  public privateSchool: boolean;
 
-  timing = '';
-  workingDays = '';
-  sessionStart = '';
-
-  remarks = '';
-
-  address = '';
-  website = '';
-
-
-  public toString() {
-    return this.name;
+  getStudents(entityMapperService: EntityMapperService): Promise<Child[]> {
+    return entityMapperService.loadTypeForRelation<School, Child, ChildSchoolRelation>(
+      School,
+      Child,
+      ChildSchoolRelation,
+      this.getId())
   }
 }

@@ -1,7 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {School} from '../schoolsShared/school';
-import {SchoolsServices} from '../schoolsShared/schools.services';
+import {School} from '../school';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import uniqid from 'uniqid';
@@ -41,7 +40,6 @@ export class SchoolDetailComponent implements OnInit {
   }
 
   constructor(
-    private ss: SchoolsServices,
     private route: ActivatedRoute,
     private router: Router,
     @Inject(FormBuilder) public fb: FormBuilder,
@@ -64,33 +62,20 @@ export class SchoolDetailComponent implements OnInit {
     this.initializeForm();
   }
 
-  enableEdit() {
-    this.editing = true;
-    this.initializeForm();
-  }
-
-  disableEdit() {
-    this.editing = false;
+  switchEdit() {
+    this.editing = !this.editing;
     this.initializeForm();
   }
 
   async loadSchool(id: string) {
-    // this.entityMapperService.load(School, id)
-    //   .then(loadedEntities => this.school = loadedEntities)
-    //   .then(() => this.entityMapperService.loadType<ChildSchoolRelation>((ChildSchoolRelation)))
-    //   .then(childSchoolRelations => childSchoolRelations.filter(relation => relation.schoolId === this.school.getId()))
-    //   .then(async childSchoolRelations => {
-    //     const promisses: Promise<Child>[] = [];
-    //     childSchoolRelations.forEach(relation => {
-    //       promisses.push(this.entityMapperService.load<Child>(Child, relation.childId));
-    //     });
-    //     this.studentDataSource.data = await Promise.all(promisses);
-    //   }).catch((err) => this.alertService.addDanger('Could not load school with id "' + id + '": ' + err));
     this.entityMapperService.load(School, id)
       .then((school: School) => {
         this.school = school;
         this.school.getStudents(this.entityMapperService)
-          .then((students: Child[]) => this.studentDataSource.data = students);
+          .then((students: Child[]) => {
+            this.studentDataSource.data = students;
+            this.initializeForm();
+          });
       })
   }
 
@@ -119,24 +104,22 @@ export class SchoolDetailComponent implements OnInit {
     this.router.navigate([route]);
   }
   saveSchool() {
-    // this.school.name = this.form.get('name').value;
-    // this.school.address = this.form.get('address').value;
-    // this.school.medium = this.form.get('medium').value;
-    // this.school.schoolTiming = this.form.get('schoolTiming').value;
-    // this.school.maxClass = this.form.get('maxClass').value;
-    // this.school.remarks = this.form.get('remarks').value;
-    // this.school.board = this.form.get('board').value;
-    // this.school.workDays = this.form.get('workDays').value;
-    // this.school.website = this.form.get('website').value;
-    // this.school.privateSchool = this.form.get('privateSchool').value;
-    //
-    // this.entityMapperService.save<School>(this.school)
-    //   .then(() => {
-    //     if (this.creatingNew) {
-    //       this.router.navigate(['/school', this.school.getId()]);
-    //     }
-    //     this.disableEdit();
-    //   })
-    //   .catch((err) => this.alertService.addDanger('Could not save School "' + this.school.name + '": ' + err));  }
+    this.assignFormValuesToSchool(this.school, this.form);
+
+    this.entityMapperService.save<School>(this.school)
+      .then(() => {
+        if (this.creatingNew) {
+          this.router.navigate(['/school', this.school.getId()]);
+          this.creatingNew = false;
+        }
+        this.switchEdit();
+      })
+      .catch((err) => this.alertService.addDanger('Could not save School "' + this.school.name + '": ' + err));
+  }
+
+  private assignFormValuesToSchool(school: School, form: FormGroup) {
+    Object.keys(form.controls).forEach(key => {
+      school[key] = form.get(key).value;
+    });
   }
 }

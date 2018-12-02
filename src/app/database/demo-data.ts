@@ -2,11 +2,11 @@ import {Child} from '../children/child';
 import {Gender} from '../children/Gender';
 import {AttendanceMonth} from '../children/attendance/attendance-month';
 import {Entity} from '../entity/entity';
-import {School} from '../schools/school';
 import {Note} from '../children/notes/note';
 import {WarningLevel} from '../children/attendance/warning-level';
 import {AttendanceStatus} from '../children/attendance/attendance-day';
 import {ChildSchoolRelation} from '../children/childSchoolRelation';
+import {School} from '../schools/school';
 
 export class DemoData {
 

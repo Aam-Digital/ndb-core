@@ -1,5 +1,5 @@
 import {Entity} from '../entity/entity';
-import {School} from '../schools/schoolsShared/school';
+import {School} from '../schools/school';
 import {Child} from './child';
 import {EntityRelation} from '../entity/EntityRelation';
 import {EntityMapperService} from '../entity/entity-mapper.service';

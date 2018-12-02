@@ -1,16 +1,42 @@
 <h1>Schools List</h1>
 
-<div>
+<mat-expansion-panel expanded="true" fxLayout="column" fxLayoutGap="10px" class='filter-panel'>
+  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none end">
+    <div fxFlex='50'>
+      <mat-form-field style='width:100%'>
+        <input matInput placeholder="Filter" (ngModelChange)="applyFilter($event)" [(ngModel)]="filterString">
+        <button mat-icon-button *ngIf="filterString" matSuffix aria-label="Clear" (click)="filterString=''; applyFilter('');">
+          <mat-icon fontIcon="fa-times"></mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
 
-  <div>
-    <mat-form-field>
-      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-    </mat-form-field>
+    <div class='align-form-field'>
+      (Showing {{schoolDataSource.filteredData.length}} children)
+    </div>
+
+    <div class='align-form-field'>
+      <button mat-stroked-button color="accent" (click)="addSchoolClick()">
+        <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>Add New School
+      </button>
+    </div>
   </div>
 
+  <div fxLayout='row' fxLayoutGap='10px'>
+    <mat-button-toggle-group name="mediumFilterSelection" [(value)]="mediumFilterSelection">
+      <mat-button-toggle *ngFor='let medium of mediums' [value]="medium" (click)="setMediumFilteredList(medium)">{{medium}}</mat-button-toggle>
+      <mat-button-toggle value="" (click)="setMediumFilteredList('')">All</mat-button-toggle>
+    </mat-button-toggle-group>
 
-  <mat-table #table [dataSource]="schoolDataSource" matSort>
-    <!-- Name Column -->
+    <mat-button-toggle-group name="privateSchoolFilterSelection" [(value)]="privateSchoolFilterSelection">
+      <mat-button-toggle *ngFor='let privateSchool of privateSchools' [value]="privateSchool" (click)="setPrivateSchoolFilteredList(privateSchool)">{{privateSchool}}</mat-button-toggle>
+      <mat-button-toggle value="" (click)="setPrivateSchoolFilteredList('')">All</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+</mat-expansion-panel>
+
+<div *ngIf="schoolDataSource">
+  <mat-table mat-table [dataSource]="schoolDataSource" matSort class="mat-elevation-z8 table-list" width='100%'>
     <ng-container matColumnDef="name">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
       <mat-cell *matCellDef="let school"> {{school.name}} </mat-cell>

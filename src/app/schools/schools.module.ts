@@ -24,7 +24,6 @@ import { MatPaginatorModule, MatProgressSpinnerModule } from '@angular/material'
 import {MatSelectModule} from '@angular/material/select';
 import {UiHelperModule} from '../ui-helper/ui-helper.module';
 import {RouterModule} from '@angular/router';
-import {SchoolsServices} from './schoolsShared/schools.services';
 
 @NgModule({
   imports: [
@@ -72,6 +71,6 @@ import {SchoolsServices} from './schoolsShared/schools.services';
     SchoolDetailComponent,
   ],
   exports: [SchoolBlockComponent],
-  providers: [SchoolsServices]
+  providers: []
 })
 export class SchoolsModule { }
