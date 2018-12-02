@@ -60,7 +60,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
       if(change.mqAlias=='xs'){
         this.displayColumnGroup('Basic Info');
       }
-    }
+    });
   }
 
 
