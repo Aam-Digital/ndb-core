@@ -82,6 +82,15 @@ export class EntityMapperService {
     )
   }
 
+  /**
+   * Loads all entities of type O/inputType that occur in a entity of type R/relationType and reference the same entity of type I/inputType
+   * with an id equal to inputId
+   *
+   * @param inputType the type of entity where you have the id
+   * @param outputType the type of the entities which you want to get
+   * @param relationType the type of the relation that is used for resolving the call
+   * @param inputId the id of the input entity
+   */
   public loadTypeForRelation<I extends Entity, O extends Entity, R extends EntityRelation>(
     inputType: typeof Entity | PassableEntityConstructor<I>,
     outputType: typeof Entity | PassableEntityConstructor<O>,

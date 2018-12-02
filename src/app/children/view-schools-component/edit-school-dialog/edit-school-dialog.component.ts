@@ -28,7 +28,6 @@ export class EditSchoolDialogComponent implements OnInit {
   ngOnInit() {
     this.child = this.data.child;
 
-
     if (this.data.childSchoolRelation) {
       this.entityMapperService.load<ChildSchoolRelation>(ChildSchoolRelation, this.data.childSchoolRelation.getId())
         .then((res: ChildSchoolRelation) => this.childSchoolRelation = res); // fetch a new one to not mutate the displayed object
@@ -45,7 +44,6 @@ export class EditSchoolDialogComponent implements OnInit {
 
   public editSchoolClick() {
     this.childSchoolRelation.schoolId = this.selectedSchool.getId();
-    console.log('date', this.childSchoolRelation.start, typeof this.childSchoolRelation.start);
     this.entityMapperService.save<ChildSchoolRelation>(this.childSchoolRelation)
       .then(() => this.closeAfterEditing(this.creating ? 'CREATE' : 'EDIT'));
   }
