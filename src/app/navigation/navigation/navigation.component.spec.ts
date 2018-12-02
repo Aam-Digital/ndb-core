@@ -19,10 +19,11 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NavigationComponent } from './navigation.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import {SessionService} from '../../session/session.service';
+import {MockSessionService} from '../../session/mock-session.service';
 import {NavigationItemsService} from '../navigation-items.service';
 import {MenuItem} from '../menu-item';
 import {MatDividerModule, MatIconModule, MatListModule} from '@angular/material';
+import { SessionService } from 'app/session/session.service';
 
 describe('NavigationComponent', () => {
   let component: NavigationComponent;
@@ -30,10 +31,10 @@ describe('NavigationComponent', () => {
 
 
   let navigationItemsService: NavigationItemsService;
-  let sessionService: SessionService;
+  let sessionService: MockSessionService;
 
   beforeEach(async(() => {
-    sessionService = new SessionService(null, null, null);
+    sessionService = new MockSessionService();
     navigationItemsService = new NavigationItemsService();
     navigationItemsService.addMenuItem(new MenuItem('test', 'test-icon', []));
 

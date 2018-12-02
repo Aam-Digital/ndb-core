@@ -19,14 +19,15 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AppVersionComponent } from './app-version.component';
 import {MatDialog, MatDialogModule} from '@angular/material';
-import {SessionService} from '../../session/session.service';
+import {MockSessionService} from '../../session/mock-session.service';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {LatestChangesService} from '../latest-changes.service';
 import {Observable} from 'rxjs/Rx';
-import {SessionStatus} from '../../session/session-status';
+import {LoginState} from '../../session/login-state.enum';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {ChangelogComponent} from '../changelog/changelog.component';
 import {NgModule} from '@angular/core';
+import { SessionService } from 'app/session/session.service';
 
 
 @NgModule({
@@ -41,18 +42,18 @@ describe('AppVersionComponent', () => {
   let fixture: ComponentFixture<AppVersionComponent>;
 
   let latestChangesService: LatestChangesService;
-  let sessionService: SessionService;
+  let sessionService: MockSessionService;
   let entityMapper: EntityMapperService;
 
   beforeEach(async(() => {
     latestChangesService = new LatestChangesService(null, null);
-    sessionService = new SessionService(null, null, null);
+    sessionService = new MockSessionService();
     entityMapper = new EntityMapperService(null);
 
     spyOn(latestChangesService, 'getChangelogs').and
       .returnValue(Observable.of([{ name: 'test', tag_name: 'v1.0', body: 'latest test', published_at: '2018-01-01'}]));
-    spyOn(sessionService, 'onSessionStatusChanged').and
-      .returnValue(Observable.of(SessionStatus.loggedIn));
+    spyOn(sessionService.getLoginState(), 'getState').and
+      .returnValue(LoginState.loggedIn);
 
     TestBed.configureTestingModule({
       declarations: [AppVersionComponent],

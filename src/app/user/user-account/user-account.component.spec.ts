@@ -22,6 +22,7 @@ import {MatButtonModule, MatFormFieldModule, MatInputModule} from '@angular/mate
 import {SessionService} from '../../session/session.service';
 import {User} from '../user';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import { MockSessionService } from 'app/session/mock-session.service';
 
 describe('UserAccountComponent', () => {
   let component: UserAccountComponent;
@@ -32,8 +33,8 @@ describe('UserAccountComponent', () => {
   user.name = 'test';
 
   beforeEach(async(() => {
-    sessionService = new SessionService(null, null, null);
-    sessionService.currentUser = user;
+    sessionService = new MockSessionService();
+    spyOn(sessionService, 'getCurrentUser').and.returnValue(user);
 
     TestBed.configureTestingModule({
       declarations: [UserAccountComponent],

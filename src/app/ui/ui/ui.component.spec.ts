@@ -33,12 +33,12 @@ import {NavigationModule} from '../../navigation/navigation.module';
 import {LatestChangesModule} from '../../latest-changes/latest-changes.module';
 import {SessionModule} from '../../session/session.module';
 import {AppConfigModule} from '../../app-config/app-config.module';
-import {DatabaseManagerService} from '../../database/database-manager.service';
-import {MockDatabaseManagerService} from '../../database/mock-database-manager.service';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {UiHelperModule} from '../../ui-helper/ui-helper.module';
 import {PrimaryActionComponent} from '../primary-action/primary-action.component';
 import {AppConfig} from '../../app-config/app-config';
+import { SessionService } from 'app/session/session.service';
+import { MockSessionService } from 'app/session/mock-session.service';
 
 describe('UiComponent', () => {
   let component: UiComponent;
@@ -70,7 +70,7 @@ describe('UiComponent', () => {
         LatestChangesModule,
         SessionModule,
       ],
-      providers: [{provide: DatabaseManagerService, useClass: MockDatabaseManagerService}],
+      providers: [{provide: SessionService, useClass: MockSessionService}],
     })
       .compileComponents();
   }));

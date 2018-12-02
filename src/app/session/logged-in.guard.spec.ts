@@ -18,6 +18,7 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { LoggedInGuard } from './logged-in.guard';
+import { MockSessionService } from './mock-session.service';
 import { SessionService } from './session.service';
 
 describe('LoggedInGuard', () => {
@@ -25,7 +26,7 @@ describe('LoggedInGuard', () => {
   let sessionService: SessionService;
 
   beforeEach(() => {
-    sessionService = new SessionService(null, null, null);
+    sessionService = new MockSessionService();
 
     TestBed.configureTestingModule({
       providers: [LoggedInGuard,

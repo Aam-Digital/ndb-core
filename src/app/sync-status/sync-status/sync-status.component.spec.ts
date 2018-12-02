@@ -19,14 +19,13 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SyncStatusComponent } from './sync-status.component';
 import {MatDialogModule, MatIconModule, MatProgressBarModule} from '@angular/material';
-import {SessionService} from '../../session/session.service';
+import {MockSessionService} from '../../session/mock-session.service';
 import {AlertService} from '../../alerts/alert.service';
-import {DatabaseManagerService} from '../../database/database-manager.service';
-import {MockDatabaseManagerService} from '../../database/mock-database-manager.service';
-import {DatabaseSyncStatus} from '../../database/database-sync-status.enum';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {InitialSyncDialogComponent} from './initial-sync-dialog.component';
 import {NgModule} from '@angular/core';
+import { SessionService } from 'app/session/session.service';
+import { SyncState } from 'app/session/sync-state.enum';
 
 
 @NgModule({
@@ -41,21 +40,18 @@ describe('SyncStatusComponent', () => {
   let component: SyncStatusComponent;
   let fixture: ComponentFixture<SyncStatusComponent>;
 
-  let sessionService: SessionService;
+  let sessionService: MockSessionService;
   let alertService: AlertService;
-  let dbManager: MockDatabaseManagerService;
 
   beforeEach(async(() => {
-    sessionService = new SessionService(null, null, null);
+    sessionService = new MockSessionService();
     alertService = new AlertService(null, null);
-    dbManager = new MockDatabaseManagerService();
 
     TestBed.configureTestingModule({
       imports: [TestModule],
       providers: [
         { provide: SessionService, useValue: sessionService },
-        { provide: AlertService, useValue: alertService },
-        { provide: DatabaseManagerService, useValue: dbManager}
+        { provide: AlertService, useValue: alertService }
       ],
     })
       .compileComponents();
@@ -73,7 +69,7 @@ describe('SyncStatusComponent', () => {
    });
 
   it('should open dialog without error', (done) => {
-    dbManager.triggerSyncStatusChanged(DatabaseSyncStatus.started);
+    sessionService.getSyncState().setState(SyncState.started);
     setTimeout(() => checkDialogRefDefined(expect, done), 100);
 
     function checkDialogRefDefined(_expect, _done) {
