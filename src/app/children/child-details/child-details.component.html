@@ -214,7 +214,7 @@
         Attendance
       </mat-expansion-panel-header>
 
-      <div fxLayout='row' fxLayoutGap='20px'>
+      <div fxLayout='row' fxLayoutGap='20px' fxLayout.xs='column wrap' fxLayout.md='column wrap' fxLayout.sm='column wrap'>
         <div fxFlex='40'>
           <h3>School Attendance</h3>
           <app-child-attendance institution='school' [showDailyAttendanceOfLatest]='true'></app-child-attendance>
