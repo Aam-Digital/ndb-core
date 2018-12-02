@@ -14,3 +14,7 @@
 .mat-header-cell.mat-sort-header-sorted {
   color: black;
 }
+
+.list-item:hover{
+  background: #F5F5F5;
+}

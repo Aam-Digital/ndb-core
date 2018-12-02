@@ -19,8 +19,9 @@
 <mat-toolbar color="primary" class="app-header mat-elevation-z6 mat-typography">
   <mat-toolbar-row fxLayout="row">
     <span fxFlex *ngIf="isLoggedIn()">
-      <button mat-icon-button (click)="showNav=showNav?false:true;" class='sidenav-toggle-button'>
-      <mat-icon class="header-icon" fontIcon="fa-bars"></mat-icon></button>
+      <button mat-icon-button fxshow fxHide.xs="false" fxHide="true" (click)="showNav=showNav?false:true;">
+        <mat-icon class="header-icon" fontIcon="fa-bars"></mat-icon>
+      </button>
     </span>
     <span fxFlex=""><a class="header-title" [routerLink]="['']">{{title}}</a></span>
     <span fxFlex="grow"></span>
@@ -42,7 +43,7 @@
 <mat-sidenav-container class="app-content mat-typography">
 
 
-  <mat-sidenav *ngIf="isLoggedIn()" #sidenav mode="side" [opened]="showNav" fixedInViewport="true" class="sidenav-menu">
+  <mat-sidenav *ngIf="isLoggedIn()" [mode]="sideNavMode" [opened]="showNav" fixedInViewport="true" class="sidenav-menu">
     <app-navigation></app-navigation>
     <app-version style="position:absolute; bottom:0;"></app-version>
   </mat-sidenav>
