@@ -1,9 +1,9 @@
-<table mat-table [dataSource]="recordsDataSource" matSort class="mat-elevation-z8 subrecord-table">
+<mat-table [dataSource]="recordsDataSource" matSort class="mat-elevation-z8 subrecord-table">
 
   <ng-container *ngFor="let col of columns" [matColumnDef]="col.name">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header fxShow=checkVisibility(col)> {{col.label}} </th>
-    <td mat-cell *matCellDef="let rec"
-        (click)='showRecord(rec)' [ngClass]="{'table-link': detailsComponent!==undefined}" fxShow="checkVisibility({{col.visibileFrom}})">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> {{col.label}} </mat-header-cell>
+    <mat-cell *matCellDef="let rec"
+        (click)='showRecord(rec)' [ngClass]="{'table-link': detailsComponent!==undefined}">
 
       <div *ngIf="col.inputType === 'function'" class='table-show-number'>
         {{ col.formatter( rec[col.name]() ) }}
@@ -49,7 +49,7 @@
 
         </mat-form-field>
       </div>
-    </td>
+    </mat-cell>
   </ng-container>
 
 
@@ -76,8 +76,8 @@
   </ng-container>
 
 
-  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-  <tr mat-row *matRowDef="let rec; columns: columnsToDisplay"
+  <mat-header-row *matHeaderRowDef="columnsToDisplay"></mat-header-row>
+  <mat-row *matRowDef="let rec; columns: columnsToDisplay"
       class="{{getWarningStyleClass(rec)}}" [ngStyle]="{'background-color': rec.getColor()}">
-  </tr>
-</table>
+  </mat-row>
+</mat-table>

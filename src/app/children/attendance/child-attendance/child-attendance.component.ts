@@ -29,7 +29,7 @@ export class ChildAttendanceComponent implements OnInit {
     new ColumnDescription('getAttendancePercentage', 'Attended', 'function', null,
       (v: number) => this.percentPipe.transform(v, '1.0-0'), 'md'),
     new ColumnDescription('daysExcused', 'Excused', 'number', null, undefined, 'md'),
-    new ColumnDescription('remarks', 'Remarks', 'textarea', null, undefined, 'md'),
+    new ColumnDescription('remarks', 'Remarks', 'textarea', null, undefined, 'xl'),
   ];
 
 

@@ -4,6 +4,7 @@ import {ConfirmationDialogService} from '../confirmation-dialog/confirmation-dia
 import {Entity} from '../../entity/entity';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {ColumnDescription} from './column-description';
+import {HostListener} from '@angular/core';
 
 @Component({
   selector: 'app-entity-subrecord',
@@ -21,14 +22,15 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
   columnsToDisplay = [];
   recordsEditing = new Map<string, boolean>();
   originalRecords = [];
+  screenWidth: any;
 
   @ViewChild(MatSort) sort: MatSort;
-
 
   constructor(private _entityMapper: EntityMapperService,
               private _snackBar: MatSnackBar,
               private _confirmationDialog: ConfirmationDialogService,
               private dialog: MatDialog) {
+    this.getScreenWidth();
   }
 
   ngOnInit() {
@@ -140,8 +142,44 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
     col.selectValues = col.allSelectValues.filter(v => v.value.includes(input) || v.label.includes(input));
   }
 
-  checkVisisibility(col){
+  @HostListener('window:resize', ['$event'])
+  getScreenWidth(event?) {
+    this.screenWidth = window.innerWidth;
+  }
 
+  checkVisibility(col) {
+    let result = false;
+    switch (col.visibileFrom) {
+      case 'xl': {
+        if (this.screenWidth >= 1920) {
+          result = true;
+        }
+        break;
+      }
+      case 'lg': {
+        if (this.screenWidth >= 1280) {
+          result = true;
+        }
+        break;
+      }
+      case 'md': {
+        if (this.screenWidth >= 960) {
+          result = true;
+        }
+        break;
+      }
+      case 'sm': {
+        if (this.screenWidth >= 600) {
+          result = true;
+        }
+        break;
+      }
+      default: {
+        result = true;
+        break;
+      }
+    }
+    return result;
   }
 
 }
