@@ -34,31 +34,29 @@
         </button>
       </div>
 
-      <div class="dashboard-table-cell" *ngIf='configure'>
-        <mat-form-field>
+      <!-- TODO: remove ugly negative margins -->
+      <div class="dashboard-table-cell" *ngIf='configure' style="border-bottom: 1px solid black">
+        <mat-form-field style="margin-bottom: -10px">
           <input matInput type="text" placeholder="Title" [value]="data.title" (input)='data.title=$event.target.value'>
         </mat-form-field>
       </div>
 
-      <!-- TODO: remove hard coded widths -->
       <table class="dashboard-table" *ngIf='configure'>
         <tr *ngFor="let entry of data.parts; let i = index" class="dashboard-table-row">
-          <td class="dashboard-table-cell">
-            <mat-form-field style='width: 100px;'>
+          <td class="dashboard-table-cell" style="width: calc(100% - 20px); display: inline-block">
+            <mat-form-field class="filler">
               <input matInput type="text" placeholder="Label" [value]="entry.label" (input)="entry.label=$event.target.value">
             </mat-form-field>
           </td>
-          <td class="dashboard-table-cell">
-            <mat-form-field style='width: 40px;'>
+          <td class="dashboard-table-cell" style="display: inline-block; margin-top: -20px; margin-bottom: -10px">
+            <mat-form-field class="small">
               <input matInput type="number" placeholder="Current" [value]="entry.currentValue" (change)="entry.currentValue=$event.target.valueAsNumber">
             </mat-form-field>
-          </td>
-          <td class="dashboard-table-cell">
-            <mat-form-field style='width: 40px;'>
+
+            <mat-form-field class="small" style="margin: 0px 10px">
               <input matInput type="number" placeholder="Target"  [value]="entry.targetValue" (change)="entry.targetValue=$event.target.valueAsNumber">
             </mat-form-field>
-          </td>
-          <td>
+
             <button mat-icon-button (click)='parts.splice(i, 1)'>
               <mat-icon aria-label="remove" fontIcon="fa-trash"></mat-icon>
             </button>
