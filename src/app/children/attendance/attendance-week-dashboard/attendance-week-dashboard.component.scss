@@ -8,7 +8,12 @@
   border-collapse: collapse;
 }
 .dashboard-table-first-cell {
-  width: 100%;
+  width: calc(40% - 20px);
+  white-space: nowrap;
+}
+.dashboard-table-last-cell {
+  width: calc(60% - 20px);
+  min-width: 180px;
 }
 
 .attendance-day {
