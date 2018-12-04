@@ -18,7 +18,8 @@
 
 <mat-toolbar *ngIf="showSearchToolbar" class="search-header mat-elevation-z7 mat-typography">
   <mat-toolbar-row fxLayout="row">
-    <input fxFlex="grow" matInput (input)="search()" title="Search" [matAutocomplete]="autoResults" [(ngModel)]="searchText">
+    <input #searchInput fxFlex="grow" matInput (input)="search()" title="Search" [matAutocomplete]="autoResults" [(ngModel)]="searchText">
+    {{searchInput.focus()}}
     <button mat-icon-button (click)="toggleSearchToolbar()"><mat-icon class="search-icon" fontIcon="fa-times"></mat-icon></button>
   </mat-toolbar-row>
 </mat-toolbar>
