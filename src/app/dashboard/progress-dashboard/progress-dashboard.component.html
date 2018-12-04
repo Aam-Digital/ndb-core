@@ -6,15 +6,18 @@
     <mat-card-title>{{ data.getTotalPercentage() | percent:'1.0-0'}}</mat-card-title>
     <mat-card-subtitle>{{data.title}}</mat-card-subtitle>
   </mat-card-header>
-  <mat-card-content style="margin:-24px;">
+  <mat-card-content>
+    <p class="dashboard-desc">
+      Status of current processes:
+    </p>
     <table class="dashboard-table">
       <tr *ngFor="let entry of data.parts" class="dashboard-table-row">
         <td class="dashboard-table-cell">{{entry.label}}</td>
-        <td class="dashboard-table-cell">
-          <mat-progress-bar mode="determinate" [value]="entry.currentValue/entry.targetValue*100" style='width: 100px;'></mat-progress-bar>
+        <td class="dashboard-table-cell filler">
+          <mat-progress-bar mode="determinate" [value]="entry.currentValue/entry.targetValue*100"></mat-progress-bar>
         </td>
         <td class="dashboard-table-cell">{{entry.currentValue/entry.targetValue | percent:'1.0-0'}}</td>
-        <td class="dashboard-table-cell">{{entry.currentValue}} / {{entry.targetValue}}</td>
+        <td class="dashboard-table-cell" style="white-space: nowrap">{{entry.currentValue}} / {{entry.targetValue}}</td>
       </tr>
     </table>
 

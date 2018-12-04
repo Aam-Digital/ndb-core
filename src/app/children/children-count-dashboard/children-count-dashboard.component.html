@@ -6,7 +6,7 @@
     <mat-card-title>{{totalChildren}}</mat-card-title>
     <mat-card-subtitle>Children</mat-card-subtitle>
   </mat-card-header>
-  <mat-card-content style='margin:-24px;'>
+  <mat-card-content>
     <table class='dashboard-table'>
       <tr *ngFor='let entry of childrenByCenter' class='dashboard-table-row' (click)='goToChildrenList(entry[0])' style='cursor: pointer;'>
           <td class='dashboard-table-cell'>{{entry[0]}}:</td>

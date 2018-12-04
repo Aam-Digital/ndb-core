@@ -50,11 +50,8 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 
 
 .dashboard .mat-card-header {
-  margin-top: -24px !important;
-  margin-left: -24px;
-  margin-right: -24px;
-  margin-bottom: 24px;
   padding: 24px;
+  margin-bottom: 10px;
   position: relative;
 
   height: 48px;
@@ -87,15 +84,19 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
   font-size: 40pt;
 }
 
+.dashboard .dashboard-desc {
+  padding: 10px;
+  font-style: italic;
+}
+
 mat-card.dashboard {
   min-width: 250px;
   margin: 10px;
+  padding: 0px;
 }
 
-@media (max-width: 599px) {
-  mat-card.dashboard {
-    padding: 24px;
-  }
+.dashboard .dashboard-table-cell {
+  padding: 10px;
 }
 
 
