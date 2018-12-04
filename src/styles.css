@@ -49,37 +49,35 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 
 
 
-.dashboard .mat-card-header {
+.dashboard mat-card-header {
   padding: 24px;
   margin-bottom: 10px;
   position: relative;
-
-  height: 48px;
 
   background-color: lightgray;
   color: white;
 }
 
-.dashboard .mat-card-title {
-  position: absolute;
-  right: 24px;
-  top: 32px;
+.dashboard .mat-card-header-text {
+  width: 100%;
+}
 
+.dashboard .mat-card-title {
+  text-align: end;
+  width: 100%;
+  margin-top: 10px;
   font-size: 40pt;
 }
 
 .dashboard .mat-card-subtitle {
-  position: absolute;
-  right: 24px;
-  bottom: 0px;
-
+  text-align: end;
+  width: calc(100% - 20px);
+  padding-left: 20px;
+  margin-bottom: 0px;
   color: white;
 }
 
 .dashboard .mat-card-avatar {
-  position: absolute;
-  left: 24px;
-  top: 18px;
 
   font-size: 40pt;
 }
