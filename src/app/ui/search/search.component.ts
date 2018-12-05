@@ -115,12 +115,12 @@ export class SearchComponent implements OnInit {
   clickOption(optionElement) {
     // simulate a click on the EntityBlock inside the selected option element
     optionElement._element.nativeElement.children['0'].children['0'].click();
-    if (this.showSearchToolbar == true) {
+    if (this.showSearchToolbar === true) {
       this.showSearchToolbar = false;
     }
   }
 
-  toggleSearchToolbar(){
+  toggleSearchToolbar() {
     this.showSearchToolbar = !this.showSearchToolbar;
   }
 }
