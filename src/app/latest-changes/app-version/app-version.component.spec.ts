@@ -27,7 +27,6 @@ import {SessionStatus} from '../../session/session-status';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {ChangelogComponent} from '../changelog/changelog.component';
 import {NgModule} from '@angular/core';
-import {AppConfig} from '../../app-config/app-config';
 
 
 @NgModule({
@@ -49,13 +48,8 @@ describe('AppVersionComponent', () => {
     latestChangesService = new LatestChangesService(null, null);
     sessionService = new SessionService(null, null, null);
     entityMapper = new EntityMapperService(null);
-    AppConfig.settings = {
-      version: '2.0.1',
-      site_name: '',
-      database: { name: 'unit-tests', remote_url: '', timeout: 60000, outdated_threshold_days: 0, useTemporaryDatabase: true },
-    };
 
-    spyOn(latestChangesService, 'getChangelog').and
+    spyOn(latestChangesService, 'getChangelogs').and
       .returnValue(Observable.of([{ name: 'test', tag_name: 'v1.0', body: 'latest test', published_at: '2018-01-01'}]));
     spyOn(sessionService, 'onSessionStatusChanged').and
       .returnValue(Observable.of(SessionStatus.loggedIn));

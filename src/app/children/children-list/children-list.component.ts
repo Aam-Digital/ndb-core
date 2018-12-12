@@ -12,7 +12,7 @@ import {FilterSelection} from '../../ui-helper/filter-selection';
   styleUrls: ['./children-list.component.scss']
 })
 export class ChildrenListComponent implements OnInit, AfterViewInit {
-  childrenList = new Array<Child>();
+  childrenList = [];
   attendanceList = new Map<string, AttendanceMonth[]>();
   childrenDataSource = new MatTableDataSource();
 
@@ -29,19 +29,18 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
 
   @ViewChild(MatSort) sort: MatSort;
-  columnGroupSelection = 'school';
+  columnGroupSelection = 'School Info';
   columnGroups = {
-    'basic': ['projectNumber', 'name', 'age', 'gender', 'schoolClass', 'schoolId', 'center', 'status'],
-    'school': ['projectNumber', 'name', 'age', 'schoolClass', 'schoolId', 'attendance-school', 'attendance-coaching', 'motherTongue'],
-    'status': ['projectNumber', 'name', 'center', 'status', 'admissionDate',
+    'Basic Info': ['projectNumber', 'name', 'age', 'gender', 'schoolClass', 'schoolId', 'center', 'status'],
+    'School Info': ['projectNumber', 'name', 'age', 'schoolClass', 'schoolId', 'attendance-school', 'attendance-coaching', 'motherTongue'],
+    'Status': ['projectNumber', 'name', 'center', 'status', 'admissionDate',
       'has_aadhar', 'has_kanyashree', 'has_bankAccount', 'has_rationCard', 'has_bplCard'],
-    'health': ['projectNumber', 'name', 'center',
+    'Health': ['projectNumber', 'name', 'center',
       'health_vaccinationStatus', 'health_LastDentalCheckup', 'health_LastEyeCheckup', 'health_eyeHealthStatus', 'health_LastENTCheckup',
-      'health_lastVitaminD', 'health_LastDeworming',
+      'health_LastVitaminD', 'health_LastDeworming',
       'gender', 'age', 'dateOfBirth'],
   };
   columnsToDisplay: ['projectNumber', 'name'];
-
   filterString = '';
 
 
@@ -50,12 +49,12 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
               private route: ActivatedRoute) {  }
 
   ngOnInit() {
-    this.loadData();
-    this.loadUrlParams();
+    this.loadData(true, /*Replace URL instead of navigating*/);
+    this.loadUrlParams(true /*Replace URL instead of navigating*/);
   }
 
 
-  private loadUrlParams() {
+  private loadUrlParams(replaceUrl: boolean = false) {
     this.route.queryParams.subscribe(params => {
         this.columnGroupSelection = params['view'] ? params['view'] : this.columnGroupSelection;
         this.displayColumnGroup(this.columnGroupSelection);
@@ -66,7 +65,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
           f.selectedOption = f.options[0].key;
         }
       });
-      this.applyFilterSelections();
+      this.applyFilterSelections(replaceUrl);
     });
   }
 
@@ -75,14 +74,14 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   }
 
 
-  private loadData() {
+  private loadData(replaceUrl: boolean = false) {
     this.childrenService.getChildren().subscribe(data => {
       this.childrenList = data;
 
       const centers = data.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
       this.initCenterFilterOptions(centers);
 
-      this.applyFilterSelections();
+      this.applyFilterSelections(replaceUrl);
     });
 
     this.childrenService.getAttendances()
@@ -134,7 +133,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   }
 
 
-  updateUrl() {
+  updateUrl(replaceUrl: boolean = false) {
     const params = {};
     this.filterSelections.forEach(f => {
       params[f.name] = f.selectedOption;
@@ -142,10 +141,10 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
     params['view'] = this.columnGroupSelection;
 
-    this.router.navigate(['child'], { queryParams: params });
+    this.router.navigate(['child'], { queryParams: params, replaceUrl: replaceUrl });
   }
 
-  applyFilterSelections() {
+  applyFilterSelections(replaceUrl: boolean = false) {
     let filteredData = this.childrenList;
 
     this.filterSelections.forEach(f => {
@@ -154,7 +153,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
     this.childrenDataSource.data = filteredData;
 
-    this.updateUrl();
+    this.updateUrl(replaceUrl);
   }
 
 

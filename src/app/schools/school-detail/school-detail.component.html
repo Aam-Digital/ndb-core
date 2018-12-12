@@ -1,16 +1,16 @@
 <!--
 <mat-expansion-panel>
   <mat-form-field>
-    <input matInput type="text" placeholder="School Name" value="{{ school.name }}">
+    <input matInput type="text" placeholder="School Name" value="{{ selectedSchool.name }}">
   </mat-form-field>
   <mat-form-field>
-    <input matInput type="number" placeholder="School-ID" value="{{ school.id }}">
+    <input matInput type="number" placeholder="School-ID" value="{{ selectedSchool.id }}">
   </mat-form-field>
   <mat-form-field>
-    <input matInput type="text" placeholder="Location" value="{{ school.address }}">
+    <input matInput type="text" placeholder="Location" value="{{ selectedSchool.address }}">
   </mat-form-field>
   <mat-form-field>
-    <input matInput type="text" placeholder="Medium" value="{{ school.medium.valueOf() }}">
+    <input matInput type="text" placeholder="Medium" value="{{ selectedSchool.medium.valueOf() }}">
   </mat-form-field>
   <mat-action-row>
     <button mat-button (click)="switchEdit()">Edit</button>
@@ -51,6 +51,8 @@
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="studentClick(row.getId())"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"
+             (click)="studentClick(row.getId())"
+             class="list-item" style="cursor:pointer;"></mat-row>
   </mat-table>
 </div>

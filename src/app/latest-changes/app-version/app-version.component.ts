@@ -17,11 +17,11 @@
 
 import {Component, OnInit} from '@angular/core';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
-import {AppConfig} from '../../app-config/app-config';
 import { SessionStatus } from '../../session/session-status';
 import { SessionService } from '../../session/session.service';
 import {ChangelogComponent} from '../changelog/changelog.component';
 import {MatDialog, MatDialogRef} from '@angular/material';
+import {LatestChangesService} from '../latest-changes.service';
 
 @Component({
   selector: 'app-version',
@@ -35,11 +35,12 @@ export class AppVersionComponent implements OnInit {
 
   constructor(private _sessionService: SessionService,
               private _entityMapperService: EntityMapperService,
+              private changelog: LatestChangesService,
               private dialog: MatDialog) {
   }
 
   ngOnInit(): void {
-    this.currentVersion = AppConfig.settings.version;
+    this.changelog.getCurrentVersion().subscribe(version => this.currentVersion = version);
 
     this._sessionService.onSessionStatusChanged.subscribe(
       (sessionStatus: SessionStatus) => {

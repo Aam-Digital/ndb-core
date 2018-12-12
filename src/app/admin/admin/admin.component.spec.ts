@@ -13,7 +13,6 @@ describe('AdminComponent', () => {
 
   beforeEach(async(() => {
     AppConfig.settings = {
-      version: '',
       site_name: '',
       database: {name: 'unit-tests', remote_url: '', timeout: 60000, outdated_threshold_days: 0, useTemporaryDatabase: true},
     };

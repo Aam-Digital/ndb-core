@@ -39,6 +39,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {UiHelperModule} from '../../ui-helper/ui-helper.module';
 import {PrimaryActionComponent} from '../primary-action/primary-action.component';
 import {AppConfig} from '../../app-config/app-config';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 describe('UiComponent', () => {
   let component: UiComponent;
@@ -46,7 +47,6 @@ describe('UiComponent', () => {
 
   beforeEach(async(() => {
     AppConfig.settings = {
-      'version': '0.0.1',
       'site_name': 'Testing',
 
       'database': {
@@ -70,6 +70,7 @@ describe('UiComponent', () => {
         NavigationModule,
         LatestChangesModule,
         SessionModule,
+        FlexLayoutModule,
       ],
       providers: [{provide: DatabaseManagerService, useClass: MockDatabaseManagerService}],
     })
