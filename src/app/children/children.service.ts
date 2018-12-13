@@ -7,6 +7,97 @@ import {Database} from '../database/database';
 import {Note} from './notes/note';
 import {EducationalMaterial} from './educational-material/educational-material';
 import {Aser} from './aser/aser';
+import {ChildSchoolRelation} from './childSchoolRelation';
+import {Gender} from './Gender';
+import {School} from '../schools/school';
+
+export class ViewableChild {
+  constructor(private _child: Child, private _school: School, private _childSchoolRelation?: ChildSchoolRelation) { }
+  get child(): Child {
+    return this._child;
+  }
+  set child(value: Child) {
+    this._child = value;
+  }
+  get school(): School {
+    return this._school;
+  }
+  set school(value: School) {
+    this._school = value;
+  }
+  get childSchoolRelation(): ChildSchoolRelation {
+    return this._childSchoolRelation;
+  }
+  set childSchoolRelation(value: ChildSchoolRelation) {
+    this._childSchoolRelation = value;
+  }
+  getProjectNumber(): string {
+    return this._child.projectNumber
+  }
+  getAge(): number {
+    return this._child.age;
+  }
+  getDateOfBirth(): Date {
+    return this._child.dateOfBirth;
+  }
+  getGender(): Gender {
+    return this._child.gender
+  }
+  getSchoolClass(): string {
+    return '5';
+  }
+  getSchoolId(): string {
+    return this._school.getId();
+  }
+  getCenter(): string {
+    return this._child.center;
+  }
+  getStatus(): string {
+    return this._child.status;
+  }
+  getAdmissionDate(): Date {
+    return this._child.admissionDate;
+  }
+  getMotherTongue(): string {
+    return this._child.motherTongue;
+  }
+  getHasAadhar(): string {
+    return this._child.has_aadhar
+  }
+  getHasBankaccount(): string {
+    return this._child.has_bankAccount;
+  }
+  getHasKanyashree(): string {
+    return this._child.has_kanyashree;
+  }
+  getHasRationCard(): string {
+    return this._child.has_rationCard;
+  }
+  getHasBplCard(): string {
+    return this._child.has_BplCard;
+  }
+  getHealthVaccinationStatus(): string {
+    return this._child.health_vaccinationStatus;
+  }
+  getHealthLastDentalCheckup(): Date {
+    return this._child.health_lastDentalCheckup
+  }
+  getHealthLastEyeCheckup(): Date {
+    return this._child.health_lastEyeCheckup;
+  }
+  getHealthEyeHealthStatus(): string {
+    return this._child.health_eyeHealthStatus;
+  }
+  getHealthLastEntCheckup(): Date {
+    return this._child.health_lastENTCheckup;
+  }
+  getHealthLastVitaminD(): Date {
+    return this._child.health_lastVitaminD;
+  }
+  getHealthLastDeworming(): Date {
+    return this._child.health_lastDeworming;
+  }
+}
 
 @Injectable()
 export class ChildrenService {
@@ -18,8 +109,14 @@ export class ChildrenService {
     this.createAttendancesIndex();
   }
 
-  getChildren(): Observable<Child[]> {
-    return Observable.fromPromise(this.entityMapper.loadType<Child>(Child));
+  getChildren(): Promise<ViewableChild[]> {
+    return this.entityMapper.loadType<Child>(Child)
+      .then((children: Child[]) => {
+        const vChildren: ViewableChild[] = [];
+        children.forEach(async child =>
+          vChildren.push(new ViewableChild(child, await child.getCurrentSchool(this.entityMapper))));
+          return vChildren;
+      })
   }
 
   getChild(id: string): Observable<Child> {
@@ -143,10 +240,6 @@ export class ChildrenService {
       '}';
   }
 
-
-
-
-
   getNotesOfChild(childId: string): Observable<Note[]> {
     const promise = this.db.query('notes_index/by_child', {key: childId, include_docs: true})
       .then(loadedEntities => {
@@ -176,10 +269,6 @@ export class ChildrenService {
     return this.db.saveDatabaseIndex(designDoc);
   }
 
-
-
-
-
   getEducationalMaterialsOfChild(childId: string): Observable<EducationalMaterial[]> {
     return Observable.fromPromise(
       this.entityMapper.loadType<EducationalMaterial>(EducationalMaterial)
@@ -197,5 +286,4 @@ export class ChildrenService {
         })
     );
   }
-
 }

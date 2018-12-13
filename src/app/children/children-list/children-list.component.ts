@@ -2,7 +2,7 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {Child} from '../child';
 import {MatSort, MatTableDataSource} from '@angular/material';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ChildrenService} from '../children.service';
+import {ChildrenService, ViewableChild} from '../children.service';
 import {AttendanceMonth} from '../attendance/attendance-month';
 import {FilterSelection} from '../../ui-helper/filter-selection';
 
@@ -75,10 +75,11 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
 
   private loadData() {
-    this.childrenService.getChildren().subscribe(data => {
+    this.childrenService.getChildren()
+      .then((data: ViewableChild[]) => {
       this.childrenList = data;
 
-      const centers = data.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
+      const centers = data.map(c => c.getCenter()).filter((value, index, arr) => arr.indexOf(value) === index);
       this.initCenterFilterOptions(centers);
 
       this.applyFilterSelections();
