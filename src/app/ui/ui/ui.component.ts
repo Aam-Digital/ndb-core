@@ -15,12 +15,12 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, OnDestroy, OnInit, ViewContainerRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
 import { SessionService } from '../../session/session.service';
 import {AppConfig} from '../../app-config/app-config';
 import {Title} from '@angular/platform-browser';
-import {ObservableMedia, MediaChange} from "@angular/flex-layout";
-import {Subscription} from "rxjs";
+import {ObservableMedia, MediaChange} from '@angular/flex-layout';
+import {Subscription} from 'rxjs';
 
 @Component({
   moduleId: module.id,
@@ -29,9 +29,8 @@ import {Subscription} from "rxjs";
   styleUrls: ['./ui.component.css']
 })
 export class UiComponent implements OnInit, OnDestroy {
-
+  @ViewChild('sideNav') sideNav;
   title: string;
-  showNav = true;
   viewContainerRef: ViewContainerRef;
   watcher: Subscription;
   sideNavMode: string;
@@ -39,23 +38,16 @@ export class UiComponent implements OnInit, OnDestroy {
   constructor(private _sessionService: SessionService,
               viewContainerRef: ViewContainerRef,
               private titleService: Title,
-              media:ObservableMedia) {
+              media: ObservableMedia) {
     this.viewContainerRef = viewContainerRef;
     // watch screen width to change sidenav mode
     this.watcher = media.subscribe((change: MediaChange) => {
-      this.sideNavMode = change.mqAlias == 'xs' ? 'over' : 'side';
-      if (change.mqAlias != 'xs') {
-        this.showNav = true;
-      }
+      this.sideNavMode = change.mqAlias === 'xs' ? 'over' : 'side';
     });
   }
   ngOnInit(): void {
     this.title = AppConfig.settings.site_name;
     this.titleService.setTitle(this.title);
-
-    if (window.innerWidth < 600) {
-      this.showNav = false;
-    }
   }
 
   ngOnDestroy() {

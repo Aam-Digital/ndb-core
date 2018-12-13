@@ -2,6 +2,24 @@
   font-size: 15pt;
 }
 
+.search-field {
+  color: white;
+}
+
 .result-inactive {
   color: grey;
+}
+
+.search-header {
+  position: fixed;
+  background: white;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+}
+
+.header-icon {
+  color: white;
+  font-size: 15pt;
 }
