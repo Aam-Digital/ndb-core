@@ -109,12 +109,21 @@ export class Child extends Entity {
 
 
   getCurrentSchool(entityMapperService: EntityMapperService): Promise<School> {
-    return entityMapperService.loadType<ChildSchoolRelation>(ChildSchoolRelation)
+    return this.getRelations(entityMapperService)
       .then((relations: ChildSchoolRelation[]) => {
         let max: ChildSchoolRelation = relations[0];
         relations.forEach(relation => max = relation.start > max.start ? relation : max);
         return max.end ? null : max.getSchool(entityMapperService);
       });
+  }
+
+  getCurrentRelation(entityMapperService: EntityMapperService): Promise<ChildSchoolRelation> {
+    return this.getRelations(entityMapperService)
+      .then((relations: ChildSchoolRelation[]) => {
+        let max: ChildSchoolRelation = relations[0];
+        relations.forEach(relation => max = relation.start > max.start ? relation : max);
+        return max;
+      })
   }
 
   getRelations(entityMapperService: EntityMapperService): Promise<ChildSchoolRelation[]> {

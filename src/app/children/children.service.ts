@@ -12,7 +12,7 @@ import {Gender} from './Gender';
 import {School} from '../schools/school';
 
 export class ViewableChild {
-  constructor(private _child: Child, private _school: School, private _childSchoolRelation?: ChildSchoolRelation) { }
+  constructor(private _child: Child, private _school: School, private _childSchoolRelation: ChildSchoolRelation) { }
   get child(): Child {
     return this._child;
   }
@@ -31,70 +31,70 @@ export class ViewableChild {
   set childSchoolRelation(value: ChildSchoolRelation) {
     this._childSchoolRelation = value;
   }
-  getProjectNumber(): string {
+  get projectNumber(): string {
     return this._child.projectNumber
   }
-  getAge(): number {
+  get age(): number {
     return this._child.age;
   }
-  getDateOfBirth(): Date {
+  get dateOfBirth(): Date {
     return this._child.dateOfBirth;
   }
-  getGender(): Gender {
+  get gender(): Gender {
     return this._child.gender
   }
-  getSchoolClass(): string {
-    return '5';
+  get schoolClass(): string {
+    return this._childSchoolRelation.class;
   }
-  getSchoolId(): string {
+  get schoolId(): string {
     return this._school.getId();
   }
-  getCenter(): string {
+  get center(): string {
     return this._child.center;
   }
-  getStatus(): string {
+  get status(): string {
     return this._child.status;
   }
-  getAdmissionDate(): Date {
+  get admissionDate(): Date {
     return this._child.admissionDate;
   }
-  getMotherTongue(): string {
+  get motherTongue(): string {
     return this._child.motherTongue;
   }
-  getHasAadhar(): string {
+  get has_aadhar(): string {
     return this._child.has_aadhar
   }
-  getHasBankaccount(): string {
+  get has_bankAccount(): string {
     return this._child.has_bankAccount;
   }
-  getHasKanyashree(): string {
+  get has_kanyashree(): string {
     return this._child.has_kanyashree;
   }
-  getHasRationCard(): string {
+  get has_rationCard(): string {
     return this._child.has_rationCard;
   }
-  getHasBplCard(): string {
+  get has_BplCard(): string {
     return this._child.has_BplCard;
   }
-  getHealthVaccinationStatus(): string {
+  get health_vaccinationStatus(): string {
     return this._child.health_vaccinationStatus;
   }
-  getHealthLastDentalCheckup(): Date {
+  get health_lastDentalCheckup(): Date {
     return this._child.health_lastDentalCheckup
   }
-  getHealthLastEyeCheckup(): Date {
+  get health_lastEyeCheckput(): Date {
     return this._child.health_lastEyeCheckup;
   }
-  getHealthEyeHealthStatus(): string {
+  get health_eyeHealthStatus(): string {
     return this._child.health_eyeHealthStatus;
   }
-  getHealthLastEntCheckup(): Date {
+  get health_lastENTCheckup(): Date {
     return this._child.health_lastENTCheckup;
   }
-  getHealthLastVitaminD(): Date {
+  get health_lastVitaminD(): Date {
     return this._child.health_lastVitaminD;
   }
-  getHealthLastDeworming(): Date {
+  get health_lastDeworming(): Date {
     return this._child.health_lastDeworming;
   }
 }
@@ -109,19 +109,48 @@ export class ChildrenService {
     this.createAttendancesIndex();
   }
 
-  getChildren(): Promise<ViewableChild[]> {
+  getViewableChildren(): Promise<ViewableChild[]> {
     return this.entityMapper.loadType<Child>(Child)
       .then((children: Child[]) => {
         const vChildren: ViewableChild[] = [];
-        children.forEach(async child =>
-          vChildren.push(new ViewableChild(child, await child.getCurrentSchool(this.entityMapper))));
-          return vChildren;
+        console.log('children', children);
+        children.forEach(async child => {
+          console.log('viewable childs', vChildren);
+          return vChildren.push(new ViewableChild(child, await child.getCurrentSchool(this.entityMapper), await child.getCurrentRelation(this.entityMapper)));
+        });
+        return vChildren;
       })
   }
 
+  getChildren(): Observable<Child[]> {
+    return Observable.fromPromise(this.entityMapper.loadType<Child>(Child));
+  }
   getChild(id: string): Observable<Child> {
     return Observable.fromPromise(this.entityMapper.load<Child>(Child, id));
   }
+
+  async getViewableChildrenImproved(): Promise<ViewableChild[]> {
+    const schools: School[] = await this.entityMapper.loadType<School>(School);
+    const relations: ChildSchoolRelation[] = await this.entityMapper.loadType<ChildSchoolRelation>(ChildSchoolRelation);
+    const children: Child[] = await this.entityMapper.loadType<Child>(Child);
+    const vChildren: ViewableChild[] = [];
+    children.forEach(child => {
+      const latestRel: ChildSchoolRelation = this.getLatestRelation(relations, child.getId());
+      const latestSchool: School = schools.find(school => school.getId() === latestRel.schoolId);
+      vChildren.push(new ViewableChild(child, latestSchool, latestRel));
+    });
+    console.log('vchildren', vChildren);
+    return vChildren;
+  }
+
+  private getLatestRelation(relations: ChildSchoolRelation[], childId: string) {
+    relations = relations.filter(relation => relation.childId === childId);
+    let max: ChildSchoolRelation = relations[0];
+    relations.forEach(relation => max = relation.start > max.start ? relation : max);
+    console.log('max', max);
+    return max;
+  }
+
 
 
   getAttendances(): Observable<AttendanceMonth[]> {

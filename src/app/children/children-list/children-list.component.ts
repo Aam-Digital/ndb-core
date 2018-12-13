@@ -75,11 +75,11 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
 
   private loadData() {
-    this.childrenService.getChildren()
+    this.childrenService.getViewableChildrenImproved()
       .then((data: ViewableChild[]) => {
       this.childrenList = data;
 
-      const centers = data.map(c => c.getCenter()).filter((value, index, arr) => arr.indexOf(value) === index);
+      const centers = data.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
       this.initCenterFilterOptions(centers);
 
       this.applyFilterSelections();

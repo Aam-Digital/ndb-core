@@ -103,54 +103,54 @@
 
   <ng-container matColumnDef="center">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Center </th>
-    <td mat-cell *matCellDef="let child"> {{child.getCenter()}} </td>
+    <td mat-cell *matCellDef="let child"> {{child.center}} </td>
   </ng-container>
 
   <ng-container matColumnDef="status">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
-    <td mat-cell *matCellDef="let child"> {{child.getStatus()}} </td>
+    <td mat-cell *matCellDef="let child"> {{child.status}} </td>
   </ng-container>
 
   <ng-container matColumnDef="admissionDate">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Admission </th>
-    <td mat-cell *matCellDef="let child"> {{child.getAdmissionDate()}} </td>
+    <td mat-cell *matCellDef="let child"> {{child.admissionDate}} </td>
   </ng-container>
 
   <ng-container matColumnDef="motherTongue">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Mother Tongue </th>
-    <td mat-cell *matCellDef="let child"> {{child.getMotherTongue()}} </td>
+    <td mat-cell *matCellDef="let child"> {{child.motherTongue}} </td>
   </ng-container>
 
 
   <ng-container matColumnDef="has_aadhar">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Aadhar </th>
-    <td mat-cell *matCellDef="let child"> {{child.getHasAadhar()}}</td>
+    <td mat-cell *matCellDef="let child"> {{child.has_aadhar}}</td>
   </ng-container>
 
   <ng-container matColumnDef="has_bankAccount">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Bank Account </th>
-    <td mat-cell *matCellDef="let child"> {{child.getHasBankaccount()}}</td>
+    <td mat-cell *matCellDef="let child"> {{child.has_bankAccount}}</td>
   </ng-container>
 
   <ng-container matColumnDef="has_kanyashree">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Kanyashree </th>
-    <td mat-cell *matCellDef="let child"> {{child.getHasKanyashree()}}</td>
+    <td mat-cell *matCellDef="let child"> {{child.has_kanyashree}}</td>
   </ng-container>
 
   <ng-container matColumnDef="has_rationCard">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Ration Card </th>
-    <td mat-cell *matCellDef="let child"> {{child.getHasRationCard()}}</td>
+    <td mat-cell *matCellDef="let child"> {{child.has_rationCard}}</td>
   </ng-container>
 
   <ng-container matColumnDef="has_bplCard">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> BPL Card </th>
-    <td mat-cell *matCellDef="let child"> {{child.getHasBplCard()}}</td>
+    <td mat-cell *matCellDef="let child"> {{child.has_BplCard}}</td>
   </ng-container>
 
 
   <ng-container matColumnDef="health_vaccinationStatus">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Vaccination Status </th>
-    <td mat-cell *matCellDef="let child"> {{child.getHealthVaccinationStatus()}} </td>
+    <td mat-cell *matCellDef="let child"> {{child.health_vaccinationStatus}} </td>
   </ng-container>
 
   <ng-container matColumnDef="health_LastDentalCheckup">
@@ -160,27 +160,27 @@
 
   <ng-container matColumnDef="health_LastEyeCheckup">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Eye Check-Up </th>
-    <td mat-cell *matCellDef="let child"> {{child.getHealthLastEyeCheckup()}} </td>
+    <td mat-cell *matCellDef="let child"> {{child.health_lastEyeCheckup}} </td>
   </ng-container>
 
   <ng-container matColumnDef="health_eyeHealthStatus">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Eye Status </th>
-    <td mat-cell *matCellDef="let child"> {{child.getHealthEyeHealthStatus()}} </td>
+    <td mat-cell *matCellDef="let child"> {{child.health_eyeHealthStatus}} </td>
   </ng-container>
 
   <ng-container matColumnDef="health_LastENTCheckup">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Last ENT Check-Up </th>
-    <td mat-cell *matCellDef="let child"> {{child.getHealthLastEntCheckup()}} </td>
+    <td mat-cell *matCellDef="let child"> {{child.health_lastENTCheckup}} </td>
   </ng-container>
 
   <ng-container matColumnDef="health_LastVitaminD">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Vitamin D </th>
-    <td mat-cell *matCellDef="let child"> {{child.getHealthLastVitaminD()}} </td>
+    <td mat-cell *matCellDef="let child"> {{child.health_lastVitaminD}} </td>
   </ng-container>
 
   <ng-container matColumnDef="health_LastDeworming">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Last De-Worming </th>
-    <td mat-cell *matCellDef="let child"> {{child.getHealthLastDeworming()}} </td>
+    <td mat-cell *matCellDef="let child"> {{child.health_lastDeworming}} </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
