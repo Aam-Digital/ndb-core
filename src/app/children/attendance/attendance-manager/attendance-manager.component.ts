@@ -20,7 +20,8 @@ export class AttendanceManagerComponent implements OnInit, AfterViewInit {
   childrenAll: Child[];
 
   dataSource = new MatTableDataSource<any>();
-  columnsToDisplay = ['child', 'attendanceType', 'averageAttendance', 'recordCount', 'attendance'];
+  columnsToDisplay = ['child', 'attendanceType', 'averageAttendance',
+    'totalWorking', 'totalAttended', 'totalAbsent', 'totalLate', 'attendance', 'recordCount'];
   @ViewChild(MatSort) sort: MatSort;
   loading = 0;
 
@@ -114,15 +115,20 @@ export class AttendanceManagerComponent implements OnInit, AfterViewInit {
     const stats = record.attendance
       .reduce((acc, a: AttendanceMonth) => {
           if (a.daysWorking > 0) {
-            acc.sum += a.getAttendancePercentage();
             acc.count++;
+            acc.daysWorking += a.daysWorking;
+            acc.daysAttended += a.daysAttended;
+            acc.daysLate += a.daysLate;
           }
           return acc;
         },
-        { sum: 0, count: 0 });
+        { sum: 0, count: 0, daysWorking: 0, daysAttended: 0, daysLate: 0 });
     record.recordCount = stats.count;
-    record.averageAttendance = stats.sum / stats.count;
-
+    record.averageAttendance = stats.daysAttended / stats.daysWorking;
+    record.totalWorking = stats.daysWorking;
+    record.totalAttended = stats.daysAttended;
+    record.totalAbsent = stats.daysWorking - stats.daysAttended;
+    record.totalLate = stats.daysLate;
   }
 
   private isLaterOrEqualMonth(month: Date, filterFrom: Date) {
