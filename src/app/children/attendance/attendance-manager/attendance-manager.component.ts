@@ -92,11 +92,7 @@ export class AttendanceManagerComponent implements OnInit, AfterViewInit {
 
     this.childrenService.getAttendancesOfChild(child.getId()).subscribe(attendances => {
       attendances.forEach(att => {
-        if ((att.month.getFullYear() > this.filterFrom.getFullYear()
-              || (att.month.getFullYear() === this.filterFrom.getFullYear() && att.month.getMonth() >= this.filterFrom.getMonth()))
-            && (att.month.getFullYear() < this.filterUntil.getFullYear()
-              || (att.month.getFullYear() === this.filterUntil.getFullYear() && att.month.getMonth() <= this.filterUntil.getMonth()))) {
-
+        if (this.isLaterOrEqualMonth(att.month, this.filterFrom) && this.isEarlierOrEqualMonth(att.month, this.filterUntil)) {
           if (att.institution === 'school') {
             recordSchool.attendance.push(att);
           } else if (att.institution === 'coaching') {
@@ -112,7 +108,7 @@ export class AttendanceManagerComponent implements OnInit, AfterViewInit {
     });
 
     return [recordSchool, recordCoaching];
-  }
+}
 
   calculateRecordStats(record) {
     const stats = record.attendance
@@ -129,4 +125,12 @@ export class AttendanceManagerComponent implements OnInit, AfterViewInit {
 
   }
 
+  private isLaterOrEqualMonth(month: Date, filterFrom: Date) {
+    return (month.getFullYear() > filterFrom.getFullYear()
+      || (month.getFullYear() === filterFrom.getFullYear() && month.getMonth() >= filterFrom.getMonth()));
+  }
+  private isEarlierOrEqualMonth(month: Date, filterUntil: Date) {
+    return (month.getFullYear() < filterUntil.getFullYear()
+      || (month.getFullYear() === filterUntil.getFullYear() && month.getMonth() <= filterUntil.getMonth()));
+  }
 }
