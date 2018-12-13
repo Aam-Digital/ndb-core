@@ -10,9 +10,9 @@
 
     <button *ngIf="!creatingNew && editing" mat-stroked-button class='edit-button' style="color:red" (click)="removeSchool()">Delete</button>
 
-    <button *ngIf="creatingNew || editing" mat-stroked-button class='edit-button' (click)="disableEdit()">Cancel</button>
+    <button *ngIf="creatingNew || editing" mat-stroked-button class='edit-button' (click)="switchEdit()">Cancel</button>
 
-    <button *ngIf="!editing" mat-stroked-button class='edit-button' (click)="enableEdit()">Edit</button>
+    <button *ngIf="!editing" mat-stroked-button class='edit-button' (click)="switchEdit()">Edit</button>
   </div>
 </div>
 
