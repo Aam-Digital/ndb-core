@@ -15,6 +15,7 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   schoolDataSource: MatTableDataSource<School> = new MatTableDataSource<School>();
 
   @ViewChild(MatSort) sort: MatSort;
+  filterString = '';
   columnsToDisplay: string[] = ['name', 'medium', 'privateSchool', 'academicBoard', 'upToClass'];
 
   mediumFS = new FilterSelection('medium', []);
