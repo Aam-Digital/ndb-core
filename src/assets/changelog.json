@@ -1,5 +1,12 @@
 [
   {
+    "tag_name": "v2.5.0",
+    "name": "Attendance Manager & School Details",
+    "published_at": "2018-12-14",
+    "body": "- Attendance Register shows & summarizes attendance of lists of students\n- Schools list & details pages show & edit various details\n- New schools can be added from schools list page\n-Improvements to view the app on smaller screens",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.4.5",
     "name": "Bug fixes: Saving Daily Attendance",
     "published_at": "2018-10-12",
