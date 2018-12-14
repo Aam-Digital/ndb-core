@@ -39,7 +39,6 @@ export const routes: Routes = [
   {path: 'child', component: ChildrenListComponent},
   {path: 'child/:id', component: ChildDetailsComponent},
   {path: 'child/:id/attendance', component: ChildAttendanceComponent},
-  {path: 'schooldetail', component: SchoolDetailComponent},
   {path: 'note', component: NotesManagerComponent},
   {path: 'attendance', component: AttendanceManagerComponent},
   {path: 'attendance/add/month', component: AddMonthAttendanceComponent},

@@ -3,7 +3,6 @@ import {MatTableDataSource, MatSort} from '@angular/material';
 import {School} from '../school';
 import {SchoolsService} from '../schools.service';
 import {Router} from '@angular/router';
-import {EntityMapperService} from '../../entity/entity-mapper.service';
 
 @Component({
   selector: 'app-schools-list',
@@ -15,7 +14,8 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   schoolDataSource: MatTableDataSource<School> = new MatTableDataSource<School>();
 
   @ViewChild(MatSort) sort: MatSort;
-  columnsToDisplay: string[] = ['name', 'address', 'medium', 'privateSchool'];
+  columnsToDisplay: string[] = ['name', 'medium', 'privateSchool', 'academicBoard', 'upToClass'];
+
   mediums: string[];
   mediumFilterSelection = '';
 
@@ -27,6 +27,9 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
 
   constructor(private schoolService: SchoolsService,
               private router: Router) {
+  }
+
+  ngOnInit() {
     this.schoolService.getSchools().subscribe(data => {
       this.schoolList = data;
       this.schoolDataSource.data = data;
@@ -35,22 +38,7 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
       this.mediums = data.map(s => s.medium).filter((value, index, arr) => arr.indexOf(value) === index);
     });
   }
-/* // master version
-  ngOnInit() {
-    this.entityMapper.loadType<School>(School)
-      .then(loadedEntities => this.dataSource.data = loadedEntities);
-  } */
 
-// schoolDetailversion
-  ngOnInit() {
-    this.columnsToDisplay = ['name', 'address', 'medium', 'privateSchool'];
-  }
-/* // master version
-  ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
-  } */
-
- // schoolDetail version
   ngAfterViewInit() {
     this.schoolDataSource.sort = this.sort;
   }
@@ -81,7 +69,7 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
     if (filteredSelection === '') {
       this.filterFunctionPrivateSchool = (s: School) => true;
     } else {
-      this.filterFunctionPrivateSchool = (s: School) => s.privateSchool == true;
+      this.filterFunctionPrivateSchool = (s: School) => s.privateSchool === true;
     }
 
     this.applyFilterGroups();
@@ -90,12 +78,10 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
 
 
   addSchoolClick() {
-    let route: string;
-    route = this.router.url + '/new';
-    this.router.navigate([route]);
+    this.router.navigate([this.router.url, 'new']);
   }
 
   showSchoolDetails(school: School) {
-    this.router.navigate(['/school', school.getId()]);
+    this.router.navigate([this.router.url, school.getId()]);
   }
 }
