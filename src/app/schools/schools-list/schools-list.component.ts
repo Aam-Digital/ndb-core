@@ -1,46 +1,101 @@
-import {Component, OnInit, Output, EventEmitter, ViewChild, AfterViewInit} from '@angular/core';
+import {Component, OnInit, AfterViewInit, ViewChild} from '@angular/core';
 import {MatTableDataSource, MatSort} from '@angular/material';
 import {School} from '../school';
+import {SchoolsService} from '../schools.service';
 import {Router} from '@angular/router';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 
 @Component({
-  selector: 'app-schools',
+  selector: 'app-schools-list',
   templateUrl: './schools-list.component.html',
   styleUrls: ['./schools-list.component.css']
 })
 export class SchoolsListComponent implements OnInit, AfterViewInit {
-  schools: School[];
-  school: School;
+  schoolList: School[];
+  schoolDataSource: MatTableDataSource<School> = new MatTableDataSource<School>();
 
-  dataSource = new MatTableDataSource();
-  displayedColumns = ['name', 'address', 'medium'];
   @ViewChild(MatSort) sort: MatSort;
-  @Output() showDetailsEvent = new EventEmitter<School>();
+  columnsToDisplay: string[] = ['name', 'address', 'medium', 'privateSchool'];
+  mediums: string[];
+  mediumFilterSelection = '';
 
-  constructor(
-    private entityMapper: EntityMapperService,
-    private router: Router
-  ) {}
+  privateSchools: string[] = ['Private  School'];
+  privateSchoolFilterSelection = '';
 
+  filterFunctionPrivateSchool: (s: School) => boolean = (s: School) => true;
+  filterFunctionMedium: (s: School) => boolean = (s: School) => true;
+
+  constructor(private schoolService: SchoolsService,
+              private router: Router) {
+    this.schoolService.getSchools().subscribe(data => {
+      this.schoolList = data;
+      this.schoolDataSource.data = data;
+      this.setMediumFilteredList(this.mediumFilterSelection);
+
+      this.mediums = data.map(s => s.medium).filter((value, index, arr) => arr.indexOf(value) === index);
+    });
+  }
+/* // master version
   ngOnInit() {
     this.entityMapper.loadType<School>(School)
       .then(loadedEntities => this.dataSource.data = loadedEntities);
-  }
+  } */
 
+// schoolDetailversion
+  ngOnInit() {
+    this.columnsToDisplay = ['name', 'address', 'medium', 'privateSchool'];
+  }
+/* // master version
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
+  } */
+
+ // schoolDetail version
+  ngAfterViewInit() {
+    this.schoolDataSource.sort = this.sort;
   }
 
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim();
-    filterValue = filterValue.toLowerCase();
-    this.dataSource.filter = filterValue;
+    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    this.schoolDataSource.filter = filterValue;
   }
 
-  showDetails(id) {
+  applyFilterGroups() {
+    this.schoolDataSource.data = this.schoolList
+      .filter(this.filterFunctionMedium)
+      .filter(this.filterFunctionPrivateSchool);
+  }
+
+  setMediumFilteredList(filteredSelection: string) {
+    if (filteredSelection === '') {
+      this.filterFunctionMedium = (s: School) => true;
+    } else {
+      this.filterFunctionMedium = (s: School) => s.medium === filteredSelection;
+    }
+
+    this.applyFilterGroups();
+  }
+
+  setPrivateSchoolFilteredList(filteredSelection: string) {
+    if (filteredSelection === '') {
+      this.filterFunctionPrivateSchool = (s: School) => true;
+    } else {
+      this.filterFunctionPrivateSchool = (s: School) => s.privateSchool == true;
+    }
+
+    this.applyFilterGroups();
+  }
+
+
+
+  addSchoolClick() {
     let route: string;
-    route = this.router.url + '/' + id;
+    route = this.router.url + '/new';
     this.router.navigate([route]);
+  }
+
+  showSchoolDetails(school: School) {
+    this.router.navigate(['/school', school.getId()]);
   }
 }

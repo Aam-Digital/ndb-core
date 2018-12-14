@@ -1,37 +1,64 @@
 <h1>Schools List</h1>
 
-<div>
+<mat-expansion-panel expanded="true" fxLayout="column" fxLayoutGap="10px" class='filter-panel'>
+  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none end">
+    <div fxFlex='50'>
+      <mat-form-field style='width:100%'>
+        <input matInput placeholder="Filter" (ngModelChange)="applyFilter($event)" [(ngModel)]="filterString">
+        <button mat-icon-button *ngIf="filterString" matSuffix aria-label="Clear" (click)="filterString=''; applyFilter('');">
+          <mat-icon fontIcon="fa-times"></mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
 
-  <div>
-    <mat-form-field>
-      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-    </mat-form-field>
+    <div class='align-form-field'>
+      (Showing {{schoolDataSource.filteredData.length}} schools)
+    </div>
+
+    <div class='align-form-field'>
+      <button mat-stroked-button color="accent" (click)="addSchoolClick()">
+        <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>Add New School
+      </button>
+    </div>
   </div>
 
+  <div fxLayout='row' fxLayoutGap='10px'>
+    <mat-button-toggle-group name="mediumFilterSelection" [(value)]="mediumFilterSelection">
+      <mat-button-toggle *ngFor='let medium of mediums' [value]="medium" (click)="setMediumFilteredList(medium)">{{medium}}</mat-button-toggle>
+      <mat-button-toggle value="" (click)="setMediumFilteredList('')">All</mat-button-toggle>
+    </mat-button-toggle-group>
 
-  <mat-table #table [dataSource]="dataSource" matSort>
-    <!-- Name Column -->
+    <mat-button-toggle-group name="privateSchoolFilterSelection" [(value)]="privateSchoolFilterSelection">
+      <mat-button-toggle *ngFor='let privateSchool of privateSchools' [value]="privateSchool" (click)="setPrivateSchoolFilteredList(privateSchool)">{{privateSchool}}</mat-button-toggle>
+      <mat-button-toggle value="" (click)="setPrivateSchoolFilteredList('')">All</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+</mat-expansion-panel>
+
+<div *ngIf="schoolDataSource">
+  <table mat-table [dataSource]="schoolDataSource" matSort class="mat-elevation-z8 table-list" width='100%'>
     <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
-      <mat-cell *matCellDef="let school"> {{school.name}} </mat-cell>
+      <th mat-header-cell mat-sort-header> Name </th>
+      <td mat-cell *matCellDef="let school"> {{school.name}}</td>
     </ng-container>
 
-    <!-- Address Column -->
     <ng-container matColumnDef="address">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Address </mat-header-cell>
-      <mat-cell *matCellDef="let school"> {{school.address}} </mat-cell>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Address </th>
+      <td mat-cell *matCellDef="let school"> {{school.address}}</td>
     </ng-container>
 
-    <!-- Medium Column -->
     <ng-container matColumnDef="medium">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Medium </mat-header-cell>
-      <mat-cell *matCellDef="let school"> {{school.medium}} </mat-cell>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Medium </th>
+      <td mat-cell *matCellDef="let school"> {{school.medium}}</td>
     </ng-container>
 
+    <ng-container matColumnDef="privateSchool">
+       <th mat-header-cell *matHeaderCellDef mat-sort-header> Private School </th>
+       <td mat-cell *matCellDef="let school"> {{school.privateSchool?"✓":"×"}} </td>
+     </ng-container>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"
-             (click)="showDetails(row.getId())"
-             class="list-item" style="cursor:pointer;"></mat-row>
-  </mat-table>
+
+    <tr mat-header-row *matHeaderRowDef=""></tr>
+    <tr mat-row *matRowDef="let school; columns: columnsToDisplay" (click)="showSchoolDetails(school)" style="cursor:pointer;"></tr>
+  </table>
 </div>
