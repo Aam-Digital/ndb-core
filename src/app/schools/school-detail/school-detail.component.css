@@ -3,8 +3,8 @@
   height: 1cm;
 }
 .mat-expansion-panel{
-  padding: 0cm;
-  margin-top: 0cm;
+  padding: 0;
+  margin-top: 0;
 }
 .edit-button {
   margin-left: 10px;
@@ -12,4 +12,19 @@
 
 .list-item:hover{
   background: #F5F5F5;
+}
+
+
+.mat-input-element:disabled {
+  color: black;
+}
+.mat-select-value {
+  color: black !important;
+}
+
+.mat-form-field {
+  margin-right: 10px;
+}
+.mat-checkbox {
+  margin-right: 10px;
 }

@@ -17,9 +17,9 @@ import {Child} from '../../children/child';
 })
 export class SchoolDetailComponent implements OnInit {
   school = new School('');
-  studentDataSource: MatTableDataSource<Child> = new MatTableDataSource();
-  displayedColumns = ['id', 'name', 'age'];
 
+  studentDataSource: MatTableDataSource<Child> = new MatTableDataSource();
+  displayedColumns = ['id', 'name', 'class', 'age'];
 
   form: FormGroup;
   creatingNew = false;
@@ -29,6 +29,7 @@ export class SchoolDetailComponent implements OnInit {
     this.form = this.fb.group({
       name:           [{value: this.school.name,          disabled: !this.editing}],
       address:        [{value: this.school.address,       disabled: !this.editing}],
+      phone:          [{value: this.school.phone,         disabled: !this.editing}],
       medium:         [{value: this.school.medium,        disabled: !this.editing}],
       timing:         [{value: this.school.timing,        disabled: !this.editing}],
       upToClass:      [{value: this.school.upToClass,     disabled: !this.editing}],
@@ -75,21 +76,29 @@ export class SchoolDetailComponent implements OnInit {
 
   loadSchool(id: string) {
     this.entityMapperService.load<School>(School, id)
-      .then(schools => this.school = schools)
-      .then(() => this.entityMapperService.loadType<Child>(Child))
+      .then(school => this.school = school)
+      .then(() => this.initializeForm())
+      .then(() => this.loadStudents());
+  }
+
+  loadStudents() {
+    // TODO: load only children related to this school through a method of SchoolService (to be implemented)
+    this.entityMapperService.loadType<Child>(Child)
       .then(children => {
-        console.log('children', children);
         return children.filter(child => {
-          console.log('child', child.schoolId, this.school.getId(), child.schoolId === this.school.getId());
           return child.schoolId === this.school.getId();
         })
       })
       .then(children => {
-        console.log('filtered', children);
         this.studentDataSource.data = children;
-        console.log('dataSource', this.studentDataSource.data);
       });
   }
+
+
+  studentClick(id: number) {
+    this.router.navigate(['/child', id]);
+  }
+
 
   removeSchool() {
     const dialogRef = this.confirmationDialog
@@ -110,13 +119,23 @@ export class SchoolDetailComponent implements OnInit {
       });
   }
 
-  studentClick(id: number) {
-    let route: string;
-    route = '/child/' + id;
-    this.router.navigate([route]);
+  saveSchool() {
+    this.assignFormValuesToChild(this.school, this.form);
+
+    this.entityMapperService.save<School>(this.school)
+      .then(() => {
+        if (this.creatingNew) {
+          this.router.navigate(['/school', this.school.getId()]);
+          this.creatingNew = false;
+        }
+        this.disableEdit();
+      })
+      .catch((err) => this.alertService.addDanger('Could not save School "' + this.school.name + '": ' + err));
   }
 
-  saveSchool() {
-
+  private assignFormValuesToChild(school: School, form: FormGroup) {
+    Object.keys(form.controls).forEach(key => {
+      school[key] = form.get(key).value;
+    });
   }
 }

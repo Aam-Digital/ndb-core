@@ -18,79 +18,65 @@
 
 
 <form [formGroup]="form">
-  <mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
-    <mat-expansion-panel-header style="">
+  <mat-expansion-panel hideToggle="true" expanded="true">
+    <mat-expansion-panel-header>
       <mat-panel-title>
-        Basic Information
       </mat-panel-title>
     </mat-expansion-panel-header>
+    <div>
+      <mat-form-field style='width: 300px;'>
+        <input matInput formControlName="name" placeholder="Name" type="text">
+      </mat-form-field>
 
-    <mat-form-field>
-      <input matInput formControlName="name" placeholder="Name" type="text">
-    </mat-form-field>
+      <mat-form-field style='width: 100px;'>
+        <input matInput formControlName="medium" placeholder="Medium" type="text">
+      </mat-form-field>
 
-    <mat-form-field>
-      <input matInput formControlName="address" placeholder="Address" type="text">
-    </mat-form-field>
+      <mat-checkbox formControlName="privateSchool" [disabled]="!editing">Private school</mat-checkbox>
 
-    <mat-form-field>
-      <input matInput formControlName="medium" placeholder="Medium" type="text">
-    </mat-form-field>
-    <mat-checkbox formControlName="privateSchool" [disabled]="!editing">Private school</mat-checkbox>
+      <mat-form-field style='width: 100px;'>
+        <input matInput formControlName="academicBoard" placeholder="Board" type="text">
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field>
+        <input matInput formControlName="phone" placeholder="Contact Number" type="text">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput formControlName="address" placeholder="Address" type="text">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input formControlName="website" matInput placeholder="Website" type="text">
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field>
+        <input matInput formControlName="timing" placeholder="School Timing" type="text">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput formControlName="workingDays" placeholder="Working Days" type="text">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput formControlName="upToClass" placeholder="Teaching up to class" type="text">
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field style='width: 100%'>
+        <textarea matInput formControlName="remarks" placeholder="Remarks"></textarea>
+      </mat-form-field>
+    </div>
   </mat-expansion-panel>
 
 
-  <mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
-    <mat-expansion-panel-header style="">
-      <mat-panel-title>
-        Teaching
-      </mat-panel-title>
-    </mat-expansion-panel-header>
 
-    <mat-form-field>
-      <input matInput formControlName="schoolTiming" placeholder="School Timing" type="text">
-    </mat-form-field>
-
-    <mat-form-field>
-      <input matInput formControlName="workDays" placeholder="Working Days" type="text">
-    </mat-form-field>
-
-    <mat-form-field>
-      <input matInput formControlName="maxClass" placeholder="Max Class" type="text">
-    </mat-form-field>
-  </mat-expansion-panel>
-
-
-  <mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
-    <mat-expansion-panel-header style="">
-      <mat-panel-title>
-        Miscellaneous
-      </mat-panel-title>
-    </mat-expansion-panel-header>
-
-    <mat-form-field>
-      <input matInput formControlName="board" placeholder="Board" type="text">
-    </mat-form-field>
-
-    <mat-form-field>
-      <input formControlName="website" matInput placeholder="Website" type="text">
-    </mat-form-field>
-
-  </mat-expansion-panel>
-
-  <mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
-    <mat-expansion-panel-header style="">
-      <mat-panel-title>
-        Remarks
-      </mat-panel-title>
-    </mat-expansion-panel-header>
-
-    <mat-form-field>
-      <textarea matInput formControlName="remarks" placeholder="Remarks"></textarea>
-    </mat-form-field>
-
-  </mat-expansion-panel>
-  <mat-expansion-panel hideToggle="true" expanded="true" collapse="false">
+  <mat-expansion-panel hideToggle="false" expanded="true">
     <mat-expansion-panel-header>
       <mat-panel-title>
         Students
@@ -98,36 +84,30 @@
     </mat-expansion-panel-header>
     <div class="example-container mat-elevation-z8">
 
-      <div class="example-header">
-        <mat-form-field>
-          <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-        </mat-form-field>
-      </div>
       <mat-table #table [dataSource]="studentDataSource" matSort>
 
-        <!--- Note that these columns can be defined in any order.
-              The actual rendered columns are set as a property on the row definition" -->
-
-        <!-- Position Column -->
         <ng-container matColumnDef="id">
           <mat-header-cell *matHeaderCellDef mat-sort-header> PN </mat-header-cell>
           <mat-cell *matCellDef="let student"> {{student.projectNumber}} </mat-cell>
         </ng-container>
 
-        <!-- Name Column -->
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
           <mat-cell *matCellDef="let student"> {{student.name}} </mat-cell>
         </ng-container>
 
-        <!-- Age Column -->
+        <ng-container matColumnDef="class">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Class </mat-header-cell>
+          <mat-cell *matCellDef="let student"> {{student.schoolClass}} </mat-cell>
+        </ng-container>
+
         <ng-container matColumnDef="age">
           <mat-header-cell *matHeaderCellDef mat-sort-header> Age </mat-header-cell>
           <mat-cell *matCellDef="let student"> {{student.age}} </mat-cell>
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="studentClick(row.getId())"></mat-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="studentClick(row.getId())" style="cursor:pointer;"></mat-row>
       </mat-table>
     </div>
   </mat-expansion-panel>

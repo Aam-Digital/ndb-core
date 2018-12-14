@@ -17,6 +17,7 @@ export class School extends Entity {
 
   address = '';
   website = '';
+  phone = '';
 
 
   public toString() {
