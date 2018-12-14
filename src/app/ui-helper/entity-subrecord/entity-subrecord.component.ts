@@ -55,6 +55,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     if (changes['columns']) {
       this.columnsToDisplay = this.columns.map(e => e.name);
       this.columnsToDisplay.push('actions');
+      this.setupTable();
     }
   }
 
@@ -155,14 +156,16 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     col.selectValues = col.allSelectValues.filter(v => v.value.includes(input) || v.label.includes(input));
   }
 
+  // resets columnsToDisplay depending on current screensize
   setupTable() {
-    if (this.columns !== undefined) {
+    if (this.columns !== undefined && this.screenWidth !== '') {
       this.newColumns = [];
       this.columns.forEach( (col) => this.checkVisibility(col));
       this.columnsToDisplay = this.newColumns;
     }
   }
 
+  // compares the current screensize to the columns' property visibleFrom. screensize < visibleFrom? column not displayed
   checkVisibility(col) {
     switch (col.visibileFrom) {
       case 'xl': {
