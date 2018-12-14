@@ -3,6 +3,7 @@ import {MatTableDataSource, MatSort} from '@angular/material';
 import {School} from '../school';
 import {SchoolsService} from '../schools.service';
 import {Router} from '@angular/router';
+import {FilterSelection} from '../../ui-helper/filter-selection/filter-selection';
 
 @Component({
   selector: 'app-schools-list',
@@ -16,14 +17,18 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   columnsToDisplay: string[] = ['name', 'medium', 'privateSchool', 'academicBoard', 'upToClass'];
 
-  mediums: string[];
-  mediumFilterSelection = '';
+  mediumFS = new FilterSelection('medium', []);
+  privateFS = new FilterSelection('private', [
+    {key: 'private', label: 'Private School', filterFun: (s: School) => s.privateSchool},
+    {key: 'government', label: 'Government School', filterFun: (s: School) => !s.privateSchool},
+    {key: '', label: 'All', filterFun: (s: School) => true},
+  ]);
+  filterSelections = [
+    this.mediumFS,
+    this.privateFS,
+  ];
 
-  privateSchools: string[] = ['Private  School'];
-  privateSchoolFilterSelection = '';
 
-  filterFunctionPrivateSchool: (s: School) => boolean = (s: School) => true;
-  filterFunctionMedium: (s: School) => boolean = (s: School) => true;
 
   constructor(private schoolService: SchoolsService,
               private router: Router) {
@@ -33,9 +38,9 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
     this.schoolService.getSchools().subscribe(data => {
       this.schoolList = data;
       this.schoolDataSource.data = data;
-      this.setMediumFilteredList(this.mediumFilterSelection);
 
-      this.mediums = data.map(s => s.medium).filter((value, index, arr) => arr.indexOf(value) === index);
+      const mediums = data.map(s => s.medium).filter((value, index, arr) => arr.indexOf(value) === index);
+      this.mediumFS.initOptions(mediums, 'medium');
     });
   }
 
@@ -43,38 +48,22 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
     this.schoolDataSource.sort = this.sort;
   }
 
+
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.schoolDataSource.filter = filterValue;
   }
 
-  applyFilterGroups() {
-    this.schoolDataSource.data = this.schoolList
-      .filter(this.filterFunctionMedium)
-      .filter(this.filterFunctionPrivateSchool);
+  applyFilterSelections() {
+    let filteredData = this.schoolList;
+
+    this.filterSelections.forEach(f => {
+      filteredData = filteredData.filter(f.getSelectedFilterFunction());
+    });
+
+    this.schoolDataSource.data = filteredData;
   }
-
-  setMediumFilteredList(filteredSelection: string) {
-    if (filteredSelection === '') {
-      this.filterFunctionMedium = (s: School) => true;
-    } else {
-      this.filterFunctionMedium = (s: School) => s.medium === filteredSelection;
-    }
-
-    this.applyFilterGroups();
-  }
-
-  setPrivateSchoolFilteredList(filteredSelection: string) {
-    if (filteredSelection === '') {
-      this.filterFunctionPrivateSchool = (s: School) => true;
-    } else {
-      this.filterFunctionPrivateSchool = (s: School) => s.privateSchool === true;
-    }
-
-    this.applyFilterGroups();
-  }
-
 
 
   addSchoolClick() {
