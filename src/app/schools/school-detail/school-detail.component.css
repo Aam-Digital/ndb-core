@@ -9,3 +9,7 @@
 .mat-select-value {
   color: black !important;
 }
+
+.list-item:hover{
+  background: #F5F5F5;
+}

@@ -7,7 +7,7 @@
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
-    "lint": "ng lint --type-check",
+    "lint": "ng lint ndb-core ndb-core-e2e --type-check",
     "e2e": "ng e2e"
   },
   "private": true,
