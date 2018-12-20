@@ -1,11 +1,11 @@
-.mat-extension-panel-header{
-  background-color: grey;
-  height: 1cm;
+.section-header {
+  font-weight: bold;
 }
-.mat-expansion-panel{
-  padding: 0cm;
-  margin-top: 0cm;
+
+.mat-input-element:disabled {
+  color: black;
 }
-.edit-button {
-  margin-left: 10px;
+
+.mat-select-value {
+  color: black !important;
 }

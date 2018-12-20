@@ -63,19 +63,12 @@ export class SchoolDetailComponent implements OnInit {
     this.initializeForm();
   }
 
-  enableEdit() {
-    this.editing = true;
-    this.initializeForm();
-  }
-
-  disableEdit() {
-    this.editing = false;
-    this.initializeForm();
-  }
-
   loadSchool(id: string) {
     this.entityMapperService.load<School>(School, id)
-      .then(schools => this.school = schools)
+      .then(schools => {
+        this.school = schools;
+        this.initializeForm();
+      })
       .then(() => this.entityMapperService.loadType<Child>(Child))
       .then(children => {
         return children.filter(child => {
@@ -108,6 +101,7 @@ export class SchoolDetailComponent implements OnInit {
 
   switchEdit() {
     this.editing = !this.editing;
+    this.initializeForm();
   }
 
   studentClick(id: number) {
