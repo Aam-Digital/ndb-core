@@ -13,3 +13,7 @@
 .list-item:hover{
   background: #F5F5F5;
 }
+
+.edit-button {
+  margin-left: 10px;
+}

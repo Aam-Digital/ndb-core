@@ -81,7 +81,7 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
     if (filteredSelection === '') {
       this.filterFunctionPrivateSchool = (s: School) => true;
     } else {
-      this.filterFunctionPrivateSchool = (s: School) => s.privateSchool == true;
+      this.filterFunctionPrivateSchool = (s: School) => s.privateSchool === true;
     }
 
     this.applyFilterGroups();
