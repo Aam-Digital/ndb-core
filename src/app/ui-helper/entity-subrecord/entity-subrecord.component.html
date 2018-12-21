@@ -1,4 +1,4 @@
-<mat-table [dataSource]="recordsDataSource" matSort class="mat-elevation-z8 subrecord-table">
+<table mat-table [dataSource]="recordsDataSource" matSort class="mat-elevation-z8 subrecord-table">
 
   <ng-container *ngFor="let col of columns" [matColumnDef]="col.name">
     <mat-header-cell *matHeaderCellDef mat-sort-header> {{col.label}} </mat-header-cell>
@@ -50,16 +50,20 @@
         </mat-form-field>
       </div>
     </mat-cell>
+    <mat-cell>
+      <textarea>asdsassdasdsasd</textarea>
+    </mat-cell>
   </ng-container>
 
 
   <ng-container matColumnDef="actions">
-    <th mat-header-cell *matHeaderCellDef>
-      <button mat-stroked-button color="accent" (click)="create()">
-        <mat-icon class="table-action-icon" aria-label="add" fontIcon="fa-plus-circle"></mat-icon>Add New
+    <mat-header-cell *matHeaderCellDef align="right">
+      <button mat-stroked-button class="table-action-button" color="accent" (click)="create()">
+        <mat-icon class="table-action-icon" aria-label="add" fontIcon="fa-plus-circle"></mat-icon>
+        <!-- fxHide.md="false">Add New -->
       </button>
-    </th>
-    <td mat-cell *matCellDef="let rec">
+    </mat-header-cell>
+    <mat-cell *matCellDef="let rec" align="right">
       <button mat-icon-button *ngIf="!recordsEditing.get(rec.getId())" (click)="recordsEditing.set(rec.getId(), true)">
         <mat-icon class="table-action-icon" aria-label="edit" fontIcon="fa-pencil"></mat-icon>
       </button>
@@ -72,7 +76,7 @@
       <button mat-icon-button (click)="delete(rec)">
         <mat-icon class="table-action-icon" aria-label="delete" fontIcon="fa-trash"></mat-icon>
       </button>
-    </td>
+    </mat-cell>
   </ng-container>
 
 
@@ -80,4 +84,5 @@
   <mat-row *matRowDef="let rec; columns: columnsToDisplay"
       class="{{getWarningStyleClass(rec)}}" [ngStyle]="{'background-color': rec.getColor()}">
   </mat-row>
-</mat-table>
+  <!--<mat-row *matRowDef="let rec; columns: columnsToNotDisplay" class="{{getWarningStyleClass(rec)}}" [ngStyle]="{'background-color': reg.getColor()}"></mat-row>-->
+</table>
