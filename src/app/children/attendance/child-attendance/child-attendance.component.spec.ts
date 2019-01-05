@@ -14,6 +14,7 @@ import {AttendanceDaysComponent} from '../attendance-days/attendance-days.compon
 import {AttendanceDayBlockComponent} from '../attendance-days/attendance-day-block.component';
 import {MatSelectModule, MatTooltipModule} from '@angular/material';
 import {FormsModule} from '@angular/forms';
+import {of} from 'rxjs';
 
 describe('ChildAttendanceComponent', () => {
   let component: ChildAttendanceComponent;
@@ -45,7 +46,7 @@ describe('ChildAttendanceComponent', () => {
       imports: [UiHelperModule, MatSelectModule, FormsModule, MatTooltipModule],
       providers: [
         DatePipe, PercentPipe,
-        { provide: ActivatedRoute, useValue: {params: Observable.of({id: '22'})} },
+        { provide: ActivatedRoute, useValue: {params: of({id: '22'})} },
         { provide: ChildrenService, useValue: mockChildrenService },
         { provide: EntityMapperService, useValue: mockEntityMapper },
       ],

@@ -20,8 +20,8 @@ import { TestBed } from '@angular/core/testing';
 import { LatestChangesService } from './latest-changes.service';
 import {AlertService} from '../alerts/alert.service';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs/Rx';
 import {ErrorObservable} from 'rxjs-compat/observable/ErrorObservable';
+import {of} from 'rxjs';
 
 describe('LatestChangesService', () => {
 
@@ -52,7 +52,7 @@ describe('LatestChangesService', () => {
 
   it('should return changelog array', (done) => {
     spyOn(http, 'get').and
-      .returnValue(Observable.of([{ name: 'test', tag_name: 'v1.0', body: 'latest test', published_at: '2018-01-01'}]));
+      .returnValue(of([{ name: 'test', tag_name: 'v1.0', body: 'latest test', published_at: '2018-01-01'}]));
     service.getChangelogs()
       .subscribe(result => {
         expect(result.length).toBe(1);

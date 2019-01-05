@@ -4,7 +4,7 @@ import {EntityMapperService} from '../../../entity/entity-mapper.service';
 import {Note} from '../note';
 import {NoteDetailsComponent} from '../note-details/note-details.component';
 import {SessionService} from '../../../session/session.service';
-import {FilterSelection} from '../../../ui-helper/filter-selection';
+import {FilterSelection} from '../../../ui-helper/filter-selection/filter-selection';
 import {WarningLevel} from '../../attendance/warning-level';
 
 @Component({
