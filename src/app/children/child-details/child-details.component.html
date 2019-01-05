@@ -201,6 +201,11 @@
       </div>
 
       <div>
+        <h3>Previous Schools</h3>
+        <app-view-schools-component [child]="child"></app-view-schools-component>
+      </div>
+
+      <div>
         <h3>ASER Results</h3>
         <app-aser></app-aser>
       </div>
@@ -233,13 +238,6 @@
       </mat-expansion-panel-header>
 
   <app-notes></app-notes>
-</mat-expansion-panel>
-
-<mat-expansion-panel expanded="false">
-  <mat-expansion-panel-header class="section-header">
-    Schools
-  </mat-expansion-panel-header>
-  <app-view-schools-component [child]="child"></app-view-schools-component>
 </mat-expansion-panel>
 
 

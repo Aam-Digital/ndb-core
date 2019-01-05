@@ -19,7 +19,7 @@ export class SchoolDetailComponent implements OnInit {
   school = new School('');
 
   studentDataSource: MatTableDataSource<Child> = new MatTableDataSource();
-  displayedColumns = ['id', 'name', 'class', 'age'];
+  displayedColumns = ['id', 'name', 'schoolClass', 'age'];
 
   form: FormGroup;
   creatingNew = false;
