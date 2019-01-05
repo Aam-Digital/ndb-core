@@ -22,6 +22,7 @@ import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material'
 import {LatestChangesService} from '../latest-changes.service';
 import {Observable} from 'rxjs/Observable';
 import {Changelog} from '../changelog';
+import 'rxjs-compat/add/observable/of';
 
 describe('ChangelogComponent', () => {
   let component: ChangelogComponent;

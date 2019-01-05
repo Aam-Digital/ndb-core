@@ -12,6 +12,7 @@ import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {MockDatabase} from '../../database/mock-database';
 import {DatePipe} from '@angular/common';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import 'rxjs-compat/add/observable/of';
 
 describe('NotesComponent', () => {
   let component: NotesComponent;
