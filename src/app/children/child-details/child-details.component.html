@@ -18,7 +18,12 @@
 
 <div fxLayout="row" fxLayoutAlign='space-between'>
   <div>
-    <h1 class="page-header section-child"><i class="fa fa-child fa-fw"></i>
+    <h1 class="page-header section-child">
+      <button mat-icon-button (click)='location.back()' matTooltip="Back" style='vertical-align: middle;'>
+        <mat-icon fontIcon="fa-backward"></mat-icon>
+      </button>
+
+      <i class="fa fa-child fa-fw"></i>
       <span *ngIf="!creatingNew">{{ child.name }} [{{ child.projectNumber }}]</span>
       <span *ngIf="creatingNew">Adding new Child</span>
     </h1>
@@ -51,7 +56,7 @@
 
       <div fxLayout='row'>
         <div fxFlex='150px'>
-          <img [src]="child.getPhoto()" class="child-pic" >
+          <img [src]="child.getPhoto()" class="child-pic" alt="child's photo">
         </div>
 
 

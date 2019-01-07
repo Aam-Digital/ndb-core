@@ -1,6 +1,11 @@
 
 <div fxLayout="row" fxLayoutAlign='space-between'>
-  <h1 class="page-header section-school"><i class="fa fa-university fa-fw"></i>
+  <h1 class="page-header section-school">
+    <button mat-icon-button (click)='location.back()' matTooltip="Back" style='vertical-align: middle;'>
+      <mat-icon fontIcon="fa-backward"></mat-icon>
+    </button>
+
+    <i class="fa fa-university fa-fw"></i>
     <span *ngIf="!creatingNew">{{ school.name }}</span>
     <span *ngIf="creatingNew">Adding new School</span>
   </h1>

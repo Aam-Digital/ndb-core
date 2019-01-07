@@ -9,6 +9,7 @@ import {AlertService} from '../../alerts/alert.service';
 import {MatSnackBar, MatTableDataSource} from '@angular/material';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {Child} from '../../children/child';
+import {Location} from '@angular/common';
 
 @Component({
   selector: 'app-school-detail',
@@ -45,6 +46,7 @@ export class SchoolDetailComponent implements OnInit {
     private ss: SchoolsService,
     private route: ActivatedRoute,
     private router: Router,
+    private location: Location,
     @Inject(FormBuilder) public fb: FormBuilder,
     private entityMapperService: EntityMapperService,
     private alertService: AlertService,
