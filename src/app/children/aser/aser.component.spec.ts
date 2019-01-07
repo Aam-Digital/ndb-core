@@ -10,7 +10,6 @@ import {MockDatabase} from '../../database/mock-database';
 import {Child} from '../child';
 import {DatePipe} from '@angular/common';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import 'rxjs-compat/add/observable/of';
 import {of} from 'rxjs';
 
 describe('AserComponent', () => {

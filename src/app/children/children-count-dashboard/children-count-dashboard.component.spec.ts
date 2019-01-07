@@ -4,9 +4,9 @@ import { ChildrenCountDashboardComponent } from './children-count-dashboard.comp
 import {MatCardModule, MatIconModule} from '@angular/material';
 import {ChildrenService} from '../children.service';
 import {RouterTestingModule} from '@angular/router/testing';
-import {Observable} from 'rxjs/Rx';
 import {Child} from '../child';
 import {MockDatabase} from '../../database/mock-database';
+import {Observable} from 'rxjs';
 
 describe('ChildrenCountDashboardComponent', () => {
   let component: ChildrenCountDashboardComponent;
