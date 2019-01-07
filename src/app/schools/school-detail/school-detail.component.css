@@ -15,13 +15,6 @@
 }
 
 
-.mat-input-element:disabled {
-  color: black;
-}
-.mat-select-value {
-  color: black !important;
-}
-
 .mat-form-field {
   margin-right: 10px;
 }

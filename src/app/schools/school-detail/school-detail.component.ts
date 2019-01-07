@@ -9,6 +9,7 @@ import {AlertService} from '../../alerts/alert.service';
 import {MatSnackBar, MatTableDataSource} from '@angular/material';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {Child} from '../../children/child';
+import {Location} from '@angular/common';
 
 @Component({
   selector: 'app-school-detail',
@@ -19,7 +20,7 @@ export class SchoolDetailComponent implements OnInit {
   school = new School('');
 
   studentDataSource: MatTableDataSource<Child> = new MatTableDataSource();
-  displayedColumns = ['id', 'name', 'class', 'age'];
+  displayedColumns = ['id', 'name', 'schoolClass', 'age'];
 
   form: FormGroup;
   creatingNew = false;
@@ -45,6 +46,7 @@ export class SchoolDetailComponent implements OnInit {
     private ss: SchoolsService,
     private route: ActivatedRoute,
     private router: Router,
+    private location: Location,
     @Inject(FormBuilder) public fb: FormBuilder,
     private entityMapperService: EntityMapperService,
     private alertService: AlertService,
@@ -137,5 +139,9 @@ export class SchoolDetailComponent implements OnInit {
     Object.keys(form.controls).forEach(key => {
       school[key] = form.get(key).value;
     });
+  }
+
+  navigateBack() {
+    this.location.back();
   }
 }
