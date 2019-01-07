@@ -166,4 +166,8 @@ export class ChildDetailsComponent implements OnInit {
         }
       });
   }
+
+  navigateBack() {
+    this.location.back();
+  }
 }

@@ -140,4 +140,8 @@ export class SchoolDetailComponent implements OnInit {
       school[key] = form.get(key).value;
     });
   }
+
+  navigateBack() {
+    this.location.back();
+  }
 }

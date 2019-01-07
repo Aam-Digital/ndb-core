@@ -1,7 +1,7 @@
 
 <div fxLayout="row" fxLayoutAlign='space-between'>
   <h1 class="page-header section-school">
-    <button mat-icon-button (click)='location.back()' matTooltip="Back" style='vertical-align: middle;'>
+    <button mat-icon-button (click)='navigateBack()' matTooltip="Back" style='vertical-align: middle;'>
       <mat-icon fontIcon="fa-backward"></mat-icon>
     </button>
 
@@ -101,7 +101,7 @@
           <mat-cell *matCellDef="let student"> {{student.name}} </mat-cell>
         </ng-container>
 
-        <ng-container matColumnDef="class">
+        <ng-container matColumnDef="schoolClass">
           <mat-header-cell *matHeaderCellDef mat-sort-header> Class </mat-header-cell>
           <mat-cell *matCellDef="let student"> {{student.schoolClass}} </mat-cell>
         </ng-container>
