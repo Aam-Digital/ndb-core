@@ -4,7 +4,7 @@ import {MatSort, MatTableDataSource} from '@angular/material';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ChildrenService} from '../children.service';
 import {AttendanceMonth} from '../attendance/attendance-month';
-import {FilterSelection} from '../../ui-helper/filter-selection';
+import {FilterSelection} from '../../ui-helper/filter-selection/filter-selection';
 
 @Component({
   selector: 'app-children-list',
@@ -79,23 +79,13 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
       this.childrenList = data;
 
       const centers = data.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
-      this.initCenterFilterOptions(centers);
+      this.centerFS.initOptions(centers, 'center');
 
       this.applyFilterSelections(replaceUrl);
     });
 
     this.childrenService.getAttendances()
       .subscribe(results => this.prepareAttendanceData(results));
-  }
-
-  private initCenterFilterOptions(centers: string[]) {
-    const options = [{key: '', label: 'All', filterFun: (c: Child) => true}];
-
-    centers.forEach(center => {
-      options.push({key: center.toLowerCase(), label: center, filterFun: (c: Child) => c.center === center});
-    });
-
-    this.centerFS.options = options;
   }
 
 
