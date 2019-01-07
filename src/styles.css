@@ -49,7 +49,7 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 
 
 
-.dashboard .mat-card-header {
+.dashboard-widget .mat-card-header {
   margin-top: -24px !important;
   margin-left: -24px;
   margin-right: -24px;
@@ -63,7 +63,7 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
   color: white;
 }
 
-.dashboard .mat-card-title {
+.dashboard-widget .mat-card-title {
   position: absolute;
   right: 24px;
   top: 32px;
@@ -71,7 +71,7 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
   font-size: 40pt;
 }
 
-.dashboard .mat-card-subtitle {
+.dashboard-widget .mat-card-subtitle {
   position: absolute;
   right: 24px;
   bottom: 0;
@@ -79,13 +79,19 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
   color: white;
 }
 
-.dashboard .mat-card-avatar {
+.dashboard-widget .mat-card-avatar {
   position: absolute;
   left: 24px;
   top: 18px;
 
   font-size: 40pt;
 }
+
+.dashboard-widget .mat-card-content {
+  max-height: 240px;
+  overflow: auto;
+}
+
 
 
 
