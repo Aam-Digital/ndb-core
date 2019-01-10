@@ -72,15 +72,20 @@ export class SchoolDetailComponent implements OnInit {
     this.initializeForm();
   }
 
-  async loadSchool(id: string) {
-    this.entityMapperService.load(School, id)
-      .then((school: School) => {
-        this.school = school;
-        this.school.getStudents(this.entityMapperService)
-          .then((students: Child[]) => {
-            this.studentDataSource.data = students;
-            this.initializeForm();
-          });
+  loadSchool(id: string) {
+    this.entityMapperService.load<School>(School, id)
+      .then(school => this.school = school)
+      .then(() => this.initializeForm())
+      .then(() => this.loadStudents());
+  }
+
+  loadStudents() {
+    // TODO: load only children related to this school through a method of SchoolService (to be implemented)
+    this.entityMapperService.loadType<Child>(Child)
+      .then(children => {
+        return children.filter(child => {
+          return child.schoolId === this.school.getId();
+        })
       })
       .then(children => {
         this.studentDataSource.data = children;
