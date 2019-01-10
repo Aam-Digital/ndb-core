@@ -77,8 +77,19 @@ export class Entity {
     return Object.assign(this, data);
   }
 
+  /**
+   * Returns an object cleaned for export or writing to the database.
+   *
+   * Generates the current search indices for the returned object.
+   *
+   * <b>Overwrite this method in subtypes if you need to convert some special property before saving.</b>
+   *
+   * @returns {object} the instance's cleaned object.
+   */
   public rawData(): any {
-    return this;
+    const data = this;
+    data['searchIndices'] = this.generateSearchIndices();
+    return data;
   }
 
   /**
@@ -88,8 +99,28 @@ export class Entity {
    *
    * @returns {string} the instance's string representation.
    */
-  public toString() {
+  public toString(): string {
     return this.getId();
+  }
+
+  /**
+   * Returns an array of strings by which the entity can be searched.
+   *
+   * By default the parts of the "name" property (split at spaces) is used if it is present.
+   *
+   * <b>Overwrite this method in subtypes if you want an entity type to be searchable by other properties.</b>
+   *
+   * @returns {string[]} an array of strings through which the entity can be searched.
+   */
+  public generateSearchIndices(): string[] {
+    let indices = [];
+
+    // default indices generated from "name" property
+    if (this.hasOwnProperty('name')) {
+      indices = this['name'].split(' ');
+    }
+
+    return indices;
   }
 
   public getColor() {
