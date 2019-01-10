@@ -11,8 +11,8 @@ import {ChildSchoolRelation} from './childSchoolRelation';
 import {Gender} from './Gender';
 import {School} from '../schools/school';
 
-export class ViewableChild {
-  constructor(private _child: Child, private _school: School, private _childSchoolRelation: ChildSchoolRelation) { }
+export class TableChild {
+  constructor(private _child?: Child, private _school?: School, private _childSchoolRelation?: ChildSchoolRelation) { }
   get child(): Child {
     return this._child;
   }
@@ -97,6 +97,15 @@ export class ViewableChild {
   get health_lastDeworming(): Date {
     return this._child.health_lastDeworming;
   }
+  isActive(): boolean {
+    return this._child.isActive();
+  }
+  getPhoto(): string {
+    return this._child.getPhoto()
+  }
+  getId(): string {
+    return this._child.getId()
+  }
 }
 
 @Injectable()
@@ -109,17 +118,21 @@ export class ChildrenService {
     this.createAttendancesIndex();
   }
 
-  getViewableChildren(): Promise<ViewableChild[]> {
-    return this.entityMapper.loadType<Child>(Child)
-      .then((children: Child[]) => {
-        const vChildren: ViewableChild[] = [];
-        console.log('children', children);
-        children.forEach(async child => {
-          console.log('viewable childs', vChildren);
-          return vChildren.push(new ViewableChild(child, await child.getCurrentSchool(this.entityMapper), await child.getCurrentRelation(this.entityMapper)));
-        });
-        return vChildren;
-      })
+  async getChildrenForList(): Promise<TableChild[]> {
+    const children = await this.entityMapper.loadType<Child>(Child);
+    const schools = await this.entityMapper.loadType<School>(School);
+    const relations = await this.entityMapper.loadType<ChildSchoolRelation>(ChildSchoolRelation);
+    const tableData: TableChild[] = [];
+    children.forEach(child => {
+      const tableChild = new TableChild();
+      tableChild.child = child;
+      const childRelations = relations.filter(relation => relation.childId === child.getId());
+      childRelations.sort((a, b) => a.start > b.start ? 1 : a.start === b.start ? 0 : -1);
+      tableChild.childSchoolRelation = childRelations.pop();
+      tableChild.school = schools.filter(school => school.getId() === tableChild.childSchoolRelation.schoolId)[0];
+      tableData.push(tableChild);
+    });
+    return tableData;
   }
 
   getChildren(): Observable<Child[]> {
@@ -129,15 +142,15 @@ export class ChildrenService {
     return Observable.fromPromise(this.entityMapper.load<Child>(Child, id));
   }
 
-  async getViewableChildrenImproved(): Promise<ViewableChild[]> {
+  async getViewableChildrenImproved(): Promise<TableChild[]> {
     const schools: School[] = await this.entityMapper.loadType<School>(School);
     const relations: ChildSchoolRelation[] = await this.entityMapper.loadType<ChildSchoolRelation>(ChildSchoolRelation);
     const children: Child[] = await this.entityMapper.loadType<Child>(Child);
-    const vChildren: ViewableChild[] = [];
+    const vChildren: TableChild[] = [];
     children.forEach(child => {
       const latestRel: ChildSchoolRelation = this.getLatestRelation(relations, child.getId());
       const latestSchool: School = schools.find(school => school.getId() === latestRel.schoolId);
-      vChildren.push(new ViewableChild(child, latestSchool, latestRel));
+      vChildren.push(new TableChild(child, latestSchool, latestRel));
     });
     console.log('vchildren', vChildren);
     return vChildren;

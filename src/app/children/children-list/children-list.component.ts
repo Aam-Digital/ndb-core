@@ -2,7 +2,7 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {Child} from '../child';
 import {MatSort, MatTableDataSource} from '@angular/material';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ChildrenService, ViewableChild} from '../children.service';
+import {ChildrenService, TableChild} from '../children.service';
 import {AttendanceMonth} from '../attendance/attendance-month';
 import {FilterSelection} from '../../ui-helper/filter-selection';
 
@@ -18,9 +18,9 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
   centerFS = new FilterSelection('center', []);
   dropoutFS = new FilterSelection('status', [
-        {key: 'active', label: 'Current Project Children', filterFun: (c: Child) => c.isActive()},
-        {key: 'dropout', label: 'Dropouts', filterFun: (c: Child) => !c.isActive()},
-        {key: '', label: 'All', filterFun: (c: Child) => true},
+        {key: 'active', label: 'Current Project Children', filterFun: (c: TableChild) => c.isActive()},
+        {key: 'dropout', label: 'Dropouts', filterFun: (c: TableChild) => !c.isActive()},
+        {key: '', label: 'All', filterFun: (c: TableChild) => true},
       ]);
   filterSelections = [
     this.dropoutFS,
@@ -75,8 +75,8 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
 
   private loadData() {
-    this.childrenService.getViewableChildrenImproved()
-      .then((data: ViewableChild[]) => {
+    this.childrenService.getChildrenForList()
+      .then((data: TableChild[]) => {
       this.childrenList = data;
 
       const centers = data.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
