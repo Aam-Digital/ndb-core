@@ -12,7 +12,7 @@
 
 .table-action-button {
   min-width: auto !important;
-  padding-right: 0;
+  //padding-right: 0;
 }
 
 .table-show-number {
@@ -25,3 +25,10 @@
 .table-input-month {
   width: 120px;
 }
+
+.mat-column-actions {
+  width: 1px;
+  white-space: nowrap;
+  text-align: center;
+}
+

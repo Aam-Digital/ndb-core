@@ -162,6 +162,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
       this.newColumns = [];
       this.columns.forEach( (col) => this.checkVisibility(col));
       this.columnsToDisplay = this.newColumns;
+      this.columnsToDisplay.push('actions');
     }
   }
 
