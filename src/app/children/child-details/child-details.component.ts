@@ -28,6 +28,7 @@ import uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
 import {School} from '../../schools/school';
 import {ChildrenService} from '../children.service';
+import {HealthCheck} from '../HealthCheck';
 
 
 @Component({
@@ -170,4 +171,7 @@ export class ChildDetailsComponent implements OnInit {
   navigateBack() {
     this.location.back();
   }
+
+
+  
 }
