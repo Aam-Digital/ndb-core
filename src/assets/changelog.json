@@ -1,5 +1,12 @@
 [
   {
+    "tag_name": "v2.5.1",
+    "name": "Multiple problems fixed",
+    "published_at": "2019-01-07",
+    "body": "- allow letters in school class\n- added Back Button to child and school details pages to go to previous page with previous filters\n- fixed Progress dashboard widget not deleting rows",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.5.0",
     "name": "Attendance Manager & School Details",
     "published_at": "2018-12-14",
