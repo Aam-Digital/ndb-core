@@ -1,6 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {School} from '../school';
+import {SchoolsService} from '../schools.service';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import uniqid from 'uniqid';
@@ -8,6 +9,7 @@ import {AlertService} from '../../alerts/alert.service';
 import {MatSnackBar, MatTableDataSource} from '@angular/material';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {Child} from '../../children/child';
+import {Location} from '@angular/common';
 
 @Component({
   selector: 'app-school-detail',
@@ -16,9 +18,9 @@ import {Child} from '../../children/child';
 })
 export class SchoolDetailComponent implements OnInit {
   school = new School('');
-  studentDataSource: MatTableDataSource<Child> = new MatTableDataSource();
-  displayedColumns = ['id', 'name', 'age'];
 
+  studentDataSource: MatTableDataSource<Child> = new MatTableDataSource();
+  displayedColumns = ['id', 'name', 'schoolClass', 'age'];
 
   form: FormGroup;
   creatingNew = false;
@@ -28,20 +30,23 @@ export class SchoolDetailComponent implements OnInit {
     this.form = this.fb.group({
       name:           [{value: this.school.name,          disabled: !this.editing}],
       address:        [{value: this.school.address,       disabled: !this.editing}],
+      phone:          [{value: this.school.phone,         disabled: !this.editing}],
       medium:         [{value: this.school.medium,        disabled: !this.editing}],
-      schoolTiming:   [{value: this.school.schoolTiming,  disabled: !this.editing}],
-      maxClass:       [{value: this.school.maxClass,      disabled: !this.editing}],
+      timing:         [{value: this.school.timing,        disabled: !this.editing}],
+      upToClass:      [{value: this.school.upToClass,     disabled: !this.editing}],
       remarks:        [{value: this.school.remarks,       disabled: !this.editing}],
-      board:          [{value: this.school.board,         disabled: !this.editing}],
-      workDays:       [{value: this.school.workDays,      disabled: !this.editing}],
+      academicBoard:  [{value: this.school.academicBoard, disabled: !this.editing}],
+      workingDays:    [{value: this.school.workingDays,   disabled: !this.editing}],
       website:        [{value: this.school.website,       disabled: !this.editing}],
       privateSchool:  [{value: this.school.privateSchool, disabled: !this.editing}]
     });
   }
 
   constructor(
+    private ss: SchoolsService,
     private route: ActivatedRoute,
     private router: Router,
+    private location: Location,
     @Inject(FormBuilder) public fb: FormBuilder,
     private entityMapperService: EntityMapperService,
     private alertService: AlertService,
@@ -77,7 +82,16 @@ export class SchoolDetailComponent implements OnInit {
             this.initializeForm();
           });
       })
+      .then(children => {
+        this.studentDataSource.data = children;
+      });
   }
+
+
+  studentClick(id: number) {
+    this.router.navigate(['/child', id]);
+  }
+
 
   removeSchool() {
     const dialogRef = this.confirmationDialog
@@ -98,11 +112,6 @@ export class SchoolDetailComponent implements OnInit {
       });
   }
 
-  studentClick(id: number) {
-    let route: string;
-    route = '/child/' + id;
-    this.router.navigate([route]);
-  }
   saveSchool() {
     this.assignFormValuesToSchool(this.school, this.form);
 
@@ -121,5 +130,9 @@ export class SchoolDetailComponent implements OnInit {
     Object.keys(form.controls).forEach(key => {
       school[key] = form.get(key).value;
     });
+  }
+
+  navigateBack() {
+    this.location.back();
   }
 }

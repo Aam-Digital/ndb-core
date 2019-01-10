@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ChildrenService} from '../../children.service';
 import {Child} from '../../child';
-import {FilterSelection} from '../../../ui-helper/filter-selection';
+import {FilterSelection} from '../../../ui-helper/filter-selection/filter-selection';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
 import {AttendanceDay, AttendanceStatus} from '../attendance-day';
 import {AttendanceMonth} from '../attendance-month';

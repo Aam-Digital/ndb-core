@@ -1,8 +1,9 @@
 import {Component, OnInit, AfterViewInit, ViewChild} from '@angular/core';
 import {MatTableDataSource, MatSort} from '@angular/material';
 import {School} from '../school';
+import {SchoolsService} from '../schools.service';
 import {Router} from '@angular/router';
-import {EntityMapperService} from '../../entity/entity-mapper.service';
+import {FilterSelection} from '../../ui-helper/filter-selection/filter-selection';
 
 @Component({
   selector: 'app-schools-list',
@@ -14,35 +15,38 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   schoolDataSource: MatTableDataSource<School> = new MatTableDataSource<School>();
 
   @ViewChild(MatSort) sort: MatSort;
-  columnsToDisplay: string[] = ['name', 'address', 'medium', 'privateSchool'];
-  mediums: string[];
-  mediumFilterSelection = '';
   filterString = '';
+  columnsToDisplay: string[] = ['name', 'medium', 'privateSchool', 'academicBoard', 'upToClass'];
 
-  privateSchools: string[] = ['Private  School'];
-  privateSchoolFilterSelection = '';
+  mediumFS = new FilterSelection('medium', []);
+  privateFS = new FilterSelection('private', [
+    {key: 'private', label: 'Private School', filterFun: (s: School) => s.privateSchool},
+    {key: 'government', label: 'Government School', filterFun: (s: School) => !s.privateSchool},
+    {key: '', label: 'All', filterFun: (s: School) => true},
+  ]);
+  filterSelections = [
+    this.mediumFS,
+    this.privateFS,
+  ];
 
-  filterFunctionPrivateSchool: (s: School) => boolean = (s: School) => true;
-  filterFunctionMedium: (s: School) => boolean = (s: School) => true;
 
-  constructor(private router: Router,
-              private entityMapperService: EntityMapperService) {
 
+  constructor(private schoolService: SchoolsService,
+              private router: Router) {
   }
 
   ngOnInit() {
-    this.entityMapperService.loadType<School>(School)
-      .then(data => {
-        this.schoolList = data;
-        this.schoolDataSource.data = data;
-        this.setMediumFilteredList(this.mediumFilterSelection);
-        this.mediums = data.map(s => s.medium).filter((value, index, arr) => arr.indexOf(value) === index);
-      });
-    this.schoolDataSource.sort = this.sort;
+    this.schoolService.getSchools().subscribe(data => {
+      this.schoolList = data;
+      this.schoolDataSource.data = data;
+
+      const mediums = data.map(s => s.medium).filter((value, index, arr) => arr.indexOf(value) === index);
+      this.mediumFS.initOptions(mediums, 'medium');
+    });
   }
 
- // schoolDetail version
   ngAfterViewInit() {
+    this.schoolDataSource.sort = this.sort;
   }
 
   applyFilter(filterValue: string) {
@@ -51,39 +55,22 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
     this.schoolDataSource.filter = filterValue;
   }
 
-  applyFilterGroups() {
-    this.schoolDataSource.data = this.schoolList
-      .filter(this.filterFunctionMedium)
-      .filter(this.filterFunctionPrivateSchool);
+  applyFilterSelections() {
+    let filteredData = this.schoolList;
+
+    this.filterSelections.forEach(f => {
+      filteredData = filteredData.filter(f.getSelectedFilterFunction());
+    });
+
+    this.schoolDataSource.data = filteredData;
   }
 
-  setMediumFilteredList(filteredSelection: string) {
-    if (filteredSelection === '') {
-      this.filterFunctionMedium = (s: School) => true;
-    } else {
-      this.filterFunctionMedium = (s: School) => s.medium === filteredSelection;
-    }
-
-    this.applyFilterGroups();
-  }
-
-  setPrivateSchoolFilteredList(filteredSelection: string) {
-    if (filteredSelection === '') {
-      this.filterFunctionPrivateSchool = (s: School) => true;
-    } else {
-      this.filterFunctionPrivateSchool = (s: School) => s.privateSchool == true;
-    }
-
-    this.applyFilterGroups();
-  }
 
   addSchoolClick() {
-    let route: string;
-    route = this.router.url + '/new';
-    this.router.navigate([route]);
+    this.router.navigate([this.router.url, 'new']);
   }
 
   showSchoolDetails(school: School) {
-    this.router.navigate(['/school', school.getId()]);
+    this.router.navigate([this.router.url, school.getId()]);
   }
 }

@@ -6,16 +6,17 @@ import {ChildSchoolRelation} from '../children/childSchoolRelation';
 export class School extends Entity {
   public static ENTITY_TYPE = 'School';
 
-  public name: string;
-  public address: string;
-  public medium: string;
+  public name: string = '';
+  public address: string = '';
+  public medium: string = '';
   public maxClass?: number;
-  public remarks?: string;
-  public board?: string;
-  public schoolTiming: string;
-  public workDays: string;
-  public website: string;
+  public remarks?: string ='';
+  public board?: string ='';
+  public schoolTiming: string ='';
+  public workDays: string = '';
+  public website: string = '';
   public privateSchool: boolean;
+  public phone: string = '';
 
   getStudents(entityMapperService: EntityMapperService): Promise<Child[]> {
     return entityMapperService.loadTypeForRelation<School, Child, ChildSchoolRelation>(
@@ -23,5 +24,9 @@ export class School extends Entity {
       Child,
       ChildSchoolRelation,
       this.getId())
+  }
+
+  public toString() {
+    return this.name;
   }
 }
