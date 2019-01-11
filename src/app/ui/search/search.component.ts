@@ -23,8 +23,8 @@ export class SearchComponent implements OnInit {
   private createSearchIndex() {
     // `emit(x)` to add x as a key to the index that can be searched
     const searchMapFunction = 'function searchMapFunction (doc) {' +
-'if (doc.hasOwnProperty("name")) {doc.name.toLowerCase().split(" ").forEach(word => emit(word));}' +
-'if (doc.hasOwnProperty("projectNumber")) { emit(doc.projectNumber); }  }';
+      'if (doc.hasOwnProperty("searchIndices")) { doc.searchIndices.forEach(word => emit(word.toString().toLowerCase())) }' +
+      '}';
 
     const designDoc = {
       _id: '_design/search_index',
@@ -71,7 +71,7 @@ export class SearchComponent implements OnInit {
   }
 
   private containsSecondarySearchTerms(item, searchTerms: string[]) {
-    const itemKey = (item.toString() + ' ' + item.getId()).toLowerCase();
+    const itemKey = item.generateSearchIndices().join(' ').toLowerCase();
     for (let i = 1; i < searchTerms.length; i++) {
       if (!itemKey.includes(searchTerms[i])) {
         return false;
