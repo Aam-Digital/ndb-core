@@ -13,19 +13,19 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^7.2.0",
-    "@angular/cdk": "^7.2.0",
+    "@angular/cdk": "^7.2.1",
     "@angular/common": "^7.2.0",
     "@angular/compiler": "^7.2.0",
     "@angular/core": "^7.2.0",
-    "@angular/flex-layout": "^7.0.0-beta.22",
+    "@angular/flex-layout": "^7.0.0-beta.23",
     "@angular/forms": "^7.2.0",
-    "@angular/material": "^7.2.0",
+    "@angular/material": "^7.2.1",
     "@angular/platform-browser": "^7.2.0",
     "@angular/platform-browser-dynamic": "^7.2.0",
-    "@angular/pwa": "^0.11.4",
+    "@angular/pwa": "^0.12.1",
     "@angular/router": "^7.2.0",
     "@angular/service-worker": "^7.2.0",
-    "core-js": "^2.6.1",
+    "core-js": "^2.6.2",
     "crypto-js": "~3.1.9-1",
     "file-saver": "^2.0.0",
     "font-awesome": "^4.7.0",
@@ -37,11 +37,11 @@
     "rxjs": "^6.3.3",
     "stream": "0.0.2",
     "uniqid": "^5.0.3",
-    "zone.js": "^0.8.26"
+    "zone.js": "^0.8.27"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.12.0-rc.0",
-    "@angular/cli": "^7.1.4",
+    "@angular-devkit/build-angular": "^0.12.1",
+    "@angular/cli": "^7.2.1",
     "@angular/compiler-cli": "^7.2.0",
     "@types/crypto-js": "^3.1.43",
     "@types/file-saver": "^2.0.0",
@@ -60,8 +60,8 @@
     "node-sass": "^4.11.0",
     "protractor": "^5.4.2",
     "ts-node": "^7.0.1",
-    "tslint": "~5.12.0",
+    "tslint": "^5.12.1",
     "typescript": "<3.2",
-    "webpack": "^4.28.3"
+    "webpack": "^4.28.4"
   }
 }
