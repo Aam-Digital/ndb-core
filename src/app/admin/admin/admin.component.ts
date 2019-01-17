@@ -54,7 +54,7 @@ export class AdminComponent implements OnInit {
     return new Promise(resolve => {
         const fileReader = new FileReader();
         fileReader.onload = () => {
-          resolve(fileReader.result);
+          resolve(fileReader.result as string);
         };
         fileReader.readAsText(file);
       }

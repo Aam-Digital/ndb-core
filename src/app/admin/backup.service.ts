@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Database} from '../database/database';
 import {User} from '../user/user';
-import {PapaParseService} from 'ngx-papaparse';
+import {Papa} from 'ngx-papaparse';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,7 @@ export class BackupService {
   static readonly SEPARATOR_COL = ',';
 
   constructor(private db: Database,
-              private papa: PapaParseService) { }
+              private papa: Papa) { }
 
   getJsonExport(): Promise<string> {
     return this.db.getAll()
