@@ -51,7 +51,7 @@ describe('SessionService', () => {
     user.setNewPassword(password);
 
     entityMapper = {
-      load: function (entityType: { new(id: string): User; }, id: string): Promise<User> {
+      load: function (entityType: new(id: string) => User, id: string): Promise<User> {
         const resultEntity = new entityType('');
 
         if (id !== user.getId()) {
