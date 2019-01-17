@@ -7,11 +7,11 @@ import {ActivatedRoute} from '@angular/router';
 import {Child} from '../child';
 import {SessionService} from '../../session/session.service';
 import {User} from '../../user/user';
-import {Observable} from 'rxjs/Observable';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {MockDatabase} from '../../database/mock-database';
 import {DatePipe} from '@angular/common';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {of} from 'rxjs';
 
 describe('NotesComponent', () => {
   let component: NotesComponent;
@@ -19,10 +19,10 @@ describe('NotesComponent', () => {
 
   const mockChildrenService = {
     getChild: (id) => {
-      return Observable.of([new Child('22')]);
+      return of([new Child('22')]);
     },
     getNotesOfChild: (id) => {
-      return Observable.of([]);
+      return of([]);
     }
   };
   let mockEntityMapper;
@@ -40,7 +40,7 @@ describe('NotesComponent', () => {
       imports: [UiHelperModule, NoopAnimationsModule],
       providers: [
         DatePipe,
-        { provide: ActivatedRoute, useValue: {paramMap: Observable.of({get: () => '22'}) } },
+        { provide: ActivatedRoute, useValue: {paramMap: of({get: () => '22'}) } },
         { provide: ChildrenService, useValue: mockChildrenService },
         { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: SessionService, useValue: { getCurrentUser() { return testUser; }} },

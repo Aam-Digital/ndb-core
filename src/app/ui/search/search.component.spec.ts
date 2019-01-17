@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SearchComponent } from './search.component';
-import {MatAutocompleteModule, MatFormFieldModule, MatIconModule, MatInputModule} from '@angular/material';
+import {MatAutocompleteModule, MatFormFieldModule, MatIconModule, MatInputModule, MatToolbarModule} from '@angular/material';
 import {FormsModule} from '@angular/forms';
 import {Database} from '../../database/database';
 import {CommonModule} from '@angular/common';
@@ -22,7 +22,7 @@ describe('SearchComponent', () => {
     TestBed.configureTestingModule({
       imports: [MatIconModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule,
         CommonModule, FormsModule, NoopAnimationsModule,
-        ChildrenModule, SchoolsModule,
+        ChildrenModule, SchoolsModule, MatToolbarModule,
       ],
       providers: [{ provide: Database, useValue: pouchDB }],
       declarations: [ SearchComponent ]
