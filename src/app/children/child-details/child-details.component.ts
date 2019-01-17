@@ -42,6 +42,7 @@ export class ChildDetailsComponent implements OnInit {
   schools: School[] = [];
 
   form: FormGroup;
+  healthCheckForm: FormGroup;
   creatingNew = false;
   editing = false;
   gender = Gender;
@@ -90,6 +91,12 @@ export class ChildDetailsComponent implements OnInit {
       dropoutType:    [{value: this.child.dropoutType,    disabled: !this.editing}],
       dropoutRemarks: [{value: this.child.dropoutRemarks, disabled: !this.editing}],
     });
+    
+    this.healthCheckForm = this.fb.group({
+      health_checkup: [{}],
+      health_height:  [{}],
+      health_weight:  [{}]
+    })
   }
 
 
@@ -172,6 +179,17 @@ export class ChildDetailsComponent implements OnInit {
     this.location.back();
   }
 
+  addHealthCheck(date: Date, height: number, weight: number){
+    var newHealthCheck = new HealthCheck(uniqid());
+    newHealthCheck.date=date;
+    newHealthCheck.height=height;
+    newHealthCheck.weight=weight;
+    newHealthCheck.child=this.child.getId();
+    console.log(newHealthCheck);
+    this.entityMapperService.save(newHealthCheck);
+  }
+
+}
+
 
   
-}

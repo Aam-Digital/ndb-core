@@ -275,6 +275,7 @@
         </mat-form-field>
       </div>
 
+
       <div>
         <mat-form-field>
           <input matInput formControlName="health_lastDentalCheckup" placeholder="Last Dental Check-Up" type="date">
@@ -291,12 +292,31 @@
         <mat-form-field>
           <input matInput formControlName="health_lastVitaminD" placeholder="Last Vitamin D" type="date">
         </mat-form-field>
-
         <mat-form-field>
           <input matInput formControlName="health_lastDeworming" placeholder="Last De-Worming" type="date">
         </mat-form-field>
       </div>
+
+      <div>
+        <mat-label>
+          Health Check-Up
+        </mat-label>
+        <!-- <form #healthcheckForm="ngForm" (ngSubmit)="addHealthCheck(#health_height.value)"> -->
+        <mat-form-field>
+          <input matInput #health_checkup formControlName="health_checkup" placeholder="Last HealthCheck"  type="date">
+          <input matInput #health_height formControlName="health_height" placeholder="Height" type="number">
+          <input matInput #health_weight formControlName="health_weight" placeholder="Weight" type="number">
+          <button mat-button (click)="addHealthCheck(health_checkup.value, health_height.value, health_weight.value)">Add Health Check</button>
+        </mat-form-field>
+       <!--  <button mat-button type="submit" (click)=addHealthCheck(#)>Add Health Check</button> -->
+     <!--  </form> -->
+      </div>
+
+  
+  
     </mat-expansion-panel>
+
+   
 
 
     <mat-expansion-panel [expanded]="false">

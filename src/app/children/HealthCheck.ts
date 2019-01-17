@@ -16,24 +16,14 @@
  */
 
 import { Entity } from '../entity/entity';
+import {Child} from '../children/child';
 
 export class HealthCheck extends Entity{
 
     static ENTITY_TYPE='HealthCheck';
 
-    child: string;      //id of child entity
+    child: String;      //child_id of the child the health check is made for
     date: Date;
-    height: number;
-    weight: number;
-
-
-    public static createHealthCheck(childID: string, date: Date, height: number, weight: number){
-        const newHealthCheck = new HealthCheck();
-        newHealthCheck.child=childID;
-        newHealthCheck.height=height;
-        newHealthCheck.weight=weight;
-        newHealthCheck.date=date;
-
-        return newHealthCheck;
-    }
+    height: number;     //stores the height of a child in cm
+    weight: number;     //stores the height of a child in kg
 }
