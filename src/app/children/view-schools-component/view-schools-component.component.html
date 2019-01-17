@@ -1,7 +1,6 @@
-<button mat-stroked-button color='accent' (click)='addSchoolClick()'>
+<button mat-stroked-button class="add-school-button" color='accent' (click)='addSchoolClick()'>
   <mat-icon class='button-icon' aria-label='add school' fontIcon='fa-plus-circle'></mat-icon>Add School
 </button>
-
 <table mat-table *ngIf='schoolsDataSource.data.length > 0' [dataSource]='schoolsDataSource' matSort class='mat-elevation-z8 table-list'>
   <ng-container matColumnDef='schoolName'>
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
