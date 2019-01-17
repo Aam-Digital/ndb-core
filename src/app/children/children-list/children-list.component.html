@@ -1,29 +1,29 @@
 <h1>Children List</h1>
 
-<mat-expansion-panel expanded="true" fxLayout="column" fxLayoutGap="10px" class='filter-panel'>
-  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none end">
-    <div fxFlex='50'>
+<mat-expansion-panel expanded="true" fxLayout="column wrap" fxLayoutGap="10px" class='filter-panel'>
+  <div fxLayout="row wrap" fxLayoutGap="10px" fxLayoutAlign="none end">
+    <div fxFlex='25'>
       <mat-form-field style='width:100%'>
-        <input matInput placeholder="Filter" (ngModelChange)="applyFilter($event)" [(ngModel)]="filterString">
-        <button mat-icon-button *ngIf="filterString" matSuffix aria-label="Clear" (click)="filterString=''; applyFilter('');">
+        <input fxFlex='25' matInput placeholder="Filter" (ngModelChange)="applyFilter($event)" [(ngModel)]="filterString">
+        <button fxFlex='25' mat-icon-button *ngIf="filterString" matSuffix aria-label="Clear" (click)="filterString=''; applyFilter('');">
           <mat-icon fontIcon="fa-times"></mat-icon>
         </button>
       </mat-form-field>
     </div>
 
-    <div class='align-form-field'>
+    <div fxFlex='25' fxHide.xs='true' class='align-form-field'>
       (Showing {{childrenDataSource.filteredData.length}} children)
     </div>
 
-    <div class='align-form-field'>
+    <div fxFlex='25'class='align-form-field'>
       <button mat-stroked-button color="accent" (click)="addChildClick()">
         <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>Add New Child
       </button>
     </div>
   </div>
 
-  <div fxLayout='row' fxLayoutGap='10px' class="filter-button">
-    <mat-button-toggle-group name="columnSelection" [(value)]="columnGroupSelection">
+  <div fxLayout='row wrap' fxLayoutGap='10px' class="filter-button">
+    <mat-button-toggle-group name="columnSelection" [(value)]="columnGroupSelection" fxLayout="row wrap">
       <!--<mat-button-toggle value="basic" (click)="displayColumnGroup('basic')">Basic Info</mat-button-toggle>-->
       <!--<mat-button-toggle value="school" (click)="displayColumnGroup('school')">School Info</mat-button-toggle>-->
       <!--<mat-button-toggle value="status" (click)="displayColumnGroup('status')">Status</mat-button-toggle>-->
@@ -39,7 +39,8 @@
       [name]="filterSelection.name" [value]='filterSelection.selectedOption'>
       <mat-button-toggle *ngFor='let option of filterSelection.options' [value]="option.key"
                          [class.selected]="option.key === filterSelection.selectedOption"
-                         (click)="filterSelection.selectedOption=option.key; applyFilterSelections();">
+                         (click)="filterSelection.selectedOption=option.key; applyFilterSelections();"
+                         fxHide.xs="true">
         {{option.label}}
       </mat-button-toggle>
     </mat-button-toggle-group>
