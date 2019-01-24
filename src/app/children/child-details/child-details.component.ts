@@ -186,7 +186,8 @@ export class ChildDetailsComponent implements OnInit {
     newHealthCheck.weight=weight;
     newHealthCheck.child=this.child.getId();
     console.log(newHealthCheck);
-    this.entityMapperService.save(newHealthCheck);
+    this.entityMapperService.save<HealthCheck>(newHealthCheck);
+/*     this.entityMapperService.load<HealthCheck>(HealthCheck, newHealthCheck.getId()).then(result => console.log(result)); */
   }
 
 }
