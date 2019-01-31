@@ -11,7 +11,7 @@
       </mat-form-field>
     </div>
 
-    <div class='align-form-field'>
+    <div class='align-form-field' fxHide.xs='true'>
       (Showing {{notesDataSource.filteredData.length}} Notes)
     </div>
 
@@ -22,7 +22,7 @@
     </div>
   </div>
 
-  <div fxLayout='row' fxLayoutGap='10px' class="filter-button">
+  <div fxLayout='row wrap' fxLayoutGap='10px' class="filter-button">
     <mat-button-toggle-group *ngFor='let filterSelection of filterSelections'
                              [name]="filterSelection.name" [value]='filterSelection.selectedOption'>
       <mat-button-toggle *ngFor='let option of filterSelection.options' [value]="option.key"
