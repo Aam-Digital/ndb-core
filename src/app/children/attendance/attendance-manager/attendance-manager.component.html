@@ -5,6 +5,122 @@
   <a routerLink='/attendance/add/month' style='margin-left:40px;'><button mat-stroked-button>add a month's attendance</button></a>
 </div>
 
-<div>
+<br>
 
+<mat-expansion-panel expanded="true" fxLayout="column" fxLayoutGap="10px" class='filter-panel'>
+  <div fxLayout='row' fxLayoutGap='10px' style='margin-top: 20px;'>
+    <div>
+      <mat-form-field>
+        <input matInput placeholder="From" type="date" [valueAsDate]='filterFrom' (change)='filterFrom=$event.target.valueAsDate'>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Until" type="date" [valueAsDate]='filterUntil' (change)='filterUntil=$event.target.valueAsDate'>
+      </mat-form-field>
+    </div>
+
+    <div *ngIf='false'>
+      <mat-button-toggle-group name="displayType" [(value)]="displayType">
+        <mat-button-toggle value="daily">Daily</mat-button-toggle>
+        <mat-button-toggle value="monthly">Monthly</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
+    <div *ngIf='false'>
+      <mat-button-toggle-group name="attendanceType" [(value)]="attendanceType">
+        <mat-button-toggle value="">Any</mat-button-toggle>
+        <mat-button-toggle value="school">School Attendance</mat-button-toggle>
+        <mat-button-toggle value="coaching">Coaching Attendance</mat-button-toggle>
+        <mat-button-toggle value="none">Has No Attendance</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
+    <div>
+      <button mat-raised-button (click)='applyFilterSelections();'>Search records</button>
+    </div>
+  </div>
+
+  <div fxLayout='row' fxLayoutGap='10px'>
+    <mat-button-toggle-group *ngFor='let filterSelection of filterSelections'
+                             [name]="filterSelection.name" [value]='filterSelection.selectedOption'>
+      <mat-button-toggle *ngFor='let option of filterSelection.options' [value]="option.key"
+                         (click)="filterSelection.selectedOption=option.key; applyFilterSelections();">
+        {{option.label}}
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <div class='align-form-field'>
+      (Showing {{dataSource.filteredData.length / 2 }} children)
+    </div>
+  </div>
+</mat-expansion-panel>
+
+<div *ngIf='loading > 0'>
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <div>Loading data ({{loading}}) ...</div>
 </div>
+
+<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 table-list">
+  <ng-container matColumnDef="child">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Student </th>
+    <td mat-cell *matCellDef="let record">
+      <app-child-block [entity]='record.child'></app-child-block>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="attendanceType">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Type </th>
+    <td mat-cell *matCellDef="let record">
+      {{ record.attendanceType }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="averageAttendance">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Attendance </th>
+    <td mat-cell *matCellDef="let record">
+      {{ record.averageAttendance | percent:'1.0-0' }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="recordCount">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Count </th>
+    <td mat-cell *matCellDef="let record">
+      {{ record.recordCount }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="totalWorking">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Working Days </th>
+    <td mat-cell *matCellDef="let record">
+      {{ record.totalWorking }}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="totalAttended">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Attended </th>
+    <td mat-cell *matCellDef="let record">
+      {{ record.totalAttended }}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="totalAbsent">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Absent </th>
+    <td mat-cell *matCellDef="let record">
+      {{ record.totalAbsent }}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="totalLate">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Late </th>
+    <td mat-cell *matCellDef="let record">
+      {{ record.totalLate }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="attendance">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Attendance </th>
+    <td mat-cell *matCellDef="let record">
+      <app-attendance-block *ngFor='let att of record.attendance' [attendanceData]='att'></app-attendance-block>
+    </td>
+  </ng-container>
+
+
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+  <tr mat-row *matRowDef="let record; columns: columnsToDisplay"></tr>
+</table>

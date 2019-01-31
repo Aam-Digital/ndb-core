@@ -12,6 +12,7 @@ import {Entity} from '../../entity/entity';
 export class SearchComponent implements OnInit {
   results;
   searchText = '';
+  showSearchToolbar = false;
 
   constructor(private db: Database) { }
 
@@ -22,8 +23,8 @@ export class SearchComponent implements OnInit {
   private createSearchIndex() {
     // `emit(x)` to add x as a key to the index that can be searched
     const searchMapFunction = 'function searchMapFunction (doc) {' +
-'if (doc.hasOwnProperty("name")) {doc.name.toLowerCase().split(" ").forEach(word => emit(word));}' +
-'if (doc.hasOwnProperty("projectNumber")) { emit(doc.projectNumber); }  }';
+      'if (doc.hasOwnProperty("searchIndices")) { doc.searchIndices.forEach(word => emit(word.toString().toLowerCase())) }' +
+      '}';
 
     const designDoc = {
       _id: '_design/search_index',
@@ -70,7 +71,7 @@ export class SearchComponent implements OnInit {
   }
 
   private containsSecondarySearchTerms(item, searchTerms: string[]) {
-    const itemKey = (item.toString() + ' ' + item.getId()).toLowerCase();
+    const itemKey = item.generateSearchIndices().join(' ').toLowerCase();
     for (let i = 1; i < searchTerms.length; i++) {
       if (!itemKey.includes(searchTerms[i])) {
         return false;
@@ -114,6 +115,12 @@ export class SearchComponent implements OnInit {
   clickOption(optionElement) {
     // simulate a click on the EntityBlock inside the selected option element
     optionElement._element.nativeElement.children['0'].children['0'].click();
+    if (this.showSearchToolbar === true) {
+      this.showSearchToolbar = false;
+    }
   }
 
+  toggleSearchToolbar() {
+    this.showSearchToolbar = !this.showSearchToolbar;
+  }
 }

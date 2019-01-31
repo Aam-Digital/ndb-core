@@ -19,7 +19,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppVersionComponent } from './app-version/app-version.component';
 import { AlertsModule } from '../alerts/alerts.module';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { LatestChangesService } from './latest-changes.service';
 import { SessionModule } from '../session/session.module';
 import {MatButtonModule, MatDialogModule} from '@angular/material';
@@ -32,7 +32,7 @@ import {ChangelogComponent} from './changelog/changelog.component';
     SessionModule,
     MatDialogModule,
     MatButtonModule,
-    HttpModule
+    HttpClientModule
   ],
   declarations: [AppVersionComponent, ChangelogComponent],
   exports: [AppVersionComponent],

@@ -22,12 +22,12 @@ import {MatDialog, MatDialogModule} from '@angular/material';
 import {MockSessionService} from '../../session/mock-session.service';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {LatestChangesService} from '../latest-changes.service';
-import {Observable} from 'rxjs/Rx';
 import {LoginState} from '../../session/login-state.enum';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {ChangelogComponent} from '../changelog/changelog.component';
 import {NgModule} from '@angular/core';
 import { SessionService } from 'app/session/session.service';
+import {of} from 'rxjs';
 
 
 @NgModule({
@@ -51,7 +51,7 @@ describe('AppVersionComponent', () => {
     entityMapper = new EntityMapperService(null);
 
     spyOn(latestChangesService, 'getChangelogs').and
-      .returnValue(Observable.of([{ name: 'test', tag_name: 'v1.0', body: 'latest test', published_at: '2018-01-01'}]));
+      .returnValue(of([{ name: 'test', tag_name: 'v1.0', body: 'latest test', published_at: '2018-01-01'}]));
     spyOn(sessionService.getLoginState(), 'getState').and
       .returnValue(LoginState.loggedIn);
 

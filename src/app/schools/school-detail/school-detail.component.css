@@ -1,26 +1,23 @@
-.example-container {
-  display: flex;
-  flex-direction: column;
-  min-width: 300px;
+.mat-extension-panel-header{
+  background-color: grey;
+  height: 1cm;
+}
+.mat-expansion-panel{
+  padding: 0;
+  margin-top: 0;
+}
+.edit-button {
+  margin-left: 10px;
 }
 
-.example-header {
-  min-height: 16px;
-  padding: 8px 24px 0;
+.list-item:hover{
+  background: #F5F5F5;
 }
+
 
 .mat-form-field {
-  font-size: 14px;
-  width: 100%;
+  margin-right: 10px;
 }
-
-.mat-table {
-  overflow: auto;
-  max-height: 500px;
-  width: 100%;
-  height: 100%;
-}
-
-.mat-header-cell.mat-sort-header-sorted {
-  color: black;
+.mat-checkbox {
+  margin-right: 10px;
 }

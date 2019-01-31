@@ -39,6 +39,7 @@ import {PrimaryActionComponent} from '../primary-action/primary-action.component
 import {AppConfig} from '../../app-config/app-config';
 import { SessionService } from 'app/session/session.service';
 import { MockSessionService } from 'app/session/mock-session.service';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 describe('UiComponent', () => {
   let component: UiComponent;
@@ -69,6 +70,7 @@ describe('UiComponent', () => {
         NavigationModule,
         LatestChangesModule,
         SessionModule,
+        FlexLayoutModule,
       ],
       providers: [{provide: SessionService, useClass: MockSessionService}],
     })
