@@ -34,7 +34,7 @@
  * - Connected
  */
 
-import PouchDB from 'pouchdb';
+import PouchDB from 'pouchdb-browser';
 import PouchDBAuthentication from 'pouchdb-authentication';
 
 import { AppConfig } from '../app-config/app-config';

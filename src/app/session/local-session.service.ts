@@ -40,9 +40,9 @@
  */
 
 
-import PouchDB from 'pouchdb';
+import PouchDB from 'pouchdb-browser';
 
-import { Injectable, Injector } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 import { AppConfig } from '../app-config/app-config';
 import { User } from '../user/user';
@@ -66,7 +66,6 @@ export class LocalSessionService {
     this.syncState = new StateHandler<SyncState>(SyncState.unsynced);
   }
 
-  // TODO: the entityMapper uses the DatabaseService, where it should try to get the DB from here
   /**
    * Get a login at the local session by fetching the user from the local database and validating the password.
    * Returns a Promise resolving with the loginState.
@@ -131,7 +130,7 @@ export class LocalSessionService {
    * This check can only be performed async, so this method returns a Promise
    */
   public isInitial(): Promise<Boolean> {
-    // doc_count === 0 => initial is a valid assumptions, as documents for users must always be present, even after db-clean
+    // `doc_count === 0 => initial` is a valid assumptions, as documents for users must always be present, even after db-clean
     return this.database.info().then(result => result.doc_count === 0);
   }
 
@@ -142,6 +141,10 @@ export class LocalSessionService {
     this.loginState.setState(LoginState.loggedOut);
   }
 
+  /**
+   * Helper to get a User Entity from the Database without needing the EntityMapperService
+   * @param userId Id of the User to be loaded
+   */
   public async loadUser(userId: string): Promise<User> {
     const user = new User('');
     const userData = await this.database.get('User:' + userId);
