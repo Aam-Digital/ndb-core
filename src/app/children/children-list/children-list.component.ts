@@ -4,7 +4,7 @@ import {MatSort, MatTableDataSource} from '@angular/material';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ChildrenService} from '../children.service';
 import {AttendanceMonth} from '../attendance/attendance-month';
-import {FilterSelection} from '../../ui-helper/filter-selection';
+import {FilterSelection} from '../../ui-helper/filter-selection/filter-selection';
 import {MediaChange, ObservableMedia} from '@angular/flex-layout';
 import {Subscription} from 'rxjs';
 
