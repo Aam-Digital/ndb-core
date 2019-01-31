@@ -29,6 +29,9 @@ import {AlertService} from '../../alerts/alert.service';
 import {School} from '../../schools/school';
 import {ChildrenService} from '../children.service';
 import {HealthCheck} from '../HealthCheck';
+import {EntitySubrecordComponent} from '../../ui-helper/entity-subrecord/entity-subrecord.component';
+import {ColumnDescription} from '../../ui-helper/entity-subrecord/column-description';
+
 
 
 @Component({
@@ -46,6 +49,19 @@ export class ChildDetailsComponent implements OnInit {
   creatingNew = false;
   editing = false;
   gender = Gender;
+
+  //initalize input for HealthCheck Subrecord
+  HealthCheckRecords: Array<HealthCheck> = [];
+  HealthCheckColumns: Array<ColumnDescription> = [
+    new ColumnDescription('date','Date','Date', null),
+    new ColumnDescription('height','Height','number', null),
+    new ColumnDescription('weight','Weight','number', null),
+  ];
+
+  generateNewRecordFactory() {
+    // define values locally because 'this' is a different scope after passing a function as input to another component
+    const child = this.child.getId();
+}
 
   genders = Gender;
   documentStatus = ['OK (copy with us)', 'OK (copy needed for us)', 'needs correction', 'applied', 'doesn\'t have', 'not eligible', ''];
@@ -190,6 +206,23 @@ export class ChildDetailsComponent implements OnInit {
 /*     this.entityMapperService.load<HealthCheck>(HealthCheck, newHealthCheck.getId()).then(result => console.log(result)); */
   }
 
+  loadHealthChecks(){
+
+    let tempArray = []; //we need this because somehow you cant push directly into the HealthCheckRecors Array
+    //this is a workaround until indizes in our database are centrelized 
+    this.entityMapperService.loadType<HealthCheck>(HealthCheck).then(
+       result => result.forEach(doc => {
+           if(doc.child===this.child.getId()){
+                tempArray.push(doc);
+            }
+            else{
+              console.log(doc);
+            }
+       })
+       );
+       console.log(tempArray);
+       this.HealthCheckRecords=tempArray;
+      }
 }
 
 

@@ -301,7 +301,6 @@
         <mat-label>
           Health Check-Up
         </mat-label>
-        <!-- <form #healthcheckForm="ngForm" (ngSubmit)="addHealthCheck(#health_height.value)"> -->
         <mat-form-field>
           <input matInput #health_checkup formControlName="health_checkup" placeholder="Last HealthCheck"  type="date">
         </mat-form-field>
@@ -311,10 +310,28 @@
         <mat-form-field>
           <input matInput #health_weight formControlName="health_weight" placeholder="Weight" type="number">
         </mat-form-field>
-          <button mat-button (click)="addHealthCheck(health_checkup.value, health_height.value, health_weight.value)">Add Health Check</button>
-       <!--  <button mat-button type="submit" (click)=addHealthCheck(#)>Add Health Check</button> -->
-     <!--  </form> -->
+          <button mat-stroked-button (click)="addHealthCheck(health_checkup.value, health_height.value, health_weight.value)">Add Health Check</button>
       </div>
+      <button mat-stroked-button (click)="loadHealthChecks()">Load HealthChecks</button>
+      <div>
+        <app-entity-subrecord [records]="HealthCheckRecords" [columns]="HealthCheckColumns" [newRecordFactory]="generateNewRecordFactory()"></app-entity-subrecord>
+      </div>
+     <!--  <div>
+        <table mat-table [dataSource]="HealthCheckDataSource" matSort class="mat-elevation-z8 table-list">
+          <ng-container matColumnDef="projectNumber">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> PN </th>
+            <td mat-cell *matCellDef="let child"> {{child.projectNumber}}</td>
+          </ng-container>
+          <ng-container matColumnDef="projectNumber">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> PN </th>
+            <td mat-cell *matCellDef="let child"> {{child.projectNumber}}</td>
+          </ng-container>
+          <ng-container matColumnDef="projectNumber">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> PN </th>
+            <td mat-cell *matCellDef="let child"> {{child.projectNumber}}</td>
+          </ng-container>
+          </table>
+      </div> -->
 
   
   
