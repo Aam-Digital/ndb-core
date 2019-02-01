@@ -60,8 +60,8 @@ export class ChildDetailsComponent implements OnInit {
 
   generateNewRecordFactory() {
     // define values locally because 'this' is a different scope after passing a function as input to another component
-    const child = this.child.getId();
-}
+    const child = this.child.getId(); 
+  }
 
   genders = Gender;
   documentStatus = ['OK (copy with us)', 'OK (copy needed for us)', 'needs correction', 'applied', 'doesn\'t have', 'not eligible', ''];
@@ -108,11 +108,11 @@ export class ChildDetailsComponent implements OnInit {
       dropoutRemarks: [{value: this.child.dropoutRemarks, disabled: !this.editing}],
     });
     
-    this.healthCheckForm = this.fb.group({
+    /* this.healthCheckForm = this.fb.group({
       health_checkup: [{}],
       health_height:  [{}],
       health_weight:  [{}]
-    })
+    }) */
   }
 
 
@@ -208,7 +208,7 @@ export class ChildDetailsComponent implements OnInit {
 
   loadHealthChecks(){
 
-    let tempArray = []; //we need this because somehow you cant push directly into the HealthCheckRecors Array
+    let tempArray = []; //we need this because somehow you cant push directly into the HealthCheckRecords Array
     //this is a workaround until indizes in our database are centrelized 
     this.entityMapperService.loadType<HealthCheck>(HealthCheck).then(
        result => result.forEach(doc => {

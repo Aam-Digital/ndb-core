@@ -314,25 +314,8 @@
       </div>
       <button mat-stroked-button (click)="loadHealthChecks()">Load HealthChecks</button>
       <div>
-        <app-entity-subrecord [records]="HealthCheckRecords" [columns]="HealthCheckColumns" [newRecordFactory]="generateNewRecordFactory()"></app-entity-subrecord>
+        <app-entity-subrecord [records]="HealthCheckRecords" [columns]="HealthCheckColumns" [newRecordFactory]="generateNewRecordFactory()" [showButton]="false"></app-entity-subrecord>
       </div>
-     <!--  <div>
-        <table mat-table [dataSource]="HealthCheckDataSource" matSort class="mat-elevation-z8 table-list">
-          <ng-container matColumnDef="projectNumber">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> PN </th>
-            <td mat-cell *matCellDef="let child"> {{child.projectNumber}}</td>
-          </ng-container>
-          <ng-container matColumnDef="projectNumber">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> PN </th>
-            <td mat-cell *matCellDef="let child"> {{child.projectNumber}}</td>
-          </ng-container>
-          <ng-container matColumnDef="projectNumber">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> PN </th>
-            <td mat-cell *matCellDef="let child"> {{child.projectNumber}}</td>
-          </ng-container>
-          </table>
-      </div> -->
-
   
   
     </mat-expansion-panel>
