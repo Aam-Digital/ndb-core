@@ -129,6 +129,7 @@ export class ChildDetailsComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
     this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
+    this.loadHealthChecks();
   }
 
   loadChild(id: string) {
@@ -203,7 +204,7 @@ export class ChildDetailsComponent implements OnInit {
     newHealthCheck.child=this.child.getId();
     console.log(newHealthCheck);
     this.entityMapperService.save<HealthCheck>(newHealthCheck);
-/*     this.entityMapperService.load<HealthCheck>(HealthCheck, newHealthCheck.getId()).then(result => console.log(result)); */
+    this.loadHealthChecks();
   }
 
   loadHealthChecks(){

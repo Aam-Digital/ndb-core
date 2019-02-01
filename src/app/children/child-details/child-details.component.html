@@ -312,7 +312,6 @@
         </mat-form-field>
           <button mat-stroked-button (click)="addHealthCheck(health_checkup.value, health_height.value, health_weight.value)">Add Health Check</button>
       </div>
-      <button mat-stroked-button (click)="loadHealthChecks()">Load HealthChecks</button>
       <div>
         <app-entity-subrecord [records]="HealthCheckRecords" [columns]="HealthCheckColumns" [newRecordFactory]="generateNewRecordFactory()" [showButton]="false"></app-entity-subrecord>
       </div>
