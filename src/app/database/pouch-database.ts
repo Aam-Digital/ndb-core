@@ -107,7 +107,7 @@ export class PouchDatabase extends Database {
 
 
   private notifyError(err) {
-    this.alertService.addWarning(err.message + '(' + err.id + ')');
+    this.alertService.addWarning(err.message + ' (' + err.status + ')', true);
   }
 
   private resolveConflict(newObject: any, overwriteChanges: boolean, existingError: any) {
