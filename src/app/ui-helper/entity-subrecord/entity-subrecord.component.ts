@@ -168,7 +168,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
 
   // compares the current screensize to the columns' property visibleFrom. screensize < visibleFrom? column not displayed
   checkVisibility(col) {
-    switch (col.visibileFrom) {
+    switch (col.visibleFrom) {
       case 'xl': {
         if (this.screenWidth.match('xl')) {
           this.newColumns.push(col.name);
