@@ -129,7 +129,6 @@ export class ChildDetailsComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
     this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
-    this.loadHealthChecks();
   }
 
   loadChild(id: string) {
@@ -145,6 +144,7 @@ export class ChildDetailsComponent implements OnInit {
         });
     }
     this.initForm();
+    this.loadHealthChecks(); //load all the healthchecks for the child, not called in ngOnInit() because it needs the child to be loaded
   }
 
   switchEdit() {
@@ -220,7 +220,7 @@ export class ChildDetailsComponent implements OnInit {
               console.log(doc);
             }
        })
-       );
+       ).catch(error => console.log("ERROR FROM LOADHEALTHCHECKS"));
        console.log(tempArray);
        this.HealthCheckRecords=tempArray;
       }
