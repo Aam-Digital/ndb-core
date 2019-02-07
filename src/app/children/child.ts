@@ -17,7 +17,6 @@
 
 import { Entity } from '../entity/entity';
 import { Gender} from './Gender';
-import {EntityMapperService} from '../entity/entity-mapper.service';
 import {ChildSchoolRelation} from './childSchoolRelation';
 import {School} from '../schools/school';
 
@@ -109,51 +108,6 @@ export class Child extends Entity {
       return 'assets/child.png';
     }
     return 'assets/child-photos/' + this.projectNumber + '.jpg';
-  }
-
-  getSchools(entityMapperService: EntityMapperService): Promise<School[]> {
-    return entityMapperService.loadTypeForRelation<Child, School, ChildSchoolRelation> (
-      Child,
-      School,
-      ChildSchoolRelation,
-      this.getId(),
-    );
-  }
-
-
-  getCurrentSchool(entityMapperService: EntityMapperService): Promise<School> {
-    return this.getRelations(entityMapperService)
-      .then((relations: ChildSchoolRelation[]) => {
-        let max: ChildSchoolRelation = relations[0];
-        relations.forEach(relation => max = relation.start > max.start ? relation : max);
-        return max.end ? null : max.getSchool(entityMapperService);
-      });
-  }
-
-  getCurrentRelation(entityMapperService: EntityMapperService): Promise<ChildSchoolRelation> {
-    return this.getRelations(entityMapperService)
-      .then((relations: ChildSchoolRelation[]) => {
-        let max: ChildSchoolRelation = relations[0];
-        relations.forEach(relation => max = relation.start > max.start ? relation : max);
-        return max;
-      })
-  }
-
-  getRelations(entityMapperService: EntityMapperService): Promise<ChildSchoolRelation[]> {
-    return entityMapperService.loadType<ChildSchoolRelation>(ChildSchoolRelation).then((relations: ChildSchoolRelation[]) => {
-      return relations.filter(relation => relation.childId === this.getId());
-   })
-  }
-
-  getViewableSchools(entityMapperService: EntityMapperService): Promise<ViewableSchool[]> {
-    return this.getRelations(entityMapperService).then((relations: ChildSchoolRelation[]) => {
-      const schools: ViewableSchool[] = [];
-      relations.forEach(async relation => {
-        const school: School = await relation.getSchool(entityMapperService);
-        schools.push(new ViewableSchool(relation, school));
-      });
-      return schools;
-    });
   }
 }
 

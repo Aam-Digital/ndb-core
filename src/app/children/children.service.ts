@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {from, Observable} from 'rxjs';
-import {Child} from './child';
+import {Child, ViewableSchool} from './child';
 import {EntityMapperService} from '../entity/entity-mapper.service';
 import {AttendanceMonth} from './attendance/attendance-month';
 import {Database} from '../database/database';
@@ -152,7 +152,6 @@ export class ChildrenService {
       const latestSchool: School = schools.find(school => school.getId() === latestRel.schoolId);
       vChildren.push(new TableChild(child, latestSchool, latestRel));
     });
-    console.log('vchildren', vChildren);
     return vChildren;
   }
 
@@ -327,5 +326,53 @@ export class ChildrenService {
           return loadedEntities.filter(o => o.child === childId);
         })
     );
+  }
+   getSchools(childId: string): Promise<School[]> {
+    return this.entityMapper.loadTypeForRelation<Child, School, ChildSchoolRelation> (
+      Child,
+      School,
+      ChildSchoolRelation,
+      childId,
+    );
+  }
+
+
+  getCurrentSchool(childId: string): Promise<School> {
+    return this.getRelations(childId)
+      .then((relations: ChildSchoolRelation[]) => {
+        if (relations.length > 0) {
+          let max: ChildSchoolRelation = relations[0];
+          relations.forEach(relation => max = relation.start > max.start ? relation : max);
+          return max.end ? null : max.getSchool(this.entityMapper);
+        }
+      });
+  }
+
+  getCurrentRelation(childId: string): Promise<ChildSchoolRelation> {
+    return this.getRelations(childId)
+      .then((relations: ChildSchoolRelation[]) => {
+        let max: ChildSchoolRelation = relations[0];
+        relations.forEach(relation => max = relation.start > max.start ? relation : max);
+        return max;
+      })
+  }
+
+  getRelations(childId: string): Promise<ChildSchoolRelation[]> {
+    return this.entityMapper.loadType<ChildSchoolRelation>(ChildSchoolRelation).then((relations: ChildSchoolRelation[]) => {
+      return relations.filter(relation => {
+        return relation.childId === childId
+      });
+   })
+  }
+
+  getViewableSchools(childId: string): Promise<ViewableSchool[]> {
+    return this.getRelations(childId).then((relations: ChildSchoolRelation[]) => {
+      const schools: ViewableSchool[] = [];
+      relations.forEach(async relation => {
+        const school: School = await relation.getSchool(this.entityMapper);
+        schools.push(new ViewableSchool(relation, school));
+      });
+      return schools;
+    });
   }
 }

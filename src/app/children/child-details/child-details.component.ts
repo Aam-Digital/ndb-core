@@ -38,6 +38,7 @@ import {School} from '../../schools/school';
 export class ChildDetailsComponent implements OnInit {
 
   child: Child = new Child('');
+  currentSchool: School = new School('');
   schools: School[] = [];
 
   form: FormGroup;
@@ -116,8 +117,9 @@ export class ChildDetailsComponent implements OnInit {
       this.entityMapperService.load<Child>(Child, id)
         .then(child => {
           this.child = child;
-          this.child.getSchools(this.entityMapperService);
           this.initForm();
+          this.childrenService.getCurrentSchool(this.child.getId())
+            .then(school => this.currentSchool = school)
         });
     }
     this.initForm();

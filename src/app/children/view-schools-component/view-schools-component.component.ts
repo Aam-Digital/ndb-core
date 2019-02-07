@@ -4,6 +4,7 @@ import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {MatDialog, MatTableDataSource, MatSort} from '@angular/material';
 import {Child, ViewableSchool} from '../child';
 import {LoggingService} from '../../logging/logging.service';
+import {ChildrenService} from '../children.service';
 
 @Component({
   selector: 'app-view-schools-component',
@@ -24,8 +25,9 @@ export class ViewSchoolsComponentComponent implements OnInit, OnChanges {
     this.schoolsDataSource.sort = this.sort;
   }
 
-  constructor(private entityMapperService: EntityMapperService,
-              private dialog: MatDialog, private loggingService: LoggingService, private changeDetectionRef: ChangeDetectorRef) {
+  constructor(private entityMapperService: EntityMapperService, private dialog: MatDialog,
+              private loggingService: LoggingService, private changeDetectionRef: ChangeDetectorRef,
+              private childrenService: ChildrenService) {
   }
 
   ngOnInit() {
@@ -51,7 +53,7 @@ export class ViewSchoolsComponentComponent implements OnInit, OnChanges {
 
 
   public loadSchoolEntries() {
-    this.child.getViewableSchools(this.entityMapperService)
+    this.childrenService.getViewableSchools(this.child.getId())
       .then((schools: ViewableSchool[]) => {
         this.viewableSchools = schools;
         this.updateViewableItems();
