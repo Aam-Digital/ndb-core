@@ -33,7 +33,9 @@ export class AlertService {
 
   addAlert(alert: Alert) {
     this.alerts.push(alert);
-    this.openSnackBar(alert);
+    if (!alert.silent) {
+      this.openSnackBar(alert);
+    }
     this.logToConsole(alert);
   }
 
@@ -84,23 +86,23 @@ export class AlertService {
   }
 
 
-  public addInfo(message: string) {
-    this.addAlert(new Alert(message, Alert.INFO));
+  public addInfo(message: string, silent: boolean = false) {
+    this.addAlert(new Alert(message, Alert.INFO, silent));
   }
 
-  public addSuccess(message: string) {
-    this.addAlert(new Alert(message, Alert.SUCCESS));
+  public addSuccess(message: string, silent: boolean = false) {
+    this.addAlert(new Alert(message, Alert.SUCCESS, silent));
   }
 
-  public addWarning(message: string) {
-    this.addAlert(new Alert(message, Alert.WARNING));
+  public addWarning(message: string, silent: boolean = false) {
+    this.addAlert(new Alert(message, Alert.WARNING, silent));
   }
 
-  public addDanger(message: string) {
-    this.addAlert(new Alert(message, Alert.DANGER));
+  public addDanger(message: string, silent: boolean = false) {
+    this.addAlert(new Alert(message, Alert.DANGER, silent));
   }
 
-  public addDebug(message: string) {
-    this.addAlert(new Alert(message, Alert.DEBUG));
+  public addDebug(message: string, silent: boolean = false) {
+    this.addAlert(new Alert(message, Alert.DEBUG, silent));
   }
 }

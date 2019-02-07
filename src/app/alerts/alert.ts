@@ -28,6 +28,7 @@ export class Alert {
   public notificationRef: MatSnackBarRef<AlertComponent>;
 
   constructor(public message: string,
-              public type: string) {
+              public type: string,
+              public silent: boolean) {
   }
 }
