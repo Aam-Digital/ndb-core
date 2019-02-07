@@ -142,29 +142,6 @@ export class ChildrenService {
     return from(this.entityMapper.load<Child>(Child, id));
   }
 
-  async getViewableChildrenImproved(): Promise<TableChild[]> {
-    const schools: School[] = await this.entityMapper.loadType<School>(School);
-    const relations: ChildSchoolRelation[] = await this.entityMapper.loadType<ChildSchoolRelation>(ChildSchoolRelation);
-    const children: Child[] = await this.entityMapper.loadType<Child>(Child);
-    const vChildren: TableChild[] = [];
-    children.forEach(child => {
-      const latestRel: ChildSchoolRelation = this.getLatestRelation(relations, child.getId());
-      const latestSchool: School = schools.find(school => school.getId() === latestRel.schoolId);
-      vChildren.push(new TableChild(child, latestSchool, latestRel));
-    });
-    return vChildren;
-  }
-
-  private getLatestRelation(relations: ChildSchoolRelation[], childId: string) {
-    relations = relations.filter(relation => relation.childId === childId);
-    let max: ChildSchoolRelation = relations[0];
-    relations.forEach(relation => max = relation.start > max.start ? relation : max);
-    console.log('max', max);
-    return max;
-  }
-
-
-
   getAttendances(): Observable<AttendanceMonth[]> {
     return from(this.entityMapper.loadType<AttendanceMonth>(AttendanceMonth));
   }
