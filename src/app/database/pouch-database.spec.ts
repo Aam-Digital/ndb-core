@@ -16,7 +16,7 @@
  */
 
 import { PouchDatabase } from './pouch-database';
-import PouchDB from 'pouchdb';
+import PouchDB from 'pouchdb-browser';
 import {AlertService} from '../alerts/alert.service';
 
 describe('PouchDatabase tests', () => {

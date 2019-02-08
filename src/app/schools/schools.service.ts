@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {School} from './school';
 import {EntityMapperService} from '../entity/entity-mapper.service';
-import {Observable} from 'rxjs';
+import {from, Observable} from 'rxjs';
 
 @Injectable()
 export class SchoolsService {
@@ -10,6 +10,6 @@ export class SchoolsService {
   }
 
   getSchools(): Observable<School[]> {
-    return Observable.fromPromise(this.entityMapper.loadType<School>(School));
+    return from(this.entityMapper.loadType<School>(School));
   }
 }

@@ -7,7 +7,7 @@ import {Database} from '../../database/database';
 import {CommonModule} from '@angular/common';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {PouchDatabase} from '../../database/pouch-database';
-import PouchDB from 'pouchdb';
+import PouchDB from 'pouchdb-browser';
 import {ChildrenModule} from '../../children/children.module';
 import {SchoolsModule} from '../../schools/schools.module';
 import {AlertService} from '../../alerts/alert.service';

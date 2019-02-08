@@ -15,14 +15,15 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+import {catchError, map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
+import { Observable, throwError } from 'rxjs';
+
+
 import { Changelog } from './changelog';
 import {AlertService} from '../alerts/alert.service';
 import {HttpClient} from '@angular/common/http';
-import {ErrorObservable} from 'rxjs-compat/observable/ErrorObservable';
 
 @Injectable()
 export class LatestChangesService {
@@ -32,15 +33,15 @@ export class LatestChangesService {
   }
 
   getChangelogs(): Observable<Changelog[]> {
-    return this.http.get<Changelog[]>('assets/changelog.json')
-      .map((response) => response)
-      .catch((error) => {
+    return this.http.get<Changelog[]>('assets/changelog.json').pipe(
+      map((response) => response),
+      catchError((error) => {
         this.alertService.addWarning('Could not load latest changes: ' + error);
-        return ErrorObservable.create('Could not load latest changes.');
-      });
+        return throwError('Could not load latest changes.');
+      }));
   }
 
   getCurrentVersion(): Observable<string> {
-    return this.getChangelogs().map(changelog => changelog[0].tag_name);
+    return this.getChangelogs().pipe(map(changelog => changelog[0].tag_name));
   }
 }
