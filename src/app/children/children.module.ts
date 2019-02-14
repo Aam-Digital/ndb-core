@@ -67,6 +67,7 @@ import { AddDayAttendanceComponent } from './attendance/add-day-attendance/add-d
 import { AttendanceWeekDashboardComponent } from './attendance/attendance-week-dashboard/attendance-week-dashboard.component';
 import {AttendanceDayBlockComponent} from './attendance/attendance-days/attendance-day-block.component';
 import { AttendanceManagerComponent } from './attendance/attendance-manager/attendance-manager.component';
+import { HealthCheckupComponent } from './health-checkup/health-checkup.component';
 
 
 @NgModule({
@@ -126,6 +127,7 @@ import { AttendanceManagerComponent } from './attendance/attendance-manager/atte
     AddDayAttendanceComponent,
     AttendanceWeekDashboardComponent,
     AttendanceManagerComponent,
+    HealthCheckupComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [

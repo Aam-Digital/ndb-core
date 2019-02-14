@@ -28,7 +28,7 @@ import uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
 import {School} from '../../schools/school';
 import {ChildrenService} from '../children.service';
-import {HealthCheck} from '../HealthCheck';
+import {HealthCheck} from '../health-checkup/HealthCheck';
 import {EntitySubrecordComponent} from '../../ui-helper/entity-subrecord/entity-subrecord.component';
 import {ColumnDescription} from '../../ui-helper/entity-subrecord/column-description';
 
@@ -129,7 +129,6 @@ export class ChildDetailsComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
     this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
-    this.loadHealthChecks();
   }
 
   loadChild(id: string) {
@@ -196,34 +195,34 @@ export class ChildDetailsComponent implements OnInit {
     this.location.back();
   }
 
-  addHealthCheck(date: Date, height: number, weight: number){
-    var newHealthCheck = new HealthCheck(uniqid());
-    newHealthCheck.date=date;
-    newHealthCheck.height=height;
-    newHealthCheck.weight=weight;
-    newHealthCheck.child=this.child.getId();
-    console.log(newHealthCheck);
-    this.entityMapperService.save<HealthCheck>(newHealthCheck);
-    this.loadHealthChecks();
-  }
+  // addHealthCheck(date: Date, height: number, weight: number){
+  //   var newHealthCheck = new HealthCheck(uniqid());
+  //   newHealthCheck.date=date;
+  //   newHealthCheck.height=height;
+  //   newHealthCheck.weight=weight;
+  //   newHealthCheck.child=this.child.getId();
+  //   console.log(newHealthCheck);
+  //   this.entityMapperService.save<HealthCheck>(newHealthCheck);
+  //   this.loadHealthChecks();
+  // }
 
-  loadHealthChecks(){
+  // loadHealthChecks(){
 
-    let tempArray = []; //we need this because somehow you cant push directly into the HealthCheckRecords Array
-    //this is a workaround until indizes in our database are centrelized 
-    this.entityMapperService.loadType<HealthCheck>(HealthCheck).then(
-       result => result.forEach(doc => {
-           if(doc.child===this.child.getId()){
-                tempArray.push(doc);
-            }
-            else{
-              console.log(doc);
-            }
-       })
-       );
-       console.log(tempArray);
-       this.HealthCheckRecords=tempArray;
-      }
+  //   let tempArray = []; //we need this because somehow you cant push directly into the HealthCheckRecords Array
+  //   //this is a workaround until indizes in our database are centrelized 
+  //   this.entityMapperService.loadType<HealthCheck>(HealthCheck).then(
+  //      result => result.forEach(doc => {
+  //          if(doc.child===this.child.getId()){
+  //               tempArray.push(doc);
+  //           }
+  //           else{
+  //             console.log(doc);
+  //           }
+  //      })
+  //      );
+  //      console.log(tempArray);
+  //      this.HealthCheckRecords=tempArray;
+  //     }
 }
 
 
