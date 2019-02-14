@@ -40,8 +40,9 @@ import {UiHelperModule} from '../../ui-helper/ui-helper.module';
 import {PrimaryActionComponent} from '../primary-action/primary-action.component';
 import {AppConfig} from '../../app-config/app-config';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import {CookieService} from 'ngx-cookie-service';
 
-describe('UiComponent', () => {
+fdescribe('UiComponent', () => {
   let component: UiComponent;
   let fixture: ComponentFixture<UiComponent>;
 
@@ -72,7 +73,10 @@ describe('UiComponent', () => {
         SessionModule,
         FlexLayoutModule,
       ],
-      providers: [{provide: DatabaseManagerService, useClass: MockDatabaseManagerService}],
+      providers: [
+        {provide: DatabaseManagerService, useClass: MockDatabaseManagerService},
+        CookieService,
+      ],
     })
       .compileComponents();
   }));

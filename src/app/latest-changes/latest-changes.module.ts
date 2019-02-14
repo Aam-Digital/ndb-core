@@ -40,4 +40,9 @@ import {ChangelogComponent} from './changelog/changelog.component';
   entryComponents: [ChangelogComponent]
 })
 export class LatestChangesModule {
+  constructor(
+    private latestChangesService: LatestChangesService) {
+
+    this.latestChangesService.showLatestChangesIfUpdated();
+  }
 }
