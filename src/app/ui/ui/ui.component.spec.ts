@@ -41,8 +41,10 @@ import {PrimaryActionComponent} from '../primary-action/primary-action.component
 import {AppConfig} from '../../app-config/app-config';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import {CookieService} from 'ngx-cookie-service';
+import {SwUpdate} from '@angular/service-worker';
+import {of} from 'rxjs';
 
-fdescribe('UiComponent', () => {
+describe('UiComponent', () => {
   let component: UiComponent;
   let fixture: ComponentFixture<UiComponent>;
 
@@ -58,6 +60,8 @@ fdescribe('UiComponent', () => {
         'useTemporaryDatabase': true,
       },
     };
+
+    const mockSwUpdate = { available: of(), checkForUpdate: () => {} };
 
     TestBed.configureTestingModule({
       declarations: [SearchComponent, PrimaryActionComponent, UiComponent],
@@ -76,6 +80,7 @@ fdescribe('UiComponent', () => {
       providers: [
         {provide: DatabaseManagerService, useClass: MockDatabaseManagerService},
         CookieService,
+        {provide: SwUpdate, useValue: mockSwUpdate},
       ],
     })
       .compileComponents();
