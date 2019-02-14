@@ -44,12 +44,14 @@ import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
 import {MatIconModule, MatIconRegistry} from '@angular/material';
 import {AdminModule} from './admin/admin.module';
+import {CookieService} from 'ngx-cookie-service';
 
 @NgModule({
   declarations: [
     AppComponent
   ],
   imports: [
+    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
     BrowserModule,
     BrowserAnimationsModule,
     FlexLayoutModule,
@@ -69,13 +71,13 @@ import {AdminModule} from './admin/admin.module';
     ChildrenModule,
     SchoolsModule,
     AdminModule,
-    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
     MatIconModule,
   ],
   providers: [
     AppConfig,
     { provide: APP_INITIALIZER, useFactory: initializeApp, deps: [AppConfig], multi: true },
     MatIconRegistry,
+    CookieService,
   ],
   bootstrap: [AppComponent]
 })
