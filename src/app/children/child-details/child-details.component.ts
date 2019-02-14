@@ -50,14 +50,6 @@ export class ChildDetailsComponent implements OnInit {
   editing = false;
   gender = Gender;
 
-  //initalize input for HealthCheck Subrecord
-  HealthCheckRecords: Array<HealthCheck> = [];
-  HealthCheckColumns: Array<ColumnDescription> = [
-    new ColumnDescription('date','Date','Date', null),
-    new ColumnDescription('height','Height','number', null),
-    new ColumnDescription('weight','Weight','number', null),
-  ];
-
   generateNewRecordFactory() {
     // define values locally because 'this' is a different scope after passing a function as input to another component
     const child = this.child.getId(); 
@@ -206,23 +198,6 @@ export class ChildDetailsComponent implements OnInit {
   //   this.loadHealthChecks();
   // }
 
-  // loadHealthChecks(){
-
-  //   let tempArray = []; //we need this because somehow you cant push directly into the HealthCheckRecords Array
-  //   //this is a workaround until indizes in our database are centrelized 
-  //   this.entityMapperService.loadType<HealthCheck>(HealthCheck).then(
-  //      result => result.forEach(doc => {
-  //          if(doc.child===this.child.getId()){
-  //               tempArray.push(doc);
-  //           }
-  //           else{
-  //             console.log(doc);
-  //           }
-  //      })
-  //      );
-  //      console.log(tempArray);
-  //      this.HealthCheckRecords=tempArray;
-  //     }
 }
 
 

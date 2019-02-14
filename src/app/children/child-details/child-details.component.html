@@ -297,7 +297,7 @@
         </mat-form-field>
       </div>
 
-      <div>
+      <!-- <div>
         <mat-label>
           Health Check-Up
         </mat-label>
@@ -311,10 +311,8 @@
           <input matInput #health_weight formControlName="health_weight" placeholder="Weight" type="number">
         </mat-form-field>
           <button mat-stroked-button (click)="addHealthCheck(health_checkup.value, health_height.value, health_weight.value)">Add Health Check</button>
-      </div>
-      <div>
-        <app-entity-subrecord [records]="HealthCheckRecords" [columns]="HealthCheckColumns" [newRecordFactory]="generateNewRecordFactory()" [showButton]="false"></app-entity-subrecord>
-      </div>
+      </div> -->
+        <app-health-checkup></app-health-checkup>
   
   
     </mat-expansion-panel>

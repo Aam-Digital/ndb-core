@@ -7,6 +7,6 @@
     "remote_url": "https://couchdb.aam-digital.com/",
     "timeout": 60000,
     "outdated_threshold_days": 0,
-    "useTemporaryDatabase": true
+    "useTemporaryDatabase": false
   }
 }
