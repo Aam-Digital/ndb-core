@@ -8,7 +8,9 @@
         "/favicon.ico",
         "/index.html",
         "/*.css",
-        "/*.js"
+        "/*.js",
+        "/*.woff2",
+        "/*.tff"
       ]
     }
   }, {
