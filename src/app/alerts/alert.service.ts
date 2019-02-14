@@ -21,6 +21,7 @@ import {MatSnackBar} from '@angular/material';
 import {Alert} from './alert';
 import {AlertComponent} from './alerts/alert.component';
 import {LoggingService} from '../logging/logging.service';
+import {AlertDisplay} from './alert-display';
 
 @Injectable()
 export class AlertService {
@@ -33,24 +34,20 @@ export class AlertService {
 
   addAlert(alert: Alert) {
     this.alerts.push(alert);
-    if (!alert.silent) {
-      this.openSnackBar(alert);
-    }
+    this.displayAlert(alert);
     this.logToConsole(alert);
   }
 
-  private openSnackBar(alert: Alert) {
+  private displayAlert(alert: Alert) {
     const snackConfig = {data: alert, duration: 10000, panelClass: 'alerts-snackbar'};
 
-    switch (alert.type) {
-      case Alert.DEBUG:
+    switch (alert.display) {
+      case AlertDisplay.NONE:
         return;
-      case Alert.SUCCESS:
-      case Alert.INFO:
+      case AlertDisplay.TEMPORARY:
         snackConfig.duration = 5000;
         break;
-      case Alert.DANGER:
-      case Alert.WARNING:
+      case AlertDisplay.PERSISTENT:
         snackConfig.duration = 3600000;
         break;
     }
@@ -86,23 +83,23 @@ export class AlertService {
   }
 
 
-  public addInfo(message: string, silent: boolean = false) {
-    this.addAlert(new Alert(message, Alert.INFO, silent));
+  public addInfo(message: string, display: AlertDisplay = AlertDisplay.TEMPORARY) {
+    this.addAlert(new Alert(message, Alert.INFO, display));
   }
 
-  public addSuccess(message: string, silent: boolean = false) {
-    this.addAlert(new Alert(message, Alert.SUCCESS, silent));
+  public addSuccess(message: string, display: AlertDisplay = AlertDisplay.TEMPORARY) {
+    this.addAlert(new Alert(message, Alert.SUCCESS, display));
   }
 
-  public addWarning(message: string, silent: boolean = false) {
-    this.addAlert(new Alert(message, Alert.WARNING, silent));
+  public addWarning(message: string, display: AlertDisplay = AlertDisplay.PERSISTENT) {
+    this.addAlert(new Alert(message, Alert.WARNING, display));
   }
 
-  public addDanger(message: string, silent: boolean = false) {
-    this.addAlert(new Alert(message, Alert.DANGER, silent));
+  public addDanger(message: string, display: AlertDisplay = AlertDisplay.PERSISTENT) {
+    this.addAlert(new Alert(message, Alert.DANGER, display));
   }
 
-  public addDebug(message: string, silent: boolean = false) {
-    this.addAlert(new Alert(message, Alert.DEBUG, silent));
+  public addDebug(message: string, display: AlertDisplay = AlertDisplay.NONE) {
+    this.addAlert(new Alert(message, Alert.DEBUG, display));
   }
 }
