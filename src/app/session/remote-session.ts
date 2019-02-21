@@ -45,7 +45,7 @@ import { ConnectionState } from './connection-state.enum';
 PouchDB.plugin(PouchDBAuthentication);
 
 @Injectable()
-export class RemoteSessionService {
+export class RemoteSession {
   public database: any;
 
   public connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>(ConnectionState.disconnected);

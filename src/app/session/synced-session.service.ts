@@ -48,8 +48,8 @@ import { Injectable } from '@angular/core';
 import { AlertService } from '../alerts/alert.service';
 
 import { SessionService } from './session.service';
-import { LocalSessionService } from './local-session.service';
-import { RemoteSessionService } from './remote-session.service';
+import { LocalSession } from './local-session';
+import { RemoteSession } from './remote-session';
 import { LoginState } from './login-state.enum';
 import { Database } from '../database/database';
 import { PouchDatabase } from '../database/pouch-database';
@@ -59,13 +59,13 @@ import { User } from '../user/user';
 
 @Injectable()
 export class SyncedSessionService extends SessionService {
-  private _localSession: LocalSessionService;
-  private _remoteSession: RemoteSessionService;
+  private _localSession: LocalSession;
+  private _remoteSession: RemoteSession;
 
   constructor(private _alertService: AlertService) {
     super();
-    this._localSession = new LocalSessionService();
-    this._remoteSession = new RemoteSessionService();
+    this._localSession = new LocalSession();
+    this._remoteSession = new RemoteSession();
   }
 
   public isLoggedIn(): boolean {

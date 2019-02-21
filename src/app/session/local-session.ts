@@ -52,7 +52,7 @@ import { LoginState } from './login-state.enum';
 import { StateHandler } from './util/state-handler';
 
 @Injectable()
-export class LocalSessionService {
+export class LocalSession {
   public database: any;
 
   public loginState: StateHandler<LoginState>; // logged in, logged out, login failed
