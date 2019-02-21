@@ -46,8 +46,8 @@ describe('AppVersionComponent', () => {
   let entityMapper: EntityMapperService;
 
   beforeEach(async(() => {
-    latestChangesService = new LatestChangesService(null, null);
     sessionService = new MockSessionService();
+    latestChangesService = new LatestChangesService(null, null, null, null);
     entityMapper = new EntityMapperService(null);
 
     spyOn(latestChangesService, 'getChangelogs').and
@@ -81,8 +81,7 @@ describe('AppVersionComponent', () => {
 
 
   it('should open dialog', () => {
-    const dialogService = fixture.debugElement.injector.get(MatDialog);
-    const spy = spyOn(dialogService, 'open').and.callThrough();
+    const spy = spyOn(latestChangesService, 'showLatestChanges');
 
     component.showLatestChanges();
     expect(spy.calls.count()).toBe(1, 'dialog not opened');

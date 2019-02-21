@@ -40,6 +40,9 @@ import {AppConfig} from '../../app-config/app-config';
 import { SessionService } from 'app/session/session.service';
 import { MockSessionService } from 'app/session/mock-session.service';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import {CookieService} from 'ngx-cookie-service';
+import {SwUpdate} from '@angular/service-worker';
+import {of} from 'rxjs';
 
 describe('UiComponent', () => {
   let component: UiComponent;
@@ -58,6 +61,8 @@ describe('UiComponent', () => {
       },
     };
 
+    const mockSwUpdate = { available: of(), checkForUpdate: () => {} };
+
     TestBed.configureTestingModule({
       declarations: [SearchComponent, PrimaryActionComponent, UiComponent],
       imports: [RouterTestingModule, CommonModule, FormsModule, MatIconModule, MatToolbarModule, MatSidenavModule,
@@ -72,7 +77,11 @@ describe('UiComponent', () => {
         SessionModule,
         FlexLayoutModule,
       ],
-      providers: [{provide: SessionService, useClass: MockSessionService}],
+      providers: [
+        {provide: SessionService, useClass: MockSessionService},
+        CookieService,
+        {provide: SwUpdate, useValue: mockSwUpdate},
+      ],
     })
       .compileComponents();
   }));

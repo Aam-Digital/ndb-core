@@ -1,5 +1,12 @@
 [
   {
+    "tag_name": "v2.5.2",
+    "name": "Automatic Update Notifications available now",
+    "published_at": "2019-02-16",
+    "body": "- when a new update is available on the server, a notification message is displayed to activate the update\n-fixed Updated - Latest Changes popup to only be displayed once after a new version is loaded\n- fixed symbols not getting displayed when offline\n- fixed errors in related components after a child is deleted\n- updated related libraries",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.5.1",
     "name": "Multiple problems fixed",
     "published_at": "2019-01-07",

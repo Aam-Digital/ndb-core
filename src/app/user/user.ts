@@ -23,7 +23,6 @@ export class User extends Entity {
   static ENTITY_TYPE = 'User';
 
   public name: string;
-  public lastUsedVersion = ''; // used by AppVersionComponent to notify user after the app was updated to a new version
   private password: any;
   public admin: boolean;
 

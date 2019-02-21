@@ -17,10 +17,8 @@
 
 import {Component, OnInit} from '@angular/core';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
-import { LoginState } from '../../session/login-state.enum';
-import { SessionService } from '../../session/session.service';
 import {ChangelogComponent} from '../changelog/changelog.component';
-import {MatDialog, MatDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material';
 import {LatestChangesService} from '../latest-changes.service';
 
 @Component({
@@ -33,42 +31,15 @@ export class AppVersionComponent implements OnInit {
 
   dialogRef: MatDialogRef<ChangelogComponent>;
 
-  constructor(private _sessionService: SessionService,
-              private _entityMapperService: EntityMapperService,
-              private changelog: LatestChangesService,
-              private dialog: MatDialog) {
+  constructor(private _entityMapperService: EntityMapperService,
+              private changelog: LatestChangesService) {
   }
 
   ngOnInit(): void {
     this.changelog.getCurrentVersion().subscribe(version => this.currentVersion = version);
-
-    this._sessionService.getLoginState().getStateChangedStream().subscribe(
-      (loginState: LoginState) => {
-        if (loginState === LoginState.loggedIn) {
-          setTimeout(() => this.checkForUpdatedVersion());
-        }
-      }
-    );
-
-    // do initial check
-    setTimeout(() => this.checkForUpdatedVersion());
-  }
-
-  checkForUpdatedVersion() {
-    if (this._sessionService.getCurrentUser() === null) {
-      return;
-    }
-
-    if (this._sessionService.getCurrentUser().lastUsedVersion !== this.currentVersion) {
-      this._sessionService.getCurrentUser().lastUsedVersion = this.currentVersion;
-      this._entityMapperService.save(this._sessionService.getCurrentUser());
-      this.showLatestChanges();
-    }
   }
 
   public showLatestChanges(): void {
-    this.dialogRef = this.dialog.open(ChangelogComponent, {
-      width: '400px'
-    });
+    this.changelog.showLatestChanges();
   }
 }
