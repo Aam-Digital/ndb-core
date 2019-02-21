@@ -17,7 +17,7 @@
 
 import { Entity } from '../entity/entity';
 
-import CryptoJS from 'crypto-js';
+import * as CryptoJS from 'crypto-js';
 
 export class User extends Entity {
   static ENTITY_TYPE = 'User';
