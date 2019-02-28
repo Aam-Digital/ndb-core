@@ -16,7 +16,7 @@ export class ChildrenService {
     this.createAttendanceAnalysisIndex();
     this.createNotesIndex();
     this.createAttendancesIndex();
-    this.createChildSchoolRelationIndex();
+    // this.createChildSchoolRelationIndex();
   }
 
   getChildren(): Observable<Child[]> {

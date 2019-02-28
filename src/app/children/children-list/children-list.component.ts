@@ -77,6 +77,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   private loadData(replaceUrl: boolean = false) {
     this.childrenService.getChildren().subscribe(data => {
       this.childrenList = data;
+      // this.childrenService.querySchoolsOfChild(data[0].getId()).then(res => console.log('res', res));
 
       const centers = data.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
       this.centerFS.initOptions(centers, 'center');
