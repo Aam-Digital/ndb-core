@@ -3,6 +3,7 @@ import { HealthCheck } from './HealthCheck';
 import { ColumnDescription } from '../../ui-helper/entity-subrecord/column-description';
 import { ActivatedRoute } from '@angular/router';
 import { EntityMapperService } from 'app/entity/entity-mapper.service';
+import {uniqid} from 'uniqid';
 
 
 @Component({
@@ -29,6 +30,21 @@ export class HealthCheckupComponent implements OnInit {
     } )
   }
 
+  generateNewRecordFactory() {
+    // define values locally because "this" is a different scope after passing a function as input to another component
+    const childId = this.childId;
+
+    return () => {
+      var newHC = new HealthCheck(Date.now().toString());
+
+      // use last entered date as default, otherwise today's date
+      newHC.date = this.records.length > 0 ? this.records[0].date : new Date();
+      newHC.child = childId;
+
+      return newHC;
+    };
+  }
+
   loadHealthChecks(){
 
     let tempArray = []; //we need this because somehow you cant push directly into the HealthCheckRecords Array
@@ -46,4 +62,16 @@ export class HealthCheckupComponent implements OnInit {
        console.log(tempArray);
        this.records=tempArray;
       }
+    
+      // addHealthCheck(date: Date, height: number, weight: number){
+  //   var newHealthCheck = new HealthCheck(uniqid());
+  //   newHealthCheck.date=date;
+  //   newHealthCheck.height=height;
+  //   newHealthCheck.weight=weight;
+  //   newHealthCheck.child=this.child.getId();
+  //   console.log(newHealthCheck);
+  //   this.entityMapperService.save<HealthCheck>(newHealthCheck);
+  //   this.loadHealthChecks();
+  // }
+
     }
