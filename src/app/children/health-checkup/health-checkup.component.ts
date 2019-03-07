@@ -4,7 +4,7 @@ import { ColumnDescription } from '../../ui-helper/entity-subrecord/column-descr
 import { ActivatedRoute } from '@angular/router';
 import { EntityMapperService } from 'app/entity/entity-mapper.service';
 import { ChildrenService } from '../children.service';
-import {uniqid} from 'uniqid';
+import {DatePipe} from '@angular/common';
 
 
 @Component({
@@ -16,12 +16,13 @@ import {uniqid} from 'uniqid';
 export class HealthCheckupComponent implements OnInit {
   records = new Array<HealthCheck>();
   columns : Array<ColumnDescription> = [
-    new ColumnDescription('date','Date','Date', null),
-    new ColumnDescription('height','Height','number', null),
-    new ColumnDescription('weight','Weight','number', null),
+    new ColumnDescription('date','Date','date', null,
+    (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
+    new ColumnDescription('height','Height','number'),
+    new ColumnDescription('weight','Weight','number'),
   ];
   childId : string;
-  constructor(private route: ActivatedRoute, private entityMapperService: EntityMapperService, private childrenService: ChildrenService) { }
+  constructor(private route: ActivatedRoute, private childrenService: ChildrenService, private datePipe: DatePipe ) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe (params => {
