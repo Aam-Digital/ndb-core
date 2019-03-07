@@ -116,6 +116,7 @@ export class ChildrenService {
     this.createAttendanceAnalysisIndex();
     this.createNotesIndex();
     this.createAttendancesIndex();
+    // this.createChildSchoolRelationIndex();
   }
 
   async getChildrenForList(): Promise<TableChild[]> {
@@ -195,6 +196,24 @@ export class ChildrenService {
     return this.db.saveDatabaseIndex(designDoc);
   }
 
+  private createChildSchoolRelationIndex(): Promise<any> {
+    const designDoc = {
+      _id: '_design/childSchoolRelations_index',
+      views: {
+        by_child: {
+          map: '(doc) => emit(doc.childId)'
+        },
+        by_school: {
+          map: '(doc) => emit(doc.childId)'
+        }
+      }
+    };
+    return this.db.saveDatabaseIndex(designDoc);
+  }
+
+  querySchoolsOfChild(childId: string) {
+    return this.db.query('childSchoolRelations_index/by_child', {key: childId, include_docs: true});
+  }
 
 
   queryAttendanceLast3Months() {
