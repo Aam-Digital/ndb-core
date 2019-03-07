@@ -3,6 +3,7 @@ import { HealthCheck } from './HealthCheck';
 import { ColumnDescription } from '../../ui-helper/entity-subrecord/column-description';
 import { ActivatedRoute } from '@angular/router';
 import { EntityMapperService } from 'app/entity/entity-mapper.service';
+import { ChildrenService } from '../children.service';
 import {uniqid} from 'uniqid';
 
 
@@ -20,7 +21,7 @@ export class HealthCheckupComponent implements OnInit {
     new ColumnDescription('weight','Weight','number', null),
   ];
   childId : string;
-  constructor(private route: ActivatedRoute, private entityMapperService: EntityMapperService) { }
+  constructor(private route: ActivatedRoute, private entityMapperService: EntityMapperService, private childrenService: ChildrenService) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe (params => {
@@ -44,25 +45,17 @@ export class HealthCheckupComponent implements OnInit {
       return newHC;
     };
   }
-
+  
+  
   loadHealthChecks(){
 
-    let tempArray = []; //we need this because somehow you cant push directly into the HealthCheckRecords Array
-    //this is a workaround until indizes in our database are centrelized 
-    this.entityMapperService.loadType<HealthCheck>(HealthCheck).then(
-       result => result.forEach(doc => {
-           if(doc.child===this.childId) {
-                tempArray.push(doc);
-            }
-            else{
-              console.log(doc);
-            }
-       })
-       );
-       console.log(tempArray);
-       this.records=tempArray;
-      }
-    
+    this.childrenService.getHealthChecksOfChild(this.childId)
+      .subscribe(results => {
+        this.records=results
+          .sort(( a,b ) => b.date.valueOf() - a.date.valueOf())
+      });
+    }
+
       // addHealthCheck(date: Date, height: number, weight: number){
   //   var newHealthCheck = new HealthCheck(uniqid());
   //   newHealthCheck.date=date;
