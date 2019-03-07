@@ -136,7 +136,7 @@ export class ChildDetailsComponent implements OnInit {
         });
     }
     this.initForm();
-    this.loadHealthChecks(); //load all the healthchecks for the child, not called in ngOnInit() because it needs the child to be loaded
+    
   }
 
   switchEdit() {
