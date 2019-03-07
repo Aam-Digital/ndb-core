@@ -37,7 +37,9 @@ export class ChildSelectComponent implements OnInit {
 
     this.valueAsIds.forEach(selectedId => {
       const selectedChild: Child = this.allChildren.find(c => c.getId() === selectedId);
-      this.selectChild(selectedChild, true);
+      if (selectedChild) {
+        this.selectChild(selectedChild, true);
+      }
     });
   }
 

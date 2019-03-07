@@ -19,6 +19,7 @@ import {AlertService} from './alert.service';
 import {Alert} from './alert';
 import {LogLevel} from '../logging/log-level';
 import {LoggingService} from '../logging/logging.service';
+import {AlertDisplay} from './alert-display';
 
 class MockLoggingService extends LoggingService {
   public log(message: string, logLevel: LogLevel) {
@@ -92,7 +93,7 @@ describe('AlertService', () => {
   });
 
   it('removes alert', function () {
-    const alert = new Alert('test message', Alert.DANGER);
+    const alert = new Alert('test message', Alert.DANGER, AlertDisplay.PERSISTENT);
     alertService.addAlert(alert);
     alertService.removeAlert(alert);
 
