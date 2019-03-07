@@ -28,7 +28,7 @@ import uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
 import {School} from '../../schools/school';
 import {ChildrenService} from '../children.service';
-import {HealthCheck} from '../HealthCheck';
+import {HealthCheck} from '../health-checkup/HealthCheck';
 import {EntitySubrecordComponent} from '../../ui-helper/entity-subrecord/entity-subrecord.component';
 import {ColumnDescription} from '../../ui-helper/entity-subrecord/column-description';
 
@@ -49,14 +49,6 @@ export class ChildDetailsComponent implements OnInit {
   creatingNew = false;
   editing = false;
   gender = Gender;
-
-  //initalize input for HealthCheck Subrecord
-  HealthCheckRecords: Array<HealthCheck> = [];
-  HealthCheckColumns: Array<ColumnDescription> = [
-    new ColumnDescription('date','Date','Date', null),
-    new ColumnDescription('height','Height','number', null),
-    new ColumnDescription('weight','Weight','number', null),
-  ];
 
   generateNewRecordFactory() {
     // define values locally because 'this' is a different scope after passing a function as input to another component
@@ -196,34 +188,6 @@ export class ChildDetailsComponent implements OnInit {
     this.location.back();
   }
 
-  addHealthCheck(date: Date, height: number, weight: number){
-    var newHealthCheck = new HealthCheck(uniqid());
-    newHealthCheck.date=date;
-    newHealthCheck.height=height;
-    newHealthCheck.weight=weight;
-    newHealthCheck.child=this.child.getId();
-    console.log(newHealthCheck);
-    this.entityMapperService.save<HealthCheck>(newHealthCheck);
-    this.loadHealthChecks();
-  }
-
-  loadHealthChecks(){
-
-    let tempArray = []; //we need this because somehow you cant push directly into the HealthCheckRecords Array
-    //this is a workaround until indizes in our database are centrelized 
-    this.entityMapperService.loadType<HealthCheck>(HealthCheck).then(
-       result => result.forEach(doc => {
-           if(doc.child===this.child.getId()){
-                tempArray.push(doc);
-            }
-            else{
-              console.log(doc);
-            }
-       })
-       ).catch(error => console.log("ERROR FROM LOADHEALTHCHECKS"));
-       console.log(tempArray);
-       this.HealthCheckRecords=tempArray;
-      }
 }
 
 

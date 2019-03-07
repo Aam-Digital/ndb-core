@@ -15,8 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from '../entity/entity';
-import {Child} from '../children/child';
+import { Entity } from '../../entity/entity';
+import {Child} from '../child';
 
 export class HealthCheck extends Entity{
 

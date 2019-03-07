@@ -7,6 +7,7 @@ import {Database} from '../database/database';
 import {Note} from './notes/note';
 import {EducationalMaterial} from './educational-material/educational-material';
 import {Aser} from './aser/aser';
+import {HealthCheck} from './health-checkup/HealthCheck'
 
 @Injectable()
 export class ChildrenService {
@@ -186,6 +187,15 @@ export class ChildrenService {
         .then(loadedEntities => {
           return loadedEntities.filter(o => o.child === childId);
         })
+    );
+  }
+
+  getHealthChecksOfChild(childId: string): Observable<HealthCheck[]>{
+    return Observable.fromPromise(
+      this.entityMapper.loadType<HealthCheck>(HealthCheck)
+      .then(loadedEntities => {
+        return loadedEntities.filter(h => h.child===childId);
+      })
     );
   }
 
