@@ -191,7 +191,7 @@ export class ChildrenService {
   }
 
   getHealthChecksOfChild(childId: string): Observable<HealthCheck[]>{
-    return Observable.fromPromise(
+    return from(
       this.entityMapper.loadType<HealthCheck>(HealthCheck)
       .then(loadedEntities => {
         return loadedEntities.filter(h => h.child===childId);
