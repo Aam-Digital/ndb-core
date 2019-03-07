@@ -28,6 +28,7 @@ import uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
 import {ChildrenService} from '../children.service';
 import {School} from '../../schools/school';
+import {Database} from '../../database/database';
 
 
 @Component({
@@ -101,11 +102,16 @@ export class ChildDetailsComponent implements OnInit {
               private location: Location,
               private snackBar: MatSnackBar,
               private confirmationDialog: ConfirmationDialogService,
-              private alertService: AlertService) { }
+              private alertService: AlertService,
+  ) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
     this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
+    this.route.paramMap.subscribe(params => {
+      const childId = params.get('id');
+      this.childrenService.querySchoolsOfChild(childId).subscribe(res => console.log('res', res));
+    });
   }
 
   loadChild(id: string) {

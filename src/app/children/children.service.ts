@@ -10,6 +10,7 @@ import {Aser} from './aser/aser';
 import {ChildSchoolRelation} from './childSchoolRelation';
 import {Gender} from './Gender';
 import {School} from '../schools/school';
+import {map} from 'rxjs/operators';
 
 export class TableChild {
   constructor(private _child?: Child, private _school?: School, private _childSchoolRelation?: ChildSchoolRelation) { }
@@ -116,7 +117,7 @@ export class ChildrenService {
     this.createAttendanceAnalysisIndex();
     this.createNotesIndex();
     this.createAttendancesIndex();
-    // this.createChildSchoolRelationIndex();
+    this.createChildSchoolRelationIndex()
   }
 
   async getChildrenForList(): Promise<TableChild[]> {
@@ -197,24 +198,51 @@ export class ChildrenService {
   }
 
   private createChildSchoolRelationIndex(): Promise<any> {
+
     const designDoc = {
       _id: '_design/childSchoolRelations_index',
       views: {
         by_child: {
-          map: '(doc) => emit(doc.childId)'
+          map: `(doc) => {
+            if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
+            emit(doc.childId);
+            }`
         },
         by_school: {
-          map: '(doc) => emit(doc.childId)'
+          map: `(doc) => {
+            if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
+            emit(doc.schoolId);
+            }`
         }
       }
     };
     return this.db.saveDatabaseIndex(designDoc);
   }
 
-  querySchoolsOfChild(childId: string) {
-    return this.db.query('childSchoolRelations_index/by_child', {key: childId, include_docs: true});
+  querySchoolsOfChild(childId: string): Observable<ChildSchoolRelation[]> {
+    const promise = this.db.query('childSchoolRelations_index/by_child', {key: childId, include_docs: true})
+      .then(loadedEntities => {
+        return loadedEntities.rows.map(loadedRecord => {
+          const entity = new ChildSchoolRelation('');
+          entity.load(loadedRecord.doc);
+          return entity;
+        });
+      });
+
+    return from(promise);
   }
 
+  queryChildrenofSchool(schoolId: string) {
+    const promise = this.db.query('childSchoolRelations_index/by_school', {key: schoolId, include_docs: true})
+      .then(loadedEntities => {
+        return loadedEntities.rows.map(loadedRecord => {
+          const entity = new ChildSchoolRelation('');
+          entity.load(loadedRecord.doc);
+          return entity;
+        });
+      });
+
+    return from(promise);  }
 
   queryAttendanceLast3Months() {
     return this.db.query('avg_attendance_index/three_months', {reduce: true, group: true});
@@ -361,14 +389,14 @@ export class ChildrenService {
    })
   }
 
-  getViewableSchools(childId: string): Promise<ViewableSchool[]> {
-    return this.getRelations(childId).then((relations: ChildSchoolRelation[]) => {
+  getViewableSchools(childId: string): Observable<ViewableSchool[]> {
+    return this.querySchoolsOfChild(childId).pipe(map((relations: ChildSchoolRelation[]) => {
       const schools: ViewableSchool[] = [];
       relations.forEach(async relation => {
         const school: School = await relation.getSchool(this.entityMapper);
         schools.push(new ViewableSchool(relation, school));
       });
       return schools;
-    });
+    }));
   }
 }
