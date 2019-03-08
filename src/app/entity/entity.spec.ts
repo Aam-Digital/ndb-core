@@ -17,7 +17,7 @@
 
 import { Entity } from './entity';
 
-describe('Entity', () => {
+fdescribe('Entity', () => {
 
   it('has ID', function () {
     const id = 'test1';
@@ -31,5 +31,64 @@ describe('Entity', () => {
     const entity = new Entity(id);
 
     expect(entity.getType()).toBe('Entity');
+  });
+
+  it('all schema fields exist', function () {
+    const id = 'test1';
+    const entity = new Entity(id);
+
+    for (const sField of Entity.schema.keys()) {
+      if (!Entity.schema.get(sField).isOptional) {
+        expect(entity[sField]).toBeDefined('(' + sField + ' not defined)');
+      }
+    }
+  });
+
+  it('load() assigns all data', function () {
+    const id = 'test1';
+    const entity = new Entity(id);
+
+    const data = {
+      _id: 'test2',
+      _rev: '1.2.3',
+      other: 'x'
+    };
+    entity.load(data);
+
+    expect(entity._id).toBe(data._id);
+    expect(entity._rev).toBe(data._rev);
+    // @ts-ignore   because other is not a defined property of the class (-> TypeScript error) and only added from load(data)
+    expect(entity.other).toBe(data.other);
+  });
+
+  it('rawData() returns only data matching the schema', function () {
+    class TestEntity extends Entity {
+      static schema = Entity.schema.extend({
+        'text': 'string',
+        'defaultText': 'string=default',
+      });
+
+      text = 'text';
+      defaultText: string;
+      otherText = 'other Text';
+    }
+    const id = 'test1';
+    const entity = new TestEntity(id);
+
+    const data = entity.rawData();
+
+    expect(data._id).toBeDefined();
+    expect(data.text).toBe('text');
+    expect(data.defaultText).toBe('default');
+    expect(data.otherText).toBeUndefined();
+  });
+
+  it('rawData() includes searchIndices', function () {
+    const id = 'test1';
+    const entity = new Entity(id);
+
+    const data = entity.rawData();
+
+    expect(data.searchIndices).toBeDefined();
   });
 });

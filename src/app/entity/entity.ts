@@ -15,6 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {EntitySchema} from './entity-schema';
+
 /**
  * Entity is a base class for all domain model classes.
  *
@@ -27,12 +29,28 @@ export class Entity {
    */
   static ENTITY_TYPE = 'Entity';
 
-  /**
-   * The unique id of this entity.
-   */
-  private readonly entityId: string;
+  static schema: EntitySchema<Entity> = new EntitySchema<Entity>({
+    _id: 'string',
+    _rev: 'string?',
+    // searchIndices: 'string[]' // generated through this.generateSearchIndices() and assigned in rawData() directly
+  });
 
+
+  _id: string;
   _rev: string;
+
+
+  /**
+   * An helper property to access the actual id without prefix
+   */
+  get entityId(): string {
+    const split = this._id.indexOf(':');
+    return this._id.substring(split + 1);
+  }
+  set entityId(newEntityId: string) {
+    // TODO: this duplicates the EntityMapper.createDatabaseId function, (re)move it there?
+    this._id = this.getType() + ':' + newEntityId;
+  }
 
   /**
    * Creates an entity object with the given id. This id is final and won't be changeable after this object has been
@@ -42,6 +60,13 @@ export class Entity {
    */
   constructor(id: string) {
     this.entityId = id;
+  }
+
+  /**
+   * Get the class (Entity or the actual subclass of the instance) to call static methods on the correct class considering inheritance
+   */
+  getConstructor(): typeof Entity {
+    return <typeof Entity>this.constructor;
   }
 
   /**
@@ -64,15 +89,12 @@ export class Entity {
    * @returns {string} the entity's type (which is the class name).
    */
   public getType(): string {
-    const c = <typeof Entity>this.constructor;
-    return c.ENTITY_TYPE;
+    return this.getConstructor().ENTITY_TYPE;
   }
 
 
   public load(data: any) {
-    if (data.entityId) {
-      data.entityId.toString();
-    }
+    data = this.getConstructor().schema.transformDatabaseToEntityFormat(data);
 
     return Object.assign(this, data);
   }
@@ -87,8 +109,10 @@ export class Entity {
    * @returns {object} the instance's cleaned object.
    */
   public rawData(): any {
-    const data = this;
+    const data = this.getConstructor().schema.transformEntityToDatabaseFormat(this);
+
     data['searchIndices'] = this.generateSearchIndices();
+
     return data;
   }
 
