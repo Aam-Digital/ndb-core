@@ -213,10 +213,37 @@ export class ChildrenService {
             if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
             emit(doc.schoolId);
             }`
+        },
+        by_date: {
+          // Somehow pouchDB wants me to remove the two missing ')' after .valueOf(.
+          // If I add the pouchDB throws an error
+          map: `(doc) => {
+            if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
+            emit(new Date(doc.start));
+            }`
         }
+
       }
     };
     return this.db.saveDatabaseIndex(designDoc);
+  }
+
+  queryCurrentSchoolOfChild(childId: string): Observable<ChildSchoolRelation> {
+    const promise: Promise<ChildSchoolRelation> = this.db.query(
+      'childSchoolRelations_index/by_date',
+      {descending: true, include_docs: true}
+      )
+      .then(loadedEntities => {
+        for (const record of loadedEntities.rows) {
+          if (record.doc.childId === childId) {
+            const entity: ChildSchoolRelation = new ChildSchoolRelation('');
+            entity.load(record.doc);
+            return entity;
+          }
+        }
+      });
+
+    return from(promise);
   }
 
   querySchoolsOfChild(childId: string): Observable<ChildSchoolRelation[]> {
