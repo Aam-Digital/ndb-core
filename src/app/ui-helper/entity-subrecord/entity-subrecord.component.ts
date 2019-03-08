@@ -6,6 +6,7 @@ import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {ColumnDescription} from './column-description';
 import { ObservableMedia, MediaChange} from '@angular/flex-layout';
 import {Subscription} from 'rxjs/Rx';
+import {logWarning} from 'typings/dist/support/cli';
 
 @Component({
   selector: 'app-entity-subrecord',
@@ -25,7 +26,6 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   originalRecords = [];
   screenWidth = '';
   flexMediaWatcher: Subscription;
-  newColumns = [];
 
   @ViewChild(MatSort) sort: MatSort;
 
@@ -156,46 +156,43 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     col.selectValues = col.allSelectValues.filter(v => v.value.includes(input) || v.label.includes(input));
   }
 
-  // resets columnsToDisplay depending on current screensize
+  /**
+   * resets columnsToDisplay depending on current screensize
+   */
   setupTable() {
     if (this.columns !== undefined && this.screenWidth !== '') {
-      this.newColumns = [];
-      this.columns.forEach( (col) => this.checkVisibility(col));
-      this.columnsToDisplay = this.newColumns;
+      const columnsHelpArray = [];
+      const entitySubrecordComponent = this;
+      this.columns.forEach( function(this, col) {if (entitySubrecordComponent.isVisible(col)) {
+        columnsHelpArray.push(col.name);
+      } } );
+      this.columnsToDisplay = columnsHelpArray;
       this.columnsToDisplay.push('actions');
     }
   }
 
-  // compares the current screensize to the columns' property visibleFrom. screensize < visibleFrom? column not displayed
-  checkVisibility(col) {
+  /**
+   * isVisible
+   * compares the current screensize to the columns' property visibleFrom. screensize < visibleFrom? column not displayed
+   * @param col column that is checked
+   * @return returns true if column is visible
+   */
+  isVisible(col) {
     switch (col.visibleFrom) {
       case 'xl': {
-        if (this.screenWidth.match('xl')) {
-          this.newColumns.push(col.name);
-        }
-        break;
+        return (this.screenWidth.match('xl'))
       }
       case 'lg': {
-        if (this.screenWidth.match('(lg|xl)')) {
-          this.newColumns.push(col.name);
-        }
-        break;
+        return (this.screenWidth.match('(lg|xl)'))
       }
       case 'md': {
-        if (this.screenWidth.match('(md|lg|xl)')) {
-          this.newColumns.push(col.name);
-        }
-        break;
+        return (this.screenWidth.match('(md|lg|xl)'))
       }
       case 'sm': {
-        if (this.screenWidth.match('(sm|md|lg|xl)')) {
-          this.newColumns.push(col.name);
-        }
-        break;
+        return (this.screenWidth.match('(sm|md|lg|xl)'))
       }
       default: {
-        this.newColumns.push(col.name);
-        break;
+        return true;
       }
     }
   }
