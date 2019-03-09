@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/NGO-DB/ndb-core.svg?branch=master)](https://travis-ci.org/NGO-DB/ndb-core)
-[![Code Climate](https://codeclimate.com/github/NGO-DB/ndb-core/badges/gpa.svg)](https://codeclimate.com/github/NGO-DB/ndb-core)
+[![Code Climate](https://codeclimate.com/github/NGO-DB/ndb-core/badges/gpa.svg)](https://codeclimate.com/github/NGO-DB/ndb-core) [![Greenkeeper badge](https://badges.greenkeeper.io/NGO-DB/ndb-core.svg)](https://greenkeeper.io/)
 
 # Aam Digital
 Empowering NGOs' social workers with simple to use (database) software.
