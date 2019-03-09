@@ -22,6 +22,8 @@ export class ChildBlockComponent implements OnInit {
     if (this.entityId !== undefined) {
       this.entityMapper.load(Child, this.entityId).then(child => {
         this.entity = child;
+      }).catch(() => {
+        // No special error handling here, as the database will report the technical error and the UI catches the entity being undefined
       });
     }
   }
@@ -50,7 +52,7 @@ export class ChildBlockComponent implements OnInit {
   }
 
   onPhotoError() {
-    if (this.entity.hasPhoto) {
+    if (this.entity && this.entity.hasPhoto) {
       this.entity.hasPhoto = false;
       this.entityMapper.save(this.entity);
     }

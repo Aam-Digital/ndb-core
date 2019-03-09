@@ -20,8 +20,8 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import {ChangelogComponent} from './changelog.component';
 import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material';
 import {LatestChangesService} from '../latest-changes.service';
-import {Observable} from 'rxjs/Observable';
 import {Changelog} from '../changelog';
+import { of } from 'rxjs';
 
 describe('ChangelogComponent', () => {
   let component: ChangelogComponent;
@@ -39,7 +39,7 @@ describe('ChangelogComponent', () => {
       providers: [
         {provide: MatDialogRef, useValue: {}},
         {provide: MAT_DIALOG_DATA, useValue: {}},
-        {provide: LatestChangesService, useValue: { getChangelogs: () => Observable.of([testChangelog]) } },
+        {provide: LatestChangesService, useValue: { getChangelogs: () => of([testChangelog]) } },
         ],
     })
       .compileComponents();

@@ -2,7 +2,6 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ChildAttendanceComponent } from './child-attendance.component';
 import {ActivatedRoute} from '@angular/router';
-import {Observable} from 'rxjs/Rx';
 import {Child} from '../../child';
 import {ChildrenService} from '../../children.service';
 import {UiHelperModule} from '../../../ui-helper/ui-helper.module';
@@ -14,6 +13,7 @@ import {AttendanceDaysComponent} from '../attendance-days/attendance-days.compon
 import {AttendanceDayBlockComponent} from '../attendance-days/attendance-day-block.component';
 import {MatSelectModule, MatTooltipModule} from '@angular/material';
 import {FormsModule} from '@angular/forms';
+import {Observable, of} from 'rxjs';
 
 describe('ChildAttendanceComponent', () => {
   let component: ChildAttendanceComponent;
@@ -45,7 +45,7 @@ describe('ChildAttendanceComponent', () => {
       imports: [UiHelperModule, MatSelectModule, FormsModule, MatTooltipModule],
       providers: [
         DatePipe, PercentPipe,
-        { provide: ActivatedRoute, useValue: {params: Observable.of({id: '22'})} },
+        { provide: ActivatedRoute, useValue: {params: of({id: '22'})} },
         { provide: ChildrenService, useValue: mockChildrenService },
         { provide: EntityMapperService, useValue: mockEntityMapper },
       ],

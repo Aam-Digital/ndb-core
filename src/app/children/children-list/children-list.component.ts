@@ -4,7 +4,7 @@ import {MatSort, MatTableDataSource} from '@angular/material';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ChildrenService} from '../children.service';
 import {AttendanceMonth} from '../attendance/attendance-month';
-import {FilterSelection} from '../../ui-helper/filter-selection';
+import {FilterSelection} from '../../ui-helper/filter-selection/filter-selection';
 import {MediaChange, ObservableMedia} from '@angular/flex-layout';
 import {Subscription} from 'rxjs';
 
@@ -90,7 +90,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
       this.childrenList = data;
 
       const centers = data.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
-      this.initCenterFilterOptions(centers);
+      this.centerFS.initOptions(centers, 'center');
 
       this.applyFilterSelections(replaceUrl);
     });
@@ -98,7 +98,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.childrenService.getAttendances()
       .subscribe(results => this.prepareAttendanceData(results));
   }
-
+/*
   private initCenterFilterOptions(centers: string[]) {
     const options = [{key: '', label: 'All', filterFun: (c: Child) => true}];
 
@@ -107,7 +107,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     });
 
     this.centerFS.options = options;
-  }
+  } */
 
 
   prepareAttendanceData(loadedEntities: AttendanceMonth[]) {

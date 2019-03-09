@@ -5,7 +5,7 @@ export class School extends Entity {
 
   name = '';
   medium = '';
-  governmentSchool: boolean;
+  privateSchool: boolean;
   academicBoard = '';
   upToClass: number;
 
@@ -17,6 +17,7 @@ export class School extends Entity {
 
   address = '';
   website = '';
+  phone = '';
 
 
   public toString() {

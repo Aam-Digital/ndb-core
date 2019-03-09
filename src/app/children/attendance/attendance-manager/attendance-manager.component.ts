@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {FilterSelection} from '../../../ui-helper/filter-selection';
+import {FilterSelection} from '../../../ui-helper/filter-selection/filter-selection';
 import {Child} from '../../child';
 import {ChildrenService} from '../../children.service';
 import {MatSort, MatTableDataSource} from '@angular/material';

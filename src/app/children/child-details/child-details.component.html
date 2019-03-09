@@ -18,7 +18,12 @@
 
 <div fxLayout="row" fxLayoutAlign='space-between'>
   <div>
-    <h1 class="page-header section-child"><i class="fa fa-child fa-fw"></i>
+    <h1 class="page-header section-child">
+      <button mat-icon-button (click)='navigateBack()' matTooltip="Back" style='vertical-align: middle;'>
+        <mat-icon fontIcon="fa-backward"></mat-icon>
+      </button>
+
+      <i class="fa fa-child fa-fw"></i>
       <span *ngIf="!creatingNew">{{ child.name }} [{{ child.projectNumber }}]</span>
       <span *ngIf="creatingNew">Adding new Child</span>
     </h1>
@@ -51,7 +56,7 @@
 
       <div fxLayout='row' fxLayout.xs='column wrap' fxLayout.md='column wrap' fxLayout.sm='column wrap'>
         <div fxFlex='150px'>
-          <img [src]="child.getPhoto()" class="child-pic" >
+          <img [src]="child.getPhoto()" class="child-pic" alt="child's photo">
         </div>
 
 
@@ -196,8 +201,13 @@
         </mat-form-field>
 
         <mat-form-field>
-          <input matInput type="number" formControlName="schoolClass" placeholder="Class">
+          <input matInput type="text" formControlName="schoolClass" placeholder="Class">
         </mat-form-field>
+      </div>
+
+      <div>
+        <h3>Previous Schools</h3>
+        <app-view-schools-component [child]="child"></app-view-schools-component>
       </div>
 
       <div>
@@ -233,13 +243,6 @@
       </mat-expansion-panel-header>
 
   <app-notes></app-notes>
-</mat-expansion-panel>
-
-<mat-expansion-panel expanded="false">
-  <mat-expansion-panel-header class="section-header">
-    Schools
-  </mat-expansion-panel-header>
-  <app-view-schools-component [child]="child"></app-view-schools-component>
 </mat-expansion-panel>
 
 

@@ -5,7 +5,7 @@ import {Note} from '../note';
 import {NoteDetailsComponent} from '../note-details/note-details.component';
 import {Subscription} from 'rxjs'
 import {SessionService} from '../../../session/session.service';
-import {FilterSelection} from '../../../ui-helper/filter-selection';
+import {FilterSelection} from '../../../ui-helper/filter-selection/filter-selection';
 import {WarningLevel} from '../../attendance/warning-level';
 import {MediaChange, ObservableMedia} from '@angular/flex-layout';
 

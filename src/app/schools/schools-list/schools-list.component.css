@@ -1,18 +1,22 @@
+.align-form-field {
+  padding-bottom: 1.25em;
+}
+.table-list td {
+  padding-left: 8px;
+}
 
 .mat-form-field {
   font-size: 14px;
   width: 100%;
 }
 
-.mat-table {
-  overflow: auto;
-  max-height: 500px;
-  width: 100%;
-  height: 100%;
+.button-icon {
+  font-size: 1.5em;
+  margin-right: 5px;
 }
 
-.mat-header-cell.mat-sort-header-sorted {
-  color: black;
+.filter-panel {
+  padding-top: 10px;
 }
 
 .list-item:hover{

@@ -43,4 +43,14 @@ export class FilterSelection<T> {
   public getSelectedFilterFunction() {
     return this.getFilterFunction(this.selectedOption);
   }
+
+  public initOptions(keys: any[], attributeName: string) {
+    const options = [{key: '', label: 'All', filterFun: (e: T) => true}];
+
+    keys.forEach(k => {
+      options.push({key: k.toLowerCase(), label: k.toString(), filterFun: (e: T) => e[attributeName] === k});
+    });
+
+    this.options = options;
+  }
 }

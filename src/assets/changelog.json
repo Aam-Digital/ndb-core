@@ -1,5 +1,26 @@
 [
   {
+    "tag_name": "v2.5.2",
+    "name": "Automatic Update Notifications available now",
+    "published_at": "2019-02-16",
+    "body": "- when a new update is available on the server, a notification message is displayed to activate the update\n-fixed Updated - Latest Changes popup to only be displayed once after a new version is loaded\n- fixed symbols not getting displayed when offline\n- fixed errors in related components after a child is deleted\n- updated related libraries",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.5.1",
+    "name": "Multiple problems fixed",
+    "published_at": "2019-01-07",
+    "body": "- allow letters in school class\n- added Back Button to child and school details pages to go to previous page with previous filters\n- fixed Progress dashboard widget not deleting rows",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.5.0",
+    "name": "Attendance Manager & School Details",
+    "published_at": "2018-12-14",
+    "body": "- Attendance Register shows & summarizes attendance of lists of students\n- Schools list & details pages show & edit various details\n- New schools can be added from schools list page\n-Improvements to view the app on smaller screens",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.4.5",
     "name": "Bug fixes: Saving Daily Attendance",
     "published_at": "2018-10-12",
