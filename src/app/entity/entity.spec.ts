@@ -17,7 +17,7 @@
 
 import { Entity } from './entity';
 
-fdescribe('Entity', () => {
+describe('Entity', () => {
 
   it('has ID', function () {
     const id = 'test1';

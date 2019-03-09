@@ -18,7 +18,7 @@
 import { Entity } from './entity';
 import {EntitySchema} from './entity-schema';
 
-fdescribe('EntitySchema', () => {
+describe('EntitySchema', () => {
 
   it('load() assigns default values', function () {
     class TestEntity extends Entity {

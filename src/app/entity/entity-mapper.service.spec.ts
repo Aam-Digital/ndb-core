@@ -20,7 +20,7 @@ import { Entity } from './entity';
 import {MockDatabase} from '../database/mock-database';
 import {Database} from '../database/database';
 
-fdescribe('EntityMapperService', () => {
+describe('EntityMapperService', () => {
   let entityMapper: EntityMapperService;
   let testDatabase: Database;
 
