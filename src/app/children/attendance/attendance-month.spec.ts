@@ -17,6 +17,7 @@
 
 import {AttendanceMonth, daysInMonth} from './attendance-month';
 import {WarningLevel} from './warning-level';
+import {AttendanceDay} from './attendance-day';
 
 describe('AttendanceMonth', () => {
 
@@ -119,13 +120,55 @@ describe('AttendanceMonth', () => {
   });
 
 
+  it('saves & loads manually entered attendance values', () => {
+    const originalData = {
+      month: new Date('2018-01-01'),
+      daysWorking: 10,
+      daysAttended: 7,
+      daysExcused: 2,
+      daysLate: 4,
+    };
+    const entity = new AttendanceMonth('');
+
+    entity.load(originalData);
+    expect(entity.daysWorking).toBe(originalData.daysWorking);
+    expect(entity.daysAttended).toBe(originalData.daysAttended);
+    expect(entity.daysExcused).toBe(originalData.daysExcused);
+    expect(entity.daysLate).toBe(originalData.daysLate);
+
+    const data = entity.rawData();
+    expect(data.daysWorking).toBe(originalData.daysWorking);
+    expect(data.daysAttended).toBe(originalData.daysAttended);
+    expect(data.daysExcused).toBe(originalData.daysExcused);
+    expect(data.daysLate).toBe(originalData.daysLate);
+  });
+
+
   it('returns month as string in rawData', () => {
     const month = new Date('2018-01-01');
     const entity = new AttendanceMonth('');
     entity.month = month;
 
     expect(typeof entity.rawData().month).toBe('string');
+    expect(entity.rawData().month).toBe('2018-1');
     expect(entity.rawData().p_month).toBeUndefined();
+  });
+
+
+  it('loads AttendanceDay.date values as Date objects', () => {
+    const month = new Date('2018-01-01');
+    const entity = new AttendanceMonth('');
+    entity.month = month;
+
+    expect(entity.dailyRegister.length).toBeGreaterThan(0);
+    const data = entity.rawData();
+
+    const entity2 = new AttendanceMonth('');
+    entity2.load(data);
+    const day1 = entity2.dailyRegister[0];
+
+    expect(day1 instanceof AttendanceDay).toBeTruthy();
+    expect(day1.date instanceof Date).toBeTruthy();
   });
 
 });

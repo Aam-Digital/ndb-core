@@ -21,6 +21,16 @@ import {WarningLevel} from '../attendance/warning-level';
 
 export class Aser extends Entity {
   static ENTITY_TYPE = 'Aser';
+  static schema = Entity.schema.extend({
+    'child': 'string',
+    'date': 'Date',
+    'hindi': 'string=',
+    'bengali': 'string=',
+    'english': 'string=',
+    'math': 'string=',
+    'remarks': 'string',
+  });
+
 
   static ReadingLevels = [
     'Nothing',
@@ -68,15 +78,6 @@ export class Aser extends Entity {
       return true;
     }
     return false;
-  }
-
-
-  public load(data: any) {
-    if (data.date !== undefined && typeof data.date !== typeof new Date()) {
-      data.date = new Date(data.date);
-    }
-
-    return super.load(data);
   }
 
 

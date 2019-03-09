@@ -22,6 +22,12 @@ const CryptoJS = require('crypto-js');
 
 export class User extends Entity {
   static ENTITY_TYPE = 'User';
+  static schema = Entity.schema.extend({
+    'name': 'string',
+    'password': 'any',
+    'admin': 'boolean'
+  });
+
 
   public name: string;
   private password: any;
@@ -56,15 +62,5 @@ export class User extends Entity {
 
   public isAdmin(): boolean {
     return this.admin;
-  }
-
-
-
-  public load(data: any) {
-    if (data.entityId === undefined) {
-      data.entityId = data._id.substring(data._id.indexOf(':') + 1);
-    }
-
-    return super.load(data);
   }
 }

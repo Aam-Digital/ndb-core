@@ -21,6 +21,16 @@ import {WarningLevel} from '../attendance/warning-level';
 
 export class Note extends Entity {
   static ENTITY_TYPE = 'Note';
+  static schema = Entity.schema.extend({
+    'children': 'any', // TODO: change schema type to string[] (or Child[]) once lists are implemented in EntitySchema
+    'date': 'date=',
+    'subject': 'string=',
+    'text': 'string=',
+    'author': 'string=',
+    'category': 'string=',
+    'warningLevel': 'string?',
+  });
+
 
   static INTERACTION_TYPES = [
     'Home Visit',
@@ -77,16 +87,5 @@ export class Note extends Entity {
     }
 
     return '';
-  }
-
-
-  public load(data: any) {
-    if (data.date === undefined) {
-      data.date = new Date();
-    } else if (data.date !== undefined && typeof data.date !== typeof new Date()) {
-      data.date = new Date(data.date);
-    }
-
-    return super.load(data);
   }
 }

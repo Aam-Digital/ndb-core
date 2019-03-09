@@ -22,8 +22,22 @@ import {AttendanceDay, AttendanceStatus} from './attendance-day';
 
 export class AttendanceMonth extends Entity {
   static ENTITY_TYPE = 'AttendanceMonth';
+  static schema = Entity.schema.extend({
+    'student': 'string',
+    'institution': 'string',
+    'month': 'month',
+    'remarks': 'string=',
+    'daysWorking': 'number',
+    'daysAttended': 'number',
+    'daysExcused': 'number',
+    'daysLate': 'number',
+    'dailyRegister': 'any?',
+  });
+
+
   static readonly THRESHOLD_URGENT = 0.6;
   static readonly THRESHOLD_WARNING = 0.8;
+
 
   student: string; // id of Child entity
   remarks = '';
@@ -111,6 +125,10 @@ export class AttendanceMonth extends Entity {
       return;
     }
 
+    if (this.dailyRegister === undefined) {
+      this.dailyRegister = new Array<AttendanceDay>();
+    }
+
     const expectedDays = daysInMonth(this.month);
     const currentDays = this.dailyRegister.length;
     if (currentDays < expectedDays) {
@@ -173,32 +191,6 @@ export class AttendanceMonth extends Entity {
       return WarningLevel.OK;
     }
   }
-
-
-  public load(data: any) {
-    if (data.month !== undefined) {
-      data.month = new Date(data.month);
-    }
-
-    if (data.dailyRegister !== undefined) {
-      data.dailyRegister.forEach(day => {
-        day.date = new Date(day.date);
-      });
-    }
-
-    return super.load(data);
-  }
-
-  public rawData(): any {
-    const raw: any = Object.assign({}, this);
-
-    delete raw.month;
-    delete raw.p_month;
-    raw.month = this.month.getFullYear().toString() + '-' + (this.month.getMonth() + 1).toString();
-
-    return raw;
-  }
-
 }
 
 export function daysInMonth (date: Date) {
