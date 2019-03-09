@@ -57,6 +57,7 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
   margin-bottom: 24px;
   padding: 24px;
   position: relative;
+  height: 48px;
 
   background-color: lightgray;
   color: white;
