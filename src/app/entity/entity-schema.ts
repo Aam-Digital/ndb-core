@@ -95,6 +95,11 @@ export class EntitySchema<T extends Entity> {
       if (schemaLine.isIndexed) {
         throw new Error('schema option "isIndexed" not implemented yet');
       }
+
+      if (schemaLine.isOptional && data[key] === undefined) {
+        // don't explicitly write 'undefined' values, this could overwrite setup logic from the Entity classes
+        delete data[key];
+      }
     }
 
     return data;
@@ -134,6 +139,7 @@ export class EntitySchema<T extends Entity> {
       case 'number':
         return Number(value);
 
+      case 'month':
       case 'date':
         const date =  new Date(value);
         if (isNaN(date.getTime())) {
@@ -168,6 +174,11 @@ export class EntitySchema<T extends Entity> {
 
   private transformToDatabaseDataType(value: any, schemaLine: SchemaLine) {
     switch (schemaLine.dataType.toLowerCase()) {
+      case 'month':
+        if (!(value instanceof Date)) {
+          value = new Date(value);
+        }
+        return (value.getFullYear().toString() + '-' + (value.getMonth() + 1).toString());
       case 'date':
       case 'string':
       case 'number':

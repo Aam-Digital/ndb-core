@@ -119,4 +119,28 @@ describe('EntitySchema', () => {
     expect(entity.otherDate.getMonth()).toBe(0);
     expect(entity.otherDate.getDate()).toBe(1);
   });
+
+  it('schema:month converts to correctly between string and Date objects', function () {
+    class TestEntity extends Entity {
+
+      static schema = Entity.schema.extend({
+        'month': 'month',
+      });
+
+      month: Date;
+    }
+    const id = 'test1';
+    const entity = new TestEntity(id);
+
+    const data = {
+      _id: 'test2',
+      month: '2018-2',
+    };
+    entity.load(data);
+
+    const expectedDate = new Date(2018, 1); // month indices start at 0!
+
+    expect(entity.month.toDateString()).toBe(expectedDate.toDateString());
+    expect(entity.rawData().month).toBe('2018-2');
+  });
 });
