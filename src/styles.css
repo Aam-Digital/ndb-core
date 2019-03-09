@@ -50,10 +50,7 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 
 
 .dashboard-widget .mat-card-header {
-  /*margin-top: -24px !important;
-  margin-left: -24px;
-  margin-right: -24px;
-  margin-bottom: 24px; */
+
   padding: 24px;
   margin-bottom: 10px;
   position: relative;
@@ -80,6 +77,7 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
   width: calc(100% - 20px);
   padding-left: 20px;
   margin-bottom: 0;
+  margin-top: 0 !important;
   color: white;
 }
 
@@ -98,7 +96,7 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
   font-style: italic;
 }
 
-mat-card.dashboard {
+mat-card.dashboard-widget {
   min-width: 250px;
   margin: 10px;
   padding: 0px;
