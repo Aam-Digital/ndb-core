@@ -5,7 +5,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {ChildrenService} from '../children.service';
 import {AttendanceMonth} from '../attendance/attendance-month';
 import {FilterSelection} from '../../ui-helper/filter-selection/filter-selection';
-import {MediaChange, ObservableMedia} from '@angular/flex-layout';
+import {MediaChange, MediaObserver} from '@angular/flex-layout';
 import {Subscription} from 'rxjs';
 
 @Component({
@@ -15,7 +15,7 @@ import {Subscription} from 'rxjs';
 })
 export class ChildrenListComponent implements OnInit, AfterViewInit {
   watcher: Subscription;
-  activeMediaQuery= '';
+  activeMediaQuery = '';
   childrenList = [];
   attendanceList = new Map<string, AttendanceMonth[]>();
   childrenDataSource = new MatTableDataSource();
@@ -52,13 +52,13 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   constructor(private childrenService: ChildrenService,
               private router: Router,
               private route: ActivatedRoute,
-              private media: ObservableMedia) {  }
+              private media: MediaObserver) {  }
 
   ngOnInit() {
     this.loadData();
     this.loadUrlParams();
-    this.watcher = this.media.subscribe((change: MediaChange) => {
-      if(change.mqAlias=='xs'){
+    this.watcher = this.media.media$.subscribe((change: MediaChange) => {
+      if (change.mqAlias == 'xs') {
         this.displayColumnGroup('Mobile');
       }
     });
