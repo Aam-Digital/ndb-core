@@ -29,7 +29,9 @@ before_script:
   - ./cc-test-reporter before-build
 
 branches:
-  only: master
+  only:
+    - master
+    - /^greenkeeper/.*$/
 
 cache:
   directories:
