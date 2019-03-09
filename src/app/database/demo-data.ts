@@ -122,6 +122,7 @@ export class DemoData {
     current1.student = '1';
     current1.month = new Date();
     current1.month = new Date(current1.month.getFullYear(), current1.month.getMonth(), current1.month.getDate() - 10);
+    current1.dailyRegister[0].status = AttendanceStatus.LATE;
     current1.dailyRegister[1].status = AttendanceStatus.PRESENT;
     current1.dailyRegister[2].status = AttendanceStatus.PRESENT;
     current1.dailyRegister[3].status = AttendanceStatus.PRESENT;
@@ -148,8 +149,7 @@ export class DemoData {
     current1.dailyRegister[24].status = AttendanceStatus.PRESENT;
     current1.dailyRegister[25].status = AttendanceStatus.PRESENT;
     current1.dailyRegister[26].status = AttendanceStatus.PRESENT;
-    current1.dailyRegister[27].status = AttendanceStatus.PRESENT;
-    current1.dailyRegister[28].status = AttendanceStatus.LATE;
+    current1.dailyRegister[27].status = AttendanceStatus.LATE;
     current1.institution = 'coaching';
     data.push(current1);
 
@@ -161,6 +161,7 @@ export class DemoData {
     current2.dailyRegister[current1.month.getDate() - 1].status = AttendanceStatus.ABSENT;
     current2.dailyRegister[current1.month.getDate()].status = AttendanceStatus.ABSENT;
     current2.dailyRegister[current1.month.getDate()].remarks = 'foo';
+    current2.dailyRegister[0].status = AttendanceStatus.LATE;
     current2.dailyRegister[1].status = AttendanceStatus.ABSENT;
     current2.dailyRegister[2].status = AttendanceStatus.PRESENT;
     current2.dailyRegister[3].status = AttendanceStatus.ABSENT;
@@ -188,7 +189,6 @@ export class DemoData {
     current2.dailyRegister[25].status = AttendanceStatus.ABSENT;
     current2.dailyRegister[26].status = AttendanceStatus.ABSENT;
     current2.dailyRegister[27].status = AttendanceStatus.ABSENT;
-    current2.dailyRegister[28].status = AttendanceStatus.ABSENT;
     data.push(current2);
 
     return data;
