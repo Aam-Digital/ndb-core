@@ -32,10 +32,12 @@ export class Note extends Entity {
     'Phone Call',
     'Talk with Coaching Teacher',
     'Talk with Peer',
+    'Talk with Neighbours',
     'Guardians\' Meeting',
     'Children\'s Meeting',
     'Daily Routine',
     'Annual Survey',
+    'Contact with other partners (club/NGO/...)',
   ];
 
   children: string[] = []; // id of Child entity
