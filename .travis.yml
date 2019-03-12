@@ -39,8 +39,7 @@ script:
 after_script:
   - ./cc-test-reporter after-build --debug --exit-code $TRAVIS_TEST_RESULT
 before_deploy:
-  - cd docker
-  - tar -zcf ndb-core_${TRAVIS_TAG}.tar.gz ../dist
+  - tar -zcf ndb-core_${TRAVIS_TAG}.tar.gz dist
 deploy:
   - provider: releases
     api_key:
@@ -50,9 +49,7 @@ deploy:
     on:
       tags: true
   - provider: script
-    script: bash publish.sh
+    script: bash docker/publish.sh
     skip_cleanup: true
     on:
       tags: true
-after_deploy:
-  - cd ..
