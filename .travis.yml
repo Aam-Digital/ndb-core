@@ -39,13 +39,13 @@ script:
 after_script:
   - ./cc-test-reporter after-build --debug --exit-code $TRAVIS_TEST_RESULT
 before_deploy:
-  - tar -zcf ndb-core_${TRAVIS_TAG}.tar.gz dist
   - cd docker
+  - tar -zcf ndb-core_${TRAVIS_TAG}.tar.gz ../dist
 deploy:
   - provider: releases
     api_key:
       secure: ODYu9vGivpdmPkGUx61EBO402KT/JzsqA8skNnf7YwR0UMbLqzRLbc7rCd/9QHx/SsRDRyt2y0QuiQtnn5qed0ZiFsvM6Zr59cAKN3PPVy3eYT3O5obnmViiM2bWo+cLee0Ch5vPt5CTOyaus5a56gOB5lGW7nx0v+3rakX9RimewGzvED976ZvCUWiV1K0nX9ZFJVWN6CwlRYWosvjM5FHENMu/NYIDHZA+2ZO4gSwaUFsy65Dwj5dTpJIO1xaVkuxE4LwXnHLoaidtPdmMPlS0BbUIPpfn1LE1im/bSd+0cSJDWc6tVQpIMYu814I8Pf1gCDvVB3pz9iibfOyWCB96MR9J9ywjEbmH6E+/XUJmocxgH7busiKIyRAfbs8JYXALd6GAXVFz5MIfhtJ2L4f+oiPT36kumYbA/WDP17q2lPrRy24KyCfs+f7z9/HHRnEsmRJM52cHe2hk2dd3lzXdeehFA+jPF7ilTNPokpG1fUpgWXcKU6UPgIADbO+u33B17CsdmyGbfOIfTCqdYyS9QMrOyXG8QceXNhUUj9GMCRRV5rz9tJhEKtv5Sl11fpxjsOYq4w1n4n6qwrJEPYztIZJOhN4fDsKUkZNrrg2cIVxbDyZCtfhOvMEexyUYMmtTUnDPHQvS5G74H6j7mvSR8GFRoD6Vcph49CBKNs0=
-    file: "../ndb-core_${TRAVIS_TAG}.tar.gz"
+    file: "ndb-core_${TRAVIS_TAG}.tar.gz"
     skip_cleanup: true
     on:
       tags: true
