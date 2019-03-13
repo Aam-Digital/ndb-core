@@ -232,8 +232,8 @@ export class ChildrenService {
       'childSchoolRelations_index/by_date',
       {
         startkey: childId + '\uffff', //  higher value needs to be startkey
-        endkey: childId,              //  this will return you the first childSchoolRelation that starts with the child id -> latest one
-        limit: 1,
+        endkey: childId,              //  \uffff is not a character -> only relations staring with childId will be selected
+        limit: 1,                     //  only return first one because that is the latest starting date -> current one?
         descending: true,
         include_docs: true
       }
