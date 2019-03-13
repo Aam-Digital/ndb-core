@@ -218,7 +218,7 @@ export class ChildrenService {
         by_date: {
           map: `(doc) => {
             if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
-            emit(new Date(doc.start));
+            emit(doc.childId + (new Date(doc.start)).getTime());
             }`
         }
 
@@ -227,53 +227,29 @@ export class ChildrenService {
     return this.db.saveDatabaseIndex(designDoc);
   }
 
-  createLatestSchoolForChildIndex(childId: string): Promise<any> {
-    const designDoc = {
-      id: '_design/latestSchoolFor' + childId + '_index',
-      views: {
-        by_date: {
-          map: `(doc) => {
-            if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}") || doc.childId !== "${childId}") return;
-            emit(new Date(doc.start));
-          }`
-        }
-      }
-    };
-    return this.db.saveDatabaseIndex(designDoc);
-  }
-
   queryLatestSchool(childId: string) {
     const promise: Promise<any> = this.db.query(
-      'latestSchoolFor' + childId + '_index/by_date',
-      {descending: true, limit: 1, include_docs: true}
+      'childSchoolRelations_index/by_date',
+      {
+        startkey: childId + '\uffff', //  higher value needs to be startkey
+        endkey: childId,              //  this will return you the first childSchoolRelation that starts with the child id -> latest one
+        limit: 1,
+        descending: true,
+        include_docs: true
+      }
     )
-      .then(record => {
-        console.log('record', record)
-        // const entity: ChildSchoolRelation = new ChildSchoolRelation('');
-        // entity.load(record.ro.doc);
-        // return entity;
+      .then(result => {
+        let entity: ChildSchoolRelation = null;
+        const records = result.rows;
+        if (records) {
+          entity = new ChildSchoolRelation('');
+          entity.load(records[0].doc);
+          }
+        return entity;
       });
 
     return from(promise);
  }
-
-  queryCurrentSchoolOfChild(childId: string): Observable<ChildSchoolRelation> {
-    const promise: Promise<ChildSchoolRelation> = this.db.query(
-      'childSchoolRelations_index/by_date',
-      {descending: true, include_docs: true}
-      )
-      .then(loadedEntities => {
-        for (const record of loadedEntities.rows) {
-          if (record.doc.childId === childId) {
-            const entity: ChildSchoolRelation = new ChildSchoolRelation('');
-            entity.load(record.doc);
-            return entity;
-          }
-        }
-      });
-
-    return from(promise);
-  }
 
   querySchoolsOfChild(childId: string): Observable<ChildSchoolRelation[]> {
     const promise = this.db.query('childSchoolRelations_index/by_child', {key: childId, include_docs: true})

@@ -111,13 +111,7 @@ export class ChildDetailsComponent implements OnInit {
     this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
     this.route.paramMap.subscribe(params => {
       const childId = params.get('id');
-      this.childrenService.querySchoolsOfChild(childId).subscribe(res => console.log('res', res));
-      this.childrenService.queryCurrentSchoolOfChild(childId).subscribe(res => console.log('current', res))
-      this.childrenService.createLatestSchoolForChildIndex(childId).then((() => {
-        console.log('query set');
-        this.database.allDocs({include_docs: true}).then(res => console.log('all docs', res));
-        this.childrenService.queryLatestSchool(childId)
-      }));
+      this.childrenService.queryLatestSchool(childId).subscribe(res => console.log('result', res))
     });
   }
 
