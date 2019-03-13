@@ -109,11 +109,15 @@ export class ChildDetailsComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
     this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
-    this.database.allDocs({include_docs: true}).then(res => console.log('all docs', res));
     this.route.paramMap.subscribe(params => {
       const childId = params.get('id');
       this.childrenService.querySchoolsOfChild(childId).subscribe(res => console.log('res', res));
       this.childrenService.queryCurrentSchoolOfChild(childId).subscribe(res => console.log('current', res))
+      this.childrenService.createLatestSchoolForChildIndex(childId).then((() => {
+        console.log('query set');
+        this.database.allDocs({include_docs: true}).then(res => console.log('all docs', res));
+        this.childrenService.queryLatestSchool(childId)
+      }));
     });
   }
 
@@ -131,6 +135,7 @@ export class ChildDetailsComponent implements OnInit {
             .then(school => this.currentSchool = school)
         });
     }
+
     this.initForm();
   }
 

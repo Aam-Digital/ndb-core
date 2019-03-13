@@ -5,6 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:run": "start chrome \"http://localhost:4200/\" --user-data-dir=\"C:/'Chrome dev session'\" --disable-web-security && ng serve",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint ndb-core ndb-core-e2e --type-check",

@@ -11,6 +11,7 @@ import {ChildSchoolRelation} from './childSchoolRelation';
 import {Gender} from './Gender';
 import {School} from '../schools/school';
 import {map} from 'rxjs/operators';
+import {load} from '@angular/core/src/render3';
 
 export class TableChild {
   constructor(private _child?: Child, private _school?: School, private _childSchoolRelation?: ChildSchoolRelation) { }
@@ -215,8 +216,6 @@ export class ChildrenService {
             }`
         },
         by_date: {
-          // Somehow pouchDB wants me to remove the two missing ')' after .valueOf(.
-          // If I add the pouchDB throws an error
           map: `(doc) => {
             if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
             emit(new Date(doc.start));
@@ -227,6 +226,36 @@ export class ChildrenService {
     };
     return this.db.saveDatabaseIndex(designDoc);
   }
+
+  createLatestSchoolForChildIndex(childId: string): Promise<any> {
+    const designDoc = {
+      id: '_design/latestSchoolFor' + childId + '_index',
+      views: {
+        by_date: {
+          map: `(doc) => {
+            if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}") || doc.childId !== "${childId}") return;
+            emit(new Date(doc.start));
+          }`
+        }
+      }
+    };
+    return this.db.saveDatabaseIndex(designDoc);
+  }
+
+  queryLatestSchool(childId: string) {
+    const promise: Promise<any> = this.db.query(
+      'latestSchoolFor' + childId + '_index/by_date',
+      {descending: true, limit: 1, include_docs: true}
+    )
+      .then(record => {
+        console.log('record', record)
+        // const entity: ChildSchoolRelation = new ChildSchoolRelation('');
+        // entity.load(record.ro.doc);
+        // return entity;
+      });
+
+    return from(promise);
+ }
 
   queryCurrentSchoolOfChild(childId: string): Observable<ChildSchoolRelation> {
     const promise: Promise<ChildSchoolRelation> = this.db.query(
