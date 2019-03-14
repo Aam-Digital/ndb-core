@@ -4,9 +4,9 @@ import {ConfirmationDialogService} from '../confirmation-dialog/confirmation-dia
 import {Entity} from '../../entity/entity';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {ColumnDescription} from './column-description';
-import { ObservableMedia, MediaChange} from '@angular/flex-layout';
-import {Subscription} from 'rxjs/Rx';
-import {logWarning} from 'typings/dist/support/cli';
+import { MediaObserver, MediaChange} from '@angular/flex-layout';
+import {Subscription} from 'rxjs';
+
 
 @Component({
   selector: 'app-entity-subrecord',
@@ -33,8 +33,8 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
               private _snackBar: MatSnackBar,
               private _confirmationDialog: ConfirmationDialogService,
               private dialog: MatDialog,
-              private media: ObservableMedia) {
-    this.flexMediaWatcher = this.media.subscribe((change: MediaChange) => {
+              private media: MediaObserver) {
+    this.flexMediaWatcher = this.media.media$.subscribe((change: MediaChange) => {
       if (change.mqAlias !== this.screenWidth) {
         this.screenWidth = change.mqAlias;
         this.setupTable();
