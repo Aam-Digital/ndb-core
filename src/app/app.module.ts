@@ -19,7 +19,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {APP_INITIALIZER, NgModule} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { UiModule } from './ui/ui.module';
@@ -44,16 +44,18 @@ import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
 import {MatIconModule, MatIconRegistry} from '@angular/material';
 import {AdminModule} from './admin/admin.module';
+import {CookieService} from 'ngx-cookie-service';
 
 @NgModule({
   declarations: [
     AppComponent
   ],
   imports: [
+    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
     BrowserModule,
     BrowserAnimationsModule,
     FlexLayoutModule,
-    HttpModule,
+    HttpClientModule,
     routing,
     FormsModule,
     AlertsModule,
@@ -69,13 +71,13 @@ import {AdminModule} from './admin/admin.module';
     ChildrenModule,
     SchoolsModule,
     AdminModule,
-    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
     MatIconModule,
   ],
   providers: [
     AppConfig,
     { provide: APP_INITIALIZER, useFactory: initializeApp, deps: [AppConfig], multi: true },
     MatIconRegistry,
+    CookieService,
   ],
   bootstrap: [AppComponent]
 })

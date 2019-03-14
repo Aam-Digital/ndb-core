@@ -6,7 +6,7 @@ import FileSaver from 'file-saver';
 import {BackupService} from '../backup.service';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {MatSnackBar} from '@angular/material';
-import PouchDB from 'pouchdb';
+import PouchDB from 'pouchdb-browser';
 
 @Component({
   selector: 'app-admin',
@@ -54,7 +54,7 @@ export class AdminComponent implements OnInit {
     return new Promise(resolve => {
         const fileReader = new FileReader();
         fileReader.onload = () => {
-          resolve(fileReader.result);
+          resolve(fileReader.result as string);
         };
         fileReader.readAsText(file);
       }

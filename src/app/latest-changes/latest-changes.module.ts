@@ -15,15 +15,17 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
+import {NgModule} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppVersionComponent } from './app-version/app-version.component';
 import { AlertsModule } from '../alerts/alerts.module';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { LatestChangesService } from './latest-changes.service';
 import { SessionModule } from '../session/session.module';
-import {MatButtonModule, MatDialogModule} from '@angular/material';
+import {MatButtonModule, MatDialogModule, MatSnackBarModule} from '@angular/material';
 import {ChangelogComponent} from './changelog/changelog.component';
+import {SwUpdate} from '@angular/service-worker';
+import {UpdateManagerService} from './update-manager.service';
 
 @NgModule({
   imports: [
@@ -32,12 +34,23 @@ import {ChangelogComponent} from './changelog/changelog.component';
     SessionModule,
     MatDialogModule,
     MatButtonModule,
-    HttpModule
+    MatSnackBarModule,
+    HttpClientModule
   ],
   declarations: [AppVersionComponent, ChangelogComponent],
   exports: [AppVersionComponent],
-  providers: [LatestChangesService],
+  providers: [LatestChangesService, UpdateManagerService],
   entryComponents: [ChangelogComponent]
 })
 export class LatestChangesModule {
+  constructor(
+    private updates: SwUpdate,
+    private latestChangesService: LatestChangesService,
+    private updateManagerService: UpdateManagerService) {
+
+    this.latestChangesService.showLatestChangesIfUpdated();
+
+    this.updateManagerService.notifyUserWhenUpdateAvailable();
+    this.updateManagerService.regularlyCheckForUpdates();
+  }
 }

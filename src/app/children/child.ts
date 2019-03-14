@@ -88,6 +88,19 @@ export class Child extends Entity {
     return this.name;
   }
 
+  public generateSearchIndices(): string[] {
+    let indices = [];
+
+    if (this.name !== undefined) {
+      indices = indices.concat(this.name.split(' '));
+    }
+    if (this.projectNumber !== undefined) {
+      indices.push(this.projectNumber);
+    }
+
+    return indices;
+  }
+
   public getPhoto() {
     if (!this.hasPhoto) {
       return 'assets/child.png';

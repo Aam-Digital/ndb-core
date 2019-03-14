@@ -7,8 +7,11 @@
       "files": [
         "/favicon.ico",
         "/index.html",
+        "/assets/config.json",
         "/*.css",
-        "/*.js"
+        "/*.js",
+        "/*.woff2",
+        "/*.tff"
       ]
     }
   }, {
