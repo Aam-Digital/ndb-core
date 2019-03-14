@@ -12,7 +12,7 @@ import {FilterSelection} from '../../ui-helper/filter-selection/filter-selection
   styleUrls: ['./children-list.component.scss']
 })
 export class ChildrenListComponent implements OnInit, AfterViewInit {
-  childrenList = [];
+  childrenList: TableChild[] = [];
   attendanceList = new Map<string, AttendanceMonth[]>();
   childrenDataSource = new MatTableDataSource();
 
@@ -75,16 +75,13 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
 
   private loadData(replaceUrl: boolean = false) {
-    this.childrenService.getChildren().subscribe(data => {
-      this.childrenList = data;
-      // this.childrenService.querySchoolsOfChild(data[0].getId()).then(res => console.log('res', res));
-
-      const centers = data.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
+    this.childrenService.getChildrenForTable().then(children => {
+      this.childrenList = children;
+      const centers = children.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
       this.centerFS.initOptions(centers, 'center');
 
       this.applyFilterSelections(replaceUrl);
     });
-
     this.childrenService.getAttendances()
       .subscribe(results => this.prepareAttendanceData(results));
   }

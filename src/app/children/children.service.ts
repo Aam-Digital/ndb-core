@@ -8,105 +8,18 @@ import {Note} from './notes/note';
 import {EducationalMaterial} from './educational-material/educational-material';
 import {Aser} from './aser/aser';
 import {ChildSchoolRelation} from './childSchoolRelation';
-import {Gender} from './Gender';
 import {School} from '../schools/school';
 import {map} from 'rxjs/operators';
-import {load} from '@angular/core/src/render3';
 
-export class TableChild {
-  constructor(private _child?: Child, private _school?: School, private _childSchoolRelation?: ChildSchoolRelation) { }
-  get child(): Child {
-    return this._child;
-  }
-  set child(value: Child) {
-    this._child = value;
-  }
-  get school(): School {
-    return this._school;
-  }
-  set school(value: School) {
-    this._school = value;
-  }
-  get childSchoolRelation(): ChildSchoolRelation {
-    return this._childSchoolRelation;
-  }
-  set childSchoolRelation(value: ChildSchoolRelation) {
-    this._childSchoolRelation = value;
-  }
-  get projectNumber(): string {
-    return this._child.projectNumber
-  }
-  get age(): number {
-    return this._child.age;
-  }
-  get dateOfBirth(): Date {
-    return this._child.dateOfBirth;
-  }
-  get gender(): Gender {
-    return this._child.gender
-  }
-  get schoolClass(): string {
-    return this._childSchoolRelation.class;
-  }
-  get schoolId(): string {
-    return this._school.getId();
-  }
-  get center(): string {
-    return this._child.center;
-  }
-  get status(): string {
-    return this._child.status;
-  }
-  get admissionDate(): Date {
-    return this._child.admissionDate;
-  }
-  get motherTongue(): string {
-    return this._child.motherTongue;
-  }
-  get has_aadhar(): string {
-    return this._child.has_aadhar
-  }
-  get has_bankAccount(): string {
-    return this._child.has_bankAccount;
-  }
-  get has_kanyashree(): string {
-    return this._child.has_kanyashree;
-  }
-  get has_rationCard(): string {
-    return this._child.has_rationCard;
-  }
-  get has_BplCard(): string {
-    return this._child.has_BplCard;
-  }
-  get health_vaccinationStatus(): string {
-    return this._child.health_vaccinationStatus;
-  }
-  get health_lastDentalCheckup(): Date {
-    return this._child.health_lastDentalCheckup
-  }
-  get health_lastEyeCheckput(): Date {
-    return this._child.health_lastEyeCheckup;
-  }
-  get health_eyeHealthStatus(): string {
-    return this._child.health_eyeHealthStatus;
-  }
-  get health_lastENTCheckup(): Date {
-    return this._child.health_lastENTCheckup;
-  }
-  get health_lastVitaminD(): Date {
-    return this._child.health_lastVitaminD;
-  }
-  get health_lastDeworming(): Date {
-    return this._child.health_lastDeworming;
-  }
-  isActive(): boolean {
-    return this._child.isActive();
-  }
-  getPhoto(): string {
-    return this._child.getPhoto()
-  }
-  getId(): string {
-    return this._child.getId()
+export class TableChild extends Child {
+  public schoolId = '';
+  public schoolClass = '';
+
+  constructor(private _child?: Child, private _childSchoolRelation?: ChildSchoolRelation) {
+    super(_child.getId());
+    this.load(_child);
+    this.schoolId = this._childSchoolRelation.schoolId;
+    this.schoolClass = this._childSchoolRelation.class;
   }
 }
 
@@ -121,20 +34,14 @@ export class ChildrenService {
     this.createChildSchoolRelationIndex()
   }
 
-  async getChildrenForList(): Promise<TableChild[]> {
+  async getChildrenForTable(): Promise<TableChild[]> {
     const children = await this.entityMapper.loadType<Child>(Child);
-    const schools = await this.entityMapper.loadType<School>(School);
-    const relations = await this.entityMapper.loadType<ChildSchoolRelation>(ChildSchoolRelation);
     const tableData: TableChild[] = [];
-    children.forEach(child => {
-      const tableChild = new TableChild();
-      tableChild.child = child;
-      const childRelations = relations.filter(relation => relation.childId === child.getId());
-      childRelations.sort((a, b) => a.start > b.start ? 1 : a.start === b.start ? 0 : -1);
-      tableChild.childSchoolRelation = childRelations.pop();
-      tableChild.school = schools.filter(school => school.getId() === tableChild.childSchoolRelation.schoolId)[0];
-      tableData.push(tableChild);
-    });
+    for (const child of children) {
+      const relation: ChildSchoolRelation = await this.queryLatestSchool(child.getId());
+      console.log('relation', child, relation);
+      tableData.push(new TableChild(child, relation));
+    }
     return tableData;
   }
 
@@ -227,8 +134,8 @@ export class ChildrenService {
     return this.db.saveDatabaseIndex(designDoc);
   }
 
-  queryLatestSchool(childId: string) {
-    const promise: Promise<any> = this.db.query(
+  queryLatestSchool(childId: string): Promise<ChildSchoolRelation> {
+    return this.db.query(
       'childSchoolRelations_index/by_date',
       {
         startkey: childId + '\uffff', //  higher value needs to be startkey
@@ -247,8 +154,6 @@ export class ChildrenService {
           }
         return entity;
       });
-
-    return from(promise);
  }
 
   querySchoolsOfChild(childId: string): Observable<ChildSchoolRelation[]> {
