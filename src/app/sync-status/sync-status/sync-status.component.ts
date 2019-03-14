@@ -21,6 +21,7 @@ import {SyncState} from '../../session/sync-state.enum';
 import {AlertService} from '../../alerts/alert.service';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {InitialSyncDialogComponent} from './initial-sync-dialog.component';
+import { StateChangedEvent } from 'app/session/util/state-handler';
 
 @Component({
   selector: 'app-sync-status',
@@ -33,19 +34,19 @@ export class SyncStatusComponent implements OnInit {
   dialogRef: MatDialogRef<InitialSyncDialogComponent>;
 
   constructor(public dialog: MatDialog,
-              private _sessionService: SessionService,
+              private sessionService: SessionService,
               private alertService: AlertService) {
   }
 
   ngOnInit(): void {
-    this._sessionService.getSyncState().getStateChangedStream().subscribe((state: SyncState) => this.handleSyncState(state));
+    this.sessionService.getSyncState().getStateChangedStream().subscribe(state => this.handleSyncState(state));
   }
 
-  private handleSyncState(state: SyncState) {
-    switch (state) {
+  private handleSyncState(state: StateChangedEvent<SyncState>) {
+    switch (state.toState) {
       case SyncState.started:
         this.syncInProgress = true;
-        if (!this._sessionService.isLoggedIn()) {
+        if (!this.sessionService.isLoggedIn()) {
           this.dialogRef = this.dialog.open(InitialSyncDialogComponent);
         }
         break;
