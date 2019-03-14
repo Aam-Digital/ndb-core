@@ -15,6 +15,10 @@ import {DatePipe} from '@angular/common';
 
 export class HealthCheckupComponent implements OnInit {
   records = new Array<HealthCheck>();
+  /**
+   * Column Description for the SubentityRecordComponent
+   * The Date-Column needs to be transformed to apply the MathFormCheck in the SubentityRecordComponent
+   */
   columns : Array<ColumnDescription> = [
     new ColumnDescription('date','Date','date', null,
     (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
@@ -32,6 +36,9 @@ export class HealthCheckupComponent implements OnInit {
     } )
   }
 
+  /**
+   * 
+   */
   generateNewRecordFactory() {
     // define values locally because "this" is a different scope after passing a function as input to another component
     const childId = this.childId;
@@ -48,6 +55,9 @@ export class HealthCheckupComponent implements OnInit {
   }
   
   
+  /**
+   * implements the health check loading from the children service and is called in the onInit()
+   */
   loadHealthChecks(){
 
     this.childrenService.getHealthChecksOfChild(this.childId)

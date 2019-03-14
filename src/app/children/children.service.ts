@@ -190,6 +190,11 @@ export class ChildrenService {
     );
   }
 
+  /**
+   * 
+   * @param childId should be set in the specific components and is passed by the URL as a parameter
+   * This function should be considered refactored and should use a index, once they're made generic
+   */
   getHealthChecksOfChild(childId: string): Observable<HealthCheck[]>{
     return from(
       this.entityMapper.loadType<HealthCheck>(HealthCheck)
