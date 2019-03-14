@@ -57,15 +57,5 @@ export class HealthCheckupComponent implements OnInit {
       });
     }
 
-      // addHealthCheck(date: Date, height: number, weight: number){
-  //   var newHealthCheck = new HealthCheck(uniqid());
-  //   newHealthCheck.date=date;
-  //   newHealthCheck.height=height;
-  //   newHealthCheck.weight=weight;
-  //   newHealthCheck.child=this.child.getId();
-  //   console.log(newHealthCheck);
-  //   this.entityMapperService.save<HealthCheck>(newHealthCheck);
-  //   this.loadHealthChecks();
-  // }
 
     }

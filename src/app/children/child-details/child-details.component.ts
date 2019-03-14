@@ -100,11 +100,7 @@ export class ChildDetailsComponent implements OnInit {
       dropoutRemarks: [{value: this.child.dropoutRemarks, disabled: !this.editing}],
     });
     
-    /* this.healthCheckForm = this.fb.group({
-      health_checkup: [{}],
-      health_height:  [{}],
-      health_weight:  [{}]
-    }) */
+    
   }
 
 
