@@ -7,7 +7,7 @@ import {Database} from '../database/database';
 import {Note} from './notes/note';
 import {EducationalMaterial} from './educational-material/educational-material';
 import {Aser} from './aser/aser';
-import {HealthCheck} from './health-checkup/HealthCheck'
+import {HealthCheck} from './health-checkup/health-check'
 
 @Injectable()
 export class ChildrenService {

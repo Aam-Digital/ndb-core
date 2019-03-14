@@ -28,7 +28,7 @@ import uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
 import {School} from '../../schools/school';
 import {ChildrenService} from '../children.service';
-import {HealthCheck} from '../health-checkup/HealthCheck';
+import {HealthCheck} from '../health-checkup/health-check';
 import {EntitySubrecordComponent} from '../../ui-helper/entity-subrecord/entity-subrecord.component';
 import {ColumnDescription} from '../../ui-helper/entity-subrecord/column-description';
 

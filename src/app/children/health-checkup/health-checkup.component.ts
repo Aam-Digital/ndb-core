@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { HealthCheck } from './HealthCheck';
+import { HealthCheck } from './health-check';
 import { ColumnDescription } from '../../ui-helper/entity-subrecord/column-description';
 import { ActivatedRoute } from '@angular/router';
 import { EntityMapperService } from 'app/entity/entity-mapper.service';
