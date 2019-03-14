@@ -149,7 +149,7 @@ export class DemoData {
     current1.dailyRegister[25].status = AttendanceStatus.PRESENT;
     current1.dailyRegister[26].status = AttendanceStatus.PRESENT;
     current1.dailyRegister[27].status = AttendanceStatus.PRESENT;
-    //urrent1.dailyRegister[28].status = AttendanceStatus.LATE;
+    //current1.dailyRegister[28].status = AttendanceStatus.LATE;
     current1.institution = 'coaching';
     data.push(current1);
 
