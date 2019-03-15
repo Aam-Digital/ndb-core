@@ -6,6 +6,7 @@ import {MatIconModule} from '@angular/material';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {MockDatabase} from '../../database/mock-database';
 import {School} from '../school';
+import {ChildrenService} from '../../children/children.service';
 
 describe('SchoolBlockComponent', () => {
   let component: SchoolBlockComponent;
@@ -19,6 +20,7 @@ describe('SchoolBlockComponent', () => {
       imports: [RouterTestingModule, MatIconModule],
       providers: [
         {provide: EntityMapperService, useValue: entityMapper},
+        ChildrenService
       ],
     })
     .compileComponents();
