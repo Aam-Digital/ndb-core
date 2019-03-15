@@ -9,9 +9,8 @@ import {EducationalMaterial} from './educational-material/educational-material';
 import {Aser} from './aser/aser';
 import {ChildSchoolRelation} from './childSchoolRelation';
 import {School} from '../schools/school';
-import {map} from 'rxjs/operators';
 
-export class TableChild extends Child {
+export class ChildWithRelation extends Child {
   public schoolId = '';
   public schoolClass = '';
 
@@ -34,12 +33,12 @@ export class ChildrenService {
     this.createChildSchoolRelationIndex()
   }
 
-  async getChildrenForTable(): Promise<TableChild[]> {
+  async getChildrenWithRelation(): Promise<ChildWithRelation[]> {
     const children = await this.entityMapper.loadType<Child>(Child);
-    const tableData: TableChild[] = [];
+    const tableData: ChildWithRelation[] = [];
     for (const child of children) {
       const relation: ChildSchoolRelation = await this.queryLatestRelation(child.getId());
-      tableData.push(new TableChild(child, relation));
+      tableData.push(new ChildWithRelation(child, relation));
     }
     return tableData;
   }

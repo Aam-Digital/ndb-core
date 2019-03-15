@@ -2,7 +2,7 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {Child} from '../child';
 import {MatSort, MatTableDataSource} from '@angular/material';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ChildrenService, TableChild} from '../children.service';
+import {ChildrenService, ChildWithRelation} from '../children.service';
 import {AttendanceMonth} from '../attendance/attendance-month';
 import {FilterSelection} from '../../ui-helper/filter-selection/filter-selection';
 
@@ -12,15 +12,15 @@ import {FilterSelection} from '../../ui-helper/filter-selection/filter-selection
   styleUrls: ['./children-list.component.scss']
 })
 export class ChildrenListComponent implements OnInit, AfterViewInit {
-  childrenList: TableChild[] = [];
+  childrenList: ChildWithRelation[] = [];
   attendanceList = new Map<string, AttendanceMonth[]>();
   childrenDataSource = new MatTableDataSource();
 
   centerFS = new FilterSelection('center', []);
   dropoutFS = new FilterSelection('status', [
-        {key: 'active', label: 'Current Project Children', filterFun: (c: TableChild) => c.isActive()},
-        {key: 'dropout', label: 'Dropouts', filterFun: (c: TableChild) => !c.isActive()},
-        {key: '', label: 'All', filterFun: (c: TableChild) => true},
+        {key: 'active', label: 'Current Project Children', filterFun: (c: ChildWithRelation) => c.isActive()},
+        {key: 'dropout', label: 'Dropouts', filterFun: (c: ChildWithRelation) => !c.isActive()},
+        {key: '', label: 'All', filterFun: (c: ChildWithRelation) => true},
       ]);
   filterSelections = [
     this.dropoutFS,
@@ -75,7 +75,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
 
   private loadData(replaceUrl: boolean = false) {
-    this.childrenService.getChildrenForTable().then(children => {
+    this.childrenService.getChildrenWithRelation().then(children => {
       this.childrenList = children;
       const centers = children.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
       this.centerFS.initOptions(centers, 'center');
