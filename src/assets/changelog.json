@@ -1,5 +1,12 @@
 [
   {
+    "tag_name": "v2.5.3",
+    "name": "New fields: blood group and interaction types",
+    "published_at": "2019-03-11",
+    "body": "- added field 'Blood Group' to Child\n-added interaction types for Note: 'Talk with Neighbours', 'Contact with other partners (club/NGO/...)'",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.5.2",
     "name": "Automatic Update Notifications available now",
     "published_at": "2019-02-16",

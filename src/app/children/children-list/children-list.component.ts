@@ -40,8 +40,8 @@ export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
     'Status': ['projectNumber', 'name', 'center', 'status', 'admissionDate',
       'has_aadhar', 'has_kanyashree', 'has_bankAccount', 'has_rationCard', 'has_bplCard'],
     'Health': ['projectNumber', 'name', 'center',
-      'health_vaccinationStatus', 'health_LastDentalCheckup', 'health_LastEyeCheckup', 'health_eyeHealthStatus', 'health_LastENTCheckup',
-      'health_LastVitaminD', 'health_LastDeworming',
+      'health_vaccinationStatus', 'health_bloodGroup', 'health_eyeHealthStatus',
+      'health_LastEyeCheckup', 'health_LastDentalCheckup', 'health_LastENTCheckup', 'health_LastVitaminD', 'health_LastDeworming',
       'gender', 'age', 'dateOfBirth'],
     'Mobile' : ['projectNumber', 'name', 'age', 'schoolId']
   };
