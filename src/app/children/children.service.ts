@@ -38,8 +38,7 @@ export class ChildrenService {
     const children = await this.entityMapper.loadType<Child>(Child);
     const tableData: TableChild[] = [];
     for (const child of children) {
-      const relation: ChildSchoolRelation = await this.queryLatestSchool(child.getId());
-      console.log('relation', child, relation);
+      const relation: ChildSchoolRelation = await this.queryLatestRelation(child.getId());
       tableData.push(new TableChild(child, relation));
     }
     return tableData;
@@ -134,7 +133,7 @@ export class ChildrenService {
     return this.db.saveDatabaseIndex(designDoc);
   }
 
-  queryLatestSchool(childId: string): Promise<ChildSchoolRelation> {
+  queryLatestRelation(childId: string): Promise<ChildSchoolRelation> {
     return this.db.query(
       'childSchoolRelations_index/by_date',
       {
@@ -156,8 +155,8 @@ export class ChildrenService {
       });
  }
 
-  querySchoolsOfChild(childId: string): Observable<ChildSchoolRelation[]> {
-    const promise = this.db.query('childSchoolRelations_index/by_child', {key: childId, include_docs: true})
+  queryRelationsOfChild(childId: string): Promise<ChildSchoolRelation[]> {
+    return this.db.query('childSchoolRelations_index/by_child', {key: childId, include_docs: true})
       .then(loadedEntities => {
         return loadedEntities.rows.map(loadedRecord => {
           const entity = new ChildSchoolRelation('');
@@ -166,7 +165,6 @@ export class ChildrenService {
         });
       });
 
-    return from(promise);
   }
 
   queryChildrenofSchool(schoolId: string) {
@@ -288,52 +286,24 @@ export class ChildrenService {
         })
     );
   }
-   getSchools(childId: string): Promise<School[]> {
-    return this.entityMapper.loadTypeForRelation<Child, School, ChildSchoolRelation> (
-      Child,
-      School,
-      ChildSchoolRelation,
-      childId,
-    );
-  }
-
 
   getCurrentSchool(childId: string): Promise<School> {
-    return this.getRelations(childId)
-      .then((relations: ChildSchoolRelation[]) => {
-        if (relations.length > 0) {
-          let max: ChildSchoolRelation = relations[0];
-          relations.forEach(relation => max = relation.start > max.start ? relation : max);
-          return max.end ? null : max.getSchool(this.entityMapper);
+    return this.queryLatestRelation(childId)
+      .then(relation => {
+        if (relation) {
+         return this.entityMapper.load<School>(School, relation.schoolId)
         }
+        return null;
       });
   }
 
-  getCurrentRelation(childId: string): Promise<ChildSchoolRelation> {
-    return this.getRelations(childId)
-      .then((relations: ChildSchoolRelation[]) => {
-        let max: ChildSchoolRelation = relations[0];
-        relations.forEach(relation => max = relation.start > max.start ? relation : max);
-        return max;
-      })
-  }
-
-  getRelations(childId: string): Promise<ChildSchoolRelation[]> {
-    return this.entityMapper.loadType<ChildSchoolRelation>(ChildSchoolRelation).then((relations: ChildSchoolRelation[]) => {
-      return relations.filter(relation => {
-        return relation.childId === childId
-      });
-   })
-  }
-
-  getViewableSchools(childId: string): Observable<ViewableSchool[]> {
-    return this.querySchoolsOfChild(childId).pipe(map((relations: ChildSchoolRelation[]) => {
-      const schools: ViewableSchool[] = [];
-      relations.forEach(async relation => {
-        const school: School = await relation.getSchool(this.entityMapper);
-        schools.push(new ViewableSchool(relation, school));
-      });
-      return schools;
-    }));
+  async getViewableSchools(childId: string): Promise<ViewableSchool[]> {
+    const relations = await this.queryRelationsOfChild(childId);
+    const schools: ViewableSchool[] = [];
+    for (const relation of relations) {
+      const school: School = await this.entityMapper.load<School>(School, relation.schoolId);
+      schools.push(new ViewableSchool(relation, school));
+    }
+    return schools;
   }
 }

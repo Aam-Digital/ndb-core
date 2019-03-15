@@ -103,16 +103,11 @@ export class ChildDetailsComponent implements OnInit {
               private snackBar: MatSnackBar,
               private confirmationDialog: ConfirmationDialogService,
               private alertService: AlertService,
-              private database: Database,
   ) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
     this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
-    this.route.paramMap.subscribe(params => {
-      const childId = params.get('id');
-      this.childrenService.queryLatestSchool(childId).then(res => console.log('result', res))
-    });
   }
 
   loadChild(id: string) {

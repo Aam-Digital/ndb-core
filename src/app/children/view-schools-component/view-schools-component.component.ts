@@ -54,8 +54,9 @@ export class ViewSchoolsComponentComponent implements OnInit, OnChanges {
 
   public loadSchoolEntries() {
     this.childrenService.getViewableSchools(this.child.getId())
-      .subscribe((schools: ViewableSchool[]) => {
+      .then((schools: ViewableSchool[]) => {
         this.viewableSchools = schools;
+        console.log('viewable schools', this.viewableSchools);
         this.updateViewableItems();
         this.changeDetectionRef.detectChanges();
       },
@@ -65,6 +66,7 @@ export class ViewSchoolsComponentComponent implements OnInit, OnChanges {
 
   private updateViewableItems() {
     this.schoolsDataSource.data = this.viewableSchools;
+
   }
 
   schoolClicked(viewableSchool: ViewableSchool) {
