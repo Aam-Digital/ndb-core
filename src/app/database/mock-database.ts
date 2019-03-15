@@ -19,6 +19,7 @@ import { Database } from './database';
 import {Note} from '../children/notes/note';
 import {AttendanceMonth} from '../children/attendance/attendance-month';
 import {Entity} from '../entity/entity';
+import {ChildSchoolRelation} from '../children/childSchoolRelation';
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -142,6 +143,14 @@ export class MockDatabase extends Database {
         reduce = this.getStatsReduceFun((e: AttendanceMonth) => e.student,
           (e: AttendanceMonth) => (e.daysAttended / (e.daysWorking - e.daysExcused)));
         break;
+      case 'childSchoolRelations_index/by_child':
+        filter = (e) => e._id.startsWith( ChildSchoolRelation.ENTITY_TYPE) && e.childId === options.key;
+        break;
+      case 'childSchoolRelations_index/by_school':
+        filter = (e) => e._id.startsWith( ChildSchoolRelation.ENTITY_TYPE) && e.schoolId === options.key;
+        break;
+      case 'childSchoolRelations_index/by_date':
+        return this.filterForLatestRelationOfChild(options.key);
     }
     if (filter !== undefined) {
       if (reduce !== undefined) {
@@ -160,6 +169,18 @@ export class MockDatabase extends Database {
 
     console.warn('MockDatabase does not implement "query()"');
     return Promise.resolve({ rows: []});
+  }
+
+  private async filterForLatestRelationOfChild(childId: string) {
+    const all = await this.getAll();
+    const relations = all.filter(e => e._id.startsWith(ChildSchoolRelation.ENTITY_TYPE));
+    const sorted = relations.sort((a, b) => {
+      const aValue = a.childId + new Date(a.start).getDate();
+      const bValue = b.childId + new Date(b.start).getDate();
+      return aValue > bValue ? 1 : aValue === bValue ? 0 : -1;
+    });
+    console.log('sorted', sorted);
+    return sorted.find(doc => doc.childId === childId);
   }
 
   private isWithinLastMonths(date: Date, now: Date, numberOfMonths: number): boolean {
