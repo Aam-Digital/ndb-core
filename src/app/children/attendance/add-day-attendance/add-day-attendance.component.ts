@@ -52,7 +52,12 @@ export class AddDayAttendanceComponent implements OnInit {
       .filter(c => c.center === this.center)
       .map(c => c.schoolId).filter((value, index, arr) => arr.indexOf(value) === index)
       .forEach(schoolId => {
-        const filterOption = { key: schoolId, label: schoolId, type: 'school', filterFun: (c: Child) => c.schoolId === schoolId };
+        const filterOption = {
+          key: schoolId,
+          label: schoolId,
+          type: 'school',
+          filterFun: (c: ChildWithRelation) => c.schoolId === schoolId
+        };
         this.studentGroups.options.push(filterOption);
       });
 

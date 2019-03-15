@@ -5,7 +5,7 @@ import {MatTableDataSource} from '@angular/material';
 import {AttendanceMonth} from '../attendance-month';
 import {ConfirmationDialogService} from '../../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {AlertService} from '../../../alerts/alert.service';
-import {ChildrenService} from '../../children.service';
+import {ChildrenService, ChildWithRelation} from '../../children.service';
 import {School} from '../../../schools/school';
 
 @Component({
@@ -17,9 +17,9 @@ export class AddMonthAttendanceComponent implements OnInit {
   schools = new Array<School>();
   centers = new Array<string>();
 
-  children = new Array<Child>();
-  childrenBySchool = new Map<string, Child[]>();
-  childrenByCenter = new Map<string, Child[]>();
+  children = new Array<ChildWithRelation>();
+  childrenBySchool = new Map<string, ChildWithRelation[]>();
+  childrenByCenter = new Map<string, ChildWithRelation[]>();
 
   attendanceDataSource = new MatTableDataSource();
   columnsToDisplay = ['student', 'daysAttended', 'daysExcused', 'remarks', 'daysWorking'];
@@ -46,9 +46,9 @@ export class AddMonthAttendanceComponent implements OnInit {
     });
   }
 
-  private initChildrenLookupTables(children: Child[]) {
-    this.childrenBySchool = new Map<string, Child[]>();
-    this.childrenByCenter = new Map<string, Child[]>();
+  private initChildrenLookupTables(children: ChildWithRelation[]) {
+    this.childrenBySchool = new Map<string, ChildWithRelation[]>();
+    this.childrenByCenter = new Map<string, ChildWithRelation[]>();
 
     children.forEach(c => {
       let arrS = this.childrenBySchool.get(c.schoolId);

@@ -2,6 +2,7 @@ import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {Child} from '../child';
 import {Router} from '@angular/router';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
+import {ChildWithRelation} from '../children.service';
 
 @Component({
   selector: 'app-child-block',
@@ -9,7 +10,7 @@ import {EntityMapperService} from '../../entity/entity-mapper.service';
   styleUrls: ['./child-block.component.scss']
 })
 export class ChildBlockComponent implements OnInit {
-  @Input() entity: Child;
+  @Input() entity: ChildWithRelation;
   @Input() entityId: string;
   @Input() linkDisabled: boolean;
   tooltip = false;

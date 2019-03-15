@@ -52,6 +52,7 @@ export class SchoolDetailComponent implements OnInit {
     private alertService: AlertService,
     private snackBar: MatSnackBar,
     private confirmationDialog: ConfirmationDialogService,
+    private schoolService: SchoolsService,
   ) { }
 
   ngOnInit() {
@@ -81,15 +82,11 @@ export class SchoolDetailComponent implements OnInit {
 
   loadStudents() {
     // TODO: load only children related to this school through a method of SchoolService (to be implemented)
-    this.entityMapperService.loadType<Child>(Child)
+    this.schoolService.getChildrenForSchool(this.school.getId())
       .then(children => {
-        return children.filter(child => {
-          return child.schoolId === this.school.getId();
-        })
-      })
-      .then(children => {
+        console.log('children', children);
         this.studentDataSource.data = children;
-      });
+      })
   }
 
 
