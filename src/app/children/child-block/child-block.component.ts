@@ -2,7 +2,7 @@ import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {Child} from '../child';
 import {Router} from '@angular/router';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
-import {ChildWithRelation} from '../children.service';
+import {ChildrenService, ChildWithRelation} from '../children.service';
 
 @Component({
   selector: 'app-child-block',
@@ -17,11 +17,12 @@ export class ChildBlockComponent implements OnInit {
   tooltipTimeout;
 
   constructor(private router: Router,
-              private entityMapper: EntityMapperService) { }
+              private entityMapper: EntityMapperService,
+              private childrenService: ChildrenService) { }
 
   ngOnInit() {
     if (this.entityId !== undefined) {
-      this.entityMapper.load(Child, this.entityId).then(child => {
+      this.childrenService.getChildWithRelation(this.entityId).then(child => {
         this.entity = child;
       }).catch(() => {
         // No special error handling here, as the database will report the technical error and the UI catches the entity being undefined
@@ -55,7 +56,7 @@ export class ChildBlockComponent implements OnInit {
   onPhotoError() {
     if (this.entity && this.entity.hasPhoto) {
       this.entity.hasPhoto = false;
-      this.entityMapper.save(this.entity);
+      this.entityMapper.save(this.entity.getChild());
     }
   }
 }

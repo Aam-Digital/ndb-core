@@ -37,7 +37,7 @@ import {School} from '../../schools/school';
 })
 export class ChildDetailsComponent implements OnInit {
 
-  child: ChildWithRelation = new Child('');
+  child: ChildWithRelation = new ChildWithRelation(new Child(''));
   currentSchool: School = new School('');
   schools: School[] = [];
 
@@ -113,7 +113,7 @@ export class ChildDetailsComponent implements OnInit {
     if (id === 'new') {
       this.creatingNew = true;
       this.editing = true;
-      this.child = new Child(uniqid());
+      this.child = new ChildWithRelation(new Child(uniqid()));
     } else {
       this.childrenService.getChildWithRelation(id)
         .then(child => {
@@ -165,7 +165,7 @@ export class ChildDetailsComponent implements OnInit {
 
           const snackBarRef = this.snackBar.open('Deleted Child "' + this.child.name + '"', 'Undo', {duration: 8000});
           snackBarRef.onAction().subscribe(() => {
-            this.entityMapperService.save(this.child, true);
+            this.entityMapperService.save(this.child.getChild(), true);
             this.router.navigate(['/child', this.child.getId()]);
           });
         }

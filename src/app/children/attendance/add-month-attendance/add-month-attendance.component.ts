@@ -38,8 +38,8 @@ export class AddMonthAttendanceComponent implements OnInit {
 
   ngOnInit() {
     this.entityMapper.loadType<School>(School).then(schools => this.schools = schools);
-    this.entityMapper.loadType<Child>(Child).then(children => {
-      this.children = children.filter((c: Child) => c.isActive());
+    this.childrenService.getChildrenWithRelation().then(children => {
+      this.children = children.filter((c: ChildWithRelation) => c.isActive());
       this.initChildrenLookupTables(this.children);
 
       this.centers = children.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
