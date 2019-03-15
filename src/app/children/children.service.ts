@@ -158,24 +158,27 @@ export class ChildrenService {
   }
 
   queryLatestRelation(childId: string): Promise<ChildSchoolRelation> {
+    return this.querySortedRelations(childId, 1).then(children => children[0])
+ }
+
+ querySortedRelations(childId: string, limit?: number): Promise<ChildSchoolRelation[]> {
+    const options: any = {
+      startkey: childId + '\uffff', //  higher value needs to be startkey
+      endkey: childId,              //  \uffff is not a character -> only relations staring with childId will be selected
+      descending: true,
+      include_docs: true,
+      limit: limit
+    };
     return this.db.query(
       'childSchoolRelations_index/by_date',
-      {
-        startkey: childId + '\uffff', //  higher value needs to be startkey
-        endkey: childId,              //  \uffff is not a character -> only relations staring with childId will be selected
-        limit: 1,                     //  only return first one because that is the latest starting date -> current one?
-        descending: true,
-        include_docs: true
-      }
+      options
     )
-      .then(result => {
-        let entity: ChildSchoolRelation = null;
-        const records = result.rows;
-        if (records) {
-          entity = new ChildSchoolRelation('');
-          entity.load(records[0].doc);
-          }
-        return entity;
+      .then(loadedEntities => {
+        return loadedEntities.rows.map(loadedRecord => {
+          const entity = new ChildSchoolRelation('');
+          entity.load(loadedRecord.doc);
+          return entity;
+        });
       });
  }
 
@@ -322,7 +325,7 @@ export class ChildrenService {
   }
 
   async getViewableSchools(childId: string): Promise<ViewableSchool[]> {
-    const relations = await this.queryRelationsOfChild(childId);
+    const relations = await this.querySortedRelations(childId);
     const schools: ViewableSchool[] = [];
     for (const relation of relations) {
       const school: School = await this.entityMapper.load<School>(School, relation.schoolId);

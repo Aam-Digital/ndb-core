@@ -18,7 +18,6 @@
 import { Database } from './database';
 import {Note} from '../children/notes/note';
 import {AttendanceMonth} from '../children/attendance/attendance-month';
-import {Entity} from '../entity/entity';
 import {ChildSchoolRelation} from '../children/childSchoolRelation';
 
 /**
@@ -150,7 +149,7 @@ export class MockDatabase extends Database {
         filter = (e) => e._id.startsWith( ChildSchoolRelation.ENTITY_TYPE) && e.schoolId === options.key;
         break;
       case 'childSchoolRelations_index/by_date':
-        return this.filterForLatestRelationOfChild(options.key);
+        return this.filterForLatestRelationOfChild(options.endkey, options.limit);
     }
     if (filter !== undefined) {
       if (reduce !== undefined) {
@@ -171,16 +170,23 @@ export class MockDatabase extends Database {
     return Promise.resolve({ rows: []});
   }
 
-  private async filterForLatestRelationOfChild(childId: string) {
-    const all = await this.getAll();
-    const relations = all.filter(e => e._id.startsWith(ChildSchoolRelation.ENTITY_TYPE));
-    const sorted = relations.sort((a, b) => {
-      const aValue = a.childId + new Date(a.start).getDate();
-      const bValue = b.childId + new Date(b.start).getDate();
-      return aValue > bValue ? 1 : aValue === bValue ? 0 : -1;
-    });
-    console.log('sorted', sorted);
-    return sorted.find(doc => doc.childId === childId);
+  private async filterForLatestRelationOfChild(childId: string, limit: number): Promise<any> {
+    return new Promise(resolve => {
+      this.getAll().then(all => {
+        const relations = all.filter(e => e._id.startsWith(ChildSchoolRelation.ENTITY_TYPE));
+        const sorted = relations.sort((a, b) => {
+          const aValue = a.childId + new Date(a.start).getTime();
+          const bValue = b.childId + new Date(b.start).getTime();
+          return aValue > bValue ? 1 : aValue === bValue ? 0 : -1;
+        });
+        const filtered: ChildSchoolRelation[] = sorted.filter(doc => doc.childId === childId);
+        let results: {doc: ChildSchoolRelation}[] = filtered.map(relation => { return {doc: relation} });
+        if (limit) {
+          results = results.slice(0, limit)
+        }
+        resolve({rows: results});
+      })
+    })
   }
 
   private isWithinLastMonths(date: Date, now: Date, numberOfMonths: number): boolean {

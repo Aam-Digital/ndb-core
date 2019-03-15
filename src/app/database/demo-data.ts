@@ -145,7 +145,6 @@ export class DemoData {
     current1.dailyRegister[25].status = AttendanceStatus.PRESENT;
     current1.dailyRegister[26].status = AttendanceStatus.PRESENT;
     current1.dailyRegister[27].status = AttendanceStatus.PRESENT;
-    current1.dailyRegister[28].status = AttendanceStatus.LATE;
     current1.institution = 'coaching';
     data.push(current1);
 
@@ -184,7 +183,6 @@ export class DemoData {
     current2.dailyRegister[25].status = AttendanceStatus.ABSENT;
     current2.dailyRegister[26].status = AttendanceStatus.ABSENT;
     current2.dailyRegister[27].status = AttendanceStatus.ABSENT;
-    current2.dailyRegister[28].status = AttendanceStatus.ABSENT;
     data.push(current2);
 
     return data;
@@ -251,24 +249,24 @@ export class DemoData {
     rel1.start = '2016-10-01';
     data.push(rel1);
 
-    const rel2: ChildSchoolRelation = new ChildSchoolRelation('2');
-    rel2.childId = '2';
-    rel2.schoolId = '2';
-    rel2.start = '2018-05-07';
-    data.push(rel2);
-
-    const rel3: ChildSchoolRelation = new ChildSchoolRelation('3');
-    rel3.childId = '3';
-    rel3.schoolId = '1';
-    rel3.start = '2010-01-01';
-    data.push(rel3);
-
-    const rel4: ChildSchoolRelation = new ChildSchoolRelation('4');
+    const rel4: ChildSchoolRelation = new ChildSchoolRelation('2');
     rel4.childId = '3';
     rel4.schoolId = '2';
     rel4.start = '2001-01-01';
     rel4.end = '2002-01-01';
     data.push(rel4);
+
+    const rel2: ChildSchoolRelation = new ChildSchoolRelation('3');
+    rel2.childId = '2';
+    rel2.schoolId = '2';
+    rel2.start = '2018-05-07';
+    data.push(rel2);
+
+    const rel3: ChildSchoolRelation = new ChildSchoolRelation('4');
+    rel3.childId = '3';
+    rel3.schoolId = '1';
+    rel3.start = '2010-01-01';
+    data.push(rel3);
 
     return data;
   }
