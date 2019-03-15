@@ -8,8 +8,8 @@ import uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
 import {MatSnackBar, MatTableDataSource} from '@angular/material';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
-import {Child} from '../../children/child';
 import {Location} from '@angular/common';
+import {ChildWithRelation} from '../../children/children.service';
 
 @Component({
   selector: 'app-school-detail',
@@ -19,7 +19,7 @@ import {Location} from '@angular/common';
 export class SchoolDetailComponent implements OnInit {
   school = new School('');
 
-  studentDataSource: MatTableDataSource<Child> = new MatTableDataSource();
+  studentDataSource: MatTableDataSource<ChildWithRelation> = new MatTableDataSource();
   displayedColumns = ['id', 'name', 'schoolClass', 'age'];
 
   form: FormGroup;
@@ -81,10 +81,8 @@ export class SchoolDetailComponent implements OnInit {
   }
 
   loadStudents() {
-    // TODO: load only children related to this school through a method of SchoolService (to be implemented)
     this.schoolService.getChildrenForSchool(this.school.getId())
       .then(children => {
-        console.log('children', children);
         this.studentDataSource.data = children;
       })
   }

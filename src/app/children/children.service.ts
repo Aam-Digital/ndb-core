@@ -43,6 +43,12 @@ export class ChildrenService {
     return tableData;
   }
 
+  async getChildWithRelation(childId: string): Promise<ChildWithRelation> {
+    const child = await this.entityMapper.load<Child>(Child, childId);
+    const relation = await this.queryLatestRelation(childId);
+    return new ChildWithRelation(child, relation);
+  }
+
   getChildren(): Observable<Child[]> {
     return from(this.entityMapper.loadType<Child>(Child));
   }

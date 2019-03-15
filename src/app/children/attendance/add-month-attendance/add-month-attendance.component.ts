@@ -82,7 +82,7 @@ export class AddMonthAttendanceComponent implements OnInit {
     this.attendanceDataSource.data = records;
   }
 
-  private getFilteredStudents() {
+  private getFilteredStudents(): ChildWithRelation[] {
     let result;
     if (this.attendanceType === 'school') {
       result = this.childrenBySchool.get(this.school);

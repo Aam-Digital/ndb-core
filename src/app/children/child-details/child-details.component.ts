@@ -26,9 +26,8 @@ import {Location} from '@angular/common';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
-import {ChildrenService} from '../children.service';
+import {ChildrenService, ChildWithRelation} from '../children.service';
 import {School} from '../../schools/school';
-import {Database} from '../../database/database';
 
 
 @Component({
@@ -38,7 +37,7 @@ import {Database} from '../../database/database';
 })
 export class ChildDetailsComponent implements OnInit {
 
-  child: Child = new Child('');
+  child: ChildWithRelation = new Child('');
   currentSchool: School = new School('');
   schools: School[] = [];
 
@@ -116,11 +115,11 @@ export class ChildDetailsComponent implements OnInit {
       this.editing = true;
       this.child = new Child(uniqid());
     } else {
-      this.entityMapperService.load<Child>(Child, id)
+      this.childrenService.getChildWithRelation(id)
         .then(child => {
           this.child = child;
           this.initForm();
-          this.childrenService.getCurrentSchool(this.child.getId())
+          this.entityMapperService.load<School>(School, this.child.schoolId)
             .then(school => this.currentSchool = school)
         });
     }
