@@ -146,7 +146,7 @@ export class MockDatabase extends Database {
         filter = (e) => e._id.startsWith( ChildSchoolRelation.ENTITY_TYPE) && e.childId === options.key;
         break;
       case 'childSchoolRelations_index/by_school':
-        filter = (e) => e._id.startsWith( ChildSchoolRelation.ENTITY_TYPE) && e.schoolId === options.key;
+        filter = (e) => e._id.startsWith( ChildSchoolRelation.ENTITY_TYPE) && !e.end && e.schoolId === options.key;
         break;
       case 'childSchoolRelations_index/by_date':
         return this.filterForLatestRelationOfChild(options.endkey, options.limit);

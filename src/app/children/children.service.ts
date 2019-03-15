@@ -141,7 +141,7 @@ export class ChildrenService {
         },
         by_school: {
           map: `(doc) => {
-            if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
+            if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}" || doc.end)) return;
             emit(doc.schoolId);
             }`
         },
