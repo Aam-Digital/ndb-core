@@ -10,6 +10,11 @@
   font-size: 1.5em;
 }
 
+.table-action-button {
+  min-width: auto !important;
+  //padding-right: 0;
+}
+
 .table-show-number {
   /*text-align: right;*/
 }
@@ -20,3 +25,10 @@
 .table-input-month {
   width: 120px;
 }
+
+.mat-column-actions {
+  width: 1px;
+  white-space: nowrap;
+  text-align: center;
+}
+

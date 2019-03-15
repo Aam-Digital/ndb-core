@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Child} from '../child';
 import {MatSort, MatTableDataSource} from '@angular/material';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -13,7 +13,7 @@ import {Subscription} from 'rxjs';
   templateUrl: './children-list.component.html',
   styleUrls: ['./children-list.component.scss']
 })
-export class ChildrenListComponent implements OnInit, AfterViewInit {
+export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
   watcher: Subscription;
   activeMediaQuery = '';
   childrenList = [];
@@ -63,7 +63,6 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
       }
     });
   }
-
 
   private loadUrlParams(replaceUrl: boolean = false) {
     this.route.queryParams.subscribe(params => {
@@ -175,5 +174,9 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
   showChildDetails(child: Child) {
     this.router.navigate(['/child', child.getId()]);
+  }
+
+  ngOnDestroy() {
+    this.watcher.unsubscribe();
   }
 }

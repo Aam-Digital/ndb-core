@@ -49,14 +49,13 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 
 
 
+
 .dashboard-widget .mat-card-header {
 
   padding: 24px;
   margin-bottom: 10px;
   position: relative;
 
-  /*height: 48px;
-  */
   background-color: lightgray;
   color: white;
 }
@@ -164,4 +163,13 @@ mat-card.dashboard-widget {
 
 .filter-button mat-button-toggle.selected:hover{
   background: #e0e0e0;
+}
+
+
+/* display disabled form values in black for better readability as we disable forms by default */
+.mat-input-element:disabled {
+  color: black;
+}
+.mat-select-disabled .mat-select-value {
+  color: black;
 }

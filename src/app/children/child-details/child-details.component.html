@@ -46,7 +46,7 @@
 <mat-accordion multi='true'>
   <form [formGroup]="form">
 
-    <mat-expansion-panel hideToggle="true" [expanded]="child.isActive()">
+    <mat-expansion-panel hideToggle="true" [expanded]="child.isActive()" title="Basic Information">
       <mat-expansion-panel-header class='section-header'>
         <mat-panel-title>
           Basic Information
@@ -183,7 +183,7 @@
 
 
 
-    <mat-expansion-panel expanded="false">
+    <mat-expansion-panel expanded="false" title="Education">
       <mat-expansion-panel-header class='section-header'>
         Education
       </mat-expansion-panel-header>
@@ -219,12 +219,12 @@
 
 
 
-    <mat-expansion-panel expanded="false">
+    <mat-expansion-panel expanded="false" title="Attendance">
       <mat-expansion-panel-header class='section-header'>
         Attendance
       </mat-expansion-panel-header>
 
-      <div fxLayout='row' fxLayoutGap='20px'>
+      <div fxLayout='row wrap' fxLayout.lt-md="column" fxLayoutGap='20px'>
         <div fxFlex='40'>
           <h3>School Attendance</h3>
           <app-child-attendance institution='school' [showDailyAttendanceOfLatest]='true'></app-child-attendance>
