@@ -55,6 +55,7 @@ export class Child extends Entity {
   dropoutRemarks: string;
 
   health_vaccinationStatus: string;
+  health_bloodGroup: string;
   health_lastDentalCheckup: Date;
   health_lastEyeCheckup: Date;
   health_lastENTCheckup: Date;
