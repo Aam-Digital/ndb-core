@@ -141,7 +141,8 @@ export class ChildrenService {
         },
         by_school: {
           map: `(doc) => {
-            if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}" || doc.end)) return;
+            if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
+            if (doc.end) return;
             emit(doc.schoolId);
             }`
         },
@@ -193,18 +194,6 @@ export class ChildrenService {
       });
 
   }
-
-  queryChildrenofSchool(schoolId: string) {
-    const promise = this.db.query('childSchoolRelations_index/by_school', {key: schoolId, include_docs: true})
-      .then(loadedEntities => {
-        return loadedEntities.rows.map(loadedRecord => {
-          const entity = new ChildSchoolRelation('');
-          entity.load(loadedRecord.doc);
-          return entity;
-        });
-      });
-
-    return from(promise);  }
 
   queryAttendanceLast3Months() {
     return this.db.query('avg_attendance_index/three_months', {reduce: true, group: true});
