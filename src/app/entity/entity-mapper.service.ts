@@ -82,33 +82,6 @@ export class EntityMapperService {
     )
   }
 
-  /**
-   * Loads all entities of type O/inputType that occur in a entity of type R/relationType and reference the same entity of type I/inputType
-   * with an id equal to inputId
-   *
-   * @param inputType the type of entity where you have the id
-   * @param outputType the type of the entities which you want to get
-   * @param relationType the type of the relation that is used for resolving the call
-   * @param inputId the id of the input entity
-   */
-  public loadTypeForRelation<I extends Entity, O extends Entity, R extends EntityRelation>(
-    inputType: typeof Entity | PassableEntityConstructor<I>,
-    outputType: typeof Entity | PassableEntityConstructor<O>,
-    relationType: typeof EntityRelation | PassableEntityConstructor<R>,
-    inputId: string,
-  ): Promise<O[]> {
-    const inputField: string = (relationType as typeof EntityRelation).getParameterName(inputType as typeof Entity);
-    const outputField: string = (relationType as typeof EntityRelation).getParameterName(outputType as typeof Entity);
-    return this.loadType<R>(relationType as PassableEntityConstructor<R>)
-      .then((relations: R[]) => relations.filter((relation: R) => relation[inputField] === inputId))
-      .then(async (relations: R[]) => {
-        const promises: Promise<O>[] = [];
-        relations.forEach(relation =>
-          promises.push(this.load<O>(outputType as PassableEntityConstructor<O>, relation[outputField])));
-        return await Promise.all(promises);
-      })
-  }
-
   public save<T extends Entity>(entity: T, forceUpdate: boolean = false): Promise<any> {
     entity['_id'] = EntityMapperService.createDatabaseIdByEntity(entity);
     return this._db.put(entity.rawData(), forceUpdate)
