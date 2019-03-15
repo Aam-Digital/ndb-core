@@ -38,8 +38,6 @@ export class Child extends Entity {
   admissionDate: Date;
   status = '';
 
-  schoolId: string;
-  schoolClass = '';
 
   address = '';
   phone = '';

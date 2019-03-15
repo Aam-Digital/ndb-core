@@ -30,8 +30,6 @@ export class DemoData {
     a1.dateOfBirth = new Date('2000-03-13');
     a1.motherTongue = 'Hindi';
     a1.center = 'Delhi';
-    a1.schoolId = '1';
-    a1.schoolClass = '4';
     data.push(a1);
 
     const a2 = new Child('2');
@@ -42,8 +40,6 @@ export class DemoData {
     a2.dateOfBirth = new Date('2001-01-01');
     a2.motherTongue = 'Bengali';
     a2.center = 'Kolkata';
-    a2.schoolId = '2';
-    a2.schoolClass = '9';
     data.push(a2);
 
     const a3 = new Child('3');
@@ -54,8 +50,6 @@ export class DemoData {
     a3.dateOfBirth = new Date('2002-07-29');
     a3.motherTongue = 'Hindi';
     a3.center = 'Kolkata';
-    a3.schoolId = '1';
-    a3.schoolClass = '5';
     data.push(a3);
 
     return data;

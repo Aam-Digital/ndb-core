@@ -1,7 +1,4 @@
 import {Entity} from '../entity/entity';
-import {EntityMapperService} from '../entity/entity-mapper.service';
-import {Child} from '../children/child';
-import {ChildSchoolRelation} from '../children/childSchoolRelation';
 
 export class School extends Entity {
   public static ENTITY_TYPE = 'School';
@@ -21,16 +18,6 @@ export class School extends Entity {
   academicBoard = '';
   timing = '';
   workingDays = '';
-
-
-
-  getStudents(entityMapperService: EntityMapperService): Promise<Child[]> {
-    return entityMapperService.loadTypeForRelation<School, Child, ChildSchoolRelation>(
-      School,
-      Child,
-      ChildSchoolRelation,
-      this.getId())
-  }
 
   public toString() {
     return this.name;
