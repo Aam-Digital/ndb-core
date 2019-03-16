@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges, V
 import {EditSchoolDialogComponent} from './edit-school-dialog/edit-school-dialog.component';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {MatDialog, MatTableDataSource, MatSort} from '@angular/material';
-import {Child, ViewableSchool} from '../child';
+import {Child, SchoolWithRelation} from '../child';
 import {LoggingService} from '../../logging/logging.service';
 import {ChildrenService} from '../children.service';
 
@@ -16,8 +16,8 @@ export class ViewSchoolsComponentComponent implements OnInit, OnChanges {
 
   @Input() public child: Child;
   private sort: MatSort;
-  schoolsDataSource: MatTableDataSource<ViewableSchool> = new MatTableDataSource();
-  viewableSchools: ViewableSchool[] = [];
+  schoolsDataSource: MatTableDataSource<SchoolWithRelation> = new MatTableDataSource();
+  viewableSchools: SchoolWithRelation[] = [];
   displayedColumns: string[] = ['schoolName', 'startTime', 'endTime'];
 
   @ViewChild(MatSort) set matSort(ms: MatSort) {    // Needed to set the mat sort later than ngAfterViewInit
@@ -54,7 +54,7 @@ export class ViewSchoolsComponentComponent implements OnInit, OnChanges {
 
   public loadSchoolEntries() {
     this.childrenService.getViewableSchools(this.child.getId())
-      .then((schools: ViewableSchool[]) => {
+      .then((schools: SchoolWithRelation[]) => {
         this.viewableSchools = schools;
         this.updateViewableItems();
         this.changeDetectionRef.detectChanges();
@@ -68,7 +68,7 @@ export class ViewSchoolsComponentComponent implements OnInit, OnChanges {
 
   }
 
-  schoolClicked(viewableSchool: ViewableSchool) {
+  schoolClicked(viewableSchool: SchoolWithRelation) {
     const data = {
           childSchoolRelation: viewableSchool.childSchoolRelation,
           child: this.child,

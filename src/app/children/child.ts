@@ -111,7 +111,7 @@ export class Child extends Entity {
 }
 
 
-export class ViewableSchool {
+export class SchoolWithRelation {
   constructor(private _childSchoolRelation: ChildSchoolRelation, private _school: School) { }
 
   set childSchoolRelation(value: ChildSchoolRelation) {

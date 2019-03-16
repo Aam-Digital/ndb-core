@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {from, Observable} from 'rxjs';
-import {Child, ViewableSchool} from './child';
+import {Child, SchoolWithRelation} from './child';
 import {EntityMapperService} from '../entity/entity-mapper.service';
 import {AttendanceMonth} from './attendance/attendance-month';
 import {Database} from '../database/database';
@@ -313,12 +313,12 @@ export class ChildrenService {
       });
   }
 
-  async getViewableSchools(childId: string): Promise<ViewableSchool[]> {
+  async getViewableSchools(childId: string): Promise<SchoolWithRelation[]> {
     const relations = await this.querySortedRelations(childId);
-    const schools: ViewableSchool[] = [];
+    const schools: SchoolWithRelation[] = [];
     for (const relation of relations) {
       const school: School = await this.entityMapper.load<School>(School, relation.schoolId);
-      schools.push(new ViewableSchool(relation, school));
+      schools.push(new SchoolWithRelation(relation, school));
     }
     return schools;
   }
