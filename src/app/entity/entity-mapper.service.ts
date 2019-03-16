@@ -19,7 +19,6 @@ import { Injectable } from '@angular/core';
 import { Database } from '../database/database';
 import { Entity } from './entity';
 import {PassableEntityConstructor} from './PassableEntityConstructor';
-import {EntityRelation} from './EntityRelation';
 
 /**
  * The default generic DataMapper for Entity and any subclass.
