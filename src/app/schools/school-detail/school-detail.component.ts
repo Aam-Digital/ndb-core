@@ -43,7 +43,6 @@ export class SchoolDetailComponent implements OnInit {
   }
 
   constructor(
-    private ss: SchoolsService,
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,

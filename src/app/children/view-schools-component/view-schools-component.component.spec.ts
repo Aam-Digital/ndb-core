@@ -1,9 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import {MatIconModule, MatFormFieldModule, MatTableModule, MatDialogModule} from '@angular/material';
+import {MatIconModule, MatFormFieldModule, MatTableModule, MatDialogModule, MatDialog} from '@angular/material';
 
 import { ViewSchoolsComponentComponent } from './view-schools-component.component';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import { MockDatabase } from '../../database/mock-database';
+import {ChildrenService} from '../children.service';
+import {ChangeDetectorRef} from '@angular/core';
+import {LoggingService} from '../../logging/logging.service';
+import {Database} from '../../database/database';
 
 describe('ViewSchoolsComponentComponent', () => {
   let component: ViewSchoolsComponentComponent;
@@ -20,7 +24,12 @@ describe('ViewSchoolsComponentComponent', () => {
         MatDialogModule
       ],
       providers: [
-        {provide: EntityMapperService, useValue: entityMapper},
+        ChildrenService,
+        EntityMapperService,
+        MatDialog,
+        ChangeDetectorRef,
+        LoggingService,
+        { provide: Database, useClass: MockDatabase}
       ],
     })
     .compileComponents();
@@ -32,8 +41,7 @@ describe('ViewSchoolsComponentComponent', () => {
     fixture.detectChanges();
   });
 
-  // TODO reactivate tests
-  // it('should create', () => {
-  //   expect(component).toBeTruthy();
-  // });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 });

@@ -43,7 +43,6 @@ describe('EditSchoolDialogComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EditSchoolDialogComponent);
     component = fixture.componentInstance;
-    // component.child = new Child('');
     fixture.detectChanges();
   });
 
