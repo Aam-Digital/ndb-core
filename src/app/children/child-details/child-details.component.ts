@@ -24,7 +24,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatSnackBar} from '@angular/material';
 import {Location} from '@angular/common';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
-import uniqid from 'uniqid';
+import * as uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
 import {ChildrenService, ChildWithRelation} from '../children.service';
 import {School} from '../../schools/school';

@@ -4,7 +4,7 @@ import {School} from '../school';
 import {SchoolsService} from '../schools.service';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import uniqid from 'uniqid';
+import * as uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
 import {MatSnackBar, MatTableDataSource} from '@angular/material';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';

@@ -7,13 +7,12 @@ import {
   MatIconModule,
   MatSortModule,
   MatTableModule,
-  MatSnackBar,
-  MatDialog
+  MatSnackBar, MatInputModule,
 } from '@angular/material';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {SchoolsService} from '../schools.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {AlertService} from '../../alerts/alert.service';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
@@ -22,6 +21,7 @@ import {MockDatabase} from '../../database/mock-database';
 import { Location } from '@angular/common';
 import {Observable} from 'rxjs';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import * as uniqid from 'uniqid'; //  Necessary for usage of uniqid in the component
 
 describe('SchoolDetailComponent', () => {
   let component: SchoolDetailComponent;
@@ -48,11 +48,13 @@ describe('SchoolDetailComponent', () => {
         MatCheckboxModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
+        MatInputModule,
       ],
       providers: [
         EntityMapperService,
         SchoolsService,
         AlertService,
+        FormBuilder,
         { provide: ConfirmationDialogService, useValue: mockedConfirmationDialog},
         { provide: MatSnackBar, useValue: mockedSnackBar},
         { provide: Location, useValue: mockedLocation},
@@ -70,8 +72,7 @@ describe('SchoolDetailComponent', () => {
     fixture.detectChanges();
   });
 
-  // TODO: find a way to mock/import uniqid, the rest should work
-  // it('should create', () => {
-  //   expect(component).toBeTruthy();
-  // });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 });

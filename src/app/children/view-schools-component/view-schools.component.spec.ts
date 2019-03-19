@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import {MatIconModule, MatFormFieldModule, MatTableModule, MatDialogModule, MatDialog} from '@angular/material';
 
-import { ViewSchoolsComponentComponent } from './view-schools-component.component';
+import { ViewSchoolsComponent } from './view-schools.component';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import { MockDatabase } from '../../database/mock-database';
 import {ChildrenService} from '../children.service';
@@ -9,14 +9,14 @@ import {ChangeDetectorRef} from '@angular/core';
 import {LoggingService} from '../../logging/logging.service';
 import {Database} from '../../database/database';
 
-describe('ViewSchoolsComponentComponent', () => {
-  let component: ViewSchoolsComponentComponent;
-  let fixture: ComponentFixture<ViewSchoolsComponentComponent>;
+describe('ViewSchoolsComponent', () => {
+  let component: ViewSchoolsComponent;
+  let fixture: ComponentFixture<ViewSchoolsComponent>;
   const entityMapper = new EntityMapperService(new MockDatabase());
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ViewSchoolsComponentComponent ],
+      declarations: [ ViewSchoolsComponent ],
       imports: [
         MatIconModule,
         MatFormFieldModule,
@@ -36,7 +36,7 @@ describe('ViewSchoolsComponentComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ViewSchoolsComponentComponent);
+    fixture = TestBed.createComponent(ViewSchoolsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

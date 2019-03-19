@@ -8,11 +8,11 @@ import {ChildrenService} from '../children.service';
 
 @Component({
   selector: 'app-view-schools-component',
-  templateUrl: './view-schools-component.component.html',
-  styleUrls: ['./view-schools-component.component.scss']
+  templateUrl: './view-schools.component.html',
+  styleUrls: ['./view-schools.component.scss']
 })
 
-export class ViewSchoolsComponentComponent implements OnInit, OnChanges {
+export class ViewSchoolsComponent implements OnInit, OnChanges {
 
   @Input() public child: Child;
   private sort: MatSort;
