@@ -9,7 +9,7 @@ import {AlertService} from '../../alerts/alert.service';
 import {MatSnackBar, MatTableDataSource} from '@angular/material';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {Location} from '@angular/common';
-import {ChildWithRelation} from '../../children/children.service';
+import {ChildWithRelation} from '../../children/childWithRelation';
 
 @Component({
   selector: 'app-school-detail',

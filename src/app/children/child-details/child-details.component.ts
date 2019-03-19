@@ -26,8 +26,9 @@ import {Location} from '@angular/common';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import * as uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
-import {ChildrenService, ChildWithRelation} from '../children.service';
+import {ChildrenService} from '../children.service';
 import {School} from '../../schools/school';
+import {ChildWithRelation} from '../childWithRelation';
 
 
 @Component({

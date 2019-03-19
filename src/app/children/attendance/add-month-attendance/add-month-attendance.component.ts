@@ -5,8 +5,9 @@ import {MatTableDataSource} from '@angular/material';
 import {AttendanceMonth} from '../attendance-month';
 import {ConfirmationDialogService} from '../../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {AlertService} from '../../../alerts/alert.service';
-import {ChildrenService, ChildWithRelation} from '../../children.service';
+import {ChildrenService} from '../../children.service';
 import {School} from '../../../schools/school';
+import {ChildWithRelation} from '../../childWithRelation';
 
 @Component({
   selector: 'app-add-month-attendance',

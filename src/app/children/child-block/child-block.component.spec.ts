@@ -7,8 +7,9 @@ import {SchoolBlockComponent} from '../../schools/school-block/school-block.comp
 import {MatIconModule} from '@angular/material';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {MockDatabase} from '../../database/mock-database';
-import {ChildrenService, ChildWithRelation} from '../children.service';
+import {ChildrenService} from '../children.service';
 import {Database} from '../../database/database';
+import {ChildWithRelation} from '../childWithRelation';
 
 describe('ChildBlockComponent', () => {
   let component: ChildBlockComponent;

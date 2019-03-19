@@ -1,8 +1,8 @@
 import {Component, HostListener, Input, OnInit} from '@angular/core';
-import {Child} from '../child';
 import {Router} from '@angular/router';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
-import {ChildrenService, ChildWithRelation} from '../children.service';
+import {ChildrenService} from '../children.service';
+import {ChildWithRelation} from '../childWithRelation';
 
 @Component({
   selector: 'app-child-block',

@@ -2,9 +2,10 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {Child} from '../child';
 import {MatSort, MatTableDataSource} from '@angular/material';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ChildrenService, ChildWithRelation} from '../children.service';
+import {ChildrenService} from '../children.service';
 import {AttendanceMonth} from '../attendance/attendance-month';
 import {FilterSelection} from '../../ui-helper/filter-selection/filter-selection';
+import {ChildWithRelation} from '../childWithRelation';
 
 @Component({
   selector: 'app-children-list',

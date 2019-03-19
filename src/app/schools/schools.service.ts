@@ -5,7 +5,7 @@ import {from, Observable} from 'rxjs';
 import {ChildSchoolRelation} from '../children/childSchoolRelation';
 import {Database} from '../database/database';
 import {Child} from '../children/child';
-import {ChildWithRelation} from '../children/children.service';
+import {ChildWithRelation} from '../children/childWithRelation';
 
 @Injectable()
 export class SchoolsService {
