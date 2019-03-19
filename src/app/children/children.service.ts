@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {from, Observable} from 'rxjs';
-import {Child, SchoolWithRelation} from './child';
+import {Child} from './child';
 import {EntityMapperService} from '../entity/entity-mapper.service';
 import {AttendanceMonth} from './attendance/attendance-month';
 import {Database} from '../database/database';
@@ -10,6 +10,7 @@ import {Aser} from './aser/aser';
 import {ChildSchoolRelation} from './childSchoolRelation';
 import {School} from '../schools/school';
 import {ChildWithRelation} from './childWithRelation';
+import {SchoolWithRelation} from '../schools/schoolWithRelation';
 
 @Injectable()
 export class ChildrenService {

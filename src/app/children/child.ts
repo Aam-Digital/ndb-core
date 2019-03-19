@@ -17,8 +17,6 @@
 
 import { Entity } from '../entity/entity';
 import { Gender} from './Gender';
-import {ChildSchoolRelation} from './childSchoolRelation';
-import {School} from '../schools/school';
 
 
 export class Child extends Entity {
@@ -107,36 +105,5 @@ export class Child extends Entity {
       return 'assets/child.png';
     }
     return 'assets/child-photos/' + this.projectNumber + '.jpg';
-  }
-}
-
-
-export class SchoolWithRelation {
-  constructor(private _childSchoolRelation: ChildSchoolRelation, private _school: School) { }
-
-  set childSchoolRelation(value: ChildSchoolRelation) {
-    this._childSchoolRelation = value;
-  }
-
-  set school(value: School) {
-    this._school = value;
-  }
-
-  get childSchoolRelation(): ChildSchoolRelation {
-    return this._childSchoolRelation;
-  }
-
-  get school(): School {
-    return this._school;
-  }
-
-  getSchoolName(): string {
-    return this._school.name;
-  }
-  getStartTime(): string {
-    return this._childSchoolRelation.start;
-  }
-  getEndTime(): string {
-    return this._childSchoolRelation.end;
   }
 }
