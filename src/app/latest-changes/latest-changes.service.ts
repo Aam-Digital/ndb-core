@@ -19,17 +19,22 @@
 import {catchError, map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-
-
 import { Changelog } from './changelog';
 import {AlertService} from '../alerts/alert.service';
 import {HttpClient} from '@angular/common/http';
+import {MatDialog} from '@angular/material';
+import {ChangelogComponent} from './changelog/changelog.component';
+import {CookieService} from 'ngx-cookie-service';
 
 @Injectable()
 export class LatestChangesService {
 
+  private static COOKIE_NAME = 'AppVersion';
+
   constructor(private http: HttpClient,
-              private alertService: AlertService) {
+              private alertService: AlertService,
+              private dialog: MatDialog,
+              private cookieService: CookieService) {
   }
 
   getChangelogs(): Observable<Changelog[]> {
@@ -43,5 +48,27 @@ export class LatestChangesService {
 
   getCurrentVersion(): Observable<string> {
     return this.getChangelogs().pipe(map(changelog => changelog[0].tag_name));
+  }
+
+  public showLatestChanges(): void {
+    const changelogObservable = this.getChangelogs();
+    const dialogData = { changelogData: changelogObservable };
+
+    this.dialog.open(ChangelogComponent, {
+      width: '400px',
+      data: dialogData
+    });
+  }
+
+  public showLatestChangesIfUpdated() {
+    this.getCurrentVersion().subscribe(currentVersion => {
+      if (this.cookieService.check(LatestChangesService.COOKIE_NAME)) {
+        const previousVersion = this.cookieService.get(LatestChangesService.COOKIE_NAME);
+        if (currentVersion !== previousVersion) {
+          this.showLatestChanges();
+        }
+      }
+      this.cookieService.set( LatestChangesService.COOKIE_NAME, currentVersion );
+    });
   }
 }
