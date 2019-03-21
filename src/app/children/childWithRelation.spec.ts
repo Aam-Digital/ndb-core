@@ -1,11 +1,10 @@
-import { Child } from './child';
-import {describe} from 'selenium-webdriver/testing';
 import {ChildSchoolRelation} from './childSchoolRelation';
 import {ChildWithRelation} from './childWithRelation';
+import {Child} from './child';
 
 describe('ChildWithRelation', () => {
 
-  it('has class and schoolId', () => {
+  it('has class and schoolId', function () {
     const schoolId = 'school-id';
     const schoolClass = '1';
     const child = new Child('child1');
@@ -15,11 +14,9 @@ describe('ChildWithRelation', () => {
     const childWithRelation = new ChildWithRelation(child, relation);
     expect(childWithRelation.schoolId).toBe(schoolId);
     expect(childWithRelation.schoolClass).toBe(schoolClass);
-    expect(childWithRelation.getChild).toBe(child);
-    expect(childWithRelation.getRelation).toBe(relation);
   });
 
-  it('has class and schoolId when setting relation later', () => {
+  it('has class and schoolId when setting relation later', function () {
     const schoolId = 'school-id';
     const schoolClass = '1';
     const child = new Child('child1');
@@ -30,5 +27,7 @@ describe('ChildWithRelation', () => {
     childWithRelation.setRelation(relation);
     expect(childWithRelation.schoolId).toBe(schoolId);
     expect(childWithRelation.schoolClass).toBe(schoolClass);
+    expect(childWithRelation.getRelation()).toBe(relation);
   });
 });
+
