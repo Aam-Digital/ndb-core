@@ -78,6 +78,7 @@ export class ChildDetailsComponent implements OnInit {
       // bplCard:        [{value: this.child.has_BplCard,        disabled: !this.editing}],
 
       // health_vaccinationStatus:    [{value: this.child.health_vaccinationStatus,    disabled: !this.editing}],
+      health_bloodGroup:          [{value: this.child.health_bloodGroup,    disabled: !this.editing}],
       health_lastDentalCheckup:   [{value: this.child.health_lastDentalCheckup,    disabled: !this.editing}],
       health_lastEyeCheckup:      [{value: this.child.health_lastEyeCheckup, disabled: !this.editing}],
       // health_eyeHealthStatus:   [{value: this.child.health_eyeHealthStatus,    disabled: !this.editing}],

@@ -273,6 +273,11 @@
             <mat-option *ngFor="let value of eyeStatusValues" [value]="value">{{value}}</mat-option>
           </mat-select>
         </mat-form-field>
+
+        <mat-form-field>
+          <!-- TODO: replace bloodGroup text field with a custom-select, once it is user configurable (#236) -->
+          <input matInput formControlName="health_bloodGroup" placeholder="Blood Group" type="text">
+        </mat-form-field>
       </div>
 
       <div>
