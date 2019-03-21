@@ -178,23 +178,29 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
    * @return returns true if column is visible
    */
   isVisible(col) {
+    let returnVal;
     switch (col.visibleFrom) {
       case 'xl': {
-        return (this.screenWidth.match('xl'))
+        returnVal = (this.screenWidth.match('xl'));
+        break;
       }
       case 'lg': {
-        return (this.screenWidth.match('(lg|xl)'))
+        returnVal (this.screenWidth.match('(lg|xl)'));
+        break;
       }
       case 'md': {
-        return (this.screenWidth.match('(md|lg|xl)'))
+        returnVal (this.screenWidth.match('(md|lg|xl)'));
+        break;
       }
       case 'sm': {
-        return (this.screenWidth.match('(sm|md|lg|xl)'))
+        returnVal (this.screenWidth.match('(sm|md|lg|xl)'));
+        break;
       }
       default: {
-        return true;
+        returnVal = true;
       }
     }
+    return returnVal;
   }
 
 }
