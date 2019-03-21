@@ -50,15 +50,15 @@ export class ChildDetailsComponent implements OnInit {
   editing = false;
   gender = Gender;
 
-  generateNewRecordFactory() {
-    // define values locally because 'this' is a different scope after passing a function as input to another component
-    const child = this.child.getId(); 
-  }
-
   genders = Gender;
   documentStatus = ['OK (copy with us)', 'OK (copy needed for us)', 'needs correction', 'applied', 'doesn\'t have', 'not eligible', ''];
   eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
   vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
+
+  generateNewRecordFactory() {
+    // define values locally because 'this' is a different scope after passing a function as input to another component
+    const child = this.child.getId();
+  }
 
 
   initForm() {
@@ -99,8 +99,8 @@ export class ChildDetailsComponent implements OnInit {
       dropoutType:    [{value: this.child.dropoutType,    disabled: !this.editing}],
       dropoutRemarks: [{value: this.child.dropoutRemarks, disabled: !this.editing}],
     });
-    
-    
+
+
   }
 
 
@@ -132,7 +132,7 @@ export class ChildDetailsComponent implements OnInit {
         });
     }
     this.initForm();
-    
+
   }
 
   switchEdit() {
@@ -187,4 +187,4 @@ export class ChildDetailsComponent implements OnInit {
 }
 
 
-  
+

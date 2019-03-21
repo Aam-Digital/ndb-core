@@ -18,12 +18,12 @@
 import { Entity } from '../../entity/entity';
 import {Child} from '../child';
 
-export class HealthCheck extends Entity{
+export class HealthCheck extends Entity {
 
-    static ENTITY_TYPE='HealthCheck';
+    static ENTITY_TYPE = 'HealthCheck';
 
-    child: String;      //child_id of the child the health check is made for
+    child: String;      // child_id of the child the health check is made for
     date: Date;
-    height: number;     //stores the height of a child in cm
-    weight: number;     //stores the height of a child in kg
+    height: number;     // stores the height of a child in cm
+    weight: number;     // stores the height of a child in kg
 }
