@@ -26,13 +26,45 @@ describe('ChildrenService', () => {
     service.getChildren().subscribe(children => {
       const promises: Promise<any>[] = [];
       expect(children.length).toBeGreaterThan(0);
-      children.forEach(child => promises.push(verifyChildRelations(child, service)));
+      children.forEach(child => promises.push(verifyLatestChildRelations(child, service)));
       Promise.all(promises).then(() => done())
     })
   });
+
+  it('should return ChildSchoolRelations of child in correct order', (done: DoneFn) => {
+    service.getChildren().subscribe(children => {
+      const promises: Promise<any>[] = [];
+      expect(children.length).toBeGreaterThan(0);
+      children.forEach(child => promises.push(verifyChildRelationsOrder(child, service)));
+      Promise.all(promises).then(() => done())
+    })
+  })
 });
 
-async function verifyChildRelations(child: Child, childrenService: ChildrenService) {
+function compareRelations(a: ChildSchoolRelation, b: ChildSchoolRelation) {
+  expect(a.getId()).toBe(b.getId());
+  expect(a.class).toBe(b.class);
+  expect(a.schoolId).toBe(b.schoolId);
+  expect(a.childId).toBe(b.childId);
+  expect(a.start).toBe(b.start);
+  expect(a.end).toBe(b.end);
+}
+
+async function verifyChildRelationsOrder(child: Child, childrenService: ChildrenService) {
+  const relations = await childrenService.queryRelationsOfChild(child.getId());
+  const sorted = relations.sort((a, b) => {
+    const aValue = new Date(a.start);
+    const bValue = new Date(b.start);
+    return aValue > bValue ? -1 : aValue === bValue ? 0 : 1;
+  });
+  const res = await childrenService.querySortedRelations(child.getId());
+  expect(res.length).toBe(sorted.length);
+  for (let i = 0; i < res.length; i++) {
+    compareRelations(res[i], sorted[i]);
+  }
+}
+
+async function verifyLatestChildRelations(child: Child, childrenService: ChildrenService) {
   const relations = await childrenService.queryRelationsOfChild(child.getId());
   const latest: ChildSchoolRelation = relations.sort((a, b) => {
     const aValue = new Date(a.start);
@@ -41,9 +73,5 @@ async function verifyChildRelations(child: Child, childrenService: ChildrenServi
   })[0];
   const childWithRelation = new ChildWithRelation(child, latest);
   const res = await childrenService.queryLatestRelation(child.getId());
-  expect(res.class).toBe(childWithRelation.getRelation().class);
-  expect(res.schoolId).toBe(childWithRelation.getRelation().schoolId);
-  expect(res.childId).toBe(childWithRelation.getId());
-  expect(res.start).toBe(childWithRelation.getRelation().start);
-  expect(res.end).toBe(childWithRelation.getRelation().end);
+  compareRelations(res, childWithRelation.getRelation());
 }
