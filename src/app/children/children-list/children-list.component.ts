@@ -58,7 +58,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadData();
     this.loadUrlParams();
     this.watcher = this.media.media$.subscribe((change: MediaChange) => {
-      if (change.mqAlias == 'xs') {
+      if (change.mqAlias === 'xs') {
         this.displayColumnGroup('Mobile');
       }
     });

@@ -68,7 +68,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     });
     this.displayColumnGroup('standard');
     this.watcher = this.media.media$.subscribe((change: MediaChange) => {
-      if (change.mqAlias == 'xs' || change.mqAlias == 'sm') {
+      if (change.mqAlias === 'xs' || change.mqAlias === 'sm') {
         console.log('smaller screen toggled');
         this.displayColumnGroup('mobile');
       }
