@@ -15,26 +15,31 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {Changelog} from '../changelog';
-import {MatDialogRef} from '@angular/material';
-import {LatestChangesService} from '../latest-changes.service';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {isObservable} from 'rxjs';
 
 @Component({
   templateUrl: './changelog.component.html',
   styleUrls: ['./changelog.component.css']
 })
-export class ChangelogComponent {
+export class ChangelogComponent implements OnInit {
 
   currentChangelog: Changelog;
 
   constructor(
-    private latestChangesService: LatestChangesService,
-    public dialogRef: MatDialogRef<ChangelogComponent>) {
+    public dialogRef: MatDialogRef<ChangelogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any) {
 
-      this.latestChangesService.getChangelogs().subscribe(
-        changelog => this.currentChangelog = changelog[0]);
   }
+
+  ngOnInit(): void {
+    if (this.data && isObservable(this.data.changelogData)) {
+      this.data.changelogData.subscribe(changelog => this.currentChangelog = changelog[0]);
+    }
+  }
+
 
   onCloseClick(): void {
     this.dialogRef.close();

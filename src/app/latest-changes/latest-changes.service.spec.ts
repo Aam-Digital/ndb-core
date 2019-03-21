@@ -21,6 +21,8 @@ import { LatestChangesService } from './latest-changes.service';
 import {AlertService} from '../alerts/alert.service';
 import {HttpClient} from '@angular/common/http';
 import {of, throwError} from 'rxjs';
+import {MatDialogModule} from '@angular/material';
+import {CookieService} from 'ngx-cookie-service';
 
 describe('LatestChangesService', () => {
 
@@ -34,8 +36,10 @@ describe('LatestChangesService', () => {
     http = new HttpClient(null);
 
     TestBed.configureTestingModule({
+      imports: [MatDialogModule],
       providers: [
         LatestChangesService,
+        CookieService,
         {provide: AlertService, useValue: alertService},
         {provide: HttpClient, useValue: http},
       ]
