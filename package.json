@@ -41,7 +41,7 @@
     "zone.js": "^0.8.27"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.13.5",
+    "@angular-devkit/build-angular": "^0.12.4",
     "@angular/cli": "^7.2.1",
     "@angular/compiler-cli": "^7.2.0",
     "@types/crypto-js": "^3.1.43",
@@ -62,7 +62,7 @@
     "protractor": "^5.4.2",
     "ts-node": "^8.0.3",
     "tslint": "^5.12.1",
-    "typescript": "3.3.3333",
+    "typescript": "<3.2",
     "webpack": "^4.28.4"
   }
 }
