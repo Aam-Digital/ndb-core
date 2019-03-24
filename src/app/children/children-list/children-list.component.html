@@ -153,9 +153,14 @@
     <td mat-cell *matCellDef="let child"> {{child.health_vaccinationStatus}} </td>
   </ng-container>
 
-  <ng-container matColumnDef="health_LastDentalCheckup">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Dental Check-Ups </th>
-    <td mat-cell *matCellDef="let child"> {{child.health_lastDentalCheckup}} </td>
+  <ng-container matColumnDef="health_bloodGroup">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Blood Group </th>
+    <td mat-cell *matCellDef="let child"> {{child.health_bloodGroup}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="health_eyeHealthStatus">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Eye Status </th>
+    <td mat-cell *matCellDef="let child"> {{child.health_eyeHealthStatus}} </td>
   </ng-container>
 
   <ng-container matColumnDef="health_LastEyeCheckup">
@@ -163,9 +168,9 @@
     <td mat-cell *matCellDef="let child"> {{child.health_lastEyeCheckup}} </td>
   </ng-container>
 
-  <ng-container matColumnDef="health_eyeHealthStatus">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Eye Status </th>
-    <td mat-cell *matCellDef="let child"> {{child.health_eyeHealthStatus}} </td>
+  <ng-container matColumnDef="health_LastDentalCheckup">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Dental Check-Ups </th>
+    <td mat-cell *matCellDef="let child"> {{child.health_lastDentalCheckup}} </td>
   </ng-container>
 
   <ng-container matColumnDef="health_LastENTCheckup">
@@ -182,6 +187,8 @@
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Last De-Worming </th>
     <td mat-cell *matCellDef="let child"> {{child.health_lastDeworming}} </td>
   </ng-container>
+
+
 
   <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
   <tr mat-row *matRowDef="let child; columns: columnsToDisplay" (click)="showChildDetails(child)"
