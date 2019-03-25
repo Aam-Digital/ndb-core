@@ -20,14 +20,31 @@ import {Entity} from './entity';
 
 export interface SchemaLine {
   dataType: string,
-  isArray: boolean,
+  isArray: boolean, // TODO: implement array support in EntitySchema
   isOptional: boolean,
-  isIndexed: boolean,
+  isIndexed: boolean, // TODO: implement index support in EntitySchema
   defaultValue: any
 }
 
 /**
  * EntitySchema provides functions to handle data conversion for types defined in the schema.
+ *
+ * A schema can be defined as a simple Javascript object where keys / attribute names are the names of the database fields
+ * with their value being a string that defines the type and other configuration of that field.
+ *
+ * Example:
+    {
+      _id: 'string',
+      name: 'string=anonymous',
+      age: 'number?',
+      supervisor: 'User'
+    }
+ * The config string follows the pattern "TYPE[]?*=DEFAULT_VALUE"
+ * Only TYPE is required, the other modifiers can be left out.
+ * - "[]" indicates an array of values of the given type
+ * - "?" indicates the field is optional and is only included in the database record if its value is defined
+ * - "*" indicates that the entities can be queried using this field, an index is created automatically
+ * - "=DEFAULT_VALUE" defines a default value that is automatically assigned if the value is not already set
  */
 export class EntitySchema<T extends Entity> {
   private originalSchema: Object;
