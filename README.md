@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/NGO-DB/ndb-core.svg?branch=master)](https://travis-ci.org/NGO-DB/ndb-core)
-[![Code Climate](https://codeclimate.com/github/NGO-DB/ndb-core/badges/gpa.svg)](https://codeclimate.com/github/NGO-DB/ndb-core)
+[![Code Climate](https://codeclimate.com/github/NGO-DB/ndb-core/badges/gpa.svg)](https://codeclimate.com/github/NGO-DB/ndb-core) [![Greenkeeper badge](https://badges.greenkeeper.io/NGO-DB/ndb-core.svg)](https://greenkeeper.io/)
 
 # Aam Digital
 Empowering NGOs' social workers with simple to use (database) software.
@@ -12,6 +12,11 @@ For a project outline, free demo system, etc. visit [www.aam-digital.com](https:
 
 -----
 
+# Use with Docker
+You can directly run the system using Docker. More information in our [NGO-DB/docker repository](https://github.com/NGO-DB/docker/). In that case you do not have to clone this repository and install all the dependencies as everything is packaged into the docker image already.
+
+
+
 # Installation
 The project depends on a couple of tools which are required for development. Please make sure you have the following installed:
 - [npm (NodeJS)](https://www.npmjs.org/)
@@ -21,7 +26,6 @@ Then install the dependencies with
 ```
 npm install
 ```
-
 
 ## Deployment
 1. Run `ng build -prod` to build the project and copy the resulting files from the `dist/` directory to your webhost.
