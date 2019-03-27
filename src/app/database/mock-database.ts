@@ -18,7 +18,6 @@
 import { Database } from './database';
 import {Note} from '../children/notes/note';
 import {AttendanceMonth} from '../children/attendance/attendance-month';
-import {Entity} from '../entity/entity';
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -58,18 +57,20 @@ export class MockDatabase extends Database {
     return Promise.resolve(result);
   }
 
-  put(object: any, forceUpdate?: boolean) {
+  async put(object: any, forceUpdate?: boolean) {
     let result;
 
     // check if unintentionally (no _rev) a duplicate _id is used
     if (this.exists(object._id)) {
-      if (!object._rev) {
-        return Promise.reject({ 'message': '_id already exists'});
-      } else {
+      const existingObject = await this.get(object._id);
+      if (object._rev === existingObject._rev) {
+        object._rev = object._rev + 'x';
         result = this.overwriteExisting(object);
+      } else {
+        return Promise.reject({ 'message': '_id already exists'});
       }
     } else {
-      object._rev = true;
+      object._rev = 'x';
       result = Promise.resolve(this.data.push(object));
     }
 

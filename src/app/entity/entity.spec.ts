@@ -16,8 +16,14 @@
  */
 
 import { Entity } from './entity';
+import {async} from '@angular/core/testing';
+import {EntityModule} from './entity.module';
 
 describe('Entity', () => {
+  beforeEach(async(() => {
+    EntityModule.registerSchemaDatatypes();
+  }));
+
 
   it('has ID', function () {
     const id = 'test1';

@@ -16,9 +16,14 @@
  */
 
 import { Entity } from '../entity';
-import {EntitySchema} from './entity-schema';
+import {async} from '@angular/core/testing';
+import {EntityModule} from '../entity.module';
 
 describe('EntitySchema', () => {
+
+  beforeEach(async(() => {
+    EntityModule.registerSchemaDatatypes();
+  }));
 
   it('load() assigns default values', function () {
     class TestEntity extends Entity {
@@ -66,6 +71,9 @@ describe('EntitySchema', () => {
     entity.load(data);
 
     expect(entity.aString).toBe('192');
+
+    const rawData = entity.rawData();
+    expect(rawData.aString).toBe('192');
   });
 
   it('schema:number converts to numbers', function () {
@@ -91,6 +99,10 @@ describe('EntitySchema', () => {
 
     expect(entity.aNumber).toBe(192);
     expect(entity.aFloat).toBe(1.68);
+
+    const rawData = entity.rawData();
+    expect(rawData.aNumber).toBe(192);
+    expect(rawData.aFloat).toBe(1.68);
   });
 
   it('schema:date converts to Date object', function () {
@@ -118,6 +130,11 @@ describe('EntitySchema', () => {
     expect(entity.otherDate.getFullYear()).toBe(2018);
     expect(entity.otherDate.getMonth()).toBe(0);
     expect(entity.otherDate.getDate()).toBe(1);
+
+    const rawData = entity.rawData();
+    expect(rawData.otherDate.getFullYear()).toBe(2018);
+    expect(rawData.otherDate.getMonth()).toBe(0);
+    expect(rawData.otherDate.getDate()).toBe(1);
   });
 
   it('schema:month converts to correctly between string and Date objects', function () {

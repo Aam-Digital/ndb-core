@@ -18,8 +18,14 @@
 import {AttendanceMonth, daysInMonth} from './attendance-month';
 import {WarningLevel} from './warning-level';
 import {AttendanceDay} from './attendance-day';
+import {async} from '@angular/core/testing';
+import {EntityModule} from '../../entity/entity.module';
 
 describe('AttendanceMonth', () => {
+  beforeEach(async(() => {
+    EntityModule.registerSchemaDatatypes();
+  }));
+
 
   it('has ID', function () {
     const id = 'test1';

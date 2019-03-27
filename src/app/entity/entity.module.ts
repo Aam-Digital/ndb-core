@@ -15,10 +15,15 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
+import {APP_INITIALIZER, NgModule} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DatabaseModule } from '../database/database.module';
 import { EntityMapperService } from './entity-mapper.service';
+import {EntitySchema} from './schema/entity-schema';
+import {stringEntitySchemaDatatype} from './schema/datatype-string';
+import {numberEntitySchemaDatatype} from './schema/datatype-number';
+import {dateEntitySchemaDatatype} from './schema/datatype-date';
+import {monthEntitySchemaDatatype} from './schema/datatype-month';
 
 @NgModule({
   imports: [
@@ -26,7 +31,17 @@ import { EntityMapperService } from './entity-mapper.service';
     DatabaseModule
   ],
   declarations: [],
-  providers: [EntityMapperService]
+  providers: [
+    EntityMapperService,
+    { provide: APP_INITIALIZER, useValue: EntityModule.registerSchemaDatatypes, multi: true }
+  ]
 })
 export class EntityModule {
+  static registerSchemaDatatypes(): Promise<any> {
+    EntitySchema.registerSchemaDatatype(stringEntitySchemaDatatype);
+    EntitySchema.registerSchemaDatatype(numberEntitySchemaDatatype);
+    EntitySchema.registerSchemaDatatype(dateEntitySchemaDatatype);
+    EntitySchema.registerSchemaDatatype(monthEntitySchemaDatatype);
+    return Promise.resolve();
+  }
 }

@@ -17,6 +17,7 @@
 
 
 import {Entity} from '../entity';
+import {defaultEntitySchemaDatatype, EntitySchemaDatatype} from './entity-schema-datatype';
 
 export interface SchemaLine {
   dataType: string,
@@ -47,13 +48,47 @@ export interface SchemaLine {
  * - "=DEFAULT_VALUE" defines a default value that is automatically assigned if the value is not already set
  */
 export class EntitySchema<T extends Entity> {
+  /**
+   * Internal registry of data type definitions.
+   * You can extend the Schema system with your data type conversions by using EntitySchema.registerSchemaDatatype()
+   */
+  private static schemaTypes = new Map<string, EntitySchemaDatatype>();
+
   private originalSchema: Object;
   schema: Map<string, SchemaLine>;
 
+
+  /**
+   * Add a data type definition to the registry to provide a conversion between what is written into the database
+   * and what is available in Entity objects.
+   * @param type The EntitySchemaDatatype object definition providing data transformation functions.
+   */
+  public static registerSchemaDatatype(type: EntitySchemaDatatype) {
+    EntitySchema.schemaTypes.set(type.name, type);
+  }
+
+  public static getDatatypeOrDefault(datatypeName: string) {
+    datatypeName = datatypeName.toLowerCase();
+
+    if (EntitySchema.schemaTypes.has(datatypeName)) {
+      return EntitySchema.schemaTypes.get(datatypeName);
+    } else {
+      return defaultEntitySchemaDatatype;
+    }
+  }
+
+
+  /**
+   * Get all keys (i.e. field names) defined in the schema.
+   */
   keys() {
     return this.schema.keys();
   }
 
+  /**
+   * Get the Schema details of a field.
+   * @param key The name of the field
+   */
   get(key: string): SchemaLine {
     return this.schema.get(key);
   }
@@ -85,12 +120,21 @@ export class EntitySchema<T extends Entity> {
   private parseSchemaLine(schemaLine: string): SchemaLine {
     const parts = schemaLine.match(/(\w+)(\[\])?(\?)?(\*)?(\=)?(.*)?/).slice(1, 7);
 
+    let defaultValue = undefined;
+    if (parts[4] !== undefined) {
+      if (parts[5] === undefined) {
+        defaultValue = '';
+      } else {
+        defaultValue = parts[5];
+      }
+    }
+
     return {
       dataType: parts[0],
       isArray: (parts[1] !== undefined),
       isOptional: (parts[2] !== undefined),
       isIndexed: (parts[3] !== undefined),
-      defaultValue: parts[4] !== undefined ? parts[5] : undefined
+      defaultValue: defaultValue,
     };
   }
 
@@ -104,7 +148,9 @@ export class EntitySchema<T extends Entity> {
         data[key] = schemaLine.defaultValue;
       }
 
-      data[key] = this.transformToEntityDataType(data[key], schemaLine);
+      if (data[key] !== undefined) {
+        data[key] = EntitySchema.getDatatypeOrDefault(schemaLine.dataType).transformToObjectFormat(data[key]);
+      }
 
       if (schemaLine.isArray) {
         throw new Error('schema option "isArray" not implemented yet');
@@ -122,59 +168,21 @@ export class EntitySchema<T extends Entity> {
     return data;
   }
 
-  private transformToEntityDataType(value: any, schemaLine: SchemaLine): any {
-    switch (schemaLine.dataType.toLowerCase()) {
-      case 'string':
-        return String(value);
-
-      case 'number':
-        return Number(value);
-
-      case 'month':
-      case 'date':
-        const date =  new Date(value);
-        if (isNaN(date.getTime())) {
-          throw new Error('failed to convert data to Date object: ' + value);
-        }
-        return date;
-
-      default:
-        return value;
-    }
-  }
-
-
-
-
-
 
   public transformEntityToDatabaseFormat(entity: Entity) {
     const data = {};
 
     for (const key of this.schema.keys()) {
       const schemaLine = this.schema.get(key);
+      let entityValue = entity[key];
 
-      data[key] = this.transformToDatabaseDataType(entity[key], schemaLine);
-      if (data[key] === undefined) {
-        data[key] = schemaLine.defaultValue;
+      if (entityValue === undefined) {
+        entityValue = schemaLine.defaultValue;
       }
+
+      data[key] = EntitySchema.getDatatypeOrDefault(schemaLine.dataType).transformToDatabaseFormat(entityValue);
     }
 
     return data;
-  }
-
-  private transformToDatabaseDataType(value: any, schemaLine: SchemaLine) {
-    switch (schemaLine.dataType.toLowerCase()) {
-      case 'month':
-        if (!(value instanceof Date)) {
-          value = new Date(value);
-        }
-        return (value.getFullYear().toString() + '-' + (value.getMonth() + 1).toString());
-      case 'date':
-      case 'string':
-      case 'number':
-      default:
-        return value;
-    }
   }
 }
