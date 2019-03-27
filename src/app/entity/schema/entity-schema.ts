@@ -16,7 +16,7 @@
  */
 
 
-import {Entity} from './entity';
+import {Entity} from '../entity';
 
 export interface SchemaLine {
   dataType: string,
@@ -90,7 +90,7 @@ export class EntitySchema<T extends Entity> {
       isArray: (parts[1] !== undefined),
       isOptional: (parts[2] !== undefined),
       isIndexed: (parts[3] !== undefined),
-      defaultValue: parts[4] !== undefined ? this.getDefaultValue(parts[5], parts[0]) : undefined
+      defaultValue: parts[4] !== undefined ? parts[5] : undefined
     };
   }
 
@@ -102,9 +102,9 @@ export class EntitySchema<T extends Entity> {
 
       if (data[key] === undefined) {
         data[key] = schemaLine.defaultValue;
-      } else {
-        data[key] = this.transformToEntityDataType(data[key], schemaLine);
       }
+
+      data[key] = this.transformToEntityDataType(data[key], schemaLine);
 
       if (schemaLine.isArray) {
         throw new Error('schema option "isArray" not implemented yet');
@@ -120,33 +120,6 @@ export class EntitySchema<T extends Entity> {
     }
 
     return data;
-  }
-
-
-  private getDefaultValue(strValue: string, dataType: string): any {
-    switch (dataType.toLowerCase()) {
-      case 'string':
-        if (strValue === undefined) {
-          return '';
-        } else {
-          return strValue;
-        }
-      case 'number':
-        if (strValue === undefined) {
-          return 0;
-        } else {
-          return Number(strValue);
-        }
-      case 'month':
-      case 'date':
-        if (strValue === undefined) {
-          return new Date();
-        } else {
-          return new Date(strValue);
-        }
-      default:
-        return undefined;
-    }
   }
 
   private transformToEntityDataType(value: any, schemaLine: SchemaLine): any {

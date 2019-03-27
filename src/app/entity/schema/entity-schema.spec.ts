@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from './entity';
+import { Entity } from '../entity';
 import {EntitySchema} from './entity-schema';
 
 describe('EntitySchema', () => {

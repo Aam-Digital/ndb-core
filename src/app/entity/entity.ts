@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {EntitySchema} from './entity-schema';
+import {EntitySchema} from './schema/entity-schema';
 
 /**
  * Entity is a base class for all domain model classes.
