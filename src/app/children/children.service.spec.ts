@@ -43,7 +43,7 @@ describe('ChildrenService', () => {
 
 function compareRelations(a: ChildSchoolRelation, b: ChildSchoolRelation) {
   expect(a.getId()).toBe(b.getId());
-  expect(a.class).toBe(b.class);
+  expect(a.schoolClass).toBe(b.schoolClass);
   expect(a.schoolId).toBe(b.schoolId);
   expect(a.childId).toBe(b.childId);
   expect(a.start).toBe(b.start);

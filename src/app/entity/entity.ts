@@ -15,6 +15,14 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+/**
+ * This represents a static class of type <T>.
+ * It can be used for passing a class from which new objects should be created.
+ * For example usage check the entity mapper service.
+ */
+export type PassableEntityConstructor<T extends Entity> = new(id: string) => T;
+
 /**
  * Entity is a base class for all domain model classes.
  *

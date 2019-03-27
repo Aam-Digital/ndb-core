@@ -18,7 +18,7 @@ export class ViewSchoolsComponent implements OnInit, OnChanges {
   @Input() public child: Child;
   private sort: MatSort;
   schoolsDataSource: MatTableDataSource<SchoolWithRelation> = new MatTableDataSource();
-  viewableSchools: SchoolWithRelation[] = [];
+  schoolsWithRelations: SchoolWithRelation[] = [];
   displayedColumns: string[] = ['schoolName', 'startTime', 'endTime'];
 
   @ViewChild(MatSort) set matSort(ms: MatSort) {    // Needed to set the mat sort later than ngAfterViewInit
@@ -54,9 +54,9 @@ export class ViewSchoolsComponent implements OnInit, OnChanges {
 
 
   public loadSchoolEntries() {
-    this.childrenService.getViewableSchools(this.child.getId())
+    this.childrenService.getSchoolsWithRelations(this.child.getId())
       .then((schools: SchoolWithRelation[]) => {
-        this.viewableSchools = schools;
+        this.schoolsWithRelations = schools;
         this.updateViewableItems();
         this.changeDetectionRef.detectChanges();
       },
@@ -65,7 +65,7 @@ export class ViewSchoolsComponent implements OnInit, OnChanges {
   }
 
   private updateViewableItems() {
-    this.schoolsDataSource.data = this.viewableSchools;
+    this.schoolsDataSource.data = this.schoolsWithRelations;
 
   }
 

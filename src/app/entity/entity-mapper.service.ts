@@ -17,8 +17,7 @@
 
 import { Injectable } from '@angular/core';
 import { Database } from '../database/database';
-import { Entity } from './entity';
-import {PassableEntityConstructor} from './PassableEntityConstructor';
+import {Entity, PassableEntityConstructor} from './entity';
 
 /**
  * The default generic DataMapper for Entity and any subclass.
@@ -61,7 +60,7 @@ export class EntityMapperService {
   /**
    * Loads all entities from the database of the given type (for example a list of entities of the type User).
    *
-   * @param entityType a class that implements <code>Entity</code>.
+   * @param entityType a schoolClass that implements <code>Entity</code>.
    * @returns A Promise containing an array with the loaded entities.
    */
   public loadType<T extends Entity>(entityType: PassableEntityConstructor<T>): Promise<T[]> {

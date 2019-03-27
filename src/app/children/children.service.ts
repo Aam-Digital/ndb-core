@@ -120,7 +120,7 @@ export class ChildrenService {
         by_date: {
           map: `(doc) => {
             if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
-            emit(doc.childId + (new Date(doc.start)).getTime());
+            emit(doc.childId + '_' + (new Date(doc.start)).getTime().toString().padStart(14, "0"));
             }`
         }
 
@@ -284,7 +284,7 @@ export class ChildrenService {
       });
   }
 
-  async getViewableSchools(childId: string): Promise<SchoolWithRelation[]> {
+  async getSchoolsWithRelations(childId: string): Promise<SchoolWithRelation[]> {
     const relations = await this.querySortedRelations(childId);
     const schools: SchoolWithRelation[] = [];
     for (const relation of relations) {

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {Database} from '../../database/database';
 import {Child} from '../../children/child';
-import {Entity} from '../../entity/entity';
 import {School} from '../../schools/school';
+import {Entity} from '../../entity/entity';
 
 @Component({
   selector: 'app-search',

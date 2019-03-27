@@ -175,9 +175,9 @@ export class MockDatabase extends Database {
       this.getAll().then(all => {
         const relations = all.filter(e => e._id.startsWith(ChildSchoolRelation.ENTITY_TYPE));
         const sorted = relations.sort((a, b) => {
-          const aValue = a.childId + new Date(a.start).getTime();
-          const bValue = b.childId + new Date(b.start).getTime();
-          return aValue > bValue ? 1 : aValue === bValue ? 0 : -1;
+          const aValue = a.childId + '_' + this.zeroPad(new Date(a.start).valueOf());
+          const bValue = b.childId + '_' + this.zeroPad(new Date(b.start).valueOf());
+          return aValue < bValue ? 1 : aValue === bValue ? 0 : -1;
         });
         const filtered: ChildSchoolRelation[] = sorted.filter(doc => doc.childId === childId);
         let results: {doc: ChildSchoolRelation}[] = filtered.map(relation => { return {doc: relation} });
@@ -187,6 +187,23 @@ export class MockDatabase extends Database {
         resolve({rows: results});
       })
     })
+  }
+
+  /**
+   * This function is useful when comparing numbers on string level.
+   * For example: 123 < 1111 but "123" > "1111"
+   * That is why its being transformed to "0123" and "1111" so "0123" < "1111"
+   * @param str the string that should be padded with zeros
+   * @param length the length to which the string should be padded
+   * @return string of the padded input
+   */
+  private zeroPad(str: string | number, length: number = 14): string {
+    // with ECMAScript 2017 you can do a one-liner: 'return str.toString().padStart(length, '0');'
+    let res = str.toString();
+    while (res.length < length) {
+      res = '0' + res;
+    }
+    return res
   }
 
   private isWithinLastMonths(date: Date, now: Date, numberOfMonths: number): boolean {

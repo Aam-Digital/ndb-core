@@ -9,7 +9,7 @@ export class ChildWithRelation extends Child {
     super(_child.getId());
     this.load(_child);
     this.schoolId = this._childSchoolRelation.schoolId;
-    this.schoolClass = this._childSchoolRelation.class;
+    this.schoolClass = this._childSchoolRelation.schoolClass;
   }
 
   getChild(): Child {
@@ -24,7 +24,7 @@ export class ChildWithRelation extends Child {
   setRelation(childSchoolRelation: ChildSchoolRelation) {
     this._childSchoolRelation = childSchoolRelation;
     this.schoolId = childSchoolRelation.schoolId;
-    this.schoolClass = childSchoolRelation.class;
+    this.schoolClass = childSchoolRelation.schoolClass;
   }
 
   getRelation(): ChildSchoolRelation {
