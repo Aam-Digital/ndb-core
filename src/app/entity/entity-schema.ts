@@ -137,6 +137,7 @@ export class EntitySchema<T extends Entity> {
         } else {
           return Number(strValue);
         }
+      case 'month':
       case 'date':
         if (strValue === undefined) {
           return new Date();
