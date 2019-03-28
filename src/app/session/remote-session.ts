@@ -17,21 +17,11 @@
 
 
 /**
- * Tasks:
+ * Responsibilities:
  * - Hold the remote DB
  * - Hold remote credentials
  * - Handle auth
- * - Provide interface for Sync
  * - provide "am i online"-info
- */
-
-/**
- * States:
- * - Disconnected
- *   - not tried yet
- *   - auth fail
- *   - db not accessible (offline etc)
- * - Connected
  */
 
 import PouchDB from 'pouchdb-browser';
@@ -74,7 +64,7 @@ export class RemoteSession {
    * @param username Username
    * @param password Password
    */
-  public login(username: string, password: string): Promise<ConnectionState> {
+  public async login(username: string, password: string): Promise<ConnectionState> {
     const ajaxOpts = {
       ajax: {
         headers: {
@@ -83,10 +73,11 @@ export class RemoteSession {
       }
     };
 
-    return this.database.login(username, password, ajaxOpts).then(() => {
+    try {
+      await this.database.login(username, password, ajaxOpts);
       this.connectionState.setState(ConnectionState.connected);
       return ConnectionState.connected;
-    }).catch((error: any) => {
+    } catch (error) {
       if (error.status === 401) { // TODO: This test is not the best
         this.connectionState.setState(ConnectionState.rejected);
         return ConnectionState.rejected;
@@ -94,7 +85,7 @@ export class RemoteSession {
         this.connectionState.setState(ConnectionState.offline);
         return ConnectionState.offline;
       }
-    });
+    }
   }
 
   /**

@@ -16,7 +16,7 @@
  */
 
  /**
- * Tasks:
+ * Responsibilities:
  * - Hold the local DB
  * - Hold local credentials
  * - Check credentials against DB
@@ -24,21 +24,6 @@
  *   - we want to block before the first full sync
  * - Provide an interface to access the data
  */
-
-/**
- * States
- * - Sync -> must be persisted across restarts! we must not authenticate if state was unsynced
- *   - started
- *   - completed
- *   - failed
- *   - unsynced
- * - Login
- *   - (wait for first sync)
- *   - logged in
- *   - not logged in
- *   - failed login (can only be wrong pwd)
- */
-
 
 import PouchDB from 'pouchdb-browser';
 
@@ -73,10 +58,10 @@ export class LocalSession {
    * @param username Username
    * @param password Password
    */
-  public login(username: string, password: string): Promise<LoginState> {
-    return this.waitForFirstSync().then(() => {
-      return this.loadUser(username);
-    }).then(userEntity => {
+  public async login(username: string, password: string): Promise<LoginState> {
+    try {
+      await this.waitForFirstSync();
+      const userEntity = await this.loadUser(username);
       if (userEntity.checkPassword(password)) {
         this.loginState.setState(LoginState.loggedIn);
         this.currentUser = userEntity;
@@ -85,13 +70,13 @@ export class LocalSession {
         this.loginState.setState(LoginState.loginFailed);
         return LoginState.loginFailed;
       }
-    }).catch(error => {
-      // TODO: one error should be "no entity found for this key", which should return false.
+    } catch (error) {
+      // TODO: one error should be "no entity found for this key", which should return loginFailed.
       //       all other cases should throw an error
       console.log(error);
       this.loginState.setState(LoginState.loginFailed);
       return LoginState.loginFailed;
-    });
+    };
   }
 
   /**
@@ -100,29 +85,26 @@ export class LocalSession {
    * Returns a Promise containing the result of database.sync()
    * @param remoteDB A native PouchDB-object
    */
-  public sync(remoteDB): Promise<any> {
+  public async sync(remoteDB) {
     this.syncState.setState(SyncState.started);
-    return this.database.sync(remoteDB).then(res => {
+    try {
+      const result = await this.database.sync(remoteDB);
       this.syncState.setState(SyncState.completed);
-      return res;
-    }).catch(error => {
+      return result;
+    } catch (error) {
       this.syncState.setState(SyncState.failed);
       throw error; // rethrow, so later Promise-handling lands in .catch, too
-    });
+    };
   }
 
   /**
    * Wait for the first sync of the database, returns a Promise.
    * Resolves directly, if the database is not initial, otherwise waits for the first change of the SyncState to completed (or failed)
    */
-  public waitForFirstSync(): Promise<any> {
-    return this.isInitial().then(bInitial => {
-      // if initial, wait for changes in the syncState
-      if (bInitial) {
-        return this.syncState.waitForChangeTo(SyncState.completed, SyncState.failed);
-      }
-      // otherwise, just do nothing to resolve directly
-    });
+  public async waitForFirstSync() {
+    if (await this.isInitial()) {
+      return await this.syncState.waitForChangeTo(SyncState.completed, SyncState.failed);
+    }
   }
 
   /**

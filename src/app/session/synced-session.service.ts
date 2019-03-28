@@ -15,35 +15,6 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * Tasks:
- * - Hold the remote DB
- * - Hold credentials
- * - Keep local and remote state sync
- * - Handle sync
- * - Provide unified interface for accessing
- *   - data (r/w)
- *   - login state (r)
- *   - sync state (r)
- */
-
-/**
- * States:
- * - local (known) out of sync, remote disconnected (no internet)
- * - local (assumed) in sync, remote disconnected (no internet)
- * - local (known) out of sync, remote connectable
- * - local (assumed) in sync, remote connectable
- *
- * - local authenticated, remote authenticated
- * - local authenticated, remote auth failed
- * - local auth failed, remote authenticated
- * - local auth failed, remote auth failed
- *
- * --> logged in
- * --> not logged in
- * --> getDB
- */
-
 import { Injectable } from '@angular/core';
 import { AlertService } from '../alerts/alert.service';
 
@@ -72,33 +43,43 @@ export class SyncedSessionService extends SessionService {
     return this._localSession.loginState.getState() === LoginState.loggedIn;
   }
 
+  /**
+   * Perform a login. The result will only be the login at the local DB, as we might be offline.
+   * Calling this function will trigger a login in the background.
+   * - If it is successful, a sync is performed in the background
+   * - If it fails due to wrong credentials, yet the local login was successful somehow, we fail local login after the fact
+   *
+   * If the localSession is empty, the local login waits for the result of the sync triggered by the remote login (see local-session.ts).
+   * If the remote login fails for some reason, this sync will never be performed, which is why it must be failed manually here
+   * to abort the local login and prevent a deadlock.
+   * @param username Username
+   * @param password Password
+   * @returns a promise resolving with the local LoginState
+   */
   public login(username: string, password: string): Promise<LoginState> {
     const localLogin =  this._localSession.login(username, password);
-    this._remoteSession.login(username, password).then((connectionState: ConnectionState) => {
+    this._remoteSession.login(username, password).then(async (connectionState: ConnectionState) => {
+      // remote connected -- sync!
       if (connectionState === ConnectionState.connected) {
-        return this.sync();
+        return await this.sync();
       }
 
       // remote rejected but local logged in
       if (connectionState === ConnectionState.rejected) {
-        localLogin.then(function(loginState: LoginState) {
-          if (loginState === LoginState.loggedIn) {
-            // Someone changed the password remotely --> fail the login
-            this._localSession.loginState.setState(LoginState.loginFailed);
-            // TODO: We might want to alert the alertService
-          }
-        });
+        if (await localLogin === LoginState.loggedIn) {
+          // Someone changed the password remotely --> fail the login
+          this._localSession.loginState.setState(LoginState.loginFailed);
+          // TODO: We might want to alert the alertService
+        }
       }
 
       // If we are not connected, we must check, whether the local database is initial
-      return this._localSession.isInitial().then(isInitial => {
-        if (isInitial) {
-          // Fail the sync in the local session, which will fail the authentication there
-          this._localSession.syncState.setState(SyncState.failed);
-        }
-      });
+      if (await this._localSession.isInitial()) {
+        // Fail the sync in the local session, which will fail the authentication there
+        this._localSession.syncState.setState(SyncState.failed);
+      }
     });
-    return localLogin;
+    return localLogin; // the local login is the Promise that counts
   }
 
   public getCurrentUser(): User {
@@ -118,6 +99,8 @@ export class SyncedSessionService extends SessionService {
   public sync(): Promise<any> {
     return this._localSession.sync(this._remoteSession.database);
   }
+
+  // TODO: Live-Sync that will tell us when we are offline
 
   public getDatabase(): Database {
     return new PouchDatabase(this._localSession.database, this._alertService);
