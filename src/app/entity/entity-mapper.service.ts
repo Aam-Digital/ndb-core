@@ -26,14 +26,6 @@ import {Entity, EntityConstructor} from './entity';
 @Injectable()
 export class EntityMapperService {
 
-  private static createDatabaseId(type: string, id: string): string {
-    const prefix = type + ':';
-    if (!id.startsWith(prefix)) {
-      return prefix + id;
-    } else {
-      return id;
-    }
-  }
 
   constructor(private _db: Database) {
   }
@@ -47,7 +39,7 @@ export class EntityMapperService {
    */
   public load<T extends Entity>(entityType: EntityConstructor<T>, id: string): Promise<T> {
     const resultEntity = new entityType('');
-    return this._db.get(EntityMapperService.createDatabaseId(resultEntity.getType(), id)).then(
+    return this._db.get(Entity.createPrefixedId(resultEntity.getType(), id)).then(
       function (result: any) {
         resultEntity.load(result);
         return resultEntity;

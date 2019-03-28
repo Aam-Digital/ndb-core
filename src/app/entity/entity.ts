@@ -47,16 +47,34 @@ export class Entity {
   _rev: string;
 
 
+  static extractTypeFromId(id: string): string {
+    const split = id.indexOf(':');
+    return id.substring(0, split);
+  }
+
+  static extractEntityIdFromId(id: string): string {
+    const split = id.indexOf(':');
+    return id.substring(split + 1);
+  }
+
+  static createPrefixedId(type: string, id: string): string {
+    const prefix = type + ':';
+    if (!id.startsWith(prefix)) {
+      return prefix + id;
+    } else {
+      return id;
+    }
+  }
+
+
   /**
    * An helper property to access the actual id without prefix
    */
   get entityId(): string {
-    const split = this._id.indexOf(':');
-    return this._id.substring(split + 1);
+    return Entity.extractEntityIdFromId(this._id);
   }
   set entityId(newEntityId: string) {
-    // TODO: this duplicates the EntityMapper.createDatabaseId function, (re)move it there?
-    this._id = this.getType() + ':' + newEntityId;
+    this._id = Entity.createPrefixedId(this.getType(), newEntityId);
   }
 
   /**

@@ -25,11 +25,12 @@ describe('Entity', () => {
   }));
 
 
-  it('has ID', function () {
+  it('has ID and entityId', function () {
     const id = 'test1';
     const entity = new Entity(id);
 
     expect(entity.getId()).toBe(id);
+    expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
   });
 
   it('has correct type/prefix', function () {
@@ -37,6 +38,7 @@ describe('Entity', () => {
     const entity = new Entity(id);
 
     expect(entity.getType()).toBe('Entity');
+    expect(Entity.extractTypeFromId(entity._id)).toBe('Entity');
   });
 
   it('all schema fields exist', function () {
