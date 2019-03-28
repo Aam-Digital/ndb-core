@@ -20,17 +20,17 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { SyncStatusComponent } from './sync-status.component';
 import {MatDialogModule, MatIconModule, MatProgressBarModule} from '@angular/material';
 import {MockSessionService} from '../../session/mock-session.service';
-import {AlertService} from '../../alerts/alert.service';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {InitialSyncDialogComponent} from './initial-sync-dialog.component';
 import {NgModule} from '@angular/core';
 import { SessionService } from 'app/session/session.service';
 import { SyncState } from 'app/session/sync-state.enum';
+import { AlertsModule } from 'app/alerts/alerts.module';
 
 
 @NgModule({
   declarations: [InitialSyncDialogComponent, SyncStatusComponent],
-  imports: [MatIconModule, MatDialogModule, NoopAnimationsModule, MatProgressBarModule],
+  imports: [MatIconModule, MatDialogModule, NoopAnimationsModule, MatProgressBarModule, AlertsModule],
   entryComponents: [InitialSyncDialogComponent],
 })
 class TestModule { }
@@ -41,17 +41,14 @@ describe('SyncStatusComponent', () => {
   let fixture: ComponentFixture<SyncStatusComponent>;
 
   let sessionService: MockSessionService;
-  let alertService: AlertService;
 
   beforeEach(async(() => {
     sessionService = new MockSessionService();
-    alertService = new AlertService(null, null);
 
     TestBed.configureTestingModule({
       imports: [TestModule],
       providers: [
-        { provide: SessionService, useValue: sessionService },
-        { provide: AlertService, useValue: alertService }
+        { provide: SessionService, useValue: sessionService }
       ],
     })
       .compileComponents();
@@ -68,13 +65,17 @@ describe('SyncStatusComponent', () => {
     expect(component).toBeTruthy();
    });
 
-  it('should open dialog without error', (done) => {
+  it('should open dialog without error', async () => {
     sessionService.getSyncState().setState(SyncState.started);
-    setTimeout(() => checkDialogRefDefined(expect, done), 100);
 
-    function checkDialogRefDefined(_expect, _done) {
-      _expect(component.dialogRef).toBeDefined();
-      _done();
-    }
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(component.dialogRef).toBeDefined();
+
+    sessionService.getSyncState().setState(SyncState.completed);
+    component.dialogRef.close();
+
+    fixture.detectChanges();
+    await fixture.whenStable();
   });
 });
