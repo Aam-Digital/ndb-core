@@ -121,6 +121,7 @@ export class LocalSession {
    */
   public logout() {
     this.loginState.setState(LoginState.loggedOut);
+    this.currentUser = undefined;
   }
 
   /**

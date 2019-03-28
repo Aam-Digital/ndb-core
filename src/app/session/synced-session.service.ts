@@ -107,6 +107,7 @@ export class SyncedSessionService extends SessionService {
   }
 
   public logout() {
+    // TODO: should this throw if we are not logged in?
     this._localSession.logout();
     this._remoteSession.logout();
   }
