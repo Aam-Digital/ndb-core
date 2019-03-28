@@ -22,8 +22,14 @@ export class HealthCheck extends Entity {
 
     static ENTITY_TYPE = 'HealthCheck';
 
-    child: String;      // child_id of the child the health check is made for
+    /**
+     * Model Class for the Health Checks that are taken for a Child. 
+     * It stores the Child's ID in a String and both, the height and weight in cm as a number, and the Date
+     *  
+     */
+
+    child: String;     
     date: Date;
-    height: number;     // stores the height of a child in cm
-    weight: number;     // stores the height of a child in kg
+    height: number;     
+    weight: number;     
 }
