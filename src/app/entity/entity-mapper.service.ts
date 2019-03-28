@@ -27,7 +27,12 @@ import {Entity, EntityConstructor} from './entity';
 export class EntityMapperService {
 
   private static createDatabaseId(type: string, id: string): string {
-    return type + ':' + id;
+    const prefix = type + ':';
+    if (!id.startsWith(prefix)) {
+      return prefix + id;
+    } else {
+      return id;
+    }
   }
 
   constructor(private _db: Database) {

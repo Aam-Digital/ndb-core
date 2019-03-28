@@ -175,4 +175,19 @@ describe('EntityMapperService', () => {
         done();
       });
   });
+
+
+  it('loads entity for id given with and without prefix', async () => {
+    const testId = 't1';
+    const testEntity = new Entity(testId);
+    await entityMapper.save(testEntity);
+
+    const loadedByEntityId = await entityMapper.load<Entity>(Entity, testEntity.getId());
+    expect(loadedByEntityId).toBeDefined();
+
+    expect(loadedByEntityId._id.startsWith(Entity.ENTITY_TYPE)).toBeTruthy();
+    const loadedByFullId = await entityMapper.load<Entity>(Entity, loadedByEntityId._id);
+    expect(loadedByFullId._id).toBe(loadedByEntityId._id);
+    expect(loadedByFullId._rev).toBe(loadedByEntityId._rev);
+  });
 });
