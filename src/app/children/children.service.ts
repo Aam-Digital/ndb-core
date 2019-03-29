@@ -7,6 +7,7 @@ import {Database} from '../database/database';
 import {Note} from './notes/note';
 import {EducationalMaterial} from './educational-material/educational-material';
 import {Aser} from './aser/aser';
+import {HealthCheck} from './health-checkup/health-check'
 
 @Injectable()
 export class ChildrenService {
@@ -186,6 +187,20 @@ export class ChildrenService {
         .then(loadedEntities => {
           return loadedEntities.filter(o => o.child === childId);
         })
+    );
+  }
+
+  /**
+   *
+   * @param childId should be set in the specific components and is passed by the URL as a parameter
+   * This function should be considered refactored and should use a index, once they're made generic
+   */
+  getHealthChecksOfChild(childId: string): Observable<HealthCheck[]> {
+    return from(
+      this.entityMapper.loadType<HealthCheck>(HealthCheck)
+      .then(loadedEntities => {
+        return loadedEntities.filter(h => h.child === childId);
+      })
     );
   }
 

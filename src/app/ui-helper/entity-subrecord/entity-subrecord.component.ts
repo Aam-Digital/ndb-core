@@ -16,11 +16,13 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
   @Input() columns: Array<ColumnDescription>;
   @Input() newRecordFactory: () => Entity;
   @Input() detailsComponent: typeof Component;
+  @Input() showButton = true;
 
   recordsDataSource = new MatTableDataSource();
   columnsToDisplay = [];
   recordsEditing = new Map<string, boolean>();
   originalRecords = [];
+
 
   @ViewChild(MatSort) sort: MatSort;
 
@@ -138,6 +140,10 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
     }
 
     col.selectValues = col.allSelectValues.filter(v => v.value.includes(input) || v.label.includes(input));
+  }
+
+  changeVisibilityOfAddButton() {
+    this.showButton = !this.showButton;
   }
 
 }
