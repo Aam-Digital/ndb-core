@@ -8,8 +8,8 @@ import {Child} from '../child';
 import { CommonModule, DatePipe } from '@angular/common';
 import {ChildrenService} from '../children.service';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
-import {UiHelperModule} from '../../ui-helper/ui-helper.module';
-import { MatTableModule, MatSelectModule, MatOptionModule, MatAutocomplete, MatAutocompleteModule, MatFormFieldModule, MatIcon, MatIconModule, MatSnackBar, MatDialog, MatDialogModule } from '@angular/material';
+import { MatTableModule, MatSelectModule, MatOptionModule, MatAutocompleteModule, MatFormFieldModule, MatIconModule,
+  MatSnackBar, MatDialog, MatDialogModule } from '@angular/material';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ConfirmationDialogService } from 'app/ui-helper/confirmation-dialog/confirmation-dialog.service';
 
@@ -23,9 +23,12 @@ describe('HealthCheckupComponent', () => {
     },
     getEducationalMaterialsOfChild: (id) => {
       return of([]);
+    },
+    getHealthChecksOfChild: (id) => {
+      return of([]);
     }
   };
-  let mockEntityMapper;
+  const mockEntityMapper = jasmine.createSpyObj('mockEntityMapper', ['save', 'remove']);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -39,7 +42,7 @@ describe('HealthCheckupComponent', () => {
         MatDialog,
        { provide: ActivatedRoute, useValue: {paramMap: of({get: () => '22'}) } },
        { provide: ChildrenService, useValue: mockChildrenService },
-       { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: EntityMapperService, useValue: mockEntityMapper },
       ]
     })
     .compileComponents();

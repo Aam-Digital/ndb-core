@@ -144,6 +144,6 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
 
   changeVisibilityOfAddButton() {
     this.showButton = !this.showButton;
-  } 
+  }
 
 }

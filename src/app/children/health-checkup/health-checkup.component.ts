@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { HealthCheck } from './health-check';
 import { ColumnDescription } from '../../ui-helper/entity-subrecord/column-description';
 import { ActivatedRoute } from '@angular/router';
-import { EntityMapperService } from 'app/entity/entity-mapper.service';
 import { ChildrenService } from '../children.service';
 import {DatePipe} from '@angular/common';
 
@@ -24,7 +23,7 @@ export class HealthCheckupComponent implements OnInit {
     (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
     new ColumnDescription('height', 'Height', 'number', null,
     (height: Number) => height + ' cm' ),
-    new ColumnDescription('weight', 'Weight', 'number', null, 
+    new ColumnDescription('weight', 'Weight', 'number', null,
     (weight: Number) => weight + ' kg'),
   ];
   childId: string;
@@ -61,13 +60,10 @@ export class HealthCheckupComponent implements OnInit {
    * implements the health check loading from the children service and is called in the onInit()
    */
   loadHealthChecks() {
-
     this.childrenService.getHealthChecksOfChild(this.childId)
       .subscribe(results => {
         this.records = results
           .sort(( a, b ) => b.date.valueOf() - a.date.valueOf())
       });
-    }
-
-
-    }
+  }
+}
