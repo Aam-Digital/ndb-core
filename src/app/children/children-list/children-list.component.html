@@ -1,12 +1,12 @@
 <h1>Children List</h1>
 
 <mat-expansion-panel expanded="true" fxLayout="column wrap" fxLayoutGap="10px" class='filter-panel'>
-  <div fxLayout="row wrap" fxLayoutGap="10px" fxLayoutAlign="none end">
+  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none end">
     <!-- text search -->
-    <div fxFlex='25'>
+    <div fxFlex='50'>
       <mat-form-field style='width:100%'>
-        <input fxFlex='25' matInput placeholder="Filter" (ngModelChange)="applyFilter($event)" [(ngModel)]="filterString">
-        <button fxFlex='25' mat-icon-button *ngIf="filterString" matSuffix aria-label="Clear" (click)="filterString=''; applyFilter('');">
+        <input  matInput placeholder="Filter" (ngModelChange)="applyFilter($event)" [(ngModel)]="filterString">
+        <button  mat-icon-button *ngIf="filterString" matSuffix aria-label="Clear" (click)="filterString=''; applyFilter('');">
           <mat-icon fontIcon="fa-times"></mat-icon>
         </button>
       </mat-form-field>
@@ -18,7 +18,7 @@
     <!-- add new button -->
     <div fxFlex='25'class='align-form-field'>
       <button mat-stroked-button color="accent" (click)="addChildClick()">
-        <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>Add New Child
+        <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>Add New
       </button>
     </div>
   </div>
