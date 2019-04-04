@@ -42,7 +42,7 @@ export class PreviousSchoolsComponent implements OnInit {
     this.childrenService.getPreviousSchoolsOfChild(id)
       .subscribe(results => {
         this.records = results
-          .sort((a, b) => b.start.valueOf() - a.start.valueOf());
+          .sort((a, b) => (b.start?b.start.valueOf():0 - (a.start?a.start.valueOf():0)));
           console.log(this.records);
       });
   }
