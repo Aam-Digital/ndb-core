@@ -29,6 +29,10 @@ import {AlertService} from '../../alerts/alert.service';
 import {ChildrenService} from '../children.service';
 import {School} from '../../schools/school';
 import {ChildWithRelation} from '../childWithRelation';
+import {HealthCheck} from '../health-checkup/health-check';
+import {EntitySubrecordComponent} from '../../ui-helper/entity-subrecord/entity-subrecord.component';
+import {ColumnDescription} from '../../ui-helper/entity-subrecord/column-description';
+
 
 
 @Component({
@@ -43,6 +47,7 @@ export class ChildDetailsComponent implements OnInit {
   schools: School[] = [];
 
   form: FormGroup;
+  healthCheckForm: FormGroup;
   creatingNew = false;
   editing = false;
   gender = Gender;
@@ -51,6 +56,11 @@ export class ChildDetailsComponent implements OnInit {
   documentStatus = ['OK (copy with us)', 'OK (copy needed for us)', 'needs correction', 'applied', 'doesn\'t have', 'not eligible', ''];
   eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
   vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
+
+  generateNewRecordFactory() {
+    // define values locally because 'this' is a different scope after passing a function as input to another component
+    const child = this.child.getId();
+  }
 
 
   initForm() {
@@ -92,6 +102,8 @@ export class ChildDetailsComponent implements OnInit {
       dropoutType:    [{value: this.child.dropoutType,    disabled: !this.editing}],
       dropoutRemarks: [{value: this.child.dropoutRemarks, disabled: !this.editing}],
     });
+
+
   }
 
 
@@ -127,6 +139,7 @@ export class ChildDetailsComponent implements OnInit {
     }
 
     this.initForm();
+
   }
 
   switchEdit() {

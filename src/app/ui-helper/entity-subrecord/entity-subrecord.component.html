@@ -55,7 +55,7 @@
 
   <ng-container matColumnDef="actions">
     <th mat-header-cell *matHeaderCellDef>
-      <button mat-stroked-button color="accent" (click)="create()">
+      <button mat-stroked-button color="accent" *ngIf="showButton" (click)="create()">
         <mat-icon class="table-action-icon" aria-label="add" fontIcon="fa-plus-circle"></mat-icon>Add New
       </button>
     </th>
