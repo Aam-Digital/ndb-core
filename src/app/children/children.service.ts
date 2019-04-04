@@ -10,6 +10,7 @@ import {Aser} from './aser/aser';
 import {HealthCheck} from './health-checkup/health-check'
 import {PreviousSchools} from './previous-schools/previous-schools';
 import {ChildSchoolRelation} from './childSchoolRelation';
+import { School } from 'app/schools/school';
 
 @Injectable()
 export class ChildrenService {
@@ -220,7 +221,11 @@ export class ChildrenService {
       this.entityMapper.loadType<ChildSchoolRelation>(ChildSchoolRelation)
         .then(loadedEntities => {
           return loadedEntities.filter(o => o.childId === childId);
-          //console.log(loadedEntities.filter(o => o.childId === childId));
+          console.log(loadedEntities.filter(o => o.childId === childId));
+          this.entityMapper.loadType<School>(School)
+            .then(schools => {
+              console.log(schools)
+            });
           // for (const r of loadedEntities) {
           //   if (r.childId === childId) {
           //     console.log(r);

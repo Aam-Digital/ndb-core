@@ -5,6 +5,7 @@ import {PreviousSchools} from './previous-schools';
 import {ColumnDescription} from '../../ui-helper/entity-subrecord/column-description';
 import {ChildrenService} from '../children.service';
 import {ChildSchoolRelation} from '../childSchoolRelation';
+import uniqid from 'uniqid';
 
 
 @Component({
@@ -51,12 +52,18 @@ export class PreviousSchoolsComponent implements OnInit {
     // define values locally because "this" is a different scope after passing a function as input to another component
     const child = this.childId;
 
-    return () => {
-      const newAtt = new PreviousSchools(Date.now().toString());
-      newAtt.date = new Date();
-      newAtt.child = child;
+    // return () => {
+    //   const newAtt = new PreviousSchools(Date.now().toString());
+    //   newAtt.date = new Date();
+    //   newAtt.child = child;
 
-      return newAtt;
-    };
+    //   return newAtt;
+    // };
+    return () => {
+      const newCSR = new ChildSchoolRelation(uniqid());
+      newCSR.childId = child;
+      // newCSR.start = new Date();
+      return newCSR;
+    }
   }
 }
