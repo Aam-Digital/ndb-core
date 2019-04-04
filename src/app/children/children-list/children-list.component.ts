@@ -8,6 +8,11 @@ import {FilterSelection} from '../../ui-helper/filter-selection/filter-selection
 import {MediaChange, MediaObserver} from '@angular/flex-layout';
 import {Subscription} from 'rxjs';
 
+export interface ColumnGroup {
+  name: string;
+  columns: string[];
+}
+
 @Component({
   selector: 'app-children-list',
   templateUrl: './children-list.component.html',
@@ -34,18 +39,19 @@ export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(MatSort) sort: MatSort;
   columnGroupSelection = 'School Info';
-  columnGroups = {
-    'Basic Info': ['projectNumber', 'name', 'age', 'gender', 'schoolClass', 'schoolId', 'center', 'status'],
-    'School Info': ['projectNumber', 'name', 'age', 'schoolClass', 'schoolId', 'attendance-school', 'attendance-coaching', 'motherTongue'],
-    'Status': ['projectNumber', 'name', 'center', 'status', 'admissionDate',
-      'has_aadhar', 'has_kanyashree', 'has_bankAccount', 'has_rationCard', 'has_bplCard'],
-    'Health': ['projectNumber', 'name', 'center',
+  columnGroups: ColumnGroup[] = [
+    { name: 'Basic Info', columns: ['projectNumber', 'name', 'age', 'gender', 'schoolClass', 'schoolId', 'center', 'status']},
+    { name: 'School Info',
+      columns: ['projectNumber', 'name', 'age', 'schoolClass', 'schoolId', 'attendance-school', 'attendance-coaching', 'motherTongue']},
+    { name: 'Status', columns: ['projectNumber', 'name', 'center', 'status', 'admissionDate',
+      'has_aadhar', 'has_kanyashree', 'has_bankAccount', 'has_rationCard', 'has_bplCard']},
+    { name: 'Health', columns: ['projectNumber', 'name', 'center',
       'health_vaccinationStatus', 'health_bloodGroup', 'health_eyeHealthStatus',
       'health_LastEyeCheckup', 'health_LastDentalCheckup', 'health_LastENTCheckup', 'health_LastVitaminD', 'health_LastDeworming',
-      'gender', 'age', 'dateOfBirth'],
-    'Mobile' : ['projectNumber', 'name', 'age', 'schoolId']
-  };
-  columnsToDisplay: ['projectNumber', 'name'];
+      'gender', 'age', 'dateOfBirth']},
+    { name: 'Mobile', columns : ['projectNumber', 'name', 'age', 'schoolId']}
+  ];
+  columnsToDisplay = ['projectNumber', 'name'];
   filterString = '';
 
 
@@ -136,9 +142,19 @@ export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.childrenDataSource.filter = filterValue;
   }
 
-  displayColumnGroup(columnGroup: string) {
-    this.columnGroupSelection = columnGroup;
-    this.columnsToDisplay = this.columnGroups[columnGroup];
+  displayColumnGroup(columnGroupName: string) {
+    this.columnGroupSelection = columnGroupName;
+    let found = false;
+    let group: ColumnGroup;
+    let i = 0;
+    while (!found && i < this.columnGroups.length) {
+       if (this.columnGroups[i].name === columnGroupName) {
+         found = true;
+         group = this.columnGroups[i];
+       }
+       i++;
+    }
+    this.columnsToDisplay = group.columns;
     this.updateUrl();
   }
 

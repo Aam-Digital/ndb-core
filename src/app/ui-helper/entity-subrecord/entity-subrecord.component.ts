@@ -185,15 +185,15 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
         break;
       }
       case 'lg': {
-        returnVal (this.screenWidth.match('(lg|xl)'));
+        returnVal = (this.screenWidth.match('(lg|xl)'));
         break;
       }
       case 'md': {
-        returnVal (this.screenWidth.match('(md|lg|xl)'));
+        returnVal = (this.screenWidth.match('(md|lg|xl)'));
         break;
       }
       case 'sm': {
-        returnVal (this.screenWidth.match('(sm|md|lg|xl)'));
+        returnVal = (this.screenWidth.match('(sm|md|lg|xl)'));
         break;
       }
       default: {
