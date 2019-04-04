@@ -64,6 +64,7 @@ export class ViewSchoolsComponentComponent implements OnInit {
                   childSchoolRelation: r,
                 });
                 this.updateViewableItems();
+                console.log(this.childSchoolRelations);
               })
           }
         }
@@ -110,7 +111,7 @@ export class ViewSchoolsComponentComponent implements OnInit {
         break;
       case 'DELETE':
         this.viewableSchools = this.viewableSchools.filter(school => {
-          console.log('current', school.childSchoolRelation, 'res', res.childSchoolRelation);
+          //console.log('current', school.childSchoolRelation, 'res', res.childSchoolRelation);
           return school.childSchoolRelation.getId() !== res.childSchoolRelation.getId();
         });
         break;

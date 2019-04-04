@@ -1,33 +1,28 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {DatePipe} from '@angular/common';
-import {Aser} from './aser';
+import {PreviousSchools} from './previous-schools';
 import {ColumnDescription} from '../../ui-helper/entity-subrecord/column-description';
 import {ChildrenService} from '../children.service';
+import {ChildSchoolRelation} from '../childSchoolRelation';
 
 
 @Component({
-  selector: 'app-aser',
+  selector: 'app-previous-schools',
   template: '<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="generateNewRecordFactory()">' +
   '</app-entity-subrecord>',
 })
-export class AserComponent implements OnInit {
+export class PreviousSchoolsComponent implements OnInit {
 
   childId: string;
-  records: Array<Aser>;
+  records: Array<ChildSchoolRelation>;
 
   columns: Array<ColumnDescription> = [
-    new ColumnDescription('date', 'Date', 'date', null,
+    new ColumnDescription('schoolId', 'Name', 'text'),
+    new ColumnDescription('start', 'From', 'date', null,
       (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
-    new ColumnDescription('math', 'Math', 'select',
-      Aser.MathLevels.map(s => { return { value: s, label: s } })),
-    new ColumnDescription('english', 'English', 'select',
-      Aser.ReadingLevels.map(s => { return { value: s, label: s } })),
-    new ColumnDescription('hindi', 'Hindi', 'select',
-      Aser.ReadingLevels.map(s => { return { value: s, label: s } })),
-    new ColumnDescription('bengali', 'Bengali', 'select',
-      Aser.ReadingLevels.map(s => { return { value: s, label: s } })),
-    new ColumnDescription('remarks', 'Remarks', 'text'),
+    new ColumnDescription('end', 'To', 'date', null,
+      (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
   ];
 
   constructor(private route: ActivatedRoute,
@@ -43,10 +38,11 @@ export class AserComponent implements OnInit {
   }
 
   loadData(id: string) {
-    this.childrenService.getAserResultsOfChild(id)
+    this.childrenService.getPreviousSchoolsOfChild(id)
       .subscribe(results => {
         this.records = results
-          .sort((a, b) => b.date.valueOf() - a.date.valueOf());
+          .sort((a, b) => b.start.valueOf() - a.start.valueOf());
+          console.log(this.records);
       });
   }
 
@@ -56,7 +52,7 @@ export class AserComponent implements OnInit {
     const child = this.childId;
 
     return () => {
-      const newAtt = new Aser(Date.now().toString());
+      const newAtt = new PreviousSchools(Date.now().toString());
       newAtt.date = new Date();
       newAtt.child = child;
 

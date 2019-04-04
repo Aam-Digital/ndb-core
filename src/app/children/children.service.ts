@@ -8,6 +8,8 @@ import {Note} from './notes/note';
 import {EducationalMaterial} from './educational-material/educational-material';
 import {Aser} from './aser/aser';
 import {HealthCheck} from './health-checkup/health-check'
+import {PreviousSchools} from './previous-schools/previous-schools';
+import {ChildSchoolRelation} from './childSchoolRelation';
 
 @Injectable()
 export class ChildrenService {
@@ -212,5 +214,41 @@ export class ChildrenService {
         })
     );
   }
+
+  getPreviousSchoolsOfChild(childId: string) {//: Observable<ChildSchoolRelation[]> {
+    return from(
+      this.entityMapper.loadType<ChildSchoolRelation>(ChildSchoolRelation)
+        .then(loadedEntities => {
+          return loadedEntities.filter(o => o.childId === childId);
+          //console.log(loadedEntities.filter(o => o.childId === childId));
+          // for (const r of loadedEntities) {
+          //   if (r.childId === childId) {
+          //     console.log(r);
+          //     return(r);
+          //   }
+          // }
+          //return loadedEntities.filter(o => o.child === childId);
+          //console.log(loadedEntities);//.filter(o => o.child === childId));
+        })
+      );
+    }
+      // this.viewableSchools = [];
+      // this.childSchoolRelations = [];
+      // this.entityMapperService.loadType<ChildSchoolRelation>(ChildSchoolRelation)
+      //   .then((relations: ChildSchoolRelation[]) => {
+      //     for (const r of relations) {
+      //       if (r.childId === this.child.getId()) {
+      //         this.childSchoolRelations.push(r);
+      //         this.entityMapperService.load<School>(School, r.schoolId)
+      //           .then((school: School) => {
+      //             this.viewableSchools.push({
+      //               school: school,
+      //               childSchoolRelation: r,
+      //             });
+      //           })
+      //       }
+      //     }
+      //   })
+      //   .catch(() => this.loggingService.error('[ViewSchoolsComponent] loading from database error.'))
 
 }
