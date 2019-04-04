@@ -41,7 +41,8 @@ export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
   columnGroupSelection = 'School Info';
   columnGroups: ColumnGroup[] = [
     { name: 'Basic Info', columns: ['projectNumber', 'name', 'age', 'gender', 'schoolClass', 'schoolId', 'center', 'status']},
-    { name: 'School Info', columns: ['projectNumber', 'name', 'age', 'schoolClass', 'schoolId', 'attendance-school', 'attendance-coaching', 'motherTongue']},
+    { name: 'School Info',
+      columns: ['projectNumber', 'name', 'age', 'schoolClass', 'schoolId', 'attendance-school', 'attendance-coaching', 'motherTongue']},
     { name: 'Status', columns: ['projectNumber', 'name', 'center', 'status', 'admissionDate',
       'has_aadhar', 'has_kanyashree', 'has_bankAccount', 'has_rationCard', 'has_bplCard']},
     { name: 'Health', columns: ['projectNumber', 'name', 'center',
