@@ -78,7 +78,7 @@ export class RemoteSession {
       this.connectionState.setState(ConnectionState.connected);
       return ConnectionState.connected;
     } catch (error) {
-      if (error.status === 401) { // TODO: This test is not the best
+      if (error.name === 'unauthorized' || error.name === 'forbidden') {
         this.connectionState.setState(ConnectionState.rejected);
         return ConnectionState.rejected;
       } else {

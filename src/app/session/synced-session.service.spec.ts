@@ -1,11 +1,3 @@
-import { SessionService } from './session.service';
-import { SyncedSessionService } from './synced-session.service';
-import { AlertService } from 'app/alerts/alert.service';
-import { LoginState } from './login-state.enum';
-import { SyncState } from './sync-state.enum';
-import { ConnectionState } from './connection-state.enum';
-import { AppConfig } from 'app/app-config/app-config';
-
 /*
  *     This file is part of ndb-core.
  *
@@ -22,6 +14,14 @@ import { AppConfig } from 'app/app-config/app-config';
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+import { SessionService } from './session.service';
+import { SyncedSessionService } from './synced-session.service';
+import { AlertService } from 'app/alerts/alert.service';
+import { LoginState } from './login-state.enum';
+import { SyncState } from './sync-state.enum';
+import { ConnectionState } from './connection-state.enum';
+import { AppConfig } from 'app/app-config/app-config';
 
 describe('SyncedSessionService', () => {
     const alertService = new AlertService(null, null);
@@ -48,7 +48,7 @@ describe('SyncedSessionService', () => {
 
         expect(sessionService.isLoggedIn()).toEqual(false);
         expect(sessionService.getCurrentUser()).not.toBeDefined();
-    })
+    });
 
     it('has the correct state after Login with wrong credentials', async () => {
         const loginState = await sessionService.login('demo', 'pass123');
@@ -75,7 +75,7 @@ describe('SyncedSessionService', () => {
         expect(sessionService.getCurrentUser()).toBeDefined();
     });
 
-    it('Logout', () => {
+    it('has the correct state after Logout', () => {
         sessionService.logout();
         expect(sessionService.getLoginState().getState()).toEqual(LoginState.loggedOut);
         expect(sessionService.getConnectionState().getState()).toEqual(ConnectionState.disconnected);
