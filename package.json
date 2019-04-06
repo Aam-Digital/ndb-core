@@ -25,7 +25,7 @@
     "@angular/pwa": "^0.13.5",
     "@angular/router": "^7.2.0",
     "@angular/service-worker": "^7.2.0",
-    "core-js": "^2.6.2",
+    "core-js": "^3.0.1",
     "crypto-js": "~3.1.9-1",
     "file-saver": "^2.0.0",
     "font-awesome": "^4.7.0",
