@@ -66,10 +66,10 @@ export class AttendanceWeekDashboardComponent implements OnInit {
 
     if (attendanceMonth.institution === 'coaching') {
       record.attendanceCoaching = record.attendanceCoaching.concat(relevantDays)
-        .sort((a, b) => (a.date?a.date.getTime():0) - (b.date?b.date.getTime():0) );
+        .sort((a, b) => (a.date ? a.date.getTime() : 0) - (b.date ? b.date.getTime() : 0) );
     } else if (attendanceMonth.institution === 'school') {
       record.attendanceSchool = record.attendanceSchool.concat(relevantDays)
-        .sort((a, b) => (a.date?a.date.getTime():0) - (b.date?b.date.getTime():0) );
+        .sort((a, b) => (a.date ? a.date.getTime() : 0) - (b.date ? b.date.getTime() : 0) );
     }
   }
 

@@ -42,7 +42,7 @@ export class EducationalMaterialComponent implements OnInit {
     this.childrenService.getEducationalMaterialsOfChild(id)
       .subscribe(results => {
         this.records = results
-          .sort((a, b) => (b.date?b.date.valueOf():0) - (a.date?a.date.valueOf():0) )
+          .sort((a, b) => (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0) )
       });
   }
 

@@ -52,7 +52,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.entityMapper.loadType<Note>(Note)
       .then(data => {
-        this.entityList = data.sort((a, b) => (b.date?b.date.getTime():0) - (a.date?a.date.getTime():0) );
+        this.entityList = data.sort((a, b) => (b.date ? b.date.getTime() : 0) - (a.date ? a.date.getTime() : 0) );
         this.applyFilterSelections();
     });
 
