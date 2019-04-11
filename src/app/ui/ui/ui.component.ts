@@ -42,7 +42,7 @@ export class UiComponent implements OnInit, OnDestroy {
     this.viewContainerRef = viewContainerRef;
     // watch screen width to change sidenav mode
     this.watcher = mediaObserver.media$.subscribe((change: MediaChange) => {
-      this.sideNavMode = change.mqAlias === 'xs' ? 'over' : 'side';
+      this.sideNavMode = change.mqAlias === 'xs' || 'sm' ? 'over' : 'side';
     });
   }
   ngOnInit(): void {
