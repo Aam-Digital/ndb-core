@@ -37,6 +37,7 @@ import {MatSnackBar} from '@angular/material';
 import {SessionService} from '../../session/session.service';
 import {DatabaseManagerService} from '../../database/database-manager.service';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {HealthCheckupComponent} from '../health-checkup/health-checkup.component';
 
 describe('ChildDetailsComponent', () => {
   let component: ChildDetailsComponent;
@@ -69,6 +70,7 @@ describe('ChildDetailsComponent', () => {
         EntitySubrecordComponent,
         AttendanceDaysComponent,
         AttendanceDayBlockComponent,
+        HealthCheckupComponent
       ],
       imports: [
         MatTableModule,
