@@ -15,9 +15,9 @@
 
     <button *ngIf="!creatingNew && editing" mat-stroked-button class='edit-button' style="color:red" (click)="removeSchool()">Delete</button>
 
-    <button *ngIf="creatingNew || editing" mat-stroked-button class='edit-button' (click)="disableEdit()">Cancel</button>
+    <button *ngIf="creatingNew || editing" mat-stroked-button class='edit-button' (click)="switchEdit()">Cancel</button>
 
-    <button *ngIf="!editing" mat-stroked-button class='edit-button' (click)="enableEdit()">Edit</button>
+    <button *ngIf="!editing" mat-stroked-button class='edit-button' (click)="switchEdit()">Edit</button>
   </div>
 </div>
 
@@ -89,7 +89,7 @@
     </mat-expansion-panel-header>
     <div class="example-container mat-elevation-z8">
 
-      <mat-table #table [dataSource]="studentDataSource" matSort>
+      <table mat-table #table [dataSource]="studentDataSource" matSort>
 
         <ng-container matColumnDef="id">
           <mat-header-cell *matHeaderCellDef mat-sort-header> PN </mat-header-cell>
@@ -113,7 +113,7 @@
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="studentClick(row.getId())" style="cursor:pointer;"></mat-row>
-      </mat-table>
+      </table>
     </div>
   </mat-expansion-panel>
 </form>

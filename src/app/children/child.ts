@@ -36,8 +36,6 @@ export class Child extends Entity {
   admissionDate: Date;
   status = '';
 
-  schoolId: string;
-  schoolClass = '';
 
   address = '';
   phone = '';
@@ -108,5 +106,4 @@ export class Child extends Entity {
     }
     return 'assets/child-photos/' + this.projectNumber + '.jpg';
   }
-
 }

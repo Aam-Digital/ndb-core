@@ -6,6 +6,7 @@ export class ChildSchoolRelation extends Entity {
   public childId: string;
   public schoolId: string;
   public schoolClass: string;
-  public start: Date;
-  public end: Date;
+  public start: string;
+  public end: string;
 }
+
