@@ -7,6 +7,11 @@ import {Database} from '../database/database';
 import {Note} from './notes/note';
 import {EducationalMaterial} from './educational-material/educational-material';
 import {Aser} from './aser/aser';
+import {ChildSchoolRelation} from './childSchoolRelation';
+import {School} from '../schools/school';
+import {ChildWithRelation} from './childWithRelation';
+import {SchoolWithRelation} from '../schools/schoolWithRelation';
+import {HealthCheck} from './health-checkup/health-check'
 
 @Injectable()
 export class ChildrenService {
@@ -16,16 +21,31 @@ export class ChildrenService {
     this.createAttendanceAnalysisIndex();
     this.createNotesIndex();
     this.createAttendancesIndex();
+    this.createChildSchoolRelationIndex()
+  }
+
+  async getChildrenWithRelation(): Promise<ChildWithRelation[]> {
+    const children = await this.entityMapper.loadType<Child>(Child);
+    const tableData: ChildWithRelation[] = [];
+    for (const child of children) {
+      const relation: ChildSchoolRelation = await this.queryLatestRelation(child.getId());
+      tableData.push(new ChildWithRelation(child, relation));
+    }
+    return tableData;
+  }
+
+  async getChildWithRelation(childId: string): Promise<ChildWithRelation> {
+    const child = await this.entityMapper.load<Child>(Child, childId);
+    const relation = await this.queryLatestRelation(childId);
+    return new ChildWithRelation(child, relation);
   }
 
   getChildren(): Observable<Child[]> {
     return from(this.entityMapper.loadType<Child>(Child));
   }
-
   getChild(id: string): Observable<Child> {
     return from(this.entityMapper.load<Child>(Child, id));
   }
-
 
   getAttendances(): Observable<AttendanceMonth[]> {
     return from(this.entityMapper.loadType<AttendanceMonth>(AttendanceMonth));
@@ -80,7 +100,72 @@ export class ChildrenService {
     return this.db.saveDatabaseIndex(designDoc);
   }
 
+  private createChildSchoolRelationIndex(): Promise<any> {
 
+    const designDoc = {
+      _id: '_design/childSchoolRelations_index',
+      views: {
+        by_child: {
+          map: `(doc) => {
+            if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
+            emit(doc.childId);
+            }`
+        },
+        by_school: {
+          map: `(doc) => {
+            if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
+            if (doc.end) return;
+            emit(doc.schoolId);
+            }`
+        },
+        by_date: {
+          map: `(doc) => {
+            if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
+            emit(doc.childId + '_' + (new Date(doc.start)).getTime().toString().padStart(14, "0"));
+            }`
+        }
+
+      }
+    };
+    return this.db.saveDatabaseIndex(designDoc);
+  }
+
+  queryLatestRelation(childId: string): Promise<ChildSchoolRelation> {
+    return this.querySortedRelations(childId, 1).then(children => children[0])
+ }
+
+ querySortedRelations(childId: string, limit?: number): Promise<ChildSchoolRelation[]> {
+    const options: any = {
+      startkey: childId + '\uffff', //  higher value needs to be startkey
+      endkey: childId,              //  \uffff is not a character -> only relations staring with childId will be selected
+      descending: true,
+      include_docs: true,
+      limit: limit
+    };
+    return this.db.query(
+      'childSchoolRelations_index/by_date',
+      options
+    )
+      .then(loadedEntities => {
+        return loadedEntities.rows.map(loadedRecord => {
+          const entity = new ChildSchoolRelation('');
+          entity.load(loadedRecord.doc);
+          return entity;
+        });
+      });
+ }
+
+  queryRelationsOfChild(childId: string): Promise<ChildSchoolRelation[]> {
+    return this.db.query('childSchoolRelations_index/by_child', {key: childId, include_docs: true})
+      .then(loadedEntities => {
+        return loadedEntities.rows.map(loadedRecord => {
+          const entity = new ChildSchoolRelation('');
+          entity.load(loadedRecord.doc);
+          return entity;
+        });
+      });
+
+  }
 
   queryAttendanceLast3Months() {
     return this.db.query('avg_attendance_index/three_months', {reduce: true, group: true});
@@ -143,10 +228,6 @@ export class ChildrenService {
       '}';
   }
 
-
-
-
-
   getNotesOfChild(childId: string): Observable<Note[]> {
     const promise = this.db.query('notes_index/by_child', {key: childId, include_docs: true})
       .then(loadedEntities => {
@@ -176,16 +257,26 @@ export class ChildrenService {
     return this.db.saveDatabaseIndex(designDoc);
   }
 
-
-
-
-
   getEducationalMaterialsOfChild(childId: string): Observable<EducationalMaterial[]> {
     return from(
       this.entityMapper.loadType<EducationalMaterial>(EducationalMaterial)
         .then(loadedEntities => {
           return loadedEntities.filter(o => o.child === childId);
         })
+    );
+  }
+
+  /**
+   *
+   * @param childId should be set in the specific components and is passed by the URL as a parameter
+   * This function should be considered refactored and should use a index, once they're made generic
+   */
+  getHealthChecksOfChild(childId: string): Observable<HealthCheck[]> {
+    return from(
+      this.entityMapper.loadType<HealthCheck>(HealthCheck)
+      .then(loadedEntities => {
+        return loadedEntities.filter(h => h.child === childId);
+      })
     );
   }
 
@@ -198,4 +289,23 @@ export class ChildrenService {
     );
   }
 
+  getCurrentSchool(childId: string): Promise<School> {
+    return this.queryLatestRelation(childId)
+      .then(relation => {
+        if (relation) {
+         return this.entityMapper.load<School>(School, relation.schoolId)
+        }
+        return null;
+      });
+  }
+
+  async getSchoolsWithRelations(childId: string): Promise<SchoolWithRelation[]> {
+    const relations = await this.querySortedRelations(childId);
+    const schools: SchoolWithRelation[] = [];
+    for (const relation of relations) {
+      const school: School = await this.entityMapper.load<School>(School, relation.schoolId);
+      schools.push(new SchoolWithRelation(relation, school));
+    }
+    return schools;
+  }
 }

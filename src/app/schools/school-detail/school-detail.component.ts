@@ -4,12 +4,12 @@ import {School} from '../school';
 import {SchoolsService} from '../schools.service';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import uniqid from 'uniqid';
+import * as uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
 import {MatSnackBar, MatTableDataSource} from '@angular/material';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
-import {Child} from '../../children/child';
 import {Location} from '@angular/common';
+import {ChildWithRelation} from '../../children/childWithRelation';
 
 @Component({
   selector: 'app-school-detail',
@@ -19,7 +19,7 @@ import {Location} from '@angular/common';
 export class SchoolDetailComponent implements OnInit {
   school = new School('');
 
-  studentDataSource: MatTableDataSource<Child> = new MatTableDataSource();
+  studentDataSource: MatTableDataSource<ChildWithRelation> = new MatTableDataSource();
   displayedColumns = ['id', 'name', 'schoolClass', 'age'];
 
   form: FormGroup;
@@ -43,7 +43,6 @@ export class SchoolDetailComponent implements OnInit {
   }
 
   constructor(
-    private ss: SchoolsService,
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
@@ -51,7 +50,8 @@ export class SchoolDetailComponent implements OnInit {
     private entityMapperService: EntityMapperService,
     private alertService: AlertService,
     private snackBar: MatSnackBar,
-    private confirmationDialog: ConfirmationDialogService
+    private confirmationDialog: ConfirmationDialogService,
+    private schoolService: SchoolsService,
   ) { }
 
   ngOnInit() {
@@ -61,18 +61,14 @@ export class SchoolDetailComponent implements OnInit {
       this.editing = true;
       this.school = new School(uniqid());
     } else {
+      this.studentDataSource.data = [];
       this.loadSchool(id);
     }
     this.initializeForm();
   }
 
-  enableEdit() {
-    this.editing = true;
-    this.initializeForm();
-  }
-
-  disableEdit() {
-    this.editing = false;
+  switchEdit() {
+    this.editing = !this.editing;
     this.initializeForm();
   }
 
@@ -84,16 +80,10 @@ export class SchoolDetailComponent implements OnInit {
   }
 
   loadStudents() {
-    // TODO: load only children related to this school through a method of SchoolService (to be implemented)
-    this.entityMapperService.loadType<Child>(Child)
-      .then(children => {
-        return children.filter(child => {
-          return child.schoolId === this.school.getId();
-        })
-      })
+    this.schoolService.getChildrenForSchool(this.school.getId())
       .then(children => {
         this.studentDataSource.data = children;
-      });
+      })
   }
 
 
@@ -122,7 +112,7 @@ export class SchoolDetailComponent implements OnInit {
   }
 
   saveSchool() {
-    this.assignFormValuesToChild(this.school, this.form);
+    this.assignFormValuesToSchool(this.school, this.form);
 
     this.entityMapperService.save<School>(this.school)
       .then(() => {
@@ -130,12 +120,12 @@ export class SchoolDetailComponent implements OnInit {
           this.router.navigate(['/school', this.school.getId()]);
           this.creatingNew = false;
         }
-        this.disableEdit();
+        this.switchEdit();
       })
       .catch((err) => this.alertService.addDanger('Could not save School "' + this.school.name + '": ' + err));
   }
 
-  private assignFormValuesToChild(school: School, form: FormGroup) {
+  private assignFormValuesToSchool(school: School, form: FormGroup) {
     Object.keys(form.controls).forEach(key => {
       school[key] = form.get(key).value;
     });

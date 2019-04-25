@@ -1,11 +1,10 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
 import {ChildSchoolRelation} from '../../childSchoolRelation';
-import { School } from '../../../schools/school';
-
 import * as uniqid from 'uniqid';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {Child} from '../../child';
+import {School} from '../../../schools/school';
 
 @Component({
   selector: 'app-add-school-dialog',
