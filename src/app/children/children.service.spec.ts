@@ -3,12 +3,12 @@ import {EntityMapperService} from '../entity/entity-mapper.service';
 import {ChildSchoolRelation} from './childSchoolRelation';
 import {Child} from './child';
 import {ChildWithRelation} from './childWithRelation';
-import {MockDatabaseManagerService} from '../database/mock-database-manager.service';
+import { MockSessionService } from 'app/session/mock-session.service';
 
 describe('ChildrenService', () => {
   let service: ChildrenService;
   beforeEach(() => {
-    const database = new MockDatabaseManagerService().getDatabase();
+    const database = new MockSessionService().getDatabase();
     service = new ChildrenService(new EntityMapperService(database), database)
   });
 
