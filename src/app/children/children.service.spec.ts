@@ -7,9 +7,11 @@ import {MockDatabaseManagerService} from '../database/mock-database-manager.serv
 
 describe('ChildrenService', () => {
   let service: ChildrenService;
+  let entityMapper: EntityMapperService;
   beforeEach(() => {
     const database = new MockDatabaseManagerService().getDatabase();
-    service = new ChildrenService(new EntityMapperService(database), database)
+    entityMapper = new EntityMapperService(database);
+    service = new ChildrenService(entityMapper, database)
   });
 
   it('should be created', () => {
@@ -17,8 +19,36 @@ describe('ChildrenService', () => {
   });
 
   // TODO: test getChildren
+  it('should list newly saved children', async () => {
+    const childrenBefore = await service.getChildren().toPromise();
+    const child = new Child('10');
+    await entityMapper.save<Child>(child);
+    const childrenAfter = await service.getChildren().toPromise();
+
+    let find = childrenBefore.find(c => c.getId() === child.getId());
+    expect(find).toBeUndefined();
+    find = childrenAfter.find(c => c.getId() === child.getId());
+    expect(find).toBeDefined();
+    expect(find.getId()).toBe(child.getId());
+    expect(childrenBefore.length).toBe(childrenAfter.length - 1);
+  });
 
   // TODO: test getChild
+  it('should find a newly saved child', async () => {
+    const child = new Child('10');
+    let error;
+    try {
+      await service.getChild(child.getId()).toPromise();
+    } catch (err) {
+      error = err;
+    }
+    expect(error).toEqual({status: 404, message: 'object not found'});
+    await entityMapper.save<Child>(child);
+    const childAfter = await service.getChild(child.getId()).toPromise();
+    // expect(childBefore).toBeUndefined();
+    expect(childAfter).toBeDefined();
+    expect(childAfter.getId()).toBe(child.getId());
+  });
 
   // TODO: test getAttendances
 
