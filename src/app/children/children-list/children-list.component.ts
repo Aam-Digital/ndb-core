@@ -77,7 +77,6 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   private loadData(replaceUrl: boolean = false) {
     this.childrenService.getChildren().subscribe(data => {
       this.childrenList = data;
-
       const centers = data.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
       this.centerFS.initOptions(centers, 'center');
 
@@ -86,6 +85,29 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
     this.childrenService.getAttendances()
       .subscribe(results => this.prepareAttendanceData(results));
+  }
+
+  getCsvExport() {
+    let csvData = '';
+    let rowNames = 'PN, Name';
+    if (this.columnGroupSelection === 'School Info') {
+      rowNames += ', Age, Class, School, Attendance (School), Attendance (Coaching), Mother Tongue';
+    } else if (this.columnGroupSelection === 'Basic Info') {
+      rowNames += ', Age, Gender, Class, School, Center, Status';
+    } else if (this.columnGroupSelection === 'Health') {
+      rowNames += ', Center, Vaccination Status, Blood Group, Eye Status, Last Eye Check-Up, Last Dental Check-Ups, Last ENT Check-Up,' +
+        'Last Vitamin D, Last De-Worming, Gender, Age, DoB';
+    } else if (this.columnGroupSelection === 'Status') {
+      rowNames += ', Center, Status, Admission, Aadhar, Kanyashree, Bank Account, Ration Card, BPL Card';
+    }
+    csvData += rowNames + '\r\n';
+    const link = document.createElement('a');
+    link.setAttribute('style', 'display:none;');
+    document.body.appendChild(link);
+    const blob = new Blob([csvData], {type: 'text/csv'});
+    link.href = window.URL.createObjectURL(blob);
+    link.download = 'ChildrenList.csv';
+    link.click();
   }
 
 
