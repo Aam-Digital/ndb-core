@@ -18,7 +18,6 @@ describe('ChildrenService', () => {
     expect(service).toBeTruthy();
   });
 
-  // TODO: test getChildren
   it('should list newly saved children', async () => {
     const childrenBefore = await service.getChildren().toPromise();
     const child = new Child('10');
@@ -34,7 +33,6 @@ describe('ChildrenService', () => {
     expect(childrenBefore.length).toBe(childrenAfter.length - 1);
   });
 
-  // TODO: test getChild
   it('should find a newly saved child', async () => {
     const child = new Child('10');
     let error;
