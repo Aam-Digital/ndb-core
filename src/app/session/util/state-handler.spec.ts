@@ -30,7 +30,7 @@ describe('StateHandler', () => {
     it('changes the state when setting the state', () => {
         const handler = new StateHandler<TestState>(TestState.test1);
         handler.setState(TestState.test2);
-        expect(handler.getState()).toEqual(TestState.test1);
+        expect(handler.getState()).toEqual(TestState.test2);
     });
     it('emits an event when setting the state', done => {
         const handler = new StateHandler<TestState>(TestState.test1);
