@@ -78,7 +78,9 @@ describe('SyncStatusComponent', () => {
 
     function checkDialogRefDefined(_expect, _done) {
       _expect(component.dialogRef).toBeDefined();
-      _done();
+      component.dialogRef.close();
+      fixture.detectChanges();
+      fixture.whenStable().then(_done());
     }
   });
 });
