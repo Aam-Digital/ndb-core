@@ -27,6 +27,7 @@ describe('ChildrenService', () => {
 
     let find = childrenBefore.find(c => c.getId() === child.getId());
     expect(find).toBeUndefined();
+
     find = childrenAfter.find(c => c.getId() === child.getId());
     expect(find).toBeDefined();
     expect(find.getId()).toBe(child.getId());
@@ -43,9 +44,9 @@ describe('ChildrenService', () => {
       error = err;
     }
     expect(error).toEqual({status: 404, message: 'object not found'});
+
     await entityMapper.save<Child>(child);
     const childAfter = await service.getChild(child.getId()).toPromise();
-    // expect(childBefore).toBeUndefined();
     expect(childAfter).toBeDefined();
     expect(childAfter.getId()).toBe(child.getId());
   });
