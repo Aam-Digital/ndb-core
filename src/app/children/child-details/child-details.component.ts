@@ -24,10 +24,11 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatSnackBar} from '@angular/material';
 import {Location} from '@angular/common';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
-import uniqid from 'uniqid';
+import * as uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
-import {School} from '../../schools/school';
 import {ChildrenService} from '../children.service';
+import {School} from '../../schools/school';
+import {ChildWithRelation} from '../childWithRelation';
 import {HealthCheck} from '../health-checkup/health-check';
 import {EntitySubrecordComponent} from '../../ui-helper/entity-subrecord/entity-subrecord.component';
 import {ColumnDescription} from '../../ui-helper/entity-subrecord/column-description';
@@ -41,7 +42,8 @@ import {ColumnDescription} from '../../ui-helper/entity-subrecord/column-descrip
 })
 export class ChildDetailsComponent implements OnInit {
 
-  child: Child = new Child('');
+  child: ChildWithRelation = new ChildWithRelation(new Child(''));
+  currentSchool: School = new School('');
   schools: School[] = [];
 
   form: FormGroup;
@@ -113,7 +115,8 @@ export class ChildDetailsComponent implements OnInit {
               private location: Location,
               private snackBar: MatSnackBar,
               private confirmationDialog: ConfirmationDialogService,
-              private alertService: AlertService) { }
+              private alertService: AlertService,
+  ) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
@@ -124,14 +127,17 @@ export class ChildDetailsComponent implements OnInit {
     if (id === 'new') {
       this.creatingNew = true;
       this.editing = true;
-      this.child = new Child(uniqid());
+      this.child = new ChildWithRelation(new Child(uniqid()));
     } else {
-      this.entityMapperService.load<Child>(Child, id)
+      this.childrenService.getChildWithRelation(id)
         .then(child => {
           this.child = child;
           this.initForm();
+          this.entityMapperService.load<School>(School, this.child.schoolId)
+            .then(school => this.currentSchool = school)
         });
     }
+
     this.initForm();
 
   }
@@ -174,7 +180,7 @@ export class ChildDetailsComponent implements OnInit {
 
           const snackBarRef = this.snackBar.open('Deleted Child "' + this.child.name + '"', 'Undo', {duration: 8000});
           snackBarRef.onAction().subscribe(() => {
-            this.entityMapperService.save(this.child, true);
+            this.entityMapperService.save(this.child.getChild(), true);
             this.router.navigate(['/child', this.child.getId()]);
           });
         }
@@ -184,8 +190,4 @@ export class ChildDetailsComponent implements OnInit {
   navigateBack() {
     this.location.back();
   }
-
 }
-
-
-

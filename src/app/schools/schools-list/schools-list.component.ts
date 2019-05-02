@@ -49,7 +49,6 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
     this.schoolDataSource.sort = this.sort;
   }
 
-
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
