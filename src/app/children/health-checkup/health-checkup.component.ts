@@ -63,7 +63,7 @@ export class HealthCheckupComponent implements OnInit {
     this.childrenService.getHealthChecksOfChild(this.childId)
       .subscribe(results => {
         this.records = results
-          .sort(( a, b ) => b.date.valueOf() - a.date.valueOf())
+          .sort((a, b ) => (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0) )
       });
   }
 }
