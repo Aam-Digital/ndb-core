@@ -51,7 +51,7 @@ export class ChildAttendanceComponent implements OnInit {
       .subscribe(results => {
         this.records = results
           .filter(r => this.institution === undefined || r.institution === this.institution)
-          .sort((a, b) => b.month.valueOf() - a.month.valueOf());
+          .sort((a, b) => (b.month ? b.month.valueOf() : 0) - (a.month ? a.month.valueOf() : 0) );
 
         if (this.showDailyAttendanceOfLatest) {
           this.createCurrentMonthsAttendanceIfNotExists();
