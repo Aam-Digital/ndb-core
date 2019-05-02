@@ -55,7 +55,13 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Chrome'],
-    singleRun: false
+    browsers: ['ChromeCORS'],
+    singleRun: false,
+    customLaunchers: {
+      ChromeCORS: {
+        base: 'Chrome',
+        flags: ['--disable-web-security']
+      }
+    }
   });
 };
