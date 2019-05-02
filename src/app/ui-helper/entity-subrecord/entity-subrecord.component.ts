@@ -167,7 +167,9 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
         columnsHelpArray.push(col.name);
       } } );
       this.columnsToDisplay = columnsHelpArray;
-      this.columnsToDisplay.push('actions');
+      if (this.screenWidth !== 'xs') {
+        this.columnsToDisplay.push('actions');
+      }
     }
   }
 
