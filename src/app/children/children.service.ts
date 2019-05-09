@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Observable} from 'rxjs/Rx';
+import {from, Observable} from 'rxjs';
 import {Child} from './child';
 import {EntityMapperService} from '../entity/entity-mapper.service';
 import {AttendanceMonth} from './attendance/attendance-month';
@@ -19,16 +19,16 @@ export class ChildrenService {
   }
 
   getChildren(): Observable<Child[]> {
-    return Observable.fromPromise(this.entityMapper.loadType<Child>(Child));
+    return from(this.entityMapper.loadType<Child>(Child));
   }
 
   getChild(id: string): Observable<Child> {
-    return Observable.fromPromise(this.entityMapper.load<Child>(Child, id));
+    return from(this.entityMapper.load<Child>(Child, id));
   }
 
 
   getAttendances(): Observable<AttendanceMonth[]> {
-    return Observable.fromPromise(this.entityMapper.loadType<AttendanceMonth>(AttendanceMonth));
+    return from(this.entityMapper.loadType<AttendanceMonth>(AttendanceMonth));
   }
 
   getAttendancesOfChild(childId: string): Observable<AttendanceMonth[]> {
@@ -41,7 +41,7 @@ export class ChildrenService {
         });
       });
 
-    return Observable.fromPromise(promise);
+    return from(promise);
   }
 
   getAttendancesOfMonth(month: Date): Observable<AttendanceMonth[]> {
@@ -55,7 +55,7 @@ export class ChildrenService {
         });
       });
 
-    return Observable.fromPromise(promise);
+    return from(promise);
   }
 
   private createAttendancesIndex(): Promise<any> {
@@ -157,7 +157,7 @@ export class ChildrenService {
         });
       });
 
-    return Observable.fromPromise(promise);
+    return from(promise);
   }
 
   private createNotesIndex(): Promise<any> {
@@ -181,7 +181,7 @@ export class ChildrenService {
 
 
   getEducationalMaterialsOfChild(childId: string): Observable<EducationalMaterial[]> {
-    return Observable.fromPromise(
+    return from(
       this.entityMapper.loadType<EducationalMaterial>(EducationalMaterial)
         .then(loadedEntities => {
           return loadedEntities.filter(o => o.child === childId);
@@ -190,7 +190,7 @@ export class ChildrenService {
   }
 
   getAserResultsOfChild(childId: string): Observable<Aser[]> {
-    return Observable.fromPromise(
+    return from(
       this.entityMapper.loadType<Aser>(Aser)
         .then(loadedEntities => {
           return loadedEntities.filter(o => o.child === childId);

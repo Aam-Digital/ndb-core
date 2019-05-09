@@ -55,6 +55,7 @@ export class Child extends Entity {
   dropoutRemarks: string;
 
   health_vaccinationStatus: string;
+  health_bloodGroup: string;
   health_lastDentalCheckup: Date;
   health_lastEyeCheckup: Date;
   health_lastENTCheckup: Date;
@@ -86,6 +87,19 @@ export class Child extends Entity {
 
   public toString() {
     return this.name;
+  }
+
+  public generateSearchIndices(): string[] {
+    let indices = [];
+
+    if (this.name !== undefined) {
+      indices = indices.concat(this.name.split(' '));
+    }
+    if (this.projectNumber !== undefined) {
+      indices.push(this.projectNumber);
+    }
+
+    return indices;
   }
 
   public getPhoto() {

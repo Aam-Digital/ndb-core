@@ -18,7 +18,12 @@
 
 <div fxLayout="row" fxLayoutAlign='space-between'>
   <div>
-    <h1 class="page-header section-child"><i class="fa fa-child fa-fw"></i>
+    <h1 class="page-header section-child">
+      <button mat-icon-button (click)='navigateBack()' matTooltip="Back" style='vertical-align: middle;'>
+        <mat-icon fontIcon="fa-backward"></mat-icon>
+      </button>
+
+      <i class="fa fa-child fa-fw"></i>
       <span *ngIf="!creatingNew">{{ child.name }} [{{ child.projectNumber }}]</span>
       <span *ngIf="creatingNew">Adding new Child</span>
     </h1>
@@ -41,7 +46,7 @@
 <mat-accordion multi='true'>
   <form [formGroup]="form">
 
-    <mat-expansion-panel hideToggle="true" [expanded]="child.isActive()">
+    <mat-expansion-panel hideToggle="true" [expanded]="child.isActive()" title="Basic Information">
       <mat-expansion-panel-header class='section-header'>
         <mat-panel-title>
           Basic Information
@@ -51,7 +56,7 @@
 
       <div fxLayout='row' fxLayout.xs='column wrap' fxLayout.md='column wrap' fxLayout.sm='column wrap'>
         <div fxFlex='150px'>
-          <img [src]="child.getPhoto()" class="child-pic" >
+          <img [src]="child.getPhoto()" class="child-pic" alt="child's photo">
         </div>
 
 
@@ -178,7 +183,7 @@
 
 
 
-    <mat-expansion-panel expanded="false">
+    <mat-expansion-panel expanded="false" title="Education">
       <mat-expansion-panel-header class='section-header'>
         Education
       </mat-expansion-panel-header>
@@ -196,8 +201,13 @@
         </mat-form-field>
 
         <mat-form-field>
-          <input matInput type="number" formControlName="schoolClass" placeholder="Class">
+          <input matInput type="text" formControlName="schoolClass" placeholder="Class">
         </mat-form-field>
+      </div>
+
+      <div>
+        <h3>Previous Schools</h3>
+        <app-view-schools-component [child]="child"></app-view-schools-component>
       </div>
 
       <div>
@@ -209,12 +219,12 @@
 
 
 
-    <mat-expansion-panel expanded="false">
+    <mat-expansion-panel expanded="false" title="Attendance">
       <mat-expansion-panel-header class='section-header'>
         Attendance
       </mat-expansion-panel-header>
 
-      <div fxLayout='row' fxLayoutGap='20px' fxLayout.xs='column wrap' fxLayout.md='column wrap' fxLayout.sm='column wrap'>
+      <div fxLayout='row wrap' fxLayout.lt-md="column" fxLayoutGap='20px'>
         <div fxFlex='40'>
           <h3>School Attendance</h3>
           <app-child-attendance institution='school' [showDailyAttendanceOfLatest]='true'></app-child-attendance>
@@ -232,15 +242,8 @@
         Notes & Reports
       </mat-expansion-panel-header>
 
-  <app-notes></app-notes>
-</mat-expansion-panel>
-
-<mat-expansion-panel expanded="false">
-  <mat-expansion-panel-header class="section-header">
-    Schools
-  </mat-expansion-panel-header>
-  <app-view-schools-component [child]="child"></app-view-schools-component>
-</mat-expansion-panel>
+      <app-notes></app-notes>
+    </mat-expansion-panel>
 
 
 
@@ -269,6 +272,11 @@
           <mat-select [disabled]='!editing' [(ngModel)]='child.health_eyeHealthStatus' [ngModelOptions]="{standalone: true}">
             <mat-option *ngFor="let value of eyeStatusValues" [value]="value">{{value}}</mat-option>
           </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <!-- TODO: replace bloodGroup text field with a custom-select, once it is user configurable (#236) -->
+          <input matInput formControlName="health_bloodGroup" placeholder="Blood Group" type="text">
         </mat-form-field>
       </div>
 
@@ -328,5 +336,3 @@
 
   </form>
 </mat-accordion>
-
-<p>&nbsp;</p>

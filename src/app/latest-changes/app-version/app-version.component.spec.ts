@@ -22,11 +22,11 @@ import {MatDialog, MatDialogModule} from '@angular/material';
 import {SessionService} from '../../session/session.service';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {LatestChangesService} from '../latest-changes.service';
-import {Observable} from 'rxjs/Rx';
 import {SessionStatus} from '../../session/session-status';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {ChangelogComponent} from '../changelog/changelog.component';
 import {NgModule} from '@angular/core';
+import {of} from 'rxjs';
 
 
 @NgModule({
@@ -45,14 +45,14 @@ describe('AppVersionComponent', () => {
   let entityMapper: EntityMapperService;
 
   beforeEach(async(() => {
-    latestChangesService = new LatestChangesService(null, null);
+    latestChangesService = new LatestChangesService(null, null, null, null);
     sessionService = new SessionService(null, null, null);
     entityMapper = new EntityMapperService(null);
 
     spyOn(latestChangesService, 'getChangelogs').and
-      .returnValue(Observable.of([{ name: 'test', tag_name: 'v1.0', body: 'latest test', published_at: '2018-01-01'}]));
+      .returnValue(of([{ name: 'test', tag_name: 'v1.0', body: 'latest test', published_at: '2018-01-01'}]));
     spyOn(sessionService, 'onSessionStatusChanged').and
-      .returnValue(Observable.of(SessionStatus.loggedIn));
+      .returnValue(of(SessionStatus.loggedIn));
 
     TestBed.configureTestingModule({
       declarations: [AppVersionComponent],
@@ -80,8 +80,7 @@ describe('AppVersionComponent', () => {
 
 
   it('should open dialog', () => {
-    const dialogService = fixture.debugElement.injector.get(MatDialog);
-    const spy = spyOn(dialogService, 'open').and.callThrough();
+    const spy = spyOn(latestChangesService, 'showLatestChanges');
 
     component.showLatestChanges();
     expect(spy.calls.count()).toBe(1, 'dialog not opened');

@@ -22,8 +22,8 @@ import {Gender} from '../Gender';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatSnackBar} from '@angular/material';
+import {Location} from '@angular/common';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
-
 import uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
 import {School} from '../../schools/school';
@@ -78,6 +78,7 @@ export class ChildDetailsComponent implements OnInit {
       // bplCard:        [{value: this.child.has_BplCard,        disabled: !this.editing}],
 
       // health_vaccinationStatus:    [{value: this.child.health_vaccinationStatus,    disabled: !this.editing}],
+      health_bloodGroup:          [{value: this.child.health_bloodGroup,    disabled: !this.editing}],
       health_lastDentalCheckup:   [{value: this.child.health_lastDentalCheckup,    disabled: !this.editing}],
       health_lastEyeCheckup:      [{value: this.child.health_lastEyeCheckup, disabled: !this.editing}],
       // health_eyeHealthStatus:   [{value: this.child.health_eyeHealthStatus,    disabled: !this.editing}],
@@ -97,6 +98,7 @@ export class ChildDetailsComponent implements OnInit {
               private route: ActivatedRoute,
               @Inject(FormBuilder) public fb: FormBuilder,
               private router: Router,
+              private location: Location,
               private snackBar: MatSnackBar,
               private confirmationDialog: ConfirmationDialogService,
               private alertService: AlertService) { }
@@ -164,5 +166,9 @@ export class ChildDetailsComponent implements OnInit {
           });
         }
       });
+  }
+
+  navigateBack() {
+    this.location.back();
   }
 }

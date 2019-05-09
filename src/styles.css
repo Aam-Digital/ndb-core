@@ -49,7 +49,9 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 
 
 
-.dashboard mat-card-header {
+
+.dashboard-widget .mat-card-header {
+
   padding: 24px;
   margin-bottom: 10px;
   position: relative;
@@ -58,44 +60,51 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
   color: white;
 }
 
-.dashboard .mat-card-header-text {
+.dashboard-widget .mat-card-header-text {
   width: 100%;
 }
 
-.dashboard .mat-card-title {
+.dashboard-widget .mat-card-title {
   text-align: end;
   width: 100%;
   margin-top: 10px;
   font-size: 40pt;
 }
 
-.dashboard .mat-card-subtitle {
+.dashboard-widget .mat-card-subtitle {
   text-align: end;
   width: calc(100% - 20px);
   padding-left: 20px;
-  margin-bottom: 0px;
+  margin-bottom: 0;
+  margin-top: 0 !important;
   color: white;
 }
 
-.dashboard .mat-card-avatar {
+.dashboard-widget .mat-card-avatar {
 
   font-size: 40pt;
 }
 
-.dashboard .dashboard-desc {
+.dashboard-widget .mat-card-content {
+  max-height: 240px;
+  overflow: auto;
+}
+
+.dashboard-widget .dashboard-desc {
   padding: 10px;
   font-style: italic;
 }
 
-mat-card.dashboard {
+mat-card.dashboard-widget {
   min-width: 250px;
   margin: 10px;
   padding: 0px;
 }
 
-.dashboard .dashboard-table-cell {
+.dashboard-widget .dashboard-table-cell {
   padding: 10px;
 }
+
 
 
 
@@ -154,4 +163,13 @@ mat-card.dashboard {
 
 .filter-button mat-button-toggle.selected:hover{
   background: #e0e0e0;
+}
+
+
+/* display disabled form values in black for better readability as we disable forms by default */
+.mat-input-element:disabled {
+  color: black;
+}
+.mat-select-disabled .mat-select-value {
+  color: black;
 }

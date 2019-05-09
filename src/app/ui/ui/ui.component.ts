@@ -19,7 +19,7 @@ import {Component, OnDestroy, OnInit, ViewChild, ViewContainerRef} from '@angula
 import { SessionService } from '../../session/session.service';
 import {AppConfig} from '../../app-config/app-config';
 import {Title} from '@angular/platform-browser';
-import {ObservableMedia, MediaChange} from '@angular/flex-layout';
+import {MediaObserver, MediaChange} from '@angular/flex-layout';
 import {Subscription} from 'rxjs';
 
 @Component({
@@ -38,11 +38,11 @@ export class UiComponent implements OnInit, OnDestroy {
   constructor(private _sessionService: SessionService,
               viewContainerRef: ViewContainerRef,
               private titleService: Title,
-              media: ObservableMedia) {
+              mediaObserver: MediaObserver) {
     this.viewContainerRef = viewContainerRef;
     // watch screen width to change sidenav mode
-    this.watcher = media.subscribe((change: MediaChange) => {
-      this.sideNavMode = change.mqAlias === 'xs' ? 'over' : 'side';
+    this.watcher = mediaObserver.media$.subscribe((change: MediaChange) => {
+      this.sideNavMode = change.mqAlias === ('xs' || 'sm') ? 'over' : 'side';
     });
   }
   ngOnInit(): void {

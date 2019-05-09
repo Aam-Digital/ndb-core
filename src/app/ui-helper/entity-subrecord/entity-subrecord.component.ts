@@ -1,16 +1,19 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, ViewChild, HostListener} from '@angular/core';
 import {MatDialog, MatSnackBar, MatSort, MatTableDataSource} from '@angular/material';
 import {ConfirmationDialogService} from '../confirmation-dialog/confirmation-dialog.service';
 import {Entity} from '../../entity/entity';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {ColumnDescription} from './column-description';
+import { MediaObserver, MediaChange} from '@angular/flex-layout';
+import {Subscription} from 'rxjs';
+
 
 @Component({
   selector: 'app-entity-subrecord',
   templateUrl: './entity-subrecord.component.html',
   styleUrls: ['./entity-subrecord.component.scss']
 })
-export class EntitySubrecordComponent implements OnInit, OnChanges {
+export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() records: Array<Entity>;
   @Input() columns: Array<ColumnDescription>;
@@ -21,14 +24,22 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
   columnsToDisplay = [];
   recordsEditing = new Map<string, boolean>();
   originalRecords = [];
+  screenWidth = '';
+  flexMediaWatcher: Subscription;
 
   @ViewChild(MatSort) sort: MatSort;
-
 
   constructor(private _entityMapper: EntityMapperService,
               private _snackBar: MatSnackBar,
               private _confirmationDialog: ConfirmationDialogService,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+              private media: MediaObserver) {
+    this.flexMediaWatcher = this.media.media$.subscribe((change: MediaChange) => {
+      if (change.mqAlias !== this.screenWidth) {
+        this.screenWidth = change.mqAlias;
+        this.setupTable();
+      }
+    })
   }
 
   ngOnInit() {
@@ -44,7 +55,12 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
     if (changes['columns']) {
       this.columnsToDisplay = this.columns.map(e => e.name);
       this.columnsToDisplay.push('actions');
+      this.setupTable();
     }
+  }
+
+  ngOnDestroy() {
+    this.flexMediaWatcher.unsubscribe();
   }
 
 
@@ -138,6 +154,55 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
     }
 
     col.selectValues = col.allSelectValues.filter(v => v.value.includes(input) || v.label.includes(input));
+  }
+
+  /**
+   * resets columnsToDisplay depending on current screensize
+   */
+  setupTable() {
+    if (this.columns !== undefined && this.screenWidth !== '') {
+      const columnsHelpArray = [];
+      const entitySubrecordComponent = this;
+      this.columns.forEach( function(this, col) {if (entitySubrecordComponent.isVisible(col)) {
+        columnsHelpArray.push(col.name);
+      } } );
+      this.columnsToDisplay = columnsHelpArray;
+      if (this.screenWidth !== 'xs') {
+        this.columnsToDisplay.push('actions');
+      }
+    }
+  }
+
+  /**
+   * isVisible
+   * compares the current screensize to the columns' property visibleFrom. screensize < visibleFrom? column not displayed
+   * @param col column that is checked
+   * @return returns true if column is visible
+   */
+  isVisible(col) {
+    let returnVal;
+    switch (col.visibleFrom) {
+      case 'xl': {
+        returnVal = (this.screenWidth.match('xl'));
+        break;
+      }
+      case 'lg': {
+        returnVal = (this.screenWidth.match('(lg|xl)'));
+        break;
+      }
+      case 'md': {
+        returnVal = (this.screenWidth.match('(md|lg|xl)'));
+        break;
+      }
+      case 'sm': {
+        returnVal = (this.screenWidth.match('(sm|md|lg|xl)'));
+        break;
+      }
+      default: {
+        returnVal = true;
+      }
+    }
+    return returnVal;
   }
 
 }

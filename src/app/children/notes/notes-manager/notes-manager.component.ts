@@ -5,9 +5,9 @@ import {Note} from '../note';
 import {NoteDetailsComponent} from '../note-details/note-details.component';
 import {Subscription} from 'rxjs'
 import {SessionService} from '../../../session/session.service';
-import {FilterSelection} from '../../../ui-helper/filter-selection';
+import {FilterSelection} from '../../../ui-helper/filter-selection/filter-selection';
 import {WarningLevel} from '../../attendance/warning-level';
-import {MediaChange, ObservableMedia} from '@angular/flex-layout';
+import {MediaChange, MediaObserver} from '@angular/flex-layout';
 
 @Component({
   selector: 'app-notes-manager',
@@ -18,7 +18,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
 
 
   watcher: Subscription;
-  activeMediaQuery= '';  
+  activeMediaQuery = '';
   entityList = new Array<Note>();
   notesDataSource = new MatTableDataSource();
 
@@ -58,7 +58,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
   constructor(private entityMapper: EntityMapperService,
               private dialog: MatDialog,
               private sessionService: SessionService,
-              private media: ObservableMedia) { }
+              private media: MediaObserver) { }
 
   ngOnInit() {
     this.entityMapper.loadType<Note>(Note)
@@ -67,8 +67,8 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
         this.applyFilterSelections();
     });
     this.displayColumnGroup('standard');
-    this.watcher=this.media.subscribe((change: MediaChange) => {
-      if(change.mqAlias=='xs' || change.mqAlias=='sm'){
+    this.watcher = this.media.media$.subscribe((change: MediaChange) => {
+      if (change.mqAlias === 'xs' || change.mqAlias === 'sm') {
         console.log('smaller screen toggled');
         this.displayColumnGroup('mobile');
       }

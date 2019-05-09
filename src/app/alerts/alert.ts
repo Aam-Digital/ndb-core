@@ -17,6 +17,7 @@
 
 import {MatSnackBarRef} from '@angular/material';
 import {AlertComponent} from './alerts/alert.component';
+import {AlertDisplay} from './alert-display';
 
 export class Alert {
   static SUCCESS = 'success';
@@ -28,6 +29,7 @@ export class Alert {
   public notificationRef: MatSnackBarRef<AlertComponent>;
 
   constructor(public message: string,
-              public type: string) {
+              public type: string,
+              public display: AlertDisplay) {
   }
 }

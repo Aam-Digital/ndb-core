@@ -23,13 +23,13 @@ export class ChildAttendanceComponent implements OnInit {
 
   columns: Array<ColumnDescription> = [
     new ColumnDescription('month', 'Month', 'month', null,
-      (v: Date) => this.datePipe.transform(v, 'yyyy-MM')),
-    new ColumnDescription('daysAttended', 'Present', 'number'),
-    new ColumnDescription('daysWorking', 'Working Days', 'number'),
+      (v: Date) => this.datePipe.transform(v, 'yyyy-MM'), 'xs'),
+    new ColumnDescription('daysAttended', 'Present', 'number', null, undefined,  'xs'),
+    new ColumnDescription('daysWorking', 'Working Days', 'number',  null, undefined, 'xs'),
     new ColumnDescription('getAttendancePercentage', 'Attended', 'function', null,
-      (v: number) => this.percentPipe.transform(v, '1.0-0')),
-    new ColumnDescription('daysExcused', 'Excused', 'number'),
-    new ColumnDescription('remarks', 'Remarks', 'textarea'),
+      (v: number) => this.percentPipe.transform(v, '1.0-0'), 'md'),
+    new ColumnDescription('daysExcused', 'Excused', 'number', null, undefined, 'md'),
+    new ColumnDescription('remarks', 'Remarks', 'textarea', null, undefined, 'xl'),
   ];
 
 
