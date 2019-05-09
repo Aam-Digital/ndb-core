@@ -7,6 +7,7 @@ import {WarningLevel} from '../children/attendance/warning-level';
 import {AttendanceStatus} from '../children/attendance/attendance-day';
 import {ChildSchoolRelation} from '../children/childSchoolRelation';
 import {School} from '../schools/school';
+import { User } from 'app/user/user';
 
 export class DemoData {
 
@@ -16,8 +17,27 @@ export class DemoData {
       .concat(this.getSchoolEntities())
       .concat(this.getMonthAttendanceEntities())
       .concat(this.getNoteEntities())
-      .concat(this.getChildSchoolRelationEntities());
+      .concat(this.getChildSchoolRelationEntities())
+      .concat(this.getUserEntities());
   }
+
+  //create demo users
+  static getUserEntities(): User[]{
+    const users = [];
+
+      const demoUser = new User('demo');
+      demoUser.name = 'demo';
+      demoUser.setNewPassword('pass');
+      users.push(demoUser);
+
+      const u1 = new User('demo-admin');
+      u1.name = 'demo-admin';
+      u1.setNewPassword('pass');
+      u1.admin=true;
+
+      users.push(u1);
+      return users;
+ }
 
   static getChildEntities(): Child[] {
     const data = [];

@@ -41,11 +41,11 @@ export class MockDatabaseManagerService extends DatabaseManagerService {
   private initDemoData() {
     const entityMapper = new EntityMapperService(this.database);
 
-    // add demo user
+   /*  // add demo user
     const demoUser = new User('demo');
     demoUser.name = 'demo';
     demoUser.setNewPassword('pass');
-    entityMapper.save(demoUser);
+    entityMapper.save(demoUser); */
 
     DemoData.getAllDemoEntities()
       .forEach(c => entityMapper.save(c));
