@@ -1,7 +1,7 @@
 import {Component, HostListener, Input, OnInit} from '@angular/core';
-import {School} from '../school';
 import {Router} from '@angular/router';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
+import {School} from '../school';
 
 @Component({
   selector: 'app-school-block',

@@ -59,7 +59,7 @@ import {AserComponent} from './aser/aser.component';
 import {FilterPipeModule} from 'ngx-filter-pipe';
 import { NotesManagerComponent } from './notes/notes-manager/notes-manager.component';
 import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/add-month-attendance.component';
-import { ViewSchoolsComponentComponent } from './view-schools-component/view-schools-component.component';
+import { ViewSchoolsComponent } from './view-schools-component/view-schools.component';
 import { AttendanceDaysComponent } from './attendance/attendance-days/attendance-days.component';
 import { AttendanceDetailsComponent } from './attendance/attendance-details/attendance-details.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -67,6 +67,7 @@ import { AddDayAttendanceComponent } from './attendance/add-day-attendance/add-d
 import { AttendanceWeekDashboardComponent } from './attendance/attendance-week-dashboard/attendance-week-dashboard.component';
 import {AttendanceDayBlockComponent} from './attendance/attendance-days/attendance-day-block.component';
 import { AttendanceManagerComponent } from './attendance/attendance-manager/attendance-manager.component';
+import { HealthCheckupComponent } from './health-checkup/health-checkup.component';
 
 
 @NgModule({
@@ -119,13 +120,14 @@ import { AttendanceManagerComponent } from './attendance/attendance-manager/atte
     AserComponent,
     NotesManagerComponent,
     AddMonthAttendanceComponent,
-    ViewSchoolsComponentComponent,
+    ViewSchoolsComponent,
     AttendanceDayBlockComponent,
     AttendanceDaysComponent,
     AttendanceDetailsComponent,
     AddDayAttendanceComponent,
     AttendanceWeekDashboardComponent,
     AttendanceManagerComponent,
+    HealthCheckupComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
@@ -134,7 +136,7 @@ import { AttendanceManagerComponent } from './attendance/attendance-manager/atte
     ChildrenCountDashboardComponent,
     AttendanceAverageDashboardComponent,
     AttendanceWarningsDashboardComponent,
-    ViewSchoolsComponentComponent,
+    ViewSchoolsComponent,
     AttendanceWarningsDashboardComponent,
     AttendanceWeekDashboardComponent,
     AttendanceDaysComponent,

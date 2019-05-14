@@ -13,6 +13,7 @@ import {
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {MockDatabase} from '../../database/mock-database';
 import {ConfirmationDialogService} from '../confirmation-dialog/confirmation-dialog.service';
+import { CommonModule } from '@angular/common';
 
 describe('EntitySubrecordComponent', () => {
   let component: EntitySubrecordComponent;
@@ -26,7 +27,7 @@ describe('EntitySubrecordComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ EntitySubrecordComponent ],
       imports: [MatTableModule, MatFormFieldModule, MatIconModule,
-        MatSnackBarModule, MatSelectModule, MatDialogModule, MatAutocompleteModule],
+        MatSnackBarModule, MatSelectModule, MatDialogModule, MatAutocompleteModule, CommonModule],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: ConfirmationDialogService, useClass: ConfirmationDialogService },

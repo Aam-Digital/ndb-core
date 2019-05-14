@@ -15,21 +15,17 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { School } from './school';
+import { Entity } from '../../entity/entity';
 
-describe('School', () => {
+/**
+ * Model Class for the Health Checks that are taken for a Child.
+ * It stores the Child's ID in a String and both, the height and weight in cm as a number, and the Date
+ */
+export class HealthCheck extends Entity {
+    static ENTITY_TYPE = 'HealthCheck';
 
-  it('has ID', function () {
-    const id = 'test1';
-    const entity = new School(id);
-
-    expect(entity.getId()).toBe(id);
-  });
-
-  it('has correct type/prefix', function () {
-    const id = 'test1';
-    const entity = new School(id);
-
-    expect(entity.getType()).toBe(School.ENTITY_TYPE);
-  });
-});
+    child: string;
+    date: Date;
+    height: number;
+    weight: number;
+}

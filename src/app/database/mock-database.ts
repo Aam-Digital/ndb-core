@@ -18,6 +18,7 @@
 import { Database } from './database';
 import {Note} from '../children/notes/note';
 import {AttendanceMonth} from '../children/attendance/attendance-month';
+import {ChildSchoolRelation} from '../children/childSchoolRelation';
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -143,6 +144,14 @@ export class MockDatabase extends Database {
         reduce = this.getStatsReduceFun((e: AttendanceMonth) => e.student,
           (e: AttendanceMonth) => (e.daysAttended / (e.daysWorking - e.daysExcused)));
         break;
+      case 'childSchoolRelations_index/by_child':
+        filter = (e) => e._id.startsWith( ChildSchoolRelation.ENTITY_TYPE) && e.childId === options.key;
+        break;
+      case 'childSchoolRelations_index/by_school':
+        filter = (e) => e._id.startsWith( ChildSchoolRelation.ENTITY_TYPE) && !e.end && e.schoolId === options.key;
+        break;
+      case 'childSchoolRelations_index/by_date':
+        return this.filterForLatestRelationOfChild(options.endkey, options.limit);
     }
     if (filter !== undefined) {
       if (reduce !== undefined) {
@@ -161,6 +170,42 @@ export class MockDatabase extends Database {
 
     console.warn('MockDatabase does not implement "query()"');
     return Promise.resolve({ rows: []});
+  }
+
+  private async filterForLatestRelationOfChild(childId: string, limit: number): Promise<any> {
+    return new Promise(resolve => {
+      this.getAll().then(all => {
+        const relations = all.filter(e => e._id.startsWith(ChildSchoolRelation.ENTITY_TYPE));
+        const sorted = relations.sort((a, b) => {
+          const aValue = a.childId + '_' + this.zeroPad(new Date(a.start).valueOf());
+          const bValue = b.childId + '_' + this.zeroPad(new Date(b.start).valueOf());
+          return aValue < bValue ? 1 : aValue === bValue ? 0 : -1;
+        });
+        const filtered: ChildSchoolRelation[] = sorted.filter(doc => doc.childId === childId);
+        let results: {doc: ChildSchoolRelation}[] = filtered.map(relation => { return {doc: relation} });
+        if (limit) {
+          results = results.slice(0, limit)
+        }
+        resolve({rows: results});
+      })
+    })
+  }
+
+  /**
+   * This function is useful when comparing numbers on string level.
+   * For example: 123 < 1111 but "123" > "1111"
+   * That is why its being transformed to "0123" and "1111" so "0123" < "1111"
+   * @param str the string that should be padded with zeros
+   * @param length the length to which the string should be padded
+   * @return string of the padded input
+   */
+  private zeroPad(str: string | number, length: number = 14): string {
+    // with ECMAScript 2017 you can do a one-liner: 'return str.toString().padStart(length, '0');'
+    let res = str.toString();
+    while (res.length < length) {
+      res = '0' + res;
+    }
+    return res
   }
 
   private isWithinLastMonths(date: Date, now: Date, numberOfMonths: number): boolean {

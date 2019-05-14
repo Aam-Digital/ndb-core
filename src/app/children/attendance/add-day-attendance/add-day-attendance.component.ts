@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {ChildrenService} from '../../children.service';
-import {Child} from '../../child';
 import {FilterSelection} from '../../../ui-helper/filter-selection/filter-selection';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
 import {AttendanceDay, AttendanceStatus} from '../attendance-day';
 import {AttendanceMonth} from '../attendance-month';
+import {ChildWithRelation} from '../../childWithRelation';
 
 @Component({
   selector: 'app-add-day-attendance',
@@ -17,15 +17,15 @@ export class AddDayAttendanceComponent implements OnInit {
   day = new Date();
   attendanceType: string;
   center: string;
-  studentGroups = new FilterSelection<Child>('Groups', [
-    { key: 'all', label: 'All Students', filterFun: (c: Child) => c.center === this.center}
+  studentGroups = new FilterSelection<ChildWithRelation>('Groups', [
+    { key: 'all', label: 'All Students', filterFun: (c: ChildWithRelation) => c.center === this.center}
     ]);
-  rollCallList: {child: Child, attendanceDay: AttendanceDay, attendanceMonth: AttendanceMonth}[] = [];
+  rollCallList: {child: ChildWithRelation, attendanceDay: AttendanceDay, attendanceMonth: AttendanceMonth}[] = [];
   rollCallIndex = 0;
   rollCallListLoading;
 
   centers: string[];
-  children: Child[];
+  children: ChildWithRelation[];
 
   stages = [
     'Select Center',
@@ -38,7 +38,7 @@ export class AddDayAttendanceComponent implements OnInit {
               private entityMapper: EntityMapperService) { }
 
   ngOnInit() {
-    this.childrenService.getChildren().subscribe(children => {
+    this.childrenService.getChildrenWithRelation().then(children => {
       this.children = children.filter(c => c.isActive()).sort((a, b) => a.schoolClass > b.schoolClass ? 1 : -1);
       this.centers = this.children.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
     });
@@ -52,7 +52,12 @@ export class AddDayAttendanceComponent implements OnInit {
       .filter(c => c.center === this.center)
       .map(c => c.schoolId).filter((value, index, arr) => arr.indexOf(value) === index)
       .forEach(schoolId => {
-        const filterOption = { key: schoolId, label: schoolId, type: 'school', filterFun: (c: Child) => c.schoolId === schoolId };
+        const filterOption = {
+          key: schoolId,
+          label: schoolId,
+          type: 'school',
+          filterFun: (c: ChildWithRelation) => c.schoolId === schoolId
+        };
         this.studentGroups.options.push(filterOption);
       });
 
@@ -71,7 +76,7 @@ export class AddDayAttendanceComponent implements OnInit {
     this.currentStage = 2;
   }
 
-  private loadMonthAttendanceRecords(children: Child[], monthsAttendances: AttendanceMonth[]) {
+  private loadMonthAttendanceRecords(children: ChildWithRelation[], monthsAttendances: AttendanceMonth[]) {
     this.rollCallIndex = 0;
 
     children.forEach(child => {
