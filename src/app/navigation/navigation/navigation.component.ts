@@ -40,6 +40,7 @@ export class NavigationComponent implements OnInit {
 
   ngOnInit(): void {
     this.menu_main = this._navigationItemService.getMenuItems().filter(e => !e.requiresAdmin || this.adminGuard.isAdmin());
+    console.log(this.menu_main);
   }
 
   logout() {

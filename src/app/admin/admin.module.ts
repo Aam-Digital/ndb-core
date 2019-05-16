@@ -7,7 +7,6 @@ import {PapaParseModule} from 'ngx-papaparse';
 import {AlertsModule} from '../alerts/alerts.module';
 import {UiHelperModule} from '../ui-helper/ui-helper.module';
 import {AdminGuard} from './admin.guard';
-import { AdminInterfaceComponent } from './admin-interface/admin-interface.component';
 import { UserListComponent } from './user-list/user-list.component';
 
 @NgModule({
@@ -20,7 +19,7 @@ import { UserListComponent } from './user-list/user-list.component';
     AlertsModule,
     UiHelperModule,
   ],
-  declarations: [AdminComponent, AdminInterfaceComponent, UserListComponent],
+  declarations: [AdminComponent, UserListComponent],
   providers: [AdminGuard],
 })
 export class AdminModule { }

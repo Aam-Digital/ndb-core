@@ -93,6 +93,7 @@ export class AppModule {
     _navigationItemsService.addMenuItem(new MenuItem('Notes', 'file-text', ['/note']));
     _navigationItemsService.addMenuItem(new MenuItem('Attendance Register', 'table', ['/attendance']));
     _navigationItemsService.addMenuItem(new MenuItem('Admin', 'wrench', ['/admin'], true));
+    _navigationItemsService.addMenuItem(new MenuItem('Users', 'user', ['/user-list'], true));
   }
 }
 
