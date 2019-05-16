@@ -17,6 +17,7 @@
 
 import { Entity } from '../../entity/entity';
 import {WarningLevel} from '../attendance/warning-level';
+import { dbProperty } from '../../entity/db-decorators';
 
 
 export class Aser extends Entity {
@@ -30,7 +31,7 @@ export class Aser extends Entity {
     'math': 'string=',
     'remarks': 'string',
   });
-
+  
 
   static ReadingLevels = [
     'Nothing',
@@ -47,7 +48,7 @@ export class Aser extends Entity {
     'Division'
   ];
 
-
+  @dbProperty
   child: string; // id of Child entity
   date: Date;
   hindi = '';
