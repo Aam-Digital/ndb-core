@@ -14,8 +14,8 @@ export class UserListComponent implements OnInit {
 
   columns: Array<ColumnDescription> = [
   new ColumnDescription('name', 'Username', 'string'),
-  new ColumnDescription('password', 'Password', 'string'),
-  new ColumnDescription('admin', 'Role', 'boolean'), 
+  new ColumnDescription('password', 'Password', 'string', null, (password: String) => password='***'),
+  new ColumnDescription('admin', 'Role', 'boolean', null, (role: Boolean) => role ? 'admin' : 'user')
   ]
 
   constructor(private entityMapperService: EntityMapperService) { }
@@ -33,7 +33,7 @@ export class UserListComponent implements OnInit {
     }
 
   generateNewRecordFactory(){
-    
+
   }
   
 
