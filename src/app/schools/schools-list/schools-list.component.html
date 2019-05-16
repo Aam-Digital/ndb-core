@@ -17,7 +17,12 @@
 
     <div fxFlex='25' class='align-form-field'>
       <button mat-stroked-button color="accent" (click)="addSchoolClick()" fxFlexAlign="end">
-        <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>Add New
+        <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>
+        <span fxHide.lt-sm>
+          <span fxHide.lt-md="true">
+          Add New
+          </span>
+        </span>
       </button>
     </div>
   </div>
