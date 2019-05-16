@@ -8,6 +8,7 @@ import {AlertsModule} from '../alerts/alerts.module';
 import {UiHelperModule} from '../ui-helper/ui-helper.module';
 import {AdminGuard} from './admin.guard';
 import { AdminInterfaceComponent } from './admin-interface/admin-interface.component';
+import { UserListComponent } from './user-list/user-list.component';
 
 @NgModule({
   imports: [
@@ -19,7 +20,7 @@ import { AdminInterfaceComponent } from './admin-interface/admin-interface.compo
     AlertsModule,
     UiHelperModule,
   ],
-  declarations: [AdminComponent, AdminInterfaceComponent],
+  declarations: [AdminComponent, AdminInterfaceComponent, UserListComponent],
   providers: [AdminGuard],
 })
 export class AdminModule { }
