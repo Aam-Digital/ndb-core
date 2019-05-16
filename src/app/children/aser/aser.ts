@@ -17,21 +17,10 @@
 
 import { Entity } from '../../entity/entity';
 import {WarningLevel} from '../attendance/warning-level';
-import { dbProperty } from '../../entity/db-decorators';
+import {dbClass, dbProperty} from '../../entity/db-decorators';
 
-
+@dbClass('Aser')
 export class Aser extends Entity {
-  static ENTITY_TYPE = 'Aser';
-  static schema = Entity.schema.extend({
-    'child': 'string',
-    'date': 'Date',
-    'hindi': 'string=',
-    'bengali': 'string=',
-    'english': 'string=',
-    'math': 'string=',
-    'remarks': 'string',
-  });
-  
 
   static ReadingLevels = [
     'Nothing',
@@ -48,13 +37,19 @@ export class Aser extends Entity {
     'Division'
   ];
 
-  @dbProperty
+  @dbProperty('string')
   child: string; // id of Child entity
+  @dbProperty('Date')
   date: Date;
+  @dbProperty('string=')
   hindi = '';
+  @dbProperty('string=')
   bengali = '';
+  @dbProperty('string=')
   english = '';
+  @dbProperty('string=')
   math = '';
+  @dbProperty('string')
   remarks = '';
 
 
