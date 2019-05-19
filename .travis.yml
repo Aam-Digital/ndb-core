@@ -56,7 +56,7 @@ deploy:
     on:
       tags: true
   - provider: pages
-    local_dir: doc/combodoc
+    local_dir: doc/compodoc
     github_token: $GH_REPO_TOKEN
     on:
       branch: compodoc
