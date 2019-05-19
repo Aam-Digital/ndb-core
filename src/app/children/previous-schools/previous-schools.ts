@@ -22,12 +22,11 @@ import {WarningLevel} from '../attendance/warning-level';
 export class PreviousSchools extends Entity {
   static ENTITY_TYPE = 'ChildSchoolRelation';
 
-  schoolId: string;
+  name: string;
 
   child: string; // id of Child entity
   from: Date;
   to: Date;
-  date: Date;
 
 
   public load(data: any) {

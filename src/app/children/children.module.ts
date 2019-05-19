@@ -59,7 +59,7 @@ import {AserComponent} from './aser/aser.component';
 import {FilterPipeModule} from 'ngx-filter-pipe';
 import { NotesManagerComponent } from './notes/notes-manager/notes-manager.component';
 import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/add-month-attendance.component';
-import { ViewSchoolsComponentComponent } from './view-schools-component/view-schools-component.component';
+import { ViewSchoolsComponent } from './view-schools-component/view-schools.component';
 import { AttendanceDaysComponent } from './attendance/attendance-days/attendance-days.component';
 import { AttendanceDetailsComponent } from './attendance/attendance-details/attendance-details.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -121,7 +121,7 @@ import { PreviousSchoolsComponent } from './previous-schools/previous-schools.co
     AserComponent,
     NotesManagerComponent,
     AddMonthAttendanceComponent,
-    ViewSchoolsComponentComponent,
+    ViewSchoolsComponent,
     AttendanceDayBlockComponent,
     AttendanceDaysComponent,
     AttendanceDetailsComponent,
@@ -138,7 +138,7 @@ import { PreviousSchoolsComponent } from './previous-schools/previous-schools.co
     ChildrenCountDashboardComponent,
     AttendanceAverageDashboardComponent,
     AttendanceWarningsDashboardComponent,
-    ViewSchoolsComponentComponent,
+    ViewSchoolsComponent,
     AttendanceWarningsDashboardComponent,
     AttendanceWeekDashboardComponent,
     AttendanceDaysComponent,

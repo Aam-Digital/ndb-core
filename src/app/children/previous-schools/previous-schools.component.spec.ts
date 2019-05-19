@@ -20,9 +20,9 @@ describe('PreviousSchoolsComponent', () => {
     getChild: (id) => {
       return of([new Child('22')]);
     },
-    getPreviousSchoolsOfChild: (id) => {
-      return of([]);
-    }
+    // getPreviousSchoolsOfChild: (id) => {
+    //   return of([]);
+    // }
   };
   let mockEntityMapper;
 

@@ -64,7 +64,7 @@ export class ViewSchoolsComponentComponent implements OnInit {
                   childSchoolRelation: r,
                 });
                 this.updateViewableItems();
-                console.log(this.childSchoolRelations);
+                //console.log(this.childSchoolRelations);
               })
           }
         }
