@@ -8,7 +8,8 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint ndb-core ndb-core-e2e --type-check",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "compodoc": "npx compodoc -p src/tsconfig.app.json --includes documentation_sources --includesName test_additional_docs"
   },
   "private": true,
   "dependencies": {
@@ -44,6 +45,7 @@
     "@angular-devkit/build-angular": "^0.12.4",
     "@angular/cli": "^7.2.1",
     "@angular/compiler-cli": "^7.2.0",
+    "@compodoc/compodoc": "^1.1.9",
     "@types/crypto-js": "^3.1.43",
     "@types/file-saver": "^2.0.0",
     "@types/jasmine": "^3.3.5",
