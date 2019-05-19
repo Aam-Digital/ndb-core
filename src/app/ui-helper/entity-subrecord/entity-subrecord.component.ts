@@ -50,7 +50,12 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
     }
   }
 
-
+  /**
+   * 
+   * @param record uses the input from the form field to create a record
+   * curently has ugly workaround for entity type user because the id is dependent from the users input
+   * this workaround is highly WIP because its buggy aswell for creating a user twice somehow. 
+   */
   save(record: Entity) {
     if(record.getType()==='User'){
       let user: User;
