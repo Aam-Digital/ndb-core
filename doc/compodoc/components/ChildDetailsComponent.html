@@ -1,0 +1,1871 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	      <link rel="stylesheet" href="../styles/style.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">ndb-core documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li>Components</li>
+  <li>ChildDetailsComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#info" role="tab" id="info-tab" data-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li >
+            <a href="#source" role="tab" id="source-tab" data-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li >
+            <a href="#templateData" role="tab" id="templateData-tab" data-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li >
+            <a href="#styleData" role="tab" id="styleData-tab" data-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li >
+            <a href="#tree" role="tab" id="tree-tab" data-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="c-info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/children/child-details/child-details.component.ts</code>
+</p>
+
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                    <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
+    </p>
+
+
+<section>
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-child-details</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./child-details.component.css</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./child-details.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#child">child</a>
+                            </li>
+                            <li>
+                                <a href="#creatingNew">creatingNew</a>
+                            </li>
+                            <li>
+                                <a href="#currentSchool">currentSchool</a>
+                            </li>
+                            <li>
+                                <a href="#documentStatus">documentStatus</a>
+                            </li>
+                            <li>
+                                <a href="#editing">editing</a>
+                            </li>
+                            <li>
+                                <a href="#eyeStatusValues">eyeStatusValues</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#fb">fb</a>
+                            </li>
+                            <li>
+                                <a href="#form">form</a>
+                            </li>
+                            <li>
+                                <a href="#gender">gender</a>
+                            </li>
+                            <li>
+                                <a href="#genders">genders</a>
+                            </li>
+                            <li>
+                                <a href="#healthCheckForm">healthCheckForm</a>
+                            </li>
+                            <li>
+                                <a href="#schools">schools</a>
+                            </li>
+                            <li>
+                                <a href="#vaccinationStatusValues">vaccinationStatusValues</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#assignFormValuesToChild">assignFormValuesToChild</a>
+                            </li>
+                            <li>
+                                <a href="#generateNewRecordFactory">generateNewRecordFactory</a>
+                            </li>
+                            <li>
+                                <a href="#initForm">initForm</a>
+                            </li>
+                            <li>
+                                <a href="#loadChild">loadChild</a>
+                            </li>
+                            <li>
+                                <a href="#navigateBack">navigateBack</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit">ngOnInit</a>
+                            </li>
+                            <li>
+                                <a href="#removeChild">removeChild</a>
+                            </li>
+                            <li>
+                                <a href="#save">save</a>
+                            </li>
+                            <li>
+                                <a href="#switchEdit">switchEdit</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(entityMapperService: <a href="../injectables/EntityMapperService.html">EntityMapperService</a>, childrenService: <a href="../injectables/ChildrenService.html">ChildrenService</a>, route: <a href="https://angular.io/api/router/ActivatedRoute" target="_blank">ActivatedRoute</a>, fb: <a href="https://angular.io/api/forms/FormBuilder" target="_blank">FormBuilder</a>, router: <a href="https://angular.io/api/router/Router" target="_blank">Router</a>, location: <a href="https://angular.io/api/common/Location" target="_blank">Location</a>, snackBar: MatSnackBar, confirmationDialog: <a href="../injectables/ConfirmationDialogService.html">ConfirmationDialogService</a>, alertService: <a href="../injectables/AlertService.html">AlertService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="107" class="link-to-prism">src/app/children/child-details/child-details.component.ts:107</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>entityMapperService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/EntityMapperService.html" target="_self" >EntityMapperService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>childrenService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ChildrenService.html" target="_self" >ChildrenService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>route</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="https://angular.io/api/router/ActivatedRoute" target="_blank" >ActivatedRoute</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>fb</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="https://angular.io/api/forms/FormBuilder" target="_blank" >FormBuilder</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>router</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="https://angular.io/api/router/Router" target="_blank" >Router</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>location</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="https://angular.io/api/common/Location" target="_blank" >Location</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>snackBar</td>
+                                                  
+                                                        <td>
+                                                                    <code>MatSnackBar</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>confirmationDialog</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ConfirmationDialogService.html" target="_self" >ConfirmationDialogService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>alertService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AlertService.html" target="_self" >AlertService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+
+
+    <section>
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="assignFormValuesToChild"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Private</span>
+                            assignFormValuesToChild
+                        </b>
+                        <a href="#assignFormValuesToChild"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>assignFormValuesToChild(child: <a href="../classes/Child.html">Child</a>, form: <a href="https://angular.io/api/forms/FormGroup" target="_blank">FormGroup</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="164"
+                            class="link-to-prism">src/app/children/child-details/child-details.component.ts:164</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>child</td>
+                                    <td>
+                                                <code><a href="../classes/Child.html" target="_self" >Child</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>form</td>
+                                    <td>
+                                                <code><a href="https://angular.io/api/forms/FormGroup" target="_blank" >FormGroup</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="generateNewRecordFactory"></a>
+                    <span class="name">
+                        <b>
+                            generateNewRecordFactory
+                        </b>
+                        <a href="#generateNewRecordFactory"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>generateNewRecordFactory()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="60"
+                            class="link-to-prism">src/app/children/child-details/child-details.component.ts:60</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="initForm"></a>
+                    <span class="name">
+                        <b>
+                            initForm
+                        </b>
+                        <a href="#initForm"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>initForm()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="66"
+                            class="link-to-prism">src/app/children/child-details/child-details.component.ts:66</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadChild"></a>
+                    <span class="name">
+                        <b>
+                            loadChild
+                        </b>
+                        <a href="#loadChild"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>loadChild(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="126"
+                            class="link-to-prism">src/app/children/child-details/child-details.component.ts:126</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>id</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="navigateBack"></a>
+                    <span class="name">
+                        <b>
+                            navigateBack
+                        </b>
+                        <a href="#navigateBack"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>navigateBack()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="190"
+                            class="link-to-prism">src/app/children/child-details/child-details.component.ts:190</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <b>
+                            ngOnInit
+                        </b>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="121"
+                            class="link-to-prism">src/app/children/child-details/child-details.component.ts:121</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeChild"></a>
+                    <span class="name">
+                        <b>
+                            removeChild
+                        </b>
+                        <a href="#removeChild"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>removeChild()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="171"
+                            class="link-to-prism">src/app/children/child-details/child-details.component.ts:171</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="save"></a>
+                    <span class="name">
+                        <b>
+                            save
+                        </b>
+                        <a href="#save"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>save()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="150"
+                            class="link-to-prism">src/app/children/child-details/child-details.component.ts:150</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="switchEdit"></a>
+                    <span class="name">
+                        <b>
+                            switchEdit
+                        </b>
+                        <a href="#switchEdit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>switchEdit()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="145"
+                            class="link-to-prism">src/app/children/child-details/child-details.component.ts:145</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section>
+    
+        <h3 id="inputs">
+            Properties
+        </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="child"></a>
+                        <span class="name">
+                            <b>
+                            child</b>
+                            <a href="#child"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="../classes/ChildWithRelation.html" target="_self" >ChildWithRelation</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>new ChildWithRelation(new Child(&#x27;&#x27;))</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/children/child-details/child-details.component.ts:45</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="creatingNew"></a>
+                        <span class="name">
+                            <b>
+                            creatingNew</b>
+                            <a href="#creatingNew"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>false</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/children/child-details/child-details.component.ts:51</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="currentSchool"></a>
+                        <span class="name">
+                            <b>
+                            currentSchool</b>
+                            <a href="#currentSchool"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="../classes/School.html" target="_self" >School</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>new School(&#x27;&#x27;)</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/children/child-details/child-details.component.ts:46</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="documentStatus"></a>
+                        <span class="name">
+                            <b>
+                            documentStatus</b>
+                            <a href="#documentStatus"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>[]</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>[&#x27;OK (copy with us)&#x27;, &#x27;OK (copy needed for us)&#x27;, &#x27;needs correction&#x27;, &#x27;applied&#x27;, &#x27;doesn\&#x27;t have&#x27;, &#x27;not eligible&#x27;, &#x27;&#x27;]</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/children/child-details/child-details.component.ts:56</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="editing"></a>
+                        <span class="name">
+                            <b>
+                            editing</b>
+                            <a href="#editing"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>false</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/children/child-details/child-details.component.ts:52</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="eyeStatusValues"></a>
+                        <span class="name">
+                            <b>
+                            eyeStatusValues</b>
+                            <a href="#eyeStatusValues"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>[]</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>[&#x27;Good&#x27;, &#x27;Has Glasses&#x27;, &#x27;Needs Glasses&#x27;, &#x27;Needs Checkup&#x27;]</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/children/child-details/child-details.component.ts:57</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="fb"></a>
+                        <span class="name">
+                            <b>
+                                <span class="modifier">Public</span>
+                            fb</b>
+                            <a href="#fb"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://angular.io/api/forms/FormBuilder" target="_blank" >FormBuilder</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Decorators : </b>
+                            <br />
+                            <code>
+                                @Inject(FormBuilder)<br />
+                            </code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="113" class="link-to-prism">src/app/children/child-details/child-details.component.ts:113</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="form"></a>
+                        <span class="name">
+                            <b>
+                            form</b>
+                            <a href="#form"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://angular.io/api/forms/FormGroup" target="_blank" >FormGroup</a></code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/children/child-details/child-details.component.ts:49</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="gender"></a>
+                        <span class="name">
+                            <b>
+                            gender</b>
+                            <a href="#gender"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>Gender</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/children/child-details/child-details.component.ts:53</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="genders"></a>
+                        <span class="name">
+                            <b>
+                            genders</b>
+                            <a href="#genders"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>Gender</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/children/child-details/child-details.component.ts:55</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="healthCheckForm"></a>
+                        <span class="name">
+                            <b>
+                            healthCheckForm</b>
+                            <a href="#healthCheckForm"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://angular.io/api/forms/FormGroup" target="_blank" >FormGroup</a></code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/children/child-details/child-details.component.ts:50</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="schools"></a>
+                        <span class="name">
+                            <b>
+                            schools</b>
+                            <a href="#schools"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="../classes/School.html" target="_self" >School[]</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>[]</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/children/child-details/child-details.component.ts:47</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="vaccinationStatusValues"></a>
+                        <span class="name">
+                            <b>
+                            vaccinationStatusValues</b>
+                            <a href="#vaccinationStatusValues"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>[]</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>[&#x27;Good&#x27;, &#x27;Vaccination Due&#x27;, &#x27;Needs Checking&#x27;, &#x27;No Card/Information&#x27;]</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/children/child-details/child-details.component.ts:58</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="c-source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {Component, Inject, OnInit} from &#x27;@angular/core&#x27;;
+import {Child} from &#x27;../child&#x27;;
+import {EntityMapperService} from &#x27;../../entity/entity-mapper.service&#x27;;
+import {Gender} from &#x27;../Gender&#x27;;
+import {ActivatedRoute, Router} from &#x27;@angular/router&#x27;;
+import {FormBuilder, FormGroup, Validators} from &#x27;@angular/forms&#x27;;
+import {MatSnackBar} from &#x27;@angular/material&#x27;;
+import {Location} from &#x27;@angular/common&#x27;;
+import {ConfirmationDialogService} from &#x27;../../ui-helper/confirmation-dialog/confirmation-dialog.service&#x27;;
+import * as uniqid from &#x27;uniqid&#x27;;
+import {AlertService} from &#x27;../../alerts/alert.service&#x27;;
+import {ChildrenService} from &#x27;../children.service&#x27;;
+import {School} from &#x27;../../schools/school&#x27;;
+import {ChildWithRelation} from &#x27;../childWithRelation&#x27;;
+import {HealthCheck} from &#x27;../health-checkup/health-check&#x27;;
+import {EntitySubrecordComponent} from &#x27;../../ui-helper/entity-subrecord/entity-subrecord.component&#x27;;
+import {ColumnDescription} from &#x27;../../ui-helper/entity-subrecord/column-description&#x27;;
+
+
+
+@Component({
+  selector: &#x27;app-child-details&#x27;,
+  templateUrl: &#x27;./child-details.component.html&#x27;,
+  styleUrls: [&#x27;./child-details.component.css&#x27;]
+})
+export class ChildDetailsComponent implements OnInit {
+
+  child: ChildWithRelation &#x3D; new ChildWithRelation(new Child(&#x27;&#x27;));
+  currentSchool: School &#x3D; new School(&#x27;&#x27;);
+  schools: School[] &#x3D; [];
+
+  form: FormGroup;
+  healthCheckForm: FormGroup;
+  creatingNew &#x3D; false;
+  editing &#x3D; false;
+  gender &#x3D; Gender;
+
+  genders &#x3D; Gender;
+  documentStatus &#x3D; [&#x27;OK (copy with us)&#x27;, &#x27;OK (copy needed for us)&#x27;, &#x27;needs correction&#x27;, &#x27;applied&#x27;, &#x27;doesn\&#x27;t have&#x27;, &#x27;not eligible&#x27;, &#x27;&#x27;];
+  eyeStatusValues &#x3D; [&#x27;Good&#x27;, &#x27;Has Glasses&#x27;, &#x27;Needs Glasses&#x27;, &#x27;Needs Checkup&#x27;];
+  vaccinationStatusValues &#x3D; [&#x27;Good&#x27;, &#x27;Vaccination Due&#x27;, &#x27;Needs Checking&#x27;, &#x27;No Card/Information&#x27;];
+
+  generateNewRecordFactory() {
+    // define values locally because &#x27;this&#x27; is a different scope after passing a function as input to another component
+    const child &#x3D; this.child.getId();
+  }
+
+
+  initForm() {
+    this.form &#x3D; this.fb.group({
+      name:           [{value: this.child.name,           disabled: !this.editing}, Validators.required],
+      // gender:         [{value: this.child.gender}], // reactive forms seem broken for mat-select, using ngModel instead
+      projectNumber:  [{value: this.child.projectNumber,  disabled: !this.editing}],
+      dateOfBirth:    [{value: this.child.dateOfBirth,    disabled: !this.editing}],
+      motherTongue:   [{value: this.child.motherTongue,   disabled: !this.editing}],
+      religion:       [{value: this.child.religion,       disabled: !this.editing}],
+
+      center:         [{value: this.child.center,         disabled: !this.editing}],
+      status:         [{value: this.child.status,         disabled: !this.editing}],
+      admissionDate:  [{value: this.child.admissionDate,  disabled: !this.editing}],
+
+      address:        [{value: this.child.address,        disabled: !this.editing}],
+      phone:          [{value: this.child.phone,          disabled: !this.editing}],
+      guardianName:   [{value: this.child.guardianName,   disabled: !this.editing}],
+      preferredTimeForGuardianMeeting: [{value: this.child.preferredTimeForGuardianMeeting, disabled: !this.editing}],
+
+      schoolClass:    [{value: this.child.schoolClass,    disabled: !this.editing}],
+
+      // aadhar:         [{value: this.child.has_aadhar,         disabled: !this.editing}],
+      // kanyashree:     [{value: this.child.has_kanyashree,     disabled: !this.editing}],
+      // bankAccount:    [{value: this.child.has_bankAccount,    disabled: !this.editing}],
+      // rationCard:     [{value: this.child.has_rationCard,     disabled: !this.editing}],
+      // bplCard:        [{value: this.child.has_BplCard,        disabled: !this.editing}],
+
+      // health_vaccinationStatus:    [{value: this.child.health_vaccinationStatus,    disabled: !this.editing}],
+      health_bloodGroup:          [{value: this.child.health_bloodGroup,    disabled: !this.editing}],
+      health_lastDentalCheckup:   [{value: this.child.health_lastDentalCheckup,    disabled: !this.editing}],
+      health_lastEyeCheckup:      [{value: this.child.health_lastEyeCheckup, disabled: !this.editing}],
+      // health_eyeHealthStatus:   [{value: this.child.health_eyeHealthStatus,    disabled: !this.editing}],
+      health_lastENTCheckup:      [{value: this.child.health_lastENTCheckup,    disabled: !this.editing}],
+      health_lastVitaminD:        [{value: this.child.health_lastVitaminD, disabled: !this.editing}],
+      health_lastDeworming:       [{value: this.child.health_lastDeworming, disabled: !this.editing}],
+
+      dropoutDate:    [{value: this.child.dropoutDate,    disabled: !this.editing}],
+      dropoutType:    [{value: this.child.dropoutType,    disabled: !this.editing}],
+      dropoutRemarks: [{value: this.child.dropoutRemarks, disabled: !this.editing}],
+    });
+
+
+  }
+
+
+  constructor(private entityMapperService: EntityMapperService,
+              private childrenService: ChildrenService,
+              private route: ActivatedRoute,
+              @Inject(FormBuilder) public fb: FormBuilder,
+              private router: Router,
+              private location: Location,
+              private snackBar: MatSnackBar,
+              private confirmationDialog: ConfirmationDialogService,
+              private alertService: AlertService,
+  ) { }
+
+  ngOnInit() {
+    this.route.paramMap.subscribe(params &#x3D;&gt; this.loadChild(params.get(&#x27;id&#x27;)));
+    this.entityMapperService.loadType&lt;School&gt;(School).then(results &#x3D;&gt; this.schools &#x3D; results);
+  }
+
+  loadChild(id: string) {
+    if (id &#x3D;&#x3D;&#x3D; &#x27;new&#x27;) {
+      this.creatingNew &#x3D; true;
+      this.editing &#x3D; true;
+      this.child &#x3D; new ChildWithRelation(new Child(uniqid()));
+    } else {
+      this.childrenService.getChildWithRelation(id)
+        .then(child &#x3D;&gt; {
+          this.child &#x3D; child;
+          this.initForm();
+          this.entityMapperService.load&lt;School&gt;(School, this.child.schoolId)
+            .then(school &#x3D;&gt; this.currentSchool &#x3D; school)
+        });
+    }
+
+    this.initForm();
+
+  }
+
+  switchEdit() {
+    this.editing &#x3D; !this.editing;
+    this.initForm();
+  }
+
+  save() {
+    this.assignFormValuesToChild(this.child, this.form);
+
+    this.entityMapperService.save&lt;Child&gt;(this.child)
+      .then(() &#x3D;&gt; {
+        if (this.creatingNew) {
+          this.router.navigate([&#x27;/child&#x27;, this.child.getId()]);
+          this.creatingNew &#x3D; false;
+        }
+        this.switchEdit();
+      })
+      .catch((err) &#x3D;&gt; this.alertService.addDanger(&#x27;Could not save Child &quot;&#x27; + this.child.name + &#x27;&quot;: &#x27; + err));
+  }
+
+  private assignFormValuesToChild(child: Child, form: FormGroup) {
+    Object.keys(form.controls).forEach(key &#x3D;&gt; {
+      child[key] &#x3D; form.get(key).value;
+    });
+  }
+
+
+  removeChild() {
+    const dialogRef &#x3D; this.confirmationDialog
+      .openDialog(&#x27;Delete?&#x27;, &#x27;Are you sure you want to delete this Child?&#x27;);
+
+    dialogRef.afterClosed()
+      .subscribe(confirmed &#x3D;&gt; {
+        if (confirmed) {
+          this.entityMapperService.remove&lt;Child&gt;(this.child)
+            .then(() &#x3D;&gt; this.router.navigate([&#x27;/child&#x27;]));
+
+          const snackBarRef &#x3D; this.snackBar.open(&#x27;Deleted Child &quot;&#x27; + this.child.name + &#x27;&quot;&#x27;, &#x27;Undo&#x27;, {duration: 8000});
+          snackBarRef.onAction().subscribe(() &#x3D;&gt; {
+            this.entityMapperService.save(this.child.getChild(), true);
+            this.router.navigate([&#x27;/child&#x27;, this.child.getId()]);
+          });
+        }
+      });
+  }
+
+  navigateBack() {
+    this.location.back();
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;!--
+  ~     This file is part of ndb-core.
+  ~
+  ~     ndb-core is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     (at your option) any later version.
+  ~
+  ~     ndb-core is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with ndb-core.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+  --&gt;
+
+
+&lt;div fxLayout&#x3D;&quot;row&quot; fxLayoutAlign&#x3D;&#x27;space-between&#x27;&gt;
+  &lt;div&gt;
+    &lt;h1 class&#x3D;&quot;page-header section-child&quot;&gt;
+      &lt;button mat-icon-button (click)&#x3D;&#x27;navigateBack()&#x27; matTooltip&#x3D;&quot;Back&quot; style&#x3D;&#x27;vertical-align: middle;&#x27;&gt;
+        &lt;mat-icon fontIcon&#x3D;&quot;fa-backward&quot;&gt;&lt;/mat-icon&gt;
+      &lt;/button&gt;
+
+      &lt;i class&#x3D;&quot;fa fa-child fa-fw&quot;&gt;&lt;/i&gt;
+      &lt;span *ngIf&#x3D;&quot;!creatingNew&quot;&gt;{{ child.name }} [{{ child.projectNumber }}]&lt;/span&gt;
+      &lt;span *ngIf&#x3D;&quot;creatingNew&quot;&gt;Adding new Child&lt;/span&gt;
+    &lt;/h1&gt;
+  &lt;/div&gt;
+
+  &lt;div&gt;
+
+    &lt;button *ngIf&#x3D;&quot;creatingNew || editing&quot; mat-stroked-button class&#x3D;&#x27;edit-button&#x27; (click)&#x3D;&quot;save()&quot;&gt;Save&lt;/button&gt;
+
+    &lt;button *ngIf&#x3D;&quot;!creatingNew &amp;&amp; editing&quot; mat-stroked-button class&#x3D;&#x27;edit-button&#x27; style&#x3D;&quot;color:red&quot; (click)&#x3D;&quot;removeChild()&quot;&gt;Delete&lt;/button&gt;
+
+    &lt;button *ngIf&#x3D;&quot;creatingNew || editing&quot; mat-stroked-button class&#x3D;&#x27;edit-button&#x27; (click)&#x3D;&quot;switchEdit()&quot;&gt;Cancel&lt;/button&gt;
+
+    &lt;button *ngIf&#x3D;&quot;!editing&quot; mat-stroked-button class&#x3D;&#x27;edit-button&#x27; (click)&#x3D;&quot;switchEdit()&quot;&gt;Edit&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+
+&lt;mat-accordion multi&#x3D;&#x27;true&#x27;&gt;
+  &lt;form [formGroup]&#x3D;&quot;form&quot;&gt;
+
+    &lt;mat-expansion-panel hideToggle&#x3D;&quot;true&quot; [expanded]&#x3D;&quot;child.isActive()&quot;&gt;
+      &lt;mat-expansion-panel-header class&#x3D;&#x27;section-header&#x27;&gt;
+        &lt;mat-panel-title&gt;
+          Basic Information
+        &lt;/mat-panel-title&gt;
+      &lt;/mat-expansion-panel-header&gt;
+
+
+      &lt;div fxLayout&#x3D;&#x27;row&#x27;&gt;
+        &lt;div fxFlex&#x3D;&#x27;150px&#x27;&gt;
+          &lt;img [src]&#x3D;&quot;child.getPhoto()&quot; class&#x3D;&quot;child-pic&quot; alt&#x3D;&quot;child&#x27;s photo&quot;&gt;
+        &lt;/div&gt;
+
+
+
+        &lt;div fxFlex&gt;
+          &lt;mat-form-field style&#x3D;&#x27;width: 300px;&#x27;&gt;
+            &lt;input matInput formControlName&#x3D;&quot;name&quot; placeholder&#x3D;&quot;Name&quot; title&#x3D;&quot;name&quot; type&#x3D;&quot;text&quot;&gt;
+          &lt;/mat-form-field&gt;
+
+          &lt;mat-form-field style&#x3D;&#x27;width: 100px;&#x27;&gt;
+            &lt;input matInput formControlName&#x3D;&quot;projectNumber&quot; placeholder&#x3D;&quot;Project Number&quot; type&#x3D;&quot;text&quot;&gt;
+          &lt;/mat-form-field&gt;
+
+          &lt;mat-form-field&gt;
+            &lt;input matInput formControlName&#x3D;&quot;center&quot; placeholder&#x3D;&quot;Center&quot; type&#x3D;&quot;text&quot;&gt;
+          &lt;/mat-form-field&gt;
+
+          &lt;mat-form-field&gt;
+            &lt;input matInput formControlName&#x3D;&quot;status&quot; placeholder&#x3D;&quot;Project Status&quot; type&#x3D;&quot;text&quot;&gt;
+          &lt;/mat-form-field&gt;
+        &lt;/div&gt;
+
+
+        &lt;div&gt;
+          &lt;mat-form-field style&#x3D;&#x27;width: 50px;&#x27;&gt;
+            &lt;input matInput placeholder&#x3D;&quot;Age&quot; type&#x3D;&quot;text&quot; [value]&#x3D;child.age [disabled]&#x3D;&quot;true&quot;&gt;
+          &lt;/mat-form-field&gt;
+          &lt;mat-form-field&gt;
+            &lt;input matInput formControlName&#x3D;&quot;dateOfBirth&quot; placeholder&#x3D;&quot;Date of Birth&quot; type&#x3D;&quot;date&quot;&gt;
+          &lt;/mat-form-field&gt;
+
+          &lt;mat-form-field&gt;
+            &lt;mat-label&gt;
+              Gender
+            &lt;/mat-label&gt;
+            &lt;mat-select [disabled]&#x3D;&#x27;!editing&#x27; [(ngModel)]&#x3D;&#x27;child.gender&#x27; [ngModelOptions]&#x3D;&quot;{standalone: true}&quot;&gt;
+              &lt;mat-option *ngFor&#x3D;&quot;let g of genders | keys&quot; [value]&#x3D;&quot;g.value&quot;&gt;{{g.key}}&lt;/mat-option&gt;
+            &lt;/mat-select&gt;
+          &lt;/mat-form-field&gt;
+
+          &lt;mat-form-field&gt;
+            &lt;input matInput formControlName&#x3D;&quot;motherTongue&quot; placeholder&#x3D;&quot;Mother Tongue&quot; type&#x3D;&quot;text&quot;&gt;
+          &lt;/mat-form-field&gt;
+
+          &lt;mat-form-field&gt;
+            &lt;input matInput formControlName&#x3D;&quot;religion&quot; placeholder&#x3D;&quot;Religion&quot; title&#x3D;&quot;Religion&quot; type&#x3D;&quot;text&quot;&gt;
+          &lt;/mat-form-field&gt;
+        &lt;/div&gt;
+
+
+        &lt;div&gt;
+          &lt;mat-form-field&gt;
+            &lt;input matInput formControlName&#x3D;&quot;admissionDate&quot; placeholder&#x3D;&quot;Admission Date&quot; type&#x3D;&quot;date&quot;&gt;
+          &lt;/mat-form-field&gt;
+
+          &lt;mat-form-field&gt;
+            &lt;mat-label&gt;
+              Aadhar Status
+            &lt;/mat-label&gt;
+            &lt;mat-select [disabled]&#x3D;&#x27;!editing&#x27; [(ngModel)]&#x3D;&#x27;child.has_aadhar&#x27; [ngModelOptions]&#x3D;&quot;{standalone: true}&quot;&gt;
+              &lt;mat-option *ngFor&#x3D;&quot;let s of documentStatus&quot; [value]&#x3D;&quot;s&quot;&gt;{{s}}&lt;/mat-option&gt;
+            &lt;/mat-select&gt;
+          &lt;/mat-form-field&gt;
+
+          &lt;mat-form-field&gt;
+            &lt;mat-label&gt;
+              Kanyashree Status
+            &lt;/mat-label&gt;
+            &lt;mat-select [disabled]&#x3D;&#x27;!editing&#x27; [(ngModel)]&#x3D;&#x27;child.has_kanyashree&#x27; [ngModelOptions]&#x3D;&quot;{standalone: true}&quot;&gt;
+              &lt;mat-option *ngFor&#x3D;&quot;let s of documentStatus&quot; [value]&#x3D;&quot;s&quot;&gt;{{s}}&lt;/mat-option&gt;
+            &lt;/mat-select&gt;
+          &lt;/mat-form-field&gt;
+
+          &lt;mat-form-field&gt;
+            &lt;mat-label&gt;
+              Bank Account Status
+            &lt;/mat-label&gt;
+            &lt;mat-select [disabled]&#x3D;&#x27;!editing&#x27; [(ngModel)]&#x3D;&#x27;child.has_bankAccount&#x27; [ngModelOptions]&#x3D;&quot;{standalone: true}&quot;&gt;
+              &lt;mat-option *ngFor&#x3D;&quot;let s of documentStatus&quot; [value]&#x3D;&quot;s&quot;&gt;{{s}}&lt;/mat-option&gt;
+            &lt;/mat-select&gt;
+          &lt;/mat-form-field&gt;
+
+          &lt;mat-form-field&gt;
+            &lt;mat-label&gt;
+              Ration Card Status
+            &lt;/mat-label&gt;
+            &lt;mat-select [disabled]&#x3D;&#x27;!editing&#x27; [(ngModel)]&#x3D;&#x27;child.has_rationCard&#x27; [ngModelOptions]&#x3D;&quot;{standalone: true}&quot;&gt;
+              &lt;mat-option *ngFor&#x3D;&quot;let s of documentStatus&quot; [value]&#x3D;&quot;s&quot;&gt;{{s}}&lt;/mat-option&gt;
+            &lt;/mat-select&gt;
+          &lt;/mat-form-field&gt;
+
+          &lt;mat-form-field&gt;
+            &lt;mat-label&gt;
+              BPL Card Status
+            &lt;/mat-label&gt;
+            &lt;mat-select [disabled]&#x3D;&#x27;!editing&#x27; [(ngModel)]&#x3D;&#x27;child.has_BplCard&#x27; [ngModelOptions]&#x3D;&quot;{standalone: true}&quot;&gt;
+              &lt;mat-option *ngFor&#x3D;&quot;let s of documentStatus&quot; [value]&#x3D;&quot;s&quot;&gt;{{s}}&lt;/mat-option&gt;
+            &lt;/mat-select&gt;
+          &lt;/mat-form-field&gt;
+        &lt;/div&gt;
+
+
+        &lt;div&gt;
+          &lt;mat-form-field style&#x3D;&#x27;width: 300px;&#x27;&gt;
+            &lt;input matInput type&#x3D;&quot;text&quot; formControlName&#x3D;&quot;address&quot; placeholder&#x3D;&quot;Address&quot;&gt;
+          &lt;/mat-form-field&gt;
+
+          &lt;mat-form-field&gt;
+            &lt;input matInput type&#x3D;&quot;text&quot; formControlName&#x3D;&quot;phone&quot; placeholder&#x3D;&quot;Phone No.&quot;&gt;
+          &lt;/mat-form-field&gt;
+
+          &lt;mat-form-field&gt;
+            &lt;input matInput type&#x3D;&quot;text&quot; formControlName&#x3D;&quot;guardianName&quot; placeholder&#x3D;&quot;Guardians&quot;&gt;
+          &lt;/mat-form-field&gt;
+
+          &lt;mat-form-field&gt;
+            &lt;input matInput type&#x3D;&quot;text&quot; formControlName&#x3D;&quot;preferredTimeForGuardianMeeting&quot; placeholder&#x3D;&quot;Preferred time for guardians meeting&quot;&gt;
+          &lt;/mat-form-field&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+    &lt;/mat-expansion-panel&gt;
+
+    &lt;mat-expansion-panel expanded&#x3D;&quot;false&quot;&gt;
+      &lt;mat-expansion-panel-header class&#x3D;&#x27;section-header&#x27;&gt;
+        Education
+      &lt;/mat-expansion-panel-header&gt;
+
+      &lt;div&gt;
+        &lt;mat-form-field style&#x3D;&#x27;width:300px;&#x27;&gt;
+          &lt;mat-label&gt;
+            School
+          &lt;/mat-label&gt;
+          &lt;mat-select [disabled]&#x3D;&#x27;!editing&#x27; [(ngModel)]&#x3D;&#x27;child.schoolId&#x27; [ngModelOptions]&#x3D;&quot;{standalone: true}&quot;&gt;
+            &lt;mat-option *ngFor&#x3D;&quot;let s of schools&quot; [value]&#x3D;&quot;s.getId()&quot;&gt;
+              &lt;app-school-block [entity]&#x3D;&#x27;s&#x27; [linkDisabled]&#x3D;&#x27;true&#x27; class&#x3D;&#x27;mat-form-field&#x27;&gt;&lt;/app-school-block&gt;
+            &lt;/mat-option&gt;
+          &lt;/mat-select&gt;
+        &lt;/mat-form-field&gt;
+
+        &lt;mat-form-field&gt;
+          &lt;input matInput type&#x3D;&quot;text&quot; formControlName&#x3D;&quot;schoolClass&quot; placeholder&#x3D;&quot;Class&quot;&gt;
+        &lt;/mat-form-field&gt;
+      &lt;/div&gt;
+
+      &lt;div&gt;
+        &lt;h3&gt;Previous Schools&lt;/h3&gt;
+        &lt;app-view-schools-component [child]&#x3D;&quot;child&quot;&gt;&lt;/app-view-schools-component&gt;
+      &lt;/div&gt;
+
+      &lt;div&gt;
+        &lt;h3&gt;ASER Results&lt;/h3&gt;
+        &lt;app-aser&gt;&lt;/app-aser&gt;
+      &lt;/div&gt;
+    &lt;/mat-expansion-panel&gt;
+
+
+
+
+    &lt;mat-expansion-panel expanded&#x3D;&quot;false&quot;&gt;
+      &lt;mat-expansion-panel-header class&#x3D;&#x27;section-header&#x27;&gt;
+        Attendance
+      &lt;/mat-expansion-panel-header&gt;
+
+      &lt;div fxLayout&#x3D;&#x27;row&#x27; fxLayoutGap&#x3D;&#x27;20px&#x27;&gt;
+        &lt;div fxFlex&#x3D;&#x27;40&#x27;&gt;
+          &lt;h3&gt;School Attendance&lt;/h3&gt;
+          &lt;app-child-attendance institution&#x3D;&#x27;school&#x27; [showDailyAttendanceOfLatest]&#x3D;&#x27;true&#x27;&gt;&lt;/app-child-attendance&gt;
+        &lt;/div&gt;
+        &lt;div fxFlex&#x3D;&#x27;40&#x27;&gt;
+          &lt;h3&gt;Coaching Attendance&lt;/h3&gt;
+          &lt;app-child-attendance institution&#x3D;&#x27;coaching&#x27; [showDailyAttendanceOfLatest]&#x3D;&#x27;true&#x27;&gt;&lt;/app-child-attendance&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/mat-expansion-panel&gt;
+
+
+    &lt;mat-expansion-panel expanded&#x3D;&quot;false&quot;&gt;
+      &lt;mat-expansion-panel-header class&#x3D;&#x27;section-header&#x27;&gt;
+        Notes &amp; Reports
+      &lt;/mat-expansion-panel-header&gt;
+
+  &lt;app-notes&gt;&lt;/app-notes&gt;
+&lt;/mat-expansion-panel&gt;
+
+
+
+
+
+    &lt;mat-expansion-panel [expanded]&#x3D;&quot;false&quot;&gt;
+      &lt;mat-expansion-panel-header class&#x3D;&#x27;section-header&#x27;&gt;
+        Health
+      &lt;/mat-expansion-panel-header&gt;
+
+
+      &lt;div&gt;
+        &lt;mat-form-field&gt;
+          &lt;mat-label&gt;
+            Vaccination Status
+          &lt;/mat-label&gt;
+          &lt;mat-select [disabled]&#x3D;&#x27;!editing&#x27; [(ngModel)]&#x3D;&#x27;child.health_vaccinationStatus&#x27; [ngModelOptions]&#x3D;&quot;{standalone: true}&quot;&gt;
+            &lt;mat-option *ngFor&#x3D;&quot;let value of vaccinationStatusValues&quot; [value]&#x3D;&quot;value&quot;&gt;{{value}}&lt;/mat-option&gt;
+          &lt;/mat-select&gt;
+        &lt;/mat-form-field&gt;
+
+        &lt;mat-form-field&gt;
+          &lt;mat-label&gt;
+            Eye Status
+          &lt;/mat-label&gt;
+          &lt;mat-select [disabled]&#x3D;&#x27;!editing&#x27; [(ngModel)]&#x3D;&#x27;child.health_eyeHealthStatus&#x27; [ngModelOptions]&#x3D;&quot;{standalone: true}&quot;&gt;
+            &lt;mat-option *ngFor&#x3D;&quot;let value of eyeStatusValues&quot; [value]&#x3D;&quot;value&quot;&gt;{{value}}&lt;/mat-option&gt;
+          &lt;/mat-select&gt;
+        &lt;/mat-form-field&gt;
+
+        &lt;mat-form-field&gt;
+          &lt;!-- TODO: replace bloodGroup text field with a custom-select, once it is user configurable (#236) --&gt;
+          &lt;input matInput formControlName&#x3D;&quot;health_bloodGroup&quot; placeholder&#x3D;&quot;Blood Group&quot; type&#x3D;&quot;text&quot;&gt;
+        &lt;/mat-form-field&gt;
+      &lt;/div&gt;
+
+
+      &lt;div&gt;
+        &lt;mat-form-field&gt;
+          &lt;input matInput formControlName&#x3D;&quot;health_lastDentalCheckup&quot; placeholder&#x3D;&quot;Last Dental Check-Up&quot; type&#x3D;&quot;date&quot;&gt;
+        &lt;/mat-form-field&gt;
+
+        &lt;mat-form-field&gt;
+          &lt;input matInput formControlName&#x3D;&quot;health_lastEyeCheckup&quot; placeholder&#x3D;&quot;Last Eye Check-Up&quot; type&#x3D;&quot;date&quot;&gt;
+        &lt;/mat-form-field&gt;
+
+        &lt;mat-form-field&gt;
+          &lt;input matInput formControlName&#x3D;&quot;health_lastENTCheckup&quot; placeholder&#x3D;&quot;Last ENT Check-Up&quot; type&#x3D;&quot;date&quot;&gt;
+        &lt;/mat-form-field&gt;
+
+        &lt;mat-form-field&gt;
+          &lt;input matInput formControlName&#x3D;&quot;health_lastVitaminD&quot; placeholder&#x3D;&quot;Last Vitamin D&quot; type&#x3D;&quot;date&quot;&gt;
+        &lt;/mat-form-field&gt;
+        &lt;mat-form-field&gt;
+          &lt;input matInput formControlName&#x3D;&quot;health_lastDeworming&quot; placeholder&#x3D;&quot;Last De-Worming&quot; type&#x3D;&quot;date&quot;&gt;
+        &lt;/mat-form-field&gt;
+      &lt;/div&gt;
+
+      &lt;div&gt;
+        &lt;app-health-checkup&gt;&lt;/app-health-checkup&gt;
+      &lt;/div&gt;
+  
+    &lt;/mat-expansion-panel&gt;
+
+   
+
+
+    &lt;mat-expansion-panel [expanded]&#x3D;&quot;false&quot;&gt;
+      &lt;mat-expansion-panel-header class&#x3D;&#x27;section-header&#x27;&gt;
+        Educational Materials
+      &lt;/mat-expansion-panel-header&gt;
+
+      &lt;app-educational-material&gt;&lt;/app-educational-material&gt;
+    &lt;/mat-expansion-panel&gt;
+
+
+
+
+    &lt;mat-expansion-panel [expanded]&#x3D;&quot;!child.isActive()&quot;&gt;
+      &lt;mat-expansion-panel-header class&#x3D;&#x27;section-header&#x27;&gt;
+        Dropout
+      &lt;/mat-expansion-panel-header&gt;
+
+      &lt;mat-form-field&gt;
+        &lt;input matInput formControlName&#x3D;&quot;dropoutDate&quot; placeholder&#x3D;&quot;Dropout Date&quot; type&#x3D;&quot;date&quot;&gt;
+      &lt;/mat-form-field&gt;
+
+      &lt;mat-form-field&gt;
+        &lt;input matInput formControlName&#x3D;&quot;dropoutType&quot; placeholder&#x3D;&quot;Dropout Type&quot; type&#x3D;&quot;text&quot;&gt;
+      &lt;/mat-form-field&gt;
+
+      &lt;mat-form-field&gt;
+        &lt;textarea matInput formControlName&#x3D;&quot;dropoutRemarks&quot; placeholder&#x3D;&quot;Dropout Remarks&quot; type&#x3D;&quot;text&quot;&gt;
+        &lt;/textarea&gt;
+      &lt;/mat-form-field&gt;
+    &lt;/mat-expansion-panel&gt;
+
+  &lt;/form&gt;
+&lt;/mat-accordion&gt;
+
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-styleData">
+                <p class="comment">
+                    <code>./child-details.component.css</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">/*
+ *     This file is part of ndb-core.
+ *
+ *     ndb-core is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     ndb-core is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with ndb-core.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+
+.section-header {
+  font-weight: bold;
+}
+.mat-expansion-panel {
+  padding: 0;
+  margin-top: 0;
+}
+
+.edit-button {
+  margin-left: 10px;
+}
+
+.mat-form-field {
+  margin-right: 10px;
+}
+
+
+.child-pic {
+  width: 120px;
+  height: 150px;
+  object-fit: contain;
+  border: 1px solid black;
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><!--  ~     This file is part of ndb-core.  ~  ~     ndb-core is free software: you can redistribute it and/or modify  ~     it under the terms of the GNU General Public License as published by  ~     the Free Software Foundation, either version 3 of the License, or  ~     (at your option) any later version.  ~  ~     ndb-core is distributed in the hope that it will be useful,  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  ~     GNU General Public License for more details.  ~  ~     You should have received a copy of the GNU General Public License  ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.  --><div fxLayout="row" fxLayoutAlign=\'space-between\'>  <div>    <h1 class="page-header section-child">      <button mat-icon-button (click)=\'navigateBack()\' matTooltip="Back" style=\'vertical-align: middle;\'>        <mat-icon fontIcon="fa-backward"></mat-icon>      </button>      <i class="fa fa-child fa-fw"></i>      <span *ngIf="!creatingNew">{{ child.name }} [{{ child.projectNumber }}]</span>      <span *ngIf="creatingNew">Adding new Child</span>    </h1>  </div>  <div>    <button *ngIf="creatingNew || editing" mat-stroked-button class=\'edit-button\' (click)="save()">Save</button>    <button *ngIf="!creatingNew && editing" mat-stroked-button class=\'edit-button\' style="color:red" (click)="removeChild()">Delete</button>    <button *ngIf="creatingNew || editing" mat-stroked-button class=\'edit-button\' (click)="switchEdit()">Cancel</button>    <button *ngIf="!editing" mat-stroked-button class=\'edit-button\' (click)="switchEdit()">Edit</button>  </div></div><mat-accordion multi=\'true\'>  <form [formGroup]="form">    <mat-expansion-panel hideToggle="true" [expanded]="child.isActive()">      <mat-expansion-panel-header class=\'section-header\'>        <mat-panel-title>          Basic Information        </mat-panel-title>      </mat-expansion-panel-header>      <div fxLayout=\'row\'>        <div fxFlex=\'150px\'>          <img [src]="child.getPhoto()" class="child-pic" alt="child\'s photo">        </div>        <div fxFlex>          <mat-form-field style=\'width: 300px;\'>            <input matInput formControlName="name" placeholder="Name" title="name" type="text">          </mat-form-field>          <mat-form-field style=\'width: 100px;\'>            <input matInput formControlName="projectNumber" placeholder="Project Number" type="text">          </mat-form-field>          <mat-form-field>            <input matInput formControlName="center" placeholder="Center" type="text">          </mat-form-field>          <mat-form-field>            <input matInput formControlName="status" placeholder="Project Status" type="text">          </mat-form-field>        </div>        <div>          <mat-form-field style=\'width: 50px;\'>            <input matInput placeholder="Age" type="text" [value]=child.age [disabled]="true">          </mat-form-field>          <mat-form-field>            <input matInput formControlName="dateOfBirth" placeholder="Date of Birth" type="date">          </mat-form-field>          <mat-form-field>            <mat-label>              Gender            </mat-label>            <mat-select [disabled]=\'!editing\' [(ngModel)]=\'child.gender\' [ngModelOptions]="{standalone: true}">              <mat-option *ngFor="let g of genders | keys" [value]="g.value">{{g.key}}</mat-option>            </mat-select>          </mat-form-field>          <mat-form-field>            <input matInput formControlName="motherTongue" placeholder="Mother Tongue" type="text">          </mat-form-field>          <mat-form-field>            <input matInput formControlName="religion" placeholder="Religion" title="Religion" type="text">          </mat-form-field>        </div>        <div>          <mat-form-field>            <input matInput formControlName="admissionDate" placeholder="Admission Date" type="date">          </mat-form-field>          <mat-form-field>            <mat-label>              Aadhar Status            </mat-label>            <mat-select [disabled]=\'!editing\' [(ngModel)]=\'child.has_aadhar\' [ngModelOptions]="{standalone: true}">              <mat-option *ngFor="let s of documentStatus" [value]="s">{{s}}</mat-option>            </mat-select>          </mat-form-field>          <mat-form-field>            <mat-label>              Kanyashree Status            </mat-label>            <mat-select [disabled]=\'!editing\' [(ngModel)]=\'child.has_kanyashree\' [ngModelOptions]="{standalone: true}">              <mat-option *ngFor="let s of documentStatus" [value]="s">{{s}}</mat-option>            </mat-select>          </mat-form-field>          <mat-form-field>            <mat-label>              Bank Account Status            </mat-label>            <mat-select [disabled]=\'!editing\' [(ngModel)]=\'child.has_bankAccount\' [ngModelOptions]="{standalone: true}">              <mat-option *ngFor="let s of documentStatus" [value]="s">{{s}}</mat-option>            </mat-select>          </mat-form-field>          <mat-form-field>            <mat-label>              Ration Card Status            </mat-label>            <mat-select [disabled]=\'!editing\' [(ngModel)]=\'child.has_rationCard\' [ngModelOptions]="{standalone: true}">              <mat-option *ngFor="let s of documentStatus" [value]="s">{{s}}</mat-option>            </mat-select>          </mat-form-field>          <mat-form-field>            <mat-label>              BPL Card Status            </mat-label>            <mat-select [disabled]=\'!editing\' [(ngModel)]=\'child.has_BplCard\' [ngModelOptions]="{standalone: true}">              <mat-option *ngFor="let s of documentStatus" [value]="s">{{s}}</mat-option>            </mat-select>          </mat-form-field>        </div>        <div>          <mat-form-field style=\'width: 300px;\'>            <input matInput type="text" formControlName="address" placeholder="Address">          </mat-form-field>          <mat-form-field>            <input matInput type="text" formControlName="phone" placeholder="Phone No.">          </mat-form-field>          <mat-form-field>            <input matInput type="text" formControlName="guardianName" placeholder="Guardians">          </mat-form-field>          <mat-form-field>            <input matInput type="text" formControlName="preferredTimeForGuardianMeeting" placeholder="Preferred time for guardians meeting">          </mat-form-field>        </div>      </div>    </mat-expansion-panel>    <mat-expansion-panel expanded="false">      <mat-expansion-panel-header class=\'section-header\'>        Education      </mat-expansion-panel-header>      <div>        <mat-form-field style=\'width:300px;\'>          <mat-label>            School          </mat-label>          <mat-select [disabled]=\'!editing\' [(ngModel)]=\'child.schoolId\' [ngModelOptions]="{standalone: true}">            <mat-option *ngFor="let s of schools" [value]="s.getId()">              <app-school-block [entity]=\'s\' [linkDisabled]=\'true\' class=\'mat-form-field\'></app-school-block>            </mat-option>          </mat-select>        </mat-form-field>        <mat-form-field>          <input matInput type="text" formControlName="schoolClass" placeholder="Class">        </mat-form-field>      </div>      <div>        <h3>Previous Schools</h3>        <app-view-schools-component [child]="child"></app-view-schools-component>      </div>      <div>        <h3>ASER Results</h3>        <app-aser></app-aser>      </div>    </mat-expansion-panel>    <mat-expansion-panel expanded="false">      <mat-expansion-panel-header class=\'section-header\'>        Attendance      </mat-expansion-panel-header>      <div fxLayout=\'row\' fxLayoutGap=\'20px\'>        <div fxFlex=\'40\'>          <h3>School Attendance</h3>          <app-child-attendance institution=\'school\' [showDailyAttendanceOfLatest]=\'true\'></app-child-attendance>        </div>        <div fxFlex=\'40\'>          <h3>Coaching Attendance</h3>          <app-child-attendance institution=\'coaching\' [showDailyAttendanceOfLatest]=\'true\'></app-child-attendance>        </div>      </div>    </mat-expansion-panel>    <mat-expansion-panel expanded="false">      <mat-expansion-panel-header class=\'section-header\'>        Notes & Reports      </mat-expansion-panel-header>  <app-notes></app-notes></mat-expansion-panel>    <mat-expansion-panel [expanded]="false">      <mat-expansion-panel-header class=\'section-header\'>        Health      </mat-expansion-panel-header>      <div>        <mat-form-field>          <mat-label>            Vaccination Status          </mat-label>          <mat-select [disabled]=\'!editing\' [(ngModel)]=\'child.health_vaccinationStatus\' [ngModelOptions]="{standalone: true}">            <mat-option *ngFor="let value of vaccinationStatusValues" [value]="value">{{value}}</mat-option>          </mat-select>        </mat-form-field>        <mat-form-field>          <mat-label>            Eye Status          </mat-label>          <mat-select [disabled]=\'!editing\' [(ngModel)]=\'child.health_eyeHealthStatus\' [ngModelOptions]="{standalone: true}">            <mat-option *ngFor="let value of eyeStatusValues" [value]="value">{{value}}</mat-option>          </mat-select>        </mat-form-field>        <mat-form-field>          <!-- TODO: replace bloodGroup text field with a custom-select, once it is user configurable (#236) -->          <input matInput formControlName="health_bloodGroup" placeholder="Blood Group" type="text">        </mat-form-field>      </div>      <div>        <mat-form-field>          <input matInput formControlName="health_lastDentalCheckup" placeholder="Last Dental Check-Up" type="date">        </mat-form-field>        <mat-form-field>          <input matInput formControlName="health_lastEyeCheckup" placeholder="Last Eye Check-Up" type="date">        </mat-form-field>        <mat-form-field>          <input matInput formControlName="health_lastENTCheckup" placeholder="Last ENT Check-Up" type="date">        </mat-form-field>        <mat-form-field>          <input matInput formControlName="health_lastVitaminD" placeholder="Last Vitamin D" type="date">        </mat-form-field>        <mat-form-field>          <input matInput formControlName="health_lastDeworming" placeholder="Last De-Worming" type="date">        </mat-form-field>      </div>      <div>        <app-health-checkup></app-health-checkup>      </div>      </mat-expansion-panel>       <mat-expansion-panel [expanded]="false">      <mat-expansion-panel-header class=\'section-header\'>        Educational Materials      </mat-expansion-panel-header>      <app-educational-material></app-educational-material>    </mat-expansion-panel>    <mat-expansion-panel [expanded]="!child.isActive()">      <mat-expansion-panel-header class=\'section-header\'>        Dropout      </mat-expansion-panel-header>      <mat-form-field>        <input matInput formControlName="dropoutDate" placeholder="Dropout Date" type="date">      </mat-form-field>      <mat-form-field>        <input matInput formControlName="dropoutType" placeholder="Dropout Type" type="text">      </mat-form-field>      <mat-form-field>        <textarea matInput formControlName="dropoutRemarks" placeholder="Dropout Remarks" type="text">        </textarea>      </mat-form-field>    </mat-expansion-panel>  </form></mat-accordion><p>&nbsp;</p></div>'
+    var COMPONENTS = [{'name': 'AddDayAttendanceComponent', 'selector': 'app-add-day-attendance'},{'name': 'AddMonthAttendanceComponent', 'selector': 'app-add-month-attendance'},{'name': 'AdminComponent', 'selector': 'app-admin'},{'name': 'AlertComponent', 'selector': ''},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AserComponent', 'selector': 'app-aser'},{'name': 'AttendanceAverageDashboardComponent', 'selector': 'app-attendance-average-dashboard'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block]'},{'name': 'AttendanceDaysComponent', 'selector': 'app-attendance-days'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceWarningsDashboardComponent', 'selector': 'app-attendance-warnings-dashboard'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChildAttendanceComponent', 'selector': 'app-child-attendance'},{'name': 'ChildBlockComponent', 'selector': 'app-child-block'},{'name': 'ChildDetailsComponent', 'selector': 'app-child-details'},{'name': 'ChildrenCountDashboardComponent', 'selector': 'app-children-count-dashboard'},{'name': 'ChildrenListComponent', 'selector': 'app-children-list'},{'name': 'ChildSelectComponent', 'selector': 'app-child-select'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'EditSchoolDialogComponent', 'selector': 'app-add-school-dialog'},{'name': 'EducationalMaterialComponent', 'selector': 'app-educational-material'},{'name': 'EntitySubrecordComponent', 'selector': 'app-entity-subrecord'},{'name': 'HealthCheckupComponent', 'selector': 'app-health-checkup'},{'name': 'InitialSyncDialogComponent', 'selector': ''},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesComponent', 'selector': 'app-notes'},{'name': 'NotesManagerComponent', 'selector': 'app-notes-manager'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'SchoolBlockComponent', 'selector': 'app-school-block'},{'name': 'SchoolDetailComponent', 'selector': 'app-school-detail'},{'name': 'SchoolsListComponent', 'selector': 'app-schools-list'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserAccountComponent', 'selector': 'app-user-account'},{'name': 'ViewSchoolsComponent', 'selector': 'app-view-schools-component'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'ChildDetailsComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> result-matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'ChildDetailsComponent.html';
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+       <!-- Required to polyfill modern browsers as code is ES5 for IE... -->
+       <script src="../js/libs/custom-elements-es5-adapter.js" charset="utf-8" defer></script>
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

@@ -1,0 +1,660 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	      <link rel="stylesheet" href="../styles/style.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">ndb-core documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li>Components</li>
+  <li>AttendanceWarningsDashboardComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#info" role="tab" id="info-tab" data-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li >
+            <a href="#source" role="tab" id="source-tab" data-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li >
+            <a href="#templateData" role="tab" id="templateData-tab" data-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li >
+            <a href="#styleData" role="tab" id="styleData-tab" data-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li >
+            <a href="#tree" role="tab" id="tree-tab" data-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="c-info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/children/attendance/attendance-warnings-dashboard/attendance-warnings-dashboard.component.ts</code>
+</p>
+
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                    <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
+    </p>
+
+
+<section>
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-attendance-warnings-dashboard</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./attendance-warnings-dashboard.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./attendance-warnings-dashboard.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#ATTENDANCE_THRESHOLD">ATTENDANCE_THRESHOLD</a>
+                            </li>
+                            <li>
+                                <a href="#lastMonthsLowAttendence">lastMonthsLowAttendence</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#goToChild">goToChild</a>
+                            </li>
+                            <li>
+                                <a href="#loadLastAttendances">loadLastAttendances</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit">ngOnInit</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(childrenService: <a href="../injectables/ChildrenService.html">ChildrenService</a>, router: <a href="https://angular.io/api/router/Router" target="_blank">Router</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/children/attendance/attendance-warnings-dashboard/attendance-warnings-dashboard.component.ts:15</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>childrenService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ChildrenService.html" target="_self" >ChildrenService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>router</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="https://angular.io/api/router/Router" target="_blank" >Router</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+
+
+    <section>
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="goToChild"></a>
+                    <span class="name">
+                        <b>
+                            goToChild
+                        </b>
+                        <a href="#goToChild"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>goToChild(childId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="48"
+                            class="link-to-prism">src/app/children/attendance/attendance-warnings-dashboard/attendance-warnings-dashboard.component.ts:48</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>childId</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadLastAttendances"></a>
+                    <span class="name">
+                        <b>
+                            loadLastAttendances
+                        </b>
+                        <a href="#loadLastAttendances"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>loadLastAttendances()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="26"
+                            class="link-to-prism">src/app/children/attendance/attendance-warnings-dashboard/attendance-warnings-dashboard.component.ts:26</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <b>
+                            ngOnInit
+                        </b>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="20"
+                            class="link-to-prism">src/app/children/attendance/attendance-warnings-dashboard/attendance-warnings-dashboard.component.ts:20</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section>
+    
+        <h3 id="inputs">
+            Properties
+        </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="ATTENDANCE_THRESHOLD"></a>
+                        <span class="name">
+                            <b>
+                                <span class="modifier">Readonly</span>
+                            ATTENDANCE_THRESHOLD</b>
+                            <a href="#ATTENDANCE_THRESHOLD"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>AttendanceMonth.THRESHOLD_WARNING</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/children/attendance/attendance-warnings-dashboard/attendance-warnings-dashboard.component.ts:12</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="lastMonthsLowAttendence"></a>
+                        <span class="name">
+                            <b>
+                            lastMonthsLowAttendence</b>
+                            <a href="#lastMonthsLowAttendence"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>[]</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>[]</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/children/attendance/attendance-warnings-dashboard/attendance-warnings-dashboard.component.ts:15</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="c-source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, OnInit } from &#x27;@angular/core&#x27;;
+import {ChildrenService} from &#x27;../../children.service&#x27;;
+import {Router} from &#x27;@angular/router&#x27;;
+import {AttendanceMonth} from &#x27;../attendance-month&#x27;;
+
+@Component({
+  selector: &#x27;app-attendance-warnings-dashboard&#x27;,
+  templateUrl: &#x27;./attendance-warnings-dashboard.component.html&#x27;,
+  styleUrls: [&#x27;./attendance-warnings-dashboard.component.scss&#x27;]
+})
+export class AttendanceWarningsDashboardComponent implements OnInit {
+  readonly ATTENDANCE_THRESHOLD &#x3D; AttendanceMonth.THRESHOLD_WARNING;
+
+
+  lastMonthsLowAttendence &#x3D; []; // [[Child, last_months_attendance]]
+
+  constructor(private childrenService: ChildrenService,
+              private router: Router) { }
+
+  ngOnInit() {
+    this.loadLastAttendances();
+  }
+
+
+
+  loadLastAttendances() {
+    this.childrenService.queryAttendanceLastMonth()
+      .then(queryResults &#x3D;&gt; {
+        this.lastMonthsLowAttendence &#x3D; [];
+        queryResults.rows.forEach(studentStat &#x3D;&gt; {
+          const att &#x3D; studentStat.value.sum / studentStat.value.count;
+
+          let urgency &#x3D; &#x27;WARNING&#x27;;
+          if (att &lt; AttendanceMonth.THRESHOLD_URGENT) {
+            urgency &#x3D; &#x27;URGENT&#x27;;
+          }
+
+          if (att &lt; this.ATTENDANCE_THRESHOLD) {
+            this.childrenService.getChild(studentStat.key)
+              .subscribe(child &#x3D;&gt; this.lastMonthsLowAttendence.push([child, att, urgency]));
+          }
+        });
+        this.lastMonthsLowAttendence.sort((a, b) &#x3D;&gt; a[1] - b[1]);
+      });
+  }
+
+
+  goToChild(childId: string) {
+    this.router.navigate([&#x27;/child&#x27;, childId]);
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;mat-card class&#x3D;&quot;dashboard-widget&quot;&gt;
+  &lt;mat-card-header class&#x3D;&quot;app-attendance&quot;&gt;
+    &lt;div mat-card-avatar&gt;
+      &lt;mat-icon fontIcon&#x3D;&quot;fa-exclamation-triangle&quot;&gt;&lt;/mat-icon&gt;
+    &lt;/div&gt;
+    &lt;mat-card-title&gt;{{lastMonthsLowAttendence.length}}&lt;/mat-card-title&gt;
+    &lt;mat-card-subtitle&gt;Students with low attendance&lt;/mat-card-subtitle&gt;
+  &lt;/mat-card-header&gt;
+  &lt;mat-card-content style&#x3D;&quot;margin:-24px;&quot;&gt;
+    &lt;p class&#x3D;&quot;dashboard-desc&quot;&gt;
+      Students below {{ATTENDANCE_THRESHOLD | percent:&#x27;1.0-0&#x27;}} attendance last month:
+    &lt;/p&gt;
+    &lt;table class&#x3D;&quot;dashboard-table&quot;&gt;
+      &lt;tr *ngFor&#x3D;&quot;let entry of lastMonthsLowAttendence&quot; class&#x3D;&quot;dashboard-table-row w-{{entry[2]}}&quot; (click)&#x3D;&quot;goToChild(entry[0].getId())&quot; style&#x3D;&quot;cursor: pointer;&quot;&gt;
+        &lt;td class&#x3D;&quot;dashboard-table-cell&quot;&gt;&lt;app-child-block *ngIf&#x3D;&quot;entry[0]&quot; [entity]&#x3D;&quot;entry[0]&quot;&gt;&lt;/app-child-block&gt;&lt;/td&gt;
+        &lt;td class&#x3D;&quot;dashboard-table-cell&quot; style&#x3D;&quot;text-align: right;&quot;&gt;{{entry[1] | percent:&#x27;1.0-0&#x27;}}&lt;/td&gt;
+        &lt;td class&#x3D;&quot;dashboard-table-cell&quot;&gt;&lt;span class&#x3D;&quot;fa fa-external-link-square&quot;&gt;&lt;/span&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+  &lt;/mat-card-content&gt;
+&lt;/mat-card&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-styleData">
+                <p class="comment">
+                    <code>./attendance-warnings-dashboard.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">.dashboard-table-cell {
+  padding: 10px;
+}
+.dashboard-table-row {
+  border-top: 1px solid black;
+}
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.dashboard-table td:first-child {
+  width: 100%;
+}
+
+.dashboard-desc {
+  padding: 24px;
+  padding-bottom: 0;
+  font-style: italic;
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><mat-card class="dashboard-widget">  <mat-card-header class="app-attendance">    <div mat-card-avatar>      <mat-icon fontIcon="fa-exclamation-triangle"></mat-icon>    </div>    <mat-card-title>{{lastMonthsLowAttendence.length}}</mat-card-title>    <mat-card-subtitle>Students with low attendance</mat-card-subtitle>  </mat-card-header>  <mat-card-content style="margin:-24px;">    <p class="dashboard-desc">      Students below {{ATTENDANCE_THRESHOLD | percent:\'1.0-0\'}} attendance last month:    </p>    <table class="dashboard-table">      <tr *ngFor="let entry of lastMonthsLowAttendence" class="dashboard-table-row w-{{entry[2]}}" (click)="goToChild(entry[0].getId())" style="cursor: pointer;">        <td class="dashboard-table-cell"><app-child-block *ngIf="entry[0]" [entity]="entry[0]"></app-child-block></td>        <td class="dashboard-table-cell" style="text-align: right;">{{entry[1] | percent:\'1.0-0\'}}</td>        <td class="dashboard-table-cell"><span class="fa fa-external-link-square"></span></td>      </tr>    </table>  </mat-card-content></mat-card></div>'
+    var COMPONENTS = [{'name': 'AddDayAttendanceComponent', 'selector': 'app-add-day-attendance'},{'name': 'AddMonthAttendanceComponent', 'selector': 'app-add-month-attendance'},{'name': 'AdminComponent', 'selector': 'app-admin'},{'name': 'AlertComponent', 'selector': ''},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AserComponent', 'selector': 'app-aser'},{'name': 'AttendanceAverageDashboardComponent', 'selector': 'app-attendance-average-dashboard'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block]'},{'name': 'AttendanceDaysComponent', 'selector': 'app-attendance-days'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceWarningsDashboardComponent', 'selector': 'app-attendance-warnings-dashboard'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChildAttendanceComponent', 'selector': 'app-child-attendance'},{'name': 'ChildBlockComponent', 'selector': 'app-child-block'},{'name': 'ChildDetailsComponent', 'selector': 'app-child-details'},{'name': 'ChildrenCountDashboardComponent', 'selector': 'app-children-count-dashboard'},{'name': 'ChildrenListComponent', 'selector': 'app-children-list'},{'name': 'ChildSelectComponent', 'selector': 'app-child-select'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'EditSchoolDialogComponent', 'selector': 'app-add-school-dialog'},{'name': 'EducationalMaterialComponent', 'selector': 'app-educational-material'},{'name': 'EntitySubrecordComponent', 'selector': 'app-entity-subrecord'},{'name': 'HealthCheckupComponent', 'selector': 'app-health-checkup'},{'name': 'InitialSyncDialogComponent', 'selector': ''},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesComponent', 'selector': 'app-notes'},{'name': 'NotesManagerComponent', 'selector': 'app-notes-manager'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'SchoolBlockComponent', 'selector': 'app-school-block'},{'name': 'SchoolDetailComponent', 'selector': 'app-school-detail'},{'name': 'SchoolsListComponent', 'selector': 'app-schools-list'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserAccountComponent', 'selector': 'app-user-account'},{'name': 'ViewSchoolsComponent', 'selector': 'app-view-schools-component'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'AttendanceWarningsDashboardComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> result-matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'AttendanceWarningsDashboardComponent.html';
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+       <!-- Required to polyfill modern browsers as code is ES5 for IE... -->
+       <script src="../js/libs/custom-elements-es5-adapter.js" charset="utf-8" defer></script>
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
