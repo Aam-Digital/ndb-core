@@ -1,6 +1,9 @@
 sudo: required
 dist: trusty
 language: node_js
+branches:
+  except:
+    - gh-pages
 node_js:
   - '8.9'
 env:
@@ -60,4 +63,4 @@ deploy:
     local_dir: doc/compodoc
     github_token: $GH_REPO_TOKEN
     on:
-      branch: compodoc
+      branch: master
