@@ -40,7 +40,6 @@ after_script:
   - ./cc-test-reporter after-build --debug --exit-code $TRAVIS_TEST_RESULT
 after_success:
   - npm run compodoc
-  - if [ -f "doc/compodoc/index.html" ]; then echo "exists"; else echo "doesnt exist";fi
 before_deploy:
   - tar -zcf ndb-core_${TRAVIS_TAG}.tar.gz dist
 deploy:
