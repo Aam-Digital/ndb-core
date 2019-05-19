@@ -22,11 +22,15 @@ export class PreviousSchoolsComponent implements OnInit {
 
   columns: Array<ColumnDescription> = [
     new ColumnDescription('name', 'Name', 'select',
-      this.schoolList.map(t => { return { value: t.name, label: t.name }; })),
+      this.schoolList.map(t => { console.log(t);return { value: t.name, label: t.name }; })),
     new ColumnDescription('from', 'From', 'date', null,
       (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
     new ColumnDescription('to', 'To', 'date', null,
-      (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
+      (v: Date) => { if(v.toDateString()==="Invalid Date"){
+      }
+      else{
+        this.datePipe.transform(v, 'yyyy-MM-dd');
+      }}),
   ];
 
   constructor(private route: ActivatedRoute,
@@ -39,7 +43,6 @@ export class PreviousSchoolsComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.childId = params.get('id').toString();
       this.loadData(this.childId);
-      console.log("HI: "+this.schoolList);
     });
   }
 
@@ -55,19 +58,9 @@ export class PreviousSchoolsComponent implements OnInit {
           tempRecords.push(previousSchool);
         });
         this.records=tempRecords;
-        //this.records = results
-          // .sort((a, b) => (
-          //   b.getStartTime()
-          //   ? b.getStartTime().valueOf()
-          //   : 0 -
-          //   (a.getStartTime()
-          //   ? a.getStartTime().valueOf()
-          //   : 0
-          //   )));
       });
     this.schoolsService.getSchools().subscribe(data => {
         this.schoolList = data;
-        console.log(this.schoolList);
     });
   }
 
@@ -75,7 +68,7 @@ export class PreviousSchoolsComponent implements OnInit {
   generateNewRecordFactory() {
     // define values locally because "this" is a different scope after passing a function as input to another component
     const child = this.childId;
-
+    console.log(this.schoolList);
     return () => {
       const newCSR = new PreviousSchools(Date.now().toString());
       newCSR.child = child;
