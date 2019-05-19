@@ -4,6 +4,7 @@ import {ConfirmationDialogService} from '../confirmation-dialog/confirmation-dia
 import {Entity} from '../../entity/entity';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {ColumnDescription} from './column-description';
+import {User} from '../../user/user';
 
 @Component({
   selector: 'app-entity-subrecord',
@@ -51,6 +52,15 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
 
 
   save(record: Entity) {
+    if(record.getType()==='User'){
+      let user: User;
+      user=new User((record as User).name);
+      user.setNewPassword('pass');
+      user.admin=(record as User).admin;
+      user.name=(record as User).name;
+      record=user;
+    }
+    console.log(record);
     this._entityMapper.save(record);
 
     // updated backup copies used for reset

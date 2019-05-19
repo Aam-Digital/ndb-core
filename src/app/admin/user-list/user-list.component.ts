@@ -39,9 +39,7 @@ export class UserListComponent implements OnInit {
   generateNewRecordFactory(){
 
     return () => {
-      const newUser = new User('');
-      newUser.admin=false;
-      newUser.setNewPassword('pass');
+      const newUser= new User('');
       return newUser;
     };
 
