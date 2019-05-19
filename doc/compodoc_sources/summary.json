@@ -1,0 +1,16 @@
+[
+  {
+    "title": "example file for additional doc",
+    "file": "example.md"
+  },
+  {
+    "title": "overview",
+    "file": "overview.md",
+    "children": [
+      {
+        "title": "child of overview",
+        "file": "somefolder/child.md"
+      }
+    ]
+  }
+]
