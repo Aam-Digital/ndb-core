@@ -1,0 +1,1271 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	      <link rel="stylesheet" href="../styles/style.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">ndb-core documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li>Components</li>
+  <li>AddDayAttendanceComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#info" role="tab" id="info-tab" data-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li >
+            <a href="#source" role="tab" id="source-tab" data-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li >
+            <a href="#templateData" role="tab" id="templateData-tab" data-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li >
+            <a href="#styleData" role="tab" id="styleData-tab" data-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li >
+            <a href="#tree" role="tab" id="tree-tab" data-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="c-info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/children/attendance/add-day-attendance/add-day-attendance.component.ts</code>
+</p>
+
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                    <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
+    </p>
+
+
+<section>
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-add-day-attendance</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./add-day-attendance.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./add-day-attendance.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#attendanceType">attendanceType</a>
+                            </li>
+                            <li>
+                                <a href="#AttStatus">AttStatus</a>
+                            </li>
+                            <li>
+                                <a href="#center">center</a>
+                            </li>
+                            <li>
+                                <a href="#centers">centers</a>
+                            </li>
+                            <li>
+                                <a href="#children">children</a>
+                            </li>
+                            <li>
+                                <a href="#currentStage">currentStage</a>
+                            </li>
+                            <li>
+                                <a href="#day">day</a>
+                            </li>
+                            <li>
+                                <a href="#rollCallIndex">rollCallIndex</a>
+                            </li>
+                            <li>
+                                <a href="#rollCallList">rollCallList</a>
+                            </li>
+                            <li>
+                                <a href="#rollCallListLoading">rollCallListLoading</a>
+                            </li>
+                            <li>
+                                <a href="#stages">stages</a>
+                            </li>
+                            <li>
+                                <a href="#studentGroups">studentGroups</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#finishCenterSelection">finishCenterSelection</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#loadMonthAttendanceRecords">loadMonthAttendanceRecords</a>
+                            </li>
+                            <li>
+                                <a href="#markAttendance">markAttendance</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit">ngOnInit</a>
+                            </li>
+                            <li>
+                                <a href="#startRollCall">startRollCall</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(childrenService: <a href="../injectables/ChildrenService.html">ChildrenService</a>, entityMapper: <a href="../injectables/EntityMapperService.html">EntityMapperService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/children/attendance/add-day-attendance/add-day-attendance.component.ts:35</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>childrenService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ChildrenService.html" target="_self" >ChildrenService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>entityMapper</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/EntityMapperService.html" target="_self" >EntityMapperService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+
+
+    <section>
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="finishCenterSelection"></a>
+                    <span class="name">
+                        <b>
+                            finishCenterSelection
+                        </b>
+                        <a href="#finishCenterSelection"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>finishCenterSelection()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="48"
+                            class="link-to-prism">src/app/children/attendance/add-day-attendance/add-day-attendance.component.ts:48</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadMonthAttendanceRecords"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Private</span>
+                            loadMonthAttendanceRecords
+                        </b>
+                        <a href="#loadMonthAttendanceRecords"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>loadMonthAttendanceRecords(children: ChildWithRelation[], monthsAttendances: <a href="../classes/AttendanceMonth.html">AttendanceMonth[]</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="79"
+                            class="link-to-prism">src/app/children/attendance/add-day-attendance/add-day-attendance.component.ts:79</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>children</td>
+                                    <td>
+                                            <code>ChildWithRelation[]</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>monthsAttendances</td>
+                                    <td>
+                                                <code><a href="../classes/AttendanceMonth.html" target="_self" >AttendanceMonth[]</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="markAttendance"></a>
+                    <span class="name">
+                        <b>
+                            markAttendance
+                        </b>
+                        <a href="#markAttendance"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>markAttendance(status: <a href="../undefineds/AttendanceStatus.html">AttendanceStatus</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="99"
+                            class="link-to-prism">src/app/children/attendance/add-day-attendance/add-day-attendance.component.ts:99</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>status</td>
+                                    <td>
+                                                <code><a href="../miscellaneous/enumerations.html#AttendanceStatus" target="_self" >AttendanceStatus</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <b>
+                            ngOnInit
+                        </b>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="40"
+                            class="link-to-prism">src/app/children/attendance/add-day-attendance/add-day-attendance.component.ts:40</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="startRollCall"></a>
+                    <span class="name">
+                        <b>
+                            startRollCall
+                        </b>
+                        <a href="#startRollCall"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>startRollCall(group)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="68"
+                            class="link-to-prism">src/app/children/attendance/add-day-attendance/add-day-attendance.component.ts:68</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>group</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section>
+    
+        <h3 id="inputs">
+            Properties
+        </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="attendanceType"></a>
+                        <span class="name">
+                            <b>
+                            attendanceType</b>
+                            <a href="#attendanceType"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/app/children/attendance/add-day-attendance/add-day-attendance.component.ts:18</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="AttStatus"></a>
+                        <span class="name">
+                            <b>
+                            AttStatus</b>
+                            <a href="#AttStatus"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>AttendanceStatus</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/children/attendance/add-day-attendance/add-day-attendance.component.ts:35</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="center"></a>
+                        <span class="name">
+                            <b>
+                            center</b>
+                            <a href="#center"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/children/attendance/add-day-attendance/add-day-attendance.component.ts:19</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="centers"></a>
+                        <span class="name">
+                            <b>
+                            centers</b>
+                            <a href="#centers"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>string[]</code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/children/attendance/add-day-attendance/add-day-attendance.component.ts:27</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="children"></a>
+                        <span class="name">
+                            <b>
+                            children</b>
+                            <a href="#children"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>ChildWithRelation[]</code>
+
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/children/attendance/add-day-attendance/add-day-attendance.component.ts:28</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="currentStage"></a>
+                        <span class="name">
+                            <b>
+                            currentStage</b>
+                            <a href="#currentStage"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>0</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/children/attendance/add-day-attendance/add-day-attendance.component.ts:16</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="day"></a>
+                        <span class="name">
+                            <b>
+                            day</b>
+                            <a href="#day"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>new Date()</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/children/attendance/add-day-attendance/add-day-attendance.component.ts:17</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="rollCallIndex"></a>
+                        <span class="name">
+                            <b>
+                            rollCallIndex</b>
+                            <a href="#rollCallIndex"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>0</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/children/attendance/add-day-attendance/add-day-attendance.component.ts:24</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="rollCallList"></a>
+                        <span class="name">
+                            <b>
+                            rollCallList</b>
+                            <a href="#rollCallList"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>literal type[]</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>[]</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/children/attendance/add-day-attendance/add-day-attendance.component.ts:23</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="rollCallListLoading"></a>
+                        <span class="name">
+                            <b>
+                            rollCallListLoading</b>
+                            <a href="#rollCallListLoading"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/children/attendance/add-day-attendance/add-day-attendance.component.ts:25</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="stages"></a>
+                        <span class="name">
+                            <b>
+                            stages</b>
+                            <a href="#stages"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Type : </i>    <code>[]</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>[
+    &#x27;Select Center&#x27;,
+    &#x27;Select Student Group&#x27;,
+    &#x27;Roll Call&#x27;
+  ]</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/children/attendance/add-day-attendance/add-day-attendance.component.ts:30</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="studentGroups"></a>
+                        <span class="name">
+                            <b>
+                            studentGroups</b>
+                            <a href="#studentGroups"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Default value : </i><code>new FilterSelection&lt;ChildWithRelation&gt;(&#x27;Groups&#x27;, [
+    { key: &#x27;all&#x27;, label: &#x27;All Students&#x27;, filterFun: (c: ChildWithRelation) &#x3D;&gt; c.center &#x3D;&#x3D;&#x3D; this.center}
+    ])</code>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/children/attendance/add-day-attendance/add-day-attendance.component.ts:20</a></div>
+                            </td>
+                        </tr>
+
+
+            </tbody>
+        </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="c-source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, OnInit } from &#x27;@angular/core&#x27;;
+import {ChildrenService} from &#x27;../../children.service&#x27;;
+import {FilterSelection} from &#x27;../../../ui-helper/filter-selection/filter-selection&#x27;;
+import {EntityMapperService} from &#x27;../../../entity/entity-mapper.service&#x27;;
+import {AttendanceDay, AttendanceStatus} from &#x27;../attendance-day&#x27;;
+import {AttendanceMonth} from &#x27;../attendance-month&#x27;;
+import {ChildWithRelation} from &#x27;../../childWithRelation&#x27;;
+
+@Component({
+  selector: &#x27;app-add-day-attendance&#x27;,
+  templateUrl: &#x27;./add-day-attendance.component.html&#x27;,
+  styleUrls: [&#x27;./add-day-attendance.component.scss&#x27;]
+})
+export class AddDayAttendanceComponent implements OnInit {
+
+  currentStage &#x3D; 0;
+  day &#x3D; new Date();
+  attendanceType: string;
+  center: string;
+  studentGroups &#x3D; new FilterSelection&lt;ChildWithRelation&gt;(&#x27;Groups&#x27;, [
+    { key: &#x27;all&#x27;, label: &#x27;All Students&#x27;, filterFun: (c: ChildWithRelation) &#x3D;&gt; c.center &#x3D;&#x3D;&#x3D; this.center}
+    ]);
+  rollCallList: {child: ChildWithRelation, attendanceDay: AttendanceDay, attendanceMonth: AttendanceMonth}[] &#x3D; [];
+  rollCallIndex &#x3D; 0;
+  rollCallListLoading;
+
+  centers: string[];
+  children: ChildWithRelation[];
+
+  stages &#x3D; [
+    &#x27;Select Center&#x27;,
+    &#x27;Select Student Group&#x27;,
+    &#x27;Roll Call&#x27;
+  ];
+  AttStatus &#x3D; AttendanceStatus;
+
+  constructor(private childrenService: ChildrenService,
+              private entityMapper: EntityMapperService) { }
+
+  ngOnInit() {
+    this.childrenService.getChildrenWithRelation().then(children &#x3D;&gt; {
+      this.children &#x3D; children.filter(c &#x3D;&gt; c.isActive()).sort((a, b) &#x3D;&gt; a.schoolClass &gt; b.schoolClass ? 1 : -1);
+      this.centers &#x3D; this.children.map(c &#x3D;&gt; c.center).filter((value, index, arr) &#x3D;&gt; arr.indexOf(value) &#x3D;&#x3D;&#x3D; index);
+    });
+  }
+
+
+  finishCenterSelection() {
+    this.studentGroups.options.splice(1);
+
+    this.children
+      .filter(c &#x3D;&gt; c.center &#x3D;&#x3D;&#x3D; this.center)
+      .map(c &#x3D;&gt; c.schoolId).filter((value, index, arr) &#x3D;&gt; arr.indexOf(value) &#x3D;&#x3D;&#x3D; index)
+      .forEach(schoolId &#x3D;&gt; {
+        const filterOption &#x3D; {
+          key: schoolId,
+          label: schoolId,
+          type: &#x27;school&#x27;,
+          filterFun: (c: ChildWithRelation) &#x3D;&gt; c.schoolId &#x3D;&#x3D;&#x3D; schoolId
+        };
+        this.studentGroups.options.push(filterOption);
+      });
+
+    this.currentStage &#x3D; 1;
+  }
+
+
+  startRollCall(group) {
+    const selectedChildren &#x3D; this.children.filter(group.filterFun);
+
+    this.rollCallList &#x3D; [];
+    this.rollCallListLoading &#x3D; true;
+    this.childrenService.getAttendancesOfMonth(this.day)
+      .subscribe(attendances &#x3D;&gt; this.loadMonthAttendanceRecords(selectedChildren, attendances));
+
+    this.currentStage &#x3D; 2;
+  }
+
+  private loadMonthAttendanceRecords(children: ChildWithRelation[], monthsAttendances: AttendanceMonth[]) {
+    this.rollCallIndex &#x3D; 0;
+
+    children.forEach(child &#x3D;&gt; {
+      let attMonth: AttendanceMonth &#x3D; monthsAttendances.find(a &#x3D;&gt; a.student &#x3D;&#x3D;&#x3D; child.getId() &amp;&amp; a.institution &#x3D;&#x3D;&#x3D; this.attendanceType);
+      if (attMonth &#x3D;&#x3D;&#x3D; undefined) {
+        attMonth &#x3D; AttendanceMonth.createAttendanceMonth(child.getId(), this.attendanceType);
+        attMonth.month &#x3D; this.day;
+      }
+
+      const attDay &#x3D; attMonth.dailyRegister.find(d &#x3D;&gt; d.date.getDate() &#x3D;&#x3D;&#x3D; this.day.getDate()
+        &amp;&amp; d.date.getMonth() &#x3D;&#x3D;&#x3D; this.day.getMonth() &amp;&amp; d.date.getFullYear() &#x3D;&#x3D;&#x3D; this.day.getFullYear());
+
+      this.rollCallList.push({child: child, attendanceMonth: attMonth, attendanceDay: attDay})
+    });
+
+    this.rollCallListLoading &#x3D; false;
+  }
+
+
+  markAttendance(status: AttendanceStatus) {
+    const rollCallListEntry &#x3D; this.rollCallList[this.rollCallIndex];
+    rollCallListEntry.attendanceDay.status &#x3D; status;
+    this.entityMapper.save(rollCallListEntry.attendanceMonth);
+
+    setTimeout(() &#x3D;&gt; this.rollCallIndex++, 750);
+  }
+
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;h1&gt;Add Daily Attendance&lt;/h1&gt;
+&lt;h2&gt;{{stages[currentStage]}}&lt;/h2&gt;
+
+
+&lt;div *ngIf&#x3D;&#x27;currentStage&#x3D;&#x3D;&#x3D;0&#x27; fxLayout&#x3D;&#x27;column&#x27; fxLayoutAlign&#x3D;&#x27;space-around start&#x27;&gt;
+  &lt;mat-form-field fxFlex&gt;
+    &lt;mat-label&gt;
+      Center
+    &lt;/mat-label&gt;
+    &lt;mat-select [(ngModel)]&#x3D;&#x27;center&#x27;&gt;
+      &lt;mat-option *ngFor&#x3D;&quot;let c of centers&quot; [value]&#x3D;&#x27;c&#x27;&gt;
+        {{c}}
+      &lt;/mat-option&gt;
+    &lt;/mat-select&gt;
+  &lt;/mat-form-field&gt;
+
+  &lt;div class&#x3D;&#x27;form-field&#x27; fxFlex&gt;
+    &lt;mat-button-toggle-group name&#x3D;&quot;attendanceType&quot; [(ngModel)]&#x3D;&quot;attendanceType&quot;&gt;
+      &lt;mat-button-toggle value&#x3D;&quot;school&quot;&gt;School Attendance&lt;/mat-button-toggle&gt;
+      &lt;mat-button-toggle value&#x3D;&quot;coaching&quot;&gt;Coaching Attendance&lt;/mat-button-toggle&gt;
+    &lt;/mat-button-toggle-group&gt;
+  &lt;/div&gt;
+
+  &lt;mat-form-field&gt;
+    &lt;input matInput placeholder&#x3D;&quot;Date&quot; type&#x3D;&quot;date&quot; [valueAsDate]&#x3D;&#x27;day&#x27; (change)&#x3D;&#x27;day&#x3D;$event.target.valueAsDate&#x27;&gt;
+  &lt;/mat-form-field&gt;
+
+  &lt;div fxFlex&gt;
+    &lt;button mat-stroked-button (click)&#x3D;&#x27;finishCenterSelection()&#x27;
+            [disabled]&#x3D;&#x27;!center || !attendanceType || !day&#x27;&gt;
+      Continue
+    &lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;div *ngIf&#x3D;&#x27;currentStage&#x3D;&#x3D;&#x3D;1&#x27; fxLayout&#x3D;&#x27;column&#x27;&gt;
+  &lt;div *ngFor&#x3D;&quot;let group of studentGroups.options&quot; class&#x3D;&#x27;group-select-option&#x27; (click)&#x3D;&#x27;startRollCall(group)&#x27;&gt;
+    &lt;span style&#x3D;&#x27;text-align: right&#x27; class&#x3D;&#x27;fa fa-chevron-right&#x27;&gt;&lt;/span&gt;&amp;nbsp;
+    &lt;span *ngIf&#x3D;&#x27;!group.type&#x27;&gt;{{group.label}}&lt;/span&gt;
+    &lt;app-school-block *ngIf&#x3D;&quot;group.type&#x3D;&#x3D;&#x3D;&#x27;school&#x27;&quot; [entityId]&#x3D;&#x27;group.label&#x27; [linkDisabled]&#x3D;&#x27;true&#x27;&gt;&lt;/app-school-block&gt;
+  &lt;/div&gt;
+
+  &lt;div&gt;
+    &lt;button mat-stroked-button (click)&#x3D;&#x27;currentStage &#x3D; currentStage - 1&#x27; class&#x3D;&#x27;nav-button&#x27; fxFlex&gt;Back&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+
+
+&lt;div *ngIf&#x3D;&#x27;currentStage&#x3D;&#x3D;&#x3D;2&#x27;&gt;
+  &lt;div *ngFor&#x3D;&#x27;let entry of rollCallList; let i &#x3D; index&#x27; [ngClass]&#x3D;&#x27;{&quot;hidden&quot;: (rollCallIndex!&#x3D;&#x3D;i)}&#x27;&gt;
+    &lt;app-child-block [entity]&#x3D;&#x27;entry.child&#x27;&gt;&lt;/app-child-block&gt;
+
+    &lt;div fxLayout&#x3D;&#x27;column&#x27; fxLayoutAlign&#x3D;&#x27;space-between stretch&#x27; class&#x3D;&#x27;options-wrapper&#x27;&gt;
+      &lt;div class&#x3D;&#x27;group-select-option&#x27; (click)&#x3D;&#x27;markAttendance(AttStatus.PRESENT)&#x27; [ngClass]&#x3D;&quot;{&#x27;attendance-P&#x27;: entry.attendanceDay.status&#x3D;&#x3D;&#x3D;AttStatus.PRESENT}&quot;&gt;
+        &lt;span class&#x3D;&#x27;fa fa-check&#x27; *ngIf&#x3D;&#x27;entry.attendanceDay.status&#x3D;&#x3D;&#x3D;AttStatus.PRESENT&#x27;&gt;&lt;/span&gt;
+        Present
+      &lt;/div&gt;
+      &lt;div class&#x3D;&#x27;group-select-option&#x27; (click)&#x3D;&#x27;markAttendance(AttStatus.ABSENT)&#x27; [ngClass]&#x3D;&quot;{&#x27;attendance-A&#x27;: entry.attendanceDay.status&#x3D;&#x3D;&#x3D;AttStatus.ABSENT}&quot;&gt;
+        &lt;span class&#x3D;&#x27;fa fa-check&#x27; *ngIf&#x3D;&#x27;entry.attendanceDay.status&#x3D;&#x3D;&#x3D;AttStatus.ABSENT&#x27;&gt;&lt;/span&gt;
+        Absent
+      &lt;/div&gt;
+      &lt;div class&#x3D;&#x27;group-select-option&#x27; (click)&#x3D;&#x27;markAttendance(AttStatus.LATE)&#x27; [ngClass]&#x3D;&quot;{&#x27;attendance-L&#x27;: entry.attendanceDay.status&#x3D;&#x3D;&#x3D;AttStatus.LATE}&quot;&gt;
+        &lt;span class&#x3D;&#x27;fa fa-check&#x27; *ngIf&#x3D;&#x27;entry.attendanceDay.status&#x3D;&#x3D;&#x3D;AttStatus.LATE&#x27;&gt;&lt;/span&gt;
+        Late
+      &lt;/div&gt;
+      &lt;div class&#x3D;&#x27;group-select-option&#x27; (click)&#x3D;&#x27;markAttendance(AttStatus.HOLIDAY)&#x27; [ngClass]&#x3D;&quot;{&#x27;attendance-H&#x27;: entry.attendanceDay.status&#x3D;&#x3D;&#x3D;AttStatus.HOLIDAY}&quot;&gt;
+        &lt;span class&#x3D;&#x27;fa fa-check&#x27; *ngIf&#x3D;&#x27;entry.attendanceDay.status&#x3D;&#x3D;&#x3D;AttStatus.HOLIDAY&#x27;&gt;&lt;/span&gt;
+        Holiday
+      &lt;/div&gt;
+      &lt;div class&#x3D;&#x27;group-select-option&#x27; (click)&#x3D;&#x27;markAttendance(AttStatus.EXCUSED)&#x27; [ngClass]&#x3D;&quot;{&#x27;attendance-E&#x27;: entry.attendanceDay.status&#x3D;&#x3D;&#x3D;AttStatus.EXCUSED}&quot;&gt;
+        &lt;span class&#x3D;&#x27;fa fa-check&#x27; *ngIf&#x3D;&#x27;entry.attendanceDay.status&#x3D;&#x3D;&#x3D;AttStatus.EXCUSED&#x27;&gt;&lt;/span&gt;
+        Excused
+      &lt;/div&gt;
+      &lt;div class&#x3D;&#x27;group-select-option&#x27; (click)&#x3D;&#x27;markAttendance(AttStatus.UNKNOWN)&#x27; [ngClass]&#x3D;&quot;{&#x27;attendance-U&#x27;: entry.attendanceDay.status&#x3D;&#x3D;&#x3D;AttStatus.UNKNOWN}&quot;&gt;Skip&lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div&gt;
+      &lt;button mat-stroked-button [disabled]&#x3D;&#x27;rollCallIndex&lt;1&#x27; (click)&#x3D;&#x27;rollCallIndex &#x3D; rollCallIndex - 1&#x27; class&#x3D;&#x27;nav-button&#x27;&gt;Back&lt;/button&gt;
+      &lt;button mat-stroked-button (click)&#x3D;&#x27;currentStage &#x3D; 0&#x27; class&#x3D;&#x27;nav-button&#x27;&gt;Abort&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+
+  &lt;div *ngIf&#x3D;&#x27;rollCallListLoading&#x27;&gt;
+    &lt;mat-progress-bar mode&#x3D;&quot;indeterminate&quot;&gt;&lt;/mat-progress-bar&gt;
+    &lt;div&gt;Loading students ...&lt;/div&gt;
+  &lt;/div&gt;
+
+
+  &lt;div *ngIf&#x3D;&#x27;!rollCallListLoading &amp;&amp; rollCallIndex&gt;&#x3D;rollCallList.length&#x27;&gt;
+    &lt;div&gt;Roll call completed.&lt;/div&gt;
+    &lt;div&gt;
+      &lt;button mat-stroked-button (click)&#x3D;&#x27;currentStage &#x3D; 0&#x27; class&#x3D;&#x27;nav-button&#x27; fxFlex&gt;Finish&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-styleData">
+                <p class="comment">
+                    <code>./add-day-attendance.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">.form-field {
+  padding-bottom: 17px;
+}
+
+.group-select-option {
+  width: 100%;
+  padding: 16px;
+  cursor: pointer;
+  box-sizing: border-box;
+  border: 1px solid;
+  border-top: 0;
+}
+
+.group-select-option:first-child {
+  border-top: 1px solid;
+}
+
+.options-wrapper {
+  margin-top: 16px;
+}
+
+.nav-button {
+  margin: 10px;
+  flex: none;
+}
+
+.hidden {
+  display: none;
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><h1>Add Daily Attendance</h1><h2>{{stages[currentStage]}}</h2><div *ngIf=\'currentStage===0\' fxLayout=\'column\' fxLayoutAlign=\'space-around start\'>  <mat-form-field fxFlex>    <mat-label>      Center    </mat-label>    <mat-select [(ngModel)]=\'center\'>      <mat-option *ngFor="let c of centers" [value]=\'c\'>        {{c}}      </mat-option>    </mat-select>  </mat-form-field>  <div class=\'form-field\' fxFlex>    <mat-button-toggle-group name="attendanceType" [(ngModel)]="attendanceType">      <mat-button-toggle value="school">School Attendance</mat-button-toggle>      <mat-button-toggle value="coaching">Coaching Attendance</mat-button-toggle>    </mat-button-toggle-group>  </div>  <mat-form-field>    <input matInput placeholder="Date" type="date" [valueAsDate]=\'day\' (change)=\'day=$event.target.valueAsDate\'>  </mat-form-field>  <div fxFlex>    <button mat-stroked-button (click)=\'finishCenterSelection()\'            [disabled]=\'!center || !attendanceType || !day\'>      Continue    </button>  </div></div><div *ngIf=\'currentStage===1\' fxLayout=\'column\'>  <div *ngFor="let group of studentGroups.options" class=\'group-select-option\' (click)=\'startRollCall(group)\'>    <span style=\'text-align: right\' class=\'fa fa-chevron-right\'></span>&nbsp;    <span *ngIf=\'!group.type\'>{{group.label}}</span>    <app-school-block *ngIf="group.type===\'school\'" [entityId]=\'group.label\' [linkDisabled]=\'true\'></app-school-block>  </div>  <div>    <button mat-stroked-button (click)=\'currentStage = currentStage - 1\' class=\'nav-button\' fxFlex>Back</button>  </div></div><div *ngIf=\'currentStage===2\'>  <div *ngFor=\'let entry of rollCallList; let i = index\' [ngClass]=\'{"hidden": (rollCallIndex!==i)}\'>    <app-child-block [entity]=\'entry.child\'></app-child-block>    <div fxLayout=\'column\' fxLayoutAlign=\'space-between stretch\' class=\'options-wrapper\'>      <div class=\'group-select-option\' (click)=\'markAttendance(AttStatus.PRESENT)\' [ngClass]="{\'attendance-P\': entry.attendanceDay.status===AttStatus.PRESENT}">        <span class=\'fa fa-check\' *ngIf=\'entry.attendanceDay.status===AttStatus.PRESENT\'></span>        Present      </div>      <div class=\'group-select-option\' (click)=\'markAttendance(AttStatus.ABSENT)\' [ngClass]="{\'attendance-A\': entry.attendanceDay.status===AttStatus.ABSENT}">        <span class=\'fa fa-check\' *ngIf=\'entry.attendanceDay.status===AttStatus.ABSENT\'></span>        Absent      </div>      <div class=\'group-select-option\' (click)=\'markAttendance(AttStatus.LATE)\' [ngClass]="{\'attendance-L\': entry.attendanceDay.status===AttStatus.LATE}">        <span class=\'fa fa-check\' *ngIf=\'entry.attendanceDay.status===AttStatus.LATE\'></span>        Late      </div>      <div class=\'group-select-option\' (click)=\'markAttendance(AttStatus.HOLIDAY)\' [ngClass]="{\'attendance-H\': entry.attendanceDay.status===AttStatus.HOLIDAY}">        <span class=\'fa fa-check\' *ngIf=\'entry.attendanceDay.status===AttStatus.HOLIDAY\'></span>        Holiday      </div>      <div class=\'group-select-option\' (click)=\'markAttendance(AttStatus.EXCUSED)\' [ngClass]="{\'attendance-E\': entry.attendanceDay.status===AttStatus.EXCUSED}">        <span class=\'fa fa-check\' *ngIf=\'entry.attendanceDay.status===AttStatus.EXCUSED\'></span>        Excused      </div>      <div class=\'group-select-option\' (click)=\'markAttendance(AttStatus.UNKNOWN)\' [ngClass]="{\'attendance-U\': entry.attendanceDay.status===AttStatus.UNKNOWN}">Skip</div>    </div>    <div>      <button mat-stroked-button [disabled]=\'rollCallIndex<1\' (click)=\'rollCallIndex = rollCallIndex - 1\' class=\'nav-button\'>Back</button>      <button mat-stroked-button (click)=\'currentStage = 0\' class=\'nav-button\'>Abort</button>    </div>  </div>  <div *ngIf=\'rollCallListLoading\'>    <mat-progress-bar mode="indeterminate"></mat-progress-bar>    <div>Loading students ...</div>  </div>  <div *ngIf=\'!rollCallListLoading && rollCallIndex>=rollCallList.length\'>    <div>Roll call completed.</div>    <div>      <button mat-stroked-button (click)=\'currentStage = 0\' class=\'nav-button\' fxFlex>Finish</button>    </div>  </div></div></div>'
+    var COMPONENTS = [{'name': 'AddDayAttendanceComponent', 'selector': 'app-add-day-attendance'},{'name': 'AddMonthAttendanceComponent', 'selector': 'app-add-month-attendance'},{'name': 'AdminComponent', 'selector': 'app-admin'},{'name': 'AlertComponent', 'selector': ''},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AserComponent', 'selector': 'app-aser'},{'name': 'AttendanceAverageDashboardComponent', 'selector': 'app-attendance-average-dashboard'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block]'},{'name': 'AttendanceDaysComponent', 'selector': 'app-attendance-days'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceWarningsDashboardComponent', 'selector': 'app-attendance-warnings-dashboard'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChildAttendanceComponent', 'selector': 'app-child-attendance'},{'name': 'ChildBlockComponent', 'selector': 'app-child-block'},{'name': 'ChildDetailsComponent', 'selector': 'app-child-details'},{'name': 'ChildrenCountDashboardComponent', 'selector': 'app-children-count-dashboard'},{'name': 'ChildrenListComponent', 'selector': 'app-children-list'},{'name': 'ChildSelectComponent', 'selector': 'app-child-select'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'EditSchoolDialogComponent', 'selector': 'app-add-school-dialog'},{'name': 'EducationalMaterialComponent', 'selector': 'app-educational-material'},{'name': 'EntitySubrecordComponent', 'selector': 'app-entity-subrecord'},{'name': 'HealthCheckupComponent', 'selector': 'app-health-checkup'},{'name': 'InitialSyncDialogComponent', 'selector': ''},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesComponent', 'selector': 'app-notes'},{'name': 'NotesManagerComponent', 'selector': 'app-notes-manager'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'SchoolBlockComponent', 'selector': 'app-school-block'},{'name': 'SchoolDetailComponent', 'selector': 'app-school-detail'},{'name': 'SchoolsListComponent', 'selector': 'app-schools-list'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserAccountComponent', 'selector': 'app-user-account'},{'name': 'ViewSchoolsComponent', 'selector': 'app-view-schools-component'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'AddDayAttendanceComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> result-matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'AddDayAttendanceComponent.html';
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+       <!-- Required to polyfill modern browsers as code is ES5 for IE... -->
+       <script src="../js/libs/custom-elements-es5-adapter.js" charset="utf-8" defer></script>
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
