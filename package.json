@@ -9,7 +9,7 @@
     "test": "ng test",
     "lint": "ng lint ndb-core ndb-core-e2e --type-check",
     "e2e": "ng e2e",
-    "compodoc": "npx compodoc -p src/tsconfig.app.json --includes documentation_sources --includesName test_additional_docs"
+    "compodoc": "npx compodoc -c doc/compodoc_sources/.compodocrc.json"
   },
   "private": true,
   "dependencies": {
