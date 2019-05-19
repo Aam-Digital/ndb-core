@@ -18,10 +18,11 @@ export class PreviousSchoolsComponent implements OnInit {
 
   childId: string;
   records = new Array<PreviousSchools>();
-  schoolList: School[];
+  schoolList = new Array<School>();
 
   columns: Array<ColumnDescription> = [
-    new ColumnDescription('name', 'Name', 'text'),
+    new ColumnDescription('name', 'Name', 'select',
+      this.schoolList.map(t => { return { value: t.name, label: t.name }; })),
     new ColumnDescription('from', 'From', 'date', null,
       (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
     new ColumnDescription('to', 'To', 'date', null,
@@ -38,6 +39,7 @@ export class PreviousSchoolsComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.childId = params.get('id').toString();
       this.loadData(this.childId);
+      console.log("HI: "+this.schoolList);
     });
   }
 
@@ -62,15 +64,10 @@ export class PreviousSchoolsComponent implements OnInit {
           //   ? a.getStartTime().valueOf()
           //   : 0
           //   )));
-        // console.log(this.records);
-        // console.log(this.records[0].getSchoolName()); 
-        // console.log(this.records[0].getStartTime());   
-        // console.log(this.records[0].getEndTime());
-
       });
     this.schoolsService.getSchools().subscribe(data => {
-        console.log(data);
         this.schoolList = data;
+        console.log(this.schoolList);
     });
   }
 
