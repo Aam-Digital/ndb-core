@@ -57,6 +57,7 @@ deploy:
     on:
       tags: true
   - provider: pages
+    skip_cleanup: true
     local_dir: doc/compodoc
     github_token: $GH_REPO_TOKEN
     on:
