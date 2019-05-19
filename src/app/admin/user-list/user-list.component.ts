@@ -13,11 +13,13 @@ import { DatabaseManagerService } from 'app/database/database-manager.service';
 export class UserListComponent implements OnInit {
 
   users = new Array<User>();
+  roles = [true, false];
 
   columns: Array<ColumnDescription> = [
   new ColumnDescription('name', 'Username', 'text'),
   new ColumnDescription('password', 'Password', 'text', null, (password: String) => password='***'),
-  new ColumnDescription('admin', 'Role', 'text', null, (role: Boolean) => role ? 'admin' : 'user')
+  new ColumnDescription('admin', 'Role', 'select', this.roles.map(t => { return { value: t, label: t ? 'admin' : 'user',};}))
+  /* new ColumnDescription('admin', 'Role', 'text', null, (role: Boolean) => role ? 'admin' : 'user') */
   ]
 
   constructor(private entityMapperService: EntityMapperService,
@@ -25,7 +27,6 @@ export class UserListComponent implements OnInit {
 
   ngOnInit() {
     this.loadData();
-    console.log(this.users);
   }
 
 
@@ -44,17 +45,6 @@ export class UserListComponent implements OnInit {
       return newUser;
     };
 
-  }
-
-  signupUser(){
-    let newUser = new User('');
-    newUser.name='batman';
-    newUser.setNewPassword('pass');
-    newUser.admin=false;
-    console.log(newUser);
-    this.entityMapperService.save<User>(newUser).then( 
-      result => console.log(result)
-    )
   }
 
 }
