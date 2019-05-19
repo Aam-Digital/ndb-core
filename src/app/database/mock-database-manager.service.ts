@@ -68,4 +68,8 @@ export class MockDatabaseManagerService extends DatabaseManagerService {
     this.onSyncStatusChanged.emit(status);
   }
 
+  signupUser(){
+    console.log("This is no pouchDB");
+  }
+
 }

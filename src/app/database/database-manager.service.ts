@@ -43,6 +43,8 @@ export abstract class DatabaseManagerService {
 
   abstract getDatabase(): Database;
 
+  abstract signupUser(): void;
+
 }
 
 export function databaseServiceFactory(_databaseManagerService: DatabaseManagerService) {

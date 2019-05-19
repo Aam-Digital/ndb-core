@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { EntityMapperService } from 'app/entity/entity-mapper.service';
 import { User } from 'app/user/user';
 import { ColumnDescription } from '../../ui-helper/entity-subrecord/column-description';
+import { PouchDatabaseManagerService } from 'app/database/pouch-database-manager.service';
+import { DatabaseManagerService } from 'app/database/database-manager.service';
 
 @Component({
   selector: 'app-user-list',
@@ -18,7 +20,8 @@ export class UserListComponent implements OnInit {
   new ColumnDescription('admin', 'Role', 'boolean', null, (role: Boolean) => role ? 'admin' : 'user')
   ]
 
-  constructor(private entityMapperService: EntityMapperService) { }
+  constructor(private entityMapperService: EntityMapperService,
+              private databaseService: DatabaseManagerService) { }
 
   ngOnInit() {
     this.loadData();
@@ -34,6 +37,10 @@ export class UserListComponent implements OnInit {
 
   generateNewRecordFactory(){
 
+  }
+
+  signupUser(){
+      this.databaseService.signupUser(); 
   }
   
 

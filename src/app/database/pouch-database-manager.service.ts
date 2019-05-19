@@ -133,4 +133,19 @@ export class PouchDatabaseManagerService extends DatabaseManagerService {
 
     this.alertService.addInfo('Database live synchronization started.');
   }
+
+  signupUser(){
+    this._remoteDatabase.signUp('batman', 'brucewayne', function (err, response) {
+      if (err) {
+        if (err.name === 'conflict') {
+          console.log("batman already exists, choose another username");
+        } else if (err.name === 'forbidden') {
+          console.log("invalid username");
+        } else {
+          console.log(err);
+        }
+      }
+    });
+  }
+
 }
