@@ -38,6 +38,8 @@ script:
   - ng build --prod
 after_script:
   - ./cc-test-reporter after-build --debug --exit-code $TRAVIS_TEST_RESULT
+after_success:
+  - npm run compodoc
 before_deploy:
   - tar -zcf ndb-core_${TRAVIS_TAG}.tar.gz dist
 deploy:
@@ -53,3 +55,8 @@ deploy:
     skip_cleanup: true
     on:
       tags: true
+  - provider: pages
+    local_dir: doc/combodoc
+    github_token: $GH_REPO_TOKEN
+    on:
+      branch: compodoc
