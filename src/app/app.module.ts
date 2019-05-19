@@ -45,6 +45,7 @@ import {environment} from '../environments/environment';
 import {MatIconModule, MatIconRegistry} from '@angular/material';
 import {AdminModule} from './admin/admin.module';
 import {CookieService} from 'ngx-cookie-service';
+import {UiHelperModule} from './ui-helper/ui-helper.module';
 
 @NgModule({
   declarations: [
@@ -71,6 +72,7 @@ import {CookieService} from 'ngx-cookie-service';
     ChildrenModule,
     SchoolsModule,
     AdminModule,
+    UiHelperModule,
     MatIconModule,
   ],
   providers: [

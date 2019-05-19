@@ -15,9 +15,9 @@ export class UserListComponent implements OnInit {
   users = new Array<User>();
 
   columns: Array<ColumnDescription> = [
-  new ColumnDescription('name', 'Username', 'string'),
-  new ColumnDescription('password', 'Password', 'string', null, (password: String) => password='***'),
-  new ColumnDescription('admin', 'Role', 'boolean', null, (role: Boolean) => role ? 'admin' : 'user')
+  new ColumnDescription('name', 'Username', 'text'),
+  new ColumnDescription('password', 'Password', 'text', null, (password: String) => password='***'),
+  new ColumnDescription('admin', 'Role', 'text', null, (role: Boolean) => role ? 'admin' : 'user')
   ]
 
   constructor(private entityMapperService: EntityMapperService,
@@ -37,11 +37,24 @@ export class UserListComponent implements OnInit {
 
   generateNewRecordFactory(){
 
+    return () => {
+      const newUser = new User('');
+      newUser.admin=false;
+      newUser.setNewPassword('pass');
+      return newUser;
+    };
+
   }
 
   signupUser(){
-      this.databaseService.signupUser(); 
+    let newUser = new User('');
+    newUser.name='batman';
+    newUser.setNewPassword('pass');
+    newUser.admin=false;
+    console.log(newUser);
+    this.entityMapperService.save<User>(newUser).then( 
+      result => console.log(result)
+    )
   }
-  
 
 }

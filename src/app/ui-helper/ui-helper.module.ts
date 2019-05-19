@@ -7,7 +7,10 @@ import {
   MatDialogModule,
   MatIconModule,
   MatInputModule,
-  MatSelectModule, MatSnackBarModule, MatSortModule,
+  MatSelectModule,
+  MatSnackBarModule,
+  MatSortModule,
+  MatFormFieldModule,
   MatTableModule
 } from '@angular/material';
 import {ConfirmationDialogService} from './confirmation-dialog/confirmation-dialog.service';
@@ -25,6 +28,7 @@ import { KeysPipe } from './keys-pipe/keys.pipe';
     MatIconModule,
     MatSnackBarModule,
     MatSortModule,
+    MatFormFieldModule,
     MatAutocompleteModule,
   ],
   declarations: [ConfirmationDialogComponent, EntitySubrecordComponent, KeysPipe],

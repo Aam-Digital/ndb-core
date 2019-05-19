@@ -8,6 +8,7 @@ import {AlertsModule} from '../alerts/alerts.module';
 import {UiHelperModule} from '../ui-helper/ui-helper.module';
 import {AdminGuard} from './admin.guard';
 import { UserListComponent } from './user-list/user-list.component';
+import { MatFormFieldModule, MatSelectModule, MatInputModule } from '@angular/material';
 
 @NgModule({
   imports: [
@@ -15,6 +16,9 @@ import { UserListComponent } from './user-list/user-list.component';
     BrowserModule,
     MatButtonModule,
     MatSnackBarModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatSelectModule,
     PapaParseModule,
     AlertsModule,
     UiHelperModule,
