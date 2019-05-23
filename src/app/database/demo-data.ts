@@ -2,10 +2,11 @@ import {Child} from '../children/child';
 import {Gender} from '../children/Gender';
 import {AttendanceMonth} from '../children/attendance/attendance-month';
 import {Entity} from '../entity/entity';
-import {School} from '../schools/school';
 import {Note} from '../children/notes/note';
 import {WarningLevel} from '../children/attendance/warning-level';
 import {AttendanceStatus} from '../children/attendance/attendance-day';
+import {ChildSchoolRelation} from '../children/childSchoolRelation';
+import {School} from '../schools/school';
 
 export class DemoData {
 
@@ -14,7 +15,8 @@ export class DemoData {
       .concat(DemoData.getChildEntities())
       .concat(this.getSchoolEntities())
       .concat(this.getMonthAttendanceEntities())
-      .concat(this.getNoteEntities());
+      .concat(this.getNoteEntities())
+      .concat(this.getChildSchoolRelationEntities());
   }
 
   static getChildEntities(): Child[] {
@@ -28,8 +30,6 @@ export class DemoData {
     a1.dateOfBirth = new Date('2000-03-13');
     a1.motherTongue = 'Hindi';
     a1.center = 'Delhi';
-    a1.schoolId = '1';
-    a1.schoolClass = '4';
     data.push(a1);
 
     const a2 = new Child('2');
@@ -40,8 +40,6 @@ export class DemoData {
     a2.dateOfBirth = new Date('2001-01-01');
     a2.motherTongue = 'Bengali';
     a2.center = 'Kolkata';
-    a2.schoolId = '2';
-    a2.schoolClass = '9';
     data.push(a2);
 
     const a3 = new Child('3');
@@ -52,8 +50,6 @@ export class DemoData {
     a3.dateOfBirth = new Date('2002-07-29');
     a3.motherTongue = 'Hindi';
     a3.center = 'Kolkata';
-    a3.schoolId = '1';
-    a3.schoolClass = '5';
     data.push(a3);
 
     return data;
@@ -244,6 +240,40 @@ export class DemoData {
     s2.name = 'Hope High School';
     s2.medium = 'English';
     data.push(s2);
+
+    return data;
+  }
+
+  static getChildSchoolRelationEntities(): ChildSchoolRelation[] {
+    const data: ChildSchoolRelation[] = [];
+    const rel1: ChildSchoolRelation = new ChildSchoolRelation('1');
+    rel1.childId = '1';
+    rel1.schoolId = '1';
+    rel1.start = '2016-10-01';
+    rel1.schoolClass = '2';
+    data.push(rel1);
+
+    const rel4: ChildSchoolRelation = new ChildSchoolRelation('2');
+    rel4.childId = '3';
+    rel4.schoolId = '2';
+    rel4.start = '2001-01-01';
+    rel4.end = '2002-01-01';
+    rel4.schoolClass = '1';
+    data.push(rel4);
+
+    const rel2: ChildSchoolRelation = new ChildSchoolRelation('3');
+    rel2.childId = '2';
+    rel2.schoolId = '2';
+    rel2.start = '2018-05-07';
+    rel2.schoolClass = '3';
+    data.push(rel2);
+
+    const rel3: ChildSchoolRelation = new ChildSchoolRelation('4');
+    rel3.childId = '3';
+    rel3.schoolId = '1';
+    rel3.start = '2010-01-01';
+    rel3.schoolClass = '2';
+    data.push(rel3);
 
     return data;
   }

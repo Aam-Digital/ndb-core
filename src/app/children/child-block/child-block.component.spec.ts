@@ -7,6 +7,9 @@ import {SchoolBlockComponent} from '../../schools/school-block/school-block.comp
 import {MatIconModule} from '@angular/material';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {MockDatabase} from '../../database/mock-database';
+import {ChildrenService} from '../children.service';
+import {Database} from '../../database/database';
+import {ChildWithRelation} from '../childWithRelation';
 
 describe('ChildBlockComponent', () => {
   let component: ChildBlockComponent;
@@ -21,6 +24,8 @@ describe('ChildBlockComponent', () => {
       imports: [RouterTestingModule, MatIconModule],
       providers: [
         {provide: EntityMapperService, useValue: entityMapper},
+        ChildrenService,
+        {provide: Database, useClass: MockDatabase},
       ],
     })
     .compileComponents();
@@ -29,7 +34,7 @@ describe('ChildBlockComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ChildBlockComponent);
     component = fixture.componentInstance;
-    component.entity = new Child('');
+    component.entity = new ChildWithRelation(new Child(''));
     fixture.detectChanges();
   });
 

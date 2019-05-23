@@ -1,24 +1,23 @@
 import {Entity} from '../entity/entity';
 
 export class School extends Entity {
-  static ENTITY_TYPE = 'School';
+  public static ENTITY_TYPE = 'School';
 
   name = '';
-  medium = '';
+  address = '';
+  medium ? = '';
+  maxClass?: number;
+  remarks ? = '';
+  board ? = '';
+  schoolTiming = '';
+  workDays = '';
+  website = '';
   privateSchool: boolean;
-  academicBoard = '';
+  phone = '';
   upToClass: number;
-
+  academicBoard = '';
   timing = '';
   workingDays = '';
-  sessionStart = '';
-
-  remarks = '';
-
-  address = '';
-  website = '';
-  phone = '';
-
 
   public toString() {
     return this.name;

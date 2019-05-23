@@ -280,6 +280,7 @@
         </mat-form-field>
       </div>
 
+
       <div>
         <mat-form-field>
           <input matInput formControlName="health_lastDentalCheckup" placeholder="Last Dental Check-Up" type="date">
@@ -296,12 +297,18 @@
         <mat-form-field>
           <input matInput formControlName="health_lastVitaminD" placeholder="Last Vitamin D" type="date">
         </mat-form-field>
-
         <mat-form-field>
           <input matInput formControlName="health_lastDeworming" placeholder="Last De-Worming" type="date">
         </mat-form-field>
       </div>
+
+      <div>
+        <app-health-checkup></app-health-checkup>
+      </div>
+  
     </mat-expansion-panel>
+
+   
 
 
     <mat-expansion-panel [expanded]="false">

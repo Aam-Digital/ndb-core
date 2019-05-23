@@ -24,7 +24,7 @@ import {AlertDisplay} from '../alerts/alert-display';
  * that external library.
  *
  * Additional convenience functions on top of the PouchDB API
- * should be implemented in the abstract `Database` class.
+ * should be implemented in the abstract `Database` schoolClass.
  */
 export class PouchDatabase extends Database {
 

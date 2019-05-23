@@ -19,6 +19,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   @Input() columns: Array<ColumnDescription>;
   @Input() newRecordFactory: () => Entity;
   @Input() detailsComponent: typeof Component;
+  @Input() showButton = true;
 
   recordsDataSource = new MatTableDataSource();
   columnsToDisplay = [];
@@ -26,6 +27,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   originalRecords = [];
   screenWidth = '';
   flexMediaWatcher: Subscription;
+
 
   @ViewChild(MatSort) sort: MatSort;
 
@@ -203,6 +205,10 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
     return returnVal;
+  }
+
+ changeVisibilityOfAddButton() {
+    this.showButton = !this.showButton;
   }
 
 }

@@ -12,6 +12,8 @@ export interface ColumnGroup {
   name: string;
   columns: string[];
 }
+import {ChildWithRelation} from '../childWithRelation';
+
 
 @Component({
   selector: 'app-children-list',
@@ -21,15 +23,15 @@ export interface ColumnGroup {
 export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
   watcher: Subscription;
   activeMediaQuery = '';
-  childrenList = [];
+  childrenList: ChildWithRelation[] = [];
   attendanceList = new Map<string, AttendanceMonth[]>();
   childrenDataSource = new MatTableDataSource();
 
   centerFS = new FilterSelection('center', []);
   dropoutFS = new FilterSelection('status', [
-        {key: 'active', label: 'Current Project Children', filterFun: (c: Child) => c.isActive()},
-        {key: 'dropout', label: 'Dropouts', filterFun: (c: Child) => !c.isActive()},
-        {key: '', label: 'All', filterFun: (c: Child) => true},
+        {key: 'active', label: 'Current Project Children', filterFun: (c: ChildWithRelation) => c.isActive()},
+        {key: 'dropout', label: 'Dropouts', filterFun: (c: ChildWithRelation) => !c.isActive()},
+        {key: '', label: 'All', filterFun: (c: ChildWithRelation) => true},
       ]);
   filterSelections = [
     this.dropoutFS,
@@ -91,15 +93,13 @@ export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   private loadData(replaceUrl: boolean = false) {
-    this.childrenService.getChildren().subscribe(data => {
-      this.childrenList = data;
-
-      const centers = data.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
+    this.childrenService.getChildrenWithRelation().then(children => {
+      this.childrenList = children;
+      const centers = children.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
       this.centerFS.initOptions(centers, 'center');
 
       this.applyFilterSelections(replaceUrl);
     });
-
     this.childrenService.getAttendances()
       .subscribe(results => this.prepareAttendanceData(results));
   }
@@ -157,7 +157,6 @@ export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.columnsToDisplay = group.columns;
     this.updateUrl();
   }
-
 
   updateUrl(replaceUrl: boolean = false) {
     const params = {};
