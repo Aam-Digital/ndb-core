@@ -56,7 +56,9 @@ describe('SyncedSessionService', () => {
             expect(loginState).toEqual(LoginState.loginFailed);
             expect(sessionService.getLoginState().getState()).toEqual(LoginState.loginFailed);
             expect(sessionService.getSyncState().getState()).toEqual(SyncState.unsynced);
-            expect(sessionService.getConnectionState().getState()).toEqual(ConnectionState.rejected);
+
+            // remote session takes a bit longer than a local login - this throws on successful connection
+            await sessionService.getConnectionState().waitForChangeTo(ConnectionState.rejected, ConnectionState.connected);
 
             expect(sessionService.isLoggedIn()).toEqual(false);
             expect(sessionService.getCurrentUser()).not.toBeDefined();
@@ -67,7 +69,9 @@ describe('SyncedSessionService', () => {
             expect(loginState).toEqual(LoginState.loginFailed);
             expect(sessionService.getLoginState().getState()).toEqual(LoginState.loginFailed);
             expect(sessionService.getSyncState().getState()).toEqual(SyncState.unsynced);
-            expect(sessionService.getConnectionState().getState()).toEqual(ConnectionState.rejected);
+
+            // remote session takes a bit longer than a local login - this throws on successful connection
+            await sessionService.getConnectionState().waitForChangeTo(ConnectionState.rejected, ConnectionState.connected);
 
             expect(sessionService.isLoggedIn()).toEqual(false);
             expect(sessionService.getCurrentUser()).not.toBeDefined();
