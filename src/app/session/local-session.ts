@@ -71,11 +71,13 @@ export class LocalSession {
         return LoginState.loginFailed;
       }
     } catch (error) {
-      // TODO: one error should be "no entity found for this key", which should return loginFailed.
-      //       all other cases should throw an error
-      console.log(error);
-      this.loginState.setState(LoginState.loginFailed);
-      return LoginState.loginFailed;
+      // possible error: user object not found locally, which should return loginFailed.
+      if (error.status && error.status === 404) {
+        this.loginState.setState(LoginState.loginFailed);
+        return LoginState.loginFailed;
+      }
+      // all other cases must throw an error
+      throw error;
     };
   }
 
