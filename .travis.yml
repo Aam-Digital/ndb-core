@@ -1,6 +1,9 @@
 sudo: required
 dist: trusty
 language: node_js
+branches:
+  except:
+    - gh-pages
 node_js:
   - '8.9'
 env:
@@ -38,6 +41,8 @@ script:
   - ng build --prod
 after_script:
   - ./cc-test-reporter after-build --debug --exit-code $TRAVIS_TEST_RESULT
+after_success:
+  - npm run compodoc
 before_deploy:
   - tar -zcf ndb-core_${TRAVIS_TAG}.tar.gz dist
 deploy:
@@ -53,3 +58,9 @@ deploy:
     skip_cleanup: true
     on:
       tags: true
+  - provider: pages
+    skip_cleanup: true
+    local_dir: doc/compodoc
+    github_token: $GH_REPO_TOKEN
+    on:
+      branch: master
