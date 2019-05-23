@@ -32,6 +32,7 @@ import { User } from '../user/user';
 export class SyncedSessionService extends SessionService {
   private _localSession: LocalSession;
   private _remoteSession: RemoteSession;
+  private _liveSyncHandle: any;
 
   constructor(private _alertService: AlertService) {
     super();
@@ -61,6 +62,8 @@ export class SyncedSessionService extends SessionService {
     this._remoteSession.login(username, password).then(async (connectionState: ConnectionState) => {
       // remote connected -- sync!
       if (connectionState === ConnectionState.connected) {
+        // TODO(lh): what do we do, if we learn that the localSession login failed? We need to retry after the login.
+        // TODO(lh): liveSync() here?
         return await this.sync();
       }
 
@@ -69,7 +72,7 @@ export class SyncedSessionService extends SessionService {
         if (await localLogin === LoginState.loggedIn) {
           // Someone changed the password remotely --> fail the login
           this._localSession.loginState.setState(LoginState.loginFailed);
-          // TODO: We might want to alert the alertService
+          // TODO(lh): We might want to alert the alertService
         }
       }
 
@@ -96,18 +99,47 @@ export class SyncedSessionService extends SessionService {
     return this._localSession.syncState;
   }
 
-  public sync(): Promise<any> {
-    return this._localSession.sync(this._remoteSession.database);
+  public async sync(): Promise<any> {
+    this._localSession.syncState.setState(SyncState.started);
+    try {
+      const result = await this._localSession.database.sync(this._remoteSession.database);
+      this._localSession.syncState.setState(SyncState.completed);
+      return result;
+    } catch (error) {
+      this._localSession.syncState.setState(SyncState.failed);
+      throw error; // rethrow, so later Promise-handling lands in .catch, too
+    };
   }
 
-  // TODO: Live-Sync that will tell us when we are offline
+  public liveSync() {
+    this._localSession.syncState.setState(SyncState.started);
+    this._liveSyncHandle = this._localSession.database.sync(this._remoteSession.database, {
+      live: true,
+      retry: true
+    }).on('change', change => {
+      // yo, something changed!
+      // TODO(lh): Question is: before or after sync?
+    }).on('paused', info => {
+      // replication was paused, usually because of a lost connection
+      this._remoteSession.connectionState.setState(ConnectionState.offline);
+    }).on('active', info => {
+      // replication was resumed
+      this._remoteSession.connectionState.setState(ConnectionState.connected);
+    }).on('error', err => {
+      // totally unhandled error (shouldn't happen)
+      this._localSession.syncState.setState(SyncState.failed)
+    }).on('complete', function (info) {
+      // replication was canceled!
+      // TODO(lh): is this supposed to happen?
+    });
+    return this._liveSyncHandle;
+  }
 
   public getDatabase(): Database {
     return new PouchDatabase(this._localSession.database, this._alertService);
   }
 
   public logout() {
-    // TODO: should this throw if we are not logged in?
     this._localSession.logout();
     this._remoteSession.logout();
   }

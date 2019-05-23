@@ -39,6 +39,7 @@ import { StateHandler } from './util/state-handler';
 @Injectable()
 export class LocalSession {
   public database: any;
+  public liveSyncHandle: any;
 
   public loginState: StateHandler<LoginState>; // logged in, logged out, login failed
   public syncState: StateHandler<SyncState>; // started, completed, failed, unsynced
@@ -78,24 +79,6 @@ export class LocalSession {
       }
       // all other cases must throw an error
       throw error;
-    };
-  }
-
-  /**
-   * Syncs the local DB with any (remote) PouchDB passed to the method.
-   * Updates the sessions SyncState.
-   * Returns a Promise containing the result of database.sync()
-   * @param remoteDB A native PouchDB-object
-   */
-  public async sync(remoteDB) {
-    this.syncState.setState(SyncState.started);
-    try {
-      const result = await this.database.sync(remoteDB);
-      this.syncState.setState(SyncState.completed);
-      return result;
-    } catch (error) {
-      this.syncState.setState(SyncState.failed);
-      throw error; // rethrow, so later Promise-handling lands in .catch, too
     };
   }
 
