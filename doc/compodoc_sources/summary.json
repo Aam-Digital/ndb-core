@@ -1,11 +1,12 @@
 [
+
   {
     "title": "Getting started",
     "file": "getting_started.md"
   },
   {
     "title": "Contribution Guidelines",
-    "file": "guidelines/Contribution-Guidelines.md",
+    "file": "guidelines/Contribution_Guidelines.md",
     "children": [
       {
         "title": "Documentation",
@@ -21,7 +22,7 @@
       },
       {
         "title": "UX Guidelines",
-        "file": "guidelines/UX-Guidelines"
+        "file": "guidelines/UX-Guidelines.md"
       },
       {
         "title": "Creating new Entity types",
