@@ -2,5 +2,5 @@
   "tsconfig": "src/tsconfig.app.json",
   "output": "doc/compodoc",
   "includes": "doc/compodoc_sources",
-  "includesName": "test_additional_info"
+  "includesName": "developer wiki"
 }
