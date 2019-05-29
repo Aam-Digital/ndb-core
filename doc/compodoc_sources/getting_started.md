@@ -1,7 +1,7 @@
 This wiki serves as the place for all development related documentation. 
 
-* Have a look at the [Architecture](https://github.com/NGO-DB/ndb-core/wiki/Architecture) to understand the structure of the system.
-* Follow the [Contribution Guidelines](https://github.com/NGO-DB/ndb-core/wiki/Contribution-Guidelines) if you want to commit code.
+* Have a look at the Architecture
+* Follow the Contribution Guidelines, if you want to commit code.
 * Any Prerequisites that are necessary to run the application are listed [here](https://github.com/NGO-DB/ndb-core/wiki/Prerequisites)
 
 

@@ -9,6 +9,8 @@ For a project outline, free demo system, etc. visit [www.aam-digital.com](https:
 **This is an Angular2/Typescript based rewrite of [HELGO DB](https://github.com/NGO-DB/helgo_db)**
 
 
+#Documentation and Wiki for developers
+Also see our documentation including a **wiki for developers** on [github pages](http://aam-digital.github.io/ndb-core/index.html)!
 
 -----
 
@@ -26,6 +28,7 @@ Then install the dependencies with
 ```
 npm install
 ```
+
 
 ## Deployment
 1. Run `ng build -prod` to build the project and copy the resulting files from the `dist/` directory to your webhost.
