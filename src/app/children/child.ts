@@ -21,6 +21,43 @@ import { Gender} from './Gender';
 
 export class Child extends Entity {
   static ENTITY_TYPE = 'Child';
+  static schema = Entity.schema.extend({
+    'name': 'string',
+    'projectNumber': 'string',
+    'gender': 'string',
+    'dateOfBirth': 'date',
+    'motherTongue': 'string=',
+    'religion': 'string=',
+    'school': 'string',
+
+    'hasPhoto': 'boolean',
+    'center': 'string=',
+    'admissionDate': 'date',
+    'status': 'string=',
+    'address': 'string=',
+    'phone': 'string=',
+    'guardianName': 'string=',
+    'preferredTimeForGuardianMeeting': 'string=',
+
+    'has_aadhar': 'string=',
+    'has_bankAccount': 'string=',
+    'has_kanyashree': 'string=',
+    'has_rationCard': 'string=',
+    'has_BplCard': 'string=',
+
+    'dropoutDate': 'date',
+    'dropoutType': 'string',
+    'dropoutRemarks': 'string',
+
+    'health_vaccinationStatus': 'string',
+    'health_bloodGroup': 'string',
+    'health_eyeHealthStatus': 'string',
+    'health_lastDentalCheckup': 'date',
+    'health_lastEyeCheckup': 'date',
+    'health_lastENTCheckup': 'date',
+    'health_lastVitaminD': 'date',
+    'health_lastDeworming': 'date',
+  });
 
   name: string;
   projectNumber: string; // project number

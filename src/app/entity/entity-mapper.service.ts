@@ -59,31 +59,26 @@ export class EntityMapperService {
    * @param entityType a schoolClass that implements <code>Entity</code>.
    * @returns A Promise containing an array with the loaded entities.
    */
-  public loadType<T extends Entity>(entityType: EntityConstructor<T>): Promise<T[]> {
-    let resultEntity = new entityType('');
-    return this._db.getAll(resultEntity.getType() + ':').then(
-      function (result: any) {
-        const resultArray: Array<T> = [];
-        for (const current of result) {
-          resultArray.push(resultEntity.load(current));
-          resultEntity = new entityType('');
-        }
-        return resultArray;
-      },
-      function (error: any) {
-        throw error;
-      }
-    )
+  public async loadType<T extends Entity>(entityType: EntityConstructor<T>): Promise<T[]> {
+    const resultArray: Array<T> = [];
+
+    const allRecordsOfType = await this._db.getAll(new entityType('').getType() + ':');
+
+    for (const record of allRecordsOfType) {
+      const entity = new entityType('');
+      entity.load(record);
+      resultArray.push(entity);
+    }
+
+    return resultArray;
   }
 
-  public save<T extends Entity>(entity: T, forceUpdate: boolean = false): Promise<any> {
-    return this._db.put(entity.rawData(), forceUpdate)
-      .then(result => {
-        if (result.ok) {
-          entity._rev = result.rev;
-        }
-        return result;
-      })
+  public async save<T extends Entity>(entity: T, forceUpdate: boolean = false): Promise<any> {
+    const result = await this._db.put(entity.rawData(), forceUpdate);
+    if (result.ok) {
+      entity._rev = result.rev;
+    }
+    return result;
   }
 
   public remove<T extends Entity>(entity: T): Promise<any> {

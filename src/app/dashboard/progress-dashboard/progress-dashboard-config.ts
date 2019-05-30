@@ -20,6 +20,10 @@ import { Entity } from '../../entity/entity';
 
 export class ProgressDashboardConfig extends Entity {
   static ENTITY_TYPE = 'ProgressDashboardConfig';
+  static schema = Entity.schema.extend({
+    'title': 'string',
+    'parts': 'any',
+  });
 
   title = 'Progress Widget';
   parts = [];

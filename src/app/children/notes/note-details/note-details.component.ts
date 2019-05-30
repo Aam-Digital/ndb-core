@@ -46,7 +46,7 @@ export class NoteDetailsComponent implements OnInit {
   }
 
   cancel() {
-    this.note = this.note.load(this.originalNote);
+    this.note.load(this.originalNote);
     this.dialogRef.close(this.note);
   }
 

@@ -65,7 +65,8 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
     const index = this.records.findIndex(a => a.getId() === record.getId());
     if (index > -1) {
       const originalRecord = this.originalRecords.find(e => e.entityId === record.getId());
-      this.records[index] = record.load(originalRecord);
+      record.load(originalRecord);
+      this.records[index] = record;
       this.recordsDataSource.data = this.records;
     }
 

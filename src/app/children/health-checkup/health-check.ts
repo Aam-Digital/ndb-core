@@ -22,10 +22,16 @@ import { Entity } from '../../entity/entity';
  * It stores the Child's ID in a String and both, the height and weight in cm as a number, and the Date
  */
 export class HealthCheck extends Entity {
-    static ENTITY_TYPE = 'HealthCheck';
+  static ENTITY_TYPE = 'HealthCheck';
+  static schema = Entity.schema.extend({
+    'child': 'string',
+    'date': 'date',
+    'height': 'number',
+    'weight': 'number',
+  });
 
-    child: string;
-    date: Date;
-    height: number;
-    weight: number;
+  child: string;
+  date: Date;
+  height: number;
+  weight: number;
 }

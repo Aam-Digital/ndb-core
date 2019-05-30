@@ -100,10 +100,14 @@ export class Entity {
   }
 
 
+  /**
+   * Load the given raw data object into this entity instance, respecting the EntitySchema.
+   * The fields of the given data object are parsed and filtered using the EntitySchema definition of this Entity type.
+   * @param data Raw data object.
+   */
   public load(data: any) {
     data = this.getConstructor().schema.transformDatabaseToEntityFormat(data);
-
-    return Object.assign(this, data);
+    Object.assign(this, data);
   }
 
   /**
