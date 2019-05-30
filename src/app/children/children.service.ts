@@ -11,7 +11,7 @@ import {ChildSchoolRelation} from './childSchoolRelation';
 import {School} from '../schools/school';
 import {ChildWithRelation} from './childWithRelation';
 import {SchoolWithRelation} from '../schools/schoolWithRelation';
-import {HealthCheck} from './health-checkup/health-check'
+import {HealthCheck} from './health-checkup/health-check';
 
 @Injectable()
 export class ChildrenService {
@@ -21,7 +21,7 @@ export class ChildrenService {
     this.createAttendanceAnalysisIndex();
     this.createNotesIndex();
     this.createAttendancesIndex();
-    this.createChildSchoolRelationIndex()
+    this.createChildSchoolRelationIndex();
   }
 
   async getChildrenWithRelation(): Promise<ChildWithRelation[]> {
@@ -131,7 +131,7 @@ export class ChildrenService {
   }
 
   queryLatestRelation(childId: string): Promise<ChildSchoolRelation> {
-    return this.querySortedRelations(childId, 1).then(children => children[0])
+    return this.querySortedRelations(childId, 1).then(children => children[0]);
  }
 
  querySortedRelations(childId: string, limit?: number): Promise<ChildSchoolRelation[]> {
@@ -293,7 +293,7 @@ export class ChildrenService {
     return this.queryLatestRelation(childId)
       .then(relation => {
         if (relation) {
-         return this.entityMapper.load<School>(School, relation.schoolId)
+         return this.entityMapper.load<School>(School, relation.schoolId);
         }
         return null;
       });
