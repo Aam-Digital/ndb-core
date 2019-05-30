@@ -21,7 +21,7 @@ export class ViewSchoolsComponent implements OnInit, OnChanges {
   schoolsWithRelations: SchoolWithRelation[] = [];
   displayedColumns: string[] = ['schoolName', 'startTime', 'endTime'];
 
-  @ViewChild(MatSort) set matSort(ms: MatSort) {    // Needed to set the mat sort later than ngAfterViewInit
+  @ViewChild(MatSort, { static: false }) set matSort(ms: MatSort) {    // Needed to set the mat sort later than ngAfterViewInit
     this.sort = ms;
     this.schoolsDataSource.sort = this.sort;
   }
@@ -61,7 +61,7 @@ export class ViewSchoolsComponent implements OnInit, OnChanges {
         this.changeDetectionRef.detectChanges();
       },
         () => this.loggingService.error('[ViewSchoolsComponent] loading from database error.')
-      )
+      );
   }
 
   private updateViewableItems() {

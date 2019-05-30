@@ -17,7 +17,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
   entityList = new Array<Note>();
   notesDataSource = new MatTableDataSource();
 
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
   columnsToDisplay = ['date', 'subject', 'category', 'author', 'children'];
 
   filterString = '';
@@ -65,7 +65,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     ];
 
     Note.INTERACTION_TYPES.forEach(t => {
-      this.categoryFS.options.push({ key: t, label: t, filterFun: (n: Note) => n.category === t })
+      this.categoryFS.options.push({ key: t, label: t, filterFun: (n: Note) => n.category === t });
     });
 
     this.applyFilterSelections();

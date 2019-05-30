@@ -12,7 +12,7 @@ import {AttendanceMonth} from '../attendance-month';
 export class AttendanceDetailsComponent implements OnInit {
   @Input() entity: AttendanceMonth;
   originalEntity: AttendanceMonth;
-  @ViewChild('recordForm') form;
+  @ViewChild('recordForm', { static: true }) form;
 
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
@@ -31,7 +31,7 @@ export class AttendanceDetailsComponent implements OnInit {
           } else {
             this.cancel();
           }
-        })
+        });
       }
     });
   }

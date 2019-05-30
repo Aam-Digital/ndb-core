@@ -22,7 +22,7 @@ export class AttendanceManagerComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<any>();
   columnsToDisplay = ['child', 'attendanceType', 'averageAttendance',
     'totalWorking', 'totalAttended', 'totalAbsent', 'totalLate', 'attendance', 'recordCount'];
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
   loading = 0;
 
   centerFS = new FilterSelection('center', []);

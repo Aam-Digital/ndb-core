@@ -18,11 +18,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AppVersionComponent } from './app-version.component';
-import {MatDialog, MatDialogModule} from '@angular/material';
+import {MatDialogModule} from '@angular/material';
 import {SessionService} from '../../session/session.service';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {LatestChangesService} from '../latest-changes.service';
-import {SessionStatus} from '../../session/session-status';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {ChangelogComponent} from '../changelog/changelog.component';
 import {NgModule} from '@angular/core';
@@ -51,8 +50,6 @@ describe('AppVersionComponent', () => {
 
     spyOn(latestChangesService, 'getChangelogs').and
       .returnValue(of([{ name: 'test', tag_name: 'v1.0', body: 'latest test', published_at: '2018-01-01'}]));
-    spyOn(sessionService, 'onSessionStatusChanged').and
-      .returnValue(of(SessionStatus.loggedIn));
 
     TestBed.configureTestingModule({
       declarations: [AppVersionComponent],

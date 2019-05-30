@@ -12,7 +12,7 @@ import {EntityMapperService} from '../../../entity/entity-mapper.service';
 export class NoteDetailsComponent implements OnInit {
   @Input() note: Note;
   originalNote: Note;
-  @ViewChild('recordForm') form;
+  @ViewChild('recordForm', { static: true }) form;
   interactionTypes = Note.INTERACTION_TYPES;
 
 
@@ -32,7 +32,7 @@ export class NoteDetailsComponent implements OnInit {
             } else {
               this.cancel();
             }
-        })
+        });
       }
     });
   }
