@@ -89,7 +89,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
   getCsvExport() {
     let csvData = '';
-    const rowNames = 'PN, Name, Age, Date of Birth, Gender, Class, Center, Status, Mother Tongue, Religion, Address, Phone';
+    const rowNames = 'ProjectNumber,Name,Age,Date of Birth,Gender,Class,Center,Status,Mother Tongue,Religion,Address,Phone';
     csvData += rowNames + '\r\n';
     console.log(this.childrenList);
     this.childrenList.map(child => {

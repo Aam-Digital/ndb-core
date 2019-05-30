@@ -14,12 +14,6 @@
     <div class='align-form-field'>
       (Showing {{childrenDataSource.filteredData.length}} children)
     </div>
-
-    <div class='align-form-field'>
-      <button mat-stroked-button color="accent" (click)="addChildClick()">
-        <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>Add New Child
-      </button>
-    </div>
   </div>
 
   <div fxLayout='row' fxLayoutGap='10px' class="filter-button">
@@ -46,8 +40,14 @@
   </div>
   <br/>
   <div>
-    <button mat-stroked-button (click)="getCsvExport()">
-      CSV Export
+    <button mat-stroked-button color="accent" (click)="addChildClick()">
+      <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>
+      Add New Child
+    </button>
+    &nbsp;
+    <button mat-stroked-button color="accent" (click)="getCsvExport()">
+      <mat-icon class="button-icon" aria-label="download" fontIcon="fa-download"></mat-icon>
+      Download (.csv)
     </button>
   </div>
 </mat-expansion-panel>
