@@ -28,6 +28,7 @@ import {MockDatabaseManagerService} from '../../database/mock-database-manager.s
 import {DatabaseSyncStatus} from '../../database/database-sync-status.enum';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {InitialSyncDialogComponent} from './initial-sync-dialog.component';
+import {BrowserDynamicTestingModule} from '@angular/platform-browser-dynamic/testing';
 
 describe('SyncStatusComponent', () => {
   let component: SyncStatusComponent;
@@ -45,14 +46,20 @@ describe('SyncStatusComponent', () => {
     TestBed.configureTestingModule({
       declarations: [InitialSyncDialogComponent, SyncStatusComponent],
       imports: [MatIconModule, MatDialogModule, NoopAnimationsModule, MatProgressBarModule],
-      // entryComponents: [InitialSyncDialogComponent],
       providers: [
         { provide: SessionService, useValue: sessionService },
         { provide: AlertService, useValue: alertService },
         { provide: DatabaseManagerService, useValue: dbManager}
       ],
-    })
-      .compileComponents();
+    });
+
+    TestBed.overrideModule(BrowserDynamicTestingModule, {
+      set: {
+        entryComponents: [InitialSyncDialogComponent]
+      }
+    });
+
+    TestBed.compileComponents();
   }));
 
   beforeEach(() => {

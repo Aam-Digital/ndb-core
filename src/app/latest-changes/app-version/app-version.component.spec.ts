@@ -25,6 +25,7 @@ import {LatestChangesService} from '../latest-changes.service';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {ChangelogComponent} from '../changelog/changelog.component';
 import {of} from 'rxjs';
+import {BrowserDynamicTestingModule} from '@angular/platform-browser-dynamic/testing';
 
 describe('AppVersionComponent', () => {
   let component: AppVersionComponent;
@@ -45,14 +46,20 @@ describe('AppVersionComponent', () => {
     TestBed.configureTestingModule({
       declarations: [AppVersionComponent, ChangelogComponent],
       imports: [MatDialogModule, NoopAnimationsModule],
-      // entryComponents: [ChangelogComponent],
       providers: [
         {provide: SessionService, useValue: sessionService},
         {provide: EntityMapperService, useValue: entityMapper},
         {provide: LatestChangesService, useValue: latestChangesService},
       ]
-    })
-      .compileComponents();
+    });
+
+    TestBed.overrideModule(BrowserDynamicTestingModule, {
+      set: {
+        entryComponents: [ChangelogComponent]
+      }
+    });
+
+    TestBed.compileComponents();
   }));
 
   beforeEach(() => {
