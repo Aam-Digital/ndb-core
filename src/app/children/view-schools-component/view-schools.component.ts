@@ -1,7 +1,9 @@
 import {ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {EditSchoolDialogComponent} from './edit-school-dialog/edit-school-dialog.component';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
-import {MatDialog, MatTableDataSource, MatSort} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import {Child} from '../child';
 import {LoggingService} from '../../logging/logging.service';
 import {ChildrenService} from '../children.service';

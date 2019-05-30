@@ -3,7 +3,7 @@ import {AttendanceDay, AttendanceStatus} from '../attendance-day';
 import {ConfirmationDialogService} from '../../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {AttendanceMonth} from '../attendance-month';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
-import {MatSelect} from '@angular/material';
+import { MatSelect } from '@angular/material/select';
 
 @Component({
   selector: 'app-attendance-days',

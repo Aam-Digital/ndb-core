@@ -2,7 +2,8 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {FilterSelection} from '../../../ui-helper/filter-selection/filter-selection';
 import {Child} from '../../child';
 import {ChildrenService} from '../../children.service';
-import {MatSort, MatTableDataSource} from '@angular/material';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import {AttendanceMonth} from '../attendance-month';
 
 @Component({

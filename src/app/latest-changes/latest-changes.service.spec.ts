@@ -21,7 +21,7 @@ import { LatestChangesService } from './latest-changes.service';
 import {AlertService} from '../alerts/alert.service';
 import {HttpClient} from '@angular/common/http';
 import {of, throwError} from 'rxjs';
-import {MatDialogModule} from '@angular/material';
+import { MatDialogModule } from '@angular/material/dialog';
 import {CookieService} from 'ngx-cookie-service';
 
 describe('LatestChangesService', () => {

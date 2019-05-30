@@ -42,7 +42,7 @@ import {AppConfig} from './app-config/app-config';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
-import {MatIconModule, MatIconRegistry} from '@angular/material';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import {AdminModule} from './admin/admin.module';
 import {CookieService} from 'ngx-cookie-service';
 

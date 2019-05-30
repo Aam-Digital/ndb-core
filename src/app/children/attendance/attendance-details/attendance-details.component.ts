@@ -1,5 +1,5 @@
 import {Component, Inject, Input, OnInit, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {ConfirmationDialogService} from '../../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
 import {AttendanceMonth} from '../attendance-month';

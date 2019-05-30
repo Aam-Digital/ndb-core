@@ -18,7 +18,7 @@
 import {Component, OnInit} from '@angular/core';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
 import {ChangelogComponent} from '../changelog/changelog.component';
-import {MatDialogRef} from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import {LatestChangesService} from '../latest-changes.service';
 
 @Component({

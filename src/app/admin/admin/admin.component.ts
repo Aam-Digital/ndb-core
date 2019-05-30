@@ -5,7 +5,7 @@ import {Alert} from '../../alerts/alert';
 import FileSaver from 'file-saver';
 import {BackupService} from '../backup.service';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
-import {MatSnackBar} from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import PouchDB from 'pouchdb-browser';
 
 @Component({

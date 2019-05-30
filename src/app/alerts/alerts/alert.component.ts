@@ -18,7 +18,7 @@
 import {Component, Inject} from '@angular/core';
 
 import { Alert } from '../alert';
-import {MAT_SNACK_BAR_DATA} from '@angular/material';
+import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
 
 @Component({
   moduleId: module.id,

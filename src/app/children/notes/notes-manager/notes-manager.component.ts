@@ -1,5 +1,7 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {MatDialog, MatSort, MatTableDataSource} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
 import {Note} from '../note';
 import {NoteDetailsComponent} from '../note-details/note-details.component';

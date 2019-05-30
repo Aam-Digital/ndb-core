@@ -1,13 +1,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NotesManagerComponent } from './notes-manager.component';
-import {
-  MatButtonToggleModule, MatDialogModule, MatExpansionModule,
-  MatFormFieldModule,
-  MatIconModule, MatInputModule,
-  MatSelectModule,
-  MatTableModule
-} from '@angular/material';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 import {ChildBlockComponent} from '../../child-block/child-block.component';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
 import {MockDatabase} from '../../../database/mock-database';

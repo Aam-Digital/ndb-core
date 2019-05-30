@@ -18,22 +18,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AppVersionComponent } from './app-version.component';
-import {MatDialogModule} from '@angular/material';
+import { MatDialogModule } from '@angular/material/dialog';
 import {SessionService} from '../../session/session.service';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {LatestChangesService} from '../latest-changes.service';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {ChangelogComponent} from '../changelog/changelog.component';
-import {NgModule} from '@angular/core';
 import {of} from 'rxjs';
-
-
-@NgModule({
-  declarations: [ChangelogComponent],
-  imports: [MatDialogModule, NoopAnimationsModule],
-  entryComponents: [ChangelogComponent],
-})
-class TestModule { }
 
 describe('AppVersionComponent', () => {
   let component: AppVersionComponent;
@@ -52,9 +43,9 @@ describe('AppVersionComponent', () => {
       .returnValue(of([{ name: 'test', tag_name: 'v1.0', body: 'latest test', published_at: '2018-01-01'}]));
 
     TestBed.configureTestingModule({
-      declarations: [AppVersionComponent],
-      imports: [TestModule,
-        MatDialogModule, NoopAnimationsModule],
+      declarations: [AppVersionComponent, ChangelogComponent],
+      imports: [MatDialogModule, NoopAnimationsModule],
+      // entryComponents: [ChangelogComponent],
       providers: [
         {provide: SessionService, useValue: sessionService},
         {provide: EntityMapperService, useValue: entityMapper},

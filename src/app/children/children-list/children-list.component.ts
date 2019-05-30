@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {Child} from '../child';
-import {MatSort, MatTableDataSource} from '@angular/material';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ChildrenService} from '../children.service';
 import {AttendanceMonth} from '../attendance/attendance-month';
