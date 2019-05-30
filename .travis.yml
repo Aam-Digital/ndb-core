@@ -8,13 +8,11 @@ node_js:
   - '8.9'
 env:
   global:
-    - CC_TEST_REPORTER_ID=c658ba82647d4ca17571a84f48c1ccf75d6c18e97f0ef0bfaabec3684e2009ae
     - DOCKER_USERNAME=aamdigitaltravis
   matrix:
     - secure: gOMHgEFJXKZxL7NK6IknMabOqAFYDgLa46bJZpluOCv8+TEBENaSV0p6qm1yns8QdaGFi2RzXqo3AQxDj5YI7C57YyvZNkeUtFD8OXY25Ls/o9YXiVYU89Pca6MJor6PskwIpAw8kuq5i9gOfyLQyKmLwaGwD5KlCw2I2UCcyxUWIlrWgDDQLLTRWjKEt7FVbJjuXiILBSI8hPDJ1IwhmGFc1eJRBMQu3HomyvOK48bT6d5nRpcraPApXROP+X1sTekfDZ3GpiVMEl2dvqITviXoAM0RaWfIy6J45k/LKMYlA4554NbZR4lGM+BiGInXG5iklpXCCbex9wgQ2tpoMqEKhelV7ducsjztmykzAOLH88ArDtlv2O+fqfvgnErkuhg/apWb2nv1e38y5j0Jg7VmQnlQ6W7N16+FYSqvlHJbLRSi74NlWj56cgaSKF7ljqcA76seO6E9VjdU72C/d349gJFWUzlKiuKQ3EaXb3ax2+iJ17JSYy2HSSRS7Nkkkbf/gdp9cVDID3CYayPOt/ojNY2Pu/dr8eA6QSNTjHYIcM2SMmJ800FLUvHEfVNUYkhoy7pVdr+4sPlEnqPgxa4llfxxodu3iXLvf5MWVn8qBC6fSmtnRxF1f1vyTBU86y9IOBx58LXZ/pEAddmlCuzHjvni+WpHatOvTxrqo3U=
 services:
   - docker
-addons: 
 apt:
   sources:
     - google-chrome
