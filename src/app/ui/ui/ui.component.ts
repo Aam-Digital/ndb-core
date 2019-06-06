@@ -29,7 +29,7 @@ import {Subscription} from 'rxjs';
   styleUrls: ['./ui.component.css']
 })
 export class UiComponent implements OnInit, OnDestroy {
-  @ViewChild('sideNav') sideNav;
+  @ViewChild('sideNav', { static: false }) sideNav;
   title: string;
   viewContainerRef: ViewContainerRef;
   watcher: Subscription;

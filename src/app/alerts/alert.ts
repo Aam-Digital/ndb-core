@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {MatSnackBarRef} from '@angular/material';
+import { MatSnackBarRef } from '@angular/material/snack-bar';
 import {AlertComponent} from './alerts/alert.component';
 import {AlertDisplay} from './alert-display';
 

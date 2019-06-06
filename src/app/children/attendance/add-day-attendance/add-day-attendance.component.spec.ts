@@ -1,13 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AddDayAttendanceComponent } from './add-day-attendance.component';
-import {
-  MatButtonModule,
-  MatButtonToggleModule,
-  MatFormFieldModule, MatIconModule,
-  MatInputModule, MatProgressBarModule,
-  MatSelectModule
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSelectModule } from '@angular/material/select';
 import {FormsModule} from '@angular/forms';
 import {SchoolBlockComponent} from '../../../schools/school-block/school-block.component';
 import {ChildBlockComponent} from '../../child-block/child-block.component';

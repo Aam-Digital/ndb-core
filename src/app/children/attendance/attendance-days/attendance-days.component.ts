@@ -3,7 +3,7 @@ import {AttendanceDay, AttendanceStatus} from '../attendance-day';
 import {ConfirmationDialogService} from '../../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {AttendanceMonth} from '../attendance-month';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
-import {MatSelect} from '@angular/material';
+import { MatSelect } from '@angular/material/select';
 
 @Component({
   selector: 'app-attendance-days',
@@ -19,15 +19,12 @@ export class AttendanceDaysComponent implements OnInit {
   selectedRecordChanged = false;
 
   private dayStatusSelect: MatSelect;
-  @ViewChild('dayStatusSelect') set content(content: MatSelect) {
+  @ViewChild('dayStatusSelect', { static: false }) set content(content: MatSelect) {
     this.dayStatusSelect = content;
   }
 
 
   statusValues = AttendanceStatus;
-
-  weekRecordsTrackByFunction = (index: number, item: any) => (item.length > 0) ? item[0].date.getTime() : undefined;
-  recordTrackByFunction = (index: number, item: any) => item.date.getTime();
 
   constructor(private dialog: ConfirmationDialogService,
               private entityMapper: EntityMapperService) { }
@@ -36,6 +33,9 @@ export class AttendanceDaysComponent implements OnInit {
     this.records = this.attendanceMonth.dailyRegister;
   }
 
+  weekRecordsTrackByFunction = (index: number, item: any) => (item.length > 0) ? item[0].date.getTime() : undefined;
+  recordTrackByFunction = (index: number, item: any) => item.date.getTime();
+
   getWeeks(): AttendanceDay[] {
     const weeks = [];
     let currentWeek = [];
@@ -43,7 +43,7 @@ export class AttendanceDaysComponent implements OnInit {
     // fill first week with placeholder days if the month doesn't start on a Monday
     const firstDay = this.records[0].date;
     let daysUntilFirstOfMonth = firstDay.getDay();
-    if (firstDay.getDay() === 0) { daysUntilFirstOfMonth = 7} // workaround if first day of month is Sunday
+    if (firstDay.getDay() === 0) { daysUntilFirstOfMonth = 7; } // workaround if first day of month is Sunday
     for (let i = 1; i < daysUntilFirstOfMonth; i++) {
       const d = new Date(firstDay.getFullYear(), firstDay.getMonth(), firstDay.getDate() - i);
       currentWeek.unshift(new AttendanceDay(d));

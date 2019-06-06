@@ -20,13 +20,13 @@ export class AserComponent implements OnInit {
     new ColumnDescription('date', 'Date', 'date', null,
       (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
     new ColumnDescription('math', 'Math', 'select',
-      Aser.MathLevels.map(s => { return { value: s, label: s } })),
+      Aser.MathLevels.map(s => { return { value: s, label: s }; })),
     new ColumnDescription('english', 'English', 'select',
-      Aser.ReadingLevels.map(s => { return { value: s, label: s } })),
+      Aser.ReadingLevels.map(s => { return { value: s, label: s }; })),
     new ColumnDescription('hindi', 'Hindi', 'select',
-      Aser.ReadingLevels.map(s => { return { value: s, label: s } })),
+      Aser.ReadingLevels.map(s => { return { value: s, label: s }; })),
     new ColumnDescription('bengali', 'Bengali', 'select',
-      Aser.ReadingLevels.map(s => { return { value: s, label: s } })),
+      Aser.ReadingLevels.map(s => { return { value: s, label: s }; })),
     new ColumnDescription('remarks', 'Remarks', 'text'),
   ];
 
@@ -46,7 +46,7 @@ export class AserComponent implements OnInit {
     this.childrenService.getAserResultsOfChild(id)
       .subscribe(results => {
         this.records = results
-          .sort((a, b) => (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0) )
+          .sort((a, b) => (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0) );
       });
   }
 

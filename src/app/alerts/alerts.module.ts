@@ -20,7 +20,10 @@ import { CommonModule } from '@angular/common';
 
 import { AlertComponent } from './alerts/alert.component';
 import { AlertService } from './alert.service';
-import {MatButtonModule, MatCardModule, MatIconModule, MatSnackBarModule} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   imports: [

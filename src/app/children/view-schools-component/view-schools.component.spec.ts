@@ -1,5 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import {MatIconModule, MatFormFieldModule, MatTableModule, MatDialogModule, MatDialog} from '@angular/material';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
 
 import { ViewSchoolsComponent } from './view-schools.component';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
@@ -25,7 +28,7 @@ describe('ViewSchoolsComponent', () => {
       ],
       providers: [
         ChildrenService,
-        EntityMapperService,
+        { provide: EntityMapperService, useValue: entityMapper },
         MatDialog,
         ChangeDetectorRef,
         LoggingService,

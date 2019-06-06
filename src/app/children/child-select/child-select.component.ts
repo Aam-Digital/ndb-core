@@ -16,7 +16,7 @@ export class ChildSelectComponent implements OnInit {
   @Input() valueAsIds: string[];
   @Output() valueAsIdsChange = new EventEmitter();
 
-  @ViewChild('inputField') inputField;
+  @ViewChild('inputField', { static: true }) inputField;
 
   constructor(private childrenService: ChildrenService) { }
 
@@ -26,7 +26,7 @@ export class ChildSelectComponent implements OnInit {
         this.allChildren = children;
         this.suggestions = this.allChildren;
 
-        this.selectInitialSelectedChildren()
+        this.selectInitialSelectedChildren();
       });
   }
 

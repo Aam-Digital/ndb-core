@@ -2,7 +2,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
 import {ChildSchoolRelation} from '../../childSchoolRelation';
 import * as uniqid from 'uniqid';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {Child} from '../../child';
 import {School} from '../../../schools/school';
 
@@ -38,7 +38,7 @@ export class EditSchoolDialogComponent implements OnInit {
       .then((schools: School[]) => {
         this.schools = schools;
         this.selectedSchool = this.schools.find(school => school.getId() === this.childSchoolRelation.schoolId);
-      })
+      });
   }
 
   public editSchoolClick() {

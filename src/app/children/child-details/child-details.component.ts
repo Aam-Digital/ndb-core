@@ -21,7 +21,7 @@ import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {Gender} from '../Gender';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MatSnackBar} from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {Location} from '@angular/common';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import * as uniqid from 'uniqid';
@@ -29,10 +29,6 @@ import {AlertService} from '../../alerts/alert.service';
 import {ChildrenService} from '../children.service';
 import {School} from '../../schools/school';
 import {ChildWithRelation} from '../childWithRelation';
-import {HealthCheck} from '../health-checkup/health-check';
-import {EntitySubrecordComponent} from '../../ui-helper/entity-subrecord/entity-subrecord.component';
-import {ColumnDescription} from '../../ui-helper/entity-subrecord/column-description';
-
 
 
 @Component({
@@ -56,6 +52,18 @@ export class ChildDetailsComponent implements OnInit {
   documentStatus = ['OK (copy with us)', 'OK (copy needed for us)', 'needs correction', 'applied', 'doesn\'t have', 'not eligible', ''];
   eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
   vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
+
+
+  constructor(private entityMapperService: EntityMapperService,
+              private childrenService: ChildrenService,
+              private route: ActivatedRoute,
+              @Inject(FormBuilder) public fb: FormBuilder,
+              private router: Router,
+              private location: Location,
+              private snackBar: MatSnackBar,
+              private confirmationDialog: ConfirmationDialogService,
+              private alertService: AlertService,
+  ) { }
 
   generateNewRecordFactory() {
     // define values locally because 'this' is a different scope after passing a function as input to another component
@@ -106,18 +114,6 @@ export class ChildDetailsComponent implements OnInit {
 
   }
 
-
-  constructor(private entityMapperService: EntityMapperService,
-              private childrenService: ChildrenService,
-              private route: ActivatedRoute,
-              @Inject(FormBuilder) public fb: FormBuilder,
-              private router: Router,
-              private location: Location,
-              private snackBar: MatSnackBar,
-              private confirmationDialog: ConfirmationDialogService,
-              private alertService: AlertService,
-  ) { }
-
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
     this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
@@ -134,7 +130,7 @@ export class ChildDetailsComponent implements OnInit {
           this.child = child;
           this.initForm();
           this.entityMapperService.load<School>(School, this.child.schoolId)
-            .then(school => this.currentSchool = school)
+            .then(school => this.currentSchool = school);
         });
     }
 
