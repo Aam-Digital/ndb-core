@@ -48,6 +48,13 @@ export class StateHandler<StateEnum> {
 
   public waitForChangeTo(toState: StateEnum, failOnState?: StateEnum): Promise<any> {
     return new Promise((resolve, reject) => {
+      if (this.getState() === toState) {
+        resolve();
+        return;
+      } else if (failOnState && this.getState() === failOnState) {
+        reject();
+        return;
+      }
       const subscription = this.getStateChangedStream().subscribe(change => {
         if (change.toState === toState) {
           subscription.unsubscribe(); // only once
