@@ -18,7 +18,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserAccountComponent } from './user-account.component';
-import {MatButtonModule, MatFormFieldModule, MatInputModule} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import {SessionService} from '../../session/session.service';
 import {User} from '../user';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';

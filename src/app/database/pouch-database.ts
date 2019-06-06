@@ -92,7 +92,7 @@ export class PouchDatabase extends Database {
         if (JSON.stringify(existingDoc.views) !== JSON.stringify(designDoc.views)) {
           designDoc._rev = existingDoc._rev;
           this.alertService.addDebug('replacing existing database index');
-          return this.put(designDoc)
+          return this.put(designDoc);
         }
       })
       .catch(err => {

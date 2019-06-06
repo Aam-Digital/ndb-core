@@ -18,24 +18,16 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AppVersionComponent } from './app-version.component';
-import {MatDialog, MatDialogModule} from '@angular/material';
 import {MockSessionService} from '../../session/mock-session.service';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
-import {LatestChangesService} from '../latest-changes.service';
 import {LoginState} from '../../session/login-state.enum';
+import { SessionService } from 'app/session/session.service';
+import { MatDialogModule } from '@angular/material/dialog';
+import {LatestChangesService} from '../latest-changes.service';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {ChangelogComponent} from '../changelog/changelog.component';
-import {NgModule} from '@angular/core';
-import { SessionService } from 'app/session/session.service';
 import {of} from 'rxjs';
-
-
-@NgModule({
-  declarations: [ChangelogComponent],
-  imports: [MatDialogModule, NoopAnimationsModule],
-  entryComponents: [ChangelogComponent],
-})
-class TestModule { }
+import {BrowserDynamicTestingModule} from '@angular/platform-browser-dynamic/testing';
 
 describe('AppVersionComponent', () => {
   let component: AppVersionComponent;
@@ -56,16 +48,22 @@ describe('AppVersionComponent', () => {
       .returnValue(LoginState.loggedIn);
 
     TestBed.configureTestingModule({
-      declarations: [AppVersionComponent],
-      imports: [TestModule,
-        MatDialogModule, NoopAnimationsModule],
+      declarations: [AppVersionComponent, ChangelogComponent],
+      imports: [MatDialogModule, NoopAnimationsModule],
       providers: [
         {provide: SessionService, useValue: sessionService},
         {provide: EntityMapperService, useValue: entityMapper},
         {provide: LatestChangesService, useValue: latestChangesService},
       ]
-    })
-      .compileComponents();
+    });
+
+    TestBed.overrideModule(BrowserDynamicTestingModule, {
+      set: {
+        entryComponents: [ChangelogComponent]
+      }
+    });
+
+    TestBed.compileComponents();
   }));
 
   beforeEach(() => {

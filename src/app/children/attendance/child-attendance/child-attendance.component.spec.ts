@@ -11,7 +11,8 @@ import {MockDatabase} from '../../../database/mock-database';
 import {DemoData} from '../../../database/demo-data';
 import {AttendanceDaysComponent} from '../attendance-days/attendance-days.component';
 import {AttendanceDayBlockComponent} from '../attendance-days/attendance-day-block.component';
-import {MatSelectModule, MatTooltipModule} from '@angular/material';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {FormsModule} from '@angular/forms';
 import {Observable, of} from 'rxjs';
 

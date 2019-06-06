@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
 import {Child} from '../../child';
-import {MatTableDataSource} from '@angular/material';
+import { MatTableDataSource } from '@angular/material/table';
 import {AttendanceMonth} from '../attendance-month';
 import {ConfirmationDialogService} from '../../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {AlertService} from '../../../alerts/alert.service';

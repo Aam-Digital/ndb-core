@@ -83,7 +83,7 @@ describe('EntityMapperService', () => {
         expect(entity2 instanceof Entity).toBe(true);
         done();
       }
-    )
+    );
   });
 
   it('rejects promise when loading nonexistent entity', function (done) {
@@ -102,7 +102,7 @@ describe('EntityMapperService', () => {
 
     entityMapper.loadType<TestEntity>(TestEntity).then((result) => {
       expect(result.length).toBe(0);
-      done()
+      done();
     });
   });
 
@@ -142,7 +142,7 @@ describe('EntityMapperService', () => {
           .then(() => done())
           .catch((err) => {
             console.log(err);
-            fail()
+            fail();
           });
       }
     );

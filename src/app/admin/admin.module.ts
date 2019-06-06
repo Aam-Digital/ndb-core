@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminComponent } from './admin/admin.component';
-import {MatButtonModule, MatSnackBarModule} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {BrowserModule} from '@angular/platform-browser';
 import {PapaParseModule} from 'ngx-papaparse';
 import {AlertsModule} from '../alerts/alerts.module';

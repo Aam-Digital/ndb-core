@@ -1,5 +1,6 @@
 import {Component, OnInit, AfterViewInit, ViewChild} from '@angular/core';
-import {MatTableDataSource, MatSort} from '@angular/material';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import {School} from '../school';
 import {SchoolsService} from '../schools.service';
 import {Router} from '@angular/router';
@@ -14,7 +15,7 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   schoolList: School[];
   schoolDataSource: MatTableDataSource<School> = new MatTableDataSource<School>();
 
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   filterString = '';
   columnsToDisplay: string[] = ['name', 'medium', 'privateSchool', 'academicBoard', 'upToClass'];
 

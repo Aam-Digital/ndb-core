@@ -1,14 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NoteDetailsComponent } from './note-details.component';
-import {
-  MAT_DIALOG_DATA,
-  MatAutocompleteModule,
-  MatDialogModule, MatDialogRef,
-  MatFormFieldModule, MatIconModule,
-  MatInputModule,
-  MatSelectModule
-} from '@angular/material';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import {UiHelperModule} from '../../../ui-helper/ui-helper.module';
 import {EntityModule} from '../../../entity/entity.module';
 import {FormsModule} from '@angular/forms';
@@ -44,7 +42,7 @@ describe('NoteDetailsComponent', () => {
         UiHelperModule, EntityModule],
       providers: [
         {provide: Database, useClass: MockDatabase},
-        {provide: MatDialogRef, useValue: {beforeClose: () => { return { subscribe: () => {}}}}},
+        {provide: MatDialogRef, useValue: {beforeClose: () => { return { subscribe: () => {}}; }}},
         {provide: MAT_DIALOG_DATA, useValue: {entity: note}},
         {provide: ChildrenService, useClass: ChildrenService},
         ],

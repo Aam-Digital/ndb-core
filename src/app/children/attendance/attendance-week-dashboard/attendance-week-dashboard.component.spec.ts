@@ -1,7 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AttendanceWeekDashboardComponent } from './attendance-week-dashboard.component';
-import {MatCardModule, MatIconModule, MatTooltipModule} from '@angular/material';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {ChildBlockComponent} from '../../child-block/child-block.component';
 import {AttendanceDayBlockComponent} from '../attendance-days/attendance-day-block.component';
 import {SchoolBlockComponent} from '../../../schools/school-block/school-block.component';

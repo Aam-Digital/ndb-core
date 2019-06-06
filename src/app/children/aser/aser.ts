@@ -38,15 +38,6 @@ export class Aser extends Entity {
   ];
 
 
-  child: string; // id of Child entity
-  date: Date;
-  hindi = '';
-  bengali = '';
-  english = '';
-  math = '';
-  remarks = '';
-
-
   static isReadingPassedOrNA(level: string) {
     if (level === '' || level === undefined) {
       // not applicable
@@ -71,6 +62,15 @@ export class Aser extends Entity {
   }
 
 
+  child: string; // id of Child entity
+  date: Date;
+  hindi = '';
+  bengali = '';
+  english = '';
+  math = '';
+  remarks = '';
+
+
   public load(data: any) {
     if (data.date !== undefined && typeof data.date !== typeof new Date()) {
       data.date = new Date(data.date);
@@ -92,5 +92,4 @@ export class Aser extends Entity {
 
     return warningLevel;
   }
-
 }

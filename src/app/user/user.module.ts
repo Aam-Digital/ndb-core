@@ -17,8 +17,9 @@
 
 import { NgModule } from '@angular/core';
 import { UserAccountComponent } from './user-account/user-account.component';
-import { routing } from './user.routing';
-import {MatButtonModule, MatFormFieldModule, MatInputModule} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import {CommonModule} from '@angular/common';
 
 @NgModule({

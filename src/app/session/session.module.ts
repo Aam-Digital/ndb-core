@@ -23,10 +23,13 @@ import { DatabaseModule } from '../database/database.module';
 import { AlertsModule } from '../alerts/alerts.module';
 import { LoggedInGuard } from './logged-in.guard';
 import { sessionServiceProvider } from './session.service.provider';
-import { MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule} from '@angular/material';
-import { RouterModule } from '@angular/router';
 import { databaseServiceProvider } from './database.service.provider';
 import { UserModule } from 'app/user/user.module';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   imports: [

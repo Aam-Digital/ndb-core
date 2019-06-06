@@ -77,7 +77,7 @@ export class EntityMapperService {
       function (error: any) {
         throw error;
       }
-    )
+    );
   }
 
   public save<T extends Entity>(entity: T, forceUpdate: boolean = false): Promise<any> {
@@ -88,7 +88,7 @@ export class EntityMapperService {
           entity._rev = result.rev;
         }
         return result;
-      })
+      });
   }
 
   public remove<T extends Entity>(entity: T): Promise<any> {

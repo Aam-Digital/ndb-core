@@ -11,7 +11,7 @@ describe('ChildrenService', () => {
   beforeEach(() => {
     const database = new MockSessionService().getDatabase();
     entityMapper = new EntityMapperService(database);
-    service = new ChildrenService(entityMapper, database)
+    service = new ChildrenService(entityMapper, database);
   });
 
   it('should be created', () => {
@@ -56,8 +56,8 @@ describe('ChildrenService', () => {
       const promises: Promise<any>[] = [];
       expect(children.length).toBeGreaterThan(0);
       children.forEach(child => promises.push(verifyLatestChildRelations(child, service)));
-      Promise.all(promises).then(() => done())
-    })
+      Promise.all(promises).then(() => done());
+    });
   });
 
   it('should return ChildSchoolRelations of child in correct order', (done: DoneFn) => {
@@ -65,9 +65,9 @@ describe('ChildrenService', () => {
       const promises: Promise<any>[] = [];
       expect(children.length).toBeGreaterThan(0);
       children.forEach(child => promises.push(verifyChildRelationsOrder(child, service)));
-      Promise.all(promises).then(() => done())
-    })
-  })
+      Promise.all(promises).then(() => done());
+    });
+  });
 });
 
 function compareRelations(a: ChildSchoolRelation, b: ChildSchoolRelation) {

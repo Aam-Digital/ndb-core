@@ -19,7 +19,7 @@ import {Component, OnInit} from '@angular/core';
 import {SessionService} from '../../session/session.service';
 import {SyncState} from '../../session/sync-state.enum';
 import {AlertService} from '../../alerts/alert.service';
-import {MatDialog, MatDialogRef} from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {InitialSyncDialogComponent} from './initial-sync-dialog.component';
 import { StateChangedEvent } from 'app/session/util/state-handler';
 

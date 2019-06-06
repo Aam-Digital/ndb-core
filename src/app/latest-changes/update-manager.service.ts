@@ -19,7 +19,7 @@ import {ApplicationRef, Injectable} from '@angular/core';
 import {SwUpdate} from '@angular/service-worker';
 import {first} from 'rxjs/operators';
 import {concat, interval} from 'rxjs';
-import {MatSnackBar} from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable()
 export class UpdateManagerService {
@@ -35,7 +35,7 @@ export class UpdateManagerService {
 
   public notifyUserWhenUpdateAvailable() {
     this.updates.available.subscribe(event => {
-      this.showUpdateNotification()
+      this.showUpdateNotification();
     });
   }
 

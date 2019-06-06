@@ -18,7 +18,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import {ChangelogComponent} from './changelog.component';
-import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import {LatestChangesService} from '../latest-changes.service';
 import {Changelog} from '../changelog';
 import { of } from 'rxjs';

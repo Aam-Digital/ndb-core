@@ -1,23 +1,33 @@
-[![Build Status](https://travis-ci.org/NGO-DB/ndb-core.svg?branch=master)](https://travis-ci.org/NGO-DB/ndb-core)
-[![Code Climate](https://codeclimate.com/github/NGO-DB/ndb-core/badges/gpa.svg)](https://codeclimate.com/github/NGO-DB/ndb-core) [![Greenkeeper badge](https://badges.greenkeeper.io/NGO-DB/ndb-core.svg)](https://greenkeeper.io/)
+[![Release Version](https://img.shields.io/github/release/Aam-Digital/ndb-core.svg)](https://github.com/Aam-Digital/ndb-core/releases)
+[![Build Status](https://travis-ci.org/Aam-Digital/ndb-core.svg?branch=master)](https://travis-ci.org/Aam-Digital/ndb-core)
+[![Code Climate](https://codeclimate.com/github/NGO-DB/ndb-core/badges/gpa.svg)](https://codeclimate.com/github/NGO-DB/ndb-core)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/4e4a7a6301064019b2c9/test_coverage)](https://codeclimate.com/github/Aam-Digital/ndb-core/test_coverage)
+[![Greenkeeper badge](https://badges.greenkeeper.io/NGO-DB/ndb-core.svg)](https://greenkeeper.io/)
+[![Docs](https://img.shields.io/badge/docs-by%20compodoc-blue.svg)](https://aam-digital.github.io/ndb-core/index.html)
+
+
 
 # Aam Digital
 Empowering NGOs' social workers with simple to use (database) software.
 
-For a project outline, free demo system, etc. visit [www.aam-digital.com](https://www.aam-digital.com/demo)
-
-**This is an Angular2/Typescript based rewrite of [HELGO DB](https://github.com/NGO-DB/helgo_db)**
-
+> For more information about the software and a free demo system visit **[www.aam-digital.com](https://www.aam-digital.com)**.
 
 
 -----
 
-# Use with Docker
+
+# Use / Deploy
 You can directly run the system using Docker. More information in our [NGO-DB/docker repository](https://github.com/NGO-DB/docker/). In that case you do not have to clone this repository and install all the dependencies as everything is packaged into the docker image already.
 
 
 
-# Installation
+
+
+# Development
+Our detailed documentation and API reference is hosted on GitHub Pages: [**aam-digital.github.io/ndb-core**](http://aam-digital.github.io/ndb-core/index.html).
+
+
+## Setup
 The project depends on a couple of tools which are required for development. Please make sure you have the following installed:
 - [npm (NodeJS)](https://www.npmjs.org/)
 
@@ -27,21 +37,11 @@ Then install the dependencies with
 npm install
 ```
 
-## Deployment
-1. Run `ng build -prod` to build the project and copy the resulting files from the `dist/` directory to your webhost.
-2. Create a config file at `assets/config.json` by copying the default config `assets/config.default.json` (the default config file is used as a fallback and replace with every updated build, your `config.json` file will not be overwritten by updates). Adapt the settings, especially regarding the CouchDB server that should be used for server-side synchronisation.
 
-### Updates
-To update to a newer code base, simply repeat these steps and overwrite your existing files.
-
-Users currently have to actively reload (`Ctrl+F5`) the page due to the offline caching to get the latest version. The UI displays a popup with the latest changes the first time a user sees the new version of the app.
-
-
-
------
-
-# Development
-The **[developer documentation is at the Wiki](https://github.com/NGO-DB/ndb-core/wiki)**. There you can find details about the architecture and instructions on how to add different entities, demo data or unit tests.
+## Configuration
+Create a config file at `assets/config.json` by copying the default config `assets/config.default.json`.
+The default config file is used as a fallback.
+Adapt the settings, especially regarding the CouchDB server that should be used for server-side synchronisation.
 
 
 
@@ -81,5 +81,9 @@ The credentials for the EWB-Account can be found in the `podio` workspace.
 
 
 
-## Contribute
-Please read through the [Contribution Guidelines](https://github.com/NGO-DB/ndb-core/wiki/Contribution-Guidelines) if you want to contribute code to this project.
+
+
+# Contribute
+Our project is run completely by volunteers. Contributions welcome!
+
+Please read the [Contribution Guidelines](https://github.com/NGO-DB/ndb-core/wiki/Contribution-Guidelines) if you want to contribute code to this project.
