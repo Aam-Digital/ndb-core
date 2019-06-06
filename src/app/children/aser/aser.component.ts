@@ -20,13 +20,13 @@ export class AserComponent implements OnInit {
     new ColumnDescription('date', 'Date', 'date', null,
       (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd'), 'xs'),
     new ColumnDescription('math', 'Math', 'select',
-      Aser.MathLevels.map(s => { return { value: s, label: s } }), undefined, 'xs'),
+      Aser.MathLevels.map(s => { return { value: s, label: s }; }), undefined, 'xs'),
     new ColumnDescription('english', 'English', 'select',
-      Aser.ReadingLevels.map(s => { return { value: s, label: s } }), undefined, 'xs'),
+      Aser.ReadingLevels.map(s => { return { value: s, label: s }; }), undefined, 'xs'),
     new ColumnDescription('hindi', 'Hindi', 'select',
-      Aser.ReadingLevels.map(s => { return { value: s, label: s } }), undefined, 'md'),
+      Aser.ReadingLevels.map(s => { return { value: s, label: s }; }), undefined, 'md'),
     new ColumnDescription('bengali', 'Bengali', 'select',
-      Aser.ReadingLevels.map(s => { return { value: s, label: s } }), undefined, 'md'),
+      Aser.ReadingLevels.map(s => { return { value: s, label: s }; }), undefined, 'md'),
     new ColumnDescription('remarks', 'Remarks', 'text', null, undefined, 'md'),
   ];
 
@@ -46,7 +46,7 @@ export class AserComponent implements OnInit {
     this.childrenService.getAserResultsOfChild(id)
       .subscribe(results => {
         this.records = results
-          .sort((a, b) => (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0) )
+          .sort((a, b) => (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0) );
       });
   }
 

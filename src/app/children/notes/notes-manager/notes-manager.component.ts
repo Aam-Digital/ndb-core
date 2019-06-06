@@ -1,5 +1,7 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {MatDialog, MatSort, MatTableDataSource} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
 import {Note} from '../note';
 import {NoteDetailsComponent} from '../note-details/note-details.component';
@@ -22,7 +24,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
   entityList = new Array<Note>();
   notesDataSource = new MatTableDataSource();
 
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
   columnsToDisplay = ['date', 'subject', 'category', 'author', 'children'];
 
 
@@ -88,7 +90,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     ];
 
     Note.INTERACTION_TYPES.forEach(t => {
-      this.categoryFS.options.push({ key: t, label: t, filterFun: (n: Note) => n.category === t })
+      this.categoryFS.options.push({ key: t, label: t, filterFun: (n: Note) => n.category === t });
     });
 
     this.applyFilterSelections();

@@ -89,7 +89,7 @@ export class AddDayAttendanceComponent implements OnInit {
       const attDay = attMonth.dailyRegister.find(d => d.date.getDate() === this.day.getDate()
         && d.date.getMonth() === this.day.getMonth() && d.date.getFullYear() === this.day.getFullYear());
 
-      this.rollCallList.push({child: child, attendanceMonth: attMonth, attendanceDay: attDay})
+      this.rollCallList.push({child: child, attendanceMonth: attMonth, attendanceDay: attDay});
     });
 
     this.rollCallListLoading = false;

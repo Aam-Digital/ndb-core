@@ -21,7 +21,10 @@ import { SyncStatusComponent } from './sync-status/sync-status.component';
 import { DatabaseModule } from '../database/database.module';
 import { SessionModule } from '../session/session.module';
 import {AlertsModule} from '../alerts/alerts.module';
-import {MatButtonModule, MatDialogModule, MatIconModule, MatProgressBarModule} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import {InitialSyncDialogComponent} from './sync-status/initial-sync-dialog.component';
 
 @NgModule({

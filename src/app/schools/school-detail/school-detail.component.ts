@@ -6,7 +6,8 @@ import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import * as uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
-import {MatSnackBar, MatTableDataSource} from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTableDataSource } from '@angular/material/table';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {Location} from '@angular/common';
 import {ChildWithRelation} from '../../children/childWithRelation';
@@ -26,6 +27,18 @@ export class SchoolDetailComponent implements OnInit {
   creatingNew = false;
   editing = false;
 
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private location: Location,
+    @Inject(FormBuilder) public fb: FormBuilder,
+    private entityMapperService: EntityMapperService,
+    private alertService: AlertService,
+    private snackBar: MatSnackBar,
+    private confirmationDialog: ConfirmationDialogService,
+    private schoolService: SchoolsService,
+  ) { }
+
   initializeForm() {
     this.form = this.fb.group({
       name:           [{value: this.school.name,          disabled: !this.editing}],
@@ -41,18 +54,6 @@ export class SchoolDetailComponent implements OnInit {
       privateSchool:  [{value: this.school.privateSchool, disabled: !this.editing}]
     });
   }
-
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private location: Location,
-    @Inject(FormBuilder) public fb: FormBuilder,
-    private entityMapperService: EntityMapperService,
-    private alertService: AlertService,
-    private snackBar: MatSnackBar,
-    private confirmationDialog: ConfirmationDialogService,
-    private schoolService: SchoolsService,
-  ) { }
 
   ngOnInit() {
     const id = this.route.snapshot.params['id'];
@@ -83,7 +84,7 @@ export class SchoolDetailComponent implements OnInit {
     this.schoolService.getChildrenForSchool(this.school.getId())
       .then(children => {
         this.studentDataSource.data = children;
-      })
+      });
   }
 
 

@@ -2,7 +2,8 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AdminComponent } from './admin.component';
 import {AlertsModule} from '../../alerts/alerts.module';
-import {MatButtonModule, MatSnackBarModule} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {BackupService} from '../backup.service';
 import {UiHelperModule} from '../../ui-helper/ui-helper.module';
 import {AppConfig} from '../../app-config/app-config';

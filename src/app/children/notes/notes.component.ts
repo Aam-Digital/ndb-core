@@ -43,7 +43,7 @@ export class NotesComponent implements OnInit {
 
       this.childrenService.getNotesOfChild(this.childId)
         .subscribe(results => this.records = results.sort((a, b) => {
-          return (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0) } ));
+          return (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0); } ));
     });
   }
 

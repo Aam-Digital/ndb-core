@@ -19,12 +19,13 @@
 export class FilterSelection<T> {
 
   public selectedOption = '';
-  defaultFilterFunction = (c: T) => true;
 
   constructor (public name: string,
                public options: { key: string, label: string, filterFun: (c: T) => boolean}[] ) {
 
   }
+
+  defaultFilterFunction = (c: T) => true;
 
   getOption(key: string) {
     return this.options.find((option) => option.key === key);

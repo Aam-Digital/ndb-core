@@ -1,5 +1,8 @@
 import {Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, ViewChild, HostListener} from '@angular/core';
-import {MatDialog, MatSnackBar, MatSort, MatTableDataSource} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import {ConfirmationDialogService} from '../confirmation-dialog/confirmation-dialog.service';
 import {Entity} from '../../entity/entity';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
@@ -29,7 +32,8 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   flexMediaWatcher: Subscription;
 
 
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+
 
   constructor(private _entityMapper: EntityMapperService,
               private _snackBar: MatSnackBar,

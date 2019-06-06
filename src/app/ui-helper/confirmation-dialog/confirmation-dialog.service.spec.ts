@@ -1,7 +1,7 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { ConfirmationDialogService } from './confirmation-dialog.service';
-import {MatDialogModule} from '@angular/material';
+import { MatDialogModule } from '@angular/material/dialog';
 
 describe('ConfirmationDialogService', () => {
   beforeEach(() => {

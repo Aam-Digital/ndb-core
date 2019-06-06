@@ -25,6 +25,17 @@ export class AttendanceMonth extends Entity {
   static readonly THRESHOLD_URGENT = 0.6;
   static readonly THRESHOLD_WARNING = 0.8;
 
+
+  public static createAttendanceMonth(childId: string, institution: string) {
+    // TODO: logical way to assign entityId to Attendance?
+    const newAtt = new AttendanceMonth(childId + '_' + Date.now().toString() + institution);
+    newAtt.month = new Date();
+    newAtt.student = childId;
+    newAtt.institution = institution;
+    return newAtt;
+  }
+
+
   student: string; // id of Child entity
   remarks = '';
   institution: string;
@@ -95,16 +106,6 @@ export class AttendanceMonth extends Entity {
   overridden = false; // indicates individual override during bulk adding
 
   dailyRegister = new Array<AttendanceDay>();
-
-
-  public static createAttendanceMonth(childId: string, institution: string) {
-    // TODO: logical way to assign entityId to Attendance?
-    const newAtt = new AttendanceMonth(childId + '_' + Date.now().toString() + institution);
-    newAtt.month = new Date();
-    newAtt.student = childId;
-    newAtt.institution = institution;
-    return newAtt;
-  }
 
   private updateDailyRegister() {
     if (this.month === undefined) {
