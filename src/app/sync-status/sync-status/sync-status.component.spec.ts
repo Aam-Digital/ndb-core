@@ -26,6 +26,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {InitialSyncDialogComponent} from './initial-sync-dialog.component';
 import { SessionService } from 'app/session/session.service';
 import { SyncState } from 'app/session/sync-state.enum';
+import { AlertsModule } from 'app/alerts/alerts.module';
 import {BrowserDynamicTestingModule} from '@angular/platform-browser-dynamic/testing';
 
 
@@ -40,7 +41,7 @@ describe('SyncStatusComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [InitialSyncDialogComponent, SyncStatusComponent],
-      imports: [MatIconModule, MatDialogModule, NoopAnimationsModule, MatProgressBarModule],
+      imports: [MatIconModule, MatDialogModule, NoopAnimationsModule, MatProgressBarModule, AlertsModule],
       providers: [
         { provide: SessionService, useValue: sessionService }
       ],

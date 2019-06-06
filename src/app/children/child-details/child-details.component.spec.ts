@@ -30,8 +30,6 @@ import {AttendanceDaysComponent} from '../attendance/attendance-days/attendance-
 import {AttendanceDayBlockComponent} from '../attendance/attendance-days/attendance-day-block.component';
 import {ChildrenService} from '../children.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {SessionService} from '../../session/session.service';
-import {DatabaseManagerService} from '../../database/database-manager.service';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HealthCheckupComponent} from '../health-checkup/health-checkup.component';
 import { databaseServiceProvider } from 'app/session/database.service.provider';
