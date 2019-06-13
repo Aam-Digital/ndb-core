@@ -5,7 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
 import {Note} from '../note';
 import {NoteDetailsComponent} from '../note-details/note-details.component';
-import {Subscription} from 'rxjs'
+import {Subscription} from 'rxjs';
 import {SessionService} from '../../../session/session.service';
 import {FilterSelection} from '../../../ui-helper/filter-selection/filter-selection';
 import {WarningLevel} from '../../attendance/warning-level';
@@ -31,7 +31,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
   columnGroups = {
       'standard' : ['date', 'subject', 'category', 'author', 'children'],
       'mobile' : ['date', 'subject', 'children']
-  }
+  };
   filterString = '';
 
   followUpFS = new FilterSelection<Note>('status', [

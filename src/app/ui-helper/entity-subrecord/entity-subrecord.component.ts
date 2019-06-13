@@ -45,7 +45,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
         this.screenWidth = change.mqAlias;
         this.setupTable();
       }
-    })
+    });
   }
 
   ngOnInit() {
