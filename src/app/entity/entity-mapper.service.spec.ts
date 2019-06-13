@@ -36,12 +36,11 @@ describe('EntityMapperService', () => {
     label: 'entity 2 from database'
   };
 
-  beforeEach((done) => {
+  beforeEach(() => {
     testDatabase = new MockDatabase();
     entityMapper = new EntityMapperService(testDatabase);
 
-    Promise.all([testDatabase.put(existingEntity), testDatabase.put(existingEntity2)])
-      .then(function () { done(); })
+    return Promise.all([testDatabase.put(existingEntity), testDatabase.put(existingEntity2)])
       .catch(err => console.log('Failed to insert entity: ' + err));
   });
 
@@ -56,123 +55,83 @@ describe('EntityMapperService', () => {
 
 
 
-  it('loads existing entity', function (done) {
-    entityMapper.load<Entity>(Entity, existingEntity.entityId)
-      .then((loadedEntity) => {
-        expectEntity(loadedEntity, existingEntity);
-        done();
-      })
-      .catch(function (err) {
-        console.log('Failed to load entity: ' + err);
-        fail(err);
+  it('loads existing entity', async () => {
+    const loadedEntity = await entityMapper.load<Entity>(Entity, existingEntity.entityId);
+    expectEntity(loadedEntity, existingEntity);
+  });
+
+  it('load multiple entities', async () => {
+    const loadedEntities = await entityMapper.loadType<Entity>(Entity);
+    expect(loadedEntities.length).toBe(2);
+
+    const entity1 = loadedEntities[0];
+    const entity2 = loadedEntities[1];
+
+    expectEntity(entity1, existingEntity);
+    expectEntity(entity2, existingEntity2);
+  });
+
+  it('rejects promise when loading nonexistent entity', async () => {
+    return entityMapper.load<Entity>(Entity, 'nonexistent_id')
+      .catch((err) => {
+        expect(err).toBeDefined('"not found" error not defined');
       });
   });
 
-  it('load multiple entities', function (done) {
-    entityMapper.loadType<Entity>(Entity).then(
-      function (loadedEntities) {
-        expect(loadedEntities.length).toBe(2);
-
-        const entity1 = loadedEntities[0];
-        const entity2 = loadedEntities[1];
-
-        expectEntity(entity1, existingEntity);
-        expectEntity(entity2, existingEntity2);
-        done();
-      }
-    )
-  });
-
-  it('rejects promise when loading nonexistent entity', function (done) {
-    entityMapper.load<Entity>(Entity, 'nonexistent_id').catch(
-      (err) => {
-        expect(err).toBeDefined('"not found" error not defined');
-        done();
-      }
-    );
-  });
-
-  it('returns empty array when loading non existing entity type ', function (done) {
+  it('returns empty array when loading non existing entity type ', async () => {
     class TestEntity extends Entity {
       static ENTITY_TYPE = 'TestEntity';
     }
 
-    entityMapper.loadType<TestEntity>(TestEntity).then((result) => {
-      expect(result.length).toBe(0);
-      done()
-    });
+    const result = await entityMapper.loadType<TestEntity>(TestEntity);
+    expect(result.length).toBe(0);
   });
 
-  it('saves new entity and loads it', function (done) {
+  it('saves new entity and loads it', async () => {
     const entity = new Entity('test1');
 
-    (async function() {
-      try {
-        await entityMapper.save<Entity>(entity);
-        const loadedEntity = await entityMapper.load<Entity>(Entity, entity.getId());
-        expectEntity(loadedEntity, entity);
-        done();
-      } catch (err) {
-        fail(err);
-        done();
-      }
-    })();
+    await entityMapper.save<Entity>(entity);
+    const loadedEntity = await entityMapper.load<Entity>(Entity, entity.getId());
+    expectEntity(loadedEntity, entity);
   });
 
-  it('rejects promise when saving new entity with existing entityId', function (done) {
+  it('rejects promise when saving new entity with existing entityId', async () => {
     const duplicateEntity = new Entity(existingEntity.entityId);
 
-    entityMapper.save<Entity>(duplicateEntity)
+    await entityMapper.save<Entity>(duplicateEntity)
       .then(() => {
         fail('unexpectedly succeeded to overwrite existing entity');
-        done();
       })
       .catch(
       function (error) {
         expect(error).toBeDefined();
-        done();
       });
   });
 
-  it('saves new version of existing entity', function (done) {
-    (async function() {
-      try {
-        const loadedEntity = await entityMapper.load<Entity>(Entity, existingEntity.entityId);
-        expect(loadedEntity.getId()).toBe(existingEntity.entityId);
+  it('saves new version of existing entity', async () => {
+    const loadedEntity = await entityMapper.load<Entity>(Entity, existingEntity.entityId);
+    expect(loadedEntity.getId()).toBe(existingEntity.entityId);
 
-        await entityMapper.save<Entity>(loadedEntity);
-        done();
-      } catch (err) {
-        fail(err);
-        done();
-      }
-    })();
+    await entityMapper.save<Entity>(loadedEntity);
   });
 
-  it('removes existing entity', function (done) {
-    (async function() {
-      try {
-        const loadedEntity = await entityMapper.load<Entity>(Entity, existingEntity.entityId);
-        await entityMapper.remove<Entity>(loadedEntity);
-        entityMapper.load<Entity>(Entity, existingEntity.entityId)
-          .catch((err) => {
-            expect(err).toBeDefined('"not found" error not defined');
-            done();
-          });
-      } catch (err) {
-        fail(err);
-        done();
-      }
-    })();
+  it('removes existing entity', async () => {
+    const loadedEntity = await entityMapper.load<Entity>(Entity, existingEntity.entityId);
+    await entityMapper.remove<Entity>(loadedEntity);
+    entityMapper.load<Entity>(Entity, existingEntity.entityId)
+      .then(() => fail('unexpectedly resolved promise'))
+      .catch((err) => {
+        expect(err).toBeDefined('"not found" error not defined');
+      });
   });
 
-  it('rejects promise removing nonexistent entity', function (done) {
+  it('rejects promise removing nonexistent entity', () => {
     const nonexistingEntity = new Entity('nonexistent-entity');
 
-    entityMapper.remove<Entity>(nonexistingEntity)
+    return entityMapper.remove<Entity>(nonexistingEntity)
+      .then(() => fail('unexpectedly resolved promise'))
       .catch((error) => {
         expect(error).toBeDefined();
-        done();
       });
   });
 
