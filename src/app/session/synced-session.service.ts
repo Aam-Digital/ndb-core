@@ -59,27 +59,39 @@ export class SyncedSessionService extends SessionService {
    */
   public login(username: string, password: string): Promise<LoginState> {
     const localLogin =  this._localSession.login(username, password);
-    this._remoteSession.login(username, password).then(async (connectionState: ConnectionState) => {
+    const remoteLogin = this._remoteSession.login(username, password);
+    remoteLogin.then(async (connectionState: ConnectionState) => {
       // remote connected -- sync!
       if (connectionState === ConnectionState.connected) {
-        // TODO(lh): what do we do, if we learn that the localSession login failed? We need to retry after the login.
-        // TODO(lh): liveSync() here?
-        return await this.sync();
+        const syncPromise = this.sync(); // TODO(lh): liveSync() here?
+
+        // asynchronously check if the local login failed --> this happens, when the password was changed at the remote
+        localLogin.then(async (loginState: LoginState) => {
+          if (loginState === LoginState.loginFailed) {
+            // in this case: when the sync is completed, retry the local login after the sync
+            await syncPromise;
+            return this._localSession.login(username, password)
+          }
+        });
+
+        return syncPromise;
       }
+
+      // If we are not connected, we must check (asynchronously), whether the local database is initial
+      this._localSession.isInitial().then(isInitial => {
+        if (isInitial) {
+          // Fail the sync in the local session, which will fail the authentication there
+          this._localSession.syncState.setState(SyncState.failed);
+        }
+      });
 
       // remote rejected but local logged in
       if (connectionState === ConnectionState.rejected) {
         if (await localLogin === LoginState.loggedIn) {
           // Someone changed the password remotely --> fail the login
-          this._localSession.loginState.setState(LoginState.loginFailed);
+          this._localSession.logout();
           // TODO(lh): We might want to alert the alertService
         }
-      }
-
-      // If we are not connected, we must check, whether the local database is initial
-      if (await this._localSession.isInitial()) {
-        // Fail the sync in the local session, which will fail the authentication there
-        this._localSession.syncState.setState(SyncState.failed);
       }
     });
     return localLogin; // the local login is the Promise that counts
@@ -108,7 +120,7 @@ export class SyncedSessionService extends SessionService {
     } catch (error) {
       this._localSession.syncState.setState(SyncState.failed);
       throw error; // rethrow, so later Promise-handling lands in .catch, too
-    };
+    }
   }
 
   public liveSync() {
