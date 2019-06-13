@@ -1,8 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AttendanceAverageDashboardComponent } from './attendance-average-dashboard.component';
-import {AttendanceMonth} from '../attendance-month';
-import {MatCardModule, MatIconModule} from '@angular/material';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import {ChildrenService} from '../../children.service';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
 import {Database} from '../../../database/database';

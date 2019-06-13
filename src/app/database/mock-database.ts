@@ -158,11 +158,11 @@ export class MockDatabase extends Database {
         return this.getAll().then(results => {
           results = results.filter(filter);
           results = results.reduce(reduce, []);
-          return { rows: results }
+          return { rows: results };
         });
       } else {
         return this.getAll().then(results => {
-          return { rows: results.filter(filter).map(e => { return {doc: e} } ) }
+          return { rows: results.filter(filter).map(e => { return {doc: e}; } ) };
         });
       }
     }
@@ -182,13 +182,13 @@ export class MockDatabase extends Database {
           return aValue < bValue ? 1 : aValue === bValue ? 0 : -1;
         });
         const filtered: ChildSchoolRelation[] = sorted.filter(doc => doc.childId === childId);
-        let results: {doc: ChildSchoolRelation}[] = filtered.map(relation => { return {doc: relation} });
+        let results: {doc: ChildSchoolRelation}[] = filtered.map(relation => { return {doc: relation}; });
         if (limit) {
-          results = results.slice(0, limit)
+          results = results.slice(0, limit);
         }
         resolve({rows: results});
-      })
-    })
+      });
+    });
   }
 
   /**
@@ -205,7 +205,7 @@ export class MockDatabase extends Database {
     while (res.length < length) {
       res = '0' + res;
     }
-    return res
+    return res;
   }
 
   private isWithinLastMonths(date: Date, now: Date, numberOfMonths: number): boolean {

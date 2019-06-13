@@ -18,7 +18,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SyncStatusComponent } from './sync-status.component';
-import {MatDialogModule, MatIconModule, MatProgressBarModule} from '@angular/material';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import {SessionService} from '../../session/session.service';
 import {AlertService} from '../../alerts/alert.service';
 import {DatabaseManagerService} from '../../database/database-manager.service';
@@ -26,16 +28,7 @@ import {MockDatabaseManagerService} from '../../database/mock-database-manager.s
 import {DatabaseSyncStatus} from '../../database/database-sync-status.enum';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {InitialSyncDialogComponent} from './initial-sync-dialog.component';
-import {NgModule} from '@angular/core';
-
-
-@NgModule({
-  declarations: [InitialSyncDialogComponent, SyncStatusComponent],
-  imports: [MatIconModule, MatDialogModule, NoopAnimationsModule, MatProgressBarModule],
-  entryComponents: [InitialSyncDialogComponent],
-})
-class TestModule { }
-
+import {BrowserDynamicTestingModule} from '@angular/platform-browser-dynamic/testing';
 
 describe('SyncStatusComponent', () => {
   let component: SyncStatusComponent;
@@ -51,14 +44,22 @@ describe('SyncStatusComponent', () => {
     dbManager = new MockDatabaseManagerService();
 
     TestBed.configureTestingModule({
-      imports: [TestModule],
+      declarations: [InitialSyncDialogComponent, SyncStatusComponent],
+      imports: [MatIconModule, MatDialogModule, NoopAnimationsModule, MatProgressBarModule],
       providers: [
         { provide: SessionService, useValue: sessionService },
         { provide: AlertService, useValue: alertService },
         { provide: DatabaseManagerService, useValue: dbManager}
       ],
-    })
-      .compileComponents();
+    });
+
+    TestBed.overrideModule(BrowserDynamicTestingModule, {
+      set: {
+        entryComponents: [InitialSyncDialogComponent]
+      }
+    });
+
+    TestBed.compileComponents();
   }));
 
   beforeEach(() => {

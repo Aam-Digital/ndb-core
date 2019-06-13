@@ -48,7 +48,7 @@ describe('EntityMapperService', () => {
 
   function expectEntity(actualEntity, expectedEntity) {
     expect(actualEntity.getId()).toBe(expectedEntity.entityId);
-    expect((EntityMapperService as any).createDatabaseId(actualEntity.getType(), actualEntity.getId()))
+    expect(Entity.createPrefixedId(actualEntity.getType(), actualEntity.getId()))
       .toBe(expectedEntity._id);
 
     expect(actualEntity instanceof Entity).toBe(true);
@@ -64,7 +64,7 @@ describe('EntityMapperService', () => {
       })
       .catch(function (err) {
         console.log('Failed to load entity: ' + err);
-        fail();
+        fail(err);
       });
   });
 

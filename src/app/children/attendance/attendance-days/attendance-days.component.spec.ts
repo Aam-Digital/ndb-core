@@ -1,7 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AttendanceDaysComponent } from './attendance-days.component';
-import {MatFormFieldModule, MatInputModule, MatSelectModule, MatTooltipModule} from '@angular/material';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {FormsModule} from '@angular/forms';
 import {UiHelperModule} from '../../../ui-helper/ui-helper.module';
 import {EntityModule} from '../../../entity/entity.module';

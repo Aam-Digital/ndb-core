@@ -9,7 +9,7 @@ import {EntityMapperService} from '../../entity/entity-mapper.service';
 })
 export class ProgressDashboardComponent implements OnInit {
 
-  @Input() dashboardConfigId;
+  @Input() dashboardConfigId = '';
   data: ProgressDashboardConfig;
   configure = false;
 

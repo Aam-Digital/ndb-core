@@ -20,7 +20,7 @@ import {DatabaseManagerService} from '../../database/database-manager.service';
 import {SessionService} from '../../session/session.service';
 import {DatabaseSyncStatus} from '../../database/database-sync-status.enum';
 import {AlertService} from '../../alerts/alert.service';
-import {MatDialog, MatDialogRef} from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {InitialSyncDialogComponent} from './initial-sync-dialog.component';
 
 @Component({

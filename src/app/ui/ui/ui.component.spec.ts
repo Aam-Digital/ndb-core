@@ -20,10 +20,12 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { UiComponent } from './ui.component';
 import {RouterTestingModule} from '@angular/router/testing';
 import {SearchComponent} from '../search/search.component';
-import {
-  MatAutocompleteModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSidenavModule,
-  MatToolbarModule
-} from '@angular/material';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import {FormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {ChildrenModule} from '../../children/children.module';
