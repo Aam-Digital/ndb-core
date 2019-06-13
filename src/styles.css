@@ -49,40 +49,38 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 
 
 
-.dashboard-widget .mat-card-header {
-  margin-top: -24px !important;
-  margin-left: -24px;
-  margin-right: -24px;
-  margin-bottom: 24px;
-  padding: 24px;
-  position: relative;
 
-  height: 48px;
+.dashboard-widget .mat-card-header {
+
+  padding: 24px;
+  margin-bottom: 10px;
+  position: relative;
 
   background-color: lightgray;
   color: white;
 }
 
-.dashboard-widget .mat-card-title {
-  position: absolute;
-  right: 24px;
-  top: 32px;
+.dashboard-widget .mat-card-header-text {
+  width: 100%;
+}
 
+.dashboard-widget .mat-card-title {
+  text-align: end;
+  width: 100%;
+  margin-top: 10px;
   font-size: 40pt;
 }
 
 .dashboard-widget .mat-card-subtitle {
-  position: absolute;
-  right: 24px;
-  bottom: 0;
-
+  text-align: end;
+  width: calc(100% - 20px);
+  padding-left: 20px;
+  margin-bottom: 0;
+  margin-top: 0 !important;
   color: white;
 }
 
 .dashboard-widget .mat-card-avatar {
-  position: absolute;
-  left: 24px;
-  top: 18px;
 
   font-size: 40pt;
 }
@@ -90,6 +88,21 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 .dashboard-widget .mat-card-content {
   max-height: 240px;
   overflow: auto;
+}
+
+.dashboard-widget .dashboard-desc {
+  padding: 10px;
+  font-style: italic;
+}
+
+mat-card.dashboard-widget {
+  min-width: 250px;
+  margin: 10px;
+  padding: 0px;
+}
+
+.dashboard-widget .dashboard-table-cell {
+  padding: 10px;
 }
 
 
@@ -142,7 +155,6 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 .attendance-U {
   background-color: #DDDDDD !important;
 }
-
 
 /* configures the color of the buttons on hover*/
 .filter-button mat-button-toggle:hover{

@@ -1,13 +1,16 @@
 <h1>Attendance Register</h1>
 
 <div>
-  <a routerLink='/attendance/add/day' style='margin-left:40px;'><button mat-stroked-button>add a day's attendance</button></a>
+    <a routerLink='/attendance/add/day' style='margin-left:40px;'><button mat-stroked-button>add a day's attendance</button></a>
   <a routerLink='/attendance/add/month' style='margin-left:40px;'><button mat-stroked-button>add a month's attendance</button></a>
 </div>
 
 <br>
 
 <mat-expansion-panel expanded="true" fxLayout="column" fxLayoutGap="10px" class='filter-panel'>
+  <div fxHide.gt-xs>
+    <button mat-raised-button (click)='applyFilterSelections();'>Search records</button>
+  </div>
   <div fxLayout='row' fxLayoutGap='10px' style='margin-top: 20px;'>
     <div>
       <mat-form-field>
@@ -34,23 +37,34 @@
       </mat-button-toggle-group>
     </div>
 
-    <div>
+    <div fxHide.lt-sm>
       <button mat-raised-button (click)='applyFilterSelections();'>Search records</button>
     </div>
   </div>
 
-  <div fxLayout='row' fxLayoutGap='10px'>
+  <div fxLayout='row wrap' fxLayoutGap='10px' class="filter-button" fxHide.lt-sm>
     <mat-button-toggle-group *ngFor='let filterSelection of filterSelections'
                              [name]="filterSelection.name" [value]='filterSelection.selectedOption'>
       <mat-button-toggle *ngFor='let option of filterSelection.options' [value]="option.key"
+                         [class.selected]="option.key === filterSelection.selectedOption"
                          (click)="filterSelection.selectedOption=option.key; applyFilterSelections();">
         {{option.label}}
       </mat-button-toggle>
     </mat-button-toggle-group>
-
     <div class='align-form-field'>
       (Showing {{dataSource.filteredData.length / 2 }} children)
     </div>
+  </div>
+  <div fxLayout="row wrap" fxHide.gt-xs>
+    <mat-form-field *ngFor="let filterSelection of filterSelections" style="padding-right: 1%">
+      <mat-label>{{filterSelection.name}}</mat-label>
+      <mat-select  [id]="filterSelection.name" [value]="filterSelection.selectedOption" placeholder="filterSelection.name">
+        <mat-option *ngFor="let option of filterSelection.options" [value]="option.key"
+                    (click)="filterSelection.selectedOption=option.key; applyFilterSelections()">
+          {{option.label}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
 </mat-expansion-panel>
 
@@ -122,5 +136,5 @@
 
 
   <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-  <tr mat-row *matRowDef="let record; columns: columnsToDisplay"></tr>
+  <tr mat-row *matRowDef="let record; columns: columnsToDisplay" class="table-list-item"></tr>
 </table>

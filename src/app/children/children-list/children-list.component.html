@@ -1,37 +1,46 @@
 <h1>Children List</h1>
 
-<mat-expansion-panel expanded="true" fxLayout="column" fxLayoutGap="10px" class='filter-panel'>
+<mat-expansion-panel expanded="true" fxLayout="column wrap" fxLayoutGap="10px" class='filter-panel'>
   <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none end">
+    <!-- text search -->
     <div fxFlex='50'>
       <mat-form-field style='width:100%'>
-        <input matInput placeholder="Filter" (ngModelChange)="applyFilter($event)" [(ngModel)]="filterString">
-        <button mat-icon-button *ngIf="filterString" matSuffix aria-label="Clear" (click)="filterString=''; applyFilter('');">
+        <input  matInput placeholder="Filter" (ngModelChange)="applyFilter($event)" [(ngModel)]="filterString">
+        <button  mat-icon-button *ngIf="filterString" matSuffix aria-label="Clear" (click)="filterString=''; applyFilter('');">
           <mat-icon fontIcon="fa-times"></mat-icon>
         </button>
       </mat-form-field>
     </div>
-
-    <div class='align-form-field'>
+    <!-- number of table entries -->
+    <div fxFlex='25' fxHide.xs='true' class='align-form-field'>
       (Showing {{childrenDataSource.filteredData.length}} children)
     </div>
-
-    <div class='align-form-field'>
+    <!-- add new button -->
+    <div fxFlex='25'class='align-form-field'>
       <button mat-stroked-button color="accent" (click)="addChildClick()">
-        <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>Add New Child
+        <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>
+        <span fxHide.lt-md="true">
+          Add New
+        </span>
       </button>
     </div>
   </div>
-
-  <div fxLayout='row' fxLayoutGap='10px' class="filter-button">
-    <mat-button-toggle-group name="columnSelection" [(value)]="columnGroupSelection">
-      <!--<mat-button-toggle value="basic" (click)="displayColumnGroup('basic')">Basic Info</mat-button-toggle>-->
-      <!--<mat-button-toggle value="school" (click)="displayColumnGroup('school')">School Info</mat-button-toggle>-->
-      <!--<mat-button-toggle value="status" (click)="displayColumnGroup('status')">Status</mat-button-toggle>-->
-      <!--<mat-button-toggle value="health" (click)="displayColumnGroup('health')">Health</mat-button-toggle>-->
-      <mat-button-toggle *ngFor="let item of columnGroups | keyvalue" [value]="item.key"
-                         [class.selected]="item.key === columnGroupSelection"
-                         (click)="displayColumnGroup(item.key)">
-        {{item.key}}
+  <!--
+  <mat-form-field>
+    <mat-select fxShow.xs="true" [value]="columnGroupSelection">
+      <mat-option *ngFor="let item of columnGroups" [value]="item.name"
+                  (click)="displayColumnGroup(item.name)">
+        {{item.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  -->
+  <div fxLayout='row wrap' fxLayoutGap='10px' class="filter-button" fxHide.lt-sm>
+    <mat-button-toggle-group name="columnSelection" [(value)]="columnGroupSelection" fxLayout="row wrap">
+      <mat-button-toggle *ngFor="let item of columnGroups " [value]="item.name"
+                         [class.selected]="item.name === columnGroupSelection"
+                         (click)="displayColumnGroup(item.name)">
+        {{item.name}}
       </mat-button-toggle>
     </mat-button-toggle-group>
 
@@ -39,10 +48,22 @@
       [name]="filterSelection.name" [value]='filterSelection.selectedOption'>
       <mat-button-toggle *ngFor='let option of filterSelection.options' [value]="option.key"
                          [class.selected]="option.key === filterSelection.selectedOption"
-                         (click)="filterSelection.selectedOption=option.key; applyFilterSelections();">
+                         (click)="filterSelection.selectedOption=option.key; applyFilterSelections();"
+                         >
         {{option.label}}
       </mat-button-toggle>
     </mat-button-toggle-group>
+  </div>
+  <div fxLayout="row wrap" fxHide.gt-xs>
+    <mat-form-field *ngFor="let filterSelection of filterSelections" style="padding-right: 1%">
+      <mat-label>{{filterSelection.name}}</mat-label>
+      <mat-select  [id]="filterSelection.name" [value]="filterSelection.selectedOption" placeholder="filterSelection.name">
+        <mat-option *ngFor="let option of filterSelection.options" [value]="option.key"
+                    (click)="filterSelection.selectedOption=option.key; applyFilterSelections()">
+          {{option.label}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
 </mat-expansion-panel>
 

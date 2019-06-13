@@ -6,12 +6,12 @@
     <mat-card-title>{{totalChildren}}</mat-card-title>
     <mat-card-subtitle>Children</mat-card-subtitle>
   </mat-card-header>
-  <mat-card-content style='margin:-24px;'>
-    <table class='dashboard-table'>
-      <tr *ngFor='let entry of childrenByCenter' class='dashboard-table-row' (click)='goToChildrenList(entry[0])' style='cursor: pointer;'>
-          <td class='dashboard-table-cell'>{{entry[0]}}:</td>
-          <td class='dashboard-table-cell'>{{entry[1]}}</td>
-          <td class='dashboard-table-cell'><span class='fa fa-external-link-square'></span></td>
+  <mat-card-content>
+    <table class="dashboard-table">
+      <tr *ngFor="let entry of childrenByCenter" class="dashboard-table-row" (click)="goToChildrenList(entry[0])" style="cursor: pointer;">
+          <td class="dashboard-table-cell">{{entry[0]}}:</td>
+          <td class="dashboard-table-cell">{{entry[1]}}</td>
+          <td class="dashboard-table-cell"><span class="fa fa-external-link-square"></span></td>
       </tr>
     </table>
   </mat-card-content>

@@ -17,6 +17,7 @@
 
 .widget-wrapper > * {
   margin-bottom: 20px;
-  min-width: 360px;
+  min-width: min-content;
+  margin-right: 10px !important;
 }
 
