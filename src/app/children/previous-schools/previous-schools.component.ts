@@ -14,24 +14,13 @@ import { School } from 'app/schools/school';
   template: '<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="generateNewRecordFactory()">' +
   '</app-entity-subrecord>',
 })
+
 export class PreviousSchoolsComponent implements OnInit {
 
   childId: string;
   records = new Array<PreviousSchools>();
   schoolList = new Array<School>();
-
-  columns: Array<ColumnDescription> = [
-    new ColumnDescription('name', 'Name', 'select',
-      this.schoolList.map(t => { console.log(t);return { value: t.name, label: t.name }; })),
-    new ColumnDescription('from', 'From', 'date', null,
-      (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
-    new ColumnDescription('to', 'To', 'date', null,
-      (v: Date) => { if(v.toDateString()==="Invalid Date"){
-      }
-      else{
-        this.datePipe.transform(v, 'yyyy-MM-dd');
-      }}),
-  ];
+  columns = new Array<ColumnDescription>();
 
   constructor(private route: ActivatedRoute,
               private childrenService: ChildrenService,
@@ -39,12 +28,14 @@ export class PreviousSchoolsComponent implements OnInit {
               private datePipe: DatePipe) {
   }
 
+
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.childId = params.get('id').toString();
-      this.loadData(this.childId);
+      this.loadData(this.childId); 
     });
   }
+
 
   loadData(id: string) {
     let tempRecords = new Array<PreviousSchools>();
@@ -57,23 +48,31 @@ export class PreviousSchoolsComponent implements OnInit {
           previousSchool.to=new Date(element.getEndTime());
           tempRecords.push(previousSchool);
         });
-        this.records=tempRecords;
+        this.records = tempRecords
+          .sort((a, b) => (
+            (b.from ? b.from.valueOf() : 0) - (a.from ? a.from.valueOf() : 0)
+          ));
       });
     this.schoolsService.getSchools().subscribe(data => {
-        this.schoolList = data;
+        this.columns = [
+          new ColumnDescription('name', 'Name', 'select',
+            data.map(t => { return { value: t.name, label: t.name} })),
+          new ColumnDescription('from', 'From', 'date', null,
+            (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
+          new ColumnDescription('to', 'To', 'date', null,
+            (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
+        ];
     });
   }
 
-
+  
   generateNewRecordFactory() {
-    // define values locally because "this" is a different scope after passing a function as input to another component
-    const child = this.childId;
-    console.log(this.schoolList);
     return () => {
-      const newCSR = new PreviousSchools(Date.now().toString());
-      newCSR.child = child;
-      // newCSR.start = new Date();
-      return newCSR;
+      const newPreviousSchool = new PreviousSchools(Date.now().toString());
+      newPreviousSchool.child = this.childId;
+      newPreviousSchool.from = new Date();
+      newPreviousSchool.to = new Date();
+      return newPreviousSchool;
     }
   }
 }
