@@ -40,7 +40,7 @@
   <div fxLayout="row wrap" fxHide.gt-xs>
     <mat-form-field *ngFor="let filterSelection of filterSelections" style="padding-right: 1%">
       <mat-label>{{filterSelection.name}}</mat-label>
-      <mat-select  [id]="filterSelection.name" [value]="filterSelection.selectedOption" placeholder="filterSelection.name">
+      <mat-select  [id]="filterSelection.name" [value]="filterSelection.selectedOption" placeholder="filterSelection.name" >
         <mat-option *ngFor="let option of filterSelection.options" [value]="option.key"
                     (click)="filterSelection.selectedOption=option.key; applyFilterSelections()">
           {{option.label}}

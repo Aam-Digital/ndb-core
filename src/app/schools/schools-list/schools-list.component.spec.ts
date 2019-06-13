@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
+import {MatSelectModule} from '@angular/material/select';
 import {FormsModule} from '@angular/forms';
 import {Database} from '../../database/database';
 import {MockDatabase} from '../../database/mock-database';
@@ -35,6 +36,7 @@ describe('SchoolsListComponent', () => {
         MatExpansionModule,
         FormsModule,
         BrowserAnimationsModule,
+        MatSelectModule,
       ],
       providers: [
         SchoolsService,
