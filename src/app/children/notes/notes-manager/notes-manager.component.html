@@ -1,7 +1,7 @@
 <h1>Notes &amp; Reports</h1>
 
 <mat-expansion-panel expanded="true" fxLayout="column" fxLayoutGap="10px" class='filter-panel'>
-  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none end">
+  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none end" >
     <div fxFlex='50'>
       <mat-form-field style='width:100%'>
         <input matInput placeholder="Filter" (ngModelChange)="applyFilter($event)" [(ngModel)]="filterString">
@@ -11,18 +11,21 @@
       </mat-form-field>
     </div>
 
-    <div class='align-form-field'>
+    <div class='align-form-field' fxHide.xs='true'>
       (Showing {{notesDataSource.filteredData.length}} Notes)
     </div>
 
     <div class='align-form-field'>
       <button mat-stroked-button color="accent" (click)="addNoteClick()">
-        <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>Add New Note
+        <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>
+        <span fxHide.lt-md="true">
+          Add New
+        </span>
       </button>
     </div>
   </div>
 
-  <div fxLayout='row' fxLayoutGap='10px' class="filter-button">
+  <div fxLayout='row wrap' fxLayoutGap='10px' class="filter-button" fxHide.lt-sm>
     <mat-button-toggle-group *ngFor='let filterSelection of filterSelections'
                              [name]="filterSelection.name" [value]='filterSelection.selectedOption'>
       <mat-button-toggle *ngFor='let option of filterSelection.options' [value]="option.key"
@@ -31,6 +34,18 @@
         {{option.label}}
       </mat-button-toggle>
     </mat-button-toggle-group>
+  </div>
+  <div fxLayout="row wrap" fxHide.gt-xs>
+    <mat-form-field *ngFor="let filterSelection of filterSelections" style="padding-right: 1%">
+      <mat-label>{{filterSelection.name}}</mat-label>
+      <mat-select  [id]="filterSelection.name" [value]="filterSelection.selectedOption" placeholder="filterSelection.name">
+        <mat-option *ngFor="let option of filterSelection.options" [value]="option.key"
+                    (click)="filterSelection.selectedOption=option.key; applyFilterSelections()">
+          {{option.label}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
   </div>
 
   <div fxLayout='row' fxLayoutGap='10px' style='margin-top: 20px;'>

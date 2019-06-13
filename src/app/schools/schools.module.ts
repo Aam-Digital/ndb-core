@@ -50,7 +50,6 @@ import {SchoolsService} from './schools.service';
     FlexLayoutModule,
     RouterModule,
     MatFormFieldModule,
-    MatSelectModule,
     MatInputModule,
     MatSelectModule,
     MatExpansionModule,

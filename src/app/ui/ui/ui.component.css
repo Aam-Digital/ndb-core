@@ -35,6 +35,7 @@ app-ui {
   left: 0;
   right: 0;
   bottom: 0;
+  padding-bottom: 30px;
 }
 
 .sidenav-menu {
@@ -54,6 +55,12 @@ app-ui {
 .sidenav-content {
   padding: 24px;
   overflow: scroll;
+}
+/* reduce padding for content when screen size is too small */
+@media (max-width: 599px) {
+  .sidenav-content {
+    padding: 12px;
+  }
 }
 
 .header-icon {
