@@ -22,12 +22,25 @@ import { LoginState } from './login-state.enum';
 import { SyncState } from './sync-state.enum';
 import { ConnectionState } from './connection-state.enum';
 import { AppConfig } from 'app/app-config/app-config';
+import { LocalSession } from './local-session';
+import { RemoteSession } from './remote-session';
 
 describe('SyncedSessionService', () => {
     const alertService = new AlertService(null, null);
     let sessionService: SessionService;
 
-    describe("Integration Tests", () => {
+    describe('Integration Tests', () => {
+        var originalTimeout;
+
+        beforeEach(function() {
+            originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+            jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+        });
+
+        afterEach(function() {
+            jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
+        });
+
         beforeEach(() => {
             AppConfig.settings = {
                 'site_name': 'Aam Digital - DEV',
@@ -101,26 +114,52 @@ describe('SyncedSessionService', () => {
         });
     });
 
-    describe("Mocked Tests", () => {
+    describe('Mocked Tests', () => {
+        let localSession: LocalSession;
+        let remoteSession: RemoteSession;
+
         beforeEach(() => {
             // setup synced session service
-            // replace login-methods of local and remote session with mocks that can resolve with custom values programmatically
-            throw new Error("TODO(lh)");
+            sessionService = new SyncedSessionService(alertService);
+            // make private members localSession and remoteSession available in the tests
+            localSession = sessionService['_localSession'];
+            remoteSession = sessionService['_remoteSession'];
         });
 
-        it('behaves correctly when the local session rejects, but the remote session succeeds', async () => {
-            // localSession should change loginState to loginFailed
-            // remoteSession should change connectionState to connected
-            // syncState should change to completed
-            // loginState should change to loggedIn (this is not implemented yet!)
-            throw new Error("TODO(lh)");
+        it('behaves correctly when the local session rejects, but the remote session succeeds', (done) => {
+            const localLogin = spyOn(localSession, 'login').and.returnValues(
+                Promise.resolve(LoginState.loginFailed),
+                Promise.resolve(LoginState.loggedIn)
+            );
+            const remoteLogin = spyOn(remoteSession, 'login').and.returnValue(Promise.resolve(ConnectionState.connected));
+            const syncSpy = spyOn(sessionService, 'sync').and.returnValue(Promise.resolve());
+            sessionService.login('u', 'p');
+            setTimeout(() => { // wait for the next event cycle loop --> all Promise handlers are evaluated before this
+                // login methods should have been called, the local one twice
+                expect(localLogin.calls.allArgs()).toEqual([['u', 'p'], ['u', 'p']]);
+                expect(remoteLogin.calls.allArgs()).toEqual([['u', 'p']]);
+                // sync should have been triggered
+                expect(syncSpy.calls.count()).toEqual(1);
+                done();
+            });
         });
 
-        it('behaves correctly when the local session logs in, but the remote session rejects', async () => {
-            // localSession should change loginState to loggedIn
-            // remoteSession should change connectionState to rejected
-            // loginState should change to loginFailed
-            throw new Error("TODO(lh)");
+        it('behaves correctly when the local session logs in, but the remote session rejects', (done) => {
+            const localLogin = spyOn(localSession, 'login').and.returnValue(Promise.resolve(LoginState.loggedIn));
+            const localLogout = spyOn(localSession, 'logout');
+            const remoteLogin = spyOn(remoteSession, 'login').and.returnValue(Promise.resolve(ConnectionState.rejected));
+            const syncSpy = spyOn(sessionService, 'sync').and.returnValue(Promise.resolve());
+            sessionService.login('u', 'p');
+            setTimeout(() => { // wait for the next event cycle loop --> all Promise handlers are evaluated before this
+                // login methods should have been called
+                expect(localLogin.calls.allArgs()).toEqual([['u', 'p']]);
+                expect(remoteLogin.calls.allArgs()).toEqual([['u', 'p']]);
+                // sync should not have been triggered
+                expect(syncSpy.calls.count()).toEqual(0);
+                // logout should have been called
+                expect(localLogout.calls.count()).toEqual(1);
+                done();
+            });
         });
     });
 });
