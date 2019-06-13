@@ -19,4 +19,21 @@ export class BlobServiceService {
       }
     )
   };
+
+  public async getDir() {
+    try {
+      const contents = await this.client.getDirectoryContents("");
+      console.log(JSON.stringify(contents, undefined, 4));
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  public getFile(id: string):any {
+    return this.client.getFileContents("/"+id)
+  }
+
+  public setFile(file: any, path:string) {
+    this.client.putFileContents(path, file);
+  }
 }
