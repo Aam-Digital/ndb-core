@@ -12,14 +12,12 @@ import {School} from '../schools/school';
 import {ChildWithRelation} from './childWithRelation';
 import {SchoolWithRelation} from '../schools/schoolWithRelation';
 import {HealthCheck} from './health-checkup/health-check';
-import { BlobServiceService } from '../webdav/blob-service.service';
 
 @Injectable()
 export class ChildrenService {
 
   constructor(private entityMapper: EntityMapperService,
-              private db: Database,
-              private blobService: BlobServiceService) {
+              private db: Database) {
     this.createAttendanceAnalysisIndex();
     this.createNotesIndex();
     this.createAttendancesIndex();
@@ -299,10 +297,6 @@ export class ChildrenService {
         }
         return null;
       });
-  }
-
-  getChildPhoto(childId: string): string{
-    return this.blobService.getFile(childId);
   }
 
   async getSchoolsWithRelations(childId: string): Promise<SchoolWithRelation[]> {
