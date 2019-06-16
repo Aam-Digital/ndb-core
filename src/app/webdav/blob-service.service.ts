@@ -8,7 +8,7 @@ import webdav from 'webdav';
 export class BlobServiceService {
 
   private client: any;
-  constructor() { 
+  constructor() {
     // const { createClient } = require("webdav");
 
     this.client = webdav.createClient(
@@ -29,11 +29,24 @@ export class BlobServiceService {
     }
   }
 
-  public getFile(id: string):any {
-    return this.client.getFileContents("/"+id)
+  /**
+   * Uploads a given image to the nextcloud server.
+   * @param imageFile Image to be stored
+   * @param path path where the image will be stored, ammends '.jpg'
+   */
+  public async setImage(imageFile: any, path: string) {
+    await this.client.putFileContents(path + '.jpg', imageFile,
+      {onUploadProgress: progress => {
+      console.log(`Uploaded ${progress.loaded} bytes of ${progress.total}`);
+      }}
+    );
   }
 
-  public setFile(file: any, path:string) {
-    this.client.putFileContents(path, file);
+  /**
+   * returns a download link for an image
+   * @param path path of the image without extension
+   */
+  public getImageDownloadLink(path: string): string {
+    return this.client.getFileDownloadLink(path + '.jpg');
   }
 }
