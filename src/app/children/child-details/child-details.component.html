@@ -38,6 +38,8 @@
     <button *ngIf="creatingNew || editing" mat-stroked-button class='edit-button' (click)="switchEdit()">Cancel</button>
 
     <button *ngIf="!editing" mat-stroked-button class='edit-button' (click)="switchEdit()">Edit</button>
+
+    <input *ngIf="creatingNew || editing" type="file" (change)=uploadChildPhoto($event)>
   </div>
 </div>
 
@@ -56,7 +58,7 @@
 
       <div fxLayout='row' fxLayout.xs='column wrap' fxLayout.md='column wrap' fxLayout.sm='column wrap'>
         <div fxFlex='150px'>
-          <img [src]="child.getPhoto()" class="child-pic" alt="child's photo">
+          <img src="{{ imageURL }}" class="child-pic" alt="child's photo">
         </div>
 
 

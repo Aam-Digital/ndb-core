@@ -100,6 +100,7 @@ export class Child extends Entity {
     return indices;
   }
 
+  /** @deprecated since v2.5.3*/
   public getPhoto() {
     if (!this.hasPhoto) {
       return 'assets/child.png';

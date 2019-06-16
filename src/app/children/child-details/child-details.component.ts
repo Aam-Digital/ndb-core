@@ -29,6 +29,7 @@ import {AlertService} from '../../alerts/alert.service';
 import {ChildrenService} from '../children.service';
 import {School} from '../../schools/school';
 import {ChildWithRelation} from '../childWithRelation';
+import { BlobServiceService } from 'app/webdav/blob-service.service';
 
 
 @Component({
@@ -53,6 +54,7 @@ export class ChildDetailsComponent implements OnInit {
   eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
   vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
 
+  imageURL: string;
 
   constructor(private entityMapperService: EntityMapperService,
               private childrenService: ChildrenService,
@@ -63,6 +65,7 @@ export class ChildDetailsComponent implements OnInit {
               private snackBar: MatSnackBar,
               private confirmationDialog: ConfirmationDialogService,
               private alertService: AlertService,
+              private blobService: BlobServiceService
   ) { }
 
   generateNewRecordFactory() {
@@ -117,6 +120,7 @@ export class ChildDetailsComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
     this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
+    this.imageURL = 'http://localhost/remote.php/dav/files/nextclouduser/default.jpg';
   }
 
   loadChild(id: string) {
@@ -131,6 +135,10 @@ export class ChildDetailsComponent implements OnInit {
           this.initForm();
           this.entityMapperService.load<School>(School, this.child.schoolId)
             .then(school => this.currentSchool = school);
+          // the id string for a child, whith id 123, is "child:123".
+          // Currently we save images as "123.jpg", so we need to strip the "child:".
+          // (special characters seem to cause problems with webdav/nextcloud...)
+          this.imageURL = this.blobService.getImageDownloadLink(this.child.getId().replace('child:', ''));
         });
     }
 
@@ -185,5 +193,14 @@ export class ChildDetailsComponent implements OnInit {
 
   navigateBack() {
     this.location.back();
+  }
+
+  /**
+   * hands over the selected file to the blobService together with the childID
+   * @param event
+   */
+  uploadChildPhoto(event) {
+    console.log(event);
+    this.blobService.setImage(event.target.files[0], this.child.getId().replace('child:', ''));
   }
 }
