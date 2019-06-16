@@ -7,25 +7,25 @@ import webdav from 'webdav';
 })
 export class BlobServiceService {
 
-  private client:any;
+  private client: any;
   constructor() { 
-    //const { createClient } = require("webdav");
+    // const { createClient } = require("webdav");
 
     this.client = webdav.createClient(
       AppConfig.settings.webdav.remote_url,
       {
-        username:AppConfig.settings.webdav.username,
-        password:AppConfig.settings.webdav.password
+        username: AppConfig.settings.webdav.username,
+        password: AppConfig.settings.webdav.password
       }
-    )
-  };
+    );
+  }
 
   public async getDir() {
     try {
-      const contents = await this.client.getDirectoryContents("");
+      const contents = await this.client.getDirectoryContents('');
       console.log(JSON.stringify(contents, undefined, 4));
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 

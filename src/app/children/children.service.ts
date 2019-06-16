@@ -12,7 +12,7 @@ import {School} from '../schools/school';
 import {ChildWithRelation} from './childWithRelation';
 import {SchoolWithRelation} from '../schools/schoolWithRelation';
 import {HealthCheck} from './health-checkup/health-check';
-import { BlobServiceService } from "../webdav/blob-service.service";
+import { BlobServiceService } from '../webdav/blob-service.service';
 
 @Injectable()
 export class ChildrenService {
