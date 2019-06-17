@@ -38,3 +38,16 @@
   object-fit: contain;
   border: 1px solid black;
 }
+
+.child-pic-upload{
+  width: 120px;
+  height: 150px;
+  object-fit: contain;
+  border: 1px solid black;
+  background: #f5f5f5;
+  cursor: pointer;
+}
+
+.upload-icon { 
+  font-size: 2.0em;
+}
