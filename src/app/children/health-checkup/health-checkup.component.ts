@@ -21,9 +21,9 @@ export class HealthCheckupComponent implements OnInit {
   columns: Array<ColumnDescription> = [
     new ColumnDescription('date', 'Date', 'date', null,
     (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
-    new ColumnDescription('height', 'Height', 'number', null,
+    new ColumnDescription('height', 'Height [cm]', 'number', null,
     (height: Number) => height + ' cm' ),
-    new ColumnDescription('weight', 'Weight', 'number', null,
+    new ColumnDescription('weight', 'Weight [kg]', 'number', null,
     (weight: Number) => weight + ' kg'),
   ];
   childId: string;
