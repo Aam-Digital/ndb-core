@@ -120,7 +120,7 @@ export class ChildDetailsComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
     this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
-    this.imageURL = 'http://localhost/remote.php/dav/files/nextclouduser/default.jpg';
+    this.imageURL = 'http://localhost/remote.php/dav/files/nextclouduser/default.png';
   }
 
   loadChild(id: string) {
