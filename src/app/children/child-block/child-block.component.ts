@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {ChildrenService} from '../children.service';
 import {ChildWithRelation} from '../childWithRelation';
+import { BlobServiceService } from 'app/webdav/blob-service.service';
 
 @Component({
   selector: 'app-child-block',
@@ -15,10 +16,12 @@ export class ChildBlockComponent implements OnInit {
   @Input() linkDisabled: boolean;
   tooltip = false;
   tooltipTimeout;
+  imageURL: string;
 
   constructor(private router: Router,
               private entityMapper: EntityMapperService,
-              private childrenService: ChildrenService) { }
+              private childrenService: ChildrenService,
+              private blobService: BlobServiceService) { }
 
   ngOnInit() {
     if (this.entityId !== undefined) {
@@ -27,6 +30,11 @@ export class ChildBlockComponent implements OnInit {
       }).catch(() => {
         // No special error handling here, as the database will report the technical error and the UI catches the entity being undefined
       });
+    }
+    if (this.entity.hasPhoto) {
+      this.imageURL = this.blobService.getImageDownloadLink(this.entity.getId().replace('child:', ''));
+    } else {
+      this.imageURL = 'http://localhost/remote.php/dav/files/nextclouduser/default.png';
     }
   }
 
