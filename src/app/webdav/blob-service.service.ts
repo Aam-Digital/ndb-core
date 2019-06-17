@@ -32,10 +32,10 @@ export class BlobServiceService {
   /**
    * Uploads a given image to the nextcloud server.
    * @param imageFile Image to be stored
-   * @param path path where the image will be stored, ammends '.jpg'
+   * @param path path where the image will be stored
    */
   public async setImage(imageFile: any, path: string) {
-    await this.client.putFileContents(path + '.jpg', imageFile,
+    await this.client.putFileContents(path, imageFile,
       {onUploadProgress: progress => {
       console.log(`Uploaded ${progress.loaded} bytes of ${progress.total}`);
       }}
@@ -44,9 +44,9 @@ export class BlobServiceService {
 
   /**
    * returns a download link for an image
-   * @param path path of the image without extension
+   * @param path path of the image on server
    */
   public getImageDownloadLink(path: string): string {
-    return this.client.getFileDownloadLink(path + '.jpg');
+    return this.client.getFileDownloadLink(path);
   }
 }
