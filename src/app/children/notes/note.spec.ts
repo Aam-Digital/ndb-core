@@ -15,13 +15,14 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { User } from './user';
 import {async} from '@angular/core/testing';
-import {EntityModule} from '../entity/entity.module';
-import {Entity} from '../entity/entity';
+import {Note} from './note';
+import {EntityModule} from '../../entity/entity.module';
+import {Entity} from '../../entity/entity';
+import {WarningLevel} from '../attendance/warning-level';
 
-describe('User', () => {
-  const ENTITY_TYPE = 'User';
+describe('Note Entity', () => {
+  const ENTITY_TYPE = 'Note';
 
   beforeEach(async(() => {
     EntityModule.registerSchemaDatatypes();
@@ -30,7 +31,7 @@ describe('User', () => {
 
   it('has correct _id and entityId and type', function () {
     const id = 'test1';
-    const entity = new User(id);
+    const entity = new Note(id);
 
     expect(entity.getId()).toBe(id);
     expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
@@ -38,7 +39,7 @@ describe('User', () => {
 
   it('has correct type/prefix', function () {
     const id = 'test1';
-    const entity = new User(id);
+    const entity = new Note(id);
 
     expect(entity.getType()).toBe(ENTITY_TYPE);
     expect(Entity.extractTypeFromId(entity._id)).toBe(ENTITY_TYPE);
@@ -50,39 +51,28 @@ describe('User', () => {
       _id: ENTITY_TYPE + ':' + id,
       _rev: 'undefined',
 
-      name: 'tester',
-      admin: true,
-      password: undefined,
+      children: ['1', '2'],
+      date: new Date(),
+      subject: 'Test',
+      text: 'description',
+      author: 'me',
+      category: 'Phone Call',
+      warningLevel: 'URGENT',
 
       searchIndices: [],
     };
-    expectedData.searchIndices.push(expectedData.name);
 
-    const entity = new User(id);
-    entity.name = expectedData.name;
-    entity.admin = expectedData.admin;
+    const entity = new Note(id);
+    entity.children = expectedData.children;
+    entity.date = expectedData.date;
+    entity.subject = expectedData.subject;
+    entity.text = expectedData.text;
+    entity.author = expectedData.author;
+    entity.category = expectedData.category;
+    entity.warningLevel = WarningLevel.URGENT;
 
     const rawData = entity.rawData();
 
     expect(rawData).toEqual(expectedData);
-  });
-
-
-  it('accepts valid password', function () {
-    const entityId = 'test1';
-    const user = new User(entityId);
-    const password = 'pass';
-    user.setNewPassword(password);
-
-    expect(user.checkPassword(password)).toBeTruthy();
-  });
-
-  it('rejects wrong password', function () {
-    const entityId = 'test1';
-    const user = new User(entityId);
-    const password = 'pass';
-    user.setNewPassword(password);
-
-    expect(user.checkPassword(password + 'x')).toBeFalsy();
   });
 });

@@ -13,7 +13,7 @@ export class ChildSchoolRelation extends Entity {
   public childId: string;
   public schoolId: string;
   public schoolClass: string;
-  public start: string;
-  public end: string;
+  public start: string; // TODO: use Date instead of string?
+  public end: string; // TODO: use Date instead of string?
 }
 

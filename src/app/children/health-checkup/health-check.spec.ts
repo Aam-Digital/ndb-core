@@ -15,13 +15,13 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { User } from './user';
 import {async} from '@angular/core/testing';
-import {EntityModule} from '../entity/entity.module';
-import {Entity} from '../entity/entity';
+import {EntityModule} from '../../entity/entity.module';
+import {Entity} from '../../entity/entity';
+import {HealthCheck} from './health-check';
 
-describe('User', () => {
-  const ENTITY_TYPE = 'User';
+describe('HealthCheck Entity', () => {
+  const ENTITY_TYPE = 'EducationalMaterial';
 
   beforeEach(async(() => {
     EntityModule.registerSchemaDatatypes();
@@ -30,7 +30,7 @@ describe('User', () => {
 
   it('has correct _id and entityId and type', function () {
     const id = 'test1';
-    const entity = new User(id);
+    const entity = new HealthCheck(id);
 
     expect(entity.getId()).toBe(id);
     expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
@@ -38,7 +38,7 @@ describe('User', () => {
 
   it('has correct type/prefix', function () {
     const id = 'test1';
-    const entity = new User(id);
+    const entity = new HealthCheck(id);
 
     expect(entity.getType()).toBe(ENTITY_TYPE);
     expect(Entity.extractTypeFromId(entity._id)).toBe(ENTITY_TYPE);
@@ -50,39 +50,22 @@ describe('User', () => {
       _id: ENTITY_TYPE + ':' + id,
       _rev: 'undefined',
 
-      name: 'tester',
-      admin: true,
-      password: undefined,
+      child: '1',
+      date: new Date(),
+      height: 101,
+      weight: 32,
 
       searchIndices: [],
     };
-    expectedData.searchIndices.push(expectedData.name);
 
-    const entity = new User(id);
-    entity.name = expectedData.name;
-    entity.admin = expectedData.admin;
+    const entity = new HealthCheck(id);
+    entity.child = expectedData.child;
+    entity.date = expectedData.date;
+    entity.height = expectedData.height;
+    entity.weight = expectedData.weight;
 
     const rawData = entity.rawData();
 
     expect(rawData).toEqual(expectedData);
-  });
-
-
-  it('accepts valid password', function () {
-    const entityId = 'test1';
-    const user = new User(entityId);
-    const password = 'pass';
-    user.setNewPassword(password);
-
-    expect(user.checkPassword(password)).toBeTruthy();
-  });
-
-  it('rejects wrong password', function () {
-    const entityId = 'test1';
-    const user = new User(entityId);
-    const password = 'pass';
-    user.setNewPassword(password);
-
-    expect(user.checkPassword(password + 'x')).toBeFalsy();
   });
 });

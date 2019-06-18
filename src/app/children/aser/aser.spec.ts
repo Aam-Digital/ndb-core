@@ -17,14 +17,63 @@
 
 import {Aser} from './aser';
 import {WarningLevel} from '../attendance/warning-level';
+import {async} from '@angular/core/testing';
+import {EntityModule} from '../../entity/entity.module';
+import {Entity} from '../../entity/entity';
 
 describe('Aser', () => {
+  const ENTITY_TYPE = 'Aser';
+
+  beforeEach(async(() => {
+    EntityModule.registerSchemaDatatypes();
+  }));
+
+
+  it('has correct _id and entityId and type', function () {
+    const id = 'test1';
+    const entity = new Aser(id);
+
+    expect(entity.getId()).toBe(id);
+    expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
+  });
 
   it('has correct type/prefix', function () {
     const id = 'test1';
     const entity = new Aser(id);
 
-    expect(entity.getType()).toBe(Aser.ENTITY_TYPE);
+    expect(entity.getType()).toBe(ENTITY_TYPE);
+    expect(Entity.extractTypeFromId(entity._id)).toBe(ENTITY_TYPE);
+  });
+
+  it('has all and only defined schema fields in rawData', function () {
+    const id = 'test1';
+    const expectedData = {
+      _id: ENTITY_TYPE + ':' + id,
+      _rev: 'undefined',
+
+      child: '1',
+      date: new Date(),
+      hindi: 'Read Sentence',
+      bengali: 'Nothing',
+      english: 'Read Letters',
+      math: 'Subtraction',
+      remarks: 'nothing to remark',
+
+      searchIndices: [],
+    };
+
+    const entity = new Aser(id);
+    entity.child = expectedData.child;
+    entity.date = expectedData.date;
+    entity.hindi = expectedData.hindi;
+    entity.bengali = expectedData.bengali;
+    entity.english = expectedData.english;
+    entity.math = expectedData.math;
+    entity.remarks = expectedData.remarks;
+
+    const rawData = entity.rawData();
+
+    expect(rawData).toEqual(expectedData);
   });
 
 

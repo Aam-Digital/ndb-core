@@ -20,26 +20,67 @@ import {WarningLevel} from './warning-level';
 import {AttendanceDay} from './attendance-day';
 import {async} from '@angular/core/testing';
 import {EntityModule} from '../../entity/entity.module';
+import {Entity} from '../../entity/entity';
 
 describe('AttendanceMonth', () => {
+  const ENTITY_TYPE = 'AttendanceMonth';
+
   beforeEach(async(() => {
     EntityModule.registerSchemaDatatypes();
   }));
 
 
-  it('has ID', function () {
+  it('has correct _id and entityId and type', function () {
     const id = 'test1';
     const entity = new AttendanceMonth(id);
 
     expect(entity.getId()).toBe(id);
+    expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
   });
 
   it('has correct type/prefix', function () {
     const id = 'test1';
     const entity = new AttendanceMonth(id);
 
-    expect(entity.getType()).toBe('AttendanceMonth');
+    expect(entity.getType()).toBe(ENTITY_TYPE);
+    expect(Entity.extractTypeFromId(entity._id)).toBe(ENTITY_TYPE);
   });
+
+  it('has all and only defined schema fields in rawData', function () {
+    const id = 'test1';
+    const expectedData = {
+      _id: ENTITY_TYPE + ':' + id,
+      _rev: 'undefined',
+
+      student: '1',
+      institution: 'school',
+      month: '2019-1', // TODO: no leading zero in month format?
+      remarks: 'more notes',
+      daysWorking: 25,
+      daysAttended: 20,
+      daysExcused: 1,
+      daysLate: 1,
+      dailyRegister: [],
+
+      searchIndices: [],
+    };
+
+    const entity = new AttendanceMonth(id);
+    entity.student = expectedData.student;
+    entity.institution = expectedData.institution;
+    entity.month = new Date(expectedData.month);
+    entity.remarks = expectedData.remarks;
+    entity.daysWorking = expectedData.daysWorking;
+    entity.daysAttended = expectedData.daysAttended;
+    entity.daysExcused = expectedData.daysExcused;
+    entity.daysLate = expectedData.daysLate;
+
+    const rawData = entity.rawData();
+
+    expectedData.dailyRegister = entity.dailyRegister; // dailyRegister is auto-generated and expected in rawData also
+    expect(rawData).toEqual(expectedData);
+  });
+
 
   it('calculates attendance percentage', () => {
     const working = 10;

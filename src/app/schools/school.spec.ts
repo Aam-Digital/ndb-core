@@ -15,13 +15,13 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { User } from './user';
 import {async} from '@angular/core/testing';
+import {School} from './school';
 import {EntityModule} from '../entity/entity.module';
 import {Entity} from '../entity/entity';
 
-describe('User', () => {
-  const ENTITY_TYPE = 'User';
+describe('School Entity', () => {
+  const ENTITY_TYPE = 'School';
 
   beforeEach(async(() => {
     EntityModule.registerSchemaDatatypes();
@@ -30,7 +30,7 @@ describe('User', () => {
 
   it('has correct _id and entityId and type', function () {
     const id = 'test1';
-    const entity = new User(id);
+    const entity = new School(id);
 
     expect(entity.getId()).toBe(id);
     expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
@@ -38,7 +38,7 @@ describe('User', () => {
 
   it('has correct type/prefix', function () {
     const id = 'test1';
-    const entity = new User(id);
+    const entity = new School(id);
 
     expect(entity.getType()).toBe(ENTITY_TYPE);
     expect(Entity.extractTypeFromId(entity._id)).toBe(ENTITY_TYPE);
@@ -47,42 +47,40 @@ describe('User', () => {
   it('has all and only defined schema fields in rawData', function () {
     const id = 'test1';
     const expectedData = {
-      _id: ENTITY_TYPE + ':' + id,
+      _id: 'School:' + id,
       _rev: 'undefined',
 
-      name: 'tester',
-      admin: true,
-      password: undefined,
+      name: 'Max',
+      address: 'Muster',
+      medium: 'English',
+      remarks: 'None',
+      website: 'www.google.com',
+      privateSchool: true,
+      phone: '911',
+      upToClass: 10,
+      academicBoard: 'XY',
+      timing: '9-5',
+      workingDays: 'Mon-Fri',
 
       searchIndices: [],
     };
     expectedData.searchIndices.push(expectedData.name);
 
-    const entity = new User(id);
+    const entity = new School(id);
     entity.name = expectedData.name;
-    entity.admin = expectedData.admin;
+    entity.address = expectedData.address;
+    entity.medium = expectedData.medium;
+    entity.remarks = expectedData.remarks;
+    entity.website = expectedData.website;
+    entity.privateSchool = expectedData.privateSchool;
+    entity.phone = expectedData.phone;
+    entity.upToClass = expectedData.upToClass;
+    entity.academicBoard = expectedData.academicBoard;
+    entity.timing = expectedData.timing;
+    entity.workingDays = expectedData.workingDays;
 
     const rawData = entity.rawData();
 
     expect(rawData).toEqual(expectedData);
-  });
-
-
-  it('accepts valid password', function () {
-    const entityId = 'test1';
-    const user = new User(entityId);
-    const password = 'pass';
-    user.setNewPassword(password);
-
-    expect(user.checkPassword(password)).toBeTruthy();
-  });
-
-  it('rejects wrong password', function () {
-    const entityId = 'test1';
-    const user = new User(entityId);
-    const password = 'pass';
-    user.setNewPassword(password);
-
-    expect(user.checkPassword(password + 'x')).toBeFalsy();
   });
 });

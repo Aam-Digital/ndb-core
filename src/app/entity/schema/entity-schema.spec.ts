@@ -132,9 +132,7 @@ describe('EntitySchema', () => {
     expect(entity.otherDate.getDate()).toBe(1);
 
     const rawData = entity.rawData();
-    expect(rawData.otherDate.getFullYear()).toBe(2018);
-    expect(rawData.otherDate.getMonth()).toBe(0);
-    expect(rawData.otherDate.getDate()).toBe(1);
+    expect(rawData.otherDate).toBe(data.otherDate);
   });
 
   it('schema:month converts to correctly between string and Date objects', function () {

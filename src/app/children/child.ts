@@ -65,6 +65,7 @@ export class Child extends Entity {
   dateOfBirth: Date;
   motherTongue = '';
   religion = '';
+  school = ''; // TODO: remove school once the ChildSchoolRelation system is thoroughly tested and fully replacing this
 
   hasPhoto = true;
 

@@ -21,6 +21,7 @@ export const dateEntitySchemaDatatype: EntitySchemaDatatype = {
   name: 'date',
 
   transformToDatabaseFormat: (value) => {
+    // TODO: should date format be saved as date object or as string "YYYY-mm-dd"?
     return value;
   },
 

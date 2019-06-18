@@ -23,7 +23,7 @@ export class Aser extends Entity {
   static ENTITY_TYPE = 'Aser';
   static schema = Entity.schema.extend({
     'child': 'string',
-    'date': 'Date',
+    'date': 'date',
     'hindi': 'string=',
     'bengali': 'string=',
     'english': 'string=',
