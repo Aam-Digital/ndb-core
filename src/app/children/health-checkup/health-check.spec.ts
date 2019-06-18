@@ -21,7 +21,7 @@ import {Entity} from '../../entity/entity';
 import {HealthCheck} from './health-check';
 
 describe('HealthCheck Entity', () => {
-  const ENTITY_TYPE = 'EducationalMaterial';
+  const ENTITY_TYPE = 'HealthCheck';
 
   beforeEach(async(() => {
     EntityModule.registerSchemaDatatypes();
