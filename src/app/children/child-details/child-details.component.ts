@@ -144,13 +144,13 @@ export class ChildDetailsComponent implements OnInit {
   }
 
   save() {
-    const child = this.child.getChild();
-    this.assignFormValuesToChild(child, this.form);
+    const plainChildEntity: Child = this.child.getChild();
+    this.assignFormValuesToChild(plainChildEntity, this.form);
 
-    this.entityMapperService.save<Child>(child)
+    this.entityMapperService.save<Child>(plainChildEntity)
       .then(() => {
         if (this.creatingNew) {
-          this.router.navigate(['/child', child.getId()]);
+          this.router.navigate(['/child', plainChildEntity.getId()]);
           this.creatingNew = false;
         }
         this.switchEdit();
