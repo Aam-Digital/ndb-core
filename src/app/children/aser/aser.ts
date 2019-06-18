@@ -17,9 +17,10 @@
 
 import { Entity } from '../../entity/entity';
 import {WarningLevel} from '../attendance/warning-level';
-import {dbClass, dbProperty} from '../../entity/db-decorators';
+import {DatabaseField} from '../../entity/database-field.decorator';
+import {DatabaseEntity} from '../../entity/database-entity.decorator';
 
-@dbClass('Aser')
+@DatabaseEntity('Aser')
 export class Aser extends Entity {
 
   static ReadingLevels = [
@@ -36,22 +37,6 @@ export class Aser extends Entity {
     'Subtraction',
     'Division'
   ];
-
-  @dbProperty('string')
-  child: string; // id of Child entity
-  @dbProperty('Date')
-  date: Date;
-  @dbProperty('string=')
-  hindi = '';
-  @dbProperty('string=')
-  bengali = '';
-  @dbProperty('string=')
-  english = '';
-  @dbProperty('string=')
-  math = '';
-  @dbProperty('string')
-  remarks = '';
-
 
   static isReadingPassedOrNA(level: string) {
     if (level === '' || level === undefined) {
@@ -75,6 +60,28 @@ export class Aser extends Entity {
     }
     return false;
   }
+
+
+  @DatabaseField('string')
+  child: string; // id of Child entity
+
+  @DatabaseField('Date')
+  date: Date = new Date();
+
+  @DatabaseField('string=')
+  hindi = '';
+
+  @DatabaseField('string=')
+  bengali = '';
+
+  @DatabaseField('string=')
+  english = '';
+
+  @DatabaseField('string=')
+  math = '';
+
+  @DatabaseField('string')
+  remarks = '';
 
 
   getWarningLevel (): WarningLevel {
