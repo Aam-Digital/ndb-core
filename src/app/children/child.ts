@@ -28,7 +28,6 @@ export class Child extends Entity {
   dateOfBirth: Date;
   motherTongue = '';
   religion = '';
-  school: string;
 
   hasPhoto = true;
 
