@@ -24,6 +24,7 @@ describe('PouchDatabaseManagerService', () => {
 
   beforeEach(() => {
     AppConfig.settings = {
+      site_name: '',
       database: {
         name: 'unit-test',
         remote_url: 'remote-',
@@ -31,7 +32,11 @@ describe('PouchDatabaseManagerService', () => {
         outdated_threshold_days: 0,
         useTemporaryDatabase: false,
       },
-      site_name: '',
+      webdav: {
+        remote_url: '',
+        username: '',
+        password: ''
+      }
     };
     dbManager = new PouchDatabaseManagerService(new AlertService(null, null));
   });
