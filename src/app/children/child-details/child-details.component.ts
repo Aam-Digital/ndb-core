@@ -57,7 +57,7 @@ export class ChildDetailsComponent implements OnInit {
   constructor(private entityMapperService: EntityMapperService,
               private childrenService: ChildrenService,
               private route: ActivatedRoute,
-              @Inject(FormBuilder) public fb: FormBuilder,
+              public fb: FormBuilder,
               private router: Router,
               private location: Location,
               private snackBar: MatSnackBar,
