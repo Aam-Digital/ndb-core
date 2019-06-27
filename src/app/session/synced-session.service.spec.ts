@@ -45,7 +45,7 @@ describe('SyncedSessionService', () => {
             AppConfig.settings = {
                 'site_name': 'Aam Digital - DEV',
                 'database': {
-                    'name': 'dev',
+                    'name': 'integration_tests',
                     'remote_url': 'https://demo.aam-digital.com/db/',
                     'timeout': 60000,
                     'outdated_threshold_days': 0,
