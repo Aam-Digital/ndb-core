@@ -119,6 +119,16 @@ describe('SyncedSessionService', () => {
         let remoteSession: RemoteSession;
 
         beforeEach(() => {
+            AppConfig.settings = {
+                'site_name': 'Aam Digital - DEV',
+                'database': {
+                    'name': 'integration_tests',
+                    'remote_url': 'https://demo.aam-digital.com/db/',
+                    'timeout': 60000,
+                    'outdated_threshold_days': 0,
+                    'useTemporaryDatabase': false
+                }
+            };
             // setup synced session service
             sessionService = new SyncedSessionService(alertService);
             // make private members localSession and remoteSession available in the tests
