@@ -63,7 +63,10 @@ export class SyncedSessionService extends SessionService {
     remoteLogin.then(async (connectionState: ConnectionState) => {
       // remote connected -- sync!
       if (connectionState === ConnectionState.connected) {
-        const syncPromise = this.sync(); // TODO(lh): liveSync() here?
+        const syncPromise = this.sync(); // no liveSync() here, as we can't know when that's finished if there are no changes.
+
+        // no matter the result of the non-live sync(), start liveSync() once it is done
+        syncPromise.then(() => this.liveSync(), () => this.liveSync())
 
         // asynchronously check if the local login failed --> this happens, when the password was changed at the remote
         localLogin.then(async (loginState: LoginState) => {
@@ -123,28 +126,46 @@ export class SyncedSessionService extends SessionService {
     }
   }
 
+  private isOffline(): boolean {
+    return false; // TODO(lh)
+  }
+
   public liveSync() {
     this._localSession.syncState.setState(SyncState.started);
     this._liveSyncHandle = this._localSession.database.sync(this._remoteSession.database, {
       live: true,
       retry: true
     }).on('change', change => {
-      // yo, something changed!
-      // TODO(lh): Question is: before or after sync?
+      // after sync. change has direction and changes with info on errors etc
     }).on('paused', info => {
-      // replication was paused, usually because of a lost connection
-      this._remoteSession.connectionState.setState(ConnectionState.offline);
+      // replication was paused: either because sync is finished or because of a lost connection. info is empty.
+      if (this.isOffline()) {
+        this._remoteSession.connectionState.setState(ConnectionState.offline);
+      } else {
+        this._localSession.syncState.setState(SyncState.completed);
+      }
     }).on('active', info => {
-      // replication was resumed
-      this._remoteSession.connectionState.setState(ConnectionState.connected);
+      // replication was resumed: either because new things to sync or because connection is available again. info contains the direction
+      if (!this.isOffline()) {
+        if (this._remoteSession.connectionState.getState() === ConnectionState.offline) {
+          this._remoteSession.connectionState.setState(ConnectionState.connected);
+        }
+        this._localSession.syncState.setState(SyncState.started);
+      }
     }).on('error', err => {
       // totally unhandled error (shouldn't happen)
-      this._localSession.syncState.setState(SyncState.failed)
+      this._localSession.syncState.setState(SyncState.failed);
     }).on('complete', function (info) {
       // replication was canceled!
-      // TODO(lh): is this supposed to happen?
+      this._liveSyncHandle = null;
     });
     return this._liveSyncHandle;
+  }
+
+  public cancelLiveSync() {
+    if (this._liveSyncHandle) {
+      this._liveSyncHandle.cancel();
+    }
   }
 
   public getDatabase(): Database {
@@ -152,6 +173,7 @@ export class SyncedSessionService extends SessionService {
   }
 
   public logout() {
+    this.cancelLiveSync();
     this._localSession.logout();
     this._remoteSession.logout();
   }
