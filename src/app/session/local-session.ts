@@ -73,7 +73,7 @@ export class LocalSession {
       }
     } catch (error) {
       // possible error: user object not found locally, which should return loginFailed.
-      if (error.status && error.status === 404) {
+      if (error && error.status && error.status === 404) {
         this.loginState.setState(LoginState.loginFailed);
         return LoginState.loginFailed;
       }
