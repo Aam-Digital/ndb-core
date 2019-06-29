@@ -1,6 +1,4 @@
-.dashboard-table-cell {
-  padding: 10px;
-}
+
 .dashboard-table-row {
   border-top: 1px solid black;
 }
@@ -10,13 +8,12 @@
   border-collapse: collapse;
 }
 .dashboard-table-first-cell {
-  width: 100%;
+  width: calc(40% - 20px);
+  white-space: nowrap;
 }
-
-.dashboard-desc {
-  padding: 24px;
-  padding-bottom: 0;
-  font-style: italic;
+.dashboard-table-last-cell {
+  width: calc(60% - 20px);
+  min-width: 180px;
 }
 
 .attendance-day {

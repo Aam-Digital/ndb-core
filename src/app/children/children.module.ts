@@ -19,7 +19,7 @@ import { NgModule } from '@angular/core';
 import {CommonModule, DatePipe, PercentPipe} from '@angular/common';
 import { ChildDetailsComponent } from './child-details/child-details.component';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatSelectModule} from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { ChildrenListComponent } from './children-list/children-list.component';
@@ -76,7 +76,6 @@ import { HealthCheckupComponent } from './health-checkup/health-checkup.componen
     FlexLayoutModule,
     RouterModule,
     MatFormFieldModule,
-    MatSelectModule,
     MatInputModule,
     MatCheckboxModule,
     MatSelectModule,

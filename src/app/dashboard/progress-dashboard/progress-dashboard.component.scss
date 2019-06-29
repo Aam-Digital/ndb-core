@@ -1,6 +1,3 @@
-.dashboard-table-cell {
-  padding: 20px;
-}
 .dashboard-table-row {
   border-top: 1px solid black;
 }
@@ -12,10 +9,19 @@
   width: 100%;
   border-collapse: collapse;
 }
-.dashboard-table td:last-child {
+.filler {
   width: 100%;
 }
 
 .dashboard-config {
   background-color: lightgray;
+}
+
+.dashboard-widget .part-bar {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.dashboard-widget mat-form-field.small {
+  width: 40px;
 }

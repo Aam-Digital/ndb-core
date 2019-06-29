@@ -19,7 +19,7 @@
 <mat-toolbar color="primary" class="app-header mat-elevation-z6 mat-typography">
   <mat-toolbar-row fxLayout="row">
     <span fxFlex *ngIf="isLoggedIn()">
-      <button mat-icon-button fxHide.xs="false" fxHide="true" (click)="sideNav.toggle()">
+      <button mat-icon-button fxHide.lt-md="false" fxHide="true" (click)="sideNav.toggle()">
         <mat-icon class="header-icon" fontIcon="fa-bars"></mat-icon>
       </button>
     </span>
@@ -27,10 +27,14 @@
     <span fxFlex="grow">&nbsp;</span>
     <span fxFlex="grow">&nbsp;</span>
     <!--top right icons and search-->
-    <app-search *ngIf="isLoggedIn()" [fxFlex]="sideNavMode == 'side' ? 'grow' : 'none'"></app-search>
+    <app-search *ngIf="isLoggedIn()" [fxFlex]="sideNavMode == 'side' ? 'grow' : 'none'" fxHide.xs></app-search>
     <app-sync-status ></app-sync-status>
-    <button mat-icon-button [routerLink]="['/user']" *ngIf="isLoggedIn()"><mat-icon class="header-icon" fontIcon="fa-user-circle-o"></mat-icon></button>
-    <button mat-icon-button (click)="logout()" [routerLink]="['']" *ngIf="isLoggedIn()"><mat-icon class="header-icon" fontIcon="fa-sign-out"></mat-icon></button>
+    <button mat-icon-button [routerLink]="['/user']" *ngIf="isLoggedIn()">
+      <mat-icon class="header-icon" fontIcon="fa-user-circle-o"></mat-icon>
+    </button>
+    <button mat-icon-button (click)="logout()" [routerLink]="['']" *ngIf="isLoggedIn()">
+      <mat-icon class="header-icon" fontIcon="fa-sign-out"></mat-icon>
+    </button>
   </mat-toolbar-row>
 </mat-toolbar>
 
