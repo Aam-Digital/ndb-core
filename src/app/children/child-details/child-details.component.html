@@ -56,7 +56,8 @@
 
       <div fxLayout='row' fxLayout.xs='column wrap' fxLayout.md='column wrap' fxLayout.sm='column wrap'>
         <div fxFlex='150px'>
-          <img [src]="child.getPhoto()" class="child-pic" alt="child's photo">
+          <img [src]="child.getPhoto()" class="child-pic" (error)="onPhotoError()" alt="child's photo">
+          <mat-checkbox *ngIf="creatingNew || editing" formControlName="hasPhoto">has photo</mat-checkbox>
         </div>
 
 
