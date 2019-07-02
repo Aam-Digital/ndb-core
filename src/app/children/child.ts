@@ -100,7 +100,7 @@ export class Child extends Entity {
   }
 
   public getPhoto() {
-    if (this.photoFile === undefined) {
+    if (!this.photoFile) {
       return 'assets/child.png';
     }
     return 'assets/child-photos/' + this.photoFile;

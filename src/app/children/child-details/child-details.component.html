@@ -55,8 +55,8 @@
 
 
       <div fxLayout='row' fxLayout.xs='column wrap' fxLayout.md='column wrap' fxLayout.sm='column wrap'>
-        <div fxFlex>
-          <img [src]="child.getPhoto()" class="child-pic" (error)="onPhotoError()" alt="child's photo">
+        <div fxFlex='150px'>
+          <img [src]="child.getPhoto()" class="child-pic" alt="child's photo">
           <br>
           <mat-form-field *ngIf="creatingNew || editing" style='width: 120px;'>
             <input matInput formControlName="photoFile" placeholder="Photo File Name" title="photoFile" type="text" >
@@ -86,7 +86,7 @@
 
         <div>
           <mat-form-field style='width: 50px;'>
-            <input matInput placeholder="Age" type="text" [value]=child.age [disabled]="true">
+            <input matInput placeholder="Age" type="number" [value]="child.age" [disabled]="true">
           </mat-form-field>
           <mat-form-field>
             <input matInput formControlName="dateOfBirth" placeholder="Date of Birth" type="date">
