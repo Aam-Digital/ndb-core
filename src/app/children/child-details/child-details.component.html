@@ -55,10 +55,10 @@
 
 
       <div fxLayout='row' fxLayout.xs='column wrap' fxLayout.md='column wrap' fxLayout.sm='column wrap'>
-        <div fxFlex='150px'>
+        <div fxFlex='160px'>
           <img [src]="child.getPhoto()" class="child-pic" alt="child's photo">
           <br>
-          <mat-form-field *ngIf="creatingNew || editing" style='width: 120px;'>
+          <mat-form-field *ngIf="creatingNew || editing" class='photo-filename'>
             <input matInput formControlName="photoFile" placeholder="Photo File Name" title="photoFile" type="text" >
           </mat-form-field>
         </div>
