@@ -3,10 +3,11 @@ import {AppConfig} from '../../app-config/app-config';
 import {AlertService} from '../../alerts/alert.service';
 import {Alert} from '../../alerts/alert';
 import FileSaver from 'file-saver';
-import {BackupService} from '../backup.service';
+import {BackupService} from '../services/backup.service';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import PouchDB from 'pouchdb-browser';
+import {ChildPhotoUpdateService} from '../services/child-photo-update.service';
 
 @Component({
   selector: 'app-admin',
@@ -21,7 +22,9 @@ export class AdminComponent implements OnInit {
   constructor(private alertService: AlertService,
               private backupService: BackupService,
               private confirmationDialog: ConfirmationDialogService,
-              private snackBar: MatSnackBar) { }
+              private snackBar: MatSnackBar,
+              private childPhotoUpdateService: ChildPhotoUpdateService,
+              ) { }
 
   ngOnInit() {
     this.alerts = this.alertService.alerts;
@@ -138,5 +141,4 @@ export class AdminComponent implements OnInit {
         });
     });
   }
-
 }
