@@ -29,7 +29,7 @@ export class Child extends Entity {
   motherTongue = '';
   religion = '';
 
-  hasPhoto = true;
+  photoFile: string;
 
   center = '';
   admissionDate: Date;
@@ -100,9 +100,9 @@ export class Child extends Entity {
   }
 
   public getPhoto() {
-    if (!this.hasPhoto) {
+    if (this.photoFile === undefined) {
       return 'assets/child.png';
     }
-    return 'assets/child-photos/' + this.projectNumber + '.jpg';
+    return 'assets/child-photos/' + this.photoFile;
   }
 }
