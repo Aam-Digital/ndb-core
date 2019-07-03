@@ -31,7 +31,7 @@ export class AdminComponent implements OnInit {
     this.db = new PouchDB(AppConfig.settings.database.name);
   }
 
-  updatePhotoFilenames(){
+  updatePhotoFilenames() {
     this.childPhotoUpdateService.updateChildrenPhotoFilenames();
   }
 
