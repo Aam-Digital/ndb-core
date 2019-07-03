@@ -108,7 +108,7 @@ export class Child extends Entity {
   }
 
   public getPhoto() {
-    if (!this.photoFile || this.photoFile === '') {
+    if (!this.photoFile) {
       return 'assets/child.png';
     }
     return Child.generatePhotoPath(this.photoFile);
