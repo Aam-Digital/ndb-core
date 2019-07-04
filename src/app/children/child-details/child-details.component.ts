@@ -109,6 +109,8 @@ export class ChildDetailsComponent implements OnInit {
       dropoutDate:    [{value: this.child.dropoutDate,    disabled: !this.editing}],
       dropoutType:    [{value: this.child.dropoutType,    disabled: !this.editing}],
       dropoutRemarks: [{value: this.child.dropoutRemarks, disabled: !this.editing}],
+
+      photoFile: [this.child.photoFile]
     });
 
 
