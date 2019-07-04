@@ -38,3 +38,10 @@
   object-fit: contain;
   border: 1px solid black;
 }
+
+.photo-filename {
+  width: 120px;
+  top: -50px;
+  position: relative;
+  background-color: white;
+}

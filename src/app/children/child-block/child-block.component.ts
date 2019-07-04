@@ -52,11 +52,4 @@ export class ChildBlockComponent implements OnInit {
 
     this.router.navigate(['/child', this.entity.getId()]);
   }
-
-  onPhotoError() {
-    if (this.entity && this.entity.hasPhoto) {
-      this.entity.hasPhoto = false;
-      this.entityMapper.save(this.entity.getChild());
-    }
-  }
 }
