@@ -22,6 +22,14 @@ import { Gender} from './Gender';
 export class Child extends Entity {
   static ENTITY_TYPE = 'Child';
 
+  /**
+   * Returns the full relative filePath to a child photo given a filename, adding the relevant folders to it.
+   * @param filename The given filename with file extension.
+   */
+  public static generatePhotoPath(filename: string): string {
+    return 'assets/child-photos/' + filename;
+  }
+
   name: string;
   projectNumber: string; // project number
   gender: Gender; // M or F
@@ -29,7 +37,7 @@ export class Child extends Entity {
   motherTongue = '';
   religion = '';
 
-  hasPhoto = true;
+  photoFile: string;
 
   center = '';
   admissionDate: Date;
@@ -100,9 +108,9 @@ export class Child extends Entity {
   }
 
   public getPhoto() {
-    if (!this.hasPhoto) {
+    if (!this.photoFile) {
       return 'assets/child.png';
     }
-    return 'assets/child-photos/' + this.projectNumber + '.jpg';
+    return Child.generatePhotoPath(this.photoFile);
   }
 }

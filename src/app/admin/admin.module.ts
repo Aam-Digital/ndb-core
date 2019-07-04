@@ -8,6 +8,10 @@ import {PapaParseModule} from 'ngx-papaparse';
 import {AlertsModule} from '../alerts/alerts.module';
 import {UiHelperModule} from '../ui-helper/ui-helper.module';
 import {AdminGuard} from './admin.guard';
+import {ChildrenModule} from '../children/children.module';
+import {EntityModule} from '../entity/entity.module';
+import {HttpClientModule} from '@angular/common/http';
+import {ChildPhotoUpdateService} from './services/child-photo-update.service';
 
 @NgModule({
   imports: [
@@ -18,8 +22,14 @@ import {AdminGuard} from './admin.guard';
     PapaParseModule,
     AlertsModule,
     UiHelperModule,
+    ChildrenModule,
+    EntityModule,
+    HttpClientModule,
   ],
   declarations: [AdminComponent],
-  providers: [AdminGuard],
+  providers: [
+    AdminGuard,
+    ChildPhotoUpdateService,
+  ],
 })
 export class AdminModule { }
