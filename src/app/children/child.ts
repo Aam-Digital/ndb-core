@@ -43,6 +43,10 @@ export class Child extends Entity {
   admissionDate: Date;
   status = '';
 
+  // TODO: remove in favour of ChildSchoolRelations once all bugs are fixed
+  schoolId = '';
+  schoolClass = '';
+  schoolName = '';
 
   address = '';
   phone = '';

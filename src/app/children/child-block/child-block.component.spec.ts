@@ -9,7 +9,6 @@ import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {MockDatabase} from '../../database/mock-database';
 import {ChildrenService} from '../children.service';
 import {Database} from '../../database/database';
-import {ChildWithRelation} from '../childWithRelation';
 
 describe('ChildBlockComponent', () => {
   let component: ChildBlockComponent;
@@ -34,7 +33,7 @@ describe('ChildBlockComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ChildBlockComponent);
     component = fixture.componentInstance;
-    component.entity = new ChildWithRelation(new Child(''));
+    component.entity = new Child('');
     fixture.detectChanges();
   });
 
