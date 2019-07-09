@@ -5,7 +5,6 @@ import {from, Observable} from 'rxjs';
 import {ChildSchoolRelation} from '../children/childSchoolRelation';
 import {Database} from '../database/database';
 import {Child} from '../children/child';
-import {ChildWithRelation} from '../children/childWithRelation';
 
 @Injectable()
 export class SchoolsService {
@@ -32,12 +31,12 @@ export class SchoolsService {
       });
   }
 
-  async getChildrenForSchool(schoolId: string): Promise<ChildWithRelation[]> {
+  async getChildrenForSchool(schoolId: string): Promise<Child[]> {
     const relations = await this.queryRelationsOfSchool(schoolId);
-    const children: ChildWithRelation[] = [];
+    const children: Child[] = [];
     for (const relation of relations) {
       const child = await this.entityMapper.load<Child>(Child, relation.childId);
-      children.push(new ChildWithRelation(child, relation));
+      children.push(child);
     }
     return children;
   }
