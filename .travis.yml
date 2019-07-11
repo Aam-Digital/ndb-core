@@ -64,6 +64,4 @@ deploy:
     local_dir: doc/compodoc
     github_token: $GH_REPO_TOKEN
     on:
-      branches:
-        - master
-        - compodoc
+      branch: compodoc
