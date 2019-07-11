@@ -19,4 +19,3 @@ export function DatabaseField(fieldSchema: string) {
     return targetEntity;
   };
 }
-
