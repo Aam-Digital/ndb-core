@@ -13,6 +13,9 @@ export function DatabaseField(fieldSchema: string) {
     }
     targetEntity.constructor.localSchema[property] = fieldSchema;
 
+    //  This ensures that the field is not read only
+    targetEntity[property] = null;
+
     return targetEntity;
   };
 }
