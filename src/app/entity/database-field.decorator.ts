@@ -12,7 +12,10 @@ export function DatabaseField(fieldSchema: string) {
       targetEntity.constructor.localSchema = {};
     }
     targetEntity.constructor.localSchema[property] = fieldSchema;
+    console.log('in database field', targetEntity[property]);
+    targetEntity[property] = null;
 
     return targetEntity;
   };
 }
+
