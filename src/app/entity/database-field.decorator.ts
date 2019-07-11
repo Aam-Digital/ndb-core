@@ -13,6 +13,8 @@ export function DatabaseField(fieldSchema: string) {
     }
     targetEntity.constructor.localSchema[property] = fieldSchema;
     console.log('in database field', targetEntity[property]);
+
+    //  This ensures that the field is not read only
     targetEntity[property] = null;
 
     return targetEntity;
