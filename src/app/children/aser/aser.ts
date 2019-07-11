@@ -69,19 +69,19 @@ export class Aser extends Entity {
   date: Date = new Date();
 
   @DatabaseField('string=')
-  hindi = '';
+  hindi: string = '';
 
   @DatabaseField('string=')
-  bengali = '';
+  bengali: string = '';
 
   @DatabaseField('string=')
-  english = '';
+  english: string = '';
 
   @DatabaseField('string=')
-  math = '';
+  math: string = '';
 
   @DatabaseField('string')
-  remarks = '';
+  remarks: string = '';
 
 
   getWarningLevel (): WarningLevel {
