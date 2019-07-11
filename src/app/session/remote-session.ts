@@ -52,7 +52,21 @@ export class RemoteSession {
         // https://github.com/pouchdb/pouchdb/pull/7395
         fetch(url, opts) {
           opts.credentials = 'include';
-          return (PouchDB as any).fetch(url, opts);
+          return fetch(url, opts).catch(error => {
+            // fetch will throw on network errors, giving us a chance to check the online status
+            // if we are offline at the start, this will already be set on login, so we need not check that initial condition here
+            // do not set offline on AbortErrors, as these are fine:
+            // https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Exceptions
+            if ((error.name !== 'AbortError') && (this.connectionState.getState() === ConnectionState.connected)) {
+              this.connectionState.setState(ConnectionState.offline);
+            }
+            throw error;
+          }).then(result => {
+            if (this.connectionState.getState() === ConnectionState.offline) {
+              this.connectionState.setState(ConnectionState.connected);
+            }
+            return result;
+          });
         },
         skip_setup: true
       } as PouchDB.Configuration.RemoteDatabaseConfiguration
