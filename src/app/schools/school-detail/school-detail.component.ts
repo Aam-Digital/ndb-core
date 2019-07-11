@@ -10,7 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {Location} from '@angular/common';
-import {ChildWithRelation} from '../../children/childWithRelation';
+import {Child} from '../../children/child';
 
 @Component({
   selector: 'app-school-detail',
@@ -20,7 +20,7 @@ import {ChildWithRelation} from '../../children/childWithRelation';
 export class SchoolDetailComponent implements OnInit {
   school = new School('');
 
-  studentDataSource: MatTableDataSource<ChildWithRelation> = new MatTableDataSource();
+  studentDataSource: MatTableDataSource<Child> = new MatTableDataSource();
   displayedColumns = ['id', 'name', 'schoolClass', 'age'];
 
   form: FormGroup;

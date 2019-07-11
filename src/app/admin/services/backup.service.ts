@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import {Database} from '../database/database';
-import {User} from '../user/user';
+import {Database} from '../../database/database';
+import {User} from '../../user/user';
 import {Papa} from 'ngx-papaparse';
 
 @Injectable({

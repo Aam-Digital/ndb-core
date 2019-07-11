@@ -28,7 +28,6 @@ import * as uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
 import {ChildrenService} from '../children.service';
 import {School} from '../../schools/school';
-import {ChildWithRelation} from '../childWithRelation';
 
 
 @Component({
@@ -38,7 +37,7 @@ import {ChildWithRelation} from '../childWithRelation';
 })
 export class ChildDetailsComponent implements OnInit {
 
-  child: ChildWithRelation = new ChildWithRelation(new Child(''));
+  child: Child = new Child('');
   currentSchool: School = new School('');
   schools: School[] = [];
 
@@ -65,6 +64,7 @@ export class ChildDetailsComponent implements OnInit {
               private alertService: AlertService,
   ) { }
 
+  // TODO: is this generateNewRecordFactory() used at all?
   generateNewRecordFactory() {
     // define values locally because 'this' is a different scope after passing a function as input to another component
     const child = this.child.getId();
@@ -109,6 +109,8 @@ export class ChildDetailsComponent implements OnInit {
       dropoutDate:    [{value: this.child.dropoutDate,    disabled: !this.editing}],
       dropoutType:    [{value: this.child.dropoutType,    disabled: !this.editing}],
       dropoutRemarks: [{value: this.child.dropoutRemarks, disabled: !this.editing}],
+
+      photoFile: [this.child.photoFile]
     });
 
 
@@ -123,10 +125,10 @@ export class ChildDetailsComponent implements OnInit {
     if (id === 'new') {
       this.creatingNew = true;
       this.editing = true;
-      this.child = new ChildWithRelation(new Child(uniqid()));
+      this.child = new Child(uniqid());
     } else {
-      this.childrenService.getChildWithRelation(id)
-        .then(child => {
+      this.childrenService.getChild(id)
+        .subscribe(child => {
           this.child = child;
           this.initForm();
           this.entityMapperService.load<School>(School, this.child.schoolId)
@@ -176,7 +178,7 @@ export class ChildDetailsComponent implements OnInit {
 
           const snackBarRef = this.snackBar.open('Deleted Child "' + this.child.name + '"', 'Undo', {duration: 8000});
           snackBarRef.onAction().subscribe(() => {
-            this.entityMapperService.save(this.child.getChild(), true);
+            this.entityMapperService.save(this.child, true);
             this.router.navigate(['/child', this.child.getId()]);
           });
         }

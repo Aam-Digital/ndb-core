@@ -46,7 +46,7 @@
 <mat-accordion multi='true'>
   <form [formGroup]="form">
 
-    <mat-expansion-panel hideToggle="true" [expanded]="child.isActive()">
+    <mat-expansion-panel hideToggle="true" [expanded]="child.isActive()" title="Basic Information">
       <mat-expansion-panel-header class='section-header'>
         <mat-panel-title>
           Basic Information
@@ -54,9 +54,13 @@
       </mat-expansion-panel-header>
 
 
-      <div fxLayout='row'>
-        <div fxFlex='150px'>
+      <div fxLayout='row' fxLayout.xs='column wrap' fxLayout.md='column wrap' fxLayout.sm='column wrap'>
+        <div fxFlex='160px'>
           <img [src]="child.getPhoto()" class="child-pic" alt="child's photo">
+          <br>
+          <mat-form-field *ngIf="creatingNew || editing" class='photo-filename'>
+            <input matInput formControlName="photoFile" placeholder="Photo File Name" title="photoFile" type="text" >
+          </mat-form-field>
         </div>
 
 
@@ -82,7 +86,7 @@
 
         <div>
           <mat-form-field style='width: 50px;'>
-            <input matInput placeholder="Age" type="text" [value]=child.age [disabled]="true">
+            <input matInput placeholder="Age" type="number" [value]="child.age" [disabled]="true">
           </mat-form-field>
           <mat-form-field>
             <input matInput formControlName="dateOfBirth" placeholder="Date of Birth" type="date">
@@ -180,7 +184,10 @@
 
     </mat-expansion-panel>
 
-    <mat-expansion-panel expanded="false">
+
+
+
+    <mat-expansion-panel expanded="false" title="Education">
       <mat-expansion-panel-header class='section-header'>
         Education
       </mat-expansion-panel-header>
@@ -216,12 +223,12 @@
 
 
 
-    <mat-expansion-panel expanded="false">
+    <mat-expansion-panel expanded="false" title="Attendance">
       <mat-expansion-panel-header class='section-header'>
         Attendance
       </mat-expansion-panel-header>
 
-      <div fxLayout='row' fxLayoutGap='20px'>
+      <div fxLayout='row wrap' fxLayout.lt-md="column" fxLayoutGap='20px'>
         <div fxFlex='40'>
           <h3>School Attendance</h3>
           <app-child-attendance institution='school' [showDailyAttendanceOfLatest]='true'></app-child-attendance>
@@ -239,8 +246,8 @@
         Notes & Reports
       </mat-expansion-panel-header>
 
-  <app-notes></app-notes>
-</mat-expansion-panel>
+      <app-notes></app-notes>
+    </mat-expansion-panel>
 
 
 
@@ -300,12 +307,13 @@
       </div>
 
       <div>
+        <h3>Height & Weight Tracking</h3>
         <app-health-checkup></app-health-checkup>
       </div>
-  
+
     </mat-expansion-panel>
 
-   
+
 
 
     <mat-expansion-panel [expanded]="false">
@@ -340,5 +348,3 @@
 
   </form>
 </mat-accordion>
-
-<p>&nbsp;</p>

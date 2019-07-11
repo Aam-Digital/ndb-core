@@ -19,11 +19,11 @@ export class EducationalMaterialComponent implements OnInit {
 
   columns: Array<ColumnDescription> = [
     new ColumnDescription('date', 'Date', 'date', null,
-      (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
+      (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd'), 'xs'),
     new ColumnDescription('materialType', 'Material', 'autocomplete',
-      this.materialTypes.map(t => { return { value: t, label: t }; })),
-    new ColumnDescription('materialAmount', 'Amount', 'number'),
-    new ColumnDescription('description', 'Description/Remarks', 'text'),
+      this.materialTypes.map(t => { return { value: t, label: t }; }), undefined, 'xs'),
+    new ColumnDescription('materialAmount', 'Amount', 'number', null, undefined, 'md'),
+    new ColumnDescription('description', 'Description/Remarks', 'text', null, undefined, 'md'),
   ];
 
   constructor(private route: ActivatedRoute,

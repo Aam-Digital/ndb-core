@@ -26,6 +26,10 @@ export class HealthCheck extends Entity {
 
     child: string;
     date: Date;
+
+    /** height measurement in cm **/
     height: number;
+
+    /** weight measurement in kg **/
     weight: number;
 }

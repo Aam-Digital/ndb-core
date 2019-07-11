@@ -21,13 +21,13 @@ export class NotesComponent implements OnInit {
 
   columns: Array<ColumnDescription> = [
     new ColumnDescription('date', 'Date', 'date', null,
-      (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
-    new ColumnDescription('subject', 'Topic', 'text'),
-    new ColumnDescription('text', 'Notes', 'textarea'),
-    new ColumnDescription('author', 'SW', 'text'),
+      (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd'), 'xs'),
+    new ColumnDescription('subject', 'Topic', 'text', null, undefined, 'xs'),
+    new ColumnDescription('text', 'Notes', 'textarea', null, undefined, 'md'),
+    new ColumnDescription('author', 'SW', 'text', null, undefined, 'md'),
     new ColumnDescription('warningLevel', '', 'select',
       [{value: 'OK', label: 'Solved'}, {value: 'WARNING', label: 'Needs Follow-Up'}, {value: 'URGENT', label: 'Urgent Follow-Up'}],
-      (v) => ''),
+      (v) => '', 'md'),
   ];
 
 
