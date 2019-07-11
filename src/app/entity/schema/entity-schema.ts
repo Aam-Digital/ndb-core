@@ -19,12 +19,13 @@
 import {Entity} from '../entity';
 import {defaultEntitySchemaDatatype, EntitySchemaDatatype} from './entity-schema-datatype';
 
-export interface SchemaLine {
-  dataType: string,
-  isArray: boolean, // TODO: implement array support in EntitySchema
-  isOptional: boolean,
-  isIndexed: boolean, // TODO: implement index support in EntitySchema
-  defaultValue: any
+export interface SchemaFieldOptions {
+  generateIndex?: boolean; // TODO: implement index support in EntitySchema
+}
+
+export interface SchemaField {
+  dataType: string;
+  options: SchemaFieldOptions;
 }
 
 /**
@@ -55,7 +56,7 @@ export class EntitySchema<T extends Entity> {
   private static schemaTypes = new Map<string, EntitySchemaDatatype>();
 
   private originalSchema: Object;
-  schema: Map<string, SchemaLine>;
+  schema: Map<string, SchemaField>;
 
 
   /**
@@ -89,7 +90,7 @@ export class EntitySchema<T extends Entity> {
    * Get the Schema details of a field.
    * @param key The name of the field
    */
-  get(key: string): SchemaLine {
+  get(key: string): SchemaField {
     return this.schema.get(key);
   }
 
@@ -110,14 +111,14 @@ export class EntitySchema<T extends Entity> {
 
 
   private parseSchema(schema: Object) {
-    const parsedSchema = new Map<string, SchemaLine>();
+    const parsedSchema = new Map<string, SchemaField>();
     for (const key of Object.keys(schema)) {
       parsedSchema.set(key, this.parseSchemaLine(schema[key]));
     }
     return parsedSchema;
   }
 
-  private parseSchemaLine(schemaLine: string): SchemaLine {
+  private parseSchemaLine(schemaLine: string): SchemaField {
     const parts = schemaLine.match(/(\w+)(\[\])?(\?)?(\*)?(\=)?(.*)?/).slice(1, 7);
 
     let defaultValue = undefined;
