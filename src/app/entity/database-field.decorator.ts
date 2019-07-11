@@ -4,7 +4,9 @@ import 'reflect-metadata'
  * Note: Property decorators are called before class decorators.
  * @param fieldSchema The schema definition for this property.
  */
-export function DatabaseField(fieldSchema: string) {
+import {SchemaFieldOptions} from './schema/entity-schema';
+
+export function DatabaseField(dataType: string, options: SchemaFieldOptions = {}) {
   return (targetEntity, property: string) => {
     let design =  Reflect.getMetadata('design:type', targetEntity, property);
     let types =  Reflect.getMetadata('design:paramtypes', targetEntity, property);
@@ -13,7 +15,10 @@ export function DatabaseField(fieldSchema: string) {
     if (!targetEntity.constructor.hasOwnProperty('localSchema')) {
       targetEntity.constructor.localSchema = {};
     }
-    targetEntity.constructor.localSchema[property] = fieldSchema;
+    targetEntity.constructor.schema[property] = { dataType, options };
+
+    //  This ensures that the field is not read only
+    targetEntity[property] = undefined;
 
     return targetEntity;
   };
