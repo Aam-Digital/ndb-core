@@ -73,7 +73,7 @@ export class SyncedSessionService extends SessionService {
           if (loginState === LoginState.loginFailed) {
             // in this case: when the sync is completed, retry the local login after the sync
             await syncPromise;
-            return this._localSession.login(username, password)
+            return this._localSession.login(username, password);
           }
         });
 

@@ -30,7 +30,7 @@ describe('SyncedSessionService', () => {
     let sessionService: SessionService;
 
     describe('Integration Tests', () => {
-        var originalTimeout;
+        let originalTimeout;
 
         beforeEach(function() {
             originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;

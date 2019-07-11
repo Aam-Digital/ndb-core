@@ -79,7 +79,7 @@ export class LocalSession {
       }
       // all other cases must throw an error
       throw error;
-    };
+    }
   }
 
   /**

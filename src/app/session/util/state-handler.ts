@@ -18,8 +18,8 @@
 import { EventEmitter } from '@angular/core';
 
 export interface StateChangedEvent<StateEnum> {
-  fromState: StateEnum,
-  toState: StateEnum
+  fromState: StateEnum;
+  toState: StateEnum;
 }
 
 export class StateHandler<StateEnum> {

@@ -33,7 +33,7 @@ export class MockSessionService extends SessionService {
 
         DemoData.getAllDemoEntities()
             .forEach(c => entityMapper.save(c));
-    };
+    }
 
     public getCurrentUser(): User {
         return this.demoUser;
