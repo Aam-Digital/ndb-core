@@ -26,7 +26,7 @@ As an example look at the User class' schema definition:
 
 Only `user.name`, `user.password` and `user.admin` of an User class instance are save to the database. If you would define other attributes in the class for internal processing without adding them to this schema object, they would not be saved. Also, the data type of the fields are defined and the EntityModule ensures that they are saved and loaded into the correct format.
 
-For more Details see the page about the [EntitySchema System](https://github.com/NGO-DB/ndb-core/wiki/EntitySchema-System).
+For more Details see the page about the [EntitySchema System](http://aam-digital.github.io/ndb-core/additional-documentation/architecture/entityschema.html).
 
 
 ## Other components to be implemented for a new sub-type
