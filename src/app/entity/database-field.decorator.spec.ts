@@ -15,26 +15,23 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntityMapperService } from './entity-mapper.service';
 import { Entity } from './entity';
-import {MockDatabase} from '../database/mock-database';
-import {Database} from '../database/database';
 import {DatabaseField} from './database-field.decorator';
 
 class TestClass extends Entity {
-  @DatabaseField('string')
+  @DatabaseField()
   fieldUndefined: string;
 
-  @DatabaseField('string')
-  fieldWithDefault = 'default';
+  @DatabaseField()
+  fieldWithDefault: string = 'default';
 
-  @DatabaseField('date', { generateIndex: true } )
+  @DatabaseField({ generateIndex: true } )
   fieldDate: Date;
 }
 
-fdescribe('@DatabaseField Decorator', () => {
+describe('@DatabaseField Decorator', () => {
 
-  it('assigns correct default values', async () => {
+  it('keeps correct default values', async () => {
     const testClass = new TestClass('1');
 
     expect(testClass.fieldUndefined).toBe(undefined);
@@ -44,11 +41,10 @@ fdescribe('@DatabaseField Decorator', () => {
   it('results in full schema', async () => {
     const testClass = new TestClass('1');
 
-    expect(TestClass.schema).toMatch({
-      fieldUndefined: { dataType: 'string' },
-      fieldWithDefault: { dataType: 'string' },
-      fieldDate: { dataType: 'date' },
-    });
+    expect(TestClass.schema).toEqual(new Map([
+      ['fieldUndefined', { dataType: 'string' }],
+      ['fieldWithDefault', { dataType: 'string' }],
+      ['fieldDate', { dataType: 'date', generateIndex: true }],
+    ]));
   });
-
 });

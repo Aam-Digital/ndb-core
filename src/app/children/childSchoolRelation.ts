@@ -1,19 +1,13 @@
 import {Entity} from '../entity/entity';
+import {DatabaseEntity} from '../entity/database-entity.decorator';
+import {DatabaseField} from '../entity/database-field.decorator';
 
+@DatabaseEntity('ChildSchoolRelation')
 export class ChildSchoolRelation extends Entity {
-  static ENTITY_TYPE = 'ChildSchoolRelation';
-  static schema = Entity.schema.extend({
-    'childId': 'string',
-    'schoolId': 'string',
-    'schoolClass': 'string',
-    'start': 'string',
-    'end': 'string',
-  });
-
-  public childId: string;
-  public schoolId: string;
-  public schoolClass: string;
-  public start: string; // TODO: use Date instead of string?
-  public end: string; // TODO: use Date instead of string?
+  @DatabaseField() childId: string;
+  @DatabaseField() schoolId: string;
+  @DatabaseField() schoolClass: string;
+  @DatabaseField() start: string; // TODO: use Date instead of string?
+  @DatabaseField() end: string; // TODO: use Date instead of string?
 }
 

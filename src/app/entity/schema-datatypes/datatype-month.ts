@@ -15,22 +15,28 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from '../../entity/entity';
-import {DatabaseEntity} from '../../entity/database-entity.decorator';
-import {DatabaseField} from '../../entity/database-field.decorator';
+import {EntitySchemaDatatype} from '../schema/entity-schema-datatype';
 
-/**
- * Model Class for the Health Checks that are taken for a Child.
- * It stores the Child's ID in a String and both, the height and weight in cm as a number, and the Date
- */
-@DatabaseEntity('HealthCheck')
-export class HealthCheck extends Entity {
-  @DatabaseField() child: string;
-  @DatabaseField() date: Date;
+export const monthEntitySchemaDatatype: EntitySchemaDatatype = {
+  name: 'month',
 
-  /** height measurement in cm **/
-  @DatabaseField() height: number;
+  transformToDatabaseFormat: (value) => {
+    if (!(value instanceof Date)) {
+      value = new Date(value);
+    }
+    return (value.getFullYear().toString() + '-' + (value.getMonth() + 1).toString());
+  },
 
-  /** weight measurement in kg **/
-  @DatabaseField() weight: number;
-}
+  transformToObjectFormat: (value) => {
+    let date;
+    if (value === '') {
+      date = new Date();
+    } else {
+      date = new Date(value);
+    }
+    if (isNaN(date.getTime())) {
+      throw new Error('failed to convert data to Date object: ' + value);
+    }
+    return date;
+  }
+};

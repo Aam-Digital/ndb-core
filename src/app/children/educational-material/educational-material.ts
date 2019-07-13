@@ -16,18 +16,11 @@
  */
 
 import { Entity } from '../../entity/entity';
+import {DatabaseEntity} from '../../entity/database-entity.decorator';
+import {DatabaseField} from '../../entity/database-field.decorator';
 
-
+@DatabaseEntity('EducationalMaterial')
 export class EducationalMaterial extends Entity {
-  static ENTITY_TYPE = 'EducationalMaterial';
-  static schema = Entity.schema.extend({
-    'child': 'string',
-    'date': 'Date',
-    'materialType': 'string=',
-    'materialAmount': 'number',
-    'description': 'string=',
-  });
-
 
   static MATERIAL_STATIONARIES = [
     'pencil',
@@ -66,11 +59,11 @@ export class EducationalMaterial extends Entity {
   static MATERIAL_ALL = EducationalMaterial.MATERIAL_STATIONARIES.concat(EducationalMaterial.MATERIAL_OTHER);
 
 
-  child: string; // id of Child entity
-  date: Date;
-  materialType = '';
-  materialAmount: number;
-  description = '';
+  @DatabaseField() child: string; // id of Child entity
+  @DatabaseField() date: Date;
+  @DatabaseField() materialType = '';
+  @DatabaseField() materialAmount: number;
+  @DatabaseField() description = '';
 
 
 

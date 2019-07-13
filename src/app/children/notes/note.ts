@@ -17,20 +17,11 @@
 
 import {Entity} from '../../entity/entity';
 import {WarningLevel} from '../attendance/warning-level';
+import {DatabaseEntity} from '../../entity/database-entity.decorator';
+import {DatabaseField} from '../../entity/database-field.decorator';
 
-
+@DatabaseEntity('Note')
 export class Note extends Entity {
-  static ENTITY_TYPE = 'Note';
-  static schema = Entity.schema.extend({
-    'children': 'any', // TODO: change schema type to string[] (or Child[]) once lists are implemented in EntitySchema
-    'date': 'date=',
-    'subject': 'string=',
-    'text': 'string=',
-    'author': 'string=',
-    'category': 'string=',
-    'warningLevel': 'string?',
-  });
-
 
   static INTERACTION_TYPES = [
     'Home Visit',
@@ -50,13 +41,13 @@ export class Note extends Entity {
     'Contact with other partners (club/NGO/...)',
   ];
 
-  children: string[] = []; // id of Child entity
-  date: Date;
-  subject = '';
-  text = '';
-  author = '';
-  category = '';
-  warningLevel: WarningLevel = WarningLevel.OK;
+  @DatabaseField() children: string[] = []; // id of Child entity
+  @DatabaseField() date: Date;
+  @DatabaseField() subject: string = '';
+  @DatabaseField() text: string = '';
+  @DatabaseField() author: string = '';
+  @DatabaseField() category: string = '';
+  @DatabaseField({dataType: 'string'}) warningLevel: WarningLevel = WarningLevel.OK;
 
   getWarningLevel (): WarningLevel {
     return this.warningLevel;

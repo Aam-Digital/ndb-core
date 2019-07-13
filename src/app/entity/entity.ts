@@ -15,13 +15,14 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {EntitySchema} from './schema/entity-schema';
-
 /**
  * This represents a static class of type <T>.
  * It can be used for passing a class from which new objects should be created.
  * For example usage check the entity mapper service.
  */
+import {EntitySchema} from './schema/entity-schema';
+import {DatabaseField} from './database-field.decorator';
+
 export type EntityConstructor<T extends Entity> = new(id: string) => T;
 
 /**
@@ -35,16 +36,7 @@ export class Entity {
    * The entity's type.
    */
   static ENTITY_TYPE = 'Entity';
-
-  static schema: EntitySchema<Entity> = new EntitySchema<Entity>({
-    _id: 'string',
-    _rev: 'string?',
-    // searchIndices: 'string[]' // generated through this.generateSearchIndices() and assigned in rawData() directly
-  });
-
-
-  _id: string;
-  _rev: string;
+  static schema: EntitySchema;
 
 
   static extractTypeFromId(id: string): string {
@@ -65,6 +57,13 @@ export class Entity {
       return id;
     }
   }
+
+
+  @DatabaseField()
+  _id: string;
+
+  @DatabaseField()
+  _rev: string;
 
 
   /**
@@ -115,34 +114,6 @@ export class Entity {
    */
   public getType(): string {
     return this.getConstructor().ENTITY_TYPE;
-  }
-
-
-  /**
-   * Load the given raw data object into this entity instance, respecting the EntitySchema.
-   * The fields of the given data object are parsed and filtered using the EntitySchema definition of this Entity type.
-   * @param data Raw data object.
-   */
-  public load(data: any) {
-    data = this.getConstructor().schema.transformDatabaseToEntityFormat(data);
-    Object.assign(this, data);
-  }
-
-  /**
-   * Returns an object cleaned for export or writing to the database.
-   *
-   * Generates the current search indices for the returned object.
-   *
-   * <b>Overwrite this method in subtypes if you need to convert some special property before saving.</b>
-   *
-   * @returns {object} the instance's cleaned object.
-   */
-  public rawData(): any {
-    const data = this.getConstructor().schema.transformEntityToDatabaseFormat(this);
-
-    data['searchIndices'] = this.generateSearchIndices();
-
-    return data;
   }
 
   /**

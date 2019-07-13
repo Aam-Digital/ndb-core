@@ -15,16 +15,14 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {EntitySchemaDatatype} from './entity-schema-datatype';
+import {EntitySchemaDatatype} from '../schema/entity-schema-datatype';
 
-export const monthEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: 'month',
+export const dateEntitySchemaDatatype: EntitySchemaDatatype = {
+  name: 'date',
 
   transformToDatabaseFormat: (value) => {
-    if (!(value instanceof Date)) {
-      value = new Date(value);
-    }
-    return (value.getFullYear().toString() + '-' + (value.getMonth() + 1).toString());
+    // TODO: should date format be saved as date object or as string "YYYY-mm-dd"?
+    return value;
   },
 
   transformToObjectFormat: (value) => {

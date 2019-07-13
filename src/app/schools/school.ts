@@ -1,32 +1,20 @@
 import {Entity} from '../entity/entity';
+import {DatabaseEntity} from '../entity/database-entity.decorator';
+import {DatabaseField} from '../entity/database-field.decorator';
 
+@DatabaseEntity('School')
 export class School extends Entity {
-  public static ENTITY_TYPE = 'School';
-  static schema = Entity.schema.extend({
-    'name': 'string=',
-    'address': 'string=',
-    'medium': 'string=',
-    'remarks': 'string=',
-    'website': 'string=',
-    'privateSchool': 'boolean',
-    'phone': 'string=',
-    'upToClass': 'number',
-    'academicBoard': 'string=',
-    'timing': 'string=',
-    'workingDays': 'string=',
-  });
-
-  name = '';
-  address = '';
-  medium ? = '';
-  remarks ? = '';
-  website = '';
-  privateSchool: boolean;
-  phone = '';
-  upToClass: number;
-  academicBoard = '';
-  timing = '';
-  workingDays = '';
+  @DatabaseField() name: string = '';
+  @DatabaseField() address: string = '';
+  @DatabaseField() medium: string = '';
+  @DatabaseField() remarks: string = '';
+  @DatabaseField() website: string = '';
+  @DatabaseField() privateSchool: boolean;
+  @DatabaseField() phone: string = '';
+  @DatabaseField() upToClass: number;
+  @DatabaseField() academicBoard: string = '';
+  @DatabaseField() timing: string = '';
+  @DatabaseField() workingDays: string = '';
 
   public toString() {
     return this.name;

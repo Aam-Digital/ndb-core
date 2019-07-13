@@ -15,16 +15,16 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {EntitySchemaDatatype} from './entity-schema-datatype';
+import {EntitySchemaDatatype} from '../schema/entity-schema-datatype';
 
-export const stringEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: 'string',
+export const numberEntitySchemaDatatype: EntitySchemaDatatype = {
+  name: 'number',
 
   transformToDatabaseFormat: (value) => {
-    return String(value);
+    return Number(value);
   },
 
   transformToObjectFormat: (value) => {
-    return String(value);
+    return Number(value);
   }
 };

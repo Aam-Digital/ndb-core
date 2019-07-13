@@ -17,49 +17,20 @@
 
 import { Entity } from '../entity';
 import {async} from '@angular/core/testing';
-import {EntityModule} from '../entity.module';
+import {EntitySchemaService} from './entity-schema.service';
+import {DatabaseField} from '../database-field.decorator';
 
-describe('EntitySchema', () => {
+describe('EntitySchemaService', () => {
+  let entitySchemaService: EntitySchemaService;
 
   beforeEach(async(() => {
-    EntityModule.registerSchemaDatatypes();
+    entitySchemaService = new EntitySchemaService();
   }));
 
-  it('load() assigns default values', function () {
-    class TestEntity extends Entity {
-
-      static schema = Entity.schema.extend({
-        'defaultString': 'string=',
-        'defaultNumber': 'number=1',
-        'noDefault': 'string',
-      });
-
-      defaultString: string;
-      defaultNumber = 0; // WARNING: the default value defined in the class will be overwritten by the schema default value
-      noDefault: string;
-    }
-    const id = 'test1';
-    const entity = new TestEntity(id);
-
-    const data = {
-      _id: 'test2',
-      _rev: '1.2.3'
-    };
-    entity.load(data);
-
-    expect(entity.defaultString).toBe('');
-    expect(entity.defaultNumber).toBe(1);
-    expect(entity.noDefault).toBeUndefined();
-  });
 
   it('schema:string converts to strings', function () {
     class TestEntity extends Entity {
-
-      static schema = Entity.schema.extend({
-        'aString': 'string',
-      });
-
-      aString: string;
+      @DatabaseField() aString: string;
     }
     const id = 'test1';
     const entity = new TestEntity(id);
@@ -68,24 +39,18 @@ describe('EntitySchema', () => {
       _id: 'test2',
       aString: 192
     };
-    entity.load(data);
+    entitySchemaService.loadDataIntoEntity(entity, data);
 
     expect(entity.aString).toBe('192');
 
-    const rawData = entity.rawData();
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
     expect(rawData.aString).toBe('192');
   });
 
   it('schema:number converts to numbers', function () {
     class TestEntity extends Entity {
-
-      static schema = Entity.schema.extend({
-        'aNumber': 'number',
-        'aFloat': 'number',
-      });
-
-      aNumber: number;
-      aFloat: number;
+      @DatabaseField() aNumber: number;
+      @DatabaseField() aFloat: number;
     }
     const id = 'test1';
     const entity = new TestEntity(id);
@@ -95,26 +60,20 @@ describe('EntitySchema', () => {
       aNumber: '192',
       aFloat: '1.68',
     };
-    entity.load(data);
+    entitySchemaService.loadDataIntoEntity(entity, data);
 
     expect(entity.aNumber).toBe(192);
     expect(entity.aFloat).toBe(1.68);
 
-    const rawData = entity.rawData();
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
     expect(rawData.aNumber).toBe(192);
     expect(rawData.aFloat).toBe(1.68);
   });
 
   it('schema:date converts to Date object', function () {
     class TestEntity extends Entity {
-
-      static schema = Entity.schema.extend({
-        'defaultDate': 'Date=',
-        'otherDate': 'Date',
-      });
-
-      defaultDate: Date;
-      otherDate: Date;
+      @DatabaseField() defaultDate: Date = new Date();
+      @DatabaseField() otherDate: Date;
     }
     const id = 'test1';
     const entity = new TestEntity(id);
@@ -123,7 +82,7 @@ describe('EntitySchema', () => {
       _id: 'test2',
       otherDate: '2018-01-01',
     };
-    entity.load(data);
+    entitySchemaService.loadDataIntoEntity(entity, data);
 
     expect(entity.defaultDate.toDateString()).toBe((new Date()).toDateString());
 
@@ -131,18 +90,13 @@ describe('EntitySchema', () => {
     expect(entity.otherDate.getMonth()).toBe(0);
     expect(entity.otherDate.getDate()).toBe(1);
 
-    const rawData = entity.rawData();
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
     expect(rawData.otherDate).toBe(data.otherDate);
   });
 
   it('schema:month converts to correctly between string and Date objects', function () {
     class TestEntity extends Entity {
-
-      static schema = Entity.schema.extend({
-        'month': 'month',
-      });
-
-      month: Date;
+      @DatabaseField({dataType: 'month'}) month: Date;
     }
     const id = 'test1';
     const entity = new TestEntity(id);
@@ -151,11 +105,12 @@ describe('EntitySchema', () => {
       _id: 'test2',
       month: '2018-2',
     };
-    entity.load(data);
+    entitySchemaService.loadDataIntoEntity(entity, data);
 
     const expectedDate = new Date(2018, 1); // month indices start at 0!
-
     expect(entity.month.toDateString()).toBe(expectedDate.toDateString());
-    expect(entity.rawData().month).toBe('2018-2');
+
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
+    expect(rawData.month).toBe('2018-2');
   });
 });

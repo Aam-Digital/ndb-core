@@ -15,16 +15,23 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {EntitySchemaDatatype} from './entity-schema-datatype';
 
-export const numberEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: 'number',
+/**
+ * Object defining additional configuration about a DatabaseField schema
+ */
+export interface EntitySchemaField {
+  /**
+   * The datatype of this field. This will trigger to matching datatype transformer when saving/loading the entity.
+   */
+  dataType?: string;
 
-  transformToDatabaseFormat: (value) => {
-    return Number(value);
-  },
+  /**
+   * In case of an array field (dataType==='array') define the datatype of the values contained in the array
+   */
+  arrayDataType?: string;
 
-  transformToObjectFormat: (value) => {
-    return Number(value);
-  }
-};
+  /**
+   * Set to true to make the framework automatically create an index to retrieve/filter Entities quickly based on this field
+   */
+  generateIndex?: boolean; // TODO: implement index support in EntitySchema
+}

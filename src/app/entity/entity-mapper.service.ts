@@ -18,6 +18,7 @@
 import { Injectable } from '@angular/core';
 import { Database } from '../database/database';
 import {Entity, EntityConstructor} from './entity';
+import {EntitySchemaService} from './schema/entity-schema.service';
 
 /**
  * The default generic DataMapper for Entity and any subclass.
@@ -27,8 +28,10 @@ import {Entity, EntityConstructor} from './entity';
 export class EntityMapperService {
 
 
-  constructor(private _db: Database) {
-  }
+  constructor(
+    private _db: Database,
+    private entitySchemaService: EntitySchemaService,
+  ) { }
 
   /**
    * Loads an Entity from the database with the given id.
@@ -37,17 +40,11 @@ export class EntityMapperService {
    * @param id the id of the entity to load.
    * @returns A Promise containing the resultEntity filled with its data.
    */
-  public load<T extends Entity>(entityType: EntityConstructor<T>, id: string): Promise<T> {
+  public async load<T extends Entity>(entityType: EntityConstructor<T>, id: string): Promise<T> {
     const resultEntity = new entityType('');
-    return this._db.get(Entity.createPrefixedId(resultEntity.getType(), id)).then(
-      function (result: any) {
-        resultEntity.load(result);
-        return resultEntity;
-      },
-      function (error: any) {
-        throw error;
-      }
-    );
+    const result = await this._db.get(Entity.createPrefixedId(resultEntity.getType(), id));
+    this.entitySchemaService.loadDataIntoEntity(resultEntity, result);
+    return resultEntity;
   }
 
   /**
@@ -63,7 +60,7 @@ export class EntityMapperService {
 
     for (const record of allRecordsOfType) {
       const entity = new entityType('');
-      entity.load(record);
+      this.entitySchemaService.loadDataIntoEntity(entity, record);
       resultArray.push(entity);
     }
 
@@ -71,7 +68,8 @@ export class EntityMapperService {
   }
 
   public async save<T extends Entity>(entity: T, forceUpdate: boolean = false): Promise<any> {
-    const result = await this._db.put(entity.rawData(), forceUpdate);
+    const rawData = this.entitySchemaService.transformEntityToDatabaseFormat(entity);
+    const result = await this._db.put(rawData, forceUpdate);
     if (result.ok) {
       entity._rev = result.rev;
     }

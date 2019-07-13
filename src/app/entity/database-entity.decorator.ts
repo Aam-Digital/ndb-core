@@ -1,4 +1,4 @@
-import {Entity} from './entity';
+
 
 /**
  * Decorator (Annotation `@DatabaseEntity()`) to set the string ENTITY_TYPE to an Entity Type
@@ -7,9 +7,9 @@ import {Entity} from './entity';
 export function DatabaseEntity(entityType: string) {
   return (constructor) => {
     constructor.ENTITY_TYPE = entityType;
-    // Use the dummy object to extend the schema // TODO: document why "localSchema" is needed
-    constructor.schema = Entity.schema.extend(constructor.localSchema);
-    delete constructor.localSchema;
-    console.log('constructor', constructor)
+
+    // append parent schema definitions
+    const parentConstructor = Object.getPrototypeOf(constructor);
+    parentConstructor.schema.forEach((value, key) => constructor.schema.set(key, value));
   };
 }

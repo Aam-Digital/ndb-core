@@ -11,11 +11,11 @@ import {ChildrenService} from '../children.service';
 import {ChangeDetectorRef} from '@angular/core';
 import {LoggingService} from '../../logging/logging.service';
 import {Database} from '../../database/database';
+import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 
 describe('ViewSchoolsComponent', () => {
   let component: ViewSchoolsComponent;
   let fixture: ComponentFixture<ViewSchoolsComponent>;
-  const entityMapper = new EntityMapperService(new MockDatabase());
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -28,7 +28,8 @@ describe('ViewSchoolsComponent', () => {
       ],
       providers: [
         ChildrenService,
-        { provide: EntityMapperService, useValue: entityMapper },
+        EntityMapperService,
+        EntitySchemaService,
         MatDialog,
         ChangeDetectorRef,
         LoggingService,

@@ -17,15 +17,16 @@
 
 import { Child } from './child';
 import {async} from '@angular/core/testing';
-import {EntityModule} from '../entity/entity.module';
 import {Entity} from '../entity/entity';
 import {Gender} from './Gender';
+import {EntitySchemaService} from '../entity/schema/entity-schema.service';
 
 describe('Child', () => {
   const ENTITY_TYPE = 'Child';
+  let entitySchemaService: EntitySchemaService;
 
   beforeEach(async(() => {
-    EntityModule.registerSchemaDatatypes();
+    entitySchemaService = new EntitySchemaService();
   }));
 
 
@@ -49,7 +50,6 @@ describe('Child', () => {
     const id = 'test1';
     const expectedData = {
       _id: ENTITY_TYPE + ':' + id,
-      _rev: 'undefined',
 
       name: 'Max',
       projectNumber: '1',
@@ -57,9 +57,10 @@ describe('Child', () => {
       dateOfBirth: new Date(2010, 1, 1),
       motherTongue: 'Hindi',
       religion: 'Hindu',
-      school: '2',
+      schoolId: '2',
+      schoolClass: '2',
 
-      hasPhoto: false,
+      photoFile: '..',
       center: 'Alpha',
       admissionDate: new Date(),
       status: 'Active',
@@ -99,9 +100,10 @@ describe('Child', () => {
     entity.dateOfBirth = expectedData.dateOfBirth;
     entity.motherTongue = expectedData.motherTongue;
     entity.religion = expectedData.religion;
-    entity.school = expectedData.school;
+    entity.schoolId = expectedData.schoolId;
+    entity.schoolClass = expectedData.schoolClass;
 
-    entity.hasPhoto = expectedData.hasPhoto;
+    entity.photoFile = expectedData.photoFile;
     entity.center = expectedData.center;
     entity.admissionDate = expectedData.admissionDate;
     entity.status = expectedData.status;
@@ -129,7 +131,7 @@ describe('Child', () => {
     entity.health_lastVitaminD = expectedData.health_lastVitaminD;
     entity.health_lastDeworming = expectedData.health_lastDeworming;
 
-    const rawData = entity.rawData();
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
     expect(rawData).toEqual(expectedData);
   });

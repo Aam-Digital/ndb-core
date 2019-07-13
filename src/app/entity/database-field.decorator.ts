@@ -1,30 +1,23 @@
-import 'reflect-metadata'
-import {SchemaFieldOptions} from './schema/entity-schema';
+import 'reflect-metadata';
+import {EntitySchemaField} from './schema/entity-schema-field';
 
 /**
- * Decorator (Annotation `@DatabaseEntity()`) to set the string ENTITY_TYPE to an Entity Type.
- * Note: Property decorators are called before class decorators.
- * @param fieldSchema The schema definition for this property.
- * @param arrayType (optional) needs to be provided if property is an array.
+ * Decorator (Annotation `@DatabaseField()`) to mark a property of an Entity that should be persisted in the database.
+ * @param propertySchema (optional) SchemaField definition that configures additional options regarding this field
  */
-export function DatabaseField(dataType: string, options: SchemaFieldOptions = {}, arrayType = '') {
-  return (targetEntity, property: string) => {
-    let expDataType = Reflect.getMetadata('design:type', targetEntity, property).name.toLowerCase();
-    if (expDataType === 'array') {
-        expDataType = arrayType;
-        options['isArray'] = true;
+export function DatabaseField(propertySchema: EntitySchemaField = {}) {
+  return (target, propertyName: string) => {
+    target[propertyName] = undefined; // This ensures that the field is not read only
+
+    if (propertySchema.dataType === undefined) {
+      propertySchema.dataType = Reflect.getMetadata('design:type', target, propertyName).name.toLowerCase();
     }
-    console.log('property', property, 'name', expDataType);
 
-    // Adding a dummy object to store the schemas // TODO: document why "localSchema" is needed
-    if (!targetEntity.constructor.hasOwnProperty('localSchema')) {
-      targetEntity.constructor.localSchema = {};
+    if (Object.getOwnPropertyDescriptor(target.constructor, 'schema') == null) {
+      target.constructor.schema = new Map<string, EntitySchemaField>();
     }
-    targetEntity.constructor.schema[property] = { dataType, options };
+    target.constructor.schema.set(propertyName, propertySchema);
 
-    //  This ensures that the field is not read only
-    targetEntity[property] = undefined;
-
-    return targetEntity;
+    return target;
   };
 }

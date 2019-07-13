@@ -15,26 +15,17 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {EntitySchemaDatatype} from './entity-schema-datatype';
 
-export const dateEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: 'date',
+import {EntitySchemaDatatype} from '../schema/entity-schema-datatype';
+
+export const defaultEntitySchemaDatatype: EntitySchemaDatatype = {
+  name: 'any',
 
   transformToDatabaseFormat: (value) => {
-    // TODO: should date format be saved as date object or as string "YYYY-mm-dd"?
     return value;
   },
 
   transformToObjectFormat: (value) => {
-    let date;
-    if (value === '') {
-      date = new Date();
-    } else {
-      date = new Date(value);
-    }
-    if (isNaN(date.getTime())) {
-      throw new Error('failed to convert data to Date object: ' + value);
-    }
-    return date;
+    return value;
   }
 };

@@ -16,17 +16,13 @@
  */
 
 import { Entity } from '../../entity/entity';
+import {DatabaseEntity} from '../../entity/database-entity.decorator';
+import {DatabaseField} from '../../entity/database-field.decorator';
 
-
+@DatabaseEntity('ProgressDashboardConfig')
 export class ProgressDashboardConfig extends Entity {
-  static ENTITY_TYPE = 'ProgressDashboardConfig';
-  static schema = Entity.schema.extend({
-    'title': 'string',
-    'parts': 'any',
-  });
-
-  title = 'Progress Widget';
-  parts = [];
+  @DatabaseField() title: string = 'Progress Widget';
+  @DatabaseField() parts = [];
 
 
   getTotalPercentage() {

@@ -15,22 +15,16 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from '../../entity/entity';
-import {DatabaseEntity} from '../../entity/database-entity.decorator';
-import {DatabaseField} from '../../entity/database-field.decorator';
+import {EntitySchemaDatatype} from '../schema/entity-schema-datatype';
 
-/**
- * Model Class for the Health Checks that are taken for a Child.
- * It stores the Child's ID in a String and both, the height and weight in cm as a number, and the Date
- */
-@DatabaseEntity('HealthCheck')
-export class HealthCheck extends Entity {
-  @DatabaseField() child: string;
-  @DatabaseField() date: Date;
+export const stringEntitySchemaDatatype: EntitySchemaDatatype = {
+  name: 'string',
 
-  /** height measurement in cm **/
-  @DatabaseField() height: number;
+  transformToDatabaseFormat: (value) => {
+    return String(value);
+  },
 
-  /** weight measurement in kg **/
-  @DatabaseField() weight: number;
-}
+  transformToObjectFormat: (value) => {
+    return String(value);
+  }
+};

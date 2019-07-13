@@ -10,6 +10,7 @@ import {Database} from '../../../database/database';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
 import {ChildrenService} from '../../children.service';
 import {SchoolBlockComponent} from '../../../schools/school-block/school-block.component';
+import {EntitySchemaService} from '../../../entity/schema/entity-schema.service';
 
 describe('AttendanceWarningsDashboardComponent', () => {
   let component: AttendanceWarningsDashboardComponent;
@@ -19,7 +20,12 @@ describe('AttendanceWarningsDashboardComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ ChildBlockComponent, SchoolBlockComponent, AttendanceWarningsDashboardComponent ],
       imports: [MatIconModule, MatCardModule, RouterTestingModule],
-      providers: [ChildrenService, EntityMapperService, { provide: Database, useClass: MockDatabase }],
+      providers: [
+        ChildrenService,
+        EntityMapperService,
+        EntitySchemaService,
+        { provide: Database, useClass: MockDatabase },
+      ],
     })
     .compileComponents();
   }));

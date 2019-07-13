@@ -18,23 +18,11 @@
 import {Entity} from '../../entity/entity';
 import {WarningLevel} from './warning-level';
 import {AttendanceDay, AttendanceStatus} from './attendance-day';
+import {DatabaseEntity} from '../../entity/database-entity.decorator';
+import {DatabaseField} from '../../entity/database-field.decorator';
 
-
+@DatabaseEntity('AttendanceMonth')
 export class AttendanceMonth extends Entity {
-  static ENTITY_TYPE = 'AttendanceMonth';
-  static schema = Entity.schema.extend({
-    'student': 'string',
-    'institution': 'string',
-    'month': 'month',
-    'remarks': 'string=',
-    'daysWorking': 'number',
-    'daysAttended': 'number',
-    'daysExcused': 'number',
-    'daysLate': 'number',
-    'dailyRegister': 'any?',
-  });
-
-
   static readonly THRESHOLD_URGENT = 0.6;
   static readonly THRESHOLD_WARNING = 0.8;
 
@@ -49,15 +37,22 @@ export class AttendanceMonth extends Entity {
   }
 
 
-  student: string; // id of Child entity
-  remarks = '';
-  institution: string;
+  @DatabaseField() student: string; // id of Child entity
+  @DatabaseField() remarks: string = '';
+  @DatabaseField() institution: string;
+
 
   private p_month: Date;
+  @DatabaseField({dataType: 'month'})
   get month(): Date {
     return this.p_month;
   }
   set month(value: Date) {
+    if (!(value instanceof Date)) {
+      console.warn('Trying to set invalid date ' + value + ' to Entity ' + this._id);
+      return;
+    }
+
     if (value.getDate() !== 2) {
       value.setDate(2);
     }
@@ -66,6 +61,7 @@ export class AttendanceMonth extends Entity {
   }
 
   daysWorking_manuallyEntered: number;
+  @DatabaseField()
   get daysWorking(): number {
     if (this.daysWorking_manuallyEntered !== undefined) {
       return this.daysWorking_manuallyEntered;
@@ -79,6 +75,7 @@ export class AttendanceMonth extends Entity {
   }
 
   daysAttended_manuallyEntered: number;
+  @DatabaseField()
   get daysAttended(): number {
     if (this.daysAttended_manuallyEntered !== undefined) {
       return this.daysAttended_manuallyEntered;
@@ -92,6 +89,7 @@ export class AttendanceMonth extends Entity {
   }
 
   daysExcused_manuallyEntered: number;
+  @DatabaseField()
   get daysExcused(): number {
     if (this.daysExcused_manuallyEntered !== undefined) {
       return this.daysExcused_manuallyEntered;
@@ -105,6 +103,7 @@ export class AttendanceMonth extends Entity {
   }
 
   daysLate_manuallyEntered: number;
+  @DatabaseField()
   get daysLate(): number {
     if (this.daysLate_manuallyEntered !== undefined) {
       return this.daysLate_manuallyEntered;
@@ -118,6 +117,7 @@ export class AttendanceMonth extends Entity {
 
   overridden = false; // indicates individual override during bulk adding
 
+  @DatabaseField()
   dailyRegister = new Array<AttendanceDay>();
 
   private updateDailyRegister() {

@@ -16,15 +16,16 @@
  */
 
 import {async} from '@angular/core/testing';
-import {EntityModule} from '../../entity/entity.module';
 import {Entity} from '../../entity/entity';
 import {HealthCheck} from './health-check';
+import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 
 describe('HealthCheck Entity', () => {
   const ENTITY_TYPE = 'HealthCheck';
+  let entitySchemaService: EntitySchemaService;
 
   beforeEach(async(() => {
-    EntityModule.registerSchemaDatatypes();
+    entitySchemaService = new EntitySchemaService();
   }));
 
 
@@ -48,7 +49,6 @@ describe('HealthCheck Entity', () => {
     const id = 'test1';
     const expectedData = {
       _id: ENTITY_TYPE + ':' + id,
-      _rev: 'undefined',
 
       child: '1',
       date: new Date(),
@@ -64,7 +64,7 @@ describe('HealthCheck Entity', () => {
     entity.height = expectedData.height;
     entity.weight = expectedData.weight;
 
-    const rawData = entity.rawData();
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
     expect(rawData).toEqual(expectedData);
   });

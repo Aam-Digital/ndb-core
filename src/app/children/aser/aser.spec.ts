@@ -18,14 +18,15 @@
 import {Aser} from './aser';
 import {WarningLevel} from '../attendance/warning-level';
 import {async} from '@angular/core/testing';
-import {EntityModule} from '../../entity/entity.module';
 import {Entity} from '../../entity/entity';
+import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 
 describe('Aser', () => {
   const ENTITY_TYPE = 'Aser';
+  const entitySchemaService = new EntitySchemaService();
 
   beforeEach(async(() => {
-    EntityModule.registerSchemaDatatypes();
+
   }));
 
 
@@ -49,7 +50,6 @@ describe('Aser', () => {
     const id = 'test1';
     const expectedData = {
       _id: ENTITY_TYPE + ':' + id,
-      _rev: 'undefined',
 
       child: '1',
       date: new Date(),
@@ -71,7 +71,7 @@ describe('Aser', () => {
     entity.math = expectedData.math;
     entity.remarks = expectedData.remarks;
 
-    const rawData = entity.rawData();
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
     expect(rawData).toEqual(expectedData);
   });

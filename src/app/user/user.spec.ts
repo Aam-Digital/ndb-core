@@ -17,14 +17,15 @@
 
 import { User } from './user';
 import {async} from '@angular/core/testing';
-import {EntityModule} from '../entity/entity.module';
 import {Entity} from '../entity/entity';
+import {EntitySchemaService} from '../entity/schema/entity-schema.service';
 
 describe('User', () => {
   const ENTITY_TYPE = 'User';
+  let entitySchemaService: EntitySchemaService;
 
   beforeEach(async(() => {
-    EntityModule.registerSchemaDatatypes();
+    entitySchemaService = new EntitySchemaService();
   }));
 
 
@@ -48,7 +49,6 @@ describe('User', () => {
     const id = 'test1';
     const expectedData = {
       _id: ENTITY_TYPE + ':' + id,
-      _rev: 'undefined',
 
       name: 'tester',
       admin: true,
@@ -61,8 +61,11 @@ describe('User', () => {
     const entity = new User(id);
     entity.name = expectedData.name;
     entity.admin = expectedData.admin;
+    entity.setNewPassword('pass');
+    // @ts-ignore
+    expectedData.password = entity.password;
 
-    const rawData = entity.rawData();
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
     expect(rawData).toEqual(expectedData);
   });

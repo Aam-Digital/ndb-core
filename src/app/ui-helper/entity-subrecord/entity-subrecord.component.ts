@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, ViewChild, HostListener} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
@@ -85,7 +85,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     const index = this.records.findIndex(a => a.getId() === record.getId());
     if (index > -1) {
       const originalRecord = this.originalRecords.find(e => e.entityId === record.getId());
-      record.load(originalRecord);
+      Object.assign(record, originalRecord);
       this.records[index] = record;
       this.recordsDataSource.data = this.records;
     }

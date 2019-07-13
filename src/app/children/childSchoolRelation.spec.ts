@@ -17,14 +17,15 @@
 
 import {async} from '@angular/core/testing';
 import {ChildSchoolRelation} from './childSchoolRelation';
-import {EntityModule} from '../entity/entity.module';
 import {Entity} from '../entity/entity';
+import {EntitySchemaService} from '../entity/schema/entity-schema.service';
 
 describe('ChildSchoolRelation Entity', () => {
   const ENTITY_TYPE = 'ChildSchoolRelation';
+  let entitySchemaService: EntitySchemaService;
 
   beforeEach(async(() => {
-    EntityModule.registerSchemaDatatypes();
+    entitySchemaService = new EntitySchemaService();
   }));
 
 
@@ -48,7 +49,6 @@ describe('ChildSchoolRelation Entity', () => {
     const id = 'test1';
     const expectedData = {
       _id: ENTITY_TYPE + ':' + id,
-      _rev: 'undefined',
 
       childId: '1',
       schoolId: '2',
@@ -66,7 +66,7 @@ describe('ChildSchoolRelation Entity', () => {
     entity.start = expectedData.start;
     entity.end = expectedData.end;
 
-    const rawData = entity.rawData();
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
     expect(rawData).toEqual(expectedData);
   });

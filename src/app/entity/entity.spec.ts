@@ -17,11 +17,14 @@
 
 import { Entity } from './entity';
 import {async} from '@angular/core/testing';
-import {EntityModule} from './entity.module';
+import {EntitySchemaService} from './schema/entity-schema.service';
+import {DatabaseField} from './database-field.decorator';
 
 describe('Entity', () => {
+  let entitySchemaService: EntitySchemaService;
+
   beforeEach(async(() => {
-    EntityModule.registerSchemaDatatypes();
+    entitySchemaService = new EntitySchemaService();
   }));
 
 
@@ -44,12 +47,12 @@ describe('Entity', () => {
   it('all schema fields exist', function () {
     const id = 'test1';
     const entity = new Entity(id);
+    entity._rev = 'XYZ';
 
-    for (const sField of Entity.schema.keys()) {
-      if (!Entity.schema.get(sField).isOptional) {
-        expect(entity[sField]).toBeDefined('(' + sField + ' not defined)');
-      }
-    }
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
+
+    expect(rawData._id).toBe(Entity.createPrefixedId(Entity.ENTITY_TYPE, id));
+    expect(rawData._rev).toBe('XYZ');
   });
 
   it('load() assigns all data', function () {
@@ -61,7 +64,7 @@ describe('Entity', () => {
       _rev: '1.2.3',
       other: 'x'
     };
-    entity.load(data);
+    entitySchemaService.loadDataIntoEntity(entity, data);
 
     expect(entity._id).toBe(data._id);
     expect(entity._rev).toBe(data._rev);
@@ -71,21 +74,15 @@ describe('Entity', () => {
 
   it('rawData() returns only data matching the schema', function () {
     class TestEntity extends Entity {
-      static schema = Entity.schema.extend({
-        'text': 'string',
-        'defaultText': 'string=default',
-      });
-
-      text = 'text';
-      defaultText: string;
-      otherText = 'other Text';
+      @DatabaseField() text: string = 'text';
+      @DatabaseField() defaultText: string = 'default';
+      otherText: string = 'other Text';
     }
     const id = 'test1';
     const entity = new TestEntity(id);
 
-    const data = entity.rawData();
+    const data = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
-    expect(data._id).toBeDefined();
     expect(data.text).toBe('text');
     expect(data.defaultText).toBe('default');
     expect(data.otherText).toBeUndefined();
@@ -95,7 +92,7 @@ describe('Entity', () => {
     const id = 'test1';
     const entity = new Entity(id);
 
-    const data = entity.rawData();
+    const data = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
     expect(data.searchIndices).toBeDefined();
   });

@@ -62,26 +62,13 @@ export class Aser extends Entity {
   }
 
 
-  @DatabaseField('string')
-  child: string; // id of Child entity
-
-  @DatabaseField('Date')
-  date: Date = new Date();
-
-  @DatabaseField('string=')
-  hindi: string = '';
-
-  @DatabaseField('string=')
-  bengali: string = '';
-
-  @DatabaseField('string=')
-  english: string = '';
-
-  @DatabaseField('string=')
-  math: string = '';
-
-  @DatabaseField('string')
-  remarks: string = '';
+  @DatabaseField() child: string; // id of Child entity
+  @DatabaseField() date: Date = new Date();
+  @DatabaseField() hindi: string = '';
+  @DatabaseField() bengali: string = '';
+  @DatabaseField() english: string = '';
+  @DatabaseField() math: string = '';
+  @DatabaseField() remarks: string = '';
 
 
   getWarningLevel (): WarningLevel {
@@ -96,5 +83,4 @@ export class Aser extends Entity {
 
     return warningLevel;
   }
-
 }

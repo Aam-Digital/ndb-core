@@ -16,15 +16,16 @@
  */
 
 import {async} from '@angular/core/testing';
-import {EntityModule} from '../../entity/entity.module';
 import {EducationalMaterial} from './educational-material';
 import {Entity} from '../../entity/entity';
+import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 
 describe('EducationalMaterial Entity', () => {
   const ENTITY_TYPE = 'EducationalMaterial';
+  let entitySchemaService: EntitySchemaService;
 
   beforeEach(async(() => {
-    EntityModule.registerSchemaDatatypes();
+    entitySchemaService = new EntitySchemaService();
   }));
 
 
@@ -48,7 +49,7 @@ describe('EducationalMaterial Entity', () => {
     const id = 'test1';
     const expectedData = {
       _id: ENTITY_TYPE + ':' + id,
-      _rev: 'undefined',
+      _rev: 'XYZ',
 
       child: '1',
       date: new Date(),
@@ -60,13 +61,14 @@ describe('EducationalMaterial Entity', () => {
     };
 
     const entity = new EducationalMaterial(id);
+    entity._rev = expectedData._rev;
     entity.child = expectedData.child;
     entity.date = expectedData.date;
     entity.materialType = expectedData.materialType;
     entity.materialAmount = expectedData.materialAmount;
     entity.description = expectedData.description;
 
-    const rawData = entity.rawData();
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
     expect(rawData).toEqual(expectedData);
   });

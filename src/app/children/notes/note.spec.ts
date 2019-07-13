@@ -17,15 +17,16 @@
 
 import {async} from '@angular/core/testing';
 import {Note} from './note';
-import {EntityModule} from '../../entity/entity.module';
 import {Entity} from '../../entity/entity';
 import {WarningLevel} from '../attendance/warning-level';
+import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 
 describe('Note Entity', () => {
   const ENTITY_TYPE = 'Note';
+  let entitySchemaService: EntitySchemaService;
 
   beforeEach(async(() => {
-    EntityModule.registerSchemaDatatypes();
+    entitySchemaService = new EntitySchemaService();
   }));
 
 
@@ -49,7 +50,6 @@ describe('Note Entity', () => {
     const id = 'test1';
     const expectedData = {
       _id: ENTITY_TYPE + ':' + id,
-      _rev: 'undefined',
 
       children: ['1', '2'],
       date: new Date(),
@@ -71,7 +71,7 @@ describe('Note Entity', () => {
     entity.category = expectedData.category;
     entity.warningLevel = WarningLevel.URGENT;
 
-    const rawData = entity.rawData();
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
     expect(rawData).toEqual(expectedData);
   });

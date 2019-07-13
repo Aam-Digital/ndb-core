@@ -16,20 +16,11 @@
  */
 
 
+/**
+ * Interface to be implemented by any Datatype transformer of the Schema system.
+ */
 export interface EntitySchemaDatatype {
-  name: string
-  transformToDatabaseFormat(value: any): any
-  transformToObjectFormat(value: any): any
+  name: string;
+  transformToDatabaseFormat(value: any): any;
+  transformToObjectFormat(value: any): any;
 }
-
-export const defaultEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: 'any',
-
-  transformToDatabaseFormat: (value) => {
-    return value;
-  },
-
-  transformToObjectFormat: (value) => {
-    return value;
-  }
-};
