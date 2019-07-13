@@ -9,7 +9,6 @@ import {EducationalMaterial} from './educational-material/educational-material';
 import {Aser} from './aser/aser';
 import {ChildSchoolRelation} from './childSchoolRelation';
 import {School} from '../schools/school';
-import {ChildWithRelation} from './childWithRelation';
 import {SchoolWithRelation} from '../schools/schoolWithRelation';
 import {HealthCheck} from './health-checkup/health-check';
 
@@ -24,21 +23,6 @@ export class ChildrenService {
     this.createChildSchoolRelationIndex();
   }
 
-  async getChildrenWithRelation(): Promise<ChildWithRelation[]> {
-    const children = await this.entityMapper.loadType<Child>(Child);
-    const tableData: ChildWithRelation[] = [];
-    for (const child of children) {
-      const relation: ChildSchoolRelation = await this.queryLatestRelation(child.getId());
-      tableData.push(new ChildWithRelation(child, relation));
-    }
-    return tableData;
-  }
-
-  async getChildWithRelation(childId: string): Promise<ChildWithRelation> {
-    const child = await this.entityMapper.load<Child>(Child, childId);
-    const relation = await this.queryLatestRelation(childId);
-    return new ChildWithRelation(child, relation);
-  }
 
   getChildren(): Observable<Child[]> {
     return from(this.entityMapper.loadType<Child>(Child));

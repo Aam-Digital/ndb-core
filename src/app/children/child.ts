@@ -59,6 +59,14 @@ export class Child extends Entity {
     'health_lastDeworming': 'date',
   });
 
+  /**
+   * Returns the full relative filePath to a child photo given a filename, adding the relevant folders to it.
+   * @param filename The given filename with file extension.
+   */
+  public static generatePhotoPath(filename: string): string {
+    return 'assets/child-photos/' + filename;
+  }
+
   name: string;
   projectNumber: string; // project number
   gender: Gender; // M or F
@@ -67,12 +75,16 @@ export class Child extends Entity {
   religion = '';
   school = ''; // TODO: remove school once the ChildSchoolRelation system is thoroughly tested and fully replacing this
 
-  hasPhoto = true;
+  photoFile: string;
 
   center = '';
   admissionDate: Date;
   status = '';
 
+  // TODO: remove in favour of ChildSchoolRelations once all bugs are fixed
+  schoolId = '';
+  schoolClass = '';
+  schoolName = '';
 
   address = '';
   phone = '';
@@ -138,9 +150,9 @@ export class Child extends Entity {
   }
 
   public getPhoto() {
-    if (!this.hasPhoto) {
+    if (!this.photoFile) {
       return 'assets/child.png';
     }
-    return 'assets/child-photos/' + this.projectNumber + '.jpg';
+    return Child.generatePhotoPath(this.photoFile);
   }
 }

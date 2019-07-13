@@ -1,12 +1,12 @@
 <span *ngIf="entity" (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()">
-  <img [src]="entity?.getPhoto()" (error)="onPhotoError()" class="child-pic" alt="child's photo">
+  <img [src]="entity?.getPhoto()" class="child-pic" alt="child's photo">
   {{entity?.name}} <span style="font-size: x-small">({{entity?.projectNumber}})</span>
 </span>
 
 <div style="position:absolute;" *ngIf="tooltip">
   <div class="mat-elevation-z5 child-tooltip" (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()" fxLayout='row'>
     <div fxFlex='30'>
-      <img [src]="entity?.getPhoto()" (error)="onPhotoError()" class="child-pic-large" alt="child's photo">
+      <img [src]="entity?.getPhoto()" class="child-pic-large" alt="child's photo">
     </div>
     <div fxFlex>
       <h3>{{entity?.name}}</h3>

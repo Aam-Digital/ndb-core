@@ -13,7 +13,6 @@ export interface ColumnGroup {
   name: string;
   columns: string[];
 }
-import {ChildWithRelation} from '../childWithRelation';
 
 
 @Component({
@@ -24,15 +23,15 @@ import {ChildWithRelation} from '../childWithRelation';
 export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
   watcher: Subscription;
   activeMediaQuery = '';
-  childrenList: ChildWithRelation[] = [];
+  childrenList: Child[] = [];
   attendanceList = new Map<string, AttendanceMonth[]>();
   childrenDataSource = new MatTableDataSource();
 
   centerFS = new FilterSelection('center', []);
   dropoutFS = new FilterSelection('status', [
-        {key: 'active', label: 'Current Project Children', filterFun: (c: ChildWithRelation) => c.isActive()},
-        {key: 'dropout', label: 'Dropouts', filterFun: (c: ChildWithRelation) => !c.isActive()},
-        {key: '', label: 'All', filterFun: (c: ChildWithRelation) => true},
+        {key: 'active', label: 'Current Project Children', filterFun: (c: Child) => c.isActive()},
+        {key: 'dropout', label: 'Dropouts', filterFun: (c: Child) => !c.isActive()},
+        {key: '', label: 'All', filterFun: () => true},
       ]);
   filterSelections = [
     this.dropoutFS,
@@ -94,7 +93,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   private loadData(replaceUrl: boolean = false) {
-    this.childrenService.getChildrenWithRelation().then(children => {
+    this.childrenService.getChildren().subscribe(children => {
       this.childrenList = children;
       const centers = children.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
       this.centerFS.initOptions(centers, 'center');

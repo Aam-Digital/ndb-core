@@ -2,7 +2,7 @@ import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {ChildrenService} from '../children.service';
-import {ChildWithRelation} from '../childWithRelation';
+import {Child} from '../child';
 
 @Component({
   selector: 'app-child-block',
@@ -10,7 +10,7 @@ import {ChildWithRelation} from '../childWithRelation';
   styleUrls: ['./child-block.component.scss']
 })
 export class ChildBlockComponent implements OnInit {
-  @Input() entity: ChildWithRelation;
+  @Input() entity: Child;
   @Input() entityId: string;
   @Input() linkDisabled: boolean;
   tooltip = false;
@@ -22,10 +22,8 @@ export class ChildBlockComponent implements OnInit {
 
   ngOnInit() {
     if (this.entityId !== undefined) {
-      this.childrenService.getChildWithRelation(this.entityId).then(child => {
+      this.childrenService.getChild(this.entityId).subscribe(child => {
         this.entity = child;
-      }).catch(() => {
-        // No special error handling here, as the database will report the technical error and the UI catches the entity being undefined
       });
     }
   }
@@ -51,12 +49,5 @@ export class ChildBlockComponent implements OnInit {
     }
 
     this.router.navigate(['/child', this.entity.getId()]);
-  }
-
-  onPhotoError() {
-    if (this.entity && this.entity.hasPhoto) {
-      this.entity.hasPhoto = false;
-      this.entityMapper.save(this.entity.getChild());
-    }
   }
 }
