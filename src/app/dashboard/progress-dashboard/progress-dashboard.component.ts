@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ProgressDashboardConfig} from './progress-dashboard-config';
+import {ProgressDashboardConfig, ProgressDashboardPart} from './progress-dashboard-config';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
+import {AlertService} from '../../alerts/alert.service';
 
 @Component({
   selector: 'app-progress-dashboard',
@@ -13,7 +14,9 @@ export class ProgressDashboardComponent implements OnInit {
   data: ProgressDashboardConfig;
   configure = false;
 
-  constructor(private entityMapper: EntityMapperService) { }
+  constructor(private entityMapper: EntityMapperService,
+              private alertService: AlertService,
+  ) { }
 
   ngOnInit() {
     this.data = new ProgressDashboardConfig(this.dashboardConfigId);
@@ -21,14 +24,26 @@ export class ProgressDashboardComponent implements OnInit {
       .then(config => {
         this.data = config;
       })
-      .catch(e => console.log(e));
+      .catch(e => {
+        if (e.status === 404) {
+          this.alertService.addDebug(`ProgressDashboardConfig (${this.dashboardConfigId}) not found. Creating ...`);
+          this.createDefaultConfig();
+        } else {
+          this.alertService.addWarning(`Error loading ProgressDashboardConfig (${this.dashboardConfigId}): ${e.message}`);
+        }
+      });
+  }
 
+  private createDefaultConfig() {
+    this.data.title = 'Progress of X';
     this.addPart();
+    this.addPart();
+    this.save();
   }
 
 
   addPart() {
-    const newPart = {
+    const newPart: ProgressDashboardPart = {
       label: 'Part',
       currentValue: 1,
       targetValue: 10,
@@ -36,10 +51,8 @@ export class ProgressDashboardComponent implements OnInit {
     this.data.parts.push(newPart);
   }
 
-  save() {
-    this.entityMapper.save(this.data)
-      .then(x => console.log(x))
-      .catch(e => console.log(e));
+  async save() {
+    await this.entityMapper.save(this.data);
     this.configure = false;
   }
 }

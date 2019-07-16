@@ -22,7 +22,7 @@ import {DatabaseField} from '../../entity/database-field.decorator';
 @DatabaseEntity('ProgressDashboardConfig')
 export class ProgressDashboardConfig extends Entity {
   @DatabaseField() title: string = 'Progress Widget';
-  @DatabaseField() parts = [];
+  @DatabaseField() parts: Array<ProgressDashboardPart> = [];
 
 
   getTotalPercentage() {
@@ -30,4 +30,10 @@ export class ProgressDashboardConfig extends Entity {
     const targetTotal = this.parts.reduce((acc, entry) => acc + entry.targetValue, 0);
     return currentTotal / targetTotal;
   }
+}
+
+export interface ProgressDashboardPart {
+  label: string;
+  currentValue: number;
+  targetValue: number;
 }
