@@ -50,6 +50,7 @@ export class Entity {
   }
 
   static createPrefixedId(type: string, id: string): string {
+    id = String(id);
     const prefix = type + ':';
     if (!id.startsWith(prefix)) {
       return prefix + id;
