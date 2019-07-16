@@ -94,7 +94,7 @@ describe('EntitySchemaService', () => {
     expect(rawData.otherDate).toBe(data.otherDate);
   });
 
-  it('schema:month converts to correctly between string and Date objects', function () {
+  it('schema:month converts between string and Date objects', function () {
     class TestEntity extends Entity {
       @DatabaseField({dataType: 'month'}) month: Date;
     }

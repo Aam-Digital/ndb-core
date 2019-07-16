@@ -202,6 +202,16 @@ describe('AttendanceMonth', () => {
     expect(rawData.p_month).toBeUndefined();
   });
 
+  it('loads month as date from rawData', () => {
+    const data = {
+      month: '2018-1',
+    };
+    const entity = new AttendanceMonth('');
+
+    entitySchemaService.loadDataIntoEntity(entity, data);
+    expect(entity.month).toEqual(new Date(data.month));
+  });
+
 
   it('loads AttendanceDay.date values as Date objects', () => {
     const month = new Date('2018-01-01');
