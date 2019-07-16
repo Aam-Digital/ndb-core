@@ -13,6 +13,7 @@ import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {MockDatabase} from '../../database/mock-database';
 import {Database} from '../../database/database';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
+import {AlertService} from '../../alerts/alert.service';
 
 describe('ProgressDashboardComponent', () => {
   let component: ProgressDashboardComponent;
@@ -25,6 +26,7 @@ describe('ProgressDashboardComponent', () => {
         CommonModule, FormsModule],
       providers: [
         { provide: Database, useClass: MockDatabase },
+        { provide: AlertService, useValue: jasmine.createSpyObj(['addDebug', 'addInfo', 'addWarning']) },
         EntityMapperService,
         EntitySchemaService,
       ]
