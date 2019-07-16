@@ -170,7 +170,7 @@ export class AddMonthAttendanceComponent implements OnInit {
           const relevantExistingRecords = records.filter((a: AttendanceMonth) => a.student === recordToOverwrite.student
             && a.institution === attendanceType);
           if (relevantExistingRecords.length > 0) {
-            recordToOverwrite.load(relevantExistingRecords[0]);
+            Object.assign(recordToOverwrite, relevantExistingRecords[0]);
             recordToOverwrite.overridden = true;
           }
         });

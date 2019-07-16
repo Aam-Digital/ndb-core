@@ -15,12 +15,14 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 /**
  * This represents a static class of type <T>.
  * It can be used for passing a class from which new objects should be created.
  * For example usage check the entity mapper service.
  */
+import {EntitySchema} from './schema/entity-schema';
+import {DatabaseField} from './database-field.decorator';
+
 export type EntityConstructor<T extends Entity> = new(id: string) => T;
 
 /**
@@ -34,13 +36,46 @@ export class Entity {
    * The entity's type.
    */
   static ENTITY_TYPE = 'Entity';
+  static schema: EntitySchema;
+
+
+  static extractTypeFromId(id: string): string {
+    const split = id.indexOf(':');
+    return id.substring(0, split);
+  }
+
+  static extractEntityIdFromId(id: string): string {
+    const split = id.indexOf(':');
+    return id.substring(split + 1);
+  }
+
+  static createPrefixedId(type: string, id: string): string {
+    id = String(id);
+    const prefix = type + ':';
+    if (!id.startsWith(prefix)) {
+      return prefix + id;
+    } else {
+      return id;
+    }
+  }
+
+
+  @DatabaseField()
+  _id: string;
+
+  @DatabaseField()
+  _rev: string;
+
 
   /**
-   * The unique id of this entity.
+   * An helper property to access the actual id without prefix
    */
-  private readonly entityId: string;
-
-  _rev: string;
+  get entityId(): string {
+    return Entity.extractEntityIdFromId(this._id);
+  }
+  set entityId(newEntityId: string) {
+    this._id = Entity.createPrefixedId(this.getType(), newEntityId);
+  }
 
   /**
    * Creates an entity object with the given id. This id is final and won't be changeable after this object has been
@@ -50,6 +85,13 @@ export class Entity {
    */
   constructor(id: string) {
     this.entityId = id;
+  }
+
+  /**
+   * Get the class (Entity or the actual subclass of the instance) to call static methods on the correct class considering inheritance
+   */
+  getConstructor(): typeof Entity {
+    return <typeof Entity>this.constructor;
   }
 
   /**
@@ -72,32 +114,7 @@ export class Entity {
    * @returns {string} the entity's type (which is the class name).
    */
   public getType(): string {
-    const c = <typeof Entity>this.constructor;
-    return c.ENTITY_TYPE;
-  }
-
-
-  public load(data: any) {
-    if (data.entityId) {
-      data.entityId.toString();
-    }
-
-    return Object.assign(this, data);
-  }
-
-  /**
-   * Returns an object cleaned for export or writing to the database.
-   *
-   * Generates the current search indices for the returned object.
-   *
-   * <b>Overwrite this method in subtypes if you need to convert some special property before saving.</b>
-   *
-   * @returns {object} the instance's cleaned object.
-   */
-  public rawData(): any {
-    const data = this;
-    data['searchIndices'] = this.generateSearchIndices();
-    return data;
+    return this.getConstructor().ENTITY_TYPE;
   }
 
   /**

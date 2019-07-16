@@ -1,6 +1,5 @@
 import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {ChildrenService} from '../children.service';
 import {Child} from '../child';
 
@@ -17,7 +16,6 @@ export class ChildBlockComponent implements OnInit {
   tooltipTimeout;
 
   constructor(private router: Router,
-              private entityMapper: EntityMapperService,
               private childrenService: ChildrenService) { }
 
   ngOnInit() {

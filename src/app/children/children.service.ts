@@ -11,11 +11,13 @@ import {ChildSchoolRelation} from './childSchoolRelation';
 import {School} from '../schools/school';
 import {SchoolWithRelation} from '../schools/schoolWithRelation';
 import {HealthCheck} from './health-checkup/health-check';
+import {EntitySchemaService} from '../entity/schema/entity-schema.service';
 
 @Injectable()
 export class ChildrenService {
 
   constructor(private entityMapper: EntityMapperService,
+              private entitySchemaService: EntitySchemaService,
               private db: Database) {
     this.createAttendanceAnalysisIndex();
     this.createNotesIndex();
@@ -40,7 +42,7 @@ export class ChildrenService {
       .then(loadedEntities => {
         return loadedEntities.rows.map(loadedRecord => {
           const entity = new AttendanceMonth('');
-          entity.load(loadedRecord.doc);
+          this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
           return entity;
         });
       });
@@ -54,7 +56,7 @@ export class ChildrenService {
       .then(loadedEntities => {
         return loadedEntities.rows.map(loadedRecord => {
           const entity = new AttendanceMonth('');
-          entity.load(loadedRecord.doc);
+          this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
           return entity;
         });
       });
@@ -133,7 +135,7 @@ export class ChildrenService {
       .then(loadedEntities => {
         return loadedEntities.rows.map(loadedRecord => {
           const entity = new ChildSchoolRelation('');
-          entity.load(loadedRecord.doc);
+          this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
           return entity;
         });
       });
@@ -144,7 +146,7 @@ export class ChildrenService {
       .then(loadedEntities => {
         return loadedEntities.rows.map(loadedRecord => {
           const entity = new ChildSchoolRelation('');
-          entity.load(loadedRecord.doc);
+          this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
           return entity;
         });
       });
@@ -217,7 +219,7 @@ export class ChildrenService {
       .then(loadedEntities => {
         return loadedEntities.rows.map(loadedRecord => {
           const entity = new Note('');
-          entity.load(loadedRecord.doc);
+          this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
           return entity;
         });
       });

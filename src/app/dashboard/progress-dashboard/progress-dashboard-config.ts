@@ -16,13 +16,13 @@
  */
 
 import { Entity } from '../../entity/entity';
+import {DatabaseEntity} from '../../entity/database-entity.decorator';
+import {DatabaseField} from '../../entity/database-field.decorator';
 
-
+@DatabaseEntity('ProgressDashboardConfig')
 export class ProgressDashboardConfig extends Entity {
-  static ENTITY_TYPE = 'ProgressDashboardConfig';
-
-  title = 'Progress Widget';
-  parts = [];
+  @DatabaseField() title: string = 'Progress Widget';
+  @DatabaseField() parts: Array<ProgressDashboardPart> = [];
 
 
   getTotalPercentage() {
@@ -30,4 +30,10 @@ export class ProgressDashboardConfig extends Entity {
     const targetTotal = this.parts.reduce((acc, entry) => acc + entry.targetValue, 0);
     return currentTotal / targetTotal;
   }
+}
+
+export interface ProgressDashboardPart {
+  label: string;
+  currentValue: number;
+  targetValue: number;
 }

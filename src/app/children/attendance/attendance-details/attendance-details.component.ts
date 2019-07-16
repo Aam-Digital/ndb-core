@@ -45,7 +45,7 @@ export class AttendanceDetailsComponent implements OnInit {
   }
 
   cancel() {
-    this.entity = this.entity.load(this.originalEntity);
+    Object.assign(this.entity, this.originalEntity);
     this.dialogRef.close(this.entity);
   }
 }

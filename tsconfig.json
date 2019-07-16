@@ -1,7 +1,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "module": "esnext",
     "outDir": "./dist/out-tsc",
     "baseUrl": "src",
     "sourceMap": true,
@@ -10,6 +9,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "target": "es2015",
+    "downlevelIteration": true,
     "types": [ "node" ],
     "typeRoots": [ "../node_modules/@types" ],
     "allowSyntheticDefaultImports": true,
