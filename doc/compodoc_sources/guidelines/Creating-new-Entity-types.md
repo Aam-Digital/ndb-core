@@ -1,3 +1,4 @@
+#Creating new Entity-types
 "Entities" are the objects around which our whole system is built. There may for example be User, Child or School classes representing the types of objects the users can view interact with. To extend the system with types, you can create a new module and extend the existing base of the Entity system.
 
 The `EntityModule` specifies the base class and generic functionalities and specific entity types can extend upon it. For an example, have a look at the [UserModule](https://github.com/NGO-DB/ndb-core/tree/master/src/app/user) defining the `User` class that extends `Entity`.

@@ -12,6 +12,7 @@ Empowering NGOs' social workers with simple to use (database) software.
 
 > For more information about the software and a free demo system visit **[www.aam-digital.com](https://www.aam-digital.com)**.
 
+> You can find the a developer-oriented wiki at **[http://aam-digital.github.io/ndb-core/](http://aam-digital.github.io/ndb-core/)** under 'developer manual'
 
 -----
 
