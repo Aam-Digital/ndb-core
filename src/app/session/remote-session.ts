@@ -41,6 +41,7 @@ export class RemoteSession {
   public connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>(ConnectionState.disconnected);
 
   constructor() {
+    const thisRemoteSession = this;
     this.database = new PouchDB(AppConfig.settings.database.remote_url + AppConfig.settings.database.name,
       {
         ajax: {
@@ -54,8 +55,8 @@ export class RemoteSession {
           opts.credentials = 'include';
           const req = fetch(url, opts);
           req.then(result => {
-            if (this.connectionState.getState() === ConnectionState.offline) {
-              this.connectionState.setState(ConnectionState.connected);
+            if (thisRemoteSession.connectionState.getState() === ConnectionState.offline) {
+              thisRemoteSession.connectionState.setState(ConnectionState.connected);
             }
             return result;
           });
@@ -64,8 +65,8 @@ export class RemoteSession {
             // if we are offline at the start, this will already be set on login, so we need not check that initial condition here
             // do not set offline on AbortErrors, as these are fine:
             // https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Exceptions
-            if ((error.name !== 'AbortError') && (this.connectionState.getState() === ConnectionState.connected)) {
-              this.connectionState.setState(ConnectionState.offline);
+            if ((error.name !== 'AbortError') && (thisRemoteSession.connectionState.getState() === ConnectionState.connected)) {
+              thisRemoteSession.connectionState.setState(ConnectionState.offline);
             }
             throw error;
           });
