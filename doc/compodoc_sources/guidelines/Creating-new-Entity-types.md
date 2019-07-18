@@ -1,4 +1,3 @@
-#Creating new Entity-types
 "Entities" are the objects around which our whole system is built. There may for example be User, Child or School classes representing the types of objects the users can view interact with. To extend the system with types, you can create a new module and extend the existing base of the Entity system.
 
 The `EntityModule` specifies the base class and generic functionalities and specific entity types can extend upon it. For an example, have a look at the [UserModule](https://github.com/NGO-DB/ndb-core/tree/master/src/app/user) defining the `User` class that extends `Entity`.
@@ -27,7 +26,7 @@ As an example look at the User class' schema definition:
 
 Only `user.name`, `user.password` and `user.admin` of an User class instance are save to the database. If you would define other attributes in the class for internal processing without adding them to this schema object, they would not be saved. Also, the data type of the fields are defined and the EntityModule ensures that they are saved and loaded into the correct format.
 
-For more Details see the page about the [EntitySchema System](http://aam-digital.github.io/ndb-core/additional-documentation/architecture/entityschema.html).
+For more Details see the page about the [EntitySchema System](https://github.com/NGO-DB/ndb-core/wiki/EntitySchema-System).
 
 
 ## Other components to be implemented for a new sub-type
