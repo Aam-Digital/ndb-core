@@ -23,7 +23,7 @@ export class MockSessionService extends SessionService {
     }
 
     private initDemoData() {
-        const entityMapper = new EntityMapperService(this.database);
+        const entityMapper = new EntityMapperService(this.database); // TODO(lh): EntitySchemaService
 
         // add demo user
         this.demoUser = new User('demo');

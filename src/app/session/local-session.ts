@@ -122,7 +122,7 @@ export class LocalSession {
   public async loadUser(userId: string): Promise<User> {
     const user = new User('');
     const userData = await this.database.get('User:' + userId);
-    user.load(userData);
+    user.load(userData); // TODO(lh) EntitySchemaService
     return user;
   }
 }
