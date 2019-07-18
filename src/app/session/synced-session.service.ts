@@ -66,7 +66,17 @@ export class SyncedSessionService extends SessionService {
         const syncPromise = this.sync(); // no liveSync() here, as we can't know when that's finished if there are no changes.
 
         // no matter the result of the non-live sync(), start liveSync() once it is done
-        syncPromise.then(() => this.liveSync(), () => this.liveSync());
+        syncPromise.then(
+          // successful -> start liveSync()
+          () => this.liveSync(),
+          // not successful -> only start a liveSync() to retry, if we are logged in locally
+          // otherwise the UI is in a fairly unusable state.
+          async () => {
+            if (await localLogin === LoginState.loggedIn) {
+              this.liveSync();
+            }
+          }
+        );
 
         // asynchronously check if the local login failed --> this happens, when the password was changed at the remote
         localLogin.then(async (loginState: LoginState) => {
@@ -141,9 +151,11 @@ export class SyncedSessionService extends SessionService {
     }).on('change', change => {
       // after sync. change has direction and changes with info on errors etc
     }).on('paused', info => {
-      // replication was paused: either because sync is finished or because of a lost connection. info is empty.
+      // replication was paused: either because sync is finished or because of a failed sync (mostly due to lost connection). info is empty.
       if (this.getConnectionState().getState() !== ConnectionState.offline) {
         this._localSession.syncState.setState(SyncState.completed);
+        // We might end up here after a failed sync that is not due to offline errors.
+        // It shouldn't happen too often, as we have an initial non-live sync to catch those situations, but we can't find that out here
       }
     }).on('active', info => {
       // replication was resumed: either because new things to sync or because connection is available again. info contains the direction

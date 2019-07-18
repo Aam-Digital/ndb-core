@@ -109,6 +109,4 @@ export class RemoteSession {
     this.database.logout();
     this.connectionState.setState(ConnectionState.disconnected);
   }
-
-  // TODO: Methods to retry connection if offline
 }

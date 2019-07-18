@@ -72,6 +72,12 @@ export class LocalSession {
         return LoginState.loginFailed;
       }
     } catch (error) {
+      // possible error: initial sync failed
+      if (error && error.toState && error.toState === SyncState.failed) {
+        // TODO(lh): Alert the Alert Service?
+        this.loginState.setState(LoginState.loggedOut);
+        return LoginState.loggedOut;
+      }
       // possible error: user object not found locally, which should return loginFailed.
       if (error && error.status && error.status === 404) {
         this.loginState.setState(LoginState.loginFailed);
