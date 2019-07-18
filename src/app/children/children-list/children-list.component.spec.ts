@@ -27,6 +27,7 @@ import {FilterPipeModule} from 'ngx-filter-pipe';
 import {AttendanceDaysComponent} from '../attendance/attendance-days/attendance-days.component';
 import {UiHelperModule} from '../../ui-helper/ui-helper.module';
 import {AttendanceDayBlockComponent} from '../attendance/attendance-days/attendance-day-block.component';
+import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 
 describe('ChildrenListComponent', () => {
   let component: ChildrenListComponent;
@@ -58,7 +59,11 @@ describe('ChildrenListComponent', () => {
         ]),
         UiHelperModule,
       ],
-      providers: [ChildrenService, EntityMapperService, { provide: Database, useClass: MockDatabase }],
+      providers: [ChildrenService,
+        EntityMapperService,
+        EntitySchemaService,
+        { provide: Database, useClass: MockDatabase }
+      ],
     })
     .compileComponents();
   }));

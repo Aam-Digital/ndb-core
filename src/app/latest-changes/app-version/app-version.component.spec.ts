@@ -40,7 +40,7 @@ describe('AppVersionComponent', () => {
   beforeEach(async(() => {
     sessionService = new MockSessionService();
     latestChangesService = new LatestChangesService(null, null, null, null);
-    entityMapper = new EntityMapperService(null);
+    entityMapper = new EntityMapperService(null, null);
 
     spyOn(latestChangesService, 'getChangelogs').and
       .returnValue(of([{ name: 'test', tag_name: 'v1.0', body: 'latest test', published_at: '2018-01-01'}]));

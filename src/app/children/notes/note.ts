@@ -17,10 +17,11 @@
 
 import {Entity} from '../../entity/entity';
 import {WarningLevel} from '../attendance/warning-level';
+import {DatabaseEntity} from '../../entity/database-entity.decorator';
+import {DatabaseField} from '../../entity/database-field.decorator';
 
-
+@DatabaseEntity('Note')
 export class Note extends Entity {
-  static ENTITY_TYPE = 'Note';
 
   static INTERACTION_TYPES = [
     'Home Visit',
@@ -40,13 +41,13 @@ export class Note extends Entity {
     'Contact with other partners (club/NGO/...)',
   ];
 
-  children: string[] = []; // id of Child entity
-  date: Date;
-  subject = '';
-  text = '';
-  author = '';
-  category = '';
-  warningLevel: WarningLevel = WarningLevel.OK;
+  @DatabaseField() children: string[] = []; // id of Child entity
+  @DatabaseField() date: Date;
+  @DatabaseField() subject: string = '';
+  @DatabaseField() text: string = '';
+  @DatabaseField() author: string = '';
+  @DatabaseField() category: string = '';
+  @DatabaseField({dataType: 'string'}) warningLevel: WarningLevel = WarningLevel.OK;
 
   getWarningLevel (): WarningLevel {
     return this.warningLevel;
@@ -79,16 +80,5 @@ export class Note extends Entity {
     }
 
     return '';
-  }
-
-
-  public load(data: any) {
-    if (data.date === undefined) {
-      data.date = new Date();
-    } else if (data.date !== undefined && typeof data.date !== typeof new Date()) {
-      data.date = new Date(data.date);
-    }
-
-    return super.load(data);
   }
 }

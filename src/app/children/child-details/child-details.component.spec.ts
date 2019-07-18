@@ -35,6 +35,7 @@ import {HealthCheckupComponent} from '../health-checkup/health-checkup.component
 import { databaseServiceProvider } from 'app/session/database.service.provider';
 import { SessionService } from 'app/session/session.service';
 import { MockSessionService } from 'app/session/mock-session.service';
+import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 
 describe('ChildDetailsComponent', () => {
   let component: ChildDetailsComponent;
@@ -85,6 +86,7 @@ describe('ChildDetailsComponent', () => {
       ],
       providers: [
         EntityMapperService,
+        EntitySchemaService,
         ChildrenService,
         AlertService,
         DatePipe,

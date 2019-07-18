@@ -9,6 +9,7 @@ import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {MockDatabase} from '../../database/mock-database';
 import {ChildrenService} from '../children.service';
 import {Database} from '../../database/database';
+import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 
 describe('ChildBlockComponent', () => {
   let component: ChildBlockComponent;
@@ -16,13 +17,12 @@ describe('ChildBlockComponent', () => {
 
 
   beforeEach(async(() => {
-    const entityMapper = new EntityMapperService(new MockDatabase());
-
     TestBed.configureTestingModule({
       declarations: [ SchoolBlockComponent, ChildBlockComponent ],
       imports: [RouterTestingModule, MatIconModule],
       providers: [
-        {provide: EntityMapperService, useValue: entityMapper},
+        EntityMapperService,
+        EntitySchemaService,
         ChildrenService,
         {provide: Database, useClass: MockDatabase},
       ],

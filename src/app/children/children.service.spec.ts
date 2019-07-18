@@ -3,14 +3,17 @@ import {EntityMapperService} from '../entity/entity-mapper.service';
 import {ChildSchoolRelation} from './childSchoolRelation';
 import {Child} from './child';
 import { MockSessionService } from 'app/session/mock-session.service';
+import {EntitySchemaService} from '../entity/schema/entity-schema.service';
 
 describe('ChildrenService', () => {
   let service: ChildrenService;
   let entityMapper: EntityMapperService;
+  let entitySchemaService: EntitySchemaService;
+
   beforeEach(() => {
     const database = new MockSessionService().getDatabase();
-    entityMapper = new EntityMapperService(database);
-    service = new ChildrenService(entityMapper, database);
+    entityMapper = new EntityMapperService(database, entitySchemaService);
+    service = new ChildrenService(entityMapper, entitySchemaService, database);
   });
 
   it('should be created', () => {

@@ -11,7 +11,7 @@
       Status of current processes:
     </p>
     <table class="dashboard-table">
-      <tr *ngFor="let entry of data.parts" class="dashboard-table-row">
+      <tr *ngFor="let entry of data?.parts" class="dashboard-table-row">
         <td class="dashboard-table-cell">{{entry.label}}</td>
         <td class="dashboard-table-cell filler">
           <mat-progress-bar mode="determinate" [value]="entry.currentValue/entry.targetValue*100"></mat-progress-bar>
@@ -58,7 +58,7 @@
             </mat-form-field>
           </td>
           <td>
-            <button mat-icon-button (click)='parts.splice(i, 1)'>
+            <button mat-icon-button (click)='data.parts.splice(i, 1)'>
               <mat-icon aria-label="remove" fontIcon="fa-trash"></mat-icon>
             </button>
           </td>
