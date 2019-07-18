@@ -33,6 +33,7 @@ export class SyncedSessionService extends SessionService {
   private _localSession: LocalSession;
   private _remoteSession: RemoteSession;
   private _liveSyncHandle: any;
+  private _liveSyncScheduledHandle: any;
 
   constructor(private _alertService: AlertService) {
     super();
@@ -68,12 +69,12 @@ export class SyncedSessionService extends SessionService {
         // no matter the result of the non-live sync(), start liveSync() once it is done
         syncPromise.then(
           // successful -> start liveSync()
-          () => this.liveSync(),
+          () => this.liveSyncDeferred(),
           // not successful -> only start a liveSync() to retry, if we are logged in locally
           // otherwise the UI is in a fairly unusable state.
           async () => {
             if (await localLogin === LoginState.loggedIn) {
-              this.liveSync();
+              this.liveSyncDeferred();
             }
           }
         );
@@ -144,6 +145,7 @@ export class SyncedSessionService extends SessionService {
   }
 
   public liveSync() {
+    this.cancelLiveSync(); // cancel any liveSync that may have been alive before
     this._localSession.syncState.setState(SyncState.started);
     this._liveSyncHandle = this._localSession.database.sync(this._remoteSession.database, {
       live: true,
@@ -163,14 +165,31 @@ export class SyncedSessionService extends SessionService {
     }).on('error', err => {
       // totally unhandled error (shouldn't happen)
       this._localSession.syncState.setState(SyncState.failed);
-    }).on('complete', function (info) {
+    }).on('complete', info => {
       // replication was canceled!
       this._liveSyncHandle = null;
     });
     return this._liveSyncHandle;
   }
 
+  /**
+   * Schedules liveSync to be started.
+   * This method should be used to start the liveSync after the initial non-live sync,
+   * so the browser makes a round trip to the UI and hides the potentially visible first-sync dialog.
+   * @param timeout ms to wait before starting the liveSync
+   */
+  public liveSyncDeferred(timeout = 1000) {
+    this.cancelLiveSync(); // cancel any liveSync that may have been alive before
+    this._liveSyncScheduledHandle = setTimeout(() => this.liveSync(), timeout);
+  }
+
+  /**
+   * Cancels a currently running liveSync or a liveSync scheduled to start in the future.
+   */
   public cancelLiveSync() {
+    if (this._liveSyncScheduledHandle) {
+      clearTimeout(this._liveSyncScheduledHandle);
+    }
     if (this._liveSyncHandle) {
       this._liveSyncHandle.cancel();
     }
