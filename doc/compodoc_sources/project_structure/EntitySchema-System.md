@@ -5,16 +5,12 @@
 An example of a schema definition:
 
 ```
+@DatabaseEntity('Child') // configures the database prefix to be used by the Schema system
 class Note extends Entity {
-  static schema = {
-    children: "Entity[]", // instead of the whole objects, only their id will be written into the database for "Entity" type fields; "[]" indicates this is an array of values
-    text: "string=to do", // "=to do" defines a default value in case the field is not defined
-    date: "date*", // "*" indicates that there will be an index on this field
-  }
-
-  children: Child[];
-  text: string;
-  date: string;
+  @DatabaseField() children: Child[];
+  @DatabaseField() text: string = 'default text';
+  @DatabaseField() date: Date; // dataType is inferred from the Typescript type
+  @DatabaseField({dataType: 'month'}) reportingMonth: Date; // sets a specific dataType how this value will be written to the database
 }
 ```
 
@@ -22,26 +18,24 @@ class Note extends Entity {
 -----
 
 The logical flow looks something like this:
+1. Entities are requested through the `EntityMapperService` (`entityMapper.load(...)`)
+2. The `EntitySchemaService` functions as a helper to the `EntityMapperService` 
+and takes care of data transformations based on the schema of that Entity type.
+3. Data from the database is "loaded" into an Entity instance to combine the raw data
+with its Entity class by the `EntityMapperService` together with the `EntitySchemaService`.
+4. The Entity classes themselves only define the schema through the `@DatabaseEntity` and `@DatabaseField` decorators
+and are otherwise simple Typescript objects.
 
-![entityschema_load](https://user-images.githubusercontent.com/1682541/54995579-4cf93f00-4fc7-11e9-8b75-ee3f7efea79f.png)
-
-1. Entities are requested through the EntityMapper as before (`entityMapper.load(...)`)
-2. Data from the database is "loaded" into an Entity instance to combine the raw data with the class (`resultEntity.load(data)`)
-3. `Entity.load()` uses the schema defined statically for its Entity class to transform and filter the raw data while loading it into the attributes. (`Entity.schema.transformDatabaseToEntityFormat(...)`).
-
-The process of saving an Entity to the database works similarly through `entity.rawData()` doing filtering and transformation of data with `EntitySchema.trasnformEntityToDatabaseFormat()`. This can for example replace a full object with it's reference id before writing it to the database.
-![entityschema_save](https://user-images.githubusercontent.com/1682541/55015106-87c19e00-4fec-11e9-871d-fba1eec407a4.png)
-
+The process of saving an Entity to the database works similarly with `EntitySchemaService`
+supporting the `EntityMapperService` and transforming the entity object into the desired format to be persisted into the database.
 
 
 -----
 
 
 
-1. Each Entity type (e.g. `Child`, `School`, ...) needs to be registered initially at `EntityMapperService.registerEntityType(Entity)`. This can be done in the related Module's constructor, to be called when a Module is initially imported by Angular so that the EntityType is always registered automatically before it can be used.
-2. EntityMapperService keeps a registry of Entity types. Therefore we don't need to pass the constructor of the type into the load method anymore (type can be inferred from the id prefix or passed in explicitly); i.e. `entityMapper.load<Child>(childId)` instead of the current `entityMapper.load<Child>(Child, childId)`
+`EntitySchemaService` keeps a registry of "data types",
+i.e. transformation functions that will be called for a specific schema field's dataType.
 
-The explicit registering of types is necessary because somewhere down the line we need the Database from Angular's dependency injection on startup to be able to create indices.
-
-
-TODO: Lazy loading of linked entities?
+Basic data transformations for `string`, `number`, `date` and `month` are supported by default.
+You can register your own transformations by injecting the `EntitySchemaService` and using its `registerSchemaDatatype()` method.

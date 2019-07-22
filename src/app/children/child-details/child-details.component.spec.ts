@@ -37,6 +37,7 @@ import {SessionService} from '../../session/session.service';
 import {DatabaseManagerService} from '../../database/database-manager.service';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HealthCheckupComponent} from '../health-checkup/health-checkup.component';
+import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 
 describe('ChildDetailsComponent', () => {
   let component: ChildDetailsComponent;
@@ -87,6 +88,7 @@ describe('ChildDetailsComponent', () => {
       ],
       providers: [
         EntityMapperService,
+        EntitySchemaService,
         ChildrenService,
         AlertService,
         DatePipe,

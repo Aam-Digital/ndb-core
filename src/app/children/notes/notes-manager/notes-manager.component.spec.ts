@@ -18,6 +18,7 @@ import {CommonModule} from '@angular/common';
 import {SchoolBlockComponent} from '../../../schools/school-block/school-block.component';
 import {SessionService} from '../../../session/session.service';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {EntitySchemaService} from '../../../entity/schema/entity-schema.service';
 
 describe('NotesManagerComponent', () => {
   let component: NotesManagerComponent;
@@ -44,6 +45,7 @@ describe('NotesManagerComponent', () => {
       providers: [
         { provide: Database, useClass: MockDatabase },
         EntityMapperService,
+        EntitySchemaService,
         { provide: SessionService, useValue: mockSessionService },
       ],
     })

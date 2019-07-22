@@ -15,10 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
+import { NgModule} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DatabaseModule } from '../database/database.module';
 import { EntityMapperService } from './entity-mapper.service';
+import {EntitySchemaService} from './schema/entity-schema.service';
 
 @NgModule({
   imports: [
@@ -26,7 +27,10 @@ import { EntityMapperService } from './entity-mapper.service';
     DatabaseModule
   ],
   declarations: [],
-  providers: [EntityMapperService]
+  providers: [
+    EntityMapperService,
+    EntitySchemaService,
+  ]
 })
 export class EntityModule {
 }

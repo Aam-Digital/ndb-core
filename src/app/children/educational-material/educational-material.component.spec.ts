@@ -11,6 +11,8 @@ import {Child} from '../child';
 import {DatePipe} from '@angular/common';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {of} from 'rxjs';
+import {Database} from '../../database/database';
+import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 
 describe('EducationalMaterialComponent', () => {
   let component: EducationalMaterialComponent;
@@ -24,12 +26,9 @@ describe('EducationalMaterialComponent', () => {
       return of([]);
     }
   };
-  let mockEntityMapper;
 
 
   beforeEach(async(() => {
-    mockEntityMapper = new EntityMapperService(new MockDatabase());
-
     TestBed.configureTestingModule({
       declarations: [ EducationalMaterialComponent ],
       imports: [ UiHelperModule, FormsModule, NoopAnimationsModule],
@@ -37,7 +36,9 @@ describe('EducationalMaterialComponent', () => {
         DatePipe,
         { provide: ActivatedRoute, useValue: {paramMap: of({get: () => '22'}) } },
         { provide: ChildrenService, useValue: mockChildrenService },
-        { provide: EntityMapperService, useValue: mockEntityMapper },
+        EntityMapperService,
+        EntitySchemaService,
+        { provide: Database, useClass: MockDatabase },
       ],
     })
     .compileComponents();

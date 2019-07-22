@@ -12,6 +12,8 @@ import {MockDatabase} from '../../database/mock-database';
 import {DatePipe} from '@angular/common';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {of} from 'rxjs';
+import {Database} from '../../database/database';
+import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 
 describe('NotesComponent', () => {
   let component: NotesComponent;
@@ -25,15 +27,12 @@ describe('NotesComponent', () => {
       return of([]);
     }
   };
-  let mockEntityMapper;
   let testUser;
 
 
   beforeEach(async(() => {
     testUser = new User('tester');
     testUser.name = 'tester';
-
-    mockEntityMapper = new EntityMapperService(new MockDatabase());
 
     TestBed.configureTestingModule({
       declarations: [ NotesComponent ],
@@ -42,9 +41,11 @@ describe('NotesComponent', () => {
         DatePipe,
         { provide: ActivatedRoute, useValue: {paramMap: of({get: () => '22'}) } },
         { provide: ChildrenService, useValue: mockChildrenService },
-        { provide: EntityMapperService, useValue: mockEntityMapper },
+        EntityMapperService,
+        EntitySchemaService,
+        { provide: Database, useClass: MockDatabase },
         { provide: SessionService, useValue: { getCurrentUser() { return testUser; }} },
-        ],
+      ],
     })
     .compileComponents();
   }));

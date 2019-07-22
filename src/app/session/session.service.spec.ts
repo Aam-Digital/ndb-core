@@ -57,7 +57,7 @@ describe('SessionService', () => {
         if (id !== user.getId()) {
           return Promise.reject<User>('ID not found');
         } else {
-          resultEntity.load(user);
+          Object.assign(resultEntity, user);
           return Promise.resolve<User>(resultEntity);
         }
       }
@@ -114,7 +114,7 @@ describe('SessionService', () => {
       function (requestedUser: User) {
         if (databaseManager.loggedIn) {
           // simulate synced database
-          requestedUser.load(user);
+          Object.assign(requestedUser, user);
           return Promise.resolve<User>(requestedUser);
         } else {
           return Promise.reject<User>('not found');

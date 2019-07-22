@@ -20,6 +20,7 @@ import {ChildrenService} from '../../children.service';
 import {UiHelperModule} from '../../../ui-helper/ui-helper.module';
 import {AlertsModule} from '../../../alerts/alerts.module';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {EntitySchemaService} from '../../../entity/schema/entity-schema.service';
 
 describe('AddMonthAttendanceComponent', () => {
   let component: AddMonthAttendanceComponent;
@@ -45,6 +46,7 @@ describe('AddMonthAttendanceComponent', () => {
       ],
       providers: [
         EntityMapperService,
+        EntitySchemaService,
         { provide: Database, useClass: MockDatabase },
         ChildrenService,
       ]

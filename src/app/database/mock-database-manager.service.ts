@@ -19,11 +19,11 @@ import { Injectable } from '@angular/core';
 import { DatabaseManagerService } from './database-manager.service';
 import { User } from '../user/user';
 import { Database } from './database';
-import { isNullOrUndefined } from 'util';
 import {MockDatabase} from './mock-database';
 import {EntityMapperService} from '../entity/entity-mapper.service';
 import {DatabaseSyncStatus} from './database-sync-status.enum';
 import {DemoData} from './demo-data';
+import {EntitySchemaService} from '../entity/schema/entity-schema.service';
 
 @Injectable()
 export class MockDatabaseManagerService extends DatabaseManagerService {
@@ -38,8 +38,9 @@ export class MockDatabaseManagerService extends DatabaseManagerService {
     this.initDemoData();
   }
 
+  // TODO: move demo data generation to a separate service
   private initDemoData() {
-    const entityMapper = new EntityMapperService(this.database);
+    const entityMapper = new EntityMapperService(this.database, new EntitySchemaService());
 
     // add demo user
     const demoUser = new User('demo');
