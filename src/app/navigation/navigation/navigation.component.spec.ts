@@ -26,6 +26,7 @@ import { SessionService } from 'app/session/session.service';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
 
 describe('NavigationComponent', () => {
   let component: NavigationComponent;
@@ -36,7 +37,7 @@ describe('NavigationComponent', () => {
   let sessionService: MockSessionService;
 
   beforeEach(async(() => {
-    sessionService = new MockSessionService();
+    sessionService = new MockSessionService(new EntitySchemaService());
     navigationItemsService = new NavigationItemsService();
     navigationItemsService.addMenuItem(new MenuItem('test', 'test-icon', []));
 

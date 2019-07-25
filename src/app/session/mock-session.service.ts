@@ -24,7 +24,7 @@ export class MockSessionService extends SessionService {
     }
 
     private initDemoData() {
-        const entityMapper = new EntityMapperService(this.database, this._entitySchemaService); // TODO(lh): EntitySchemaService
+        const entityMapper = new EntityMapperService(this.database, this._entitySchemaService);
 
         // add demo user
         this.demoUser = new User('demo');

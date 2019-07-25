@@ -8,10 +8,10 @@ import {EntitySchemaService} from '../entity/schema/entity-schema.service';
 describe('ChildrenService', () => {
   let service: ChildrenService;
   let entityMapper: EntityMapperService;
-  let entitySchemaService: EntitySchemaService;
 
   beforeEach(() => {
-    const database = new MockSessionService().getDatabase();
+    const entitySchemaService = new EntitySchemaService();
+    const database = new MockSessionService(entitySchemaService).getDatabase();
     entityMapper = new EntityMapperService(database, entitySchemaService);
     service = new ChildrenService(entityMapper, entitySchemaService, database);
   });

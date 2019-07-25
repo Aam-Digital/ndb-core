@@ -28,6 +28,7 @@ import { SessionService } from 'app/session/session.service';
 import { SyncState } from 'app/session/sync-state.enum';
 import { AlertsModule } from 'app/alerts/alerts.module';
 import {BrowserDynamicTestingModule} from '@angular/platform-browser-dynamic/testing';
+import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
 
 
 describe('SyncStatusComponent', () => {
@@ -37,7 +38,7 @@ describe('SyncStatusComponent', () => {
   let sessionService: MockSessionService;
 
   beforeEach(async(() => {
-    sessionService = new MockSessionService();
+    sessionService = new MockSessionService(new EntitySchemaService());
 
     TestBed.configureTestingModule({
       declarations: [InitialSyncDialogComponent, SyncStatusComponent],

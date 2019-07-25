@@ -24,9 +24,11 @@ import { ConnectionState } from './connection-state.enum';
 import { AppConfig } from 'app/app-config/app-config';
 import { LocalSession } from './local-session';
 import { RemoteSession } from './remote-session';
+import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
 
 describe('SyncedSessionService', () => {
     const alertService = new AlertService(null, null);
+    const entitySchemaService = new EntitySchemaService();
     let sessionService: SessionService;
 
     describe('Integration Tests', () => {
@@ -52,7 +54,7 @@ describe('SyncedSessionService', () => {
                     'useTemporaryDatabase': false
                 }
             };
-            sessionService = new SyncedSessionService(alertService);
+            sessionService = new SyncedSessionService(alertService, entitySchemaService);
         });
 
         it('has the correct Initial State', () => {
@@ -130,7 +132,7 @@ describe('SyncedSessionService', () => {
                 }
             };
             // setup synced session service
-            sessionService = new SyncedSessionService(alertService);
+            sessionService = new SyncedSessionService(alertService, entitySchemaService);
             // make private members localSession and remoteSession available in the tests
             localSession = sessionService['_localSession'];
             remoteSession = sessionService['_remoteSession'];

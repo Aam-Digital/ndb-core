@@ -28,6 +28,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {ChangelogComponent} from '../changelog/changelog.component';
 import {of} from 'rxjs';
 import {BrowserDynamicTestingModule} from '@angular/platform-browser-dynamic/testing';
+import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
 
 describe('AppVersionComponent', () => {
   let component: AppVersionComponent;
@@ -35,10 +36,12 @@ describe('AppVersionComponent', () => {
 
   let latestChangesService: LatestChangesService;
   let sessionService: MockSessionService;
+  let entitySchemaService: EntitySchemaService;
   let entityMapper: EntityMapperService;
 
   beforeEach(async(() => {
-    sessionService = new MockSessionService();
+    entitySchemaService = new EntitySchemaService();
+    sessionService = new MockSessionService(entitySchemaService);
     latestChangesService = new LatestChangesService(null, null, null, null);
     entityMapper = new EntityMapperService(null, null);
 
