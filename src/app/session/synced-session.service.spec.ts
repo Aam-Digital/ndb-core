@@ -27,7 +27,9 @@ import { RemoteSession } from './remote-session';
 import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
 
 describe('SyncedSessionService', () => {
-    const alertService = new AlertService(null, null);
+    const snackBarMock = { openFromComponent: () => {} } as any;
+    const loggingServiceMock = { warn: () => {} } as any;
+    const alertService = new AlertService(snackBarMock, loggingServiceMock);
     const entitySchemaService = new EntitySchemaService();
     let sessionService: SessionService;
 
