@@ -154,6 +154,7 @@ export class ChildDetailsComponent implements OnInit {
           this.router.navigate(['/child', this.child.getId()]);
           this.creatingNew = false;
         }
+        this.alertService.addInfo('Saving Succesfull');
         this.switchEdit();
       })
       .catch((err) => this.alertService.addDanger('Could not save Child "' + this.child.name + '": ' + err));
