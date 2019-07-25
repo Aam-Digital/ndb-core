@@ -19,7 +19,7 @@ To enter the Children section click on the button in the navigation. You will be
 After this click "Save" in the top right corner.
 You can see that saving was successful when the child's name is the headline.
 
-##... edit a child?
+### ... edit a child?
 1. On the Children List Screen search for the child you want to edit and click on the corresponding entry in the list.
 It is the best to click on the name or the project number (PN), cause clicking on the school will navigate you to the school's detail page.
 If you did everything right the child view will open.
@@ -29,7 +29,7 @@ If you did everything right the child view will open.
 3. Now edit the attributes you want to and press "Save" in the top right corner to save your changes
    If you want to discard your changes click "Cancel".
    
-## ... delete a child?
+### ... delete a child?
 1. On the Children List Screen search for the child you want to delete and click on the corresponding entry in the list.
 It is the best to click on the name or the project number (PN), cause clicking on the school will navigate you to the school's detail page.
 If you did everything right the child view will open.
@@ -38,7 +38,50 @@ If you did everything right the child view will open.
 
 3. Click on the button "Delete" in the top right corner and confirm that you want to delete the child by selection yes on the popup.
 
- 
-  
+##Schools
+To enter the Schools section click on the button in the navigation. You will be navigated to the School List Screen.
+###... create a school?
+1. On the School List Screen click on the button with the plus (and the text "Add New") at the upper right side.
+  This will open an empty school view
 
+2. Fill in the needed attributes for the new school.
+After this click "Save" in the top right corner.
+You can see that saving was successful when the school's name is the headline.
+
+### ... edit a school?
+1. On the School List Screen search for the school you want to edit and click on the corresponding entry in the list.
+
+2. Click on the button "Edit" in the top right corner
+
+3. Now edit the attributes you want to and press "Save" in the top right corner to save your changes
+   If you want to discard your changes click "Cancel".
+   
+### ... delete a school?
+1. On the Children List Screen search for the school you want to delete and click on the corresponding entry in the list.
+
+2. Click on the button "Edit" in the top right corner  
+
+3. Click on the button "Delete" in the top right corner and confirm that you want to delete the school by selection yes on the popup.
+
+
+##Notes
+To enter the Notes section click on the button in the navigation. You will be navigated to the Notes List Screen.
+###... create a note?
+1. On the Note List Screen click on the button with the plus (and the text "Add New") at the upper right side.
+  This will open an pop up.
+
+2. Fill in the needed attributes for the new note.
+After this click "Save" in the low left corner.
+You can see that saving was successful when you leave the section and reenter it.
+
+###... edit a note?
+You can not edit a note.
+   
+### ... delete a school?
+You can not delete a note.
+
+##Attendance Register
+To enter the Attendance Register section click on the button in the navigation. You will be navigated to the Notes List Screen.
+
+### Add daily attendance
 
