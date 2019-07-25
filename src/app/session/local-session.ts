@@ -35,6 +35,7 @@ import { User } from '../user/user';
 import { SyncState } from './sync-state.enum';
 import { LoginState } from './login-state.enum';
 import { StateHandler } from './util/state-handler';
+import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
 
 @Injectable()
 export class LocalSession {
@@ -45,7 +46,7 @@ export class LocalSession {
   public syncState: StateHandler<SyncState>; // started, completed, failed, unsynced
   public currentUser: User;
 
-  constructor() {
+  constructor(private _entitySchemaService: EntitySchemaService) {
     this.database = new PouchDB(AppConfig.settings.database.name);
 
     this.loginState = new StateHandler<LoginState>(LoginState.loggedOut);
@@ -122,7 +123,7 @@ export class LocalSession {
   public async loadUser(userId: string): Promise<User> {
     const user = new User('');
     const userData = await this.database.get('User:' + userId);
-    user.load(userData); // TODO(lh) EntitySchemaService
+    this._entitySchemaService.loadDataIntoEntity(user, userData);
     return user;
   }
 }

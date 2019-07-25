@@ -8,6 +8,7 @@ import { MockDatabase } from 'app/database/mock-database';
 import { Database } from 'app/database/database';
 import { DemoData } from 'app/database/demo-data';
 import { EntityMapperService } from 'app/entity/entity-mapper.service';
+import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
 
 export class MockSessionService extends SessionService {
     private database: MockDatabase;
@@ -16,14 +17,14 @@ export class MockSessionService extends SessionService {
     private connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>(ConnectionState.disconnected);
     private syncState: StateHandler<SyncState> = new StateHandler<SyncState>(SyncState.unsynced);
 
-    constructor() {
+    constructor(private _entitySchemaService: EntitySchemaService) {
         super();
         this.database = new MockDatabase();
         this.initDemoData();
     }
 
     private initDemoData() {
-        const entityMapper = new EntityMapperService(this.database); // TODO(lh): EntitySchemaService
+        const entityMapper = new EntityMapperService(this.database, this._entitySchemaService); // TODO(lh): EntitySchemaService
 
         // add demo user
         this.demoUser = new User('demo');

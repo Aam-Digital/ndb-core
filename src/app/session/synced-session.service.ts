@@ -27,6 +27,7 @@ import { PouchDatabase } from '../database/pouch-database';
 import { ConnectionState } from './connection-state.enum';
 import { SyncState } from './sync-state.enum';
 import { User } from '../user/user';
+import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
 
 @Injectable()
 export class SyncedSessionService extends SessionService {
@@ -35,9 +36,9 @@ export class SyncedSessionService extends SessionService {
   private _liveSyncHandle: any;
   private _liveSyncScheduledHandle: any;
 
-  constructor(private _alertService: AlertService) {
+  constructor(private _alertService: AlertService, private _entitySchemaService: EntitySchemaService) {
     super();
-    this._localSession = new LocalSession();
+    this._localSession = new LocalSession(this._entitySchemaService);
     this._remoteSession = new RemoteSession();
   }
 

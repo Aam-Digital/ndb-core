@@ -20,17 +20,18 @@ import { AppConfig } from '../app-config/app-config';
 import { MockSessionService } from './mock-session.service';
 import { SessionService } from './session.service';
 import { AlertService } from '../alerts/alert.service';
+import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
 
-export function sessionServiceFactory(alertService: AlertService): SessionService {
+export function sessionServiceFactory(alertService: AlertService, entitySchemaService: EntitySchemaService): SessionService {
   if (AppConfig.settings.database.useTemporaryDatabase) {
-    return new MockSessionService();
+    return new MockSessionService(entitySchemaService);
   } else {
-    return new SyncedSessionService(alertService);
+    return new SyncedSessionService(alertService, entitySchemaService);
   }
 }
 
 export const sessionServiceProvider = {
   provide: SessionService,
   useFactory: sessionServiceFactory,
-  deps: [AlertService]
+  deps: [AlertService, EntitySchemaService]
 };
