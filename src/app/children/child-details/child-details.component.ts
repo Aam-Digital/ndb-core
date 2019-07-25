@@ -75,12 +75,12 @@ export class ChildDetailsComponent implements OnInit {
     this.form = this.fb.group({
       name:           [{value: this.child.name,           disabled: !this.editing}, Validators.required],
       // gender:         [{value: this.child.gender}], // reactive forms seem broken for mat-select, using ngModel instead
-      projectNumber:  [{value: this.child.projectNumber,  disabled: !this.editing}],
-      dateOfBirth:    [{value: this.child.dateOfBirth,    disabled: !this.editing}],
+      projectNumber:  [{value: this.child.projectNumber,  disabled: !this.editing}, Validators.required],
+      dateOfBirth:    [{value: this.child.dateOfBirth,    disabled: !this.editing}, Validators.required],
       motherTongue:   [{value: this.child.motherTongue,   disabled: !this.editing}],
       religion:       [{value: this.child.religion,       disabled: !this.editing}],
 
-      center:         [{value: this.child.center,         disabled: !this.editing}],
+      center:         [{value: this.child.center,         disabled: !this.editing}, Validators.required],
       status:         [{value: this.child.status,         disabled: !this.editing}],
       admissionDate:  [{value: this.child.admissionDate,  disabled: !this.editing}],
 
@@ -146,6 +146,7 @@ export class ChildDetailsComponent implements OnInit {
   }
 
   save() {
+    if(this.form.valid){
     this.assignFormValuesToChild(this.child, this.form);
 
     this.entityMapperService.save<Child>(this.child)
@@ -159,6 +160,10 @@ export class ChildDetailsComponent implements OnInit {
       })
       .catch((err) => this.alertService.addDanger('Could not save Child "' + this.child.name + '": ' + err));
   }
+  else{
+    this.alertService.addDanger('Form ist not valid!!');
+  }
+}
 
   private assignFormValuesToChild(child: Child, form: FormGroup) {
     Object.keys(form.controls).forEach(key => {
