@@ -146,7 +146,7 @@ export class ChildDetailsComponent implements OnInit {
   }
 
   save() {
-    if(this.form.valid){
+    if (this.form.valid) {
     this.assignFormValuesToChild(this.child, this.form);
 
     this.entityMapperService.save<Child>(this.child)
@@ -159,8 +159,7 @@ export class ChildDetailsComponent implements OnInit {
         this.switchEdit();
       })
       .catch((err) => this.alertService.addDanger('Could not save Child "' + this.child.name + '": ' + err));
-  }
-  else{
+  } else {
     this.alertService.addDanger('Form ist not valid!!');
   }
 }
