@@ -36,6 +36,7 @@ import { SyncState } from './sync-state.enum';
 import { LoginState } from './login-state.enum';
 import { StateHandler } from './util/state-handler';
 import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
+import { AlertService } from 'app/alerts/alert.service';
 
 @Injectable()
 export class LocalSession {
@@ -46,7 +47,7 @@ export class LocalSession {
   public syncState: StateHandler<SyncState>; // started, completed, failed, unsynced
   public currentUser: User;
 
-  constructor(private _entitySchemaService: EntitySchemaService) {
+  constructor(private _alertService: AlertService, private _entitySchemaService: EntitySchemaService) {
     this.database = new PouchDB(AppConfig.settings.database.name);
 
     this.loginState = new StateHandler<LoginState>(LoginState.loggedOut);
@@ -75,7 +76,7 @@ export class LocalSession {
     } catch (error) {
       // possible error: initial sync failed
       if (error && error.toState && error.toState === SyncState.failed) {
-        // TODO(lh): Alert the Alert Service?
+        this._alertService.addDanger('The initial Sync of the Database failed, so you couldn\'t be logged in. Please try again later.');
         this.loginState.setState(LoginState.loggedOut);
         return LoginState.loggedOut;
       }

@@ -38,7 +38,7 @@ export class SyncedSessionService extends SessionService {
 
   constructor(private _alertService: AlertService, private _entitySchemaService: EntitySchemaService) {
     super();
-    this._localSession = new LocalSession(this._entitySchemaService);
+    this._localSession = new LocalSession(this._alertService, this._entitySchemaService);
     this._remoteSession = new RemoteSession();
   }
 
@@ -105,7 +105,7 @@ export class SyncedSessionService extends SessionService {
         if (await localLogin === LoginState.loggedIn) {
           // Someone changed the password remotely --> fail the login
           this._localSession.logout();
-          // TODO(lh): We might want to alert the alertService
+          this._alertService.addDanger('Your password was changed recently. Please retry with your new password!');
         }
       }
 
