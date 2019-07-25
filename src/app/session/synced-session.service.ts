@@ -95,7 +95,9 @@ export class SyncedSessionService extends SessionService {
       // If we are not connected, we must check (asynchronously), whether the local database is initial
       this._localSession.isInitial().then(isInitial => {
         if (isInitial) {
-          // Fail the sync in the local session, which will fail the authentication there
+          // If we were initial, the local session was waiting for a sync.
+          // Explicitly tell it that the login failed and fail the sync to resolve the deadlock
+          this._localSession.loginState.setState(LoginState.loginFailed);
           this._localSession.syncState.setState(SyncState.failed);
         }
       });

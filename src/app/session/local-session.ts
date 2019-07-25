@@ -76,6 +76,11 @@ export class LocalSession {
     } catch (error) {
       // possible error: initial sync failed
       if (error && error.toState && error.toState === SyncState.failed) {
+        if (this.loginState.getState() === LoginState.loginFailed) {
+          // The sync failed because the remote rejected
+          return LoginState.loginFailed;
+        }
+        // The sync failed for other reasons. The user should try again
         this._alertService.addDanger('The initial Sync of the Database failed, so you couldn\'t be logged in. Please try again later.');
         this.loginState.setState(LoginState.loggedOut);
         return LoginState.loggedOut;
