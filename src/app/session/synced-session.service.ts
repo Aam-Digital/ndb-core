@@ -76,6 +76,8 @@ export class SyncedSessionService extends SessionService {
           async () => {
             if (await localLogin === LoginState.loggedIn) {
               this.liveSyncDeferred();
+            } else {
+              // TODO(lh): Alert the AlertService: Your password was changed recently, but there is an issue with sync. Try again later!
             }
           }
         );
@@ -96,8 +98,11 @@ export class SyncedSessionService extends SessionService {
       this._localSession.isInitial().then(isInitial => {
         if (isInitial) {
           // If we were initial, the local session was waiting for a sync.
-          // Explicitly tell it that the login failed and fail the sync to resolve the deadlock
-          this._localSession.loginState.setState(LoginState.loginFailed);
+          // Explicitly fail the login if the Connection was rejected, so the LocalSession knows what's going on
+          if (connectionState === ConnectionState.rejected) {
+            this._localSession.loginState.setState(LoginState.loginFailed);
+          }
+          // Explicitly fail the sync to resolve the deadlock
           this._localSession.syncState.setState(SyncState.failed);
         }
       });
@@ -105,8 +110,9 @@ export class SyncedSessionService extends SessionService {
       // remote rejected but local logged in
       if (connectionState === ConnectionState.rejected) {
         if (await localLogin === LoginState.loggedIn) {
-          // Someone changed the password remotely --> fail the login
+          // Someone changed the password remotely --> log out and signal failed login
           this._localSession.logout();
+          this._localSession.loginState.setState(LoginState.loginFailed);
           this._alertService.addDanger('Your password was changed recently. Please retry with your new password!');
         }
       }
