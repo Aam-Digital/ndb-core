@@ -42,6 +42,10 @@ export class BlobServiceService {
     );
   }
 
+  public async getImage(path: string): Promise<any> {
+    return this.client.getFileContents(path);
+  }
+
   /**
    * returns a download link for an image
    * @param path path of the image on server
