@@ -1,5 +1,12 @@
 [
   {
+    "tag_name": "v2.6.2",
+    "name": "Bugfixes",
+    "published_at": "2019-07-09",
+    "body": "- fixed problems with child school relations, also affecting attendance roll call\n- fixed slow loading of children lists",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.6.0",
     "name": "Better usability on phones + Height & Weight Tracking",
     "published_at": "2019-06-17",

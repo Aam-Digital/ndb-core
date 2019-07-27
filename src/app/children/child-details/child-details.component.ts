@@ -28,7 +28,6 @@ import * as uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
 import {ChildrenService} from '../children.service';
 import {School} from '../../schools/school';
-import {ChildWithRelation} from '../childWithRelation';
 import { BlobServiceService } from 'app/webdav/blob-service.service';
 
 
@@ -39,7 +38,7 @@ import { BlobServiceService } from 'app/webdav/blob-service.service';
 })
 export class ChildDetailsComponent implements OnInit {
 
-  child: ChildWithRelation = new ChildWithRelation(new Child(''));
+  child: Child = new Child('');
   currentSchool: School = new School('');
   schools: School[] = [];
 
@@ -68,6 +67,7 @@ export class ChildDetailsComponent implements OnInit {
               private blobService: BlobServiceService
   ) { }
 
+  // TODO: is this generateNewRecordFactory() used at all?
   generateNewRecordFactory() {
     // define values locally because 'this' is a different scope after passing a function as input to another component
     const child = this.child.getId();
@@ -112,6 +112,8 @@ export class ChildDetailsComponent implements OnInit {
       dropoutDate:    [{value: this.child.dropoutDate,    disabled: !this.editing}],
       dropoutType:    [{value: this.child.dropoutType,    disabled: !this.editing}],
       dropoutRemarks: [{value: this.child.dropoutRemarks, disabled: !this.editing}],
+
+      photoFile: [this.child.photoFile]
     });
 
 
@@ -140,6 +142,7 @@ export class ChildDetailsComponent implements OnInit {
         this.image = await this.blobService.getImage(this.child.getId().replace('child:', ''));
       } catch (error) {
         console.log(error);
+        // TODO
       }
     }
   }
@@ -182,7 +185,7 @@ export class ChildDetailsComponent implements OnInit {
 
           const snackBarRef = this.snackBar.open('Deleted Child "' + this.child.name + '"', 'Undo', {duration: 8000});
           snackBarRef.onAction().subscribe(() => {
-            this.entityMapperService.save(this.child.getChild(), true);
+            this.entityMapperService.save(this.child, true);
             this.router.navigate(['/child', this.child.getId()]);
           });
         }

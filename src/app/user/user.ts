@@ -16,16 +16,19 @@
  */
 
 import { Entity } from '../entity/entity';
+import {DatabaseEntity} from '../entity/database-entity.decorator';
+import {DatabaseField} from '../entity/database-field.decorator';
 
 declare const require: any;
 const CryptoJS = require('crypto-js');
 
+@DatabaseEntity('User')
 export class User extends Entity {
-  static ENTITY_TYPE = 'User';
+  @DatabaseField() name: string;
+  @DatabaseField() admin: boolean;
 
-  public name: string;
+  @DatabaseField()
   private password: any;
-  public admin: boolean;
 
   public setNewPassword(password: string) {
     const cryptKeySize = 256 / 32;
@@ -56,15 +59,5 @@ export class User extends Entity {
 
   public isAdmin(): boolean {
     return this.admin;
-  }
-
-
-
-  public load(data: any) {
-    if (data.entityId === undefined) {
-      data.entityId = data._id.substring(data._id.indexOf(':') + 1);
-    }
-
-    return super.load(data);
   }
 }

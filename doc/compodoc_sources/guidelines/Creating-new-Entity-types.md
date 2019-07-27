@@ -1,6 +1,7 @@
 "Entities" are the objects around which our whole system is built. There may for example be User, Child or School classes representing the types of objects the users can view interact with. To extend the system with types, you can create a new module and extend the existing base of the Entity system.
 
-The `EntityModule` specifies the base class and generic functionalities and specific entity types can extend upon it. For an example, have a look at the [UserModule](https://github.com/NGO-DB/ndb-core/tree/master/src/app/user) defining the `User` class that extends `Entity`.
+The `EntityModule` specifies the base class and generic features, specific entity types can extend upon it.
+For an example, have a look at the [UserModule](https://github.com/NGO-DB/ndb-core/tree/master/src/app/user) defining the `User` class that extends `Entity`.
 
 
 
@@ -13,20 +14,30 @@ To keep them easy to understand and extend the Entity (sub-)classes also shouldn
 
 
 ## The EntitySchema
-The EntitySchema object is defining which attributes of the class will be saved to the database. Attributes not explicitly defined in the Entity sub-type's schema are ignored when the an instance is saved.
+The EntitySchema object is defining which attributes of the class will be saved to the database.
+Attributes not explicitly defined in the Entity sub-type's schema are ignored when an instance is saved.
 
-As an example look at the User class' schema definition:
+You must annotate your Entity class with the `@DatabaseEntity('ENTITY_TYPE')` decorator
+thereby defining a database prefix for your Entity type.
 
-    class User extends Entity {
-      static schema = Entity.schema.extend({
-        'name': 'string',
-        'password': 'any',
-        'admin': 'boolean'
-      });`
+Any properties that you want to be persisted in the database when saving entities of this type
+must have the `@DatabaseField()` decorator.
+Any other properties are ignored and will be lost after saving and loading an entity of this type.
+As an example look at this class' schema definition:
 
-Only `user.name`, `user.password` and `user.admin` of an User class instance are save to the database. If you would define other attributes in the class for internal processing without adding them to this schema object, they would not be saved. Also, the data type of the fields are defined and the EntityModule ensures that they are saved and loaded into the correct format.
+    @DatabaseEntity('Dummy')
+    class Dummy extends Entity {
+      @DatabaseField() name: string;
+      @DatabaseField() size: number = 1;
+      @DatabaseField({dataType: 'month'}) month: Date;
+      temp: string = 'foo';
+    }
 
-For more Details see the page about the [EntitySchema System](https://github.com/NGO-DB/ndb-core/wiki/EntitySchema-System).
+Only `dummy.name`, `dummy.size` and `dummy.month` of a Dummy class instance are saved to the database.
+The `dummy.temp` property is available for internal processing but will be ignored when saving the entity to the database.
+
+You can also set additional options for DatabaseFields and implement your own data transformations.
+For more details see the docs about the [EntitySchema System](https://github.com/NGO-DB/ndb-core/wiki/EntitySchema-System).
 
 
 ## Other components to be implemented for a new sub-type
@@ -44,22 +55,12 @@ The following components are related to display an Entity sub-type and currently
 import { Entity } from '../entity/entity';
 import { Gender} from './Gender';
 
+@DatabaseEntity('Child')
 export class Child extends Entity {
-  ENTITY_TYPE = 'Child'; // required to preserve type names after minification of code
-  static schema = Entity.schema.extend({ // required to define what and how fields are saved to the database
-    'name': 'string',
-    'gender': 'string',
-    'dateOfBirth': 'date',
-    'currentStatus': 'any' // the datatype 'any' will keep the field unchanged (e.g. to write a complete object to the db)
-  });
-
-  name: String;
-  gender: Gender;
-  dateOfBirth: Date;
-  currentStatus: {
-    projectStatus: String;
-    socialworker: String;
-  };
+  @DatabaseField() name: string;
+  @DatabaseField({dataType: 'string'}) gender: Gender;
+  @DatabaseField() dateOfBirth: Date;
+  @DatabaseField() marks: [];
 
   age(): number {
      // calculate from this.dateOfBirth
@@ -68,33 +69,6 @@ export class Child extends Entity {
   // Override this to define a human-readable, textual summary of the instance
   toString(): string {
     return this.name + ' (' + this.age() + ')';
-  }
-}
-```
-
-
-## Overriding data transformation
-Usually, the logic defined by the Entity base class should be sufficient to handle transformations (if any) between an entity's properties and the values saved in the database. If you have special requirements how things should be saved in the database, you can override the functions `load(dataObjectFromDatabase)` and `rawData()` however. Make sure to call the base class's implementation using `super.load(data)`/`super.rawData()`:
-
-```
-class AttendaneMonth extends Entity {
-  // ...
-  public load(data: any) {
-    if (data.month !== undefined) {
-      // make sure it is created as a Date object
-      data.month = new Date(data.month);
-    }
-    return super.load(data);
-  }
-
-  public rawData(): any {
-    const data = super.rawData();
-
-    delete data.month;
-    // save to the database it as a string "YYYY-mm"
-    data.month = this.month.getFullYear().toString() + '-' + (this.month.getMonth() + 1).toString();
-
-    return raw;
   }
 }
 ```

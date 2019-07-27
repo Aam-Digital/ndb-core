@@ -10,13 +10,14 @@ import {EntityMapperService} from '../../../entity/entity-mapper.service';
 import {MockDatabase} from '../../../database/mock-database';
 import {Child} from '../../child';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {Database} from '../../../database/database';
+import {EntitySchemaService} from '../../../entity/schema/entity-schema.service';
 
 describe('EditSchoolDialogComponent', () => {
   let component: EditSchoolDialogComponent;
   let fixture: ComponentFixture<EditSchoolDialogComponent>;
 
   beforeEach(async(() => {
-    const entityMapper = new EntityMapperService(new MockDatabase());
     TestBed.configureTestingModule({
       declarations: [ EditSchoolDialogComponent ],
       imports: [
@@ -28,7 +29,9 @@ describe('EditSchoolDialogComponent', () => {
         BrowserAnimationsModule,
       ],
       providers: [
-        {provide: EntityMapperService, useValue: entityMapper},
+        EntityMapperService,
+        EntitySchemaService,
+        { provide: Database, useClass: MockDatabase },
         {provide: MatDialogRef, useValue: MatDialogRef},
         {provide: MAT_DIALOG_DATA, useValue: {child: new Child('')}},
       ]

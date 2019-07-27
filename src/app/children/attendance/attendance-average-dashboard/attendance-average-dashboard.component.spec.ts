@@ -10,6 +10,7 @@ import {MockDatabase} from '../../../database/mock-database';
 import {ChildBlockComponent} from '../../child-block/child-block.component';
 import {RouterTestingModule} from '@angular/router/testing';
 import {SchoolBlockComponent} from '../../../schools/school-block/school-block.component';
+import {EntitySchemaService} from '../../../entity/schema/entity-schema.service';
 
 describe('AttendanceAverageDashboardComponent', () => {
   let component: AttendanceAverageDashboardComponent;
@@ -19,7 +20,12 @@ describe('AttendanceAverageDashboardComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ ChildBlockComponent, SchoolBlockComponent, AttendanceAverageDashboardComponent],
       imports: [MatIconModule, MatCardModule, RouterTestingModule],
-      providers: [ChildrenService, EntityMapperService, { provide: Database, useClass: MockDatabase }],
+      providers: [
+        ChildrenService,
+        EntityMapperService,
+        EntitySchemaService,
+        { provide: Database, useClass: MockDatabase },
+      ],
     })
     .compileComponents();
   }));
