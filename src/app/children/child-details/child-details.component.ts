@@ -54,7 +54,7 @@ export class ChildDetailsComponent implements OnInit {
   eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
   vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
 
-  imageURL: string;
+  image: any;
 
   constructor(private entityMapperService: EntityMapperService,
               private childrenService: ChildrenService,
@@ -120,30 +120,28 @@ export class ChildDetailsComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
     this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
-    this.imageURL = 'http://localhost/remote.php/dav/files/nextclouduser/default.png';
+    // this.image = 'http://localhost/remote.php/dav/files/nextclouduser/default.png';
   }
 
-  loadChild(id: string) {
+  async loadChild(id: string) {
     if (id === 'new') {
       this.creatingNew = true;
       this.editing = true;
       this.child = new ChildWithRelation(new Child(uniqid()));
+      this.initForm();
     } else {
-      this.childrenService.getChildWithRelation(id)
-        .then(child => {
-          this.child = child;
-          this.initForm();
-          this.entityMapperService.load<School>(School, this.child.schoolId)
-            .then(school => this.currentSchool = school);
+      this.child = await this.childrenService.getChildWithRelation(id);
+      this.initForm();
+      this.currentSchool = await this.entityMapperService.load<School>(School, this.child.schoolId);
           // the id string for a child, whith id 123, is "child:123".
           // Currently we save images as "123.jpg", so we need to strip the "child:".
           // (special characters seem to cause problems with webdav/nextcloud...)
-          this.imageURL = this.blobService.getImageDownloadLink(this.child.getId().replace('child:', ''));
-        });
+      try {
+        this.image = await this.blobService.getImage(this.child.getId().replace('child:', ''));
+      } catch (error) {
+        console.log(error);
+      }
     }
-
-    this.initForm();
-
   }
 
   switchEdit() {

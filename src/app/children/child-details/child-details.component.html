@@ -57,7 +57,7 @@
 
       <div fxLayout='row' fxLayout.xs='column wrap' fxLayout.md='column wrap' fxLayout.sm='column wrap'>
         <div fxFlex='150px'>
-          <img *ngIf="!creatingNew && !editing" src="{{ imageURL }}" class="child-pic" alt="child's photo">
+          <img *ngIf="!creatingNew && !editing" src="{{ image }}" class="child-pic" alt="child's photo">
 
           <input style="display: none" type="file" (change)=uploadChildPhoto($event) #fileUpload>
           <button *ngIf="creatingNew || editing" class="child-pic-upload" (click)="fileUpload.click()">
