@@ -129,10 +129,10 @@ export class ChildDetailsComponent implements OnInit {
     if (id === 'new') {
       this.creatingNew = true;
       this.editing = true;
-      this.child = new ChildWithRelation(new Child(uniqid()));
+      this.child = new Child(uniqid());
       this.initForm();
     } else {
-      this.child = await this.childrenService.getChildWithRelation(id);
+      this.child = await this.childrenService.getChild(id);
       this.initForm();
       this.currentSchool = await this.entityMapperService.load<School>(School, this.child.schoolId);
           // the id string for a child, whith id 123, is "child:123".
