@@ -203,6 +203,6 @@ export class ChildDetailsComponent implements OnInit {
   uploadChildPhoto(event) {
     console.log(event);
     this.blobService.setImage(event.target.files[0], this.child.getId().replace('child:', ''));
-    this.child.hasPhoto = true;
+    this.child.photoFile = this.child.getId();
   }
 }
