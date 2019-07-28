@@ -27,7 +27,7 @@ export class ChildBlockComponent implements OnInit {
         this.entity = child;
       });
     }
-    if (this.entity.hasPhoto) {
+    if (this.entity.photoFile) {
       this.imageURL = this.blobService.getImageDownloadLink(this.entity.getId().replace('child:', ''));
     } else {
       this.imageURL = 'http://localhost/remote.php/dav/files/nextclouduser/default.png';
