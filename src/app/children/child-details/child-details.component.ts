@@ -132,9 +132,13 @@ export class ChildDetailsComponent implements OnInit {
       this.child = new Child(uniqid());
       this.initForm();
     } else {
-      this.child = await this.childrenService.getChild(id);
-      this.initForm();
-      this.currentSchool = await this.entityMapperService.load<School>(School, this.child.schoolId);
+      this.childrenService.getChild(id)
+        .subscribe(child => {
+          this.child = child;
+          this.initForm();
+          this.entityMapperService.load<School>(School, this.child.schoolId)
+            .then(school => this.currentSchool = school);
+        });
           // the id string for a child, whith id 123, is "child:123".
           // Currently we save images as "123.jpg", so we need to strip the "child:".
           // (special characters seem to cause problems with webdav/nextcloud...)
