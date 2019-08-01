@@ -75,7 +75,10 @@ After this click "Save" in the low left corner.
 You can see that saving was successful when you leave the section and reenter it.
 
 ###... edit a note?
-You can not edit a note.
+1. On the Note List Screen search for the note you want to edit and click on the corresponding entry in the list.
+
+2. Now edit the attributes you want to and press "Save" in the low left corner to save your changes
+If you want to discard your changes click "Cancel". 
    
 ### ... delete a school?
 You can not delete a note.
@@ -84,4 +87,25 @@ You can not delete a note.
 To enter the Attendance Register section click on the button in the navigation. You will be navigated to the Notes List Screen.
 
 ### Add daily attendance
+1. Click on the "add a day's attendance" button
+   
+2. Select the center and the appointment type you want to add the attendance and change the date if necessary.
 
+3. Press "Continue". If the button is disabled check that center, appointment type and date are set.
+
+4. Select the student group you want to add attendance for. The options are all students of the center or a special school.
+
+5. Next, select the attendance value for the shown child.
+   Attention, after selecting a value the next child is shown automatically.
+   If you made a mistake you can navigate back using the "back" button underneath the selectable values.
+   To abort click on the "abort" button.
+   
+### Add monthly attendance
+1. Click on the "add a month's attendance" button.
+
+2. Select the center or coaching and corresponding a school or center, the month and set the number of working days.
+   This should create an entry for every child matching the school or center in the table underneath.
+   
+3. For every child set the values attended days, excused days, remarks and workings days. If the working days are the same as defined above just check the box.
+
+4. Save the records
