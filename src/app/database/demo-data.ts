@@ -250,10 +250,11 @@ export class DemoData {
     rel1.childId = '1';
     rel1.schoolId = '1';
     rel1.start = '2016-10-01';
+    rel1.end = '2016-10-31';
     rel1.schoolClass = '2';
     data.push(rel1);
 
-    const rel4: ChildSchoolRelation = new ChildSchoolRelation('2');
+    const rel4: ChildSchoolRelation = new ChildSchoolRelation('4');
     rel4.childId = '3';
     rel4.schoolId = '2';
     rel4.start = '2001-01-01';
@@ -261,19 +262,37 @@ export class DemoData {
     rel4.schoolClass = '1';
     data.push(rel4);
 
-    const rel2: ChildSchoolRelation = new ChildSchoolRelation('3');
+    const rel2: ChildSchoolRelation = new ChildSchoolRelation('2');
     rel2.childId = '2';
     rel2.schoolId = '2';
     rel2.start = '2018-05-07';
+    rel2.end = '2018-10-01';
     rel2.schoolClass = '3';
     data.push(rel2);
 
-    const rel3: ChildSchoolRelation = new ChildSchoolRelation('4');
+    const rel3: ChildSchoolRelation = new ChildSchoolRelation('3');
     rel3.childId = '3';
     rel3.schoolId = '1';
     rel3.start = '2010-01-01';
+    rel3.end = '2010-02-01';
     rel3.schoolClass = '2';
     data.push(rel3);
+
+    const rel5: ChildSchoolRelation = new ChildSchoolRelation('5');
+    rel5.childId = '2';
+    rel5.schoolId = '1';
+    rel5.start = '2000-01-01';
+    rel5.end = '2000-01-02'
+    rel5.schoolClass = '2';
+    data.push(rel5);
+
+    const rel6: ChildSchoolRelation = new ChildSchoolRelation('6');
+    rel6.childId = '2';
+    rel6.schoolId = '1';
+    rel6.start = '2005-01-01';
+    rel6.end = '2005-01-02'
+    rel6.schoolClass = '2';
+    data.push(rel6);
 
     return data;
   }

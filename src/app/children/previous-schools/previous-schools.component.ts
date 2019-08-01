@@ -1,18 +1,15 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {DatePipe} from '@angular/common';
 import {PreviousSchools} from './previous-schools';
 import {ColumnDescription} from '../../ui-helper/entity-subrecord/column-description';
 import {ChildrenService} from '../children.service';
 import {SchoolsService} from '../../schools/schools.service';
-import { removeSummaryDuplicates } from '@angular/compiler';
 import { School } from 'app/schools/school';
-
 
 @Component({
   selector: 'app-previous-schools',
-  template: '<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="generateNewRecordFactory()">' +
-  '</app-entity-subrecord>',
+  template: '<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="generateNewRecordFactory" [optionalFormValidation]="generateOptionalFormValidation">' + '</app-entity-subrecord>',
 })
 
 export class PreviousSchoolsComponent implements OnInit {
@@ -58,21 +55,41 @@ export class PreviousSchoolsComponent implements OnInit {
           new ColumnDescription('name', 'Name', 'select',
             data.map(t => { return { value: t.name, label: t.name} })),
           new ColumnDescription('from', 'From', 'date', null,
-            (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
+            (v: Date) => !isNaN(v.getTime()) ? this.datePipe.transform(v, 'yyyy-MM-dd') : undefined), // checking if v is a date and otherweise returning undefined prevents a datePipe error
           new ColumnDescription('to', 'To', 'date', null,
-            (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
+            (v: Date) => !isNaN(v.getTime()) ? this.datePipe.transform(v, 'yyyy-MM-dd') : undefined),
         ];
     });
   }
 
-  
-  generateNewRecordFactory() {
-    return () => {
-      const newPreviousSchool = new PreviousSchools(Date.now().toString());
-      newPreviousSchool.child = this.childId;
-      newPreviousSchool.from = new Date();
-      newPreviousSchool.to = new Date();
-      return newPreviousSchool;
+
+  generateNewRecordFactory = function() {
+    const newPreviousSchool = new PreviousSchools(Date.now().toString());
+    newPreviousSchool.child = this.childId;
+    const lastToDate =  (this.records.length && this.records[0].to) ? new Date(this.records[0].to) : new Date(new Date().setDate(new Date().getDate() + -1));  // last to-date (of first entry in records); if the first entry doesn't have any to-date, lastToDate is set to yesterday
+    newPreviousSchool.from = new Date(lastToDate.setDate(lastToDate.getDate() + 1));  // one day after last to-date
+    newPreviousSchool.to = new Date('');  // void date
+    return newPreviousSchool;
+  }
+
+  generateOptionalFormValidation = (record) => {
+    if (!record.rawData().name) {
+      return {
+        hasPassedValidation: false,
+        validationMessage: '"Name" is empy. Please select a school.',
+      }
+    }
+    else if (record.rawData().from > record.rawData().to) {
+      return {
+        hasPassedValidation: false,
+        validationMessage: '"To"-date lies before "From"-date. Please enter correct dates.',
+      }
+    }
+    else {
+      return {
+        hasPassedValidation: true,
+        validationMessage: '',
+      }
     }
   }
 }

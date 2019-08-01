@@ -4,6 +4,8 @@ import {ConfirmationDialogService} from '../confirmation-dialog/confirmation-dia
 import {Entity} from '../../entity/entity';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {ColumnDescription} from './column-description';
+import {AlertService} from '../../alerts/alert.service';
+
 
 @Component({
   selector: 'app-entity-subrecord',
@@ -17,6 +19,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
   @Input() newRecordFactory: () => Entity;
   @Input() detailsComponent: typeof Component;
   @Input() showButton = true;
+  @Input() optionalFormValidation: (record) => Object;
 
   recordsDataSource = new MatTableDataSource();
   columnsToDisplay = [];
@@ -30,7 +33,8 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
   constructor(private _entityMapper: EntityMapperService,
               private _snackBar: MatSnackBar,
               private _confirmationDialog: ConfirmationDialogService,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+              private alertService: AlertService) {
   }
 
   ngOnInit() {
@@ -51,7 +55,16 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
 
 
   save(record: Entity) {
-    this._entityMapper.save(record);
+    if (this.optionalFormValidation) {
+      const formValidationResult = this.optionalFormValidation(record);
+      if (!formValidationResult['hasPassedValidation']) {
+        this.alertService.addWarning(formValidationResult['validationMessage']);
+        return;
+      }
+    };
+    this._entityMapper.save(record).then(record => {
+      console.log(record);
+    });
 
     // updated backup copies used for reset
     const i = this.originalRecords.findIndex(e => e.entityId === record.getId());
