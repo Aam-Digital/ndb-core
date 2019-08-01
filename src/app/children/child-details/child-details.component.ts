@@ -75,8 +75,8 @@ export class ChildDetailsComponent implements OnInit {
     this.form = this.fb.group({
       name:           [{value: this.child.name,           disabled: !this.editing}, Validators.required],
       // gender:         [{value: this.child.gender}], // reactive forms seem broken for mat-select, using ngModel instead
-      projectNumber:  [{value: this.child.projectNumber,  disabled: !this.editing}, Validators.required],
-      dateOfBirth:    [{value: this.child.dateOfBirth,    disabled: !this.editing}, Validators.required],
+      projectNumber:  [{value: this.child.projectNumber,  disabled: !this.editing}],
+      dateOfBirth:    [{value: this.child.dateOfBirth,    disabled: !this.editing}],
       motherTongue:   [{value: this.child.motherTongue,   disabled: !this.editing}],
       religion:       [{value: this.child.religion,       disabled: !this.editing}],
 
