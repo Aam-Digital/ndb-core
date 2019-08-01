@@ -15,9 +15,12 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Login at the local database
+/** State of the login at the local database, which is synonymous to login at the whole application */
 export enum LoginState {
-  loginFailed, // wrong credentials
-  loggedOut,   // either before first login-attempt or after logout
-  loggedIn,    // successfully logged in
+  /** Login failed due to wrong credentials */
+  loginFailed,
+  /** Login state either before first login-attempt or after logout */
+  loggedOut,
+  /** Successfully logged in */
+  loggedIn,
 }

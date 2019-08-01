@@ -15,10 +15,14 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- // Connection to the remote database
+ /** State of the connection to the remote database  */
 export enum ConnectionState {
-  offline,      // we are offline and therefor not connected to the remote db
-  rejected,     // we tried to login, but it failed, so we are not connected to the remote db
-  disconnected, // we are intentionally not connected to the remote db
-  connected,    // we are connected to the remote db
+  /** we are offline and therefor not connected to the remote db */
+  offline,
+  /** we tried to login, but it failed, so we are not connected to the remote db */
+  rejected,
+  /** we are intentionally not connected to the remote db */
+  disconnected,
+  /** we are connected to the remote db */
+  connected,
 }

@@ -16,13 +16,6 @@
  */
 
 
-/**
- * Responsibilities:
- * - Hold the remote DB
- * - Hold remote credentials
- * - Handle auth
- * - provide "am i online"-info
- */
 
 import PouchDB from 'pouchdb-browser';
 import PouchDBAuthentication from 'pouchdb-authentication';
@@ -34,6 +27,12 @@ import { ConnectionState } from './connection-state.enum';
 
 PouchDB.plugin(PouchDBAuthentication);
 
+/**
+ * Responsibilities:
+ * - Hold the remote DB
+ * - Handle auth
+ * - provide "am i online"-info
+ */
 @Injectable()
 export class RemoteSession {
   public database: any;

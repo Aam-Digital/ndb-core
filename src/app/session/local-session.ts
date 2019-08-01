@@ -15,16 +15,6 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- /**
- * Responsibilities:
- * - Hold the local DB
- * - Hold local credentials
- * - Check credentials against DB
- * - Provide interface for Sync
- *   - we want to block before the first full sync
- * - Provide an interface to access the data
- */
-
 import PouchDB from 'pouchdb-browser';
 
 import { Injectable } from '@angular/core';
@@ -38,6 +28,15 @@ import { StateHandler } from './util/state-handler';
 import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
 import { AlertService } from 'app/alerts/alert.service';
 
+ /**
+ * Responsibilities:
+ * - Hold the local DB
+ * - Hold local user
+ * - Check credentials against DB
+ * - Provide the state of the synchronisation of the local db
+ *   - we want to block before the first full sync
+ * - Provide an interface to access the data
+ */
 @Injectable()
 export class LocalSession {
   public database: any;
