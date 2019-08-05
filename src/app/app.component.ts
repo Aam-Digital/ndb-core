@@ -15,19 +15,35 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, ViewContainerRef } from '@angular/core';
+import {Component, OnInit, ViewContainerRef} from '@angular/core';
 
 import './rxjs-operators';
+import {DemoDataService} from './demo-data/demo-data.service';
+import {AppConfig} from './app-config/app-config';
 
 @Component({
   selector: 'app-root',
   template: '<app-ui></app-ui>'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   private viewContainerRef: ViewContainerRef;
 
-  public constructor(viewContainerRef: ViewContainerRef) {
+  public constructor(
+    viewContainerRef: ViewContainerRef,
+    private demoDataService: DemoDataService,
+  ) {
     // You need this small hack in order to catch application root view container ref
     this.viewContainerRef = viewContainerRef;
+  }
+
+  ngOnInit() {
+    this.loadDemoData();
+  }
+
+  // TODO: move loading of demo data to a more suitable place
+  private loadDemoData() {
+    if (AppConfig.settings.database.useTemporaryDatabase) {
+      this.demoDataService.publishDemoData();
+    }
   }
 }

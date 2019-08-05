@@ -1,12 +1,9 @@
-import {Child} from '../children/child';
-import {Gender} from '../children/Gender';
 import {AttendanceMonth} from '../children/attendance/attendance-month';
 import {Entity} from '../entity/entity';
 import {Note} from '../children/notes/note';
 import {WarningLevel} from '../children/attendance/warning-level';
 import {AttendanceStatus} from '../children/attendance/attendance-day';
 import {ChildSchoolRelation} from '../children/childSchoolRelation';
-import {School} from '../schools/school';
 import {ProgressDashboardConfig} from '../dashboard/progress-dashboard/progress-dashboard-config';
 
 export class DemoData {
@@ -14,8 +11,6 @@ export class DemoData {
   static getAllDemoEntities(): Entity[] {
     return []
       .concat(this.getConfigEntities())
-      .concat(DemoData.getChildEntities())
-      .concat(this.getSchoolEntities())
       .concat(this.getMonthAttendanceEntities())
       .concat(this.getNoteEntities())
       .concat(this.getChildSchoolRelationEntities());
@@ -42,42 +37,6 @@ export class DemoData {
       targetValue: 10,
     });
     data.push(dashboardProgressWidget);
-
-    return data;
-  }
-
-  static getChildEntities(): Child[] {
-    const data = [];
-
-    const a1 = new Child('1');
-    a1.name = 'Arjun A.';
-    a1.projectNumber = '1';
-    a1.religion = 'Hindu';
-    a1.gender = Gender.MALE;
-    a1.dateOfBirth = new Date('2000-03-13');
-    a1.motherTongue = 'Hindi';
-    a1.center = 'Delhi';
-    data.push(a1);
-
-    const a2 = new Child('2');
-    a2.name = 'Bandana B.';
-    a2.projectNumber = '2';
-    a2.religion = 'Hindu';
-    a2.gender = Gender.FEMALE;
-    a2.dateOfBirth = new Date('2001-01-01');
-    a2.motherTongue = 'Bengali';
-    a2.center = 'Kolkata';
-    data.push(a2);
-
-    const a3 = new Child('3');
-    a3.name = 'Chandan C.';
-    a3.projectNumber = '3';
-    a3.religion = 'Hindu';
-    a3.gender = Gender.MALE;
-    a3.dateOfBirth = new Date('2002-07-29');
-    a3.motherTongue = 'Hindi';
-    a3.center = 'Kolkata';
-    data.push(a3);
 
     return data;
   }
@@ -250,23 +209,6 @@ export class DemoData {
     n3.category = 'Homevisit';
     n3.warningLevel = WarningLevel.URGENT;
     data.push(n3);
-
-    return data;
-  }
-
-
-  static getSchoolEntities(): School[] {
-    const data = [];
-
-    const s1 = new School('1');
-    s1.name = 'People\'s Primary';
-    s1.medium = 'Hindi';
-    data.push(s1);
-
-    const s2 = new School('2');
-    s2.name = 'Hope High School';
-    s2.medium = 'English';
-    data.push(s2);
 
     return data;
   }
