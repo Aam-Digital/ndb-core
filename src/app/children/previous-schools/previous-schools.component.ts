@@ -6,10 +6,11 @@ import {ColumnDescription} from '../../ui-helper/entity-subrecord/column-descrip
 import {ChildrenService} from '../children.service';
 import {SchoolsService} from '../../schools/schools.service';
 import { School } from 'app/schools/school';
+import { BreakpointObserver } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-previous-schools',
-  template: '<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="generateNewRecordFactory" [optionalFormValidation]="generateOptionalFormValidation">' + '</app-entity-subrecord>',
+  template: '<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="newRecordFactory" [optionalFormValidation]="optionalFormValidation">' + '</app-entity-subrecord>',
 })
 
 export class PreviousSchoolsComponent implements OnInit {
@@ -63,16 +64,16 @@ export class PreviousSchoolsComponent implements OnInit {
   }
 
 
-  generateNewRecordFactory = function() {
+  newRecordFactory = () => {
     const newPreviousSchool = new PreviousSchools(Date.now().toString());
-    newPreviousSchool.child = this.childId;
+    newPreviousSchool.childId = this.childId;
     const lastToDate =  (this.records.length && this.records[0].to) ? new Date(this.records[0].to) : new Date(new Date().setDate(new Date().getDate() + -1));  // last to-date (of first entry in records); if the first entry doesn't have any to-date, lastToDate is set to yesterday
     newPreviousSchool.from = new Date(lastToDate.setDate(lastToDate.getDate() + 1));  // one day after last to-date
     newPreviousSchool.to = new Date('');  // void date
     return newPreviousSchool;
   }
 
-  generateOptionalFormValidation = (record) => {
+  optionalFormValidation = (record) => {
     if (!record.name) {
       return {
         hasPassedValidation: false,

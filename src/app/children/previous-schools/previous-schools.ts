@@ -17,16 +17,18 @@
 
 import { Entity } from '../../entity/entity';
 import {WarningLevel} from '../attendance/warning-level';
+import {DatabaseEntity} from '../../entity/database-entity.decorator';
+import {DatabaseField} from '../../entity/database-field.decorator';
 
-
+@DatabaseEntity('ChildSchoolRelation')
 export class PreviousSchools extends Entity {
-  static ENTITY_TYPE = 'ChildSchoolRelation';
+  //static ENTITY_TYPE = 'ChildSchoolRelation';
 
-  name: string;
+  @DatabaseField() name: string;
 
-  child: string; // id of Child entity
-  from: Date;
-  to: Date;
+  @DatabaseField() childId: string; // id of Child entity
+  @DatabaseField({dataType: 'date'}) from: Date;
+  @DatabaseField({dataType: 'date'}) to: Date;
 
 
   // public load(data: any) {
