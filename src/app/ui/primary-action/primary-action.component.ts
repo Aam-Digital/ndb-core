@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Note} from '../../children/notes/note';
 import {SessionService} from '../../session/session.service';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import {NoteDetailsComponent} from '../../children/notes/note-details/note-details.component';
 
 @Component({

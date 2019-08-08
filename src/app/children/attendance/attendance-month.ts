@@ -18,22 +18,41 @@
 import {Entity} from '../../entity/entity';
 import {WarningLevel} from './warning-level';
 import {AttendanceDay, AttendanceStatus} from './attendance-day';
+import {DatabaseEntity} from '../../entity/database-entity.decorator';
+import {DatabaseField} from '../../entity/database-field.decorator';
 
-
+@DatabaseEntity('AttendanceMonth')
 export class AttendanceMonth extends Entity {
-  static ENTITY_TYPE = 'AttendanceMonth';
   static readonly THRESHOLD_URGENT = 0.6;
   static readonly THRESHOLD_WARNING = 0.8;
 
-  student: string; // id of Child entity
-  remarks = '';
-  institution: string;
+
+  public static createAttendanceMonth(childId: string, institution: string) {
+    // TODO: logical way to assign entityId to Attendance?
+    const newAtt = new AttendanceMonth(childId + '_' + Date.now().toString() + institution);
+    newAtt.month = new Date();
+    newAtt.student = childId;
+    newAtt.institution = institution;
+    return newAtt;
+  }
+
+
+  @DatabaseField() student: string; // id of Child entity
+  @DatabaseField() remarks: string = '';
+  @DatabaseField() institution: string;
+
 
   private p_month: Date;
+  @DatabaseField({dataType: 'month'})
   get month(): Date {
     return this.p_month;
   }
   set month(value: Date) {
+    if (!(value instanceof Date)) {
+      console.warn('Trying to set invalid date ' + value + ' to Entity ' + this._id);
+      return;
+    }
+
     if (value.getDate() !== 2) {
       value.setDate(2);
     }
@@ -42,6 +61,7 @@ export class AttendanceMonth extends Entity {
   }
 
   daysWorking_manuallyEntered: number;
+  @DatabaseField()
   get daysWorking(): number {
     if (this.daysWorking_manuallyEntered !== undefined) {
       return this.daysWorking_manuallyEntered;
@@ -55,6 +75,7 @@ export class AttendanceMonth extends Entity {
   }
 
   daysAttended_manuallyEntered: number;
+  @DatabaseField()
   get daysAttended(): number {
     if (this.daysAttended_manuallyEntered !== undefined) {
       return this.daysAttended_manuallyEntered;
@@ -68,6 +89,7 @@ export class AttendanceMonth extends Entity {
   }
 
   daysExcused_manuallyEntered: number;
+  @DatabaseField()
   get daysExcused(): number {
     if (this.daysExcused_manuallyEntered !== undefined) {
       return this.daysExcused_manuallyEntered;
@@ -81,6 +103,7 @@ export class AttendanceMonth extends Entity {
   }
 
   daysLate_manuallyEntered: number;
+  @DatabaseField()
   get daysLate(): number {
     if (this.daysLate_manuallyEntered !== undefined) {
       return this.daysLate_manuallyEntered;
@@ -94,21 +117,16 @@ export class AttendanceMonth extends Entity {
 
   overridden = false; // indicates individual override during bulk adding
 
+  @DatabaseField()
   dailyRegister = new Array<AttendanceDay>();
-
-
-  public static createAttendanceMonth(childId: string, institution: string) {
-    // TODO: logical way to assign entityId to Attendance?
-    const newAtt = new AttendanceMonth(childId + '_' + Date.now().toString() + institution);
-    newAtt.month = new Date();
-    newAtt.student = childId;
-    newAtt.institution = institution;
-    return newAtt;
-  }
 
   private updateDailyRegister() {
     if (this.month === undefined) {
       return;
+    }
+
+    if (this.dailyRegister === undefined) {
+      this.dailyRegister = new Array<AttendanceDay>();
     }
 
     const expectedDays = daysInMonth(this.month);
@@ -173,32 +191,6 @@ export class AttendanceMonth extends Entity {
       return WarningLevel.OK;
     }
   }
-
-
-  public load(data: any) {
-    if (data.month !== undefined) {
-      data.month = new Date(data.month);
-    }
-
-    if (data.dailyRegister !== undefined) {
-      data.dailyRegister.forEach(day => {
-        day.date = new Date(day.date);
-      });
-    }
-
-    return super.load(data);
-  }
-
-  public rawData(): any {
-    const raw: any = Object.assign({}, this);
-
-    delete raw.month;
-    delete raw.p_month;
-    raw.month = this.month.getFullYear().toString() + '-' + (this.month.getMonth() + 1).toString();
-
-    return raw;
-  }
-
 }
 
 export function daysInMonth (date: Date) {

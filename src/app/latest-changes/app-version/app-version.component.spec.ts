@@ -18,23 +18,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AppVersionComponent } from './app-version.component';
-import {MatDialog, MatDialogModule} from '@angular/material';
+import { MatDialogModule } from '@angular/material/dialog';
 import {SessionService} from '../../session/session.service';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {LatestChangesService} from '../latest-changes.service';
-import {SessionStatus} from '../../session/session-status';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {ChangelogComponent} from '../changelog/changelog.component';
-import {NgModule} from '@angular/core';
 import {of} from 'rxjs';
-
-
-@NgModule({
-  declarations: [ChangelogComponent],
-  imports: [MatDialogModule, NoopAnimationsModule],
-  entryComponents: [ChangelogComponent],
-})
-class TestModule { }
+import {BrowserDynamicTestingModule} from '@angular/platform-browser-dynamic/testing';
 
 describe('AppVersionComponent', () => {
   let component: AppVersionComponent;
@@ -47,24 +38,28 @@ describe('AppVersionComponent', () => {
   beforeEach(async(() => {
     latestChangesService = new LatestChangesService(null, null, null, null);
     sessionService = new SessionService(null, null, null);
-    entityMapper = new EntityMapperService(null);
+    entityMapper = new EntityMapperService(null, null);
 
     spyOn(latestChangesService, 'getChangelogs').and
       .returnValue(of([{ name: 'test', tag_name: 'v1.0', body: 'latest test', published_at: '2018-01-01'}]));
-    spyOn(sessionService, 'onSessionStatusChanged').and
-      .returnValue(of(SessionStatus.loggedIn));
 
     TestBed.configureTestingModule({
-      declarations: [AppVersionComponent],
-      imports: [TestModule,
-        MatDialogModule, NoopAnimationsModule],
+      declarations: [AppVersionComponent, ChangelogComponent],
+      imports: [MatDialogModule, NoopAnimationsModule],
       providers: [
         {provide: SessionService, useValue: sessionService},
         {provide: EntityMapperService, useValue: entityMapper},
         {provide: LatestChangesService, useValue: latestChangesService},
       ]
-    })
-      .compileComponents();
+    });
+
+    TestBed.overrideModule(BrowserDynamicTestingModule, {
+      set: {
+        entryComponents: [ChangelogComponent]
+      }
+    });
+
+    TestBed.compileComponents();
   }));
 
   beforeEach(() => {

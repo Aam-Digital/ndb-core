@@ -20,8 +20,6 @@ export class AttendanceWeekDashboardComponent implements OnInit {
     { childId: string, child: Child, attendanceSchool: AttendanceDay[], attendanceCoaching: AttendanceDay[],
       schoolAbsences?: number, coachingAbsences?: number}>;
   attendanceRecords;
-  recordTrackByFunction = (index, item) => item.childId;
-
 
 
   constructor(private childrenService: ChildrenService,
@@ -30,6 +28,8 @@ export class AttendanceWeekDashboardComponent implements OnInit {
   ngOnInit() {
     this.loadAttendanceOfAbsentees(this.daysOffset);
   }
+
+  recordTrackByFunction = (index, item) => item.childId;
 
 
 

@@ -101,7 +101,7 @@ describe('MockDatabase tests', () => {
               }
             );
           }
-        )
+        );
       }
     );
   });
@@ -119,13 +119,13 @@ describe('MockDatabase tests', () => {
           .then(function () {
             database.remove(testData).then(
               function () {
-                expectIdNotInDatabase(testData._id, done)
+                expectIdNotInDatabase(testData._id, done);
               },
               function () {
                 expect(false).toBe(true, 'promise of Database.remove failed');
                 done();
               }
-            )
+            );
           }
         );
       },
@@ -153,7 +153,7 @@ describe('MockDatabase tests', () => {
               .toBe(2, 'getAll result has ' + resultData.length + ' not expected number of objects');
             done();
           });
-      })
+      });
     });
   });
 
@@ -175,7 +175,7 @@ describe('MockDatabase tests', () => {
               .toBe(1, 'getAll result has ' + resultData.length + ' not expected number of objects');
             done();
           });
-      })
+      });
     });
   });
 

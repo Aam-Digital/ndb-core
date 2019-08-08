@@ -21,7 +21,8 @@ export interface ViewableSchool {
 export class ViewSchoolsComponentComponent implements OnInit {
 
   @Input() public child: Child = new Child('');
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+
 
   schoolsDataSource: MatTableDataSource<ViewableSchool> = new MatTableDataSource();
   viewableSchools: ViewableSchool[] = [];

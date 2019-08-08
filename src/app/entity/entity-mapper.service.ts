@@ -18,6 +18,7 @@
 import { Injectable } from '@angular/core';
 import { Database } from '../database/database';
 import {Entity, EntityConstructor} from './entity';
+import {EntitySchemaService} from './schema/entity-schema.service';
 
 /**
  * The default generic DataMapper for Entity and any subclass.
@@ -26,16 +27,11 @@ import {Entity, EntityConstructor} from './entity';
 @Injectable()
 export class EntityMapperService {
 
-  private static createDatabaseIdByEntity<T extends Entity>(entity: T): string {
-    return EntityMapperService.createDatabaseId(entity.getType(), entity.getId());
-  }
 
-  private static createDatabaseId(type: string, id: string): string {
-    return type + ':' + id;
-  }
-
-  constructor(private _db: Database) {
-  }
+  constructor(
+    private _db: Database,
+    private entitySchemaService: EntitySchemaService,
+  ) { }
 
   /**
    * Loads an Entity from the database with the given id.
@@ -44,17 +40,11 @@ export class EntityMapperService {
    * @param id the id of the entity to load.
    * @returns A Promise containing the resultEntity filled with its data.
    */
-  public load<T extends Entity>(entityType: EntityConstructor<T>, id: string): Promise<T> {
+  public async load<T extends Entity>(entityType: EntityConstructor<T>, id: string): Promise<T> {
     const resultEntity = new entityType('');
-    return this._db.get(EntityMapperService.createDatabaseId(resultEntity.getType(), id)).then(
-      function (result: any) {
-        resultEntity.load(result);
-        return resultEntity;
-      },
-      function (error: any) {
-        throw error;
-      }
-    );
+    const result = await this._db.get(Entity.createPrefixedId(resultEntity.getType(), id));
+    this.entitySchemaService.loadDataIntoEntity(resultEntity, result);
+    return resultEntity;
   }
 
   /**
@@ -63,32 +53,27 @@ export class EntityMapperService {
    * @param entityType a schoolClass that implements <code>Entity</code>.
    * @returns A Promise containing an array with the loaded entities.
    */
-  public loadType<T extends Entity>(entityType: EntityConstructor<T>): Promise<T[]> {
-    let resultEntity = new entityType('');
-    return this._db.getAll(resultEntity.getType() + ':').then(
-      function (result: any) {
-        const resultArray: Array<T> = [];
-        for (const current of result) {
-          resultArray.push(resultEntity.load(current));
-          resultEntity = new entityType('');
-        }
-        return resultArray;
-      },
-      function (error: any) {
-        throw error;
-      }
-    )
+  public async loadType<T extends Entity>(entityType: EntityConstructor<T>): Promise<T[]> {
+    const resultArray: Array<T> = [];
+
+    const allRecordsOfType = await this._db.getAll(new entityType('').getType() + ':');
+
+    for (const record of allRecordsOfType) {
+      const entity = new entityType('');
+      this.entitySchemaService.loadDataIntoEntity(entity, record);
+      resultArray.push(entity);
+    }
+
+    return resultArray;
   }
 
-  public save<T extends Entity>(entity: T, forceUpdate: boolean = false): Promise<any> {
-    entity['_id'] = EntityMapperService.createDatabaseIdByEntity(entity);
-    return this._db.put(entity.rawData(), forceUpdate)
-      .then(result => {
-        if (result.ok) {
-          entity._rev = result.rev;
-        }
-        return result;
-      })
+  public async save<T extends Entity>(entity: T, forceUpdate: boolean = false): Promise<any> {
+    const rawData = this.entitySchemaService.transformEntityToDatabaseFormat(entity);
+    const result = await this._db.put(rawData, forceUpdate);
+    if (result.ok) {
+      entity._rev = result.rev;
+    }
+    return result;
   }
 
   public remove<T extends Entity>(entity: T): Promise<any> {

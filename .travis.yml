@@ -1,43 +1,49 @@
 sudo: required
 dist: trusty
 language: node_js
+branches:
+  except:
+    - gh-pages
 node_js:
-  - '8.9'
+  - '12'
 env:
   global:
-    - CC_TEST_REPORTER_ID=c658ba82647d4ca17571a84f48c1ccf75d6c18e97f0ef0bfaabec3684e2009ae
     - DOCKER_USERNAME=aamdigitaltravis
   matrix:
     - secure: gOMHgEFJXKZxL7NK6IknMabOqAFYDgLa46bJZpluOCv8+TEBENaSV0p6qm1yns8QdaGFi2RzXqo3AQxDj5YI7C57YyvZNkeUtFD8OXY25Ls/o9YXiVYU89Pca6MJor6PskwIpAw8kuq5i9gOfyLQyKmLwaGwD5KlCw2I2UCcyxUWIlrWgDDQLLTRWjKEt7FVbJjuXiILBSI8hPDJ1IwhmGFc1eJRBMQu3HomyvOK48bT6d5nRpcraPApXROP+X1sTekfDZ3GpiVMEl2dvqITviXoAM0RaWfIy6J45k/LKMYlA4554NbZR4lGM+BiGInXG5iklpXCCbex9wgQ2tpoMqEKhelV7ducsjztmykzAOLH88ArDtlv2O+fqfvgnErkuhg/apWb2nv1e38y5j0Jg7VmQnlQ6W7N16+FYSqvlHJbLRSi74NlWj56cgaSKF7ljqcA76seO6E9VjdU72C/d349gJFWUzlKiuKQ3EaXb3ax2+iJ17JSYy2HSSRS7Nkkkbf/gdp9cVDID3CYayPOt/ojNY2Pu/dr8eA6QSNTjHYIcM2SMmJ800FLUvHEfVNUYkhoy7pVdr+4sPlEnqPgxa4llfxxodu3iXLvf5MWVn8qBC6fSmtnRxF1f1vyTBU86y9IOBx58LXZ/pEAddmlCuzHjvni+WpHatOvTxrqo3U=
 services:
   - docker
-addons: 
 apt:
   sources:
     - google-chrome
   packages:
     - google-chrome-stable
     - google-chrome-beta
+
+cache:
+  directories:
+    - node_modules
+
 before_install:
   - export CHROME_BIN=chromium-browser
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
+
 before_script:
-  - npm install -g @angular/cli
-  - npm install -g karma
-  - npm install
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
-cache:
-  directories:
-    - node_modules
+
 script:
   - ng lint
   - ng test --watch=false --code-coverage
   - ng build --prod
+
 after_script:
   - ./cc-test-reporter after-build --debug --exit-code $TRAVIS_TEST_RESULT
+after_success:
+  - npm run compodoc
+
 before_deploy:
   - tar -zcf ndb-core_${TRAVIS_TAG}.tar.gz dist
 deploy:
@@ -53,3 +59,9 @@ deploy:
     skip_cleanup: true
     on:
       tags: true
+  - provider: pages
+    skip_cleanup: true
+    local_dir: doc/compodoc
+    github_token: $GH_REPO_TOKEN
+    on:
+      branch: master

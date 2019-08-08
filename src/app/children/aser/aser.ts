@@ -17,10 +17,11 @@
 
 import { Entity } from '../../entity/entity';
 import {WarningLevel} from '../attendance/warning-level';
+import {DatabaseField} from '../../entity/database-field.decorator';
+import {DatabaseEntity} from '../../entity/database-entity.decorator';
 
-
+@DatabaseEntity('Aser')
 export class Aser extends Entity {
-  static ENTITY_TYPE = 'Aser';
 
   static ReadingLevels = [
     'Nothing',
@@ -36,16 +37,6 @@ export class Aser extends Entity {
     'Subtraction',
     'Division'
   ];
-
-
-  child: string; // id of Child entity
-  date: Date;
-  hindi = '';
-  bengali = '';
-  english = '';
-  math = '';
-  remarks = '';
-
 
   static isReadingPassedOrNA(level: string) {
     if (level === '' || level === undefined) {
@@ -71,13 +62,13 @@ export class Aser extends Entity {
   }
 
 
-  public load(data: any) {
-    if (data.date !== undefined && typeof data.date !== typeof new Date()) {
-      data.date = new Date(data.date);
-    }
-
-    return super.load(data);
-  }
+  @DatabaseField() child: string; // id of Child entity
+  @DatabaseField() date: Date = new Date();
+  @DatabaseField() hindi: string = '';
+  @DatabaseField() bengali: string = '';
+  @DatabaseField() english: string = '';
+  @DatabaseField() math: string = '';
+  @DatabaseField() remarks: string = '';
 
 
   getWarningLevel (): WarningLevel {
@@ -92,5 +83,4 @@ export class Aser extends Entity {
 
     return warningLevel;
   }
-
 }

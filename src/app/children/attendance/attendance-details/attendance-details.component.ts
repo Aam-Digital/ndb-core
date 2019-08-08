@@ -1,5 +1,5 @@
 import {Component, Inject, Input, OnInit, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {ConfirmationDialogService} from '../../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
 import {AttendanceMonth} from '../attendance-month';
@@ -12,7 +12,7 @@ import {AttendanceMonth} from '../attendance-month';
 export class AttendanceDetailsComponent implements OnInit {
   @Input() entity: AttendanceMonth;
   originalEntity: AttendanceMonth;
-  @ViewChild('recordForm') form;
+  @ViewChild('recordForm', { static: true }) form;
 
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
@@ -31,7 +31,7 @@ export class AttendanceDetailsComponent implements OnInit {
           } else {
             this.cancel();
           }
-        })
+        });
       }
     });
   }
@@ -45,7 +45,7 @@ export class AttendanceDetailsComponent implements OnInit {
   }
 
   cancel() {
-    this.entity = this.entity.load(this.originalEntity);
+    Object.assign(this.entity, this.originalEntity);
     this.dialogRef.close(this.entity);
   }
 }

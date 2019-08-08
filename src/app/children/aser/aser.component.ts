@@ -18,16 +18,16 @@ export class AserComponent implements OnInit {
 
   columns: Array<ColumnDescription> = [
     new ColumnDescription('date', 'Date', 'date', null,
-      (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
+      (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd'), 'xs'),
     new ColumnDescription('math', 'Math', 'select',
-      Aser.MathLevels.map(s => { return { value: s, label: s } })),
+      Aser.MathLevels.map(s => { return { value: s, label: s }; }), undefined, 'xs'),
     new ColumnDescription('english', 'English', 'select',
-      Aser.ReadingLevels.map(s => { return { value: s, label: s } })),
+      Aser.ReadingLevels.map(s => { return { value: s, label: s }; }), undefined, 'xs'),
     new ColumnDescription('hindi', 'Hindi', 'select',
-      Aser.ReadingLevels.map(s => { return { value: s, label: s } })),
+      Aser.ReadingLevels.map(s => { return { value: s, label: s }; }), undefined, 'md'),
     new ColumnDescription('bengali', 'Bengali', 'select',
-      Aser.ReadingLevels.map(s => { return { value: s, label: s } })),
-    new ColumnDescription('remarks', 'Remarks', 'text'),
+      Aser.ReadingLevels.map(s => { return { value: s, label: s }; }), undefined, 'md'),
+    new ColumnDescription('remarks', 'Remarks', 'text', null, undefined, 'md'),
   ];
 
   constructor(private route: ActivatedRoute,
@@ -46,7 +46,7 @@ export class AserComponent implements OnInit {
     this.childrenService.getAserResultsOfChild(id)
       .subscribe(results => {
         this.records = results
-          .sort((a, b) => (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0) )
+          .sort((a, b) => (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0) );
       });
   }
 

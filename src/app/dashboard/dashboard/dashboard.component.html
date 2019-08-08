@@ -15,7 +15,7 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<div fxLayout="row wrap" fxLayoutGap="20px" class='widget-wrapper'>
+<div fxLayout="row wrap" fxLayout.xs="column wrap" fxLayoutGap="20px" class='widget-wrapper'>
   <app-children-count-dashboard fxFlex='25'></app-children-count-dashboard>
   <app-attendance-week-dashboard fxFlex='25' [daysOffset]='0' periodLabel='last week'></app-attendance-week-dashboard>
   <app-attendance-week-dashboard fxFlex='25' [daysOffset]='7' periodLabel='this week'></app-attendance-week-dashboard>
@@ -23,3 +23,4 @@
   <app-attendance-average-dashboard fxFlex="25"></app-attendance-average-dashboard>
   <app-attendance-warnings-dashboard fxFlex="25"></app-attendance-warnings-dashboard>
 </div>
+

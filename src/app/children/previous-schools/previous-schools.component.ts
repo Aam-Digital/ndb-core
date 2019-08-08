@@ -73,13 +73,13 @@ export class PreviousSchoolsComponent implements OnInit {
   }
 
   generateOptionalFormValidation = (record) => {
-    if (!record.rawData().name) {
+    if (!record.name) {
       return {
         hasPassedValidation: false,
         validationMessage: '"Name" is empy. Please select a school.',
       }
     }
-    else if (record.rawData().from > record.rawData().to) {
+    else if (record.from > record.to) {
       return {
         hasPassedValidation: false,
         validationMessage: '"To"-date lies before "From"-date. Please enter correct dates.',

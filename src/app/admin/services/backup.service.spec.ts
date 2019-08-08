@@ -1,9 +1,9 @@
 import {TestBed} from '@angular/core/testing';
 
 import { BackupService } from './backup.service';
-import {Database} from '../database/database';
+import {Database} from '../../database/database';
 import {PapaParseModule} from 'ngx-papaparse';
-import {MockDatabase} from '../database/mock-database';
+import {MockDatabase} from '../../database/mock-database';
 
 describe('BackupService', () => {
   let db: Database;

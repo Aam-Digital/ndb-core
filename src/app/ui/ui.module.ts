@@ -23,11 +23,13 @@ import { SessionModule } from '../session/session.module';
 import { SyncStatusModule } from '../sync-status/sync-status.module';
 import { RouterModule } from '@angular/router';
 import { LatestChangesModule } from '../latest-changes/latest-changes.module';
-import {
-  MatAutocompleteModule,
-  MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSidenavModule,
-  MatToolbarModule
-} from '@angular/material';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { SearchComponent } from './search/search.component';
 import {FormsModule} from '@angular/forms';
 import {ChildrenModule} from '../children/children.module';

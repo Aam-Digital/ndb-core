@@ -21,9 +21,9 @@ export class HealthCheckupComponent implements OnInit {
   columns: Array<ColumnDescription> = [
     new ColumnDescription('date', 'Date', 'date', null,
     (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
-    new ColumnDescription('height', 'Height', 'number', null,
+    new ColumnDescription('height', 'Height [cm]', 'number', null,
     (height: Number) => height + ' cm' ),
-    new ColumnDescription('weight', 'Weight', 'number', null,
+    new ColumnDescription('weight', 'Weight [kg]', 'number', null,
     (weight: Number) => weight + ' kg'),
   ];
   childId: string;
@@ -34,7 +34,7 @@ export class HealthCheckupComponent implements OnInit {
       this.childId = params.get('id').toString();
       this.loadHealthChecks();
 
-    } )
+    } );
   }
 
   /**
@@ -63,7 +63,7 @@ export class HealthCheckupComponent implements OnInit {
     this.childrenService.getHealthChecksOfChild(this.childId)
       .subscribe(results => {
         this.records = results
-          .sort((a, b ) => (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0) )
+          .sort((a, b ) => (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0) );
       });
   }
 }

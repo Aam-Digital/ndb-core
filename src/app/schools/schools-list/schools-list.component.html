@@ -11,18 +11,23 @@
       </mat-form-field>
     </div>
 
-    <div class='align-form-field'>
+    <div fxFlex='25' class='align-form-field' fxHide.xs='true'>
       (Showing {{schoolDataSource.filteredData.length}} schools)
     </div>
 
-    <div class='align-form-field'>
-      <button mat-stroked-button color="accent" (click)="addSchoolClick()">
-        <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>Add New School
+    <div fxFlex='25' class='align-form-field'>
+      <button mat-stroked-button color="accent" (click)="addSchoolClick()" fxFlexAlign="end">
+        <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>
+        <span fxHide.lt-sm>
+          <span fxHide.lt-md="true">
+          Add New
+          </span>
+        </span>
       </button>
     </div>
   </div>
 
-  <div fxLayout='row' fxLayoutGap='10px'>
+  <div fxLayout='row wrap' fxLayoutGap='10px' fxHide.lt-sm>
     <mat-button-toggle-group *ngFor='let filterSelection of filterSelections'
                              [name]="filterSelection.name" [value]='filterSelection.selectedOption'>
       <mat-button-toggle *ngFor='let option of filterSelection.options' [value]="option.key"
@@ -31,6 +36,17 @@
         {{option.label}}
       </mat-button-toggle>
     </mat-button-toggle-group>
+  </div>
+  <div fxLayout="row wrap" fxHide.gt-xs>
+    <mat-form-field *ngFor="let filterSelection of filterSelections" style="padding-right: 1%">
+      <mat-label>{{filterSelection.name}}</mat-label>
+      <mat-select  [id]="filterSelection.name" [value]="filterSelection.selectedOption" placeholder="filterSelection.name" >
+        <mat-option *ngFor="let option of filterSelection.options" [value]="option.key"
+                    (click)="filterSelection.selectedOption=option.key; applyFilterSelections()">
+          {{option.label}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
 </mat-expansion-panel>
 

@@ -1,27 +1,37 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Child} from '../child';
-import {MatSort, MatTableDataSource} from '@angular/material';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ChildrenService} from '../children.service';
 import {AttendanceMonth} from '../attendance/attendance-month';
 import {FilterSelection} from '../../ui-helper/filter-selection/filter-selection';
-import {ChildWithRelation} from '../childWithRelation';
+import {MediaChange, MediaObserver} from '@angular/flex-layout';
+import {Subscription} from 'rxjs';
+
+export interface ColumnGroup {
+  name: string;
+  columns: string[];
+}
+
 
 @Component({
   selector: 'app-children-list',
   templateUrl: './children-list.component.html',
   styleUrls: ['./children-list.component.scss']
 })
-export class ChildrenListComponent implements OnInit, AfterViewInit {
-  childrenList: ChildWithRelation[] = [];
+export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
+  watcher: Subscription;
+  activeMediaQuery = '';
+  childrenList: Child[] = [];
   attendanceList = new Map<string, AttendanceMonth[]>();
   childrenDataSource = new MatTableDataSource();
 
   centerFS = new FilterSelection('center', []);
   dropoutFS = new FilterSelection('status', [
-        {key: 'active', label: 'Current Project Children', filterFun: (c: ChildWithRelation) => c.isActive()},
-        {key: 'dropout', label: 'Dropouts', filterFun: (c: ChildWithRelation) => !c.isActive()},
-        {key: '', label: 'All', filterFun: (c: ChildWithRelation) => true},
+        {key: 'active', label: 'Current Project Children', filterFun: (c: Child) => c.isActive()},
+        {key: 'dropout', label: 'Dropouts', filterFun: (c: Child) => !c.isActive()},
+        {key: '', label: 'All', filterFun: () => true},
       ]);
   filterSelections = [
     this.dropoutFS,
@@ -29,31 +39,38 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   ];
 
 
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
   columnGroupSelection = 'School Info';
-  columnGroups = {
-    'Basic Info': ['projectNumber', 'name', 'age', 'gender', 'schoolClass', 'schoolId', 'center', 'status'],
-    'School Info': ['projectNumber', 'name', 'age', 'schoolClass', 'schoolId', 'attendance-school', 'attendance-coaching', 'motherTongue'],
-    'Status': ['projectNumber', 'name', 'center', 'status', 'admissionDate',
-      'has_aadhar', 'has_kanyashree', 'has_bankAccount', 'has_rationCard', 'has_bplCard'],
-    'Health': ['projectNumber', 'name', 'center',
+  columnGroups: ColumnGroup[] = [
+    { name: 'Basic Info', columns: ['projectNumber', 'name', 'age', 'gender', 'schoolClass', 'schoolId', 'center', 'status']},
+    { name: 'School Info',
+      columns: ['projectNumber', 'name', 'age', 'schoolClass', 'schoolId', 'attendance-school', 'attendance-coaching', 'motherTongue']},
+    { name: 'Status', columns: ['projectNumber', 'name', 'center', 'status', 'admissionDate',
+      'has_aadhar', 'has_kanyashree', 'has_bankAccount', 'has_rationCard', 'has_bplCard']},
+    { name: 'Health', columns: ['projectNumber', 'name', 'center',
       'health_vaccinationStatus', 'health_bloodGroup', 'health_eyeHealthStatus',
       'health_LastEyeCheckup', 'health_LastDentalCheckup', 'health_LastENTCheckup', 'health_LastVitaminD', 'health_LastDeworming',
-      'gender', 'age', 'dateOfBirth'],
-  };
-  columnsToDisplay: ['projectNumber', 'name'];
+      'gender', 'age', 'dateOfBirth']},
+    { name: 'Mobile', columns : ['projectNumber', 'name', 'age', 'schoolId']}
+  ];
+  columnsToDisplay = ['projectNumber', 'name'];
   filterString = '';
 
 
   constructor(private childrenService: ChildrenService,
               private router: Router,
-              private route: ActivatedRoute) {  }
+              private route: ActivatedRoute,
+              private media: MediaObserver) {  }
 
   ngOnInit() {
-    this.loadData(true, /*Replace URL instead of navigating*/);
-    this.loadUrlParams(true /*Replace URL instead of navigating*/);
+    this.loadData();
+    this.loadUrlParams();
+    this.watcher = this.media.media$.subscribe((change: MediaChange) => {
+      if (change.mqAlias === 'xs') {
+        this.displayColumnGroup('Mobile');
+      }
+    });
   }
-
 
   private loadUrlParams(replaceUrl: boolean = false) {
     this.route.queryParams.subscribe(params => {
@@ -76,7 +93,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
 
   private loadData(replaceUrl: boolean = false) {
-    this.childrenService.getChildrenWithRelation().then(children => {
+    this.childrenService.getChildren().subscribe(children => {
       this.childrenList = children;
       const centers = children.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
       this.centerFS.initOptions(centers, 'center');
@@ -86,6 +103,16 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.childrenService.getAttendances()
       .subscribe(results => this.prepareAttendanceData(results));
   }
+/*
+  private initCenterFilterOptions(centers: string[]) {
+    const options = [{key: '', label: 'All', filterFun: (c: Child) => true}];
+
+    centers.forEach(center => {
+      options.push({key: center.toLowerCase(), label: center, filterFun: (c: Child) => c.center === center});
+    });
+
+    this.centerFS.options = options;
+  } */
 
 
   prepareAttendanceData(loadedEntities: AttendanceMonth[]) {
@@ -115,9 +142,19 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.childrenDataSource.filter = filterValue;
   }
 
-  displayColumnGroup(columnGroup: string) {
-    this.columnGroupSelection = columnGroup;
-    this.columnsToDisplay = this.columnGroups[columnGroup];
+  displayColumnGroup(columnGroupName: string) {
+    this.columnGroupSelection = columnGroupName;
+    let found = false;
+    let group: ColumnGroup;
+    let i = 0;
+    while (!found && i < this.columnGroups.length) {
+       if (this.columnGroups[i].name === columnGroupName) {
+         found = true;
+         group = this.columnGroups[i];
+       }
+       i++;
+    }
+    this.columnsToDisplay = group.columns;
     this.updateUrl();
   }
 
@@ -152,5 +189,9 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
   showChildDetails(child: Child) {
     this.router.navigate(['/child', child.getId()]);
+  }
+
+  ngOnDestroy() {
+    this.watcher.unsubscribe();
   }
 }

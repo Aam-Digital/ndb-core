@@ -6,15 +6,18 @@
     <mat-card-title>{{ data.getTotalPercentage() | percent:'1.0-0'}}</mat-card-title>
     <mat-card-subtitle>{{data.title}}</mat-card-subtitle>
   </mat-card-header>
-  <mat-card-content style="margin:-24px;">
+  <mat-card-content>
+    <p class="dashboard-desc">
+      Status of current processes:
+    </p>
     <table class="dashboard-table">
-      <tr *ngFor="let entry of data.parts" class="dashboard-table-row">
+      <tr *ngFor="let entry of data?.parts" class="dashboard-table-row">
         <td class="dashboard-table-cell">{{entry.label}}</td>
-        <td class="dashboard-table-cell">
-          <mat-progress-bar mode="determinate" [value]="entry.currentValue/entry.targetValue*100" style='width: 100px;'></mat-progress-bar>
+        <td class="dashboard-table-cell filler">
+          <mat-progress-bar mode="determinate" [value]="entry.currentValue/entry.targetValue*100"></mat-progress-bar>
         </td>
         <td class="dashboard-table-cell">{{entry.currentValue/entry.targetValue | percent:'1.0-0'}}</td>
-        <td class="dashboard-table-cell">{{entry.currentValue}} / {{entry.targetValue}}</td>
+        <td class="dashboard-table-cell" style="white-space: nowrap">{{entry.currentValue}} / {{entry.targetValue}}</td>
       </tr>
     </table>
 
@@ -31,26 +34,26 @@
         </button>
       </div>
 
-      <div class="dashboard-table-cell" *ngIf='configure'>
-        <mat-form-field>
+      <!-- TODO: remove ugly negative margins -->
+      <div class="dashboard-table-cell" *ngIf='configure' style="border-bottom: 1px solid black">
+        <mat-form-field style="margin-bottom: -10px">
           <input matInput type="text" placeholder="Title" [value]="data.title" (input)='data.title=$event.target.value'>
         </mat-form-field>
       </div>
 
       <table class="dashboard-table" *ngIf='configure'>
         <tr *ngFor="let entry of data.parts; let i = index" class="dashboard-table-row">
-          <td class="dashboard-table-cell">
-            <mat-form-field style='width: 100px;'>
+          <td class="dashboard-table-cell" style="width: calc(100% - 20px); display: inline-block">
+            <mat-form-field class="filler">
               <input matInput type="text" placeholder="Label" [value]="entry.label" (input)="entry.label=$event.target.value">
             </mat-form-field>
           </td>
-          <td class="dashboard-table-cell">
-            <mat-form-field style='width: 40px;'>
+          <td class="dashboard-table-cell" style="display: inline-block; margin-top: -20px; margin-bottom: -10px">
+            <mat-form-field class="small">
               <input matInput type="number" placeholder="Current" [value]="entry.currentValue" (change)="entry.currentValue=$event.target.valueAsNumber">
             </mat-form-field>
-          </td>
-          <td class="dashboard-table-cell">
-            <mat-form-field style='width: 40px;'>
+
+            <mat-form-field class="small" style="margin: 0px 10px">
               <input matInput type="number" placeholder="Target"  [value]="entry.targetValue" (change)="entry.targetValue=$event.target.valueAsNumber">
             </mat-form-field>
           </td>

@@ -6,14 +6,17 @@ import {Child} from '../../child';
 import {ChildrenService} from '../../children.service';
 import {UiHelperModule} from '../../../ui-helper/ui-helper.module';
 import {DatePipe, PercentPipe} from '@angular/common';
-import {EntityMapperService} from '../../../entity/entity-mapper.service';
-import {MockDatabase} from '../../../database/mock-database';
 import {DemoData} from '../../../database/demo-data';
 import {AttendanceDaysComponent} from '../attendance-days/attendance-days.component';
 import {AttendanceDayBlockComponent} from '../attendance-days/attendance-day-block.component';
-import {MatSelectModule, MatTooltipModule} from '@angular/material';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {FormsModule} from '@angular/forms';
 import {Observable, of} from 'rxjs';
+import {EntityMapperService} from '../../../entity/entity-mapper.service';
+import {EntitySchemaService} from '../../../entity/schema/entity-schema.service';
+import {Database} from '../../../database/database';
+import {MockDatabase} from '../../../database/mock-database';
 
 describe('ChildAttendanceComponent', () => {
   let component: ChildAttendanceComponent;
@@ -34,12 +37,8 @@ describe('ChildAttendanceComponent', () => {
     }
   };
 
-  let mockEntityMapper;
-
 
   beforeEach(async(() => {
-    mockEntityMapper = new EntityMapperService(new MockDatabase());
-
     TestBed.configureTestingModule({
       declarations: [ ChildAttendanceComponent, AttendanceDaysComponent, AttendanceDayBlockComponent ],
       imports: [UiHelperModule, MatSelectModule, FormsModule, MatTooltipModule],
@@ -47,7 +46,9 @@ describe('ChildAttendanceComponent', () => {
         DatePipe, PercentPipe,
         { provide: ActivatedRoute, useValue: {params: of({id: '22'})} },
         { provide: ChildrenService, useValue: mockChildrenService },
-        { provide: EntityMapperService, useValue: mockEntityMapper },
+        EntityMapperService,
+        EntitySchemaService,
+        { provide: Database, useClass: MockDatabase },
       ],
     })
     .compileComponents();

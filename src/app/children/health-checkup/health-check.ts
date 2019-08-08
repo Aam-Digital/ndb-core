@@ -16,16 +16,21 @@
  */
 
 import { Entity } from '../../entity/entity';
+import {DatabaseEntity} from '../../entity/database-entity.decorator';
+import {DatabaseField} from '../../entity/database-field.decorator';
 
 /**
  * Model Class for the Health Checks that are taken for a Child.
  * It stores the Child's ID in a String and both, the height and weight in cm as a number, and the Date
  */
+@DatabaseEntity('HealthCheck')
 export class HealthCheck extends Entity {
-    static ENTITY_TYPE = 'HealthCheck';
+  @DatabaseField() child: string;
+  @DatabaseField() date: Date;
 
-    child: string;
-    date: Date;
-    height: number;
-    weight: number;
+  /** height measurement in cm **/
+  @DatabaseField() height: number;
+
+  /** weight measurement in kg **/
+  @DatabaseField() weight: number;
 }

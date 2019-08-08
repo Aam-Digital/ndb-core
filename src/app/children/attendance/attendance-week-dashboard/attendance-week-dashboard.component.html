@@ -6,16 +6,16 @@
     <mat-card-title>{{attendanceRecords?.length}}</mat-card-title>
     <mat-card-subtitle>Students with absences {{periodLabel}}</mat-card-subtitle>
   </mat-card-header>
-  <mat-card-content style="margin:-24px;">
+  <mat-card-content>
     <p class="dashboard-desc">
       Students more than one day absent {{periodLabel}}:
     </p>
     <table class="dashboard-table">
       <tr *ngFor="let record of attendanceRecords; trackBy: recordTrackByFunction" class="dashboard-table-row w-WARNING" (click)="goToChild(record.child.getId())" style="cursor: pointer;">
-        <td class="dashboard-table-first-cell dashboard-table-cell">
+        <td class="dashboard-table-first-cell dashboard-table-cell" style="display: inline-block">
           <app-child-block [entity]="record.child"></app-child-block>
         </td>
-        <td class="dashboard-table-cell">
+        <td class="dashboard-table-last-cell dashboard-table-cell" style="display: inline-block" align="right">
           <table>
             <tr><td *ngFor='let day of record.attendanceSchool'>
               <app-attendance-day-block [entity]='day' [showDate]='false' class='day-box'></app-attendance-day-block>

@@ -1,13 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
 import {Child} from '../../child';
-import {MatTableDataSource} from '@angular/material';
+import { MatTableDataSource } from '@angular/material/table';
 import {AttendanceMonth} from '../attendance-month';
 import {ConfirmationDialogService} from '../../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {AlertService} from '../../../alerts/alert.service';
 import {ChildrenService} from '../../children.service';
 import {School} from '../../../schools/school';
-import {ChildWithRelation} from '../../childWithRelation';
 
 @Component({
   selector: 'app-add-month-attendance',
@@ -18,9 +17,9 @@ export class AddMonthAttendanceComponent implements OnInit {
   schools = new Array<School>();
   centers = new Array<string>();
 
-  children = new Array<ChildWithRelation>();
-  childrenBySchool = new Map<string, ChildWithRelation[]>();
-  childrenByCenter = new Map<string, ChildWithRelation[]>();
+  children = new Array<Child>();
+  childrenBySchool = new Map<string, Child[]>();
+  childrenByCenter = new Map<string, Child[]>();
 
   attendanceDataSource = new MatTableDataSource();
   columnsToDisplay = ['student', 'daysAttended', 'daysExcused', 'remarks', 'daysWorking'];
@@ -39,17 +38,17 @@ export class AddMonthAttendanceComponent implements OnInit {
 
   ngOnInit() {
     this.entityMapper.loadType<School>(School).then(schools => this.schools = schools);
-    this.childrenService.getChildrenWithRelation().then(children => {
-      this.children = children.filter((c: ChildWithRelation) => c.isActive());
+    this.childrenService.getChildren().subscribe(children => {
+      this.children = children.filter((c: Child) => c.isActive());
       this.initChildrenLookupTables(this.children);
 
       this.centers = children.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
     });
   }
 
-  private initChildrenLookupTables(children: ChildWithRelation[]) {
-    this.childrenBySchool = new Map<string, ChildWithRelation[]>();
-    this.childrenByCenter = new Map<string, ChildWithRelation[]>();
+  private initChildrenLookupTables(children: Child[]) {
+    this.childrenBySchool = new Map<string, Child[]>();
+    this.childrenByCenter = new Map<string, Child[]>();
 
     children.forEach(c => {
       let arrS = this.childrenBySchool.get(c.schoolId);
@@ -83,7 +82,7 @@ export class AddMonthAttendanceComponent implements OnInit {
     this.attendanceDataSource.data = records;
   }
 
-  private getFilteredStudents(): ChildWithRelation[] {
+  private getFilteredStudents(): Child[] {
     let result;
     if (this.attendanceType === 'school') {
       result = this.childrenBySchool.get(this.school);
@@ -171,7 +170,7 @@ export class AddMonthAttendanceComponent implements OnInit {
           const relevantExistingRecords = records.filter((a: AttendanceMonth) => a.student === recordToOverwrite.student
             && a.institution === attendanceType);
           if (relevantExistingRecords.length > 0) {
-            recordToOverwrite.load(relevantExistingRecords[0]);
+            Object.assign(recordToOverwrite, relevantExistingRecords[0]);
             recordToOverwrite.overridden = true;
           }
         });

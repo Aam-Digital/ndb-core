@@ -1,6 +1,6 @@
 import {Component, Inject, Input, OnInit, ViewChild} from '@angular/core';
 import {Note} from '../note';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {ConfirmationDialogService} from '../../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {EntityMapperService} from '../../../entity/entity-mapper.service';
 
@@ -12,7 +12,7 @@ import {EntityMapperService} from '../../../entity/entity-mapper.service';
 export class NoteDetailsComponent implements OnInit {
   @Input() note: Note;
   originalNote: Note;
-  @ViewChild('recordForm') form;
+  @ViewChild('recordForm', { static: true }) form;
   interactionTypes = Note.INTERACTION_TYPES;
 
 
@@ -32,7 +32,7 @@ export class NoteDetailsComponent implements OnInit {
             } else {
               this.cancel();
             }
-        })
+        });
       }
     });
   }
@@ -46,7 +46,7 @@ export class NoteDetailsComponent implements OnInit {
   }
 
   cancel() {
-    this.note = this.note.load(this.originalNote);
+    Object.assign(this.note, this.originalNote);
     this.dialogRef.close(this.note);
   }
 

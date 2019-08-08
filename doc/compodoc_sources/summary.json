@@ -1,0 +1,58 @@
+[
+
+  {
+    "title": "Getting started",
+    "file": "getting_started.md"
+  },
+  {
+    "title": "Contribution Guidelines",
+    "file": "guidelines/Contribution_Guidelines.md",
+    "children": [
+      {
+        "title": "Documentation",
+        "file": "guidelines/documentation.md"
+      },
+      {
+        "title": "Logging errors",
+        "file": "guidelines/Logging-errors.md"
+      },
+      {
+        "title": "Unit Tests",
+        "file": "guidelines/Unit-Tests.md"
+      },
+      {
+        "title": "UX Guidelines",
+        "file": "guidelines/UX-Guidelines.md"
+      },
+      {
+        "title": "Creating new Entity types",
+        "file": "guidelines/Creating-new-Entity-types.md"
+      }
+
+    ]
+  },
+  {
+    "title": "Architecture",
+    "file": "project_structure/Architecture.md",
+    "children": [
+      {
+        "title": "EntitySchema",
+        "file": "project_structure/EntitySchema-System.md"
+      }
+    ]
+  },
+  {
+    "title": "Database",
+    "file": "database/Database.md",
+    "children": [
+      {
+        "title": "Demo Data",
+        "file": "database/Demo-Data.md"
+      }
+    ]
+  },
+  {
+    "title":"Prerequisites",
+    "file": "Prerequisites.md"
+  }
+]

@@ -22,7 +22,7 @@ import { Observable, throwError } from 'rxjs';
 import { Changelog } from './changelog';
 import {AlertService} from '../alerts/alert.service';
 import {HttpClient} from '@angular/common/http';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import {ChangelogComponent} from './changelog/changelog.component';
 import {CookieService} from 'ngx-cookie-service';
 

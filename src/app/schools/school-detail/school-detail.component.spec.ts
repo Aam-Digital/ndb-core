@@ -1,14 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SchoolDetailComponent } from './school-detail.component';
-import {
-  MatCheckboxModule,
-  MatFormFieldModule,
-  MatIconModule,
-  MatSortModule,
-  MatTableModule,
-  MatSnackBar, MatInputModule,
-} from '@angular/material';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {SchoolsService} from '../schools.service';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -21,7 +20,8 @@ import {MockDatabase} from '../../database/mock-database';
 import { Location } from '@angular/common';
 import {Observable} from 'rxjs';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import * as uniqid from 'uniqid'; //  Necessary for usage of uniqid in the component
+import * as uniqid from 'uniqid';
+import {EntitySchemaService} from '../../entity/schema/entity-schema.service'; //  Necessary for usage of uniqid in the component
 
 describe('SchoolDetailComponent', () => {
   let component: SchoolDetailComponent;
@@ -31,10 +31,10 @@ describe('SchoolDetailComponent', () => {
   const mockedLocation = {back: () => null};
   const mockedSnackBar = {open: () => { return {
     onAction: () => Observable.create(observer => observer.next())
-  }}};
+  }; }};
   const mockedConfirmationDialog = { openDialog: () => { return {
       afterClosed: () => Observable.create(observer => observer(false))
-  }}};
+  }; }};
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -52,6 +52,7 @@ describe('SchoolDetailComponent', () => {
       ],
       providers: [
         EntityMapperService,
+        EntitySchemaService,
         SchoolsService,
         AlertService,
         FormBuilder,

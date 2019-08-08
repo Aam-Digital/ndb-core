@@ -19,7 +19,9 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {AlertComponent} from './alert.component';
 import {AlertService} from '../alert.service';
-import {MAT_SNACK_BAR_DATA, MatButtonModule, MatIconModule} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
 import {Alert} from '../alert';
 import {AlertDisplay} from '../alert-display';
 

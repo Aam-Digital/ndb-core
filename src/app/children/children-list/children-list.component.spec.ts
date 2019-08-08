@@ -1,12 +1,17 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ChildrenListComponent } from './children-list.component';
-import {
-  MatButtonModule, MatButtonToggleModule,
-  MatExpansionModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSelectModule, MatSidenavModule,
-  MatSortModule,
-  MatTableModule, MatTooltipModule
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {CommonModule} from '@angular/common';
 import {ChildrenService} from '../children.service';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
@@ -22,6 +27,7 @@ import {FilterPipeModule} from 'ngx-filter-pipe';
 import {AttendanceDaysComponent} from '../attendance/attendance-days/attendance-days.component';
 import {UiHelperModule} from '../../ui-helper/ui-helper.module';
 import {AttendanceDayBlockComponent} from '../attendance/attendance-days/attendance-day-block.component';
+import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 
 describe('ChildrenListComponent', () => {
   let component: ChildrenListComponent;
@@ -53,7 +59,11 @@ describe('ChildrenListComponent', () => {
         ]),
         UiHelperModule,
       ],
-      providers: [ChildrenService, EntityMapperService, { provide: Database, useClass: MockDatabase }],
+      providers: [ChildrenService,
+        EntityMapperService,
+        EntitySchemaService,
+        { provide: Database, useClass: MockDatabase }
+      ],
     })
     .compileComponents();
   }));

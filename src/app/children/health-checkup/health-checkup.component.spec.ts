@@ -8,8 +8,14 @@ import {Child} from '../child';
 import { CommonModule, DatePipe } from '@angular/common';
 import {ChildrenService} from '../children.service';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
-import { MatTableModule, MatSelectModule, MatOptionModule, MatAutocompleteModule, MatFormFieldModule, MatIconModule,
-  MatSnackBar, MatDialog, MatDialogModule } from '@angular/material';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatOptionModule } from '@angular/material/core';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTableModule } from '@angular/material/table';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ConfirmationDialogService } from 'app/ui-helper/confirmation-dialog/confirmation-dialog.service';
 

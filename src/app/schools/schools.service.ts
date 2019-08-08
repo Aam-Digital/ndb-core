@@ -5,12 +5,15 @@ import {from, Observable} from 'rxjs';
 import {ChildSchoolRelation} from '../children/childSchoolRelation';
 import {Database} from '../database/database';
 import {Child} from '../children/child';
-import {ChildWithRelation} from '../children/childWithRelation';
+import {EntitySchemaService} from '../entity/schema/entity-schema.service';
 
 @Injectable()
 export class SchoolsService {
 
-  constructor(private entityMapper: EntityMapperService, private db: Database) {
+  constructor(
+    private entityMapper: EntityMapperService,
+    private entitySchemaService: EntitySchemaService,
+    private db: Database) {
   }
 
   getSchools(): Observable<School[]> {
@@ -26,18 +29,18 @@ export class SchoolsService {
       .then(loadedEntities => {
         return loadedEntities.rows.map(loadedRecord => {
           const entity = new ChildSchoolRelation('');
-          entity.load(loadedRecord.doc);
+          this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
           return entity;
         });
       });
   }
 
-  async getChildrenForSchool(schoolId: string): Promise<ChildWithRelation[]> {
+  async getChildrenForSchool(schoolId: string): Promise<Child[]> {
     const relations = await this.queryRelationsOfSchool(schoolId);
-    const children: ChildWithRelation[] = [];
+    const children: Child[] = [];
     for (const relation of relations) {
       const child = await this.entityMapper.load<Child>(Child, relation.childId);
-      children.push(new ChildWithRelation(child, relation));
+      children.push(child);
     }
     return children;
   }

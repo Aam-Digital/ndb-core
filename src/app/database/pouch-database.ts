@@ -18,6 +18,7 @@
 import {Database} from './database';
 import {AlertService} from '../alerts/alert.service';
 import {AlertDisplay} from '../alerts/alert-display';
+import {LoggingService} from '../logging/logging.service';
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -29,11 +30,13 @@ import {AlertDisplay} from '../alerts/alert-display';
 export class PouchDatabase extends Database {
 
   constructor(private _pouchDB: any,
-              private alertService: AlertService) {
+              private alertService: AlertService,
+  ) {
     super();
   }
 
   get(id: string) {
+    this.alertService.addDebug('DB_READ');
     return this._pouchDB.get(id)
       .catch((err) => {
         this.notifyError(err);
@@ -42,6 +45,7 @@ export class PouchDatabase extends Database {
   }
 
   allDocs(options?: any) {
+    this.alertService.addDebug('DB_READ');
     return this._pouchDB.allDocs(options).then(result => {
       const resultArray = [];
       for (const row of result.rows) {
@@ -52,12 +56,14 @@ export class PouchDatabase extends Database {
   }
 
   allDocsRaw(options?: any) {
+    this.alertService.addDebug('DB_READ');
     return this._pouchDB.allDocs(options).then(result => {
       return result;
     });
   }
 
   put(object: any, forceOverwrite?: boolean) {
+    this.alertService.addDebug('DB_WRITE');
     const options: any = {};
     // if (forceOverwrite) {
     //   options.force = true;
@@ -83,6 +89,7 @@ export class PouchDatabase extends Database {
   }
 
   query(fun: (doc: any, emit: any) => void, options: any): Promise<any> {
+    this.alertService.addDebug('DB_READ');
     return this._pouchDB.query(fun, options);
   }
 
@@ -92,7 +99,7 @@ export class PouchDatabase extends Database {
         if (JSON.stringify(existingDoc.views) !== JSON.stringify(designDoc.views)) {
           designDoc._rev = existingDoc._rev;
           this.alertService.addDebug('replacing existing database index');
-          return this.put(designDoc)
+          return this.put(designDoc);
         }
       })
       .catch(err => {

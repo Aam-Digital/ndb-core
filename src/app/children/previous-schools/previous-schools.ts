@@ -29,13 +29,13 @@ export class PreviousSchools extends Entity {
   to: Date;
 
 
-  public load(data: any) {
-    if (data.date !== undefined && typeof data.date !== typeof new Date()) {
-      data.date = new Date(data.date);
-    }
+  // public load(data: any) {
+  //   if (data.date !== undefined && typeof data.date !== typeof new Date()) {
+  //     data.date = new Date(data.date);
+  //   }
 
-    return super.load(data);
-  }
+  //   return super.load(data);
+  // }
 
 
 }

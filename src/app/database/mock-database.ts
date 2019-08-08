@@ -58,33 +58,41 @@ export class MockDatabase extends Database {
     return Promise.resolve(result);
   }
 
-  put(object: any, forceUpdate?: boolean) {
-    let result;
-
-    // check if unintentionally (no _rev) a duplicate _id is used
+  async put(object: any, forceUpdate?: boolean) {
     if (this.exists(object._id)) {
-      if (!object._rev) {
-        return Promise.reject({ 'message': '_id already exists'});
-      } else {
-        result = this.overwriteExisting(object);
-      }
+      return this.overwriteExisting(object);
     } else {
-      object._rev = true;
-      result = Promise.resolve(this.data.push(object));
+      object._rev = 'x';
+      this.data.push(object);
+      return Promise.resolve(this.generateWriteResponse(object));
     }
-
-    return result;
   }
 
-  private overwriteExisting(object: any): Promise<any> {
+  private async overwriteExisting(object: any): Promise<any> {
+    const existingObject = await this.get(object._id);
+
+    if (object._rev !== existingObject._rev) {
+      return Promise.reject({ 'message': '_id already exists'});
+    }
+
     const index = this.data.findIndex(e => e._id === object._id);
     if (index > -1) {
+      object._rev = object._rev + 'x';
       this.data[index] = object;
-      return Promise.resolve(object);
+      return Promise.resolve(this.generateWriteResponse(object));
     } else {
       return Promise.reject({ 'message': 'failed to overwrite existing object'});
     }
   }
+
+  private generateWriteResponse(writtenObject: any) {
+    return {
+      'ok': true,
+      'id': writtenObject._id,
+      'rev': writtenObject._rev,
+    };
+  }
+
 
   remove(object: any) {
     if (!this.exists(object._id)) {
@@ -156,11 +164,11 @@ export class MockDatabase extends Database {
         return this.getAll().then(results => {
           results = results.filter(filter);
           results = results.reduce(reduce, []);
-          return { rows: results }
+          return { rows: results };
         });
       } else {
         return this.getAll().then(results => {
-          return { rows: results.filter(filter).map(e => { return {doc: e} } ) }
+          return { rows: results.filter(filter).map(e => { return {doc: e}; } ) };
         });
       }
     }
@@ -180,13 +188,13 @@ export class MockDatabase extends Database {
           return aValue < bValue ? 1 : aValue === bValue ? 0 : -1;
         });
         const filtered: ChildSchoolRelation[] = sorted.filter(doc => doc.childId === childId);
-        let results: {doc: ChildSchoolRelation}[] = filtered.map(relation => { return {doc: relation} });
+        let results: {doc: ChildSchoolRelation}[] = filtered.map(relation => { return {doc: relation}; });
         if (limit) {
-          results = results.slice(0, limit)
+          results = results.slice(0, limit);
         }
         resolve({rows: results});
-      })
-    })
+      });
+    });
   }
 
   /**
@@ -203,7 +211,7 @@ export class MockDatabase extends Database {
     while (res.length < length) {
       res = '0' + res;
     }
-    return res
+    return res;
   }
 
   private isWithinLastMonths(date: Date, now: Date, numberOfMonths: number): boolean {
