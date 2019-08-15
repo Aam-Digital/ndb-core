@@ -30,6 +30,9 @@ import {ChildrenService} from '../children.service';
 import {School} from '../../schools/school';
 import { BlobServiceService } from 'app/webdav/blob-service.service';
 
+import { SafeUrl } from '@angular/platform-browser';
+import { buffer } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-child-details',
@@ -53,7 +56,7 @@ export class ChildDetailsComponent implements OnInit {
   eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
   vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
 
-  image: any;
+  image: SafeUrl;
 
   constructor(private entityMapperService: EntityMapperService,
               private childrenService: ChildrenService,
@@ -122,7 +125,7 @@ export class ChildDetailsComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
     this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
-    // this.image = 'http://localhost/remote.php/dav/files/nextclouduser/default.png';
+    this.image = 'assets/child.png';
   }
 
   async loadChild(id: string) {
@@ -138,16 +141,10 @@ export class ChildDetailsComponent implements OnInit {
           this.initForm();
           this.entityMapperService.load<School>(School, this.child.schoolId)
             .then(school => this.currentSchool = school);
+          // TODO: use entity.photoFile instead
+          this.blobService.getImage(this.child.getId().replace('child:', ''))
+            .then(arr => this.image = this.blobService.bufferArrayToBase64(arr));
         });
-          // the id string for a child, whith id 123, is "child:123".
-          // Currently we save images as "123.jpg", so we need to strip the "child:".
-          // (special characters seem to cause problems with webdav/nextcloud...)
-      try {
-        this.image = await this.blobService.getImage(this.child.getId().replace('child:', ''));
-      } catch (error) {
-        console.log(error);
-        // TODO
-      }
     }
   }
 
