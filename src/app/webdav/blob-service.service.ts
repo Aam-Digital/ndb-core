@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AppConfig } from '../app-config/app-config';
 import webdav from 'webdav';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ import webdav from 'webdav';
 export class BlobServiceService {
 
   private client: any;
-  constructor() {
+  constructor(private domSanitizer: DomSanitizer) {
     // const { createClient } = require("webdav");
 
     this.client = webdav.createClient(
@@ -50,7 +51,10 @@ export class BlobServiceService {
    * returns a download link for an image
    * @param path path of the image on server
    */
-  public getImageDownloadLink(path: string): string {
-    return this.client.getFileDownloadLink(path);
+  public bufferArrayToBase64(arrayBuffer: ArrayBuffer): SafeUrl{
+    const TYPED_ARRAY = new Uint8Array(arrayBuffer);
+    const STRING_CHAR = String.fromCharCode.apply(null, TYPED_ARRAY);
+    const base64String = btoa(STRING_CHAR);
+    return this.domSanitizer.bypassSecurityTrustUrl('data:image/jpg;base64,' + base64String);
   }
 }
