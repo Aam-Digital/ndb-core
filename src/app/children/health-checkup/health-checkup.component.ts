@@ -17,6 +17,7 @@ export class HealthCheckupComponent implements OnInit {
   /**
    * Column Description for the SubentityRecordComponent
    * The Date-Column needs to be transformed to apply the MathFormCheck in the SubentityRecordComponent
+   * BMI is rounded to 2 decimal digits 
    */
   columns: Array<ColumnDescription> = [
     new ColumnDescription('date', 'Date', 'date', null,
@@ -25,6 +26,8 @@ export class HealthCheckupComponent implements OnInit {
     (height: Number) => height + ' cm' ),
     new ColumnDescription('weight', 'Weight [kg]', 'number', null,
     (weight: Number) => weight + ' kg'),
+    new ColumnDescription('bmi', 'BMI', 'number', null,
+    (bmi: Number) => bmi.toFixed(2)),
   ];
   childId: string;
   constructor(private route: ActivatedRoute, private childrenService: ChildrenService, private datePipe: DatePipe ) { }
