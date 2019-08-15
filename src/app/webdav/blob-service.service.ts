@@ -21,9 +21,13 @@ export class BlobServiceService {
     );
   }
 
-  public async getDir() {
+  /**
+   * Returns the content of '/' + path
+   * @param path path without leading '/'
+   */
+  public async getDir(path) {
     try {
-      const contents = await this.client.getDirectoryContents('');
+      const contents = await this.client.getDirectoryContents(path);
       console.log(JSON.stringify(contents, undefined, 4));
     } catch (error) {
       console.log(error);
@@ -43,7 +47,11 @@ export class BlobServiceService {
     );
   }
 
-  public async getImage(path: string): Promise<any> {
+  /**
+   * Returns a Promise which resolves as an ArrayBuffer of the file located at the given path
+   * @param path 
+   */
+  public async getImage(path: string): Promise<ArrayBuffer> {
     return this.client.getFileContents(path);
   }
 
@@ -53,6 +61,10 @@ export class BlobServiceService {
   public async getDefaultImage(): Promise<ArrayBuffer> {
     return this.client.getFileContents('default.png');
   }
+
+  /**
+   * converts an ArrayBuffer to a SafeUrl and returns it
+   * @param arrayBuffer ArrayBuffer to be converted
    */
   public bufferArrayToBase64(arrayBuffer: ArrayBuffer): SafeUrl{
     const TYPED_ARRAY = new Uint8Array(arrayBuffer);
