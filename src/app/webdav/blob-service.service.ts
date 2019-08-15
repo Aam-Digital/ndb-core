@@ -48,8 +48,11 @@ export class BlobServiceService {
   }
 
   /**
-   * returns a download link for an image
-   * @param path path of the image on server
+   * Returns a Promise which resolves as an ArrayBuffer of the default child image
+   */
+  public async getDefaultImage(): Promise<ArrayBuffer> {
+    return this.client.getFileContents('default.png');
+  }
    */
   public bufferArrayToBase64(arrayBuffer: ArrayBuffer): SafeUrl{
     const TYPED_ARRAY = new Uint8Array(arrayBuffer);
