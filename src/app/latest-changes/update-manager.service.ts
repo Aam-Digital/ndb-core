@@ -45,7 +45,7 @@ export class UpdateManagerService {
     const everyHours$ = interval(60 * 60 * 1000);
     const everyHoursOnceAppIsStable$ = concat(appIsStable$, everyHours$);
 
-    everyHoursOnceAppIsStable$.subscribe(() => this.updates.checkForUpdate());
+    everyHoursOnceAppIsStable$.subscribe(() => this.updates.checkForUpdate().catch(() => {}));
   }
 
 
