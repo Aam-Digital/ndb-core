@@ -33,4 +33,8 @@ export class HealthCheck extends Entity {
 
   /** weight measurement in kg **/
   @DatabaseField() weight: number;
+
+  get bmi(): number { 
+    return (this.weight/((this.height/100)*(this.height/100)));
+  }
 }
