@@ -29,9 +29,7 @@ import {AlertService} from '../../alerts/alert.service';
 import {ChildrenService} from '../children.service';
 import {School} from '../../schools/school';
 import { BlobServiceService } from 'app/webdav/blob-service.service';
-
 import { SafeUrl } from '@angular/platform-browser';
-import { buffer } from 'rxjs/operators';
 
 
 @Component({
