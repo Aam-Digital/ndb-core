@@ -28,6 +28,7 @@ import * as uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
 import {ChildrenService} from '../children.service';
 import {School} from '../../schools/school';
+import {MessageModule} from 'primeng/message';
 
 
 @Component({
@@ -46,6 +47,8 @@ export class ChildDetailsComponent implements OnInit {
   creatingNew = false;
   editing = false;
   gender = Gender;
+  nameinvalid: boolean;
+  centerinvalid: boolean;
 
   genders = Gender;
   documentStatus = ['OK (copy with us)', 'OK (copy needed for us)', 'needs correction', 'applied', 'doesn\'t have', 'not eligible', ''];
@@ -160,7 +163,15 @@ export class ChildDetailsComponent implements OnInit {
       })
       .catch((err) => this.alertService.addDanger('Could not save Child "' + this.child.name + '": ' + err));
   } else {
-    this.alertService.addDanger('Form ist not valid!!');
+    let errorstring = 'Form is not valid: \n';
+    if(this.form.get('name').invalid){
+      errorstring += 'Name is required '
+    }
+    if(this.form.get('center').invalid){
+      errorstring += ' | Center is required \n';
+    }
+    this.alertService.addDanger(errorstring);
+    console.log(errorstring);
   }
 }
 
