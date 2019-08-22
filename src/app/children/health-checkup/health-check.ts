@@ -40,9 +40,9 @@ export class HealthCheck extends Entity {
   }
 
   getWarningLevel() {
-    if (this.bmi <= 16 || this.bmi >=30) {
+    if (this.bmi <= 16 || this.bmi >= 30) {
       return WarningLevel.URGENT;
-    } else if (this.bmi  >= 18 && this.bmi <=25) {
+    } else if (this.bmi  >= 18 && this.bmi <= 25) {
       return WarningLevel.OK;
     } else {
       return WarningLevel.WARNING;
