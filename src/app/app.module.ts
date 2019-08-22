@@ -45,10 +45,12 @@ import {environment} from '../environments/environment';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import {AdminModule} from './admin/admin.module';
 import {CookieService} from 'ngx-cookie-service';
+import { HelpComponent } from './help/help.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    HelpComponent
   ],
   imports: [
     ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
@@ -93,6 +95,7 @@ export class AppModule {
     _navigationItemsService.addMenuItem(new MenuItem('Notes', 'file-text', ['/note']));
     _navigationItemsService.addMenuItem(new MenuItem('Attendance Register', 'table', ['/attendance']));
     _navigationItemsService.addMenuItem(new MenuItem('Admin', 'wrench', ['/admin'], true));
+    _navigationItemsService.addMenuItem(new MenuItem('Help', 'help',['/help']));
   }
 }
 
