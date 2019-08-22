@@ -131,7 +131,6 @@ export class ChildDetailsComponent implements OnInit {
       this.creatingNew = true;
       this.editing = true;
       this.child = new Child(uniqid());
-      this.initForm();
     } else {
       this.childrenService.getChild(id)
         .subscribe(child => {
@@ -144,6 +143,7 @@ export class ChildDetailsComponent implements OnInit {
             .then(arr => this.image = this.blobService.bufferArrayToBase64(arr));
         });
     }
+    this.initForm();
   }
 
   switchEdit() {
