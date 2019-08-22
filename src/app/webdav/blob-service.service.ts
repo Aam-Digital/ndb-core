@@ -58,7 +58,7 @@ export class BlobServiceService {
 
   /**
    * Returns a Promise which resolves as an ArrayBuffer of the file located at the given path
-   * @param path 
+   * @param path
    */
   public async getImage(path: string): Promise<ArrayBuffer> {
     return this.client.getFileContents(path);
@@ -75,7 +75,7 @@ export class BlobServiceService {
    * converts an ArrayBuffer to a SafeUrl and returns it
    * @param arrayBuffer ArrayBuffer to be converted
    */
-  public bufferArrayToBase64(arrayBuffer: ArrayBuffer): SafeUrl{
+  public bufferArrayToBase64(arrayBuffer: ArrayBuffer): SafeUrl {
     const TYPED_ARRAY = new Uint8Array(arrayBuffer);
     const STRING_CHAR = String.fromCharCode.apply(null, TYPED_ARRAY);
     const base64String = btoa(STRING_CHAR);
