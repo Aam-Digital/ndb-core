@@ -138,8 +138,7 @@ export class ChildDetailsComponent implements OnInit {
           this.initForm();
           this.entityMapperService.load<School>(School, this.child.schoolId)
             .then(school => this.currentSchool = school);
-          // TODO: use entity.photoFile instead
-          this.blobService.getImage(this.child.getId().replace('child:', ''))
+          this.blobService.getImage(this.child.photoFile)
             .then(arr => this.image = this.blobService.bufferArrayToBase64(arr));
         });
     }
@@ -149,6 +148,9 @@ export class ChildDetailsComponent implements OnInit {
   switchEdit() {
     this.editing = !this.editing;
     this.initForm();
+    // reload child picture
+    this.blobService.getImage(this.child.photoFile)
+            .then(arr => this.image = this.blobService.bufferArrayToBase64(arr));
   }
 
   save() {
@@ -201,7 +203,7 @@ export class ChildDetailsComponent implements OnInit {
    */
   uploadChildPhoto(event) {
     console.log(event);
-    this.blobService.setImage(event.target.files[0], this.child.getId().replace('child:', ''));
+    this.blobService.setImage(event.target.files[0], this.child.photoFile);
     this.child.photoFile = this.child.getId();
   }
 }

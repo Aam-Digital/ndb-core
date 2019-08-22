@@ -29,7 +29,7 @@ export class ChildBlockComponent implements OnInit {
       });
     }
     // TODO: use entity.photoFile
-    this.blobService.getImage(this.entity.getId().replace('child:', ''))
+    this.blobService.getImage(this.entity.photoFile)
     .then( arrayBuffer => this.image = this.blobService.bufferArrayToBase64(arrayBuffer));
   }
 
