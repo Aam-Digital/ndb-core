@@ -25,7 +25,7 @@ export class BlobServiceService {
    * Returns the content of '/' + path
    * @param path path without leading '/'
    */
-  public async getDir(path) {
+  public async getDir(path: string) {
     try {
       const contents = await this.client.getDirectoryContents(path);
       console.log(JSON.stringify(contents, undefined, 4));
@@ -34,13 +34,22 @@ export class BlobServiceService {
     }
   }
 
+
+  /**
+  * creates new directory
+  * @param path path to directory to be created
+  */
+  public async createDir(path: string) {
+    this.client.createDirectory(path);
+  }
+
   /**
    * Uploads a given image to the nextcloud server.
    * @param imageFile Image to be stored
    * @param path path where the image will be stored
    */
   public async setImage(imageFile: any, path: string) {
-    await this.client.putFileContents(path, imageFile,
+    this.client.putFileContents(path, imageFile,
       {onUploadProgress: progress => {
       console.log(`Uploaded ${progress.loaded} bytes of ${progress.total}`);
       }}
