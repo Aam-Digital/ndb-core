@@ -19,7 +19,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {APP_INITIALIZER, NgModule} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import {HttpClient, HttpClientModule} from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { UiModule } from './ui/ui.module';
@@ -46,6 +46,7 @@ import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import {AdminModule} from './admin/admin.module';
 import {CookieService} from 'ngx-cookie-service';
 import { HelpComponent } from './help/help.component';
+import { MarkdownModule} from 'ngx-markdown';
 
 @NgModule({
   declarations: [
@@ -74,6 +75,7 @@ import { HelpComponent } from './help/help.component';
     SchoolsModule,
     AdminModule,
     MatIconModule,
+    MarkdownModule.forRoot({loader: HttpClient}),
   ],
   providers: [
     AppConfig,
@@ -95,7 +97,7 @@ export class AppModule {
     _navigationItemsService.addMenuItem(new MenuItem('Notes', 'file-text', ['/note']));
     _navigationItemsService.addMenuItem(new MenuItem('Attendance Register', 'table', ['/attendance']));
     _navigationItemsService.addMenuItem(new MenuItem('Admin', 'wrench', ['/admin'], true));
-    _navigationItemsService.addMenuItem(new MenuItem('Help', 'help',['/help']));
+    _navigationItemsService.addMenuItem(new MenuItem('Help', 'help', ['/help']));
   }
 }
 
