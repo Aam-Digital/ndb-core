@@ -164,10 +164,10 @@ export class ChildDetailsComponent implements OnInit {
       .catch((err) => this.alertService.addDanger('Could not save Child "' + this.child.name + '": ' + err));
   } else {
     let errorstring = 'Form is not valid: \n';
-    if(this.form.get('name').invalid){
-      errorstring += 'Name is required '
+    if (this.form.get('name').invalid) {
+      errorstring += 'Name is required ';
     }
-    if(this.form.get('center').invalid){
+    if (this.form.get('center').invalid) {
       errorstring += ' | Center is required \n';
     }
     this.alertService.addDanger(errorstring);
