@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-help',
-  templateUrl: './help.component.html',
-  styleUrls: ['./help.component.scss']
+  templateUrl: './how_to.component.html',
+  styleUrls: ['./how_to.component.scss']
 })
-export class HelpComponent implements OnInit {
+export class HowToComponent implements OnInit {
 
   constructor() { }
 

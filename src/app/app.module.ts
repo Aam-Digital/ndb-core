@@ -45,13 +45,11 @@ import {environment} from '../environments/environment';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import {AdminModule} from './admin/admin.module';
 import {CookieService} from 'ngx-cookie-service';
-import { HelpComponent } from './help/help.component';
-import { MarkdownModule} from 'ngx-markdown';
+import {HelpModule} from './help/help.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HelpComponent
   ],
   imports: [
     ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
@@ -75,7 +73,7 @@ import { MarkdownModule} from 'ngx-markdown';
     SchoolsModule,
     AdminModule,
     MatIconModule,
-    MarkdownModule.forRoot({loader: HttpClient}),
+    HelpModule,
   ],
   providers: [
     AppConfig,
