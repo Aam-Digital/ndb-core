@@ -55,4 +55,5 @@ export enum ColumnDescriptionInputType {
   SELECT = 'select',
   AUTOCOMPLETE = 'autocomplete',
   FUNCTION = 'function',
+  READONLY = 'readonly',
 }
