@@ -26,7 +26,7 @@ export class HealthCheckupComponent implements OnInit {
     (height: Number) => height + ' cm' ),
     new ColumnDescription('weight', 'Weight [kg]', ColumnDescriptionInputType.NUMBER, null,
     (weight: Number) => weight + ' kg'),
-    new ColumnDescription('bmi', 'BMI', ColumnDescriptionInputType.NUMBER, null,
+    new ColumnDescription('bmi', 'BMI', ColumnDescriptionInputType.READONLY, null,
     (bmi: Number) => bmi.toFixed(2)),
   ];
   childId: string;
