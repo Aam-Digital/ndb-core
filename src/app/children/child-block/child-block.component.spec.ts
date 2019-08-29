@@ -10,6 +10,7 @@ import {MockDatabase} from '../../database/mock-database';
 import {ChildrenService} from '../children.service';
 import {Database} from '../../database/database';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
+import { SessionService } from 'app/session/session.service';
 
 describe('ChildBlockComponent', () => {
   let component: ChildBlockComponent;
@@ -25,6 +26,7 @@ describe('ChildBlockComponent', () => {
         EntitySchemaService,
         ChildrenService,
         {provide: Database, useClass: MockDatabase},
+        SessionService
       ],
     })
     .compileComponents();
