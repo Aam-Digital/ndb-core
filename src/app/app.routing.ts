@@ -30,7 +30,7 @@ import {NotesManagerComponent} from './children/notes/notes-manager/notes-manage
 import {AddMonthAttendanceComponent} from './children/attendance/add-month-attendance/add-month-attendance.component';
 import {AddDayAttendanceComponent} from './children/attendance/add-day-attendance/add-day-attendance.component';
 import {AttendanceManagerComponent} from './children/attendance/attendance-manager/attendance-manager.component';
-import {HowToComponent} from './help/how_to/how-to.component';
+import {HowToComponent} from './help/how-to/how-to.component';
 
 export const routes: Routes = [
   {path: '', component: DashboardComponent},

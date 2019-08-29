@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {HowToComponent} from './how_to/how-to.component';
+import {HowToComponent} from './how-to/how-to.component';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import { MarkdownModule} from 'ngx-markdown';
 
