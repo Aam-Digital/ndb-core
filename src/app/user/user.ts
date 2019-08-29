@@ -48,16 +48,16 @@ export class User extends Entity {
     this.password = {'hash': hash, 'salt': cryptSalt, 'iterations': cryptIterations, 'keysize': cryptKeySize};
 
     // update encrypted nextcloud password
-    this.blobPasswordEnc = CryptoJS.AES.encrypt(this.blobPasswordDec, password);
+    this.blobPasswordEnc = CryptoJS.AES.encrypt(this.blobPasswordDec, password).toString();
   }
 
   public checkPassword(givenPassword: string): boolean {
     // compares given password to the stored one of this user
     // therefore hashes the given password string and compares it with the sored hash
-    if  (this.hashPassword(givenPassword) === this.password.hash){
+    if  (this.hashPassword(givenPassword) === this.password.hash) {
       this.decryptBlobPassword(givenPassword);
     }
-    return;
+    return (this.hashPassword(givenPassword) === this.password.hash);
   }
 
   private hashPassword(givenPassword: string): string {
@@ -69,7 +69,13 @@ export class User extends Entity {
   }
 
   private decryptBlobPassword(givenPassword: string){
-    this.blobPasswordDec = CryptoJS.AES.decrypt(this.blobPasswordEnc.toString(), givenPassword).toString();
+    this.blobPasswordDec = CryptoJS.AES.decrypt(this.blobPasswordEnc.toString(), givenPassword).toString(CryptoJS.enc.Utf8);
+  }
+
+  public setBlobPassword(blobPassword: string, givenPassword: string) {
+    if (this.checkPassword(givenPassword)) {
+      this.blobPasswordEnc = CryptoJS.AES.encrypt(blobPassword, givenPassword).toString();
+    }
   }
 
   public isAdmin(): boolean {
