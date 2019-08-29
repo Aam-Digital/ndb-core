@@ -12,4 +12,8 @@ export class HowToComponent implements OnInit {
   ngOnInit() {
   }
 
+  onError() {
+
+  }
+
 }

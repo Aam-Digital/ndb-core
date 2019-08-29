@@ -1,7 +1,7 @@
 # How to?
 ## This document should help you as a user to understand all functionalities of the application.
 
-##Introduction
+## Introduction
 After logging in you will be navigated to the dashboard screen.
 Here you see the navigation at the left border and some fancy dashboards in the content area.
 They give you some information about children and can be defined by you, but later more about that (Verlinkung section Dashboard).
@@ -9,9 +9,9 @@ In the navigation you can choose between the different sections (Dashboard, Chil
 
 In the following the apps' basic functions are explained step by step.
 
-##Children
+## Children
 To enter the Children section click on the button in the navigation. You will be navigated to the Children List Screen.
-###... create a child?
+### ... create a child?
 1. On the Children List Screen click on the button with the plus (and the text "Add New") at the upper right side.
   This will open an empty child view
 
@@ -38,9 +38,9 @@ If you did everything right the child view will open.
 
 3. Click on the button "Delete" in the top right corner and confirm that you want to delete the child by selection yes on the popup.
 
-##Schools
+## Schools
 To enter the Schools section click on the button in the navigation. You will be navigated to the School List Screen.
-###... create a school?
+### ... create a school?
 1. On the School List Screen click on the button with the plus (and the text "Add New") at the upper right side.
   This will open an empty school view
 
@@ -64,9 +64,9 @@ You can see that saving was successful when the school's name is the headline.
 3. Click on the button "Delete" in the top right corner and confirm that you want to delete the school by selection yes on the popup.
 
 
-##Notes
+## Notes
 To enter the Notes section click on the button in the navigation. You will be navigated to the Notes List Screen.
-###... create a note?
+### ... create a note?
 1. On the Note List Screen click on the button with the plus (and the text "Add New") at the upper right side.
   This will open an pop up.
 
@@ -74,7 +74,7 @@ To enter the Notes section click on the button in the navigation. You will be na
 After this click "Save" in the low left corner.
 You can see that saving was successful when you leave the section and reenter it.
 
-###... edit a note?
+### ... edit a note?
 1. On the Note List Screen search for the note you want to edit and click on the corresponding entry in the list.
 
 2. Now edit the attributes you want to and press "Save" in the low left corner to save your changes
@@ -83,7 +83,7 @@ If you want to discard your changes click "Cancel".
 ### ... delete a school?
 You can not delete a note.
 
-##Attendance Register
+## Attendance Register
 To enter the Attendance Register section click on the button in the navigation. You will be navigated to the Notes List Screen.
 
 ### Add daily attendance
