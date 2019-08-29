@@ -21,6 +21,7 @@ import {EntityModule} from '../../../entity/entity.module';
 import {RouterTestingModule} from '@angular/router/testing';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {AttendanceDayBlockComponent} from '../attendance-days/attendance-day-block.component';
+import { SessionService } from 'app/session/session.service';
 
 describe('AttendanceDetailsComponent', () => {
   let component: AttendanceDetailsComponent;
@@ -50,7 +51,14 @@ describe('AttendanceDetailsComponent', () => {
     fixture = TestBed.createComponent(AttendanceDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    TestBed.configureTestingModule({
+      providers: [
+        SessionService
+      ],
+    })
+    .compileComponents();
   });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();
