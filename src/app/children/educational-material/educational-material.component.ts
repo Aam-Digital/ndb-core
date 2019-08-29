@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {DatePipe} from '@angular/common';
 import {EducationalMaterial} from './educational-material';
-import {ColumnDescription} from '../../ui-helper/entity-subrecord/column-description';
+import {ColumnDescription, ColumnDescriptionInputType} from '../../ui-helper/entity-subrecord/column-description';
 import {ChildrenService} from '../children.service';
 
 
@@ -18,12 +18,12 @@ export class EducationalMaterialComponent implements OnInit {
   materialTypes = EducationalMaterial.MATERIAL_ALL;
 
   columns: Array<ColumnDescription> = [
-    new ColumnDescription('date', 'Date', 'date', null,
+    new ColumnDescription('date', 'Date', ColumnDescriptionInputType.DATE, null,
       (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd'), 'xs'),
-    new ColumnDescription('materialType', 'Material', 'autocomplete',
+    new ColumnDescription('materialType', 'Material', ColumnDescriptionInputType.AUTOCOMPLETE,
       this.materialTypes.map(t => { return { value: t, label: t }; }), undefined, 'xs'),
-    new ColumnDescription('materialAmount', 'Amount', 'number', null, undefined, 'md'),
-    new ColumnDescription('description', 'Description/Remarks', 'text', null, undefined, 'md'),
+    new ColumnDescription('materialAmount', 'Amount', ColumnDescriptionInputType.NUMBER, null, undefined, 'md'),
+    new ColumnDescription('description', 'Description/Remarks', ColumnDescriptionInputType.TEXT, null, undefined, 'md'),
   ];
 
   constructor(private route: ActivatedRoute,
