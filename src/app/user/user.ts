@@ -68,7 +68,7 @@ export class User extends Entity {
     return CryptoJS.PBKDF2(givenPassword, this.password.salt, options).toString();
   }
 
-  private decryptBlobPassword(givenPassword: string){
+  private decryptBlobPassword(givenPassword: string) {
     this.blobPasswordDec = CryptoJS.AES.decrypt(this.blobPasswordEnc.toString(), givenPassword).toString(CryptoJS.enc.Utf8);
   }
 
