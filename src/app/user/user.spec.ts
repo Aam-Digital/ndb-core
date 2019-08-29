@@ -53,6 +53,7 @@ describe('User', () => {
       name: 'tester',
       admin: true,
       password: undefined,
+      blobPasswordEnd: undefined,
 
       searchIndices: [],
     };
