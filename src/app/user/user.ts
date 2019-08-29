@@ -29,7 +29,13 @@ export class User extends Entity {
 
   @DatabaseField()
   private password: any;
+  //
+  @DatabaseField()
+  private blobPasswordEnc: any;
+  // nextCloud password that gets encrypted during session
+  public blobPasswordDec: any;
 
+  // TODO: nextCloud password change for admin
   public setNewPassword(password: string) {
     const cryptKeySize = 256 / 32;
     const cryptIterations = 128;
@@ -40,12 +46,18 @@ export class User extends Entity {
     }).toString();
 
     this.password = {'hash': hash, 'salt': cryptSalt, 'iterations': cryptIterations, 'keysize': cryptKeySize};
+
+    // update encrypted nextcloud password
+    this.blobPasswordEnc = CryptoJS.AES.encrypt(this.blobPasswordDec, password);
   }
 
   public checkPassword(givenPassword: string): boolean {
     // compares given password to the stored one of this user
     // therefore hashes the given password string and compares it with the sored hash
-    return (this.hashPassword(givenPassword) === this.password.hash);
+    if  (this.hashPassword(givenPassword) === this.password.hash){
+      this.decryptBlobPassword(givenPassword);
+    }
+    return;
   }
 
   private hashPassword(givenPassword: string): string {
@@ -56,6 +68,9 @@ export class User extends Entity {
     return CryptoJS.PBKDF2(givenPassword, this.password.salt, options).toString();
   }
 
+  private decryptBlobPassword(givenPassword: string){
+    this.blobPasswordDec = CryptoJS.AES.decrypt(this.blobPasswordEnc.toString(), givenPassword).toString();
+  }
 
   public isAdmin(): boolean {
     return this.admin;

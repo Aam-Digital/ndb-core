@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AppConfig } from '../app-config/app-config';
 import webdav from 'webdav';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { SessionService } from 'app/session/session.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,14 +10,15 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 export class BlobServiceService {
 
   private client: any;
-  constructor(private domSanitizer: DomSanitizer) {
+  constructor(private domSanitizer: DomSanitizer,
+    private sessionService: SessionService) {
     // const { createClient } = require("webdav");
 
     this.client = webdav.createClient(
       AppConfig.settings.webdav.remote_url,
       {
-        username: AppConfig.settings.webdav.username,
-        password: AppConfig.settings.webdav.password
+        username: 'nextclouduser',
+        password: this.sessionService.getCurrentUser().blobPasswordDec
       }
     );
   }
