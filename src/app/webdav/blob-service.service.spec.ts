@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 
-import { BlobServiceService } from './blob-service.service';
+import { BlobService } from './blob-service.service';
 import { SessionService } from 'app/session/session.service';
 
-describe('BlobServiceService', () => {
+describe('BlobService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   beforeEach(async(() => {
@@ -16,7 +16,7 @@ describe('BlobServiceService', () => {
   }));
 
   it('should be created', () => {
-    const service: BlobServiceService = TestBed.get(BlobServiceService);
+    const service: BlobService = TestBed.get(BlobService);
     expect(service).toBeTruthy();
   });
 });

@@ -7,7 +7,7 @@ import { SessionService } from 'app/session/session.service';
 @Injectable({
   providedIn: 'root'
 })
-export class BlobServiceService {
+export class BlobService {
 
   private client: any;
   constructor(private domSanitizer: DomSanitizer,

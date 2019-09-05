@@ -28,7 +28,7 @@ import * as uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
 import {ChildrenService} from '../children.service';
 import {School} from '../../schools/school';
-import { BlobServiceService } from 'app/webdav/blob-service.service';
+import { BlobService } from 'app/webdav/blob-service.service';
 import { SafeUrl } from '@angular/platform-browser';
 
 
@@ -65,7 +65,7 @@ export class ChildDetailsComponent implements OnInit {
               private snackBar: MatSnackBar,
               private confirmationDialog: ConfirmationDialogService,
               private alertService: AlertService,
-              private blobService: BlobServiceService
+              private blobService: BlobService
   ) { }
 
   // TODO: is this generateNewRecordFactory() used at all?

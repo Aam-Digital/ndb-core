@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BlobServiceService } from './blob-service.service';
+import { BlobService } from './blob-service.service';
 
 @NgModule({
   declarations: [],
@@ -8,7 +8,7 @@ import { BlobServiceService } from './blob-service.service';
     CommonModule
   ],
   providers: [
-    BlobServiceService
+    BlobService
   ]
 })
 export class WebdavModule { }

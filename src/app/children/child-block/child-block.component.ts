@@ -1,7 +1,7 @@
 import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {ChildrenService} from '../children.service';
-import { BlobServiceService } from 'app/webdav/blob-service.service';
+import { BlobService } from 'app/webdav/blob-service.service';
 import {Child} from '../child';
 import { SafeUrl } from '@angular/platform-browser';
 
@@ -19,7 +19,7 @@ export class ChildBlockComponent implements OnInit {
   image: SafeUrl = 'assets/child.png';
 
   constructor(private router: Router,
-              private blobService: BlobServiceService,
+              private blobService: BlobService,
               private childrenService: ChildrenService) { }
 
   ngOnInit() {
