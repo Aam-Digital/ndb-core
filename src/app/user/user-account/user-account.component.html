@@ -40,3 +40,17 @@
 <p>
   <button mat-raised-button (click)="changePassword(passwordInp.value,confirmationInp.value)" disabled>Save</button>
 </p>
+
+<h2>Image Service</h2>
+<p>
+  <mat-form-field>
+    <input placeholder="Password" matInput="text" type="password" value="" #password>
+  </mat-form-field>
+  <br>
+  <mat-form-field>
+    <input placeholder="Image Service Password" matInput="text" type="password" value="" #blobPassword>
+  </mat-form-field>
+  <br>
+
+  <button mat-raised-button (click)="changeBlobPassword(blobPassword.value, password.value)">Update</button>
+</p>

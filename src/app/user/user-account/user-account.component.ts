@@ -43,4 +43,8 @@ export class UserAccountComponent implements OnInit {
       // TODO: Show error message
     }
   }
+
+  changeBlobPassword(blobPassword, password) {
+    this.sessionService.getCurrentUser().setBlobPassword(blobPassword, password);
+  }
 }
