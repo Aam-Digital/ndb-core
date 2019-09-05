@@ -4,9 +4,7 @@ import webdav from 'webdav';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { SessionService } from 'app/session/session.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class BlobService {
 
   private client: any;
