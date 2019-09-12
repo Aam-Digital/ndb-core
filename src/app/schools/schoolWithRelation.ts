@@ -23,10 +23,10 @@ export class SchoolWithRelation {
   getSchoolName(): string {
     return this._school.name;
   }
-  getStartTime(): string {
+  getStartTime(): Date {
     return this._childSchoolRelation.start;
   }
-  getEndTime(): string {
+  getEndTime(): Date {
     return this._childSchoolRelation.end;
   }
 }

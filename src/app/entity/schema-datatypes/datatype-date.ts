@@ -20,9 +20,9 @@ import {EntitySchemaDatatype} from '../schema/entity-schema-datatype';
 export const dateEntitySchemaDatatype: EntitySchemaDatatype = {
   name: 'date',
 
-  transformToDatabaseFormat: (value) => {
+  transformToDatabaseFormat: (value: Date) => {
     // TODO: should date format be saved as date object or as string "YYYY-mm-dd"?
-    return value;
+    return !isNaN(value.getTime()) ? value.toISOString().slice(0, 10) : '';
   },
 
   transformToObjectFormat: (value) => {

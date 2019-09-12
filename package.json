@@ -37,6 +37,7 @@
     "pouchdb-browser": "~7.1.0",
     "raven-js": "^3.27.1",
     "reflect-metadata": "^0.1.13",
+    "reveal": "0.0.4",
     "rxjs": "^6.5.2",
     "stream": "0.0.2",
     "uniqid": "^5.0.3",
