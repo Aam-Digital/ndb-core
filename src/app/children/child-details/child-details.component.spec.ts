@@ -38,6 +38,8 @@ import {DatabaseManagerService} from '../../database/database-manager.service';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HealthCheckupComponent} from '../health-checkup/health-checkup.component';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
+import { BlobService } from 'app/webdav/blob-service.service';
+import { Overlay } from '@angular/cdk/overlay';
 
 describe('ChildDetailsComponent', () => {
   let component: ChildDetailsComponent;
@@ -103,6 +105,10 @@ describe('ChildDetailsComponent', () => {
         { provide: ActivatedRoute, useValue: mockedRoute},
         { provide: Database, useClass: MockDatabase},
         FormBuilder,
+        SessionService,
+        BlobService,
+        MatSnackBar,
+        Overlay
       ]
     })
       .compileComponents();

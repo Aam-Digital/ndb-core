@@ -22,6 +22,11 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {AttendanceDayBlockComponent} from '../attendance-days/attendance-day-block.component';
 import { SessionService } from 'app/session/session.service';
+import { Overlay } from '@angular/cdk/overlay';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AlertService } from 'app/alerts/alert.service';
+import { DatabaseManagerService } from 'app/database/database-manager.service';
+import { BlobService } from 'app/webdav/blob-service.service';
 
 describe('AttendanceDetailsComponent', () => {
   let component: AttendanceDetailsComponent;
@@ -42,6 +47,12 @@ describe('AttendanceDetailsComponent', () => {
         {provide: MatDialogRef, useValue: {beforeClose: () => { return { subscribe: () => {}}; }}},
         {provide: MAT_DIALOG_DATA, useValue: {entity: att}},
         {provide: ChildrenService, useClass: ChildrenService},
+        SessionService,
+        BlobService,
+        DatabaseManagerService,
+        AlertService,
+        MatSnackBar,
+        Overlay
       ],
     })
     .compileComponents();
@@ -51,12 +62,6 @@ describe('AttendanceDetailsComponent', () => {
     fixture = TestBed.createComponent(AttendanceDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    TestBed.configureTestingModule({
-      providers: [
-        SessionService
-      ],
-    })
-    .compileComponents();
   });
 
 

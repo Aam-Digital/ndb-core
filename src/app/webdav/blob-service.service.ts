@@ -12,13 +12,15 @@ export class BlobService {
     private sessionService: SessionService) {
     // const { createClient } = require("webdav");
 
-    this.client = webdav.createClient(
-      AppConfig.settings.webdav.remote_url,
-      {
-        username: 'nextclouduser',
-        password: this.sessionService.getCurrentUser().blobPasswordDec
-      }
-    );
+    if (this.sessionService.getCurrentUser() != null) {
+      this.client = webdav.createClient(
+        AppConfig.settings.webdav.remote_url,
+        {
+          username: 'nextclouduser',
+          password: this.sessionService.getCurrentUser().blobPasswordDec
+        }
+      );
+    }
   }
 
   /**

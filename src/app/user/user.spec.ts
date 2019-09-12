@@ -53,7 +53,7 @@ describe('User', () => {
       name: 'tester',
       admin: true,
       password: undefined,
-      blobPasswordEnd: undefined,
+      blobPasswordEnc: undefined,
 
       searchIndices: [],
     };
@@ -65,6 +65,8 @@ describe('User', () => {
     entity.setNewPassword('pass');
     // @ts-ignore
     expectedData.password = entity.password;
+    // @ts-ignore
+    expectedData.blobPasswordEnc = entity.blobPasswordEnc;
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 

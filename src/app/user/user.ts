@@ -29,7 +29,7 @@ export class User extends Entity {
 
   @DatabaseField()
   private password: any;
-  //
+
   @DatabaseField()
   private blobPasswordEnc: any;
   // nextCloud password that gets encrypted during session
@@ -55,6 +55,7 @@ export class User extends Entity {
     // compares given password to the stored one of this user
     // therefore hashes the given password string and compares it with the sored hash
     if  (this.hashPassword(givenPassword) === this.password.hash) {
+      // this.blobPasswordEnc = CryptoJS.AES.encrypt('password', givenPassword).toString();
       this.decryptBlobPassword(givenPassword);
     }
     return (this.hashPassword(givenPassword) === this.password.hash);

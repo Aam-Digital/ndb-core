@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ChildBlockComponent } from './child-block.component';
-import {RouterTestingModule} from '@angular/router/testing';
+import {RouterTestingModule, SpyNgModuleFactoryLoader} from '@angular/router/testing';
 import {Child} from '../child';
 import {SchoolBlockComponent} from '../../schools/school-block/school-block.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,10 +11,18 @@ import {ChildrenService} from '../children.service';
 import {Database} from '../../database/database';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 import { SessionService } from 'app/session/session.service';
+import { BlobService } from 'app/webdav/blob-service.service';
+import { DatabaseManagerService } from 'app/database/database-manager.service';
+import { AlertService } from 'app/alerts/alert.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Overlay } from '@angular/cdk/overlay';
+import { userInfo } from 'os';
+import { User } from 'app/user/user';
 
 describe('ChildBlockComponent', () => {
   let component: ChildBlockComponent;
   let fixture: ComponentFixture<ChildBlockComponent>;
+//  let sessionService = { getCurrentUser: () => new User('TestUser')};
 
 
   beforeEach(async(() => {
@@ -26,7 +34,12 @@ describe('ChildBlockComponent', () => {
         EntitySchemaService,
         ChildrenService,
         {provide: Database, useClass: MockDatabase},
-        SessionService
+        SessionService,
+        BlobService,
+        DatabaseManagerService,
+        AlertService,
+        MatSnackBar,
+        Overlay
       ],
     })
     .compileComponents();

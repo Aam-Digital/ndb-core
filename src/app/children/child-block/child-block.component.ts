@@ -26,11 +26,10 @@ export class ChildBlockComponent implements OnInit {
     if (this.entityId !== undefined) {
       this.childrenService.getChild(this.entityId).subscribe(child => {
         this.entity = child;
+        this.blobService.getImage(this.entity.getId().replace('child:', ''))
+        .then( arrayBuffer => this.image = this.blobService.bufferArrayToBase64(arrayBuffer));
       });
     }
-    // TODO: use entity.photoFile
-    this.blobService.getImage(this.entity.getId().replace('child:', ''))
-    .then( arrayBuffer => this.image = this.blobService.bufferArrayToBase64(arrayBuffer));
   }
 
   showTooltip() {
