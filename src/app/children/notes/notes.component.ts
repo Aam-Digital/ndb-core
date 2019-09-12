@@ -3,7 +3,7 @@ import {Note} from './note';
 import {ChildrenService} from '../children.service';
 import {ActivatedRoute} from '@angular/router';
 import {SessionService} from '../../session/session.service';
-import {ColumnDescription} from '../../ui-helper/entity-subrecord/column-description';
+import {ColumnDescription, ColumnDescriptionInputType} from '../../ui-helper/entity-subrecord/column-description';
 import {DatePipe} from '@angular/common';
 import {NoteDetailsComponent} from './note-details/note-details.component';
 
@@ -20,12 +20,12 @@ export class NotesComponent implements OnInit {
   detailsComponent = NoteDetailsComponent;
 
   columns: Array<ColumnDescription> = [
-    new ColumnDescription('date', 'Date', 'date', null,
+    new ColumnDescription('date', 'Date', ColumnDescriptionInputType.DATE, null,
       (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd'), 'xs'),
-    new ColumnDescription('subject', 'Topic', 'text', null, undefined, 'xs'),
-    new ColumnDescription('text', 'Notes', 'textarea', null, undefined, 'md'),
-    new ColumnDescription('author', 'SW', 'text', null, undefined, 'md'),
-    new ColumnDescription('warningLevel', '', 'select',
+    new ColumnDescription('subject', 'Topic', ColumnDescriptionInputType.TEXT, null, undefined, 'xs'),
+    new ColumnDescription('text', 'Notes', ColumnDescriptionInputType.TEXTAREA, null, undefined, 'md'),
+    new ColumnDescription('author', 'SW', ColumnDescriptionInputType.TEXT, null, undefined, 'md'),
+    new ColumnDescription('warningLevel', '', ColumnDescriptionInputType.SELECT,
       [{value: 'OK', label: 'Solved'}, {value: 'WARNING', label: 'Needs Follow-Up'}, {value: 'URGENT', label: 'Urgent Follow-Up'}],
       (v) => '', 'md'),
   ];
