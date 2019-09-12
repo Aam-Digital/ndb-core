@@ -36,16 +36,10 @@ export class PreviousSchoolsComponent implements OnInit {
 
 
   loadData(id: string) {
-    const tempRecords = new Array<ChildSchoolRelation>();
+    let tempRecords = new Array<ChildSchoolRelation>();
     this.childrenService.getSchoolsWithRelations(id)
       .then(results => {
-        results.forEach(element => {
-          const previousSchool = new ChildSchoolRelation('');
-          previousSchool.schoolId = element.getSchoolName();
-          previousSchool.start = new Date(element.getStartTime());
-          previousSchool.end = new Date(element.getEndTime());
-          tempRecords.push(previousSchool);
-        });
+        tempRecords = results;
         this.records = tempRecords
           .sort((a, b) => (
             (b.start ? b.start.valueOf() : 0) - (a.start ? a.start.valueOf() : 0)

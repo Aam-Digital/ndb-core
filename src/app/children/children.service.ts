@@ -285,13 +285,12 @@ export class ChildrenService {
       });
   }
 
-  async getSchoolsWithRelations(childId: string): Promise<SchoolWithRelation[]> {
+  async getSchoolsWithRelations(childId: string): Promise<ChildSchoolRelation[]> {
     const relations = await this.querySortedRelations(childId);
-    const schools: SchoolWithRelation[] = [];
     for (const relation of relations) {
       const school: School = await this.entityMapper.load<School>(School, relation.schoolId);
-      schools.push(new SchoolWithRelation(relation, school));
+      relation.schoolName = school.name
     }
-    return schools;
+    return relations;
   }
 }
