@@ -1,4 +1,3 @@
-import {faker} from './faker';
 import {Entity} from '../entity/entity';
 import {Child} from '../children/child';
 import {Gender} from '../children/Gender';
@@ -8,6 +7,8 @@ import {languages} from './fixtures/languages';
 import {dropoutTypes} from './fixtures/dropout-types';
 import {Injectable} from '@angular/core';
 import {DemoDataGenerator} from './demo-data-generator';
+import {faker} from './faker';
+
 
 @Injectable()
 export class DemoChildGenerator extends DemoDataGenerator {
@@ -39,12 +40,11 @@ export class DemoChildGenerator extends DemoDataGenerator {
       child.projectNumber = String(i);
       child.religion = faker.random.arrayElement(religions);
       child.gender = faker.random.arrayElement([Gender.MALE, Gender.FEMALE]);
-      child.dateOfBirth = faker.date.birthdate(5, 20);
+      child.dateOfBirth = faker.dateOfBirth(5, 20);
       child.motherTongue = faker.random.arrayElement(languages);
       child.center = faker.random.arrayElement(centers);
 
       child.admissionDate = faker.date.past(child.age - 4);
-
 
       if (faker.random.number(100) > 80) {
         this.makeChildDropout(child);
