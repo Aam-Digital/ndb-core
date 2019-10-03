@@ -3,7 +3,6 @@ import {Entity} from '../entity/entity';
 import {Note} from '../children/notes/note';
 import {WarningLevel} from '../children/attendance/warning-level';
 import {AttendanceStatus} from '../children/attendance/attendance-day';
-import {ChildSchoolRelation} from '../children/childSchoolRelation';
 import {ProgressDashboardConfig} from '../dashboard/progress-dashboard/progress-dashboard-config';
 
 export class DemoData {
@@ -12,8 +11,7 @@ export class DemoData {
     return []
       .concat(this.getConfigEntities())
       .concat(this.getMonthAttendanceEntities())
-      .concat(this.getNoteEntities())
-      .concat(this.getChildSchoolRelationEntities());
+      .concat(this.getNoteEntities());
   }
 
   static getConfigEntities(): any[] {
@@ -209,40 +207,6 @@ export class DemoData {
     n3.category = 'Homevisit';
     n3.warningLevel = WarningLevel.URGENT;
     data.push(n3);
-
-    return data;
-  }
-
-  static getChildSchoolRelationEntities(): ChildSchoolRelation[] {
-    const data: ChildSchoolRelation[] = [];
-    const rel1: ChildSchoolRelation = new ChildSchoolRelation('1');
-    rel1.childId = '1';
-    rel1.schoolId = '1';
-    rel1.start = '2016-10-01';
-    rel1.schoolClass = '2';
-    data.push(rel1);
-
-    const rel4: ChildSchoolRelation = new ChildSchoolRelation('2');
-    rel4.childId = '3';
-    rel4.schoolId = '2';
-    rel4.start = '2001-01-01';
-    rel4.end = '2002-01-01';
-    rel4.schoolClass = '1';
-    data.push(rel4);
-
-    const rel2: ChildSchoolRelation = new ChildSchoolRelation('3');
-    rel2.childId = '2';
-    rel2.schoolId = '2';
-    rel2.start = '2018-05-07';
-    rel2.schoolClass = '3';
-    data.push(rel2);
-
-    const rel3: ChildSchoolRelation = new ChildSchoolRelation('4');
-    rel3.childId = '3';
-    rel3.schoolId = '1';
-    rel3.start = '2010-01-01';
-    rel3.schoolClass = '2';
-    data.push(rel3);
 
     return data;
   }
