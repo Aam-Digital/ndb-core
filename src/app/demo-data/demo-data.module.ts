@@ -26,17 +26,15 @@ import {
 import {DemoSchoolGenerator} from './demo-data-generators/demo-school-generator.service';
 import {DemoChildGenerator} from './demo-data-generators/demo-child-generator.service';
 import {DemoChildSchoolRelationGenerator} from './demo-data-generators/demo-child-school-relation-generator.service';
+import {DemoAttendanceGenerator} from './demo-data-generators/demo-attendance-generator.service';
 
 const DEFAULT_DEMO_GENERATOR_PROVIDERS = [
   ...DemoChildGenerator.provider({count: 150}),
   ...DemoSchoolGenerator.provider({count: 8}),
   ...DemoChildSchoolRelationGenerator.provider(),
-
-  // TODO: demo data for ChildSchoolRelations (every child, each year since admission)
-  // new DemoChildSchoolRelationGenerator(150, 8),
+  ...DemoAttendanceGenerator.provider(),
 
   // TODO: demo data for Notes (2-10 notes per child)
-  // TODO: demo data for AttendanceMonths (every child for last 15 months)
   // TODO: demo data for ASER (from admission till passed or today)
   // TODO: demo data for EducationalMaterials (every child, 2-10 entries for past year)
   // TODO: demo data for HeightWeight (from admission till age 12; every 6 months)
