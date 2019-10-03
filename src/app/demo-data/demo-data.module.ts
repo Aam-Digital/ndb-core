@@ -15,24 +15,47 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {EntityModule} from '../entity/entity.module';
-import {DemoDataService} from './demo-data.service';
-import {NgModule} from '@angular/core';
-import {DemoSchoolGenerator} from './demo-school-generator.service';
-import {DemoChildGenerator} from './demo-child-generator.service';
-import {DemoChildSchoolRelationGenerator} from './demo-child-school-relation-generator';
+import {DemoDataServiceConfig, DemoDataService} from './demo-data.service';
+import {
+  ClassProvider,
+  FactoryProvider,
+  ModuleWithProviders,
+  NgModule,
+  ValueProvider
+} from '@angular/core';
+import {DemoSchoolGenerator} from './demo-data-generators/demo-school-generator.service';
+import {DemoChildGenerator} from './demo-data-generators/demo-child-generator.service';
+import {DemoChildSchoolRelationGenerator} from './demo-data-generators/demo-child-school-relation-generator.service';
 
-@NgModule({
-  imports: [
-    EntityModule,
-  ],
-  declarations: [],
-  providers: [
-    DemoDataService,
-    DemoChildGenerator.provider(150),
-    DemoSchoolGenerator.provider(8),
-    DemoChildSchoolRelationGenerator.provider(),
-  ]
-})
+const DEFAULT_DEMO_GENERATOR_PROVIDERS = [
+  ...DemoChildGenerator.provider({count: 150}),
+  ...DemoSchoolGenerator.provider({count: 8}),
+  ...DemoChildSchoolRelationGenerator.provider(),
+
+  // TODO: demo data for ChildSchoolRelations (every child, each year since admission)
+  // new DemoChildSchoolRelationGenerator(150, 8),
+
+  // TODO: demo data for Notes (2-10 notes per child)
+  // TODO: demo data for AttendanceMonths (every child for last 15 months)
+  // TODO: demo data for ASER (from admission till passed or today)
+  // TODO: demo data for EducationalMaterials (every child, 2-10 entries for past year)
+  // TODO: demo data for HeightWeight (from admission till age 12; every 6 months)
+
+  // TODO: remove database/demo-data.ts
+];
+
+@NgModule()
 export class DemoDataModule {
+  static forRoot(
+    demoDataGeneratorProviders: (ValueProvider|ClassProvider|FactoryProvider)[] = DEFAULT_DEMO_GENERATOR_PROVIDERS
+  ): ModuleWithProviders {
+    return {
+      ngModule: DemoDataModule,
+      providers: [
+        DemoDataService,
+        { provide: DemoDataServiceConfig, useValue: {dataGeneratorProviders: demoDataGeneratorProviders} },
+        demoDataGeneratorProviders,
+      ],
+    };
+  }
 }

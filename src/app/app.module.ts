@@ -46,6 +46,7 @@ import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import {AdminModule} from './admin/admin.module';
 import {CookieService} from 'ngx-cookie-service';
 import {DemoDataModule} from './demo-data/demo-data.module';
+import {EntityModule} from './entity/entity.module';
 
 @NgModule({
   declarations: [
@@ -61,6 +62,7 @@ import {DemoDataModule} from './demo-data/demo-data.module';
     FormsModule,
     AlertsModule,
     DatabaseModule,
+    EntityModule,
     AppConfigModule,
     SessionModule,
     UiModule,
@@ -73,7 +75,7 @@ import {DemoDataModule} from './demo-data/demo-data.module';
     SchoolsModule,
     AdminModule,
     MatIconModule,
-    DemoDataModule,
+    DemoDataModule.forRoot(),
   ],
   providers: [
     AppConfig,

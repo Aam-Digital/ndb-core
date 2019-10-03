@@ -1,34 +1,36 @@
-import {faker} from './faker';
-import {School} from '../schools/school';
-import {Entity} from '../entity/entity';
+import {faker} from '../faker';
+import {School} from '../../schools/school';
 import {Injectable} from '@angular/core';
-import {DemoDataGenerator} from './demo-data-generator';
+import {DemoDataGenerator} from '../demo-data-generator';
+
+
+export class DemoSchoolConfig {
+  count: number;
+}
 
 @Injectable()
-export class DemoSchoolGenerator extends DemoDataGenerator {
+export class DemoSchoolGenerator extends DemoDataGenerator<School> {
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoSchoolGenerator.provider(150)]`
-   * @param count The number of entities the service should generate.
+   * @param config A config object specifying the number of entities the service should generate.
    */
-  static provider(count: number) {
-    return {
-      provide: DemoSchoolGenerator,
-      useValue: new DemoSchoolGenerator(count),
-    };
+  static provider(config: DemoSchoolConfig) {
+    return [
+      { provide: DemoSchoolGenerator, useClass: DemoSchoolGenerator },
+      { provide: DemoSchoolConfig, useValue: config },
+    ];
   }
 
-  /**
-   * @param count The number of entities this provider should generate
-   */
-  constructor(public count: number) {
+
+  constructor(public config: DemoSchoolConfig) {
     super();
   }
 
-  generateEntities(): Entity[] {
+  generateEntities(): School[] {
     const data = [];
 
-    for (let i = 1; i <= this.count; i++) {
+    for (let i = 1; i <= this.config.count; i++) {
       const school = new School(String(i));
       school.medium = faker.random.arrayElement(['Hindi', 'English', 'Bengali']);
       school.name = faker.name.firstName() + ' ' +
