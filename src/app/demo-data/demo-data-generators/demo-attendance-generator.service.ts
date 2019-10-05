@@ -113,12 +113,8 @@ export class DemoAttendanceGenerator extends DemoDataGenerator<AttendanceMonth> 
   private generateAttendanceRecordsForChild(child: Child): AttendanceMonth[] {
     const data = [];
 
-    const finalMonth = new Date();
+    const finalMonth = this.getEarlierDateOrToday(child.dropoutDate);
     finalMonth.setDate(1);
-    if (child.dropoutDate && child.dropoutDate < finalMonth) {
-      finalMonth.setMonth(child.dropoutDate.getMonth());
-      finalMonth.setFullYear(child.dropoutDate.getFullYear());
-    }
 
     const month = new Date();
     month.setDate(1);

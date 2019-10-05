@@ -15,4 +15,20 @@ export abstract class DemoDataGenerator<T extends Entity> {
   reset() {
     delete this._entities;
   }
+
+
+  /**
+   * Return the given date if it is defined and earlier than today's date
+   * otherwise return a Date representing today.
+   * @param date The date to be compared
+   */
+  getEarlierDateOrToday(date: Date): Date {
+    const today = new Date();
+
+    if (!date || date > today) {
+      return today;
+    } else {
+      return date;
+    }
+  }
 }
