@@ -6,8 +6,8 @@ import {Note} from '../../children/notes/note';
 import {faker} from '../faker';
 import {WarningLevel} from '../../children/attendance/warning-level';
 import {noteIndividualStories} from '../fixtures/notes_individual-stories';
-import {centers} from '../fixtures/centers';
 import {noteGroupStories} from '../fixtures/notes_group-stories';
+import {centersUnique} from '../fixtures/centers';
 
 
 export class DemoNoteConfig {
@@ -65,7 +65,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
       }
     }
 
-    for (const center of centers) {
+    for (const center of centersUnique) {
       const children: Child[] = this.demoChildren.entities.filter(c => c.center === center);
       for (let i = 0; i < this.config.groupNotes; i++) {
         data.push(this.generateGroupNote(children));

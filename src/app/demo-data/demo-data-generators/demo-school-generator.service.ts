@@ -12,7 +12,7 @@ export class DemoSchoolConfig {
 export class DemoSchoolGenerator extends DemoDataGenerator<School> {
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
-   *   `providers: [DemoSchoolGenerator.provider(150)]`
+   *   `providers: [DemoSchoolGenerator.provider({count: 10})]`
    * @param config A config object specifying the number of entities the service should generate.
    */
   static provider(config: DemoSchoolConfig) {

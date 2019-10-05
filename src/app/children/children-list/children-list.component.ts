@@ -104,10 +104,10 @@ export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(results => this.prepareAttendanceData(results));
   }
 /*
-  private initCenterFilterOptions(centers: string[]) {
+  private initCenterFilterOptions(centersWithProbability: string[]) {
     const options = [{key: '', label: 'All', filterFun: (c: Child) => true}];
 
-    centers.forEach(center => {
+    centersWithProbability.forEach(center => {
       options.push({key: center.toLowerCase(), label: center, filterFun: (c: Child) => c.center === center});
     });
 

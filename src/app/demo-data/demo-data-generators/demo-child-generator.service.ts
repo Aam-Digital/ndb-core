@@ -1,12 +1,12 @@
 import {Child} from '../../children/child';
 import {Gender} from '../../children/Gender';
 import {religions} from '../fixtures/religions';
-import {centers} from '../fixtures/centers';
 import {languages} from '../fixtures/languages';
 import {dropoutTypes} from '../fixtures/dropout-types';
 import {Injectable} from '@angular/core';
 import {DemoDataGenerator} from '../demo-data-generator';
 import {faker} from '../faker';
+import {centersWithProbability} from '../fixtures/centers';
 
 
 export class DemoChildConfig {
@@ -45,7 +45,7 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
       child.gender = faker.random.arrayElement([Gender.MALE, Gender.FEMALE]);
       child.dateOfBirth = faker.dateOfBirth(5, 20);
       child.motherTongue = faker.random.arrayElement(languages);
-      child.center = faker.random.arrayElement(centers);
+      child.center = faker.random.arrayElement(centersWithProbability);
 
       child.admissionDate = faker.date.past(child.age - 4);
 
