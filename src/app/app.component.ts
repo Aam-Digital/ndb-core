@@ -16,10 +16,10 @@
  */
 
 import {Component, OnInit, ViewContainerRef} from '@angular/core';
-
 import './rxjs-operators';
-import {DemoDataService} from './demo-data/demo-data.service';
 import {AppConfig} from './app-config/app-config';
+import {MatDialog} from '@angular/material/dialog';
+import {DemoDataGeneratingProgressDialogComponent} from './demo-data/demo-data-generating-progress-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -30,7 +30,7 @@ export class AppComponent implements OnInit {
 
   public constructor(
     viewContainerRef: ViewContainerRef,
-    private demoDataService: DemoDataService,
+    private dialog: MatDialog,
   ) {
     // You need this small hack in order to catch application root view container ref
     this.viewContainerRef = viewContainerRef;
@@ -43,7 +43,7 @@ export class AppComponent implements OnInit {
   // TODO: move loading of demo data to a more suitable place
   private loadDemoData() {
     if (AppConfig.settings.database.useTemporaryDatabase) {
-      this.demoDataService.publishDemoData();
+      DemoDataGeneratingProgressDialogComponent.loadDemoDataWithLoadingDialog(this.dialog);
     }
   }
 }

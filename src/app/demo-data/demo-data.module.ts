@@ -32,6 +32,9 @@ import {DemoWidgetGeneratorService} from './demo-data-generators/demo-widget-gen
 import {DemoAserGeneratorService} from './demo-data-generators/demo-aser-generator.service';
 import {DemoEducationalMaterialGeneratorService} from './demo-data-generators/demo-educational-material-generator.service';
 import {DemoHealthCheckGeneratorService} from './demo-data-generators/demo-health-check-generator.service';
+import {DemoDataGeneratingProgressDialogComponent} from './demo-data-generating-progress-dialog.component';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatDialogModule} from '@angular/material/dialog';
 
 
 const DEFAULT_DEMO_GENERATOR_PROVIDERS = [
@@ -47,7 +50,15 @@ const DEFAULT_DEMO_GENERATOR_PROVIDERS = [
   ...DemoWidgetGeneratorService.provider(),
 ];
 
-@NgModule()
+@NgModule({
+  imports: [
+    MatProgressBarModule,
+    MatDialogModule,
+  ],
+  declarations: [DemoDataGeneratingProgressDialogComponent],
+  exports: [DemoDataGeneratingProgressDialogComponent],
+  entryComponents: [DemoDataGeneratingProgressDialogComponent]
+})
 export class DemoDataModule {
   static forRoot(
     demoDataGeneratorProviders: (ValueProvider|ClassProvider|FactoryProvider)[] = DEFAULT_DEMO_GENERATOR_PROVIDERS
