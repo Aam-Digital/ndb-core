@@ -161,7 +161,10 @@ export class ChildDetailsComponent implements OnInit {
 
   private assignFormValuesToChild(child: Child, form: FormGroup) {
     Object.keys(form.controls).forEach(key => {
-      child[key] = form.get(key).value;
+      const value = form.get(key).value;
+      if (value !== null) {
+        child[key] = value;
+      }
     });
   }
 
