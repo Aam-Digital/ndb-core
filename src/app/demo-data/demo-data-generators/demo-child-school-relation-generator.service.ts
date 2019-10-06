@@ -58,10 +58,12 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
       offset++;
     }
 
+    this.setChildSchoolAndClassForLegacyUse(child, data[data.length - 1]);
+
     return data;
   }
 
-  private generateRecord(child: Child, year, schoolClass: number, school: School) {
+  private generateRecord(child: Child, year, schoolClass: number, school: School): ChildSchoolRelation {
     const schoolRelation = new ChildSchoolRelation(faker.random.uuid());
     schoolRelation.childId = child.getId();
     schoolRelation.start = year + '-01-01';
@@ -85,5 +87,10 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
     } else {
       return currentSchool;
     }
+  }
+
+  private setChildSchoolAndClassForLegacyUse(child: Child, latestChildSchoolRelation: ChildSchoolRelation) {
+    child.schoolId = latestChildSchoolRelation.schoolId;
+    child.schoolClass = latestChildSchoolRelation.schoolClass;
   }
 }
