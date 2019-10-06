@@ -49,7 +49,7 @@ export class AttendanceMonth extends Entity {
   }
   set month(value: Date) {
     if (!(value instanceof Date)) {
-      console.warn('Trying to set invalid date ' + value + ' to Entity ' + this._id);
+      console.warn('Trying to set invalid date ' + JSON.stringify(value) + ' to Entity ' + this._id);
       return;
     }
 
