@@ -117,7 +117,7 @@ export class MockDatabase extends Database {
 
 
 
-  query(fun: any, options?: any): Promise<any> {
+  async query(fun: any, options?: any): Promise<any> {
     // TODO: implement generic mock query function
     /* SAMPLE INPUT:
       query('notes_index/by_child', {key: childId, include_docs: true});
@@ -125,57 +125,60 @@ export class MockDatabase extends Database {
     */
 
     // mock specific indices
-    let filter;
-    let reduce;
+    let filterFun;
+    let reducerFun;
     switch (fun) {
       case 'notes_index/by_child':
-        filter = (e) => e._id.startsWith( Note.ENTITY_TYPE) && e.children.includes(options.key);
+        filterFun = (e) => e._id.startsWith( Note.ENTITY_TYPE) && e.children.includes(options.key);
         break;
       case 'attendances_index/by_child':
-        filter = (e) => e._id.startsWith( AttendanceMonth.ENTITY_TYPE) && e.student === options.key;
+        filterFun = (e) => e._id.startsWith( AttendanceMonth.ENTITY_TYPE) && e.student === options.key;
         break;
       case 'attendances_index/by_month':
-        filter = (e) => e._id.startsWith( AttendanceMonth.ENTITY_TYPE) && e.month.getFullYear !== undefined
-          && e.month.getFullYear().toString() + '-' + (e.month.getMonth() + 1).toString() === options.key;
+        filterFun = (e) => {
+          if (!e._id.startsWith( AttendanceMonth.ENTITY_TYPE)) {
+            return false;
+          }
+          e.month = new Date(e.month);
+          return e.month.getFullYear().toString() + '-' + (e.month.getMonth() + 1).toString() === options.key;
+        };
         break;
       case 'avg_attendance_index/three_months':
-        filter = (e) => e._id.startsWith( AttendanceMonth.ENTITY_TYPE) && e.month.getFullYear !== undefined
+        filterFun = (e) => e._id.startsWith( AttendanceMonth.ENTITY_TYPE)
           && this.isWithinLastMonths(e.month, new Date(), 3);
-        reduce = this.getStatsReduceFun((e: AttendanceMonth) => e.student,
+        reducerFun = this.getStatsReduceFun((e: AttendanceMonth) => e.student,
           (e: AttendanceMonth) => (e.daysAttended / (e.daysWorking - e.daysExcused)));
         break;
       case 'avg_attendance_index/last_month':
-        filter = (e) => e._id.startsWith( AttendanceMonth.ENTITY_TYPE) && e.month.getFullYear !== undefined
+        filterFun = (e) => e._id.startsWith( AttendanceMonth.ENTITY_TYPE)
           && this.isWithinLastMonths(e.month, new Date(), 1);
-        reduce = this.getStatsReduceFun((e: AttendanceMonth) => e.student,
+        reducerFun = this.getStatsReduceFun((e: AttendanceMonth) => e.student,
           (e: AttendanceMonth) => (e.daysAttended / (e.daysWorking - e.daysExcused)));
         break;
       case 'childSchoolRelations_index/by_child':
-        filter = (e) => e._id.startsWith( ChildSchoolRelation.ENTITY_TYPE) && e.childId === options.key;
+        filterFun = (e) => e._id.startsWith( ChildSchoolRelation.ENTITY_TYPE) && e.childId === options.key;
         break;
       case 'childSchoolRelations_index/by_school':
-        filter = (e) => e._id.startsWith( ChildSchoolRelation.ENTITY_TYPE) && !e.end && e.schoolId === options.key;
+        filterFun = (e) => e._id.startsWith( ChildSchoolRelation.ENTITY_TYPE) && !e.end && e.schoolId === options.key;
         break;
       case 'childSchoolRelations_index/by_date':
         return this.filterForLatestRelationOfChild(options.endkey, options.limit);
     }
-    if (filter !== undefined) {
-      if (reduce !== undefined) {
-        return this.getAll().then(results => {
-          results = results.filter(filter);
-          results = results.reduce(reduce, []);
-          return { rows: results };
-        });
+    if (filterFun !== undefined) {
+      if (reducerFun !== undefined) {
+        const allData = await this.getAll();
+        const filteredResults = allData.filter(filterFun);
+        const reducedResults = filteredResults.reduce(reducerFun, []);
+        return { rows: reducedResults };
       } else {
-        return this.getAll().then(results => {
-          return { rows: results.filter(filter).map(e => { return {doc: e}; } ) };
-        });
+        const allData = await this.getAll();
+        return { rows: allData.filter(filterFun).map(e => { return {doc: e}; } ) };
       }
     }
 
 
     console.warn('MockDatabase does not implement "query()"');
-    return Promise.resolve({ rows: []});
+    return { rows: []};
   }
 
   private async filterForLatestRelationOfChild(childId: string, limit: number): Promise<any> {
@@ -215,6 +218,11 @@ export class MockDatabase extends Database {
   }
 
   private isWithinLastMonths(date: Date, now: Date, numberOfMonths: number): boolean {
+    if (!date) {
+      return false;
+    }
+    date = new Date(date);
+
     let months;
     months = (now.getFullYear() - date.getFullYear()) * 12;
     months -= date.getMonth();
