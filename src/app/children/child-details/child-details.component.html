@@ -91,8 +91,11 @@
           <mat-form-field style='width: 50px;'>
             <input matInput placeholder="Age" type="number" [value]="child.age" [disabled]="true">
           </mat-form-field>
-          <mat-form-field>
-            <input matInput formControlName="dateOfBirth" placeholder="Date of Birth" type="date">
+          <mat-form-field style='width: 120px;'>
+            <input matInput formControlName="dateOfBirth" placeholder="Date of Birth"
+                   [matDatepicker]="dateOfBirthDatepicker" [disabled]='!editing'>
+            <mat-datepicker-toggle matSuffix [for]="dateOfBirthDatepicker"></mat-datepicker-toggle>
+            <mat-datepicker #dateOfBirthDatepicker></mat-datepicker>
           </mat-form-field>
 
           <mat-form-field>
@@ -115,8 +118,11 @@
 
 
         <div>
-          <mat-form-field>
-            <input matInput formControlName="admissionDate" placeholder="Admission Date" type="date">
+          <mat-form-field style='width: 180px;'>
+            <input matInput formControlName="admissionDate" placeholder="Admission Date"
+                   [matDatepicker]="admissionDatepicker" [disabled]='!editing'>
+            <mat-datepicker-toggle matSuffix [for]="admissionDatepicker"></mat-datepicker-toggle>
+            <mat-datepicker #admissionDatepicker></mat-datepicker>
           </mat-form-field>
 
           <mat-form-field>
