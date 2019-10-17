@@ -68,6 +68,7 @@ import {AttendanceDayBlockComponent} from './attendance/attendance-days/attendan
 import { AttendanceManagerComponent } from './attendance/attendance-manager/attendance-manager.component';
 import { HealthCheckupComponent } from './health-checkup/health-checkup.component';
 import {MatDatepickerModule} from '@angular/material/datepicker';
+import { WebdavModule } from 'app/webdav/webdav.module';
 
 
 @NgModule({
@@ -101,7 +102,8 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
     SchoolsModule,
     ReactiveFormsModule,
     MatDialogModule,
-    MatListModule
+    MatListModule,
+    WebdavModule
   ],
   declarations: [
     AttendanceBlockComponent,
