@@ -142,6 +142,10 @@ export class AttendanceMonth extends Entity {
     }
 
     this.dailyRegister.forEach((day) => {
+      if (typeof day.date === 'string') {
+        day.date = new Date(day.date);
+      }
+
       day.date.setMonth(this.month.getMonth());
       day.date.setFullYear(this.month.getFullYear());
     });
