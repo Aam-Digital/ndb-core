@@ -3,6 +3,7 @@ import {Database} from '../../database/database';
 import {Child} from '../../children/child';
 import {School} from '../../schools/school';
 import {Entity} from '../../entity/entity';
+import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 
 @Component({
   selector: 'app-search',
@@ -14,7 +15,10 @@ export class SearchComponent implements OnInit {
   searchText = '';
   showSearchToolbar = false;
 
-  constructor(private db: Database) { }
+  constructor(
+    private db: Database,
+    private entitySchemaService: EntitySchemaService,
+  ) { }
 
   ngOnInit() {
     this.createSearchIndex();
@@ -39,11 +43,20 @@ export class SearchComponent implements OnInit {
   }
 
 
-  search() {
+  async search() {
     this.searchText = this.searchText.toLowerCase();
+
+    const searchHash = JSON.stringify(this.searchText);
     const searchTerms = this.searchText.split(' ');
-    this.db.query('search_index/by_name', {startkey: searchTerms[0], endkey: searchTerms[0] + '\ufff0', include_docs: true})
-      .then(queryResults => this.results = this.prepareResults(queryResults.rows, searchTerms));
+    const queryResults = await this.db.query(
+      'search_index/by_name',
+      {startkey: searchTerms[0], endkey: searchTerms[0] + '\ufff0', include_docs: true}
+      );
+
+    if (JSON.stringify(this.searchText) === searchHash) {
+      // only set result if the user hasn't continued typing and change the search term already
+      this.results = this.prepareResults(queryResults.rows, searchTerms);
+    }
   }
 
   private prepareResults(rows, searchTerms: string[]) {
@@ -54,20 +67,22 @@ export class SearchComponent implements OnInit {
     return results;
   }
 
-  private parseRows(rows) {
-    return rows.map(r => {
-        let resultEntity;
-        if (r.doc._id.startsWith(Child.ENTITY_TYPE + ':')) {
-          resultEntity = new Child(r.doc.entityId);
-        } else if (r.doc._id.startsWith(School.ENTITY_TYPE + ':')) {
-          resultEntity = new School(r.doc.entityId);
-        } else {
-          return;
-        }
+  private parseRows(rows): Entity[] {
+    const resultEntities = [];
+    for (const r of rows) {
+      let resultEntity: Entity;
+      if (r.doc._id.startsWith(Child.ENTITY_TYPE + ':')) {
+        resultEntity = new Child(r.doc.entityId);
+      } else if (r.doc._id.startsWith(School.ENTITY_TYPE + ':')) {
+        resultEntity = new School(r.doc.entityId);
+      } else {
+        return;
+      }
 
-        resultEntity.load(r.doc);
-        return resultEntity;
-      });
+      this.entitySchemaService.loadDataIntoEntity(resultEntity, r.doc);
+      resultEntities.push(resultEntity);
+    }
+    return resultEntities;
   }
 
   private containsSecondarySearchTerms(item, searchTerms: string[]) {
