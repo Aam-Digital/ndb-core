@@ -46,10 +46,13 @@ import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import {AdminModule} from './admin/admin.module';
 import {CookieService} from 'ngx-cookie-service';
 import {HelpModule} from './help/help.module';
+import {DemoDataModule} from './demo-data/demo-data.module';
+import {EntityModule} from './entity/entity.module';
+import {MatNativeDateModule} from '@angular/material/core';
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ],
   imports: [
     ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
@@ -61,6 +64,7 @@ import {HelpModule} from './help/help.module';
     FormsModule,
     AlertsModule,
     DatabaseModule,
+    EntityModule,
     AppConfigModule,
     SessionModule,
     UiModule,
@@ -74,6 +78,8 @@ import {HelpModule} from './help/help.module';
     AdminModule,
     MatIconModule,
     HelpModule,
+    MatNativeDateModule,
+    DemoDataModule.forRoot(),
   ],
   providers: [
     AppConfig,

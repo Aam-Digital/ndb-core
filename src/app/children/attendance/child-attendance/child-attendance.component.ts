@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {AttendanceMonth} from '../attendance-month';
 import {ChildrenService} from '../../children.service';
-import {ColumnDescription} from '../../../ui-helper/entity-subrecord/column-description';
+import {ColumnDescription, ColumnDescriptionInputType} from '../../../ui-helper/entity-subrecord/column-description';
 import {DatePipe, PercentPipe} from '@angular/common';
 import {AttendanceDetailsComponent} from '../attendance-details/attendance-details.component';
 
@@ -22,14 +22,14 @@ export class ChildAttendanceComponent implements OnInit {
 
 
   columns: Array<ColumnDescription> = [
-    new ColumnDescription('month', 'Month', 'month', null,
+    new ColumnDescription('month', 'Month', ColumnDescriptionInputType.MONTH, null,
       (v: Date) => this.datePipe.transform(v, 'yyyy-MM'), 'xs'),
-    new ColumnDescription('daysAttended', 'Present', 'number', null, undefined,  'xs'),
-    new ColumnDescription('daysWorking', 'Working Days', 'number',  null, undefined, 'xs'),
-    new ColumnDescription('getAttendancePercentage', 'Attended', 'function', null,
+    new ColumnDescription('daysAttended', 'Present', ColumnDescriptionInputType.NUMBER, null, undefined,  'xs'),
+    new ColumnDescription('daysWorking', 'Working Days', ColumnDescriptionInputType.NUMBER,  null, undefined, 'xs'),
+    new ColumnDescription('getAttendancePercentage', 'Attended', ColumnDescriptionInputType.FUNCTION, null,
       (v: number) => this.percentPipe.transform(v, '1.0-0'), 'md'),
-    new ColumnDescription('daysExcused', 'Excused', 'number', null, undefined, 'md'),
-    new ColumnDescription('remarks', 'Remarks', 'textarea', null, undefined, 'xl'),
+    new ColumnDescription('daysExcused', 'Excused', ColumnDescriptionInputType.NUMBER, null, undefined, 'md'),
+    new ColumnDescription('remarks', 'Remarks', ColumnDescriptionInputType.TEXTAREA, null, undefined, 'xl'),
   ];
 
 
