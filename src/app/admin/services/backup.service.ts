@@ -15,35 +15,36 @@ export class BackupService {
 
   getJsonExport(): Promise<string> {
     return this.db.getAll()
-      .then(results => {
-        let res = '';
-        results.forEach(r => {
-          res += JSON.stringify(r) + BackupService.SEPARATOR_ROW;
-        });
+      .then(results => this.createJson(results));
+  }
 
-        return res.trim();
-      });
+  createJson(data): string {
+    let res = '';
+    data.forEach(r => {
+      res += JSON.stringify(r) + BackupService.SEPARATOR_ROW;
+    });
+
+    return res.trim();
   }
 
   getCsvExport(): Promise<string> {
     return this.db.getAll()
-      .then(results => {
-        const resultFields = ['_id', '_rev'];
-        results.forEach(r => {
-          for (const propertyName in r) {
-            if (resultFields.indexOf(propertyName) === -1) {
-              resultFields.push(propertyName);
-            }
-          }
-        });
-
-        return this.papa.unparse(
-          {data: results, fields: resultFields},
-          {quotes: true, header: true});
-      });
+      .then(results => this.createCsv(results));
   }
 
-
+  createCsv(data): string {
+    const resultFields = ['_id', '_rev'];
+    data.forEach(d => {
+      for (const propertyName in d) {
+        if (resultFields.indexOf(propertyName) === -1) {
+          resultFields.push(propertyName);
+        }
+      }
+    });
+    return this.papa.unparse(
+        {data: data, fields: resultFields},
+        {quotes: true, header: true});
+  }
 
   clearDatabase(): Promise<any> {
     const userEntityPrefix = new User('').getType() + ':';

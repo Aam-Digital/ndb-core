@@ -67,6 +67,7 @@ import { AttendanceWeekDashboardComponent } from './attendance/attendance-week-d
 import {AttendanceDayBlockComponent} from './attendance/attendance-days/attendance-day-block.component';
 import { AttendanceManagerComponent } from './attendance/attendance-manager/attendance-manager.component';
 import { HealthCheckupComponent } from './health-checkup/health-checkup.component';
+import {AdminModule} from '../admin/admin.module';
 
 
 @NgModule({
@@ -99,7 +100,8 @@ import { HealthCheckupComponent } from './health-checkup/health-checkup.componen
     SchoolsModule,
     ReactiveFormsModule,
     MatDialogModule,
-    MatListModule
+    AdminModule,
+    MatListModule,
   ],
   declarations: [
     AttendanceBlockComponent,

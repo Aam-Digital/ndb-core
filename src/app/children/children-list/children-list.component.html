@@ -23,6 +23,12 @@
           Add New
         </span>
       </button>
+      <app-export-data [data]="childrenList" format="csv" filename="ChildrenList">
+        <mat-icon class="button-icon" aria-label="download csv" fontIcon="fa-download"></mat-icon>
+        <span fxHide.lt-md="true">
+          Download CSV
+        </span>
+      </app-export-data>
     </div>
   </div>
   <!--
