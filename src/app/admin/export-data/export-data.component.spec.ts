@@ -1,9 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { ExportDataComponent } from './export-data.component';
+import {BackupService} from '../services/backup.service';
+import {ExportDataComponent} from './export-data.component';
 import {Database} from '../../database/database';
 import {MockDatabase} from '../../database/mock-database';
-import {BackupService} from '../services/backup.service';
 import {PapaParseModule} from 'ngx-papaparse';
 
 describe('ExportDataComponent', () => {
@@ -11,16 +10,15 @@ describe('ExportDataComponent', () => {
   let fixture: ComponentFixture<ExportDataComponent>;
 
   beforeEach(async(() => {
-    const db = new MockDatabase();
     TestBed.configureTestingModule({
       imports: [PapaParseModule],
       declarations: [ ExportDataComponent ],
       providers: [
         BackupService,
-        {provide: Database, useValue: db},
+        {provide: Database, useClass: MockDatabase}
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -33,9 +31,18 @@ describe('ExportDataComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('creates a link element when pressing export button', () => {
-    component.exportData();
-    const link = document.getElementById('download-link');
-    expect(link).toBeTruthy();
-  })
+  it('opens download link when pressing button', () => {
+    const link = document.createElement('a');
+    const clickSpy = spyOn(link, 'click');
+    // Needed to later reset the createElement function, otherwise subsequent calls result in an error
+    const oldCreateElement = document.createElement;
+    document.createElement = jasmine.createSpy('HTML Element').and.returnValue(link);
+    const button = fixture.nativeElement.querySelector('button');
+
+    expect(clickSpy.calls.count()).toBe(0);
+    button.click();
+    expect(clickSpy.calls.count()).toBe(1);
+    // reset createElement otherwise results in: 'an Error was thrown after all'
+    document.createElement = oldCreateElement;
+  });
 });

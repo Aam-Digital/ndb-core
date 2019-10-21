@@ -24,16 +24,15 @@ export class ExportDataComponent {
   private createDownloadLink(blobData): HTMLAnchorElement {
     const link = document.createElement('a');
     link.setAttribute('style', 'display:none;');
-    link.id = 'download-link';
     document.body.appendChild(link);
     link.href = window.URL.createObjectURL(blobData);
     link.download = this.filename + '.' + this.format.toLowerCase();
-    return link
+    return link;
   }
 
   private getFormattedBlobData(): Blob {
     let result = '';
-    switch(this.format.toLowerCase()) {
+    switch (this.format.toLowerCase()) {
       case 'json':
         result = this.backupService.createJson(this.data);
         return new Blob([result], {type: 'application/json'});
