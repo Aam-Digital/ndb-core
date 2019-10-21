@@ -235,6 +235,6 @@ describe('BackupService', () => {
     const expected = '"_id","_rev","propOne","propTwo"\r\n"1","2","first","second"\r\n"1","2","first","second"';
     const result = service.createCsv([test, test]);
     expect(result).toEqual(expected);
-  })
+  });
 });
 
