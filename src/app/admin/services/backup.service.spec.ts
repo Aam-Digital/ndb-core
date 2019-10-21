@@ -27,7 +27,6 @@ describe('BackupService', () => {
     expect(service).toBeTruthy();
   });
 
-
   it('clearDatabase should remove all records', (done) => {
     const setup = db.put({_id: 'Test:1', test: 1})
       .then(() => db.getAll()).then(res => expect(res.length).toBe(1));
@@ -175,4 +174,67 @@ describe('BackupService', () => {
     delete x._rev;
     return x;
   }
+
+  it('exportJson creates the correct json object', ()  => {
+      class TestClass {
+          propertyOne;
+          propertyTwo;
+      }
+      const test = new TestClass();
+      test.propertyOne = 'Hello';
+      test.propertyTwo = 'World';
+      const expected = JSON.stringify({propertyOne: 'Hello', propertyTwo: 'World'});
+      const result = service.createJson([test]);
+      expect(result).toEqual(expected);
+  });
+
+  it('exportJson transforms an json array correctly', ()  => {
+      class TestClass {
+          propertyOne;
+          propertyTwo;
+      }
+      const test = new TestClass();
+      test.propertyOne = 'Hello';
+      test.propertyTwo = 'World';
+      let expected = JSON.stringify({propertyOne: 'Hello', propertyTwo: 'World'});
+      expected += BackupService.SEPARATOR_ROW;
+      expected += JSON.stringify({propertyOne: 'Hello', propertyTwo: 'World'});
+      const result = service.createJson([test, test]);
+      expect(result).toEqual(expected);
+  });
+
+  it('should create a csv string correctly', () => {
+    class TestClass {
+      _id;
+      _rev;
+      propOne;
+      propTwo;
+    }
+    const test = new TestClass();
+    test._id = 1;
+    test._rev = 2;
+    test.propOne = 'first';
+    test.propTwo = 'second';
+    const expected = '"_id","_rev","propOne","propTwo"\r\n"1","2","first","second"';
+    const result = service.createCsv([test]);
+    expect(result).toEqual(expected);
+  });
+
+  it('should create a csv string correctly with multiple objects', () => {
+    class TestClass {
+      _id;
+      _rev;
+      propOne;
+      propTwo;
+    }
+    const test = new TestClass();
+    test._id = 1;
+    test._rev = 2;
+    test.propOne = 'first';
+    test.propTwo = 'second';
+    const expected = '"_id","_rev","propOne","propTwo"\r\n"1","2","first","second"\r\n"1","2","first","second"';
+    const result = service.createCsv([test, test]);
+    expect(result).toEqual(expected);
+  })
 });
+

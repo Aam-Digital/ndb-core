@@ -8,7 +8,7 @@ import {BackupService} from '../services/backup.service';
 })
 export class ExportDataComponent {
 
-  @Input() data: any = {};
+  @Input() data: any = [];
   // What kind of data should be export? Currently implemented are 'json', 'csv'
   @Input() format: string = 'csv';
   @Input() filename: string = 'exportedData';
@@ -24,6 +24,7 @@ export class ExportDataComponent {
   private createDownloadLink(blobData): HTMLAnchorElement {
     const link = document.createElement('a');
     link.setAttribute('style', 'display:none;');
+    link.id = 'download-link';
     document.body.appendChild(link);
     link.href = window.URL.createObjectURL(blobData);
     link.download = this.filename + '.' + this.format.toLowerCase();
