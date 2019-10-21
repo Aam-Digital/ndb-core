@@ -73,7 +73,7 @@
             "karmaConfig": "./karma.conf.js",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
-            "scripts": ["node_modules/marked/lib/marked.js"],
+            "scripts": [],
             "styles": [
               "src/ndb-theme.scss",
               "src/styles.css"
