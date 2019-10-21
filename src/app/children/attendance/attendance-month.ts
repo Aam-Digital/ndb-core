@@ -49,7 +49,7 @@ export class AttendanceMonth extends Entity {
   }
   set month(value: Date) {
     if (!(value instanceof Date)) {
-      console.warn('Trying to set invalid date ' + value + ' to Entity ' + this._id);
+      console.warn('Trying to set invalid date ' + JSON.stringify(value) + ' to Entity ' + this._id);
       return;
     }
 
@@ -142,6 +142,10 @@ export class AttendanceMonth extends Entity {
     }
 
     this.dailyRegister.forEach((day) => {
+      if (typeof day.date === 'string') {
+        day.date = new Date(day.date);
+      }
+
       day.date.setMonth(this.month.getMonth());
       day.date.setFullYear(this.month.getFullYear());
     });

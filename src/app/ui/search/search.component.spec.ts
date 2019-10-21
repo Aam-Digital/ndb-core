@@ -13,6 +13,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {ChildrenModule} from '../../children/children.module';
 import {SchoolsModule} from '../../schools/schools.module';
 import {MockDatabase} from '../../database/mock-database';
+import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 
 describe('SearchComponent', () => {
   let component: SearchComponent;
@@ -24,7 +25,10 @@ describe('SearchComponent', () => {
         CommonModule, FormsModule, NoopAnimationsModule,
         ChildrenModule, SchoolsModule, MatToolbarModule,
       ],
-      providers: [{ provide: Database, useClass: MockDatabase }],
+      providers: [
+        { provide: Database, useClass: MockDatabase },
+        EntitySchemaService,
+      ],
       declarations: [ SearchComponent ]
     })
     .compileComponents();

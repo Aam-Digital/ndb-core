@@ -45,6 +45,9 @@ import {environment} from '../environments/environment';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import {AdminModule} from './admin/admin.module';
 import {CookieService} from 'ngx-cookie-service';
+import {DemoDataModule} from './demo-data/demo-data.module';
+import {EntityModule} from './entity/entity.module';
+import {MatNativeDateModule} from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -60,6 +63,7 @@ import {CookieService} from 'ngx-cookie-service';
     FormsModule,
     AlertsModule,
     DatabaseModule,
+    EntityModule,
     AppConfigModule,
     SessionModule,
     UiModule,
@@ -72,6 +76,8 @@ import {CookieService} from 'ngx-cookie-service';
     SchoolsModule,
     AdminModule,
     MatIconModule,
+    MatNativeDateModule,
+    DemoDataModule.forRoot(),
   ],
   providers: [
     AppConfig,
