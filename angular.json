@@ -26,7 +26,7 @@
               "src/ndb-theme.scss",
               "src/styles.css"
             ],
-            "scripts": ["node_modules/marked/lib/marked.js"]
+            "scripts": []
           },
           "configurations": {
             "production": {
