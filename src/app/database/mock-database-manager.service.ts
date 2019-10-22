@@ -45,6 +45,11 @@ export class MockDatabaseManagerService extends DatabaseManagerService {
     demoUser.name = 'demo';
     demoUser.setNewPassword('pass');
     entityMapper.save(demoUser);
+    const demoAdmin = new User('demo-admin');
+    demoUser.name = 'demo-admin';
+    demoAdmin.admin = true;
+    demoAdmin.setNewPassword('pass');
+    entityMapper.save(demoAdmin);
   }
 
 
