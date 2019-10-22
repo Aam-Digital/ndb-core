@@ -21,14 +21,22 @@ describe('SearchComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [MatIconModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule,
-        CommonModule, FormsModule, NoopAnimationsModule,
-        ChildrenModule, SchoolsModule, MatToolbarModule,
+      imports: [
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatAutocompleteModule,
+        CommonModule,
+        FormsModule,
+        NoopAnimationsModule,
+        ChildrenModule,
+        SchoolsModule,
+        MatToolbarModule,
       ],
       providers: [
-        { provide: Database, useClass: MockDatabase },
         EntitySchemaService,
-      ],
+        { provide: Database, useClass: MockDatabase }
+        ],
       declarations: [ SearchComponent ]
     })
     .compileComponents();
