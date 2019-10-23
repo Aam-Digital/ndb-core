@@ -117,8 +117,23 @@ export class AttendanceMonth extends Entity {
 
   overridden = false; // indicates individual override during bulk adding
 
+  private _dailyRegister = new Array<AttendanceDay>();
+  set dailyRegister(value: AttendanceDay[]) {
+    if (!value) {
+      return;
+    }
+
+    for (const attDay of value) {
+      if (typeof attDay.date.getTime !== 'function') {
+        attDay.date = new Date(attDay.date);
+      }
+    }
+    this._dailyRegister = value;
+  }
   @DatabaseField()
-  dailyRegister = new Array<AttendanceDay>();
+  get dailyRegister(): AttendanceDay[] {
+    return this._dailyRegister;
+  }
 
   private updateDailyRegister() {
     if (this.month === undefined) {
@@ -142,10 +157,6 @@ export class AttendanceMonth extends Entity {
     }
 
     this.dailyRegister.forEach((day) => {
-      if (typeof day.date === 'string') {
-        day.date = new Date(day.date);
-      }
-
       day.date.setMonth(this.month.getMonth());
       day.date.setFullYear(this.month.getFullYear());
     });
