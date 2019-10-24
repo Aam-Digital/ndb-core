@@ -22,7 +22,7 @@ import {DatabaseField} from '../../entity/database-field.decorator';
 
 @DatabaseEntity('ChildSchoolRelation')
 export class PreviousSchools extends Entity {
-  //static ENTITY_TYPE = 'ChildSchoolRelation';
+  // static ENTITY_TYPE = 'ChildSchoolRelation';
 
   @DatabaseField() name: string;
 
@@ -38,6 +38,4 @@ export class PreviousSchools extends Entity {
 
   //   return super.load(data);
   // }
-
-
 }

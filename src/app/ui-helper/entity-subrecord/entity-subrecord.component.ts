@@ -1,15 +1,15 @@
-import {Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, ViewChild} from '@angular/core';
+import { Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import {ConfirmationDialogService} from '../confirmation-dialog/confirmation-dialog.service';
-import {Entity} from '../../entity/entity';
-import {EntityMapperService} from '../../entity/entity-mapper.service';
-import {ColumnDescription} from './column-description';
-import {AlertService} from '../../alerts/alert.service';
+import { ConfirmationDialogService } from '../confirmation-dialog/confirmation-dialog.service';
+import { Entity } from '../../entity/entity';
+import { EntityMapperService } from '../../entity/entity-mapper.service';
+import { ColumnDescription } from './column-description';
+import { AlertService } from '../../alerts/alert.service';
 import { MediaObserver, MediaChange} from '@angular/flex-layout';
-import {Subscription} from 'rxjs';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -80,10 +80,10 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
         this.alertService.addWarning(formValidationResult['validationMessage']);
         return;
       }
-    };
+    }
     console.log(record);
-    this._entityMapper.save(record).then(record => {
-      console.log(record);
+    this._entityMapper.save(record).then(savedRecord => {
+      console.log(savedRecord);
     });
 
     // updated backup copies used for reset
@@ -155,7 +155,6 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     if (this.detailsComponent === undefined || this.recordsEditing.get(record.getId())) {
       return;
     }
-
     this.dialog.open(this.detailsComponent, {width: '80%', data: {entity: record}});
   }
 
@@ -172,7 +171,6 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     if (col.allSelectValues === undefined) {
       col.allSelectValues = col.selectValues;
     }
-
     col.selectValues = col.allSelectValues.filter(v => v.value.includes(input) || v.label.includes(input));
   }
 
@@ -228,5 +226,4 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
  changeVisibilityOfAddButton() {
     this.showButton = !this.showButton;
   }
-
 }

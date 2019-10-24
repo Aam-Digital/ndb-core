@@ -56,14 +56,14 @@ export class ViewSchoolsComponent implements OnInit, OnChanges {
 
 
   public loadSchoolEntries() {
-    this.childrenService.getSchoolsWithRelations(this.child.getId())
-      .then((schools: SchoolWithRelation[]) => {
-        this.schoolsWithRelations = schools;
-        this.updateViewableItems();
-        this.changeDetectionRef.detectChanges();
-      },
-        () => this.loggingService.error('[ViewSchoolsComponent] loading from database error.')
-      );
+    // this.childrenService.getSchoolsWithRelations(this.child.getId())
+    //   .then((schools: SchoolWithRelation[]) => {
+    //     this.schoolsWithRelations = schools;
+    //     this.updateViewableItems();
+    //     this.changeDetectionRef.detectChanges();
+    //   },
+    //     () => this.loggingService.error('[ViewSchoolsComponent] loading from database error.')
+    //   );
   }
 
   private updateViewableItems() {

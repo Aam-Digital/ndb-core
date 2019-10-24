@@ -6,7 +6,7 @@
         (click)='showRecord(rec)' [ngClass]="{'table-link': detailsComponent!==undefined}">
 
       <div *ngIf="col.inputType === 'function'" class='table-show-number'>
-        {{ col.formatter( rec[col.name]() ) }}
+        {{ col.formatter( rec[col.name]) }}
       </div>
 
       <div *ngIf="!recordsEditing.get(rec.getId()) && col.inputType !== 'function'"
