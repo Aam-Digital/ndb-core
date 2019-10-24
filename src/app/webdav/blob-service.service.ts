@@ -78,9 +78,9 @@ export class BlobService {
    * @param arrayBuffer ArrayBuffer to be converted
    */
   public bufferArrayToBase64(arrayBuffer: ArrayBuffer): SafeUrl {
-    const TYPED_ARRAY = new Uint8Array(arrayBuffer);
-    const STRING_CHAR = String.fromCharCode.apply(null, TYPED_ARRAY);
-    const base64String = btoa(STRING_CHAR);
+    const base64String = btoa(new Uint8Array(arrayBuffer).reduce((data, byte) => {
+        return data + String.fromCharCode(byte); }, '')
+      );
     return this.domSanitizer.bypassSecurityTrustUrl('data:image/jpg;base64,' + base64String);
   }
 }
