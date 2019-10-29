@@ -6,7 +6,6 @@ import { LoginState } from './login-state.enum';
 import { SyncState } from './sync-state.enum';
 import { MockDatabase } from 'app/database/mock-database';
 import { Database } from 'app/database/database';
-import { DemoData } from 'app/database/demo-data';
 import { EntityMapperService } from 'app/entity/entity-mapper.service';
 import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
 
@@ -20,10 +19,10 @@ export class MockSessionService extends SessionService {
     constructor(private _entitySchemaService: EntitySchemaService) {
         super();
         this.database = new MockDatabase();
-        this.initDemoData();
+        this.createDemoUser();
     }
 
-    private initDemoData() {
+    private createDemoUser() {
         const entityMapper = new EntityMapperService(this.database, this._entitySchemaService);
 
         // add demo user
@@ -31,9 +30,6 @@ export class MockSessionService extends SessionService {
         this.demoUser.name = 'demo';
         this.demoUser.setNewPassword('pass');
         entityMapper.save(this.demoUser);
-
-        DemoData.getAllDemoEntities()
-            .forEach(c => entityMapper.save(c));
     }
 
     public getCurrentUser(): User {

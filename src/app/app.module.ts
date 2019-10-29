@@ -48,7 +48,6 @@ import { EntityModule } from './entity/entity.module';
 import {CookieService} from 'ngx-cookie-service';
 import {HelpModule} from './help/help.module';
 import {DemoDataModule} from './demo-data/demo-data.module';
-import {EntityModule} from './entity/entity.module';
 import {MatNativeDateModule} from '@angular/material/core';
 
 @NgModule({
@@ -68,7 +67,6 @@ import {MatNativeDateModule} from '@angular/material/core';
     EntityModule,
     AppConfigModule,
     SessionModule,
-    EntityModule,
     UiModule,
     SyncStatusModule,
     LatestChangesModule,
