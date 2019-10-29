@@ -36,6 +36,8 @@ import { databaseServiceProvider } from 'app/session/database.service.provider';
 import { SessionService } from 'app/session/session.service';
 import { MockSessionService } from 'app/session/mock-session.service';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatNativeDateModule} from '@angular/material/core';
 
 describe('ChildDetailsComponent', () => {
   let component: ChildDetailsComponent;
@@ -78,6 +80,8 @@ describe('ChildDetailsComponent', () => {
         MatIconModule,
         MatSelectModule,
         MatTooltipModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
         ReactiveFormsModule,
         MatInputModule,
         FormsModule,
