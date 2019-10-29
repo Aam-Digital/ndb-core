@@ -178,6 +178,7 @@ export class AttendanceMonth extends Entity {
 
 
   getAttendancePercentage() {
+    console.log(this.daysAttended / (this.daysWorking - this.daysExcused));
     return this.daysAttended / (this.daysWorking - this.daysExcused);
   }
 

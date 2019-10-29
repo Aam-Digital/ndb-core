@@ -8,7 +8,7 @@ import { Entity } from '../../entity/entity';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
 import { ColumnDescription } from './column-description';
 import { AlertService } from '../../alerts/alert.service';
-import { MediaObserver, MediaChange} from '@angular/flex-layout';
+import { MediaObserver, MediaChange } from '@angular/flex-layout';
 import { Subscription } from 'rxjs';
 
 
@@ -74,6 +74,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
 
 
   save(record: Entity) {
+
     if (this.optionalFormValidation) {
       const formValidationResult = this.optionalFormValidation(record);
       if (!formValidationResult['hasPassedValidation']) {
@@ -81,9 +82,11 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
         return;
       }
     }
-    console.log(record);
+    console.log(`Vor dem Speichern:  &{record}`);
+    // this.alertService.addWarning(`Vor dem Speichern:  &{record}`);
     this._entityMapper.save(record).then(savedRecord => {
-      console.log(savedRecord);
+      console.log(`Nach dem Speichern: &{savedRecord}`);
+      // this.alertService.addWarning(`Vor dem Speichern:  &{savedRecord}`);
     });
 
     // updated backup copies used for reset

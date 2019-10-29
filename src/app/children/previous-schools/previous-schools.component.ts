@@ -52,7 +52,7 @@ export class PreviousSchoolsComponent implements OnInit {
     this.schoolsService.getSchools().subscribe(data => {
         this.columns = [
           new ColumnDescription('schoolName', 'Name', 'select',
-            data.map(t => { return { value: t.name, label: t.name}; })),
+            data.map(t => { return { value: t.name , label: t.name}; })),
           new ColumnDescription('start', 'From', 'date', null,
             // tslint:disable-next-line: max-line-length
             (v: Date) => !isNaN(v.getTime()) ? this.datePipe.transform(v, 'yyyy-MM-dd') : undefined), // checking if v is a date and otherweise returning undefined prevents a datePipe error
@@ -62,12 +62,13 @@ export class PreviousSchoolsComponent implements OnInit {
     });
   }
 
-
   newRecordFactory = () => {
     const newPreviousSchool = new ChildSchoolRelation(uniqid());
     newPreviousSchool.childId = this.childId;
-    // tslint:disable-next-line: max-line-length
-    const lastToDate =  (this.records.length && this.records[0].end) ? new Date(this.records[0].end) : new Date(new Date().setDate(new Date().getDate() + -1));  // last to-date (of first entry in records); if the first entry doesn't have any to-date, lastToDate is set to yesterday
+    // last to-date (of first entry in records); if the first entry doesn't have any to-date, lastToDate is set to yesterday
+    const lastToDate =  (this.records.length && this.records[0].end)
+      ? new Date(this.records[0].end)
+      : new Date(new Date().setDate(new Date().getDate() + -1));
     newPreviousSchool.start = new Date(lastToDate.setDate(lastToDate.getDate() + 1));  // one day after last to-date
     newPreviousSchool.end = new Date('');  // void date
     return newPreviousSchool;
