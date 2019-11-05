@@ -113,8 +113,6 @@ export class ChildDetailsComponent implements OnInit, OnChanges {
       dropoutDate:    [{value: this.child.dropoutDate,    disabled: !this.editing}],
       dropoutType:    [{value: this.child.dropoutType,    disabled: !this.editing}],
       dropoutRemarks: [{value: this.child.dropoutRemarks, disabled: !this.editing}],
-
-      photoFile: [this.child.photoFile]
     });
 
 
@@ -123,7 +121,6 @@ export class ChildDetailsComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
     this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
-    this.image = 'assets/child.png';
   }
 
   // for debugging purposes
