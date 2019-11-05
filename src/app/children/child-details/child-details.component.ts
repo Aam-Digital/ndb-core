@@ -139,8 +139,8 @@ export class ChildDetailsComponent implements OnInit {
           this.entityMapperService.load<School>(School, this.child.schoolId)
             .then(school => this.currentSchool = school);
           // TODO: use entity.photoFile instead
-          this.blobService.getImage(this.child.getId().replace('child:', ''))
-            .then(arr => this.image = this.blobService.bufferArrayToBase64(arr));
+      //    this.blobService.getImage(this.child.getId().replace('child:', ''))
+        //    .then(arr => this.image = this.blobService.bufferArrayToBase64(arr));
         });
     }
     this.initForm();
@@ -149,8 +149,8 @@ export class ChildDetailsComponent implements OnInit {
   switchEdit() {
     this.editing = !this.editing;
     this.initForm();
-    this.blobService.getImage(this.child.getId().replace('child:', ''))
-            .then(arr => this.image = this.blobService.bufferArrayToBase64(arr));
+  //  this.blobService.getImage(this.child.getId().replace('child:', ''))
+  //          .then(arr => this.image = this.blobService.bufferArrayToBase64(arr));
   }
 
   save() {

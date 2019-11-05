@@ -12,13 +12,15 @@ import {School} from '../schools/school';
 import {SchoolWithRelation} from '../schools/schoolWithRelation';
 import {HealthCheck} from './health-checkup/health-check';
 import {EntitySchemaService} from '../entity/schema/entity-schema.service';
+import { BlobService } from 'app/webdav/blob-service.service';
 
 @Injectable()
 export class ChildrenService {
 
   constructor(private entityMapper: EntityMapperService,
               private entitySchemaService: EntitySchemaService,
-              private db: Database) {
+              private db: Database,
+              private blobService: BlobService) {
     this.createAttendanceAnalysisIndex();
     this.createNotesIndex();
     this.createAttendancesIndex();
@@ -27,7 +29,20 @@ export class ChildrenService {
 
 
   getChildren(): Observable<Child[]> {
-    return from(this.entityMapper.loadType<Child>(Child));
+    const childObs = new Observable<Child[]>((observer) => {
+      const {next, error} = observer;
+      this.entityMapper.loadType<Child>(Child).then(
+        children => {
+          next(children);
+          children.forEach(child => {
+            this.blobService.getImage(child.getId().replace('child:', '')).then(image => {
+              child.photo = this.blobService._bufferArrayToBase64(image);
+              console.log('image for child: ' + child.getId() + ' received');
+              next(children); } );
+          });
+        });
+    });
+    return childObs;
   }
   getChild(id: string): Observable<Child> {
     return from(this.entityMapper.load<Child>(Child, id));

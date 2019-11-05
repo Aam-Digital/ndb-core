@@ -6,7 +6,7 @@
 <div style="position:absolute;" *ngIf="tooltip">
   <div class="mat-elevation-z5 child-tooltip" (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()" fxLayout='row'>
     <div fxFlex='30'>
-      <img [src]="image" class="child-pic-large" alt="child's photo">
+      <img [src]="child?.photo" class="child-pic-large" alt="child's photo">
     </div>
     <div fxFlex>
       <h3>{{entity?.name}}</h3>
