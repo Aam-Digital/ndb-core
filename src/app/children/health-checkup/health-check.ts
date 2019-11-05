@@ -18,6 +18,7 @@
 import { Entity } from '../../entity/entity';
 import {DatabaseEntity} from '../../entity/database-entity.decorator';
 import {DatabaseField} from '../../entity/database-field.decorator';
+import {WarningLevel} from '../attendance/warning-level';
 
 /**
  * Model Class for the Health Checks that are taken for a Child.
@@ -33,4 +34,18 @@ export class HealthCheck extends Entity {
 
   /** weight measurement in kg **/
   @DatabaseField() weight: number;
+
+  get bmi(): number {
+    return (this.weight / ((this.height / 100) * (this.height / 100)));
+  }
+
+  getWarningLevel() {
+    if (this.bmi <= 16 || this.bmi >= 30) {
+      return WarningLevel.URGENT;
+    } else if (this.bmi  >= 18 && this.bmi <= 25) {
+      return WarningLevel.OK;
+    } else {
+      return WarningLevel.WARNING;
+    }
+  }
 }

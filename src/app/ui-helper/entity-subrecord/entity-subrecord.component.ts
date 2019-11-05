@@ -6,7 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ConfirmationDialogService } from '../confirmation-dialog/confirmation-dialog.service';
 import { Entity } from '../../entity/entity';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
-import { ColumnDescription } from './column-description';
+import { ColumnDescription, ColumnDescriptionInputType } from './column-description';
 import { AlertService } from '../../alerts/alert.service';
 import { MediaObserver, MediaChange } from '@angular/flex-layout';
 import { Subscription } from 'rxjs';
@@ -228,5 +228,9 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
 
  changeVisibilityOfAddButton() {
     this.showButton = !this.showButton;
+  }
+
+  isReadonlyInputType(inputType: ColumnDescriptionInputType): boolean {
+    return inputType === ColumnDescriptionInputType.FUNCTION || inputType === ColumnDescriptionInputType.READONLY;
   }
 }

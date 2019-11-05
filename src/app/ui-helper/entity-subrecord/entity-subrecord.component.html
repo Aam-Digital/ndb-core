@@ -9,12 +9,17 @@
         {{ col.formatter( rec[col.name]) }}
       </div>
 
-      <div *ngIf="!recordsEditing.get(rec.getId()) && col.inputType !== 'function'"
+      <div *ngIf="col.inputType === 'readonly'" class='table-show-number'>
+        {{ col.formatter( rec[col.name] ) }}
+      </div>
+
+
+      <div *ngIf="!recordsEditing.get(rec.getId()) && !isReadonlyInputType(col.inputType)"
            [ngClass]="{ 'table-show-number': col.inputType==='number' }">
         {{ col.formatter(rec[col.name]) }}
       </div>
 
-      <div *ngIf="recordsEditing.get(rec.getId()) && col.inputType !== 'function'">
+      <div *ngIf="recordsEditing.get(rec.getId()) &&  !isReadonlyInputType(col.inputType)">
         <mat-form-field [ngClass]="{
             'table-input-number': col.inputType === 'number',
             'table-input-month': col.inputType === 'month' || col.inputType === 'date'

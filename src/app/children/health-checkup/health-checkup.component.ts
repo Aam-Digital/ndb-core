@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HealthCheck } from './health-check';
-import { ColumnDescription } from '../../ui-helper/entity-subrecord/column-description';
+import {ColumnDescription, ColumnDescriptionInputType} from '../../ui-helper/entity-subrecord/column-description';
 import { ActivatedRoute } from '@angular/router';
 import { ChildrenService } from '../children.service';
 import {DatePipe} from '@angular/common';
@@ -17,14 +17,17 @@ export class HealthCheckupComponent implements OnInit {
   /**
    * Column Description for the SubentityRecordComponent
    * The Date-Column needs to be transformed to apply the MathFormCheck in the SubentityRecordComponent
+   * BMI is rounded to 2 decimal digits
    */
   columns: Array<ColumnDescription> = [
-    new ColumnDescription('date', 'Date', 'date', null,
+    new ColumnDescription('date', 'Date', ColumnDescriptionInputType.DATE, null,
     (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
-    new ColumnDescription('height', 'Height [cm]', 'number', null,
+    new ColumnDescription('height', 'Height [cm]', ColumnDescriptionInputType.NUMBER, null,
     (height: Number) => height + ' cm' ),
-    new ColumnDescription('weight', 'Weight [kg]', 'number', null,
+    new ColumnDescription('weight', 'Weight [kg]', ColumnDescriptionInputType.NUMBER, null,
     (weight: Number) => weight + ' kg'),
+    new ColumnDescription('bmi', 'BMI', ColumnDescriptionInputType.READONLY, null,
+    (bmi: Number) => bmi.toFixed(2)),
   ];
   childId: string;
   constructor(private route: ActivatedRoute, private childrenService: ChildrenService, private datePipe: DatePipe ) { }

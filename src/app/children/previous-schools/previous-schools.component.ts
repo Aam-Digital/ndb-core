@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {DatePipe} from '@angular/common';
 import {ChildSchoolRelation} from '../childSchoolRelation';
-import {ColumnDescription} from '../../ui-helper/entity-subrecord/column-description';
+import {ColumnDescription, ColumnDescriptionInputType} from '../../ui-helper/entity-subrecord/column-description';
 import {ChildrenService} from '../children.service';
 import {SchoolsService} from '../../schools/schools.service';
 import {School} from 'app/schools/school';
@@ -51,12 +51,12 @@ export class PreviousSchoolsComponent implements OnInit {
       });
     this.schoolsService.getSchools().subscribe(data => {
         this.columns = [
-          new ColumnDescription('schoolName', 'Name', 'select',
+          new ColumnDescription('schoolName', 'Name', ColumnDescriptionInputType.SELECT,
             data.map(t => { return { value: t.name , label: t.name}; })),
-          new ColumnDescription('start', 'From', 'date', null,
+          new ColumnDescription('start', 'From', ColumnDescriptionInputType.DATE, null,
             // tslint:disable-next-line: max-line-length
             (v: Date) => !isNaN(v.getTime()) ? this.datePipe.transform(v, 'yyyy-MM-dd') : undefined), // checking if v is a date and otherweise returning undefined prevents a datePipe error
-          new ColumnDescription('end', 'To', 'date', null,
+          new ColumnDescription('end', 'To', ColumnDescriptionInputType.DATE, null,
             (v: Date) => !isNaN(v.getTime()) ? this.datePipe.transform(v, 'yyyy-MM-dd') : undefined),
         ];
     });

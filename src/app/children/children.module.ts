@@ -66,6 +66,7 @@ import {AttendanceDayBlockComponent} from './attendance/attendance-days/attendan
 import { AttendanceManagerComponent } from './attendance/attendance-manager/attendance-manager.component';
 import { HealthCheckupComponent } from './health-checkup/health-checkup.component';
 import { PreviousSchoolsComponent } from './previous-schools/previous-schools.component';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 
 
 @NgModule({
@@ -78,6 +79,7 @@ import { PreviousSchoolsComponent } from './previous-schools/previous-schools.co
     MatInputModule,
     MatCheckboxModule,
     MatSelectModule,
+    MatDatepickerModule,
     MatExpansionModule,
     MatTableModule,
     MatSortModule,
@@ -116,7 +118,7 @@ import { PreviousSchoolsComponent } from './previous-schools/previous-schools.co
     AserComponent,
     NotesManagerComponent,
     AddMonthAttendanceComponent,
-    //ViewSchoolsComponent,
+    // ViewSchoolsComponent,
     AttendanceDayBlockComponent,
     AttendanceDaysComponent,
     AttendanceDetailsComponent,

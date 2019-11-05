@@ -22,7 +22,6 @@ import { Database } from './database';
 import {MockDatabase} from './mock-database';
 import {EntityMapperService} from '../entity/entity-mapper.service';
 import {DatabaseSyncStatus} from './database-sync-status.enum';
-import {DemoData} from './demo-data';
 import {EntitySchemaService} from '../entity/schema/entity-schema.service';
 
 @Injectable()
@@ -35,11 +34,10 @@ export class MockDatabaseManagerService extends DatabaseManagerService {
     super();
 
     this.database = new MockDatabase();
-    this.initDemoData();
+    this.createDemoUser();
   }
 
-  // TODO: move demo data generation to a separate service
-  private initDemoData() {
+  private createDemoUser() {
     const entityMapper = new EntityMapperService(this.database, new EntitySchemaService());
 
     // add demo user
@@ -47,9 +45,6 @@ export class MockDatabaseManagerService extends DatabaseManagerService {
     demoUser.name = 'demo';
     demoUser.setNewPassword('pass');
     entityMapper.save(demoUser);
-
-    DemoData.getAllDemoEntities()
-      .forEach(c => entityMapper.save(c));
   }
 
 

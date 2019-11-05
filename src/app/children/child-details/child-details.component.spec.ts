@@ -36,6 +36,8 @@ import {DatabaseManagerService} from '../../database/database-manager.service';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HealthCheckupComponent} from '../health-checkup/health-checkup.component';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatNativeDateModule} from '@angular/material/core';
 
 describe('ChildDetailsComponent', () => {
   let component: ChildDetailsComponent;
@@ -78,6 +80,8 @@ describe('ChildDetailsComponent', () => {
         MatIconModule,
         MatSelectModule,
         MatTooltipModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
         ReactiveFormsModule,
         MatInputModule,
         FormsModule,
