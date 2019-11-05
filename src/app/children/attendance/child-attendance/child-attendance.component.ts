@@ -27,9 +27,7 @@ export class ChildAttendanceComponent implements OnInit {
     new ColumnDescription('daysAttended', 'Present', ColumnDescriptionInputType.NUMBER, null, undefined,  'xs'),
     new ColumnDescription('daysWorking', 'Working Days', ColumnDescriptionInputType.NUMBER, null, undefined, 'xs'),
     new ColumnDescription('getAttendancePercentage', 'Attended', ColumnDescriptionInputType.FUNCTION, null,
-      (v) => { console.log("Peter: " + this.percentPipe.transform(v, '1.0-0'));
-        return(1);
-    }, 'md'),
+      (v: number) => this.percentPipe.transform(v, '1.0-0'), 'md'),
     new ColumnDescription('daysExcused', 'Excused', ColumnDescriptionInputType.NUMBER, null, undefined, 'md'),
     new ColumnDescription('remarks', 'Remarks', ColumnDescriptionInputType.TEXTAREA, null, undefined, 'xl'),
   ];

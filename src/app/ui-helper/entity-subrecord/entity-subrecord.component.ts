@@ -82,10 +82,10 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
         return;
       }
     }
-    console.log(`Vor dem Speichern:  &{record}`);
+    console.log(`Vor dem Speichern:  ${record}`);
     // this.alertService.addWarning(`Vor dem Speichern:  &{record}`);
     this._entityMapper.save(record).then(savedRecord => {
-      console.log(`Nach dem Speichern: &{savedRecord}`);
+      console.log(`Nach dem Speichern: ${savedRecord}`);
       // this.alertService.addWarning(`Vor dem Speichern:  &{savedRecord}`);
     });
 
