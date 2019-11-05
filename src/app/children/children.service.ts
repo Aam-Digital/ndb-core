@@ -30,15 +30,14 @@ export class ChildrenService {
 
   getChildren(): Observable<Child[]> {
     const childObs = new Observable<Child[]>((observer) => {
-      const {next, error} = observer;
       this.entityMapper.loadType<Child>(Child).then(
         children => {
-          next(children);
+          observer.next(children);
           children.forEach(child => {
             this.blobService.getImage(child.getId().replace('child:', '')).then(image => {
               child.photo = this.blobService._bufferArrayToBase64(image);
               console.log('image for child: ' + child.getId() + ' received');
-              next(children); } );
+              observer.next(children); } );
           });
         });
     });
