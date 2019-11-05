@@ -44,7 +44,18 @@ export class ChildrenService {
     return childObs;
   }
   getChild(id: string): Observable<Child> {
-    return from(this.entityMapper.load<Child>(Child, id));
+    //return from(this.entityMapper.load<Child>(Child, id));
+    const childObs = new Observable<Child>((observer) => {
+      this.entityMapper.load<Child>(Child, id).then(
+        child => {
+          observer.next(child);
+          this.blobService.getImage(child.getId().replace('child:', '')).then(image => {
+            child.photo = this.blobService._bufferArrayToBase64(image);
+            console.log('image for child(' + child.getId() + ') in getChild received');
+        observer.next(child); } );
+        });
+    });
+    return childObs;
   }
 
   getAttendances(): Observable<AttendanceMonth[]> {
