@@ -8,6 +8,8 @@ import { SessionService } from 'app/session/session.service';
 export class BlobService {
 
   private client: any;
+  private fileList: string;
+
   constructor(private domSanitizer: DomSanitizer,
     private sessionService: SessionService) {
     // const { createClient } = require("webdav");
@@ -27,15 +29,22 @@ export class BlobService {
    * Returns the content of '/' + path
    * @param path path without leading '/'
    */
-  public async getDir(path: string) {
-    try {
+  public async getDir(path: string): Promise<any> {
       const contents = await this.client.getDirectoryContents(path);
-      console.log(JSON.stringify(contents, undefined, 4));
-    } catch (error) {
-      console.log(error);
-    }
+    return JSON.stringify(contents, undefined, 4);
   }
 
+  public async doesFileExist(name: string): Promise<Boolean> {
+    if (!this.fileList) {
+      this.fileList = await this.getDir('');
+    }
+    // hacky way of checking if file exists, subject to change
+    // TODO fix this
+    if (this.fileList.includes('"basename": "' + name + '"')) {
+      return true;
+    }
+    return false;
+  }
 
   /**
   * creates new directory
@@ -63,7 +72,10 @@ export class BlobService {
    * @param path
    */
   public async getImage(path: string): Promise<ArrayBuffer> {
+    if (await this.doesFileExist(path)) {
     return this.client.getFileContents(path); //.then(arr => {return this._bufferArrayToBase64(arr); } );
+  }
+    return new ArrayBuffer(0);
   }
 
   /**
