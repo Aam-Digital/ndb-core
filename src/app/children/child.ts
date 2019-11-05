@@ -17,8 +17,9 @@
 
 import { Entity } from '../entity/entity';
 import { Gender} from './Gender';
-import {DatabaseEntity} from '../entity/database-entity.decorator';
-import {DatabaseField} from '../entity/database-field.decorator';
+import { DatabaseEntity } from '../entity/database-entity.decorator';
+import { DatabaseField } from '../entity/database-field.decorator';
+import { SafeUrl } from '@angular/platform-browser';
 
 @DatabaseEntity('Child')
 export class Child extends Entity {
@@ -70,6 +71,8 @@ export class Child extends Entity {
   @DatabaseField() health_eyeHealthStatus: string;
   @DatabaseField() health_lastVitaminD: Date;
   @DatabaseField() health_lastDeworming: Date;
+
+  photo: SafeUrl = 'assets/child.png';
 
   get age(): number {
     let age = -1;
