@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnInit, OnChanges} from '@angular/core';
 import {Child} from '../child';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {Gender} from '../Gender';
@@ -37,7 +37,7 @@ import { SafeUrl } from '@angular/platform-browser';
   templateUrl: './child-details.component.html',
   styleUrls: ['./child-details.component.css']
 })
-export class ChildDetailsComponent implements OnInit {
+export class ChildDetailsComponent implements OnInit, OnChanges {
 
   child: Child = new Child('');
   currentSchool: School = new School('');
@@ -124,6 +124,11 @@ export class ChildDetailsComponent implements OnInit {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
     this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
     this.image = 'assets/child.png';
+  }
+
+  // for debugging purposes
+  ngOnChanges() {
+    console.log('child-details change', this.child.photo);
   }
 
   async loadChild(id: string) {

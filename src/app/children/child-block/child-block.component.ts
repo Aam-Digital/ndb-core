@@ -1,4 +1,4 @@
-import {Component, HostListener, Input, OnInit} from '@angular/core';
+import {Component, HostListener, Input, OnInit, OnChanges} from '@angular/core';
 import {Router} from '@angular/router';
 import {ChildrenService} from '../children.service';
 import { BlobService } from 'app/webdav/blob-service.service';
@@ -10,7 +10,7 @@ import { SafeUrl } from '@angular/platform-browser';
   templateUrl: './child-block.component.html',
   styleUrls: ['./child-block.component.scss']
 })
-export class ChildBlockComponent implements OnInit {
+export class ChildBlockComponent implements OnInit, OnChanges {
   @Input() entity: Child;
   @Input() entityId: string;
   @Input() linkDisabled: boolean;
@@ -28,6 +28,12 @@ export class ChildBlockComponent implements OnInit {
         this.entity = child;
       });
     }
+    //this.blobService.getImage(this.entity.getId().replace('child:', ''))
+    //.then( arrayBuffer => {this.image = this.blobService.bufferArrayToBase64(arrayBuffer); });
+  }
+
+  ngOnChanges() {
+    console.log("child-block change", this.entity.photo);
   }
 
   showTooltip() {
