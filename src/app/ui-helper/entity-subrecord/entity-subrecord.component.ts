@@ -82,11 +82,11 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
         return;
       }
     }
-    console.log(`Vor dem Speichern:  ${record}`);
-    // this.alertService.addWarning(`Vor dem Speichern:  &{record}`);
+    console.log('Vor dem Speichern: ' + record);
+    this.alertService.addWarning('Vor dem Speichern: ' + record);
     this._entityMapper.save(record).then(savedRecord => {
-      console.log(`Nach dem Speichern: ${savedRecord}`);
-      // this.alertService.addWarning(`Vor dem Speichern:  &{savedRecord}`);
+      console.log('Nach dem Speichern: ' + savedRecord);
+      this.alertService.addWarning('Nach dem Speichern: ' + savedRecord);
     });
 
     // updated backup copies used for reset
@@ -139,6 +139,10 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
 
   create() {
     const newRecord = this.newRecordFactory();
+    console.log(this.records[0]);
+    console.log(this.records[1]);
+    console.log(this.records[2]);
+    console.log('New Record: ' + newRecord);
 
     this.records.unshift(newRecord);
     this.originalRecords.unshift(Object.assign({}, newRecord));
