@@ -8,7 +8,9 @@ import { SessionService } from 'app/session/session.service';
 export class BlobService {
 
   private client: any;
+  private defaultImage: SafeUrl;
   private fileList: string;
+  private currentlyGettingList: Promise<boolean>;
 
   constructor(private domSanitizer: DomSanitizer,
     private sessionService: SessionService) {
@@ -29,14 +31,21 @@ export class BlobService {
    * Returns the content of '/' + path
    * @param path path without leading '/'
    */
-  public async getDir(path: string): Promise<any> {
+  public async getDir(path: string): Promise<string> {
       const contents = await this.client.getDirectoryContents(path);
     return JSON.stringify(contents, undefined, 4);
   }
 
-  public async doesFileExist(name: string): Promise<Boolean> {
-    if (!this.fileList) {
-      this.fileList = await this.getDir('');
+  public async doesFileExist(name: string): Promise<boolean> {
+    if (!this.fileList && !this.currentlyGettingList) {
+      // console.log('getting file list');
+      this.currentlyGettingList = new Promise((resolve, reject) => {
+        this.getDir('').then(list => this.fileList = list);
+        resolve(true);
+      });
+    } else if (!this.fileList) {
+      // console.log('waiting for list');
+      await this.currentlyGettingList;
     }
     // hacky way of checking if file exists, subject to change
     // TODO fix this
@@ -71,18 +80,23 @@ export class BlobService {
    * Returns a Promise which resolves as an ArrayBuffer of the file located at the given path
    * @param path
    */
-  public async getImage(path: string): Promise<ArrayBuffer> {
+  public async getImage(path: string): Promise<SafeUrl> {
     if (await this.doesFileExist(path)) {
-    return this.client.getFileContents(path); //.then(arr => {return this._bufferArrayToBase64(arr); } );
+      const image = await this.client.getFileContents(path);
+      return this._bufferArrayToBase64(image);
   }
-    return new ArrayBuffer(0);
+    return await this.getDefaultImage();
   }
 
   /**
    * Returns a Promise which resolves as an ArrayBuffer of the default child image
    */
-  public async getDefaultImage(): Promise<ArrayBuffer> {
-    return this.client.getFileContents('default.png');
+  public getDefaultImage(): Promise<SafeUrl> {
+    if (!this.defaultImage) {
+      const image = this.client.getFileContents('default.png');
+      this.defaultImage = this._bufferArrayToBase64(image);
+    }
+    return new Promise( (resolve, reject) => resolve(this.defaultImage));
   }
 
   /**
