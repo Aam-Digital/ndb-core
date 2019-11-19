@@ -108,7 +108,12 @@ describe('SyncedSessionService', () => {
             expect(sessionService.getCurrentUser()).toBeDefined();
         });
 
-        it('has the correct state after Logout', () => {
+        it('has the correct state after Logout', async () => {
+            await Promise.all([
+                sessionService.login('demo', 'pass'),
+                sessionService.getSyncState().waitForChangeTo(SyncState.completed, SyncState.failed)
+            ]);
+
             sessionService.logout();
             expect(sessionService.getLoginState().getState()).toEqual(LoginState.loggedOut);
             expect(sessionService.getConnectionState().getState()).toEqual(ConnectionState.disconnected);
@@ -119,7 +124,7 @@ describe('SyncedSessionService', () => {
     });
 
     // These tests mock the login-methods of local and remote session.
-    // We cannot test wether the StateHandlers are in correct state, as these are set in the sub-classes themselves.
+    // We cannot test whether the StateHandlers are in correct state, as these are set in the sub-classes themselves.
     describe('Mocked Tests', () => {
         let localSession: LocalSession;
         let remoteSession: RemoteSession;
