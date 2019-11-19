@@ -38,6 +38,7 @@ import { MockSessionService } from 'app/session/mock-session.service';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
+import { MockDatabase } from 'app/database/mock-database';
 
 describe('ChildDetailsComponent', () => {
   let component: ChildDetailsComponent;
@@ -54,7 +55,8 @@ describe('ChildDetailsComponent', () => {
   const mockedDialog = { open: () => { return {
       afterClosed: () => Observable.create(observer => observer(false))
     }; }};
-  const mockedSession = { getCurrentUser: () => 'testUser'};
+  const mockedDatabase = new MockDatabase();
+  const mockedSession = { getCurrentUser: () => 'testUser', getDatabase: () => mockedDatabase };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -96,7 +98,7 @@ describe('ChildDetailsComponent', () => {
         DatePipe,
         PercentPipe,
         databaseServiceProvider,
-        { provide: SessionService, useClass: MockSessionService },
+        { provide: SessionService, useValue: mockedSession },
         { provide: MatDialog, useValue: mockedDialog },
         { provide: ConfirmationDialogService, useValue: mockedConfirmationDialog},
         { provide: MatSnackBar, useValue: mockedSnackBar},
