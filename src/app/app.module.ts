@@ -24,7 +24,6 @@ import { HttpClientModule} from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { UiModule } from './ui/ui.module';
 import { AppConfigModule } from './app-config/app-config.module';
-import { DatabaseModule } from './database/database.module';
 import { routing } from './app.routing';
 import { AlertsModule } from './alerts/alerts.module';
 import { SessionModule } from './session/session.module';
@@ -63,7 +62,6 @@ import {MatNativeDateModule} from '@angular/material/core';
     routing,
     FormsModule,
     AlertsModule,
-    DatabaseModule,
     EntityModule,
     AppConfigModule,
     SessionModule,

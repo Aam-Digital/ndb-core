@@ -19,7 +19,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoginComponent } from './login/login.component';
 import { FormsModule } from '@angular/forms';
-import { DatabaseModule } from '../database/database.module';
 import { EntityModule } from 'app/entity/entity.module';
 import { AlertsModule } from '../alerts/alerts.module';
 import { LoggedInGuard } from './logged-in.guard';
@@ -36,7 +35,6 @@ import {RouterModule} from '@angular/router';
   imports: [
     CommonModule,
     FormsModule,
-    DatabaseModule,
     EntityModule,
     AlertsModule,
     MatCardModule,
