@@ -82,6 +82,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
         return;
       }
     }
+
     console.log('Vor dem Speichern: ' + record);
     this.alertService.addWarning('Vor dem Speichern: ' + record);
     this._entityMapper.save(record).then(savedRecord => {
@@ -145,6 +146,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     console.log('New Record: ' + newRecord);
 
     this.records.unshift(newRecord);
+    console.log(this.records[0]);
     this.originalRecords.unshift(Object.assign({}, newRecord));
     this.recordsDataSource.data = this.records;
 
