@@ -37,7 +37,7 @@ export class ChildrenService {
             // TODO only load child photo if no photo exists
             this.blobService.getImage(child.getId().replace('child:', '')).then(image => {
               child.photo = image;
-              console.log('image '+ image + ' for child(' + child.getId() + ') in getChildren received');
+              // console.log('image '+ image + ' for child(' + child.getId() + ') in getChildren received');
               observer.next(children); } );
           });
         });
@@ -53,7 +53,7 @@ export class ChildrenService {
           observer.next(child);
           this.blobService.getImage(child.getId().replace('child:', '')).then(image => {
             child.photo = image;
-            console.log('image for child(' + child.getId() + ') in getChild received');
+            // console.log('image for child(' + child.getId() + ') in getChild received');
         observer.next(child); } );
         });
     });
