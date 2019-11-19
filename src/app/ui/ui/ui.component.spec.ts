@@ -45,6 +45,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import {CookieService} from 'ngx-cookie-service';
 import {SwUpdate} from '@angular/service-worker';
 import {of} from 'rxjs';
+import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
 
 describe('UiComponent', () => {
   let component: UiComponent;
@@ -64,6 +65,7 @@ describe('UiComponent', () => {
     };
 
     const mockSwUpdate = { available: of(), checkForUpdate: () => {} };
+    const mockSession = new MockSessionService(new EntitySchemaService());
 
     TestBed.configureTestingModule({
       declarations: [SearchComponent, PrimaryActionComponent, UiComponent],
@@ -80,7 +82,7 @@ describe('UiComponent', () => {
         FlexLayoutModule,
       ],
       providers: [
-        {provide: SessionService, useClass: MockSessionService},
+        {provide: SessionService, useValue: mockSession},
         CookieService,
         {provide: SwUpdate, useValue: mockSwUpdate},
       ],
