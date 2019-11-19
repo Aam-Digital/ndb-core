@@ -35,6 +35,7 @@ export class SyncedSessionService extends SessionService {
   private _remoteSession: RemoteSession;
   private _liveSyncHandle: any;
   private _liveSyncScheduledHandle: any;
+  private _offlineRetryLoginScheduleHandle: any;
 
   constructor(private _alertService: AlertService, private _entitySchemaService: EntitySchemaService) {
     super();
@@ -119,7 +120,7 @@ export class SyncedSessionService extends SessionService {
 
       // offline? retry! TODO(lh): Backoff
       if (connectionState === ConnectionState.OFFLINE) {
-        setTimeout(() => {
+        this._offlineRetryLoginScheduleHandle = setTimeout(() => {
           this.login(username, password);
         }, 2000);
       }
@@ -193,6 +194,15 @@ export class SyncedSessionService extends SessionService {
   }
 
   /**
+   * Cancels a pending login retry scheduled to start in the future.
+   */
+  public cancelLoginOfflineRetry() {
+    if (this._offlineRetryLoginScheduleHandle) {
+      clearTimeout(this._offlineRetryLoginScheduleHandle);
+    }
+  }
+
+  /**
    * Cancels a currently running liveSync or a liveSync scheduled to start in the future.
    */
   public cancelLiveSync() {
@@ -209,6 +219,7 @@ export class SyncedSessionService extends SessionService {
   }
 
   public logout() {
+    this.cancelLoginOfflineRetry();
     this.cancelLiveSync();
     this._localSession.logout();
     this._remoteSession.logout();
