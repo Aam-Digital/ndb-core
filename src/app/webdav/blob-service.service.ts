@@ -8,7 +8,7 @@ import { SessionService } from 'app/session/session.service';
 export class BlobService {
 
   private client: any;
-  private defaultImage: SafeUrl;
+  // private defaultImage: SafeUrl;
   private fileList: string;
   private currentlyGettingList: Promise<boolean>;
 
@@ -92,12 +92,13 @@ export class BlobService {
   /**
    * Returns a Promise which resolves as an ArrayBuffer of the default child image
    */
-  public getDefaultImage(): Promise<SafeUrl> {
-    if (!this.defaultImage) {
-      const image = this.client.getFileContents('default.png');
-      this.defaultImage = this._bufferArrayToBase64(image);
-    }
-    return new Promise( (resolve, reject) => resolve(this.defaultImage));
+  public getDefaultImage(): SafeUrl {
+    //if (!this.defaultImage) {
+    //  const image = this.client.getFileContents('default.png');
+    //  this.defaultImage = this._bufferArrayToBase64(image);
+    //}
+    //return new Promise( (resolve, reject) => resolve(this.defaultImage));
+    return 'assets/child.png';
   }
 
   /**
