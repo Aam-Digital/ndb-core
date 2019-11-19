@@ -64,16 +64,6 @@ export class SyncStatusComponent implements OnInit {
         }
         this.alertService.addWarning('Database sync failed.');
         break;
-
-      /*case DatabaseSyncStatus.pulledChanges:
-        this.alertService.addInfo('Updated database from server.');
-        this.syncInProgress = true;
-        setTimeout(() => this.syncInProgress = false, 1000);
-        break;
-      case DatabaseSyncStatus.pushedChanges:
-        this.syncInProgress = true;
-        setTimeout(() => this.syncInProgress = false, 1000);
-        break;*/
     }
   }
 }
