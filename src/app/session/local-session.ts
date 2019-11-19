@@ -80,7 +80,6 @@ export class LocalSession {
           return LoginState.LOGIN_FAILED;
         }
         // The sync failed for other reasons. The user should try again
-        this._alertService.addDanger('The initial Sync of the Database failed, so you couldn\'t be logged in. Please try again later.');
         this.loginState.setState(LoginState.LOGGED_OUT);
         return LoginState.LOGGED_OUT;
       }

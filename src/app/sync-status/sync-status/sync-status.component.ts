@@ -22,6 +22,7 @@ import {AlertService} from '../../alerts/alert.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {InitialSyncDialogComponent} from './initial-sync-dialog.component';
 import { StateChangedEvent } from 'app/session/util/state-handler';
+import { ConnectionState } from 'app/session/connection-state.enum';
 
 @Component({
   selector: 'app-sync-status',
@@ -61,6 +62,10 @@ export class SyncStatusComponent implements OnInit {
         this.syncInProgress = false;
         if (this.dialogRef) {
           this.dialogRef.close();
+        }
+        if (this.sessionService.getConnectionState().getState() === ConnectionState.OFFLINE && !this.sessionService.isLoggedIn()) {
+          // edge case: initial login when offline. we don't want to show the sync failure here
+          break;
         }
         this.alertService.addWarning('Database sync failed.');
         break;

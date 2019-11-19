@@ -19,6 +19,7 @@ import { Component, OnInit } from '@angular/core';
 import { SyncState } from '../sync-state.enum';
 import { SessionService } from '../session.service';
 import { LoginState } from '../login-state.enum';
+import { ConnectionState } from '../connection-state.enum';
 
 @Component({
   selector: 'app-login',
@@ -32,14 +33,8 @@ export class LoginComponent implements OnInit {
   password: string;
   errorMessage: string;
 
-  private retryLoginSubscription: any;
-  private isRetriedLogin = false;
-  private _lastPassword: string;
-
-
   constructor(private _sessionService: SessionService) {
   }
-
 
   ngOnInit(): void {
   }
@@ -48,9 +43,17 @@ export class LoginComponent implements OnInit {
     this.loginInProgress = true;
 
     this._sessionService.login(this.username, this.password)
-      .then(
-        loginState => (loginState === LoginState.LOGGED_IN) ? this.onLoginSuccess() : this.onLoginFailure('username or password incorrect')
-      ).catch(reason => this.onLoginFailure(reason));
+      .then(loginState => {
+        if (loginState === LoginState.LOGGED_IN) {
+          this.onLoginSuccess();
+        } else {
+          if (this._sessionService.getConnectionState().getState() === ConnectionState.OFFLINE) {
+            this.onLoginFailure('can\'t login for the first time when offline');
+          } else {
+            this.onLoginFailure('username or password incorrect');
+          }
+        }
+      }).catch(reason => this.onLoginFailure(reason));
   }
 
   private onLoginSuccess() {
@@ -59,11 +62,6 @@ export class LoginComponent implements OnInit {
   }
 
   private onLoginFailure(reason: any) {
-    if (!this.isRetriedLogin) {
-      this._lastPassword = this.password;
-      this.retryLoginAfterSync();
-    }
-
     this.reset();
     this.errorMessage = reason;
   }
@@ -71,27 +69,7 @@ export class LoginComponent implements OnInit {
 
   private reset() {
     this.errorMessage = '';
-    this._lastPassword = this.password;
     this.password = '';
     this.loginInProgress = false;
-    this.isRetriedLogin = false;
-  }
-
-
-  private retryLoginAfterSync() {
-    this.isRetriedLogin = true;
-
-    const self = this;
-    this.retryLoginSubscription = this._sessionService.getSyncState().getStateChangedStream().subscribe(
-      function (syncStatus: SyncState) {
-        if (syncStatus === SyncState.COMPLETED) {
-          self.password = self._lastPassword;
-          self.login();
-          self.retryLoginSubscription.unsubscribe();
-        } else if (syncStatus === SyncState.FAILED) {
-          self.retryLoginSubscription.unsubscribe();
-        }
-      }
-    );
   }
 }
