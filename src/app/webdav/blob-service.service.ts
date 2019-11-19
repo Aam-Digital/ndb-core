@@ -38,13 +38,14 @@ export class BlobService {
 
   public async doesFileExist(name: string): Promise<boolean> {
     if (!this.fileList && !this.currentlyGettingList) {
-      // console.log('getting file list');
       this.currentlyGettingList = new Promise((resolve, reject) => {
-        this.getDir('').then(list => this.fileList = list);
+        this.getDir('').then(list => {
+          this.fileList = list;
         resolve(true);
       });
-    } else if (!this.fileList) {
-      // console.log('waiting for list');
+      });
+    }
+    if (!this.fileList) {
       await this.currentlyGettingList;
     }
     // hacky way of checking if file exists, subject to change
