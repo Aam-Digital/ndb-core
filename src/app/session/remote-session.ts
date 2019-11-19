@@ -37,7 +37,7 @@ PouchDB.plugin(PouchDBAuthentication);
 export class RemoteSession {
   public database: any;
 
-  public connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>(ConnectionState.disconnected);
+  public connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>(ConnectionState.DISCONNECTED);
 
   constructor() {
     const thisRemoteSession = this;
@@ -54,8 +54,8 @@ export class RemoteSession {
           opts.credentials = 'include';
           const req = fetch(url, opts);
           req.then(result => {
-            if (thisRemoteSession.connectionState.getState() === ConnectionState.offline) {
-              thisRemoteSession.connectionState.setState(ConnectionState.connected);
+            if (thisRemoteSession.connectionState.getState() === ConnectionState.OFFLINE) {
+              thisRemoteSession.connectionState.setState(ConnectionState.CONNECTED);
             }
             return result;
           });
@@ -64,8 +64,8 @@ export class RemoteSession {
             // if we are offline at the start, this will already be set on login, so we need not check that initial condition here
             // do not set offline on AbortErrors, as these are fine:
             // https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Exceptions
-            if ((error.name !== 'AbortError') && (thisRemoteSession.connectionState.getState() === ConnectionState.connected)) {
-              thisRemoteSession.connectionState.setState(ConnectionState.offline);
+            if ((error.name !== 'AbortError') && (thisRemoteSession.connectionState.getState() === ConnectionState.CONNECTED)) {
+              thisRemoteSession.connectionState.setState(ConnectionState.OFFLINE);
             }
             throw error;
           });
@@ -92,15 +92,15 @@ export class RemoteSession {
 
     try {
       await this.database.login(username, password, ajaxOpts);
-      this.connectionState.setState(ConnectionState.connected);
-      return ConnectionState.connected;
+      this.connectionState.setState(ConnectionState.CONNECTED);
+      return ConnectionState.CONNECTED;
     } catch (error) {
       if (error.name === 'unauthorized' || error.name === 'forbidden') {
-        this.connectionState.setState(ConnectionState.rejected);
-        return ConnectionState.rejected;
+        this.connectionState.setState(ConnectionState.REJECTED);
+        return ConnectionState.REJECTED;
       } else {
-        this.connectionState.setState(ConnectionState.offline);
-        return ConnectionState.offline;
+        this.connectionState.setState(ConnectionState.OFFLINE);
+        return ConnectionState.OFFLINE;
       }
     }
   }
@@ -110,6 +110,6 @@ export class RemoteSession {
    */
   public logout(): void {
     this.database.logout();
-    this.connectionState.setState(ConnectionState.disconnected);
+    this.connectionState.setState(ConnectionState.DISCONNECTED);
   }
 }

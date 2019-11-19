@@ -43,7 +43,7 @@ export class SyncedSessionService extends SessionService {
   }
 
   public isLoggedIn(): boolean {
-    return this._localSession.loginState.getState() === LoginState.loggedIn;
+    return this._localSession.loginState.getState() === LoginState.LOGGED_IN;
   }
 
   /**
@@ -64,7 +64,7 @@ export class SyncedSessionService extends SessionService {
     const remoteLogin = this._remoteSession.login(username, password);
     remoteLogin.then(async (connectionState: ConnectionState) => {
       // remote connected -- sync!
-      if (connectionState === ConnectionState.connected) {
+      if (connectionState === ConnectionState.CONNECTED) {
         const syncPromise = this.sync(); // no liveSync() here, as we can't know when that's finished if there are no changes.
 
         // no matter the result of the non-live sync(), start liveSync() once it is done
@@ -74,7 +74,7 @@ export class SyncedSessionService extends SessionService {
           // not successful -> only start a liveSync() to retry, if we are logged in locally
           // otherwise the UI is in a fairly unusable state.
           async () => {
-            if (await localLogin === LoginState.loggedIn) {
+            if (await localLogin === LoginState.LOGGED_IN) {
               this.liveSyncDeferred();
             } else {
               // TODO(lh): Alert the AlertService: Your password was changed recently, but there is an issue with sync. Try again later!
@@ -84,7 +84,7 @@ export class SyncedSessionService extends SessionService {
 
         // asynchronously check if the local login failed --> this happens, when the password was changed at the remote
         localLogin.then(async (loginState: LoginState) => {
-          if (loginState === LoginState.loginFailed) {
+          if (loginState === LoginState.LOGIN_FAILED) {
             // in this case: when the sync is completed, retry the local login after the sync
             await syncPromise;
             return this._localSession.login(username, password);
@@ -99,26 +99,26 @@ export class SyncedSessionService extends SessionService {
         if (isInitial) {
           // If we were initial, the local session was waiting for a sync.
           // Explicitly fail the login if the Connection was rejected, so the LocalSession knows what's going on
-          if (connectionState === ConnectionState.rejected) {
-            this._localSession.loginState.setState(LoginState.loginFailed);
+          if (connectionState === ConnectionState.REJECTED) {
+            this._localSession.loginState.setState(LoginState.LOGIN_FAILED);
           }
           // Explicitly fail the sync to resolve the deadlock
-          this._localSession.syncState.setState(SyncState.failed);
+          this._localSession.syncState.setState(SyncState.FAILED);
         }
       });
 
       // remote rejected but local logged in
-      if (connectionState === ConnectionState.rejected) {
-        if (await localLogin === LoginState.loggedIn) {
+      if (connectionState === ConnectionState.REJECTED) {
+        if (await localLogin === LoginState.LOGGED_IN) {
           // Someone changed the password remotely --> log out and signal failed login
           this._localSession.logout();
-          this._localSession.loginState.setState(LoginState.loginFailed);
+          this._localSession.loginState.setState(LoginState.LOGIN_FAILED);
           this._alertService.addDanger('Your password was changed recently. Please retry with your new password!');
         }
       }
 
       // offline? retry! TODO(lh): Backoff
-      if (connectionState === ConnectionState.offline) {
+      if (connectionState === ConnectionState.OFFLINE) {
         setTimeout(() => {
           this.login(username, password);
         }, 2000);
@@ -142,20 +142,20 @@ export class SyncedSessionService extends SessionService {
   }
 
   public async sync(): Promise<any> {
-    this._localSession.syncState.setState(SyncState.started);
+    this._localSession.syncState.setState(SyncState.STARTED);
     try {
       const result = await this._localSession.database.sync(this._remoteSession.database);
-      this._localSession.syncState.setState(SyncState.completed);
+      this._localSession.syncState.setState(SyncState.COMPLETED);
       return result;
     } catch (error) {
-      this._localSession.syncState.setState(SyncState.failed);
+      this._localSession.syncState.setState(SyncState.FAILED);
       throw error; // rethrow, so later Promise-handling lands in .catch, too
     }
   }
 
   public liveSync() {
     this.cancelLiveSync(); // cancel any liveSync that may have been alive before
-    this._localSession.syncState.setState(SyncState.started);
+    this._localSession.syncState.setState(SyncState.STARTED);
     this._liveSyncHandle = this._localSession.database.sync(this._remoteSession.database, {
       live: true,
       retry: true
@@ -163,17 +163,17 @@ export class SyncedSessionService extends SessionService {
       // after sync. change has direction and changes with info on errors etc
     }).on('paused', info => {
       // replication was paused: either because sync is finished or because of a failed sync (mostly due to lost connection). info is empty.
-      if (this.getConnectionState().getState() !== ConnectionState.offline) {
-        this._localSession.syncState.setState(SyncState.completed);
+      if (this.getConnectionState().getState() !== ConnectionState.OFFLINE) {
+        this._localSession.syncState.setState(SyncState.COMPLETED);
         // We might end up here after a failed sync that is not due to offline errors.
         // It shouldn't happen too often, as we have an initial non-live sync to catch those situations, but we can't find that out here
       }
     }).on('active', info => {
       // replication was resumed: either because new things to sync or because connection is available again. info contains the direction
-      this._localSession.syncState.setState(SyncState.started);
+      this._localSession.syncState.setState(SyncState.STARTED);
     }).on('error', err => {
       // totally unhandled error (shouldn't happen)
-      this._localSession.syncState.setState(SyncState.failed);
+      this._localSession.syncState.setState(SyncState.FAILED);
     }).on('complete', info => {
       // replication was canceled!
       this._liveSyncHandle = null;

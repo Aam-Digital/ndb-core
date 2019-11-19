@@ -49,8 +49,8 @@ export class LocalSession {
   constructor(private _alertService: AlertService, private _entitySchemaService: EntitySchemaService) {
     this.database = new PouchDB(AppConfig.settings.database.name);
 
-    this.loginState = new StateHandler<LoginState>(LoginState.loggedOut);
-    this.syncState = new StateHandler<SyncState>(SyncState.unsynced);
+    this.loginState = new StateHandler<LoginState>(LoginState.LOGGED_OUT);
+    this.syncState = new StateHandler<SyncState>(SyncState.UNSYNCED);
   }
 
   /**
@@ -65,29 +65,29 @@ export class LocalSession {
       await this.waitForFirstSync();
       const userEntity = await this.loadUser(username);
       if (userEntity.checkPassword(password)) {
-        this.loginState.setState(LoginState.loggedIn);
+        this.loginState.setState(LoginState.LOGGED_IN);
         this.currentUser = userEntity;
-        return LoginState.loggedIn;
+        return LoginState.LOGGED_IN;
       } else {
-        this.loginState.setState(LoginState.loginFailed);
-        return LoginState.loginFailed;
+        this.loginState.setState(LoginState.LOGIN_FAILED);
+        return LoginState.LOGIN_FAILED;
       }
     } catch (error) {
       // possible error: initial sync failed
-      if (error && error.toState && error.toState === SyncState.failed) {
-        if (this.loginState.getState() === LoginState.loginFailed) {
+      if (error && error.toState && error.toState === SyncState.FAILED) {
+        if (this.loginState.getState() === LoginState.LOGIN_FAILED) {
           // The sync failed because the remote rejected
-          return LoginState.loginFailed;
+          return LoginState.LOGIN_FAILED;
         }
         // The sync failed for other reasons. The user should try again
         this._alertService.addDanger('The initial Sync of the Database failed, so you couldn\'t be logged in. Please try again later.');
-        this.loginState.setState(LoginState.loggedOut);
-        return LoginState.loggedOut;
+        this.loginState.setState(LoginState.LOGGED_OUT);
+        return LoginState.LOGGED_OUT;
       }
       // possible error: user object not found locally, which should return loginFailed.
       if (error && error.status && error.status === 404) {
-        this.loginState.setState(LoginState.loginFailed);
-        return LoginState.loginFailed;
+        this.loginState.setState(LoginState.LOGIN_FAILED);
+        return LoginState.LOGIN_FAILED;
       }
       // all other cases must throw an error
       throw error;
@@ -100,7 +100,7 @@ export class LocalSession {
    */
   public async waitForFirstSync() {
     if (await this.isInitial()) {
-      return await this.syncState.waitForChangeTo(SyncState.completed, SyncState.failed);
+      return await this.syncState.waitForChangeTo(SyncState.COMPLETED, SyncState.FAILED);
     }
   }
 
@@ -117,7 +117,7 @@ export class LocalSession {
    * Logout
    */
   public logout() {
-    this.loginState.setState(LoginState.loggedOut);
+    this.loginState.setState(LoginState.LOGGED_OUT);
     this.currentUser = undefined;
   }
 

@@ -18,11 +18,11 @@
  /** State of the connection to the remote database  */
 export enum ConnectionState {
   /** we are offline and therefor not connected to the remote db */
-  offline,
+  OFFLINE,
   /** we tried to login, but it failed, so we are not connected to the remote db */
-  rejected,
+  REJECTED,
   /** we are intentionally not connected to the remote db */
-  disconnected,
+  DISCONNECTED,
   /** we are connected to the remote db */
-  connected,
+  CONNECTED,
 }

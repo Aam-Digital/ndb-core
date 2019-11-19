@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
 
     this._sessionService.login(this.username, this.password)
       .then(
-        loginState => (loginState === LoginState.loggedIn) ? this.onLoginSuccess() : this.onLoginFailure('username or password incorrect')
+        loginState => (loginState === LoginState.LOGGED_IN) ? this.onLoginSuccess() : this.onLoginFailure('username or password incorrect')
       ).catch(reason => this.onLoginFailure(reason));
   }
 
@@ -84,11 +84,11 @@ export class LoginComponent implements OnInit {
     const self = this;
     this.retryLoginSubscription = this._sessionService.getSyncState().getStateChangedStream().subscribe(
       function (syncStatus: SyncState) {
-        if (syncStatus === SyncState.completed) {
+        if (syncStatus === SyncState.COMPLETED) {
           self.password = self._lastPassword;
           self.login();
           self.retryLoginSubscription.unsubscribe();
-        } else if (syncStatus === SyncState.failed) {
+        } else if (syncStatus === SyncState.FAILED) {
           self.retryLoginSubscription.unsubscribe();
         }
       }

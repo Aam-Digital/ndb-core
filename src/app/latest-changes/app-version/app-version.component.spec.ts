@@ -48,7 +48,7 @@ describe('AppVersionComponent', () => {
     spyOn(latestChangesService, 'getChangelogs').and
       .returnValue(of([{ name: 'test', tag_name: 'v1.0', body: 'latest test', published_at: '2018-01-01'}]));
     spyOn(sessionService.getLoginState(), 'getState').and
-      .returnValue(LoginState.loggedIn);
+      .returnValue(LoginState.LOGGED_IN);
 
     TestBed.configureTestingModule({
       declarations: [AppVersionComponent, ChangelogComponent],

@@ -44,20 +44,20 @@ export class SyncStatusComponent implements OnInit {
 
   private handleSyncState(state: StateChangedEvent<SyncState>) {
     switch (state.toState) {
-      case SyncState.started:
+      case SyncState.STARTED:
         this.syncInProgress = true;
         if (!this.sessionService.isLoggedIn()) {
           this.dialogRef = this.dialog.open(InitialSyncDialogComponent);
         }
         break;
-      case SyncState.completed:
+      case SyncState.COMPLETED:
         this.syncInProgress = false;
         if (this.dialogRef) {
           this.dialogRef.close();
         }
         this.alertService.addInfo('Database sync completed.');
         break;
-      case SyncState.failed:
+      case SyncState.FAILED:
         this.syncInProgress = false;
         if (this.dialogRef) {
           this.dialogRef.close();

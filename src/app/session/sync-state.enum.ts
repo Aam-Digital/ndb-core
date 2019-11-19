@@ -20,11 +20,11 @@
  */
 export enum SyncState {
   /** Sync startet. In case of liveSync, this means the sync was resumed */
-  started,
+  STARTED,
   /** Sync completed. In case of liveSync, this means the sync was paused (and waits for more changes) */
-  completed,
+  COMPLETED,
   /** Sync failed. This may be, because we are offline, or due to some other reason */
-  failed,
+  FAILED,
   /** (Potentially) Unsynced. This is the state before the first sync after startup */
-  unsynced
+  UNSYNCED
 }

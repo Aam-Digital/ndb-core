@@ -12,9 +12,9 @@ import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
 export class MockSessionService extends SessionService {
     private database: MockDatabase;
     private demoUser: User;
-    private loginState: StateHandler<LoginState> = new StateHandler<LoginState>(LoginState.loggedOut);
-    private connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>(ConnectionState.disconnected);
-    private syncState: StateHandler<SyncState> = new StateHandler<SyncState>(SyncState.unsynced);
+    private loginState: StateHandler<LoginState> = new StateHandler<LoginState>(LoginState.LOGGED_OUT);
+    private connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>(ConnectionState.DISCONNECTED);
+    private syncState: StateHandler<SyncState> = new StateHandler<SyncState>(SyncState.UNSYNCED);
 
     constructor(private _entitySchemaService: EntitySchemaService) {
         super();
@@ -36,7 +36,7 @@ export class MockSessionService extends SessionService {
         return this.demoUser;
     }
     public isLoggedIn(): boolean {
-        return this.loginState.getState() === LoginState.loggedIn;
+        return this.loginState.getState() === LoginState.LOGGED_IN;
     }
     public getConnectionState(): StateHandler<ConnectionState> {
         return this.connectionState;
@@ -52,22 +52,22 @@ export class MockSessionService extends SessionService {
     }
     public login(username, password): Promise<LoginState> {
         if (username === 'demo' && password === 'pass') {
-            this.loginState.setState(LoginState.loggedIn);
-            this.connectionState.setState(ConnectionState.connected);
+            this.loginState.setState(LoginState.LOGGED_IN);
+            this.connectionState.setState(ConnectionState.CONNECTED);
             setTimeout(() => this.sync(), 0);
-            return Promise.resolve(LoginState.loggedIn);
+            return Promise.resolve(LoginState.LOGGED_IN);
         }
-        this.loginState.setState(LoginState.loginFailed);
-        this.connectionState.setState(ConnectionState.rejected);
-        return Promise.resolve(LoginState.loginFailed);
+        this.loginState.setState(LoginState.LOGIN_FAILED);
+        this.connectionState.setState(ConnectionState.REJECTED);
+        return Promise.resolve(LoginState.LOGIN_FAILED);
     }
     public logout(): void {
-        this.loginState.setState(LoginState.loggedOut);
-        this.connectionState.setState(ConnectionState.disconnected);
+        this.loginState.setState(LoginState.LOGGED_OUT);
+        this.connectionState.setState(ConnectionState.DISCONNECTED);
     }
     public sync(): Promise<any> {
-        this.syncState.setState(SyncState.started);
-        this.syncState.setState(SyncState.completed);
+        this.syncState.setState(SyncState.STARTED);
+        this.syncState.setState(SyncState.COMPLETED);
         return Promise.resolve(true);
     }
 }

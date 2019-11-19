@@ -69,13 +69,13 @@ describe('SyncStatusComponent', () => {
    });
 
   it('should open dialog without error', async () => {
-    sessionService.getSyncState().setState(SyncState.started);
+    sessionService.getSyncState().setState(SyncState.STARTED);
 
     fixture.detectChanges();
     await fixture.whenStable();
     expect(component.dialogRef).toBeDefined();
 
-    sessionService.getSyncState().setState(SyncState.completed);
+    sessionService.getSyncState().setState(SyncState.COMPLETED);
     component.dialogRef.close();
 
     fixture.detectChanges();

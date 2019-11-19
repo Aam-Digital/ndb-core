@@ -18,9 +18,9 @@
 /** State of the login at the local database, which is synonymous to login at the whole application */
 export enum LoginState {
   /** Login failed due to wrong credentials */
-  loginFailed,
+  LOGIN_FAILED,
   /** Login state either before first login-attempt or after logout */
-  loggedOut,
+  LOGGED_OUT,
   /** Successfully logged in */
-  loggedIn,
+  LOGGED_IN,
 }

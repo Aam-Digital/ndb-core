@@ -97,19 +97,19 @@ sequenceDiagram
 
     LocalSession->>+Local PouchDB: get User
     Local PouchDB-->>-LocalSession: User
-    Note over LocalSession: LoginState.loggedIn
-    LocalSession-->>-SyncedSession: LoginState.loggedIn
-    SyncedSession-->>User: LoginState.loggedIn
+    Note over LocalSession: LoginState.LOGGED_IN
+    LocalSession-->>-SyncedSession: LoginState.LOGGED_IN
+    SyncedSession-->>User: LoginState.LOGGED_IN
 
     RemoteSession->>+Remote PouchDB: login
     Remote PouchDB-->>-RemoteSession: connected
-    Note over RemoteSession: ConnectionState.connected
-    RemoteSession-->>-SyncedSession: ConnectionState.connected
+    Note over RemoteSession: ConnectionState.CONNECTED
+    RemoteSession-->>-SyncedSession: ConnectionState.CONNECTED
 
     SyncedSession->>+SyncedSession: sync
-    Note over LocalSession: SyncState.started
-    SyncedSession-->>-SyncedSession: SyncState.completed
-    Note over LocalSession: SyncState.completed
+    Note over LocalSession: SyncState.STARTED
+    SyncedSession-->>-SyncedSession: SyncState.COMPLETED
+    Note over LocalSession: SyncState.COMPLETED
     Note over SyncedSession: liveSyncDeferred
     deactivate Session
     deactivate User
@@ -133,14 +133,14 @@ sequenceDiagram
 
     LocalSession->>+Local PouchDB: get User
     Local PouchDB-->>-LocalSession: User
-    Note over LocalSession: LoginState.loginFailed
-    LocalSession-->>-SyncedSession: LoginState.loginFailed
-    SyncedSession-->>User: LoginState.loginFailed
+    Note over LocalSession: LoginState.LOGIN_FAILED
+    LocalSession-->>-SyncedSession: LoginState.LOGIN_FAILED
+    SyncedSession-->>User: LoginState.LOGIN_FAILED
 
     RemoteSession->>+Remote PouchDB: login
     Remote PouchDB-->>-RemoteSession: rejected
-    Note over RemoteSession: ConnectionState.rejected
-    RemoteSession-->>-SyncedSession: ConnectionState.rejected
+    Note over RemoteSession: ConnectionState.REJECTED
+    RemoteSession-->>-SyncedSession: ConnectionState.REJECTED
 
     deactivate Session
     deactivate User
@@ -167,15 +167,15 @@ sequenceDiagram
 
     LocalSession->>+Local PouchDB: get User
     Local PouchDB-->>-LocalSession: User
-    Note over LocalSession: LoginState.loggedIn
-    LocalSession-->>-SyncedSession: LoginState.loggedIn
-    SyncedSession-->>User: LoginState.loggedIn
+    Note over LocalSession: LoginState.LOGGED_IN
+    LocalSession-->>-SyncedSession: LoginState.LOGGED_IN
+    SyncedSession-->>User: LoginState.LOGGED_IN
 
     RemoteSession->>+Remote PouchDB: login
     Note over RemoteSession,Remote PouchDB: Offline Detection via fetch
     Remote PouchDB-->>-RemoteSession: failed
-    Note over RemoteSession: ConnectionState.offline
-    RemoteSession-->>-SyncedSession: ConnectionState.offline
+    Note over RemoteSession: ConnectionState.OFFLINE
+    RemoteSession-->>-SyncedSession: ConnectionState.OFFLINE
 
     SyncedSession->>SyncedSession: login
     Note over SyncedSession: retry with wait
@@ -201,15 +201,15 @@ sequenceDiagram
 
     LocalSession->>+Local PouchDB: get User
     Local PouchDB-->>-LocalSession: User
-    Note over LocalSession: LoginState.loginFailed
-    LocalSession-->>-SyncedSession: LoginState.loginFailed
-    SyncedSession-->>User: LoginState.loginFailed
+    Note over LocalSession: LoginState.LOGIN_FAILED
+    LocalSession-->>-SyncedSession: LoginState.LOGIN_FAILED
+    SyncedSession-->>User: LoginState.LOGIN_FAILED
 
     RemoteSession->>+Remote PouchDB: login
     Note over RemoteSession,Remote PouchDB: Offline Detection via fetch
     Remote PouchDB-->>-RemoteSession: failed
-    Note over RemoteSession: ConnectionState.offline
-    RemoteSession-->>-SyncedSession: ConnectionState.offline
+    Note over RemoteSession: ConnectionState.OFFLINE
+    RemoteSession-->>-SyncedSession: ConnectionState.OFFLINE
 
     SyncedSession->>SyncedSession: login
     Note over SyncedSession: retry with wait
@@ -241,17 +241,17 @@ sequenceDiagram
 
     LocalSession->>+Local PouchDB: get User
     Local PouchDB-->>-LocalSession: User
-    Note over LocalSession: LoginState.loggedIn
-    LocalSession-->>-SyncedSession: LoginState.loggedIn
-    SyncedSession-->>User: LoginState.loggedIn
+    Note over LocalSession: LoginState.LOGGED_IN
+    LocalSession-->>-SyncedSession: LoginState.LOGGED_IN
+    SyncedSession-->>User: LoginState.LOGGED_IN
 
     RemoteSession->>+Remote PouchDB: login
     Remote PouchDB-->>-RemoteSession: rejected
-    Note over RemoteSession: ConnectionState.rejected
-    RemoteSession-->>-SyncedSession: ConnectionState.rejected
+    Note over RemoteSession: ConnectionState.REJECTED
+    RemoteSession-->>-SyncedSession: ConnectionState.REJECTED
 
     SyncedSession->>LocalSession: logout + fail
-    Note over LocalSession: LoginState.loginFailed
+    Note over LocalSession: LoginState.LOGIN_FAILED
     Note over User,SyncedSession: Login Guard rejects
 
     deactivate Session
@@ -277,21 +277,21 @@ sequenceDiagram
 
     LocalSession->>+Local PouchDB: get User
     Local PouchDB-->>-LocalSession: User
-    Note over LocalSession: LoginState.loginFailed
-    LocalSession-->>-SyncedSession: LoginState.loginFailed
-    SyncedSession-->>User: LoginState.loginFailed
+    Note over LocalSession: LoginState.LOGIN_FAILED
+    LocalSession-->>-SyncedSession: LoginState.LOGIN_FAILED
+    SyncedSession-->>User: LoginState.LOGIN_FAILED
 
     RemoteSession->>+Remote PouchDB: login
     Remote PouchDB-->>-RemoteSession: connected
-    Note over RemoteSession: ConnectionState.connected
-    RemoteSession-->>-SyncedSession: ConnectionState.connected
+    Note over RemoteSession: ConnectionState.CONNECTED
+    RemoteSession-->>-SyncedSession: ConnectionState.CONNECTED
 
     SyncedSession->>+SyncedSession: sync
-    Note over LocalSession: SyncState.started
-    SyncedSession-->>-SyncedSession: SyncState.completed
-    Note over LocalSession: SyncState.completed
+    Note over LocalSession: SyncState.STARTED
+    SyncedSession-->>-SyncedSession: SyncState.COMPLETED
+    Note over LocalSession: SyncState.COMPLETED
     SyncedSession->>LocalSession: login
-    Note over LocalSession: LoginState.loggedIn
+    Note over LocalSession: LoginState.LOGGED_IN
     Note over User,SyncedSession: Login Guard to passes
     Note over SyncedSession: liveSyncDeferred
     deactivate Session
@@ -320,19 +320,19 @@ sequenceDiagram
 
     LocalSession->>+Local PouchDB: get User
     Local PouchDB-->>-LocalSession: User
-    Note over LocalSession: LoginState.loggedIn
-    LocalSession-->>-SyncedSession: LoginState.loggedIn
-    SyncedSession-->>User: LoginState.loggedIn
+    Note over LocalSession: LoginState.LOGGED_IN
+    LocalSession-->>-SyncedSession: LoginState.LOGGED_IN
+    SyncedSession-->>User: LoginState.LOGGED_IN
 
     RemoteSession->>+Remote PouchDB: login
     Remote PouchDB-->>-RemoteSession: connected
-    Note over RemoteSession: ConnectionState.connected
-    RemoteSession-->>-SyncedSession: ConnectionState.connected
+    Note over RemoteSession: ConnectionState.CONNECTED
+    RemoteSession-->>-SyncedSession: ConnectionState.CONNECTED
 
     SyncedSession->>+SyncedSession: sync
-    Note over LocalSession: SyncState.started
-    SyncedSession-->>-SyncedSession: SyncState.failed
-    Note over LocalSession: SyncState.failed
+    Note over LocalSession: SyncState.STARTED
+    SyncedSession-->>-SyncedSession: SyncState.FAILED
+    Note over LocalSession: SyncState.FAILED
     Note over SyncedSession: liveSyncDeferred
     deactivate Session
     deactivate User
@@ -357,19 +357,19 @@ sequenceDiagram
 
     LocalSession->>+Local PouchDB: get User
     Local PouchDB-->>-LocalSession: User
-    Note over LocalSession: LoginState.loginFailed
-    LocalSession-->>-SyncedSession: LoginState.loginFailed
-    SyncedSession-->>User: LoginState.loginFailed
+    Note over LocalSession: LoginState.LOGIN_FAILED
+    LocalSession-->>-SyncedSession: LoginState.LOGIN_FAILED
+    SyncedSession-->>User: LoginState.LOGIN_FAILED
 
     RemoteSession->>+Remote PouchDB: login
     Remote PouchDB-->>-RemoteSession: connected
-    Note over RemoteSession: ConnectionState.connected
-    RemoteSession-->>-SyncedSession: ConnectionState.connected
+    Note over RemoteSession: ConnectionState.CONNECTED
+    RemoteSession-->>-SyncedSession: ConnectionState.CONNECTED
 
     SyncedSession->>+SyncedSession: sync
-    Note over LocalSession: SyncState.started
-    SyncedSession-->>-SyncedSession: SyncState.failed
-    Note over LocalSession: SyncState.failed
+    Note over LocalSession: SyncState.STARTED
+    SyncedSession-->>-SyncedSession: SyncState.FAILED
+    Note over LocalSession: SyncState.FAILED
     deactivate Session
     deactivate User
 ```
@@ -397,20 +397,20 @@ sequenceDiagram
 
     RemoteSession->>+Remote PouchDB: login
     Remote PouchDB-->>-RemoteSession: connected
-    Note over RemoteSession: ConnectionState.connected
-    RemoteSession-->>-SyncedSession: ConnectionState.connected
+    Note over RemoteSession: ConnectionState.CONNECTED
+    RemoteSession-->>-SyncedSession: ConnectionState.CONNECTED
 
     SyncedSession->>+SyncedSession: sync
-    Note over LocalSession: SyncState.started
-    SyncedSession-->>-SyncedSession: SyncState.completed
-    Note over LocalSession: SyncState.completed
+    Note over LocalSession: SyncState.STARTED
+    SyncedSession-->>-SyncedSession: SyncState.COMPLETED
+    Note over LocalSession: SyncState.COMPLETED
 
     LocalSession->>-LocalSession: success
     LocalSession->>+Local PouchDB: get User
     Local PouchDB-->>-LocalSession: User
-    Note over LocalSession: LoginState.loggedIn
-    LocalSession-->>-SyncedSession: LoginState.loggedIn
-    SyncedSession-->>User: LoginState.loggedIn
+    Note over LocalSession: LoginState.LOGGED_IN
+    LocalSession-->>-SyncedSession: LoginState.LOGGED_IN
+    SyncedSession-->>User: LoginState.LOGGED_IN
 
     Note over SyncedSession: liveSyncDeferred
     deactivate Session
@@ -437,16 +437,16 @@ sequenceDiagram
 
     RemoteSession->>+Remote PouchDB: login
     Remote PouchDB-->>-RemoteSession: rejected
-    Note over RemoteSession: ConnectionState.rejected
-    RemoteSession-->>-SyncedSession: ConnectionState.rejected
+    Note over RemoteSession: ConnectionState.REJECTED
+    RemoteSession-->>-SyncedSession: ConnectionState.REJECTED
 
     SyncedSession->>LocalSession: set login and sync failed
-    Note over LocalSession: LoginState.loginFailed
-    Note over LocalSession: SyncState.failed
+    Note over LocalSession: LoginState.LOGIN_FAILED
+    Note over LocalSession: SyncState.FAILED
 
     LocalSession->>-LocalSession: failure
-    LocalSession-->>-SyncedSession: LoginState.loginFailed
-    SyncedSession-->>User: LoginState.loginFailed
+    LocalSession-->>-SyncedSession: LoginState.LOGIN_FAILED
+    SyncedSession-->>User: LoginState.LOGIN_FAILED
 
     deactivate Session
     deactivate User
@@ -474,11 +474,11 @@ sequenceDiagram
     RemoteSession->>+Remote PouchDB: login
     Note over RemoteSession,Remote PouchDB: Offline Detection via fetch
     Remote PouchDB-->>-RemoteSession: rejected
-    Note over RemoteSession: ConnectionState.offline
-    RemoteSession-->>-SyncedSession: ConnectionState.offline
+    Note over RemoteSession: ConnectionState.OFFLINE
+    RemoteSession-->>-SyncedSession: ConnectionState.OFFLINE
 
     SyncedSession->>LocalSession: set sync failed
-    Note over LocalSession: SyncState.failed
+    Note over LocalSession: SyncState.FAILED
 
     LocalSession->>-LocalSession: failure
     Note over LocalSession: LoginState.loggedOff
@@ -511,13 +511,13 @@ sequenceDiagram
 
     RemoteSession->>+Remote PouchDB: login
     Remote PouchDB-->>-RemoteSession: connected
-    Note over RemoteSession: ConnectionState.connected
-    RemoteSession-->>-SyncedSession: ConnectionState.connected
+    Note over RemoteSession: ConnectionState.CONNECTED
+    RemoteSession-->>-SyncedSession: ConnectionState.CONNECTED
 
     SyncedSession->>+SyncedSession: sync
-    Note over LocalSession: SyncState.started
-    SyncedSession-->>-SyncedSession: SyncState.failed
-    Note over LocalSession: SyncState.failed
+    Note over LocalSession: SyncState.STARTED
+    SyncedSession-->>-SyncedSession: SyncState.FAILED
+    Note over LocalSession: SyncState.FAILED
 
     LocalSession->>-LocalSession: failure
 
