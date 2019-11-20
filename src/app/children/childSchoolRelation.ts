@@ -11,6 +11,4 @@ export class ChildSchoolRelation extends Entity {
   @DatabaseField() schoolClass: string;
   @DatabaseField() start: Date;
   @DatabaseField() end: Date;
-  schoolName: string = '';
-  school: School;
 }

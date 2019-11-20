@@ -43,17 +43,15 @@ export class PreviousSchoolsComponent implements OnInit {
     this.childrenService.getSchoolsWithRelations(id)
       .then(results => {
         this.records = results;
-        // tempRecords = results;
-        // this.records = tempRecords
-        //   .sort((a, b) => (
-        //     (b.start ? b.start.valueOf() : 0) - (a.start ? a.start.valueOf() : 0)
-        //   ));,
       });
     this.schoolsService.getSchools().subscribe(data => {
         console.table(data);
+        const schoolMap = {};
+        data.forEach(s => schoolMap[s.getId()] = s.name);
         this.columns = [
           new ColumnDescription('schoolId', 'Name', ColumnDescriptionInputType.SELECT,
-            data.map(t => { return { value: t.getId(), label: t.name}; })),
+            data.map(t => { return { value: t.getId(), label: t.name}; }),
+            (schoolId) => schoolMap[schoolId]),
           new ColumnDescription('start', 'From', ColumnDescriptionInputType.DATE, null,
             // tslint:disable-next-line: max-line-length
             (v: Date) => !isNaN(v.getTime()) ? this.datePipe.transform(v, 'yyyy-MM-dd') : undefined), // checking if v is a date and otherweise returning undefined prevents a datePipe error
@@ -80,10 +78,10 @@ export class PreviousSchoolsComponent implements OnInit {
   }
 
   optionalFormValidation = (record) => {
-    console.log(`schoolName: ${record.schoolName}`);
+    console.log(`schoolName: ${record.school.name}`);
     this.schoolsService.getSchools().subscribe(data => { console.table(data); } );
     console.log(`schoolId: ${record.schoolId}`);
-    if (!record.schoolName) {
+    if (!record.school) {
       return {
         hasPassedValidation: false,
         validationMessage: '"Name" is empy. Please select a school.',

@@ -287,10 +287,6 @@ export class ChildrenService {
 
   async getSchoolsWithRelations(childId: string): Promise<ChildSchoolRelation[]> {
     const relations = await this.querySortedRelations(childId);
-    for (const relation of relations) {
-      const school: School = await this.entityMapper.load<School>(School, relation.schoolId);
-      relation.schoolName = school.name
-    }
     return relations;
   }
 }
