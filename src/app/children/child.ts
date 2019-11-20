@@ -72,7 +72,7 @@ export class Child extends Entity {
   @DatabaseField() health_lastVitaminD: Date;
   @DatabaseField() health_lastDeworming: Date;
 
-  photo: SafeUrl = 'assets/child.png';
+  photo: SafeUrl;
 
   get age(): number {
     let age = -1;

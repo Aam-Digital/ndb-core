@@ -34,11 +34,12 @@ export class ChildrenService {
         children => {
           observer.next(children);
           children.forEach(child => {
-            // TODO only load child photo if no photo exists
-            this.blobService.getImage(child.getId().replace('child:', '')).then(image => {
-              child.photo = image;
-              // console.log('image '+ image + ' for child(' + child.getId() + ') in getChildren received');
-              observer.next(children); } );
+            if (!child.photo) {
+              this.blobService.getImage(child.getId().replace('child:', '')).then(image => {
+                child.photo = image;
+                observer.next(children); }
+              );
+            }
           });
         });
     });
@@ -51,10 +52,12 @@ export class ChildrenService {
       this.entityMapper.load<Child>(Child, id).then(
         child => {
           observer.next(child);
-          this.blobService.getImage(child.getId().replace('child:', '')).then(image => {
-            child.photo = image;
-            // console.log('image for child(' + child.getId() + ') in getChild received');
-        observer.next(child); } );
+          if (!child.photo) {
+            this.blobService.getImage(child.getId().replace('child:', '')).then(image => {
+              child.photo = image;
+              observer.next(child); }
+            );
+          }
         });
     });
     return childObs;
