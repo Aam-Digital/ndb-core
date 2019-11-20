@@ -1,14 +1,21 @@
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+<button mat-stroked-button class="add-user-button" color='accent' (click)='createUser()'>
+  <mat-icon class='button-icon' aria-label='add user' fontIcon='fa-plus-circle'></mat-icon>Add User
+</button>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8" width="100%">
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef> ID </th>
+    <td mat-cell *matCellDef="let user"> {{user.getId()}}</td>
+  </ng-container>
   <ng-container matColumnDef="name">
     <th mat-header-cell *matHeaderCellDef> Username </th>
     <td mat-cell *matCellDef="let user"> {{user.name}}</td>
   </ng-container>
   <ng-container matColumnDef="admin">
-    <th mat-header-cell *matHeaderCellDef> Password </th>
-    <td mat-cell *matCellDef="let user">
-      <mat-checkbox [(ngModel)]="user.admin"></mat-checkbox>
-    </td>
+    <th mat-header-cell *matHeaderCellDef> Admin </th>
+    <td mat-cell *matCellDef="let user"> {{user.isAdmin()?"✓":""}} </td>
+
   </ng-container>
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  <tr mat-row *matRowDef="let user; columns: displayedColumns;" (click)="editUser(user)"></tr>
 </table>

@@ -15,7 +15,12 @@ import {MatButtonModule} from '@angular/material/button';
 import {PapaParseModule} from 'ngx-papaparse';
 import {AdminComponent} from './admin/admin.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { UserDetailsComponent } from './user-details/user-details.component';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatIconModule} from '@angular/material/icon';
 
 @NgModule({
   imports: [
@@ -32,12 +37,17 @@ import {FormsModule} from '@angular/forms';
     EntityModule,
     HttpClientModule,
     FormsModule,
-
+    MatDialogModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
   ],
-  declarations: [AdminComponent, UserListComponent],
+  declarations: [AdminComponent, UserListComponent, UserDetailsComponent],
   providers: [
     AdminGuard,
     ChildPhotoUpdateService,
   ],
+  entryComponents: [UserDetailsComponent]
 })
 export class AdminModule { }
