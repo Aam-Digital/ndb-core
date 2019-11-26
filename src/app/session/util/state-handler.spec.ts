@@ -51,7 +51,7 @@ describe('StateHandler', () => {
     }));
     it('fails waiting for the state to change to a specific value if specified', async(() => {
         const handler = new StateHandler<TestState>(TestState.test1);
-        handler.waitForChangeTo(TestState.test2, TestState.test3).catch(() => {
+        handler.waitForChangeTo(TestState.test2, [TestState.test3]).catch(() => {
             expect(handler.getState()).toEqual(TestState.test3);
         });
         handler.setState(TestState.test4);

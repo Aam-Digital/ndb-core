@@ -46,20 +46,20 @@ export class StateHandler<StateEnum> {
     return this.stateChanged;
   }
 
-  public waitForChangeTo(toState: StateEnum, failOnState?: StateEnum): Promise<StateChangedEvent<StateEnum>> {
+  public waitForChangeTo(toState: StateEnum, failOnStates?: StateEnum[]): Promise<StateChangedEvent<StateEnum>> {
     return new Promise((resolve, reject) => {
       if (this.getState() === toState) {
         resolve({ fromState: undefined, toState });
         return;
-      } else if (failOnState && this.getState() === failOnState) {
-        reject({ fromState: undefined, toState: failOnState });
+      } else if (failOnStates && failOnStates.includes(this.getState())) {
+        reject({ fromState: undefined, toState: this.getState() });
         return;
       }
       const subscription = this.getStateChangedStream().subscribe(change => {
         if (change.toState === toState) {
           subscription.unsubscribe(); // only once
           resolve(change);
-        } else if (failOnState && change.toState === failOnState) {
+        } else if (failOnStates && failOnStates.includes(change.toState)) {
           subscription.unsubscribe(); // only once
           reject(change);
         }
