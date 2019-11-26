@@ -3,7 +3,7 @@
 
   "database": {
     "name": "dev",
-    "remote_url": "https://demo.aam-digital.com/db/",
+    "remote_url": "http://localhost:4200/db/",
     "timeout": 60000,
     "outdated_threshold_days": 0,
     "useTemporaryDatabase": true

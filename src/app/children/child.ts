@@ -35,29 +35,29 @@ export class Child extends Entity {
   @DatabaseField() projectNumber: string; // project number
   @DatabaseField({dataType: 'string'}) gender: Gender; // M or F
   @DatabaseField() dateOfBirth: Date;
-  @DatabaseField() motherTongue = '';
-  @DatabaseField() religion = '';
+  @DatabaseField() motherTongue: string = '';
+  @DatabaseField() religion: string = '';
 
   @DatabaseField() photoFile: string;
 
-  @DatabaseField() center = '';
+  @DatabaseField() center: string = '';
   @DatabaseField() admissionDate: Date;
-  @DatabaseField() status = '';
+  @DatabaseField() status: string = '';
 
   // TODO: remove in favour of ChildSchoolRelations once all bugs are fixed
-  @DatabaseField() schoolId = '';
-  @DatabaseField() schoolClass = '';
+  @DatabaseField() schoolId: string = '';
+  @DatabaseField() schoolClass: string = '';
 
-  @DatabaseField() address = '';
-  @DatabaseField() phone = '';
-  @DatabaseField() guardianName = '';
-  @DatabaseField() preferredTimeForGuardianMeeting = '';
+  @DatabaseField() address: string = '';
+  @DatabaseField() phone: string = '';
+  @DatabaseField() guardianName: string = '';
+  @DatabaseField() preferredTimeForGuardianMeeting: string = '';
 
-  @DatabaseField() has_aadhar = '';
-  @DatabaseField() has_bankAccount = '';
-  @DatabaseField() has_kanyashree = '';
-  @DatabaseField() has_rationCard = '';
-  @DatabaseField() has_BplCard = '';
+  @DatabaseField() has_aadhar: string = '';
+  @DatabaseField() has_bankAccount: string = '';
+  @DatabaseField() has_kanyashree: string = '';
+  @DatabaseField() has_rationCard: string = '';
+  @DatabaseField() has_BplCard: string = '';
 
   @DatabaseField() dropoutDate: Date;
   @DatabaseField() dropoutType: string;
