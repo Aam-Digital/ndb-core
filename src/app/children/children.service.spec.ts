@@ -6,8 +6,6 @@ import {MockDatabaseManagerService} from '../database/mock-database-manager.serv
 import {EntitySchemaService} from '../entity/schema/entity-schema.service';
 import {Gender} from './Gender';
 import {School} from '../schools/school';
-import { BlobService } from 'app/webdav/blob-service.service';
-import { DomSanitizer } from '@angular/platform-browser';
 
 function generateChildEntities(): Child[] {
   const data = [];
@@ -103,6 +101,7 @@ describe('ChildrenService', () => {
     entitySchemaService = new EntitySchemaService();
     const database = new MockDatabaseManagerService().getDatabase();
     entityMapper = new EntityMapperService(database, entitySchemaService);
+    // TODO introduce BlobService to test.
     const blobService = null;
     generateChildEntities().forEach(c => entityMapper.save(c));
     generateSchoolEntities().forEach(s => entityMapper.save(s));
