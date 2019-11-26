@@ -2,10 +2,10 @@ import { ChildrenService } from './children.service';
 import {EntityMapperService} from '../entity/entity-mapper.service';
 import {ChildSchoolRelation} from './childSchoolRelation';
 import {Child} from './child';
-import { MockSessionService } from 'app/session/mock-session.service';
 import {EntitySchemaService} from '../entity/schema/entity-schema.service';
 import {Gender} from './Gender';
 import {School} from '../schools/school';
+import {MockDatabase} from '../database/mock-database';
 
 function generateChildEntities(): Child[] {
   const data = [];
@@ -98,7 +98,7 @@ describe('ChildrenService', () => {
 
   beforeEach(() => {
     const entitySchemaService = new EntitySchemaService();
-    const database = new MockSessionService(entitySchemaService).getDatabase();
+    const database = new MockDatabase();
     entityMapper = new EntityMapperService(database, entitySchemaService);
     generateChildEntities().forEach(c => entityMapper.save(c));
     generateSchoolEntities().forEach(s => entityMapper.save(s));

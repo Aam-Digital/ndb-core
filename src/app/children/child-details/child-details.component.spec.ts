@@ -34,7 +34,6 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HealthCheckupComponent} from '../health-checkup/health-checkup.component';
 import { databaseServiceProvider } from 'app/session/database.service.provider';
 import { SessionService } from 'app/session/session.service';
-import { MockSessionService } from 'app/session/mock-session.service';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
