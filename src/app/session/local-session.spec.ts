@@ -14,3 +14,32 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+
+import {EntitySchemaService} from '../entity/schema/entity-schema.service';
+import {AppConfig} from '../app-config/app-config';
+import {LocalSession} from './local-session';
+
+describe('LocalSessionService', () => {
+  let localSession: LocalSession;
+
+  beforeEach(() => {
+    AppConfig.settings = {
+      'site_name': 'Aam Digital - DEV',
+      'database': {
+        'name': 'integration_tests',
+        'remote_url': 'https://demo.aam-digital.com/db/',
+        'timeout': 60000,
+        'outdated_threshold_days': 0,
+        'useTemporaryDatabase': false
+      }
+    };
+
+    const mockAlertService = jasmine.createSpyObj(['addDebug', 'addInfo', 'addWarning']);
+    localSession = new LocalSession(mockAlertService, new EntitySchemaService());
+  });
+
+  it('should be created', async () => {
+    expect(localSession).toBeDefined();
+  });
+});
