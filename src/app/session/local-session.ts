@@ -73,8 +73,8 @@ export class LocalSession {
         return LoginState.LOGIN_FAILED;
       }
     } catch (error) {
-      // possible error: initial sync failed
-      if (error && error.toState && error.toState === SyncState.FAILED) {
+      // possible error: initial sync failed or aborted
+      if (error && error.toState && [SyncState.ABORTED, SyncState.FAILED].includes(error.toState)) {
         if (this.loginState.getState() === LoginState.LOGIN_FAILED) {
           // The sync failed because the remote rejected
           return LoginState.LOGIN_FAILED;
@@ -99,7 +99,7 @@ export class LocalSession {
    */
   public async waitForFirstSync() {
     if (await this.isInitial()) {
-      return await this.syncState.waitForChangeTo(SyncState.COMPLETED, SyncState.FAILED);
+      return await this.syncState.waitForChangeTo(SyncState.COMPLETED, [SyncState.FAILED, SyncState.ABORTED]);
     }
   }
 

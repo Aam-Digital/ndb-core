@@ -75,7 +75,7 @@ describe('SyncedSessionService', () => {
             expect(sessionService.getSyncState().getState()).toEqual(SyncState.UNSYNCED);
 
             // remote session takes a bit longer than a local login - this throws on successful connection
-            await sessionService.getConnectionState().waitForChangeTo(ConnectionState.REJECTED, ConnectionState.CONNECTED);
+            await sessionService.getConnectionState().waitForChangeTo(ConnectionState.REJECTED, [ConnectionState.CONNECTED]);
 
             expect(sessionService.isLoggedIn()).toEqual(false);
             expect(sessionService.getCurrentUser()).not.toBeDefined();
@@ -88,7 +88,7 @@ describe('SyncedSessionService', () => {
             expect(sessionService.getSyncState().getState()).toEqual(SyncState.UNSYNCED);
 
             // remote session takes a bit longer than a local login - this throws on successful connection
-            await sessionService.getConnectionState().waitForChangeTo(ConnectionState.REJECTED, ConnectionState.CONNECTED);
+            await sessionService.getConnectionState().waitForChangeTo(ConnectionState.REJECTED, [ConnectionState.CONNECTED]);
 
             expect(sessionService.isLoggedIn()).toEqual(false);
             expect(sessionService.getCurrentUser()).not.toBeDefined();
@@ -97,7 +97,7 @@ describe('SyncedSessionService', () => {
         it('has the correct state after Login with correct credentials', async () => {
             const [loginState] = await Promise.all([
                 sessionService.login('demo', 'pass'),
-                sessionService.getSyncState().waitForChangeTo(SyncState.COMPLETED, SyncState.FAILED)
+                sessionService.getSyncState().waitForChangeTo(SyncState.COMPLETED, [SyncState.FAILED])
             ]);
             expect(loginState).toEqual(LoginState.LOGGED_IN);
             expect(sessionService.getLoginState().getState()).toEqual(LoginState.LOGGED_IN);
@@ -111,7 +111,7 @@ describe('SyncedSessionService', () => {
         it('has the correct state after Logout', async () => {
             await Promise.all([
                 sessionService.login('demo', 'pass'),
-                sessionService.getSyncState().waitForChangeTo(SyncState.COMPLETED, SyncState.FAILED)
+                sessionService.getSyncState().waitForChangeTo(SyncState.COMPLETED, [SyncState.FAILED])
             ]);
 
             sessionService.logout();

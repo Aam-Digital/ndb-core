@@ -26,5 +26,7 @@ export enum SyncState {
   /** Sync failed. This may be, because we are offline, or due to some other reason */
   FAILED,
   /** (Potentially) Unsynced. This is the state before the first sync after startup */
-  UNSYNCED
+  UNSYNCED,
+  /** Sync was aborted. Currently only used when the initial login takes place offline */
+  ABORTED,
 }

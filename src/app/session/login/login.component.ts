@@ -47,13 +47,13 @@ export class LoginComponent implements OnInit {
         if (loginState === LoginState.LOGGED_IN) {
           this.onLoginSuccess();
         } else {
-          if (this._sessionService.getConnectionState().getState() === ConnectionState.OFFLINE) {
+          if (this._sessionService.getSyncState().getState() === SyncState.ABORTED && this._sessionService.getConnectionState().getState() === ConnectionState.OFFLINE) {
             this.onLoginFailure('Can\'t login for the first time when offline. Please try again later.');
           } else {
             this.onLoginFailure('Username or password incorrect!');
           }
         }
-      }).catch(reason => this.onLoginFailure(reason));
+      }).catch(reason => this.onLoginFailure((typeof reason === 'string') ? reason : JSON.stringify(reason)));
   }
 
   private onLoginSuccess() {

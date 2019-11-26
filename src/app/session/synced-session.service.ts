@@ -62,8 +62,11 @@ export class SyncedSessionService extends SessionService {
    */
   public login(username: string, password: string): Promise<LoginState> {
     this.cancelLoginOfflineRetry(); // in case this is running in the background
+    this.getSyncState().setState(SyncState.UNSYNCED);
+
     const localLogin =  this._localSession.login(username, password);
     const remoteLogin = this._remoteSession.login(username, password);
+
     remoteLogin.then(async (connectionState: ConnectionState) => {
       // remote connected -- sync!
       if (connectionState === ConnectionState.CONNECTED) {
@@ -100,12 +103,14 @@ export class SyncedSessionService extends SessionService {
       this._localSession.isInitial().then(isInitial => {
         if (isInitial) {
           // If we were initial, the local session was waiting for a sync.
-          // Explicitly fail the login if the Connection was rejected, so the LocalSession knows what's going on
           if (connectionState === ConnectionState.REJECTED) {
+            // Explicitly fail the login if the Connection was rejected, so the LocalSession knows what's going on, and fail sync to resolve deadlock
             this._localSession.loginState.setState(LoginState.LOGIN_FAILED);
+            this._localSession.syncState.setState(SyncState.FAILED);
+          } else {
+            // Explicitly abort the sync to resolve the deadlock
+            this._localSession.syncState.setState(SyncState.ABORTED);
           }
-          // Explicitly fail the sync to resolve the deadlock
-          this._localSession.syncState.setState(SyncState.FAILED);
         }
       });
 

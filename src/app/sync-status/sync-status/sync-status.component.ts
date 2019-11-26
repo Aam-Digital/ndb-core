@@ -63,10 +63,6 @@ export class SyncStatusComponent implements OnInit {
         if (this.dialogRef) {
           this.dialogRef.close();
         }
-        if (this.sessionService.getConnectionState().getState() === ConnectionState.OFFLINE && !this.sessionService.isLoggedIn()) {
-          // edge case: initial login when offline. we don't want to show the sync failure here
-          break;
-        }
         this.alertService.addWarning('Database sync failed.');
         break;
     }
