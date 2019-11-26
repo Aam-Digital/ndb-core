@@ -18,6 +18,7 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from '../user';
 import { SessionService } from '../../session/session.service';
+import { BlobService } from 'app/webdav/blob-service.service';
 
 @Component({
   selector: 'app-user-account',
@@ -28,7 +29,8 @@ export class UserAccountComponent implements OnInit {
 
   user: User;
 
-  constructor( private sessionService: SessionService ) { }
+  constructor( private sessionService: SessionService,
+               private blobService: BlobService ) { }
 
   ngOnInit() {
     this.user = this.sessionService.getCurrentUser();
@@ -46,5 +48,6 @@ export class UserAccountComponent implements OnInit {
 
   changeBlobPassword(blobPassword, password) {
     this.sessionService.getCurrentUser().setBlobPassword(blobPassword, password);
+    this.blobService.connect(this.sessionService.getCurrentUser().blobPasswordDec);
   }
 }
