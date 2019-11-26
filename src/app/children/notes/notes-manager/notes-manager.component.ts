@@ -135,11 +135,18 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     newNote.date = new Date();
     newNote.author = this.sessionService.getCurrentUser().name;
 
-    this.showDetails(newNote);
+    this.showDetails(newNote, true);
   }
 
 
-  showDetails(entity: Note) {
-    this.dialog.open(NoteDetailsComponent, {width: '80%', data: {entity: entity}});
+  showDetails(entity: Note, newNote: boolean = false) {
+    const nextNote = this.dialog.open(NoteDetailsComponent, {width: '80%', data: {entity: entity}});
+
+    if (newNote) {
+      nextNote.afterClosed().subscribe(val => {
+        this.entityList = [val].concat(this.entityList);
+        this.applyFilterSelections();
+      });
+    }
   }
 }
