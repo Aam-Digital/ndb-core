@@ -48,9 +48,9 @@ export class LoginComponent implements OnInit {
           this.onLoginSuccess();
         } else {
           if (this._sessionService.getConnectionState().getState() === ConnectionState.OFFLINE) {
-            this.onLoginFailure('can\'t login for the first time when offline');
+            this.onLoginFailure('Can\'t login for the first time when offline. Please try again later.');
           } else {
-            this.onLoginFailure('username or password incorrect');
+            this.onLoginFailure('Username or password incorrect!');
           }
         }
       }).catch(reason => this.onLoginFailure(reason));

@@ -118,8 +118,8 @@ export class SyncedSessionService extends SessionService {
         }
       }
 
-      // offline? retry! TODO(lh): Backoff
-      if (connectionState === ConnectionState.OFFLINE) {
+      // offline? retry (unless we are in an initial state)! TODO(lh): Backoff
+      if (connectionState === ConnectionState.OFFLINE && !(await this._localSession.isInitial())) {
         this._offlineRetryLoginScheduleHandle = setTimeout(() => {
           this.login(username, password);
         }, 2000);
