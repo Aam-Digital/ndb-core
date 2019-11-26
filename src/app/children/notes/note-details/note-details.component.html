@@ -41,39 +41,38 @@
       </mat-form-field>
     </div>
   </div>
-
-  <p>
-    <mat-form-field class='input-medium'>
-      <input matInput placeholder="Subject" name="subject" type="text" [(ngModel)]="note.subject">
-    </mat-form-field>
-  </p>
-
-  <p>
-    <app-child-select [valueAsIds]='note.children' (valueAsIdsChange)='note.children=$event;recordForm.form.markAsDirty();'
-                      class='input-medium'>
-    </app-child-select>
-  </p>
-
+  <div fxLayout='row wrap' fxLayoutGap='20px'>
+    <div fxFlex>
+      <mat-form-field class='input-medium'>
+        <input matInput placeholder="Subject" name="subject" type="text" [(ngModel)]="note.subject">
+      </mat-form-field>
+    </div>
+    <div fxFlex>
+      <mat-form-field class='input-medium'>
+        <mat-select matInput placeholder="Type of Interaction" name="type" [(ngModel)]="note.category">
+          <mat-option *ngFor="let interaction of interactionTypes" [value]="interaction">
+            {{interaction}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  <div fxLayout='row wrap' fxLayoutGap='20px'>
+    <div fxFlex>
+      <app-child-select [valueAsIds]='note.children' (valueAsIdsChange)='note.children=$event;recordForm.form.markAsDirty();'
+                        class='input-medium'>
+      </app-child-select>
+    </div>
+    <div fxFlex>
+      <mat-form-field class='input-medium'>
+        <!-- TODO: should be multi-select or auto-complete field of user names? -->
+        <input matInput placeholder="Team Member" name="teammember" type="text" [(ngModel)]="note.author">
+      </mat-form-field>
+    </div>
+  </div>
   <p>
     <mat-form-field class='input-max'>
-      <textarea matInput placeholder="Notes" name="notes" [(ngModel)]="note.text"></textarea>
-    </mat-form-field>
-  </p>
-
-  <p>
-    <mat-form-field class='input-medium'>
-      <!-- TODO: should be multi-select or auto-complete field of user names? -->
-      <input matInput placeholder="Team Member" name="teammember" type="text" [(ngModel)]="note.author">
-    </mat-form-field>
-  </p>
-
-  <p>
-    <mat-form-field class='input-medium'>
-      <mat-select matInput placeholder="Type of Interaction" name="type" [(ngModel)]="note.category">
-        <mat-option *ngFor="let interaction of interactionTypes" [value]="interaction">
-          {{interaction}}
-        </mat-option>
-      </mat-select>
+      <textarea matInput placeholder="Notes" name="notes" [(ngModel)]="note.text" cdkTextareaAutosize></textarea>
     </mat-form-field>
   </p>
 </mat-dialog-content>
