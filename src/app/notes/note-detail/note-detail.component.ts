@@ -1,23 +1,25 @@
 import {Component, Inject, Input, OnInit, ViewChild} from '@angular/core';
-import {Note} from '../note';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import {ConfirmationDialogService} from '../../../ui-helper/confirmation-dialog/confirmation-dialog.service';
-import {EntityMapperService} from '../../../entity/entity-mapper.service';
+import {NoteModel} from '../note.model';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
+import {EntityMapperService} from '../../entity/entity-mapper.service';
 
 @Component({
-  selector: 'app-note-details',
-  templateUrl: './note-details.component.html',
-  styleUrls: ['./note-details.component.scss']
+  selector: 'app-note-detail',
+  templateUrl: './note-detail.component.html',
+  styleUrls: ['./note-detail.component.scss']
 })
-export class NoteDetailsComponent implements OnInit {
-  @Input() note: Note;
-  originalNote: Note;
-  @ViewChild('recordForm', { static: true }) form;
-  interactionTypes = Note.INTERACTION_TYPES;
+export class NoteDetailComponent implements OnInit {
+  @Input() note: NoteModel;
 
+  originalNote: NoteModel;
+
+  @ViewChild('recordForm', { static: true }) form;
+
+  interactionTypes = NoteModel.INTERACTION_TYPES;
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
-              public dialogRef: MatDialogRef<NoteDetailsComponent>,
+              public dialogRef: MatDialogRef<NoteDetailComponent>,
               private confirmationDialog: ConfirmationDialogService,
               private entityMapper: EntityMapperService) {
     this.note = data.entity;
@@ -27,17 +29,14 @@ export class NoteDetailsComponent implements OnInit {
       if (!returnedNote && this.form.dirty) {
         this.confirmationDialog.openDialog('Save Changes?', 'Do you want to save the changes you made to the record?')
           .afterClosed().subscribe(confirmed => {
-            if (confirmed) {
-              this.save();
-            } else {
-              this.cancel();
-            }
+          if (confirmed) {
+            this.save();
+          } else {
+            this.cancel();
+          }
         });
       }
     });
-  }
-
-  ngOnInit() {
   }
 
   save() {
@@ -48,6 +47,9 @@ export class NoteDetailsComponent implements OnInit {
   cancel() {
     Object.assign(this.note, this.originalNote);
     this.dialogRef.close(this.note);
+  }
+
+  ngOnInit() {
   }
 
 }

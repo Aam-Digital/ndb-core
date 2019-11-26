@@ -17,12 +17,6 @@
 
 import { NgModule } from '@angular/core';
 import {CommonModule, DatePipe, PercentPipe} from '@angular/common';
-import { ChildDetailsComponent } from './child-details/child-details.component';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import {MatInputModule} from '@angular/material/input';
-import {MatExpansionModule} from '@angular/material/expansion';
-import { ChildrenListComponent } from './children-list/children-list.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -37,43 +31,48 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import {FlexLayoutModule} from '@angular/flex-layout';
-import {ChildrenService} from './children.service';
-import {AttendanceBlockComponent} from './attendance/attendance-block/attendance-block.component';
-import {ChildAttendanceComponent} from './attendance/child-attendance/child-attendance.component';
-import {UiHelperModule} from '../ui-helper/ui-helper.module';
-import {ChildBlockComponent} from './child-block/child-block.component';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { RouterModule } from '@angular/router';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FilterPipeModule } from 'ngx-filter-pipe';
+import { UiHelperModule } from '../ui-helper/ui-helper.module';
+import { SchoolsModule } from '../schools/schools.module';
+import { ChildDetailsComponent } from './child-details/child-details.component';
+import { ChildrenListComponent } from './children-list/children-list.component';
+import { AttendanceBlockComponent } from './attendance/attendance-block/attendance-block.component';
+import { ChildAttendanceComponent } from './attendance/child-attendance/child-attendance.component';
+import { ChildBlockComponent } from './child-block/child-block.component';
 import { ChildrenCountDashboardComponent } from './children-count-dashboard/children-count-dashboard.component';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {RouterModule} from '@angular/router';
 import { AttendanceAverageDashboardComponent } from './attendance/attendance-average-dashboard/attendance-average-dashboard.component';
 import { AttendanceWarningsDashboardComponent } from './attendance/attendance-warnings-dashboard/attendance-warnings-dashboard.component';
-import { NotesComponent } from './notes/notes.component';
-import { NoteDetailsComponent } from './notes/note-details/note-details.component';
 import { ChildSelectComponent } from './child-select/child-select.component';
 import { EditSchoolDialogComponent } from './view-schools-component/edit-school-dialog/edit-school-dialog.component';
-import {SchoolsModule} from '../schools/schools.module';
 import { EducationalMaterialComponent } from './educational-material/educational-material.component';
-import {AserComponent} from './aser/aser.component';
-import {FilterPipeModule} from 'ngx-filter-pipe';
-import { NotesManagerComponent } from './notes/notes-manager/notes-manager.component';
+import { AserComponent } from './aser/aser.component';
 import { AddMonthAttendanceComponent } from './attendance/add-month-attendance/add-month-attendance.component';
 import { ViewSchoolsComponent } from './view-schools-component/view-schools.component';
 import { AttendanceDaysComponent } from './attendance/attendance-days/attendance-days.component';
 import { AttendanceDetailsComponent } from './attendance/attendance-details/attendance-details.component';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { AddDayAttendanceComponent } from './attendance/add-day-attendance/add-day-attendance.component';
 import { AttendanceWeekDashboardComponent } from './attendance/attendance-week-dashboard/attendance-week-dashboard.component';
-import {AttendanceDayBlockComponent} from './attendance/attendance-days/attendance-day-block.component';
+import { AttendanceDayBlockComponent } from './attendance/attendance-days/attendance-day-block.component';
 import { AttendanceManagerComponent } from './attendance/attendance-manager/attendance-manager.component';
 import { HealthCheckupComponent } from './health-checkup/health-checkup.component';
-import {MatDatepickerModule} from '@angular/material/datepicker';
+import { ChildrenService } from './children.service';
+import { NotesListComponent } from './notes-list/notes-list.component';
 
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
+    UiHelperModule,
     FlexLayoutModule,
     RouterModule,
     MatFormFieldModule,
@@ -97,7 +96,6 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FilterPipeModule,
-    UiHelperModule,
     SchoolsModule,
     ReactiveFormsModule,
     MatDialogModule,
@@ -107,18 +105,15 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
     AttendanceBlockComponent,
     ChildBlockComponent,
     ChildAttendanceComponent,
-    NotesComponent,
     ChildDetailsComponent,
     ChildrenListComponent,
     ChildrenCountDashboardComponent,
     AttendanceAverageDashboardComponent,
     AttendanceWarningsDashboardComponent,
-    NoteDetailsComponent,
     ChildSelectComponent,
     EditSchoolDialogComponent,
     EducationalMaterialComponent,
     AserComponent,
-    NotesManagerComponent,
     AddMonthAttendanceComponent,
     ViewSchoolsComponent,
     AttendanceDayBlockComponent,
@@ -128,6 +123,7 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
     AttendanceWeekDashboardComponent,
     AttendanceManagerComponent,
     HealthCheckupComponent,
+    NotesListComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
@@ -141,6 +137,6 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
     AttendanceWeekDashboardComponent,
     AttendanceDaysComponent,
   ],
-  entryComponents: [NoteDetailsComponent, EditSchoolDialogComponent, AttendanceDetailsComponent],
+  entryComponents: [EditSchoolDialogComponent, AttendanceDetailsComponent],
 })
 export class ChildrenModule { }

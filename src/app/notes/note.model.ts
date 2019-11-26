@@ -15,13 +15,14 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Entity} from '../../entity/entity';
-import {WarningLevel} from '../attendance/warning-level';
-import {DatabaseEntity} from '../../entity/database-entity.decorator';
-import {DatabaseField} from '../../entity/database-field.decorator';
+import {Entity} from '../entity/entity';
+import {WarningLevel} from '../children/attendance/warning-level';
+import {DatabaseEntity} from '../entity/database-entity.decorator';
+import {DatabaseField} from '../entity/database-field.decorator';
+import {AttendanceModel} from './attendance.model';
 
 @DatabaseEntity('Note')
-export class Note extends Entity {
+export class NoteModel extends Entity {
 
   static INTERACTION_TYPES = [
     'Home Visit',
@@ -40,8 +41,8 @@ export class Note extends Entity {
     'Annual Survey',
     'Contact with other partners (club/NGO/...)',
   ];
-
-  @DatabaseField() children: string[] = []; // id of Child entity
+  // An array of triplets containing information about the child and it's attendance
+  @DatabaseField({dataType: 'attendancemodel'}) children: AttendanceModel[] = [];
   @DatabaseField() date: Date;
   @DatabaseField() subject: string = '';
   @DatabaseField() text: string = '';
@@ -49,12 +50,14 @@ export class Note extends Entity {
   @DatabaseField() category: string = '';
   @DatabaseField({dataType: 'string'}) warningLevel: WarningLevel = WarningLevel.OK;
 
+
   getWarningLevel (): WarningLevel {
     return this.warningLevel;
   }
 
   isLinkedWithChild(childId: string) {
-    return (this.children.findIndex(e => e === childId) > -1);
+    const found = this.getChildIDs().includes(childId);
+    return found;
   }
 
 
@@ -80,5 +83,23 @@ export class Note extends Entity {
     }
 
     return '';
+  }
+
+  getChildIDs(): string[] {
+    return this.children.map(e => e.childID);
+  }
+
+  setChildrenFromIDs(childIDs: string[]) {
+    this.children = childIDs.map(childId => new AttendanceModel(childId));
+  }
+
+  setDateFromString(date: Object) {
+    console.log(date);
+  }
+
+  logEvent(event: Event) {
+    console.log(event);
+    console.log((<HTMLInputElement>event.target).value);
+    console.log(event.currentTarget);
   }
 }

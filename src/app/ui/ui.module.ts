@@ -17,12 +17,6 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UiComponent } from './ui/ui.component';
-import { NavigationModule } from '../navigation/navigation.module';
-import { SessionModule } from '../session/session.module';
-import { SyncStatusModule } from '../sync-status/sync-status.module';
-import { RouterModule } from '@angular/router';
-import { LatestChangesModule } from '../latest-changes/latest-changes.module';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -30,11 +24,18 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { RouterModule } from '@angular/router';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { FormsModule } from '@angular/forms';
+import { ChildrenModule } from '../children/children.module';
+import { SchoolsModule } from '../schools/schools.module';
+import { NavigationModule } from '../navigation/navigation.module';
+import { SessionModule } from '../session/session.module';
+import { SyncStatusModule } from '../sync-status/sync-status.module';
+import { LatestChangesModule } from '../latest-changes/latest-changes.module';
+import { NotesModule } from '../notes/notes.module';
+import { UiComponent } from './ui/ui.component';
 import { SearchComponent } from './search/search.component';
-import {FormsModule} from '@angular/forms';
-import {ChildrenModule} from '../children/children.module';
-import {SchoolsModule} from '../schools/schools.module';
-import {FlexLayoutModule} from '@angular/flex-layout';
 import { PrimaryActionComponent } from './primary-action/primary-action.component';
 
 @NgModule({
@@ -56,6 +57,7 @@ import { PrimaryActionComponent } from './primary-action/primary-action.componen
     FlexLayoutModule,
     ChildrenModule,
     SchoolsModule,
+    NotesModule
   ],
   declarations: [SearchComponent, UiComponent, PrimaryActionComponent],
   exports: [UiComponent]

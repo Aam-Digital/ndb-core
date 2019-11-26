@@ -16,9 +16,9 @@
  */
 
 import { Database } from './database';
-import {Note} from '../children/notes/note';
-import {AttendanceMonth} from '../children/attendance/attendance-month';
-import {ChildSchoolRelation} from '../children/childSchoolRelation';
+import { NoteModel } from '../notes/note.model';
+import { AttendanceMonth } from '../children/attendance/attendance-month';
+import { ChildSchoolRelation } from '../children/childSchoolRelation';
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -129,7 +129,7 @@ export class MockDatabase extends Database {
     let reducerFun;
     switch (fun) {
       case 'notes_index/by_child':
-        filterFun = (e) => e._id.startsWith( Note.ENTITY_TYPE) && e.children.includes(options.key);
+        filterFun = (e) => e._id.startsWith( NoteModel.ENTITY_TYPE) && e.children.includes(options.key);
         break;
       case 'attendances_index/by_child':
         filterFun = (e) => e._id.startsWith( AttendanceMonth.ENTITY_TYPE) && e.student === options.key;

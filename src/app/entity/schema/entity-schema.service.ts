@@ -26,6 +26,7 @@ import {stringEntitySchemaDatatype} from '../schema-datatypes/datatype-string';
 import {numberEntitySchemaDatatype} from '../schema-datatypes/datatype-number';
 import {dateEntitySchemaDatatype} from '../schema-datatypes/datatype-date';
 import {monthEntitySchemaDatatype} from '../schema-datatypes/datatype-month';
+import {attendanceEntitySchemaDatatype} from '../schema-datatypes/datatype-attendance';
 
 
 /**
@@ -49,6 +50,7 @@ export class EntitySchemaService {
     this.registerSchemaDatatype(numberEntitySchemaDatatype);
     this.registerSchemaDatatype(dateEntitySchemaDatatype);
     this.registerSchemaDatatype(monthEntitySchemaDatatype);
+    this.registerSchemaDatatype(attendanceEntitySchemaDatatype);
   }
 
 

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {Note} from '../../children/notes/note';
-import {SessionService} from '../../session/session.service';
+import { NoteModel } from '../../notes/note.model';
+import { SessionService } from '../../session/session.service';
 import { MatDialog } from '@angular/material/dialog';
-import {NoteDetailsComponent} from '../../children/notes/note-details/note-details.component';
+import { NoteDetailComponent } from '../../notes/note-detail/note-detail.component';
 
 @Component({
   selector: 'app-primary-action',
@@ -18,11 +18,11 @@ export class PrimaryActionComponent implements OnInit {
   }
 
   primaryAction() {
-    this.dialog.open(NoteDetailsComponent, {width: '80%', data: {entity: this.createNewNote()}});
+    this.dialog.open(NoteDetailComponent, {width: '80%', data: {entity: this.createNewNote()}});
   }
 
   private createNewNote() {
-    const newNote = new Note(Date.now().toString());
+    const newNote = new NoteModel(Date.now().toString());
     newNote.date = new Date();
     newNote.author = this.sessionService.getCurrentUser().name;
     return newNote;
