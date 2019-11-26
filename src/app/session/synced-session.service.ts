@@ -145,7 +145,7 @@ export class SyncedSessionService extends SessionService {
   public async sync(): Promise<any> {
     this._localSession.syncState.setState(SyncState.STARTED);
     try {
-      const result = await this._localSession.database.sync(this._remoteSession.database);
+      const result = await this._localSession.database.sync(this._remoteSession.database, { batch_size: 500 });
       this._localSession.syncState.setState(SyncState.COMPLETED);
       return result;
     } catch (error) {
