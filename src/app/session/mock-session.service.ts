@@ -11,7 +11,7 @@ import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
 
 export class MockSessionService extends SessionService {
     private database: MockDatabase;
-    private demoUser: User;
+    private currentUser: User;
     private loginState: StateHandler<LoginState> = new StateHandler<LoginState>(LoginState.LOGGED_OUT);
     private connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>(ConnectionState.DISCONNECTED);
     private syncState: StateHandler<SyncState> = new StateHandler<SyncState>(SyncState.UNSYNCED);
@@ -26,14 +26,14 @@ export class MockSessionService extends SessionService {
         const entityMapper = new EntityMapperService(this.database, this._entitySchemaService);
 
         // add demo user
-        this.demoUser = new User('demo');
-        this.demoUser.name = 'demo';
-        this.demoUser.setNewPassword('pass');
-        entityMapper.save(this.demoUser);
+        const demoUser = new User('demo');
+        demoUser.name = 'demo';
+        demoUser.setNewPassword('pass');
+        entityMapper.save(demoUser);
     }
 
     public getCurrentUser(): User {
-        return this.demoUser;
+        return this.currentUser;
     }
     public isLoggedIn(): boolean {
         return this.loginState.getState() === LoginState.LOGGED_IN;
@@ -50,16 +50,30 @@ export class MockSessionService extends SessionService {
     public getDatabase(): Database {
         return this.database;
     }
-    public login(username, password): Promise<LoginState> {
-        if (username === 'demo' && password === 'pass') {
-            this.loginState.setState(LoginState.LOGGED_IN);
-            this.connectionState.setState(ConnectionState.CONNECTED);
-            setTimeout(() => this.sync(), 0);
-            return Promise.resolve(LoginState.LOGGED_IN);
+    public async login(username, password): Promise<LoginState> {
+        try {
+            const userEntity = await this.loadUser(username);
+            if (userEntity.checkPassword(password)) {
+              this.loginState.setState(LoginState.LOGGED_IN);
+              this.connectionState.setState(ConnectionState.CONNECTED);
+              this.currentUser = userEntity;
+                setTimeout(() => this.sync(), 0);
+                return LoginState.LOGGED_IN;
+            } else {
+              this.loginState.setState(LoginState.LOGIN_FAILED);
+              this.connectionState.setState(ConnectionState.REJECTED);
+              return LoginState.LOGIN_FAILED;
+            }
+        } catch (error) {
+            // possible error: user object not found locally, which should return loginFailed.
+            if (error && error.status && error.status === 404) {
+                this.loginState.setState(LoginState.LOGIN_FAILED);
+                this.connectionState.setState(ConnectionState.REJECTED);
+                return LoginState.LOGIN_FAILED;
+            }
+            // all other cases must throw an error
+            throw error;
         }
-        this.loginState.setState(LoginState.LOGIN_FAILED);
-        this.connectionState.setState(ConnectionState.REJECTED);
-        return Promise.resolve(LoginState.LOGIN_FAILED);
     }
     public logout(): void {
         this.loginState.setState(LoginState.LOGGED_OUT);
@@ -67,7 +81,20 @@ export class MockSessionService extends SessionService {
     }
     public sync(): Promise<any> {
         this.syncState.setState(SyncState.STARTED);
-        this.syncState.setState(SyncState.COMPLETED);
-        return Promise.resolve(true);
+        return new Promise(resolve => setTimeout(() => {
+            this.syncState.setState(SyncState.COMPLETED);
+            resolve();
+        }, 0));
+    }
+
+    /**
+     * Helper to get a User Entity from the Database without needing the EntityMapperService
+     * @param userId Id of the User to be loaded
+     */
+    public async loadUser(userId: string): Promise<User> {
+        const user = new User('');
+        const userData = await this.database.get('User:' + userId);
+        this._entitySchemaService.loadDataIntoEntity(user, userData);
+        return user;
     }
 }
