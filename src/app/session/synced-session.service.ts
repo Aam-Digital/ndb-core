@@ -61,6 +61,7 @@ export class SyncedSessionService extends SessionService {
    * @returns a promise resolving with the local LoginState
    */
   public login(username: string, password: string): Promise<LoginState> {
+    this.cancelLoginOfflineRetry(); // in case this is running in the background
     const localLogin =  this._localSession.login(username, password);
     const remoteLogin = this._remoteSession.login(username, password);
     remoteLogin.then(async (connectionState: ConnectionState) => {
