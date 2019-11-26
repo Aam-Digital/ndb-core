@@ -15,14 +15,17 @@ export class BlobService {
 
   constructor(private domSanitizer: DomSanitizer,
     private sessionService: SessionService) {
-    // const { createClient } = require("webdav");
+      this.connect(this.sessionService.getCurrentUser().blobPasswordDec);
+  }
 
+  public connect(password: string = this.sessionService.getCurrentUser().blobPasswordDec) {
+    this.currentlyGettingList = null;
     if (this.sessionService.getCurrentUser() != null) {
       this.client = webdav.createClient(
         AppConfig.settings.webdav.remote_url,
         {
           username: 'nextclouduser',
-          password: this.sessionService.getCurrentUser().blobPasswordDec
+          password: password
         }
       );
     }
@@ -33,7 +36,7 @@ export class BlobService {
    * @param path path without leading '/'
    */
   public async getDir(path: string): Promise<string> {
-      const contents = await this.client.getDirectoryContents(path);
+    const contents = await this.client.getDirectoryContents(path);
     return JSON.stringify(contents, undefined, 4);
   }
 
@@ -42,8 +45,8 @@ export class BlobService {
       this.currentlyGettingList = new Promise((resolve, reject) => {
         this.getDir('').then(list => {
           this.fileList = list;
-        resolve(true);
-      });
+          resolve(true);
+        });
       });
     }
     if (!this.fileList) {
@@ -86,7 +89,7 @@ export class BlobService {
     if (await this.doesFileExist(path)) {
       const image = await this.client.getFileContents(path);
       return this._bufferArrayToBase64(image);
-  }
+    }
     return await this.getDefaultImage();
   }
 
