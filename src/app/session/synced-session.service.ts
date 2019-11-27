@@ -104,7 +104,8 @@ export class SyncedSessionService extends SessionService {
         if (isInitial) {
           // If we were initial, the local session was waiting for a sync.
           if (connectionState === ConnectionState.REJECTED) {
-            // Explicitly fail the login if the Connection was rejected, so the LocalSession knows what's going on, and fail sync to resolve deadlock
+            // Explicitly fail the login if the Connection was rejected, so the LocalSession knows what's going on
+            // additionally, fail sync to resolve deadlock
             this._localSession.loginState.setState(LoginState.LOGIN_FAILED);
             this._localSession.syncState.setState(SyncState.FAILED);
           } else {
