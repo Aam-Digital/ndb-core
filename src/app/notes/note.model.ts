@@ -20,34 +20,20 @@ import {WarningLevel} from '../children/attendance/warning-level';
 import {DatabaseEntity} from '../entity/database-entity.decorator';
 import {DatabaseField} from '../entity/database-field.decorator';
 import {AttendanceModel} from './attendance.model';
+import {InteractionTypes} from './interaction-types.enum';
 
 @DatabaseEntity('Note')
 export class NoteModel extends Entity {
 
-  static INTERACTION_TYPES = [
-    'Home Visit',
-    'Talk with Guardians',
-    'Talk with Child',
-    'Incident',
-    'Discussion/Decision',
-    'School/Hostel Visit',
-    'Phone Call',
-    'Talk with Coaching Teacher',
-    'Talk with Peer',
-    'Talk with Neighbours',
-    'Guardians\' Meeting',
-    'Children\'s Meeting',
-    'Daily Routine',
-    'Annual Survey',
-    'Contact with other partners (club/NGO/...)',
-  ];
+  // The values that 'Type of interaction' can have in the UI / The values that category can have here
+  static INTERACTION_TYPES = Object.values(InteractionTypes);
   // An array of triplets containing information about the child and it's attendance
   @DatabaseField({dataType: 'attendancemodel'}) children: AttendanceModel[] = [];
   @DatabaseField() date: Date;
   @DatabaseField() subject: string = '';
   @DatabaseField() text: string = '';
   @DatabaseField() author: string = '';
-  @DatabaseField() category: string = '';
+  @DatabaseField() category: InteractionTypes = InteractionTypes.NONE;
   @DatabaseField({dataType: 'string'}) warningLevel: WarningLevel = WarningLevel.OK;
 
 
