@@ -46,6 +46,21 @@ export class NoteModel extends Entity {
     return found;
   }
 
+  /**
+   * returns whether or not this note's contents describe a meeting
+   */
+
+  isMeeting(): boolean {
+    return  this.category === InteractionTypes.GUARDIAN_MEETING ||
+            this.category === InteractionTypes.CHILDREN_MEETING ||
+            this.category === InteractionTypes.EXCURSION;
+  }
+
+  childrenWithPresence(presence: boolean) {
+    return this.children.filter(attendance => {
+      return attendance.present === presence;
+    });
+  }
 
   public getColor() {
     if (this.warningLevel === WarningLevel.URGENT) {
@@ -76,16 +91,24 @@ export class NoteModel extends Entity {
   }
 
   setChildrenFromIDs(childIDs: string[]) {
-    this.children = childIDs.map(childId => new AttendanceModel(childId));
+    // TODO: implement update if childIDs are new
+    this.children = childIDs.map(childId => {
+      return new AttendanceModel(childId);
+    });
   }
 
-  setDateFromString(date: Object) {
-    console.log(date);
-  }
+  /**
+   * Toggles for a given child it's presence.
+   * If the child was absent, the presence-field will be true for that child.
+   * If the child was present, the presence-field will be false for that child
+   * @param childId The ID of the child
+   */
 
-  logEvent(event: Event) {
-    console.log(event);
-    console.log((<HTMLInputElement>event.target).value);
-    console.log(event.currentTarget);
+  togglePresence(childId: string) {
+    this.children.forEach(attendance => {
+      if (attendance.childID === childId) {
+        attendance.present = !attendance.present;
+      }
+    });
   }
 }

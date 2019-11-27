@@ -15,10 +15,8 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-
 <h2 mat-dialog-title>{{note.date.toLocaleDateString()}}: {{note.subject}}</h2>
 
-<!--View that describes a single note-->
 
 <form #recordForm="ngForm">
   <mat-dialog-content>
@@ -26,7 +24,7 @@
       <div fxFlex>
         <mat-form-field>
           <input matInput placeholder="Date" name="date" type="date"
-                 [valueAsDate]="note.date" (change)='note.date=$event.currentTarget.valueAsDate;recordForm.form.markAsDirty();'/>
+                 [valueAsDate]="note.date" (change)='note.date=$event.target.valueAsDate;recordForm.form.markAsDirty();'>
         </mat-form-field>
       </div>
 
@@ -44,42 +42,115 @@
       </div>
     </div>
 
-    <p>
-      <mat-form-field class='input-medium'>
-        <input matInput placeholder="Subject" name="subject" type="text" [(ngModel)]="note.subject">
-      </mat-form-field>
-    </p>
+    <div fxLayout='row wrap' fxLayoutGap='20px'>
+      <div fxFlex>
+        <mat-form-field class='input-medium'>
+          <input matInput placeholder="Subject" name="subject" type="text" [(ngModel)]="note.subject">
+        </mat-form-field>
+      </div>
+      <div fxFlex>
+        <mat-form-field class='input-medium'>
+          <mat-select matInput placeholder="Type of Interaction" name="type" [(ngModel)]="note.category">
+            <mat-option *ngFor="let interaction of interactionTypes" [value]="interaction">
+              {{interaction}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
 
-    <p>
-      <app-child-select [valueAsIds]='note.getChildIDs()' (valueAsIdsChange)='note.setChildrenFromIDs($event);recordForm.form.markAsDirty();'
-                        class='input-medium'>
-      </app-child-select>
-    </p>
+    <div fxLayout='row wrap' fxLayoutGap='20px'>
+      <div fxFlex>
+        <app-child-select [valueAsIds]='note.children' (valueAsIdsChange)='note.setChildrenFromIDs($event);recordForm.form.markAsDirty();'
+                          class='input-medium'>
+        </app-child-select>
+      </div>
+      <div fxFlex>
+        <mat-form-field class='input-medium'>
+          <!-- TODO: should be multi-select or auto-complete field of user names? -->
+
+          <input matInput placeholder="Team Member" name="teammember" type="text" [(ngModel)]="note.author">
+        </mat-form-field>
+      </div>
+    </div>
 
     <p>
       <mat-form-field class='input-max'>
-        <textarea matInput placeholder="Notes" name="notes" [(ngModel)]="note.text"></textarea>
+        <textarea matInput placeholder="Notes" name="notes" [(ngModel)]="note.text" cdkTextareaAutosize></textarea>
       </mat-form-field>
     </p>
 
-    <p>
-      <mat-form-field class='input-medium'>
+    <!--
+    <div>
+      <div class="list-container">
+        <mat-label>Present</mat-label>
 
-        <!-- TODO: should be multi-select or auto-complete field of user names? -->
+        <div
+          cdkDropList
+          #presentList="cdkDropList"
+          [cdkDropListData]="note.childrenWithPresence(true)"
+          [cdkDropListConnectedTo]="[absentList]"
+          (cdkDropListDropped)="drop($event)">
+          <div *ngFor="let child of note.childrenWithPresence(true)" cdkDrag>
+            <app-child-block [entityId]="child.childID"></app-child-block>
+            <button mat-icon-button (click)="note.togglePresence(child.childID)">
+              <span class="fa fa-arrow-right>"></span>
+            </button>
+          </div>
+        </div>
+      </div>
 
-        <input matInput placeholder="Team Member" name="teammember" type="text" [(ngModel)]="note.author">
-      </mat-form-field>
-    </p>
+      <div class="list-container">
+        <mat-label>Absent</mat-label>
 
-    <p>
-      <mat-form-field class='input-medium'>
-        <mat-select matInput placeholder="Type of Interaction" name="type" [(ngModel)]="note.category">
-          <mat-option *ngFor="let interaction of interactionTypes" [value]="interaction">
-            {{interaction}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </p>
+        <div
+          cdkDropList
+          #absentList="cdkDropList"
+          [cdkDropListData]="note.childrenWithPresence(false)"
+          [cdkDropListConnectedTo]="[presentList]"
+          (cdkDropListDropped)="drop($event)">
+          <div *ngFor="let child of note.childrenWithPresence(false)" cdkDrag>
+            <button mat-icon-button (click)="note.togglePresence(child.childID)">
+              <span class="fa fa-arrow-left>"></span>
+            </button>
+            <app-child-block [entityId]="child.childID"></app-child-block>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    -->
+
+    <div *ngIf="note.isMeeting()">
+      <div fxFlex>
+        <mat-label>Present</mat-label>
+        <mat-list>
+          <mat-list-item *ngFor="let child of note.childrenWithPresence(true)" class="list-box">
+            <app-child-block [entityId]="child.childID"></app-child-block>
+            <button mat-icon-button (click)="note.togglePresence(child.childID)">
+              <span class="fa fa-arrow-right"></span>
+            </button>
+          </mat-list-item>
+        </mat-list>
+      </div>
+
+      <div fxFlex>
+        <mat-label>Absent</mat-label>
+        <mat-list>
+          <mat-list-item *ngFor="let child of note.childrenWithPresence(false)">
+            <button mat-icon-button (click)="note.togglePresence(child.childID)">
+              <span class="fa fa-arrow-left"></span>
+            </button>
+            <app-child-block [entityId]="child.childID"></app-child-block>
+            <mat-form-field>
+              <textarea matInput placeholder="Remarks" name="remarks" [(ngModel)]="child.remarks" cdkTextareaAutosize></textarea>
+            </mat-form-field>
+          </mat-list-item>
+        </mat-list>
+      </div>
+
+    </div>
+
   </mat-dialog-content>
 
   <mat-dialog-actions>
@@ -87,3 +158,5 @@
     <button mat-stroked-button (click)='cancel()'>Cancel</button>
   </mat-dialog-actions>
 </form>
+
+
