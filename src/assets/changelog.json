@@ -1,5 +1,12 @@
 [
   {
+    "tag_name": "v2.7.3",
+    "name": "Bugfixes",
+    "published_at": "2019-11-26",
+    "body": "- sort children in daily attendance roll call by class",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.7.2",
     "name": "Bugfixes",
     "published_at": "2019-11-11",
