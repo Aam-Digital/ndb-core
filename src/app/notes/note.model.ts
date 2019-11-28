@@ -95,21 +95,38 @@ export class NoteModel extends Entity {
     return '';
   }
 
+  public getColorForId(childId: string) {
+    console.log(this.children.find(attendance => attendance.childID === childId));
+    if (this.children.find(attendance => attendance.childID === childId).present === false) {
+      // TODO: what should the color be?
+      return 'rgba(253,94,49,0.5)';
+    } else {
+      return this.getColor();
+    }
+  }
+
   getChildIDs(): string[] {
     return this.children.map(e => e.childID);
   }
 
   /**
-   * updates this note's children with any children given in the new array that were not part of this note so far
-   * @param childIDs The new children that should be updated
+   * removes a specific child from this note
+   * @param childId The id of the child to exclude from the notes
    */
 
-  updateChildrenFromNewIDs(newChildIDs: string[]) {
-    newChildIDs.forEach(id => {
-      if (!this.isLinkedWithChild(id)) {
-        this.children.push(new AttendanceModel(id));
-      }
-    });
+  removeChild(childId: string) {
+    console.log('child id to remove:', childId);
+    console.log('filtering:', this.children.filter(attendance => attendance.childID !== childId));
+    this.children = this.children.filter(attendance => attendance.childID !== childId);
+  }
+
+  /**
+   * adds a new child to this note
+   * @param childId The id of the child to add to the notes
+   */
+
+  addChild(childId: string) {
+    this.children.push(new AttendanceModel(childId));
   }
 
   /**

@@ -64,7 +64,9 @@
 
     <div fxLayout='row wrap' fxLayoutGap='20px'>
       <div fxFlex>
-        <app-child-select [valueAsIds]='note.getChildIDs()' (valueAsIdsChange)='note.updateChildrenFromNewIDs($event);recordForm.form.markAsDirty();'
+        <app-child-select [valueAsIds]='note.getChildIDs()'
+                          (newIdAdded)="note.addChild($event);recordForm.form.markAsDirty()"
+                          (idRemoved)="note.removeChild($event);recordForm.form.markAsDirty()"
                           class='input-medium'>
         </app-child-select>
       </div>
@@ -91,14 +93,14 @@
 
           <mat-expansion-panel-header>
             <app-child-block [entityId]="child.childID"></app-child-block>
-            <button mat-icon-button (click)="note.togglePresence(child.childID)">
+            <button mat-icon-button (click)="note.togglePresence(child.childID);recordForm.form.markAsDirty()">
               <span class="fa fa-arrow-right"></span>
             </button>
           </mat-expansion-panel-header>
 
           <mat-form-field class="input-max">
             <label>
-              <textarea matInput placeholder="Remarks" name="remarks" [(ngModel)]="child.remarks"></textarea>
+              <textarea matInput placeholder="Remarks" name="remarks" [(ngModel)]="child.remarks" (change)="recordForm.form.markAsDirty()"></textarea>
             </label>
           </mat-form-field>
 
@@ -110,14 +112,14 @@
         <mat-expansion-panel  *ngFor="let child of note.childrenWithPresence(false)">
           <mat-expansion-panel-header>
             <app-child-block [entityId]="child.childID"></app-child-block>
-            <button mat-icon-button (click)="note.togglePresence(child.childID)">
+            <button mat-icon-button (click)="note.togglePresence(child.childID);recordForm.form.markAsDirty()">
               <span class="fa fa-arrow-left"></span>
             </button>
           </mat-expansion-panel-header>
 
           <mat-form-field class="input-max">
             <label>
-              <textarea matInput placeholder="Remarks" name="remarks" [(ngModel)]="child.remarks"></textarea>
+              <textarea matInput placeholder="Remarks" name="remarks" [(ngModel)]="child.remarks" (change)="recordForm.form.markAsDirty()"></textarea>
             </label>
           </mat-form-field>
 
