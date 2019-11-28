@@ -41,9 +41,13 @@ export class NoteModel extends Entity {
     return this.warningLevel;
   }
 
+  /**
+   * returns whether a specific child with given childID is linked to this not
+   * @param childId The childID to check for
+   */
+
   isLinkedWithChild(childId: string) {
-    const found = this.getChildIDs().includes(childId);
-    return found;
+    return this.getChildIDs().includes(childId);
   }
 
   /**
@@ -55,6 +59,11 @@ export class NoteModel extends Entity {
             this.category === InteractionTypes.CHILDREN_MEETING ||
             this.category === InteractionTypes.EXCURSION;
   }
+
+  /**
+   * returns the children that were either present or absent
+   * @param presence true for the children that were present, false for the children that were absent
+   */
 
   childrenWithPresence(presence: boolean) {
     return this.children.filter(attendance => {
@@ -70,7 +79,7 @@ export class NoteModel extends Entity {
       return '#ffa50080';
     }
 
-    if (this.category === 'Guardians\' Meeting' || this.category === 'Children\'s Meeting') {
+    if (this.isMeeting()) {
       return '#E1F5FE';
     }
     if (this.category === 'Discussion/Decision') {
@@ -90,10 +99,16 @@ export class NoteModel extends Entity {
     return this.children.map(e => e.childID);
   }
 
-  setChildrenFromIDs(childIDs: string[]) {
-    // TODO: implement update if childIDs are new
-    this.children = childIDs.map(childId => {
-      return new AttendanceModel(childId);
+  /**
+   * updates this note's children with any children given in the new array that were not part of this note so far
+   * @param childIDs The new children that should be updated
+   */
+
+  updateChildrenFromNewIDs(newChildIDs: string[]) {
+    newChildIDs.forEach(id => {
+      if (!this.isLinkedWithChild(id)) {
+        this.children.push(new AttendanceModel(id));
+      }
     });
   }
 

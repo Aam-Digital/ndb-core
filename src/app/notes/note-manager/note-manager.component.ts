@@ -5,12 +5,12 @@ import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import {FilterSelection} from '../../ui-helper/filter-selection/filter-selection';
 import {WarningLevel} from '../../children/attendance/warning-level';
-import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {MatDialog} from '@angular/material/dialog';
 import {SessionService} from '../../session/session.service';
 import {MediaChange, MediaObserver} from '@angular/flex-layout';
 import {NoteDetailComponent} from '../note-detail/note-detail.component';
 import {NotesService} from '../notes.service';
+import {InteractionTypes} from '../interaction-types.enum';
 
 @Component({
   selector: 'app-note-manager',
@@ -58,20 +58,20 @@ export class NoteManagerComponent implements OnInit, AfterViewInit {
     this.categoryFS,
   ];
 
-  constructor( // private entityMapper: EntityMapperService,
-              private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
               private sessionService: SessionService,
               private media: MediaObserver,
-              private notesService: NotesService) { }
+              private notesService: NotesService) {}
 
   ngOnInit() {
 
     // Receives the notes from the notes-service, sorts them and applies filter selections
-    this.notesService.getNotes().subscribe(notes => {
-      this.entityList = notes.sort((a, b) => (b.date ? b.date.getTime() : 0) - (a.date ? a.date.getTime() : 0) );
+    this.notesService.getNotes().subscribe((newNotes: NoteModel[]) => {
+      this.entityList = newNotes.sort((a, b) => (b.date ? b.date.getTime() : 0) - (a.date ? a.date.getTime() : 0) );
       this.applyFilterSelections();
     });
 
+    this.notesService.noteUpdate.subscribe(newNote => this.entityList.push(newNote));
     this.displayColumnGroup('standard');
     this.watcher = this.media.media$.subscribe((change: MediaChange) => {
       if (change.mqAlias === 'xs' || change.mqAlias === 'sm') {
@@ -88,12 +88,13 @@ export class NoteManagerComponent implements OnInit, AfterViewInit {
   }
 
   private initCategoryFilter() {
-    this.categoryFS.options = [
-      { key: '', label: '', filterFun: (n: NoteModel) => true },
-    ];
 
-    NoteModel.INTERACTION_TYPES.forEach(t => {
-      this.categoryFS.options.push({ key: t, label: t, filterFun: (n: NoteModel) => n.category === t });
+    NoteModel.INTERACTION_TYPES.forEach(interaction => {
+      this.categoryFS.options.push({key: interaction,
+      label: interaction,
+      filterFun: (note: NoteModel) => {
+        return interaction === InteractionTypes.NONE ? true : note.category === interaction;
+      }});
     });
 
     this.applyFilterSelections();
@@ -121,8 +122,8 @@ export class NoteManagerComponent implements OnInit, AfterViewInit {
 
     this.filterSelections.forEach(f => {
       filteredData = filteredData.filter(f.getSelectedFilterFunction());
-    });
-    this.filterSelectionsDropdown.forEach(f => {
+     });
+     this.filterSelectionsDropdown.forEach(f => {
       filteredData = filteredData.filter(f.getSelectedFilterFunction());
     });
 

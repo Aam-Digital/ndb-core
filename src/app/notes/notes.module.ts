@@ -30,6 +30,8 @@ import {SchoolsModule} from '../schools/schools.module';
 import {MatListModule} from '@angular/material/list';
 import { ChildrenModule } from '../children/children.module';
 import {NotesService} from './notes.service';
+import {DragDropModule} from '@angular/cdk/drag-drop';
+import {MatTreeModule} from '@angular/material/tree';
 
 
 @NgModule({
@@ -65,7 +67,9 @@ import {NotesService} from './notes.service';
     ReactiveFormsModule,
     MatDialogModule,
     MatListModule,
-    ChildrenModule
+    ChildrenModule,
+    DragDropModule,
+    MatTreeModule
   ],
   entryComponents: [NoteDetailComponent],
   providers: [NotesService]

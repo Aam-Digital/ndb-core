@@ -23,8 +23,11 @@
     <div fxLayout='row wrap' fxLayoutGap='20px'>
       <div fxFlex>
         <mat-form-field>
-          <input matInput placeholder="Date" name="date" type="date"
+          <!-- TODO: date pickers should be the same throughout the app -->
+          <input matInput placeholder="Date" [matDatepicker]="picker"
                  [valueAsDate]="note.date" (change)='note.date=$event.target.valueAsDate;recordForm.form.markAsDirty();'>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
       </div>
 
@@ -61,7 +64,7 @@
 
     <div fxLayout='row wrap' fxLayoutGap='20px'>
       <div fxFlex>
-        <app-child-select [valueAsIds]='note.children' (valueAsIdsChange)='note.setChildrenFromIDs($event);recordForm.form.markAsDirty();'
+        <app-child-select [valueAsIds]='note.getChildIDs()' (valueAsIdsChange)='note.updateChildrenFromNewIDs($event);recordForm.form.markAsDirty();'
                           class='input-medium'>
         </app-child-select>
       </div>
@@ -80,73 +83,45 @@
       </mat-form-field>
     </p>
 
-    <!--
-    <div>
-      <div class="list-container">
-        <mat-label>Present</mat-label>
+    <div *ngIf="note.isMeeting()" fxLayout="row wrap" fxLayoutGap="20px">
 
-        <div
-          cdkDropList
-          #presentList="cdkDropList"
-          [cdkDropListData]="note.childrenWithPresence(true)"
-          [cdkDropListConnectedTo]="[absentList]"
-          (cdkDropListDropped)="drop($event)">
-          <div *ngFor="let child of note.childrenWithPresence(true)" cdkDrag>
-            <app-child-block [entityId]="child.childID"></app-child-block>
-            <button mat-icon-button (click)="note.togglePresence(child.childID)">
-              <span class="fa fa-arrow-right>"></span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="list-container">
-        <mat-label>Absent</mat-label>
-
-        <div
-          cdkDropList
-          #absentList="cdkDropList"
-          [cdkDropListData]="note.childrenWithPresence(false)"
-          [cdkDropListConnectedTo]="[presentList]"
-          (cdkDropListDropped)="drop($event)">
-          <div *ngFor="let child of note.childrenWithPresence(false)" cdkDrag>
-            <button mat-icon-button (click)="note.togglePresence(child.childID)">
-              <span class="fa fa-arrow-left>"></span>
-            </button>
-            <app-child-block [entityId]="child.childID"></app-child-block>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    -->
-
-    <div *ngIf="note.isMeeting()">
       <div fxFlex>
-        <mat-label>Present</mat-label>
-        <mat-list>
-          <mat-list-item *ngFor="let child of note.childrenWithPresence(true)" class="list-box">
+        <h3>Present</h3>
+        <mat-expansion-panel  *ngFor="let child of note.childrenWithPresence(true)">
+
+          <mat-expansion-panel-header>
             <app-child-block [entityId]="child.childID"></app-child-block>
             <button mat-icon-button (click)="note.togglePresence(child.childID)">
               <span class="fa fa-arrow-right"></span>
             </button>
-          </mat-list-item>
-        </mat-list>
+          </mat-expansion-panel-header>
+
+          <mat-form-field class="input-max">
+            <label>
+              <textarea matInput placeholder="Remarks" name="remarks" [(ngModel)]="child.remarks"></textarea>
+            </label>
+          </mat-form-field>
+
+        </mat-expansion-panel>
       </div>
 
       <div fxFlex>
-        <mat-label>Absent</mat-label>
-        <mat-list>
-          <mat-list-item *ngFor="let child of note.childrenWithPresence(false)">
+        <h3>Absent</h3>
+        <mat-expansion-panel  *ngFor="let child of note.childrenWithPresence(false)">
+          <mat-expansion-panel-header>
+            <app-child-block [entityId]="child.childID"></app-child-block>
             <button mat-icon-button (click)="note.togglePresence(child.childID)">
               <span class="fa fa-arrow-left"></span>
             </button>
-            <app-child-block [entityId]="child.childID"></app-child-block>
-            <mat-form-field>
-              <textarea matInput placeholder="Remarks" name="remarks" [(ngModel)]="child.remarks" cdkTextareaAutosize></textarea>
-            </mat-form-field>
-          </mat-list-item>
-        </mat-list>
+          </mat-expansion-panel-header>
+
+          <mat-form-field class="input-max">
+            <label>
+              <textarea matInput placeholder="Remarks" name="remarks" [(ngModel)]="child.remarks"></textarea>
+            </label>
+          </mat-form-field>
+
+        </mat-expansion-panel>
       </div>
 
     </div>

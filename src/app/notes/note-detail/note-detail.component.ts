@@ -3,6 +3,7 @@ import {NoteModel} from '../note.model';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
+import {NotesService} from '../notes.service';
 
 @Component({
   selector: 'app-note-detail',
@@ -21,7 +22,8 @@ export class NoteDetailComponent implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
               public dialogRef: MatDialogRef<NoteDetailComponent>,
               private confirmationDialog: ConfirmationDialogService,
-              private entityMapper: EntityMapperService) {
+              private entityMapper: EntityMapperService,
+              private notesService: NotesService) {
     this.note = data.entity;
     this.originalNote = Object.assign({}, this.note);
 
@@ -40,7 +42,7 @@ export class NoteDetailComponent implements OnInit {
   }
 
   save() {
-    this.entityMapper.save(this.note);
+    this.notesService.saveNewNote(this.note);
     this.dialogRef.close(this.note);
   }
 

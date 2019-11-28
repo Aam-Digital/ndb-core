@@ -6,3 +6,13 @@
 .input-max {
   width: 100%
 }
+
+.list-container-left {
+  max-width: 45%;
+  align-self: start;
+}
+
+.list-container-right {
+  max-width: 45%;
+  align-self: end;
+}
