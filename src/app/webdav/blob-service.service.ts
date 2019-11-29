@@ -47,8 +47,14 @@ export class BlobService {
     return JSON.stringify(contents, undefined, 4);
   }
 
+  /**
+   * Checks if the file exists in the root directory.
+   * @param name file name to check
+   */
   public async doesFileExist(name: string): Promise<boolean> {
     if (!this.fileList && !this.currentlyGettingList) {
+      // create promise that resolves when the file list is loaded
+      // if this function gets called mulitple times this ensures that the list will only be loaded once
       this.currentlyGettingList = new Promise((resolve, reject) => {
         this.getDir('').then(list => {
           this.fileList = list;
