@@ -9,6 +9,7 @@ import {noteIndividualStories} from '../fixtures/notes_individual-stories';
 import {noteGroupStories} from '../fixtures/notes_group-stories';
 import {centersUnique} from '../fixtures/centers';
 import {AttendanceModel} from '../../notes/attendance.model';
+import {absenceRemarks} from '../fixtures/remarks';
 
 
 export class DemoNoteConfig {
@@ -106,7 +107,15 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<NoteModel> {
     const selectedStory = faker.random.arrayElement(noteGroupStories);
     Object.assign(note, selectedStory);
 
-    note.children = children.map(c => new AttendanceModel(c.getId()));
+    note.children = children.map(child => {
+      const attendance = new AttendanceModel(child.getId());
+      // get an approximate presence of 85%
+      if (faker.random.number(100) <= 15) {
+        attendance.present = false;
+        attendance.remarks = faker.random.arrayElement(absenceRemarks);
+      }
+      return attendance;
+    });
     note.author = faker.random.arrayElement(this.teamMembers);
     note.date = faker.date.past(1);
 
