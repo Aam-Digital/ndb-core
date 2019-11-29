@@ -11,6 +11,8 @@ import {EntityMapperService} from '../../../entity/entity-mapper.service';
 import {ChildrenService} from '../../children.service';
 import {SchoolBlockComponent} from '../../../schools/school-block/school-block.component';
 import {EntitySchemaService} from '../../../entity/schema/entity-schema.service';
+import { BlobService } from 'app/webdav/blob-service.service';
+import { MockBlobService } from 'app/webdav/mock-blob-service';
 
 describe('AttendanceWarningsDashboardComponent', () => {
   let component: AttendanceWarningsDashboardComponent;
@@ -25,6 +27,7 @@ describe('AttendanceWarningsDashboardComponent', () => {
         EntityMapperService,
         EntitySchemaService,
         { provide: Database, useClass: MockDatabase },
+        {provide: BlobService, useClass: MockBlobService}
       ],
     })
     .compileComponents();

@@ -21,6 +21,8 @@ import {UiHelperModule} from '../../../ui-helper/ui-helper.module';
 import {AlertsModule} from '../../../alerts/alerts.module';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {EntitySchemaService} from '../../../entity/schema/entity-schema.service';
+import { BlobService } from 'app/webdav/blob-service.service';
+import { MockBlobService } from 'app/webdav/mock-blob-service';
 
 describe('AddMonthAttendanceComponent', () => {
   let component: AddMonthAttendanceComponent;
@@ -49,6 +51,7 @@ describe('AddMonthAttendanceComponent', () => {
         EntitySchemaService,
         { provide: Database, useClass: MockDatabase },
         ChildrenService,
+        {provide: BlobService, useClass: MockBlobService}
       ]
     })
     .compileComponents();

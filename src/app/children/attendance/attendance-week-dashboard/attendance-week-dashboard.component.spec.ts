@@ -12,6 +12,8 @@ import {EntityModule} from '../../../entity/entity.module';
 import {Database} from '../../../database/database';
 import {MockDatabase} from '../../../database/mock-database';
 import {RouterTestingModule} from '@angular/router/testing';
+import { BlobService } from 'app/webdav/blob-service.service';
+import { MockBlobService } from 'app/webdav/mock-blob-service';
 
 describe('AttendanceWeekDashboardComponent', () => {
   let component: AttendanceWeekDashboardComponent;
@@ -26,6 +28,7 @@ describe('AttendanceWeekDashboardComponent', () => {
       providers: [
         { provide: ChildrenService, useClass: ChildrenService },
         { provide: Database, useClass: MockDatabase },
+        { provide: BlobService, useClass: MockBlobService }
       ]
     })
     .compileComponents();

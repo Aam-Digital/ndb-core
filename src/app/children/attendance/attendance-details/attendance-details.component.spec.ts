@@ -27,6 +27,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AlertService } from 'app/alerts/alert.service';
 import { DatabaseManagerService } from 'app/database/database-manager.service';
 import { BlobService } from 'app/webdav/blob-service.service';
+import { MockBlobService } from 'app/webdav/mock-blob-service';
 
 describe('AttendanceDetailsComponent', () => {
   let component: AttendanceDetailsComponent;
@@ -47,12 +48,7 @@ describe('AttendanceDetailsComponent', () => {
         {provide: MatDialogRef, useValue: {beforeClose: () => { return { subscribe: () => {}}; }}},
         {provide: MAT_DIALOG_DATA, useValue: {entity: att}},
         {provide: ChildrenService, useClass: ChildrenService},
-        SessionService,
-        BlobService,
-        DatabaseManagerService,
-        AlertService,
-        MatSnackBar,
-        Overlay
+        {provide: BlobService, useClass: MockBlobService}
       ],
     })
     .compileComponents();

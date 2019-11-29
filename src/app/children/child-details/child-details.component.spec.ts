@@ -42,6 +42,7 @@ import { BlobService } from 'app/webdav/blob-service.service';
 import { Overlay } from '@angular/cdk/overlay';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
+import { MockBlobService } from 'app/webdav/mock-blob-service';
 
 describe('ChildDetailsComponent', () => {
   let component: ChildDetailsComponent;
@@ -108,11 +109,7 @@ describe('ChildDetailsComponent', () => {
         { provide: Router, useValue: mockedRouter},
         { provide: ActivatedRoute, useValue: mockedRoute},
         { provide: Database, useClass: MockDatabase},
-        FormBuilder,
-        SessionService,
-        BlobService,
-        MatSnackBar,
-        Overlay
+        { provide: BlobService, useClass: MockBlobService}
       ]
     })
       .compileComponents();

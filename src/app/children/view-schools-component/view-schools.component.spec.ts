@@ -12,6 +12,8 @@ import {ChangeDetectorRef} from '@angular/core';
 import {LoggingService} from '../../logging/logging.service';
 import {Database} from '../../database/database';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
+import { BlobService } from 'app/webdav/blob-service.service';
+import { MockBlobService } from 'app/webdav/mock-blob-service';
 
 describe('ViewSchoolsComponent', () => {
   let component: ViewSchoolsComponent;
@@ -33,7 +35,8 @@ describe('ViewSchoolsComponent', () => {
         MatDialog,
         ChangeDetectorRef,
         LoggingService,
-        { provide: Database, useClass: MockDatabase}
+        {provide: Database, useClass: MockDatabase},
+        {provide: BlobService, useClass: MockBlobService}
       ],
     })
     .compileComponents();

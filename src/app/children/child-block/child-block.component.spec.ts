@@ -18,6 +18,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Overlay } from '@angular/cdk/overlay';
 import { userInfo } from 'os';
 import { User } from 'app/user/user';
+import { MockBlobService } from 'app/webdav/mock-blob-service';
 
 describe('ChildBlockComponent', () => {
   let component: ChildBlockComponent;
@@ -33,13 +34,8 @@ describe('ChildBlockComponent', () => {
         EntityMapperService,
         EntitySchemaService,
         ChildrenService,
-        {provide: Database, useClass: MockDatabase},
-        SessionService,
-        BlobService,
-        DatabaseManagerService,
-        AlertService,
-        MatSnackBar,
-        Overlay
+        { provide: Database, useClass: MockDatabase },
+        { provide: BlobService, useClass: MockBlobService }
       ],
     })
     .compileComponents();
