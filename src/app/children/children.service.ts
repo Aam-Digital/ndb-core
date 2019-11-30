@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {from, Observable, throwError} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import {Child} from './child';
 import {EntityMapperService} from '../entity/entity-mapper.service';
 import {AttendanceMonth} from './attendance/attendance-month';
