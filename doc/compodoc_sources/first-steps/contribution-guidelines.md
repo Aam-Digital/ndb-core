@@ -1,6 +1,8 @@
-# Workflow
+# Contribution Guidelines
 
-We are following the "GitHub Flow", using feature branches for development. Please read through the following short guide before you get started: [Understanding the GitHub Flow](https://guides.github.com/introduction/flow/).
+## Workflow
+We are following the "GitHub Flow", using feature branches for development.
+Please read through the following short guide before you get started: [Understanding the GitHub Flow](https://guides.github.com/introduction/flow/).
 
 In summary, this means each feature will be implemented on it's own branch, which will then merged back onto the `master` branch. If you participate in the development, either by fixing a bug or implementing a new feature, follow these steps:
 
@@ -14,7 +16,7 @@ In summary, this means each feature will be implemented on it's own branch, whic
 6. After merging, **delete your feature branch** and make sure the corresponding issue(s) and pull request are closed. 
 
 
-## Remarks
+### Remarks
 * Reference an issue on GitHub in your commits or comments by writing the issue number (e.g. `#15` to reference issue #15)
 * Add `[WIP]` to the beginning of the PR title if this is still "work in progress" and should not be merged yet.
 * If you have a lot of trivial commits in your working feature branch (such as fixed typos, fixed codestyle warnings, ...) you may squash some commits for better readability of the git history. This can be done with a git rebase on your feature branch (please **never** rebase the master branch). Further information can be found in the [Git Book](https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History).

@@ -1,6 +1,6 @@
-# Working with the Database Services
-
-Normally there should be no need to use `Database` (or even `DatabaseManagerService`) anywhere to load/save/remove data from other modules! This is done using the `EntityMapperService` (or a custom MapperService extending `EntityMapperService` for special entity types), which is one layer above the specific database code.
+# Loading and Saving Data
+Normally there should be no need to use the `Database` class anywhere directly.
+Instead to load/save/remove data you should use the `EntityMapperService` (or a custom MapperService extending `EntityMapperService` for special entity types), which is one layer above the specific database code.
 
 ## Example: load and save data in the database
 
