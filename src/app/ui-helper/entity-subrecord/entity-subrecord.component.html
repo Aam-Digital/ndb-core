@@ -84,7 +84,7 @@
 
   <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
   <tr mat-row *matRowDef="let rec; columns: columnsToDisplay"
-      class="{{getWarningStyleClass(rec)}}" [ngStyle]="{'background-color': rec.getColor()}">
+      [ngStyle]="{'background-color': getColor(rec)}">
   </tr>
   <!--<mat-row *matRowDef="let rec; columns: columnsToNotDisplay" class="{{getWarningStyleClass(rec)}}" [ngStyle]="{'background-color': reg.getColor()}"></mat-row>-->
 </table>

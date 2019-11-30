@@ -23,6 +23,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   @Input() newRecordFactory: () => Entity;
   @Input() detailsComponent: typeof Component;
   @Input() showButton = true;
+  @Input() entityId: string;
 
   recordsDataSource = new MatTableDataSource();
   columnsToDisplay = [];
@@ -53,22 +54,23 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['records'] && this.records !== undefined) {
-      this.recordsDataSource.data = this.records;
+     if (changes['records'] && this.records !== undefined) {
 
-      this.records.forEach(e => this.originalRecords.push(Object.assign({}, e)));
-    }
-    if (changes['columns']) {
-      this.columnsToDisplay = this.columns.map(e => e.name);
-      this.columnsToDisplay.push('actions');
-      this.setupTable();
-    }
+       this.recordsDataSource.data = this.records;
+
+       this.records.forEach(e => this.originalRecords.push(Object.assign({}, e)));
+     }
+     if (changes['columns']) {
+       this.columnsToDisplay = this.columns.map(e => e.name);
+       this.columnsToDisplay.push('actions');
+       this.setupTable();
+     }
   }
+
 
   ngOnDestroy() {
     this.flexMediaWatcher.unsubscribe();
   }
-
 
   save(record: Entity) {
     this._entityMapper.save(record);
@@ -219,4 +221,19 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   isReadonlyInputType(inputType: ColumnDescriptionInputType): boolean {
     return inputType === ColumnDescriptionInputType.FUNCTION || inputType === ColumnDescriptionInputType.READONLY;
   }
+
+  /**
+   * returns the color for a record.
+   * I this entity id is undefined, this will return the default color. Otherwise it will attempt
+   * to get a specific color for this specific entity
+   * @param record The record to check for. The record must be an entity that has a <code>getColor()</code>-Method specified
+   * and, if this entityId is set, a <code>getColorForId()</code>-Method specified, that accepts this id.
+   */
+  getColor(record) {
+    if (this.entityId !== undefined) {
+      return record.getColorForId(this.entityId);
+    }
+    return record.getColor();
+  }
+
 }

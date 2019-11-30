@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {NoteModel} from '../../notes/note.model';
 import {NoteDetailComponent} from '../../notes/note-detail/note-detail.component';
 import {ColumnDescription, ColumnDescriptionInputType} from '../../ui-helper/entity-subrecord/column-description';
@@ -8,6 +8,7 @@ import {ChildrenService} from '../children.service';
 import {ActivatedRoute} from '@angular/router';
 import {AttendanceModel} from '../../notes/attendance.model';
 import {NotesService} from '../../notes/notes.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-notes-list',
@@ -17,10 +18,11 @@ import {NotesService} from '../../notes/notes.service';
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
  */
-export class NotesListComponent implements OnInit {
+export class NotesListComponent implements OnInit, OnDestroy {
 
   childId: string;
   records: Array<NoteModel>;
+  recordSubscription: Subscription;
   detailsComponent = NoteDetailComponent;
 
   columns: Array<ColumnDescription> = [
@@ -52,6 +54,10 @@ export class NotesListComponent implements OnInit {
           });
       });
 
+      this.recordSubscription = this.notesService.getUpdater().subscribe(newModels => {
+        newModels.forEach(newModel => this.records.push(newModel));
+      });
+
     });
   }
 
@@ -68,6 +74,10 @@ export class NotesListComponent implements OnInit {
 
       return newNote;
     };
+  }
+
+  ngOnDestroy(): void {
+    this.recordSubscription.unsubscribe();
   }
 
 }

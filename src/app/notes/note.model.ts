@@ -27,6 +27,7 @@ export class NoteModel extends Entity {
 
   // The values that 'Type of interaction' can have in the UI / The values that category can have here
   static INTERACTION_TYPES = Object.values(InteractionTypes);
+
   // An array of triplets containing information about the child and it's attendance
   @DatabaseField({dataType: 'attendancemodel'}) children: AttendanceModel[] = [];
   @DatabaseField() date: Date;
@@ -62,10 +63,10 @@ export class NoteModel extends Entity {
 
   /**
    * returns the children that were either present or absent
-   * @param presence true for the children that were present, false for the children that were absent
+   * @param presence true to get the children that were present, false to get the children that were absent
    */
 
-  childrenWithPresence(presence: boolean) {
+  childrenWithPresence(presence: boolean): AttendanceModel[] {
     return this.children.filter(attendance => {
       return attendance.present === presence;
     });
@@ -95,18 +96,43 @@ export class NoteModel extends Entity {
     return '';
   }
 
-  public getColorForId(childId: string) {
-    console.log(this.children.find(attendance => attendance.childID === childId));
-    if (this.children.find(attendance => attendance.childID === childId).present === false) {
-      // TODO: what should the color be?
-      return 'rgba(253,94,49,0.5)';
-    } else {
+  /**
+   * return a specific color for a certain child, represented by it's id.
+   * This color is different than the <code>getColor()</code>-Method, if
+   * the entityId corresponds to a certain child in this note and this note's category is a meeting
+   * @param entityId The id of the child to get the color for
+   */
+
+  public getColorForId(entityId: string) {
+    // if the child is not part of this note or this is not a meeting-note, return the default color
+    if (this.isLinkedWithChild(entityId) || !this.isMeeting()) {
       return this.getColor();
     }
+    // if the child is present, return a green color
+    if (this.isPresent(entityId)) {
+      return 'rgba(71,253,24,0.5)';
+    }
+    // else, return a red color
+    return 'rgba(219,49,36,0.51)';
   }
 
+  /**
+   * returns the children linked to this note as string-id's
+   */
   getChildIDs(): string[] {
     return this.children.map(e => e.childID);
+  }
+
+  /**
+   * returns whether or not a specific child was present or not.
+   * This does not check whether or not, this note is a meeting and will not return
+   * a sensible value, if this child couldn't be found
+   * @param childId The id of the child to check for
+   */
+
+  isPresent(childId: string): boolean {
+    const child = this.children.find(attendance => attendance.childID === childId);
+    if (child !== undefined) {return child.present; }
   }
 
   /**
@@ -115,8 +141,6 @@ export class NoteModel extends Entity {
    */
 
   removeChild(childId: string) {
-    console.log('child id to remove:', childId);
-    console.log('filtering:', this.children.filter(attendance => attendance.childID !== childId));
     this.children = this.children.filter(attendance => attendance.childID !== childId);
   }
 

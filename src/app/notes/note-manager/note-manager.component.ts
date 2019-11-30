@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {NoteModel} from '../note.model';
 import {MatTableDataSource} from '@angular/material/table';
@@ -17,12 +17,13 @@ import {InteractionTypes} from '../interaction-types.enum';
   templateUrl: './note-manager.component.html',
   styleUrls: ['./note-manager.component.scss']
 })
-export class NoteManagerComponent implements OnInit, AfterViewInit {
+export class NoteManagerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   watcher: Subscription;
   activeMediaQuery = '';
   entityList = new Array<NoteModel>();
   notesDataSource = new MatTableDataSource();
+  noteUpdater: Subscription;
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   columnsToDisplay = ['date', 'subject', 'category', 'author', 'children'];
@@ -65,13 +66,16 @@ export class NoteManagerComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
 
-    // Receives the notes from the notes-service, sorts them and applies filter selections
+    // Receives the initial notes from the notes-service, sort them and apply filter selections
     this.notesService.getNotes().subscribe((newNotes: NoteModel[]) => {
-      this.entityList = newNotes.sort((a, b) => (b.date ? b.date.getTime() : 0) - (a.date ? a.date.getTime() : 0) );
-      this.applyFilterSelections();
+      this.sortAndAdd(newNotes);
     });
 
-    this.notesService.noteUpdate.subscribe(newNote => this.entityList.push(newNote));
+    // subscribe to get informed whenever a new note should be added
+    this.noteUpdater = this.notesService.getUpdater().subscribe(newNotes => {
+       this.sortAndAdd(newNotes);
+     });
+
     this.displayColumnGroup('standard');
     this.watcher = this.media.media$.subscribe((change: MediaChange) => {
       if (change.mqAlias === 'xs' || change.mqAlias === 'sm') {
@@ -80,6 +84,12 @@ export class NoteManagerComponent implements OnInit, AfterViewInit {
       }
     });
     this.initCategoryFilter();
+  }
+
+  private sortAndAdd(newNotes: NoteModel[]) {
+    newNotes.forEach(newNote => this.entityList.push(newNote));
+    this.entityList.sort((a, b) => (b.date ? b.date.getTime() : 0) - (a.date ? a.date.getTime() : 0) );
+    this.applyFilterSelections();
   }
 
   displayColumnGroup(columnGroup: string) {
@@ -140,6 +150,13 @@ export class NoteManagerComponent implements OnInit, AfterViewInit {
 
   showDetails(entity: NoteModel) {
     this.dialog.open(NoteDetailComponent, {width: '80%', data: {entity: entity}});
+  }
+
+  ngOnDestroy(): void {
+    // unsubscribe to avoid multiple subscriptions from the updater
+    if (this.noteUpdater !== undefined) {
+      this.noteUpdater.unsubscribe();
+    }
   }
 
 }

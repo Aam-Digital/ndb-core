@@ -1,7 +1,7 @@
-import {EventEmitter, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {EntityMapperService} from '../entity/entity-mapper.service';
 import {NoteModel} from './note.model';
-import {from, Observable} from 'rxjs';
+import {BehaviorSubject, from, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 @Injectable({
@@ -9,13 +9,16 @@ import {map} from 'rxjs/operators';
 })
 export class NotesService {
 
-  // The data source for the note-model.
+  // The data source for the note-model. This is where all the notes are
   private readonly dataSource: Observable<NoteModel[]>;
-  public noteUpdate = new EventEmitter<NoteModel>();
+  // TODO: Can the dataSource and noteUpdater be combined into one entity?
+  // emits, whenever a new is getting saved
+  private noteUpdater = new BehaviorSubject<NoteModel[]>([]);
 
   constructor(private entityMapper: EntityMapperService) {
     this.dataSource = from(entityMapper.loadType<NoteModel>(NoteModel));
   }
+
 
   /**
    * returns all notes that can be accessed
@@ -23,6 +26,10 @@ export class NotesService {
 
   getNotes(): Observable<NoteModel[]> {
     return this.dataSource;
+  }
+
+  getUpdater(): Observable<NoteModel[]> {
+    return this.noteUpdater.asObservable();
   }
 
   /**
@@ -43,8 +50,15 @@ export class NotesService {
    */
 
   saveNewNote(note: NoteModel) {
-    this.entityMapper.save(note);
-    this.noteUpdate.emit(note);
+    // save the new note to the database...
+    const result = this.entityMapper.save(note);
+    // ... and immediately inform any subscribers that a new note has been saved,
+    // if this note is not old (the update will be done automatically by the individual components)
+    result.then(res => {
+      if (res.rev === 'x') {
+        this.noteUpdater.next([note]);
+      }
+    });
   }
 
 }
