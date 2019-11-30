@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {from, Observable} from 'rxjs';
+import {from, Observable, throwError} from 'rxjs';
 import {Child} from './child';
 import {EntityMapperService} from '../entity/entity-mapper.service';
 import {AttendanceMonth} from './attendance/attendance-month';
@@ -41,7 +41,8 @@ export class ChildrenService {
               );
             }
           });
-        });
+          observer.complete();
+        }).catch((error) => {observer.error(error)});;
     });
     return childObs;
   }
@@ -58,7 +59,8 @@ export class ChildrenService {
               observer.next(child); }
             );
           }
-        });
+          observer.complete();
+      }).catch((error) => {observer.error(error)});
     });
     return childObs;
   }
