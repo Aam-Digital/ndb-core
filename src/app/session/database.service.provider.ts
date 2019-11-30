@@ -15,28 +15,15 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
-
-import { LoginState } from './login-state.enum';
 import { Database } from '../database/database';
-import { ConnectionState } from './connection-state.enum';
-import { SyncState } from './sync-state.enum';
-import { User } from '../user/user';
-import { StateHandler } from './util/state-handler';
+import { SessionService } from './session.service';
 
-@Injectable()
-export abstract class SessionService {
-  abstract login(username: string, password: string): Promise<LoginState>;
-  abstract logout();
-
-  abstract getCurrentUser(): User;
-  abstract isLoggedIn(): boolean;
-
-  abstract getLoginState(): StateHandler<LoginState>;
-  abstract getConnectionState(): StateHandler<ConnectionState>;
-  abstract getSyncState(): StateHandler<SyncState>;
-
-  abstract sync(): Promise<any>;
-
-  abstract getDatabase(): Database;
+export function databaseServiceFactory(_sessionService: SessionService) {
+  return _sessionService.getDatabase();
 }
+
+export let databaseServiceProvider = {
+  provide: Database,
+  useFactory: databaseServiceFactory,
+  deps: [SessionService]
+};
