@@ -18,7 +18,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SyncStatusComponent } from './sync-status/sync-status.component';
-import { DatabaseModule } from '../database/database.module';
 import { SessionModule } from '../session/session.module';
 import {AlertsModule} from '../alerts/alerts.module';
 import { MatButtonModule } from '@angular/material/button';
@@ -31,7 +30,6 @@ import {InitialSyncDialogComponent} from './sync-status/initial-sync-dialog.comp
   imports: [
     CommonModule,
     SessionModule,
-    DatabaseModule,
     AlertsModule,
     MatIconModule,
     MatButtonModule,

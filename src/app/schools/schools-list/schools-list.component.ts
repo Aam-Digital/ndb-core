@@ -41,7 +41,7 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
       this.schoolList = data;
       this.schoolDataSource.data = data;
 
-      const mediums = data.map(s => s.medium).filter((value, index, arr) => arr.indexOf(value) === index);
+      const mediums = data.map(s => s.medium).filter((value, index, arr) => value && (arr.indexOf(value) === index));
       this.mediumFS.initOptions(mediums, 'medium');
     });
   }

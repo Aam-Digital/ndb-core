@@ -34,6 +34,10 @@
       {
         "title": "EntitySchema",
         "file": "project_structure/EntitySchema-System.md"
+      },
+      {
+        "title": "Session",
+        "file": "project_structure/Session-Handling.md"
       }
     ]
   },

@@ -16,20 +16,36 @@
  */
 
 import { Entity } from '../../entity/entity';
+import {DatabaseEntity} from '../../entity/database-entity.decorator';
+import {DatabaseField} from '../../entity/database-field.decorator';
+import {WarningLevel} from '../attendance/warning-level';
 
 /**
  * Model Class for the Health Checks that are taken for a Child.
  * It stores the Child's ID in a String and both, the height and weight in cm as a number, and the Date
  */
+@DatabaseEntity('HealthCheck')
 export class HealthCheck extends Entity {
-    static ENTITY_TYPE = 'HealthCheck';
+  @DatabaseField() child: string;
+  @DatabaseField() date: Date;
 
-    child: string;
-    date: Date;
+  /** height measurement in cm **/
+  @DatabaseField() height: number;
 
-    /** height measurement in cm **/
-    height: number;
+  /** weight measurement in kg **/
+  @DatabaseField() weight: number;
 
-    /** weight measurement in kg **/
-    weight: number;
+  get bmi(): number {
+    return (this.weight / ((this.height / 100) * (this.height / 100)));
+  }
+
+  getWarningLevel() {
+    if (this.bmi <= 16 || this.bmi >= 30) {
+      return WarningLevel.URGENT;
+    } else if (this.bmi  >= 18 && this.bmi <= 25) {
+      return WarningLevel.OK;
+    } else {
+      return WarningLevel.WARNING;
+    }
+  }
 }

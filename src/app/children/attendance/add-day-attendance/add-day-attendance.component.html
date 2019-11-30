@@ -93,7 +93,8 @@
   <div *ngIf='!rollCallListLoading && rollCallIndex>=rollCallList.length'>
     <div>Roll call completed.</div>
     <div>
-      <button mat-stroked-button (click)='currentStage = 0' class='nav-button' fxFlex>Finish</button>
+      <button mat-stroked-button (click)='currentStage = 0' class='nav-button' fxFlex><b>Finish</b></button>
+      <button mat-stroked-button (click)='rollCallIndex = rollCallIndex - 1' class='nav-button' fxFlex>Back</button>
     </div>
   </div>
 </div>

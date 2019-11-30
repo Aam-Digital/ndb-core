@@ -19,12 +19,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {APP_INITIALIZER, NgModule} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule} from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { UiModule } from './ui/ui.module';
 import { AppConfigModule } from './app-config/app-config.module';
-import { DatabaseModule } from './database/database.module';
 import { routing } from './app.routing';
 import { AlertsModule } from './alerts/alerts.module';
 import { SessionModule } from './session/session.module';
@@ -44,7 +43,11 @@ import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import {AdminModule} from './admin/admin.module';
+import { EntityModule } from './entity/entity.module';
 import {CookieService} from 'ngx-cookie-service';
+import {HelpModule} from './help/help.module';
+import {DemoDataModule} from './demo-data/demo-data.module';
+import {MatNativeDateModule} from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -59,7 +62,7 @@ import {CookieService} from 'ngx-cookie-service';
     routing,
     FormsModule,
     AlertsModule,
-    DatabaseModule,
+    EntityModule,
     AppConfigModule,
     SessionModule,
     UiModule,
@@ -72,6 +75,9 @@ import {CookieService} from 'ngx-cookie-service';
     SchoolsModule,
     AdminModule,
     MatIconModule,
+    HelpModule,
+    MatNativeDateModule,
+    DemoDataModule.forRoot(),
   ],
   providers: [
     AppConfig,
@@ -93,6 +99,7 @@ export class AppModule {
     _navigationItemsService.addMenuItem(new MenuItem('Notes', 'file-text', ['/note']));
     _navigationItemsService.addMenuItem(new MenuItem('Attendance Register', 'table', ['/attendance']));
     _navigationItemsService.addMenuItem(new MenuItem('Admin', 'wrench', ['/admin'], true));
+    _navigationItemsService.addMenuItem(new MenuItem('Help', 'question-circle', ['/help']));
   }
 }
 

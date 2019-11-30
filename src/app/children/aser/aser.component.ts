@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {DatePipe} from '@angular/common';
 import {Aser} from './aser';
-import {ColumnDescription} from '../../ui-helper/entity-subrecord/column-description';
+import {ColumnDescription, ColumnDescriptionInputType} from '../../ui-helper/entity-subrecord/column-description';
 import {ChildrenService} from '../children.service';
 
 
@@ -17,17 +17,17 @@ export class AserComponent implements OnInit {
   records: Array<Aser>;
 
   columns: Array<ColumnDescription> = [
-    new ColumnDescription('date', 'Date', 'date', null,
+    new ColumnDescription('date', 'Date', ColumnDescriptionInputType.DATE, null,
       (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd'), 'xs'),
-    new ColumnDescription('math', 'Math', 'select',
+    new ColumnDescription('math', 'Math', ColumnDescriptionInputType.SELECT,
       Aser.MathLevels.map(s => { return { value: s, label: s }; }), undefined, 'xs'),
-    new ColumnDescription('english', 'English', 'select',
+    new ColumnDescription('english', 'English', ColumnDescriptionInputType.SELECT,
       Aser.ReadingLevels.map(s => { return { value: s, label: s }; }), undefined, 'xs'),
-    new ColumnDescription('hindi', 'Hindi', 'select',
+    new ColumnDescription('hindi', 'Hindi', ColumnDescriptionInputType.SELECT,
       Aser.ReadingLevels.map(s => { return { value: s, label: s }; }), undefined, 'md'),
-    new ColumnDescription('bengali', 'Bengali', 'select',
+    new ColumnDescription('bengali', 'Bengali', ColumnDescriptionInputType.SELECT,
       Aser.ReadingLevels.map(s => { return { value: s, label: s }; }), undefined, 'md'),
-    new ColumnDescription('remarks', 'Remarks', 'text', null, undefined, 'md'),
+    new ColumnDescription('remarks', 'Remarks', ColumnDescriptionInputType.TEXT, null, undefined, 'md'),
   ];
 
   constructor(private route: ActivatedRoute,

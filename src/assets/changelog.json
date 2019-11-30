@@ -1,5 +1,47 @@
 [
   {
+    "tag_name": "v2.8.0",
+    "name": "Internal Technical Improvements",
+    "published_at": "2019-11-30",
+    "body": "- reworked login, session and sync processes",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.7.4",
+    "name": "UI Improvements",
+    "published_at": "2019-11-30",
+    "body": "- show newly added notes in the list\n- improve Note form\n- fix empty filter buttons\n- dashboard widgets are more dense",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.7.3",
+    "name": "Bugfixes",
+    "published_at": "2019-11-26",
+    "body": "- sort children in daily attendance roll call by class",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.7.2",
+    "name": "Bugfixes",
+    "published_at": "2019-11-11",
+    "body": "- ensure datatype of 'center'",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.7.1",
+    "name": "Bugfixes",
+    "published_at": "2019-10-23",
+    "body": "- fixed problems with saving attendance",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.7.0",
+    "name": "Improved Technical Foundation",
+    "published_at": "2019-10-06",
+    "body": "- improved code base to provide extendability and test data\n- added BMI calculation to child health table\n- fixed dashboard progess widget not deleting parts",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.6.2",
     "name": "Bugfixes",
     "published_at": "2019-07-09",

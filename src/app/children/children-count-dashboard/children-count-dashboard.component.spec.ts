@@ -6,14 +6,13 @@ import { MatIconModule } from '@angular/material/icon';
 import {ChildrenService} from '../children.service';
 import {RouterTestingModule} from '@angular/router/testing';
 import {Child} from '../child';
-import {MockDatabase} from '../../database/mock-database';
 import {Observable} from 'rxjs';
 
 describe('ChildrenCountDashboardComponent', () => {
   let component: ChildrenCountDashboardComponent;
   let fixture: ComponentFixture<ChildrenCountDashboardComponent>;
 
-  let childrenService: ChildrenService;
+  let childrenService;
   let childrenObserver;
 
   let _lastId = 0;
@@ -25,8 +24,8 @@ describe('ChildrenCountDashboardComponent', () => {
   }
 
   beforeEach(async(() => {
-    childrenService = new ChildrenService(null, new MockDatabase());
-    spyOn(childrenService, 'getChildren').and
+    childrenService = jasmine.createSpyObj(['getChildren']);
+    childrenService.getChildren.and
       .returnValue(new Observable((observer) => { childrenObserver = observer; }));
 
     TestBed.configureTestingModule({
@@ -65,7 +64,7 @@ describe('ChildrenCountDashboardComponent', () => {
     const children = [createChild(centerA), createChild(centerB), createChild(centerA)];
     childrenObserver.next(children);
 
-    expect(component.childrenByCenter.length).toBe(2, 'unexpected number of centers');
+    expect(component.childrenByCenter.length).toBe(2, 'unexpected number of centersWithProbability');
     const actualCenterAEntry = component.childrenByCenter.filter(e => e[0] === centerA)[0];
     expect(actualCenterAEntry[1]).toBe(2, 'child count of CenterA not correct');
     const actualCenterBEntry = component.childrenByCenter.filter(e => e[0] === centerB)[0];

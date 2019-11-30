@@ -13,6 +13,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {ChildrenModule} from '../../children/children.module';
 import {SchoolsModule} from '../../schools/schools.module';
 import {MockDatabase} from '../../database/mock-database';
+import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 
 describe('SearchComponent', () => {
   let component: SearchComponent;
@@ -20,11 +21,22 @@ describe('SearchComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [MatIconModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule,
-        CommonModule, FormsModule, NoopAnimationsModule,
-        ChildrenModule, SchoolsModule, MatToolbarModule,
+      imports: [
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatAutocompleteModule,
+        CommonModule,
+        FormsModule,
+        NoopAnimationsModule,
+        ChildrenModule,
+        SchoolsModule,
+        MatToolbarModule,
       ],
-      providers: [{ provide: Database, useClass: MockDatabase }],
+      providers: [
+        EntitySchemaService,
+        { provide: Database, useClass: MockDatabase }
+        ],
       declarations: [ SearchComponent ]
     })
     .compileComponents();

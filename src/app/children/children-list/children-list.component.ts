@@ -95,7 +95,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
   private loadData(replaceUrl: boolean = false) {
     this.childrenService.getChildren().subscribe(children => {
       this.childrenList = children;
-      const centers = children.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
+      const centers = children.map(c => c.center).filter((value, index, arr) => value && (arr.indexOf(value) === index));
       this.centerFS.initOptions(centers, 'center');
 
       this.applyFilterSelections(replaceUrl);
@@ -104,10 +104,10 @@ export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(results => this.prepareAttendanceData(results));
   }
 /*
-  private initCenterFilterOptions(centers: string[]) {
+  private initCenterFilterOptions(centersWithProbability: string[]) {
     const options = [{key: '', label: 'All', filterFun: (c: Child) => true}];
 
-    centers.forEach(center => {
+    centersWithProbability.forEach(center => {
       options.push({key: center.toLowerCase(), label: center, filterFun: (c: Child) => c.center === center});
     });
 

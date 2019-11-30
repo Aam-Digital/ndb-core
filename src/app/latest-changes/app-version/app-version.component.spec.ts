@@ -18,30 +18,37 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AppVersionComponent } from './app-version.component';
-import { MatDialogModule } from '@angular/material/dialog';
-import {SessionService} from '../../session/session.service';
+import {MockSessionService} from '../../session/mock-session.service';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
+import {LoginState} from '../../session/login-state.enum';
+import { SessionService } from 'app/session/session.service';
+import { MatDialogModule } from '@angular/material/dialog';
 import {LatestChangesService} from '../latest-changes.service';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {ChangelogComponent} from '../changelog/changelog.component';
 import {of} from 'rxjs';
 import {BrowserDynamicTestingModule} from '@angular/platform-browser-dynamic/testing';
+import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
 
 describe('AppVersionComponent', () => {
   let component: AppVersionComponent;
   let fixture: ComponentFixture<AppVersionComponent>;
 
   let latestChangesService: LatestChangesService;
-  let sessionService: SessionService;
+  let sessionService: MockSessionService;
+  let entitySchemaService: EntitySchemaService;
   let entityMapper: EntityMapperService;
 
   beforeEach(async(() => {
+    entitySchemaService = new EntitySchemaService();
+    sessionService = new MockSessionService(entitySchemaService);
     latestChangesService = new LatestChangesService(null, null, null, null);
-    sessionService = new SessionService(null, null, null);
-    entityMapper = new EntityMapperService(null);
+    entityMapper = new EntityMapperService(null, null);
 
     spyOn(latestChangesService, 'getChangelogs').and
       .returnValue(of([{ name: 'test', tag_name: 'v1.0', body: 'latest test', published_at: '2018-01-01'}]));
+    spyOn(sessionService.getLoginState(), 'getState').and
+      .returnValue(LoginState.LOGGED_IN);
 
     TestBed.configureTestingModule({
       declarations: [AppVersionComponent, ChangelogComponent],

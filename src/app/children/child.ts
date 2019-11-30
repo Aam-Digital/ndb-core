@@ -17,11 +17,11 @@
 
 import { Entity } from '../entity/entity';
 import { Gender} from './Gender';
+import {DatabaseEntity} from '../entity/database-entity.decorator';
+import {DatabaseField} from '../entity/database-field.decorator';
 
-
+@DatabaseEntity('Child')
 export class Child extends Entity {
-  static ENTITY_TYPE = 'Child';
-
   /**
    * Returns the full relative filePath to a child photo given a filename, adding the relevant folders to it.
    * @param filename The given filename with file extension.
@@ -30,47 +30,46 @@ export class Child extends Entity {
     return 'assets/child-photos/' + filename;
   }
 
-  name: string;
-  projectNumber: string; // project number
-  gender: Gender; // M or F
-  dateOfBirth: Date;
-  motherTongue = '';
-  religion = '';
+  @DatabaseField() name: string;
+  @DatabaseField() projectNumber: string; // project number
+  @DatabaseField({dataType: 'string'}) gender: Gender; // M or F
+  @DatabaseField() dateOfBirth: Date;
+  @DatabaseField() motherTongue: string = '';
+  @DatabaseField() religion: string = '';
 
-  photoFile: string;
+  @DatabaseField() photoFile: string;
 
-  center = '';
-  admissionDate: Date;
-  status = '';
+  @DatabaseField() center: string = '';
+  @DatabaseField() admissionDate: Date;
+  @DatabaseField() status: string = '';
 
   // TODO: remove in favour of ChildSchoolRelations once all bugs are fixed
-  schoolId = '';
-  schoolClass = '';
-  schoolName = '';
+  @DatabaseField() schoolId: string = '';
+  @DatabaseField() schoolClass: string = '';
 
-  address = '';
-  phone = '';
-  guardianName = '';
-  preferredTimeForGuardianMeeting = '';
+  @DatabaseField() address: string = '';
+  @DatabaseField() phone: string = '';
+  @DatabaseField() guardianName: string = '';
+  @DatabaseField() preferredTimeForGuardianMeeting: string = '';
 
-  has_aadhar = '';
-  has_bankAccount = '';
-  has_kanyashree = '';
-  has_rationCard = '';
-  has_BplCard = '';
+  @DatabaseField() has_aadhar: string = '';
+  @DatabaseField() has_bankAccount: string = '';
+  @DatabaseField() has_kanyashree: string = '';
+  @DatabaseField() has_rationCard: string = '';
+  @DatabaseField() has_BplCard: string = '';
 
-  dropoutDate: Date;
-  dropoutType: string;
-  dropoutRemarks: string;
+  @DatabaseField() dropoutDate: Date;
+  @DatabaseField() dropoutType: string;
+  @DatabaseField() dropoutRemarks: string;
 
-  health_vaccinationStatus: string;
-  health_bloodGroup: string;
-  health_lastDentalCheckup: Date;
-  health_lastEyeCheckup: Date;
-  health_lastENTCheckup: Date;
-  health_eyeHealthStatus: string;
-  health_lastVitaminD: Date;
-  health_lastDeworming: Date;
+  @DatabaseField() health_vaccinationStatus: string;
+  @DatabaseField() health_bloodGroup: string;
+  @DatabaseField() health_lastDentalCheckup: Date;
+  @DatabaseField() health_lastEyeCheckup: Date;
+  @DatabaseField() health_lastENTCheckup: Date;
+  @DatabaseField() health_eyeHealthStatus: string;
+  @DatabaseField() health_lastVitaminD: Date;
+  @DatabaseField() health_lastDeworming: Date;
 
   get age(): number {
     let age = -1;

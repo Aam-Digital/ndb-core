@@ -5,11 +5,15 @@ import {from, Observable} from 'rxjs';
 import {ChildSchoolRelation} from '../children/childSchoolRelation';
 import {Database} from '../database/database';
 import {Child} from '../children/child';
+import {EntitySchemaService} from '../entity/schema/entity-schema.service';
 
 @Injectable()
 export class SchoolsService {
 
-  constructor(private entityMapper: EntityMapperService, private db: Database) {
+  constructor(
+    private entityMapper: EntityMapperService,
+    private entitySchemaService: EntitySchemaService,
+    private db: Database) {
   }
 
   getSchools(): Observable<School[]> {
@@ -25,7 +29,7 @@ export class SchoolsService {
       .then(loadedEntities => {
         return loadedEntities.rows.map(loadedRecord => {
           const entity = new ChildSchoolRelation('');
-          entity.load(loadedRecord.doc);
+          this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
           return entity;
         });
       });

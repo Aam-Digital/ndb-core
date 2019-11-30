@@ -1,13 +1,13 @@
-import {Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, ViewChild, HostListener} from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatSort} from '@angular/material/sort';
+import {MatTableDataSource} from '@angular/material/table';
 import {ConfirmationDialogService} from '../confirmation-dialog/confirmation-dialog.service';
 import {Entity} from '../../entity/entity';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
-import {ColumnDescription} from './column-description';
-import { MediaObserver, MediaChange} from '@angular/flex-layout';
+import {ColumnDescription, ColumnDescriptionInputType} from './column-description';
+import {MediaChange, MediaObserver} from '@angular/flex-layout';
 import {Subscription} from 'rxjs';
 
 
@@ -85,7 +85,8 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     const index = this.records.findIndex(a => a.getId() === record.getId());
     if (index > -1) {
       const originalRecord = this.originalRecords.find(e => e.entityId === record.getId());
-      this.records[index] = record.load(originalRecord);
+      Object.assign(record, originalRecord);
+      this.records[index] = record;
       this.recordsDataSource.data = this.records;
     }
 
@@ -215,4 +216,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     this.showButton = !this.showButton;
   }
 
+  isReadonlyInputType(inputType: ColumnDescriptionInputType): boolean {
+    return inputType === ColumnDescriptionInputType.FUNCTION || inputType === ColumnDescriptionInputType.READONLY;
+  }
 }
