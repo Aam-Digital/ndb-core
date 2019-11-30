@@ -105,7 +105,7 @@ export class NoteModel extends Entity {
 
   public getColorForId(entityId: string) {
     // if the child is not part of this note or this is not a meeting-note, return the default color
-    if (this.isLinkedWithChild(entityId) || !this.isMeeting()) {
+    if (!this.isLinkedWithChild(entityId) || !this.isMeeting()) {
       return this.getColor();
     }
     // if the child is present, return a green color
