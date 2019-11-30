@@ -6,6 +6,11 @@ import {MockDatabaseManagerService} from '../database/mock-database-manager.serv
 import {EntitySchemaService} from '../entity/schema/entity-schema.service';
 import {Gender} from './Gender';
 import {School} from '../schools/school';
+import { TestBed } from '@angular/core/testing';
+import { Database } from 'app/database/database';
+import { MockDatabase } from 'app/database/mock-database';
+import { BlobService } from 'app/webdav/blob-service.service';
+import { MockBlobService } from 'app/webdav/mock-blob-service';
 
 function generateChildEntities(): Child[] {
   const data = [];
@@ -95,19 +100,25 @@ function generateChildSchoolRelationEntities(): ChildSchoolRelation[] {
 describe('ChildrenService', () => {
   let service: ChildrenService;
   let entityMapper: EntityMapperService;
-  let entitySchemaService: EntitySchemaService;
 
   beforeEach(() => {
-    entitySchemaService = new EntitySchemaService();
-    const database = new MockDatabaseManagerService().getDatabase();
-    entityMapper = new EntityMapperService(database, entitySchemaService);
-    // TODO introduce BlobService to test.
-    const blobService = null;
+    TestBed.configureTestingModule({
+      providers: [EntityMapperService,
+          EntitySchemaService,
+          { provide: Database, useClass: MockDatabase },
+          { provide: BlobService, useClass: MockBlobService },
+          ChildrenService
+        ]
+      }
+    )
+
+    entityMapper = TestBed.get(EntityMapperService);
+
     generateChildEntities().forEach(c => entityMapper.save(c));
     generateSchoolEntities().forEach(s => entityMapper.save(s));
     generateChildSchoolRelationEntities().forEach(cs => entityMapper.save(cs));
 
-    service = new ChildrenService(entityMapper, entitySchemaService, database, blobService);
+    service = TestBed.get(ChildrenService);
   });
 
   it('should be created', () => {
