@@ -42,7 +42,7 @@ export class ChildrenService {
             }
           });
           observer.complete();
-        }).catch((error) => {observer.error(error)});;
+        }).catch((error) => {observer.error(error); });
     });
     return childObs;
   }
@@ -60,7 +60,7 @@ export class ChildrenService {
             );
           }
           observer.complete();
-      }).catch((error) => {observer.error(error)});
+      }).catch((error) => {observer.error(error); });
     });
     return childObs;
   }

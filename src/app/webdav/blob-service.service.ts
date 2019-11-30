@@ -26,7 +26,7 @@ export class BlobService {
     // clear the promise that retrieves the root dir
     this.currentlyGettingList = null;
     this.fileList = null;
-    
+
     if (this.sessionService.getCurrentUser() != null) {
       this.client = webdav.createClient(
         AppConfig.settings.webdav.remote_url,

@@ -7,7 +7,7 @@ export class MockBlobService {
   constructor() {
   }
 
-  getImage(path: string): Promise<SafeUrl>{
-    return new Promise((resolve, reject) => {resolve('assets/child.png');});
+  getImage(path: string): Promise<SafeUrl> {
+    return new Promise((resolve, reject) => {resolve('assets/child.png'); });
   }
 }

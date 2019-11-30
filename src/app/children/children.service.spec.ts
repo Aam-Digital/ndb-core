@@ -110,7 +110,7 @@ describe('ChildrenService', () => {
           ChildrenService
         ]
       }
-    )
+    );
 
     entityMapper = TestBed.get(EntityMapperService);
 
