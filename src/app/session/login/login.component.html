@@ -28,7 +28,7 @@
 
     <p>
     <mat-form-field class="login-field">
-      <input matInput placeholder="Username" type="text" [(ngModel)]="username" required autofocus>
+      <input matInput placeholder="Username" type="text" [(ngModel)]="username" required autofocus (keyup.enter)="login()">
       <mat-error>{{errorMessage}}</mat-error>
     </mat-form-field>
     </p>
