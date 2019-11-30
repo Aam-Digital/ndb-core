@@ -1,14 +1,14 @@
 .day-cell {
   background-color: #F5F5F5;
-  width: 60px;
-  height: 30px;
   position: relative;
   text-align: center;
+  vertical-align: middle;
   display: table-cell;
 }
 
 .day-box {
   height: 40px;
+  width: 60px;
   display: table;
 }
 
@@ -23,7 +23,7 @@
 .status {
   font-weight: bold;
   margin-top: 0.5em;
-  display: inline-block;
+  //display: inline-block;
 }
 
 .selected {
