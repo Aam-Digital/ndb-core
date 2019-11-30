@@ -1,11 +1,10 @@
-#Getting started
-##Where to look at first
+# First Steps
+## Where to look at first
 This wiki serves as the place for all development related documentation. 
 
 * Have a look at the Architecture
 * Follow the Contribution Guidelines, if you want to commit code.
 * Any Prerequisites that are necessary to run the application are listed [here](http://aam-digital.github.io/ndb-core/additional-documentation/prerequisites.html)
-
 
 
 ## Getting started with coding

@@ -3,5 +3,5 @@
   "output": "doc/compodoc",
   "assetsFolder": "doc/images",
   "includes": "doc/compodoc_sources",
-  "includesName": "developer manual"
+  "includesName": "Developer Documentation"
 }

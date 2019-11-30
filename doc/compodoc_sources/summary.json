@@ -1,67 +1,60 @@
 [
-
   {
-    "title": "Getting started",
-    "file": "getting_started/getting_started.md"
-  },
-  {
-    "title": "Guidelines",
-    "file": "guidelines/Contribution_Guidelines.md",
+    "title": "First Steps",
+    "file": "first-steps/first-steps.md",
     "children": [
       {
-        "title": "Documentation",
-        "file": "guidelines/documentation.md"
-      },
-      {
-        "title": "Logging errors",
-        "file": "guidelines/Logging-errors.md"
-      },
+        "title": "Contribution Guidelines",
+        "file": "first-steps/contribution-guidelines.md"
+      }
+    ]
+  },
+  {
+    "title": "Guidelines and Recipes",
+    "file": "handbook/handbook.md",
+    "children": [
       {
         "title": "UX Guidelines",
-        "file": "guidelines/UX-Guidelines.md"
+        "file": "handbook/ux-guidelines.md"
       },
       {
-        "title": "Creating new Entity types",
-        "file": "guidelines/Creating-new-Entity-types.md"
+        "title": "Writing Documentation",
+        "file": "handbook/documentation.md"
+      },
+      {
+        "title": "Writing Automated Tests",
+        "file": "handbook/testing.md"
+      },
+      {
+        "title": "Logging and Tracking Errors",
+        "file": "handbook/logging.md"
+      },
+      {
+        "title": "Loading and Saving Data",
+        "file": "handbook/loading-and-saving-data.md"
+      },
+      {
+        "title": "Creating New Entity Types",
+        "file": "handbook/creating-new-entity-types.md"
       }
-
     ]
   },
   {
     "title": "Architecture",
-    "file": "project_structure/Architecture.md",
+    "file": "architecture/architecture.md",
     "children": [
       {
-        "title": "EntitySchema",
-        "file": "project_structure/EntitySchema-System.md"
+        "title": "Entity Schema",
+        "file": "architecture/entity-schema-system.md"
       },
       {
-        "title": "Session",
-        "file": "project_structure/Session-Handling.md"
-      }
-    ]
-  },
-  {
-    "title": "Database",
-    "file": "database/Database.md",
-    "children": [
-      {
-        "title": "Demo Data",
-        "file": "database/Demo-Data.md"
-      }
-    ]
-  },
-  {
-    "title": "Testing",
-    "children": [
-      {
-        "title": "Unit Tests",
-        "file": "testing/Unit-Tests.md"
+        "title": "Session and Authentication System",
+        "file": "architecture/session-system.md"
       }
     ]
   },
   {
     "title":"Prerequisites",
-    "file": "Prerequisites.md"
+    "file": "prerequisites.md"
   }
 ]
