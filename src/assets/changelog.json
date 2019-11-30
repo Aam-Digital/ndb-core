@@ -1,5 +1,12 @@
 [
   {
+    "tag_name": "v2.8.0",
+    "name": "Internal Technical Improvements",
+    "published_at": "2019-11-30",
+    "body": "- reworked login, session and sync processes",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.7.4",
     "name": "UI Improvements",
     "published_at": "2019-11-30",
