@@ -18,7 +18,7 @@ describe('AdminComponent', () => {
     AppConfig.settings = {
       site_name: '',
       database: {name: 'unit-tests', remote_url: '', timeout: 60000, outdated_threshold_days: 0, useTemporaryDatabase: true},
-      webdav: {remote_url: '', username: '', password: ''}
+      webdav: {remote_url: '', username: ''}
     };
 
     TestBed.configureTestingModule({

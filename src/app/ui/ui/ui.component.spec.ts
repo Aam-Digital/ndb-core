@@ -63,8 +63,7 @@ describe('UiComponent', () => {
       },
       webdav: {
         remote_url: '',
-        username: '',
-        password: ''
+        username: ''
       }
     };
 

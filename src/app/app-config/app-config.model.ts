@@ -30,6 +30,5 @@ export interface IAppConfig {
   webdav: {
     remote_url: string;
     username: string;
-    password: string;
   };
 }
