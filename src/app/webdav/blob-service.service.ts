@@ -29,7 +29,7 @@ export class BlobService {
       this.client = webdav.createClient(
         AppConfig.settings.webdav.remote_url,
         {
-          username: 'nextclouduser',
+          username: AppConfig.settings.webdav.username,
           password: password
         }
       );
