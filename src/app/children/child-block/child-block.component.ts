@@ -1,7 +1,6 @@
 import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChildrenService } from '../children.service';
-import { BlobService } from 'app/webdav/blob-service.service';
 import { Child } from '../child';
 
 @Component({
@@ -17,7 +16,6 @@ export class ChildBlockComponent implements OnInit {
   tooltipTimeout;
 
   constructor(private router: Router,
-              private blobService: BlobService,
               private childrenService: ChildrenService) { }
 
   ngOnInit() {
