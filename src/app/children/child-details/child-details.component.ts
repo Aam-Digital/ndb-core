@@ -54,8 +54,6 @@ export class ChildDetailsComponent implements OnInit {
   eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
   vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
 
-  image: SafeUrl;
-
   constructor(private entityMapperService: EntityMapperService,
               private childrenService: ChildrenService,
               private route: ActivatedRoute,
