@@ -46,6 +46,12 @@ export class UserAccountComponent implements OnInit {
     }
   }
 
+  /**
+   * Sets the username and password for the cloud-service, provided the login password is correct
+   * @param cloudUser username for the cloud-service
+   * @param cloudPassword password for the cloud-service
+   * @param password password used to login to the main application
+   */
   updateCloudService(cloudUser: string, cloudPassword: string, password: string) {
     this.sessionService.getCurrentUser().setBlobPassword(cloudPassword, password);
     this.sessionService.getCurrentUser().cloudUserName = cloudUser;

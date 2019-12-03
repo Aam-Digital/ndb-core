@@ -27,7 +27,9 @@ export class ChildrenService {
     this.createChildSchoolRelationIndex();
   }
 
-
+  /**
+   * returns an observable which retrieves children from the database and loads their pictures
+   */
   getChildren(): Observable<Child[]> {
     const childObs = new Observable<Child[]>((observer) => {
       this.entityMapper.loadType<Child>(Child).then(
@@ -45,8 +47,11 @@ export class ChildrenService {
     return childObs;
   }
 
+  /**
+   * returns an observable which retrieves a single child and loads its photo
+   * @param id id of child
+   */
   getChild(id: string): Observable<Child> {
-    // return from(this.entityMapper.load<Child>(Child, id));
     const childObs = new Observable<Child>((observer) => {
       this.entityMapper.load<Child>(Child, id).then(
         async(child) => {
