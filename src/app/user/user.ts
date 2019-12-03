@@ -54,9 +54,6 @@ export class User extends Entity {
   public checkPassword(givenPassword: string): boolean {
     // compares given password to the stored one of this user
     // therefore hashes the given password string and compares it with the sored hash
-    if  (this.hashPassword(givenPassword) === this.password.hash) {
-      this.decryptBlobPassword(givenPassword);
-    }
     return (this.hashPassword(givenPassword) === this.password.hash);
   }
 
@@ -68,8 +65,9 @@ export class User extends Entity {
     return CryptoJS.PBKDF2(givenPassword, this.password.salt, options).toString();
   }
 
-  private decryptBlobPassword(givenPassword: string) {
+  public decryptBlobPassword(givenPassword: string): string {
     this.blobPasswordDec = CryptoJS.AES.decrypt(this.blobPasswordEnc.toString(), givenPassword).toString(CryptoJS.enc.Utf8);
+    return this.blobPasswordDec;
   }
 
   public setBlobPassword(blobPassword: string, givenPassword: string) {
