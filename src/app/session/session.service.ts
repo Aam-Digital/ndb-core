@@ -77,6 +77,7 @@ export class SessionService {
     return this._entityMapper.load<User>(User, username)
       .then(function (userEntity) {
         if (userEntity.checkPassword(password)) {
+          userEntity.decryptBlobPassword(password);
           self.onLocalLoginSuccessful(userEntity);
           return true;
         } else {
