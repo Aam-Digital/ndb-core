@@ -3,7 +3,6 @@ import { AppConfig } from '../app-config/app-config';
 import webdav from 'webdav';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { SessionService } from 'app/session/session.service';
-import { ReplaySubject } from 'rxjs';
 
 @Injectable()
 export class BlobService {
@@ -11,7 +10,8 @@ export class BlobService {
   // TODO Check connection/login success?
   private client: any;
   // private defaultImage: SafeUrl;
-  private _fileList: ReplaySubject<string>;
+  private fileList: string;
+  private currentlyGettingList: Promise<boolean>;
 
   constructor(private domSanitizer: DomSanitizer,
     private sessionService: SessionService) {
@@ -23,7 +23,9 @@ export class BlobService {
    * @param password login password
    */
   public connect(password: string = this.sessionService.getCurrentUser().blobPasswordDec) {
-    this.reset();
+    // clear the promise that retrieves the root dir
+    this.currentlyGettingList = null;
+    this.fileList = null;
 
     if (this.sessionService.getCurrentUser() != null) {
       this.client = webdav.createClient(
@@ -34,13 +36,6 @@ export class BlobService {
         }
       );
     }
-  }
-
-  /**
-   * Clear any previously loaded or loading state.
-   */
-  private reset() {
-    this._fileList = null;
   }
 
   /**
@@ -57,31 +52,26 @@ export class BlobService {
    * @param name file name to check
    */
   public async doesFileExist(name: string): Promise<boolean> {
-    const fileList = await this.getFileList();
-
+    if (!this.fileList && !this.currentlyGettingList) {
+      // create promise that resolves when the file list is loaded
+      // if this function gets called mulitple times this ensures that the list will only be loaded once
+      this.currentlyGettingList = new Promise((resolve, reject) => {
+        this.getDir('').then(list => {
+          this.fileList = list;
+          resolve(true);
+        });
+      });
+    }
+    if (!this.fileList) {
+      await this.currentlyGettingList;
+    }
     // hacky way of checking if file exists, subject to change
     // TODO fix this
-    if (fileList.includes('"basename": "' + name + '"')) {
+    if (this.fileList.includes('"basename": "' + name + '"')) {
       return true;
     }
     return false;
   }
-
-  /**
-   * Loads the list of files in the root folder.
-   */
-  public async getFileList(): Promise<string> {
-    // if this function gets called multiple times ensure that the list will only be loaded once
-    if (!this._fileList) {
-      this._fileList = new ReplaySubject(1);
-      const loadedFileList = await this.getDir('');
-      this._fileList.next(loadedFileList);
-    }
-
-    return await this._fileList.toPromise(); // ReplaySubject always emits the last value immediately
-  }
-
-
 
   /**
   * creates new directory
