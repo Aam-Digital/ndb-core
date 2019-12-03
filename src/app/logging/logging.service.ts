@@ -10,6 +10,7 @@ Sentry.init({
   ]
 });
 
+
 /* tslint:disable:no-console */
 @Injectable({
   providedIn: 'root'
@@ -20,29 +21,32 @@ export class LoggingService {
   }
 
 
-  public debug(message: string) {
+  public debug(message: any) {
     this.log(message, LogLevel.DEBUG);
   }
 
-  public info(message: string) {
+  public info(message: any) {
     this.log(message, LogLevel.INFO);
   }
 
-  public warn(message: string) {
+  public warn(message: any) {
     this.log(message, LogLevel.WARN);
   }
 
-  public error(message: string) {
+  public error(message: any) {
     this.log(message, LogLevel.ERROR);
   }
 
 
-  public log(message: string, logLevel: LogLevel = LogLevel.INFO) {
+  public log(message: any, logLevel: LogLevel = LogLevel.INFO) {
     this.logToConsole(message, logLevel);
-    this.logToRemoteMonitoring(message, logLevel);
+
+    if (logLevel !== LogLevel.DEBUG && logLevel !== LogLevel.INFO) {
+      this.logToRemoteMonitoring(message, logLevel);
+    }
   }
 
-  private logToConsole(message: string, logLevel: LogLevel) {
+  private logToConsole(message: any, logLevel: LogLevel) {
     switch (+logLevel) {
       case LogLevel.DEBUG:
         console.debug(message);
@@ -62,12 +66,7 @@ export class LoggingService {
     }
   }
 
-  private logToRemoteMonitoring(message: string, logLevel: LogLevel) {
-    if (logLevel === LogLevel.DEBUG) {
-      // do not log to remote
-      return;
-    }
-
+  private logToRemoteMonitoring(message: any, logLevel: LogLevel) {
     Sentry.captureMessage(message, this.translateLogLevel(logLevel));
   }
 
