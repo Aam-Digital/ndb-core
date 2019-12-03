@@ -67,7 +67,7 @@ export class LocalSession {
       if (userEntity.checkPassword(password)) {
         this.loginState.setState(LoginState.LOGGED_IN);
         this.currentUser = userEntity;
-        this.currentUser.decryptBlobPassword(password);
+        this.currentUser.decryptCloudPassword(password);
         return LoginState.LOGGED_IN;
       } else {
         this.loginState.setState(LoginState.LOGIN_FAILED);

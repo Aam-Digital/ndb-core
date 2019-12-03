@@ -30,7 +30,7 @@ export class CloudFileService {
     if (this.sessionService.getCurrentUser() != null) {
       if (username === null && password == null) {
         username = this.sessionService.getCurrentUser().cloudUserName;
-        password = this.sessionService.getCurrentUser().blobPasswordDec;
+        password = this.sessionService.getCurrentUser().cloudPasswordDec;
       }
       this.client = webdav.createClient(
         AppConfig.settings.webdav.remote_url,

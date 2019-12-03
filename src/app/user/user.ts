@@ -30,11 +30,11 @@ export class User extends Entity {
   private password: any;
 
   @DatabaseField()
-  private blobPasswordEnc: any;
+  private cloudPasswordEnc: any;
   @DatabaseField()
   public cloudUserName: string;
   // nextCloud password that gets encrypted during session
-  public blobPasswordDec: any;
+  public cloudPasswordDec: any;
 
   // TODO: nextCloud password change for admin
   public setNewPassword(password: string) {
@@ -49,7 +49,7 @@ export class User extends Entity {
     this.password = {'hash': hash, 'salt': cryptSalt, 'iterations': cryptIterations, 'keysize': cryptKeySize};
 
     // update encrypted nextcloud password
-    this.blobPasswordEnc = CryptoJS.AES.encrypt(this.blobPasswordDec, password).toString();
+    this.cloudPasswordEnc = CryptoJS.AES.encrypt(this.cloudPasswordDec, password).toString();
   }
 
   public checkPassword(givenPassword: string): boolean {
@@ -66,15 +66,15 @@ export class User extends Entity {
     return CryptoJS.PBKDF2(givenPassword, this.password.salt, options).toString();
   }
 
-  public decryptBlobPassword(givenPassword: string): string {
-    this.blobPasswordDec = CryptoJS.AES.decrypt(this.blobPasswordEnc.toString(), givenPassword).toString(CryptoJS.enc.Utf8);
-    return this.blobPasswordDec;
+  public decryptCloudPassword(givenPassword: string): string {
+    this.cloudPasswordDec = CryptoJS.AES.decrypt(this.cloudPasswordEnc.toString(), givenPassword).toString(CryptoJS.enc.Utf8);
+    return this.cloudPasswordDec;
   }
 
-  public setBlobPassword(blobPassword: string, givenPassword: string) {
+  public setCloudPassword(blobPassword: string, givenPassword: string) {
     if (this.checkPassword(givenPassword)) {
-      this.blobPasswordDec = blobPassword;
-      this.blobPasswordEnc = CryptoJS.AES.encrypt(blobPassword, givenPassword).toString();
+      this.cloudPasswordDec = blobPassword;
+      this.cloudPasswordEnc = CryptoJS.AES.encrypt(blobPassword, givenPassword).toString();
     }
   }
 

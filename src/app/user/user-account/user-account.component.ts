@@ -53,7 +53,7 @@ export class UserAccountComponent implements OnInit {
    * @param password password used to login to the main application
    */
   updateCloudService(cloudUser: string, cloudPassword: string, password: string) {
-    this.sessionService.getCurrentUser().setBlobPassword(cloudPassword, password);
+    this.sessionService.getCurrentUser().setCloudPassword(cloudPassword, password);
     this.sessionService.getCurrentUser().cloudUserName = cloudUser;
     this.cloudFileService.connect();
   }

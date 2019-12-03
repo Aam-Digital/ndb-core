@@ -53,7 +53,7 @@ describe('User', () => {
       name: 'tester',
       admin: true,
       password: undefined,
-      blobPasswordEnc: undefined,
+      cloudPasswordEnc: undefined,
 
       searchIndices: [],
     };
@@ -66,7 +66,7 @@ describe('User', () => {
     // @ts-ignore
     expectedData.password = entity.password;
     // @ts-ignore
-    expectedData.blobPasswordEnc = entity.blobPasswordEnc;
+    expectedData.cloudPasswordEnc = entity.cloudPasswordEnc;
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 

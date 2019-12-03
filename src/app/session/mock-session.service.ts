@@ -45,7 +45,7 @@ export class MockSessionService extends SessionService {
               this.loginState.setState(LoginState.LOGGED_IN);
               this.connectionState.setState(ConnectionState.CONNECTED);
               this.currentUser = userEntity;
-              this.currentUser.decryptBlobPassword(password);
+              this.currentUser.decryptCloudPassword(password);
                 setTimeout(() => this.sync(), 0);
                 return LoginState.LOGGED_IN;
             } else {
