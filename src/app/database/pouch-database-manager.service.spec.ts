@@ -33,9 +33,7 @@ describe('PouchDatabaseManagerService', () => {
         useTemporaryDatabase: false,
       },
       webdav: {
-        remote_url: '',
-        username: '',
-        password: ''
+        remote_url: ''
       }
     };
     dbManager = new PouchDatabaseManagerService(new AlertService(null, null));
