@@ -1,0 +1,19 @@
+<h2 *ngIf="present" class="mat-title">Present</h2>
+<h2 *ngIf="!present" class="mat-title">Absent</h2>
+
+<mat-accordion>
+  <mat-expansion-panel  *ngFor="let child of note.childrenWithPresence(present)">
+
+    <mat-expansion-panel-header>
+      <app-child-block [entityId]="child.childID"></app-child-block>
+      <button mat-icon-button (click)="note.togglePresence(child.childID);recordForm.form.markAsDirty()">
+        <span class="fa fa-arrow-right"></span>
+      </button>
+    </mat-expansion-panel-header>
+
+    <mat-form-field class="input-max">
+      <input matInput placeholder="Remarks" [(ngModel)]="child.remarks" (change)="recordForm.form.markAsDirty()" [ngModelOptions]="{standalone:true}">
+    </mat-form-field>
+
+  </mat-expansion-panel>
+</mat-accordion>

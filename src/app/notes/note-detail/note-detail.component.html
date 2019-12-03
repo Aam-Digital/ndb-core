@@ -88,44 +88,11 @@
     <div *ngIf="note.isMeeting()" fxLayout="row wrap" fxLayoutGap="20px">
 
       <div fxFlex>
-        <h3>Present</h3>
-        <mat-accordion>
-          <mat-expansion-panel  *ngFor="let child of note.childrenWithPresence(true)">
-
-            <mat-expansion-panel-header>
-              <app-child-block [entityId]="child.childID"></app-child-block>
-              <button mat-icon-button (click)="note.togglePresence(child.childID);recordForm.form.markAsDirty()">
-                <span class="fa fa-arrow-right"></span>
-              </button>
-            </mat-expansion-panel-header>
-
-            <mat-form-field class="input-max">
-              <input matInput placeholder="Remarks" [(ngModel)]="child.remarks" (change)="recordForm.form.markAsDirty()" [ngModelOptions]="{standalone:true}">
-            </mat-form-field>
-
-          </mat-expansion-panel>
-        </mat-accordion>
+        <app-child-presence-list [note]="note" [recordForm]="recordForm" [present]="true"></app-child-presence-list>
       </div>
-
       <div fxFlex>
-        <h3>Absent</h3>
-        <mat-accordion>
-          <mat-expansion-panel  *ngFor="let child of note.childrenWithPresence(false)">
-            <mat-expansion-panel-header>
-              <app-child-block [entityId]="child.childID"></app-child-block>
-              <button mat-icon-button (click)="note.togglePresence(child.childID);recordForm.form.markAsDirty()">
-                <span class="fa fa-arrow-left"></span>
-              </button>
-            </mat-expansion-panel-header>
-
-            <mat-form-field class="input-max">
-              <input matInput placeholder="Remarks" [(ngModel)]="child.remarks" (change)="recordForm.form.markAsDirty()" [ngModelOptions]="{standalone:true}">
-            </mat-form-field>
-
-          </mat-expansion-panel>
-        </mat-accordion>
+        <app-child-presence-list [note]="note" [recordForm]="recordForm" [present]="false"></app-child-presence-list>
       </div>
-
     </div>
 
   </mat-dialog-content>

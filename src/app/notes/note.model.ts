@@ -113,7 +113,7 @@ export class NoteModel extends Entity {
       return 'rgba(71,253,24,0.5)';
     }
     // else, return a red color
-    return 'rgba(219,49,36,0.51)';
+    return 'rgba(219,49,36,0.5)';
   }
 
   /**

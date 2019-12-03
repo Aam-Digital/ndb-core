@@ -32,10 +32,11 @@ import { ChildrenModule } from '../children/children.module';
 import {NotesService} from './notes.service';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {MatTreeModule} from '@angular/material/tree';
+import { ChildPresenceListComponent } from './note-detail/child-presence-list/child-presence-list.component';
 
 
 @NgModule({
-  declarations: [NoteDetailComponent, NoteManagerComponent],
+  declarations: [NoteDetailComponent, NoteManagerComponent, ChildPresenceListComponent],
   imports: [
     CommonModule,
     FormsModule,
