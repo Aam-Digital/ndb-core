@@ -113,7 +113,9 @@ export class Child extends Entity {
     return indices;
   }
 
-  /** @deprecated since v2.5.3*/
+  /** @deprecated since v2.5.3
+   * each child now posses its own photo variable, which gets loaded via the blob-service, use that one instead.
+  */
   public getPhoto() {
     if (!this.photoFile) {
       return 'assets/child.png';
