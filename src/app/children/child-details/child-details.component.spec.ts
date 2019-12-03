@@ -11,7 +11,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {AlertService} from '../../alerts/alert.service';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
@@ -36,9 +36,9 @@ import { databaseServiceProvider } from 'app/session/database.service.provider';
 import { SessionService } from 'app/session/session.service';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 import { CloudFileService } from 'app/webdav/cloud-file-service.service';
-import { Overlay } from '@angular/cdk/overlay';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
+import { MockDatabase } from 'app/database/mock-database';
 import { MockCloudFileService } from 'app/webdav/mock-cloud-file-service';
 
 describe('ChildDetailsComponent', () => {
