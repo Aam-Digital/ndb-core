@@ -19,8 +19,8 @@ import {ChildrenService} from '../../children.service';
 import {WarningLevel} from '../../attendance/warning-level';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {SchoolBlockComponent} from '../../../schools/school-block/school-block.component';
-import { BlobService } from 'app/webdav/blob-service.service';
-import { MockBlobService } from 'app/webdav/mock-blob-service';
+import { CloudFileService } from 'app/webdav/cloud-file-service.service';
+import { MockCloudFileService } from 'app/webdav/mock-cloud-file-service';
 
 describe('NoteDetailsComponent', () => {
   let component: NoteDetailsComponent;
@@ -47,7 +47,7 @@ describe('NoteDetailsComponent', () => {
         {provide: MatDialogRef, useValue: {beforeClose: () => { return { subscribe: () => {}}; }}},
         {provide: MAT_DIALOG_DATA, useValue: {entity: note}},
         {provide: ChildrenService, useClass: ChildrenService},
-        {provide: BlobService, useClass: MockBlobService}
+        {provide: CloudFileService, useClass: MockCloudFileService}
         ],
     })
     .compileComponents();

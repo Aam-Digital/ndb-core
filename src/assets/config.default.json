@@ -10,7 +10,6 @@
   },
 
   "webdav": {
-    "remote_url": "",
-    "username": ""
+    "remote_url": ""
   }
 }

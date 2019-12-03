@@ -24,8 +24,8 @@ import { MatInputModule } from '@angular/material/input';
 import {SessionService} from '../../session/session.service';
 import {User} from '../user';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import { BlobService } from 'app/webdav/blob-service.service';
-import { MockBlobService } from 'app/webdav/mock-blob-service';
+import { CloudFileService } from 'app/webdav/cloud-file-service.service';
+import { MockCloudFileService } from 'app/webdav/mock-cloud-file-service';
 
 describe('UserAccountComponent', () => {
   let component: UserAccountComponent;
@@ -44,7 +44,7 @@ describe('UserAccountComponent', () => {
       imports: [MatFormFieldModule, MatInputModule, MatButtonModule, NoopAnimationsModule],
       providers: [
         {provide: SessionService, useValue: sessionService},
-        {provide: BlobService, useClass: MockBlobService}
+        {provide: CloudFileService, useClass: MockCloudFileService}
       ],
     })
       .compileComponents();

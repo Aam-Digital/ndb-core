@@ -12,7 +12,7 @@ import {School} from '../schools/school';
 import {SchoolWithRelation} from '../schools/schoolWithRelation';
 import {HealthCheck} from './health-checkup/health-check';
 import {EntitySchemaService} from '../entity/schema/entity-schema.service';
-import { BlobService } from 'app/webdav/blob-service.service';
+import { CloudFileService } from 'app/webdav/cloud-file-service.service';
 
 @Injectable()
 export class ChildrenService {
@@ -20,7 +20,7 @@ export class ChildrenService {
   constructor(private entityMapper: EntityMapperService,
               private entitySchemaService: EntitySchemaService,
               private db: Database,
-              private blobService: BlobService) {
+              private cloudFileService: CloudFileService) {
     this.createAttendanceAnalysisIndex();
     this.createNotesIndex();
     this.createAttendancesIndex();
@@ -35,7 +35,7 @@ export class ChildrenService {
           observer.next(children);
           children.forEach(child => {
             if (!child.photo) {
-              this.blobService.getImage(child.getId().replace('child:', '')).then(image => {
+              this.cloudFileService.getImage(child.getId().replace('child:', '')).then(image => {
                 child.photo = image;
                 observer.next(children); }
               );
@@ -54,7 +54,7 @@ export class ChildrenService {
         child => {
           observer.next(child);
           if (!child.photo) {
-            this.blobService.getImage(child.getId().replace('child:', '')).then(image => {
+            this.cloudFileService.getImage(child.getId().replace('child:', '')).then(image => {
               child.photo = image;
               observer.next(child); }
             );

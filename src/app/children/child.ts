@@ -114,7 +114,7 @@ export class Child extends Entity {
   }
 
   /** @deprecated since v2.5.3
-   * each child now posses its own photo variable, which gets loaded via the blob-service, use that one instead.
+   * each child now posses its own photo variable, which gets loaded via the cloud-file-service, use that one instead.
   */
   public getPhoto() {
     if (!this.photoFile) {

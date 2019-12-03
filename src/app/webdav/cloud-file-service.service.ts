@@ -5,7 +5,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { SessionService } from 'app/session/session.service';
 
 @Injectable()
-export class BlobService {
+export class CloudFileService {
 
   // TODO Check connection/login success?
   private client: any;

@@ -29,12 +29,12 @@ import {UiHelperModule} from '../../ui-helper/ui-helper.module';
 import {AttendanceDayBlockComponent} from '../attendance/attendance-days/attendance-day-block.component';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 import { SessionService } from 'app/session/session.service';
-import { BlobService } from 'app/webdav/blob-service.service';
+import { CloudFileService } from 'app/webdav/cloud-file-service.service';
 import { DatabaseManagerService } from 'app/database/database-manager.service';
 import { AlertService } from 'app/alerts/alert.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Overlay } from '@angular/cdk/overlay';
-import { MockBlobService } from 'app/webdav/mock-blob-service';
+import { MockCloudFileService } from 'app/webdav/mock-cloud-file-service';
 
 describe('ChildrenListComponent', () => {
   let component: ChildrenListComponent;
@@ -70,7 +70,7 @@ describe('ChildrenListComponent', () => {
         EntityMapperService,
         EntitySchemaService,
         { provide: Database, useClass: MockDatabase },
-        { provide: BlobService, useClass: MockBlobService },
+        { provide: CloudFileService, useClass: MockCloudFileService },
       ],
     })
     .compileComponents();

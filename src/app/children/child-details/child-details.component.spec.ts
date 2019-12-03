@@ -38,11 +38,11 @@ import {DatabaseManagerService} from '../../database/database-manager.service';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HealthCheckupComponent} from '../health-checkup/health-checkup.component';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
-import { BlobService } from 'app/webdav/blob-service.service';
+import { CloudFileService } from 'app/webdav/cloud-file-service.service';
 import { Overlay } from '@angular/cdk/overlay';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
-import { MockBlobService } from 'app/webdav/mock-blob-service';
+import { MockCloudFileService } from 'app/webdav/mock-cloud-file-service';
 
 describe('ChildDetailsComponent', () => {
   let component: ChildDetailsComponent;
@@ -109,7 +109,7 @@ describe('ChildDetailsComponent', () => {
         { provide: Router, useValue: mockedRouter},
         { provide: ActivatedRoute, useValue: mockedRoute},
         { provide: Database, useClass: MockDatabase},
-        { provide: BlobService, useClass: MockBlobService}
+        { provide: CloudFileService, useClass: MockCloudFileService}
       ]
     })
       .compileComponents();

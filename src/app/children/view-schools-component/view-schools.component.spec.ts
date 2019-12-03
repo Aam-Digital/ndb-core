@@ -12,8 +12,8 @@ import {ChangeDetectorRef} from '@angular/core';
 import {LoggingService} from '../../logging/logging.service';
 import {Database} from '../../database/database';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
-import { BlobService } from 'app/webdav/blob-service.service';
-import { MockBlobService } from 'app/webdav/mock-blob-service';
+import { CloudFileService } from 'app/webdav/cloud-file-service.service';
+import { MockCloudFileService } from 'app/webdav/mock-cloud-file-service';
 
 describe('ViewSchoolsComponent', () => {
   let component: ViewSchoolsComponent;
@@ -36,7 +36,7 @@ describe('ViewSchoolsComponent', () => {
         ChangeDetectorRef,
         LoggingService,
         {provide: Database, useClass: MockDatabase},
-        {provide: BlobService, useClass: MockBlobService}
+        {provide: CloudFileService, useClass: MockCloudFileService}
       ],
     })
     .compileComponents();

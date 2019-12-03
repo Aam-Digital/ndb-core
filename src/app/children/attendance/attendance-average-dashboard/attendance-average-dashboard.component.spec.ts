@@ -11,8 +11,8 @@ import {ChildBlockComponent} from '../../child-block/child-block.component';
 import {RouterTestingModule} from '@angular/router/testing';
 import {SchoolBlockComponent} from '../../../schools/school-block/school-block.component';
 import {EntitySchemaService} from '../../../entity/schema/entity-schema.service';
-import { BlobService } from 'app/webdav/blob-service.service';
-import { MockBlobService } from 'app/webdav/mock-blob-service';
+import { CloudFileService } from 'app/webdav/cloud-file-service.service';
+import { MockCloudFileService } from 'app/webdav/mock-cloud-file-service';
 
 describe('AttendanceAverageDashboardComponent', () => {
   let component: AttendanceAverageDashboardComponent;
@@ -27,7 +27,7 @@ describe('AttendanceAverageDashboardComponent', () => {
         EntityMapperService,
         EntitySchemaService,
         { provide: Database, useClass: MockDatabase },
-        { provide: BlobService, useClass: MockBlobService }
+        { provide: CloudFileService, useClass: MockCloudFileService }
       ],
     })
     .compileComponents();

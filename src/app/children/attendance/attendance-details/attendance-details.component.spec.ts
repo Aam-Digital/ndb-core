@@ -26,8 +26,8 @@ import { Overlay } from '@angular/cdk/overlay';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AlertService } from 'app/alerts/alert.service';
 import { DatabaseManagerService } from 'app/database/database-manager.service';
-import { BlobService } from 'app/webdav/blob-service.service';
-import { MockBlobService } from 'app/webdav/mock-blob-service';
+import { CloudFileService } from 'app/webdav/cloud-file-service.service';
+import { MockCloudFileService } from 'app/webdav/mock-cloud-file-service';
 
 describe('AttendanceDetailsComponent', () => {
   let component: AttendanceDetailsComponent;
@@ -48,7 +48,7 @@ describe('AttendanceDetailsComponent', () => {
         {provide: MatDialogRef, useValue: {beforeClose: () => { return { subscribe: () => {}}; }}},
         {provide: MAT_DIALOG_DATA, useValue: {entity: att}},
         {provide: ChildrenService, useClass: ChildrenService},
-        {provide: BlobService, useClass: MockBlobService}
+        {provide: CloudFileService, useClass: MockCloudFileService}
       ],
     })
     .compileComponents();

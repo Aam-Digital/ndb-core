@@ -28,7 +28,7 @@ import * as uniqid from 'uniqid';
 import {AlertService} from '../../alerts/alert.service';
 import {ChildrenService} from '../children.service';
 import {School} from '../../schools/school';
-import { BlobService } from 'app/webdav/blob-service.service';
+import { CloudFileService } from 'app/webdav/cloud-file-service.service';
 import { SafeUrl } from '@angular/platform-browser';
 
 
@@ -63,7 +63,7 @@ export class ChildDetailsComponent implements OnInit {
               private snackBar: MatSnackBar,
               private confirmationDialog: ConfirmationDialogService,
               private alertService: AlertService,
-              private blobService: BlobService
+              private cloudFileService: CloudFileService
   ) { }
 
   // TODO: is this generateNewRecordFactory() used at all?
@@ -141,8 +141,8 @@ export class ChildDetailsComponent implements OnInit {
   switchEdit() {
     this.editing = !this.editing;
     this.initForm();
-  //  this.blobService.getImage(this.child.getId().replace('child:', ''))
-  //          .then(arr => this.image = this.blobService.bufferArrayToBase64(arr));
+  //  this.cloudFileService.getImage(this.child.getId().replace('child:', ''))
+  //          .then(arr => this.image = this.cloudFileService.bufferArrayToBase64(arr));
   }
 
   save() {
@@ -193,12 +193,12 @@ export class ChildDetailsComponent implements OnInit {
   }
 
   /**
-   * hands over the selected file to the blobService together with the childID
+   * hands over the selected file to the cloudFileService together with the childID
    * @param event
    */
   uploadChildPhoto(event) {
     console.log(event);
-    this.blobService.setImage(event.target.files[0], this.child.getId().replace('child:', ''));
+    this.cloudFileService.setImage(event.target.files[0], this.child.getId().replace('child:', ''));
     // TODO Update child.photo
   }
 }

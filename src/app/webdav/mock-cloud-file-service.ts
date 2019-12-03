@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
 
 @Injectable()
-export class MockBlobService {
+export class MockCloudFileService {
 
   constructor() {
   }
