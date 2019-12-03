@@ -25,9 +25,9 @@ export class UserListComponent implements OnInit {
   loadData() {
     this.entityMapperService.loadType<User>(User)
       .then(users => {
-        console.log('users', users);
         this.users = users;
         this.dataSource.data = users;
+        console.log(users);
       });
   }
 
