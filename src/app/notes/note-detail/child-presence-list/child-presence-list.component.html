@@ -1,13 +1,12 @@
-<h2 *ngIf="present" class="mat-title">Present</h2>
-<h2 *ngIf="!present" class="mat-title">Absent</h2>
-
+<h2 *ngIf="label" class="mat-title">{{label}}</h2>
 <mat-accordion>
   <mat-expansion-panel  *ngFor="let child of note.childrenWithPresence(present)">
 
     <mat-expansion-panel-header>
       <app-child-block [entityId]="child.childID"></app-child-block>
       <button mat-icon-button (click)="note.togglePresence(child.childID);recordForm.form.markAsDirty()">
-        <span class="fa fa-arrow-right"></span>
+        <span *ngIf="present" class="fa fa-arrow-right"></span>
+        <span *ngIf="!present" class="fa fa-arrow-left"></span>
       </button>
     </mat-expansion-panel-header>
 

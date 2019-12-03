@@ -12,6 +12,7 @@ export class ChildPresenceListComponent implements OnInit {
   @Input() note: NoteModel;
   @Input() recordForm: NgForm;
   @Input() present: boolean;
+  @Input() label: string;
 
   constructor() { }
 

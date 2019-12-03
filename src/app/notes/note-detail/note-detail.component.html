@@ -85,15 +85,26 @@
       </mat-form-field>
     </p>
 
-    <div *ngIf="note.isMeeting()" fxLayout="row wrap" fxLayoutGap="20px">
+    <!--Small screen: display the notes in tabs-->
+    <div *ngIf="note.isMeeting() && smallScreen" fxLayout="row wrap" fxLayoutGap="20px">
 
-      <div fxFlex>
-        <app-child-presence-list [note]="note" [recordForm]="recordForm" [present]="true"></app-child-presence-list>
-      </div>
-      <div fxFlex>
-        <app-child-presence-list [note]="note" [recordForm]="recordForm" [present]="false"></app-child-presence-list>
-      </div>
+      <mat-tab-group mat-align-tabs="center" fxFlex>
+        <mat-tab label="Present">
+          <app-child-presence-list [note]="note" [recordForm]="recordForm" [present]="true" fxFlex></app-child-presence-list>
+        </mat-tab>
+        <mat-tab label="Absent">
+          <app-child-presence-list [note]="note" [recordForm]="recordForm" [present]="false" fxFlex></app-child-presence-list>
+        </mat-tab>
+      </mat-tab-group>
+
     </div>
+
+    <!--Big screen: display the notes as two lists-->
+    <div *ngIf="note.isMeeting() && !smallScreen" fxLayout="row wrap" fxLayoutGap="20px">
+      <app-child-presence-list [note]="note" [recordForm]="recordForm" [present]="true" [label]="'Present'" fxFlex></app-child-presence-list>
+      <app-child-presence-list [note]="note" [recordForm]="recordForm" [present]="false" [label]="'Absent'" fxFlex></app-child-presence-list>
+    </div>
+
 
   </mat-dialog-content>
 

@@ -33,6 +33,7 @@ import {NotesService} from './notes.service';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {MatTreeModule} from '@angular/material/tree';
 import { ChildPresenceListComponent } from './note-detail/child-presence-list/child-presence-list.component';
+import {MatTabsModule} from '@angular/material/tabs';
 
 
 @NgModule({
@@ -70,7 +71,8 @@ import { ChildPresenceListComponent } from './note-detail/child-presence-list/ch
     MatListModule,
     ChildrenModule,
     DragDropModule,
-    MatTreeModule
+    MatTreeModule,
+    MatTabsModule
   ],
   entryComponents: [NoteDetailComponent],
   providers: [NotesService]
