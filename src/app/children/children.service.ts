@@ -33,12 +33,10 @@ export class ChildrenService {
       this.entityMapper.loadType<Child>(Child).then(
         children => {
           observer.next(children);
-          children.forEach(child => {
+          children.forEach(async(child) => {
             if (!child.photo) {
-              this.cloudFileService.getImage(child.entityId).then(image => {
-                child.photo = image;
-                observer.next(children); }
-              );
+              child.photo = await this.cloudFileService.getImage(child.entityId);
+              observer.next(children);
             }
           });
           observer.complete();
@@ -51,13 +49,11 @@ export class ChildrenService {
     // return from(this.entityMapper.load<Child>(Child, id));
     const childObs = new Observable<Child>((observer) => {
       this.entityMapper.load<Child>(Child, id).then(
-        child => {
+        async(child) => {
           observer.next(child);
           if (!child.photo) {
-            this.cloudFileService.getImage(child.entityId).then(image => {
-              child.photo = image;
-              observer.next(child); }
-            );
+            child.photo = await this.cloudFileService.getImage(child.entityId);
+            observer.next(child);
           }
           observer.complete();
       }).catch((error) => {observer.error(error); });
