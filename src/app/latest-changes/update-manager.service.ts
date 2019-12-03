@@ -20,6 +20,7 @@ import {SwUpdate} from '@angular/service-worker';
 import {first} from 'rxjs/operators';
 import {concat, interval} from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import {LoggingService} from '../logging/logging.service';
 
 @Injectable()
 export class UpdateManagerService {
@@ -29,12 +30,13 @@ export class UpdateManagerService {
   constructor(
     private appRef: ApplicationRef,
     private updates: SwUpdate,
-    public snackBar: MatSnackBar) {
-
+    public snackBar: MatSnackBar,
+    private logger: LoggingService,
+  ) {
   }
 
   public notifyUserWhenUpdateAvailable() {
-    this.updates.available.subscribe(event => {
+    this.updates.available.subscribe(() => {
       this.showUpdateNotification();
     });
   }
@@ -49,7 +51,7 @@ export class UpdateManagerService {
       try {
         await this.updates.checkForUpdate();
       } catch (err) {
-        console.log(err);
+        this.logger.error(err);
       }
     });
   }
