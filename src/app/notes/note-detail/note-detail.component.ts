@@ -44,6 +44,7 @@ export class NoteDetailComponent implements OnInit {
       }
     });
 
+    // magic value, note should be toggled since it looks better using tabs when under this threshold
     this.smallScreen = window.innerWidth < 550;
   }
 
