@@ -21,11 +21,6 @@ import {EntityModule} from '../../../entity/entity.module';
 import {RouterTestingModule} from '@angular/router/testing';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {AttendanceDayBlockComponent} from '../attendance-days/attendance-day-block.component';
-import { SessionService } from 'app/session/session.service';
-import { Overlay } from '@angular/cdk/overlay';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { AlertService } from 'app/alerts/alert.service';
-import { DatabaseManagerService } from 'app/database/database-manager.service';
 import { CloudFileService } from 'app/webdav/cloud-file-service.service';
 import { MockCloudFileService } from 'app/webdav/mock-cloud-file-service';
 

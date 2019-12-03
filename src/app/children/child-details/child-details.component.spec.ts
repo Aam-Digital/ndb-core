@@ -106,7 +106,6 @@ describe('ChildDetailsComponent', () => {
         { provide: Location, useValue: mockedLocation},
         { provide: Router, useValue: mockedRouter},
         { provide: ActivatedRoute, useValue: mockedRoute},
-        { provide: Database, useClass: MockDatabase},
         { provide: CloudFileService, useClass: MockCloudFileService}
       ]
     })
