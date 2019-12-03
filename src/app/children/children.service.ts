@@ -35,7 +35,7 @@ export class ChildrenService {
           observer.next(children);
           children.forEach(child => {
             if (!child.photo) {
-              this.cloudFileService.getImage(child.getId().replace('child:', '')).then(image => {
+              this.cloudFileService.getImage(child.entityId).then(image => {
                 child.photo = image;
                 observer.next(children); }
               );
@@ -54,7 +54,7 @@ export class ChildrenService {
         child => {
           observer.next(child);
           if (!child.photo) {
-            this.cloudFileService.getImage(child.getId().replace('child:', '')).then(image => {
+            this.cloudFileService.getImage(child.entityId).then(image => {
               child.photo = image;
               observer.next(child); }
             );

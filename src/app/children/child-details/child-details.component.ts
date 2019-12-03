@@ -141,8 +141,6 @@ export class ChildDetailsComponent implements OnInit {
   switchEdit() {
     this.editing = !this.editing;
     this.initForm();
-  //  this.cloudFileService.getImage(this.child.getId().replace('child:', ''))
-  //          .then(arr => this.image = this.cloudFileService.bufferArrayToBase64(arr));
   }
 
   save() {
@@ -198,7 +196,7 @@ export class ChildDetailsComponent implements OnInit {
    */
   uploadChildPhoto(event) {
     console.log(event);
-    this.cloudFileService.setImage(event.target.files[0], this.child.getId().replace('child:', ''));
+    this.cloudFileService.setImage(event.target.files[0], this.child.entityId);
     // TODO Update child.photo
   }
 }
