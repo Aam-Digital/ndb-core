@@ -63,6 +63,11 @@ export class LoggingService {
   }
 
   private logToRemoteMonitoring(message: string, logLevel: LogLevel) {
+    if (logLevel === LogLevel.DEBUG) {
+      // do not log to remote
+      return;
+    }
+
     Sentry.captureMessage(message, this.translateLogLevel(logLevel));
   }
 
