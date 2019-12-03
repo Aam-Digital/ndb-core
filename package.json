@@ -7,7 +7,7 @@
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "test": "ng test",
-    "lint": "ng lint ndb-core ndb-core-e2e --type-check",
+    "lint": "ng lint ndb-core --type-check",
     "e2e": "ng e2e",
     "compodoc": "npx compodoc -c doc/compodoc_sources/.compodocrc.json"
   },
