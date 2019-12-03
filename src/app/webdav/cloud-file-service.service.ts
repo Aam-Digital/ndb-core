@@ -22,7 +22,7 @@ export class CloudFileService {
    * Reinitialize the client for the nextcloud server
    * @param password login password
    */
-  public connect(username:string = null, password: string = null) {
+  public connect(username: string = null, password: string = null) {
     // clear the promise that retrieves the root dir
     this.currentlyGettingList = null;
     this.fileList = null;
