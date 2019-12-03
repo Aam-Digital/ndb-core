@@ -22,26 +22,30 @@
 
 
   <mat-card-content>
-    <p class="login-error">
-      {{errorMessage}}
-    </p>
+    <form>
+      <p class="login-error">
+        {{errorMessage}}
+      </p>
 
-    <p>
-    <mat-form-field class="login-field">
-      <input matInput placeholder="Username" type="text" [(ngModel)]="username" required autofocus>
-      <mat-error>{{errorMessage}}</mat-error>
-    </mat-form-field>
-    </p>
-    <p>
-    <mat-form-field class="login-field">
-      <input matInput placeholder="Password" type="password" [(ngModel)]="password" (keyup.enter)="login()" required>
-    </mat-form-field>
-    </p>
+      <p>
+        <mat-form-field class="login-field">
+          <input matInput placeholder="Username" type="text" [(ngModel)]="username" (keyup.enter)="login()" required autofocus
+                 name="username" autocomplete="username">
+          <mat-error>{{errorMessage}}</mat-error>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field class="login-field">
+          <input matInput placeholder="Password" type="password" [(ngModel)]="password" (keyup.enter)="login()" required
+                 name="password" autocomplete="current-password">
+        </mat-form-field>
+      </p>
 
-    <p>
-      <button mat-raised-button type="submit" [disabled]="loginInProgress" (click)="login()">
-        Login
-      </button>
-    </p>
+      <p>
+        <button mat-raised-button type="submit" [disabled]="loginInProgress" (click)="login()">
+          Login
+        </button>
+      </p>
+    </form>
   </mat-card-content>
 </mat-card>

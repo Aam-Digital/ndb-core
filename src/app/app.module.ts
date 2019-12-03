@@ -24,7 +24,6 @@ import { HttpClientModule} from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { UiModule } from './ui/ui.module';
 import { AppConfigModule } from './app-config/app-config.module';
-import { DatabaseModule } from './database/database.module';
 import { routing } from './app.routing';
 import { AlertsModule } from './alerts/alerts.module';
 import { SessionModule } from './session/session.module';
@@ -44,10 +43,10 @@ import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import {AdminModule} from './admin/admin.module';
+import { EntityModule } from './entity/entity.module';
 import {CookieService} from 'ngx-cookie-service';
 import {HelpModule} from './help/help.module';
 import {DemoDataModule} from './demo-data/demo-data.module';
-import {EntityModule} from './entity/entity.module';
 import {MatNativeDateModule} from '@angular/material/core';
 
 @NgModule({
@@ -63,7 +62,6 @@ import {MatNativeDateModule} from '@angular/material/core';
     routing,
     FormsModule,
     AlertsModule,
-    DatabaseModule,
     EntityModule,
     AppConfigModule,
     SessionModule,

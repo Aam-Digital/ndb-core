@@ -18,14 +18,16 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { LoggedInGuard } from './logged-in.guard';
-import {SessionService} from './session.service';
+import { MockSessionService } from './mock-session.service';
+import { SessionService } from './session.service';
+import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
 
 describe('LoggedInGuard', () => {
 
   let sessionService: SessionService;
 
   beforeEach(() => {
-    sessionService = new SessionService(null, null, null);
+    sessionService = new MockSessionService(new EntitySchemaService());
 
     TestBed.configureTestingModule({
       providers: [LoggedInGuard,
