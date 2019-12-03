@@ -62,8 +62,7 @@ describe('UiComponent', () => {
         'useTemporaryDatabase': true,
       },
       webdav: {
-        remote_url: '',
-        username: ''
+        remote_url: ''
       }
     };
 
