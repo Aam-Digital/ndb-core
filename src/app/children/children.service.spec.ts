@@ -2,7 +2,6 @@ import { ChildrenService } from './children.service';
 import {EntityMapperService} from '../entity/entity-mapper.service';
 import {ChildSchoolRelation} from './childSchoolRelation';
 import {Child} from './child';
-import {MockDatabaseManagerService} from '../database/mock-database-manager.service';
 import {EntitySchemaService} from '../entity/schema/entity-schema.service';
 import {Gender} from './Gender';
 import {School} from '../schools/school';

@@ -26,6 +26,8 @@ import {User} from '../user';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import { CloudFileService } from 'app/webdav/cloud-file-service.service';
 import { MockCloudFileService } from 'app/webdav/mock-cloud-file-service';
+import { MockSessionService } from 'app/session/mock-session.service';
+import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
 
 describe('UserAccountComponent', () => {
   let component: UserAccountComponent;
@@ -36,8 +38,8 @@ describe('UserAccountComponent', () => {
   user.name = 'test';
 
   beforeEach(async(() => {
-    sessionService = new SessionService(null, null, null);
-    sessionService.currentUser = user;
+    sessionService = new MockSessionService(new EntitySchemaService());
+    spyOn(sessionService, 'getCurrentUser').and.returnValue(user);
 
     TestBed.configureTestingModule({
       declarations: [UserAccountComponent],
