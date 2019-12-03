@@ -44,13 +44,17 @@
 <h2>Image Service</h2>
 <p>
   <mat-form-field>
-    <input placeholder="Password" matInput="text" type="password" value="" #password>
+    <input placeholder="Cloud Image Service User" matInput="text" value="" #cloudUser>
   </mat-form-field>
   <br>
   <mat-form-field>
-    <input placeholder="Image Service Password" matInput="text" type="password" value="" #blobPassword>
+    <input placeholder="Cloud Image Service Password" matInput="text" type="password" value="" #cloudPassword>
+  </mat-form-field>
+  <br>
+  <mat-form-field>
+    <input placeholder="Password" matInput="text" type="password" value="" #password>
   </mat-form-field>
   <br>
 
-  <button mat-raised-button (click)="changeBlobPassword(blobPassword.value, password.value)">Update</button>
+  <button mat-raised-button (click)="updateCloudService(cloudUser.value, cloudPassword.value, password.value)">Update</button>
 </p>

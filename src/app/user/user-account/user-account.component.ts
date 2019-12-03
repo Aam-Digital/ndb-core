@@ -46,8 +46,9 @@ export class UserAccountComponent implements OnInit {
     }
   }
 
-  changeBlobPassword(blobPassword, password) {
-    this.sessionService.getCurrentUser().setBlobPassword(blobPassword, password);
-    this.blobService.connect(this.sessionService.getCurrentUser().blobPasswordDec);
+  updateCloudService(cloudUser: string, cloudPassword: string, password: string) {
+    this.sessionService.getCurrentUser().setBlobPassword(cloudPassword, password);
+    this.sessionService.getCurrentUser().cloudUserName = cloudUser;
+    this.blobService.connect();
   }
 }

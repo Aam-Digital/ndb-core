@@ -32,6 +32,8 @@ export class User extends Entity {
 
   @DatabaseField()
   private blobPasswordEnc: any;
+  @DatabaseField()
+  public cloudUserName: string;
   // nextCloud password that gets encrypted during session
   public blobPasswordDec: any;
 

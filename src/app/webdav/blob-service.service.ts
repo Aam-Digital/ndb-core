@@ -22,16 +22,20 @@ export class BlobService {
    * Reinitialize the client for the nextcloud server
    * @param password login password
    */
-  public connect(password: string = this.sessionService.getCurrentUser().blobPasswordDec) {
+  public connect(username:string = null, password: string = null) {
     // clear the promise that retrieves the root dir
     this.currentlyGettingList = null;
     this.fileList = null;
 
     if (this.sessionService.getCurrentUser() != null) {
+      if (username === null && password == null) {
+        username = this.sessionService.getCurrentUser().cloudUserName;
+        password = this.sessionService.getCurrentUser().blobPasswordDec;
+      }
       this.client = webdav.createClient(
         AppConfig.settings.webdav.remote_url,
         {
-          username: AppConfig.settings.webdav.username,
+          username: username,
           password: password
         }
       );
