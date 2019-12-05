@@ -1,5 +1,12 @@
 [
   {
+    "tag_name": "v2.8.1",
+    "name": "Improved Error Logging",
+    "published_at": "2019-12-05",
+    "body": "- improved reporting of technical errors to the development team",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.8.0",
     "name": "Internal Technical Improvements",
     "published_at": "2019-11-30",
