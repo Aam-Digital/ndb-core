@@ -6,14 +6,19 @@
 .dashboard-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 .dashboard-table-first-cell {
-  width: calc(40% - 20px);
   white-space: nowrap;
+  overflow: hidden;
 }
 .dashboard-table-last-cell {
-  width: calc(60% - 20px);
-  min-width: 180px;
+  width: 103px;
+  text-align: right;
+}
+.dashboard-table-cell {
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 .attendance-day {
@@ -22,5 +27,14 @@
 
 .day-box {
   display: table;
-  width: 30px;
+  width: 15px;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: smaller;
+}
+
+
+.attendance-week-table {
+  border-spacing: 0;
+  padding-right: 10px;
 }

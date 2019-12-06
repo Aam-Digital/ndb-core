@@ -33,6 +33,7 @@ import {DemoAserGeneratorService} from './demo-data-generators/demo-aser-generat
 import {DemoEducationalMaterialGeneratorService} from './demo-data-generators/demo-educational-material-generator.service';
 import {DemoHealthCheckGeneratorService} from './demo-data-generators/demo-health-check-generator.service';
 import {DemoDataGeneratingProgressDialogComponent} from './demo-data-generating-progress-dialog.component';
+import {DemoUserGeneratorService} from './demo-data-generators/demo-user-generator.service';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatDialogModule} from '@angular/material/dialog';
 
@@ -48,6 +49,7 @@ const DEFAULT_DEMO_GENERATOR_PROVIDERS = [
   ...DemoHealthCheckGeneratorService.provider(),
 
   ...DemoWidgetGeneratorService.provider(),
+  ...DemoUserGeneratorService.provider(),
 ];
 
 @NgModule({

@@ -16,12 +16,13 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {DatabaseManagerService} from '../../database/database-manager.service';
 import {SessionService} from '../../session/session.service';
-import {DatabaseSyncStatus} from '../../database/database-sync-status.enum';
+import {SyncState} from '../../session/sync-state.enum';
 import {AlertService} from '../../alerts/alert.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {InitialSyncDialogComponent} from './initial-sync-dialog.component';
+import { StateChangedEvent } from 'app/session/util/state-handler';
+import { ConnectionState } from 'app/session/connection-state.enum';
 
 @Component({
   selector: 'app-sync-status',
@@ -33,47 +34,36 @@ export class SyncStatusComponent implements OnInit {
   syncInProgress: boolean;
   dialogRef: MatDialogRef<InitialSyncDialogComponent>;
 
-  constructor(private _dbManager: DatabaseManagerService,
-              public dialog: MatDialog,
-              private _sessionService: SessionService,
+  constructor(public dialog: MatDialog,
+              private sessionService: SessionService,
               private alertService: AlertService) {
   }
 
   ngOnInit(): void {
-    this._dbManager.onSyncStatusChanged.subscribe((status: any) => this.handleSyncStatus(status));
+    this.sessionService.getSyncState().getStateChangedStream().subscribe(state => this.handleSyncState(state));
   }
 
-  private handleSyncStatus(status: DatabaseSyncStatus) {
-    switch (status) {
-      case DatabaseSyncStatus.started:
+  private handleSyncState(state: StateChangedEvent<SyncState>) {
+    switch (state.toState) {
+      case SyncState.STARTED:
         this.syncInProgress = true;
-        if (!this._sessionService.isLoggedIn()) {
+        if (!this.sessionService.isLoggedIn()) {
           this.dialogRef = this.dialog.open(InitialSyncDialogComponent);
         }
         break;
-      case DatabaseSyncStatus.completed:
+      case SyncState.COMPLETED:
         this.syncInProgress = false;
         if (this.dialogRef) {
           this.dialogRef.close();
         }
         this.alertService.addInfo('Database sync completed.');
         break;
-      case DatabaseSyncStatus.failed:
+      case SyncState.FAILED:
         this.syncInProgress = false;
         if (this.dialogRef) {
           this.dialogRef.close();
         }
         this.alertService.addWarning('Database sync failed.');
-        break;
-
-      case DatabaseSyncStatus.pulledChanges:
-        this.alertService.addInfo('Updated database from server.');
-        this.syncInProgress = true;
-        setTimeout(() => this.syncInProgress = false, 1000);
-        break;
-      case DatabaseSyncStatus.pushedChanges:
-        this.syncInProgress = true;
-        setTimeout(() => this.syncInProgress = false, 1000);
         break;
     }
   }
