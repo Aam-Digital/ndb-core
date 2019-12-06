@@ -95,3 +95,8 @@
       style="cursor:pointer;" [ngStyle]="{'background-color': note.getColor()}"></tr>
 </table>
 
+<mat-paginator [pageSize]="50"
+               [pageSizeOptions]="[30, 50, 70, 100]">
+</mat-paginator>
+
+<div class="bottom-padding"></div>

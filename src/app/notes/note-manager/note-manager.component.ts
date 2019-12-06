@@ -11,6 +11,7 @@ import {MediaChange, MediaObserver} from '@angular/flex-layout';
 import {NoteDetailComponent} from '../note-detail/note-detail.component';
 import {NotesService} from '../notes.service';
 import {InteractionTypes} from '../interaction-types.enum';
+import {MatPaginator} from '@angular/material/paginator';
 
 @Component({
   selector: 'app-note-manager',
@@ -26,6 +27,8 @@ export class NoteManagerComponent implements OnInit, AfterViewInit, OnDestroy {
   noteUpdater: Subscription;
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+
   columnsToDisplay = ['date', 'subject', 'category', 'author', 'children'];
 
   columnGroups = {
@@ -84,6 +87,7 @@ export class NoteManagerComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     this.initCategoryFilter();
+    this.notesDataSource.paginator = this.paginator;
   }
 
   private sortAndAdd(newNotes: NoteModel[]) {
