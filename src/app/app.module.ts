@@ -17,14 +17,13 @@
 
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {APP_INITIALIZER, NgModule} from '@angular/core';
+import {APP_INITIALIZER, ErrorHandler, NgModule} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule} from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { UiModule } from './ui/ui.module';
 import { AppConfigModule } from './app-config/app-config.module';
-import { DatabaseModule } from './database/database.module';
 import { routing } from './app.routing';
 import { AlertsModule } from './alerts/alerts.module';
 import { SessionModule } from './session/session.module';
@@ -44,11 +43,12 @@ import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import {AdminModule} from './admin/admin.module';
+import { EntityModule } from './entity/entity.module';
 import {CookieService} from 'ngx-cookie-service';
 import {HelpModule} from './help/help.module';
 import {DemoDataModule} from './demo-data/demo-data.module';
-import {EntityModule} from './entity/entity.module';
 import {MatNativeDateModule} from '@angular/material/core';
+import {LoggingErrorHandler} from './logging/logging-error-handler';
 
 @NgModule({
   declarations: [
@@ -63,7 +63,6 @@ import {MatNativeDateModule} from '@angular/material/core';
     routing,
     FormsModule,
     AlertsModule,
-    DatabaseModule,
     EntityModule,
     AppConfigModule,
     SessionModule,
@@ -84,6 +83,7 @@ import {MatNativeDateModule} from '@angular/material/core';
   providers: [
     AppConfig,
     { provide: APP_INITIALIZER, useFactory: initializeApp, deps: [AppConfig], multi: true },
+    { provide: ErrorHandler, useClass: LoggingErrorHandler },
     MatIconRegistry,
     CookieService,
   ],

@@ -59,16 +59,13 @@ export class AlertService {
     switch (alert.type) {
       case Alert.WARNING:
       case Alert.DANGER:
-        console.warn(alert.message);
         this.loggingService.warn(alert.message);
         break;
       case Alert.INFO:
       case Alert.SUCCESS:
-        console.log(alert.message);
         this.loggingService.info(alert.message);
         break;
       case Alert.DEBUG:
-        console.log(alert.message);
         this.loggingService.debug(alert.message);
         break;
     }

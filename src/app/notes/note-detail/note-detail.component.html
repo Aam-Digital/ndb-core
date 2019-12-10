@@ -20,12 +20,18 @@
 
 <form #recordForm="ngForm">
   <mat-dialog-content>
+    <!-- General context of Note -->
+    <div class='form-section-secondary'>
     <div fxLayout='row wrap' fxLayoutGap='20px'>
       <div fxFlex>
         <mat-form-field>
           <!-- TODO: date pickers should be the same throughout the app -->
-          <input matInput placeholder="Date" [matDatepicker]="picker"
-                 [valueAsDate]="note.date" (change)='note.date=$event.target.valueAsDate;recordForm.form.markAsDirty();'>
+          <input matInput placeholder="Date"
+                 name="date"
+                 type="date"
+                 [matDatepicker]="picker"
+                 [valueAsDate]="note.date"
+                 (change)='note.date=$event.target.valueAsDate;recordForm.form.markAsDirty();'>
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
@@ -44,23 +50,23 @@
         </mat-form-field>
       </div>
     </div>
-
     <div fxLayout='row wrap' fxLayoutGap='20px'>
       <div fxFlex>
         <mat-form-field class='input-medium'>
-          <input matInput placeholder="Subject" name="subject" type="text" [(ngModel)]="note.subject">
-        </mat-form-field>
-      </div>
-      <div fxFlex>
-        <mat-form-field class='input-medium'>
-          <mat-select matInput placeholder="Type of Interaction" name="type" [(ngModel)]="note.category">
+          <mat-select placeholder="Type of Interaction" name="type" [(ngModel)]="note.category">
             <mat-option *ngFor="let interaction of interactionTypes" [value]="interaction">
               {{interaction}}
             </mat-option>
           </mat-select>
         </mat-form-field>
       </div>
-    </div>
+      <div fxFlex>
+        <mat-form-field class='input-medium'>
+          <!-- TODO: should be multi-select or auto-complete field of user names? -->
+          <input matInput placeholder="Team Member" name="teammember" type="text" [(ngModel)]="note.author">
+        </mat-form-field>
+      </div>
+      </div>
 
     <div fxLayout='row wrap' fxLayoutGap='20px'>
       <div fxFlex>
@@ -70,20 +76,28 @@
                           class='input-medium'>
         </app-child-select>
       </div>
+    </div>
+    </div>
+
+
+
+  <!-- Primary information of Note -->
+  <div class='mat-elevation-z2 primary-section-elevated form-section-primary'>
+    <div fxLayout='row wrap' fxLayoutGap='20px'>
       <div fxFlex>
         <mat-form-field class='input-medium'>
-          <!-- TODO: should be multi-select or auto-complete field of user names? -->
-
-          <input matInput placeholder="Team Member" name="teammember" type="text" [(ngModel)]="note.author">
+          <input matInput placeholder="Topic / Summary" name="subject" type="text" [(ngModel)]="note.subject">
         </mat-form-field>
       </div>
     </div>
 
-    <p>
+    <div fxLayout='row wrap' fxLayoutGap='20px'>
       <mat-form-field class='input-max'>
-        <textarea matInput placeholder="Notes" name="notes" [(ngModel)]="note.text" cdkTextareaAutosize></textarea>
+      <textarea matInput placeholder="Notes" name="notes" [(ngModel)]="note.text"
+                cdkTextareaAutosize cdkAutosizeMinRows="4"></textarea>
       </mat-form-field>
-    </p>
+    </div>
+  </div>
 
     <!--Small screen: display the notes in tabs-->
     <div *ngIf="note.isMeeting() && smallScreen" fxLayout="row wrap" fxLayoutGap="20px">
@@ -124,5 +138,3 @@
     <button mat-stroked-button (click)='cancel()'>Cancel</button>
   </mat-dialog-actions>
 </form>
-
-

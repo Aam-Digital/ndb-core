@@ -11,8 +11,8 @@ export class NotesService {
 
   // The data source for the note-model. This is where all the notes are
   private readonly dataSource: Observable<NoteModel[]>;
-  // TODO: Can the dataSource and noteUpdater be combined into one entity?
-  // emits, whenever a new is getting saved
+
+  // emits, whenever a new Note is being saved
   private noteUpdater = new BehaviorSubject<NoteModel[]>([]);
 
   constructor(private entityMapper: EntityMapperService) {
@@ -27,6 +27,12 @@ export class NotesService {
   getNotes(): Observable<NoteModel[]> {
     return this.dataSource;
   }
+
+  /**
+   * returns an observable that emits whenever a note-update happens
+   * This returns an observable in contrast to a <code>Subject</code> since
+   * returning a Subject is considered bad practice
+   */
 
   getUpdater(): Observable<NoteModel[]> {
     return this.noteUpdater.asObservable();
@@ -55,7 +61,8 @@ export class NotesService {
     // ... and immediately inform any subscribers that a new note has been saved,
     // if this note is not old (the update will be done automatically by the individual components)
     result.then(res => {
-      if (res.rev === 'x') {
+      // if the revision is the first, emit the new note
+      if (res.rev.startsWith('1')) {
         this.noteUpdater.next([note]);
       }
     });

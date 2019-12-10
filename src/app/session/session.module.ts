@@ -19,11 +19,12 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoginComponent } from './login/login.component';
 import { FormsModule } from '@angular/forms';
-import { DatabaseModule } from '../database/database.module';
+import { EntityModule } from 'app/entity/entity.module';
 import { AlertsModule } from '../alerts/alerts.module';
-import { EntityModule } from '../entity/entity.module';
 import { LoggedInGuard } from './logged-in.guard';
-import { SessionService } from './session.service';
+import { sessionServiceProvider } from './session.service.provider';
+import { databaseServiceProvider } from './database.service.provider';
+import { UserModule } from 'app/user/user.module';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -34,18 +35,18 @@ import {RouterModule} from '@angular/router';
   imports: [
     CommonModule,
     FormsModule,
-    DatabaseModule,
-    AlertsModule,
     EntityModule,
+    AlertsModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     RouterModule,
+    UserModule
   ],
   declarations: [LoginComponent],
   exports: [LoginComponent],
-  providers: [SessionService, LoggedInGuard]
+  providers: [LoggedInGuard, sessionServiceProvider, databaseServiceProvider]
 })
 export class SessionModule {
 }

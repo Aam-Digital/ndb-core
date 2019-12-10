@@ -1,6 +1,7 @@
 {
   "tsconfig": "src/tsconfig.app.json",
   "output": "doc/compodoc",
+  "assetsFolder": "doc/images",
   "includes": "doc/compodoc_sources",
-  "includesName": "developer wiki"
+  "includesName": "Developer Documentation"
 }

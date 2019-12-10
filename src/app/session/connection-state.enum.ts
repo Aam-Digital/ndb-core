@@ -15,17 +15,14 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { MockDatabaseManagerService } from './mock-database-manager.service';
-
-describe('MockDatabaseManagerService', () => {
-  let dbManager: MockDatabaseManagerService;
-
-  beforeEach(() => {
-    dbManager = new MockDatabaseManagerService();
-  });
-
-  it('returns database', function () {
-    const db = dbManager.getDatabase();
-    expect(db).toBeDefined();
-  });
-});
+/** State of the connection to the remote database  */
+export enum ConnectionState {
+  /** we are offline and therefor not connected to the remote db */
+  OFFLINE,
+  /** we tried to login, but it failed, so we are not connected to the remote db */
+  REJECTED,
+  /** we are intentionally not connected to the remote db */
+  DISCONNECTED,
+  /** we are connected to the remote db */
+  CONNECTED,
+}

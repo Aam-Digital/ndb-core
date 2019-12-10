@@ -15,29 +15,31 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { PouchDatabaseManagerService } from './pouch-database-manager.service';
-import {AppConfig} from '../app-config/app-config';
-import {AlertService} from '../alerts/alert.service';
 
-describe('PouchDatabaseManagerService', () => {
-  let dbManager: PouchDatabaseManagerService;
+import {EntitySchemaService} from '../entity/schema/entity-schema.service';
+import {AppConfig} from '../app-config/app-config';
+import {LocalSession} from './local-session';
+
+describe('LocalSessionService', () => {
+  let localSession: LocalSession;
 
   beforeEach(() => {
     AppConfig.settings = {
-      database: {
-        name: 'unit-test',
-        remote_url: 'remote-',
-        timeout: 60000,
-        outdated_threshold_days: 0,
-        useTemporaryDatabase: false,
-      },
-      site_name: '',
+      'site_name': 'Aam Digital - DEV',
+      'database': {
+        'name': 'integration_tests',
+        'remote_url': 'https://demo.aam-digital.com/db/',
+        'timeout': 60000,
+        'outdated_threshold_days': 0,
+        'useTemporaryDatabase': false
+      }
     };
-    dbManager = new PouchDatabaseManagerService(new AlertService(null, null));
+
+    const mockAlertService = jasmine.createSpyObj(['addDebug', 'addInfo', 'addWarning']);
+    localSession = new LocalSession(mockAlertService, new EntitySchemaService());
   });
 
-  it('returns database', function () {
-    const db = dbManager.getDatabase();
-    expect(db).toBeDefined();
+  it('should be created', async () => {
+    expect(localSession).toBeDefined();
   });
 });

@@ -15,22 +15,23 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { PouchDatabaseManagerService } from './pouch-database-manager.service';
+import { SyncedSessionService } from './synced-session.service';
 import { AppConfig } from '../app-config/app-config';
-import { MockDatabaseManagerService } from './mock-database-manager.service';
-import { DatabaseManagerService } from './database-manager.service';
-import {AlertService} from '../alerts/alert.service';
+import { MockSessionService } from './mock-session.service';
+import { SessionService } from './session.service';
+import { AlertService } from '../alerts/alert.service';
+import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
 
-export function databaseManagerServiceFactory(alertService: AlertService): DatabaseManagerService {
+export function sessionServiceFactory(alertService: AlertService, entitySchemaService: EntitySchemaService): SessionService {
   if (AppConfig.settings.database.useTemporaryDatabase) {
-    return new MockDatabaseManagerService();
+    return new MockSessionService(entitySchemaService);
   } else {
-    return new PouchDatabaseManagerService(alertService);
+    return new SyncedSessionService(alertService, entitySchemaService);
   }
 }
 
-export const databaseManagerProvider = {
-  provide: DatabaseManagerService,
-  useFactory: databaseManagerServiceFactory,
-  deps: [AlertService]
+export const sessionServiceProvider = {
+  provide: SessionService,
+  useFactory: sessionServiceFactory,
+  deps: [AlertService, EntitySchemaService]
 };

@@ -15,10 +15,18 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export enum DatabaseSyncStatus {
-  started,
-  completed,
-  failed,
-  pushedChanges,
-  pulledChanges
+/**
+ * State of the Synchronization between local and remote database
+ */
+export enum SyncState {
+  /** Sync startet. In case of liveSync, this means the sync was resumed */
+  STARTED,
+  /** Sync completed. In case of liveSync, this means the sync was paused (and waits for more changes) */
+  COMPLETED,
+  /** Sync failed. This may be, because we are offline, or due to some other reason */
+  FAILED,
+  /** (Potentially) Unsynced. This is the state before the first sync after startup */
+  UNSYNCED,
+  /** Sync was aborted. Currently only used when the initial login takes place offline */
+  ABORTED,
 }

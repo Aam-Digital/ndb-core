@@ -51,9 +51,7 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 
 
 .dashboard-widget .mat-card-header {
-
   padding: 24px;
-  margin-bottom: 10px;
   position: relative;
 
   background-color: lightgray;
@@ -91,15 +89,18 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 }
 
 .dashboard-widget .dashboard-desc {
-  padding: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
   font-style: italic;
 }
 
 mat-card.dashboard-widget {
   min-width: 250px;
   margin: 10px;
-  padding: 0px;
+  padding: 0;
 }
+
+
 
 .dashboard-widget .dashboard-table-cell {
   padding: 10px;

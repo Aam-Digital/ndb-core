@@ -116,6 +116,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<NoteModel> {
       }
       return attendance;
     });
+
     note.author = faker.random.arrayElement(this.teamMembers);
     note.date = faker.date.past(1);
 

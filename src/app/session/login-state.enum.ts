@@ -15,22 +15,12 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { databaseServiceProvider } from './database-manager.service';
-import { databaseManagerProvider } from './database-manager.service.provider';
-import {AlertsModule} from '../alerts/alerts.module';
-
-@NgModule({
-  imports: [
-    CommonModule,
-    AlertsModule,
-  ],
-  declarations: [],
-  providers: [
-    databaseManagerProvider,
-    databaseServiceProvider,
-  ]
-})
-export class DatabaseModule {
+/** State of the login at the local database, which is synonymous to login at the whole application */
+export enum LoginState {
+  /** Login failed due to wrong credentials */
+  LOGIN_FAILED,
+  /** Login state either before first login-attempt or after logout */
+  LOGGED_OUT,
+  /** Successfully logged in */
+  LOGGED_IN,
 }

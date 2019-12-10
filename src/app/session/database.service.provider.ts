@@ -15,8 +15,15 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export enum SessionStatus {
-  loggedIn,
-  loggedOut,
-  loginFailed
+import { Database } from '../database/database';
+import { SessionService } from './session.service';
+
+export function databaseServiceFactory(_sessionService: SessionService) {
+  return _sessionService.getDatabase();
 }
+
+export let databaseServiceProvider = {
+  provide: Database,
+  useFactory: databaseServiceFactory,
+  deps: [SessionService]
+};

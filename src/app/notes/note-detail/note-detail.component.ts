@@ -4,7 +4,6 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {NotesService} from '../notes.service';
-import {MediaChange, MediaObserver} from '@angular/flex-layout';
 
 @Component({
   selector: 'app-note-detail',
@@ -26,8 +25,7 @@ export class NoteDetailComponent implements OnInit {
               public dialogRef: MatDialogRef<NoteDetailComponent>,
               private confirmationDialog: ConfirmationDialogService,
               private entityMapper: EntityMapperService,
-              private notesService: NotesService,
-              private mediaObserver: MediaObserver) {
+              private notesService: NotesService) {
     this.note = data.entity;
     this.originalNote = Object.assign({}, this.note);
 

@@ -15,17 +15,13 @@ import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {AlertService} from '../../alerts/alert.service';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
-import {Database} from '../../database/database';
-import {MockDatabase} from '../../database/mock-database';
 import {DatePipe, Location, PercentPipe} from '@angular/common';
 import {Observable} from 'rxjs';
-import * as uniqid from 'uniqid'; //  Necessary for usage of uniqid in the component
 import {ChildDetailsComponent} from './child-details.component';
 import {ViewSchoolsComponent} from '../view-schools-component/view-schools.component';
 import {SchoolBlockComponent} from '../../schools/school-block/school-block.component';
 import {AserComponent} from '../aser/aser.component';
 import {ChildAttendanceComponent} from '../attendance/child-attendance/child-attendance.component';
-import {NotesComponent} from '../notes/notes.component';
 import {EducationalMaterialComponent} from '../educational-material/educational-material.component';
 import {KeysPipe} from '../../ui-helper/keys-pipe/keys.pipe';
 import {EntitySubrecordComponent} from '../../ui-helper/entity-subrecord/entity-subrecord.component';
@@ -33,13 +29,14 @@ import {AttendanceDaysComponent} from '../attendance/attendance-days/attendance-
 import {AttendanceDayBlockComponent} from '../attendance/attendance-days/attendance-day-block.component';
 import {ChildrenService} from '../children.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {SessionService} from '../../session/session.service';
-import {DatabaseManagerService} from '../../database/database-manager.service';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HealthCheckupComponent} from '../health-checkup/health-checkup.component';
+import { databaseServiceProvider } from 'app/session/database.service.provider';
+import { SessionService } from 'app/session/session.service';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
+import { MockDatabase } from 'app/database/mock-database';
 
 describe('ChildDetailsComponent', () => {
   let component: ChildDetailsComponent;
@@ -56,7 +53,8 @@ describe('ChildDetailsComponent', () => {
   const mockedDialog = { open: () => { return {
       afterClosed: () => Observable.create(observer => observer(false))
     }; }};
-  const mockedSession = { getCurrentUser: () => 'testUser'};
+  const mockedDatabase = new MockDatabase();
+  const mockedSession = { getCurrentUser: () => 'testUser', getDatabase: () => mockedDatabase };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -66,7 +64,6 @@ describe('ChildDetailsComponent', () => {
         SchoolBlockComponent,
         AserComponent,
         ChildAttendanceComponent,
-        NotesComponent,
         EducationalMaterialComponent,
         KeysPipe,
         EntitySubrecordComponent,
@@ -97,15 +94,14 @@ describe('ChildDetailsComponent', () => {
         AlertService,
         DatePipe,
         PercentPipe,
-        { provide: SessionService, useValue: mockedSession},
-        DatabaseManagerService,
+        databaseServiceProvider,
+        { provide: SessionService, useValue: mockedSession },
         { provide: MatDialog, useValue: mockedDialog },
         { provide: ConfirmationDialogService, useValue: mockedConfirmationDialog},
         { provide: MatSnackBar, useValue: mockedSnackBar},
         { provide: Location, useValue: mockedLocation},
         { provide: Router, useValue: mockedRouter},
         { provide: ActivatedRoute, useValue: mockedRoute},
-        { provide: Database, useClass: MockDatabase},
         FormBuilder,
       ]
     })
