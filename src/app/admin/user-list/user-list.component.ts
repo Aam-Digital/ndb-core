@@ -13,8 +13,6 @@ import {UserDetailsComponent} from '../user-details/user-details.component';
 export class UserListComponent implements OnInit {
   public displayedColumns = ['id', 'name', 'admin'];
   public dataSource = new MatTableDataSource<User>();
-  public users: User[] = [];
-  public editing: Boolean = false;
 
   constructor(private entityMapperService: EntityMapperService, private dialog: MatDialog) { }
 
@@ -24,11 +22,7 @@ export class UserListComponent implements OnInit {
 
   loadData() {
     this.entityMapperService.loadType<User>(User)
-      .then(users => {
-        this.users = users;
-        this.dataSource.data = users;
-        console.log(users);
-      });
+      .then(users => this.dataSource.data = users);
   }
 
   editUser(user) {

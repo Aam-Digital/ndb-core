@@ -12,7 +12,9 @@ export class AdminGuard implements CanActivate {
   }
 
   isAdmin() {
-    return this._sessionService.getCurrentUser().isAdmin();
+    if (this._sessionService.isLoggedIn()) {
+      return this._sessionService.getCurrentUser().isAdmin();
+    }
   }
 
   canActivate(

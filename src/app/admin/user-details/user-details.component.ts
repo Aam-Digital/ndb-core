@@ -32,17 +32,11 @@ export class UserDetailsComponent implements OnInit {
   ngOnInit() {
     this.creating = this.user === null;
     if (! this.creating) {
-      this.userForm.patchValue({username: {value: this.user.name, disabled: !this.creating}});
+      this.userForm.patchValue({username: this.user.name});
+      // Username can't be edited after creation
+      this.userForm.get('username').disable();
       this.userForm.patchValue({admin: this.user.isAdmin()});
     }
-  }
-
-  initForm() {
-    this.fb.group({
-      username: [{value: 'Username', disabled: !this.creating}, Validators.required],
-      password: [this.defaultPasswordValue, Validators.required],
-      admin: [false]
-    });
   }
 
   saveUser() {
