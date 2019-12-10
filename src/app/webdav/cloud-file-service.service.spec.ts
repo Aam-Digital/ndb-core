@@ -2,22 +2,42 @@ import { TestBed } from '@angular/core/testing';
 
 import { CloudFileService } from './cloud-file-service.service';
 import { SessionService } from 'app/session/session.service';
+import { User } from 'app/user/user';
+import { AppConfig } from 'app/app-config/app-config';
+
 
 describe('CloudFileService', () => {
-  beforeEach(() => TestBed.configureTestingModule({}));
+  let cloudFileService: CloudFileService;
+  let sessionService: jasmine.SpyObj<SessionService>;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [
-        SessionService
-      ],
-    })
-    .compileComponents();
+    AppConfig.settings = {
+      site_name: '',
+      database: {name: 'unit-tests', remote_url: '', timeout: 60000, outdated_threshold_days: 0, useTemporaryDatabase: true},
+      webdav: {remote_url: 'test-url'}
+    };
+
+    const sessionSpy = jasmine.createSpyObj('SessionService', ['getCurrentUser']);
+
+    TestBed.configureTestingModule({ providers: [
+      CloudFileService,
+      { provide: SessionService, useValue: sessionSpy}]
+    });
+
+    cloudFileService = TestBed.get(CloudFileService);
+    sessionService = TestBed.get(SessionService);
   });
 
-  // TODO: write tests!
-  // it('should be created', () => {
-  //   const service: CloudFileService = TestBed.get(CloudFileService);
-  //   expect(service).toBeTruthy();
+  it('.connect() should call sessionService.getCurrentUser()', () => {
+    cloudFileService.connect('user', 'pass');
+    expect(sessionService.getCurrentUser).toHaveBeenCalled();
+  });
+
+  // it('.connect() should call client.createClient()', () => {
+
+  //   sessionService.getCurrentUser.and.returnValue(new User('user'));
+  //   cloudFileService.connect('user', 'pass');
+    
+  //   expect(webdavClient.createClient).toHaveBeenCalledWith('test-url', {username: 'user', password: 'pass'});
   // });
 });
