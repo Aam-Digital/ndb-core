@@ -7,7 +7,7 @@ import { AppConfig } from 'app/app-config/app-config';
 import webdav from 'webdav';
 
 
-fdescribe('CloudFileService', () => {
+describe('CloudFileService', () => {
   let cloudFileService: CloudFileService;
   let sessionService: jasmine.SpyObj<SessionService>;
 
@@ -26,7 +26,6 @@ fdescribe('CloudFileService', () => {
     });
 
     cloudFileService = TestBed.get(CloudFileService);
-    console.log(cloudFileService);
     sessionService = TestBed.get(SessionService);
   });
 
