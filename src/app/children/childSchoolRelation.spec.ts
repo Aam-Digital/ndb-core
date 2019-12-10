@@ -63,8 +63,8 @@ describe('ChildSchoolRelation Entity', () => {
     entity.childId = expectedData.childId;
     entity.schoolId = expectedData.schoolId;
     entity.schoolClass = expectedData.schoolClass;
-    entity.start = expectedData.start;
-    entity.end = expectedData.end;
+    entity.start = new Date(expectedData.start);
+    entity.end = new Date (expectedData.end);
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 

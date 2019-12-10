@@ -20,6 +20,7 @@ import {MockDatabase} from '../../database/mock-database';
 import {DatePipe, Location, PercentPipe} from '@angular/common';
 import {Observable} from 'rxjs';
 import {ChildDetailsComponent} from './child-details.component';
+import {ViewSchoolsComponent} from '../view-schools-component/view-schools.component';
 import {SchoolBlockComponent} from '../../schools/school-block/school-block.component';
 import {AserComponent} from '../aser/aser.component';
 import {ChildAttendanceComponent} from '../attendance/child-attendance/child-attendance.component';

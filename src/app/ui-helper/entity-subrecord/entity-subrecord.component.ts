@@ -83,7 +83,6 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
 
-    console.log(record);
     this._entityMapper.save(record).then(savedRecord => {
     });
 

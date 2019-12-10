@@ -29,13 +29,14 @@ export const monthEntitySchemaDatatype: EntitySchemaDatatype = {
 
   transformToObjectFormat: (value) => {
     let date;
-    if (value === '') {
-      date = new Date();
+    if (!value || value === '') {
+      date = null;
     } else {
       date = new Date(value);
-    }
-    if (isNaN(date.getTime())) {
-      throw new Error('failed to convert data to Date object: ' + value);
+      if (isNaN(date.getTime())) {
+        console.log('value aus datatype-month.ts: ' + value);
+        throw new Error('failed to convert data to Date object: ' + value);
+      }
     }
     return date;
   }
