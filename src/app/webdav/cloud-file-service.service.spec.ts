@@ -34,10 +34,22 @@ describe('CloudFileService', () => {
     expect(sessionService.getCurrentUser).toHaveBeenCalled();
   });
 
-  it('.connect() should call client.createClient()', () => {
+  it('.connect() should call webdav.createClient()', () => {
     spyOn(webdav, 'createClient');
     sessionService.getCurrentUser.and.returnValue(new User('user'));
     cloudFileService.connect('user', 'pass');
     expect(webdav.createClient).toHaveBeenCalledWith('test-url', {username: 'user', password: 'pass'});
   });
+
+  it('.getDir() should call webdav.getDirectoryContents()', () => {
+    spyOn(webdav, 'getDirectoryContents');
+    cloudFileService.getDir('testDir');
+    expect(webdav.getDirectoryContents).toHaveBeenCalledWith('testDir');
+  });
+
+  it('should create dir', () => {
+    spyOn(webdav, 'createDirectory');
+    cloudFileService.createDir('testDir');
+    expect(webdav.createDirectory).toHaveBeenCalledWith('testDir');
+  })
 });
