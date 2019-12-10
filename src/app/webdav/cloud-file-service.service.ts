@@ -4,6 +4,9 @@ import webdav from 'webdav';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { SessionService } from 'app/session/session.service';
 
+/**
+ * This class provides access to the in config.json specified cloud service.
+ */
 @Injectable()
 export class CloudFileService {
 
