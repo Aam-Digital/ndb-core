@@ -66,6 +66,8 @@ export class Entity {
   @DatabaseField()
   _rev: string;
 
+  _cacheExpired: boolean;
+
 
   /**
    * An helper property to access the actual id without prefix
@@ -84,6 +86,7 @@ export class Entity {
    * @param id a unique id for this entity
    */
   constructor(id: string) {
+    this._cacheExpired = true;
     this.entityId = id;
   }
 
@@ -150,5 +153,15 @@ export class Entity {
 
   public getColor() {
     return '';
+  }
+
+  cacheExpire() {
+    this._cacheExpired = true;
+  }
+  cacheRefreshed() {
+    this._cacheExpired = false;
+  }
+  isCacheExpired() {
+    return this._cacheExpired;
   }
 }

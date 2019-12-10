@@ -19,6 +19,7 @@ import { Injectable } from '@angular/core';
 import { Database } from '../database/database';
 import {Entity, EntityConstructor} from './entity';
 import {EntitySchemaService} from './schema/entity-schema.service';
+import { EntityCache } from './cache/entity-cache.service';
 
 /**
  * The default generic DataMapper for Entity and any subclass.
@@ -31,6 +32,7 @@ export class EntityMapperService {
   constructor(
     private _db: Database,
     private entitySchemaService: EntitySchemaService,
+    private entityCache: EntityCache,
   ) { }
 
   /**
@@ -41,9 +43,12 @@ export class EntityMapperService {
    * @returns A Promise containing the resultEntity filled with its data.
    */
   public async load<T extends Entity>(entityType: EntityConstructor<T>, id: string): Promise<T> {
-    const resultEntity = new entityType('');
-    const result = await this._db.get(Entity.createPrefixedId(resultEntity.getType(), id));
-    this.entitySchemaService.loadDataIntoEntity(resultEntity, result);
+    const resultEntity = this.entityCache.getEntity(entityType, id);
+    if (resultEntity.isCacheExpired()) {
+      const result = await this._db.get(Entity.createPrefixedId(resultEntity.getType(), id));
+      this.entitySchemaService.loadDataIntoEntity(resultEntity, result);
+      resultEntity.cacheRefreshed();
+    }
     return resultEntity;
   }
 
@@ -59,8 +64,11 @@ export class EntityMapperService {
     const allRecordsOfType = await this._db.getAll(new entityType('').getType() + ':');
 
     for (const record of allRecordsOfType) {
-      const entity = new entityType('');
-      this.entitySchemaService.loadDataIntoEntity(entity, record);
+      const entity = this.entityCache.getEntity(entityType, record._id);
+      if (entity.isCacheExpired()) {
+        this.entitySchemaService.loadDataIntoEntity(entity, record);
+        entity.cacheRefreshed();
+      }
       resultArray.push(entity);
     }
 

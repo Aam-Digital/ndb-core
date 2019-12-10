@@ -15,23 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { EntityMapperService } from './entity-mapper.service';
-import {EntitySchemaService} from './schema/entity-schema.service';
-import { LRUEntityCache } from './cache/lru-entity-cache.service';
-import { EntityCache } from './cache/entity-cache.service';
+import { Injectable } from '@angular/core';
+import { Entity, EntityConstructor } from '../entity';
 
-@NgModule({
-  imports: [
-    CommonModule
-  ],
-  declarations: [],
-  providers: [
-    EntityMapperService,
-    EntitySchemaService,
-    { provide: EntityCache, useClass: LRUEntityCache }
-  ]
-})
-export class EntityModule {
+@Injectable()
+export abstract class EntityCache {
+    abstract getEntity<T extends Entity>(entityType: EntityConstructor<T>, id: string): T;
 }
