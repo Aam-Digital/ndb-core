@@ -4,9 +4,10 @@ import { CloudFileService } from './cloud-file-service.service';
 import { SessionService } from 'app/session/session.service';
 import { User } from 'app/user/user';
 import { AppConfig } from 'app/app-config/app-config';
+import webdav from 'webdav';
 
 
-describe('CloudFileService', () => {
+fdescribe('CloudFileService', () => {
   let cloudFileService: CloudFileService;
   let sessionService: jasmine.SpyObj<SessionService>;
 
@@ -25,6 +26,7 @@ describe('CloudFileService', () => {
     });
 
     cloudFileService = TestBed.get(CloudFileService);
+    console.log(cloudFileService);
     sessionService = TestBed.get(SessionService);
   });
 
@@ -33,11 +35,10 @@ describe('CloudFileService', () => {
     expect(sessionService.getCurrentUser).toHaveBeenCalled();
   });
 
-  // it('.connect() should call client.createClient()', () => {
-
-  //   sessionService.getCurrentUser.and.returnValue(new User('user'));
-  //   cloudFileService.connect('user', 'pass');
-    
-  //   expect(webdavClient.createClient).toHaveBeenCalledWith('test-url', {username: 'user', password: 'pass'});
-  // });
+  it('.connect() should call client.createClient()', () => {
+    spyOn(webdav, 'createClient');
+    sessionService.getCurrentUser.and.returnValue(new User('user'));
+    cloudFileService.connect('user', 'pass');
+    expect(webdav.createClient).toHaveBeenCalledWith('test-url', {username: 'user', password: 'pass'});
+  });
 });
