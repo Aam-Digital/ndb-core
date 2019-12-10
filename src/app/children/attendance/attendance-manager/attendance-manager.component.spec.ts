@@ -19,12 +19,9 @@ import {AttendanceDaysComponent} from '../attendance-days/attendance-days.compon
 import {FormsModule} from '@angular/forms';
 import {UiHelperModule} from '../../../ui-helper/ui-helper.module';
 import {ChildrenService} from '../../children.service';
-import {Database} from '../../../database/database';
-import {MockDatabase} from '../../../database/mock-database';
 import {EntityModule} from '../../../entity/entity.module';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import { CloudFileService } from 'app/webdav/cloud-file-service.service';
-import { MockCloudFileService } from 'app/webdav/mock-cloud-file-service';
+import {BehaviorSubject} from 'rxjs';
 
 describe('AttendanceManagerComponent', () => {
   let component: AttendanceManagerComponent;
@@ -38,9 +35,13 @@ describe('AttendanceManagerComponent', () => {
         MatProgressBarModule, MatTooltipModule, MatSelectModule, MatIconModule, FormsModule, NoopAnimationsModule,
         UiHelperModule, EntityModule],
       providers: [
-        {provide: ChildrenService, useClass: ChildrenService},
-        {provide: Database, useClass: MockDatabase},
-        {provide: CloudFileService, useClass: MockCloudFileService}
+        {
+          provide: ChildrenService,
+          useValue: {
+            getChildren: () => new BehaviorSubject([]),
+            getAttendancesOfChild: () => new BehaviorSubject([])
+          }
+        },
       ],
     })
     .compileComponents();
