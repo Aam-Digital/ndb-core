@@ -33,7 +33,12 @@ export abstract class Database {
   abstract query(fun: any, options?: any): Promise<any>;
   abstract saveDatabaseIndex(designDoc: any): Promise<any>;
 
-  getAll(prefix = ''): Promise<Array<any>> {
-    return this.allDocs({include_docs: true, startkey: prefix, endkey: prefix + '\ufff0'});
+  getAll(prefix = '', limit = undefined, skip = undefined): Promise<Array<any>> {
+    return this.allDocs({
+      include_docs: true,
+      startkey: prefix,
+      endkey: prefix + '\ufff0',
+      limit, skip
+    });
   }
 }
