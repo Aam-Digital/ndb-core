@@ -10,6 +10,8 @@ import webdav from 'webdav';
 describe('CloudFileService', () => {
   let cloudFileService: CloudFileService;
   let sessionService: jasmine.SpyObj<SessionService>;
+  let sessionSpy;
+  let clientSpy;
 
   beforeEach(() => {
     AppConfig.settings = {
@@ -18,7 +20,8 @@ describe('CloudFileService', () => {
       webdav: {remote_url: 'test-url'}
     };
 
-    const sessionSpy = jasmine.createSpyObj('SessionService', ['getCurrentUser']);
+    sessionSpy = jasmine.createSpyObj('SessionService', ['getCurrentUser']);
+    clientSpy = jasmine.createSpyObj('client', ['getDirectoryContents', 'createDirectory']);
 
     TestBed.configureTestingModule({ providers: [
       CloudFileService,
@@ -26,6 +29,7 @@ describe('CloudFileService', () => {
     });
 
     cloudFileService = TestBed.get(CloudFileService);
+    cloudFileService['client'] = clientSpy;
     sessionService = TestBed.get(SessionService);
   });
 
@@ -42,14 +46,12 @@ describe('CloudFileService', () => {
   });
 
   it('.getDir() should call webdav.getDirectoryContents()', () => {
-    spyOn(webdav, 'getDirectoryContents');
     cloudFileService.getDir('testDir');
-    expect(webdav.getDirectoryContents).toHaveBeenCalledWith('testDir');
+    expect(clientSpy.getDirectoryContents).toHaveBeenCalledWith('testDir');
   });
 
   it('should create dir', () => {
-    spyOn(webdav, 'createDirectory');
     cloudFileService.createDir('testDir');
-    expect(webdav.createDirectory).toHaveBeenCalledWith('testDir');
+    expect(clientSpy.createDirectory).toHaveBeenCalledWith('testDir');
   })
 });
