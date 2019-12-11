@@ -1,13 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-
 import { CloudFileService } from './cloud-file-service.service';
 import { SessionService } from 'app/session/session.service';
 import { User } from 'app/user/user';
 import { AppConfig } from 'app/app-config/app-config';
 import webdav from 'webdav';
 
-
-describe('CloudFileService', () => {
+fdescribe('CloudFileService', () => {
   let cloudFileService: CloudFileService;
   let sessionService: jasmine.SpyObj<SessionService>;
   let sessionSpy;
@@ -21,7 +19,7 @@ describe('CloudFileService', () => {
     };
 
     sessionSpy = jasmine.createSpyObj('SessionService', ['getCurrentUser']);
-    clientSpy = jasmine.createSpyObj('client', ['getDirectoryContents', 'createDirectory']);
+    clientSpy = jasmine.createSpyObj('client', ['getDirectoryContents', 'createDirectory', 'getFileContents', 'putFileContents']);
 
     TestBed.configureTestingModule({ providers: [
       CloudFileService,
@@ -53,5 +51,22 @@ describe('CloudFileService', () => {
   it('should create dir', () => {
     cloudFileService.createDir('testDir');
     expect(clientSpy.createDirectory).toHaveBeenCalledWith('testDir');
-  })
+  });
+
+  it('should check file existance', async() => {
+    spyOn(cloudFileService, 'getDir').and.returnValue(new Promise((resolve,reject) => {resolve('"basename": "filename"')}));
+    expect(await cloudFileService.doesFileExist('filename')).toBe(true);
+    expect(await cloudFileService.doesFileExist('nonexistant')).toBe(false);
+  });
+
+  it('should get images', async() => {
+    spyOn(cloudFileService, 'doesFileExist').and.returnValue(new Promise((resolve,reject) => {resolve(true)}));
+    await cloudFileService.getImage('filepath');
+    expect(clientSpy.getFileContents).toHaveBeenCalledWith('filepath');
+  });
+
+  it('should set images', () => {
+    cloudFileService.setImage('image', 'path');
+    expect(clientSpy.putFileContents).toHaveBeenCalledWith('path', 'image', jasmine.anything());
+  });
 });
