@@ -5,7 +5,7 @@ import { User } from 'app/user/user';
 import { AppConfig } from 'app/app-config/app-config';
 import webdav from 'webdav';
 
-fdescribe('CloudFileService', () => {
+describe('CloudFileService', () => {
   let cloudFileService: CloudFileService;
   let sessionService: jasmine.SpyObj<SessionService>;
   let sessionSpy;
@@ -54,13 +54,13 @@ fdescribe('CloudFileService', () => {
   });
 
   it('should check file existance', async() => {
-    spyOn(cloudFileService, 'getDir').and.returnValue(new Promise((resolve,reject) => {resolve('"basename": "filename"')}));
+    spyOn(cloudFileService, 'getDir').and.returnValue(new Promise((resolve, reject) => {resolve('"basename": "filename"'); }));
     expect(await cloudFileService.doesFileExist('filename')).toBe(true);
     expect(await cloudFileService.doesFileExist('nonexistant')).toBe(false);
   });
 
   it('should get images', async() => {
-    spyOn(cloudFileService, 'doesFileExist').and.returnValue(new Promise((resolve,reject) => {resolve(true)}));
+    spyOn(cloudFileService, 'doesFileExist').and.returnValue(new Promise((resolve, reject) => {resolve(true); }));
     await cloudFileService.getImage('filepath');
     expect(clientSpy.getFileContents).toHaveBeenCalledWith('filepath');
   });
