@@ -108,7 +108,7 @@ export class CloudFileService {
   public async getImage(path: string): Promise<SafeUrl> {
     if (await this.doesFileExist(path)) {
       const image = await this.client.getFileContents(path);
-      return this._bufferArrayToBase64(image);
+      return this.bufferArrayToBase64(image);
     }
     return await this.getDefaultImage();
   }
@@ -119,7 +119,7 @@ export class CloudFileService {
   public getDefaultImage(): SafeUrl {
     // if (!this.defaultImage) {
     //  const image = this.client.getFileContents('default.png');
-    //  this.defaultImage = this._bufferArrayToBase64(image);
+    //  this.defaultImage = this.bufferArrayToBase64(image);
     // }
     // return new Promise( (resolve, reject) => resolve(this.defaultImage));
     return 'assets/child.png';
@@ -129,7 +129,7 @@ export class CloudFileService {
    * converts an ArrayBuffer to a SafeUrl and returns it
    * @param arrayBuffer ArrayBuffer to be converted
    */
-  public _bufferArrayToBase64(arrayBuffer: ArrayBuffer): SafeUrl {
+  private bufferArrayToBase64(arrayBuffer: ArrayBuffer): SafeUrl {
     const base64String = btoa(new Uint8Array(arrayBuffer).reduce((data, byte) => {
         return data + String.fromCharCode(byte); }, '')
       );
