@@ -99,6 +99,7 @@ function generateChildSchoolRelationEntities(): ChildSchoolRelation[] {
 describe('ChildrenService', () => {
   let service: ChildrenService;
   let entityMapper: EntityMapperService;
+  let cloudFileService: CloudFileService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -118,6 +119,7 @@ describe('ChildrenService', () => {
     generateChildSchoolRelationEntities().forEach(cs => entityMapper.save(cs));
 
     service = TestBed.get(ChildrenService);
+    cloudFileService = TestBed.get(CloudFileService);
   });
 
   it('should be created', () => {
@@ -138,6 +140,29 @@ describe('ChildrenService', () => {
     expect(find.getId()).toBe(child.getId());
     expect(childrenBefore.length).toBe(childrenAfter.length - 1);
   });
+
+  it('should load image for a single child', async() => {
+    let child = new Child('10');
+    await entityMapper.save<Child>(child);
+    expect(child.photo).not.toBeDefined();
+    spyOn(cloudFileService, 'getImage').and.callThrough();
+    child = await service.getChild('10').toPromise();
+    expect(cloudFileService.getImage).toHaveBeenCalledWith('10');
+    expect(child.photo).toEqual(await cloudFileService.getImage('10'));
+
+  });
+
+  it('should load images for children', async() => {
+    let child = new Child('10');
+    await entityMapper.save<Child>(child);
+    expect(child.photo).not.toBeDefined();
+    spyOn(cloudFileService, 'getImage').and.callThrough();
+    const childrenList = await service.getChildren().toPromise();
+    child = childrenList[0];
+    expect(cloudFileService.getImage).toHaveBeenCalledWith('10');
+    expect(child.photo).toEqual(await cloudFileService.getImage('10'));
+  });
+
 
   it('should find a newly saved child', async () => {
     const child = new Child('10');
