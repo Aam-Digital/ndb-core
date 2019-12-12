@@ -91,4 +91,14 @@ describe('User', () => {
 
     expect(user.checkPassword(password + 'x')).toBeFalsy();
   });
+
+  it('sets cloud passwords', () => {
+    const user = new User('test1');
+    user.setNewPassword('userpwd');
+    expect(user.cloudPasswordDec).not.toBeDefined();
+    expect(user.checkPassword('userpwd')).toBeTrue();
+    user.setCloudPassword('cloudpwd', 'userpwd');
+    expect(user.cloudPasswordDec).toEqual('cloudpwd');
+    expect(user.decryptCloudPassword('userpwd')).toEqual('cloudpwd');
+  });
 });
