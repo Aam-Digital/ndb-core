@@ -18,9 +18,10 @@ export class LRUEntityCache extends EntityCache {
     public getEntity<T extends Entity>(entityType: EntityConstructor<T>, id: string): T {
         const cached = this.cache.get(id);
         if (cached) {
-            console.log("cache hit");
+            window["cacheHit"] = window["cacheHit"] ? window["cacheHit"] + 1 : 1;
             return cached as T;
         }
+        window["cacheMiss"] = window["cacheMiss"] ? window["cacheMiss"] + 1 : 1;
         const result = new entityType(id);
         this.cache.set(id, result);
         return result;
