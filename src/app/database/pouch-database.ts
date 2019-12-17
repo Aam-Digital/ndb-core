@@ -36,7 +36,6 @@ export class PouchDatabase extends Database {
   }
 
   get(id: string) {
-    this.alertService.addDebug('DB_READ');
     return this._pouchDB.get(id)
       .catch((err) => {
         this.notifyError(err);
@@ -45,7 +44,6 @@ export class PouchDatabase extends Database {
   }
 
   allDocs(options?: any) {
-    this.alertService.addDebug('DB_READ');
     return this._pouchDB.allDocs(options).then(result => {
       const resultArray = [];
       for (const row of result.rows) {
@@ -56,14 +54,12 @@ export class PouchDatabase extends Database {
   }
 
   allDocsRaw(options?: any) {
-    this.alertService.addDebug('DB_READ');
     return this._pouchDB.allDocs(options).then(result => {
       return result;
     });
   }
 
   put(object: any, forceOverwrite?: boolean) {
-    this.alertService.addDebug('DB_WRITE');
     const options: any = {};
     // if (forceOverwrite) {
     //   options.force = true;
@@ -89,7 +85,6 @@ export class PouchDatabase extends Database {
   }
 
   query(fun: (doc: any, emit: any) => void, options: any): Promise<any> {
-    this.alertService.addDebug('DB_READ');
     return this._pouchDB.query(fun, options);
   }
 
