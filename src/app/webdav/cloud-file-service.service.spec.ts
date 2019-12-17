@@ -31,15 +31,11 @@ describe('CloudFileService', () => {
     sessionService = TestBed.get(SessionService);
   });
 
-  it('.connect() should call sessionService.getCurrentUser()', () => {
-    cloudFileService.connect('user', 'pass');
-    expect(sessionService.getCurrentUser).toHaveBeenCalled();
-  });
-
-  it('.connect() should call webdav.createClient()', () => {
+  it('.connect() should check user existance and call webdav.createClient()', () => {
     spyOn(webdav, 'createClient');
     sessionService.getCurrentUser.and.returnValue(new User('user'));
     cloudFileService.connect('user', 'pass');
+    expect(sessionService.getCurrentUser).toHaveBeenCalled();
     expect(webdav.createClient).toHaveBeenCalledWith('test-url', {username: 'user', password: 'pass'});
   });
 
