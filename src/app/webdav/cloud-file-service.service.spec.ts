@@ -65,4 +65,11 @@ describe('CloudFileService', () => {
     cloudFileService.setImage('image', 'path');
     expect(clientSpy.putFileContents).toHaveBeenCalledWith('path', 'image', jasmine.anything());
   });
+
+  it('should return a default image if no child picture is present', async () => {
+    spyOn(cloudFileService, 'getDefaultImage');
+    spyOn(cloudFileService, 'doesFileExist').and.returnValue(new Promise((resolve, reject) => {resolve(false); }));
+    const image = await cloudFileService.getImage('filepath');
+    expect(image).toBe(cloudFileService.getDefaultImage());
+  });
 });
