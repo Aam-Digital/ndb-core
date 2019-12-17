@@ -32,7 +32,9 @@
                  matInput type="number" min="0" [title]="col.label" [value]="rec[col.name]" (change)="rec[col.name]=$event.target.valueAsNumber">
 
           <input *ngIf="col.inputType === 'date'"
-                 matInput type="date" [title]="col.label" [valueAsDate]="rec[col.name]" (change)="rec[col.name]=$event.target.valueAsDate">
+                 matInput [title]="col.label" [value]="rec[col.name]" (dateChange)="rec[col.name]=$event.target.value"  [matDatepicker]="subrecordDatepicker">
+          <mat-datepicker-toggle *ngIf="col.inputType === 'date'" matSuffix [for]="subrecordDatepicker"></mat-datepicker-toggle>
+          <mat-datepicker #subrecordDatepicker ></mat-datepicker>
 
           <input *ngIf="col.inputType === 'month'"
                  matInput type="month" [title]="col.label" [valueAsDate]="rec[col.name]" (change)="rec[col.name]=$event.target.valueAsDate">
