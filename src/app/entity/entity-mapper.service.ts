@@ -42,14 +42,20 @@ export class EntityMapperService {
    * @param id the id of the entity to load.
    * @returns A Promise containing the resultEntity filled with its data.
    */
-  public async load<T extends Entity>(entityType: EntityConstructor<T>, id: string): Promise<T> {
-    const resultEntity = this.entityCache.getEntity(entityType, id);
-    if (resultEntity.isCacheExpired()) {
-      const result = await this._db.get(Entity.createPrefixedId(resultEntity.getType(), id));
-      this.entitySchemaService.loadDataIntoEntity(resultEntity, result);
-      resultEntity.cacheRefreshed();
+  public async load<T extends Entity>(entityType: EntityConstructor<T>, id: string, throws: boolean = false): Promise<T> {
+    try {
+      const resultEntity = this.entityCache.getEntity(entityType, id);
+      if (resultEntity.isCacheExpired()) {
+        const result = await this._db.get(Entity.createPrefixedId(resultEntity.getType(), id));
+        this.entitySchemaService.loadDataIntoEntity(resultEntity, result);
+        resultEntity.cacheRefreshed();
+      }
+      return resultEntity;
+    } catch (error) {
+      if (throws) {
+        throw error;
+      }
     }
-    return resultEntity;
   }
 
   /**

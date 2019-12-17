@@ -20,7 +20,7 @@ export class ProgressDashboardComponent implements OnInit {
 
   ngOnInit() {
     this.data = new ProgressDashboardConfig(this.dashboardConfigId);
-    this.entityMapper.load<ProgressDashboardConfig>(ProgressDashboardConfig, this.dashboardConfigId)
+    this.entityMapper.load<ProgressDashboardConfig>(ProgressDashboardConfig, this.dashboardConfigId, true)
       .then(config => {
         this.data = config;
       })
