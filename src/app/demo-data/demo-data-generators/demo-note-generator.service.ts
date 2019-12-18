@@ -84,7 +84,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<NoteModel> {
     const selectedStory = faker.random.arrayElement(noteIndividualStories);
     Object.assign(note, selectedStory);
 
-    note.children = [new AttendanceModel(child.getId())];
+    note.addChild(child.getId());
     note.author = faker.random.arrayElement(this.teamMembers);
     note.date = faker.date.between(child.admissionDate, this.getEarlierDateOrToday(child.dropoutDate));
 

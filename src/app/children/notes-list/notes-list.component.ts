@@ -6,7 +6,6 @@ import {SessionService} from '../../session/session.service';
 import {DatePipe} from '@angular/common';
 import {ChildrenService} from '../children.service';
 import {ActivatedRoute} from '@angular/router';
-import {AttendanceModel} from '../../notes/attendance.model';
 import {NotesService} from '../../notes/notes.service';
 import {Subscription} from 'rxjs';
 
@@ -54,8 +53,9 @@ export class NotesListComponent implements OnInit, OnDestroy {
           });
       });
 
-      this.recordSubscription = this.notesService.getUpdater().subscribe(newModels => {
-        newModels.forEach(newModel => this.records.push(newModel));
+      // in order to make something like this work, the {@link AppEntitySubrecord} would have to be altered
+      this.recordSubscription = this.notesService.getUpdater().subscribe(newNotes => {
+        newNotes.forEach(newModel => this.records.push(newModel));
       });
 
     });
@@ -69,7 +69,7 @@ export class NotesListComponent implements OnInit, OnDestroy {
     return () => {
       const newNote = new NoteModel(Date.now().toString());
       newNote.date = new Date();
-      newNote.children = [new AttendanceModel(childId)];
+      newNote.addChild(childId);
       newNote.author = user;
 
       return newNote;

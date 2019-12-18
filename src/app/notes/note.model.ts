@@ -154,6 +154,15 @@ export class NoteModel extends Entity {
   }
 
   /**
+   * adds multiple children to this note
+   * @param childIds The id's of the children to add
+   */
+
+  addChildren(...childIds: string[]) {
+    childIds.forEach(child => this.addChild(child));
+  }
+
+  /**
    * Toggles for a given child it's presence.
    * If the child was absent, the presence-field will be true for that child.
    * If the child was present, the presence-field will be false for that child

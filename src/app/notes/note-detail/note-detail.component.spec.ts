@@ -49,8 +49,4 @@ describe('NoteDetailComponent', () => {
       notesService
     );
   }));
-
-  it('should ', function () {
-
-  });
 });

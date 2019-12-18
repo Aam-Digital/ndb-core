@@ -1,6 +1,6 @@
 <h2 *ngIf="label" class="mat-title">{{label}}</h2>
 <mat-accordion>
-  <mat-expansion-panel  *ngFor="let child of note.childrenWithPresence(present)">
+  <mat-expansion-panel *ngFor="let child of note.childrenWithPresence(present)">
 
     <mat-expansion-panel-header>
       <app-child-block [entityId]="child.childID"></app-child-block>
