@@ -55,6 +55,9 @@ export class NotesService {
    * @param note The note to save
    */
 
+  // TODO: something like this should be implemented in the {@link EntityMapperService} so that changes from a remote source can be fetched.
+  // TODO: A note could for example be created remotely when it is being created using the {@link PrimaryActionComponent}
+
   saveNewNote(note: NoteModel) {
     // save the new note to the database...
     const result = this.entityMapper.save(note);

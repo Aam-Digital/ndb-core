@@ -161,10 +161,7 @@ export class NoteModel extends Entity {
    */
 
   togglePresence(childId: string) {
-    this.children.forEach(attendance => {
-      if (attendance.childID === childId) {
-        attendance.present = !attendance.present;
-      }
-    });
+    const child = this.children.find((attendance) => attendance.childID === childId );
+    if (child !== undefined) { child.present = !child.present; }
   }
 }
