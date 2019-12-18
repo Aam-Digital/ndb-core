@@ -60,16 +60,17 @@ export class BackupService {
    * @returns string a valid CSV string of the input data
    */
   createCsv(data: Entity[]): string {
-    const resultFields = ['_id', '_rev'];
-    data.forEach(d => {
-      for (const propertyName in d) {
-        if (resultFields.indexOf(propertyName) === -1) {
-          resultFields.push(propertyName);
+    // create list of row descriptions for the csv string
+    const uniqueFields = ['_id', '_rev'];
+    data.forEach(element => {
+      for (const field in element) {
+        if (!uniqueFields.includes(field)) {
+          uniqueFields.push(field);
         }
       }
     });
     return this.papa.unparse(
-        {data: data, fields: resultFields},
+        {data: data, fields: uniqueFields},
         {quotes: true, header: true});
   }
 
