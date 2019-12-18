@@ -5,7 +5,6 @@ import {EntityMapperService} from '../entity/entity-mapper.service';
 import {EntitySchemaService} from '../entity/schema/entity-schema.service';
 import {MockDatabase} from '../database/mock-database';
 
-
 function generateNotes() {
   const notes = [];
 
@@ -38,10 +37,24 @@ function generateNotes() {
   return notes;
 }
 
+function generateFreshNote() {
+  const n1 = new NoteModel('5');
+  n1.children = [];
+  return n1;
+}
+
+function generateUpdatedNote() {
+  const n1 = new NoteModel('6');
+  n1._rev = 'x';
+  return n1;
+}
+
 describe('NotesService', () => {
   let entityMapper: EntityMapperService;
   let entitySchemaService: EntitySchemaService;
   let service: NotesService;
+
+  let newNote: NoteModel;
 
   beforeEach(() => {
     entitySchemaService = new EntitySchemaService();
@@ -50,23 +63,37 @@ describe('NotesService', () => {
     generateNotes().forEach(note => entityMapper.save(note));
 
     service = new NotesService(entityMapper);
-  });
-
-  it('#getNotes() for child 1 should have length 3', () => {
-    service.getNotesForChild('1').subscribe(res => {
-      expect(res.length).toBe(3);
+    service.getUpdater().subscribe(newNotes => {
+      newNote = newNotes[0];
     });
   });
 
-  it ('#getNotes() for child 4 should have length 1', () => {
+  it('#getNotes() should return correct number of notes', async () => {
+    service.getNotesForChild('1').subscribe(async res => {
+      expect(res.length).toBe(3);
+    });
+
     service.getNotesForChild('4').subscribe(res => {
-      expect(res.length).toBe(3);
+      expect(res.length).toBe(1);
     });
   });
 
-  it ('#getNotes() for non-existing should have length 0', () => {
-    service.getNotesForChild('10').subscribe(res => {
-      expect(res.length).toBe(0);
+  it('#saveNewNote() should emit when a new note is being saved', (doneFn) => {
+    service.getUpdater().subscribe(newNotes => {
+        expect(newNotes.length).toBe(1);
+        doneFn();
+    });
+    const freshNote = generateFreshNote();
+    service.saveNewNote(freshNote);
+  });
+
+  it('#saveNewNote() should not emit when an updated note is being saved ', () => {
+
+    const updatedNote = generateUpdatedNote();
+    service.saveNewNote(updatedNote);
+
+    service.getUpdater().subscribe(newNotes => {
+      expect(newNotes.length).toBe(0);
     });
   });
 

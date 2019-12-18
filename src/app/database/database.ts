@@ -15,6 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {MockDatabase} from './mock-database';
+
 /**
  * An implementation of this interface provides functions for direct database access.
  * The interface is an extension of the [PouchDB API](https://pouchdb.com/api.html).

@@ -9,7 +9,7 @@ import {map} from 'rxjs/operators';
 })
 export class NotesService {
 
-  // The data source for the note-model. This is where all the notes are
+  // The data source for the note-model. This is where all the notes can be retrieved off
   private readonly dataSource: Observable<NoteModel[]>;
 
   // emits, whenever a new Note is being saved
@@ -61,10 +61,20 @@ export class NotesService {
     // ... and immediately inform any subscribers that a new note has been saved,
     // if this note is not old (the update will be done automatically by the individual components)
     result.then(res => {
+      console.log('callback for note: ', note);
       // if the revision is the first, emit the new note
-      if (res.rev.startsWith('1')) {
+      // What the revision is is dependant from the used database.
+      // In case of a temporary db, the first revision is denoted as 'x', the second as 'xx' and so on
+      // In the case of the pouch db, the first revision string starts with a '1', the second with a '2' and so on
+      if (res.rev === 'x') {
+        this.noteUpdater.next([note]);
+      } else if (res.rev.startsWith('1')) {
         this.noteUpdater.next([note]);
       }
+
+    }).catch(reason => {
+      // should never trigger since errors should be handled directly by the database/entityMapper
+      console.log('A new note could not be saved: ', reason);
     });
   }
 
