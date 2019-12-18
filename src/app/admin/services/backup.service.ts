@@ -61,14 +61,10 @@ export class BackupService {
    */
   createCsv(data): string {
     // create list of row descriptions for the csv string
-    const uniqueFields = ['_id', '_rev'];
-    data.forEach(element => {
-      for (const field in element) {
-        if (!uniqueFields.includes(field)) {
-          uniqueFields.push(field);
-        }
-      }
-    });
+    const allFields = ['_id', '_rev'];
+    data.forEach(element => allFields.concat(element.keys()));
+    const uniqueFields = [... new Set(allFields)]; // creates list with unique elements
+
     return this.papa.unparse(
         {data: data, fields: uniqueFields},
         {quotes: true, header: true});
