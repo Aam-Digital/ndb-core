@@ -37,6 +37,7 @@ import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
 import { MockDatabase } from 'app/database/mock-database';
+import {NotesListComponent} from '../notes-list/notes-list.component';
 
 describe('ChildDetailsComponent', () => {
   let component: ChildDetailsComponent;
@@ -69,7 +70,8 @@ describe('ChildDetailsComponent', () => {
         EntitySubrecordComponent,
         AttendanceDaysComponent,
         AttendanceDayBlockComponent,
-        HealthCheckupComponent
+        HealthCheckupComponent,
+        NotesListComponent
       ],
       imports: [
         MatTableModule,

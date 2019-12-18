@@ -1,22 +1,14 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ChildPresenceListComponent } from './child-presence-list.component';
+import {NoteModel} from '../../note.model';
 
 describe('ChildPresenceListComponent', () => {
   let component: ChildPresenceListComponent;
-  let fixture: ComponentFixture<ChildPresenceListComponent>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ ChildPresenceListComponent ]
-    })
-    .compileComponents();
-  }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ChildPresenceListComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    component = new ChildPresenceListComponent();
+    component.note = new NoteModel('1');
+
   });
 
   it('should create', () => {

@@ -73,27 +73,28 @@ export class NoteModel extends Entity {
   }
 
   public getColor() {
+    let color = '';
     if (this.warningLevel === WarningLevel.URGENT) {
-      return '#fd727280';
+      color = '#fd727280';
     }
     if (this.warningLevel === WarningLevel.WARNING) {
-      return '#ffa50080';
+      color = '#ffa50080';
     }
 
     if (this.isMeeting()) {
-      return '#E1F5FE';
+      color = '#E1F5FE';
     }
     if (this.category === 'Discussion/Decision') {
-      return '#E1BEE7';
+      color = '#E1BEE7';
     }
     if (this.category === 'Annual Survey') {
-      return '#FFFDE7';
+      color = '#FFFDE7';
     }
     if (this.category === 'Daily Routine') {
-      return '#F1F8E9';
+      color = '#F1F8E9';
     }
 
-    return '';
+    return color;
   }
 
   /**

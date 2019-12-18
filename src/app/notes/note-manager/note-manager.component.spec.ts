@@ -50,11 +50,12 @@ describe('NoteManagerComponent', () => {
     });
   });
 
-  it('list should not be longer after saving an old note ', () => {
+  it('list should not be longer after saving an old note', () => {
     const initialLength = noteManager.entityList.length;
     notesService.saveNewNote(generateUpdatedNoteModel());
     notesService.getUpdater().toPromise().then( v => {
       expect(noteManager.entityList.length).toBe(initialLength);
     });
   });
+
 });
