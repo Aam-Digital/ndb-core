@@ -1,62 +1,35 @@
-import {Component, Inject, Input, OnInit, ViewChild} from '@angular/core';
-import {NoteModel} from '../note.model';
+import {Component, Inject} from '@angular/core';
+import {AbstractDetailsComponent} from '../../ui-helper/AbstractDetailsComponent';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {NotesService} from '../notes.service';
+import {NoteModel} from '../note.model';
 
 @Component({
   selector: 'app-note-detail',
   templateUrl: './note-detail.component.html',
   styleUrls: ['./note-detail.component.scss']
 })
-export class NoteDetailComponent implements OnInit {
-  @Input() note: NoteModel;
-
-  originalNote: NoteModel;
+export class NoteDetailComponent extends AbstractDetailsComponent<NoteModel> {
 
   smallScreen: boolean;
-
-  @ViewChild('recordForm', { static: true }) form;
 
   interactionTypes = NoteModel.INTERACTION_TYPES;
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
-              public dialogRef: MatDialogRef<NoteDetailComponent>,
-              private confirmationDialog: ConfirmationDialogService,
-              private entityMapper: EntityMapperService,
+              dialogRef: MatDialogRef<NoteDetailComponent>,
+              confirmationDialog: ConfirmationDialogService,
+              entityMapper: EntityMapperService,
               private notesService: NotesService) {
-    this.note = data.entity;
-    this.originalNote = Object.assign({}, this.note);
+    super(data, dialogRef, confirmationDialog, entityMapper);
 
-    this.dialogRef.beforeClose().subscribe((returnedNote) => {
-      if (!returnedNote && this.form.dirty) {
-        this.confirmationDialog.openDialog('Save Changes?', 'Do you want to save the changes you made to the record?')
-          .afterClosed().subscribe(confirmed => {
-          if (confirmed) {
-            this.save();
-          } else {
-            this.cancel();
-          }
-        });
-      }
-    });
-
-    // magic value, note should be toggled since it looks better using tabs when under this threshold
-    this.smallScreen = window.innerWidth < 550;
+    this.smallScreen = window.innerWidth < 500;
   }
 
   save() {
-    this.notesService.saveNewNote(this.note);
-    this.dialogRef.close(this.note);
-  }
-
-  cancel() {
-    Object.assign(this.note, this.originalNote);
-    this.dialogRef.close(this.note);
-  }
-
-  ngOnInit() {
+    this.notesService.saveNewNote(this.entity as NoteModel);
+    this.dialogRef.close(this.entity);
   }
 
 }

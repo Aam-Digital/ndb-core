@@ -2,10 +2,10 @@ import {NoteDetailComponent} from './note-detail.component';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 import {NotesService} from '../notes.service';
-import {MockDatabase} from '../../database/mock-database';
 import {NoteModel} from '../note.model';
 import {AttendanceModel} from '../attendance.model';
 import {InteractionTypes} from '../interaction-types.enum';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 function generateChildAttendanceModels() {
   const attendances = [];
@@ -29,24 +29,29 @@ function generateMeetingNoteModel() {
 }
 
 describe('NoteDetailComponent', () => {
-  let entityMapper: EntityMapperService;
-  let entitySchemaService: EntitySchemaService;
-  let notesService: NotesService;
 
   let component: NoteDetailComponent;
+  let fixture: ComponentFixture<NoteDetailComponent>;
 
-  beforeEach((() => {
-    entitySchemaService = new EntitySchemaService();
-    const database = new MockDatabase();
-    entityMapper = new EntityMapperService(database, entitySchemaService);
-    notesService = new NotesService(entityMapper);
+  beforeEach(async () => {
+    TestBed.configureTestingModule({
+      declarations: [ NoteDetailComponent ],
+      imports: [],
+      providers: [
+        EntityMapperService,
+        EntitySchemaService,
+        NotesService
+      ]
+    });
+  });
 
-    component = new NoteDetailComponent(
-      generateChildAttendanceModels(),
-      null,
-      null,
-      entityMapper,
-      notesService
-    );
-  }));
+  beforeEach(() => {
+    fixture = TestBed.createComponent(NoteDetailComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 });

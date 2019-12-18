@@ -15,7 +15,7 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<h2 mat-dialog-title>{{note.date.toLocaleDateString()}}: {{note.subject}}</h2>
+<h2 mat-dialog-title>{{entity.date.toLocaleDateString()}}: {{entity.subject}}</h2>
 
 
 <form #recordForm="ngForm">
@@ -30,8 +30,8 @@
                  name="date"
                  type="date"
                  [matDatepicker]="picker"
-                 [valueAsDate]="note.date"
-                 (change)='note.date=$event.target.valueAsDate;recordForm.form.markAsDirty();'>
+                 [valueAsDate]="entity.date"
+                 (change)='entity.date=$event.target.valueAsDate;recordForm.form.markAsDirty();'>
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
@@ -42,7 +42,7 @@
           <mat-label>
             Status
           </mat-label>
-          <mat-select name="followup" [(ngModel)]="note.warningLevel">
+          <mat-select name="followup" [(ngModel)]="entity.warningLevel">
             <mat-option value="OK">Solved</mat-option>
             <mat-option value="WARNING">Needs Follow-Up</mat-option>
             <mat-option value="URGENT">Urgent Follow-Up</mat-option>
@@ -53,7 +53,7 @@
     <div fxLayout='row wrap' fxLayoutGap='20px'>
       <div fxFlex>
         <mat-form-field class='input-medium'>
-          <mat-select placeholder="Type of Interaction" name="type" [(ngModel)]="note.category">
+          <mat-select placeholder="Type of Interaction" name="type" [(ngModel)]="entity.category">
             <mat-option *ngFor="let interaction of interactionTypes" [value]="interaction">
               {{interaction}}
             </mat-option>
@@ -63,16 +63,16 @@
       <div fxFlex>
         <mat-form-field class='input-medium'>
           <!-- TODO: should be multi-select or auto-complete field of user names? -->
-          <input matInput placeholder="Team Member" name="teammember" type="text" [(ngModel)]="note.author">
+          <input matInput placeholder="Team Member" name="teammember" type="text" [(ngModel)]="entity.author">
         </mat-form-field>
       </div>
       </div>
 
     <div fxLayout='row wrap' fxLayoutGap='20px'>
       <div fxFlex>
-        <app-child-select [valueAsIds]='note.getChildIDs()'
-                          (newIdAdded)="note.addChild($event);recordForm.form.markAsDirty()"
-                          (idRemoved)="note.removeChild($event);recordForm.form.markAsDirty()"
+        <app-child-select [valueAsIds]='entity.getChildIDs()'
+                          (newIdAdded)="entity.addChild($event);recordForm.form.markAsDirty()"
+                          (idRemoved)="entity.removeChild($event);recordForm.form.markAsDirty()"
                           class='input-medium'>
         </app-child-select>
       </div>
@@ -86,43 +86,43 @@
     <div fxLayout='row wrap' fxLayoutGap='20px'>
       <div fxFlex>
         <mat-form-field class='input-medium'>
-          <input matInput placeholder="Topic / Summary" name="subject" type="text" [(ngModel)]="note.subject">
+          <input matInput placeholder="Topic / Summary" name="subject" type="text" [(ngModel)]="entity.subject">
         </mat-form-field>
       </div>
     </div>
 
     <div fxLayout='row wrap' fxLayoutGap='20px'>
       <mat-form-field class='input-max'>
-      <textarea matInput placeholder="Notes" name="notes" [(ngModel)]="note.text"
+      <textarea matInput placeholder="Notes" name="notes" [(ngModel)]="entity.text"
                 cdkTextareaAutosize cdkAutosizeMinRows="4"></textarea>
       </mat-form-field>
     </div>
   </div>
 
     <!--Small screen: display the notes in tabs-->
-    <div *ngIf="note.isMeeting() && smallScreen" fxLayout="row wrap" fxLayoutGap="20px">
+    <div *ngIf="entity.isMeeting() && smallScreen" fxLayout="row wrap" fxLayoutGap="20px">
 
       <mat-tab-group mat-align-tabs="center" fxFlex>
         <mat-tab label="Present" class="padding-container" >
-          <app-child-presence-list [note]="note" [recordForm]="recordForm" [present]="true" fxFlex></app-child-presence-list>
+          <app-child-presence-list [note]="entity" [recordForm]="recordForm" [present]="true" fxFlex></app-child-presence-list>
         </mat-tab>
         <mat-tab label="Absent" class="padding-container" >
-          <app-child-presence-list [note]="note" [recordForm]="recordForm" [present]="false" fxFlex></app-child-presence-list>
+          <app-child-presence-list [note]="entity" [recordForm]="recordForm" [present]="false" fxFlex></app-child-presence-list>
         </mat-tab>
       </mat-tab-group>
 
     </div>
 
     <!--Big screen: display the notes as two lists-->
-    <div *ngIf="note.isMeeting() && !smallScreen" fxLayout="row wrap" fxLayoutGap="20px">
-      <app-child-presence-list [note]="note"
+    <div *ngIf="entity.isMeeting() && !smallScreen" fxLayout="row wrap" fxLayoutGap="20px">
+      <app-child-presence-list [note]="entity"
                                [recordForm]="recordForm"
                                [present]="true"
                                [label]="'Present'"
                                class="padding-bottom"
                                fxFlex>
       </app-child-presence-list>
-      <app-child-presence-list [note]="note"
+      <app-child-presence-list [note]="entity"
                                [recordForm]="recordForm"
                                [present]="false"
                                [label]="'Absent'"

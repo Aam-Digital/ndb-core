@@ -84,13 +84,13 @@ export class NoteModel extends Entity {
     if (this.isMeeting()) {
       color = '#E1F5FE';
     }
-    if (this.category === 'Discussion/Decision') {
+    if (this.category === InteractionTypes.DISCUSSION) {
       color = '#E1BEE7';
     }
-    if (this.category === 'Annual Survey') {
+    if (this.category === InteractionTypes.ANNUAL_SURVEY) {
       color = '#FFFDE7';
     }
-    if (this.category === 'Daily Routine') {
+    if (this.category === InteractionTypes.DAILY_ROUTINE) {
       color = '#F1F8E9';
     }
 
