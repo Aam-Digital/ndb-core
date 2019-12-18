@@ -59,7 +59,7 @@ export class BackupService {
    * @param data an array of elements
    * @returns string a valid CSV string of the input data
    */
-  createCsv(data: Entity[]): string {
+  createCsv(data): string {
     // create list of row descriptions for the csv string
     const uniqueFields = ['_id', '_rev'];
     data.forEach(element => {
