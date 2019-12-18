@@ -26,6 +26,7 @@
     "@angular/pwa": "^0.803.20",
     "@angular/router": "^8.2.14",
     "@angular/service-worker": "^8.2.14",
+    "@types/jest": "^24.0.24",
     "core-js": "^2.6.11",
     "crypto-js": "~3.1.9-1",
     "faker": "^4.1.0",
@@ -53,7 +54,7 @@
     "@types/faker": "^4.1.8",
     "@types/file-saver": "^2.0.1",
     "@types/jasmine": "^3.5.0",
-    "@types/node": "^12.12.16",
+    "@types/node": "^12.12.21",
     "@types/pouchdb": "^6.4.0",
     "codelyzer": "^5.2.0",
     "jasmine-core": "^3.4.0",
@@ -69,6 +70,6 @@
     "ts-node": "^8.5.4",
     "tslint": "^5.20.1",
     "typescript": "3.5.3",
-    "webpack": "^4.39.2"
+    "webpack": "^4.41.3"
   }
 }

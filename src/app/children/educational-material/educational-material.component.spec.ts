@@ -13,6 +13,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {of} from 'rxjs';
 import {Database} from '../../database/database';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
+import { AlertService } from 'app/alerts/alert.service';
 
 describe('EducationalMaterialComponent', () => {
   let component: EducationalMaterialComponent;
@@ -39,6 +40,7 @@ describe('EducationalMaterialComponent', () => {
         EntityMapperService,
         EntitySchemaService,
         { provide: Database, useClass: MockDatabase },
+        AlertService,
       ],
     })
     .compileComponents();

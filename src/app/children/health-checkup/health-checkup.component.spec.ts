@@ -18,6 +18,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ConfirmationDialogService } from 'app/ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { AlertService } from 'app/alerts/alert.service';
 
 describe('HealthCheckupComponent', () => {
   let component: HealthCheckupComponent;
@@ -48,7 +49,8 @@ describe('HealthCheckupComponent', () => {
         MatDialog,
        { provide: ActivatedRoute, useValue: {paramMap: of({get: () => '22'}) } },
        { provide: ChildrenService, useValue: mockChildrenService },
-        { provide: EntityMapperService, useValue: mockEntityMapper },
+      { provide: EntityMapperService, useValue: mockEntityMapper },
+      AlertService,
       ]
     })
     .compileComponents();

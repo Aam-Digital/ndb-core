@@ -14,6 +14,7 @@ import {ConfirmationDialogService} from '../confirmation-dialog/confirmation-dia
 import { CommonModule } from '@angular/common';
 import {Database} from '../../database/database';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
+import { AlertService } from 'app/alerts/alert.service';
 
 describe('EntitySubrecordComponent', () => {
   let component: EntitySubrecordComponent;
@@ -29,6 +30,7 @@ describe('EntitySubrecordComponent', () => {
         EntitySchemaService,
         { provide: Database, useClass: MockDatabase },
         { provide: ConfirmationDialogService, useClass: ConfirmationDialogService },
+        AlertService,
       ],
     })
     .compileComponents();

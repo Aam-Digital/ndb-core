@@ -14,6 +14,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {of} from 'rxjs';
 import {Database} from '../../database/database';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
+import { AlertService } from 'app/alerts/alert.service';
 
 describe('NotesComponent', () => {
   let component: NotesComponent;
@@ -45,6 +46,7 @@ describe('NotesComponent', () => {
         EntitySchemaService,
         { provide: Database, useClass: MockDatabase },
         { provide: SessionService, useValue: { getCurrentUser() { return testUser; }} },
+        AlertService,
       ],
     })
     .compileComponents();

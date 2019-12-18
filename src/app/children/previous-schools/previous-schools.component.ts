@@ -12,7 +12,7 @@ import * as uniqid from 'uniqid';
 @Component({
   selector: 'app-previous-schools',
   // tslint:disable-next-line: max-line-length
-  template: '<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="generateNewRecordFactory" [optionalFormValidation]="optionalFormValidation">' + '</app-entity-subrecord>',
+  template: '<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="generateNewRecordFactory()" [optionalFormValidation]="optionalFormValidation">' + '</app-entity-subrecord>',
 })
 
 
@@ -61,15 +61,18 @@ export class PreviousSchoolsComponent implements OnInit {
   }
 
   generateNewRecordFactory() {
-    const newPreviousSchool = new ChildSchoolRelation(uniqid());
-    newPreviousSchool.childId = this.childId;
-    // last to-date (of first entry in records); if the first entry doesn't have any to-date, lastToDate is set to yesterday
-    const lastToDate = (this.records.length && this.records[0].end)
-      ? new Date(this.records[0].end)
-      : new Date(new Date().setDate(new Date().getDate() + -1));
-    newPreviousSchool.start = new Date(lastToDate.setDate(lastToDate.getDate() + 1));  // one day after last to-date
-    newPreviousSchool.end = null; // void date
-    return newPreviousSchool;
+    const childId = this.childId;
+    return () => {
+      const newPreviousSchool = new ChildSchoolRelation(uniqid());
+      newPreviousSchool.childId = childId;
+      // last to-date (of first entry in records); if the first entry doesn't have any to-date, lastToDate is set to yesterday
+      const lastToDate = (this.records.length && this.records[0].end)
+        ? new Date(this.records[0].end)
+        : new Date(new Date().setDate(new Date().getDate() + -1));
+      newPreviousSchool.start = new Date(lastToDate.setDate(lastToDate.getDate() + 1));  // one day after last to-date
+      newPreviousSchool.end = null; // void date
+      return newPreviousSchool;
+    };
   }
 
   optionalFormValidation = (record) => {

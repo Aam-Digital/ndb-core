@@ -6,11 +6,15 @@ import {FormsModule} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {ChildrenService} from '../children.service';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
+import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 import {MockDatabase} from '../../database/mock-database';
 import {Child} from '../child';
 import {DatePipe} from '@angular/common';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {of} from 'rxjs';
+import { AlertService } from 'app/alerts/alert.service';
+import { SchoolsService } from 'app/schools/schools.service';
+import { Database } from 'app/database/database';
 
 describe('PreviousSchoolsComponent', () => {
   let component: PreviousSchoolsComponent;
@@ -28,7 +32,7 @@ describe('PreviousSchoolsComponent', () => {
 
 
   beforeEach(async(() => {
-    mockEntityMapper = new EntityMapperService(new MockDatabase());
+    mockEntityMapper = new EntityMapperService(new MockDatabase(), new EntitySchemaService());
 
     TestBed.configureTestingModule({
       declarations: [ PreviousSchoolsComponent ],
@@ -38,6 +42,10 @@ describe('PreviousSchoolsComponent', () => {
         { provide: ActivatedRoute, useValue: {paramMap: of({get: () => '22'}) } },
         { provide: ChildrenService, useValue: mockChildrenService },
         { provide: EntityMapperService, useValue: mockEntityMapper },
+        AlertService,
+        SchoolsService,
+        EntitySchemaService,
+        Database,
       ],
     })
     .compileComponents();

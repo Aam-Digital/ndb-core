@@ -165,12 +165,12 @@ describe('ChildrenService', () => {
 });
 
 function compareRelations(a: ChildSchoolRelation, b: ChildSchoolRelation) {
-  expect(a.getId()).toBe(b.getId());
-  expect(a.schoolClass).toBe(b.schoolClass);
-  expect(a.schoolId).toBe(b.schoolId);
-  expect(a.childId).toBe(b.childId);
-  expect(a.start).toBe(b.start);
-  expect(a.end).toBe(b.end);
+  expect(a.getId()).toEqual(b.getId());
+  expect(a.schoolClass).toEqual(b.schoolClass);
+  expect(a.schoolId).toEqual(b.schoolId);
+  expect(a.childId).toEqual(b.childId);
+  expect(a.start).toEqual(b.start);
+  expect(a.end).toEqual(b.end);
 }
 
 async function verifyChildRelationsOrder(child: Child, childrenService: ChildrenService) {

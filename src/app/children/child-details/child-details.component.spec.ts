@@ -39,6 +39,8 @@ import {HealthCheckupComponent} from '../health-checkup/health-checkup.component
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
+import { PreviousSchoolsComponent } from '../previous-schools/previous-schools.component';
+import { SchoolsService } from 'app/schools/schools.service';
 
 describe('ChildDetailsComponent', () => {
   let component: ChildDetailsComponent;
@@ -71,7 +73,8 @@ describe('ChildDetailsComponent', () => {
         EntitySubrecordComponent,
         AttendanceDaysComponent,
         AttendanceDayBlockComponent,
-        HealthCheckupComponent
+        HealthCheckupComponent,
+        PreviousSchoolsComponent
       ],
       imports: [
         MatTableModule,
@@ -106,6 +109,7 @@ describe('ChildDetailsComponent', () => {
         { provide: ActivatedRoute, useValue: mockedRoute},
         { provide: Database, useClass: MockDatabase},
         FormBuilder,
+        SchoolsService,
       ]
     })
       .compileComponents();
