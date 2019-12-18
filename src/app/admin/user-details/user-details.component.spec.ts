@@ -13,6 +13,7 @@ import {MockDatabase} from '../../database/mock-database';
 import {Database} from '../../database/database';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatInputModule} from '@angular/material/input';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 
 describe('UserDetailsComponent', () => {
   let component: UserDetailsComponent;
@@ -28,6 +29,7 @@ describe('UserDetailsComponent', () => {
         MatTableModule,
         MatSnackBarModule,
         MatInputModule,
+        NoopAnimationsModule
         ],
       providers: [
         EntityMapperService,

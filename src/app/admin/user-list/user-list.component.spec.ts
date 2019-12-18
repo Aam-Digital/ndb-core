@@ -11,6 +11,7 @@ import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 import {MockDatabase} from '../../database/mock-database';
 import {Database} from '../../database/database';
+import {MatDialogModule} from '@angular/material/dialog';
 
 describe('UserListComponent', () => {
   let component: UserListComponent;
@@ -25,6 +26,7 @@ describe('UserListComponent', () => {
         MatFormFieldModule,
         MatCheckboxModule,
         ReactiveFormsModule,
+        MatDialogModule
       ],
       providers: [
         EntityMapperService,
