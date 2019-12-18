@@ -125,7 +125,7 @@ export class NoteModel extends Entity {
 
   /**
    * returns whether or not a specific child was present or not.
-   * This does not check whether or not, this note is a meeting and will not return
+   * This does not check whether or not this note is a meeting and will not return
    * a sensible value, if this child couldn't be found
    * @param childId The id of the child to check for
    */

@@ -37,18 +37,6 @@ function generateNotes() {
   return notes;
 }
 
-function generateFreshNote() {
-  const n1 = new NoteModel('5');
-  n1.children = [];
-  return n1;
-}
-
-function generateUpdatedNote() {
-  const n1 = new NoteModel('6');
-  n1._rev = 'x';
-  return n1;
-}
-
 describe('NotesService', () => {
   let entityMapper: EntityMapperService;
   let entitySchemaService: EntitySchemaService;
@@ -75,25 +63,6 @@ describe('NotesService', () => {
 
     service.getNotesForChild('4').subscribe(res => {
       expect(res.length).toBe(1);
-    });
-  });
-
-  it('#saveNewNote() should emit when a new note is being saved', (doneFn) => {
-    service.getUpdater().subscribe(newNotes => {
-        expect(newNotes.length).toBe(1);
-        doneFn();
-    });
-    const freshNote = generateFreshNote();
-    service.saveNewNote(freshNote);
-  });
-
-  it('#saveNewNote() should not emit when an updated note is being saved ', () => {
-
-    const updatedNote = generateUpdatedNote();
-    service.saveNewNote(updatedNote);
-
-    service.getUpdater().subscribe(newNotes => {
-      expect(newNotes.length).toBe(0);
     });
   });
 

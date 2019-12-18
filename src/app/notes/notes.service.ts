@@ -61,7 +61,6 @@ export class NotesService {
     // ... and immediately inform any subscribers that a new note has been saved,
     // if this note is not old (the update will be done automatically by the individual components)
     result.then(res => {
-      console.log('callback for note: ', note);
       // if the revision is the first, emit the new note
       // What the revision is is dependant from the used database.
       // In case of a temporary db, the first revision is denoted as 'x', the second as 'xx' and so on
