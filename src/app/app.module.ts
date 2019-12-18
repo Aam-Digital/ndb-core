@@ -17,7 +17,7 @@
 
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {APP_INITIALIZER, NgModule} from '@angular/core';
+import {APP_INITIALIZER, ErrorHandler, NgModule} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule} from '@angular/common/http';
 
@@ -48,6 +48,7 @@ import {CookieService} from 'ngx-cookie-service';
 import {HelpModule} from './help/help.module';
 import {DemoDataModule} from './demo-data/demo-data.module';
 import {MatNativeDateModule} from '@angular/material/core';
+import {LoggingErrorHandler} from './logging/logging-error-handler';
 
 @NgModule({
   declarations: [
@@ -82,6 +83,7 @@ import {MatNativeDateModule} from '@angular/material/core';
   providers: [
     AppConfig,
     { provide: APP_INITIALIZER, useFactory: initializeApp, deps: [AppConfig], multi: true },
+    { provide: ErrorHandler, useClass: LoggingErrorHandler },
     MatIconRegistry,
     CookieService,
   ],

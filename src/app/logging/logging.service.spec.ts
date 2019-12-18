@@ -1,34 +1,17 @@
 import {LoggingService} from './logging.service';
-import * as Raven from 'raven-js';
-
-class LoggingServiceRavenMock extends LoggingService {
-
-  public latestRavenCalls: Array<[string, Raven.RavenOptions]>;
-
-  constructor() {
-    super();
-    this.latestRavenCalls = [];
-  }
-
-  protected ravenCaptureMessage(message: string, options: Raven.RavenOptions): void {
-    this.latestRavenCalls.push([message, options]);
-  }
-}
+import {LogLevel} from './log-level';
 
 
 describe('LoggingService', () => {
   const testMessage = 'FANCY_TEST_MESSAGE';
 
-  let loggingService: LoggingServiceRavenMock;
+  let loggingService: LoggingService;
   beforeEach(() => {
-    loggingService = new LoggingServiceRavenMock();
+    loggingService = new LoggingService();
+    spyOn<any>(loggingService, 'logToConsole');
+    spyOn<any>(loggingService, 'logToRemoteMonitoring');
   });
 
-  function checkReceivedLogMessage(level: Raven.LogLevel) {
-    const receivedLogRequest = loggingService.latestRavenCalls.pop();
-    expect(receivedLogRequest[0]).toEqual(testMessage);
-    expect(receivedLogRequest[1].level).toEqual(level);
-  }
 
   it('should be created', () => {
     expect(loggingService).toBeTruthy();
@@ -37,25 +20,37 @@ describe('LoggingService', () => {
   it('should log a debug message', function () {
     loggingService.debug(testMessage);
 
-    checkReceivedLogMessage('debug');
+    expect(loggingService['logToConsole']).toHaveBeenCalledWith(testMessage, LogLevel.DEBUG);
+    expect(loggingService['logToRemoteMonitoring']).not.toHaveBeenCalled();
   });
 
   it('should log a info message', function () {
     loggingService.info(testMessage);
 
-    checkReceivedLogMessage('info');
+    expect(loggingService['logToConsole']).toHaveBeenCalledWith(testMessage, LogLevel.INFO);
+    expect(loggingService['logToRemoteMonitoring']).not.toHaveBeenCalled();
   });
 
   it('should log a warn message', function () {
     loggingService.warn(testMessage);
 
-    checkReceivedLogMessage('warn');
+    expect(loggingService['logToConsole']).toHaveBeenCalledWith(testMessage, LogLevel.WARN);
+    expect(loggingService['logToRemoteMonitoring']).toHaveBeenCalledWith(testMessage, LogLevel.WARN);
   });
 
 
   it('should log a error message', function () {
     loggingService.error(testMessage);
 
-    checkReceivedLogMessage('error');
+    expect(loggingService['logToConsole']).toHaveBeenCalledWith(testMessage, LogLevel.ERROR);
+    expect(loggingService['logToRemoteMonitoring']).toHaveBeenCalledWith(testMessage, LogLevel.ERROR);
+  });
+
+
+  it('should log a message through the generic log method', function () {
+    loggingService.log(testMessage, LogLevel.WARN);
+
+    expect(loggingService['logToConsole']).toHaveBeenCalledWith(testMessage, LogLevel.WARN);
+    expect(loggingService['logToRemoteMonitoring']).toHaveBeenCalledWith(testMessage, LogLevel.WARN);
   });
 });
