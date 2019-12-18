@@ -8,7 +8,6 @@ describe('ChildPresenceListComponent', () => {
   beforeEach(() => {
     component = new ChildPresenceListComponent();
     component.note = new NoteModel('1');
-
   });
 
   it('should create', () => {

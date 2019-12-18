@@ -1,6 +1,5 @@
 import {NotesService} from './notes.service';
 import {NoteModel} from './note.model';
-import {AttendanceModel} from './attendance.model';
 import {EntityMapperService} from '../entity/entity-mapper.service';
 import {EntitySchemaService} from '../entity/schema/entity-schema.service';
 import {MockDatabase} from '../database/mock-database';
@@ -13,7 +12,7 @@ function generateNotes() {
   notes.push(n1);
 
   const n2 = new NoteModel('2');
-  n2.addChild('1')
+  n2.addChild('1');
   notes.push(n2);
 
   const n3 = new NoteModel('3');
