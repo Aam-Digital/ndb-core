@@ -95,10 +95,9 @@ function generateChildSchoolRelationEntities(): ChildSchoolRelation[] {
 describe('ChildrenService', () => {
   let service: ChildrenService;
   let entityMapper: EntityMapperService;
-  let entitySchemaService: EntitySchemaService;
 
   beforeEach(() => {
-    entitySchemaService = new EntitySchemaService();
+    const entitySchemaService = new EntitySchemaService();
     const database = new MockDatabase();
     entityMapper = new EntityMapperService(database, entitySchemaService);
     generateChildEntities().forEach(c => entityMapper.save(c));

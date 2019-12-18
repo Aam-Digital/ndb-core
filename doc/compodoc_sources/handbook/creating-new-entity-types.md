@@ -1,3 +1,4 @@
+# Creating New Entity Types
 "Entities" are the objects around which our whole system is built. There may for example be User, Child or School classes representing the types of objects the users can view interact with. To extend the system with types, you can create a new module and extend the existing base of the Entity system.
 
 The `EntityModule` specifies the base class and generic features, specific entity types can extend upon it.

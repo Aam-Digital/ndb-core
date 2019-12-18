@@ -19,42 +19,42 @@ import { async } from '@angular/core/testing';
 import { StateHandler } from './state-handler';
 
 enum TestState {
-  test1, test2, test3, test4
+    test1, test2, test3, test4
 }
 
 describe('StateHandler', () => {
-  it('is initiated with the correct Initial State', () => {
-    const handler = new StateHandler<TestState>(TestState.test1);
-    expect(handler.getState()).toEqual(TestState.test1);
-  });
-  it('changes the state when setting the state', () => {
-    const handler = new StateHandler<TestState>(TestState.test1);
-    handler.setState(TestState.test2);
-    expect(handler.getState()).toEqual(TestState.test2);
-  });
-  it('emits an event when setting the state', done => {
-    const handler = new StateHandler<TestState>(TestState.test1);
-    handler.getStateChangedStream().subscribe(stateChangeEvent => {
-      expect(stateChangeEvent.fromState).toEqual(TestState.test1);
-      expect(stateChangeEvent.toState).toEqual(TestState.test2);
-      done();
+    it('is initiated with the correct Initial State', () => {
+        const handler = new StateHandler<TestState>(TestState.test1);
+        expect(handler.getState()).toEqual(TestState.test1);
     });
-    handler.setState(TestState.test2);
-  });
-  it('waits for the state to change to a specific value', async(() => {
-    const handler = new StateHandler<TestState>(TestState.test1);
-    handler.waitForChangeTo(TestState.test2).then(() => {
-      expect(handler.getState()).toEqual(TestState.test2);
+    it('changes the state when setting the state', () => {
+        const handler = new StateHandler<TestState>(TestState.test1);
+        handler.setState(TestState.test2);
+        expect(handler.getState()).toEqual(TestState.test2);
     });
-    handler.setState(TestState.test3);
-    handler.setState(TestState.test2);
-  }));
-  it('fails waiting for the state to change to a specific value if specified', async(() => {
-    const handler = new StateHandler<TestState>(TestState.test1);
-    handler.waitForChangeTo(TestState.test2, [TestState.test3]).catch(() => {
-      expect(handler.getState()).toEqual(TestState.test3);
+    it('emits an event when setting the state', done => {
+        const handler = new StateHandler<TestState>(TestState.test1);
+        handler.getStateChangedStream().subscribe(stateChangeEvent => {
+            expect(stateChangeEvent.fromState).toEqual(TestState.test1);
+            expect(stateChangeEvent.toState).toEqual(TestState.test2);
+            done();
+        });
+        handler.setState(TestState.test2);
     });
-    handler.setState(TestState.test4);
-    handler.setState(TestState.test3);
-  }));
+    it('waits for the state to change to a specific value', async(() => {
+        const handler = new StateHandler<TestState>(TestState.test1);
+        handler.waitForChangeTo(TestState.test2).then(() => {
+            expect(handler.getState()).toEqual(TestState.test2);
+        });
+        handler.setState(TestState.test3);
+        handler.setState(TestState.test2);
+    }));
+    it('fails waiting for the state to change to a specific value if specified', async(() => {
+        const handler = new StateHandler<TestState>(TestState.test1);
+        handler.waitForChangeTo(TestState.test2, [TestState.test3]).catch(() => {
+            expect(handler.getState()).toEqual(TestState.test3);
+        });
+        handler.setState(TestState.test4);
+        handler.setState(TestState.test3);
+    }));
 });

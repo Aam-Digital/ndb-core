@@ -28,7 +28,7 @@ import { StateHandler } from './util/state-handler';
 import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
 import { AlertService } from 'app/alerts/alert.service';
 
-/**
+ /**
  * Responsibilities:
  * - Hold the local DB
  * - Hold local user
