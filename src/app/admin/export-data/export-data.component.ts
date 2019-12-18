@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {BackupService} from '../services/backup.service';
+import {timeout} from 'rxjs/operators';
 
 @Component({
   selector: 'app-export-data',
@@ -27,6 +28,7 @@ export class ExportDataComponent {
     document.body.appendChild(link);
     link.href = window.URL.createObjectURL(blobData);
     link.download = this.filename + '.' + this.format.toLowerCase();
+    link.addEventListener('click', () => window.URL.revokeObjectURL(blobData));
     return link;
   }
 
