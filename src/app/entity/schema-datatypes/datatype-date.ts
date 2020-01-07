@@ -22,7 +22,9 @@ export const dateEntitySchemaDatatype: EntitySchemaDatatype = {
 
   transformToDatabaseFormat: (value: Date) => {
     // TODO: should date format be saved as date object or as string "YYYY-mm-dd"?
-    return (value && !isNaN(value.getTime())) ? value.toISOString().slice(0, 10) : '';
+    // return (value && !isNaN(value.getTime())) ? value.toISOString().slice(0, 10) : '';
+    // DONE: date format is now being saved as date object
+    return value;
   },
 
   transformToObjectFormat: (value) => {
