@@ -20,6 +20,7 @@ import './rxjs-operators';
 import {AppConfig} from './app-config/app-config';
 import {MatDialog} from '@angular/material/dialog';
 import {DemoDataGeneratingProgressDialogComponent} from './demo-data/demo-data-generating-progress-dialog.component';
+import { MatomoInjector } from 'ngx-matomo';
 
 @Component({
   selector: 'app-root',
@@ -30,8 +31,10 @@ export class AppComponent implements OnInit {
 
   public constructor(
     viewContainerRef: ViewContainerRef,
+    private matomoInjector: MatomoInjector,
     private dialog: MatDialog,
   ) {
+    this.matomoInjector.init('YOUR_MATOMO_URL', YOUR_SITE_ID);
     // You need this small hack in order to catch application root view container ref
     this.viewContainerRef = viewContainerRef;
   }

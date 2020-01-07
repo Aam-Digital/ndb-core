@@ -20,6 +20,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {APP_INITIALIZER, ErrorHandler, NgModule} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule} from '@angular/common/http';
+import { MatomoModule } from 'ngx-matomo';
 
 import { AppComponent } from './app.component';
 import { UiModule } from './ui/ui.module';
@@ -79,6 +80,7 @@ import {LoggingErrorHandler} from './logging/logging-error-handler';
     HelpModule,
     MatNativeDateModule,
     DemoDataModule.forRoot(),
+    MatomoModule
   ],
   providers: [
     AppConfig,
