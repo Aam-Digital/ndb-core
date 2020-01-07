@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
     private matomoInjector: MatomoInjector,
     private dialog: MatDialog,
   ) {
-    this.matomoInjector.init('YOUR_MATOMO_URL', YOUR_SITE_ID);
+    this.matomoInjector.init('//matomo.aam-digital.com/', 3);
     // You need this small hack in order to catch application root view container ref
     this.viewContainerRef = viewContainerRef;
   }
