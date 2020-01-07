@@ -51,4 +51,11 @@ describe('UserDetailsComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('calls the entity mapper when saving a user', () => {
+    const entityMapper = fixture.debugElement.injector.get(EntityMapperService);
+    spyOn(entityMapper, 'save').and.callThrough();
+    component.saveUser();
+    expect(entityMapper.save).toHaveBeenCalled();
+  });
 });
