@@ -18,6 +18,7 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from '../user';
 import { SessionService } from '../../session/session.service';
+import { MatomoTracker } from 'ngx-matomo';
 
 @Component({
   selector: 'app-user-account',
@@ -28,10 +29,13 @@ export class UserAccountComponent implements OnInit {
 
   user: User;
 
-  constructor( private sessionService: SessionService ) { }
+  constructor( private sessionService: SessionService,
+    private matomoTracker: MatomoTracker ) { }
 
   ngOnInit() {
     this.user = this.sessionService.getCurrentUser();
+    this.matomoTracker.setUserId(this.user._id.toString());
+    this.matomoTracker.setDocumentTitle('ngx-Matomo Test');
   }
 
   changePassword( pwd , rpwd ) {
@@ -42,5 +46,9 @@ export class UserAccountComponent implements OnInit {
     } else {
       // TODO: Show error message
     }
+  }
+
+  trackingTest() {
+    this.matomoTracker.trackEvent('category', 'action', 'name', 1);
   }
 }
