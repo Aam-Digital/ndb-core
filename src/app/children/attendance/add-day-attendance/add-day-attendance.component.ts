@@ -39,7 +39,7 @@ export class AddDayAttendanceComponent implements OnInit {
 
   ngOnInit() {
     this.childrenService.getChildren().subscribe(children => {
-      this.children = children.filter(c => c.isActive()).sort((a, b) => a.schoolClass > b.schoolClass ? 1 : -1);
+      this.children = children.filter(c => c.isActive());
       this.centers = this.children.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
     });
   }
@@ -65,15 +65,18 @@ export class AddDayAttendanceComponent implements OnInit {
   }
 
 
-  startRollCall(group) {
+  async startRollCall(group) {
     const selectedChildren = this.children.filter(group.filterFun);
 
+    this.currentStage = 2;
     this.rollCallList = [];
     this.rollCallListLoading = true;
-    this.childrenService.getAttendancesOfMonth(this.day)
-      .subscribe(attendances => this.loadMonthAttendanceRecords(selectedChildren, attendances));
 
-    this.currentStage = 2;
+    const attendances = await this.childrenService.getAttendancesOfMonth(this.day).toPromise();
+    this.loadMonthAttendanceRecords(selectedChildren, attendances);
+    this.sortRollCallList();
+
+    this.rollCallListLoading = false;
   }
 
   private loadMonthAttendanceRecords(children: Child[], monthsAttendances: AttendanceMonth[]) {
@@ -91,8 +94,20 @@ export class AddDayAttendanceComponent implements OnInit {
 
       this.rollCallList.push({child: child, attendanceMonth: attMonth, attendanceDay: attDay});
     });
+  }
 
-    this.rollCallListLoading = false;
+  private sortRollCallList() {
+    interface RollCallEntry { child: Child; attendanceMonth: AttendanceMonth; attendanceDay: AttendanceDay; }
+    this.rollCallList.sort((a: RollCallEntry, b: RollCallEntry) => {
+      const diff = parseInt(a.child.schoolClass, 10) - parseInt(b.child.schoolClass, 10);
+      if (!isNaN(diff)) {
+        return diff;
+      }
+
+      if (a.child.schoolClass > b.child.schoolClass) { return 1; }
+      if (a.child.schoolClass < b.child.schoolClass) { return -1; }
+      return 0;
+    });
   }
 
 
@@ -103,5 +118,4 @@ export class AddDayAttendanceComponent implements OnInit {
 
     setTimeout(() => this.rollCallIndex++, 750);
   }
-
 }

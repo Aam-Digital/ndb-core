@@ -35,16 +35,17 @@ import {NavigationModule} from '../../navigation/navigation.module';
 import {LatestChangesModule} from '../../latest-changes/latest-changes.module';
 import {SessionModule} from '../../session/session.module';
 import {AppConfigModule} from '../../app-config/app-config.module';
-import {DatabaseManagerService} from '../../database/database-manager.service';
-import {MockDatabaseManagerService} from '../../database/mock-database-manager.service';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {UiHelperModule} from '../../ui-helper/ui-helper.module';
 import {PrimaryActionComponent} from '../primary-action/primary-action.component';
 import {AppConfig} from '../../app-config/app-config';
+import { SessionService } from 'app/session/session.service';
+import { MockSessionService } from 'app/session/mock-session.service';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import {CookieService} from 'ngx-cookie-service';
 import {SwUpdate} from '@angular/service-worker';
 import {of} from 'rxjs';
+import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
 
 describe('UiComponent', () => {
   let component: UiComponent;
@@ -64,6 +65,7 @@ describe('UiComponent', () => {
     };
 
     const mockSwUpdate = { available: of(), checkForUpdate: () => {} };
+    const mockSession = new MockSessionService(new EntitySchemaService());
 
     TestBed.configureTestingModule({
       declarations: [SearchComponent, PrimaryActionComponent, UiComponent],
@@ -80,7 +82,7 @@ describe('UiComponent', () => {
         FlexLayoutModule,
       ],
       providers: [
-        {provide: DatabaseManagerService, useClass: MockDatabaseManagerService},
+        {provide: SessionService, useValue: mockSession},
         CookieService,
         {provide: SwUpdate, useValue: mockSwUpdate},
       ],

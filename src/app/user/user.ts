@@ -19,8 +19,7 @@ import { Entity } from '../entity/entity';
 import {DatabaseEntity} from '../entity/database-entity.decorator';
 import {DatabaseField} from '../entity/database-field.decorator';
 
-declare const require: any;
-const CryptoJS = require('crypto-js');
+import * as CryptoJS from 'crypto-js';
 
 @DatabaseEntity('User')
 export class User extends Entity {

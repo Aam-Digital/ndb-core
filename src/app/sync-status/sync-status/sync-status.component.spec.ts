@@ -21,35 +21,30 @@ import { SyncStatusComponent } from './sync-status.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import {SessionService} from '../../session/session.service';
-import {AlertService} from '../../alerts/alert.service';
-import {DatabaseManagerService} from '../../database/database-manager.service';
-import {MockDatabaseManagerService} from '../../database/mock-database-manager.service';
-import {DatabaseSyncStatus} from '../../database/database-sync-status.enum';
+import {MockSessionService} from '../../session/mock-session.service';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {InitialSyncDialogComponent} from './initial-sync-dialog.component';
+import { SessionService } from 'app/session/session.service';
+import { SyncState } from 'app/session/sync-state.enum';
+import { AlertsModule } from 'app/alerts/alerts.module';
 import {BrowserDynamicTestingModule} from '@angular/platform-browser-dynamic/testing';
+import { EntitySchemaService } from 'app/entity/schema/entity-schema.service';
+
 
 describe('SyncStatusComponent', () => {
   let component: SyncStatusComponent;
   let fixture: ComponentFixture<SyncStatusComponent>;
 
-  let sessionService: SessionService;
-  let alertService: AlertService;
-  let dbManager: MockDatabaseManagerService;
+  let sessionService: MockSessionService;
 
   beforeEach(async(() => {
-    sessionService = new SessionService(null, null, null);
-    alertService = new AlertService(null, null);
-    dbManager = new MockDatabaseManagerService();
+    sessionService = new MockSessionService(new EntitySchemaService());
 
     TestBed.configureTestingModule({
       declarations: [InitialSyncDialogComponent, SyncStatusComponent],
-      imports: [MatIconModule, MatDialogModule, NoopAnimationsModule, MatProgressBarModule],
+      imports: [MatIconModule, MatDialogModule, NoopAnimationsModule, MatProgressBarModule, AlertsModule],
       providers: [
-        { provide: SessionService, useValue: sessionService },
-        { provide: AlertService, useValue: alertService },
-        { provide: DatabaseManagerService, useValue: dbManager}
+        { provide: SessionService, useValue: sessionService }
       ],
     });
 
@@ -73,15 +68,17 @@ describe('SyncStatusComponent', () => {
     expect(component).toBeTruthy();
    });
 
-  it('should open dialog without error', (done) => {
-    dbManager.triggerSyncStatusChanged(DatabaseSyncStatus.started);
-    setTimeout(() => checkDialogRefDefined(expect, done), 100);
+  it('should open dialog without error', async () => {
+    sessionService.getSyncState().setState(SyncState.STARTED);
 
-    function checkDialogRefDefined(_expect, _done) {
-      _expect(component.dialogRef).toBeDefined();
-      component.dialogRef.close();
-      fixture.detectChanges();
-      fixture.whenStable().then(_done());
-    }
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(component.dialogRef).toBeDefined();
+
+    sessionService.getSyncState().setState(SyncState.COMPLETED);
+    component.dialogRef.close();
+
+    fixture.detectChanges();
+    await fixture.whenStable();
   });
 });

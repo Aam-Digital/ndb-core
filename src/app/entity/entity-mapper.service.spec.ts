@@ -41,8 +41,7 @@ describe('EntityMapperService', () => {
     testDatabase = new MockDatabase();
     entityMapper = new EntityMapperService(testDatabase, new EntitySchemaService());
 
-    return Promise.all([testDatabase.put(existingEntity), testDatabase.put(existingEntity2)])
-      .catch(err => console.log('Failed to insert entity: ' + err));
+    return Promise.all([testDatabase.put(existingEntity), testDatabase.put(existingEntity2)]);
   });
 
 

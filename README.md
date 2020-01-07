@@ -2,7 +2,6 @@
 [![Build Status](https://travis-ci.org/Aam-Digital/ndb-core.svg?branch=master)](https://travis-ci.org/Aam-Digital/ndb-core)
 [![Code Climate](https://codeclimate.com/github/NGO-DB/ndb-core/badges/gpa.svg)](https://codeclimate.com/github/NGO-DB/ndb-core)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/4e4a7a6301064019b2c9/test_coverage)](https://codeclimate.com/github/Aam-Digital/ndb-core/test_coverage)
-[![Greenkeeper badge](https://badges.greenkeeper.io/NGO-DB/ndb-core.svg)](https://greenkeeper.io/)
 [![Docs](https://img.shields.io/badge/docs-by%20compodoc-blue.svg)](https://aam-digital.github.io/ndb-core/index.html)
 
 
@@ -12,12 +11,15 @@ Empowering NGOs' social workers with simple to use (database) software.
 
 > For more information about the software and a free demo system visit **[www.aam-digital.com](https://www.aam-digital.com)**.
 
+> You can find the Developer Documentation at **[http://aam-digital.github.io/ndb-core/](http://aam-digital.github.io/ndb-core/additional-documentation/guidelines-and-recipes.html)**
 
 -----
 
 
 # Use / Deploy
-You can directly run the system using Docker. More information in our [NGO-DB/docker repository](https://github.com/NGO-DB/docker/). In that case you do not have to clone this repository and install all the dependencies as everything is packaged into the docker image already.
+You can directly run the system using Docker.
+More information in our [Aam-Digital/ndb-setup repository](https://github.com/Aam-Digital/ndb-setup/).
+In that case you do not have to clone this repository and install all the dependencies as everything is packaged into the docker image already.
 
 
 
@@ -25,6 +27,8 @@ You can directly run the system using Docker. More information in our [NGO-DB/do
 
 # Development
 Our detailed documentation and API reference is hosted on GitHub Pages: [**aam-digital.github.io/ndb-core**](http://aam-digital.github.io/ndb-core/index.html).
+
+Additionally you can find guides and recipes to implement common functionalities there in the [Developer Documentation](http://aam-digital.github.io/ndb-core/additional-documentation/guidelines-and-recipes.html).
 
 
 ## Setup
@@ -49,7 +53,7 @@ Adapt the settings, especially regarding the CouchDB server that should be used 
 
 ### Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Run `npm run start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
 ### Code scaffolding (Generate new modules and components)
 
@@ -74,16 +78,8 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 
 
-## Server side logging
-
-The service side logging is performed via the [sentry.io](https://sentry.io/ewb/aam-digital/) logging service. 
-The credentials for the EWB-Account can be found in the `podio` workspace.
-
-
-
-
 
 # Contribute
 Our project is run completely by volunteers. Contributions welcome!
 
-Please read the [Contribution Guidelines](https://github.com/NGO-DB/ndb-core/wiki/Contribution-Guidelines) if you want to contribute code to this project.
+Please read the [Contribution Guidelines](http://aam-digital.github.io/ndb-core/first-steps/contribution-guidelines.html) in the Developer Documentation.
