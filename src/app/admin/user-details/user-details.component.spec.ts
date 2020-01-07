@@ -58,4 +58,14 @@ describe('UserDetailsComponent', () => {
     component.saveUser();
     expect(entityMapper.save).toHaveBeenCalled();
   });
+
+  it('closes the dialog after removing the user', (done) => {
+    const dialogRef = fixture.debugElement.injector.get(MatDialogRef);
+    spyOn(dialogRef, 'close');
+    component.removeUser();
+    setTimeout(() => {
+      expect(dialogRef.close).toHaveBeenCalled();
+      done();
+    });
+  });
 });
