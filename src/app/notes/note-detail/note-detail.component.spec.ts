@@ -1,11 +1,22 @@
 import {NoteDetailComponent} from './note-detail.component';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
-import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
 import {NotesService} from '../notes.service';
 import {NoteModel} from '../note.model';
 import {AttendanceModel} from '../attendance.model';
 import {InteractionTypes} from '../interaction-types.enum';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
+import {FormBuilder} from '@angular/forms';
+import {Database} from '../../database/database';
+import {MockDatabase} from '../../database/mock-database';
+import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
+import {of} from 'rxjs';
+import {MatNativeDateModule} from '@angular/material/core';
+import {ChildrenService} from '../../children/children.service';
+import {NavigationExtras, Router} from '@angular/router';
+import {NotesModule} from '../notes.module';
+import {Child} from '../../children/child';
 
 function generateChildAttendanceModels() {
   const attendances = [];
@@ -21,31 +32,47 @@ function generateChildAttendanceModels() {
   return attendances;
 }
 
-function generateMeetingNoteModel() {
+function generateTestingData() {
   const n1 = new NoteModel('1');
   n1.children = generateChildAttendanceModels();
   n1.category = InteractionTypes.CHILDREN_MEETING;
-  return n1;
+  n1.date = new Date(Date.now());
+  return {entity: n1};
 }
+
+const testData = generateTestingData();
+const mockDialogRef = {beforeClosed() {return of(new NoteModel('1')); }};
+const mockedDatabase = new MockDatabase();
+const mockedRouter = {navigate(commands: any[], extras?: NavigationExtras) {return Promise.resolve(); }};
 
 describe('NoteDetailComponent', () => {
 
   let component: NoteDetailComponent;
   let fixture: ComponentFixture<NoteDetailComponent>;
 
-  beforeEach(async () => {
-    TestBed.configureTestingModule({
-      declarations: [ NoteDetailComponent ],
-      imports: [],
-      providers: [
-        EntityMapperService,
-        EntitySchemaService,
-        NotesService
-      ]
-    });
-  });
-
   beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [],
+      imports: [
+        NotesModule,
+        MatNativeDateModule],
+      providers: [
+        EntitySchemaService,
+        EntityMapperService,
+        NotesService,
+        ConfirmationDialogService,
+        ChildrenService,
+        {provide: Router, useValue: mockedRouter},
+        {provide: MatDialogRef, useValue: mockDialogRef},
+        {provide: MAT_DIALOG_DATA, useValue: testData},
+        {provide: Database, useValue: mockedDatabase},
+        FormBuilder
+      ]
+    })
+      .compileComponents();
+    mockedDatabase.put(new Child('Child:1'));
+    mockedDatabase.put(new Child('Child:2'));
+    mockedDatabase.put(new Child('Child:3'));
     fixture = TestBed.createComponent(NoteDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -53,5 +80,9 @@ describe('NoteDetailComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should load data', () => {
+    expect(component.entity).toBe(testData.entity);
   });
 });

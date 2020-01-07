@@ -47,7 +47,7 @@ export class NoteModel extends Entity {
    * @param childId The childID to check for
    */
 
-  isLinkedWithChild(childId: string) {
+  isLinkedWithChild(childId: string): boolean {
     return this.getChildIDs().includes(childId);
   }
 
@@ -73,28 +73,27 @@ export class NoteModel extends Entity {
   }
 
   public getColor() {
-    let color = '';
     if (this.warningLevel === WarningLevel.URGENT) {
-      color = '#fd727280';
+      return '#fd727280';
     }
     if (this.warningLevel === WarningLevel.WARNING) {
-      color = '#ffa50080';
+      return '#ffa50080';
     }
 
     if (this.isMeeting()) {
-      color = '#E1F5FE';
+      return '#E1F5FE';
     }
     if (this.category === InteractionTypes.DISCUSSION) {
-      color = '#E1BEE7';
+      return '#E1BEE7';
     }
     if (this.category === InteractionTypes.ANNUAL_SURVEY) {
-      color = '#FFFDE7';
+      return '#FFFDE7';
     }
     if (this.category === InteractionTypes.DAILY_ROUTINE) {
-      color = '#F1F8E9';
+      return  '#F1F8E9';
     }
 
-    return color;
+    return '';
   }
 
   /**

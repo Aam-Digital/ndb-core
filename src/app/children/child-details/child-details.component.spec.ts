@@ -57,7 +57,7 @@ describe('ChildDetailsComponent', () => {
   const mockedDatabase = new MockDatabase();
   const mockedSession = { getCurrentUser: () => 'testUser', getDatabase: () => mockedDatabase };
 
-  beforeEach(async(() => {
+  beforeEach((() => {
     TestBed.configureTestingModule({
       declarations: [
         ChildDetailsComponent,
@@ -108,13 +108,10 @@ describe('ChildDetailsComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ChildDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
+  }));
 
   it('should create', () => {
     expect(component).toBeTruthy();

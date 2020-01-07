@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {NoteModel} from '../../note.model';
 import {NgForm} from '@angular/forms';
 
@@ -7,7 +7,7 @@ import {NgForm} from '@angular/forms';
   templateUrl: './child-presence-list.component.html',
   styleUrls: ['./child-presence-list.component.scss']
 })
-export class ChildPresenceListComponent implements OnInit {
+export class ChildPresenceListComponent {
 
   @Input() note: NoteModel;
   @Input() recordForm: NgForm;
@@ -15,8 +15,5 @@ export class ChildPresenceListComponent implements OnInit {
   @Input() label: string;
 
   constructor() { }
-
-  ngOnInit() {
-  }
 
 }

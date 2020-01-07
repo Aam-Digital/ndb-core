@@ -37,6 +37,9 @@ export class MockDatabase extends Database {
 
   get(id: string) {
     if (!this.exists(id)) {
+      // rejected promise will lead to confusing error messages in test-scenarios
+      // so this log achieves more clarity
+      console.log('object with id ' + id + 'not found (in MockDatabase#get(id))');
       return Promise.reject({'status': 404, 'message': 'object not found'});
     }
 
