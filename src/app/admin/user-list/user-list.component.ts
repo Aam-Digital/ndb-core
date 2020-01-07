@@ -26,8 +26,8 @@ export class UserListComponent implements OnInit {
   }
 
   editUser(user) {
-    const dialogRef = this.dialog.open(UserDetailsComponent, {data: user});
-    dialogRef.afterClosed().subscribe(res => res ? this.loadData() : null);
+    this.dialog.open(UserDetailsComponent, {data: user})
+      .afterClosed().subscribe(res => res ? this.loadData() : null);
   }
 
   createUser() {

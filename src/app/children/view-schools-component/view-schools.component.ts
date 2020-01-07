@@ -85,7 +85,7 @@ export class ViewSchoolsComponent implements OnInit, OnChanges {
   }
 
   private showEditSchoolDialog(data) {
-    const dialog = this.dialog.open(EditSchoolDialogComponent, {data: data});
-    dialog.afterClosed().subscribe(res => res ? this.loadSchoolEntries() : null);
+    this.dialog.open(EditSchoolDialogComponent, {data: data})
+      .afterClosed().subscribe(res => res ? this.loadSchoolEntries() : null);
   }
 }
