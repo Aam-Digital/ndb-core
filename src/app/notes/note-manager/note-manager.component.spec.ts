@@ -56,23 +56,25 @@ describe('NoteManagerComponent', () => {
     fixture = TestBed.createComponent(NoteManagerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  })
+  });
 
   it('list should be longer after saving a new note', async () =>  {
+    const initialLength = component.entityList.length;
+
     notesService.getUpdater().toPromise().then(v => {
       expect(component.entityList.length).toBe(initialLength + 1);
     });
 
-    const initialLength = component.entityList.length;
     notesService.saveNewNote(generateNewNoteModel());
   });
 
   it('list should not be longer after saving an old note', async () => {
+    const initialLength = component.entityList.length;
+
     notesService.getUpdater().toPromise().then( v => {
       expect(component.entityList.length).toBe(initialLength);
     });
 
-    const initialLength = component.entityList.length;
     notesService.saveNewNote(generateUpdatedNoteModel());
   });
 
