@@ -21,12 +21,13 @@ export class SchoolsService {
   }
 
   /***
-   * Index is set int he ChildrenService
+   * Index is set in the ChildrenService
    * @param schoolId school you want relations for
    */
   queryRelationsOfSchool(schoolId: string): Promise<ChildSchoolRelation[]> {
     return this.db.query('childSchoolRelations_index/by_school', {key: schoolId, include_docs: true})
       .then(loadedEntities => {
+        console.log('loaded', loadedEntities);
         return loadedEntities.rows.map(loadedRecord => {
           const entity = new ChildSchoolRelation('');
           this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
