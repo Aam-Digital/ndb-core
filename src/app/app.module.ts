@@ -58,6 +58,7 @@ import { DemoEducationalMaterialGeneratorService } from './child-dev-project/edu
 import { DemoHealthCheckGeneratorService } from './child-dev-project/health-checkup/demo-data/demo-health-check-generator.service';
 import { DemoWidgetGeneratorService } from './child-dev-project/dashboard/demo-widget-generator.service';
 import { DemoUserGeneratorService } from './core/user/demo-user-generator.service';
+import { ConflictResolutionModule } from './conflict-resolution/conflict-resolution.module';
 
 /**
  * Main entry point of the application.
@@ -89,6 +90,7 @@ import { DemoUserGeneratorService } from './core/user/demo-user-generator.servic
     ChildrenModule,
     SchoolsModule,
     AdminModule,
+    ConflictResolutionModule,
     MatIconModule,
     HelpModule,
     MatNativeDateModule,
@@ -124,6 +126,7 @@ export class AppModule {
     _navigationItemsService.addMenuItem(new MenuItem('Notes', 'file-text', ['/note']));
     _navigationItemsService.addMenuItem(new MenuItem('Attendance Register', 'table', ['/attendance']));
     _navigationItemsService.addMenuItem(new MenuItem('Admin', 'wrench', ['/admin'], true));
+    _navigationItemsService.addMenuItem(new MenuItem('Database Conflicts', 'wrench', ['/admin/conflicts'], true));
     _navigationItemsService.addMenuItem(new MenuItem('Users', 'user', ['/users'], true));
     _navigationItemsService.addMenuItem(new MenuItem('Help', 'question-circle', ['/help']));
   }

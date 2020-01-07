@@ -1,6 +1,6 @@
 {
   "name": "ndb-core",
-  "version": "2.6.0",
+  "version": "0.0.0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -30,9 +30,11 @@
     "@sentry/browser": "^5.15.4",
     "core-js": "^2.6.9",
     "crypto-js": "~3.1.9-1",
+    "deep-object-diff": "^1.1.0",
     "faker": "^4.1.0",
     "file-saver": "^2.0.2",
     "font-awesome": "^4.7.0",
+    "lodash": "^4.17.15",
     "ngx-cookie-service": "^2.3.0",
     "ngx-filter-pipe": "^2.1.2",
     "ngx-markdown": "^8.2.2",
@@ -55,6 +57,7 @@
     "@types/faker": "^4.1.11",
     "@types/file-saver": "^2.0.1",
     "@types/jasmine": "^3.5.10",
+    "@types/lodash": "^4.14.149",
     "@types/node": "^12.12.27",
     "@types/pouchdb": "^6.4.0",
     "codelyzer": "^5.2.2",

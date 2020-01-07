@@ -2,6 +2,7 @@
 
 /src/assets/config.json
 /src/assets/child-photos
+proxy.conf.json
 
 # compiled output
 dist
