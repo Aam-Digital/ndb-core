@@ -1,18 +1,18 @@
-import {ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
-import {EditSchoolDialogComponent} from './edit-school-dialog/edit-school-dialog.component';
-import {EntityMapperService} from '../../../core/entity/entity-mapper.service';
+import { ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { EditSchoolDialogComponent } from './edit-school-dialog/edit-school-dialog.component';
+import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import {Child} from '../model/child';
-import {LoggingService} from '../../../core/logging/logging.service';
-import {ChildrenService} from '../children.service';
-import {SchoolWithRelation} from '../../schools/model/schoolWithRelation';
+import { Child } from '../model/child';
+import { LoggingService } from '../../../core/logging/logging.service';
+import { ChildrenService } from '../children.service';
+import { SchoolWithRelation } from '../../schools/model/schoolWithRelation';
 
 @Component({
   selector: 'app-view-schools-component',
   templateUrl: './view-schools.component.html',
-  styleUrls: ['./view-schools.component.scss']
+  styleUrls: ['./view-schools.component.scss'],
 })
 
 export class ViewSchoolsComponent implements OnInit, OnChanges {
@@ -62,7 +62,7 @@ export class ViewSchoolsComponent implements OnInit, OnChanges {
         this.updateViewableItems();
         this.changeDetectionRef.detectChanges();
       },
-        () => this.loggingService.error('[ViewSchoolsComponent] loading from database error.')
+        () => this.loggingService.error('[ViewSchoolsComponent] loading from database error.'),
       );
   }
 

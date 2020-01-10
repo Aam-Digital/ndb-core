@@ -31,12 +31,12 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatSnackBarModule,
     MatCardModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
   ],
   declarations: [AlertComponent],
   exports: [AlertComponent],
   providers: [AlertService],
-  entryComponents: [AlertComponent]
+  entryComponents: [AlertComponent],
 })
 export class AlertsModule {
 }

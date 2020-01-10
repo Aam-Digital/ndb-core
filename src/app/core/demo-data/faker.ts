@@ -1,5 +1,5 @@
 import * as originalFaker_IND from 'faker/locale/en_IND';
-import {Faker} from './faker.types';
+import { Faker } from './faker.types';
 import FakerStatic = Faker.FakerStatic;
 
 
@@ -10,7 +10,7 @@ class CustomFaker {
 
   constructor(
     // @ts-ignore
-    private baseFaker: Faker.FakerStatic
+    private baseFaker: Faker.FakerStatic,
   ) {
     // make baseFaker methods available from instances of this class
     Object.assign(this, baseFaker);

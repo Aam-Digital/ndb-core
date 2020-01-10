@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import {EntityMapperService} from '../../entity/entity-mapper.service';
-import {HttpClient} from '@angular/common/http';
-import {Child} from '../../../child-dev-project/children/model/child';
+import { EntityMapperService } from '../../entity/entity-mapper.service';
+import { HttpClient } from '@angular/common/http';
+import { Child } from '../../../child-dev-project/children/model/child';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ChildPhotoUpdateService {
 

@@ -8,12 +8,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
-import {EntityMapperService} from '../../entity/entity-mapper.service';
-import {MockDatabase} from '../../database/mock-database';
-import {ConfirmationDialogService} from '../confirmation-dialog/confirmation-dialog.service';
+import { EntityMapperService } from '../../entity/entity-mapper.service';
+import { MockDatabase } from '../../database/mock-database';
+import { ConfirmationDialogService } from '../confirmation-dialog/confirmation-dialog.service';
 import { CommonModule } from '@angular/common';
-import {Database} from '../../database/database';
-import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
+import { Database } from '../../database/database';
+import { EntitySchemaService } from '../../entity/schema/entity-schema.service';
 
 describe('EntitySubrecordComponent', () => {
   let component: EntitySubrecordComponent;

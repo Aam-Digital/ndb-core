@@ -15,25 +15,25 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, Inject, OnInit} from '@angular/core';
-import {Child} from '../model/child';
-import {EntityMapperService} from '../../../core/entity/entity-mapper.service';
-import {Gender} from '../model/Gender';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { Component, Inject, OnInit } from '@angular/core';
+import { Child } from '../model/child';
+import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
+import { Gender } from '../model/Gender';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {Location} from '@angular/common';
-import {ConfirmationDialogService} from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { Location } from '@angular/common';
+import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
 import * as uniqid from 'uniqid';
-import {AlertService} from '../../../core/alerts/alert.service';
-import {ChildrenService} from '../children.service';
-import {School} from '../../schools/model/school';
+import { AlertService } from '../../../core/alerts/alert.service';
+import { ChildrenService } from '../children.service';
+import { School } from '../../schools/model/school';
 
 
 @Component({
   selector: 'app-child-details',
   templateUrl: './child-details.component.html',
-  styleUrls: ['./child-details.component.css']
+  styleUrls: ['./child-details.component.css'],
 })
 export class ChildDetailsComponent implements OnInit {
 
@@ -110,7 +110,7 @@ export class ChildDetailsComponent implements OnInit {
       dropoutType:    [{value: this.child.dropoutType,    disabled: !this.editing}],
       dropoutRemarks: [{value: this.child.dropoutRemarks, disabled: !this.editing}],
 
-      photoFile: [this.child.photoFile]
+      photoFile: [this.child.photoFile],
     });
 
 

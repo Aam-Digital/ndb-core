@@ -1,4 +1,4 @@
-import {FilterSelection} from './filter-selection';
+import { FilterSelection } from './filter-selection';
 
 describe('FilterSelection', () => {
   it('create an instance', () => {

@@ -1,20 +1,20 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import {EntityMapperService} from '../../../core/entity/entity-mapper.service';
-import {Note} from '../model/note';
-import {NoteDetailsComponent} from '../note-details/note-details.component';
-import {Subscription} from 'rxjs';
-import {SessionService} from '../../../core/session/session.service';
-import {FilterSelection} from '../../../core/ui-helper/filter-selection/filter-selection';
-import {WarningLevel} from '../../warning-level';
-import {MediaChange, MediaObserver} from '@angular/flex-layout';
+import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
+import { Note } from '../model/note';
+import { NoteDetailsComponent } from '../note-details/note-details.component';
+import { Subscription } from 'rxjs';
+import { SessionService } from '../../../core/session/session.service';
+import { FilterSelection } from '../../../core/ui-helper/filter-selection/filter-selection';
+import { WarningLevel } from '../../warning-level';
+import { MediaChange, MediaObserver } from '@angular/flex-layout';
 
 @Component({
   selector: 'app-notes-manager',
   templateUrl: './notes-manager.component.html',
-  styleUrls: ['./notes-manager.component.scss']
+  styleUrls: ['./notes-manager.component.scss'],
 })
 export class NotesManagerComponent implements OnInit, AfterViewInit {
 
@@ -30,7 +30,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
 
   columnGroups = {
       'standard' : ['date', 'subject', 'category', 'author', 'children'],
-      'mobile' : ['date', 'subject', 'children']
+      'mobile' : ['date', 'subject', 'children'],
   };
   filterString = '';
 

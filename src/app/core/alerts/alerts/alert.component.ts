@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, Inject} from '@angular/core';
+import { Component, Inject } from '@angular/core';
 
 import { Alert } from '../alert';
 import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';

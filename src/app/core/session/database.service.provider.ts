@@ -25,5 +25,5 @@ export function databaseServiceFactory(_sessionService: SessionService) {
 export let databaseServiceProvider = {
   provide: Database,
   useFactory: databaseServiceFactory,
-  deps: [SessionService]
+  deps: [SessionService],
 };

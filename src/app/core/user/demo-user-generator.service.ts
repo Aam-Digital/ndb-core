@@ -1,6 +1,6 @@
-import {DemoDataGenerator} from '../demo-data/demo-data-generator';
-import {Injectable} from '@angular/core';
-import {User} from './user';
+import { DemoDataGenerator } from '../demo-data/demo-data-generator';
+import { Injectable } from '@angular/core';
+import { User } from './user';
 
 
 /**

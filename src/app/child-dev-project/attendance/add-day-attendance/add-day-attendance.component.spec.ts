@@ -8,14 +8,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
-import {FormsModule} from '@angular/forms';
-import {SchoolBlockComponent} from '../../schools/school-block/school-block.component';
-import {ChildBlockComponent} from '../../children/child-block/child-block.component';
-import {ChildrenService} from '../../children/children.service';
-import {Database} from '../../../core/database/database';
-import {MockDatabase} from '../../../core/database/mock-database';
-import {EntityModule} from '../../../core/entity/entity.module';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import { FormsModule } from '@angular/forms';
+import { SchoolBlockComponent } from '../../schools/school-block/school-block.component';
+import { ChildBlockComponent } from '../../children/child-block/child-block.component';
+import { ChildrenService } from '../../children/children.service';
+import { Database } from '../../../core/database/database';
+import { MockDatabase } from '../../../core/database/mock-database';
+import { EntityModule } from '../../../core/entity/entity.module';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('AddDayAttendanceComponent', () => {
   let component: AddDayAttendanceComponent;

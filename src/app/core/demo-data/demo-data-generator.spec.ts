@@ -1,4 +1,4 @@
-import {DemoDataGenerator} from './demo-data-generator';
+import { DemoDataGenerator } from './demo-data-generator';
 
 
 class DemoDataGeneratorImplementation extends DemoDataGenerator<any> {

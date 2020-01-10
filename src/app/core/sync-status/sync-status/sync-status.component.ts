@@ -15,18 +15,18 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, OnInit} from '@angular/core';
-import {SessionService} from '../../session/session.service';
-import {SyncState} from '../../session/sync-state.enum';
-import {AlertService} from '../../alerts/alert.service';
+import { Component, OnInit } from '@angular/core';
+import { SessionService } from '../../session/session.service';
+import { SyncState } from '../../session/sync-state.enum';
+import { AlertService } from '../../alerts/alert.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import {InitialSyncDialogComponent} from './initial-sync-dialog.component';
+import { InitialSyncDialogComponent } from './initial-sync-dialog.component';
 import { StateChangedEvent } from 'app/core/session/util/state-handler';
 
 @Component({
   selector: 'app-sync-status',
   templateUrl: './sync-status.component.html',
-  styleUrls: ['./sync-status.component.css']
+  styleUrls: ['./sync-status.component.css'],
 })
 export class SyncStatusComponent implements OnInit {
 

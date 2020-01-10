@@ -18,11 +18,11 @@
 import { TestBed } from '@angular/core/testing';
 
 import { LatestChangesService } from './latest-changes.service';
-import {AlertService} from '../alerts/alert.service';
-import {HttpClient} from '@angular/common/http';
-import {of, throwError} from 'rxjs';
+import { AlertService } from '../alerts/alert.service';
+import { HttpClient } from '@angular/common/http';
+import { of, throwError } from 'rxjs';
 import { MatDialogModule } from '@angular/material/dialog';
-import {CookieService} from 'ngx-cookie-service';
+import { CookieService } from 'ngx-cookie-service';
 
 describe('LatestChangesService', () => {
 
@@ -42,7 +42,7 @@ describe('LatestChangesService', () => {
         CookieService,
         {provide: AlertService, useValue: alertService},
         {provide: HttpClient, useValue: http},
-      ]
+      ],
     });
 
     service = TestBed.get(LatestChangesService);

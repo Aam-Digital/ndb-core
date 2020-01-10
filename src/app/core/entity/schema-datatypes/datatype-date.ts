@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {EntitySchemaDatatype} from '../schema/entity-schema-datatype';
+import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
 
 export const dateEntitySchemaDatatype: EntitySchemaDatatype = {
   name: 'date',
@@ -36,5 +36,5 @@ export const dateEntitySchemaDatatype: EntitySchemaDatatype = {
       throw new Error('failed to convert data to Date object: ' + value);
     }
     return date;
-  }
+  },
 };

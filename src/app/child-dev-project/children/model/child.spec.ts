@@ -16,10 +16,10 @@
  */
 
 import { Child } from './child';
-import {async} from '@angular/core/testing';
-import {Entity} from '../../../core/entity/entity';
-import {Gender} from './Gender';
-import {EntitySchemaService} from '../../../core/entity/schema/entity-schema.service';
+import { async } from '@angular/core/testing';
+import { Entity } from '../../../core/entity/entity';
+import { Gender } from './Gender';
+import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 
 describe('Child', () => {
   const ENTITY_TYPE = 'Child';

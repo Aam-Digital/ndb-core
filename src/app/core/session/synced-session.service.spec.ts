@@ -52,8 +52,8 @@ describe('SyncedSessionService', () => {
                     'remote_url': 'https://demo.aam-digital.com/db/',
                     'timeout': 60000,
                     'outdated_threshold_days': 0,
-                    'useTemporaryDatabase': false
-                }
+                    'useTemporaryDatabase': false,
+                },
             };
             sessionService = new SyncedSessionService(alertService, entitySchemaService);
         });
@@ -96,7 +96,7 @@ describe('SyncedSessionService', () => {
         it('has the correct state after Login with correct credentials', async () => {
             const [loginState] = await Promise.all([
                 sessionService.login('demo', 'pass'),
-                sessionService.getSyncState().waitForChangeTo(SyncState.COMPLETED, [SyncState.FAILED])
+                sessionService.getSyncState().waitForChangeTo(SyncState.COMPLETED, [SyncState.FAILED]),
             ]);
             expect(loginState).toEqual(LoginState.LOGGED_IN);
             expect(sessionService.getLoginState().getState()).toEqual(LoginState.LOGGED_IN);
@@ -110,7 +110,7 @@ describe('SyncedSessionService', () => {
         it('has the correct state after Logout', async () => {
             await Promise.all([
                 sessionService.login('demo', 'pass'),
-                sessionService.getSyncState().waitForChangeTo(SyncState.COMPLETED, [SyncState.FAILED])
+                sessionService.getSyncState().waitForChangeTo(SyncState.COMPLETED, [SyncState.FAILED]),
             ]);
 
             sessionService.logout();
@@ -136,8 +136,8 @@ describe('SyncedSessionService', () => {
                     'remote_url': 'https://demo.aam-digital.com/db/',
                     'timeout': 60000,
                     'outdated_threshold_days': 0,
-                    'useTemporaryDatabase': false
-                }
+                    'useTemporaryDatabase': false,
+                },
             };
             // setup synced session service
             sessionService = new SyncedSessionService(alertService, entitySchemaService);
@@ -202,7 +202,7 @@ describe('SyncedSessionService', () => {
         it('behaves correctly when the local session rejects, but the remote session succeeds (password change, new password)', (done) => {
             const localLogin = spyOn(localSession, 'login').and.returnValues(
                 Promise.resolve(LoginState.LOGIN_FAILED),
-                Promise.resolve(LoginState.LOGGED_IN)
+                Promise.resolve(LoginState.LOGGED_IN),
             );
             const remoteLogin = spyOn(remoteSession, 'login').and.returnValue(Promise.resolve(ConnectionState.CONNECTED));
             const syncSpy = spyOn(sessionService, 'sync').and.returnValue(Promise.resolve());

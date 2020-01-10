@@ -15,12 +15,12 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {AttendanceMonth, daysInMonth} from './attendance-month';
-import {WarningLevel} from '../../warning-level';
-import {AttendanceDay} from './attendance-day';
-import {async} from '@angular/core/testing';
-import {Entity} from '../../../core/entity/entity';
-import {EntitySchemaService} from '../../../core/entity/schema/entity-schema.service';
+import { AttendanceMonth, daysInMonth } from './attendance-month';
+import { WarningLevel } from '../../warning-level';
+import { AttendanceDay } from './attendance-day';
+import { async } from '@angular/core/testing';
+import { Entity } from '../../../core/entity/entity';
+import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 
 describe('AttendanceMonth', () => {
   const ENTITY_TYPE = 'AttendanceMonth';

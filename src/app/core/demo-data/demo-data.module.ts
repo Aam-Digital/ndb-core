@@ -15,27 +15,27 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DemoDataServiceConfig, DemoDataService} from './demo-data.service';
+import { DemoDataServiceConfig, DemoDataService } from './demo-data.service';
 import {
   ClassProvider,
   FactoryProvider,
   ModuleWithProviders,
   NgModule,
-  ValueProvider
+  ValueProvider,
 } from '@angular/core';
-import {DemoSchoolGenerator} from '../../child-dev-project/schools/demo-school-generator.service';
-import {DemoChildGenerator} from '../../child-dev-project/children/demo-data-generators/demo-child-generator.service';
-import {DemoChildSchoolRelationGenerator} from '../../child-dev-project/children/demo-data-generators/demo-child-school-relation-generator.service';
-import {DemoAttendanceGenerator} from '../../child-dev-project/attendance/demo-attendance-generator.service';
-import {DemoNoteGeneratorService} from '../../child-dev-project/notes/demo-data/demo-note-generator.service';
-import {DemoWidgetGeneratorService} from '../../child-dev-project/dashboard/demo-widget-generator.service';
-import {DemoAserGeneratorService} from '../../child-dev-project/aser/demo-aser-generator.service';
-import {DemoEducationalMaterialGeneratorService} from '../../child-dev-project/educational-material/demo-educational-material-generator.service';
-import {DemoHealthCheckGeneratorService} from '../../child-dev-project/health-checkup/demo-data/demo-health-check-generator.service';
-import {DemoDataGeneratingProgressDialogComponent} from './demo-data-generating-progress-dialog.component';
-import {DemoUserGeneratorService} from '../user/demo-user-generator.service';
-import {MatProgressBarModule} from '@angular/material/progress-bar';
-import {MatDialogModule} from '@angular/material/dialog';
+import { DemoSchoolGenerator } from '../../child-dev-project/schools/demo-school-generator.service';
+import { DemoChildGenerator } from '../../child-dev-project/children/demo-data-generators/demo-child-generator.service';
+import { DemoChildSchoolRelationGenerator } from '../../child-dev-project/children/demo-data-generators/demo-child-school-relation-generator.service';
+import { DemoAttendanceGenerator } from '../../child-dev-project/attendance/demo-attendance-generator.service';
+import { DemoNoteGeneratorService } from '../../child-dev-project/notes/demo-data/demo-note-generator.service';
+import { DemoWidgetGeneratorService } from '../../child-dev-project/dashboard/demo-widget-generator.service';
+import { DemoAserGeneratorService } from '../../child-dev-project/aser/demo-aser-generator.service';
+import { DemoEducationalMaterialGeneratorService } from '../../child-dev-project/educational-material/demo-educational-material-generator.service';
+import { DemoHealthCheckGeneratorService } from '../../child-dev-project/health-checkup/demo-data/demo-health-check-generator.service';
+import { DemoDataGeneratingProgressDialogComponent } from './demo-data-generating-progress-dialog.component';
+import { DemoUserGeneratorService } from '../user/demo-user-generator.service';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatDialogModule } from '@angular/material/dialog';
 
 
 const DEFAULT_DEMO_GENERATOR_PROVIDERS = [
@@ -59,11 +59,11 @@ const DEFAULT_DEMO_GENERATOR_PROVIDERS = [
   ],
   declarations: [DemoDataGeneratingProgressDialogComponent],
   exports: [DemoDataGeneratingProgressDialogComponent],
-  entryComponents: [DemoDataGeneratingProgressDialogComponent]
+  entryComponents: [DemoDataGeneratingProgressDialogComponent],
 })
 export class DemoDataModule {
   static forRoot(
-    demoDataGeneratorProviders: (ValueProvider|ClassProvider|FactoryProvider)[] = DEFAULT_DEMO_GENERATOR_PROVIDERS
+    demoDataGeneratorProviders: (ValueProvider|ClassProvider|FactoryProvider)[] = DEFAULT_DEMO_GENERATOR_PROVIDERS,
   ): ModuleWithProviders {
     return {
       ngModule: DemoDataModule,

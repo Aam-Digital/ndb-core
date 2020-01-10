@@ -1,6 +1,6 @@
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {SchoolsListComponent} from './schools-list/schools-list.component';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { SchoolsListComponent } from './schools-list/schools-list.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -15,16 +15,16 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import {SchoolDetailComponent} from './school-detail/school-detail.component';
+import { SchoolDetailComponent } from './school-detail/school-detail.component';
 import { SchoolBlockComponent } from './school-block/school-block.component';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {FlexLayoutModule} from '@angular/flex-layout';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import {MatSelectModule} from '@angular/material/select';
-import {UiHelperModule} from '../../core/ui-helper/ui-helper.module';
-import {RouterModule} from '@angular/router';
-import {SchoolsService} from './schools.service';
+import { MatSelectModule } from '@angular/material/select';
+import { UiHelperModule } from '../../core/ui-helper/ui-helper.module';
+import { RouterModule } from '@angular/router';
+import { SchoolsService } from './schools.service';
 
 @NgModule({
   imports: [
@@ -63,7 +63,7 @@ import {SchoolsService} from './schools.service';
     MatDialogModule,
     MatAutocompleteModule,
     UiHelperModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   declarations: [
     SchoolBlockComponent,
@@ -71,6 +71,6 @@ import {SchoolsService} from './schools.service';
     SchoolDetailComponent,
   ],
   exports: [SchoolBlockComponent],
-  providers: [SchoolsService]
+  providers: [SchoolsService],
 })
 export class SchoolsModule { }

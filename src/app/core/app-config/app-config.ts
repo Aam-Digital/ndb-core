@@ -15,9 +15,9 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Injectable} from '@angular/core';
-import {IAppConfig} from './app-config.model';
-import {HttpClient} from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { IAppConfig } from './app-config.model';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class AppConfig {

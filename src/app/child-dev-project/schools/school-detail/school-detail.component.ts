@@ -1,21 +1,21 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {School} from '../model/school';
-import {SchoolsService} from '../schools.service';
-import {EntityMapperService} from '../../../core/entity/entity-mapper.service';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import { Component, Inject, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { School } from '../model/school';
+import { SchoolsService } from '../schools.service';
+import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import * as uniqid from 'uniqid';
-import {AlertService} from '../../../core/alerts/alert.service';
+import { AlertService } from '../../../core/alerts/alert.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
-import {ConfirmationDialogService} from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
-import {Location} from '@angular/common';
-import {Child} from '../../children/model/child';
+import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { Location } from '@angular/common';
+import { Child } from '../../children/model/child';
 
 @Component({
   selector: 'app-school-detail',
   templateUrl: './school-detail.component.html',
-  styleUrls: ['./school-detail.component.css']
+  styleUrls: ['./school-detail.component.css'],
 })
 export class SchoolDetailComponent implements OnInit {
   school = new School('');
@@ -51,7 +51,7 @@ export class SchoolDetailComponent implements OnInit {
       academicBoard:  [{value: this.school.academicBoard, disabled: !this.editing}],
       workingDays:    [{value: this.school.workingDays,   disabled: !this.editing}],
       website:        [{value: this.school.website,       disabled: !this.editing}],
-      privateSchool:  [{value: this.school.privateSchool, disabled: !this.editing}]
+      privateSchool:  [{value: this.school.privateSchool, disabled: !this.editing}],
     });
   }
 

@@ -1,15 +1,15 @@
-import {Component, OnInit, AfterViewInit, ViewChild} from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import {School} from '../model/school';
-import {SchoolsService} from '../schools.service';
-import {Router} from '@angular/router';
-import {FilterSelection} from '../../../core/ui-helper/filter-selection/filter-selection';
+import { School } from '../model/school';
+import { SchoolsService } from '../schools.service';
+import { Router } from '@angular/router';
+import { FilterSelection } from '../../../core/ui-helper/filter-selection/filter-selection';
 
 @Component({
   selector: 'app-schools-list',
   templateUrl: './schools-list.component.html',
-  styleUrls: ['./schools-list.component.css']
+  styleUrls: ['./schools-list.component.css'],
 })
 export class SchoolsListComponent implements OnInit, AfterViewInit {
   schoolList: School[];

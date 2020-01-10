@@ -16,9 +16,9 @@
  */
 
 import { Entity } from '../../../core/entity/entity';
-import {WarningLevel} from '../../warning-level';
-import {DatabaseField} from '../../../core/entity/database-field.decorator';
-import {DatabaseEntity} from '../../../core/entity/database-entity.decorator';
+import { WarningLevel } from '../../warning-level';
+import { DatabaseField } from '../../../core/entity/database-field.decorator';
+import { DatabaseEntity } from '../../../core/entity/database-entity.decorator';
 
 @DatabaseEntity('Aser')
 export class Aser extends Entity {
@@ -28,14 +28,14 @@ export class Aser extends Entity {
     'Read Letters',
     'Read Words',
     'Read Sentence',
-    'Read Paragraph'
+    'Read Paragraph',
   ];
   static MathLevels = [
     'Nothing',
     'Numbers 1-9',
     'Numbers 10-99',
     'Subtraction',
-    'Division'
+    'Division',
   ];
 
   static isReadingPassedOrNA(level: string) {

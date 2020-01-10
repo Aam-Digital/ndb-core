@@ -16,16 +16,16 @@
  */
 
 
-import {Entity} from '../entity';
-import {EntitySchemaDatatype} from './entity-schema-datatype';
-import {Injectable} from '@angular/core';
-import {defaultEntitySchemaDatatype} from '../schema-datatypes/datatype-default';
-import {EntitySchema} from './entity-schema';
-import {EntitySchemaField} from './entity-schema-field';
-import {stringEntitySchemaDatatype} from '../schema-datatypes/datatype-string';
-import {numberEntitySchemaDatatype} from '../schema-datatypes/datatype-number';
-import {dateEntitySchemaDatatype} from '../schema-datatypes/datatype-date';
-import {monthEntitySchemaDatatype} from '../schema-datatypes/datatype-month';
+import { Entity } from '../entity';
+import { EntitySchemaDatatype } from './entity-schema-datatype';
+import { Injectable } from '@angular/core';
+import { defaultEntitySchemaDatatype } from '../schema-datatypes/datatype-default';
+import { EntitySchema } from './entity-schema';
+import { EntitySchemaField } from './entity-schema-field';
+import { stringEntitySchemaDatatype } from '../schema-datatypes/datatype-string';
+import { numberEntitySchemaDatatype } from '../schema-datatypes/datatype-number';
+import { dateEntitySchemaDatatype } from '../schema-datatypes/datatype-date';
+import { monthEntitySchemaDatatype } from '../schema-datatypes/datatype-month';
 
 
 /**

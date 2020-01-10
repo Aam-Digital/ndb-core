@@ -15,9 +15,9 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Database} from './database';
-import {AlertService} from '../alerts/alert.service';
-import {AlertDisplay} from '../alerts/alert-display';
+import { Database } from './database';
+import { AlertService } from '../alerts/alert.service';
+import { AlertDisplay } from '../alerts/alert-display';
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from

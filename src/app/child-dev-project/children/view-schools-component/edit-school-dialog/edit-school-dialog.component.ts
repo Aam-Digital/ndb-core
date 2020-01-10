@@ -1,15 +1,15 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {EntityMapperService} from '../../../../core/entity/entity-mapper.service';
-import {ChildSchoolRelation} from '../../model/childSchoolRelation';
+import { Component, Inject, OnInit } from '@angular/core';
+import { EntityMapperService } from '../../../../core/entity/entity-mapper.service';
+import { ChildSchoolRelation } from '../../model/childSchoolRelation';
 import * as uniqid from 'uniqid';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import {Child} from '../../model/child';
-import {School} from '../../../schools/model/school';
+import { Child } from '../../model/child';
+import { School } from '../../../schools/model/school';
 
 @Component({
   selector: 'app-add-school-dialog',
   templateUrl: './edit-school-dialog.component.html',
-  styleUrls: ['./edit-school-dialog.component.scss']
+  styleUrls: ['./edit-school-dialog.component.scss'],
 })
 export class EditSchoolDialogComponent implements OnInit {
 

@@ -1,12 +1,12 @@
-import {Component, HostListener, Input, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
-import {ChildrenService} from '../children.service';
-import {Child} from '../model/child';
+import { Component, HostListener, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { ChildrenService } from '../children.service';
+import { Child } from '../model/child';
 
 @Component({
   selector: 'app-child-block',
   templateUrl: './child-block.component.html',
-  styleUrls: ['./child-block.component.scss']
+  styleUrls: ['./child-block.component.scss'],
 })
 export class ChildBlockComponent implements OnInit {
   @Input() entity: Child;

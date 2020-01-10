@@ -15,16 +15,16 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
-import {ChangelogComponent} from '../changelog/changelog.component';
+import { ChangelogComponent } from '../changelog/changelog.component';
 import { MatDialogRef } from '@angular/material/dialog';
-import {LatestChangesService} from '../latest-changes.service';
+import { LatestChangesService } from '../latest-changes.service';
 
 @Component({
   selector: 'app-version',
   templateUrl: './app-version.component.html',
-  styleUrls: ['./app-version.component.css']
+  styleUrls: ['./app-version.component.css'],
 })
 export class AppVersionComponent implements OnInit {
   currentVersion: string;

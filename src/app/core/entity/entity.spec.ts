@@ -16,9 +16,9 @@
  */
 
 import { Entity } from './entity';
-import {async} from '@angular/core/testing';
-import {EntitySchemaService} from './schema/entity-schema.service';
-import {DatabaseField} from './database-field.decorator';
+import { async } from '@angular/core/testing';
+import { EntitySchemaService } from './schema/entity-schema.service';
+import { DatabaseField } from './database-field.decorator';
 
 describe('Entity', () => {
   let entitySchemaService: EntitySchemaService;
@@ -62,7 +62,7 @@ describe('Entity', () => {
     const data = {
       _id: 'test2',
       _rev: '1.2.3',
-      other: 'x'
+      other: 'x',
     };
     entitySchemaService.loadDataIntoEntity(entity, data);
 

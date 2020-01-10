@@ -1,13 +1,13 @@
-import {Component, Inject, Input, OnInit, ViewChild} from '@angular/core';
+import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import {ConfirmationDialogService} from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
-import {EntityMapperService} from '../../../core/entity/entity-mapper.service';
-import {AttendanceMonth} from '../model/attendance-month';
+import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
+import { AttendanceMonth } from '../model/attendance-month';
 
 @Component({
   selector: 'app-attendance-details',
   templateUrl: './attendance-details.component.html',
-  styleUrls: ['./attendance-details.component.scss']
+  styleUrls: ['./attendance-details.component.scss'],
 })
 export class AttendanceDetailsComponent implements OnInit {
   @Input() entity: AttendanceMonth;

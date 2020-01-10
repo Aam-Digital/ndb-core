@@ -1,16 +1,16 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AttendanceBlockComponent } from './attendance-block.component';
-import {AttendanceMonth} from '../model/attendance-month';
-import {AttendanceDaysComponent} from '../attendance-days/attendance-days.component';
+import { AttendanceMonth } from '../model/attendance-month';
+import { AttendanceDaysComponent } from '../attendance-days/attendance-days.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import {FormsModule} from '@angular/forms';
-import {UiHelperModule} from '../../../core/ui-helper/ui-helper.module';
-import {EntityModule} from '../../../core/entity/entity.module';
-import {AttendanceDayBlockComponent} from '../attendance-days/attendance-day-block.component';
+import { FormsModule } from '@angular/forms';
+import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
+import { EntityModule } from '../../../core/entity/entity.module';
+import { AttendanceDayBlockComponent } from '../attendance-days/attendance-day-block.component';
 
 describe('AttendanceBlockComponent', () => {
   let component: AttendanceBlockComponent;

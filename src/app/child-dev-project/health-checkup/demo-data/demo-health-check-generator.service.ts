@@ -1,10 +1,10 @@
-import {DemoChildGenerator} from '../../children/demo-data-generators/demo-child-generator.service';
-import {DemoDataGenerator} from '../../../core/demo-data/demo-data-generator';
-import {Injectable} from '@angular/core';
-import {Child} from '../../children/model/child';
-import {faker} from '../../../core/demo-data/faker';
-import {HealthCheck} from '../model/health-check';
-import {heightRangeForAge, weightRangeForAge} from './height-weight';
+import { DemoChildGenerator } from '../../children/demo-data-generators/demo-child-generator.service';
+import { DemoDataGenerator } from '../../../core/demo-data/demo-data-generator';
+import { Injectable } from '@angular/core';
+import { Child } from '../../children/model/child';
+import { faker } from '../../../core/demo-data/faker';
+import { HealthCheck } from '../model/health-check';
+import { heightRangeForAge, weightRangeForAge } from './height-weight';
 
 
 /**

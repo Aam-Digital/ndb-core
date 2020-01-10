@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import {Note} from '../../../child-dev-project/notes/model/note';
-import {SessionService} from '../../session/session.service';
+import { Note } from '../../../child-dev-project/notes/model/note';
+import { SessionService } from '../../session/session.service';
 import { MatDialog } from '@angular/material/dialog';
-import {NoteDetailsComponent} from '../../../child-dev-project/notes/note-details/note-details.component';
+import { NoteDetailsComponent } from '../../../child-dev-project/notes/note-details/note-details.component';
 
 @Component({
   selector: 'app-primary-action',
   templateUrl: './primary-action.component.html',
-  styleUrls: ['./primary-action.component.scss']
+  styleUrls: ['./primary-action.component.scss'],
 })
 export class PrimaryActionComponent implements OnInit {
 

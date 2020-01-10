@@ -16,9 +16,9 @@
  */
 
 import { Entity } from '../../../core/entity/entity';
-import {DatabaseEntity} from '../../../core/entity/database-entity.decorator';
-import {DatabaseField} from '../../../core/entity/database-field.decorator';
-import {WarningLevel} from '../../warning-level';
+import { DatabaseEntity } from '../../../core/entity/database-entity.decorator';
+import { DatabaseField } from '../../../core/entity/database-field.decorator';
+import { WarningLevel } from '../../warning-level';
 
 /**
  * Model Class for the Health Checks that are taken for a Child.

@@ -18,16 +18,16 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AppVersionComponent } from './app-version.component';
-import {MockSessionService} from '../../session/mock-session.service';
-import {EntityMapperService} from '../../entity/entity-mapper.service';
-import {LoginState} from '../../session/login-state.enum';
+import { MockSessionService } from '../../session/mock-session.service';
+import { EntityMapperService } from '../../entity/entity-mapper.service';
+import { LoginState } from '../../session/login-state.enum';
 import { SessionService } from 'app/core/session/session.service';
 import { MatDialogModule } from '@angular/material/dialog';
-import {LatestChangesService} from '../latest-changes.service';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {ChangelogComponent} from '../changelog/changelog.component';
-import {of} from 'rxjs';
-import {BrowserDynamicTestingModule} from '@angular/platform-browser-dynamic/testing';
+import { LatestChangesService } from '../latest-changes.service';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { ChangelogComponent } from '../changelog/changelog.component';
+import { of } from 'rxjs';
+import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { EntitySchemaService } from 'app/core/entity/schema/entity-schema.service';
 
 describe('AppVersionComponent', () => {
@@ -57,13 +57,13 @@ describe('AppVersionComponent', () => {
         {provide: SessionService, useValue: sessionService},
         {provide: EntityMapperService, useValue: entityMapper},
         {provide: LatestChangesService, useValue: latestChangesService},
-      ]
+      ],
     });
 
     TestBed.overrideModule(BrowserDynamicTestingModule, {
       set: {
-        entryComponents: [ChangelogComponent]
-      }
+        entryComponents: [ChangelogComponent],
+      },
     });
 
     TestBed.compileComponents();

@@ -32,7 +32,7 @@ describe('LoggedInGuard', () => {
     TestBed.configureTestingModule({
       providers: [LoggedInGuard,
         {provide: SessionService, useValue: sessionService},
-      ]
+      ],
     });
   });
 

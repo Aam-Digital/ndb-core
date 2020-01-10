@@ -16,7 +16,7 @@
  */
 
 import { Entity } from './entity';
-import {DatabaseField} from './database-field.decorator';
+import { DatabaseField } from './database-field.decorator';
 
 class TestClass extends Entity {
   @DatabaseField()

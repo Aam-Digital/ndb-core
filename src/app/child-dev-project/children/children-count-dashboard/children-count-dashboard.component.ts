@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import {ChildrenService} from '../children.service';
-import {Router} from '@angular/router';
+import { ChildrenService } from '../children.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-children-count-dashboard',
   templateUrl: './children-count-dashboard.component.html',
-  styleUrls: ['./children-count-dashboard.component.scss']
+  styleUrls: ['./children-count-dashboard.component.scss'],
 })
 export class ChildrenCountDashboardComponent implements OnInit {
   totalChildren: number;

@@ -15,18 +15,18 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, OnDestroy, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { SessionService } from '../../session/session.service';
-import {AppConfig} from '../../app-config/app-config';
-import {Title} from '@angular/platform-browser';
-import {MediaObserver, MediaChange} from '@angular/flex-layout';
-import {Subscription} from 'rxjs';
+import { AppConfig } from '../../app-config/app-config';
+import { Title } from '@angular/platform-browser';
+import { MediaObserver, MediaChange } from '@angular/flex-layout';
+import { Subscription } from 'rxjs';
 
 @Component({
   moduleId: module.id,
   selector: 'app-ui',
   templateUrl: './ui.component.html',
-  styleUrls: ['./ui.component.css']
+  styleUrls: ['./ui.component.css'],
 })
 export class UiComponent implements OnInit, OnDestroy {
   @ViewChild('sideNav', { static: false }) sideNav;

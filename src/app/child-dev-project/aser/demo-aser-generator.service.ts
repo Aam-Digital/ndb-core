@@ -1,10 +1,10 @@
-import {DemoChildGenerator} from '../children/demo-data-generators/demo-child-generator.service';
-import {DemoDataGenerator} from '../../core/demo-data/demo-data-generator';
-import {Injectable} from '@angular/core';
-import {Child} from '../children/model/child';
-import {faker} from '../../core/demo-data/faker';
-import {WarningLevel} from '../warning-level';
-import {Aser} from './model/aser';
+import { DemoChildGenerator } from '../children/demo-data-generators/demo-child-generator.service';
+import { DemoDataGenerator } from '../../core/demo-data/demo-data-generator';
+import { Injectable } from '@angular/core';
+import { Child } from '../children/model/child';
+import { faker } from '../../core/demo-data/faker';
+import { WarningLevel } from '../warning-level';
+import { Aser } from './model/aser';
 
 
 /**

@@ -15,14 +15,14 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, Inject, OnInit} from '@angular/core';
-import {Changelog} from '../changelog';
+import { Component, Inject, OnInit } from '@angular/core';
+import { Changelog } from '../changelog';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import {isObservable} from 'rxjs';
+import { isObservable } from 'rxjs';
 
 @Component({
   templateUrl: './changelog.component.html',
-  styleUrls: ['./changelog.component.css']
+  styleUrls: ['./changelog.component.css'],
 })
 export class ChangelogComponent implements OnInit {
 

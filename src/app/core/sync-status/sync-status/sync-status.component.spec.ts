@@ -21,13 +21,13 @@ import { SyncStatusComponent } from './sync-status.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import {MockSessionService} from '../../session/mock-session.service';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {InitialSyncDialogComponent} from './initial-sync-dialog.component';
+import { MockSessionService } from '../../session/mock-session.service';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { InitialSyncDialogComponent } from './initial-sync-dialog.component';
 import { SessionService } from 'app/core/session/session.service';
 import { SyncState } from 'app/core/session/sync-state.enum';
 import { AlertsModule } from 'app/core/alerts/alerts.module';
-import {BrowserDynamicTestingModule} from '@angular/platform-browser-dynamic/testing';
+import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { EntitySchemaService } from 'app/core/entity/schema/entity-schema.service';
 
 
@@ -44,14 +44,14 @@ describe('SyncStatusComponent', () => {
       declarations: [InitialSyncDialogComponent, SyncStatusComponent],
       imports: [MatIconModule, MatDialogModule, NoopAnimationsModule, MatProgressBarModule, AlertsModule],
       providers: [
-        { provide: SessionService, useValue: sessionService }
+        { provide: SessionService, useValue: sessionService },
       ],
     });
 
     TestBed.overrideModule(BrowserDynamicTestingModule, {
       set: {
-        entryComponents: [InitialSyncDialogComponent]
-      }
+        entryComponents: [InitialSyncDialogComponent],
+      },
     });
 
     TestBed.compileComponents();

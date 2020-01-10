@@ -5,13 +5,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 
 import { ViewSchoolsComponent } from './view-schools.component';
-import {EntityMapperService} from '../../../core/entity/entity-mapper.service';
+import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 import { MockDatabase } from '../../../core/database/mock-database';
-import {ChildrenService} from '../children.service';
-import {ChangeDetectorRef} from '@angular/core';
-import {LoggingService} from '../../../core/logging/logging.service';
-import {Database} from '../../../core/database/database';
-import {EntitySchemaService} from '../../../core/entity/schema/entity-schema.service';
+import { ChildrenService } from '../children.service';
+import { ChangeDetectorRef } from '@angular/core';
+import { LoggingService } from '../../../core/logging/logging.service';
+import { Database } from '../../../core/database/database';
+import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 
 describe('ViewSchoolsComponent', () => {
   let component: ViewSchoolsComponent;
@@ -24,7 +24,7 @@ describe('ViewSchoolsComponent', () => {
         MatIconModule,
         MatFormFieldModule,
         MatTableModule,
-        MatDialogModule
+        MatDialogModule,
       ],
       providers: [
         ChildrenService,
@@ -33,7 +33,7 @@ describe('ViewSchoolsComponent', () => {
         MatDialog,
         ChangeDetectorRef,
         LoggingService,
-        { provide: Database, useClass: MockDatabase}
+        { provide: Database, useClass: MockDatabase},
       ],
     })
     .compileComponents();

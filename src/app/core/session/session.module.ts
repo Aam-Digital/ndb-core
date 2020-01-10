@@ -29,7 +29,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import {RouterModule} from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   imports: [
@@ -42,11 +42,11 @@ import {RouterModule} from '@angular/router';
     MatInputModule,
     MatButtonModule,
     RouterModule,
-    UserModule
+    UserModule,
   ],
   declarations: [LoginComponent],
   exports: [LoginComponent],
-  providers: [LoggedInGuard, sessionServiceProvider, databaseServiceProvider]
+  providers: [LoggedInGuard, sessionServiceProvider, databaseServiceProvider],
 })
 export class SessionModule {
 }

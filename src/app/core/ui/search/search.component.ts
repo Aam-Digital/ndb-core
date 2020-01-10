@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import {Database} from '../../database/database';
-import {Child} from '../../../child-dev-project/children/model/child';
-import {School} from '../../../child-dev-project/schools/model/school';
-import {Entity} from '../../entity/entity';
-import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
+import { Database } from '../../database/database';
+import { Child } from '../../../child-dev-project/children/model/child';
+import { School } from '../../../child-dev-project/schools/model/school';
+import { Entity } from '../../entity/entity';
+import { EntitySchemaService } from '../../entity/schema/entity-schema.service';
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
-  styleUrls: ['./search.component.scss']
+  styleUrls: ['./search.component.scss'],
 })
 export class SearchComponent implements OnInit {
   results;
@@ -34,9 +34,9 @@ export class SearchComponent implements OnInit {
       _id: '_design/search_index',
       views: {
         by_name: {
-          map: searchMapFunction
-        }
-      }
+          map: searchMapFunction,
+        },
+      },
     };
 
     this.db.saveDatabaseIndex(designDoc);
@@ -50,7 +50,7 @@ export class SearchComponent implements OnInit {
     const searchTerms = this.searchText.split(' ');
     const queryResults = await this.db.query(
       'search_index/by_name',
-      {startkey: searchTerms[0], endkey: searchTerms[0] + '\ufff0', include_docs: true}
+      {startkey: searchTerms[0], endkey: searchTerms[0] + '\ufff0', include_docs: true},
       );
 
     if (JSON.stringify(this.searchText) === searchHash) {

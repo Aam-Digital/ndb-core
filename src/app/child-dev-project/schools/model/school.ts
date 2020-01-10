@@ -1,6 +1,6 @@
-import {Entity} from '../../../core/entity/entity';
-import {DatabaseEntity} from '../../../core/entity/database-entity.decorator';
-import {DatabaseField} from '../../../core/entity/database-field.decorator';
+import { Entity } from '../../../core/entity/entity';
+import { DatabaseEntity } from '../../../core/entity/database-entity.decorator';
+import { DatabaseField } from '../../../core/entity/database-field.decorator';
 
 @DatabaseEntity('School')
 export class School extends Entity {

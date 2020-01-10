@@ -14,7 +14,7 @@ describe('ConfirmationDialogComponent', () => {
       imports: [MatDialogModule, MatButtonModule],
       providers: [
         {provide: MatDialogRef, useValue: {}},
-        {provide: MAT_DIALOG_DATA, useValue: {title: 'test title', text: 'test text'}}
+        {provide: MAT_DIALOG_DATA, useValue: {title: 'test title', text: 'test text'}},
         ],
     })
     .compileComponents();

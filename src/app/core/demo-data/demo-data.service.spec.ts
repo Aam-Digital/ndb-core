@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 
-import {DemoDataServiceConfig, DemoDataService} from './demo-data.service';
-import {EntityMapperService} from '../entity/entity-mapper.service';
-import {AlertService} from '../alerts/alert.service';
-import {Injector} from '@angular/core';
-import {DemoChildConfig, DemoChildGenerator} from '../../child-dev-project/children/demo-data-generators/demo-child-generator.service';
+import { DemoDataServiceConfig, DemoDataService } from './demo-data.service';
+import { EntityMapperService } from '../entity/entity-mapper.service';
+import { AlertService } from '../alerts/alert.service';
+import { Injector } from '@angular/core';
+import { DemoChildConfig, DemoChildGenerator } from '../../child-dev-project/children/demo-data-generators/demo-child-generator.service';
 
 describe('DemoDataService', () => {
   let mockEntityMapper;

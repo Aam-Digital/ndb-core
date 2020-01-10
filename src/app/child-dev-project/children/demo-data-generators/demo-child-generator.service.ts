@@ -1,12 +1,12 @@
-import {Child} from '../model/child';
-import {Gender} from '../model/Gender';
-import {religions} from './fixtures/religions';
-import {languages} from './fixtures/languages';
-import {dropoutTypes} from './fixtures/dropout-types';
-import {Injectable} from '@angular/core';
-import {DemoDataGenerator} from '../../../core/demo-data/demo-data-generator';
-import {faker} from '../../../core/demo-data/faker';
-import {centersWithProbability} from './fixtures/centers';
+import { Child } from '../model/child';
+import { Gender } from '../model/Gender';
+import { religions } from './fixtures/religions';
+import { languages } from './fixtures/languages';
+import { dropoutTypes } from './fixtures/dropout-types';
+import { Injectable } from '@angular/core';
+import { DemoDataGenerator } from '../../../core/demo-data/demo-data-generator';
+import { faker } from '../../../core/demo-data/faker';
+import { centersWithProbability } from './fixtures/centers';
 
 
 export class DemoChildConfig {

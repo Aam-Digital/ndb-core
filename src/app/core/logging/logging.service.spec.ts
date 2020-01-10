@@ -1,5 +1,5 @@
-import {LoggingService} from './logging.service';
-import {LogLevel} from './log-level';
+import { LoggingService } from './logging.service';
+import { LogLevel } from './log-level';
 
 
 describe('LoggingService', () => {

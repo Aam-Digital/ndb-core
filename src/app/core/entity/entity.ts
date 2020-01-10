@@ -20,8 +20,8 @@
  * It can be used for passing a class from which new objects should be created.
  * For example usage check the entity mapper service.
  */
-import {EntitySchema} from './schema/entity-schema';
-import {DatabaseField} from './database-field.decorator';
+import { EntitySchema } from './schema/entity-schema';
+import { DatabaseField } from './database-field.decorator';
 
 export type EntityConstructor<T extends Entity> = new(id: string) => T;
 

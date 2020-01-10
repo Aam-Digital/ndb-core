@@ -1,12 +1,12 @@
-import {Component, HostListener, Input, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
-import {EntityMapperService} from '../../../core/entity/entity-mapper.service';
-import {School} from '../model/school';
+import { Component, HostListener, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
+import { School } from '../model/school';
 
 @Component({
   selector: 'app-school-block',
   templateUrl: './school-block.component.html',
-  styleUrls: ['./school-block.component.scss']
+  styleUrls: ['./school-block.component.scss'],
 })
 export class SchoolBlockComponent implements OnInit {
   @Input() entity: School = new School('');

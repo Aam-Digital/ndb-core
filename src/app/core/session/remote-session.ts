@@ -71,8 +71,8 @@ export class RemoteSession {
           });
           return req;
         },
-        skip_setup: true
-      } as PouchDB.Configuration.RemoteDatabaseConfiguration
+        skip_setup: true,
+      } as PouchDB.Configuration.RemoteDatabaseConfiguration,
     );
   }
 
@@ -85,9 +85,9 @@ export class RemoteSession {
     const ajaxOpts = {
       ajax: {
         headers: {
-          Authorization: 'Basic ' + window.btoa(username + ':' + password)
-        }
-      }
+          Authorization: 'Basic ' + window.btoa(username + ':' + password),
+        },
+      },
     };
 
     try {

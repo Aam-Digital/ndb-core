@@ -19,13 +19,13 @@ import { Component, OnInit } from '@angular/core';
 import { MenuItem } from '../menu-item';
 import { SessionService } from '../../session/session.service';
 import { NavigationItemsService } from '../navigation-items.service';
-import {AdminGuard} from '../../admin/admin.guard';
-import {Location} from '@angular/common';
+import { AdminGuard } from '../../admin/admin.guard';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-navigation',
   templateUrl: './navigation.component.html',
-  styleUrls: ['./navigation.component.css']
+  styleUrls: ['./navigation.component.css'],
 })
 export class NavigationComponent implements OnInit {
 

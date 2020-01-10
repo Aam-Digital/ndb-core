@@ -16,9 +16,9 @@
  */
 
 import { Entity } from '../../../core/entity/entity';
-import { Gender} from './Gender';
-import {DatabaseEntity} from '../../../core/entity/database-entity.decorator';
-import {DatabaseField} from '../../../core/entity/database-field.decorator';
+import { Gender } from './Gender';
+import { DatabaseEntity } from '../../../core/entity/database-entity.decorator';
+import { DatabaseField } from '../../../core/entity/database-field.decorator';
 
 @DatabaseEntity('Child')
 export class Child extends Entity {

@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { HealthCheck } from '../model/health-check';
-import {ColumnDescription, ColumnDescriptionInputType} from '../../../core/ui-helper/entity-subrecord/column-description';
+import { ColumnDescription, ColumnDescriptionInputType } from '../../../core/ui-helper/entity-subrecord/column-description';
 import { ActivatedRoute } from '@angular/router';
 import { ChildrenService } from '../../children/children.service';
-import {DatePipe} from '@angular/common';
+import { DatePipe } from '@angular/common';
 
 
 @Component({
   selector: 'app-health-checkup',
   templateUrl: './health-checkup.component.html',
-  styleUrls: ['./health-checkup.component.scss']
+  styleUrls: ['./health-checkup.component.scss'],
 })
 
 export class HealthCheckupComponent implements OnInit {

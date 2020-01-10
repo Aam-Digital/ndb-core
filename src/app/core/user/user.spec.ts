@@ -16,9 +16,9 @@
  */
 
 import { User } from './user';
-import {async} from '@angular/core/testing';
-import {Entity} from '../entity/entity';
-import {EntitySchemaService} from '../entity/schema/entity-schema.service';
+import { async } from '@angular/core/testing';
+import { Entity } from '../entity/entity';
+import { EntitySchemaService } from '../entity/schema/entity-schema.service';
 
 describe('User', () => {
   const ENTITY_TYPE = 'User';

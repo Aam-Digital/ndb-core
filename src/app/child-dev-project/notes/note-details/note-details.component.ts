@@ -1,13 +1,13 @@
-import {Component, Inject, Input, OnInit, ViewChild} from '@angular/core';
-import {Note} from '../model/note';
+import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
+import { Note } from '../model/note';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import {ConfirmationDialogService} from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
-import {EntityMapperService} from '../../../core/entity/entity-mapper.service';
+import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 
 @Component({
   selector: 'app-note-details',
   templateUrl: './note-details.component.html',
-  styleUrls: ['./note-details.component.scss']
+  styleUrls: ['./note-details.component.scss'],
 })
 export class NoteDetailsComponent implements OnInit {
   @Input() note: Note;

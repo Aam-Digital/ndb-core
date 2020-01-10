@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {EntitySchemaDatatype} from '../schema/entity-schema-datatype';
+import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
 
 export const stringEntitySchemaDatatype: EntitySchemaDatatype = {
   name: 'string',
@@ -26,5 +26,5 @@ export const stringEntitySchemaDatatype: EntitySchemaDatatype = {
 
   transformToObjectFormat: (value) => {
     return String(value);
-  }
+  },
 };

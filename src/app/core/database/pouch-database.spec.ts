@@ -17,8 +17,8 @@
 
 import { PouchDatabase } from './pouch-database';
 import PouchDB from 'pouchdb-browser';
-import {AlertService} from '../alerts/alert.service';
-import {LoggingService} from '../logging/logging.service';
+import { AlertService } from '../alerts/alert.service';
+import { LoggingService } from '../logging/logging.service';
 
 describe('PouchDatabase tests', () => {
   let pouchDatabase: PouchDatabase;
@@ -54,7 +54,7 @@ describe('PouchDatabase tests', () => {
       },
       function () {
         expect(false).toBe(true, 'promise of pouchDatabase.put failed');
-      }
+      },
     );
 
     function getObjectAndCompare() {
@@ -67,7 +67,7 @@ describe('PouchDatabase tests', () => {
         },
         function () {
           expect(false).toBe(true, 'promise of pouchDatabase.get failed');
-        }
+        },
       );
     }
   });
@@ -80,7 +80,7 @@ describe('PouchDatabase tests', () => {
       function (err: any) {
         expect(err).toBeDefined();
         done();
-      }
+      },
     );
   });
 

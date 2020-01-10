@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {EntitySchemaField} from './entity-schema-field';
+import { EntitySchemaField } from './entity-schema-field';
 
 /**
  * Complete schema of an Entity containing multiple EntitySchemaFields.

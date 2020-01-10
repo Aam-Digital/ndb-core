@@ -1,8 +1,8 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { AdminGuard } from './admin.guard';
-import {SessionService} from '../session/session.service';
-import {User} from '../user/user';
+import { SessionService } from '../session/session.service';
+import { User } from '../user/user';
 
 describe('AdminGuard', () => {
   let mockSessionService;
@@ -16,7 +16,7 @@ describe('AdminGuard', () => {
       providers: [
         AdminGuard,
         {provide: SessionService, useValue: mockSessionService},
-      ]
+      ],
     });
   });
 

@@ -12,22 +12,22 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import {CommonModule} from '@angular/common';
-import {ChildrenService} from '../children.service';
-import {EntityMapperService} from '../../../core/entity/entity-mapper.service';
-import {MockDatabase} from '../../../core/database/mock-database';
-import {Database} from '../../../core/database/database';
-import {RouterTestingModule} from '@angular/router/testing';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {AttendanceBlockComponent} from '../../attendance/attendance-block/attendance-block.component';
-import {FormsModule} from '@angular/forms';
-import {ChildBlockComponent} from '../child-block/child-block.component';
-import {SchoolBlockComponent} from '../../schools/school-block/school-block.component';
-import {FilterPipeModule} from 'ngx-filter-pipe';
-import {AttendanceDaysComponent} from '../../attendance/attendance-days/attendance-days.component';
-import {UiHelperModule} from '../../../core/ui-helper/ui-helper.module';
-import {AttendanceDayBlockComponent} from '../../attendance/attendance-days/attendance-day-block.component';
-import {EntitySchemaService} from '../../../core/entity/schema/entity-schema.service';
+import { CommonModule } from '@angular/common';
+import { ChildrenService } from '../children.service';
+import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
+import { MockDatabase } from '../../../core/database/mock-database';
+import { Database } from '../../../core/database/database';
+import { RouterTestingModule } from '@angular/router/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { AttendanceBlockComponent } from '../../attendance/attendance-block/attendance-block.component';
+import { FormsModule } from '@angular/forms';
+import { ChildBlockComponent } from '../child-block/child-block.component';
+import { SchoolBlockComponent } from '../../schools/school-block/school-block.component';
+import { FilterPipeModule } from 'ngx-filter-pipe';
+import { AttendanceDaysComponent } from '../../attendance/attendance-days/attendance-days.component';
+import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
+import { AttendanceDayBlockComponent } from '../../attendance/attendance-days/attendance-day-block.component';
+import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 
 describe('ChildrenListComponent', () => {
   let component: ChildrenListComponent;
@@ -55,14 +55,14 @@ describe('ChildrenListComponent', () => {
         FormsModule,
         FilterPipeModule,
         RouterTestingModule.withRoutes([
-          { path: 'child', component: ChildrenListComponent}
+          { path: 'child', component: ChildrenListComponent},
         ]),
         UiHelperModule,
       ],
       providers: [ChildrenService,
         EntityMapperService,
         EntitySchemaService,
-        { provide: Database, useClass: MockDatabase }
+        { provide: Database, useClass: MockDatabase },
       ],
     })
     .compileComponents();

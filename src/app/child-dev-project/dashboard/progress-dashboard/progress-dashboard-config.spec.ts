@@ -15,10 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {async} from '@angular/core/testing';
-import {Entity} from '../../../core/entity/entity';
-import {ProgressDashboardConfig} from './progress-dashboard-config';
-import {EntitySchemaService} from '../../../core/entity/schema/entity-schema.service';
+import { async } from '@angular/core/testing';
+import { Entity } from '../../../core/entity/entity';
+import { ProgressDashboardConfig } from './progress-dashboard-config';
+import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 
 describe('ProgressDashboardConfig Entity', () => {
   const ENTITY_TYPE = 'ProgressDashboardConfig';

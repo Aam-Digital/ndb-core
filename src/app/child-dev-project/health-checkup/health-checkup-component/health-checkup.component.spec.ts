@@ -1,13 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { HealthCheckupComponent } from './health-checkup.component';
-import {ActivatedRoute} from '@angular/router';
-import {of} from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 import { EntitySubrecordComponent } from 'app/core/ui-helper/entity-subrecord/entity-subrecord.component';
-import {Child} from '../../children/model/child';
+import { Child } from '../../children/model/child';
 import { CommonModule, DatePipe } from '@angular/common';
-import {ChildrenService} from '../../children/children.service';
-import {EntityMapperService} from '../../../core/entity/entity-mapper.service';
+import { ChildrenService } from '../../children/children.service';
+import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatOptionModule } from '@angular/material/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -32,7 +32,7 @@ describe('HealthCheckupComponent', () => {
     },
     getHealthChecksOfChild: (id) => {
       return of([]);
-    }
+    },
   };
   const mockEntityMapper = jasmine.createSpyObj('mockEntityMapper', ['save', 'remove']);
 
@@ -49,7 +49,7 @@ describe('HealthCheckupComponent', () => {
        { provide: ActivatedRoute, useValue: {paramMap: of({get: () => '22'}) } },
        { provide: ChildrenService, useValue: mockChildrenService },
         { provide: EntityMapperService, useValue: mockEntityMapper },
-      ]
+      ],
     })
     .compileComponents();
   }));

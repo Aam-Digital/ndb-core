@@ -36,7 +36,7 @@ describe('MockDatabase tests', () => {
       },
       function () {
         expect(false).toBe(true, 'promise of Database.put failed');
-      }
+      },
     );
   });
 
@@ -51,17 +51,17 @@ describe('MockDatabase tests', () => {
           function () {
             expectIdInDatabase(data1._id, () => {}).then(function () {
                 expectIdInDatabase(data2._id, done);
-              }
+              },
             );
           },
           function () {
             expect(false).toBe(true, 'promise of Database.put failed');
-          }
+          },
         );
       },
       function () {
         expect(false).toBe(true, 'promise of Database.put failed');
-      }
+      },
     );
   });
 
@@ -75,7 +75,7 @@ describe('MockDatabase tests', () => {
       function (err: any) {
         expect(err).toBeDefined();
         done();
-      }
+      },
     );
   });
 
@@ -98,11 +98,11 @@ describe('MockDatabase tests', () => {
               function (result) {
                 expect(result.name).toBe(testData.name, 'original record was overwritten');
                 done();
-              }
+              },
             );
-          }
+          },
         );
-      }
+      },
     );
   });
 
@@ -124,15 +124,15 @@ describe('MockDatabase tests', () => {
               function () {
                 expect(false).toBe(true, 'promise of Database.remove failed');
                 done();
-              }
+              },
             );
-          }
+          },
         );
       },
       function () {
         expect(false).toBe(true, 'promise of Database.put failed');
         done();
-      }
+      },
     );
   });
 
@@ -190,7 +190,7 @@ describe('MockDatabase tests', () => {
       function () {
         expect(false).toBe(true, 'promise of Database.get failed');
         done();
-      }
+      },
     );
   }
 
@@ -202,7 +202,7 @@ describe('MockDatabase tests', () => {
       },
       function () {
         done();
-      }
+      },
     );
   }
 

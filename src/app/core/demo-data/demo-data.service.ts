@@ -20,10 +20,10 @@ import {
   Injectable,
   Injector, ValueProvider,
 } from '@angular/core';
-import {DemoDataGenerator} from './demo-data-generator';
-import {EntityMapperService} from '../entity/entity-mapper.service';
-import {AlertService} from '../alerts/alert.service';
-import {AlertDisplay} from '../alerts/alert-display';
+import { DemoDataGenerator } from './demo-data-generator';
+import { EntityMapperService } from '../entity/entity-mapper.service';
+import { AlertService } from '../alerts/alert.service';
+import { AlertDisplay } from '../alerts/alert-display';
 
 
 export class DemoDataServiceConfig {

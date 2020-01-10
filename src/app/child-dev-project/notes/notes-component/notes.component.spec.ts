@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NotesComponent } from './notes.component';
-import {ChildrenService} from '../../children/children.service';
-import {UiHelperModule} from '../../../core/ui-helper/ui-helper.module';
-import {ActivatedRoute} from '@angular/router';
-import {Child} from '../../children/model/child';
-import {SessionService} from '../../../core/session/session.service';
-import {User} from '../../../core/user/user';
-import {EntityMapperService} from '../../../core/entity/entity-mapper.service';
-import {MockDatabase} from '../../../core/database/mock-database';
-import {DatePipe} from '@angular/common';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {of} from 'rxjs';
-import {Database} from '../../../core/database/database';
-import {EntitySchemaService} from '../../../core/entity/schema/entity-schema.service';
+import { ChildrenService } from '../../children/children.service';
+import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
+import { ActivatedRoute } from '@angular/router';
+import { Child } from '../../children/model/child';
+import { SessionService } from '../../../core/session/session.service';
+import { User } from '../../../core/user/user';
+import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
+import { MockDatabase } from '../../../core/database/mock-database';
+import { DatePipe } from '@angular/common';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { of } from 'rxjs';
+import { Database } from '../../../core/database/database';
+import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 
 describe('NotesComponent', () => {
   let component: NotesComponent;
@@ -25,7 +25,7 @@ describe('NotesComponent', () => {
     },
     getNotesOfChild: (id) => {
       return of([]);
-    }
+    },
   };
   let testUser;
 

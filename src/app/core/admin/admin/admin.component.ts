@@ -1,18 +1,18 @@
-import {Component, OnInit} from '@angular/core';
-import {AppConfig} from '../../app-config/app-config';
-import {AlertService} from '../../alerts/alert.service';
-import {Alert} from '../../alerts/alert';
+import { Component, OnInit } from '@angular/core';
+import { AppConfig } from '../../app-config/app-config';
+import { AlertService } from '../../alerts/alert.service';
+import { Alert } from '../../alerts/alert';
 import FileSaver from 'file-saver';
-import {BackupService} from '../services/backup.service';
-import {ConfirmationDialogService} from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { BackupService } from '../services/backup.service';
+import { ConfirmationDialogService } from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import PouchDB from 'pouchdb-browser';
-import {ChildPhotoUpdateService} from '../services/child-photo-update.service';
+import { ChildPhotoUpdateService } from '../services/child-photo-update.service';
 
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.scss']
+  styleUrls: ['./admin.component.scss'],
 })
 export class AdminComponent implements OnInit {
   appConfig = AppConfig.settings;
@@ -63,7 +63,7 @@ export class AdminComponent implements OnInit {
           resolve(fileReader.result as string);
         };
         fileReader.readAsText(file);
-      }
+      },
     );
   }
 

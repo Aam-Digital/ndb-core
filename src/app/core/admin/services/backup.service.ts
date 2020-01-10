@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import {Database} from '../../database/database';
-import {User} from '../../user/user';
-import {Papa} from 'ngx-papaparse';
+import { Database } from '../../database/database';
+import { User } from '../../user/user';
+import { Papa } from 'ngx-papaparse';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BackupService {
   static readonly SEPARATOR_ROW = '\n';

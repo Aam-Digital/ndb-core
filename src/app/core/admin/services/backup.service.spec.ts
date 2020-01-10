@@ -1,9 +1,9 @@
-import {TestBed} from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
 import { BackupService } from './backup.service';
-import {Database} from '../../database/database';
-import {PapaParseModule} from 'ngx-papaparse';
-import {MockDatabase} from '../../database/mock-database';
+import { Database } from '../../database/database';
+import { PapaParseModule } from 'ngx-papaparse';
+import { MockDatabase } from '../../database/mock-database';
 
 describe('BackupService', () => {
   let db: Database;
@@ -16,7 +16,7 @@ describe('BackupService', () => {
       providers: [
         BackupService,
         {provide: Database, useValue: db},
-      ]
+      ],
     });
 
     service = TestBed.get(BackupService);

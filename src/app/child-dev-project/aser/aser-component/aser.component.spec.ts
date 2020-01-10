@@ -1,18 +1,18 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AserComponent } from './aser.component';
-import {UiHelperModule} from '../../../core/ui-helper/ui-helper.module';
-import {FormsModule} from '@angular/forms';
-import {ActivatedRoute} from '@angular/router';
-import {ChildrenService} from '../../children/children.service';
-import {EntityMapperService} from '../../../core/entity/entity-mapper.service';
-import {MockDatabase} from '../../../core/database/mock-database';
-import {Child} from '../../children/model/child';
-import {DatePipe} from '@angular/common';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {of} from 'rxjs';
-import {EntitySchemaService} from '../../../core/entity/schema/entity-schema.service';
-import {Database} from '../../../core/database/database';
+import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { ChildrenService } from '../../children/children.service';
+import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
+import { MockDatabase } from '../../../core/database/mock-database';
+import { Child } from '../../children/model/child';
+import { DatePipe } from '@angular/common';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { of } from 'rxjs';
+import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
+import { Database } from '../../../core/database/database';
 
 describe('AserComponent', () => {
   let component: AserComponent;
@@ -24,7 +24,7 @@ describe('AserComponent', () => {
     },
     getAserResultsOfChild: (id) => {
       return of([]);
-    }
+    },
   };
 
 

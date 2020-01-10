@@ -22,7 +22,7 @@ export enum AttendanceStatus {
   ABSENT = 'A',
   PRESENT = 'P',
   LATE = 'L',
-  EXCUSED = 'E'
+  EXCUSED = 'E',
 }
 
 

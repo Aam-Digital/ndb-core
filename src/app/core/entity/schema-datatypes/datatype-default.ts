@@ -16,7 +16,7 @@
  */
 
 
-import {EntitySchemaDatatype} from '../schema/entity-schema-datatype';
+import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
 
 export const defaultEntitySchemaDatatype: EntitySchemaDatatype = {
   name: 'any',
@@ -27,5 +27,5 @@ export const defaultEntitySchemaDatatype: EntitySchemaDatatype = {
 
   transformToObjectFormat: (value) => {
     return value;
-  }
+  },
 };

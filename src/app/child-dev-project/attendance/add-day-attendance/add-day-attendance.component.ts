@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import {ChildrenService} from '../../children/children.service';
-import {FilterSelection} from '../../../core/ui-helper/filter-selection/filter-selection';
-import {EntityMapperService} from '../../../core/entity/entity-mapper.service';
-import {AttendanceDay, AttendanceStatus} from '../model/attendance-day';
-import {AttendanceMonth} from '../model/attendance-month';
-import {Child} from '../../children/model/child';
+import { ChildrenService } from '../../children/children.service';
+import { FilterSelection } from '../../../core/ui-helper/filter-selection/filter-selection';
+import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
+import { AttendanceDay, AttendanceStatus } from '../model/attendance-day';
+import { AttendanceMonth } from '../model/attendance-month';
+import { Child } from '../../children/model/child';
 
 @Component({
   selector: 'app-add-day-attendance',
   templateUrl: './add-day-attendance.component.html',
-  styleUrls: ['./add-day-attendance.component.scss']
+  styleUrls: ['./add-day-attendance.component.scss'],
 })
 export class AddDayAttendanceComponent implements OnInit {
 
@@ -18,7 +18,7 @@ export class AddDayAttendanceComponent implements OnInit {
   attendanceType: string;
   center: string;
   studentGroups = new FilterSelection<Child>('Groups', [
-    { key: 'all', label: 'All Students', filterFun: (c: Child) => c.center === this.center}
+    { key: 'all', label: 'All Students', filterFun: (c: Child) => c.center === this.center},
     ]);
   rollCallList: {child: Child, attendanceDay: AttendanceDay, attendanceMonth: AttendanceMonth}[] = [];
   rollCallIndex = 0;
@@ -30,7 +30,7 @@ export class AddDayAttendanceComponent implements OnInit {
   stages = [
     'Select Center',
     'Select Student Group',
-    'Roll Call'
+    'Roll Call',
   ];
   AttStatus = AttendanceStatus;
 
@@ -56,7 +56,7 @@ export class AddDayAttendanceComponent implements OnInit {
           key: schoolId,
           label: schoolId,
           type: 'school',
-          filterFun: (c: Child) => c.schoolId === schoolId
+          filterFun: (c: Child) => c.schoolId === schoolId,
         };
         this.studentGroups.options.push(filterOption);
       });

@@ -17,9 +17,9 @@
 
 import { EntityMapperService } from './entity-mapper.service';
 import { Entity } from './entity';
-import {MockDatabase} from '../database/mock-database';
-import {Database} from '../database/database';
-import {EntitySchemaService} from './schema/entity-schema.service';
+import { MockDatabase } from '../database/mock-database';
+import { Database } from '../database/database';
+import { EntitySchemaService } from './schema/entity-schema.service';
 
 describe('EntityMapperService', () => {
   let entityMapper: EntityMapperService;
@@ -28,13 +28,13 @@ describe('EntityMapperService', () => {
   const existingEntity = {
     _id: 'Entity:existing-entity',
     entityId: 'existing-entity',
-    label: 'entity from database'
+    label: 'entity from database',
   };
 
   const existingEntity2 = {
     _id: 'Entity:existing-entity2',
     entityId: 'existing-entity2',
-    label: 'entity 2 from database'
+    label: 'entity 2 from database',
   };
 
   beforeEach(() => {

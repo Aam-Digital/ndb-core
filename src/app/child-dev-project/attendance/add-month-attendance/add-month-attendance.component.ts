@@ -1,17 +1,17 @@
-import {Component, OnInit} from '@angular/core';
-import {EntityMapperService} from '../../../core/entity/entity-mapper.service';
-import {Child} from '../../children/model/child';
+import { Component, OnInit } from '@angular/core';
+import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
+import { Child } from '../../children/model/child';
 import { MatTableDataSource } from '@angular/material/table';
-import {AttendanceMonth} from '../model/attendance-month';
-import {ConfirmationDialogService} from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
-import {AlertService} from '../../../core/alerts/alert.service';
-import {ChildrenService} from '../../children/children.service';
-import {School} from '../../schools/model/school';
+import { AttendanceMonth } from '../model/attendance-month';
+import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { AlertService } from '../../../core/alerts/alert.service';
+import { ChildrenService } from '../../children/children.service';
+import { School } from '../../schools/model/school';
 
 @Component({
   selector: 'app-add-month-attendance',
   templateUrl: './add-month-attendance.component.html',
-  styleUrls: ['./add-month-attendance.component.scss']
+  styleUrls: ['./add-month-attendance.component.scss'],
 })
 export class AddMonthAttendanceComponent implements OnInit {
   schools = new Array<School>();

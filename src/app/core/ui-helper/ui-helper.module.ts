@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {ConfirmationDialogComponent} from './confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -10,7 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import {ConfirmationDialogService} from './confirmation-dialog/confirmation-dialog.service';
+import { ConfirmationDialogService } from './confirmation-dialog/confirmation-dialog.service';
 import { EntitySubrecordComponent } from './entity-subrecord/entity-subrecord.component';
 import { KeysPipe } from './keys-pipe/keys.pipe';
 

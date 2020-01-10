@@ -16,8 +16,8 @@
  */
 
 import { MatSnackBarRef } from '@angular/material/snack-bar';
-import {AlertComponent} from './alerts/alert.component';
-import {AlertDisplay} from './alert-display';
+import { AlertComponent } from './alerts/alert.component';
+import { AlertDisplay } from './alert-display';
 
 export class Alert {
   static SUCCESS = 'success';

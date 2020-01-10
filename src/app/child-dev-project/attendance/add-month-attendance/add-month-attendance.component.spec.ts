@@ -10,17 +10,17 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
-import {FormsModule} from '@angular/forms';
-import {SchoolBlockComponent} from '../../schools/school-block/school-block.component';
-import {ChildBlockComponent} from '../../children/child-block/child-block.component';
-import {EntityMapperService} from '../../../core/entity/entity-mapper.service';
-import {MockDatabase} from '../../../core/database/mock-database';
-import {Database} from '../../../core/database/database';
-import {ChildrenService} from '../../children/children.service';
-import {UiHelperModule} from '../../../core/ui-helper/ui-helper.module';
-import {AlertsModule} from '../../../core/alerts/alerts.module';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {EntitySchemaService} from '../../../core/entity/schema/entity-schema.service';
+import { FormsModule } from '@angular/forms';
+import { SchoolBlockComponent } from '../../schools/school-block/school-block.component';
+import { ChildBlockComponent } from '../../children/child-block/child-block.component';
+import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
+import { MockDatabase } from '../../../core/database/mock-database';
+import { Database } from '../../../core/database/database';
+import { ChildrenService } from '../../children/children.service';
+import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
+import { AlertsModule } from '../../../core/alerts/alerts.module';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 
 describe('AddMonthAttendanceComponent', () => {
   let component: AddMonthAttendanceComponent;
@@ -49,7 +49,7 @@ describe('AddMonthAttendanceComponent', () => {
         EntitySchemaService,
         { provide: Database, useClass: MockDatabase },
         ChildrenService,
-      ]
+      ],
     })
     .compileComponents();
   }));

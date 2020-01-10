@@ -1,11 +1,11 @@
-import {Injectable} from '@angular/core';
-import {School} from './model/school';
-import {EntityMapperService} from '../../core/entity/entity-mapper.service';
-import {from, Observable} from 'rxjs';
-import {ChildSchoolRelation} from '../children/model/childSchoolRelation';
-import {Database} from '../../core/database/database';
-import {Child} from '../children/model/child';
-import {EntitySchemaService} from '../../core/entity/schema/entity-schema.service';
+import { Injectable } from '@angular/core';
+import { School } from './model/school';
+import { EntityMapperService } from '../../core/entity/entity-mapper.service';
+import { from, Observable } from 'rxjs';
+import { ChildSchoolRelation } from '../children/model/childSchoolRelation';
+import { Database } from '../../core/database/database';
+import { Child } from '../children/model/child';
+import { EntitySchemaService } from '../../core/entity/schema/entity-schema.service';
 
 @Injectable()
 export class SchoolsService {

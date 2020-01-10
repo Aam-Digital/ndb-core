@@ -15,11 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {AlertService} from './alert.service';
-import {Alert} from './alert';
-import {LogLevel} from '../logging/log-level';
-import {LoggingService} from '../logging/logging.service';
-import {AlertDisplay} from './alert-display';
+import { AlertService } from './alert.service';
+import { Alert } from './alert';
+import { LogLevel } from '../logging/log-level';
+import { LoggingService } from '../logging/logging.service';
+import { AlertDisplay } from './alert-display';
 
 class MockLoggingService extends LoggingService {
   public log(message: string, logLevel: LogLevel) {

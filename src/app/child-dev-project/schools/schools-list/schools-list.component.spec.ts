@@ -8,15 +8,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import {MatSelectModule} from '@angular/material/select';
-import {FormsModule} from '@angular/forms';
-import {Database} from '../../../core/database/database';
-import {MockDatabase} from '../../../core/database/mock-database';
-import {SchoolsService} from '../schools.service';
-import {EntityMapperService} from '../../../core/entity/entity-mapper.service';
-import {Router} from '@angular/router';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {EntitySchemaService} from '../../../core/entity/schema/entity-schema.service';
+import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
+import { Database } from '../../../core/database/database';
+import { MockDatabase } from '../../../core/database/mock-database';
+import { SchoolsService } from '../schools.service';
+import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
+import { Router } from '@angular/router';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 
 describe('SchoolsListComponent', () => {
   let component: SchoolsListComponent;
@@ -44,7 +44,7 @@ describe('SchoolsListComponent', () => {
         EntityMapperService,
         EntitySchemaService,
         {provide: Router, useValue: mockedRouter},
-      ]
+      ],
     })
     .compileComponents();
   }));

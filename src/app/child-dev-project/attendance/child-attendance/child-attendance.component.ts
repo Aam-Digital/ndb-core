@@ -1,10 +1,10 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {AttendanceMonth} from '../model/attendance-month';
-import {ChildrenService} from '../../children/children.service';
-import {ColumnDescription, ColumnDescriptionInputType} from '../../../core/ui-helper/entity-subrecord/column-description';
-import {DatePipe, PercentPipe} from '@angular/common';
-import {AttendanceDetailsComponent} from '../attendance-details/attendance-details.component';
+import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { AttendanceMonth } from '../model/attendance-month';
+import { ChildrenService } from '../../children/children.service';
+import { ColumnDescription, ColumnDescriptionInputType } from '../../../core/ui-helper/entity-subrecord/column-description';
+import { DatePipe, PercentPipe } from '@angular/common';
+import { AttendanceDetailsComponent } from '../attendance-details/attendance-details.component';
 
 
 @Component({

@@ -7,13 +7,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {EntityMapperService} from '../../../core/entity/entity-mapper.service';
-import {MockDatabase} from '../../../core/database/mock-database';
-import {Database} from '../../../core/database/database';
-import {EntitySchemaService} from '../../../core/entity/schema/entity-schema.service';
-import {AlertService} from '../../../core/alerts/alert.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
+import { MockDatabase } from '../../../core/database/mock-database';
+import { Database } from '../../../core/database/database';
+import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
+import { AlertService } from '../../../core/alerts/alert.service';
 
 describe('ProgressDashboardComponent', () => {
   let component: ProgressDashboardComponent;
@@ -29,7 +29,7 @@ describe('ProgressDashboardComponent', () => {
         { provide: AlertService, useValue: jasmine.createSpyObj(['addDebug', 'addInfo', 'addWarning']) },
         EntityMapperService,
         EntitySchemaService,
-      ]
+      ],
     })
     .compileComponents();
   }));

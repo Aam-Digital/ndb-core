@@ -4,14 +4,14 @@ import { AttendanceWeekDashboardComponent } from './attendance-week-dashboard.co
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import {ChildBlockComponent} from '../../../children/child-block/child-block.component';
-import {AttendanceDayBlockComponent} from '../../attendance-days/attendance-day-block.component';
-import {SchoolBlockComponent} from '../../../schools/school-block/school-block.component';
-import {ChildrenService} from '../../../children/children.service';
-import {EntityModule} from '../../../../core/entity/entity.module';
-import {Database} from '../../../../core/database/database';
-import {MockDatabase} from '../../../../core/database/mock-database';
-import {RouterTestingModule} from '@angular/router/testing';
+import { ChildBlockComponent } from '../../../children/child-block/child-block.component';
+import { AttendanceDayBlockComponent } from '../../attendance-days/attendance-day-block.component';
+import { SchoolBlockComponent } from '../../../schools/school-block/school-block.component';
+import { ChildrenService } from '../../../children/children.service';
+import { EntityModule } from '../../../../core/entity/entity.module';
+import { Database } from '../../../../core/database/database';
+import { MockDatabase } from '../../../../core/database/mock-database';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('AttendanceWeekDashboardComponent', () => {
   let component: AttendanceWeekDashboardComponent;
@@ -26,7 +26,7 @@ describe('AttendanceWeekDashboardComponent', () => {
       providers: [
         { provide: ChildrenService, useClass: ChildrenService },
         { provide: Database, useClass: MockDatabase },
-      ]
+      ],
     })
     .compileComponents();
   }));

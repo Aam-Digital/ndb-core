@@ -19,12 +19,12 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SyncStatusComponent } from './sync-status/sync-status.component';
 import { SessionModule } from '../session/session.module';
-import {AlertsModule} from '../alerts/alerts.module';
+import { AlertsModule } from '../alerts/alerts.module';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import {InitialSyncDialogComponent} from './sync-status/initial-sync-dialog.component';
+import { InitialSyncDialogComponent } from './sync-status/initial-sync-dialog.component';
 
 @NgModule({
   imports: [

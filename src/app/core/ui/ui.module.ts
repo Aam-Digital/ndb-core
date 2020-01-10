@@ -31,10 +31,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { SearchComponent } from './search/search.component';
-import {FormsModule} from '@angular/forms';
-import {ChildrenModule} from '../../child-dev-project/children/children.module';
-import {SchoolsModule} from '../../child-dev-project/schools/schools.module';
-import {FlexLayoutModule} from '@angular/flex-layout';
+import { FormsModule } from '@angular/forms';
+import { ChildrenModule } from '../../child-dev-project/children/children.module';
+import { SchoolsModule } from '../../child-dev-project/schools/schools.module';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { PrimaryActionComponent } from './primary-action/primary-action.component';
 
 @NgModule({
@@ -58,7 +58,7 @@ import { PrimaryActionComponent } from './primary-action/primary-action.componen
     SchoolsModule,
   ],
   declarations: [SearchComponent, UiComponent, PrimaryActionComponent],
-  exports: [UiComponent]
+  exports: [UiComponent],
 })
 export class UiModule {
 }

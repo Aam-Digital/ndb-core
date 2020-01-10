@@ -1,11 +1,11 @@
 import { ChildrenService } from './children.service';
-import {EntityMapperService} from '../../core/entity/entity-mapper.service';
-import {ChildSchoolRelation} from './model/childSchoolRelation';
-import {Child} from './model/child';
-import {EntitySchemaService} from '../../core/entity/schema/entity-schema.service';
-import {Gender} from './model/Gender';
-import {School} from '../schools/model/school';
-import {MockDatabase} from '../../core/database/mock-database';
+import { EntityMapperService } from '../../core/entity/entity-mapper.service';
+import { ChildSchoolRelation } from './model/childSchoolRelation';
+import { Child } from './model/child';
+import { EntitySchemaService } from '../../core/entity/schema/entity-schema.service';
+import { Gender } from './model/Gender';
+import { School } from '../schools/model/school';
+import { MockDatabase } from '../../core/database/mock-database';
 
 function generateChildEntities(): Child[] {
   const data = [];

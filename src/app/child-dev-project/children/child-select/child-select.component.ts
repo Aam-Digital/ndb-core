@@ -1,11 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {Child} from '../model/child';
-import {ChildrenService} from '../children.service';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Child } from '../model/child';
+import { ChildrenService } from '../children.service';
 
 @Component({
   selector: 'app-child-select',
   templateUrl: './child-select.component.html',
-  styleUrls: ['./child-select.component.scss']
+  styleUrls: ['./child-select.component.scss'],
 })
 export class ChildSelectComponent implements OnInit {
   searchText = '';

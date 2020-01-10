@@ -15,12 +15,12 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ApplicationRef, Injectable} from '@angular/core';
-import {SwUpdate} from '@angular/service-worker';
-import {first} from 'rxjs/operators';
-import {concat, interval} from 'rxjs';
+import { ApplicationRef, Injectable } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
+import { first } from 'rxjs/operators';
+import { concat, interval } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {LoggingService} from '../logging/logging.service';
+import { LoggingService } from '../logging/logging.service';
 
 @Injectable()
 export class UpdateManagerService {

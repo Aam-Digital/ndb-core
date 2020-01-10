@@ -15,13 +15,13 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import {Alert} from './alert';
-import {AlertComponent} from './alerts/alert.component';
-import {LoggingService} from '../logging/logging.service';
-import {AlertDisplay} from './alert-display';
+import { Alert } from './alert';
+import { AlertComponent } from './alerts/alert.component';
+import { LoggingService } from '../logging/logging.service';
+import { AlertDisplay } from './alert-display';
 
 @Injectable()
 export class AlertService {

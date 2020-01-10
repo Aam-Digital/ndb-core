@@ -16,8 +16,8 @@
  */
 
 import { Entity } from '../entity/entity';
-import {DatabaseEntity} from '../entity/database-entity.decorator';
-import {DatabaseField} from '../entity/database-field.decorator';
+import { DatabaseEntity } from '../entity/database-entity.decorator';
+import { DatabaseField } from '../entity/database-field.decorator';
 
 import * as CryptoJS from 'crypto-js';
 
@@ -35,7 +35,7 @@ export class User extends Entity {
     const cryptSalt = CryptoJS.lib.WordArray.random(128 / 8).toString();
     const hash = CryptoJS.PBKDF2(password, cryptSalt, {
       keySize: cryptKeySize,
-      iterations: cryptIterations
+      iterations: cryptIterations,
     }).toString();
 
     this.password = {'hash': hash, 'salt': cryptSalt, 'iterations': cryptIterations, 'keysize': cryptKeySize};
@@ -50,7 +50,7 @@ export class User extends Entity {
   private hashPassword(givenPassword: string): string {
     const options = {
       keySize: this.password.keysize,
-      iterations: this.password.iterations
+      iterations: this.password.iterations,
     };
     return CryptoJS.PBKDF2(givenPassword, this.password.salt, options).toString();
   }

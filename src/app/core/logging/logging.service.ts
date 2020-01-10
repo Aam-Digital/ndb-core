@@ -1,19 +1,19 @@
-import {Injectable} from '@angular/core';
-import {LogLevel} from './log-level';
+import { Injectable } from '@angular/core';
+import { LogLevel } from './log-level';
 import * as Sentry from '@sentry/browser';
 
 
 Sentry.init({
   dsn: 'https://bd6aba79ca514d35bb06a4b4e0c2a21e@sentry.io/1242399',
   whitelistUrls: [
-    /https?:\/\/(.*)\.?aam-digital\.com/
-  ]
+    /https?:\/\/(.*)\.?aam-digital\.com/,
+  ],
 });
 
 
 /* tslint:disable:no-console */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LoggingService {
 

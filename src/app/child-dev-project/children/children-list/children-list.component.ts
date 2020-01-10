@@ -1,13 +1,13 @@
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Child} from '../model/child';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Child } from '../model/child';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import {ActivatedRoute, Router} from '@angular/router';
-import {ChildrenService} from '../children.service';
-import {AttendanceMonth} from '../../attendance/model/attendance-month';
-import {FilterSelection} from '../../../core/ui-helper/filter-selection/filter-selection';
-import {MediaChange, MediaObserver} from '@angular/flex-layout';
-import {Subscription} from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ChildrenService } from '../children.service';
+import { AttendanceMonth } from '../../attendance/model/attendance-month';
+import { FilterSelection } from '../../../core/ui-helper/filter-selection/filter-selection';
+import { MediaChange, MediaObserver } from '@angular/flex-layout';
+import { Subscription } from 'rxjs';
 
 export interface ColumnGroup {
   name: string;
@@ -18,7 +18,7 @@ export interface ColumnGroup {
 @Component({
   selector: 'app-children-list',
   templateUrl: './children-list.component.html',
-  styleUrls: ['./children-list.component.scss']
+  styleUrls: ['./children-list.component.scss'],
 })
 export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
   watcher: Subscription;
@@ -51,7 +51,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
       'health_vaccinationStatus', 'health_bloodGroup', 'health_eyeHealthStatus',
       'health_LastEyeCheckup', 'health_LastDentalCheckup', 'health_LastENTCheckup', 'health_LastVitaminD', 'health_LastDeworming',
       'gender', 'age', 'dateOfBirth']},
-    { name: 'Mobile', columns : ['projectNumber', 'name', 'age', 'schoolId']}
+    { name: 'Mobile', columns : ['projectNumber', 'name', 'age', 'schoolId']},
   ];
   columnsToDisplay = ['projectNumber', 'name'];
   filterString = '';

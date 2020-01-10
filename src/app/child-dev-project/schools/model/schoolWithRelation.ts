@@ -1,5 +1,5 @@
-import {ChildSchoolRelation} from '../../children/model/childSchoolRelation';
-import {School} from './school';
+import { ChildSchoolRelation } from '../../children/model/childSchoolRelation';
+import { School } from './school';
 
 export class SchoolWithRelation {
   constructor(private _childSchoolRelation: ChildSchoolRelation, private _school: School) { }

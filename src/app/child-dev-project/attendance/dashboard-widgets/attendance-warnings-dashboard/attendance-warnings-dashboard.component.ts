@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import {ChildrenService} from '../../../children/children.service';
-import {Router} from '@angular/router';
-import {AttendanceMonth} from '../../model/attendance-month';
+import { ChildrenService } from '../../../children/children.service';
+import { Router } from '@angular/router';
+import { AttendanceMonth } from '../../model/attendance-month';
 
 @Component({
   selector: 'app-attendance-warnings-dashboard',
   templateUrl: './attendance-warnings-dashboard.component.html',
-  styleUrls: ['./attendance-warnings-dashboard.component.scss']
+  styleUrls: ['./attendance-warnings-dashboard.component.scss'],
 })
 export class AttendanceWarningsDashboardComponent implements OnInit {
   readonly ATTENDANCE_THRESHOLD = AttendanceMonth.THRESHOLD_WARNING;

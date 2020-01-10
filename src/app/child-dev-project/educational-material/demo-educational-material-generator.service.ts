@@ -1,9 +1,9 @@
-import {DemoChildGenerator} from '../children/demo-data-generators/demo-child-generator.service';
-import {DemoDataGenerator} from '../../core/demo-data/demo-data-generator';
-import {Injectable} from '@angular/core';
-import {Child} from '../children/model/child';
-import {faker} from '../../core/demo-data/faker';
-import {EducationalMaterial} from './model/educational-material';
+import { DemoChildGenerator } from '../children/demo-data-generators/demo-child-generator.service';
+import { DemoDataGenerator } from '../../core/demo-data/demo-data-generator';
+import { Injectable } from '@angular/core';
+import { Child } from '../children/model/child';
+import { faker } from '../../core/demo-data/faker';
+import { EducationalMaterial } from './model/educational-material';
 
 
 export class DemoEducationMaterialConfig {

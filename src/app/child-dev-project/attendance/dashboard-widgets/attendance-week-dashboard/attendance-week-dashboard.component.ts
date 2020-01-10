@@ -1,15 +1,15 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {ChildrenService} from '../../../children/children.service';
-import {Router} from '@angular/router';
-import {AttendanceMonth} from '../../model/attendance-month';
-import {AttendanceDay, AttendanceStatus} from '../../model/attendance-day';
-import {Child} from '../../../children/model/child';
-import {forkJoin} from 'rxjs';
+import { Component, Input, OnInit } from '@angular/core';
+import { ChildrenService } from '../../../children/children.service';
+import { Router } from '@angular/router';
+import { AttendanceMonth } from '../../model/attendance-month';
+import { AttendanceDay, AttendanceStatus } from '../../model/attendance-day';
+import { Child } from '../../../children/model/child';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-attendance-week-dashboard',
   templateUrl: './attendance-week-dashboard.component.html',
-  styleUrls: ['./attendance-week-dashboard.component.scss']
+  styleUrls: ['./attendance-week-dashboard.component.scss'],
 })
 export class AttendanceWeekDashboardComponent implements OnInit {
 

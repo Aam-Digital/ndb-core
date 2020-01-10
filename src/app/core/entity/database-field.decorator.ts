@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import {EntitySchemaField} from './schema/entity-schema-field';
+import { EntitySchemaField } from './schema/entity-schema-field';
 
 /**
  * Decorator (Annotation `@DatabaseField()`) to mark a property of an Entity that should be persisted in the database.

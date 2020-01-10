@@ -3,10 +3,10 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChildrenCountDashboardComponent } from './children-count-dashboard.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import {ChildrenService} from '../children.service';
-import {RouterTestingModule} from '@angular/router/testing';
-import {Child} from '../model/child';
-import {Observable} from 'rxjs';
+import { ChildrenService } from '../children.service';
+import { RouterTestingModule } from '@angular/router/testing';
+import { Child } from '../model/child';
+import { Observable } from 'rxjs';
 
 describe('ChildrenCountDashboardComponent', () => {
   let component: ChildrenCountDashboardComponent;

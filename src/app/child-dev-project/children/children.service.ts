@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
-import {from, Observable} from 'rxjs';
-import {Child} from './model/child';
-import {EntityMapperService} from '../../core/entity/entity-mapper.service';
-import {AttendanceMonth} from '../attendance/model/attendance-month';
-import {Database} from '../../core/database/database';
-import {Note} from '../notes/model/note';
-import {EducationalMaterial} from '../educational-material/model/educational-material';
-import {Aser} from '../aser/model/aser';
-import {ChildSchoolRelation} from './model/childSchoolRelation';
-import {School} from '../schools/model/school';
-import {SchoolWithRelation} from '../schools/model/schoolWithRelation';
-import {HealthCheck} from '../health-checkup/model/health-check';
-import {EntitySchemaService} from '../../core/entity/schema/entity-schema.service';
+import { from, Observable } from 'rxjs';
+import { Child } from './model/child';
+import { EntityMapperService } from '../../core/entity/entity-mapper.service';
+import { AttendanceMonth } from '../attendance/model/attendance-month';
+import { Database } from '../../core/database/database';
+import { Note } from '../notes/model/note';
+import { EducationalMaterial } from '../educational-material/model/educational-material';
+import { Aser } from '../aser/model/aser';
+import { ChildSchoolRelation } from './model/childSchoolRelation';
+import { School } from '../schools/model/school';
+import { SchoolWithRelation } from '../schools/model/schoolWithRelation';
+import { HealthCheck } from '../health-checkup/model/health-check';
+import { EntitySchemaService } from '../../core/entity/schema/entity-schema.service';
 
 @Injectable()
 export class ChildrenService {
@@ -72,15 +72,15 @@ export class ChildrenService {
           map: '(doc) => { ' +
             'if (!doc._id.startsWith("' + AttendanceMonth.ENTITY_TYPE + '")) return;' +
             'emit(doc.student); ' +
-            '}'
+            '}',
         },
         by_month: {
           map: '(doc) => { ' +
             'if (!doc._id.startsWith("' + AttendanceMonth.ENTITY_TYPE + '")) return;' +
             'emit(doc.month); ' +
-            '}'
-        }
-      }
+            '}',
+        },
+      },
     };
 
     return this.db.saveDatabaseIndex(designDoc);
@@ -95,23 +95,23 @@ export class ChildrenService {
           map: `(doc) => {
             if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
             emit(doc.childId);
-            }`
+            }`,
         },
         by_school: {
           map: `(doc) => {
             if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
             if (doc.end) return;
             emit(doc.schoolId);
-            }`
+            }`,
         },
         by_date: {
           map: `(doc) => {
             if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
             emit(doc.childId + '_' + (new Date(doc.start)).getTime().toString().padStart(14, "0"));
-            }`
-        }
+            }`,
+        },
 
-      }
+      },
     };
     return this.db.saveDatabaseIndex(designDoc);
   }
@@ -126,11 +126,11 @@ export class ChildrenService {
       endkey: childId,              //  \uffff is not a character -> only relations staring with childId will be selected
       descending: true,
       include_docs: true,
-      limit: limit
+      limit: limit,
     };
     return this.db.query(
       'childSchoolRelations_index/by_date',
-      options
+      options,
     )
       .then(loadedEntities => {
         return loadedEntities.rows.map(loadedRecord => {
@@ -168,13 +168,13 @@ export class ChildrenService {
       views: {
         three_months: {
           map: this.getAverageAttendanceMapFunction(),
-          reduce: '_stats'
+          reduce: '_stats',
         },
         last_month: {
           map: this.getLastAverageAttendanceMapFunction(),
-          reduce: '_stats'
-        }
-      }
+          reduce: '_stats',
+        },
+      },
     };
 
     return this.db.saveDatabaseIndex(designDoc);
@@ -235,9 +235,9 @@ export class ChildrenService {
           map: '(doc) => { ' +
             'if (!doc._id.startsWith("' + Note.ENTITY_TYPE + '")) return;' +
             'doc.children.forEach(childId => emit(childId)); ' +
-            '}'
-        }
-      }
+            '}',
+        },
+      },
     };
 
     return this.db.saveDatabaseIndex(designDoc);
@@ -248,7 +248,7 @@ export class ChildrenService {
       this.entityMapper.loadType<EducationalMaterial>(EducationalMaterial)
         .then(loadedEntities => {
           return loadedEntities.filter(o => o.child === childId);
-        })
+        }),
     );
   }
 
@@ -262,7 +262,7 @@ export class ChildrenService {
       this.entityMapper.loadType<HealthCheck>(HealthCheck)
       .then(loadedEntities => {
         return loadedEntities.filter(h => h.child === childId);
-      })
+      }),
     );
   }
 
@@ -271,7 +271,7 @@ export class ChildrenService {
       this.entityMapper.loadType<Aser>(Aser)
         .then(loadedEntities => {
           return loadedEntities.filter(o => o.child === childId);
-        })
+        }),
     );
   }
 

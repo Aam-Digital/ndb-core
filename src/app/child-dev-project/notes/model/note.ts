@@ -15,10 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Entity} from '../../../core/entity/entity';
-import {WarningLevel} from '../../warning-level';
-import {DatabaseEntity} from '../../../core/entity/database-entity.decorator';
-import {DatabaseField} from '../../../core/entity/database-field.decorator';
+import { Entity } from '../../../core/entity/entity';
+import { WarningLevel } from '../../warning-level';
+import { DatabaseEntity } from '../../../core/entity/database-entity.decorator';
+import { DatabaseField } from '../../../core/entity/database-field.decorator';
 
 @DatabaseEntity('Note')
 export class Note extends Entity {

@@ -84,7 +84,7 @@ export class SyncedSessionService extends SessionService {
             } else {
               // TODO(lh): Alert the AlertService: Your password was changed recently, but there is an issue with sync. Try again later!
             }
-          }
+          },
         );
 
         // asynchronously check if the local login failed --> this happens, when the password was changed at the remote
@@ -166,7 +166,7 @@ export class SyncedSessionService extends SessionService {
     this._localSession.syncState.setState(SyncState.STARTED);
     this._liveSyncHandle = this._localSession.database.sync(this._remoteSession.database, {
       live: true,
-      retry: true
+      retry: true,
     }).on('change', change => {
       // after sync. change has direction and changes with info on errors etc
     }).on('paused', info => {

@@ -1,15 +1,15 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {FilterSelection} from '../../../core/ui-helper/filter-selection/filter-selection';
-import {Child} from '../../children/model/child';
-import {ChildrenService} from '../../children/children.service';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { FilterSelection } from '../../../core/ui-helper/filter-selection/filter-selection';
+import { Child } from '../../children/model/child';
+import { ChildrenService } from '../../children/children.service';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import {AttendanceMonth} from '../model/attendance-month';
+import { AttendanceMonth } from '../model/attendance-month';
 
 @Component({
   selector: 'app-attendance-manager',
   templateUrl: './attendance-manager.component.html',
-  styleUrls: ['./attendance-manager.component.scss']
+  styleUrls: ['./attendance-manager.component.scss'],
 })
 export class AttendanceManagerComponent implements OnInit, AfterViewInit {
 

@@ -17,9 +17,9 @@
 
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {APP_INITIALIZER, ErrorHandler, NgModule} from '@angular/core';
+import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule} from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { UiModule } from './core/ui/ui.module';
@@ -37,22 +37,22 @@ import { ChildrenModule } from './child-dev-project/children/children.module';
 import { SchoolsModule } from './child-dev-project/schools/schools.module';
 import { NavigationItemsService } from './core/navigation/navigation-items.service';
 import { MenuItem } from './core/navigation/menu-item';
-import {AppConfig} from './core/app-config/app-config';
-import {FlexLayoutModule} from '@angular/flex-layout';
-import {ServiceWorkerModule} from '@angular/service-worker';
-import {environment} from '../environments/environment';
+import { AppConfig } from './core/app-config/app-config';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
-import {AdminModule} from './core/admin/admin.module';
+import { AdminModule } from './core/admin/admin.module';
 import { EntityModule } from './core/entity/entity.module';
-import {CookieService} from 'ngx-cookie-service';
-import {HelpModule} from './core/help/help.module';
-import {DemoDataModule} from './core/demo-data/demo-data.module';
-import {MatNativeDateModule} from '@angular/material/core';
-import {LoggingErrorHandler} from './core/logging/logging-error-handler';
+import { CookieService } from 'ngx-cookie-service';
+import { HelpModule } from './core/help/help.module';
+import { DemoDataModule } from './core/demo-data/demo-data.module';
+import { MatNativeDateModule } from '@angular/material/core';
+import { LoggingErrorHandler } from './core/logging/logging-error-handler';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
@@ -87,7 +87,7 @@ import {LoggingErrorHandler} from './core/logging/logging-error-handler';
     MatIconRegistry,
     CookieService,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {
   constructor(private _navigationItemsService: NavigationItemsService,

@@ -15,22 +15,22 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {RouterModule, Routes} from '@angular/router';
-import {ModuleWithProviders} from '@angular/core';
-import {DashboardComponent} from './child-dev-project/dashboard/dashboard/dashboard.component';
-import {SchoolsListComponent} from './child-dev-project/schools/schools-list/schools-list.component';
-import {SchoolDetailComponent} from './child-dev-project/schools/school-detail/school-detail.component';
-import {ChildDetailsComponent} from './child-dev-project/children/child-details/child-details.component';
-import {UserAccountComponent} from './core/user/user-account/user-account.component';
-import {ChildrenListComponent} from './child-dev-project/children/children-list/children-list.component';
-import {ChildAttendanceComponent} from './child-dev-project/attendance/child-attendance/child-attendance.component';
-import {AdminComponent} from './core/admin/admin/admin.component';
-import {AdminGuard} from './core/admin/admin.guard';
-import {NotesManagerComponent} from './child-dev-project/notes/notes-manager/notes-manager.component';
-import {AddMonthAttendanceComponent} from './child-dev-project/attendance/add-month-attendance/add-month-attendance.component';
-import {AddDayAttendanceComponent} from './child-dev-project/attendance/add-day-attendance/add-day-attendance.component';
-import {AttendanceManagerComponent} from './child-dev-project/attendance/attendance-manager/attendance-manager.component';
-import {HowToComponent} from './core/help/how-to/how-to.component';
+import { RouterModule, Routes } from '@angular/router';
+import { ModuleWithProviders } from '@angular/core';
+import { DashboardComponent } from './child-dev-project/dashboard/dashboard/dashboard.component';
+import { SchoolsListComponent } from './child-dev-project/schools/schools-list/schools-list.component';
+import { SchoolDetailComponent } from './child-dev-project/schools/school-detail/school-detail.component';
+import { ChildDetailsComponent } from './child-dev-project/children/child-details/child-details.component';
+import { UserAccountComponent } from './core/user/user-account/user-account.component';
+import { ChildrenListComponent } from './child-dev-project/children/children-list/children-list.component';
+import { ChildAttendanceComponent } from './child-dev-project/attendance/child-attendance/child-attendance.component';
+import { AdminComponent } from './core/admin/admin/admin.component';
+import { AdminGuard } from './core/admin/admin.guard';
+import { NotesManagerComponent } from './child-dev-project/notes/notes-manager/notes-manager.component';
+import { AddMonthAttendanceComponent } from './child-dev-project/attendance/add-month-attendance/add-month-attendance.component';
+import { AddDayAttendanceComponent } from './child-dev-project/attendance/add-day-attendance/add-day-attendance.component';
+import { AttendanceManagerComponent } from './child-dev-project/attendance/attendance-manager/attendance-manager.component';
+import { HowToComponent } from './core/help/how-to/how-to.component';
 
 export const routes: Routes = [
   {path: '', component: DashboardComponent},

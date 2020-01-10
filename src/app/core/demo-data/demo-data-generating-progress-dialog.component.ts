@@ -15,9 +15,9 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component} from '@angular/core';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {DemoDataService} from './demo-data.service';
+import { Component } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DemoDataService } from './demo-data.service';
 
 @Component({
   template: '<p>Generating sample data for this demo ...</p>' +

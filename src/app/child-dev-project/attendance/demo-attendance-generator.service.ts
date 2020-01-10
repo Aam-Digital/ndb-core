@@ -1,10 +1,10 @@
-import {DemoChildGenerator} from '../children/demo-data-generators/demo-child-generator.service';
-import {DemoDataGenerator} from '../../core/demo-data/demo-data-generator';
-import {Injectable} from '@angular/core';
-import {Child} from '../children/model/child';
-import {faker} from '../../core/demo-data/faker';
-import {AttendanceMonth} from './model/attendance-month';
-import {AttendanceDay, AttendanceStatus} from './model/attendance-day';
+import { DemoChildGenerator } from '../children/demo-data-generators/demo-child-generator.service';
+import { DemoDataGenerator } from '../../core/demo-data/demo-data-generator';
+import { Injectable } from '@angular/core';
+import { Child } from '../children/model/child';
+import { faker } from '../../core/demo-data/faker';
+import { AttendanceMonth } from './model/attendance-month';
+import { AttendanceDay, AttendanceStatus } from './model/attendance-day';
 
 interface AttendanceProfile {
   id: number;
@@ -143,7 +143,7 @@ export class DemoAttendanceGenerator extends DemoDataGenerator<AttendanceMonth> 
     attendanceMonth.student = child.getId();
     attendanceMonth.institution = institution;
     attendanceMonth.dailyRegister.forEach(attendanceDay =>
-      this.setDayAttendance(attendanceDay, institution !== 'school', attendanceProfile)
+      this.setDayAttendance(attendanceDay, institution !== 'school', attendanceProfile),
     );
     return attendanceMonth;
   }

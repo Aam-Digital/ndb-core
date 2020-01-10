@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import {Note} from '../model/note';
-import {ChildrenService} from '../../children/children.service';
-import {ActivatedRoute} from '@angular/router';
-import {SessionService} from '../../../core/session/session.service';
-import {ColumnDescription, ColumnDescriptionInputType} from '../../../core/ui-helper/entity-subrecord/column-description';
-import {DatePipe} from '@angular/common';
-import {NoteDetailsComponent} from '../note-details/note-details.component';
+import { Note } from '../model/note';
+import { ChildrenService } from '../../children/children.service';
+import { ActivatedRoute } from '@angular/router';
+import { SessionService } from '../../../core/session/session.service';
+import { ColumnDescription, ColumnDescriptionInputType } from '../../../core/ui-helper/entity-subrecord/column-description';
+import { DatePipe } from '@angular/common';
+import { NoteDetailsComponent } from '../note-details/note-details.component';
 
 @Component({
   selector: 'app-notes',

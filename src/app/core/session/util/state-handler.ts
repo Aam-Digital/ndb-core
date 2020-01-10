@@ -38,7 +38,7 @@ export class StateHandler<StateEnum> {
     this.state = state;
     this.stateChanged.emit({
       fromState: oldState,
-      toState: this.state
+      toState: this.state,
     });
     return this;
   }

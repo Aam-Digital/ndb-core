@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {NgModule} from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppVersionComponent } from './app-version/app-version.component';
 import { AlertsModule } from '../alerts/alerts.module';
@@ -25,9 +25,9 @@ import { SessionModule } from '../session/session.module';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import {ChangelogComponent} from './changelog/changelog.component';
-import {SwUpdate} from '@angular/service-worker';
-import {UpdateManagerService} from './update-manager.service';
+import { ChangelogComponent } from './changelog/changelog.component';
+import { SwUpdate } from '@angular/service-worker';
+import { UpdateManagerService } from './update-manager.service';
 
 @NgModule({
   imports: [
@@ -37,12 +37,12 @@ import {UpdateManagerService} from './update-manager.service';
     MatDialogModule,
     MatButtonModule,
     MatSnackBarModule,
-    HttpClientModule
+    HttpClientModule,
   ],
   declarations: [AppVersionComponent, ChangelogComponent],
   exports: [AppVersionComponent],
   providers: [LatestChangesService, UpdateManagerService],
-  entryComponents: [ChangelogComponent]
+  entryComponents: [ChangelogComponent],
 })
 export class LatestChangesModule {
   constructor(

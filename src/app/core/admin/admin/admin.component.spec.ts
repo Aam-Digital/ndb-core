@@ -1,14 +1,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AdminComponent } from './admin.component';
-import {AlertsModule} from '../../alerts/alerts.module';
+import { AlertsModule } from '../../alerts/alerts.module';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import {BackupService} from '../services/backup.service';
-import {UiHelperModule} from '../../ui-helper/ui-helper.module';
-import {AppConfig} from '../../app-config/app-config';
-import {EntityMapperService} from '../../entity/entity-mapper.service';
-import {HttpClientTestingModule} from '@angular/common/http/testing';
+import { BackupService } from '../services/backup.service';
+import { UiHelperModule } from '../../ui-helper/ui-helper.module';
+import { AppConfig } from '../../app-config/app-config';
+import { EntityMapperService } from '../../entity/entity-mapper.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('AdminComponent', () => {
   let component: AdminComponent;
@@ -27,7 +27,7 @@ describe('AdminComponent', () => {
         {provide: BackupService, useValue: new BackupService(null, null)},
         {provide: AppConfig, useValue: { load: () => {} }},
         {provide: EntityMapperService, useValue: jasmine.createSpyObj(['loadType', 'save'])},
-      ]
+      ],
     })
     .compileComponents();
   }));

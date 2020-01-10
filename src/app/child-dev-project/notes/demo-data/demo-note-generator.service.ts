@@ -1,13 +1,13 @@
-import {DemoChildGenerator} from '../../children/demo-data-generators/demo-child-generator.service';
-import {DemoDataGenerator} from '../../../core/demo-data/demo-data-generator';
-import {Injectable} from '@angular/core';
-import {Child} from '../../children/model/child';
-import {Note} from '../model/note';
-import {faker} from '../../../core/demo-data/faker';
-import {WarningLevel} from '../../warning-level';
-import {noteIndividualStories} from './notes_individual-stories';
-import {noteGroupStories} from './notes_group-stories';
-import {centersUnique} from '../../children/demo-data-generators/fixtures/centers';
+import { DemoChildGenerator } from '../../children/demo-data-generators/demo-child-generator.service';
+import { DemoDataGenerator } from '../../../core/demo-data/demo-data-generator';
+import { Injectable } from '@angular/core';
+import { Child } from '../../children/model/child';
+import { Note } from '../model/note';
+import { faker } from '../../../core/demo-data/faker';
+import { WarningLevel } from '../../warning-level';
+import { noteIndividualStories } from './notes_individual-stories';
+import { noteGroupStories } from './notes_group-stories';
+import { centersUnique } from '../../children/demo-data-generators/fixtures/centers';
 
 
 export class DemoNoteConfig {

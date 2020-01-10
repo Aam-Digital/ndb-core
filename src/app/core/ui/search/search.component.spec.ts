@@ -6,14 +6,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import {FormsModule} from '@angular/forms';
-import {Database} from '../../database/database';
-import {CommonModule} from '@angular/common';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {ChildrenModule} from '../../../child-dev-project/children/children.module';
-import {SchoolsModule} from '../../../child-dev-project/schools/schools.module';
-import {MockDatabase} from '../../database/mock-database';
-import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
+import { FormsModule } from '@angular/forms';
+import { Database } from '../../database/database';
+import { CommonModule } from '@angular/common';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { ChildrenModule } from '../../../child-dev-project/children/children.module';
+import { SchoolsModule } from '../../../child-dev-project/schools/schools.module';
+import { MockDatabase } from '../../database/mock-database';
+import { EntitySchemaService } from '../../entity/schema/entity-schema.service';
 
 describe('SearchComponent', () => {
   let component: SearchComponent;
@@ -35,9 +35,9 @@ describe('SearchComponent', () => {
       ],
       providers: [
         EntitySchemaService,
-        { provide: Database, useClass: MockDatabase }
+        { provide: Database, useClass: MockDatabase },
         ],
-      declarations: [ SearchComponent ]
+      declarations: [ SearchComponent ],
     })
     .compileComponents();
   }));

@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
 import { ChildPhotoUpdateService } from './child-photo-update.service';
-import {EntityMapperService} from '../../entity/entity-mapper.service';
-import {HttpClientTestingModule} from '@angular/common/http/testing';
+import { EntityMapperService } from '../../entity/entity-mapper.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('ChildPhotoUpdateService', () => {
   beforeEach(() => {
@@ -15,7 +15,7 @@ describe('ChildPhotoUpdateService', () => {
       ],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
-      ]
+      ],
     });
   });
 

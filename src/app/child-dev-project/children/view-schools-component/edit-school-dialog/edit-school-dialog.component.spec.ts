@@ -5,13 +5,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
 import { EditSchoolDialogComponent } from './edit-school-dialog.component';
-import {FormsModule} from '@angular/forms';
-import {EntityMapperService} from '../../../../core/entity/entity-mapper.service';
-import {MockDatabase} from '../../../../core/database/mock-database';
-import {Child} from '../../model/child';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {Database} from '../../../../core/database/database';
-import {EntitySchemaService} from '../../../../core/entity/schema/entity-schema.service';
+import { FormsModule } from '@angular/forms';
+import { EntityMapperService } from '../../../../core/entity/entity-mapper.service';
+import { MockDatabase } from '../../../../core/database/mock-database';
+import { Child } from '../../model/child';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Database } from '../../../../core/database/database';
+import { EntitySchemaService } from '../../../../core/entity/schema/entity-schema.service';
 
 describe('EditSchoolDialogComponent', () => {
   let component: EditSchoolDialogComponent;
@@ -34,7 +34,7 @@ describe('EditSchoolDialogComponent', () => {
         { provide: Database, useClass: MockDatabase },
         {provide: MatDialogRef, useValue: MatDialogRef},
         {provide: MAT_DIALOG_DATA, useValue: {child: new Child('')}},
-      ]
+      ],
     })
     .compileComponents();
   }));

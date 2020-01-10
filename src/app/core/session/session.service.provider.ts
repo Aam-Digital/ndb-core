@@ -33,5 +33,5 @@ export function sessionServiceFactory(alertService: AlertService, entitySchemaSe
 export const sessionServiceProvider = {
   provide: SessionService,
   useFactory: sessionServiceFactory,
-  deps: [AlertService, EntitySchemaService]
+  deps: [AlertService, EntitySchemaService],
 };

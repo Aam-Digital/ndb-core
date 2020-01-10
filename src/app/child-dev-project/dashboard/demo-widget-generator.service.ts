@@ -1,9 +1,9 @@
-import {faker} from '../../core/demo-data/faker';
-import {Injectable} from '@angular/core';
-import {DemoDataGenerator} from '../../core/demo-data/demo-data-generator';
-import {ProgressDashboardConfig} from './progress-dashboard/progress-dashboard-config';
-import {DemoChildGenerator} from '../children/demo-data-generators/demo-child-generator.service';
-import {centersUnique} from '../children/demo-data-generators/fixtures/centers';
+import { faker } from '../../core/demo-data/faker';
+import { Injectable } from '@angular/core';
+import { DemoDataGenerator } from '../../core/demo-data/demo-data-generator';
+import { ProgressDashboardConfig } from './progress-dashboard/progress-dashboard-config';
+import { DemoChildGenerator } from '../children/demo-data-generators/demo-child-generator.service';
+import { centersUnique } from '../children/demo-data-generators/fixtures/centers';
 
 
 @Injectable()
@@ -14,7 +14,7 @@ export class DemoWidgetGeneratorService extends DemoDataGenerator<any> {
    */
   static provider() {
     return [
-      { provide: DemoWidgetGeneratorService, useClass: DemoWidgetGeneratorService }
+      { provide: DemoWidgetGeneratorService, useClass: DemoWidgetGeneratorService },
     ];
   }
 

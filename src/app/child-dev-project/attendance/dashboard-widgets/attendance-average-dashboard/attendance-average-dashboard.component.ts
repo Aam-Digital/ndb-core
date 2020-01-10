@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import {ChildrenService} from '../../../children/children.service';
-import {Child} from '../../../children/model/child';
-import {Router} from '@angular/router';
+import { ChildrenService } from '../../../children/children.service';
+import { Child } from '../../../children/model/child';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-attendance-average-dashboard',
   templateUrl: './attendance-average-dashboard.component.html',
-  styleUrls: ['./attendance-average-dashboard.component.scss']
+  styleUrls: ['./attendance-average-dashboard.component.scss'],
 })
 export class AttendanceAverageDashboardComponent implements OnInit {
   readonly ATTENDANCE_THRESHOLD = 0.9;

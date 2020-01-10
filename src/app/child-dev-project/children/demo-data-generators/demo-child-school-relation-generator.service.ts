@@ -1,11 +1,11 @@
-import {DemoChildGenerator} from './demo-child-generator.service';
-import {DemoSchoolGenerator} from '../../schools/demo-school-generator.service';
-import {DemoDataGenerator} from '../../../core/demo-data/demo-data-generator';
-import {Injectable} from '@angular/core';
-import {Child} from '../model/child';
-import {ChildSchoolRelation} from '../model/childSchoolRelation';
-import {faker} from '../../../core/demo-data/faker';
-import {School} from '../../schools/model/school';
+import { DemoChildGenerator } from './demo-child-generator.service';
+import { DemoSchoolGenerator } from '../../schools/demo-school-generator.service';
+import { DemoDataGenerator } from '../../../core/demo-data/demo-data-generator';
+import { Injectable } from '@angular/core';
+import { Child } from '../model/child';
+import { ChildSchoolRelation } from '../model/childSchoolRelation';
+import { faker } from '../../../core/demo-data/faker';
+import { School } from '../../schools/model/school';
 
 /**
  * Generate ChildSchoolRelation entities linking a child to a school for a specific year.
@@ -52,7 +52,7 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
     while (firstYear + offset <= finalYear && offset <= 12) {
       currentSchool = this.selectNextSchool(currentSchool);
       data.push(
-        this.generateRecord(child, firstYear + offset, offset + 1, currentSchool)
+        this.generateRecord(child, firstYear + offset, offset + 1, currentSchool),
       );
 
       offset++;

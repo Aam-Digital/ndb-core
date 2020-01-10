@@ -17,8 +17,8 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {AppConfig} from './app-config';
-import {HttpClientModule} from '@angular/common/http';
+import { AppConfig } from './app-config';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   imports: [
@@ -26,7 +26,7 @@ import {HttpClientModule} from '@angular/common/http';
     HttpClientModule,
   ],
   declarations: [],
-  providers: [AppConfig]
+  providers: [AppConfig],
 })
 export class AppConfigModule {
 }

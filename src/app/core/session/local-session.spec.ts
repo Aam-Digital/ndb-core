@@ -16,9 +16,9 @@
  */
 
 
-import {EntitySchemaService} from '../entity/schema/entity-schema.service';
-import {AppConfig} from '../app-config/app-config';
-import {LocalSession} from './local-session';
+import { EntitySchemaService } from '../entity/schema/entity-schema.service';
+import { AppConfig } from '../app-config/app-config';
+import { LocalSession } from './local-session';
 
 describe('LocalSessionService', () => {
   let localSession: LocalSession;
@@ -31,8 +31,8 @@ describe('LocalSessionService', () => {
         'remote_url': 'https://demo.aam-digital.com/db/',
         'timeout': 60000,
         'outdated_threshold_days': 0,
-        'useTemporaryDatabase': false
-      }
+        'useTemporaryDatabase': false,
+      },
     };
 
     const mockAlertService = jasmine.createSpyObj(['addDebug', 'addInfo', 'addWarning']);

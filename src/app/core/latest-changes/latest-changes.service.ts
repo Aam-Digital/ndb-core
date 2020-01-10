@@ -16,15 +16,15 @@
  */
 
 
-import {catchError, map} from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { Changelog } from './changelog';
-import {AlertService} from '../alerts/alert.service';
-import {HttpClient} from '@angular/common/http';
+import { AlertService } from '../alerts/alert.service';
+import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
-import {ChangelogComponent} from './changelog/changelog.component';
-import {CookieService} from 'ngx-cookie-service';
+import { ChangelogComponent } from './changelog/changelog.component';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable()
 export class LatestChangesService {
@@ -56,7 +56,7 @@ export class LatestChangesService {
 
     this.dialog.open(ChangelogComponent, {
       width: '400px',
-      data: dialogData
+      data: dialogData,
     });
   }
 

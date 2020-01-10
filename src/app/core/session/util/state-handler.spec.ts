@@ -19,7 +19,7 @@ import { async } from '@angular/core/testing';
 import { StateHandler } from './state-handler';
 
 enum TestState {
-    test1, test2, test3, test4
+    test1, test2, test3, test4,
 }
 
 describe('StateHandler', () => {

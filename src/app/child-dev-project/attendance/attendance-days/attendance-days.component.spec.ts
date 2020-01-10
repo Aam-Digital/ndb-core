@@ -5,13 +5,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import {FormsModule} from '@angular/forms';
-import {UiHelperModule} from '../../../core/ui-helper/ui-helper.module';
-import {EntityModule} from '../../../core/entity/entity.module';
-import {Database} from '../../../core/database/database';
-import {MockDatabase} from '../../../core/database/mock-database';
-import {AttendanceMonth} from '../model/attendance-month';
-import {AttendanceDayBlockComponent} from './attendance-day-block.component';
+import { FormsModule } from '@angular/forms';
+import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
+import { EntityModule } from '../../../core/entity/entity.module';
+import { Database } from '../../../core/database/database';
+import { MockDatabase } from '../../../core/database/mock-database';
+import { AttendanceMonth } from '../model/attendance-month';
+import { AttendanceDayBlockComponent } from './attendance-day-block.component';
 
 describe('AttendanceDaysComponent', () => {
   let component: AttendanceDaysComponent;
@@ -31,7 +31,7 @@ describe('AttendanceDaysComponent', () => {
         UiHelperModule, EntityModule],
       providers: [
         { provide: Database, useClass: MockDatabase },
-      ]
+      ],
     })
     .compileComponents();
   }));
