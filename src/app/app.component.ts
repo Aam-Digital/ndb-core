@@ -17,9 +17,9 @@
 
 import {Component, OnInit, ViewContainerRef} from '@angular/core';
 import './rxjs-operators';
-import {AppConfig} from './app-config/app-config';
+import {AppConfig} from './core/app-config/app-config';
 import {MatDialog} from '@angular/material/dialog';
-import {DemoDataGeneratingProgressDialogComponent} from './demo-data/demo-data-generating-progress-dialog.component';
+import {DemoDataGeneratingProgressDialogComponent} from './core/demo-data/demo-data-generating-progress-dialog.component';
 
 @Component({
   selector: 'app-root',
