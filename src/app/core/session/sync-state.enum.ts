@@ -19,7 +19,7 @@
  * State of the Synchronization between local and remote database
  */
 export enum SyncState {
-  /** Sync startet. In case of liveSync, this means the sync was resumed */
+  /** Sync started. In case of liveSync, this means the sync was resumed */
   STARTED,
   /** Sync completed. In case of liveSync, this means the sync was paused (and waits for more changes) */
   COMPLETED,

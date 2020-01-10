@@ -20,7 +20,6 @@ import { MenuItem } from '../menu-item';
 import { SessionService } from '../../session/session.service';
 import { NavigationItemsService } from '../navigation-items.service';
 import {AdminGuard} from '../../admin/admin.guard';
-import {Title} from '@angular/platform-browser';
 import {Location} from '@angular/common';
 
 @Component({

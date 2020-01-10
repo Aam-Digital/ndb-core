@@ -37,7 +37,7 @@ describe('BackupService', () => {
       .then(() => db.getAll()).then(res => expect(res.length).toBe(0))
       .then(() => done())
       .catch(err => {
-        expect(false).toBeTruthy('unexpected error occured: ' + err);
+        expect(false).toBeTruthy('unexpected error occurred: ' + err);
         done();
       });
   });
@@ -55,7 +55,7 @@ describe('BackupService', () => {
         done();
       })
       .catch(err => {
-        expect(false).toBeTruthy('unexpected error occured: ' + err);
+        expect(false).toBeTruthy('unexpected error occurred: ' + err);
         done();
       });
   });
@@ -77,7 +77,7 @@ describe('BackupService', () => {
       .then(() => service.getJsonExport()).then(res => backup = res)
       .then(() => service.clearDatabase())
       .catch(err => {
-        expect(false).toBeTruthy('1unexpected error occured: ' + err);
+        expect(false).toBeTruthy('1unexpected error occurred: ' + err);
       })
       .then(() => service.importJson(backup, true));
 
@@ -92,7 +92,7 @@ describe('BackupService', () => {
         done();
       })
       .catch(err => {
-        expect(false).toBeTruthy('unexpected error occured: ' + err);
+        expect(false).toBeTruthy('unexpected error occurred: ' + err);
         done();
       });
   });
@@ -110,7 +110,7 @@ describe('BackupService', () => {
         done();
       })
       .catch(err => {
-        expect(false).toBeTruthy('unexpected error occured: ' + err);
+        expect(false).toBeTruthy('unexpected error occurred: ' + err);
         done();
       });
   });
@@ -129,7 +129,7 @@ describe('BackupService', () => {
         done();
       })
       .catch(err => {
-        expect(false).toBeTruthy('unexpected error occured: ' + err);
+        expect(false).toBeTruthy('unexpected error occurred: ' + err);
         done();
       });
   });
@@ -148,7 +148,7 @@ describe('BackupService', () => {
         done();
       })
       .catch(err => {
-        expect(false).toBeTruthy('unexpected error occured: ' + err);
+        expect(false).toBeTruthy('unexpected error occurred: ' + err);
         done();
       });
   });
@@ -166,7 +166,7 @@ describe('BackupService', () => {
         done();
       })
       .catch(err => {
-        expect(false).toBeTruthy('unexpected error occured: ' + err);
+        expect(false).toBeTruthy('unexpected error occurred: ' + err);
         done();
       });
   });

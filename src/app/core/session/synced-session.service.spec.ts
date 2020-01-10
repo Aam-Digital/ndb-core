@@ -15,7 +15,6 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { SessionService } from './session.service';
 import { SyncedSessionService } from './synced-session.service';
 import { AlertService } from 'app/core/alerts/alert.service';
 import { LoginState } from './login-state.enum';

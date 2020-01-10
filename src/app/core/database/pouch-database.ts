@@ -18,7 +18,6 @@
 import {Database} from './database';
 import {AlertService} from '../alerts/alert.service';
 import {AlertDisplay} from '../alerts/alert-display';
-import {LoggingService} from '../logging/logging.service';
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from

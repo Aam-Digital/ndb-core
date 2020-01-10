@@ -20,7 +20,6 @@ import {MockDatabase} from '../../../core/database/mock-database';
 import { Location } from '@angular/common';
 import {Observable} from 'rxjs';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import * as uniqid from 'uniqid';
 import {EntitySchemaService} from '../../../core/entity/schema/entity-schema.service'; //  Necessary for usage of uniqid in the component
 
 describe('SchoolDetailComponent', () => {

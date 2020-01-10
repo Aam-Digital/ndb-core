@@ -22,7 +22,6 @@ import {AlertService} from '../../alerts/alert.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {InitialSyncDialogComponent} from './initial-sync-dialog.component';
 import { StateChangedEvent } from 'app/core/session/util/state-handler';
-import { ConnectionState } from 'app/core/session/connection-state.enum';
 
 @Component({
   selector: 'app-sync-status',
