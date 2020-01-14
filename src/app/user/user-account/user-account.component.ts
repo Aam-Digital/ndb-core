@@ -19,6 +19,7 @@ import { Component, OnInit } from '@angular/core';
 import { User } from '../user';
 import { SessionService } from '../../session/session.service';
 import { CloudFileService } from 'app/webdav/cloud-file-service.service';
+import { AppConfig } from '../../app-config/app-config';
 
 @Component({
   selector: 'app-user-account',
@@ -28,12 +29,15 @@ import { CloudFileService } from 'app/webdav/cloud-file-service.service';
 export class UserAccountComponent implements OnInit {
 
   user: User;
+  webdavUrl: String;
+  statusMessage: string;
 
   constructor( private sessionService: SessionService,
                private cloudFileService: CloudFileService ) { }
 
   ngOnInit() {
     this.user = this.sessionService.getCurrentUser();
+    this.webdavUrl = AppConfig.settings.webdav.remote_url;
   }
 
   changePassword( pwd , rpwd ) {
@@ -53,8 +57,13 @@ export class UserAccountComponent implements OnInit {
    * @param password password used to login to the main application
    */
   updateCloudService(cloudUser: string, cloudPassword: string, password: string) {
-    this.sessionService.getCurrentUser().setCloudPassword(cloudPassword, password);
-    this.sessionService.getCurrentUser().cloudUserName = cloudUser;
-    this.cloudFileService.connect();
+    try {
+      this.sessionService.getCurrentUser().setCloudPassword(cloudPassword, password);
+      this.sessionService.getCurrentUser().cloudUserName = cloudUser;
+      this.cloudFileService.connect();
+      this.statusMessage = 'Success';
+    } catch (error) {
+      this.statusMessage = 'Error encountered: ' + error;
+    }
   }
 }

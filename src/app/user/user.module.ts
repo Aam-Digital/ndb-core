@@ -21,13 +21,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import {CommonModule} from '@angular/common';
+import { MatTabsModule } from '@angular/material';
 
 @NgModule({
   imports: [
     CommonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    MatTabsModule
   ],
   declarations: [UserAccountComponent]
 })
