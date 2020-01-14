@@ -46,6 +46,7 @@ npm install
 Create a config file at `assets/config.json` by copying the default config `assets/config.default.json`.
 The default config file is used as a fallback.
 Adapt the settings, especially regarding the CouchDB server that should be used for server-side synchronisation.
+Under `webdav.remoteUrl` one can enter a base-url to a webdav server (e.g. `"nextcloud-domain.com/remote.php/webdav"`) used for storing images and (in the future) files.
 
 
 
