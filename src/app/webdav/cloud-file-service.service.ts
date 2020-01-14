@@ -46,8 +46,8 @@ export class CloudFileService {
   }
 
   /**
-   * Returns the content of '/' + path
-   * @param path path without leading '/'
+   * Returns the content path
+   * @param path example '/'
    */
   public async getDir(path: string): Promise<string> {
     const contents = await this.client.getDirectoryContents(path);
@@ -63,7 +63,7 @@ export class CloudFileService {
       // create promise that resolves when the file list is loaded
       // if this function gets called mulitple times this ensures that the list will only be loaded once
       this.currentlyGettingList = new Promise((resolve, reject) => {
-        this.getDir('').then(list => {
+        this.getDir('/').then(list => {
           this.fileList = list;
           resolve(true);
         });

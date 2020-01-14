@@ -196,7 +196,7 @@ export class ChildDetailsComponent implements OnInit {
    */
   uploadChildPhoto(event) {
     console.log(event);
-    this.cloudFileService.setImage(event.target.files[0], this.child.entityId);
+    this.cloudFileService.setImage(event.target.files[0], '/' + this.child.entityId);
     // TODO Update child.photo
   }
 }
