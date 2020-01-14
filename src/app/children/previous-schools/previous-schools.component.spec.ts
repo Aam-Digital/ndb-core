@@ -11,41 +11,35 @@ import {MockDatabase} from '../../database/mock-database';
 import {Child} from '../child';
 import {DatePipe} from '@angular/common';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {of} from 'rxjs';
+import {of, Observable} from 'rxjs';
 import { AlertService } from 'app/alerts/alert.service';
 import { SchoolsService } from 'app/schools/schools.service';
 import { Database } from 'app/database/database';
+import { ChildSchoolRelation } from '../childSchoolRelation';
+import { ChildrenModule } from '../children.module';
+import { RouterTestingModule } from '@angular/router/testing';
+import { ExpectedConditions } from 'protractor';
 
 describe('PreviousSchoolsComponent', () => {
   let component: PreviousSchoolsComponent;
   let fixture: ComponentFixture<PreviousSchoolsComponent>;
 
-  const mockChildrenService = {
-    getChild: (id) => {
-      return of([new Child('22')]);
-    },
-    // getPreviousSchoolsOfChild: (id) => {
-    //   return of([]);
-    // }
-  };
-  let mockEntityMapper;
-
 
   beforeEach(async(() => {
-    mockEntityMapper = new EntityMapperService(new MockDatabase(), new EntitySchemaService());
+    const route = {paramMap: Observable.create((observer) => {
+      const paramMap = {get: () => '22'};
+      observer.next(paramMap);
+    })};
 
     TestBed.configureTestingModule({
-      declarations: [ PreviousSchoolsComponent ],
-      imports: [ UiHelperModule, FormsModule, NoopAnimationsModule],
+      declarations: [ ],
+      imports: [ ChildrenModule, RouterTestingModule ],
       providers: [
-        DatePipe,
-        { provide: ActivatedRoute, useValue: {paramMap: of({get: () => '22'}) } },
-        { provide: ChildrenService, useValue: mockChildrenService },
-        { provide: EntityMapperService, useValue: mockEntityMapper },
-        AlertService,
-        SchoolsService,
+        {provide: Database, useClass: MockDatabase},
+        {provide: ActivatedRoute, useValue: route},
+        EntityMapperService,
         EntitySchemaService,
-        Database,
+        AlertService
       ],
     })
     .compileComponents();
@@ -59,5 +53,17 @@ describe('PreviousSchoolsComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('calls children service with id from route',(done) => {
+    const childrenService = fixture.debugElement.injector.get(ChildrenService);
+    spyOn(component, 'loadData').and.callThrough();
+    spyOn(childrenService, 'getSchoolsWithRelations').and.callThrough();
+    component.ngOnInit();
+    fixture.whenStable().then(() => {
+      expect(component.loadData).toHaveBeenCalledWith('22');
+      expect(childrenService.getSchoolsWithRelations).toHaveBeenCalledWith('22');
+      done();
+    });
   });
 });
