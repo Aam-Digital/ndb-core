@@ -196,8 +196,9 @@ export class ChildDetailsComponent implements OnInit {
    */
   uploadChildPhoto(event) {
     // get file extension
-    const ext = event.target.files[0].name.substr(event.target.files[0].name.lastIndexOf('.') + 1);
-    this.cloudFileService.setImage(event.target.files[0], '/' + this.child.entityId + '.' + ext);
+    // currently disabled since there is no way to retrieve the image without knowledge of the file type
+    // const ext = event.target.files[0].name.substr(event.target.files[0].name.lastIndexOf('.') + 1);
+    this.cloudFileService.setImage(event.target.files[0], '/' + this.child.entityId);
 
     // TODO Update child.photo
   }
