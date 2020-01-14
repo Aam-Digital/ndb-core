@@ -14,10 +14,7 @@
 </mat-form-field>
 
 <mat-form-field>
-  <!--<input matInput [(ngModel)]='childSchoolRelation.start' placeholder='Started on' title='start' type='date'>-->
-  <input matInput [(ngModel)]='childSchoolRelation.start' placeholder='Started on' title='start' [matDatepicker]="schoolStartedDatepicker">
-  <mat-datepicker-toggle matSuffix [for]="schoolStartedDatepicker"></mat-datepicker-toggle>
-  <mat-datepicker #schoolStartedDatepicker></mat-datepicker>
+  <input matInput [(ngModel)]='childSchoolRelation.start' placeholder='Started on' title='start' type='date'>
 </mat-form-field>
 
 <mat-form-field>
