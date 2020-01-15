@@ -68,7 +68,7 @@ import { AttendanceDayBlockComponent } from '../attendance/attendance-days/atten
 import { AttendanceManagerComponent } from '../attendance/attendance-manager/attendance-manager.component';
 import { HealthCheckupComponent } from '../health-checkup/health-checkup-component/health-checkup.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import {AdminModule} from '../admin/admin.module';
+import { AdminModule } from '../../core/admin/admin.module';
 
 @NgModule({
   imports: [

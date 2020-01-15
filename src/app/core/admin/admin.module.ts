@@ -8,13 +8,12 @@ import { PapaParseModule } from 'ngx-papaparse';
 import { AlertsModule } from '../alerts/alerts.module';
 import { UiHelperModule } from '../ui-helper/ui-helper.module';
 import { AdminGuard } from './admin.guard';
-import { ChildrenModule } from '../../child-dev-project/children/children.module';
 import { EntityModule } from '../entity/entity.module';
 import { HttpClientModule } from '@angular/common/http';
 import { ChildPhotoUpdateService } from './services/child-photo-update.service';
-import {BackupService} from './services/backup.service';
+import { MatIconModule } from '@angular/material/icon';
 import { ExportDataComponent } from './export-data/export-data.component';
-import {MatIconModule} from '@angular/material/icon';
+import { BackupService } from './services/backup.service';
 
 @NgModule({
   imports: [
@@ -37,7 +36,7 @@ import {MatIconModule} from '@angular/material/icon';
     ExportDataComponent,
   ],
   exports: [
-    ExportDataComponent
-  ]
+    ExportDataComponent,
+  ],
 })
 export class AdminModule { }

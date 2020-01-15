@@ -1,11 +1,10 @@
-import {Component, Input} from '@angular/core';
-import {BackupService} from '../services/backup.service';
-import {timeout} from 'rxjs/operators';
+import { Component, Input } from '@angular/core';
+import { BackupService } from '../services/backup.service';
 
 @Component({
   selector: 'app-export-data',
   templateUrl: './export-data.component.html',
-  styleUrls: ['./export-data.component.scss']
+  styleUrls: ['./export-data.component.scss'],
 })
 export class ExportDataComponent {
 
