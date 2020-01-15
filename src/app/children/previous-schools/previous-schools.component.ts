@@ -33,7 +33,6 @@ export class PreviousSchoolsComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.childId = params.get('id').toString();
-      console.log('called init');
       this.loadData(this.childId);
     });
   }
