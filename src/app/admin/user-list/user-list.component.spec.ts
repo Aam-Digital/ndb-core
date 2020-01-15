@@ -7,6 +7,8 @@ import {MockDatabase} from '../../database/mock-database';
 import {Database} from '../../database/database';
 import {MatDialog} from '@angular/material/dialog';
 import {AdminModule} from '../admin.module';
+import {of} from 'rxjs';
+import {User} from '../../user/user';
 
 describe('UserListComponent', () => {
   let component: UserListComponent;
@@ -41,5 +43,15 @@ describe('UserListComponent', () => {
     spyOn(dialogService, 'open').and.callThrough();
     component.createUser();
     expect(dialogService.open).toHaveBeenCalled();
+  });
+
+  it('loads new data when dialog returns value', () => {
+    const dialogService = fixture.debugElement.injector.get(MatDialog);
+    const mockedDialogRef = {afterClosed: () => of(new User('test'))};
+    // @ts-ignore
+    spyOn(dialogService, 'open').and.returnValue(mockedDialogRef);
+    spyOn(component, 'loadData');
+    component.createUser();
+    expect(component.loadData).toHaveBeenCalled();
   });
 });

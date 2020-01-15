@@ -18,7 +18,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 describe('UserDetailsComponent', () => {
   let component: UserDetailsComponent;
   let fixture: ComponentFixture<UserDetailsComponent>;
-  const testUser = new User('test');
+  const testUser = new User('username');
 
   beforeEach(async(() => {
     const dialog = {
@@ -87,4 +87,39 @@ describe('UserDetailsComponent', () => {
     expect(component.userForm.get('username').value).toBe(testUser.name);
     expect(component.userForm.get('admin').value).toBe(testUser.isAdmin());
   });
+
+  it('saves a newly created user correctly', (done) => {
+    const dialogRef = fixture.debugElement.injector.get(MatDialogRef);
+    const entityMapperService = fixture.debugElement.injector.get(EntityMapperService);
+    spyOn(dialogRef, 'close');
+    spyOn(entityMapperService, 'save').and.callThrough();
+    const username = 'newUser';
+    const password = 'newPassword';
+    const newUser = new User(username);
+    newUser.admin = false;
+    newUser.name = username;
+    newUser.setNewPassword(password);
+    component.creating = true;
+    component.userForm.patchValue({
+      admin: newUser.isAdmin(),
+      username: newUser.name,
+      password: password
+    });
+    component.saveUser();
+    expect(userEqual(component.user, newUser)).toBeTruthy();
+    setTimeout(async () => {
+      expect(entityMapperService.save).toHaveBeenCalled();
+      expect(dialogRef.close).toHaveBeenCalled();
+      const user = await entityMapperService.load<User>(User, newUser.getId());
+      expect(userEqual(user, newUser)).toBeTruthy();
+      expect(user.checkPassword(password)).toBeTruthy();
+      done();
+    });
+  });
 });
+
+function userEqual(actual: User, expected: User): boolean {
+  return actual.name === expected.name
+    && actual.getId() === expected.getId()
+    && actual.isAdmin() === expected.isAdmin();
+}
