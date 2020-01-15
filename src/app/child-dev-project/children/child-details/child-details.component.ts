@@ -20,7 +20,7 @@ import { Child } from '../model/child';
 import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 import { Gender } from '../model/Gender';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Location } from '@angular/common';
 import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
