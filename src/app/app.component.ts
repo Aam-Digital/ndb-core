@@ -15,19 +15,35 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, ViewContainerRef } from '@angular/core';
-
+import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import './rxjs-operators';
+import { AppConfig } from './core/app-config/app-config';
+import { MatDialog } from '@angular/material/dialog';
+import { DemoDataGeneratingProgressDialogComponent } from './core/demo-data/demo-data-generating-progress-dialog.component';
 
 @Component({
   selector: 'app-root',
-  template: '<app-ui></app-ui>'
+  template: '<app-ui></app-ui>',
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   private viewContainerRef: ViewContainerRef;
 
-  public constructor(viewContainerRef: ViewContainerRef) {
+  public constructor(
+    viewContainerRef: ViewContainerRef,
+    private dialog: MatDialog,
+  ) {
     // You need this small hack in order to catch application root view container ref
     this.viewContainerRef = viewContainerRef;
+  }
+
+  ngOnInit() {
+    this.loadDemoData();
+  }
+
+  // TODO: move loading of demo data to a more suitable place
+  private loadDemoData() {
+    if (AppConfig.settings.database.useTemporaryDatabase) {
+      DemoDataGeneratingProgressDialogComponent.loadDemoDataWithLoadingDialog(this.dialog);
+    }
   }
 }
