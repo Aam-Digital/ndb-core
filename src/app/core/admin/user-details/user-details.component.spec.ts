@@ -66,7 +66,7 @@ describe('UserDetailsComponent', () => {
     const entityMapper = fixture.debugElement.injector.get(EntityMapperService);
     spyOn(entityMapper, 'save').and.callThrough();
     component.saveUser();
-    expect(entityMapper.save).toHaveBeenCalled();
+    expect(entityMapper.save).toHaveBeenCalledWith(testUser);
   });
 
   it('closes the dialog after removing the user', async (done) => {
