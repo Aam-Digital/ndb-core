@@ -18,8 +18,14 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 describe('UserDetailsComponent', () => {
   let component: UserDetailsComponent;
   let fixture: ComponentFixture<UserDetailsComponent>;
+  const testUser = new User('test');
 
   beforeEach(async(() => {
+    const dialog = {
+      close: () => {}
+    };
+    testUser.name = 'username';
+    testUser.admin = true;
     TestBed.configureTestingModule({
       declarations: [ UserDetailsComponent ],
       imports: [
@@ -33,20 +39,23 @@ describe('UserDetailsComponent', () => {
         MatDialogModule
         ],
       providers: [
+        { provide: Database, useClass: MockDatabase},
         EntityMapperService,
         EntitySchemaService,
-        MatDialogRef,
-        { provide: Database, useValue: MockDatabase},
+        {provide: MatDialogRef, useValue: dialog},
         { provide: MAT_DIALOG_DATA, useValue: new User('demo') },
       ]
     })
     .compileComponents();
   }));
 
-  beforeEach(() => {
+  beforeEach(async () => {
     fixture = TestBed.createComponent(UserDetailsComponent);
     component = fixture.componentInstance;
+    component.user = testUser;
     fixture.detectChanges();
+    component.ngOnInit();
+    await fixture.whenStable();
   });
 
   it('should create', () => {
@@ -60,23 +69,22 @@ describe('UserDetailsComponent', () => {
     expect(entityMapper.save).toHaveBeenCalled();
   });
 
-  it('closes the dialog after removing the user', (done) => {
+  it('closes the dialog after removing the user', async (done) => {
     const dialogRef = fixture.debugElement.injector.get(MatDialogRef);
+    const entityMapperService = fixture.debugElement.injector.get(EntityMapperService);
+    await entityMapperService.save(testUser);
     spyOn(dialogRef, 'close');
+    spyOn(entityMapperService, 'remove').and.callThrough();
     component.removeUser();
     setTimeout(() => {
+      expect(entityMapperService.remove).toHaveBeenCalledWith(testUser);
       expect(dialogRef.close).toHaveBeenCalled();
       done();
     });
   });
 
   it('loads a passed user correctly', () => {
-    const user = new User('test');
-    user.name = 'username';
-    user.admin = true;
-    component.user = user;
-    component.ngOnInit();
-    expect(component.userForm.get('username').value).toBe(user.name);
-    expect(component.userForm.get('admin').value).toBe(user.isAdmin());
+    expect(component.userForm.get('username').value).toBe(testUser.name);
+    expect(component.userForm.get('admin').value).toBe(testUser.isAdmin());
   });
 });
