@@ -46,3 +46,8 @@
   position: relative;
   background-color: white;
 }
+
+.validationWarning {
+  color: red;
+  font-size: 14px;
+}

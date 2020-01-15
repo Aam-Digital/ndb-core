@@ -41,6 +41,8 @@ export class ChildDetailsComponent implements OnInit {
   currentSchool: School = new School('');
   schools: School[] = [];
 
+  checkCenterFailed = false;
+  checkNameFailed = false;
   form: FormGroup;
   healthCheckForm: FormGroup;
   creatingNew = false;
@@ -148,6 +150,8 @@ export class ChildDetailsComponent implements OnInit {
   }
 
   save() {
+    this.checkNameFailed = false;
+    this.checkCenterFailed = false;
     if (this.form.valid) {
     this.assignFormValuesToChild(this.child, this.form);
 
@@ -165,12 +169,13 @@ export class ChildDetailsComponent implements OnInit {
     let errorstring = 'Form is not valid: \n';
     if (this.form.get('name').invalid) {
       errorstring += 'Name is required ';
+      this.checkNameFailed = true;
     }
     if (this.form.get('center').invalid) {
       errorstring += ' | Center is required \n';
+      this.checkCenterFailed = true;
     }
     this.alertService.addDanger(errorstring);
-    console.log(errorstring);
   }
 }
 
