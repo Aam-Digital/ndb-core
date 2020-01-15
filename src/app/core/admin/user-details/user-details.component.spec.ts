@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserDetailsComponent } from './user-details.component';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatCheckboxModule} from '@angular/material/checkbox';
-import {ReactiveFormsModule} from '@angular/forms';
-import {MatTableModule} from '@angular/material/table';
-import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
-import {User} from '../../user/user';
-import {EntityMapperService} from '../../entity/entity-mapper.service';
-import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
-import {MockDatabase} from '../../database/mock-database';
-import {Database} from '../../database/database';
-import {MatSnackBarModule} from '@angular/material/snack-bar';
-import {MatInputModule} from '@angular/material/input';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatTableModule } from '@angular/material/table';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { User } from '../../user/user';
+import { EntityMapperService } from '../../entity/entity-mapper.service';
+import { EntitySchemaService } from '../../entity/schema/entity-schema.service';
+import { MockDatabase } from '../../database/mock-database';
+import { Database } from '../../database/database';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatInputModule } from '@angular/material/input';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('UserDetailsComponent', () => {
   let component: UserDetailsComponent;
@@ -22,7 +22,7 @@ describe('UserDetailsComponent', () => {
 
   beforeEach(async(() => {
     const dialog = {
-      close: () => {}
+      close: () => {},
     };
     testUser.name = 'username';
     testUser.admin = true;
@@ -36,7 +36,7 @@ describe('UserDetailsComponent', () => {
         MatSnackBarModule,
         MatInputModule,
         NoopAnimationsModule,
-        MatDialogModule
+        MatDialogModule,
         ],
       providers: [
         { provide: Database, useClass: MockDatabase},
@@ -44,7 +44,7 @@ describe('UserDetailsComponent', () => {
         EntitySchemaService,
         {provide: MatDialogRef, useValue: dialog},
         { provide: MAT_DIALOG_DATA, useValue: new User('demo') },
-      ]
+      ],
     })
     .compileComponents();
   }));
@@ -103,7 +103,7 @@ describe('UserDetailsComponent', () => {
     component.userForm.patchValue({
       admin: newUser.isAdmin(),
       username: newUser.name,
-      password: password
+      password: password,
     });
     component.saveUser();
     expect(userEqual(component.user, newUser)).toBeTruthy();

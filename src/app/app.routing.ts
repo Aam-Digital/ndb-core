@@ -31,7 +31,7 @@ import { AddMonthAttendanceComponent } from './child-dev-project/attendance/add-
 import { AddDayAttendanceComponent } from './child-dev-project/attendance/add-day-attendance/add-day-attendance.component';
 import { AttendanceManagerComponent } from './child-dev-project/attendance/attendance-manager/attendance-manager.component';
 import { HowToComponent } from './core/help/how-to/how-to.component';
-import { UserListComponent } from './admin/user-list/user-list.component';
+import { UserListComponent } from './core/admin/user-list/user-list.component';
 
 export const routes: Routes = [
   {path: '', component: DashboardComponent},

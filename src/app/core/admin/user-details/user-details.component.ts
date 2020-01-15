@@ -1,14 +1,14 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {User} from '../../user/user';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {EntityMapperService} from '../../entity/entity-mapper.service';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { User } from '../../user/user';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { EntityMapperService } from '../../entity/entity-mapper.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-user-details',
   templateUrl: './user-details.component.html',
-  styleUrls: ['./user-details.component.scss']
+  styleUrls: ['./user-details.component.scss'],
 })
 export class UserDetailsComponent implements OnInit {
   creating: boolean = true;
@@ -18,7 +18,7 @@ export class UserDetailsComponent implements OnInit {
   userForm: FormGroup = this.fb.group({
     username: [{value: this.defaultUsernameValue, disabled: !this.creating}, Validators.required],
     password: [this.defaultPasswordValue, Validators.required],
-    admin: [false]
+    admin: [false],
   });
 
   constructor(
@@ -26,7 +26,7 @@ export class UserDetailsComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public user: User,
     private fb: FormBuilder,
     private entityMapper: EntityMapperService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
   ) { }
 
   ngOnInit() {

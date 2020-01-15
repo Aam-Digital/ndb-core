@@ -1,14 +1,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserListComponent } from './user-list.component';
-import {EntityMapperService} from '../../entity/entity-mapper.service';
-import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
-import {MockDatabase} from '../../database/mock-database';
-import {Database} from '../../database/database';
-import {MatDialog} from '@angular/material/dialog';
-import {AdminModule} from '../admin.module';
-import {of} from 'rxjs';
-import {User} from '../../user/user';
+import { EntityMapperService } from '../../entity/entity-mapper.service';
+import { EntitySchemaService } from '../../entity/schema/entity-schema.service';
+import { MockDatabase } from '../../database/mock-database';
+import { Database } from '../../database/database';
+import { MatDialog } from '@angular/material/dialog';
+import { AdminModule } from '../admin.module';
+import { of } from 'rxjs';
+import { User } from '../../user/user';
 
 describe('UserListComponent', () => {
   let component: UserListComponent;
@@ -17,13 +17,13 @@ describe('UserListComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        AdminModule
+        AdminModule,
       ],
       providers: [
         EntityMapperService,
         EntitySchemaService,
-        { provide: Database, useClass: MockDatabase }
-      ]
+        { provide: Database, useClass: MockDatabase },
+      ],
     })
     .compileComponents();
   }));
