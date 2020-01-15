@@ -30,6 +30,10 @@ Our detailed documentation and API reference is hosted on GitHub Pages: [**aam-d
 
 Additionally you can find guides and recipes to implement common functionalities there in the [Developer Documentation](http://aam-digital.github.io/ndb-core/additional-documentation/guidelines-and-recipes.html).
 
+The application code is split within the `src/app/` directory into modules providing
+general features and abstract components (_core_) and
+concrete feature modules for users' use cases (_child-dev-project_).
+
 
 ## Setup
 The project depends on a couple of tools which are required for development. Please make sure you have the following installed:
