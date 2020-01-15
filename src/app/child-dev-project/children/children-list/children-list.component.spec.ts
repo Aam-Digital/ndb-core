@@ -28,8 +28,8 @@ import { AttendanceDaysComponent } from '../../attendance/attendance-days/attend
 import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
 import { AttendanceDayBlockComponent } from '../../attendance/attendance-days/attendance-day-block.component';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
-import {ExportDataComponent} from '../../admin/export-data/export-data.component';
-import {PapaParseModule} from 'ngx-papaparse';
+import { ExportDataComponent } from '../../../core/admin/export-data/export-data.component';
+import { PapaParseModule } from 'ngx-papaparse';
 
 describe('ChildrenListComponent', () => {
   let component: ChildrenListComponent;
@@ -44,7 +44,7 @@ describe('ChildrenListComponent', () => {
         ChildrenListComponent,
         AttendanceDaysComponent,
         AttendanceDayBlockComponent,
-        ExportDataComponent
+        ExportDataComponent,
       ],
       imports: [
         CommonModule,
