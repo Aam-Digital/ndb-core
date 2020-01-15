@@ -20,7 +20,7 @@ import { Child } from '../model/child';
 import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 import { Gender } from '../model/Gender';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Location } from '@angular/common';
 import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
@@ -41,8 +41,7 @@ export class ChildDetailsComponent implements OnInit {
   currentSchool: School = new School('');
   schools: School[] = [];
 
-  checkCenterFailed = false;
-  checkNameFailed = false;
+  validateForm = false;
   form: FormGroup;
   healthCheckForm: FormGroup;
   creatingNew = false;
@@ -150,8 +149,7 @@ export class ChildDetailsComponent implements OnInit {
   }
 
   save() {
-    this.checkNameFailed = false;
-    this.checkCenterFailed = false;
+    this.validateForm = true;
     if (this.form.valid) {
     this.assignFormValuesToChild(this.child, this.form);
 
@@ -166,16 +164,8 @@ export class ChildDetailsComponent implements OnInit {
       })
       .catch((err) => this.alertService.addDanger('Could not save Child "' + this.child.name + '": ' + err));
   } else {
-    let errorstring = 'Form is not valid: \n';
-    if (this.form.get('name').invalid) {
-      errorstring += 'Name is required ';
-      this.checkNameFailed = true;
-    }
-    if (this.form.get('center').invalid) {
-      errorstring += ' | Center is required \n';
-      this.checkCenterFailed = true;
-    }
-    this.alertService.addDanger(errorstring);
+    const invalidFields = this.getInvalidFields(this.form);
+    this.alertService.addDanger('Form invalid, required fields missing');
   }
 }
 
@@ -210,5 +200,16 @@ export class ChildDetailsComponent implements OnInit {
 
   navigateBack() {
     this.location.back();
+  }
+
+  getInvalidFields(form: FormGroup) {
+    const invalid = [];
+    const controls = this.form.controls;
+    for (const field in controls) {
+      if ( controls[field].invalid) {
+        invalid.push(field);
+      }
+    }
+    return invalid;
   }
 }

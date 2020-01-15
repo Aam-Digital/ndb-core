@@ -69,7 +69,7 @@
           <mat-form-field style='width: 300px;'>
             <input matInput formControlName="name" placeholder="Name" title="name" type="text">
           </mat-form-field>
-          <div *ngIf="this.form.get('name').invalid && this.checkNameFailed" class="validationWarning">
+          <div *ngIf="this.form.get('name').invalid && validateForm" class="validationWarning">
                 Name is required
           </div>
 
@@ -83,7 +83,7 @@
           <mat-form-field>
             <input matInput formControlName="center" placeholder="Center" type="text">
           </mat-form-field>
-          <div *ngIf="this.form.get('center').invalid && this.checkCenterFailed" class="validationWarning">
+          <div *ngIf="this.form.get('center').invalid && validateForm" class="validationWarning">
             Center is required
           </div>
         </div>
