@@ -5,7 +5,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MatTableModule} from '@angular/material/table';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
 import {User} from '../../user/user';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
@@ -29,13 +29,14 @@ describe('UserDetailsComponent', () => {
         MatTableModule,
         MatSnackBarModule,
         MatInputModule,
-        NoopAnimationsModule
+        NoopAnimationsModule,
+        MatDialogModule
         ],
       providers: [
         EntityMapperService,
         EntitySchemaService,
+        MatDialogRef,
         { provide: Database, useValue: MockDatabase},
-        { provide: MatDialogRef, useValue: MatDialogRef },
         { provide: MAT_DIALOG_DATA, useValue: new User('demo') },
       ]
     })
@@ -67,5 +68,15 @@ describe('UserDetailsComponent', () => {
       expect(dialogRef.close).toHaveBeenCalled();
       done();
     });
+  });
+
+  it('loads a passed user correctly', () => {
+    const user = new User('test');
+    user.name = 'username';
+    user.admin = true;
+    component.user = user;
+    component.ngOnInit();
+    expect(component.userForm.get('username').value).toBe(user.name);
+    expect(component.userForm.get('admin').value).toBe(user.isAdmin());
   });
 });
