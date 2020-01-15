@@ -55,7 +55,7 @@ describe('PreviousSchoolsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('calls children service with id from route',(done) => {
+  it('calls children service with id from route', (done) => {
     const childrenService = fixture.debugElement.injector.get(ChildrenService);
     spyOn(component, 'loadData').and.callThrough();
     spyOn(childrenService, 'getSchoolsWithRelations').and.callThrough();
