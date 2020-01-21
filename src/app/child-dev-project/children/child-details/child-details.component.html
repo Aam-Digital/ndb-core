@@ -293,22 +293,32 @@
 
       <div>
         <mat-form-field>
-          <input matInput formControlName="health_lastDentalCheckup" placeholder="Last Dental Check-Up" type="date">
+          <input matInput formControlName="health_lastDentalCheckup" placeholder="Last Dental Check-Up" [matDatepicker]="lastDentalCheckupDatepicker" [disabled]='!editing'>
+          <mat-datepicker-toggle matSuffix [for]="lastDentalCheckupDatepicker"></mat-datepicker-toggle>
+          <mat-datepicker #lastDentalCheckupDatepicker></mat-datepicker>
         </mat-form-field>
 
         <mat-form-field>
-          <input matInput formControlName="health_lastEyeCheckup" placeholder="Last Eye Check-Up" type="date">
+          <input matInput formControlName="health_lastEyeCheckup" placeholder="Last Eye Check-Up" [matDatepicker]="lastEyeCheckupDatepicker" [disabled]='!editing'>
+          <mat-datepicker-toggle matSuffix [for]="lastEyeCheckupDatepicker"></mat-datepicker-toggle>
+          <mat-datepicker #lastEyeCheckupDatepicker></mat-datepicker>
         </mat-form-field>
 
         <mat-form-field>
-          <input matInput formControlName="health_lastENTCheckup" placeholder="Last ENT Check-Up" type="date">
+          <input matInput formControlName="health_lastENTCheckup" placeholder="Last ENT Check-Up" [matDatepicker]="lastENTCheckupDatepicker" [disabled]='!editing'>
+          <mat-datepicker-toggle matSuffix [for]="lastENTCheckupDatepicker"></mat-datepicker-toggle>
+          <mat-datepicker #lastENTCheckupDatepicker></mat-datepicker>
         </mat-form-field>
 
         <mat-form-field>
-          <input matInput formControlName="health_lastVitaminD" placeholder="Last Vitamin D" type="date">
+          <input matInput formControlName="health_lastVitaminD" placeholder="Last Vitamin D" [matDatepicker]="lastVitaminDDatepicker" [disabled]='!editing'>
+          <mat-datepicker-toggle matSuffix [for]="lastVitaminDDatepicker"></mat-datepicker-toggle>
+          <mat-datepicker #lastVitaminDDatepicker></mat-datepicker>
         </mat-form-field>
         <mat-form-field>
-          <input matInput formControlName="health_lastDeworming" placeholder="Last De-Worming" type="date">
+          <input matInput formControlName="health_lastDeworming" placeholder="Last De-Worming" [matDatepicker]="lastDewormingDatepicker" [disabled]='!editing'>
+          <mat-datepicker-toggle matSuffix [for]="lastDewormingDatepicker"></mat-datepicker-toggle>
+          <mat-datepicker #lastDewormingDatepicker></mat-datepicker>
         </mat-form-field>
       </div>
 
@@ -339,7 +349,9 @@
       </mat-expansion-panel-header>
 
       <mat-form-field>
-        <input matInput formControlName="dropoutDate" placeholder="Dropout Date" type="date">
+        <input matInput formControlName="dropoutDate" placeholder="Dropout Date" [matDatepicker]="dropoutDatepicker" [disabled]='!editing'>
+        <mat-datepicker-toggle matSuffix [for]="dropoutDatepicker"></mat-datepicker-toggle>
+        <mat-datepicker #dropoutDatepicker></mat-datepicker>
       </mat-form-field>
 
       <mat-form-field>
