@@ -19,6 +19,8 @@ import { ChildrenService } from '../../children/children.service';
 import { WarningLevel } from '../../warning-level';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { SchoolBlockComponent } from '../../schools/school-block/school-block.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 describe('NoteDetailsComponent', () => {
   let component: NoteDetailsComponent;
@@ -38,7 +40,7 @@ describe('NoteDetailsComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ NoteDetailsComponent, ChildSelectComponent, ChildBlockComponent, SchoolBlockComponent ],
       imports: [MatDialogModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule, MatSelectModule,
-        FormsModule, NoopAnimationsModule, MatIconModule,
+        FormsModule, NoopAnimationsModule, MatIconModule, MatDatepickerModule, MatNativeDateModule,
         UiHelperModule, EntityModule],
       providers: [
         {provide: Database, useClass: MockDatabase},

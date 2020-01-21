@@ -14,6 +14,7 @@ import { ConfirmationDialogService } from '../confirmation-dialog/confirmation-d
 import { CommonModule } from '@angular/common';
 import { Database } from '../../database/database';
 import { EntitySchemaService } from '../../entity/schema/entity-schema.service';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 describe('EntitySubrecordComponent', () => {
   let component: EntitySubrecordComponent;
@@ -23,7 +24,7 @@ describe('EntitySubrecordComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ EntitySubrecordComponent ],
       imports: [MatTableModule, MatFormFieldModule, MatIconModule,
-        MatSnackBarModule, MatSelectModule, MatDialogModule, MatAutocompleteModule, CommonModule],
+        MatSnackBarModule, MatSelectModule, MatDialogModule, MatAutocompleteModule, MatDatepickerModule, CommonModule],
       providers: [
         EntityMapperService,
         EntitySchemaService,
