@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NoteModel} from '../../notes/note.model';
 import {NoteDetailComponent} from '../../notes/note-detail/note-detail.component';
 import {ColumnDescription, ColumnDescriptionInputType} from '../../ui-helper/entity-subrecord/column-description';
@@ -6,8 +6,7 @@ import {SessionService} from '../../session/session.service';
 import {DatePipe} from '@angular/common';
 import {ChildrenService} from '../children.service';
 import {ActivatedRoute} from '@angular/router';
-import {NotesService} from '../../notes/notes.service';
-import {Subscription} from 'rxjs';
+import {EntityMapperService} from '../../entity/entity-mapper.service';
 
 @Component({
   selector: 'app-notes-list',
@@ -17,11 +16,10 @@ import {Subscription} from 'rxjs';
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
  */
-export class NotesListComponent implements OnInit, OnDestroy {
+export class NotesListComponent implements OnInit {
 
   childId: string;
-  records: Array<NoteModel>;
-  recordSubscription: Subscription;
+  records: Array<NoteModel> = [];
   detailsComponent = NoteDetailComponent;
 
   columns: Array<ColumnDescription> = [
@@ -39,25 +37,15 @@ export class NotesListComponent implements OnInit, OnDestroy {
               private childrenService: ChildrenService,
               private sessionService: SessionService,
               private datePipe: DatePipe,
-              private notesService: NotesService) {
-  }
+              private entityMapperService: EntityMapperService) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.childId = params.get('id');
+    });
 
-      // sets the records and sorts them according to the date-value
-      this.notesService.getNotesForChild(this.childId).subscribe(notes => {
-          this.records = notes.sort((first, second) => {
-            return (second.date ? second.date.valueOf() : 0) - (first.date ? first.date.valueOf() : 0);
-          });
-      });
-
-      // in order to make something like this work, the {@link AppEntitySubrecord} would have to be altered
-      this.recordSubscription = this.notesService.getUpdater().subscribe(newNotes => {
-        newNotes.forEach(newModel => this.records.push(newModel));
-      });
-
+    this.entityMapperService.loadType<NoteModel>(NoteModel).then(notes => {
+      this.records = notes.filter(note => note.isLinkedWithChild(this.childId));
     });
   }
 
@@ -74,10 +62,6 @@ export class NotesListComponent implements OnInit, OnDestroy {
 
       return newNote;
     };
-  }
-
-  ngOnDestroy(): void {
-    this.recordSubscription.unsubscribe();
   }
 
 }

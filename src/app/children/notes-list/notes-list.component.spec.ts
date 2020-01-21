@@ -1,39 +1,68 @@
 import { NotesListComponent } from './notes-list.component';
-import {EntityMapperService} from '../../entity/entity-mapper.service';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {NotesModule} from '../../notes/notes.module';
+import {MatNativeDateModule} from '@angular/material/core';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
-import {MockDatabase} from '../../database/mock-database';
+import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {ChildrenService} from '../children.service';
 import {SessionService} from '../../session/session.service';
-import {MockSessionService} from '../../session/mock-session.service';
+import {Database} from '../../database/database';
+import {MockDatabase} from '../../database/mock-database';
 import {DatePipe} from '@angular/common';
-import {NotesService} from '../../notes/notes.service';
+import {NoteModel} from '../../notes/note.model';
+import {RouterTestingModule} from '@angular/router/testing';
+import {Observable} from 'rxjs';
+import {ActivatedRoute} from '@angular/router';
+
+const mockedRoute = {
+  paramMap: Observable.create((observer) => observer.next({
+    get: (x) => '1'
+  }))
+};
+
+const allChildren: Array<NoteModel> = [];
 
 describe('NotesListComponent', () => {
-  let entityMapper: EntityMapperService;
-  let entitySchemaService: EntitySchemaService;
-  let notesListComponent: NotesListComponent;
-  let childrenService: ChildrenService;
-  let sessionService: SessionService;
-  let notesService: NotesService;
 
-  beforeEach(() => {
-    entitySchemaService = new EntitySchemaService();
-    const database = new MockDatabase();
-    entityMapper = new EntityMapperService(database, entitySchemaService);
-    childrenService = new ChildrenService(entityMapper, entitySchemaService, database);
-    sessionService = new MockSessionService(entitySchemaService);
-    notesService = new NotesService(entityMapper);
+  let component: NotesListComponent;
+  let fixture: ComponentFixture<NotesListComponent>;
 
-    notesListComponent = new NotesListComponent(
-      null,
-      childrenService,
-      sessionService,
-      new DatePipe('medium'),
-      notesService
-    );
+  beforeEach(async () => {
+
+    TestBed.configureTestingModule({
+      declarations: [],
+      imports: [
+        NotesModule,
+        MatNativeDateModule,
+        RouterTestingModule],
+      providers: [
+        ChildrenService,
+        SessionService,
+        {provide: Database, useClass: MockDatabase},
+        EntitySchemaService,
+        EntityMapperService,
+        {provide: DatePipe, useValue: new DatePipe('medium')},
+        {provide: ActivatedRoute, useValue: mockedRoute}]
+      })
+      .compileComponents();
   });
+
+  beforeEach(async () => {
+    fixture = TestBed.createComponent(NotesListComponent);
+    component = fixture.componentInstance;
+    component.ngOnInit();
+  });
+
 
   it('should create', () => {
-    expect(notesService).toBeTruthy();
+    expect(component).toBeTruthy();
   });
+
+
+  it('should load initial notes', async () => {
+    const entityMapperService = fixture.debugElement.injector.get(EntityMapperService);
+    await fixture.whenStable();
+    expect(component.records).toEqual(allChildren);
+  });
+
 });

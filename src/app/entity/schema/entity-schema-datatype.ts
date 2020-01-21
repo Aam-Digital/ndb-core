@@ -15,7 +15,6 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 /**
  * Interface to be implemented by any Datatype transformer of the Schema system.
  */

@@ -30,6 +30,7 @@ export class NoteModel extends Entity {
 
   // An array of triplets containing information about the child and it's attendance
   @DatabaseField({dataType: 'attendancemodel'}) children: AttendanceModel[] = [];
+  // @DatabaseField() children: AttendanceModel[] = [];
   @DatabaseField() date: Date;
   @DatabaseField() subject: string = '';
   @DatabaseField() text: string = '';
@@ -67,9 +68,7 @@ export class NoteModel extends Entity {
    */
 
   childrenWithPresence(presence: boolean): AttendanceModel[] {
-    return this.children.filter(attendance => {
-      return attendance.present === presence;
-    });
+    return this.children.filter(attendance => attendance.present === presence);
   }
 
   public getColor() {
@@ -132,7 +131,7 @@ export class NoteModel extends Entity {
 
   isPresent(childId: string): boolean {
     const child = this.children.find(attendance => attendance.childID === childId);
-    if (child !== undefined) {return child.present; }
+    if (child !== undefined) { return child.present; }
   }
 
   /**
@@ -170,7 +169,7 @@ export class NoteModel extends Entity {
    */
 
   togglePresence(childId: string) {
-    const child = this.children.find((attendance) => attendance.childID === childId );
+    const child = this.children.find(attendance => attendance.childID === childId );
     if (child !== undefined) { child.present = !child.present; }
   }
 }

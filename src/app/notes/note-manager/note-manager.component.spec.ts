@@ -1,7 +1,6 @@
 import {NoteManagerComponent} from './note-manager.component';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
 import {EntitySchemaService} from '../../entity/schema/entity-schema.service';
-import {NotesService} from '../notes.service';
 import {NoteModel} from '../note.model';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {NotesModule} from '../notes.module';
@@ -29,7 +28,6 @@ describe('NoteManagerComponent', () => {
 
   let component: NoteManagerComponent;
   let fixture: ComponentFixture<NoteManagerComponent>;
-  let notesService: NotesService;
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
@@ -40,7 +38,6 @@ describe('NoteManagerComponent', () => {
       providers: [
         EntitySchemaService,
         EntityMapperService,
-        NotesService,
         ConfirmationDialogService,
         ChildrenService,
         FormBuilder,
@@ -49,7 +46,6 @@ describe('NoteManagerComponent', () => {
       ]
     })
       .compileComponents();
-    notesService = new NotesService(new EntityMapperService(database, new EntitySchemaService()));
   });
 
   beforeEach(() => {
@@ -58,24 +54,8 @@ describe('NoteManagerComponent', () => {
     fixture.detectChanges();
   });
 
-  it('list should be longer after saving a new note', async () =>  {
-    const initialLength = component.entityList.length;
-
-    notesService.getUpdater().toPromise().then(v => {
-      expect(component.entityList.length).toBe(initialLength + 1);
-    });
-
-    notesService.saveNewNote(generateNewNoteModel());
-  });
-
-  it('list should not be longer after saving an old note', async () => {
-    const initialLength = component.entityList.length;
-
-    notesService.getUpdater().toPromise().then( v => {
-      expect(component.entityList.length).toBe(initialLength);
-    });
-
-    notesService.saveNewNote(generateUpdatedNoteModel());
+  it('should create', function () {
+    expect(component).toBeTruthy();
   });
 
 });

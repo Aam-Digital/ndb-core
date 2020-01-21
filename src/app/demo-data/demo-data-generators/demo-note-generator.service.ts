@@ -11,7 +11,6 @@ import {centersUnique} from '../fixtures/centers';
 import {AttendanceModel} from '../../notes/attendance.model';
 import {absenceRemarks} from '../fixtures/remarks';
 
-
 export class DemoNoteConfig {
   minNotesPerChild: number;
   maxNotesPerChild: number;
@@ -73,8 +72,6 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<NoteModel> {
         data.push(this.generateGroupNote(children));
       }
     }
-
-    // console.log(data);
     return data;
   }
 

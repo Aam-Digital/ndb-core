@@ -29,7 +29,6 @@ import {FilterPipeModule} from 'ngx-filter-pipe';
 import {SchoolsModule} from '../schools/schools.module';
 import {MatListModule} from '@angular/material/list';
 import { ChildrenModule } from '../children/children.module';
-import {NotesService} from './notes.service';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {MatTreeModule} from '@angular/material/tree';
 import { ChildPresenceListComponent } from './note-detail/child-presence-list/child-presence-list.component';
@@ -77,6 +76,6 @@ import {MatPaginatorModule} from '@angular/material/paginator';
         MatPaginatorModule
     ],
   entryComponents: [NoteDetailComponent],
-  providers: [NotesService]
+  providers: []
 })
 export class NotesModule { }

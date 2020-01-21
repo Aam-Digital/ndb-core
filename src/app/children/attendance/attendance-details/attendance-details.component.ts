@@ -13,7 +13,7 @@ import {EntityMapperService} from '../../../entity/entity-mapper.service';
 
 export class AttendanceDetailsComponent extends AbstractDetailsComponent<AttendanceMonth> {
 
-  // need the explicit constructor since the generic argument of MatDialogRef throws a spurious error
+  // need the explicit constructor since the generic argument of MatDialogRef throws an error
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
               dialogRef: MatDialogRef<AttendanceDetailsComponent>,
               confirmationDialog: ConfirmationDialogService,

@@ -39,7 +39,7 @@ export class MockDatabase extends Database {
     if (!this.exists(id)) {
       // rejected promise will lead to confusing error messages in test-scenarios
       // so this log achieves more clarity
-      console.log('object with id ' + id + 'not found (in MockDatabase#get(id))');
+      console.log('object with id ' + id + ' not found (in MockDatabase#get(id))');
       return Promise.reject({'status': 404, 'message': 'object not found'});
     }
 
@@ -62,6 +62,9 @@ export class MockDatabase extends Database {
   }
 
   async put(object: any, forceUpdate?: boolean) {
+    /* if (object['children']) {
+      console.log(object);
+    } */
     if (this.exists(object._id)) {
       return this.overwriteExisting(object);
     } else {
@@ -266,8 +269,6 @@ export class MockDatabase extends Database {
       }
     };
      */
-
-
     console.warn('MockDatabase does not implement "saveDatabaseIndex()"');
     return Promise.resolve({});
   }

@@ -19,6 +19,7 @@ import { Injectable } from '@angular/core';
 import { Database } from '../database/database';
 import {Entity, EntityConstructor} from './entity';
 import {EntitySchemaService} from './schema/entity-schema.service';
+import {NoteModel} from '../notes/note.model';
 
 /**
  * The default generic DataMapper for Entity and any subclass.

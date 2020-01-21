@@ -111,6 +111,7 @@ describe('ChildDetailsComponent', () => {
     fixture = TestBed.createComponent(ChildDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    component.ngOnInit();
   }));
 
   it('should create', () => {

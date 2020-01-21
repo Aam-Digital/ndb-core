@@ -9,9 +9,9 @@ import {MatDialog} from '@angular/material/dialog';
 import {SessionService} from '../../session/session.service';
 import {MediaChange, MediaObserver} from '@angular/flex-layout';
 import {NoteDetailComponent} from '../note-detail/note-detail.component';
-import {NotesService} from '../notes.service';
 import {InteractionTypes} from '../interaction-types.enum';
 import {MatPaginator} from '@angular/material/paginator';
+import {EntityMapperService} from '../../entity/entity-mapper.service';
 
 @Component({
   selector: 'app-note-manager',
@@ -24,7 +24,6 @@ export class NoteManagerComponent implements OnInit, AfterViewInit, OnDestroy {
   activeMediaQuery = '';
   entityList = new Array<NoteModel>();
   notesDataSource = new MatTableDataSource();
-  noteUpdater: Subscription;
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -65,19 +64,12 @@ export class NoteManagerComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private dialog: MatDialog,
               private sessionService: SessionService,
               private media: MediaObserver,
-              private notesService: NotesService) {}
+              private entityMapperService: EntityMapperService) {}
 
   ngOnInit() {
-
-    // Receives the initial notes from the notes-service, sort them and apply filter selections
-    this.notesService.getNotes().subscribe((newNotes: NoteModel[]) => {
-      this.sortAndAdd(newNotes);
+    this.entityMapperService.loadType<NoteModel>(NoteModel).then(noteModels => {
+      this.sortAndAdd(noteModels);
     });
-
-    // subscribe to get informed whenever a new note should be added
-    this.noteUpdater = this.notesService.getUpdater().subscribe(newNotes => {
-       this.sortAndAdd(newNotes);
-     });
 
     this.displayColumnGroup('standard');
     this.watcher = this.media.media$.subscribe((change: MediaChange) => {
@@ -91,7 +83,9 @@ export class NoteManagerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private sortAndAdd(newNotes: NoteModel[]) {
-    newNotes.forEach(newNote => this.entityList.push(newNote));
+    newNotes.forEach(newNote => {
+      this.entityList.push(newNote);
+    });
     this.entityList.sort((a, b) => (b.date ? b.date.getTime() : 0) - (a.date ? a.date.getTime() : 0) );
     this.applyFilterSelections();
   }
@@ -157,10 +151,6 @@ export class NoteManagerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // unsubscribe to avoid multiple subscriptions from the updater
-    if (this.noteUpdater !== undefined) {
-      this.noteUpdater.unsubscribe();
-    }
   }
 
 }

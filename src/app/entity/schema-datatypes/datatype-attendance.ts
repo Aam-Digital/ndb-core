@@ -5,21 +5,24 @@ export const attendanceEntitySchemaDatatype: EntitySchemaDatatype = {
   name: 'attendancemodel',
 
   transformToDatabaseFormat: (value) => {
-    return JSON.stringify(value);
+    return value;
   },
 
   transformToObjectFormat: (value) => {
-    // We need this try-catch phrase to update any legacy values.
-    // If the value is old, the parameter 'value' is a String-array containing the child-ID's.
-    // If the value has already been updated, it is a JSON-String containing the attendance-models
-    // (A single attendance model is an array of triplets; childID, attendance and remarks)
-    // If it is a String-array, one can retrieve the attendance-models by simply mapping each ID to a new AttendanceModel.
-    // This will result in an attendance model that has all fields (except the childID) set to it's default value
-    // If the fetched data can be parsed as a JSON-String, simply de-serialize and return it.
-    try {
-      return JSON.parse(value);
-    } catch {
-      return value.map(v => new AttendanceModel(v));
+    // If the value is null or undefined (should never occur), return an empty array
+    if (!value) { return []; }
+    // if the value is a string, return a new AttendanceModel-array with the value as the id
+    if (typeof value === 'string') { return [new AttendanceModel(value)]; }
+    // if the value is an array, we need to check if the array contains strings or attendanceModels.
+    // If the value is not a string, it is assumed to be an AttendanceModel.
+    // Since nothing else is saved to the db, this should always be true
+    if (value instanceof Array) {
+      return value.map(v => {
+        if (typeof v === 'string') {return new AttendanceModel(v); }
+        return v;
+      });
     }
+    console.log('unrecognized type: ' + typeof value + ' in attendancemodel');
+    return [];
   },
 };

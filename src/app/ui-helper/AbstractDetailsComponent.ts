@@ -31,11 +31,10 @@ export abstract class AbstractDetailsComponent<T extends Entity> implements OnIn
     });
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   save() {
-    this.entityMapper.save(this.entity, true);
+    this.entityMapper.save(this.entity);
     this.dialogRef.close(this.entity);
   }
 

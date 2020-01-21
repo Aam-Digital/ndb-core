@@ -1,6 +1,5 @@
 import {NoteDetailComponent} from './note-detail.component';
 import {EntityMapperService} from '../../entity/entity-mapper.service';
-import {NotesService} from '../notes.service';
 import {NoteModel} from '../note.model';
 import {AttendanceModel} from '../attendance.model';
 import {InteractionTypes} from '../interaction-types.enum';
@@ -40,6 +39,7 @@ function generateTestingData() {
   return {entity: n1};
 }
 
+const children = [new Child('1'), new Child('2'), new Child('3')];
 const testData = generateTestingData();
 const mockDialogRef = {beforeClosed() {return of(new NoteModel('1')); }};
 const mockedDatabase = new MockDatabase();
@@ -50,7 +50,7 @@ describe('NoteDetailComponent', () => {
   let component: NoteDetailComponent;
   let fixture: ComponentFixture<NoteDetailComponent>;
 
-  beforeEach(() => {
+  beforeEach( () => {
     TestBed.configureTestingModule({
       declarations: [],
       imports: [
@@ -59,7 +59,6 @@ describe('NoteDetailComponent', () => {
       providers: [
         EntitySchemaService,
         EntityMapperService,
-        NotesService,
         ConfirmationDialogService,
         ChildrenService,
         {provide: Router, useValue: mockedRouter},
@@ -70,11 +69,11 @@ describe('NoteDetailComponent', () => {
       ]
     })
       .compileComponents();
-    mockedDatabase.put(new Child('Child:1'));
-    mockedDatabase.put(new Child('Child:2'));
-    mockedDatabase.put(new Child('Child:3'));
     fixture = TestBed.createComponent(NoteDetailComponent);
     component = fixture.componentInstance;
+    const entityMapperService = fixture.debugElement.injector.get(EntityMapperService);
+    entityMapperService.save<NoteModel>(testData.entity);
+    children.forEach(child => entityMapperService.save<Child>(child));
     fixture.detectChanges();
   });
 
