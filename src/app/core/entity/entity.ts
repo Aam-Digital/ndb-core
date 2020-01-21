@@ -32,9 +32,6 @@ export type EntityConstructor<T extends Entity> = new(id: string) => T;
  * and use its find/save/delete functions.
  */
 export class Entity {
-  load(data: any) {
-    throw new Error("Method not implemented.");
-  }
   /**
    * The entity's type.
    */
