@@ -1,13 +1,13 @@
-import {Child} from '../children/child';
-import {Gender} from '../children/Gender';
-import {AttendanceMonth} from '../children/attendance/attendance-month';
-import {Entity} from '../entity/entity';
-import {Note} from '../children/notes/note';
-import {WarningLevel} from '../children/attendance/warning-level';
-import {AttendanceStatus} from '../children/attendance/attendance-day';
-import {ChildSchoolRelation} from '../children/childSchoolRelation';
-import {School} from '../schools/school';
-import {ProgressDashboardConfig} from '../dashboard/progress-dashboard/progress-dashboard-config';
+import { Child } from '../../app/child-dev-project/children/model/child';
+import { Gender } from '../../app/child-dev-project/children/model/Gender';
+import { AttendanceMonth } from '../../app/child-dev-project/attendance/model/attendance-month';
+import { Entity } from '../../app/core/entity/entity';
+import { Note } from '../../app/child-dev-project/notes/model/note';
+import { WarningLevel } from '../../app/child-dev-project/warning-level';
+import { AttendanceStatus } from '../../app/child-dev-project/attendance/model/attendance-day';
+import { ChildSchoolRelation } from '../../app/child-dev-project/children/model/childSchoolRelation';
+import { School } from '../../app/child-dev-project/schools/model/school';
+import { ProgressDashboardConfig } from '../../app/child-dev-project/dashboard/progress-dashboard/progress-dashboard-config';
 
 export class DemoData {
 
@@ -309,7 +309,7 @@ export class DemoData {
     rel5.childId = '2';
     rel5.schoolId = '1';
     rel5.start = new Date('2000-01-01');
-    rel5.end = new Date('2000-01-02')
+    rel5.end = new Date('2000-01-02');
     rel5.schoolClass = '2';
     data.push(rel5);
 
@@ -317,7 +317,7 @@ export class DemoData {
     rel6.childId = '2';
     rel6.schoolId = '1';
     rel6.start = new Date('2005-01-01');
-    rel6.end = new Date('2005-01-02')
+    rel6.end = new Date('2005-01-02');
     rel6.schoolClass = '2';
     data.push(rel6);
 
