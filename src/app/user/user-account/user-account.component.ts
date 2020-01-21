@@ -56,12 +56,14 @@ export class UserAccountComponent implements OnInit {
    * @param cloudPassword password for the cloud-service
    * @param password password used to login to the main application
    */
-  updateCloudService(cloudUser: string, cloudPassword: string, password: string) {
+  async updateCloudService(cloudUser: string, cloudPassword: string, password: string) {
     try {
       this.sessionService.getCurrentUser().setCloudPassword(cloudPassword, password);
       this.sessionService.getCurrentUser().cloudUserName = cloudUser;
       this.cloudFileService.connect();
-      this.statusMessage = 'Success';
+      if (await this.cloudFileService.checkConnection()) {
+        this.statusMessage = 'Success';
+      }
     } catch (error) {
       this.statusMessage = 'Error encountered: ' + error;
     }
