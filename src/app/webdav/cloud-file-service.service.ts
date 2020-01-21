@@ -12,6 +12,7 @@ export class CloudFileService {
 
   // TODO Check connection/login success?
   private client: any;
+  private imagePath: string;
   // private defaultImage: SafeUrl;
   private fileList: string;
   private currentlyGettingList: Promise<boolean>;
@@ -31,9 +32,12 @@ export class CloudFileService {
     this.fileList = null;
 
     if (this.sessionService.getCurrentUser() != null) {
+      const currentUser = this.sessionService.getCurrentUser();
+      this.imagePath = currentUser.imagePath;
+
       if (username === null && password == null) {
-        username = this.sessionService.getCurrentUser().cloudUserName;
-        password = this.sessionService.getCurrentUser().cloudPasswordDec;
+        username = currentUser.cloudUserName;
+        password = currentUser.cloudPasswordDec;
       }
       this.client = webdav.createClient(
         AppConfig.settings.webdav.remote_url,
@@ -63,7 +67,7 @@ export class CloudFileService {
       // create promise that resolves when the file list is loaded
       // if this function gets called mulitple times this ensures that the list will only be loaded once
       this.currentlyGettingList = new Promise((resolve, reject) => {
-        this.getDir('/').then(list => {
+        this.getDir(this.imagePath).then(list => {
           this.fileList = list;
           resolve(true);
         });
@@ -94,7 +98,7 @@ export class CloudFileService {
    * @param childId Id of child for which one wants to store the image
    */
   public async setImage(imageFile: any, childId: string) {
-    this.client.putFileContents('/' + childId, imageFile,
+    this.client.putFileContents(this.imagePath + '/' + childId, imageFile,
       {onUploadProgress: progress => {
       console.log(`Uploaded ${progress.loaded} bytes of ${progress.total}`);
       }}
@@ -107,7 +111,7 @@ export class CloudFileService {
    */
   public async getImage(childId: string): Promise<SafeUrl> {
     if (await this.doesFileExist(childId)) {
-      const image = await this.client.getFileContents('/' + childId);
+      const image = await this.client.getFileContents(this.imagePath + '/' + childId);
       return this.bufferArrayToBase64(image);
     }
     return await this.getDefaultImage();

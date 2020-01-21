@@ -35,6 +35,8 @@ export class User extends Entity {
   public cloudUserName: string;
   // nextCloud password that gets encrypted during session
   public cloudPasswordDec: any;
+  @DatabaseField()
+  public imagePath: string = '/aam-digital/photos';
 
   // TODO: nextCloud password change for admin
   public setNewPassword(password: string) {
