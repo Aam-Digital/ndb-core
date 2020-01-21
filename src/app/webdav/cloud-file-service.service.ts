@@ -74,7 +74,7 @@ export class CloudFileService {
     }
     // hacky way of checking if file exists, subject to change
     // TODO fix this
-    if (this.fileList.includes('"basename": "' + name + '"')) {
+    if (this.fileList.includes('"basename": "' + name.split('/').pop() + '"')) {
       return true;
     }
     return false;
@@ -91,10 +91,10 @@ export class CloudFileService {
   /**
    * Uploads a given image to the nextcloud server.
    * @param imageFile Image to be stored
-   * @param path path where the image will be stored
+   * @param childId Id of child for which one wants to store the image
    */
-  public async setImage(imageFile: any, path: string) {
-    this.client.putFileContents(path, imageFile,
+  public async setImage(imageFile: any, childId: string) {
+    this.client.putFileContents('/' + childId, imageFile,
       {onUploadProgress: progress => {
       console.log(`Uploaded ${progress.loaded} bytes of ${progress.total}`);
       }}
@@ -103,11 +103,11 @@ export class CloudFileService {
 
   /**
    * Returns a Promise which resolves as an ArrayBuffer of the file located at the given path
-   * @param path
+   * @param childId
    */
-  public async getImage(path: string): Promise<SafeUrl> {
-    if (await this.doesFileExist(path)) {
-      const image = await this.client.getFileContents(path);
+  public async getImage(childId: string): Promise<SafeUrl> {
+    if (await this.doesFileExist(childId)) {
+      const image = await this.client.getFileContents('/' + childId);
       return this.bufferArrayToBase64(image);
     }
     return await this.getDefaultImage();

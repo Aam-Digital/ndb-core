@@ -37,7 +37,7 @@ export class ChildrenService {
           observer.next(children);
           children.forEach(async(child) => {
             if (!child.photo) {
-              child.photo = await this.cloudFileService.getImage('/' + child.entityId);
+              child.photo = await this.cloudFileService.getImage(child.entityId);
               observer.next(children);
             }
           });
@@ -57,7 +57,7 @@ export class ChildrenService {
         async(child) => {
           observer.next(child);
           if (!child.photo) {
-            child.photo = await this.cloudFileService.getImage('/' + child.entityId);
+            child.photo = await this.cloudFileService.getImage(child.entityId);
             observer.next(child);
           }
           observer.complete();
