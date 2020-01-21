@@ -54,6 +54,7 @@ describe('User', () => {
       admin: true,
       password: undefined,
       cloudPasswordEnc: undefined,
+      imagePath: '/aam-digital/photos',
 
       searchIndices: [],
     };

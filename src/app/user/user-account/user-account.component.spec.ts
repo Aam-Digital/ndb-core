@@ -21,6 +21,7 @@ import { UserAccountComponent } from './user-account.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatTabsModule } from '@angular/material';
 import {SessionService} from '../../session/session.service';
 import {User} from '../user';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
@@ -43,7 +44,7 @@ describe('UserAccountComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [UserAccountComponent],
-      imports: [MatFormFieldModule, MatInputModule, MatButtonModule, NoopAnimationsModule],
+      imports: [MatFormFieldModule, MatInputModule, MatButtonModule, NoopAnimationsModule, MatTabsModule],
       providers: [
         {provide: SessionService, useValue: sessionService},
         {provide: CloudFileService, useClass: MockCloudFileService}

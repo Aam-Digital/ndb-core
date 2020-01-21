@@ -28,6 +28,7 @@ describe('CloudFileService', () => {
 
     cloudFileService = TestBed.get(CloudFileService);
     cloudFileService['client'] = clientSpy;
+    cloudFileService['imagePath'] = '/imagePath';
     sessionService = TestBed.get(SessionService);
   });
 
@@ -58,12 +59,12 @@ describe('CloudFileService', () => {
   it('should get images', async() => {
     spyOn(cloudFileService, 'doesFileExist').and.returnValue(new Promise((resolve, reject) => {resolve(true); }));
     await cloudFileService.getImage('filepath');
-    expect(clientSpy.getFileContents).toHaveBeenCalledWith('filepath');
+    expect(clientSpy.getFileContents).toHaveBeenCalledWith(cloudFileService['imagePath'] + '/filepath');
   });
 
   it('should set images', () => {
     cloudFileService.setImage('image', 'path');
-    expect(clientSpy.putFileContents).toHaveBeenCalledWith('path', 'image', jasmine.anything());
+    expect(clientSpy.putFileContents).toHaveBeenCalledWith(cloudFileService['imagePath'] + '/path', 'image', jasmine.anything());
   });
 
   it('should return a default image if no child picture is present', async () => {
