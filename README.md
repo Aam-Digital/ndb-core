@@ -77,7 +77,10 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 Before running the tests make sure you are serving the app via `ng serve`.
 
 ### Build a docker image locally
+Deployment on a server can be done through a docker image, our [ndb-setup project](https://github.com/Aam-Digital/ndb-setup) provides tools and a starting point to run the system using docker.
+For more information about Docker, please refer to [their official documentation](https://docs.docker.com/get-started/).
 
+To build a new docker image from the built project files run:
 ```
 npx ng build --output-path docker/dist --prod
 cd docker
