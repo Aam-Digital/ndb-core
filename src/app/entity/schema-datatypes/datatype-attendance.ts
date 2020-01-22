@@ -22,7 +22,7 @@ export const attendanceEntitySchemaDatatype: EntitySchemaDatatype = {
         return v;
       });
     }
-    console.log('unrecognized type: ' + typeof value + ' in attendancemodel');
+    console.warn('unrecognized type: ' + typeof value + ' in attendancemodel');
     return [];
   },
 };
