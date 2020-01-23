@@ -27,8 +27,6 @@ function createTestModel(): NoteModel {
   return n1;
 }
 
-const testNote = createTestModel();
-
 describe('NoteModel', () => {
   const ENTITY_TYPE = 'Note';
   let entitySchemaService: EntitySchemaService;
@@ -38,20 +36,12 @@ describe('NoteModel', () => {
   }));
 
 
-  it('has correct _id and entityId and type', function () {
+  it('has correct _id and entityId', function () {
     const id = 'test1';
     const entity = new NoteModel(id);
 
     expect(entity.getId()).toBe(id);
     expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
-  });
-
-  it('has correct type/prefix', function () {
-    const id = 'test1';
-    const entity = new NoteModel(id);
-
-    expect(entity.getType()).toBe(ENTITY_TYPE);
-    expect(Entity.extractTypeFromId(entity._id)).toBe(ENTITY_TYPE);
   });
 
   it('has all and only defined schema fields in rawData', function () {
@@ -79,37 +69,44 @@ describe('NoteModel', () => {
   });
 
   it('should return the correct linked children', function () {
-    expect(testNote.isLinkedWithChild('1')).toBe(true);
-    expect(testNote.isLinkedWithChild('2')).toBe(false);
+    const n1 = createTestModel();
+    expect(n1.isLinkedWithChild('1')).toBe(true);
+    expect(n1.isLinkedWithChild('2')).toBe(false);
   });
 
   it('should return the correct presence behaviour', function () {
-    expect(testNote.childrenWithPresence(true).length).toBe(2);
-    expect(testNote.childrenWithPresence(false).length).toBe(1);
+    const n2 = createTestModel();
+    expect(n2.childrenWithPresence(true).length).toBe(2);
+    expect(n2.childrenWithPresence(false).length).toBe(1);
 
-    expect(testNote.isPresent('1')).toBe(true);
-    expect(testNote.isPresent('4')).toBe(false);
+    expect(n2.isPresent('1')).toBe(true);
+    expect(n2.isPresent('4')).toBe(false);
   });
 
   it('should return the correct childIds', function () {
-    expect(testNote.getChildIDs()).toEqual(['1', '4', '7']);
+    // sort since we don't care about the order
+    const n3 = createTestModel();
+    expect(n3.getChildIDs().sort()).toEqual(['1', '4', '7'].sort());
   });
 
   it('should shrink in size after removing', function () {
-    const previousLength = testNote.children.length;
-    testNote.removeChild('1');
-    expect(testNote.children.length).toBe(previousLength - 1);
+    const n4 = createTestModel();
+    const previousLength = n4.children.length;
+    n4.removeChild('1');
+    expect(n4.children.length).toBe(previousLength - 1);
   });
 
   it('should increase in size after adding', function () {
-    const previousLength = testNote.children.length;
-    testNote.addChildren('2', '5');
-    expect(testNote.children.length).toBe(previousLength + 2);
+    const n5 = createTestModel();
+    const previousLength = n5.children.length;
+    n5.addChildren('2', '5');
+    expect(n5.children.length).toBe(previousLength + 2);
   });
 
   it('should toggle presence', function () {
-    testNote.togglePresence('1');
-    expect(testNote.children[0].present).toBe(false);
+    const n6 = createTestModel();
+    n6.togglePresence('1');
+    expect(n6.children[0].present).toBe(false);
   });
 
 });
