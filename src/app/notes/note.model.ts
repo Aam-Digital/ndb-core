@@ -27,6 +27,14 @@ export class NoteModel extends Entity {
 
   // The values that 'Type of interaction' can have in the UI / The values that category can have here
   static INTERACTION_TYPES = Object.values(InteractionTypes);
+  private static interactionsColorMap: Map<InteractionTypes, string> = new Map([
+    [InteractionTypes.GUARDIAN_MEETING, '#E1F5FE'],
+    [InteractionTypes.CHILDREN_MEETING, '#E1F5FE'],
+    [InteractionTypes.EXCURSION, '#E1F5FE'],
+    [InteractionTypes.DISCUSSION, '#E1BEE7'],
+    [InteractionTypes.ANNUAL_SURVEY, '#FFFDE7'],
+    [InteractionTypes.DAILY_ROUTINE, '#F1F8E9']
+  ]);
 
   // An array of triplets containing information about the child and it's attendance
   @DatabaseField({dataType: 'attendancemodel'}) children: AttendanceModel[] = [];
@@ -79,20 +87,8 @@ export class NoteModel extends Entity {
       return '#ffa50080';
     }
 
-    if (this.isMeeting()) {
-      return '#E1F5FE';
-    }
-    if (this.category === InteractionTypes.DISCUSSION) {
-      return '#E1BEE7';
-    }
-    if (this.category === InteractionTypes.ANNUAL_SURVEY) {
-      return '#FFFDE7';
-    }
-    if (this.category === InteractionTypes.DAILY_ROUTINE) {
-      return  '#F1F8E9';
-    }
-
-    return '';
+    const color = NoteModel.interactionsColorMap.get(this.category);
+    return color === undefined ? '' : color;
   }
 
   /**
