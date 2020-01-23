@@ -52,7 +52,6 @@ describe('NoteManagerComponent', () => {
   beforeEach (() => {
     fixture = TestBed.createComponent(NoteManagerComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
     const entityMapperService = fixture.debugElement.injector.get(EntityMapperService);
     testNotes.forEach(note => entityMapperService.save(note));
   });
