@@ -62,9 +62,6 @@ export class MockDatabase extends Database {
   }
 
   async put(object: any, forceUpdate?: boolean) {
-    /* if (object['children']) {
-      console.log(object);
-    } */
     if (this.exists(object._id)) {
       return this.overwriteExisting(object);
     } else {

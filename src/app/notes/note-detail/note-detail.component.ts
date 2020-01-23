@@ -25,9 +25,4 @@ export class NoteDetailComponent extends AbstractDetailsComponent<NoteModel> {
     this.smallScreen = window.innerWidth < 500;
   }
 
-  save() {
-    this.entityMapper.save<NoteModel>(this.entity);
-    this.dialogRef.close(this.entity);
-  }
-
 }

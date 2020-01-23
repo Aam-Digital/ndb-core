@@ -34,7 +34,7 @@ export abstract class AbstractDetailsComponent<T extends Entity> implements OnIn
   ngOnInit() {}
 
   save() {
-    this.entityMapper.save(this.entity);
+    this.entityMapper.save<T>(this.entity);
     this.dialogRef.close(this.entity);
   }
 

@@ -12,17 +12,18 @@ import {SessionService} from '../../session/session.service';
 import {Database} from '../../database/database';
 import {MockDatabase} from '../../database/mock-database';
 
-function generateNewNoteModel() {
-  return new NoteModel('1');
-}
-
-function generateUpdatedNoteModel() {
-  const n1 = new NoteModel('1');
-  n1._rev = 'x';
-  return n1;
+function generateNewNoteModels(): Array<NoteModel> {
+  let i;
+  const notes: Array<NoteModel> = [];
+  for (i = 0; i < 10; i++) {
+    const note = new NoteModel('' + i);
+    notes.push(note);
+  }
+  return notes;
 }
 
 const database: Database = new MockDatabase();
+const testNotes =  generateNewNoteModels();
 
 describe('NoteManagerComponent', () => {
 
@@ -48,14 +49,22 @@ describe('NoteManagerComponent', () => {
       .compileComponents();
   });
 
-  beforeEach(() => {
+  beforeEach (() => {
     fixture = TestBed.createComponent(NoteManagerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    const entityMapperService = fixture.debugElement.injector.get(EntityMapperService);
+    testNotes.forEach(note => entityMapperService.save(note));
   });
 
   it('should create', function () {
     expect(component).toBeTruthy();
+  });
+
+  it('should load all data after initializing', async function () {
+    component.ngOnInit();
+    await fixture.whenStable();
+    expect(component.entityList.length).toEqual(testNotes.length);
   });
 
 });

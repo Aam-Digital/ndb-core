@@ -36,12 +36,15 @@ function generateTestingData() {
   n1.children = generateChildAttendanceModels();
   n1.category = InteractionTypes.CHILDREN_MEETING;
   n1.date = new Date(Date.now());
+  // mock an already existing note
+  n1._rev = 'x';
   return {entity: n1};
 }
 
 const children = [new Child('1'), new Child('2'), new Child('3')];
 const testData = generateTestingData();
-const mockDialogRef = {beforeClosed() {return of(new NoteModel('1')); }};
+const mockDialogRef = {beforeClosed() {return of(new NoteModel('1')); },
+                      close(r: any) {}};
 const mockedDatabase = new MockDatabase();
 const mockedRouter = {navigate(commands: any[], extras?: NavigationExtras) {return Promise.resolve(); }};
 
@@ -84,4 +87,12 @@ describe('NoteDetailComponent', () => {
   it('should load data', () => {
     expect(component.entity).toBe(testData.entity);
   });
+
+  it('should save data', async function () {
+    component.entity.addChildren('5', '7');
+    await component.save();
+    const newNote: NoteModel = await mockedDatabase.get('Note:1');
+    expect(newNote.children.length).toBe(5);
+  });
+
 });
