@@ -4,7 +4,7 @@
 /src/assets/child-photos
 
 # compiled output
-/dist
+dist
 /tmp
 /out-tsc
 
