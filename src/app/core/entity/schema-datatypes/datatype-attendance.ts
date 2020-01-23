@@ -4,9 +4,7 @@ import { AttendanceModel } from '../../../child-dev-project/notes/attendance.mod
 export const attendanceEntitySchemaDatatype: EntitySchemaDatatype = {
   name: 'attendancemodel',
 
-  transformToDatabaseFormat: (value) => {
-    return value;
-  },
+  transformToDatabaseFormat: (value) => {return value; },
 
   transformToObjectFormat: (value) => {
     // If the value is null or undefined (should never occur), return an empty array
@@ -19,7 +17,5 @@ export const attendanceEntitySchemaDatatype: EntitySchemaDatatype = {
     if (value instanceof Array) {
       return value.map(v => typeof v === 'string' ? new AttendanceModel(v) : v );
     }
-    console.warn('unrecognized type: ' + typeof value + ' in attendancemodel');
-    return [];
   },
 };
