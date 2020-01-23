@@ -17,10 +17,7 @@ export const attendanceEntitySchemaDatatype: EntitySchemaDatatype = {
     // If the value is not a string, it is assumed to be an AttendanceModel.
     // Since nothing else is saved to the db, this should always be true
     if (value instanceof Array) {
-      return value.map(v => {
-        if (typeof v === 'string') {return new AttendanceModel(v); }
-        return v;
-      });
+      return value.map(v => typeof v === 'string' ? new AttendanceModel(v) : v );
     }
     console.warn('unrecognized type: ' + typeof value + ' in attendancemodel');
     return [];

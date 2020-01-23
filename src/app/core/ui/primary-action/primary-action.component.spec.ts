@@ -11,7 +11,7 @@ describe('PrimaryActionComponent', () => {
 
   const mockSessionService = { getCurrentUser: () => { return { name: 'tester' }; }};
 
-  beforeEach(async(() => {
+  beforeEach(async (() => {
     TestBed.configureTestingModule({
       declarations: [ PrimaryActionComponent ],
       imports: [MatDialogModule, MatButtonModule],
