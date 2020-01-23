@@ -13,11 +13,18 @@ import { EntityMapperService } from '../../../core/entity/entity-mapper.service'
 import { MockDatabase } from '../../../core/database/mock-database';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 import { Database } from '../../../core/database/database';
+import { User } from '../../../core/user/user';
 
 const mockedRoute = {
   paramMap: Observable.create((observer) => observer.next({
     get: (x) => '1',
   })),
+};
+
+const mockedSessionService = {
+  getCurrentUser(): User {
+    return new User('1');
+  },
 };
 
 const allChildren: Array<NoteModel> = [];
@@ -37,10 +44,10 @@ describe('NotesListComponent', () => {
         RouterTestingModule],
       providers: [
         ChildrenService,
-        SessionService,
-        {provide: Database, useClass: MockDatabase},
         EntitySchemaService,
         EntityMapperService,
+        {provide: SessionService, useValue: mockedSessionService},
+        {provide: Database, useClass: MockDatabase},
         {provide: DatePipe, useValue: new DatePipe('medium')},
         {provide: ActivatedRoute, useValue: mockedRoute}],
       })
@@ -60,9 +67,13 @@ describe('NotesListComponent', () => {
 
 
   it('should load initial notes', async () => {
-    const entityMapperService = fixture.debugElement.injector.get(EntityMapperService);
     await fixture.whenStable();
     expect(component.records).toEqual(allChildren);
+  });
+
+  it('should create a new note', function () {
+    const newNoteFactory = component.generateNewRecordFactory();
+    expect(newNoteFactory).toBeDefined();
   });
 
 });

@@ -12,6 +12,16 @@ import { CommonModule } from '@angular/common';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { SchoolBlockComponent } from '../../schools/school-block/school-block.component';
 import { of } from 'rxjs';
+import { Child } from '../model/child';
+import { RouterTestingModule } from '@angular/router/testing';
+
+function createTestData() {
+  const c1 = new Child('1');
+  const c2 = new Child('4');
+  const c3 = new Child('5');
+
+  return [c1, c2, c3];
+}
 
 describe('ChildSelectComponent', () => {
   let component: ChildSelectComponent;
@@ -19,7 +29,7 @@ describe('ChildSelectComponent', () => {
 
   const mockChildrenService = {
     getChildren() {
-      return of([]);
+      return of(createTestData());
     },
   };
 
@@ -38,6 +48,7 @@ describe('ChildSelectComponent', () => {
         FormsModule,
         CommonModule,
         NoopAnimationsModule,
+        RouterTestingModule,
       ],
       providers: [
         { provide: ChildrenService, useValue: mockChildrenService },
@@ -54,5 +65,15 @@ describe('ChildSelectComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should increase and shrink after selecting/un-selecting', function () {
+    let previousLength = component.selectedChildren.length;
+    component.selectChild(new Child('1'));
+    expect(component.selectedChildren.length).toBe(previousLength + 1);
+
+    previousLength = component.selectedChildren.length;
+    component.unselectChild(new Child('1'));
+    expect(component.selectedChildren.length).toBe(previousLength - 1);
   });
 });
