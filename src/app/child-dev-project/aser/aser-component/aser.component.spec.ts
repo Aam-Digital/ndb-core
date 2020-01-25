@@ -13,6 +13,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 import { Database } from '../../../core/database/database';
+import { AlertService } from 'app/core/alerts/alert.service';
 
 describe('AserComponent', () => {
   let component: AserComponent;
@@ -38,6 +39,7 @@ describe('AserComponent', () => {
         { provide: ChildrenService, useValue: mockChildrenService },
         EntityMapperService,
         EntitySchemaService,
+        AlertService,
         { provide: Database, useClass: MockDatabase },
       ],
     })

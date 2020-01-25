@@ -6,7 +6,7 @@
         (click)='showRecord(rec)' [ngClass]="{'table-link': detailsComponent!==undefined}">
 
       <div *ngIf="col.inputType === 'function'" class='table-show-number'>
-        {{ col.formatter( rec[col.name]() ) }}
+        {{ col.formatter( rec[col.name].bind(rec)() ) }}
       </div>
 
       <div *ngIf="col.inputType === 'readonly'" class='table-show-number'>
@@ -85,8 +85,10 @@
 
 
   <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-  <tr mat-row *matRowDef="let rec; columns: columnsToDisplay"
-      class="{{getWarningStyleClass(rec)}}" [ngStyle]="{'background-color': rec.getColor()}">
+  <!-- <tr mat-row *matRowDef="let rec; columns: columnsToDisplay"
+      class="{{getWarningStyleClass(rec)}}" [ngStyle]="{'background-color': rec.getColor()}"> -->
+      <tr mat-row *matRowDef="let rec; columns: columnsToDisplay"
+      class="{{getWarningStyleClass(rec)}}">
   </tr>
   <!--<mat-row *matRowDef="let rec; columns: columnsToNotDisplay" class="{{getWarningStyleClass(rec)}}" [ngStyle]="{'background-color': reg.getColor()}"></mat-row>-->
 </table>

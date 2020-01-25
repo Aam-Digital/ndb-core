@@ -16,7 +16,7 @@
   -->
 
 
-<h2 mat-dialog-title>{{note.date.toLocaleDateString()}}: {{note.subject}}</h2>
+<h2 mat-dialog-title>{{note.date ? note.date.toLocaleDateString() : 'Note without date'}}: {{note.subject}}</h2>
 
 <form #recordForm="ngForm">
 <mat-dialog-content>
