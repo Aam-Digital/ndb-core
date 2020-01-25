@@ -14,7 +14,7 @@ import { ConfirmationDialogService } from '../confirmation-dialog/confirmation-d
 import { CommonModule } from '@angular/common';
 import { Database } from '../../database/database';
 import { EntitySchemaService } from '../../entity/schema/entity-schema.service';
-<<<<<<< HEAD
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { AlertService } from 'app/core/alerts/alert.service';
 
 describe('EntitySubrecordComponent', () => {

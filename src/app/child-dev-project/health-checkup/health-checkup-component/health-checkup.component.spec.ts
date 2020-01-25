@@ -18,7 +18,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ConfirmationDialogService } from 'app/core/ui-helper/confirmation-dialog/confirmation-dialog.service';
-<<<<<<< HEAD
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { AlertService } from 'app/core/alerts/alert.service';
 
 describe('HealthCheckupComponent', () => {
