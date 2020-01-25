@@ -9,7 +9,6 @@ import { EducationalMaterial } from '../educational-material/model/educational-m
 import { Aser } from '../aser/model/aser';
 import { ChildSchoolRelation } from './model/childSchoolRelation';
 import { School } from '../schools/model/school';
-import { SchoolWithRelation } from '../schools/model/schoolWithRelation';
 import { HealthCheck } from '../health-checkup/model/health-check';
 import { EntitySchemaService } from '../../core/entity/schema/entity-schema.service';
 
