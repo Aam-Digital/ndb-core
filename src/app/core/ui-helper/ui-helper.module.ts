@@ -13,6 +13,7 @@ import { MatTableModule } from '@angular/material/table';
 import { ConfirmationDialogService } from './confirmation-dialog/confirmation-dialog.service';
 import { EntitySubrecordComponent } from './entity-subrecord/entity-subrecord.component';
 import { KeysPipe } from './keys-pipe/keys.pipe';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 @NgModule({
   imports: [
@@ -26,6 +27,7 @@ import { KeysPipe } from './keys-pipe/keys.pipe';
     MatSnackBarModule,
     MatSortModule,
     MatAutocompleteModule,
+    MatDatepickerModule,
   ],
   declarations: [ConfirmationDialogComponent, EntitySubrecordComponent, KeysPipe],
   exports: [EntitySubrecordComponent, KeysPipe],

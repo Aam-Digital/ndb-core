@@ -26,8 +26,10 @@
     <div fxLayout='row wrap' fxLayoutGap='20px'>
       <div fxFlex>
         <mat-form-field>
-          <input matInput placeholder="Date" name="date" type="date"
-                 [valueAsDate]="note.date" (change)='note.date=$event.target.valueAsDate;recordForm.form.markAsDirty();'>
+          <input matInput placeholder="Date" name="date"
+                  [value]="note.date" (dateChange)='note.date=$event.target.value;recordForm.form.markAsDirty();' [matDatepicker]="noteDatepicker">
+          <mat-datepicker-toggle matSuffix [for]="noteDatepicker"></mat-datepicker-toggle>
+          <mat-datepicker #noteDatepicker></mat-datepicker>
         </mat-form-field>
       </div>
 

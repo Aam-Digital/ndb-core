@@ -18,6 +18,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ConfirmationDialogService } from 'app/core/ui-helper/confirmation-dialog/confirmation-dialog.service';
+<<<<<<< HEAD
 import { AlertService } from 'app/core/alerts/alert.service';
 
 describe('HealthCheckupComponent', () => {
@@ -41,7 +42,7 @@ describe('HealthCheckupComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ HealthCheckupComponent, EntitySubrecordComponent],
       imports: [CommonModule, MatTableModule, MatSelectModule, MatOptionModule, MatAutocompleteModule, MatFormFieldModule,
-      MatIconModule, NoopAnimationsModule, MatDialogModule],
+      MatIconModule, NoopAnimationsModule, MatDialogModule, MatDatepickerModule],
       providers: [
         DatePipe,
         MatSnackBar,

@@ -88,6 +88,7 @@ describe('ChildDetailsComponent', () => {
         MatInputModule,
         FormsModule,
         MatAutocompleteModule,
+        MatDatepickerModule,
         BrowserAnimationsModule,
       ],
       providers: [
