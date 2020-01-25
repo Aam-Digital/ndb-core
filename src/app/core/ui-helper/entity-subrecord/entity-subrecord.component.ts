@@ -10,6 +10,7 @@ import { ColumnDescription, ColumnDescriptionInputType } from './column-descript
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { Subscription } from 'rxjs';
 import { AlertService } from 'app/core/alerts/alert.service';
+import { FormValidationResult } from './form-validation-result';
 
 
 @Component({
@@ -24,7 +25,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   @Input() newRecordFactory: () => Entity;
   @Input() detailsComponent: typeof Component;
   @Input() showButton = true;
-  @Input() optionalFormValidation: (record) => Object;
+  @Input() formValidation?: (record: Entity) => FormValidationResult;
 
   recordsDataSource = new MatTableDataSource();
   columnsToDisplay = [];
@@ -75,10 +76,10 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
 
   save(record: Entity) {
 
-    if (this.optionalFormValidation) {
-      const formValidationResult = this.optionalFormValidation(record);
-      if (!formValidationResult['hasPassedValidation']) {
-        this.alertService.addWarning(formValidationResult['validationMessage']);
+    if (this.formValidation) {
+      const formValidationResult = this.formValidation(record);
+      if (!formValidationResult.hasPassedValidation) {
+        this.alertService.addWarning(formValidationResult.validationMessage);
         return;
       }
     }

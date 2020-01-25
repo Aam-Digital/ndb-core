@@ -12,7 +12,7 @@ import * as uniqid from 'uniqid';
 @Component({
   selector: 'app-previous-schools',
   // tslint:disable-next-line: max-line-length
-  template: '<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="generateNewRecordFactory()" [optionalFormValidation]="optionalFormValidation">' + '</app-entity-subrecord>',
+  template: '<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="generateNewRecordFactory()" [formValidation]="formValidation">' + '</app-entity-subrecord>',
 })
 
 
@@ -75,7 +75,7 @@ export class PreviousSchoolsComponent implements OnInit {
     };
   }
 
-  optionalFormValidation = (record) => {
+  formValidation = (record) => {
     if (!record.schoolId) {
       return {
         hasPassedValidation: false,
