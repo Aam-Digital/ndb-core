@@ -56,14 +56,15 @@ export class CloudFileService {
    */
   public async checkConnection(): Promise<boolean> {
     // delete 'tmp.txt' if it exists
-    if (await this.doesFileExist('/tmp.txt')) {
-      await this.client.deleteFile('/tmp.txt');
+    const fileName: string = '/test.txt';
+    if (await this.doesFileExist(fileName)) {
+      await this.client.deleteFile(fileName);
     }
 
-    await this.client.putFileContents('/tmp.txt', 'TestString');
-    const buffer = await this.client.getFileContents('/tmp.txt');
+    await this.client.putFileContents(fileName, 'TestString');
+    const buffer = await this.client.getFileContents(fileName);
     const tmpContent = String.fromCharCode.apply(null, new Uint8Array(buffer));
-    await this.client.deleteFile('/tmp.txt');
+    await this.client.deleteFile(fileName);
 
     if (tmpContent === 'TestString') {
       return true;
