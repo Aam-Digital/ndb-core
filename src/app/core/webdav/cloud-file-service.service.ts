@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { AppConfig } from '../app-config/app-config';
 import webdav from 'webdav';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { SessionService } from 'app/session/session.service';
-
+import { SessionService } from '../session/session.service';
 /**
  * This class provides access to the in config.json specified cloud service.
  */

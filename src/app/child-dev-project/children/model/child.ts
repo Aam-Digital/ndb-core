@@ -19,6 +19,7 @@ import { Entity } from '../../../core/entity/entity';
 import { Gender } from './Gender';
 import { DatabaseEntity } from '../../../core/entity/database-entity.decorator';
 import { DatabaseField } from '../../../core/entity/database-field.decorator';
+import { SafeUrl } from '@angular/platform-browser';
 
 @DatabaseEntity('Child')
 export class Child extends Entity {
