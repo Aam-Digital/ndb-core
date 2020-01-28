@@ -5,10 +5,10 @@ import { CloudFileService } from './cloud-file-service.service';
 @NgModule({
   declarations: [],
   imports: [
-    CommonModule
+    CommonModule,
   ],
   providers: [
-    CloudFileService
-  ]
+    CloudFileService,
+  ],
 })
 export class WebdavModule { }

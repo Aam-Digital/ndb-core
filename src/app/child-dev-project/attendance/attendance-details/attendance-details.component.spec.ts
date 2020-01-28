@@ -43,7 +43,7 @@ describe('AttendanceDetailsComponent', () => {
         {provide: MatDialogRef, useValue: {beforeClose: () => { return { subscribe: () => {}}; }}},
         {provide: MAT_DIALOG_DATA, useValue: {entity: att}},
         {provide: ChildrenService, useClass: ChildrenService},
-        {provide: CloudFileService, useClass: MockCloudFileService}
+        {provide: CloudFileService, useClass: MockCloudFileService},
       ],
     })
     .compileComponents();

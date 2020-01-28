@@ -15,7 +15,7 @@ describe('CloudFileService', () => {
     AppConfig.settings = {
       site_name: '',
       database: {name: 'unit-tests', remote_url: '', timeout: 60000, outdated_threshold_days: 0, useTemporaryDatabase: true},
-      webdav: {remote_url: 'test-url'}
+      webdav: {remote_url: 'test-url'},
     };
 
     sessionSpy = jasmine.createSpyObj('SessionService', ['getCurrentUser']);
@@ -23,7 +23,7 @@ describe('CloudFileService', () => {
 
     TestBed.configureTestingModule({ providers: [
       CloudFileService,
-      { provide: SessionService, useValue: sessionSpy}]
+      { provide: SessionService, useValue: sessionSpy}],
     });
 
     cloudFileService = TestBed.get(CloudFileService);

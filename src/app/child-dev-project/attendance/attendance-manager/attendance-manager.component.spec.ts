@@ -43,8 +43,8 @@ describe('AttendanceManagerComponent', () => {
           provide: ChildrenService,
           useValue: {
             getChildren: () => new BehaviorSubject([]),
-            getAttendancesOfChild: () => new BehaviorSubject([])
-          }
+            getAttendancesOfChild: () => new BehaviorSubject([]),
+          },
         },
       ],
     })

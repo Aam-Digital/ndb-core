@@ -43,8 +43,8 @@ export class CloudFileService {
         AppConfig.settings.webdav.remote_url,
         {
           username: username,
-          password: password
-        }
+          password: password,
+        },
       );
     }
   }
@@ -123,7 +123,7 @@ export class CloudFileService {
     this.client.putFileContents(this.imagePath + '/' + childId, imageFile,
       {onUploadProgress: progress => {
       console.log(`Uploaded ${progress.loaded} bytes of ${progress.total}`);
-      }}
+      }},
     );
   }
 
@@ -157,7 +157,7 @@ export class CloudFileService {
    */
   private bufferArrayToBase64(arrayBuffer: ArrayBuffer): SafeUrl {
     const base64String = btoa(new Uint8Array(arrayBuffer).reduce((data, byte) => {
-        return data + String.fromCharCode(byte); }, '')
+        return data + String.fromCharCode(byte); }, ''),
       );
     return this.domSanitizer.bypassSecurityTrustUrl('data:image/jpg;base64,' + base64String);
   }

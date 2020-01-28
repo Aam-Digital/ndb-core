@@ -8,6 +8,8 @@ import { School } from '../schools/model/school';
 import { MockDatabase } from '../../core/database/mock-database';
 import { CloudFileService } from 'app/webdav/cloud-file-service.service';
 import { MockCloudFileService } from 'app/webdav/mock-cloud-file-service';
+import { TestBed } from '@angular/core/testing';
+import { Database } from 'app/core/database/database';
 
 function generateChildEntities(): Child[] {
   const data = [];
@@ -105,9 +107,9 @@ describe('ChildrenService', () => {
           EntitySchemaService,
           { provide: Database, useClass: MockDatabase },
           { provide: CloudFileService, useClass: MockCloudFileService },
-          ChildrenService
-        ]
-      }
+          ChildrenService,
+        ],
+      },
     );
 
     entityMapper = TestBed.get(EntityMapperService);

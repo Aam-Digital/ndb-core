@@ -27,7 +27,7 @@ describe('AttendanceWarningsDashboardComponent', () => {
         EntityMapperService,
         EntitySchemaService,
         { provide: Database, useClass: MockDatabase },
-        {provide: CloudFileService, useClass: MockCloudFileService}
+        {provide: CloudFileService, useClass: MockCloudFileService},
       ],
     })
     .compileComponents();

@@ -35,7 +35,7 @@ describe('LocalSessionService', () => {
       },
       webdav: {
         remote_url: '',
-      }
+      },
     };
 
     const mockAlertService = jasmine.createSpyObj(['addDebug', 'addInfo', 'addWarning']);

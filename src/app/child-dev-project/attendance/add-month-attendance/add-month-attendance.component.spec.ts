@@ -51,8 +51,8 @@ describe('AddMonthAttendanceComponent', () => {
         EntitySchemaService,
         { provide: Database, useClass: MockDatabase },
         ChildrenService,
-        {provide: CloudFileService, useClass: MockCloudFileService}
-      ]
+        {provide: CloudFileService, useClass: MockCloudFileService},
+      ],
     })
     .compileComponents();
   }));

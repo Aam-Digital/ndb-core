@@ -26,7 +26,7 @@ describe('ChildBlockComponent', () => {
         EntitySchemaService,
         ChildrenService,
         { provide: Database, useClass: MockDatabase },
-        { provide: CloudFileService, useClass: MockCloudFileService }
+        { provide: CloudFileService, useClass: MockCloudFileService },
       ],
     })
     .compileComponents();

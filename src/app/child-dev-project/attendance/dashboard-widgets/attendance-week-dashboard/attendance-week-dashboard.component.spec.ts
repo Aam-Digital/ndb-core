@@ -28,8 +28,8 @@ describe('AttendanceWeekDashboardComponent', () => {
       providers: [
         { provide: ChildrenService, useClass: ChildrenService },
         { provide: Database, useClass: MockDatabase },
-        { provide: CloudFileService, useClass: MockCloudFileService }
-      ]
+        { provide: CloudFileService, useClass: MockCloudFileService },
+      ],
     })
     .compileComponents();
   }));

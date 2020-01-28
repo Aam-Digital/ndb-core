@@ -62,7 +62,7 @@ export class ChildDetailsComponent implements OnInit {
               private snackBar: MatSnackBar,
               private confirmationDialog: ConfirmationDialogService,
               private alertService: AlertService,
-              private cloudFileService: CloudFileService
+              private cloudFileService: CloudFileService,
   ) { }
 
   // TODO: is this generateNewRecordFactory() used at all?

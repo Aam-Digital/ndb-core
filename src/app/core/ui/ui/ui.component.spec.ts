@@ -63,8 +63,8 @@ describe('UiComponent', () => {
         'useTemporaryDatabase': true,
       },
       webdav: {
-        remote_url: ''
-      }
+        remote_url: '',
+      },
     };
 
     const mockSwUpdate = { available: of(), checkForUpdate: () => {} };

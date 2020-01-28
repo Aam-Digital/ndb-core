@@ -52,9 +52,9 @@ describe('SyncedSessionService', () => {
                     'remote_url': 'https://demo.aam-digital.com/db/',
                     'timeout': 60000,
                     'outdated_threshold_days': 0,
-                    'useTemporaryDatabase': false
+                    'useTemporaryDatabase': false,
                 },
-                'webdav' : {'remote_url': ''}
+                'webdav' : {'remote_url': ''},
             };
             sessionService = new SyncedSessionService(alertService, entitySchemaService);
         });
@@ -137,9 +137,9 @@ describe('SyncedSessionService', () => {
                     'remote_url': 'https://demo.aam-digital.com/db/',
                     'timeout': 60000,
                     'outdated_threshold_days': 0,
-                    'useTemporaryDatabase': false
+                    'useTemporaryDatabase': false,
                 },
-                'webdav' : {'remote_url': ''}
+                'webdav' : {'remote_url': ''},
             };
             // setup synced session service
             sessionService = new SyncedSessionService(alertService, entitySchemaService);
