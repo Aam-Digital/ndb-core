@@ -53,8 +53,8 @@ describe('ChildSchoolRelation Entity', () => {
       childId: '1',
       schoolId: '2',
       schoolClass: '10',
-      start: '2019-01-01',
-      end: '2019-12-31',
+      start: new Date('2019-01-01'),
+      end: new Date('2019-12-31'),
 
       searchIndices: [],
     };
@@ -63,8 +63,8 @@ describe('ChildSchoolRelation Entity', () => {
     entity.childId = expectedData.childId;
     entity.schoolId = expectedData.schoolId;
     entity.schoolClass = expectedData.schoolClass;
-    entity.start = expectedData.start;
-    entity.end = expectedData.end;
+    entity.start = new Date(expectedData.start);
+    entity.end = new Date (expectedData.end);
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 

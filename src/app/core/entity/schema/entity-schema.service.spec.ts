@@ -41,10 +41,10 @@ describe('EntitySchemaService', () => {
     };
     entitySchemaService.loadDataIntoEntity(entity, data);
 
-    expect(entity.aString).toBe('192');
+    expect(entity.aString).toEqual('192');
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    expect(rawData.aString).toBe('192');
+    expect(rawData.aString).toEqual('192');
   });
 
   it('schema:number converts to numbers', function () {
@@ -62,12 +62,12 @@ describe('EntitySchemaService', () => {
     };
     entitySchemaService.loadDataIntoEntity(entity, data);
 
-    expect(entity.aNumber).toBe(192);
-    expect(entity.aFloat).toBe(1.68);
+    expect(entity.aNumber).toEqual(192);
+    expect(entity.aFloat).toEqual(1.68);
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    expect(rawData.aNumber).toBe(192);
-    expect(rawData.aFloat).toBe(1.68);
+    expect(rawData.aNumber).toEqual(192);
+    expect(rawData.aFloat).toEqual(1.68);
   });
 
   it('schema:date converts to Date object', function () {
@@ -84,14 +84,14 @@ describe('EntitySchemaService', () => {
     };
     entitySchemaService.loadDataIntoEntity(entity, data);
 
-    expect(entity.defaultDate.toDateString()).toBe((new Date()).toDateString());
+    expect(entity.defaultDate.toDateString()).toEqual((new Date()).toDateString());
 
-    expect(entity.otherDate.getFullYear()).toBe(2018);
-    expect(entity.otherDate.getMonth()).toBe(0);
-    expect(entity.otherDate.getDate()).toBe(1);
+    expect(entity.otherDate.getFullYear()).toEqual(2018);
+    expect(entity.otherDate.getMonth()).toEqual(0);
+    expect(entity.otherDate.getDate()).toEqual(1);
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    expect(rawData.otherDate).toBe(data.otherDate);
+    expect(rawData.otherDate).toEqual(data.otherDate);
   });
 
   it('schema:month converts between string and Date objects', function () {
@@ -108,9 +108,9 @@ describe('EntitySchemaService', () => {
     entitySchemaService.loadDataIntoEntity(entity, data);
 
     const expectedDate = new Date(2018, 1); // month indices start at 0!
-    expect(entity.month.toDateString()).toBe(expectedDate.toDateString());
+    expect(entity.month.toDateString()).toEqual(expectedDate.toDateString());
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    expect(rawData.month).toBe('2018-2');
+    expect(rawData.month).toEqual('2018-2');
   });
 });
