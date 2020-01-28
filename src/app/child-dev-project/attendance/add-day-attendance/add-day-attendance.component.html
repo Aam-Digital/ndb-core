@@ -22,7 +22,9 @@
   </div>
 
   <mat-form-field>
-    <input matInput placeholder="Date" type="date" [valueAsDate]='day' (change)='day=$event.target.valueAsDate'>
+    <input matInput placeholder="Date" [value]='day' (dateChange)='day=$event.target.value' [matDatepicker]="addDayAttendanceDatepicker">
+    <mat-datepicker-toggle matSuffix [for]="addDayAttendanceDatepicker"></mat-datepicker-toggle>
+    <mat-datepicker #addDayAttendanceDatepicker></mat-datepicker>
   </mat-form-field>
 
   <div fxFlex>

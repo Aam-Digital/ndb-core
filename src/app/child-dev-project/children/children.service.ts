@@ -9,7 +9,6 @@ import { EducationalMaterial } from '../educational-material/model/educational-m
 import { Aser } from '../aser/model/aser';
 import { ChildSchoolRelation } from './model/childSchoolRelation';
 import { School } from '../schools/model/school';
-import { SchoolWithRelation } from '../schools/model/schoolWithRelation';
 import { HealthCheck } from '../health-checkup/model/health-check';
 import { EntitySchemaService } from '../../core/entity/schema/entity-schema.service';
 
@@ -285,13 +284,8 @@ export class ChildrenService {
       });
   }
 
-  async getSchoolsWithRelations(childId: string): Promise<SchoolWithRelation[]> {
+  async getSchoolsWithRelations(childId: string): Promise<ChildSchoolRelation[]> {
     const relations = await this.querySortedRelations(childId);
-    const schools: SchoolWithRelation[] = [];
-    for (const relation of relations) {
-      const school: School = await this.entityMapper.load<School>(School, relation.schoolId);
-      schools.push(new SchoolWithRelation(relation, school));
-    }
-    return schools;
+    return relations;
   }
 }

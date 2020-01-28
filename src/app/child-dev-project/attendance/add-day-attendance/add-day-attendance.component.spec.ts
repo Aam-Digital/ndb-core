@@ -16,6 +16,8 @@ import { Database } from '../../../core/database/database';
 import { MockDatabase } from '../../../core/database/mock-database';
 import { EntityModule } from '../../../core/entity/entity.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 describe('AddDayAttendanceComponent', () => {
   let component: AddDayAttendanceComponent;
@@ -25,7 +27,7 @@ describe('AddDayAttendanceComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ AddDayAttendanceComponent, SchoolBlockComponent, ChildBlockComponent ],
       imports: [FormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatButtonToggleModule,
-        MatIconModule, MatProgressBarModule, NoopAnimationsModule,
+        MatIconModule, MatProgressBarModule, MatDatepickerModule, MatNativeDateModule, NoopAnimationsModule,
         EntityModule],
       providers: [
         {provide: ChildrenService, useClass: ChildrenService},

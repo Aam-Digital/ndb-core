@@ -23,6 +23,8 @@ import { Database } from '../../../core/database/database';
 import { MockDatabase } from '../../../core/database/mock-database';
 import { EntityModule } from '../../../core/entity/entity.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 describe('AttendanceManagerComponent', () => {
   let component: AttendanceManagerComponent;
@@ -33,8 +35,8 @@ describe('AttendanceManagerComponent', () => {
       declarations: [ AttendanceManagerComponent, ChildBlockComponent, AttendanceBlockComponent, AttendanceDayBlockComponent,
         AttendanceDaysComponent, SchoolBlockComponent ],
       imports: [ MatFormFieldModule, MatInputModule, MatButtonToggleModule, MatExpansionModule, MatButtonModule, MatTableModule,
-        MatProgressBarModule, MatTooltipModule, MatSelectModule, MatIconModule, FormsModule, NoopAnimationsModule,
-        UiHelperModule, EntityModule],
+        MatProgressBarModule, MatTooltipModule, MatSelectModule, MatIconModule, MatDatepickerModule, MatNativeDateModule,
+        FormsModule, NoopAnimationsModule, UiHelperModule, EntityModule],
       providers: [
         {provide: ChildrenService, useClass: ChildrenService},
         {provide: Database, useClass: MockDatabase},

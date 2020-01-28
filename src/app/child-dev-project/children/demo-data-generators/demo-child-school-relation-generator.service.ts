@@ -66,8 +66,8 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
   private generateRecord(child: Child, year, schoolClass: number, school: School): ChildSchoolRelation {
     const schoolRelation = new ChildSchoolRelation(faker.random.uuid());
     schoolRelation.childId = child.getId();
-    schoolRelation.start = year + '-01-01';
-    schoolRelation.end = year + '-12-31';
+    schoolRelation.start = new Date(year + '-01-01');
+    schoolRelation.end = new Date(year + '-12-31');
     schoolRelation.schoolClass = String(schoolClass);
     schoolRelation.schoolId = school.getId();
     return schoolRelation;
