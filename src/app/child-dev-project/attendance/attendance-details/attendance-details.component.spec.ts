@@ -21,8 +21,8 @@ import { EntityModule } from '../../../core/entity/entity.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AttendanceDayBlockComponent } from '../attendance-days/attendance-day-block.component';
-import { CloudFileService } from 'app/webdav/cloud-file-service.service';
-import { MockCloudFileService } from 'app/webdav/mock-cloud-file-service';
+import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
+import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
 
 describe('AttendanceDetailsComponent', () => {
   let component: AttendanceDetailsComponent;

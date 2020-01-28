@@ -28,7 +28,7 @@ import * as uniqid from 'uniqid';
 import { AlertService } from '../../../core/alerts/alert.service';
 import { ChildrenService } from '../children.service';
 import { School } from '../../schools/model/school';
-import { CloudFileService } from 'app/webdav/cloud-file-service.service';
+import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
 
 
 @Component({

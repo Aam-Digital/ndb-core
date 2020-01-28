@@ -39,8 +39,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MockDatabase } from 'app/core/database/mock-database';
 import { PreviousSchoolsComponent } from 'app/child-dev-project/previous-schools/previous-schools.component';
 import { SchoolsService } from 'app/child-dev-project/schools/schools.service';
-import { CloudFileService } from 'app/webdav/cloud-file-service.service';
-import { MockCloudFileService } from 'app/webdav/mock-cloud-file-service';
+import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
+import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
 
 describe('ChildDetailsComponent', () => {
   let component: ChildDetailsComponent;

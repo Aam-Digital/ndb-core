@@ -28,8 +28,8 @@ import { AttendanceDaysComponent } from '../../attendance/attendance-days/attend
 import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
 import { AttendanceDayBlockComponent } from '../../attendance/attendance-days/attendance-day-block.component';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
-import { CloudFileService } from 'app/webdav/cloud-file-service.service';
-import { MockCloudFileService } from 'app/webdav/mock-cloud-file-service';
+import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
+import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
 
 describe('ChildrenListComponent', () => {
   let component: ChildrenListComponent;

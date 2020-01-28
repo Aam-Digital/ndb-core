@@ -10,8 +10,8 @@ import { MockDatabase } from '../../../core/database/mock-database';
 import { ChildrenService } from '../children.service';
 import { Database } from '../../../core/database/database';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
-import { CloudFileService } from 'app/webdav/cloud-file-service.service';
-import { MockCloudFileService } from 'app/webdav/mock-cloud-file-service';
+import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
+import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
 
 describe('ChildBlockComponent', () => {
   let component: ChildBlockComponent;

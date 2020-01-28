@@ -11,7 +11,7 @@ import { ChildSchoolRelation } from './model/childSchoolRelation';
 import { School } from '../schools/model/school';
 import { HealthCheck } from '../health-checkup/model/health-check';
 import { EntitySchemaService } from '../../core/entity/schema/entity-schema.service';
-import { CloudFileService } from 'app/webdav/cloud-file-service.service';
+import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
 
 @Injectable()
 export class ChildrenService {

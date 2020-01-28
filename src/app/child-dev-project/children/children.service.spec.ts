@@ -6,8 +6,8 @@ import { EntitySchemaService } from '../../core/entity/schema/entity-schema.serv
 import { Gender } from './model/Gender';
 import { School } from '../schools/model/school';
 import { MockDatabase } from '../../core/database/mock-database';
-import { CloudFileService } from 'app/webdav/cloud-file-service.service';
-import { MockCloudFileService } from 'app/webdav/mock-cloud-file-service';
+import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
+import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
 import { TestBed } from '@angular/core/testing';
 import { Database } from 'app/core/database/database';
 

@@ -67,7 +67,7 @@ import { AttendanceManagerComponent } from '../attendance/attendance-manager/att
 import { HealthCheckupComponent } from '../health-checkup/health-checkup-component/health-checkup.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { PreviousSchoolsComponent } from '../previous-schools/previous-schools.component';
-import { WebdavModule } from 'app/webdav/webdav.module';
+import { WebdavModule } from 'app/core/webdav/webdav.module';
 
 
 @NgModule({

@@ -11,8 +11,8 @@ import { EntityMapperService } from '../../../../core/entity/entity-mapper.servi
 import { ChildrenService } from '../../../children/children.service';
 import { SchoolBlockComponent } from '../../../schools/school-block/school-block.component';
 import { EntitySchemaService } from '../../../../core/entity/schema/entity-schema.service';
-import { CloudFileService } from 'app/webdav/cloud-file-service.service';
-import { MockCloudFileService } from 'app/webdav/mock-cloud-file-service';
+import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
+import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
 
 describe('AttendanceWarningsDashboardComponent', () => {
   let component: AttendanceWarningsDashboardComponent;

@@ -18,7 +18,7 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from '../user';
 import { SessionService } from '../../session/session.service';
-import { CloudFileService } from 'app/webdav/cloud-file-service.service';
+import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
 import { AppConfig } from '../../app-config/app-config';
 
 @Component({

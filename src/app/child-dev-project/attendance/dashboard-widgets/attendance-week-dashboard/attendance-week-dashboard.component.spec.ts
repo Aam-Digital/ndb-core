@@ -12,8 +12,8 @@ import { EntityModule } from '../../../../core/entity/entity.module';
 import { Database } from '../../../../core/database/database';
 import { MockDatabase } from '../../../../core/database/mock-database';
 import { RouterTestingModule } from '@angular/router/testing';
-import { CloudFileService } from 'app/webdav/cloud-file-service.service';
-import { MockCloudFileService } from 'app/webdav/mock-cloud-file-service';
+import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
+import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
 
 describe('AttendanceWeekDashboardComponent', () => {
   let component: AttendanceWeekDashboardComponent;
