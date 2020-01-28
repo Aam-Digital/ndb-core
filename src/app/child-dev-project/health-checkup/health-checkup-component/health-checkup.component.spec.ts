@@ -18,6 +18,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ConfirmationDialogService } from 'app/core/ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { AlertService } from 'app/core/alerts/alert.service';
 
 describe('HealthCheckupComponent', () => {
   let component: HealthCheckupComponent;
@@ -40,7 +42,7 @@ describe('HealthCheckupComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ HealthCheckupComponent, EntitySubrecordComponent],
       imports: [CommonModule, MatTableModule, MatSelectModule, MatOptionModule, MatAutocompleteModule, MatFormFieldModule,
-      MatIconModule, NoopAnimationsModule, MatDialogModule],
+      MatIconModule, NoopAnimationsModule, MatDialogModule, MatDatepickerModule],
       providers: [
         DatePipe,
         MatSnackBar,
@@ -49,6 +51,7 @@ describe('HealthCheckupComponent', () => {
        { provide: ActivatedRoute, useValue: {paramMap: of({get: () => '22'}) } },
        { provide: ChildrenService, useValue: mockChildrenService },
         { provide: EntityMapperService, useValue: mockEntityMapper },
+        AlertService,
       ],
     })
     .compileComponents();
