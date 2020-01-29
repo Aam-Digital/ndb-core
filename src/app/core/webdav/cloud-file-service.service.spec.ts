@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { CloudFileService } from './cloud-file-service.service';
-import { SessionService } from 'app/session/session.service';
-import { User } from 'app/user/user';
-import { AppConfig } from 'app/app-config/app-config';
+import { SessionService } from '../session/session.service';
+import { User } from '../user/user';
+import { AppConfig } from '../app-config/app-config';
 import webdav from 'webdav';
+
 
 describe('CloudFileService', () => {
   let cloudFileService: CloudFileService;
