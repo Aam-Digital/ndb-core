@@ -34,38 +34,45 @@ import { Database } from 'app/core/database/database';
 import { MockDatabase } from 'app/core/database/mock-database';
 
 describe('UserAccountComponent', () => {
-  let component: UserAccountComponent;
-  let fixture: ComponentFixture<UserAccountComponent>;
-
-  let sessionService: SessionService;
-  const user = new User('1');
-  user.name = 'test';
+  let userAccountComponent: UserAccountComponent;
+  let cloudFileService: jasmine.SpyObj<CloudFileService>;
+  let sessionService: jasmine.SpyObj<SessionService>;
+  let sessionSpy, cloudFileSpy;
 
   beforeEach(async(() => {
-    sessionService = new MockSessionService(new EntitySchemaService());
-    spyOn(sessionService, 'getCurrentUser').and.returnValue(user);
+    sessionSpy = jasmine.createSpyObj('SessionService', ['getCurrentUser']);
+    cloudFileSpy = jasmine.createSpyObj('SessionService', ['connect', 'checkConnection']);
 
     TestBed.configureTestingModule({
-      declarations: [UserAccountComponent],
       imports: [MatFormFieldModule, MatInputModule, MatButtonModule, NoopAnimationsModule, MatTabsModule],
       providers: [
+        UserAccountComponent,
         EntityMapperService,
         EntitySchemaService,
         { provide: Database, useClass: MockDatabase },
-        {provide: SessionService, useValue: sessionService},
-        {provide: CloudFileService, useClass: MockCloudFileService},
+        {provide: SessionService, useValue: sessionSpy},
+        {provide: CloudFileService, useValue: cloudFileSpy},
       ],
-    })
-      .compileComponents();
+    });
+
+    userAccountComponent = TestBed.get(UserAccountComponent);
+    cloudFileService = TestBed.get(CloudFileService);
+    sessionService = TestBed.get(SessionService);
   }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(UserAccountComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+  it('should be created', () => {
+    expect(userAccountComponent).toBeTruthy();
   });
 
-  it('should be created', () => {
-    expect(component).toBeTruthy();
+  fit('should update cloud-service credentials annd check the connection', () => {
+    const user = new User('user');
+    spyOn(user, 'setCloudPassword');
+    sessionService.getCurrentUser.and.returnValue(user);
+    userAccountComponent.updateCloudService('testUser', 'testPwd', 'loginPwd');
+    expect(sessionService.getCurrentUser).toHaveBeenCalled();
+    expect(user.cloudUserName).toBe('testUser');
+    expect(user.setCloudPassword).toHaveBeenCalledWith('testPwd', 'loginPwd');
+    expect(cloudFileService.connect).toHaveBeenCalled();
+    expect(cloudFileService.checkConnection).toHaveBeenCalled();
   });
 });
