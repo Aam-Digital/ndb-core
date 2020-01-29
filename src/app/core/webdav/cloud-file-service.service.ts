@@ -132,9 +132,9 @@ export class CloudFileService {
    * @param childId
    */
   public async getImage(childId: string): Promise<SafeUrl> {
-    enum ImageType { "" , ".jpg", ".jpeg", ".png"}
-    
-    for (let ext in ImageType){
+    const imageType = [ '' , '.jpg', '.jpeg', '.png' ];
+
+    for (const ext of imageType){
       if (await this.doesFileExist(childId + ext)) {
         const image = await this.client.getFileContents(this.imagePath + '/' + childId + ext);
         return this.bufferArrayToBase64(image);
