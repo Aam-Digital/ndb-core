@@ -20,6 +20,7 @@ import { User } from '../user';
 import { SessionService } from '../../session/session.service';
 import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
 import { AppConfig } from '../../app-config/app-config';
+import { EntityMapperService } from 'app/core/entity/entity-mapper.service';
 
 @Component({
   selector: 'app-user-account',
@@ -32,7 +33,8 @@ export class UserAccountComponent implements OnInit {
   webdavUrl: String;
   statusMessage: string;
 
-  constructor( private sessionService: SessionService,
+  constructor( private entityMapperService: EntityMapperService,
+               private sessionService: SessionService,
                private cloudFileService: CloudFileService ) { }
 
   ngOnInit() {
@@ -58,10 +60,13 @@ export class UserAccountComponent implements OnInit {
    */
   async updateCloudService(cloudUser: string, cloudPassword: string, password: string) {
     try {
-      this.sessionService.getCurrentUser().setCloudPassword(cloudPassword, password);
-      this.sessionService.getCurrentUser().cloudUserName = cloudUser;
+      this.statusMessage = 'Processing...';
+      const currentUser = this.sessionService.getCurrentUser();
+      currentUser.setCloudPassword(cloudPassword, password);
+      currentUser.cloudUserName = cloudUser;
       this.cloudFileService.connect();
       if (await this.cloudFileService.checkConnection()) {
+        this.entityMapperService.save<User>(currentUser);
         this.statusMessage = 'Success';
       }
     } catch (error) {
