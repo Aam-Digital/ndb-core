@@ -64,7 +64,7 @@ describe('UserAccountComponent', () => {
     expect(userAccountComponent).toBeTruthy();
   });
 
-  fit('should update cloud-service credentials annd check the connection', () => {
+  it('should update cloud-service credentials annd check the connection', () => {
     const user = new User('user');
     spyOn(user, 'setCloudPassword');
     sessionService.getCurrentUser.and.returnValue(user);

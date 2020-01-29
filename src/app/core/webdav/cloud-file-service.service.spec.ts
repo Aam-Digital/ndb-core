@@ -20,7 +20,7 @@ describe('CloudFileService', () => {
     };
 
     sessionSpy = jasmine.createSpyObj('SessionService', ['getCurrentUser']);
-    clientSpy = jasmine.createSpyObj('client', ['getDirectoryContents', 'createDirectory', 'getFileContents', 'putFileContents']);
+    clientSpy = jasmine.createSpyObj('client', ['getDirectoryContents', 'createDirectory', 'getFileContents', 'putFileContents', 'deleteFile']);
 
     TestBed.configureTestingModule({ providers: [
       CloudFileService,
@@ -39,6 +39,13 @@ describe('CloudFileService', () => {
     cloudFileService.connect('user', 'pass');
     expect(sessionService.getCurrentUser).toHaveBeenCalled();
     expect(webdav.createClient).toHaveBeenCalledWith('test-url', {username: 'user', password: 'pass'});
+  });
+
+  it('.checkConnection() should try to create and delete a file', async () => {
+    spyOn(cloudFileService, 'doesFileExist').and.returnValue(new Promise((resolve, reject) => {resolve(true); }));
+    await cloudFileService.checkConnection();
+    expect(clientSpy.putFileContents).toHaveBeenCalled();
+    expect(clientSpy.deleteFile).toHaveBeenCalled();
   });
 
   it('.getDir() should call webdav.getDirectoryContents()', () => {
