@@ -29,6 +29,9 @@ import { EntitySchemaService } from 'app/core/entity/schema/entity-schema.servic
 import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
 import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
 import { MatTabsModule } from '@angular/material';
+import { EntityMapperService } from 'app/core/entity/entity-mapper.service';
+import { Database } from 'app/core/database/database';
+import { MockDatabase } from 'app/core/database/mock-database';
 
 describe('UserAccountComponent', () => {
   let component: UserAccountComponent;
@@ -46,6 +49,9 @@ describe('UserAccountComponent', () => {
       declarations: [UserAccountComponent],
       imports: [MatFormFieldModule, MatInputModule, MatButtonModule, NoopAnimationsModule, MatTabsModule],
       providers: [
+        EntityMapperService,
+        EntitySchemaService,
+        { provide: Database, useClass: MockDatabase },
         {provide: SessionService, useValue: sessionService},
         {provide: CloudFileService, useClass: MockCloudFileService},
       ],

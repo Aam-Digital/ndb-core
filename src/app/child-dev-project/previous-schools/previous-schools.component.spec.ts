@@ -12,10 +12,13 @@ import { Database } from '../../core/database/database';
 import { ChildrenModule } from '../../child-dev-project/children/children.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SchoolsService } from '../../child-dev-project/schools/schools.service';
+import { SessionService } from 'app/core/session/session.service';
 
 describe('PreviousSchoolsComponent', () => {
   let component: PreviousSchoolsComponent;
   let fixture: ComponentFixture<PreviousSchoolsComponent>;
+
+  const mockedSession = { getCurrentUser: () => 'testUser' };
 
 
   beforeEach(async(() => {
@@ -30,6 +33,7 @@ describe('PreviousSchoolsComponent', () => {
       providers: [
         {provide: Database, useClass: MockDatabase},
         {provide: ActivatedRoute, useValue: route},
+        { provide: SessionService, useValue: mockedSession },
         EntityMapperService,
         EntitySchemaService,
         AlertService,
