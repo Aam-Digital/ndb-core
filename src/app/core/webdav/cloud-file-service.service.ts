@@ -66,8 +66,10 @@ export class CloudFileService {
     await this.client.deleteFile(fileName);
 
     if (tmpContent === 'TestString') {
+      console.log('Connection to cloud service successful.');
       return true;
     }
+    console.log('Can not connect to cloud service.');
     return false;
   }
 
@@ -134,7 +136,7 @@ export class CloudFileService {
   public async getImage(childId: string): Promise<SafeUrl> {
     const imageType = [ '' , '.jpg', '.jpeg', '.png' ];
 
-    for (const ext of imageType){
+    for (const ext of imageType) {
       if (await this.doesFileExist(childId + ext)) {
         const image = await this.client.getFileContents(this.imagePath + '/' + childId + ext);
         return this.bufferArrayToBase64(image);
