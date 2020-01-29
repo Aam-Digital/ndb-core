@@ -13,6 +13,8 @@ import { ChildrenModule } from '../../child-dev-project/children/children.module
 import { RouterTestingModule } from '@angular/router/testing';
 import { SchoolsService } from '../../child-dev-project/schools/schools.service';
 import { SessionService } from 'app/core/session/session.service';
+import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
+import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
 
 describe('PreviousSchoolsComponent', () => {
   let component: PreviousSchoolsComponent;
@@ -38,6 +40,7 @@ describe('PreviousSchoolsComponent', () => {
         EntitySchemaService,
         AlertService,
         SchoolsService,
+        { provide: CloudFileService, useClass: MockCloudFileService },
       ],
     })
     .compileComponents();
