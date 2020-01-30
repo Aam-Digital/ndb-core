@@ -21,7 +21,7 @@ export class ViewSchoolsComponent implements OnInit, OnChanges {
   private sort: MatSort;
   schoolsDataSource: MatTableDataSource<SchoolWithRelation> = new MatTableDataSource();
   schoolsWithRelations: SchoolWithRelation[] = [];
-  displayedColumns: string[] = ['schoolName', 'startTime', 'endTime'];
+  displayedColumns: string[] = ['schoolName', 'startTime', 'endTime', 'class', 'results'];
 
   @ViewChild(MatSort, { static: false }) set matSort(ms: MatSort) {    // Needed to set the mat sort later than ngAfterViewInit
     this.sort = ms;
@@ -42,6 +42,10 @@ export class ViewSchoolsComponent implements OnInit, OnChanges {
           return item.getStartTime();
         case 'endTime':
           return item.getEndTime();
+        case 'class':
+          return item.getClass();
+        case 'result':
+          return item.getResult();
         default:
           return item[property];
       }
@@ -87,5 +91,19 @@ export class ViewSchoolsComponent implements OnInit, OnChanges {
   private showEditSchoolDialog(data) {
     const dialog = this.dialog.open(EditSchoolDialogComponent, {data: data});
     dialog.afterClosed().subscribe(res => res ? this.loadSchoolEntries() : null);
+  }
+
+  /**
+   * returns an css-compatible color value from green to red using the given
+   * input value
+   * @param percent The percentage from 0-100 (both inclusive). 0 will be completely red, 100 will be completely green
+   * Everything between will have suitable colors (orange, yellow,...)
+   */
+
+  private fromPercent(percent: number): string {
+    // the hsv color-value is to be between 0 (red) and 120 (green)
+    // percent is between 0-100, so we have to normalize it first
+    const color = (percent / 100) * 120;
+    return 'hsl(' + color + ', 70%, 65%)';
   }
 }

@@ -29,4 +29,10 @@ export class SchoolWithRelation {
   getEndTime(): string {
     return this._childSchoolRelation.end;
   }
+  getClass(): string {
+    return this._childSchoolRelation.schoolClass;
+  }
+  getResult(): number {
+    return this._childSchoolRelation.result ? this._childSchoolRelation.result : Number.NaN;
+  }
 }

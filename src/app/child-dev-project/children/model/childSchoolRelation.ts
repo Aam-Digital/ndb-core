@@ -7,6 +7,7 @@ export class ChildSchoolRelation extends Entity {
   @DatabaseField() childId: string;
   @DatabaseField() schoolId: string;
   @DatabaseField() schoolClass: string;
+  @DatabaseField() result: number;
   @DatabaseField() start: string; // TODO: use Date instead of string?
   @DatabaseField() end: string; // TODO: use Date instead of string?
 }

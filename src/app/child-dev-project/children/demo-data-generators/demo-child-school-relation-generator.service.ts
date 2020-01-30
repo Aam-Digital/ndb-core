@@ -70,6 +70,7 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
     schoolRelation.end = year + '-12-31';
     schoolRelation.schoolClass = String(schoolClass);
     schoolRelation.schoolId = school.getId();
+    schoolRelation.result = faker.random.number(100);
     return schoolRelation;
   }
 

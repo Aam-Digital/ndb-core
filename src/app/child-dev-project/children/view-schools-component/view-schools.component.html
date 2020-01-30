@@ -7,6 +7,19 @@
     <td mat-cell *matCellDef='let viewableSchool'>{{viewableSchool.getSchoolName()}}</td>
   </ng-container>
 
+  <ng-container matColumnDef='class'>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Class</th>
+    <td mat-cell *matCellDef='let viewableSchool'>{{viewableSchool.getClass()}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef='results'>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Results</th>
+    <td mat-cell *matCellDef="let viewableSchool">
+      <div *ngIf="viewableSchool.getResult()" [ngStyle]="{'color': fromPercent(viewableSchool.getResult())}">{{viewableSchool.getResult()}}%</div>
+      <div *ngIf="!viewableSchool.getResult()" class="nan-color">N/A</div>
+    </td>
+  </ng-container>
+
   <ng-container matColumnDef='startTime'>
     <th mat-header-cell *matHeaderCellDef mat-sort-header>From</th>
     <td mat-cell *matCellDef='let viewableSchool'>{{viewableSchool.getStartTime()}}</td>
