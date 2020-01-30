@@ -28,6 +28,7 @@ export class NoteModel extends Entity {
 
   // The values that 'Type of interaction' can have in the UI / The values that category can have here
   static INTERACTION_TYPES = Object.values(InteractionTypes);
+  // maps all interaction types that are displayed with a specific color in several components
   private static interactionsColorMap: Map<InteractionTypes, string> = new Map([
     [InteractionTypes.GUARDIAN_MEETING, '#E1F5FE'],
     [InteractionTypes.CHILDREN_MEETING, '#E1F5FE'],
@@ -39,7 +40,6 @@ export class NoteModel extends Entity {
 
   // An array of triplets containing information about the child and it's attendance
   @DatabaseField({dataType: 'attendancemodel'}) children: AttendanceModel[] = [];
-  // @DatabaseField() children: AttendanceModel[] = [];
   @DatabaseField() date: Date;
   @DatabaseField() subject: string = '';
   @DatabaseField() text: string = '';

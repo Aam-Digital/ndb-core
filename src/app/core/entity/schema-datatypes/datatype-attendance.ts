@@ -17,5 +17,6 @@ export const attendanceEntitySchemaDatatype: EntitySchemaDatatype = {
     if (value instanceof Array) {
       return value.map(v => typeof v === 'string' ? new AttendanceModel(v) : v );
     }
+    return [];
   },
 };
