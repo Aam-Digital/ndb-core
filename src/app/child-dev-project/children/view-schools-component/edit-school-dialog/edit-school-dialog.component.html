@@ -4,29 +4,29 @@
   <mat-label>
     School
   </mat-label>
-  <mat-select [(value)]='selectedSchool'>
-    <mat-option *ngFor='let school of schools' [value]='school' >{{school.name}}</mat-option>
+  <mat-select [(value)]='selectedSchool' (selectionChange)="dirty=true">
+    <mat-option *ngFor='let school of schools' [value]='school'>{{school.name}}</mat-option>
   </mat-select>
 </mat-form-field>
 
 <mat-form-field>
-  <input matInput [(ngModel)]='childSchoolRelation.schoolClass' placeholder='Class' title='class' type='text'>
+  <input matInput [(ngModel)]='childSchoolRelation.schoolClass' (ngModelChange)="dirty=true" placeholder='Class' title='class' type='text'>
 </mat-form-field>
 
 <mat-form-field>
-  <input matInput [(ngModel)]='childSchoolRelation.start' placeholder='Started on' title='start' type='date'>
+  <input matInput [(ngModel)]='childSchoolRelation.start' (ngModelChange)="dirty=true" placeholder='Started on' title='start' type='date'>
 </mat-form-field>
 
 <mat-form-field>
-  <input matInput [(ngModel)]='childSchoolRelation.end' placeholder='Finished on' title='end' type='date'>
+  <input matInput [(ngModel)]='childSchoolRelation.end' (ngModelChange)="dirty=true" placeholder='Finished on' title='end' type='date'>
 </mat-form-field>
 
 <mat-form-field>
-  <input matInput [(ngModel)]='childSchoolRelation.result' placeholder='Result' title='result' type='number'>
+  <input matInput [(ngModel)]='childSchoolRelation.result' (ngModelChange)="dirty=true" placeholder='Result' title='result' type='number'>
 </mat-form-field>
 
 <div>
-  <button [disabled]='selectedSchool == null' mat-stroked-button class='edit-button' (click)='editSchoolClick()'>{{creating ? 'Add School' : 'Edit'}}</button>
+  <button [disabled]='!dirty || childSchoolRelation === null' mat-stroked-button class='edit-button' (click)='editSchoolClick()'>{{creating ? 'Add School' : 'Edit'}}</button>
   <button *ngIf='!creating' mat-stroked-button class='edit-button' style='color:red' (click)='removeSchoolClick()'>Delete</button>
 </div>
 

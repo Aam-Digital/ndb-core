@@ -5,6 +5,7 @@ import * as uniqid from 'uniqid';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Child } from '../../model/child';
 import { School } from '../../../schools/model/school';
+import { ConfirmationDialogService } from '../../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
 
 @Component({
   selector: 'app-add-school-dialog',
@@ -14,6 +15,7 @@ import { School } from '../../../schools/model/school';
 export class EditSchoolDialogComponent implements OnInit {
 
   creating = false;
+  dirty = false;
   public schools: School[];
   public selectedSchool: School;
   public child: Child;
@@ -22,7 +24,20 @@ export class EditSchoolDialogComponent implements OnInit {
   constructor(private entityMapperService: EntityMapperService,
               public dialogRef: MatDialogRef<EditSchoolDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data,
-  ) { }
+              private confirmationDialog: ConfirmationDialogService) {
+    this.dialogRef.beforeClosed().subscribe((returnedEntity) => {
+      if (!returnedEntity && this.dirty) {
+        this.confirmationDialog.openDialog('Save Changes?', 'Do you want to save the changes you made to the record?')
+          .afterClosed().subscribe(confirmed => {
+            if (confirmed) {
+              this.editSchoolClick();
+            } else {
+              this.dialogRef.close();
+            }
+        });
+      }
+    });
+  }
 
   ngOnInit() {
     this.child = this.data.child;
