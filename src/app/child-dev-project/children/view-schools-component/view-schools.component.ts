@@ -21,7 +21,7 @@ export class ViewSchoolsComponent implements OnInit, OnChanges {
   private sort: MatSort;
   schoolsDataSource: MatTableDataSource<SchoolWithRelation> = new MatTableDataSource();
   schoolsWithRelations: SchoolWithRelation[] = [];
-  displayedColumns: string[] = ['schoolName', 'startTime', 'endTime', 'class', 'results'];
+  displayedColumns: string[] = ['schoolName', 'class', 'startTime', 'endTime', 'results'];
 
   @ViewChild(MatSort, { static: false }) set matSort(ms: MatSort) {    // Needed to set the mat sort later than ngAfterViewInit
     this.sort = ms;

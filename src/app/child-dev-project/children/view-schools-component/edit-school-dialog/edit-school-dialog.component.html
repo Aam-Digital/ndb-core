@@ -20,6 +20,11 @@
 <mat-form-field>
   <input matInput [(ngModel)]='childSchoolRelation.end' placeholder='Finished on' title='end' type='date'>
 </mat-form-field>
+
+<mat-form-field>
+  <input matInput [(ngModel)]='childSchoolRelation.result' placeholder='Result' title='result' type='number'>
+</mat-form-field>
+
 <div>
   <button [disabled]='selectedSchool == null' mat-stroked-button class='edit-button' (click)='editSchoolClick()'>{{creating ? 'Add School' : 'Edit'}}</button>
   <button *ngIf='!creating' mat-stroked-button class='edit-button' style='color:red' (click)='removeSchoolClick()'>Delete</button>

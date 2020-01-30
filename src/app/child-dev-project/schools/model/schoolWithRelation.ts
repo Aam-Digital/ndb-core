@@ -33,6 +33,6 @@ export class SchoolWithRelation {
     return this._childSchoolRelation.schoolClass;
   }
   getResult(): number {
-    return this._childSchoolRelation.result ? this._childSchoolRelation.result : Number.NaN;
+    return this._childSchoolRelation.result;
   }
 }
