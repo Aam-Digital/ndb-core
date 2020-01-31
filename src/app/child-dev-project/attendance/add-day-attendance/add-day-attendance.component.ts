@@ -86,7 +86,7 @@ export class AddDayAttendanceComponent implements OnInit {
       let attMonth: AttendanceMonth = monthsAttendances.find(a => a.student === child.getId() && a.institution === this.attendanceType);
       if (attMonth === undefined) {
         attMonth = AttendanceMonth.createAttendanceMonth(child.getId(), this.attendanceType);
-        attMonth.month = this.day;
+        attMonth.month = new Date(this.day.getTime());
       }
 
       const attDay = attMonth.dailyRegister.find(d => d.date.getDate() === this.day.getDate()
