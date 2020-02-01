@@ -114,6 +114,26 @@ describe('EntitySchemaService', () => {
     expect(rawData.month).toEqual('2018-2');
   });
 
+  it('schema:date-only converts between YYYY-MM-dd and Date objects', function () {
+    class TestEntity extends Entity {
+      @DatabaseField({dataType: 'date-only'}) day: Date;
+    }
+    const id = 'test1';
+    const entity = new TestEntity(id);
+
+    const data = {
+      _id: 'test2',
+      day: '2018-01-15',
+    };
+    entitySchemaService.loadDataIntoEntity(entity, data);
+
+    const expectedDate = new Date('2018-01-15');
+    expect(entity.day).toEqual(expectedDate);
+
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
+    expect(rawData.day).toBe('2018-01-15');
+  });
+
 
 
   it('schema:array converts contained dates to month for saving', function () {
