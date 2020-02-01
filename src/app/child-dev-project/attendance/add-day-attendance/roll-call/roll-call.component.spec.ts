@@ -50,7 +50,9 @@ describe('RollCallComponent', () => {
       new Child('2'),
     ];
     const testAttendanceType = 'coaching';
+
     const testDate = new Date('2020-01-05');
+    testDate.setHours(0); // reset hours to avoid mismatch with AttendanceMonth dates constructed as utc
 
     const testAttendances = [
       new AttendanceMonth('a1'),
@@ -92,6 +94,7 @@ describe('RollCallComponent', () => {
       new Child('1'),
     ];
     const testAttendanceType = 'coaching';
+
     const testDate = new Date('2020-01-05');
 
     const testAttendances = [];
