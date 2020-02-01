@@ -211,4 +211,22 @@ describe('AttendanceMonth', () => {
     entitySchemaService.loadDataIntoEntity(entity, data);
     expect(entity.month).toEqual(new Date(data.month));
   });
+
+
+  it('creates correct instance using static createAttendanceMonth', () => {
+    const testInstitution = 'coaching';
+    const testChildId = 'childId1';
+    const now = new Date();
+
+    const actualInstance = AttendanceMonth.createAttendanceMonth(testChildId, testInstitution);
+
+    expect(actualInstance.student).toBe(testChildId);
+    expect(actualInstance.institution).toBe(testInstitution);
+    expect(actualInstance.month.getFullYear()).toBe(now.getFullYear());
+    expect(actualInstance.month.getMonth()).toBe(now.getMonth());
+
+    expect(actualInstance.getId()).toContain(testChildId);
+    expect(actualInstance.getId()).toContain(testInstitution);
+    expect(actualInstance.getId()).toContain(now.getFullYear() + '-' + (now.getMonth() + 1));
+  });
 });

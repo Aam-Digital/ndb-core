@@ -28,9 +28,9 @@ export class AttendanceMonth extends Entity {
 
 
   public static createAttendanceMonth(childId: string, institution: string) {
-    // TODO: logical way to assign entityId to Attendance?
-    const newAtt = new AttendanceMonth(childId + '_' + Date.now().toString() + institution);
-    newAtt.month = new Date();
+    const month = new Date();
+    const newAtt = new AttendanceMonth(childId + '_' + month.getFullYear() + '-' + (month.getMonth() + 1) + '_' + institution);
+    newAtt.month = month;
     newAtt.student = childId;
     newAtt.institution = institution;
     return newAtt;
