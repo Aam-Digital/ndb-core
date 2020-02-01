@@ -39,7 +39,7 @@ export class RollCallComponent implements OnInit {
   /**
    * The children for whom attendance will be recorded
    */
-  @Input() students: Child[];
+  @Input() students: Child[] = [];
 
   /**
    * Event emitted when the roll call is finished (or aborted).

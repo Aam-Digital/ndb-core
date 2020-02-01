@@ -19,6 +19,7 @@ describe('RollCallComponent', () => {
   beforeEach(async(() => {
     mockEntityMapper = jasmine.createSpyObj(['save']);
     mockChildrenService = jasmine.createSpyObj(['getAttendancesOfMonth']);
+    mockChildrenService.getAttendancesOfMonth.and.returnValue(of([]));
 
     TestBed.configureTestingModule({
       imports: [
