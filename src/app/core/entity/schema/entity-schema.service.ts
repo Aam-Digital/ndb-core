@@ -26,6 +26,8 @@ import { stringEntitySchemaDatatype } from '../schema-datatypes/datatype-string'
 import { numberEntitySchemaDatatype } from '../schema-datatypes/datatype-number';
 import { dateEntitySchemaDatatype } from '../schema-datatypes/datatype-date';
 import { monthEntitySchemaDatatype } from '../schema-datatypes/datatype-month';
+import { arrayEntitySchemaDatatype } from '../schema-datatypes/datatype-array';
+import { schemaEmbedEntitySchemaDatatype } from '../schema-datatypes/datatype-schema-embed';
 
 
 /**
@@ -49,6 +51,8 @@ export class EntitySchemaService {
     this.registerSchemaDatatype(numberEntitySchemaDatatype);
     this.registerSchemaDatatype(dateEntitySchemaDatatype);
     this.registerSchemaDatatype(monthEntitySchemaDatatype);
+    this.registerSchemaDatatype(arrayEntitySchemaDatatype);
+    this.registerSchemaDatatype(schemaEmbedEntitySchemaDatatype);
   }
 
 
@@ -62,7 +66,7 @@ export class EntitySchemaService {
   }
 
   public getDatatypeOrDefault(datatypeName: string) {
-    datatypeName = datatypeName.toLowerCase();
+    datatypeName = datatypeName ? datatypeName.toLowerCase() : undefined;
 
     if (this.schemaTypes.has(datatypeName)) {
       return this.schemaTypes.get(datatypeName);
@@ -76,7 +80,8 @@ export class EntitySchemaService {
     for (const key of schema.keys()) {
       const schemaField: EntitySchemaField = schema.get(key);
       if (data[key] !== undefined) {
-        data[key] = this.getDatatypeOrDefault(schemaField.dataType).transformToObjectFormat(data[key]);
+        data[key] = this.getDatatypeOrDefault(schemaField.dataType)
+          .transformToObjectFormat(data[key], schemaField, this);
       }
 
       if (schemaField.generateIndex) {
@@ -93,18 +98,25 @@ export class EntitySchemaService {
   }
 
 
-  public transformEntityToDatabaseFormat(entity: Entity): any {
+  public transformEntityToDatabaseFormat(entity: Entity, schema?: EntitySchema): any {
+    if (!schema) {
+      schema = entity.getConstructor().schema;
+    }
+
     const data = {};
 
-    for (const key of entity.getConstructor().schema.keys()) {
-      const schemaField: EntitySchemaField = entity.getConstructor().schema.get(key);
+    for (const key of schema.keys()) {
+      const schemaField: EntitySchemaField = schema.get(key);
 
       if (entity[key] !== undefined) {
-        data[key] = this.getDatatypeOrDefault(schemaField.dataType).transformToDatabaseFormat(entity[key]);
+        data[key] = this.getDatatypeOrDefault(schemaField.dataType)
+          .transformToDatabaseFormat(entity[key], schemaField, this);
       }
     }
 
-    data['searchIndices'] = entity.generateSearchIndices();
+    if (entity.generateSearchIndices) {
+      data['searchIndices'] = entity.generateSearchIndices();
+    }
 
     return data;
   }

@@ -108,9 +108,68 @@ describe('EntitySchemaService', () => {
     entitySchemaService.loadDataIntoEntity(entity, data);
 
     const expectedDate = new Date(2018, 1); // month indices start at 0!
-    expect(entity.month.toDateString()).toEqual(expectedDate.toDateString());
+    expect(entity.month).toEqual(expectedDate);
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
     expect(rawData.month).toEqual('2018-2');
+  });
+
+
+
+  it('schema:array converts contained dates to month for saving', function () {
+    class TestEntity extends Entity {
+      @DatabaseField({ arrayDataType: 'month' }) dateArr: Date[];
+    }
+    const id = 'test1';
+    const entity = new TestEntity(id);
+    entity.dateArr = [ new Date('2020-01-01'), new Date('2020-02-02') ];
+
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
+
+    expect(rawData.dateArr).toEqual(['2020-1', '2020-2']);
+  });
+
+  it('schema:array converts contained month strings to dates when loading', function () {
+    class TestEntity extends Entity {
+      @DatabaseField({ arrayDataType: 'month' }) dateArr: Date[];
+    }
+    const id = 'test1';
+    const entity = new TestEntity(id);
+
+    const data = {
+      _id: 'test2',
+      dateArr: [ '2020-1', '2020-2' ],
+    };
+    entitySchemaService.loadDataIntoEntity(entity, data);
+
+    expect(entity.dateArr).toEqual([new Date(2020, 0), new Date(2020, 1)]);
+  });
+
+
+  it('schema:schema-embed converts contained object with contained schema annotation', function () {
+    class Detail {
+      @DatabaseField({ dataType: 'month' }) month: Date;
+      otherStuff: string;
+    }
+    class TestEntity extends Entity {
+      @DatabaseField({ dataType: 'schema-embed', ext: Detail }) details: Detail;
+    }
+    const id = 'test1';
+    const entity = new TestEntity(id);
+
+    const data = {
+      _id: 'test2',
+      details: { month: '2020-1' },
+    };
+
+
+    entitySchemaService.loadDataIntoEntity(entity, data);
+    expect(entity.details.month).toEqual(new Date(2020, 0));
+
+
+    entity.details.otherStuff = 'foo';
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
+    expect(rawData.details.month).toEqual('2020-1');
+    expect(rawData.details.otherStuff).toBeUndefined();
   });
 });
