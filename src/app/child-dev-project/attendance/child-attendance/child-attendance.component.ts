@@ -25,7 +25,7 @@ export class ChildAttendanceComponent implements OnInit {
     new ColumnDescription('month', 'Month', ColumnDescriptionInputType.MONTH, null,
       (v: Date) => this.datePipe.transform(v, 'yyyy-MM'), 'xs'),
     new ColumnDescription('daysAttended', 'Present', ColumnDescriptionInputType.NUMBER, null, undefined,  'xs'),
-    new ColumnDescription('daysWorking', 'Working Days', ColumnDescriptionInputType.NUMBER,  null, undefined, 'xs'),
+    new ColumnDescription('daysWorking', 'Working Days', ColumnDescriptionInputType.NUMBER, null, undefined, 'xs'),
     new ColumnDescription('getAttendancePercentage', 'Attended', ColumnDescriptionInputType.FUNCTION, null,
       (v: number) => this.percentPipe.transform(v, '1.0-0'), 'md'),
     new ColumnDescription('daysExcused', 'Excused', ColumnDescriptionInputType.NUMBER, null, undefined, 'md'),

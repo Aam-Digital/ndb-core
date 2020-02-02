@@ -18,6 +18,7 @@ import { Database } from '../../../core/database/database';
 import { MockDatabase } from '../../../core/database/mock-database';
 import { AttendanceMonth } from '../model/attendance-month';
 import { AttendanceStatus } from '../model/attendance-day';
+import { AlertService } from 'app/core/alerts/alert.service';
 
 
 const ATTENDANCE_ENTITIES: AttendanceMonth[] = (() => {
@@ -177,6 +178,7 @@ describe('ChildAttendanceComponent', () => {
         { provide: ChildrenService, useValue: mockChildrenService },
         EntityMapperService,
         EntitySchemaService,
+        AlertService,
         { provide: Database, useClass: MockDatabase },
       ],
     })
