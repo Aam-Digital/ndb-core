@@ -1,0 +1,39 @@
+
+.group-select-option {
+  width: 100%;
+  padding: 16px;
+  cursor: pointer;
+  box-sizing: border-box;
+  border: 1px solid;
+  border-top: 0;
+}
+
+.group-select-option:first-child {
+  border-top: 1px solid;
+}
+
+.options-wrapper {
+  margin-top: 16px;
+}
+
+.hidden {
+  display: none;
+}
+
+.nav-button {
+  margin: 10px;
+  flex: none;
+}
+
+.roll-call-complete {
+  text-align: center;
+  line-height: 2em;
+
+  padding: 20px 0;
+
+  background-color: #C8E6C9;
+  border-radius: 5px;
+}
+.roll-call-complete-icon {
+  font-size: 40px;
+}
