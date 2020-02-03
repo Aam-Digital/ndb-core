@@ -18,40 +18,47 @@
 
 export class FilterSelection<T> {
 
-  public selectedOption = '';
+    public selectedOption = '';
 
-  constructor (public name: string,
-               public options: { key: string, label: string, filterFun: (c: T) => boolean}[] ) {
+    constructor(public name: string,
+                public options: FilterSelectionOption<T>[]) {
 
-  }
-
-  defaultFilterFunction = (c: T) => true;
-
-  getOption(key: string) {
-    return this.options.find((option) => option.key === key);
-  }
-
-  public getFilterFunction(key: string) {
-    const option = this.getOption(key);
-
-    if (!option) {
-      return this.defaultFilterFunction;
-    } else {
-      return option.filterFun;
     }
-  }
 
-  public getSelectedFilterFunction() {
-    return this.getFilterFunction(this.selectedOption);
-  }
+    defaultFilterFunction = (c: T) => true;
 
-  public initOptions(keys: any[], attributeName: string) {
-    const options = [{key: '', label: 'All', filterFun: (e: T) => true}];
+    getOption(key: string) {
+        return this.options.find((option) => option.key === key);
+    }
 
-    keys.forEach(k => {
-      options.push({key: k.toLowerCase(), label: k.toString(), filterFun: (e: T) => e[attributeName] === k});
-    });
+    public getFilterFunction(key: string) {
+        const option = this.getOption(key);
 
-    this.options = options;
-  }
+        if (!option) {
+            return this.defaultFilterFunction;
+        } else {
+            return option.filterFun;
+        }
+    }
+
+    public getSelectedFilterFunction() {
+        return this.getFilterFunction(this.selectedOption);
+    }
+
+    public initOptions(keys: any[], attributeName: string) {
+        const options = [{key: '', label: 'All', filterFun: (e: T) => true}];
+
+        keys.forEach(k => {
+            options.push({key: k.toLowerCase(), label: k.toString(), filterFun: (e: T) => e[attributeName] === k});
+        });
+
+        this.options = options;
+    }
+}
+
+
+export interface FilterSelectionOption<T> {
+    key: string;
+    label: string;
+    filterFun: (c: T) => boolean;
 }

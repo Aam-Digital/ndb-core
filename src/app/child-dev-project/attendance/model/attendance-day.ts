@@ -16,6 +16,8 @@
  */
 
 
+import { DatabaseField } from '../../../core/entity/database-field.decorator';
+
 export enum AttendanceStatus {
   UNKNOWN = '?',
   HOLIDAY = 'H',
@@ -27,9 +29,9 @@ export enum AttendanceStatus {
 
 
 export class AttendanceDay {
-  date: Date;
-  status: AttendanceStatus;
-  remarks = '';
+  @DatabaseField({ dataType: 'date-only' }) date: Date;
+  @DatabaseField() status: AttendanceStatus;
+  @DatabaseField() remarks: string = '';
 
   constructor (date: Date, status: AttendanceStatus = AttendanceStatus.UNKNOWN) {
     this.date = date;

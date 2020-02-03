@@ -34,4 +34,9 @@ export interface EntitySchemaField {
    * Set to true to make the framework automatically create an index to retrieve/filter Entities quickly based on this field
    */
   generateIndex?: boolean; // TODO: implement index support in EntitySchema
+
+  /**
+   * (Optional) Assign any custom configuration you need for a specific datatype extension.
+   */
+  ext?: any;
 }
