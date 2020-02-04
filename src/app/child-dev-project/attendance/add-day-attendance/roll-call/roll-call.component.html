@@ -1,0 +1,76 @@
+<div *ngIf='isLoading'>
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <div>Loading attendance list ...</div>
+</div>
+
+<div *ngIf='!isLoading'>
+
+  <!-- Individual Student's Page -->
+  <div *ngFor='let entry of rollCallList; let i = index' [ngClass]='{"hidden": (currentIndex!==i)}'>
+    <app-child-block [entity]='entry.child'></app-child-block>
+
+    <div fxLayout='column' fxLayoutAlign='space-between stretch' class='options-wrapper'>
+      <div class='group-select-option'
+           (click)='markAttendance(AttStatus.PRESENT)'
+           [ngClass]="{'attendance-P': entry.attendanceDay.status===AttStatus.PRESENT}">
+        <span class='fa fa-check' *ngIf='entry.attendanceDay.status===AttStatus.PRESENT'></span>
+        Present
+      </div>
+      <div class='group-select-option'
+           (click)='markAttendance(AttStatus.ABSENT)'
+           [ngClass]="{'attendance-A': entry.attendanceDay.status===AttStatus.ABSENT}">
+        <span class='fa fa-check' *ngIf='entry.attendanceDay.status===AttStatus.ABSENT'></span>
+        Absent
+      </div>
+      <div class='group-select-option'
+           (click)='markAttendance(AttStatus.LATE)'
+           [ngClass]="{'attendance-L': entry.attendanceDay.status===AttStatus.LATE}">
+        <span class='fa fa-check' *ngIf='entry.attendanceDay.status===AttStatus.LATE'></span>
+        Late
+      </div>
+      <div class='group-select-option'
+           (click)='markAttendance(AttStatus.HOLIDAY)'
+           [ngClass]="{'attendance-H': entry.attendanceDay.status===AttStatus.HOLIDAY}">
+        <span class='fa fa-check' *ngIf='entry.attendanceDay.status===AttStatus.HOLIDAY'></span>
+        Holiday
+      </div>
+      <div class='group-select-option'
+           (click)='markAttendance(AttStatus.EXCUSED)'
+           [ngClass]="{'attendance-E': entry.attendanceDay.status===AttStatus.EXCUSED}">
+        <span class='fa fa-check' *ngIf='entry.attendanceDay.status===AttStatus.EXCUSED'></span>
+        Excused
+      </div>
+      <div class='group-select-option'
+           (click)='markAttendance(AttStatus.UNKNOWN)'
+           [ngClass]="{'attendance-U': entry.attendanceDay.status===AttStatus.UNKNOWN}">
+        Skip
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- Completion Page -->
+  <div *ngIf='isFinished()' class='roll-call-complete' [@completeRollCall]>
+    <span class='fa fa-check-circle-o roll-call-complete-icon'></span><br>
+    Roll call completed.
+  </div>
+
+
+  <!-- Control Buttons -->
+  <div>
+    <button mat-stroked-button [disabled]='currentIndex < 1' (click)='currentIndex = currentIndex - 1'
+            class='nav-button' fxFlex>
+      Back
+    </button>
+
+    <button mat-stroked-button *ngIf='!isFinished()' (click)='endRollCall()' class='nav-button' fxFlex>
+      Abort
+    </button>
+
+    <button mat-stroked-button *ngIf='isFinished()' (click)='endRollCall()' class='nav-button' fxFlex>
+      <b>Finish</b>
+    </button>
+  </div>
+
+</div>

@@ -17,7 +17,6 @@
 
 import { AttendanceMonth, daysInMonth } from './attendance-month';
 import { WarningLevel } from '../../warning-level';
-import { AttendanceDay } from './attendance-day';
 import { async } from '@angular/core/testing';
 import { Entity } from '../../../core/entity/entity';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
@@ -77,7 +76,8 @@ describe('AttendanceMonth', () => {
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
-    expectedData.dailyRegister = entity.dailyRegister; // dailyRegister is auto-generated and expected in rawData also
+    expect(rawData.dailyRegister.length).toBe(31);
+    expectedData.dailyRegister = rawData.dailyRegister; // simplify the overall comparison by ignoring dailyRegister diff
     expect(rawData).toEqual(expectedData);
   });
 
@@ -213,20 +213,20 @@ describe('AttendanceMonth', () => {
   });
 
 
-  it('loads AttendanceDay.date values as Date objects', () => {
-    const month = new Date('2018-01-01');
-    const entity = new AttendanceMonth('');
-    entity.month = month;
+  it('creates correct instance using static createAttendanceMonth', () => {
+    const testInstitution = 'coaching';
+    const testChildId = 'childId1';
+    const now = new Date();
 
-    expect(entity.dailyRegister.length).toBeGreaterThan(0);
-    const data = entitySchemaService.transformEntityToDatabaseFormat(entity);
+    const actualInstance = AttendanceMonth.createAttendanceMonth(testChildId, testInstitution);
 
-    const entity2 = new AttendanceMonth('');
-    entitySchemaService.loadDataIntoEntity(entity2, data);
-    const day1 = entity2.dailyRegister[0];
+    expect(actualInstance.student).toBe(testChildId);
+    expect(actualInstance.institution).toBe(testInstitution);
+    expect(actualInstance.month.getFullYear()).toBe(now.getFullYear());
+    expect(actualInstance.month.getMonth()).toBe(now.getMonth());
 
-    expect(day1 instanceof AttendanceDay).toBeTruthy();
-    expect(day1.date instanceof Date).toBeTruthy();
+    expect(actualInstance.getId()).toContain(testChildId);
+    expect(actualInstance.getId()).toContain(testInstitution);
+    expect(actualInstance.getId()).toContain(now.getFullYear() + '-' + (now.getMonth() + 1));
   });
-
 });
