@@ -10,7 +10,7 @@ export abstract class AbstractDetailsComponent<T extends Entity> implements OnIn
   originalEntity: T;
   @ViewChild('recordForm', { static: true }) form;
 
-  protected constructor(@Inject(MAT_DIALOG_DATA) data: any,
+  protected constructor(@Inject(MAT_DIALOG_DATA) protected data: any,
                         protected dialogRef: MatDialogRef<AbstractDetailsComponent<T>>,
                         protected confirmationDialog: ConfirmationDialogService,
                         protected entityMapper: EntityMapperService) {

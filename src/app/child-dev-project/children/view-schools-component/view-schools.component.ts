@@ -8,6 +8,8 @@ import { Child } from '../model/child';
 import { LoggingService } from '../../../core/logging/logging.service';
 import { ChildrenService } from '../children.service';
 import { SchoolWithRelation } from '../../schools/model/schoolWithRelation';
+import { ChildSchoolRelation } from '../model/childSchoolRelation';
+import * as uniqueId from 'uniqid';
 
 @Component({
   selector: 'app-view-schools-component',
@@ -77,7 +79,7 @@ export class ViewSchoolsComponent implements OnInit, OnChanges {
 
   schoolClicked(viewableSchool: SchoolWithRelation) {
     const data = {
-          childSchoolRelation: viewableSchool.childSchoolRelation,
+          entity: viewableSchool.childSchoolRelation,
           child: this.child,
     };
     this.showEditSchoolDialog(data);
@@ -85,12 +87,15 @@ export class ViewSchoolsComponent implements OnInit, OnChanges {
 
 
   addSchoolClick() {
-    this.showEditSchoolDialog({child: this.child});
+    this.showEditSchoolDialog({
+      entity: new ChildSchoolRelation(uniqueId()),
+      child: this.child,
+      creating: true,
+    });
   }
 
   private showEditSchoolDialog(data) {
-    const dialog = this.dialog.open(EditSchoolDialogComponent, {data: data});
-    dialog.afterClosed().subscribe(res => res ? this.loadSchoolEntries() : null);
+    this.dialog.open(EditSchoolDialogComponent, {data: data});
   }
 
   /**

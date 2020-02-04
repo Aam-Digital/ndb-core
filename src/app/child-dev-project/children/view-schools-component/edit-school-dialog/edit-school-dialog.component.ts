@@ -1,78 +1,44 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { EntityMapperService } from '../../../../core/entity/entity-mapper.service';
 import { ChildSchoolRelation } from '../../model/childSchoolRelation';
-import * as uniqid from 'uniqid';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Child } from '../../model/child';
-import { School } from '../../../schools/model/school';
 import { ConfirmationDialogService } from '../../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { AbstractDetailsComponent } from '../../../../core/ui-helper/AbstractDetailsComponent';
+import { School } from '../../../schools/model/school';
+import { Child } from '../../model/child';
 
 @Component({
   selector: 'app-add-school-dialog',
   templateUrl: './edit-school-dialog.component.html',
   styleUrls: ['./edit-school-dialog.component.scss'],
 })
-export class EditSchoolDialogComponent implements OnInit {
+export class EditSchoolDialogComponent extends AbstractDetailsComponent<ChildSchoolRelation> implements OnInit {
 
-  creating = false;
-  dirty = false;
-  public schools: School[];
-  public selectedSchool: School;
-  public child: Child;
-  public childSchoolRelation: ChildSchoolRelation = new ChildSchoolRelation(uniqid());
+  private selectedSchool: School;
+  private schools: School[];
+  private creating: boolean = true;
+  private child: Child;
 
-  constructor(private entityMapperService: EntityMapperService,
-              public dialogRef: MatDialogRef<EditSchoolDialogComponent>,
-              @Inject(MAT_DIALOG_DATA) public data,
-              private confirmationDialog: ConfirmationDialogService) {
-    this.dialogRef.beforeClosed().subscribe((returnedEntity) => {
-      if (!returnedEntity && this.dirty) {
-        this.confirmationDialog.openDialog('Save Changes?', 'Do you want to save the changes you made to the record?')
-          .afterClosed().subscribe(confirmed => {
-            if (confirmed) {
-              this.editSchoolClick();
-            } else {
-              this.dialogRef.close();
-            }
-        });
-      }
-    });
+  constructor(@Inject(MAT_DIALOG_DATA) data: any,
+              dialogRef: MatDialogRef<EditSchoolDialogComponent>,
+              confirmationDialogService: ConfirmationDialogService,
+              entityMapperService: EntityMapperService) {
+    super(data, dialogRef, confirmationDialogService, entityMapperService);
+  }
+
+  delete() {
+    this.entityMapper.remove<ChildSchoolRelation>(this.entity)
+      .then(() => this.dialogRef.close());
   }
 
   ngOnInit() {
+    if (!this.data.creating) { this.creating = false; }
     this.child = this.data.child;
-
-    if (this.data.childSchoolRelation) {
-      this.entityMapperService.load<ChildSchoolRelation>(ChildSchoolRelation, this.data.childSchoolRelation.getId())
-        .then((res: ChildSchoolRelation) => this.childSchoolRelation = res); // fetch a new one to not mutate the displayed object
-    } else {
-      this.creating = true;
-      this.childSchoolRelation.childId = this.child.getId();
-    }
-    this.entityMapperService.loadType<School>(School)
+    this.entityMapper.loadType<School>(School)
       .then((schools: School[]) => {
         this.schools = schools;
-        this.selectedSchool = this.schools.find(school => school.getId() === this.childSchoolRelation.schoolId);
+        this.selectedSchool = this.schools.find(school => school.getId() === this.entity.schoolId);
       });
   }
 
-  public editSchoolClick() {
-    this.childSchoolRelation.schoolId = this.selectedSchool.getId();
-    this.entityMapperService.save<ChildSchoolRelation>(this.childSchoolRelation)
-      .then(() => this.closeAfterEditing(this.creating ? 'CREATE' : 'EDIT'));
-  }
-
-  public removeSchoolClick() {
-    this.entityMapperService.remove<ChildSchoolRelation>(this.childSchoolRelation)
-      .then(() => this.closeAfterEditing('DELETE'));
-  }
-
-  closeAfterEditing(editType: string) {
-    this.dialogRef.close({
-      childSchoolRelation: this.childSchoolRelation,
-      school: this.selectedSchool,
-      type: editType,
-    });
-  }
 }
-
