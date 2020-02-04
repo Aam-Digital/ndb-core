@@ -39,8 +39,6 @@ describe('@DatabaseField Decorator', () => {
   });
 
   it('results in full schema', async () => {
-    const testClass = new TestClass('1');
-
     expect(TestClass.schema).toEqual(new Map([
       ['fieldUndefined', { dataType: 'string' }],
       ['fieldWithDefault', { dataType: 'string' }],
