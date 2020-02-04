@@ -17,43 +17,43 @@
 
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {APP_INITIALIZER, ErrorHandler, NgModule} from '@angular/core';
+import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule} from '@angular/common/http';
 import { MatomoModule } from 'ngx-matomo';
 
 import { AppComponent } from './app.component';
-import { UiModule } from './ui/ui.module';
-import { AppConfigModule } from './app-config/app-config.module';
+import { UiModule } from './core/ui/ui.module';
+import { AppConfigModule } from './core/app-config/app-config.module';
 import { routing } from './app.routing';
-import { AlertsModule } from './alerts/alerts.module';
-import { SessionModule } from './session/session.module';
-import { SyncStatusModule } from './sync-status/sync-status.module';
-import { NavigationModule } from './navigation/navigation.module';
-import { LatestChangesModule } from './latest-changes/latest-changes.module';
-import { UserModule } from './user/user.module';
+import { AlertsModule } from './core/alerts/alerts.module';
+import { SessionModule } from './core/session/session.module';
+import { SyncStatusModule } from './core/sync-status/sync-status.module';
+import { NavigationModule } from './core/navigation/navigation.module';
+import { LatestChangesModule } from './core/latest-changes/latest-changes.module';
+import { UserModule } from './core/user/user.module';
 
-import { DashboardModule } from './dashboard/dashboard.module';
-import { ChildrenModule } from './children/children.module';
-import { SchoolsModule } from './schools/schools.module';
-import { NavigationItemsService } from './navigation/navigation-items.service';
-import { MenuItem } from './navigation/menu-item';
-import {AppConfig} from './app-config/app-config';
-import {FlexLayoutModule} from '@angular/flex-layout';
-import {ServiceWorkerModule} from '@angular/service-worker';
-import {environment} from '../environments/environment';
+import { DashboardModule } from './child-dev-project/dashboard/dashboard.module';
+import { ChildrenModule } from './child-dev-project/children/children.module';
+import { SchoolsModule } from './child-dev-project/schools/schools.module';
+import { NavigationItemsService } from './core/navigation/navigation-items.service';
+import { MenuItem } from './core/navigation/menu-item';
+import { AppConfig } from './core/app-config/app-config';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
-import {AdminModule} from './admin/admin.module';
-import { EntityModule } from './entity/entity.module';
-import {CookieService} from 'ngx-cookie-service';
-import {HelpModule} from './help/help.module';
-import {DemoDataModule} from './demo-data/demo-data.module';
-import {MatNativeDateModule} from '@angular/material/core';
-import {LoggingErrorHandler} from './logging/logging-error-handler';
+import { AdminModule } from './core/admin/admin.module';
+import { EntityModule } from './core/entity/entity.module';
+import { CookieService } from 'ngx-cookie-service';
+import { HelpModule } from './core/help/help.module';
+import { DemoDataModule } from './core/demo-data/demo-data.module';
+import { MatNativeDateModule } from '@angular/material/core';
+import { LoggingErrorHandler } from './core/logging/logging-error-handler';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
@@ -89,7 +89,7 @@ import {LoggingErrorHandler} from './logging/logging-error-handler';
     MatIconRegistry,
     CookieService,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {
   constructor(private _navigationItemsService: NavigationItemsService,
