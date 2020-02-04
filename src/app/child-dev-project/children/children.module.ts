@@ -67,6 +67,8 @@ import { AttendanceManagerComponent } from '../attendance/attendance-manager/att
 import { HealthCheckupComponent } from '../health-checkup/health-checkup-component/health-checkup.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { PreviousSchoolsComponent } from '../previous-schools/previous-schools.component';
+import { SelectGroupChildrenComponent } from './select-group-children/select-group-children.component';
+import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/roll-call.component';
 
 
 @NgModule({
@@ -122,6 +124,8 @@ import { PreviousSchoolsComponent } from '../previous-schools/previous-schools.c
     AttendanceDaysComponent,
     AttendanceDetailsComponent,
     AddDayAttendanceComponent,
+    RollCallComponent,
+    SelectGroupChildrenComponent,
     AttendanceWeekDashboardComponent,
     AttendanceManagerComponent,
     HealthCheckupComponent,
