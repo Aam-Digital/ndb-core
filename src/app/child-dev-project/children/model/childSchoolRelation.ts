@@ -10,4 +10,5 @@ export class ChildSchoolRelation extends Entity {
   @DatabaseField() schoolClass: string;
   @DatabaseField() start: Date;
   @DatabaseField() end: Date;
+  @DatabaseField() result: Number;
 }

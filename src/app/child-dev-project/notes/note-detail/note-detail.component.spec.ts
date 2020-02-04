@@ -54,7 +54,7 @@ describe('NoteDetailComponent', () => {
   let component: NoteDetailComponent;
   let fixture: ComponentFixture<NoteDetailComponent>;
 
-  beforeEach( () => {
+  beforeEach(async() => {
     TestBed.configureTestingModule({
       declarations: [],
       imports: [
@@ -76,7 +76,7 @@ describe('NoteDetailComponent', () => {
     fixture = TestBed.createComponent(NoteDetailComponent);
     component = fixture.componentInstance;
     const entityMapperService = fixture.debugElement.injector.get(EntityMapperService);
-    entityMapperService.save<NoteModel>(testData.entity);
+    await entityMapperService.save<NoteModel>(testData.entity);
     children.forEach(child => entityMapperService.save<Child>(child));
     fixture.detectChanges();
   });
