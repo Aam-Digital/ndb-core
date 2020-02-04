@@ -17,14 +17,15 @@
 
 import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
 
-export const monthEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: 'month',
+/**
+ * Converter to serialize a Date object to a simple date string (YYYY-MM-dd) discarding the time.
+ * Use through the EntitySchema system by annotating a property with `@DatabaseField({ dataType: 'date-only' })`
+ */
+export const dateOnlyEntitySchemaDatatype: EntitySchemaDatatype = {
+  name: 'date-only',
 
-  transformToDatabaseFormat: (value) => {
-    if (!(value instanceof Date)) {
-      value = new Date(value);
-    }
-    return (value.getFullYear().toString() + '-' + (value.getMonth() + 1).toString());
+  transformToDatabaseFormat: (value: Date) => {
+    return dateObjectToSimpleDateString(value);
   },
 
   transformToObjectFormat: (value) => {
@@ -34,10 +35,13 @@ export const monthEntitySchemaDatatype: EntitySchemaDatatype = {
     } else {
       date = new Date(value);
       if (isNaN(date.getTime())) {
-        console.log('value aus datatype-month.ts: ' + value);
         throw new Error('failed to convert data to Date object: ' + value);
       }
     }
     return date;
   },
 };
+
+function dateObjectToSimpleDateString(value: Date) {
+  return value.getFullYear() + '-' + (value.getMonth() + 1).toString().padStart(2, '0') + '-' + value.getDate().toString().padStart(2, '0');
+}

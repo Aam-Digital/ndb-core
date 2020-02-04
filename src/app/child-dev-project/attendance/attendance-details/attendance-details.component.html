@@ -41,8 +41,8 @@
     </div>
 
     <div class="w-{{entity.getWarningLevel()}}">
-      <div class='summary'>Attendance: {{entity.getAttendancePercentage() | percent:'1.0-0'}}</div>
-      <div class='summary'>Late: {{entity.daysLate / entity.daysWorking | percent:'1.0-0'}}</div>
+      <div class='summary'>Attendance: {{entity?.getAttendancePercentage() | percent:'1.0-0'}}</div>
+      <div class='summary'>Late: {{entity?.daysLate / entity?.daysWorking | percent:'1.0-0'}}</div>
     </div>
 
     <div fxLayout='row wrap' fxLayoutGap='20px' class="w-{{entity.getWarningLevel()}}">

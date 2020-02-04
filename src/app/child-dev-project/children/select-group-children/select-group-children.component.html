@@ -1,0 +1,23 @@
+<div fxLayout='column'>
+  <div>
+    <mat-form-field fxFlex>
+      <mat-label>
+        Select a center
+      </mat-label>
+      <mat-select (valueChange)='loadStudentGroupFilterForCenter($event)'>
+        <mat-option *ngFor="let c of centers" [value]='c'>
+          {{c}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div>
+    <div *ngFor="let group of studentGroupFilters.options" class='group-select-option' (click)='updateSelectedChildren(group)'>
+      <span style='text-align: right' class='fa fa-chevron-right'></span>&nbsp;
+      <span *ngIf='!group.type'>{{group.label}}</span>
+      <app-school-block *ngIf="group.type==='school'" [entityId]='group.label' [linkDisabled]='true'></app-school-block>
+    </div>
+  </div>
+
+</div>

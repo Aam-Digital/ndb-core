@@ -57,6 +57,10 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
 
       offset++;
     }
+    if (Math.random() < 0.8) {
+      // 80% of the latest records for each child don't have an end date, which means the child currently attends this school.
+      (data[data.length - 1] as ChildSchoolRelation).end = null;
+    }
 
     this.setChildSchoolAndClassForLegacyUse(child, data[data.length - 1]);
 
@@ -66,8 +70,8 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
   private generateRecord(child: Child, year, schoolClass: number, school: School): ChildSchoolRelation {
     const schoolRelation = new ChildSchoolRelation(faker.random.uuid());
     schoolRelation.childId = child.getId();
-    schoolRelation.start = year + '-01-01';
-    schoolRelation.end = year + '-12-31';
+    schoolRelation.start = new Date(year + '-01-01');
+    schoolRelation.end = new Date(year + '-12-31');
     schoolRelation.schoolClass = String(schoolClass);
     schoolRelation.schoolId = school.getId();
     schoolRelation.result = faker.random.number(100);

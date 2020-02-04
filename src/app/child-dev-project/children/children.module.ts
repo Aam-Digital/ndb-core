@@ -48,14 +48,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AttendanceAverageDashboardComponent } from '../attendance/dashboard-widgets/attendance-average-dashboard/attendance-average-dashboard.component';
 import { AttendanceWarningsDashboardComponent } from '../attendance/dashboard-widgets/attendance-warnings-dashboard/attendance-warnings-dashboard.component';
+import { NotesComponent } from '../notes/notes-component/notes.component';
+import { NoteDetailsComponent } from '../notes/note-details/note-details.component';
 import { ChildSelectComponent } from './child-select/child-select.component';
-import { EditSchoolDialogComponent } from './view-schools-component/edit-school-dialog/edit-school-dialog.component';
 import { SchoolsModule } from '../schools/schools.module';
 import { EducationalMaterialComponent } from '../educational-material/educational-material-component/educational-material.component';
 import { AserComponent } from '../aser/aser-component/aser.component';
 import { FilterPipeModule } from 'ngx-filter-pipe';
+import { NotesManagerComponent } from '../notes/notes-manager/notes-manager.component';
 import { AddMonthAttendanceComponent } from '../attendance/add-month-attendance/add-month-attendance.component';
-import { ViewSchoolsComponent } from './view-schools-component/view-schools.component';
 import { AttendanceDaysComponent } from '../attendance/attendance-days/attendance-days.component';
 import { AttendanceDetailsComponent } from '../attendance/attendance-details/attendance-details.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -65,7 +66,9 @@ import { AttendanceDayBlockComponent } from '../attendance/attendance-days/atten
 import { AttendanceManagerComponent } from '../attendance/attendance-manager/attendance-manager.component';
 import { HealthCheckupComponent } from '../health-checkup/health-checkup-component/health-checkup.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { NotesListComponent } from './notes-list/notes-list.component';
+import { PreviousSchoolsComponent } from '../previous-schools/previous-schools.component';
+import { SelectGroupChildrenComponent } from './select-group-children/select-group-children.component';
+import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/roll-call.component';
 
 
 @NgModule({
@@ -105,25 +108,28 @@ import { NotesListComponent } from './notes-list/notes-list.component';
     AttendanceBlockComponent,
     ChildBlockComponent,
     ChildAttendanceComponent,
+    NotesComponent,
     ChildDetailsComponent,
     ChildrenListComponent,
     ChildrenCountDashboardComponent,
     AttendanceAverageDashboardComponent,
     AttendanceWarningsDashboardComponent,
+    NoteDetailsComponent,
     ChildSelectComponent,
-    EditSchoolDialogComponent,
     EducationalMaterialComponent,
     AserComponent,
+    NotesManagerComponent,
     AddMonthAttendanceComponent,
-    ViewSchoolsComponent,
     AttendanceDayBlockComponent,
     AttendanceDaysComponent,
     AttendanceDetailsComponent,
     AddDayAttendanceComponent,
+    RollCallComponent,
+    SelectGroupChildrenComponent,
     AttendanceWeekDashboardComponent,
     AttendanceManagerComponent,
     HealthCheckupComponent,
-    NotesListComponent,
+    PreviousSchoolsComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
@@ -132,11 +138,10 @@ import { NotesListComponent } from './notes-list/notes-list.component';
     ChildrenCountDashboardComponent,
     AttendanceAverageDashboardComponent,
     AttendanceWarningsDashboardComponent,
-    ViewSchoolsComponent,
     AttendanceWarningsDashboardComponent,
     AttendanceWeekDashboardComponent,
     AttendanceDaysComponent,
   ],
-  entryComponents: [EditSchoolDialogComponent, AttendanceDetailsComponent],
+  entryComponents: [NoteDetailsComponent, AttendanceDetailsComponent],
 })
 export class ChildrenModule { }
