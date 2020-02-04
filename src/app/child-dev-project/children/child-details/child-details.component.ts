@@ -47,8 +47,6 @@ export class ChildDetailsComponent implements OnInit {
   creatingNew = false;
   editing = false;
   gender = Gender;
-  nameinvalid: boolean;
-  centerinvalid: boolean;
 
   genders = Gender;
   documentStatus = ['OK (copy with us)', 'OK (copy needed for us)', 'needs correction', 'applied', 'doesn\'t have', 'not eligible', ''];

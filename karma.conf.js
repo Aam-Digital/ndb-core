@@ -33,14 +33,14 @@ module.exports = function (config) {
     client:{
       clearContext: false, // leave Jasmine Spec Runner output visible in browser
       jasmine: {
-        random: false
+        random: true
       }
     },
     files: [
-      
+
     ],
     preprocessors: {
-      
+
     },
     mime: {
       'text/x-typescript': ['ts','tsx']
