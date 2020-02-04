@@ -94,6 +94,7 @@ export class ViewSchoolsComponent implements OnInit, OnChanges {
     });
   }
 
+
   private showEditSchoolDialog(data) {
     this.dialog.open(EditSchoolDialogComponent, {data: data});
   }

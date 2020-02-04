@@ -14,14 +14,14 @@ import { Child } from '../../model/child';
 })
 export class EditSchoolDialogComponent extends AbstractDetailsComponent<ChildSchoolRelation> implements OnInit {
 
-  private selectedSchool: School;
+  selectedSchool: School;
   /**Cached array of all schools for selection only*/
-  private schools: School[];
+  schools: School[];
   /**Whether or not this is used to create a new note.
    * Defaults to true, will be set in ngOnInit()
    */
-  private creating: boolean = true;
-  private child: Child;
+  creating: boolean = true;
+  child: Child;
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
               dialogRef: MatDialogRef<EditSchoolDialogComponent>,
