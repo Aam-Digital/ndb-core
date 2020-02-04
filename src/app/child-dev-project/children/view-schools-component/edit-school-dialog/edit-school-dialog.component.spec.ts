@@ -12,6 +12,19 @@ import { Child } from '../../model/child';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Database } from '../../../../core/database/database';
 import { EntitySchemaService } from '../../../../core/entity/schema/entity-schema.service';
+import { ConfirmationDialogService } from '../../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { ChildSchoolRelation } from '../../model/childSchoolRelation';
+import { of } from 'rxjs';
+
+const mockedDialogRef = {
+  beforeClosed() {return of(new ChildSchoolRelation('')); },
+  close(r: any) {},
+};
+const mockedData = {
+  entity: new ChildSchoolRelation('1'),
+  child: new Child(''),
+  creating: undefined,
+};
 
 describe('EditSchoolDialogComponent', () => {
   let component: EditSchoolDialogComponent;
@@ -31,9 +44,10 @@ describe('EditSchoolDialogComponent', () => {
       providers: [
         EntityMapperService,
         EntitySchemaService,
-        { provide: Database, useClass: MockDatabase },
-        {provide: MatDialogRef, useValue: MatDialogRef},
-        {provide: MAT_DIALOG_DATA, useValue: {child: new Child('')}},
+        ConfirmationDialogService,
+        {provide: Database, useClass: MockDatabase },
+        {provide: MatDialogRef, useValue: mockedDialogRef},
+        {provide: MAT_DIALOG_DATA, useValue: mockedData},
       ],
     })
     .compileComponents();
@@ -42,10 +56,32 @@ describe('EditSchoolDialogComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EditSchoolDialogComponent);
     component = fixture.componentInstance;
+    fixture.debugElement.injector.get(EntityMapperService).save(mockedData.entity);
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should load initial data', function () {
+    expect(component.entity).toBe(mockedData.entity);
+  });
+
+  it('should delete data', async function () {
+    const entityMapper = fixture.debugElement.injector.get(EntityMapperService);
+    // First try, we want to find the entity here
+    await entityMapper.load(ChildSchoolRelation, '1')
+      // Object found, as expected
+      .then((res) => expect(true).toBe(true))
+      // Object not found, throw an error
+      .catch(() => expect(true).toBe(false));
+    component.delete();
+    // Second try, we have deleted the entity and do not want to find it
+    await entityMapper.load(ChildSchoolRelation, '1')
+      // Object found, throw an error
+      .then((res) => expect(true).toBe(false))
+      // Object not found, EntityMapper throws an error, object got deleted properly
+      .catch(() => expect(true).toBe(true));
   });
 });
