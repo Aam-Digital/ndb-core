@@ -21,6 +21,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { UserListComponent } from './user-list/user-list.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
+import { ExportDataComponent } from './export-data/export-data.component';
+import { BackupService } from './services/backup.service';
 
 @NgModule({
   imports: [
@@ -43,10 +45,20 @@ import { UserDetailsComponent } from './user-details/user-details.component';
     MatInputModule,
     MatIconModule,
   ],
-  declarations: [AdminComponent, UserListComponent, UserDetailsComponent],
+  declarations: [
+    AdminComponent,
+    UserListComponent,
+    UserDetailsComponent,
+    ExportDataComponent,
+  ],
   providers: [
     AdminGuard,
     ChildPhotoUpdateService,
+    BackupService,
+    ExportDataComponent,
+  ],
+  exports: [
+    ExportDataComponent,
   ],
   entryComponents: [UserDetailsComponent],
 })
