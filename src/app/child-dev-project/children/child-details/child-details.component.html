@@ -68,15 +68,26 @@
         <div fxFlex>
           <mat-form-field style='width: 300px;'>
             <input matInput formControlName="name" placeholder="Name" title="name" type="text">
+            <mat-error *ngIf="this.form.get('name').invalid && validateForm">
+              Name is required
+            </mat-error>
           </mat-form-field>
 
-          <mat-form-field style='width: 100px;'>
+
+          <mat-form-field style='width: 100px'>
             <input matInput formControlName="projectNumber" placeholder="Project Number" type="text">
           </mat-form-field>
 
+
+
           <mat-form-field>
             <input matInput formControlName="center" placeholder="Center" type="text">
+            <mat-error *ngIf="this.form.get('center').invalid && validateForm">
+              Center is required
+            </mat-error>
           </mat-form-field>
+
+
 
           <mat-form-field>
             <input matInput formControlName="status" placeholder="Project Status" type="text">
