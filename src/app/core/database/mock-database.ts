@@ -160,7 +160,7 @@ export class MockDatabase extends Database {
         break;
       case 'childSchoolRelations_index/by_school':
         filterFun = (e) => e._id.startsWith( ChildSchoolRelation.ENTITY_TYPE) &&
-          (!e.end || e.end >= new Date().setHours(0, 0, 0, 0)) && e.schoolId === options.key;
+          (e.start <= new Date().setHours(0, 0, 0, 0) && !e.end || e.end >= new Date().setHours(0, 0, 0, 0)) && e.schoolId === options.key;
         break;
       case 'childSchoolRelations_index/by_date':
         return this.filterForLatestRelationOfChild(options.endkey, options.limit);

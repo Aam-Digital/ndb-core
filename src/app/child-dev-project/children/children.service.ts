@@ -99,7 +99,8 @@ export class ChildrenService {
         by_school: {
           map: `(doc) => {
             if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
-            if (doc.end < new Date().setHours(0, 0, 0, 0)) return;
+            if (doc.start && (new Date(doc.start) > new Date().setHours(0, 0, 0, 0))) return;
+            if (doc.end && (new Date(doc.end) < new Date().setHours(0, 0, 0, 0))) return;
             emit(doc.schoolId);
             }`,
         },
@@ -149,7 +150,21 @@ export class ChildrenService {
           return entity;
         });
       });
+  }
 
+  /***
+  *
+  * @param schoolId school you want relations for
+  */
+  queryRelationsOfSchool(schoolId: string): Promise<ChildSchoolRelation[]> {
+    return this.db.query('childSchoolRelations_index/by_school', {key: schoolId, include_docs: true})
+      .then(loadedEntities => {
+        return loadedEntities.rows.map(loadedRecord => {
+          const entity = new ChildSchoolRelation('');
+          this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
+          return entity;
+        });
+      });
   }
 
   queryAttendanceLast3Months() {
