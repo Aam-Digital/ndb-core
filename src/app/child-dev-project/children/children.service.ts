@@ -152,8 +152,7 @@ export class ChildrenService {
       });
   }
 
-  /***
-  *
+  /*
   * @param schoolId school you want relations for
   */
   queryRelationsOfSchool(schoolId: string): Promise<ChildSchoolRelation[]> {
