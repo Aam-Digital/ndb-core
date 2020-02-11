@@ -136,7 +136,6 @@ import { NotesListComponent } from './notes-list/notes-list.component';
     ChildrenCountDashboardComponent,
     AttendanceAverageDashboardComponent,
     AttendanceWarningsDashboardComponent,
-    ViewSchoolsComponent,
     AttendanceWarningsDashboardComponent,
     AttendanceWeekDashboardComponent,
     AttendanceDaysComponent,
