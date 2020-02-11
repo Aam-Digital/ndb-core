@@ -99,7 +99,7 @@ export class ChildrenService {
         by_school: {
           map: `(doc) => {
             if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
-            if (doc.end) return;
+            if (doc.end < new Date().setHours(0, 0, 0, 0)) return;
             emit(doc.schoolId);
             }`,
         },
