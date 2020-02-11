@@ -161,14 +161,6 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   }
 
 
-  getWarningStyleClass(rec) {
-    if (typeof rec.getWarningLevel === 'function') {
-      return 'w-' + rec.getWarningLevel();
-    } else {
-      return '';
-    }
-  }
-
   autocompleteSearch(col, input) {
     if (col.allSelectValues === undefined) {
       col.allSelectValues = col.selectValues;

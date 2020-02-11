@@ -22,6 +22,7 @@
  */
 import { EntitySchema } from './schema/entity-schema';
 import { DatabaseField } from './database-field.decorator';
+import { WarningLevel, WarningLevelColor } from '../../child-dev-project/warning-level';
 
 export type EntityConstructor<T extends Entity> = new(id: string) => T;
 
@@ -148,7 +149,20 @@ export class Entity {
     return indices;
   }
 
+  /**
+   * Override getColor() to define a specific color that should be used for color-coding
+   * the entity in generic lists of the UI.
+   * Warning: Overriding this removes the default color-coding based on getWarningLevel().
+   */
   public getColor() {
-    return '';
+    return WarningLevelColor(this.getWarningLevel());
+  }
+
+  /**
+   * Override getWarningLevel() to define when the entity is in a critical condition and should be color-coded
+   * and highlighted in generic components of the UI.
+   */
+  public getWarningLevel(): WarningLevel {
+    return WarningLevel.NONE;
   }
 }
