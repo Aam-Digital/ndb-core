@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common';
 import { Database } from '../../database/database';
 import { EntitySchemaService } from '../../entity/schema/entity-schema.service';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { AlertService } from 'app/core/alerts/alert.service';
 
 describe('EntitySubrecordComponent', () => {
   let component: EntitySubrecordComponent;
@@ -28,6 +29,7 @@ describe('EntitySubrecordComponent', () => {
       providers: [
         EntityMapperService,
         EntitySchemaService,
+        AlertService,
         { provide: Database, useClass: MockDatabase },
         { provide: ConfirmationDialogService, useClass: ConfirmationDialogService },
       ],

@@ -62,29 +62,29 @@ function generateChildSchoolRelationEntities(): ChildSchoolRelation[] {
   const rel1: ChildSchoolRelation = new ChildSchoolRelation('1');
   rel1.childId = '1';
   rel1.schoolId = '1';
-  rel1.start = '2016-10-01';
+  rel1.start = new Date ('2016-10-01');
   rel1.schoolClass = '2';
   data.push(rel1);
 
   const rel4: ChildSchoolRelation = new ChildSchoolRelation('2');
   rel4.childId = '3';
   rel4.schoolId = '2';
-  rel4.start = '2001-01-01';
-  rel4.end = '2002-01-01';
+  rel4.start = new Date('2001-01-01');
+  rel4.end = new Date('2002-01-01');
   rel4.schoolClass = '1';
   data.push(rel4);
 
   const rel2: ChildSchoolRelation = new ChildSchoolRelation('3');
   rel2.childId = '2';
   rel2.schoolId = '2';
-  rel2.start = '2018-05-07';
+  rel2.start = new Date('2018-05-07');
   rel2.schoolClass = '3';
   data.push(rel2);
 
   const rel3: ChildSchoolRelation = new ChildSchoolRelation('4');
   rel3.childId = '3';
   rel3.schoolId = '1';
-  rel3.start = '2010-01-01';
+  rel3.start = new Date('2010-01-01');
   rel3.schoolClass = '2';
   data.push(rel3);
 
@@ -144,13 +144,13 @@ describe('ChildrenService', () => {
 
   // TODO: test getAttendances
 
-  xit('should find latest ChildSchoolRelation of a child', () => {
-    // service.getChildren().subscribe(children => {
-    //   const promises: Promise<any>[] = [];
-    //   expect(children.length).toBeGreaterThan(0);
-    //   children.forEach(child => promises.push(verifyLatestChildRelations(child, service)));
-    //   Promise.all(promises).then(() => done());
-    // });
+  it('should find latest ChildSchoolRelation of a child', (done: DoneFn) => {
+    service.getChildren().subscribe(children => {
+      const promises: Promise<any>[] = [];
+      expect(children.length).toBeGreaterThan(0);
+      children.forEach(child => promises.push(verifyLatestChildRelations(child, service)));
+      Promise.all(promises).then(() => done());
+    });
   });
 
   it('should return ChildSchoolRelations of child in correct order', (done: DoneFn) => {
@@ -164,12 +164,12 @@ describe('ChildrenService', () => {
 });
 
 function compareRelations(a: ChildSchoolRelation, b: ChildSchoolRelation) {
-  expect(a.getId()).toBe(b.getId());
-  expect(a.schoolClass).toBe(b.schoolClass);
-  expect(a.schoolId).toBe(b.schoolId);
-  expect(a.childId).toBe(b.childId);
-  expect(a.start).toBe(b.start);
-  expect(a.end).toBe(b.end);
+  expect(a.getId()).toEqual(b.getId());
+  expect(a.schoolClass).toEqual(b.schoolClass);
+  expect(a.schoolId).toEqual(b.schoolId);
+  expect(a.childId).toEqual(b.childId);
+  expect(a.start).toEqual(b.start);
+  expect(a.end).toEqual(b.end);
 }
 
 async function verifyChildRelationsOrder(child: Child, childrenService: ChildrenService) {
@@ -186,14 +186,13 @@ async function verifyChildRelationsOrder(child: Child, childrenService: Children
   }
 }
 
-// async function verifyLatestChildRelations(child: Child, childrenService: ChildrenService) {
-//   const relations = await childrenService.queryRelationsOfChild(child.getId());
-//   const latest: ChildSchoolRelation = relations.sort((a, b) => {
-//     const aValue = new Date(a.start);
-//     const bValue = new Date(b.start);
-//     return aValue > bValue ? -1 : aValue === bValue ? 0 : 1;
-//   })[0];
-//   const childWithRelation = new ChildWithRelation(child, latest);
-//   const res = await childrenService.queryLatestRelation(child.getId());
-//   compareRelations(res, child.getRelation());
-// }
+async function verifyLatestChildRelations(child: Child, childrenService: ChildrenService) {
+  const relations = await childrenService.queryRelationsOfChild(child.getId());
+  const latest: ChildSchoolRelation = relations.sort((a, b) => {
+    const aValue = new Date(a.start);
+    const bValue = new Date(b.start);
+    return aValue > bValue ? -1 : aValue === bValue ? 0 : 1;
+  })[0];
+  const res = await childrenService.queryLatestRelation(child.getId());
+  compareRelations(res, latest);
+}

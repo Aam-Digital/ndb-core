@@ -10,7 +10,7 @@
     "experimentalDecorators": true,
     "target": "es2015",
     "downlevelIteration": true,
-    "types": [ "node" ],
+    "types": [ "node", "jasmine" ],
     "typeRoots": [ "../node_modules/@types" ],
     "allowSyntheticDefaultImports": true,
     "lib": [

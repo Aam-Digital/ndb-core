@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
@@ -9,6 +9,8 @@ import { EntityMapperService } from '../../entity/entity-mapper.service';
 import { ColumnDescription, ColumnDescriptionInputType } from './column-description';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { Subscription } from 'rxjs';
+import { AlertService } from 'app/core/alerts/alert.service';
+import { FormValidationResult } from './form-validation-result';
 
 
 @Component({
@@ -24,6 +26,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   @Input() detailsComponent: typeof Component;
   @Input() showButton = true;
   @Input() entityId: string;
+  @Input() formValidation?: (record: Entity) => FormValidationResult;
 
   recordsDataSource = new MatTableDataSource();
   columnsToDisplay = [];
@@ -40,6 +43,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
               private _snackBar: MatSnackBar,
               private _confirmationDialog: ConfirmationDialogService,
               private dialog: MatDialog,
+              private alertService: AlertService,
               private media: MediaObserver) {
     this.flexMediaWatcher = this.media.media$.subscribe((change: MediaChange) => {
       if (change.mqAlias !== this.screenWidth) {
@@ -72,7 +76,17 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
 
 
   save(record: Entity) {
-    this._entityMapper.save(record);
+
+    if (this.formValidation) {
+      const formValidationResult = this.formValidation(record);
+      if (!formValidationResult.hasPassedValidation) {
+        this.alertService.addWarning(formValidationResult.validationMessage);
+        return;
+      }
+    }
+
+    this._entityMapper.save(record).then(savedRecord => {
+    });
 
     // updated backup copies used for reset
     const i = this.originalRecords.findIndex(e => e.entityId === record.getId());
@@ -143,7 +157,6 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     if (this.detailsComponent === undefined || this.recordsEditing.get(record.getId())) {
       return;
     }
-
     this.dialog.open(this.detailsComponent, {width: '80%', data: {entity: record}});
   }
 
@@ -160,7 +173,6 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     if (col.allSelectValues === undefined) {
       col.allSelectValues = col.selectValues;
     }
-
     col.selectValues = col.allSelectValues.filter(v => v.value.includes(input) || v.label.includes(input));
   }
 
