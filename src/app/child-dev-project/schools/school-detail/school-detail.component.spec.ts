@@ -21,6 +21,7 @@ import { Location } from '@angular/common';
 import { Observable } from 'rxjs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service'; //  Necessary for usage of uniqid in the component
+import { ChildrenService } from 'app/child-dev-project/children/children.service';
 
 describe('SchoolDetailComponent', () => {
   let component: SchoolDetailComponent;
@@ -55,6 +56,7 @@ describe('SchoolDetailComponent', () => {
         SchoolsService,
         AlertService,
         FormBuilder,
+        ChildrenService,
         { provide: ConfirmationDialogService, useValue: mockedConfirmationDialog},
         { provide: MatSnackBar, useValue: mockedSnackBar},
         { provide: Location, useValue: mockedLocation},
