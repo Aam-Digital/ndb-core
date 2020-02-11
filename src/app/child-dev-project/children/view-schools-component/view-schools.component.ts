@@ -100,7 +100,7 @@ export class ViewSchoolsComponent implements OnInit, OnChanges {
   }
 
   /**
-   * returns an css-compatible color value from green to red using the given
+   * returns a css-compatible color value from green to red using the given
    * input value
    * @param percent The percentage from 0-100 (both inclusive). 0 will be completely red, 100 will be completely green
    * Everything between will have suitable colors (orange, yellow,...)

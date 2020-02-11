@@ -64,10 +64,10 @@ import { AttendanceManagerComponent } from '../attendance/attendance-manager/att
 import { HealthCheckupComponent } from '../health-checkup/health-checkup-component/health-checkup.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { PreviousSchoolsComponent } from '../previous-schools/previous-schools.component';
+import { AdminModule } from '../../core/admin/admin.module';
 import { SelectGroupChildrenComponent } from './select-group-children/select-group-children.component';
 import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/roll-call.component';
-import { EditSchoolDialogComponent } from './view-schools-component/edit-school-dialog/edit-school-dialog.component';
-import { ViewSchoolsComponent } from './view-schools-component/view-schools.component';
+import { NotesListComponent } from './notes-list/notes-list.component';
 
 
 @NgModule({
@@ -101,6 +101,7 @@ import { ViewSchoolsComponent } from './view-schools-component/view-schools.comp
     SchoolsModule,
     ReactiveFormsModule,
     MatDialogModule,
+    AdminModule,
     MatListModule,
   ],
   declarations: [
@@ -126,8 +127,7 @@ import { ViewSchoolsComponent } from './view-schools-component/view-schools.comp
     AttendanceManagerComponent,
     HealthCheckupComponent,
     PreviousSchoolsComponent,
-    EditSchoolDialogComponent,
-    ViewSchoolsComponent,
+    NotesListComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [

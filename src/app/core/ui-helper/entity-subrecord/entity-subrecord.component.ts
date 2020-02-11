@@ -25,6 +25,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   @Input() newRecordFactory: () => Entity;
   @Input() detailsComponent: typeof Component;
   @Input() showButton = true;
+  @Input() entityId: string;
   @Input() formValidation?: (record: Entity) => FormValidationResult;
 
   recordsDataSource = new MatTableDataSource();
@@ -231,4 +232,19 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   isReadonlyInputType(inputType: ColumnDescriptionInputType): boolean {
     return inputType === ColumnDescriptionInputType.FUNCTION || inputType === ColumnDescriptionInputType.READONLY;
   }
+
+  /**
+   * returns the color for a record.
+   * If this entity id is undefined, this will return the default color. Otherwise it will attempt
+   * to get a specific color for this specific entity id
+   * @param record The record to check for. The record must be an entity that has a <code>getColor()</code>-Method specified.
+   * If this entityId is set, a <code>getColorForId()</code>-Method must be specified, that accepts this id.
+   */
+  getColor(record) {
+    if (this.entityId !== undefined) {
+      return record.getColorForId(this.entityId);
+    }
+    return record.getColor();
+  }
+
 }

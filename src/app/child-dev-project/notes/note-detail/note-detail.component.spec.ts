@@ -44,8 +44,7 @@ function generateTestingData() {
 const children = [new Child('1'), new Child('2'), new Child('3')];
 const testData = generateTestingData();
 const mockDialogRef = {beforeClosed() {return of(new NoteModel('1')); },
-                      close(r: any) {},
-};
+                      close(r: any) {}};
 const mockedDatabase = new MockDatabase();
 const mockedRouter = {navigate(commands: any[], extras?: NavigationExtras) {return Promise.resolve(); }};
 
@@ -54,7 +53,7 @@ describe('NoteDetailComponent', () => {
   let component: NoteDetailComponent;
   let fixture: ComponentFixture<NoteDetailComponent>;
 
-  beforeEach(async() => {
+  beforeEach( () => {
     TestBed.configureTestingModule({
       declarations: [],
       imports: [
@@ -76,7 +75,7 @@ describe('NoteDetailComponent', () => {
     fixture = TestBed.createComponent(NoteDetailComponent);
     component = fixture.componentInstance;
     const entityMapperService = fixture.debugElement.injector.get(EntityMapperService);
-    await entityMapperService.save<NoteModel>(testData.entity);
+    entityMapperService.save<NoteModel>(testData.entity);
     children.forEach(child => entityMapperService.save<Child>(child));
     fixture.detectChanges();
   });

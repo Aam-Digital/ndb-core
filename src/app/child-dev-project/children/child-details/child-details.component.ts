@@ -41,6 +41,7 @@ export class ChildDetailsComponent implements OnInit {
   currentSchool: School = new School('');
   schools: School[] = [];
 
+  validateForm = false;
   form: FormGroup;
   healthCheckForm: FormGroup;
   creatingNew = false;
@@ -80,7 +81,7 @@ export class ChildDetailsComponent implements OnInit {
       motherTongue:   [{value: this.child.motherTongue,   disabled: !this.editing}],
       religion:       [{value: this.child.religion,       disabled: !this.editing}],
 
-      center:         [{value: this.child.center,         disabled: !this.editing}],
+      center:         [{value: this.child.center,         disabled: !this.editing}, Validators.required],
       status:         [{value: this.child.status,         disabled: !this.editing}],
       admissionDate:  [{value: this.child.admissionDate,  disabled: !this.editing}],
 
@@ -146,6 +147,8 @@ export class ChildDetailsComponent implements OnInit {
   }
 
   save() {
+    this.validateForm = true;
+    if (this.form.valid) {
     this.assignFormValuesToChild(this.child, this.form);
 
     this.entityMapperService.save<Child>(this.child)
@@ -154,10 +157,15 @@ export class ChildDetailsComponent implements OnInit {
           this.router.navigate(['/child', this.child.getId()]);
           this.creatingNew = false;
         }
+        this.alertService.addInfo('Saving Succesfull');
         this.switchEdit();
       })
       .catch((err) => this.alertService.addDanger('Could not save Child "' + this.child.name + '": ' + err));
+  } else {
+    const invalidFields = this.getInvalidFields(this.form);
+    this.alertService.addDanger('Form invalid, required fields missing');
   }
+}
 
   private assignFormValuesToChild(child: Child, form: FormGroup) {
     Object.keys(form.controls).forEach(key => {
@@ -190,5 +198,16 @@ export class ChildDetailsComponent implements OnInit {
 
   navigateBack() {
     this.location.back();
+  }
+
+  getInvalidFields(form: FormGroup) {
+    const invalid = [];
+    const controls = this.form.controls;
+    for (const field in controls) {
+      if ( controls[field].invalid) {
+        invalid.push(field);
+      }
+    }
+    return invalid;
   }
 }
