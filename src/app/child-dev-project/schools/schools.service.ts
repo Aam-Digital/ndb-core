@@ -23,7 +23,7 @@ export class SchoolsService {
   }
 
   async getChildrenForSchool(schoolId: string): Promise<Child[]> {
-    const relations = await this.childrenService.queryRelationsOfSchool(schoolId);
+    const relations = await this.childrenService.queryRelationsOf('school', schoolId);
     const children: Child[] = [];
     for (const relation of relations) {
       const child = await this.entityMapper.load<Child>(Child, relation.childId);

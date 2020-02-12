@@ -6,6 +6,6 @@
     "remote_url": "http://localhost:4200/db/",
     "timeout": 60000,
     "outdated_threshold_days": 0,
-    "useTemporaryDatabase": true
+    "useTemporaryDatabase": false
   }
 }
