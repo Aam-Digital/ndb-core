@@ -140,31 +140,6 @@ export class ChildrenService {
       });
  }
 
-  // queryRelationsOfChild(childId: string): Promise<ChildSchoolRelation[]> {
-  //   return this.db.query('childSchoolRelations_index/by_child', {key: childId, include_docs: true})
-  //     .then(loadedEntities => {
-  //       return loadedEntities.rows.map(loadedRecord => {
-  //         const entity = new ChildSchoolRelation('');
-  //         this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
-  //         return entity;
-  //       });
-  //     });
-  // }
-
-  // /*
-  // * @param schoolId school you want relations for
-  // */
-  // queryRelationsOfSchool(schoolId: string): Promise<ChildSchoolRelation[]> {
-  //   return this.db.query('childSchoolRelations_index/by_school', {key: schoolId, include_docs: true})
-  //     .then(loadedEntities => {
-  //       return loadedEntities.rows.map(loadedRecord => {
-  //         const entity = new ChildSchoolRelation('');
-  //         this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
-  //         return entity;
-  //       });
-  //     });
-  // }
-
   queryRelationsOf(queryType: 'child' | 'school', id: string): Promise<ChildSchoolRelation[]> {
     return this.db.query('childSchoolRelations_index/by_' + queryType, {key: id, include_docs: true})
       .then(loadedEntities => {
