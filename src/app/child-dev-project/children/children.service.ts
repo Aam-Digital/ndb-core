@@ -98,8 +98,11 @@ export class ChildrenService {
         },
         by_school: {
           map: `(doc) => {
-            if ((!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) || (doc.start && (new Date(doc.start) > new Date().setHours(0, 0, 0, 0))) ||
-              (doc.end && (new Date(doc.end) < new Date().setHours(0, 0, 0, 0))) return;
+            if ( (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) ||
+                (doc.start && (new Date(doc.start) > new Date().setHours(0, 0, 0, 0))) ||
+                (doc.end && (new Date(doc.end) < new Date().setHours(0, 0, 0, 0))) ) {
+              return;
+            }
             emit(doc.schoolId);
             }`,
         },
