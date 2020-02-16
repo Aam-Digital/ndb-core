@@ -26,4 +26,6 @@ export interface IAppConfig {
     outdated_threshold_days: number;
     useTemporaryDatabase: boolean;
   };
+
+  debug?: boolean;
 }
