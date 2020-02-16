@@ -44,6 +44,7 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 
 .alerts-snackbar {
   background-color: transparent;
+  box-shadow: none;
 }
 
 
