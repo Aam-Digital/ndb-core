@@ -131,8 +131,11 @@ export class ChildrenService {
         },
         by_school: {
           map: `(doc) => {
-            if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
-            if (doc.end) return;
+            if ( (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) ||
+                (doc.start && (new Date(doc.start) > new Date().setHours(0, 0, 0, 0))) ||
+                (doc.end && (new Date(doc.end) < new Date().setHours(0, 0, 0, 0))) ) {
+              return;
+            }
             emit(doc.schoolId);
             }`,
         },
@@ -152,7 +155,7 @@ export class ChildrenService {
     return this.querySortedRelations(childId, 1).then(children => children[0]);
  }
 
- querySortedRelations(childId: string, limit?: number): Promise<ChildSchoolRelation[]> {
+  querySortedRelations(childId: string, limit?: number): Promise<ChildSchoolRelation[]> {
     const options: any = {
       startkey: childId + '\uffff', //  higher value needs to be startkey
       endkey: childId,              //  \uffff is not a character -> only relations staring with childId will be selected
@@ -173,8 +176,8 @@ export class ChildrenService {
       });
  }
 
-  queryRelationsOfChild(childId: string): Promise<ChildSchoolRelation[]> {
-    return this.db.query('childSchoolRelations_index/by_child', {key: childId, include_docs: true})
+  queryRelationsOf(queryType: 'child' | 'school', id: string): Promise<ChildSchoolRelation[]> {
+    return this.db.query('childSchoolRelations_index/by_' + queryType, {key: id, include_docs: true})
       .then(loadedEntities => {
         return loadedEntities.rows.map(loadedRecord => {
           const entity = new ChildSchoolRelation('');
@@ -182,7 +185,6 @@ export class ChildrenService {
           return entity;
         });
       });
-
   }
 
   queryAttendanceLast3Months() {

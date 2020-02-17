@@ -16,9 +16,8 @@
   -->
 
 <div class="ndb-alert ndb-alert-{{alert.type}}">
-    {{ alert.message }}
-
-    <button mat-icon-button (click)="alert.notificationRef.dismiss()" class="ndb-alert-dismiss">
-      <mat-icon class="ndb-alert-dismiss-icon" fontIcon="fa-window-close-o"></mat-icon>
-    </button>
+  <button mat-icon-button (click)="alert.notificationRef.dismiss()" class="ndb-alert-dismiss">
+    <mat-icon class="ndb-alert-dismiss-icon" fontIcon="fa-window-close-o"></mat-icon>
+  </button>
+  <p>{{ alert.message }}</p>
 </div>

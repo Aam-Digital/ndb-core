@@ -73,4 +73,13 @@
     </button>
   </div>
 
+  <!-- Additional information for debugging issues -->
+  <mat-card *ngIf='showDebug'>
+    <mat-card-title>Debugging Information</mat-card-title>
+    <mat-card-content>
+      <p>Day: <em>{{day}}</em></p>
+      <p>Current Record: <em>{{debugContent}}</em></p>
+    </mat-card-content>
+  </mat-card>
+
 </div>

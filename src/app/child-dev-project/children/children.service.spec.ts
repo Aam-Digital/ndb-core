@@ -211,7 +211,7 @@ function compareRelations(a: ChildSchoolRelation, b: ChildSchoolRelation) {
 }
 
 async function verifyChildRelationsOrder(child: Child, childrenService: ChildrenService) {
-  const relations = await childrenService.queryRelationsOfChild(child.getId());
+  const relations = await childrenService.queryRelationsOf('child', child.getId());
   const sorted = relations.sort((a, b) => {
     const aValue = new Date(a.start);
     const bValue = new Date(b.start);
@@ -225,7 +225,7 @@ async function verifyChildRelationsOrder(child: Child, childrenService: Children
 }
 
 async function verifyLatestChildRelations(child: Child, childrenService: ChildrenService) {
-  const relations = await childrenService.queryRelationsOfChild(child.getId());
+  const relations = await childrenService.queryRelationsOf('child', child.getId());
   const latest: ChildSchoolRelation = relations.sort((a, b) => {
     const aValue = new Date(a.start);
     const bValue = new Date(b.start);

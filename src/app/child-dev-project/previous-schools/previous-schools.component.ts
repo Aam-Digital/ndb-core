@@ -81,7 +81,7 @@ export class PreviousSchoolsComponent implements OnInit {
         hasPassedValidation: false,
         validationMessage: '"Name" is empy. Please select a school.',
       };
-    } else if (record.start && record.end && record.start > record.end) {
+    } else if (record.start && record.end && record.start.setHours(0, 0, 0, 0) > record.end.setHours(0, 0, 0, 0)) {
       return {
         hasPassedValidation: false,
         validationMessage: '"To"-date lies before "From"-date. Please enter correct dates.',

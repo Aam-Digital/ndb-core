@@ -42,6 +42,7 @@ export class ChildDetailsComponent implements OnInit {
   currentSchool: School = new School('');
   schools: School[] = [];
 
+  validateForm = false;
   form: FormGroup;
   healthCheckForm: FormGroup;
   creatingNew = false;
@@ -52,6 +53,7 @@ export class ChildDetailsComponent implements OnInit {
   documentStatus = ['OK (copy with us)', 'OK (copy needed for us)', 'needs correction', 'applied', 'doesn\'t have', 'not eligible', ''];
   eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
   vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
+
 
   constructor(private entityMapperService: EntityMapperService,
               private childrenService: ChildrenService,
@@ -81,7 +83,7 @@ export class ChildDetailsComponent implements OnInit {
       motherTongue:   [{value: this.child.motherTongue,   disabled: !this.editing}],
       religion:       [{value: this.child.religion,       disabled: !this.editing}],
 
-      center:         [{value: this.child.center,         disabled: !this.editing}],
+      center:         [{value: this.child.center,         disabled: !this.editing}, Validators.required],
       status:         [{value: this.child.status,         disabled: !this.editing}],
       admissionDate:  [{value: this.child.admissionDate,  disabled: !this.editing}],
 
@@ -122,7 +124,7 @@ export class ChildDetailsComponent implements OnInit {
     this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
   }
 
-  async loadChild(id: string) {
+  loadChild(id: string) {
     if (id === 'new') {
       this.creatingNew = true;
       this.editing = true;
@@ -145,17 +147,24 @@ export class ChildDetailsComponent implements OnInit {
   }
 
   save() {
-    this.assignFormValuesToChild(this.child, this.form);
+    this.validateForm = true;
+    if (this.form.valid) {
+      this.assignFormValuesToChild(this.child, this.form);
 
-    this.entityMapperService.save<Child>(this.child)
-      .then(() => {
-        if (this.creatingNew) {
-          this.router.navigate(['/child', this.child.getId()]);
-          this.creatingNew = false;
-        }
-        this.switchEdit();
-      })
-      .catch((err) => this.alertService.addDanger('Could not save Child "' + this.child.name + '": ' + err));
+      this.entityMapperService.save<Child>(this.child)
+        .then(() => {
+          if (this.creatingNew) {
+            this.router.navigate(['/child', this.child.getId()]);
+            this.creatingNew = false;
+          }
+          this.alertService.addInfo('Saving Succesfull');
+          this.switchEdit();
+        })
+        .catch((err) => this.alertService.addDanger('Could not save Child "' + this.child.name + '": ' + err));
+    } else {
+      const invalidFields = this.getInvalidFields(this.form);
+      this.alertService.addDanger('Form invalid, required fields missing');
+    }
   }
 
   private assignFormValuesToChild(child: Child, form: FormGroup) {
@@ -189,6 +198,17 @@ export class ChildDetailsComponent implements OnInit {
 
   navigateBack() {
     this.location.back();
+  }
+
+  getInvalidFields(form: FormGroup) {
+    const invalid = [];
+    const controls = this.form.controls;
+    for (const field in controls) {
+      if ( controls[field].invalid) {
+        invalid.push(field);
+      }
+    }
+    return invalid;
   }
 
   /**

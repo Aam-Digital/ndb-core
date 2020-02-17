@@ -11,5 +11,7 @@
 
   "webdav": {
     "remote_url": ""
-  }
+  },
+
+  "debug": false
 }
