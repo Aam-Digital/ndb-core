@@ -22,57 +22,54 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { SessionService } from '../../session/session.service';
-import { User } from '../user';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { MockSessionService } from 'app/core/session/mock-session.service';
-import { EntitySchemaService } from 'app/core/entity/schema/entity-schema.service';
-import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
-import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
 import { MatTabsModule } from '@angular/material';
 import { EntityMapperService } from 'app/core/entity/entity-mapper.service';
 import { Database } from 'app/core/database/database';
 import { MockDatabase } from 'app/core/database/mock-database';
+import { WebdavModule } from '../../webdav/webdav.module';
+import { User } from '../user';
 
 describe('UserAccountComponent', () => {
-  let userAccountComponent: UserAccountComponent;
-  let cloudFileService: jasmine.SpyObj<CloudFileService>;
-  let sessionService: jasmine.SpyObj<SessionService>;
-  let sessionSpy, cloudFileSpy;
+  let component: UserAccountComponent;
+  let fixture: ComponentFixture<UserAccountComponent>;
+
+  let mockSessionService;
+  let mockEntityMapper;
+  const testUser = new User('');
 
   beforeEach(async(() => {
-    sessionSpy = jasmine.createSpyObj('SessionService', ['getCurrentUser']);
-    cloudFileSpy = jasmine.createSpyObj('SessionService', ['connect', 'checkConnection']);
+    mockSessionService = jasmine.createSpyObj('sessionService', ['getCurrentUser']);
+    mockSessionService.getCurrentUser.and.returnValue(testUser);
+    mockEntityMapper = jasmine.createSpyObj(['save']);
 
     TestBed.configureTestingModule({
-      imports: [MatFormFieldModule, MatInputModule, MatButtonModule, NoopAnimationsModule, MatTabsModule],
-      providers: [
+      declarations: [
         UserAccountComponent,
-        EntityMapperService,
-        EntitySchemaService,
+      ],
+      imports: [
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        NoopAnimationsModule,
+        MatTabsModule,
+        WebdavModule,
+      ],
+      providers: [
         { provide: Database, useClass: MockDatabase },
-        {provide: SessionService, useValue: sessionSpy},
-        {provide: CloudFileService, useValue: cloudFileSpy},
+        { provide: SessionService, useValue: mockSessionService },
+        { provide: EntityMapperService, useValue: mockEntityMapper },
       ],
     });
-
-    userAccountComponent = TestBed.get(UserAccountComponent);
-    cloudFileService = TestBed.get(CloudFileService);
-    sessionService = TestBed.get(SessionService);
   }));
 
-  it('should be created', () => {
-    expect(userAccountComponent).toBeTruthy();
+  beforeEach(() => {
+    fixture = TestBed.createComponent(UserAccountComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
-  it('should update cloud-service credentials annd check the connection', () => {
-    const user = new User('user');
-    spyOn(user, 'setCloudPassword');
-    sessionService.getCurrentUser.and.returnValue(user);
-    userAccountComponent.updateCloudService('testUser', 'testPwd', 'loginPwd');
-    expect(sessionService.getCurrentUser).toHaveBeenCalled();
-    expect(user.cloudUserName).toBe('testUser');
-    expect(user.setCloudPassword).toHaveBeenCalledWith('testPwd', 'loginPwd');
-    expect(cloudFileService.connect).toHaveBeenCalled();
-    expect(cloudFileService.checkConnection).toHaveBeenCalled();
+  it('should be created', () => {
+    expect(component).toBeTruthy();
   });
 });

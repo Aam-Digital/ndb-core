@@ -18,28 +18,23 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from '../user';
 import { SessionService } from '../../session/session.service';
-import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
-import { AppConfig } from '../../app-config/app-config';
 import { EntityMapperService } from 'app/core/entity/entity-mapper.service';
 
 @Component({
   selector: 'app-user-account',
   templateUrl: './user-account.component.html',
-  styleUrls: ['./user-account.component.css'],
+  styleUrls: ['./user-account.component.scss'],
 })
 export class UserAccountComponent implements OnInit {
 
   user: User;
-  webdavUrl: String;
-  statusMessage: string;
 
   constructor( private entityMapperService: EntityMapperService,
                private sessionService: SessionService,
-               private cloudFileService: CloudFileService ) { }
+  ) { }
 
   ngOnInit() {
     this.user = this.sessionService.getCurrentUser();
-    this.webdavUrl = AppConfig.settings.webdav.remote_url;
   }
 
   changePassword( pwd , rpwd ) {
@@ -49,28 +44,6 @@ export class UserAccountComponent implements OnInit {
       // TODO: Show success message
     } else {
       // TODO: Show error message
-    }
-  }
-
-  /**
-   * Sets the username and password for the cloud-service, provided the login password is correct
-   * @param cloudUser username for the cloud-service
-   * @param cloudPassword password for the cloud-service
-   * @param password password used to login to the main application
-   */
-  async updateCloudService(cloudUser: string, cloudPassword: string, password: string) {
-    try {
-      this.statusMessage = 'Processing...';
-      const currentUser = this.sessionService.getCurrentUser();
-      currentUser.setCloudPassword(cloudPassword, password);
-      currentUser.cloudUserName = cloudUser;
-      this.cloudFileService.connect();
-      if (await this.cloudFileService.checkConnection()) {
-        this.entityMapperService.save<User>(currentUser);
-        this.statusMessage = 'Success';
-      }
-    } catch (error) {
-      this.statusMessage = 'Error encountered: ' + error;
     }
   }
 }

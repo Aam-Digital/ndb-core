@@ -23,9 +23,10 @@ export class CloudFileService {
 
   /**
    * Reinitialize the client for the nextcloud server
+   * @param username
    * @param password login password
    */
-  public connect(username: string = null, password: string = null) {
+  public async connect(username: string = null, password: string = null) {
     // clear the promise that retrieves the root dir
     this.currentlyGettingList = null;
     this.fileList = null;
@@ -38,7 +39,7 @@ export class CloudFileService {
         username = currentUser.cloudUserName;
         password = currentUser.cloudPasswordDec;
       }
-      this.client = webdav.createClient(
+      this.client = await webdav.createClient(
         AppConfig.settings.webdav.remote_url,
         {
           username: username,
