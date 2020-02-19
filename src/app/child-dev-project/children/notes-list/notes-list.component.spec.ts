@@ -4,7 +4,7 @@ import { NotesModule } from '../../notes/notes.module';
 import { MatNativeDateModule } from '@angular/material/core';
 import { ChildrenService } from '../children.service';
 import { DatePipe } from '@angular/common';
-import { NoteModel } from '../../notes/note.model';
+import { Note } from '../../notes/note';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
@@ -27,7 +27,7 @@ const mockedSessionService = {
   },
 };
 
-const allChildren: Array<NoteModel> = [];
+const allChildren: Array<Note> = [];
 
 describe('NotesListComponent', () => {
 

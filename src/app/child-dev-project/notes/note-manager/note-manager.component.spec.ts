@@ -1,5 +1,5 @@
 import { NoteManagerComponent } from './note-manager.component';
-import { NoteModel } from '../note.model';
+import { Note } from '../note';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NotesModule } from '../notes.module';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -12,18 +12,18 @@ import { EntityMapperService } from '../../../core/entity/entity-mapper.service'
 import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
 import { SessionService } from '../../../core/session/session.service';
 
-function generateNewNoteModels(): Array<NoteModel> {
+function generateNewNotes(): Array<Note> {
   let i;
-  const notes: Array<NoteModel> = [];
+  const notes: Array<Note> = [];
   for (i = 0; i < 10; i++) {
-    const note = new NoteModel('' + i);
+    const note = new Note('' + i);
     notes.push(note);
   }
   return notes;
 }
 
 const database: Database = new MockDatabase();
-const testNotes =  generateNewNoteModels();
+const testNotes =  generateNewNotes();
 
 describe('NoteManagerComponent', () => {
 

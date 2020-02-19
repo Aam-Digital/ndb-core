@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NoteModel } from '../../../child-dev-project/notes/note.model';
+import { Note } from '../../../child-dev-project/notes/note';
 import { SessionService } from '../../session/session.service';
 import { MatDialog } from '@angular/material/dialog';
 import { NoteDetailComponent } from '../../../child-dev-project/notes/note-detail/note-detail.component';
@@ -22,7 +22,7 @@ export class PrimaryActionComponent implements OnInit {
   }
 
   private createNewNote() {
-    const newNote = new NoteModel(Date.now().toString());
+    const newNote = new Note(Date.now().toString());
     newNote.date = new Date();
     newNote.author = this.sessionService.getCurrentUser().name;
     return newNote;

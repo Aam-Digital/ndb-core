@@ -1,5 +1,5 @@
-import { AttendanceModel } from './attendance.model';
-import { NoteModel } from './note.model';
+import { MeetingNoteAttendance } from './meeting-note-attendance';
+import { Note } from './note';
 import { InteractionTypes } from './interaction-types.enum';
 import { WarningLevel } from '../warning-level';
 import { EntitySchemaService } from '../../core/entity/schema/entity-schema.service';
@@ -7,16 +7,16 @@ import { async } from '@angular/core/testing';
 import { Entity } from '../../core/entity/entity';
 
 
-function createAttendanceModels(): Array<AttendanceModel> {
-  const a1 = new AttendanceModel('1').presence(true).remark('not empty');
-  const a2 = new AttendanceModel('4').presence(false).remark('remark one');
-  const a3 = new AttendanceModel('7').presence(true).remark('');
+function createAttendanceModels(): Array<MeetingNoteAttendance> {
+  const a1 = new MeetingNoteAttendance('1').presence(true).remark('not empty');
+  const a2 = new MeetingNoteAttendance('4').presence(false).remark('remark one');
+  const a3 = new MeetingNoteAttendance('7').presence(true).remark('');
 
   return [a1, a2, a3];
 }
 
-function createTestModel(): NoteModel {
-  const n1 = new NoteModel('2');
+function createTestModel(): Note {
+  const n1 = new Note('2');
   n1.children = createAttendanceModels();
   n1.date = new Date();
   n1.subject = 'Note Subject';
@@ -28,7 +28,7 @@ function createTestModel(): NoteModel {
   return n1;
 }
 
-describe('NoteModel', () => {
+describe('Note', () => {
   const ENTITY_TYPE = 'Note';
   let entitySchemaService: EntitySchemaService;
 
@@ -39,7 +39,7 @@ describe('NoteModel', () => {
 
   it('has correct _id and entityId', function () {
     const id = 'test1';
-    const entity = new NoteModel(id);
+    const entity = new Note(id);
 
     expect(entity.getId()).toBe(id);
     expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
@@ -50,7 +50,7 @@ describe('NoteModel', () => {
     const expectedData = {
       _id: ENTITY_TYPE + ':' + id,
 
-      children: [new AttendanceModel('1'), new AttendanceModel('2'), new AttendanceModel('5')],
+      children: [new MeetingNoteAttendance('1'), new MeetingNoteAttendance('2'), new MeetingNoteAttendance('5')],
       date: new Date(),
       subject: 'Note Subject',
       text: 'Note text',
@@ -61,7 +61,7 @@ describe('NoteModel', () => {
       searchIndices: [],
     };
 
-    const entity = new NoteModel(id);
+    const entity = new Note(id);
     Object.assign(entity, expectedData);
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
@@ -112,7 +112,7 @@ describe('NoteModel', () => {
 
   it('should never return an undefined color', function () {
     const n7 = createTestModel();
-    NoteModel.INTERACTION_TYPES.forEach(type => {
+    Note.INTERACTION_TYPES.forEach(type => {
       n7.category = type;
       expect(n7.getColor()).toBeDefined();
     });
