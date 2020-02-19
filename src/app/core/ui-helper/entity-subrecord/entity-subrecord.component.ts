@@ -1,3 +1,4 @@
+import { HealthCheck } from './../../../child-dev-project/health-checkup/model/health-check';
 import { Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -26,6 +27,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   @Input() detailsComponent: typeof Component;
   @Input() showButton = true;
   @Input() formValidation?: (record: Entity) => FormValidationResult;
+  @Input() transformFlag: boolean;
 
   recordsDataSource = new MatTableDataSource();
   columnsToDisplay = [];
@@ -83,7 +85,8 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
         return;
       }
     }
-
+    if ( record.getType() === 'HealthCheck' && this.transformInput) {
+    }
     this._entityMapper.save(record).then(savedRecord => {
     });
 
@@ -230,5 +233,12 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
 
   isReadonlyInputType(inputType: ColumnDescriptionInputType): boolean {
     return inputType === ColumnDescriptionInputType.FUNCTION || inputType === ColumnDescriptionInputType.READONLY;
+  }
+
+  transformInput(height: number, entity: Entity, colName: string): number {
+    if (this.transformFlag && entity.getType() === 'HealthCheck' && colName === 'height') {
+      height = height * 30.48;
+    }
+    return height;
   }
 }

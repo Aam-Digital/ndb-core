@@ -29,7 +29,7 @@
                  matInput type="text" [title]="col.label" [value]="rec[col.name]" (change)="rec[col.name]=$event.target.value">
 
           <input *ngIf="col.inputType === 'number'"
-                 matInput type="number" min="0" [title]="col.label" [value]="rec[col.name]" (change)="rec[col.name]=$event.target.valueAsNumber">
+                 matInput type="number" min="0" [title]="col.label" [value]="rec[col.name]" (change)="rec[col.name]=transformInput($event.target.valueAsNumber, rec, col.name)">
 
           <input *ngIf="col.inputType === 'date'"
                  matInput [title]="col.label" [value]="rec[col.name]" (dateChange)="rec[col.name]=$event.target.value"  [matDatepicker]="subrecordDatepicker">

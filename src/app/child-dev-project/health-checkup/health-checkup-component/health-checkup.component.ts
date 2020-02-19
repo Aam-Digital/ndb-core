@@ -14,6 +14,8 @@ import { DatePipe } from '@angular/common';
 
 export class HealthCheckupComponent implements OnInit {
   records = new Array<HealthCheck>();
+  transformHeightOfChild: boolean;
+  inputType: string;
   /**
    * Column Description for the SubentityRecordComponent
    * The Date-Column needs to be transformed to apply the MathFormCheck in the SubentityRecordComponent
@@ -36,7 +38,6 @@ export class HealthCheckupComponent implements OnInit {
     this.route.paramMap.subscribe (params => {
       this.childId = params.get('id').toString();
       this.loadHealthChecks();
-
     } );
   }
 
@@ -53,6 +54,8 @@ export class HealthCheckupComponent implements OnInit {
       // use last entered date as default, otherwise today's date
       newHC.date = this.records.length > 0 ? this.records[0].date : new Date();
       newHC.child = childId;
+
+      this.inputType === 'feet' ? this.transformHeightOfChild = true : this.transformHeightOfChild = false;
 
       return newHC;
     };
