@@ -34,10 +34,11 @@ import { ChildPresenceListComponent } from './note-detail/child-presence-list/ch
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { UiHelperModule } from '../../core/ui-helper/ui-helper.module';
+import { NotePresenceListComponent } from './note-detail/note-presence-list/note-presence-list.component';
 
 
 @NgModule({
-  declarations: [NoteDetailComponent, NoteManagerComponent, ChildPresenceListComponent],
+  declarations: [NoteDetailComponent, NoteManagerComponent, ChildPresenceListComponent, NotePresenceListComponent],
     imports: [
         CommonModule,
         FormsModule,
