@@ -60,6 +60,7 @@ export class ChildSelectComponent implements OnInit {
     this.selectedChildren.push(child);
     if (!suppressChangeEvent) {
       this.newIdAdded.emit(child.getId());
+      this.valueAsIdsChange.emit(this.selectedChildren.map(c => c.getId()));
     }
 
     const i = this.allChildren.findIndex(e => e.getId() === child.getId());
@@ -73,6 +74,7 @@ export class ChildSelectComponent implements OnInit {
     const i = this.selectedChildren.findIndex(e => e.getId() === child.getId());
     this.selectedChildren.splice(i, 1);
     this.idRemoved.emit(child.getId());
+    this.valueAsIdsChange.emit(this.selectedChildren.map(c => c.getId()));
 
     this.allChildren.unshift(child);
   }
