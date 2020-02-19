@@ -68,15 +68,6 @@
       </div>
       </div>
 
-    <div fxLayout='row wrap' fxLayoutGap='20px'>
-      <div fxFlex>
-        <app-child-select [valueAsIds]='entity.getChildIDs()'
-                          (newIdAdded)="entity.addChild($event);recordForm.form.markAsDirty()"
-                          (idRemoved)="entity.removeChild($event);recordForm.form.markAsDirty()"
-                          class='input-medium'>
-        </app-child-select>
-      </div>
-    </div>
     </div>
 
 
@@ -99,15 +90,33 @@
     </div>
   </div>
 
+    <div fxLayout='row wrap' fxLayoutGap='20px'>
+      <div fxFlex>
+        <app-child-select [valueAsIds]='entity.getChildIDs()'
+                          (newIdAdded)="entity.addChild($event);recordForm.form.markAsDirty()"
+                          (idRemoved)="entity.removeChild($event);recordForm.form.markAsDirty()"
+                          class='input-medium'>
+        </app-child-select>
+      </div>
+    </div>
+
     <!--Small screen: display the notes in tabs-->
     <div *ngIf="entity.isMeeting() && smallScreen" fxLayout="row wrap" fxLayoutGap="20px">
 
       <mat-tab-group mat-align-tabs="center" fxFlex>
         <mat-tab label="Present" class="padding-container" >
-          <app-child-presence-list [note]="entity" [recordForm]="recordForm" [present]="true" fxFlex></app-child-presence-list>
+          <app-child-presence-list [note]="entity"
+                                   [recordForm]="recordForm"
+                                   [present]="true"
+                                   fxFlex>
+          </app-child-presence-list>
         </mat-tab>
         <mat-tab label="Absent" class="padding-container" >
-          <app-child-presence-list [note]="entity" [recordForm]="recordForm" [present]="false" fxFlex></app-child-presence-list>
+          <app-child-presence-list [note]="entity"
+                                   [recordForm]="recordForm"
+                                   [present]="false"
+                                   fxFlex>
+          </app-child-presence-list>
         </mat-tab>
       </mat-tab-group>
 

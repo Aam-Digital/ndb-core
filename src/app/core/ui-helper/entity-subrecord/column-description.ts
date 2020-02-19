@@ -42,6 +42,7 @@ export class ColumnDescription {
 
     public formatter = (value) => { return value; },
     public visibleFrom?: string,
+    public styleBuilder = (value) => {return {}; },
   ) {}
 
 }

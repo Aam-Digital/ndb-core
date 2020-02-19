@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { NoteModel } from '../../note.model';
+import { Note } from '../../note';
 import { NgForm } from '@angular/forms';
 
 @Component({
@@ -9,7 +9,7 @@ import { NgForm } from '@angular/forms';
 })
 export class ChildPresenceListComponent {
 
-  @Input() note: NoteModel;
+  @Input() note: Note;
   @Input() recordForm: NgForm;
   @Input() present: boolean;
   @Input() label: string;

@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>{{creating ? 'Add' : 'Edit'}} school for {{child.name}}</h2>
+
+<form #recordForm="ngForm">
+  <mat-dialog-content>
+    <mat-form-field>
+      <mat-label>
+       School
+     </mat-label>
+      <mat-select [(value)]='selectedSchool' (selectionChange)="recordForm.form.markAsDirty()">
+        <mat-option *ngFor='let school of schools' [value]='school'>{{school.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+     <input matInput [(ngModel)]='entity.schoolClass' (ngModelChange)="recordForm.form.markAsDirty()" placeholder='Class' name='class' type='text'>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput [(ngModel)]='entity.start' (ngModelChange)="recordForm.form.markAsDirty()" placeholder='Started on' name='start' type='date'>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput [(ngModel)]='entity.end' (ngModelChange)="recordForm.form.markAsDirty()" placeholder='Finished on' name='end' type='date'>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput [(ngModel)]='entity.result' (ngModelChange)="recordForm.form.markAsDirty()" placeholder='Result' name='result' type='number'>
+    </mat-form-field>
+
+  </mat-dialog-content>
+
+    <mat-dialog-actions>
+      <button [disabled]='!recordForm.form.dirty || entity === null' mat-stroked-button class='edit-button' (click)='save()'>{{creating ? 'Add School' : 'Edit'}}</button>
+      <button *ngIf='!creating' mat-stroked-button class='edit-button' style='color:red' (click)='delete()'>Delete</button>
+    </mat-dialog-actions>
+
+</form>
+

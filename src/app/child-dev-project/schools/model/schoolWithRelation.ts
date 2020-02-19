@@ -1,0 +1,38 @@
+import { ChildSchoolRelation } from '../../children/model/childSchoolRelation';
+import { School } from './school';
+
+export class SchoolWithRelation {
+  constructor(private _childSchoolRelation: ChildSchoolRelation, private _school: School) { }
+
+  set childSchoolRelation(value: ChildSchoolRelation) {
+    this._childSchoolRelation = value;
+  }
+
+  set school(value: School) {
+    this._school = value;
+  }
+
+  get childSchoolRelation(): ChildSchoolRelation {
+    return this._childSchoolRelation;
+  }
+
+  get school(): School {
+    return this._school;
+  }
+
+  getSchoolName(): string {
+    return this._school.name;
+  }
+  getStartTime(): Date {
+    return this._childSchoolRelation.start;
+  }
+  getEndTime(): Date {
+    return this._childSchoolRelation.end;
+  }
+  getClass(): string {
+    return this._childSchoolRelation.schoolClass;
+  }
+  getResult(): number {
+    return this._childSchoolRelation.result;
+  }
+}

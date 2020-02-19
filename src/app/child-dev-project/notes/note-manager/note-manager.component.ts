@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { NoteModel } from '../note.model';
+import { Note } from '../note';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
@@ -22,7 +22,7 @@ export class NoteManagerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   watcher: Subscription;
   activeMediaQuery = '';
-  entityList = new Array<NoteModel>();
+  entityList = new Array<Note>();
   notesDataSource = new MatTableDataSource();
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -37,18 +37,18 @@ export class NoteManagerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   filterString = '';
 
-  followUpFS = new FilterSelection<NoteModel>('status', [
-    { key: 'urgent', label: 'Urgent', filterFun: (n: NoteModel) => n.warningLevel === WarningLevel.URGENT },
+  followUpFS = new FilterSelection<Note>('status', [
+    { key: 'urgent', label: 'Urgent', filterFun: (n: Note) => n.warningLevel === WarningLevel.URGENT },
     { key: 'follow-up', label: 'Needs Follow-Up',
-      filterFun: (n: NoteModel) => n.warningLevel === WarningLevel.WARNING || n.warningLevel === WarningLevel.URGENT },
-    { key: '', label: 'All', filterFun: (c: NoteModel) => true },
+      filterFun: (n: Note) => n.warningLevel === WarningLevel.WARNING || n.warningLevel === WarningLevel.URGENT },
+    { key: '', label: 'All', filterFun: (c: Note) => true },
   ]);
 
-  dateFS = new FilterSelection<NoteModel>('date', [
+  dateFS = new FilterSelection<Note>('date', [
     { key: 'current-week', label: 'This Week',
-      filterFun: (n: NoteModel) => n.date > this.getPreviousSunday(0) },
-    { key: 'last-week', label: 'Since Last Week', filterFun: (n: NoteModel) => n.date > this.getPreviousSunday(1) },
-    { key: '', label: 'All', filterFun: (c: NoteModel) => true },
+      filterFun: (n: Note) => n.date > this.getPreviousSunday(0) },
+    { key: 'last-week', label: 'Since Last Week', filterFun: (n: Note) => n.date > this.getPreviousSunday(1) },
+    { key: '', label: 'All', filterFun: (c: Note) => true },
   ]);
 
   filterSelections = [
@@ -56,7 +56,7 @@ export class NoteManagerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dateFS,
   ];
 
-  categoryFS = new FilterSelection<NoteModel>('category', []);
+  categoryFS = new FilterSelection<Note>('category', []);
   filterSelectionsDropdown = [
     this.categoryFS,
   ];
@@ -67,8 +67,8 @@ export class NoteManagerComponent implements OnInit, AfterViewInit, OnDestroy {
               private entityMapperService: EntityMapperService) {}
 
   ngOnInit() {
-    this.entityMapperService.loadType<NoteModel>(NoteModel).then(noteModels => {
-      this.sortAndAdd(noteModels);
+    this.entityMapperService.loadType<Note>(Note).then(notes => {
+      this.sortAndAdd(notes);
     });
 
     this.displayColumnGroup('standard');
@@ -82,7 +82,7 @@ export class NoteManagerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.notesDataSource.paginator = this.paginator;
   }
 
-  private sortAndAdd(newNotes: NoteModel[]) {
+  private sortAndAdd(newNotes: Note[]) {
     newNotes.forEach(newNote => {
       this.entityList.push(newNote);
     });
@@ -97,10 +97,10 @@ export class NoteManagerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private initCategoryFilter() {
 
-    NoteModel.INTERACTION_TYPES.forEach(interaction => {
+    Note.INTERACTION_TYPES.forEach(interaction => {
       this.categoryFS.options.push({key: interaction,
       label: interaction,
-      filterFun: (note: NoteModel) => {
+      filterFun: (note: Note) => {
         return interaction === InteractionTypes.NONE ? true : note.category === interaction;
       }});
     });
@@ -139,14 +139,14 @@ export class NoteManagerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   addNoteClick() {
-    const newNote = new NoteModel(Date.now().toString());
+    const newNote = new Note(Date.now().toString());
     newNote.date = new Date();
     newNote.author = this.sessionService.getCurrentUser().name;
 
     this.showDetails(newNote);
   }
 
-  showDetails(entity: NoteModel) {
+  showDetails(entity: Note) {
     this.dialog.open(NoteDetailComponent, {width: '80%', data: {entity: entity}});
   }
 

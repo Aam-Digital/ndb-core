@@ -2,8 +2,8 @@ import { DemoChildGenerator } from '../../children/demo-data-generators/demo-chi
 import { DemoDataGenerator } from '../../../core/demo-data/demo-data-generator';
 import { Injectable } from '@angular/core';
 import { Child } from '../../children/model/child';
-import { NoteModel } from '../note.model';
-import { AttendanceModel } from '../attendance.model';
+import { Note } from '../note';
+import { MeetingNoteAttendance } from '../meeting-note-attendance';
 import { faker } from '../../../core/demo-data/faker';
 import { WarningLevel } from '../../warning-level';
 import { noteIndividualStories } from './notes_individual-stories';
@@ -23,7 +23,7 @@ export class DemoNoteConfig {
  * Builds upon the generated demo Child entities.
  */
 @Injectable()
-export class DemoNoteGeneratorService extends DemoDataGenerator<NoteModel> {
+export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoNoteGeneratorService.provider()]`
@@ -56,7 +56,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<NoteModel> {
     super();
   }
 
-  public generateEntities(): NoteModel[] {
+  public generateEntities(): Note[] {
     const data = [];
 
     for (const child of this.demoChildren.entities) {
@@ -77,8 +77,8 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<NoteModel> {
     return data;
   }
 
-  private generateNoteForChild(child: Child): NoteModel {
-    const note = new NoteModel(faker.random.uuid());
+  private generateNoteForChild(child: Child): Note {
+    const note = new Note(faker.random.uuid());
 
     const selectedStory = faker.random.arrayElement(noteIndividualStories);
     Object.assign(note, selectedStory);
@@ -92,7 +92,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<NoteModel> {
     return note;
   }
 
-  private removeFollowUpMarkerForOldNotes(note: NoteModel) {
+  private removeFollowUpMarkerForOldNotes(note: Note) {
     const lastMonths = new Date();
     lastMonths.setMonth(lastMonths.getMonth() - 1);
     if (note.date < lastMonths) {
@@ -101,13 +101,13 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<NoteModel> {
   }
 
   private generateGroupNote(children: Child[]) {
-    const note = new NoteModel(faker.random.uuid());
+    const note = new Note(faker.random.uuid());
 
     const selectedStory = faker.random.arrayElement(noteGroupStories);
     Object.assign(note, selectedStory);
 
     note.children = children.map(child => {
-      const attendance = new AttendanceModel(child.getId());
+      const attendance = new MeetingNoteAttendance(child.getId());
       // get an approximate presence of 85%
       if (faker.random.number(100) <= 15) {
         attendance.present = false;

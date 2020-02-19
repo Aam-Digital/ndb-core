@@ -1,5 +1,5 @@
 
-export class AttendanceModel {
+export class MeetingNoteAttendance {
 
   present: boolean = true;
   remarks: string = '';
@@ -9,12 +9,12 @@ export class AttendanceModel {
     this.childID = childID;
   }
 
-  presence(presence: boolean): AttendanceModel {
+  presence(presence: boolean): MeetingNoteAttendance {
     this.present = presence;
     return this;
   }
 
-  remark(remarks: string): AttendanceModel {
+  remark(remarks: string): MeetingNoteAttendance {
     this.remarks = remarks;
     return this;
   }

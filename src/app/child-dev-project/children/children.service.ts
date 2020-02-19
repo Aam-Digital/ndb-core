@@ -4,7 +4,7 @@ import { Child } from './model/child';
 import { EntityMapperService } from '../../core/entity/entity-mapper.service';
 import { AttendanceMonth } from '../attendance/model/attendance-month';
 import { Database } from '../../core/database/database';
-import { NoteModel } from '../notes/note.model';
+import { Note } from '../notes/note';
 import { EducationalMaterial } from '../educational-material/model/educational-material';
 import { Aser } from '../aser/model/aser';
 import { ChildSchoolRelation } from './model/childSchoolRelation';
@@ -215,11 +215,11 @@ export class ChildrenService {
       '}';
   }
 
-  getNotesOfChild(childId: string): Observable<NoteModel[]> {
+  getNotesOfChild(childId: string): Observable<Note[]> {
     const promise = this.db.query('notes_index/by_child', {key: childId, include_docs: true})
       .then(loadedEntities => {
         return loadedEntities.rows.map(loadedRecord => {
-          const entity = new NoteModel('');
+          const entity = new Note('');
           this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
           return entity;
         });
@@ -234,7 +234,7 @@ export class ChildrenService {
       views: {
         by_child: {
           map: '(doc) => { ' +
-            'if (!doc._id.startsWith("' + NoteModel.ENTITY_TYPE + '")) return;' +
+            'if (!doc._id.startsWith("' + Note.ENTITY_TYPE + '")) return;' +
             'doc.children.forEach(childId => emit(childId)); ' +
             '}',
         },

@@ -16,7 +16,7 @@
  */
 
 
-import { AttendanceModel } from './attendance.model';
+import { MeetingNoteAttendance } from './meeting-note-attendance';
 import { InteractionTypes } from './interaction-types.enum';
 import { DatabaseEntity } from '../../core/entity/database-entity.decorator';
 import { Entity } from '../../core/entity/entity';
@@ -24,7 +24,7 @@ import { DatabaseField } from '../../core/entity/database-field.decorator';
 import { WarningLevel, WarningLevelColor } from '../warning-level';
 
 @DatabaseEntity('Note')
-export class NoteModel extends Entity {
+export class Note extends Entity {
 
   // The values that 'Type of interaction' can have in the UI / The values that category can have here
   static INTERACTION_TYPES = Object.values(InteractionTypes);
@@ -39,7 +39,7 @@ export class NoteModel extends Entity {
   ]);
 
   // An array of triplets containing information about the child and it's attendance
-  @DatabaseField({dataType: 'attendancemodel'}) children: AttendanceModel[] = [];
+  @DatabaseField({dataType: 'attendancemodel'}) children: MeetingNoteAttendance[] = [];
   @DatabaseField() date: Date;
   @DatabaseField() subject: string = '';
   @DatabaseField() text: string = '';
@@ -76,7 +76,7 @@ export class NoteModel extends Entity {
    * @param presence true to get the children that were present, false to get the children that were absent
    */
 
-  childrenWithPresence(presence: boolean): AttendanceModel[] {
+  childrenWithPresence(presence: boolean): MeetingNoteAttendance[] {
     return this.children.filter(attendance => attendance.present === presence);
   }
 
@@ -88,7 +88,7 @@ export class NoteModel extends Entity {
       return WarningLevelColor(WarningLevel.WARNING);
     }
 
-    const color = NoteModel.interactionsColorMap.get(this.category);
+    const color = Note.interactionsColorMap.get(this.category);
     return color === undefined ? '' : color;
   }
 
@@ -145,7 +145,7 @@ export class NoteModel extends Entity {
    */
 
   addChild(childId: string) {
-    this.children.push(new AttendanceModel(childId));
+    this.children.push(new MeetingNoteAttendance(childId));
   }
 
   /**

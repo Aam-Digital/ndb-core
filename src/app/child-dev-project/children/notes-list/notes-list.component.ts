@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NoteModel } from '../../notes/note.model';
+import { Note } from '../../notes/note';
 import { NoteDetailComponent } from '../../notes/note-detail/note-detail.component';
 import { DatePipe } from '@angular/common';
 import { ChildrenService } from '../children.service';
@@ -19,7 +19,7 @@ import { SessionService } from '../../../core/session/session.service';
 export class NotesListComponent implements OnInit {
 
   childId: string;
-  records: Array<NoteModel> = [];
+  records: Array<Note> = [];
   detailsComponent = NoteDetailComponent;
 
   columns: Array<ColumnDescription> = [
@@ -43,10 +43,10 @@ export class NotesListComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.childId = params.get('id');
     });
-
-    this.entityMapperService.loadType<NoteModel>(NoteModel).then(notes => {
-      this.records = notes.filter(note => note.isLinkedWithChild(this.childId));
-    });
+    this.childrenService.getNotesOfChild(this.childId).subscribe((notes: Note[]) => this.records = notes);
+    /*this.entityMapperService.loadType<Note>(Note).then(notes => {
+      this.records = notes.filter((note) => note.isLinkedWithChild(this.childId));
+    }); */
   }
 
   generateNewRecordFactory() {
@@ -55,7 +55,7 @@ export class NotesListComponent implements OnInit {
     const childId = this.childId;
 
     return () => {
-      const newNote = new NoteModel(Date.now().toString());
+      const newNote = new Note(Date.now().toString());
       newNote.date = new Date();
       newNote.addChild(childId);
       newNote.author = user;

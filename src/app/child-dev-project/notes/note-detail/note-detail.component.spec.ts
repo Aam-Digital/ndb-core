@@ -1,6 +1,6 @@
 import { NoteDetailComponent } from './note-detail.component';
-import { NoteModel } from '../note.model';
-import { AttendanceModel } from '../attendance.model';
+import { Note } from '../note';
+import { MeetingNoteAttendance } from '../meeting-note-attendance';
 import { InteractionTypes } from '../interaction-types.enum';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -21,7 +21,7 @@ function generateChildAttendanceModels() {
   const attendances = [];
   let i;
   for (i = 1; i < 4; i++) {
-    const am = new AttendanceModel('' + i);
+    const am = new MeetingNoteAttendance('' + i);
     if (i % 2 === 0) {
       am.present = false;
       am.remarks = 'not empty';
@@ -32,7 +32,7 @@ function generateChildAttendanceModels() {
 }
 
 function generateTestingData() {
-  const n1 = new NoteModel('1');
+  const n1 = new Note('1');
   n1.children = generateChildAttendanceModels();
   n1.category = InteractionTypes.CHILDREN_MEETING;
   n1.date = new Date(Date.now());
@@ -43,7 +43,7 @@ function generateTestingData() {
 
 const children = [new Child('1'), new Child('2'), new Child('3')];
 const testData = generateTestingData();
-const mockDialogRef = {beforeClosed() {return of(new NoteModel('1')); },
+const mockDialogRef = {beforeClosed() {return of(new Note('1')); },
                       close(r: any) {}};
 const mockedDatabase = new MockDatabase();
 const mockedRouter = {navigate(commands: any[], extras?: NavigationExtras) {return Promise.resolve(); }};
@@ -75,7 +75,7 @@ describe('NoteDetailComponent', () => {
     fixture = TestBed.createComponent(NoteDetailComponent);
     component = fixture.componentInstance;
     const entityMapperService = fixture.debugElement.injector.get(EntityMapperService);
-    entityMapperService.save<NoteModel>(testData.entity);
+    entityMapperService.save<Note>(testData.entity);
     children.forEach(child => entityMapperService.save<Child>(child));
     fixture.detectChanges();
   });
@@ -91,7 +91,7 @@ describe('NoteDetailComponent', () => {
   it('should save data', async function () {
     component.entity.addChildren('5', '7');
     await component.save();
-    const newNote: NoteModel = await mockedDatabase.get('Note:1');
+    const newNote: Note = await mockedDatabase.get('Note:1');
     expect(newNote.children.length).toBe(5);
   });
 

@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { AbstractDetailsComponent } from '../../../core/ui-helper/AbstractDetailsComponent';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { NoteModel } from '../note.model';
+import { Note } from '../note';
 import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
 import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 
@@ -10,11 +10,11 @@ import { EntityMapperService } from '../../../core/entity/entity-mapper.service'
   templateUrl: './note-detail.component.html',
   styleUrls: ['./note-detail.component.scss'],
 })
-export class NoteDetailComponent extends AbstractDetailsComponent<NoteModel> {
+export class NoteDetailComponent extends AbstractDetailsComponent<Note> {
 
   smallScreen: boolean;
 
-  interactionTypes = NoteModel.INTERACTION_TYPES;
+  interactionTypes = Note.INTERACTION_TYPES;
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
               dialogRef: MatDialogRef<NoteDetailComponent>,
