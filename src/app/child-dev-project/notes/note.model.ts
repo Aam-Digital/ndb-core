@@ -21,7 +21,7 @@ import { InteractionTypes } from './interaction-types.enum';
 import { DatabaseEntity } from '../../core/entity/database-entity.decorator';
 import { Entity } from '../../core/entity/entity';
 import { DatabaseField } from '../../core/entity/database-field.decorator';
-import { WarningLevel } from '../warning-level';
+import { WarningLevel, WarningLevelColor } from '../warning-level';
 
 @DatabaseEntity('Note')
 export class NoteModel extends Entity {
@@ -82,10 +82,10 @@ export class NoteModel extends Entity {
 
   public getColor() {
     if (this.warningLevel === WarningLevel.URGENT) {
-      return '#fd727280';
+      return WarningLevelColor(WarningLevel.URGENT);
     }
     if (this.warningLevel === WarningLevel.WARNING) {
-      return '#ffa50080';
+      return WarningLevelColor(WarningLevel.WARNING);
     }
 
     const color = NoteModel.interactionsColorMap.get(this.category);
@@ -106,10 +106,9 @@ export class NoteModel extends Entity {
     }
     // if the child is present, return a green color
     if (this.isPresent(entityId)) {
-      return 'rgba(71,253,24,0.5)';
+      return WarningLevelColor(WarningLevel.OK);
     }
-    // else, return a red color
-    return 'rgba(219,49,36,0.5)';
+    return WarningLevelColor(WarningLevel.URGENT);
   }
 
   /**
