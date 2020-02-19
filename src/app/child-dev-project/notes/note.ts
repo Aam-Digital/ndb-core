@@ -39,7 +39,7 @@ export class Note extends Entity {
   ]);
 
   // An array of triplets containing information about the child and it's attendance
-  @DatabaseField({dataType: 'attendancemodel'}) children: MeetingNoteAttendance[] = [];
+  @DatabaseField({dataType: 'meetingnoteattendance'}) children: MeetingNoteAttendance[] = [];
   @DatabaseField() date: Date;
   @DatabaseField() subject: string = '';
   @DatabaseField() text: string = '';
