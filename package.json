@@ -43,6 +43,7 @@
     "reflect-metadata": "^0.1.13",
     "reveal": "0.0.4",
     "rxjs": "^6.5.5",
+    "tslint-plugin-prettier": "^2.1.0",
     "uniqid": "^5.2.0",
     "webdav": "^2.10.1",
     "zone.js": "~0.10.3"

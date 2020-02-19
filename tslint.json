@@ -3,6 +3,7 @@
     "node_modules/codelyzer"
   ],
   "rules": {
+    "prettier": true,
     "callable-types": true,
     "class-name": true,
     "comment-format": [
@@ -136,5 +137,6 @@
     "use-pipe-transform-interface": true,
     "component-class-suffix": true,
     "directive-class-suffix": true
-  }
+  },
+  "extends": ["tslint-plugin-prettier"]
 }
