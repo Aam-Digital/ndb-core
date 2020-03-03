@@ -48,14 +48,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AttendanceAverageDashboardComponent } from '../attendance/dashboard-widgets/attendance-average-dashboard/attendance-average-dashboard.component';
 import { AttendanceWarningsDashboardComponent } from '../attendance/dashboard-widgets/attendance-warnings-dashboard/attendance-warnings-dashboard.component';
-import { NotesComponent } from '../notes/notes-component/notes.component';
-import { NoteDetailsComponent } from '../notes/note-details/note-details.component';
 import { ChildSelectComponent } from './child-select/child-select.component';
 import { SchoolsModule } from '../schools/schools.module';
 import { EducationalMaterialComponent } from '../educational-material/educational-material-component/educational-material.component';
 import { AserComponent } from '../aser/aser-component/aser.component';
 import { FilterPipeModule } from 'ngx-filter-pipe';
-import { NotesManagerComponent } from '../notes/notes-manager/notes-manager.component';
 import { AddMonthAttendanceComponent } from '../attendance/add-month-attendance/add-month-attendance.component';
 import { AttendanceDaysComponent } from '../attendance/attendance-days/attendance-days.component';
 import { AttendanceDetailsComponent } from '../attendance/attendance-details/attendance-details.component';
@@ -70,6 +67,7 @@ import { PreviousSchoolsComponent } from '../previous-schools/previous-schools.c
 import { AdminModule } from '../../core/admin/admin.module';
 import { SelectGroupChildrenComponent } from './select-group-children/select-group-children.component';
 import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/roll-call.component';
+import { NotesListComponent } from './notes-list/notes-list.component';
 
 
 @NgModule({
@@ -110,17 +108,14 @@ import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/ro
     AttendanceBlockComponent,
     ChildBlockComponent,
     ChildAttendanceComponent,
-    NotesComponent,
     ChildDetailsComponent,
     ChildrenListComponent,
     ChildrenCountDashboardComponent,
     AttendanceAverageDashboardComponent,
     AttendanceWarningsDashboardComponent,
-    NoteDetailsComponent,
     ChildSelectComponent,
     EducationalMaterialComponent,
     AserComponent,
-    NotesManagerComponent,
     AddMonthAttendanceComponent,
     AttendanceDayBlockComponent,
     AttendanceDaysComponent,
@@ -132,6 +127,7 @@ import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/ro
     AttendanceManagerComponent,
     HealthCheckupComponent,
     PreviousSchoolsComponent,
+    NotesListComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
@@ -144,6 +140,6 @@ import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/ro
     AttendanceWeekDashboardComponent,
     AttendanceDaysComponent,
   ],
-  entryComponents: [NoteDetailsComponent, AttendanceDetailsComponent],
+  entryComponents: [AttendanceDetailsComponent],
 })
 export class ChildrenModule { }

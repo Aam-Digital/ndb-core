@@ -15,6 +15,8 @@ export class ChildSelectComponent implements OnInit {
 
   @Input() valueAsIds: string[];
   @Output() valueAsIdsChange = new EventEmitter();
+  @Output() newIdAdded = new EventEmitter();
+  @Output() idRemoved = new EventEmitter();
 
   @ViewChild('inputField', { static: true }) inputField;
 
@@ -57,6 +59,7 @@ export class ChildSelectComponent implements OnInit {
   selectChild(child: Child, suppressChangeEvent = false) {
     this.selectedChildren.push(child);
     if (!suppressChangeEvent) {
+      this.newIdAdded.emit(child.getId());
       this.valueAsIdsChange.emit(this.selectedChildren.map(c => c.getId()));
     }
 
@@ -70,6 +73,7 @@ export class ChildSelectComponent implements OnInit {
   unselectChild(child: Child) {
     const i = this.selectedChildren.findIndex(e => e.getId() === child.getId());
     this.selectedChildren.splice(i, 1);
+    this.idRemoved.emit(child.getId());
     this.valueAsIdsChange.emit(this.selectedChildren.map(c => c.getId()));
 
     this.allChildren.unshift(child);

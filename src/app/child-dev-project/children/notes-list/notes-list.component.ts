@@ -1,23 +1,26 @@
 import { Component, OnInit } from '@angular/core';
-import { Note } from '../model/note';
-import { ChildrenService } from '../../children/children.service';
-import { ActivatedRoute } from '@angular/router';
-import { SessionService } from '../../../core/session/session.service';
-import { ColumnDescription, ColumnDescriptionInputType } from '../../../core/ui-helper/entity-subrecord/column-description';
+import { Note } from '../../notes/note';
+import { NoteDetailComponent } from '../../notes/note-detail/note-detail.component';
 import { DatePipe } from '@angular/common';
-import { NoteDetailsComponent } from '../note-details/note-details.component';
+import { ChildrenService } from '../children.service';
+import { ActivatedRoute } from '@angular/router';
+import { ColumnDescription, ColumnDescriptionInputType } from '../../../core/ui-helper/entity-subrecord/column-description';
+import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
+import { SessionService } from '../../../core/session/session.service';
 
 @Component({
-  selector: 'app-notes',
-  template: '<app-entity-subrecord [records]="records" [columns]="columns" ' +
-            '[newRecordFactory]="generateNewRecordFactory()" [detailsComponent]="detailsComponent">' +
-            '</app-entity-subrecord>',
+  selector: 'app-notes-list',
+  templateUrl: './notes-list.component.html',
+  styleUrls: ['./notes-list.component.scss'],
 })
-export class NotesComponent implements OnInit {
+/**
+ * The component that is responsible for listing the Notes that are related to a certain child
+ */
+export class NotesListComponent implements OnInit {
 
   childId: string;
-  records: Array<Note>;
-  detailsComponent = NoteDetailsComponent;
+  records: Array<Note> = [];
+  detailsComponent = NoteDetailComponent;
 
   columns: Array<ColumnDescription> = [
     new ColumnDescription('date', 'Date', ColumnDescriptionInputType.DATE, null,
@@ -30,23 +33,21 @@ export class NotesComponent implements OnInit {
       (v) => '', 'md'),
   ];
 
-
   constructor(private route: ActivatedRoute,
               private childrenService: ChildrenService,
               private sessionService: SessionService,
-              private datePipe: DatePipe) {
-  }
+              private datePipe: DatePipe,
+              private entityMapperService: EntityMapperService) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.childId = params.get('id');
-
-      this.childrenService.getNotesOfChild(this.childId)
-        .subscribe(results => this.records = results.sort((a, b) => {
-          return (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0); } ));
     });
+    this.childrenService.getNotesOfChild(this.childId).subscribe((notes: Note[]) => this.records = notes);
+    /*this.entityMapperService.loadType<Note>(Note).then(notes => {
+      this.records = notes.filter((note) => note.isLinkedWithChild(this.childId));
+    }); */
   }
-
 
   generateNewRecordFactory() {
     // define values locally because "this" is a different scope after passing a function as input to another component
@@ -56,10 +57,11 @@ export class NotesComponent implements OnInit {
     return () => {
       const newNote = new Note(Date.now().toString());
       newNote.date = new Date();
-      newNote.children = [childId];
+      newNote.addChild(childId);
       newNote.author = user;
 
       return newNote;
     };
   }
+
 }

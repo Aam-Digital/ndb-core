@@ -84,7 +84,7 @@
   <ng-container matColumnDef="children">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Children </th>
     <td mat-cell *matCellDef="let note">
-      <app-child-block *ngFor='let child of note.children' [entityId]='child'></app-child-block>
+      <app-child-block *ngFor='let child of note.getChildIDs()' [entityId]='child'></app-child-block>
     </td>
   </ng-container>
 
@@ -94,3 +94,9 @@
   <tr mat-row *matRowDef="let note; columns: columnsToDisplay" (click)="showDetails(note)"
       style="cursor:pointer;" [ngStyle]="{'background-color': note.getColor()}"></tr>
 </table>
+
+<mat-paginator [pageSize]="50"
+               [pageSizeOptions]="[30, 50, 70, 100]">
+</mat-paginator>
+
+<div class="bottom-padding"></div>

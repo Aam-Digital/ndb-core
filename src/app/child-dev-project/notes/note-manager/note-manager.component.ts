@@ -1,37 +1,40 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
-import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
-import { Note } from '../model/note';
-import { NoteDetailsComponent } from '../note-details/note-details.component';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { SessionService } from '../../../core/session/session.service';
+import { Note } from '../note';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
+import { MatDialog } from '@angular/material/dialog';
+import { MediaChange, MediaObserver } from '@angular/flex-layout';
+import { NoteDetailComponent } from '../note-detail/note-detail.component';
+import { InteractionTypes } from '../interaction-types.enum';
+import { MatPaginator } from '@angular/material/paginator';
 import { FilterSelection } from '../../../core/ui-helper/filter-selection/filter-selection';
 import { WarningLevel } from '../../warning-level';
-import { MediaChange, MediaObserver } from '@angular/flex-layout';
+import { SessionService } from '../../../core/session/session.service';
+import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 
 @Component({
-  selector: 'app-notes-manager',
-  templateUrl: './notes-manager.component.html',
-  styleUrls: ['./notes-manager.component.scss'],
+  selector: 'app-note-manager',
+  templateUrl: './note-manager.component.html',
+  styleUrls: ['./note-manager.component.scss'],
 })
-export class NotesManagerComponent implements OnInit, AfterViewInit {
-
+export class NoteManagerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   watcher: Subscription;
   activeMediaQuery = '';
   entityList = new Array<Note>();
   notesDataSource = new MatTableDataSource();
 
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+
   columnsToDisplay = ['date', 'subject', 'category', 'author', 'children'];
 
-
   columnGroups = {
-      'standard' : ['date', 'subject', 'category', 'author', 'children'],
-      'mobile' : ['date', 'subject', 'children'],
+    'standard' : ['date', 'subject', 'category', 'author', 'children'],
+    'mobile' : ['date', 'subject', 'children'],
   };
+
   filterString = '';
 
   followUpFS = new FilterSelection<Note>('status', [
@@ -40,12 +43,14 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
       filterFun: (n: Note) => n.warningLevel === WarningLevel.WARNING || n.warningLevel === WarningLevel.URGENT },
     { key: '', label: 'All', filterFun: (c: Note) => true },
   ]);
+
   dateFS = new FilterSelection<Note>('date', [
     { key: 'current-week', label: 'This Week',
       filterFun: (n: Note) => n.date > this.getPreviousSunday(0) },
     { key: 'last-week', label: 'Since Last Week', filterFun: (n: Note) => n.date > this.getPreviousSunday(1) },
     { key: '', label: 'All', filterFun: (c: Note) => true },
   ]);
+
   filterSelections = [
     this.followUpFS,
     this.dateFS,
@@ -56,18 +61,16 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     this.categoryFS,
   ];
 
-
-  constructor(private entityMapper: EntityMapperService,
-              private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
               private sessionService: SessionService,
-              private media: MediaObserver) { }
+              private media: MediaObserver,
+              private entityMapperService: EntityMapperService) {}
 
   ngOnInit() {
-    this.entityMapper.loadType<Note>(Note)
-      .then(data => {
-        this.entityList = data.sort((a, b) => (b.date ? b.date.getTime() : 0) - (a.date ? a.date.getTime() : 0) );
-        this.applyFilterSelections();
+    this.entityMapperService.loadType<Note>(Note).then(notes => {
+      this.sortAndAdd(notes);
     });
+
     this.displayColumnGroup('standard');
     this.watcher = this.media.media$.subscribe((change: MediaChange) => {
       if (change.mqAlias === 'xs' || change.mqAlias === 'sm') {
@@ -76,6 +79,15 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
       }
     });
     this.initCategoryFilter();
+    this.notesDataSource.paginator = this.paginator;
+  }
+
+  private sortAndAdd(newNotes: Note[]) {
+    newNotes.forEach(newNote => {
+      this.entityList.push(newNote);
+    });
+    this.entityList.sort((a, b) => (b.date ? b.date.getTime() : 0) - (a.date ? a.date.getTime() : 0) );
+    this.applyFilterSelections();
   }
 
   displayColumnGroup(columnGroup: string) {
@@ -83,14 +95,14 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     this.columnsToDisplay = this.columnGroups[columnGroup];
   }
 
-
   private initCategoryFilter() {
-    this.categoryFS.options = [
-      { key: '', label: '', filterFun: (n: Note) => true },
-    ];
 
-    Note.INTERACTION_TYPES.forEach(t => {
-      this.categoryFS.options.push({ key: t, label: t, filterFun: (n: Note) => n.category === t });
+    Note.INTERACTION_TYPES.forEach(interaction => {
+      this.categoryFS.options.push({key: interaction,
+      label: interaction,
+      filterFun: (note: Note) => {
+        return interaction === InteractionTypes.NONE ? true : note.category === interaction;
+      }});
     });
 
     this.applyFilterSelections();
@@ -100,14 +112,12 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     this.notesDataSource.sort = this.sort;
   }
 
-
   private getPreviousSunday(weeksBack: number) {
     const today = new Date();
     const day = today.getDay();
     const diff = today.getDate() - day - 7 * weeksBack; // adjust when day is sunday
     return new Date(today.setDate(diff));
   }
-
 
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim();
@@ -120,33 +130,27 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
 
     this.filterSelections.forEach(f => {
       filteredData = filteredData.filter(f.getSelectedFilterFunction());
-    });
-    this.filterSelectionsDropdown.forEach(f => {
+     });
+     this.filterSelectionsDropdown.forEach(f => {
       filteredData = filteredData.filter(f.getSelectedFilterFunction());
     });
 
     this.notesDataSource.data = filteredData;
   }
 
-
-
   addNoteClick() {
     const newNote = new Note(Date.now().toString());
     newNote.date = new Date();
     newNote.author = this.sessionService.getCurrentUser().name;
 
-    this.showDetails(newNote, true);
+    this.showDetails(newNote);
   }
 
-
-  showDetails(entity: Note, newNote: boolean = false) {
-    const nextNote = this.dialog.open(NoteDetailsComponent, {width: '80%', data: {entity: entity}});
-
-    if (newNote) {
-      nextNote.afterClosed().subscribe(val => {
-        this.entityList = [val].concat(this.entityList);
-        this.applyFilterSelections();
-      });
-    }
+  showDetails(entity: Note) {
+    this.dialog.open(NoteDetailComponent, {width: '80%', data: {entity: entity}});
   }
+
+  ngOnDestroy(): void {
+  }
+
 }

@@ -2,12 +2,14 @@ import { DemoChildGenerator } from '../../children/demo-data-generators/demo-chi
 import { DemoDataGenerator } from '../../../core/demo-data/demo-data-generator';
 import { Injectable } from '@angular/core';
 import { Child } from '../../children/model/child';
-import { Note } from '../model/note';
+import { Note } from '../note';
+import { MeetingNoteAttendance } from '../meeting-note-attendance';
 import { faker } from '../../../core/demo-data/faker';
 import { WarningLevel } from '../../warning-level';
 import { noteIndividualStories } from './notes_individual-stories';
 import { noteGroupStories } from './notes_group-stories';
 import { centersUnique } from '../../children/demo-data-generators/fixtures/centers';
+import { absenceRemarks } from './remarks';
 
 
 export class DemoNoteConfig {
@@ -81,7 +83,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     const selectedStory = faker.random.arrayElement(noteIndividualStories);
     Object.assign(note, selectedStory);
 
-    note.children = [child.getId()];
+    note.addChild(child.getId());
     note.author = faker.random.arrayElement(this.teamMembers);
     note.date = faker.date.between(child.admissionDate, this.getEarlierDateOrToday(child.dropoutDate));
 
@@ -104,7 +106,16 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     const selectedStory = faker.random.arrayElement(noteGroupStories);
     Object.assign(note, selectedStory);
 
-    note.children = children.map(c => c.getId());
+    note.children = children.map(child => {
+      const attendance = new MeetingNoteAttendance(child.getId());
+      // get an approximate presence of 85%
+      if (faker.random.number(100) <= 15) {
+        attendance.present = false;
+        attendance.remarks = faker.random.arrayElement(absenceRemarks);
+      }
+      return attendance;
+    });
+
     note.author = faker.random.arrayElement(this.teamMembers);
     note.date = faker.date.past(1);
 

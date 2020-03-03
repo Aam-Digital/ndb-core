@@ -16,7 +16,7 @@
  */
 
 import { Database } from './database';
-import { Note } from '../../child-dev-project/notes/model/note';
+import { Note } from '../../child-dev-project/notes/note';
 import { AttendanceMonth } from '../../child-dev-project/attendance/model/attendance-month';
 import { ChildSchoolRelation } from '../../child-dev-project/children/model/childSchoolRelation';
 
@@ -129,7 +129,7 @@ export class MockDatabase extends Database {
     let reducerFun;
     switch (fun) {
       case 'notes_index/by_child':
-        filterFun = (e) => e._id.startsWith( Note.ENTITY_TYPE) && e.children.includes(options.key);
+        filterFun = (e) => e._id.startsWith(Note.ENTITY_TYPE) && e.children.includes(options.key);
         break;
       case 'attendances_index/by_child':
         filterFun = (e) => e._id.startsWith( AttendanceMonth.ENTITY_TYPE) && e.student === options.key;

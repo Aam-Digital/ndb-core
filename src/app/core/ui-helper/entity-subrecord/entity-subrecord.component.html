@@ -15,6 +15,7 @@
 
 
       <div *ngIf="!recordsEditing.get(rec.getId()) && !isReadonlyInputType(col.inputType)"
+           [ngStyle]="col.styleBuilder(rec[col.name])"
            [ngClass]="{ 'table-show-number': col.inputType==='number' }">
         {{ col.formatter(rec[col.name]) }}
       </div>
@@ -85,10 +86,7 @@
 
 
   <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-  <!-- <tr mat-row *matRowDef="let rec; columns: columnsToDisplay"
-      class="{{getWarningStyleClass(rec)}}" [ngStyle]="{'background-color': rec.getColor()}"> -->
-      <tr mat-row *matRowDef="let rec; columns: columnsToDisplay"
-      class="{{getWarningStyleClass(rec)}}">
+  <tr mat-row *matRowDef="let rec; columns: columnsToDisplay"
+      [ngStyle]="{'background-color': getColor(rec)}">
   </tr>
-  <!--<mat-row *matRowDef="let rec; columns: columnsToNotDisplay" class="{{getWarningStyleClass(rec)}}" [ngStyle]="{'background-color': reg.getColor()}"></mat-row>-->
 </table>

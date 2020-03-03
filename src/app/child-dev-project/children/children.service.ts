@@ -4,7 +4,7 @@ import { Child } from './model/child';
 import { EntityMapperService } from '../../core/entity/entity-mapper.service';
 import { AttendanceMonth } from '../attendance/model/attendance-month';
 import { Database } from '../../core/database/database';
-import { Note } from '../notes/model/note';
+import { Note } from '../notes/note';
 import { EducationalMaterial } from '../educational-material/model/educational-material';
 import { Aser } from '../aser/model/aser';
 import { ChildSchoolRelation } from './model/childSchoolRelation';
@@ -235,7 +235,7 @@ export class ChildrenService {
         by_child: {
           map: '(doc) => { ' +
             'if (!doc._id.startsWith("' + Note.ENTITY_TYPE + '")) return;' +
-            'doc.children.forEach(childId => emit(childId)); ' +
+            'doc.children.forEach(attendanceModel => emit(attendanceModel.childID)); ' +
             '}',
         },
       },

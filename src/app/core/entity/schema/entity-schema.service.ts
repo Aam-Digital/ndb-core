@@ -26,6 +26,7 @@ import { stringEntitySchemaDatatype } from '../schema-datatypes/datatype-string'
 import { numberEntitySchemaDatatype } from '../schema-datatypes/datatype-number';
 import { dateEntitySchemaDatatype } from '../schema-datatypes/datatype-date';
 import { monthEntitySchemaDatatype } from '../schema-datatypes/datatype-month';
+import { attendanceEntitySchemaDatatype } from '../schema-datatypes/datatype-attendance';
 import { arrayEntitySchemaDatatype } from '../schema-datatypes/datatype-array';
 import { schemaEmbedEntitySchemaDatatype } from '../schema-datatypes/datatype-schema-embed';
 import { dateOnlyEntitySchemaDatatype } from '../schema-datatypes/datatype-date-only';

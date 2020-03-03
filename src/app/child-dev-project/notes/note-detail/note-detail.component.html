@@ -15,21 +15,25 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
+<h2 mat-dialog-title>{{entity.date.toLocaleDateString()}}: {{entity.subject}}</h2>
 
-<h2 mat-dialog-title>{{note.date ? note.date.toLocaleDateString() : 'Note without date'}}: {{note.subject}}</h2>
 
 <form #recordForm="ngForm">
-<mat-dialog-content>
-
-  <!-- General context of Note -->
-  <div class='form-section-secondary'>
+  <mat-dialog-content>
+    <!-- General context of Note -->
+    <div class='form-section-secondary'>
     <div fxLayout='row wrap' fxLayoutGap='20px'>
       <div fxFlex>
         <mat-form-field>
-          <input matInput placeholder="Date" name="date"
-                  [value]="note.date" (dateChange)='note.date=$event.target.value;recordForm.form.markAsDirty();' [matDatepicker]="noteDatepicker">
-          <mat-datepicker-toggle matSuffix [for]="noteDatepicker"></mat-datepicker-toggle>
-          <mat-datepicker #noteDatepicker></mat-datepicker>
+          <!-- TODO: date pickers should be the same throughout the app -->
+          <input matInput placeholder="Date"
+                 name="date"
+                 type="date"
+                 [matDatepicker]="picker"
+                 [valueAsDate]="entity.date"
+                 (change)='entity.date=$event.target.valueAsDate;recordForm.form.markAsDirty();'>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
       </div>
 
@@ -38,7 +42,7 @@
           <mat-label>
             Status
           </mat-label>
-          <mat-select name="followup" [(ngModel)]="note.warningLevel">
+          <mat-select name="followup" [(ngModel)]="entity.warningLevel">
             <mat-option value="OK">Solved</mat-option>
             <mat-option value="WARNING">Needs Follow-Up</mat-option>
             <mat-option value="URGENT">Urgent Follow-Up</mat-option>
@@ -49,7 +53,7 @@
     <div fxLayout='row wrap' fxLayoutGap='20px'>
       <div fxFlex>
         <mat-form-field class='input-medium'>
-          <mat-select placeholder="Type of Interaction" name="type" [(ngModel)]="note.category">
+          <mat-select placeholder="Type of Interaction" name="type" [(ngModel)]="entity.category">
             <mat-option *ngFor="let interaction of interactionTypes" [value]="interaction">
               {{interaction}}
             </mat-option>
@@ -59,46 +63,37 @@
       <div fxFlex>
         <mat-form-field class='input-medium'>
           <!-- TODO: should be multi-select or auto-complete field of user names? -->
-          <input matInput placeholder="Team Member" name="teammember" type="text" [(ngModel)]="note.author">
+          <input matInput placeholder="Team Member" name="teammember" type="text" [(ngModel)]="entity.author">
         </mat-form-field>
       </div>
-    </div>
-
-    <div fxLayout='row wrap' fxLayoutGap='20px'>
-      <div fxFlex>
-        <app-child-select [valueAsIds]='note.children' (valueAsIdsChange)='note.children=$event;recordForm.form.markAsDirty();'
-                          class='input-medium'>
-        </app-child-select>
       </div>
+
     </div>
-  </div>
-
-
 
   <!-- Primary information of Note -->
   <div class='mat-elevation-z2 primary-section-elevated form-section-primary'>
     <div fxLayout='row wrap' fxLayoutGap='20px'>
       <div fxFlex>
         <mat-form-field class='input-medium'>
-          <input matInput placeholder="Topic / Summary" name="subject" type="text" [(ngModel)]="note.subject">
+          <input matInput placeholder="Topic / Summary" name="subject" type="text" [(ngModel)]="entity.subject">
         </mat-form-field>
       </div>
     </div>
 
     <div fxLayout='row wrap' fxLayoutGap='20px'>
       <mat-form-field class='input-max'>
-      <textarea matInput placeholder="Notes" name="notes" [(ngModel)]="note.text"
+      <textarea matInput placeholder="Notes" name="notes" [(ngModel)]="entity.text"
                 cdkTextareaAutosize cdkAutosizeMinRows="4"></textarea>
       </mat-form-field>
     </div>
   </div>
 
+  <app-note-presence-list [recordForm]="recordForm" [entity]="entity"></app-note-presence-list>
 
+  </mat-dialog-content>
 
-</mat-dialog-content>
-
-<mat-dialog-actions>
-  <button mat-stroked-button [disabled]='!recordForm.form.dirty' (click)='save()'>Save</button>
-  <button mat-stroked-button (click)='cancel()'>Cancel</button>
-</mat-dialog-actions>
+  <mat-dialog-actions>
+    <button mat-stroked-button [disabled]='!recordForm.form.dirty' (click)='save()'>Save</button>
+    <button mat-stroked-button (click)='cancel()'>Cancel</button>
+  </mat-dialog-actions>
 </form>
