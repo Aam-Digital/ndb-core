@@ -40,6 +40,8 @@ export class PreviousSchoolsComponent implements OnInit {
   records = new Array<ChildSchoolRelation>();
   schoolList = new Array<School>();
   columns = new Array<ColumnDescription>();
+  currentSchool: School;
+  currentSchoolClass: string;
 
   constructor(private route: ActivatedRoute,
               private childrenService: ChildrenService,
@@ -60,28 +62,31 @@ export class PreviousSchoolsComponent implements OnInit {
     this.childrenService.getSchoolsWithRelations(id)
       .then(results => {
         this.records = results;
+        this.currentSchoolClass = this.records[0].schoolClass;
+        this.schoolsService.getSchools().subscribe(data => {
+          const schoolMap = {};
+          data.forEach(s => schoolMap[s.getId()] = s.name);
+          this.currentSchool = schoolMap[this.records[0].schoolId];
+          console.log('Currently attending ' + this.currentSchool + ' in class ' + this.currentSchoolClass);
+          this.columns = [
+            new ColumnDescription('schoolId', 'Name', ColumnDescriptionInputType.SELECT,
+              data.map(t => { return { value: t.getId(), label: t.name}; }),
+              (schoolId) => schoolMap[schoolId]),
+              // (schoolId) => data.find(schoolElement => schoolElement._id === ('School:' + schoolId)).name),
+            new ColumnDescription('schoolClass', 'Class', ColumnDescriptionInputType.NUMBER),
+            new ColumnDescription('start', 'From', ColumnDescriptionInputType.DATE, null,
+              // tslint:disable-next-line: max-line-length
+              (v: Date) => v && !isNaN(v.getTime()) ? this.datePipe.transform(v, 'yyyy-MM-dd') : ''), // checking if v is a date and otherwise returning undefined prevents a datePipe error
+            new ColumnDescription('end', 'To', ColumnDescriptionInputType.DATE, null,
+              (v: Date) => v && !isNaN(v.getTime()) ? this.datePipe.transform(v, 'yyyy-MM-dd') : ''),
+            new ColumnDescription('result', 'Result', ColumnDescriptionInputType.NUMBER, null,
+              (n: number) => n >= 0 && !isNaN(n) ? n + '%' : 'N/A',
+              null,
+              (value: number) => {
+              return {'color': PreviousSchoolsComponent.fromPercent(value)}; }),
+          ];
+        });
       });
-    this.schoolsService.getSchools().subscribe(data => {
-        const schoolMap = {};
-        data.forEach(s => schoolMap[s.getId()] = s.name);
-        this.columns = [
-          new ColumnDescription('schoolId', 'Name', ColumnDescriptionInputType.SELECT,
-            data.map(t => { return { value: t.getId(), label: t.name}; }),
-            (schoolId) => schoolMap[schoolId]),
-            // (schoolId) => data.find(schoolElement => schoolElement._id === ('School:' + schoolId)).name),
-          new ColumnDescription('schoolClass', 'Class', ColumnDescriptionInputType.NUMBER),
-          new ColumnDescription('start', 'From', ColumnDescriptionInputType.DATE, null,
-            // tslint:disable-next-line: max-line-length
-            (v: Date) => v && !isNaN(v.getTime()) ? this.datePipe.transform(v, 'yyyy-MM-dd') : ''), // checking if v is a date and otherwise returning undefined prevents a datePipe error
-          new ColumnDescription('end', 'To', ColumnDescriptionInputType.DATE, null,
-            (v: Date) => v && !isNaN(v.getTime()) ? this.datePipe.transform(v, 'yyyy-MM-dd') : ''),
-          new ColumnDescription('result', 'Result', ColumnDescriptionInputType.NUMBER, null,
-            (n: number) => n >= 0 && !isNaN(n) ? n + '%' : 'N/A',
-            null,
-            (value: number) => {
-            return {'color': PreviousSchoolsComponent.fromPercent(value)}; }),
-        ];
-    });
   }
 
   generateNewRecordFactory() {
