@@ -1,24 +1,12 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { NotePresenceListComponent } from './note-presence-list.component';
-import { NotesModule } from '../../notes.module';
+import { Note } from '../../note';
 
 describe('NotePresenceListComponent', () => {
   let component: NotePresenceListComponent;
-  let fixture: ComponentFixture<NotePresenceListComponent>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ NotePresenceListComponent ],
-      imports: [NotesModule],
-    })
-    .compileComponents();
-  }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NotePresenceListComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    component = new NotePresenceListComponent();
+    component.entity = new Note('1');
   });
 
   it('should create', () => {
