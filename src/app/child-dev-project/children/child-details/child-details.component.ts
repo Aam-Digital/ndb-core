@@ -39,6 +39,8 @@ export class ChildDetailsComponent implements OnInit {
 
   child: Child = new Child('');
   currentSchool: School = new School('');
+  currentSchoolName: String;
+  currentSchoolClass: String;
   schools: School[] = [];
 
   validateForm = false;
@@ -90,7 +92,8 @@ export class ChildDetailsComponent implements OnInit {
       guardianName:   [{value: this.child.guardianName,   disabled: !this.editing}],
       preferredTimeForGuardianMeeting: [{value: this.child.preferredTimeForGuardianMeeting, disabled: !this.editing}],
 
-      schoolClass:    [{value: this.child.schoolClass,    disabled: !this.editing}],
+      schoolClass:    [{value: this.currentSchoolClass,    disabled: !this.editing}],
+      currentSchool:  [{value: this.currentSchoolName,     disabled: !this.editing}],
 
       // aadhar:         [{value: this.child.has_aadhar,         disabled: !this.editing}],
       // kanyashree:     [{value: this.child.has_kanyashree,     disabled: !this.editing}],
@@ -128,13 +131,27 @@ export class ChildDetailsComponent implements OnInit {
       this.editing = true;
       this.child = new Child(uniqid());
     } else {
-      this.childrenService.getChild(id)
-        .subscribe(child => {
-          this.child = child;
-          this.initForm();
-          this.entityMapperService.load<School>(School, this.child.schoolId)
-            .then(school => this.currentSchool = school);
+      this.childrenService.getCurrentSchoolClass(id)
+        .then(result => {
+          //this.initForm();
+          this.currentSchoolClass = result;
+          console.log("Current SchoolClass Result: " + result);
+          this.childrenService.getCurrentSchool(id)
+          .then(result => {
+            console.log("Current School Result: " + result);
+            this.initForm();
+            this.currentSchool = result;
+            this.currentSchoolName = result.toString();
+            console.log(this.currentSchoolName);
+          });
         });
+      // this.childrenService.getChild(id)
+      //   .subscribe(child => {
+      //     this.child = child;
+      //     this.initForm();
+      //     this.entityMapperService.load<School>(School, this.child.schoolId)
+      //       .then(school => this.currentSchool = school);
+      //   });
     }
 
     this.initForm();

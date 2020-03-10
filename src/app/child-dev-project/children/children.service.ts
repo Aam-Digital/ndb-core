@@ -276,11 +276,28 @@ export class ChildrenService {
     );
   }
 
-  getCurrentSchool(childId: string): Promise<School> {
+  async getCurrentSchool(childId: string): Promise<School> {
+    const relations = await this.querySortedRelations(childId);
+    for (let i = 0; i < relations.length; i++) {
+      console.log(i + ': ' + relations[i].schoolId);
+    }
+    return null;
+    //return this.querySortedRelations(childId, 1)
+      // .then(relations => {
+      //   if (relations) {
+      //     console.log
+      //     //return this.entityMapper.load<School>(School, relation.schoolId);
+      //   }
+      //   return null;
+      // });
+  }
+
+  getCurrentSchoolClass(childId: string): Promise<String> {
     return this.queryLatestRelation(childId)
       .then(relation => {
         if (relation) {
-         return this.entityMapper.load<School>(School, relation.schoolId);
+          //return this.entityMapper.load<School>(School, relation.schoolId);
+          return relation.schoolClass;
         }
         return null;
       });
