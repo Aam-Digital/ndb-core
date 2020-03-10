@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NotePresenceListComponent } from './note-presence-list.component';
+import { NotesModule } from '../../notes.module';
 
 describe('NotePresenceListComponent', () => {
   let component: NotePresenceListComponent;
@@ -9,6 +10,7 @@ describe('NotePresenceListComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ NotePresenceListComponent ],
+      imports: [NotesModule],
     })
     .compileComponents();
   }));
