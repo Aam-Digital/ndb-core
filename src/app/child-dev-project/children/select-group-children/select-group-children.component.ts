@@ -15,11 +15,18 @@ import { FilterSelection, FilterSelectionOption } from '../../../core/ui-helper/
 export class SelectGroupChildrenComponent implements OnInit {
 
   @Output() valueChange = new EventEmitter<Child[]>();
+  value: Child[] = [];
 
-  private value: Child[] = [];
-  centers: string[];
   children: Child[];
-  studentGroupFilters = new FilterSelection<Child>('Groups', [ ]);
+
+  centerFilters = new FilterSelection<Child>('Centers', [ ]);
+  private selectedCenterFilter: FilterSelectionOption<Child>;
+
+  schoolFilters = new FilterSelection<Child>('Schools', [ ]);
+  private selectedSchoolFilter: FilterSelectionOption<Child>;
+
+  classFilters = new FilterSelection<Child>('Classes', [ ]);
+  private selectedClassFilter: FilterSelectionOption<Child>;
 
   constructor(
     private childrenService: ChildrenService,
@@ -28,41 +35,68 @@ export class SelectGroupChildrenComponent implements OnInit {
   ngOnInit() {
     this.childrenService.getChildren().subscribe(children => {
       this.children = children.filter(c => c.isActive());
-      this.centers = this.children.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
+      this.centerFilters.options = this.loadFilterOptionsForProperty(this.children, 'center');
     });
   }
 
 
-  loadStudentGroupFilterForCenter(center: string) {
-    this.studentGroupFilters.options = [ this.getAllSchoolsFilterOption(center) ];
-
-    this.children
-      .filter(c => c.center === center)
-      .map(c => c.schoolId).filter((value, index, arr) => arr.indexOf(value) === index)
-      .forEach(schoolId => {
-        if (!schoolId) { return; }
+  private loadFilterOptionsForProperty(children: Child[], propertyToBeFiltered: string) {
+    const options = [ this.getAllStudentsFilterOption() ];
+    children
+      .map(c => c[propertyToBeFiltered])
+      .filter((value, index, arr) => arr.indexOf(value) === index)
+      .forEach(id => {
+        if (!id) { return; }
 
         const filterOption = {
-          key: schoolId,
-          label: schoolId,
-          type: 'school',
-          filterFun: (c: Child) => c.schoolId === schoolId && c.center === center,
+          key: id,
+          label: id,
+          type: 'valueFilter',
+          filterFun: (c: Child) => c[propertyToBeFiltered] === id,
         };
-        this.studentGroupFilters.options.push(filterOption);
+        options.push(filterOption);
       });
+    return options;
   }
 
-  private getAllSchoolsFilterOption(center: string): FilterSelectionOption<Child> {
+  private getAllStudentsFilterOption(): FilterSelectionOption<Child> {
     return {
       key: 'all',
       label: 'All Students',
-      filterFun: (c: Child) => c.center === center,
+      filterFun: () => true,
     };
   }
 
 
-  updateSelectedChildren(group: FilterSelectionOption<Child>) {
-    this.value = this.children.filter(group.filterFun);
+  selectCenterFilter(group: FilterSelectionOption<Child>) {
+    this.selectedCenterFilter = group;
+    this.value = this.children
+      .filter(this.selectedCenterFilter.filterFun);
+
+    this.schoolFilters.options = this.loadFilterOptionsForProperty(this.value, 'schoolId');
+    this.selectSchoolFilter(this.schoolFilters.options[0]); // reset to the default "All Students" filter
+  }
+
+  selectSchoolFilter(group: FilterSelectionOption<Child>) {
+    this.selectedSchoolFilter = group;
+    this.value = this.children
+      .filter(this.selectedCenterFilter.filterFun)
+      .filter(this.selectedSchoolFilter.filterFun);
+
+    this.classFilters.options = this.loadFilterOptionsForProperty(this.value, 'schoolClass');
+    this.selectClassFilter(this.classFilters.options[0]); // reset to the default "All Students" filter
+  }
+
+  selectClassFilter(group: FilterSelectionOption<Child>) {
+    this.selectedClassFilter = group;
+    this.value = this.children
+      .filter(this.selectedCenterFilter.filterFun)
+      .filter(this.selectedSchoolFilter.filterFun)
+      .filter(this.selectedClassFilter.filterFun);
+  }
+
+
+  confirmSelectedChildren() {
     this.valueChange.emit(this.value);
   }
 }

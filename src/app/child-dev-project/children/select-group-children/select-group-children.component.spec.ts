@@ -58,7 +58,7 @@ describe('SelectGroupChildrenComponent', () => {
 
     mockChildrenObservable.next(mockChildren);
 
-    expect(component.centers).toEqual([mockChildren[0].center, mockChildren[1].center]);
+    expect(component.centerFilters.options.length).toBe(3);
   });
 
 
@@ -79,11 +79,11 @@ describe('SelectGroupChildrenComponent', () => {
 
     mockChildrenObservable.next(mockChildren);
 
-    component.loadStudentGroupFilterForCenter(selectedCenter);
+    component.selectCenterFilter(component.centerFilters.options.find(o => o.label === selectedCenter));
 
-    expect(component.studentGroupFilters.options.length).toBe(3); // includes default option "all schools"
-    expect(component.studentGroupFilters.options[1].key).toBe('School:1');
-    expect(component.studentGroupFilters.options[2].key).toBe('School:2');
+    expect(component.schoolFilters.options.length).toBe(3); // includes default option "all schools"
+    expect(component.schoolFilters.options[1].key).toBe('School:1');
+    expect(component.schoolFilters.options[2].key).toBe('School:2');
   });
 
   it('should not list empty filter for undefined schools', () => {
@@ -99,10 +99,10 @@ describe('SelectGroupChildrenComponent', () => {
 
     mockChildrenObservable.next(mockChildren);
 
-    component.loadStudentGroupFilterForCenter(selectedCenter);
+    component.selectCenterFilter(component.centerFilters.options.find(o => o.label === selectedCenter));
 
-    expect(component.studentGroupFilters.options.length).toBe(2); // includes default option "all schools"
-    expect(component.studentGroupFilters.options[1].key).toBe('School:1');
+    expect(component.schoolFilters.options.length).toBe(2); // includes default option "all schools"
+    expect(component.schoolFilters.options[1].key).toBe('School:1');
   });
 
 
@@ -126,8 +126,9 @@ describe('SelectGroupChildrenComponent', () => {
 
     spyOn(component.valueChange, 'emit');
 
-    component.loadStudentGroupFilterForCenter(selectedCenter);
-    component.updateSelectedChildren(component.studentGroupFilters.options.find(o => o.key === selectedSchool));
+    component.selectCenterFilter(component.centerFilters.options.find(o => o.label === selectedCenter));
+    component.selectSchoolFilter(component.schoolFilters.options.find(o => o.key === selectedSchool));
+    component.confirmSelectedChildren();
 
     expect(component.valueChange.emit).toHaveBeenCalledWith([mockChildren[0]]);
   });
@@ -151,8 +152,9 @@ describe('SelectGroupChildrenComponent', () => {
 
     spyOn(component.valueChange, 'emit');
 
-    component.loadStudentGroupFilterForCenter(selectedCenter);
-    component.updateSelectedChildren(component.studentGroupFilters.options.find(o => o.key === 'all'));
+    component.selectCenterFilter(component.centerFilters.options.find(o => o.label === selectedCenter));
+    component.selectSchoolFilter(component.schoolFilters.options.find(o => o.key === 'all'));
+    component.confirmSelectedChildren();
 
     expect(component.valueChange.emit).toHaveBeenCalledWith([ mockChildren[0], mockChildren[1] ]);
   });
