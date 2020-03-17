@@ -276,23 +276,28 @@ export class ChildrenService {
     );
   }
 
-  async getCurrentSchool(childId: string): Promise<School> {
+  async getCurrentSchoolInfo(childId: string): Promise<{school: School, schoolClass: String}> {
     const relations = await this.querySortedRelations(childId);
-    for (let i = 0; i < relations.length; i++) {
-      console.log(i + ': ' + relations[i].schoolId);
+    let result: {school: School, schoolClass: String} = {
+      school: null,
+      schoolClass: null,
+    };
+    if (relations) {
+      for (let i = 0; i < relations.length; i++) {
+        //console.log(i + ': ' + relations[i].schoolId);
+        if (relations[i].start.setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0)) {
+          result = {
+            school: await this.entityMapper.load<School>(School, relations[i].schoolId),
+            schoolClass: relations[i].schoolClass,
+          };
+          break;
+        }
+      }
     }
-    return null;
-    //return this.querySortedRelations(childId, 1)
-      // .then(relations => {
-      //   if (relations) {
-      //     console.log
-      //     //return this.entityMapper.load<School>(School, relation.schoolId);
-      //   }
-      //   return null;
-      // });
+    return result;
   }
 
-  getCurrentSchoolClass(childId: string): Promise<String> {
+  async getCurrentSchoolClass(childId: string): Promise<String> {
     return this.queryLatestRelation(childId)
       .then(relation => {
         if (relation) {

@@ -34,6 +34,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   originalRecords = [];
   screenWidth = '';
   flexMediaWatcher: Subscription;
+  child
 
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;

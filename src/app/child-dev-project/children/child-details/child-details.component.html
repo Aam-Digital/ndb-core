@@ -209,7 +209,7 @@
         Education
       </mat-expansion-panel-header>
 
-      <div>
+      <div *ngIf="currentSchool">
         <!-- <mat-form-field style='width:300px;'>
           <mat-label>
             School
@@ -227,7 +227,9 @@
         <mat-form-field>
           <input matInput type="text" formControlName="currentSchool" placeholder="currentSchool">
         </mat-form-field> -->
-        <h4>CurrentSchool: {{currentSchool}}; CurrentSchoolClass: {{currentSchoolClass}}</h4>
+
+        <h3>Current School: <span class="ineditable-text" matTooltip='To edit the current school, please edit the school history in "Previous Schools" below'>{{currentSchool}}</span>
+          <span *ngIf="currentSchoolClass">, class: <span class="ineditable-text" matTooltip='To edit the current school, please edit the school history in "Previous Schools" below'>{{currentSchoolClass}}</span></span></h3>
       </div>
 
       <div>
