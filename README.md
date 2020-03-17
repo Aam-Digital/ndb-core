@@ -21,9 +21,48 @@ You can directly run the system using Docker.
 More information in our [Aam-Digital/ndb-setup repository](https://github.com/Aam-Digital/ndb-setup/).
 In that case you do not have to clone this repository and install all the dependencies as everything is packaged into the docker image already.
 
+## Configuration
+The custom configuration for your service instance is set in the `assets/config.json` file.
+You can copy the `assets/config.default.json` as a starting point.
 
+### Nextcloud (webdav) Integration
+You can integrate Aam Digital with an existing Nextcloud server to allow users to update photos on their own.
+To avoid CORS issues the webdav URL in your _config.json_ should be a relative URL
+in combination with a reverse-proxy that is forwarding to the actual Nextcloud server address:
 
+_assets/config.json:_
+```
+  "webdav": {
+    "remote_url": "nextcloud/"
+  }
+```
 
+_proxy.conf.json_ (for local development):
+```
+  "/nextcloud": {
+    "target": "https://<your-nextcloud-server>/remote.php/webdav",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/nextcloud": ""
+    }
+  }
+```
+
+_docker/nginx_default.conf_ (for production server):
+```
+    location /nextcloud {
+        rewrite /nextcloud/(.*) remote.php/webdav/$1 break;
+        proxy_pass https://<your-nextcloud-server>/;
+        proxy_redirect off;
+        proxy_buffering off;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Ssl on;
+    }
+```
+
+-----
 
 # Development
 Our detailed documentation and API reference is hosted on GitHub Pages: [**aam-digital.github.io/ndb-core**](http://aam-digital.github.io/ndb-core/index.html).
@@ -49,9 +88,6 @@ npm install
 ## Configuration
 Create a config file at `assets/config.json` by copying the default config `assets/config.default.json`.
 The default config file is used as a fallback.
-Adapt the settings, especially regarding the CouchDB server that should be used for server-side synchronisation.
-Under `webdav.remoteUrl` one can enter a base-url to a webdav server (e.g. `"nextcloud-domain.com/remote.php/webdav"`) used for storing images and (in the future) files. Make sure that CORS is properly configured as it may require some tweaking!
-
 
 
 ## Using Angular CLI

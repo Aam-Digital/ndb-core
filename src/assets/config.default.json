@@ -10,7 +10,7 @@
   },
 
   "webdav": {
-    "remote_url": ""
+    "remote_url": null
   },
 
   "debug": false
