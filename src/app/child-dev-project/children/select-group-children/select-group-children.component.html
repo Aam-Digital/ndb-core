@@ -2,22 +2,52 @@
   <div>
     <mat-form-field fxFlex>
       <mat-label>
-        Select a center
+        Select center
       </mat-label>
-      <mat-select (valueChange)='loadStudentGroupFilterForCenter($event)'>
-        <mat-option *ngFor="let c of centers" [value]='c'>
-          {{c}}
+      <mat-select (valueChange)='selectCenterFilter($event)'>
+        <mat-option *ngFor="let group of centerFilters.options" [value]="group">
+          <span>{{group.label}}</span>
         </mat-option>
       </mat-select>
     </mat-form-field>
   </div>
 
   <div>
-    <div *ngFor="let group of studentGroupFilters.options" class='group-select-option' (click)='updateSelectedChildren(group)'>
-      <span style='text-align: right' class='fa fa-chevron-right'></span>&nbsp;
-      <span *ngIf='!group.type'>{{group.label}}</span>
-      <app-school-block *ngIf="group.type==='school'" [entityId]='group.label' [linkDisabled]='true'></app-school-block>
-    </div>
+    <mat-form-field fxFlex>
+      <mat-label>
+        Select school
+      </mat-label>
+      <mat-select (valueChange)='selectSchoolFilter($event)' [disabled]='schoolFilters.options.length === 0'>
+        <mat-option *ngFor="let group of schoolFilters.options" [value]="group">
+          <span *ngIf='!group.type'>{{group.label}}</span>
+          <app-school-block *ngIf="group.type==='valueFilter'" [entityId]='group.label' [linkDisabled]='true'></app-school-block>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div>
+    <mat-form-field fxFlex>
+      <mat-label>
+        Select class
+      </mat-label>
+      <mat-select (valueChange)='selectClassFilter($event)' [disabled]='schoolFilters.options.length === 0'>
+        <mat-option *ngFor="let group of classFilters.options" [value]="group">
+          <span>{{group.label}}</span>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+
+  <div>
+    Total students selected: {{ value.length }}
+  </div>
+
+  <div>
+    <button mat-stroked-button (click)='confirmSelectedChildren()' class='nav-button' fxFlex>
+      Continue
+    </button>
   </div>
 
 </div>

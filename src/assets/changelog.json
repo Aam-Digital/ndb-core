@@ -1,5 +1,12 @@
 [
   {
+    "tag_name": "v2.10.0",
+    "name": "Roll Call for class",
+    "published_at": "2020-03-15",
+    "body": "- filter students for roll call by class",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.9.0",
     "name": "Bug Fixes & Export",
     "published_at": "2020-02-16",
