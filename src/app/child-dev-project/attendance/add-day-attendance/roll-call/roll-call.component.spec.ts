@@ -8,6 +8,7 @@ import { Child } from '../../../children/model/child';
 import { of } from 'rxjs';
 import { AttendanceMonth } from '../../model/attendance-month';
 import { AttendanceStatus } from '../../model/attendance-day';
+import { AppConfig } from '../../../../core/app-config/app-config';
 
 describe('RollCallComponent', () => {
   let component: RollCallComponent;
@@ -17,6 +18,11 @@ describe('RollCallComponent', () => {
   let mockChildrenService;
 
   beforeEach(async(() => {
+    AppConfig.settings = {
+      site_name: '',
+      database: {name: 'unit-tests', remote_url: '', timeout: 60000, outdated_threshold_days: 0, useTemporaryDatabase: true},
+    };
+
     mockEntityMapper = jasmine.createSpyObj(['save']);
     mockChildrenService = jasmine.createSpyObj(['getAttendancesOfMonth']);
     mockChildrenService.getAttendancesOfMonth.and.returnValue(of([]));
