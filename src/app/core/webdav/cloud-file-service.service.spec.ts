@@ -33,6 +33,8 @@ describe('CloudFileService', () => {
     sessionService = TestBed.get(SessionService);
   });
 
+
+
   it('.connect() should check user existance and call webdav.createClient()', () => {
     spyOn(webdav, 'createClient');
     sessionService.getCurrentUser.and.returnValue(new User('user'));
@@ -40,6 +42,28 @@ describe('CloudFileService', () => {
     expect(sessionService.getCurrentUser).toHaveBeenCalled();
     expect(webdav.createClient).toHaveBeenCalledWith('test-url', {username: 'user', password: 'pass'});
   });
+
+  it('.connect() should abort if credentials are passed and not configured for user', () => {
+    spyOn(webdav, 'createClient');
+    sessionService.getCurrentUser.and.returnValue(new User('user'));
+    cloudFileService.connect();
+    expect(webdav.createClient).not.toHaveBeenCalled();
+  });
+
+  it('.connect() should connect using credentials saved for user', () => {
+    spyOn(webdav, 'createClient');
+
+    const testUser = new User('user');
+    testUser.setNewPassword('pass');
+    testUser.cloudUserName = 'testuser';
+    testUser.setCloudPassword('testuserpass', 'pass');
+    sessionService.getCurrentUser.and.returnValue(testUser);
+
+    cloudFileService.connect();
+    expect(sessionService.getCurrentUser).toHaveBeenCalled();
+    expect(webdav.createClient).toHaveBeenCalledWith('test-url', {username: 'testuser', password: 'testuserpass'});
+  });
+
 
   it('.checkConnection() should try to create and delete a file', async () => {
     spyOn(cloudFileService, 'doesFileExist').and.returnValue(new Promise((resolve, reject) => {resolve(true); }));
