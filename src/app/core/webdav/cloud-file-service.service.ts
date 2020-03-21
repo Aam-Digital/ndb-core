@@ -16,8 +16,10 @@ export class CloudFileService {
   private fileList: string;
   private currentlyGettingList: Promise<boolean>;
 
-  constructor(private domSanitizer: DomSanitizer,
-    private sessionService: SessionService) {
+  constructor(
+    private domSanitizer: DomSanitizer,
+    private sessionService: SessionService,
+  ) {
       this.connect();
   }
 
@@ -27,9 +29,7 @@ export class CloudFileService {
    * @param password login password
    */
   public async connect(username: string = null, password: string = null) {
-    // clear the promise that retrieves the root dir
-    this.currentlyGettingList = null;
-    this.fileList = null;
+    this.reset();
 
     if (this.sessionService.getCurrentUser() != null) {
       const currentUser = this.sessionService.getCurrentUser();
@@ -39,6 +39,13 @@ export class CloudFileService {
         username = currentUser.cloudUserName;
         password = currentUser.cloudPasswordDec;
       }
+
+      if (!username || !password) {
+        // abort if account is not configured
+        this.client = null;
+        return;
+      }
+
       this.client = await webdav.createClient(
         AppConfig.settings.webdav.remote_url,
         {
@@ -47,6 +54,15 @@ export class CloudFileService {
         },
       );
     }
+  }
+
+  /**
+   * Reset the current state and requests.
+   * e.g. clear promise that retrieves the root dir
+   */
+  private reset() {
+    this.currentlyGettingList = null;
+    this.fileList = null;
   }
 
   /**
