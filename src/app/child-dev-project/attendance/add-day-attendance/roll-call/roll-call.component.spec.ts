@@ -18,6 +18,11 @@ describe('RollCallComponent', () => {
   let mockChildrenService;
 
   beforeEach(async(() => {
+    AppConfig.settings = {
+      site_name: '',
+      database: {name: 'unit-tests', remote_url: '', timeout: 60000, outdated_threshold_days: 0, useTemporaryDatabase: true},
+    };
+
     mockEntityMapper = jasmine.createSpyObj(['save']);
     mockChildrenService = jasmine.createSpyObj(['getAttendancesOfMonth']);
     mockChildrenService.getAttendancesOfMonth.and.returnValue(of([]));
