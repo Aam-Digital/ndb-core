@@ -29,31 +29,33 @@ export class CloudFileService {
    * @param password login password
    */
   public async connect(username: string = null, password: string = null) {
+    if (!AppConfig.settings.webdav || !this.sessionService.getCurrentUser()) {
+      return;
+    }
+
     this.reset();
 
-    if (this.sessionService.getCurrentUser() != null) {
-      const currentUser = this.sessionService.getCurrentUser();
-      this.imagePath = currentUser.imagePath;
+    const currentUser = this.sessionService.getCurrentUser();
+    this.imagePath = currentUser.imagePath;
 
-      if (username === null && password == null) {
-        username = currentUser.cloudUserName;
-        password = currentUser.cloudPasswordDec;
-      }
-
-      if (!username || !password) {
-        // abort if account is not configured
-        this.client = null;
-        return;
-      }
-
-      this.client = await webdav.createClient(
-        AppConfig.settings.webdav.remote_url,
-        {
-          username: username,
-          password: password,
-        },
-      );
+    if (username === null && password == null) {
+      username = currentUser.cloudUserName;
+      password = currentUser.cloudPasswordDec;
     }
+
+    if (!username || !password) {
+      // abort if account is not configured
+      this.client = null;
+      return;
+    }
+
+    this.client = await webdav.createClient(
+      AppConfig.settings.webdav.remote_url,
+      {
+        username: username,
+        password: password,
+      },
+    );
   }
 
   /**
@@ -107,7 +109,7 @@ export class CloudFileService {
     if (!this.fileList && !this.currentlyGettingList) {
       // create promise that resolves when the file list is loaded
       // if this function gets called mulitple times this ensures that the list will only be loaded once
-      this.currentlyGettingList = new Promise((resolve, reject) => {
+      this.currentlyGettingList = new Promise(resolve => {
         this.getDir(this.imagePath).then(list => {
           this.fileList = list;
           resolve(true);

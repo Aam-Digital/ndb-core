@@ -27,7 +27,7 @@ export interface IAppConfig {
     useTemporaryDatabase: boolean;
   };
 
-  webdav: {
+  webdav?: {
     remote_url: string;
   };
 

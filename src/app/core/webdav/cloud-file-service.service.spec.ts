@@ -38,14 +38,25 @@ describe('CloudFileService', () => {
   it('.connect() should check user existance and call webdav.createClient()', () => {
     spyOn(webdav, 'createClient');
     sessionService.getCurrentUser.and.returnValue(new User('user'));
+
     cloudFileService.connect('user', 'pass');
     expect(sessionService.getCurrentUser).toHaveBeenCalled();
     expect(webdav.createClient).toHaveBeenCalledWith('test-url', {username: 'user', password: 'pass'});
   });
 
+  it('.connect() should abort if appconfig for webdav is not set', () => {
+    spyOn(webdav, 'createClient');
+    AppConfig.settings.webdav = null;
+    sessionService.getCurrentUser.and.returnValue(new User('user'));
+
+    cloudFileService.connect('user', 'pass');
+    expect(webdav.createClient).not.toHaveBeenCalled();
+  });
+
   it('.connect() should abort if credentials are passed and not configured for user', () => {
     spyOn(webdav, 'createClient');
     sessionService.getCurrentUser.and.returnValue(new User('user'));
+
     cloudFileService.connect();
     expect(webdav.createClient).not.toHaveBeenCalled();
   });
@@ -66,7 +77,7 @@ describe('CloudFileService', () => {
 
 
   it('.checkConnection() should try to create and delete a file', async () => {
-    spyOn(cloudFileService, 'doesFileExist').and.returnValue(new Promise((resolve, reject) => {resolve(true); }));
+    spyOn(cloudFileService, 'doesFileExist').and.returnValue(new Promise(resolve => {resolve(true); }));
     await cloudFileService.checkConnection();
     expect(clientSpy.putFileContents).toHaveBeenCalled();
     expect(clientSpy.deleteFile).toHaveBeenCalled();
@@ -83,13 +94,13 @@ describe('CloudFileService', () => {
   });
 
   it('should check file existance', async() => {
-    spyOn(cloudFileService, 'getDir').and.returnValue(new Promise((resolve, reject) => {resolve('"basename": "filename"'); }));
+    spyOn(cloudFileService, 'getDir').and.returnValue(new Promise(resolve => {resolve('"basename": "filename"'); }));
     expect(await cloudFileService.doesFileExist('filename')).toBe(true);
     expect(await cloudFileService.doesFileExist('nonexistant')).toBe(false);
   });
 
   it('should get images', async() => {
-    spyOn(cloudFileService, 'doesFileExist').and.returnValue(new Promise((resolve, reject) => {resolve(true); }));
+    spyOn(cloudFileService, 'doesFileExist').and.returnValue(new Promise(resolve => {resolve(true); }));
     await cloudFileService.getImage('filepath');
     expect(clientSpy.getFileContents).toHaveBeenCalledWith(cloudFileService['imagePath'] + '/filepath');
   });
@@ -101,7 +112,7 @@ describe('CloudFileService', () => {
 
   it('should return a default image if no child picture is present', async () => {
     spyOn(cloudFileService, 'getDefaultImage');
-    spyOn(cloudFileService, 'doesFileExist').and.returnValue(new Promise((resolve, reject) => {resolve(false); }));
+    spyOn(cloudFileService, 'doesFileExist').and.returnValue(new Promise(resolve => {resolve(false); }));
     const image = await cloudFileService.getImage('filepath');
     expect(image).toBe(cloudFileService.getDefaultImage());
   });

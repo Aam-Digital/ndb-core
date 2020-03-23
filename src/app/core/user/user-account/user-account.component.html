@@ -48,7 +48,7 @@
   </mat-tab>
 
 
-  <mat-tab label="Image Service">
+  <mat-tab label="Image Service" *ngIf='webdavEnabled'>
     <ng-template matTabContent>
       <div class='user-profile-tab'>
         <app-cloud-file-service-user-settings [user]='user'></app-cloud-file-service-user-settings>
