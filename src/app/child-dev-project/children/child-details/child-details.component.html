@@ -65,6 +65,10 @@
                   class="child-pic-upload" (click)="fileUpload.click()">
             <mat-icon class="upload-icon" fontIcon="fa-upload"></mat-icon>
           </button>
+
+          <input  *ngIf="(creatingNew || editing) && isAdminUser"
+                  class="child-pic-photofile" matTooltip='filename for child photo uploaded by server administrator'
+                  matInput formControlName="photoFile" placeholder="Photo filename" title="photoFile" type="text">
         </div>
 
 

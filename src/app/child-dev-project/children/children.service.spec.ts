@@ -146,7 +146,7 @@ describe('ChildrenService', () => {
     expect(child.photo).not.toBeDefined();
     mockChildPhotoService.getImage.and.returnValue(Promise.resolve('test-img'));
     child = await service.getChild('10').toPromise();
-    expect(mockChildPhotoService.getImage).toHaveBeenCalledWith('10');
+    expect(mockChildPhotoService.getImage).toHaveBeenCalledWith(child);
     expect(child.photo).toEqual('test-img');
   });
 
@@ -157,7 +157,7 @@ describe('ChildrenService', () => {
     mockChildPhotoService.getImage.and.returnValue(Promise.resolve('test-img'));
     const childrenList = await service.getChildren().toPromise();
     child = childrenList[0];
-    expect(mockChildPhotoService.getImage).toHaveBeenCalledWith('10');
+    expect(mockChildPhotoService.getImage).toHaveBeenCalledWith(child);
     expect(child.photo).toEqual('test-img');
   });
 

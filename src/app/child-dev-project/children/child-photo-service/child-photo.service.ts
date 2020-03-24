@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
 import { CloudFileService } from '../../../core/webdav/cloud-file-service.service';
+import { Child } from '../model/child';
 
 @Injectable({
   providedIn: 'root',
@@ -14,15 +15,15 @@ export class ChildPhotoService {
 
   /**
    * Creates an ArrayBuffer of the photo for that Child or the default image url.
-   * @param childId
+   * @param child
    */
-  public async getImage(childId: string): Promise<SafeUrl> {
-    let image: SafeUrl = this.getDefaultImage();
+  public async getImage(child: Child): Promise<SafeUrl> {
+    let image: SafeUrl;
 
     if (this.cloudFileService.isConnected()) {
       const imageType = [ '.png' , '.jpg', '.jpeg', '' ];
       for (const ext of imageType) {
-        const filepath = this.basePath + childId + ext;
+        const filepath = this.basePath + child.getId() + ext;
         try {
           image = await this.cloudFileService.getFile(filepath);
           break;
@@ -36,7 +37,18 @@ export class ChildPhotoService {
       }
     }
 
+    if (!image) {
+      image = this.getImageFromAssets(child);
+    }
+
     return image;
+  }
+
+  private getImageFromAssets(child: Child): SafeUrl {
+    if (!child.photoFile) {
+      return this.getDefaultImage();
+    }
+    return Child.generatePhotoPath(child.photoFile);
   }
 
   private getDefaultImage(): SafeUrl {

@@ -38,8 +38,6 @@ export class Child extends Entity {
   @DatabaseField() motherTongue: string = '';
   @DatabaseField() religion: string = '';
 
-  @DatabaseField() photoFile: string;
-
   @DatabaseField() center: string = '';
   @DatabaseField() admissionDate: Date;
   @DatabaseField() status: string = '';
@@ -71,6 +69,12 @@ export class Child extends Entity {
   @DatabaseField() health_eyeHealthStatus: string;
   @DatabaseField() health_lastVitaminD: Date;
   @DatabaseField() health_lastDeworming: Date;
+
+  /**
+   * Url to an image that is displayed for the child
+   * as a fallback option if no CloudFileService file or connection is available.
+   */
+  @DatabaseField() photoFile: string;
 
   photo: SafeUrl;
 
@@ -111,15 +115,5 @@ export class Child extends Entity {
     }
 
     return indices;
-  }
-
-  /** @deprecated since v2.5.3
-   * each child now posses its own photo variable, which gets loaded via the cloud-file-service, use that one instead.
-  */
-  public getPhoto() {
-    if (!this.photoFile) {
-      return 'assets/child.png';
-    }
-    return Child.generatePhotoPath(this.photoFile);
   }
 }

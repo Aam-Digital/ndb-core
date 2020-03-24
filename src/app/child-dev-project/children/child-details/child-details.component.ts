@@ -29,6 +29,7 @@ import { AlertService } from '../../../core/alerts/alert.service';
 import { ChildrenService } from '../children.service';
 import { School } from '../../schools/model/school';
 import { ChildPhotoService } from '../child-photo-service/child-photo.service';
+import { SessionService } from '../../../core/session/session.service';
 
 
 @Component({
@@ -54,6 +55,7 @@ export class ChildDetailsComponent implements OnInit {
   documentStatus = ['OK (copy with us)', 'OK (copy needed for us)', 'needs correction', 'applied', 'doesn\'t have', 'not eligible', ''];
   eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
   vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
+  isAdminUser: boolean;
 
 
   constructor(private entityMapperService: EntityMapperService,
@@ -66,6 +68,7 @@ export class ChildDetailsComponent implements OnInit {
               private confirmationDialog: ConfirmationDialogService,
               private alertService: AlertService,
               private childPhotoService: ChildPhotoService,
+              private sessionService: SessionService,
   ) { }
 
   // TODO: is this generateNewRecordFactory() used at all?
@@ -123,6 +126,7 @@ export class ChildDetailsComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
     this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
+    this.isAdminUser = this.sessionService.getCurrentUser().admin;
   }
 
   loadChild(id: string) {
@@ -219,6 +223,6 @@ export class ChildDetailsComponent implements OnInit {
    */
   async uploadChildPhoto(event) {
     await this.childPhotoService.setImage(event.target.files[0], this.child.entityId);
-    this.child.photo = await this.childPhotoService.getImage(this.child.entityId);
+    this.child.photo = await this.childPhotoService.getImage(this.child);
   }
 }

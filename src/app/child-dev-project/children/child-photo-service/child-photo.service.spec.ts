@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { ChildPhotoService } from './child-photo.service';
 import { CloudFileService } from '../../../core/webdav/cloud-file-service.service';
+import { Child } from '../model/child';
 
 describe('ChildPhotoService', () => {
   let service: ChildPhotoService;
@@ -29,28 +30,41 @@ describe('ChildPhotoService', () => {
 
 
   it('should getFile default if no webdav connection', async () => {
-    const actualImage = await service.getImage('1');
+    const testChild = new Child('1');
+    const actualImage = await service.getImage(testChild);
     expect(actualImage).toBe(DEFAULT_IMG);
   });
 
   it('should getFile from webdav connection', async () => {
-    const childId = '1';
+    const testChild = new Child('1');
     const testImg = 'url-encoded-img';
     mockCloudFileService.isConnected.and.returnValue(true);
     mockCloudFileService.doesFileExist.and.returnValue(Promise.resolve(true));
     mockCloudFileService.getFile.and.returnValue(Promise.resolve(testImg));
 
-    const actualImage = await service.getImage(childId);
+    const actualImage = await service.getImage(testChild);
     expect(actualImage).toBe(testImg);
-    expect(mockCloudFileService.getFile).toHaveBeenCalledWith('photos/' + childId + '.png');
+    expect(mockCloudFileService.getFile).toHaveBeenCalledWith('photos/' + testChild.getId() + '.png');
   });
 
-  it('should getFile default if it not exists at webdav location', async () => {
+  it('should getFile from assets (old pattern) if it not exists at webdav location', async () => {
+    const testChild = new Child('1');
+    testChild.photoFile = 'test-photo.png';
     mockCloudFileService.isConnected.and.returnValue(true);
     mockCloudFileService.doesFileExist.and.returnValue(Promise.resolve(false));
     mockCloudFileService.getFile.and.returnValue(Promise.reject('File not found'));
 
-    const actualImage = await service.getImage('1');
+    const actualImage = await service.getImage(testChild);
+    expect(actualImage).toBe(Child.generatePhotoPath(testChild.photoFile));
+  });
+
+  it('should getFile default if neither webdav nor assets has the file', async () => {
+    const testChild = new Child('1');
+    mockCloudFileService.isConnected.and.returnValue(true);
+    mockCloudFileService.doesFileExist.and.returnValue(Promise.resolve(false));
+    mockCloudFileService.getFile.and.returnValue(Promise.reject('File not found'));
+
+    const actualImage = await service.getImage(testChild);
     expect(actualImage).toBe(DEFAULT_IMG);
   });
 

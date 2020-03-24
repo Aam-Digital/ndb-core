@@ -36,7 +36,7 @@ export class ChildrenService {
           observer.next(children);
           children.forEach(async (child) => {
             if (!child.photo) {
-              child.photo = await this.childPhotoService.getImage(child.entityId);
+              child.photo = await this.childPhotoService.getImage(child);
               observer.next(children);
             }
           });
@@ -57,7 +57,7 @@ export class ChildrenService {
         async (child) => {
           observer.next(child);
           if (!child.photo) {
-            child.photo = await this.childPhotoService.getImage(child.entityId);
+            child.photo = await this.childPhotoService.getImage(child);
             observer.next(child);
           }
           observer.complete();

@@ -58,3 +58,9 @@
 .upload-icon {
   font-size: 2.0em;
 }
+
+.child-pic-photofile {
+  position: absolute;
+  left: 0;
+  top: 150px;
+}
