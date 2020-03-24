@@ -11,7 +11,7 @@ import { ChildSchoolRelation } from './model/childSchoolRelation';
 import { School } from '../schools/model/school';
 import { HealthCheck } from '../health-checkup/model/health-check';
 import { EntitySchemaService } from '../../core/entity/schema/entity-schema.service';
-import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
+import { ChildPhotoService } from './child-photo-service/child-photo.service';
 
 @Injectable()
 export class ChildrenService {
@@ -19,7 +19,7 @@ export class ChildrenService {
   constructor(private entityMapper: EntityMapperService,
               private entitySchemaService: EntitySchemaService,
               private db: Database,
-              private cloudFileService: CloudFileService) {
+              private childPhotoService: ChildPhotoService) {
     this.createAttendanceAnalysisIndex();
     this.createNotesIndex();
     this.createAttendancesIndex();
@@ -30,20 +30,21 @@ export class ChildrenService {
    * returns an observable which retrieves children from the database and loads their pictures
    */
   getChildren(): Observable<Child[]> {
-    const childObs = new Observable<Child[]>((observer) => {
+    return new Observable<Child[]>((observer) => {
       this.entityMapper.loadType<Child>(Child).then(
         children => {
           observer.next(children);
-          children.forEach(async(child) => {
+          children.forEach(async (child) => {
             if (!child.photo) {
-              child.photo = await this.cloudFileService.getImage(child.entityId);
+              child.photo = await this.childPhotoService.getImage(child.entityId);
               observer.next(children);
             }
           });
           observer.complete();
-        }).catch((error) => {observer.error(error); });
+        }).catch((error) => {
+        observer.error(error);
+      });
     });
-    return childObs;
   }
 
   /**
@@ -51,18 +52,19 @@ export class ChildrenService {
    * @param id id of child
    */
   getChild(id: string): Observable<Child> {
-    const childObs = new Observable<Child>((observer) => {
+    return new Observable<Child>((observer) => {
       this.entityMapper.load<Child>(Child, id).then(
-        async(child) => {
+        async (child) => {
           observer.next(child);
           if (!child.photo) {
-            child.photo = await this.cloudFileService.getImage(child.entityId);
+            child.photo = await this.childPhotoService.getImage(child.entityId);
             observer.next(child);
           }
           observer.complete();
-      }).catch((error) => {observer.error(error); });
+        }).catch((error) => {
+        observer.error(error);
+      });
     });
-    return childObs;
   }
 
   getAttendances(): Observable<AttendanceMonth[]> {
@@ -320,7 +322,6 @@ export class ChildrenService {
   }
 
   async getSchoolsWithRelations(childId: string): Promise<ChildSchoolRelation[]> {
-    const relations = await this.querySortedRelations(childId);
-    return relations;
+    return await this.querySortedRelations(childId);
   }
 }

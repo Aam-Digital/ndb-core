@@ -8,9 +8,10 @@ import webdav from 'webdav';
 
 describe('CloudFileService', () => {
   let cloudFileService: CloudFileService;
-  let sessionService: jasmine.SpyObj<SessionService>;
-  let sessionSpy;
-  let clientSpy;
+  let sessionSpy: jasmine.SpyObj<SessionService>;
+  let clientSpy: jasmine.SpyObj<any>;
+
+  const BASE_PATH = 'base-path/';
 
   beforeEach(() => {
     AppConfig.settings = {
@@ -29,25 +30,24 @@ describe('CloudFileService', () => {
 
     cloudFileService = TestBed.get(CloudFileService);
     cloudFileService['client'] = clientSpy;
-    cloudFileService['imagePath'] = '/imagePath';
-    sessionService = TestBed.get(SessionService);
+    cloudFileService['basePath'] = BASE_PATH;
   });
 
 
 
   it('.connect() should check user existance and call webdav.createClient()', () => {
     spyOn(webdav, 'createClient');
-    sessionService.getCurrentUser.and.returnValue(new User('user'));
+    sessionSpy.getCurrentUser.and.returnValue(new User('user'));
 
     cloudFileService.connect('user', 'pass');
-    expect(sessionService.getCurrentUser).toHaveBeenCalled();
+    expect(sessionSpy.getCurrentUser).toHaveBeenCalled();
     expect(webdav.createClient).toHaveBeenCalledWith('test-url', {username: 'user', password: 'pass'});
   });
 
   it('.connect() should abort if appconfig for webdav is not set', () => {
     spyOn(webdav, 'createClient');
     AppConfig.settings.webdav = null;
-    sessionService.getCurrentUser.and.returnValue(new User('user'));
+    sessionSpy.getCurrentUser.and.returnValue(new User('user'));
 
     cloudFileService.connect('user', 'pass');
     expect(webdav.createClient).not.toHaveBeenCalled();
@@ -55,7 +55,7 @@ describe('CloudFileService', () => {
 
   it('.connect() should abort if credentials are passed and not configured for user', () => {
     spyOn(webdav, 'createClient');
-    sessionService.getCurrentUser.and.returnValue(new User('user'));
+    sessionSpy.getCurrentUser.and.returnValue(new User('user'));
 
     cloudFileService.connect();
     expect(webdav.createClient).not.toHaveBeenCalled();
@@ -68,10 +68,10 @@ describe('CloudFileService', () => {
     testUser.setNewPassword('pass');
     testUser.cloudUserName = 'testuser';
     testUser.setCloudPassword('testuserpass', 'pass');
-    sessionService.getCurrentUser.and.returnValue(testUser);
+    sessionSpy.getCurrentUser.and.returnValue(testUser);
 
     cloudFileService.connect();
-    expect(sessionService.getCurrentUser).toHaveBeenCalled();
+    expect(sessionSpy.getCurrentUser).toHaveBeenCalled();
     expect(webdav.createClient).toHaveBeenCalledWith('test-url', {username: 'testuser', password: 'testuserpass'});
   });
 
@@ -85,35 +85,42 @@ describe('CloudFileService', () => {
 
   it('.getDir() should call webdav.getDirectoryContents()', () => {
     cloudFileService.getDir('testDir');
-    expect(clientSpy.getDirectoryContents).toHaveBeenCalledWith('testDir');
+    expect(clientSpy.getDirectoryContents).toHaveBeenCalledWith(BASE_PATH + 'testDir');
   });
 
   it('should create dir', () => {
     cloudFileService.createDir('testDir');
-    expect(clientSpy.createDirectory).toHaveBeenCalledWith('testDir');
+    expect(clientSpy.createDirectory).toHaveBeenCalledWith(BASE_PATH + 'testDir');
   });
 
   it('should check file existance', async() => {
-    spyOn(cloudFileService, 'getDir').and.returnValue(new Promise(resolve => {resolve('"basename": "filename"'); }));
+    clientSpy.getDirectoryContents.and.returnValue(Promise.resolve({ basename: 'filename' }));
+
     expect(await cloudFileService.doesFileExist('filename')).toBe(true);
+    expect(clientSpy.getDirectoryContents).toHaveBeenCalledWith(BASE_PATH);
+
     expect(await cloudFileService.doesFileExist('nonexistant')).toBe(false);
   });
 
   it('should get images', async() => {
-    spyOn(cloudFileService, 'doesFileExist').and.returnValue(new Promise(resolve => {resolve(true); }));
-    await cloudFileService.getImage('filepath');
-    expect(clientSpy.getFileContents).toHaveBeenCalledWith(cloudFileService['imagePath'] + '/filepath');
+    clientSpy.getFileContents.and.returnValue('image-data');
+    // @ts-ignore
+    const cloudBufferConverterFun = spyOn(cloudFileService, 'bufferArrayToBase64').and.returnValue('data-url');
+
+    const returnedFile = await cloudFileService.getFile('filepath');
+    expect(returnedFile).toEqual('data-url');
+    expect(clientSpy.getFileContents).toHaveBeenCalledWith(BASE_PATH + 'filepath');
+    expect(cloudBufferConverterFun).toHaveBeenCalledWith('image-data');
   });
 
   it('should set images', () => {
-    cloudFileService.setImage('image', 'path');
-    expect(clientSpy.putFileContents).toHaveBeenCalledWith(cloudFileService['imagePath'] + '/path', 'image', jasmine.anything());
+    cloudFileService.uploadFile('image', 'path/file');
+    expect(clientSpy.putFileContents).toHaveBeenCalledWith(BASE_PATH + 'path/file', 'image');
   });
 
-  it('should return a default image if no child picture is present', async () => {
-    spyOn(cloudFileService, 'getDefaultImage');
-    spyOn(cloudFileService, 'doesFileExist').and.returnValue(new Promise(resolve => {resolve(false); }));
-    const image = await cloudFileService.getImage('filepath');
-    expect(image).toBe(cloudFileService.getDefaultImage());
+  it('should reject if file does not exist', async () => {
+    spyOn(cloudFileService, 'doesFileExist').and.returnValue(Promise.resolve(false));
+
+    expectAsync(cloudFileService.getFile('filepath')).toBeRejected('File not found');
   });
 });

@@ -11,7 +11,7 @@ export class CloudFileService {
 
   // TODO Check connection/login success?
   private client: any;
-  private imagePath: string;
+  private basePath: string;
   // private defaultImage: SafeUrl;
   private fileList: string;
   private currentlyGettingList: Promise<boolean>;
@@ -36,7 +36,7 @@ export class CloudFileService {
     this.reset();
 
     const currentUser = this.sessionService.getCurrentUser();
-    this.imagePath = currentUser.imagePath;
+    this.basePath = currentUser.cloudBaseFolder;
 
     if (username === null && password == null) {
       username = currentUser.cloudUserName;
@@ -74,7 +74,7 @@ export class CloudFileService {
    */
   public async checkConnection(): Promise<boolean> {
     // delete 'tmp.txt' if it exists
-    const fileName: string = '/test.txt';
+    const fileName: string = this.basePath + '/test.txt';
     if (await this.doesFileExist(fileName)) {
       await this.client.deleteFile(fileName);
     }
@@ -85,19 +85,17 @@ export class CloudFileService {
     await this.client.deleteFile(fileName);
 
     if (tmpContent === 'TestString') {
-      console.log('Connection to cloud service successful.');
       return true;
     }
-    console.log('Can not connect to cloud service.');
     return false;
   }
 
   /**
-   * Returns the content path
-   * @param path example '/'
+   * Returns the content path.
+   * @param path File path relative to the base path, without leading slash; example 'folder1'
    */
   public async getDir(path: string): Promise<string> {
-    const contents = await this.client.getDirectoryContents(path);
+    const contents = await this.client.getDirectoryContents(this.basePath + path);
     return JSON.stringify(contents, undefined, 4);
   }
 
@@ -106,11 +104,13 @@ export class CloudFileService {
    * @param name file name to check
    */
   public async doesFileExist(name: string): Promise<boolean> {
+    // TODO: doesFileExist seems to have problems at least with nested files?
+
     if (!this.fileList && !this.currentlyGettingList) {
       // create promise that resolves when the file list is loaded
       // if this function gets called mulitple times this ensures that the list will only be loaded once
       this.currentlyGettingList = new Promise(resolve => {
-        this.getDir(this.imagePath).then(list => {
+        this.getDir('').then(list => {
           this.fileList = list;
           resolve(true);
         });
@@ -129,51 +129,37 @@ export class CloudFileService {
 
   /**
   * creates new directory
-  * @param path path to directory to be created
+  * @param path path to directory to be created, without leading slash; e.g. 'new-folder'
   */
   public async createDir(path: string) {
-    this.client.createDirectory(path);
+    this.client.createDirectory(this.basePath + path);
   }
 
   /**
-   * Uploads a given image to the nextcloud server.
-   * @param imageFile Image to be stored
-   * @param childId Id of child for which one wants to store the image
+   * Uploads a given file to the nextcloud server.
+   * @param file The file to be stored
+   * @param filePath the filename and path to which the file will be uploaded, no leading slash
    */
-  public async setImage(imageFile: any, childId: string) {
-    this.client.putFileContents(this.imagePath + '/' + childId, imageFile,
-      {onUploadProgress: progress => {
-      console.log(`Uploaded ${progress.loaded} bytes of ${progress.total}`);
-      }},
+  public async uploadFile(file: any, filePath: string): Promise<void> {
+    return this.client.putFileContents(
+      this.basePath + filePath,
+      file,
+      // { onUploadProgress: progress => {  console.log(`Uploaded ${progress.loaded} / ${progress.total} bytes`); } },
     );
   }
 
   /**
    * Returns a Promise which resolves as an ArrayBuffer of the file located at the given path
-   * @param childId
+   * @param filePath the filename and path relative to the base path without leading slash; e.g. 'photos/105.png'
    */
-  public async getImage(childId: string): Promise<SafeUrl> {
-    const imageType = [ '' , '.jpg', '.jpeg', '.png' ];
-
-    for (const ext of imageType) {
-      if (await this.doesFileExist(childId + ext)) {
-        const image = await this.client.getFileContents(this.imagePath + '/' + childId + ext);
-        return this.bufferArrayToBase64(image);
-      }
+  public async getFile(filePath: string): Promise<SafeUrl> {
+    let file;
+    try {
+      file = await this.client.getFileContents(this.basePath + filePath);
+      return this.bufferArrayToBase64(file);
+    } catch (err) {
+      return Promise.reject('Could not load file.');
     }
-    return await this.getDefaultImage();
-  }
-
-  /**
-   * Returns a Promise which resolves as an ArrayBuffer of the default child image
-   */
-  public getDefaultImage(): SafeUrl {
-    // if (!this.defaultImage) {
-    //  const image = this.client.getFileContents('default.png');
-    //  this.defaultImage = this.bufferArrayToBase64(image);
-    // }
-    // return new Promise( (resolve, reject) => resolve(this.defaultImage));
-    return 'assets/child.png';
   }
 
   /**
@@ -185,5 +171,12 @@ export class CloudFileService {
         return data + String.fromCharCode(byte); }, ''),
       );
     return this.domSanitizer.bypassSecurityTrustUrl('data:image/jpg;base64,' + base64String);
+  }
+
+  /**
+   * Check whether the client is connected and therefore this service is able to execute its remote actions.
+   */
+  isConnected() {
+    return !!this.client;
   }
 }

@@ -39,8 +39,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MockDatabase } from 'app/core/database/mock-database';
 import { PreviousSchoolsComponent } from 'app/child-dev-project/previous-schools/previous-schools.component';
 import { SchoolsService } from 'app/child-dev-project/schools/schools.service';
-import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
-import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
+import { ChildPhotoService } from '../child-photo-service/child-photo.service';
 
 describe('ChildDetailsComponent', () => {
   let component: ChildDetailsComponent;
@@ -59,8 +58,11 @@ describe('ChildDetailsComponent', () => {
     }; }};
   const mockedDatabase = new MockDatabase();
   const mockedSession = { getCurrentUser: () => 'testUser', getDatabase: () => mockedDatabase };
+  let mockChildPhotoService: jasmine.SpyObj<ChildPhotoService>;
 
   beforeEach(async(() => {
+    mockChildPhotoService = jasmine.createSpyObj('mockChildPhotoService', ['canSetImage', 'setImage']);
+
     TestBed.configureTestingModule({
       declarations: [
         ChildDetailsComponent,
@@ -108,7 +110,7 @@ describe('ChildDetailsComponent', () => {
         { provide: Location, useValue: mockedLocation},
         { provide: Router, useValue: mockedRouter},
         { provide: ActivatedRoute, useValue: mockedRoute},
-        { provide: CloudFileService, useClass: MockCloudFileService },
+        { provide: ChildPhotoService, useValue: mockChildPhotoService },
         FormBuilder,
         SchoolsService,
       ],
@@ -123,6 +125,16 @@ describe('ChildDetailsComponent', () => {
   });
 
   it('should create', () => {
+    mockChildPhotoService.canSetImage.and.returnValue(false);
+    expect(component).toBeTruthy();
+  });
+
+  it('should create with edit mode', () => {
+    mockChildPhotoService.canSetImage.and.returnValue(true);
+    component.switchEdit();
+
+    fixture.detectChanges();
+
     expect(component).toBeTruthy();
   });
 });

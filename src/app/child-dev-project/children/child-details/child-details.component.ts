@@ -28,7 +28,7 @@ import * as uniqid from 'uniqid';
 import { AlertService } from '../../../core/alerts/alert.service';
 import { ChildrenService } from '../children.service';
 import { School } from '../../schools/model/school';
-import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
+import { ChildPhotoService } from '../child-photo-service/child-photo.service';
 
 
 @Component({
@@ -47,6 +47,7 @@ export class ChildDetailsComponent implements OnInit {
   healthCheckForm: FormGroup;
   creatingNew = false;
   editing = false;
+  enablePhotoUpload;
   gender = Gender;
 
   genders = Gender;
@@ -64,7 +65,7 @@ export class ChildDetailsComponent implements OnInit {
               private snackBar: MatSnackBar,
               private confirmationDialog: ConfirmationDialogService,
               private alertService: AlertService,
-              private cloudFileService: CloudFileService,
+              private childPhotoService: ChildPhotoService,
   ) { }
 
   // TODO: is this generateNewRecordFactory() used at all?
@@ -143,6 +144,7 @@ export class ChildDetailsComponent implements OnInit {
 
   switchEdit() {
     this.editing = !this.editing;
+    this.enablePhotoUpload = this.childPhotoService.canSetImage();
     this.initForm();
   }
 
@@ -213,11 +215,10 @@ export class ChildDetailsComponent implements OnInit {
 
   /**
    * hands over the selected file to the cloudFileService together with the childID
-   * @param event
+   * @param event The event of the file upload dialog
    */
-  uploadChildPhoto(event) {
-    // get file extension
-    const ext = event.target.files[0].name.substr(event.target.files[0].name.lastIndexOf('.') + 1);
-    this.cloudFileService.setImage(event.target.files[0], this.child.entityId + '.' + ext);
+  async uploadChildPhoto(event) {
+    await this.childPhotoService.setImage(event.target.files[0], this.child.entityId);
+    this.child.photo = await this.childPhotoService.getImage(this.child.entityId);
   }
 }

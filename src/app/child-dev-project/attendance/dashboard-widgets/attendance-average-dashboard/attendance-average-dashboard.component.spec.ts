@@ -4,31 +4,36 @@ import { AttendanceAverageDashboardComponent } from './attendance-average-dashbo
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ChildrenService } from '../../../children/children.service';
-import { EntityMapperService } from '../../../../core/entity/entity-mapper.service';
-import { Database } from '../../../../core/database/database';
-import { MockDatabase } from '../../../../core/database/mock-database';
 import { ChildBlockComponent } from '../../../children/child-block/child-block.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SchoolBlockComponent } from '../../../schools/school-block/school-block.component';
-import { EntitySchemaService } from '../../../../core/entity/schema/entity-schema.service';
-import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
-import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
 
 
 describe('AttendanceAverageDashboardComponent', () => {
   let component: AttendanceAverageDashboardComponent;
   let fixture: ComponentFixture<AttendanceAverageDashboardComponent>;
 
+  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+
+  const mockAttendanceLastMonth = {
+    rows: [
+      { key: '1', sum: 10, count: 12 },
+      { key: '2', sum: 12, count: 12 },
+    ],
+  };
+
   beforeEach(async(() => {
+    mockChildrenService = jasmine.createSpyObj(
+      'mockChildrenService',
+      ['queryAttendanceLastMonth', 'getChild'],
+    );
+    mockChildrenService.queryAttendanceLastMonth.and.returnValue(Promise.resolve(mockAttendanceLastMonth));
+
     TestBed.configureTestingModule({
       declarations: [ ChildBlockComponent, SchoolBlockComponent, AttendanceAverageDashboardComponent],
       imports: [MatIconModule, MatCardModule, RouterTestingModule],
       providers: [
-        ChildrenService,
-        EntityMapperService,
-        EntitySchemaService,
-        { provide: Database, useClass: MockDatabase },
-        { provide: CloudFileService, useClass: MockCloudFileService },
+        { provide: ChildrenService, useValue: mockChildrenService },
       ],
     })
     .compileComponents();

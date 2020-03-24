@@ -5,29 +5,33 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ChildBlockComponent } from '../../../children/child-block/child-block.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import { MockDatabase } from '../../../../core/database/mock-database';
-import { Database } from '../../../../core/database/database';
-import { EntityMapperService } from '../../../../core/entity/entity-mapper.service';
 import { ChildrenService } from '../../../children/children.service';
 import { SchoolBlockComponent } from '../../../schools/school-block/school-block.component';
-import { EntitySchemaService } from '../../../../core/entity/schema/entity-schema.service';
-import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
-import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
 
 describe('AttendanceWarningsDashboardComponent', () => {
   let component: AttendanceWarningsDashboardComponent;
   let fixture: ComponentFixture<AttendanceWarningsDashboardComponent>;
+  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+
+  const mockAttendanceLastMonth = {
+    rows: [
+      { key: '1', value: { sum: 10, count: 12 } },
+      { key: '2', value: { sum: 12, count: 12 } },
+    ],
+  };
 
   beforeEach(async(() => {
+    mockChildrenService = jasmine.createSpyObj(
+      'mockChildrenService',
+      ['queryAttendanceLastMonth', 'getChild'],
+    );
+    mockChildrenService.queryAttendanceLastMonth.and.returnValue(Promise.resolve(mockAttendanceLastMonth));
+
     TestBed.configureTestingModule({
       declarations: [ ChildBlockComponent, SchoolBlockComponent, AttendanceWarningsDashboardComponent ],
       imports: [MatIconModule, MatCardModule, RouterTestingModule],
       providers: [
-        ChildrenService,
-        EntityMapperService,
-        EntitySchemaService,
-        { provide: Database, useClass: MockDatabase },
-        {provide: CloudFileService, useClass: MockCloudFileService},
+        { provide: ChildrenService, useValue: mockChildrenService },
       ],
     })
     .compileComponents();

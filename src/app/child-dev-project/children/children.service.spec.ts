@@ -6,10 +6,9 @@ import { EntitySchemaService } from '../../core/entity/schema/entity-schema.serv
 import { Gender } from './model/Gender';
 import { School } from '../schools/model/school';
 import { MockDatabase } from '../../core/database/mock-database';
-import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
-import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
 import { TestBed } from '@angular/core/testing';
 import { Database } from 'app/core/database/database';
+import { ChildPhotoService } from './child-photo-service/child-photo.service';
 
 function generateChildEntities(): Child[] {
   const data = [];
@@ -99,14 +98,15 @@ function generateChildSchoolRelationEntities(): ChildSchoolRelation[] {
 describe('ChildrenService', () => {
   let service: ChildrenService;
   let entityMapper: EntityMapperService;
-  let cloudFileService: CloudFileService;
+  let mockChildPhotoService: jasmine.SpyObj<ChildPhotoService>;
 
   beforeEach(() => {
+    mockChildPhotoService = jasmine.createSpyObj('mockChildPhotoService', ['getImage']);
     TestBed.configureTestingModule({
       providers: [EntityMapperService,
           EntitySchemaService,
           { provide: Database, useClass: MockDatabase },
-          { provide: CloudFileService, useClass: MockCloudFileService },
+          { provide: ChildPhotoService, useValue: mockChildPhotoService },
           ChildrenService,
         ],
       },
@@ -119,7 +119,6 @@ describe('ChildrenService', () => {
     generateChildSchoolRelationEntities().forEach(cs => entityMapper.save(cs));
 
     service = TestBed.get(ChildrenService);
-    cloudFileService = TestBed.get(CloudFileService);
   });
 
   it('should be created', () => {
@@ -145,22 +144,21 @@ describe('ChildrenService', () => {
     let child = new Child('10');
     await entityMapper.save<Child>(child);
     expect(child.photo).not.toBeDefined();
-    spyOn(cloudFileService, 'getImage').and.callThrough();
+    mockChildPhotoService.getImage.and.returnValue(Promise.resolve('test-img'));
     child = await service.getChild('10').toPromise();
-    expect(cloudFileService.getImage).toHaveBeenCalledWith('10');
-    expect(child.photo).toEqual(await cloudFileService.getImage('10'));
-
+    expect(mockChildPhotoService.getImage).toHaveBeenCalledWith('10');
+    expect(child.photo).toEqual('test-img');
   });
 
   it('should load images for children', async() => {
     let child = new Child('10');
     await entityMapper.save<Child>(child);
     expect(child.photo).not.toBeDefined();
-    spyOn(cloudFileService, 'getImage').and.callThrough();
+    mockChildPhotoService.getImage.and.returnValue(Promise.resolve('test-img'));
     const childrenList = await service.getChildren().toPromise();
     child = childrenList[0];
-    expect(cloudFileService.getImage).toHaveBeenCalledWith('10');
-    expect(child.photo).toEqual(await cloudFileService.getImage('10'));
+    expect(mockChildPhotoService.getImage).toHaveBeenCalledWith('10');
+    expect(child.photo).toEqual('test-img');
   });
 
 

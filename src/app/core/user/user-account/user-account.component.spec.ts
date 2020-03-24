@@ -29,6 +29,7 @@ import { Database } from 'app/core/database/database';
 import { MockDatabase } from 'app/core/database/mock-database';
 import { WebdavModule } from '../../webdav/webdav.module';
 import { User } from '../user';
+import { AppConfig } from '../../app-config/app-config';
 
 describe('UserAccountComponent', () => {
   let component: UserAccountComponent;
@@ -39,6 +40,8 @@ describe('UserAccountComponent', () => {
   const testUser = new User('');
 
   beforeEach(async(() => {
+    // @ts-ignore
+    AppConfig.settings = {};
     mockSessionService = jasmine.createSpyObj('sessionService', ['getCurrentUser']);
     mockSessionService.getCurrentUser.and.returnValue(testUser);
     mockEntityMapper = jasmine.createSpyObj(['save']);
