@@ -2,27 +2,35 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserListComponent } from './user-list.component';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
-import { EntitySchemaService } from '../../entity/schema/entity-schema.service';
-import { MockDatabase } from '../../database/mock-database';
-import { Database } from '../../database/database';
-import { MatDialog } from '@angular/material/dialog';
 import { AdminModule } from '../admin.module';
-import { of } from 'rxjs';
 import { User } from '../../user/user';
+import { SessionService } from '../../session/session.service';
 
 describe('UserListComponent', () => {
   let component: UserListComponent;
   let fixture: ComponentFixture<UserListComponent>;
 
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
+  let testUsers: User[];
+
   beforeEach(async(() => {
+    testUsers = [
+      new User('1'),
+      new User('2'),
+    ];
+    mockEntityMapper = jasmine.createSpyObj('mockEntityMapper', ['loadType', 'save']);
+    mockEntityMapper.loadType.and.returnValue(Promise.resolve(testUsers));
+
+    mockSessionService = jasmine.createSpyObj('mockSessionService', ['getCurrentUser']);
+
     TestBed.configureTestingModule({
       imports: [
         AdminModule,
       ],
       providers: [
-        EntityMapperService,
-        EntitySchemaService,
-        { provide: Database, useClass: MockDatabase },
+        { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: SessionService, useValue: mockSessionService },
       ],
     })
     .compileComponents();
@@ -38,20 +46,34 @@ describe('UserListComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('opens dialog when create is clicked', () => {
-    const dialogService = fixture.debugElement.injector.get(MatDialog);
-    spyOn(dialogService, 'open').and.callThrough();
-    component.createUser();
-    expect(dialogService.open).toHaveBeenCalled();
+
+  it('should makeAdmin and save if user has admin rights', async () => {
+    const currentUser = new User('tester');
+    currentUser.setAdmin(true);
+    mockSessionService.getCurrentUser.and.returnValue(currentUser);
+
+    await component.makeAdmin(testUsers[0], true);
+    expect(testUsers[0].isAdmin()).toBeTruthy();
+    expect(mockEntityMapper.save).toHaveBeenCalledWith(testUsers[0]);
   });
 
-  it('loads new data when dialog returns value', () => {
-    const dialogService = fixture.debugElement.injector.get(MatDialog);
-    const mockedDialogRef = {afterClosed: () => of(new User('test'))};
-    // @ts-ignore
-    spyOn(dialogService, 'open').and.returnValue(mockedDialogRef);
-    spyOn(component, 'loadData');
-    component.createUser();
-    expect(component.loadData).toHaveBeenCalled();
+  it('should not makeAdmin if user has no admin rights', async () => {
+    const currentUser = new User('tester');
+    currentUser.setAdmin(false);
+    mockSessionService.getCurrentUser.and.returnValue(currentUser);
+
+    await component.makeAdmin(testUsers[0], true);
+    expect(testUsers[0].isAdmin()).toBeFalsy();
+    expect(mockEntityMapper.save).not.toHaveBeenCalled();
+  });
+
+  it('should not let you remove your own admin rights', async () => {
+    const currentUser = new User('1');
+    currentUser.setAdmin(true);
+    mockSessionService.getCurrentUser.and.returnValue(currentUser);
+
+    await component.makeAdmin(currentUser, false);
+    expect(currentUser.isAdmin()).toBeTruthy();
+    expect(mockEntityMapper.save).not.toHaveBeenCalled();
   });
 });

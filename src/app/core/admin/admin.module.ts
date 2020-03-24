@@ -8,7 +8,6 @@ import { PapaParseModule } from 'ngx-papaparse';
 import { AlertsModule } from '../alerts/alerts.module';
 import { UiHelperModule } from '../ui-helper/ui-helper.module';
 import { AdminGuard } from './admin.guard';
-import { ChildrenModule } from '../../child-dev-project/children/children.module';
 import { EntityModule } from '../entity/entity.module';
 import { HttpClientModule } from '@angular/common/http';
 import { ChildPhotoUpdateService } from './services/child-photo-update.service';
@@ -20,9 +19,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { UserListComponent } from './user-list/user-list.component';
-import { UserDetailsComponent } from './user-details/user-details.component';
 import { ExportDataComponent } from './export-data/export-data.component';
 import { BackupService } from './services/backup.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   imports: [
@@ -35,7 +34,6 @@ import { BackupService } from './services/backup.service';
     PapaParseModule,
     AlertsModule,
     UiHelperModule,
-    ChildrenModule,
     EntityModule,
     HttpClientModule,
     FormsModule,
@@ -44,11 +42,11 @@ import { BackupService } from './services/backup.service';
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
+    MatTooltipModule,
   ],
   declarations: [
     AdminComponent,
     UserListComponent,
-    UserDetailsComponent,
     ExportDataComponent,
   ],
   providers: [
@@ -60,6 +58,5 @@ import { BackupService } from './services/backup.service';
   exports: [
     ExportDataComponent,
   ],
-  entryComponents: [UserDetailsComponent],
 })
 export class AdminModule { }

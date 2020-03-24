@@ -83,4 +83,8 @@ export class User extends Entity {
   public isAdmin(): boolean {
     return this.admin;
   }
+
+  public setAdmin(admin: boolean) {
+    this.admin = admin;
+  }
 }

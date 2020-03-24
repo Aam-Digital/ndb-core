@@ -2,8 +2,7 @@ import { User } from '../../user/user';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { UserDetailsComponent } from '../user-details/user-details.component';
+import { SessionService } from '../../session/session.service';
 
 @Component({
   selector: 'app-user-list',
@@ -11,26 +10,37 @@ import { UserDetailsComponent } from '../user-details/user-details.component';
   styleUrls: ['./user-list.component.scss'],
 })
 export class UserListComponent implements OnInit {
-  public displayedColumns = ['id', 'name', 'admin'];
+  public displayedColumns = ['id', 'name', 'admin', 'details'];
   public dataSource = new MatTableDataSource<User>();
 
-  constructor(private entityMapperService: EntityMapperService, private dialog: MatDialog) { }
+  debugDetails = new Map<string, string>();
 
-  ngOnInit() {
-    this.loadData();
+  constructor(
+    private entityMapperService: EntityMapperService,
+    private sessionService: SessionService,
+  ) { }
+
+  async ngOnInit() {
+    await this.loadData();
   }
 
-  loadData() {
-    this.entityMapperService.loadType<User>(User)
-      .then(users => this.dataSource.data = users);
+  async loadData() {
+    this.dataSource.data = await this.entityMapperService.loadType<User>(User);
+    this.dataSource.data.forEach(user => this.debugDetails.set(user.getId(), JSON.stringify(user)));
   }
 
-  editUser(user) {
-    this.dialog.open(UserDetailsComponent, {data: user})
-      .afterClosed().subscribe(res => res ? this.loadData() : null);
-  }
+  async makeAdmin(user: User, admin: boolean) {
+    if (!this.sessionService.getCurrentUser().isAdmin()) {
+      this.loadData();
+      return;
+    }
+    if (this.sessionService.getCurrentUser().getId() === user.getId()) {
+      // do not change own user to avoid removing your own admin rights by accident
+      this.loadData();
+      return;
+    }
 
-  createUser() {
-    this.editUser(null);
+    user.setAdmin(admin);
+    await this.entityMapperService.save<User>(user);
   }
 }
