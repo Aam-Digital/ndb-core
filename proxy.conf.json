@@ -1,8 +1,17 @@
 {
-    "/db": {
-      "target": "https://demo.aam-digital.com",
-      "secure": true,
-      "logLevel": "debug",
-      "changeOrigin": true
+  "/db": {
+    "target": "https://demo.aam-digital.com",
+    "secure": true,
+    "logLevel": "debug",
+    "changeOrigin": true
+  },
+  "/nextcloud": {
+    "target": "https://nextcloud.aam-digital.com/remote.php/webdav",
+    "secure": true,
+    "logLevel": "debug",
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/nextcloud": ""
     }
+  }
 }

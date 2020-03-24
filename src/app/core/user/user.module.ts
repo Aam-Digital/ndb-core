@@ -21,6 +21,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
+import { MatTabsModule } from '@angular/material';
+import { WebdavModule } from '../webdav/webdav.module';
 
 @NgModule({
   imports: [
@@ -28,6 +30,8 @@ import { CommonModule } from '@angular/common';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatTabsModule,
+    WebdavModule,
   ],
   declarations: [UserAccountComponent],
 })

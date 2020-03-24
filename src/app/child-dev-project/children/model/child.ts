@@ -19,6 +19,7 @@ import { Entity } from '../../../core/entity/entity';
 import { Gender } from './Gender';
 import { DatabaseEntity } from '../../../core/entity/database-entity.decorator';
 import { DatabaseField } from '../../../core/entity/database-field.decorator';
+import { SafeUrl } from '@angular/platform-browser';
 
 @DatabaseEntity('Child')
 export class Child extends Entity {
@@ -36,8 +37,6 @@ export class Child extends Entity {
   @DatabaseField() dateOfBirth: Date;
   @DatabaseField() motherTongue: string = '';
   @DatabaseField() religion: string = '';
-
-  @DatabaseField() photoFile: string;
 
   @DatabaseField() center: string = '';
   @DatabaseField() admissionDate: Date;
@@ -70,6 +69,14 @@ export class Child extends Entity {
   @DatabaseField() health_eyeHealthStatus: string;
   @DatabaseField() health_lastVitaminD: Date;
   @DatabaseField() health_lastDeworming: Date;
+
+  /**
+   * Url to an image that is displayed for the child
+   * as a fallback option if no CloudFileService file or connection is available.
+   */
+  @DatabaseField() photoFile: string;
+
+  photo: SafeUrl;
 
   get age(): number {
     let age = -1;
@@ -108,12 +115,5 @@ export class Child extends Entity {
     }
 
     return indices;
-  }
-
-  public getPhoto() {
-    if (!this.photoFile) {
-      return 'assets/child.png';
-    }
-    return Child.generatePhotoPath(this.photoFile);
   }
 }

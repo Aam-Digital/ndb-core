@@ -18,6 +18,7 @@ import { Router } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 import { ChildrenService } from 'app/child-dev-project/children/children.service';
+import { CloudFileService } from '../../../core/webdav/cloud-file-service.service';
 
 describe('SchoolsListComponent', () => {
   let component: SchoolsListComponent;
@@ -46,6 +47,7 @@ describe('SchoolsListComponent', () => {
         EntityMapperService,
         EntitySchemaService,
         {provide: Router, useValue: mockedRouter},
+        { provide: CloudFileService, useValue: jasmine.createSpyObj(['getImage']) },
       ],
     })
     .compileComponents();

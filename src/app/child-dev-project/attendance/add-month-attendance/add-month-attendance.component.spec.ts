@@ -21,6 +21,8 @@ import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
 import { AlertsModule } from '../../../core/alerts/alerts.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
+import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
+import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
 
 describe('AddMonthAttendanceComponent', () => {
   let component: AddMonthAttendanceComponent;
@@ -49,6 +51,7 @@ describe('AddMonthAttendanceComponent', () => {
         EntitySchemaService,
         { provide: Database, useClass: MockDatabase },
         ChildrenService,
+        {provide: CloudFileService, useClass: MockCloudFileService},
       ],
     })
     .compileComponents();

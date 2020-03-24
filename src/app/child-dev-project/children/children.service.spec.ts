@@ -6,6 +6,9 @@ import { EntitySchemaService } from '../../core/entity/schema/entity-schema.serv
 import { Gender } from './model/Gender';
 import { School } from '../schools/model/school';
 import { MockDatabase } from '../../core/database/mock-database';
+import { TestBed } from '@angular/core/testing';
+import { Database } from 'app/core/database/database';
+import { ChildPhotoService } from './child-photo-service/child-photo.service';
 
 function generateChildEntities(): Child[] {
   const data = [];
@@ -95,16 +98,27 @@ function generateChildSchoolRelationEntities(): ChildSchoolRelation[] {
 describe('ChildrenService', () => {
   let service: ChildrenService;
   let entityMapper: EntityMapperService;
+  let mockChildPhotoService: jasmine.SpyObj<ChildPhotoService>;
 
   beforeEach(() => {
-    const entitySchemaService = new EntitySchemaService();
-    const database = new MockDatabase();
-    entityMapper = new EntityMapperService(database, entitySchemaService);
+    mockChildPhotoService = jasmine.createSpyObj('mockChildPhotoService', ['getImage']);
+    TestBed.configureTestingModule({
+      providers: [EntityMapperService,
+          EntitySchemaService,
+          { provide: Database, useClass: MockDatabase },
+          { provide: ChildPhotoService, useValue: mockChildPhotoService },
+          ChildrenService,
+        ],
+      },
+    );
+
+    entityMapper = TestBed.get(EntityMapperService);
+
     generateChildEntities().forEach(c => entityMapper.save(c));
     generateSchoolEntities().forEach(s => entityMapper.save(s));
     generateChildSchoolRelationEntities().forEach(cs => entityMapper.save(cs));
 
-    service = new ChildrenService(entityMapper, entitySchemaService, database);
+    service = TestBed.get(ChildrenService);
   });
 
   it('should be created', () => {
@@ -125,6 +139,28 @@ describe('ChildrenService', () => {
     expect(find.getId()).toBe(child.getId());
     expect(childrenBefore.length).toBe(childrenAfter.length - 1);
   });
+
+  it('should load image for a single child', async() => {
+    let child = new Child('10');
+    await entityMapper.save<Child>(child);
+    expect(child.photo).not.toBeDefined();
+    mockChildPhotoService.getImage.and.returnValue(Promise.resolve('test-img'));
+    child = await service.getChild('10').toPromise();
+    expect(mockChildPhotoService.getImage).toHaveBeenCalledWith(child);
+    expect(child.photo).toEqual('test-img');
+  });
+
+  it('should load images for children', async() => {
+    let child = new Child('10');
+    await entityMapper.save<Child>(child);
+    expect(child.photo).not.toBeDefined();
+    mockChildPhotoService.getImage.and.returnValue(Promise.resolve('test-img'));
+    const childrenList = await service.getChildren().toPromise();
+    child = childrenList[0];
+    expect(mockChildPhotoService.getImage).toHaveBeenCalledWith(child);
+    expect(child.photo).toEqual('test-img');
+  });
+
 
   it('should find a newly saved child', async () => {
     const child = new Child('10');

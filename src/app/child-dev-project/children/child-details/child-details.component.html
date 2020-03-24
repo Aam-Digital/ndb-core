@@ -38,6 +38,7 @@
     <button *ngIf="creatingNew || editing" mat-stroked-button class='edit-button' (click)="switchEdit()">Cancel</button>
 
     <button *ngIf="!editing" mat-stroked-button class='edit-button' (click)="switchEdit()">Edit</button>
+
   </div>
 </div>
 
@@ -55,12 +56,19 @@
 
 
       <div fxLayout='row' fxLayout.xs='column wrap' fxLayout.md='column wrap' fxLayout.sm='column wrap'>
-        <div fxFlex='160px'>
-          <img [src]="child.getPhoto()" class="child-pic" alt="child's photo">
-          <br>
-          <mat-form-field *ngIf="creatingNew || editing" class='photo-filename'>
-            <input matInput formControlName="photoFile" placeholder="Photo File Name" title="photoFile" type="text" >
-          </mat-form-field>
+
+        <div fxFlex='160px' class='child-pic-container'>
+          <img [src]="child?.photo" class="child-pic" alt="child's photo">
+
+          <input style="display: none" type="file" accept=".jpg, .jpeg, .png" (change)=uploadChildPhoto($event) #fileUpload>
+          <button *ngIf="enablePhotoUpload && (creatingNew || editing)"
+                  class="child-pic-upload" (click)="fileUpload.click()">
+            <mat-icon class="upload-icon" fontIcon="fa-upload"></mat-icon>
+          </button>
+
+          <input  *ngIf="(creatingNew || editing) && isAdminUser"
+                  class="child-pic-photofile" matTooltip='filename for child photo uploaded by server administrator'
+                  matInput formControlName="photoFile" placeholder="Photo filename" title="photoFile" type="text">
         </div>
 
 

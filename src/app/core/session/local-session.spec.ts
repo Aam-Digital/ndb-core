@@ -33,6 +33,9 @@ describe('LocalSessionService', () => {
         'outdated_threshold_days': 0,
         'useTemporaryDatabase': false,
       },
+      webdav: {
+        remote_url: '',
+      },
     };
 
     const mockAlertService = jasmine.createSpyObj(['addDebug', 'addInfo', 'addWarning']);

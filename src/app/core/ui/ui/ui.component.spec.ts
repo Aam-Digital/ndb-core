@@ -62,6 +62,9 @@ describe('UiComponent', () => {
         'outdated_threshold_days': 0,
         'useTemporaryDatabase': true,
       },
+      webdav: {
+        remote_url: '',
+      },
     };
 
     const mockSwUpdate = { available: of(), checkForUpdate: () => {} };

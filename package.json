@@ -1,6 +1,6 @@
 {
   "name": "ndb-core",
-  "version": "0.1.1",
+  "version": "2.6.0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -9,7 +9,8 @@
     "test": "ng test",
     "lint": "ng lint ndb-core --type-check",
     "e2e": "ng e2e",
-    "compodoc": "npx compodoc -c doc/compodoc_sources/.compodocrc.json"
+    "compodoc": "npx compodoc -c doc/compodoc_sources/.compodocrc.json",
+    "postinstall": "node patch-webpack.js"
   },
   "private": true,
   "dependencies": {
@@ -42,6 +43,7 @@
     "reveal": "0.0.4",
     "rxjs": "^6.5.4",
     "uniqid": "^5.2.0",
+    "webdav": "^2.10.1",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
