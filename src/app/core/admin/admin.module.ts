@@ -11,9 +11,17 @@ import { AdminGuard } from './admin.guard';
 import { EntityModule } from '../entity/entity.module';
 import { HttpClientModule } from '@angular/common/http';
 import { ChildPhotoUpdateService } from './services/child-photo-update.service';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTableModule } from '@angular/material/table';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
+import { UserListComponent } from './user-list/user-list.component';
 import { ExportDataComponent } from './export-data/export-data.component';
 import { BackupService } from './services/backup.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   imports: [
@@ -21,14 +29,26 @@ import { BackupService } from './services/backup.service';
     BrowserModule,
     MatButtonModule,
     MatSnackBarModule,
+    MatTableModule,
+    MatCheckboxModule,
     PapaParseModule,
     AlertsModule,
     UiHelperModule,
     EntityModule,
     HttpClientModule,
+    FormsModule,
+    MatDialogModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
     MatIconModule,
+    MatTooltipModule,
   ],
-  declarations: [AdminComponent, ExportDataComponent],
+  declarations: [
+    AdminComponent,
+    UserListComponent,
+    ExportDataComponent,
+  ],
   providers: [
     AdminGuard,
     ChildPhotoUpdateService,
