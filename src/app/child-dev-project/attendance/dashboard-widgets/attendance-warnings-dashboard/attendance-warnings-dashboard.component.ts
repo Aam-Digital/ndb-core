@@ -17,14 +17,14 @@ export class AttendanceWarningsDashboardComponent implements OnInit {
   constructor(private childrenService: ChildrenService,
               private router: Router) { }
 
-  ngOnInit() {
-    this.loadLastAttendances();
+  async ngOnInit() {
+    await this.loadLastAttendances();
   }
 
 
 
-  loadLastAttendances() {
-    this.childrenService.queryAttendanceLastMonth()
+  async loadLastAttendances() {
+    await this.childrenService.queryAttendanceLastMonth()
       .then(queryResults => {
         this.lastMonthsLowAttendence = [];
         queryResults.rows.forEach(studentStat => {

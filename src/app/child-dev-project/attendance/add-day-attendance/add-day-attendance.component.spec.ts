@@ -7,6 +7,8 @@ import { MockDatabase } from '../../../core/database/mock-database';
 import { ChildrenModule } from '../../children/children.module';
 import { SchoolsModule } from '../../schools/schools.module';
 import { MatNativeDateModule } from '@angular/material/core';
+import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
+import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
 
 describe('AddDayAttendanceComponent', () => {
   let component: AddDayAttendanceComponent;
@@ -20,8 +22,9 @@ describe('AddDayAttendanceComponent', () => {
         MatNativeDateModule,
       ],
       providers: [
-        {provide: ChildrenService, useClass: ChildrenService},
+        ChildrenService,
         {provide: Database, useClass: MockDatabase},
+        {provide: CloudFileService, useClass: MockCloudFileService},
       ],
     })
     .compileComponents();

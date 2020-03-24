@@ -28,6 +28,8 @@ import * as uniqid from 'uniqid';
 import { AlertService } from '../../../core/alerts/alert.service';
 import { ChildrenService } from '../children.service';
 import { School } from '../../schools/model/school';
+import { ChildPhotoService } from '../child-photo-service/child-photo.service';
+import { SessionService } from '../../../core/session/session.service';
 
 
 @Component({
@@ -46,12 +48,14 @@ export class ChildDetailsComponent implements OnInit {
   healthCheckForm: FormGroup;
   creatingNew = false;
   editing = false;
+  enablePhotoUpload;
   gender = Gender;
 
   genders = Gender;
   documentStatus = ['OK (copy with us)', 'OK (copy needed for us)', 'needs correction', 'applied', 'doesn\'t have', 'not eligible', ''];
   eyeStatusValues = ['Good', 'Has Glasses', 'Needs Glasses', 'Needs Checkup'];
   vaccinationStatusValues = ['Good', 'Vaccination Due', 'Needs Checking', 'No Card/Information'];
+  isAdminUser: boolean;
 
 
   constructor(private entityMapperService: EntityMapperService,
@@ -63,6 +67,8 @@ export class ChildDetailsComponent implements OnInit {
               private snackBar: MatSnackBar,
               private confirmationDialog: ConfirmationDialogService,
               private alertService: AlertService,
+              private childPhotoService: ChildPhotoService,
+              private sessionService: SessionService,
   ) { }
 
   // TODO: is this generateNewRecordFactory() used at all?
@@ -120,6 +126,7 @@ export class ChildDetailsComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
     this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
+    this.isAdminUser = this.sessionService.getCurrentUser().admin;
   }
 
   loadChild(id: string) {
@@ -136,36 +143,35 @@ export class ChildDetailsComponent implements OnInit {
             .then(school => this.currentSchool = school);
         });
     }
-
     this.initForm();
-
   }
 
   switchEdit() {
     this.editing = !this.editing;
+    this.enablePhotoUpload = this.childPhotoService.canSetImage();
     this.initForm();
   }
 
   save() {
     this.validateForm = true;
     if (this.form.valid) {
-    this.assignFormValuesToChild(this.child, this.form);
+      this.assignFormValuesToChild(this.child, this.form);
 
-    this.entityMapperService.save<Child>(this.child)
-      .then(() => {
-        if (this.creatingNew) {
-          this.router.navigate(['/child', this.child.getId()]);
-          this.creatingNew = false;
-        }
-        this.alertService.addInfo('Saving Succesfull');
-        this.switchEdit();
-      })
-      .catch((err) => this.alertService.addDanger('Could not save Child "' + this.child.name + '": ' + err));
-  } else {
-    const invalidFields = this.getInvalidFields(this.form);
-    this.alertService.addDanger('Form invalid, required fields missing');
+      this.entityMapperService.save<Child>(this.child)
+        .then(() => {
+          if (this.creatingNew) {
+            this.router.navigate(['/child', this.child.getId()]);
+            this.creatingNew = false;
+          }
+          this.alertService.addInfo('Saving Succesfull');
+          this.switchEdit();
+        })
+        .catch((err) => this.alertService.addDanger('Could not save Child "' + this.child.name + '": ' + err));
+    } else {
+      const invalidFields = this.getInvalidFields(this.form);
+      this.alertService.addDanger('Form invalid, required fields missing');
+    }
   }
-}
 
   private assignFormValuesToChild(child: Child, form: FormGroup) {
     Object.keys(form.controls).forEach(key => {
@@ -209,5 +215,14 @@ export class ChildDetailsComponent implements OnInit {
       }
     }
     return invalid;
+  }
+
+  /**
+   * hands over the selected file to the cloudFileService together with the childID
+   * @param event The event of the file upload dialog
+   */
+  async uploadChildPhoto(event) {
+    await this.childPhotoService.setImage(event.target.files[0], this.child.entityId);
+    this.child.photo = await this.childPhotoService.getImage(this.child);
   }
 }

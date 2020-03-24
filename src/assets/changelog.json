@@ -1,5 +1,19 @@
 [
   {
+    "tag_name": "v2.10.0",
+    "name": "Roll Call for class",
+    "published_at": "2020-03-15",
+    "body": "- filter students for roll call by class",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
+    "tag_name": "v2.9.0",
+    "name": "Bug Fixes & Export",
+    "published_at": "2020-02-16",
+    "body": "- fix problems with attendance roll call\n- allow export/download of children as document\n- display students in school details\n- fix display of children in notes",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.8.1",
     "name": "Improved Error Logging",
     "published_at": "2019-12-05",

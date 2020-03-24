@@ -53,6 +53,8 @@ describe('User', () => {
       name: 'tester',
       admin: true,
       password: undefined,
+      cloudPasswordEnc: undefined,
+      cloudBaseFolder: '/aam-digital/',
 
       searchIndices: [],
     };
@@ -64,6 +66,8 @@ describe('User', () => {
     entity.setNewPassword('pass');
     // @ts-ignore
     expectedData.password = entity.password;
+    // @ts-ignore
+    expectedData.cloudPasswordEnc = entity.cloudPasswordEnc;
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
@@ -87,5 +91,15 @@ describe('User', () => {
     user.setNewPassword(password);
 
     expect(user.checkPassword(password + 'x')).toBeFalsy();
+  });
+
+  it('sets cloud passwords', () => {
+    const user = new User('test1');
+    user.setNewPassword('userpwd');
+    expect(user.cloudPasswordDec).not.toBeDefined();
+    expect(user.checkPassword('userpwd')).toBeTrue();
+    user.setCloudPassword('cloudpwd', 'userpwd');
+    expect(user.cloudPasswordDec).toEqual('cloudpwd');
+    expect(user.decryptCloudPassword('userpwd')).toEqual('cloudpwd');
   });
 });

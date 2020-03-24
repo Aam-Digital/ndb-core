@@ -4,27 +4,46 @@ import { AttendanceAverageDashboardComponent } from './attendance-average-dashbo
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ChildrenService } from '../../../children/children.service';
-import { EntityMapperService } from '../../../../core/entity/entity-mapper.service';
-import { Database } from '../../../../core/database/database';
-import { MockDatabase } from '../../../../core/database/mock-database';
 import { ChildBlockComponent } from '../../../children/child-block/child-block.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SchoolBlockComponent } from '../../../schools/school-block/school-block.component';
-import { EntitySchemaService } from '../../../../core/entity/schema/entity-schema.service';
+import { of } from 'rxjs';
+import { Child } from '../../../children/model/child';
+
 
 describe('AttendanceAverageDashboardComponent', () => {
   let component: AttendanceAverageDashboardComponent;
   let fixture: ComponentFixture<AttendanceAverageDashboardComponent>;
 
+  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+  const mockAttendanceLastMonth = {
+    rows: [
+      { key: '1', value: { sum: 10, count: 12 } },
+      { key: '2', value: { sum: 12, count: 12 } },
+    ],
+  };
+  const mockAttendanceLast3Months = {
+    rows: [
+      { key: '1', value: { sum: 15, count: 30 } },
+      { key: '2', value: { sum: 15, count: 35 } },
+    ],
+  };
+  const testChild = new Child('1');
+
   beforeEach(async(() => {
+    mockChildrenService = jasmine.createSpyObj(
+      'mockChildrenService',
+      ['queryAttendanceLastMonth', 'queryAttendanceLast3Months', 'getChild'],
+    );
+    mockChildrenService.queryAttendanceLastMonth.and.returnValue(Promise.resolve(mockAttendanceLastMonth));
+    mockChildrenService.queryAttendanceLast3Months.and.returnValue(Promise.resolve(mockAttendanceLast3Months));
+    mockChildrenService.getChild.and.returnValue(of(testChild));
+
     TestBed.configureTestingModule({
       declarations: [ ChildBlockComponent, SchoolBlockComponent, AttendanceAverageDashboardComponent],
       imports: [MatIconModule, MatCardModule, RouterTestingModule],
       providers: [
-        ChildrenService,
-        EntityMapperService,
-        EntitySchemaService,
-        { provide: Database, useClass: MockDatabase },
+        { provide: ChildrenService, useValue: mockChildrenService },
       ],
     })
     .compileComponents();
@@ -36,7 +55,8 @@ describe('AttendanceAverageDashboardComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create', async () => {
+    await component.ngOnInit();
     expect(component).toBeTruthy();
   });
 

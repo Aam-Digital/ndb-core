@@ -26,4 +26,10 @@ export interface IAppConfig {
     outdated_threshold_days: number;
     useTemporaryDatabase: boolean;
   };
+
+  webdav?: {
+    remote_url: string;
+  };
+
+  debug?: boolean;
 }

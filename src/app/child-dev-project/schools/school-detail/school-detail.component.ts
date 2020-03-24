@@ -11,7 +11,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
 import { Location } from '@angular/common';
 import { Child } from '../../children/model/child';
-
 @Component({
   selector: 'app-school-detail',
   templateUrl: './school-detail.component.html',

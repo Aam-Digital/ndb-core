@@ -6,6 +6,7 @@ import { AttendanceMonth } from '../../model/attendance-month';
 import { ChildrenService } from '../../../children/children.service';
 import { RollCallRecord } from './roll-call-record';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { AppConfig } from '../../../../core/app-config/app-config';
 
 /**
  * Displays the given children one by one to the user to mark the attendance status for the given day and type.
@@ -53,6 +54,9 @@ export class RollCallComponent implements OnInit {
 
   AttStatus = AttendanceStatus;
 
+  showDebug = AppConfig.settings.debug;
+  debugContent: any;
+
   constructor(
     private entityMapper: EntityMapperService,
     private childrenService: ChildrenService,
@@ -67,10 +71,11 @@ export class RollCallComponent implements OnInit {
   private async loadList() {
     this.isLoading = true;
 
-    this.currentIndex = 0;
 
     this.rollCallList = await this.loadMonthAttendanceRecords(this.students);
     this.sortRollCallList();
+
+    this.goToNextStudent(0);
 
     this.isLoading = false;
   }
@@ -114,7 +119,17 @@ export class RollCallComponent implements OnInit {
     rollCallListEntry.attendanceDay.status = status;
     this.entityMapper.save(rollCallListEntry.attendanceMonth);
 
-    setTimeout(() => this.currentIndex++, 750);
+    setTimeout(() => this.goToNextStudent(), 750);
+  }
+
+  goToNextStudent(newIndex?: number) {
+    if (newIndex !== undefined) {
+      this.currentIndex = newIndex;
+    } else {
+      this.currentIndex++;
+    }
+
+    this.displayRecordForDebugging(this.rollCallList[this.currentIndex]);
   }
 
 
@@ -124,5 +139,14 @@ export class RollCallComponent implements OnInit {
 
   isFinished(): boolean {
     return this.currentIndex >= this.rollCallList.length;
+  }
+
+  displayRecordForDebugging(rollCallRecord: RollCallRecord) {
+    if (!rollCallRecord) {
+      return;
+    }
+
+    console.log(rollCallRecord);
+    this.debugContent = JSON.stringify(rollCallRecord.attendanceDay, null, 2);
   }
 }
