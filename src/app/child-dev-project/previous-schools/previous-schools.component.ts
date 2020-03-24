@@ -10,7 +10,7 @@ import * as uniqid from 'uniqid';
 
 @Component({
   selector: 'app-previous-schools',
-  template: '<app-entity-subrecord ' +
+  template: '<app-entity-subrecord (savedRecordInEntitySubrecordEvent)="savedRecord()"' +
     '[records]="records" ' +
     '[columns]="columns" ' +
     '[newRecordFactory]="generateNewRecordFactory()" ' +
@@ -87,6 +87,11 @@ export class PreviousSchoolsComponent implements OnInit {
           ];
         });
       });
+  }
+
+  savedRecord() {
+    console.log('SavedRecordEvent empfangen in Previous Schools.');
+    this.childrenService.updateCurrentSchoolInfo();
   }
 
   generateNewRecordFactory() {

@@ -297,16 +297,20 @@ export class ChildrenService {
     return result;
   }
 
-  async getCurrentSchoolClass(childId: string): Promise<String> {
-    return this.queryLatestRelation(childId)
-      .then(relation => {
-        if (relation) {
-          //return this.entityMapper.load<School>(School, relation.schoolId);
-          return relation.schoolClass;
-        }
-        return null;
-      });
+  updateCurrentSchoolInfo() {
+    console.log('CurrentSchoolInfo geupdated.');
   }
+
+  // async getCurrentSchoolClass(childId: string): Promise<String> {
+  //   return this.queryLatestRelation(childId)
+  //     .then(relation => {
+  //       if (relation) {
+  //         //return this.entityMapper.load<School>(School, relation.schoolId);
+  //         return relation.schoolClass;
+  //       }
+  //       return null;
+  //     });
+  // }
 
   async getSchoolsWithRelations(childId: string): Promise<ChildSchoolRelation[]> {
     const relations = await this.querySortedRelations(childId);

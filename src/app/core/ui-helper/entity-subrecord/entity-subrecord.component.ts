@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, ViewChild, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
@@ -28,13 +28,15 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   @Input() entityId: string;
   @Input() formValidation?: (record: Entity) => FormValidationResult;
 
+  @Output() savedRecordInEntitySubrecordEvent = new EventEmitter<any>();
+
   recordsDataSource = new MatTableDataSource();
   columnsToDisplay = [];
   recordsEditing = new Map<string, boolean>();
   originalRecords = [];
   screenWidth = '';
   flexMediaWatcher: Subscription;
-  child
+  // child
 
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -87,6 +89,8 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     this._entityMapper.save(record).then(savedRecord => {
+      this.savedRecordInEntitySubrecordEvent.emit();
+      console.log('SavedRecordEvent emitted.');
     });
 
     // updated backup copies used for reset
