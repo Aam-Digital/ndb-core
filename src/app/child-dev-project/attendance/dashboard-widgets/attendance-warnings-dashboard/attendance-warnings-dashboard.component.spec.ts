@@ -43,7 +43,8 @@ describe('AttendanceWarningsDashboardComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create', async () => {
+    await component.ngOnInit();
     expect(component).toBeTruthy();
   });
 });
