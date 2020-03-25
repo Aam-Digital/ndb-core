@@ -130,12 +130,20 @@ export class ChildDetailsComponent implements OnInit {
       this.editing = true;
       this.child = new Child(uniqid());
     } else {
-      this.childrenService.getCurrentSchoolInfo(id)
-        .then(result => {
+      // this.childrenService.getCurrentSchoolInfo(id)
+      //   .then(result => {
+      //     this.currentSchool = result.school;
+      //     this.currentSchoolClass = result.schoolClass;
+      //     //console.log("Current SchoolClass Result: " + this.currentSchoolClass);
+      //     //console.log("Current School Result: " + this.currentSchool);
+      //   });
+      this.childrenService.getCurrentSchoolInfo2(id)
+        .subscribe(result => {
+          console.log('SchoolResult: ' + result.school);
           this.currentSchool = result.school;
           this.currentSchoolClass = result.schoolClass;
-          //console.log("Current SchoolClass Result: " + this.currentSchoolClass);
-          //console.log("Current School Result: " + this.currentSchool);
+          console.log("Current SchoolClass Result: " + this.currentSchoolClass);
+          console.log("Current School Result: " + this.currentSchool);
         });
     }
     this.initForm();

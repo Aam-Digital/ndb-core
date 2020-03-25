@@ -276,6 +276,36 @@ export class ChildrenService {
     );
   }
 
+
+
+  getCurrentSchoolInfo2(childId: string): Observable<{school: School, schoolClass: String}> {
+    let result: {school: School, schoolClass: String} = {
+      school: null,
+      schoolClass: 'Peter', // null,
+    };
+    const promise: Promise<{school: School, schoolClass: String}> = this.querySortedRelations(childId)
+      .then(relations => {
+        if (relations) {
+          for (let i = 0; i < relations.length; i++) {
+            if (relations[i].start.setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0)) {
+              this.entityMapper.load<School>(School, relations[i].schoolId)
+                .then(loadedSchool => {
+                  result = {
+                    school: loadedSchool,
+                    schoolClass: relations[i].schoolClass,
+                  };
+                  console.log('Das Ergebnis ist: ' + result.school);
+                  return result;
+                });
+              break;
+            }
+          }
+          return(result);
+        }
+      });
+    return from(promise);
+  }
+
   async getCurrentSchoolInfo(childId: string): Promise<{school: School, schoolClass: String}> {
     const relations = await this.querySortedRelations(childId);
     let result: {school: School, schoolClass: String} = {
@@ -284,7 +314,6 @@ export class ChildrenService {
     };
     if (relations) {
       for (let i = 0; i < relations.length; i++) {
-        //console.log(i + ': ' + relations[i].schoolId);
         if (relations[i].start.setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0)) {
           result = {
             school: await this.entityMapper.load<School>(School, relations[i].schoolId),
