@@ -45,49 +45,65 @@ export class SearchComponent implements OnInit {
 
   async search() {
     this.searchText = this.searchText.toLowerCase();
-    const regexp = new RegExp('[a-z]+|[0-9]+');
-    // Only search for words starting with a char or number -> no searching for space or no input
-    if (this.searchText.match(regexp)) {
-      const searchHash = JSON.stringify(this.searchText);
-      const searchTerms = this.searchText.split(' ');
-      const queryResults = await this.db.query(
-        'search_index/by_name',
-        {startkey: searchTerms[0], endkey: searchTerms[0] + '\ufff0', include_docs: true},
-        );
-
-      if (JSON.stringify(this.searchText) === searchHash) {
-        // only set result if the user hasn't continued typing and change the search term already
-        this.results = this.prepareResults(queryResults.rows, searchTerms);
-      }
-    } else {
+    if (!this.isRelevantSearchInput(this.searchText)) {
       this.results = [];
+      return;
     }
+
+    const searchHash = JSON.stringify(this.searchText);
+    const searchTerms = this.searchText.split(' ');
+    const queryResults = await this.db.query(
+      'search_index/by_name',
+      {startkey: searchTerms[0], endkey: searchTerms[0] + '\ufff0', include_docs: true},
+      );
+
+    if (JSON.stringify(this.searchText) === searchHash) {
+      // only set result if the user hasn't continued typing and changed the search term already
+      this.results = this.prepareResults(queryResults.rows, searchTerms);
+    }
+  }
+
+
+  /**
+   * Check if the input should start an actual search.
+   * Only search for words starting with a char or number -> no searching for space or no input
+   * @param searchText
+   */
+  private isRelevantSearchInput(searchText: string) {
+    const regexp = new RegExp('[a-z]+|[0-9]+');
+    return this.searchText.match(regexp);
   }
 
   private prepareResults(rows, searchTerms: string[]) {
-    let results = this.parseRows(rows);
-    results = results.filter(r => r !== undefined);
-    results = results.filter(r => this.containsSecondarySearchTerms(r, searchTerms));
-    results = results.sort((a, b) => this.sortResults(a, b));
-    return results;
+    return this.getResultsWithoutDuplicates(rows)
+      .map(doc => this.transformDocToEntity(doc))
+      .filter(r => r !== null)
+      .filter(r => this.containsSecondarySearchTerms(r, searchTerms))
+      .sort((a, b) => this.sortResults(a, b));
   }
 
-  private parseRows(rows): Entity[] {
-    const resultEntities = [];
-    for (const r of rows) {
-      let resultEntity: Entity;
-      if (r.doc._id.startsWith(Child.ENTITY_TYPE + ':')) {
-        resultEntity = new Child(r.doc.entityId);
-      } else if (r.doc._id.startsWith(School.ENTITY_TYPE + ':')) {
-        resultEntity = new School(r.doc.entityId);
-      } else {
-        continue;
-      }
-
-      this.entitySchemaService.loadDataIntoEntity(resultEntity, r.doc);
-      resultEntities.push(resultEntity);
+  private getResultsWithoutDuplicates(rows): any[] {
+    const filteredResults = new Map<string, any>();
+    for (const row of rows) {
+      filteredResults.set(row.id, row.doc);
     }
-    return resultEntities;
+    return Array.from(filteredResults.values());
+  }
+
+  private transformDocToEntity(doc: any): Entity {
+    let resultEntity;
+    if (doc._id.startsWith(Child.ENTITY_TYPE + ':')) {
+      resultEntity = new Child(doc.entityId);
+    } else if (doc._id.startsWith(School.ENTITY_TYPE + ':')) {
+      resultEntity = new School(doc.entityId);
+    }
+
+    if (resultEntity) {
+      this.entitySchemaService.loadDataIntoEntity(resultEntity, doc);
+      return resultEntity;
+    } else {
+      return null;
+    }
   }
 
   private containsSecondarySearchTerms(item, searchTerms: string[]) {
