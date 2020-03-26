@@ -223,6 +223,6 @@ export class ChildDetailsComponent implements OnInit {
    */
   async uploadChildPhoto(event) {
     await this.childPhotoService.setImage(event.target.files[0], this.child.entityId);
-    this.child.photo = await this.childPhotoService.getImage(this.child);
+    this.child.photo.next(await this.childPhotoService.getImage(this.child));
   }
 }

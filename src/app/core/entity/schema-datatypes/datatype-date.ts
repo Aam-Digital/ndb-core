@@ -30,7 +30,7 @@ export const dateEntitySchemaDatatype: EntitySchemaDatatype = {
   transformToObjectFormat: (value) => {
     let date;
     if (!value || value === '') {
-      date = null;
+      date = undefined;
     } else {
       date = new Date(value);
       if (isNaN(date.getTime())) {

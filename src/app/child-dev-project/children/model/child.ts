@@ -20,6 +20,7 @@ import { Gender } from './Gender';
 import { DatabaseEntity } from '../../../core/entity/database-entity.decorator';
 import { DatabaseField } from '../../../core/entity/database-field.decorator';
 import { SafeUrl } from '@angular/platform-browser';
+import { BehaviorSubject } from 'rxjs';
 
 @DatabaseEntity('Child')
 export class Child extends Entity {
@@ -76,7 +77,8 @@ export class Child extends Entity {
    */
   @DatabaseField() photoFile: string;
 
-  photo: SafeUrl;
+  @DatabaseField({ dataType: 'load-child-photo' })
+  photo: BehaviorSubject<SafeUrl>;
 
   get age(): number {
     let age = -1;
