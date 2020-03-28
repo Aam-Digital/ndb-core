@@ -3,8 +3,6 @@ import { SafeUrl } from '@angular/platform-browser';
 import { CloudFileService } from '../../../core/webdav/cloud-file-service.service';
 import { Child } from '../model/child';
 import { BehaviorSubject } from 'rxjs';
-import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
-import { LoadChildPhotoEntitySchemaDatatype } from './datatype-load-child-photo';
 
 @Injectable({
   providedIn: 'root',
@@ -50,7 +48,7 @@ export class ChildPhotoService {
   }
 
   private getImageFromAssets(child: { photoFile?: string }): SafeUrl {
-    if (!child.photoFile) {
+    if (!child.photoFile || child.photoFile.trim() === '') {
       return this.getDefaultImage();
     }
     return Child.generatePhotoPath(child.photoFile);

@@ -66,9 +66,11 @@
             <mat-icon class="upload-icon" fontIcon="fa-upload"></mat-icon>
           </button>
 
-          <input  *ngIf="(creatingNew || editing) && isAdminUser"
-                  class="child-pic-photofile" matTooltip='filename for child photo uploaded by server administrator'
-                  matInput formControlName="photoFile" placeholder="Photo filename" title="photoFile" type="text">
+          <mat-form-field *ngIf="(creatingNew || editing) && isAdminUser" class="child-pic-photofile">
+            <input #photoFileInput matTooltip='filename for child photo uploaded by server administrator'
+                   matInput formControlName="photoFile" placeholder="Photo filename" title="photoFile" type="text">
+            <span matSuffix (click)="photoFileInput.value = ''" class='fa fa-times'></span>
+          </mat-form-field>
         </div>
 
 
