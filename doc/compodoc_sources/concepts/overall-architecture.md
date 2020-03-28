@@ -5,8 +5,6 @@ This is a rough sketch of the architecture of the core system under discussion. 
 An actual, specific software system to be used will be based on the core and extend it:
 ![](../../images/architecture_concrete-project.png)
 
-## EntitySchema System
-see [Entity Schema System](./architecture/entity-schema.html)
 
 ## Folder Structure
 The application code is split within the `src/app/` directory into modules providing
