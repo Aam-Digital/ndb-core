@@ -21,8 +21,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { SchoolBlockComponent } from '../../schools/school-block/school-block.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
-import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
+import { ChildPhotoService } from '../../children/child-photo-service/child-photo.service';
 
 describe('NoteDetailsComponent', () => {
   let component: NoteDetailsComponent;
@@ -49,8 +48,8 @@ describe('NoteDetailsComponent', () => {
         {provide: MatDialogRef, useValue: {beforeClose: () => { return { subscribe: () => {}}; }}},
         {provide: MAT_DIALOG_DATA, useValue: {entity: note}},
         {provide: ChildrenService, useClass: ChildrenService},
-        {provide: CloudFileService, useClass: MockCloudFileService },
-        ],
+        { provide: ChildPhotoService, useValue: jasmine.createSpyObj(['getImage']) },
+      ],
     })
     .compileComponents();
   }));

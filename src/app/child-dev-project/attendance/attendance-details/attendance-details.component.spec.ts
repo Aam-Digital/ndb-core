@@ -21,8 +21,7 @@ import { EntityModule } from '../../../core/entity/entity.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AttendanceDayBlockComponent } from '../attendance-days/attendance-day-block.component';
-import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
-import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
+import { ChildPhotoService } from '../../children/child-photo-service/child-photo.service';
 
 describe('AttendanceDetailsComponent', () => {
   let component: AttendanceDetailsComponent;
@@ -43,7 +42,7 @@ describe('AttendanceDetailsComponent', () => {
         {provide: MatDialogRef, useValue: {beforeClose: () => { return { subscribe: () => {}}; }}},
         {provide: MAT_DIALOG_DATA, useValue: {entity: att}},
         {provide: ChildrenService, useClass: ChildrenService},
-        {provide: CloudFileService, useClass: MockCloudFileService},
+        { provide: ChildPhotoService, useValue: jasmine.createSpyObj(['getImage']) },
       ],
     })
     .compileComponents();
