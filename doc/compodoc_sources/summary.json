@@ -5,7 +5,25 @@
   },
   {
     "title": "Tutorial",
-    "file": "tutorials/_index.md"
+    "file": "tutorial/_index.md",
+    "children": [
+      {
+        "title": "Overview of Technologies",
+        "file": "tutorial/technologies.md"
+      },
+      {
+        "title": "Setting up the project",
+        "file": "tutorial/setting-up-the-project.md"
+      },
+      {
+        "title": "Using Aam Digital (as a user)",
+        "file": "tutorial/using-aam-digital.md"
+      },
+      {
+        "title": "Diving into the Code",
+        "file": "tutorial/diving-into-the-code.md"
+      }
+    ]
   },
   {
     "title": "How-To Guides",
