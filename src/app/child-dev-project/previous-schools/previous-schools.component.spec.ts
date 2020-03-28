@@ -2,19 +2,17 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PreviousSchoolsComponent } from './previous-schools.component';
 import { ActivatedRoute } from '@angular/router';
-import { ChildrenService } from '../../child-dev-project/children/children.service';
+import { ChildrenService } from '../children/children.service';
 import { EntityMapperService } from '../../core/entity/entity-mapper.service';
 import { EntitySchemaService } from '../../core/entity/schema/entity-schema.service';
 import { MockDatabase } from '../../core/database/mock-database';
-import { of, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AlertService } from '../../core/alerts/alert.service';
 import { Database } from '../../core/database/database';
-import { ChildrenModule } from '../../child-dev-project/children/children.module';
+import { ChildrenModule } from '../children/children.module';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SchoolsService } from '../../child-dev-project/schools/schools.service';
+import { SchoolsService } from '../schools/schools.service';
 import { SessionService } from 'app/core/session/session.service';
-import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
-import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
 
 describe('PreviousSchoolsComponent', () => {
   let component: PreviousSchoolsComponent;
@@ -40,7 +38,6 @@ describe('PreviousSchoolsComponent', () => {
         EntitySchemaService,
         AlertService,
         SchoolsService,
-        { provide: CloudFileService, useClass: MockCloudFileService },
       ],
     })
     .compileComponents();
