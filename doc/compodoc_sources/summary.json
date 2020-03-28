@@ -64,6 +64,10 @@
       {
         "title": "UX Guidelines",
         "file": "concepts/ux-guidelines.md"
+      },
+      {
+        "title": "Documentation Structure",
+        "file": "concepts/documentation-structure.md"
       }
     ]
   },
