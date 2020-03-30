@@ -117,7 +117,7 @@ export class ChildDetailsComponent implements OnInit {
       dropoutType:    [{value: this.child.dropoutType,    disabled: !this.editing}],
       dropoutRemarks: [{value: this.child.dropoutRemarks, disabled: !this.editing}],
 
-      photoFile: [this.child.photoFile],
+      photoFile: [{value: this.child.photoFile, disabled: !this.editing}],
     });
 
 
@@ -223,6 +223,6 @@ export class ChildDetailsComponent implements OnInit {
    */
   async uploadChildPhoto(event) {
     await this.childPhotoService.setImage(event.target.files[0], this.child.entityId);
-    this.child.photo = await this.childPhotoService.getImage(this.child);
+    this.child.photo.next(await this.childPhotoService.getImage(this.child));
   }
 }

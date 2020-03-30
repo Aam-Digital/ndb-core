@@ -18,12 +18,13 @@
 
 import { EntitySchemaField } from './entity-schema-field';
 import { EntitySchemaService } from './entity-schema.service';
+import { Entity } from '../entity';
 
 /**
  * Interface to be implemented by any Datatype transformer of the Schema system.
  */
 export interface EntitySchemaDatatype {
   name: string;
-  transformToDatabaseFormat(value: any, schemaField: EntitySchemaField, schemaService: EntitySchemaService): any;
-  transformToObjectFormat(value: any, schemaField: EntitySchemaField, schemaService: EntitySchemaService): any;
+  transformToDatabaseFormat(value: any, schemaField: EntitySchemaField, schemaService: EntitySchemaService, parent: Entity): any;
+  transformToObjectFormat(value: any, schemaField: EntitySchemaField, schemaService: EntitySchemaService, parent: any): any;
 }

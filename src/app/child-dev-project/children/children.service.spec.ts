@@ -9,6 +9,8 @@ import { MockDatabase } from '../../core/database/mock-database';
 import { TestBed } from '@angular/core/testing';
 import { Database } from 'app/core/database/database';
 import { ChildPhotoService } from './child-photo-service/child-photo.service';
+import { CloudFileService } from '../../core/webdav/cloud-file-service.service';
+import { MockCloudFileService } from '../../core/webdav/mock-cloud-file-service';
 
 function generateChildEntities(): Child[] {
   const data = [];
@@ -103,10 +105,12 @@ describe('ChildrenService', () => {
   beforeEach(() => {
     mockChildPhotoService = jasmine.createSpyObj('mockChildPhotoService', ['getImage']);
     TestBed.configureTestingModule({
-      providers: [EntityMapperService,
+        providers: [
+          EntityMapperService,
           EntitySchemaService,
           { provide: Database, useClass: MockDatabase },
-          { provide: ChildPhotoService, useValue: mockChildPhotoService },
+          { provide: CloudFileService, useClass: MockCloudFileService },
+          ChildPhotoService,
           ChildrenService,
         ],
       },
@@ -139,28 +143,6 @@ describe('ChildrenService', () => {
     expect(find.getId()).toBe(child.getId());
     expect(childrenBefore.length).toBe(childrenAfter.length - 1);
   });
-
-  it('should load image for a single child', async() => {
-    let child = new Child('10');
-    await entityMapper.save<Child>(child);
-    expect(child.photo).not.toBeDefined();
-    mockChildPhotoService.getImage.and.returnValue(Promise.resolve('test-img'));
-    child = await service.getChild('10').toPromise();
-    expect(mockChildPhotoService.getImage).toHaveBeenCalledWith(child);
-    expect(child.photo).toEqual('test-img');
-  });
-
-  it('should load images for children', async() => {
-    let child = new Child('10');
-    await entityMapper.save<Child>(child);
-    expect(child.photo).not.toBeDefined();
-    mockChildPhotoService.getImage.and.returnValue(Promise.resolve('test-img'));
-    const childrenList = await service.getChildren().toPromise();
-    child = childrenList[0];
-    expect(mockChildPhotoService.getImage).toHaveBeenCalledWith(child);
-    expect(child.photo).toEqual('test-img');
-  });
-
 
   it('should find a newly saved child', async () => {
     const child = new Child('10');

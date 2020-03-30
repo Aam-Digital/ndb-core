@@ -12,6 +12,7 @@ import { School } from '../schools/model/school';
 import { HealthCheck } from '../health-checkup/model/health-check';
 import { EntitySchemaService } from '../../core/entity/schema/entity-schema.service';
 import { ChildPhotoService } from './child-photo-service/child-photo.service';
+import { LoadChildPhotoEntitySchemaDatatype } from './child-photo-service/datatype-load-child-photo';
 
 @Injectable()
 export class ChildrenService {
@@ -19,7 +20,9 @@ export class ChildrenService {
   constructor(private entityMapper: EntityMapperService,
               private entitySchemaService: EntitySchemaService,
               private db: Database,
-              private childPhotoService: ChildPhotoService) {
+              childPhotoService: ChildPhotoService,
+  ) {
+    this.entitySchemaService.registerSchemaDatatype(new LoadChildPhotoEntitySchemaDatatype(childPhotoService));
     this.createAttendanceAnalysisIndex();
     this.createNotesIndex();
     this.createAttendancesIndex();
@@ -30,21 +33,7 @@ export class ChildrenService {
    * returns an observable which retrieves children from the database and loads their pictures
    */
   getChildren(): Observable<Child[]> {
-    return new Observable<Child[]>((observer) => {
-      this.entityMapper.loadType<Child>(Child).then(
-        children => {
-          observer.next(children);
-          children.forEach(async (child) => {
-            if (!child.photo) {
-              child.photo = await this.childPhotoService.getImage(child);
-              observer.next(children);
-            }
-          });
-          observer.complete();
-        }).catch((error) => {
-        observer.error(error);
-      });
-    });
+    return from(this.entityMapper.loadType<Child>(Child));
   }
 
   /**
@@ -52,19 +41,7 @@ export class ChildrenService {
    * @param id id of child
    */
   getChild(id: string): Observable<Child> {
-    return new Observable<Child>((observer) => {
-      this.entityMapper.load<Child>(Child, id).then(
-        async (child) => {
-          observer.next(child);
-          if (!child.photo) {
-            child.photo = await this.childPhotoService.getImage(child);
-            observer.next(child);
-          }
-          observer.complete();
-        }).catch((error) => {
-        observer.error(error);
-      });
-    });
+    return from(this.entityMapper.load<Child>(Child, id));
   }
 
   getAttendances(): Observable<AttendanceMonth[]> {
