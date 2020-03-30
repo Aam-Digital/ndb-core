@@ -62,7 +62,9 @@ export class SearchComponent implements OnInit {
       // only set result if the user hasn't continued typing and changed the search term already
       if (queryResults.rows.length === 0) {
         this.searchInformation.text = 'no results found';
-        this.results.push(this.searchInformation);
+        const a = Array();
+        a.push(this.searchInformation);
+        this.results = a;
       } else {
       this.results = this.prepareResults(queryResults.rows, searchTerms);
       }
