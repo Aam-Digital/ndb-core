@@ -4,6 +4,7 @@ import { Child } from '../../../child-dev-project/children/model/child';
 import { School } from '../../../child-dev-project/schools/model/school';
 import { Entity } from '../../entity/entity';
 import { EntitySchemaService } from '../../entity/schema/entity-schema.service';
+import { SearchInformation } from './search-information/model/search-information';
 
 @Component({
   selector: 'app-search',
@@ -14,6 +15,7 @@ export class SearchComponent implements OnInit {
   results = [];
   searchText = '';
   showSearchToolbar = false;
+  searchInformation = new SearchInformation('12344');
 
   constructor(
     private db: Database,
@@ -56,10 +58,14 @@ export class SearchComponent implements OnInit {
       'search_index/by_name',
       {startkey: searchTerms[0], endkey: searchTerms[0] + '\ufff0', include_docs: true},
       );
-
     if (JSON.stringify(this.searchText) === searchHash) {
       // only set result if the user hasn't continued typing and changed the search term already
+      if (queryResults.rows.length === 0) {
+        this.searchInformation.text = 'no results found';
+        this.results.push(this.searchInformation);
+      } else {
       this.results = this.prepareResults(queryResults.rows, searchTerms);
+      }
     }
   }
 

@@ -8,6 +8,7 @@
     <mat-option *ngFor="let res of results" [value]="''">
       <app-child-block *ngIf="res.getType()==='Child'" [entity]="res" [ngClass]="{'result-inactive': !res.isActive()}"></app-child-block>
       <app-school-block *ngIf="res.getType()==='School'" [entity]="res"></app-school-block>
+      <app-search-information *ngIf="res.getType()==='SearchInformation'" [entity]="res"></app-search-information>
     </mat-option>
   </mat-autocomplete>
 </div>

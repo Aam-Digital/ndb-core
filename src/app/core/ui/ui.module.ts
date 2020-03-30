@@ -36,6 +36,7 @@ import { ChildrenModule } from '../../child-dev-project/children/children.module
 import { SchoolsModule } from '../../child-dev-project/schools/schools.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { PrimaryActionComponent } from './primary-action/primary-action.component';
+import { SearchInformationComponent } from './search/search-information/search-information/search-information.component';
 
 @NgModule({
   imports: [
@@ -57,7 +58,7 @@ import { PrimaryActionComponent } from './primary-action/primary-action.componen
     ChildrenModule,
     SchoolsModule,
   ],
-  declarations: [SearchComponent, UiComponent, PrimaryActionComponent],
+  declarations: [SearchComponent, UiComponent, PrimaryActionComponent, SearchInformationComponent],
   exports: [UiComponent],
 })
 export class UiModule {
