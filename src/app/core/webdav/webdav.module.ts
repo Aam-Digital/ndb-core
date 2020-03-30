@@ -8,6 +8,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
+/**
+ * Provides cloud file storage integration with platforms like Nextcloud.
+ * Configuration is described in the main README.
+ */
 @NgModule({
   declarations: [
     CloudFileServiceUserSettingsComponent,
