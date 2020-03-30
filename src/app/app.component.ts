@@ -21,19 +21,20 @@ import { AppConfig } from './core/app-config/app-config';
 import { MatDialog } from '@angular/material/dialog';
 import { DemoDataGeneratingProgressDialogComponent } from './core/demo-data/demo-data-generating-progress-dialog.component';
 
+/**
+ * Component as the main entry point for the app.
+ * Actual logic and UI structure is defined in other modules.
+ */
 @Component({
   selector: 'app-root',
   template: '<app-ui></app-ui>',
 })
 export class AppComponent implements OnInit {
-  private viewContainerRef: ViewContainerRef;
 
-  public constructor(
-    viewContainerRef: ViewContainerRef,
+  constructor(
+    private viewContainerRef: ViewContainerRef, // need this small hack in order to catch application root view container ref
     private dialog: MatDialog,
   ) {
-    // You need this small hack in order to catch application root view container ref
-    this.viewContainerRef = viewContainerRef;
   }
 
   ngOnInit() {

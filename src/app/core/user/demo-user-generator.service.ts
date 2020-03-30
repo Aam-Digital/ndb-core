@@ -4,13 +4,15 @@ import { User } from './user';
 
 
 /**
- * Generate demo users for the application. Currently, we only generate user 'demo' with password 'pass'
+ * Generate demo users for the application with its DemoDataModule.
  */
 @Injectable()
 export class DemoUserGeneratorService extends DemoDataGenerator<User> {
+
   /**
-   * This function returns a provider object to be used in an Angular Module configuration:
-   *   `providers: [DemoUserGeneratorService.provider()]`
+   * This function returns a provider object to be used in an Angular Module configuration
+   *
+   * @return `providers: [DemoUserGeneratorService.provider()]`
    */
   static provider() {
     return [
@@ -22,6 +24,9 @@ export class DemoUserGeneratorService extends DemoDataGenerator<User> {
     super();
   }
 
+  /**
+   * Generate User entities to be loaded by the DemoDataModule.
+   */
   public generateEntities(): User[] {
     const demoUser = new User('demo');
     demoUser.name = 'demo';

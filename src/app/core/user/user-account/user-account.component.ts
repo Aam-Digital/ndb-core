@@ -21,6 +21,9 @@ import { SessionService } from '../../session/session.service';
 import { EntityMapperService } from 'app/core/entity/entity-mapper.service';
 import { AppConfig } from '../../app-config/app-config';
 
+/**
+ * User account form to allow the user to view and edit information.
+ */
 @Component({
   selector: 'app-user-account',
   templateUrl: './user-account.component.html',
@@ -28,7 +31,10 @@ import { AppConfig } from '../../app-config/app-config';
 })
 export class UserAccountComponent implements OnInit {
 
+  /** user to be edited */
   user: User;
+
+  /** whether webdav integration is configured and the cloud settings section should be displayed */
   webdavEnabled = !!AppConfig.settings.webdav;
 
   constructor( private entityMapperService: EntityMapperService,
@@ -39,6 +45,14 @@ export class UserAccountComponent implements OnInit {
     this.user = this.sessionService.getCurrentUser();
   }
 
+  /**
+   * Change the user's password.
+   *
+   * @todo This is not implemented yet!
+   *
+   * @param pwd New password to be set
+   * @param rpwd Confirmation of new password (second input by the user to prevent typos)
+   */
   changePassword( pwd , rpwd ) {
     if ( pwd === rpwd ) {
       // TODO: update the password for this remote database user first and deny the password change if that fails

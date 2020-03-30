@@ -50,6 +50,11 @@ import { DemoDataModule } from './core/demo-data/demo-data.module';
 import { MatNativeDateModule } from '@angular/material/core';
 import { LoggingErrorHandler } from './core/logging/logging-error-handler';
 
+/**
+ * Main entry point of the application.
+ * Imports required modules and does basic setup.
+ * Real functionality should be implemented in separate modules and imported here rather than being part of this module.
+ */
 @NgModule({
   declarations: [
     AppComponent,
@@ -106,6 +111,10 @@ export class AppModule {
   }
 }
 
+/**
+ * Factory method for APP_INITIALIZER to load essential things before any other modules.
+ * @param appConfig The AppConfig service (through dependency injection)
+ */
 export function initializeApp(appConfig: AppConfig) {
   return () => appConfig.load();
 }

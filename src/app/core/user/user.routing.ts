@@ -23,6 +23,10 @@ const routes: Routes = [
   {path: '', component: UserAccountComponent},
 ];
 
+/**
+ * RoutingModule for UserModule related routes.
+ * Separating these routes from the main AppModule routing allows lazy-loading of modules.
+ */
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);
 
 

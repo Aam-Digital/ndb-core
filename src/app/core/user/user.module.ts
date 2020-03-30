@@ -24,6 +24,9 @@ import { CommonModule } from '@angular/common';
 import { MatTabsModule } from '@angular/material';
 import { WebdavModule } from '../webdav/webdav.module';
 
+/**
+ * Provides a User functionality including user account forms.
+ */
 @NgModule({
   imports: [
     CommonModule,

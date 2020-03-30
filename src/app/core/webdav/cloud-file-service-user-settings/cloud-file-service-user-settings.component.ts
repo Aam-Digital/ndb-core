@@ -6,6 +6,9 @@ import { EntityMapperService } from '../../entity/entity-mapper.service';
 import { AlertService } from '../../alerts/alert.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
+/**
+ * User Profile form to allow the user to set up credentials for a webdav server to be used by the CloudFileService.
+ */
 @Component({
   selector: 'app-cloud-file-service-user-settings',
   templateUrl: './cloud-file-service-user-settings.component.html',
@@ -13,8 +16,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class CloudFileServiceUserSettingsComponent implements OnInit {
 
+  /** The user for who this form edits data */
   @Input() user: User;
+
+  /** Webdav server URL */
   webdavUrl: string;
+
+  /** whether checking and saving the webdav credentials is currently in progress */
   processing: boolean;
 
   form: FormGroup;
@@ -38,6 +46,7 @@ export class CloudFileServiceUserSettingsComponent implements OnInit {
 
   /**
    * Sets the username and password for the cloud-service, provided the login password is correct
+   * and saves the user entity.
    */
   async updateCloudServiceSettings() {
     const password = this.form.controls.userPassword.value;
