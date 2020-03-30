@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 
 import { ChildPhotoService } from './child-photo.service';
 import { CloudFileService } from '../../../core/webdav/cloud-file-service.service';
@@ -67,6 +67,21 @@ describe('ChildPhotoService', () => {
     const actualImage = await service.getImage(testChild);
     expect(actualImage).toBe(DEFAULT_IMG);
   });
+
+
+  it('should getImageAsyncObservable with multiple next() images', fakeAsync(() => {
+    const testChild = new Child('1');
+    const testImg = 'url-encoded-img';
+    mockCloudFileService.isConnected.and.returnValue(true);
+    mockCloudFileService.doesFileExist.and.returnValue(Promise.resolve(true));
+    mockCloudFileService.getFile.and.returnValue(Promise.resolve(testImg));
+
+    const resultSubject = service.getImageAsyncObservable(testChild);
+    expect(resultSubject.value).toBe(DEFAULT_IMG);
+
+    tick();
+    expect(resultSubject.value).toBe(testImg);
+  }));
 
 
   it('should return false for canSetImage if no webdav connection', async () => {

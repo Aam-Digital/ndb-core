@@ -61,6 +61,8 @@
 
 .child-pic-photofile {
   position: absolute;
-  left: 0;
-  top: 150px;
+  left: 1px;
+  top: 115px;
+  width: 120px;
+  background: white;
 }

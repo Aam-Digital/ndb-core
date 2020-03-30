@@ -23,7 +23,7 @@ import { EntitySchemaService } from '../schema/entity-schema.service';
 export const arrayEntitySchemaDatatype: EntitySchemaDatatype = {
   name: 'array',
 
-  transformToDatabaseFormat: (value: any[], schemaField: EntitySchemaField, schemaService: EntitySchemaService) => {
+  transformToDatabaseFormat: (value: any[], schemaField: EntitySchemaField, schemaService: EntitySchemaService, parent) => {
     if (!Array.isArray(value)) {
       console.warn('property to be transformed with "array" EntitySchema is not an array', value);
       return value;
@@ -31,11 +31,11 @@ export const arrayEntitySchemaDatatype: EntitySchemaDatatype = {
 
     const arrayElementDatatype: EntitySchemaDatatype = schemaService.getDatatypeOrDefault(schemaField.arrayDataType);
     return value.map((el) => arrayElementDatatype
-      .transformToDatabaseFormat(el, generateSubSchemaField(schemaField), schemaService));
+      .transformToDatabaseFormat(el, generateSubSchemaField(schemaField), schemaService, parent));
   },
 
 
-  transformToObjectFormat: (value: any[], schemaField: EntitySchemaField, schemaService: EntitySchemaService) => {
+  transformToObjectFormat: (value: any[], schemaField: EntitySchemaField, schemaService: EntitySchemaService, parent) => {
     if (!Array.isArray(value)) {
       console.warn('property to be transformed with "array" EntitySchema is not an array', value);
       return value;
@@ -44,7 +44,7 @@ export const arrayEntitySchemaDatatype: EntitySchemaDatatype = {
     const arrayElementDatatype: EntitySchemaDatatype = schemaService.getDatatypeOrDefault(schemaField.arrayDataType);
 
     return value.map((el) => arrayElementDatatype
-      .transformToObjectFormat(el, generateSubSchemaField(schemaField), schemaService));
+      .transformToObjectFormat(el, generateSubSchemaField(schemaField), schemaService, parent));
   },
 };
 
