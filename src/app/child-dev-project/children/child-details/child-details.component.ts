@@ -39,9 +39,9 @@ export class ChildDetailsComponent implements OnInit {
 
   child: Child = new Child('');
   currentSchool: School = new School('');
-  //currentSchoolName: String;
   currentSchoolClass: String;
   schools: School[] = [];
+  message: {School, String};
 
   validateForm = false;
   form: FormGroup;
@@ -92,8 +92,6 @@ export class ChildDetailsComponent implements OnInit {
       guardianName:   [{value: this.child.guardianName,   disabled: !this.editing}],
       preferredTimeForGuardianMeeting: [{value: this.child.preferredTimeForGuardianMeeting, disabled: !this.editing}],
 
-      schoolClass:    [{value: this.currentSchoolClass,    disabled: !this.editing}],
-
       // aadhar:         [{value: this.child.has_aadhar,         disabled: !this.editing}],
       // kanyashree:     [{value: this.child.has_kanyashree,     disabled: !this.editing}],
       // bankAccount:    [{value: this.child.has_bankAccount,    disabled: !this.editing}],
@@ -122,7 +120,7 @@ export class ChildDetailsComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
     this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
-  }
+    }
 
   loadChild(id: string) {
     if (id === 'new') {
@@ -130,24 +128,19 @@ export class ChildDetailsComponent implements OnInit {
       this.editing = true;
       this.child = new Child(uniqid());
     } else {
-      // this.childrenService.getCurrentSchoolInfo(id)
-      //   .then(result => {
-      //     this.currentSchool = result.school;
-      //     this.currentSchoolClass = result.schoolClass;
-      //     //console.log("Current SchoolClass Result: " + this.currentSchoolClass);
-      //     //console.log("Current School Result: " + this.currentSchool);
-      //   });
-      this.childrenService.getCurrentSchoolInfo2(id)
+      this.childrenService.getChild(id)
+        .subscribe(child => {
+          this.child = child;
+          this.initForm();
+      });
+      this.childrenService.updateCurrentSchool(id);
+      this.childrenService.currentSchool$
         .subscribe(result => {
-          console.log('SchoolResult: ' + result.school);
           this.currentSchool = result.school;
           this.currentSchoolClass = result.schoolClass;
-          console.log("Current SchoolClass Result: " + this.currentSchoolClass);
-          console.log("Current School Result: " + this.currentSchool);
         });
     }
     this.initForm();
-
   }
 
   switchEdit() {

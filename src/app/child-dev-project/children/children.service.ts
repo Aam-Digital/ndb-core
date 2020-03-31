@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { from, Observable } from 'rxjs';
+import { from, Observable, BehaviorSubject } from 'rxjs';
 import { Child } from './model/child';
 import { EntityMapperService } from '../../core/entity/entity-mapper.service';
 import { AttendanceMonth } from '../attendance/model/attendance-month';
@@ -15,6 +15,9 @@ import { EntitySchemaService } from '../../core/entity/schema/entity-schema.serv
 @Injectable()
 export class ChildrenService {
 
+  private currentSchoolBehaviorSubject = new BehaviorSubject<{school: School, schoolClass: String}>({school: null, schoolClass: null});
+  currentSchool$: Observable<{school: School, schoolClass: String}> = this.currentSchoolBehaviorSubject.asObservable();
+
   constructor(private entityMapper: EntityMapperService,
               private entitySchemaService: EntitySchemaService,
               private db: Database) {
@@ -23,7 +26,6 @@ export class ChildrenService {
     this.createAttendancesIndex();
     this.createChildSchoolRelationIndex();
   }
-
 
   getChildren(): Observable<Child[]> {
     return from(this.entityMapper.loadType<Child>(Child));
@@ -276,45 +278,16 @@ export class ChildrenService {
     );
   }
 
-
-
-  getCurrentSchoolInfo2(childId: string): Observable<{school: School, schoolClass: String}> {
-    let result: {school: School, schoolClass: String} = {
-      school: null,
-      schoolClass: 'Peter', // null,
-    };
-    const promise: Promise<{school: School, schoolClass: String}> = this.querySortedRelations(childId)
-      .then(relations => {
-        if (relations) {
-          for (let i = 0; i < relations.length; i++) {
-            if (relations[i].start.setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0)) {
-              this.entityMapper.load<School>(School, relations[i].schoolId)
-                .then(loadedSchool => {
-                  result = {
-                    school: loadedSchool,
-                    schoolClass: relations[i].schoolClass,
-                  };
-                  console.log('Das Ergebnis ist: ' + result.school);
-                  return result;
-                });
-              break;
-            }
-          }
-          return(result);
-        }
-      });
-    return from(promise);
-  }
-
-  async getCurrentSchoolInfo(childId: string): Promise<{school: School, schoolClass: String}> {
+  async updateCurrentSchool(childId: string) {
     const relations = await this.querySortedRelations(childId);
-    let result: {school: School, schoolClass: String} = {
+    let result = {
       school: null,
       schoolClass: null,
     };
     if (relations) {
       for (let i = 0; i < relations.length; i++) {
-        if (relations[i].start.setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0)) {
+        if ((!relations[i].start || relations[i].start.setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0)) &&
+            (!relations[i].end || relations[i].end.setHours(0, 0, 0, 0) >= new Date().setHours(0, 0, 0, 0))) {
           result = {
             school: await this.entityMapper.load<School>(School, relations[i].schoolId),
             schoolClass: relations[i].schoolClass,
@@ -322,24 +295,11 @@ export class ChildrenService {
           break;
         }
       }
+      this.currentSchoolBehaviorSubject.next(result);
+    } else {
+      this.currentSchoolBehaviorSubject.next(result);
     }
-    return result;
   }
-
-  updateCurrentSchoolInfo() {
-    console.log('CurrentSchoolInfo geupdated.');
-  }
-
-  // async getCurrentSchoolClass(childId: string): Promise<String> {
-  //   return this.queryLatestRelation(childId)
-  //     .then(relation => {
-  //       if (relation) {
-  //         //return this.entityMapper.load<School>(School, relation.schoolId);
-  //         return relation.schoolClass;
-  //       }
-  //       return null;
-  //     });
-  // }
 
   async getSchoolsWithRelations(childId: string): Promise<ChildSchoolRelation[]> {
     const relations = await this.querySortedRelations(childId);

@@ -10,7 +10,7 @@ import * as uniqid from 'uniqid';
 
 @Component({
   selector: 'app-previous-schools',
-  template: '<app-entity-subrecord (savedRecordInEntitySubrecordEvent)="savedRecord()"' +
+  template: '<app-entity-subrecord (changedRecordsInEntitySubrecordEvent)="savedRecordInEntitySubrecord()"' +
     '[records]="records" ' +
     '[columns]="columns" ' +
     '[newRecordFactory]="generateNewRecordFactory()" ' +
@@ -40,8 +40,6 @@ export class PreviousSchoolsComponent implements OnInit {
   records = new Array<ChildSchoolRelation>();
   schoolList = new Array<School>();
   columns = new Array<ColumnDescription>();
-  currentSchool: School;
-  currentSchoolClass: string;
 
   constructor(private route: ActivatedRoute,
               private childrenService: ChildrenService,
@@ -62,12 +60,9 @@ export class PreviousSchoolsComponent implements OnInit {
     this.childrenService.getSchoolsWithRelations(id)
       .then(results => {
         this.records = results;
-        this.currentSchoolClass = this.records[0].schoolClass;
         this.schoolsService.getSchools().subscribe(data => {
           const schoolMap = {};
           data.forEach(s => schoolMap[s.getId()] = s.name);
-          this.currentSchool = schoolMap[this.records[0].schoolId];
-          console.log('Currently attending ' + this.currentSchool + ' in class ' + this.currentSchoolClass);
           this.columns = [
             new ColumnDescription('schoolId', 'Name', ColumnDescriptionInputType.SELECT,
               data.map(t => { return { value: t.getId(), label: t.name}; }),
@@ -89,9 +84,8 @@ export class PreviousSchoolsComponent implements OnInit {
       });
   }
 
-  savedRecord() {
-    console.log('SavedRecordEvent empfangen in Previous Schools.');
-    this.childrenService.updateCurrentSchoolInfo();
+  savedRecordInEntitySubrecord() {
+    this.childrenService.updateCurrentSchool(this.childId);
   }
 
   generateNewRecordFactory() {

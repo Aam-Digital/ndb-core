@@ -27,8 +27,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   @Input() showButton = true;
   @Input() entityId: string;
   @Input() formValidation?: (record: Entity) => FormValidationResult;
-
-  @Output() savedRecordInEntitySubrecordEvent = new EventEmitter<any>();
+  @Output() changedRecordsInEntitySubrecordEvent = new EventEmitter<any>();
 
   recordsDataSource = new MatTableDataSource();
   columnsToDisplay = [];
@@ -88,9 +87,8 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
 
-    this._entityMapper.save(record).then(savedRecord => {
-      this.savedRecordInEntitySubrecordEvent.emit();
-      console.log('SavedRecordEvent emitted.');
+    this._entityMapper.save(record).then(() => {
+      this.changedRecordsInEntitySubrecordEvent.emit();
     });
 
     // updated backup copies used for reset
@@ -128,7 +126,10 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     dialogRef.afterClosed()
       .subscribe(confirmed => {
         if (confirmed) {
-          this._entityMapper.remove(record);
+          this._entityMapper.remove(record)
+            .then(() => {
+              this.changedRecordsInEntitySubrecordEvent.emit();
+            });
           this.removeFromDataTable(record);
 
           const snackBarRef = this._snackBar.open('Record deleted', 'Undo', { duration: 8000 });
