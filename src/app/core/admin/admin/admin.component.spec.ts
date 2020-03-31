@@ -5,7 +5,7 @@ import { AlertsModule } from '../../alerts/alerts.module';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BackupService } from '../services/backup.service';
-import { UiHelperModule } from '../../ui-helper/ui-helper.module';
+import { EntitySubrecordModule } from '../../entity-subrecord/entity-subrecord.module';
 import { AppConfig } from '../../app-config/app-config';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -22,7 +22,7 @@ describe('AdminComponent', () => {
     };
 
     TestBed.configureTestingModule({
-      imports: [AlertsModule, MatSnackBarModule, MatButtonModule, UiHelperModule, HttpClientTestingModule],
+      imports: [AlertsModule, MatSnackBarModule, MatButtonModule, EntitySubrecordModule, HttpClientTestingModule],
       declarations: [ AdminComponent ],
       providers: [
         {provide: BackupService, useValue: new BackupService(null, null)},

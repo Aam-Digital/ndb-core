@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HealthCheck } from '../model/health-check';
-import { ColumnDescription, ColumnDescriptionInputType } from '../../../core/ui-helper/entity-subrecord/column-description';
+import { ColumnDescription, ColumnDescriptionInputType } from '../../../core/entity-subrecord/entity-subrecord/column-description';
 import { ActivatedRoute } from '@angular/router';
 import { ChildrenService } from '../../children/children.service';
 import { DatePipe } from '@angular/common';

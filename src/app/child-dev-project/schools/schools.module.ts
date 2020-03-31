@@ -22,7 +22,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
-import { UiHelperModule } from '../../core/ui-helper/ui-helper.module';
+import { EntitySubrecordModule } from '../../core/entity-subrecord/entity-subrecord.module';
 import { RouterModule } from '@angular/router';
 import { SchoolsService } from './schools.service';
 
@@ -62,7 +62,7 @@ import { SchoolsService } from './schools.service';
     MatSnackBarModule,
     MatDialogModule,
     MatAutocompleteModule,
-    UiHelperModule,
+    EntitySubrecordModule,
     ReactiveFormsModule,
   ],
   declarations: [

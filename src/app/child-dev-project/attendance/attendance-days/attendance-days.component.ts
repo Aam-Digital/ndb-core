@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { AttendanceDay, AttendanceStatus } from '../model/attendance-day';
-import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { ConfirmationDialogService } from '../../../core/confirmation-dialog/confirmation-dialog.service';
 import { AttendanceMonth } from '../model/attendance-month';
 import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 import { MatSelect } from '@angular/material/select';

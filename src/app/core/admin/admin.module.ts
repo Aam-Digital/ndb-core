@@ -6,7 +6,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
 import { PapaParseModule } from 'ngx-papaparse';
 import { AlertsModule } from '../alerts/alerts.module';
-import { UiHelperModule } from '../ui-helper/ui-helper.module';
+import { EntitySubrecordModule } from '../entity-subrecord/entity-subrecord.module';
 import { AdminGuard } from './admin.guard';
 import { EntityModule } from '../entity/entity.module';
 import { HttpClientModule } from '@angular/common/http';
@@ -33,7 +33,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatCheckboxModule,
     PapaParseModule,
     AlertsModule,
-    UiHelperModule,
+    EntitySubrecordModule,
     EntityModule,
     HttpClientModule,
     FormsModule,

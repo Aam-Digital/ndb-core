@@ -3,7 +3,7 @@ import { EntityMapperService } from '../../../core/entity/entity-mapper.service'
 import { Child } from '../../children/model/child';
 import { MatTableDataSource } from '@angular/material/table';
 import { AttendanceMonth } from '../model/attendance-month';
-import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { ConfirmationDialogService } from '../../../core/confirmation-dialog/confirmation-dialog.service';
 import { AlertService } from '../../../core/alerts/alert.service';
 import { ChildrenService } from '../../children/children.service';
 import { School } from '../../schools/model/school';

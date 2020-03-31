@@ -36,7 +36,7 @@ import { LatestChangesModule } from '../../latest-changes/latest-changes.module'
 import { SessionModule } from '../../session/session.module';
 import { AppConfigModule } from '../../app-config/app-config.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { UiHelperModule } from '../../ui-helper/ui-helper.module';
+import { EntitySubrecordModule } from '../../entity-subrecord/entity-subrecord.module';
 import { PrimaryActionComponent } from '../primary-action/primary-action.component';
 import { AppConfig } from '../../app-config/app-config';
 import { SessionService } from 'app/core/session/session.service';
@@ -75,7 +75,7 @@ describe('UiComponent', () => {
       imports: [RouterTestingModule, CommonModule, FormsModule, MatIconModule, MatToolbarModule, MatSidenavModule,
         MatAutocompleteModule, MatInputModule, MatFormFieldModule, NoopAnimationsModule,
         AppConfigModule,
-        UiHelperModule,
+        EntitySubrecordModule,
         ChildrenModule,
         SchoolsModule,
         SyncStatusModule,

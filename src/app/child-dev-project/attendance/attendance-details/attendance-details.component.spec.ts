@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AttendanceDaysComponent } from '../attendance-days/attendance-days.component';
 import { SchoolBlockComponent } from '../../schools/school-block/school-block.component';
-import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
+import { EntitySubrecordModule } from '../../../core/entity-subrecord/entity-subrecord.module';
 import { Database } from '../../../core/database/database';
 import { MockDatabase } from '../../../core/database/mock-database';
 import { ChildrenService } from '../../children/children.service';
@@ -36,7 +36,7 @@ describe('AttendanceDetailsComponent', () => {
         ChildBlockComponent, SchoolBlockComponent ],
       imports: [ MatFormFieldModule, MatInputModule, MatDialogModule, MatSelectModule, MatIconModule, MatTooltipModule,
         FormsModule, CommonModule, RouterTestingModule, NoopAnimationsModule,
-        UiHelperModule, EntityModule],
+        EntitySubrecordModule, EntityModule],
       providers: [
         {provide: Database, useClass: MockDatabase},
         {provide: MatDialogRef, useValue: {beforeClose: () => { return { subscribe: () => {}}; }}},

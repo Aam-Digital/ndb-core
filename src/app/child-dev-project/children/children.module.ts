@@ -41,7 +41,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ChildrenService } from './children.service';
 import { AttendanceBlockComponent } from '../attendance/attendance-block/attendance-block.component';
 import { ChildAttendanceComponent } from '../attendance/child-attendance/child-attendance.component';
-import { UiHelperModule } from '../../core/ui-helper/ui-helper.module';
+import { EntitySubrecordModule } from '../../core/entity-subrecord/entity-subrecord.module';
 import { ChildBlockComponent } from './child-block/child-block.component';
 import { ChildrenCountDashboardComponent } from './children-count-dashboard/children-count-dashboard.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -100,7 +100,7 @@ import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/ro
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FilterPipeModule,
-    UiHelperModule,
+    EntitySubrecordModule,
     SchoolsModule,
     ReactiveFormsModule,
     MatDialogModule,

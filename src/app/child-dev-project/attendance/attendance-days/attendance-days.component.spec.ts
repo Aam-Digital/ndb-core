@@ -6,7 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
-import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
+import { EntitySubrecordModule } from '../../../core/entity-subrecord/entity-subrecord.module';
 import { EntityModule } from '../../../core/entity/entity.module';
 import { Database } from '../../../core/database/database';
 import { MockDatabase } from '../../../core/database/mock-database';
@@ -28,7 +28,7 @@ describe('AttendanceDaysComponent', () => {
       declarations: [ AttendanceDayBlockComponent, AttendanceDaysComponent ],
       imports: [MatFormFieldModule, MatInputModule, MatSelectModule, MatTooltipModule,
         FormsModule,
-        UiHelperModule, EntityModule],
+        EntitySubrecordModule, EntityModule],
       providers: [
         { provide: Database, useClass: MockDatabase },
       ],

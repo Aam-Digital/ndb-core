@@ -4,7 +4,7 @@ import { ChildAttendanceComponent } from './child-attendance.component';
 import { ActivatedRoute } from '@angular/router';
 import { Child } from '../../children/model/child';
 import { ChildrenService } from '../../children/children.service';
-import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
+import { EntitySubrecordModule } from '../../../core/entity-subrecord/entity-subrecord.module';
 import { DatePipe, PercentPipe } from '@angular/common';
 import { AttendanceDaysComponent } from '../attendance-days/attendance-days.component';
 import { AttendanceDayBlockComponent } from '../attendance-days/attendance-day-block.component';
@@ -171,7 +171,7 @@ describe('ChildAttendanceComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ ChildAttendanceComponent, AttendanceDaysComponent, AttendanceDayBlockComponent ],
-      imports: [UiHelperModule, MatSelectModule, FormsModule, MatTooltipModule],
+      imports: [EntitySubrecordModule, MatSelectModule, FormsModule, MatTooltipModule],
       providers: [
         DatePipe, PercentPipe,
         { provide: ActivatedRoute, useValue: {params: of({id: '22'})} },
