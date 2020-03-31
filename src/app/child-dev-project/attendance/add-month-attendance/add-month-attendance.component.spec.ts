@@ -17,7 +17,7 @@ import { EntityMapperService } from '../../../core/entity/entity-mapper.service'
 import { MockDatabase } from '../../../core/database/mock-database';
 import { Database } from '../../../core/database/database';
 import { ChildrenService } from '../../children/children.service';
-import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
+import { EntitySubrecordModule } from '../../../core/entity-subrecord/entity-subrecord.module';
 import { AlertsModule } from '../../../core/alerts/alerts.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
@@ -41,7 +41,7 @@ describe('AddMonthAttendanceComponent', () => {
         MatButtonModule,
         MatProgressBarModule,
         FormsModule,
-        UiHelperModule,
+        EntitySubrecordModule,
         AlertsModule,
         NoopAnimationsModule,
       ],

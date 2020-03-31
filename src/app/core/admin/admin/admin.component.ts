@@ -4,7 +4,7 @@ import { AlertService } from '../../alerts/alert.service';
 import { Alert } from '../../alerts/alert';
 import FileSaver from 'file-saver';
 import { BackupService } from '../services/backup.service';
-import { ConfirmationDialogService } from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { ConfirmationDialogService } from '../../confirmation-dialog/confirmation-dialog.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import PouchDB from 'pouchdb-browser';
 import { ChildPhotoUpdateService } from '../services/child-photo-update.service';

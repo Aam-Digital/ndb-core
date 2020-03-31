@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { Aser } from '../model/aser';
-import { ColumnDescription, ColumnDescriptionInputType } from '../../../core/ui-helper/entity-subrecord/column-description';
+import { ColumnDescription, ColumnDescriptionInputType } from '../../../core/entity-subrecord/entity-subrecord/column-description';
 import { ChildrenService } from '../../children/children.service';
 
 

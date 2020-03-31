@@ -10,12 +10,12 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
 import { MockDatabase } from '../../database/mock-database';
-import { ConfirmationDialogService } from '../confirmation-dialog/confirmation-dialog.service';
 import { CommonModule } from '@angular/common';
 import { Database } from '../../database/database';
 import { EntitySchemaService } from '../../entity/schema/entity-schema.service';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { AlertService } from 'app/core/alerts/alert.service';
+import { ConfirmationDialogService } from '../../confirmation-dialog/confirmation-dialog.service';
 
 describe('EntitySubrecordComponent', () => {
   let component: EntitySubrecordComponent;

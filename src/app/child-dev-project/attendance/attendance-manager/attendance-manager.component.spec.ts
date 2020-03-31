@@ -17,10 +17,8 @@ import { AttendanceDayBlockComponent } from '../attendance-days/attendance-day-b
 import { SchoolBlockComponent } from '../../schools/school-block/school-block.component';
 import { AttendanceDaysComponent } from '../attendance-days/attendance-days.component';
 import { FormsModule } from '@angular/forms';
-import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
+import { EntitySubrecordModule } from '../../../core/entity-subrecord/entity-subrecord.module';
 import { ChildrenService } from '../../children/children.service';
-import { Database } from '../../../core/database/database';
-import { MockDatabase } from '../../../core/database/mock-database';
 import { EntityModule } from '../../../core/entity/entity.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -37,7 +35,7 @@ describe('AttendanceManagerComponent', () => {
         AttendanceDaysComponent, SchoolBlockComponent ],
       imports: [ MatFormFieldModule, MatInputModule, MatButtonToggleModule, MatExpansionModule, MatButtonModule, MatTableModule,
         MatProgressBarModule, MatTooltipModule, MatSelectModule, MatIconModule, MatDatepickerModule, MatNativeDateModule,
-        FormsModule, NoopAnimationsModule, UiHelperModule, EntityModule],
+        FormsModule, NoopAnimationsModule, EntitySubrecordModule, EntityModule],
       providers: [
         {
           provide: ChildrenService,

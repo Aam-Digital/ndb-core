@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
+import { EntitySubrecordModule } from '../../../core/entity-subrecord/entity-subrecord.module';
 import { EntityModule } from '../../../core/entity/entity.module';
 import { FormsModule } from '@angular/forms';
 import { ChildSelectComponent } from '../../children/child-select/child-select.component';
@@ -42,7 +42,7 @@ describe('NoteDetailsComponent', () => {
       declarations: [ NoteDetailsComponent, ChildSelectComponent, ChildBlockComponent, SchoolBlockComponent ],
       imports: [MatDialogModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule, MatSelectModule,
         FormsModule, NoopAnimationsModule, MatIconModule, MatDatepickerModule, MatNativeDateModule,
-        UiHelperModule, EntityModule],
+        EntitySubrecordModule, EntityModule],
       providers: [
         {provide: Database, useClass: MockDatabase},
         {provide: MatDialogRef, useValue: {beforeClose: () => { return { subscribe: () => {}}; }}},

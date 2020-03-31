@@ -3,7 +3,7 @@ import { Note } from '../model/note';
 import { ChildrenService } from '../../children/children.service';
 import { ActivatedRoute } from '@angular/router';
 import { SessionService } from '../../../core/session/session.service';
-import { ColumnDescription, ColumnDescriptionInputType } from '../../../core/ui-helper/entity-subrecord/column-description';
+import { ColumnDescription, ColumnDescriptionInputType } from '../../../core/entity-subrecord/entity-subrecord/column-description';
 import { DatePipe } from '@angular/common';
 import { NoteDetailsComponent } from '../note-details/note-details.component';
 

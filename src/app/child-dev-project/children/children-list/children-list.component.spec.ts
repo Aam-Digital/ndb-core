@@ -25,7 +25,7 @@ import { ChildBlockComponent } from '../child-block/child-block.component';
 import { SchoolBlockComponent } from '../../schools/school-block/school-block.component';
 import { FilterPipeModule } from 'ngx-filter-pipe';
 import { AttendanceDaysComponent } from '../../attendance/attendance-days/attendance-days.component';
-import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
+import { EntitySubrecordModule } from '../../../core/entity-subrecord/entity-subrecord.module';
 import { AttendanceDayBlockComponent } from '../../attendance/attendance-days/attendance-day-block.component';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 import { ExportDataComponent } from '../../../core/admin/export-data/export-data.component';
@@ -67,7 +67,7 @@ describe('ChildrenListComponent', () => {
         RouterTestingModule.withRoutes([
           { path: 'child', component: ChildrenListComponent},
         ]),
-        UiHelperModule,
+        EntitySubrecordModule,
         PapaParseModule,
       ],
       providers: [ChildrenService,
