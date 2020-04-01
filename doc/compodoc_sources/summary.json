@@ -1,55 +1,91 @@
 [
   {
-    "title": "First Steps",
-    "file": "first-steps/first-steps.md",
+    "title":"Overview",
+    "file": "overview.md"
+  },
+  {
+    "title": "Tutorial",
+    "file": "tutorial/_index.md",
     "children": [
       {
-        "title": "Contribution Guidelines",
-        "file": "first-steps/contribution-guidelines.md"
+        "title": "Overview of Technologies",
+        "file": "tutorial/technologies.md"
+      },
+      {
+        "title": "Setting up the project",
+        "file": "tutorial/setting-up-the-project.md"
+      },
+      {
+        "title": "Using Aam Digital (as a user)",
+        "file": "tutorial/using-aam-digital.md"
+      },
+      {
+        "title": "Diving into the Code",
+        "file": "tutorial/diving-into-the-code.md"
       }
     ]
   },
   {
-    "title": "Guidelines and Recipes",
-    "file": "handbook/handbook.md",
+    "title": "How-To Guides",
+    "file": "how-to-guides/_index.md",
     "children": [
       {
-        "title": "UX Guidelines",
-        "file": "handbook/ux-guidelines.md"
+        "title": "Navigate the Code Structure",
+        "file": "how-to-guides/navigate-code-structure.md"
       },
       {
-        "title": "Writing Documentation",
-        "file": "handbook/documentation.md"
+        "title": "Contribute Code to the Project",
+        "file": "how-to-guides/contribute-code.md"
       },
       {
-        "title": "Writing Automated Tests",
-        "file": "handbook/testing.md"
+        "title": "Load and Save Data",
+        "file": "how-to-guides/load-and-save-data.md"
       },
       {
-        "title": "Logging and Tracking Errors",
-        "file": "handbook/logging.md"
+        "title": "Write Automated Unit Tests",
+        "file": "how-to-guides/write-tests.md"
       },
       {
-        "title": "Loading and Saving Data",
-        "file": "handbook/loading-and-saving-data.md"
+        "title": "Write Documentation",
+        "file": "how-to-guides/write-documentation.md"
       },
       {
-        "title": "Creating New Entity Types",
-        "file": "handbook/creating-new-entity-types.md"
+        "title": "Log and Track Errors",
+        "file": "how-to-guides/log-errors.md"
+      },
+      {
+        "title": "Create A New Entity Type",
+        "file": "how-to-guides/create-new-entity-type.md"
+      },
+      {
+        "title": "Generate Demo Data",
+        "file": "how-to-guides/generate-demo-data.md"
       }
     ]
   },
   {
-    "title": "Architecture",
-    "file": "architecture/architecture.md",
+    "title": "Concepts",
+    "file": "concepts/_index.md",
     "children": [
+      {
+        "title": "Overall Architecture",
+        "file": "concepts/overall-architecture.md"
+      },
       {
         "title": "Entity Schema",
-        "file": "architecture/entity-schema-system.md"
+        "file": "concepts/entity-schema-system.md"
       },
       {
         "title": "Session and Authentication System",
-        "file": "architecture/session-system.md"
+        "file": "concepts/session-system.md"
+      },
+      {
+        "title": "UX Guidelines",
+        "file": "concepts/ux-guidelines.md"
+      },
+      {
+        "title": "Documentation Structure",
+        "file": "concepts/documentation-structure.md"
       }
     ]
   },

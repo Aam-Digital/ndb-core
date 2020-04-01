@@ -122,7 +122,7 @@ Easiest case. Just start the liveSync and hope everything works out eventually. 
 #### Local Login failed
 This is most probably a changed password case. However, as the sync failed, we cannot log the user in locally, so we have to keep the login failed. We also don't start a liveSync here, as it confuses the hell out of the UI to be not logged in but have a running (and intermittently failing) liveSync here. We might want to revisit this behavior, though.
 
-![](../../images/new-session-flows/sync_failed__local_login_failed.svg)
+![](../../images/new-session-flows/sync_failed__local_login_failure.svg)
 
 ### Initial Sync Flows
 The local database is initial. We must wait for a first sync before we can log anyone in.

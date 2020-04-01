@@ -1,4 +1,4 @@
-# Adding Developer Documentation (compodoc)
+# How to Write Developer Documentation (compodoc)
 * With every push to the master, travis generates this Documentation of the Project via Compodoc automatically.
 **All you have to do is to Comment your code with basic JSDoc!**
 Further information: https://compodoc.app/guides/comments.html

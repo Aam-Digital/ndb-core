@@ -2,12 +2,12 @@
 "Entities" are the objects around which our whole system is built. There may for example be User, Child or School classes representing the types of objects the users can view interact with. To extend the system with types, you can create a new module and extend the existing base of the Entity system.
 
 The `EntityModule` specifies the base class and generic features, specific entity types can extend upon it.
-For an example, have a look at the [UserModule](https://github.com/NGO-DB/ndb-core/tree/master/src/app/user) defining the `User` class that extends `Entity`.
+For an example, have a look at the [UserModule](https://github.com/Aam-Digital/ndb-core/tree/master/src/app/core/user), which defines the `User` class that extends `Entity`.
 
 
 
 ## The `Entity` class
-`Entity` and any class extending it are only plain TypeScript classes defining the attributes (and possibly some "business logic" methods). 
+`Entity` and any class extending it are only plain TypeScript classes defining the attributes (and possibly some "business logic" methods).
 
 The classes should never contain code for saving/deleting or other database related code because we are keeping this separate in an EntityMapper class (see [Data Mapper Pattern](https://en.wikipedia.org/wiki/Data_mapper_pattern)).
 
@@ -38,7 +38,7 @@ Only `dummy.name`, `dummy.size` and `dummy.month` of a Dummy class instance are 
 The `dummy.temp` property is available for internal processing but will be ignored when saving the entity to the database.
 
 You can also set additional options for DatabaseFields and implement your own data transformations.
-For more details see the docs about the [EntitySchema System](https://github.com/NGO-DB/ndb-core/wiki/EntitySchema-System).
+For more details see the concept of the [EntitySchema System](../concepts/entity-schema.html).
 
 
 ## Other components to be implemented for a new sub-type
