@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { from, Observable, BehaviorSubject } from 'rxjs';
+import { from, Observable, Subject } from 'rxjs';
 import { Child } from './model/child';
 import { EntityMapperService } from '../../core/entity/entity-mapper.service';
 import { AttendanceMonth } from '../attendance/model/attendance-month';
@@ -15,8 +15,8 @@ import { EntitySchemaService } from '../../core/entity/schema/entity-schema.serv
 @Injectable()
 export class ChildrenService {
 
-  private currentSchoolBehaviorSubject = new BehaviorSubject<{school: School, schoolClass: String}>({school: null, schoolClass: null});
-  currentSchool$: Observable<{school: School, schoolClass: String}> = this.currentSchoolBehaviorSubject.asObservable();
+  private currentSchoolSubject = new Subject<{school: School, schoolClass: String}>();
+  currentSchool$: Observable<{school: School, schoolClass: String}> = this.currentSchoolSubject.asObservable();
 
   constructor(private entityMapper: EntityMapperService,
               private entitySchemaService: EntitySchemaService,
@@ -295,10 +295,8 @@ export class ChildrenService {
           break;
         }
       }
-      this.currentSchoolBehaviorSubject.next(result);
-    } else {
-      this.currentSchoolBehaviorSubject.next(result);
     }
+    this.currentSchoolSubject.next(result);
   }
 
   async getSchoolsWithRelations(childId: string): Promise<ChildSchoolRelation[]> {

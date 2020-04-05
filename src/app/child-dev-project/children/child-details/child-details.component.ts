@@ -41,7 +41,6 @@ export class ChildDetailsComponent implements OnInit {
   currentSchool: School = new School('');
   currentSchoolClass: String;
   schools: School[] = [];
-  message: {School, String};
 
   validateForm = false;
   form: FormGroup;
