@@ -28,10 +28,27 @@ export class ChildrenService {
   }
 
   getChildren(): Observable<Child[]> {
-    return from(this.entityMapper.loadType<Child>(Child));
+    const promise = this.entityMapper.loadType<Child>(Child)
+    .then(loadedChildren => {
+      loadedChildren.forEach(loadedChild => {
+        loadedChild.schoolClass = 'hi';
+      });
+      return loadedChildren;
+    });
+    return from(promise);
   }
+
   getChild(id: string): Observable<Child> {
-    return from(this.entityMapper.load<Child>(Child, id));
+    const promise = this.entityMapper.load<Child>(Child, id)
+      .then(loadedChild => {
+        return (this.getCurrentSchoolInfo(id))
+          .then(currentSchoolInfo => {
+            loadedChild.schoolClass = currentSchoolInfo.schoolClass;
+            loadedChild.schoolId = currentSchoolInfo.school;
+            return (loadedChild);
+          });
+      });
+    return from(promise);
   }
 
   getAttendances(): Observable<AttendanceMonth[]> {
@@ -276,6 +293,27 @@ export class ChildrenService {
           return loadedEntities.filter(o => o.child === childId);
         }),
     );
+  }
+
+  async getCurrentSchoolInfo(childId: string) {
+    const relations = await this.querySortedRelations(childId);
+    let result = {
+      school: null,
+      schoolClass: null,
+    };
+    if (relations) {
+      for (let i = 0; i < relations.length; i++) {
+        if ((!relations[i].start || relations[i].start.setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0)) &&
+            (!relations[i].end || relations[i].end.setHours(0, 0, 0, 0) >= new Date().setHours(0, 0, 0, 0))) {
+          result = {
+            school: relations[i].schoolId, // await this.entityMapper.load<School>(School, relations[i].schoolId),
+            schoolClass: relations[i].schoolClass,
+          };
+          break;
+        }
+      }
+    }
+    return result;
   }
 
   async updateCurrentSchool(childId: string) {

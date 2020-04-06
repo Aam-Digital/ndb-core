@@ -89,6 +89,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
 
     this._entityMapper.save(record).then(() => {
       this.changedRecordsInEntitySubrecordEvent.emit();
+      console.log('Event emitted');
     });
 
     // updated backup copies used for reset

@@ -7,10 +7,11 @@ import { ChildrenService } from '../children/children.service';
 import { SchoolsService } from '../schools/schools.service';
 import { School } from '../schools/model/school';
 import * as uniqid from 'uniqid';
+import { ChildDetailsComponent } from '../children/child-details/child-details.component';
 
 @Component({
   selector: 'app-previous-schools',
-  template: '<app-entity-subrecord (changedRecordsInEntitySubrecordEvent)="savedRecordInEntitySubrecord()"' +
+  template: '<app-entity-subrecord (changedRecordsInEntitySubrecordEvent)="changedRecordInEntitySubrecord()"' +
     '[records]="records" ' +
     '[columns]="columns" ' +
     '[newRecordFactory]="generateNewRecordFactory()" ' +
@@ -43,6 +44,7 @@ export class PreviousSchoolsComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private childrenService: ChildrenService,
+              private childDetailsComponent: ChildDetailsComponent,
               private schoolsService: SchoolsService,
               private datePipe: DatePipe) {
   }
@@ -84,8 +86,9 @@ export class PreviousSchoolsComponent implements OnInit {
       });
   }
 
-  savedRecordInEntitySubrecord() {
-    this.childrenService.updateCurrentSchool(this.childId);
+  changedRecordInEntitySubrecord() {
+    // this.childrenService.updateCurrentSchool(this.childId);
+    this.childDetailsComponent.changedRecordInEntitySubrecord();
   }
 
   generateNewRecordFactory() {
