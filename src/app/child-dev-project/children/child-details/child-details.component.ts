@@ -29,7 +29,7 @@ import { AlertService } from '../../../core/alerts/alert.service';
 import { ChildrenService } from '../children.service';
 import { School } from '../../schools/model/school';
 import { ChildPhotoService } from '../child-photo-service/child-photo.service';
-import { SessionService } from '../../../core/session/session.service';
+import { SessionService } from '../../../core/session/session-service/session.service';
 
 
 @Component({

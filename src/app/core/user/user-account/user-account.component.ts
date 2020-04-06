@@ -17,7 +17,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { User } from '../user';
-import { SessionService } from '../../session/session.service';
+import { SessionService } from '../../session/session-service/session.service';
 import { EntityMapperService } from 'app/core/entity/entity-mapper.service';
 import { AppConfig } from '../../app-config/app-config';
 

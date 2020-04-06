@@ -15,17 +15,19 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
-import { CanActivate } from '@angular/router';
-import { SessionService } from './session.service';
+import { Database } from './database';
+import { SessionService } from '../session/session-service/session.service';
 
-@Injectable()
-export class LoggedInGuard implements CanActivate {
-
-  constructor(private _sessionService: SessionService) {
-  }
-
-  canActivate() {
-    return this._sessionService.isLoggedIn();
-  }
-}
+/**
+ * Provider of Database service for the Angular dependency injection.
+ *
+ * This depends on the SessionService that is set up
+ * (which in turn considers the app-config.json to switch between an in-memory database and a synced persistent database).
+ */
+export let databaseServiceProvider = {
+  provide: Database,
+  useFactory: function (_sessionService: SessionService) {
+    return _sessionService.getDatabase();
+  },
+  deps: [SessionService],
+};

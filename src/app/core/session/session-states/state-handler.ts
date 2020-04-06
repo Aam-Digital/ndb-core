@@ -17,22 +17,45 @@
 
 import { EventEmitter } from '@angular/core';
 
+/**
+ * Interface of state transition events.
+ */
 export interface StateChangedEvent<StateEnum> {
+  /** previous state before change */
   fromState: StateEnum;
+
+  /** new state after change */
   toState: StateEnum;
 }
 
+/**
+ * Utility class supporting generic state transitions by emitting change events
+ * and allowing to wait for a certain state transition.
+ */
 export class StateHandler<StateEnum> {
   private state: StateEnum;
   private stateChanged: EventEmitter<StateChangedEvent<StateEnum>> = new EventEmitter<StateChangedEvent<StateEnum>>();
 
+  /**
+   * Create a StateHandler helper.
+   * @param defaultState Optional initial state.
+   */
   constructor(defaultState?: StateEnum) {
     this.state = defaultState;
   }
 
+  /**
+   * Get the current state.
+   */
   public getState(): StateEnum {
     return this.state;
   }
+
+  /**
+   * Change to the given new state.
+   * The state handler ensures an event is emitted.
+   * @param state The new state
+   */
   public setState(state: StateEnum): StateHandler<StateEnum> {
     const oldState = this.state;
     this.state = state;
@@ -42,10 +65,19 @@ export class StateHandler<StateEnum> {
     });
     return this;
   }
+
+  /**
+   * Subscribe to all state change events.
+   */
   public getStateChangedStream(): EventEmitter<StateChangedEvent<StateEnum>> {
     return this.stateChanged;
   }
 
+  /**
+   * Subscribe to a certain state transition.
+   * @param toState The state for which to wait for and resolve the Promise.
+   * @param failOnStates Optional array of states for which the reject the Promise.
+   */
   public waitForChangeTo(toState: StateEnum, failOnStates?: StateEnum[]): Promise<StateChangedEvent<StateEnum>> {
     return new Promise((resolve, reject) => {
       if (this.getState() === toState) {

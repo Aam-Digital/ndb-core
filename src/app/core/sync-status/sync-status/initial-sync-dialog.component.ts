@@ -18,6 +18,10 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
+/**
+ * Content for the dialog being displayed during an initial synchronization which blocks login
+ * (because user accounts need to be synced first).
+ */
 @Component({
   templateUrl: './initial-sync-dialog.component.html',
 })

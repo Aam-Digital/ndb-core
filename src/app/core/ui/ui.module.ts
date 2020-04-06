@@ -37,6 +37,9 @@ import { SchoolsModule } from '../../child-dev-project/schools/schools.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { PrimaryActionComponent } from './primary-action/primary-action.component';
 
+/**
+ * The core user interface structure that ties different components together into the overall app layout.
+ */
 @NgModule({
   imports: [
     CommonModule,

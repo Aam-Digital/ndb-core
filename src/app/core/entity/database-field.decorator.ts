@@ -3,6 +3,9 @@ import { EntitySchemaField } from './schema/entity-schema-field';
 
 /**
  * Decorator (Annotation `@DatabaseField()`) to mark a property of an Entity that should be persisted in the database.
+ *
+ * also see {@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
+ *
  * @param propertySchema (optional) SchemaField definition that configures additional options regarding this field
  */
 export function DatabaseField(propertySchema: EntitySchemaField = {}) {

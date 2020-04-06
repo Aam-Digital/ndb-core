@@ -15,13 +15,17 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { SessionService } from '../../session/session.service';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { SessionService } from '../../session/session-service/session.service';
 import { AppConfig } from '../../app-config/app-config';
 import { Title } from '@angular/platform-browser';
 import { MediaObserver, MediaChange } from '@angular/flex-layout';
 import { Subscription } from 'rxjs';
 
+/**
+ * The main user interface component as root element for the app structure
+ * which also ties different components together into the overall app layout.
+ */
 @Component({
   moduleId: module.id,
   selector: 'app-ui',
@@ -29,22 +33,25 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./ui.component.css'],
 })
 export class UiComponent implements OnInit, OnDestroy {
-  @ViewChild('sideNav', { static: false }) sideNav;
-  title: string;
-  viewContainerRef: ViewContainerRef;
-  watcher: Subscription;
+  /** display mode for the menu to make it responive and usable on smaller screens */
   sideNavMode: string;
+  /** reference to sideNav component in template, required for toggling the menu on user actions */
+  @ViewChild('sideNav', { static: false }) sideNav;
+
+  /** title displayed in the app header bar */
+  title: string;
+
+  private watcher: Subscription;
 
   constructor(private _sessionService: SessionService,
-              viewContainerRef: ViewContainerRef,
               private titleService: Title,
               mediaObserver: MediaObserver) {
-    this.viewContainerRef = viewContainerRef;
     // watch screen width to change sidenav mode
     this.watcher = mediaObserver.media$.subscribe((change: MediaChange) => {
       this.sideNavMode = change.mqAlias === ('xs' || 'sm') ? 'over' : 'side';
     });
   }
+
   ngOnInit(): void {
     this.title = AppConfig.settings.site_name;
     this.titleService.setTitle(this.title);
@@ -54,10 +61,16 @@ export class UiComponent implements OnInit, OnDestroy {
     this.watcher.unsubscribe();
   }
 
-  isLoggedIn() {
+  /**
+   * Check if user is logged in.
+   */
+  isLoggedIn(): boolean {
     return this._sessionService.isLoggedIn();
   }
 
+  /**
+   * Trigger logout of user.
+   */
   logout() {
     this._sessionService.logout();
   }

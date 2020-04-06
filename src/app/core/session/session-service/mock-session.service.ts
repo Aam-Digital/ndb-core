@@ -1,13 +1,23 @@
 import { SessionService } from './session.service';
 import { User } from 'app/core/user/user';
-import { StateHandler } from './util/state-handler';
-import { ConnectionState } from './connection-state.enum';
-import { LoginState } from './login-state.enum';
-import { SyncState } from './sync-state.enum';
+import { StateHandler } from '../session-states/state-handler';
+import { ConnectionState } from '../session-states/connection-state.enum';
+import { LoginState } from '../session-states/login-state.enum';
+import { SyncState } from '../session-states/sync-state.enum';
 import { MockDatabase } from 'app/core/database/mock-database';
 import { Database } from 'app/core/database/database';
 import { EntitySchemaService } from 'app/core/entity/schema/entity-schema.service';
 
+/**
+ * SessionService implementation for testing and demo purposes.
+ * The MockSessionService does not set up a remote connection or sync and only creates an in-memory database,
+ * which will lose any changes after closing the browser.
+ *
+ * Set `"database": { "useTemporaryDatabase": true }` in your app-config.json
+ * to use the MockSessionService which will also generate demo data.
+ *
+ * For an CouchDB/PouchDB sync based session implementation see {@link SyncedSessionService}
+ */
 export class MockSessionService extends SessionService {
     private database: MockDatabase;
     private currentUser: User;
@@ -20,24 +30,39 @@ export class MockSessionService extends SessionService {
         this.database = new MockDatabase();
     }
 
+    /** see {@link SessionService} */
     public getCurrentUser(): User {
         return this.currentUser;
     }
+
+    /** see {@link SessionService} */
     public isLoggedIn(): boolean {
         return this.loginState.getState() === LoginState.LOGGED_IN;
     }
+    /** see {@link SessionService} */
     public getConnectionState(): StateHandler<ConnectionState> {
         return this.connectionState;
     }
+    /** see {@link SessionService} */
     public getLoginState(): StateHandler<LoginState> {
         return this.loginState;
     }
+    /** see {@link SessionService} */
     public getSyncState(): StateHandler<SyncState> {
         return this.syncState;
     }
+    /** see {@link SessionService} */
     public getDatabase(): Database {
         return this.database;
     }
+
+
+    /**
+     * Log in the given user.
+     * Checks the in-memory database for User Entities to authenticate against.
+     *
+     * also see {@link SessionService}
+     */
     public async login(username, password): Promise<LoginState> {
         try {
             const userEntity = await this.loadUser(username);
@@ -64,10 +89,15 @@ export class MockSessionService extends SessionService {
             throw error;
         }
     }
+    /** see {@link SessionService} */
     public logout(): void {
         this.loginState.setState(LoginState.LOGGED_OUT);
         this.connectionState.setState(ConnectionState.DISCONNECTED);
     }
+
+    /**
+     * Dummy implementation, will trigger syncState to quickly switch to SyncState.COMPLETED.
+     */
     public sync(): Promise<any> {
         this.syncState.setState(SyncState.STARTED);
         return new Promise(resolve => setTimeout(() => {

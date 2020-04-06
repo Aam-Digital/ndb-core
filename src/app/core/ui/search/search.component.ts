@@ -5,6 +5,12 @@ import { School } from '../../../child-dev-project/schools/model/school';
 import { Entity } from '../../entity/entity';
 import { EntitySchemaService } from '../../entity/schema/entity-schema.service';
 
+/**
+ * General search box that provides results out of any kind of entities from the system
+ * as soon as the user starts typing.
+ *
+ * This is usually displayed in the app header to be available to the user anywhere, allowing to navigate quickly.
+ */
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',

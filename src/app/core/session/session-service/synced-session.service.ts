@@ -16,19 +16,26 @@
  */
 
 import { Injectable } from '@angular/core';
-import { AlertService } from '../alerts/alert.service';
+import { AlertService } from '../../alerts/alert.service';
 
 import { SessionService } from './session.service';
 import { LocalSession } from './local-session';
 import { RemoteSession } from './remote-session';
-import { LoginState } from './login-state.enum';
-import { Database } from '../database/database';
-import { PouchDatabase } from '../database/pouch-database';
-import { ConnectionState } from './connection-state.enum';
-import { SyncState } from './sync-state.enum';
-import { User } from '../user/user';
+import { LoginState } from '../session-states/login-state.enum';
+import { Database } from '../../database/database';
+import { PouchDatabase } from '../../database/pouch-database';
+import { ConnectionState } from '../session-states/connection-state.enum';
+import { SyncState } from '../session-states/sync-state.enum';
+import { User } from '../../user/user';
 import { EntitySchemaService } from 'app/core/entity/schema/entity-schema.service';
 
+/**
+ * A synced session creates and manages a LocalSession and a RemoteSession
+ * and handles the setup of synchronisation.
+ *
+ * also see
+ * [Session Handling, Authentication & Synchronisation]{@link /additional-documentation/concepts/session-and-authentication-system.html}
+ */
 @Injectable()
 export class SyncedSessionService extends SessionService {
   private _localSession: LocalSession;
@@ -43,6 +50,7 @@ export class SyncedSessionService extends SessionService {
     this._remoteSession = new RemoteSession();
   }
 
+  /** see {@link SessionService} */
   public isLoggedIn(): boolean {
     return this._localSession.loginState.getState() === LoginState.LOGGED_IN;
   }
@@ -135,20 +143,25 @@ export class SyncedSessionService extends SessionService {
     return localLogin; // the local login is the Promise that counts
   }
 
+  /** see {@link SessionService} */
   public getCurrentUser(): User {
     return this._localSession.currentUser;
   }
 
+  /** see {@link SessionService} */
   public getLoginState() {
     return this._localSession.loginState;
   }
+  /** see {@link SessionService} */
   public getConnectionState() {
     return this._remoteSession.connectionState;
   }
+  /** see {@link SessionService} */
   public getSyncState() {
     return this._localSession.syncState;
   }
 
+  /** see {@link SessionService} */
   public async sync(): Promise<any> {
     this._localSession.syncState.setState(SyncState.STARTED);
     try {
@@ -161,6 +174,9 @@ export class SyncedSessionService extends SessionService {
     }
   }
 
+  /**
+   * Start live sync in background.
+   */
   public liveSync() {
     this.cancelLiveSync(); // cancel any liveSync that may have been alive before
     this._localSession.syncState.setState(SyncState.STARTED);
@@ -221,10 +237,18 @@ export class SyncedSessionService extends SessionService {
     }
   }
 
+  /**
+   * Get the local database instance that should be used for regular data access.
+   * als see {@link SessionService}
+   */
   public getDatabase(): Database {
     return new PouchDatabase(this._localSession.database, this._alertService);
   }
 
+  /**
+   * Logout and stop any existing sync.
+   * also see {@link SessionService}
+   */
   public logout() {
     this.cancelLoginOfflineRetry();
     this.cancelLiveSync();

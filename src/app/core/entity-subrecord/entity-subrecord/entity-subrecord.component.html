@@ -62,7 +62,7 @@
 
   <ng-container matColumnDef="actions">
     <th mat-header-cell *matHeaderCellDef >
-      <button mat-stroked-button class="table-action-button" color="accent" (click)="create()">
+      <button *ngIf="showAddButton" mat-stroked-button class="table-action-button" color="accent" (click)="create()">
         <mat-icon class="table-action-icon" aria-label="add" fontIcon="fa-plus-circle"></mat-icon>
         <!-- fxHide.md="false">Add New -->
       </button>

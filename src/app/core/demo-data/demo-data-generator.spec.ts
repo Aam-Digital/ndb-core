@@ -1,4 +1,5 @@
 import { DemoDataGenerator } from './demo-data-generator';
+import { faker } from './faker';
 
 
 class DemoDataGeneratorImplementation extends DemoDataGenerator<any> {
@@ -14,17 +15,17 @@ describe('DemoDataGenerator', () => {
     const TODAY = new Date();
 
     const earlierDate = new Date(2019, 0, 1);
-    expect(generator.getEarlierDateOrToday(earlierDate)).toEqual(earlierDate);
+    expect(faker.getEarlierDateOrToday(earlierDate)).toEqual(earlierDate);
 
     const laterDate = new Date();
     laterDate.setMonth(laterDate.getMonth() + 1);
-    let actualDate = generator.getEarlierDateOrToday(laterDate);
+    let actualDate = faker.getEarlierDateOrToday(laterDate);
     expect(actualDate.getFullYear()).toEqual(TODAY.getFullYear());
     expect(actualDate.getMonth()).toEqual(TODAY.getMonth());
     expect(actualDate.getDate()).toEqual(TODAY.getDate());
 
     const noDate = undefined;
-    actualDate = generator.getEarlierDateOrToday(noDate);
+    actualDate = faker.getEarlierDateOrToday(noDate);
     expect(actualDate.getFullYear()).toEqual(TODAY.getFullYear());
     expect(actualDate.getMonth()).toEqual(TODAY.getMonth());
     expect(actualDate.getDate()).toEqual(TODAY.getDate());

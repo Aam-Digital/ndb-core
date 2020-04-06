@@ -5,14 +5,21 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Entity } from '../../entity/entity';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
-import { ColumnDescription, ColumnDescriptionInputType } from './column-description';
+import { ColumnDescription } from './column-description';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { Subscription } from 'rxjs';
 import { AlertService } from 'app/core/alerts/alert.service';
 import { FormValidationResult } from './form-validation-result';
 import { ConfirmationDialogService } from '../../confirmation-dialog/confirmation-dialog.service';
+import { ColumnDescriptionInputType } from './column-description-input-type.enum';
 
-
+/**
+ * Generically configurable component to display and edit a list of entities in a compact way
+ * that can especially be used within another entity's details view to display related entities.
+ *
+ * For example, all Notes related to a certain Child are displayed within the Child's detail view
+ * with the help of this component.
+ */
 @Component({
   selector: 'app-entity-subrecord',
   templateUrl: './entity-subrecord.component.html',
@@ -20,20 +27,49 @@ import { ConfirmationDialogService } from '../../confirmation-dialog/confirmatio
 })
 export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
 
+  /** data to be displayed */
   @Input() records: Array<Entity>;
+
+  /** configuration what kind of columns to be generated for the table */
   @Input() columns: Array<ColumnDescription>;
+
+  /**
+   * factory method to create a new instance of the displayed Entity type
+   * used when the user adds a new entity to the list.
+   */
   @Input() newRecordFactory: () => Entity;
+
+  /**
+   * A Component to be used to display a detailed view or form of a single instance of the displayed entities.
+   * This is displayed as a modal (hovering) dialog above the active view and allows the user to get
+   * more information or more comfortable editing of a single record.
+   */
   @Input() detailsComponent: typeof Component;
-  @Input() showButton = true;
+
+  /**
+   * Whether an "Add" button to create a new entry should be displayed as part of the form.
+   * Default is "true".
+   */
+  @Input() showAddButton = true;
+
+  /**
+   * Optional function implementing form validation logic that takes an entity instance, checks it and returns
+   * a {@link FormValidationResult} that is then handled by the EntitySubrecordComponent.
+   */
   @Input() formValidation?: (record: Entity) => FormValidationResult;
 
+  /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource();
+  /** columns displayed in the template's table */
   columnsToDisplay = [];
-  recordsEditing = new Map<string, boolean>();
-  originalRecords = [];
-  screenWidth = '';
-  flexMediaWatcher: Subscription;
 
+  /** map of entities' ids and whether this record's table row is currently in edit mode */
+  recordsEditing = new Map<string, boolean>();
+  /** backup copies of the original state of records to allow reset */
+  private originalRecords = [];
+
+  private screenWidth = '';
+  private flexMediaWatcher: Subscription;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
@@ -56,6 +92,10 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     this.recordsDataSource.sort = this.sort;
   }
 
+  /**
+   * Update the component if any of the @Input properties were changed from outside.
+   * @param changes
+   */
   ngOnChanges(changes: SimpleChanges) {
     if (changes['records'] && this.records !== undefined) {
       this.recordsDataSource.data = this.records;
@@ -73,9 +113,11 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     this.flexMediaWatcher.unsubscribe();
   }
 
-
+  /**
+   * Save an edited record to the database (if validation succeeds).
+   * @param record The entity to be saved.
+   */
   save(record: Entity) {
-
     if (this.formValidation) {
       const formValidationResult = this.formValidation(record);
       if (!formValidationResult.hasPassedValidation) {
@@ -94,6 +136,10 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     this.recordsEditing.set(record.getId(), false);
   }
 
+  /**
+   * Discard any changes to the given entity and reset it to the state before the user started editing.
+   * @param record The entity to be reset.
+   */
   resetChanges(record: Entity) {
     // reload original record from database
     const index = this.records.findIndex(a => a.getId() === record.getId());
@@ -115,6 +161,10 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
+  /**
+   * Delete the given entity from the database (after explicit user confirmation).
+   * @param record The entity to be deleted.
+   */
   delete(record: Entity) {
     const dialogRef = this._confirmationDialog
       .openDialog('Delete?', 'Are you sure you want to delete this record?');
@@ -135,6 +185,10 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
       });
   }
 
+  /**
+   * Create a new entity.
+   * The entity is only written to the database when the user saves this record which is newly added in edit mode.
+   */
   create() {
     const newRecord = this.newRecordFactory();
 
@@ -151,7 +205,10 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-
+  /**
+   * Show one record's details in a modal dialog (if configured).
+   * @param record The entity whose details should be displayed.
+   */
   showRecord(record: Entity) {
     if (this.detailsComponent === undefined || this.recordsEditing.get(record.getId())) {
       return;
@@ -159,7 +216,10 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     this.dialog.open(this.detailsComponent, {width: '80%', data: {entity: record}});
   }
 
-
+  /**
+   * Helper function to convert entities' "getWarningLevel()" value to a styling that can highlight records based on this.
+   * @param rec The entity for which to get the style class.
+   */
   getWarningStyleClass(rec) {
     if (typeof rec.getWarningLevel === 'function') {
       return 'w-' + rec.getWarningLevel();
@@ -167,6 +227,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
       return '';
     }
   }
+
 
   autocompleteSearch(col, input) {
     if (col.allSelectValues === undefined) {
@@ -224,10 +285,11 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     return returnVal;
   }
 
- changeVisibilityOfAddButton() {
-    this.showButton = !this.showButton;
-  }
-
+  /**
+   * Checks whether the given column configuration's input type is readonly
+   * and therefore not changing its template in edit mode.
+   * @param inputType The input type to be checked.
+   */
   isReadonlyInputType(inputType: ColumnDescriptionInputType): boolean {
     return inputType === ColumnDescriptionInputType.FUNCTION || inputType === ColumnDescriptionInputType.READONLY;
   }

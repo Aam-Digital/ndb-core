@@ -20,10 +20,10 @@
 import PouchDB from 'pouchdb-browser';
 import PouchDBAuthentication from 'pouchdb-authentication';
 
-import { AppConfig } from '../app-config/app-config';
+import { AppConfig } from '../../app-config/app-config';
 import { Injectable } from '@angular/core';
-import { StateHandler } from './util/state-handler';
-import { ConnectionState } from './connection-state.enum';
+import { StateHandler } from '../session-states/state-handler';
+import { ConnectionState } from '../session-states/connection-state.enum';
 
 PouchDB.plugin(PouchDBAuthentication);
 
@@ -35,10 +35,15 @@ PouchDB.plugin(PouchDBAuthentication);
  */
 @Injectable()
 export class RemoteSession {
+  /** remote (!) database PouchDB */
   public database: any;
 
+  /** state of the remote connection */
   public connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>(ConnectionState.DISCONNECTED);
 
+  /**
+   * Create a RemoteSession and set up connection to the remote database CouchDB server configured in AppConfig.
+   */
   constructor() {
     const thisRemoteSession = this;
     this.database = new PouchDB(AppConfig.settings.database.remote_url + AppConfig.settings.database.name,
@@ -106,7 +111,7 @@ export class RemoteSession {
   }
 
   /**
-   * Logout
+   * Logout at the remote database.
    */
   public logout(): void {
     this.database.logout();

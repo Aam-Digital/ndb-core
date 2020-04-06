@@ -24,7 +24,39 @@ import { Entity } from '../entity';
  * Interface to be implemented by any Datatype transformer of the Schema system.
  */
 export interface EntitySchemaDatatype {
+
+  /**
+   * Key for this datatype that must be specified in the DatabaseField annotation to use this transformation.
+   *
+   * for example `@DatabaseField({dataType: 'foo'}) myField` will trigger the datatype implementation with `name` "foo".
+   *
+   * If you set the name to an TypeScript type, class properties with this type will automatically use
+   * that EntitySchemaDatatype without the need to explicitly state the dataType config in the annotation
+   * (e.g. `@DatabaseField() myField: string` is triggering the EntitySchemaDatatype with `name` "string".
+   */
   name: string;
+
+  /**
+   * Transformation function taking a value in the format that is used in entity instances and returning the value
+   * in the format used in database objects.
+   *
+   * @param value The value (in Entity format) to be transformed
+   * @param schemaField The EntitySchemaField configuration providing details of how the value should be transformed.
+   *          This can be set as a parameter to the `@DatabaseField()` annotation in Entity classes.
+   * @param schemaService A reference to the EntitySchemaService instance (e.g. to allow recursive transformations)
+   * @param parent The full entity instance this value is part of (e.g. to allow cross-related transformations)
+   */
   transformToDatabaseFormat(value: any, schemaField: EntitySchemaField, schemaService: EntitySchemaService, parent: Entity): any;
+
+  /**
+   * Transformation function taking a value in the format that is used in database objects and returning the value
+   * in the format used in entity instances.
+   *
+   * @param value The value (in database format) to be transformed
+   * @param schemaField The EntitySchemaField configuration providing details of how the value should be transformed.
+   *          This can be set as a parameter to the `@DatabaseField()` annotation in Entity classes.
+   * @param schemaService A reference to the EntitySchemaService instance (e.g. to allow recursive transformations)
+   * @param parent The full entity instance this value is part of (e.g. to allow cross-related transformations)
+   */
   transformToObjectFormat(value: any, schemaField: EntitySchemaField, schemaService: EntitySchemaService, parent: any): any;
 }

@@ -17,19 +17,20 @@
 
 import { Component, OnInit } from '@angular/core';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
-import { ChangelogComponent } from '../changelog/changelog.component';
-import { MatDialogRef } from '@angular/material/dialog';
 import { LatestChangesService } from '../latest-changes.service';
 
+/**
+ * Simple component displaying the current app version
+ * including functionality to open an info dialog showing the latest change when the user clicks on it.
+ */
 @Component({
   selector: 'app-version',
   templateUrl: './app-version.component.html',
   styleUrls: ['./app-version.component.css'],
 })
 export class AppVersionComponent implements OnInit {
+  /** the current app version */
   currentVersion: string;
-
-  dialogRef: MatDialogRef<ChangelogComponent>;
 
   constructor(private _entityMapperService: EntityMapperService,
               private changelog: LatestChangesService) {
@@ -39,6 +40,9 @@ export class AppVersionComponent implements OnInit {
     this.changelog.getCurrentVersion().subscribe(version => this.currentVersion = version);
   }
 
+  /**
+   * Open dialog box to display changelog information about the latest version to the user.
+   */
   public showLatestChanges(): void {
     this.changelog.showLatestChanges();
   }

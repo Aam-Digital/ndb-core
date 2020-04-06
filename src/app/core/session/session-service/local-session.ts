@@ -19,12 +19,12 @@ import PouchDB from 'pouchdb-browser';
 
 import { Injectable } from '@angular/core';
 
-import { AppConfig } from '../app-config/app-config';
-import { User } from '../user/user';
+import { AppConfig } from '../../app-config/app-config';
+import { User } from '../../user/user';
 
-import { SyncState } from './sync-state.enum';
-import { LoginState } from './login-state.enum';
-import { StateHandler } from './util/state-handler';
+import { SyncState } from '../session-states/sync-state.enum';
+import { LoginState } from '../session-states/login-state.enum';
+import { StateHandler } from '../session-states/state-handler';
 import { EntitySchemaService } from 'app/core/entity/schema/entity-schema.service';
 import { AlertService } from 'app/core/alerts/alert.service';
 
@@ -39,13 +39,23 @@ import { AlertService } from 'app/core/alerts/alert.service';
  */
 @Injectable()
 export class LocalSession {
+   /** local (IndexedDb) database PouchDB */
   public database: any;
   public liveSyncHandle: any;
 
-  public loginState: StateHandler<LoginState>; // logged in, logged out, login failed
-  public syncState: StateHandler<SyncState>; // started, completed, failed, unsynced
+  /** StateHandler for login state changes */
+  public loginState: StateHandler<LoginState>;
+  /** StateHandler for sync state changes */
+  public syncState: StateHandler<SyncState>;
+
+  /** The currently authenticated user entity */
   public currentUser: User;
 
+   /**
+    * Create a LocalSession and set up the local PouchDB instance based on AppConfig settings.
+    * @param _alertService
+    * @param _entitySchemaService
+    */
   constructor(private _alertService: AlertService, private _entitySchemaService: EntitySchemaService) {
     this.database = new PouchDB(AppConfig.settings.database.name);
 

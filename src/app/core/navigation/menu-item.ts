@@ -15,11 +15,22 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Structure for menu items to be displayed.
+ *
+ * also see {@link NavigationItemsService}
+ */
 export class MenuItem {
+  /**
+   * Create a menu item.
+   * @param label The text to be displayed in the menu.
+   * @param icon The icon to be displayed left of the label.
+   * @param routerLinkParameters The Angular routerLink parameters to which the item will route to (e.g. ['/dashboard'])
+   * @param requiresAdmin Whether the menu item is only visible for users with admin rights.
+   */
   constructor(public label: string,
               public icon: string,
               public routerLinkParameters: any[],
-              public requiresAdmin = false) {
-
+              public requiresAdmin: boolean = false) {
   }
 }

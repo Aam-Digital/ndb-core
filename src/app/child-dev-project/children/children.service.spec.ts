@@ -10,7 +10,6 @@ import { TestBed } from '@angular/core/testing';
 import { Database } from 'app/core/database/database';
 import { ChildPhotoService } from './child-photo-service/child-photo.service';
 import { CloudFileService } from '../../core/webdav/cloud-file-service.service';
-import { MockCloudFileService } from '../../core/webdav/mock-cloud-file-service';
 
 function generateChildEntities(): Child[] {
   const data = [];
@@ -109,7 +108,7 @@ describe('ChildrenService', () => {
           EntityMapperService,
           EntitySchemaService,
           { provide: Database, useClass: MockDatabase },
-          { provide: CloudFileService, useClass: MockCloudFileService },
+          { provide: CloudFileService, useValue: { isConnected: () => false } },
           ChildPhotoService,
           ChildrenService,
         ],

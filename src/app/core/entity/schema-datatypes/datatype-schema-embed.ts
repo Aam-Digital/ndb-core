@@ -21,11 +21,19 @@ import { EntitySchemaField } from '../schema/entity-schema-field';
 import { EntitySchemaService } from '../schema/entity-schema.service';
 
 /**
- * (De)serialize instances of any class recognizing the normal @DatabaseField() annotations.
+ * Datatype for the EntitySchemaService transforming values of complex objects recursively.
+ *
+ * (De)serialize instances of any class recognizing the normal @DatabaseField() annotations within that referenced class.
+ * This is useful if your Entity type is complex and has properties that are instances of other classes
+ * rather just basic value types like string or number.
+ * You can then annotate some properties of that referenced class so they will be saved to the database while ignoring other properties.
+ * The referenced class instance will be saved embedded into the entity's object and not as an own "stand-alone" entity.
+ *
+ * see the unit tests in entity-schema.service.spec.ts for an example
  *
  * Requires the class constructor as extension field in the schema field annotation:
+ *
  * `@DatabaseField({ dataType: 'schema-embed', ext: MyClass })`
- * see the unit tests in entity-schema.service.spec.ts for an example
  */
 export const schemaEmbedEntitySchemaDatatype: EntitySchemaDatatype = {
   name: 'schema-embed',

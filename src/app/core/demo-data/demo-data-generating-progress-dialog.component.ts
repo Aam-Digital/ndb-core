@@ -19,18 +19,28 @@ import { Component } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DemoDataService } from './demo-data.service';
 
+/**
+ * Loading box during demo data generation.
+ *
+ * see {@link DemoDataModule}
+ */
 @Component({
   template: '<p>Generating sample data for this demo ...</p>' +
     '<mat-progress-bar mode="indeterminate"></mat-progress-bar>',
 })
 export class DemoDataGeneratingProgressDialogComponent {
-    static loadDemoDataWithLoadingDialog(dialog: MatDialog) {
-      dialog.open(DemoDataGeneratingProgressDialogComponent);
-    }
+
+  /**
+   * Display a loading dialog while generating demo data from all register generators.
+   * @param dialog
+   */
+  static loadDemoDataWithLoadingDialog(dialog: MatDialog) {
+    dialog.open(DemoDataGeneratingProgressDialogComponent);
+  }
 
   constructor(
     private demoDataService: DemoDataService,
-    public dialogRef: MatDialogRef<DemoDataGeneratingProgressDialogComponent>,
+    private dialogRef: MatDialogRef<DemoDataGeneratingProgressDialogComponent>,
     ) {
     this.dialogRef.disableClose = true;
     this.dialogRef.afterOpened().subscribe(async () => {

@@ -15,24 +15,26 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*********** ColumnDescription *********
- Objects of this class are used to define columns for the entity-subrecord component.
- With it you can dynamically create a table (see child details page attendance as example)
+import { ColumnDescriptionInputType } from './column-description-input-type.enum';
 
- @param name, defines name of ColumnDescriptor
- @param label defines the label for the column, basically the headline
- @param inputType: type of  data shown in a cell.
- @param selectedValues Array of possible values for this cell, needed for inputTypes select and autocomplete
- @param formatter function that formats the input value
- @param visibleFrom defines the minimal screen size the column is shown.
-          screen size classes: xs	'screen and (max-width: 599px)'
-                               sm	'screen and (min-width: 600px) and (max-width: 959px)'
-                               md	'screen and (min-width: 960px) and (max-width: 1279px)'
-                               lg	'screen and (min-width: 1280px) and (max-width: 1919px)'
-                               xl	'screen and (min-width: 1920px) and (max-width: 5000px)'
+/**
+ *  Objects of this class are used to define columns for the {@link EntitySubrecordComponent}.
+ *  A ColumnDescription describes a single column to be generated in that generic component.
  */
-
 export class ColumnDescription {
+  /**
+   * @param name The identifier of the column
+   * @param label The label for the column displayed in the table header
+   * @param inputType How the value of this column is displayed and what kind of form field is provided to edit it
+   * @param selectValues Array of possible values for editing this column; required for inputTypes select and autocomplete
+   * @param formatter Function doing a custom transformation of the column's value before it is displayed.
+   * @param visibleFrom The minimal screen size the column is shown.
+   *           screen size classes: xs	'screen and (max-width: 599px)'
+   *           sm	'screen and (min-width: 600px) and (max-width: 959px)'
+   *           md	'screen and (min-width: 960px) and (max-width: 1279px)'
+   *           lg	'screen and (min-width: 1280px) and (max-width: 1919px)'
+   *           xl	'screen and (min-width: 1920px) and (max-width: 5000px)'
+   */
   constructor(
     public name: string,
     public label: string,
@@ -43,17 +45,4 @@ export class ColumnDescription {
     public formatter = (value) => { return value; },
     public visibleFrom?: string,
   ) {}
-
-}
-
-export enum ColumnDescriptionInputType {
-  TEXT = 'text',
-  NUMBER = 'number',
-  DATE = 'date',
-  MONTH = 'month',
-  TEXTAREA = 'textarea',
-  SELECT = 'select',
-  AUTOCOMPLETE = 'autocomplete',
-  FUNCTION = 'function',
-  READONLY = 'readonly',
 }

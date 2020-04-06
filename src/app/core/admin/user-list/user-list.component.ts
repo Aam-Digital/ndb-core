@@ -2,7 +2,7 @@ import { User } from '../../user/user';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { Component, OnInit } from '@angular/core';
-import { SessionService } from '../../session/session.service';
+import { SessionService } from '../../session/session-service/session.service';
 
 @Component({
   selector: 'app-user-list',
