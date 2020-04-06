@@ -2,8 +2,8 @@
 [![Build Status](https://travis-ci.org/Aam-Digital/ndb-core.svg?branch=master)](https://travis-ci.org/Aam-Digital/ndb-core)
 [![Code Climate](https://codeclimate.com/github/NGO-DB/ndb-core/badges/gpa.svg)](https://codeclimate.com/github/NGO-DB/ndb-core)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/4e4a7a6301064019b2c9/test_coverage)](https://codeclimate.com/github/Aam-Digital/ndb-core/test_coverage)
-[![Docs](https://img.shields.io/badge/docs-by%20compodoc-blue.svg)](https://aam-digital.github.io/ndb-core/index.html)
-
+[![Guides](https://img.shields.io/badge/Tutorial%20%26%20Guides-9-blue)](https://aam-digital.github.io/ndb-core/additional-documentation/overview.html)
+[![Doc CoverageDocs](https://aam-digital.github.io/ndb-core/images/coverage-badge-documentation.svg)](https://aam-digital.github.io/ndb-core/modules.html)
 
 
 # Aam Digital

@@ -24,16 +24,26 @@ import { AlertDisplay } from '../alerts/alert-display';
  * that external library.
  *
  * Additional convenience functions on top of the PouchDB API
- * should be implemented in the abstract `Database` schoolClass.
+ * should be implemented in the abstract {@link Database}.
  */
 export class PouchDatabase extends Database {
 
+  /**
+   * Create a PouchDB database manager.
+   * @param _pouchDB An (initialized) PouchDB database instance from the PouchDB library.
+   * @param alertService The AlertService instance of the app to be able to report problems.
+   */
   constructor(private _pouchDB: any,
               private alertService: AlertService,
   ) {
     super();
   }
 
+  /**
+   * Load a single document by id from the database.
+   * (see {@link Database})
+   * @param id The primary key of the document to be loaded
+   */
   get(id: string) {
     this.alertService.addDebug('DB_READ');
     return this._pouchDB.get(id)
@@ -43,6 +53,16 @@ export class PouchDatabase extends Database {
       });
   }
 
+  /**
+   * Load all documents (matching the given PouchDB options) from the database.
+   * (see {@link Database})
+   *
+   * Normally you should rather use "getAll()" or another well typed method of this class
+   * instead of passing PouchDB specific options here
+   * because that will make your code tightly coupled with PouchDB rather than any other database provider.
+   *
+   * @param options PouchDB options object as in the normal PouchDB library
+   */
   allDocs(options?: any) {
     this.alertService.addDebug('DB_READ');
     return this._pouchDB.allDocs(options).then(result => {
@@ -54,13 +74,13 @@ export class PouchDatabase extends Database {
     });
   }
 
-  allDocsRaw(options?: any) {
-    this.alertService.addDebug('DB_READ');
-    return this._pouchDB.allDocs(options).then(result => {
-      return result;
-    });
-  }
-
+  /**
+   * Save a document to the database.
+   * (see {@link Database})
+   *
+   * @param object The document to be saved
+   * @param forceUpdate (Optional) Whether conflicts should be ignored and an existing conflicting document forcefully overwritten.
+   */
   put(object: any, forceOverwrite?: boolean) {
     this.alertService.addDebug('DB_WRITE');
     const options: any = {};
@@ -79,6 +99,12 @@ export class PouchDatabase extends Database {
       });
   }
 
+  /**
+   * Delete a document from the database
+   * (see {@link Database})
+   *
+   * @param object The document to be deleted (usually this object must at least contain the _id and _rev)
+   */
   remove(object: any) {
     return this._pouchDB.remove(object)
       .catch((err) => {
@@ -87,11 +113,29 @@ export class PouchDatabase extends Database {
       });
   }
 
+  /**
+   * Query data from the database based on a more complex, indexed request.
+   * (see {@link Database})
+   *
+   * This is directly calling the PouchDB implementation of this function.
+   * Also see the documentation there: {@link https://pouchdb.com/api.html#query_database}
+   *
+   * @param fun The name of a previously saved database index
+   * @param options Additional options for the query, like a `key`. See the PouchDB docs for details.
+   */
   query(fun: (doc: any, emit: any) => void, options: any): Promise<any> {
     this.alertService.addDebug('DB_READ');
     return this._pouchDB.query(fun, options);
   }
 
+  /**
+   * Create a database index to `query()` certain data more efficiently in the future.
+   * (see {@link Database})
+   *
+   * Also see the PouchDB documentation regarding indices and queries: {@link https://pouchdb.com/api.html#query_database}
+   *
+   * @param designDoc The PouchDB style design document for the map/reduce query
+   */
   saveDatabaseIndex(designDoc: any): Promise<any> {
     return this.get(designDoc._id)
       .then(existingDoc => {
@@ -117,6 +161,12 @@ export class PouchDatabase extends Database {
     this.alertService.addWarning(err.message + ' (' + err.status + ')', AlertDisplay.NONE);
   }
 
+  /**
+   * Attempt to intelligently resolve conflicting document versions automatically.
+   * @param newObject
+   * @param overwriteChanges
+   * @param existingError
+   */
   private resolveConflict(newObject: any, overwriteChanges: boolean, existingError: any) {
     this.get(newObject._id).then(existingObject => {
       const resolvedObject = this.mergeObjects(existingObject, newObject);

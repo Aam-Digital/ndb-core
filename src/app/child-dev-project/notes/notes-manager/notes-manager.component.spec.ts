@@ -16,7 +16,7 @@ import { Database } from '../../../core/database/database';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SchoolBlockComponent } from '../../schools/school-block/school-block.component';
-import { SessionService } from '../../../core/session/session.service';
+import { SessionService } from '../../../core/session/session-service/session.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 

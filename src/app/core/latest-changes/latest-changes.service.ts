@@ -26,6 +26,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { ChangelogComponent } from './changelog/changelog.component';
 import { CookieService } from 'ngx-cookie-service';
 
+/**
+ * Manage the changelog information and display it to the user
+ * on request or automatically on the first visit of a new version after update.
+ */
 @Injectable()
 export class LatestChangesService {
 
@@ -37,6 +41,9 @@ export class LatestChangesService {
               private cookieService: CookieService) {
   }
 
+  /**
+   * Load the changelog document.
+   */
   getChangelogs(): Observable<Changelog[]> {
     return this.http.get<Changelog[]>('assets/changelog.json').pipe(
       map((response) => response),
@@ -46,20 +53,26 @@ export class LatestChangesService {
       }));
   }
 
+  /**
+   * Get current app version inferred from the latest changelog entry.
+   */
   getCurrentVersion(): Observable<string> {
     return this.getChangelogs().pipe(map(changelog => changelog[0].tag_name));
   }
 
+  /**
+   * Open a modal window displaying the changelog of the latest version.
+   */
   public showLatestChanges(): void {
-    const changelogObservable = this.getChangelogs();
-    const dialogData = { changelogData: changelogObservable };
-
     this.dialog.open(ChangelogComponent, {
       width: '400px',
-      data: dialogData,
+      data: this.getChangelogs(),
     });
   }
 
+  /**
+   * Display the latest changes info box automatically if the current user has not seen this version before.
+   */
   public showLatestChangesIfUpdated() {
     this.getCurrentVersion().subscribe(currentVersion => {
       if (this.cookieService.check(LatestChangesService.COOKIE_NAME)) {

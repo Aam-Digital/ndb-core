@@ -17,9 +17,9 @@
 
 import { SyncedSessionService } from './synced-session.service';
 import { AlertService } from 'app/core/alerts/alert.service';
-import { LoginState } from './login-state.enum';
-import { SyncState } from './sync-state.enum';
-import { ConnectionState } from './connection-state.enum';
+import { LoginState } from '../session-states/login-state.enum';
+import { SyncState } from '../session-states/sync-state.enum';
+import { ConnectionState } from '../session-states/connection-state.enum';
 import { AppConfig } from 'app/core/app-config/app-config';
 import { LocalSession } from './local-session';
 import { RemoteSession } from './remote-session';

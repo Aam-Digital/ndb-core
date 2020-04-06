@@ -17,11 +17,14 @@
 
 import { Component, OnInit } from '@angular/core';
 import { MenuItem } from '../menu-item';
-import { SessionService } from '../../session/session.service';
 import { NavigationItemsService } from '../navigation-items.service';
 import { AdminGuard } from '../../admin/admin.guard';
-import { Location } from '@angular/common';
 
+/**
+ * Main app menu listing.
+ *
+ * To add new entries use {@link NavigationItemsService}.
+ */
 @Component({
   selector: 'app-navigation',
   templateUrl: './navigation.component.html',
@@ -29,20 +32,15 @@ import { Location } from '@angular/common';
 })
 export class NavigationComponent implements OnInit {
 
+  /** all menu items to be displayed */
   public menu_main: MenuItem[];
 
-  constructor(private _sessionService: SessionService,
-              private _navigationItemService: NavigationItemsService,
-              public adminGuard: AdminGuard,
-              public location: Location) {
-  }
+  constructor(
+    private _navigationItemService: NavigationItemsService,
+    private adminGuard: AdminGuard,
+  ) { }
 
   ngOnInit(): void {
     this.menu_main = this._navigationItemService.getMenuItems().filter(e => !e.requiresAdmin || this.adminGuard.isAdmin());
   }
-
-  logout() {
-    this._sessionService.logout();
-  }
-
 }

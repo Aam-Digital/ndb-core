@@ -61,7 +61,7 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<HealthChe
       }
       previousRecord = record;
     } while (
-      date < this.getEarlierDateOrToday(child.dropoutDate)
+      date < faker.getEarlierDateOrToday(child.dropoutDate)
       && this.getAgeAtDate(child, date) < 12
     );
 

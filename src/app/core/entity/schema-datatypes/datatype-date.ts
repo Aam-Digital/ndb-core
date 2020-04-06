@@ -17,6 +17,16 @@
 
 import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
 
+/**
+ * Datatype for the EntitySchemaService transforming values to Date instances.
+ *
+ * This type is automatically used if you annotate a class's property that has the TypeScript type "Date"
+ * ensuring that even if values in the database might be some kind of date string they will be cast to Date instances.
+ *
+ * For example:
+ *
+ * `@DatabaseField() myDate: Date; // will be a valid Date even if the database previously had "2020-01-15" as string`
+ */
 export const dateEntitySchemaDatatype: EntitySchemaDatatype = {
   name: 'date',
 

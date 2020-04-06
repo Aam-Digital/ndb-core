@@ -17,6 +17,18 @@
 
 import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
 
+/**
+ * Datatype for the EntitySchemaService transforming values to "number".
+ *
+ * This type is automatically used if you annotate a class's property that has the TypeScript type "number"
+ * ensuring that even if values in the database from other sources are not of type number they will be cast to number.
+ *
+ * For example:
+ *
+ * `@DatabaseField() myNumber: number;`
+ *
+ * `@DatabaseField({dataType: 'number'}) myValue: any;`
+ */
 export const numberEntitySchemaDatatype: EntitySchemaDatatype = {
   name: 'number',
 

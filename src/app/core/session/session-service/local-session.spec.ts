@@ -16,8 +16,8 @@
  */
 
 
-import { EntitySchemaService } from '../entity/schema/entity-schema.service';
-import { AppConfig } from '../app-config/app-config';
+import { EntitySchemaService } from '../../entity/schema/entity-schema.service';
+import { AppConfig } from '../../app-config/app-config';
 import { LocalSession } from './local-session';
 
 describe('LocalSessionService', () => {

@@ -21,8 +21,14 @@ import { Entity, EntityConstructor } from './entity';
 import { EntitySchemaService } from './schema/entity-schema.service';
 
 /**
- * The default generic DataMapper for Entity and any subclass.
- * If necessary, write a specific Mapper for your special Entity subclass.
+ * Handles loading and saving of data for any higher-level feature module.
+ * The EntityMapperService implicitly transforms objects from instances of Entity classes to the format to be written
+ * to the database and back - ensuring they you always receive instances of {@link Entity} subclasses, that you can
+ * simply treat them as normal javascript class instances without worrying about database persistance logic.
+ *
+ * To understand more about how to use the Entity system in your own modules, refer to the How-To Guides:
+ * - [How to Load and Save Data]{@link /additional-documentation/how-to-guides/load-and-save-data.html}
+ * - [How to Create a new Entity Type]{@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
  */
 @Injectable()
 export class EntityMapperService {
@@ -34,11 +40,11 @@ export class EntityMapperService {
   ) { }
 
   /**
-   * Loads an Entity from the database with the given id.
+   * Load an Entity from the database with the given id.
    *
-   * @param entityType a class that implements <code>Entity</code>.
-   * @param id the id of the entity to load.
-   * @returns A Promise containing the resultEntity filled with its data.
+   * @param entityType Class that implements Entity, which is the type of Entity the results should be transformed to
+   * @param id The id of the entity to load
+   * @returns A Promise resolving to an instance of entityType filled with its data.
    */
   public async load<T extends Entity>(entityType: EntityConstructor<T>, id: string): Promise<T> {
     const resultEntity = new entityType('');
@@ -48,10 +54,10 @@ export class EntityMapperService {
   }
 
   /**
-   * Loads all entities from the database of the given type (for example a list of entities of the type User).
+   * Load all entities from the database of the given type (for example a list of entities of the type User).
    *
-   * @param entityType a schoolClass that implements <code>Entity</code>.
-   * @returns A Promise containing an array with the loaded entities.
+   * @param entityType Class that implements Entity, which is the type of Entity the results should be transformed to
+   * @returns A Promise resolving to an array of instances of entityType with the data of the loaded entities.
    */
   public async loadType<T extends Entity>(entityType: EntityConstructor<T>): Promise<T[]> {
     const resultArray: Array<T> = [];
@@ -67,6 +73,12 @@ export class EntityMapperService {
     return resultArray;
   }
 
+  /**
+   * Save an entity to the database after transforming it to its database representation.
+   * @param entity The entity to be saved
+   * @param forceUpdate Optional flag whether any conflicting version in the database will be quietly overwritten.
+   *          if a conflict occurs without the forceUpdate flag being set, the save will fail, rejecting the returned promise.
+   */
   public async save<T extends Entity>(entity: T, forceUpdate: boolean = false): Promise<any> {
     const rawData = this.entitySchemaService.transformEntityToDatabaseFormat(entity);
     const result = await this._db.put(rawData, forceUpdate);
@@ -76,6 +88,10 @@ export class EntityMapperService {
     return result;
   }
 
+  /**
+   * Delete an entity from the database.
+   * @param entity The entity to be deleted
+   */
   public remove<T extends Entity>(entity: T): Promise<any> {
     return this._db.remove(entity);
   }

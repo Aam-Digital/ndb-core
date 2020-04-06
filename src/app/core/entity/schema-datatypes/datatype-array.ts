@@ -20,6 +20,18 @@ import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
 import { EntitySchemaField } from '../schema/entity-schema-field';
 import { EntitySchemaService } from '../schema/entity-schema.service';
 
+/**
+ * Datatype for the EntitySchemaService transforming values of an array recursively.
+ *
+ * (De)serialize each item in an array according to the given Datatype transformer.
+ *
+ * As TypeScript array types are not reliable, you have to explicitly configure the dataType for array items with the annotation.
+ * For example:
+ *
+ * `@DatabaseField({ arrayDataType: 'month' }) dateArr: Date[];`
+ * will ensure that in the database this property is saved as an array of "month" date strings
+ * using the {@link monthEntitySchemaDatatype} (e.g. resulting in `['2020-01', '2020-04']` in the database).
+ */
 export const arrayEntitySchemaDatatype: EntitySchemaDatatype = {
   name: 'array',
 
@@ -48,6 +60,13 @@ export const arrayEntitySchemaDatatype: EntitySchemaDatatype = {
   },
 };
 
+/**
+ * Generate an EntitySchemaField configuration object for the recursively called datatype for array items
+ * based on the given main config for the array datatype.
+ * @ignore
+ *
+ * @param arraySchemaField The schema field config as received by the array datatype from the annotation
+ */
 function generateSubSchemaField(arraySchemaField: EntitySchemaField) {
   const subSchemaField = Object.assign({}, arraySchemaField);
   subSchemaField.dataType = arraySchemaField.arrayDataType;

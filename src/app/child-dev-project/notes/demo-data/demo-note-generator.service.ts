@@ -83,7 +83,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
 
     note.children = [child.getId()];
     note.author = faker.random.arrayElement(this.teamMembers);
-    note.date = faker.date.between(child.admissionDate, this.getEarlierDateOrToday(child.dropoutDate));
+    note.date = faker.date.between(child.admissionDate, faker.getEarlierDateOrToday(child.dropoutDate));
 
     this.removeFollowUpMarkerForOldNotes(note);
 

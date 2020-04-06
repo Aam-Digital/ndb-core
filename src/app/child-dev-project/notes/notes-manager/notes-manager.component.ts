@@ -6,7 +6,7 @@ import { EntityMapperService } from '../../../core/entity/entity-mapper.service'
 import { Note } from '../model/note';
 import { NoteDetailsComponent } from '../note-details/note-details.component';
 import { Subscription } from 'rxjs';
-import { SessionService } from '../../../core/session/session.service';
+import { SessionService } from '../../../core/session/session-service/session.service';
 import { FilterSelection } from '../../../core/filter/filter-selection/filter-selection';
 import { WarningLevel } from '../../warning-level';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';

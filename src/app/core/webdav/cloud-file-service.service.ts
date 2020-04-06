@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AppConfig } from '../app-config/app-config';
 import webdav from 'webdav';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { SessionService } from '../session/session.service';
+import { SessionService } from '../session/session-service/session.service';
 
 /**
  * Connect and access a remote cloud file system like Nextcloud

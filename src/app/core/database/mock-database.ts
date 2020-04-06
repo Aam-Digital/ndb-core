@@ -21,20 +21,26 @@ import { AttendanceMonth } from '../../child-dev-project/attendance/model/attend
 import { ChildSchoolRelation } from '../../child-dev-project/children/model/childSchoolRelation';
 
 /**
- * Wrapper for a PouchDB instance to decouple the code from
- * that external library.
+ * In-Memory database implementation that works as a drop-in replacement of {@link PouchDatabase}
  *
- * Additional convenience functions on top of the PouchDB API
- * should be implemented in the abstract `Database` class.
+ * The MockDatabase internally stores all documents in a variable and tries to simulate functionality
+ * as similar as possible to the PouchDatabase.
  */
 export class MockDatabase extends Database {
   private data = [];
 
+  /**
+   * Create an in-memory database manager.
+   */
   constructor() {
     super();
   }
 
 
+  /**
+   * see {@link Database}
+   * @param id The primary id of the document
+   */
   get(id: string) {
     if (!this.exists(id)) {
       return Promise.reject({'status': 404, 'message': 'object not found'});
@@ -46,6 +52,10 @@ export class MockDatabase extends Database {
     return Promise.resolve(result);
   }
 
+  /**
+   * see {@link Database}
+   * @param options Only 'startkey' is considered by the MockDatabase implementation
+   */
   allDocs(options?: any) {
     let result = this.data;
 
@@ -58,6 +68,11 @@ export class MockDatabase extends Database {
     return Promise.resolve(result);
   }
 
+  /**
+   * see {@link Database}
+   * @param object The document to be saved
+   * @param forceUpdate Whether a conflicting document will be forcefully overwritten
+   */
   async put(object: any, forceUpdate?: boolean) {
     if (this.exists(object._id)) {
       return this.overwriteExisting(object);
@@ -94,6 +109,10 @@ export class MockDatabase extends Database {
   }
 
 
+  /**
+   * see {@link Database}
+   * @param object The document to be deleted
+   */
   remove(object: any) {
     if (!this.exists(object._id)) {
       return Promise.reject({'status': 404, 'message': 'object not found'});
@@ -116,7 +135,16 @@ export class MockDatabase extends Database {
   }
 
 
-
+  /**
+   * A "simulation" of queries as the PouchDatabase implementation would handle them.
+   *
+   * This has hard-coded response logic for some individual indices that are used in the app
+   * and at the moment cannot handle generic creating and executing real queries.
+   * You can add a mock implementation here for your specific query/index if necessary.
+   *
+   * @param fun The name of the previously created index
+   * @param options Additional options for the query
+   */
   async query(fun: any, options?: any): Promise<any> {
     // TODO: implement generic mock query function
     /* SAMPLE INPUT:
@@ -249,6 +277,13 @@ export class MockDatabase extends Database {
   }
 
 
+  /**
+   * Currently not implemented for MockDatabase!
+   *
+   * Check (and extend) the `query` method for hard-coded mocks of some specific queries.
+   *
+   * @param designDoc
+   */
   saveDatabaseIndex(designDoc) {
     // TODO: implement mock query
     /* SAMPLE INPUT:

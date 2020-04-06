@@ -49,6 +49,16 @@ import { HelpModule } from './core/help/help.module';
 import { DemoDataModule } from './core/demo-data/demo-data.module';
 import { MatNativeDateModule } from '@angular/material/core';
 import { LoggingErrorHandler } from './core/logging/logging-error-handler';
+import { DemoChildGenerator } from './child-dev-project/children/demo-data-generators/demo-child-generator.service';
+import { DemoSchoolGenerator } from './child-dev-project/schools/demo-school-generator.service';
+import { DemoChildSchoolRelationGenerator } from './child-dev-project/children/demo-data-generators/demo-child-school-relation-generator.service';
+import { DemoAttendanceGenerator } from './child-dev-project/attendance/demo-attendance-generator.service';
+import { DemoNoteGeneratorService } from './child-dev-project/notes/demo-data/demo-note-generator.service';
+import { DemoAserGeneratorService } from './child-dev-project/aser/demo-aser-generator.service';
+import { DemoEducationalMaterialGeneratorService } from './child-dev-project/educational-material/demo-educational-material-generator.service';
+import { DemoHealthCheckGeneratorService } from './child-dev-project/health-checkup/demo-data/demo-health-check-generator.service';
+import { DemoWidgetGeneratorService } from './child-dev-project/dashboard/demo-widget-generator.service';
+import { DemoUserGeneratorService } from './core/user/demo-user-generator.service';
 
 /**
  * Main entry point of the application.
@@ -83,7 +93,18 @@ import { LoggingErrorHandler } from './core/logging/logging-error-handler';
     MatIconModule,
     HelpModule,
     MatNativeDateModule,
-    DemoDataModule.forRoot(),
+    DemoDataModule.forRoot([
+      ...DemoChildGenerator.provider({count: 150}),
+      ...DemoSchoolGenerator.provider({count: 8}),
+      ...DemoChildSchoolRelationGenerator.provider(),
+      ...DemoAttendanceGenerator.provider(),
+      ...DemoNoteGeneratorService.provider({minNotesPerChild: 2, maxNotesPerChild: 10, groupNotes: 3}),
+      ...DemoAserGeneratorService.provider(),
+      ...DemoEducationalMaterialGeneratorService.provider({minCount: 3, maxCount: 8}),
+      ...DemoHealthCheckGeneratorService.provider(),
+      ...DemoWidgetGeneratorService.provider(),
+      ...DemoUserGeneratorService.provider(),
+    ]),
   ],
   providers: [
     AppConfig,

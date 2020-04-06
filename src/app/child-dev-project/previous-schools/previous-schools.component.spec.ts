@@ -12,7 +12,8 @@ import { Database } from '../../core/database/database';
 import { ChildrenModule } from '../children/children.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SchoolsService } from '../schools/schools.service';
-import { SessionService } from 'app/core/session/session.service';
+import { SessionService } from 'app/core/session/session-service/session.service';
+import { ChildPhotoService } from '../children/child-photo-service/child-photo.service';
 
 describe('PreviousSchoolsComponent', () => {
   let component: PreviousSchoolsComponent;
@@ -38,6 +39,7 @@ describe('PreviousSchoolsComponent', () => {
         EntitySchemaService,
         AlertService,
         SchoolsService,
+        { provide: ChildPhotoService, useValue: jasmine.createSpyObj(['getImage']) },
       ],
     })
     .compileComponents();

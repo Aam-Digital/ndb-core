@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { ChildSchoolRelation } from '../children/model/childSchoolRelation';
-import { ColumnDescription, ColumnDescriptionInputType } from '../../core/entity-subrecord/entity-subrecord/column-description';
+import { ColumnDescription } from '../../core/entity-subrecord/entity-subrecord/column-description';
 import { ChildrenService } from '../children/children.service';
 import { SchoolsService } from '../schools/schools.service';
 import { School } from '../schools/model/school';
 import * as uniqid from 'uniqid';
+import { ColumnDescriptionInputType } from '../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum';
 
 
 @Component({

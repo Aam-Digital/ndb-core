@@ -5,7 +5,7 @@ import { ChildrenService } from '../../children/children.service';
 import { EntitySubrecordModule } from '../../../core/entity-subrecord/entity-subrecord.module';
 import { ActivatedRoute } from '@angular/router';
 import { Child } from '../../children/model/child';
-import { SessionService } from '../../../core/session/session.service';
+import { SessionService } from '../../../core/session/session-service/session.service';
 import { User } from '../../../core/user/user';
 import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 import { MockDatabase } from '../../../core/database/mock-database';

@@ -17,26 +17,39 @@
 
 
 /**
- * Object defining additional configuration about a DatabaseField schema
+ * Interface for additional configuration about a DatabaseField schema.
+ *
+ * This is used as parameter for the DatabaseField annotation:
+ *
+ * `@DatabaseField(fieldConfig: EntitySchemaField)`
  */
 export interface EntitySchemaField {
   /**
    * The datatype of this field. This will trigger to matching datatype transformer when saving/loading the entity.
+   *
+   * If you don't set this explicitly, the dataType is inferred from the TypeScript type of the property that is annotated.
    */
   dataType?: string;
 
   /**
    * In case of an array field (dataType==='array') define the datatype of the values contained in the array
+   *
+   * see {@link arrayDataType}
    */
   arrayDataType?: string;
 
   /**
    * Set to true to make the framework automatically create an index to retrieve/filter Entities quickly based on this field
+   *
+   * @todo not implemented yet
    */
   generateIndex?: boolean; // TODO: implement index support in EntitySchema
 
   /**
-   * (Optional) Assign any custom configuration you need for a specific datatype extension.
+   * (Optional) Assign any custom "extension" configuration you need for a specific datatype extension.
+   *
+   * You can pass any kind of value here to allow complex custom datytypes' transformations
+   * that are not part of the core datatypes and therefore not included in this core interface.
    */
   ext?: any;
 }

@@ -18,8 +18,8 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { LoggedInGuard } from './logged-in.guard';
-import { MockSessionService } from './mock-session.service';
-import { SessionService } from './session.service';
+import { MockSessionService } from '../session-service/mock-session.service';
+import { SessionService } from '../session-service/session.service';
 import { EntitySchemaService } from 'app/core/entity/schema/entity-schema.service';
 
 describe('LoggedInGuard', () => {
