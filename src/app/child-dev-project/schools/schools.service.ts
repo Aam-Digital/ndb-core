@@ -31,4 +31,17 @@ export class SchoolsService {
     }
     return children;
   }
+
+  // async getChildrenForSchool(schoolId: string): Promise<Child[]> {
+  //   const relations = await this.childrenService.queryRelationsOf('school', schoolId);
+  //   const children: Child[] = [];
+  //   for (const relation of relations) {
+  //     // const child = await this.entityMapper.load<Child>(Child, relation.childId);
+  //     this.childrenService.getChild(relation.childId)
+  //       .subscribe(child => {
+  //         children.push(child);
+  //     });
+  //   }
+  //   return children;
+  // }
 }

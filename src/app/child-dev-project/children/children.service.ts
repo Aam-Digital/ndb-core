@@ -15,9 +15,6 @@ import { EntitySchemaService } from '../../core/entity/schema/entity-schema.serv
 @Injectable()
 export class ChildrenService {
 
-  private currentSchoolSubject = new Subject<{school: School, schoolClass: String}>();
-  currentSchool$: Observable<{school: School, schoolClass: String}> = this.currentSchoolSubject.asObservable();
-
   constructor(private entityMapper: EntityMapperService,
               private entitySchemaService: EntitySchemaService,
               private db: Database) {
@@ -31,7 +28,12 @@ export class ChildrenService {
     const promise = this.entityMapper.loadType<Child>(Child)
     .then(loadedChildren => {
       loadedChildren.forEach(loadedChild => {
-        loadedChild.schoolClass = 'hi';
+        this.getCurrentSchoolInfoForChild(loadedChild.getId())
+          .then(currentSchoolInfo => {
+            loadedChild.schoolClass = currentSchoolInfo.schoolClass;
+            loadedChild.schoolId = currentSchoolInfo.schoolId;
+            return (loadedChild);
+          });
       });
       return loadedChildren;
     });
@@ -41,10 +43,10 @@ export class ChildrenService {
   getChild(id: string): Observable<Child> {
     const promise = this.entityMapper.load<Child>(Child, id)
       .then(loadedChild => {
-        return (this.getCurrentSchoolInfo(id))
+        return (this.getCurrentSchoolInfoForChild(id))
           .then(currentSchoolInfo => {
             loadedChild.schoolClass = currentSchoolInfo.schoolClass;
-            loadedChild.schoolId = currentSchoolInfo.school;
+            loadedChild.schoolId = currentSchoolInfo.schoolId;
             return (loadedChild);
           });
       });
@@ -295,10 +297,10 @@ export class ChildrenService {
     );
   }
 
-  async getCurrentSchoolInfo(childId: string) {
+  async getCurrentSchoolInfoForChild(childId: string): Promise<{schoolId: string, schoolClass: string}> {
     const relations = await this.querySortedRelations(childId);
     let result = {
-      school: null,
+      schoolId: null,
       schoolClass: null,
     };
     if (relations) {
@@ -306,7 +308,7 @@ export class ChildrenService {
         if ((!relations[i].start || relations[i].start.setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0)) &&
             (!relations[i].end || relations[i].end.setHours(0, 0, 0, 0) >= new Date().setHours(0, 0, 0, 0))) {
           result = {
-            school: relations[i].schoolId, // await this.entityMapper.load<School>(School, relations[i].schoolId),
+            schoolId: relations[i].schoolId,
             schoolClass: relations[i].schoolClass,
           };
           break;
@@ -314,27 +316,6 @@ export class ChildrenService {
       }
     }
     return result;
-  }
-
-  async updateCurrentSchool(childId: string) {
-    const relations = await this.querySortedRelations(childId);
-    let result = {
-      school: null,
-      schoolClass: null,
-    };
-    if (relations) {
-      for (let i = 0; i < relations.length; i++) {
-        if ((!relations[i].start || relations[i].start.setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0)) &&
-            (!relations[i].end || relations[i].end.setHours(0, 0, 0, 0) >= new Date().setHours(0, 0, 0, 0))) {
-          result = {
-            school: await this.entityMapper.load<School>(School, relations[i].schoolId),
-            schoolClass: relations[i].schoolClass,
-          };
-          break;
-        }
-      }
-    }
-    this.currentSchoolSubject.next(result);
   }
 
   async getSchoolsWithRelations(childId: string): Promise<ChildSchoolRelation[]> {

@@ -208,9 +208,9 @@
         Education
       </mat-expansion-panel-header>
 
-      <div *ngIf="currentSchoolName">
-        <h3>Current School: <span class="ineditable-text" matTooltip='To edit the current school, please edit the school history in "Previous Schools" below'>{{currentSchoolName}}</span>
-          <span *ngIf="currentSchoolClass">, class: <span class="ineditable-text" matTooltip='To edit the current school, please edit the school history in "Previous Schools" below'>{{currentSchoolClass}}</span></span></h3>
+      <div *ngIf="child.schoolId">
+        <h3>Current School: <span class="ineditable-text" matTooltip='To edit the current school, please edit the school history in "Previous Schools" below'><app-school-block [entityId]='child.schoolId'></app-school-block></span>
+          <span *ngIf="child.schoolClass">, class: <span class="ineditable-text" matTooltip='To edit the current school, please edit the school history in "Previous Schools" below'>{{child.schoolClass}}</span></span></h3>
       </div>
 
       <div>

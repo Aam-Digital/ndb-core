@@ -38,9 +38,6 @@ import { School } from '../../schools/model/school';
 export class ChildDetailsComponent implements OnInit {
 
   child: Child = new Child('');
-  currentSchool: School = new School('');
-  currentSchoolName: string;
-  currentSchoolClass: string;
   schools: School[] = [];
 
   validateForm = false;
@@ -131,40 +128,15 @@ export class ChildDetailsComponent implements OnInit {
       this.childrenService.getChild(id)
         .subscribe(child => {
           this.child = child;
-          this.currentSchoolClass = child.schoolClass;
-          this.entityMapperService.load<School>(School, child.schoolId)
-            .then (result => {
-              this.currentSchoolName = result.name;
-            });
-          this.initForm();
       });
-      // this.childrenService.updateCurrentSchool(id);
-      // this.childrenService.currentSchool$
-      //   .subscribe(result => {
-      //     this.currentSchool = result.school;
-      //     this.currentSchoolClass = result.schoolClass;
-      //   });
     }
     this.initForm();
   }
 
   changedRecordInEntitySubrecord() {
     this.childrenService.getChild(this.child.getId())
-        .subscribe(child => {
-          // this.child = child;
-          this.currentSchoolClass = child.schoolClass;
-          console.log('CurrentSchoolClass: ' + this.currentSchoolClass);
-          if (child.schoolId) {
-            this.entityMapperService.load<School>(School, child.schoolId)
-              .then (result => {
-                this.currentSchoolName = result.name;
-                console.log('CurrentSchoolName: '+ this.currentSchoolName);
-                console.log('Änderungsevent gehol');
-              });
-          } else {
-            this.currentSchoolName = null;
-          }
-          this.initForm();
+      .subscribe(child => {
+        this.child = child;
       });
   }
 

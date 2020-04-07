@@ -44,8 +44,8 @@ export class Child extends Entity {
   @DatabaseField() status: string = '';
 
   // TODO: remove in favour of ChildSchoolRelations once all bugs are fixed
-  @DatabaseField() schoolId: string = '';
-  @DatabaseField() schoolClass: string = '';
+  schoolId: string = '';
+  schoolClass: string = '';
 
   @DatabaseField() address: string = '';
   @DatabaseField() phone: string = '';

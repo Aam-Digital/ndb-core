@@ -87,7 +87,6 @@ export class PreviousSchoolsComponent implements OnInit {
   }
 
   changedRecordInEntitySubrecord() {
-    // this.childrenService.updateCurrentSchool(this.childId);
     this.childDetailsComponent.changedRecordInEntitySubrecord();
   }
 
