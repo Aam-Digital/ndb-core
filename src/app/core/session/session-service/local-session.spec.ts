@@ -30,7 +30,6 @@ describe('LocalSessionService', () => {
         'name': 'integration_tests',
         'remote_url': 'https://demo.aam-digital.com/db/',
         'timeout': 60000,
-        'outdated_threshold_days': 0,
         'useTemporaryDatabase': false,
       },
       webdav: {

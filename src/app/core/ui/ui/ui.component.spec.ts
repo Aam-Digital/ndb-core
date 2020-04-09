@@ -59,7 +59,6 @@ describe('UiComponent', () => {
         'name': 'unit-tests',
         'remote_url': '',
         'timeout': 60000,
-        'outdated_threshold_days': 0,
         'useTemporaryDatabase': true,
       },
       webdav: {

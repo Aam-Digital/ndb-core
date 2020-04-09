@@ -15,18 +15,40 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppConfig } from './app-config';
 import { HttpClientModule } from '@angular/common/http';
 
+/**
+ * Management of central configuration for the app that can a set by an administrator independent of code
+ * in the assets/config.json file.
+ *
+ * Just import this module in your root module to ensure the AppConfig is properly initialized on startup.
+ *
+ * You can then use the static `AppConfig.settings` object (which exactly represents the contents of the config.json)
+ * to access the configuration values without need for dependency injection of a service.
+ */
 @NgModule({
   imports: [
     CommonModule,
     HttpClientModule,
   ],
   declarations: [],
-  providers: [AppConfig],
+  providers: [
+    AppConfig,
+    { provide: APP_INITIALIZER, useFactory: initializeAppConfig, deps: [AppConfig], multi: true },
+  ],
 })
 export class AppConfigModule {
+}
+
+/**
+ * Factory method for APP_INITIALIZER to load essential things before any other modules.
+ * This is required to ensure the AppConfig.settings are available before other code needs it.
+ *
+ * @param appConfig The AppConfig service (through dependency injection)
+ */
+export function initializeAppConfig(appConfig: AppConfig) {
+  return () => appConfig.load();
 }

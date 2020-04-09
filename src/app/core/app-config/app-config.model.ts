@@ -15,21 +15,54 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+/**
+ * Interface to facilitate use of AppConfig.settings.
+ *
+ * This defines the settings that should be available in the config.json and therefore in the AppConfig.settings.
+ * Adapt this interface when you add more config options to the core.
+ */
 export interface IAppConfig {
+  /** Title of the app overall */
   site_name: string;
 
+  /** database configuration */
   database: {
+    /** name of the database - both remote and local */
     name: string;
+
+    /**
+     * URL to the database server to be synced with
+     *
+     * Beware of CORS issues if this is on a different domain than the app is served from.
+     */
     remote_url: string;
+
+    /** timeout for remote connection attempts */
     timeout: number;
-    outdated_threshold_days: number;
+
+    /**
+     * whether to use a temporary in-memory database instead of a persistant and synced PouchDB/CouchDB
+     *
+     * If this is set to "true" the {@link MockSessionService} and {@link MockDatabase} are used
+     * and the {@link DemoDataModule} generates mock data.
+     */
     useTemporaryDatabase: boolean;
   };
 
+  /**
+   * Optional configuration of a webdav (e.g. Nextcloud) integration
+   */
   webdav?: {
+    /**
+     * URL to the webdav endpoint of the Nextcloud server
+     *
+     * Beware of CORS issues if this is on a different domain than the app is served from.
+     */
     remote_url: string;
   };
 
+  /**
+   * Optional flag to activate additional debugging output to troubleshoot problems on a user's device
+   */
   debug?: boolean;
 }
