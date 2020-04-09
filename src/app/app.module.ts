@@ -17,7 +17,7 @@
 
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -37,7 +37,6 @@ import { ChildrenModule } from './child-dev-project/children/children.module';
 import { SchoolsModule } from './child-dev-project/schools/schools.module';
 import { NavigationItemsService } from './core/navigation/navigation-items.service';
 import { MenuItem } from './core/navigation/menu-item';
-import { AppConfig } from './core/app-config/app-config';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
@@ -107,8 +106,6 @@ import { DemoUserGeneratorService } from './core/user/demo-user-generator.servic
     ]),
   ],
   providers: [
-    AppConfig,
-    { provide: APP_INITIALIZER, useFactory: initializeApp, deps: [AppConfig], multi: true },
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
     MatIconRegistry,
     CookieService,
@@ -130,12 +127,4 @@ export class AppModule {
     _navigationItemsService.addMenuItem(new MenuItem('Users', 'user', ['/users'], true));
     _navigationItemsService.addMenuItem(new MenuItem('Help', 'question-circle', ['/help']));
   }
-}
-
-/**
- * Factory method for APP_INITIALIZER to load essential things before any other modules.
- * @param appConfig The AppConfig service (through dependency injection)
- */
-export function initializeApp(appConfig: AppConfig) {
-  return () => appConfig.load();
 }

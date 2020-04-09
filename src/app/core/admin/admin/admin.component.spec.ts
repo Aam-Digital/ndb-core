@@ -17,7 +17,7 @@ describe('AdminComponent', () => {
   beforeEach(async(() => {
     AppConfig.settings = {
       site_name: '',
-      database: {name: 'unit-tests', remote_url: '', timeout: 60000, outdated_threshold_days: 0, useTemporaryDatabase: true},
+      database: {name: 'unit-tests', remote_url: '', timeout: 60000, useTemporaryDatabase: true},
       webdav: {remote_url: ''},
     };
 
