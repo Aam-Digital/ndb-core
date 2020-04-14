@@ -23,6 +23,9 @@ import { ExportDataComponent } from './export-data/export-data.component';
 import { BackupService } from './services/backup.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+/**
+ * GUI for administrative users to manage and maintain background and technical aspects of the app.
+ */
 @NgModule({
   imports: [
     CommonModule,

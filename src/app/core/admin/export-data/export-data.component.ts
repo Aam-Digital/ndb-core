@@ -1,20 +1,29 @@
 import { Component, Input } from '@angular/core';
 import { BackupService } from '../services/backup.service';
 
+/**
+ * Generic export data button that allows the user to download a file of the given data.
+ */
 @Component({
   selector: 'app-export-data',
   templateUrl: './export-data.component.html',
   styleUrls: ['./export-data.component.scss'],
 })
 export class ExportDataComponent {
-
+  /** data to be exported */
   @Input() data: any = [];
-  // What kind of data should be export? Currently implemented are 'json', 'csv'
+
+  /** What kind of data should be export? Currently implemented are 'json', 'csv' */
   @Input() format: string = 'csv';
+
+  /** filename for the download of the exported data */
   @Input() filename: string = 'exportedData';
 
   constructor(private backupService: BackupService) { }
 
+  /**
+   * Trigger the download of the export file.
+   */
   exportData() {
     const blobData = this.getFormattedBlobData();
     const link = this.createDownloadLink(blobData);

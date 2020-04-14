@@ -25,6 +25,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
+/**
+ * Show alert message to the user informing about events or errors.
+ */
 @NgModule({
   imports: [
     CommonModule,

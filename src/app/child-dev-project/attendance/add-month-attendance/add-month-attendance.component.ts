@@ -144,7 +144,7 @@ export class AddMonthAttendanceComponent implements OnInit {
     this.attendanceDataSource.data.forEach((att: AttendanceMonth) => {
       this.entityMapper.save(att);
     });
-    this.alertService.addSuccess(this.attendanceDataSource.data.length + ' attendance records saved.');
+    this.alertService.addInfo(this.attendanceDataSource.data.length + ' attendance records saved.');
 
     this.reset();
   }

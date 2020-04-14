@@ -27,6 +27,10 @@ import { MatDialogRef } from '@angular/material/dialog';
 })
 export class InitialSyncDialogComponent {
 
+  /**
+   * This component is usually instanciated through the MatDialog service which provides the necessary paramters.
+   * @param dialogRef Reference to the dialog in which the component is being displayed.
+   */
   constructor(public dialogRef: MatDialogRef<InitialSyncDialogComponent>) {
     this.dialogRef.disableClose = true;
   }
