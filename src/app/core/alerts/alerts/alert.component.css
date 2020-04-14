@@ -25,10 +25,6 @@
   font-family: sans-serif;
 }
 
-.ndb-alert-success {
-  background-color: lightgreen;
-  color: black;
-}
 .ndb-alert-info {
   background-color: lightblue;
   color: black;
