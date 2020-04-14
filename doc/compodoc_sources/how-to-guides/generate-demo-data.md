@@ -1,4 +1,4 @@
-# How to Generate Demo Data
+# How to generate demo data
 If the app is run in the "useTemporaryDatabase" mode, realistic demo data is generated on each startup.
 
 This Guide walks you through the steps to add data to this demo mode for your own Entity type.
@@ -83,6 +83,6 @@ DemoDataModule.forRoot([
 ])
 ```
 
-_The spread operator (the `...` in front of the call to `.provider()`) is required.
+Note that the spread operator (the `...` in front of the call to `.provider()`) is required.
 As the `provider()` method returns an array of providers, the `...` "flattens" that array
-and simply makes all providers directly items of the primary array that is passed into `DemoDataModule.forRoot()`._
+and simply makes all providers directly items of the primary array that is passed into `DemoDataModule.forRoot()`.

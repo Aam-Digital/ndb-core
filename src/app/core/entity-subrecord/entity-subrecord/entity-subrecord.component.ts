@@ -19,6 +19,9 @@ import { ColumnDescriptionInputType } from './column-description-input-type.enum
  *
  * For example, all Notes related to a certain Child are displayed within the Child's detail view
  * with the help of this component.
+ *
+ * A detailed Guide on how to use this component is available:
+ * - [How to display related entities]{@link /additional-documentation/how-to-guides/display-related-entities.html}
  */
 @Component({
   selector: 'app-entity-subrecord',
