@@ -18,8 +18,8 @@ export class ChildBlockComponent implements OnInit {
   constructor(private router: Router,
               private childrenService: ChildrenService) { }
 
-  ngOnInit() {
-    if (this.entityId !== undefined) {
+  async ngOnInit() {
+    if (this.entityId) {
       this.childrenService.getChild(this.entityId).subscribe(child => {
         this.entity = child;
       });

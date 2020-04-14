@@ -17,8 +17,8 @@ export class AttendanceAverageDashboardComponent implements OnInit {
   constructor(private childrenService: ChildrenService,
               private router: Router) { }
 
-  ngOnInit() {
-    this.loadAverageAttendances();
+  async ngOnInit() {
+    await this.loadAverageAttendances();
   }
 
 

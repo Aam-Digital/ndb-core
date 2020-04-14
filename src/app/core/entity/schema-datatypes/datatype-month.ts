@@ -21,6 +21,10 @@ export const monthEntitySchemaDatatype: EntitySchemaDatatype = {
   name: 'month',
 
   transformToDatabaseFormat: (value) => {
+    if (!value) {
+      return undefined;
+    }
+
     if (!(value instanceof Date)) {
       value = new Date(value);
     }
@@ -28,15 +32,14 @@ export const monthEntitySchemaDatatype: EntitySchemaDatatype = {
   },
 
   transformToObjectFormat: (value) => {
-    let date;
     if (!value || value === '') {
-      date = null;
-    } else {
-      date = new Date(value);
-      if (isNaN(date.getTime())) {
-        console.log('value aus datatype-month.ts: ' + value);
-        throw new Error('failed to convert data to Date object: ' + value);
-      }
+      return undefined;
+    }
+
+    const date = new Date(value);
+    if (isNaN(date.getTime())) {
+      console.log('value aus datatype-month.ts: ' + value);
+      throw new Error('failed to convert data to Date object: ' + value);
     }
     return date;
   },

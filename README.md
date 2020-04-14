@@ -11,49 +11,75 @@ Empowering NGOs' social workers with simple to use (database) software.
 
 > For more information about the software and a free demo system visit **[www.aam-digital.com](https://www.aam-digital.com)**.
 
-> You can find the Developer Documentation at **[http://aam-digital.github.io/ndb-core/](http://aam-digital.github.io/ndb-core/additional-documentation/guidelines-and-recipes.html)**
+> For more information about the code including guides see the separate **[Developer Documentation](http://aam-digital.github.io/ndb-core/additional-documentation/overview.html)**
 
 -----
 
-
-# Use / Deploy
+# Installation, Use & Deployment
 You can directly run the system using Docker.
 More information in our [Aam-Digital/ndb-setup repository](https://github.com/Aam-Digital/ndb-setup/).
 In that case you do not have to clone this repository and install all the dependencies as everything is packaged into the docker image already.
 
+## Configuration
+The custom configuration for your service instance is set in the `assets/config.json` file.
+You can copy the `assets/config.default.json` as a starting point.
 
+### Nextcloud (webdav) Integration
+You can integrate Aam Digital with an existing Nextcloud server to allow users to update photos on their own.
+To avoid CORS issues the webdav URL in your _config.json_ should be a relative URL
+in combination with a reverse-proxy that is forwarding to the actual Nextcloud server address:
 
+_assets/config.json:_
+```
+  "webdav": {
+    "remote_url": "nextcloud/"
+  }
+```
 
+_proxy.conf.json_ (for local development):
+```
+  "/nextcloud": {
+    "target": "https://<your-nextcloud-server>/remote.php/webdav",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/nextcloud": ""
+    }
+  }
+```
+
+_docker/nginx_default.conf_ (for production server):
+```
+    location /nextcloud {
+        rewrite /nextcloud/(.*) remote.php/webdav/$1 break;
+        proxy_pass https://<your-nextcloud-server>/;
+        proxy_redirect off;
+        proxy_buffering off;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Ssl on;
+    }
+```
+
+-----
 
 # Development
-Our detailed documentation and API reference is hosted on GitHub Pages: [**aam-digital.github.io/ndb-core**](http://aam-digital.github.io/ndb-core/index.html).
-
-Additionally you can find guides and recipes to implement common functionalities there in the [Developer Documentation](http://aam-digital.github.io/ndb-core/additional-documentation/guidelines-and-recipes.html).
-
-The application code is split within the `src/app/` directory into modules providing
-general features and abstract components (_core_) and
-concrete feature modules for users' use cases (_child-dev-project_).
-
 
 ## Setup
-The project depends on a couple of tools which are required for development. Please make sure you have the following installed:
-- [npm (NodeJS)](https://www.npmjs.org/)
+1. This project depends on [npm (NodeJS)](https://www.npmjs.org/) to setup its dependencies. Please make sure you have npm installed.
+2. `git clone` this repository to get all the code with its configuration and requirements.
+3. `npm install` the dependencies (external libraries and packages) 
+4. create a config file `assets/config.json` by copying the default config `assets/config.default.json` that is part of the repository.
+5. `npm run start` to run your local dev server and get started.
 
-You can simply `git clone` this repository to get all the code with its configuration and requirements.
-Then install the dependencies with
-```
-npm install
-```
-
-
-## Configuration
-Create a config file at `assets/config.json` by copying the default config `assets/config.default.json`.
-The default config file is used as a fallback.
-Adapt the settings, especially regarding the CouchDB server that should be used for server-side synchronisation.
-
-
+## Documentation
+Our detailed [Developer Documentation](http://aam-digital.github.io/ndb-core/additional-documentation/overview.html)
+provides tutorials, guides, concepts and an API reference.
 
 ## Using Angular CLI
+This project is built upon [Angular](https://angular.io/).
+If you are unfamiliar with the framework and Angular CLI go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md) or use use `ng help`.
+The following sections give you a brief overview.
 
 ### Development server
 
@@ -87,14 +113,10 @@ cd docker
 docker build -t aamdigital/ndb-server:latest .
 ```
 
-### Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
-
-
-
+-----
 
 # Contribute
-Our project is run completely by volunteers. Contributions welcome!
+Our project is completely run by volunteers. Contributions welcome!
 
-Please read the [Contribution Guidelines](http://aam-digital.github.io/ndb-core/first-steps/contribution-guidelines.html) in the Developer Documentation.
+We are trying hard to make it easy for you to join in.
+As a starting point, please refer to our **[CONTRIBUTING](./CONTRIBUTING.md)** page.

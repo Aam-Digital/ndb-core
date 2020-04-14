@@ -39,6 +39,7 @@ import { MockDatabase } from 'app/core/database/mock-database';
 import { NotesListComponent } from '../notes-list/notes-list.component';
 import { PreviousSchoolsComponent } from 'app/child-dev-project/previous-schools/previous-schools.component';
 import { SchoolsService } from 'app/child-dev-project/schools/schools.service';
+import { ChildPhotoService } from '../child-photo-service/child-photo.service';
 
 describe('ChildDetailsComponent', () => {
   let component: ChildDetailsComponent;
@@ -57,8 +58,11 @@ describe('ChildDetailsComponent', () => {
     }; }};
   const mockedDatabase = new MockDatabase();
   const mockedSession = { getCurrentUser: () => 'testUser', getDatabase: () => mockedDatabase };
+  let mockChildPhotoService: jasmine.SpyObj<ChildPhotoService>;
 
   beforeEach(async(() => {
+    mockChildPhotoService = jasmine.createSpyObj('mockChildPhotoService', ['canSetImage', 'setImage']);
+
     TestBed.configureTestingModule({
       declarations: [
         ChildDetailsComponent,
@@ -106,6 +110,7 @@ describe('ChildDetailsComponent', () => {
         { provide: Location, useValue: mockedLocation},
         { provide: Router, useValue: mockedRouter},
         { provide: ActivatedRoute, useValue: mockedRoute},
+        { provide: ChildPhotoService, useValue: mockChildPhotoService },
         FormBuilder,
         SchoolsService,
       ],
@@ -120,6 +125,16 @@ describe('ChildDetailsComponent', () => {
   });
 
   it('should create', () => {
+    mockChildPhotoService.canSetImage.and.returnValue(false);
+    expect(component).toBeTruthy();
+  });
+
+  it('should create with edit mode', () => {
+    mockChildPhotoService.canSetImage.and.returnValue(true);
+    component.switchEdit();
+
+    fixture.detectChanges();
+
     expect(component).toBeTruthy();
   });
 });

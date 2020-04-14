@@ -11,19 +11,27 @@ import { ChildSchoolRelation } from './model/childSchoolRelation';
 import { School } from '../schools/model/school';
 import { HealthCheck } from '../health-checkup/model/health-check';
 import { EntitySchemaService } from '../../core/entity/schema/entity-schema.service';
+import { ChildPhotoService } from './child-photo-service/child-photo.service';
+import { LoadChildPhotoEntitySchemaDatatype } from './child-photo-service/datatype-load-child-photo';
 
 @Injectable()
 export class ChildrenService {
 
   constructor(private entityMapper: EntityMapperService,
               private entitySchemaService: EntitySchemaService,
-              private db: Database) {
+              private db: Database,
+              childPhotoService: ChildPhotoService,
+  ) {
+    this.entitySchemaService.registerSchemaDatatype(new LoadChildPhotoEntitySchemaDatatype(childPhotoService));
     this.createAttendanceAnalysisIndex();
     this.createNotesIndex();
     this.createAttendancesIndex();
     this.createChildSchoolRelationIndex();
   }
 
+  /**
+   * returns an observable which retrieves children from the database and loads their pictures
+   */
   getChildren(): Observable<Child[]> {
     const promise = this.entityMapper.loadType<Child>(Child)
     .then(loadedChildren => {
@@ -39,6 +47,10 @@ export class ChildrenService {
     return from(promise);
   }
 
+  /**
+   * returns an observable which retrieves a single child and loads its photo
+   * @param id id of child
+   */
   getChild(id: string): Observable<Child> {
     const promise = this.entityMapper.load<Child>(Child, id)
       .then(loadedChild => {
@@ -318,7 +330,6 @@ export class ChildrenService {
   }
 
   async getSchoolsWithRelations(childId: string): Promise<ChildSchoolRelation[]> {
-    const relations = await this.querySortedRelations(childId);
-    return relations;
+    return await this.querySortedRelations(childId);
   }
 }

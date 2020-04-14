@@ -64,6 +64,7 @@ import { AttendanceManagerComponent } from '../attendance/attendance-manager/att
 import { HealthCheckupComponent } from '../health-checkup/health-checkup-component/health-checkup.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { PreviousSchoolsComponent } from '../previous-schools/previous-schools.component';
+import { WebdavModule } from 'app/core/webdav/webdav.module';
 import { AdminModule } from '../../core/admin/admin.module';
 import { SelectGroupChildrenComponent } from './select-group-children/select-group-children.component';
 import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/roll-call.component';
@@ -103,6 +104,7 @@ import { NotesListComponent } from './notes-list/notes-list.component';
     MatDialogModule,
     AdminModule,
     MatListModule,
+    WebdavModule,
   ],
   declarations: [
     AttendanceBlockComponent,

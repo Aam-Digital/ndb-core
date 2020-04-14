@@ -9,5 +9,9 @@
     "useTemporaryDatabase": true
   },
 
+  "webdav": {
+    "remote_url": null
+  },
+
   "debug": false
 }

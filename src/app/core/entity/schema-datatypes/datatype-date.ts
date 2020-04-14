@@ -28,14 +28,13 @@ export const dateEntitySchemaDatatype: EntitySchemaDatatype = {
   },
 
   transformToObjectFormat: (value) => {
-    let date;
-    if (!value || value === '') {
-      date = null;
-    } else {
-      date = new Date(value);
-      if (isNaN(date.getTime())) {
-        throw new Error('failed to convert data to Date object: ' + value);
-      }
+    if (!value) {
+      return undefined;
+    }
+
+    const date = new Date(value);
+    if (isNaN(date.getTime())) {
+      throw new Error('failed to convert data to Date object: ' + value);
     }
     return date;
   },

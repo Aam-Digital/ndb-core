@@ -18,17 +18,22 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from '../user';
 import { SessionService } from '../../session/session.service';
+import { EntityMapperService } from 'app/core/entity/entity-mapper.service';
+import { AppConfig } from '../../app-config/app-config';
 
 @Component({
   selector: 'app-user-account',
   templateUrl: './user-account.component.html',
-  styleUrls: ['./user-account.component.css'],
+  styleUrls: ['./user-account.component.scss'],
 })
 export class UserAccountComponent implements OnInit {
 
   user: User;
+  webdavEnabled = !!AppConfig.settings.webdav;
 
-  constructor( private sessionService: SessionService ) { }
+  constructor( private entityMapperService: EntityMapperService,
+               private sessionService: SessionService,
+  ) { }
 
   ngOnInit() {
     this.user = this.sessionService.getCurrentUser();

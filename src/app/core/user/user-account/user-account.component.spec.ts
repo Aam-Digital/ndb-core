@@ -22,31 +22,48 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { SessionService } from '../../session/session.service';
-import { User } from '../user';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { MockSessionService } from 'app/core/session/mock-session.service';
-import { EntitySchemaService } from 'app/core/entity/schema/entity-schema.service';
+import { MatTabsModule } from '@angular/material';
+import { EntityMapperService } from 'app/core/entity/entity-mapper.service';
+import { Database } from 'app/core/database/database';
+import { MockDatabase } from 'app/core/database/mock-database';
+import { WebdavModule } from '../../webdav/webdav.module';
+import { User } from '../user';
+import { AppConfig } from '../../app-config/app-config';
 
 describe('UserAccountComponent', () => {
   let component: UserAccountComponent;
   let fixture: ComponentFixture<UserAccountComponent>;
 
-  let sessionService: SessionService;
-  const user = new User('1');
-  user.name = 'test';
+  let mockSessionService;
+  let mockEntityMapper;
+  const testUser = new User('');
 
   beforeEach(async(() => {
-    sessionService = new MockSessionService(new EntitySchemaService());
-    spyOn(sessionService, 'getCurrentUser').and.returnValue(user);
+    // @ts-ignore
+    AppConfig.settings = {};
+    mockSessionService = jasmine.createSpyObj('sessionService', ['getCurrentUser']);
+    mockSessionService.getCurrentUser.and.returnValue(testUser);
+    mockEntityMapper = jasmine.createSpyObj(['save']);
 
     TestBed.configureTestingModule({
-      declarations: [UserAccountComponent],
-      imports: [MatFormFieldModule, MatInputModule, MatButtonModule, NoopAnimationsModule],
-      providers: [
-        { provide: SessionService, useValue: sessionService },
+      declarations: [
+        UserAccountComponent,
       ],
-    })
-      .compileComponents();
+      imports: [
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        NoopAnimationsModule,
+        MatTabsModule,
+        WebdavModule,
+      ],
+      providers: [
+        { provide: Database, useClass: MockDatabase },
+        { provide: SessionService, useValue: mockSessionService },
+        { provide: EntityMapperService, useValue: mockEntityMapper },
+      ],
+    });
   }));
 
   beforeEach(() => {

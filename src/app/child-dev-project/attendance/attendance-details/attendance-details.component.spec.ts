@@ -21,6 +21,8 @@ import { EntityModule } from '../../../core/entity/entity.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AttendanceDayBlockComponent } from '../attendance-days/attendance-day-block.component';
+import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
+import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
 
 describe('AttendanceDetailsComponent', () => {
   let component: AttendanceDetailsComponent;
@@ -41,6 +43,7 @@ describe('AttendanceDetailsComponent', () => {
         {provide: MatDialogRef, useValue: {beforeClosed: () => { return { subscribe: () => {}}; }}},
         {provide: MAT_DIALOG_DATA, useValue: {entity: att}},
         {provide: ChildrenService, useClass: ChildrenService},
+        {provide: CloudFileService, useClass: MockCloudFileService},
       ],
     })
     .compileComponents();
@@ -51,6 +54,7 @@ describe('AttendanceDetailsComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();

@@ -29,6 +29,16 @@ export class User extends Entity {
   @DatabaseField()
   private password: any;
 
+  @DatabaseField()
+  private cloudPasswordEnc: any;
+  @DatabaseField()
+  public cloudUserName: string;
+  // nextCloud password that gets encrypted during session
+  public cloudPasswordDec: any;
+  @DatabaseField()
+  public cloudBaseFolder: string = '/aam-digital/';
+
+  // TODO: nextCloud password change for admin
   public setNewPassword(password: string) {
     const cryptKeySize = 256 / 32;
     const cryptIterations = 128;
@@ -39,6 +49,9 @@ export class User extends Entity {
     }).toString();
 
     this.password = {'hash': hash, 'salt': cryptSalt, 'iterations': cryptIterations, 'keysize': cryptKeySize};
+
+    // update encrypted nextcloud password
+    this.cloudPasswordEnc = CryptoJS.AES.encrypt(this.cloudPasswordDec, password).toString();
   }
 
   public checkPassword(givenPassword: string): boolean {
@@ -55,8 +68,23 @@ export class User extends Entity {
     return CryptoJS.PBKDF2(givenPassword, this.password.salt, options).toString();
   }
 
+  public decryptCloudPassword(givenPassword: string): string {
+    this.cloudPasswordDec = CryptoJS.AES.decrypt(this.cloudPasswordEnc.toString(), givenPassword).toString(CryptoJS.enc.Utf8);
+    return this.cloudPasswordDec;
+  }
+
+  public setCloudPassword(blobPassword: string, givenPassword: string) {
+    if (this.checkPassword(givenPassword)) {
+      this.cloudPasswordDec = blobPassword;
+      this.cloudPasswordEnc = CryptoJS.AES.encrypt(blobPassword, givenPassword).toString();
+    }
+  }
 
   public isAdmin(): boolean {
     return this.admin;
+  }
+
+  public setAdmin(admin: boolean) {
+    this.admin = admin;
   }
 }

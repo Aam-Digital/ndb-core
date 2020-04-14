@@ -15,28 +15,45 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<h1>User Account</h1>
+<mat-tab-group>
 
-<p>
-  <mat-form-field>
-    <input placeholder="Username" matInput="text" id="username" type="text" [(value)]="user.name" disabled>
-  </mat-form-field>
-</p>
+  <mat-tab label="User Account">
+    <ng-template matTabContent>
+      <div class='user-profile-tab'>
+        <p>
+          <mat-form-field>
+            <input placeholder="Username" matInput="text" id="username" type="text" [(value)]="user.name" disabled>
+          </mat-form-field>
+        </p>
 
-<p>
-  <mat-form-field>
-    <input placeholder="New Password" matInput="text" id="password1" type="password" value="pass" #passwordInp disabled>
-  </mat-form-field>
-  <br>
-  <mat-form-field>
-    <input placeholder="Confirm New Password" matInput="text" id="confirm" type="password" value="pass" #confirmationInp disabled>
-  </mat-form-field>
-</p>
+        <p>
+          <mat-form-field>
+            <input placeholder="New Password" matInput="text" id="password1" type="password" value="pass" #passwordInp disabled>
+          </mat-form-field>
+          <br>
+          <mat-form-field>
+            <input placeholder="Confirm New Password" matInput="text" id="confirm" type="password" value="pass" #confirmationInp disabled>
+          </mat-form-field>
+        </p>
 
-<p>
-  <i>Changes currently not supported. Please talk to your administrator for password changes.</i>
-</p>
+        <p>
+          <i>Changes currently not supported. Please talk to your administrator for password changes.</i>
+        </p>
 
-<p>
-  <button mat-raised-button (click)="changePassword(passwordInp.value,confirmationInp.value)" disabled>Save</button>
-</p>
+        <p>
+          <button mat-raised-button (click)="changePassword(passwordInp.value,confirmationInp.value)" disabled>Save</button>
+        </p>
+      </div>
+    </ng-template>
+  </mat-tab>
+
+
+  <mat-tab label="Image Service" *ngIf='webdavEnabled'>
+    <ng-template matTabContent>
+      <div class='user-profile-tab'>
+        <app-cloud-file-service-user-settings [user]='user'></app-cloud-file-service-user-settings>
+      </div>
+    </ng-template>
+  </mat-tab>
+
+</mat-tab-group>

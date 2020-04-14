@@ -82,9 +82,10 @@ export class EntitySchemaService {
   public transformDatabaseToEntityFormat(data: any, schema: EntitySchema) {
     for (const key of schema.keys()) {
       const schemaField: EntitySchemaField = schema.get(key);
-      if (data[key] !== undefined) {
-        data[key] = this.getDatatypeOrDefault(schemaField.dataType)
-          .transformToObjectFormat(data[key], schemaField, this);
+      const newValue = this.getDatatypeOrDefault(schemaField.dataType)
+        .transformToObjectFormat(data[key], schemaField, this, data);
+      if (newValue !== undefined) {
+        data[key] = newValue;
       }
 
       if (schemaField.generateIndex) {
@@ -113,7 +114,7 @@ export class EntitySchemaService {
 
       if (entity[key] !== undefined) {
         data[key] = this.getDatatypeOrDefault(schemaField.dataType)
-          .transformToDatabaseFormat(entity[key], schemaField, this);
+          .transformToDatabaseFormat(entity[key], schemaField, this, entity);
       }
     }
 

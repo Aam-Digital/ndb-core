@@ -6,6 +6,11 @@ import { EntitySchemaService } from '../../core/entity/schema/entity-schema.serv
 import { Gender } from './model/Gender';
 import { School } from '../schools/model/school';
 import { MockDatabase } from '../../core/database/mock-database';
+import { TestBed } from '@angular/core/testing';
+import { Database } from 'app/core/database/database';
+import { ChildPhotoService } from './child-photo-service/child-photo.service';
+import { CloudFileService } from '../../core/webdav/cloud-file-service.service';
+import { MockCloudFileService } from '../../core/webdav/mock-cloud-file-service';
 
 function generateChildEntities(): Child[] {
   const data = [];
@@ -95,16 +100,29 @@ function generateChildSchoolRelationEntities(): ChildSchoolRelation[] {
 describe('ChildrenService', () => {
   let service: ChildrenService;
   let entityMapper: EntityMapperService;
+  let mockChildPhotoService: jasmine.SpyObj<ChildPhotoService>;
 
   beforeEach(() => {
-    const entitySchemaService = new EntitySchemaService();
-    const database = new MockDatabase();
-    entityMapper = new EntityMapperService(database, entitySchemaService);
+    mockChildPhotoService = jasmine.createSpyObj('mockChildPhotoService', ['getImage']);
+    TestBed.configureTestingModule({
+        providers: [
+          EntityMapperService,
+          EntitySchemaService,
+          { provide: Database, useClass: MockDatabase },
+          { provide: CloudFileService, useClass: MockCloudFileService },
+          ChildPhotoService,
+          ChildrenService,
+        ],
+      },
+    );
+
+    entityMapper = TestBed.get(EntityMapperService);
+
     generateChildEntities().forEach(c => entityMapper.save(c));
     generateSchoolEntities().forEach(s => entityMapper.save(s));
     generateChildSchoolRelationEntities().forEach(cs => entityMapper.save(cs));
 
-    service = new ChildrenService(entityMapper, entitySchemaService, database);
+    service = TestBed.get(ChildrenService);
   });
 
   it('should be created', () => {

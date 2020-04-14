@@ -54,6 +54,7 @@ describe('SyncedSessionService', () => {
                     'outdated_threshold_days': 0,
                     'useTemporaryDatabase': false,
                 },
+                'webdav' : {'remote_url': ''},
             };
             sessionService = new SyncedSessionService(alertService, entitySchemaService);
         });
@@ -138,6 +139,7 @@ describe('SyncedSessionService', () => {
                     'outdated_threshold_days': 0,
                     'useTemporaryDatabase': false,
                 },
+                'webdav' : {'remote_url': ''},
             };
             // setup synced session service
             sessionService = new SyncedSessionService(alertService, entitySchemaService);

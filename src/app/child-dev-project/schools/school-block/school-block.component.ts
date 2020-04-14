@@ -19,12 +19,11 @@ export class SchoolBlockComponent implements OnInit, OnChanges {
               private entityMapper: EntityMapperService) {
   }
 
-  ngOnInit() {
-    if (this.entityId !== undefined) {
-      this.entityMapper.load(School, this.entityId).then(school => {
-        this.entity = school;
-      });
+  async ngOnInit() {
+    if (!this.entityId) {
+      return;
     }
+    this.entity = await this.entityMapper.load(School, this.entityId);
   }
 
   ngOnChanges(changes: SimpleChanges) {

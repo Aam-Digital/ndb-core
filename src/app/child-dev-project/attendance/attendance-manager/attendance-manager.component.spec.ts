@@ -25,6 +25,7 @@ import { EntityModule } from '../../../core/entity/entity.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { BehaviorSubject } from 'rxjs';
 
 describe('AttendanceManagerComponent', () => {
   let component: AttendanceManagerComponent;
@@ -38,8 +39,13 @@ describe('AttendanceManagerComponent', () => {
         MatProgressBarModule, MatTooltipModule, MatSelectModule, MatIconModule, MatDatepickerModule, MatNativeDateModule,
         FormsModule, NoopAnimationsModule, UiHelperModule, EntityModule],
       providers: [
-        {provide: ChildrenService, useClass: ChildrenService},
-        {provide: Database, useClass: MockDatabase},
+        {
+          provide: ChildrenService,
+          useValue: {
+            getChildren: () => new BehaviorSubject([]),
+            getAttendancesOfChild: () => new BehaviorSubject([]),
+          },
+        },
       ],
     })
     .compileComponents();

@@ -27,7 +27,12 @@ export class DemoUserGeneratorService extends DemoDataGenerator<User> {
     demoUser.name = 'demo';
     demoUser.setNewPassword('pass');
 
-    return [demoUser];
+    const demoAdmin = new User('demo-admin');
+    demoUser.name = 'demo-admin';
+    demoAdmin.admin = true;
+    demoAdmin.setNewPassword('pass');
+
+    return [demoUser, demoAdmin];
   }
 
 }

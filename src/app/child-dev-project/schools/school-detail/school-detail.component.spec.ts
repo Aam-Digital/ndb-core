@@ -22,6 +22,7 @@ import { Observable } from 'rxjs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service'; //  Necessary for usage of uniqid in the component
 import { ChildrenService } from 'app/child-dev-project/children/children.service';
+import { CloudFileService } from '../../../core/webdav/cloud-file-service.service';
 
 describe('SchoolDetailComponent', () => {
   let component: SchoolDetailComponent;
@@ -63,6 +64,7 @@ describe('SchoolDetailComponent', () => {
         { provide: Router, useValue: mockedRouter},
         { provide: ActivatedRoute, useValue: mockedRoute},
         { provide: Database, useClass: MockDatabase},
+        { provide: CloudFileService, useValue: jasmine.createSpyObj(['getImage']) },
       ],
     })
     .compileComponents();

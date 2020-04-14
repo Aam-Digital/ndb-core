@@ -115,13 +115,14 @@ describe('EntityMapperService', () => {
     await entityMapper.save<Entity>(loadedEntity);
   });
 
-  it('removes existing entity', async () => {
+  it('removes existing entity', async (done) => {
     const loadedEntity = await entityMapper.load<Entity>(Entity, existingEntity.entityId);
     await entityMapper.remove<Entity>(loadedEntity);
     entityMapper.load<Entity>(Entity, existingEntity.entityId)
       .then(() => fail('unexpectedly resolved promise'))
       .catch((err) => {
         expect(err).toBeDefined('"not found" error not defined');
+        done();
       });
   });
 

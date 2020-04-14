@@ -30,6 +30,8 @@ import { AttendanceDayBlockComponent } from '../../attendance/attendance-days/at
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 import { ExportDataComponent } from '../../../core/admin/export-data/export-data.component';
 import { PapaParseModule } from 'ngx-papaparse';
+import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
+import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
 
 describe('ChildrenListComponent', () => {
   let component: ChildrenListComponent;
@@ -73,6 +75,7 @@ describe('ChildrenListComponent', () => {
         EntityMapperService,
         EntitySchemaService,
         { provide: Database, useClass: MockDatabase },
+        { provide: CloudFileService, useClass: MockCloudFileService },
       ],
     })
     .compileComponents();
