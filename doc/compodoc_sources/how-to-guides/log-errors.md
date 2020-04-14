@@ -1,23 +1,22 @@
-# Logging and Errors
+# How to log errors
+This Guide considers logging of errors and information that is necessary for developers in debugging and monitoring.
+Refer to the [Display Dialogs or Notifications](display-dialogs-and-notifications.html) Guide
+regarding ways to inform the user about errors or other events.
+
+## Logging things
 Production code (whatever is merged into the `master` branch) should not contain any calls to `console.log()`. 
 If you need to output information for possible debugging that is not handled otherwise, use the `AlertService` from our `AlertsModule`.
 This way, all logging is done in a consistent manner and can possibly be transferred to the development team or saved in some other way.
 
-To log information in production code without explicit notification to the user:
+To log information for analysis and debugging (without explicit notification to the user)
+use the [LoggingService](../../injectables/LoggingService.html):
 ```
-constructor(private alertService: AlertService) {
-  this.alertService.addDebug('debug info');
+constructor(private logger: LoggingService) {
+  this.logger.error('some error information');
 }
 ```
-
-To log information and display a message to the user (through `MatSnackBar`):
-```
-constructor(private alertService: AlertService) {
-  this.alertService.addInfo('info message');
-  this.alertService.addWarning('warning message');
-  this.alertService.addDanger('important message');
-}
-```
+Similar to the AlertService the LoggingService has multiple log levels
+that control whether log messages are sent to the remote monitoring and how they are treated there.
 
 ## Remote Logging
 The service side logging is performed via the [sentry.io](https://sentry.io/ewb/aam-digital/) logging service. 

@@ -42,16 +42,28 @@
         "file": "how-to-guides/load-and-save-data.md"
       },
       {
+        "title": "Display Dialogs and Notifications",
+        "file": "how-to-guides/dialogs-notifications.md"
+      },
+      {
+        "title": "Display Related Entities",
+        "file": "how-to-guides/entity-subrecord-component.md"
+      },
+      {
+        "title": "Log Errors",
+        "file": "how-to-guides/log-errors.md"
+      },
+      {
         "title": "Write Automated Unit Tests",
         "file": "how-to-guides/write-tests.md"
       },
       {
-        "title": "Write Documentation",
+        "title": "Document Code",
         "file": "how-to-guides/write-documentation.md"
       },
       {
-        "title": "Log and Track Errors",
-        "file": "how-to-guides/log-errors.md"
+        "title": "Use Queries and Indices",
+        "file": "how-to-guides/use-queries-and-indices.md"
       },
       {
         "title": "Create A New Entity Type",
