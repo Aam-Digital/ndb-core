@@ -81,7 +81,7 @@ export class SchoolDetailComponent implements OnInit {
 
   loadStudents() {
     this.schoolService.getChildrenForSchool(this.school.getId())
-      .then(children => {
+      .subscribe(children => {
         this.studentDataSource.data = children;
       });
   }

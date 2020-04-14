@@ -27,12 +27,26 @@ export class ChildrenService {
   getChildren(): Observable<Child[]> {
     const promise = this.entityMapper.loadType<Child>(Child)
     .then(loadedChildren => {
+      return (loadedChildren.map(loadedChild => {
+        this.getCurrentSchoolInfoForChild(loadedChild.getId())
+          .then(currentSchoolInfo => {
+            loadedChild.schoolClass = currentSchoolInfo.schoolClass;
+            loadedChild.schoolId = currentSchoolInfo.schoolId;
+          });
+        return loadedChild;
+      }));
+    });
+    return from(promise);
+  }
+
+  getChildren_good(): Observable<Child[]> {
+    const promise = this.entityMapper.loadType<Child>(Child)
+    .then(loadedChildren => {
       loadedChildren.forEach(loadedChild => {
         this.getCurrentSchoolInfoForChild(loadedChild.getId())
           .then(currentSchoolInfo => {
             loadedChild.schoolClass = currentSchoolInfo.schoolClass;
             loadedChild.schoolId = currentSchoolInfo.schoolId;
-            return (loadedChild);
           });
       });
       return loadedChildren;

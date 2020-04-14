@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { School } from './model/school';
 import { EntityMapperService } from '../../core/entity/entity-mapper.service';
-import { from, Observable } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { ChildSchoolRelation } from '../children/model/childSchoolRelation';
 import { Database } from '../../core/database/database';
 import { Child } from '../children/model/child';
@@ -22,26 +22,15 @@ export class SchoolsService {
     return from(this.entityMapper.loadType<School>(School));
   }
 
-  async getChildrenForSchool(schoolId: string): Promise<Child[]> {
-    const relations = await this.childrenService.queryRelationsOf('school', schoolId);
-    const children: Child[] = [];
-    for (const relation of relations) {
-      const child = await this.entityMapper.load<Child>(Child, relation.childId);
-      children.push(child);
-    }
-    return children;
+  getChildrenForSchool(schoolId: string): Observable<Child[]> {
+    const promise = this.childrenService.queryRelationsOf('school', schoolId)
+    .then(async relations => {
+      const children: Child[] = [];
+      for (const relation of relations) {
+        children.push(await this.childrenService.getChild(relation.childId).toPromise());
+      }
+      return children;
+      });
+    return from(promise);
   }
-
-  // async getChildrenForSchool(schoolId: string): Promise<Child[]> {
-  //   const relations = await this.childrenService.queryRelationsOf('school', schoolId);
-  //   const children: Child[] = [];
-  //   for (const relation of relations) {
-  //     // const child = await this.entityMapper.load<Child>(Child, relation.childId);
-  //     this.childrenService.getChild(relation.childId)
-  //       .subscribe(child => {
-  //         children.push(child);
-  //     });
-  //   }
-  //   return children;
-  // }
 }
