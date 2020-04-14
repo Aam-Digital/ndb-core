@@ -39,21 +39,6 @@ export class ChildrenService {
     return from(promise);
   }
 
-  getChildren_good(): Observable<Child[]> {
-    const promise = this.entityMapper.loadType<Child>(Child)
-    .then(loadedChildren => {
-      loadedChildren.forEach(loadedChild => {
-        this.getCurrentSchoolInfoForChild(loadedChild.getId())
-          .then(currentSchoolInfo => {
-            loadedChild.schoolClass = currentSchoolInfo.schoolClass;
-            loadedChild.schoolId = currentSchoolInfo.schoolId;
-          });
-      });
-      return loadedChildren;
-    });
-    return from(promise);
-  }
-
   getChild(id: string): Observable<Child> {
     const promise = this.entityMapper.load<Child>(Child, id)
       .then(loadedChild => {
