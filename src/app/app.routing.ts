@@ -32,7 +32,6 @@ import { AddDayAttendanceComponent } from './child-dev-project/attendance/add-da
 import { AttendanceManagerComponent } from './child-dev-project/attendance/attendance-manager/attendance-manager.component';
 import { HowToComponent } from './core/help/how-to/how-to.component';
 import { UserListComponent } from './core/admin/user-list/user-list.component';
-import { ConflictResolutionComponent } from './conflict-resolution/conflict-resolution/conflict-resolution.component';
 
 /**
  * All routes configured for the main app routing.
@@ -51,7 +50,11 @@ export const routes: Routes = [
   {path: 'attendance/add/day', component: AddDayAttendanceComponent},
   {path: 'admin', component: AdminComponent, canActivate: [AdminGuard]},
   {path: 'users', component: UserListComponent, canActivate: [AdminGuard]},
-  {path: 'admin/conflicts', component: ConflictResolutionComponent, canActivate: [AdminGuard]},
+  {
+    path: 'admin/conflicts',
+    canActivate: [AdminGuard],
+    loadChildren: () => import('./conflict-resolution/conflict-resolution.module').then(m => m.ConflictResolutionModule),
+  },
   {path: 'help', component: HowToComponent},
   {path: '**', redirectTo: '/'},
 ];

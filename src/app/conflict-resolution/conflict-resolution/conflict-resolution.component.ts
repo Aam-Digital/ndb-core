@@ -1,5 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatSort } from '@angular/material/sort';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { QueryDataSource } from '../../core/database/query-data-source';
 import { Entity } from '../../core/entity/entity';
@@ -14,29 +13,31 @@ import { Database } from '../../core/database/database';
   templateUrl: './conflict-resolution.component.html',
   styleUrls: ['./conflict-resolution.component.scss'],
 })
-export class ConflictResolutionComponent implements OnInit, AfterViewInit {
+export class ConflictResolutionComponent implements AfterViewInit {
+  /** visible table columns in the template */
   columnsToDisplay = [ 'id', 'data' ];
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+
+  /** data for the table in the template */
   dataSource: QueryDataSource<Entity>;
 
+  /** reference to mat-table paginator from template, required to set up pagination */
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   constructor(
     private db: Database,
   ) { }
 
-  async ngOnInit() {
-  }
-
   async ngAfterViewInit() {
-    await this.createConflictView();
+    await this.createDatabaseIndexForConflicts();
     this.dataSource = new QueryDataSource(this.db, 'conflicts/all');
     this.dataSource.paginator = this.paginator;
-    // this.dataSource.sort = this.sort;
   }
 
 
-  private createConflictView() {
+  /**
+   * Create the database index to query document conflicts, if the index doesn't exist already.
+   */
+  private createDatabaseIndexForConflicts() {
     const designDoc = {
       _id: '_design/conflicts',
       views: {
@@ -49,9 +50,5 @@ export class ConflictResolutionComponent implements OnInit, AfterViewInit {
     };
 
     return this.db.saveDatabaseIndex(designDoc);
-  }
-
-  stringify(entity: any) {
-    return JSON.stringify(entity);
   }
 }

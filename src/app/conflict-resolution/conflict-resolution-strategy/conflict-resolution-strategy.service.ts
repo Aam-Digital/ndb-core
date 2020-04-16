@@ -7,7 +7,7 @@ import { AttendanceMonth } from '../../child-dev-project/attendance/model/attend
  * Attempt automatic conflict resolutions or identify trivial conflicts for semi-automatic resolution.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ConflictResolutionStrategyService {
 

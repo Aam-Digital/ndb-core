@@ -1,8 +1,8 @@
-import {TestBed} from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
-import {ConflictResolutionStrategyService} from './conflict-resolution-strategy.service';
-import {AttendanceMonth} from '../../children/attendance/attendance-month';
-import {AttendanceDay, AttendanceStatus} from '../../children/attendance/attendance-day';
+import { ConflictResolutionStrategyService } from './conflict-resolution-strategy.service';
+import { AttendanceMonth } from '../../child-dev-project/attendance/model/attendance-month';
+import { AttendanceDay, AttendanceStatus } from '../../child-dev-project/attendance/model/attendance-day';
 
 describe('ConflictResolutionStrategyService', () => {
   let service: ConflictResolutionStrategyService;

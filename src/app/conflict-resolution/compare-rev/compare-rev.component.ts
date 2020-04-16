@@ -1,10 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { diff } from 'deep-object-diff';
 import { ConflictResolutionStrategyService } from '../conflict-resolution-strategy/conflict-resolution-strategy.service';
 import _ from 'lodash';
 import { ConfirmationDialogService } from '../../core/confirmation-dialog/confirmation-dialog.service';
 import { Database } from '../../core/database/database';
-import { AlertService } from '../../core/alerts/alert.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 /**
  * Visualize one specific conflicting document revision and offer resolution options.
@@ -14,30 +14,46 @@ import { AlertService } from '../../core/alerts/alert.service';
   templateUrl: './compare-rev.component.html',
   styleUrls: ['./compare-rev.component.scss'],
 })
-export class CompareRevComponent implements OnInit {
-  @Input() rev;
-  @Input() doc;
+export class CompareRevComponent {
+  /** revision key (_rev) of the confliction version to be displayed */
+  @Input() rev: string;
 
-  docString;
-  revDoc;
+  /** document from the database in the current version */
+  @Input() doc: any;
+
+  /** used in the template for a tooltip displaying the full document */
+  docString: string;
+
+  /** document from the database in the conflicting version */
+  revDoc: any;
+
+  /** changes the conflicting doc has compared to the current doc */
   diffs;
+
+  /** changes the current doc has compared to the conflicting doc.
+   *
+   * This mirrors `diffs` but shows the things that would be added if the current doc would
+   * overwrite the conflicting version instead of the other way round.
+   */
   diffsReverse;
+
+  /** the user edited diff that can be applied as an alternative resolution (initialized with same value as `diffs`) */
   diffsCustom;
-  resolution = null;
+
+  /** whether/how this conflict has been resolved */
+  resolution: string = null;
 
   constructor(
-    private confirmationDialog: ConfirmationDialogService,
     private db: Database,
-    private alertService: AlertService,
+    private confirmationDialog: ConfirmationDialogService,
+    private snackBar: MatSnackBar,
     private conflictResolver: ConflictResolutionStrategyService,
   ) { }
 
-  ngOnInit() {
-    this.loadRev();
-  }
-
-
-  async loadRev() {
+  /**
+   * Load the document version (revision) to be displayed and generate the diffs to be visualized.
+   */
+  public async loadRev() {
     this.revDoc = await this.db.get(this.doc._id, { rev: this.rev });
     const diffObject = diff(this.doc, this.revDoc);
     this.diffs = this.stringify(diffObject);
@@ -56,6 +72,10 @@ export class CompareRevComponent implements OnInit {
   }
 
 
+  /**
+   * Generate a human-readable string of the given object.
+   * @param entity Object to be stringified
+   */
   stringify(entity: any) {
     return JSON.stringify(
       entity,
@@ -65,7 +85,10 @@ export class CompareRevComponent implements OnInit {
   }
 
 
-
+  /**
+   * Resolve the displayed conflict by deleting the conflicting revision doc and keeping the current doc.
+   * @param docToDelete Document to be deleted
+   */
   public resolveByDelete(docToDelete: any) {
     const dialogRef = this.confirmationDialog
       .openDialog(
@@ -91,7 +114,7 @@ export class CompareRevComponent implements OnInit {
       return true;
     } catch (e) {
       const errorMessage = e.message || e.toString();
-      this.alertService.addDanger('Error trying to delete conflicting version: ' + errorMessage);
+      this.snackBar.open('Error trying to delete conflicting version: ' + errorMessage);
       return false;
     }
   }
@@ -102,7 +125,7 @@ export class CompareRevComponent implements OnInit {
       return true;
     } catch (e) {
       const errorMessage = e.message || e.toString();
-      this.alertService.addDanger('Error trying to save version: ' + errorMessage);
+      this.snackBar.open('Error trying to save version: ' + errorMessage);
       return false;
     }
   }
@@ -110,6 +133,15 @@ export class CompareRevComponent implements OnInit {
 
   // TODO: https://www.npmjs.com/package/ngx-text-diff
 
+  /**
+   * Apply the given diff, save the resulting new document to the database
+   * and remove the conflicting document, thereby resolving the conflict.
+   *
+   * This method is also used to resolve the conflict to keep the conflicting version instead of the current doc.
+   * Then this simply applies the diff of the existing conflicting version instead of a user-edited diff.
+   *
+   * @param diffStringToApply The (user-edited) diff to be applied to the current doc
+   */
   public async resolveByManualEdit(diffStringToApply: string) {
     const originalDoc = _.merge({}, this.doc);
     const diffToApply = JSON.parse(diffStringToApply);

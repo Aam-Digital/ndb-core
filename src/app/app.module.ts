@@ -58,7 +58,6 @@ import { DemoEducationalMaterialGeneratorService } from './child-dev-project/edu
 import { DemoHealthCheckGeneratorService } from './child-dev-project/health-checkup/demo-data/demo-health-check-generator.service';
 import { DemoWidgetGeneratorService } from './child-dev-project/dashboard/demo-widget-generator.service';
 import { DemoUserGeneratorService } from './core/user/demo-user-generator.service';
-import { ConflictResolutionModule } from './conflict-resolution/conflict-resolution.module';
 
 /**
  * Main entry point of the application.
@@ -90,7 +89,6 @@ import { ConflictResolutionModule } from './conflict-resolution/conflict-resolut
     ChildrenModule,
     SchoolsModule,
     AdminModule,
-    ConflictResolutionModule,
     MatIconModule,
     HelpModule,
     MatNativeDateModule,
