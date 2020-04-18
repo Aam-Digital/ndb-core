@@ -6,7 +6,7 @@ import { ChildrenService } from '../../child-dev-project/children/children.servi
 import { EntityMapperService } from '../../core/entity/entity-mapper.service';
 import { EntitySchemaService } from '../../core/entity/schema/entity-schema.service';
 import { MockDatabase } from '../../core/database/mock-database';
-import { of, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AlertService } from '../../core/alerts/alert.service';
 import { Database } from '../../core/database/database';
 import { ChildrenModule } from '../../child-dev-project/children/children.module';
@@ -15,6 +15,7 @@ import { SchoolsService } from '../../child-dev-project/schools/schools.service'
 import { SessionService } from 'app/core/session/session.service';
 import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
 import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
+import { ChildDetailsComponent } from '../children/child-details/child-details.component';
 
 describe('PreviousSchoolsComponent', () => {
   let component: PreviousSchoolsComponent;
@@ -40,6 +41,7 @@ describe('PreviousSchoolsComponent', () => {
         EntitySchemaService,
         AlertService,
         SchoolsService,
+        ChildDetailsComponent,
         { provide: CloudFileService, useClass: MockCloudFileService },
       ],
     })

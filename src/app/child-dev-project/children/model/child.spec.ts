@@ -57,8 +57,8 @@ describe('Child', () => {
       dateOfBirth: new Date(2010, 1, 1),
       motherTongue: 'Hindi',
       religion: 'Hindu',
-      schoolId: '2',
-      schoolClass: '2',
+      // schoolId: '2',
+      // schoolClass: '2',
 
       photoFile: '..',
       center: 'Alpha',
@@ -100,8 +100,8 @@ describe('Child', () => {
     entity.dateOfBirth = expectedData.dateOfBirth;
     entity.motherTongue = expectedData.motherTongue;
     entity.religion = expectedData.religion;
-    entity.schoolId = expectedData.schoolId;
-    entity.schoolClass = expectedData.schoolClass;
+    // entity.schoolId = expectedData.schoolId;
+    // entity.schoolClass = expectedData.schoolClass;
 
     entity.photoFile = expectedData.photoFile;
     entity.center = expectedData.center;

@@ -10,7 +10,7 @@ import { Child } from '../../model/child';
 @Component({
   selector: 'app-add-school-dialog',
   templateUrl: './edit-school-dialog.component.html',
-  styleUrls: ['./edit-school-dialog.component.scss'],
+  // styleUrls: ['./edit-school-dialog.component.scss'],
 })
 export class EditSchoolDialogComponent extends AbstractDetailsComponent<ChildSchoolRelation> implements OnInit {
 

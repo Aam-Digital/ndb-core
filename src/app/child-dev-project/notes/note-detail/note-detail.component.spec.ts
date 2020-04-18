@@ -16,6 +16,8 @@ import { MockDatabase } from '../../../core/database/mock-database';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
 import { Database } from '../../../core/database/database';
+import { SessionService } from 'app/core/session/session.service';
+
 
 function generateChildAttendanceModels() {
   const attendances = [];
@@ -69,6 +71,7 @@ describe('NoteDetailComponent', () => {
         {provide: MAT_DIALOG_DATA, useValue: testData},
         {provide: Database, useValue: mockedDatabase},
         FormBuilder,
+        SessionService,
       ],
     })
       .compileComponents();
