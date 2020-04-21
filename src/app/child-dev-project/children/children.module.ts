@@ -62,6 +62,7 @@ import { AttendanceDetailsComponent } from '../attendance/attendance-details/att
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AddDayAttendanceComponent } from '../attendance/add-day-attendance/add-day-attendance.component';
 import { AttendanceWeekDashboardComponent } from '../attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component';
+import { RecentNotesDashboardComponent } from '../attendance/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component';
 import { AttendanceDayBlockComponent } from '../attendance/attendance-days/attendance-day-block.component';
 import { AttendanceManagerComponent } from '../attendance/attendance-manager/attendance-manager.component';
 import { HealthCheckupComponent } from '../health-checkup/health-checkup-component/health-checkup.component';
@@ -131,6 +132,7 @@ import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/ro
     RollCallComponent,
     SelectGroupChildrenComponent,
     AttendanceWeekDashboardComponent,
+    RecentNotesDashboardComponent,
     AttendanceManagerComponent,
     HealthCheckupComponent,
     PreviousSchoolsComponent,
@@ -144,6 +146,7 @@ import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/ro
     AttendanceWarningsDashboardComponent,
     AttendanceWarningsDashboardComponent,
     AttendanceWeekDashboardComponent,
+    RecentNotesDashboardComponent,
     AttendanceDaysComponent,
   ],
   entryComponents: [NoteDetailsComponent, AttendanceDetailsComponent],
