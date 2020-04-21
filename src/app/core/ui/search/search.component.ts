@@ -32,7 +32,7 @@ export class SearchComponent implements OnInit {
 
   private createSearchIndex() {
     // `emit(x)` to add x as a key to the index that can be searched
-    const searchMapFunction = 'function searchMapFunction (doc) {' +
+    const searchMapFunction = '(doc) => {' +
       'if (doc.hasOwnProperty("searchIndices")) { doc.searchIndices.forEach(word => emit(word.toString().toLowerCase())) }' +
       '}';
 
