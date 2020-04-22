@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Note } from '../../notes/note';
-import { NoteDetailComponent } from '../../notes/note-detail/note-detail.component';
+import { Note } from '../../notes/model/note';
+import { NoteDetailsComponent } from '../../notes/note-details/note-details.component';
 import { DatePipe } from '@angular/common';
 import { ChildrenService } from '../children.service';
 import { ActivatedRoute } from '@angular/router';
@@ -9,18 +9,18 @@ import { EntityMapperService } from '../../../core/entity/entity-mapper.service'
 import { SessionService } from '../../../core/session/session.service';
 
 @Component({
-  selector: 'app-notes-list',
-  templateUrl: './notes-list.component.html',
-  styleUrls: ['./notes-list.component.scss'],
+  selector: 'app-notes',
+  templateUrl: './notes.component.html',
+  styleUrls: ['./notes.component.scss'],
 })
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
  */
-export class NotesListComponent implements OnInit {
+export class NotesComponent implements OnInit {
 
   childId: string;
   records: Array<Note> = [];
-  detailsComponent = NoteDetailComponent;
+  detailsComponent = NoteDetailsComponent;
 
   columns: Array<ColumnDescription> = [
     new ColumnDescription('date', 'Date', ColumnDescriptionInputType.DATE, null,

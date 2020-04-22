@@ -21,6 +21,7 @@ import { ChildDetailsComponent } from './child-details.component';
 import { SchoolBlockComponent } from '../../schools/school-block/school-block.component';
 import { AserComponent } from '../../aser/aser-component/aser.component';
 import { ChildAttendanceComponent } from '../../attendance/child-attendance/child-attendance.component';
+import { NotesComponent } from '../notes/notes.component';
 import { EducationalMaterialComponent } from '../../educational-material/educational-material-component/educational-material.component';
 import { KeysPipe } from '../../../core/ui-helper/keys-pipe/keys.pipe';
 import { EntitySubrecordComponent } from '../../../core/ui-helper/entity-subrecord/entity-subrecord.component';
@@ -36,7 +37,6 @@ import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.s
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MockDatabase } from 'app/core/database/mock-database';
-import { NotesListComponent } from '../notes-list/notes-list.component';
 import { PreviousSchoolsComponent } from 'app/child-dev-project/previous-schools/previous-schools.component';
 import { SchoolsService } from 'app/child-dev-project/schools/schools.service';
 import { ChildPhotoService } from '../child-photo-service/child-photo.service';
@@ -69,13 +69,13 @@ describe('ChildDetailsComponent', () => {
         SchoolBlockComponent,
         AserComponent,
         ChildAttendanceComponent,
+        NotesComponent,
         EducationalMaterialComponent,
         KeysPipe,
         EntitySubrecordComponent,
         AttendanceDaysComponent,
         AttendanceDayBlockComponent,
         HealthCheckupComponent,
-        NotesListComponent,
         PreviousSchoolsComponent,
       ],
       imports: [

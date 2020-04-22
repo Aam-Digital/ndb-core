@@ -26,7 +26,7 @@ import { ChildrenListComponent } from './child-dev-project/children/children-lis
 import { ChildAttendanceComponent } from './child-dev-project/attendance/child-attendance/child-attendance.component';
 import { AdminComponent } from './core/admin/admin/admin.component';
 import { AdminGuard } from './core/admin/admin.guard';
-import { NoteManagerComponent } from './child-dev-project/notes/note-manager/note-manager.component';
+import { NotesManagerComponent } from './child-dev-project/notes/notes-manager/notes-manager.component';
 import { AddMonthAttendanceComponent } from './child-dev-project/attendance/add-month-attendance/add-month-attendance.component';
 import { AddDayAttendanceComponent } from './child-dev-project/attendance/add-day-attendance/add-day-attendance.component';
 import { AttendanceManagerComponent } from './child-dev-project/attendance/attendance-manager/attendance-manager.component';
@@ -41,7 +41,7 @@ export const routes: Routes = [
   {path: 'child', component: ChildrenListComponent},
   {path: 'child/:id', component: ChildDetailsComponent},
   {path: 'child/:id/attendance', component: ChildAttendanceComponent},
-  {path: 'note', component: NoteManagerComponent},
+  {path: 'note', component: NotesManagerComponent},
   {path: 'attendance', component: AttendanceManagerComponent},
   {path: 'attendance/add/month', component: AddMonthAttendanceComponent},
   {path: 'attendance/add/day', component: AddDayAttendanceComponent},

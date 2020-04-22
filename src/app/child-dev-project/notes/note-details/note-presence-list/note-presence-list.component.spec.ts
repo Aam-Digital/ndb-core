@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NotePresenceListComponent } from './note-presence-list.component';
 import { ChildSelectComponent } from '../../../children/child-select/child-select.component';
-import { ChildPresenceListComponent } from '../../note-detail/child-presence-list/child-presence-list.component';
+import { ChildPresenceListComponent } from '../child-presence-list/child-presence-list.component';
 import { MatTabsModule } from '@angular/material';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';

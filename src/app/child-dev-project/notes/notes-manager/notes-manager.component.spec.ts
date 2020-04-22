@@ -1,5 +1,5 @@
-import { NoteManagerComponent } from './note-manager.component';
-import { Note } from '../note';
+import { NotesManagerComponent } from './notes-manager.component';
+import { Note } from '../model/note';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NotesModule } from '../notes.module';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -25,10 +25,10 @@ function generateNewNotes(): Array<Note> {
 const database: Database = new MockDatabase();
 const testNotes =  generateNewNotes();
 
-describe('NoteManagerComponent', () => {
+describe('NotesManagerComponent', () => {
 
-  let component: NoteManagerComponent;
-  let fixture: ComponentFixture<NoteManagerComponent>;
+  let component: NotesManagerComponent;
+  let fixture: ComponentFixture<NotesManagerComponent>;
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
@@ -50,7 +50,7 @@ describe('NoteManagerComponent', () => {
   });
 
   beforeEach (() => {
-    fixture = TestBed.createComponent(NoteManagerComponent);
+    fixture = TestBed.createComponent(NotesManagerComponent);
     component = fixture.componentInstance;
     const entityMapperService = fixture.debugElement.injector.get(EntityMapperService);
     testNotes.forEach(note => entityMapperService.save(note));

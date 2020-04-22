@@ -16,12 +16,12 @@
  */
 
 
-import { MeetingNoteAttendance } from './meeting-note-attendance';
-import { InteractionTypes } from './interaction-types.enum';
-import { DatabaseEntity } from '../../core/entity/database-entity.decorator';
-import { Entity } from '../../core/entity/entity';
-import { DatabaseField } from '../../core/entity/database-field.decorator';
-import { WarningLevel, WarningLevelColor } from '../warning-level';
+import { MeetingNoteAttendance } from '../meeting-note-attendance';
+import { InteractionTypes } from '../interaction-types.enum';
+import { DatabaseEntity } from '../../../core/entity/database-entity.decorator';
+import { Entity } from '../../../core/entity/entity';
+import { DatabaseField } from '../../../core/entity/database-field.decorator';
+import { WarningLevel, WarningLevelColor } from '../../warning-level';
 
 @DatabaseEntity('Note')
 export class Note extends Entity {

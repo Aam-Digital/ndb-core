@@ -2,7 +2,7 @@ import { DemoChildGenerator } from '../../children/demo-data-generators/demo-chi
 import { DemoDataGenerator } from '../../../core/demo-data/demo-data-generator';
 import { Injectable } from '@angular/core';
 import { Child } from '../../children/model/child';
-import { Note } from '../note';
+import { Note } from '../model/note';
 import { MeetingNoteAttendance } from '../meeting-note-attendance';
 import { faker } from '../../../core/demo-data/faker';
 import { WarningLevel } from '../../warning-level';

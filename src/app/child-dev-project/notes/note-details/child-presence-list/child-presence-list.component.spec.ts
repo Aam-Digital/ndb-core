@@ -1,6 +1,6 @@
 
 import { ChildPresenceListComponent } from './child-presence-list.component';
-import { Note } from '../../note';
+import { Note } from '../../model/note';
 
 describe('ChildPresenceListComponent', () => {
   let component: ChildPresenceListComponent;

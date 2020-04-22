@@ -4,7 +4,7 @@ import { Child } from './model/child';
 import { EntityMapperService } from '../../core/entity/entity-mapper.service';
 import { AttendanceMonth } from '../attendance/model/attendance-month';
 import { Database } from '../../core/database/database';
-import { Note } from '../notes/note';
+import { Note } from '../notes/model/note';
 import { EducationalMaterial } from '../educational-material/model/educational-material';
 import { Aser } from '../aser/model/aser';
 import { ChildSchoolRelation } from './model/childSchoolRelation';

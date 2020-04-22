@@ -1,5 +1,5 @@
-import { NoteDetailComponent } from './note-detail.component';
-import { Note } from '../note';
+import { NoteDetailsComponent } from './note-details.component';
+import { Note } from '../model/note';
 import { MeetingNoteAttendance } from '../meeting-note-attendance';
 import { InteractionTypes } from '../interaction-types.enum';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -50,10 +50,10 @@ const mockDialogRef = {beforeClosed() {return of(new Note('1')); },
 const mockedDatabase = new MockDatabase();
 const mockedRouter = {navigate(commands: any[], extras?: NavigationExtras) {return Promise.resolve(); }};
 
-describe('NoteDetailComponent', () => {
+describe('NoteDetailsComponent', () => {
 
-  let component: NoteDetailComponent;
-  let fixture: ComponentFixture<NoteDetailComponent>;
+  let component: NoteDetailsComponent;
+  let fixture: ComponentFixture<NoteDetailsComponent>;
 
   beforeEach( () => {
     TestBed.configureTestingModule({
@@ -75,7 +75,7 @@ describe('NoteDetailComponent', () => {
       ],
     })
       .compileComponents();
-    fixture = TestBed.createComponent(NoteDetailComponent);
+    fixture = TestBed.createComponent(NoteDetailsComponent);
     component = fixture.componentInstance;
     const entityMapperService = fixture.debugElement.injector.get(EntityMapperService);
     entityMapperService.save<Note>(testData.entity);

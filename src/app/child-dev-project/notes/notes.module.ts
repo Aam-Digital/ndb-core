@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NoteDetailComponent } from './note-detail/note-detail.component';
+import { NoteDetailsComponent } from './note-details/note-details.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
-import { NoteManagerComponent } from './note-manager/note-manager.component';
+import { NotesManagerComponent } from './notes-manager/notes-manager.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -30,15 +30,15 @@ import { MatListModule } from '@angular/material/list';
 import { ChildrenModule } from '../children/children.module';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatTreeModule } from '@angular/material/tree';
-import { ChildPresenceListComponent } from './note-detail/child-presence-list/child-presence-list.component';
+import { ChildPresenceListComponent } from './note-details/child-presence-list/child-presence-list.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { UiHelperModule } from '../../core/ui-helper/ui-helper.module';
-import { NotePresenceListComponent } from './note-detail/note-presence-list/note-presence-list.component';
+import { NotePresenceListComponent } from './note-details/note-presence-list/note-presence-list.component';
 
 
 @NgModule({
-  declarations: [NoteDetailComponent, NoteManagerComponent, ChildPresenceListComponent, NotePresenceListComponent],
+  declarations: [NoteDetailsComponent, NotesManagerComponent, ChildPresenceListComponent, NotePresenceListComponent],
     imports: [
         CommonModule,
         FormsModule,
@@ -76,7 +76,7 @@ import { NotePresenceListComponent } from './note-detail/note-presence-list/note
         MatTabsModule,
         MatPaginatorModule,
     ],
-  entryComponents: [NoteDetailComponent],
+  entryComponents: [NoteDetailsComponent],
   providers: [],
 })
 export class NotesModule { }

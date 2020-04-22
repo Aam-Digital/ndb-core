@@ -1,10 +1,10 @@
-import { MeetingNoteAttendance } from './meeting-note-attendance';
+import { MeetingNoteAttendance } from '../meeting-note-attendance';
 import { Note } from './note';
-import { InteractionTypes } from './interaction-types.enum';
-import { WarningLevel } from '../warning-level';
-import { EntitySchemaService } from '../../core/entity/schema/entity-schema.service';
+import { InteractionTypes } from '../interaction-types.enum';
+import { WarningLevel } from '../../warning-level';
+import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 import { async } from '@angular/core/testing';
-import { Entity } from '../../core/entity/entity';
+import { Entity } from '../../../core/entity/entity';
 
 
 function createAttendanceModels(): Array<MeetingNoteAttendance> {

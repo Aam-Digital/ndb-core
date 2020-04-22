@@ -11,14 +11,14 @@ describe('PrimaryActionComponent', () => {
 
   const mockSessionService = { getCurrentUser: () => { return { name: 'tester' }; }};
 
-  beforeEach(async (() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ PrimaryActionComponent ],
       imports: [MatDialogModule, MatButtonModule],
       providers: [{provide: SessionService, useValue: mockSessionService }],
     })
     .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(PrimaryActionComponent);

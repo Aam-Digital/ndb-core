@@ -1,11 +1,11 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { Note } from '../note';
+import { Note } from '../model/note';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
-import { NoteDetailComponent } from '../note-detail/note-detail.component';
+import { NoteDetailsComponent } from '../note-details/note-details.component';
 import { InteractionTypes } from '../interaction-types.enum';
 import { MatPaginator } from '@angular/material/paginator';
 import { FilterSelection } from '../../../core/ui-helper/filter-selection/filter-selection';
@@ -14,11 +14,11 @@ import { SessionService } from '../../../core/session/session.service';
 import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 
 @Component({
-  selector: 'app-note-manager',
-  templateUrl: './note-manager.component.html',
-  styleUrls: ['./note-manager.component.scss'],
+  selector: 'app-notes-manager',
+  templateUrl: './notes-manager.component.html',
+  styleUrls: ['./notes-manager.component.scss'],
 })
-export class NoteManagerComponent implements OnInit, AfterViewInit, OnDestroy {
+export class NotesManagerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   watcher: Subscription;
   activeMediaQuery = '';
@@ -147,7 +147,7 @@ export class NoteManagerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showDetails(entity: Note) {
-    this.dialog.open(NoteDetailComponent, {width: '80%', data: {entity: entity}});
+    this.dialog.open(NoteDetailsComponent, {width: '80%', data: {entity: entity}});
   }
 
   ngOnDestroy(): void {

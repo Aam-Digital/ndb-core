@@ -48,6 +48,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AttendanceAverageDashboardComponent } from '../attendance/dashboard-widgets/attendance-average-dashboard/attendance-average-dashboard.component';
 import { AttendanceWarningsDashboardComponent } from '../attendance/dashboard-widgets/attendance-warnings-dashboard/attendance-warnings-dashboard.component';
+import { NotesComponent } from './notes/notes.component';
 import { ChildSelectComponent } from './child-select/child-select.component';
 import { SchoolsModule } from '../schools/schools.module';
 import { EducationalMaterialComponent } from '../educational-material/educational-material-component/educational-material.component';
@@ -68,7 +69,6 @@ import { WebdavModule } from 'app/core/webdav/webdav.module';
 import { AdminModule } from '../../core/admin/admin.module';
 import { SelectGroupChildrenComponent } from './select-group-children/select-group-children.component';
 import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/roll-call.component';
-import { NotesListComponent } from './notes-list/notes-list.component';
 
 
 @NgModule({
@@ -110,6 +110,7 @@ import { NotesListComponent } from './notes-list/notes-list.component';
     AttendanceBlockComponent,
     ChildBlockComponent,
     ChildAttendanceComponent,
+    NotesComponent,
     ChildDetailsComponent,
     ChildrenListComponent,
     ChildrenCountDashboardComponent,
@@ -129,7 +130,6 @@ import { NotesListComponent } from './notes-list/notes-list.component';
     AttendanceManagerComponent,
     HealthCheckupComponent,
     PreviousSchoolsComponent,
-    NotesListComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [

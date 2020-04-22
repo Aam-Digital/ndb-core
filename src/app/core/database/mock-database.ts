@@ -16,7 +16,7 @@
  */
 
 import { Database } from './database';
-import { Note } from '../../child-dev-project/notes/note';
+import { Note } from '../../child-dev-project/notes/model/note';
 import { AttendanceMonth } from '../../child-dev-project/attendance/model/attendance-month';
 import { ChildSchoolRelation } from '../../child-dev-project/children/model/childSchoolRelation';
 

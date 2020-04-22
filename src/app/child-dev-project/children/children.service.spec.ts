@@ -67,7 +67,7 @@ function generateChildSchoolRelationEntities(): ChildSchoolRelation[] {
   const rel1: ChildSchoolRelation = new ChildSchoolRelation('1');
   rel1.childId = '1';
   rel1.schoolId = '1';
-  rel1.start = new Date ('2016-10-02');
+  rel1.start = new Date ('2016-10-01');
   rel1.schoolClass = '2';
   data.push(rel1);
 

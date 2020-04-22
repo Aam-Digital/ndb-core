@@ -40,7 +40,7 @@ describe('AttendanceDetailsComponent', () => {
         UiHelperModule, EntityModule],
       providers: [
         {provide: Database, useClass: MockDatabase},
-        {provide: MatDialogRef, useValue: {beforeClosed: () => { return { subscribe: () => {}}; }}},
+        {provide: MatDialogRef, useValue: {beforeClose: () => { return { subscribe: () => {}}; }}},
         {provide: MAT_DIALOG_DATA, useValue: {entity: att}},
         {provide: ChildrenService, useClass: ChildrenService},
         {provide: CloudFileService, useClass: MockCloudFileService},

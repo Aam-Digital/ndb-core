@@ -35,7 +35,7 @@ import { SessionService } from '../../../core/session/session.service';
 @Component({
   selector: 'app-child-details',
   templateUrl: './child-details.component.html',
-  styleUrls: ['./child-details.component.css'],
+  styleUrls: ['./child-details.component.scss'],
 })
 export class ChildDetailsComponent implements OnInit {
 

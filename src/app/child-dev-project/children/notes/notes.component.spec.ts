@@ -1,10 +1,10 @@
-import { NotesListComponent } from './notes-list.component';
+import { NotesComponent } from './notes.component';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NotesModule } from '../../notes/notes.module';
 import { MatNativeDateModule } from '@angular/material/core';
 import { ChildrenService } from '../children.service';
 import { DatePipe } from '@angular/common';
-import { Note } from '../../notes/note';
+import { Note } from '../../notes/model/note';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
@@ -31,8 +31,8 @@ const allChildren: Array<Note> = [];
 
 describe('NotesListComponent', () => {
 
-  let component: NotesListComponent;
-  let fixture: ComponentFixture<NotesListComponent>;
+  let component: NotesComponent;
+  let fixture: ComponentFixture<NotesComponent>;
 
   beforeEach(async () => {
 
@@ -55,7 +55,7 @@ describe('NotesListComponent', () => {
   });
 
   beforeEach(async () => {
-    fixture = TestBed.createComponent(NotesListComponent);
+    fixture = TestBed.createComponent(NotesComponent);
     component = fixture.componentInstance;
     component.ngOnInit();
   });
