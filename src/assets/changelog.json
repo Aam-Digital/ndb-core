@@ -1,5 +1,12 @@
 [
   {
+    "tag_name": "v2.11.0",
+    "name": "Improvements to UI",
+    "published_at": "2020-04-22",
+    "body": "- fix search problems\n- improve views on different screen sizes\n- add search for mobile view",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.10.0",
     "name": "Roll Call for class",
     "published_at": "2020-03-15",
