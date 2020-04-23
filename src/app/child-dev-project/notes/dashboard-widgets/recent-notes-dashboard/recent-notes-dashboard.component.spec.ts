@@ -1,26 +1,29 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AttendanceWeekDashboardComponent } from './attendance-week-dashboard.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ChildBlockComponent } from '../../../children/child-block/child-block.component';
-import { AttendanceDayBlockComponent } from '../../attendance-days/attendance-day-block.component';
-import { SchoolBlockComponent } from '../../../schools/school-block/school-block.component';
 import { ChildrenService } from '../../../children/children.service';
 import { EntityModule } from '../../../../core/entity/entity.module';
-import { Database } from '../../../../core/database/database';
-import { MockDatabase } from '../../../../core/database/mock-database';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ChildPhotoService } from '../../../children/child-photo-service/child-photo.service';
+import { RecentNotesDashboardComponent } from './recent-notes-dashboard.component';
 
-describe('AttendanceWeekDashboardComponent', () => {
-  let component: AttendanceWeekDashboardComponent;
-  let fixture: ComponentFixture<AttendanceWeekDashboardComponent>;
+describe('RecentNotesDashboardComponent', () => {
+  let component: RecentNotesDashboardComponent;
+  let fixture: ComponentFixture<RecentNotesDashboardComponent>;
+
+  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
   beforeEach(async(() => {
+    mockChildrenService = jasmine.createSpyObj('mockChildrenService', ['getNotes']);
+
     TestBed.configureTestingModule({
-      declarations: [ AttendanceWeekDashboardComponent, ChildBlockComponent, AttendanceDayBlockComponent, SchoolBlockComponent ],
+      declarations: [
+        RecentNotesDashboardComponent,
+        ChildBlockComponent,
+      ],
       imports: [
         MatIconModule,
         MatCardModule,
@@ -28,8 +31,7 @@ describe('AttendanceWeekDashboardComponent', () => {
         RouterTestingModule.withRoutes([]),
         EntityModule],
       providers: [
-        { provide: ChildrenService, useClass: ChildrenService },
-        { provide: Database, useClass: MockDatabase },
+        { provide: ChildrenService, useValue: mockChildrenService },
         { provide: ChildPhotoService, useValue: jasmine.createSpyObj(['getImage']) },
       ],
     })
@@ -37,7 +39,7 @@ describe('AttendanceWeekDashboardComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AttendanceWeekDashboardComponent);
+    fixture = TestBed.createComponent(RecentNotesDashboardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
