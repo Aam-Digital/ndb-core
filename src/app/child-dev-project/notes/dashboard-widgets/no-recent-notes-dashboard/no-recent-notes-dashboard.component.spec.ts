@@ -8,11 +8,13 @@ import { ChildrenService } from '../../../children/children.service';
 import { EntityModule } from '../../../../core/entity/entity.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ChildPhotoService } from '../../../children/child-photo-service/child-photo.service';
-import { RecentNotesDashboardComponent } from './recent-notes-dashboard.component';
+import { NoRecentNotesDashboardComponent } from './no-recent-notes-dashboard.component';
+import { SchoolBlockComponent } from '../../../schools/school-block/school-block.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 describe('RecentNotesDashboardComponent', () => {
-  let component: RecentNotesDashboardComponent;
-  let fixture: ComponentFixture<RecentNotesDashboardComponent>;
+  let component: NoRecentNotesDashboardComponent;
+  let fixture: ComponentFixture<NoRecentNotesDashboardComponent>;
 
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
@@ -21,15 +23,18 @@ describe('RecentNotesDashboardComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [
-        RecentNotesDashboardComponent,
+        NoRecentNotesDashboardComponent,
         ChildBlockComponent,
+        SchoolBlockComponent,
       ],
       imports: [
         MatIconModule,
         MatCardModule,
         MatTooltipModule,
+        MatProgressSpinnerModule,
         RouterTestingModule.withRoutes([]),
-        EntityModule],
+        EntityModule,
+      ],
       providers: [
         { provide: ChildrenService, useValue: mockChildrenService },
         { provide: ChildPhotoService, useValue: jasmine.createSpyObj(['getImage']) },
@@ -39,7 +44,7 @@ describe('RecentNotesDashboardComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RecentNotesDashboardComponent);
+    fixture = TestBed.createComponent(NoRecentNotesDashboardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -62,7 +62,7 @@ import { AttendanceDetailsComponent } from '../attendance/attendance-details/att
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AddDayAttendanceComponent } from '../attendance/add-day-attendance/add-day-attendance.component';
 import { AttendanceWeekDashboardComponent } from '../attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component';
-import { RecentNotesDashboardComponent } from '../notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component';
+import { NoRecentNotesDashboardComponent } from '../notes/dashboard-widgets/no-recent-notes-dashboard/no-recent-notes-dashboard.component';
 import { AttendanceDayBlockComponent } from '../attendance/attendance-days/attendance-day-block.component';
 import { AttendanceManagerComponent } from '../attendance/attendance-manager/attendance-manager.component';
 import { HealthCheckupComponent } from '../health-checkup/health-checkup-component/health-checkup.component';
@@ -72,43 +72,45 @@ import { WebdavModule } from 'app/core/webdav/webdav.module';
 import { AdminModule } from '../../core/admin/admin.module';
 import { SelectGroupChildrenComponent } from './select-group-children/select-group-children.component';
 import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/roll-call.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    FlexLayoutModule,
-    RouterModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatCheckboxModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatExpansionModule,
-    MatTableModule,
-    MatSortModule,
-    MatSidenavModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatIconModule,
-    MatCardModule,
-    MatSnackBarModule,
-    MatDialogModule,
-    MatProgressBarModule,
-    MatAutocompleteModule,
-    MatTooltipModule,
-    BrowserAnimationsModule,
-    ReactiveFormsModule,
-    FilterPipeModule,
-    EntitySubrecordModule,
-    SchoolsModule,
-    ReactiveFormsModule,
-    MatDialogModule,
-    AdminModule,
-    MatListModule,
-    WebdavModule,
-  ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        FlexLayoutModule,
+        RouterModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatCheckboxModule,
+        MatSelectModule,
+        MatDatepickerModule,
+        MatExpansionModule,
+        MatTableModule,
+        MatSortModule,
+        MatSidenavModule,
+        MatButtonModule,
+        MatButtonToggleModule,
+        MatIconModule,
+        MatCardModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        MatProgressBarModule,
+        MatAutocompleteModule,
+        MatTooltipModule,
+        BrowserAnimationsModule,
+        ReactiveFormsModule,
+        FilterPipeModule,
+        EntitySubrecordModule,
+        SchoolsModule,
+        ReactiveFormsModule,
+        MatDialogModule,
+        AdminModule,
+        MatListModule,
+        WebdavModule,
+        MatProgressSpinnerModule,
+    ],
   declarations: [
     AttendanceBlockComponent,
     ChildBlockComponent,
@@ -132,7 +134,7 @@ import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/ro
     RollCallComponent,
     SelectGroupChildrenComponent,
     AttendanceWeekDashboardComponent,
-    RecentNotesDashboardComponent,
+    NoRecentNotesDashboardComponent,
     AttendanceManagerComponent,
     HealthCheckupComponent,
     PreviousSchoolsComponent,
@@ -146,7 +148,7 @@ import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/ro
     AttendanceWarningsDashboardComponent,
     AttendanceWarningsDashboardComponent,
     AttendanceWeekDashboardComponent,
-    RecentNotesDashboardComponent,
+    NoRecentNotesDashboardComponent,
     AttendanceDaysComponent,
   ],
   entryComponents: [NoteDetailsComponent, AttendanceDetailsComponent],

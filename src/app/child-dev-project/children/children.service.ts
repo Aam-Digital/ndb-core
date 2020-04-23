@@ -240,6 +240,27 @@ export class ChildrenService {
     return from(promise);
   }
 
+  /**
+   * Query how many days ago the last note for each child was added.
+   *
+   * Warning: Children without any notes will be missing from this map.
+   *
+   * @return A map of childIds as key and days since last note as value
+   */
+  public async getDaysSinceLastNoteOfEachChild(): Promise<Map<string, number>> {
+    const stats = await this.db
+      .query('notes_index/note_date_in_days_for_child', {reduce: true, group: true});
+
+    const results = new Map();
+    for (const childStats of stats.rows) {
+      const dateOfLatestNoteInDays = childStats.value.max;
+      const todayInDays = (new Date()).getTime() / 86400000; // ms/day: 1000*60*60*24 = 86400000
+      results.set(childStats.key, (todayInDays - dateOfLatestNoteInDays));
+    }
+
+    return results;
+  }
+
   private createNotesIndex(): Promise<any> {
     const designDoc = {
       _id: '_design/notes_index',
@@ -247,8 +268,17 @@ export class ChildrenService {
         by_child: {
           map: '(doc) => { ' +
             'if (!doc._id.startsWith("' + Note.ENTITY_TYPE + '")) return;' +
+            'if (!Array.isArray(doc.children)) return;' +
             'doc.children.forEach(childId => emit(childId)); ' +
             '}',
+        },
+        note_date_in_days_for_child: {
+          map: '(doc) => { ' +
+            'if (!doc._id.startsWith("' + Note.ENTITY_TYPE + '")) return;' +
+            'if (!Array.isArray(doc.children) || !doc.date) return;' +
+            'doc.children.forEach(childId => emit(childId, new Date(doc.date)/86400000)); ' + // ms/day: 1000*60*60*24 = 86400000
+            '}',
+          reduce: '_stats',
         },
       },
     };
