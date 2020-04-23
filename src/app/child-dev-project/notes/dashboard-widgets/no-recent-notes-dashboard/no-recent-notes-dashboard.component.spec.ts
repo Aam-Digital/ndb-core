@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,6 +11,7 @@ import { ChildPhotoService } from '../../../children/child-photo-service/child-p
 import { NoRecentNotesDashboardComponent } from './no-recent-notes-dashboard.component';
 import { SchoolBlockComponent } from '../../../schools/school-block/school-block.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { of } from 'rxjs';
 
 describe('RecentNotesDashboardComponent', () => {
   let component: NoRecentNotesDashboardComponent;
@@ -19,7 +20,9 @@ describe('RecentNotesDashboardComponent', () => {
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
   beforeEach(async(() => {
-    mockChildrenService = jasmine.createSpyObj('mockChildrenService', ['getNotes']);
+    mockChildrenService = jasmine.createSpyObj('mockChildrenService', ['getChildren', 'getDaysSinceLastNoteOfEachChild']);
+    mockChildrenService.getChildren.and.returnValue(of([]));
+    mockChildrenService.getDaysSinceLastNoteOfEachChild.and.returnValue(Promise.resolve(new Map()));
 
     TestBed.configureTestingModule({
       declarations: [
@@ -49,7 +52,8 @@ describe('RecentNotesDashboardComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create', fakeAsync(() => {
     expect(component).toBeTruthy();
-  });
+    tick();
+  }));
 });

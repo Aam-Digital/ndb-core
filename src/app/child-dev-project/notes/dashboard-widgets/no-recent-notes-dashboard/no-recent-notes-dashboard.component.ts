@@ -3,6 +3,9 @@ import { ChildrenService } from '../../../children/children.service';
 import { Child } from '../../../children/model/child';
 import moment from 'moment';
 
+/**
+ * Dashboard Widget displaying children that do not have a recently added Note.
+ */
 @Component({
   selector: 'app-no-recent-notes-dashboard',
   templateUrl: './no-recent-notes-dashboard.component.html',
@@ -16,6 +19,7 @@ export class NoRecentNotesDashboardComponent implements OnInit {
    */
   @Input() sinceDays: number = moment().startOf('day').diff(moment().startOf('week'), 'days');
 
+  /** true while data is not ready/available yet */
   isLoading: boolean;
 
   /** children displayed in the template
