@@ -1,9 +1,9 @@
 # How to review a pull request
 Every regular team member is encouraged to review other pull requests (PRs).
 You don't have to be a senior programmer or an expert in that particular part of the code
-to help by reviewing PRs (and learn possibly learn something along the way).
+to help by reviewing PRs (and possibly learn something along the way).
 
-To establish best practices for our project and make it reviews easier for you
+To establish best practices for our project and make reviews easier for you
 we are documenting guidelines for reviews here.
 
 ## Goals: Why do we have reviews?
