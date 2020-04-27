@@ -17,6 +17,7 @@
 
 <div fxLayout="row wrap" fxLayout.xs="column wrap" fxLayoutGap="20px" class='widget-wrapper'>
   <app-children-count-dashboard fxFlex='30'></app-children-count-dashboard>
+  <app-no-recent-notes-dashboard fxFlex='30'></app-no-recent-notes-dashboard>
   <app-attendance-week-dashboard fxFlex='30' [daysOffset]='0' periodLabel='last week'></app-attendance-week-dashboard>
   <app-attendance-week-dashboard fxFlex='30' [daysOffset]='7' periodLabel='this week'></app-attendance-week-dashboard>
   <app-progress-dashboard [dashboardConfigId]='"1"' fxFlex="30"></app-progress-dashboard>
