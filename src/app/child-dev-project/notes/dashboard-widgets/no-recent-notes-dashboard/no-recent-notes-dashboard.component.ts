@@ -72,9 +72,9 @@ export class NoRecentNotesDashboardComponent implements OnInit {
 
   private isWithinDayRange(daysSinceLastNote: number) {
     if (this.fromBeginningOfWeek) {
-      return daysSinceLastNote > (this.sinceDays + this.daysSinceBeginningOfWeek);
+      return daysSinceLastNote <= (this.sinceDays + this.daysSinceBeginningOfWeek);
     } else {
-      return daysSinceLastNote > this.sinceDays;
+      return daysSinceLastNote <= this.sinceDays;
     }
   }
 }
