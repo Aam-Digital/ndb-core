@@ -255,7 +255,8 @@ export class ChildrenService {
     for (const childStats of stats.rows) {
       const dateOfLatestNoteInDays = childStats.value.max;
       const todayInDays = (new Date()).getTime() / 86400000; // ms/day: 1000*60*60*24 = 86400000
-      results.set(childStats.key, (todayInDays - dateOfLatestNoteInDays));
+      const daysSinceLastNote = (todayInDays - dateOfLatestNoteInDays);
+      results.set(childStats.key, daysSinceLastNote);
     }
 
     return results;
@@ -276,7 +277,7 @@ export class ChildrenService {
           map: '(doc) => { ' +
             'if (!doc._id.startsWith("' + Note.ENTITY_TYPE + '")) return;' +
             'if (!Array.isArray(doc.children) || !doc.date) return;' +
-            'doc.children.forEach(childId => emit(childId, new Date(doc.date)/86400000)); ' + // ms/day: 1000*60*60*24 = 86400000
+            'doc.children.forEach(childId => emit(childId, (new Date(doc.date)).getTime()/86400000)); ' + // ms/day: 1000*60*60*24 = 86400000
             '}',
           reduce: '_stats',
         },

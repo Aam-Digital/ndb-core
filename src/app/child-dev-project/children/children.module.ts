@@ -73,6 +73,7 @@ import { AdminModule } from '../../core/admin/admin.module';
 import { SelectGroupChildrenComponent } from './select-group-children/select-group-children.component';
 import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/roll-call.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { RecentNotesDashboardComponent } from '../notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component';
 
 
 @NgModule({
@@ -135,6 +136,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     SelectGroupChildrenComponent,
     AttendanceWeekDashboardComponent,
     NoRecentNotesDashboardComponent,
+    RecentNotesDashboardComponent,
     AttendanceManagerComponent,
     HealthCheckupComponent,
     PreviousSchoolsComponent,
@@ -149,6 +151,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     AttendanceWarningsDashboardComponent,
     AttendanceWeekDashboardComponent,
     NoRecentNotesDashboardComponent,
+    RecentNotesDashboardComponent,
     AttendanceDaysComponent,
   ],
   entryComponents: [NoteDetailsComponent, AttendanceDetailsComponent],
