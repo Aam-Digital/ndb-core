@@ -96,6 +96,10 @@ export class User extends Entity {
    * @return the decrypted cloud password
    */
   public decryptCloudPassword(givenPassword: string): string {
+    if (!this.cloudPasswordEnc) {
+      return;
+    }
+
     this.cloudPasswordDec = CryptoJS.AES.decrypt(this.cloudPasswordEnc.toString(), givenPassword).toString(CryptoJS.enc.Utf8);
     return this.cloudPasswordDec;
   }
