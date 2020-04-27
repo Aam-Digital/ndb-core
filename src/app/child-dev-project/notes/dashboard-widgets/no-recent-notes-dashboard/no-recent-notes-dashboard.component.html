@@ -26,7 +26,7 @@
           <app-child-block [entity]="record"></app-child-block>
         </td>
         <td class='dashboard-table-additional-info-cell'>
-          {{ record.daysSinceLastNote | number:'1.0-0' }} days
+          <span *ngIf='record.daysSinceLastNote > 0'>{{ record.daysSinceLastNote | number:'1.0-0' }} days</span>
         </td>
       </tr>
     </table>

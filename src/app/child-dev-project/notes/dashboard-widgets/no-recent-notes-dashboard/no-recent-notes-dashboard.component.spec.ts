@@ -12,6 +12,7 @@ import { NoRecentNotesDashboardComponent } from './no-recent-notes-dashboard.com
 import { SchoolBlockComponent } from '../../../schools/school-block/school-block.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { of } from 'rxjs';
+import { Child } from '../../../children/model/child';
 
 describe('RecentNotesDashboardComponent', () => {
   let component: NoRecentNotesDashboardComponent;
@@ -55,5 +56,18 @@ describe('RecentNotesDashboardComponent', () => {
   it('should create', fakeAsync(() => {
     expect(component).toBeTruthy();
     tick();
+  }));
+
+  it('should add all children without note', fakeAsync(() => {
+    const mockChildren = [
+      new Child('1'),
+      new Child('2'),
+    ];
+    mockChildrenService.getChildren.and.returnValue(of(mockChildren));
+
+    component.ngOnInit();
+    tick();
+
+    expect(component.concernedChildren.length).toBe(2);
   }));
 });
