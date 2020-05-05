@@ -16,13 +16,20 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { SessionService } from '../../session/session.service';
-import { SyncState } from '../../session/sync-state.enum';
+import { SessionService } from '../../session/session-service/session.service';
+import { SyncState } from '../../session/session-states/sync-state.enum';
 import { AlertService } from '../../alerts/alert.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { InitialSyncDialogComponent } from './initial-sync-dialog.component';
-import { StateChangedEvent } from 'app/core/session/util/state-handler';
+import { StateChangedEvent } from 'app/core/session/session-states/state-handler';
 
+/**
+ * A small indicator component that displays an icon when there is currently synchronization
+ * with the remote server going on in the background.
+ *
+ * This component also triggers a blocking dialog box when an initial sync is detected that prevents
+ * user login (because user accounts need to be synced first).
+ */
 @Component({
   selector: 'app-sync-status',
   templateUrl: './sync-status.component.html',
@@ -30,8 +37,10 @@ import { StateChangedEvent } from 'app/core/session/util/state-handler';
 })
 export class SyncStatusComponent implements OnInit {
 
+  /** whether synchronization is currently going on */
   syncInProgress: boolean;
-  dialogRef: MatDialogRef<InitialSyncDialogComponent>;
+
+  private dialogRef: MatDialogRef<InitialSyncDialogComponent>;
 
   constructor(public dialog: MatDialog,
               private sessionService: SessionService,

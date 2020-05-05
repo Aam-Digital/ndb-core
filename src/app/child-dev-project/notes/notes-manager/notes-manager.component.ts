@@ -6,8 +6,8 @@ import { EntityMapperService } from '../../../core/entity/entity-mapper.service'
 import { Note } from '../model/note';
 import { NoteDetailsComponent } from '../note-details/note-details.component';
 import { Subscription } from 'rxjs';
-import { SessionService } from '../../../core/session/session.service';
-import { FilterSelection } from '../../../core/ui-helper/filter-selection/filter-selection';
+import { SessionService } from '../../../core/session/session-service/session.service';
+import { FilterSelection } from '../../../core/filter/filter-selection/filter-selection';
 import { WarningLevel } from '../../warning-level';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 
@@ -38,13 +38,13 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     { key: 'urgent', label: 'Urgent', filterFun: (n: Note) => n.warningLevel === WarningLevel.URGENT },
     { key: 'follow-up', label: 'Needs Follow-Up',
       filterFun: (n: Note) => n.warningLevel === WarningLevel.WARNING || n.warningLevel === WarningLevel.URGENT },
-    { key: '', label: 'All', filterFun: (c: Note) => true },
+    { key: '', label: 'All', filterFun: () => true },
   ]);
   dateFS = new FilterSelection<Note>('date', [
     { key: 'current-week', label: 'This Week',
       filterFun: (n: Note) => n.date > this.getPreviousSunday(0) },
     { key: 'last-week', label: 'Since Last Week', filterFun: (n: Note) => n.date > this.getPreviousSunday(1) },
-    { key: '', label: 'All', filterFun: (c: Note) => true },
+    { key: '', label: 'All', filterFun: () => true },
   ]);
   filterSelections = [
     this.followUpFS,
@@ -63,6 +63,9 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
               private media: MediaObserver) { }
 
   ngOnInit() {
+    // activate default filter to current week
+    this.dateFS.selectedOption = this.dateFS.options[0].key;
+
     this.entityMapper.loadType<Note>(Note)
       .then(data => {
         this.entityList = data.sort((a, b) => (b.date ? b.date.getTime() : 0) - (a.date ? a.date.getTime() : 0) );
@@ -75,6 +78,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
         this.displayColumnGroup('mobile');
       }
     });
+
     this.initCategoryFilter();
   }
 
@@ -86,7 +90,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
 
   private initCategoryFilter() {
     this.categoryFS.options = [
-      { key: '', label: '', filterFun: (n: Note) => true },
+      { key: '', label: '', filterFun: () => true },
     ];
 
     Note.INTERACTION_TYPES.forEach(t => {

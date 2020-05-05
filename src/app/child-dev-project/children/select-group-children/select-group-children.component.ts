@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Child } from '../model/child';
 import { ChildrenService } from '../children.service';
-import { FilterSelection, FilterSelectionOption } from '../../../core/ui-helper/filter-selection/filter-selection';
+import { FilterSelection, FilterSelectionOption } from '../../../core/filter/filter-selection/filter-selection';
 
 
 /**

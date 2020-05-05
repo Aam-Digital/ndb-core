@@ -18,17 +18,28 @@
 import { Injectable } from '@angular/core';
 import { MenuItem } from './menu-item';
 
+/**
+ * Manage menu items to be displayed in the main app menu.
+ *
+ * Inject this service in your classes to add your own custom menu entries.
+ */
 @Injectable()
 export class NavigationItemsService {
 
-  menuItems: MenuItem[] = [];
+  private menuItems: MenuItem[] = [];
 
+  /**
+   * Get all registered menu items.
+   */
   public getMenuItems(): MenuItem[] {
     return this.menuItems;
   }
 
+  /**
+   * Register a new menu item to be display in the menu.
+   * @param menuItem
+   */
   public addMenuItem(menuItem: MenuItem) {
     this.menuItems.push(menuItem);
   }
-
 }

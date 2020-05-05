@@ -17,6 +17,15 @@
 
 import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
 
+/**
+ * Datatype for the EntitySchemaService transforming Date values to/from a short string month format ("YYYY-mm").
+ *
+ * Throws an exception if the property is set to something that is not a Date instance and cannot be cast to Date either.
+ *
+ * For example:
+ *
+ * `@DatabaseField({dataType: 'month'}) myMonth: Date = new Date('2020-01-15'); // will be "2020-01" in the database`
+ */
 export const monthEntitySchemaDatatype: EntitySchemaDatatype = {
   name: 'month',
 

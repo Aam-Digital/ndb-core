@@ -23,15 +23,27 @@ import { AlertComponent } from './alerts/alert.component';
 import { LoggingService } from '../logging/logging.service';
 import { AlertDisplay } from './alert-display';
 
+
+/**
+ * Display alerts to the user as a hovering message at the bottom of the view.
+ * (Angular Material "SnackBar")
+ *
+ * Inject this service in your classes to easily trigger alerts in the app consistent style.
+ */
 @Injectable()
 export class AlertService {
 
+  /** All alerts currently to be displayed */
   alerts: Alert[] = [];
 
   constructor(public snackBar: MatSnackBar,
               private loggingService: LoggingService) {
   }
 
+  /**
+   * Display the given alert.
+   * @param alert The alert instance to be displayed
+   */
   addAlert(alert: Alert) {
     this.alerts.push(alert);
     this.displayAlert(alert);
@@ -62,7 +74,6 @@ export class AlertService {
         this.loggingService.warn(alert.message);
         break;
       case Alert.INFO:
-      case Alert.SUCCESS:
         this.loggingService.info(alert.message);
         break;
       case Alert.DEBUG:
@@ -72,6 +83,10 @@ export class AlertService {
   }
 
 
+  /**
+   * Remove an existing alert so that it is no longer displayed.
+   * @param alert The alert to be removed
+   */
   removeAlert(alert: Alert) {
     const index = this.alerts.indexOf(alert, 0);
     if (index > -1) {
@@ -80,22 +95,38 @@ export class AlertService {
   }
 
 
+  /**
+   * Display an alert message of "Info" level, that will automatically dismiss itself after a timeout.
+   * @param message The text to be displayed
+   * @param display Optional override of the display style (e.g. whether the alert has to be actively dismissed by the user)
+   */
   public addInfo(message: string, display: AlertDisplay = AlertDisplay.TEMPORARY) {
     this.addAlert(new Alert(message, Alert.INFO, display));
   }
 
-  public addSuccess(message: string, display: AlertDisplay = AlertDisplay.TEMPORARY) {
-    this.addAlert(new Alert(message, Alert.SUCCESS, display));
-  }
-
+  /**
+   * Display an alert message of "Warning" level, that will have to be actively dismissed by the user.
+   * @param message The text to be displayed
+   * @param display Optional override of the display style (e.g. whether the alert has to be actively dismissed by the user)
+   */
   public addWarning(message: string, display: AlertDisplay = AlertDisplay.PERSISTENT) {
     this.addAlert(new Alert(message, Alert.WARNING, display));
   }
 
+  /**
+   * Display an alert message of "Danger" level, that is highlighted and will have to be actively dismissed by the user.
+   * @param message The text to be displayed
+   * @param display Optional override of the display style (e.g. whether the alert has to be actively dismissed by the user)
+   */
   public addDanger(message: string, display: AlertDisplay = AlertDisplay.PERSISTENT) {
     this.addAlert(new Alert(message, Alert.DANGER, display));
   }
 
+  /**
+   * Display an alert message of "Debug" level, that will not be displayed to the user.
+   * @param message The text to be displayed
+   * @param display Optional override of the display style (e.g. whether the alert has to be actively dismissed by the user)
+   */
   public addDebug(message: string, display: AlertDisplay = AlertDisplay.NONE) {
     this.addAlert(new Alert(message, Alert.DEBUG, display));
   }

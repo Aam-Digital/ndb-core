@@ -3,6 +3,9 @@ import { EntityMapperService } from '../../entity/entity-mapper.service';
 import { HttpClient } from '@angular/common/http';
 import { Child } from '../../../child-dev-project/children/model/child';
 
+/**
+ * Utility service to automatically detect and update filenames for Child entities' photos.
+ */
 @Injectable({
   providedIn: 'root',
 })
@@ -13,6 +16,10 @@ export class ChildPhotoUpdateService {
     private httpClient: HttpClient,
     ) { }
 
+  /**
+   * Tries to detect and update the filename of an existing photo for all Child entities,
+   * saving the entities that were updated.
+   */
   public async updateChildrenPhotoFilenames() {
     const children = await this.entityService.loadType<Child>(Child);
     for (const child of children) {
@@ -21,6 +28,11 @@ export class ChildPhotoUpdateService {
     }
   }
 
+  /**
+   * Check (and if it exists update) the Child's photo file.
+   * @param child The child to be updated
+   * @param filename A guess for a likely filename that needs to be checked
+   */
   private async updatePhotoIfFileExists(child: Child, filename: string) {
     if (child.photoFile && child.photoFile !== '') {
       // do not overwrite existing path

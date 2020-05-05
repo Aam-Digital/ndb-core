@@ -16,23 +16,68 @@
  */
 
 /**
- * An implementation of this interface provides functions for direct database access.
- * The interface is an extension of the [PouchDB API](https://pouchdb.com/api.html).
- * A `Database` instance is injected into the app through `DatabaseManagerService`.
+ * An implementation of this abstract class provides functions for direct database access.
+ * This interface is an extension of the [PouchDB API](https://pouchdb.com/api.html).
+ *
+ * A `Database` instance is injected into the app through the {@link databaseServiceProvider}
+ * with the help of the {@link SessionService}.
  */
 export abstract class Database {
 
+  /**
+   * Load a single document by id from the database.
+   * @param id The primary key of the document to be loaded
+   */
   abstract get(id: string): Promise<any>;
 
+  /**
+   * Load all documents (matching the given PouchDB options) from the database.
+   *
+   * Normally you should rather use "getAll()" or another well typed method of this class
+   * instead of passing PouchDB specific options here
+   * because that will make your code tightly coupled with PouchDB rather than any other database provider.
+   *
+   * @param options PouchDB options object as in the normal PouchDB library
+   */
   abstract allDocs(options?: any): Promise<any>;
 
+  /**
+   * Save a document to the database.
+   * @param object The document to be saved
+   * @param forceUpdate (Optional) Whether conflicts should be ignored and an existing conflicting document forcefully overwritten.
+   */
   abstract put(object: any, forceUpdate?: boolean): Promise<any>;
 
+  /**
+   * Delete a document from the database
+   * @param object The document to be deleted (usually this object must at least contain the _id and _rev)
+   */
   abstract remove(object: any): Promise<any>;
 
+  /**
+   * Query data from the database based on a more complex, indexed request.
+   *
+   * This is directly calling the PouchDB implementation of this function.
+   * Also see the documentation there: {@link https://pouchdb.com/api.html#query_database}
+   *
+   * @param fun The name of a previously saved database index
+   * @param options Additional options for the query, like a `key`. See the PouchDB docs for details.
+   */
   abstract query(fun: any, options?: any): Promise<any>;
+
+  /**
+   * Create a database index to `query()` certain data more efficiently in the future.
+   *
+   * Also see the PouchDB documentation regarding indices and queries: {@link https://pouchdb.com/api.html#query_database}
+   *
+   * @param designDoc The PouchDB style design document for the map/reduce query
+   */
   abstract saveDatabaseIndex(designDoc: any): Promise<any>;
 
+  /**
+   * Load all documents (with the given prefix) from the database.
+   * @param prefix The string prefix of document ids that should be retrieved
+   */
   getAll(prefix = ''): Promise<Array<any>> {
     return this.allDocs({include_docs: true, startkey: prefix, endkey: prefix + '\ufff0'});
   }

@@ -32,7 +32,16 @@ import { dateOnlyEntitySchemaDatatype } from '../schema-datatypes/datatype-date-
 
 
 /**
- * EntitySchemaService provides functions to handle data conversion for types defined in the schema.
+ * Transform between entity instances and database objects
+ * based on the dataType set for properties in Entity classes using the {@link DatabaseField} annotation.
+ *
+ * You can inject the EntitySchemaService in your code to register your custom {@link EntitySchemaDatatype} implementations.
+ *
+ * This service is used by the {@link EntityMapperService} to internally transform objects.
+ * You should normally use the EntityMapperService instead of transforming objects yourself with the EntitySchemaService.
+ *
+ * also see the How-To Guides:
+ * - [Create A New Entity Type]{@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
  */
 @Injectable()
 export class EntitySchemaService {
@@ -59,7 +68,7 @@ export class EntitySchemaService {
 
 
   /**
-   * Add a data type definition to the registry to provide a conversion between what is written into the database
+   * Add a datatype definition to the registry to provide a conversion between what is written into the database
    * and what is available in Entity objects.
    * @param type The EntitySchemaDatatype object definition providing data transformation functions.
    */
@@ -67,6 +76,10 @@ export class EntitySchemaService {
     this.schemaTypes.set(type.name, type);
   }
 
+  /**
+   * Get the datatype for the giving name (or the default datatype if no other registered type fits)
+   * @param datatypeName The key/name of the datatype
+   */
   public getDatatypeOrDefault(datatypeName: string) {
     datatypeName = datatypeName ? datatypeName.toLowerCase() : undefined;
 
@@ -78,6 +91,11 @@ export class EntitySchemaService {
   }
 
 
+  /**
+   * Transform a database object to entity format according to the schema.
+   * @param data The database object that will be transformed to the given entity format
+   * @param schema A schema defining the transformation
+   */
   public transformDatabaseToEntityFormat(data: any, schema: EntitySchema) {
     for (const key of schema.keys()) {
       const schemaField: EntitySchemaField = schema.get(key);
@@ -95,12 +113,21 @@ export class EntitySchemaService {
     return data;
   }
 
+  /**
+   * Helper function to assign the giving data to the given entity instance after transforming it according to the schema.
+   * @param entity An entity instance whose properties will be overwritten with the transformed data
+   * @param data The database object that will be transformed and assigned to the entity
+   */
   public loadDataIntoEntity(entity: Entity, data: any) {
     data = this.transformDatabaseToEntityFormat(data,  entity.getConstructor().schema);
     Object.assign(entity, data);
   }
 
-
+  /**
+   * Transform an entity instance to a database object according to the schema.
+   * @param entity The object (an instance of an entity type)
+   * @param schema The schema of the entity (if not explicitly defined the schema of the given entity is used)
+   */
   public transformEntityToDatabaseFormat(entity: Entity, schema?: EntitySchema): any {
     if (!schema) {
       schema = entity.getConstructor().schema;

@@ -21,7 +21,7 @@ import { UserAccountComponent } from './user-account.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { SessionService } from '../../session/session.service';
+import { SessionService } from '../../session/session-service/session.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTabsModule } from '@angular/material';
 import { EntityMapperService } from 'app/core/entity/entity-mapper.service';

@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
+import { EntitySubrecordModule } from '../../../core/entity-subrecord/entity-subrecord.module';
 import { EntityModule } from '../../../core/entity/entity.module';
 import { FormsModule } from '@angular/forms';
 import { ChildSelectComponent } from '../../children/child-select/child-select.component';
@@ -21,8 +21,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { SchoolBlockComponent } from '../../schools/school-block/school-block.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
-import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
+import { ChildPhotoService } from '../../children/child-photo-service/child-photo.service';
 
 describe('NoteDetailsComponent', () => {
   let component: NoteDetailsComponent;
@@ -43,14 +42,14 @@ describe('NoteDetailsComponent', () => {
       declarations: [ NoteDetailsComponent, ChildSelectComponent, ChildBlockComponent, SchoolBlockComponent ],
       imports: [MatDialogModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule, MatSelectModule,
         FormsModule, NoopAnimationsModule, MatIconModule, MatDatepickerModule, MatNativeDateModule,
-        UiHelperModule, EntityModule],
+        EntitySubrecordModule, EntityModule],
       providers: [
         {provide: Database, useClass: MockDatabase},
         {provide: MatDialogRef, useValue: {beforeClose: () => { return { subscribe: () => {}}; }}},
         {provide: MAT_DIALOG_DATA, useValue: {entity: note}},
         {provide: ChildrenService, useClass: ChildrenService},
-        {provide: CloudFileService, useClass: MockCloudFileService },
-        ],
+        { provide: ChildPhotoService, useValue: jasmine.createSpyObj(['getImage']) },
+      ],
     })
     .compileComponents();
   }));

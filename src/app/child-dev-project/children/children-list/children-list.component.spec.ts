@@ -25,13 +25,12 @@ import { ChildBlockComponent } from '../child-block/child-block.component';
 import { SchoolBlockComponent } from '../../schools/school-block/school-block.component';
 import { FilterPipeModule } from 'ngx-filter-pipe';
 import { AttendanceDaysComponent } from '../../attendance/attendance-days/attendance-days.component';
-import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
+import { EntitySubrecordModule } from '../../../core/entity-subrecord/entity-subrecord.module';
 import { AttendanceDayBlockComponent } from '../../attendance/attendance-days/attendance-day-block.component';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 import { ExportDataComponent } from '../../../core/admin/export-data/export-data.component';
 import { PapaParseModule } from 'ngx-papaparse';
-import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
-import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
+import { ChildPhotoService } from '../child-photo-service/child-photo.service';
 
 describe('ChildrenListComponent', () => {
   let component: ChildrenListComponent;
@@ -68,14 +67,14 @@ describe('ChildrenListComponent', () => {
         RouterTestingModule.withRoutes([
           { path: 'child', component: ChildrenListComponent},
         ]),
-        UiHelperModule,
+        EntitySubrecordModule,
         PapaParseModule,
       ],
       providers: [ChildrenService,
         EntityMapperService,
         EntitySchemaService,
         { provide: Database, useClass: MockDatabase },
-        { provide: CloudFileService, useClass: MockCloudFileService },
+        { provide: ChildPhotoService, useValue: jasmine.createSpyObj(['getImage']) },
       ],
     })
     .compileComponents();

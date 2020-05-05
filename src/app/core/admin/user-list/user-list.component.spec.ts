@@ -4,7 +4,7 @@ import { UserListComponent } from './user-list.component';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
 import { AdminModule } from '../admin.module';
 import { User } from '../../user/user';
-import { SessionService } from '../../session/session.service';
+import { SessionService } from '../../session/session-service/session.service';
 
 describe('UserListComponent', () => {
   let component: UserListComponent;

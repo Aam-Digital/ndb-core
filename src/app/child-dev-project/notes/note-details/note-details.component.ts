@@ -1,7 +1,7 @@
 import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { Note } from '../model/note';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { ConfirmationDialogService } from '../../../core/confirmation-dialog/confirmation-dialog.service';
 import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 
 @Component({

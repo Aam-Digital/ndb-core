@@ -12,8 +12,7 @@ import { EntityModule } from '../../../../core/entity/entity.module';
 import { Database } from '../../../../core/database/database';
 import { MockDatabase } from '../../../../core/database/mock-database';
 import { RouterTestingModule } from '@angular/router/testing';
-import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
-import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
+import { ChildPhotoService } from '../../../children/child-photo-service/child-photo.service';
 
 describe('AttendanceWeekDashboardComponent', () => {
   let component: AttendanceWeekDashboardComponent;
@@ -22,13 +21,16 @@ describe('AttendanceWeekDashboardComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ AttendanceWeekDashboardComponent, ChildBlockComponent, AttendanceDayBlockComponent, SchoolBlockComponent ],
-      imports: [MatIconModule, MatCardModule, MatTooltipModule,
+      imports: [
+        MatIconModule,
+        MatCardModule,
+        MatTooltipModule,
         RouterTestingModule.withRoutes([]),
         EntityModule],
       providers: [
         { provide: ChildrenService, useClass: ChildrenService },
         { provide: Database, useClass: MockDatabase },
-        { provide: CloudFileService, useClass: MockCloudFileService },
+        { provide: ChildPhotoService, useValue: jasmine.createSpyObj(['getImage']) },
       ],
     })
     .compileComponents();

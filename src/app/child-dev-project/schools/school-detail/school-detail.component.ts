@@ -8,7 +8,7 @@ import * as uniqid from 'uniqid';
 import { AlertService } from '../../../core/alerts/alert.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
-import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { ConfirmationDialogService } from '../../../core/confirmation-dialog/confirmation-dialog.service';
 import { Location } from '@angular/common';
 import { Child } from '../../children/model/child';
 @Component({

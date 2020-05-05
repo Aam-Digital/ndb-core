@@ -59,7 +59,7 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Aser> {
       date = new Date(date.getFullYear() + 1, 2, 1);
       previousResult = aserResult;
     } while (
-      date < this.getEarlierDateOrToday(child.dropoutDate)
+      date < faker.getEarlierDateOrToday(child.dropoutDate)
       && previousResult.getWarningLevel() !== WarningLevel.OK
     );
 

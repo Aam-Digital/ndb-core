@@ -33,7 +33,7 @@ describe('CloudFileServiceUserSettingsComponent', () => {
       providers: [
         { provide: CloudFileService, useValue: mockCloudFileService },
         { provide: EntityMapperService, useValue: mockEntityMapper },
-        { provide: AlertService, useValue: jasmine.createSpyObj(['addSuccess']) },
+        { provide: AlertService, useValue: jasmine.createSpyObj(['addInfo']) },
       ],
     })
     .compileComponents();

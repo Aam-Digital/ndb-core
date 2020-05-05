@@ -2,10 +2,10 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NotesComponent } from './notes.component';
 import { ChildrenService } from '../../children/children.service';
-import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
+import { EntitySubrecordModule } from '../../../core/entity-subrecord/entity-subrecord.module';
 import { ActivatedRoute } from '@angular/router';
 import { Child } from '../../children/model/child';
-import { SessionService } from '../../../core/session/session.service';
+import { SessionService } from '../../../core/session/session-service/session.service';
 import { User } from '../../../core/user/user';
 import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 import { MockDatabase } from '../../../core/database/mock-database';
@@ -37,7 +37,7 @@ describe('NotesComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [ NotesComponent ],
-      imports: [UiHelperModule, NoopAnimationsModule],
+      imports: [EntitySubrecordModule, NoopAnimationsModule],
       providers: [
         DatePipe,
         { provide: ActivatedRoute, useValue: {paramMap: of({get: () => '22'}) } },

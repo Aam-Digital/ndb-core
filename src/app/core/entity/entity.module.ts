@@ -20,6 +20,24 @@ import { CommonModule } from '@angular/common';
 import { EntityMapperService } from './entity-mapper.service';
 import { EntitySchemaService } from './schema/entity-schema.service';
 
+/**
+ * Generic system to manage saving and loading documents with the database
+ * while offering certain transformations between the object and the database representation.
+ * A key part of this is to return instances of {@link Entity} subclasses to other modules of the app
+ * which can simply treat them as normal javascript class instances without worrying about database persistance logic.
+ *
+ * The main service used by other modules is {@link EntityMapperService}, which provides functions to load, save and query
+ * data from the database (and return it after transformation to the correct Entity instances).
+ *
+ * The Entity schema system allows you to use annotations in the Entity classes to define which properties
+ * are saved to the database, how they are transformed and which properties are ignored when writing to the database.
+ * This is handled by the {@link EntitySchemaService} (which is internally used by the EntityMapperService.
+ * You can register your own custom data-type transformations with the EntitySchemaService as well.
+ *
+ * To understand how to use the Entity system in your own modules, refer to the How-To Guides:
+ * - [How to Load and Save Data]{@link /additional-documentation/how-to-guides/load-and-save-data.html}
+ * - [How to Create a new Entity Type]{@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
+ */
 @NgModule({
   imports: [
     CommonModule,

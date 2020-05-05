@@ -15,40 +15,65 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * This represents a static class of type <T>.
- * It can be used for passing a class from which new objects should be created.
- * For example usage check the entity mapper service.
- */
 import { EntitySchema } from './schema/entity-schema';
 import { DatabaseField } from './database-field.decorator';
 
+/**
+ * This represents a static class of type <T>.
+ * It can be used for passing a class from which new objects should be created.
+ * For example usage check the {@link EntityMapperService}.
+ */
 export type EntityConstructor<T extends Entity> = new(id: string) => T;
 
 /**
- * Entity is a base class for all domain model classes.
+ * "Entity" is a base class for all domain model classes.
+ * It implements the basic general properties and methods that are required for all Entity types
+ * e.g. supporting the Entity Schema system or basic database logic.
  *
- * Entity does not deal with database actions. Inject `EntityMapperService`
- * and use its find/save/delete functions.
+ * Entity classes do not deal with database actions, use {@link EntityMapperService} with its find/save/delete functions.
+ *
+ * Do not use the Entity class directly. Instead implement your own Entity types, writing classes that extend "Entity".
+ * A How-To Guide on how to implement your own types is available:
+ * - [How to Create a new Entity Type]{@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
  */
 export class Entity {
   /**
    * The entity's type.
+   * In classes extending Entity this is usually overridden by the class annotation `@DatabaseEntity('NewEntity')`.
    */
   static ENTITY_TYPE = 'Entity';
+
+  /**
+   * EntitySchema defining property transformations from/to the database.
+   * This is auto-generated from the property annotations `@DatabaseField()`.
+   *
+   * see {@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
+   */
   static schema: EntitySchema;
 
-
+  /**
+   * Extract the ENTITY_TYPE from an id.
+   * @param id An entity's id including prefix.
+   */
   static extractTypeFromId(id: string): string {
     const split = id.indexOf(':');
     return id.substring(0, split);
   }
 
+  /**
+   * Extract entityId without prefix.
+   * @param id An entity's id including prefix.
+   */
   static extractEntityIdFromId(id: string): string {
     const split = id.indexOf(':');
     return id.substring(split + 1);
   }
 
+  /**
+   * Create a prefixed id by adding the type prefix if it isn't already part of the given id.
+   * @param type The type prefix to be added.
+   * @param id The id to be extended with a prefix.
+   */
   static createPrefixedId(type: string, id: string): string {
     id = String(id);
     const prefix = type + ':';
@@ -60,19 +85,26 @@ export class Entity {
   }
 
 
-  @DatabaseField()
-  _id: string;
-
-  @DatabaseField()
-  _rev: string;
-
-
   /**
-   * An helper property to access the actual id without prefix
+   * Internal database id.
+   * This is usually combined from the ENTITY_TYPE as a prefix with the entityId field `EntityType:entityId`
+   * @example "Entity:123"
    */
+  @DatabaseField() _id: string;
+
+  /** internal database doc revision, used to detect conflicts by PouchDB/CouchDB */
+  @DatabaseField() _rev: string;
+
+
+  /** actual id without prefix */
   get entityId(): string {
     return Entity.extractEntityIdFromId(this._id);
   }
+
+  /**
+   * Set id without prefix.
+   * @param newEntityId The new id without prefix.
+   */
   set entityId(newEntityId: string) {
     this._id = Entity.createPrefixedId(this.getType(), newEntityId);
   }
@@ -148,6 +180,10 @@ export class Entity {
     return indices;
   }
 
+  /**
+   * Used by some generic UI components to set the color for the entity instance.
+   * Override this method as needed.
+   */
   public getColor() {
     return '';
   }

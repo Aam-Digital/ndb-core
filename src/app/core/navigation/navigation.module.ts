@@ -26,7 +26,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-
+/**
+ * Manages the main app navigation menu
+ * which can dynamically be configured through the {@link NavigationItemsService}.
+ */
 @NgModule({
   imports: [
     CommonModule,

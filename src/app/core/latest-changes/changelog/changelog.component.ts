@@ -18,29 +18,47 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { Changelog } from '../changelog';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { isObservable } from 'rxjs';
+import { isObservable, Observable } from 'rxjs';
 
+/**
+ * Display information from the changelog for the latest version.
+ *
+ * This component is used as content of a dialog.
+ */
 @Component({
   templateUrl: './changelog.component.html',
   styleUrls: ['./changelog.component.css'],
 })
 export class ChangelogComponent implements OnInit {
 
+  /** The changelog entry of the version to be displayed */
   currentChangelog: Changelog;
 
+  /**
+   * This component is to be created through a MatDialog that should pass in the relevant data.
+   *
+   * @example
+   * dialog.open(ChangelogComponent, { data: { changelogData: latestChangesService.getChangelogs() } });
+   *
+   * @param dialogRef Reference to the parent dialog.
+   * @param data Changelog data
+   */
   constructor(
     public dialogRef: MatDialogRef<ChangelogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any) {
+    @Inject(MAT_DIALOG_DATA) public data: Observable<Changelog[]>) {
 
   }
 
   ngOnInit(): void {
-    if (this.data && isObservable(this.data.changelogData)) {
-      this.data.changelogData.subscribe(changelog => this.currentChangelog = changelog[0]);
+    if (this.data && isObservable(this.data)) {
+      this.data.subscribe(changelog => this.currentChangelog = changelog[0]);
     }
   }
 
 
+  /**
+   * Close the parent dialog box.
+   */
   onCloseClick(): void {
     this.dialogRef.close();
   }

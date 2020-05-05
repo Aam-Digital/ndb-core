@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { HealthCheckupComponent } from './health-checkup.component';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
-import { EntitySubrecordComponent } from 'app/core/ui-helper/entity-subrecord/entity-subrecord.component';
+import { EntitySubrecordComponent } from 'app/core/entity-subrecord/entity-subrecord/entity-subrecord.component';
 import { Child } from '../../children/model/child';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ChildrenService } from '../../children/children.service';
@@ -17,7 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { ConfirmationDialogService } from 'app/core/ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { ConfirmationDialogService } from 'app/core/confirmation-dialog/confirmation-dialog.service';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { AlertService } from 'app/core/alerts/alert.service';
 

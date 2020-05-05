@@ -22,6 +22,13 @@ import { concat, interval } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { LoggingService } from '../logging/logging.service';
 
+/**
+ * Check with the server whether a new version of the app is available in order to notify the user.
+ *
+ * As we are using ServiceWorkers to cache the app to also work offline, explicit checking for updates is necessary.
+ * The user receives a toast (hover message) if an update is available
+ * and can click that to reload the app with the new version.
+ */
 @Injectable()
 export class UpdateManagerService {
 
@@ -30,17 +37,23 @@ export class UpdateManagerService {
   constructor(
     private appRef: ApplicationRef,
     private updates: SwUpdate,
-    public snackBar: MatSnackBar,
+    private snackBar: MatSnackBar,
     private logger: LoggingService,
   ) {
   }
 
+  /**
+   * Display a notification to the user in case a new app version is detected by the ServiceWorker.
+   */
   public notifyUserWhenUpdateAvailable() {
     this.updates.available.subscribe(() => {
       this.showUpdateNotification();
     });
   }
 
+  /**
+   * Schedule a regular check with the server for updates.
+   */
   public regularlyCheckForUpdates() {
     // Allow the app to stabilize first, before starting polling for updates with `interval()`.
     const appIsStable$ = this.appRef.isStable.pipe(first(isStable => isStable === true));

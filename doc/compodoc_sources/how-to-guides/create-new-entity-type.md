@@ -1,8 +1,9 @@
-# Creating New Entity Types
-"Entities" are the objects around which our whole system is built. There may for example be User, Child or School classes representing the types of objects the users can view interact with. To extend the system with types, you can create a new module and extend the existing base of the Entity system.
+# How to create a new Entity Type
+"Entities" are the objects around which our whole system is built.
+There may for example be User, Child or School classes representing the types of objects the users can view interact with. To extend the system with types, you can create a new module and extend the existing base of the Entity system.
 
-The `EntityModule` specifies the base class and generic features, specific entity types can extend upon it.
-For an example, have a look at the [UserModule](https://github.com/Aam-Digital/ndb-core/tree/master/src/app/core/user), which defines the `User` class that extends `Entity`.
+The [EntityModule](../../modules/EntityModule.html) specifies the base class and generic features, specific entity types can extend upon it.
+For an example, have a look at the [User](../../classes/User.html#source) class that extends `Entity`.
 
 
 
@@ -43,7 +44,6 @@ For more details see the concept of the [EntitySchema System](../concepts/entity
 
 ## Other components to be implemented for a new sub-type
 The following components are related to display an Entity sub-type and currently implemented for each new sub-type as Angular components:
-* `EntityService`: (optional?) provides methods to get the Entity's objects from the database
 * `EntityDetailsComponent`: displays all attributes of one of the Entity's objects to the user
 * `EntityListComponent`: displays a list of all the Entity's objects
 * `EntityBlockComponent`: displays a small, inline representation of one of the Entity's objects for use in other components

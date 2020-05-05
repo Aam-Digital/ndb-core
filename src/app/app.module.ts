@@ -17,7 +17,7 @@
 
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -37,7 +37,6 @@ import { ChildrenModule } from './child-dev-project/children/children.module';
 import { SchoolsModule } from './child-dev-project/schools/schools.module';
 import { NavigationItemsService } from './core/navigation/navigation-items.service';
 import { MenuItem } from './core/navigation/menu-item';
-import { AppConfig } from './core/app-config/app-config';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
@@ -49,7 +48,22 @@ import { HelpModule } from './core/help/help.module';
 import { DemoDataModule } from './core/demo-data/demo-data.module';
 import { MatNativeDateModule } from '@angular/material/core';
 import { LoggingErrorHandler } from './core/logging/logging-error-handler';
+import { DemoChildGenerator } from './child-dev-project/children/demo-data-generators/demo-child-generator.service';
+import { DemoSchoolGenerator } from './child-dev-project/schools/demo-school-generator.service';
+import { DemoChildSchoolRelationGenerator } from './child-dev-project/children/demo-data-generators/demo-child-school-relation-generator.service';
+import { DemoAttendanceGenerator } from './child-dev-project/attendance/demo-attendance-generator.service';
+import { DemoNoteGeneratorService } from './child-dev-project/notes/demo-data/demo-note-generator.service';
+import { DemoAserGeneratorService } from './child-dev-project/aser/demo-aser-generator.service';
+import { DemoEducationalMaterialGeneratorService } from './child-dev-project/educational-material/demo-educational-material-generator.service';
+import { DemoHealthCheckGeneratorService } from './child-dev-project/health-checkup/demo-data/demo-health-check-generator.service';
+import { DemoWidgetGeneratorService } from './child-dev-project/dashboard/demo-widget-generator.service';
+import { DemoUserGeneratorService } from './core/user/demo-user-generator.service';
 
+/**
+ * Main entry point of the application.
+ * Imports required modules and does basic setup.
+ * Real functionality should be implemented in separate modules and imported here rather than being part of this module.
+ */
 @NgModule({
   declarations: [
     AppComponent,
@@ -78,11 +92,20 @@ import { LoggingErrorHandler } from './core/logging/logging-error-handler';
     MatIconModule,
     HelpModule,
     MatNativeDateModule,
-    DemoDataModule.forRoot(),
+    DemoDataModule.forRoot([
+      ...DemoChildGenerator.provider({count: 150}),
+      ...DemoSchoolGenerator.provider({count: 8}),
+      ...DemoChildSchoolRelationGenerator.provider(),
+      ...DemoAttendanceGenerator.provider(),
+      ...DemoNoteGeneratorService.provider({minNotesPerChild: 2, maxNotesPerChild: 10, groupNotes: 3}),
+      ...DemoAserGeneratorService.provider(),
+      ...DemoEducationalMaterialGeneratorService.provider({minCount: 3, maxCount: 8}),
+      ...DemoHealthCheckGeneratorService.provider(),
+      ...DemoWidgetGeneratorService.provider(),
+      ...DemoUserGeneratorService.provider(),
+    ]),
   ],
   providers: [
-    AppConfig,
-    { provide: APP_INITIALIZER, useFactory: initializeApp, deps: [AppConfig], multi: true },
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
     MatIconRegistry,
     CookieService,
@@ -104,8 +127,4 @@ export class AppModule {
     _navigationItemsService.addMenuItem(new MenuItem('Users', 'user', ['/users'], true));
     _navigationItemsService.addMenuItem(new MenuItem('Help', 'question-circle', ['/help']));
   }
-}
-
-export function initializeApp(appConfig: AppConfig) {
-  return () => appConfig.load();
 }

@@ -29,6 +29,11 @@ import { ChangelogComponent } from './changelog/changelog.component';
 import { SwUpdate } from '@angular/service-worker';
 import { UpdateManagerService } from './update-manager.service';
 
+/**
+ * Displaying app version and changelog information to the user
+ * through components that can be used in other templates
+ * as well as automatic popups on updates (see {@link UpdateManagerService}, {@link LatestChangesService}).
+ */
 @NgModule({
   imports: [
     CommonModule,

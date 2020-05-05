@@ -1,7 +1,7 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { AdminGuard } from './admin.guard';
-import { SessionService } from '../session/session.service';
+import { SessionService } from '../session/session-service/session.service';
 import { User } from '../user/user';
 
 describe('AdminGuard', () => {

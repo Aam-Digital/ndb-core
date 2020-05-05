@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AserComponent } from './aser.component';
-import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
+import { EntitySubrecordModule } from '../../../core/entity-subrecord/entity-subrecord.module';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ChildrenService } from '../../children/children.service';
@@ -32,7 +32,7 @@ describe('AserComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ AserComponent ],
-      imports: [ UiHelperModule, FormsModule, NoopAnimationsModule],
+      imports: [ EntitySubrecordModule, FormsModule, NoopAnimationsModule],
       providers: [
         DatePipe,
         { provide: ActivatedRoute, useValue: {paramMap: of({get: () => '22'}) } },
