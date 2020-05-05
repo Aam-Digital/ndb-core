@@ -8,6 +8,8 @@ import { AttendanceMonth } from '../../attendance/model/attendance-month';
 import { FilterSelection } from '../../../core/filter/filter-selection/filter-selection';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { Subscription } from 'rxjs';
+import { MatPaginator } from '@angular/material/paginator';
+
 
 export interface ColumnGroup {
   name: string;
@@ -40,6 +42,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   columnGroupSelection = 'School Info';
   columnGroups: ColumnGroup[] = [
     { name: 'Basic Info', columns: ['projectNumber', 'name', 'age', 'gender', 'schoolClass', 'schoolId', 'center', 'status']},
@@ -89,6 +92,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.childrenDataSource.sort = this.sort;
+    this.childrenDataSource.paginator = this.paginator;
   }
 
 

@@ -74,6 +74,7 @@ import { SelectGroupChildrenComponent } from './select-group-children/select-gro
 import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/roll-call.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RecentNotesDashboardComponent } from '../notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 
 @NgModule({
@@ -89,6 +90,7 @@ import { RecentNotesDashboardComponent } from '../notes/dashboard-widgets/recent
     MatDatepickerModule,
     MatExpansionModule,
     MatTableModule,
+    MatPaginatorModule,
     MatSortModule,
     MatSidenavModule,
     MatButtonModule,

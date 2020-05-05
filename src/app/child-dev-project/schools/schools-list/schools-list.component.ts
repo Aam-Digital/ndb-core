@@ -5,6 +5,7 @@ import { School } from '../model/school';
 import { SchoolsService } from '../schools.service';
 import { Router } from '@angular/router';
 import { FilterSelection } from '../../../core/filter/filter-selection/filter-selection';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-schools-list',
@@ -16,6 +17,7 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   schoolDataSource: MatTableDataSource<School> = new MatTableDataSource<School>();
 
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   filterString = '';
   columnsToDisplay: string[] = ['name', 'medium', 'privateSchool', 'academicBoard', 'upToClass'];
 
@@ -48,6 +50,7 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.schoolDataSource.sort = this.sort;
+    this.schoolDataSource.paginator = this.paginator;
   }
 
   applyFilter(filterValue: string) {

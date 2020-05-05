@@ -221,3 +221,4 @@
   <tr mat-row *matRowDef="let child; columns: columnsToDisplay" (click)="showChildDetails(child)"
       style="cursor:pointer;" class="table-list-item"></tr>
 </table>
+<mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 10, 20, 50]" [showFirstLastButtons]="true"></mat-paginator>

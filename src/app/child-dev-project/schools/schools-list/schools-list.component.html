@@ -81,4 +81,5 @@
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
     <tr mat-row *matRowDef="let school; columns: columnsToDisplay" (click)="showSchoolDetails(school)" style="cursor:pointer;"></tr>
   </table>
+  <mat-paginator [pageSize]="3" [pageSizeOptions]="[3, 5, 10]" [showFirstLastButtons]="true"></mat-paginator>
 </div>

@@ -2,7 +2,7 @@
   "site_name": "Aam Digital - DEV",
 
   "database": {
-    "name": "app",
+    "name": "dev",
     "remote_url": "http://localhost:4200/db/",
     "timeout": 60000,
     "useTemporaryDatabase": true
