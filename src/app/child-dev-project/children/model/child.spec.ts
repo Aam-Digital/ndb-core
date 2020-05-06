@@ -54,7 +54,7 @@ describe('Child', () => {
       name: 'Max',
       projectNumber: '1',
       gender: 'M',
-      dateOfBirth: new Date(2010, 1, 1),
+      dateOfBirth: '2010-01-01',
       motherTongue: 'Hindi',
       religion: 'Hindu',
       // schoolId: '2',
@@ -97,7 +97,7 @@ describe('Child', () => {
     entity.name = expectedData.name;
     entity.projectNumber = expectedData.projectNumber;
     entity.gender = Gender.MALE;
-    entity.dateOfBirth = expectedData.dateOfBirth;
+    entity.dateOfBirth = new Date(expectedData.dateOfBirth);
     entity.motherTongue = expectedData.motherTongue;
     entity.religion = expectedData.religion;
     // entity.schoolId = expectedData.schoolId;

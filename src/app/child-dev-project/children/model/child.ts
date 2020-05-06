@@ -35,7 +35,7 @@ export class Child extends Entity {
   @DatabaseField() name: string;
   @DatabaseField() projectNumber: string; // project number
   @DatabaseField({dataType: 'string'}) gender: Gender; // M or F
-  @DatabaseField() dateOfBirth: Date;
+  @DatabaseField({dataType: 'date-only'}) dateOfBirth: Date;
   @DatabaseField() motherTongue: string = '';
   @DatabaseField() religion: string = '';
 

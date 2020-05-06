@@ -11,6 +11,7 @@ import { Database } from 'app/core/database/database';
 import { ChildPhotoService } from './child-photo-service/child-photo.service';
 import { CloudFileService } from '../../core/webdav/cloud-file-service.service';
 import { MockCloudFileService } from '../../core/webdav/mock-cloud-file-service';
+import moment from 'moment';
 
 function generateChildEntities(): Child[] {
   const data = [];
@@ -186,8 +187,8 @@ function compareRelations(a: ChildSchoolRelation, b: ChildSchoolRelation) {
   expect(a.schoolClass).toEqual(b.schoolClass);
   expect(a.schoolId).toEqual(b.schoolId);
   expect(a.childId).toEqual(b.childId);
-  expect(a.start).toEqual(b.start);
-  expect(a.end).toEqual(b.end);
+  expect(moment(a.start).isSame(b.start, 'day')).toBeTrue();
+  expect(moment(a.end).isSame(b.end, 'day')).toBeTrue();
 }
 
 async function verifyChildRelationsOrder(child: Child, childrenService: ChildrenService) {
@@ -200,7 +201,7 @@ async function verifyChildRelationsOrder(child: Child, childrenService: Children
   const res = await childrenService.querySortedRelations(child.getId());
   expect(res.length).toBe(sorted.length);
   for (let i = 0; i < res.length; i++) {
-    // compareRelations(res[i], sorted[i]);
+    compareRelations(res[i], sorted[i]);
   }
 }
 
@@ -212,5 +213,5 @@ async function verifyLatestChildRelations(child: Child, childrenService: Childre
     return aValue > bValue ? -1 : aValue === bValue ? 0 : 1;
   })[0];
   const res = await childrenService.queryLatestRelation(child.getId());
-  // compareRelations(res, latest);
+  compareRelations(res, latest);
 }
