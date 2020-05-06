@@ -70,12 +70,6 @@ export class ChildDetailsComponent implements OnInit {
               private sessionService: SessionService,
   ) { }
 
-  // TODO: is this generateNewRecordFactory() used at all?
-  generateNewRecordFactory() {
-    // define values locally because 'this' is a different scope after passing a function as input to another component
-    const child = this.child.getId();
-  }
-
 
   initForm() {
     this.form = this.fb.group({

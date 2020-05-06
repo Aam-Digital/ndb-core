@@ -41,6 +41,7 @@ export class Note extends Entity {
     return this.warningLevel;
   }
 
+  // TODO: color logic should not be part of entity/model but rather in the component responsible for displaying it
   public getColor() {
     if (this.warningLevel === WarningLevel.URGENT) {
       return WarningLevelColor(WarningLevel.URGENT);
@@ -51,6 +52,18 @@ export class Note extends Entity {
 
     const color = INTERACTION_TYPE_COLORS.get(this.category);
     return color === undefined ? '' : color;
+  }
+
+  public getColorForId(entityId: string) {
+    // if the child is not part of this note or this is not a meeting-note, return the default color
+    if (!this.isLinkedWithChild(entityId) || !this.isMeeting()) {
+      return this.getColor();
+    }
+    // if the child is present, return a green color
+    if (this.isPresent(entityId)) {
+      return WarningLevelColor(WarningLevel.OK);
+    }
+    return WarningLevelColor(WarningLevel.URGENT);
   }
 
   /**

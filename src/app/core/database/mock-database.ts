@@ -266,7 +266,8 @@ export class MockDatabase extends Database {
      */
 
 
-    console.warn('MockDatabase does not implement "saveDatabaseIndex()"');
+    // tslint:disable-next-line:no-console
+    console.debug('MockDatabase does not implement "saveDatabaseIndex()"');
     return Promise.resolve({});
   }
 }

@@ -33,6 +33,7 @@
     "faker": "^4.1.0",
     "file-saver": "^2.0.2",
     "font-awesome": "^4.7.0",
+    "moment": "^2.25.3",
     "ngx-cookie-service": "^2.4.0",
     "ngx-filter-pipe": "^2.1.2",
     "ngx-markdown": "^8.2.2",

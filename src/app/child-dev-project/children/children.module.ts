@@ -48,7 +48,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AttendanceAverageDashboardComponent } from '../attendance/dashboard-widgets/attendance-average-dashboard/attendance-average-dashboard.component';
 import { AttendanceWarningsDashboardComponent } from '../attendance/dashboard-widgets/attendance-warnings-dashboard/attendance-warnings-dashboard.component';
-import { NotesComponent } from './notes/notes.component';
+import { NotesOfChildComponent } from '../notes/notes-of-child/notes-of-child.component';
 import { ChildSelectComponent } from './child-select/child-select.component';
 import { SchoolsModule } from '../schools/schools.module';
 import { EducationalMaterialComponent } from '../educational-material/educational-material-component/educational-material.component';
@@ -110,7 +110,7 @@ import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/ro
     AttendanceBlockComponent,
     ChildBlockComponent,
     ChildAttendanceComponent,
-    NotesComponent,
+    NotesOfChildComponent,
     ChildDetailsComponent,
     ChildrenListComponent,
     ChildrenCountDashboardComponent,

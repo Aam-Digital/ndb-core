@@ -1,24 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { Note } from '../../notes/model/note';
-import { NoteDetailsComponent } from '../../notes/note-details/note-details.component';
+import { Component, Input, OnInit } from '@angular/core';
+import { Note } from '../model/note';
+import { NoteDetailsComponent } from '../note-details/note-details.component';
 import { DatePipe } from '@angular/common';
-import { ChildrenService } from '../children.service';
-import { ActivatedRoute } from '@angular/router';
+import { ChildrenService } from '../../children/children.service';
 import { ColumnDescription, ColumnDescriptionInputType } from '../../../core/ui-helper/entity-subrecord/column-description';
-import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 import { SessionService } from '../../../core/session/session.service';
+import moment from 'moment';
 
-@Component({
-  selector: 'app-notes',
-  templateUrl: './notes.component.html',
-  styleUrls: ['./notes.component.scss'],
-})
+
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
  */
-export class NotesComponent implements OnInit {
+@Component({
+  selector: 'app-notes-of-child',
+  templateUrl: './notes-of-child.component.html',
+  styleUrls: ['./notes-of-child.component.scss'],
+})
+export class NotesOfChildComponent implements OnInit {
 
-  childId: string;
+  @Input() childId: string;
   records: Array<Note> = [];
   detailsComponent = NoteDetailsComponent;
 
@@ -30,23 +30,21 @@ export class NotesComponent implements OnInit {
     new ColumnDescription('author', 'SW', ColumnDescriptionInputType.TEXT, null, undefined, 'md'),
     new ColumnDescription('warningLevel', '', ColumnDescriptionInputType.SELECT,
       [{value: 'OK', label: 'Solved'}, {value: 'WARNING', label: 'Needs Follow-Up'}, {value: 'URGENT', label: 'Urgent Follow-Up'}],
-      (v) => '', 'md'),
+      () => '', 'md'),
   ];
 
-  constructor(private route: ActivatedRoute,
-              private childrenService: ChildrenService,
-              private sessionService: SessionService,
-              private datePipe: DatePipe,
-              private entityMapperService: EntityMapperService) {}
+  constructor(
+    private childrenService: ChildrenService,
+    private sessionService: SessionService,
+    private datePipe: DatePipe,
+  ) {}
 
   ngOnInit() {
-    this.route.paramMap.subscribe(params => {
-      this.childId = params.get('id');
-    });
-    this.childrenService.getNotesOfChild(this.childId).subscribe((notes: Note[]) => this.records = notes);
-    /*this.entityMapperService.loadType<Note>(Note).then(notes => {
-      this.records = notes.filter((note) => note.isLinkedWithChild(this.childId));
-    }); */
+    this.childrenService.getNotesOfChild(this.childId)
+      .subscribe((notes: Note[]) => {
+        notes.sort((a, b) => moment(a.date).valueOf() - moment(b.date).valueOf());
+        this.records = notes;
+      });
   }
 
   generateNewRecordFactory() {

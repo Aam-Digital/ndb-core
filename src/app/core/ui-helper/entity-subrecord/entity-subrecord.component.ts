@@ -11,6 +11,7 @@ import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { Subscription } from 'rxjs';
 import { AlertService } from 'app/core/alerts/alert.service';
 import { FormValidationResult } from './form-validation-result';
+import { ComponentType } from '@angular/cdk/overlay';
 
 
 @Component({
@@ -23,7 +24,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   @Input() records: Array<Entity>;
   @Input() columns: Array<ColumnDescription>;
   @Input() newRecordFactory: () => Entity;
-  @Input() detailsComponent: typeof Component;
+  @Input() detailsComponent: ComponentType<unknown>;
   @Input() showButton = true;
   @Input() entityId: string;
   @Input() formValidation?: (record: Entity) => FormValidationResult;

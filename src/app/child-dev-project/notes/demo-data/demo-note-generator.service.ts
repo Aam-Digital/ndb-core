@@ -106,7 +106,8 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     const selectedStory = faker.random.arrayElement(noteGroupStories);
     Object.assign(note, selectedStory);
 
-    note.children = children.map(child => {
+    note.children = children.map(c => c.getId());
+    note.attendances = children.map(child => {
       const attendance = new MeetingNoteAttendance(child.getId());
       // get an approximate presence of 85%
       if (faker.random.number(100) <= 15) {

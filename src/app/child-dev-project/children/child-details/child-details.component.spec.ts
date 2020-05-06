@@ -21,7 +21,7 @@ import { ChildDetailsComponent } from './child-details.component';
 import { SchoolBlockComponent } from '../../schools/school-block/school-block.component';
 import { AserComponent } from '../../aser/aser-component/aser.component';
 import { ChildAttendanceComponent } from '../../attendance/child-attendance/child-attendance.component';
-import { NotesComponent } from '../notes/notes.component';
+import { NotesOfChildComponent } from '../../notes/notes-of-child/notes-of-child.component';
 import { EducationalMaterialComponent } from '../../educational-material/educational-material-component/educational-material.component';
 import { KeysPipe } from '../../../core/ui-helper/keys-pipe/keys.pipe';
 import { EntitySubrecordComponent } from '../../../core/ui-helper/entity-subrecord/entity-subrecord.component';
@@ -69,7 +69,7 @@ describe('ChildDetailsComponent', () => {
         SchoolBlockComponent,
         AserComponent,
         ChildAttendanceComponent,
-        NotesComponent,
+        NotesOfChildComponent,
         EducationalMaterialComponent,
         KeysPipe,
         EntitySubrecordComponent,

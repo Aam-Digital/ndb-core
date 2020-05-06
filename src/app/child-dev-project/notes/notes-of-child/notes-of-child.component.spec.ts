@@ -1,10 +1,10 @@
-import { NotesComponent } from './notes.component';
+import { NotesOfChildComponent } from './notes-of-child.component';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NotesModule } from '../../notes/notes.module';
+import { NotesModule } from '../notes.module';
 import { MatNativeDateModule } from '@angular/material/core';
-import { ChildrenService } from '../children.service';
+import { ChildrenService } from '../../children/children.service';
 import { DatePipe } from '@angular/common';
-import { Note } from '../../notes/model/note';
+import { Note } from '../model/note';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
@@ -17,7 +17,7 @@ import { User } from '../../../core/user/user';
 
 const mockedRoute = {
   paramMap: Observable.create((observer) => observer.next({
-    get: (x) => '1',
+    get: () => '1',
   })),
 };
 
@@ -29,10 +29,10 @@ const mockedSessionService = {
 
 const allChildren: Array<Note> = [];
 
-describe('NotesListComponent', () => {
+describe('NotesOfChildComponent', () => {
 
-  let component: NotesComponent;
-  let fixture: ComponentFixture<NotesComponent>;
+  let component: NotesOfChildComponent;
+  let fixture: ComponentFixture<NotesOfChildComponent>;
 
   beforeEach(async () => {
 
@@ -55,7 +55,7 @@ describe('NotesListComponent', () => {
   });
 
   beforeEach(async () => {
-    fixture = TestBed.createComponent(NotesComponent);
+    fixture = TestBed.createComponent(NotesOfChildComponent);
     component = fixture.componentInstance;
     component.ngOnInit();
   });
