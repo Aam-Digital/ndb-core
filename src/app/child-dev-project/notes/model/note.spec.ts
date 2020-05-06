@@ -43,6 +43,7 @@ describe('Note', () => {
     const entity = new Note(id);
 
     expect(entity.getId()).toBe(id);
+    expect(entity.getType()).toBe(ENTITY_TYPE);
     expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
   });
 

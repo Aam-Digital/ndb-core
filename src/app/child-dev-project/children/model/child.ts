@@ -43,8 +43,9 @@ export class Child extends Entity {
   @DatabaseField() admissionDate: Date;
   @DatabaseField() status: string = '';
 
-  // TODO: remove in favour of ChildSchoolRelations once all bugs are fixed
+  /** current school (as determined through the ChildSchoolRelation docs) set during loading through ChildrenService */
   schoolId: string = '';
+  /** current class (as determined through the ChildSchoolRelation docs) set during loading through ChildrenService */
   schoolClass: string = '';
 
   @DatabaseField() address: string = '';
