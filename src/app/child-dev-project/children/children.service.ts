@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { from, Observable, Subject } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { Child } from './model/child';
 import { EntityMapperService } from '../../core/entity/entity-mapper.service';
 import { AttendanceMonth } from '../attendance/model/attendance-month';
@@ -8,7 +8,6 @@ import { Note } from '../notes/model/note';
 import { EducationalMaterial } from '../educational-material/model/educational-material';
 import { Aser } from '../aser/model/aser';
 import { ChildSchoolRelation } from './model/childSchoolRelation';
-import { School } from '../schools/model/school';
 import { HealthCheck } from '../health-checkup/model/health-check';
 import { EntitySchemaService } from '../../core/entity/schema/entity-schema.service';
 import { ChildPhotoService } from './child-photo-service/child-photo.service';
@@ -267,7 +266,7 @@ export class ChildrenService {
         by_child: {
           map: '(doc) => { ' +
             'if (!doc._id.startsWith("' + Note.ENTITY_TYPE + '")) return;' +
-            'doc.children.forEach(attendanceModel => emit(attendanceModel.childID)); ' +
+            'doc.children.forEach(childId => emit(childId)); ' +
             '}',
         },
       },

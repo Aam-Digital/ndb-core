@@ -17,6 +17,7 @@ import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.s
 import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
 import { Database } from '../../../core/database/database';
 import { SessionService } from 'app/core/session/session.service';
+import { User } from '../../../core/user/user';
 
 
 function generateChildAttendanceModels() {
@@ -56,6 +57,9 @@ describe('NoteDetailsComponent', () => {
   let fixture: ComponentFixture<NoteDetailsComponent>;
 
   beforeEach( () => {
+    const mockChildrenService: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj('mockChildrenService', ['getChildren']);
+    mockChildrenService.getChildren.and.returnValue(of([]));
+
     TestBed.configureTestingModule({
       declarations: [],
       imports: [
@@ -65,13 +69,13 @@ describe('NoteDetailsComponent', () => {
         EntitySchemaService,
         EntityMapperService,
         ConfirmationDialogService,
-        ChildrenService,
+        { provide: ChildrenService, useValue: mockChildrenService },
         {provide: Router, useValue: mockedRouter},
         {provide: MatDialogRef, useValue: mockDialogRef},
         {provide: MAT_DIALOG_DATA, useValue: testData},
         {provide: Database, useValue: mockedDatabase},
         FormBuilder,
-        SessionService,
+        { provide: SessionService, useValue: { getCurrentUser: () => new User('') } },
       ],
     })
       .compileComponents();

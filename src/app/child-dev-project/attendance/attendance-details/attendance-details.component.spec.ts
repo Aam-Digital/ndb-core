@@ -23,6 +23,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AttendanceDayBlockComponent } from '../attendance-days/attendance-day-block.component';
 import { CloudFileService } from 'app/core/webdav/cloud-file-service.service';
 import { MockCloudFileService } from 'app/core/webdav/mock-cloud-file-service';
+import { of } from 'rxjs';
 
 describe('AttendanceDetailsComponent', () => {
   let component: AttendanceDetailsComponent;
@@ -40,7 +41,7 @@ describe('AttendanceDetailsComponent', () => {
         UiHelperModule, EntityModule],
       providers: [
         {provide: Database, useClass: MockDatabase},
-        {provide: MatDialogRef, useValue: {beforeClose: () => { return { subscribe: () => {}}; }}},
+        {provide: MatDialogRef, useValue: {beforeClosed: () => of({})} },
         {provide: MAT_DIALOG_DATA, useValue: {entity: att}},
         {provide: ChildrenService, useClass: ChildrenService},
         {provide: CloudFileService, useClass: MockCloudFileService},

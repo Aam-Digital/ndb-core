@@ -1,16 +1,6 @@
-<div fxLayout='row wrap' fxLayoutGap='20px'>
-  <div fxFlex>
-    <app-child-select [valueAsIds]='entity.getChildIDs()'
-                      (newIdAdded)="entity.addChild($event);recordForm.form.markAsDirty()"
-                      (idRemoved)="entity.removeChild($event);recordForm.form.markAsDirty()"
-                      class='input-medium'>
-    </app-child-select>
-  </div>
-</div>
 
 <!--Small screen: display the notes in tabs-->
-<div *ngIf="entity.isMeeting() && smallScreen" fxLayout="row wrap" fxLayoutGap="20px">
-
+<div *ngIf="smallScreen" fxLayout="row wrap" fxLayoutGap="20px">
   <mat-tab-group mat-align-tabs="center" fxFlex>
     <mat-tab label="Present" class="padding-container" >
       <app-child-presence-list [note]="entity"
@@ -25,11 +15,10 @@
                                fxFlex></app-child-presence-list>
     </mat-tab>
   </mat-tab-group>
-
 </div>
 
 <!--Big screen: display the notes as two lists-->
-<div *ngIf="entity.isMeeting() && !smallScreen" fxLayout="row wrap" fxLayoutGap="20px">
+<div *ngIf="!smallScreen" fxLayout="row wrap" fxLayoutGap="20px">
   <app-child-presence-list [note]="entity"
                            [recordForm]="recordForm"
                            [present]="true"

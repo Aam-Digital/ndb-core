@@ -219,7 +219,7 @@ export class ChildDetailsComponent implements OnInit {
   }
 
   /**
-   * hands over the selected file to the cloudFileService together with the childID
+   * hands over the selected file to the cloudFileService together with the childId
    * @param event The event of the file upload dialog
    */
   async uploadChildPhoto(event) {

@@ -17,7 +17,7 @@
 
 
 import { MeetingNoteAttendance } from '../meeting-note-attendance';
-import { InteractionTypes } from '../interaction-types.enum';
+import { INTERACTION_TYPE_COLORS, InteractionTypes } from '../interaction-types.enum';
 import { DatabaseEntity } from '../../../core/entity/database-entity.decorator';
 import { Entity } from '../../../core/entity/entity';
 import { DatabaseField } from '../../../core/entity/database-field.decorator';
@@ -25,21 +25,10 @@ import { WarningLevel, WarningLevelColor } from '../../warning-level';
 
 @DatabaseEntity('Note')
 export class Note extends Entity {
-
-  // The values that 'Type of interaction' can have in the UI / The values that category can have here
-  static INTERACTION_TYPES = Object.values(InteractionTypes);
-  // maps all interaction types that are displayed with a specific color in several components
-  private static interactionsColorMap: Map<InteractionTypes, string> = new Map([
-    [InteractionTypes.GUARDIAN_MEETING, '#E1F5FE'],
-    [InteractionTypes.CHILDREN_MEETING, '#E1F5FE'],
-    [InteractionTypes.EXCURSION, '#E1F5FE'],
-    [InteractionTypes.DISCUSSION, '#E1BEE7'],
-    [InteractionTypes.ANNUAL_SURVEY, '#FFFDE7'],
-    [InteractionTypes.DAILY_ROUTINE, '#F1F8E9'],
-  ]);
-
-  // An array of triplets containing information about the child and it's attendance
-  @DatabaseField({dataType: 'meetingnoteattendance'}) children: MeetingNoteAttendance[] = [];
+  /** IDs of Child entities linked with this note */
+  @DatabaseField() children: string[] = [];
+  /** An array of triplets containing information about the child and it's attendance */
+  @DatabaseField() attendances: MeetingNoteAttendance[] = [];
   @DatabaseField() date: Date;
   @DatabaseField() subject: string = '';
   @DatabaseField() text: string = '';
@@ -48,36 +37,8 @@ export class Note extends Entity {
   @DatabaseField({dataType: 'string'}) warningLevel: WarningLevel = WarningLevel.OK;
 
 
-  getWarningLevel (): WarningLevel {
+  getWarningLevel(): WarningLevel {
     return this.warningLevel;
-  }
-
-  /**
-   * returns whether a specific child with given childID is linked to this not
-   * @param childId The childID to check for
-   */
-
-  isLinkedWithChild(childId: string): boolean {
-    return this.getChildIDs().includes(childId);
-  }
-
-  /**
-   * returns whether or not this note's contents describe a meeting
-   */
-
-  isMeeting(): boolean {
-    return  this.category === InteractionTypes.GUARDIAN_MEETING ||
-            this.category === InteractionTypes.CHILDREN_MEETING ||
-            this.category === InteractionTypes.EXCURSION;
-  }
-
-  /**
-   * returns the children that were either present or absent
-   * @param presence true to get the children that were present, false to get the children that were absent
-   */
-
-  childrenWithPresence(presence: boolean): MeetingNoteAttendance[] {
-    return this.children.filter(attendance => attendance.present === presence);
   }
 
   public getColor() {
@@ -88,45 +49,43 @@ export class Note extends Entity {
       return WarningLevelColor(WarningLevel.WARNING);
     }
 
-    const color = Note.interactionsColorMap.get(this.category);
+    const color = INTERACTION_TYPE_COLORS.get(this.category);
     return color === undefined ? '' : color;
   }
 
   /**
-   * return a specific color for a certain child, represented by it's id.
-   * This color is different than the <code>getColor()</code>-Method, if
-   * the entityId corresponds to a certain child in this note and this note's category is a meeting
-   * @param entityId The id of the child to get the color for
+   * whether a specific child with given childId is linked to this not
+   * @param childId The childId to check for
    */
-
-  public getColorForId(entityId: string) {
-    // if the child is not part of this note or this is not a meeting-note, return the default color
-    if (!this.isLinkedWithChild(entityId) || !this.isMeeting()) {
-      return this.getColor();
-    }
-    // if the child is present, return a green color
-    if (this.isPresent(entityId)) {
-      return WarningLevelColor(WarningLevel.OK);
-    }
-    return WarningLevelColor(WarningLevel.URGENT);
+  isLinkedWithChild(childId: string): boolean {
+    return this.children.includes(childId);
   }
 
   /**
-   * returns the children linked to this note as string-id's
+   * whether or not this note's contents describe a meeting
    */
-  getChildIDs(): string[] {
-    return this.children.map(e => e.childID);
+  isMeeting(): boolean {
+    return  this.category === InteractionTypes.GUARDIAN_MEETING ||
+            this.category === InteractionTypes.CHILDREN_MEETING ||
+            this.category === InteractionTypes.EXCURSION;
   }
 
   /**
-   * returns whether or not a specific child was present or not.
+   * returns the children that were either present or absent
+   * @param presence true to get the children that were present, false to get the children that were absent
+   */
+  childrenWithPresence(presence: boolean): MeetingNoteAttendance[] {
+    return this.attendances.filter(attendance => attendance.present === presence);
+  }
+
+  /**
+   * whether or not a specific child was present or not.
    * This does not check whether or not this note is a meeting and will not return
    * a sensible value, if this child couldn't be found
    * @param childId The id of the child to check for
    */
-
   isPresent(childId: string): boolean {
-    const child = this.children.find(attendance => attendance.childID === childId);
+    const child = this.attendances.find(attendance => attendance.childId === childId);
     if (child !== undefined) { return child.present; }
   }
 
@@ -134,25 +93,24 @@ export class Note extends Entity {
    * removes a specific child from this note
    * @param childId The id of the child to exclude from the notes
    */
-
   removeChild(childId: string) {
-    this.children = this.children.filter(attendance => attendance.childID !== childId);
+    this.children.splice(this.children.indexOf(childId), 1);
+    this.attendances.splice(this.attendances.findIndex(attendance => attendance.childId !== childId), 1);
   }
 
   /**
    * adds a new child to this note
    * @param childId The id of the child to add to the notes
    */
-
   addChild(childId: string) {
-    this.children.push(new MeetingNoteAttendance(childId));
+    this.children.push(childId);
+    this.attendances.push(new MeetingNoteAttendance(childId));
   }
 
   /**
    * adds multiple children to this note
    * @param childIds The id's of the children to add
    */
-
   addChildren(...childIds: string[]) {
     childIds.forEach(child => this.addChild(child));
   }
@@ -163,9 +121,8 @@ export class Note extends Entity {
    * If the child was present, the presence-field will be false for that child
    * @param childId The ID of the child
    */
-
   togglePresence(childId: string) {
-    const child = this.children.find(attendance => attendance.childID === childId );
+    const child = this.attendances.find(attendance => attendance.childId === childId );
     if (child !== undefined) { child.present = !child.present; }
   }
 }

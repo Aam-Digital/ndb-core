@@ -70,25 +70,34 @@
 
     </div>
 
-  <!-- Primary information of Note -->
-  <div class='mat-elevation-z2 primary-section-elevated form-section-primary'>
-    <div fxLayout='row wrap' fxLayoutGap='20px'>
-      <div fxFlex>
-        <mat-form-field class='input-medium'>
-          <input matInput placeholder="Topic / Summary" name="subject" type="text" [(ngModel)]="entity.subject">
+    <!-- Primary information of Note -->
+    <div class='mat-elevation-z2 primary-section-elevated form-section-primary'>
+      <div fxLayout='row wrap' fxLayoutGap='20px'>
+        <div fxFlex>
+          <mat-form-field class='input-medium'>
+            <input matInput placeholder="Topic / Summary" name="subject" type="text" [(ngModel)]="entity.subject">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div fxLayout='row wrap' fxLayoutGap='20px'>
+        <mat-form-field class='input-max'>
+        <textarea matInput placeholder="Notes" name="notes" [(ngModel)]="entity.text"
+                  cdkTextareaAutosize cdkAutosizeMinRows="4"></textarea>
         </mat-form-field>
       </div>
     </div>
 
     <div fxLayout='row wrap' fxLayoutGap='20px'>
-      <mat-form-field class='input-max'>
-      <textarea matInput placeholder="Notes" name="notes" [(ngModel)]="entity.text"
-                cdkTextareaAutosize cdkAutosizeMinRows="4"></textarea>
-      </mat-form-field>
+      <div fxFlex>
+        <app-child-select [valueAsIds]='entity.children'
+                          (newIdAdded)="entity.addChild($event);recordForm.form.markAsDirty()"
+                          (idRemoved)="entity.removeChild($event);recordForm.form.markAsDirty()"
+                          class='input-medium'>
+        </app-child-select>
+      </div>
     </div>
-  </div>
-
-  <app-note-presence-list [recordForm]="recordForm" [entity]="entity"></app-note-presence-list>
+    <app-note-presence-list *ngIf="entity.isMeeting()" [recordForm]="recordForm" [entity]="entity"></app-note-presence-list>
 
   </mat-dialog-content>
 

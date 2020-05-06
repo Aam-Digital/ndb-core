@@ -8,16 +8,17 @@ import { Entity } from '../../../core/entity/entity';
 
 
 function createAttendanceModels(): Array<MeetingNoteAttendance> {
-  const a1 = new MeetingNoteAttendance('1').presence(true).remark('not empty');
-  const a2 = new MeetingNoteAttendance('4').presence(false).remark('remark one');
-  const a3 = new MeetingNoteAttendance('7').presence(true).remark('');
+  const a1 = new MeetingNoteAttendance('1', true, 'not empty');
+  const a2 = new MeetingNoteAttendance('4', false, 'remark one');
+  const a3 = new MeetingNoteAttendance('7', true, '');
 
   return [a1, a2, a3];
 }
 
 function createTestModel(): Note {
   const n1 = new Note('2');
-  n1.children = createAttendanceModels();
+  n1.attendances = createAttendanceModels();
+  n1.children = n1.attendances.map(a => a.childId);
   n1.date = new Date();
   n1.subject = 'Note Subject';
   n1.text = 'Note text';
@@ -50,7 +51,8 @@ describe('Note', () => {
     const expectedData = {
       _id: ENTITY_TYPE + ':' + id,
 
-      children: [new MeetingNoteAttendance('1'), new MeetingNoteAttendance('2'), new MeetingNoteAttendance('5')],
+      children: [ '1', '2', '5'],
+      attendances: [new MeetingNoteAttendance('1'), new MeetingNoteAttendance('2'), new MeetingNoteAttendance('5')],
       date: new Date(),
       subject: 'Note Subject',
       text: 'Note text',
@@ -87,7 +89,7 @@ describe('Note', () => {
   it('should return the correct childIds', function () {
     // sort since we don't care about the order
     const n3 = createTestModel();
-    expect(n3.getChildIDs().sort()).toEqual(['1', '4', '7'].sort());
+    expect(n3.children.sort()).toEqual(['1', '4', '7'].sort());
   });
 
   it('should shrink in size after removing', function () {
@@ -95,6 +97,7 @@ describe('Note', () => {
     const previousLength = n4.children.length;
     n4.removeChild('1');
     expect(n4.children.length).toBe(previousLength - 1);
+    expect(n4.attendances.length).toBe(previousLength - 1);
   });
 
   it('should increase in size after adding', function () {
@@ -102,17 +105,18 @@ describe('Note', () => {
     const previousLength = n5.children.length;
     n5.addChildren('2', '5');
     expect(n5.children.length).toBe(previousLength + 2);
+    expect(n5.attendances.length).toBe(previousLength + 2);
   });
 
   it('should toggle presence', function () {
     const n6 = createTestModel();
     n6.togglePresence('1');
-    expect(n6.children[0].present).toBe(false);
+    expect(n6.attendances[0].present).toBe(false);
   });
 
   it('should never return an undefined color', function () {
     const n7 = createTestModel();
-    Note.INTERACTION_TYPES.forEach(type => {
+    Object.values(InteractionTypes).forEach(type => {
       n7.category = type;
       expect(n7.getColor()).toBeDefined();
     });

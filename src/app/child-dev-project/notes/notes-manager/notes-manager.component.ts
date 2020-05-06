@@ -96,8 +96,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initCategoryFilter() {
-
-    Note.INTERACTION_TYPES.forEach(interaction => {
+    Object.values(InteractionTypes).forEach(interaction => {
       this.categoryFS.options.push({key: interaction,
       label: interaction,
       filterFun: (note: Note) => {

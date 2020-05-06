@@ -3,19 +3,11 @@ export class MeetingNoteAttendance {
 
   present: boolean = true;
   remarks: string = '';
-  childID: string;
+  childId: string;
 
-  constructor(childID: string) {
-    this.childID = childID;
-  }
-
-  presence(presence: boolean): MeetingNoteAttendance {
+  constructor(childId: string, presence: boolean = true, remark: string = '') {
+    this.childId = childId;
     this.present = presence;
-    return this;
-  }
-
-  remark(remarks: string): MeetingNoteAttendance {
-    this.remarks = remarks;
-    return this;
+    this.remarks = remark;
   }
 }

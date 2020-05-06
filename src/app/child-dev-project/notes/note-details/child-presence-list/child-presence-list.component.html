@@ -3,8 +3,8 @@
   <mat-expansion-panel *ngFor="let child of note.childrenWithPresence(present)">
 
     <mat-expansion-panel-header>
-      <app-child-block [entityId]="child.childID"></app-child-block>
-      <button mat-icon-button (click)="note.togglePresence(child.childID);recordForm.form.markAsDirty()">
+      <app-child-block [entityId]="child.childId"></app-child-block>
+      <button mat-icon-button (click)="note.togglePresence(child.childId);recordForm.form.markAsDirty()">
         <span *ngIf="present" class="fa fa-arrow-right"></span>
         <span *ngIf="!present" class="fa fa-arrow-left"></span>
       </button>

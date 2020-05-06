@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Note } from '../model/note';
 import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
 import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
+import { InteractionTypes } from '../interaction-types.enum';
 
 @Component({
   selector: 'app-note-details',
@@ -14,7 +15,7 @@ export class NoteDetailsComponent extends AbstractDetailsComponent<Note> {
 
   smallScreen: boolean;
 
-  interactionTypes = Note.INTERACTION_TYPES;
+  interactionTypes = Object.values(InteractionTypes);
 
   constructor(@Inject(MAT_DIALOG_DATA) data: any,
               dialogRef: MatDialogRef<NoteDetailsComponent>,
