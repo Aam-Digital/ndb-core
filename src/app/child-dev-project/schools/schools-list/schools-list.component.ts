@@ -4,7 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { School } from '../model/school';
 import { SchoolsService } from '../schools.service';
 import { Router } from '@angular/router';
-import { FilterSelection } from '../../../core/ui-helper/filter-selection/filter-selection';
+import { FilterSelection } from '../../../core/filter/filter-selection/filter-selection';
 
 @Component({
   selector: 'app-schools-list',

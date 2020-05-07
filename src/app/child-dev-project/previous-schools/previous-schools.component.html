@@ -1,5 +1,5 @@
 <app-entity-subrecord
-  (changedRecordsInEntitySubrecordEvent)="changedRecordInEntitySubrecord()"
+  (changedRecordsInEntitySubrecordEvent)="changedRecordInEntitySubrecord.emit()"
   [records]="records"
   [columns]="columns"
   [newRecordFactory]="generateNewRecordFactory()"

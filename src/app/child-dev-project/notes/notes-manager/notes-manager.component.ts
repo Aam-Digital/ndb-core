@@ -8,10 +8,10 @@ import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { NoteDetailsComponent } from '../note-details/note-details.component';
 import { InteractionTypes } from '../interaction-types.enum';
 import { MatPaginator } from '@angular/material/paginator';
-import { FilterSelection } from '../../../core/ui-helper/filter-selection/filter-selection';
 import { WarningLevel } from '../../warning-level';
-import { SessionService } from '../../../core/session/session.service';
 import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
+import { FilterSelection } from '../../../core/filter/filter-selection/filter-selection';
+import { SessionService } from '../../../core/session/session-service/session.service';
 
 @Component({
   selector: 'app-notes-manager',
@@ -67,6 +67,9 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
               private entityMapperService: EntityMapperService) {}
 
   ngOnInit() {
+    // activate default filter to current week
+    this.dateFS.selectedOption = this.dateFS.options[0].key;
+
     this.entityMapperService.loadType<Note>(Note).then(notes => {
       this.sortAndAdd(notes);
     });
@@ -78,6 +81,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
         this.displayColumnGroup('mobile');
       }
     });
+
     this.initCategoryFilter();
     this.notesDataSource.paginator = this.paginator;
   }
@@ -96,12 +100,18 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
   }
 
   private initCategoryFilter() {
+    this.categoryFS.options = [
+      { key: '', label: '', filterFun: () => true },
+    ];
+
     Object.values(InteractionTypes).forEach(interaction => {
-      this.categoryFS.options.push({key: interaction,
-      label: interaction,
-      filterFun: (note: Note) => {
-        return interaction === InteractionTypes.NONE ? true : note.category === interaction;
-      }});
+      this.categoryFS.options.push({
+        key: interaction,
+        label: interaction,
+        filterFun: (note: Note) => {
+          return interaction === InteractionTypes.NONE ? true : note.category === interaction;
+        },
+      });
     });
 
     this.applyFilterSelections();
@@ -136,6 +146,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
 
     this.notesDataSource.data = filteredData;
   }
+
 
   addNoteClick() {
     const newNote = new Note(Date.now().toString());

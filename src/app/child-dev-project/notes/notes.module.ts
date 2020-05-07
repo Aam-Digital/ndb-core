@@ -33,8 +33,9 @@ import { MatTreeModule } from '@angular/material/tree';
 import { ChildPresenceListComponent } from './note-details/child-presence-list/child-presence-list.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { UiHelperModule } from '../../core/ui-helper/ui-helper.module';
 import { NotePresenceListComponent } from './note-details/note-presence-list/note-presence-list.component';
+import { EntitySubrecordModule } from '../../core/entity-subrecord/entity-subrecord.module';
+import { ConfirmationDialogModule } from '../../core/confirmation-dialog/confirmation-dialog.module';
 
 
 @NgModule({
@@ -47,7 +48,8 @@ import { NotePresenceListComponent } from './note-details/note-presence-list/not
   imports: [
     CommonModule,
     FormsModule,
-    UiHelperModule,
+    EntitySubrecordModule,
+    ConfirmationDialogModule,
     FlexLayoutModule,
     RouterModule,
     MatFormFieldModule,

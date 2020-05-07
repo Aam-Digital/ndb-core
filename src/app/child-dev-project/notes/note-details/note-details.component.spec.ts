@@ -14,10 +14,10 @@ import { Child } from '../../children/model/child';
 import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 import { MockDatabase } from '../../../core/database/mock-database';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
-import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
 import { Database } from '../../../core/database/database';
-import { SessionService } from 'app/core/session/session.service';
 import { User } from '../../../core/user/user';
+import { ConfirmationDialogService } from '../../../core/confirmation-dialog/confirmation-dialog.service';
+import { SessionService } from '../../../core/session/session-service/session.service';
 
 
 function generateChildAttendanceModels() {
@@ -52,7 +52,6 @@ const mockedDatabase = new MockDatabase();
 const mockedRouter = {navigate(commands: any[], extras?: NavigationExtras) {return Promise.resolve(); }};
 
 describe('NoteDetailsComponent', () => {
-
   let component: NoteDetailsComponent;
   let fixture: ComponentFixture<NoteDetailsComponent>;
 

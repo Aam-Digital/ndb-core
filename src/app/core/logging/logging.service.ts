@@ -12,32 +12,56 @@ Sentry.init({
 
 
 /* tslint:disable:no-console */
+
+/**
+ * Centrally managed logging to allow log messages to be filtered by level and even sent to a remote logging service
+ * that allows developers to monitor and analyse problems.
+ *
+ * Logging to the remote monitoring server is set only for warnings and errors.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class LoggingService {
 
-  constructor() {
-  }
-
-
+  /**
+   * Log the message with "debug" level - for very detailed, non-essential information.
+   * @param message
+   */
   public debug(message: any) {
     this.log(message, LogLevel.DEBUG);
   }
 
+  /**
+   * Log the message with "info" level - for relevant information that occurs during regular functioning of the app.
+   * @param message
+   */
   public info(message: any) {
     this.log(message, LogLevel.INFO);
   }
 
+  /**
+   * Log the message with "warning" level - for unexpected events that the app can still handle gracefully.
+   * @param message
+   */
   public warn(message: any) {
     this.log(message, LogLevel.WARN);
   }
 
+  /**
+   * Log the message with "error" level - for unexpected critical events that cannot be handled and will affect functions.
+   * @param message
+   */
   public error(message: any) {
     this.log(message, LogLevel.ERROR);
   }
 
 
+  /**
+   * Generic logging of a message.
+   * @param message Message to be logged
+   * @param logLevel Optional log level - default is "info"
+   */
   public log(message: any, logLevel: LogLevel = LogLevel.INFO) {
     this.logToConsole(message, logLevel);
 

@@ -1,10 +1,10 @@
 import { Component, Inject } from '@angular/core';
-import { AbstractDetailsComponent } from '../../../core/ui-helper/AbstractDetailsComponent';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Note } from '../model/note';
-import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { ConfirmationDialogService } from '../../../core/confirmation-dialog/confirmation-dialog.service';
 import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 import { InteractionTypes } from '../interaction-types.enum';
+import { AbstractDetailsComponent } from '../../../core/entity-subrecord/AbstractDetailsComponent';
 
 @Component({
   selector: 'app-note-details',

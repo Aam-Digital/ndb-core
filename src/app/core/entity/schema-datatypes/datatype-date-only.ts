@@ -18,8 +18,13 @@
 import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
 
 /**
- * Converter to serialize a Date object to a simple date string (YYYY-MM-dd) discarding the time.
- * Use through the EntitySchema system by annotating a property with `@DatabaseField({ dataType: 'date-only' })`
+ * Datatype for the EntitySchemaService transforming Date values to/from a date string format ("YYYY-mm-dd").
+ *
+ * Throws an exception if the property is set to something that is not a Date instance and cannot be cast to Date either.
+ *
+ * For example:
+ *
+ * `@DatabaseField({dataType: 'date-only'}) myDate: Date = new Date('2020-01-15'); // will be "2020-01-15" (without time) in the database`
  */
 export const dateOnlyEntitySchemaDatatype: EntitySchemaDatatype = {
   name: 'date-only',
@@ -29,7 +34,9 @@ export const dateOnlyEntitySchemaDatatype: EntitySchemaDatatype = {
       return undefined;
     }
 
-    return dateObjectToSimpleDateString(value);
+    return value.getFullYear() + '-'
+      + (value.getMonth() + 1).toString().padStart(2, '0') + '-'
+      + value.getDate().toString().padStart(2, '0');
   },
 
   transformToObjectFormat: (value) => {
@@ -44,7 +51,3 @@ export const dateOnlyEntitySchemaDatatype: EntitySchemaDatatype = {
     return date;
   },
 };
-
-function dateObjectToSimpleDateString(value: Date) {
-  return value.getFullYear() + '-' + (value.getMonth() + 1).toString().padStart(2, '0') + '-' + value.getDate().toString().padStart(2, '0');
-}

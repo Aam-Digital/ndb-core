@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CloudFileService } from './cloud-file-service.service';
-import { SessionService } from '../session/session.service';
+import { SessionService } from '../session/session-service/session.service';
 import { User } from '../user/user';
 import { AppConfig } from '../app-config/app-config';
 import webdav from 'webdav';
@@ -16,7 +16,7 @@ describe('CloudFileService', () => {
   beforeEach(() => {
     AppConfig.settings = {
       site_name: '',
-      database: {name: 'unit-tests', remote_url: '', timeout: 60000, outdated_threshold_days: 0, useTemporaryDatabase: true},
+      database: {name: 'unit-tests', remote_url: '', timeout: 60000, useTemporaryDatabase: true},
       webdav: {remote_url: 'test-url'},
     };
 

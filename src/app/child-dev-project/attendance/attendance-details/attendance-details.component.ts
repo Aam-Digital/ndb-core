@@ -1,9 +1,9 @@
 import { Component, Inject } from '@angular/core';
 import { AttendanceMonth } from '../model/attendance-month';
-import { AbstractDetailsComponent } from '../../../core/ui-helper/AbstractDetailsComponent';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
-import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { AbstractDetailsComponent } from '../../../core/entity-subrecord/AbstractDetailsComponent';
+import { ConfirmationDialogService } from '../../../core/confirmation-dialog/confirmation-dialog.service';
 
 @Component({
   selector: 'app-attendance-details',

@@ -38,6 +38,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { PrimaryActionComponent } from './primary-action/primary-action.component';
 import { NotesModule } from '../../child-dev-project/notes/notes.module';
 
+/**
+ * The core user interface structure that ties different components together into the overall app layout.
+ */
 @NgModule({
   imports: [
     CommonModule,

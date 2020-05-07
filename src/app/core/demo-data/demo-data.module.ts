@@ -23,35 +23,31 @@ import {
   NgModule,
   ValueProvider,
 } from '@angular/core';
-import { DemoSchoolGenerator } from '../../child-dev-project/schools/demo-school-generator.service';
-import { DemoChildGenerator } from '../../child-dev-project/children/demo-data-generators/demo-child-generator.service';
-import { DemoChildSchoolRelationGenerator } from '../../child-dev-project/children/demo-data-generators/demo-child-school-relation-generator.service';
-import { DemoAttendanceGenerator } from '../../child-dev-project/attendance/demo-attendance-generator.service';
-import { DemoNoteGeneratorService } from '../../child-dev-project/notes/demo-data/demo-note-generator.service';
-import { DemoWidgetGeneratorService } from '../../child-dev-project/dashboard/demo-widget-generator.service';
-import { DemoAserGeneratorService } from '../../child-dev-project/aser/demo-aser-generator.service';
-import { DemoEducationalMaterialGeneratorService } from '../../child-dev-project/educational-material/demo-educational-material-generator.service';
-import { DemoHealthCheckGeneratorService } from '../../child-dev-project/health-checkup/demo-data/demo-health-check-generator.service';
 import { DemoDataGeneratingProgressDialogComponent } from './demo-data-generating-progress-dialog.component';
-import { DemoUserGeneratorService } from '../user/demo-user-generator.service';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 
-
-const DEFAULT_DEMO_GENERATOR_PROVIDERS = [
-  ...DemoChildGenerator.provider({count: 150}),
-  ...DemoSchoolGenerator.provider({count: 8}),
-  ...DemoChildSchoolRelationGenerator.provider(),
-  ...DemoAttendanceGenerator.provider(),
-  ...DemoNoteGeneratorService.provider({minNotesPerChild: 2, maxNotesPerChild: 10, groupNotes: 3}),
-  ...DemoAserGeneratorService.provider(),
-  ...DemoEducationalMaterialGeneratorService.provider({minCount: 3, maxCount: 8}),
-  ...DemoHealthCheckGeneratorService.provider(),
-
-  ...DemoWidgetGeneratorService.provider(),
-  ...DemoUserGeneratorService.provider(),
-];
-
+/**
+ * Generate realist mock entities for testing and demo purposes.
+ *
+ * Import this module in the root AppModule to automatically write demo data into the database on loading of the module.
+ * You need to pass providers for {@link DemoDataGenerator} implementations to the `forRoot()` method to register them.
+ *
+  ```
+  DemoDataModule.forRoot([
+     ...DemoChildGenerator.provider({count: 150}),
+     { provide: DemoUserGeneratorService, useClass: DemoUserGeneratorService }
+  ])
+  ```
+ *
+ * In addition to importing the `DemoDataModule` you need to call the {@link DemoDataService}'s `publishDemoData()` method
+ * to actually start the data generation.
+ * Use `DemoDataGeneratingProgressDialogComponent.loadDemoDataWithLoadingDialog(this.dialog);` passing a `MatDialog` service
+ * to display a dialog box to the user and automatically handle the data generation.
+ *
+ * To implement your own demo data generator, refer to the How-To Guides:
+ * - [How to Generate Demo Data]{@link /additional-documentation/how-to-guides/generate-demo-data.html}
+ */
 @NgModule({
   imports: [
     MatProgressBarModule,
@@ -62,8 +58,14 @@ const DEFAULT_DEMO_GENERATOR_PROVIDERS = [
   entryComponents: [DemoDataGeneratingProgressDialogComponent],
 })
 export class DemoDataModule {
+
+  /**
+   * Get a provider for the module while also passing the DemoDataGenerator services to be registered with the module.
+   * @param demoDataGeneratorProviders An array of providers of DemoDataGenerator service implementations.
+   *        These generators will be registered and called when demo data generation is triggered.
+   */
   static forRoot(
-    demoDataGeneratorProviders: (ValueProvider|ClassProvider|FactoryProvider)[] = DEFAULT_DEMO_GENERATOR_PROVIDERS,
+    demoDataGeneratorProviders: (ValueProvider|ClassProvider|FactoryProvider)[],
   ): ModuleWithProviders {
     return {
       ngModule: DemoDataModule,

@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { EducationalMaterial } from '../model/educational-material';
-import { ColumnDescription, ColumnDescriptionInputType } from '../../../core/ui-helper/entity-subrecord/column-description';
+import { ColumnDescription } from '../../../core/entity-subrecord/entity-subrecord/column-description';
 import { ChildrenService } from '../../children/children.service';
+import { ColumnDescriptionInputType } from '../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum';
 
 
 @Component({

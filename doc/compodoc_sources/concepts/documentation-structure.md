@@ -22,3 +22,6 @@ following the concept laid out at **www.divio.com/blog/documentation**:
    - describe the machinery
    - accurate and complete
    - _Analogy: a reference encyclopaedia article_
+
+A good reference and repository of documentation templates also is
+[The Good Docs Project](https://thegooddocsproject.dev/).

@@ -4,20 +4,28 @@ import { AlertService } from '../../alerts/alert.service';
 import { Alert } from '../../alerts/alert';
 import FileSaver from 'file-saver';
 import { BackupService } from '../services/backup.service';
-import { ConfirmationDialogService } from '../../ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { ConfirmationDialogService } from '../../confirmation-dialog/confirmation-dialog.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import PouchDB from 'pouchdb-browser';
 import { ChildPhotoUpdateService } from '../services/child-photo-update.service';
 
+/**
+ * Admin GUI giving administrative users different options/actions.
+ */
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss'],
 })
 export class AdminComponent implements OnInit {
+  /** app-wide configuration */
   appConfig = AppConfig.settings;
-  db;
+
+  /** all alerts */
   alerts: Alert[];
+
+  /** direct database instance */
+  private db;
 
   constructor(private alertService: AlertService,
               private backupService: BackupService,
@@ -31,20 +39,31 @@ export class AdminComponent implements OnInit {
     this.db = new PouchDB(AppConfig.settings.database.name);
   }
 
+  /**
+   * Trigger an automatic detection & update of Child entities' photo filenames.
+   */
   updatePhotoFilenames() {
     this.childPhotoUpdateService.updateChildrenPhotoFilenames();
   }
 
+  /**
+   * Send a reference of the PouchDB to the browser's developer console for real-time debugging.
+   */
   debugDatabase() {
     console.log(this.db);
   }
 
-
+  /**
+   * Download a full backup of the database as (json) file.
+   */
   saveBackup() {
     this.backupService.getJsonExport()
       .then(bac => this.startDownload(bac, 'text/json', 'backup.json'));
   }
 
+  /**
+   * Download a full export of the database as csv file.
+   */
   saveCsvExport() {
     this.backupService.getCsvExport()
       .then(csv => this.startDownload(csv, 'text/csv', 'export.csv'));
@@ -67,7 +86,10 @@ export class AdminComponent implements OnInit {
     );
   }
 
-
+  /**
+   * Reset the database to the state from the loaded backup file.
+   * @param file The file object of the backup to be restored
+   */
   loadBackup(file) {
     const pRestorePoint = this.backupService.getJsonExport();
     const pLoadedData = this.readFile(file);
@@ -96,7 +118,10 @@ export class AdminComponent implements OnInit {
     });
   }
 
-
+  /**
+   * Add the data from the loaded file to the database, inserting and updating records.
+   * @param file The file object of the csv data to be loaded
+   */
   loadCsv(file) {
     const pRestorePoint = this.backupService.getJsonExport();
     const pLoadedData = this.readFile(file);
@@ -124,7 +149,9 @@ export class AdminComponent implements OnInit {
     });
   }
 
-
+  /**
+   * Reset the database removing all entities except user accounts.
+   */
   clearDatabase() {
     this.backupService.getJsonExport().then(restorePoint => {
       const dialogRef = this.confirmationDialog

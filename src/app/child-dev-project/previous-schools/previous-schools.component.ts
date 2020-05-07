@@ -1,18 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ChildSchoolRelation } from '../children/model/childSchoolRelation';
 import { ColumnDescription, ColumnDescriptionInputType } from '../../core/ui-helper/entity-subrecord/column-description';
 import { ChildrenService } from '../children/children.service';
 import { SchoolsService } from '../schools/schools.service';
 import * as uniqid from 'uniqid';
-import { ChildDetailsComponent } from '../children/child-details/child-details.component';
 
 @Component({
   selector: 'app-previous-schools',
   templateUrl: './previous-schools.component.html',
 })
-
 export class PreviousSchoolsComponent implements OnInit {
 
   /**
@@ -30,23 +27,20 @@ export class PreviousSchoolsComponent implements OnInit {
     return 'hsl(' + color + ', 70%, 65%)';
   }
 
-  childId: string;
+  @Input() childId: string;
+  @Output() changedRecordInEntitySubrecord = new EventEmitter<any>();
   records = new Array<ChildSchoolRelation>();
   columns = new Array<ColumnDescription>();
 
-  constructor(private route: ActivatedRoute,
-              private childrenService: ChildrenService,
-              private childDetailsComponent: ChildDetailsComponent,
-              private schoolsService: SchoolsService,
-              private datePipe: DatePipe) {
-  }
+  constructor(
+    private childrenService: ChildrenService,
+    private schoolsService: SchoolsService,
+    private datePipe: DatePipe,
+  ) { }
 
 
   ngOnInit() {
-    this.route.paramMap.subscribe(params => {
-      this.childId = params.get('id').toString();
-      this.loadData(this.childId);
-    });
+    this.loadData(this.childId);
   }
 
 
@@ -75,10 +69,6 @@ export class PreviousSchoolsComponent implements OnInit {
         null,
         (value: number) => { return {'color': PreviousSchoolsComponent.fromPercent(value)}; }),
     ];
-  }
-
-  changedRecordInEntitySubrecord() {
-    this.childDetailsComponent.changedRecordInEntitySubrecord();
   }
 
   generateNewRecordFactory() {

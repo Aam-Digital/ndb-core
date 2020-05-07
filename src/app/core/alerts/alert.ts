@@ -19,15 +19,28 @@ import { MatSnackBarRef } from '@angular/material/snack-bar';
 import { AlertComponent } from './alerts/alert.component';
 import { AlertDisplay } from './alert-display';
 
+/**
+ * An Alert message to be displayed to the user through the {@link AlertService}.
+ */
 export class Alert {
-  static SUCCESS = 'success';
+  /** Info messages provide feedback or information to the user without any required action */
   static INFO = 'info';
+  /** Warning messages provide feedback about unexpected or potentially unintended events */
   static WARNING = 'warning';
+  /** Danger messages inform about errors or critical conditions that the user should not overlook */
   static DANGER = 'danger';
+  /** Debug messages are not relevant to the normal user and only needed for developers troubleshooting errors */
   static DEBUG = 'debug';
 
+  /** reference to the ui displaying the message */
   public notificationRef: MatSnackBarRef<AlertComponent>;
 
+  /**
+   * Create a container of a new Alert message.
+   * @param message The text of the message
+   * @param type The type of the message
+   * @param display The display style (e.g. whether the alert has to be actively dismissed by the user)
+   */
   constructor(public message: string,
               public type: string,
               public display: AlertDisplay) {

@@ -8,12 +8,12 @@ import { Note } from '../model/note';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
-import { SessionService } from '../../../core/session/session.service';
 import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 import { MockDatabase } from '../../../core/database/mock-database';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 import { Database } from '../../../core/database/database';
 import { User } from '../../../core/user/user';
+import { SessionService } from '../../../core/session/session-service/session.service';
 
 const mockedRoute = {
   paramMap: Observable.create((observer) => observer.next({

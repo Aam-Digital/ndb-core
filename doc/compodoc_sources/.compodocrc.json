@@ -3,5 +3,7 @@
   "output": "doc/compodoc",
   "assetsFolder": "doc/images",
   "includes": "doc/compodoc_sources",
-  "includesName": "Developer Documentation"
+  "includesName": "Developer Documentation",
+  "disableLifeCycleHooks": true,
+  "disablePrivate": true
 }

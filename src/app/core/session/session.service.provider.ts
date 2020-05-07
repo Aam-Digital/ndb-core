@@ -15,21 +15,40 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { SyncedSessionService } from './synced-session.service';
+import { SyncedSessionService } from './session-service/synced-session.service';
 import { AppConfig } from '../app-config/app-config';
-import { MockSessionService } from './mock-session.service';
-import { SessionService } from './session.service';
+import { MockSessionService } from './session-service/mock-session.service';
+import { SessionService } from './session-service/session.service';
 import { AlertService } from '../alerts/alert.service';
 import { EntitySchemaService } from 'app/core/entity/schema/entity-schema.service';
+import { OnlineSessionService } from './session-service/online-session.service';
 
+/**
+ * Factory method for Angular DI provider of SessionService.
+ *
+ * see [sessionServiceProvider]{@link sessionServiceProvider} for details.
+ *
+ * @param alertService
+ * @param entitySchemaService
+ */
 export function sessionServiceFactory(alertService: AlertService, entitySchemaService: EntitySchemaService): SessionService {
   if (AppConfig.settings.database.useTemporaryDatabase) {
     return new MockSessionService(entitySchemaService);
   } else {
     return new SyncedSessionService(alertService, entitySchemaService);
+
+    // TODO: requires a configuration or UI option to select OnlineSession: https://github.com/Aam-Digital/ndb-core/issues/434
+    // return new OnlineSessionService(alertService, entitySchemaService);
   }
 }
 
+/**
+ * Provider for SessionService implementation based on the AppConfig settings.
+ *
+ * Set `"database": { "useTemporaryDatabase": true }` in your app-config.json
+ * to use the MockSessionService which will set up an in-memory database with demo data.
+ * Otherwise the SyncedSessionService is used, establishing a local and remote session and setting up sync between them.
+ */
 export const sessionServiceProvider = {
   provide: SessionService,
   useFactory: sessionServiceFactory,

@@ -4,8 +4,8 @@ import { NoteDetailsComponent } from '../note-details/note-details.component';
 import { DatePipe } from '@angular/common';
 import { ChildrenService } from '../../children/children.service';
 import { ColumnDescription, ColumnDescriptionInputType } from '../../../core/ui-helper/entity-subrecord/column-description';
-import { SessionService } from '../../../core/session/session.service';
 import moment from 'moment';
+import { SessionService } from '../../../core/session/session-service/session.service';
 
 
 /**
@@ -61,5 +61,4 @@ export class NotesOfChildComponent implements OnInit {
       return newNote;
     };
   }
-
 }

@@ -14,7 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 import { AlertService } from '../../../core/alerts/alert.service';
-import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { ConfirmationDialogService } from '../../../core/confirmation-dialog/confirmation-dialog.service';
 import { Database } from '../../../core/database/database';
 import { MockDatabase } from '../../../core/database/mock-database';
 import { Location } from '@angular/common';
@@ -23,6 +23,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service'; //  Necessary for usage of uniqid in the component
 import { ChildrenService } from 'app/child-dev-project/children/children.service';
 import { CloudFileService } from '../../../core/webdav/cloud-file-service.service';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('SchoolDetailComponent', () => {
   let component: SchoolDetailsComponent;
@@ -49,6 +50,7 @@ describe('SchoolDetailComponent', () => {
         MatCheckboxModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
+        RouterTestingModule,
         MatInputModule,
       ],
       providers: [

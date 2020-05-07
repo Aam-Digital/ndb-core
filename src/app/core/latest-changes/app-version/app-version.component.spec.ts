@@ -18,10 +18,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AppVersionComponent } from './app-version.component';
-import { MockSessionService } from '../../session/mock-session.service';
+import { MockSessionService } from '../../session/session-service/mock-session.service';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
-import { LoginState } from '../../session/login-state.enum';
-import { SessionService } from 'app/core/session/session.service';
+import { LoginState } from '../../session/session-states/login-state.enum';
+import { SessionService } from 'app/core/session/session-service/session.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { LatestChangesService } from '../latest-changes.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';

@@ -9,8 +9,8 @@ import { Database } from '../../../core/database/database';
 import { MockDatabase } from '../../../core/database/mock-database';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
-import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
-import { SessionService } from '../../../core/session/session.service';
+import { ConfirmationDialogService } from '../../../core/confirmation-dialog/confirmation-dialog.service';
+import { SessionService } from '../../../core/session/session-service/session.service';
 
 function generateNewNotes(): Array<Note> {
   let i;

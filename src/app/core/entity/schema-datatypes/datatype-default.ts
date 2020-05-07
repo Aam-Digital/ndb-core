@@ -18,6 +18,11 @@
 
 import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
 
+/**
+ * The default fallback Datatype for the EntitySchemaService that keeps values unchanged between database and entity instance.
+ *
+ * This type is automatically used whenever no fitting Datatype can be found for that config or TypeScript type.
+ */
 export const defaultEntitySchemaDatatype: EntitySchemaDatatype = {
   name: 'any',
 

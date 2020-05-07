@@ -15,30 +15,40 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { SyncState } from '../sync-state.enum';
-import { SessionService } from '../session.service';
-import { LoginState } from '../login-state.enum';
-import { ConnectionState } from '../connection-state.enum';
+import { Component } from '@angular/core';
+import { SyncState } from '../session-states/sync-state.enum';
+import { SessionService } from '../session-service/session.service';
+import { LoginState } from '../session-states/login-state.enum';
+import { ConnectionState } from '../session-states/connection-state.enum';
 
+/**
+ * Form to allow users to enter their credentials and log in.
+ */
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
 
+  /** true while a login is started but result is not received yet */
   loginInProgress = false;
+
+  /** username as entered in form */
   username: string;
+
+  /** password as entered in form */
   password: string;
+
+  /** errorMessage displayed in form */
   errorMessage: string;
 
   constructor(private _sessionService: SessionService) {
   }
 
-  ngOnInit(): void {
-  }
-
+  /**
+   * Do a login with the SessionService.
+   */
   login() {
     this.loginInProgress = true;
 

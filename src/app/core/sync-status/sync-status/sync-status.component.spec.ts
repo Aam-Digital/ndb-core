@@ -21,11 +21,11 @@ import { SyncStatusComponent } from './sync-status.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MockSessionService } from '../../session/mock-session.service';
+import { MockSessionService } from '../../session/session-service/mock-session.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { InitialSyncDialogComponent } from './initial-sync-dialog.component';
-import { SessionService } from 'app/core/session/session.service';
-import { SyncState } from 'app/core/session/sync-state.enum';
+import { SessionService } from 'app/core/session/session-service/session.service';
+import { SyncState } from 'app/core/session/session-states/sync-state.enum';
 import { AlertsModule } from 'app/core/alerts/alerts.module';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { EntitySchemaService } from 'app/core/entity/schema/entity-schema.service';
@@ -73,9 +73,11 @@ describe('SyncStatusComponent', () => {
 
     fixture.detectChanges();
     await fixture.whenStable();
+    // @ts-ignore
     expect(component.dialogRef).toBeDefined();
 
     sessionService.getSyncState().setState(SyncState.COMPLETED);
+    // @ts-ignore
     component.dialogRef.close();
 
     fixture.detectChanges();

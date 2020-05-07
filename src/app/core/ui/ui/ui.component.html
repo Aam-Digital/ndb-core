@@ -27,7 +27,7 @@
     <span fxFlex="grow">&nbsp;</span>
     <span fxFlex="grow">&nbsp;</span>
     <!--top right icons and search-->
-    <app-search *ngIf="isLoggedIn()" [fxFlex]="sideNavMode == 'side' ? 'grow' : 'none'" fxHide.xs></app-search>
+    <app-search *ngIf="isLoggedIn()" [fxFlex]="sideNavMode == 'side' ? 'grow' : 'none'"></app-search>
     <app-sync-status ></app-sync-status>
     <button mat-icon-button [routerLink]="['/user']" *ngIf="isLoggedIn()">
       <mat-icon class="header-icon" fontIcon="fa-user-circle-o"></mat-icon>

@@ -19,5 +19,8 @@ import { EntitySchemaField } from './entity-schema-field';
 
 /**
  * Complete schema of an Entity containing multiple EntitySchemaFields.
+ *
+ * This is generated from all `@DatabaseField()` of a class
+ * and then defines the transformation for that whole entity type.
  */
 export type EntitySchema = Map<string, EntitySchemaField>;

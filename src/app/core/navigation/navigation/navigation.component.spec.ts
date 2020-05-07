@@ -19,10 +19,10 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NavigationComponent } from './navigation.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import { MockSessionService } from '../../session/mock-session.service';
+import { MockSessionService } from '../../session/session-service/mock-session.service';
 import { NavigationItemsService } from '../navigation-items.service';
 import { MenuItem } from '../menu-item';
-import { SessionService } from 'app/core/session/session.service';
+import { SessionService } from 'app/core/session/session-service/session.service';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';

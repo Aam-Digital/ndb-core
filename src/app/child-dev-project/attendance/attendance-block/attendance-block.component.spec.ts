@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
-import { UiHelperModule } from '../../../core/ui-helper/ui-helper.module';
+import { EntitySubrecordModule } from '../../../core/entity-subrecord/entity-subrecord.module';
 import { EntityModule } from '../../../core/entity/entity.module';
 import { AttendanceDayBlockComponent } from '../attendance-days/attendance-day-block.component';
 
@@ -20,7 +20,7 @@ describe('AttendanceBlockComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ AttendanceBlockComponent, AttendanceDaysComponent, AttendanceDayBlockComponent ],
       imports: [MatFormFieldModule, MatInputModule, MatSelectModule, MatTooltipModule,
-        FormsModule, UiHelperModule, EntityModule,
+        FormsModule, EntitySubrecordModule, EntityModule,
       ],
     })
     .compileComponents();

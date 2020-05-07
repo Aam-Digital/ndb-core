@@ -33,6 +33,9 @@ import { AttendanceManagerComponent } from './child-dev-project/attendance/atten
 import { HowToComponent } from './core/help/how-to/how-to.component';
 import { UserListComponent } from './core/admin/user-list/user-list.component';
 
+/**
+ * All routes configured for the main app routing.
+ */
 export const routes: Routes = [
   {path: '', component: DashboardComponent},
   {path: 'user', component: UserAccountComponent},
@@ -51,4 +54,7 @@ export const routes: Routes = [
   {path: '**', redirectTo: '/'},
 ];
 
+/**
+ * Main app RouterModule with centrally configured routes.
+ */
 export const routing: ModuleWithProviders = RouterModule.forRoot(routes);

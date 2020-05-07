@@ -17,6 +17,18 @@
 
 import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
 
+/**
+ * Datatype for the EntitySchemaService transforming values to "string".
+ *
+ * This type is automatically used if you annotate a class's property that has the TypeScript type "string"
+ * ensuring that even if values in the database from other sources are not of type string, the property will be a string.
+ *
+ * For example:
+ *
+ * `@DatabaseField() myString: string;`
+ *
+ * `@DatabaseField({dataType: 'string'}) myValue: any;`
+ */
 export const stringEntitySchemaDatatype: EntitySchemaDatatype = {
   name: 'string',
 

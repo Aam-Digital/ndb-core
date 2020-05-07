@@ -2,9 +2,14 @@ import { Injectable } from '@angular/core';
 import { AppConfig } from '../app-config/app-config';
 import webdav from 'webdav';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { SessionService } from '../session/session.service';
+import { SessionService } from '../session/session-service/session.service';
+
 /**
- * This class provides access to the in config.json specified cloud service.
+ * Connect and access a remote cloud file system like Nextcloud
+ * to upload and download files.
+ *
+ * Connection requires setup of the server in the AppConfig
+ * as well as valid user credentials for that server in the currently logged in user entity.
  */
 @Injectable()
 export class CloudFileService {
@@ -12,10 +17,14 @@ export class CloudFileService {
   // TODO Check connection/login success?
   private client: any;
   private basePath: string;
-  // private defaultImage: SafeUrl;
   private fileList: string;
   private currentlyGettingList: Promise<boolean>;
 
+  /**
+   * Construct the service and immediately attempt to connect to the server with the current user.
+   * @param domSanitizer
+   * @param sessionService
+   */
   constructor(
     private domSanitizer: DomSanitizer,
     private sessionService: SessionService,
@@ -24,9 +33,9 @@ export class CloudFileService {
   }
 
   /**
-   * Reinitialize the client for the nextcloud server
-   * @param username
-   * @param password login password
+   * (Re)-initialize the client connecting to the webdav server.
+   * @param username Optional webdav username, otherwise the one set in the current user entity is used.
+   * @param password Optional webdav password, otherwise the one set in the current user entity is used.
    */
   public async connect(username: string = null, password: string = null) {
     if (!AppConfig.settings.webdav || !this.sessionService.getCurrentUser()) {
@@ -176,7 +185,7 @@ export class CloudFileService {
   /**
    * Check whether the client is connected and therefore this service is able to execute its remote actions.
    */
-  isConnected() {
+  public isConnected() {
     return !!this.client;
   }
 }

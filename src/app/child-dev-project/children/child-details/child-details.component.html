@@ -227,7 +227,10 @@
 
       <div>
         <h3>School History</h3>
-        <app-previous-schools></app-previous-schools>
+        <app-previous-schools
+          [childId]='child.getId()'
+          (changedRecordInEntitySubrecord)='changedRecordInEntitySubrecord()'>
+        </app-previous-schools>
       </div>
       <br>
 

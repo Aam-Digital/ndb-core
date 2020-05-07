@@ -23,13 +23,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Location } from '@angular/common';
-import { ConfirmationDialogService } from '../../../core/ui-helper/confirmation-dialog/confirmation-dialog.service';
+import { ConfirmationDialogService } from '../../../core/confirmation-dialog/confirmation-dialog.service';
 import * as uniqid from 'uniqid';
 import { AlertService } from '../../../core/alerts/alert.service';
 import { ChildrenService } from '../children.service';
 import { School } from '../../schools/model/school';
 import { ChildPhotoService } from '../child-photo-service/child-photo.service';
-import { SessionService } from '../../../core/session/session.service';
+import { SessionService } from '../../../core/session/session-service/session.service';
 
 
 @Component({

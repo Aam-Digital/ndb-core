@@ -41,7 +41,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ChildrenService } from './children.service';
 import { AttendanceBlockComponent } from '../attendance/attendance-block/attendance-block.component';
 import { ChildAttendanceComponent } from '../attendance/child-attendance/child-attendance.component';
-import { UiHelperModule } from '../../core/ui-helper/ui-helper.module';
+import { EntitySubrecordModule } from '../../core/entity-subrecord/entity-subrecord.module';
 import { ChildBlockComponent } from './child-block/child-block.component';
 import { ChildrenCountDashboardComponent } from './children-count-dashboard/children-count-dashboard.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -60,6 +60,7 @@ import { AttendanceDetailsComponent } from '../attendance/attendance-details/att
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AddDayAttendanceComponent } from '../attendance/add-day-attendance/add-day-attendance.component';
 import { AttendanceWeekDashboardComponent } from '../attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component';
+import { NoRecentNotesDashboardComponent } from '../notes/dashboard-widgets/no-recent-notes-dashboard/no-recent-notes-dashboard.component';
 import { AttendanceDayBlockComponent } from '../attendance/attendance-days/attendance-day-block.component';
 import { AttendanceManagerComponent } from '../attendance/attendance-manager/attendance-manager.component';
 import { HealthCheckupComponent } from '../health-checkup/health-checkup-component/health-checkup.component';
@@ -69,6 +70,8 @@ import { WebdavModule } from 'app/core/webdav/webdav.module';
 import { AdminModule } from '../../core/admin/admin.module';
 import { SelectGroupChildrenComponent } from './select-group-children/select-group-children.component';
 import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/roll-call.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { RecentNotesDashboardComponent } from '../notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component';
 
 
 @NgModule({
@@ -98,13 +101,14 @@ import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/ro
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FilterPipeModule,
-    UiHelperModule,
+    EntitySubrecordModule,
     SchoolsModule,
     ReactiveFormsModule,
     MatDialogModule,
     AdminModule,
     MatListModule,
     WebdavModule,
+    MatProgressSpinnerModule,
   ],
   declarations: [
     AttendanceBlockComponent,
@@ -127,6 +131,8 @@ import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/ro
     RollCallComponent,
     SelectGroupChildrenComponent,
     AttendanceWeekDashboardComponent,
+    NoRecentNotesDashboardComponent,
+    RecentNotesDashboardComponent,
     AttendanceManagerComponent,
     HealthCheckupComponent,
     PreviousSchoolsComponent,
@@ -140,6 +146,8 @@ import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/ro
     AttendanceWarningsDashboardComponent,
     AttendanceWarningsDashboardComponent,
     AttendanceWeekDashboardComponent,
+    NoRecentNotesDashboardComponent,
+    RecentNotesDashboardComponent,
     AttendanceDaysComponent,
   ],
   entryComponents: [AttendanceDetailsComponent],

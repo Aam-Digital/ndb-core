@@ -1,8 +1,18 @@
 import { Entity } from '../entity/entity';
 
-
+/**
+ * Abstract base class for demo data generator services.
+ *
+ * For usage refer to the How-To Guides:
+ * - [How to Generate Demo Data]{@link /additional-documentation/how-to-guides/generate-demo-data.html}
+ */
 export abstract class DemoDataGenerator<T extends Entity> {
+  /** internally used array of the generated entities */
   protected _entities: T[];
+
+  /**
+   * generated demo entities
+   */
   get entities() {
     if (!this._entities) {
       this._entities = this.generateEntities();
@@ -10,25 +20,15 @@ export abstract class DemoDataGenerator<T extends Entity> {
     return this._entities;
   }
 
+  /**
+   * Generate new demo entities.
+   */
   protected abstract generateEntities(): T[];
 
+  /**
+   * Remove all previously generated entities.
+   */
   reset() {
     delete this._entities;
-  }
-
-
-  /**
-   * Return the given date if it is defined and earlier than today's date
-   * otherwise return a Date representing today.
-   * @param date The date to be compared
-   */
-  getEarlierDateOrToday(date: Date): Date {
-    const today = new Date();
-
-    if (!date || date > today) {
-      return today;
-    } else {
-      return date;
-    }
   }
 }
