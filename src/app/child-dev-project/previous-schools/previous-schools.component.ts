@@ -5,18 +5,12 @@ import { ChildSchoolRelation } from '../children/model/childSchoolRelation';
 import { ColumnDescription, ColumnDescriptionInputType } from '../../core/ui-helper/entity-subrecord/column-description';
 import { ChildrenService } from '../children/children.service';
 import { SchoolsService } from '../schools/schools.service';
-import { School } from '../schools/model/school';
 import * as uniqid from 'uniqid';
 import { ChildDetailsComponent } from '../children/child-details/child-details.component';
 
 @Component({
   selector: 'app-previous-schools',
-  template: '<app-entity-subrecord (changedRecordsInEntitySubrecordEvent)="changedRecordInEntitySubrecord()"' +
-    '[records]="records" ' +
-    '[columns]="columns" ' +
-    '[newRecordFactory]="generateNewRecordFactory()" ' +
-    '[formValidation]="formValidation">' +
-    '</app-entity-subrecord>',
+  templateUrl: './previous-schools.component.html',
 })
 
 export class PreviousSchoolsComponent implements OnInit {
@@ -28,7 +22,6 @@ export class PreviousSchoolsComponent implements OnInit {
    * Everything between will have suitable colors (orange, yellow,...)
    * If the color is NaN, the color will be a light grey
    */
-
   private static fromPercent(percent: number): string {
     if (Number.isNaN(percent)) { return 'rgba(130,130,130,0.4)'; }
     // the hsv color-value is to be between 0 (red) and 120 (green)
@@ -39,7 +32,6 @@ export class PreviousSchoolsComponent implements OnInit {
 
   childId: string;
   records = new Array<ChildSchoolRelation>();
-  schoolList = new Array<School>();
   columns = new Array<ColumnDescription>();
 
   constructor(private route: ActivatedRoute,
@@ -58,32 +50,31 @@ export class PreviousSchoolsComponent implements OnInit {
   }
 
 
-  loadData(id: string) {
-    this.childrenService.getSchoolsWithRelations(id)
-      .then(results => {
-        this.records = results;
-        this.schoolsService.getSchools().subscribe(data => {
-          const schoolMap = {};
-          data.forEach(s => schoolMap[s.getId()] = s.name);
-          this.columns = [
-            new ColumnDescription('schoolId', 'Name', ColumnDescriptionInputType.SELECT,
-              data.map(t => { return { value: t.getId(), label: t.name}; }),
-              (schoolId) => schoolMap[schoolId]),
-              // (schoolId) => data.find(schoolElement => schoolElement._id === ('School:' + schoolId)).name),
-            new ColumnDescription('schoolClass', 'Class', ColumnDescriptionInputType.NUMBER),
-            new ColumnDescription('start', 'From', ColumnDescriptionInputType.DATE, null,
-              // tslint:disable-next-line: max-line-length
-              (v: Date) => v && !isNaN(v.getTime()) ? this.datePipe.transform(v, 'yyyy-MM-dd') : ''), // checking if v is a date and otherwise returning undefined prevents a datePipe error
-            new ColumnDescription('end', 'To', ColumnDescriptionInputType.DATE, null,
-              (v: Date) => v && !isNaN(v.getTime()) ? this.datePipe.transform(v, 'yyyy-MM-dd') : ''),
-            new ColumnDescription('result', 'Result', ColumnDescriptionInputType.NUMBER, null,
-              (n: number) => n >= 0 && !isNaN(n) ? n + '%' : 'N/A',
-              null,
-              (value: number) => {
-              return {'color': PreviousSchoolsComponent.fromPercent(value)}; }),
-          ];
-        });
-      });
+  async loadData(id: string) {
+    this.records = await this.childrenService.getSchoolsWithRelations(id);
+
+    const schools = await this.schoolsService.getSchools().toPromise();
+    const schoolMap = {};
+    schools.forEach(s => schoolMap[s.getId()] = s.name);
+
+    this.columns = [
+      new ColumnDescription('schoolId', 'Name', ColumnDescriptionInputType.SELECT,
+        schools.map(t => { return { value: t.getId(), label: t.name}; }),
+        (schoolId) => schoolMap[schoolId]),
+
+      new ColumnDescription('schoolClass', 'Class', ColumnDescriptionInputType.NUMBER),
+
+      new ColumnDescription('start', 'From', ColumnDescriptionInputType.DATE, null,
+        (v: Date) => v && !isNaN(v.getTime()) ? this.datePipe.transform(v, 'yyyy-MM-dd') : ''),
+
+      new ColumnDescription('end', 'To', ColumnDescriptionInputType.DATE, null,
+        (v: Date) => v && !isNaN(v.getTime()) ? this.datePipe.transform(v, 'yyyy-MM-dd') : ''),
+
+      new ColumnDescription('result', 'Result', ColumnDescriptionInputType.NUMBER, null,
+        (n: number) => n >= 0 && !isNaN(n) ? n + '%' : 'N/A',
+        null,
+        (value: number) => { return {'color': PreviousSchoolsComponent.fromPercent(value)}; }),
+    ];
   }
 
   changedRecordInEntitySubrecord() {

@@ -112,7 +112,7 @@
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="studentClick(row.getId())" style="cursor:pointer;"></mat-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/child', row.getId()]" style="cursor:pointer;"></mat-row>
       </table>
     </div>
   </mat-expansion-panel>

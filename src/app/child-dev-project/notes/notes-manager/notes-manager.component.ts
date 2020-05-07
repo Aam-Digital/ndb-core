@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Note } from '../model/note';
 import { MatTableDataSource } from '@angular/material/table';
@@ -18,7 +18,7 @@ import { EntityMapperService } from '../../../core/entity/entity-mapper.service'
   templateUrl: './notes-manager.component.html',
   styleUrls: ['./notes-manager.component.scss'],
 })
-export class NotesManagerComponent implements OnInit, AfterViewInit, OnDestroy {
+export class NotesManagerComponent implements OnInit, AfterViewInit {
 
   watcher: Subscription;
   activeMediaQuery = '';
@@ -41,14 +41,14 @@ export class NotesManagerComponent implements OnInit, AfterViewInit, OnDestroy {
     { key: 'urgent', label: 'Urgent', filterFun: (n: Note) => n.warningLevel === WarningLevel.URGENT },
     { key: 'follow-up', label: 'Needs Follow-Up',
       filterFun: (n: Note) => n.warningLevel === WarningLevel.WARNING || n.warningLevel === WarningLevel.URGENT },
-    { key: '', label: 'All', filterFun: (c: Note) => true },
+    { key: '', label: 'All', filterFun: () => true },
   ]);
 
   dateFS = new FilterSelection<Note>('date', [
     { key: 'current-week', label: 'This Week',
       filterFun: (n: Note) => n.date > this.getPreviousSunday(0) },
     { key: 'last-week', label: 'Since Last Week', filterFun: (n: Note) => n.date > this.getPreviousSunday(1) },
-    { key: '', label: 'All', filterFun: (c: Note) => true },
+    { key: '', label: 'All', filterFun: () => true },
   ]);
 
   filterSelections = [
@@ -142,14 +142,15 @@ export class NotesManagerComponent implements OnInit, AfterViewInit, OnDestroy {
     newNote.date = new Date();
     newNote.author = this.sessionService.getCurrentUser().name;
 
-    this.showDetails(newNote);
+    const noteDialogRef = this.showDetails(newNote);
+    noteDialogRef.afterClosed()
+      .subscribe(val => {
+        this.entityList = [val].concat(this.entityList);
+        this.applyFilterSelections();
+      });
   }
 
   showDetails(entity: Note) {
-    this.dialog.open(NoteDetailsComponent, {width: '80%', data: {entity: entity}});
+    return this.dialog.open(NoteDetailsComponent, {width: '80%', data: {entity: entity}});
   }
-
-  ngOnDestroy(): void {
-  }
-
 }

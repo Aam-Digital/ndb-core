@@ -15,7 +15,7 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<h2 mat-dialog-title>{{entity.date.toLocaleDateString()}}: {{entity.subject}}</h2>
+<h2 mat-dialog-title>{{ entity?.date?.toLocaleDateString() }}: {{entity.subject}}</h2>
 
 
 <form #recordForm="ngForm">
@@ -25,13 +25,7 @@
     <div fxLayout='row wrap' fxLayoutGap='20px'>
       <div fxFlex>
         <mat-form-field>
-          <!-- TODO: date pickers should be the same throughout the app -->
-          <input matInput placeholder="Date"
-                 name="date"
-                 type="date"
-                 [matDatepicker]="picker"
-                 [valueAsDate]="entity.date"
-                 (change)='entity.date=$event.target.valueAsDate;recordForm.form.markAsDirty();'>
+          <input matInput placeholder="Date" name="date" [(ngModel)]="entity.date" [matDatepicker]="picker">
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>

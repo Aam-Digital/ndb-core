@@ -30,7 +30,7 @@ describe('NotesManagerComponent', () => {
   let component: NotesManagerComponent;
   let fixture: ComponentFixture<NotesManagerComponent>;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [],
       imports: [
@@ -56,11 +56,11 @@ describe('NotesManagerComponent', () => {
     testNotes.forEach(note => entityMapperService.save(note));
   });
 
-  it('should create', function () {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should load all data after initializing', async function () {
+  it('should load all data after initializing', async () => {
     component.ngOnInit();
     await fixture.whenStable();
     expect(component.entityList.length).toEqual(testNotes.length);
