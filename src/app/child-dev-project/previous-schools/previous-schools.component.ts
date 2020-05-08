@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ChildSchoolRelation } from '../children/model/childSchoolRelation';
-import { ColumnDescription, ColumnDescriptionInputType } from '../../core/ui-helper/entity-subrecord/column-description';
 import { ChildrenService } from '../children/children.service';
 import { SchoolsService } from '../schools/schools.service';
 import * as uniqid from 'uniqid';
+import { ColumnDescription } from '../../core/entity-subrecord/entity-subrecord/column-description';
+import { ColumnDescriptionInputType } from '../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum';
 
 @Component({
   selector: 'app-previous-schools',
@@ -24,7 +25,7 @@ export class PreviousSchoolsComponent implements OnInit {
     // the hsv color-value is to be between 0 (red) and 120 (green)
     // percent is between 0-100, so we have to normalize it first
     const color = (percent / 100) * 120;
-    return 'hsl(' + color + ', 70%, 65%)';
+    return 'hsl(' + color + ', 100%, 85%)';
   }
 
   @Input() childId: string;
@@ -52,7 +53,7 @@ export class PreviousSchoolsComponent implements OnInit {
     schools.forEach(s => schoolMap[s.getId()] = s.name);
 
     this.columns = [
-      new ColumnDescription('schoolId', 'Name', ColumnDescriptionInputType.SELECT,
+      new ColumnDescription('schoolId', 'School', ColumnDescriptionInputType.SELECT,
         schools.map(t => { return { value: t.getId(), label: t.name}; }),
         (schoolId) => schoolMap[schoolId]),
 
@@ -67,7 +68,7 @@ export class PreviousSchoolsComponent implements OnInit {
       new ColumnDescription('result', 'Result', ColumnDescriptionInputType.NUMBER, null,
         (n: number) => n >= 0 && !isNaN(n) ? n + '%' : 'N/A',
         null,
-        (value: number) => { return {'color': PreviousSchoolsComponent.fromPercent(value)}; }),
+        this.resultColorStyleBuilder),
     ];
   }
 
@@ -114,5 +115,14 @@ export class PreviousSchoolsComponent implements OnInit {
         validationMessage: '',
       };
     }
+  }
+
+  resultColorStyleBuilder(value: number) {
+    return {
+      'background-color': PreviousSchoolsComponent.fromPercent(value),
+      'border-radius': '5%',
+      'padding': '5px',
+      'width': 'min-content',
+    };
   }
 }

@@ -15,7 +15,7 @@
 
 
       <div *ngIf="!recordsEditing.get(rec.getId()) && !isReadonlyInputType(col.inputType)"
-           [ngStyle]="col.styleBuilder(rec[col.name])"
+           [ngStyle]="col.styleBuilder ? col.styleBuilder(rec[col.name]) : {}"
            [ngClass]="{ 'table-show-number': col.inputType==='number' }">
         {{ col.formatter(rec[col.name]) }}
       </div>

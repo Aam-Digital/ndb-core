@@ -4,13 +4,7 @@ import { ChildAttendanceComponent } from './child-attendance.component';
 import { ActivatedRoute } from '@angular/router';
 import { Child } from '../../children/model/child';
 import { ChildrenService } from '../../children/children.service';
-import { EntitySubrecordModule } from '../../../core/entity-subrecord/entity-subrecord.module';
 import { DatePipe, PercentPipe } from '@angular/common';
-import { AttendanceDaysComponent } from '../attendance-days/attendance-days.component';
-import { AttendanceDayBlockComponent } from '../attendance-days/attendance-day-block.component';
-import { MatSelectModule } from '@angular/material/select';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { FormsModule } from '@angular/forms';
 import { of } from 'rxjs';
 import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
@@ -19,6 +13,7 @@ import { MockDatabase } from '../../../core/database/mock-database';
 import { AttendanceMonth } from '../model/attendance-month';
 import { AttendanceStatus } from '../model/attendance-day';
 import { AlertService } from 'app/core/alerts/alert.service';
+import { ChildrenModule } from '../../children/children.module';
 
 
 const ATTENDANCE_ENTITIES: AttendanceMonth[] = (() => {
@@ -170,8 +165,9 @@ describe('ChildAttendanceComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ChildAttendanceComponent, AttendanceDaysComponent, AttendanceDayBlockComponent ],
-      imports: [EntitySubrecordModule, MatSelectModule, FormsModule, MatTooltipModule],
+      imports: [
+        ChildrenModule,
+      ],
       providers: [
         DatePipe, PercentPipe,
         { provide: ActivatedRoute, useValue: {params: of({id: '22'})} },

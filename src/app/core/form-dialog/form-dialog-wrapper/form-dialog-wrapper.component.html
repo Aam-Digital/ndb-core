@@ -1,0 +1,12 @@
+<div mat-dialog-title class="form-dialog-title">
+  <ng-content select="h1"></ng-content>
+</div>
+
+<mat-dialog-content>
+  <ng-content select='form'></ng-content>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-stroked-button [disabled]='!contentForm.form.dirty' (click)='save()'>Save</button>
+  <button mat-stroked-button (click)='cancel()'>Cancel</button>
+</mat-dialog-actions>

@@ -27,7 +27,6 @@ import { ConfirmationDialogService } from '../../../core/confirmation-dialog/con
 import * as uniqid from 'uniqid';
 import { AlertService } from '../../../core/alerts/alert.service';
 import { ChildrenService } from '../children.service';
-import { School } from '../../schools/model/school';
 import { ChildPhotoService } from '../child-photo-service/child-photo.service';
 import { SessionService } from '../../../core/session/session-service/session.service';
 
@@ -40,7 +39,6 @@ import { SessionService } from '../../../core/session/session-service/session.se
 export class ChildDetailsComponent implements OnInit {
 
   child: Child = new Child('');
-  schools: School[] = [];
 
   validateForm = false;
   form: FormGroup;
@@ -68,7 +66,10 @@ export class ChildDetailsComponent implements OnInit {
               private alertService: AlertService,
               private childPhotoService: ChildPhotoService,
               private sessionService: SessionService,
-  ) { }
+  ) {
+    this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
+    this.isAdminUser = this.sessionService.getCurrentUser().admin;
+  }
 
 
   initForm() {
@@ -115,9 +116,6 @@ export class ChildDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
-    this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
-    this.isAdminUser = this.sessionService.getCurrentUser().admin;
   }
 
   loadChild(id: string) {
@@ -129,6 +127,7 @@ export class ChildDetailsComponent implements OnInit {
       this.childrenService.getChild(id)
         .subscribe(child => {
           this.child = child;
+          this.initForm();
       });
     }
     this.initForm();

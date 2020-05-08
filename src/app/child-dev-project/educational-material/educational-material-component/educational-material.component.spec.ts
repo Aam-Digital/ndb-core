@@ -1,7 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EducationalMaterialComponent } from './educational-material.component';
-import { EntitySubrecordModule } from '../../../core/entity-subrecord/entity-subrecord.module';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ChildrenService } from '../../children/children.service';
@@ -14,16 +13,17 @@ import { of } from 'rxjs';
 import { Database } from '../../../core/database/database';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 import { AlertService } from 'app/core/alerts/alert.service';
+import { ChildrenModule } from '../../children/children.module';
 
 describe('EducationalMaterialComponent', () => {
   let component: EducationalMaterialComponent;
   let fixture: ComponentFixture<EducationalMaterialComponent>;
 
   const mockChildrenService = {
-    getChild: (id) => {
+    getChild: () => {
       return of([new Child('22')]);
     },
-    getEducationalMaterialsOfChild: (id) => {
+    getEducationalMaterialsOfChild: () => {
       return of([]);
     },
   };
@@ -31,8 +31,11 @@ describe('EducationalMaterialComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ EducationalMaterialComponent ],
-      imports: [ EntitySubrecordModule, FormsModule, NoopAnimationsModule],
+      imports: [
+        FormsModule,
+        NoopAnimationsModule,
+        ChildrenModule,
+      ],
       providers: [
         DatePipe,
         { provide: ActivatedRoute, useValue: {paramMap: of({get: () => '22'}) } },

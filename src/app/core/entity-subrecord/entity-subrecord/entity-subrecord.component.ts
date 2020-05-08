@@ -1,5 +1,4 @@
 import { Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, ViewChild, Output, EventEmitter } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -13,6 +12,8 @@ import { FormValidationResult } from './form-validation-result';
 import { ConfirmationDialogService } from '../../confirmation-dialog/confirmation-dialog.service';
 import { ColumnDescriptionInputType } from './column-description-input-type.enum';
 import { ComponentType } from '@angular/cdk/overlay';
+import { FormDialogService } from '../../form-dialog/form-dialog.service';
+import { ShowsEntity } from '../../form-dialog/shows-entity.interface';
 
 /**
  * Generically configurable component to display and edit a list of entities in a compact way
@@ -48,7 +49,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
    * This is displayed as a modal (hovering) dialog above the active view and allows the user to get
    * more information or more comfortable editing of a single record.
    */
-  @Input() detailsComponent: ComponentType<unknown>;
+  @Input() detailsComponent: ComponentType<ShowsEntity>;
 
   /**
    * Whether an "Add" button to create a new entry should be displayed as part of the form.
@@ -89,7 +90,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   constructor(private _entityMapper: EntityMapperService,
               private _snackBar: MatSnackBar,
               private _confirmationDialog: ConfirmationDialogService,
-              private dialog: MatDialog,
+              private formDialog: FormDialogService,
               private alertService: AlertService,
               private media: MediaObserver) {
     this.flexMediaWatcher = this.media.media$.subscribe((change: MediaChange) => {
@@ -229,7 +230,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     if (this.detailsComponent === undefined || this.recordsEditing.get(record.getId())) {
       return;
     }
-    this.dialog.open(this.detailsComponent, {width: '80%', data: {entity: record}});
+    this.formDialog.openDialog(this.detailsComponent, record);
   }
 
 

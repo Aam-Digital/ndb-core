@@ -72,6 +72,8 @@ import { SelectGroupChildrenComponent } from './select-group-children/select-gro
 import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/roll-call.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RecentNotesDashboardComponent } from '../notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component';
+import { FormDialogModule } from '../../core/form-dialog/form-dialog.module';
+import { ConfirmationDialogModule } from '../../core/confirmation-dialog/confirmation-dialog.module';
 
 
 @NgModule({
@@ -94,7 +96,6 @@ import { RecentNotesDashboardComponent } from '../notes/dashboard-widgets/recent
     MatIconModule,
     MatCardModule,
     MatSnackBarModule,
-    MatDialogModule,
     MatProgressBarModule,
     MatAutocompleteModule,
     MatTooltipModule,
@@ -109,6 +110,8 @@ import { RecentNotesDashboardComponent } from '../notes/dashboard-widgets/recent
     MatListModule,
     WebdavModule,
     MatProgressSpinnerModule,
+    ConfirmationDialogModule,
+    FormDialogModule,
   ],
   declarations: [
     AttendanceBlockComponent,

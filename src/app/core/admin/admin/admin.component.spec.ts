@@ -9,6 +9,7 @@ import { EntitySubrecordModule } from '../../entity-subrecord/entity-subrecord.m
 import { AppConfig } from '../../app-config/app-config';
 import { EntityMapperService } from '../../entity/entity-mapper.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ConfirmationDialogModule } from '../../confirmation-dialog/confirmation-dialog.module';
 
 describe('AdminComponent', () => {
   let component: AdminComponent;
@@ -22,7 +23,14 @@ describe('AdminComponent', () => {
     };
 
     TestBed.configureTestingModule({
-      imports: [AlertsModule, MatSnackBarModule, MatButtonModule, EntitySubrecordModule, HttpClientTestingModule],
+      imports: [
+        MatSnackBarModule,
+        MatButtonModule,
+        HttpClientTestingModule,
+        EntitySubrecordModule,
+        AlertsModule,
+        ConfirmationDialogModule,
+      ],
       declarations: [ AdminComponent ],
       providers: [
         {provide: BackupService, useValue: new BackupService(null, null)},

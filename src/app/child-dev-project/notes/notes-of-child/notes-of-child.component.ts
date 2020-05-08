@@ -1,11 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { Note } from '../model/note';
 import { NoteDetailsComponent } from '../note-details/note-details.component';
 import { DatePipe } from '@angular/common';
 import { ChildrenService } from '../../children/children.service';
-import { ColumnDescription, ColumnDescriptionInputType } from '../../../core/ui-helper/entity-subrecord/column-description';
 import moment from 'moment';
 import { SessionService } from '../../../core/session/session-service/session.service';
+import { ColumnDescription } from '../../../core/entity-subrecord/entity-subrecord/column-description';
+import { ColumnDescriptionInputType } from '../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum';
 
 
 /**
@@ -16,7 +17,7 @@ import { SessionService } from '../../../core/session/session-service/session.se
   templateUrl: './notes-of-child.component.html',
   styleUrls: ['./notes-of-child.component.scss'],
 })
-export class NotesOfChildComponent implements OnInit {
+export class NotesOfChildComponent implements OnInit, OnChanges {
 
   @Input() childId: string;
   records: Array<Note> = [];
@@ -40,6 +41,20 @@ export class NotesOfChildComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.initNotesOfChild();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.hasOwnProperty('childId')) {
+      this.initNotesOfChild();
+    }
+  }
+
+  private initNotesOfChild() {
+    if (!this.childId || this.childId === '') {
+      return;
+    }
+
     this.childrenService.getNotesOfChild(this.childId)
       .subscribe((notes: Note[]) => {
         notes.sort((a, b) => moment(a.date).valueOf() - moment(b.date).valueOf());

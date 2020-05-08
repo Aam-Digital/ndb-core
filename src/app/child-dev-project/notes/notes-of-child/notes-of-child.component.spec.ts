@@ -34,16 +34,19 @@ describe('NotesOfChildComponent', () => {
   let component: NotesOfChildComponent;
   let fixture: ComponentFixture<NotesOfChildComponent>;
 
-  beforeEach(async () => {
+  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+
+  beforeEach(() => {
+    mockChildrenService = jasmine.createSpyObj('mockChildrenService', ['getNotesOfChild']);
 
     TestBed.configureTestingModule({
-      declarations: [],
       imports: [
         NotesModule,
         MatNativeDateModule,
-        RouterTestingModule],
+        RouterTestingModule,
+      ],
       providers: [
-        ChildrenService,
+        { provide: ChildrenService, useValue: mockChildrenService },
         EntitySchemaService,
         EntityMapperService,
         {provide: SessionService, useValue: mockedSessionService},

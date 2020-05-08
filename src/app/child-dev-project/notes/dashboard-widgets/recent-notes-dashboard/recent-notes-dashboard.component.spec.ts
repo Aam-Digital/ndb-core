@@ -21,8 +21,12 @@ describe('RecentNotesDashboardComponent', () => {
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
   beforeEach(async(() => {
-    mockChildrenService = jasmine.createSpyObj('mockChildrenService', ['getChildren', 'getDaysSinceLastNoteOfEachChild']);
+    mockChildrenService = jasmine.createSpyObj(
+      'mockChildrenService',
+      ['getChildren', 'getDaysSinceLastNoteOfEachChild', 'getChild'],
+    );
     mockChildrenService.getChildren.and.returnValue(of([]));
+    mockChildrenService.getChild.and.returnValue(of(new Child('')));
     mockChildrenService.getDaysSinceLastNoteOfEachChild.and.returnValue(Promise.resolve(new Map()));
 
     TestBed.configureTestingModule({

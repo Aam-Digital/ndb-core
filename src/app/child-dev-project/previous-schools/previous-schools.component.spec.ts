@@ -12,6 +12,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { SchoolsService } from '../schools/schools.service';
 import { SessionService } from '../../core/session/session-service/session.service';
 import { ChildPhotoService } from '../children/child-photo-service/child-photo.service';
+import { ConfirmationDialogModule } from '../../core/confirmation-dialog/confirmation-dialog.module';
 
 describe('PreviousSchoolsComponent', () => {
   let component: PreviousSchoolsComponent;
@@ -27,6 +28,7 @@ describe('PreviousSchoolsComponent', () => {
       imports: [
         RouterTestingModule,
         ChildrenModule,
+        ConfirmationDialogModule,
       ],
       providers: [
         {provide: Database, useClass: MockDatabase},

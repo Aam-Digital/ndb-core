@@ -36,6 +36,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { NotePresenceListComponent } from './note-details/note-presence-list/note-presence-list.component';
 import { EntitySubrecordModule } from '../../core/entity-subrecord/entity-subrecord.module';
 import { ConfirmationDialogModule } from '../../core/confirmation-dialog/confirmation-dialog.module';
+import { FormDialogModule } from '../../core/form-dialog/form-dialog.module';
 
 
 @NgModule({
@@ -83,6 +84,7 @@ import { ConfirmationDialogModule } from '../../core/confirmation-dialog/confirm
     MatTreeModule,
     MatTabsModule,
     MatPaginatorModule,
+    FormDialogModule,
   ],
   entryComponents: [NoteDetailsComponent],
   providers: [],

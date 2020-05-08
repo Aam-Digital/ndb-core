@@ -9,7 +9,7 @@ import { NgForm } from '@angular/forms';
 })
 export class NotePresenceListComponent {
 
-  @Input() entity: Note;
+  @Input() entity: Note = new Note('');
   @Input() recordForm: NgForm;
   smallScreen: boolean;
 

@@ -7,6 +7,8 @@ import { ChildBlockComponent } from '../../../children/child-block/child-block.c
 import { RouterTestingModule } from '@angular/router/testing';
 import { ChildrenService } from '../../../children/children.service';
 import { SchoolBlockComponent } from '../../../schools/school-block/school-block.component';
+import { of } from 'rxjs';
+import { Child } from '../../../children/model/child';
 
 describe('AttendanceWarningsDashboardComponent', () => {
   let component: AttendanceWarningsDashboardComponent;
@@ -26,6 +28,7 @@ describe('AttendanceWarningsDashboardComponent', () => {
       ['queryAttendanceLastMonth', 'getChild'],
     );
     mockChildrenService.queryAttendanceLastMonth.and.returnValue(Promise.resolve(mockAttendanceLastMonth));
+    mockChildrenService.getChild.and.returnValue(of(new Child('')));
 
     TestBed.configureTestingModule({
       declarations: [ ChildBlockComponent, SchoolBlockComponent, AttendanceWarningsDashboardComponent ],

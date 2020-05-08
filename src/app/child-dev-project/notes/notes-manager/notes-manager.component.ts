@@ -3,7 +3,6 @@ import { Subscription } from 'rxjs';
 import { Note } from '../model/note';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { MatDialog } from '@angular/material/dialog';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { NoteDetailsComponent } from '../note-details/note-details.component';
 import { InteractionTypes } from '../interaction-types.enum';
@@ -12,6 +11,7 @@ import { WarningLevel } from '../../warning-level';
 import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 import { FilterSelection } from '../../../core/filter/filter-selection/filter-selection';
 import { SessionService } from '../../../core/session/session-service/session.service';
+import { FormDialogService } from '../../../core/form-dialog/form-dialog.service';
 
 @Component({
   selector: 'app-notes-manager',
@@ -61,7 +61,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     this.categoryFS,
   ];
 
-  constructor(private dialog: MatDialog,
+  constructor(private formDialog: FormDialogService,
               private sessionService: SessionService,
               private media: MediaObserver,
               private entityMapperService: EntityMapperService) {}
@@ -162,6 +162,6 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
   }
 
   showDetails(entity: Note) {
-    return this.dialog.open(NoteDetailsComponent, {width: '80%', data: {entity: entity}});
+    return this.formDialog.openDialog(NoteDetailsComponent, entity);
   }
 }
