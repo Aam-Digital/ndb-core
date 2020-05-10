@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { Child } from '../model/child';
 import { ChildrenService } from '../children.service';
 
@@ -7,7 +7,7 @@ import { ChildrenService } from '../children.service';
   templateUrl: './child-select.component.html',
   styleUrls: ['./child-select.component.scss'],
 })
-export class ChildSelectComponent implements OnInit {
+export class ChildSelectComponent implements OnChanges {
   searchText = '';
   suggestions = new Array<Child>();
   allChildren = new Array<Child>();
@@ -22,7 +22,14 @@ export class ChildSelectComponent implements OnInit {
 
   constructor(private childrenService: ChildrenService) { }
 
-  ngOnInit() {
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.hasOwnProperty('valueAsIds')) {
+      this.loadInitial();
+    }
+  }
+
+  private loadInitial() {
     this.childrenService.getChildren()
       .subscribe(children => {
         this.allChildren = children;
@@ -36,6 +43,8 @@ export class ChildSelectComponent implements OnInit {
     if (this.valueAsIds === undefined) {
       return;
     }
+
+    this.selectedChildren = [];
 
     this.valueAsIds.forEach(selectedId => {
       const selectedChild: Child = this.allChildren.find(c => c.getId() === selectedId);
@@ -57,6 +66,11 @@ export class ChildSelectComponent implements OnInit {
 
 
   selectChild(child: Child, suppressChangeEvent = false) {
+    if (this.selectedChildren.findIndex(c => c.getId() === child.getId()) !== -1) {
+      // skip if already selected
+      return;
+    }
+
     this.selectedChildren.push(child);
     if (!suppressChangeEvent) {
       this.newIdAdded.emit(child.getId());
@@ -73,10 +87,16 @@ export class ChildSelectComponent implements OnInit {
   unselectChild(child: Child) {
     const i = this.selectedChildren.findIndex(e => e.getId() === child.getId());
     this.selectedChildren.splice(i, 1);
+    this.allChildren.unshift(child);
+
     this.idRemoved.emit(child.getId());
     this.valueAsIdsChange.emit(this.selectedChildren.map(c => c.getId()));
-
-    this.allChildren.unshift(child);
   }
 
+  unselectChildId(childId: string) {
+    const child = this.selectedChildren.find(c => c.getId() === childId);
+    if (child) {
+      this.unselectChild(child);
+    }
+  }
 }

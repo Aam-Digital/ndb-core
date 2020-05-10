@@ -12,6 +12,7 @@ import { HealthCheck } from '../health-checkup/model/health-check';
 import { EntitySchemaService } from '../../core/entity/schema/entity-schema.service';
 import { ChildPhotoService } from './child-photo-service/child-photo.service';
 import { LoadChildPhotoEntitySchemaDatatype } from './child-photo-service/datatype-load-child-photo';
+import moment from 'moment';
 
 @Injectable()
 export class ChildrenService {
@@ -339,24 +340,21 @@ export class ChildrenService {
   }
 
   async getCurrentSchoolInfoForChild(childId: string): Promise<{schoolId: string, schoolClass: string}> {
-    const relations = await this.querySortedRelations(childId);
-    let result = {
+    const relations = (await this.querySortedRelations(childId)) || [];
+    for (const rel of relations) {
+      if (moment(rel.start).isSameOrBefore(moment(), 'days')
+        && moment(rel.end).isSameOrAfter(moment(), 'days')) {
+        return {
+          schoolId: rel.schoolId,
+          schoolClass: rel.schoolClass,
+        };
+      }
+    }
+
+    return {
       schoolId: null,
       schoolClass: null,
     };
-    if (relations) {
-      for (let i = 0; i < relations.length; i++) {
-        if ((!relations[i].start || relations[i].start.setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0)) &&
-            (!relations[i].end || relations[i].end.setHours(0, 0, 0, 0) >= new Date().setHours(0, 0, 0, 0))) {
-          result = {
-            schoolId: relations[i].schoolId,
-            schoolClass: relations[i].schoolClass,
-          };
-          break;
-        }
-      }
-    }
-    return result;
   }
 
   async getSchoolsWithRelations(childId: string): Promise<ChildSchoolRelation[]> {

@@ -55,15 +55,12 @@ export class Note extends Entity {
   }
 
   public getColorForId(entityId: string) {
-    // if the child is not part of this note or this is not a meeting-note, return the default color
-    if (!this.isLinkedWithChild(entityId) || !this.isMeeting()) {
-      return this.getColor();
+    if (this.isMeeting() && !this.isPresent(entityId)) {
+      // child is absent, highlight the entry
+      return WarningLevelColor(WarningLevel.URGENT);
     }
-    // if the child is present, return a green color
-    if (this.isPresent(entityId)) {
-      return WarningLevelColor(WarningLevel.OK);
-    }
-    return WarningLevelColor(WarningLevel.URGENT);
+
+    return this.getColor();
   }
 
   /**
@@ -108,7 +105,7 @@ export class Note extends Entity {
    */
   removeChild(childId: string) {
     this.children.splice(this.children.indexOf(childId), 1);
-    this.attendances.splice(this.attendances.findIndex(attendance => attendance.childId !== childId), 1);
+    this.attendances.splice(this.attendances.findIndex(attendance => attendance.childId === childId), 1);
   }
 
   /**
@@ -116,8 +113,8 @@ export class Note extends Entity {
    * @param childId The id of the child to add to the notes
    */
   addChild(childId: string) {
-    this.children.push(childId);
-    this.attendances.push(new MeetingNoteAttendance(childId));
+    this.children.splice(0, 0, childId);
+    this.attendances.splice(0, 0, new MeetingNoteAttendance(childId));
   }
 
   /**

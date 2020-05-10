@@ -82,15 +82,16 @@
     </div>
 
     <div fxLayout='row wrap' fxLayoutGap='20px'>
-      <div fxFlex>
+      <div fxFlex *ngIf='!entity.isMeeting()'>
         <app-child-select [valueAsIds]='entity.children'
                           (newIdAdded)="entity.addChild($event);entityForm.form.markAsDirty()"
                           (idRemoved)="entity.removeChild($event);entityForm.form.markAsDirty()"
                           class='input-medium'>
         </app-child-select>
       </div>
+      <app-note-presence-list *ngIf="entity.isMeeting()" [recordForm]="entityForm" [entity]="entity" fxFlex>
+      </app-note-presence-list>
     </div>
-    <app-note-presence-list *ngIf="entity.isMeeting()" [recordForm]="entityForm" [entity]="entity"></app-note-presence-list>
 
   </form>
 </app-form-dialog-wrapper>

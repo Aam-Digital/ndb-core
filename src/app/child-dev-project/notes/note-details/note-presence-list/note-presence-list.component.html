@@ -1,36 +1,14 @@
 
-<!--Small screen: display the notes in tabs-->
-<div *ngIf="smallScreen" fxLayout="row wrap" fxLayoutGap="20px">
-  <mat-tab-group mat-align-tabs="center" fxFlex>
-    <mat-tab label="Present" class="padding-container" >
-      <app-child-presence-list [note]="entity"
-                               [recordForm]="recordForm"
-                               [present]="true"
-                               fxFlex></app-child-presence-list>
-    </mat-tab>
-    <mat-tab label="Absent" class="padding-container" >
-      <app-child-presence-list [note]="entity"
-                               [recordForm]="recordForm"
-                               [present]="false"
-                               fxFlex></app-child-presence-list>
-    </mat-tab>
-  </mat-tab-group>
-</div>
+<app-child-select #childSelect [valueAsIds]='entity.children'
+                  (newIdAdded)="entity.addChild($event); recordForm.form.markAsDirty()"
+                  (idRemoved)="entity.removeChild($event); recordForm.form.markAsDirty()"
+                  class='input-medium'>
+</app-child-select>
 
-<!--Big screen: display the notes as two lists-->
-<div *ngIf="!smallScreen" fxLayout="row wrap" fxLayoutGap="20px">
-  <app-child-presence-list [note]="entity"
-                           [recordForm]="recordForm"
-                           [present]="true"
-                           [label]="'Present'"
-                           class="padding-bottom"
-                           fxFlex>
-  </app-child-presence-list>
-  <app-child-presence-list [note]="entity"
-                           [recordForm]="recordForm"
-                           [present]="false"
-                           [label]="'Absent'"
-                           class="padding-bottom"
-                           fxFlex>
-  </app-child-presence-list>
-</div>
+
+<app-child-meeting-note-attendance *ngFor="let att of entity.attendances"
+                         [noteChildAttendance]="att"
+                         (change)='recordForm.form.markAsDirty();'
+                         (remove)='childSelectComponent.unselectChildId(att.childId)'
+                         [ngClass]="{'child-absent': !att.present}">
+</app-child-meeting-note-attendance>

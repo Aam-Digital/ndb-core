@@ -1,20 +1,22 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NotePresenceListComponent } from './note-presence-list.component';
-import { ChildSelectComponent } from '../../../children/child-select/child-select.component';
-import { ChildPresenceListComponent } from '../child-presence-list/child-presence-list.component';
-import { MatTabsModule } from '@angular/material';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { FormsModule } from '@angular/forms';
-import { EntitySchemaService } from 'app/core/entity/schema/entity-schema.service';
-import { EntityMapperService } from 'app/core/entity/entity-mapper.service';
-import { ChildBlockComponent } from '../../../children/child-block/child-block.component';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { SchoolBlockComponent } from '../../../schools/school-block/school-block.component';
 import { Note } from '../../model/note';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { ChildSelectComponent } from '../../../children/child-select/child-select.component';
+import { ChildBlockComponent } from '../../../children/child-block/child-block.component';
+import { ChildrenService } from '../../../children/children.service';
+import { ChildMeetingNoteAttendanceComponent } from '../child-meeting-attendance/child-meeting-note-attendance.component';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { SchoolBlockComponent } from '../../../schools/school-block/school-block.component';
+import { of } from 'rxjs';
+import { Child } from '../../../children/model/child';
+import { MatInputModule } from '@angular/material/input';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('NotePresenceListComponent', () => {
   let component: NotePresenceListComponent;
@@ -22,28 +24,35 @@ describe('NotePresenceListComponent', () => {
 
   let testEntity: Note;
 
+  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+
   beforeEach(async(() => {
     testEntity = new Note('test1');
 
+    mockChildrenService = jasmine.createSpyObj(['getChild', 'getChildren']);
+    mockChildrenService.getChildren.and.returnValue(of([]));
+    mockChildrenService.getChild.and.returnValue(of(new Child('')));
+
     TestBed.configureTestingModule({
-      declarations: [ NotePresenceListComponent,
+      declarations: [
+        NotePresenceListComponent,
+        ChildMeetingNoteAttendanceComponent,
         ChildSelectComponent,
-        ChildPresenceListComponent,
         ChildBlockComponent,
         SchoolBlockComponent,
       ],
       imports: [
-        MatTabsModule,
-        MatAutocompleteModule,
+        FormsModule,
         MatFormFieldModule,
         MatInputModule,
         MatIconModule,
-        MatExpansionModule,
-        FormsModule,
+        MatButtonModule,
+        MatButtonToggleModule,
+        MatAutocompleteModule,
+        NoopAnimationsModule,
       ],
       providers: [
-        EntitySchemaService,
-        EntityMapperService,
+        { provide: ChildrenService, useValue: mockChildrenService },
       ],
     })
     .compileComponents();

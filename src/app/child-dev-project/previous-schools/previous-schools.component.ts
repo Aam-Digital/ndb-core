@@ -6,6 +6,7 @@ import { SchoolsService } from '../schools/schools.service';
 import * as uniqid from 'uniqid';
 import { ColumnDescription } from '../../core/entity-subrecord/entity-subrecord/column-description';
 import { ColumnDescriptionInputType } from '../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum';
+import moment from 'moment';
 
 @Component({
   selector: 'app-previous-schools',
@@ -89,32 +90,22 @@ export class PreviousSchoolsComponent implements OnInit {
   }
 
   formValidation = (record) => {
+    const validationResult = {
+      hasPassedValidation: false,
+      validationMessage: '',
+    };
     if (!record.schoolId) {
-      return {
-        hasPassedValidation: false,
-        validationMessage: '"Name" is empty. Please select a school.',
-      };
-    } else if (record.start && record.end && record.start.setHours(0, 0, 0, 0) > record.end.setHours(0, 0, 0, 0)) {
-      return {
-        hasPassedValidation: false,
-        validationMessage: '"To"-date lies before "From"-date. Please enter correct dates.',
-      };
+      validationResult.validationMessage = '"Name" is empty. Please select a school.';
+    } else if (moment(record.start).isAfter(record.end, 'days')) {
+      validationResult.validationMessage = '"To"-date lies before "From"-date. Please enter correct dates.';
     } else if (record.result > 100) {
-      return {
-        hasPassedValidation: false,
-        validationMessage: 'Result cannot be greater than 100',
-      };
+      validationResult.validationMessage = 'Result cannot be greater than 100';
     } else if (record.result < 0) {
-      return {
-        hasPassedValidation: false,
-        validationMessage: 'Result cannot be smaller than 0',
-      };
+      validationResult.validationMessage = 'Result cannot be smaller than 0';
     } else {
-      return {
-        hasPassedValidation: true,
-        validationMessage: '',
-      };
+      validationResult.hasPassedValidation = true;
     }
+    return validationResult;
   }
 
   resultColorStyleBuilder(value: number) {
