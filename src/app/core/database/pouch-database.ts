@@ -79,7 +79,7 @@ export class PouchDatabase extends Database {
    * (see {@link Database})
    *
    * @param object The document to be saved
-   * @param forceUpdate (Optional) Whether conflicts should be ignored and an existing conflicting document forcefully overwritten.
+   * @param forceOverwrite (Optional) Whether conflicts should be ignored and an existing conflicting document forcefully overwritten.
    */
   put(object: any, forceOverwrite?: boolean) {
     this.alertService.addDebug('DB_WRITE');
@@ -158,7 +158,7 @@ export class PouchDatabase extends Database {
 
 
   private notifyError(err) {
-    this.alertService.addWarning(err.message + ' (' + err.status + ')', AlertDisplay.NONE);
+    this.alertService.addWarning('PouchDB Error ' + err.status + ': ' + JSON.stringify(err), AlertDisplay.NONE);
   }
 
   /**

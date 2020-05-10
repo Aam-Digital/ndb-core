@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ChildSchoolRelation } from '../children/model/childSchoolRelation';
 import { ChildrenService } from '../children/children.service';
@@ -12,7 +12,7 @@ import moment from 'moment';
   selector: 'app-previous-schools',
   templateUrl: './previous-schools.component.html',
 })
-export class PreviousSchoolsComponent implements OnInit {
+export class PreviousSchoolsComponent implements OnInit, OnChanges {
 
   /**
    * returns a css-compatible color value from green to red using the given
@@ -42,20 +42,34 @@ export class PreviousSchoolsComponent implements OnInit {
 
 
   ngOnInit() {
-    this.loadData(this.childId);
+    this.initColumnDefinitions();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.hasOwnProperty('childId')) {
+      this.loadData(this.childId);
+    }
   }
 
 
   async loadData(id: string) {
-    this.records = await this.childrenService.getSchoolsWithRelations(id);
+    if (!this.childId || this.childId === '') {
+      return;
+    }
 
+    this.records = await this.childrenService.getSchoolsWithRelations(id);
+  }
+
+  private async initColumnDefinitions() {
     const schools = await this.schoolsService.getSchools().toPromise();
     const schoolMap = {};
     schools.forEach(s => schoolMap[s.getId()] = s.name);
 
     this.columns = [
       new ColumnDescription('schoolId', 'School', ColumnDescriptionInputType.SELECT,
-        schools.map(t => { return { value: t.getId(), label: t.name}; }),
+        schools.map(t => {
+          return {value: t.getId(), label: t.name};
+        }),
         (schoolId) => schoolMap[schoolId]),
 
       new ColumnDescription('schoolClass', 'Class', ColumnDescriptionInputType.NUMBER),

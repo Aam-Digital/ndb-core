@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { from, Observable } from 'rxjs';
+import { from, Observable, Subject } from 'rxjs';
 import { Child } from './model/child';
 import { EntityMapperService } from '../../core/entity/entity-mapper.service';
 import { AttendanceMonth } from '../attendance/model/attendance-month';
@@ -33,18 +33,21 @@ export class ChildrenService {
    * returns an observable which retrieves children from the database and loads their pictures
    */
   getChildren(): Observable<Child[]> {
-    const promise = this.entityMapper.loadType<Child>(Child)
-    .then(loadedChildren => {
-      return (loadedChildren.map(loadedChild => {
-        this.getCurrentSchoolInfoForChild(loadedChild.getId())
-          .then(currentSchoolInfo => {
-            loadedChild.schoolClass = currentSchoolInfo.schoolClass;
-            loadedChild.schoolId = currentSchoolInfo.schoolId;
-          });
-        return loadedChild;
-      }));
+    const results = new Subject<Child[]>();
+
+    this.entityMapper.loadType<Child>(Child)
+    .then(async (loadedChildren) => {
+      results.next(loadedChildren);
+
+      for (const loadedChild of loadedChildren) {
+        const childCurrentSchoolInfo = await this.getCurrentSchoolInfoForChild(loadedChild.getId());
+        loadedChild.schoolClass = childCurrentSchoolInfo.schoolClass;
+        loadedChild.schoolId = childCurrentSchoolInfo.schoolId;
+      }
+      results.next(loadedChildren);
     });
-    return from(promise);
+
+    return results;
   }
 
   /**
@@ -118,7 +121,6 @@ export class ChildrenService {
   }
 
   private createChildSchoolRelationIndex(): Promise<any> {
-
     const designDoc = {
       _id: '_design/childSchoolRelations_index',
       views: {
@@ -156,8 +158,8 @@ export class ChildrenService {
 
   querySortedRelations(childId: string, limit?: number): Promise<ChildSchoolRelation[]> {
     const options: any = {
-      startkey: childId + '\uffff', //  higher value needs to be startkey
-      endkey: childId,              //  \uffff is not a character -> only relations staring with childId will be selected
+      startkey: childId + '_\uffff', //  higher value needs to be startkey
+      endkey: childId + '_',              //  \uffff is not a character -> only relations staring with childId will be selected
       descending: true,
       include_docs: true,
       limit: limit,

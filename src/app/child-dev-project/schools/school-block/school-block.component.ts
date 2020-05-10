@@ -1,4 +1,4 @@
-import { Component, HostListener, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, HostListener, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
 import { School } from '../model/school';
@@ -8,7 +8,7 @@ import { School } from '../model/school';
   templateUrl: './school-block.component.html',
   styleUrls: ['./school-block.component.scss'],
 })
-export class SchoolBlockComponent implements OnInit, OnChanges {
+export class SchoolBlockComponent implements OnChanges {
   @Input() entity: School = new School('');
   @Input() entityId: string;
   @Input() linkDisabled: boolean;
@@ -19,19 +19,17 @@ export class SchoolBlockComponent implements OnInit, OnChanges {
               private entityMapper: EntityMapperService) {
   }
 
-  async ngOnInit() {
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.hasOwnProperty('entityId')) {
+      this.initFromEntityId();
+    }
+  }
+
+  private async initFromEntityId() {
     if (!this.entityId) {
       return;
     }
     this.entity = await this.entityMapper.load(School, this.entityId);
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (this.entityId !== undefined) {
-      this.entityMapper.load(School, this.entityId).then(school => {
-        this.entity = school;
-      });
-    }
   }
 
   showTooltip() {
