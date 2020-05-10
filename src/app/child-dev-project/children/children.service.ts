@@ -13,6 +13,8 @@ import { EntitySchemaService } from '../../core/entity/schema/entity-schema.serv
 import { ChildPhotoService } from './child-photo-service/child-photo.service';
 import { LoadChildPhotoEntitySchemaDatatype } from './child-photo-service/datatype-load-child-photo';
 import moment from 'moment';
+import * as uniqid from 'uniqid';
+import { LoggingService } from '../../core/logging/logging.service';
 
 @Injectable()
 export class ChildrenService {
@@ -21,6 +23,7 @@ export class ChildrenService {
               private entitySchemaService: EntitySchemaService,
               private db: Database,
               childPhotoService: ChildPhotoService,
+              private logger: LoggingService,
   ) {
     this.entitySchemaService.registerSchemaDatatype(new LoadChildPhotoEntitySchemaDatatype(childPhotoService));
     this.createAttendanceAnalysisIndex();
@@ -41,6 +44,7 @@ export class ChildrenService {
 
       for (const loadedChild of loadedChildren) {
         const childCurrentSchoolInfo = await this.getCurrentSchoolInfoForChild(loadedChild.getId());
+        await this.migrateToNewChildSchoolRelationModel(loadedChild, childCurrentSchoolInfo);
         loadedChild.schoolClass = childCurrentSchoolInfo.schoolClass;
         loadedChild.schoolId = childCurrentSchoolInfo.schoolId;
       }
@@ -48,6 +52,37 @@ export class ChildrenService {
     });
 
     return results;
+  }
+
+  /**
+   * DATA MODEL UPGRADE
+   * Check if the Child Entity still contains direct links to schoolId and schoolClass
+   * and create a new ChildSchoolRelation if necessary.
+   * @param loadedChild Child entity to be checked and migrated
+   * @param childCurrentSchoolInfo Currently available school information according to new data model from ChildSchoolRelation entities
+   */
+  private async migrateToNewChildSchoolRelationModel(
+    loadedChild: Child,
+    childCurrentSchoolInfo: { schoolId: string; schoolClass: string },
+  ) {
+    if (!loadedChild.schoolClass && !loadedChild.schoolId) {
+      // no data from old model -> skip migration
+      return;
+    }
+
+    if (loadedChild.schoolId !== childCurrentSchoolInfo.schoolId || loadedChild.schoolClass !== childCurrentSchoolInfo.schoolClass) {
+      // generate a ChildSchoolRelation entity from the information of the previous data model
+      const autoMigratedChildSchoolRelation = new ChildSchoolRelation(uniqid());
+      autoMigratedChildSchoolRelation.childId = loadedChild.getId();
+      autoMigratedChildSchoolRelation.schoolId = loadedChild.schoolId;
+      autoMigratedChildSchoolRelation.schoolClass = loadedChild.schoolClass;
+      await this.entityMapper.save(autoMigratedChildSchoolRelation);
+      this.logger.debug('migrated Child entity to new ChildSchoolRelation model ' + loadedChild._id);
+      console.log(autoMigratedChildSchoolRelation);
+    }
+
+    // save the Child entity to remove the deprecated attributes from the doc in the database
+    await this.entityMapper.save(loadedChild);
   }
 
   /**
@@ -143,7 +178,8 @@ export class ChildrenService {
         by_date: {
           map: `(doc) => {
             if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
-            emit(doc.childId + '_' + (new Date(doc.start)).getTime().toString().padStart(14, "0"));
+            let timestamp = (new Date(doc.start || '3000-01-01')).getTime().toString().padStart(14, "0");
+            emit(doc.childId + '_' + timestamp);
             }`,
         },
 

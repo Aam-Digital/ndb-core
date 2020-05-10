@@ -13,6 +13,7 @@ import { SchoolsService } from '../schools/schools.service';
 import { SessionService } from '../../core/session/session-service/session.service';
 import { ChildPhotoService } from '../children/child-photo-service/child-photo.service';
 import { ConfirmationDialogModule } from '../../core/confirmation-dialog/confirmation-dialog.module';
+import { SimpleChange } from '@angular/core';
 
 describe('PreviousSchoolsComponent', () => {
   let component: PreviousSchoolsComponent;
@@ -46,7 +47,6 @@ describe('PreviousSchoolsComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(PreviousSchoolsComponent);
     component = fixture.componentInstance;
-    component.childId = testChildId;
     fixture.detectChanges();
   });
 
@@ -58,7 +58,10 @@ describe('PreviousSchoolsComponent', () => {
     const childrenService = fixture.debugElement.injector.get(ChildrenService);
     spyOn(component, 'loadData').and.callThrough();
     spyOn(childrenService, 'getSchoolsWithRelations').and.callThrough();
-    component.ngOnInit();
+
+    component.childId = testChildId;
+    component.ngOnChanges({ childId: new SimpleChange(undefined, testChildId, false)});
+
     fixture.whenStable().then(() => {
       expect(component.loadData).toHaveBeenCalledWith(testChildId);
       expect(childrenService.getSchoolsWithRelations).toHaveBeenCalledWith(testChildId);

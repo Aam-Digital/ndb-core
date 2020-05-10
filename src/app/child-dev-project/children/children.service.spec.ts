@@ -11,6 +11,8 @@ import { Database } from 'app/core/database/database';
 import { ChildPhotoService } from './child-photo-service/child-photo.service';
 import { CloudFileService } from '../../core/webdav/cloud-file-service.service';
 import moment from 'moment';
+import { LoggingService } from '../../core/logging/logging.service';
+import { take } from 'rxjs/operators';
 
 function generateChildEntities(): Child[] {
   const data = [];
@@ -112,6 +114,7 @@ describe('ChildrenService', () => {
           { provide: CloudFileService, useValue: { isConnected: () => false } },
           ChildPhotoService,
           ChildrenService,
+          LoggingService,
         ],
       },
     );
@@ -130,10 +133,10 @@ describe('ChildrenService', () => {
   });
 
   it('should list newly saved children', async () => {
-    const childrenBefore = await service.getChildren().toPromise();
+    const childrenBefore = await service.getChildren().pipe(take(1)).toPromise();
     const child = new Child('10');
     await entityMapper.save<Child>(child);
-    const childrenAfter = await service.getChildren().toPromise();
+    const childrenAfter = await service.getChildren().pipe(take(1)).toPromise();
 
     let find = childrenBefore.find(c => c.getId() === child.getId());
     expect(find).toBeUndefined();
