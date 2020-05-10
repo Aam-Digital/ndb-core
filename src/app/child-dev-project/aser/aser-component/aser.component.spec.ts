@@ -14,16 +14,18 @@ import { of } from 'rxjs';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
 import { Database } from '../../../core/database/database';
 import { AlertService } from 'app/core/alerts/alert.service';
+import { ConfirmationDialogModule } from '../../../core/confirmation-dialog/confirmation-dialog.module';
+import { FormDialogModule } from '../../../core/form-dialog/form-dialog.module';
 
 describe('AserComponent', () => {
   let component: AserComponent;
   let fixture: ComponentFixture<AserComponent>;
 
   const mockChildrenService = {
-    getChild: (id) => {
+    getChild: () => {
       return of([new Child('22')]);
     },
-    getAserResultsOfChild: (id) => {
+    getAserResultsOfChild: () => {
       return of([]);
     },
   };
@@ -32,7 +34,13 @@ describe('AserComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ AserComponent ],
-      imports: [ EntitySubrecordModule, FormsModule, NoopAnimationsModule],
+      imports: [
+        FormsModule,
+        NoopAnimationsModule,
+        EntitySubrecordModule,
+        ConfirmationDialogModule,
+        FormDialogModule,
+      ],
       providers: [
         DatePipe,
         { provide: ActivatedRoute, useValue: {paramMap: of({get: () => '22'}) } },

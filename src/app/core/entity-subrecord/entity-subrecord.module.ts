@@ -13,6 +13,7 @@ import { EntitySubrecordComponent } from './entity-subrecord/entity-subrecord.co
 import { KeysPipe } from './keys-pipe/keys.pipe';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ConfirmationDialogModule } from '../confirmation-dialog/confirmation-dialog.module';
+import { FormDialogModule } from '../form-dialog/form-dialog.module';
 
 /**
  * EntitySubrecord provides generic components to display and edit a list of entities
@@ -34,6 +35,7 @@ import { ConfirmationDialogModule } from '../confirmation-dialog/confirmation-di
     MatSortModule,
     MatAutocompleteModule,
     MatDatepickerModule,
+    FormDialogModule,
     ConfirmationDialogModule,
   ],
   declarations: [EntitySubrecordComponent, KeysPipe],

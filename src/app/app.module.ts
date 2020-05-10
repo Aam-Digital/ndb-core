@@ -58,6 +58,8 @@ import { DemoEducationalMaterialGeneratorService } from './child-dev-project/edu
 import { DemoHealthCheckGeneratorService } from './child-dev-project/health-checkup/demo-data/demo-health-check-generator.service';
 import { DemoWidgetGeneratorService } from './child-dev-project/dashboard/demo-widget-generator.service';
 import { DemoUserGeneratorService } from './core/user/demo-user-generator.service';
+import { ConfirmationDialogModule } from './core/confirmation-dialog/confirmation-dialog.module';
+import { FormDialogModule } from './core/form-dialog/form-dialog.module';
 
 /**
  * Main entry point of the application.
@@ -76,6 +78,8 @@ import { DemoUserGeneratorService } from './core/user/demo-user-generator.servic
     HttpClientModule,
     routing,
     FormsModule,
+    ConfirmationDialogModule,
+    FormDialogModule,
     AlertsModule,
     EntityModule,
     AppConfigModule,

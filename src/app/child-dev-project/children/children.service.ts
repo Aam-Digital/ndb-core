@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { from, Observable } from 'rxjs';
+import { from, Observable, Subject } from 'rxjs';
 import { Child } from './model/child';
 import { EntityMapperService } from '../../core/entity/entity-mapper.service';
 import { AttendanceMonth } from '../attendance/model/attendance-month';
@@ -8,11 +8,13 @@ import { Note } from '../notes/model/note';
 import { EducationalMaterial } from '../educational-material/model/educational-material';
 import { Aser } from '../aser/model/aser';
 import { ChildSchoolRelation } from './model/childSchoolRelation';
-import { School } from '../schools/model/school';
 import { HealthCheck } from '../health-checkup/model/health-check';
 import { EntitySchemaService } from '../../core/entity/schema/entity-schema.service';
 import { ChildPhotoService } from './child-photo-service/child-photo.service';
 import { LoadChildPhotoEntitySchemaDatatype } from './child-photo-service/datatype-load-child-photo';
+import moment from 'moment';
+import * as uniqid from 'uniqid';
+import { LoggingService } from '../../core/logging/logging.service';
 
 @Injectable()
 export class ChildrenService {
@@ -21,6 +23,7 @@ export class ChildrenService {
               private entitySchemaService: EntitySchemaService,
               private db: Database,
               childPhotoService: ChildPhotoService,
+              private logger: LoggingService,
   ) {
     this.entitySchemaService.registerSchemaDatatype(new LoadChildPhotoEntitySchemaDatatype(childPhotoService));
     this.createAttendanceAnalysisIndex();
@@ -33,7 +36,53 @@ export class ChildrenService {
    * returns an observable which retrieves children from the database and loads their pictures
    */
   getChildren(): Observable<Child[]> {
-    return from(this.entityMapper.loadType<Child>(Child));
+    const results = new Subject<Child[]>();
+
+    this.entityMapper.loadType<Child>(Child)
+    .then(async (loadedChildren) => {
+      results.next(loadedChildren);
+
+      for (const loadedChild of loadedChildren) {
+        const childCurrentSchoolInfo = await this.getCurrentSchoolInfoForChild(loadedChild.getId());
+        await this.migrateToNewChildSchoolRelationModel(loadedChild, childCurrentSchoolInfo);
+        loadedChild.schoolClass = childCurrentSchoolInfo.schoolClass;
+        loadedChild.schoolId = childCurrentSchoolInfo.schoolId;
+      }
+      results.next(loadedChildren);
+    });
+
+    return results;
+  }
+
+  /**
+   * DATA MODEL UPGRADE
+   * Check if the Child Entity still contains direct links to schoolId and schoolClass
+   * and create a new ChildSchoolRelation if necessary.
+   * @param loadedChild Child entity to be checked and migrated
+   * @param childCurrentSchoolInfo Currently available school information according to new data model from ChildSchoolRelation entities
+   */
+  private async migrateToNewChildSchoolRelationModel(
+    loadedChild: Child,
+    childCurrentSchoolInfo: { schoolId: string; schoolClass: string },
+  ) {
+    if (!loadedChild.schoolClass && !loadedChild.schoolId) {
+      // no data from old model -> skip migration
+      return;
+    }
+
+    if (loadedChild.schoolId !== childCurrentSchoolInfo.schoolId || loadedChild.schoolClass !== childCurrentSchoolInfo.schoolClass) {
+      // generate a ChildSchoolRelation entity from the information of the previous data model
+      const autoMigratedChildSchoolRelation = new ChildSchoolRelation(uniqid());
+      autoMigratedChildSchoolRelation.childId = loadedChild.getId();
+      autoMigratedChildSchoolRelation.schoolId = loadedChild.schoolId;
+      autoMigratedChildSchoolRelation.schoolClass = loadedChild.schoolClass;
+      await this.entityMapper.save(autoMigratedChildSchoolRelation);
+      this.logger.debug('migrated Child entity to new ChildSchoolRelation model ' + loadedChild._id);
+      console.log(autoMigratedChildSchoolRelation);
+    }
+
+    // save the Child entity to remove the deprecated attributes from the doc in the database
+    await this.entityMapper.save(loadedChild);
   }
 
   /**
@@ -41,7 +90,16 @@ export class ChildrenService {
    * @param id id of child
    */
   getChild(id: string): Observable<Child> {
-    return from(this.entityMapper.load<Child>(Child, id));
+    const promise = this.entityMapper.load<Child>(Child, id)
+      .then(loadedChild => {
+        return (this.getCurrentSchoolInfoForChild(id))
+          .then(currentSchoolInfo => {
+            loadedChild.schoolClass = currentSchoolInfo.schoolClass;
+            loadedChild.schoolId = currentSchoolInfo.schoolId;
+            return (loadedChild);
+          });
+      });
+    return from(promise);
   }
 
   getAttendances(): Observable<AttendanceMonth[]> {
@@ -98,7 +156,6 @@ export class ChildrenService {
   }
 
   private createChildSchoolRelationIndex(): Promise<any> {
-
     const designDoc = {
       _id: '_design/childSchoolRelations_index',
       views: {
@@ -121,7 +178,8 @@ export class ChildrenService {
         by_date: {
           map: `(doc) => {
             if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
-            emit(doc.childId + '_' + (new Date(doc.start)).getTime().toString().padStart(14, "0"));
+            let timestamp = (new Date(doc.start || '3000-01-01')).getTime().toString().padStart(14, "0");
+            emit(doc.childId + '_' + timestamp);
             }`,
         },
 
@@ -136,8 +194,8 @@ export class ChildrenService {
 
   querySortedRelations(childId: string, limit?: number): Promise<ChildSchoolRelation[]> {
     const options: any = {
-      startkey: childId + '\uffff', //  higher value needs to be startkey
-      endkey: childId,              //  \uffff is not a character -> only relations staring with childId will be selected
+      startkey: childId + '_\uffff', //  higher value needs to be startkey
+      endkey: childId + '_',              //  \uffff is not a character -> only relations staring with childId will be selected
       descending: true,
       include_docs: true,
       limit: limit,
@@ -319,14 +377,22 @@ export class ChildrenService {
     );
   }
 
-  getCurrentSchool(childId: string): Promise<School> {
-    return this.queryLatestRelation(childId)
-      .then(relation => {
-        if (relation) {
-         return this.entityMapper.load<School>(School, relation.schoolId);
-        }
-        return null;
-      });
+  async getCurrentSchoolInfoForChild(childId: string): Promise<{schoolId: string, schoolClass: string}> {
+    const relations = (await this.querySortedRelations(childId)) || [];
+    for (const rel of relations) {
+      if (moment(rel.start).isSameOrBefore(moment(), 'days')
+        && moment(rel.end).isSameOrAfter(moment(), 'days')) {
+        return {
+          schoolId: rel.schoolId,
+          schoolClass: rel.schoolClass,
+        };
+      }
+    }
+
+    return {
+      schoolId: null,
+      schoolClass: null,
+    };
   }
 
   async getSchoolsWithRelations(childId: string): Promise<ChildSchoolRelation[]> {

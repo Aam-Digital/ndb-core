@@ -135,6 +135,15 @@ export class AttendanceMonth extends Entity {
     return this._dailyRegister;
   }
 
+
+
+  constructor(id: string) {
+    super(id);
+    this.month = new Date();
+  }
+
+
+
   private updateDailyRegister() {
     if (this.month === undefined) {
       return;

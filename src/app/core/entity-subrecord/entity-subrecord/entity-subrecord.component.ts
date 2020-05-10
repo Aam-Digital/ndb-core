@@ -1,5 +1,4 @@
-import { Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, ViewChild, Output, EventEmitter } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -12,6 +11,9 @@ import { AlertService } from 'app/core/alerts/alert.service';
 import { FormValidationResult } from './form-validation-result';
 import { ConfirmationDialogService } from '../../confirmation-dialog/confirmation-dialog.service';
 import { ColumnDescriptionInputType } from './column-description-input-type.enum';
+import { ComponentType } from '@angular/cdk/overlay';
+import { FormDialogService } from '../../form-dialog/form-dialog.service';
+import { ShowsEntity } from '../../form-dialog/shows-entity.interface';
 
 /**
  * Generically configurable component to display and edit a list of entities in a compact way
@@ -47,7 +49,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
    * This is displayed as a modal (hovering) dialog above the active view and allows the user to get
    * more information or more comfortable editing of a single record.
    */
-  @Input() detailsComponent: typeof Component;
+  @Input() detailsComponent: ComponentType<ShowsEntity>;
 
   /**
    * Whether an "Add" button to create a new entry should be displayed as part of the form.
@@ -60,6 +62,14 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
    * a {@link FormValidationResult} that is then handled by the EntitySubrecordComponent.
    */
   @Input() formValidation?: (record: Entity) => FormValidationResult;
+
+  /**
+   * Event whenever an entity in this table is changed.
+   */
+  @Output() changedRecordsInEntitySubrecordEvent = new EventEmitter<any>();
+
+  /** id of the parent entity of the records being displayed. May be used for custom display logic. */
+  @Input() entityId?: string;
 
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource();
@@ -80,7 +90,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   constructor(private _entityMapper: EntityMapperService,
               private _snackBar: MatSnackBar,
               private _confirmationDialog: ConfirmationDialogService,
-              private dialog: MatDialog,
+              private formDialog: FormDialogService,
               private alertService: AlertService,
               private media: MediaObserver) {
     this.flexMediaWatcher = this.media.media$.subscribe((change: MediaChange) => {
@@ -129,7 +139,8 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
 
-    this._entityMapper.save(record).then(savedRecord => {
+    this._entityMapper.save(record).then(() => {
+      this.changedRecordsInEntitySubrecordEvent.emit();
     });
 
     // updated backup copies used for reset
@@ -175,7 +186,10 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     dialogRef.afterClosed()
       .subscribe(confirmed => {
         if (confirmed) {
-          this._entityMapper.remove(record);
+          this._entityMapper.remove(record)
+            .then(() => {
+              this.changedRecordsInEntitySubrecordEvent.emit();
+            });
           this.removeFromDataTable(record);
 
           const snackBarRef = this._snackBar.open('Record deleted', 'Undo', { duration: 8000 });
@@ -216,19 +230,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     if (this.detailsComponent === undefined || this.recordsEditing.get(record.getId())) {
       return;
     }
-    this.dialog.open(this.detailsComponent, {width: '80%', data: {entity: record}});
-  }
-
-  /**
-   * Helper function to convert entities' "getWarningLevel()" value to a styling that can highlight records based on this.
-   * @param rec The entity for which to get the style class.
-   */
-  getWarningStyleClass(rec) {
-    if (typeof rec.getWarningLevel === 'function') {
-      return 'w-' + rec.getWarningLevel();
-    } else {
-      return '';
-    }
+    this.formDialog.openDialog(this.detailsComponent, record);
   }
 
 
@@ -295,5 +297,19 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
    */
   isReadonlyInputType(inputType: ColumnDescriptionInputType): boolean {
     return inputType === ColumnDescriptionInputType.FUNCTION || inputType === ColumnDescriptionInputType.READONLY;
+  }
+
+  /**
+   * returns the color for a record.
+   * If this entity id is undefined, this will return the default color. Otherwise it will attempt
+   * to get a specific color for this specific entity id
+   * @param record The record to check for. The record must be an entity that has a <code>getColor()</code>-Method specified.
+   * If this entityId is set, a <code>getColorForId()</code>-Method must be specified, that accepts this id.
+   */
+  getColor(record) {
+    if (this.entityId !== undefined) {
+      return record.getColorForId(this.entityId);
+    }
+    return record.getColor();
   }
 }

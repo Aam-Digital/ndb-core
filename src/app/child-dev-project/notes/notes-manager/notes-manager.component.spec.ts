@@ -1,64 +1,69 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { NotesManagerComponent } from './notes-manager.component';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
-import { ChildBlockComponent } from '../../children/child-block/child-block.component';
-import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
-import { MockDatabase } from '../../../core/database/mock-database';
+import { Note } from '../model/note';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NotesModule } from '../notes.module';
+import { MatNativeDateModule } from '@angular/material/core';
+import { ChildrenService } from '../../children/children.service';
+import { FormBuilder } from '@angular/forms';
 import { Database } from '../../../core/database/database';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { SchoolBlockComponent } from '../../schools/school-block/school-block.component';
-import { SessionService } from '../../../core/session/session-service/session.service';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { MockDatabase } from '../../../core/database/mock-database';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
+import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
+import { ConfirmationDialogService } from '../../../core/confirmation-dialog/confirmation-dialog.service';
+import { SessionService } from '../../../core/session/session-service/session.service';
+
+function generateNewNotes(): Array<Note> {
+  let i;
+  const notes: Array<Note> = [];
+  for (i = 0; i < 10; i++) {
+    const note = new Note('' + i);
+    notes.push(note);
+  }
+  return notes;
+}
+
+const database: Database = new MockDatabase();
+const testNotes =  generateNewNotes();
 
 describe('NotesManagerComponent', () => {
+
   let component: NotesManagerComponent;
   let fixture: ComponentFixture<NotesManagerComponent>;
 
-  const mockSessionService = { getCurrentUser: () => { return { name: 'tester' }; }};
-
-  beforeEach(async(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ NotesManagerComponent, ChildBlockComponent, SchoolBlockComponent ],
+      declarations: [],
       imports: [
-        MatIconModule,
-        MatTableModule,
-        MatSelectModule,
-        MatButtonToggleModule,
-        FormsModule,
-        CommonModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatExpansionModule,
-        MatDialogModule,
-        NoopAnimationsModule,
-      ],
+        NotesModule,
+        MatNativeDateModule],
       providers: [
-        { provide: Database, useClass: MockDatabase },
-        EntityMapperService,
         EntitySchemaService,
-        { provide: SessionService, useValue: mockSessionService },
+        EntityMapperService,
+        ConfirmationDialogService,
+        ChildrenService,
+        FormBuilder,
+        SessionService,
+        {provide: Database, useValue: database},
       ],
     })
-    .compileComponents();
-  }));
+      .compileComponents();
+  });
 
-  beforeEach(() => {
+  beforeEach (() => {
     fixture = TestBed.createComponent(NotesManagerComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    const entityMapperService = fixture.debugElement.injector.get(EntityMapperService);
+    testNotes.forEach(note => entityMapperService.save(note));
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should load all data after initializing', async () => {
+    component.ngOnInit();
+    await fixture.whenStable();
+    expect(component.entityList.length).toEqual(testNotes.length);
+  });
+
 });

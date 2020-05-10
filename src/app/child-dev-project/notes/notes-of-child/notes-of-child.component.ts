@@ -1,23 +1,26 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { Note } from '../model/note';
+import { NoteDetailsComponent } from '../note-details/note-details.component';
+import { DatePipe } from '@angular/common';
 import { ChildrenService } from '../../children/children.service';
-import { ActivatedRoute } from '@angular/router';
+import moment from 'moment';
 import { SessionService } from '../../../core/session/session-service/session.service';
 import { ColumnDescription } from '../../../core/entity-subrecord/entity-subrecord/column-description';
-import { DatePipe } from '@angular/common';
-import { NoteDetailsComponent } from '../note-details/note-details.component';
 import { ColumnDescriptionInputType } from '../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum';
 
-@Component({
-  selector: 'app-notes',
-  template: '<app-entity-subrecord [records]="records" [columns]="columns" ' +
-            '[newRecordFactory]="generateNewRecordFactory()" [detailsComponent]="detailsComponent">' +
-            '</app-entity-subrecord>',
-})
-export class NotesComponent implements OnInit {
 
-  childId: string;
-  records: Array<Note>;
+/**
+ * The component that is responsible for listing the Notes that are related to a certain child
+ */
+@Component({
+  selector: 'app-notes-of-child',
+  templateUrl: './notes-of-child.component.html',
+  styleUrls: ['./notes-of-child.component.scss'],
+})
+export class NotesOfChildComponent implements OnInit, OnChanges {
+
+  @Input() childId: string;
+  records: Array<Note> = [];
   detailsComponent = NoteDetailsComponent;
 
   columns: Array<ColumnDescription> = [
@@ -28,26 +31,36 @@ export class NotesComponent implements OnInit {
     new ColumnDescription('author', 'SW', ColumnDescriptionInputType.TEXT, null, undefined, 'md'),
     new ColumnDescription('warningLevel', '', ColumnDescriptionInputType.SELECT,
       [{value: 'OK', label: 'Solved'}, {value: 'WARNING', label: 'Needs Follow-Up'}, {value: 'URGENT', label: 'Urgent Follow-Up'}],
-      (v) => '', 'md'),
+      () => '', 'md'),
   ];
 
-
-  constructor(private route: ActivatedRoute,
-              private childrenService: ChildrenService,
-              private sessionService: SessionService,
-              private datePipe: DatePipe) {
-  }
+  constructor(
+    private childrenService: ChildrenService,
+    private sessionService: SessionService,
+    private datePipe: DatePipe,
+  ) {}
 
   ngOnInit() {
-    this.route.paramMap.subscribe(params => {
-      this.childId = params.get('id');
-
-      this.childrenService.getNotesOfChild(this.childId)
-        .subscribe(results => this.records = results.sort((a, b) => {
-          return (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0); } ));
-    });
+    this.initNotesOfChild();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.hasOwnProperty('childId')) {
+      this.initNotesOfChild();
+    }
+  }
+
+  private initNotesOfChild() {
+    if (!this.childId || this.childId === '') {
+      return;
+    }
+
+    this.childrenService.getNotesOfChild(this.childId)
+      .subscribe((notes: Note[]) => {
+        notes.sort((a, b) => moment(a.date).valueOf() - moment(b.date).valueOf());
+        this.records = notes;
+      });
+  }
 
   generateNewRecordFactory() {
     // define values locally because "this" is a different scope after passing a function as input to another component
@@ -57,7 +70,7 @@ export class NotesComponent implements OnInit {
     return () => {
       const newNote = new Note(Date.now().toString());
       newNote.date = new Date();
-      newNote.children = [childId];
+      newNote.addChild(childId);
       newNote.author = user;
 
       return newNote;

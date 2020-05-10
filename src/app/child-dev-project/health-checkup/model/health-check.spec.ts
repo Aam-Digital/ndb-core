@@ -59,10 +59,7 @@ describe('HealthCheck Entity', () => {
     };
 
     const entity = new HealthCheck(id);
-    entity.child = expectedData.child;
-    entity.date = expectedData.date;
-    entity.height = expectedData.height;
-    entity.weight = expectedData.weight;
+    Object.assign(entity, expectedData);
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 

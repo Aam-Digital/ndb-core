@@ -17,6 +17,7 @@
 
 import { EntitySchema } from './schema/entity-schema';
 import { DatabaseField } from './database-field.decorator';
+import { WarningLevel, WarningLevelColor } from '../../child-dev-project/warning-level';
 
 /**
  * This represents a static class of type <T>.
@@ -185,6 +186,14 @@ export class Entity {
    * Override this method as needed.
    */
   public getColor() {
-    return '';
+    return WarningLevelColor(this.getWarningLevel());
+  }
+
+  /**
+   * Override getWarningLevel() to define when the entity is in a critical condition and should be color-coded
+   * and highlighted in generic components of the UI.
+   */
+  public getWarningLevel(): WarningLevel {
+    return WarningLevel.NONE;
   }
 }

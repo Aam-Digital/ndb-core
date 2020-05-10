@@ -15,70 +15,124 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from '../../../core/entity/entity';
-import { WarningLevel } from '../../warning-level';
+
+import { MeetingNoteAttendance } from '../meeting-note-attendance';
+import { INTERACTION_TYPE_COLORS, InteractionTypes } from '../interaction-types.enum';
 import { DatabaseEntity } from '../../../core/entity/database-entity.decorator';
+import { Entity } from '../../../core/entity/entity';
 import { DatabaseField } from '../../../core/entity/database-field.decorator';
+import { WarningLevel, WarningLevelColor } from '../../warning-level';
 
 @DatabaseEntity('Note')
 export class Note extends Entity {
-
-  static INTERACTION_TYPES = [
-    'Home Visit',
-    'Talk with Guardians',
-    'Talk with Child',
-    'Incident',
-    'Discussion/Decision',
-    'School/Hostel Visit',
-    'Phone Call',
-    'Talk with Coaching Teacher',
-    'Talk with Peer',
-    'Talk with Neighbours',
-    'Guardians\' Meeting',
-    'Children\'s Meeting',
-    'Daily Routine',
-    'Annual Survey',
-    'Contact with other partners (club/NGO/...)',
-  ];
-
-  @DatabaseField() children: string[] = []; // id of Child entity
+  /** IDs of Child entities linked with this note */
+  @DatabaseField() children: string[] = [];
+  /** An array of triplets containing information about the child and it's attendance */
+  @DatabaseField() attendances: MeetingNoteAttendance[] = [];
   @DatabaseField() date: Date;
   @DatabaseField() subject: string = '';
   @DatabaseField() text: string = '';
   @DatabaseField() author: string = '';
-  @DatabaseField() category: string = '';
+  @DatabaseField() category: InteractionTypes = InteractionTypes.NONE;
   @DatabaseField({dataType: 'string'}) warningLevel: WarningLevel = WarningLevel.OK;
 
-  getWarningLevel (): WarningLevel {
+
+  getWarningLevel(): WarningLevel {
     return this.warningLevel;
   }
 
-  isLinkedWithChild(childId: string) {
-    return (this.children.findIndex(e => e === childId) > -1);
-  }
-
-
+  // TODO: color logic should not be part of entity/model but rather in the component responsible for displaying it
   public getColor() {
     if (this.warningLevel === WarningLevel.URGENT) {
-      return '#fd727280';
+      return WarningLevelColor(WarningLevel.URGENT);
     }
     if (this.warningLevel === WarningLevel.WARNING) {
-      return '#ffa50080';
+      return WarningLevelColor(WarningLevel.WARNING);
     }
 
-    if (this.category === 'Guardians\' Meeting' || this.category === 'Children\'s Meeting') {
-      return '#E1F5FE';
-    }
-    if (this.category === 'Discussion/Decision') {
-      return '#E1BEE7';
-    }
-    if (this.category === 'Annual Survey') {
-      return '#FFFDE7';
-    }
-    if (this.category === 'Daily Routine') {
-      return '#F1F8E9';
+    const color = INTERACTION_TYPE_COLORS.get(this.category);
+    return color === undefined ? '' : color;
+  }
+
+  public getColorForId(entityId: string) {
+    if (this.isMeeting() && !this.isPresent(entityId)) {
+      // child is absent, highlight the entry
+      return WarningLevelColor(WarningLevel.URGENT);
     }
 
-    return '';
+    return this.getColor();
+  }
+
+  /**
+   * whether a specific child with given childId is linked to this not
+   * @param childId The childId to check for
+   */
+  isLinkedWithChild(childId: string): boolean {
+    return this.children.includes(childId);
+  }
+
+  /**
+   * whether or not this note's contents describe a meeting
+   */
+  isMeeting(): boolean {
+    return  this.category === InteractionTypes.GUARDIAN_MEETING ||
+            this.category === InteractionTypes.CHILDREN_MEETING ||
+            this.category === InteractionTypes.EXCURSION;
+  }
+
+  /**
+   * returns the children that were either present or absent
+   * @param presence true to get the children that were present, false to get the children that were absent
+   */
+  childrenWithPresence(presence: boolean): MeetingNoteAttendance[] {
+    return this.attendances.filter(attendance => attendance.present === presence);
+  }
+
+  /**
+   * whether or not a specific child was present or not.
+   * This does not check whether or not this note is a meeting and will not return
+   * a sensible value, if this child couldn't be found
+   * @param childId The id of the child to check for
+   */
+  isPresent(childId: string): boolean {
+    const child = this.attendances.find(attendance => attendance.childId === childId);
+    if (child !== undefined) { return child.present; }
+  }
+
+  /**
+   * removes a specific child from this note
+   * @param childId The id of the child to exclude from the notes
+   */
+  removeChild(childId: string) {
+    this.children.splice(this.children.indexOf(childId), 1);
+    this.attendances.splice(this.attendances.findIndex(attendance => attendance.childId === childId), 1);
+  }
+
+  /**
+   * adds a new child to this note
+   * @param childId The id of the child to add to the notes
+   */
+  addChild(childId: string) {
+    this.children.splice(0, 0, childId);
+    this.attendances.splice(0, 0, new MeetingNoteAttendance(childId));
+  }
+
+  /**
+   * adds multiple children to this note
+   * @param childIds The id's of the children to add
+   */
+  addChildren(...childIds: string[]) {
+    childIds.forEach(child => this.addChild(child));
+  }
+
+  /**
+   * Toggles for a given child it's presence.
+   * If the child was absent, the presence-field will be true for that child.
+   * If the child was present, the presence-field will be false for that child
+   * @param childId The ID of the child
+   */
+  togglePresence(childId: string) {
+    const child = this.attendances.find(attendance => attendance.childId === childId );
+    if (child !== undefined) { child.present = !child.present; }
   }
 }

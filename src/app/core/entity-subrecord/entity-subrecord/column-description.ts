@@ -34,6 +34,7 @@ export class ColumnDescription {
    *           md	'screen and (min-width: 960px) and (max-width: 1279px)'
    *           lg	'screen and (min-width: 1280px) and (max-width: 1919px)'
    *           xl	'screen and (min-width: 1920px) and (max-width: 5000px)'
+   * @param styleBuilder (Optional) function building a ngStyle value, receiving the value as a parameter
    */
   constructor(
     public name: string,
@@ -43,6 +44,7 @@ export class ColumnDescription {
     public selectValues: Array<{value: any, label: string}> = [],
 
     public formatter = (value) => { return value; },
-    public visibleFrom?: string,
+    public visibleFrom: string = undefined,
+    public styleBuilder: (value) => Object = () => { return {}; },
   ) {}
 }

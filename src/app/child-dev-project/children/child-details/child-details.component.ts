@@ -27,7 +27,6 @@ import { ConfirmationDialogService } from '../../../core/confirmation-dialog/con
 import * as uniqid from 'uniqid';
 import { AlertService } from '../../../core/alerts/alert.service';
 import { ChildrenService } from '../children.service';
-import { School } from '../../schools/model/school';
 import { ChildPhotoService } from '../child-photo-service/child-photo.service';
 import { SessionService } from '../../../core/session/session-service/session.service';
 
@@ -35,13 +34,11 @@ import { SessionService } from '../../../core/session/session-service/session.se
 @Component({
   selector: 'app-child-details',
   templateUrl: './child-details.component.html',
-  styleUrls: ['./child-details.component.css'],
+  styleUrls: ['./child-details.component.scss'],
 })
 export class ChildDetailsComponent implements OnInit {
 
   child: Child = new Child('');
-  currentSchool: School = new School('');
-  schools: School[] = [];
 
   validateForm = false;
   form: FormGroup;
@@ -69,12 +66,9 @@ export class ChildDetailsComponent implements OnInit {
               private alertService: AlertService,
               private childPhotoService: ChildPhotoService,
               private sessionService: SessionService,
-  ) { }
-
-  // TODO: is this generateNewRecordFactory() used at all?
-  generateNewRecordFactory() {
-    // define values locally because 'this' is a different scope after passing a function as input to another component
-    const child = this.child.getId();
+  ) {
+    this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
+    this.isAdminUser = this.sessionService.getCurrentUser().admin;
   }
 
 
@@ -95,8 +89,6 @@ export class ChildDetailsComponent implements OnInit {
       phone:          [{value: this.child.phone,          disabled: !this.editing}],
       guardianName:   [{value: this.child.guardianName,   disabled: !this.editing}],
       preferredTimeForGuardianMeeting: [{value: this.child.preferredTimeForGuardianMeeting, disabled: !this.editing}],
-
-      schoolClass:    [{value: this.child.schoolClass,    disabled: !this.editing}],
 
       // aadhar:         [{value: this.child.has_aadhar,         disabled: !this.editing}],
       // kanyashree:     [{value: this.child.has_kanyashree,     disabled: !this.editing}],
@@ -124,9 +116,6 @@ export class ChildDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.route.paramMap.subscribe(params => this.loadChild(params.get('id')));
-    this.entityMapperService.loadType<School>(School).then(results => this.schools = results);
-    this.isAdminUser = this.sessionService.getCurrentUser().admin;
   }
 
   loadChild(id: string) {
@@ -139,11 +128,16 @@ export class ChildDetailsComponent implements OnInit {
         .subscribe(child => {
           this.child = child;
           this.initForm();
-          this.entityMapperService.load<School>(School, this.child.schoolId)
-            .then(school => this.currentSchool = school);
-        });
+      });
     }
     this.initForm();
+  }
+
+  changedRecordInEntitySubrecord() {
+    this.childrenService.getChild(this.child.getId())
+      .subscribe(child => {
+        this.child = child;
+      });
   }
 
   switchEdit() {
@@ -218,7 +212,7 @@ export class ChildDetailsComponent implements OnInit {
   }
 
   /**
-   * hands over the selected file to the cloudFileService together with the childID
+   * hands over the selected file to the cloudFileService together with the childId
    * @param event The event of the file upload dialog
    */
   async uploadChildPhoto(event) {
