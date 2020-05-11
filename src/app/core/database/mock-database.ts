@@ -157,7 +157,7 @@ export class MockDatabase extends Database {
     let reducerFun;
     switch (fun) {
       case 'notes_index/by_child':
-        filterFun = (e) => e._id.startsWith( Note.ENTITY_TYPE) && e.children.includes(options.key);
+        filterFun = (e) => e._id.startsWith(Note.ENTITY_TYPE) && e.children.includes(options.key);
         break;
       case 'attendances_index/by_child':
         filterFun = (e) => e._id.startsWith( AttendanceMonth.ENTITY_TYPE) && e.student === options.key;
@@ -210,7 +210,7 @@ export class MockDatabase extends Database {
     return { rows: []};
   }
 
-  private async filterForLatestRelationOfChild(childId: string, limit: number): Promise<any> {
+  private async filterForLatestRelationOfChild(childKey: string, limit: number): Promise<any> {
     return new Promise(resolve => {
       this.getAll().then(all => {
         const relations = all.filter(e => e._id.startsWith(ChildSchoolRelation.ENTITY_TYPE));
@@ -219,7 +219,7 @@ export class MockDatabase extends Database {
           const bValue = b.childId + '_' + this.zeroPad(new Date(b.start).valueOf());
           return aValue < bValue ? 1 : aValue === bValue ? 0 : -1;
         });
-        const filtered: ChildSchoolRelation[] = sorted.filter(doc => doc.childId === childId);
+        const filtered: ChildSchoolRelation[] = sorted.filter(doc => doc.childId + '_' === childKey);
         let results: {doc: ChildSchoolRelation}[] = filtered.map(relation => { return {doc: relation}; });
         if (limit) {
           results = results.slice(0, limit);
@@ -301,7 +301,8 @@ export class MockDatabase extends Database {
      */
 
 
-    console.warn('MockDatabase does not implement "saveDatabaseIndex()"');
+    // tslint:disable-next-line:no-console
+    console.debug('MockDatabase does not implement "saveDatabaseIndex()"');
     return Promise.resolve({});
   }
 }

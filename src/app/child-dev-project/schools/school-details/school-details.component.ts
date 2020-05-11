@@ -12,11 +12,11 @@ import { ConfirmationDialogService } from '../../../core/confirmation-dialog/con
 import { Location } from '@angular/common';
 import { Child } from '../../children/model/child';
 @Component({
-  selector: 'app-school-detail',
-  templateUrl: './school-detail.component.html',
-  styleUrls: ['./school-detail.component.css'],
+  selector: 'app-school-details',
+  templateUrl: './school-details.component.html',
+  styleUrls: ['./school-details.component.css'],
 })
-export class SchoolDetailComponent implements OnInit {
+export class SchoolDetailsComponent implements OnInit {
   school = new School('');
 
   studentDataSource: MatTableDataSource<Child> = new MatTableDataSource();
@@ -79,16 +79,8 @@ export class SchoolDetailComponent implements OnInit {
       .then(() => this.loadStudents());
   }
 
-  loadStudents() {
-    this.schoolService.getChildrenForSchool(this.school.getId())
-      .then(children => {
-        this.studentDataSource.data = children;
-      });
-  }
-
-
-  studentClick(id: number) {
-    this.router.navigate(['/child', id]);
+  async loadStudents() {
+    this.studentDataSource.data = await this.schoolService.getChildrenForSchool(this.school.getId());
   }
 
 

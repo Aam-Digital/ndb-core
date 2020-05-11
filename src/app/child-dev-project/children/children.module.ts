@@ -48,14 +48,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AttendanceAverageDashboardComponent } from '../attendance/dashboard-widgets/attendance-average-dashboard/attendance-average-dashboard.component';
 import { AttendanceWarningsDashboardComponent } from '../attendance/dashboard-widgets/attendance-warnings-dashboard/attendance-warnings-dashboard.component';
-import { NotesComponent } from '../notes/notes-component/notes.component';
-import { NoteDetailsComponent } from '../notes/note-details/note-details.component';
+import { NotesOfChildComponent } from '../notes/notes-of-child/notes-of-child.component';
 import { ChildSelectComponent } from './child-select/child-select.component';
 import { SchoolsModule } from '../schools/schools.module';
 import { EducationalMaterialComponent } from '../educational-material/educational-material-component/educational-material.component';
 import { AserComponent } from '../aser/aser-component/aser.component';
 import { FilterPipeModule } from 'ngx-filter-pipe';
-import { NotesManagerComponent } from '../notes/notes-manager/notes-manager.component';
 import { AddMonthAttendanceComponent } from '../attendance/add-month-attendance/add-month-attendance.component';
 import { AttendanceDaysComponent } from '../attendance/attendance-days/attendance-days.component';
 import { AttendanceDetailsComponent } from '../attendance/attendance-details/attendance-details.component';
@@ -74,6 +72,8 @@ import { SelectGroupChildrenComponent } from './select-group-children/select-gro
 import { RollCallComponent } from '../attendance/add-day-attendance/roll-call/roll-call.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RecentNotesDashboardComponent } from '../notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component';
+import { FormDialogModule } from '../../core/form-dialog/form-dialog.module';
+import { ConfirmationDialogModule } from '../../core/confirmation-dialog/confirmation-dialog.module';
 import { MatPaginatorModule } from '@angular/material/paginator';
 
 
@@ -98,7 +98,6 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatIconModule,
     MatCardModule,
     MatSnackBarModule,
-    MatDialogModule,
     MatProgressBarModule,
     MatAutocompleteModule,
     MatTooltipModule,
@@ -113,22 +112,22 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatListModule,
     WebdavModule,
     MatProgressSpinnerModule,
+    ConfirmationDialogModule,
+    FormDialogModule,
   ],
   declarations: [
     AttendanceBlockComponent,
     ChildBlockComponent,
     ChildAttendanceComponent,
-    NotesComponent,
+    NotesOfChildComponent,
     ChildDetailsComponent,
     ChildrenListComponent,
     ChildrenCountDashboardComponent,
     AttendanceAverageDashboardComponent,
     AttendanceWarningsDashboardComponent,
-    NoteDetailsComponent,
     ChildSelectComponent,
     EducationalMaterialComponent,
     AserComponent,
-    NotesManagerComponent,
     AddMonthAttendanceComponent,
     AttendanceDayBlockComponent,
     AttendanceDaysComponent,
@@ -156,6 +155,6 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     RecentNotesDashboardComponent,
     AttendanceDaysComponent,
   ],
-  entryComponents: [NoteDetailsComponent, AttendanceDetailsComponent],
+  entryComponents: [AttendanceDetailsComponent],
 })
 export class ChildrenModule { }

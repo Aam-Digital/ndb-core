@@ -19,7 +19,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { ModuleWithProviders } from '@angular/core';
 import { DashboardComponent } from './child-dev-project/dashboard/dashboard/dashboard.component';
 import { SchoolsListComponent } from './child-dev-project/schools/schools-list/schools-list.component';
-import { SchoolDetailComponent } from './child-dev-project/schools/school-detail/school-detail.component';
+import { SchoolDetailsComponent } from './child-dev-project/schools/school-details/school-details.component';
 import { ChildDetailsComponent } from './child-dev-project/children/child-details/child-details.component';
 import { UserAccountComponent } from './core/user/user-account/user-account.component';
 import { ChildrenListComponent } from './child-dev-project/children/children-list/children-list.component';
@@ -40,7 +40,7 @@ export const routes: Routes = [
   {path: '', component: DashboardComponent},
   {path: 'user', component: UserAccountComponent},
   {path: 'school', component: SchoolsListComponent},
-  {path: 'school/:id', component: SchoolDetailComponent},
+  {path: 'school/:id', component: SchoolDetailsComponent},
   {path: 'child', component: ChildrenListComponent},
   {path: 'child/:id', component: ChildDetailsComponent},
   {path: 'child/:id/attendance', component: ChildAttendanceComponent},

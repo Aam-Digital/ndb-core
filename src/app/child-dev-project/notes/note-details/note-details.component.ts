@@ -1,53 +1,22 @@
-import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
+import { InteractionTypes } from '../interaction-types.enum';
 import { Note } from '../model/note';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ConfirmationDialogService } from '../../../core/confirmation-dialog/confirmation-dialog.service';
-import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
+import { ShowsEntity } from '../../../core/form-dialog/shows-entity.interface';
 
 @Component({
   selector: 'app-note-details',
   templateUrl: './note-details.component.html',
   styleUrls: ['./note-details.component.scss'],
 })
-export class NoteDetailsComponent implements OnInit {
-  @Input() note: Note;
-  originalNote: Note;
-  @ViewChild('recordForm', { static: true }) form;
-  interactionTypes = Note.INTERACTION_TYPES;
+export class NoteDetailsComponent implements ShowsEntity {
+  @Input() entity: Note;
+  @ViewChild('dialogForm', { static: true }) formDialogWrapper;
 
+  smallScreen: boolean;
 
-  constructor(@Inject(MAT_DIALOG_DATA) data: any,
-              public dialogRef: MatDialogRef<NoteDetailsComponent>,
-              private confirmationDialog: ConfirmationDialogService,
-              private entityMapper: EntityMapperService) {
-    this.note = data.entity;
-    this.originalNote = Object.assign({}, this.note);
+  interactionTypes = Object.values(InteractionTypes);
 
-    this.dialogRef.beforeClose().subscribe((returnedNote) => {
-      if (!returnedNote && this.form.dirty) {
-        this.confirmationDialog.openDialog('Save Changes?', 'Do you want to save the changes you made to the record?')
-          .afterClosed().subscribe(confirmed => {
-            if (confirmed) {
-              this.save();
-            } else {
-              this.cancel();
-            }
-        });
-      }
-    });
+  constructor() {
+    this.smallScreen = window.innerWidth < 500;
   }
-
-  ngOnInit() {
-  }
-
-  save() {
-    this.entityMapper.save(this.note);
-    this.dialogRef.close(this.note);
-  }
-
-  cancel() {
-    Object.assign(this.note, this.originalNote);
-    this.dialogRef.close(this.note);
-  }
-
 }

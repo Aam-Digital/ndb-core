@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SchoolDetailComponent } from './school-detail.component';
+import { SchoolDetailsComponent } from './school-details.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -23,10 +23,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service'; //  Necessary for usage of uniqid in the component
 import { ChildrenService } from 'app/child-dev-project/children/children.service';
 import { CloudFileService } from '../../../core/webdav/cloud-file-service.service';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('SchoolDetailComponent', () => {
-  let component: SchoolDetailComponent;
-  let fixture: ComponentFixture<SchoolDetailComponent>;
+  let component: SchoolDetailsComponent;
+  let fixture: ComponentFixture<SchoolDetailsComponent>;
   const mockedRoute = {snapshot: { params: { id: 'new' } } };
   const mockedRouter = {navigate: () => null};
   const mockedLocation = {back: () => null};
@@ -39,7 +40,7 @@ describe('SchoolDetailComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SchoolDetailComponent ],
+      declarations: [ SchoolDetailsComponent ],
       imports: [
         MatTableModule,
         MatFormFieldModule,
@@ -49,6 +50,7 @@ describe('SchoolDetailComponent', () => {
         MatCheckboxModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
+        RouterTestingModule,
         MatInputModule,
       ],
       providers: [
@@ -71,7 +73,7 @@ describe('SchoolDetailComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SchoolDetailComponent);
+    fixture = TestBed.createComponent(SchoolDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

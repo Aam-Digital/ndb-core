@@ -15,7 +15,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import { SchoolDetailComponent } from './school-detail/school-detail.component';
+import { SchoolDetailsComponent } from './school-details/school-details.component';
 import { SchoolBlockComponent } from './school-block/school-block.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -25,6 +25,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { EntitySubrecordModule } from '../../core/entity-subrecord/entity-subrecord.module';
 import { RouterModule } from '@angular/router';
 import { SchoolsService } from './schools.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   imports: [
@@ -64,11 +65,12 @@ import { SchoolsService } from './schools.service';
     MatAutocompleteModule,
     EntitySubrecordModule,
     ReactiveFormsModule,
+    MatTooltipModule,
   ],
   declarations: [
     SchoolBlockComponent,
     SchoolsListComponent,
-    SchoolDetailComponent,
+    SchoolDetailsComponent,
   ],
   exports: [SchoolBlockComponent],
   providers: [SchoolsService],

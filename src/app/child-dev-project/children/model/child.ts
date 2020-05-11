@@ -35,7 +35,7 @@ export class Child extends Entity {
   @DatabaseField() name: string;
   @DatabaseField() projectNumber: string; // project number
   @DatabaseField({dataType: 'string'}) gender: Gender; // M or F
-  @DatabaseField() dateOfBirth: Date;
+  @DatabaseField({dataType: 'date-only'}) dateOfBirth: Date;
   @DatabaseField() motherTongue: string = '';
   @DatabaseField() religion: string = '';
 
@@ -43,9 +43,10 @@ export class Child extends Entity {
   @DatabaseField() admissionDate: Date;
   @DatabaseField() status: string = '';
 
-  // TODO: remove in favour of ChildSchoolRelations once all bugs are fixed
-  @DatabaseField() schoolId: string = '';
-  @DatabaseField() schoolClass: string = '';
+  /** current school (as determined through the ChildSchoolRelation docs) set during loading through ChildrenService */
+  schoolId: string = '';
+  /** current class (as determined through the ChildSchoolRelation docs) set during loading through ChildrenService */
+  schoolClass: string = '';
 
   @DatabaseField() address: string = '';
   @DatabaseField() phone: string = '';

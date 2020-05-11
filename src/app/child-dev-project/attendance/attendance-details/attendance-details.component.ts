@@ -1,51 +1,16 @@
-import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ConfirmationDialogService } from '../../../core/confirmation-dialog/confirmation-dialog.service';
-import { EntityMapperService } from '../../../core/entity/entity-mapper.service';
+import { Component, Input, ViewChild } from '@angular/core';
 import { AttendanceMonth } from '../model/attendance-month';
+import { ShowsEntity } from '../../../core/form-dialog/shows-entity.interface';
 
 @Component({
   selector: 'app-attendance-details',
   templateUrl: './attendance-details.component.html',
   styleUrls: ['./attendance-details.component.scss'],
 })
-export class AttendanceDetailsComponent implements OnInit {
-  @Input() entity: AttendanceMonth;
-  originalEntity: AttendanceMonth;
-  @ViewChild('recordForm', { static: true }) form;
+export class AttendanceDetailsComponent implements ShowsEntity {
+  @Input() entity: AttendanceMonth = new AttendanceMonth('');
+  @ViewChild('dialogForm', { static: true }) formDialogWrapper;
 
-
-  constructor(@Inject(MAT_DIALOG_DATA) data: any,
-              public dialogRef: MatDialogRef<AttendanceDetailsComponent>,
-              private confirmationDialog: ConfirmationDialogService,
-              private entityMapper: EntityMapperService) {
-    this.entity = data.entity;
-    this.originalEntity = Object.assign({}, this.entity);
-
-    this.dialogRef.beforeClose().subscribe((returnedEntity) => {
-      if (!returnedEntity && this.form.dirty) {
-        this.confirmationDialog.openDialog('Save Changes?', 'Do you want to save the changes you made to the record?')
-          .afterClosed().subscribe(confirmed => {
-          if (confirmed) {
-            this.save();
-          } else {
-            this.cancel();
-          }
-        });
-      }
-    });
-  }
-
-  ngOnInit() {
-  }
-
-  save() {
-    this.entityMapper.save(this.entity, true);
-    this.dialogRef.close(this.entity);
-  }
-
-  cancel() {
-    Object.assign(this.entity, this.originalEntity);
-    this.dialogRef.close(this.entity);
+  constructor() {
   }
 }
