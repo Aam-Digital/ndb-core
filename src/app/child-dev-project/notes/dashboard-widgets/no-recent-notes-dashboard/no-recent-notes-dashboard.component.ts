@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ChildrenService } from '../../../children/children.service';
 import { Child } from '../../../children/model/child';
 import moment from 'moment';
+import { take } from 'rxjs/operators';
 
 /**
  * Dashboard Widget displaying children that do not have a recently added Note.
@@ -46,7 +47,7 @@ export class NoRecentNotesDashboardComponent implements OnInit {
   private async loadConcernedChildrenFromIndex() {
     this.isLoading = true;
 
-    const children = (await this.childrenService.getChildren().toPromise() as ChildWithRecentNoteInfo[])
+    const children = (await this.childrenService.getChildren().pipe(take(1)).toPromise() as ChildWithRecentNoteInfo[])
       .filter(c => c.isActive());
 
     const lastNoteStats = await this.childrenService.getDaysSinceLastNoteOfEachChild();
