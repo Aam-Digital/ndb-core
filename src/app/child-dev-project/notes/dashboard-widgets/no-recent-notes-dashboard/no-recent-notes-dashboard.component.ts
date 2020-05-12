@@ -1,7 +1,14 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { ChildrenService } from '../../../children/children.service';
 import { Child } from '../../../children/model/child';
 import moment from 'moment';
+import { take } from 'rxjs/operators';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { Router } from '@angular/router';
+
+
+
 
 /**
  * Dashboard Widget displaying children that do not have a recently added Note.
@@ -14,7 +21,7 @@ import moment from 'moment';
   templateUrl: './no-recent-notes-dashboard.component.html',
   styleUrls: ['./no-recent-notes-dashboard.component.scss'],
 })
-export class NoRecentNotesDashboardComponent implements OnInit {
+export class NoRecentNotesDashboardComponent implements OnInit, AfterViewInit {
   /**
    * number of days since last note that children should be considered having a "recent" note.
    */
@@ -34,19 +41,29 @@ export class NoRecentNotesDashboardComponent implements OnInit {
    */
   concernedChildren: ChildWithRecentNoteInfo[] = [];
 
+  columnsToDisplay: string[] = ['name', 'daysSinceLastNote'];
+  childrenWithNoteInfoDataSource: MatTableDataSource<ChildWithRecentNoteInfo> = new MatTableDataSource<ChildWithRecentNoteInfo>();
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+
 
   constructor(
     private childrenService: ChildrenService,
+    private router: Router,
   ) { }
 
   async ngOnInit() {
     await this.loadConcernedChildrenFromIndex();
+    this.childrenWithNoteInfoDataSource.data = this.concernedChildren;
+  }
+
+  ngAfterViewInit() {
+    this.childrenWithNoteInfoDataSource.paginator = this.paginator;
   }
 
   private async loadConcernedChildrenFromIndex() {
     this.isLoading = true;
 
-    const children = (await this.childrenService.getChildren().toPromise() as ChildWithRecentNoteInfo[])
+    const children = (await this.childrenService.getChildren().pipe(take(1)).toPromise() as ChildWithRecentNoteInfo[])
       .filter(c => c.isActive());
 
     const lastNoteStats = await this.childrenService.getDaysSinceLastNoteOfEachChild();
@@ -77,6 +94,11 @@ export class NoRecentNotesDashboardComponent implements OnInit {
       return daysSinceLastNote <= this.sinceDays;
     }
   }
+
+  showChildDetails(child: ChildWithRecentNoteInfo) {
+    this.router.navigate([this.router.url, child.getId()]);
+  }
+
 }
 
 type ChildWithRecentNoteInfo = Child & { daysSinceLastNote: number };
