@@ -1,12 +1,12 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { UserListComponent } from './user-list.component';
-import { EntityMapperService } from '../../entity/entity-mapper.service';
-import { AdminModule } from '../admin.module';
-import { User } from '../../user/user';
-import { SessionService } from '../../session/session-service/session.service';
+import { UserListComponent } from "./user-list.component";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { AdminModule } from "../admin.module";
+import { User } from "../../user/user";
+import { SessionService } from "../../session/session-service/session.service";
 
-describe('UserListComponent', () => {
+describe("UserListComponent", () => {
   let component: UserListComponent;
   let fixture: ComponentFixture<UserListComponent>;
 
@@ -15,25 +15,24 @@ describe('UserListComponent', () => {
   let testUsers: User[];
 
   beforeEach(async(() => {
-    testUsers = [
-      new User('1'),
-      new User('2'),
-    ];
-    mockEntityMapper = jasmine.createSpyObj('mockEntityMapper', ['loadType', 'save']);
+    testUsers = [new User("1"), new User("2")];
+    mockEntityMapper = jasmine.createSpyObj("mockEntityMapper", [
+      "loadType",
+      "save",
+    ]);
     mockEntityMapper.loadType.and.returnValue(Promise.resolve(testUsers));
 
-    mockSessionService = jasmine.createSpyObj('mockSessionService', ['getCurrentUser']);
+    mockSessionService = jasmine.createSpyObj("mockSessionService", [
+      "getCurrentUser",
+    ]);
 
     TestBed.configureTestingModule({
-      imports: [
-        AdminModule,
-      ],
+      imports: [AdminModule],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: SessionService, useValue: mockSessionService },
       ],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -42,13 +41,12 @@ describe('UserListComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 
-
-  it('should makeAdmin and save if user has admin rights', async () => {
-    const currentUser = new User('tester');
+  it("should makeAdmin and save if user has admin rights", async () => {
+    const currentUser = new User("tester");
     currentUser.setAdmin(true);
     mockSessionService.getCurrentUser.and.returnValue(currentUser);
 
@@ -57,8 +55,8 @@ describe('UserListComponent', () => {
     expect(mockEntityMapper.save).toHaveBeenCalledWith(testUsers[0]);
   });
 
-  it('should not makeAdmin if user has no admin rights', async () => {
-    const currentUser = new User('tester');
+  it("should not makeAdmin if user has no admin rights", async () => {
+    const currentUser = new User("tester");
     currentUser.setAdmin(false);
     mockSessionService.getCurrentUser.and.returnValue(currentUser);
 
@@ -67,8 +65,8 @@ describe('UserListComponent', () => {
     expect(mockEntityMapper.save).not.toHaveBeenCalled();
   });
 
-  it('should not let you remove your own admin rights', async () => {
-    const currentUser = new User('1');
+  it("should not let you remove your own admin rights", async () => {
+    const currentUser = new User("1");
     currentUser.setAdmin(true);
     mockSessionService.getCurrentUser.and.returnValue(currentUser);
 

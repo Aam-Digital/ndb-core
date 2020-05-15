@@ -15,14 +15,14 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { browser, by, element } from 'protractor';
+import { browser, by, element } from "protractor";
 
 export class NdbCorePage {
   navigateTo() {
-    return browser.get('/');
+    return browser.get("/");
   }
 
   getParagraphText() {
-    return element(by.css('app-root h1')).getText();
+    return element(by.css("app-root h1")).getText();
   }
 }

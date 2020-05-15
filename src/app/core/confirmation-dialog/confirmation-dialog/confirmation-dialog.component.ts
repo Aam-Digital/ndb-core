@@ -1,17 +1,16 @@
-import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject } from "@angular/core";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 
 /**
  * A configurable confirmation dialog box
  * used by the {@link ConfirmationDialogService}.
  */
 @Component({
-  selector: 'app-confirmation-dialog',
-  templateUrl: './confirmation-dialog.component.html',
-  styleUrls: ['./confirmation-dialog.component.scss'],
+  selector: "app-confirmation-dialog",
+  templateUrl: "./confirmation-dialog.component.html",
+  styleUrls: ["./confirmation-dialog.component.scss"],
 })
 export class ConfirmationDialogComponent {
-
   /**
    * This component is used as a template for MatDialog, created with the required dependencies through that service.
    * @param dialogRef The reference to the dialog this component is displayed within
@@ -19,8 +18,8 @@ export class ConfirmationDialogComponent {
    */
   constructor(
     public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ConfirmationDialogConfig,
-  ) { }
+    @Inject(MAT_DIALOG_DATA) public data: ConfirmationDialogConfig
+  ) {}
 }
 
 /**

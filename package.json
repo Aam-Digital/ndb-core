@@ -81,10 +81,10 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged --relative"
     }
   },
   "lint-staged": {
-    "*.{js,css,md}": "ng lint --fix --files"
+    "*.{ts,js,css,md}": ["tslint --fix"]
   }
 }

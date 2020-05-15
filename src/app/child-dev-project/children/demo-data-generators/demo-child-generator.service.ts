@@ -1,13 +1,12 @@
-import { Child } from '../model/child';
-import { Gender } from '../model/Gender';
-import { religions } from './fixtures/religions';
-import { languages } from './fixtures/languages';
-import { dropoutTypes } from './fixtures/dropout-types';
-import { Injectable } from '@angular/core';
-import { DemoDataGenerator } from '../../../core/demo-data/demo-data-generator';
-import { faker } from '../../../core/demo-data/faker';
-import { centersWithProbability } from './fixtures/centers';
-
+import { Child } from "../model/child";
+import { Gender } from "../model/Gender";
+import { religions } from "./fixtures/religions";
+import { languages } from "./fixtures/languages";
+import { dropoutTypes } from "./fixtures/dropout-types";
+import { Injectable } from "@angular/core";
+import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
+import { faker } from "../../../core/demo-data/faker";
+import { centersWithProbability } from "./fixtures/centers";
 
 export class DemoChildConfig {
   count: number;
@@ -29,7 +28,6 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     ];
   }
 
-
   constructor(public config: DemoChildConfig) {
     super();
   }
@@ -39,7 +37,7 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
 
     for (let i = 1; i <= this.config.count; i++) {
       const child = new Child(String(i));
-      child.name = faker.name.firstName() + ' ' + faker.name.lastName();
+      child.name = faker.name.firstName() + " " + faker.name.lastName();
       child.projectNumber = String(i);
       child.religion = faker.random.arrayElement(religions);
       child.gender = faker.random.arrayElement([Gender.MALE, Gender.FEMALE]);
@@ -62,6 +60,6 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     child.dropoutDate = faker.date.between(child.admissionDate, new Date());
     child.dropoutRemarks = faker.lorem.sentence();
     child.dropoutType = faker.random.arrayElement(dropoutTypes);
-    child.status = 'Dropout';
+    child.status = "Dropout";
   }
 }

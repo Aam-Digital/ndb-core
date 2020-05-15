@@ -1,6 +1,5 @@
-import { DemoDataGenerator } from './demo-data-generator';
-import { faker } from './faker';
-
+import { DemoDataGenerator } from "./demo-data-generator";
+import { faker } from "./faker";
 
 class DemoDataGeneratorImplementation extends DemoDataGenerator<any> {
   protected generateEntities(): any[] {
@@ -8,9 +7,8 @@ class DemoDataGeneratorImplementation extends DemoDataGenerator<any> {
   }
 }
 
-describe('DemoDataGenerator', () => {
-
-  it('should getEarlierDateOrToday', () => {
+describe("DemoDataGenerator", () => {
+  it("should getEarlierDateOrToday", () => {
     const generator = new DemoDataGeneratorImplementation();
     const TODAY = new Date();
 

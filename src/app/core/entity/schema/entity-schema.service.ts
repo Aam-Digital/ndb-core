@@ -15,21 +15,19 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-import { Entity } from '../entity';
-import { EntitySchemaDatatype } from './entity-schema-datatype';
-import { Injectable } from '@angular/core';
-import { defaultEntitySchemaDatatype } from '../schema-datatypes/datatype-default';
-import { EntitySchema } from './entity-schema';
-import { EntitySchemaField } from './entity-schema-field';
-import { stringEntitySchemaDatatype } from '../schema-datatypes/datatype-string';
-import { numberEntitySchemaDatatype } from '../schema-datatypes/datatype-number';
-import { dateEntitySchemaDatatype } from '../schema-datatypes/datatype-date';
-import { monthEntitySchemaDatatype } from '../schema-datatypes/datatype-month';
-import { arrayEntitySchemaDatatype } from '../schema-datatypes/datatype-array';
-import { schemaEmbedEntitySchemaDatatype } from '../schema-datatypes/datatype-schema-embed';
-import { dateOnlyEntitySchemaDatatype } from '../schema-datatypes/datatype-date-only';
-
+import { Entity } from "../entity";
+import { EntitySchemaDatatype } from "./entity-schema-datatype";
+import { Injectable } from "@angular/core";
+import { defaultEntitySchemaDatatype } from "../schema-datatypes/datatype-default";
+import { EntitySchema } from "./entity-schema";
+import { EntitySchemaField } from "./entity-schema-field";
+import { stringEntitySchemaDatatype } from "../schema-datatypes/datatype-string";
+import { numberEntitySchemaDatatype } from "../schema-datatypes/datatype-number";
+import { dateEntitySchemaDatatype } from "../schema-datatypes/datatype-date";
+import { monthEntitySchemaDatatype } from "../schema-datatypes/datatype-month";
+import { arrayEntitySchemaDatatype } from "../schema-datatypes/datatype-array";
+import { schemaEmbedEntitySchemaDatatype } from "../schema-datatypes/datatype-schema-embed";
+import { dateOnlyEntitySchemaDatatype } from "../schema-datatypes/datatype-date-only";
 
 /**
  * Transform between entity instances and database objects
@@ -51,7 +49,6 @@ export class EntitySchemaService {
    */
   private schemaTypes = new Map<string, EntitySchemaDatatype>();
 
-
   constructor() {
     this.registerBasicDatatypes();
   }
@@ -65,7 +62,6 @@ export class EntitySchemaService {
     this.registerSchemaDatatype(arrayEntitySchemaDatatype);
     this.registerSchemaDatatype(schemaEmbedEntitySchemaDatatype);
   }
-
 
   /**
    * Add a datatype definition to the registry to provide a conversion between what is written into the database
@@ -90,7 +86,6 @@ export class EntitySchemaService {
     }
   }
 
-
   /**
    * Transform a database object to entity format according to the schema.
    * @param data The database object that will be transformed to the given entity format
@@ -99,8 +94,9 @@ export class EntitySchemaService {
   public transformDatabaseToEntityFormat(data: any, schema: EntitySchema) {
     for (const key of schema.keys()) {
       const schemaField: EntitySchemaField = schema.get(key);
-      const newValue = this.getDatatypeOrDefault(schemaField.dataType)
-        .transformToObjectFormat(data[key], schemaField, this, data);
+      const newValue = this.getDatatypeOrDefault(
+        schemaField.dataType
+      ).transformToObjectFormat(data[key], schemaField, this, data);
       if (newValue !== undefined) {
         data[key] = newValue;
       }
@@ -119,7 +115,10 @@ export class EntitySchemaService {
    * @param data The database object that will be transformed and assigned to the entity
    */
   public loadDataIntoEntity(entity: Entity, data: any) {
-    data = this.transformDatabaseToEntityFormat(data,  entity.getConstructor().schema);
+    data = this.transformDatabaseToEntityFormat(
+      data,
+      entity.getConstructor().schema
+    );
     Object.assign(entity, data);
   }
 
@@ -128,7 +127,10 @@ export class EntitySchemaService {
    * @param entity The object (an instance of an entity type)
    * @param schema The schema of the entity (if not explicitly defined the schema of the given entity is used)
    */
-  public transformEntityToDatabaseFormat(entity: Entity, schema?: EntitySchema): any {
+  public transformEntityToDatabaseFormat(
+    entity: Entity,
+    schema?: EntitySchema
+  ): any {
     if (!schema) {
       schema = entity.getConstructor().schema;
     }
@@ -139,13 +141,14 @@ export class EntitySchemaService {
       const schemaField: EntitySchemaField = schema.get(key);
 
       if (entity[key] !== undefined) {
-        data[key] = this.getDatatypeOrDefault(schemaField.dataType)
-          .transformToDatabaseFormat(entity[key], schemaField, this, entity);
+        data[key] = this.getDatatypeOrDefault(
+          schemaField.dataType
+        ).transformToDatabaseFormat(entity[key], schemaField, this, entity);
       }
     }
 
     if (entity.generateSearchIndices) {
-      data['searchIndices'] = entity.generateSearchIndices();
+      data["searchIndices"] = entity.generateSearchIndices();
     }
 
     return data;

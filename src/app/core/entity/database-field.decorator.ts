@@ -1,5 +1,5 @@
-import 'reflect-metadata';
-import { EntitySchemaField } from './schema/entity-schema-field';
+import "reflect-metadata";
+import { EntitySchemaField } from "./schema/entity-schema-field";
 
 /**
  * Decorator (Annotation `@DatabaseField()`) to mark a property of an Entity that should be persisted in the database.
@@ -13,10 +13,14 @@ export function DatabaseField(propertySchema: EntitySchemaField = {}) {
     target[propertyName] = undefined; // This ensures that the field is not read only
 
     if (propertySchema.dataType === undefined) {
-      propertySchema.dataType = Reflect.getMetadata('design:type', target, propertyName).name.toLowerCase();
+      propertySchema.dataType = Reflect.getMetadata(
+        "design:type",
+        target,
+        propertyName
+      ).name.toLowerCase();
     }
 
-    if (Object.getOwnPropertyDescriptor(target.constructor, 'schema') == null) {
+    if (Object.getOwnPropertyDescriptor(target.constructor, "schema") == null) {
       target.constructor.schema = new Map<string, EntitySchemaField>();
     }
     target.constructor.schema.set(propertyName, propertySchema);

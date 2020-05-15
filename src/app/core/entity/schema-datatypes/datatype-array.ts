@@ -15,10 +15,9 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
-import { EntitySchemaField } from '../schema/entity-schema-field';
-import { EntitySchemaService } from '../schema/entity-schema.service';
+import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
+import { EntitySchemaField } from "../schema/entity-schema-field";
+import { EntitySchemaService } from "../schema/entity-schema.service";
 
 /**
  * Datatype for the EntitySchemaService transforming values of an array recursively.
@@ -33,30 +32,61 @@ import { EntitySchemaService } from '../schema/entity-schema.service';
  * using the {@link monthEntitySchemaDatatype} (e.g. resulting in `['2020-01', '2020-04']` in the database).
  */
 export const arrayEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: 'array',
+  name: "array",
 
-  transformToDatabaseFormat: (value: any[], schemaField: EntitySchemaField, schemaService: EntitySchemaService, parent) => {
+  transformToDatabaseFormat: (
+    value: any[],
+    schemaField: EntitySchemaField,
+    schemaService: EntitySchemaService,
+    parent
+  ) => {
     if (!Array.isArray(value)) {
-      console.warn('property to be transformed with "array" EntitySchema is not an array', value);
+      console.warn(
+        'property to be transformed with "array" EntitySchema is not an array',
+        value
+      );
       return value;
     }
 
-    const arrayElementDatatype: EntitySchemaDatatype = schemaService.getDatatypeOrDefault(schemaField.arrayDataType);
-    return value.map((el) => arrayElementDatatype
-      .transformToDatabaseFormat(el, generateSubSchemaField(schemaField), schemaService, parent));
+    const arrayElementDatatype: EntitySchemaDatatype = schemaService.getDatatypeOrDefault(
+      schemaField.arrayDataType
+    );
+    return value.map((el) =>
+      arrayElementDatatype.transformToDatabaseFormat(
+        el,
+        generateSubSchemaField(schemaField),
+        schemaService,
+        parent
+      )
+    );
   },
 
-
-  transformToObjectFormat: (value: any[], schemaField: EntitySchemaField, schemaService: EntitySchemaService, parent) => {
+  transformToObjectFormat: (
+    value: any[],
+    schemaField: EntitySchemaField,
+    schemaService: EntitySchemaService,
+    parent
+  ) => {
     if (!Array.isArray(value)) {
-      console.warn('property to be transformed with "array" EntitySchema is not an array', value);
+      console.warn(
+        'property to be transformed with "array" EntitySchema is not an array',
+        value
+      );
       return value;
     }
 
-    const arrayElementDatatype: EntitySchemaDatatype = schemaService.getDatatypeOrDefault(schemaField.arrayDataType);
+    const arrayElementDatatype: EntitySchemaDatatype = schemaService.getDatatypeOrDefault(
+      schemaField.arrayDataType
+    );
 
-    return value.map((el) => arrayElementDatatype
-      .transformToObjectFormat(el, generateSubSchemaField(schemaField), schemaService, parent));
+    return value.map((el) =>
+      arrayElementDatatype.transformToObjectFormat(
+        el,
+        generateSubSchemaField(schemaField),
+        schemaService,
+        parent
+      )
+    );
   },
 };
 

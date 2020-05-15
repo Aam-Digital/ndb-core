@@ -1,20 +1,19 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { AttendanceMonth } from '../model/attendance-month';
+import { Component, Input, OnInit } from "@angular/core";
+import { AttendanceMonth } from "../model/attendance-month";
 
 @Component({
-  selector: 'app-attendance-block',
-  templateUrl: './attendance-block.component.html',
-  styleUrls: ['./attendance-block.component.scss'],
+  selector: "app-attendance-block",
+  templateUrl: "./attendance-block.component.html",
+  styleUrls: ["./attendance-block.component.scss"],
 })
 export class AttendanceBlockComponent implements OnInit {
   @Input() attendanceData: AttendanceMonth;
   tooltip = false;
   tooltipTimeout;
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   showTooltip() {
     this.tooltip = true;
@@ -23,7 +22,6 @@ export class AttendanceBlockComponent implements OnInit {
     }
   }
   hideTooltip() {
-    this.tooltipTimeout = setTimeout(() => this.tooltip = false, 250);
+    this.tooltipTimeout = setTimeout(() => (this.tooltip = false), 250);
   }
-
 }

@@ -1,39 +1,47 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { AttendanceWeekDashboardComponent } from './attendance-week-dashboard.component';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { ChildBlockComponent } from '../../../children/child-block/child-block.component';
-import { AttendanceDayBlockComponent } from '../../attendance-days/attendance-day-block.component';
-import { SchoolBlockComponent } from '../../../schools/school-block/school-block.component';
-import { ChildrenService } from '../../../children/children.service';
-import { EntityModule } from '../../../../core/entity/entity.module';
-import { Database } from '../../../../core/database/database';
-import { MockDatabase } from '../../../../core/database/mock-database';
-import { RouterTestingModule } from '@angular/router/testing';
-import { ChildPhotoService } from '../../../children/child-photo-service/child-photo.service';
+import { AttendanceWeekDashboardComponent } from "./attendance-week-dashboard.component";
+import { MatCardModule } from "@angular/material/card";
+import { MatIconModule } from "@angular/material/icon";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { ChildBlockComponent } from "../../../children/child-block/child-block.component";
+import { AttendanceDayBlockComponent } from "../../attendance-days/attendance-day-block.component";
+import { SchoolBlockComponent } from "../../../schools/school-block/school-block.component";
+import { ChildrenService } from "../../../children/children.service";
+import { EntityModule } from "../../../../core/entity/entity.module";
+import { Database } from "../../../../core/database/database";
+import { MockDatabase } from "../../../../core/database/mock-database";
+import { RouterTestingModule } from "@angular/router/testing";
+import { ChildPhotoService } from "../../../children/child-photo-service/child-photo.service";
 
-describe('AttendanceWeekDashboardComponent', () => {
+describe("AttendanceWeekDashboardComponent", () => {
   let component: AttendanceWeekDashboardComponent;
   let fixture: ComponentFixture<AttendanceWeekDashboardComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AttendanceWeekDashboardComponent, ChildBlockComponent, AttendanceDayBlockComponent, SchoolBlockComponent ],
+      declarations: [
+        AttendanceWeekDashboardComponent,
+        ChildBlockComponent,
+        AttendanceDayBlockComponent,
+        SchoolBlockComponent,
+      ],
       imports: [
         MatIconModule,
         MatCardModule,
         MatTooltipModule,
         RouterTestingModule.withRoutes([]),
-        EntityModule],
+        EntityModule,
+      ],
       providers: [
         { provide: ChildrenService, useClass: ChildrenService },
         { provide: Database, useClass: MockDatabase },
-        { provide: ChildPhotoService, useValue: jasmine.createSpyObj(['getImage']) },
+        {
+          provide: ChildPhotoService,
+          useValue: jasmine.createSpyObj(["getImage"]),
+        },
       ],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -42,7 +50,7 @@ describe('AttendanceWeekDashboardComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

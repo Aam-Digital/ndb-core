@@ -15,20 +15,20 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import PouchDB from 'pouchdb-browser';
+import PouchDB from "pouchdb-browser";
 
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
-import { AppConfig } from '../../app-config/app-config';
-import { User } from '../../user/user';
+import { AppConfig } from "../../app-config/app-config";
+import { User } from "../../user/user";
 
-import { SyncState } from '../session-states/sync-state.enum';
-import { LoginState } from '../session-states/login-state.enum';
-import { StateHandler } from '../session-states/state-handler';
-import { EntitySchemaService } from 'app/core/entity/schema/entity-schema.service';
-import { AlertService } from 'app/core/alerts/alert.service';
+import { SyncState } from "../session-states/sync-state.enum";
+import { LoginState } from "../session-states/login-state.enum";
+import { StateHandler } from "../session-states/state-handler";
+import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { AlertService } from "app/core/alerts/alert.service";
 
- /**
+/**
  * Responsibilities:
  * - Hold the local DB
  * - Hold local user
@@ -39,7 +39,7 @@ import { AlertService } from 'app/core/alerts/alert.service';
  */
 @Injectable()
 export class LocalSession {
-   /** local (IndexedDb) database PouchDB */
+  /** local (IndexedDb) database PouchDB */
   public database: any;
   public liveSyncHandle: any;
 
@@ -51,12 +51,15 @@ export class LocalSession {
   /** The currently authenticated user entity */
   public currentUser: User;
 
-   /**
-    * Create a LocalSession and set up the local PouchDB instance based on AppConfig settings.
-    * @param _alertService
-    * @param _entitySchemaService
-    */
-  constructor(private _alertService: AlertService, private _entitySchemaService: EntitySchemaService) {
+  /**
+   * Create a LocalSession and set up the local PouchDB instance based on AppConfig settings.
+   * @param _alertService
+   * @param _entitySchemaService
+   */
+  constructor(
+    private _alertService: AlertService,
+    private _entitySchemaService: EntitySchemaService
+  ) {
     this.database = new PouchDB(AppConfig.settings.database.name);
 
     this.loginState = new StateHandler<LoginState>(LoginState.LOGGED_OUT);
@@ -85,7 +88,11 @@ export class LocalSession {
       }
     } catch (error) {
       // possible error: initial sync failed or aborted
-      if (error && error.toState && [SyncState.ABORTED, SyncState.FAILED].includes(error.toState)) {
+      if (
+        error &&
+        error.toState &&
+        [SyncState.ABORTED, SyncState.FAILED].includes(error.toState)
+      ) {
         if (this.loginState.getState() === LoginState.LOGIN_FAILED) {
           // The sync failed because the remote rejected
           return LoginState.LOGIN_FAILED;
@@ -110,7 +117,10 @@ export class LocalSession {
    */
   public async waitForFirstSync() {
     if (await this.isInitial()) {
-      return await this.syncState.waitForChangeTo(SyncState.COMPLETED, [SyncState.FAILED, SyncState.ABORTED]);
+      return await this.syncState.waitForChangeTo(SyncState.COMPLETED, [
+        SyncState.FAILED,
+        SyncState.ABORTED,
+      ]);
     }
   }
 
@@ -120,7 +130,7 @@ export class LocalSession {
    */
   public isInitial(): Promise<Boolean> {
     // `doc_count === 0 => initial` is a valid assumptions, as documents for users must always be present, even after db-clean
-    return this.database.info().then(result => result.doc_count === 0);
+    return this.database.info().then((result) => result.doc_count === 0);
   }
 
   /**
@@ -136,8 +146,8 @@ export class LocalSession {
    * @param userId Id of the User to be loaded
    */
   public async loadUser(userId: string): Promise<User> {
-    const user = new User('');
-    const userData = await this.database.get('User:' + userId);
+    const user = new User("");
+    const userData = await this.database.get("User:" + userId);
     this._entitySchemaService.loadDataIntoEntity(user, userData);
     return user;
   }
