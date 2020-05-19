@@ -119,6 +119,10 @@ mat-card.dashboard-widget {
   background-color: #00838F !important;
 }
 
+.app-note {
+  background-color: #008f53 !important;
+}
+
 .app-class {
   background-color: #2E7D32 !important;
 }

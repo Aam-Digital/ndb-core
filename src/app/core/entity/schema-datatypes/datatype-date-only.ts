@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
+import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
 
 /**
  * Datatype for the EntitySchemaService transforming Date values to/from a date string format ("YYYY-mm-dd").
@@ -27,16 +27,20 @@ import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
  * `@DatabaseField({dataType: 'date-only'}) myDate: Date = new Date('2020-01-15'); // will be "2020-01-15" (without time) in the database`
  */
 export const dateOnlyEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: 'date-only',
+  name: "date-only",
 
   transformToDatabaseFormat: (value: Date) => {
     if (!value) {
       return undefined;
     }
 
-    return value.getFullYear() + '-'
-      + (value.getMonth() + 1).toString().padStart(2, '0') + '-'
-      + value.getDate().toString().padStart(2, '0');
+    return (
+      value.getFullYear() +
+      "-" +
+      (value.getMonth() + 1).toString().padStart(2, "0") +
+      "-" +
+      value.getDate().toString().padStart(2, "0")
+    );
   },
 
   transformToObjectFormat: (value) => {
@@ -46,7 +50,7 @@ export const dateOnlyEntitySchemaDatatype: EntitySchemaDatatype = {
 
     const date = new Date(value);
     if (isNaN(date.getTime())) {
-      throw new Error('failed to convert data to Date object: ' + value);
+      throw new Error("failed to convert data to Date object: " + value);
     }
     return date;
   },

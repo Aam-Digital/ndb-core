@@ -15,14 +15,14 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
-import { LoginState } from '../session-states/login-state.enum';
-import { Database } from '../../database/database';
-import { ConnectionState } from '../session-states/connection-state.enum';
-import { SyncState } from '../session-states/sync-state.enum';
-import { User } from '../../user/user';
-import { StateHandler } from '../session-states/state-handler';
+import { LoginState } from "../session-states/login-state.enum";
+import { Database } from "../../database/database";
+import { ConnectionState } from "../session-states/connection-state.enum";
+import { SyncState } from "../session-states/sync-state.enum";
+import { User } from "../../user/user";
+import { StateHandler } from "../session-states/state-handler";
 
 /**
  * A session manages user authentication and database connection for the app.

@@ -15,11 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from '../entity/entity';
-import { DatabaseEntity } from '../entity/database-entity.decorator';
-import { DatabaseField } from '../entity/database-field.decorator';
+import { Entity } from "../entity/entity";
+import { DatabaseEntity } from "../entity/database-entity.decorator";
+import { DatabaseField } from "../entity/database-field.decorator";
 
-import * as CryptoJS from 'crypto-js';
+import * as CryptoJS from "crypto-js";
 
 /**
  * Entity representing a User object including password.
@@ -27,7 +27,7 @@ import * as CryptoJS from 'crypto-js';
  * Note that in addition to the User Entity there also is a "regular" CouchDB user with the same name and password
  * in the CouchDB _users database which is used for remote database authentication.
  */
-@DatabaseEntity('User')
+@DatabaseEntity("User")
 export class User extends Entity {
   /** username used for login and identification */
   @DatabaseField() name: string;
@@ -48,7 +48,7 @@ export class User extends Entity {
   public cloudPasswordDec: any;
 
   /** base folder for webdav, all actions of the app will happen relative to this as the root folder */
-  @DatabaseField() public cloudBaseFolder: string = '/aam-digital/';
+  @DatabaseField() public cloudBaseFolder: string = "/aam-digital/";
 
   /**
    * Set a new user password.
@@ -67,10 +67,18 @@ export class User extends Entity {
       iterations: cryptIterations,
     }).toString();
 
-    this.password = {'hash': hash, 'salt': cryptSalt, 'iterations': cryptIterations, 'keysize': cryptKeySize};
+    this.password = {
+      hash: hash,
+      salt: cryptSalt,
+      iterations: cryptIterations,
+      keysize: cryptKeySize,
+    };
 
     // update encrypted nextcloud password
-    this.cloudPasswordEnc = CryptoJS.AES.encrypt(this.cloudPasswordDec, password).toString();
+    this.cloudPasswordEnc = CryptoJS.AES.encrypt(
+      this.cloudPasswordDec,
+      password
+    ).toString();
   }
 
   /**
@@ -79,7 +87,7 @@ export class User extends Entity {
    */
   public checkPassword(givenPassword: string): boolean {
     // hash the given password string and compare it with the stored hash
-    return (this.hashPassword(givenPassword) === this.password.hash);
+    return this.hashPassword(givenPassword) === this.password.hash;
   }
 
   private hashPassword(givenPassword: string): string {
@@ -87,7 +95,11 @@ export class User extends Entity {
       keySize: this.password.keysize,
       iterations: this.password.iterations,
     };
-    return CryptoJS.PBKDF2(givenPassword, this.password.salt, options).toString();
+    return CryptoJS.PBKDF2(
+      givenPassword,
+      this.password.salt,
+      options
+    ).toString();
   }
 
   /**
@@ -96,7 +108,14 @@ export class User extends Entity {
    * @return the decrypted cloud password
    */
   public decryptCloudPassword(givenPassword: string): string {
-    this.cloudPasswordDec = CryptoJS.AES.decrypt(this.cloudPasswordEnc.toString(), givenPassword).toString(CryptoJS.enc.Utf8);
+    if (!this.cloudPasswordEnc) {
+      return;
+    }
+
+    this.cloudPasswordDec = CryptoJS.AES.decrypt(
+      this.cloudPasswordEnc.toString(),
+      givenPassword
+    ).toString(CryptoJS.enc.Utf8);
     return this.cloudPasswordDec;
   }
 
@@ -108,7 +127,10 @@ export class User extends Entity {
   public setCloudPassword(blobPassword: string, givenPassword: string) {
     if (this.checkPassword(givenPassword)) {
       this.cloudPasswordDec = blobPassword;
-      this.cloudPasswordEnc = CryptoJS.AES.encrypt(blobPassword, givenPassword).toString();
+      this.cloudPasswordEnc = CryptoJS.AES.encrypt(
+        blobPassword,
+        givenPassword
+      ).toString();
     }
   }
 

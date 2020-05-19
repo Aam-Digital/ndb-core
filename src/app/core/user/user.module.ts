@@ -15,14 +15,14 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
-import { UserAccountComponent } from './user-account/user-account.component';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { CommonModule } from '@angular/common';
-import { MatTabsModule } from '@angular/material';
-import { WebdavModule } from '../webdav/webdav.module';
+import { NgModule } from "@angular/core";
+import { UserAccountComponent } from "./user-account/user-account.component";
+import { MatButtonModule } from "@angular/material/button";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { CommonModule } from "@angular/common";
+import { MatTabsModule } from "@angular/material";
+import { WebdavModule } from "../webdav/webdav.module";
 
 /**
  * Provides a User functionality including user account forms.
@@ -38,5 +38,4 @@ import { WebdavModule } from '../webdav/webdav.module';
   ],
   declarations: [UserAccountComponent],
 })
-export class UserModule {
-}
+export class UserModule {}

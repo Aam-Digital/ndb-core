@@ -1,40 +1,32 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EntitySubrecordComponent } from './entity-subrecord.component';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTableModule } from '@angular/material/table';
-import { EntityMapperService } from '../../entity/entity-mapper.service';
-import { MockDatabase } from '../../database/mock-database';
-import { CommonModule } from '@angular/common';
-import { Database } from '../../database/database';
-import { EntitySchemaService } from '../../entity/schema/entity-schema.service';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { AlertService } from 'app/core/alerts/alert.service';
-import { ConfirmationDialogService } from '../../confirmation-dialog/confirmation-dialog.service';
+import { EntitySubrecordComponent } from "./entity-subrecord.component";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { MockDatabase } from "../../database/mock-database";
+import { Database } from "../../database/database";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { AlertService } from "app/core/alerts/alert.service";
+import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
+import { EntitySubrecordModule } from "../entity-subrecord.module";
 
-describe('EntitySubrecordComponent', () => {
+describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent;
   let fixture: ComponentFixture<EntitySubrecordComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ EntitySubrecordComponent ],
-      imports: [MatTableModule, MatFormFieldModule, MatIconModule,
-        MatSnackBarModule, MatSelectModule, MatDialogModule, MatAutocompleteModule, MatDatepickerModule, CommonModule],
+      imports: [EntitySubrecordModule],
       providers: [
         EntityMapperService,
         EntitySchemaService,
         AlertService,
         { provide: Database, useClass: MockDatabase },
-        { provide: ConfirmationDialogService, useClass: ConfirmationDialogService },
+        {
+          provide: ConfirmationDialogService,
+          useClass: ConfirmationDialogService,
+        },
       ],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -43,7 +35,7 @@ describe('EntitySubrecordComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

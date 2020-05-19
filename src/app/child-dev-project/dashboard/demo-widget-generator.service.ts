@@ -1,8 +1,7 @@
-import { faker } from '../../core/demo-data/faker';
-import { Injectable } from '@angular/core';
-import { DemoDataGenerator } from '../../core/demo-data/demo-data-generator';
-import { ProgressDashboardConfig } from './progress-dashboard/progress-dashboard-config';
-
+import { faker } from "../../core/demo-data/faker";
+import { Injectable } from "@angular/core";
+import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
+import { ProgressDashboardConfig } from "./progress-dashboard/progress-dashboard-config";
 
 @Injectable()
 export class DemoWidgetGeneratorService extends DemoDataGenerator<any> {
@@ -12,15 +11,17 @@ export class DemoWidgetGeneratorService extends DemoDataGenerator<any> {
    */
   static provider() {
     return [
-      { provide: DemoWidgetGeneratorService, useClass: DemoWidgetGeneratorService },
+      {
+        provide: DemoWidgetGeneratorService,
+        useClass: DemoWidgetGeneratorService,
+      },
     ];
   }
 
-
   private readonly DEMO_TASKS = [
-    'Clubs visited',
-    'Schools checked',
-    'Government Officials met',
+    "Clubs visited",
+    "Schools checked",
+    "Government Officials met",
   ];
 
   constructor() {
@@ -36,8 +37,8 @@ export class DemoWidgetGeneratorService extends DemoDataGenerator<any> {
   }
 
   private generateDashboardWidgetSurveyStatus(): ProgressDashboardConfig {
-    const dashboardProgressWidget = new ProgressDashboardConfig('1');
-    dashboardProgressWidget.title = 'Annual Survey';
+    const dashboardProgressWidget = new ProgressDashboardConfig("1");
+    dashboardProgressWidget.title = "Annual Survey";
 
     for (const task of this.DEMO_TASKS) {
       const targetNumber = faker.random.number({ min: 5, max: 50 });

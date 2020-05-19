@@ -15,9 +15,9 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Database } from './database';
-import { AlertService } from '../alerts/alert.service';
-import { AlertDisplay } from '../alerts/alert-display';
+import { Database } from "./database";
+import { AlertService } from "../alerts/alert.service";
+import { AlertDisplay } from "../alerts/alert-display";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -27,15 +27,12 @@ import { AlertDisplay } from '../alerts/alert-display';
  * should be implemented in the abstract {@link Database}.
  */
 export class PouchDatabase extends Database {
-
   /**
    * Create a PouchDB database manager.
    * @param _pouchDB An (initialized) PouchDB database instance from the PouchDB library.
    * @param alertService The AlertService instance of the app to be able to report problems.
    */
-  constructor(private _pouchDB: any,
-              private alertService: AlertService,
-  ) {
+  constructor(private _pouchDB: any, private alertService: AlertService) {
     super();
   }
 
@@ -46,7 +43,7 @@ export class PouchDatabase extends Database {
    * @param options Optional PouchDB options for the request
    */
   get(id: string, options: any = {}) {
-    this.alertService.addDebug('DB_READ');
+    this.alertService.addDebug("DB_READ");
     return this._pouchDB.get(id, options)
       .catch((err) => {
         this.notifyError(err);
@@ -65,8 +62,8 @@ export class PouchDatabase extends Database {
    * @param options PouchDB options object as in the normal PouchDB library
    */
   allDocs(options?: any) {
-    this.alertService.addDebug('DB_READ');
-    return this._pouchDB.allDocs(options).then(result => {
+    this.alertService.addDebug("DB_READ");
+    return this._pouchDB.allDocs(options).then((result) => {
       const resultArray = [];
       for (const row of result.rows) {
         resultArray.push(row.doc);
@@ -80,24 +77,23 @@ export class PouchDatabase extends Database {
    * (see {@link Database})
    *
    * @param object The document to be saved
-   * @param forceUpdate (Optional) Whether conflicts should be ignored and an existing conflicting document forcefully overwritten.
+   * @param forceOverwrite (Optional) Whether conflicts should be ignored and an existing conflicting document forcefully overwritten.
    */
   put(object: any, forceOverwrite?: boolean) {
-    this.alertService.addDebug('DB_WRITE');
+    this.alertService.addDebug("DB_WRITE");
     const options: any = {};
     // if (forceOverwrite) {
     //   options.force = true;
     // }
 
-    return this._pouchDB.put(object, options)
-      .catch((err) => {
-        if (err.status === 409) {
-          this.resolveConflict(object, forceOverwrite, err);
-        } else {
-          this.notifyError(err);
-          throw err;
-        }
-      });
+    return this._pouchDB.put(object, options).catch((err) => {
+      if (err.status === 409) {
+        this.resolveConflict(object, forceOverwrite, err);
+      } else {
+        this.notifyError(err);
+        throw err;
+      }
+    });
   }
 
   /**
@@ -107,11 +103,10 @@ export class PouchDatabase extends Database {
    * @param object The document to be deleted (usually this object must at least contain the _id and _rev)
    */
   remove(object: any) {
-    return this._pouchDB.remove(object)
-      .catch((err) => {
-        this.notifyError(err);
-        throw err;
-      });
+    return this._pouchDB.remove(object).catch((err) => {
+      this.notifyError(err);
+      throw err;
+    });
   }
 
   /**
@@ -125,7 +120,7 @@ export class PouchDatabase extends Database {
    * @param options Additional options for the query, like a `key`. See the PouchDB docs for details.
    */
   query(fun: (doc: any, emit: any) => void, options: any): Promise<any> {
-    this.alertService.addDebug('DB_READ');
+    this.alertService.addDebug("DB_READ");
     return this._pouchDB.query(fun, options);
   }
 
@@ -139,27 +134,33 @@ export class PouchDatabase extends Database {
    */
   saveDatabaseIndex(designDoc: any): Promise<any> {
     return this.get(designDoc._id)
-      .then(existingDoc => {
-        if (JSON.stringify(existingDoc.views) !== JSON.stringify(designDoc.views)) {
+      .then((existingDoc) => {
+        if (
+          JSON.stringify(existingDoc.views) !== JSON.stringify(designDoc.views)
+        ) {
           designDoc._rev = existingDoc._rev;
-          this.alertService.addDebug('replacing existing database index');
+          this.alertService.addDebug("replacing existing database index");
           return this.put(designDoc);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         if (err.status === 404) {
-          this.alertService.addDebug('creating new database index');
+          this.alertService.addDebug("creating new database index");
           return this.put(designDoc);
         } else {
           // unexpected error
-          this.alertService.addWarning('database index failed to be added: ' + err);
+          this.alertService.addWarning(
+            "database index failed to be added: " + err
+          );
         }
       });
   }
 
-
   private notifyError(err) {
-    this.alertService.addWarning(err.message + ' (' + err.status + ')', AlertDisplay.NONE);
+    this.alertService.addWarning(
+      "PouchDB Error " + err.status + ": " + JSON.stringify(err),
+      AlertDisplay.NONE
+    );
   }
 
   /**
@@ -168,19 +169,29 @@ export class PouchDatabase extends Database {
    * @param overwriteChanges
    * @param existingError
    */
-  private resolveConflict(newObject: any, overwriteChanges: boolean, existingError: any) {
-    this.get(newObject._id).then(existingObject => {
+  private resolveConflict(
+    newObject: any,
+    overwriteChanges: boolean,
+    existingError: any
+  ) {
+    this.get(newObject._id).then((existingObject) => {
       const resolvedObject = this.mergeObjects(existingObject, newObject);
       if (resolvedObject) {
-        this.alertService.addDebug('resolved document conflict automatically (' + resolvedObject._id + ')');
+        this.alertService.addDebug(
+          "resolved document conflict automatically (" +
+            resolvedObject._id +
+            ")"
+        );
         this.put(resolvedObject);
       } else if (overwriteChanges) {
-        this.alertService.addDebug('overwriting conflicting document version (' + newObject._id + ')');
+        this.alertService.addDebug(
+          "overwriting conflicting document version (" + newObject._id + ")"
+        );
         newObject._rev = existingObject._rev;
         this.put(newObject);
       } else {
-          existingError.message = existingError.message + ' (unable to resolve)';
-          throw existingError;
+        existingError.message = existingError.message + " (unable to resolve)";
+        throw existingError;
       }
     });
   }

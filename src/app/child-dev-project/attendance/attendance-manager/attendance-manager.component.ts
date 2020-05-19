@@ -1,45 +1,56 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { FilterSelection } from '../../../core/filter/filter-selection/filter-selection';
-import { Child } from '../../children/model/child';
-import { ChildrenService } from '../../children/children.service';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
-import { AttendanceMonth } from '../model/attendance-month';
+import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
+import { FilterSelection } from "../../../core/filter/filter-selection/filter-selection";
+import { Child } from "../../children/model/child";
+import { ChildrenService } from "../../children/children.service";
+import { MatSort } from "@angular/material/sort";
+import { MatTableDataSource } from "@angular/material/table";
+import { AttendanceMonth } from "../model/attendance-month";
 
 @Component({
-  selector: 'app-attendance-manager',
-  templateUrl: './attendance-manager.component.html',
-  styleUrls: ['./attendance-manager.component.scss'],
+  selector: "app-attendance-manager",
+  templateUrl: "./attendance-manager.component.html",
+  styleUrls: ["./attendance-manager.component.scss"],
 })
 export class AttendanceManagerComponent implements OnInit, AfterViewInit {
-
   filterFrom: Date;
   filterUntil: Date;
-  attendanceType = '';
-  displayType = 'daily';
+  attendanceType = "";
+  displayType = "daily";
 
   childrenAll: Child[];
 
   dataSource = new MatTableDataSource<any>();
-  columnsToDisplay = ['child', 'attendanceType', 'averageAttendance',
-    'totalWorking', 'totalAttended', 'totalAbsent', 'totalLate', 'attendance', 'recordCount'];
+  columnsToDisplay = [
+    "child",
+    "attendanceType",
+    "averageAttendance",
+    "totalWorking",
+    "totalAttended",
+    "totalAbsent",
+    "totalLate",
+    "attendance",
+    "recordCount",
+  ];
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   loading = 0;
 
-  centerFS = new FilterSelection('center', []);
-  dropoutFS = new FilterSelection('status', [
-    {key: 'active', label: 'Current Project Children', filterFun: (c: Child) => c.isActive()},
-    {key: 'dropout', label: 'Dropouts', filterFun: (c: Child) => !c.isActive()},
-    {key: '', label: 'All', filterFun: (c: Child) => true},
+  centerFS = new FilterSelection("center", []);
+  dropoutFS = new FilterSelection("status", [
+    {
+      key: "active",
+      label: "Current Project Children",
+      filterFun: (c: Child) => c.isActive(),
+    },
+    {
+      key: "dropout",
+      label: "Dropouts",
+      filterFun: (c: Child) => !c.isActive(),
+    },
+    { key: "", label: "All", filterFun: () => true },
   ]);
-  filterSelections = [
-    this.dropoutFS,
-    this.centerFS,
-  ];
+  filterSelections = [this.dropoutFS, this.centerFS];
 
-
-
-  constructor(private childrenService: ChildrenService) { }
+  constructor(private childrenService: ChildrenService) {}
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
@@ -52,78 +63,100 @@ export class AttendanceManagerComponent implements OnInit, AfterViewInit {
     this.filterUntil.setDate(1);
     this.filterUntil.setMonth(this.filterUntil.getMonth() + 1);
 
-    this.childrenService.getChildren().subscribe(data => {
-      this.childrenAll = data.filter(c => c.isActive());
+    this.childrenService.getChildren().subscribe((data) => {
+      this.childrenAll = data.filter((c) => c.isActive());
       this.initCenterFilterOptions();
       this.applyFilterSelections();
     });
   }
 
-
   private initCenterFilterOptions() {
-    const centers = this.childrenAll.map(c => c.center).filter((value, index, arr) => arr.indexOf(value) === index);
+    const centers = this.childrenAll
+      .map((c) => c.center)
+      .filter((value, index, arr) => arr.indexOf(value) === index);
 
-    const options = [{key: '', label: 'All', filterFun: (c: Child) => true}];
+    const options = [{ key: "", label: "All", filterFun: (c: Child) => true }];
 
-    centers.forEach(center => {
-      options.push({key: center.toLowerCase(), label: center, filterFun: (c: Child) => c.center === center});
+    centers.forEach((center) => {
+      options.push({
+        key: center.toLowerCase(),
+        label: center,
+        filterFun: (c: Child) => c.center === center,
+      });
     });
 
     this.centerFS.options = options;
   }
 
-
   applyFilterSelections() {
     this.loading = 0;
     let filteredData = this.childrenAll;
 
-    this.filterSelections.forEach(f => {
+    this.filterSelections.forEach((f) => {
       filteredData = filteredData.filter(f.getSelectedFilterFunction());
     });
 
     let data = [];
-    filteredData.forEach(child => data = data.concat(this.loadChildRecords(child)));
+    filteredData.forEach(
+      (child) => (data = data.concat(this.loadChildRecords(child)))
+    );
 
     this.dataSource.data = data;
   }
 
   loadChildRecords(child: Child): any[] {
     this.loading++;
-    const recordCoaching = { child: child, attendanceType: 'coaching', attendance: [], averageAttendance: 0 };
-    const recordSchool = { child: child, attendanceType: 'school', attendance: [], averageAttendance: 0 };
+    const recordCoaching = {
+      child: child,
+      attendanceType: "coaching",
+      attendance: [],
+      averageAttendance: 0,
+    };
+    const recordSchool = {
+      child: child,
+      attendanceType: "school",
+      attendance: [],
+      averageAttendance: 0,
+    };
 
-    this.childrenService.getAttendancesOfChild(child.getId()).subscribe(attendances => {
-      attendances.forEach(att => {
-        if (this.isLaterOrEqualMonth(att.month, this.filterFrom) && this.isEarlierOrEqualMonth(att.month, this.filterUntil)) {
-          if (att.institution === 'school') {
-            recordSchool.attendance.push(att);
-          } else if (att.institution === 'coaching') {
-            recordCoaching.attendance.push(att);
+    this.childrenService
+      .getAttendancesOfChild(child.getId())
+      .subscribe((attendances) => {
+        attendances.forEach((att) => {
+          if (
+            this.isLaterOrEqualMonth(att.month, this.filterFrom) &&
+            this.isEarlierOrEqualMonth(att.month, this.filterUntil)
+          ) {
+            if (att.institution === "school") {
+              recordSchool.attendance.push(att);
+            } else if (att.institution === "coaching") {
+              recordCoaching.attendance.push(att);
+            }
           }
-        }
+        });
+
+        this.calculateRecordStats(recordSchool);
+        this.calculateRecordStats(recordCoaching);
+
+        this.loading--;
       });
 
-      this.calculateRecordStats(recordSchool);
-      this.calculateRecordStats(recordCoaching);
-
-      this.loading--;
-    });
-
     return [recordSchool, recordCoaching];
-}
+  }
 
   calculateRecordStats(record) {
-    const stats = record.attendance
-      .reduce((acc, a: AttendanceMonth) => {
-          if (a.daysWorking > 0) {
-            acc.count++;
-            acc.daysWorking += a.daysWorking;
-            acc.daysAttended += a.daysAttended;
-            acc.daysLate += a.daysLate;
-          }
-          return acc;
-        },
-        { sum: 0, count: 0, daysWorking: 0, daysAttended: 0, daysLate: 0 });
+    const stats = record.attendance.reduce(
+      (acc, a: AttendanceMonth) => {
+        if (a.daysWorking > 0) {
+          acc.count++;
+          acc.daysWorking += a.daysWorking;
+          acc.daysAttended += a.daysAttended;
+          acc.daysLate += a.daysLate;
+        }
+        return acc;
+      },
+      { sum: 0, count: 0, daysWorking: 0, daysAttended: 0, daysLate: 0 }
+    );
     record.recordCount = stats.count;
     record.averageAttendance = stats.daysAttended / stats.daysWorking;
     record.totalWorking = stats.daysWorking;
@@ -133,11 +166,17 @@ export class AttendanceManagerComponent implements OnInit, AfterViewInit {
   }
 
   private isLaterOrEqualMonth(month: Date, filterFrom: Date) {
-    return (month.getFullYear() > filterFrom.getFullYear()
-      || (month.getFullYear() === filterFrom.getFullYear() && month.getMonth() >= filterFrom.getMonth()));
+    return (
+      month.getFullYear() > filterFrom.getFullYear() ||
+      (month.getFullYear() === filterFrom.getFullYear() &&
+        month.getMonth() >= filterFrom.getMonth())
+    );
   }
   private isEarlierOrEqualMonth(month: Date, filterUntil: Date) {
-    return (month.getFullYear() < filterUntil.getFullYear()
-      || (month.getFullYear() === filterUntil.getFullYear() && month.getMonth() <= filterUntil.getMonth()));
+    return (
+      month.getFullYear() < filterUntil.getFullYear() ||
+      (month.getFullYear() === filterUntil.getFullYear() &&
+        month.getMonth() <= filterUntil.getMonth())
+    );
   }
 }

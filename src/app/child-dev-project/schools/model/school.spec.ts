@@ -15,52 +15,51 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { async } from '@angular/core/testing';
-import { School } from './school';
-import { Entity } from '../../../core/entity/entity';
-import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
+import { async } from "@angular/core/testing";
+import { School } from "./school";
+import { Entity } from "../../../core/entity/entity";
+import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 
-describe('School Entity', () => {
-  const ENTITY_TYPE = 'School';
+describe("School Entity", () => {
+  const ENTITY_TYPE = "School";
   let entitySchemaService: EntitySchemaService;
 
   beforeEach(async(() => {
     entitySchemaService = new EntitySchemaService();
   }));
 
-
-  it('has correct _id and entityId and type', function () {
-    const id = 'test1';
+  it("has correct _id and entityId and type", function () {
+    const id = "test1";
     const entity = new School(id);
 
     expect(entity.getId()).toBe(id);
     expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
   });
 
-  it('has correct type/prefix', function () {
-    const id = 'test1';
+  it("has correct type/prefix", function () {
+    const id = "test1";
     const entity = new School(id);
 
     expect(entity.getType()).toBe(ENTITY_TYPE);
     expect(Entity.extractTypeFromId(entity._id)).toBe(ENTITY_TYPE);
   });
 
-  it('has all and only defined schema fields in rawData', function () {
-    const id = 'test1';
+  it("has all and only defined schema fields in rawData", function () {
+    const id = "test1";
     const expectedData = {
-      _id: 'School:' + id,
+      _id: "School:" + id,
 
-      name: 'Max',
-      address: 'Muster',
-      medium: 'English',
-      remarks: 'None',
-      website: 'www.google.com',
+      name: "Max",
+      address: "Muster",
+      medium: "English",
+      remarks: "None",
+      website: "www.google.com",
       privateSchool: true,
-      phone: '911',
+      phone: "911",
       upToClass: 10,
-      academicBoard: 'XY',
-      timing: '9-5',
-      workingDays: 'Mon-Fri',
+      academicBoard: "XY",
+      timing: "9-5",
+      workingDays: "Mon-Fri",
 
       searchIndices: [],
     };

@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/Aam-Digital/ndb-core.svg?branch=master)](https://travis-ci.org/Aam-Digital/ndb-core)
 [![Code Climate](https://codeclimate.com/github/NGO-DB/ndb-core/badges/gpa.svg)](https://codeclimate.com/github/NGO-DB/ndb-core)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/4e4a7a6301064019b2c9/test_coverage)](https://codeclimate.com/github/Aam-Digital/ndb-core/test_coverage)
-[![Guides](https://img.shields.io/badge/Tutorial%20%26%20Guides-9-blue)](https://aam-digital.github.io/ndb-core/additional-documentation/overview.html)
+[![Guides](https://img.shields.io/badge/Tutorial%20%26%20Guides-12-blue)](https://aam-digital.github.io/ndb-core/additional-documentation/overview.html)
 [![Doc CoverageDocs](https://aam-digital.github.io/ndb-core/images/coverage-badge-documentation.svg)](https://aam-digital.github.io/ndb-core/modules.html)
 
 
@@ -75,6 +75,11 @@ _docker/nginx_default.conf_ (for production server):
 ## Documentation
 Our detailed [Developer Documentation](http://aam-digital.github.io/ndb-core/additional-documentation/overview.html)
 provides tutorials, guides, concepts and an API reference.
+
+## Code Style
+We use _prettier_ to enforce a consistent formatting of code to make the project easier to read.
+The project is set up with a git pre-commit hook to automatically format your commits according to these rules.
+
 
 ## Using Angular CLI
 This project is built upon [Angular](https://angular.io/).

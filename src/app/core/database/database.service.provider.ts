@@ -15,8 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Database } from './database';
-import { SessionService } from '../session/session-service/session.service';
+import { Database } from "./database";
+import { SessionService } from "../session/session-service/session.service";
 
 /**
  * Provider of Database service for the Angular dependency injection.

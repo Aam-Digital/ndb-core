@@ -15,18 +15,17 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component } from "@angular/core";
+import { MatDialogRef } from "@angular/material/dialog";
 
 /**
  * Content for the dialog being displayed during an initial synchronization which blocks login
  * (because user accounts need to be synced first).
  */
 @Component({
-  templateUrl: './initial-sync-dialog.component.html',
+  templateUrl: "./initial-sync-dialog.component.html",
 })
 export class InitialSyncDialogComponent {
-
   /**
    * This component is usually instanciated through the MatDialog service which provides the necessary paramters.
    * @param dialogRef Reference to the dialog in which the component is being displayed.

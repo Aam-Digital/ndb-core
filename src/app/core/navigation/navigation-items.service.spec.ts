@@ -15,13 +15,13 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NavigationItemsService } from './navigation-items.service';
-import { MenuItem } from './menu-item';
+import { NavigationItemsService } from "./navigation-items.service";
+import { MenuItem } from "./menu-item";
 
-describe('NavigationItemsService', () => {
-  it('adds menu item', function () {
+describe("NavigationItemsService", () => {
+  it("adds menu item", function () {
     const navigationItemsService = new NavigationItemsService();
-    const item = new MenuItem('test', 'child', ['/']);
+    const item = new MenuItem("test", "child", ["/"]);
 
     navigationItemsService.addMenuItem(item);
 

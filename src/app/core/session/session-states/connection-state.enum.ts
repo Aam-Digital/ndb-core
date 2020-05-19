@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- /** State of the connection to the remote database  */
+/** State of the connection to the remote database  */
 export enum ConnectionState {
   /** we are offline and therefor not connected to the remote db */
   OFFLINE,

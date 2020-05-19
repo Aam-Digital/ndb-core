@@ -1,21 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { AppConfig } from '../../app-config/app-config';
-import { AlertService } from '../../alerts/alert.service';
-import { Alert } from '../../alerts/alert';
-import FileSaver from 'file-saver';
-import { BackupService } from '../services/backup.service';
-import { ConfirmationDialogService } from '../../confirmation-dialog/confirmation-dialog.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import PouchDB from 'pouchdb-browser';
-import { ChildPhotoUpdateService } from '../services/child-photo-update.service';
+import { Component, OnInit } from "@angular/core";
+import { AppConfig } from "../../app-config/app-config";
+import { AlertService } from "../../alerts/alert.service";
+import { Alert } from "../../alerts/alert";
+import FileSaver from "file-saver";
+import { BackupService } from "../services/backup.service";
+import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import PouchDB from "pouchdb-browser";
+import { ChildPhotoUpdateService } from "../services/child-photo-update.service";
 
 /**
  * Admin GUI giving administrative users different options/actions.
  */
 @Component({
-  selector: 'app-admin',
-  templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.scss'],
+  selector: "app-admin",
+  templateUrl: "./admin.component.html",
+  styleUrls: ["./admin.component.scss"],
 })
 export class AdminComponent implements OnInit {
   /** app-wide configuration */
@@ -27,12 +27,13 @@ export class AdminComponent implements OnInit {
   /** direct database instance */
   private db;
 
-  constructor(private alertService: AlertService,
-              private backupService: BackupService,
-              private confirmationDialog: ConfirmationDialogService,
-              private snackBar: MatSnackBar,
-              private childPhotoUpdateService: ChildPhotoUpdateService,
-              ) { }
+  constructor(
+    private alertService: AlertService,
+    private backupService: BackupService,
+    private confirmationDialog: ConfirmationDialogService,
+    private snackBar: MatSnackBar,
+    private childPhotoUpdateService: ChildPhotoUpdateService
+  ) {}
 
   ngOnInit() {
     this.alerts = this.alertService.alerts;
@@ -57,18 +58,19 @@ export class AdminComponent implements OnInit {
    * Download a full backup of the database as (json) file.
    */
   saveBackup() {
-    this.backupService.getJsonExport()
-      .then(bac => this.startDownload(bac, 'text/json', 'backup.json'));
+    this.backupService
+      .getJsonExport()
+      .then((bac) => this.startDownload(bac, "text/json", "backup.json"));
   }
 
   /**
    * Download a full export of the database as csv file.
    */
   saveCsvExport() {
-    this.backupService.getCsvExport()
-      .then(csv => this.startDownload(csv, 'text/csv', 'export.csv'));
+    this.backupService
+      .getCsvExport()
+      .then((csv) => this.startDownload(csv, "text/csv", "export.csv"));
   }
-
 
   private startDownload(data: string, type: string, name: string) {
     const blob = new Blob([data], { type: type });
@@ -76,14 +78,13 @@ export class AdminComponent implements OnInit {
   }
 
   private readFile(file): Promise<string> {
-    return new Promise(resolve => {
-        const fileReader = new FileReader();
-        fileReader.onload = () => {
-          resolve(fileReader.result as string);
-        };
-        fileReader.readAsText(file);
-      },
-    );
+    return new Promise((resolve) => {
+      const fileReader = new FileReader();
+      fileReader.onload = () => {
+        resolve(fileReader.result as string);
+      };
+      fileReader.readAsText(file);
+    });
   }
 
   /**
@@ -93,28 +94,35 @@ export class AdminComponent implements OnInit {
   loadBackup(file) {
     const pRestorePoint = this.backupService.getJsonExport();
     const pLoadedData = this.readFile(file);
-    Promise.all([pLoadedData, pRestorePoint]).then(r => {
+    Promise.all([pLoadedData, pRestorePoint]).then((r) => {
       const newData = r[0];
       const restorePoint = r[1];
 
-      const dialogRef = this.confirmationDialog
-        .openDialog('Overwrite complete database?', 'Are you sure you want to restore this backup? ' +
-          'This will delete all ' + restorePoint.split('\n').length + ' existing records in the database, ' +
-          'restoring ' + newData.split('\n').length + ' records from the loaded file.');
+      const dialogRef = this.confirmationDialog.openDialog(
+        "Overwrite complete database?",
+        "Are you sure you want to restore this backup? " +
+          "This will delete all " +
+          restorePoint.split("\n").length +
+          " existing records in the database, " +
+          "restoring " +
+          newData.split("\n").length +
+          " records from the loaded file."
+      );
 
-      dialogRef.afterClosed()
-        .subscribe(confirmed => {
-          if (confirmed) {
+      dialogRef.afterClosed().subscribe((confirmed) => {
+        if (confirmed) {
+          this.backupService.clearDatabase();
+          this.backupService.importJson(newData, true);
+
+          const snackBarRef = this.snackBar.open("Backup restored", "Undo", {
+            duration: 8000,
+          });
+          snackBarRef.onAction().subscribe(() => {
             this.backupService.clearDatabase();
-            this.backupService.importJson(newData, true);
-
-            const snackBarRef = this.snackBar.open('Backup restored', 'Undo', { duration: 8000 });
-            snackBarRef.onAction().subscribe(() => {
-              this.backupService.clearDatabase();
-              this.backupService.importJson(restorePoint, true);
-            });
-          }
-        });
+            this.backupService.importJson(restorePoint, true);
+          });
+        }
+      });
     });
   }
 
@@ -125,27 +133,32 @@ export class AdminComponent implements OnInit {
   loadCsv(file) {
     const pRestorePoint = this.backupService.getJsonExport();
     const pLoadedData = this.readFile(file);
-    Promise.all([pLoadedData, pRestorePoint]).then(r => {
+    Promise.all([pLoadedData, pRestorePoint]).then((r) => {
       const newData = r[0];
       const restorePoint = r[1];
 
-      const dialogRef = this.confirmationDialog
-        .openDialog('Import new data?', 'Are you sure you want to import this file? ' +
-          'This will add or update ' + (newData.trim().split('\n').length - 1) + ' records from the loaded file. ' +
-          'Existing records with same "_id" in the database will be overwritten!');
+      const dialogRef = this.confirmationDialog.openDialog(
+        "Import new data?",
+        "Are you sure you want to import this file? " +
+          "This will add or update " +
+          (newData.trim().split("\n").length - 1) +
+          " records from the loaded file. " +
+          'Existing records with same "_id" in the database will be overwritten!'
+      );
 
-      dialogRef.afterClosed()
-        .subscribe(confirmed => {
-          if (confirmed) {
-            this.backupService.importCsv(newData, true);
+      dialogRef.afterClosed().subscribe((confirmed) => {
+        if (confirmed) {
+          this.backupService.importCsv(newData, true);
 
-            const snackBarRef = this.snackBar.open('Import completed', 'Undo', {duration: 8000});
-            snackBarRef.onAction().subscribe(() => {
-              this.backupService.clearDatabase();
-              this.backupService.importJson(restorePoint, true);
-            });
-          }
-        });
+          const snackBarRef = this.snackBar.open("Import completed", "Undo", {
+            duration: 8000,
+          });
+          snackBarRef.onAction().subscribe(() => {
+            this.backupService.clearDatabase();
+            this.backupService.importJson(restorePoint, true);
+          });
+        }
+      });
     });
   }
 
@@ -153,22 +166,27 @@ export class AdminComponent implements OnInit {
    * Reset the database removing all entities except user accounts.
    */
   clearDatabase() {
-    this.backupService.getJsonExport().then(restorePoint => {
-      const dialogRef = this.confirmationDialog
-        .openDialog('Empty complete database?', 'Are you sure you want to clear the database? ' +
-          'This will delete all ' + restorePoint.split('\n').length + ' existing records in the database!');
+    this.backupService.getJsonExport().then((restorePoint) => {
+      const dialogRef = this.confirmationDialog.openDialog(
+        "Empty complete database?",
+        "Are you sure you want to clear the database? " +
+          "This will delete all " +
+          restorePoint.split("\n").length +
+          " existing records in the database!"
+      );
 
-      dialogRef.afterClosed()
-        .subscribe(confirmed => {
-          if (confirmed) {
-            this.backupService.clearDatabase();
+      dialogRef.afterClosed().subscribe((confirmed) => {
+        if (confirmed) {
+          this.backupService.clearDatabase();
 
-            const snackBarRef = this.snackBar.open('Import completed', 'Undo', {duration: 8000});
-            snackBarRef.onAction().subscribe(() => {
-              this.backupService.importJson(restorePoint, true);
-            });
-          }
-        });
+          const snackBarRef = this.snackBar.open("Import completed", "Undo", {
+            duration: 8000,
+          });
+          snackBarRef.onAction().subscribe(() => {
+            this.backupService.importJson(restorePoint, true);
+          });
+        }
+      });
     });
   }
 }

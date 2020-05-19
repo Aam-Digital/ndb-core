@@ -15,7 +15,6 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-
 <div fxLayout="row" fxLayoutAlign='space-between'>
   <div>
     <h1 class="page-header section-child">
@@ -219,26 +218,19 @@
         Education
       </mat-expansion-panel-header>
 
-      <div>
-        <mat-form-field style='width:300px;'>
-          <mat-label>
-            School
-          </mat-label>
-          <mat-select [disabled]='!editing' [(ngModel)]='child.schoolId' [ngModelOptions]="{standalone: true}">
-            <mat-option *ngFor="let s of schools" [value]="s.getId()">
-              <app-school-block [entity]='s' [linkDisabled]='true' class='mat-form-field'></app-school-block>
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field>
-          <input matInput type="text" formControlName="schoolClass" placeholder="Class">
-        </mat-form-field>
+      <div *ngIf="child.schoolId" matTooltip='To edit the current school or class, please add to the school history below'>
+        <em>
+          Currently attending class {{child.schoolClass}} at
+          <app-school-block [entityId]='child.schoolId'></app-school-block>
+        </em>
       </div>
 
       <div>
-        <h3>Previous Schools</h3>
-        <app-previous-schools></app-previous-schools>
+        <h3>School History</h3>
+        <app-previous-schools
+          [childId]='child.getId()'
+          (changedRecordInEntitySubrecord)='changedRecordInEntitySubrecord()'>
+        </app-previous-schools>
       </div>
       <br>
 
@@ -275,10 +267,8 @@
         Notes & Reports
       </mat-expansion-panel-header>
 
-      <app-notes></app-notes>
+      <app-notes-of-child [childId]="child.getId()"></app-notes-of-child>
     </mat-expansion-panel>
-
-
 
 
 

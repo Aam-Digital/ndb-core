@@ -15,12 +15,12 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { SessionService } from '../../session/session-service/session.service';
-import { AppConfig } from '../../app-config/app-config';
-import { Title } from '@angular/platform-browser';
-import { MediaObserver, MediaChange } from '@angular/flex-layout';
-import { Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { SessionService } from "../../session/session-service/session.service";
+import { AppConfig } from "../../app-config/app-config";
+import { Title } from "@angular/platform-browser";
+import { MediaObserver, MediaChange } from "@angular/flex-layout";
+import { Subscription } from "rxjs";
 
 /**
  * The main user interface component as root element for the app structure
@@ -28,27 +28,29 @@ import { Subscription } from 'rxjs';
  */
 @Component({
   moduleId: module.id,
-  selector: 'app-ui',
-  templateUrl: './ui.component.html',
-  styleUrls: ['./ui.component.css'],
+  selector: "app-ui",
+  templateUrl: "./ui.component.html",
+  styleUrls: ["./ui.component.css"],
 })
 export class UiComponent implements OnInit, OnDestroy {
   /** display mode for the menu to make it responive and usable on smaller screens */
   sideNavMode: string;
   /** reference to sideNav component in template, required for toggling the menu on user actions */
-  @ViewChild('sideNav', { static: false }) sideNav;
+  @ViewChild("sideNav", { static: false }) sideNav;
 
   /** title displayed in the app header bar */
   title: string;
 
   private watcher: Subscription;
 
-  constructor(private _sessionService: SessionService,
-              private titleService: Title,
-              mediaObserver: MediaObserver) {
+  constructor(
+    private _sessionService: SessionService,
+    private titleService: Title,
+    mediaObserver: MediaObserver
+  ) {
     // watch screen width to change sidenav mode
     this.watcher = mediaObserver.media$.subscribe((change: MediaChange) => {
-      this.sideNavMode = change.mqAlias === ('xs' || 'sm') ? 'over' : 'side';
+      this.sideNavMode = change.mqAlias === ("xs" || "sm") ? "over" : "side";
     });
   }
 

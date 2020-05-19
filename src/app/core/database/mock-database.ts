@@ -15,10 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Database } from './database';
-import { Note } from '../../child-dev-project/notes/model/note';
-import { AttendanceMonth } from '../../child-dev-project/attendance/model/attendance-month';
-import { ChildSchoolRelation } from '../../child-dev-project/children/model/childSchoolRelation';
+import { Database } from "./database";
+import { Note } from "../../child-dev-project/notes/model/note";
+import { AttendanceMonth } from "../../child-dev-project/attendance/model/attendance-month";
+import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 
 /**
  * In-Memory database implementation that works as a drop-in replacement of {@link PouchDatabase}
@@ -36,14 +36,13 @@ export class MockDatabase extends Database {
     super();
   }
 
-
   /**
    * see {@link Database}
    * @param id The primary id of the document
    */
   get(id: string) {
     if (!this.exists(id)) {
-      return Promise.reject({'status': 404, 'message': 'object not found'});
+      return Promise.reject({ status: 404, message: "object not found" });
     }
 
     const index = this.findIndex(id);
@@ -61,8 +60,8 @@ export class MockDatabase extends Database {
 
     // default options provided through getAll(prefix): {include_docs: true, startkey: prefix, endkey: prefix + '\ufff0'}
     // MockDatabase ignores endkey and only implements filtering based on startkey/prefix
-    if (options && options.hasOwnProperty('startkey')) {
-      result = this.data.filter(o => o._id.startsWith(options.startkey));
+    if (options && options.hasOwnProperty("startkey")) {
+      result = this.data.filter((o) => o._id.startsWith(options.startkey));
     }
 
     return Promise.resolve(result);
@@ -77,7 +76,7 @@ export class MockDatabase extends Database {
     if (this.exists(object._id)) {
       return this.overwriteExisting(object);
     } else {
-      object._rev = 'x';
+      object._rev = "x";
       this.data.push(object);
       return Promise.resolve(this.generateWriteResponse(object));
     }
@@ -87,27 +86,26 @@ export class MockDatabase extends Database {
     const existingObject = await this.get(object._id);
 
     if (object._rev !== existingObject._rev) {
-      return Promise.reject({ 'message': '_id already exists'});
+      return Promise.reject({ message: "_id already exists" });
     }
 
-    const index = this.data.findIndex(e => e._id === object._id);
+    const index = this.data.findIndex((e) => e._id === object._id);
     if (index > -1) {
-      object._rev = object._rev + 'x';
+      object._rev = object._rev + "x";
       this.data[index] = object;
       return Promise.resolve(this.generateWriteResponse(object));
     } else {
-      return Promise.reject({ 'message': 'failed to overwrite existing object'});
+      return Promise.reject({ message: "failed to overwrite existing object" });
     }
   }
 
   private generateWriteResponse(writtenObject: any) {
     return {
-      'ok': true,
-      'id': writtenObject._id,
-      'rev': writtenObject._rev,
+      ok: true,
+      id: writtenObject._id,
+      rev: writtenObject._rev,
     };
   }
-
 
   /**
    * see {@link Database}
@@ -115,7 +113,7 @@ export class MockDatabase extends Database {
    */
   remove(object: any) {
     if (!this.exists(object._id)) {
-      return Promise.reject({'status': 404, 'message': 'object not found'});
+      return Promise.reject({ status: 404, message: "object not found" });
     }
 
     const index = this.findIndex(object._id);
@@ -127,13 +125,12 @@ export class MockDatabase extends Database {
   }
 
   private exists(id: string) {
-    return (this.findIndex(id) > -1);
+    return this.findIndex(id) > -1;
   }
 
   private findIndex(id: string) {
-    return this.data.findIndex(o => o._id === id);
+    return this.data.findIndex((o) => o._id === id);
   }
-
 
   /**
    * A "simulation" of queries as the PouchDatabase implementation would handle them.
@@ -156,42 +153,67 @@ export class MockDatabase extends Database {
     let filterFun;
     let reducerFun;
     switch (fun) {
-      case 'notes_index/by_child':
-        filterFun = (e) => e._id.startsWith( Note.ENTITY_TYPE) && e.children.includes(options.key);
+      case "notes_index/by_child":
+        filterFun = (e) =>
+          e._id.startsWith(Note.ENTITY_TYPE) &&
+          e.children.includes(options.key);
         break;
-      case 'attendances_index/by_child':
-        filterFun = (e) => e._id.startsWith( AttendanceMonth.ENTITY_TYPE) && e.student === options.key;
+      case "attendances_index/by_child":
+        filterFun = (e) =>
+          e._id.startsWith(AttendanceMonth.ENTITY_TYPE) &&
+          e.student === options.key;
         break;
-      case 'attendances_index/by_month':
+      case "attendances_index/by_month":
         filterFun = (e) => {
-          if (!e._id.startsWith( AttendanceMonth.ENTITY_TYPE)) {
+          if (!e._id.startsWith(AttendanceMonth.ENTITY_TYPE)) {
             return false;
           }
           e.month = new Date(e.month);
-          return e.month.getFullYear().toString() + '-' + (e.month.getMonth() + 1).toString() === options.key;
+          return (
+            e.month.getFullYear().toString() +
+              "-" +
+              (e.month.getMonth() + 1).toString() ===
+            options.key
+          );
         };
         break;
-      case 'avg_attendance_index/three_months':
-        filterFun = (e) => e._id.startsWith( AttendanceMonth.ENTITY_TYPE)
-          && this.isWithinLastMonths(e.month, new Date(), 3);
-        reducerFun = this.getStatsReduceFun((e: AttendanceMonth) => e.student,
-          (e: AttendanceMonth) => (e.daysAttended / (e.daysWorking - e.daysExcused)));
+      case "avg_attendance_index/three_months":
+        filterFun = (e) =>
+          e._id.startsWith(AttendanceMonth.ENTITY_TYPE) &&
+          this.isWithinLastMonths(e.month, new Date(), 3);
+        reducerFun = this.getStatsReduceFun(
+          (e: AttendanceMonth) => e.student,
+          (e: AttendanceMonth) =>
+            e.daysAttended / (e.daysWorking - e.daysExcused)
+        );
         break;
-      case 'avg_attendance_index/last_month':
-        filterFun = (e) => e._id.startsWith( AttendanceMonth.ENTITY_TYPE)
-          && this.isWithinLastMonths(e.month, new Date(), 1);
-        reducerFun = this.getStatsReduceFun((e: AttendanceMonth) => e.student,
-          (e: AttendanceMonth) => (e.daysAttended / (e.daysWorking - e.daysExcused)));
+      case "avg_attendance_index/last_month":
+        filterFun = (e) =>
+          e._id.startsWith(AttendanceMonth.ENTITY_TYPE) &&
+          this.isWithinLastMonths(e.month, new Date(), 1);
+        reducerFun = this.getStatsReduceFun(
+          (e: AttendanceMonth) => e.student,
+          (e: AttendanceMonth) =>
+            e.daysAttended / (e.daysWorking - e.daysExcused)
+        );
         break;
-      case 'childSchoolRelations_index/by_child':
-        filterFun = (e) => e._id.startsWith( ChildSchoolRelation.ENTITY_TYPE) && e.childId === options.key;
+      case "childSchoolRelations_index/by_child":
+        filterFun = (e) =>
+          e._id.startsWith(ChildSchoolRelation.ENTITY_TYPE) &&
+          e.childId === options.key;
         break;
-      case 'childSchoolRelations_index/by_school':
-        filterFun = (e) => e._id.startsWith( ChildSchoolRelation.ENTITY_TYPE) &&
-          (e.start <= new Date().setHours(0, 0, 0, 0) && !e.end || e.end >= new Date().setHours(0, 0, 0, 0)) && e.schoolId === options.key;
+      case "childSchoolRelations_index/by_school":
+        filterFun = (e) =>
+          e._id.startsWith(ChildSchoolRelation.ENTITY_TYPE) &&
+          ((e.start <= new Date().setHours(0, 0, 0, 0) && !e.end) ||
+            e.end >= new Date().setHours(0, 0, 0, 0)) &&
+          e.schoolId === options.key;
         break;
-      case 'childSchoolRelations_index/by_date':
-        return this.filterForLatestRelationOfChild(options.endkey, options.limit);
+      case "childSchoolRelations_index/by_date":
+        return this.filterForLatestRelationOfChild(
+          options.endkey,
+          options.limit
+        );
     }
     if (filterFun !== undefined) {
       if (reducerFun !== undefined) {
@@ -201,30 +223,46 @@ export class MockDatabase extends Database {
         return { rows: reducedResults };
       } else {
         const allData = await this.getAll();
-        return { rows: allData.filter(filterFun).map(e => { return {doc: e}; } ) };
+        return {
+          rows: allData.filter(filterFun).map((e) => {
+            return { doc: e };
+          }),
+        };
       }
     }
 
-
     console.warn('MockDatabase does not implement "query()"');
-    return { rows: []};
+    return { rows: [] };
   }
 
-  private async filterForLatestRelationOfChild(childId: string, limit: number): Promise<any> {
-    return new Promise(resolve => {
-      this.getAll().then(all => {
-        const relations = all.filter(e => e._id.startsWith(ChildSchoolRelation.ENTITY_TYPE));
+  private async filterForLatestRelationOfChild(
+    childKey: string,
+    limit: number
+  ): Promise<any> {
+    return new Promise((resolve) => {
+      this.getAll().then((all) => {
+        const relations = all.filter((e) =>
+          e._id.startsWith(ChildSchoolRelation.ENTITY_TYPE)
+        );
         const sorted = relations.sort((a, b) => {
-          const aValue = a.childId + '_' + this.zeroPad(new Date(a.start).valueOf());
-          const bValue = b.childId + '_' + this.zeroPad(new Date(b.start).valueOf());
+          const aValue =
+            a.childId + "_" + this.zeroPad(new Date(a.start).valueOf());
+          const bValue =
+            b.childId + "_" + this.zeroPad(new Date(b.start).valueOf());
           return aValue < bValue ? 1 : aValue === bValue ? 0 : -1;
         });
-        const filtered: ChildSchoolRelation[] = sorted.filter(doc => doc.childId === childId);
-        let results: {doc: ChildSchoolRelation}[] = filtered.map(relation => { return {doc: relation}; });
+        const filtered: ChildSchoolRelation[] = sorted.filter(
+          (doc) => doc.childId + "_" === childKey
+        );
+        let results: { doc: ChildSchoolRelation }[] = filtered.map(
+          (relation) => {
+            return { doc: relation };
+          }
+        );
         if (limit) {
           results = results.slice(0, limit);
         }
-        resolve({rows: results});
+        resolve({ rows: results });
       });
     });
   }
@@ -241,12 +279,16 @@ export class MockDatabase extends Database {
     // with ECMAScript 2017 you can do a one-liner: 'return str.toString().padStart(length, '0');'
     let res = str.toString();
     while (res.length < length) {
-      res = '0' + res;
+      res = "0" + res;
     }
     return res;
   }
 
-  private isWithinLastMonths(date: Date, now: Date, numberOfMonths: number): boolean {
+  private isWithinLastMonths(
+    date: Date,
+    now: Date,
+    numberOfMonths: number
+  ): boolean {
     if (!date) {
       return false;
     }
@@ -256,14 +298,22 @@ export class MockDatabase extends Database {
     months = (now.getFullYear() - date.getFullYear()) * 12;
     months -= date.getMonth();
     months += now.getMonth();
-    if (months < 0) { return false; }
+    if (months < 0) {
+      return false;
+    }
     return months <= numberOfMonths;
   }
 
-  private getStatsReduceFun(keyFun: (any) => string, valueFun: (any) => number) {
+  private getStatsReduceFun(
+    keyFun: (any) => string,
+    valueFun: (any) => number
+  ) {
     return (acc, value) => {
-      const stats = { key: keyFun(value), value: { count: 1, sum: valueFun(value) } };
-      const existing = acc.filter(x => x.key === keyFun(value));
+      const stats = {
+        key: keyFun(value),
+        value: { count: 1, sum: valueFun(value) },
+      };
+      const existing = acc.filter((x) => x.key === keyFun(value));
       if (existing.length > 0) {
         const v = existing[0].value;
         v.count++;
@@ -275,7 +325,6 @@ export class MockDatabase extends Database {
       return acc;
     };
   }
-
 
   /**
    * Currently not implemented for MockDatabase!
@@ -300,8 +349,8 @@ export class MockDatabase extends Database {
     };
      */
 
-
-    console.warn('MockDatabase does not implement "saveDatabaseIndex()"');
+    // tslint:disable-next-line:no-console
+    console.debug('MockDatabase does not implement "saveDatabaseIndex()"');
     return Promise.resolve({});
   }
 }

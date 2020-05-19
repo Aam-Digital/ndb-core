@@ -1,18 +1,20 @@
-import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { Observable } from 'rxjs';
-import { SessionService } from '../session/session-service/session.service';
+import { Injectable } from "@angular/core";
+import {
+  CanActivate,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+} from "@angular/router";
+import { Observable } from "rxjs";
+import { SessionService } from "../session/session-service/session.service";
 
 /**
  * Guard checking for the currently logged in user's admin permissions.
  */
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class AdminGuard implements CanActivate {
-
-  constructor(private _sessionService: SessionService) {
-  }
+  constructor(private _sessionService: SessionService) {}
 
   /**
    * Whether the currently logged in user (if any) has administrative rights.
@@ -32,7 +34,8 @@ export class AdminGuard implements CanActivate {
    */
   canActivate(
     next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+    state: RouterStateSnapshot
+  ): Observable<boolean> | Promise<boolean> | boolean {
     return this.isAdmin();
   }
 }

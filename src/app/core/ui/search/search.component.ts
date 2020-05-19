@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { Database } from '../../database/database';
-import { Child } from '../../../child-dev-project/children/model/child';
-import { School } from '../../../child-dev-project/schools/model/school';
-import { Entity } from '../../entity/entity';
-import { EntitySchemaService } from '../../entity/schema/entity-schema.service';
+import { Component, OnInit } from "@angular/core";
+import { Database } from "../../database/database";
+import { Child } from "../../../child-dev-project/children/model/child";
+import { School } from "../../../child-dev-project/schools/model/school";
+import { Entity } from "../../entity/entity";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 /**
  * General search box that provides results out of any kind of entities from the system
@@ -12,19 +12,19 @@ import { EntitySchemaService } from '../../entity/schema/entity-schema.service';
  * This is usually displayed in the app header to be available to the user anywhere, allowing to navigate quickly.
  */
 @Component({
-  selector: 'app-search',
-  templateUrl: './search.component.html',
-  styleUrls: ['./search.component.scss'],
+  selector: "app-search",
+  templateUrl: "./search.component.html",
+  styleUrls: ["./search.component.scss"],
 })
 export class SearchComponent implements OnInit {
   results = [];
-  searchText = '';
+  searchText = "";
   showSearchToolbar = false;
 
   constructor(
     private db: Database,
-    private entitySchemaService: EntitySchemaService,
-  ) { }
+    private entitySchemaService: EntitySchemaService
+  ) {}
 
   ngOnInit() {
     this.createSearchIndex();
@@ -32,12 +32,13 @@ export class SearchComponent implements OnInit {
 
   private createSearchIndex() {
     // `emit(x)` to add x as a key to the index that can be searched
-    const searchMapFunction = 'function searchMapFunction (doc) {' +
+    const searchMapFunction =
+      "(doc) => {" +
       'if (doc.hasOwnProperty("searchIndices")) { doc.searchIndices.forEach(word => emit(word.toString().toLowerCase())) }' +
-      '}';
+      "}";
 
     const designDoc = {
-      _id: '_design/search_index',
+      _id: "_design/search_index",
       views: {
         by_name: {
           map: searchMapFunction,
@@ -48,7 +49,6 @@ export class SearchComponent implements OnInit {
     this.db.saveDatabaseIndex(designDoc);
   }
 
-
   async search() {
     this.searchText = this.searchText.toLowerCase();
     if (!this.isRelevantSearchInput(this.searchText)) {
@@ -57,11 +57,12 @@ export class SearchComponent implements OnInit {
     }
 
     const searchHash = JSON.stringify(this.searchText);
-    const searchTerms = this.searchText.split(' ');
-    const queryResults = await this.db.query(
-      'search_index/by_name',
-      {startkey: searchTerms[0], endkey: searchTerms[0] + '\ufff0', include_docs: true},
-      );
+    const searchTerms = this.searchText.split(" ");
+    const queryResults = await this.db.query("search_index/by_name", {
+      startkey: searchTerms[0],
+      endkey: searchTerms[0] + "\ufff0",
+      include_docs: true,
+    });
 
     if (JSON.stringify(this.searchText) === searchHash) {
       // only set result if the user hasn't continued typing and changed the search term already
@@ -69,22 +70,21 @@ export class SearchComponent implements OnInit {
     }
   }
 
-
   /**
    * Check if the input should start an actual search.
    * Only search for words starting with a char or number -> no searching for space or no input
    * @param searchText
    */
   private isRelevantSearchInput(searchText: string) {
-    const regexp = new RegExp('[a-z]+|[0-9]+');
+    const regexp = new RegExp("[a-z]+|[0-9]+");
     return this.searchText.match(regexp);
   }
 
   private prepareResults(rows, searchTerms: string[]) {
     return this.getResultsWithoutDuplicates(rows)
-      .map(doc => this.transformDocToEntity(doc))
-      .filter(r => r !== null)
-      .filter(r => this.containsSecondarySearchTerms(r, searchTerms))
+      .map((doc) => this.transformDocToEntity(doc))
+      .filter((r) => r !== null)
+      .filter((r) => this.containsSecondarySearchTerms(r, searchTerms))
       .sort((a, b) => this.sortResults(a, b));
   }
 
@@ -98,9 +98,9 @@ export class SearchComponent implements OnInit {
 
   private transformDocToEntity(doc: any): Entity {
     let resultEntity;
-    if (doc._id.startsWith(Child.ENTITY_TYPE + ':')) {
+    if (doc._id.startsWith(Child.ENTITY_TYPE + ":")) {
       resultEntity = new Child(doc.entityId);
-    } else if (doc._id.startsWith(School.ENTITY_TYPE + ':')) {
+    } else if (doc._id.startsWith(School.ENTITY_TYPE + ":")) {
       resultEntity = new School(doc.entityId);
     }
 
@@ -113,7 +113,7 @@ export class SearchComponent implements OnInit {
   }
 
   private containsSecondarySearchTerms(item, searchTerms: string[]) {
-    const itemKey = item.generateSearchIndices().join(' ').toLowerCase();
+    const itemKey = item.generateSearchIndices().join(" ").toLowerCase();
     for (let i = 1; i < searchTerms.length; i++) {
       if (!itemKey.includes(searchTerms[i])) {
         return false;
@@ -140,10 +140,10 @@ export class SearchComponent implements OnInit {
       if (e[i].getType() === Child.ENTITY_TYPE) {
         if ((e[i] as Child).isActive()) {
           // show first
-          t[i] = '!' + t[i];
+          t[i] = "!" + t[i];
         } else {
           // show last
-          t[i] = '\ufff0' + t[i];
+          t[i] = "\ufff0" + t[i];
         }
       }
     }
@@ -151,12 +151,9 @@ export class SearchComponent implements OnInit {
     return t[0].localeCompare(t[1]);
   }
 
-
-
-
   clickOption(optionElement) {
     // simulate a click on the EntityBlock inside the selected option element
-    optionElement._element.nativeElement.children['0'].children['0'].click();
+    optionElement._element.nativeElement.children["0"].children["0"].click();
     if (this.showSearchToolbar === true) {
       this.showSearchToolbar = false;
     }

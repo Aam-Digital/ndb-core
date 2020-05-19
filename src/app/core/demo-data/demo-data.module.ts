@@ -15,17 +15,17 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { DemoDataServiceConfig, DemoDataService } from './demo-data.service';
+import { DemoDataServiceConfig, DemoDataService } from "./demo-data.service";
 import {
   ClassProvider,
   FactoryProvider,
   ModuleWithProviders,
   NgModule,
   ValueProvider,
-} from '@angular/core';
-import { DemoDataGeneratingProgressDialogComponent } from './demo-data-generating-progress-dialog.component';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatDialogModule } from '@angular/material/dialog';
+} from "@angular/core";
+import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatDialogModule } from "@angular/material/dialog";
 
 /**
  * Generate realist mock entities for testing and demo purposes.
@@ -49,29 +49,32 @@ import { MatDialogModule } from '@angular/material/dialog';
  * - [How to Generate Demo Data]{@link /additional-documentation/how-to-guides/generate-demo-data.html}
  */
 @NgModule({
-  imports: [
-    MatProgressBarModule,
-    MatDialogModule,
-  ],
+  imports: [MatProgressBarModule, MatDialogModule],
   declarations: [DemoDataGeneratingProgressDialogComponent],
   exports: [DemoDataGeneratingProgressDialogComponent],
   entryComponents: [DemoDataGeneratingProgressDialogComponent],
 })
 export class DemoDataModule {
-
   /**
    * Get a provider for the module while also passing the DemoDataGenerator services to be registered with the module.
    * @param demoDataGeneratorProviders An array of providers of DemoDataGenerator service implementations.
    *        These generators will be registered and called when demo data generation is triggered.
    */
   static forRoot(
-    demoDataGeneratorProviders: (ValueProvider|ClassProvider|FactoryProvider)[],
+    demoDataGeneratorProviders: (
+      | ValueProvider
+      | ClassProvider
+      | FactoryProvider
+    )[]
   ): ModuleWithProviders {
     return {
       ngModule: DemoDataModule,
       providers: [
         DemoDataService,
-        { provide: DemoDataServiceConfig, useValue: {dataGeneratorProviders: demoDataGeneratorProviders} },
+        {
+          provide: DemoDataServiceConfig,
+          useValue: { dataGeneratorProviders: demoDataGeneratorProviders },
+        },
         demoDataGeneratorProviders,
       ],
     };

@@ -1,5 +1,3 @@
-
-
 /**
  * Different settings how to display an Alert.
  */
