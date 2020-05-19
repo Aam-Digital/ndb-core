@@ -15,30 +15,28 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AttendanceDay } from './attendance-day';
-import { async } from '@angular/core/testing';
-import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
-import { AttendanceMonth } from './attendance-month';
+import { AttendanceDay } from "./attendance-day";
+import { async } from "@angular/core/testing";
+import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import { AttendanceMonth } from "./attendance-month";
 
-describe('AttendanceDay', () => {
+describe("AttendanceDay", () => {
   let entitySchemaService: EntitySchemaService;
 
   beforeEach(async(() => {
     entitySchemaService = new EntitySchemaService();
   }));
 
-
-  it('(AttendanceMonth) saves date values as only YYYY-MM-dd', () => {
-    const month = new Date('2018-01-01');
-    const entity = new AttendanceMonth('');
+  it("(AttendanceMonth) saves date values as only YYYY-MM-dd", () => {
+    const month = new Date("2018-01-01");
+    const entity = new AttendanceMonth("");
     entity.month = month;
 
     const data = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    expect(data.dailyRegister[1].date).toBe('2018-01-02'); // dailyRegister array is zero-based, index 1 is second day
+    expect(data.dailyRegister[1].date).toBe("2018-01-02"); // dailyRegister array is zero-based, index 1 is second day
 
-    const loadedEntity = new AttendanceMonth('');
+    const loadedEntity = new AttendanceMonth("");
     entitySchemaService.loadDataIntoEntity(loadedEntity, data);
-    expect(loadedEntity.dailyRegister[1].date).toEqual(new Date('2018-01-02'));
+    expect(loadedEntity.dailyRegister[1].date).toEqual(new Date("2018-01-02"));
   });
-
 });

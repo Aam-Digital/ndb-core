@@ -15,17 +15,17 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NdbCorePage } from './app.po';
+import { NdbCorePage } from "./app.po";
 
-describe('ndb-core App', () => {
+describe("ndb-core App", () => {
   let page: NdbCorePage;
 
   beforeEach(() => {
     page = new NdbCorePage();
   });
 
-  it('should display message saying app works', () => {
+  it("should display message saying app works", () => {
     page.navigateTo();
-    expect(page.getParagraphText()).toEqual('app works!');
+    expect(page.getParagraphText()).toEqual("app works!");
   });
 });

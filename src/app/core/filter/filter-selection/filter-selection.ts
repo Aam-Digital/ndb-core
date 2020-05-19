@@ -24,19 +24,18 @@
  * an instance of this FilterSelection class can manage all filter selection logic.
  */
 export class FilterSelection<T> {
-
   /** key of currently selected option */
-  public selectedOption: string = '';
+  public selectedOption: string = "";
 
   /**
    * Create a FilterSelection with different options to be selected.
    * @param name The name or id describing this filter
    * @param options An array of different filtering variants to chose between
    */
-  constructor(public name: string,
-              public options: FilterSelectionOption<T>[]) {
-
-  }
+  constructor(
+    public name: string,
+    public options: FilterSelectionOption<T>[]
+  ) {}
 
   /** default filter will keep all items in the result */
   defaultFilterFunction = (c: T) => true;
@@ -46,18 +45,17 @@ export class FilterSelection<T> {
    * @param key The identifier of the requested option
    */
   getOption(key: string): FilterSelectionOption<T> {
-      return this.options.find((option) => option.key === key);
+    return this.options.find((option) => option.key === key);
   }
 
-
   private getFilterFunction(key: string) {
-      const option = this.getOption(key);
+    const option = this.getOption(key);
 
-      if (!option) {
-          return this.defaultFilterFunction;
-      } else {
-          return option.filterFun;
-      }
+    if (!option) {
+      return this.defaultFilterFunction;
+    } else {
+      return option.filterFun;
+    }
   }
 
   /**
@@ -67,7 +65,7 @@ export class FilterSelection<T> {
    * This can be directly used on a data array, e.g. "data.filter(filterSelection.getFilterFunction('a'))"
    */
   public getSelectedFilterFunction() {
-      return this.getFilterFunction(this.selectedOption);
+    return this.getFilterFunction(this.selectedOption);
   }
 
   /**
@@ -84,16 +82,19 @@ export class FilterSelection<T> {
    * @param attributeName The name of the property of a data item that is compared to the value in the filter function.
    */
   public initOptions(valuesToMatchAsOptions: any[], attributeName: string) {
-      const options = [{key: '', label: 'All', filterFun: (e: T) => true}];
+    const options = [{ key: "", label: "All", filterFun: (e: T) => true }];
 
-      valuesToMatchAsOptions.forEach(k => {
-          options.push({key: k.toLowerCase(), label: k.toString(), filterFun: (e: T) => e[attributeName] === k});
+    valuesToMatchAsOptions.forEach((k) => {
+      options.push({
+        key: k.toLowerCase(),
+        label: k.toString(),
+        filterFun: (e: T) => e[attributeName] === k,
       });
+    });
 
-      this.options = options;
+    this.options = options;
   }
 }
-
 
 /**
  * Represents one specific option to filter data in a certain way.

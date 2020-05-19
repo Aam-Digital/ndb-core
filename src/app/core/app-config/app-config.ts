@@ -15,9 +15,9 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
-import { IAppConfig } from './app-config.model';
-import { HttpClient } from '@angular/common/http';
+import { Injectable } from "@angular/core";
+import { IAppConfig } from "./app-config.model";
+import { HttpClient } from "@angular/common/http";
 
 /**
  * Central app configuration.
@@ -41,10 +41,10 @@ export class AppConfig {
   static settings: IAppConfig;
 
   /** file location of the config file to be created by the administrator */
-  private readonly CONFIG_FILE = 'assets/config.json';
+  private readonly CONFIG_FILE = "assets/config.json";
 
   /** fallback file location of the config that is part of the project already if the "real" config file isn't found */
-  private readonly DEFAULT_CONFIG_FILE = 'assets/config.default.json';
+  private readonly DEFAULT_CONFIG_FILE = "assets/config.default.json";
 
   constructor(private http: HttpClient) {}
 
@@ -54,9 +54,10 @@ export class AppConfig {
    * If the config file does not exist, uses the default config as a fallback.
    */
   load() {
-    return this.loadAppConfigJson(this.CONFIG_FILE)
-      .then((result) => result,
-        () => this.loadAppConfigJson(this.DEFAULT_CONFIG_FILE));
+    return this.loadAppConfigJson(this.CONFIG_FILE).then(
+      (result) => result,
+      () => this.loadAppConfigJson(this.DEFAULT_CONFIG_FILE)
+    );
   }
 
   /**
@@ -69,13 +70,19 @@ export class AppConfig {
    */
   private loadAppConfigJson(jsonFileLocation: string) {
     return new Promise<void>((resolve, reject) => {
-      this.http.get<IAppConfig>(jsonFileLocation).toPromise()
+      this.http
+        .get<IAppConfig>(jsonFileLocation)
+        .toPromise()
         .then((result) => {
           AppConfig.settings = result;
           resolve();
         })
         .catch((response: any) => {
-          reject(`Could not load file '${jsonFileLocation}': ${JSON.stringify(response)}`);
+          reject(
+            `Could not load file '${jsonFileLocation}': ${JSON.stringify(
+              response
+            )}`
+          );
         });
     });
   }

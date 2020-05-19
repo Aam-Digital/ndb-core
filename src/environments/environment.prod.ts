@@ -15,7 +15,6 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 /**
  * Central environment that allows to configure differences between a "dev" and a "prod" build.
  *

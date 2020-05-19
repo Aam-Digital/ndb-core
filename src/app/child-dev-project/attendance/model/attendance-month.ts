@@ -15,41 +15,51 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from '../../../core/entity/entity';
-import { WarningLevel } from '../../warning-level';
-import { AttendanceDay, AttendanceStatus } from './attendance-day';
-import { DatabaseEntity } from '../../../core/entity/database-entity.decorator';
-import { DatabaseField } from '../../../core/entity/database-field.decorator';
+import { Entity } from "../../../core/entity/entity";
+import { WarningLevel } from "../../warning-level";
+import { AttendanceDay, AttendanceStatus } from "./attendance-day";
+import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
+import { DatabaseField } from "../../../core/entity/database-field.decorator";
 
-@DatabaseEntity('AttendanceMonth')
+@DatabaseEntity("AttendanceMonth")
 export class AttendanceMonth extends Entity {
   static readonly THRESHOLD_URGENT = 0.6;
   static readonly THRESHOLD_WARNING = 0.8;
 
-
   public static createAttendanceMonth(childId: string, institution: string) {
     const month = new Date();
-    const newAtt = new AttendanceMonth(childId + '_' + month.getFullYear() + '-' + (month.getMonth() + 1) + '_' + institution);
+    const newAtt = new AttendanceMonth(
+      childId +
+        "_" +
+        month.getFullYear() +
+        "-" +
+        (month.getMonth() + 1) +
+        "_" +
+        institution
+    );
     newAtt.month = month;
     newAtt.student = childId;
     newAtt.institution = institution;
     return newAtt;
   }
 
-
   @DatabaseField() student: string; // id of Child entity
-  @DatabaseField() remarks: string = '';
+  @DatabaseField() remarks: string = "";
   @DatabaseField() institution: string;
 
-
   private p_month: Date;
-  @DatabaseField({dataType: 'month'})
+  @DatabaseField({ dataType: "month" })
   get month(): Date {
     return this.p_month;
   }
   set month(value: Date) {
     if (!(value instanceof Date)) {
-      console.warn('Trying to set invalid date ' + JSON.stringify(value) + ' to Entity ' + this._id);
+      console.warn(
+        "Trying to set invalid date " +
+          JSON.stringify(value) +
+          " to Entity " +
+          this._id
+      );
       return;
     }
 
@@ -124,25 +134,21 @@ export class AttendanceMonth extends Entity {
     }
 
     for (const attDay of value) {
-      if (typeof attDay.date.getTime !== 'function') {
+      if (typeof attDay.date.getTime !== "function") {
         attDay.date = new Date(attDay.date);
       }
     }
     this._dailyRegister = value;
   }
-  @DatabaseField({ arrayDataType: 'schema-embed', ext: AttendanceDay })
+  @DatabaseField({ arrayDataType: "schema-embed", ext: AttendanceDay })
   get dailyRegister(): AttendanceDay[] {
     return this._dailyRegister;
   }
-
-
 
   constructor(id: string) {
     super(id);
     this.month = new Date();
   }
-
-
 
   private updateDailyRegister() {
     if (this.month === undefined) {
@@ -157,7 +163,11 @@ export class AttendanceMonth extends Entity {
     const currentDays = this.dailyRegister.length;
     if (currentDays < expectedDays) {
       for (let i = currentDays + 1; i <= expectedDays; i++) {
-        const date = new Date(this.month.getFullYear(), this.month.getMonth(), i);
+        const date = new Date(
+          this.month.getFullYear(),
+          this.month.getMonth(),
+          i
+        );
         const day = new AttendanceDay(date);
         this.dailyRegister.push(day);
       }
@@ -171,7 +181,6 @@ export class AttendanceMonth extends Entity {
     });
   }
 
-
   private calculateFromDailyRegister(status: AttendanceStatus) {
     let count = 0;
     this.dailyRegister.forEach((day) => {
@@ -183,13 +192,18 @@ export class AttendanceMonth extends Entity {
   }
 
   public getDaysWorkingFromDailyAttendance() {
-    return this.dailyRegister.length
-      - this.calculateFromDailyRegister(AttendanceStatus.HOLIDAY)
-      - this.calculateFromDailyRegister(AttendanceStatus.UNKNOWN);
+    return (
+      this.dailyRegister.length -
+      this.calculateFromDailyRegister(AttendanceStatus.HOLIDAY) -
+      this.calculateFromDailyRegister(AttendanceStatus.UNKNOWN)
+    );
   }
 
   public getDaysAttendedFromDailyAttendance() {
-    return this.calculateFromDailyRegister(AttendanceStatus.PRESENT) + this.calculateFromDailyRegister(AttendanceStatus.LATE);
+    return (
+      this.calculateFromDailyRegister(AttendanceStatus.PRESENT) +
+      this.calculateFromDailyRegister(AttendanceStatus.LATE)
+    );
   }
 
   public getDaysExcusedFromDailyAttendance() {
@@ -199,7 +213,6 @@ export class AttendanceMonth extends Entity {
   public getDaysLateFromDailyAttendance() {
     return this.calculateFromDailyRegister(AttendanceStatus.LATE);
   }
-
 
   getAttendancePercentage() {
     return this.daysAttended / (this.daysWorking - this.daysExcused);
@@ -217,6 +230,6 @@ export class AttendanceMonth extends Entity {
   }
 }
 
-export function daysInMonth (date: Date) {
+export function daysInMonth(date: Date) {
   return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 }

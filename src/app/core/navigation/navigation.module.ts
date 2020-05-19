@@ -15,16 +15,16 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { NavigationComponent } from './navigation/navigation.component';
-import { SessionModule } from '../session/session.module';
-import { RouterModule } from '@angular/router';
-import { NavigationItemsService } from './navigation-items.service';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { NavigationComponent } from "./navigation/navigation.component";
+import { SessionModule } from "../session/session.module";
+import { RouterModule } from "@angular/router";
+import { NavigationItemsService } from "./navigation-items.service";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatListModule } from "@angular/material/list";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
  * Manages the main app navigation menu
@@ -44,5 +44,4 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   exports: [NavigationComponent],
   providers: [NavigationItemsService],
 })
-export class NavigationModule {
-}
+export class NavigationModule {}

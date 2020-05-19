@@ -1,6 +1,12 @@
-import { Component, ContentChild, EventEmitter, Input, Output } from '@angular/core';
-import { EntityMapperService } from '../../entity/entity-mapper.service';
-import { Entity } from '../../entity/entity';
+import {
+  Component,
+  ContentChild,
+  EventEmitter,
+  Input,
+  Output,
+} from "@angular/core";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { Entity } from "../../entity/entity";
 
 /**
  * Use `<app-form-dialog-wrapper>` in your form templates to handle the saving and resetting of the edited entity.
@@ -19,9 +25,9 @@ import { Entity } from '../../entity/entity';
  </app-form-dialog-wrapper>
  */
 @Component({
-  selector: 'app-form-dialog-wrapper',
-  templateUrl: './form-dialog-wrapper.component.html',
-  styleUrls: ['./form-dialog-wrapper.component.scss'],
+  selector: "app-form-dialog-wrapper",
+  templateUrl: "./form-dialog-wrapper.component.html",
+  styleUrls: ["./form-dialog-wrapper.component.scss"],
 })
 export class FormDialogWrapperComponent {
   /** entity to be edited */
@@ -54,13 +60,9 @@ export class FormDialogWrapperComponent {
   @Output() onClose = new EventEmitter<Entity>();
 
   /** ngForm component of the child component that is set through the ng-content */
-  @ContentChild('entityForm', { static: true }) contentForm;
+  @ContentChild("entityForm", { static: true }) contentForm;
 
-  constructor(
-    private entityMapper: EntityMapperService,
-  ) {
-  }
-
+  constructor(private entityMapper: EntityMapperService) {}
 
   /**
    * whether the contained form has been changed
@@ -68,7 +70,6 @@ export class FormDialogWrapperComponent {
   public get isFormDirty(): boolean {
     return this.contentForm.form.dirty;
   }
-
 
   /**
    * Save the entity with the changes made in the current form.

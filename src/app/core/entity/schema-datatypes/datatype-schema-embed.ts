@@ -15,10 +15,9 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
-import { EntitySchemaField } from '../schema/entity-schema-field';
-import { EntitySchemaService } from '../schema/entity-schema.service';
+import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
+import { EntitySchemaField } from "../schema/entity-schema-field";
+import { EntitySchemaService } from "../schema/entity-schema.service";
 
 /**
  * Datatype for the EntitySchemaService transforming values of complex objects recursively.
@@ -36,14 +35,27 @@ import { EntitySchemaService } from '../schema/entity-schema.service';
  * `@DatabaseField({ dataType: 'schema-embed', ext: MyClass })`
  */
 export const schemaEmbedEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: 'schema-embed',
+  name: "schema-embed",
 
-  transformToDatabaseFormat: (value: any, schemaField: EntitySchemaField, schemaService: EntitySchemaService) => {
-    return schemaService.transformEntityToDatabaseFormat(value, schemaField.ext.schema);
+  transformToDatabaseFormat: (
+    value: any,
+    schemaField: EntitySchemaField,
+    schemaService: EntitySchemaService
+  ) => {
+    return schemaService.transformEntityToDatabaseFormat(
+      value,
+      schemaField.ext.schema
+    );
   },
 
-
-  transformToObjectFormat: (value: any, schemaField: EntitySchemaField, schemaService: EntitySchemaService) => {
-    return schemaService.transformDatabaseToEntityFormat(value, schemaField.ext.schema);
+  transformToObjectFormat: (
+    value: any,
+    schemaField: EntitySchemaField,
+    schemaService: EntitySchemaService
+  ) => {
+    return schemaService.transformDatabaseToEntityFormat(
+      value,
+      schemaField.ext.schema
+    );
   },
 };

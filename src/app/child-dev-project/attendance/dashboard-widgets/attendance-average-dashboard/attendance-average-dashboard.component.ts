@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { ChildrenService } from '../../../children/children.service';
-import { Child } from '../../../children/model/child';
-import { Router } from '@angular/router';
+import { Component, OnInit } from "@angular/core";
+import { ChildrenService } from "../../../children/children.service";
+import { Child } from "../../../children/model/child";
+import { Router } from "@angular/router";
 
 @Component({
-  selector: 'app-attendance-average-dashboard',
-  templateUrl: './attendance-average-dashboard.component.html',
-  styleUrls: ['./attendance-average-dashboard.component.scss'],
+  selector: "app-attendance-average-dashboard",
+  templateUrl: "./attendance-average-dashboard.component.html",
+  styleUrls: ["./attendance-average-dashboard.component.scss"],
 })
 export class AttendanceAverageDashboardComponent implements OnInit {
   readonly ATTENDANCE_THRESHOLD = 0.9;
@@ -14,14 +14,14 @@ export class AttendanceAverageDashboardComponent implements OnInit {
   overallAttendance: number;
   lastMonthsTopAttendence = []; // [[Child, average_last_3_months, last_months_attendance]]
 
-  constructor(private childrenService: ChildrenService,
-              private router: Router) { }
+  constructor(
+    private childrenService: ChildrenService,
+    private router: Router
+  ) {}
 
   async ngOnInit() {
     await this.loadAverageAttendances();
   }
-
-
 
   async loadAverageAttendances() {
     const countMap = new Map<string, [Child, number, number]>();
@@ -29,23 +29,28 @@ export class AttendanceAverageDashboardComponent implements OnInit {
     const attendance3Months = await this.childrenService.queryAttendanceLast3Months();
     let totalCount = 0;
     let summedAverage = 0;
-    attendance3Months.rows.forEach(studentStat => {
+    attendance3Months.rows.forEach((studentStat) => {
       totalCount += studentStat.value.count;
       summedAverage += studentStat.value.sum;
 
-      countMap.set(studentStat.key, [undefined, studentStat.value.sum / studentStat.value.count, 0]);
+      countMap.set(studentStat.key, [
+        undefined,
+        studentStat.value.sum / studentStat.value.count,
+        0,
+      ]);
     });
 
     this.overallAttendance = summedAverage / totalCount;
 
     const attendanceLastMonth = await this.childrenService.queryAttendanceLastMonth();
-    attendanceLastMonth.rows.forEach(studentStat => {
+    attendanceLastMonth.rows.forEach((studentStat) => {
       const record = countMap.get(studentStat.key);
       record[2] = studentStat.value.sum / studentStat.value.count;
 
       if (record[2] >= this.ATTENDANCE_THRESHOLD) {
-        this.childrenService.getChild(studentStat.key)
-          .subscribe(child => record[0] = child);
+        this.childrenService
+          .getChild(studentStat.key)
+          .subscribe((child) => (record[0] = child));
       } else {
         countMap.delete(studentStat.key);
       }
@@ -61,8 +66,7 @@ export class AttendanceAverageDashboardComponent implements OnInit {
     this.lastMonthsTopAttendence = Array.from(countMap.values()); // direct use of Map creates change detection problems
   }
 
-
   goToChild(childId: string) {
-    this.router.navigate(['/child', childId]);
+    this.router.navigate(["/child", childId]);
   }
 }

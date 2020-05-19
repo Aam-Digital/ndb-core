@@ -1,4 +1,3 @@
-
 /**
  * Overall result of a form validation in an {@link EntitySubrecordComponent}.
  */

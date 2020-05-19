@@ -15,11 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { HowToComponent } from './how-to/how-to.component';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { MarkdownModule } from 'ngx-markdown';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { HowToComponent } from "./how-to/how-to.component";
+import { HttpClient, HttpClientModule } from "@angular/common/http";
+import { MarkdownModule } from "ngx-markdown";
 
 /**
  * Display help information to users.
@@ -29,7 +29,7 @@ import { MarkdownModule } from 'ngx-markdown';
   imports: [
     CommonModule,
     HttpClientModule,
-    MarkdownModule.forRoot({loader: HttpClient}),
+    MarkdownModule.forRoot({ loader: HttpClient }),
   ],
 })
-export class HelpModule { }
+export class HelpModule {}

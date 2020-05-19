@@ -15,28 +15,28 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { UiComponent } from './ui/ui.component';
-import { NavigationModule } from '../navigation/navigation.module';
-import { SessionModule } from '../session/session.module';
-import { SyncStatusModule } from '../sync-status/sync-status.module';
-import { RouterModule } from '@angular/router';
-import { LatestChangesModule } from '../latest-changes/latest-changes.module';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { SearchComponent } from './search/search.component';
-import { FormsModule } from '@angular/forms';
-import { ChildrenModule } from '../../child-dev-project/children/children.module';
-import { SchoolsModule } from '../../child-dev-project/schools/schools.module';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { PrimaryActionComponent } from './primary-action/primary-action.component';
-import { NotesModule } from '../../child-dev-project/notes/notes.module';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { UiComponent } from "./ui/ui.component";
+import { NavigationModule } from "../navigation/navigation.module";
+import { SessionModule } from "../session/session.module";
+import { SyncStatusModule } from "../sync-status/sync-status.module";
+import { RouterModule } from "@angular/router";
+import { LatestChangesModule } from "../latest-changes/latest-changes.module";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatButtonModule } from "@angular/material/button";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatIconModule } from "@angular/material/icon";
+import { MatInputModule } from "@angular/material/input";
+import { MatSidenavModule } from "@angular/material/sidenav";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { SearchComponent } from "./search/search.component";
+import { FormsModule } from "@angular/forms";
+import { ChildrenModule } from "../../child-dev-project/children/children.module";
+import { SchoolsModule } from "../../child-dev-project/schools/schools.module";
+import { FlexLayoutModule } from "@angular/flex-layout";
+import { PrimaryActionComponent } from "./primary-action/primary-action.component";
+import { NotesModule } from "../../child-dev-project/notes/notes.module";
 
 /**
  * The core user interface structure that ties different components together into the overall app layout.
@@ -65,5 +65,4 @@ import { NotesModule } from '../../child-dev-project/notes/notes.module';
   declarations: [SearchComponent, UiComponent, PrimaryActionComponent],
   exports: [UiComponent],
 })
-export class UiModule {
-}
+export class UiModule {}

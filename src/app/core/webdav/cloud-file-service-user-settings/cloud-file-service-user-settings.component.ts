@@ -1,21 +1,20 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { User } from '../../user/user';
-import { CloudFileService } from '../cloud-file-service.service';
-import { AppConfig } from '../../app-config/app-config';
-import { EntityMapperService } from '../../entity/entity-mapper.service';
-import { AlertService } from '../../alerts/alert.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, Input, OnInit } from "@angular/core";
+import { User } from "../../user/user";
+import { CloudFileService } from "../cloud-file-service.service";
+import { AppConfig } from "../../app-config/app-config";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { AlertService } from "../../alerts/alert.service";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 /**
  * User Profile form to allow the user to set up credentials for a webdav server to be used by the CloudFileService.
  */
 @Component({
-  selector: 'app-cloud-file-service-user-settings',
-  templateUrl: './cloud-file-service-user-settings.component.html',
-  styleUrls: ['./cloud-file-service-user-settings.component.scss'],
+  selector: "app-cloud-file-service-user-settings",
+  templateUrl: "./cloud-file-service-user-settings.component.html",
+  styleUrls: ["./cloud-file-service-user-settings.component.scss"],
 })
 export class CloudFileServiceUserSettingsComponent implements OnInit {
-
   /** The user for who this form edits data */
   @Input() user: User;
 
@@ -31,16 +30,16 @@ export class CloudFileServiceUserSettingsComponent implements OnInit {
     private fb: FormBuilder,
     private entityMapperService: EntityMapperService,
     private cloudFileService: CloudFileService,
-    private alertService: AlertService,
-  ) { }
+    private alertService: AlertService
+  ) {}
 
   ngOnInit() {
     this.webdavUrl = AppConfig.settings.webdav.remote_url;
 
     this.form = this.fb.group({
       cloudUser: [this.user.cloudUserName, Validators.required],
-      cloudPassword: ['', Validators.required],
-      userPassword: ['', Validators.required],
+      cloudPassword: ["", Validators.required],
+      userPassword: ["", Validators.required],
     });
   }
 
@@ -58,14 +57,17 @@ export class CloudFileServiceUserSettingsComponent implements OnInit {
     this.processing = true;
 
     this.user.cloudUserName = this.form.controls.cloudUser.value;
-    this.user.setCloudPassword(this.form.controls.cloudPassword.value, password);
+    this.user.setCloudPassword(
+      this.form.controls.cloudPassword.value,
+      password
+    );
 
     try {
       await this.cloudFileService.connect();
       const isConnected = await this.cloudFileService.checkConnection();
       if (!isConnected) {
         // noinspection ExceptionCaughtLocallyJS
-        throw new Error('Connection check failed.');
+        throw new Error("Connection check failed.");
       }
     } catch (error) {
       this.form.controls.cloudPassword.setErrors({ connectionFailed: true });
@@ -75,7 +77,7 @@ export class CloudFileServiceUserSettingsComponent implements OnInit {
     }
 
     await this.entityMapperService.save<User>(this.user);
-    this.alertService.addInfo('Successfully saved cloud service credentials.');
+    this.alertService.addInfo("Successfully saved cloud service credentials.");
     this.processing = false;
   }
 }

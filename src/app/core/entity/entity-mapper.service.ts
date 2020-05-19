@@ -15,10 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
-import { Database } from '../database/database';
-import { Entity, EntityConstructor } from './entity';
-import { EntitySchemaService } from './schema/entity-schema.service';
+import { Injectable } from "@angular/core";
+import { Database } from "../database/database";
+import { Entity, EntityConstructor } from "./entity";
+import { EntitySchemaService } from "./schema/entity-schema.service";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -32,12 +32,10 @@ import { EntitySchemaService } from './schema/entity-schema.service';
  */
 @Injectable()
 export class EntityMapperService {
-
-
   constructor(
     private _db: Database,
-    private entitySchemaService: EntitySchemaService,
-  ) { }
+    private entitySchemaService: EntitySchemaService
+  ) {}
 
   /**
    * Load an Entity from the database with the given id.
@@ -46,9 +44,14 @@ export class EntityMapperService {
    * @param id The id of the entity to load
    * @returns A Promise resolving to an instance of entityType filled with its data.
    */
-  public async load<T extends Entity>(entityType: EntityConstructor<T>, id: string): Promise<T> {
-    const resultEntity = new entityType('');
-    const result = await this._db.get(Entity.createPrefixedId(resultEntity.getType(), id));
+  public async load<T extends Entity>(
+    entityType: EntityConstructor<T>,
+    id: string
+  ): Promise<T> {
+    const resultEntity = new entityType("");
+    const result = await this._db.get(
+      Entity.createPrefixedId(resultEntity.getType(), id)
+    );
     this.entitySchemaService.loadDataIntoEntity(resultEntity, result);
     return resultEntity;
   }
@@ -59,13 +62,17 @@ export class EntityMapperService {
    * @param entityType Class that implements Entity, which is the type of Entity the results should be transformed to
    * @returns A Promise resolving to an array of instances of entityType with the data of the loaded entities.
    */
-  public async loadType<T extends Entity>(entityType: EntityConstructor<T>): Promise<T[]> {
+  public async loadType<T extends Entity>(
+    entityType: EntityConstructor<T>
+  ): Promise<T[]> {
     const resultArray: Array<T> = [];
 
-    const allRecordsOfType = await this._db.getAll(new entityType('').getType() + ':');
+    const allRecordsOfType = await this._db.getAll(
+      new entityType("").getType() + ":"
+    );
 
     for (const record of allRecordsOfType) {
-      const entity = new entityType('');
+      const entity = new entityType("");
       this.entitySchemaService.loadDataIntoEntity(entity, record);
       resultArray.push(entity);
     }
@@ -79,8 +86,13 @@ export class EntityMapperService {
    * @param forceUpdate Optional flag whether any conflicting version in the database will be quietly overwritten.
    *          if a conflict occurs without the forceUpdate flag being set, the save will fail, rejecting the returned promise.
    */
-  public async save<T extends Entity>(entity: T, forceUpdate: boolean = false): Promise<any> {
-    const rawData = this.entitySchemaService.transformEntityToDatabaseFormat(entity);
+  public async save<T extends Entity>(
+    entity: T,
+    forceUpdate: boolean = false
+  ): Promise<any> {
+    const rawData = this.entitySchemaService.transformEntityToDatabaseFormat(
+      entity
+    );
     const result = await this._db.put(rawData, forceUpdate);
     if (result.ok) {
       entity._rev = result.rev;
@@ -95,5 +107,4 @@ export class EntityMapperService {
   public remove<T extends Entity>(entity: T): Promise<any> {
     return this._db.remove(entity);
   }
-
 }

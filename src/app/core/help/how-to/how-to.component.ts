@@ -15,16 +15,15 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component } from '@angular/core';
+import { Component } from "@angular/core";
 
 /**
  * Display markdown formatted help that is dynamically loaded from a file in the assets folder.
  * Displayed file: assets/How_To.md
  */
 @Component({
-  selector: 'app-help',
-  templateUrl: './how-to.component.html',
-  styleUrls: ['./how-to.component.scss'],
+  selector: "app-help",
+  templateUrl: "./how-to.component.html",
+  styleUrls: ["./how-to.component.scss"],
 })
-export class HowToComponent {
-}
+export class HowToComponent {}

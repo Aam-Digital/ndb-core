@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { AppConfig } from '../app-config/app-config';
-import webdav from 'webdav';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { SessionService } from '../session/session-service/session.service';
+import { Injectable } from "@angular/core";
+import { AppConfig } from "../app-config/app-config";
+import webdav from "webdav";
+import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
+import { SessionService } from "../session/session-service/session.service";
 
 /**
  * Connect and access a remote cloud file system like Nextcloud
@@ -13,7 +13,6 @@ import { SessionService } from '../session/session-service/session.service';
  */
 @Injectable()
 export class CloudFileService {
-
   // TODO Check connection/login success?
   private client: any;
   private basePath: string;
@@ -27,9 +26,9 @@ export class CloudFileService {
    */
   constructor(
     private domSanitizer: DomSanitizer,
-    private sessionService: SessionService,
+    private sessionService: SessionService
   ) {
-      this.connect();
+    this.connect();
   }
 
   /**
@@ -63,7 +62,7 @@ export class CloudFileService {
       {
         username: username,
         password: password,
-      },
+      }
     );
   }
 
@@ -83,17 +82,17 @@ export class CloudFileService {
    */
   public async checkConnection(): Promise<boolean> {
     // delete 'tmp.txt' if it exists
-    const fileName: string = this.basePath + '/test.txt';
+    const fileName: string = this.basePath + "/test.txt";
     if (await this.doesFileExist(fileName)) {
       await this.client.deleteFile(fileName);
     }
 
-    await this.client.putFileContents(fileName, 'TestString');
+    await this.client.putFileContents(fileName, "TestString");
     const buffer = await this.client.getFileContents(fileName);
     const tmpContent = String.fromCharCode.apply(null, new Uint8Array(buffer));
     await this.client.deleteFile(fileName);
 
-    if (tmpContent === 'TestString') {
+    if (tmpContent === "TestString") {
       return true;
     }
     return false;
@@ -104,7 +103,9 @@ export class CloudFileService {
    * @param path File path relative to the base path, without leading slash; example 'folder1'
    */
   public async getDir(path: string): Promise<string> {
-    const contents = await this.client.getDirectoryContents(this.basePath + path);
+    const contents = await this.client.getDirectoryContents(
+      this.basePath + path
+    );
     return JSON.stringify(contents, undefined, 4);
   }
 
@@ -118,8 +119,8 @@ export class CloudFileService {
     if (!this.fileList && !this.currentlyGettingList) {
       // create promise that resolves when the file list is loaded
       // if this function gets called mulitple times this ensures that the list will only be loaded once
-      this.currentlyGettingList = new Promise(resolve => {
-        this.getDir('').then(list => {
+      this.currentlyGettingList = new Promise((resolve) => {
+        this.getDir("").then((list) => {
           this.fileList = list;
           resolve(true);
         });
@@ -130,16 +131,16 @@ export class CloudFileService {
     }
     // hacky way of checking if file exists, subject to change
     // TODO fix this
-    if (this.fileList.includes('"basename": "' + name.split('/').pop() + '"')) {
+    if (this.fileList.includes('"basename": "' + name.split("/").pop() + '"')) {
       return true;
     }
     return false;
   }
 
   /**
-  * creates new directory
-  * @param path path to directory to be created, without leading slash; e.g. 'new-folder'
-  */
+   * creates new directory
+   * @param path path to directory to be created, without leading slash; e.g. 'new-folder'
+   */
   public async createDir(path: string) {
     this.client.createDirectory(this.basePath + path);
   }
@@ -152,7 +153,7 @@ export class CloudFileService {
   public async uploadFile(file: any, filePath: string): Promise<void> {
     return this.client.putFileContents(
       this.basePath + filePath,
-      file,
+      file
       // { onUploadProgress: progress => {  console.log(`Uploaded ${progress.loaded} / ${progress.total} bytes`); } },
     );
   }
@@ -167,7 +168,7 @@ export class CloudFileService {
       file = await this.client.getFileContents(this.basePath + filePath);
       return this.bufferArrayToBase64(file);
     } catch (err) {
-      return Promise.reject('Could not load file.');
+      return Promise.reject("Could not load file.");
     }
   }
 
@@ -176,10 +177,14 @@ export class CloudFileService {
    * @param arrayBuffer ArrayBuffer to be converted
    */
   private bufferArrayToBase64(arrayBuffer: ArrayBuffer): SafeUrl {
-    const base64String = btoa(new Uint8Array(arrayBuffer).reduce((data, byte) => {
-        return data + String.fromCharCode(byte); }, ''),
-      );
-    return this.domSanitizer.bypassSecurityTrustUrl('data:image/jpg;base64,' + base64String);
+    const base64String = btoa(
+      new Uint8Array(arrayBuffer).reduce((data, byte) => {
+        return data + String.fromCharCode(byte);
+      }, "")
+    );
+    return this.domSanitizer.bypassSecurityTrustUrl(
+      "data:image/jpg;base64," + base64String
+    );
   }
 
   /**

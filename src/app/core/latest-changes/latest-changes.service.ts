@@ -15,16 +15,15 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-import { catchError, map } from 'rxjs/operators';
-import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
-import { Changelog } from './changelog';
-import { AlertService } from '../alerts/alert.service';
-import { HttpClient } from '@angular/common/http';
-import { MatDialog } from '@angular/material/dialog';
-import { ChangelogComponent } from './changelog/changelog.component';
-import { CookieService } from 'ngx-cookie-service';
+import { catchError, map } from "rxjs/operators";
+import { Injectable } from "@angular/core";
+import { Observable, throwError } from "rxjs";
+import { Changelog } from "./changelog";
+import { AlertService } from "../alerts/alert.service";
+import { HttpClient } from "@angular/common/http";
+import { MatDialog } from "@angular/material/dialog";
+import { ChangelogComponent } from "./changelog/changelog.component";
+import { CookieService } from "ngx-cookie-service";
 
 /**
  * Manage the changelog information and display it to the user
@@ -32,32 +31,33 @@ import { CookieService } from 'ngx-cookie-service';
  */
 @Injectable()
 export class LatestChangesService {
+  private static COOKIE_NAME = "AppVersion";
 
-  private static COOKIE_NAME = 'AppVersion';
-
-  constructor(private http: HttpClient,
-              private alertService: AlertService,
-              private dialog: MatDialog,
-              private cookieService: CookieService) {
-  }
+  constructor(
+    private http: HttpClient,
+    private alertService: AlertService,
+    private dialog: MatDialog,
+    private cookieService: CookieService
+  ) {}
 
   /**
    * Load the changelog document.
    */
   getChangelogs(): Observable<Changelog[]> {
-    return this.http.get<Changelog[]>('assets/changelog.json').pipe(
+    return this.http.get<Changelog[]>("assets/changelog.json").pipe(
       map((response) => response),
       catchError((error) => {
-        this.alertService.addWarning('Could not load latest changes: ' + error);
-        return throwError('Could not load latest changes.');
-      }));
+        this.alertService.addWarning("Could not load latest changes: " + error);
+        return throwError("Could not load latest changes.");
+      })
+    );
   }
 
   /**
    * Get current app version inferred from the latest changelog entry.
    */
   getCurrentVersion(): Observable<string> {
-    return this.getChangelogs().pipe(map(changelog => changelog[0].tag_name));
+    return this.getChangelogs().pipe(map((changelog) => changelog[0].tag_name));
   }
 
   /**
@@ -65,7 +65,7 @@ export class LatestChangesService {
    */
   public showLatestChanges(): void {
     this.dialog.open(ChangelogComponent, {
-      width: '400px',
+      width: "400px",
       data: this.getChangelogs(),
     });
   }
@@ -74,14 +74,16 @@ export class LatestChangesService {
    * Display the latest changes info box automatically if the current user has not seen this version before.
    */
   public showLatestChangesIfUpdated() {
-    this.getCurrentVersion().subscribe(currentVersion => {
+    this.getCurrentVersion().subscribe((currentVersion) => {
       if (this.cookieService.check(LatestChangesService.COOKIE_NAME)) {
-        const previousVersion = this.cookieService.get(LatestChangesService.COOKIE_NAME);
+        const previousVersion = this.cookieService.get(
+          LatestChangesService.COOKIE_NAME
+        );
         if (currentVersion !== previousVersion) {
           this.showLatestChanges();
         }
       }
-      this.cookieService.set( LatestChangesService.COOKIE_NAME, currentVersion );
+      this.cookieService.set(LatestChangesService.COOKIE_NAME, currentVersion);
     });
   }
 }

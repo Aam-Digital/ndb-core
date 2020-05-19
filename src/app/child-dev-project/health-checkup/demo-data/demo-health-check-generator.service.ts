@@ -1,32 +1,33 @@
-import { DemoChildGenerator } from '../../children/demo-data-generators/demo-child-generator.service';
-import { DemoDataGenerator } from '../../../core/demo-data/demo-data-generator';
-import { Injectable } from '@angular/core';
-import { Child } from '../../children/model/child';
-import { faker } from '../../../core/demo-data/faker';
-import { HealthCheck } from '../model/health-check';
-import { heightRangeForAge, weightRangeForAge } from './height-weight';
-
+import { DemoChildGenerator } from "../../children/demo-data-generators/demo-child-generator.service";
+import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
+import { Injectable } from "@angular/core";
+import { Child } from "../../children/model/child";
+import { faker } from "../../../core/demo-data/faker";
+import { HealthCheck } from "../model/health-check";
+import { heightRangeForAge, weightRangeForAge } from "./height-weight";
 
 /**
  * Generate HealthCheck records every 6 months for children up to the age of 12.
  * Builds upon the generated demo Child entities.
  */
 @Injectable()
-export class DemoHealthCheckGeneratorService extends DemoDataGenerator<HealthCheck> {
+export class DemoHealthCheckGeneratorService extends DemoDataGenerator<
+  HealthCheck
+> {
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoHealthCheckGeneratorService.provider()]`
    */
   static provider() {
     return [
-      { provide: DemoHealthCheckGeneratorService, useClass: DemoHealthCheckGeneratorService },
+      {
+        provide: DemoHealthCheckGeneratorService,
+        useClass: DemoHealthCheckGeneratorService,
+      },
     ];
   }
 
-
-  constructor(
-    private demoChildren: DemoChildGenerator,
-  ) {
+  constructor(private demoChildren: DemoChildGenerator) {
     super();
   }
 
@@ -44,13 +45,18 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<HealthChe
     const data = [];
 
     let date = new Date(child.admissionDate.getTime());
-    let previousRecord = new HealthCheck('');
-    previousRecord.height = 0; previousRecord.weight = 0;
+    let previousRecord = new HealthCheck("");
+    previousRecord.height = 0;
+    previousRecord.weight = 0;
     do {
       const record = new HealthCheck(faker.random.uuid());
       record.child = child.getId();
       record.date = date;
-      this.setNextHeightAndWeight(record, previousRecord, this.getAgeAtDate(child, date));
+      this.setNextHeightAndWeight(
+        record,
+        previousRecord,
+        this.getAgeAtDate(child, date)
+      );
 
       data.push(record);
 
@@ -61,8 +67,8 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<HealthChe
       }
       previousRecord = record;
     } while (
-      date < faker.getEarlierDateOrToday(child.dropoutDate)
-      && this.getAgeAtDate(child, date) < 12
+      date < faker.getEarlierDateOrToday(child.dropoutDate) &&
+      this.getAgeAtDate(child, date) < 12
     );
 
     return data;
@@ -73,12 +79,20 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<HealthChe
     return timeDiff / (1000 * 60 * 60 * 24 * 365);
   }
 
-  private setNextHeightAndWeight(record: HealthCheck, previousRecord: HealthCheck, age: number) {
+  private setNextHeightAndWeight(
+    record: HealthCheck,
+    previousRecord: HealthCheck,
+    age: number
+  ) {
     const ageRoundedToHalfYear = Math.round(2 * age) / 2;
 
-    const randomHeight = faker.random.number(heightRangeForAge.get(ageRoundedToHalfYear));
+    const randomHeight = faker.random.number(
+      heightRangeForAge.get(ageRoundedToHalfYear)
+    );
     record.height = Math.max(randomHeight, previousRecord.height); // height will not become less
 
-    record.weight = faker.random.number(weightRangeForAge.get(ageRoundedToHalfYear));
+    record.weight = faker.random.number(
+      weightRangeForAge.get(ageRoundedToHalfYear)
+    );
   }
 }

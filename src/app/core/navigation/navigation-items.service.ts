@@ -15,8 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
-import { MenuItem } from './menu-item';
+import { Injectable } from "@angular/core";
+import { MenuItem } from "./menu-item";
 
 /**
  * Manage menu items to be displayed in the main app menu.
@@ -25,7 +25,6 @@ import { MenuItem } from './menu-item';
  */
 @Injectable()
 export class NavigationItemsService {
-
   private menuItems: MenuItem[] = [];
 
   /**

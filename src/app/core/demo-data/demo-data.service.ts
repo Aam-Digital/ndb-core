@@ -16,14 +16,16 @@
  */
 
 import {
-  ClassProvider, FactoryProvider,
+  ClassProvider,
+  FactoryProvider,
   Injectable,
-  Injector, ValueProvider,
-} from '@angular/core';
-import { DemoDataGenerator } from './demo-data-generator';
-import { EntityMapperService } from '../entity/entity-mapper.service';
-import { AlertService } from '../alerts/alert.service';
-import { AlertDisplay } from '../alerts/alert-display';
+  Injector,
+  ValueProvider,
+} from "@angular/core";
+import { DemoDataGenerator } from "./demo-data-generator";
+import { EntityMapperService } from "../entity/entity-mapper.service";
+import { AlertService } from "../alerts/alert.service";
+import { AlertDisplay } from "../alerts/alert-display";
 
 /**
  * General config object to pass all initially register DemoDataGenerators
@@ -37,7 +39,11 @@ export class DemoDataServiceConfig {
    *
    * This may also include providers for services a DemoDataGenerator depends on.
    */
-  dataGeneratorProviders: (ValueProvider|ClassProvider|FactoryProvider)[] = [];
+  dataGeneratorProviders: (
+    | ValueProvider
+    | ClassProvider
+    | FactoryProvider
+  )[] = [];
 }
 
 /**
@@ -52,10 +58,11 @@ export class DemoDataService {
   /** All registered demo data generator services */
   readonly dataGenerators: DemoDataGenerator<any>[] = [];
 
-  constructor(private entityMapper: EntityMapperService,
-              private alertService: AlertService,
-              private injector: Injector,
-              private config: DemoDataServiceConfig,
+  constructor(
+    private entityMapper: EntityMapperService,
+    private alertService: AlertService,
+    private injector: Injector,
+    private config: DemoDataServiceConfig
   ) {
     this.registerAllProvidedDemoDataGenerators();
   }
@@ -69,7 +76,6 @@ export class DemoDataService {
     }
   }
 
-
   /**
    * Trigger all registered DemoDataGenerator implementations to generate demo entities
    * and add all the generated entities to the Database.
@@ -78,7 +84,7 @@ export class DemoDataService {
     // completely generate all data (i.e. call every generator) before starting to save the data
     // to allow generators to delete unwanted entities of other generators before they are saved
     // (e.g. the DropoutChildGenerator should be able to delete Attendance records of the Child after its dropout date)
-    this.dataGenerators.forEach(generator => generator.entities);
+    this.dataGenerators.forEach((generator) => generator.entities);
 
     // save the generated data
     for (const generator of this.dataGenerators) {

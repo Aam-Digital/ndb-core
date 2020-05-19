@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
+import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
 
 /**
  * Datatype for the EntitySchemaService transforming Date values to/from a short string month format ("YYYY-mm").
@@ -27,7 +27,7 @@ import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
  * `@DatabaseField({dataType: 'month'}) myMonth: Date = new Date('2020-01-15'); // will be "2020-01" in the database`
  */
 export const monthEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: 'month',
+  name: "month",
 
   transformToDatabaseFormat: (value) => {
     if (!value) {
@@ -37,18 +37,20 @@ export const monthEntitySchemaDatatype: EntitySchemaDatatype = {
     if (!(value instanceof Date)) {
       value = new Date(value);
     }
-    return (value.getFullYear().toString() + '-' + (value.getMonth() + 1).toString());
+    return (
+      value.getFullYear().toString() + "-" + (value.getMonth() + 1).toString()
+    );
   },
 
   transformToObjectFormat: (value) => {
-    if (!value || value === '') {
+    if (!value || value === "") {
       return undefined;
     }
 
     const date = new Date(value);
     if (isNaN(date.getTime())) {
-      console.log('value aus datatype-month.ts: ' + value);
-      throw new Error('failed to convert data to Date object: ' + value);
+      console.log("value aus datatype-month.ts: " + value);
+      throw new Error("failed to convert data to Date object: " + value);
     }
     return date;
   },
