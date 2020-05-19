@@ -1,5 +1,5 @@
-import { ErrorHandler, Injectable } from '@angular/core';
-import { LoggingService } from './logging.service';
+import { ErrorHandler, Injectable } from "@angular/core";
+import { LoggingService } from "./logging.service";
 
 /**
  * A simple ErrorHandler that logs any unhandled errors that occur in the app.

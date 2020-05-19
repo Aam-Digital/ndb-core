@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ColumnDescriptionInputType } from './column-description-input-type.enum';
+import { ColumnDescriptionInputType } from "./column-description-input-type.enum";
 
 /**
  *  Objects of this class are used to define columns for the {@link EntitySubrecordComponent}.
@@ -41,10 +41,14 @@ export class ColumnDescription {
     public label: string,
     public inputType: ColumnDescriptionInputType,
 
-    public selectValues: Array<{value: any, label: string}> = [],
+    public selectValues: Array<{ value: any; label: string }> = [],
 
-    public formatter = (value) => { return value; },
+    public formatter = (value) => {
+      return value;
+    },
     public visibleFrom: string = undefined,
-    public styleBuilder: (value) => Object = () => { return {}; },
+    public styleBuilder: (value) => Object = () => {
+      return {};
+    }
   ) {}
 }

@@ -1,15 +1,11 @@
-import { Injectable } from '@angular/core';
-import { LogLevel } from './log-level';
-import * as Sentry from '@sentry/browser';
-
+import { Injectable } from "@angular/core";
+import { LogLevel } from "./log-level";
+import * as Sentry from "@sentry/browser";
 
 Sentry.init({
-  dsn: 'https://bd6aba79ca514d35bb06a4b4e0c2a21e@sentry.io/1242399',
-  whitelistUrls: [
-    /https?:\/\/(.*)\.?aam-digital\.com/,
-  ],
+  dsn: "https://bd6aba79ca514d35bb06a4b4e0c2a21e@sentry.io/1242399",
+  whitelistUrls: [/https?:\/\/(.*)\.?aam-digital\.com/],
 });
-
 
 /* tslint:disable:no-console */
 
@@ -20,10 +16,9 @@ Sentry.init({
  * Logging to the remote monitoring server is set only for warnings and errors.
  */
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class LoggingService {
-
   /**
    * Log the message with "debug" level - for very detailed, non-essential information.
    * @param message
@@ -55,7 +50,6 @@ export class LoggingService {
   public error(message: any) {
     this.log(message, LogLevel.ERROR);
   }
-
 
   /**
    * Generic logging of a message.

@@ -1,40 +1,38 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { AttendanceDetailsComponent } from './attendance-details.component';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Database } from '../../../core/database/database';
-import { MockDatabase } from '../../../core/database/mock-database';
-import { ChildrenService } from '../../children/children.service';
-import { AttendanceMonth } from '../model/attendance-month';
-import { EntityModule } from '../../../core/entity/entity.module';
-import { RouterTestingModule } from '@angular/router/testing';
-import { ChildPhotoService } from '../../children/child-photo-service/child-photo.service';
-import { of } from 'rxjs';
-import { ChildrenModule } from '../../children/children.module';
+import { AttendanceDetailsComponent } from "./attendance-details.component";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { Database } from "../../../core/database/database";
+import { MockDatabase } from "../../../core/database/mock-database";
+import { ChildrenService } from "../../children/children.service";
+import { AttendanceMonth } from "../model/attendance-month";
+import { EntityModule } from "../../../core/entity/entity.module";
+import { RouterTestingModule } from "@angular/router/testing";
+import { ChildPhotoService } from "../../children/child-photo-service/child-photo.service";
+import { of } from "rxjs";
+import { ChildrenModule } from "../../children/children.module";
 
-describe('AttendanceDetailsComponent', () => {
+describe("AttendanceDetailsComponent", () => {
   let component: AttendanceDetailsComponent;
   let fixture: ComponentFixture<AttendanceDetailsComponent>;
 
   beforeEach(async(() => {
-    const att = new AttendanceMonth('test');
+    const att = new AttendanceMonth("test");
     att.month = new Date();
 
     TestBed.configureTestingModule({
-      imports: [
-        ChildrenModule,
-        EntityModule,
-        RouterTestingModule,
-      ],
+      imports: [ChildrenModule, EntityModule, RouterTestingModule],
       providers: [
-        {provide: Database, useClass: MockDatabase},
-        {provide: MatDialogRef, useValue: {beforeClosed: () => of({})} },
-        {provide: MAT_DIALOG_DATA, useValue: {entity: att}},
-        {provide: ChildrenService, useClass: ChildrenService},
-        { provide: ChildPhotoService, useValue: jasmine.createSpyObj(['getImage']) },
+        { provide: Database, useClass: MockDatabase },
+        { provide: MatDialogRef, useValue: { beforeClosed: () => of({}) } },
+        { provide: MAT_DIALOG_DATA, useValue: { entity: att } },
+        { provide: ChildrenService, useClass: ChildrenService },
+        {
+          provide: ChildPhotoService,
+          useValue: jasmine.createSpyObj(["getImage"]),
+        },
       ],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -43,8 +41,7 @@ describe('AttendanceDetailsComponent', () => {
     fixture.detectChanges();
   });
 
-
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

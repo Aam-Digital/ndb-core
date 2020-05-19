@@ -1,23 +1,21 @@
-import { Injectable } from '@angular/core';
-import { Database } from '../../database/database';
-import { User } from '../../user/user';
-import { Papa } from 'ngx-papaparse';
-
+import { Injectable } from "@angular/core";
+import { Database } from "../../database/database";
+import { User } from "../../user/user";
+import { Papa } from "ngx-papaparse";
 
 /**
  * Create and load backups of the database.
  */
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class BackupService {
   /** CSV row separator */
-  static readonly SEPARATOR_ROW = '\n';
+  static readonly SEPARATOR_ROW = "\n";
   /** CSV column/field separator */
-  static readonly SEPARATOR_COL = ',';
+  static readonly SEPARATOR_COL = ",";
 
-  constructor(private db: Database,
-              private papa: Papa) { }
+  constructor(private db: Database, private papa: Papa) {}
 
   /**
    * Creates a List of JSON elements separated by `BackupService.SEPARATOR_ROW` holding all elements of the database.
@@ -26,8 +24,7 @@ export class BackupService {
    * @returns Promise<string> a string containing all elements of the database separated by SEPARATOR_ROW
    */
   getJsonExport(): Promise<string> {
-    return this.db.getAll()
-      .then(results => this.createJson(results));
+    return this.db.getAll().then((results) => this.createJson(results));
   }
 
   /**
@@ -37,8 +34,8 @@ export class BackupService {
    * @returns string containing all the values stringified elements of the input data
    */
   createJson(data): string {
-    let res = '';
-    data.forEach(r => {
+    let res = "";
+    data.forEach((r) => {
       res += JSON.stringify(r) + BackupService.SEPARATOR_ROW;
     });
 
@@ -51,8 +48,7 @@ export class BackupService {
    * @returns string a valid CSV string
    */
   getCsvExport(): Promise<string> {
-    return this.db.getAll()
-      .then(results => this.createCsv(results));
+    return this.db.getAll().then((results) => this.createCsv(results));
   }
 
   /**
@@ -63,13 +59,14 @@ export class BackupService {
    */
   createCsv(data): string {
     // create list of row descriptions for the csv string
-    const allFields = ['_id', '_rev'];
-    data.forEach(element => allFields.push(...Object.keys(element)));
-    const uniqueFields = [... new Set(allFields)]; // creates list with unique elements
+    const allFields = ["_id", "_rev"];
+    data.forEach((element) => allFields.push(...Object.keys(element)));
+    const uniqueFields = [...new Set(allFields)]; // creates list with unique elements
 
     return this.papa.unparse(
-        {data: data, fields: uniqueFields},
-        {quotes: true, header: true});
+      { data: data, fields: uniqueFields },
+      { quotes: true, header: true }
+    );
   }
 
   /**
@@ -78,11 +75,11 @@ export class BackupService {
    * @returns Promise<any> a promise that resolves after all remove operations are done
    */
   clearDatabase(): Promise<any> {
-    const userEntityPrefix = new User('').getType() + ':';
+    const userEntityPrefix = new User("").getType() + ":";
 
-    return this.db.getAll().then(allDocs => {
+    return this.db.getAll().then((allDocs) => {
       const p = [];
-      allDocs.forEach(row => {
+      allDocs.forEach((row) => {
         if (!row._id.startsWith(userEntityPrefix)) {
           // skip User entities in order to not break login!
           p.push(this.db.remove(row));
@@ -103,10 +100,9 @@ export class BackupService {
    */
   importJson(json, forceUpdate = false) {
     const promises = [];
-    json.split(BackupService.SEPARATOR_ROW)
-      .forEach(record => {
-        promises.push(this.db.put(JSON.parse(record), forceUpdate));
-      });
+    json.split(BackupService.SEPARATOR_ROW).forEach((record) => {
+      promises.push(this.db.put(JSON.parse(record), forceUpdate));
+    });
     return Promise.all(promises);
   }
 
@@ -121,8 +117,12 @@ export class BackupService {
   importCsv(csv, forceUpdate = false): Promise<any> {
     const promises = [];
 
-    const parsedCsv = this.papa.parse(csv, { header: true, dynamicTyping: true, skipEmptyLines: true });
-    parsedCsv.data.forEach(record => {
+    const parsedCsv = this.papa.parse(csv, {
+      header: true,
+      dynamicTyping: true,
+      skipEmptyLines: true,
+    });
+    parsedCsv.data.forEach((record) => {
       // remove undefined properties
       for (const propertyName in record) {
         if (record[propertyName] === null) {

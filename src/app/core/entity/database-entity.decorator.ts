@@ -1,5 +1,3 @@
-
-
 /**
  * Decorator (Annotation `@DatabaseEntity()`) to set the string ENTITY_TYPE to an Entity Type.
  *
@@ -13,6 +11,8 @@ export function DatabaseEntity(entityType: string) {
 
     // append parent schema definitions
     const parentConstructor = Object.getPrototypeOf(constructor);
-    parentConstructor.schema.forEach((value, key) => constructor.schema.set(key, value));
+    parentConstructor.schema.forEach((value, key) =>
+      constructor.schema.set(key, value)
+    );
   };
 }

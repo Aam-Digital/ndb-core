@@ -1,11 +1,10 @@
-import { DemoChildGenerator } from '../children/demo-data-generators/demo-child-generator.service';
-import { DemoDataGenerator } from '../../core/demo-data/demo-data-generator';
-import { Injectable } from '@angular/core';
-import { Child } from '../children/model/child';
-import { faker } from '../../core/demo-data/faker';
-import { WarningLevel } from '../warning-level';
-import { Aser } from './model/aser';
-
+import { DemoChildGenerator } from "../children/demo-data-generators/demo-child-generator.service";
+import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
+import { Injectable } from "@angular/core";
+import { Child } from "../children/model/child";
+import { faker } from "../../core/demo-data/faker";
+import { WarningLevel } from "../warning-level";
+import { Aser } from "./model/aser";
 
 /**
  * Generate ASER results every 12 months for each Child until passing.
@@ -23,10 +22,7 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Aser> {
     ];
   }
 
-
-  constructor(
-    private demoChildren: DemoChildGenerator,
-  ) {
+  constructor(private demoChildren: DemoChildGenerator) {
     super();
   }
 
@@ -44,23 +40,32 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Aser> {
     const data = [];
 
     let date = new Date(child.admissionDate.getTime());
-    let previousResult = new Aser('');
+    let previousResult = new Aser("");
     const firstLanguage = child.motherTongue.toLowerCase();
     do {
       const aserResult = new Aser(faker.random.uuid());
       aserResult.child = child.getId();
       aserResult.date = date;
-      aserResult.math = this.selectNextSkillLevel(Aser.MathLevels, previousResult.math);
-      aserResult.english = this.selectNextSkillLevel(Aser.ReadingLevels, previousResult.english);
-      aserResult[firstLanguage] = this.selectNextSkillLevel(Aser.ReadingLevels, previousResult[firstLanguage]);
+      aserResult.math = this.selectNextSkillLevel(
+        Aser.MathLevels,
+        previousResult.math
+      );
+      aserResult.english = this.selectNextSkillLevel(
+        Aser.ReadingLevels,
+        previousResult.english
+      );
+      aserResult[firstLanguage] = this.selectNextSkillLevel(
+        Aser.ReadingLevels,
+        previousResult[firstLanguage]
+      );
 
       data.push(aserResult);
 
       date = new Date(date.getFullYear() + 1, 2, 1);
       previousResult = aserResult;
     } while (
-      date < faker.getEarlierDateOrToday(child.dropoutDate)
-      && previousResult.getWarningLevel() !== WarningLevel.OK
+      date < faker.getEarlierDateOrToday(child.dropoutDate) &&
+      previousResult.getWarningLevel() !== WarningLevel.OK
     );
 
     return data;
@@ -71,7 +76,10 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Aser> {
    * @param skillRange The array of skill levels for the desired subject (Aser.MathLevels or Aser.ReadingLevels)
    * @param previousSkillLevel The string indicating the level from the previous test for this subject
    */
-  private selectNextSkillLevel(skillRange: string[], previousSkillLevel: string): string {
+  private selectNextSkillLevel(
+    skillRange: string[],
+    previousSkillLevel: string
+  ): string {
     const previousSkillLevelIndex = skillRange.indexOf(previousSkillLevel);
 
     let nextSkillLevelIndex;

@@ -1,10 +1,9 @@
-import { DemoChildGenerator } from '../children/demo-data-generators/demo-child-generator.service';
-import { DemoDataGenerator } from '../../core/demo-data/demo-data-generator';
-import { Injectable } from '@angular/core';
-import { Child } from '../children/model/child';
-import { faker } from '../../core/demo-data/faker';
-import { EducationalMaterial } from './model/educational-material';
-
+import { DemoChildGenerator } from "../children/demo-data-generators/demo-child-generator.service";
+import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
+import { Injectable } from "@angular/core";
+import { Child } from "../children/model/child";
+import { faker } from "../../core/demo-data/faker";
+import { EducationalMaterial } from "./model/educational-material";
 
 export class DemoEducationMaterialConfig {
   minCount: number;
@@ -16,22 +15,26 @@ export class DemoEducationMaterialConfig {
  * Builds upon the generated demo Child entities.
  */
 @Injectable()
-export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<EducationalMaterial> {
+export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<
+  EducationalMaterial
+> {
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoEducationalMaterialGeneratorService.provider()]`
    */
   static provider(config: DemoEducationMaterialConfig) {
     return [
-      { provide: DemoEducationalMaterialGeneratorService, useClass: DemoEducationalMaterialGeneratorService },
+      {
+        provide: DemoEducationalMaterialGeneratorService,
+        useClass: DemoEducationalMaterialGeneratorService,
+      },
       { provide: DemoEducationMaterialConfig, useValue: config },
     ];
   }
 
-
   constructor(
     private config: DemoEducationMaterialConfig,
-    private demoChildren: DemoChildGenerator,
+    private demoChildren: DemoChildGenerator
   ) {
     super();
   }
@@ -40,13 +43,18 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
     const data = [];
 
     for (const child of this.demoChildren.entities) {
-      const count = faker.random.number({min: this.config.minCount, max: this.config.maxCount});
+      const count = faker.random.number({
+        min: this.config.minCount,
+        max: this.config.maxCount,
+      });
       for (let i = 1; i < count; i++) {
         data.push(this.generateEducationalMaterialEntity(child));
       }
 
       const specialMaterial = this.generateEducationalMaterialEntity(child);
-      specialMaterial.materialType = faker.random.arrayElement(EducationalMaterial.MATERIAL_OTHER);
+      specialMaterial.materialType = faker.random.arrayElement(
+        EducationalMaterial.MATERIAL_OTHER
+      );
       specialMaterial.materialAmount = 1;
       data.push(specialMaterial);
     }
@@ -58,9 +66,14 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
     const entity = new EducationalMaterial(faker.random.uuid());
 
     entity.child = child.getId();
-    entity.date = faker.date.between(child.admissionDate, faker.getEarlierDateOrToday(child.dropoutDate));
+    entity.date = faker.date.between(
+      child.admissionDate,
+      faker.getEarlierDateOrToday(child.dropoutDate)
+    );
     entity.materialAmount = faker.random.arrayElement([1, 1, 1, 2, 3]);
-    entity.materialType = faker.random.arrayElement(EducationalMaterial.MATERIAL_ALL);
+    entity.materialType = faker.random.arrayElement(
+      EducationalMaterial.MATERIAL_ALL
+    );
 
     return entity;
   }
