@@ -1,5 +1,12 @@
 [
   {
+    "tag_name": "v2.13.0",
+    "name": "Meeting Attendance, School Results & Logo",
+    "published_at": "2020-05-20",
+    "body": "- Children in Notes can now be marked as present/absent for meetings\n- School History of Child can save overall grade results\n- New logo\n- Fixes for offline function and dashboard",
+    "html_url": "https://github.com/NGO-DB/ndb-core/releases/"
+  },
+  {
     "tag_name": "v2.12.0",
     "name": "Dashboard for Recent Notes",
     "published_at": "2020-04-27",
