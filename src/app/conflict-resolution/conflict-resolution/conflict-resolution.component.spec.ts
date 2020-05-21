@@ -9,13 +9,19 @@ import { FormsModule } from "@angular/forms";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Database } from "../../core/database/database";
-import { MockDatabase } from "../../core/database/mock-database";
 
 describe("ConflictResolutionComponent", () => {
   let component: ConflictResolutionComponent;
   let fixture: ComponentFixture<ConflictResolutionComponent>;
 
+  let mockDatabase: jasmine.SpyObj<Database>;
+
   beforeEach(async(() => {
+    mockDatabase = jasmine.createSpyObj("mockDatabase", [
+      "saveDatabaseIndex",
+      "query",
+    ]);
+
     TestBed.configureTestingModule({
       imports: [
         MatTableModule,
@@ -25,7 +31,7 @@ describe("ConflictResolutionComponent", () => {
         FormsModule,
         NoopAnimationsModule,
       ],
-      providers: [{ provide: Database, useValue: new MockDatabase() }],
+      providers: [{ provide: Database, useValue: mockDatabase }],
       declarations: [CompareRevComponent, ConflictResolutionComponent],
     }).compileComponents();
   }));
@@ -38,5 +44,11 @@ describe("ConflictResolutionComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should create database index for querying conflicts", async () => {
+    await component.ngAfterViewInit();
+
+    expect(mockDatabase.saveDatabaseIndex).toHaveBeenCalled();
   });
 });
