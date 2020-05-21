@@ -1,6 +1,6 @@
-import { ConflictResolutionComponent } from './conflict-resolution/conflict-resolution.component';
-import { RouterModule, Routes } from '@angular/router';
-import { NgModule } from '@angular/core';
+import { ConflictResolutionComponent } from "./conflict-resolution/conflict-resolution.component";
+import { RouterModule, Routes } from "@angular/router";
+import { NgModule } from "@angular/core";
 
 /**
  * Internal routes of the lazy-loaded ConflictResolutionModule.
@@ -8,7 +8,7 @@ import { NgModule } from '@angular/core';
  */
 const routes: Routes = [
   {
-    path: '',
+    path: "",
     component: ConflictResolutionComponent,
   },
 ];
@@ -20,4 +20,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ConflictResolutionRoutingModule { }
+export class ConflictResolutionRoutingModule {}

@@ -1,17 +1,17 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { CompareRevComponent } from './compare-rev.component';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { FormsModule } from '@angular/forms';
-import { ConflictResolutionStrategyService } from '../conflict-resolution-strategy/conflict-resolution-strategy.service';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { ConfirmationDialogService } from '../../core/confirmation-dialog/confirmation-dialog.service';
-import { Database } from '../../core/database/database';
-import { MockDatabase } from '../../core/database/mock-database';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { CompareRevComponent } from "./compare-rev.component";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { FormsModule } from "@angular/forms";
+import { ConflictResolutionStrategyService } from "../conflict-resolution-strategy/conflict-resolution-strategy.service";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
+import { Database } from "../../core/database/database";
+import { MockDatabase } from "../../core/database/mock-database";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
 
-describe('CompareRevComponent', () => {
+describe("CompareRevComponent", () => {
   let component: CompareRevComponent;
   let fixture: ComponentFixture<CompareRevComponent>;
 
@@ -19,7 +19,7 @@ describe('CompareRevComponent', () => {
     const confDialogMock = {
       openDialog: () => {},
     };
-    spyOn(confDialogMock, 'openDialog');
+    spyOn(confDialogMock, "openDialog");
 
     TestBed.configureTestingModule({
       imports: [
@@ -34,11 +34,8 @@ describe('CompareRevComponent', () => {
         { provide: Database, useValue: new MockDatabase() },
         ConflictResolutionStrategyService,
       ],
-      declarations: [
-        CompareRevComponent,
-      ],
-    })
-    .compileComponents();
+      declarations: [CompareRevComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -47,7 +44,7 @@ describe('CompareRevComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

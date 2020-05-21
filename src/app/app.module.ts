@@ -153,7 +153,7 @@ export class AppModule {
       new MenuItem("Users", "user", ["/users"], true)
     );
     _navigationItemsService.addMenuItem(
-      new MenuItem('Database Conflicts', 'wrench', ['/admin/conflicts'], true)
+      new MenuItem("Database Conflicts", "wrench", ["/admin/conflicts"], true)
     );
     _navigationItemsService.addMenuItem(
       new MenuItem("Help", "question-circle", ["/help"])

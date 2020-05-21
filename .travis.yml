@@ -55,7 +55,7 @@ deploy:
     on:
       tags: true
   - provider: script
-    script: bash docker/publish.sh
+    script: bash docker/publish.sh $TRAVIS_TAG
     skip_cleanup: true
     on:
       tags: true

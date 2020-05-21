@@ -1,8 +1,8 @@
-import { CollectionViewer, DataSource } from '@angular/cdk/collections';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { MatPaginator } from '@angular/material/paginator';
-import { Entity } from '../entity/entity';
-import { Database } from './database';
+import { CollectionViewer, DataSource } from "@angular/cdk/collections";
+import { BehaviorSubject, Observable } from "rxjs";
+import { MatPaginator } from "@angular/material/paginator";
+import { Entity } from "../entity/entity";
+import { Database } from "./database";
 
 export class QueryDataSource<T extends Entity> implements DataSource<T> {
   private dataSubject = new BehaviorSubject<T[]>([]);
@@ -23,11 +23,7 @@ export class QueryDataSource<T extends Entity> implements DataSource<T> {
     }
   }
 
-
-  constructor(
-    private database: Database,
-    private queryName: string,
-  ) {}
+  constructor(private database: Database, private queryName: string) {}
 
   connect(collectionViewer: CollectionViewer): Observable<T[]> {
     this.loadData();
@@ -38,7 +34,6 @@ export class QueryDataSource<T extends Entity> implements DataSource<T> {
     this.dataSubject.complete();
     this.loadingSubject.complete();
   }
-
 
   async loadData() {
     this.loadingSubject.next(true);

@@ -51,9 +51,12 @@ export const routes: Routes = [
   { path: "admin", component: AdminComponent, canActivate: [AdminGuard] },
   { path: "users", component: UserListComponent, canActivate: [AdminGuard] },
   {
-    path: 'admin/conflicts',
+    path: "admin/conflicts",
     canActivate: [AdminGuard],
-    loadChildren: () => import('./conflict-resolution/conflict-resolution.module').then(m => m.ConflictResolutionModule),
+    loadChildren: () =>
+      import("./conflict-resolution/conflict-resolution.module").then(
+        (m) => m.ConflictResolutionModule
+      ),
   },
   { path: "help", component: HowToComponent },
   { path: "**", redirectTo: "/" },

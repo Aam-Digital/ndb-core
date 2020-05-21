@@ -44,11 +44,10 @@ export class PouchDatabase extends Database {
    */
   get(id: string, options: any = {}) {
     this.alertService.addDebug("DB_READ");
-    return this._pouchDB.get(id, options)
-      .catch((err) => {
-        this.notifyError(err);
-        throw err;
-      });
+    return this._pouchDB.get(id, options).catch((err) => {
+      this.notifyError(err);
+      throw err;
+    });
   }
 
   /**
