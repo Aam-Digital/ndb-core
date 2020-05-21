@@ -1,36 +1,46 @@
 import { Injectable } from "@angular/core";
-import { diff } from "deep-object-diff";
+import { ConflictResolutionStrategy } from "../../conflict-resolution/auto-resolution/conflict-resolution-strategy";
+import { AttendanceMonth } from "./model/attendance-month";
 import _ from "lodash";
-import { AttendanceMonth } from "../../child-dev-project/attendance/model/attendance-month";
+import { diff } from "deep-object-diff";
 
 /**
- * Attempt automatic conflict resolutions or identify trivial conflicts for semi-automatic resolution.
+ * Auto resolve simple database document conflicts concerning {@link AttendanceMonth} entities.
  */
-@Injectable({
-  providedIn: "root",
-})
-export class ConflictResolutionStrategyService {
-  constructor() {}
-
-  public isIrrelevantConflictVersion(
+@Injectable()
+export class AttendanceMonthConflictResolutionStrategy
+  implements ConflictResolutionStrategy {
+  /**
+   * Checks if the given conflict is about AttendanceMonth entities (otherwise this strategy doesn't apply)
+   * and suggests whether the conflict is trivial and can be automatically deleted.
+   * @param currentDoc The currently active revision
+   * @param conflictingDoc The conflicting revision to be checked whether it can be deleted
+   */
+  public autoDeleteConflictingRevision(
     currentDoc: any,
     conflictingDoc: any
   ): boolean {
+    console.log("checking conflict");
+    if (!currentDoc._id.startsWith(AttendanceMonth.ENTITY_TYPE)) {
+      return false;
+    }
+
     const currentDocC = _.merge({}, currentDoc);
     delete currentDocC._rev;
     const conflictingDocC = _.merge({}, conflictingDoc);
     delete conflictingDocC._rev;
 
-    if (currentDocC._id.startsWith(AttendanceMonth.ENTITY_TYPE)) {
-      return this.isIrrelevantAttendanceMonthConflict(
-        currentDocC,
-        conflictingDocC
-      );
-    }
-
-    return false;
+    return this.isIrrelevantAttendanceMonthConflict(
+      currentDocC,
+      conflictingDocC
+    );
   }
 
+  /**
+   * Calculate a diff between the two objects discarding trivial differences.
+   * @param currentDoc The object to compare against
+   * @param conflictingDoc The conflicting object version to compare
+   */
   private isIrrelevantAttendanceMonthConflict(
     currentDoc: any,
     conflictingDoc: any

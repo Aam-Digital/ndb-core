@@ -1,10 +1,10 @@
 import { Component, Input } from "@angular/core";
 import { diff } from "deep-object-diff";
-import { ConflictResolutionStrategyService } from "../conflict-resolution-strategy/conflict-resolution-strategy.service";
 import _ from "lodash";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
 import { Database } from "../../core/database/database";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { AutoResolutionService } from "../auto-resolution/auto-resolution.service";
 
 /**
  * Visualize one specific conflicting document revision and offer resolution options.
@@ -47,7 +47,7 @@ export class CompareRevComponent {
     private db: Database,
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
-    private conflictResolver: ConflictResolutionStrategyService
+    private conflictResolver: AutoResolutionService
   ) {}
 
   /**
@@ -62,7 +62,7 @@ export class CompareRevComponent {
     this.diffsReverse = this.stringify(diffReverseObject);
     this.diffsCustom = this.stringify(diffReverseObject);
 
-    const isIrrelevantConflictingDoc = this.conflictResolver.isIrrelevantConflictVersion(
+    const isIrrelevantConflictingDoc = this.conflictResolver.shouldDeleteConflictingRevision(
       this.doc,
       this.revDoc
     );

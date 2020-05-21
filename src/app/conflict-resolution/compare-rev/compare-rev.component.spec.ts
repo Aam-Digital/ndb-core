@@ -10,18 +10,19 @@ import { CompareRevComponent } from "./compare-rev.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { FormsModule } from "@angular/forms";
-import { ConflictResolutionStrategyService } from "../conflict-resolution-strategy/conflict-resolution-strategy.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
 import { Database } from "../../core/database/database";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { BehaviorSubject } from "rxjs";
+import { AutoResolutionService } from "../auto-resolution/auto-resolution.service";
 
 describe("CompareRevComponent", () => {
   let component: CompareRevComponent;
   let fixture: ComponentFixture<CompareRevComponent>;
 
   let mockDatabase: jasmine.SpyObj<Database>;
+  let mockResolutionService: jasmine.SpyObj<AutoResolutionService>;
 
   const testDoc = { _id: "abc", _rev: "rev-1a", value: 1 };
   const testConflictDoc = { _id: "abc", _rev: "rev-1b", value: 2 };
@@ -33,6 +34,13 @@ describe("CompareRevComponent", () => {
       "put",
     ]);
     mockDatabase.get.and.returnValue(Promise.resolve(testConflictDoc));
+
+    mockResolutionService = jasmine.createSpyObj("mockResolutionService", [
+      "shouldDeleteConflictingRevision",
+    ]);
+    mockResolutionService.shouldDeleteConflictingRevision.and.returnValue(
+      false
+    );
 
     const confDialogMock = {
       // by default immediately simulate a confirmed dialog result
@@ -51,7 +59,7 @@ describe("CompareRevComponent", () => {
       providers: [
         { provide: ConfirmationDialogService, useValue: confDialogMock },
         { provide: Database, useValue: mockDatabase },
-        ConflictResolutionStrategyService,
+        { provide: AutoResolutionService, useValue: mockResolutionService },
       ],
       declarations: [CompareRevComponent],
     }).compileComponents();
@@ -82,19 +90,13 @@ describe("CompareRevComponent", () => {
   });
 
   it("should automatically resolve (delete) trivial conflict", async () => {
-    const conflictResolutionService = TestBed.get(
-      ConflictResolutionStrategyService
-    );
     mockDatabase.get.and.returnValue(Promise.resolve(testConflictDoc));
-    spyOn(
-      conflictResolutionService,
-      "isIrrelevantConflictVersion"
-    ).and.returnValue(true);
+    mockResolutionService.shouldDeleteConflictingRevision.and.returnValue(true);
 
     await component.loadRev();
 
     expect(
-      conflictResolutionService.isIrrelevantConflictVersion
+      mockResolutionService.shouldDeleteConflictingRevision
     ).toHaveBeenCalled();
     expect(mockDatabase.remove).toHaveBeenCalledWith(testConflictDoc);
     expect(component.resolution).toBeTruthy();
