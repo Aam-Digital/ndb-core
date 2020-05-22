@@ -1,0 +1,4 @@
+buttons:
+  - title: Release Version
+    action: "semantic_release"
+    description: Create a new version through semantic-release
