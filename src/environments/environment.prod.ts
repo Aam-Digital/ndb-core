@@ -25,5 +25,5 @@
  */
 export const environment = {
   production: true,
-  appVersion: "0.0.0-dev", // replaced automatically by semantic-release
+  appVersion: "2.13.1", // replaced automatically by semantic-release
 };
