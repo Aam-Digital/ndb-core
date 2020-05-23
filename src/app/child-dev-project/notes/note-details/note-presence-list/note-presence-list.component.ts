@@ -19,7 +19,7 @@ export class NotePresenceListComponent implements OnChanges {
   @Input() recordForm: NgForm;
   smallScreen: boolean;
 
-  @ViewChild("childSelect", { static: false })
+  @ViewChild("childSelect")
   childSelectComponent: ChildSelectComponent;
 
   constructor() {

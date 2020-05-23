@@ -66,7 +66,7 @@ export class DemoDataModule {
       | ClassProvider
       | FactoryProvider
     )[]
-  ): ModuleWithProviders {
+  ): ModuleWithProviders<DemoDataModule> {
     return {
       ngModule: DemoDataModule,
       providers: [
