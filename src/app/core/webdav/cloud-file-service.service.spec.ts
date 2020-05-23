@@ -40,7 +40,7 @@ describe("CloudFileService", () => {
       ],
     });
 
-    cloudFileService = TestBed.get(CloudFileService);
+    cloudFileService = TestBed.inject<CloudFileService>(CloudFileService);
     cloudFileService["client"] = clientSpy;
     cloudFileService["basePath"] = BASE_PATH;
   });

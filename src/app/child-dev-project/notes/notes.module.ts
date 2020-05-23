@@ -85,7 +85,6 @@ import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
     MatPaginatorModule,
     FormDialogModule,
   ],
-  entryComponents: [NoteDetailsComponent],
   providers: [],
 })
 export class NotesModule {}

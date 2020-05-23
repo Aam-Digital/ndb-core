@@ -40,7 +40,9 @@ describe("dataType load-child-photo", () => {
       ],
     });
 
-    entitySchemaService = TestBed.get(EntitySchemaService);
+    entitySchemaService = TestBed.inject<EntitySchemaService>(
+      EntitySchemaService
+    );
     entitySchemaService.registerSchemaDatatype(
       new LoadChildPhotoEntitySchemaDatatype(mockChildPhotoService)
     );

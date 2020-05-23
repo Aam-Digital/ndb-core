@@ -152,6 +152,5 @@ import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirm
     RecentNotesDashboardComponent,
     AttendanceDaysComponent,
   ],
-  entryComponents: [AttendanceDetailsComponent],
 })
 export class ChildrenModule {}

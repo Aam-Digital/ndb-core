@@ -95,7 +95,7 @@ describe("NoteDetailsComponent", () => {
   });
 
   it("should save data", async function () {
-    const mockedDatabase = TestBed.get(Database);
+    const mockedDatabase = TestBed.inject<Database>(Database);
 
     component.entity.addChildren("5", "7");
     await component.formDialogWrapper.save();

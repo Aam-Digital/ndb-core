@@ -39,6 +39,5 @@ import { InitialSyncDialogComponent } from "./sync-status/initial-sync-dialog.co
   declarations: [InitialSyncDialogComponent, SyncStatusComponent],
   exports: [SyncStatusComponent],
   providers: [],
-  entryComponents: [InitialSyncDialogComponent],
 })
 export class SyncStatusModule {}

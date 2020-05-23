@@ -27,7 +27,6 @@ import { InitialSyncDialogComponent } from "./initial-sync-dialog.component";
 import { SessionService } from "app/core/session/session-service/session.service";
 import { SyncState } from "app/core/session/session-states/sync-state.enum";
 import { AlertsModule } from "app/core/alerts/alerts.module";
-import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 
 describe("SyncStatusComponent", () => {
@@ -49,12 +48,6 @@ describe("SyncStatusComponent", () => {
         AlertsModule,
       ],
       providers: [{ provide: SessionService, useValue: sessionService }],
-    });
-
-    TestBed.overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [InitialSyncDialogComponent],
-      },
     });
 
     TestBed.compileComponents();

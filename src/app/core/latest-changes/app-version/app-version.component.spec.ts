@@ -27,7 +27,6 @@ import { LatestChangesService } from "../latest-changes.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ChangelogComponent } from "../changelog/changelog.component";
 import { of } from "rxjs";
-import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 
 describe("AppVersionComponent", () => {
@@ -67,12 +66,6 @@ describe("AppVersionComponent", () => {
         { provide: EntityMapperService, useValue: entityMapper },
         { provide: LatestChangesService, useValue: latestChangesService },
       ],
-    });
-
-    TestBed.overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [ChangelogComponent],
-      },
     });
 
     TestBed.compileComponents();

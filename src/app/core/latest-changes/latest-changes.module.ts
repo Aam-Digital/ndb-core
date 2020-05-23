@@ -47,7 +47,6 @@ import { UpdateManagerService } from "./update-manager.service";
   declarations: [AppVersionComponent, ChangelogComponent],
   exports: [AppVersionComponent],
   providers: [LatestChangesService, UpdateManagerService],
-  entryComponents: [ChangelogComponent],
 })
 export class LatestChangesModule {
   constructor(

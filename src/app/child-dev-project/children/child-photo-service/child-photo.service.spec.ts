@@ -23,7 +23,7 @@ describe("ChildPhotoService", () => {
         { provide: CloudFileService, useValue: mockCloudFileService },
       ],
     });
-    service = TestBed.get(ChildPhotoService);
+    service = TestBed.inject<ChildPhotoService>(ChildPhotoService);
   });
 
   it("should be created", () => {
