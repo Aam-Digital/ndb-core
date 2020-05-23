@@ -23,7 +23,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { SessionService } from "../../session/session-service/session.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { MatTabsModule } from "@angular/material";
+import { MatTabsModule } from "@angular/material/tabs";
 import { EntityMapperService } from "app/core/entity/entity-mapper.service";
 import { Database } from "app/core/database/database";
 import { MockDatabase } from "app/core/database/mock-database";
