@@ -88,6 +88,7 @@ You can review the PR's code changes easily on GitHub:
     2. If you have a suggestion to improve the code.
     Whether you have an idea to structure things in a clearer way
     or to solve it differently - share your suggestions.
+    3. You can also suggest code changes from within the GitHub UI that can be merged - without having the checkout and commit to the branch on you local machine. See [Suggesting Changes on GitHub](https://haacked.com/archive/2019/06/03/suggested-changes/)
 3. "Finish your review" in GitHub.
 If there are issues or questions remaining, set the review status "Comment" or "Request Changes" instead of "Approve".
 
