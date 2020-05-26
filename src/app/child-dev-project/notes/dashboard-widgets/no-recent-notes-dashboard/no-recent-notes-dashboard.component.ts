@@ -4,6 +4,7 @@ import { Child } from '../../../children/model/child';
 import moment from 'moment';
 import { take } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 
@@ -17,9 +18,9 @@ import { Router } from '@angular/router';
  * by default notes since beginning of the current week are considered.
  */
 @Component({
-  selector: "app-no-recent-notes-dashboard",
-  templateUrl: "./no-recent-notes-dashboard.component.html",
-  styleUrls: ["./no-recent-notes-dashboard.component.scss"],
+  selector: 'app-no-recent-notes-dashboard',
+  templateUrl: './no-recent-notes-dashboard.component.html',
+  styleUrls: ['./no-recent-notes-dashboard.component.scss'],
 })
 export class NoRecentNotesDashboardComponent implements OnInit, AfterViewInit {
   /**
@@ -32,8 +33,8 @@ export class NoRecentNotesDashboardComponent implements OnInit, AfterViewInit {
 
   /** The offset in days since beginning of the week (used for "fromBeginningOfWeek" option) */
   private daysSinceBeginningOfWeek = moment()
-    .startOf("day")
-    .diff(moment().startOf("week"), "days");
+    .startOf('day')
+    .diff(moment().startOf('week'), 'days');
 
   /** true while data is not ready/available yet */
   isLoading: boolean;
@@ -45,6 +46,7 @@ export class NoRecentNotesDashboardComponent implements OnInit, AfterViewInit {
 
   columnsToDisplay: string[] = ['name', 'daysSinceLastNote'];
   childrenWithNoteInfoDataSource: MatTableDataSource<ChildWithRecentNoteInfo> = new MatTableDataSource<ChildWithRecentNoteInfo>();
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
 
@@ -59,6 +61,7 @@ export class NoRecentNotesDashboardComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    this.childrenWithNoteInfoDataSource.sort = this.sort;
     this.childrenWithNoteInfoDataSource.paginator = this.paginator;
   }
 
@@ -84,7 +87,7 @@ export class NoRecentNotesDashboardComponent implements OnInit, AfterViewInit {
     }
 
     this.concernedChildren = resultChildren.sort(
-      (a, b) => b.daysSinceLastNote - a.daysSinceLastNote
+      (a, b) => b.daysSinceLastNote - a.daysSinceLastNote,
     );
 
     this.isLoading = false;
@@ -101,7 +104,7 @@ export class NoRecentNotesDashboardComponent implements OnInit, AfterViewInit {
   }
 
   showChildDetails(child: ChildWithRecentNoteInfo) {
-    this.router.navigate([this.router.url, child.getId()]);
+    this.router.navigate(['/child', child.getId()]);
   }
 
 }

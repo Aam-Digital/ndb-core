@@ -39,7 +39,7 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Days passed</th>
         <td mat-cell *matCellDef="let child"> {{child.daysSinceLastNote | number:'1.0-0'}}</td>
       </ng-container>
-      <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+      <tr mat-header-row *matHeaderRowDef="columnsToDisplay" style="display: none;"></tr>
       <tr mat-row *matRowDef="let child; columns: columnsToDisplay" (click)="showChildDetails(child)" style="cursor:pointer;"></tr>
     </table>
     <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" [showFirstLastButtons]="true"></mat-paginator>
