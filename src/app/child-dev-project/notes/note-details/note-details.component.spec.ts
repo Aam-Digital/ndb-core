@@ -1,66 +1,105 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { NoteDetailsComponent } from "./note-details.component";
+import { Note } from "../model/note";
+import { MeetingNoteAttendance } from "../meeting-note-attendance";
+import { InteractionTypes } from "../interaction-types.enum";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { FormBuilder } from "@angular/forms";
+import { of } from "rxjs";
+import { MatNativeDateModule } from "@angular/material/core";
+import { ChildrenService } from "../../children/children.service";
+import { NotesModule } from "../notes.module";
+import { Child } from "../../children/model/child";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import { Database } from "../../../core/database/database";
+import { User } from "../../../core/user/user";
+import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { RouterTestingModule } from "@angular/router/testing";
+import { MockDatabase } from "../../../core/database/mock-database";
 
-import { NoteDetailsComponent } from './note-details.component';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { EntitySubrecordModule } from '../../../core/entity-subrecord/entity-subrecord.module';
-import { EntityModule } from '../../../core/entity/entity.module';
-import { FormsModule } from '@angular/forms';
-import { ChildSelectComponent } from '../../children/child-select/child-select.component';
-import { ChildBlockComponent } from '../../children/child-block/child-block.component';
-import { Note } from '../model/note';
-import { Database } from '../../../core/database/database';
-import { MockDatabase } from '../../../core/database/mock-database';
-import { ChildrenService } from '../../children/children.service';
-import { WarningLevel } from '../../warning-level';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { SchoolBlockComponent } from '../../schools/school-block/school-block.component';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { ChildPhotoService } from '../../children/child-photo-service/child-photo.service';
+function generateChildAttendanceModels() {
+  const attendances = [];
+  let i;
+  for (i = 1; i < 4; i++) {
+    const am = new MeetingNoteAttendance("" + i);
+    if (i % 2 === 0) {
+      am.present = false;
+      am.remarks = "not empty";
+    }
+    attendances.push(am);
+  }
+  return attendances;
+}
 
-describe('NoteDetailsComponent', () => {
+function generateTestingData() {
+  const n1 = new Note("1");
+  n1.children = generateChildAttendanceModels();
+  n1.category = InteractionTypes.CHILDREN_MEETING;
+  n1.date = new Date(Date.now());
+  // mock an already existing note
+  n1._rev = "x";
+  return { entity: n1 };
+}
+
+const children = [new Child("1"), new Child("2"), new Child("3")];
+const testData = generateTestingData();
+
+describe("NoteDetailsComponent", () => {
   let component: NoteDetailsComponent;
   let fixture: ComponentFixture<NoteDetailsComponent>;
 
-  let note;
-
-  beforeEach(async(() => {
-    note = new Note('');
-    note.warningLevel = WarningLevel.WARNING;
-    note.date = new Date();
-    note.subject = 'test';
-    note.author = 'tester';
-    note.text = 'foo';
-    note.children = ['1', '2'];
+  beforeEach(() => {
+    const mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
+      "getChildren",
+      "getChild",
+    ]);
+    mockChildrenService.getChildren.and.returnValue(of([]));
+    mockChildrenService.getChild.and.returnValue(of(new Child("")));
 
     TestBed.configureTestingModule({
-      declarations: [ NoteDetailsComponent, ChildSelectComponent, ChildBlockComponent, SchoolBlockComponent ],
-      imports: [MatDialogModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule, MatSelectModule,
-        FormsModule, NoopAnimationsModule, MatIconModule, MatDatepickerModule, MatNativeDateModule,
-        EntitySubrecordModule, EntityModule],
+      declarations: [],
+      imports: [NotesModule, RouterTestingModule, MatNativeDateModule],
       providers: [
-        {provide: Database, useClass: MockDatabase},
-        {provide: MatDialogRef, useValue: {beforeClose: () => { return { subscribe: () => {}}; }}},
-        {provide: MAT_DIALOG_DATA, useValue: {entity: note}},
-        {provide: ChildrenService, useClass: ChildrenService},
-        { provide: ChildPhotoService, useValue: jasmine.createSpyObj(['getImage']) },
+        EntitySchemaService,
+        EntityMapperService,
+        ConfirmationDialogService,
+        { provide: ChildrenService, useValue: mockChildrenService },
+        { provide: Database, useClass: MockDatabase },
+        FormBuilder,
+        {
+          provide: SessionService,
+          useValue: { getCurrentUser: () => new User("") },
+        },
       ],
-    })
-    .compileComponents();
-  }));
-
-  beforeEach(() => {
+    }).compileComponents();
     fixture = TestBed.createComponent(NoteDetailsComponent);
     component = fixture.componentInstance;
+
+    const entityMapperService = fixture.debugElement.injector.get(
+      EntityMapperService
+    );
+    entityMapperService.save<Note>(testData.entity);
+    children.forEach((child) => entityMapperService.save<Child>(child));
+
+    component.entity = testData.entity;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should load data", () => {
+    expect(component.entity).toBe(testData.entity);
+  });
+
+  it("should save data", async function () {
+    const mockedDatabase = TestBed.inject<Database>(Database);
+
+    component.entity.addChildren("5", "7");
+    await component.formDialogWrapper.save();
+    const newNote: Note = await mockedDatabase.get("Note:1");
+    expect(newNote.children.length).toBe(5);
   });
 });

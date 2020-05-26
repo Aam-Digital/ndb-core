@@ -1,10 +1,10 @@
-import { DemoChildGenerator } from '../children/demo-data-generators/demo-child-generator.service';
-import { DemoDataGenerator } from '../../core/demo-data/demo-data-generator';
-import { Injectable } from '@angular/core';
-import { Child } from '../children/model/child';
-import { faker } from '../../core/demo-data/faker';
-import { AttendanceMonth } from './model/attendance-month';
-import { AttendanceDay, AttendanceStatus } from './model/attendance-day';
+import { DemoChildGenerator } from "../children/demo-data-generators/demo-child-generator.service";
+import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
+import { Injectable } from "@angular/core";
+import { Child } from "../children/model/child";
+import { faker } from "../../core/demo-data/faker";
+import { AttendanceMonth } from "./model/attendance-month";
+import { AttendanceDay, AttendanceStatus } from "./model/attendance-day";
 
 interface AttendanceProfile {
   id: number;
@@ -50,7 +50,9 @@ const ATTENDANCE_PROFILES: AttendanceProfile[] = [
  * Builds upon the generated demo Child entities.
  */
 @Injectable()
-export class DemoAttendanceGenerator extends DemoDataGenerator<AttendanceMonth> {
+export class DemoAttendanceGenerator extends DemoDataGenerator<
+  AttendanceMonth
+> {
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoAttendanceGenerator.provider()]`
@@ -64,33 +66,36 @@ export class DemoAttendanceGenerator extends DemoDataGenerator<AttendanceMonth> 
   public static isHoliday(date: Date) {
     switch (date.getMonth()) {
       case 0:
-        return (date.getDate() >= 1 && date.getDate() <= 6)
-            || (date.getDate() === 23)
-            || (date.getDate() === 26);
+        return (
+          (date.getDate() >= 1 && date.getDate() <= 6) ||
+          date.getDate() === 23 ||
+          date.getDate() === 26
+        );
       case 2:
-        return (date.getDate() === 4)
-            || (date.getDate() >= 20 && date.getDate() <= 21);
+        return (
+          date.getDate() === 4 || (date.getDate() >= 20 && date.getDate() <= 21)
+        );
       case 3:
-        return (date.getDate() === 15)
-            || (date.getDate() >= 20 && date.getDate() <= 21);
+        return (
+          date.getDate() === 15 ||
+          (date.getDate() >= 20 && date.getDate() <= 21)
+        );
       case 4:
-        return (date.getDate() === 1)
-            || (date.getDate() >= 23);
+        return date.getDate() === 1 || date.getDate() >= 23;
       case 5:
-        return (date.getDate() <= 21);
+        return date.getDate() <= 21;
       case 6:
-        return (date.getDate() === 4);
+        return date.getDate() === 4;
       case 7:
-        return (date.getDate() === 15);
+        return date.getDate() === 15;
       case 8:
-        return (date.getDate() === 11);
+        return date.getDate() === 11;
       case 9:
-        return (date.getDate() >= 5 && date.getDate() <= 16);
+        return date.getDate() >= 5 && date.getDate() <= 16;
       case 10:
-        return (date.getDate() === 2)
-            || (date.getDate() === 10);
+        return date.getDate() === 2 || date.getDate() === 10;
       case 11:
-        return (date.getDate() >= 24);
+        return date.getDate() >= 24;
     }
 
     return false;
@@ -128,8 +133,22 @@ export class DemoAttendanceGenerator extends DemoDataGenerator<AttendanceMonth> 
     while (month <= finalMonth) {
       attendanceProfile = this.selectNextAttendanceProfile(attendanceProfile);
 
-      data.push(this.generateRecord(child, new Date(month.toISOString()), 'school', attendanceProfile));
-      data.push(this.generateRecord(child, new Date(month.toISOString()), 'coaching', attendanceProfile));
+      data.push(
+        this.generateRecord(
+          child,
+          new Date(month.toISOString()),
+          "school",
+          attendanceProfile
+        )
+      );
+      data.push(
+        this.generateRecord(
+          child,
+          new Date(month.toISOString()),
+          "coaching",
+          attendanceProfile
+        )
+      );
 
       month.setMonth(month.getMonth() + 1);
     }
@@ -137,24 +156,38 @@ export class DemoAttendanceGenerator extends DemoDataGenerator<AttendanceMonth> 
     return data;
   }
 
-  private generateRecord(child: Child, month: Date, institution: string, attendanceProfile: AttendanceProfile) {
+  private generateRecord(
+    child: Child,
+    month: Date,
+    institution: string,
+    attendanceProfile: AttendanceProfile
+  ) {
     const attendanceMonth = new AttendanceMonth(faker.random.uuid());
     attendanceMonth.month = month;
     attendanceMonth.student = child.getId();
     attendanceMonth.institution = institution;
-    attendanceMonth.dailyRegister.forEach(attendanceDay =>
-      this.setDayAttendance(attendanceDay, institution !== 'school', attendanceProfile),
+    attendanceMonth.dailyRegister.forEach((attendanceDay) =>
+      this.setDayAttendance(
+        attendanceDay,
+        institution !== "school",
+        attendanceProfile
+      )
     );
     return attendanceMonth;
   }
 
-  private setDayAttendance(attendanceDay: AttendanceDay, includeSaturday: boolean, attendanceProfile: AttendanceProfile) {
+  private setDayAttendance(
+    attendanceDay: AttendanceDay,
+    includeSaturday: boolean,
+    attendanceProfile: AttendanceProfile
+  ) {
     if (attendanceDay.date > new Date()) {
       return;
     }
 
-    if (attendanceDay.date.getDay() === 0 // Sunday
-        || (!includeSaturday && attendanceDay.date.getDay() === 6) // Saturday
+    if (
+      attendanceDay.date.getDay() === 0 || // Sunday
+      (!includeSaturday && attendanceDay.date.getDay() === 6) // Saturday
     ) {
       return;
     }
@@ -169,9 +202,18 @@ export class DemoAttendanceGenerator extends DemoDataGenerator<AttendanceMonth> 
       attendanceDay.status = AttendanceStatus.PRESENT;
     } else if (random < attendanceProfile.present + attendanceProfile.excused) {
       attendanceDay.status = AttendanceStatus.EXCUSED;
-      attendanceDay.remarks =
-        faker.random.arrayElement(['fever', 'cough', 'death in family', 'family out of town']);
-    } else if (random < attendanceProfile.present + attendanceProfile.excused + attendanceProfile.late) {
+      attendanceDay.remarks = faker.random.arrayElement([
+        "fever",
+        "cough",
+        "death in family",
+        "family out of town",
+      ]);
+    } else if (
+      random <
+      attendanceProfile.present +
+        attendanceProfile.excused +
+        attendanceProfile.late
+    ) {
       attendanceDay.status = AttendanceStatus.LATE;
     } else {
       attendanceDay.status = AttendanceStatus.ABSENT;
@@ -183,7 +225,9 @@ export class DemoAttendanceGenerator extends DemoDataGenerator<AttendanceMonth> 
    * It's most likely the profile will remain the same as in previous month.
    * @param previousAttendanceProfile
    */
-  private selectNextAttendanceProfile(previousAttendanceProfile: AttendanceProfile) {
+  private selectNextAttendanceProfile(
+    previousAttendanceProfile: AttendanceProfile
+  ) {
     if (!previousAttendanceProfile) {
       return faker.random.arrayElement(ATTENDANCE_PROFILES);
     }

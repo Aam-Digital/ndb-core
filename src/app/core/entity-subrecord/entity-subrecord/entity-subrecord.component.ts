@@ -1,17 +1,29 @@
-import { Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
-import { Entity } from '../../entity/entity';
-import { EntityMapperService } from '../../entity/entity-mapper.service';
-import { ColumnDescription } from './column-description';
-import { MediaChange, MediaObserver } from '@angular/flex-layout';
-import { Subscription } from 'rxjs';
-import { AlertService } from 'app/core/alerts/alert.service';
-import { FormValidationResult } from './form-validation-result';
-import { ConfirmationDialogService } from '../../confirmation-dialog/confirmation-dialog.service';
-import { ColumnDescriptionInputType } from './column-description-input-type.enum';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  OnDestroy,
+  SimpleChanges,
+  ViewChild,
+  Output,
+  EventEmitter,
+} from "@angular/core";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatSort } from "@angular/material/sort";
+import { MatTableDataSource } from "@angular/material/table";
+import { Entity } from "../../entity/entity";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { ColumnDescription } from "./column-description";
+import { MediaChange, MediaObserver } from "@angular/flex-layout";
+import { Subscription } from "rxjs";
+import { AlertService } from "app/core/alerts/alert.service";
+import { FormValidationResult } from "./form-validation-result";
+import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
+import { ColumnDescriptionInputType } from "./column-description-input-type.enum";
+import { ComponentType } from "@angular/cdk/overlay";
+import { FormDialogService } from "../../form-dialog/form-dialog.service";
+import { ShowsEntity } from "../../form-dialog/shows-entity.interface";
 
 /**
  * Generically configurable component to display and edit a list of entities in a compact way
@@ -24,12 +36,11 @@ import { ColumnDescriptionInputType } from './column-description-input-type.enum
  * - [How to display related entities]{@link /additional-documentation/how-to-guides/display-related-entities.html}
  */
 @Component({
-  selector: 'app-entity-subrecord',
-  templateUrl: './entity-subrecord.component.html',
-  styleUrls: ['./entity-subrecord.component.scss'],
+  selector: "app-entity-subrecord",
+  templateUrl: "./entity-subrecord.component.html",
+  styleUrls: ["./entity-subrecord.component.scss"],
 })
 export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
-
   /** data to be displayed */
   @Input() records: Array<Entity>;
 
@@ -47,7 +58,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
    * This is displayed as a modal (hovering) dialog above the active view and allows the user to get
    * more information or more comfortable editing of a single record.
    */
-  @Input() detailsComponent: typeof Component;
+  @Input() detailsComponent: ComponentType<ShowsEntity>;
 
   /**
    * Whether an "Add" button to create a new entry should be displayed as part of the form.
@@ -61,6 +72,14 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
    */
   @Input() formValidation?: (record: Entity) => FormValidationResult;
 
+  /**
+   * Event whenever an entity in this table is changed.
+   */
+  @Output() changedRecordsInEntitySubrecordEvent = new EventEmitter<any>();
+
+  /** id of the parent entity of the records being displayed. May be used for custom display logic. */
+  @Input() entityId?: string;
+
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource();
   /** columns displayed in the template's table */
@@ -71,24 +90,27 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   /** backup copies of the original state of records to allow reset */
   private originalRecords = [];
 
-  private screenWidth = '';
+  private screenWidth = "";
   private flexMediaWatcher: Subscription;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-
-  constructor(private _entityMapper: EntityMapperService,
-              private _snackBar: MatSnackBar,
-              private _confirmationDialog: ConfirmationDialogService,
-              private dialog: MatDialog,
-              private alertService: AlertService,
-              private media: MediaObserver) {
-    this.flexMediaWatcher = this.media.media$.subscribe((change: MediaChange) => {
-      if (change.mqAlias !== this.screenWidth) {
-        this.screenWidth = change.mqAlias;
-        this.setupTable();
+  constructor(
+    private _entityMapper: EntityMapperService,
+    private _snackBar: MatSnackBar,
+    private _confirmationDialog: ConfirmationDialogService,
+    private formDialog: FormDialogService,
+    private alertService: AlertService,
+    private media: MediaObserver
+  ) {
+    this.flexMediaWatcher = this.media.media$.subscribe(
+      (change: MediaChange) => {
+        if (change.mqAlias !== this.screenWidth) {
+          this.screenWidth = change.mqAlias;
+          this.setupTable();
+        }
       }
-    });
+    );
   }
 
   ngOnInit() {
@@ -100,14 +122,16 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
    * @param changes
    */
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['records'] && this.records !== undefined) {
+    if (changes["records"] && this.records !== undefined) {
       this.recordsDataSource.data = this.records;
 
-      this.records.forEach(e => this.originalRecords.push(Object.assign({}, e)));
+      this.records.forEach((e) =>
+        this.originalRecords.push(Object.assign({}, e))
+      );
     }
-    if (changes['columns']) {
-      this.columnsToDisplay = this.columns.map(e => e.name);
-      this.columnsToDisplay.push('actions');
+    if (changes["columns"]) {
+      this.columnsToDisplay = this.columns.map((e) => e.name);
+      this.columnsToDisplay.push("actions");
       this.setupTable();
     }
   }
@@ -129,11 +153,14 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
 
-    this._entityMapper.save(record).then(savedRecord => {
+    this._entityMapper.save(record).then(() => {
+      this.changedRecordsInEntitySubrecordEvent.emit();
     });
 
     // updated backup copies used for reset
-    const i = this.originalRecords.findIndex(e => e.entityId === record.getId());
+    const i = this.originalRecords.findIndex(
+      (e) => e.entityId === record.getId()
+    );
     this.originalRecords[i] = Object.assign({}, record);
 
     this.recordsEditing.set(record.getId(), false);
@@ -145,9 +172,11 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
    */
   resetChanges(record: Entity) {
     // reload original record from database
-    const index = this.records.findIndex(a => a.getId() === record.getId());
+    const index = this.records.findIndex((a) => a.getId() === record.getId());
     if (index > -1) {
-      const originalRecord = this.originalRecords.find(e => e.entityId === record.getId());
+      const originalRecord = this.originalRecords.find(
+        (e) => e.entityId === record.getId()
+      );
       Object.assign(record, originalRecord);
       this.records[index] = record;
       this.recordsDataSource.data = this.records;
@@ -157,7 +186,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private removeFromDataTable(record: Entity) {
-    const index = this.records.findIndex(a => a.getId() === record.getId());
+    const index = this.records.findIndex((a) => a.getId() === record.getId());
     if (index > -1) {
       this.records.splice(index, 1);
       this.recordsDataSource.data = this.records;
@@ -169,23 +198,28 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
    * @param record The entity to be deleted.
    */
   delete(record: Entity) {
-    const dialogRef = this._confirmationDialog
-      .openDialog('Delete?', 'Are you sure you want to delete this record?');
+    const dialogRef = this._confirmationDialog.openDialog(
+      "Delete?",
+      "Are you sure you want to delete this record?"
+    );
 
-    dialogRef.afterClosed()
-      .subscribe(confirmed => {
-        if (confirmed) {
-          this._entityMapper.remove(record);
-          this.removeFromDataTable(record);
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this._entityMapper.remove(record).then(() => {
+          this.changedRecordsInEntitySubrecordEvent.emit();
+        });
+        this.removeFromDataTable(record);
 
-          const snackBarRef = this._snackBar.open('Record deleted', 'Undo', { duration: 8000 });
-          snackBarRef.onAction().subscribe(() => {
-            this._entityMapper.save(record, true);
-            this.records.unshift(record);
-            this.recordsDataSource.data = this.records;
-          });
-        }
-      });
+        const snackBarRef = this._snackBar.open("Record deleted", "Undo", {
+          duration: 8000,
+        });
+        snackBarRef.onAction().subscribe(() => {
+          this._entityMapper.save(record, true);
+          this.records.unshift(record);
+          this.recordsDataSource.data = this.records;
+        });
+      }
+    });
   }
 
   /**
@@ -213,45 +247,39 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
    * @param record The entity whose details should be displayed.
    */
   showRecord(record: Entity) {
-    if (this.detailsComponent === undefined || this.recordsEditing.get(record.getId())) {
+    if (
+      this.detailsComponent === undefined ||
+      this.recordsEditing.get(record.getId())
+    ) {
       return;
     }
-    this.dialog.open(this.detailsComponent, {width: '80%', data: {entity: record}});
+    this.formDialog.openDialog(this.detailsComponent, record);
   }
-
-  /**
-   * Helper function to convert entities' "getWarningLevel()" value to a styling that can highlight records based on this.
-   * @param rec The entity for which to get the style class.
-   */
-  getWarningStyleClass(rec) {
-    if (typeof rec.getWarningLevel === 'function') {
-      return 'w-' + rec.getWarningLevel();
-    } else {
-      return '';
-    }
-  }
-
 
   autocompleteSearch(col, input) {
     if (col.allSelectValues === undefined) {
       col.allSelectValues = col.selectValues;
     }
-    col.selectValues = col.allSelectValues.filter(v => v.value.includes(input) || v.label.includes(input));
+    col.selectValues = col.allSelectValues.filter(
+      (v) => v.value.includes(input) || v.label.includes(input)
+    );
   }
 
   /**
    * resets columnsToDisplay depending on current screensize
    */
   setupTable() {
-    if (this.columns !== undefined && this.screenWidth !== '') {
+    if (this.columns !== undefined && this.screenWidth !== "") {
       const columnsHelpArray = [];
       const entitySubrecordComponent = this;
-      this.columns.forEach( function(this, col) {if (entitySubrecordComponent.isVisible(col)) {
-        columnsHelpArray.push(col.name);
-      } } );
+      this.columns.forEach(function (this, col) {
+        if (entitySubrecordComponent.isVisible(col)) {
+          columnsHelpArray.push(col.name);
+        }
+      });
       this.columnsToDisplay = columnsHelpArray;
-      if (this.screenWidth !== 'xs') {
-        this.columnsToDisplay.push('actions');
+      if (this.screenWidth !== "xs") {
+        this.columnsToDisplay.push("actions");
       }
     }
   }
@@ -265,20 +293,20 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   isVisible(col) {
     let returnVal;
     switch (col.visibleFrom) {
-      case 'xl': {
-        returnVal = (this.screenWidth.match('xl'));
+      case "xl": {
+        returnVal = this.screenWidth.match("xl");
         break;
       }
-      case 'lg': {
-        returnVal = (this.screenWidth.match('(lg|xl)'));
+      case "lg": {
+        returnVal = this.screenWidth.match("(lg|xl)");
         break;
       }
-      case 'md': {
-        returnVal = (this.screenWidth.match('(md|lg|xl)'));
+      case "md": {
+        returnVal = this.screenWidth.match("(md|lg|xl)");
         break;
       }
-      case 'sm': {
-        returnVal = (this.screenWidth.match('(sm|md|lg|xl)'));
+      case "sm": {
+        returnVal = this.screenWidth.match("(sm|md|lg|xl)");
         break;
       }
       default: {
@@ -294,6 +322,23 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
    * @param inputType The input type to be checked.
    */
   isReadonlyInputType(inputType: ColumnDescriptionInputType): boolean {
-    return inputType === ColumnDescriptionInputType.FUNCTION || inputType === ColumnDescriptionInputType.READONLY;
+    return (
+      inputType === ColumnDescriptionInputType.FUNCTION ||
+      inputType === ColumnDescriptionInputType.READONLY
+    );
+  }
+
+  /**
+   * returns the color for a record.
+   * If this entity id is undefined, this will return the default color. Otherwise it will attempt
+   * to get a specific color for this specific entity id
+   * @param record The record to check for. The record must be an entity that has a <code>getColor()</code>-Method specified.
+   * If this entityId is set, a <code>getColorForId()</code>-Method must be specified, that accepts this id.
+   */
+  getColor(record) {
+    if (this.entityId !== undefined) {
+      return record.getColorForId(this.entityId);
+    }
+    return record.getColor();
   }
 }

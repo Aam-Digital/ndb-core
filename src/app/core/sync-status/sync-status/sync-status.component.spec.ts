@@ -15,23 +15,21 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { SyncStatusComponent } from './sync-status.component';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MockSessionService } from '../../session/session-service/mock-session.service';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { InitialSyncDialogComponent } from './initial-sync-dialog.component';
-import { SessionService } from 'app/core/session/session-service/session.service';
-import { SyncState } from 'app/core/session/session-states/sync-state.enum';
-import { AlertsModule } from 'app/core/alerts/alerts.module';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
-import { EntitySchemaService } from 'app/core/entity/schema/entity-schema.service';
+import { SyncStatusComponent } from "./sync-status.component";
+import { MatDialogModule } from "@angular/material/dialog";
+import { MatIconModule } from "@angular/material/icon";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MockSessionService } from "../../session/session-service/mock-session.service";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { InitialSyncDialogComponent } from "./initial-sync-dialog.component";
+import { SessionService } from "app/core/session/session-service/session.service";
+import { SyncState } from "app/core/session/session-states/sync-state.enum";
+import { AlertsModule } from "app/core/alerts/alerts.module";
+import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 
-
-describe('SyncStatusComponent', () => {
+describe("SyncStatusComponent", () => {
   let component: SyncStatusComponent;
   let fixture: ComponentFixture<SyncStatusComponent>;
 
@@ -42,16 +40,14 @@ describe('SyncStatusComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [InitialSyncDialogComponent, SyncStatusComponent],
-      imports: [MatIconModule, MatDialogModule, NoopAnimationsModule, MatProgressBarModule, AlertsModule],
-      providers: [
-        { provide: SessionService, useValue: sessionService },
+      imports: [
+        MatIconModule,
+        MatDialogModule,
+        NoopAnimationsModule,
+        MatProgressBarModule,
+        AlertsModule,
       ],
-    });
-
-    TestBed.overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [InitialSyncDialogComponent],
-      },
+      providers: [{ provide: SessionService, useValue: sessionService }],
     });
 
     TestBed.compileComponents();
@@ -63,12 +59,11 @@ describe('SyncStatusComponent', () => {
     fixture.detectChanges();
   });
 
-
-   it('should be created', () => {
+  it("should be created", () => {
     expect(component).toBeTruthy();
-   });
+  });
 
-  it('should open dialog without error', async () => {
+  it("should open dialog without error", async () => {
     sessionService.getSyncState().setState(SyncState.STARTED);
 
     fixture.detectChanges();

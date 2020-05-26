@@ -15,15 +15,19 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchema } from './schema/entity-schema';
-import { DatabaseField } from './database-field.decorator';
+import { EntitySchema } from "./schema/entity-schema";
+import { DatabaseField } from "./database-field.decorator";
+import {
+  WarningLevel,
+  WarningLevelColor,
+} from "../../child-dev-project/warning-level";
 
 /**
  * This represents a static class of type <T>.
  * It can be used for passing a class from which new objects should be created.
  * For example usage check the {@link EntityMapperService}.
  */
-export type EntityConstructor<T extends Entity> = new(id: string) => T;
+export type EntityConstructor<T extends Entity> = new (id: string) => T;
 
 /**
  * "Entity" is a base class for all domain model classes.
@@ -41,7 +45,7 @@ export class Entity {
    * The entity's type.
    * In classes extending Entity this is usually overridden by the class annotation `@DatabaseEntity('NewEntity')`.
    */
-  static ENTITY_TYPE = 'Entity';
+  static ENTITY_TYPE = "Entity";
 
   /**
    * EntitySchema defining property transformations from/to the database.
@@ -56,7 +60,7 @@ export class Entity {
    * @param id An entity's id including prefix.
    */
   static extractTypeFromId(id: string): string {
-    const split = id.indexOf(':');
+    const split = id.indexOf(":");
     return id.substring(0, split);
   }
 
@@ -65,7 +69,7 @@ export class Entity {
    * @param id An entity's id including prefix.
    */
   static extractEntityIdFromId(id: string): string {
-    const split = id.indexOf(':');
+    const split = id.indexOf(":");
     return id.substring(split + 1);
   }
 
@@ -76,14 +80,13 @@ export class Entity {
    */
   static createPrefixedId(type: string, id: string): string {
     id = String(id);
-    const prefix = type + ':';
+    const prefix = type + ":";
     if (!id.startsWith(prefix)) {
       return prefix + id;
     } else {
       return id;
     }
   }
-
 
   /**
    * Internal database id.
@@ -94,7 +97,6 @@ export class Entity {
 
   /** internal database doc revision, used to detect conflicts by PouchDB/CouchDB */
   @DatabaseField() _rev: string;
-
 
   /** actual id without prefix */
   get entityId(): string {
@@ -173,8 +175,8 @@ export class Entity {
     let indices = [];
 
     // default indices generated from "name" property
-    if (this.hasOwnProperty('name')) {
-      indices = this['name'].split(' ');
+    if (this.hasOwnProperty("name")) {
+      indices = this["name"].split(" ");
     }
 
     return indices;
@@ -185,6 +187,14 @@ export class Entity {
    * Override this method as needed.
    */
   public getColor() {
-    return '';
+    return WarningLevelColor(this.getWarningLevel());
+  }
+
+  /**
+   * Override getWarningLevel() to define when the entity is in a critical condition and should be color-coded
+   * and highlighted in generic components of the UI.
+   */
+  public getWarningLevel(): WarningLevel {
+    return WarningLevel.NONE;
   }
 }

@@ -1,36 +1,39 @@
-import { WarningLevel } from '../../warning-level';
+import { WarningLevel } from "../../warning-level";
 
 export const noteGroupStories = [
   {
-    category: 'Guardians\' Meeting',
+    category: "Guardians' Meeting",
     warningLevel: WarningLevel.OK,
-    subject: 'Guardians Meeting',
-    text: 'Our regular monthly meeting. Find the agenda and minutes in our meeting folder.',
+    subject: "Guardians Meeting",
+    text:
+      "Our regular monthly meeting. Find the agenda and minutes in our meeting folder.",
   },
   {
-    category: 'Guardians\' Meeting',
+    category: "Guardians' Meeting",
     warningLevel: WarningLevel.OK,
-    subject: 'Guardians Meeting',
-    text: 'Our regular monthly meeting. Find the agenda and minutes in our meeting folder.',
+    subject: "Guardians Meeting",
+    text:
+      "Our regular monthly meeting. Find the agenda and minutes in our meeting folder.",
   },
 
-
   {
-    category: 'Children\'s Meeting',
+    category: "Children's Meeting",
     warningLevel: WarningLevel.OK,
-    subject: 'Children Meeting',
-    text: 'Our regular monthly meeting. Find the agenda and minutes in our meeting folder.',
+    subject: "Children Meeting",
+    text:
+      "Our regular monthly meeting. Find the agenda and minutes in our meeting folder.",
   },
   {
-    category: 'Children\'s Meeting',
+    category: "Children's Meeting",
     warningLevel: WarningLevel.OK,
-    subject: 'Children Meeting',
-    text: 'Our regular monthly meeting. Find the agenda and minutes in our meeting folder.',
+    subject: "Children Meeting",
+    text:
+      "Our regular monthly meeting. Find the agenda and minutes in our meeting folder.",
   },
   {
-    category: 'Children\'s Meeting',
+    category: "Children's Meeting",
     warningLevel: WarningLevel.OK,
-    subject: 'Drug Prevention Workshop',
-    text: 'Expert conducted a two day workshop on drug prevention.',
+    subject: "Drug Prevention Workshop",
+    text: "Expert conducted a two day workshop on drug prevention.",
   },
 ];

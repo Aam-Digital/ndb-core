@@ -1,18 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { HealthCheck } from '../model/health-check';
-import { ColumnDescription } from '../../../core/entity-subrecord/entity-subrecord/column-description';
-import { ActivatedRoute } from '@angular/router';
-import { ChildrenService } from '../../children/children.service';
-import { DatePipe } from '@angular/common';
-import { ColumnDescriptionInputType } from '../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum';
-
+import { Component, OnInit } from "@angular/core";
+import { HealthCheck } from "../model/health-check";
+import { ColumnDescription } from "../../../core/entity-subrecord/entity-subrecord/column-description";
+import { ActivatedRoute } from "@angular/router";
+import { ChildrenService } from "../../children/children.service";
+import { DatePipe } from "@angular/common";
+import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 
 @Component({
-  selector: 'app-health-checkup',
-  templateUrl: './health-checkup.component.html',
-  styleUrls: ['./health-checkup.component.scss'],
+  selector: "app-health-checkup",
+  templateUrl: "./health-checkup.component.html",
+  styleUrls: ["./health-checkup.component.scss"],
 })
-
 export class HealthCheckupComponent implements OnInit {
   records = new Array<HealthCheck>();
   /**
@@ -21,24 +19,47 @@ export class HealthCheckupComponent implements OnInit {
    * BMI is rounded to 2 decimal digits
    */
   columns: Array<ColumnDescription> = [
-    new ColumnDescription('date', 'Date', ColumnDescriptionInputType.DATE, null,
-    (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd')),
-    new ColumnDescription('height', 'Height [cm]', ColumnDescriptionInputType.NUMBER, null,
-    (height: Number) => height + ' cm' ),
-    new ColumnDescription('weight', 'Weight [kg]', ColumnDescriptionInputType.NUMBER, null,
-    (weight: Number) => weight + ' kg'),
-    new ColumnDescription('bmi', 'BMI', ColumnDescriptionInputType.READONLY, null,
-    (bmi: Number) => bmi.toFixed(2)),
+    new ColumnDescription(
+      "date",
+      "Date",
+      ColumnDescriptionInputType.DATE,
+      null,
+      (v: Date) => this.datePipe.transform(v, "yyyy-MM-dd")
+    ),
+    new ColumnDescription(
+      "height",
+      "Height [cm]",
+      ColumnDescriptionInputType.NUMBER,
+      null,
+      (height: Number) => height + " cm"
+    ),
+    new ColumnDescription(
+      "weight",
+      "Weight [kg]",
+      ColumnDescriptionInputType.NUMBER,
+      null,
+      (weight: Number) => weight + " kg"
+    ),
+    new ColumnDescription(
+      "bmi",
+      "BMI",
+      ColumnDescriptionInputType.READONLY,
+      null,
+      (bmi: Number) => bmi.toFixed(2)
+    ),
   ];
   childId: string;
-  constructor(private route: ActivatedRoute, private childrenService: ChildrenService, private datePipe: DatePipe ) { }
+  constructor(
+    private route: ActivatedRoute,
+    private childrenService: ChildrenService,
+    private datePipe: DatePipe
+  ) {}
 
   ngOnInit() {
-    this.route.paramMap.subscribe (params => {
-      this.childId = params.get('id').toString();
+    this.route.paramMap.subscribe((params) => {
+      this.childId = params.get("id").toString();
       this.loadHealthChecks();
-
-    } );
+    });
   }
 
   /**
@@ -59,15 +80,17 @@ export class HealthCheckupComponent implements OnInit {
     };
   }
 
-
   /**
    * implements the health check loading from the children service and is called in the onInit()
    */
   loadHealthChecks() {
-    this.childrenService.getHealthChecksOfChild(this.childId)
-      .subscribe(results => {
-        this.records = results
-          .sort((a, b ) => (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0) );
+    this.childrenService
+      .getHealthChecksOfChild(this.childId)
+      .subscribe((results) => {
+        this.records = results.sort(
+          (a, b) =>
+            (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0)
+        );
       });
   }
 }

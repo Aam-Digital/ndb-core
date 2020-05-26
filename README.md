@@ -76,6 +76,11 @@ _docker/nginx_default.conf_ (for production server):
 Our detailed [Developer Documentation](http://aam-digital.github.io/ndb-core/additional-documentation/overview.html)
 provides tutorials, guides, concepts and an API reference.
 
+## Code Style
+We use _prettier_ to enforce a consistent formatting of code to make the project easier to read.
+The project is set up with a git pre-commit hook to automatically format your commits according to these rules.
+
+
 ## Using Angular CLI
 This project is built upon [Angular](https://angular.io/).
 If you are unfamiliar with the framework and Angular CLI go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md) or use use `ng help`.

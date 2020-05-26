@@ -1,20 +1,19 @@
-import { Injectable } from '@angular/core';
-import { EntityMapperService } from '../../entity/entity-mapper.service';
-import { HttpClient } from '@angular/common/http';
-import { Child } from '../../../child-dev-project/children/model/child';
+import { Injectable } from "@angular/core";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { HttpClient } from "@angular/common/http";
+import { Child } from "../../../child-dev-project/children/model/child";
 
 /**
  * Utility service to automatically detect and update filenames for Child entities' photos.
  */
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class ChildPhotoUpdateService {
-
   constructor(
     private entityService: EntityMapperService,
-    private httpClient: HttpClient,
-    ) { }
+    private httpClient: HttpClient
+  ) {}
 
   /**
    * Tries to detect and update the filename of an existing photo for all Child entities,
@@ -34,16 +33,22 @@ export class ChildPhotoUpdateService {
    * @param filename A guess for a likely filename that needs to be checked
    */
   private async updatePhotoIfFileExists(child: Child, filename: string) {
-    if (child.photoFile && child.photoFile !== '') {
+    if (child.photoFile && child.photoFile !== "") {
       // do not overwrite existing path
       return;
     }
 
-    const fileExists = await this.checkIfFileExists(Child.generatePhotoPath(filename));
+    const fileExists = await this.checkIfFileExists(
+      Child.generatePhotoPath(filename)
+    );
     if (fileExists) {
       child.photoFile = filename;
       this.entityService.save<Child>(child);
-      console.log(`set photoFile for Child:${child.getId()} (${child.projectNumber}) to ${filename}`);
+      console.log(
+        `set photoFile for Child:${child.getId()} (${
+          child.projectNumber
+        }) to ${filename}`
+      );
     }
   }
 

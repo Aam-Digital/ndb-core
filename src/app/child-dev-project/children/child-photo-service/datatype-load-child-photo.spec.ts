@@ -15,56 +15,62 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { SafeUrl } from '@angular/platform-browser';
-import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
-import { DatabaseField } from '../../../core/entity/database-field.decorator';
-import { Entity } from '../../../core/entity/entity';
-import { ChildPhotoService } from './child-photo.service';
-import { LoadChildPhotoEntitySchemaDatatype } from './datatype-load-child-photo';
-import { BehaviorSubject } from 'rxjs';
+import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { SafeUrl } from "@angular/platform-browser";
+import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import { DatabaseField } from "../../../core/entity/database-field.decorator";
+import { Entity } from "../../../core/entity/entity";
+import { ChildPhotoService } from "./child-photo.service";
+import { LoadChildPhotoEntitySchemaDatatype } from "./datatype-load-child-photo";
+import { BehaviorSubject } from "rxjs";
 
-describe('dataType load-child-photo', () => {
+describe("dataType load-child-photo", () => {
   let entitySchemaService: EntitySchemaService;
   let mockChildPhotoService: jasmine.SpyObj<ChildPhotoService>;
 
   beforeEach(() => {
-    mockChildPhotoService = jasmine.createSpyObj('mockChildPhotoService', ['getImageAsyncObservable']);
+    mockChildPhotoService = jasmine.createSpyObj("mockChildPhotoService", [
+      "getImageAsyncObservable",
+    ]);
 
     TestBed.configureTestingModule({
-        providers: [
-          EntitySchemaService,
-          { provide: ChildPhotoService, useValue: mockChildPhotoService },
-        ],
-      },
-    );
+      providers: [
+        EntitySchemaService,
+        { provide: ChildPhotoService, useValue: mockChildPhotoService },
+      ],
+    });
 
-    entitySchemaService = TestBed.get(EntitySchemaService);
-    entitySchemaService.registerSchemaDatatype(new LoadChildPhotoEntitySchemaDatatype(mockChildPhotoService));
+    entitySchemaService = TestBed.inject<EntitySchemaService>(
+      EntitySchemaService
+    );
+    entitySchemaService.registerSchemaDatatype(
+      new LoadChildPhotoEntitySchemaDatatype(mockChildPhotoService)
+    );
   });
 
-
-  it('schema:load-child-photo is removed from rawData to be saved', function () {
+  it("schema:load-child-photo is removed from rawData to be saved", function () {
     class TestEntity extends Entity {
-      @DatabaseField({dataType: 'load-child-photo'}) photo: SafeUrl;
+      @DatabaseField({ dataType: "load-child-photo" }) photo: SafeUrl;
     }
-    const id = 'test1';
+    const id = "test1";
     const entity = new TestEntity(id);
-    entity.photo = '12345';
+    entity.photo = "12345";
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
     expect(rawData.photo).toBeUndefined();
   });
 
-  it('schema:load-child-photo is provided through ChildPhotoService on load', fakeAsync(() => {
+  it("schema:load-child-photo is provided through ChildPhotoService on load", fakeAsync(() => {
     class TestEntity extends Entity {
-      @DatabaseField({dataType: 'load-child-photo'}) photo: BehaviorSubject<SafeUrl>;
+      @DatabaseField({ dataType: "load-child-photo" }) photo: BehaviorSubject<
+        SafeUrl
+      >;
     }
-    const id = 'test1';
+    const id = "test1";
     const entity = new TestEntity(id);
 
-    const defaultImg = 'default-img';
-    const mockCloudImg = 'test-img-data';
+    const defaultImg = "default-img";
+    const mockCloudImg = "test-img-data";
 
     const mockImgObs = new BehaviorSubject(defaultImg);
     mockChildPhotoService.getImageAsyncObservable.and.returnValue(mockImgObs);

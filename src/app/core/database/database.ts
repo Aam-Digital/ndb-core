@@ -23,7 +23,6 @@
  * with the help of the {@link SessionService}.
  */
 export abstract class Database {
-
   /**
    * Load a single document by id from the database.
    * @param id The primary key of the document to be loaded
@@ -78,7 +77,11 @@ export abstract class Database {
    * Load all documents (with the given prefix) from the database.
    * @param prefix The string prefix of document ids that should be retrieved
    */
-  getAll(prefix = ''): Promise<Array<any>> {
-    return this.allDocs({include_docs: true, startkey: prefix, endkey: prefix + '\ufff0'});
+  getAll(prefix = ""): Promise<Array<any>> {
+    return this.allDocs({
+      include_docs: true,
+      startkey: prefix,
+      endkey: prefix + "\ufff0",
+    });
   }
 }

@@ -15,10 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { APP_INITIALIZER, NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { AppConfig } from './app-config';
-import { HttpClientModule } from '@angular/common/http';
+import { APP_INITIALIZER, NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { AppConfig } from "./app-config";
+import { HttpClientModule } from "@angular/common/http";
 
 /**
  * Management of central configuration for the app that can a set by an administrator independent of code
@@ -30,18 +30,19 @@ import { HttpClientModule } from '@angular/common/http';
  * to access the configuration values without need for dependency injection of a service.
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    HttpClientModule,
-  ],
+  imports: [CommonModule, HttpClientModule],
   declarations: [],
   providers: [
     AppConfig,
-    { provide: APP_INITIALIZER, useFactory: initializeAppConfig, deps: [AppConfig], multi: true },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeAppConfig,
+      deps: [AppConfig],
+      multi: true,
+    },
   ],
 })
-export class AppConfigModule {
-}
+export class AppConfigModule {}
 
 /**
  * Factory method for APP_INITIALIZER to load essential things before any other modules.

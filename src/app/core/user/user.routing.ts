@@ -15,18 +15,14 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { RouterModule, Routes } from '@angular/router';
-import { UserAccountComponent } from './user-account/user-account.component';
-import { ModuleWithProviders } from '@angular/core';
+import { RouterModule, Routes } from "@angular/router";
+import { UserAccountComponent } from "./user-account/user-account.component";
+import { ModuleWithProviders } from "@angular/core";
 
-const routes: Routes = [
-  {path: '', component: UserAccountComponent},
-];
+const routes: Routes = [{ path: "", component: UserAccountComponent }];
 
 /**
  * RoutingModule for UserModule related routes.
  * Separating these routes from the main AppModule routing allows lazy-loading of modules.
  */
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);
-
-

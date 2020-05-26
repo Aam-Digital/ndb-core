@@ -94,3 +94,7 @@
   <tr mat-row *matRowDef="let note; columns: columnsToDisplay" (click)="showDetails(note)"
       style="cursor:pointer;" [ngStyle]="{'background-color': note.getColor()}"></tr>
 </table>
+
+<mat-paginator [pageSize]="50"
+               [pageSizeOptions]="[30, 50, 70, 100]">
+</mat-paginator>

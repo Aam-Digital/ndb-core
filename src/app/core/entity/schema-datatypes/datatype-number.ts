@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
+import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
 
 /**
  * Datatype for the EntitySchemaService transforming values to "number".
@@ -30,7 +30,7 @@ import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
  * `@DatabaseField({dataType: 'number'}) myValue: any;`
  */
 export const numberEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: 'number',
+  name: "number",
 
   transformToDatabaseFormat: (value) => {
     if (!value) {

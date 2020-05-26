@@ -15,16 +15,14 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-import { EntitySchemaField } from './entity-schema-field';
-import { EntitySchemaService } from './entity-schema.service';
-import { Entity } from '../entity';
+import { EntitySchemaField } from "./entity-schema-field";
+import { EntitySchemaService } from "./entity-schema.service";
+import { Entity } from "../entity";
 
 /**
  * Interface to be implemented by any Datatype transformer of the Schema system.
  */
 export interface EntitySchemaDatatype {
-
   /**
    * Key for this datatype that must be specified in the DatabaseField annotation to use this transformation.
    *
@@ -46,7 +44,12 @@ export interface EntitySchemaDatatype {
    * @param schemaService A reference to the EntitySchemaService instance (e.g. to allow recursive transformations)
    * @param parent The full entity instance this value is part of (e.g. to allow cross-related transformations)
    */
-  transformToDatabaseFormat(value: any, schemaField: EntitySchemaField, schemaService: EntitySchemaService, parent: Entity): any;
+  transformToDatabaseFormat(
+    value: any,
+    schemaField: EntitySchemaField,
+    schemaService: EntitySchemaService,
+    parent: Entity
+  ): any;
 
   /**
    * Transformation function taking a value in the format that is used in database objects and returning the value
@@ -58,5 +61,10 @@ export interface EntitySchemaDatatype {
    * @param schemaService A reference to the EntitySchemaService instance (e.g. to allow recursive transformations)
    * @param parent The full entity instance this value is part of (e.g. to allow cross-related transformations)
    */
-  transformToObjectFormat(value: any, schemaField: EntitySchemaField, schemaService: EntitySchemaService, parent: any): any;
+  transformToObjectFormat(
+    value: any,
+    schemaField: EntitySchemaField,
+    schemaService: EntitySchemaService,
+    parent: any
+  ): any;
 }

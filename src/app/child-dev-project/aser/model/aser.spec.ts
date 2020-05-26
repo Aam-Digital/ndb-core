@@ -15,49 +15,46 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Aser } from './aser';
-import { WarningLevel } from '../../warning-level';
-import { async } from '@angular/core/testing';
-import { Entity } from '../../../core/entity/entity';
-import { EntitySchemaService } from '../../../core/entity/schema/entity-schema.service';
+import { Aser } from "./aser";
+import { WarningLevel } from "../../warning-level";
+import { async } from "@angular/core/testing";
+import { Entity } from "../../../core/entity/entity";
+import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 
-describe('Aser', () => {
-  const ENTITY_TYPE = 'Aser';
+describe("Aser", () => {
+  const ENTITY_TYPE = "Aser";
   const entitySchemaService = new EntitySchemaService();
 
-  beforeEach(async(() => {
+  beforeEach(async(() => {}));
 
-  }));
-
-
-  it('has correct _id and entityId and type', function () {
-    const id = 'test1';
+  it("has correct _id and entityId and type", function () {
+    const id = "test1";
     const entity = new Aser(id);
 
     expect(entity.getId()).toBe(id);
     expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
   });
 
-  it('has correct type/prefix', function () {
-    const id = 'test1';
+  it("has correct type/prefix", function () {
+    const id = "test1";
     const entity = new Aser(id);
 
     expect(entity.getType()).toBe(ENTITY_TYPE);
     expect(Entity.extractTypeFromId(entity._id)).toBe(ENTITY_TYPE);
   });
 
-  it('has all and only defined schema fields in rawData', function () {
-    const id = 'test1';
+  it("has all and only defined schema fields in rawData", function () {
+    const id = "test1";
     const expectedData = {
-      _id: ENTITY_TYPE + ':' + id,
+      _id: ENTITY_TYPE + ":" + id,
 
-      child: '1',
+      child: "1",
       date: new Date(),
-      hindi: 'Read Sentence',
-      bengali: 'Nothing',
-      english: 'Read Letters',
-      math: 'Subtraction',
-      remarks: 'nothing to remark',
+      hindi: "Read Sentence",
+      bengali: "Nothing",
+      english: "Read Letters",
+      math: "Subtraction",
+      remarks: "nothing to remark",
 
       searchIndices: [],
     };
@@ -76,22 +73,19 @@ describe('Aser', () => {
     expect(rawData).toEqual(expectedData);
   });
 
-
-
-  it('warning level OK if no results', function () {
-    const id = 'test1';
+  it("warning level OK if no results", function () {
+    const id = "test1";
     const entity = new Aser(id);
 
     expect(entity.getWarningLevel()).toBe(WarningLevel.OK);
   });
 
-  it('warning level WARNING if some bad results', function () {
-    const id = 'test1';
+  it("warning level WARNING if some bad results", function () {
+    const id = "test1";
     const entity = new Aser(id);
     entity.english = Aser.ReadingLevels[0];
     entity.math = Aser.MathLevels[1];
 
     expect(entity.getWarningLevel()).toBe(WarningLevel.WARNING);
   });
-
 });

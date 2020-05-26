@@ -1,14 +1,14 @@
-import { SessionService } from './session.service';
-import { User } from 'app/core/user/user';
-import { StateHandler } from '../session-states/state-handler';
-import { ConnectionState } from '../session-states/connection-state.enum';
-import { LoginState } from '../session-states/login-state.enum';
-import { SyncState } from '../session-states/sync-state.enum';
-import { Database } from 'app/core/database/database';
-import { EntitySchemaService } from 'app/core/entity/schema/entity-schema.service';
-import { RemoteSession } from './remote-session';
-import { PouchDatabase } from '../../database/pouch-database';
-import { AlertService } from '../../alerts/alert.service';
+import { SessionService } from "./session.service";
+import { User } from "app/core/user/user";
+import { StateHandler } from "../session-states/state-handler";
+import { ConnectionState } from "../session-states/connection-state.enum";
+import { LoginState } from "../session-states/login-state.enum";
+import { SyncState } from "../session-states/sync-state.enum";
+import { Database } from "app/core/database/database";
+import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { RemoteSession } from "./remote-session";
+import { PouchDatabase } from "../../database/pouch-database";
+import { AlertService } from "../../alerts/alert.service";
 
 /**
  * SessionService implementation for use of the app with direct requests to the remote server
@@ -26,19 +26,28 @@ import { AlertService } from '../../alerts/alert.service';
  */
 export class OnlineSessionService extends SessionService {
   private currentUser: User;
-  private loginState: StateHandler<LoginState> = new StateHandler<LoginState>(LoginState.LOGGED_OUT);
-  private connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>(ConnectionState.DISCONNECTED);
-  private syncState: StateHandler<SyncState> = new StateHandler<SyncState>(SyncState.UNSYNCED);
+  private loginState: StateHandler<LoginState> = new StateHandler<LoginState>(
+    LoginState.LOGGED_OUT
+  );
+  private connectionState: StateHandler<ConnectionState> = new StateHandler<
+    ConnectionState
+  >(ConnectionState.DISCONNECTED);
+  private syncState: StateHandler<SyncState> = new StateHandler<SyncState>(
+    SyncState.UNSYNCED
+  );
   private remoteSession: RemoteSession;
   private database: PouchDatabase;
 
   constructor(
     private alertService: AlertService,
-    private entitySchemaService: EntitySchemaService,
+    private entitySchemaService: EntitySchemaService
   ) {
     super();
     this.remoteSession = new RemoteSession();
-    this.database = new PouchDatabase(this.remoteSession.database, this.alertService);
+    this.database = new PouchDatabase(
+      this.remoteSession.database,
+      this.alertService
+    );
   }
 
   /** see {@link SessionService} */
@@ -71,14 +80,16 @@ export class OnlineSessionService extends SessionService {
     return this.database;
   }
 
-
   /**
    * Log in the given user authenticating against the remote server's CouchDB.
    *
    * also see {@link SessionService}
    */
   public async login(username, password): Promise<LoginState> {
-    const connectionState: ConnectionState = await this.remoteSession.login(username, password);
+    const connectionState: ConnectionState = await this.remoteSession.login(
+      username,
+      password
+    );
     if (connectionState === ConnectionState.CONNECTED) {
       this.currentUser = await this.loadUser(username);
 
@@ -112,8 +123,8 @@ export class OnlineSessionService extends SessionService {
    * @param userId Id of the User to be loaded
    */
   private async loadUser(userId: string): Promise<User> {
-    const user = new User('');
-    const userData = await this.getDatabase().get('User:' + userId);
+    const user = new User("");
+    const userData = await this.getDatabase().get("User:" + userId);
     this.entitySchemaService.loadDataIntoEntity(user, userData);
     return user;
   }

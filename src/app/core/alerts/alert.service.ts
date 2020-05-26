@@ -15,14 +15,13 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Injectable } from "@angular/core";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
-import { Alert } from './alert';
-import { AlertComponent } from './alerts/alert.component';
-import { LoggingService } from '../logging/logging.service';
-import { AlertDisplay } from './alert-display';
-
+import { Alert } from "./alert";
+import { AlertComponent } from "./alerts/alert.component";
+import { LoggingService } from "../logging/logging.service";
+import { AlertDisplay } from "./alert-display";
 
 /**
  * Display alerts to the user as a hovering message at the bottom of the view.
@@ -32,13 +31,13 @@ import { AlertDisplay } from './alert-display';
  */
 @Injectable()
 export class AlertService {
-
   /** All alerts currently to be displayed */
   alerts: Alert[] = [];
 
-  constructor(public snackBar: MatSnackBar,
-              private loggingService: LoggingService) {
-  }
+  constructor(
+    public snackBar: MatSnackBar,
+    private loggingService: LoggingService
+  ) {}
 
   /**
    * Display the given alert.
@@ -51,7 +50,11 @@ export class AlertService {
   }
 
   private displayAlert(alert: Alert) {
-    const snackConfig = {data: alert, duration: 10000, panelClass: 'alerts-snackbar'};
+    const snackConfig = {
+      data: alert,
+      duration: 10000,
+      panelClass: "alerts-snackbar",
+    };
 
     switch (alert.display) {
       case AlertDisplay.NONE:
@@ -64,7 +67,10 @@ export class AlertService {
         break;
     }
 
-    alert.notificationRef = this.snackBar.openFromComponent(AlertComponent, snackConfig);
+    alert.notificationRef = this.snackBar.openFromComponent(
+      AlertComponent,
+      snackConfig
+    );
   }
 
   private logToConsole(alert: Alert) {
@@ -82,7 +88,6 @@ export class AlertService {
     }
   }
 
-
   /**
    * Remove an existing alert so that it is no longer displayed.
    * @param alert The alert to be removed
@@ -94,13 +99,15 @@ export class AlertService {
     }
   }
 
-
   /**
    * Display an alert message of "Info" level, that will automatically dismiss itself after a timeout.
    * @param message The text to be displayed
    * @param display Optional override of the display style (e.g. whether the alert has to be actively dismissed by the user)
    */
-  public addInfo(message: string, display: AlertDisplay = AlertDisplay.TEMPORARY) {
+  public addInfo(
+    message: string,
+    display: AlertDisplay = AlertDisplay.TEMPORARY
+  ) {
     this.addAlert(new Alert(message, Alert.INFO, display));
   }
 
@@ -109,7 +116,10 @@ export class AlertService {
    * @param message The text to be displayed
    * @param display Optional override of the display style (e.g. whether the alert has to be actively dismissed by the user)
    */
-  public addWarning(message: string, display: AlertDisplay = AlertDisplay.PERSISTENT) {
+  public addWarning(
+    message: string,
+    display: AlertDisplay = AlertDisplay.PERSISTENT
+  ) {
     this.addAlert(new Alert(message, Alert.WARNING, display));
   }
 
@@ -118,7 +128,10 @@ export class AlertService {
    * @param message The text to be displayed
    * @param display Optional override of the display style (e.g. whether the alert has to be actively dismissed by the user)
    */
-  public addDanger(message: string, display: AlertDisplay = AlertDisplay.PERSISTENT) {
+  public addDanger(
+    message: string,
+    display: AlertDisplay = AlertDisplay.PERSISTENT
+  ) {
     this.addAlert(new Alert(message, Alert.DANGER, display));
   }
 

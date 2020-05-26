@@ -1,20 +1,20 @@
-import { User } from '../../user/user';
-import { EntityMapperService } from '../../entity/entity-mapper.service';
-import { MatTableDataSource } from '@angular/material/table';
-import { Component, OnInit } from '@angular/core';
-import { SessionService } from '../../session/session-service/session.service';
+import { User } from "../../user/user";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { MatTableDataSource } from "@angular/material/table";
+import { Component, OnInit } from "@angular/core";
+import { SessionService } from "../../session/session-service/session.service";
 
 /**
  * Display all available users.
  */
 @Component({
-  selector: 'app-user-list',
-  templateUrl: './user-list.component.html',
-  styleUrls: ['./user-list.component.scss'],
+  selector: "app-user-list",
+  templateUrl: "./user-list.component.html",
+  styleUrls: ["./user-list.component.scss"],
 })
 export class UserListComponent implements OnInit {
   /** displayed columns for the list table in the template */
-  displayedColumns = ['id', 'name', 'admin', 'details'];
+  displayedColumns = ["id", "name", "admin", "details"];
   /** datasource for the list table in the template */
   dataSource = new MatTableDataSource<User>();
 
@@ -23,8 +23,8 @@ export class UserListComponent implements OnInit {
 
   constructor(
     private entityMapperService: EntityMapperService,
-    private sessionService: SessionService,
-  ) { }
+    private sessionService: SessionService
+  ) {}
 
   async ngOnInit() {
     await this.loadData();
@@ -32,7 +32,9 @@ export class UserListComponent implements OnInit {
 
   private async loadData() {
     this.dataSource.data = await this.entityMapperService.loadType<User>(User);
-    this.dataSource.data.forEach(user => this.debugDetails.set(user.getId(), JSON.stringify(user)));
+    this.dataSource.data.forEach((user) =>
+      this.debugDetails.set(user.getId(), JSON.stringify(user))
+    );
   }
 
   /**

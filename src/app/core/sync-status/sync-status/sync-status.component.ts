@@ -15,13 +15,13 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { SessionService } from '../../session/session-service/session.service';
-import { SyncState } from '../../session/session-states/sync-state.enum';
-import { AlertService } from '../../alerts/alert.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { InitialSyncDialogComponent } from './initial-sync-dialog.component';
-import { StateChangedEvent } from 'app/core/session/session-states/state-handler';
+import { Component, OnInit } from "@angular/core";
+import { SessionService } from "../../session/session-service/session.service";
+import { SyncState } from "../../session/session-states/sync-state.enum";
+import { AlertService } from "../../alerts/alert.service";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { InitialSyncDialogComponent } from "./initial-sync-dialog.component";
+import { StateChangedEvent } from "app/core/session/session-states/state-handler";
 
 /**
  * A small indicator component that displays an icon when there is currently synchronization
@@ -31,24 +31,27 @@ import { StateChangedEvent } from 'app/core/session/session-states/state-handler
  * user login (because user accounts need to be synced first).
  */
 @Component({
-  selector: 'app-sync-status',
-  templateUrl: './sync-status.component.html',
-  styleUrls: ['./sync-status.component.css'],
+  selector: "app-sync-status",
+  templateUrl: "./sync-status.component.html",
+  styleUrls: ["./sync-status.component.css"],
 })
 export class SyncStatusComponent implements OnInit {
-
   /** whether synchronization is currently going on */
   syncInProgress: boolean;
 
   private dialogRef: MatDialogRef<InitialSyncDialogComponent>;
 
-  constructor(public dialog: MatDialog,
-              private sessionService: SessionService,
-              private alertService: AlertService) {
-  }
+  constructor(
+    public dialog: MatDialog,
+    private sessionService: SessionService,
+    private alertService: AlertService
+  ) {}
 
   ngOnInit(): void {
-    this.sessionService.getSyncState().getStateChangedStream().subscribe(state => this.handleSyncState(state));
+    this.sessionService
+      .getSyncState()
+      .getStateChangedStream()
+      .subscribe((state) => this.handleSyncState(state));
   }
 
   private handleSyncState(state: StateChangedEvent<SyncState>) {
@@ -64,14 +67,14 @@ export class SyncStatusComponent implements OnInit {
         if (this.dialogRef) {
           this.dialogRef.close();
         }
-        this.alertService.addInfo('Database sync completed.');
+        this.alertService.addInfo("Database sync completed.");
         break;
       case SyncState.FAILED:
         this.syncInProgress = false;
         if (this.dialogRef) {
           this.dialogRef.close();
         }
-        this.alertService.addWarning('Database sync failed.');
+        this.alertService.addWarning("Database sync failed.");
         break;
     }
   }

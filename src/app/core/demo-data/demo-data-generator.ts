@@ -1,4 +1,4 @@
-import { Entity } from '../entity/entity';
+import { Entity } from "../entity/entity";
 
 /**
  * Abstract base class for demo data generator services.

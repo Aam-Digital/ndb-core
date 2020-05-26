@@ -15,19 +15,19 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { ChildrenModule } from '../children/children.module';
-import { ProgressDashboardComponent } from './progress-dashboard/progress-dashboard.component';
-import { FormsModule } from '@angular/forms';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { DashboardComponent } from "./dashboard/dashboard.component";
+import { FlexLayoutModule } from "@angular/flex-layout";
+import { MatButtonModule } from "@angular/material/button";
+import { MatCardModule } from "@angular/material/card";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatIconModule } from "@angular/material/icon";
+import { MatInputModule } from "@angular/material/input";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { ChildrenModule } from "../children/children.module";
+import { ProgressDashboardComponent } from "./progress-dashboard/progress-dashboard.component";
+import { FormsModule } from "@angular/forms";
 
 @NgModule({
   imports: [
@@ -44,5 +44,4 @@ import { FormsModule } from '@angular/forms';
   ],
   declarations: [DashboardComponent, ProgressDashboardComponent],
 })
-export class DashboardModule {
-}
+export class DashboardModule {}
