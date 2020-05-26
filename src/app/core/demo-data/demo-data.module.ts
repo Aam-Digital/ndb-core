@@ -52,7 +52,6 @@ import { MatDialogModule } from "@angular/material/dialog";
   imports: [MatProgressBarModule, MatDialogModule],
   declarations: [DemoDataGeneratingProgressDialogComponent],
   exports: [DemoDataGeneratingProgressDialogComponent],
-  entryComponents: [DemoDataGeneratingProgressDialogComponent],
 })
 export class DemoDataModule {
   /**
@@ -66,7 +65,7 @@ export class DemoDataModule {
       | ClassProvider
       | FactoryProvider
     )[]
-  ): ModuleWithProviders {
+  ): ModuleWithProviders<DemoDataModule> {
     return {
       ngModule: DemoDataModule,
       providers: [

@@ -36,7 +36,7 @@ export class UiComponent implements OnInit, OnDestroy {
   /** display mode for the menu to make it responive and usable on smaller screens */
   sideNavMode: string;
   /** reference to sideNav component in template, required for toggling the menu on user actions */
-  @ViewChild("sideNav", { static: false }) sideNav;
+  @ViewChild("sideNav") sideNav;
 
   /** title displayed in the app header bar */
   title: string;

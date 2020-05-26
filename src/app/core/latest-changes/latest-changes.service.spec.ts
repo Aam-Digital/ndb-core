@@ -44,7 +44,7 @@ describe("LatestChangesService", () => {
       ],
     });
 
-    service = TestBed.get(LatestChangesService);
+    service = TestBed.inject<LatestChangesService>(LatestChangesService);
   });
 
   it("should be created", () => {

@@ -16,7 +16,7 @@ describe("BackupService", () => {
       providers: [BackupService, { provide: Database, useValue: db }],
     });
 
-    service = TestBed.get(BackupService);
+    service = TestBed.inject<BackupService>(BackupService);
   });
 
   it("should be created", () => {

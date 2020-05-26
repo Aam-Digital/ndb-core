@@ -119,7 +119,7 @@ describe("ChildrenService", () => {
       ],
     });
 
-    entityMapper = TestBed.get(EntityMapperService);
+    entityMapper = TestBed.inject<EntityMapperService>(EntityMapperService);
 
     generateChildEntities().forEach((c) => entityMapper.save(c));
     generateSchoolEntities().forEach((s) => entityMapper.save(s));
@@ -127,7 +127,7 @@ describe("ChildrenService", () => {
       entityMapper.save(cs)
     );
 
-    service = TestBed.get(ChildrenService);
+    service = TestBed.inject<ChildrenService>(ChildrenService);
   });
 
   it("should be created", () => {
