@@ -17,9 +17,9 @@ import { Router } from '@angular/router';
  * by default notes since beginning of the current week are considered.
  */
 @Component({
-  selector: 'app-no-recent-notes-dashboard',
-  templateUrl: './no-recent-notes-dashboard.component.html',
-  styleUrls: ['./no-recent-notes-dashboard.component.scss'],
+  selector: "app-no-recent-notes-dashboard",
+  templateUrl: "./no-recent-notes-dashboard.component.html",
+  styleUrls: ["./no-recent-notes-dashboard.component.scss"],
 })
 export class NoRecentNotesDashboardComponent implements OnInit, AfterViewInit {
   /**
@@ -31,7 +31,9 @@ export class NoRecentNotesDashboardComponent implements OnInit, AfterViewInit {
   @Input() fromBeginningOfWeek = true;
 
   /** The offset in days since beginning of the week (used for "fromBeginningOfWeek" option) */
-  private daysSinceBeginningOfWeek = moment().startOf('day').diff(moment().startOf('week'), 'days');
+  private daysSinceBeginningOfWeek = moment()
+    .startOf("day")
+    .diff(moment().startOf("week"), "days");
 
   /** true while data is not ready/available yet */
   isLoading: boolean;
@@ -81,15 +83,18 @@ export class NoRecentNotesDashboardComponent implements OnInit, AfterViewInit {
       }
     }
 
-    this.concernedChildren = resultChildren.sort((a, b) => b.daysSinceLastNote - a.daysSinceLastNote);
+    this.concernedChildren = resultChildren.sort(
+      (a, b) => b.daysSinceLastNote - a.daysSinceLastNote
+    );
 
     this.isLoading = false;
   }
 
-
   private isWithinDayRange(daysSinceLastNote: number) {
     if (this.fromBeginningOfWeek) {
-      return daysSinceLastNote <= (this.sinceDays + this.daysSinceBeginningOfWeek);
+      return (
+        daysSinceLastNote <= this.sinceDays + this.daysSinceBeginningOfWeek
+      );
     } else {
       return daysSinceLastNote <= this.sinceDays;
     }
