@@ -163,6 +163,5 @@ import { AttendanceMonthConflictResolutionStrategy } from "../attendance/attenda
     RecentNotesDashboardComponent,
     AttendanceDaysComponent,
   ],
-  entryComponents: [AttendanceDetailsComponent],
 })
 export class ChildrenModule {}

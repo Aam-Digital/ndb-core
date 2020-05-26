@@ -24,7 +24,6 @@ import { ConfirmationDialogModule } from "../confirmation-dialog/confirmation-di
   ],
   declarations: [FormDialogWrapperComponent],
   providers: [FormDialogService],
-  entryComponents: [FormDialogWrapperComponent],
   exports: [FormDialogWrapperComponent],
 })
 export class FormDialogModule {}

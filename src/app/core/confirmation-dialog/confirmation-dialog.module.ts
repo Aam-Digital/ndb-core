@@ -15,6 +15,5 @@ import { ConfirmationDialogService } from "./confirmation-dialog.service";
   imports: [CommonModule, MatDialogModule, MatButtonModule],
   declarations: [ConfirmationDialogComponent],
   providers: [ConfirmationDialogService],
-  entryComponents: [ConfirmationDialogComponent],
 })
 export class ConfirmationDialogModule {}

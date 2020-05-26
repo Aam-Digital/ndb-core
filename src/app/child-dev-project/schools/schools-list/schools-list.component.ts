@@ -17,7 +17,7 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
     School
   >();
 
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatSort) sort: MatSort;
   filterString = "";
   columnsToDisplay: string[] = [
     "name",

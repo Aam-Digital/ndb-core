@@ -39,6 +39,5 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
   declarations: [AlertComponent],
   exports: [AlertComponent],
   providers: [AlertService],
-  entryComponents: [AlertComponent],
 })
 export class AlertsModule {}

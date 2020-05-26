@@ -18,9 +18,7 @@ export class AttendanceDaysComponent implements OnInit {
   selectedRecordChanged = false;
 
   private dayStatusSelect: MatSelect;
-  @ViewChild("dayStatusSelect", { static: false }) set content(
-    content: MatSelect
-  ) {
+  @ViewChild("dayStatusSelect") set content(content: MatSelect) {
     this.dayStatusSelect = content;
   }
 

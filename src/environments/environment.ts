@@ -25,4 +25,5 @@
  */
 export const environment = {
   production: false,
+  appVersion: "2.13.1", // replaced automatically by semantic-release
 };

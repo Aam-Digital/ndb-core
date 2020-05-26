@@ -3,7 +3,6 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { FormDialogService } from "./form-dialog.service";
 import { Component, EventEmitter, Input } from "@angular/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 import { Entity } from "../entity/entity";
 import { ShowsEntity } from "./shows-entity.interface";
 import { FormDialogModule } from "./form-dialog.module";
@@ -29,13 +28,9 @@ describe("FormDialogService", () => {
           useValue: mockConfirmationDialog,
         },
       ],
-    }).overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [TestComponent],
-      },
     });
 
-    service = TestBed.get(FormDialogService);
+    service = TestBed.inject<FormDialogService>(FormDialogService);
   });
 
   it("should be created", () => {
