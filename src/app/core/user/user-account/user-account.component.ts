@@ -15,31 +15,31 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { User } from '../user';
-import { SessionService } from '../../session/session-service/session.service';
-import { EntityMapperService } from 'app/core/entity/entity-mapper.service';
-import { AppConfig } from '../../app-config/app-config';
+import { Component, OnInit } from "@angular/core";
+import { User } from "../user";
+import { SessionService } from "../../session/session-service/session.service";
+import { EntityMapperService } from "app/core/entity/entity-mapper.service";
+import { AppConfig } from "../../app-config/app-config";
 
 /**
  * User account form to allow the user to view and edit information.
  */
 @Component({
-  selector: 'app-user-account',
-  templateUrl: './user-account.component.html',
-  styleUrls: ['./user-account.component.scss'],
+  selector: "app-user-account",
+  templateUrl: "./user-account.component.html",
+  styleUrls: ["./user-account.component.scss"],
 })
 export class UserAccountComponent implements OnInit {
-
   /** user to be edited */
   user: User;
 
   /** whether webdav integration is configured and the cloud settings section should be displayed */
   webdavEnabled = !!AppConfig.settings.webdav;
 
-  constructor( private entityMapperService: EntityMapperService,
-               private sessionService: SessionService,
-  ) { }
+  constructor(
+    private entityMapperService: EntityMapperService,
+    private sessionService: SessionService
+  ) {}
 
   ngOnInit() {
     this.user = this.sessionService.getCurrentUser();
@@ -53,10 +53,10 @@ export class UserAccountComponent implements OnInit {
    * @param pwd New password to be set
    * @param rpwd Confirmation of new password (second input by the user to prevent typos)
    */
-  changePassword( pwd , rpwd ) {
-    if ( pwd === rpwd ) {
+  changePassword(pwd, rpwd) {
+    if (pwd === rpwd) {
       // TODO: update the password for this remote database user first and deny the password change if that fails
-      this.user.setNewPassword( pwd );
+      this.user.setNewPassword(pwd);
       // TODO: Show success message
     } else {
       // TODO: Show error message

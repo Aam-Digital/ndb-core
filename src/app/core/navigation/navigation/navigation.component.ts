@@ -15,10 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { MenuItem } from '../menu-item';
-import { NavigationItemsService } from '../navigation-items.service';
-import { AdminGuard } from '../../admin/admin.guard';
+import { Component, OnInit } from "@angular/core";
+import { MenuItem } from "../menu-item";
+import { NavigationItemsService } from "../navigation-items.service";
+import { AdminGuard } from "../../admin/admin.guard";
 
 /**
  * Main app menu listing.
@@ -26,21 +26,22 @@ import { AdminGuard } from '../../admin/admin.guard';
  * To add new entries use {@link NavigationItemsService}.
  */
 @Component({
-  selector: 'app-navigation',
-  templateUrl: './navigation.component.html',
-  styleUrls: ['./navigation.component.css'],
+  selector: "app-navigation",
+  templateUrl: "./navigation.component.html",
+  styleUrls: ["./navigation.component.css"],
 })
 export class NavigationComponent implements OnInit {
-
   /** all menu items to be displayed */
   public menu_main: MenuItem[];
 
   constructor(
     private _navigationItemService: NavigationItemsService,
-    private adminGuard: AdminGuard,
-  ) { }
+    private adminGuard: AdminGuard
+  ) {}
 
   ngOnInit(): void {
-    this.menu_main = this._navigationItemService.getMenuItems().filter(e => !e.requiresAdmin || this.adminGuard.isAdmin());
+    this.menu_main = this._navigationItemService
+      .getMenuItems()
+      .filter((e) => !e.requiresAdmin || this.adminGuard.isAdmin());
   }
 }

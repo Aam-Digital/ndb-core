@@ -15,34 +15,40 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { ChangelogComponent } from './changelog.component';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { LatestChangesService } from '../latest-changes.service';
-import { Changelog } from '../changelog';
-import { of } from 'rxjs';
+import { ChangelogComponent } from "./changelog.component";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
+import { LatestChangesService } from "../latest-changes.service";
+import { Changelog } from "../changelog";
+import { of } from "rxjs";
 
-describe('ChangelogComponent', () => {
+describe("ChangelogComponent", () => {
   let component: ChangelogComponent;
   let fixture: ComponentFixture<ChangelogComponent>;
 
   const testChangelog = new Changelog();
-  testChangelog.name = 'test name';
-  testChangelog.body = 'test changes body';
-  testChangelog.published_at = '2018-01-01';
+  testChangelog.name = "test name";
+  testChangelog.body = "test changes body";
+  testChangelog.published_at = "2018-01-01";
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ChangelogComponent],
       imports: [MatDialogModule],
       providers: [
-        {provide: MatDialogRef, useValue: {}},
-        {provide: MAT_DIALOG_DATA, useValue: {}},
-        {provide: LatestChangesService, useValue: { getChangelogs: () => of([testChangelog]) } },
-        ],
-    })
-      .compileComponents();
+        { provide: MatDialogRef, useValue: {} },
+        { provide: MAT_DIALOG_DATA, useValue: {} },
+        {
+          provide: LatestChangesService,
+          useValue: { getChangelogs: () => of([testChangelog]) },
+        },
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -51,7 +57,7 @@ describe('ChangelogComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(component).toBeTruthy();
   });
 });

@@ -1,32 +1,31 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AttendanceStatus } from '../../model/attendance-day';
-import { EntityMapperService } from '../../../../core/entity/entity-mapper.service';
-import { Child } from '../../../children/model/child';
-import { AttendanceMonth } from '../../model/attendance-month';
-import { ChildrenService } from '../../../children/children.service';
-import { RollCallRecord } from './roll-call-record';
-import { animate, style, transition, trigger } from '@angular/animations';
-import { AppConfig } from '../../../../core/app-config/app-config';
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { AttendanceStatus } from "../../model/attendance-day";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { Child } from "../../../children/model/child";
+import { AttendanceMonth } from "../../model/attendance-month";
+import { ChildrenService } from "../../../children/children.service";
+import { RollCallRecord } from "./roll-call-record";
+import { animate, style, transition, trigger } from "@angular/animations";
+import { AppConfig } from "../../../../core/app-config/app-config";
 
 /**
  * Displays the given children one by one to the user to mark the attendance status for the given day and type.
  * This component itself handles the loading and saving of the attendances entities internally.
  */
 @Component({
-  selector: 'app-roll-call',
-  templateUrl: './roll-call.component.html',
-  styleUrls: ['./roll-call.component.scss'],
+  selector: "app-roll-call",
+  templateUrl: "./roll-call.component.html",
+  styleUrls: ["./roll-call.component.scss"],
   animations: [
-    trigger('completeRollCall', [
-      transition('void => *', [
-        style({ backgroundColor: 'white' }),
+    trigger("completeRollCall", [
+      transition("void => *", [
+        style({ backgroundColor: "white" }),
         animate(1000),
       ]),
     ]),
   ],
 })
 export class RollCallComponent implements OnInit {
-
   /**
    * The day for which attendance will be recorded
    */
@@ -47,7 +46,6 @@ export class RollCallComponent implements OnInit {
    */
   @Output() complete = new EventEmitter();
 
-
   isLoading: boolean = true;
   currentIndex: number;
   rollCallList: RollCallRecord[] = [];
@@ -59,18 +57,15 @@ export class RollCallComponent implements OnInit {
 
   constructor(
     private entityMapper: EntityMapperService,
-    private childrenService: ChildrenService,
-  ) { }
+    private childrenService: ChildrenService
+  ) {}
 
   async ngOnInit() {
     await this.loadList();
   }
 
-
-
   private async loadList() {
     this.isLoading = true;
-
 
     this.rollCallList = await this.loadMonthAttendanceRecords(this.students);
     this.sortRollCallList();
@@ -80,21 +75,39 @@ export class RollCallComponent implements OnInit {
     this.isLoading = false;
   }
 
-  private async loadMonthAttendanceRecords(children: Child[]): Promise<RollCallRecord[]> {
+  private async loadMonthAttendanceRecords(
+    children: Child[]
+  ): Promise<RollCallRecord[]> {
     const rollCallRecords: RollCallRecord[] = [];
 
-    const attendances = await this.childrenService.getAttendancesOfMonth(this.day).toPromise();
-    children.forEach(child => {
-      let attMonth: AttendanceMonth = attendances.find(a => a.student === child.getId() && a.institution === this.attendanceType);
+    const attendances = await this.childrenService
+      .getAttendancesOfMonth(this.day)
+      .toPromise();
+    children.forEach((child) => {
+      let attMonth: AttendanceMonth = attendances.find(
+        (a) =>
+          a.student === child.getId() && a.institution === this.attendanceType
+      );
       if (attMonth === undefined) {
-        attMonth = AttendanceMonth.createAttendanceMonth(child.getId(), this.attendanceType);
+        attMonth = AttendanceMonth.createAttendanceMonth(
+          child.getId(),
+          this.attendanceType
+        );
         attMonth.month = new Date(this.day.getTime());
       }
 
-      const attDay = attMonth.dailyRegister.find(d => d.date.getDate() === this.day.getDate()
-        && d.date.getMonth() === this.day.getMonth() && d.date.getFullYear() === this.day.getFullYear());
+      const attDay = attMonth.dailyRegister.find(
+        (d) =>
+          d.date.getDate() === this.day.getDate() &&
+          d.date.getMonth() === this.day.getMonth() &&
+          d.date.getFullYear() === this.day.getFullYear()
+      );
 
-      rollCallRecords.push({child: child, attendanceMonth: attMonth, attendanceDay: attDay});
+      rollCallRecords.push({
+        child: child,
+        attendanceMonth: attMonth,
+        attendanceDay: attDay,
+      });
     });
 
     return rollCallRecords;
@@ -102,17 +115,21 @@ export class RollCallComponent implements OnInit {
 
   private sortRollCallList() {
     this.rollCallList.sort((a: RollCallRecord, b: RollCallRecord) => {
-      const diff = parseInt(a.child.schoolClass, 10) - parseInt(b.child.schoolClass, 10);
+      const diff =
+        parseInt(a.child.schoolClass, 10) - parseInt(b.child.schoolClass, 10);
       if (!isNaN(diff)) {
         return diff;
       }
 
-      if (a.child.schoolClass > b.child.schoolClass) { return 1; }
-      if (a.child.schoolClass < b.child.schoolClass) { return -1; }
+      if (a.child.schoolClass > b.child.schoolClass) {
+        return 1;
+      }
+      if (a.child.schoolClass < b.child.schoolClass) {
+        return -1;
+      }
       return 0;
     });
   }
-
 
   markAttendance(status: AttendanceStatus) {
     const rollCallListEntry = this.rollCallList[this.currentIndex];
@@ -131,7 +148,6 @@ export class RollCallComponent implements OnInit {
 
     this.displayRecordForDebugging(this.rollCallList[this.currentIndex]);
   }
-
 
   endRollCall() {
     this.complete.emit();

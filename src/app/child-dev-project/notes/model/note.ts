@@ -15,27 +15,29 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { MeetingNoteAttendance } from "../meeting-note-attendance";
+import {
+  INTERACTION_TYPE_COLORS,
+  InteractionTypes,
+} from "../interaction-types.enum";
+import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
+import { Entity } from "../../../core/entity/entity";
+import { DatabaseField } from "../../../core/entity/database-field.decorator";
+import { WarningLevel, WarningLevelColor } from "../../warning-level";
 
-import { MeetingNoteAttendance } from '../meeting-note-attendance';
-import { INTERACTION_TYPE_COLORS, InteractionTypes } from '../interaction-types.enum';
-import { DatabaseEntity } from '../../../core/entity/database-entity.decorator';
-import { Entity } from '../../../core/entity/entity';
-import { DatabaseField } from '../../../core/entity/database-field.decorator';
-import { WarningLevel, WarningLevelColor } from '../../warning-level';
-
-@DatabaseEntity('Note')
+@DatabaseEntity("Note")
 export class Note extends Entity {
   /** IDs of Child entities linked with this note */
   @DatabaseField() children: string[] = [];
   /** An array of triplets containing information about the child and it's attendance */
   @DatabaseField() attendances: MeetingNoteAttendance[] = [];
   @DatabaseField() date: Date;
-  @DatabaseField() subject: string = '';
-  @DatabaseField() text: string = '';
-  @DatabaseField() author: string = '';
+  @DatabaseField() subject: string = "";
+  @DatabaseField() text: string = "";
+  @DatabaseField() author: string = "";
   @DatabaseField() category: InteractionTypes = InteractionTypes.NONE;
-  @DatabaseField({dataType: 'string'}) warningLevel: WarningLevel = WarningLevel.OK;
-
+  @DatabaseField({ dataType: "string" }) warningLevel: WarningLevel =
+    WarningLevel.OK;
 
   getWarningLevel(): WarningLevel {
     return this.warningLevel;
@@ -51,7 +53,7 @@ export class Note extends Entity {
     }
 
     const color = INTERACTION_TYPE_COLORS.get(this.category);
-    return color === undefined ? '' : color;
+    return color === undefined ? "" : color;
   }
 
   public getColorForId(entityId: string) {
@@ -75,9 +77,11 @@ export class Note extends Entity {
    * whether or not this note's contents describe a meeting
    */
   isMeeting(): boolean {
-    return  this.category === InteractionTypes.GUARDIAN_MEETING ||
-            this.category === InteractionTypes.CHILDREN_MEETING ||
-            this.category === InteractionTypes.EXCURSION;
+    return (
+      this.category === InteractionTypes.GUARDIAN_MEETING ||
+      this.category === InteractionTypes.CHILDREN_MEETING ||
+      this.category === InteractionTypes.EXCURSION
+    );
   }
 
   /**
@@ -85,7 +89,9 @@ export class Note extends Entity {
    * @param presence true to get the children that were present, false to get the children that were absent
    */
   childrenWithPresence(presence: boolean): MeetingNoteAttendance[] {
-    return this.attendances.filter(attendance => attendance.present === presence);
+    return this.attendances.filter(
+      (attendance) => attendance.present === presence
+    );
   }
 
   /**
@@ -95,8 +101,12 @@ export class Note extends Entity {
    * @param childId The id of the child to check for
    */
   isPresent(childId: string): boolean {
-    const child = this.attendances.find(attendance => attendance.childId === childId);
-    if (child !== undefined) { return child.present; }
+    const child = this.attendances.find(
+      (attendance) => attendance.childId === childId
+    );
+    if (child !== undefined) {
+      return child.present;
+    }
   }
 
   /**
@@ -105,7 +115,12 @@ export class Note extends Entity {
    */
   removeChild(childId: string) {
     this.children.splice(this.children.indexOf(childId), 1);
-    this.attendances.splice(this.attendances.findIndex(attendance => attendance.childId === childId), 1);
+    this.attendances.splice(
+      this.attendances.findIndex(
+        (attendance) => attendance.childId === childId
+      ),
+      1
+    );
   }
 
   /**
@@ -122,7 +137,7 @@ export class Note extends Entity {
    * @param childIds The id's of the children to add
    */
   addChildren(...childIds: string[]) {
-    childIds.forEach(child => this.addChild(child));
+    childIds.forEach((child) => this.addChild(child));
   }
 
   /**
@@ -132,7 +147,11 @@ export class Note extends Entity {
    * @param childId The ID of the child
    */
   togglePresence(childId: string) {
-    const child = this.attendances.find(attendance => attendance.childId === childId );
-    if (child !== undefined) { child.present = !child.present; }
+    const child = this.attendances.find(
+      (attendance) => attendance.childId === childId
+    );
+    if (child !== undefined) {
+      child.present = !child.present;
+    }
   }
 }

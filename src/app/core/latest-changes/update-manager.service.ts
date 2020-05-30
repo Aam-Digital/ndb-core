@@ -15,12 +15,12 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ApplicationRef, Injectable } from '@angular/core';
-import { SwUpdate } from '@angular/service-worker';
-import { first } from 'rxjs/operators';
-import { concat, interval } from 'rxjs';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { LoggingService } from '../logging/logging.service';
+import { ApplicationRef, Injectable } from "@angular/core";
+import { SwUpdate } from "@angular/service-worker";
+import { first } from "rxjs/operators";
+import { concat, interval } from "rxjs";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { LoggingService } from "../logging/logging.service";
 
 /**
  * Check with the server whether a new version of the app is available in order to notify the user.
@@ -31,16 +31,14 @@ import { LoggingService } from '../logging/logging.service';
  */
 @Injectable()
 export class UpdateManagerService {
-
   private notificationRef;
 
   constructor(
     private appRef: ApplicationRef,
     private updates: SwUpdate,
     private snackBar: MatSnackBar,
-    private logger: LoggingService,
-  ) {
-  }
+    private logger: LoggingService
+  ) {}
 
   /**
    * Display a notification to the user in case a new app version is detected by the ServiceWorker.
@@ -56,7 +54,9 @@ export class UpdateManagerService {
    */
   public regularlyCheckForUpdates() {
     // Allow the app to stabilize first, before starting polling for updates with `interval()`.
-    const appIsStable$ = this.appRef.isStable.pipe(first(isStable => isStable === true));
+    const appIsStable$ = this.appRef.isStable.pipe(
+      first((isStable) => isStable === true)
+    );
     const everyHours$ = interval(60 * 60 * 1000);
     const everyHoursOnceAppIsStable$ = concat(appIsStable$, everyHours$);
 
@@ -69,9 +69,11 @@ export class UpdateManagerService {
     });
   }
 
-
   private showUpdateNotification() {
-    this.notificationRef = this.snackBar.open('A new version of the app is available!', 'Update');
+    this.notificationRef = this.snackBar.open(
+      "A new version of the app is available!",
+      "Update"
+    );
     this.notificationRef.onAction().subscribe(() => {
       location.reload();
     });

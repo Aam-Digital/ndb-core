@@ -1,24 +1,24 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { NotePresenceListComponent } from './note-presence-list.component';
-import { Note } from '../../model/note';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { ChildSelectComponent } from '../../../children/child-select/child-select.component';
-import { ChildBlockComponent } from '../../../children/child-block/child-block.component';
-import { ChildrenService } from '../../../children/children.service';
-import { ChildMeetingNoteAttendanceComponent } from '../child-meeting-attendance/child-meeting-note-attendance.component';
-import { FormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { SchoolBlockComponent } from '../../../schools/school-block/school-block.component';
-import { of } from 'rxjs';
-import { Child } from '../../../children/model/child';
-import { MatInputModule } from '@angular/material/input';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { NotePresenceListComponent } from "./note-presence-list.component";
+import { Note } from "../../model/note";
+import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
+import { ChildSelectComponent } from "../../../children/child-select/child-select.component";
+import { ChildBlockComponent } from "../../../children/child-block/child-block.component";
+import { ChildrenService } from "../../../children/children.service";
+import { ChildMeetingNoteAttendanceComponent } from "../child-meeting-attendance/child-meeting-note-attendance.component";
+import { FormsModule } from "@angular/forms";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { SchoolBlockComponent } from "../../../schools/school-block/school-block.component";
+import { of } from "rxjs";
+import { Child } from "../../../children/model/child";
+import { MatInputModule } from "@angular/material/input";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
-describe('NotePresenceListComponent', () => {
+describe("NotePresenceListComponent", () => {
   let component: NotePresenceListComponent;
   let fixture: ComponentFixture<NotePresenceListComponent>;
 
@@ -27,11 +27,11 @@ describe('NotePresenceListComponent', () => {
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
   beforeEach(async(() => {
-    testEntity = new Note('test1');
+    testEntity = new Note("test1");
 
-    mockChildrenService = jasmine.createSpyObj(['getChild', 'getChildren']);
+    mockChildrenService = jasmine.createSpyObj(["getChild", "getChildren"]);
     mockChildrenService.getChildren.and.returnValue(of([]));
-    mockChildrenService.getChild.and.returnValue(of(new Child('')));
+    mockChildrenService.getChild.and.returnValue(of(new Child("")));
 
     TestBed.configureTestingModule({
       declarations: [
@@ -51,11 +51,8 @@ describe('NotePresenceListComponent', () => {
         MatAutocompleteModule,
         NoopAnimationsModule,
       ],
-      providers: [
-        { provide: ChildrenService, useValue: mockChildrenService },
-      ],
-    })
-    .compileComponents();
+      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -67,7 +64,7 @@ describe('NotePresenceListComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

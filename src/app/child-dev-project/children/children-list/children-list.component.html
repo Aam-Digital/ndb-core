@@ -44,7 +44,6 @@
   <div fxLayout='row wrap' fxLayoutGap='10px' class="filter-button" fxHide.lt-sm>
     <mat-button-toggle-group name="columnSelection" [(value)]="columnGroupSelection" fxLayout="row wrap">
       <mat-button-toggle *ngFor="let item of columnGroups " [value]="item.name"
-                         [class.selected]="item.name === columnGroupSelection"
                          (click)="displayColumnGroup(item.name)">
         {{item.name}}
       </mat-button-toggle>
@@ -53,7 +52,6 @@
     <mat-button-toggle-group *ngFor='let filterSelection of filterSelections'
       [name]="filterSelection.name" [value]='filterSelection.selectedOption'>
       <mat-button-toggle *ngFor='let option of filterSelection.options' [value]="option.key"
-                         [class.selected]="option.key === filterSelection.selectedOption"
                          (click)="filterSelection.selectedOption=option.key; applyFilterSelections();"
                          >
         {{option.label}}

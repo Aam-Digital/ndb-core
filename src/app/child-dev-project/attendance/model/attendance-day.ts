@@ -15,25 +15,23 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-import { DatabaseField } from '../../../core/entity/database-field.decorator';
+import { DatabaseField } from "../../../core/entity/database-field.decorator";
 
 export enum AttendanceStatus {
-  UNKNOWN = '?',
-  HOLIDAY = 'H',
-  ABSENT = 'A',
-  PRESENT = 'P',
-  LATE = 'L',
-  EXCUSED = 'E',
+  UNKNOWN = "?",
+  HOLIDAY = "H",
+  ABSENT = "A",
+  PRESENT = "P",
+  LATE = "L",
+  EXCUSED = "E",
 }
 
-
 export class AttendanceDay {
-  @DatabaseField({ dataType: 'date-only' }) date: Date;
+  @DatabaseField({ dataType: "date-only" }) date: Date;
   @DatabaseField() status: AttendanceStatus;
-  @DatabaseField() remarks: string = '';
+  @DatabaseField() remarks: string = "";
 
-  constructor (date: Date, status: AttendanceStatus = AttendanceStatus.UNKNOWN) {
+  constructor(date: Date, status: AttendanceStatus = AttendanceStatus.UNKNOWN) {
     this.date = date;
     this.status = status;
   }

@@ -1,16 +1,15 @@
+import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-note-attendance.component";
+import { MeetingNoteAttendance } from "../../meeting-note-attendance";
 
-import { ChildMeetingNoteAttendanceComponent } from './child-meeting-note-attendance.component';
-import { MeetingNoteAttendance } from '../../meeting-note-attendance';
-
-describe('ChildMeetingAttendanceComponent', () => {
+describe("ChildMeetingAttendanceComponent", () => {
   let component: ChildMeetingNoteAttendanceComponent;
 
   beforeEach(() => {
     component = new ChildMeetingNoteAttendanceComponent();
-    component.noteChildAttendance = new MeetingNoteAttendance('child1');
+    component.noteChildAttendance = new MeetingNoteAttendance("child1");
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

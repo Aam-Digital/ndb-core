@@ -15,19 +15,24 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from '../../../core/entity/entity';
-import { DatabaseEntity } from '../../../core/entity/database-entity.decorator';
-import { DatabaseField } from '../../../core/entity/database-field.decorator';
+import { Entity } from "../../../core/entity/entity";
+import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
+import { DatabaseField } from "../../../core/entity/database-field.decorator";
 
-@DatabaseEntity('ProgressDashboardConfig')
+@DatabaseEntity("ProgressDashboardConfig")
 export class ProgressDashboardConfig extends Entity {
-  @DatabaseField() title: string = 'Progress Widget';
+  @DatabaseField() title: string = "Progress Widget";
   @DatabaseField() parts: Array<ProgressDashboardPart> = [];
 
-
   getTotalPercentage() {
-    const currentTotal = this.parts.reduce((acc, entry) => acc + entry.currentValue, 0);
-    const targetTotal = this.parts.reduce((acc, entry) => acc + entry.targetValue, 0);
+    const currentTotal = this.parts.reduce(
+      (acc, entry) => acc + entry.currentValue,
+      0
+    );
+    const targetTotal = this.parts.reduce(
+      (acc, entry) => acc + entry.targetValue,
+      0
+    );
     return currentTotal / targetTotal;
   }
 }

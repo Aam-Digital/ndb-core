@@ -15,10 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { EntityMapperService } from './entity-mapper.service';
-import { EntitySchemaService } from './schema/entity-schema.service';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { EntityMapperService } from "./entity-mapper.service";
+import { EntitySchemaService } from "./schema/entity-schema.service";
 
 /**
  * Generic system to manage saving and loading documents with the database
@@ -39,14 +39,8 @@ import { EntitySchemaService } from './schema/entity-schema.service';
  * - [How to Create a new Entity Type]{@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
  */
 @NgModule({
-  imports: [
-    CommonModule,
-  ],
+  imports: [CommonModule],
   declarations: [],
-  providers: [
-    EntityMapperService,
-    EntitySchemaService,
-  ],
+  providers: [EntityMapperService, EntitySchemaService],
 })
-export class EntityModule {
-}
+export class EntityModule {}

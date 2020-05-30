@@ -1,19 +1,26 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { DatePipe } from '@angular/common';
-import { ChildSchoolRelation } from '../children/model/childSchoolRelation';
-import { ChildrenService } from '../children/children.service';
-import { SchoolsService } from '../schools/schools.service';
-import * as uniqid from 'uniqid';
-import { ColumnDescription } from '../../core/entity-subrecord/entity-subrecord/column-description';
-import { ColumnDescriptionInputType } from '../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum';
-import moment from 'moment';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from "@angular/core";
+import { DatePipe } from "@angular/common";
+import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
+import { ChildrenService } from "../children/children.service";
+import { SchoolsService } from "../schools/schools.service";
+import * as uniqid from "uniqid";
+import { ColumnDescription } from "../../core/entity-subrecord/entity-subrecord/column-description";
+import { ColumnDescriptionInputType } from "../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
+import moment from "moment";
 
 @Component({
-  selector: 'app-previous-schools',
-  templateUrl: './previous-schools.component.html',
+  selector: "app-previous-schools",
+  templateUrl: "./previous-schools.component.html",
 })
 export class PreviousSchoolsComponent implements OnInit, OnChanges {
-
   /**
    * returns a css-compatible color value from green to red using the given
    * input value
@@ -22,11 +29,13 @@ export class PreviousSchoolsComponent implements OnInit, OnChanges {
    * If the color is NaN, the color will be a light grey
    */
   private static fromPercent(percent: number): string {
-    if (Number.isNaN(percent)) { return 'rgba(130,130,130,0.4)'; }
+    if (Number.isNaN(percent)) {
+      return "rgba(130,130,130,0.4)";
+    }
     // the hsv color-value is to be between 0 (red) and 120 (green)
     // percent is between 0-100, so we have to normalize it first
     const color = (percent / 100) * 120;
-    return 'hsl(' + color + ', 100%, 85%)';
+    return "hsl(" + color + ", 100%, 85%)";
   }
 
   @Input() childId: string;
@@ -37,23 +46,21 @@ export class PreviousSchoolsComponent implements OnInit, OnChanges {
   constructor(
     private childrenService: ChildrenService,
     private schoolsService: SchoolsService,
-    private datePipe: DatePipe,
-  ) { }
-
+    private datePipe: DatePipe
+  ) {}
 
   ngOnInit() {
     this.initColumnDefinitions();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.hasOwnProperty('childId')) {
+    if (changes.hasOwnProperty("childId")) {
       this.loadData(this.childId);
     }
   }
 
-
   async loadData(id: string) {
-    if (!this.childId || this.childId === '') {
+    if (!this.childId || this.childId === "") {
       return;
     }
 
@@ -63,27 +70,56 @@ export class PreviousSchoolsComponent implements OnInit, OnChanges {
   private async initColumnDefinitions() {
     const schools = await this.schoolsService.getSchools().toPromise();
     const schoolMap = {};
-    schools.forEach(s => schoolMap[s.getId()] = s.name);
+    schools.forEach((s) => (schoolMap[s.getId()] = s.name));
 
     this.columns = [
-      new ColumnDescription('schoolId', 'School', ColumnDescriptionInputType.SELECT,
-        schools.map(t => {
-          return {value: t.getId(), label: t.name};
+      new ColumnDescription(
+        "schoolId",
+        "School",
+        ColumnDescriptionInputType.SELECT,
+        schools.map((t) => {
+          return { value: t.getId(), label: t.name };
         }),
-        (schoolId) => schoolMap[schoolId]),
+        (schoolId) => schoolMap[schoolId]
+      ),
 
-      new ColumnDescription('schoolClass', 'Class', ColumnDescriptionInputType.NUMBER),
+      new ColumnDescription(
+        "schoolClass",
+        "Class",
+        ColumnDescriptionInputType.NUMBER
+      ),
 
-      new ColumnDescription('start', 'From', ColumnDescriptionInputType.DATE, null,
-        (v: Date) => v && !isNaN(v.getTime()) ? this.datePipe.transform(v, 'yyyy-MM-dd') : ''),
-
-      new ColumnDescription('end', 'To', ColumnDescriptionInputType.DATE, null,
-        (v: Date) => v && !isNaN(v.getTime()) ? this.datePipe.transform(v, 'yyyy-MM-dd') : ''),
-
-      new ColumnDescription('result', 'Result', ColumnDescriptionInputType.NUMBER, null,
-        (n: number) => n >= 0 && !isNaN(n) ? n + '%' : 'N/A',
+      new ColumnDescription(
+        "start",
+        "From",
+        ColumnDescriptionInputType.DATE,
         null,
-        this.resultColorStyleBuilder),
+        (v: Date) =>
+          v && !isNaN(v.getTime())
+            ? this.datePipe.transform(v, "yyyy-MM-dd")
+            : ""
+      ),
+
+      new ColumnDescription(
+        "end",
+        "To",
+        ColumnDescriptionInputType.DATE,
+        null,
+        (v: Date) =>
+          v && !isNaN(v.getTime())
+            ? this.datePipe.transform(v, "yyyy-MM-dd")
+            : ""
+      ),
+
+      new ColumnDescription(
+        "result",
+        "Result",
+        ColumnDescriptionInputType.NUMBER,
+        null,
+        (n: number) => (n >= 0 && !isNaN(n) ? n + "%" : "N/A"),
+        null,
+        this.resultColorStyleBuilder
+      ),
     ];
   }
 
@@ -93,10 +129,13 @@ export class PreviousSchoolsComponent implements OnInit, OnChanges {
       const newPreviousSchool = new ChildSchoolRelation(uniqid());
       newPreviousSchool.childId = childId;
       // last to-date (of first entry in records); if the first entry doesn't have any to-date, lastToDate is set to yesterday
-      const lastToDate = (this.records.length && this.records[0].end)
-        ? new Date(this.records[0].end)
-        : new Date(new Date().setDate(new Date().getDate() + -1));
-      newPreviousSchool.start = new Date(lastToDate.setDate(lastToDate.getDate() + 1));  // one day after last to-date
+      const lastToDate =
+        this.records.length && this.records[0].end
+          ? new Date(this.records[0].end)
+          : new Date(new Date().setDate(new Date().getDate() + -1));
+      newPreviousSchool.start = new Date(
+        lastToDate.setDate(lastToDate.getDate() + 1)
+      ); // one day after last to-date
       newPreviousSchool.end = null; // void date
       newPreviousSchool.result = Number.NaN; // NaN represents no data available
       return newPreviousSchool;
@@ -106,28 +145,30 @@ export class PreviousSchoolsComponent implements OnInit, OnChanges {
   formValidation = (record) => {
     const validationResult = {
       hasPassedValidation: false,
-      validationMessage: '',
+      validationMessage: "",
     };
     if (!record.schoolId) {
-      validationResult.validationMessage = '"Name" is empty. Please select a school.';
-    } else if (moment(record.start).isAfter(record.end, 'days')) {
-      validationResult.validationMessage = '"To"-date lies before "From"-date. Please enter correct dates.';
+      validationResult.validationMessage =
+        '"Name" is empty. Please select a school.';
+    } else if (moment(record.start).isAfter(record.end, "days")) {
+      validationResult.validationMessage =
+        '"To"-date lies before "From"-date. Please enter correct dates.';
     } else if (record.result > 100) {
-      validationResult.validationMessage = 'Result cannot be greater than 100';
+      validationResult.validationMessage = "Result cannot be greater than 100";
     } else if (record.result < 0) {
-      validationResult.validationMessage = 'Result cannot be smaller than 0';
+      validationResult.validationMessage = "Result cannot be smaller than 0";
     } else {
       validationResult.hasPassedValidation = true;
     }
     return validationResult;
-  }
+  };
 
   resultColorStyleBuilder(value: number) {
     return {
-      'background-color': PreviousSchoolsComponent.fromPercent(value),
-      'border-radius': '5%',
-      'padding': '5px',
-      'width': 'min-content',
+      "background-color": PreviousSchoolsComponent.fromPercent(value),
+      "border-radius": "5%",
+      padding: "5px",
+      width: "min-content",
     };
   }
 }

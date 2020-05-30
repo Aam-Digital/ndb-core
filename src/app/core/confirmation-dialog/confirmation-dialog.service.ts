@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { Injectable } from "@angular/core";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { ConfirmationDialogComponent } from "./confirmation-dialog/confirmation-dialog.component";
 
 /**
  * Inject this service instead of MatDialog if you need a simple, configurable confirmation dialog box
@@ -18,7 +18,6 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
  */
 @Injectable()
 export class ConfirmationDialogService {
-
   constructor(private dialog: MatDialog) {}
 
   /**
@@ -30,7 +29,11 @@ export class ConfirmationDialogService {
    *          You can use this to control the dialog or subscribe to its result:
    *          (`ref.afterClosed().subscribe(confirmed => myAction(confirmed));`
    */
-  openDialog(title: string, text: string, yesNoButtons = true): MatDialogRef<ConfirmationDialogComponent> {
+  openDialog(
+    title: string,
+    text: string,
+    yesNoButtons = true
+  ): MatDialogRef<ConfirmationDialogComponent> {
     return this.dialog.open(ConfirmationDialogComponent, {
       data: { title: title, text: text, yesNo: yesNoButtons },
     });

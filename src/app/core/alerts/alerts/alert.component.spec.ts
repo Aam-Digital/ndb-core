@@ -15,17 +15,17 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { AlertComponent } from './alert.component';
-import { AlertService } from '../alert.service';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
-import { Alert } from '../alert';
-import { AlertDisplay } from '../alert-display';
+import { AlertComponent } from "./alert.component";
+import { AlertService } from "../alert.service";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MAT_SNACK_BAR_DATA } from "@angular/material/snack-bar";
+import { Alert } from "../alert";
+import { AlertDisplay } from "../alert-display";
 
-describe('AlertComponent', () => {
+describe("AlertComponent", () => {
   let component: AlertComponent;
   let fixture: ComponentFixture<AlertComponent>;
 
@@ -34,11 +34,13 @@ describe('AlertComponent', () => {
       declarations: [AlertComponent],
       providers: [
         AlertService,
-        {provide: MAT_SNACK_BAR_DATA, useValue: new Alert('test', Alert.WARNING, AlertDisplay.PERSISTENT)},
+        {
+          provide: MAT_SNACK_BAR_DATA,
+          useValue: new Alert("test", Alert.WARNING, AlertDisplay.PERSISTENT),
+        },
       ],
       imports: [MatIconModule, MatButtonModule],
-    })
-      .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -47,9 +49,7 @@ describe('AlertComponent', () => {
     fixture.detectChanges();
   });
 
-
-  it('should be created', () => {
+  it("should be created", () => {
     expect(component).toBeTruthy();
   });
-
 });

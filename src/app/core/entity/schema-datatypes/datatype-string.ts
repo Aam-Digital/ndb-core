@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
+import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
 
 /**
  * Datatype for the EntitySchemaService transforming values to "string".
@@ -30,7 +30,7 @@ import { EntitySchemaDatatype } from '../schema/entity-schema-datatype';
  * `@DatabaseField({dataType: 'string'}) myValue: any;`
  */
 export const stringEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: 'string',
+  name: "string",
 
   transformToDatabaseFormat: (value) => {
     if (!value) {
