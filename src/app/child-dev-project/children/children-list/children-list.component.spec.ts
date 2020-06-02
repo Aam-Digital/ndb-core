@@ -29,7 +29,6 @@ import { EntitySubrecordModule } from "../../../core/entity-subrecord/entity-sub
 import { AttendanceDayBlockComponent } from "../../attendance/attendance-days/attendance-day-block.component";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { ExportDataComponent } from "../../../core/admin/export-data/export-data.component";
-import { PapaParseModule } from "ngx-papaparse";
 import { ChildPhotoService } from "../child-photo-service/child-photo.service";
 
 describe("ChildrenListComponent", () => {
@@ -68,7 +67,6 @@ describe("ChildrenListComponent", () => {
           { path: "child", component: ChildrenListComponent },
         ]),
         EntitySubrecordModule,
-        PapaParseModule,
       ],
       providers: [
         ChildrenService,
