@@ -43,7 +43,7 @@
     "rxjs": "^6.5.5",
     "tslib": "^1.13.0",
     "uniqid": "^5.2.0",
-    "webdav": "^2.10.1",
+    "webdav": "^3.3.0",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
