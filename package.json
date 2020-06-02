@@ -32,7 +32,7 @@
     "file-saver": "^2.0.2",
     "font-awesome": "^4.7.0",
     "moment": "^2.26.0",
-    "ngx-cookie-service": "^2.4.0",
+    "ngx-cookie-service": "^3.0.4",
     "ngx-filter-pipe": "^2.1.2",
     "ngx-markdown": "^9.1.1",
     "ngx-papaparse": "^4.0.4",
