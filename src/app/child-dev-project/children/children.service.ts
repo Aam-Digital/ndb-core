@@ -55,6 +55,7 @@ export class ChildrenService {
         loadedChild.schoolId = childCurrentSchoolInfo.schoolId;
       }
       results.next(loadedChildren);
+      results.complete();
     });
 
     return results;

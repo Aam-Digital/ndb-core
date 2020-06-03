@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
-import { Subscription } from "rxjs";
 import { Note } from "../model/note";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatSort } from "@angular/material/sort";
@@ -12,15 +11,15 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { FilterSelection } from "../../../core/filter/filter-selection/filter-selection";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-notes-manager",
   templateUrl: "./notes-manager.component.html",
   styleUrls: ["./notes-manager.component.scss"],
 })
 export class NotesManagerComponent implements OnInit, AfterViewInit {
-  watcher: Subscription;
-  activeMediaQuery = "";
   entityList = new Array<Note>();
   notesDataSource = new MatTableDataSource();
 
@@ -87,12 +86,14 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     });
 
     this.displayColumnGroup("standard");
-    this.watcher = this.media.media$.subscribe((change: MediaChange) => {
-      if (change.mqAlias === "xs" || change.mqAlias === "sm") {
-        console.log("smaller screen toggled");
-        this.displayColumnGroup("mobile");
-      }
-    });
+    this.media.media$
+      .pipe(untilDestroyed(this))
+      .subscribe((change: MediaChange) => {
+        if (change.mqAlias === "xs" || change.mqAlias === "sm") {
+          console.log("smaller screen toggled");
+          this.displayColumnGroup("mobile");
+        }
+      });
 
     this.initCategoryFilter();
     this.notesDataSource.paginator = this.paginator;

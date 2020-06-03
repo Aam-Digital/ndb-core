@@ -5,7 +5,9 @@ import { Aser } from "../model/aser";
 import { ColumnDescription } from "../../../core/entity-subrecord/entity-subrecord/column-description";
 import { ChildrenService } from "../../children/children.service";
 import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-aser",
   template:
@@ -82,19 +84,22 @@ export class AserComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.route.paramMap.subscribe((params) => {
+    this.route.paramMap.pipe(untilDestroyed(this)).subscribe((params) => {
       this.childId = params.get("id").toString();
       this.loadData(this.childId);
     });
   }
 
   loadData(id: string) {
-    this.childrenService.getAserResultsOfChild(id).subscribe((results) => {
-      this.records = results.sort(
-        (a, b) =>
-          (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0)
-      );
-    });
+    this.childrenService
+      .getAserResultsOfChild(id)
+      .pipe(untilDestroyed(this))
+      .subscribe((results) => {
+        this.records = results.sort(
+          (a, b) =>
+            (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0)
+        );
+      });
   }
 
   generateNewRecordFactory() {
