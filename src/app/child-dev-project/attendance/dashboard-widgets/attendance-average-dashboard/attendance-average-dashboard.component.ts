@@ -2,7 +2,9 @@ import { Component, OnInit } from "@angular/core";
 import { ChildrenService } from "../../../children/children.service";
 import { Child } from "../../../children/model/child";
 import { Router } from "@angular/router";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-attendance-average-dashboard",
   templateUrl: "./attendance-average-dashboard.component.html",
@@ -50,6 +52,7 @@ export class AttendanceAverageDashboardComponent implements OnInit {
       if (record[2] >= this.ATTENDANCE_THRESHOLD) {
         this.childrenService
           .getChild(studentStat.key)
+          .pipe(untilDestroyed(this))
           .subscribe((child) => (record[0] = child));
       } else {
         countMap.delete(studentStat.key);

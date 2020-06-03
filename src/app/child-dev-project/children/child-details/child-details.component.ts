@@ -29,7 +29,9 @@ import { AlertService } from "../../../core/alerts/alert.service";
 import { ChildrenService } from "../children.service";
 import { ChildPhotoService } from "../child-photo-service/child-photo.service";
 import { SessionService } from "../../../core/session/session-service/session.service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-child-details",
   templateUrl: "./child-details.component.html",
@@ -164,18 +166,24 @@ export class ChildDetailsComponent implements OnInit {
       this.editing = true;
       this.child = new Child(uniqid());
     } else {
-      this.childrenService.getChild(id).subscribe((child) => {
-        this.child = child;
-        this.initForm();
-      });
+      this.childrenService
+        .getChild(id)
+        .pipe(untilDestroyed(this))
+        .subscribe((child) => {
+          this.child = child;
+          this.initForm();
+        });
     }
     this.initForm();
   }
 
   changedRecordInEntitySubrecord() {
-    this.childrenService.getChild(this.child.getId()).subscribe((child) => {
-      this.child = child;
-    });
+    this.childrenService
+      .getChild(this.child.getId())
+      .pipe(untilDestroyed(this))
+      .subscribe((child) => {
+        this.child = child;
+      });
   }
 
   switchEdit() {

@@ -6,7 +6,9 @@ import { ColumnDescription } from "../../../core/entity-subrecord/entity-subreco
 import { DatePipe, PercentPipe } from "@angular/common";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
 import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-child-attendance",
   templateUrl: "./child-attendance.component.html",
@@ -85,22 +87,26 @@ export class ChildAttendanceComponent implements OnInit {
   }
 
   loadData(id: string) {
-    this.childrenService.getAttendancesOfChild(id).subscribe((results) => {
-      this.records = results
-        .filter(
-          (r) =>
-            this.institution === undefined || r.institution === this.institution
-        )
-        .sort(
-          (a, b) =>
-            (b.month ? b.month.valueOf() : 0) -
-            (a.month ? a.month.valueOf() : 0)
-        );
+    this.childrenService
+      .getAttendancesOfChild(id)
+      .pipe(untilDestroyed(this))
+      .subscribe((results) => {
+        this.records = results
+          .filter(
+            (r) =>
+              this.institution === undefined ||
+              r.institution === this.institution
+          )
+          .sort(
+            (a, b) =>
+              (b.month ? b.month.valueOf() : 0) -
+              (a.month ? a.month.valueOf() : 0)
+          );
 
-      if (this.showDailyAttendanceOfLatest) {
-        this.createCurrentMonthsAttendanceIfNotExists();
-      }
-    });
+        if (this.showDailyAttendanceOfLatest) {
+          this.createCurrentMonthsAttendanceIfNotExists();
+        }
+      });
   }
 
   private createCurrentMonthsAttendanceIfNotExists() {

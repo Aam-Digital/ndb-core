@@ -1,5 +1,5 @@
 {
-  "tsconfig": "src/tsconfig.app.json",
+  "tsconfig": "tsconfig.json",
   "output": "doc/compodoc",
   "assetsFolder": "doc/images",
   "includes": "doc/compodoc_sources",

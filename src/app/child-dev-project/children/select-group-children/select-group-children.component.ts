@@ -5,10 +5,12 @@ import {
   FilterSelection,
   FilterSelectionOption,
 } from "../../../core/filter/filter-selection/filter-selection";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Use this component in your template to allow the user to select a group of children.
  */
+@UntilDestroy()
 @Component({
   selector: "app-select-group-children",
   templateUrl: "./select-group-children.component.html",
@@ -32,13 +34,16 @@ export class SelectGroupChildrenComponent implements OnInit {
   constructor(private childrenService: ChildrenService) {}
 
   ngOnInit() {
-    this.childrenService.getChildren().subscribe((children) => {
-      this.children = children.filter((c) => c.isActive());
-      this.centerFilters.options = this.loadFilterOptionsForProperty(
-        this.children,
-        "center"
-      );
-    });
+    this.childrenService
+      .getChildren()
+      .pipe(untilDestroyed(this))
+      .subscribe((children) => {
+        this.children = children.filter((c) => c.isActive());
+        this.centerFilters.options = this.loadFilterOptionsForProperty(
+          this.children,
+          "center"
+        );
+      });
   }
 
   private loadFilterOptionsForProperty(

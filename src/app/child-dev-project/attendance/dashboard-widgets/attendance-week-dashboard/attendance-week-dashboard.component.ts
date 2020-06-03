@@ -5,7 +5,9 @@ import { AttendanceMonth } from "../../model/attendance-month";
 import { AttendanceDay, AttendanceStatus } from "../../model/attendance-day";
 import { Child } from "../../../children/model/child";
 import { forkJoin } from "rxjs";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-attendance-week-dashboard",
   templateUrl: "./attendance-week-dashboard.component.html",
@@ -55,7 +57,7 @@ export class AttendanceWeekDashboardComponent implements OnInit {
     );
 
     const o1 = this.childrenService.getAttendancesOfMonth(previousMonday);
-    o1.subscribe((attendances) => {
+    o1.pipe(untilDestroyed(this)).subscribe((attendances) => {
       attendances.forEach((a) =>
         this.extractRelevantAttendanceDays(a, previousMonday, previousSaturday)
       );
@@ -63,7 +65,7 @@ export class AttendanceWeekDashboardComponent implements OnInit {
     let o2 = o1;
     if (previousMonday.getMonth() !== previousSaturday.getMonth()) {
       o2 = this.childrenService.getAttendancesOfMonth(previousSaturday);
-      o2.subscribe((attendances) =>
+      o2.pipe(untilDestroyed(this)).subscribe((attendances) =>
         attendances.forEach((a) =>
           this.extractRelevantAttendanceDays(
             a,
@@ -91,6 +93,7 @@ export class AttendanceWeekDashboardComponent implements OnInit {
       };
       this.childrenService
         .getChild(attendanceMonth.student)
+        .pipe(untilDestroyed(this))
         .subscribe((child) => (record.child = child));
       this.attendanceRecordsMap.set(attendanceMonth.student, record);
     }
