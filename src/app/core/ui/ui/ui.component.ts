@@ -30,7 +30,7 @@ import { Subscription } from "rxjs";
   moduleId: module.id,
   selector: "app-ui",
   templateUrl: "./ui.component.html",
-  styleUrls: ["./ui.component.css"],
+  styleUrls: ["./ui.component.scss"],
 })
 export class UiComponent implements OnInit, OnDestroy {
   /** display mode for the menu to make it responive and usable on smaller screens */
