@@ -76,7 +76,7 @@
 <!--<mat-divider></mat-divider>-->
 
 <div class="mat-elevation-z8 table-list">
-  <table mat-table [dataSource]="childrenDataSource" matSort>
+  <table mat-table [dataSource]="childrenDataSource" matSort width='100%'>
     <ng-container matColumnDef="projectNumber">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> PN </th>
       <td mat-cell *matCellDef="let child"> {{child.projectNumber}}</td>
