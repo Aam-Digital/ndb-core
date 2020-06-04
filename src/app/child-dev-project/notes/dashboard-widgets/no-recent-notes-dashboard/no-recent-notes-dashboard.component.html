@@ -43,7 +43,7 @@
         <tr mat-header-row *matHeaderRowDef="columnsToDisplay" style="display: none;"></tr>
         <tr mat-row *matRowDef="let child; columns: columnsToDisplay" (click)="showChildDetails(child)" style="cursor:pointer;"></tr>
       </table>
-      <mat-paginator [pageSize]="5" [pageSizeOptions]="[3, 10, 20, 50]" [showFirstLastButtons]="true"></mat-paginator>
+      <mat-paginator [pageSize]="4" [pageSizeOptions]="[4, 10, 20, 50]" [showFirstLastButtons]="true"></mat-paginator>
     </div>
   </mat-card-content>
 </mat-card>
