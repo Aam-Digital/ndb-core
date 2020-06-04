@@ -10,7 +10,7 @@ import { MatPaginator } from "@angular/material/paginator";
 @Component({
   selector: "app-schools-list",
   templateUrl: "./schools-list.component.html",
-  styleUrls: ["./schools-list.component.css"],
+  styleUrls: ["./schools-list.component.scss"],
 })
 export class SchoolsListComponent implements OnInit, AfterViewInit {
   schoolList: School[];
