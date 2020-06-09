@@ -2,7 +2,9 @@ import { Component, HostListener, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-child-block",
   templateUrl: "./child-block.component.html",
@@ -22,9 +24,12 @@ export class ChildBlockComponent implements OnInit {
 
   async ngOnInit() {
     if (this.entityId) {
-      this.childrenService.getChild(this.entityId).subscribe((child) => {
-        this.entity = child;
-      });
+      this.childrenService
+        .getChild(this.entityId)
+        .pipe(untilDestroyed(this))
+        .subscribe((child) => {
+          this.entity = child;
+        });
     }
   }
 

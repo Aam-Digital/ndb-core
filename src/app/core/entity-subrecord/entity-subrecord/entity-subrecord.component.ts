@@ -3,7 +3,6 @@ import {
   Input,
   OnChanges,
   OnInit,
-  OnDestroy,
   SimpleChanges,
   ViewChild,
   Output,
@@ -16,7 +15,6 @@ import { Entity } from "../../entity/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { ColumnDescription } from "./column-description";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
-import { Subscription } from "rxjs";
 import { AlertService } from "app/core/alerts/alert.service";
 import { FormValidationResult } from "./form-validation-result";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
@@ -24,6 +22,7 @@ import { ColumnDescriptionInputType } from "./column-description-input-type.enum
 import { ComponentType } from "@angular/cdk/overlay";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { ShowsEntity } from "../../form-dialog/shows-entity.interface";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Generically configurable component to display and edit a list of entities in a compact way
@@ -35,12 +34,13 @@ import { ShowsEntity } from "../../form-dialog/shows-entity.interface";
  * A detailed Guide on how to use this component is available:
  * - [How to display related entities]{@link /additional-documentation/how-to-guides/display-related-entities.html}
  */
+@UntilDestroy()
 @Component({
   selector: "app-entity-subrecord",
   templateUrl: "./entity-subrecord.component.html",
   styleUrls: ["./entity-subrecord.component.scss"],
 })
-export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
+export class EntitySubrecordComponent implements OnInit, OnChanges {
   /** data to be displayed */
   @Input() records: Array<Entity>;
 
@@ -91,7 +91,6 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
   private originalRecords = [];
 
   private screenWidth = "";
-  private flexMediaWatcher: Subscription;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
@@ -103,14 +102,14 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
     private alertService: AlertService,
     private media: MediaObserver
   ) {
-    this.flexMediaWatcher = this.media.media$.subscribe(
-      (change: MediaChange) => {
+    this.media.media$
+      .pipe(untilDestroyed(this))
+      .subscribe((change: MediaChange) => {
         if (change.mqAlias !== this.screenWidth) {
           this.screenWidth = change.mqAlias;
           this.setupTable();
         }
-      }
-    );
+      });
   }
 
   ngOnInit() {
@@ -134,10 +133,6 @@ export class EntitySubrecordComponent implements OnInit, OnChanges, OnDestroy {
       this.columnsToDisplay.push("actions");
       this.setupTable();
     }
-  }
-
-  ngOnDestroy() {
-    this.flexMediaWatcher.unsubscribe();
   }
 
   /**

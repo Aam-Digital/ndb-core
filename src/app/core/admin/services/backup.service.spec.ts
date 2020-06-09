@@ -2,7 +2,6 @@ import { TestBed } from "@angular/core/testing";
 
 import { BackupService } from "./backup.service";
 import { Database } from "../../database/database";
-import { PapaParseModule } from "ngx-papaparse";
 import { MockDatabase } from "../../database/mock-database";
 
 describe("BackupService", () => {
@@ -12,7 +11,6 @@ describe("BackupService", () => {
   beforeEach(() => {
     db = new MockDatabase();
     TestBed.configureTestingModule({
-      imports: [PapaParseModule],
       providers: [BackupService, { provide: Database, useValue: db }],
     });
 

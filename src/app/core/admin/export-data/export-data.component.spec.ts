@@ -3,7 +3,6 @@ import { BackupService } from "../services/backup.service";
 import { ExportDataComponent } from "./export-data.component";
 import { Database } from "../../database/database";
 import { MockDatabase } from "../../database/mock-database";
-import { PapaParseModule } from "ngx-papaparse";
 
 describe("ExportDataComponent", () => {
   let component: ExportDataComponent;
@@ -11,7 +10,6 @@ describe("ExportDataComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [PapaParseModule],
       declarations: [ExportDataComponent],
       providers: [BackupService, { provide: Database, useClass: MockDatabase }],
     }).compileComponents();

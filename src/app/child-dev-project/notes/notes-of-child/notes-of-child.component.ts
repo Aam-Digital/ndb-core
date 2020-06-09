@@ -13,10 +13,12 @@ import moment from "moment";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { ColumnDescription } from "../../../core/entity-subrecord/entity-subrecord/column-description";
 import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
  */
+@UntilDestroy()
 @Component({
   selector: "app-notes-of-child",
   templateUrl: "./notes-of-child.component.html",
@@ -97,6 +99,7 @@ export class NotesOfChildComponent implements OnInit, OnChanges {
 
     this.childrenService
       .getNotesOfChild(this.childId)
+      .pipe(untilDestroyed(this))
       .subscribe((notes: Note[]) => {
         notes.sort(
           (a, b) => moment(a.date).valueOf() - moment(b.date).valueOf()

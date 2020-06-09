@@ -4,7 +4,6 @@ import { AdminComponent } from "./admin/admin.component";
 import { MatButtonModule } from "@angular/material/button";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { BrowserModule } from "@angular/platform-browser";
-import { PapaParseModule } from "ngx-papaparse";
 import { AlertsModule } from "../alerts/alerts.module";
 import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
 import { AdminGuard } from "./admin.guard";
@@ -34,7 +33,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatSnackBarModule,
     MatTableModule,
     MatCheckboxModule,
-    PapaParseModule,
     AlertsModule,
     EntitySubrecordModule,
     EntityModule,

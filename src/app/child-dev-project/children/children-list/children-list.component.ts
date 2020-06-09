@@ -1,10 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from "@angular/core";
+import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
 import { Child } from "../model/child";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
@@ -15,20 +9,20 @@ import { FilterSelection } from "../../../core/filter/filter-selection/filter-se
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { Subscription } from "rxjs";
 import { MatPaginator } from "@angular/material/paginator";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 export interface ColumnGroup {
   name: string;
   columns: string[];
 }
 
+@UntilDestroy()
 @Component({
   selector: "app-children-list",
   templateUrl: "./children-list.component.html",
   styleUrls: ["./children-list.component.scss"],
 })
-export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
-  watcher: Subscription;
-  activeMediaQuery = "";
+export class ChildrenListComponent implements OnInit, AfterViewInit {
   childrenList: Child[] = [];
   attendanceList = new Map<string, AttendanceMonth[]>();
   childrenDataSource = new MatTableDataSource();
@@ -128,11 +122,13 @@ export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.loadData();
     this.loadUrlParams();
-    this.watcher = this.media.media$.subscribe((change: MediaChange) => {
-      if (change.mqAlias === "xs") {
-        this.displayColumnGroup("Mobile");
-      }
-    });
+    this.media.media$
+      .pipe(untilDestroyed(this))
+      .subscribe((change: MediaChange) => {
+        if (change.mqAlias === "xs") {
+          this.displayColumnGroup("Mobile");
+        }
+      });
   }
 
   private loadUrlParams(replaceUrl: boolean = false) {
@@ -158,17 +154,21 @@ export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadData(replaceUrl: boolean = false) {
-    this.childrenService.getChildren().subscribe((children) => {
-      this.childrenList = children;
-      const centers = children
-        .map((c) => c.center)
-        .filter((value, index, arr) => value && arr.indexOf(value) === index);
-      this.centerFS.initOptions(centers, "center");
+    this.childrenService
+      .getChildren()
+      .pipe(untilDestroyed(this))
+      .subscribe((children) => {
+        this.childrenList = children;
+        const centers = children
+          .map((c) => c.center)
+          .filter((value, index, arr) => value && arr.indexOf(value) === index);
+        this.centerFS.initOptions(centers, "center");
 
-      this.applyFilterSelections(replaceUrl);
-    });
+        this.applyFilterSelections(replaceUrl);
+      });
     this.childrenService
       .getAttendances()
+      .pipe(untilDestroyed(this))
       .subscribe((results) => this.prepareAttendanceData(results));
   }
   /*
@@ -259,9 +259,5 @@ export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   showChildDetails(child: Child) {
     this.router.navigate(["/child", child.getId()]);
-  }
-
-  ngOnDestroy() {
-    this.watcher.unsubscribe();
   }
 }

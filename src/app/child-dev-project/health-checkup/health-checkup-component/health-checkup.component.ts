@@ -5,7 +5,9 @@ import { ActivatedRoute } from "@angular/router";
 import { ChildrenService } from "../../children/children.service";
 import { DatePipe } from "@angular/common";
 import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-health-checkup",
   templateUrl: "./health-checkup.component.html",
@@ -86,6 +88,7 @@ export class HealthCheckupComponent implements OnInit {
   loadHealthChecks() {
     this.childrenService
       .getHealthChecksOfChild(this.childId)
+      .pipe(untilDestroyed(this))
       .subscribe((results) => {
         this.records = results.sort(
           (a, b) =>
