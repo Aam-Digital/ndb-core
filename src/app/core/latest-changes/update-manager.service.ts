@@ -44,6 +44,10 @@ export class UpdateManagerService {
    * Display a notification to the user in case a new app version is detected by the ServiceWorker.
    */
   public notifyUserWhenUpdateAvailable() {
+    if (!this.updates.isEnabled) {
+      return;
+    }
+
     this.updates.available.subscribe(() => {
       this.showUpdateNotification();
     });
@@ -53,6 +57,10 @@ export class UpdateManagerService {
    * Schedule a regular check with the server for updates.
    */
   public regularlyCheckForUpdates() {
+    if (!this.updates.isEnabled) {
+      return;
+    }
+
     // Allow the app to stabilize first, before starting polling for updates with `interval()`.
     const appIsStable$ = this.appRef.isStable.pipe(
       first((isStable) => isStable === true)
