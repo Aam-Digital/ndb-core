@@ -43,7 +43,7 @@ export class ChildSelectComponent implements OnChanges {
       .getChildren()
       .pipe(untilDestroyed(this))
       .subscribe((children) => {
-        this.allChildren = children;
+        this.allChildren = [...children]; // clone array
         this.suggestions = this.allChildren;
 
         this.selectInitialSelectedChildren();
