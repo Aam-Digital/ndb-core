@@ -51,8 +51,8 @@ export class NoRecentNotesDashboardComponent implements OnInit, AfterViewInit {
   childrenWithNoteInfoDataSource: MatTableDataSource<
     ChildWithRecentNoteInfo
   > = new MatTableDataSource<ChildWithRecentNoteInfo>();
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
     private childrenService: ChildrenService,

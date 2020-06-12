@@ -20,8 +20,8 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
     School
   >();
 
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   filterString = "";
   columnsToDisplay: string[] = [
     "name",

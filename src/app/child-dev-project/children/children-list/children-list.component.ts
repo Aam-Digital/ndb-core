@@ -43,8 +43,8 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   ]);
   filterSelections = [this.dropoutFS, this.centerFS];
 
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   columnGroupSelection = "School Info";
   columnGroups: ColumnGroup[] = [
     {
