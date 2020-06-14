@@ -17,7 +17,7 @@
     </div>
     <!-- add new button -->
     <div fxFlex='25' class='align-form-field'>
-      <button mat-stroked-button color="accent" (click)="addChildClick()">
+      <button mat-stroked-button color="accent" [routerLink]="['/child', 'new']">
         <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>
         <span fxHide.lt-md="true">
           Add New
@@ -44,7 +44,6 @@
   <div fxLayout='row wrap' fxLayoutGap='10px' class="filter-button" fxHide.lt-sm>
     <mat-button-toggle-group name="columnSelection" [(value)]="columnGroupSelection" fxLayout="row wrap">
       <mat-button-toggle *ngFor="let item of columnGroups " [value]="item.name"
-                         [class.selected]="item.name === columnGroupSelection"
                          (click)="displayColumnGroup(item.name)">
         {{item.name}}
       </mat-button-toggle>
@@ -53,7 +52,6 @@
     <mat-button-toggle-group *ngFor='let filterSelection of filterSelections'
       [name]="filterSelection.name" [value]='filterSelection.selectedOption'>
       <mat-button-toggle *ngFor='let option of filterSelection.options' [value]="option.key"
-                         [class.selected]="option.key === filterSelection.selectedOption"
                          (click)="filterSelection.selectedOption=option.key; applyFilterSelections();"
                          >
         {{option.label}}
@@ -219,9 +217,9 @@
 
 
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-    <tr mat-row *matRowDef="let child; columns: columnsToDisplay" (click)="showChildDetails(child)"
+    <tr mat-row *matRowDef="let child; columns: columnsToDisplay" [routerLink]="['/child', child.getId()]"
         style="cursor:pointer;" class="table-list-item"></tr>
 
   </table>
-  <mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 10, 20, 50]" [showFirstLastButtons]="true"></mat-paginator>
+  <mat-paginator [pageSize]="20" [pageSizeOptions]="[3, 10, 20, 50]" [showFirstLastButtons]="true"></mat-paginator>
 </div>

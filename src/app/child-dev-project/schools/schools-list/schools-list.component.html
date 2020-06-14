@@ -31,7 +31,6 @@
     <mat-button-toggle-group *ngFor='let filterSelection of filterSelections'
                              [name]="filterSelection.name" [value]='filterSelection.selectedOption'>
       <mat-button-toggle *ngFor='let option of filterSelection.options' [value]="option.key"
-                         [class.selected]="option.key === filterSelection.selectedOption"
                          (click)="filterSelection.selectedOption=option.key; applyFilterSelections();">
         {{option.label}}
       </mat-button-toggle>
@@ -83,5 +82,5 @@
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
     <tr mat-row *matRowDef="let school; columns: columnsToDisplay" (click)="showSchoolDetails(school)" style="cursor:pointer;"></tr>
   </table>
-  <mat-paginator [pageSize]="3" [pageSizeOptions]="[3, 5, 10]" [showFirstLastButtons]="true"></mat-paginator>
+  <mat-paginator [pageSize]="20" [pageSizeOptions]="[3, 10, 20, 50]" [showFirstLastButtons]="true"></mat-paginator>
 </div>
