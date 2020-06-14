@@ -42,7 +42,6 @@ export class PouchDatabase extends Database {
    * @param id The primary key of the document to be loaded
    */
   get(id: string) {
-    this.alertService.addDebug("DB_READ");
     return this._pouchDB.get(id).catch((err) => {
       this.notifyError(err);
       throw err;
@@ -60,7 +59,6 @@ export class PouchDatabase extends Database {
    * @param options PouchDB options object as in the normal PouchDB library
    */
   allDocs(options?: any) {
-    this.alertService.addDebug("DB_READ");
     return this._pouchDB.allDocs(options).then((result) => {
       const resultArray = [];
       for (const row of result.rows) {
@@ -78,7 +76,6 @@ export class PouchDatabase extends Database {
    * @param forceOverwrite (Optional) Whether conflicts should be ignored and an existing conflicting document forcefully overwritten.
    */
   put(object: any, forceOverwrite?: boolean) {
-    this.alertService.addDebug("DB_WRITE");
     const options: any = {};
     // if (forceOverwrite) {
     //   options.force = true;
@@ -118,7 +115,6 @@ export class PouchDatabase extends Database {
    * @param options Additional options for the query, like a `key`. See the PouchDB docs for details.
    */
   query(fun: (doc: any, emit: any) => void, options: any): Promise<any> {
-    this.alertService.addDebug("DB_READ");
     return this._pouchDB.query(fun, options);
   }
 
