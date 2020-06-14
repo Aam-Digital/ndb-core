@@ -7,6 +7,7 @@ import { ChildrenService } from "../children.service";
 import { AttendanceMonth } from "../../attendance/model/attendance-month";
 import { FilterSelection } from "../../../core/filter/filter-selection/filter-selection";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
+import { MatPaginator } from "@angular/material/paginator";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 export interface ColumnGroup {
@@ -41,7 +42,8 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   ]);
   filterSelections = [this.dropoutFS, this.centerFS];
 
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   columnGroupSelection = "School Info";
   columnGroups: ColumnGroup[] = [
     {
@@ -147,6 +149,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.childrenDataSource.sort = this.sort;
+    this.childrenDataSource.paginator = this.paginator;
   }
 
   private loadData(replaceUrl: boolean = false) {
@@ -247,13 +250,5 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.childrenDataSource.data = filteredData;
 
     this.updateUrl(replaceUrl);
-  }
-
-  addChildClick() {
-    this.router.navigate(["/child", "new"]);
-  }
-
-  showChildDetails(child: Child) {
-    this.router.navigate(["/child", child.getId()]);
   }
 }

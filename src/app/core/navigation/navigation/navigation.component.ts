@@ -28,7 +28,7 @@ import { AdminGuard } from "../../admin/admin.guard";
 @Component({
   selector: "app-navigation",
   templateUrl: "./navigation.component.html",
-  styleUrls: ["./navigation.component.css"],
+  styleUrls: ["./navigation.component.scss"],
 })
 export class NavigationComponent implements OnInit {
   /** all menu items to be displayed */

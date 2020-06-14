@@ -23,8 +23,8 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
   entityList = new Array<Note>();
   notesDataSource = new MatTableDataSource();
 
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   columnsToDisplay = ["date", "subject", "category", "author", "children"];
 

@@ -27,7 +27,7 @@ import { ConnectionState } from "../session-states/connection-state.enum";
 @Component({
   selector: "app-login",
   templateUrl: "./login.component.html",
-  styleUrls: ["./login.component.css"],
+  styleUrls: ["./login.component.scss"],
 })
 export class LoginComponent {
   /** true while a login is started but result is not received yet */

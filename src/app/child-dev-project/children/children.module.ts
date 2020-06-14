@@ -74,6 +74,7 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { RecentNotesDashboardComponent } from "../notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component";
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
+import { MatPaginatorModule } from "@angular/material/paginator";
 
 @NgModule({
   imports: [
@@ -88,6 +89,7 @@ import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirm
     MatDatepickerModule,
     MatExpansionModule,
     MatTableModule,
+    MatPaginatorModule,
     MatSortModule,
     MatSidenavModule,
     MatButtonModule,

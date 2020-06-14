@@ -33,7 +33,7 @@ export class AttendanceManagerComponent implements OnInit, AfterViewInit {
     "attendance",
     "recordCount",
   ];
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatSort) sort: MatSort;
   loading = 0;
 
   centerFS = new FilterSelection("center", []);

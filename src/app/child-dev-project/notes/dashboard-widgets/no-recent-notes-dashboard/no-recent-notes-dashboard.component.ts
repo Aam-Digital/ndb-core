@@ -1,8 +1,17 @@
-import { Component, Input, OnInit } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 import { ChildrenService } from "../../../children/children.service";
 import { Child } from "../../../children/model/child";
 import moment from "moment";
 import { take } from "rxjs/operators";
+import { MatTableDataSource } from "@angular/material/table";
+import { MatSort } from "@angular/material/sort";
+import { MatPaginator } from "@angular/material/paginator";
 
 /**
  * Dashboard Widget displaying children that do not have a recently added Note.
@@ -15,7 +24,7 @@ import { take } from "rxjs/operators";
   templateUrl: "./no-recent-notes-dashboard.component.html",
   styleUrls: ["./no-recent-notes-dashboard.component.scss"],
 })
-export class NoRecentNotesDashboardComponent implements OnInit {
+export class NoRecentNotesDashboardComponent implements OnInit, AfterViewInit {
   /**
    * number of days since last note that children should be considered having a "recent" note.
    */
@@ -37,10 +46,23 @@ export class NoRecentNotesDashboardComponent implements OnInit {
    */
   concernedChildren: ChildWithRecentNoteInfo[] = [];
 
+  columnsToDisplay: string[] = ["name", "daysSinceLastNote"];
+  childrenWithNoteInfoDataSource: MatTableDataSource<
+    ChildWithRecentNoteInfo
+  > = new MatTableDataSource<ChildWithRecentNoteInfo>();
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
   constructor(private childrenService: ChildrenService) {}
 
   async ngOnInit() {
     await this.loadConcernedChildrenFromIndex();
+    this.childrenWithNoteInfoDataSource.data = this.concernedChildren;
+  }
+
+  ngAfterViewInit() {
+    this.childrenWithNoteInfoDataSource.sort = this.sort;
+    this.childrenWithNoteInfoDataSource.paginator = this.paginator;
   }
 
   private async loadConcernedChildrenFromIndex() {

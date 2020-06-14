@@ -92,7 +92,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
 
   private screenWidth = "";
 
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private _entityMapper: EntityMapperService,
