@@ -1,15 +1,7 @@
-import { Injectable } from '@angular/core';
-import { LogLevel } from './log-level';
-import * as Sentry from '@sentry/browser';
-
-
-Sentry.init({
-  dsn: 'https://bd6aba79ca514d35bb06a4b4e0c2a21e@sentry.io/1242399',
-  whitelistUrls: [
-    /https?:\/\/(.*)\.?aam-digital\.com/,
-  ],
-});
-
+import { Injectable } from "@angular/core";
+import { LogLevel } from "./log-level";
+import * as Sentry from "@sentry/browser";
+import { environment } from "../../../environments/environment";
 
 /* tslint:disable:no-console */
 
@@ -18,11 +10,45 @@ Sentry.init({
  * that allows developers to monitor and analyse problems.
  *
  * Logging to the remote monitoring server is set only for warnings and errors.
+ *
+ * To allow remote logging, call Sentry.init during bootstrap in your AppModule or somewhere early on during startup.
  */
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class LoggingService {
+  /**
+   * Initialize the remote logging module with the given options.
+   * If set up this will be used to send errors to a remote endpoint for analysis.
+   * @param options
+   */
+  static initRemoteLogging(options: any) {
+    const defaultOptions = {
+      release: "ndb-core@" + environment.appVersion,
+    };
+    Sentry.init(Object.assign(defaultOptions, options));
+  }
+
+  /**
+   * Update a piece of context information that will be attached to all log messages for easier debugging,
+   * especially in remote logging.
+   * @param tagName Identifier of the key-value pair
+   * @param value Value of the key-value pair
+   */
+  static setLoggingContext(tagName: string, value: any) {
+    Sentry.configureScope((scope) => {
+      scope.setTag(tagName, value);
+    });
+  }
+
+  /**
+   * Update the username to be attached to all log messages for easier debugging,
+   * especially in remote logging.
+   * @param username
+   */
+  static setLoggingContextUser(username: string) {
+    Sentry.setUser({ username: username });
+  }
 
   /**
    * Log the message with "debug" level - for very detailed, non-essential information.
@@ -55,7 +81,6 @@ export class LoggingService {
   public error(message: any) {
     this.log(message, LogLevel.ERROR);
   }
-
 
   /**
    * Generic logging of a message.

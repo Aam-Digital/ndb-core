@@ -15,49 +15,49 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from '../../../core/entity/entity';
-import { Gender } from './Gender';
-import { DatabaseEntity } from '../../../core/entity/database-entity.decorator';
-import { DatabaseField } from '../../../core/entity/database-field.decorator';
-import { SafeUrl } from '@angular/platform-browser';
-import { BehaviorSubject } from 'rxjs';
+import { Entity } from "../../../core/entity/entity";
+import { Gender } from "./Gender";
+import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
+import { DatabaseField } from "../../../core/entity/database-field.decorator";
+import { SafeUrl } from "@angular/platform-browser";
+import { BehaviorSubject } from "rxjs";
 
-@DatabaseEntity('Child')
+@DatabaseEntity("Child")
 export class Child extends Entity {
   /**
    * Returns the full relative filePath to a child photo given a filename, adding the relevant folders to it.
    * @param filename The given filename with file extension.
    */
   public static generatePhotoPath(filename: string): string {
-    return 'assets/child-photos/' + filename;
+    return "assets/child-photos/" + filename;
   }
 
   @DatabaseField() name: string;
   @DatabaseField() projectNumber: string; // project number
-  @DatabaseField({dataType: 'string'}) gender: Gender; // M or F
-  @DatabaseField({dataType: 'date-only'}) dateOfBirth: Date;
-  @DatabaseField() motherTongue: string = '';
-  @DatabaseField() religion: string = '';
+  @DatabaseField({ dataType: "string" }) gender: Gender; // M or F
+  @DatabaseField({ dataType: "date-only" }) dateOfBirth: Date;
+  @DatabaseField() motherTongue: string = "";
+  @DatabaseField() religion: string = "";
 
-  @DatabaseField() center: string = '';
+  @DatabaseField() center: string = "";
   @DatabaseField() admissionDate: Date;
-  @DatabaseField() status: string = '';
+  @DatabaseField() status: string = "";
 
   /** current school (as determined through the ChildSchoolRelation docs) set during loading through ChildrenService */
-  schoolId: string = '';
+  schoolId: string = "";
   /** current class (as determined through the ChildSchoolRelation docs) set during loading through ChildrenService */
-  schoolClass: string = '';
+  schoolClass: string = "";
 
-  @DatabaseField() address: string = '';
-  @DatabaseField() phone: string = '';
-  @DatabaseField() guardianName: string = '';
-  @DatabaseField() preferredTimeForGuardianMeeting: string = '';
+  @DatabaseField() address: string = "";
+  @DatabaseField() phone: string = "";
+  @DatabaseField() guardianName: string = "";
+  @DatabaseField() preferredTimeForGuardianMeeting: string = "";
 
-  @DatabaseField() has_aadhar: string = '';
-  @DatabaseField() has_bankAccount: string = '';
-  @DatabaseField() has_kanyashree: string = '';
-  @DatabaseField() has_rationCard: string = '';
-  @DatabaseField() has_BplCard: string = '';
+  @DatabaseField() has_aadhar: string = "";
+  @DatabaseField() has_bankAccount: string = "";
+  @DatabaseField() has_kanyashree: string = "";
+  @DatabaseField() has_rationCard: string = "";
+  @DatabaseField() has_BplCard: string = "";
 
   @DatabaseField() dropoutDate: Date;
   @DatabaseField() dropoutType: string;
@@ -78,7 +78,7 @@ export class Child extends Entity {
    */
   @DatabaseField() photoFile: string;
 
-  @DatabaseField({ dataType: 'load-child-photo' })
+  @DatabaseField({ dataType: "load-child-photo" })
   photo: BehaviorSubject<SafeUrl>;
 
   get age(): number {
@@ -99,9 +99,8 @@ export class Child extends Entity {
   }
 
   isActive(): boolean {
-    return this.status !== 'Dropout';
+    return this.status !== "Dropout";
   }
-
 
   public toString() {
     return this.name;
@@ -111,7 +110,7 @@ export class Child extends Entity {
     let indices = [];
 
     if (this.name !== undefined) {
-      indices = indices.concat(this.name.split(' '));
+      indices = indices.concat(this.name.split(" "));
     }
     if (this.projectNumber !== undefined) {
       indices.push(this.projectNumber);

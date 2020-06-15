@@ -28,9 +28,10 @@ export class MenuItem {
    * @param routerLinkParameters The Angular routerLink parameters to which the item will route to (e.g. ['/dashboard'])
    * @param requiresAdmin Whether the menu item is only visible for users with admin rights.
    */
-  constructor(public label: string,
-              public icon: string,
-              public routerLinkParameters: any[],
-              public requiresAdmin: boolean = false) {
-  }
+  constructor(
+    public label: string,
+    public icon: string,
+    public routerLinkParameters: any[],
+    public requiresAdmin: boolean = false
+  ) {}
 }

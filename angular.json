@@ -25,9 +25,11 @@
             "styles": [
               "node_modules/font-awesome/scss/font-awesome.scss",
               "src/ndb-theme.scss",
-              "src/styles.css"
+              "src/styles.scss"
             ],
-            "scripts": ["node_modules/marked/lib/marked.js"]
+            "scripts": [
+              "node_modules/marked/lib/marked.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -80,10 +82,12 @@
             "karmaConfig": "./karma.conf.js",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
-            "scripts": ["node_modules/marked/lib/marked.js"],
+            "scripts": [
+              "node_modules/marked/lib/marked.js"
+            ],
             "styles": [
               "src/ndb-theme.scss",
-              "src/styles.css"
+              "src/styles.scss"
             ],
             "assets": [
               "src/assets",
@@ -137,5 +141,8 @@
     "@schematics/angular:directive": {
       "prefix": "app"
     }
+  },
+  "cli": {
+    "analytics": "0bd2cce5-bfb0-4375-af96-a8222d782810"
   }
 }

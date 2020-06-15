@@ -2,6 +2,7 @@
 
 /src/assets/config.json
 /src/assets/child-photos
+release.sh
 
 # compiled output
 dist

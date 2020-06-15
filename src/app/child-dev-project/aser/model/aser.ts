@@ -15,31 +15,30 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from '../../../core/entity/entity';
-import { WarningLevel } from '../../warning-level';
-import { DatabaseField } from '../../../core/entity/database-field.decorator';
-import { DatabaseEntity } from '../../../core/entity/database-entity.decorator';
+import { Entity } from "../../../core/entity/entity";
+import { WarningLevel } from "../../warning-level";
+import { DatabaseField } from "../../../core/entity/database-field.decorator";
+import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 
-@DatabaseEntity('Aser')
+@DatabaseEntity("Aser")
 export class Aser extends Entity {
-
   static ReadingLevels = [
-    'Nothing',
-    'Read Letters',
-    'Read Words',
-    'Read Sentence',
-    'Read Paragraph',
+    "Nothing",
+    "Read Letters",
+    "Read Words",
+    "Read Sentence",
+    "Read Paragraph",
   ];
   static MathLevels = [
-    'Nothing',
-    'Numbers 1-9',
-    'Numbers 10-99',
-    'Subtraction',
-    'Division',
+    "Nothing",
+    "Numbers 1-9",
+    "Numbers 10-99",
+    "Subtraction",
+    "Division",
   ];
 
   static isReadingPassedOrNA(level: string) {
-    if (level === '' || level === undefined) {
+    if (level === "" || level === undefined) {
       // not applicable
       return true;
     }
@@ -50,7 +49,7 @@ export class Aser extends Entity {
     return false;
   }
   static isMathPassedOrNA(level: string) {
-    if (level === '' || level === undefined) {
+    if (level === "" || level === undefined) {
       // not applicable
       return true;
     }
@@ -61,21 +60,23 @@ export class Aser extends Entity {
     return false;
   }
 
-
   @DatabaseField() child: string; // id of Child entity
   @DatabaseField() date: Date = new Date();
-  @DatabaseField() hindi: string = '';
-  @DatabaseField() bengali: string = '';
-  @DatabaseField() english: string = '';
-  @DatabaseField() math: string = '';
-  @DatabaseField() remarks: string = '';
+  @DatabaseField() hindi: string = "";
+  @DatabaseField() bengali: string = "";
+  @DatabaseField() english: string = "";
+  @DatabaseField() math: string = "";
+  @DatabaseField() remarks: string = "";
 
-
-  getWarningLevel (): WarningLevel {
+  getWarningLevel(): WarningLevel {
     let warningLevel = WarningLevel.NONE;
 
-    if (Aser.isReadingPassedOrNA(this.english) && Aser.isReadingPassedOrNA(this.hindi) && Aser.isReadingPassedOrNA(this.bengali)
-        && Aser.isMathPassedOrNA(this.math)) {
+    if (
+      Aser.isReadingPassedOrNA(this.english) &&
+      Aser.isReadingPassedOrNA(this.hindi) &&
+      Aser.isReadingPassedOrNA(this.bengali) &&
+      Aser.isMathPassedOrNA(this.math)
+    ) {
       warningLevel = WarningLevel.OK;
     } else {
       warningLevel = WarningLevel.WARNING;

@@ -15,16 +15,16 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { SyncStatusComponent } from './sync-status/sync-status.component';
-import { SessionModule } from '../session/session.module';
-import { AlertsModule } from '../alerts/alerts.module';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { InitialSyncDialogComponent } from './sync-status/initial-sync-dialog.component';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { SyncStatusComponent } from "./sync-status/sync-status.component";
+import { SessionModule } from "../session/session.module";
+import { AlertsModule } from "../alerts/alerts.module";
+import { MatButtonModule } from "@angular/material/button";
+import { MatDialogModule } from "@angular/material/dialog";
+import { MatIconModule } from "@angular/material/icon";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { InitialSyncDialogComponent } from "./sync-status/initial-sync-dialog.component";
 
 @NgModule({
   imports: [
@@ -39,7 +39,5 @@ import { InitialSyncDialogComponent } from './sync-status/initial-sync-dialog.co
   declarations: [InitialSyncDialogComponent, SyncStatusComponent],
   exports: [SyncStatusComponent],
   providers: [],
-  entryComponents: [InitialSyncDialogComponent],
 })
-export class SyncStatusModule {
-}
+export class SyncStatusModule {}

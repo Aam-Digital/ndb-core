@@ -1,21 +1,21 @@
 /*
-*     This file is part of ndb-core.
-*
-*     ndb-core is free software: you can redistribute it and/or modify
-*     it under the terms of the GNU General Public License as published by
-*     the Free Software Foundation, either version 3 of the License, or
-*     (at your option) any later version.
-*
-*     ndb-core is distributed in the hope that it will be useful,
-*     but WITHOUT ANY WARRANTY; without even the implied warranty of
-*     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*     GNU General Public License for more details.
-*
-*     You should have received a copy of the GNU General Public License
-*     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *     This file is part of ndb-core.
+ *
+ *     ndb-core is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     ndb-core is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-import { EventEmitter } from '@angular/core';
+import { EventEmitter } from "@angular/core";
 
 /**
  * Interface of state transition events.
@@ -34,7 +34,9 @@ export interface StateChangedEvent<StateEnum> {
  */
 export class StateHandler<StateEnum> {
   private state: StateEnum;
-  private stateChanged: EventEmitter<StateChangedEvent<StateEnum>> = new EventEmitter<StateChangedEvent<StateEnum>>();
+  private stateChanged: EventEmitter<
+    StateChangedEvent<StateEnum>
+  > = new EventEmitter<StateChangedEvent<StateEnum>>();
 
   /**
    * Create a StateHandler helper.
@@ -78,7 +80,10 @@ export class StateHandler<StateEnum> {
    * @param toState The state for which to wait for and resolve the Promise.
    * @param failOnStates Optional array of states for which the reject the Promise.
    */
-  public waitForChangeTo(toState: StateEnum, failOnStates?: StateEnum[]): Promise<StateChangedEvent<StateEnum>> {
+  public waitForChangeTo(
+    toState: StateEnum,
+    failOnStates?: StateEnum[]
+  ): Promise<StateChangedEvent<StateEnum>> {
     return new Promise((resolve, reject) => {
       if (this.getState() === toState) {
         resolve({ fromState: undefined, toState });
@@ -87,7 +92,7 @@ export class StateHandler<StateEnum> {
         reject({ fromState: undefined, toState: this.getState() });
         return;
       }
-      const subscription = this.getStateChangedStream().subscribe(change => {
+      const subscription = this.getStateChangedStream().subscribe((change) => {
         if (change.toState === toState) {
           subscription.unsubscribe(); // only once
           resolve(change);

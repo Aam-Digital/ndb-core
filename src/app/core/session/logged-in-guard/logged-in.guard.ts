@@ -15,18 +15,16 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
-import { CanActivate } from '@angular/router';
-import { SessionService } from '../session-service/session.service';
+import { Injectable } from "@angular/core";
+import { CanActivate } from "@angular/router";
+import { SessionService } from "../session-service/session.service";
 
 /**
  * Angular guard to prevent routing if no user is currently logged in.
  */
 @Injectable()
 export class LoggedInGuard implements CanActivate {
-
-  constructor(private _sessionService: SessionService) {
-  }
+  constructor(private _sessionService: SessionService) {}
 
   /**
    * Allow if a user is logged in currently.

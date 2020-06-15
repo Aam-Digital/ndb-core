@@ -15,7 +15,6 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 /**
  * Interface for additional configuration about a DatabaseField schema.
  *

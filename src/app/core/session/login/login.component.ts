@@ -15,22 +15,21 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component } from '@angular/core';
-import { SyncState } from '../session-states/sync-state.enum';
-import { SessionService } from '../session-service/session.service';
-import { LoginState } from '../session-states/login-state.enum';
-import { ConnectionState } from '../session-states/connection-state.enum';
+import { Component } from "@angular/core";
+import { SyncState } from "../session-states/sync-state.enum";
+import { SessionService } from "../session-service/session.service";
+import { LoginState } from "../session-states/login-state.enum";
+import { ConnectionState } from "../session-states/connection-state.enum";
 
 /**
  * Form to allow users to enter their credentials and log in.
  */
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
+  selector: "app-login",
+  templateUrl: "./login.component.html",
+  styleUrls: ["./login.component.scss"],
 })
 export class LoginComponent {
-
   /** true while a login is started but result is not received yet */
   loginInProgress = false;
 
@@ -43,8 +42,7 @@ export class LoginComponent {
   /** errorMessage displayed in form */
   errorMessage: string;
 
-  constructor(private _sessionService: SessionService) {
-  }
+  constructor(private _sessionService: SessionService) {}
 
   /**
    * Do a login with the SessionService.
@@ -52,25 +50,40 @@ export class LoginComponent {
   login() {
     this.loginInProgress = true;
 
-    this._sessionService.login(this.username, this.password)
-      .then(loginState => {
+    this._sessionService
+      .login(this.username, this.password)
+      .then((loginState) => {
         if (loginState === LoginState.LOGGED_IN) {
           this.onLoginSuccess();
         } else {
           if (
-            this._sessionService.getSyncState().getState() === SyncState.ABORTED
-            && this._sessionService.getConnectionState().getState() === ConnectionState.OFFLINE
+            this._sessionService.getSyncState().getState() ===
+              SyncState.ABORTED &&
+            this._sessionService.getConnectionState().getState() ===
+              ConnectionState.OFFLINE
           ) {
-            this.onLoginFailure('Can\'t login for the first time when offline. Please try again later.');
-          } else if (this._sessionService.getConnectionState().getState() === ConnectionState.OFFLINE) {
-            this.onLoginFailure('Username or password incorrect!'
-              + ' You might also face this problem because you are currently offline.'
-              + ' Please connect to the internet to synchronize the latest user data.');
+            this.onLoginFailure(
+              "Can't login for the first time when offline. Please try again later."
+            );
+          } else if (
+            this._sessionService.getConnectionState().getState() ===
+            ConnectionState.OFFLINE
+          ) {
+            this.onLoginFailure(
+              "Username or password incorrect!" +
+                " You might also face this problem because you are currently offline." +
+                " Please connect to the internet to synchronize the latest user data."
+            );
           } else {
-            this.onLoginFailure('Username or password incorrect!');
+            this.onLoginFailure("Username or password incorrect!");
           }
         }
-      }).catch(reason => this.onLoginFailure((typeof reason === 'string') ? reason : JSON.stringify(reason)));
+      })
+      .catch((reason) =>
+        this.onLoginFailure(
+          typeof reason === "string" ? reason : JSON.stringify(reason)
+        )
+      );
   }
 
   private onLoginSuccess() {
@@ -83,10 +96,9 @@ export class LoginComponent {
     this.errorMessage = reason;
   }
 
-
   private reset() {
-    this.errorMessage = '';
-    this.password = '';
+    this.errorMessage = "";
+    this.password = "";
     this.loginInProgress = false;
   }
 }

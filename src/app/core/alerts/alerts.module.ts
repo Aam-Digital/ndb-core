@@ -15,15 +15,15 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
 
-import { AlertComponent } from './alerts/alert.component';
-import { AlertService } from './alert.service';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { AlertComponent } from "./alerts/alert.component";
+import { AlertService } from "./alert.service";
+import { MatButtonModule } from "@angular/material/button";
+import { MatCardModule } from "@angular/material/card";
+import { MatIconModule } from "@angular/material/icon";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
 
 /**
  * Show alert message to the user informing about events or errors.
@@ -39,7 +39,5 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
   declarations: [AlertComponent],
   exports: [AlertComponent],
   providers: [AlertService],
-  entryComponents: [AlertComponent],
 })
-export class AlertsModule {
-}
+export class AlertsModule {}

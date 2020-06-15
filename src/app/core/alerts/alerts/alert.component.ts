@@ -15,20 +15,19 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Inject } from '@angular/core';
+import { Component, Inject } from "@angular/core";
 
-import { Alert } from '../alert';
-import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
+import { Alert } from "../alert";
+import { MAT_SNACK_BAR_DATA } from "@angular/material/snack-bar";
 
 /**
  * Display an {@link Alert} with basic formatting and UI controls.
  */
 @Component({
-  templateUrl: './alert.component.html',
-  styleUrls: ['./alert.component.css'],
+  templateUrl: "./alert.component.html",
+  styleUrls: ["./alert.component.scss"],
 })
 export class AlertComponent {
-
   /** the displayed alert */
   alert: Alert;
 

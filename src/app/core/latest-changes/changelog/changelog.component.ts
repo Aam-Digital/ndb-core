@@ -15,10 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Inject, OnInit } from '@angular/core';
-import { Changelog } from '../changelog';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { isObservable, Observable } from 'rxjs';
+import { Component, Inject, OnInit } from "@angular/core";
+import { Changelog } from "../changelog";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { isObservable, Observable } from "rxjs";
 
 /**
  * Display information from the changelog for the latest version.
@@ -26,11 +26,10 @@ import { isObservable, Observable } from 'rxjs';
  * This component is used as content of a dialog.
  */
 @Component({
-  templateUrl: './changelog.component.html',
-  styleUrls: ['./changelog.component.css'],
+  templateUrl: "./changelog.component.html",
+  styleUrls: ["./changelog.component.scss"],
 })
 export class ChangelogComponent implements OnInit {
-
   /** The changelog entry of the version to be displayed */
   currentChangelog: Changelog;
 
@@ -45,16 +44,16 @@ export class ChangelogComponent implements OnInit {
    */
   constructor(
     public dialogRef: MatDialogRef<ChangelogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Observable<Changelog[]>) {
-
-  }
+    @Inject(MAT_DIALOG_DATA) public data: Observable<Changelog[]>
+  ) {}
 
   ngOnInit(): void {
     if (this.data && isObservable(this.data)) {
-      this.data.subscribe(changelog => this.currentChangelog = changelog[0]);
+      this.data.subscribe(
+        (changelog) => (this.currentChangelog = changelog[0])
+      );
     }
   }
-
 
   /**
    * Close the parent dialog box.

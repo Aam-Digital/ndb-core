@@ -15,21 +15,21 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { LoginComponent } from './login/login.component';
-import { FormsModule } from '@angular/forms';
-import { EntityModule } from 'app/core/entity/entity.module';
-import { AlertsModule } from '../alerts/alerts.module';
-import { LoggedInGuard } from './logged-in-guard/logged-in.guard';
-import { sessionServiceProvider } from './session.service.provider';
-import { databaseServiceProvider } from '../database/database.service.provider';
-import { UserModule } from 'app/core/user/user.module';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { RouterModule } from '@angular/router';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { LoginComponent } from "./login/login.component";
+import { FormsModule } from "@angular/forms";
+import { EntityModule } from "app/core/entity/entity.module";
+import { AlertsModule } from "../alerts/alerts.module";
+import { LoggedInGuard } from "./logged-in-guard/logged-in.guard";
+import { sessionServiceProvider } from "./session.service.provider";
+import { databaseServiceProvider } from "../database/database.service.provider";
+import { UserModule } from "app/core/user/user.module";
+import { MatButtonModule } from "@angular/material/button";
+import { MatCardModule } from "@angular/material/card";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { RouterModule } from "@angular/router";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -54,5 +54,4 @@ import { RouterModule } from '@angular/router';
   exports: [LoginComponent],
   providers: [LoggedInGuard, sessionServiceProvider, databaseServiceProvider],
 })
-export class SessionModule {
-}
+export class SessionModule {}

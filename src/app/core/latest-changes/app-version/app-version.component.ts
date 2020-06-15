@@ -15,29 +15,32 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { EntityMapperService } from '../../entity/entity-mapper.service';
-import { LatestChangesService } from '../latest-changes.service';
+import { Component, OnInit } from "@angular/core";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { LatestChangesService } from "../latest-changes.service";
 
 /**
  * Simple component displaying the current app version
  * including functionality to open an info dialog showing the latest change when the user clicks on it.
  */
 @Component({
-  selector: 'app-version',
-  templateUrl: './app-version.component.html',
-  styleUrls: ['./app-version.component.css'],
+  selector: "app-version",
+  templateUrl: "./app-version.component.html",
+  styleUrls: ["./app-version.component.scss"],
 })
 export class AppVersionComponent implements OnInit {
   /** the current app version */
   currentVersion: string;
 
-  constructor(private _entityMapperService: EntityMapperService,
-              private changelog: LatestChangesService) {
-  }
+  constructor(
+    private _entityMapperService: EntityMapperService,
+    private changelog: LatestChangesService
+  ) {}
 
   ngOnInit(): void {
-    this.changelog.getCurrentVersion().subscribe(version => this.currentVersion = version);
+    this.changelog
+      .getCurrentVersion()
+      .subscribe((version) => (this.currentVersion = version));
   }
 
   /**

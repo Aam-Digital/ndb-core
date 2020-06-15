@@ -15,13 +15,12 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { SyncedSessionService } from './session-service/synced-session.service';
-import { AppConfig } from '../app-config/app-config';
-import { MockSessionService } from './session-service/mock-session.service';
-import { SessionService } from './session-service/session.service';
-import { AlertService } from '../alerts/alert.service';
-import { EntitySchemaService } from 'app/core/entity/schema/entity-schema.service';
-import { OnlineSessionService } from './session-service/online-session.service';
+import { SyncedSessionService } from "./session-service/synced-session.service";
+import { AppConfig } from "../app-config/app-config";
+import { MockSessionService } from "./session-service/mock-session.service";
+import { SessionService } from "./session-service/session.service";
+import { AlertService } from "../alerts/alert.service";
+import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 
 /**
  * Factory method for Angular DI provider of SessionService.
@@ -31,7 +30,10 @@ import { OnlineSessionService } from './session-service/online-session.service';
  * @param alertService
  * @param entitySchemaService
  */
-export function sessionServiceFactory(alertService: AlertService, entitySchemaService: EntitySchemaService): SessionService {
+export function sessionServiceFactory(
+  alertService: AlertService,
+  entitySchemaService: EntitySchemaService
+): SessionService {
   if (AppConfig.settings.database.useTemporaryDatabase) {
     return new MockSessionService(entitySchemaService);
   } else {
