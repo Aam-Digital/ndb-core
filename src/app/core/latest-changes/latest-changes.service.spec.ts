@@ -21,8 +21,6 @@ import { LatestChangesService } from "./latest-changes.service";
 import { AlertService } from "../alerts/alert.service";
 import { HttpClient } from "@angular/common/http";
 import { of, throwError } from "rxjs";
-import { MatDialogModule } from "@angular/material/dialog";
-import { CookieService } from "ngx-cookie-service";
 
 describe("LatestChangesService", () => {
   let service: LatestChangesService;
@@ -30,15 +28,34 @@ describe("LatestChangesService", () => {
   let alertService: AlertService;
   let http: HttpClient;
 
+  const testReleases = [
+    {
+      name: "test 2",
+      tag_name: "2.0",
+      body: "C",
+      published_at: "2018-01-01",
+    },
+    {
+      name: "test 1b",
+      tag_name: "1.1",
+      body: "B",
+      published_at: "2018-01-01",
+    },
+    {
+      name: "test 1",
+      tag_name: "1.0",
+      body: "A",
+      published_at: "2018-01-01",
+    },
+  ];
+
   beforeEach(() => {
     alertService = new AlertService(null, null);
     http = new HttpClient(null);
 
     TestBed.configureTestingModule({
-      imports: [MatDialogModule],
       providers: [
         LatestChangesService,
-        CookieService,
         { provide: AlertService, useValue: alertService },
         { provide: HttpClient, useValue: http },
       ],
@@ -51,20 +68,43 @@ describe("LatestChangesService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should return changelog array", (done) => {
-    spyOn(http, "get").and.returnValue(
-      of([
-        {
-          name: "test",
-          tag_name: "v1.0",
-          body: "latest test",
-          published_at: "2018-01-01",
-        },
-      ])
-    );
-    service.getChangelogs().subscribe((result) => {
+  it("should return changelog of current version", (done) => {
+    spyOn(http, "get").and.returnValue(of(testReleases));
+
+    service.getChangelogsBetweenVersions("1.1").subscribe((result) => {
       expect(result.length).toBe(1);
-      expect(result[0].name).toBe("test");
+      expect(result[0].name).toBe(testReleases[1].name);
+      done();
+    });
+  });
+
+  it("should return changelogs between versions excluding previous version", (done) => {
+    spyOn(http, "get").and.returnValue(of(testReleases));
+
+    service.getChangelogsBetweenVersions("2.0", "1.0").subscribe((result) => {
+      expect(result.length).toBe(2);
+      expect(result[0].name).toBe(testReleases[0].name);
+      expect(result[1].name).toBe(testReleases[1].name);
+      done();
+    });
+  });
+
+  it("should return changelogs before version", (done) => {
+    spyOn(http, "get").and.returnValue(of(testReleases));
+
+    service.getChangelogsBeforeVersion("2.0", 3).subscribe((result) => {
+      expect(result.length).toBe(2); // cannot return more results than available at api
+      expect(result[0].name).toBe(testReleases[1].name);
+      expect(result[1].name).toBe(testReleases[2].name);
+      done();
+    });
+  });
+
+  it("should return empty array if no releases from api", (done) => {
+    spyOn(http, "get").and.returnValue(of([]));
+
+    service.getChangelogsBetweenVersions("1.0").subscribe((result) => {
+      expect(result.length).toBe(0);
       done();
     });
   });
@@ -74,7 +114,7 @@ describe("LatestChangesService", () => {
       throwError({ status: 404, message: "not found" })
     );
     const alertSpy = spyOn(alertService, "addAlert");
-    service.getChangelogs().subscribe(
+    service.getChangelogsBetweenVersions("1.0").subscribe(
       () => {},
       (err) => {
         expect(alertSpy.calls.count()).toBe(1, "no Alert message created");

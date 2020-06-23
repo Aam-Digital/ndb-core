@@ -20,7 +20,6 @@ import { CommonModule } from "@angular/common";
 import { AppVersionComponent } from "./app-version/app-version.component";
 import { AlertsModule } from "../alerts/alerts.module";
 import { HttpClientModule } from "@angular/common/http";
-import { LatestChangesService } from "./latest-changes.service";
 import { SessionModule } from "../session/session.module";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialogModule } from "@angular/material/dialog";
@@ -28,6 +27,12 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { ChangelogComponent } from "./changelog/changelog.component";
 import { SwUpdate } from "@angular/service-worker";
 import { UpdateManagerService } from "./update-manager.service";
+import { FlexModule } from "@angular/flex-layout";
+import { MarkdownModule } from "ngx-markdown";
+import { MatIconModule } from "@angular/material/icon";
+import { MatCardModule } from "@angular/material/card";
+import { LatestChangesDialogService } from "./latest-changes-dialog.service";
+import { LatestChangesService } from "./latest-changes.service";
 
 /**
  * Displaying app version and changelog information to the user
@@ -43,18 +48,26 @@ import { UpdateManagerService } from "./update-manager.service";
     MatButtonModule,
     MatSnackBarModule,
     HttpClientModule,
+    FlexModule,
+    MarkdownModule,
+    MatIconModule,
+    MatCardModule,
   ],
   declarations: [AppVersionComponent, ChangelogComponent],
   exports: [AppVersionComponent],
-  providers: [LatestChangesService, UpdateManagerService],
+  providers: [
+    LatestChangesService,
+    LatestChangesDialogService,
+    UpdateManagerService,
+  ],
 })
 export class LatestChangesModule {
   constructor(
     private updates: SwUpdate,
-    private latestChangesService: LatestChangesService,
+    private latestChangesDialogService: LatestChangesDialogService,
     private updateManagerService: UpdateManagerService
   ) {
-    this.latestChangesService.showLatestChangesIfUpdated();
+    this.latestChangesDialogService.showLatestChangesIfUpdated();
 
     this.updateManagerService.notifyUserWhenUpdateAvailable();
     this.updateManagerService.regularlyCheckForUpdates();

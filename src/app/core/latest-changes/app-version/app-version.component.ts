@@ -16,8 +16,7 @@
  */
 
 import { Component, OnInit } from "@angular/core";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { LatestChangesService } from "../latest-changes.service";
+import { LatestChangesDialogService } from "../latest-changes-dialog.service";
 
 /**
  * Simple component displaying the current app version
@@ -32,21 +31,16 @@ export class AppVersionComponent implements OnInit {
   /** the current app version */
   currentVersion: string;
 
-  constructor(
-    private _entityMapperService: EntityMapperService,
-    private changelog: LatestChangesService
-  ) {}
+  constructor(private changelogDialog: LatestChangesDialogService) {}
 
   ngOnInit(): void {
-    this.changelog
-      .getCurrentVersion()
-      .subscribe((version) => (this.currentVersion = version));
+    this.currentVersion = this.changelogDialog.getCurrentVersion();
   }
 
   /**
    * Open dialog box to display changelog information about the latest version to the user.
    */
   public showLatestChanges(): void {
-    this.changelog.showLatestChanges();
+    this.changelogDialog.showLatestChanges();
   }
 }
