@@ -25,7 +25,7 @@ import { MAT_SNACK_BAR_DATA } from "@angular/material/snack-bar";
  */
 @Component({
   templateUrl: "./alert.component.html",
-  styleUrls: ["./alert.component.css"],
+  styleUrls: ["./alert.component.scss"],
 })
 export class AlertComponent {
   /** the displayed alert */

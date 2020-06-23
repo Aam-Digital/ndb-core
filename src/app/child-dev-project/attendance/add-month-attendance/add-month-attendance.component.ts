@@ -7,7 +7,9 @@ import { ConfirmationDialogService } from "../../../core/confirmation-dialog/con
 import { AlertService } from "../../../core/alerts/alert.service";
 import { ChildrenService } from "../../children/children.service";
 import { School } from "../../schools/model/school";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-add-month-attendance",
   templateUrl: "./add-month-attendance.component.html",
@@ -48,14 +50,17 @@ export class AddMonthAttendanceComponent implements OnInit {
     this.entityMapper
       .loadType<School>(School)
       .then((schools) => (this.schools = schools));
-    this.childrenService.getChildren().subscribe((children) => {
-      this.children = children.filter((c: Child) => c.isActive());
-      this.initChildrenLookupTables(this.children);
+    this.childrenService
+      .getChildren()
+      .pipe(untilDestroyed(this))
+      .subscribe((children) => {
+        this.children = children.filter((c: Child) => c.isActive());
+        this.initChildrenLookupTables(this.children);
 
-      this.centers = children
-        .map((c) => c.center)
-        .filter((value, index, arr) => arr.indexOf(value) === index);
-    });
+        this.centers = children
+          .map((c) => c.center)
+          .filter((value, index, arr) => arr.indexOf(value) === index);
+      });
   }
 
   private initChildrenLookupTables(children: Child[]) {
@@ -192,6 +197,7 @@ export class AddMonthAttendanceComponent implements OnInit {
 
     this.childrenService
       .getAttendancesOfMonth(this.month)
+      .pipe(untilDestroyed(this))
       .subscribe((records) => {
         recordsToOverwrite.forEach((recordToOverwrite) => {
           const relevantExistingRecords = records.filter(

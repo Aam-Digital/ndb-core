@@ -27,6 +27,7 @@ import { LoginState } from "../session-states/login-state.enum";
 import { StateHandler } from "../session-states/state-handler";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { AlertService } from "app/core/alerts/alert.service";
+import { LoggingService } from "../../logging/logging.service";
 
 /**
  * Responsibilities:
@@ -78,9 +79,10 @@ export class LocalSession {
       await this.waitForFirstSync();
       const userEntity = await this.loadUser(username);
       if (userEntity.checkPassword(password)) {
-        this.loginState.setState(LoginState.LOGGED_IN);
         this.currentUser = userEntity;
         this.currentUser.decryptCloudPassword(password);
+        LoggingService.setLoggingContextUser(this.currentUser.name);
+        this.loginState.setState(LoginState.LOGGED_IN);
         return LoginState.LOGGED_IN;
       } else {
         this.loginState.setState(LoginState.LOGIN_FAILED);
@@ -137,8 +139,8 @@ export class LocalSession {
    * Logout
    */
   public logout() {
-    this.loginState.setState(LoginState.LOGGED_OUT);
     this.currentUser = undefined;
+    this.loginState.setState(LoginState.LOGGED_OUT);
   }
 
   /**

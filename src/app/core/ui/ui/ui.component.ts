@@ -15,24 +15,25 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
 import { AppConfig } from "../../app-config/app-config";
 import { Title } from "@angular/platform-browser";
 import { MediaObserver, MediaChange } from "@angular/flex-layout";
-import { Subscription } from "rxjs";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * The main user interface component as root element for the app structure
  * which also ties different components together into the overall app layout.
  */
+@UntilDestroy()
 @Component({
   moduleId: module.id,
   selector: "app-ui",
   templateUrl: "./ui.component.html",
-  styleUrls: ["./ui.component.css"],
+  styleUrls: ["./ui.component.scss"],
 })
-export class UiComponent implements OnInit, OnDestroy {
+export class UiComponent implements OnInit {
   /** display mode for the menu to make it responive and usable on smaller screens */
   sideNavMode: string;
   /** reference to sideNav component in template, required for toggling the menu on user actions */
@@ -41,26 +42,22 @@ export class UiComponent implements OnInit, OnDestroy {
   /** title displayed in the app header bar */
   title: string;
 
-  private watcher: Subscription;
-
   constructor(
     private _sessionService: SessionService,
     private titleService: Title,
     mediaObserver: MediaObserver
   ) {
     // watch screen width to change sidenav mode
-    this.watcher = mediaObserver.media$.subscribe((change: MediaChange) => {
-      this.sideNavMode = change.mqAlias === ("xs" || "sm") ? "over" : "side";
-    });
+    mediaObserver.media$
+      .pipe(untilDestroyed(this))
+      .subscribe((change: MediaChange) => {
+        this.sideNavMode = change.mqAlias === ("xs" || "sm") ? "over" : "side";
+      });
   }
 
   ngOnInit(): void {
     this.title = AppConfig.settings.site_name;
     this.titleService.setTitle(this.title);
-  }
-
-  ngOnDestroy() {
-    this.watcher.unsubscribe();
   }
 
   /**

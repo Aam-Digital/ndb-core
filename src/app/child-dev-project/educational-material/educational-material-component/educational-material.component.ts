@@ -5,7 +5,9 @@ import { EducationalMaterial } from "../model/educational-material";
 import { ColumnDescription } from "../../../core/entity-subrecord/entity-subrecord/column-description";
 import { ChildrenService } from "../../children/children.service";
 import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-educational-material",
   templateUrl: "./educational-material.component.html",
@@ -69,6 +71,7 @@ export class EducationalMaterialComponent implements OnInit {
   loadData(id: string) {
     this.childrenService
       .getEducationalMaterialsOfChild(id)
+      .pipe(untilDestroyed(this))
       .subscribe((results) => {
         this.records = results.sort(
           (a, b) =>

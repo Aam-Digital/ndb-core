@@ -27,7 +27,7 @@ import { isObservable, Observable } from "rxjs";
  */
 @Component({
   templateUrl: "./changelog.component.html",
-  styleUrls: ["./changelog.component.css"],
+  styleUrls: ["./changelog.component.scss"],
 })
 export class ChangelogComponent implements OnInit {
   /** The changelog entry of the version to be displayed */

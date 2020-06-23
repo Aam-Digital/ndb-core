@@ -5,7 +5,9 @@ import { ChildrenService } from "../../children/children.service";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { AttendanceMonth } from "../model/attendance-month";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-attendance-manager",
   templateUrl: "./attendance-manager.component.html",
@@ -31,7 +33,7 @@ export class AttendanceManagerComponent implements OnInit, AfterViewInit {
     "attendance",
     "recordCount",
   ];
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatSort) sort: MatSort;
   loading = 0;
 
   centerFS = new FilterSelection("center", []);
@@ -63,11 +65,14 @@ export class AttendanceManagerComponent implements OnInit, AfterViewInit {
     this.filterUntil.setDate(1);
     this.filterUntil.setMonth(this.filterUntil.getMonth() + 1);
 
-    this.childrenService.getChildren().subscribe((data) => {
-      this.childrenAll = data.filter((c) => c.isActive());
-      this.initCenterFilterOptions();
-      this.applyFilterSelections();
-    });
+    this.childrenService
+      .getChildren()
+      .pipe(untilDestroyed(this))
+      .subscribe((data) => {
+        this.childrenAll = data.filter((c) => c.isActive());
+        this.initCenterFilterOptions();
+        this.applyFilterSelections();
+      });
   }
 
   private initCenterFilterOptions() {
@@ -121,6 +126,7 @@ export class AttendanceManagerComponent implements OnInit, AfterViewInit {
 
     this.childrenService
       .getAttendancesOfChild(child.getId())
+      .pipe(untilDestroyed(this))
       .subscribe((attendances) => {
         attendances.forEach((att) => {
           if (

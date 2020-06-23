@@ -60,6 +60,7 @@ import { DemoWidgetGeneratorService } from "./child-dev-project/dashboard/demo-w
 import { DemoUserGeneratorService } from "./core/user/demo-user-generator.service";
 import { ConfirmationDialogModule } from "./core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "./core/form-dialog/form-dialog.module";
+import { LoggingService } from "./core/logging/logging.service";
 
 /**
  * Main entry point of the application.
@@ -125,38 +126,48 @@ import { FormDialogModule } from "./core/form-dialog/form-dialog.module";
 })
 export class AppModule {
   constructor(
-    private _navigationItemsService: NavigationItemsService,
+    private navigationItemsService: NavigationItemsService,
     public matIconRegistry: MatIconRegistry
   ) {
     matIconRegistry.registerFontClassAlias("fontawesome", "fa");
     matIconRegistry.setDefaultFontSetClass("fa");
 
-    _navigationItemsService.addMenuItem(
+    this.initNavigationItems();
+  }
+
+  private initNavigationItems() {
+    this.navigationItemsService.addMenuItem(
       new MenuItem("Dashboard", "home", ["/dashboard"])
     );
-    _navigationItemsService.addMenuItem(
+    this.navigationItemsService.addMenuItem(
       new MenuItem("Children", "child", ["/child"])
     );
-    _navigationItemsService.addMenuItem(
+    this.navigationItemsService.addMenuItem(
       new MenuItem("Schools", "university", ["/school"])
     );
-    _navigationItemsService.addMenuItem(
+    this.navigationItemsService.addMenuItem(
       new MenuItem("Notes", "file-text", ["/note"])
     );
-    _navigationItemsService.addMenuItem(
+    this.navigationItemsService.addMenuItem(
       new MenuItem("Attendance Register", "table", ["/attendance"])
     );
-    _navigationItemsService.addMenuItem(
+    this.navigationItemsService.addMenuItem(
       new MenuItem("Admin", "wrench", ["/admin"], true)
     );
-    _navigationItemsService.addMenuItem(
+    this.navigationItemsService.addMenuItem(
       new MenuItem("Users", "user", ["/users"], true)
     );
-    _navigationItemsService.addMenuItem(
+    this.navigationItemsService.addMenuItem(
       new MenuItem("Database Conflicts", "wrench", ["/admin/conflicts"], true)
     );
-    _navigationItemsService.addMenuItem(
+    this.navigationItemsService.addMenuItem(
       new MenuItem("Help", "question-circle", ["/help"])
     );
   }
 }
+
+// Initialize remote logging
+LoggingService.initRemoteLogging({
+  dsn: "https://bd6aba79ca514d35bb06a4b4e0c2a21e@sentry.io/1242399",
+  whitelistUrls: [/https?:\/\/(.*)\.?aam-digital\.com/],
+});

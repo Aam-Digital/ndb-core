@@ -76,6 +76,7 @@ import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
 import { CONFLICT_RESOLUTION_STRATEGY } from "../../conflict-resolution/auto-resolution/conflict-resolution-strategy";
 import { AttendanceMonthConflictResolutionStrategy } from "../attendance/attendance-month-conflict-resolution-strategy";
+import { MatPaginatorModule } from "@angular/material/paginator";
 
 @NgModule({
   imports: [
@@ -90,6 +91,7 @@ import { AttendanceMonthConflictResolutionStrategy } from "../attendance/attenda
     MatDatepickerModule,
     MatExpansionModule,
     MatTableModule,
+    MatPaginatorModule,
     MatSortModule,
     MatSidenavModule,
     MatButtonModule,

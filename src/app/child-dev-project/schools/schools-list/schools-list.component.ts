@@ -5,11 +5,14 @@ import { School } from "../model/school";
 import { SchoolsService } from "../schools.service";
 import { Router } from "@angular/router";
 import { FilterSelection } from "../../../core/filter/filter-selection/filter-selection";
+import { MatPaginator } from "@angular/material/paginator";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-schools-list",
   templateUrl: "./schools-list.component.html",
-  styleUrls: ["./schools-list.component.css"],
+  styleUrls: ["./schools-list.component.scss"],
 })
 export class SchoolsListComponent implements OnInit, AfterViewInit {
   schoolList: School[];
@@ -18,6 +21,7 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   >();
 
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   filterString = "";
   columnsToDisplay: string[] = [
     "name",
@@ -46,19 +50,23 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   constructor(private schoolService: SchoolsService, private router: Router) {}
 
   ngOnInit() {
-    this.schoolService.getSchools().subscribe((data) => {
-      this.schoolList = data;
-      this.schoolDataSource.data = data;
+    this.schoolService
+      .getSchools()
+      .pipe(untilDestroyed(this))
+      .subscribe((data) => {
+        this.schoolList = data;
+        this.schoolDataSource.data = data;
 
-      const mediums = data
-        .map((s) => s.medium)
-        .filter((value, index, arr) => value && arr.indexOf(value) === index);
-      this.mediumFS.initOptions(mediums, "medium");
-    });
+        const mediums = data
+          .map((s) => s.medium)
+          .filter((value, index, arr) => value && arr.indexOf(value) === index);
+        this.mediumFS.initOptions(mediums, "medium");
+      });
   }
 
   ngAfterViewInit() {
     this.schoolDataSource.sort = this.sort;
+    this.schoolDataSource.paginator = this.paginator;
   }
 
   applyFilter(filterValue: string) {

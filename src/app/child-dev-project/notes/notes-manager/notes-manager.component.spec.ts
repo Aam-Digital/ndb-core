@@ -1,6 +1,11 @@
 import { NotesManagerComponent } from "./notes-manager.component";
 import { Note } from "../model/note";
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 import { NotesModule } from "../notes.module";
 import { MatNativeDateModule } from "@angular/material/core";
 import { ChildrenService } from "../../children/children.service";
@@ -58,9 +63,9 @@ describe("NotesManagerComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should load all data after initializing", async () => {
+  it("should load all data after initializing", fakeAsync(() => {
     component.ngOnInit();
-    await fixture.whenStable();
+    tick();
     expect(component.entityList.length).toEqual(testNotes.length);
-  });
+  }));
 });

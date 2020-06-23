@@ -9,7 +9,9 @@ import {
 } from "@angular/core";
 import { Child } from "../model/child";
 import { ChildrenService } from "../children.service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-child-select",
   templateUrl: "./child-select.component.html",
@@ -37,12 +39,15 @@ export class ChildSelectComponent implements OnChanges {
   }
 
   private loadInitial() {
-    this.childrenService.getChildren().subscribe((children) => {
-      this.allChildren = children;
-      this.suggestions = this.allChildren;
+    this.childrenService
+      .getChildren()
+      .pipe(untilDestroyed(this))
+      .subscribe((children) => {
+        this.allChildren = [...children]; // clone array
+        this.suggestions = this.allChildren;
 
-      this.selectInitialSelectedChildren();
-    });
+        this.selectInitialSelectedChildren();
+      });
   }
 
   private selectInitialSelectedChildren() {

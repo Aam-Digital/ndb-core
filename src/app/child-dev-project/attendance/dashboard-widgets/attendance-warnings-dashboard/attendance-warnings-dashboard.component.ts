@@ -2,7 +2,9 @@ import { Component, OnInit } from "@angular/core";
 import { ChildrenService } from "../../../children/children.service";
 import { Router } from "@angular/router";
 import { AttendanceMonth } from "../../model/attendance-month";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-attendance-warnings-dashboard",
   templateUrl: "./attendance-warnings-dashboard.component.html",
@@ -38,6 +40,7 @@ export class AttendanceWarningsDashboardComponent implements OnInit {
           if (att < this.ATTENDANCE_THRESHOLD) {
             this.childrenService
               .getChild(studentStat.key)
+              .pipe(untilDestroyed(this))
               .subscribe((child) =>
                 this.lastMonthsLowAttendence.push([child, att, urgency])
               );
