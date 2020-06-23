@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  OnInit,
+  ViewChild,
+  OnDestroy,
+} from "@angular/core";
 import { Child } from "../model/child";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
@@ -7,8 +13,11 @@ import { ChildrenService } from "../children.service";
 import { AttendanceMonth } from "../../attendance/model/attendance-month";
 import { FilterSelection } from "../../../core/filter/filter-selection/filter-selection";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
-import { MatPaginator } from "@angular/material/paginator";
+import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { User } from "../../../core/user/user";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 
 export interface ColumnGroup {
   name: string;
@@ -21,7 +30,7 @@ export interface ColumnGroup {
   templateUrl: "./children-list.component.html",
   styleUrls: ["./children-list.component.scss"],
 })
-export class ChildrenListComponent implements OnInit, AfterViewInit {
+export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
   childrenList: Child[] = [];
   attendanceList = new Map<string, AttendanceMonth[]>();
   childrenDataSource = new MatTableDataSource();
@@ -111,16 +120,24 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   columnsToDisplay = ["projectNumber", "name"];
   filterString = "";
 
+  public paginatorItemsPerPage: number;
+  private user: User;
+
   constructor(
     private childrenService: ChildrenService,
     private router: Router,
     private route: ActivatedRoute,
-    private media: MediaObserver
+    private media: MediaObserver,
+    private sessionService: SessionService,
+    private entityMapperService: EntityMapperService
   ) {}
 
   ngOnInit() {
     this.loadData();
     this.loadUrlParams();
+    this.user = this.sessionService.getCurrentUser();
+    this.paginatorItemsPerPage = this.user.paginationSettings;
+    console.log(this.paginatorItemsPerPage);
     this.media.media$
       .pipe(untilDestroyed(this))
       .subscribe((change: MediaChange) => {
@@ -150,6 +167,22 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.childrenDataSource.sort = this.sort;
     this.childrenDataSource.paginator = this.paginator;
+  }
+
+  ngOnDestroy() {
+    this.user.paginationSettings = this.paginatorItemsPerPage;
+    console.log(this.user.paginationSettings);
+    console.log("Bye bye");
+  }
+
+  onPaginateChange(event: PageEvent) {
+    this.paginatorItemsPerPage = event.pageSize;
+    this.user.paginationSettings = this.paginatorItemsPerPage;
+    console.log(this.user.paginationSettings);
+    this.entityMapperService.save<User>(this.user).then(() => {
+      console.log("User gespeichert.");
+      console.log(this.sessionService.getCurrentUser().paginationSettings);
+    });
   }
 
   private loadData(replaceUrl: boolean = false) {

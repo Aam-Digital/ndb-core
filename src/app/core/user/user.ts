@@ -38,6 +38,8 @@ export class User extends Entity {
   /** password object (encrypted) */
   @DatabaseField() private password: any;
 
+  @DatabaseField() paginationSettings: number = 1;
+
   /** password for webdav account (encrypted with user.password) */
   @DatabaseField() private cloudPasswordEnc: any;
 
