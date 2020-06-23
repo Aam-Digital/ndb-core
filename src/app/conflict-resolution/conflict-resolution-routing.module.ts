@@ -1,4 +1,4 @@
-import { ConflictResolutionComponent } from "./conflict-resolution/conflict-resolution.component";
+import { ConflictResolutionListComponent } from "./conflict-resolution-list/conflict-resolution-list.component";
 import { RouterModule, Routes } from "@angular/router";
 import { NgModule } from "@angular/core";
 
@@ -9,7 +9,7 @@ import { NgModule } from "@angular/core";
 const routes: Routes = [
   {
     path: "",
-    component: ConflictResolutionComponent,
+    component: ConflictResolutionListComponent,
   },
 ];
 

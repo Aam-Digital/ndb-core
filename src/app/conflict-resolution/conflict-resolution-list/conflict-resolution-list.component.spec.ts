@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { ConflictResolutionComponent } from "./conflict-resolution.component";
+import { ConflictResolutionListComponent } from "./conflict-resolution-list.component";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { CompareRevComponent } from "../compare-rev/compare-rev.component";
@@ -10,9 +10,9 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Database } from "../../core/database/database";
 
-describe("ConflictResolutionComponent", () => {
-  let component: ConflictResolutionComponent;
-  let fixture: ComponentFixture<ConflictResolutionComponent>;
+describe("ConflictResolutionListComponent", () => {
+  let component: ConflictResolutionListComponent;
+  let fixture: ComponentFixture<ConflictResolutionListComponent>;
 
   let mockDatabase: jasmine.SpyObj<Database>;
 
@@ -35,12 +35,12 @@ describe("ConflictResolutionComponent", () => {
         NoopAnimationsModule,
       ],
       providers: [{ provide: Database, useValue: mockDatabase }],
-      declarations: [CompareRevComponent, ConflictResolutionComponent],
+      declarations: [CompareRevComponent, ConflictResolutionListComponent],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ConflictResolutionComponent);
+    fixture = TestBed.createComponent(ConflictResolutionListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

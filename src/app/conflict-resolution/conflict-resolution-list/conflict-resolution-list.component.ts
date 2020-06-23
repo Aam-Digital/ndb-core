@@ -3,20 +3,17 @@ import { MatPaginator } from "@angular/material/paginator";
 import { QueryDataSource } from "../../core/database/query-data-source";
 import { Entity } from "../../core/entity/entity";
 import { Database } from "../../core/database/database";
-import PouchDB from "pouchdb-browser";
-import { AppConfig } from "../../core/app-config/app-config";
-import { AttendanceMonth } from "../../child-dev-project/attendance/model/attendance-month";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 
 /**
  * List all document conflicts and allow the user to expand for details and manual resolution.
  */
 @Component({
-  selector: "app-conflict-resolution",
-  templateUrl: "./conflict-resolution.component.html",
-  styleUrls: ["./conflict-resolution.component.scss"],
+  selector: "app-conflict-resolution-list",
+  templateUrl: "./conflict-resolution-list.component.html",
+  styleUrls: ["./conflict-resolution-list.component.scss"],
 })
-export class ConflictResolutionComponent implements AfterViewInit {
+export class ConflictResolutionListComponent implements AfterViewInit {
   /** visible table columns in the template */
   columnsToDisplay = ["id", "data"];
 
@@ -55,5 +52,4 @@ export class ConflictResolutionComponent implements AfterViewInit {
 
     return this.db.saveDatabaseIndex(designDoc);
   }
-
 }

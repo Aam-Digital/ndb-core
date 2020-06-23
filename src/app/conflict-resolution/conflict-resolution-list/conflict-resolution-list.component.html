@@ -1,6 +1,10 @@
 <p>conflicts to resolve:</p>
 
 <div class="mat-elevation-z8">
+  <div *ngIf="dataSource?.loading$ | async">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+
   <table mat-table [dataSource]="dataSource" matSort style='width: 100%;'>
 
     <ng-container matColumnDef="id">

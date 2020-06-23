@@ -131,7 +131,6 @@ export class CompareRevComponent {
     }
   }
 
-
   /**
    * Apply the given diff, save the resulting new document to the database
    * and remove the conflicting document, thereby resolving the conflict.

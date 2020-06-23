@@ -1,6 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ConflictResolutionComponent } from "./conflict-resolution/conflict-resolution.component";
+import { ConflictResolutionListComponent } from "./conflict-resolution-list/conflict-resolution-list.component";
 import { MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
 import { MatIconModule } from "@angular/material/icon";
@@ -14,6 +14,7 @@ import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ConflictResolutionRoutingModule } from "./conflict-resolution-routing.module";
 import { ConflictResolutionStrategy } from "./auto-resolution/conflict-resolution-strategy";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
 
 /**
  * Display and resolve document conflicts in the database through a simple user interface for administrators.
@@ -50,7 +51,8 @@ routes: Routes = [
     MatInputModule,
     FormsModule,
     MatTooltipModule,
+    MatProgressBarModule,
   ],
-  declarations: [ConflictResolutionComponent, CompareRevComponent],
+  declarations: [ConflictResolutionListComponent, CompareRevComponent],
 })
 export class ConflictResolutionModule {}
