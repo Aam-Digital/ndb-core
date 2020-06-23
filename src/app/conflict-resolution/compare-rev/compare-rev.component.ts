@@ -131,7 +131,6 @@ export class CompareRevComponent {
     }
   }
 
-  // TODO: https://www.npmjs.com/package/ngx-text-diff
 
   /**
    * Apply the given diff, save the resulting new document to the database

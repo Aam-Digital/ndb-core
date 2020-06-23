@@ -20,7 +20,6 @@ export class AttendanceMonthConflictResolutionStrategy
     currentDoc: any,
     conflictingDoc: any
   ): boolean {
-    console.log("checking conflict");
     if (!currentDoc._id.startsWith(AttendanceMonth.ENTITY_TYPE)) {
       return false;
     }

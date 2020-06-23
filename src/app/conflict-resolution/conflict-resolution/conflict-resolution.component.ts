@@ -24,7 +24,7 @@ export class ConflictResolutionComponent implements AfterViewInit {
   dataSource: QueryDataSource<Entity>;
 
   /** reference to mat-table paginator from template, required to set up pagination */
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
     private db: Database,
@@ -56,19 +56,4 @@ export class ConflictResolutionComponent implements AfterViewInit {
     return this.db.saveDatabaseIndex(designDoc);
   }
 
-  // TODO: remove this before merging
-  async createTestConflicts() {
-    const pouchdb = new PouchDB(AppConfig.settings.database.name);
-
-    const doc = this.entitySchemaService.transformEntityToDatabaseFormat(
-      AttendanceMonth.createAttendanceMonth("0", "school")
-    );
-    doc._id = "AttendanceMonth:0";
-    doc._rev = "1-0000";
-    await pouchdb.put(doc, { force: true });
-    doc.dailyRegister[0].status = "A" as any;
-    await pouchdb.put(doc, { force: true });
-
-    await this.dataSource.loadData();
-  }
 }
