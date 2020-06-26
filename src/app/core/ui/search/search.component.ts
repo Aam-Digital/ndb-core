@@ -4,6 +4,8 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { Entity } from "../../entity/entity";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { Subject } from "rxjs";
+import { debounceTime, switchMap } from "rxjs/operators";
 
 /**
  * General search box that provides results out of any kind of entities from the system
@@ -20,6 +22,13 @@ export class SearchComponent implements OnInit {
   results = [];
   searchText = "";
   showSearchToolbar = false;
+  isSearching: boolean = false;
+
+  MIN_CHARACTERS_FOR_SEARCH: number = 3;
+  INPUT_DEBOUNCE_TIME_MS: number = 400;
+
+  searchStringChanged: Subject<string> = new Subject<string>();
+  searchQuery: Subject<Promise<any>> = new Subject<Promise<any>>();
 
   constructor(
     private db: Database,
@@ -28,9 +37,91 @@ export class SearchComponent implements OnInit {
 
   ngOnInit() {
     this.createSearchIndex();
+
+    this.searchStringChanged
+      .pipe(debounceTime(this.INPUT_DEBOUNCE_TIME_MS))
+      .subscribe((searchString) => {
+        this.searchQuery.next(this.startSearch(searchString));
+      });
+
+    this.searchQuery
+      .pipe(
+        switchMap((value) => {
+          return value;
+        })
+      )
+      .subscribe(
+        (result: { queryResults: any; searchTerms: string[] }) => {
+          this.handleSearchQueryResult(result);
+        },
+        (error) => {
+          console.error("SearchQuery failed", error);
+        }
+      );
   }
 
-  private createSearchIndex() {
+  async startSearch(searchString: string): Promise<any> {
+    this.isSearching = true;
+    this.results = [];
+
+    if (!searchString) {
+      return Promise.resolve();
+    }
+
+    searchString = searchString.toLowerCase();
+
+    if (!this.isRelevantSearchInput(searchString)) {
+      return Promise.resolve();
+    }
+
+    const searchTerms = searchString.split(" ");
+
+    const queryResults = await this.db.query("search_index/by_name", {
+      startkey: searchTerms[0],
+      endkey: searchTerms[0] + "\ufff0",
+      include_docs: true,
+    });
+
+    return {
+      queryResults,
+      searchTerms,
+    };
+  }
+
+  clickOption(optionElement) {
+    // simulate a click on the EntityBlock inside the selected option element
+    optionElement._element.nativeElement.children["0"].children["0"].click();
+    if (this.showSearchToolbar === true) {
+      this.showSearchToolbar = false;
+    }
+  }
+
+  toggleSearchToolbar() {
+    this.showSearchToolbar = !this.showSearchToolbar;
+  }
+
+  searchInputChanged(searchString) {
+    this.searchStringChanged.next(searchString);
+  }
+
+  handleSearchQueryResult(result: {
+    queryResults: any;
+    searchTerms: string[];
+  }) {
+    this.isSearching = false;
+
+    if (!result || !result.queryResults) {
+      this.results = [];
+      return;
+    }
+
+    this.results = this.prepareResults(
+      result.queryResults.rows,
+      result.searchTerms
+    );
+  }
+
+  private createSearchIndex(): Promise<any> {
     // `emit(x)` to add x as a key to the index that can be searched
     const searchMapFunction =
       "(doc) => {" +
@@ -46,28 +137,7 @@ export class SearchComponent implements OnInit {
       },
     };
 
-    this.db.saveDatabaseIndex(designDoc);
-  }
-
-  async search() {
-    this.searchText = this.searchText.toLowerCase();
-    if (!this.isRelevantSearchInput(this.searchText)) {
-      this.results = [];
-      return;
-    }
-
-    const searchHash = JSON.stringify(this.searchText);
-    const searchTerms = this.searchText.split(" ");
-    const queryResults = await this.db.query("search_index/by_name", {
-      startkey: searchTerms[0],
-      endkey: searchTerms[0] + "\ufff0",
-      include_docs: true,
-    });
-
-    if (JSON.stringify(this.searchText) === searchHash) {
-      // only set result if the user hasn't continued typing and changed the search term already
-      this.results = this.prepareResults(queryResults.rows, searchTerms);
-    }
+    return this.db.saveDatabaseIndex(designDoc);
   }
 
   /**
@@ -77,10 +147,13 @@ export class SearchComponent implements OnInit {
    */
   private isRelevantSearchInput(searchText: string) {
     const regexp = new RegExp("[a-z]+|[0-9]+");
-    return this.searchText.match(regexp);
+    return (
+      searchText.match(regexp) &&
+      searchText.length >= this.MIN_CHARACTERS_FOR_SEARCH
+    );
   }
 
-  private prepareResults(rows, searchTerms: string[]) {
+  private prepareResults(rows, searchTerms: string[]): any[] {
     return this.getResultsWithoutDuplicates(rows)
       .map((doc) => this.transformDocToEntity(doc))
       .filter((r) => r !== null)
@@ -149,17 +222,5 @@ export class SearchComponent implements OnInit {
     }
 
     return t[0].localeCompare(t[1]);
-  }
-
-  clickOption(optionElement) {
-    // simulate a click on the EntityBlock inside the selected option element
-    optionElement._element.nativeElement.children["0"].children["0"].click();
-    if (this.showSearchToolbar === true) {
-      this.showSearchToolbar = false;
-    }
-  }
-
-  toggleSearchToolbar() {
-    this.showSearchToolbar = !this.showSearchToolbar;
   }
 }
