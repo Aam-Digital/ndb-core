@@ -115,19 +115,23 @@ export class RollCallComponent implements OnInit {
 
   private sortRollCallList() {
     this.rollCallList.sort((a: RollCallRecord, b: RollCallRecord) => {
+      if (a.child.schoolClass === b.child.schoolClass) {
+        return 0;
+      }
+
       const diff =
         parseInt(a.child.schoolClass, 10) - parseInt(b.child.schoolClass, 10);
       if (!Number.isNaN(diff)) {
         return diff;
       }
 
-      if (a.child.schoolClass > b.child.schoolClass) {
-        return 1;
-      }
-      if (a.child.schoolClass < b.child.schoolClass) {
+      if (
+        a.child.schoolClass < b.child.schoolClass ||
+        b.child.schoolClass === undefined
+      ) {
         return -1;
       }
-      return 0;
+      return 1;
     });
   }
 
