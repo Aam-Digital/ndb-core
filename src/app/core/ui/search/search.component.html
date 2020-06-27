@@ -19,6 +19,7 @@
     (optionSelected)="clickOption($event.option)"
   >
     <mat-option
+      class="result-hint"
       *ngIf="
         searchInput.value.length > 0 &&
         searchInput.value.length < MIN_CHARACTERS_FOR_SEARCH
@@ -28,6 +29,7 @@
     </mat-option>
 
     <mat-option
+      class="result-hint"
       *ngIf="
         results.length === 0 &&
         searchInput.value.length >= MIN_CHARACTERS_FOR_SEARCH &&
@@ -37,7 +39,7 @@
       <p>There were no results</p>
     </mat-option>
 
-    <mat-option *ngIf="isSearching">
+    <mat-option class="result-hint" *ngIf="isSearching">
       <p>Search in progress...</p>
     </mat-option>
 
