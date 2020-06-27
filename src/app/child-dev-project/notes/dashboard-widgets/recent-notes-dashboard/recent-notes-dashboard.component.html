@@ -12,10 +12,14 @@
         {{ count }}
       </span>
     </mat-card-title>
-    <mat-card-subtitle>
+    <mat-card-subtitle
+      [matTooltip]="'includes children with a note ' +
+       (fromBeginningOfWeek ? 'since beginning of week ' : '') +
+       (sinceDays > 0 ? 'within the last ' + sinceDays + ' days' : '')"
+    >
       Children
       <span class='subtitle-highlight'>with</span>
-      report this week
+      recent report
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
