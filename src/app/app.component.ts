@@ -16,7 +16,6 @@
  */
 
 import { Component, OnInit, ViewContainerRef } from "@angular/core";
-import "./rxjs-operators";
 import { AppConfig } from "./core/app-config/app-config";
 import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./core/demo-data/demo-data-generating-progress-dialog.component";
