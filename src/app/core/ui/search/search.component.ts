@@ -6,6 +6,9 @@ import { Entity } from "../../entity/entity";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Subject } from "rxjs";
 import { debounceTime, switchMap } from "rxjs/operators";
+import { LoggingService } from "../../logging/logging.service";
+import { LogLevel } from "../../logging/log-level";
+import { AlertService } from "../../alerts/alert.service";
 
 /**
  * General search box that provides results out of any kind of entities from the system
@@ -32,8 +35,11 @@ export class SearchComponent implements OnInit {
 
   constructor(
     private db: Database,
-    private entitySchemaService: EntitySchemaService
-  ) {}
+    private entitySchemaService: EntitySchemaService,
+    private loggingService: LoggingService,
+    private alertService: AlertService
+  ) {
+  }
 
   ngOnInit() {
     this.createSearchIndex();
@@ -55,7 +61,14 @@ export class SearchComponent implements OnInit {
           this.handleSearchQueryResult(result);
         },
         (error) => {
-          console.error("SearchQuery failed", error);
+          this.loggingService.log(
+            {
+              message: "[Search] An error has occurred in a search query.",
+              error
+            },
+            LogLevel.ERROR
+          );
+          this.alertService.addWarning('An error has occurred in your search query. Please try again.');
         }
       );
   }
