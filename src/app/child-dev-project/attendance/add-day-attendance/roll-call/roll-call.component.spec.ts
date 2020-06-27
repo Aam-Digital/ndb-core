@@ -18,23 +18,11 @@ describe("RollCallComponent", () => {
   let mockChildrenService;
 
   beforeEach(async(() => {
-    AppConfig.settings = {
-      site_name: "",
-      database: {
-        name: "unit-tests",
-        remote_url: "",
-        timeout: 60000,
-        useTemporaryDatabase: true,
-      },
-      webdav: { remote_url: null },
-    };
-
     mockEntityMapper = jasmine.createSpyObj(["save"]);
     mockChildrenService = jasmine.createSpyObj(["getAttendancesOfMonth"]);
     mockChildrenService.getAttendancesOfMonth.and.returnValue(of([]));
 
-    // @ts-ignore
-    AppConfig.settings = {};
+    AppConfig.settings = { debug: true } as any;
 
     TestBed.configureTestingModule({
       imports: [ChildrenModule],
@@ -104,6 +92,35 @@ describe("RollCallComponent", () => {
       },
     ]);
     expect(component.rollCallList[0].attendanceDay.date).toEqual(testDate);
+  });
+
+  it("should sort list by schoolClass of students", async () => {
+    const testStudents = [
+      new Child("0"),
+      new Child("1"),
+      new Child("2"),
+      new Child("3"),
+      new Child("4"),
+    ];
+    testStudents[0].schoolClass = "10";
+    testStudents[1].schoolClass = "9";
+    testStudents[2].schoolClass = "KG";
+    testStudents[3].schoolClass = undefined;
+    testStudents[4].schoolClass = "9";
+
+    mockChildrenService.getAttendancesOfMonth.and.returnValue(of([]));
+
+    component.students = testStudents;
+    component.attendanceType = "coaching";
+    component.day = new Date();
+
+    await component.ngOnInit();
+
+    const actualStudentClassOrder = component.rollCallList.map(
+      (r) => r.child.schoolClass
+    );
+    const expectedStudentClassOrder = ["9", "9", "10", "KG", undefined];
+    expect(actualStudentClassOrder).toEqual(expectedStudentClassOrder);
   });
 
   it("should create new attendance records if none exist", async () => {

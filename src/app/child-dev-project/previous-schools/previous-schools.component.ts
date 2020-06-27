@@ -15,7 +15,7 @@ import * as uniqid from "uniqid";
 import { ColumnDescription } from "../../core/entity-subrecord/entity-subrecord/column-description";
 import { ColumnDescriptionInputType } from "../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 import moment from "moment";
-import { isValidDate } from "../../utils";
+import { isValidDate } from "../../utils/utils";
 
 @Component({
   selector: "app-previous-schools",
