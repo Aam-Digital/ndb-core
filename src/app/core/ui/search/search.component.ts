@@ -38,8 +38,7 @@ export class SearchComponent implements OnInit {
     private entitySchemaService: EntitySchemaService,
     private loggingService: LoggingService,
     private alertService: AlertService
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.createSearchIndex();
@@ -64,11 +63,13 @@ export class SearchComponent implements OnInit {
           this.loggingService.log(
             {
               message: "[Search] An error has occurred in a search query.",
-              error
+              error,
             },
             LogLevel.ERROR
           );
-          this.alertService.addWarning('An error has occurred in your search query. Please try again.');
+          this.alertService.addWarning(
+            "An error has occurred in your search query. Please try again."
+          );
         }
       );
   }
