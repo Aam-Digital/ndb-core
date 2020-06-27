@@ -25,6 +25,6 @@
  */
 export const environment = {
   production: true,
-  appVersion: "2.13.2", // replaced automatically by semantic-release
+  appVersion: "2.14.0", // replaced automatically by semantic-release
   repositoryId: "Aam-Digital/ndb-core",
 };
