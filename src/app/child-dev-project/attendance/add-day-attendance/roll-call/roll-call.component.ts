@@ -117,7 +117,7 @@ export class RollCallComponent implements OnInit {
     this.rollCallList.sort((a: RollCallRecord, b: RollCallRecord) => {
       const diff =
         parseInt(a.child.schoolClass, 10) - parseInt(b.child.schoolClass, 10);
-      if (!isNaN(diff)) {
+      if (!Number.isNaN(diff)) {
         return diff;
       }
 

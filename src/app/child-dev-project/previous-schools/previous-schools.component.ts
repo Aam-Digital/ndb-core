@@ -15,6 +15,7 @@ import * as uniqid from "uniqid";
 import { ColumnDescription } from "../../core/entity-subrecord/entity-subrecord/column-description";
 import { ColumnDescriptionInputType } from "../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 import moment from "moment";
+import { isValidDate } from "../../utils";
 
 @Component({
   selector: "app-previous-schools",
@@ -95,9 +96,7 @@ export class PreviousSchoolsComponent implements OnInit, OnChanges {
         ColumnDescriptionInputType.DATE,
         null,
         (v: Date) =>
-          v && !isNaN(v.getTime())
-            ? this.datePipe.transform(v, "yyyy-MM-dd")
-            : ""
+          isValidDate(v) ? this.datePipe.transform(v, "yyyy-MM-dd") : ""
       ),
 
       new ColumnDescription(
@@ -106,9 +105,7 @@ export class PreviousSchoolsComponent implements OnInit, OnChanges {
         ColumnDescriptionInputType.DATE,
         null,
         (v: Date) =>
-          v && !isNaN(v.getTime())
-            ? this.datePipe.transform(v, "yyyy-MM-dd")
-            : ""
+          isValidDate(v) ? this.datePipe.transform(v, "yyyy-MM-dd") : ""
       ),
 
       new ColumnDescription(
@@ -116,7 +113,7 @@ export class PreviousSchoolsComponent implements OnInit, OnChanges {
         "Result",
         ColumnDescriptionInputType.NUMBER,
         null,
-        (n: number) => (n >= 0 && !isNaN(n) ? n + "%" : "N/A"),
+        (n: number) => (n >= 0 && !Number.isNaN(n) ? n + "%" : "N/A"),
         null,
         this.resultColorStyleBuilder
       ),
