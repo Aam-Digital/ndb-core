@@ -9,7 +9,7 @@
       title="Search"
       [matAutocomplete]="autoResults"
       [(ngModel)]="searchText"
-      (ngModelChange)="searchInputChanged($event)"
+      (ngModelChange)="searchStringChanged.next($event)"
       #searchInput
     />
   </mat-form-field>
@@ -79,7 +79,7 @@
       title="Search"
       [matAutocomplete]="autoResults"
       [(ngModel)]="searchText"
-      (ngModelChange)="searchInputChanged($event)"
+      (ngModelChange)="searchStringChanged.next($event)"
     />
     {{ searchInput.focus() }}
     <button mat-icon-button (click)="toggleSearchToolbar()">

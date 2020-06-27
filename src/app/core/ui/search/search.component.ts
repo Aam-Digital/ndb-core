@@ -100,10 +100,6 @@ export class SearchComponent implements OnInit {
     this.showSearchToolbar = !this.showSearchToolbar;
   }
 
-  searchInputChanged(searchString) {
-    this.searchStringChanged.next(searchString);
-  }
-
   handleSearchQueryResult(result: {
     queryResults: any;
     searchTerms: string[];
