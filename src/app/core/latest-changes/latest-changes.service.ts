@@ -134,7 +134,7 @@ export class LatestChangesService {
 
   private parseGithubApiRelease(githubResponse: any): Changelog {
     const releaseNotesWithoutHeading = githubResponse.body.replace(
-      /##[^###]*/,
+      /#{1,2}[^###]*/,
       ""
     );
     const releaseNotesWithoutCommitRefs = releaseNotesWithoutHeading.replace(
