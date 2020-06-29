@@ -298,7 +298,7 @@ export class ChildrenService {
       'if (!doc._id.startsWith("AttendanceMonth:") ) { return; }' +
       "if (!isWithinLast3Months(new Date(doc.month), new Date())) { return; }" +
       "var attendance = (doc.daysAttended / (doc.daysWorking - doc.daysExcused));" +
-      "if (!isNaN(attendance)) { emit(doc.student, attendance); }" +
+      "if (!Number.isNaN(attendance)) { emit(doc.student, attendance); }" +
       "function isWithinLast3Months(date, now) {" +
       "  let months;" +
       "  months = (now.getFullYear() - date.getFullYear()) * 12;" +
@@ -317,7 +317,7 @@ export class ChildrenService {
       'if (!doc._id.startsWith("AttendanceMonth:")) { return; }' +
       "if (!isWithinLastMonth(new Date(doc.month), new Date())) { return; }" +
       "var attendance = (doc.daysAttended / (doc.daysWorking - doc.daysExcused));" +
-      "if (!isNaN(attendance)) { emit(doc.student, attendance); }" +
+      "if (!Number.isNaN(attendance)) { emit(doc.student, attendance); }" +
       "function isWithinLastMonth(date, now) {" +
       "  let months;" +
       "  months = (now.getFullYear() - date.getFullYear()) * 12;" +

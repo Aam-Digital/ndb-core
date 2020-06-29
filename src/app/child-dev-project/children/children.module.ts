@@ -74,6 +74,8 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { RecentNotesDashboardComponent } from "../notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component";
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
+import { CONFLICT_RESOLUTION_STRATEGY } from "../../conflict-resolution/auto-resolution/conflict-resolution-strategy";
+import { AttendanceMonthConflictResolutionStrategy } from "../attendance/attendance-month-conflict-resolution-strategy";
 import { MatPaginatorModule } from "@angular/material/paginator";
 
 @NgModule({
@@ -141,7 +143,16 @@ import { MatPaginatorModule } from "@angular/material/paginator";
     HealthCheckupComponent,
     PreviousSchoolsComponent,
   ],
-  providers: [ChildrenService, DatePipe, PercentPipe],
+  providers: [
+    ChildrenService,
+    DatePipe,
+    PercentPipe,
+    {
+      provide: CONFLICT_RESOLUTION_STRATEGY,
+      useClass: AttendanceMonthConflictResolutionStrategy,
+      multi: true,
+    },
+  ],
   exports: [
     ChildBlockComponent,
     ChildSelectComponent,

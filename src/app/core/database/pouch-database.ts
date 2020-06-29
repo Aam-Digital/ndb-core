@@ -40,9 +40,10 @@ export class PouchDatabase extends Database {
    * Load a single document by id from the database.
    * (see {@link Database})
    * @param id The primary key of the document to be loaded
+   * @param options Optional PouchDB options for the request
    */
-  get(id: string) {
-    return this._pouchDB.get(id).catch((err) => {
+  get(id: string, options: any = {}) {
+    return this._pouchDB.get(id, options).catch((err) => {
       this.notifyError(err);
       throw err;
     });

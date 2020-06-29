@@ -18,53 +18,31 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AppVersionComponent } from "./app-version.component";
-import { MockSessionService } from "../../session/session-service/mock-session.service";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { LoginState } from "../../session/session-states/login-state.enum";
-import { SessionService } from "app/core/session/session-service/session.service";
 import { MatDialogModule } from "@angular/material/dialog";
-import { LatestChangesService } from "../latest-changes.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ChangelogComponent } from "../changelog/changelog.component";
-import { of } from "rxjs";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { LatestChangesDialogService } from "../latest-changes-dialog.service";
 
 describe("AppVersionComponent", () => {
   let component: AppVersionComponent;
   let fixture: ComponentFixture<AppVersionComponent>;
 
-  let latestChangesService: LatestChangesService;
-  let sessionService: MockSessionService;
-  let entitySchemaService: EntitySchemaService;
-  let entityMapper: EntityMapperService;
+  let latestChangesDialogService: jasmine.SpyObj<LatestChangesDialogService>;
 
   beforeEach(async(() => {
-    entitySchemaService = new EntitySchemaService();
-    sessionService = new MockSessionService(entitySchemaService);
-    latestChangesService = new LatestChangesService(null, null, null, null);
-    entityMapper = new EntityMapperService(null, null);
-
-    spyOn(latestChangesService, "getChangelogs").and.returnValue(
-      of([
-        {
-          name: "test",
-          tag_name: "v1.0",
-          body: "latest test",
-          published_at: "2018-01-01",
-        },
-      ])
-    );
-    spyOn(sessionService.getLoginState(), "getState").and.returnValue(
-      LoginState.LOGGED_IN
-    );
+    latestChangesDialogService = jasmine.createSpyObj([
+      "getCurrentVersion",
+      "showLatestChanges",
+    ]);
 
     TestBed.configureTestingModule({
       declarations: [AppVersionComponent, ChangelogComponent],
       imports: [MatDialogModule, NoopAnimationsModule],
       providers: [
-        { provide: SessionService, useValue: sessionService },
-        { provide: EntityMapperService, useValue: entityMapper },
-        { provide: LatestChangesService, useValue: latestChangesService },
+        {
+          provide: LatestChangesDialogService,
+          useValue: latestChangesDialogService,
+        },
       ],
     });
 
@@ -81,10 +59,17 @@ describe("AppVersionComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should open dialog", () => {
-    const spy = spyOn(latestChangesService, "showLatestChanges");
+  it("should load currentVersion", () => {
+    const testVersion = "1.9.9";
+    latestChangesDialogService.getCurrentVersion.and.returnValue(testVersion);
 
+    component.ngOnInit();
+
+    expect(component.currentVersion).toEqual(testVersion);
+  });
+
+  it("should open dialog", () => {
     component.showLatestChanges();
-    expect(spy.calls.count()).toBe(1, "dialog not opened");
+    expect(latestChangesDialogService.showLatestChanges).toHaveBeenCalled();
   });
 });

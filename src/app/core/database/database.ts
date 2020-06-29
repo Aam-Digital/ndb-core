@@ -26,8 +26,9 @@ export abstract class Database {
   /**
    * Load a single document by id from the database.
    * @param id The primary key of the document to be loaded
+   * @param options Optional options for the database engine (PouchDB)
    */
-  abstract get(id: string): Promise<any>;
+  abstract get(id: string, options?: any): Promise<any>;
 
   /**
    * Load all documents (matching the given PouchDB options) from the database.

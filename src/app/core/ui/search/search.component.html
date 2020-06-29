@@ -1,26 +1,91 @@
-<div fxHide.xs="true" fxHide="false">
-  <mat-form-field fxFill class="search-field">
-    <span matPrefix><mat-icon class="search-icon" fontIcon="fa-search"></mat-icon>&nbsp;</span>
-    <input matInput (input)="search()" title="Search" [matAutocomplete]="autoResults" [(ngModel)]="searchText">
+<div class="desktop-search-bar" fxHide.xs="true" fxHide="false">
+  <mat-form-field fxFill class="search-field" floatLabel="never">
+    <span matPrefix>
+      <mat-icon matPrefix class="search-icon" fontIcon="fa-search"></mat-icon>
+    </span>
+    <mat-label>Search</mat-label>
+    <input
+      matInput
+      title="Search"
+      [matAutocomplete]="autoResults"
+      [(ngModel)]="searchText"
+      (ngModelChange)="searchStringChanged.next($event)"
+      #searchInput
+    />
   </mat-form-field>
 
-  <mat-autocomplete #autoResults="matAutocomplete" (optionSelected)="clickOption($event.option)">
-    <mat-option *ngFor="let res of results" [value]="''">
-      <app-child-block *ngIf="res.getType()==='Child'" [entity]="res" [ngClass]="{'result-inactive': !res.isActive()}"></app-child-block>
-      <app-school-block *ngIf="res.getType()==='School'" [entity]="res"></app-school-block>
+  <mat-autocomplete
+    #autoResults="matAutocomplete"
+    (optionSelected)="clickOption($event.option)"
+  >
+    <mat-option
+      class="result-hint"
+      *ngIf="
+        searchInput.value.length > 0 &&
+        searchInput.value.length < MIN_CHARACTERS_FOR_SEARCH
+      "
+    >
+      <p>Insert at least {{ MIN_CHARACTERS_FOR_SEARCH }} characters</p>
+    </mat-option>
+
+    <mat-option
+      class="result-hint"
+      *ngIf="
+        results.length === 0 &&
+        searchInput.value.length >= MIN_CHARACTERS_FOR_SEARCH &&
+        !isSearching
+      "
+    >
+      <p>There were no results</p>
+    </mat-option>
+
+    <mat-option class="result-hint" *ngIf="isSearching">
+      <p>Search in progress...</p>
+    </mat-option>
+
+    <mat-option *ngFor="let res of results" [value]="">
+      <app-child-block
+        *ngIf="res.getType() === 'Child'"
+        [entity]="res"
+        [ngClass]="{ 'result-inactive': !res.isActive() }"
+      ></app-child-block>
+      <app-school-block
+        *ngIf="res.getType() === 'School'"
+        [entity]="res"
+      ></app-school-block>
     </mat-option>
   </mat-autocomplete>
 </div>
 
-<button mat-icon-button fxHide.xs="false" fxHide="true" (click)="toggleSearchToolbar()">
+<button
+  mat-icon-button
+  fxHide.xs="false"
+  fxHide="true"
+  (click)="toggleSearchToolbar()"
+>
   <mat-icon class="header-icon" fontIcon="fa-search"></mat-icon>
 </button>
 
-<mat-toolbar *ngIf="showSearchToolbar" class="search-header mat-elevation-z7 mat-typography">
+<mat-toolbar
+  *ngIf="showSearchToolbar"
+  class="search-header mat-elevation-z7 mat-typography"
+>
   <mat-toolbar-row fxLayout="row">
-    <span matPrefix><mat-icon class="search-icon" fontIcon="fa-search"></mat-icon>&nbsp;</span>
-    <input #searchInput fxFlex="grow" matInput (input)="search()" title="Search" [matAutocomplete]="autoResults" [(ngModel)]="searchText">
-    {{searchInput.focus()}}
-    <button mat-icon-button (click)="toggleSearchToolbar()"><mat-icon class="search-icon" fontIcon="fa-times"></mat-icon></button>
+    <span matPrefix>
+      <mat-icon class="search-icon" fontIcon="fa-search"></mat-icon>
+    </span>
+    <input
+      #searchInput
+      fxFlex="grow"
+      matInput
+      title="Search"
+      [matAutocomplete]="autoResults"
+      [(ngModel)]="searchText"
+      (ngModelChange)="searchStringChanged.next($event)"
+    />
+    {{ searchInput.focus() }}
+    <button mat-icon-button (click)="toggleSearchToolbar()">
+      <mat-icon class="search-icon" fontIcon="fa-times"></mat-icon>
+    </button>
   </mat-toolbar-row>
 </mat-toolbar>

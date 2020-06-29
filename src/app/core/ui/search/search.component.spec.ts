@@ -60,9 +60,28 @@ describe("SearchComponent", () => {
     expect(mockDatabase.saveDatabaseIndex).toHaveBeenCalled();
   });
 
+  it("should not search for less than MIN_CHARACTERS_FOR_SEARCH character of input", async () => {
+    let result = await component.startSearch("A");
+    component.handleSearchQueryResult(result);
+    expect(mockDatabase.query).not.toHaveBeenCalled();
+    expect(component.results).toEqual([]);
+
+    result = await component.startSearch("AB");
+    component.handleSearchQueryResult(result);
+    expect(mockDatabase.query).not.toHaveBeenCalled();
+    expect(component.results).toEqual([]);
+  });
+
   it("should not search for less than one real character of input", async () => {
-    component.searchText = "   ";
-    await component.search();
+    const result = await component.startSearch("   ");
+    component.handleSearchQueryResult(result);
+    expect(mockDatabase.query).not.toHaveBeenCalled();
+    expect(component.results).toEqual([]);
+  });
+
+  it("should reset results if a a null search is performed", async () => {
+    const result = await component.startSearch(null);
+    component.handleSearchQueryResult(result);
     expect(mockDatabase.query).not.toHaveBeenCalled();
     expect(component.results).toEqual([]);
   });
@@ -81,8 +100,8 @@ describe("SearchComponent", () => {
     };
     mockDatabase.query.and.returnValue(Promise.resolve(mockQueryResults));
 
-    component.searchText = "A";
-    await component.search();
+    const result = await component.startSearch("Ada");
+    component.handleSearchQueryResult(result);
     expect(mockDatabase.query).toHaveBeenCalled();
     expect(component.results).toEqual([child1, school1]);
   });
@@ -99,8 +118,8 @@ describe("SearchComponent", () => {
     };
     mockDatabase.query.and.returnValue(Promise.resolve(mockQueryResults));
 
-    component.searchText = "A";
-    await component.search();
+    const result = await component.startSearch("Ada");
+    component.handleSearchQueryResult(result);
     expect(mockDatabase.query).toHaveBeenCalled();
     expect(component.results.length).toBe(1);
     expect(component.results).toEqual([child1]);
@@ -120,8 +139,8 @@ describe("SearchComponent", () => {
     };
     mockDatabase.query.and.returnValue(Promise.resolve(mockQueryResults));
 
-    component.searchText = "A X";
-    await component.search();
+    const result = await component.startSearch("A X");
+    component.handleSearchQueryResult(result);
     expect(mockDatabase.query).toHaveBeenCalled();
     expect(component.results).toEqual([child1]);
   });

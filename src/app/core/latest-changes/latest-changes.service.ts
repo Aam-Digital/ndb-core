@@ -21,9 +21,7 @@ import { Observable, throwError } from "rxjs";
 import { Changelog } from "./changelog";
 import { AlertService } from "../alerts/alert.service";
 import { HttpClient } from "@angular/common/http";
-import { MatDialog } from "@angular/material/dialog";
-import { ChangelogComponent } from "./changelog/changelog.component";
-import { CookieService } from "ngx-cookie-service";
+import { environment } from "../../../environments/environment";
 
 /**
  * Manage the changelog information and display it to the user
@@ -31,59 +29,124 @@ import { CookieService } from "ngx-cookie-service";
  */
 @Injectable()
 export class LatestChangesService {
-  private static COOKIE_NAME = "AppVersion";
+  private static GITHUB_API = "https://api.github.com/repos/";
 
-  constructor(
-    private http: HttpClient,
-    private alertService: AlertService,
-    private dialog: MatDialog,
-    private cookieService: CookieService
-  ) {}
+  constructor(private http: HttpClient, private alertService: AlertService) {}
 
   /**
-   * Load the changelog document.
+   * Load the changelog information of changes since the last update.
+   * @param currentVersion The current version for which changes are to be loaded.
+   * @param previousVersion (Optional) The older version since which changes of all versions until the currentVersion will be loaded.
    */
-  getChangelogs(): Observable<Changelog[]> {
-    return this.http.get<Changelog[]>("assets/changelog.json").pipe(
-      map((response) => response),
-      catchError((error) => {
-        this.alertService.addWarning("Could not load latest changes: " + error);
-        return throwError("Could not load latest changes.");
-      })
+  getChangelogsBetweenVersions(
+    currentVersion: string,
+    previousVersion?: string
+  ): Observable<Changelog[]> {
+    return this.getChangelogs((releases: any[]) =>
+      this.filterReleasesBetween(releases, currentVersion, previousVersion)
     );
   }
 
-  /**
-   * Get current app version inferred from the latest changelog entry.
-   */
-  getCurrentVersion(): Observable<string> {
-    return this.getChangelogs().pipe(map((changelog) => changelog[0].tag_name));
+  private filterReleasesBetween(
+    releases: any[],
+    currentVersion: string,
+    previousVersion?: string
+  ) {
+    let relevantReleases;
+
+    const releasesUpToCurrentVersion = releases.filter(
+      (r) => r.tag_name <= currentVersion
+    );
+    if (releasesUpToCurrentVersion.length < 1) {
+      return [];
+    }
+
+    if (previousVersion) {
+      const releasesBackToPreviousVersion = releasesUpToCurrentVersion.filter(
+        (r) => r.tag_name > previousVersion
+      );
+      relevantReleases = releasesBackToPreviousVersion.sort((a, b) =>
+        (b.tag_name as string).localeCompare(a.tag_name, "en")
+      );
+    } else {
+      relevantReleases = [releasesUpToCurrentVersion[0]];
+    }
+
+    return relevantReleases;
   }
 
   /**
-   * Open a modal window displaying the changelog of the latest version.
+   * Load the changelog information of a number of releases before (excluding) the given version.
+   * @param version The version for which preceding releases should be returned.
+   * @param count The number of releases before the given version to be returned
    */
-  public showLatestChanges(): void {
-    this.dialog.open(ChangelogComponent, {
-      width: "400px",
-      data: this.getChangelogs(),
-    });
+  getChangelogsBeforeVersion(
+    version: string,
+    count: number
+  ): Observable<Changelog[]> {
+    return this.getChangelogs((releases: any) =>
+      this.filterReleasesBefore(releases, version, count)
+    );
+  }
+
+  private filterReleasesBefore(
+    releases: any[],
+    version: string,
+    count: number
+  ) {
+    let relevantReleases;
+
+    const releasesUpToCurrentVersion = releases.filter(
+      (r) => r.tag_name < version
+    );
+    if (releasesUpToCurrentVersion.length < 1) {
+      return [];
+    }
+
+    relevantReleases = releasesUpToCurrentVersion.sort((a, b) =>
+      (b.tag_name as string).localeCompare(a.tag_name, "en")
+    );
+    return relevantReleases.slice(0, count);
   }
 
   /**
-   * Display the latest changes info box automatically if the current user has not seen this version before.
+   * Load release information from GitHub based on a given filter to select relevant releases.
+   * @param releaseFilter Filter function that is selecting relevant objects from the array of GitHub releases
    */
-  public showLatestChangesIfUpdated() {
-    this.getCurrentVersion().subscribe((currentVersion) => {
-      if (this.cookieService.check(LatestChangesService.COOKIE_NAME)) {
-        const previousVersion = this.cookieService.get(
-          LatestChangesService.COOKIE_NAME
-        );
-        if (currentVersion !== previousVersion) {
-          this.showLatestChanges();
-        }
-      }
-      this.cookieService.set(LatestChangesService.COOKIE_NAME, currentVersion);
-    });
+  private getChangelogs(releaseFilter: ([]) => any[]): Observable<Changelog[]> {
+    return this.http
+      .get<any[]>(
+        LatestChangesService.GITHUB_API + environment.repositoryId + "/releases"
+      )
+      .pipe(
+        map(releaseFilter),
+        map((relevantReleases) =>
+          relevantReleases.map((r) => this.parseGithubApiRelease(r))
+        ),
+        catchError((error) => {
+          this.alertService.addWarning(
+            "Could not load latest changes: " + error
+          );
+          return throwError("Could not load latest changes.");
+        })
+      );
+  }
+
+  private parseGithubApiRelease(githubResponse: any): Changelog {
+    const releaseNotesWithoutHeading = githubResponse.body.replace(
+      /#{1,2}[^###]*/,
+      ""
+    );
+    const releaseNotesWithoutCommitRefs = releaseNotesWithoutHeading.replace(
+      / \(\[\w{7}\]\([^\)]*\)\)/g,
+      ""
+    );
+
+    return {
+      tag_name: githubResponse.tag_name,
+      name: githubResponse.name,
+      published_at: githubResponse.published_at,
+      body: releaseNotesWithoutCommitRefs,
+    };
   }
 }
