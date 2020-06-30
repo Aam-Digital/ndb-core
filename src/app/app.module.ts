@@ -168,6 +168,6 @@ export class AppModule {
 
 // Initialize remote logging
 LoggingService.initRemoteLogging({
-  dsn: "https://bd6aba79ca514d35bb06a4b4e0c2a21e@sentry.io/1242399",
+  dsn: environment.remoteLoggingDsn,
   whitelistUrls: [/https?:\/\/(.*)\.?aam-digital\.com/],
 });
