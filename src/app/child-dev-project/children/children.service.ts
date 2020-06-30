@@ -28,10 +28,14 @@ export class ChildrenService {
     this.entitySchemaService.registerSchemaDatatype(
       new LoadChildPhotoEntitySchemaDatatype(childPhotoService)
     );
-    this.createAttendanceAnalysisIndex();
-    this.createNotesIndex();
-    this.createAttendancesIndex();
-    this.createChildSchoolRelationIndex();
+    this.createDatabaseIndices();
+  }
+
+  public async createDatabaseIndices() {
+    await this.createAttendanceAnalysisIndex();
+    await this.createNotesIndex();
+    await this.createAttendancesIndex();
+    await this.createChildSchoolRelationIndex();
   }
 
   /**
