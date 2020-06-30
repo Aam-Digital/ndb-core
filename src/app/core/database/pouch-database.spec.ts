@@ -26,10 +26,17 @@ describe("PouchDatabase tests", () => {
   let originalTimeout;
 
   beforeEach(() => {
+    const mockLoggingService: jasmine.SpyObj<LoggingService> = jasmine.createSpyObj(
+      "mockLoggingService",
+      ["warn"]
+    );
+    mockLoggingService.warn.and.callFake((m) => console.warn(m));
+
     pouch = new PouchDB("unit-test-db");
     pouchDatabase = new PouchDatabase(
       pouch,
-      new AlertService(null, new LoggingService())
+      new AlertService(null, new LoggingService()),
+      mockLoggingService
     );
 
     originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;

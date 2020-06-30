@@ -18,6 +18,8 @@
 import { Database } from "./database";
 import { AlertService } from "../alerts/alert.service";
 import { AlertDisplay } from "../alerts/alert-display";
+import moment from "moment";
+import { LoggingService } from "../logging/logging.service";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -30,9 +32,14 @@ export class PouchDatabase extends Database {
   /**
    * Create a PouchDB database manager.
    * @param _pouchDB An (initialized) PouchDB database instance from the PouchDB library.
-   * @param alertService The AlertService instance of the app to be able to report problems.
+   * @param alertService The AlertService instance of the app to be able to display problems to users.
+   * @param loggingService The LoggingService instance of the app to log and report problems.
    */
-  constructor(private _pouchDB: any, private alertService: AlertService) {
+  constructor(
+    private _pouchDB: any,
+    private alertService: AlertService,
+    private loggingService: LoggingService
+  ) {
     super();
   }
 
@@ -115,7 +122,10 @@ export class PouchDatabase extends Database {
    * @param fun The name of a previously saved database index
    * @param options Additional options for the query, like a `key`. See the PouchDB docs for details.
    */
-  query(fun: (doc: any, emit: any) => void, options: any): Promise<any> {
+  query(
+    fun: string | ((doc: any, emit: any) => void),
+    options: any
+  ): Promise<any> {
     return this._pouchDB.query(fun, options);
   }
 
@@ -127,28 +137,63 @@ export class PouchDatabase extends Database {
    *
    * @param designDoc The PouchDB style design document for the map/reduce query
    */
-  saveDatabaseIndex(designDoc: any): Promise<any> {
-    return this.get(designDoc._id)
-      .then((existingDoc) => {
-        if (
-          JSON.stringify(existingDoc.views) !== JSON.stringify(designDoc.views)
-        ) {
-          designDoc._rev = existingDoc._rev;
-          this.alertService.addDebug("replacing existing database index");
-          return this.put(designDoc);
+  async saveDatabaseIndex(designDoc: any): Promise<any> {
+    try {
+      const existingDesignDoc = await this.get(designDoc._id);
+      if (
+        JSON.stringify(existingDesignDoc.views) ===
+        JSON.stringify(designDoc.views)
+      ) {
+        // already up to date, nothing more to do
+        return;
+      }
+
+      designDoc._rev = existingDesignDoc._rev;
+      this.loggingService.debug("replacing existing database index");
+    } catch (err) {
+      if (err.status === 404) {
+        this.loggingService.debug("creating new database index");
+      } else {
+        // unexpected error
+        this.loggingService.error("database index check failed: " + err);
+        throw err;
+      }
+    }
+
+    try {
+      this.put(designDoc);
+    } catch (err) {
+      this.loggingService.error("database index creation failed: " + err);
+      throw err;
+    }
+
+    await this.prebuildViewsOfDesignDoc(designDoc);
+  }
+
+  private async prebuildViewsOfDesignDoc(designDoc: any) {
+    for (const viewName of Object.keys(designDoc.views)) {
+      try {
+        const queryName =
+          designDoc._id.replace(/_design\//, "") + "/" + viewName;
+        console.log("start indexing " + queryName);
+        const startTime = moment();
+        await this.query(queryName, { key: "1" });
+        const indexingTime = moment().diff(startTime, "milliseconds");
+        console.log("done indexing " + queryName, indexingTime);
+        if (indexingTime > 1000) {
+          this.loggingService.warn({
+            action: "Indexing for query",
+            query: queryName,
+            duration: indexingTime,
+          });
         }
-      })
-      .catch((err) => {
-        if (err.status === 404) {
-          this.alertService.addDebug("creating new database index");
-          return this.put(designDoc);
-        } else {
-          // unexpected error
-          this.alertService.addWarning(
-            "database index failed to be added: " + err
-          );
-        }
-      });
+      } catch (err) {
+        this.alertService.addWarning(
+          "failed to trigger query for new index: ",
+          err
+        );
+      }
+    }
   }
 
   private notifyError(err) {
