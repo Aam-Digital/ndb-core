@@ -38,7 +38,13 @@ export class User extends Entity {
   /** password object (encrypted) */
   @DatabaseField() private password: any;
 
-  @DatabaseField() paginationSettings: number = 1;
+  @DatabaseField() paginatorSettings: PaginatorSettings = {
+    childrenList: {
+      pageSize: 3,
+      pageSizeOptions: [3, 10, 50],
+      pageIndex: 0,
+    },
+  };
 
   /** password for webdav account (encrypted with user.password) */
   @DatabaseField() private cloudPasswordEnc: any;
@@ -150,4 +156,12 @@ export class User extends Entity {
   public setAdmin(admin: boolean) {
     this.admin = admin;
   }
+}
+
+export interface PaginatorSettings {
+  childrenList: {
+    pageSize: number;
+    pageSizeOptions: Array<number>;
+    pageIndex: number;
+  };
 }

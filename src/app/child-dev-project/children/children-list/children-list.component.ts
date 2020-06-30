@@ -1,10 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  OnInit,
-  ViewChild,
-  OnDestroy,
-} from "@angular/core";
+import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
 import { Child } from "../model/child";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
@@ -30,7 +24,7 @@ export interface ColumnGroup {
   templateUrl: "./children-list.component.html",
   styleUrls: ["./children-list.component.scss"],
 })
-export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ChildrenListComponent implements OnInit, AfterViewInit {
   childrenList: Child[] = [];
   attendanceList = new Map<string, AttendanceMonth[]>();
   childrenDataSource = new MatTableDataSource();
@@ -120,7 +114,9 @@ export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
   columnsToDisplay = ["projectNumber", "name"];
   filterString = "";
 
-  public paginatorItemsPerPage: number;
+  public paginatorPageSize: number;
+  public paginatorPageSizeOptions: Array<number>;
+  public paginatorPageIndex: number;
   private user: User;
 
   constructor(
@@ -136,8 +132,9 @@ export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadData();
     this.loadUrlParams();
     this.user = this.sessionService.getCurrentUser();
-    this.paginatorItemsPerPage = this.user.paginationSettings;
-    console.log(this.paginatorItemsPerPage);
+    this.paginatorPageSize = this.user.paginatorSettings.childrenList.pageSize;
+    this.paginatorPageSizeOptions = this.user.paginatorSettings.childrenList.pageSizeOptions;
+    this.paginatorPageIndex = this.user.paginatorSettings.childrenList.pageIndex;
     this.media.media$
       .pipe(untilDestroyed(this))
       .subscribe((change: MediaChange) => {
@@ -167,22 +164,23 @@ export class ChildrenListComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     this.childrenDataSource.sort = this.sort;
     this.childrenDataSource.paginator = this.paginator;
-  }
-
-  ngOnDestroy() {
-    this.user.paginationSettings = this.paginatorItemsPerPage;
-    console.log(this.user.paginationSettings);
-    console.log("Bye bye");
+    setTimeout(() => {
+      this.paginator.pageIndex = this.paginatorPageIndex;
+      this.paginator.page.next({
+        pageIndex: this.paginator.pageIndex,
+        pageSize: this.paginator.pageSize,
+        length: this.paginator.length,
+      });
+    });
   }
 
   onPaginateChange(event: PageEvent) {
-    this.paginatorItemsPerPage = event.pageSize;
-    this.user.paginationSettings = this.paginatorItemsPerPage;
-    console.log(this.user.paginationSettings);
-    this.entityMapperService.save<User>(this.user).then(() => {
-      console.log("User gespeichert.");
-      console.log(this.sessionService.getCurrentUser().paginationSettings);
-    });
+    this.paginatorPageSize = event.pageSize;
+    this.paginatorPageIndex = event.pageIndex;
+    this.user.paginatorSettings.childrenList.pageSize = this.paginatorPageSize;
+    this.user.paginatorSettings.childrenList.pageSizeOptions = this.paginatorPageSizeOptions;
+    this.user.paginatorSettings.childrenList.pageIndex = this.paginatorPageIndex;
+    this.entityMapperService.save<User>(this.user).then(() => {});
   }
 
   private loadData(replaceUrl: boolean = false) {

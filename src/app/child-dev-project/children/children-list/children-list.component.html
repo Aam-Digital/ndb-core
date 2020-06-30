@@ -221,5 +221,5 @@
         style="cursor:pointer;" class="table-list-item"></tr>
 
   </table>
-  <mat-paginator (page)="onPaginateChange($event)" [(pageSize)]="paginatorItemsPerPage" [pageSizeOptions]="[3, 10, 20, 50]" [showFirstLastButtons]="true"></mat-paginator>
+  <mat-paginator #paginator (page)="onPaginateChange($event)" [pageSize]="paginatorPageSize" [pageSizeOptions]="paginatorPageSizeOptions" [showFirstLastButtons]="true"></mat-paginator>
 </div>
