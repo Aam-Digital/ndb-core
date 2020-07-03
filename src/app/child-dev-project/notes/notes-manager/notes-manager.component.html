@@ -95,7 +95,5 @@
         style="cursor:pointer;" [ngStyle]="{'background-color': note.getColor()}"></tr>
   </table>
 
-  <mat-paginator [pageSize]="50"
-                [pageSizeOptions]="[3, 10, 20, 50]">
-  </mat-paginator>
+  <mat-paginator (page)="onPaginateChange($event)" [pageSize]="paginatorPageSize" [pageIndex]="paginatorPageIndex" [pageSizeOptions]="[3, 10, 20, 50]" [showFirstLastButtons]="true"></mat-paginator>
 </div>

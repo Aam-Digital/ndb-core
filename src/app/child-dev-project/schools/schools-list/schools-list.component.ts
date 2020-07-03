@@ -63,12 +63,8 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.user = this.sessionService.getCurrentUser();
-    this.paginatorPageSize = this.user.paginatorSettings.schoolsList
-      ? this.user.paginatorSettings.schoolsList.pageSize
-      : 1;
-    this.paginatorPageIndex = this.user.paginatorSettings.schoolsList
-      ? this.user.paginatorSettings.schoolsList.pageIndex
-      : 0;
+    this.paginatorPageSize = this.user.paginatorSettings.schoolsList.pageSize;
+    this.paginatorPageIndex = this.user.paginatorSettings.schoolsList.pageIndex;
     this.schoolService
       .getSchools()
       .pipe(untilDestroyed(this))
@@ -101,7 +97,7 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
     this.paginatorPageIndex = event.pageIndex;
     this.user.paginatorSettings.schoolsList.pageSize = this.paginatorPageSize;
     this.user.paginatorSettings.schoolsList.pageIndex = this.paginatorPageIndex;
-    this.entityMapperService.save<User>(this.user).then(() => {});
+    this.entityMapperService.save<User>(this.user);
   }
 
   applyFilter(filterValue: string) {

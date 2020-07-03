@@ -5,13 +5,14 @@ import { MatSort } from "@angular/material/sort";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { InteractionTypes } from "../interaction-types.enum";
-import { MatPaginator } from "@angular/material/paginator";
+import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { WarningLevel } from "../../warning-level";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FilterSelection } from "../../../core/filter/filter-selection/filter-selection";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { User } from "app/core/user/user";
 
 @UntilDestroy()
 @Component({
@@ -70,6 +71,10 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
   categoryFS = new FilterSelection<Note>("category", []);
   filterSelectionsDropdown = [this.categoryFS];
 
+  public paginatorPageSize: number;
+  public paginatorPageIndex: number;
+  private user: User;
+
   constructor(
     private formDialog: FormDialogService,
     private sessionService: SessionService,
@@ -78,6 +83,10 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
+    this.user = this.sessionService.getCurrentUser();
+    this.paginatorPageSize = this.user.paginatorSettings.notesList.pageSize;
+    this.paginatorPageIndex = this.user.paginatorSettings.notesList.pageIndex;
+
     // activate default filter to current week
     this.dateFS.selectedOption = this.dateFS.options[0].key;
 
@@ -96,7 +105,14 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
       });
 
     this.initCategoryFilter();
-    this.notesDataSource.paginator = this.paginator;
+  }
+
+  onPaginateChange(event: PageEvent) {
+    this.paginatorPageSize = event.pageSize;
+    this.paginatorPageIndex = event.pageIndex;
+    this.user.paginatorSettings.notesList.pageSize = this.paginatorPageSize;
+    this.user.paginatorSettings.notesList.pageIndex = this.paginatorPageIndex;
+    this.entityMapperService.save<User>(this.user);
   }
 
   private sortAndAdd(newNotes: Note[]) {
@@ -134,6 +150,15 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.notesDataSource.sort = this.sort;
+    this.notesDataSource.paginator = this.paginator;
+    setTimeout(() => {
+      this.paginator.pageIndex = this.paginatorPageIndex;
+      this.paginator.page.next({
+        pageIndex: this.paginator.pageIndex,
+        pageSize: this.paginator.pageSize,
+        length: this.paginator.length,
+      });
+    });
   }
 
   private getPreviousSunday(weeksBack: number) {

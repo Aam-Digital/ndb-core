@@ -41,11 +41,15 @@ export class User extends Entity {
   /** settings for the mat-paginator for tables  */
   @DatabaseField() paginatorSettings: PaginatorSettings = {
     childrenList: {
-      pageSize: 3,
+      pageSize: 10,
       pageIndex: 0,
     },
     schoolsList: {
-      pageSize: 3,
+      pageSize: 10,
+      pageIndex: 0,
+    },
+    notesList: {
+      pageSize: 10,
       pageIndex: 0,
     },
   };
@@ -168,6 +172,10 @@ export interface PaginatorSettings {
     pageIndex: number;
   };
   schoolsList: {
+    pageSize: number;
+    pageIndex: number;
+  };
+  notesList: {
     pageSize: number;
     pageIndex: number;
   };

@@ -131,12 +131,8 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.loadData();
     this.loadUrlParams();
     this.user = this.sessionService.getCurrentUser();
-    this.paginatorPageSize = this.user.paginatorSettings.childrenList
-      ? this.user.paginatorSettings.childrenList.pageSize
-      : 20;
-    this.paginatorPageIndex = this.user.paginatorSettings.childrenList
-      ? this.user.paginatorSettings.childrenList.pageIndex
-      : 0;
+    this.paginatorPageSize = this.user.paginatorSettings.childrenList.pageSize;
+    this.paginatorPageIndex = this.user.paginatorSettings.childrenList.pageIndex;
     this.media.media$
       .pipe(untilDestroyed(this))
       .subscribe((change: MediaChange) => {
@@ -181,7 +177,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.paginatorPageIndex = event.pageIndex;
     this.user.paginatorSettings.childrenList.pageSize = this.paginatorPageSize;
     this.user.paginatorSettings.childrenList.pageIndex = this.paginatorPageIndex;
-    this.entityMapperService.save<User>(this.user).then(() => {});
+    this.entityMapperService.save<User>(this.user);
   }
 
   private loadData(replaceUrl: boolean = false) {
