@@ -1,10 +1,4 @@
-import {
-  async,
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { CompareRevComponent } from "./compare-rev.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -14,7 +8,7 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
 import { Database } from "../../core/database/database";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
-import { BehaviorSubject } from "rxjs";
+import { of } from "rxjs";
 import { AutoResolutionService } from "../auto-resolution/auto-resolution.service";
 
 describe("CompareRevComponent", () => {
@@ -26,6 +20,8 @@ describe("CompareRevComponent", () => {
 
   const testDoc = { _id: "abc", _rev: "rev-1a", value: 1 };
   const testConflictDoc = { _id: "abc", _rev: "rev-1b", value: 2 };
+  let confDialogMock;
+  let dialogClosedObserver;
 
   beforeEach(async(() => {
     mockDatabase = jasmine.createSpyObj("mockDatabase", [
@@ -42,11 +38,11 @@ describe("CompareRevComponent", () => {
       false
     );
 
-    const confDialogMock = {
-      // by default immediately simulate a confirmed dialog result
-      openDialog: () => ({ afterClosed: () => new BehaviorSubject(true) }),
-    };
-    spyOn(confDialogMock, "openDialog").and.callThrough();
+    confDialogMock = jasmine.createSpyObj("confDialogMock", ["openDialog"]);
+    dialogClosedObserver = of(true);
+    confDialogMock.openDialog.and.returnValue({
+      afterClosed: () => dialogClosedObserver,
+    });
 
     TestBed.configureTestingModule({
       imports: [
@@ -102,27 +98,26 @@ describe("CompareRevComponent", () => {
     expect(component.resolution).toBeTruthy();
   });
 
-  it("should resolveByDelete, deleting giving doc", fakeAsync(() => {
-    component.loadRev();
-    tick();
+  it("should resolveByDelete, deleting giving doc", async () => {
+    await component.loadRev();
 
-    component.resolveByDelete(testConflictDoc);
-    tick();
+    await component.resolveByDelete(testConflictDoc);
+    await confDialogMock.openDialog().afterClosed().toPromise();
 
     expect(mockDatabase.remove).toHaveBeenCalledWith(testConflictDoc);
     expect(mockDatabase.put).not.toHaveBeenCalled();
     expect(component.resolution).toBeTruthy();
-  }));
+  });
 
-  it("should resolveByManualEdit, saving new version and removing conflict", fakeAsync(() => {
-    component.loadRev();
-    tick();
+  it("should resolveByManualEdit, saving new version and removing conflict", async () => {
+    await component.loadRev();
 
-    component.resolveByManualEdit(component.diffsCustom);
-    tick();
+    await component.resolveByManualEdit(component.diffsCustom);
+
+    await confDialogMock.openDialog().afterClosed().toPromise();
 
     expect(mockDatabase.remove).toHaveBeenCalledWith(testConflictDoc);
     expect(mockDatabase.put).toHaveBeenCalled();
     expect(component.resolution).toBeTruthy();
-  }));
+  });
 });

@@ -1,10 +1,4 @@
-import {
-  async,
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ChildrenService } from "../../../children/children.service";
 import { EntityModule } from "../../../../core/entity/entity.module";
@@ -53,18 +47,16 @@ describe("RecentNotesDashboardComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", fakeAsync(() => {
+  it("should create", () => {
     expect(component).toBeTruthy();
-    tick();
-  }));
+  });
 
-  it("should add all children without note", fakeAsync(() => {
+  it("should add all children without note", async () => {
     const mockChildren = [new Child("1"), new Child("2")];
     mockChildrenService.getChildren.and.returnValue(of(mockChildren));
 
-    component.ngOnInit();
-    tick();
+    await component.ngOnInit();
 
     expect(component.concernedChildren.length).toBe(2);
-  }));
+  });
 });

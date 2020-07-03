@@ -19,6 +19,7 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { ChildrenService } from "app/child-dev-project/children/children.service";
 import { CloudFileService } from "../../../core/webdav/cloud-file-service.service";
+import { MatPaginatorModule } from "@angular/material/paginator";
 
 describe("SchoolsListComponent", () => {
   let component: SchoolsListComponent;
@@ -39,6 +40,7 @@ describe("SchoolsListComponent", () => {
         FormsModule,
         BrowserAnimationsModule,
         MatSelectModule,
+        MatPaginatorModule,
       ],
       providers: [
         SchoolsService,

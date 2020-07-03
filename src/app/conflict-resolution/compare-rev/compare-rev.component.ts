@@ -142,7 +142,18 @@ export class CompareRevComponent {
    */
   public async resolveByManualEdit(diffStringToApply: string) {
     const originalDoc = _.merge({}, this.doc);
-    const diffToApply = JSON.parse(diffStringToApply);
+
+    let diffToApply;
+    try {
+      diffToApply = JSON.parse(diffStringToApply);
+    } catch (err) {
+      this.snackBar.open(
+        "Error trying to parse your custom resolution: " + err
+      );
+      console.error(err);
+      return;
+    }
+
     _.merge(this.doc, diffToApply);
 
     const newChanges = diff(originalDoc, this.doc);

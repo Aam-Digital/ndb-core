@@ -26,6 +26,16 @@ import {
 import { LatestChangesService } from "../latest-changes.service";
 import { Changelog } from "../changelog";
 import { of } from "rxjs";
+import { CommonModule } from "@angular/common";
+import { AlertsModule } from "../../alerts/alerts.module";
+import { SessionModule } from "../../session/session.module";
+import { MatButtonModule } from "@angular/material/button";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { HttpClientModule } from "@angular/common/http";
+import { FlexModule } from "@angular/flex-layout";
+import { MarkdownModule } from "ngx-markdown";
+import { MatIconModule } from "@angular/material/icon";
+import { MatCardModule } from "@angular/material/card";
 
 describe("ChangelogComponent", () => {
   let component: ChangelogComponent;
@@ -46,7 +56,19 @@ describe("ChangelogComponent", () => {
 
     TestBed.configureTestingModule({
       declarations: [ChangelogComponent],
-      imports: [MatDialogModule],
+      imports: [
+        CommonModule,
+        AlertsModule,
+        SessionModule,
+        MatDialogModule,
+        MatButtonModule,
+        MatSnackBarModule,
+        HttpClientModule,
+        FlexModule,
+        MarkdownModule.forRoot(),
+        MatIconModule,
+        MatCardModule,
+      ],
       providers: [
         { provide: MatDialogRef, useValue: {} },
         { provide: MAT_DIALOG_DATA, useValue: of([testChangelog]) },

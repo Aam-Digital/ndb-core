@@ -49,7 +49,7 @@ import { LatestChangesService } from "./latest-changes.service";
     MatSnackBarModule,
     HttpClientModule,
     FlexModule,
-    MarkdownModule,
+    MarkdownModule.forRoot(),
     MatIconModule,
     MatCardModule,
   ],

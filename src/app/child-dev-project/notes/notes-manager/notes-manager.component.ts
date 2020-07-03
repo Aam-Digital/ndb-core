@@ -77,13 +77,9 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     private entityMapperService: EntityMapperService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     // activate default filter to current week
     this.dateFS.selectedOption = this.dateFS.options[0].key;
-
-    this.entityMapperService.loadType<Note>(Note).then((notes) => {
-      this.sortAndAdd(notes);
-    });
 
     this.displayColumnGroup("standard");
     this.media.media$
@@ -97,6 +93,9 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
 
     this.initCategoryFilter();
     this.notesDataSource.paginator = this.paginator;
+
+    const notes = await this.entityMapperService.loadType<Note>(Note);
+    this.sortAndAdd(notes);
   }
 
   private sortAndAdd(newNotes: Note[]) {

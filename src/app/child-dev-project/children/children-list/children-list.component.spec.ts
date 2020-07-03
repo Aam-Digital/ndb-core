@@ -30,6 +30,7 @@ import { AttendanceDayBlockComponent } from "../../attendance/attendance-days/at
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { ExportDataComponent } from "../../../core/admin/export-data/export-data.component";
 import { ChildPhotoService } from "../child-photo-service/child-photo.service";
+import { MatPaginatorModule } from "@angular/material/paginator";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
@@ -60,6 +61,7 @@ describe("ChildrenListComponent", () => {
         MatButtonToggleModule,
         MatIconModule,
         MatTooltipModule,
+        MatPaginatorModule,
         NoopAnimationsModule,
         FormsModule,
         FilterPipeModule,
