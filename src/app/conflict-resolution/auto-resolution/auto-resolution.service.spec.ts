@@ -25,7 +25,7 @@ describe("AutoResolutionService", () => {
         },
       ],
     });
-    service = TestBed.get(AutoResolutionService);
+    service = TestBed.inject<AutoResolutionService>(AutoResolutionService);
   });
 
   it("should be created", () => {
