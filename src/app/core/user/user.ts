@@ -38,10 +38,14 @@ export class User extends Entity {
   /** password object (encrypted) */
   @DatabaseField() private password: any;
 
+  /** settings for the mat-paginator for tables  */
   @DatabaseField() paginatorSettings: PaginatorSettings = {
     childrenList: {
       pageSize: 3,
-      pageSizeOptions: [3, 10, 50],
+      pageIndex: 0,
+    },
+    schoolsList: {
+      pageSize: 3,
       pageIndex: 0,
     },
   };
@@ -157,11 +161,14 @@ export class User extends Entity {
     this.admin = admin;
   }
 }
-
+/** Settings for the mat-paginator for tables that can be changed by the user */
 export interface PaginatorSettings {
   childrenList: {
     pageSize: number;
-    pageSizeOptions: Array<number>;
+    pageIndex: number;
+  };
+  schoolsList: {
+    pageSize: number;
     pageIndex: number;
   };
 }
