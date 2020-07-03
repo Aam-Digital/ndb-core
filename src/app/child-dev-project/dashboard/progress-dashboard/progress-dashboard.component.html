@@ -50,11 +50,11 @@
           </td>
           <td class="dashboard-table-cell" style="display: inline-block; margin-top: -20px; margin-bottom: -10px">
             <mat-form-field class="small">
-              <input matInput type="number" placeholder="Current" [value]="entry.currentValue" (change)="entry.currentValue=$event.target.valueAsNumber">
+              <input matInput type="number" placeholder="Current" [value]="entry.currentValue" (input)="entry.currentValue=$event.target.valueAsNumber">
             </mat-form-field>
 
             <mat-form-field class="small" style="margin: 0px 10px">
-              <input matInput type="number" placeholder="Target"  [value]="entry.targetValue" (change)="entry.targetValue=$event.target.valueAsNumber">
+              <input matInput type="number" placeholder="Target"  [value]="entry.targetValue" (input)="entry.targetValue=$event.target.valueAsNumber">
             </mat-form-field>
           </td>
           <td>

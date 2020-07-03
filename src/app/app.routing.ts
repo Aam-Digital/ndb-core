@@ -15,8 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { RouterModule, Routes } from "@angular/router";
-import { ModuleWithProviders } from "@angular/core";
+import { Routes } from "@angular/router";
 import { DashboardComponent } from "./child-dev-project/dashboard/dashboard/dashboard.component";
 import { SchoolsListComponent } from "./child-dev-project/schools/schools-list/schools-list.component";
 import { SchoolDetailsComponent } from "./child-dev-project/schools/school-details/school-details.component";
@@ -61,8 +60,3 @@ export const routes: Routes = [
   { path: "help", component: HowToComponent },
   { path: "**", redirectTo: "/" },
 ];
-
-/**
- * Main app RouterModule with centrally configured routes.
- */
-export const routing: ModuleWithProviders = RouterModule.forRoot(routes);

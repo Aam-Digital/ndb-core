@@ -24,7 +24,7 @@ import { HttpClientModule } from "@angular/common/http";
 import { AppComponent } from "./app.component";
 import { UiModule } from "./core/ui/ui.module";
 import { AppConfigModule } from "./core/app-config/app-config.module";
-import { routing } from "./app.routing";
+import { routes } from "./app.routing";
 import { AlertsModule } from "./core/alerts/alerts.module";
 import { SessionModule } from "./core/session/session.module";
 import { SyncStatusModule } from "./core/sync-status/sync-status.module";
@@ -61,6 +61,7 @@ import { DemoUserGeneratorService } from "./core/user/demo-user-generator.servic
 import { ConfirmationDialogModule } from "./core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "./core/form-dialog/form-dialog.module";
 import { LoggingService } from "./core/logging/logging.service";
+import { RouterModule } from "@angular/router";
 
 /**
  * Main entry point of the application.
@@ -77,7 +78,7 @@ import { LoggingService } from "./core/logging/logging.service";
     BrowserAnimationsModule,
     FlexLayoutModule,
     HttpClientModule,
-    routing,
+    RouterModule.forRoot(routes),
     FormsModule,
     ConfirmationDialogModule,
     FormDialogModule,

@@ -51,7 +51,7 @@
       <div fxFlex>
         <mat-form-field>
           <input matInput type="number" min="0" placeholder='Working Days'
-                 [value]='entity.daysWorking' (change)="entity.daysWorking=$event.target.valueAsNumber;entityForm.form.markAsDirty();">
+                 [value]='entity.daysWorking' (input)="entity.daysWorking=$event.target.valueAsNumber;entityForm.form.markAsDirty();">
           <button mat-button matSuffix mat-icon-button aria-label="Reset" matTooltip='reset and use daily attendance data'
                   *ngIf="entity.daysWorking_manuallyEntered" (click)="entity.daysWorking_manuallyEntered=undefined">
             <mat-icon fontIcon='fa-times'></mat-icon>
@@ -67,7 +67,7 @@
       <div fxFlex>
         <mat-form-field>
           <input matInput type="number" min="0" placeholder='Attended Days'
-                 [value]='entity.daysAttended' (change)="entity.daysAttended=$event.target.valueAsNumber;entityForm.form.markAsDirty();">
+                 [value]='entity.daysAttended' (input)="entity.daysAttended=$event.target.valueAsNumber;entityForm.form.markAsDirty();">
           <button mat-button matSuffix mat-icon-button aria-label="Reset" matTooltip='reset and use daily attendance data'
                   *ngIf="entity.daysAttended_manuallyEntered" (click)="entity.daysAttended_manuallyEntered=undefined">
             <mat-icon fontIcon='fa-times'></mat-icon>
@@ -83,7 +83,7 @@
       <div fxFlex>
         <mat-form-field>
           <input matInput type="number" min="0" placeholder='Excused Days'
-                 [value]='entity.daysExcused' (change)="entity.daysExcused=$event.target.valueAsNumber;entityForm.form.markAsDirty();">
+                 [value]='entity.daysExcused' (input)="entity.daysExcused=$event.target.valueAsNumber;entityForm.form.markAsDirty();">
           <button mat-button matSuffix mat-icon-button aria-label="Reset" matTooltip='reset and use daily attendance data'
                   *ngIf="entity.daysExcused_manuallyEntered" (click)="entity.daysExcused_manuallyEntered=undefined">
             <mat-icon fontIcon='fa-times'></mat-icon>
@@ -99,7 +99,7 @@
       <div fxFlex>
         <mat-form-field>
           <input matInput type="number" min="0" placeholder='Late Days'
-                 [value]='entity.daysLate' (change)="entity.daysLate=$event.target.valueAsNumber;entityForm.form.markAsDirty();">
+                 [value]='entity.daysLate' (input)="entity.daysLate=$event.target.valueAsNumber;entityForm.form.markAsDirty();">
           <button mat-button matSuffix mat-icon-button aria-label="Reset"
                   *ngIf="entity.daysLate_manuallyEntered" (click)="entity.daysLate_manuallyEntered=undefined">
             <mat-icon fontIcon='fa-times'></mat-icon>
