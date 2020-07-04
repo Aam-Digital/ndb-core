@@ -42,6 +42,9 @@ export class LatestChangesService {
     currentVersion: string,
     previousVersion?: string
   ): Observable<Changelog[]> {
+    // TODO: remove after debugging changelog problems
+    console.log("getting changelogs for ", currentVersion, previousVersion);
+
     return this.getChangelogs((releases: any[]) =>
       this.filterReleasesBetween(releases, currentVersion, previousVersion)
     );
