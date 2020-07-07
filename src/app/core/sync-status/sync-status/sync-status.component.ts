@@ -58,7 +58,7 @@ export class SyncStatusComponent implements OnInit {
     switch (state.toState) {
       case SyncState.STARTED:
         this.syncInProgress = true;
-        if (!this.sessionService.isLoggedIn()) {
+        if (!this.sessionService.isLoggedIn() && !this.dialogRef) {
           this.dialogRef = this.dialog.open(InitialSyncDialogComponent);
         }
         break;
