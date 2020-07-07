@@ -33,13 +33,7 @@
     ["@semantic-release/git", {
       "assets": ["src/environments/environment.ts", "src/environments/environment.prod.ts", "package.json", "package-lock.json"]
     }],
-    ["@semantic-release/exec", {
-      "publishCmd": "./docker/publish.sh ${nextRelease.version} && tar -zcf ndb-core_${nextRelease.version}.tar.gz dist",
-      "successCmd": "rm -r dist && rm -r docker/dist && rm ndb-core_${nextRelease.version}.tar.gz"
-    }],
-    ["@semantic-release/github", {
-      "assets": "ndb-core_${nextRelease.version}.tar.gz"
-    }],
+    ["@semantic-release/github"],
     ["semantic-release-slack-bot", {
       "packageName": "ndb-server",
       "notifyOnSuccess": true,
