@@ -84,8 +84,8 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.user = this.sessionService.getCurrentUser();
-    this.paginatorPageSize = this.user.paginatorSettings.notesList.pageSize;
-    this.paginatorPageIndex = this.user.paginatorSettings.notesList.pageIndex;
+    this.paginatorPageSize = this.user.paginatorSettings.pageSize.notesList;
+    this.paginatorPageIndex = this.user.paginatorSettings.pageIndex.notesList;
 
     // activate default filter to current week
     this.dateFS.selectedOption = this.dateFS.options[0].key;
@@ -110,8 +110,8 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
   onPaginateChange(event: PageEvent) {
     this.paginatorPageSize = event.pageSize;
     this.paginatorPageIndex = event.pageIndex;
-    this.user.paginatorSettings.notesList.pageSize = this.paginatorPageSize;
-    this.user.paginatorSettings.notesList.pageIndex = this.paginatorPageIndex;
+    this.user.paginatorSettings.pageSize.notesList = this.paginatorPageSize;
+    this.user.paginatorSettings.pageIndex.notesList = this.paginatorPageIndex;
     this.entityMapperService.save<User>(this.user);
   }
 

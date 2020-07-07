@@ -39,20 +39,7 @@ export class User extends Entity {
   @DatabaseField() private password: any;
 
   /** settings for the mat-paginator for tables  */
-  @DatabaseField() paginatorSettings: PaginatorSettings = {
-    childrenList: {
-      pageSize: 10,
-      pageIndex: 0,
-    },
-    schoolsList: {
-      pageSize: 10,
-      pageIndex: 0,
-    },
-    notesList: {
-      pageSize: 10,
-      pageIndex: 0,
-    },
-  };
+  paginatorSettings = new PaginatorSettings();
 
   /** password for webdav account (encrypted with user.password) */
   @DatabaseField() private cloudPasswordEnc: any;
@@ -165,18 +152,19 @@ export class User extends Entity {
     this.admin = admin;
   }
 }
-/** Settings for the mat-paginator for tables that can be changed by the user */
-export interface PaginatorSettings {
-  childrenList: {
-    pageSize: number;
-    pageIndex: number;
+
+/** Settings for the mat-paginator for tables that can be changed by the user;
+ * pageSizeOptions is hard-coded in the html of each component
+ */
+class PaginatorSettings {
+  @DatabaseField() pageSize = {
+    childrenList: 10,
+    schoolsList: 10,
+    notesList: 10,
   };
-  schoolsList: {
-    pageSize: number;
-    pageIndex: number;
-  };
-  notesList: {
-    pageSize: number;
-    pageIndex: number;
+  public pageIndex = {
+    childrenList: 0,
+    schoolsList: 0,
+    notesList: 0,
   };
 }
