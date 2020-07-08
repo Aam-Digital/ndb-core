@@ -38,8 +38,21 @@ export class User extends Entity {
   /** password object (encrypted) */
   @DatabaseField() private password: any;
 
-  /** settings for the mat-paginator for tables  */
-  paginatorSettings = new PaginatorSettings();
+  /** settings for the mat-paginator for tables
+   * pageSizeOptions is set in the corresponding html of the component,
+   * pageSize is stored persistently in the database and
+   * pageIndex is saved only temporarily for the session
+   */
+  @DatabaseField() paginatorSettingsPageSize: PaginatorSettings = {
+    childrenList: 10,
+    schoolsList: 10,
+    notesList: 10,
+  };
+  public paginatorSettingsPageIndex: PaginatorSettings = {
+    childrenList: 0,
+    schoolsList: 0,
+    notesList: 0,
+  };
 
   /** password for webdav account (encrypted with user.password) */
   @DatabaseField() private cloudPasswordEnc: any;
@@ -153,18 +166,11 @@ export class User extends Entity {
   }
 }
 
-/** Settings for the mat-paginator for tables that can be changed by the user;
- * pageSizeOptions is hard-coded in the html of each component
+/** Interface for the PaginatorSettings for the three components
+ * childrenList, schoolsList and notesList.
  */
-class PaginatorSettings {
-  @DatabaseField() pageSize = {
-    childrenList: 10,
-    schoolsList: 10,
-    notesList: 10,
-  };
-  public pageIndex = {
-    childrenList: 0,
-    schoolsList: 0,
-    notesList: 0,
-  };
+export interface PaginatorSettings {
+  childrenList: number;
+  schoolsList: number;
+  notesList: number;
 }
