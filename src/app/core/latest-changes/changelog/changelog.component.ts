@@ -59,7 +59,9 @@ export class ChangelogComponent implements OnInit {
     public dialogRef: MatDialogRef<ChangelogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Observable<Changelog[]>,
     private latestChangesService: LatestChangesService
-  ) {}
+  ) {
+    console.log("changelog data", this.data); // TODO: remove after debugging changelog problems
+  }
 
   ngOnInit(): void {
     if (this.data && isObservable(this.data)) {

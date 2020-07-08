@@ -15,9 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { DemoDataService } from "./demo-data.service";
+import { LoggingService } from "../logging/logging.service";
 
 /**
  * Loading box during demo data generation.
@@ -29,7 +30,7 @@ import { DemoDataService } from "./demo-data.service";
     "<p>Generating sample data for this demo ...</p>" +
     '<mat-progress-bar mode="indeterminate"></mat-progress-bar>',
 })
-export class DemoDataGeneratingProgressDialogComponent {
+export class DemoDataGeneratingProgressDialogComponent implements OnInit {
   /**
    * Display a loading dialog while generating demo data from all register generators.
    * @param dialog
@@ -40,12 +41,25 @@ export class DemoDataGeneratingProgressDialogComponent {
 
   constructor(
     private demoDataService: DemoDataService,
-    private dialogRef: MatDialogRef<DemoDataGeneratingProgressDialogComponent>
-  ) {
+    private dialogRef: MatDialogRef<DemoDataGeneratingProgressDialogComponent>,
+    private loggingService: LoggingService
+  ) {}
+
+  ngOnInit(): void {
     this.dialogRef.disableClose = true;
-    this.dialogRef.afterOpened().subscribe(async () => {
-      await this.demoDataService.publishDemoData();
-      this.dialogRef.close();
+    this.dialogRef.afterOpened().subscribe(() => {
+      this.demoDataService
+        .publishDemoData()
+        .then(() => {
+          // don't use await this.demoDataService - dialogRef.close doesn't seem to work consistently in that case
+          this.dialogRef.close(true);
+        })
+        .catch((err) =>
+          this.loggingService.error({
+            title: "error during demo data generation",
+            details: err,
+          })
+        );
     });
   }
 }

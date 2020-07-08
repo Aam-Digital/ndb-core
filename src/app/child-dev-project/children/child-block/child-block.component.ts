@@ -1,4 +1,4 @@
-import { Component, HostListener, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";
@@ -41,10 +41,6 @@ export class ChildBlockComponent implements OnInit {
   }
   hideTooltip() {
     this.tooltipTimeout = setTimeout(() => (this.tooltip = false), 250);
-  }
-
-  @HostListener("click") onClick() {
-    this.showDetailsPage();
   }
 
   showDetailsPage() {
