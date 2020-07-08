@@ -10,7 +10,9 @@ describe("AutoResolutionService", () => {
     TestBed.configureTestingModule({
       providers: [AttendanceMonthConflictResolutionStrategy],
     });
-    service = TestBed.get(AttendanceMonthConflictResolutionStrategy);
+    service = TestBed.inject<AttendanceMonthConflictResolutionStrategy>(
+      AttendanceMonthConflictResolutionStrategy
+    );
   });
 
   it("should be created", () => {

@@ -13,9 +13,7 @@ apt:
     - google-chrome-stable
     - google-chrome-beta
 
-cache:
-  directories:
-    - node_modules
+cache: npm
 
 before_install:
   - export CHROME_BIN=chromium-browser
@@ -38,6 +36,16 @@ after_success:
   - npm run compodoc
 
 deploy:
+  - provider: script
+    script: bash docker/publish.sh
+    skip_cleanup: true
+    on:
+      tags: true
+  - provider: script
+    skip_cleanup: true
+    script: npx semantic-release
+    on:
+      all_branches: true
   - provider: pages
     skip_cleanup: true
     local_dir: doc/compodoc
