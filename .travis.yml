@@ -13,9 +13,7 @@ apt:
     - google-chrome-stable
     - google-chrome-beta
 
-cache:
-  directories:
-    - node_modules
+cache: npm
 
 before_install:
   - export CHROME_BIN=chromium-browser
