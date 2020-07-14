@@ -81,6 +81,13 @@ export class SearchComponent implements OnInit {
   }
 
   private prepareResults(rows, searchTerms: string[]) {
+    console.log(
+      this.getResultsWithoutDuplicates(rows)
+        .map((doc) => this.transformDocToEntity(doc))
+        .filter((r) => r !== null)
+        .filter((r) => this.containsSecondarySearchTerms(r, searchTerms))
+        .sort((a, b) => this.sortResults(a, b))
+    );
     return this.getResultsWithoutDuplicates(rows)
       .map((doc) => this.transformDocToEntity(doc))
       .filter((r) => r !== null)

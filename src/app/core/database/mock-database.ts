@@ -19,6 +19,9 @@ import { Database } from "./database";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { AttendanceMonth } from "../../child-dev-project/attendance/model/attendance-month";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
+import { Child } from "../../child-dev-project/children/model/child";
+import { School } from "../../child-dev-project/schools/model/school";
+import { Entity } from "../entity/entity";
 
 /**
  * In-Memory database implementation that works as a drop-in replacement of {@link PouchDatabase}
@@ -209,6 +212,11 @@ export class MockDatabase extends Database {
             e.end >= new Date().setHours(0, 0, 0, 0)) &&
           e.schoolId === options.key;
         break;
+      case "search_index/by_name":
+        filterFun = (e) => {
+          return e._id.startsWith(School.ENTITY_TYPE);
+        };
+        break;
       case "childSchoolRelations_index/by_date":
         return this.filterForLatestRelationOfChild(
           options.endkey,
@@ -225,6 +233,7 @@ export class MockDatabase extends Database {
         const allData = await this.getAll();
         return {
           rows: allData.filter(filterFun).map((e) => {
+            console.log(e);
             return { doc: e };
           }),
         };
