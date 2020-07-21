@@ -61,6 +61,8 @@ import { DemoUserGeneratorService } from "./core/user/demo-user-generator.servic
 import { ConfirmationDialogModule } from "./core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "./core/form-dialog/form-dialog.module";
 import { LoggingService } from "./core/logging/logging.service";
+import { Angulartics2Module } from 'angulartics2';
+import { AnalyticsService } from './core/analytics/analytics.service';
 
 /**
  * Main entry point of the application.
@@ -72,6 +74,9 @@ import { LoggingService } from "./core/logging/logging.service";
   imports: [
     ServiceWorkerModule.register("/ngsw-worker.js", {
       enabled: environment.production,
+    }),
+    Angulartics2Module.forRoot({
+      developerMode: environment.production,
     }),
     BrowserModule,
     BrowserAnimationsModule,
@@ -121,6 +126,7 @@ import { LoggingService } from "./core/logging/logging.service";
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
     MatIconRegistry,
     CookieService,
+    AnalyticsService,
   ],
   bootstrap: [AppComponent],
 })

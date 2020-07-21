@@ -28,6 +28,7 @@ import { StateHandler } from "../session-states/state-handler";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { AlertService } from "app/core/alerts/alert.service";
 import { LoggingService } from "../../logging/logging.service";
+import { AnalyticsService } from '../../analytics/analytics.service';
 
 /**
  * Responsibilities:
@@ -56,6 +57,7 @@ export class LocalSession {
    * Create a LocalSession and set up the local PouchDB instance based on AppConfig settings.
    * @param _alertService
    * @param _entitySchemaService
+   * @param _analyticsService
    */
   constructor(
     private _alertService: AlertService,
@@ -82,6 +84,7 @@ export class LocalSession {
         this.currentUser = userEntity;
         this.currentUser.decryptCloudPassword(password);
         LoggingService.setLoggingContextUser(this.currentUser.name);
+        AnalyticsService.setUser(this.currentUser.name);
         this.loginState.setState(LoginState.LOGGED_IN);
         return LoginState.LOGGED_IN;
       } else {
