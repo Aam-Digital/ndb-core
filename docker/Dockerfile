@@ -1,6 +1,7 @@
 FROM nginx
-COPY nginx_default.conf /etc/nginx/conf.d/default.conf
-RUN mkdir /etc/nginx/conf.d/custom_config
+
+# .template will automatically have environment variables injected during container startup
+COPY nginx_default.conf.template /etc/nginx/templates/default.conf.template
 
 WORKDIR /usr/share/nginx/html
 
