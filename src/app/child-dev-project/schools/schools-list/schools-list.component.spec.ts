@@ -19,6 +19,7 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { ChildrenService } from "app/child-dev-project/children/children.service";
 import { CloudFileService } from "../../../core/webdav/cloud-file-service.service";
+import { SessionService } from "../../../core/session/session-service/session.service";
 
 describe("SchoolsListComponent", () => {
   let component: SchoolsListComponent;
@@ -46,6 +47,7 @@ describe("SchoolsListComponent", () => {
         { provide: Database, useClass: MockDatabase },
         EntityMapperService,
         EntitySchemaService,
+        SessionService,
         { provide: Router, useValue: mockedRouter },
         {
           provide: CloudFileService,
