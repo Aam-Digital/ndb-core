@@ -214,7 +214,9 @@ export class ChildDetailsComponent implements OnInit {
         );
     } else {
       const invalidFields = this.getInvalidFields(this.form);
-      this.alertService.addDanger("Form invalid, required fields missing");
+      this.alertService.addDanger(
+        "Form invalid, required fields (" + invalidFields + ") missing"
+      );
     }
   }
 
