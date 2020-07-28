@@ -23,7 +23,13 @@
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <div class='dashboard-content' [routerLink]="['/note']">
+    <div
+      class='dashboard-content'
+      [routerLink]="['/note']"
+         angulartics2On="click"
+         angularticsCategory="Navigation"
+         angularticsAction="dashboard_recent_notes_link_go_to_notes"
+    >
       Go to Notes <span class="fa fa-external-link-square"></span>
     </div>
   </mat-card-content>

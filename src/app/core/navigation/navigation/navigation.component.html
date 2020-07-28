@@ -18,8 +18,9 @@
 <mat-nav-list>
   <mat-list-item
     angulartics2On="click"
-    angularticsAction="NavigationLinkClick"
-    [angularticsCategory]="item.label"
+    angularticsCategory="Navigation"
+    angularticsAction="app_navigation_link_click"
+    [angularticsLabel]="item.label"
     *ngFor="let item of menu_main"
     [routerLink]="item.routerLinkParameters"
   >
