@@ -193,7 +193,10 @@ export class ChildDetailsComponent implements OnInit {
   }
 
   save() {
+    // errors regarding invalid fields wont be displayed unless marked as touched
+    this.form.markAllAsTouched();
     this.validateForm = true;
+
     if (this.form.valid) {
       this.assignFormValuesToChild(this.child, this.form);
 
