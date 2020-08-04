@@ -16,6 +16,7 @@ import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.s
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { SessionService } from "../../../core/session/session-service/session.service";
+import { MatPaginatorModule } from "@angular/material/paginator";
 
 function generateNewNotes(): Array<Note> {
   let i;
@@ -37,7 +38,7 @@ describe("NotesManagerComponent", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [],
-      imports: [NotesModule, MatNativeDateModule],
+      imports: [NotesModule, MatNativeDateModule, MatPaginatorModule],
       providers: [
         EntitySchemaService,
         EntityMapperService,

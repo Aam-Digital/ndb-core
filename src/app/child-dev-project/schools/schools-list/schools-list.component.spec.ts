@@ -20,6 +20,7 @@ import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.s
 import { ChildrenService } from "app/child-dev-project/children/children.service";
 import { CloudFileService } from "../../../core/webdav/cloud-file-service.service";
 import { SessionService } from "../../../core/session/session-service/session.service";
+import { MatPaginatorModule } from "@angular/material/paginator";
 
 describe("SchoolsListComponent", () => {
   let component: SchoolsListComponent;
@@ -38,6 +39,7 @@ describe("SchoolsListComponent", () => {
         MatButtonToggleModule,
         MatExpansionModule,
         FormsModule,
+        MatPaginatorModule,
         BrowserAnimationsModule,
         MatSelectModule,
       ],
