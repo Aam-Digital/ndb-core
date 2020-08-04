@@ -3,6 +3,7 @@ import { ConflictResolutionStrategy } from "../../conflict-resolution/auto-resol
 import { AttendanceMonth } from "./model/attendance-month";
 import _ from "lodash";
 import { diff } from "deep-object-diff";
+import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 
 /**
  * Auto resolve simple database document conflicts concerning {@link AttendanceMonth} entities.
@@ -10,6 +11,8 @@ import { diff } from "deep-object-diff";
 @Injectable()
 export class AttendanceMonthConflictResolutionStrategy
   implements ConflictResolutionStrategy {
+  constructor(private entitySchemaService: EntitySchemaService) {}
+
   /**
    * Checks if the given conflict is about AttendanceMonth entities (otherwise this strategy doesn't apply)
    * and suggests whether the conflict is trivial and can be automatically deleted.
@@ -22,6 +25,17 @@ export class AttendanceMonthConflictResolutionStrategy
   ): boolean {
     if (!currentDoc._id.startsWith(AttendanceMonth.ENTITY_TYPE)) {
       return false;
+    }
+
+    if (typeof currentDoc.getId === "function") {
+      currentDoc = this.entitySchemaService.transformEntityToDatabaseFormat(
+        currentDoc
+      );
+    }
+    if (typeof conflictingDoc.getId === "function") {
+      conflictingDoc = this.entitySchemaService.transformEntityToDatabaseFormat(
+        conflictingDoc
+      );
     }
 
     const currentDocC = _.merge({}, currentDoc);
@@ -52,6 +66,10 @@ export class AttendanceMonthConflictResolutionStrategy
       undefined,
       null,
     ]);
+
+    console.log(currentDoc);
+    console.log(conflictingDoc);
+    console.log("isIrrelevantAttendanceMonthConflict", simplifiedDiff);
 
     return _.isObjectLike(simplifiedDiff) && _.isEmpty(simplifiedDiff);
   }

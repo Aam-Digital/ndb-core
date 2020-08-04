@@ -1,6 +1,6 @@
 {
   "name": "ndb-core",
-  "version": "2.14.3",
+  "version": "2.14.6",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -35,7 +35,7 @@
     "font-awesome": "^4.7.0",
     "moment": "^2.26.0",
     "ngx-cookie-service": "^3.0.4",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "ngx-filter-pipe": "^2.1.2",
     "ngx-markdown": "^9.1.1",
     "ngx-papaparse": "^4.0.4",
