@@ -113,16 +113,16 @@
 
     <ng-container matColumnDef="attendance-school">
       <th mat-header-cell *matHeaderCellDef> Attendance (School)</th>
-      <td mat-cell *matCellDef="let child">
-        <app-attendance-block *ngFor="let att of attendanceList.get(child.getId()) | filterBy: {'institution': 'school'} | slice:0:5"
+      <td style="white-space:nowrap" mat-cell *matCellDef="let child">
+        <app-attendance-block *ngFor="let att of attendanceList.get(child.getId()) | filterBy: {'institution': 'school'} | slice:0:attendenceBlocks"
                               [attendanceData]="att"></app-attendance-block>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="attendance-coaching">
       <th mat-header-cell *matHeaderCellDef> Attendance (Coaching)</th>
-      <td mat-cell *matCellDef="let child">
-        <app-attendance-block *ngFor="let att of attendanceList.get(child.getId()) | filterBy: {'institution': 'coaching'} | slice:0:5"
+      <td style="white-space:nowrap" mat-cell *matCellDef="let child">
+        <app-attendance-block *ngFor="let att of attendanceList.get(child.getId()) | filterBy: {'institution': 'coaching'} | slice:0:attendenceBlocks"
                               [attendanceData]="att"></app-attendance-block>
       </td>
     </ng-container>

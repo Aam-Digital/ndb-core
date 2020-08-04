@@ -110,6 +110,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   ];
   columnsToDisplay = ["projectNumber", "name"];
   filterString = "";
+  attendenceBlocks = 12;
 
   constructor(
     private childrenService: ChildrenService,
@@ -124,8 +125,23 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.media.media$
       .pipe(untilDestroyed(this))
       .subscribe((change: MediaChange) => {
-        if (change.mqAlias === "xs") {
-          this.displayColumnGroup("Mobile");
+        switch (change.mqAlias) {
+          case "xs": {
+            this.displayColumnGroup("Mobile");
+            break;
+          }
+          case "md": {
+            this.attendenceBlocks = 1;
+            break;
+          }
+          case "lg": {
+            this.attendenceBlocks = 4;
+            break;
+          }
+          case "xl": {
+            this.attendenceBlocks = 6;
+            break;
+          }
         }
       });
   }
