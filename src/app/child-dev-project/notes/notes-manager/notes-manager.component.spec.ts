@@ -17,6 +17,7 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { MatPaginatorModule } from "@angular/material/paginator";
+import { User } from "app/core/user/user";
 
 function generateNewNotes(): Array<Note> {
   let i;
@@ -36,6 +37,8 @@ describe("NotesManagerComponent", () => {
   let fixture: ComponentFixture<NotesManagerComponent>;
 
   beforeEach(() => {
+    const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+    mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
     TestBed.configureTestingModule({
       declarations: [],
       imports: [NotesModule, MatNativeDateModule, MatPaginatorModule],
@@ -45,7 +48,7 @@ describe("NotesManagerComponent", () => {
         ConfirmationDialogService,
         ChildrenService,
         FormBuilder,
-        SessionService,
+        { provide: SessionService, useValue: mockSessionService },
         { provide: Database, useValue: database },
       ],
     }).compileComponents();

@@ -32,12 +32,15 @@ import { ExportDataComponent } from "../../../core/admin/export-data/export-data
 import { ChildPhotoService } from "../child-photo-service/child-photo.service";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { MatPaginatorModule } from "@angular/material/paginator";
+import { User } from "app/core/user/user";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
   let fixture: ComponentFixture<ChildrenListComponent>;
 
   beforeEach(async(() => {
+    const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+    mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
     TestBed.configureTestingModule({
       declarations: [
         ChildBlockComponent,
@@ -75,7 +78,10 @@ describe("ChildrenListComponent", () => {
         ChildrenService,
         EntityMapperService,
         EntitySchemaService,
-        SessionService,
+        {
+          provide: SessionService,
+          useValue: mockSessionService,
+        },
         { provide: Database, useClass: MockDatabase },
         {
           provide: ChildPhotoService,
