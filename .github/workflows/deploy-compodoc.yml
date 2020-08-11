@@ -1,0 +1,22 @@
+name: Deploy Compodoc to GitHub Pages
+on:
+  push:
+    - test-deploys
+
+jobs:
+  create-and-deploy-compodoc:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install dependencies
+        run: npm install
+      - name: Run compodoc
+        run: npm run compodoc
+      - name: Deploy on pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          destination_dir: documentation
+
