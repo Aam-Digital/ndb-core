@@ -1,23 +1,50 @@
 <h1>Notes &amp; Reports</h1>
 
-<mat-expansion-panel expanded="true" fxLayout="column" fxLayoutGap="10px" class='filter-panel'>
-  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none end" >
-    <div fxFlex='50'>
-      <mat-form-field style='width:100%'>
-        <input matInput placeholder="Filter" (ngModelChange)="applyFilter($event)" [(ngModel)]="filterString">
-        <button mat-icon-button *ngIf="filterString" matSuffix aria-label="Clear" (click)="filterString=''; applyFilter('');">
+<mat-expansion-panel
+  expanded="true"
+  fxLayout="column"
+  fxLayoutGap="10px"
+  class="filter-panel"
+>
+  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none end">
+    <div fxFlex="50">
+      <mat-form-field style="width: 100%;">
+        <input
+          matInput
+          placeholder="Filter"
+          (ngModelChange)="applyFilter($event)"
+          [(ngModel)]="filterString"
+        />
+        <button
+          mat-icon-button
+          *ngIf="filterString"
+          matSuffix
+          aria-label="Clear"
+          (click)="filterString = ''; applyFilter('')"
+        >
           <mat-icon fontIcon="fa-times"></mat-icon>
         </button>
       </mat-form-field>
     </div>
 
-    <div class='align-form-field' fxHide.xs='true'>
-      (Showing {{notesDataSource.filteredData.length}} Notes)
+    <div class="align-form-field" fxHide.xs="true">
+      (Showing {{ notesDataSource.filteredData.length }} Notes)
     </div>
 
-    <div class='align-form-field'>
-      <button mat-stroked-button color="accent" (click)="addNoteClick()">
-        <mat-icon class="button-icon" aria-label="add child" fontIcon="fa-plus-circle"></mat-icon>
+    <div class="align-form-field">
+      <button
+        mat-stroked-button
+        color="accent"
+        (click)="addNoteClick()"
+        angulartics2On="click"
+        angularticsCategory="UserAction"
+        angularticsAction="notes_manager_add_note"
+      >
+        <mat-icon
+          class="button-icon"
+          aria-label="add child"
+          fontIcon="fa-plus-circle"
+        ></mat-icon>
         <span fxHide.lt-md="true">
           Add New
         </span>
@@ -25,33 +52,66 @@
     </div>
   </div>
 
-  <div fxLayout='row wrap' fxLayoutGap='10px' class="filter-button" fxHide.lt-sm>
-    <mat-button-toggle-group *ngFor='let filterSelection of filterSelections'
-                             [name]="filterSelection.name" [value]='filterSelection.selectedOption'>
-      <mat-button-toggle *ngFor='let option of filterSelection.options' [value]="option.key"
-                         (click)='filterSelection.selectedOption=option.key; applyFilterSelections();'>
-        {{option.label}}
+  <div
+    fxLayout="row wrap"
+    fxLayoutGap="10px"
+    class="filter-button"
+    fxHide.lt-sm
+  >
+    <mat-button-toggle-group
+      *ngFor="let filterSelection of filterSelections"
+      [name]="filterSelection.name"
+      [value]="filterSelection.selectedOption"
+    >
+      <mat-button-toggle
+        *ngFor="let option of filterSelection.options"
+        [value]="option.key"
+        (click)="
+          filterSelection.selectedOption = option.key; applyFilterSelections()
+        "
+      >
+        {{ option.label }}
       </mat-button-toggle>
     </mat-button-toggle-group>
   </div>
   <div fxLayout="row wrap" fxHide.gt-xs>
-    <mat-form-field *ngFor="let filterSelection of filterSelections" style="padding-right: 1%">
-      <mat-label>{{filterSelection.name}}</mat-label>
-      <mat-select  [id]="filterSelection.name" [value]="filterSelection.selectedOption" placeholder="filterSelection.name">
-        <mat-option *ngFor="let option of filterSelection.options" [value]="option.key"
-                    (click)="filterSelection.selectedOption=option.key; applyFilterSelections()">
-          {{option.label}}
+    <mat-form-field
+      *ngFor="let filterSelection of filterSelections"
+      style="padding-right: 1%;"
+    >
+      <mat-label>{{ filterSelection.name }}</mat-label>
+      <mat-select
+        [id]="filterSelection.name"
+        [value]="filterSelection.selectedOption"
+        placeholder="filterSelection.name"
+      >
+        <mat-option
+          *ngFor="let option of filterSelection.options"
+          [value]="option.key"
+          (click)="
+            filterSelection.selectedOption = option.key; applyFilterSelections()
+          "
+        >
+          {{ option.label }}
         </mat-option>
       </mat-select>
     </mat-form-field>
-
   </div>
 
-  <div fxLayout='row' fxLayoutGap='10px' style='margin-top: 20px;'>
-    <mat-form-field *ngFor='let filterSelection of filterSelectionsDropdown'>
-      <mat-select [placeholder]="filterSelection.name" [value]='filterSelection.selectedOption'>
-        <mat-option  *ngFor='let option of filterSelection.options' [value]="option.key"
-                     (click)='filterSelection.selectedOption=option.key; applyFilterSelections();'>{{option.label}}</mat-option>
+  <div fxLayout="row" fxLayoutGap="10px" style="margin-top: 20px;">
+    <mat-form-field *ngFor="let filterSelection of filterSelectionsDropdown">
+      <mat-select
+        [placeholder]="filterSelection.name"
+        [value]="filterSelection.selectedOption"
+      >
+        <mat-option
+          *ngFor="let option of filterSelection.options"
+          [value]="option.key"
+          (click)="
+            filterSelection.selectedOption = option.key; applyFilterSelections()
+          "
+          >{{ option.label }}</mat-option
+        >
       </mat-select>
     </mat-form-field>
   </div>
@@ -62,40 +122,51 @@
 <div class="mat-elevation-z8 table-list">
   <table mat-table [dataSource]="notesDataSource" matSort>
     <ng-container matColumnDef="date">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
-      <td mat-cell *matCellDef="let note"> {{note.date | date:'yyyy-MM-dd'}}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="subject">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Subject </th>
-      <td mat-cell *matCellDef="let note"> {{note.subject}}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="category">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Category </th>
-      <td mat-cell *matCellDef="let note"> {{note.category}}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="author">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Author </th>
-      <td mat-cell *matCellDef="let note"> {{note.author}}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="children">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Children </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
       <td mat-cell *matCellDef="let note">
-        <app-child-block *ngFor='let child of note.children' [entityId]='child'></app-child-block>
+        {{ note.date | date: "yyyy-MM-dd" }}
       </td>
     </ng-container>
 
+    <ng-container matColumnDef="subject">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Subject</th>
+      <td mat-cell *matCellDef="let note">{{ note.subject }}</td>
+    </ng-container>
 
+    <ng-container matColumnDef="category">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Category</th>
+      <td mat-cell *matCellDef="let note">{{ note.category }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="author">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Author</th>
+      <td mat-cell *matCellDef="let note">{{ note.author }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="children">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Children</th>
+      <td mat-cell *matCellDef="let note">
+        <app-child-block
+          *ngFor="let child of note.children"
+          [entityId]="child"
+        ></app-child-block>
+      </td>
+    </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-    <tr mat-row *matRowDef="let note; columns: columnsToDisplay" (click)="showDetails(note)"
-        style="cursor:pointer;" [ngStyle]="{'background-color': note.getColor()}"></tr>
+    <tr
+      mat-row
+      *matRowDef="let note; columns: columnsToDisplay; let i=index;"
+      (click)="showDetails(note)"
+      style="cursor: pointer;"
+      [ngStyle]="{ 'background-color': note.getColor() }"
+      angulartics2On="click"
+      angularticsCategory="Navigation"
+      angularticsAction="notes_manager_list_link"
+      [angularticsLabel]="'list-entry-' + i"
+    ></tr>
   </table>
 
-  <mat-paginator [pageSize]="50"
-                [pageSizeOptions]="[3, 10, 20, 50]">
+  <mat-paginator [pageSize]="50" [pageSizeOptions]="[3, 10, 20, 50]">
   </mat-paginator>
 </div>

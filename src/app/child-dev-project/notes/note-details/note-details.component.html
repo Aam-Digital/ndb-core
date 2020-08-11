@@ -16,16 +16,25 @@
   -->
 
 <app-form-dialog-wrapper #dialogForm [entity]="entity">
-  <h1>{{ entity.date?.toLocaleDateString() }}: {{entity.subject}}</h1>
+  <h1>{{ entity.date?.toLocaleDateString() }}: {{ entity.subject }}</h1>
 
   <form #entityForm="ngForm">
     <!-- General context of Note -->
-    <div class='form-section-secondary'>
-      <div fxLayout='row wrap' fxLayoutGap='20px'>
+    <div class="form-section-secondary">
+      <div fxLayout="row wrap" fxLayoutGap="20px">
         <div fxFlex>
           <mat-form-field>
-            <input matInput placeholder="Date" name="date" [(ngModel)]="entity.date" [matDatepicker]="picker">
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <input
+              matInput
+              placeholder="Date"
+              name="date"
+              [(ngModel)]="entity.date"
+              [matDatepicker]="picker"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
         </div>
@@ -43,55 +52,87 @@
           </mat-form-field>
         </div>
       </div>
-      <div fxLayout='row wrap' fxLayoutGap='20px'>
+      <div fxLayout="row wrap" fxLayoutGap="20px">
         <div fxFlex>
-          <mat-form-field class='input-medium'>
-            <mat-select placeholder="Type of Interaction" name="type" [(ngModel)]="entity.category">
-              <mat-option *ngFor="let interaction of interactionTypes" [value]="interaction">
-                {{interaction}}
+          <mat-form-field class="input-medium">
+            <mat-select
+              placeholder="Type of Interaction"
+              name="type"
+              [(ngModel)]="entity.category"
+            >
+              <mat-option
+                *ngFor="let interaction of interactionTypes"
+                [value]="interaction"
+              >
+                {{ interaction }}
               </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
         <div fxFlex>
-          <mat-form-field class='input-medium'>
+          <mat-form-field class="input-medium">
             <!-- TODO: should be multi-select or auto-complete field of user names? -->
-            <input matInput placeholder="Team Member" name="teammember" type="text" [(ngModel)]="entity.author">
+            <input
+              matInput
+              placeholder="Team Member"
+              name="teammember"
+              type="text"
+              [(ngModel)]="entity.author"
+            />
           </mat-form-field>
         </div>
       </div>
-
     </div>
 
     <!-- Primary information of Note -->
-    <div class='mat-elevation-z2 primary-section-elevated form-section-primary'>
-      <div fxLayout='row wrap' fxLayoutGap='20px'>
+    <div class="mat-elevation-z2 primary-section-elevated form-section-primary">
+      <div fxLayout="row wrap" fxLayoutGap="20px">
         <div fxFlex>
-          <mat-form-field class='input-medium'>
-            <input matInput placeholder="Topic / Summary" name="subject" type="text" [(ngModel)]="entity.subject">
+          <mat-form-field class="input-medium">
+            <input
+              matInput
+              placeholder="Topic / Summary"
+              name="subject"
+              type="text"
+              [(ngModel)]="entity.subject"
+            />
           </mat-form-field>
         </div>
       </div>
 
-      <div fxLayout='row wrap' fxLayoutGap='20px'>
-        <mat-form-field class='input-max'>
-        <textarea matInput placeholder="Notes" name="notes" [(ngModel)]="entity.text"
-                  cdkTextareaAutosize cdkAutosizeMinRows="4"></textarea>
+      <div fxLayout="row wrap" fxLayoutGap="20px">
+        <mat-form-field class="input-max">
+          <textarea
+            matInput
+            placeholder="Notes"
+            name="notes"
+            [(ngModel)]="entity.text"
+            cdkTextareaAutosize
+            cdkAutosizeMinRows="4"
+          ></textarea>
         </mat-form-field>
       </div>
     </div>
 
-    <div fxLayout='row wrap' fxLayoutGap='20px'>
-      <div fxFlex *ngIf='!entity.isMeeting()'>
-        <app-child-select [valueAsIds]='entity.children'
-                          (newIdAdded)="entity.addChild($event);entityForm.form.markAsDirty()"
-                          (idRemoved)="entity.removeChild($event);entityForm.form.markAsDirty()"
-                          class='input-medium'>
+    <div fxLayout="row wrap" fxLayoutGap="20px">
+      <div fxFlex *ngIf="!entity.isMeeting()">
+        <app-child-select
+          [valueAsIds]="entity.children"
+          (newIdAdded)="entity.addChild($event); entityForm.form.markAsDirty()"
+          (idRemoved)="
+            entity.removeChild($event); entityForm.form.markAsDirty()
+          "
+          class="input-medium"
+        >
         </app-child-select>
       </div>
-      <app-note-presence-list *ngIf="entity.isMeeting()" [recordForm]="entityForm" [entity]="entity" fxFlex>
+      <app-note-presence-list
+        *ngIf="entity.isMeeting()"
+        [recordForm]="entityForm"
+        [entity]="entity"
+        fxFlex
+      >
       </app-note-presence-list>
     </div>
-
   </form>
 </app-form-dialog-wrapper>
