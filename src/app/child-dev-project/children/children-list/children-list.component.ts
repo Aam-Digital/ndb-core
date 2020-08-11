@@ -1,4 +1,11 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  HostListener,
+} from "@angular/core";
 import { Child } from "../model/child";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
@@ -9,7 +16,7 @@ import { FilterSelection } from "../../../core/filter/filter-selection/filter-se
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { MatPaginator } from "@angular/material/paginator";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { floor } from "lodash";
+import { floor, min } from "lodash";
 
 export interface ColumnGroup {
   name: string;
@@ -114,6 +121,9 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   ];
   columnsToDisplay = ["projectNumber", "name"];
   filterString = "";
+  blockNumber: number;
+  @ViewChild("attendanceSchoolCell") schoolCell: ElementRef;
+  @ViewChild("attendanceCoachingCell") coachingCell: ElementRef;
 
   constructor(
     private childrenService: ChildrenService,
@@ -161,6 +171,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.childrenDataSource.sort = this.sort;
     this.childrenDataSource.paginator = this.paginator;
+    this.calculateBoxNumber();
   }
 
   private loadData(replaceUrl: boolean = false) {
@@ -263,9 +274,14 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.updateUrl(replaceUrl);
   }
 
-  calculateBoxNumber(cellWidth: number): number {
+  @HostListener("window:resize")
+  calculateBoxNumber() {
     // correlates with (block width + margin) as set in the attendance-block.component.scss
     const blockWidth = 52;
-    return floor(cellWidth / blockWidth);
+    const cellWidth: number = min([
+      this.coachingCell.nativeElement.offsetWidth,
+      this.schoolCell.nativeElement.offsetWidth,
+    ]);
+    this.blockNumber = floor(cellWidth / blockWidth);
   }
 }

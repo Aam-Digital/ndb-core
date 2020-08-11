@@ -112,17 +112,17 @@
     </ng-container>
 
     <ng-container matColumnDef="attendance-school">
-      <th mat-header-cell *matHeaderCellDef> Attendance (School)</th>
-      <td mat-cell #attendanceSchoolCell *matCellDef="let child">
-        <app-attendance-block *ngFor="let att of attendanceList.get(child.getId()) | filterBy: {'institution': 'school'} | slice:0:calculateBoxNumber(attendanceSchoolCell.offsetWidth)"
+      <th mat-header-cell #attendanceSchoolCell *matHeaderCellDef> Attendance (School)</th>
+      <td mat-cell  *matCellDef="let child">
+        <app-attendance-block *ngFor="let att of attendanceList.get(child.getId()) | filterBy: {'institution': 'school'} | slice:0:blockNumber"
                               [attendanceData]="att"></app-attendance-block>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="attendance-coaching">
-      <th mat-header-cell *matHeaderCellDef> Attendance (Coaching)</th>
-      <td mat-cell #attendanceCoachingCell *matCellDef="let child">
-        <app-attendance-block *ngFor="let att of attendanceList.get(child.getId()) | filterBy: {'institution': 'coaching'} | slice:0:calculateBoxNumber(attendanceCoachingCell.offsetWidth)"
+      <th mat-header-cell #attendanceCoachingCell *matHeaderCellDef> Attendance (Coaching)</th>
+      <td mat-cell *matCellDef="let child">
+        <app-attendance-block *ngFor="let att of attendanceList.get(child.getId()) | filterBy: {'institution': 'coaching'} | slice:0:blockNumber"
                               [attendanceData]="att"></app-attendance-block>
       </td>
     </ng-container>
