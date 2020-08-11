@@ -28,15 +28,19 @@ import { SessionService } from "app/core/session/session-service/session.service
 import { SyncState } from "app/core/session/session-states/sync-state.enum";
 import { AlertsModule } from "app/core/alerts/alerts.module";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
+import { of } from "rxjs";
 
 describe("SyncStatusComponent", () => {
   let component: SyncStatusComponent;
   let fixture: ComponentFixture<SyncStatusComponent>;
 
   let sessionService: MockSessionService;
+  let mockIndexingService;
 
   beforeEach(async(() => {
     sessionService = new MockSessionService(new EntitySchemaService());
+    mockIndexingService = { indicesRegistered: of([]) };
 
     TestBed.configureTestingModule({
       declarations: [InitialSyncDialogComponent, SyncStatusComponent],
@@ -47,7 +51,10 @@ describe("SyncStatusComponent", () => {
         MatProgressBarModule,
         AlertsModule,
       ],
-      providers: [{ provide: SessionService, useValue: sessionService }],
+      providers: [
+        { provide: SessionService, useValue: sessionService },
+        { provide: DatabaseIndexingService, useValue: mockIndexingService },
+      ],
     });
 
     TestBed.compileComponents();

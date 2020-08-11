@@ -57,13 +57,13 @@ describe("DatabaseIndexingService", () => {
     // calling `createIndex` triggers a pending index state immediately
     const indexCreationPromise = service.createIndex(testDesignDoc);
     expect(await service.indicesRegistered.pipe(take(1)).toPromise()).toEqual([
-      { indexName: testIndexName, pending: true },
+      { title: "Indexing " + testIndexName, pending: true },
     ]);
 
     // after the index creation is done, registered indices are updated
     await indexCreationPromise;
     expect(await service.indicesRegistered.pipe(take(1)).toPromise()).toEqual([
-      { indexName: testIndexName, pending: false },
+      { title: "Indexing " + testIndexName, pending: false },
     ]);
 
     expect(mockDb.saveDatabaseIndex).toHaveBeenCalledWith(testDesignDoc);
@@ -84,13 +84,13 @@ describe("DatabaseIndexingService", () => {
     // calling `createIndex` triggers a pending index state immediately
     const indexCreationPromise = service.createIndex(testDesignDoc);
     expect(await service.indicesRegistered.pipe(take(1)).toPromise()).toEqual([
-      { indexName: testIndexName, pending: true },
+      { title: "Indexing " + testIndexName, pending: true },
     ]);
 
     // after the index creation failed, registered indices are updated with error state
     await expectAsync(indexCreationPromise).toBeRejectedWith(testErr);
     expect(await service.indicesRegistered.pipe(take(1)).toPromise()).toEqual([
-      { indexName: testIndexName, pending: false, error: testErr },
+      { title: "Indexing " + testIndexName, pending: false, error: testErr },
     ]);
   });
 });

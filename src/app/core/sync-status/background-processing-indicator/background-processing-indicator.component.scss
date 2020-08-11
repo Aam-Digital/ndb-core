@@ -1,0 +1,35 @@
+
+.details-header {
+  padding: 0 16px;
+  font-size: small;
+  text-align: justify;
+}
+
+.container {
+  line-height: 48px;
+  padding: 0 16px;
+}
+
+.process-spinner {
+  display: inline-block;
+  vertical-align: middle;
+}
+.process-checkmark {
+  font-size: 20px;
+  color: green;
+}
+
+.process-title {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+
+.sync-icon{
+  color: white;
+}
+
+[hidden] {
+  visibility: hidden !important;
+}

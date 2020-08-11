@@ -18,6 +18,7 @@
 import { Injectable } from "@angular/core";
 import { Database } from "../../database/database";
 import { BehaviorSubject, Observable } from "rxjs";
+import { BackgroundProcessState } from "../../sync-status/background-process-state.interface";
 
 /**
  * Manage database query index creation and use, working as a facade in front of the Database service.
@@ -27,10 +28,12 @@ import { BehaviorSubject, Observable } from "rxjs";
   providedIn: "root",
 })
 export class DatabaseIndexingService {
-  private _indicesRegistered = new BehaviorSubject<IndexState[]>([]);
+  private _indicesRegistered = new BehaviorSubject<BackgroundProcessState[]>(
+    []
+  );
 
   /** All currently registered indices with their status */
-  public get indicesRegistered(): Observable<IndexState[]> {
+  public get indicesRegistered(): Observable<BackgroundProcessState[]> {
     return this._indicesRegistered.asObservable();
   }
 
@@ -44,8 +47,8 @@ export class DatabaseIndexingService {
    * @param designDoc The design document (see @link{Database}) describing the query/index.
    */
   public async createIndex(designDoc: any): Promise<void> {
-    const indexState: IndexState = {
-      indexName: designDoc._id.replace(/_design\//, ""),
+    const indexState: BackgroundProcessState = {
+      title: "Indexing " + designDoc._id.replace(/_design\//, ""),
       pending: true,
     };
     const indexCreationPromise = this.db.saveDatabaseIndex(designDoc);
@@ -75,18 +78,4 @@ export class DatabaseIndexingService {
   public queryIndex(indexName: string, options?: any) {
     return this.db.query(indexName, options);
   }
-}
-
-/**
- * Describe a database index and its state as managed by @link{DatabaseIndexingService}.
- */
-export interface IndexState {
-  /** unique name of the indes/query */
-  indexName: string;
-
-  /** whether the index is still in the process of being created / initially indexed */
-  pending: boolean;
-
-  /** if creating the index has failed, contains the error details; otherwise undefined */
-  error?: any;
 }

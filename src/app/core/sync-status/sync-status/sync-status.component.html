@@ -15,6 +15,5 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<button mat-icon-button class="sync-icon" [ngStyle]="{'display': syncInProgress ? 'block' : 'none'}">
-  <mat-icon class="header-icon" fontIcon="fa-refresh"></mat-icon>
-</button>
+<app-background-processing-indicator [backgroundProcesses]="backgroundProcesses | async">
+</app-background-processing-indicator>
