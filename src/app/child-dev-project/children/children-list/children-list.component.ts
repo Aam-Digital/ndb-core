@@ -9,6 +9,7 @@ import { FilterSelection } from "../../../core/filter/filter-selection/filter-se
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { MatPaginator } from "@angular/material/paginator";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { floor } from "lodash";
 
 export interface ColumnGroup {
   name: string;
@@ -106,11 +107,13 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
         "dateOfBirth",
       ],
     },
-    { name: "Mobile", columns: ["projectNumber", "name", "age", "schoolId"] },
+    {
+      name: "Mobile",
+      columns: ["projectNumber", "name", "age", "schoolId"],
+    },
   ];
   columnsToDisplay = ["projectNumber", "name"];
   filterString = "";
-  attendenceBlocks = 12;
 
   constructor(
     private childrenService: ChildrenService,
@@ -130,16 +133,8 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
             this.displayColumnGroup("Mobile");
             break;
           }
-          case "md": {
-            this.attendenceBlocks = 1;
-            break;
-          }
           case "lg": {
-            this.attendenceBlocks = 4;
-            break;
-          }
-          case "xl": {
-            this.attendenceBlocks = 6;
+            this.displayColumnGroup("School Info");
             break;
           }
         }
@@ -266,5 +261,11 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.childrenDataSource.data = filteredData;
 
     this.updateUrl(replaceUrl);
+  }
+
+  calculateBoxNumber(cellWidth: number): number {
+    // correlates with (block width + margin) as set in the attendance-block.component.scss
+    const blockWidth = 52;
+    return floor(cellWidth / blockWidth);
   }
 }
