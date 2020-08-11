@@ -67,6 +67,7 @@ export class SearchComponent implements OnInit {
     if (JSON.stringify(this.searchText) === searchHash) {
       // only set result if the user hasn't continued typing and changed the search term already
       this.results = this.prepareResults(queryResults.rows, searchTerms);
+      console.log("Als Ergebnis geliefert: " + this.results.length);
     }
   }
 
@@ -81,13 +82,14 @@ export class SearchComponent implements OnInit {
   }
 
   private prepareResults(rows, searchTerms: string[]) {
-    console.log(
-      this.getResultsWithoutDuplicates(rows)
-        .map((doc) => this.transformDocToEntity(doc))
-        .filter((r) => r !== null)
-        .filter((r) => this.containsSecondarySearchTerms(r, searchTerms))
-        .sort((a, b) => this.sortResults(a, b))
-    );
+    // console.log(
+    //   this.getResultsWithoutDuplicates(rows)
+    //     .map((doc) => this.transformDocToEntity(doc))
+    //     .filter((r) => r !== null)
+    //     .filter((r) => this.containsSecondarySearchTerms(r, searchTerms))
+    //     .sort((a, b) => this.sortResults(a, b))
+    // );
+    console.log("Übergeben: " + rows.length);
     return this.getResultsWithoutDuplicates(rows)
       .map((doc) => this.transformDocToEntity(doc))
       .filter((r) => r !== null)
@@ -98,8 +100,10 @@ export class SearchComponent implements OnInit {
   private getResultsWithoutDuplicates(rows): any[] {
     const filteredResults = new Map<string, any>();
     for (const row of rows) {
+      console.log("hi: " + row.id);
       filteredResults.set(row.id, row.doc);
     }
+    console.log("Verarbeitet: " + filteredResults.size);
     return Array.from(filteredResults.values());
   }
 

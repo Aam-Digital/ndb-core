@@ -214,7 +214,10 @@ export class MockDatabase extends Database {
         break;
       case "search_index/by_name":
         filterFun = (e) => {
-          return e._id.startsWith(School.ENTITY_TYPE);
+          return (
+            e.hasOwnProperty("name") &&
+            e.name.toLowerCase().includes(options.startkey)
+          );
         };
         break;
       case "childSchoolRelations_index/by_date":
@@ -231,10 +234,10 @@ export class MockDatabase extends Database {
         return { rows: reducedResults };
       } else {
         const allData = await this.getAll();
+        console.log(allData.filter(filterFun).length);
         return {
           rows: allData.filter(filterFun).map((e) => {
-            console.log(e);
-            return { doc: e };
+            return { id: e.id, doc: e };
           }),
         };
       }
