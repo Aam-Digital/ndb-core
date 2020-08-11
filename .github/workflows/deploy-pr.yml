@@ -14,7 +14,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build for deployment
-        run: ng build --prod
+        run: npm run-script build --prod
       - name: Deploy on pages
         uses: peaceiris/actions-gh-pages@v3.7.0-8
         with:
