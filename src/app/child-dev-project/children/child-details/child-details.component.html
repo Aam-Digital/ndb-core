@@ -213,9 +213,13 @@
 
 
 
-    <mat-expansion-panel expanded="false" title="Education">
+    <mat-expansion-panel
+      expanded="false"
+      title="Education"
+      [disabled]="creatingNew"
+    >
       <mat-expansion-panel-header class='section-header'>
-        Education
+        Education {{ creatingNew? '(Please save to enter further data)' : '' }}
       </mat-expansion-panel-header>
 
       <div *ngIf="child.schoolId" matTooltip='To edit the current school or class, please add to the school history below'>
@@ -244,7 +248,7 @@
 
 
 
-    <mat-expansion-panel expanded="false" title="Attendance">
+    <mat-expansion-panel expanded="false" title="Attendance" [disabled]="creatingNew">
       <mat-expansion-panel-header class='section-header'>
         Attendance
       </mat-expansion-panel-header>
@@ -262,7 +266,7 @@
     </mat-expansion-panel>
 
 
-    <mat-expansion-panel expanded="false">
+    <mat-expansion-panel expanded="false" [disabled]="creatingNew">
       <mat-expansion-panel-header class='section-header'>
         Notes & Reports
       </mat-expansion-panel-header>
@@ -272,7 +276,7 @@
 
 
 
-    <mat-expansion-panel [expanded]="false">
+    <mat-expansion-panel [expanded]="false" [disabled]="creatingNew">
       <mat-expansion-panel-header class='section-header'>
         Health
       </mat-expansion-panel-header>
@@ -345,7 +349,7 @@
 
 
 
-    <mat-expansion-panel [expanded]="false">
+    <mat-expansion-panel [expanded]="false" [disabled]="creatingNew">
       <mat-expansion-panel-header class='section-header'>
         Educational Materials
       </mat-expansion-panel-header>
@@ -356,7 +360,7 @@
 
 
 
-    <mat-expansion-panel [expanded]="!child.isActive()">
+    <mat-expansion-panel [expanded]="!child.isActive()" [disabled]="creatingNew">
       <mat-expansion-panel-header class='section-header'>
         Dropout
       </mat-expansion-panel-header>
