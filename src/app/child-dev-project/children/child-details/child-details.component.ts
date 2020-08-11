@@ -193,7 +193,10 @@ export class ChildDetailsComponent implements OnInit {
   }
 
   save() {
+    // errors regarding invalid fields wont be displayed unless marked as touched
+    this.form.markAllAsTouched();
     this.validateForm = true;
+
     if (this.form.valid) {
       this.assignFormValuesToChild(this.child, this.form);
 
@@ -214,7 +217,9 @@ export class ChildDetailsComponent implements OnInit {
         );
     } else {
       const invalidFields = this.getInvalidFields(this.form);
-      this.alertService.addDanger("Form invalid, required fields missing");
+      this.alertService.addDanger(
+        "Form invalid, required fields (" + invalidFields + ") missing"
+      );
     }
   }
 
