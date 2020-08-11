@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install dependencies
-        run: npm install compodoc
+        run: npm install @compodoc/compodoc
       - name: Run compodoc
         run: npm run compodoc
       - name: Deploy on pages
