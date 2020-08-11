@@ -5,13 +5,13 @@
   </span>
 </button>
 
-<mat-menu #taskListDropdown="matMenu">
-  <div class="details-header">
+<mat-menu #taskListDropdown="matMenu" class="details-container">
+  <div class="details-header details-container">
     The following processes are still running in the background.
     Until these are finished some pages may be slow or incomplete.
   </div>
 
-  <div class="container" *ngFor="let process of backgroundProcesses" fxLayout="row">
+  <div *ngFor="let process of backgroundProcesses" class="details-line details-container" fxLayout="row">
     <div fxFlex="28px">
       <mat-spinner *ngIf="process.pending" [diameter]='20' class="process-spinner"></mat-spinner>
       <mat-icon *ngIf="!process.pending" fontIcon="fa-check" class="process-checkmark"></mat-icon>
@@ -19,6 +19,10 @@
     <div class="process-title" [matTooltip]="process.description" fxFlex>
       {{process.title}}
     </div>
+  </div>
+
+  <div class="details-container">
+    <button mat-stroked-button class="details-close" (click)="taskListDropdownTrigger.closeMenu()">Close</button>
   </div>
 </mat-menu>
 

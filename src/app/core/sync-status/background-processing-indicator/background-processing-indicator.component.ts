@@ -24,17 +24,30 @@ export class BackgroundProcessingIndicatorComponent implements OnChanges {
   /** how many special tasks (e.g. index creations) are currently being processed */
   taskCounter: number;
 
-  @ViewChild(MatMenuTrigger) private taskListDropdownTrigger: MatMenuTrigger;
+  /** handle to programmatically open/close the details dropdown */
+  @ViewChild(MatMenuTrigger) taskListDropdownTrigger: MatMenuTrigger;
 
   constructor() {}
 
   ngOnChanges(changes: SimpleChanges) {
+    if (!changes.backgroundProcesses) {
+      return;
+    }
+
     this.taskCounter = this.backgroundProcesses?.filter(
       (s) => s.pending
     ).length;
 
     if (this.taskCounter > 1) {
-      this.taskListDropdownTrigger?.openMenu();
+      if (
+        !(
+          changes.backgroundProcesses.previousValue?.filter((s) => s.pending)
+            .length > 1
+        )
+      ) {
+        // open menu automatically only if it has not been opened previously, to avoid reopening after user closed it
+        this.taskListDropdownTrigger?.openMenu();
+      }
     } else if (this.taskCounter === 0) {
       this.taskListDropdownTrigger?.closeMenu();
     }

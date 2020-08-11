@@ -1,13 +1,15 @@
 
 .details-header {
-  padding: 0 16px;
   font-size: small;
   text-align: justify;
 }
 
-.container {
-  line-height: 48px;
+.details-container {
   padding: 0 16px;
+}
+
+.details-line {
+  line-height: 48px;
 }
 
 .process-spinner {
@@ -25,8 +27,11 @@
   overflow: hidden;
 }
 
+.details-close {
+  width: 100%;
+}
 
-.sync-icon{
+.sync-icon {
   color: white;
 }
 
