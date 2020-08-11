@@ -63,6 +63,7 @@ import { FormDialogModule } from "./core/form-dialog/form-dialog.module";
 import { LoggingService } from "./core/logging/logging.service";
 import { Angulartics2Module } from 'angulartics2';
 import { AnalyticsService } from './core/analytics/analytics.service';
+import { Angulartics2Piwik } from 'angulartics2/piwik';
 
 /**
  * Main entry point of the application.
@@ -127,6 +128,7 @@ import { AnalyticsService } from './core/analytics/analytics.service';
     MatIconRegistry,
     CookieService,
     AnalyticsService,
+    Angulartics2Piwik,
   ],
   bootstrap: [AppComponent],
 })

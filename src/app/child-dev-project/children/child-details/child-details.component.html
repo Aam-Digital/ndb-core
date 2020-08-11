@@ -41,9 +41,6 @@
       mat-stroked-button
       class="edit-button"
       (click)="save()"
-      angulartics2On="click"
-      angularticsCategory="UserAction"
-      [angularticsAction]="creatingNew ? 'adding_new_child_save' : 'child_details_save'"
     >
       Save
     </button>
@@ -54,9 +51,6 @@
       class="edit-button"
       style="color: red;"
       (click)="removeChild()"
-      angulartics2On="click"
-      angularticsCategory="UserAction"
-      angularticsAction="child_details_remove"
     >
       Delete
     </button>
@@ -66,9 +60,6 @@
       mat-stroked-button
       class="edit-button"
       (click)="switchEdit()"
-      angulartics2On="click"
-      angularticsCategory="UserAction"
-      angularticsAction="child_details_cancel"
     >
       Cancel
     </button>
@@ -78,9 +69,6 @@
       mat-stroked-button
       class="edit-button"
       (click)="switchEdit()"
-      angulartics2On="click"
-      angularticsCategory="UserAction"
-      angularticsAction="child_details_edit"
     >
       Edit
     </button>

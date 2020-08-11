@@ -16,6 +16,8 @@ import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.s
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { SessionService } from "../../../core/session/session-service/session.service";
+import { Angulartics2Module } from "angulartics2";
+import { RouterTestingModule } from '@angular/router/testing';
 
 function generateNewNotes(): Array<Note> {
   let i;
@@ -37,7 +39,7 @@ describe("NotesManagerComponent", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [],
-      imports: [NotesModule, MatNativeDateModule],
+      imports: [NotesModule, MatNativeDateModule, Angulartics2Module.forRoot(), RouterTestingModule],
       providers: [
         EntitySchemaService,
         EntityMapperService,
