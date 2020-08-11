@@ -1,7 +1,8 @@
 import { Injectable } from "@angular/core";
 import { Angulartics2Piwik } from "angulartics2/piwik";
-import { MD5 } from "./md5-hash";
 import { environment } from "../../../environments/environment";
+
+const md5 = require('md5');
 
 @Injectable({
   providedIn: "root",
@@ -44,6 +45,6 @@ export class AnalyticsService {
   }
 
   private static getUserHash(username: string) {
-    return MD5(username);
+    return md5(username);
   }
 }
