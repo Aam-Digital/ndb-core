@@ -1,7 +1,8 @@
 name: Deploy Compodoc to GitHub Pages
 on:
   push:
-    - test-deploys
+    branches:
+      - test-deploys
 
 jobs:
   create-and-deploy-compodoc:
