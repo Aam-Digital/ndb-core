@@ -29,7 +29,9 @@ import { SyncState } from "app/core/session/session-states/sync-state.enum";
 import { AlertsModule } from "app/core/alerts/alerts.module";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
-import { of } from "rxjs";
+import { BehaviorSubject } from "rxjs";
+import { take } from "rxjs/operators";
+import { BackgroundProcessState } from "../background-process-state.interface";
 
 describe("SyncStatusComponent", () => {
   let component: SyncStatusComponent;
@@ -38,9 +40,18 @@ describe("SyncStatusComponent", () => {
   let sessionService: MockSessionService;
   let mockIndexingService;
 
+  const DATABASE_SYNCING_STATE: BackgroundProcessState = {
+    title: "Synchronizing database",
+    pending: true,
+  };
+  const DATABASE_SYNCED_STATE: BackgroundProcessState = {
+    title: "Database up-to-date",
+    pending: false,
+  };
+
   beforeEach(async(() => {
     sessionService = new MockSessionService(new EntitySchemaService());
-    mockIndexingService = { indicesRegistered: of([]) };
+    mockIndexingService = { indicesRegistered: new BehaviorSubject([]) };
 
     TestBed.configureTestingModule({
       declarations: [InitialSyncDialogComponent, SyncStatusComponent],
@@ -84,5 +95,37 @@ describe("SyncStatusComponent", () => {
 
     fixture.detectChanges();
     await fixture.whenStable();
+  });
+
+  it("should update backgroundProcesses details on sync", async () => {
+    sessionService.getSyncState().setState(SyncState.STARTED);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(
+      await component.backgroundProcesses.pipe(take(1)).toPromise()
+    ).toEqual([DATABASE_SYNCING_STATE]);
+
+    sessionService.getSyncState().setState(SyncState.COMPLETED);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(
+      await component.backgroundProcesses.pipe(take(1)).toPromise()
+    ).toEqual([DATABASE_SYNCED_STATE]);
+  });
+
+  it("should update backgroundProcesses with indexing", async () => {
+    const testIndexState: BackgroundProcessState = {
+      title: "Indexing",
+      pending: true,
+    };
+    mockIndexingService.indicesRegistered.next([testIndexState]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(
+      await component.backgroundProcesses.pipe(take(1)).toPromise()
+    ).toEqual([DATABASE_SYNCED_STATE, testIndexState]);
   });
 });
