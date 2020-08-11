@@ -2,22 +2,13 @@ import { Injectable } from "@angular/core";
 import { Angulartics2Piwik } from "angulartics2/piwik";
 import { environment } from "../../../environments/environment";
 
-const md5 = require('md5');
+const md5 = require("md5");
 
 @Injectable({
   providedIn: "root",
 })
 export class AnalyticsService {
   static angulartics2Piwik: Angulartics2Piwik;
-
-  constructor(private angulartics2Piwik: Angulartics2Piwik) {
-    AnalyticsService.angulartics2Piwik = angulartics2Piwik;
-  }
-
-  init(): void {
-    AnalyticsService.angulartics2Piwik.startTracking();
-    AnalyticsService.setVersion();
-  }
 
   static eventTrack(
     action: string,
@@ -28,14 +19,14 @@ export class AnalyticsService {
     } = {
       category: "no_category",
       label: "no_label",
-      value: -1
+      value: -1,
     }
   ): void {
     AnalyticsService.angulartics2Piwik.eventTrack(action, properties);
   }
 
   static setUser(username: string): void {
-    AnalyticsService.angulartics2Piwik.setUsername(this.getUserHash(username));
+    AnalyticsService.angulartics2Piwik.setUsername(AnalyticsService.getUserHash(username));
   }
 
   static setVersion(): void {
@@ -46,5 +37,14 @@ export class AnalyticsService {
 
   private static getUserHash(username: string) {
     return md5(username);
+  }
+
+  constructor(private angulartics2Piwik: Angulartics2Piwik) {
+    AnalyticsService.angulartics2Piwik = angulartics2Piwik;
+  }
+
+  init(): void {
+    AnalyticsService.angulartics2Piwik.startTracking();
+    AnalyticsService.setVersion();
   }
 }

@@ -14,7 +14,7 @@ import { NoRecentNotesDashboardComponent } from "./no-recent-notes-dashboard.com
 import { of } from "rxjs";
 import { Child } from "../../../children/model/child";
 import { ChildrenModule } from "../../../children/children.module";
-import { Angulartics2Module } from 'angulartics2';
+import { Angulartics2Module } from "angulartics2";
 
 describe("RecentNotesDashboardComponent", () => {
   let component: NoRecentNotesDashboardComponent;

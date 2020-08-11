@@ -17,7 +17,7 @@ import { ConfirmationDialogService } from "../../../core/confirmation-dialog/con
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { RouterTestingModule } from "@angular/router/testing";
 import { MockDatabase } from "../../../core/database/mock-database";
-import { Angulartics2Module } from 'angulartics2';
+import { Angulartics2Module } from "angulartics2";
 
 function generateChildAttendanceModels() {
   const attendances = [];
@@ -60,7 +60,12 @@ describe("NoteDetailsComponent", () => {
 
     TestBed.configureTestingModule({
       declarations: [],
-      imports: [NotesModule, RouterTestingModule, MatNativeDateModule, Angulartics2Module.forRoot()],
+      imports: [
+        NotesModule,
+        RouterTestingModule,
+        MatNativeDateModule,
+        Angulartics2Module.forRoot(),
+      ],
       providers: [
         EntitySchemaService,
         EntityMapperService,

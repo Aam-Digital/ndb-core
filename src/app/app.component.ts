@@ -19,7 +19,7 @@ import { Component, OnInit, ViewContainerRef } from "@angular/core";
 import { AppConfig } from "./core/app-config/app-config";
 import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./core/demo-data/demo-data-generating-progress-dialog.component";
-import { AnalyticsService } from './core/analytics/analytics.service';
+import { AnalyticsService } from "./core/analytics/analytics.service";
 
 /**
  * Component as the main entry point for the app.

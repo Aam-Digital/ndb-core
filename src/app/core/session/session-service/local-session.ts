@@ -98,7 +98,7 @@ export class LocalSession {
           category: "Auth",
           label: "failed_wrong_credentials",
           value: 0,
-        })
+        });
         return LoginState.LOGIN_FAILED;
       }
     } catch (error) {
@@ -113,7 +113,7 @@ export class LocalSession {
             category: "Auth",
             label: "failed_sync_failed_remote_reject",
             value: 10,
-          })
+          });
           // The sync failed because the remote rejected
           return LoginState.LOGIN_FAILED;
         }
@@ -121,7 +121,7 @@ export class LocalSession {
           category: "Auth",
           label: "failed_sync_failed_unknown",
           value: 20,
-        })
+        });
         // The sync failed for other reasons. The user should try again
         this.loginState.setState(LoginState.LOGGED_OUT);
         return LoginState.LOGGED_OUT;
@@ -132,7 +132,7 @@ export class LocalSession {
           category: "Auth",
           label: "failed",
           value: 30,
-        })
+        });
         this.loginState.setState(LoginState.LOGIN_FAILED);
         return LoginState.LOGIN_FAILED;
       }

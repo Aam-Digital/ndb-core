@@ -14,7 +14,7 @@ import { RecentNotesDashboardComponent } from "./recent-notes-dashboard.componen
 import { of } from "rxjs";
 import { Child } from "../../../children/model/child";
 import { ChildrenModule } from "../../../children/children.module";
-import { Angulartics2Module } from 'angulartics2';
+import { Angulartics2Module } from "angulartics2";
 
 describe("RecentNotesDashboardComponent", () => {
   let component: RecentNotesDashboardComponent;
@@ -39,7 +39,7 @@ describe("RecentNotesDashboardComponent", () => {
         ChildrenModule,
         RouterTestingModule.withRoutes([]),
         EntityModule,
-        Angulartics2Module.forRoot()
+        Angulartics2Module.forRoot(),
       ],
       providers: [
         { provide: ChildrenService, useValue: mockChildrenService },
