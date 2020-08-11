@@ -48,7 +48,8 @@ export class DatabaseIndexingService {
    */
   public async createIndex(designDoc: any): Promise<void> {
     const indexState: BackgroundProcessState = {
-      title: "Indexing " + designDoc._id.replace(/_design\//, ""),
+      title: "Preparing data (Indexing)",
+      details: designDoc._id.replace(/_design\//, ""),
       pending: true,
     };
     const indexCreationPromise = this.db.saveDatabaseIndex(designDoc);

@@ -21,6 +21,9 @@ export class BackgroundProcessingIndicatorComponent implements OnChanges {
   /** details on current background processes to be displayed to user */
   @Input() backgroundProcesses: BackgroundProcessState[];
 
+  /** whether processes of with the same title shall be summarized into one line */
+  @Input() summarize: boolean = true;
+
   /** how many special tasks (e.g. index creations) are currently being processed */
   taskCounter: number;
 
@@ -32,6 +35,12 @@ export class BackgroundProcessingIndicatorComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (!changes.backgroundProcesses) {
       return;
+    }
+
+    if (this.summarize && this.backgroundProcesses) {
+      this.backgroundProcesses = this.summarizeProcesses(
+        this.backgroundProcesses
+      );
     }
 
     this.taskCounter = this.backgroundProcesses?.filter(
@@ -51,5 +60,21 @@ export class BackgroundProcessingIndicatorComponent implements OnChanges {
     } else if (this.taskCounter === 0) {
       this.taskListDropdownTrigger?.closeMenu();
     }
+  }
+
+  private summarizeProcesses(
+    processes: BackgroundProcessState[]
+  ): BackgroundProcessState[] {
+    return processes.reduce((accumulator, currentEntry) => {
+      const summaryEntry = accumulator.find(
+        (i) => i.title === currentEntry.title
+      );
+      if (!summaryEntry) {
+        accumulator.push(currentEntry);
+      } else {
+        summaryEntry.details = undefined;
+      }
+      return accumulator;
+    }, []);
   }
 }

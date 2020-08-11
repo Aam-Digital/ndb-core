@@ -17,7 +17,7 @@
       <mat-icon *ngIf="!process.pending" fontIcon="fa-check" class="process-checkmark"></mat-icon>
     </div>
     <div class="process-title" [matTooltip]="process.description" fxFlex>
-      {{process.title}}
+      {{process.title}} <span *ngIf="process.details">({{process.details}})</span>
     </div>
   </div>
 
