@@ -1,22 +1,24 @@
-name: Deploy Compodoc to GitHub Pages
+name: Deploy Aam-digital to GitHub Pages
 on:
   push:
     branches:
       - test-deploys
 
+# TODO Except GitHub pages
+
 jobs:
-  create-and-deploy-compodoc:
+  deploy-website:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
       - name: Install dependencies
-        run: npm install @compodoc/compodoc
-      - name: Run compodoc
-        run: npm run compodoc
+        run: npm install
+      - name: Build for deployment
+        run: ng build --prod
       - name: Deploy on pages
         uses: peaceiris/actions-gh-pages@v3.7.0-8
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: doc/compodoc
-          destination_dir: documentation
+          publish_dir: dist/
+          destination_dir: deployments/$GITHUB_REF
 
