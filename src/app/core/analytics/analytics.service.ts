@@ -26,7 +26,9 @@ export class AnalyticsService {
   }
 
   static setUser(username: string): void {
-    AnalyticsService.angulartics2Piwik.setUsername(AnalyticsService.getUserHash(username));
+    AnalyticsService.angulartics2Piwik.setUsername(
+      AnalyticsService.getUserHash(username)
+    );
   }
 
   static setVersion(): void {
