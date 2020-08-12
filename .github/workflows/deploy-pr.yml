@@ -1,10 +1,5 @@
 name: Deploy Aam-digital to GitHub Pages
-on:
-  push:
-    branches:
-      - test-deploys
-
-# TODO Except GitHub pages
+on: [pull_request]
 
 jobs:
   deploy-website:
