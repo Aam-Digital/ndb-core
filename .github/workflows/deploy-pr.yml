@@ -1,7 +1,7 @@
 name: Deploy Aam-digital to GitHub Pages
 on:
   pull_request:
-    types: [opened, sychronize]
+    types: [opened, sychronize, reopened]
 
 jobs:
   deploy-website:
