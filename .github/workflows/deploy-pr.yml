@@ -14,7 +14,10 @@ jobs:
       - name: check envs
         env:
           GITHUB_REF: ${{ github.ref}}
-        run: echo " $GITHUB_REF ${{ github.base_ref }} / ${{ github.ref }} / ${{ github.head_ref}}"
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+          GITHUB_HEAD_REF: ${{ github.head_ref}}
+        run: echo $GITHUB_REF && echo $GITHUB_BASE_REF && echo $GITHUB_HEAD_REF
+      - run: echo ${{ github.ref }} && echo ${{ github.base_ref }} && echo ${{ github.head_ref }}
       - name: Install dependencies
         run: npm install
       - uses: actions/setup-node@v1
