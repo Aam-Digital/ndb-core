@@ -19,6 +19,7 @@ jobs:
         with:
           node-version: 10
           check-latest: true
+      - run: npm link @angular/cli
       - name: Build for deployment
         run: ng deploy --base-href=http://aam-digital.github.io/ndb-core/documentation/${{ github.ref }}/
       - name: Deploy on pages
