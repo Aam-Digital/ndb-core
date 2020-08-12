@@ -12,9 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install dependencies
-        run: npm install
+        run: npm install && npm install @angular/cli && npm link @angular/cli
       - name: Build deployment
-        run: npm run-script build --base-href=/deployments/${{ github.ref }}/
+        run: ng build --base-href=/deployments/${{ github.ref }}/
       - name: Deploy on pages
         uses: peaceiris/actions-gh-pages@v3.7.0-8
         with:
