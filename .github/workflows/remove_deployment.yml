@@ -1,0 +1,15 @@
+name: Remove deployment from GitHub Pages
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  remove-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actsion/checkout@v2
+        with:
+          ref: gh-pages
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Remove directory
+        run: rm -rf deployments/${{ github.ref }}
