@@ -14,7 +14,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build deployment
-        run: npm run build -- --base-href=/ndb-core/deployments/refs/heads/${{ github.ref }}/
+        run: npm run build -- --base-href=/ndb-core/deployments/${{ github.ref }}/
       - name: Deploy on pages
         uses: peaceiris/actions-gh-pages@v3.7.0-8
         with:
