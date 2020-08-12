@@ -14,7 +14,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build deployment
-        run: npm run-script build --base-href=http://aam-digital.github.io/ndb-core/documentation/${{ github.ref }}/
+        run: npm run-script build --base-href=/deployments/${{ github.ref }}/
       - name: Deploy on pages
         uses: peaceiris/actions-gh-pages@v3.7.0-8
         with:
