@@ -13,10 +13,8 @@ jobs:
       - uses: actions/checkout@v1
       - name: Install dependencies
         run: npm install
-      - name: Link cli
-        run: npm link @angular/cli
       - name: Build deployment
-        run: ng build --base-href=http://aam-digital.github.io/ndb-core/documentation/${{ github.ref }}/
+        run: npm run-script build --base-href=http://aam-digital.github.io/ndb-core/documentation/${{ github.ref }}/
       - name: Deploy on pages
         uses: peaceiris/actions-gh-pages@v3.7.0-8
         with:
