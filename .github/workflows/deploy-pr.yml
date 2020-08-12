@@ -11,12 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 9
-          check-latest: true
       - name: Install dependencies
-        run: npm install && npm link @angular/cli
+        run: npm install
+      - name: Link cli
+        run: npm link @angular/cli
       - name: Build deployment
         run: ng build --base-href=http://aam-digital.github.io/ndb-core/documentation/${{ github.ref }}/
       - name: Deploy on pages
