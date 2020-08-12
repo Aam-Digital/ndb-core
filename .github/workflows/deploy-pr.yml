@@ -12,7 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: check envs
-        run: echo " ${{ $GITHUB_REF }} / ${{ github.base_ref }} / ${{ github.ref }} / ${{ github.head_ref}}"
+        env:
+          GITHUB_REF: ${{ github.ref}}
+        run: echo " $GITHUB_REF ${{ github.base_ref }} / ${{ github.ref }} / ${{ github.head_ref}}"
       - name: Install dependencies
         run: npm install
       - uses: actions/setup-node@v1
