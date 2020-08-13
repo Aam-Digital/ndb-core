@@ -13,9 +13,9 @@ jobs:
           PR=${GITHUB_REF#refs/*/}
           PR=${PR%/*}
           echo "::set-env name=:PR:PR"
-          echo "first PR"
+          echo "first $PR"
       - name: debug2
-        run: echo "second PR"
+        run: echo "second $PR"
       - uses: actions/checkout@v1
       - name: Install dependencies
         run: npm install
