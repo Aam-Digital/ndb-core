@@ -10,12 +10,12 @@ jobs:
           GITHUB_REF: ${{ github.ref }}
           GITHUB_EX: ${{ github.ref }}
         run: |
-          GITHUB_REF= ${GITHUB_REF#refs/pull/}
-          GITHUB_REF= ${GITHUB_REF%/*}
-          GITHUB_EXP= $GITHUB_REF | tr -d -c 0-9
-          echo "first $GITHUB_REF , $GITHUB_EXP"
+          GITHUB_REF=${GITHUB_REF#refs/*/}
+          GITHUB_REF=${GITHUB_REF%/*}
+          GITHUB_EX=$GITHUB_REF | tr -d -c 0-9
+          echo "first $GITHUB_REF , $GITHUB_EX"
       - name: debug2
-        run: echo "first $GITHUB_REF , $GITHUB_EXP"
+        run: echo "first $GITHUB_REF , $GITHUB_EX"
       - uses: actions/checkout@v1
       - name: Install dependencies
         run: npm install
