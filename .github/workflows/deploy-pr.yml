@@ -20,7 +20,7 @@ jobs:
         env:
           PR: ${{ github.ref }}
         run: |
-          PR=${GITHUB_REF#refs/*/}
+          PR=${PR#refs/*/}
           PR=${PR%/*}
           echo "$PR"
           curl -X POST \
