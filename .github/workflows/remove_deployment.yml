@@ -13,7 +13,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Remove directory
         run: |
-          [ -d deployments/${{ github.ref }}] && rm -rf deployments/${{ github.ref }}
+          [ -d deployments/${{ github.ref }} ] && rm -rf deployments/${{ github.ref }}
       - name: Commit changes
         run: |
           git config --local user.email "action@github.com"
