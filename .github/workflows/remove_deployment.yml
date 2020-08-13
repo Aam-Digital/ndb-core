@@ -7,9 +7,19 @@ jobs:
   remove-deployment:
     runs-on: ubuntu-latest
     steps:
-      - uses: actsion/checkout@v2
+      - uses: actions/checkout@v2
         with:
           ref: gh-pages
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Remove directory
-        run: rm -rf deployments/${{ github.ref }}
+        run: |
+          [ -d deployments/${{ github.ref }}] && rm -rf deployments/${{ github.ref }}
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Remove Deployment Workflow"
+          git commit -m "Removed deployment for branch ${{ github.ref }}" -a
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
