@@ -15,12 +15,12 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Remove directory
         run: |
-          [ -d deployments/${{ github.ref }} ] && rm -rf deployments/${{ github.ref }}
+          [ -d deployments/${{ github.ref }} ] && rm -rf deployments/${GITHUB_REF##*/}
       - name: Commit changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "Remove Deployment Workflow"
-          git commit -m "Removed deployment for branch ${{ github.ref }}" -a
+          git commit -m "Removed deployment for branch $${GITHUB_REF##*/}" -a
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
