@@ -6,6 +6,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - name: debug
+        env:
+          GITHUB_REF: ${{ github.ref }}
+        run: echo "$GITHUB_REF , ${GITHUB_REF#refs/*/}"
       - name: Install dependencies
         run: npm install
       - name: Build deployment
