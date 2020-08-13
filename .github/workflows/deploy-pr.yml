@@ -5,11 +5,18 @@ jobs:
   deploy-website:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
       - name: debug
         env:
           GITHUB_REF: ${{ github.ref }}
-        run: echo "$GITHUB_REF , ${GITHUB_REF#refs/*/}"
+          GITHUB_EX: ${{ github.ref }}
+        run: |
+          GITHUB_REF= ${GITHUB_REF#refs/pull/}
+          GITHUB_REF= ${GITHUB_REF%/*}
+          GITHUB_EXP= $GITHUB_REF | tr -d -c 0-9
+          echo "first $GITHUB_REF , $GITHUB_EXP"
+      -name: debug2
+       run: echo "first $GITHUB_REF , $GITHUB_EXP"
+      - uses: actions/checkout@v1
       - name: Install dependencies
         run: npm install
       - name: Build deployment
