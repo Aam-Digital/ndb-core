@@ -22,5 +22,5 @@ jobs:
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/Aam-Digital/ndb-core/issues/483/comments \
-          -d '{"body":"Deployed to http://aam-digital.github.io/ndb-core/deployments/${{ github.head_ref }}"}'
+          -d '{"body":"Deployed to https://aam-digital.github.io/ndb-core/deployments/${{ github.head_ref }}"}'
 
