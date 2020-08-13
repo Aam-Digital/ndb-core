@@ -14,8 +14,8 @@ jobs:
           GITHUB_REF= ${GITHUB_REF%/*}
           GITHUB_EXP= $GITHUB_REF | tr -d -c 0-9
           echo "first $GITHUB_REF , $GITHUB_EXP"
-      -name: debug2
-       run: echo "first $GITHUB_REF , $GITHUB_EXP"
+      - name: debug2
+        run: echo "first $GITHUB_REF , $GITHUB_EXP"
       - uses: actions/checkout@v1
       - name: Install dependencies
         run: npm install
