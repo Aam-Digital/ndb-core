@@ -12,7 +12,7 @@ jobs:
         run: |
           PR=${GITHUB_REF#refs/*/}
           PR=${PR%/*}
-          PR_EX= ${GITHUB_EX | tr -d -c 0-9}
+          PR_EX=${GITHUB_EX | tr -d -c 0-9}
           echo "::set-env name=:PR:PR"
           echo "::set-env name=:PR_EX:PR_EX"
           echo "first PR , PR_EX"
