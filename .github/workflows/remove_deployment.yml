@@ -1,7 +1,9 @@
 name: Remove deployment from GitHub Pages
-on:
-  pull_request:
-    types: [closed]
+#on:
+#  pull_request:
+#    types: [closed]
+on: pull_request
+
 
 jobs:
   remove-deployment:
