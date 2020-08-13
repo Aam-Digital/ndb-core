@@ -10,12 +10,14 @@ jobs:
           GITHUB_REF: ${{ github.ref }}
           GITHUB_EX: ${{ github.ref }}
         run: |
-          GITHUB_REF=${GITHUB_REF#refs/*/}
-          GITHUB_REF=${GITHUB_REF%/*}
-          GITHUB_EX=$GITHUB_REF | tr -d -c 0-9
-          echo "first $GITHUB_REF , $GITHUB_EX"
+          PR=${GITHUB_REF#refs/*/}
+          PR=${PR%/*}
+          PR_EX= ${GITHUB_EX | tr -d -c 0-9}
+          echo "::set-env name=:PR:PR"
+          echo "::set-env name=:PR_EX:PR_EX"
+          echo "first PR , PR_EX"
       - name: debug2
-        run: echo "first $GITHUB_REF , $GITHUB_EX"
+          echo "first PR , PR_EX"
       - uses: actions/checkout@v1
       - name: Install dependencies
         run: npm install
