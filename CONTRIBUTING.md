@@ -12,12 +12,12 @@ we welcome any contributions to make this project better!
 -----
 
 ## Get started
-To get started, please have a look at our [Developer Documentation](https://aam-digital.github.io/ndb-core/additional-documentation/overview.html).
+To get started, please have a look at our [Developer Documentation](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html).
 
-1. Work through the [Tutorial](https://aam-digital.github.io/ndb-core/additional-documentation/tutorial.html).
+1. Work through the [Tutorial](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/tutorial.html).
     * This walks you through the setup and basic understanding of the project and also gives an overview of the technologies and frameworks involved. 
     * Feel free to skip over steps that seem trivial to you, we tried to make this very beginner friendly.
-2. Check our workflow regarding pull requests: [How to contribute code](https://aam-digital.github.io/ndb-core/additional-documentation/how-to-guides/contribute-code-to-the-project.html)
+2. Check our workflow regarding pull requests: [How to contribute code](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/how-to-guides/contribute-code-to-the-project.html)
 3. Don't hesitate to ask questions!
 
 ## Get in touch
