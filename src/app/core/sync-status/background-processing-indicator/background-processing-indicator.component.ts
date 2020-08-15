@@ -19,7 +19,7 @@ import { BackgroundProcessState } from "../background-process-state.interface";
 })
 export class BackgroundProcessingIndicatorComponent implements OnChanges {
   /** details on current background processes to be displayed to user */
-  @Input() backgroundProcesses: BackgroundProcessState[];
+  @Input() backgroundProcesses: BackgroundProcessState[] = [];
 
   /** whether processes of with the same title shall be summarized into one line */
   @Input() summarize: boolean = true;
@@ -72,7 +72,8 @@ export class BackgroundProcessingIndicatorComponent implements OnChanges {
       if (!summaryEntry) {
         accumulator.push(currentEntry);
       } else {
-        summaryEntry.details = undefined;
+        delete summaryEntry.details;
+        summaryEntry.pending = summaryEntry.pending || currentEntry.pending;
       }
       return accumulator;
     }, []);
