@@ -1,0 +1,27 @@
+name: Remove deployment from GitHub Pages
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  remove-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: gh-pages
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Remove directory
+        run: |
+          [ -d deployments/${{ github.head_ref }} ] && rm -rf deployments/${{ github.head_ref }}
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Remove Deployment Workflow"
+          git commit -m "Removed deployment for branch $${GITHUB_REF##*/}" -a
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force: true
+          branch: gh-pages
