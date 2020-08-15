@@ -121,7 +121,9 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   ];
   columnsToDisplay = ["projectNumber", "name"];
   filterString = "";
-  blockNumber: number;
+
+  /** dynamically calculated number of attendance blocks displayed in a column to avoid overlap */
+  maxAttendanceBlocks: number;
   @ViewChild("attendanceSchoolCell") schoolCell: ElementRef;
   @ViewChild("attendanceCoachingCell") coachingCell: ElementRef;
 
@@ -171,7 +173,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.childrenDataSource.sort = this.sort;
     this.childrenDataSource.paginator = this.paginator;
-    this.calculateBoxNumber();
+    this.calculateMaxAttendanceBlocks();
   }
 
   private loadData(replaceUrl: boolean = false) {
@@ -274,14 +276,21 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.updateUrl(replaceUrl);
   }
 
+  /**
+   * Calculate the number of attendance blocks that fit into the columns based on their width to avoid overlap.
+   */
   @HostListener("window:resize")
-  calculateBoxNumber() {
+  calculateMaxAttendanceBlocks() {
+    if (!this.coachingCell || !this.schoolCell) {
+      return;
+    }
+
     // correlates with (block width + margin) as set in the attendance-block.component.scss
     const blockWidth = 52;
     const cellWidth: number = min([
       this.coachingCell.nativeElement.offsetWidth,
       this.schoolCell.nativeElement.offsetWidth,
     ]);
-    this.blockNumber = floor(cellWidth / blockWidth);
+    this.maxAttendanceBlocks = floor(cellWidth / blockWidth);
   }
 }
