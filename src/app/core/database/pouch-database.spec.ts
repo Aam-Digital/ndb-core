@@ -28,14 +28,19 @@ describe("PouchDatabase tests", () => {
   beforeEach(() => {
     const mockLoggingService: jasmine.SpyObj<LoggingService> = jasmine.createSpyObj(
       "mockLoggingService",
-      ["warn"]
+      ["warn", "debug"]
+    );
+    mockLoggingService.warn.and.callFake((m) => console.warn(m));
+    const mockAlertService: jasmine.SpyObj<AlertService> = jasmine.createSpyObj(
+      "mockAlertService",
+      ["addWarning", "addDebug"]
     );
     mockLoggingService.warn.and.callFake((m) => console.warn(m));
 
     pouch = new PouchDB("unit-test-db");
     pouchDatabase = new PouchDatabase(
       pouch,
-      new AlertService(null, new LoggingService()),
+      mockAlertService,
       mockLoggingService
     );
 
@@ -91,6 +96,19 @@ describe("PouchDatabase tests", () => {
       },
       function (err: any) {
         expect(err).toBeDefined();
+        done();
+      }
+    );
+  });
+
+  it("returns undefined on get by not existing entityId with returnUndefined parameter", function (done) {
+    pouchDatabase.get("some_id", {}, true).then(
+      function (result) {
+        expect(result).toBeUndefined();
+        done();
+      },
+      function (err: any) {
+        fail(err);
         done();
       }
     );
@@ -182,5 +200,80 @@ describe("PouchDatabase tests", () => {
         expect(false).toBe(true, "put failed: " + err);
       }
     );
+  });
+
+  it("saveDatabaseIndex creates new index", async () => {
+    const testIndex = { _id: "_design/test_index", views: { a: {}, b: {} } };
+    spyOn(pouchDatabase, "put").and.resolveTo();
+    const spyOnQuery = spyOn(pouchDatabase, "query").and.resolveTo();
+
+    await pouchDatabase.saveDatabaseIndex(testIndex);
+    expect(pouchDatabase.put).toHaveBeenCalledWith(testIndex);
+
+    // expect all indices to be queried
+    expect(spyOnQuery).toHaveBeenCalledTimes(2);
+    expect(spyOnQuery.calls.allArgs()).toEqual([
+      ["test_index/a", { key: "1" }],
+      ["test_index/b", { key: "1" }],
+    ]);
+  });
+
+  it("saveDatabaseIndex updates existing index", async () => {
+    const testIndex = { _id: "_design/test_index", views: { a: {}, b: {} } };
+    const existingIndex = {
+      _id: "_design/test_index",
+      _rev: "01",
+      views: { a: {} },
+    };
+    const mockPouchDb = jasmine.createSpyObj("mockPouchDb", ["get", "put"]);
+    // @ts-ignore
+    pouchDatabase._pouchDB = mockPouchDb;
+    mockPouchDb.get.and.resolveTo(existingIndex);
+    spyOn(pouchDatabase, "put").and.resolveTo();
+    const spyOnQuery = spyOn(pouchDatabase, "query").and.resolveTo();
+
+    await pouchDatabase.saveDatabaseIndex(testIndex);
+    expect(pouchDatabase.put).toHaveBeenCalledWith({
+      _id: testIndex._id,
+      views: testIndex.views,
+      _rev: existingIndex._rev,
+    });
+
+    // expect all indices to be queried
+    expect(spyOnQuery).toHaveBeenCalledTimes(2);
+    expect(spyOnQuery.calls.allArgs()).toEqual([
+      ["test_index/a", { key: "1" }],
+      ["test_index/b", { key: "1" }],
+    ]);
+  });
+
+  it("saveDatabaseIndex does not update unchanged index", async () => {
+    const testIndex = { _id: "_design/test_index", views: { a: {}, b: {} } };
+    const existingIndex = {
+      _id: "_design/test_index",
+      _rev: "01",
+      views: testIndex.views,
+    };
+    const mockPouchDb = jasmine.createSpyObj("mockPouchDb", ["get", "put"]);
+    // @ts-ignore
+    pouchDatabase._pouchDB = mockPouchDb;
+    mockPouchDb.get.and.resolveTo(existingIndex);
+    spyOn(pouchDatabase, "put").and.resolveTo();
+
+    await pouchDatabase.saveDatabaseIndex(testIndex);
+    expect(pouchDatabase.put).not.toHaveBeenCalled();
+  });
+
+  it("query simply calls through to query", async () => {
+    const testQuery = "testquery";
+    const testQueryResults = { rows: [] };
+    const mockPouchDb = jasmine.createSpyObj("mockPouchDb", ["query"]);
+    // @ts-ignore
+    pouchDatabase._pouchDB = mockPouchDb;
+    mockPouchDb.query.and.resolveTo(testQueryResults);
+
+    const result = await pouchDatabase.query(testQuery, {});
+    expect(result).toEqual(testQueryResults);
+    expect(mockPouchDb.query).toHaveBeenCalledWith(testQuery, {});
   });
 });

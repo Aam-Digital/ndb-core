@@ -48,11 +48,21 @@ export class PouchDatabase extends Database {
    * (see {@link Database})
    * @param id The primary key of the document to be loaded
    * @param options Optional PouchDB options for the request
+   * @param returnUndefined (Optional) return undefined instead of throwing error if doc is not found in database
    */
-  get(id: string, options: any = {}) {
+  get(id: string, options: any = {}, returnUndefined?: boolean): Promise<any> {
     return this._pouchDB.get(id, options).catch((err) => {
-      this.notifyError(err);
-      throw err;
+      if (err.status === 404) {
+        this.loggingService.debug("Doc not found in database: " + id);
+        if (returnUndefined) {
+          return undefined;
+        } else {
+          throw err;
+        }
+      } else {
+        this.notifyError(err);
+        throw err;
+      }
     });
   }
 
@@ -138,34 +148,21 @@ export class PouchDatabase extends Database {
    * @param designDoc The PouchDB style design document for the map/reduce query
    */
   async saveDatabaseIndex(designDoc: any): Promise<any> {
-    try {
-      const existingDesignDoc = await this.get(designDoc._id);
-      if (
-        JSON.stringify(existingDesignDoc.views) ===
-        JSON.stringify(designDoc.views)
-      ) {
-        // already up to date, nothing more to do
-        return;
-      }
-
-      designDoc._rev = existingDesignDoc._rev;
+    const existingDesignDoc = await this.get(designDoc._id, {}, true);
+    if (!existingDesignDoc) {
+      this.loggingService.debug("creating new database index");
+    } else if (
+      JSON.stringify(existingDesignDoc.views) !==
+      JSON.stringify(designDoc.views)
+    ) {
       this.loggingService.debug("replacing existing database index");
-    } catch (err) {
-      if (err.status === 404) {
-        this.loggingService.debug("creating new database index");
-      } else {
-        // unexpected error
-        this.loggingService.error("database index check failed: " + err);
-        throw err;
-      }
+      designDoc._rev = existingDesignDoc._rev;
+    } else {
+      // already up to date, nothing more to do
+      return;
     }
 
-    try {
-      this.put(designDoc);
-    } catch (err) {
-      this.loggingService.error("database index creation failed: " + err);
-      throw err;
-    }
+    await this.put(designDoc);
 
     await this.prebuildViewsOfDesignDoc(designDoc);
   }
