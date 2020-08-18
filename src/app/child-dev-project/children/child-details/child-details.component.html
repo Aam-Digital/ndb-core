@@ -374,8 +374,16 @@
       </div>
     </mat-expansion-panel>
 
-    <mat-expansion-panel expanded="false" title="Education">
+    <mat-expansion-panel
+      expanded="false"
+      title="Education"
+      [disabled]="creatingNew">
       <mat-expansion-panel-header class="section-header">
+        <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew"
+                  class="locked-icon"
+                  matTooltip="Please save before entering further data"
+                  [matTooltipDisabled]="!creatingNew">
+        </mat-icon>
         Education
       </mat-expansion-panel-header>
 
@@ -405,8 +413,14 @@
       </div>
     </mat-expansion-panel>
 
-    <mat-expansion-panel expanded="false" title="Attendance">
+    <mat-expansion-panel expanded="false" title="Attendance"
+                         [disabled]="creatingNew">
       <mat-expansion-panel-header class="section-header">
+        <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew"
+                  class="locked-icon"
+                  matTooltip="Please save before entering further data"
+                  [matTooltipDisabled]="!creatingNew">
+        </mat-icon>
         Attendance
       </mat-expansion-panel-header>
 
@@ -428,16 +442,30 @@
       </div>
     </mat-expansion-panel>
 
-    <mat-expansion-panel expanded="false">
+
+    <mat-expansion-panel expanded="false"
+                         [disabled]="creatingNew">
       <mat-expansion-panel-header class="section-header">
+        <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew"
+                  class="locked-icon"
+                  matTooltip="Please save before entering further data"
+                  [matTooltipDisabled]="!creatingNew">
+        </mat-icon>
         Notes & Reports
       </mat-expansion-panel-header>
 
       <app-notes-of-child [childId]="child.getId()"></app-notes-of-child>
     </mat-expansion-panel>
 
-    <mat-expansion-panel [expanded]="false">
+
+    <mat-expansion-panel [expanded]="false"
+                         [disabled]="creatingNew">
       <mat-expansion-panel-header class="section-header">
+        <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew"
+                  class="locked-icon"
+                  matTooltip="Please save before entering further data"
+                  [matTooltipDisabled]="!creatingNew">
+        </mat-icon>
         Health
       </mat-expansion-panel-header>
 
@@ -567,16 +595,28 @@
       </div>
     </mat-expansion-panel>
 
-    <mat-expansion-panel [expanded]="false">
+    <mat-expansion-panel [expanded]="false"
+                         [disabled]="creatingNew">
       <mat-expansion-panel-header class="section-header">
+        <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew"
+                  class="locked-icon"
+                  matTooltip="Please save before entering further data"
+                  [matTooltipDisabled]="!creatingNew">
+        </mat-icon>
         Educational Materials
       </mat-expansion-panel-header>
 
       <app-educational-material></app-educational-material>
     </mat-expansion-panel>
 
-    <mat-expansion-panel [expanded]="!child.isActive()">
+    <mat-expansion-panel [expanded]="!child.isActive()"
+                         [disabled]="creatingNew">
       <mat-expansion-panel-header class="section-header">
+        <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew"
+                  class="locked-icon"
+                  matTooltip="Please save before entering further data"
+                  [matTooltipDisabled]="!creatingNew">
+        </mat-icon>
         Dropout
       </mat-expansion-panel-header>
 

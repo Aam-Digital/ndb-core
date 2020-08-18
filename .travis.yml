@@ -32,8 +32,6 @@ script:
 
 after_script:
   - ./cc-test-reporter after-build --debug --exit-code $TRAVIS_TEST_RESULT
-after_success:
-  - npm run compodoc
 
 deploy:
   - provider: script
@@ -46,10 +44,3 @@ deploy:
     script: npx semantic-release
     on:
       all_branches: true
-  - provider: pages
-    skip_cleanup: true
-    local_dir: doc/compodoc
-    github_token: $GH_REPO_TOKEN
-    on:
-      all_branches: true
-      condition: ${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH} =~ ^(master|compodoc)$
