@@ -234,10 +234,9 @@ export class MockDatabase extends Database {
         return { rows: reducedResults };
       } else {
         const allData = await this.getAll();
-        console.log(allData.filter(filterFun).length);
         return {
           rows: allData.filter(filterFun).map((e) => {
-            return { id: e.id, doc: e };
+            return { id: e._id, doc: e };
           }),
         };
       }
