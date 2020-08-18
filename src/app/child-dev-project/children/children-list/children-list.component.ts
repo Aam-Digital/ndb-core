@@ -248,6 +248,11 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     }
     this.columnsToDisplay = group.columns;
     this.updateUrl();
+
+    // setTimeout ensures that the code gets run after DOM completion
+    setTimeout(() => {
+      this.calculateMaxAttendanceBlocks();
+    }, 0);
   }
 
   updateUrl(replaceUrl: boolean = false) {
@@ -274,6 +279,11 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.childrenDataSource.data = filteredData;
 
     this.updateUrl(replaceUrl);
+
+    // setTimeout ensures that the code gets run after DOM completion
+    setTimeout(() => {
+      this.calculateMaxAttendanceBlocks();
+    }, 0);
   }
 
   /**
@@ -287,10 +297,16 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
     // correlates with (block width + margin) as set in the attendance-block.component.scss
     const blockWidth = 52;
-    const cellWidth: number = min([
-      this.coachingCell.nativeElement.offsetWidth,
-      this.schoolCell.nativeElement.offsetWidth,
-    ]);
-    this.maxAttendanceBlocks = floor(cellWidth / blockWidth);
+    // since cell size changes based upon content we have to evaluate multiple times
+    for (let index = 0; index < 5; index++) {
+      // setTimeout ensures that the code gets run after DOM completion
+      setTimeout(() => {
+        const cellWidth: number = min([
+          this.coachingCell.nativeElement.offsetWidth,
+          this.schoolCell.nativeElement.offsetWidth,
+        ]);
+        this.maxAttendanceBlocks = floor(cellWidth / blockWidth);
+      }, 0);
+    }
   }
 }
