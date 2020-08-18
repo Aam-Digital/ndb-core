@@ -5,8 +5,11 @@ import { School } from "../model/school";
 import { SchoolsService } from "../schools.service";
 import { Router } from "@angular/router";
 import { FilterSelection } from "../../../core/filter/filter-selection/filter-selection";
-import { MatPaginator } from "@angular/material/paginator";
+import { MatPaginator, PageEvent } from "@angular/material/paginator";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { User } from "../../../core/user/user";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 
 @UntilDestroy()
 @Component({
@@ -47,9 +50,21 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   ]);
   filterSelections = [this.mediumFS, this.privateFS];
 
-  constructor(private schoolService: SchoolsService, private router: Router) {}
+  public paginatorPageSize: number;
+  public paginatorPageIndex: number;
+  private user: User;
+
+  constructor(
+    private schoolService: SchoolsService,
+    private router: Router,
+    private sessionService: SessionService,
+    private entityMapperService: EntityMapperService
+  ) {}
 
   ngOnInit() {
+    this.user = this.sessionService.getCurrentUser();
+    this.paginatorPageSize = this.user.paginatorSettingsPageSize.schoolsList;
+    this.paginatorPageIndex = this.user.paginatorSettingsPageIndex.schoolsList;
     this.schoolService
       .getSchools()
       .pipe(untilDestroyed(this))
@@ -67,6 +82,22 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.schoolDataSource.sort = this.sort;
     this.schoolDataSource.paginator = this.paginator;
+    setTimeout(() => {
+      this.paginator.pageIndex = this.paginatorPageIndex;
+      this.paginator.page.next({
+        pageIndex: this.paginator.pageIndex,
+        pageSize: this.paginator.pageSize,
+        length: this.paginator.length,
+      });
+    });
+  }
+
+  onPaginateChange(event: PageEvent) {
+    this.paginatorPageSize = event.pageSize;
+    this.paginatorPageIndex = event.pageIndex;
+    this.user.paginatorSettingsPageSize.schoolsList = this.paginatorPageSize;
+    this.user.paginatorSettingsPageIndex.schoolsList = this.paginatorPageIndex;
+    this.entityMapperService.save<User>(this.user);
   }
 
   applyFilter(filterValue: string) {
