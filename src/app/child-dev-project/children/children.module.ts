@@ -77,6 +77,7 @@ import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirm
 import { CONFLICT_RESOLUTION_STRATEGY } from "../../conflict-resolution/auto-resolution/conflict-resolution-strategy";
 import { AttendanceMonthConflictResolutionStrategy } from "../attendance/attendance-month-conflict-resolution-strategy";
 import { MatPaginatorModule } from "@angular/material/paginator";
+import { Angulartics2Module } from "angulartics2";
 
 @NgModule({
   imports: [
@@ -115,6 +116,7 @@ import { MatPaginatorModule } from "@angular/material/paginator";
     MatProgressSpinnerModule,
     ConfirmationDialogModule,
     FormDialogModule,
+    Angulartics2Module,
   ],
   declarations: [
     AttendanceBlockComponent,

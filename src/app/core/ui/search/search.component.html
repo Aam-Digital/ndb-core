@@ -48,10 +48,18 @@
         *ngIf="res.getType() === 'Child'"
         [entity]="res"
         [ngClass]="{ 'result-inactive': !res.isActive() }"
+        angulartics2On="click"
+        angularticsCategory="Navigation"
+        angularticsAction="search_result_list_link"
+        [angularticsLabel]="'search-result-type-child'"
       ></app-child-block>
       <app-school-block
         *ngIf="res.getType() === 'School'"
         [entity]="res"
+        angulartics2On="click"
+        angularticsCategory="Navigation"
+        angularticsAction="search_result_list_link"
+        [angularticsLabel]="'search-result-type-school'"
       ></app-school-block>
     </mat-option>
   </mat-autocomplete>

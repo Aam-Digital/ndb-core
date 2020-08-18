@@ -6,6 +6,7 @@ import { FormDialogService } from "./form-dialog.service";
 import { FormDialogWrapperComponent } from "./form-dialog-wrapper/form-dialog-wrapper.component";
 import { FormsModule } from "@angular/forms";
 import { ConfirmationDialogModule } from "../confirmation-dialog/confirmation-dialog.module";
+import { Angulartics2Module } from "angulartics2";
 
 /**
  * A helper utility module to consistently and easily display forms
@@ -21,6 +22,7 @@ import { ConfirmationDialogModule } from "../confirmation-dialog/confirmation-di
     MatButtonModule,
     FormsModule,
     ConfirmationDialogModule,
+    Angulartics2Module,
   ],
   declarations: [FormDialogWrapperComponent],
   providers: [FormDialogService],

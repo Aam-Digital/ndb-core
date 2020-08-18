@@ -8,6 +8,8 @@ import { ShowsEntity } from "./shows-entity.interface";
 import { FormDialogModule } from "./form-dialog.module";
 import { FormDialogWrapperComponent } from "./form-dialog-wrapper/form-dialog-wrapper.component";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
+import { Angulartics2Module } from "angulartics2";
+import { RouterTestingModule } from "@angular/router/testing";
 
 describe("FormDialogService", () => {
   let service: FormDialogService;
@@ -20,7 +22,13 @@ describe("FormDialogService", () => {
     ]);
 
     TestBed.configureTestingModule({
-      imports: [FormDialogModule, MatDialogModule, NoopAnimationsModule],
+      imports: [
+        FormDialogModule,
+        MatDialogModule,
+        NoopAnimationsModule,
+        Angulartics2Module.forRoot(),
+        RouterTestingModule,
+      ],
       declarations: [TestComponent],
       providers: [
         {

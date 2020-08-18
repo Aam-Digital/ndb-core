@@ -16,6 +16,8 @@ import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.s
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { SessionService } from "../../../core/session/session-service/session.service";
+import { Angulartics2Module } from "angulartics2";
+import { RouterTestingModule } from "@angular/router/testing";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { User } from "app/core/user/user";
 
@@ -41,7 +43,13 @@ describe("NotesManagerComponent", () => {
     mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
     TestBed.configureTestingModule({
       declarations: [],
-      imports: [NotesModule, MatNativeDateModule, MatPaginatorModule],
+      imports: [
+        NotesModule,
+        MatNativeDateModule,
+        MatPaginatorModule,
+        Angulartics2Module.forRoot(),
+        RouterTestingModule,
+      ],
       providers: [
         EntitySchemaService,
         EntityMapperService,

@@ -3,10 +3,27 @@
 </div>
 
 <mat-dialog-content>
-  <ng-content select='form'></ng-content>
+  <ng-content select="form"></ng-content>
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button mat-stroked-button [disabled]='!contentForm.form.dirty' (click)='save()'>Save</button>
-  <button mat-stroked-button (click)='cancel()'>Cancel</button>
+  <button
+    mat-stroked-button
+    [disabled]="!contentForm.form.dirty"
+    (click)="save()"
+    angulartics2On="click"
+    angularticsCategory="UserAction"
+    angularticsAction="form_dialog_save"
+  >
+    Save
+  </button>
+  <button
+    mat-stroked-button
+    (click)="cancel()"
+    angulartics2On="click"
+    angularticsCategory="UserAction"
+    angularticsAction="form_dialog_cancel"
+  >
+    Cancel
+  </button>
 </mat-dialog-actions>

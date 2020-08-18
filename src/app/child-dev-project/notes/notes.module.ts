@@ -37,6 +37,7 @@ import { NotePresenceListComponent } from "./note-details/note-presence-list/not
 import { EntitySubrecordModule } from "../../core/entity-subrecord/entity-subrecord.module";
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
+import { Angulartics2Module } from "angulartics2";
 
 @NgModule({
   declarations: [
@@ -84,6 +85,7 @@ import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
     MatTabsModule,
     MatPaginatorModule,
     FormDialogModule,
+    Angulartics2Module,
   ],
   providers: [],
 })

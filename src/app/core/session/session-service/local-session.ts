@@ -28,6 +28,7 @@ import { StateHandler } from "../session-states/state-handler";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { AlertService } from "app/core/alerts/alert.service";
 import { LoggingService } from "../../logging/logging.service";
+import { AnalyticsService } from "../../analytics/analytics.service";
 
 /**
  * Responsibilities:
@@ -56,6 +57,7 @@ export class LocalSession {
    * Create a LocalSession and set up the local PouchDB instance based on AppConfig settings.
    * @param _alertService
    * @param _entitySchemaService
+   * @param _analyticsService
    */
   constructor(
     private _alertService: AlertService,
@@ -82,10 +84,21 @@ export class LocalSession {
         this.currentUser = userEntity;
         this.currentUser.decryptCloudPassword(password);
         LoggingService.setLoggingContextUser(this.currentUser.name);
+        AnalyticsService.setUser(this.currentUser.name);
+        AnalyticsService.eventTrack("user_login", {
+          category: "Auth",
+          label: "successful",
+          value: 1,
+        });
         this.loginState.setState(LoginState.LOGGED_IN);
         return LoginState.LOGGED_IN;
       } else {
         this.loginState.setState(LoginState.LOGIN_FAILED);
+        AnalyticsService.eventTrack("user_login", {
+          category: "Auth",
+          label: "failed_wrong_credentials",
+          value: 0,
+        });
         return LoginState.LOGIN_FAILED;
       }
     } catch (error) {
@@ -96,15 +109,30 @@ export class LocalSession {
         [SyncState.ABORTED, SyncState.FAILED].includes(error.toState)
       ) {
         if (this.loginState.getState() === LoginState.LOGIN_FAILED) {
+          AnalyticsService.eventTrack("user_login", {
+            category: "Auth",
+            label: "failed_sync_failed_remote_reject",
+            value: 10,
+          });
           // The sync failed because the remote rejected
           return LoginState.LOGIN_FAILED;
         }
+        AnalyticsService.eventTrack("user_login", {
+          category: "Auth",
+          label: "failed_sync_failed_unknown",
+          value: 20,
+        });
         // The sync failed for other reasons. The user should try again
         this.loginState.setState(LoginState.LOGGED_OUT);
         return LoginState.LOGGED_OUT;
       }
       // possible error: user object not found locally, which should return loginFailed.
       if (error && error.status && error.status === 404) {
+        AnalyticsService.eventTrack("user_login", {
+          category: "Auth",
+          label: "failed",
+          value: 30,
+        });
         this.loginState.setState(LoginState.LOGIN_FAILED);
         return LoginState.LOGIN_FAILED;
       }
@@ -140,6 +168,11 @@ export class LocalSession {
    */
   public logout() {
     this.currentUser = undefined;
+    AnalyticsService.eventTrack("user_logout", {
+      category: "Auth",
+      label: "successful",
+      value: 1,
+    });
     this.loginState.setState(LoginState.LOGGED_OUT);
   }
 

@@ -3,27 +3,36 @@
     <div mat-card-avatar>
       <mat-icon fontIcon="fa-file-text-o"></mat-icon>
     </div>
-    <mat-card-title style='position: relative'>
-      <span *ngIf='isLoading'>
-        <mat-spinner [diameter]='40' class='loading-indicator'></mat-spinner>
+    <mat-card-title style="position: relative;">
+      <span *ngIf="isLoading">
+        <mat-spinner [diameter]="40" class="loading-indicator"></mat-spinner>
         &nbsp;
       </span>
-      <span *ngIf='!isLoading'>
+      <span *ngIf="!isLoading">
         {{ count }}
       </span>
     </mat-card-title>
     <mat-card-subtitle
-      [matTooltip]="'includes children with a note ' +
-       (fromBeginningOfWeek ? 'since beginning of week ' : '') +
-       (sinceDays > 0 ? 'within the last ' + sinceDays + ' days' : '')"
+      [matTooltip]="
+        'includes children with a note ' +
+        (fromBeginningOfWeek ? 'since beginning of week ' : '') +
+        (sinceDays > 0 ? 'within the last ' + sinceDays + ' days' : '')
+      "
     >
       Children
-      <span class='subtitle-highlight'>with</span>
+      <span class="subtitle-highlight">with</span>
       recent report
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <div class='dashboard-content' [routerLink]="['/note']">
+    <div
+      class="dashboard-content"
+      [routerLink]="['/note']"
+      angulartics2On="click"
+      angularticsCategory="Navigation"
+      angularticsAction="dashboard_recent_notes_link_go_to_notes"
+      [angularticsLabel]="'children-with-recent-report-count-' + count"
+    >
       Go to Notes <span class="fa fa-external-link-square"></span>
     </div>
   </mat-card-content>
