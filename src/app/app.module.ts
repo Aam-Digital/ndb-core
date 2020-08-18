@@ -77,7 +77,7 @@ import { Angulartics2Piwik } from "angulartics2/piwik";
       enabled: environment.production,
     }),
     Angulartics2Module.forRoot({
-      developerMode: environment.production,
+      developerMode: !environment.production,
     }),
     BrowserModule,
     BrowserAnimationsModule,
