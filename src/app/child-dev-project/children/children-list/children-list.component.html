@@ -1,6 +1,6 @@
 <h1>Children List</h1>
 
-<mat-expansion-panel expanded="true" fxLayout="column wrap" fxLayoutGap="10px" class='filter-panel'>
+<mat-expansion-panel expanded="true" fxLayout="column wrap" fxLayoutGap="10px" class="filter-panel">
   <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none end">
     <!-- text search -->
     <div fxFlex='50'>
@@ -113,7 +113,7 @@
 
     <ng-container matColumnDef="attendance-school">
       <th mat-header-cell #attendanceSchoolCell *matHeaderCellDef> Attendance (School)</th>
-      <td mat-cell  *matCellDef="let child">
+      <td mat-cell class="cell-with-blocks" *matCellDef="let child">
         <app-attendance-block *ngFor="let att of attendanceList.get(child.getId()) | filterBy: {'institution': 'school'} | slice:0:maxAttendanceBlocks"
                               [attendanceData]="att"></app-attendance-block>
       </td>
@@ -121,7 +121,7 @@
 
     <ng-container matColumnDef="attendance-coaching">
       <th mat-header-cell #attendanceCoachingCell *matHeaderCellDef> Attendance (Coaching)</th>
-      <td mat-cell *matCellDef="let child">
+      <td mat-cell class="cell-with-blocks" *matCellDef="let child">
         <app-attendance-block *ngFor="let att of attendanceList.get(child.getId()) | filterBy: {'institution': 'coaching'} | slice:0:maxAttendanceBlocks"
                               [attendanceData]="att"></app-attendance-block>
       </td>

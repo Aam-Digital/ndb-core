@@ -123,7 +123,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   filterString = "";
 
   /** dynamically calculated number of attendance blocks displayed in a column to avoid overlap */
-  maxAttendanceBlocks: number;
+  maxAttendanceBlocks: number = 3;
   @ViewChild("attendanceSchoolCell") schoolCell: ElementRef;
   @ViewChild("attendanceCoachingCell") coachingCell: ElementRef;
 
@@ -141,12 +141,23 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
       .pipe(untilDestroyed(this))
       .subscribe((change: MediaChange) => {
         switch (change.mqAlias) {
-          case "xs": {
+          case "xs":
+          case "sm": {
             this.displayColumnGroup("Mobile");
+            this.maxAttendanceBlocks = 1;
+            break;
+          }
+          case "md": {
+            this.displayColumnGroup("School Info");
+            this.maxAttendanceBlocks = 2;
             break;
           }
           case "lg": {
-            this.displayColumnGroup("School Info");
+            this.maxAttendanceBlocks = 3;
+            break;
+          }
+          case "xl": {
+            this.maxAttendanceBlocks = 6;
             break;
           }
         }
@@ -173,7 +184,6 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.childrenDataSource.sort = this.sort;
     this.childrenDataSource.paginator = this.paginator;
-    this.calculateMaxAttendanceBlocks();
   }
 
   private loadData(replaceUrl: boolean = false) {
@@ -248,11 +258,6 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     }
     this.columnsToDisplay = group.columns;
     this.updateUrl();
-
-    // setTimeout ensures that the code gets run after DOM completion
-    setTimeout(() => {
-      this.calculateMaxAttendanceBlocks();
-    }, 0);
   }
 
   updateUrl(replaceUrl: boolean = false) {
@@ -279,34 +284,5 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.childrenDataSource.data = filteredData;
 
     this.updateUrl(replaceUrl);
-
-    // setTimeout ensures that the code gets run after DOM completion
-    setTimeout(() => {
-      this.calculateMaxAttendanceBlocks();
-    }, 0);
-  }
-
-  /**
-   * Calculate the number of attendance blocks that fit into the columns based on their width to avoid overlap.
-   */
-  @HostListener("window:resize")
-  calculateMaxAttendanceBlocks() {
-    if (!this.coachingCell || !this.schoolCell) {
-      return;
-    }
-
-    // correlates with (block width + margin) as set in the attendance-block.component.scss
-    const blockWidth = 52;
-    // since cell size changes based upon content we have to evaluate multiple times
-    for (let index = 0; index < 5; index++) {
-      // setTimeout ensures that the code gets run after DOM completion
-      setTimeout(() => {
-        const cellWidth: number = min([
-          this.coachingCell.nativeElement.offsetWidth,
-          this.schoolCell.nativeElement.offsetWidth,
-        ]);
-        this.maxAttendanceBlocks = floor(cellWidth / blockWidth);
-      }, 0);
-    }
   }
 }
