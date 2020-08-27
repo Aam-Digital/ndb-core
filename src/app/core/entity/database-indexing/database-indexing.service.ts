@@ -33,7 +33,7 @@ export class DatabaseIndexingService {
   );
 
   /** All currently registered indices with their status */
-  public get indicesRegistered(): Observable<BackgroundProcessState[]> {
+  get indicesRegistered(): Observable<BackgroundProcessState[]> {
     return this._indicesRegistered.asObservable();
   }
 
@@ -46,7 +46,7 @@ export class DatabaseIndexingService {
    *
    * @param designDoc The design document (see @link{Database}) describing the query/index.
    */
-  public async createIndex(designDoc: any): Promise<void> {
+  async createIndex(designDoc: any): Promise<void> {
     const indexState: BackgroundProcessState = {
       title: "Preparing data (Indexing)",
       details: designDoc._id.replace(/_design\//, ""),
@@ -76,7 +76,7 @@ export class DatabaseIndexingService {
    * @param indexName The name of the previously created index to be queried.
    * @param options Additional query options (see @link{Database})
    */
-  public queryIndex(indexName: string, options?: any) {
+  queryIndex(indexName: string, options?: any) {
     return this.db.query(indexName, options);
   }
 }

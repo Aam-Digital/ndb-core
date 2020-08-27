@@ -24,6 +24,11 @@ import moment from "moment";
 import { ChildrenService } from "../child-dev-project/children/children.service";
 import { deleteDB } from "idb";
 
+const TEST_REMOTE_DATABASE_URL = "http://dev.aam-digital.com/db/";
+// WARNING - do not check in credentials into public git repository
+const TEST_REMOTE_DATABASE_USER = "[edit before running test]";
+const TEST_REMOTE_DATABASE_PASSWORD = "[edit before running test]";
+
 /**
  * These performance tests are actually integration tests that interact with a remote database.
  *
@@ -45,7 +50,7 @@ xdescribe("Performance Tests", () => {
     AppConfig.settings = {
       database: {
         name: "app",
-        remote_url: "http://dev.aam-digital.com/db/",
+        remote_url: TEST_REMOTE_DATABASE_URL,
         timeout: 60000,
         useTemporaryDatabase: false,
       },
@@ -60,7 +65,10 @@ xdescribe("Performance Tests", () => {
 
     const session = TestBed.inject<SessionService>(SessionService);
     const syncTimer = new Timer(true);
-    await session.login("demo", "pass");
+    await session.login(
+      TEST_REMOTE_DATABASE_USER,
+      TEST_REMOTE_DATABASE_PASSWORD
+    );
     await session.getSyncState().waitForChangeTo(SyncState.COMPLETED);
     syncTimer.stop();
     console.log("sync time", syncTimer.getDuration());

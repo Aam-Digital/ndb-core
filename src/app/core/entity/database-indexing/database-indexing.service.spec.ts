@@ -77,7 +77,7 @@ describe("DatabaseIndexingService", () => {
     expect(mockDb.saveDatabaseIndex).toHaveBeenCalledWith(testDesignDoc);
   });
 
-  it("should emit emit update with error when createIndex fails", async () => {
+  it("should emit update with error when createIndex fails", async () => {
     const testIndexName = "test_index";
     const testDesignDoc = {
       _id: "_design/" + testIndexName,
