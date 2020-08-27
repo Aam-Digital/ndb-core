@@ -26,6 +26,7 @@ import { EntitySubrecordModule } from "../../core/entity-subrecord/entity-subrec
 import { RouterModule } from "@angular/router";
 import { SchoolsService } from "./schools.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { Angulartics2Module } from "angulartics2";
 
 @NgModule({
   imports: [
@@ -66,6 +67,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     EntitySubrecordModule,
     ReactiveFormsModule,
     MatTooltipModule,
+    Angulartics2Module,
   ],
   declarations: [
     SchoolBlockComponent,
