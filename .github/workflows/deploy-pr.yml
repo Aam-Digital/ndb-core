@@ -1,0 +1,29 @@
+name: Deploy Aam-digital to GitHub Pages
+on: pull_request
+
+jobs:
+  deploy-website:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install dependencies
+        run: npm install
+      - name: Build deployment
+        run: npm run build -- --base-href=/ndb-core/deployments/${{ github.head_ref }}/
+      - name: Deploy on pages
+        uses: peaceiris/actions-gh-pages@v3.7.0-8
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dist/
+          destination_dir: deployments/${{ github.head_ref }}
+      - name: Post comment on PR
+        env:
+          PR: ${{ github.ref }}
+        run: |
+          PR=${PR#refs/*/}
+          PR=${PR%/*}
+          curl -X POST \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/Aam-Digital/ndb-core/issues/$PR/comments \
+          -d '{"body":"Deployed to https://aam-digital.github.io/ndb-core/deployments/${{ github.head_ref }}"}'

@@ -2,8 +2,8 @@
 [![Build Status](https://travis-ci.org/Aam-Digital/ndb-core.svg?branch=master)](https://travis-ci.org/Aam-Digital/ndb-core)
 [![Code Climate](https://codeclimate.com/github/Aam-Digital/ndb-core/badges/gpa.svg)](https://codeclimate.com/github/Aam-Digital/ndb-core)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/4e4a7a6301064019b2c9/test_coverage)](https://codeclimate.com/github/Aam-Digital/ndb-core/test_coverage)
-[![Guides](https://img.shields.io/badge/Tutorial%20%26%20Guides-12-blue)](https://aam-digital.github.io/ndb-core/additional-documentation/overview.html)
-[![Doc CoverageDocs](https://aam-digital.github.io/ndb-core/images/coverage-badge-documentation.svg)](https://aam-digital.github.io/ndb-core/modules.html)
+[![Guides](https://img.shields.io/badge/Tutorial%20%26%20Guides-12-blue)](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)
+[![Doc CoverageDocs](https://aam-digital.github.io/ndb-core/documentation/images/coverage-badge-documentation.svg)](https://aam-digital.github.io/ndb-core/documentation/modules.html)
 
 
 # Aam Digital
@@ -11,7 +11,7 @@ Empowering NGOs' social workers with simple to use (database) software.
 
 > For more information about the software and a free demo system visit **[www.aam-digital.com](https://www.aam-digital.com)**.
 
-> For more information about the code including guides see the separate **[Developer Documentation](http://aam-digital.github.io/ndb-core/additional-documentation/overview.html)**
+> For more information about the code including guides see the separate **[Developer Documentation](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)**
 
 -----
 
@@ -73,7 +73,7 @@ _docker/nginx_default.conf_ (for production server):
 5. `npm run start` to run your local dev server and get started.
 
 ## Documentation
-Our detailed [Developer Documentation](http://aam-digital.github.io/ndb-core/additional-documentation/overview.html)
+Our detailed [Developer Documentation](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)
 provides tutorials, guides, concepts and an API reference.
 
 ## Code Style
