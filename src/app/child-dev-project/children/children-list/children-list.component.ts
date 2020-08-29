@@ -1,4 +1,11 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  HostListener,
+} from "@angular/core";
 import { Child } from "../model/child";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
@@ -12,6 +19,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { User } from "../../../core/user/user";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { floor, min } from "lodash";
 
 export interface ColumnGroup {
   name: string;
@@ -109,7 +117,10 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
         "dateOfBirth",
       ],
     },
-    { name: "Mobile", columns: ["projectNumber", "name", "age", "schoolId"] },
+    {
+      name: "Mobile",
+      columns: ["projectNumber", "name", "age", "schoolId"],
+    },
   ];
   columnsToDisplay = ["projectNumber", "name"];
   filterString = "";
@@ -117,6 +128,11 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   public paginatorPageSize: number;
   public paginatorPageIndex: number;
   private user: User;
+
+  /** dynamically calculated number of attendance blocks displayed in a column to avoid overlap */
+  maxAttendanceBlocks: number = 3;
+  @ViewChild("attendanceSchoolCell") schoolCell: ElementRef;
+  @ViewChild("attendanceCoachingCell") coachingCell: ElementRef;
 
   constructor(
     private childrenService: ChildrenService,
@@ -136,8 +152,26 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.media.media$
       .pipe(untilDestroyed(this))
       .subscribe((change: MediaChange) => {
-        if (change.mqAlias === "xs") {
-          this.displayColumnGroup("Mobile");
+        switch (change.mqAlias) {
+          case "xs":
+          case "sm": {
+            this.displayColumnGroup("Mobile");
+            this.maxAttendanceBlocks = 1;
+            break;
+          }
+          case "md": {
+            this.displayColumnGroup("School Info");
+            this.maxAttendanceBlocks = 2;
+            break;
+          }
+          case "lg": {
+            this.maxAttendanceBlocks = 3;
+            break;
+          }
+          case "xl": {
+            this.maxAttendanceBlocks = 6;
+            break;
+          }
         }
       });
   }
