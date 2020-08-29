@@ -209,6 +209,16 @@ export class MockDatabase extends Database {
             e.end >= new Date().setHours(0, 0, 0, 0)) &&
           e.schoolId === options.key;
         break;
+      case "search_index/by_name":
+        filterFun = (e) => {
+          return (
+            e.hasOwnProperty("searchIndices") &&
+            e.searchIndices.some((word) =>
+              word.toString().toLowerCase().includes(options.startkey)
+            )
+          );
+        };
+        break;
       case "childSchoolRelations_index/by_date":
         return this.filterForLatestRelationOfChild(
           options.endkey,
@@ -225,7 +235,7 @@ export class MockDatabase extends Database {
         const allData = await this.getAll();
         return {
           rows: allData.filter(filterFun).map((e) => {
-            return { doc: e };
+            return { id: e._id, doc: e };
           }),
         };
       }
