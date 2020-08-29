@@ -19,9 +19,6 @@ import { Database } from "./database";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { AttendanceMonth } from "../../child-dev-project/attendance/model/attendance-month";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
-import { Child } from "../../child-dev-project/children/model/child";
-import { School } from "../../child-dev-project/schools/model/school";
-import { Entity } from "../entity/entity";
 
 /**
  * In-Memory database implementation that works as a drop-in replacement of {@link PouchDatabase}
@@ -215,8 +212,10 @@ export class MockDatabase extends Database {
       case "search_index/by_name":
         filterFun = (e) => {
           return (
-            e.hasOwnProperty("name") &&
-            e.name.toLowerCase().includes(options.startkey)
+            e.hasOwnProperty("searchIndices") &&
+            e.searchIndices.some((word) =>
+              word.toString().toLowerCase().includes(options.startkey)
+            )
           );
         };
         break;
