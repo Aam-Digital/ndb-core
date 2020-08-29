@@ -8,7 +8,16 @@
   </mat-card-header>
   <mat-card-content>
     <table class="dashboard-table">
-      <tr *ngFor="let entry of childrenByCenter" class="dashboard-table-row" (click)="goToChildrenList(entry[0])" style="cursor: pointer;">
+      <tr *ngFor="let entry of childrenByCenter; let i = index;"
+          class="dashboard-table-row"
+          (click)="goToChildrenList(entry[0])"
+          style="cursor: pointer;"
+
+          angulartics2On="click"
+          angularticsCategory="Navigation"
+          angularticsAction="dashboard_children_count_school_link"
+          [angularticsLabel]="'list-entry-' + i"
+      >
           <td class="dashboard-table-cell">{{entry[0]}}:</td>
           <td class="dashboard-table-cell">{{entry[1]}}</td>
           <td class="dashboard-table-cell"><span class="fa fa-external-link-square"></span></td>

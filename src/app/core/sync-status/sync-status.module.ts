@@ -25,6 +25,12 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { MatIconModule } from "@angular/material/icon";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { InitialSyncDialogComponent } from "./sync-status/initial-sync-dialog.component";
+import { MatBadgeModule } from "@angular/material/badge";
+import { MatMenuModule } from "@angular/material/menu";
+import { BackgroundProcessingIndicatorComponent } from "./background-processing-indicator/background-processing-indicator.component";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { FlexModule } from "@angular/flex-layout";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @NgModule({
   imports: [
@@ -35,8 +41,17 @@ import { InitialSyncDialogComponent } from "./sync-status/initial-sync-dialog.co
     MatButtonModule,
     MatDialogModule,
     MatProgressBarModule,
+    MatBadgeModule,
+    MatMenuModule,
+    MatProgressSpinnerModule,
+    FlexModule,
+    MatTooltipModule,
   ],
-  declarations: [InitialSyncDialogComponent, SyncStatusComponent],
+  declarations: [
+    InitialSyncDialogComponent,
+    SyncStatusComponent,
+    BackgroundProcessingIndicatorComponent,
+  ],
   exports: [SyncStatusComponent],
   providers: [],
 })

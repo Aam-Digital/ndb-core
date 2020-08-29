@@ -57,6 +57,7 @@ describe("SyncedSessionService", () => {
       };
       sessionService = new SyncedSessionService(
         alertService,
+        jasmine.createSpyObj(["warn"]),
         entitySchemaService
       );
     });
@@ -177,6 +178,7 @@ describe("SyncedSessionService", () => {
       // setup synced session service
       sessionService = new SyncedSessionService(
         alertService,
+        jasmine.createSpyObj(["warn"]),
         entitySchemaService
       );
       // make private members localSession and remoteSession available in the tests

@@ -3,7 +3,6 @@ import { from, Observable, Subject } from "rxjs";
 import { Child } from "./model/child";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { AttendanceMonth } from "../attendance/model/attendance-month";
-import { Database } from "../../core/database/database";
 import { Note } from "../notes/model/note";
 import { EducationalMaterial } from "../educational-material/model/educational-material";
 import { Aser } from "../aser/model/aser";
@@ -15,19 +14,24 @@ import { LoadChildPhotoEntitySchemaDatatype } from "./child-photo-service/dataty
 import moment from "moment";
 import * as uniqid from "uniqid";
 import { LoggingService } from "../../core/logging/logging.service";
+import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 
 @Injectable()
 export class ChildrenService {
   constructor(
     private entityMapper: EntityMapperService,
     private entitySchemaService: EntitySchemaService,
-    private db: Database,
+    private dbIndexing: DatabaseIndexingService,
     childPhotoService: ChildPhotoService,
     private logger: LoggingService
   ) {
     this.entitySchemaService.registerSchemaDatatype(
       new LoadChildPhotoEntitySchemaDatatype(childPhotoService)
     );
+    this.createDatabaseIndices();
+  }
+
+  public createDatabaseIndices() {
     this.createAttendanceAnalysisIndex();
     this.createNotesIndex();
     this.createAttendancesIndex();
@@ -122,8 +126,11 @@ export class ChildrenService {
   }
 
   getAttendancesOfChild(childId: string): Observable<AttendanceMonth[]> {
-    const promise = this.db
-      .query("attendances_index/by_child", { key: childId, include_docs: true })
+    const promise = this.dbIndexing
+      .queryIndex("attendances_index/by_child", {
+        key: childId,
+        include_docs: true,
+      })
       .then((loadedEntities) => {
         return loadedEntities.rows.map((loadedRecord) => {
           const entity = new AttendanceMonth("");
@@ -138,8 +145,8 @@ export class ChildrenService {
   getAttendancesOfMonth(month: Date): Observable<AttendanceMonth[]> {
     const monthString =
       month.getFullYear().toString() + "-" + (month.getMonth() + 1).toString();
-    const promise = this.db
-      .query("attendances_index/by_month", {
+    const promise = this.dbIndexing
+      .queryIndex("attendances_index/by_month", {
         key: monthString,
         include_docs: true,
       })
@@ -179,7 +186,7 @@ export class ChildrenService {
       },
     };
 
-    return this.db.saveDatabaseIndex(designDoc);
+    return this.dbIndexing.createIndex(designDoc);
   }
 
   private createChildSchoolRelationIndex(): Promise<any> {
@@ -211,7 +218,7 @@ export class ChildrenService {
         },
       },
     };
-    return this.db.saveDatabaseIndex(designDoc);
+    return this.dbIndexing.createIndex(designDoc);
   }
 
   queryLatestRelation(childId: string): Promise<ChildSchoolRelation> {
@@ -231,8 +238,8 @@ export class ChildrenService {
       include_docs: true,
       limit: limit,
     };
-    return this.db
-      .query("childSchoolRelations_index/by_date", options)
+    return this.dbIndexing
+      .queryIndex("childSchoolRelations_index/by_date", options)
       .then((loadedEntities) => {
         return loadedEntities.rows.map((loadedRecord) => {
           const entity = new ChildSchoolRelation("");
@@ -246,8 +253,8 @@ export class ChildrenService {
     queryType: "child" | "school",
     id: string
   ): Promise<ChildSchoolRelation[]> {
-    return this.db
-      .query("childSchoolRelations_index/by_" + queryType, {
+    return this.dbIndexing
+      .queryIndex("childSchoolRelations_index/by_" + queryType, {
         key: id,
         include_docs: true,
       })
@@ -261,14 +268,14 @@ export class ChildrenService {
   }
 
   queryAttendanceLast3Months() {
-    return this.db.query("avg_attendance_index/three_months", {
+    return this.dbIndexing.queryIndex("avg_attendance_index/three_months", {
       reduce: true,
       group: true,
     });
   }
 
   queryAttendanceLastMonth() {
-    return this.db.query("avg_attendance_index/last_month", {
+    return this.dbIndexing.queryIndex("avg_attendance_index/last_month", {
       reduce: true,
       group: true,
     });
@@ -289,7 +296,7 @@ export class ChildrenService {
       },
     };
 
-    return this.db.saveDatabaseIndex(designDoc);
+    return this.dbIndexing.createIndex(designDoc);
   }
 
   private getAverageAttendanceMapFunction() {
@@ -330,8 +337,8 @@ export class ChildrenService {
   }
 
   getNotesOfChild(childId: string): Observable<Note[]> {
-    const promise = this.db
-      .query("notes_index/by_child", { key: childId, include_docs: true })
+    const promise = this.dbIndexing
+      .queryIndex("notes_index/by_child", { key: childId, include_docs: true })
       .then((loadedEntities) => {
         return loadedEntities.rows.map((loadedRecord) => {
           const entity = new Note("");
@@ -351,7 +358,7 @@ export class ChildrenService {
    * @return A map of childIds as key and days since last note as value
    */
   public async getDaysSinceLastNoteOfEachChild(): Promise<Map<string, number>> {
-    const stats = await this.db.query(
+    const stats = await this.dbIndexing.queryIndex(
       "notes_index/note_date_in_days_for_child",
       { reduce: true, group: true }
     );
@@ -395,7 +402,7 @@ export class ChildrenService {
       },
     };
 
-    return this.db.saveDatabaseIndex(designDoc);
+    return this.dbIndexing.createIndex(designDoc);
   }
 
   getEducationalMaterialsOfChild(

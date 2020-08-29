@@ -11,6 +11,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { ChildPhotoService } from "../../children/child-photo-service/child-photo.service";
 import { of } from "rxjs";
 import { ChildrenModule } from "../../children/children.module";
+import { Angulartics2Module } from "angulartics2";
 
 describe("AttendanceDetailsComponent", () => {
   let component: AttendanceDetailsComponent;
@@ -21,7 +22,13 @@ describe("AttendanceDetailsComponent", () => {
     att.month = new Date();
 
     TestBed.configureTestingModule({
-      imports: [ChildrenModule, EntityModule, RouterTestingModule],
+      imports: [
+        ChildrenModule,
+        EntityModule,
+        RouterTestingModule,
+        Angulartics2Module.forRoot(),
+        RouterTestingModule,
+      ],
       providers: [
         { provide: Database, useClass: MockDatabase },
         { provide: MatDialogRef, useValue: { beforeClosed: () => of({}) } },

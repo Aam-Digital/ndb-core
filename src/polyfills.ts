@@ -36,9 +36,8 @@
 // import 'classlist.js';  // Run `npm install --save classlist.js`.
 /** IE10 and IE11 requires the following to support `@angular/animation`. */
 // import 'web-animations-js';  // Run `npm install --save web-animations-js`.
-/** Evergreen browsers require these. **/
-import "core-js/es6/reflect";
-import "core-js/es7/reflect";
+/** Evergreen browsers require thesnpme. **/
+import "core-js/es/reflect";
 /** ALL Firefox browsers require the following to support `@angular/animation`. **/
 // import 'web-animations-js';  // Run `npm install --save web-animations-js`.
 /***************************************************************************************************

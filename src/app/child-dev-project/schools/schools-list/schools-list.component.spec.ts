@@ -19,6 +19,9 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { ChildrenService } from "app/child-dev-project/children/children.service";
 import { CloudFileService } from "../../../core/webdav/cloud-file-service.service";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { MatPaginatorModule } from "@angular/material/paginator";
+import { User } from "app/core/user/user";
 
 describe("SchoolsListComponent", () => {
   let component: SchoolsListComponent;
@@ -26,6 +29,8 @@ describe("SchoolsListComponent", () => {
   const mockedRouter = { navigate: () => null };
 
   beforeEach(async(() => {
+    const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+    mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
     TestBed.configureTestingModule({
       declarations: [SchoolsListComponent],
       imports: [
@@ -37,6 +42,7 @@ describe("SchoolsListComponent", () => {
         MatButtonToggleModule,
         MatExpansionModule,
         FormsModule,
+        MatPaginatorModule,
         BrowserAnimationsModule,
         MatSelectModule,
       ],
@@ -46,6 +52,7 @@ describe("SchoolsListComponent", () => {
         { provide: Database, useClass: MockDatabase },
         EntityMapperService,
         EntitySchemaService,
+        { provide: SessionService, useValue: mockSessionService },
         { provide: Router, useValue: mockedRouter },
         {
           provide: CloudFileService,

@@ -3,12 +3,13 @@
     <div mat-card-avatar>
       <mat-icon fontIcon="fa-line-chart"></mat-icon>
     </div>
-    <mat-card-title>{{overallAttendance | percent:'1.0-0'}}</mat-card-title>
+    <mat-card-title>{{ overallAttendance | percent: "1.0-0" }}</mat-card-title>
     <mat-card-subtitle>Average Attendance Last 3 Months</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
     <p class="dashboard-desc">
-      Students above {{ATTENDANCE_THRESHOLD | percent:'1.0-0'}} attendance last month:
+      Students above {{ ATTENDANCE_THRESHOLD | percent: "1.0-0" }} attendance
+      last month:
     </p>
     <table class="dashboard-table">
       <tr>
@@ -17,11 +18,31 @@
         <th class="dashboard-table-cell">3 months</th>
         <th class="dashboard-table-cell"></th>
       </tr>
-      <tr *ngFor="let entry of lastMonthsTopAttendence" class="dashboard-table-row w-OK" (click)="goToChild(entry[0].getId())" style="cursor: pointer;">
-        <td class="dashboard-table-cell"><app-child-block *ngIf="entry[0]" [entity]="entry[0]"></app-child-block></td>
-        <td class="dashboard-table-cell" style="text-align: right;">{{entry[2] | percent:'1.0-0'}}</td>
-        <td class="dashboard-table-cell" style="text-align: right;">{{entry[1] | percent:'1.0-0'}}</td>
-        <td class="dashboard-table-cell"><span class="fa fa-external-link-square"></span></td>
+      <tr
+        *ngFor="let entry of lastMonthsTopAttendence; let i=index;"
+        class="dashboard-table-row w-OK"
+        (click)="goToChild(entry[0].getId())"
+        style="cursor: pointer;"
+        angulartics2On="click"
+        angularticsCategory="Navigation"
+        angularticsAction="dashboard_attendance_average_list_link"
+        [angularticsLabel]="'list-entry-' + i"
+      >
+        <td class="dashboard-table-cell">
+          <app-child-block
+            *ngIf="entry[0]"
+            [entity]="entry[0]"
+          ></app-child-block>
+        </td>
+        <td class="dashboard-table-cell" style="text-align: right;">
+          {{ entry[2] | percent: "1.0-0" }}
+        </td>
+        <td class="dashboard-table-cell" style="text-align: right;">
+          {{ entry[1] | percent: "1.0-0" }}
+        </td>
+        <td class="dashboard-table-cell">
+          <span class="fa fa-external-link-square"></span>
+        </td>
       </tr>
     </table>
   </mat-card-content>
