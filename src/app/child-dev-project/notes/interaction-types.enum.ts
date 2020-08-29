@@ -16,11 +16,13 @@ export enum InteractionTypes {
   ANNUAL_SURVEY = "Annual Survey",
   EXCURSION = "Excursion/Trip",
   PARTNER_CONTACT = "Contact with other partners (club/NGO/...)",
+  RATION_DISTRIBUTION = "Ration Distribution",
 }
 
 export const INTERACTION_TYPE_COLORS: Map<InteractionTypes, string> = new Map([
   [InteractionTypes.GUARDIAN_MEETING, "#E1F5FE"],
   [InteractionTypes.CHILDREN_MEETING, "#E1F5FE"],
+  [InteractionTypes.RATION_DISTRIBUTION, "#E1F5FE"],
   [InteractionTypes.EXCURSION, "#E1F5FE"],
   [InteractionTypes.DISCUSSION, "#E1BEE7"],
   [InteractionTypes.ANNUAL_SURVEY, "#FFFDE7"],

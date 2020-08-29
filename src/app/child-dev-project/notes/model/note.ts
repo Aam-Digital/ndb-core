@@ -80,7 +80,8 @@ export class Note extends Entity {
     return (
       this.category === InteractionTypes.GUARDIAN_MEETING ||
       this.category === InteractionTypes.CHILDREN_MEETING ||
-      this.category === InteractionTypes.EXCURSION
+      this.category === InteractionTypes.EXCURSION ||
+      this.category === InteractionTypes.RATION_DISTRIBUTION
     );
   }
 
