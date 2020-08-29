@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { Database } from "../../database/database";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { Entity } from "../../entity/entity";
@@ -9,6 +8,7 @@ import { debounceTime, switchMap } from "rxjs/operators";
 import { LoggingService } from "../../logging/logging.service";
 import { LogLevel } from "../../logging/log-level";
 import { AlertService } from "../../alerts/alert.service";
+import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 
 /**
  * General search box that provides results out of any kind of entities from the system
@@ -34,7 +34,7 @@ export class SearchComponent implements OnInit {
   searchQuery: Subject<Promise<any>> = new Subject<Promise<any>>();
 
   constructor(
-    private db: Database,
+    private dbIndexingService: DatabaseIndexingService,
     private entitySchemaService: EntitySchemaService,
     private loggingService: LoggingService,
     private alertService: AlertService
@@ -90,11 +90,14 @@ export class SearchComponent implements OnInit {
 
     const searchTerms = searchString.split(" ");
 
-    const queryResults = await this.db.query("search_index/by_name", {
-      startkey: searchTerms[0],
-      endkey: searchTerms[0] + "\ufff0",
-      include_docs: true,
-    });
+    const queryResults = await this.dbIndexingService.queryIndex(
+      "search_index/by_name",
+      {
+        startkey: searchTerms[0],
+        endkey: searchTerms[0] + "\ufff0",
+        include_docs: true,
+      }
+    );
 
     return {
       queryResults,
@@ -147,7 +150,7 @@ export class SearchComponent implements OnInit {
       },
     };
 
-    return this.db.saveDatabaseIndex(designDoc);
+    return this.dbIndexingService.createIndex(designDoc);
   }
 
   /**

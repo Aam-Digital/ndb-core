@@ -21,6 +21,7 @@ import { MockSessionService } from "./session-service/mock-session.service";
 import { SessionService } from "./session-service/session.service";
 import { AlertService } from "../alerts/alert.service";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { LoggingService } from "../logging/logging.service";
 
 /**
  * Factory method for Angular DI provider of SessionService.
@@ -28,16 +29,22 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
  * see [sessionServiceProvider]{@link sessionServiceProvider} for details.
  *
  * @param alertService
+ * @param loggingService
  * @param entitySchemaService
  */
 export function sessionServiceFactory(
   alertService: AlertService,
+  loggingService: LoggingService,
   entitySchemaService: EntitySchemaService
 ): SessionService {
   if (AppConfig.settings.database.useTemporaryDatabase) {
     return new MockSessionService(entitySchemaService);
   } else {
-    return new SyncedSessionService(alertService, entitySchemaService);
+    return new SyncedSessionService(
+      alertService,
+      loggingService,
+      entitySchemaService
+    );
 
     // TODO: requires a configuration or UI option to select OnlineSession: https://github.com/Aam-Digital/ndb-core/issues/434
     // return new OnlineSessionService(alertService, entitySchemaService);
@@ -54,5 +61,5 @@ export function sessionServiceFactory(
 export const sessionServiceProvider = {
   provide: SessionService,
   useFactory: sessionServiceFactory,
-  deps: [AlertService, EntitySchemaService],
+  deps: [AlertService, LoggingService, EntitySchemaService],
 };
