@@ -1,4 +1,11 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  HostListener,
+} from "@angular/core";
 import { Child } from "../model/child";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
@@ -7,8 +14,12 @@ import { ChildrenService } from "../children.service";
 import { AttendanceMonth } from "../../attendance/model/attendance-month";
 import { FilterSelection } from "../../../core/filter/filter-selection/filter-selection";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
-import { MatPaginator } from "@angular/material/paginator";
+import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { User } from "../../../core/user/user";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { floor, min } from "lodash";
 
 export interface ColumnGroup {
   name: string;
@@ -106,26 +117,61 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
         "dateOfBirth",
       ],
     },
-    { name: "Mobile", columns: ["projectNumber", "name", "age", "schoolId"] },
+    {
+      name: "Mobile",
+      columns: ["projectNumber", "name", "age", "schoolId"],
+    },
   ];
   columnsToDisplay = ["projectNumber", "name"];
   filterString = "";
+
+  public paginatorPageSize: number;
+  public paginatorPageIndex: number;
+  private user: User;
+
+  /** dynamically calculated number of attendance blocks displayed in a column to avoid overlap */
+  maxAttendanceBlocks: number = 3;
+  @ViewChild("attendanceSchoolCell") schoolCell: ElementRef;
+  @ViewChild("attendanceCoachingCell") coachingCell: ElementRef;
 
   constructor(
     private childrenService: ChildrenService,
     private router: Router,
     private route: ActivatedRoute,
-    private media: MediaObserver
+    private media: MediaObserver,
+    private sessionService: SessionService,
+    private entityMapperService: EntityMapperService
   ) {}
 
   ngOnInit() {
     this.loadData();
     this.loadUrlParams();
+    this.user = this.sessionService.getCurrentUser();
+    this.paginatorPageSize = this.user.paginatorSettingsPageSize.childrenList;
+    this.paginatorPageIndex = this.user.paginatorSettingsPageIndex.childrenList;
     this.media.media$
       .pipe(untilDestroyed(this))
       .subscribe((change: MediaChange) => {
-        if (change.mqAlias === "xs") {
-          this.displayColumnGroup("Mobile");
+        switch (change.mqAlias) {
+          case "xs":
+          case "sm": {
+            this.displayColumnGroup("Mobile");
+            this.maxAttendanceBlocks = 1;
+            break;
+          }
+          case "md": {
+            this.displayColumnGroup("School Info");
+            this.maxAttendanceBlocks = 2;
+            break;
+          }
+          case "lg": {
+            this.maxAttendanceBlocks = 3;
+            break;
+          }
+          case "xl": {
+            this.maxAttendanceBlocks = 6;
+            break;
+          }
         }
       });
   }
@@ -150,6 +196,22 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.childrenDataSource.sort = this.sort;
     this.childrenDataSource.paginator = this.paginator;
+    setTimeout(() => {
+      this.paginator.pageIndex = this.paginatorPageIndex;
+      this.paginator.page.next({
+        pageIndex: this.paginator.pageIndex,
+        pageSize: this.paginator.pageSize,
+        length: this.paginator.length,
+      });
+    });
+  }
+
+  onPaginateChange(event: PageEvent) {
+    this.paginatorPageSize = event.pageSize;
+    this.paginatorPageIndex = event.pageIndex;
+    this.user.paginatorSettingsPageSize.childrenList = this.paginatorPageSize;
+    this.user.paginatorSettingsPageIndex.childrenList = this.paginatorPageIndex;
+    this.entityMapperService.save<User>(this.user);
   }
 
   private loadData(replaceUrl: boolean = false) {

@@ -22,6 +22,10 @@ import { AlertService } from "../../alerts/alert.service";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { InitialSyncDialogComponent } from "./initial-sync-dialog.component";
 import { StateChangedEvent } from "app/core/session/session-states/state-handler";
+import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
+import { BackgroundProcessState } from "../background-process-state.interface";
+import { BehaviorSubject } from "rxjs";
+import { debounceTime } from "rxjs/operators";
 
 /**
  * A small indicator component that displays an icon when there is currently synchronization
@@ -36,18 +40,31 @@ import { StateChangedEvent } from "app/core/session/session-states/state-handler
   styleUrls: ["./sync-status.component.scss"],
 })
 export class SyncStatusComponent implements OnInit {
-  /** whether synchronization is currently going on */
-  syncInProgress: boolean;
+  private syncInProgress: boolean;
+  private indexingProcesses: BackgroundProcessState[];
+
+  private _backgroundProcesses: BehaviorSubject<
+    BackgroundProcessState[]
+  > = new BehaviorSubject([]);
+  /** background processes to be displayed to users, with short delay to avoid flickering */
+  backgroundProcesses = this._backgroundProcesses
+    .asObservable()
+    .pipe(debounceTime(1000));
 
   private dialogRef: MatDialogRef<InitialSyncDialogComponent>;
 
   constructor(
     public dialog: MatDialog,
     private sessionService: SessionService,
+    private dbIndexingService: DatabaseIndexingService,
     private alertService: AlertService
   ) {}
 
   ngOnInit(): void {
+    this.dbIndexingService.indicesRegistered.subscribe((indicesStatus) =>
+      this.handleIndexingState(indicesStatus)
+    );
+
     this.sessionService
       .getSyncState()
       .getStateChangedStream()
@@ -58,7 +75,7 @@ export class SyncStatusComponent implements OnInit {
     switch (state.toState) {
       case SyncState.STARTED:
         this.syncInProgress = true;
-        if (!this.sessionService.isLoggedIn()) {
+        if (!this.sessionService.isLoggedIn() && !this.dialogRef) {
           this.dialogRef = this.dialog.open(InitialSyncDialogComponent);
         }
         break;
@@ -77,5 +94,26 @@ export class SyncStatusComponent implements OnInit {
         this.alertService.addWarning("Database sync failed.");
         break;
     }
+    this.updateBackgroundProcessesList();
+  }
+
+  private handleIndexingState(indicesStatus: BackgroundProcessState[]) {
+    this.indexingProcesses = indicesStatus;
+    this.updateBackgroundProcessesList();
+  }
+
+  /**
+   * Build and emit an updated array of current background processes
+   * @private
+   */
+  private updateBackgroundProcessesList() {
+    let currentProcesses: BackgroundProcessState[] = [];
+    if (this.syncInProgress) {
+      currentProcesses.push({ title: "Synchronizing database", pending: true });
+    } else {
+      currentProcesses.push({ title: "Database up-to-date", pending: false });
+    }
+    currentProcesses = currentProcesses.concat(this.indexingProcesses);
+    this._backgroundProcesses.next(currentProcesses);
   }
 }

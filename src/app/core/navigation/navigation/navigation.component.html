@@ -15,9 +15,19 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-    <mat-nav-list>
-      <mat-list-item *ngFor="let item of menu_main" [routerLink]="item.routerLinkParameters" >
-        <a><mat-icon class="nav-icon" fontIcon="fa-{{item.icon}}"></mat-icon>{{item.label}}</a>
-        <mat-divider></mat-divider>
-      </mat-list-item>
-    </mat-nav-list>
+<mat-nav-list>
+  <mat-list-item
+    angulartics2On="click"
+    angularticsCategory="Navigation"
+    angularticsAction="app_navigation_link_click"
+    [angularticsLabel]="item.label"
+    *ngFor="let item of menu_main"
+    [routerLink]="item.routerLinkParameters"
+  >
+    <a
+      ><mat-icon class="nav-icon" fontIcon="fa-{{ item.icon }}"></mat-icon
+      >{{ item.label }}</a
+    >
+    <mat-divider></mat-divider>
+  </mat-list-item>
+</mat-nav-list>

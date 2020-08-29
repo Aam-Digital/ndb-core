@@ -101,9 +101,13 @@ export class NotesOfChildComponent implements OnInit, OnChanges {
       .getNotesOfChild(this.childId)
       .pipe(untilDestroyed(this))
       .subscribe((notes: Note[]) => {
-        notes.sort(
-          (a, b) => moment(a.date).valueOf() - moment(b.date).valueOf()
-        );
+        notes.sort((a, b) => {
+          if (!a.date && b.date) {
+            // note without date should be first
+            return -1;
+          }
+          return moment(b.date).valueOf() - moment(a.date).valueOf();
+        });
         this.records = notes;
       });
   }

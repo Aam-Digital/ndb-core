@@ -23,6 +23,11 @@ export class LoggingService {
    * @param options
    */
   static initRemoteLogging(options: any) {
+    if (!options.dsn) {
+      // abort if no target url is set
+      return;
+    }
+
     const defaultOptions = {
       release: "ndb-core@" + environment.appVersion,
     };

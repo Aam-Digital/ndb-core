@@ -9,6 +9,7 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
 import { RemoteSession } from "./remote-session";
 import { PouchDatabase } from "../../database/pouch-database";
 import { AlertService } from "../../alerts/alert.service";
+import { LoggingService } from "../../logging/logging.service";
 
 /**
  * SessionService implementation for use of the app with direct requests to the remote server
@@ -40,13 +41,15 @@ export class OnlineSessionService extends SessionService {
 
   constructor(
     private alertService: AlertService,
+    private loggingService: LoggingService,
     private entitySchemaService: EntitySchemaService
   ) {
     super();
     this.remoteSession = new RemoteSession();
     this.database = new PouchDatabase(
       this.remoteSession.database,
-      this.alertService
+      this.alertService,
+      this.loggingService
     );
   }
 

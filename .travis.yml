@@ -13,9 +13,7 @@ apt:
     - google-chrome-stable
     - google-chrome-beta
 
-cache:
-  directories:
-    - node_modules
+cache: npm
 
 before_install:
   - export CHROME_BIN=chromium-browser
@@ -34,14 +32,15 @@ script:
 
 after_script:
   - ./cc-test-reporter after-build --debug --exit-code $TRAVIS_TEST_RESULT
-after_success:
-  - npm run compodoc
 
 deploy:
-  - provider: pages
+  - provider: script
+    script: bash docker/publish.sh
     skip_cleanup: true
-    local_dir: doc/compodoc
-    github_token: $GH_REPO_TOKEN
+    on:
+      tags: true
+  - provider: script
+    skip_cleanup: true
+    script: npx semantic-release
     on:
       all_branches: true
-      condition: ${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH} =~ ^(master|compodoc)$

@@ -15,10 +15,17 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Inject, OnInit } from "@angular/core";
+import {
+  Component,
+  ElementRef,
+  Inject,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 import { Changelog } from "../changelog";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { isObservable, Observable } from "rxjs";
+import { LatestChangesService } from "../latest-changes.service";
 
 /**
  * Display information from the changelog for the latest version.
@@ -30,8 +37,13 @@ import { isObservable, Observable } from "rxjs";
   styleUrls: ["./changelog.component.scss"],
 })
 export class ChangelogComponent implements OnInit {
-  /** The changelog entry of the version to be displayed */
-  currentChangelog: Changelog;
+  /** The array of relevant changelog entries to be displayed */
+  changelogs: Changelog[];
+
+  /** Display advanced information that may not be useful to normal users */
+  showAdvancedDetails = false;
+
+  @ViewChild("changelogContainer") contentContainer: ElementRef;
 
   /**
    * This component is to be created through a MatDialog that should pass in the relevant data.
@@ -40,25 +52,37 @@ export class ChangelogComponent implements OnInit {
    * dialog.open(ChangelogComponent, { data: { changelogData: latestChangesService.getChangelogs() } });
    *
    * @param dialogRef Reference to the parent dialog.
-   * @param data Changelog data
+   * @param data Changelog data to be display initially
+   * @param latestChangesService
    */
   constructor(
     public dialogRef: MatDialogRef<ChangelogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Observable<Changelog[]>
+    @Inject(MAT_DIALOG_DATA) public data: Observable<Changelog[]>,
+    private latestChangesService: LatestChangesService
   ) {}
 
   ngOnInit(): void {
     if (this.data && isObservable(this.data)) {
-      this.data.subscribe(
-        (changelog) => (this.currentChangelog = changelog[0])
-      );
+      this.data.subscribe((changelog) => (this.changelogs = changelog));
     }
   }
 
   /**
-   * Close the parent dialog box.
+   * Add one more previous release card to the end of the currently displayed list of changelogs.
    */
-  onCloseClick(): void {
-    this.dialogRef.close();
+  loadPreviousRelease() {
+    const lastDisplayedVersion = this.changelogs[this.changelogs.length - 1]
+      .tag_name;
+    this.latestChangesService
+      .getChangelogsBeforeVersion(lastDisplayedVersion, 1)
+      .subscribe((additionalChangelog) => {
+        this.changelogs.push(...additionalChangelog);
+
+        setTimeout(() => this.scrollToBottomOfReleases());
+      });
+  }
+
+  private scrollToBottomOfReleases() {
+    this.contentContainer.nativeElement.scrollTop = this.contentContainer.nativeElement.scrollHeight;
   }
 }

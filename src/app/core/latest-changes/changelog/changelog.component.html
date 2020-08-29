@@ -16,16 +16,29 @@
   -->
 
 
-<div>
-  <h3>System updated!</h3>
-  <h4>
-    {{ currentChangelog ? currentChangelog.tag_name : "No Changelog Available" }}
-    <span> {{ (currentChangelog && currentChangelog.name) ? (": " + currentChangelog.name) : ""}}</span>
-  </h4>
-  <p class="version-changes-date" style="font-style:italic;">
-    {{ currentChangelog?.published_at | date }}
-  </p>
-  <p style="white-space: pre-wrap; text-align: left" [innerHTML]="currentChangelog?.body"></p>
+<h1 mat-dialog-title>Latest Changes</h1>
 
-  <button mat-button (click)="onCloseClick()">Close</button>
-</div>
+<mat-dialog-content #changelogContainer>
+  <mat-card *ngFor="let changelog of changelogs" class="mat-elevation-z3">
+    <mat-card-header>
+      <mat-card-title>{{ changelog ? changelog.name : "No Changelog Available" }}</mat-card-title>
+      <mat-card-subtitle>
+        <span class="meta-info"><mat-icon fontIcon="fa-calendar-o"></mat-icon>{{ changelog?.published_at | date }}</span>
+        <span class="meta-info"><mat-icon fontIcon="fa-tag"></mat-icon>{{ changelog?.tag_name }}</span>
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <markdown [data]="changelog?.body"></markdown>
+    </mat-card-content>
+
+    <mat-card-actions *ngIf="showAdvancedDetails">
+      <button mat-stroked-button><a [href]="'https://www.github.com'" target="_blank">More Information</a></button>
+    </mat-card-actions>
+  </mat-card>
+</mat-dialog-content>
+
+<mat-dialog-actions class="general-actions">
+  <button mat-raised-button (click)="loadPreviousRelease()">Show previous changes</button>
+  <button mat-raised-button color="accent" [mat-dialog-close]="true">Close</button>
+</mat-dialog-actions>

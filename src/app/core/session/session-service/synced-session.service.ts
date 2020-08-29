@@ -28,6 +28,7 @@ import { ConnectionState } from "../session-states/connection-state.enum";
 import { SyncState } from "../session-states/sync-state.enum";
 import { User } from "../../user/user";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { LoggingService } from "../../logging/logging.service";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -46,6 +47,7 @@ export class SyncedSessionService extends SessionService {
 
   constructor(
     private _alertService: AlertService,
+    private _loggingService: LoggingService,
     private _entitySchemaService: EntitySchemaService
   ) {
     super();
@@ -262,7 +264,11 @@ export class SyncedSessionService extends SessionService {
    * als see {@link SessionService}
    */
   public getDatabase(): Database {
-    return new PouchDatabase(this._localSession.database, this._alertService);
+    return new PouchDatabase(
+      this._localSession.database,
+      this._alertService,
+      this._loggingService
+    );
   }
 
   /**

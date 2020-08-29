@@ -19,6 +19,7 @@ import { ChildPhotoService } from "../child-photo-service/child-photo.service";
 import { ChildrenModule } from "../children.module";
 import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
 import { MatNativeDateModule } from "@angular/material/core";
+import { User } from "app/core/user/user";
 
 describe("ChildDetailsComponent", () => {
   let component: ChildDetailsComponent;
@@ -53,7 +54,7 @@ describe("ChildDetailsComponent", () => {
   };
   const mockedDatabase = new MockDatabase();
   const mockedSession = {
-    getCurrentUser: () => "testUser",
+    getCurrentUser: () => new User("test1"),
     getDatabase: () => mockedDatabase,
   };
   let mockChildPhotoService: jasmine.SpyObj<ChildPhotoService>;

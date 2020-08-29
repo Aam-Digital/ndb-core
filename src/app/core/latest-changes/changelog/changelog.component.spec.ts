@@ -31,22 +31,26 @@ describe("ChangelogComponent", () => {
   let component: ChangelogComponent;
   let fixture: ComponentFixture<ChangelogComponent>;
 
+  let mockLatestChangesService: jasmine.SpyObj<LatestChangesService>;
+
   const testChangelog = new Changelog();
+  testChangelog.tag_name = "1.0.0";
   testChangelog.name = "test name";
   testChangelog.body = "test changes body";
   testChangelog.published_at = "2018-01-01";
 
   beforeEach(async(() => {
+    mockLatestChangesService = jasmine.createSpyObj([
+      "getChangelogsBeforeVersion",
+    ]);
+
     TestBed.configureTestingModule({
       declarations: [ChangelogComponent],
       imports: [MatDialogModule],
       providers: [
         { provide: MatDialogRef, useValue: {} },
-        { provide: MAT_DIALOG_DATA, useValue: {} },
-        {
-          provide: LatestChangesService,
-          useValue: { getChangelogs: () => of([testChangelog]) },
-        },
+        { provide: MAT_DIALOG_DATA, useValue: of([testChangelog]) },
+        { provide: LatestChangesService, useValue: mockLatestChangesService },
       ],
     }).compileComponents();
   }));
@@ -59,5 +63,15 @@ describe("ChangelogComponent", () => {
 
   it("should be created", () => {
     expect(component).toBeTruthy();
+    expect(component.changelogs).toEqual([testChangelog]);
+  });
+
+  it("should add release info to end of array on 'show previous'", () => {
+    mockLatestChangesService.getChangelogsBeforeVersion.and.returnValue(
+      of([testChangelog])
+    );
+    component.loadPreviousRelease();
+
+    expect(component.changelogs).toEqual([testChangelog, testChangelog]);
   });
 });

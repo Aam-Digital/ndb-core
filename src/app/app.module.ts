@@ -61,6 +61,9 @@ import { DemoUserGeneratorService } from "./core/user/demo-user-generator.servic
 import { ConfirmationDialogModule } from "./core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "./core/form-dialog/form-dialog.module";
 import { LoggingService } from "./core/logging/logging.service";
+import { Angulartics2Module } from "angulartics2";
+import { AnalyticsService } from "./core/analytics/analytics.service";
+import { Angulartics2Piwik } from "angulartics2/piwik";
 
 /**
  * Main entry point of the application.
@@ -72,6 +75,9 @@ import { LoggingService } from "./core/logging/logging.service";
   imports: [
     ServiceWorkerModule.register("/ngsw-worker.js", {
       enabled: environment.production,
+    }),
+    Angulartics2Module.forRoot({
+      developerMode: !environment.production,
     }),
     BrowserModule,
     BrowserAnimationsModule,
@@ -121,6 +127,8 @@ import { LoggingService } from "./core/logging/logging.service";
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
     MatIconRegistry,
     CookieService,
+    AnalyticsService,
+    Angulartics2Piwik,
   ],
   bootstrap: [AppComponent],
 })
@@ -158,6 +166,9 @@ export class AppModule {
       new MenuItem("Users", "user", ["/users"], true)
     );
     this.navigationItemsService.addMenuItem(
+      new MenuItem("Database Conflicts", "wrench", ["/admin/conflicts"], true)
+    );
+    this.navigationItemsService.addMenuItem(
       new MenuItem("Help", "question-circle", ["/help"])
     );
   }
@@ -165,6 +176,6 @@ export class AppModule {
 
 // Initialize remote logging
 LoggingService.initRemoteLogging({
-  dsn: "https://bd6aba79ca514d35bb06a4b4e0c2a21e@sentry.io/1242399",
+  dsn: environment.remoteLoggingDsn,
   whitelistUrls: [/https?:\/\/(.*)\.?aam-digital\.com/],
 });

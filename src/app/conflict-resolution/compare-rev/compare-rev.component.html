@@ -1,0 +1,44 @@
+<mat-expansion-panel (opened)='loadRev()' *ngIf='!resolution'>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <span [matTooltip]='docString' (mouseover)='docString = stringify(doc)'>{{rev}}</span>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <div fxLayout='row' fxLayoutGap='10px'>
+    <div fxFlex='50'>
+      <label for='conflictingDiff'>Conflicting Entity:</label>
+      <textarea id='conflictingDiff' cdkTextareaAutosize class='diffText conflicting' disabled>
+        {{ diffs }}
+      </textarea>
+      <button mat-raised-button class='resolution-btn' (click)='resolveByManualEdit(diffs)'>
+        Choose conflicting version
+      </button>
+    </div>
+
+    <div fxFlex='50'>
+      <label for='customDiff'>Custom Resolution:</label>
+      <textarea id='customDiff' cdkTextareaAutosize class='diffText custom'
+                [(ngModel)]='diffsCustom'>
+      </textarea>
+      <button mat-raised-button class='resolution-btn' (click)='resolveByManualEdit(diffsCustom)'>
+        Save manually resolved record
+      </button>
+    </div>
+
+    <div fxFlex='50'>
+      <label for='currentDiff'>Current Entity:</label>
+      <textarea id='currentDiff' cdkTextareaAutosize class='diffText current' disabled>
+        {{ diffsReverse }}
+      </textarea>
+      <button mat-raised-button class='resolution-btn' (click)='resolveByDelete(revDoc)'>
+        Choose current version
+      </button>
+    </div>
+  </div>
+</mat-expansion-panel>
+
+
+<div *ngIf='resolution'>
+  <em>Resolved ({{resolution}})</em>
+</div>

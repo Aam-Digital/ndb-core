@@ -3,6 +3,8 @@ import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormDialogWrapperComponent } from "./form-dialog-wrapper.component";
 import { FormDialogModule } from "../form-dialog.module";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { Angulartics2Module } from "angulartics2";
+import { RouterTestingModule } from "@angular/router/testing";
 
 describe("FormDialogWrapperComponent", () => {
   let component: FormDialogWrapperComponent;
@@ -14,7 +16,11 @@ describe("FormDialogWrapperComponent", () => {
     mockEntityMapper = jasmine.createSpyObj("mockEntityMapper", ["save"]);
 
     TestBed.configureTestingModule({
-      imports: [FormDialogModule],
+      imports: [
+        FormDialogModule,
+        Angulartics2Module.forRoot(),
+        RouterTestingModule,
+      ],
       providers: [{ provide: EntityMapperService, useValue: mockEntityMapper }],
     }).compileComponents();
   }));
