@@ -112,7 +112,7 @@ describe("EntitySchemaService", () => {
     expect(entity.month).toEqual(expectedDate);
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    expect(rawData.month).toEqual("2018-2");
+    expect(rawData.month).toEqual("2018-02");
   });
 
   it("schema:date-only converts between YYYY-MM-dd and Date objects", function () {
@@ -145,7 +145,7 @@ describe("EntitySchemaService", () => {
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
-    expect(rawData.dateArr).toEqual(["2020-1", "2020-2"]);
+    expect(rawData.dateArr).toEqual(["2020-01", "2020-02"]);
   });
 
   it("schema:array converts contained month strings to dates when loading", function () {
@@ -157,7 +157,7 @@ describe("EntitySchemaService", () => {
 
     const data = {
       _id: "test2",
-      dateArr: ["2020-1", "2020-2"],
+      dateArr: ["2020-01", "2020-02"],
     };
     entitySchemaService.loadDataIntoEntity(entity, data);
 
@@ -185,7 +185,7 @@ describe("EntitySchemaService", () => {
 
     entity.details.otherStuff = "foo";
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    expect(rawData.details.month).toEqual("2020-1");
+    expect(rawData.details.month).toEqual("2020-01");
     expect(rawData.details.otherStuff).toBeUndefined();
   });
 });
