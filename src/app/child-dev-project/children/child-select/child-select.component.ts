@@ -10,6 +10,7 @@ import {
 import { Child } from "../model/child";
 import { ChildrenService } from "../children.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { MatAutocompleteTrigger } from "@angular/material/autocomplete";
 
 @UntilDestroy()
 @Component({
@@ -30,6 +31,7 @@ export class ChildSelectComponent implements OnChanges {
   @Output() idRemoved = new EventEmitter();
 
   @ViewChild("inputField", { static: true }) inputField;
+  @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
   constructor(private childrenService: ChildrenService) {}
 
@@ -82,6 +84,7 @@ export class ChildSelectComponent implements OnChanges {
   showAll() {
     this.showOnlyActiveChildren = false;
     this.search();
+    setTimeout(() => this.autocomplete.openPanel());
   }
 
   selectChild(child: Child, suppressChangeEvent = false) {
