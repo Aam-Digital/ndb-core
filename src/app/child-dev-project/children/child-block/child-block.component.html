@@ -3,7 +3,7 @@
   {{entity?.name}} <span style="font-size: x-small">({{entity?.projectNumber}})</span>
 </span>
 
-<div style="position:absolute;" *ngIf="tooltip">
+<div style="position:absolute;" *ngIf="tooltip && (noTooltip != true)">
   <div class="mat-elevation-z5 child-tooltip" (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()" fxLayout='row'>
     <div fxFlex='30'>
       <img [src]="entity?.photo?.value" class="child-pic-large">

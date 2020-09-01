@@ -14,6 +14,7 @@ export class ChildBlockComponent implements OnInit {
   @Input() entity: Child;
   @Input() entityId: string;
   @Input() linkDisabled: boolean;
+  @Input() noTooltip: boolean;
   tooltip = false;
   tooltipTimeout;
 
@@ -39,6 +40,7 @@ export class ChildBlockComponent implements OnInit {
       clearTimeout(this.tooltipTimeout);
     }
   }
+
   hideTooltip() {
     this.tooltipTimeout = setTimeout(() => (this.tooltip = false), 250);
   }
