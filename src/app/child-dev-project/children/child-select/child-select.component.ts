@@ -19,6 +19,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 })
 export class ChildSelectComponent implements OnChanges {
   searchText = "";
+  showOnlyActiveChildren: boolean = true;
   suggestions = new Array<Child>();
   allChildren = new Array<Child>();
   selectedChildren = new Array<Child>();
@@ -44,7 +45,7 @@ export class ChildSelectComponent implements OnChanges {
       .pipe(untilDestroyed(this))
       .subscribe((children) => {
         this.allChildren = [...children]; // clone array
-        this.suggestions = this.allChildren;
+        this.search();
 
         this.selectInitialSelectedChildren();
       });
@@ -72,8 +73,15 @@ export class ChildSelectComponent implements OnChanges {
 
     this.suggestions = this.allChildren.filter((child) => {
       const key = "" + child.name + " " + child.projectNumber;
-      return key.toLowerCase().includes(this.searchText);
+      const isActive = child.isActive();
+      const matchesKey = key.toLowerCase().includes(this.searchText);
+      return this.showOnlyActiveChildren ? matchesKey && isActive : matchesKey;
     });
+  }
+
+  showAll() {
+    this.showOnlyActiveChildren = false;
+    this.search();
   }
 
   selectChild(child: Child, suppressChangeEvent = false) {

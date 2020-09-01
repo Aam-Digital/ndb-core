@@ -12,5 +12,6 @@
     <mat-option *ngFor='let res of suggestions' [value]='res'>
       <app-child-block [entity]='res' [linkDisabled]='true' [noTooltip]='true'></app-child-block>
     </mat-option>
+    <button mat-stroked-button *ngIf="showOnlyActiveChildren" (click)="showAll()">Show all children</button>
   </mat-autocomplete>
 </div>
