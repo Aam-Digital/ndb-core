@@ -47,7 +47,6 @@
       <app-child-block
         *ngIf="res.getType() === 'Child'"
         [entity]="res"
-        [ngClass]="{ 'result-inactive': !res.isActive() }"
         angulartics2On="click"
         angularticsCategory="Navigation"
         angularticsAction="search_result_list_link"
