@@ -10,6 +10,7 @@ import {
 import { Child } from "../model/child";
 import { ChildrenService } from "../children.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { MatAutocompleteTrigger } from "@angular/material/autocomplete";
 
 @UntilDestroy()
 @Component({
@@ -19,6 +20,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 })
 export class ChildSelectComponent implements OnChanges {
   searchText = "";
+  showOnlyActiveChildren: boolean = true;
   suggestions = new Array<Child>();
   allChildren = new Array<Child>();
   selectedChildren = new Array<Child>();
@@ -29,6 +31,7 @@ export class ChildSelectComponent implements OnChanges {
   @Output() idRemoved = new EventEmitter();
 
   @ViewChild("inputField", { static: true }) inputField;
+  @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
   constructor(private childrenService: ChildrenService) {}
 
@@ -44,7 +47,7 @@ export class ChildSelectComponent implements OnChanges {
       .pipe(untilDestroyed(this))
       .subscribe((children) => {
         this.allChildren = [...children]; // clone array
-        this.suggestions = this.allChildren;
+        this.search();
 
         this.selectInitialSelectedChildren();
       });
@@ -72,8 +75,17 @@ export class ChildSelectComponent implements OnChanges {
 
     this.suggestions = this.allChildren.filter((child) => {
       const key = "" + child.name + " " + child.projectNumber;
+      if (this.showOnlyActiveChildren && !child.isActive()) {
+        return false;
+      }
       return key.toLowerCase().includes(this.searchText);
     });
+  }
+
+  showAll() {
+    this.showOnlyActiveChildren = false;
+    this.search();
+    setTimeout(() => this.autocomplete.openPanel());
   }
 
   selectChild(child: Child, suppressChangeEvent = false) {
