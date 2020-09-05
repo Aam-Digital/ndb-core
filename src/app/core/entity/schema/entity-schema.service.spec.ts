@@ -108,11 +108,11 @@ describe("EntitySchemaService", () => {
     };
     entitySchemaService.loadDataIntoEntity(entity, data);
 
-    const expectedDate = new Date(2018, 1); // month indices start at 0!
+    const expectedDate = new Date("2018-02");
     expect(entity.month).toEqual(expectedDate);
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    expect(rawData.month).toEqual("2018-2");
+    expect(rawData.month).toEqual("2018-02");
   });
 
   it("schema:date-only converts between YYYY-MM-dd and Date objects", function () {
@@ -141,11 +141,11 @@ describe("EntitySchemaService", () => {
     }
     const id = "test1";
     const entity = new TestEntity(id);
-    entity.dateArr = [new Date("2020-01-01"), new Date("2020-02-02")];
+    entity.dateArr = [new Date("2020-01-01"), new Date("2020-12-06")];
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
-    expect(rawData.dateArr).toEqual(["2020-1", "2020-2"]);
+    expect(rawData.dateArr).toEqual(["2020-01", "2020-12"]);
   });
 
   it("schema:array converts contained month strings to dates when loading", function () {
@@ -157,11 +157,11 @@ describe("EntitySchemaService", () => {
 
     const data = {
       _id: "test2",
-      dateArr: ["2020-1", "2020-2"],
+      dateArr: ["2020-1", "2020-12"],
     };
     entitySchemaService.loadDataIntoEntity(entity, data);
 
-    expect(entity.dateArr).toEqual([new Date(2020, 0), new Date(2020, 1)]);
+    expect(entity.dateArr).toEqual([new Date("2020-01"), new Date("2020-12")]);
   });
 
   it("schema:schema-embed converts contained object with contained schema annotation", function () {
@@ -181,11 +181,11 @@ describe("EntitySchemaService", () => {
     };
 
     entitySchemaService.loadDataIntoEntity(entity, data);
-    expect(entity.details.month).toEqual(new Date(2020, 0));
+    expect(entity.details.month).toEqual(new Date("2020-01"));
 
     entity.details.otherStuff = "foo";
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    expect(rawData.details.month).toEqual("2020-1");
+    expect(rawData.details.month).toEqual("2020-01");
     expect(rawData.details.otherStuff).toBeUndefined();
   });
 });

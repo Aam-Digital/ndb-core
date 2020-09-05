@@ -38,7 +38,9 @@ export const monthEntitySchemaDatatype: EntitySchemaDatatype = {
       value = new Date(value);
     }
     return (
-      value.getFullYear().toString() + "-" + (value.getMonth() + 1).toString()
+      value.getFullYear().toString() +
+      "-" +
+      (value.getMonth() + 1).toString().replace(/^(\d)$/g, "0$1")
     );
   },
 
@@ -47,6 +49,10 @@ export const monthEntitySchemaDatatype: EntitySchemaDatatype = {
       return undefined;
     }
 
+    value = value
+      .toString()
+      .replace(/-(\d)-/g, "-0$1-")
+      .replace(/-(\d)$/g, "-0$1");
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) {
       console.log("value aus datatype-month.ts: " + value);
