@@ -75,9 +75,10 @@ export class ChildSelectComponent implements OnChanges {
 
     this.suggestions = this.allChildren.filter((child) => {
       const key = "" + child.name + " " + child.projectNumber;
-      const isActive = child.isActive();
-      const matchesKey = key.toLowerCase().includes(this.searchText);
-      return this.showOnlyActiveChildren ? matchesKey && isActive : matchesKey;
+      if (this.showOnlyActiveChildren && !child.isActive()) {
+        return false;
+      }
+      return key.toLowerCase().includes(this.searchText);
     });
   }
 
