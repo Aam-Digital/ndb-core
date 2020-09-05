@@ -13,9 +13,13 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 export class ChildBlockComponent implements OnInit {
   @Input() entity: Child;
   @Input() entityId: string;
+
+  /** prevent clicks on the component to navigate to the details page */
   @Input() linkDisabled: boolean;
-  @Input() noTooltip: boolean;
-  tooltip = false;
+
+  /** prevent additional details to be displayed in a tooltip on mouse over */
+  @Input() tooltipDisabled: boolean;
+  tooltipVisible = false;
   tooltipTimeout;
 
   constructor(
@@ -35,14 +39,18 @@ export class ChildBlockComponent implements OnInit {
   }
 
   showTooltip() {
-    this.tooltip = true;
+    if (this.tooltipDisabled) {
+      return;
+    }
+
+    this.tooltipVisible = true;
     if (this.tooltipTimeout) {
       clearTimeout(this.tooltipTimeout);
     }
   }
 
   hideTooltip() {
-    this.tooltipTimeout = setTimeout(() => (this.tooltip = false), 250);
+    this.tooltipTimeout = setTimeout(() => (this.tooltipVisible = false), 250);
   }
 
   showDetailsPage() {
