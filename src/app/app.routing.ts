@@ -32,6 +32,7 @@ import { AddDayAttendanceComponent } from "./child-dev-project/attendance/add-da
 import { AttendanceManagerComponent } from "./child-dev-project/attendance/attendance-manager/attendance-manager.component";
 import { HowToComponent } from "./core/help/how-to/how-to.component";
 import { UserListComponent } from "./core/admin/user-list/user-list.component";
+import { AttendanceAnalysisComponent } from "./child-dev-project/attendance/attendance-analysis/attendance-analysis.component";
 
 /**
  * All routes configured for the main app routing.
@@ -46,6 +47,7 @@ export const routes: Routes = [
   { path: "child/:id/attendance", component: ChildAttendanceComponent },
   { path: "note", component: NotesManagerComponent },
   { path: "attendance", component: AttendanceManagerComponent },
+  { path: "attendance/analysis", component: AttendanceAnalysisComponent },
   { path: "attendance/add/month", component: AddMonthAttendanceComponent },
   { path: "attendance/add/day", component: AddDayAttendanceComponent },
   { path: "admin", component: AdminComponent, canActivate: [AdminGuard] },
