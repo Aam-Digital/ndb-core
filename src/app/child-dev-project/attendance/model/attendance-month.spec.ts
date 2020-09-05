@@ -52,7 +52,7 @@ describe("AttendanceMonth", () => {
 
       student: "1",
       institution: "school",
-      month: "2019-1", // TODO: no leading zero in month format?
+      month: "2019-01",
       remarks: "more notes",
       daysWorking: 25,
       daysAttended: 20,
@@ -195,7 +195,7 @@ describe("AttendanceMonth", () => {
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
     expect(typeof rawData.month).toBe("string");
-    expect(rawData.month).toBe("2018-1");
+    expect(rawData.month).toBe("2018-01");
     expect(rawData.p_month).toBeUndefined();
   });
 
