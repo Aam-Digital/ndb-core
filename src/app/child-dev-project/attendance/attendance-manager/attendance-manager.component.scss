@@ -1,19 +1,24 @@
-.attendance-line {
-  margin: 10px;
+.general-description {
+  font-style: italic;
 }
 
-.table-list{
-  margin-top: 10px;
+.action-button {
+  width: 100%;
 }
 
-.table-list td {
-  padding-left: 8px;
+.mat-card {
+  display:flex;
+  flex-direction: column;
+  min-width: 250px;
+  margin-right: 24px;
+  margin-bottom: 24px;
 }
 
-.table-list-item:hover{
-  background: #f5f5f5;
+.mat-card-header {
+  flex-shrink: 0;
 }
 
-.filter-panel {
-  padding-top: 10px;
+.mat-card-content {
+  flex-grow: 1;
+  overflow: auto;
 }

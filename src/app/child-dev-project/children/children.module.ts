@@ -78,6 +78,7 @@ import { CONFLICT_RESOLUTION_STRATEGY } from "../../conflict-resolution/auto-res
 import { AttendanceMonthConflictResolutionStrategy } from "../attendance/attendance-month-conflict-resolution-strategy";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { Angulartics2Module } from "angulartics2";
+import { AttendanceAnalysisComponent } from "../attendance/attendance-analysis/attendance-analysis.component";
 
 @NgModule({
   imports: [
@@ -142,6 +143,7 @@ import { Angulartics2Module } from "angulartics2";
     NoRecentNotesDashboardComponent,
     RecentNotesDashboardComponent,
     AttendanceManagerComponent,
+    AttendanceAnalysisComponent,
     HealthCheckupComponent,
     PreviousSchoolsComponent,
   ],
