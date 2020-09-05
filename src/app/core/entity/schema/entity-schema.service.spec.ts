@@ -141,11 +141,11 @@ describe("EntitySchemaService", () => {
     }
     const id = "test1";
     const entity = new TestEntity(id);
-    entity.dateArr = [new Date("2020-01-01"), new Date("2020-02-02")];
+    entity.dateArr = [new Date("2020-01-01"), new Date("2020-12-06")];
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
-    expect(rawData.dateArr).toEqual(["2020-01", "2020-02"]);
+    expect(rawData.dateArr).toEqual(["2020-01", "2020-12"]);
   });
 
   it("schema:array converts contained month strings to dates when loading", function () {
@@ -157,11 +157,11 @@ describe("EntitySchemaService", () => {
 
     const data = {
       _id: "test2",
-      dateArr: ["2020-1", "2020-02"],
+      dateArr: ["2020-1", "2020-12"],
     };
     entitySchemaService.loadDataIntoEntity(entity, data);
 
-    expect(entity.dateArr).toEqual([new Date("2020-01"), new Date("2020-02")]);
+    expect(entity.dateArr).toEqual([new Date("2020-01"), new Date("2020-12")]);
   });
 
   it("schema:schema-embed converts contained object with contained schema annotation", function () {
