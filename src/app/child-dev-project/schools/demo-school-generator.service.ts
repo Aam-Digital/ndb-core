@@ -35,14 +35,7 @@ export class DemoSchoolGenerator extends DemoDataGenerator<School> {
         "English",
         "Bengali",
       ]);
-      school.name =
-        faker.name.firstName() +
-        " " +
-        faker.random.arrayElement([
-          "School",
-          "High School",
-          school.medium + " Medium",
-        ]);
+      school.name = "Team " + faker.name.firstName();
       school.address = faker.address.streetAddress();
       school.phone = faker.phone.phoneNumberFormat();
       school.privateSchool = faker.random.boolean();

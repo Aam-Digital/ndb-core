@@ -128,7 +128,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     });
 
     note.author = faker.random.arrayElement(this.teamMembers);
-    note.date = faker.date.past(1);
+    note.date = faker.date.past(2);
 
     this.removeFollowUpMarkerForOldNotes(note);
 

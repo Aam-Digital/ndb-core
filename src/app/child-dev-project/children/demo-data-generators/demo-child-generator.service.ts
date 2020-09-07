@@ -41,11 +41,11 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
       child.projectNumber = String(i);
       child.religion = faker.random.arrayElement(religions);
       child.gender = faker.random.arrayElement([Gender.MALE, Gender.FEMALE]);
-      child.dateOfBirth = faker.dateOfBirth(5, 20);
+      child.dateOfBirth = faker.dateOfBirth(12, 18);
       child.motherTongue = faker.random.arrayElement(languages);
       child.center = faker.random.arrayElement(centersWithProbability);
 
-      child.admissionDate = faker.date.past(child.age - 4);
+      child.admissionDate = faker.date.past(4);
 
       if (faker.random.number(100) > 80) {
         this.makeChildDropout(child);

@@ -4,6 +4,11 @@ export const centersWithProbability = [
   "Alipore",
   "Tollygunge",
   "Barabazar",
+  "Howrah",
+  "Bally",
+  "Santoshpur",
+  "Saltlake",
+  "Jadavpur",
 ];
 
 export const centersUnique = centersWithProbability.filter(

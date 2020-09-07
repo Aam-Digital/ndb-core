@@ -28,7 +28,7 @@
     </div>
 
     <div fxFlex="25" class="align-form-field" fxHide.xs="true">
-      (Showing {{ schoolDataSource.filteredData.length }} schools)
+      (Showing {{ schoolDataSource.filteredData.length }} programs)
     </div>
 
     <div fxFlex="25" class="align-form-field">
@@ -55,46 +55,6 @@
     </div>
   </div>
 
-  <div fxLayout="row wrap" fxLayoutGap="10px" fxHide.lt-sm>
-    <mat-button-toggle-group
-      *ngFor="let filterSelection of filterSelections"
-      [name]="filterSelection.name"
-      [value]="filterSelection.selectedOption"
-    >
-      <mat-button-toggle
-        *ngFor="let option of filterSelection.options"
-        [value]="option.key"
-        (click)="
-          filterSelection.selectedOption = option.key; applyFilterSelections()
-        "
-      >
-        {{ option.label }}
-      </mat-button-toggle>
-    </mat-button-toggle-group>
-  </div>
-  <div fxLayout="row wrap" fxHide.gt-xs>
-    <mat-form-field
-      *ngFor="let filterSelection of filterSelections"
-      style="padding-right: 1%;"
-    >
-      <mat-label>{{ filterSelection.name }}</mat-label>
-      <mat-select
-        [id]="filterSelection.name"
-        [value]="filterSelection.selectedOption"
-        placeholder="filterSelection.name"
-      >
-        <mat-option
-          *ngFor="let option of filterSelection.options"
-          [value]="option.key"
-          (click)="
-            filterSelection.selectedOption = option.key; applyFilterSelections()
-          "
-        >
-          {{ option.label }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
 </mat-expansion-panel>
 
 <!--<mat-divider></mat-divider>-->
@@ -112,14 +72,14 @@
     </ng-container>
 
     <ng-container matColumnDef="privateSchool">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Private School</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Mixed Team</th>
       <td mat-cell *matCellDef="let school">
         {{ school.privateSchool ? "✓" : "" }}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="academicBoard">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Board</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>League</th>
       <td mat-cell *matCellDef="let school">{{ school.academicBoard }}</td>
     </ng-container>
 

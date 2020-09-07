@@ -222,27 +222,6 @@
             </mat-select>
           </mat-form-field>
 
-          <mat-form-field>
-            <input
-              matInput
-              formControlName="motherTongue"
-              placeholder="Mother Tongue"
-              type="text"
-            />
-          </mat-form-field>
-
-          <mat-form-field>
-            <input
-              matInput
-              formControlName="religion"
-              placeholder="Religion"
-              title="Religion"
-              type="text"
-            />
-          </mat-form-field>
-        </div>
-
-        <div>
           <mat-form-field style="width: 180px;">
             <input
               matInput
@@ -258,83 +237,7 @@
             <mat-datepicker #admissionDatepicker></mat-datepicker>
           </mat-form-field>
 
-          <mat-form-field>
-            <mat-label>
-              Aadhar Status
-            </mat-label>
-            <mat-select
-              [disabled]="!editing"
-              [(ngModel)]="child.has_aadhar"
-              [ngModelOptions]="{ standalone: true }"
-            >
-              <mat-option *ngFor="let s of documentStatus" [value]="s">{{
-                s
-              }}</mat-option>
-            </mat-select>
-          </mat-form-field>
 
-          <mat-form-field>
-            <mat-label>
-              Kanyashree Status
-            </mat-label>
-            <mat-select
-              [disabled]="!editing"
-              [(ngModel)]="child.has_kanyashree"
-              [ngModelOptions]="{ standalone: true }"
-            >
-              <mat-option *ngFor="let s of documentStatus" [value]="s">{{
-                s
-              }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field>
-            <mat-label>
-              Bank Account Status
-            </mat-label>
-            <mat-select
-              [disabled]="!editing"
-              [(ngModel)]="child.has_bankAccount"
-              [ngModelOptions]="{ standalone: true }"
-            >
-              <mat-option *ngFor="let s of documentStatus" [value]="s">{{
-                s
-              }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field>
-            <mat-label>
-              Ration Card Status
-            </mat-label>
-            <mat-select
-              [disabled]="!editing"
-              [(ngModel)]="child.has_rationCard"
-              [ngModelOptions]="{ standalone: true }"
-            >
-              <mat-option *ngFor="let s of documentStatus" [value]="s">{{
-                s
-              }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field>
-            <mat-label>
-              BPL Card Status
-            </mat-label>
-            <mat-select
-              [disabled]="!editing"
-              [(ngModel)]="child.has_BplCard"
-              [ngModelOptions]="{ standalone: true }"
-            >
-              <mat-option *ngFor="let s of documentStatus" [value]="s">{{
-                s
-              }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
-        <div>
           <mat-form-field style="width: 300px;">
             <input
               matInput
@@ -352,31 +255,13 @@
               placeholder="Phone No."
             />
           </mat-form-field>
-
-          <mat-form-field>
-            <input
-              matInput
-              type="text"
-              formControlName="guardianName"
-              placeholder="Guardians"
-            />
-          </mat-form-field>
-
-          <mat-form-field>
-            <input
-              matInput
-              type="text"
-              formControlName="preferredTimeForGuardianMeeting"
-              placeholder="Preferred time for guardians meeting"
-            />
-          </mat-form-field>
         </div>
       </div>
     </mat-expansion-panel>
 
     <mat-expansion-panel
       expanded="false"
-      title="Education"
+      title="Teams & Programmes"
       [disabled]="creatingNew">
       <mat-expansion-panel-header class="section-header">
         <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew"
@@ -384,21 +269,10 @@
                   matTooltip="Please save before entering further data"
                   [matTooltipDisabled]="!creatingNew">
         </mat-icon>
-        Education
+        Teams & Programmes
       </mat-expansion-panel-header>
 
-      <div
-        *ngIf="child.schoolId"
-        matTooltip="To edit the current school or class, please add to the school history below"
-      >
-        <em>
-          Currently attending class {{ child.schoolClass }} at
-          <app-school-block [entityId]="child.schoolId"></app-school-block>
-        </em>
-      </div>
-
       <div>
-        <h3>School History</h3>
         <app-previous-schools
           [childId]="child.getId()"
           (changedRecordInEntitySubrecord)="changedRecordInEntitySubrecord()"
@@ -406,14 +280,9 @@
         </app-previous-schools>
       </div>
       <br />
-
-      <div>
-        <h3>ASER Results</h3>
-        <app-aser></app-aser>
-      </div>
     </mat-expansion-panel>
 
-    <mat-expansion-panel expanded="false" title="Attendance"
+    <mat-expansion-panel expanded="false" title="Regular Attendance"
                          [disabled]="creatingNew">
       <mat-expansion-panel-header class="section-header">
         <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew"
@@ -421,21 +290,14 @@
                   matTooltip="Please save before entering further data"
                   [matTooltipDisabled]="!creatingNew">
         </mat-icon>
-        Attendance
+        Regular Attendance
       </mat-expansion-panel-header>
 
       <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="2em">
         <div fxFlex="45">
-          <h3>School Attendance</h3>
+          <h3>Attendance at Practice</h3>
           <app-child-attendance
             institution="school"
-            [showDailyAttendanceOfLatest]="true"
-          ></app-child-attendance>
-        </div>
-        <div fxFlex="45">
-          <h3>Coaching Attendance</h3>
-          <app-child-attendance
-            institution="coaching"
             [showDailyAttendanceOfLatest]="true"
           ></app-child-attendance>
         </div>
@@ -444,6 +306,7 @@
 
 
     <mat-expansion-panel expanded="false"
+                         title="Events"
                          [disabled]="creatingNew">
       <mat-expansion-panel-header class="section-header">
         <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew"
@@ -451,208 +314,11 @@
                   matTooltip="Please save before entering further data"
                   [matTooltipDisabled]="!creatingNew">
         </mat-icon>
-        Notes & Reports
+        Events
       </mat-expansion-panel-header>
 
       <app-notes-of-child [childId]="child.getId()"></app-notes-of-child>
     </mat-expansion-panel>
 
-
-    <mat-expansion-panel [expanded]="false"
-                         [disabled]="creatingNew">
-      <mat-expansion-panel-header class="section-header">
-        <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew"
-                  class="locked-icon"
-                  matTooltip="Please save before entering further data"
-                  [matTooltipDisabled]="!creatingNew">
-        </mat-icon>
-        Health
-      </mat-expansion-panel-header>
-
-      <div>
-        <mat-form-field>
-          <mat-label>
-            Vaccination Status
-          </mat-label>
-          <mat-select
-            [disabled]="!editing"
-            [(ngModel)]="child.health_vaccinationStatus"
-            [ngModelOptions]="{ standalone: true }"
-          >
-            <mat-option
-              *ngFor="let value of vaccinationStatusValues"
-              [value]="value"
-              >{{ value }}</mat-option
-            >
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field>
-          <mat-label>
-            Eye Status
-          </mat-label>
-          <mat-select
-            [disabled]="!editing"
-            [(ngModel)]="child.health_eyeHealthStatus"
-            [ngModelOptions]="{ standalone: true }"
-          >
-            <mat-option *ngFor="let value of eyeStatusValues" [value]="value">{{
-              value
-            }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field>
-          <!-- TODO: replace bloodGroup text field with a custom-select, once it is user configurable (#236) -->
-          <input
-            matInput
-            formControlName="health_bloodGroup"
-            placeholder="Blood Group"
-            type="text"
-          />
-        </mat-form-field>
-      </div>
-
-      <div>
-        <mat-form-field>
-          <input
-            matInput
-            formControlName="health_lastDentalCheckup"
-            placeholder="Last Dental Check-Up"
-            [matDatepicker]="lastDentalCheckupDatepicker"
-            [disabled]="!editing"
-          />
-          <mat-datepicker-toggle
-            matSuffix
-            [for]="lastDentalCheckupDatepicker"
-          ></mat-datepicker-toggle>
-          <mat-datepicker #lastDentalCheckupDatepicker></mat-datepicker>
-        </mat-form-field>
-
-        <mat-form-field>
-          <input
-            matInput
-            formControlName="health_lastEyeCheckup"
-            placeholder="Last Eye Check-Up"
-            [matDatepicker]="lastEyeCheckupDatepicker"
-            [disabled]="!editing"
-          />
-          <mat-datepicker-toggle
-            matSuffix
-            [for]="lastEyeCheckupDatepicker"
-          ></mat-datepicker-toggle>
-          <mat-datepicker #lastEyeCheckupDatepicker></mat-datepicker>
-        </mat-form-field>
-
-        <mat-form-field>
-          <input
-            matInput
-            formControlName="health_lastENTCheckup"
-            placeholder="Last ENT Check-Up"
-            [matDatepicker]="lastENTCheckupDatepicker"
-            [disabled]="!editing"
-          />
-          <mat-datepicker-toggle
-            matSuffix
-            [for]="lastENTCheckupDatepicker"
-          ></mat-datepicker-toggle>
-          <mat-datepicker #lastENTCheckupDatepicker></mat-datepicker>
-        </mat-form-field>
-
-        <mat-form-field>
-          <input
-            matInput
-            formControlName="health_lastVitaminD"
-            placeholder="Last Vitamin D"
-            [matDatepicker]="lastVitaminDDatepicker"
-            [disabled]="!editing"
-          />
-          <mat-datepicker-toggle
-            matSuffix
-            [for]="lastVitaminDDatepicker"
-          ></mat-datepicker-toggle>
-          <mat-datepicker #lastVitaminDDatepicker></mat-datepicker>
-        </mat-form-field>
-        <mat-form-field>
-          <input
-            matInput
-            formControlName="health_lastDeworming"
-            placeholder="Last De-Worming"
-            [matDatepicker]="lastDewormingDatepicker"
-            [disabled]="!editing"
-          />
-          <mat-datepicker-toggle
-            matSuffix
-            [for]="lastDewormingDatepicker"
-          ></mat-datepicker-toggle>
-          <mat-datepicker #lastDewormingDatepicker></mat-datepicker>
-        </mat-form-field>
-      </div>
-
-      <div>
-        <h3>Height & Weight Tracking</h3>
-        <app-health-checkup></app-health-checkup>
-      </div>
-    </mat-expansion-panel>
-
-    <mat-expansion-panel [expanded]="false"
-                         [disabled]="creatingNew">
-      <mat-expansion-panel-header class="section-header">
-        <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew"
-                  class="locked-icon"
-                  matTooltip="Please save before entering further data"
-                  [matTooltipDisabled]="!creatingNew">
-        </mat-icon>
-        Educational Materials
-      </mat-expansion-panel-header>
-
-      <app-educational-material></app-educational-material>
-    </mat-expansion-panel>
-
-    <mat-expansion-panel [expanded]="!child.isActive()"
-                         [disabled]="creatingNew">
-      <mat-expansion-panel-header class="section-header">
-        <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew"
-                  class="locked-icon"
-                  matTooltip="Please save before entering further data"
-                  [matTooltipDisabled]="!creatingNew">
-        </mat-icon>
-        Dropout
-      </mat-expansion-panel-header>
-
-      <mat-form-field>
-        <input
-          matInput
-          formControlName="dropoutDate"
-          placeholder="Dropout Date"
-          [matDatepicker]="dropoutDatepicker"
-          [disabled]="!editing"
-        />
-        <mat-datepicker-toggle
-          matSuffix
-          [for]="dropoutDatepicker"
-        ></mat-datepicker-toggle>
-        <mat-datepicker #dropoutDatepicker></mat-datepicker>
-      </mat-form-field>
-
-      <mat-form-field>
-        <input
-          matInput
-          formControlName="dropoutType"
-          placeholder="Dropout Type"
-          type="text"
-        />
-      </mat-form-field>
-
-      <mat-form-field>
-        <textarea
-          matInput
-          formControlName="dropoutRemarks"
-          placeholder="Dropout Remarks"
-          type="text"
-        >
-        </textarea>
-      </mat-form-field>
-    </mat-expansion-panel>
   </form>
 </mat-accordion>

@@ -41,7 +41,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   dropoutFS = new FilterSelection("status", [
     {
       key: "active",
-      label: "Current Project Children",
+      label: "Current Players",
       filterFun: (c: Child) => c.isActive(),
     },
     {
@@ -55,7 +55,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  columnGroupSelection = "School Info";
+  columnGroupSelection = "Basic Info";
   columnGroups: ColumnGroup[] = [
     {
       name: "Basic Info",
@@ -64,57 +64,9 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
         "name",
         "age",
         "gender",
-        "schoolClass",
         "schoolId",
         "center",
         "status",
-      ],
-    },
-    {
-      name: "School Info",
-      columns: [
-        "projectNumber",
-        "name",
-        "age",
-        "schoolClass",
-        "schoolId",
-        "attendance-school",
-        "attendance-coaching",
-        "motherTongue",
-      ],
-    },
-    {
-      name: "Status",
-      columns: [
-        "projectNumber",
-        "name",
-        "center",
-        "status",
-        "admissionDate",
-        "has_aadhar",
-        "has_kanyashree",
-        "has_bankAccount",
-        "has_rationCard",
-        "has_bplCard",
-      ],
-    },
-    {
-      name: "Health",
-      columns: [
-        "projectNumber",
-        "name",
-        "center",
-        "health_vaccinationStatus",
-        "health_bloodGroup",
-        "health_eyeHealthStatus",
-        "health_LastEyeCheckup",
-        "health_LastDentalCheckup",
-        "health_LastENTCheckup",
-        "health_LastVitaminD",
-        "health_LastDeworming",
-        "gender",
-        "age",
-        "dateOfBirth",
       ],
     },
     {
@@ -160,7 +112,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
             break;
           }
           case "md": {
-            this.displayColumnGroup("School Info");
+            this.displayColumnGroup("Basic Info");
             this.maxAttendanceBlocks = 2;
             break;
           }

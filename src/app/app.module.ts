@@ -109,16 +109,10 @@ import { Angulartics2Piwik } from "angulartics2/piwik";
       ...DemoChildSchoolRelationGenerator.provider(),
       ...DemoAttendanceGenerator.provider(),
       ...DemoNoteGeneratorService.provider({
-        minNotesPerChild: 2,
-        maxNotesPerChild: 10,
-        groupNotes: 3,
+        minNotesPerChild: 0,
+        maxNotesPerChild: 0,
+        groupNotes: 10,
       }),
-      ...DemoAserGeneratorService.provider(),
-      ...DemoEducationalMaterialGeneratorService.provider({
-        minCount: 3,
-        maxCount: 8,
-      }),
-      ...DemoHealthCheckGeneratorService.provider(),
       ...DemoWidgetGeneratorService.provider(),
       ...DemoUserGeneratorService.provider(),
     ]),
@@ -151,10 +145,10 @@ export class AppModule {
       new MenuItem("Children", "child", ["/child"])
     );
     this.navigationItemsService.addMenuItem(
-      new MenuItem("Schools", "university", ["/school"])
+      new MenuItem("Teams & Programs", "university", ["/school"])
     );
     this.navigationItemsService.addMenuItem(
-      new MenuItem("Notes", "file-text", ["/note"])
+      new MenuItem("Events", "file-text", ["/note"])
     );
     this.navigationItemsService.addMenuItem(
       new MenuItem("Attendance Register", "table", ["/attendance"])

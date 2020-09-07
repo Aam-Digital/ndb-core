@@ -20,7 +20,7 @@ export class SchoolDetailsComponent implements OnInit {
   school = new School("");
 
   studentDataSource: MatTableDataSource<Child> = new MatTableDataSource();
-  displayedColumns = ["id", "name", "schoolClass", "age"];
+  displayedColumns = ["id", "name", "age"];
 
   form: FormGroup;
   creatingNew = false;

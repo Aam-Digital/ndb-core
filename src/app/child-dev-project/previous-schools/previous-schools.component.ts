@@ -85,12 +85,6 @@ export class PreviousSchoolsComponent implements OnInit, OnChanges {
       ),
 
       new ColumnDescription(
-        "schoolClass",
-        "Class",
-        ColumnDescriptionInputType.NUMBER
-      ),
-
-      new ColumnDescription(
         "start",
         "From",
         ColumnDescriptionInputType.DATE,
@@ -106,16 +100,6 @@ export class PreviousSchoolsComponent implements OnInit, OnChanges {
         null,
         (v: Date) =>
           isValidDate(v) ? this.datePipe.transform(v, "yyyy-MM-dd") : ""
-      ),
-
-      new ColumnDescription(
-        "result",
-        "Result",
-        ColumnDescriptionInputType.NUMBER,
-        null,
-        (n: number) => (n >= 0 && !Number.isNaN(n) ? n + "%" : "N/A"),
-        null,
-        this.resultColorStyleBuilder
       ),
     ];
   }

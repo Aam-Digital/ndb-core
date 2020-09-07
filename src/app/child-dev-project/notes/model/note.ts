@@ -77,12 +77,7 @@ export class Note extends Entity {
    * whether or not this note's contents describe a meeting
    */
   isMeeting(): boolean {
-    return (
-      this.category === InteractionTypes.GUARDIAN_MEETING ||
-      this.category === InteractionTypes.CHILDREN_MEETING ||
-      this.category === InteractionTypes.EXCURSION ||
-      this.category === InteractionTypes.RATION_DISTRIBUTION
-    );
+    return this.category !== InteractionTypes.NONE;
   }
 
   /**

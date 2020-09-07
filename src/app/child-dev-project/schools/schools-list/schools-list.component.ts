@@ -26,13 +26,7 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   filterString = "";
-  columnsToDisplay: string[] = [
-    "name",
-    "medium",
-    "privateSchool",
-    "academicBoard",
-    "upToClass",
-  ];
+  columnsToDisplay: string[] = ["name", "privateSchool", "academicBoard"];
 
   mediumFS = new FilterSelection("medium", []);
   privateFS = new FilterSelection("private", [
