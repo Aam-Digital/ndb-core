@@ -16,6 +16,9 @@
  */
 
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
+import { Child } from "app/child-dev-project/children/model/child";
+import { Entity } from "app/core/entity/entity";
+import { DatabaseEntity } from "app/core/entity/database-entity.decorator";
 
 export enum AttendanceStatus {
   UNKNOWN = "?",
@@ -26,13 +29,19 @@ export enum AttendanceStatus {
   EXCUSED = "E",
 }
 
-export class AttendanceDay {
+@DatabaseEntity("Attendance")
+export class AttendanceDay extends Entity {
+  // TODO: adapt fields to new model, eg. remove date
   @DatabaseField({ dataType: "date-only" }) date: Date;
-  @DatabaseField() status: AttendanceStatus;
+  // TODO: replace string-type by child-type
+  @DatabaseField() child: string;
+  // TODO: implement reference to event/ change type
+  @DatabaseField() event: string;
+  @DatabaseField() status: AttendanceStatus = AttendanceStatus.UNKNOWN;
   @DatabaseField() remarks: string = "";
 
-  constructor(date: Date, status: AttendanceStatus = AttendanceStatus.UNKNOWN) {
-    this.date = date;
-    this.status = status;
-  }
+  // constructor(date: Date, status: AttendanceStatus = AttendanceStatus.UNKNOWN) {
+  //   this.date = date;
+  //   this.status = status;
+  // }
 }
