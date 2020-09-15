@@ -17,7 +17,7 @@
         <td *ngFor='let record of weekRecords; trackBy: recordTrackByFunction'
             (click)='selectCell(record)'>
           <app-attendance-day-block [entity]='record' class='day-box'
-                                    [showDate]='record.date.getMonth() === attendanceMonth.month.getMonth()'
+                                    [showDate]="record._id !== 'dummy'"
                                     [showHighlighted]='(selectedRecord === record)'></app-attendance-day-block>
         </td>
       </tr>
@@ -35,14 +35,14 @@
 
     <div>
       <mat-form-field>
-        <mat-select [(ngModel)]='selectedRecord.status' (ngModelChange)='selectedRecordChanged=true; save()' #dayStatusSelect>
+        <mat-select [(ngModel)]='selectedRecord.status' (ngModelChange)='selectedRecordChanged=true; save(selectedRecord)' #dayStatusSelect>
           <mat-option *ngFor="let s of statusValues | keys" [value]="s.value">{{s.key}}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
     <div>
       <mat-form-field style='width: 100%;'>
-        <textarea matInput placeholder="Remarks" [(ngModel)]="selectedRecord.remarks" (ngModelChange)='selectedRecordChanged=true' (blur)='save()'></textarea>
+        <textarea matInput placeholder="Remarks" [(ngModel)]="selectedRecord.remarks" (ngModelChange)='selectedRecordChanged=true' (blur)='save(selectedRecord)'></textarea>
       </mat-form-field>
     </div>
   </div>

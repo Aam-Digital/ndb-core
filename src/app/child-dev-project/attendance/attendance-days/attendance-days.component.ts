@@ -10,9 +10,8 @@ import { MatSelect } from "@angular/material/select";
   templateUrl: "./attendance-days.component.html",
   styleUrls: ["./attendance-days.component.scss"],
 })
-export class AttendanceDaysComponent implements OnInit {
-  @Input() attendanceMonth: AttendanceMonth;
-  records = new Array<AttendanceDay>();
+export class AttendanceDaysComponent {
+  @Input() records: AttendanceDay[];
 
   selectedRecord: AttendanceDay;
   selectedRecordChanged = false;
@@ -29,14 +28,13 @@ export class AttendanceDaysComponent implements OnInit {
     private entityMapper: EntityMapperService
   ) {}
 
-  ngOnInit() {
-    this.records = this.attendanceMonth.dailyRegister;
-  }
-
   weekRecordsTrackByFunction = (index: number, item: any) =>
     item.length > 0 ? item[0].date.getTime() : undefined;
   recordTrackByFunction = (index: number, item: any) => item.date.getTime();
 
+  /**
+   * groups attendances in records by week
+   */
   getWeeks(): AttendanceDay[] {
     const weeks = [];
     let currentWeek = [];
@@ -53,7 +51,7 @@ export class AttendanceDaysComponent implements OnInit {
         firstDay.getMonth(),
         firstDay.getDate() - i
       );
-      currentWeek.unshift(new AttendanceDay(d));
+      currentWeek.unshift(new AttendanceDay("dummy"));
     }
 
     this.records.forEach((day) => {
@@ -69,7 +67,7 @@ export class AttendanceDaysComponent implements OnInit {
   }
 
   selectCell(record: AttendanceDay) {
-    if (record.date.getMonth() !== this.attendanceMonth.month.getMonth()) {
+    if (record._id === "dummy") {
       this.selectedRecord = undefined;
       return;
     }
@@ -81,9 +79,9 @@ export class AttendanceDaysComponent implements OnInit {
     }
   }
 
-  save() {
-    if (this.selectedRecordChanged) {
-      this.entityMapper.save(this.attendanceMonth, true);
+  save(record: AttendanceDay) {
+    if (this.selectedRecordChanged && record._id !== "dummy") {
+      this.entityMapper.save(record, true);
     }
     this.selectedRecordChanged = false;
   }

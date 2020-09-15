@@ -67,152 +67,21 @@ export class AttendanceMonth extends Entity {
       value.setDate(2);
     }
     this.p_month = new Date(value);
-    this.updateDailyRegister();
   }
 
-  daysWorking_manuallyEntered: number;
   @DatabaseField()
-  get daysWorking(): number {
-    if (this.daysWorking_manuallyEntered !== undefined) {
-      return this.daysWorking_manuallyEntered;
-    } else {
-      return this.getDaysWorkingFromDailyAttendance();
-    }
-  }
+  daysWorking: number;
 
-  set daysWorking(value: number) {
-    this.daysWorking_manuallyEntered = value;
-  }
-
-  daysAttended_manuallyEntered: number;
   @DatabaseField()
-  get daysAttended(): number {
-    if (this.daysAttended_manuallyEntered !== undefined) {
-      return this.daysAttended_manuallyEntered;
-    } else {
-      return this.getDaysAttendedFromDailyAttendance();
-    }
-  }
+  daysAttended: number;
 
-  set daysAttended(value: number) {
-    this.daysAttended_manuallyEntered = value;
-  }
-
-  daysExcused_manuallyEntered: number;
   @DatabaseField()
-  get daysExcused(): number {
-    if (this.daysExcused_manuallyEntered !== undefined) {
-      return this.daysExcused_manuallyEntered;
-    } else {
-      return this.getDaysExcusedFromDailyAttendance();
-    }
-  }
+  daysExcused: number;
 
-  set daysExcused(value: number) {
-    this.daysExcused_manuallyEntered = value;
-  }
-
-  daysLate_manuallyEntered: number;
   @DatabaseField()
-  get daysLate(): number {
-    if (this.daysLate_manuallyEntered !== undefined) {
-      return this.daysLate_manuallyEntered;
-    } else {
-      return this.calculateFromDailyRegister(AttendanceStatus.LATE);
-    }
-  }
-  set daysLate(value: number) {
-    this.daysLate_manuallyEntered = value;
-  }
+  daysLate: number;
 
   overridden = false; // indicates individual override during bulk adding
-
-  private _dailyRegister = new Array<AttendanceDay>();
-  set dailyRegister(value: AttendanceDay[]) {
-    if (!value) {
-      return;
-    }
-
-    for (const attDay of value) {
-      if (typeof attDay.date.getTime !== "function") {
-        attDay.date = new Date(attDay.date);
-      }
-    }
-    this._dailyRegister = value;
-  }
-  @DatabaseField({ arrayDataType: "schema-embed", ext: AttendanceDay })
-  get dailyRegister(): AttendanceDay[] {
-    return this._dailyRegister;
-  }
-
-  constructor(id: string) {
-    super(id);
-    this.month = new Date();
-  }
-
-  private updateDailyRegister() {
-    if (this.month === undefined) {
-      return;
-    }
-
-    if (this.dailyRegister === undefined) {
-      this.dailyRegister = new Array<AttendanceDay>();
-    }
-
-    const expectedDays = daysInMonth(this.month);
-    const currentDays = this.dailyRegister.length;
-    if (currentDays < expectedDays) {
-      for (let i = currentDays + 1; i <= expectedDays; i++) {
-        const date = new Date(
-          this.month.getFullYear(),
-          this.month.getMonth(),
-          i
-        );
-        const day = new AttendanceDay(date);
-        this.dailyRegister.push(day);
-      }
-    } else if (currentDays > expectedDays) {
-      this.dailyRegister.splice(expectedDays);
-    }
-
-    this.dailyRegister.forEach((day) => {
-      day.date.setMonth(this.month.getMonth());
-      day.date.setFullYear(this.month.getFullYear());
-    });
-  }
-
-  private calculateFromDailyRegister(status: AttendanceStatus) {
-    let count = 0;
-    this.dailyRegister.forEach((day) => {
-      if (day.status === status) {
-        count++;
-      }
-    });
-    return count;
-  }
-
-  public getDaysWorkingFromDailyAttendance() {
-    return (
-      this.dailyRegister.length -
-      this.calculateFromDailyRegister(AttendanceStatus.HOLIDAY) -
-      this.calculateFromDailyRegister(AttendanceStatus.UNKNOWN)
-    );
-  }
-
-  public getDaysAttendedFromDailyAttendance() {
-    return (
-      this.calculateFromDailyRegister(AttendanceStatus.PRESENT) +
-      this.calculateFromDailyRegister(AttendanceStatus.LATE)
-    );
-  }
-
-  public getDaysExcusedFromDailyAttendance() {
-    return this.calculateFromDailyRegister(AttendanceStatus.EXCUSED);
-  }
-
-  public getDaysLateFromDailyAttendance() {
-    return this.calculateFromDailyRegister(AttendanceStatus.LATE);
-  }
 
   getAttendancePercentage() {
     return this.daysAttended / (this.daysWorking - this.daysExcused);
