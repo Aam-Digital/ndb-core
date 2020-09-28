@@ -1,5 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { AttendanceMonth } from "../model/attendance-month";
 import { ChildrenService } from "../../children/children.service";
 import { ColumnDescription } from "../../../core/entity-subrecord/entity-subrecord/column-description";
@@ -13,13 +12,13 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   selector: "app-child-attendance",
   templateUrl: "./child-attendance.component.html",
 })
-export class ChildAttendanceComponent implements OnInit {
-  childId: string;
-  records: Array<AttendanceMonth>;
-  detailsComponent = AttendanceDetailsComponent;
-
+export class ChildAttendanceComponent implements OnChanges {
+  @Input() childId: string;
   @Input() institution: string;
   @Input() showDailyAttendanceOfLatest = false;
+
+  records: Array<AttendanceMonth>;
+  detailsComponent = AttendanceDetailsComponent;
 
   columns: Array<ColumnDescription> = [
     new ColumnDescription(
@@ -73,17 +72,13 @@ export class ChildAttendanceComponent implements OnInit {
   ];
 
   constructor(
-    private route: ActivatedRoute,
     private childrenService: ChildrenService,
     private datePipe: DatePipe,
     private percentPipe: PercentPipe
   ) {}
 
-  ngOnInit() {
-    this.route.paramMap.subscribe((params) => {
-      this.childId = params.get("id").toString();
-      this.loadData(this.childId);
-    });
+  ngOnChanges(changes: SimpleChanges) {
+    this.loadData(this.childId);
   }
 
   loadData(id: string) {

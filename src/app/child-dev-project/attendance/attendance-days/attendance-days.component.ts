@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, ViewChild } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewChild,
+} from "@angular/core";
 import { AttendanceDay, AttendanceStatus } from "../model/attendance-day";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { AttendanceMonth } from "../model/attendance-month";
@@ -10,7 +16,7 @@ import { MatSelect } from "@angular/material/select";
   templateUrl: "./attendance-days.component.html",
   styleUrls: ["./attendance-days.component.scss"],
 })
-export class AttendanceDaysComponent implements OnInit {
+export class AttendanceDaysComponent implements OnChanges {
   @Input() attendanceMonth: AttendanceMonth;
   records = new Array<AttendanceDay>();
 
@@ -29,7 +35,7 @@ export class AttendanceDaysComponent implements OnInit {
     private entityMapper: EntityMapperService
   ) {}
 
-  ngOnInit() {
+  ngOnChanges(changes: SimpleChanges) {
     this.records = this.attendanceMonth.dailyRegister;
   }
 
@@ -38,6 +44,10 @@ export class AttendanceDaysComponent implements OnInit {
   recordTrackByFunction = (index: number, item: any) => item.date.getTime();
 
   getWeeks(): AttendanceDay[] {
+    if (!this.records || this.records.length === 0) {
+      return [];
+    }
+
     const weeks = [];
     let currentWeek = [];
 
