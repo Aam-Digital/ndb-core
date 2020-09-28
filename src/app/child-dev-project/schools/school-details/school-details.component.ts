@@ -98,11 +98,11 @@ export class SchoolDetailsComponent implements OnInit {
       "Are you sure you want to delete this School?"
     );
 
-    dialogRef.afterClosed().subscribe((confirmed) => {
+    dialogRef.afterClosed().subscribe(async (confirmed) => {
       if (confirmed) {
-        this.entityMapperService
-          .remove<School>(this.school)
-          .then(() => this.router.navigate(["/school"]));
+        await this.entityMapperService.remove<School>(this.school);
+
+        await this.router.navigate(["/school"]);
 
         const snackBarRef = this.snackBar.open(
           'Deleted School "' + this.school.name + '"',

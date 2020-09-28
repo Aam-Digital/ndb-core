@@ -18,7 +18,7 @@ import { MatSelect } from "@angular/material/select";
 })
 export class AttendanceDaysComponent implements OnChanges {
   @Input() attendanceMonth: AttendanceMonth;
-  records = new Array<AttendanceDay>();
+  records: AttendanceDay[] = [];
 
   selectedRecord: AttendanceDay;
   selectedRecordChanged = false;
