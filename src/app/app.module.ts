@@ -65,6 +65,8 @@ import { Angulartics2Module } from "angulartics2";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { Angulartics2Piwik } from "angulartics2/piwik";
 
+import * as config from "./child-dev-project/helgo-config.json";
+
 /**
  * Main entry point of the application.
  * Imports required modules and does basic setup.
@@ -143,34 +145,20 @@ export class AppModule {
     this.initNavigationItems();
   }
 
-  private initNavigationItems() {
-    this.navigationItemsService.addMenuItem(
-      new MenuItem("Dashboard", "home", ["/dashboard"])
-    );
-    this.navigationItemsService.addMenuItem(
-      new MenuItem("Children", "child", ["/child"])
-    );
-    this.navigationItemsService.addMenuItem(
-      new MenuItem("Schools", "university", ["/school"])
-    );
-    this.navigationItemsService.addMenuItem(
-      new MenuItem("Notes", "file-text", ["/note"])
-    );
-    this.navigationItemsService.addMenuItem(
-      new MenuItem("Attendance Register", "table", ["/attendance"])
-    );
-    this.navigationItemsService.addMenuItem(
-      new MenuItem("Admin", "wrench", ["/admin"], true)
-    );
-    this.navigationItemsService.addMenuItem(
-      new MenuItem("Users", "user", ["/users"], true)
-    );
-    this.navigationItemsService.addMenuItem(
-      new MenuItem("Database Conflicts", "wrench", ["/admin/conflicts"], true)
-    );
-    this.navigationItemsService.addMenuItem(
-      new MenuItem("Help", "question-circle", ["/help"])
-    );
+  /** Initializes menu entries from XXX-config.json
+   *
+   */
+  initNavigationItems() {
+    config.config.forEach((element) => {
+      this.navigationItemsService.addMenuItem(
+        new MenuItem(
+          element.name,
+          element.icon,
+          [element.link],
+          element.requiresAdmin
+        )
+      );
+    });
   }
 }
 
