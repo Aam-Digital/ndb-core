@@ -45,6 +45,7 @@ describe("PreviousSchoolsComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(PreviousSchoolsComponent);
     component = fixture.componentInstance;
+    component.child = testChild;
     fixture.detectChanges();
   });
 
@@ -52,12 +53,11 @@ describe("PreviousSchoolsComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("calls children service with id from route", (done) => {
+  it("it calls children service with id from passed child", (done) => {
     const childrenService = fixture.debugElement.injector.get(ChildrenService);
     spyOn(component, "loadData").and.callThrough();
     spyOn(childrenService, "getSchoolsWithRelations").and.callThrough();
 
-    component.child = testChild;
     component.ngOnChanges({
       child: new SimpleChange(undefined, testChild, false),
     });
