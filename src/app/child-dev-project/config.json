@@ -1,0 +1,31 @@
+{
+  "config": [
+    {
+      "name": "Dashboard",
+      "icon": "Icon",
+      "link": "/dashboard",
+      "component": "dashboard"
+    },
+    {
+      "name": "Children",
+      "component": {
+        "name": "childList",
+        "config": {
+          "component": {
+            "name": "childDetails",
+            "config": {
+
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Schools",
+      "component": {}
+    },
+    {
+      "name": "Notes"
+    }
+  ]
+}
