@@ -16,6 +16,7 @@ import { ColumnDescription } from "../../core/entity-subrecord/entity-subrecord/
 import { ColumnDescriptionInputType } from "../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 import moment from "moment";
 import { isValidDate } from "../../utils/utils";
+import { Child } from "../children/model/child";
 
 @Component({
   selector: "app-previous-schools",
@@ -39,7 +40,7 @@ export class PreviousSchoolsComponent implements OnInit, OnChanges {
     return "hsl(" + color + ", 100%, 85%)";
   }
 
-  @Input() childId: string;
+  @Input() child: Child;
   @Output() changedRecordInEntitySubrecord = new EventEmitter<any>();
   records = new Array<ChildSchoolRelation>();
   columns = new Array<ColumnDescription>();
@@ -56,12 +57,12 @@ export class PreviousSchoolsComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty("childId")) {
-      this.loadData(this.childId);
+      this.loadData(this.child.getId());
     }
   }
 
   async loadData(id: string) {
-    if (!this.childId || this.childId === "") {
+    if (!this.child.getId() || this.child.getId() === "") {
       return;
     }
 
@@ -121,7 +122,7 @@ export class PreviousSchoolsComponent implements OnInit, OnChanges {
   }
 
   generateNewRecordFactory() {
-    const childId = this.childId;
+    const childId = this.child.getId();
     return () => {
       const newPreviousSchool = new ChildSchoolRelation(uniqid());
       newPreviousSchool.childId = childId;
