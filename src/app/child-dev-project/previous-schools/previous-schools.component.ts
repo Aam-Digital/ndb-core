@@ -56,7 +56,7 @@ export class PreviousSchoolsComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.hasOwnProperty("childId")) {
+    if (changes.hasOwnProperty("child")) {
       this.loadData(this.child.getId());
     }
   }

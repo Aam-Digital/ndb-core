@@ -14,13 +14,14 @@ import { SessionService } from "../../core/session/session-service/session.servi
 import { ChildPhotoService } from "../children/child-photo-service/child-photo.service";
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
 import { SimpleChange } from "@angular/core";
+import { Child } from "../children/model/child";
 
 describe("PreviousSchoolsComponent", () => {
   let component: PreviousSchoolsComponent;
   let fixture: ComponentFixture<PreviousSchoolsComponent>;
 
   const mockedSession = { getCurrentUser: () => "testUser" };
-  const testChildId = "22";
+  const testChild = new Child("22");
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -56,15 +57,15 @@ describe("PreviousSchoolsComponent", () => {
     spyOn(component, "loadData").and.callThrough();
     spyOn(childrenService, "getSchoolsWithRelations").and.callThrough();
 
-    component.childId = testChildId;
+    component.child = testChild;
     component.ngOnChanges({
-      childId: new SimpleChange(undefined, testChildId, false),
+      child: new SimpleChange(undefined, testChild, false),
     });
 
     fixture.whenStable().then(() => {
-      expect(component.loadData).toHaveBeenCalledWith(testChildId);
+      expect(component.loadData).toHaveBeenCalledWith(testChild.getId());
       expect(childrenService.getSchoolsWithRelations).toHaveBeenCalledWith(
-        testChildId
+        testChild.getId()
       );
       done();
     });
