@@ -65,6 +65,7 @@ import { Angulartics2Module } from "angulartics2";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { Angulartics2Piwik } from "angulartics2/piwik";
 
+// This loads the Helgo-specific config file
 import * as config from "./child-dev-project/helgo-config.json";
 
 /**
@@ -145,11 +146,11 @@ export class AppModule {
     this.initNavigationItems();
   }
 
-  /** Initializes menu entries from XXX-config.json
-   *
+  /**
+   * Initializes menu entries from XXX-config.json
    */
   initNavigationItems() {
-    config.config.forEach((element) => {
+    config.navigationMenu.forEach((element) => {
       this.navigationItemsService.addMenuItem(
         new MenuItem(
           element.name,

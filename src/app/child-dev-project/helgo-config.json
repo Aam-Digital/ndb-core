@@ -1,18 +1,38 @@
 {
-  "config": [
+  "navigationMenu": [
     {
       "name": "Dashboard",
       "icon": "home",
       "link": "/dashboard",
       "component": "dashboard",
-      "requiresAdmin": false
+      "requiresAdmin": false,
+      "config": {
+
+      }
     },
     {
       "name": "Children",
       "icon": "child",
       "link": "/child",
-      "component": "child",
-      "requiresAdmin": false
+      "component": "childList",
+      "requiresAdmin": false,
+      "config": {
+        "routing": [
+            {
+              "link": "/:id",
+              "component": "ListView",
+              "config": {
+                "entity": "child",
+                "submenu": [
+                  {
+                    "name": "Education",
+                    "components": ["previousSchools", "aserResults"]
+                }
+              ]
+            }
+          }
+        ]
+      } 
     },
     {
       "name": "Schools",
