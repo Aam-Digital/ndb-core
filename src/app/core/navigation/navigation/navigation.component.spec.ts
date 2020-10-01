@@ -32,13 +32,15 @@ describe("NavigationComponent", () => {
   let component: NavigationComponent;
   let fixture: ComponentFixture<NavigationComponent>;
 
-  let navigationItemsService: NavigationItemsService;
+  let navigationItemsService: jasmine.SpyObj<NavigationItemsService>;
   let sessionService: MockSessionService;
 
   beforeEach(async(() => {
     sessionService = new MockSessionService(new EntitySchemaService());
-    navigationItemsService = new NavigationItemsService();
-    navigationItemsService.addMenuItem(new MenuItem("test", "test-icon", []));
+    navigationItemsService = jasmine.createSpyObj(["getMenuItems"]);
+    navigationItemsService.getMenuItems.and.returnValue([
+      new MenuItem("test", "test-icon", []),
+    ]);
 
     TestBed.configureTestingModule({
       imports: [

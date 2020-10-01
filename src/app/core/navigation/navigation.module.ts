@@ -26,6 +26,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Angulartics2Module } from "angulartics2";
+import { ConfigModule } from "../config/config.module";
 
 /**
  * Manages the main app navigation menu
@@ -41,6 +42,7 @@ import { Angulartics2Module } from "angulartics2";
     MatButtonModule,
     MatTooltipModule,
     Angulartics2Module,
+    ConfigModule,
   ],
   declarations: [NavigationComponent],
   exports: [NavigationComponent],

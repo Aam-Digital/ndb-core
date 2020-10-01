@@ -34,6 +34,26 @@ import { HowToComponent } from "./core/help/how-to/how-to.component";
 import { UserListComponent } from "./core/admin/user-list/user-list.component";
 import { AttendanceAnalysisComponent } from "./child-dev-project/attendance/attendance-analysis/attendance-analysis.component";
 
+const nameComponentMap = {
+  Dashboard: DashboardComponent,
+  UserAccount: UserAccountComponent,
+  NotesManager: NotesManagerComponent,
+  UserList: UserListComponent,
+  Help: HowToComponent,
+  AttendanceManager: AttendanceManagerComponent,
+  AddMonthAttendance: AddMonthAttendanceComponent,
+  AddDayAttendance: AddDayAttendanceComponent,
+  SchoolsList: SchoolsListComponent,
+  SchoolDetails: SchoolDetailsComponent,
+  ChildrenList: ChildrenListComponent,
+  ChildDetails: ChildDetailsComponent,
+  ChildAttendance: ChildAttendanceComponent,
+};
+
+function createRoutes(): Routes {
+  return [];
+}
+
 /**
  * All routes configured for the main app routing.
  */
@@ -57,7 +77,7 @@ export const routes: Routes = [
     canActivate: [AdminGuard],
     loadChildren: () =>
       import("./conflict-resolution/conflict-resolution.module").then(
-        (m) => m.ConflictResolutionModule
+        (m) => m["ConflictResolutionModule"]
       ),
   },
   { path: "help", component: HowToComponent },

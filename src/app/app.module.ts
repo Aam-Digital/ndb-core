@@ -17,7 +17,7 @@
 
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { ErrorHandler, NgModule } from "@angular/core";
+import { APP_INITIALIZER, ErrorHandler, NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 
@@ -35,8 +35,6 @@ import { UserModule } from "./core/user/user.module";
 import { DashboardModule } from "./child-dev-project/dashboard/dashboard.module";
 import { ChildrenModule } from "./child-dev-project/children/children.module";
 import { SchoolsModule } from "./child-dev-project/schools/schools.module";
-import { NavigationItemsService } from "./core/navigation/navigation-items.service";
-import { MenuItem } from "./core/navigation/menu-item";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
@@ -64,9 +62,11 @@ import { LoggingService } from "./core/logging/logging.service";
 import { Angulartics2Module } from "angulartics2";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { Angulartics2Piwik } from "angulartics2/piwik";
+import { ConfigService } from "./core/config/config.service";
 
-// This loads the Helgo-specific config file
-import * as config from "./child-dev-project/helgo-config.json";
+export function configFactory(configService: ConfigService) {
+  return (): Promise<any> => configService.loadConfig();
+}
 
 /**
  * Main entry point of the application.
@@ -132,34 +132,20 @@ import * as config from "./child-dev-project/helgo-config.json";
     CookieService,
     AnalyticsService,
     Angulartics2Piwik,
+    ConfigService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: configFactory,
+      deps: [ConfigService],
+      multi: true,
+    },
   ],
   bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor(
-    private navigationItemsService: NavigationItemsService,
-    public matIconRegistry: MatIconRegistry
-  ) {
+  constructor(public matIconRegistry: MatIconRegistry) {
     matIconRegistry.registerFontClassAlias("fontawesome", "fa");
     matIconRegistry.setDefaultFontSetClass("fa");
-
-    this.initNavigationItems();
-  }
-
-  /**
-   * Initializes menu entries from XXX-config.json
-   */
-  initNavigationItems() {
-    config.navigationMenu.forEach((element) => {
-      this.navigationItemsService.addMenuItem(
-        new MenuItem(
-          element.name,
-          element.icon,
-          [element.link],
-          element.requiresAdmin
-        )
-      );
-    });
   }
 }
 
