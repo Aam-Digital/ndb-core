@@ -18,7 +18,7 @@ import { ConfirmationDialogService } from "../../../core/confirmation-dialog/con
 import { Database } from "../../../core/database/database";
 import { MockDatabase } from "../../../core/database/mock-database";
 import { Location } from "@angular/common";
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service"; //  Necessary for usage of uniqid in the component
 import { ChildrenService } from "app/child-dev-project/children/children.service";
@@ -28,7 +28,9 @@ import { RouterTestingModule } from "@angular/router/testing";
 describe("SchoolDetailComponent", () => {
   let component: SchoolDetailsComponent;
   let fixture: ComponentFixture<SchoolDetailsComponent>;
-  const mockedRoute = { snapshot: { params: { id: "new" } } };
+  const mockedRoute = {
+    paramMap: of({ get: () => "new" }),
+  };
   const mockedRouter = { navigate: () => null };
   const mockedLocation = { back: () => null };
   const mockedSnackBar = {
