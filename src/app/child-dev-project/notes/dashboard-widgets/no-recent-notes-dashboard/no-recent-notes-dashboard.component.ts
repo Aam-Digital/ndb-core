@@ -12,6 +12,7 @@ import { take } from "rxjs/operators";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatSort } from "@angular/material/sort";
 import { MatPaginator } from "@angular/material/paginator";
+import { DashboardWidgetComponent } from "app/child-dev-project/dashboard/dashboard-widget.component";
 
 /**
  * Dashboard Widget displaying children that do not have a recently added Note.
@@ -24,7 +25,8 @@ import { MatPaginator } from "@angular/material/paginator";
   templateUrl: "./no-recent-notes-dashboard.component.html",
   styleUrls: ["./no-recent-notes-dashboard.component.scss"],
 })
-export class NoRecentNotesDashboardComponent implements OnInit, AfterViewInit {
+export class NoRecentNotesDashboardComponent
+  implements DashboardWidgetComponent, OnInit, AfterViewInit {
   /**
    * number of days since last note that children should be considered having a "recent" note.
    */
@@ -54,6 +56,15 @@ export class NoRecentNotesDashboardComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(private childrenService: ChildrenService) {}
+
+  initFromConfig(config: any) {
+    if (config?.sinceDays) {
+      this.sinceDays = config.sinceDays;
+    }
+    if (config?.fromBeginningOfWeek) {
+      this.fromBeginningOfWeek = config.fromBeginningOfWeek;
+    }
+  }
 
   async ngOnInit() {
     await this.loadConcernedChildrenFromIndex();

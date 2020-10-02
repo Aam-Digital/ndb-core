@@ -5,13 +5,16 @@ import {
 } from "./progress-dashboard-config";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { AlertService } from "../../../core/alerts/alert.service";
+import { DashboardWidgetComponent } from "../dashboard-widget.component";
+import { DashboardWidgetConfig } from "../dashboard-widget-config.interface";
 
 @Component({
   selector: "app-progress-dashboard",
   templateUrl: "./progress-dashboard.component.html",
   styleUrls: ["./progress-dashboard.component.scss"],
 })
-export class ProgressDashboardComponent implements OnInit {
+export class ProgressDashboardComponent
+  implements DashboardWidgetComponent, OnInit {
   @Input() dashboardConfigId = "";
   data: ProgressDashboardConfig;
   configure = false;
@@ -20,6 +23,10 @@ export class ProgressDashboardComponent implements OnInit {
     private entityMapper: EntityMapperService,
     private alertService: AlertService
   ) {}
+
+  initFromConfig(config: any) {
+    this.dashboardConfigId = config.dashboardConfigId;
+  }
 
   ngOnInit() {
     this.data = new ProgressDashboardConfig(this.dashboardConfigId);

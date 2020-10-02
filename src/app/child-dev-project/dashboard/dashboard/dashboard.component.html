@@ -16,13 +16,8 @@
   -->
 
 <div fxLayout="row wrap" fxLayout.xs="column wrap" fxLayoutGap="20px" class='widget-wrapper'>
-  <app-children-count-dashboard fxFlex='30'></app-children-count-dashboard>
-  <app-recent-notes-dashboard fxFlex='30'></app-recent-notes-dashboard>
-  <app-no-recent-notes-dashboard fxFlex='30' [sinceDays]='28' [fromBeginningOfWeek]='false'></app-no-recent-notes-dashboard>
-  <app-attendance-week-dashboard fxFlex='30' [daysOffset]='0' periodLabel='last week'></app-attendance-week-dashboard>
-  <app-attendance-week-dashboard fxFlex='30' [daysOffset]='7' periodLabel='this week'></app-attendance-week-dashboard>
-  <app-progress-dashboard [dashboardConfigId]='"1"' fxFlex="30"></app-progress-dashboard>
-  <app-attendance-average-dashboard fxFlex="30"></app-attendance-average-dashboard>
-  <app-attendance-warnings-dashboard fxFlex="30"></app-attendance-warnings-dashboard>
+  <div fxFlex="30" *ngFor="let widgetConfig of widgets">
+    <ng-template [appDashboardWidget]="widgetConfig"></ng-template>
+  </div>
 </div>
 

@@ -3,6 +3,7 @@ import { ChildrenService } from "../../../children/children.service";
 import { Router } from "@angular/router";
 import { AttendanceMonth } from "../../model/attendance-month";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { DashboardWidgetComponent } from "app/child-dev-project/dashboard/dashboard-widget.component";
 
 @UntilDestroy()
 @Component({
@@ -10,7 +11,8 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   templateUrl: "./attendance-warnings-dashboard.component.html",
   styleUrls: ["./attendance-warnings-dashboard.component.scss"],
 })
-export class AttendanceWarningsDashboardComponent implements OnInit {
+export class AttendanceWarningsDashboardComponent
+  implements DashboardWidgetComponent, OnInit {
   readonly ATTENDANCE_THRESHOLD = AttendanceMonth.THRESHOLD_WARNING;
 
   lastMonthsLowAttendence = []; // [[Child, last_months_attendance]]
@@ -19,6 +21,8 @@ export class AttendanceWarningsDashboardComponent implements OnInit {
     private childrenService: ChildrenService,
     private router: Router
   ) {}
+
+  initFromConfig(config: any) {}
 
   async ngOnInit() {
     await this.loadLastAttendances();

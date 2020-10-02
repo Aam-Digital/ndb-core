@@ -17,35 +17,43 @@
         "config": {
             "widgets": [
                 {
-                    "dashboardComponent": "ChildrenCountDashboard"
+                    "component": "ChildrenCountDashboard"
                 },
                 {
-                    "dashboardComponent": "RecentNotesDashboard"
+                    "component": "RecentNotesDashboard"
                 },
                 {
-                    "dashboardComponent": "NoRecentNotesDashboard",
-                    "sinceDays": 28,
-                    "fromBeginningOfWeek": false
+                    "component": "NoRecentNotesDashboard",
+                    "config": {
+                        "sinceDays": 28,
+                        "fromBeginningOfWeek": false
+                    }
                 },
                 {
-                    "dashboardComponent": "AttendanceWeekDashboard",
-                    "daysOffset": 0,
-                    "periodLabel": "last week"
+                    "component": "AttendanceWeekDashboard",
+                    "config": {
+                        "daysOffset": 0,
+                        "periodLabel": "last week"
+                    }
                 },
                 {
-                    "dashboardComponent": "AttendanceWeekDashboard",
-                    "daysOffset": 7,
-                    "periodLabel": "this week"
+                    "component": "AttendanceWeekDashboard",
+                    "config": {
+                        "daysOffset": 7,
+                        "periodLabel": "this week"
+                    }
                 },
                 {
-                    "dashboardComponent": "ProgressDashboard",
-                    "dashboardConfigId": "1"
+                    "component": "ProgressDashboard",
+                    "config": {
+                        "dashboardConfigId": "1"
+                    }
                 },
                 {
-                    "dashboardComponent": "AttendanceAverageDashboard"
+                    "component": "AttendanceAverageDashboard"
                 },
                 {
-                    "dashboardComponent": "AttendanceWarningsDashboard"
+                    "component": "AttendanceWarningsDashboard"
                 }
             ]
         }

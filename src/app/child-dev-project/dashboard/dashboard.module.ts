@@ -28,6 +28,7 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { ChildrenModule } from "../children/children.module";
 import { ProgressDashboardComponent } from "./progress-dashboard/progress-dashboard.component";
 import { FormsModule } from "@angular/forms";
+import { DashboardWidgetDirective } from "./dashboard/dashboard-widget.directive";
 
 @NgModule({
   imports: [
@@ -42,6 +43,10 @@ import { FormsModule } from "@angular/forms";
     MatFormFieldModule,
     ChildrenModule,
   ],
-  declarations: [DashboardComponent, ProgressDashboardComponent],
+  declarations: [
+    DashboardComponent,
+    DashboardWidgetDirective,
+    ProgressDashboardComponent,
+  ],
 })
 export class DashboardModule {}

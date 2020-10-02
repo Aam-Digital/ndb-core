@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ChildrenService } from "../../../children/children.service";
 import moment from "moment";
+import { DashboardWidgetComponent } from "app/child-dev-project/dashboard/dashboard-widget.component";
 
 /**
  * Dashboard Widget displaying children that have a recently added Note.
@@ -10,7 +11,8 @@ import moment from "moment";
   templateUrl: "./recent-notes-dashboard.component.html",
   styleUrls: ["./recent-notes-dashboard.component.scss"],
 })
-export class RecentNotesDashboardComponent implements OnInit {
+export class RecentNotesDashboardComponent
+  implements DashboardWidgetComponent, OnInit {
   /**
    * number of days since last note that children should be considered having a "recent" note.
    */
@@ -31,6 +33,15 @@ export class RecentNotesDashboardComponent implements OnInit {
   count: number = 0;
 
   constructor(private childrenService: ChildrenService) {}
+
+  initFromConfig(config: any) {
+    if (config?.sinceDays) {
+      this.sinceDays = config.sinceDays;
+    }
+    if (config?.fromBeginningOfWeek) {
+      this.fromBeginningOfWeek = config.fromBeginningOfWeek;
+    }
+  }
 
   async ngOnInit() {
     await this.loadConcernedChildrenFromIndex();

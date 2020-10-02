@@ -15,7 +15,9 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { DashboardWidgetConfig } from "../dashboard-widget-config.interface";
 
 @Component({
   selector: "app-dashboard",
@@ -23,7 +25,13 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./dashboard.component.scss"],
 })
 export class DashboardComponent implements OnInit {
-  constructor() {}
+  widgets: DashboardWidgetConfig[] = [];
 
-  ngOnInit() {}
+  constructor(private activatedRoute: ActivatedRoute) {}
+
+  ngOnInit() {
+    this.activatedRoute.data.subscribe((config) => {
+      this.widgets = config.widgets;
+    });
+  }
 }

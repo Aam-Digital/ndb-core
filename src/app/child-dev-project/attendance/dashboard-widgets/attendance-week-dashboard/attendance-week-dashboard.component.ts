@@ -6,6 +6,7 @@ import { AttendanceDay, AttendanceStatus } from "../../model/attendance-day";
 import { Child } from "../../../children/model/child";
 import { forkJoin } from "rxjs";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { DashboardWidgetComponent } from "app/child-dev-project/dashboard/dashboard-widget.component";
 
 @UntilDestroy()
 @Component({
@@ -13,7 +14,8 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   templateUrl: "./attendance-week-dashboard.component.html",
   styleUrls: ["./attendance-week-dashboard.component.scss"],
 })
-export class AttendanceWeekDashboardComponent implements OnInit {
+export class AttendanceWeekDashboardComponent
+  implements DashboardWidgetComponent, OnInit {
   @Input() daysOffset: number;
   @Input() periodLabel: string;
 
@@ -34,6 +36,15 @@ export class AttendanceWeekDashboardComponent implements OnInit {
     private childrenService: ChildrenService,
     private router: Router
   ) {}
+
+  initFromConfig(config: any) {
+    if (config?.daysOffset) {
+      this.daysOffset = config.daysOffset;
+    }
+    if (config?.periodLabel) {
+      this.periodLabel = config.periodLabel;
+    }
+  }
 
   ngOnInit() {
     this.loadAttendanceOfAbsentees(this.daysOffset);

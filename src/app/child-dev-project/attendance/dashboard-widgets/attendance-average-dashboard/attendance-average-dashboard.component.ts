@@ -3,6 +3,7 @@ import { ChildrenService } from "../../../children/children.service";
 import { Child } from "../../../children/model/child";
 import { Router } from "@angular/router";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { DashboardWidgetComponent } from "app/child-dev-project/dashboard/dashboard-widget.component";
 
 @UntilDestroy()
 @Component({
@@ -10,7 +11,8 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   templateUrl: "./attendance-average-dashboard.component.html",
   styleUrls: ["./attendance-average-dashboard.component.scss"],
 })
-export class AttendanceAverageDashboardComponent implements OnInit {
+export class AttendanceAverageDashboardComponent
+  implements DashboardWidgetComponent, OnInit {
   readonly ATTENDANCE_THRESHOLD = 0.9;
 
   overallAttendance: number;
@@ -20,6 +22,8 @@ export class AttendanceAverageDashboardComponent implements OnInit {
     private childrenService: ChildrenService,
     private router: Router
   ) {}
+
+  initFromConfig(config: any) {}
 
   async ngOnInit() {
     await this.loadAverageAttendances();

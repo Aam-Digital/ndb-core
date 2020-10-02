@@ -1,21 +1,24 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DashboardComponent } from "./dashboard.component";
-import { ConfigService } from "app/core/config/config.service";
+import { ActivatedRoute } from "@angular/router";
+import { BehaviorSubject } from "rxjs";
+import { ProgressDashboardComponent } from "../progress-dashboard/progress-dashboard.component";
 
 describe("DashboardComponent", () => {
   let component: DashboardComponent;
   let fixture: ComponentFixture<DashboardComponent>;
 
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockRouteData: BehaviorSubject<any>;
 
   beforeEach(() => {
-    mockConfigService = jasmine.createSpyObj(["getConfig"]);
-    mockConfigService.getConfig.and.returnValue({ widgets: [] });
+    mockRouteData = new BehaviorSubject({ widgets: [] });
 
     TestBed.configureTestingModule({
-      declarations: [DashboardComponent],
+      declarations: [DashboardComponent, ProgressDashboardComponent],
       imports: [],
-      providers: [{ provide: ConfigService, useValue: mockConfigService }],
+      providers: [
+        { provide: ActivatedRoute, useValue: { data: mockRouteData } },
+      ],
     }).compileComponents();
   });
 
@@ -27,5 +30,22 @@ describe("DashboardComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should init with widget config from activated route", () => {
+    const testDashboardConfig = {
+      widgets: [
+        {
+          component: "ProgressDashboard",
+        },
+        {
+          component: "ProgressDashboard",
+        },
+      ],
+    };
+
+    mockRouteData.next(testDashboardConfig);
+
+    expect(component.widgets).toEqual(testDashboardConfig.widgets);
   });
 });
