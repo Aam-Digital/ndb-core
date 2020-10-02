@@ -5,8 +5,6 @@ import config from "./config-fix.json";
   providedIn: "root",
 })
 export class ConfigService {
-  static readonly PREFIX_VIEW_CONFIG = "view:";
-
   constructor() {}
 
   public async loadConfig() {
@@ -18,7 +16,19 @@ export class ConfigService {
   }
 
   public getConfig<T>(id: string): T {
-    console.log("config", config);
     return config[id];
+  }
+
+  public getAllConfigs<T>(prefix: string): T[] {
+    const matchingConfigs = [];
+
+    for (const id of Object.keys(config)) {
+      if (id.startsWith(prefix)) {
+        config[id]._id = id;
+        matchingConfigs.push(config[id]);
+      }
+    }
+
+    return matchingConfigs;
   }
 }

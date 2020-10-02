@@ -17,6 +17,7 @@
 
 import { Injectable } from "@angular/core";
 import { ConfigService } from "../config/config.service";
+import { RouterService } from "../view/router.service";
 import { MenuItem } from "./menu-item";
 import { NavigationMenuConfig } from "./navigation-menu-config.interface";
 
@@ -55,7 +56,7 @@ export class NavigationItemsService {
    */
   private checkMenuItemPermissions(link: string): boolean {
     const viewConfig = this.configService.getConfig<any>(
-      ConfigService.PREFIX_VIEW_CONFIG + link
+      RouterService.PREFIX_VIEW_CONFIG + link.replace(/^\//, "")
     );
     return viewConfig?.requiresAdmin;
   }

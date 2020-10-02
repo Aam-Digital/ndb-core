@@ -63,6 +63,8 @@ import { Angulartics2Module } from "angulartics2";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { Angulartics2Piwik } from "angulartics2/piwik";
 import { ConfigService } from "./core/config/config.service";
+import { ViewModule } from "./core/view/view.module";
+import { RouterService } from "./core/view/router.service";
 
 export function configFactory(configService: ConfigService) {
   return (): Promise<any> => configService.loadConfig();
@@ -87,6 +89,7 @@ export function configFactory(configService: ConfigService) {
     FlexLayoutModule,
     HttpClientModule,
     routing,
+    ViewModule,
     FormsModule,
     ConfirmationDialogModule,
     FormDialogModule,
@@ -143,9 +146,14 @@ export function configFactory(configService: ConfigService) {
   bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor(public matIconRegistry: MatIconRegistry) {
+  constructor(
+    public matIconRegistry: MatIconRegistry,
+    private routerService: RouterService
+  ) {
     matIconRegistry.registerFontClassAlias("fontawesome", "fa");
     matIconRegistry.setDefaultFontSetClass("fa");
+
+    routerService.initRouting();
   }
 }
 

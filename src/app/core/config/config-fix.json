@@ -12,20 +12,57 @@
             {"name": "Help", "icon": "question-circle", "link": "/help"}
         ]
     },
-    "view:/": {"component": "Dashboard"},
-    "view:/user": {"component": "UserAccount"},
-    "view:/note": {"component": "NotesManager"},
-    "view:/admin": {"component": "Admin", "requiresAdmin": true},
-    "view:/admin/conflicts": {"component": "Admin", "requiresAdmin": true, "ignoreForRouting": true},
-    "view:/users": {"component": "UserList", "requiresAdmin": true},
-    "view:/help": {"component": "Help"},
-    "view:/attendance": {"component": "AttendanceManager"},
-    "view:/attendance/analysis": {"component": "AttendanceAnalysis"},
-    "view:/attendance/add/month": {"component": "AddMonthAttendance"},
-    "view:/attendance/add/day": {"component": "AddDayAttendance"},
+    "view:": {
+        "component": "Dashboard",
+        "config": {
+            "widgets": [
+                {
+                    "dashboardComponent": "ChildrenCountDashboard"
+                },
+                {
+                    "dashboardComponent": "RecentNotesDashboard"
+                },
+                {
+                    "dashboardComponent": "NoRecentNotesDashboard",
+                    "sinceDays": 28,
+                    "fromBeginningOfWeek": false
+                },
+                {
+                    "dashboardComponent": "AttendanceWeekDashboard",
+                    "daysOffset": 0,
+                    "periodLabel": "last week"
+                },
+                {
+                    "dashboardComponent": "AttendanceWeekDashboard",
+                    "daysOffset": 7,
+                    "periodLabel": "this week"
+                },
+                {
+                    "dashboardComponent": "ProgressDashboard",
+                    "dashboardConfigId": "1"
+                },
+                {
+                    "dashboardComponent": "AttendanceAverageDashboard"
+                },
+                {
+                    "dashboardComponent": "AttendanceWarningsDashboard"
+                }
+            ]
+        }
+    },
+    "view:user": {"component": "UserAccount"},
+    "view:note": {"component": "NotesManager"},
+    "view:admin": {"component": "Admin", "requiresAdmin": true},
+    "view:admin/conflicts": {"component": "Admin", "requiresAdmin": true},
+    "view:users": {"component": "UserList", "requiresAdmin": true},
+    "view:help": {"component": "Help"},
+    "view:attendance": {"component": "AttendanceManager"},
+    "view:attendance/analysis": {"component": "AttendanceAnalysis"},
+    "view:attendance/add/month": {"component": "AddMonthAttendance"},
+    "view:attendance/add/day": {"component": "AddDayAttendance"},
     
-    "view:/school": {"component": "SchoolsList"},
-    "view:/school/:id": {
+    "view:school": {"component": "SchoolsList"},
+    "view:school/:id": {
         "component": "SchoolDetails",
         "config": {
             "submenu": [
@@ -36,9 +73,9 @@
             ]
         }
     },
-    "view:/child": {"component": "ChildrenList"},
-    "view:/child/:id": {
-        "component": "ChildLists",
+    "view:child": {"component": "ChildrenList"},
+    "view:child/:id": {
+        "component": "ChildDetails",
         "config": {
             "submenu": [
                 {
@@ -47,6 +84,5 @@
                 }
             ]
         }
-    },
-    "view:/child/:id/attendance": {"component": "ChildAttendance"}
+    }
 }

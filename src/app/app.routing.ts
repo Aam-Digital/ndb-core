@@ -34,7 +34,7 @@ import { HowToComponent } from "./core/help/how-to/how-to.component";
 import { UserListComponent } from "./core/admin/user-list/user-list.component";
 import { AttendanceAnalysisComponent } from "./child-dev-project/attendance/attendance-analysis/attendance-analysis.component";
 
-const nameComponentMap = {
+export const COMPONENT_MAP = {
   Dashboard: DashboardComponent,
   UserAccount: UserAccountComponent,
   NotesManager: NotesManagerComponent,
@@ -43,35 +43,20 @@ const nameComponentMap = {
   AttendanceManager: AttendanceManagerComponent,
   AddMonthAttendance: AddMonthAttendanceComponent,
   AddDayAttendance: AddDayAttendanceComponent,
+  AttendanceAnalysis: AttendanceAnalysisComponent,
   SchoolsList: SchoolsListComponent,
   SchoolDetails: SchoolDetailsComponent,
   ChildrenList: ChildrenListComponent,
   ChildDetails: ChildDetailsComponent,
   ChildAttendance: ChildAttendanceComponent,
+  Admin: AdminComponent,
 };
-
-function createRoutes(): Routes {
-  return [];
-}
 
 /**
  * All routes configured for the main app routing.
  */
 export const routes: Routes = [
-  { path: "", component: DashboardComponent },
-  { path: "user", component: UserAccountComponent },
-  { path: "school", component: SchoolsListComponent },
-  { path: "school/:id", component: SchoolDetailsComponent },
-  { path: "child", component: ChildrenListComponent },
-  { path: "child/:id", component: ChildDetailsComponent },
-  { path: "child/:id/attendance", component: ChildAttendanceComponent },
-  { path: "note", component: NotesManagerComponent },
-  { path: "attendance", component: AttendanceManagerComponent },
-  { path: "attendance/analysis", component: AttendanceAnalysisComponent },
-  { path: "attendance/add/month", component: AddMonthAttendanceComponent },
-  { path: "attendance/add/day", component: AddDayAttendanceComponent },
-  { path: "admin", component: AdminComponent, canActivate: [AdminGuard] },
-  { path: "users", component: UserListComponent, canActivate: [AdminGuard] },
+  // routes are added dynamically by the RouterService
   {
     path: "admin/conflicts",
     canActivate: [AdminGuard],
@@ -80,7 +65,6 @@ export const routes: Routes = [
         (m) => m["ConflictResolutionModule"]
       ),
   },
-  { path: "help", component: HowToComponent },
   { path: "**", redirectTo: "/" },
 ];
 

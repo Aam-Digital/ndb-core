@@ -18,6 +18,7 @@
 import { NavigationItemsService } from "./navigation-items.service";
 import { MenuItem } from "./menu-item";
 import { ConfigService } from "../config/config.service";
+import { RouterService } from "../view/router.service";
 
 describe("NavigationItemsService", () => {
   let mockConfigService: jasmine.SpyObj<ConfigService>;
@@ -73,9 +74,9 @@ describe("NavigationItemsService", () => {
 
     mockConfigService.getConfig.and.callFake((id) => {
       switch (id) {
-        case ConfigService.PREFIX_VIEW_CONFIG + testConfig.items[0].link:
+        case RouterService.PREFIX_VIEW_CONFIG + "dashboard":
           return { requiresAdmin: true } as any;
-        case ConfigService.PREFIX_VIEW_CONFIG + testConfig.items[1].link:
+        case RouterService.PREFIX_VIEW_CONFIG + "child":
           return { requiresAdmin: false } as any;
         default:
           return testConfig;
