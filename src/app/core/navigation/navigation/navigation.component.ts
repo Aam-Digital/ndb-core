@@ -17,8 +17,10 @@
 
 import { Component, OnInit } from "@angular/core";
 import { MenuItem } from "../menu-item";
-import { NavigationItemsService } from "../navigation-items.service";
 import { AdminGuard } from "../../admin/admin.guard";
+import { ConfigService } from "app/core/config/config.service";
+import { NavigationMenuConfig } from "../navigation-menu-config.interface";
+import { RouterService } from "../../view/router.service";
 
 /**
  * Main app menu listing.
@@ -31,17 +33,43 @@ import { AdminGuard } from "../../admin/admin.guard";
   styleUrls: ["./navigation.component.scss"],
 })
 export class NavigationComponent implements OnInit {
+  /** name of config array in the config json file */
+  private readonly CONFIG_ID = "navigationMenu";
   /** all menu items to be displayed */
-  public menu_main: MenuItem[];
+  public menuItems: MenuItem[] = [];
 
   constructor(
-    private _navigationItemService: NavigationItemsService,
-    private adminGuard: AdminGuard
+    private adminGuard: AdminGuard,
+    private configService: ConfigService
   ) {}
 
   ngOnInit(): void {
-    this.menu_main = this._navigationItemService
-      .getMenuItems()
-      .filter((e) => !e.requiresAdmin || this.adminGuard.isAdmin());
+    this.initMenuItemsFromConfig();
+  }
+
+  /**
+   * Load menu items from config file
+   */
+  private initMenuItemsFromConfig() {
+    const config: NavigationMenuConfig = this.configService.getConfig<
+      NavigationMenuConfig
+    >(this.CONFIG_ID);
+    for (const configItem of config.items) {
+      if (this.checkMenuItemPermissions(configItem.link)) {
+        this.menuItems.push(
+          new MenuItem(configItem.name, configItem.icon, [configItem.link])
+        );
+      }
+    }
+  }
+
+  /**
+   * Check whether the user has the required rights
+   */
+  private checkMenuItemPermissions(link: string): boolean {
+    const viewConfig = this.configService.getConfig<any>(
+      RouterService.PREFIX_VIEW_CONFIG + link.replace(/^\//, "")
+    );
+    return !viewConfig?.requiresAdmin || this.adminGuard.isAdmin();
   }
 }

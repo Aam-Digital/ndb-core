@@ -20,27 +20,28 @@ import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { NavigationComponent } from "./navigation.component";
 import { RouterTestingModule } from "@angular/router/testing";
 import { MockSessionService } from "../../session/session-service/mock-session.service";
-import { NavigationItemsService } from "../navigation-items.service";
 import { MenuItem } from "../menu-item";
 import { SessionService } from "app/core/session/session-service/session.service";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatIconModule } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { RouterService } from "../../view/router.service";
+import { ConfigService } from "app/core/config/config.service";
 
 describe("NavigationComponent", () => {
   let component: NavigationComponent;
   let fixture: ComponentFixture<NavigationComponent>;
 
-  let navigationItemsService: jasmine.SpyObj<NavigationItemsService>;
   let sessionService: MockSessionService;
 
+  let mockConfigService: jasmine.SpyObj<ConfigService>;
+
   beforeEach(async(() => {
+    mockConfigService = jasmine.createSpyObj(["getConfig"]);
+    mockConfigService.getConfig.and.returnValue({ items: [] });
+
     sessionService = new MockSessionService(new EntitySchemaService());
-    navigationItemsService = jasmine.createSpyObj(["getMenuItems"]);
-    navigationItemsService.getMenuItems.and.returnValue([
-      new MenuItem("test", "test-icon", []),
-    ]);
 
     TestBed.configureTestingModule({
       imports: [
@@ -52,7 +53,7 @@ describe("NavigationComponent", () => {
       declarations: [NavigationComponent],
       providers: [
         { provide: SessionService, useValue: sessionService },
-        { provide: NavigationItemsService, useValue: navigationItemsService },
+        { provide: ConfigService, useValue: mockConfigService },
       ],
     }).compileComponents();
   }));
@@ -67,10 +68,46 @@ describe("NavigationComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should load navigation items correctly", (done) => {
-    fixture.whenRenderingDone().then(() => {
-      expect(component.menu_main.length).toBe(1);
-      done();
+  it("generates menu items from config", function () {
+    const testConfig = {
+      items: [
+        { name: "Dashboard", icon: "home", link: "/dashboard" },
+        { name: "Children", icon: "child", link: "/child" },
+      ],
+    };
+    mockConfigService.getConfig.and.returnValue(testConfig);
+
+    component.ngOnInit();
+    const items = component.menuItems;
+
+    expect(items).toEqual([
+      new MenuItem("Dashboard", "home", ["/dashboard"]),
+      new MenuItem("Children", "child", ["/child"]),
+    ]);
+  });
+
+  it("marks items that require admin rights", function () {
+    const testConfig = {
+      items: [
+        { name: "Dashboard", icon: "home", link: "/dashboard" },
+        { name: "Children", icon: "child", link: "/child" },
+      ],
+    };
+
+    mockConfigService.getConfig.and.callFake((id) => {
+      switch (id) {
+        case RouterService.PREFIX_VIEW_CONFIG + "dashboard":
+          return { requiresAdmin: true } as any;
+        case RouterService.PREFIX_VIEW_CONFIG + "child":
+          return { requiresAdmin: false } as any;
+        default:
+          return testConfig;
+      }
     });
+
+    component.ngOnInit();
+    expect(component.menuItems).toEqual([
+      new MenuItem("Children", "child", ["/child"]),
+    ]);
   });
 });
