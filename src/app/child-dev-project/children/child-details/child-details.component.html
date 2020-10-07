@@ -387,20 +387,10 @@
         Education
       </mat-expansion-panel-header>
 
-      <div
-        *ngIf="child.schoolId"
-        matTooltip="To edit the current school or class, please add to the school history below"
-      >
-        <em>
-          Currently attending class {{ child.schoolClass }} at
-          <app-school-block [entityId]="child.schoolId"></app-school-block>
-        </em>
-      </div>
-
       <div>
         <h3>School History</h3>
         <app-previous-schools
-          [childId]="child.getId()"
+          [child]="child"
           (changedRecordInEntitySubrecord)="changedRecordInEntitySubrecord()"
         >
         </app-previous-schools>
