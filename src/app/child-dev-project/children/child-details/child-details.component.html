@@ -428,6 +428,7 @@
         <div fxFlex="45">
           <h3>School Attendance</h3>
           <app-child-attendance
+            [childId]="child.getId()"
             institution="school"
             [showDailyAttendanceOfLatest]="true"
           ></app-child-attendance>
@@ -435,6 +436,7 @@
         <div fxFlex="45">
           <h3>Coaching Attendance</h3>
           <app-child-attendance
+            [childId]="child.getId()"
             institution="coaching"
             [showDailyAttendanceOfLatest]="true"
           ></app-child-attendance>

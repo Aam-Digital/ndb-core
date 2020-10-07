@@ -15,6 +15,7 @@ import { SchoolsModule } from "../../../child-dev-project/schools/schools.module
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
+import { RouterTestingModule } from "@angular/router/testing";
 
 describe("SearchComponent", () => {
   let component: SearchComponent;
@@ -40,6 +41,7 @@ describe("SearchComponent", () => {
         ChildrenModule,
         SchoolsModule,
         MatToolbarModule,
+        RouterTestingModule,
       ],
       providers: [
         EntitySchemaService,

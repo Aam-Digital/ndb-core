@@ -14,13 +14,13 @@ import { Child } from "../../children/model/child";
   templateUrl: "./child-attendance.component.html",
 })
 export class ChildAttendanceComponent implements OnChanges {
-  childId: string;
-  records: Array<AttendanceMonth>;
-  detailsComponent = AttendanceDetailsComponent;
-
+  @Input() childId: string;
   @Input() institution: string;
   @Input() showDailyAttendanceOfLatest = false;
   @Input() child: Child;
+
+  records: Array<AttendanceMonth>;
+  detailsComponent = AttendanceDetailsComponent;
 
   columns: Array<ColumnDescription> = [
     new ColumnDescription(
@@ -79,10 +79,8 @@ export class ChildAttendanceComponent implements OnChanges {
     private percentPipe: PercentPipe
   ) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.hasOwnProperty("child")) {
-      this.loadData(this.child.getId());
-    }
+  ngOnChanges(changes: SimpleChanges) {
+    this.loadData(this.childId);
   }
 
   loadData(id: string) {
