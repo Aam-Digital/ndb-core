@@ -177,15 +177,6 @@ export class ChildDetailsComponent implements OnInit {
     this.initForm();
   }
 
-  changedRecordInEntitySubrecord() {
-    this.childrenService
-      .getChild(this.child.getId())
-      .pipe(untilDestroyed(this))
-      .subscribe((child) => {
-        this.child = child;
-      });
-  }
-
   switchEdit() {
     this.editing = !this.editing;
     this.enablePhotoUpload = this.childPhotoService.canSetImage();
