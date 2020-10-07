@@ -409,25 +409,7 @@
         </mat-icon>
         Attendance
       </mat-expansion-panel-header>
-
-      <div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="2em">
-        <div fxFlex="45">
-          <h3>School Attendance</h3>
-          <app-child-attendance
-            [childId]="child.getId()"
-            institution="school"
-            [showDailyAttendanceOfLatest]="true"
-          ></app-child-attendance>
-        </div>
-        <div fxFlex="45">
-          <h3>Coaching Attendance</h3>
-          <app-child-attendance
-            [childId]="child.getId()"
-            institution="coaching"
-            [showDailyAttendanceOfLatest]="true"
-          ></app-child-attendance>
-        </div>
-      </div>
+      <app-grouped-child-attendance [child]="child"></app-grouped-child-attendance>
     </mat-expansion-panel>
 
 

@@ -14,7 +14,6 @@ import { Child } from "../../children/model/child";
   templateUrl: "./child-attendance.component.html",
 })
 export class ChildAttendanceComponent implements OnChanges {
-  @Input() childId: string;
   @Input() institution: string;
   @Input() showDailyAttendanceOfLatest = false;
   @Input() child: Child;
@@ -80,7 +79,9 @@ export class ChildAttendanceComponent implements OnChanges {
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    this.loadData(this.childId);
+    if (changes.hasOwnProperty("child")) {
+      this.loadData(this.child.getId());
+    }
   }
 
   loadData(id: string) {
@@ -114,14 +115,17 @@ export class ChildAttendanceComponent implements OnChanges {
       this.records[0].month.getMonth() !== now.getMonth()
     ) {
       this.records.unshift(
-        AttendanceMonth.createAttendanceMonth(this.childId, this.institution)
+        AttendanceMonth.createAttendanceMonth(
+          this.child.getId(),
+          this.institution
+        )
       );
     }
   }
 
   generateNewRecordFactory() {
     // define values locally because 'this' is a different scope after passing a function as input to another component
-    const child = this.childId;
+    const child = this.child.getId();
     const institution = this.institution;
 
     return () => {

@@ -79,6 +79,7 @@ import { AttendanceMonthConflictResolutionStrategy } from "../attendance/attenda
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { Angulartics2Module } from "angulartics2";
 import { AttendanceAnalysisComponent } from "../attendance/attendance-analysis/attendance-analysis.component";
+import { GroupedChildAttendanceComponent } from "./child-details/grouped-child-attendance/grouped-child-attendance.component";
 
 @NgModule({
   imports: [
@@ -146,6 +147,7 @@ import { AttendanceAnalysisComponent } from "../attendance/attendance-analysis/a
     AttendanceAnalysisComponent,
     HealthCheckupComponent,
     PreviousSchoolsComponent,
+    GroupedChildAttendanceComponent,
   ],
   providers: [
     ChildrenService,
