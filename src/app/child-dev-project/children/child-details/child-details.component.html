@@ -455,7 +455,7 @@
         Educational Materials
       </mat-expansion-panel-header>
 
-      <app-educational-material></app-educational-material>
+      <app-educational-material [child]="child"></app-educational-material>
     </mat-expansion-panel>
 
     <mat-expansion-panel [expanded]="!child.isActive()"
