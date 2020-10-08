@@ -58,13 +58,7 @@ export class ChildDetailsComponent implements OnInit {
     "not eligible",
     "",
   ];
-  eyeStatusValues = ["Good", "Has Glasses", "Needs Glasses", "Needs Checkup"];
-  vaccinationStatusValues = [
-    "Good",
-    "Vaccination Due",
-    "Needs Checking",
-    "No Card/Information",
-  ];
+
   isAdminUser: boolean;
 
   constructor(

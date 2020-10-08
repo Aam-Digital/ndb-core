@@ -80,6 +80,7 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { Angulartics2Module } from "angulartics2";
 import { AttendanceAnalysisComponent } from "../attendance/attendance-analysis/attendance-analysis.component";
 import { GroupedChildAttendanceComponent } from "./child-details/grouped-child-attendance/grouped-child-attendance.component";
+import { HealthFormComponent } from "./child-details/health-form/health-form.component";
 
 @NgModule({
   imports: [
@@ -148,6 +149,7 @@ import { GroupedChildAttendanceComponent } from "./child-details/grouped-child-a
     HealthCheckupComponent,
     PreviousSchoolsComponent,
     GroupedChildAttendanceComponent,
+    HealthFormComponent,
   ],
   providers: [
     ChildrenService,
