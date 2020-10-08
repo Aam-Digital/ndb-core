@@ -386,17 +386,11 @@
         </mat-icon>
         Education
       </mat-expansion-panel-header>
-
-      <div>
-        <h3>School History</h3>
-        <app-previous-schools [child]="child"></app-previous-schools>
-      </div>
-      <br />
-
-      <div>
-        <h3>ASER Results</h3>
-        <app-aser [child]="child"></app-aser>
-      </div>
+      <h3>School History</h3>
+      <app-previous-schools [child]="child"></app-previous-schools>
+      <br/>
+      <h3>ASER Results</h3>
+      <app-aser [child]="child"></app-aser>
     </mat-expansion-panel>
 
     <mat-expansion-panel expanded="false" title="Attendance"
@@ -438,10 +432,9 @@
         Health
       </mat-expansion-panel-header>
       <app-health-form [child]="child"></app-health-form>
-      <div>
-        <h3>Height & Weight Tracking</h3>
-        <app-health-checkup></app-health-checkup>
-      </div>
+      <br/>
+      <h3>Height & Weight Tracking</h3>
+      <app-health-checkup [child]="child"></app-health-checkup>
     </mat-expansion-panel>
 
     <mat-expansion-panel [expanded]="false"
@@ -454,7 +447,6 @@
         </mat-icon>
         Educational Materials
       </mat-expansion-panel-header>
-
       <app-educational-material [child]="child"></app-educational-material>
     </mat-expansion-panel>
 
