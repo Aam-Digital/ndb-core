@@ -1,0 +1,40 @@
+<mat-form-field>
+    <input
+            matInput
+            [(ngModel)]="child.dropoutDate"
+            placeholder="Dropout Date"
+            [matDatepicker]="dropoutDatepicker"
+    />
+    <mat-datepicker-toggle
+            matSuffix
+            [for]="dropoutDatepicker"
+    ></mat-datepicker-toggle>
+    <mat-datepicker #dropoutDatepicker></mat-datepicker>
+</mat-form-field>
+
+<mat-form-field>
+    <input
+            matInput
+            [(ngModel)]="child.dropoutType"
+            placeholder="Dropout Type"
+            type="text"
+    />
+</mat-form-field>
+
+<mat-form-field>
+        <textarea
+                matInput
+                [(ngModel)]="child.dropoutRemarks"
+                placeholder="Dropout Remarks"
+                type="text"
+        >
+        </textarea>
+</mat-form-field>
+<button
+        mat-stroked-button
+        class="edit-button"
+        (click)="save()"
+        style="float: right;"
+>Save Dropout</button>
+<!--    clear floating from save button -->
+<div style="clear: both;"></div>

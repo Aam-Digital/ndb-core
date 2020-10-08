@@ -81,6 +81,7 @@ import { Angulartics2Module } from "angulartics2";
 import { AttendanceAnalysisComponent } from "../attendance/attendance-analysis/attendance-analysis.component";
 import { GroupedChildAttendanceComponent } from "./child-details/grouped-child-attendance/grouped-child-attendance.component";
 import { HealthFormComponent } from "./child-details/health-form/health-form.component";
+import { DropoutFormComponent } from "./child-details/dropout-form/dropout-form.component";
 
 @NgModule({
   imports: [
@@ -150,6 +151,8 @@ import { HealthFormComponent } from "./child-details/health-form/health-form.com
     PreviousSchoolsComponent,
     GroupedChildAttendanceComponent,
     HealthFormComponent,
+    DropoutFormComponent,
+    DropoutFormComponent,
   ],
   providers: [
     ChildrenService,

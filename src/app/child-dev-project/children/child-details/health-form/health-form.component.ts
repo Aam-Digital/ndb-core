@@ -1,13 +1,6 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { Child } from "../../model/child";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
-import { FormBuilder, FormGroup } from "@angular/forms";
 
 @Component({
   selector: "app-health-form",

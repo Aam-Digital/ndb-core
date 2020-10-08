@@ -468,40 +468,7 @@
         </mat-icon>
         Dropout
       </mat-expansion-panel-header>
-
-      <mat-form-field>
-        <input
-          matInput
-          formControlName="dropoutDate"
-          placeholder="Dropout Date"
-          [matDatepicker]="dropoutDatepicker"
-          [disabled]="!editing"
-        />
-        <mat-datepicker-toggle
-          matSuffix
-          [for]="dropoutDatepicker"
-        ></mat-datepicker-toggle>
-        <mat-datepicker #dropoutDatepicker></mat-datepicker>
-      </mat-form-field>
-
-      <mat-form-field>
-        <input
-          matInput
-          formControlName="dropoutType"
-          placeholder="Dropout Type"
-          type="text"
-        />
-      </mat-form-field>
-
-      <mat-form-field>
-        <textarea
-          matInput
-          formControlName="dropoutRemarks"
-          placeholder="Dropout Remarks"
-          type="text"
-        >
-        </textarea>
-      </mat-form-field>
+      <app-dropout-form [child]="child"></app-dropout-form>
     </mat-expansion-panel>
   </form>
 </mat-accordion>
