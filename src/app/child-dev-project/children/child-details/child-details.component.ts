@@ -42,7 +42,6 @@ export class ChildDetailsComponent implements OnInit {
 
   validateForm = false;
   form: FormGroup;
-  healthCheckForm: FormGroup;
   creatingNew = false;
   editing = false;
   enablePhotoUpload;
@@ -165,7 +164,7 @@ export class ChildDetailsComponent implements OnInit {
             this.router.navigate(["/child", this.child.getId()]);
             this.creatingNew = false;
           }
-          this.alertService.addInfo("Saving Succesfull");
+          this.alertService.addInfo("Saving Successful");
           this.switchEdit();
         })
         .catch((err) =>

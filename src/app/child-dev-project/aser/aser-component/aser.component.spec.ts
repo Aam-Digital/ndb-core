@@ -3,7 +3,6 @@ import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { AserComponent } from "./aser.component";
 import { EntitySubrecordModule } from "../../../core/entity-subrecord/entity-subrecord.module";
 import { FormsModule } from "@angular/forms";
-import { ActivatedRoute } from "@angular/router";
 import { ChildrenService } from "../../children/children.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { MockDatabase } from "../../../core/database/mock-database";
@@ -42,10 +41,6 @@ describe("AserComponent", () => {
       ],
       providers: [
         DatePipe,
-        {
-          provide: ActivatedRoute,
-          useValue: { paramMap: of({ get: () => "22" }) },
-        },
         { provide: ChildrenService, useValue: mockChildrenService },
         EntityMapperService,
         EntitySchemaService,
@@ -58,6 +53,7 @@ describe("AserComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AserComponent);
     component = fixture.componentInstance;
+    component.child = new Child("22");
     fixture.detectChanges();
   });
 

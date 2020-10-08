@@ -87,7 +87,6 @@ export class EducationalMaterialComponent implements OnChanges {
 
       // use last entered date as default, otherwise today's date
       newAtt.date = this.records.length > 0 ? this.records[0].date : new Date();
-
       newAtt.child = child;
 
       return newAtt;
