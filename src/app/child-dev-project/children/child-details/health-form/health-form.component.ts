@@ -16,12 +16,32 @@ export class HealthFormComponent {
   ];
   eyeStatusValues = ["Good", "Has Glasses", "Needs Glasses", "Needs Checkup"];
   @Input() child: Child;
+  editing: boolean = false;
 
   constructor(private entityMapper: EntityMapperService) {}
 
   save() {
-    // Saving will save all the fields of the child, not just the health information
-    // Undoing changes that were not saved yet can be done by re-entering the view
+    this.editing = false;
     this.entityMapper.save<Child>(this.child);
+  }
+
+  edit() {
+    this.editing = true;
+  }
+
+  cancel() {
+    this.editing = false;
+    this.entityMapper
+      .load<Child>(Child, this.child.getId())
+      .then((tmpChild) => {
+        this.child.health_vaccinationStatus = tmpChild.health_vaccinationStatus;
+        this.child.health_eyeHealthStatus = tmpChild.health_eyeHealthStatus;
+        this.child.health_bloodGroup = tmpChild.health_bloodGroup;
+        this.child.health_lastDentalCheckup = tmpChild.health_lastDentalCheckup;
+        this.child.health_lastEyeCheckup = tmpChild.health_lastEyeCheckup;
+        this.child.health_lastENTCheckup = tmpChild.health_lastENTCheckup;
+        this.child.health_lastVitaminD = tmpChild.health_lastVitaminD;
+        this.child.health_lastDeworming = tmpChild.health_lastDeworming;
+      });
   }
 }

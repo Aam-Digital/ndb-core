@@ -1,40 +1,65 @@
-<mat-form-field>
-    <input
-            matInput
-            [(ngModel)]="child.dropoutDate"
-            placeholder="Dropout Date"
-            [matDatepicker]="dropoutDatepicker"
-    />
-    <mat-datepicker-toggle
-            matSuffix
-            [for]="dropoutDatepicker"
-    ></mat-datepicker-toggle>
-    <mat-datepicker #dropoutDatepicker></mat-datepicker>
-</mat-form-field>
-
-<mat-form-field>
-    <input
-            matInput
-            [(ngModel)]="child.dropoutType"
-            placeholder="Dropout Type"
-            type="text"
-    />
-</mat-form-field>
-
-<mat-form-field>
-        <textarea
+<div>
+    <mat-form-field>
+        <input
                 matInput
-                [(ngModel)]="child.dropoutRemarks"
-                placeholder="Dropout Remarks"
+                [(ngModel)]="child.dropoutDate"
+                placeholder="Dropout Date"
+                [matDatepicker]="dropoutDatepicker"
+                [disabled]="!editing"
+        />
+        <mat-datepicker-toggle
+                matSuffix
+                [for]="dropoutDatepicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #dropoutDatepicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input
+                matInput
+                [(ngModel)]="child.dropoutType"
+                placeholder="Dropout Type"
                 type="text"
-        >
-        </textarea>
-</mat-form-field>
-<button
-        mat-stroked-button
-        class="edit-button"
-        (click)="save()"
-        style="float: right;"
->Save Dropout</button>
-<!--    clear floating from save button -->
-<div style="clear: both;"></div>
+                [disabled]="!editing"
+        />
+    </mat-form-field>
+
+    <mat-form-field>
+            <textarea
+                    matInput
+                    [(ngModel)]="child.dropoutRemarks"
+                    placeholder="Dropout Remarks"
+                    type="text"
+                    [disabled]="!editing"
+            >
+            </textarea>
+    </mat-form-field>
+</div>
+<div>
+    <button
+            *ngIf="editing"
+            mat-stroked-button
+            class="edit-button"
+            (click)="save()"
+    >
+        Save
+    </button>
+
+    <button
+            *ngIf="editing"
+            mat-stroked-button
+            class="edit-button"
+            (click)="cancel()"
+    >
+        Cancel
+    </button>
+
+    <button
+            *ngIf="!editing"
+            mat-stroked-button
+            class="edit-button"
+            (click)="edit()"
+    >
+        Edit
+    </button>
+</div>

@@ -152,7 +152,6 @@ import { DropoutFormComponent } from "./child-details/dropout-form/dropout-form.
     GroupedChildAttendanceComponent,
     HealthFormComponent,
     DropoutFormComponent,
-    DropoutFormComponent,
   ],
   providers: [
     ChildrenService,

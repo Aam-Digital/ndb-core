@@ -9,12 +9,27 @@ import { EntityMapperService } from "../../../../core/entity/entity-mapper.servi
 })
 export class DropoutFormComponent {
   @Input() child: Child;
+  editing: boolean = false;
 
   constructor(private entityMapper: EntityMapperService) {}
 
   save() {
-    // Saving will save all the fields of the child, not just the dropout information
-    // Undoing changes that were not saved yet can be done by re-entering the view
+    this.editing = false;
     this.entityMapper.save<Child>(this.child);
+  }
+
+  edit() {
+    this.editing = true;
+  }
+
+  cancel() {
+    this.editing = false;
+    this.entityMapper
+      .load<Child>(Child, this.child.getId())
+      .then((tmpChild) => {
+        this.child.dropoutDate = tmpChild.dropoutDate;
+        this.child.dropoutType = tmpChild.dropoutType;
+        this.child.dropoutRemarks = tmpChild.dropoutRemarks;
+      });
   }
 }
