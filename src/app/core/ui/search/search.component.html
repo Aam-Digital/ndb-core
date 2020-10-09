@@ -43,7 +43,7 @@
       <p>Search in progress...</p>
     </mat-option>
 
-    <mat-option *ngFor="let res of results" [value]="">
+    <mat-option *ngFor="let res of results" [value]="res">
       <app-child-block
         *ngIf="res.getType() === 'Child'"
         [entity]="res"
