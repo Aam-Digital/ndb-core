@@ -76,6 +76,33 @@ describe("RouterService", () => {
     expect(router.resetConfig).toHaveBeenCalledWith(expectedRoutes);
   });
 
+  it("should generate lazy loaded routes", () => {
+    const testViewConfig = {
+      _id: "view:child/:id",
+      importModulePath: "./conflict-resolution/conflict-resolution.module",
+      importModuleName: "ConflictResolutionModule",
+      requiresAdmin: true,
+    };
+    const expectedRoutes = [
+      {
+        path: "admin/conflicts",
+        canActivate: [AdminGuard],
+        loadChildren: () =>
+          import("../../conflict-resolution/conflict-resolution.module").then(
+            (m) => m["ConflictResolutionModule"]
+          ),
+      },
+    ];
+
+    const router = TestBed.inject<Router>(Router);
+    spyOn(router, "resetConfig");
+
+    mockConfigService.getAllConfigs.and.returnValue([testViewConfig]);
+    service.reloadRouting();
+
+    expect(router.resetConfig).toHaveBeenCalledWith(expectedRoutes);
+  });
+
   it("should ignore a view config route of hard-coded route already exists", () => {
     const existingRoutes = [{ path: "other", component: TestComponent }];
     const testViewConfigs = [

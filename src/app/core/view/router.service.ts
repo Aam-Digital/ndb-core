@@ -38,6 +38,7 @@ export class RouterService {
     );
     for (const view of viewConfigs) {
       const path = view._id.substring(RouterService.PREFIX_VIEW_CONFIG.length); // remove prefix to get actual path
+
       if (additionalRoutes.find((r) => r.path === path)) {
         this.loggingService.warn(
           "ignoring route from view config because the path is already defined: " +
@@ -48,14 +49,29 @@ export class RouterService {
 
       const route: Route = {
         path: path,
-        component: COMPONENT_MAP[view.component],
       };
+
+      if (view.component) {
+        route.component = COMPONENT_MAP[view.component];
+      } else if (view.importModulePath) {
+        route.loadChildren = async () => {
+          const m = await COMPONENT_MAP[view.importModulePath]();
+          return m[view.importModuleName];
+        };
+      } else {
+        this.loggingService.warn(
+          "Error in config: Neither 'component' nor 'importModulePath' defined"
+        );
+      }
+
       if (view.requiresAdmin) {
         route.canActivate = [AdminGuard];
       }
+
       if (view.config) {
         route.data = view.config;
       }
+
       routes.push(route);
     }
 

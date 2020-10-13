@@ -50,6 +50,9 @@ export const COMPONENT_MAP = {
   ChildDetails: ChildDetailsComponent,
   ChildAttendance: ChildAttendanceComponent,
   Admin: AdminComponent,
+
+  "conflict-resolution.module": () =>
+    import("./conflict-resolution/conflict-resolution.module"),
 };
 
 /**
@@ -57,14 +60,6 @@ export const COMPONENT_MAP = {
  */
 export const routes: Routes = [
   // routes are added dynamically by the RouterService
-  {
-    path: "admin/conflicts",
-    canActivate: [AdminGuard],
-    loadChildren: () =>
-      import("./conflict-resolution/conflict-resolution.module").then(
-        (m) => m["ConflictResolutionModule"]
-      ),
-  },
   { path: "**", redirectTo: "/" },
 ];
 

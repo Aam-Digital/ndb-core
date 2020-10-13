@@ -10,7 +10,15 @@ export interface ViewConfig {
    * string id/name of the component to be displaying this view.
    * The component id has to be registered in the component map.
    */
-  component: string;
+  component?: string;
+
+  /**
+   * In case of lazy loading:
+   * strings of the module path and name.
+   * The component id has to be registered in the component map.
+   */
+  importModulePath?: string;
+  importModuleName?: string;
 
   /** whether users need admin rights to access this view */
   requiresAdmin?: boolean;

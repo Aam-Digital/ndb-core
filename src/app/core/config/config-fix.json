@@ -61,14 +61,13 @@
     "view:user": {"component": "UserAccount"},
     "view:note": {"component": "NotesManager"},
     "view:admin": {"component": "Admin", "requiresAdmin": true},
-    "view:admin/conflicts": {"component": "Admin", "requiresAdmin": true},
     "view:users": {"component": "UserList", "requiresAdmin": true},
     "view:help": {"component": "Help"},
     "view:attendance": {"component": "AttendanceManager"},
     "view:attendance/analysis": {"component": "AttendanceAnalysis"},
     "view:attendance/add/month": {"component": "AddMonthAttendance"},
     "view:attendance/add/day": {"component": "AddDayAttendance"},
-    
+
     "view:school": {"component": "SchoolsList"},
     "view:school/:id": {
         "component": "SchoolDetails",
@@ -92,5 +91,10 @@
                 }
             ]
         }
+    },
+    "view:admin/conflicts": {
+        "importModulePath": "conflict-resolution.module",
+        "importModuleName": "ConflictResolutionModule",
+        "requiresAdmin": true
     }
 }
