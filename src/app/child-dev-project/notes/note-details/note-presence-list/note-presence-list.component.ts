@@ -17,13 +17,11 @@ import { ChildSelectComponent } from "../../../children/child-select/child-selec
 export class NotePresenceListComponent implements OnChanges {
   @Input() entity: Note = new Note("");
   @Input() recordForm: NgForm;
-  smallScreen: boolean;
 
   @ViewChild("childSelect", { static: true })
   childSelectComponent: ChildSelectComponent;
 
   constructor() {
-    this.smallScreen = window.innerWidth < 500;
     this.sortEntries();
   }
 

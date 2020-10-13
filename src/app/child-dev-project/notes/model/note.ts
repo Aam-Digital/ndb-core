@@ -35,7 +35,7 @@ export class Note extends Entity {
   @DatabaseField() subject: string = "";
   @DatabaseField() text: string = "";
   @DatabaseField() author: string = "";
-  @DatabaseField() category: InteractionTypes = InteractionTypes.NONE;
+  @DatabaseField() category: string = "NONE";
   @DatabaseField({ dataType: "string" }) warningLevel: WarningLevel =
     WarningLevel.OK;
 
@@ -52,7 +52,9 @@ export class Note extends Entity {
       return WarningLevelColor(WarningLevel.WARNING);
     }
 
-    const color = INTERACTION_TYPE_COLORS.get(this.category);
+    const color = INTERACTION_TYPE_COLORS.get(
+      this.category as InteractionTypes
+    );
     return color === undefined ? "" : color;
   }
 

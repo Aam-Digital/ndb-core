@@ -61,10 +61,10 @@
               [(ngModel)]="entity.category"
             >
               <mat-option
-                *ngFor="let interaction of interactionTypes"
+                *ngFor="let interaction of Object.keys(interactionTypes)"
                 [value]="interaction"
               >
-                {{ interaction }}
+                {{ interactionTypes[interaction].name }}
               </mat-option>
             </mat-select>
           </mat-form-field>
@@ -115,7 +115,7 @@
     </div>
 
     <div fxLayout="row wrap" fxLayoutGap="20px">
-      <div fxFlex *ngIf="!entity.isMeeting()">
+      <div fxFlex *ngIf="!(interactionTypes[entity.category].isMeeting)">
         <app-child-select
           [valueAsIds]="entity.children"
           (newIdAdded)="entity.addChild($event); entityForm.form.markAsDirty()"
@@ -127,7 +127,7 @@
         </app-child-select>
       </div>
       <app-note-presence-list
-        *ngIf="entity.isMeeting()"
+        *ngIf="interactionTypes[entity.category].isMeeting"
         [recordForm]="entityForm"
         [entity]="entity"
         fxFlex
