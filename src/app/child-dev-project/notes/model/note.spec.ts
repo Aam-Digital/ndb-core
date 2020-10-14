@@ -1,6 +1,5 @@
 import { MeetingNoteAttendance } from "../meeting-note-attendance";
 import { Note } from "./note";
-import { InteractionTypes } from "../interaction-types.enum";
 import { WarningLevel } from "../../warning-level";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { async } from "@angular/core/testing";
@@ -22,7 +21,7 @@ function createTestModel(): Note {
   n1.subject = "Note Subject";
   n1.text = "Note text";
   n1.author = "Max Musterman";
-  n1.category = InteractionTypes.DISCUSSION;
+  n1.category = "DISCUSSION";
   n1.warningLevel = WarningLevel.URGENT;
 
   return n1;
@@ -60,7 +59,7 @@ describe("Note", () => {
       subject: "Note Subject",
       text: "Note text",
       author: "Max Musterman",
-      category: InteractionTypes.DISCUSSION,
+      category: "DISCUSSION",
       warningLevel: WarningLevel.URGENT,
 
       searchIndices: [],
@@ -115,18 +114,5 @@ describe("Note", () => {
     const n6 = createTestModel();
     n6.togglePresence("1");
     expect(n6.attendances[0].present).toBe(false);
-  });
-
-  it("should never return an undefined color", function () {
-    const n7 = createTestModel();
-    Object.values(InteractionTypes).forEach((type) => {
-      n7.category = type;
-      expect(n7.getColor()).toBeDefined();
-    });
-    const warningLevels = Object.values(WarningLevel);
-    warningLevels.forEach((level) => {
-      n7.warningLevel = level;
-      expect(n7.getColor()).toBeDefined();
-    });
   });
 });
