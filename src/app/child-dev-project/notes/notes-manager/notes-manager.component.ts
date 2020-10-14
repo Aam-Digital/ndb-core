@@ -4,7 +4,6 @@ import { MatTableDataSource } from "@angular/material/table";
 import { MatSort } from "@angular/material/sort";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
-import { InteractionTypes } from "../interaction-types.enum";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { WarningLevel, WarningLevelColor } from "../../warning-level";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
@@ -149,18 +148,17 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     this.columnsToDisplay = this.columnGroups[columnGroup];
   }
 
-  // TODO: rewrite wrt to config file
   private initCategoryFilter() {
-    this.categoryFS.options = [{ key: "", label: "", filterFun: () => true }];
+    this.categoryFS.options = [
+      { key: "show-all", label: "All Notes", filterFun: () => true },
+    ];
 
-    Object.values(InteractionTypes).forEach((interaction) => {
+    Object.keys(this.interactionTypes).forEach((interaction) => {
       this.categoryFS.options.push({
         key: interaction,
-        label: interaction,
+        label: this.interactionTypes[interaction].name,
         filterFun: (note: Note) => {
-          return interaction === InteractionTypes.NONE
-            ? true
-            : note.category === interaction;
+          return note.category === interaction;
         },
       });
     });
