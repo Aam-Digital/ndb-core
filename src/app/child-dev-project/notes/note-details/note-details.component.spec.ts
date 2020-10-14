@@ -1,7 +1,6 @@
 import { NoteDetailsComponent } from "./note-details.component";
 import { Note } from "../model/note";
 import { MeetingNoteAttendance } from "../meeting-note-attendance";
-import { InteractionTypes } from "../interaction-types.enum";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormBuilder } from "@angular/forms";
 import { of } from "rxjs";
@@ -36,7 +35,7 @@ function generateChildAttendanceModels() {
 function generateTestingData() {
   const n1 = new Note("1");
   n1.children = generateChildAttendanceModels();
-  n1.category = InteractionTypes.CHILDREN_MEETING;
+  n1.category = "CHILDREN_MEETING";
   n1.date = new Date(Date.now());
   // mock an already existing note
   n1._rev = "x";
