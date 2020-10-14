@@ -61,10 +61,10 @@
               [(ngModel)]="entity.category"
             >
               <mat-option
-                *ngFor="let interaction of Object.keys(interactionTypes)"
-                [value]="interaction"
+                *ngFor="let interaction of interactionTypes | keyvalue : 0"
+                [value]="interaction.key"
               >
-                {{ interactionTypes[interaction].name }}
+                {{ interactionTypes[interaction.key].name }}
               </mat-option>
             </mat-select>
           </mat-form-field>
