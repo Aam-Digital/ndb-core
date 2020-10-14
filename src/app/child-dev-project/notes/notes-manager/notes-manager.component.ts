@@ -6,13 +6,15 @@ import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { InteractionTypes } from "../interaction-types.enum";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
-import { WarningLevel } from "../../warning-level";
+import { WarningLevel, WarningLevelColor } from "../../warning-level";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FilterSelection } from "../../../core/filter/filter-selection/filter-selection";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { User } from "app/core/user/user";
+import { ConfigService } from "app/core/config/config.service";
+import { NoteConfig } from "../note-details/note-config.interface";
 
 @UntilDestroy()
 @Component({
@@ -21,6 +23,16 @@ import { User } from "app/core/user/user";
   styleUrls: ["./notes-manager.component.scss"],
 })
 export class NotesManagerComponent implements OnInit, AfterViewInit {
+  /** Name of note config Object in config json file */
+  private readonly CONFIG_ID = "notes";
+  /** interaction types loaded from config file */
+  interactionTypes: {
+    [key: string]: {
+      name: string;
+      color?: string;
+      isMeeting?: boolean;
+    };
+  };
   entityList = new Array<Note>();
   notesDataSource = new MatTableDataSource();
 
@@ -79,10 +91,17 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     private formDialog: FormDialogService,
     private sessionService: SessionService,
     private media: MediaObserver,
-    private entityMapperService: EntityMapperService
+    private entityMapperService: EntityMapperService,
+    private configService: ConfigService
   ) {}
 
   ngOnInit() {
+    // load interactionTypes from config
+    this.interactionTypes = this.interactionTypes = this.configService.getConfig<
+      NoteConfig
+    >(this.CONFIG_ID).InteractionTypes;
+    Object.freeze(this.interactionTypes);
+
     this.user = this.sessionService.getCurrentUser();
     this.paginatorPageSize = this.user.paginatorSettingsPageSize.notesList;
     this.paginatorPageIndex = this.user.paginatorSettingsPageIndex.notesList;
@@ -130,6 +149,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     this.columnsToDisplay = this.columnGroups[columnGroup];
   }
 
+  // TODO: rewrite wrt to config file
   private initCategoryFilter() {
     this.categoryFS.options = [{ key: "", label: "", filterFun: () => true }];
 
@@ -201,5 +221,17 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
 
   showDetails(entity: Note) {
     return this.formDialog.openDialog(NoteDetailsComponent, entity);
+  }
+
+  public getColor(entity: Note): string {
+    if (entity.warningLevel === WarningLevel.URGENT) {
+      return WarningLevelColor(WarningLevel.URGENT);
+    }
+    if (entity.warningLevel === WarningLevel.WARNING) {
+      return WarningLevelColor(WarningLevel.WARNING);
+    }
+
+    const color = this.interactionTypes[entity.category]?.color;
+    return color === undefined ? "" : color;
   }
 }

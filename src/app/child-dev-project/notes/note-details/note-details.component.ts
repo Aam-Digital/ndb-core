@@ -16,6 +16,7 @@ export class NoteDetailsComponent implements ShowsEntity, OnInit {
   /** name of config array in the config json file */
   private readonly CONFIG_ID = "notes";
 
+  /** interaction types loaded from config file */
   interactionTypes: {
     [key: string]: {
       name: string;
@@ -31,5 +32,14 @@ export class NoteDetailsComponent implements ShowsEntity, OnInit {
       this.CONFIG_ID
     ).InteractionTypes;
     Object.freeze(this.interactionTypes);
+  }
+
+  /**
+   * function returns zero; used to circumvent TS error in template
+   * (This function is used to sort the interactionTypes in the keyvalue-pipe.
+   * Since we want to keep the sorting from the config file, we simply return 0 all the time.)
+   */
+  returnZero() {
+    return 0;
   }
 }

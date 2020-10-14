@@ -1,3 +1,4 @@
+// TODO: remove after rewriting initCategoryFilter() in notes-manager.component
 export enum InteractionTypes {
   NONE = "",
   HOME_VISIT = "Home Visit",
@@ -18,13 +19,3 @@ export enum InteractionTypes {
   PARTNER_CONTACT = "Contact with other partners (club/NGO/...)",
   RATION_DISTRIBUTION = "Ration Distribution",
 }
-
-export const INTERACTION_TYPE_COLORS: Map<InteractionTypes, string> = new Map([
-  [InteractionTypes.GUARDIAN_MEETING, "#E1F5FE"],
-  [InteractionTypes.CHILDREN_MEETING, "#E1F5FE"],
-  [InteractionTypes.RATION_DISTRIBUTION, "#E1F5FE"],
-  [InteractionTypes.EXCURSION, "#E1F5FE"],
-  [InteractionTypes.DISCUSSION, "#E1BEE7"],
-  [InteractionTypes.ANNUAL_SURVEY, "#FFFDE7"],
-  [InteractionTypes.DAILY_ROUTINE, "#F1F8E9"],
-]);

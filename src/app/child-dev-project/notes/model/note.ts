@@ -16,10 +16,6 @@
  */
 
 import { MeetingNoteAttendance } from "../meeting-note-attendance";
-import {
-  INTERACTION_TYPE_COLORS,
-  InteractionTypes,
-} from "../interaction-types.enum";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../core/entity/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
@@ -43,29 +39,15 @@ export class Note extends Entity {
     return this.warningLevel;
   }
 
-  // TODO: color logic should not be part of entity/model but rather in the component responsible for displaying it
-  public getColor() {
-    if (this.warningLevel === WarningLevel.URGENT) {
-      return WarningLevelColor(WarningLevel.URGENT);
-    }
-    if (this.warningLevel === WarningLevel.WARNING) {
-      return WarningLevelColor(WarningLevel.WARNING);
-    }
+  // TODO: What is the purpose of this function?
+  // public getColorForId(entityId: string) {
+  //   if (this.isMeeting() && !this.isPresent(entityId)) {
+  //     // child is absent, highlight the entry
+  //     return WarningLevelColor(WarningLevel.URGENT);
+  //   }
 
-    const color = INTERACTION_TYPE_COLORS.get(
-      this.category as InteractionTypes
-    );
-    return color === undefined ? "" : color;
-  }
-
-  public getColorForId(entityId: string) {
-    if (this.isMeeting() && !this.isPresent(entityId)) {
-      // child is absent, highlight the entry
-      return WarningLevelColor(WarningLevel.URGENT);
-    }
-
-    return this.getColor();
-  }
+  //   return this.getColor();
+  // }
 
   /**
    * whether a specific child with given childId is linked to this not
@@ -73,18 +55,6 @@ export class Note extends Entity {
    */
   isLinkedWithChild(childId: string): boolean {
     return this.children.includes(childId);
-  }
-
-  /**
-   * whether or not this note's contents describe a meeting
-   */
-  isMeeting(): boolean {
-    return (
-      this.category === InteractionTypes.GUARDIAN_MEETING ||
-      this.category === InteractionTypes.CHILDREN_MEETING ||
-      this.category === InteractionTypes.EXCURSION ||
-      this.category === InteractionTypes.RATION_DISTRIBUTION
-    );
   }
 
   /**
