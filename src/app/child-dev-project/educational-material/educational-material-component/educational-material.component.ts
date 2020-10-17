@@ -1,19 +1,19 @@
-import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { DatePipe } from "@angular/common";
 import { EducationalMaterial } from "../model/educational-material";
 import { ColumnDescription } from "../../../core/entity-subrecord/entity-subrecord/column-description";
 import { ChildrenService } from "../../children/children.service";
 import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { Child } from "../../children/model/child";
 
 @UntilDestroy()
 @Component({
   selector: "app-educational-material",
   templateUrl: "./educational-material.component.html",
 })
-export class EducationalMaterialComponent implements OnInit {
-  childId: string;
+export class EducationalMaterialComponent implements OnChanges {
+  @Input() child: Child;
   records = new Array<EducationalMaterial>();
 
   materialTypes = EducationalMaterial.MATERIAL_ALL;
@@ -56,16 +56,14 @@ export class EducationalMaterialComponent implements OnInit {
   ];
 
   constructor(
-    private route: ActivatedRoute,
     private childrenService: ChildrenService,
     private datePipe: DatePipe
   ) {}
 
-  ngOnInit() {
-    this.route.paramMap.subscribe((params) => {
-      this.childId = params.get("id").toString();
-      this.loadData(this.childId);
-    });
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.hasOwnProperty("child")) {
+      this.loadData(this.child.getId());
+    }
   }
 
   loadData(id: string) {
@@ -82,14 +80,13 @@ export class EducationalMaterialComponent implements OnInit {
 
   generateNewRecordFactory() {
     // define values locally because "this" is a different scope after passing a function as input to another component
-    const child = this.childId;
+    const child = this.child.getId();
 
     return () => {
       const newAtt = new EducationalMaterial(Date.now().toString());
 
       // use last entered date as default, otherwise today's date
       newAtt.date = this.records.length > 0 ? this.records[0].date : new Date();
-
       newAtt.child = child;
 
       return newAtt;

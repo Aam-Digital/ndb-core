@@ -1,0 +1,18 @@
+<div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="2em">
+    <div fxFlex="45">
+        <h3>School Attendance</h3>
+        <app-child-attendance
+                [child]="child"
+                institution="school"
+                [showDailyAttendanceOfLatest]="true"
+        ></app-child-attendance>
+    </div>
+    <div fxFlex="45">
+        <h3>Coaching Attendance</h3>
+        <app-child-attendance
+                [child]="child"
+                institution="coaching"
+                [showDailyAttendanceOfLatest]="true"
+        ></app-child-attendance>
+    </div>
+</div>
