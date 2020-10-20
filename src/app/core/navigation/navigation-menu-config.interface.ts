@@ -8,4 +8,5 @@ export interface NavigationMenuConfig {
     icon: string;
     link: string;
   }[];
+  find(arg0: (item: { link: string }) => boolean);
 }

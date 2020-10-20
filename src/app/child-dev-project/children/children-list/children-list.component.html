@@ -1,4 +1,4 @@
-<h1>Children List</h1>
+<h1>{{ listName }} List</h1>
 
 <mat-expansion-panel
   expanded="true"
@@ -29,7 +29,7 @@
     </div>
     <!-- number of table entries -->
     <div fxFlex="25" fxHide.xs="true" class="align-form-field">
-      (Showing {{ childrenDataSource.filteredData.length }} children)
+      (Showing {{ childrenDataSource.filteredData.length }} entries)
     </div>
     <!-- add new button -->
     <div fxFlex="25" class="align-form-field">

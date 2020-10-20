@@ -2,7 +2,7 @@
     "navigationMenu": {
         "items": [
             {"name": "Dashboard", "icon": "home", "link": "/dashboard"},
-            {"name": "Children", "icon": "child", "link": "/child"},
+            {"name": "Players", "icon": "child", "link": "/child"},
             {"name": "Schools", "icon": "university", "link": "/school"},
             {"name": "Notes", "icon": "file-text", "link": "/note"},
             {"name": "Attendance Register", "icon": "table", "link": "/attendance"},
@@ -68,7 +68,7 @@
     "view:attendance/analysis": {"component": "AttendanceAnalysis"},
     "view:attendance/add/month": {"component": "AddMonthAttendance"},
     "view:attendance/add/day": {"component": "AddDayAttendance"},
-    
+
     "view:school": {"component": "SchoolsList"},
     "view:school/:id": {
         "component": "SchoolDetails",
@@ -81,7 +81,7 @@
             ]
         }
     },
-    "view:child": {"component": "ChildrenList"},
+    "view:child": {"component": "ChildrenList", "config": { "title": "Children List" } },
     "view:child/:id": {
         "component": "ChildDetails",
         "config": {
