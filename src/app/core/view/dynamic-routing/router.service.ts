@@ -43,30 +43,38 @@ export class RouterService {
       RouterService.PREFIX_VIEW_CONFIG
     );
     for (const view of viewConfigs) {
-      const path = view._id.substring(RouterService.PREFIX_VIEW_CONFIG.length); // remove prefix to get actual path
-      if (additionalRoutes.find((r) => r.path === path)) {
+      const route = this.generateRouteFromConfig(view);
+
+      if (additionalRoutes.find((r) => r.path === route.path)) {
         this.loggingService.warn(
           "ignoring route from view config because the path is already defined: " +
             view._id
         );
-        continue;
+      } else {
+        routes.push(route);
       }
-
-      const route: Route = {
-        path: path,
-        component: COMPONENT_MAP[view.component],
-      };
-      if (view.requiresAdmin) {
-        route.canActivate = [AdminGuard];
-      }
-      if (view.config) {
-        route.data = view.config;
-      }
-      routes.push(route);
     }
 
+    // add routes from other sources (e.g. pre-existing  hard-coded routes)
     routes.push(...additionalRoutes);
 
     this.router.resetConfig(routes);
+  }
+
+  private generateRouteFromConfig(view: ViewConfig): Route {
+    const path = view._id.substring(RouterService.PREFIX_VIEW_CONFIG.length); // remove prefix to get actual path
+
+    const route: Route = {
+      path: path,
+      component: COMPONENT_MAP[view.component],
+    };
+    if (view.requiresAdmin) {
+      route.canActivate = [AdminGuard];
+    }
+    if (view.config) {
+      route.data = view.config;
+    }
+
+    return route;
   }
 }
