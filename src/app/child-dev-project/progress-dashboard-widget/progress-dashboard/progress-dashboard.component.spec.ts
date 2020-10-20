@@ -10,9 +10,6 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { MockDatabase } from "../../../core/database/mock-database";
-import { Database } from "../../../core/database/database";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { AlertService } from "../../../core/alerts/alert.service";
 
 describe("ProgressDashboardComponent", () => {
@@ -20,6 +17,12 @@ describe("ProgressDashboardComponent", () => {
   let fixture: ComponentFixture<ProgressDashboardComponent>;
 
   beforeEach(async(() => {
+    const mockEntityService = jasmine.createSpyObj("mockEntityService", [
+      "load",
+      "save",
+    ]);
+    mockEntityService.load.and.resolveTo({ title: "test", parts: [] });
+
     TestBed.configureTestingModule({
       declarations: [ProgressDashboardComponent],
       imports: [
@@ -33,13 +36,11 @@ describe("ProgressDashboardComponent", () => {
         FormsModule,
       ],
       providers: [
-        { provide: Database, useClass: MockDatabase },
+        { provide: EntityMapperService, useValue: mockEntityService },
         {
           provide: AlertService,
           useValue: jasmine.createSpyObj(["addDebug", "addInfo", "addWarning"]),
         },
-        EntityMapperService,
-        EntitySchemaService,
       ],
     }).compileComponents();
   }));

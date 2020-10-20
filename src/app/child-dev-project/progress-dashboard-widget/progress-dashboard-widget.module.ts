@@ -17,7 +17,6 @@
 
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { DashboardComponent } from "./dashboard/dashboard.component";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
@@ -42,6 +41,6 @@ import { FormsModule } from "@angular/forms";
     MatFormFieldModule,
     ChildrenModule,
   ],
-  declarations: [DashboardComponent, ProgressDashboardComponent],
+  declarations: [ProgressDashboardComponent],
 })
-export class DashboardModule {}
+export class ProgressDashboardWidgetModule {}

@@ -15,20 +15,23 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NavigationItemsService } from "./navigation-items.service";
-import { MenuItem } from "./menu-item";
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { DynamicComponentConfig } from "../../view/dynamic-components/dynamic-component-config.interface";
 
-describe("NavigationItemsService", () => {
-  it("adds menu item", function () {
-    const navigationItemsService = new NavigationItemsService();
-    const item = new MenuItem("test", "child", ["/"]);
+@Component({
+  selector: "app-dashboard",
+  templateUrl: "./dashboard.component.html",
+  styleUrls: ["./dashboard.component.scss"],
+})
+export class DashboardComponent implements OnInit {
+  widgets: DynamicComponentConfig[] = [];
 
-    navigationItemsService.addMenuItem(item);
+  constructor(private activatedRoute: ActivatedRoute) {}
 
-    const items = navigationItemsService.getMenuItems();
-
-    expect(items).toBeDefined();
-    expect(items.length).toBe(1);
-    expect(items[0]).toEqual(item);
-  });
-});
+  ngOnInit() {
+    this.activatedRoute.data.subscribe((config) => {
+      this.widgets = config.widgets;
+    });
+  }
+}
