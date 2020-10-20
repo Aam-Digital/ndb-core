@@ -5,7 +5,7 @@ import {
 } from "./progress-dashboard-config";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { AlertService } from "../../../core/alerts/alert.service";
-import { DashboardWidgetComponent } from "../../../core/dashboard/dashboard-widget.component";
+import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 
 @Component({
   selector: "app-progress-dashboard",
@@ -13,7 +13,7 @@ import { DashboardWidgetComponent } from "../../../core/dashboard/dashboard-widg
   styleUrls: ["./progress-dashboard.component.scss"],
 })
 export class ProgressDashboardComponent
-  implements DashboardWidgetComponent, OnInit {
+  implements OnInitDynamicComponent, OnInit {
   @Input() dashboardConfigId = "";
   data: ProgressDashboardConfig;
   configure = false;
@@ -23,7 +23,7 @@ export class ProgressDashboardComponent
     private alertService: AlertService
   ) {}
 
-  initFromConfig(config: any) {
+  onInitFromDynamicConfig(config: any) {
     this.dashboardConfigId = config.dashboardConfigId;
   }
 

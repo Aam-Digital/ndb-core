@@ -26,7 +26,7 @@ import { MatDividerModule } from "@angular/material/divider";
 import { MatIconModule } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
-import { RouterService } from "../../view/router.service";
+import { RouterService } from "../../view/dynamic-routing/router.service";
 import { ConfigService } from "app/core/config/config.service";
 
 describe("NavigationComponent", () => {

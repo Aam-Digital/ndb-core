@@ -3,7 +3,7 @@ import { ChildrenService } from "../../../children/children.service";
 import { Child } from "../../../children/model/child";
 import { Router } from "@angular/router";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget.component";
+import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 
 @UntilDestroy()
 @Component({
@@ -12,7 +12,7 @@ import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-w
   styleUrls: ["./attendance-average-dashboard.component.scss"],
 })
 export class AttendanceAverageDashboardComponent
-  implements DashboardWidgetComponent, OnInit {
+  implements OnInitDynamicComponent, OnInit {
   readonly ATTENDANCE_THRESHOLD = 0.9;
 
   overallAttendance: number;
@@ -23,7 +23,7 @@ export class AttendanceAverageDashboardComponent
     private router: Router
   ) {}
 
-  initFromConfig(config: any) {}
+  onInitFromDynamicConfig(config: any) {}
 
   async ngOnInit() {
     await this.loadAverageAttendances();

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ChildrenService } from "../../../children/children.service";
 import moment from "moment";
-import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget.component";
+import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 
 /**
  * Dashboard Widget displaying children that have a recently added Note.
@@ -12,7 +12,7 @@ import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-w
   styleUrls: ["./recent-notes-dashboard.component.scss"],
 })
 export class RecentNotesDashboardComponent
-  implements DashboardWidgetComponent, OnInit {
+  implements OnInitDynamicComponent, OnInit {
   /**
    * number of days since last note that children should be considered having a "recent" note.
    */
@@ -34,7 +34,7 @@ export class RecentNotesDashboardComponent
 
   constructor(private childrenService: ChildrenService) {}
 
-  initFromConfig(config: any) {
+  onInitFromDynamicConfig(config: any) {
     if (config?.sinceDays) {
       this.sinceDays = config.sinceDays;
     }

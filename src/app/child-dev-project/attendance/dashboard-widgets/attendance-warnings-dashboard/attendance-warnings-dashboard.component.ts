@@ -3,7 +3,7 @@ import { ChildrenService } from "../../../children/children.service";
 import { Router } from "@angular/router";
 import { AttendanceMonth } from "../../model/attendance-month";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget.component";
+import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 
 @UntilDestroy()
 @Component({
@@ -12,7 +12,7 @@ import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-w
   styleUrls: ["./attendance-warnings-dashboard.component.scss"],
 })
 export class AttendanceWarningsDashboardComponent
-  implements DashboardWidgetComponent, OnInit {
+  implements OnInitDynamicComponent, OnInit {
   readonly ATTENDANCE_THRESHOLD = AttendanceMonth.THRESHOLD_WARNING;
 
   lastMonthsLowAttendence = []; // [[Child, last_months_attendance]]
@@ -22,7 +22,7 @@ export class AttendanceWarningsDashboardComponent
     private router: Router
   ) {}
 
-  initFromConfig(config: any) {}
+  onInitFromDynamicConfig(config: any) {}
 
   async ngOnInit() {
     await this.loadLastAttendances();

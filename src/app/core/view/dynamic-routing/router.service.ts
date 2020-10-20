@@ -1,11 +1,17 @@
 import { Injectable } from "@angular/core";
 import { Route, Router } from "@angular/router";
 import { COMPONENT_MAP } from "app/app.routing";
-import { AdminGuard } from "../admin/admin.guard";
-import { ConfigService } from "../config/config.service";
-import { LoggingService } from "../logging/logging.service";
+import { AdminGuard } from "../../admin/admin.guard";
+import { ConfigService } from "../../config/config.service";
+import { LoggingService } from "../../logging/logging.service";
 import { ViewConfig } from "./view-config.interface";
 
+/**
+ * The RouterService dynamically sets up Angular routing from config loaded through the {@link ConfigService}.
+ *
+ * You can define {@link ViewConfig} objects in the central configuration and build the routing at runtime
+ * rather than hard-coding the available paths and settings.
+ */
 @Injectable({
   providedIn: "root",
 })

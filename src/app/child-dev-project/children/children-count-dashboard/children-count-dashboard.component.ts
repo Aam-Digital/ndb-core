@@ -2,8 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { ChildrenService } from "../children.service";
 import { Router } from "@angular/router";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { DashboardWidgetComponent } from "../../../core/dashboard/dashboard-widget.component";
-import { DashboardWidgetConfig } from "../../../core/dashboard/dashboard-widget-config.interface";
+import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 
 @UntilDestroy()
 @Component({
@@ -12,7 +11,7 @@ import { DashboardWidgetConfig } from "../../../core/dashboard/dashboard-widget-
   styleUrls: ["./children-count-dashboard.component.scss"],
 })
 export class ChildrenCountDashboardComponent
-  implements DashboardWidgetComponent, OnInit {
+  implements OnInitDynamicComponent, OnInit {
   totalChildren: number;
   childrenByCenter = [];
 
@@ -21,7 +20,7 @@ export class ChildrenCountDashboardComponent
     public router: Router
   ) {}
 
-  initFromConfig(config: DashboardWidgetConfig) {}
+  onInitFromDynamicConfig(config: any) {}
 
   ngOnInit() {
     this.childrenService

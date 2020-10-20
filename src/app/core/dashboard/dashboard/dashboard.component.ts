@@ -17,7 +17,7 @@
 
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { DashboardWidgetConfig } from "../dashboard-widget-config.interface";
+import { DynamicComponentConfig } from "../../view/dynamic-components/dynamic-component-config.interface";
 
 @Component({
   selector: "app-dashboard",
@@ -25,7 +25,7 @@ import { DashboardWidgetConfig } from "../dashboard-widget-config.interface";
   styleUrls: ["./dashboard.component.scss"],
 })
 export class DashboardComponent implements OnInit {
-  widgets: DashboardWidgetConfig[] = [];
+  widgets: DynamicComponentConfig[] = [];
 
   constructor(private activatedRoute: ActivatedRoute) {}
 

@@ -12,7 +12,7 @@ import { take } from "rxjs/operators";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatSort } from "@angular/material/sort";
 import { MatPaginator } from "@angular/material/paginator";
-import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget.component";
+import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 
 /**
  * Dashboard Widget displaying children that do not have a recently added Note.
@@ -26,7 +26,7 @@ import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-w
   styleUrls: ["./no-recent-notes-dashboard.component.scss"],
 })
 export class NoRecentNotesDashboardComponent
-  implements DashboardWidgetComponent, OnInit, AfterViewInit {
+  implements OnInitDynamicComponent, OnInit, AfterViewInit {
   /**
    * number of days since last note that children should be considered having a "recent" note.
    */
@@ -57,7 +57,7 @@ export class NoRecentNotesDashboardComponent
 
   constructor(private childrenService: ChildrenService) {}
 
-  initFromConfig(config: any) {
+  onInitFromDynamicConfig(config: any) {
     if (config?.sinceDays) {
       this.sinceDays = config.sinceDays;
     }

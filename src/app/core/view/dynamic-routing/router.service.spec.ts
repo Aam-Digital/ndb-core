@@ -4,10 +4,10 @@ import { Router } from "@angular/router";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ChildDetailsComponent } from "app/child-dev-project/children/child-details/child-details.component";
 import { ChildrenListComponent } from "app/child-dev-project/children/children-list/children-list.component";
-import { AdminGuard } from "../admin/admin.guard";
-import { AdminComponent } from "../admin/admin/admin.component";
-import { ConfigService } from "../config/config.service";
-import { LoggingService } from "../logging/logging.service";
+import { AdminGuard } from "../../admin/admin.guard";
+import { AdminComponent } from "../../admin/admin/admin.component";
+import { ConfigService } from "../../config/config.service";
+import { LoggingService } from "../../logging/logging.service";
 
 import { RouterService } from "./router.service";
 

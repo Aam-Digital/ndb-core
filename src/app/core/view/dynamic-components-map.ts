@@ -6,7 +6,7 @@ import { NoRecentNotesDashboardComponent } from "app/child-dev-project/notes/das
 import { RecentNotesDashboardComponent } from "app/child-dev-project/notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component";
 import { ProgressDashboardComponent } from "../../child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard.component";
 
-export const DASHBOARD_COMPONENT_MAP = new Map<string, any>([
+export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
   ["RecentNotesDashboard", RecentNotesDashboardComponent],
   ["NoRecentNotesDashboard", NoRecentNotesDashboardComponent],

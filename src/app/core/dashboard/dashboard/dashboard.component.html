@@ -17,7 +17,7 @@
 
 <div fxLayout="row wrap" fxLayout.xs="column wrap" fxLayoutGap="20px" class='widget-wrapper'>
   <div fxFlex="30" *ngFor="let widgetConfig of widgets">
-    <ng-template [appDashboardWidget]="widgetConfig"></ng-template>
+    <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
   </div>
 </div>
 

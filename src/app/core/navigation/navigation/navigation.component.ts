@@ -20,8 +20,8 @@ import { MenuItem } from "../menu-item";
 import { AdminGuard } from "../../admin/admin.guard";
 import { ConfigService } from "app/core/config/config.service";
 import { NavigationMenuConfig } from "../navigation-menu-config.interface";
-import { RouterService } from "../../view/router.service";
-import { ViewConfig } from "../../view/view-config.interface";
+import { RouterService } from "../../view/dynamic-routing/router.service";
+import { ViewConfig } from "../../view/dynamic-routing/view-config.interface";
 
 /**
  * Main app menu listing.
