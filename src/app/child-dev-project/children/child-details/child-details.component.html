@@ -82,7 +82,6 @@
     <app-grouped-child-attendance [child]="child"></app-grouped-child-attendance>
   </mat-expansion-panel>
 
-
   <mat-expansion-panel expanded="false"
                        [disabled]="creatingNew">
     <mat-expansion-panel-header class="section-header">
@@ -95,7 +94,6 @@
     </mat-expansion-panel-header>
     <app-notes-of-child [child]="child"></app-notes-of-child>
   </mat-expansion-panel>
-
 
   <mat-expansion-panel [expanded]="false"
                        [disabled]="creatingNew">
@@ -140,9 +138,9 @@
   </mat-expansion-panel>
 </mat-accordion>
 <button
-        mat-stroked-button
-        class="edit-button"
-        style="color: red;"
+        mat-raised-button
+        color="warn"
+        class="delete-button"
         (click)="removeChild()"
 >
   Delete
