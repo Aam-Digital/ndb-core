@@ -1,3 +1,13 @@
+<div
+        *ngIf="child.schoolId"
+        matTooltip="To edit the current school or class, please add to the school history below"
+>
+    <em>
+        Currently attending class {{ child.schoolClass }} at
+        <app-school-block [entityId]="child.schoolId"></app-school-block>
+    </em>
+</div>
+
 <app-entity-subrecord
   (changedRecordsInEntitySubrecordEvent)="changedRecordInEntitySubrecord.emit()"
   [records]="records"

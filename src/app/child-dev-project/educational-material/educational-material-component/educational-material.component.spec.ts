@@ -2,7 +2,6 @@ import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EducationalMaterialComponent } from "./educational-material.component";
 import { FormsModule } from "@angular/forms";
-import { ActivatedRoute } from "@angular/router";
 import { ChildrenService } from "../../children/children.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { MockDatabase } from "../../../core/database/mock-database";
@@ -33,10 +32,6 @@ describe("EducationalMaterialComponent", () => {
       imports: [FormsModule, NoopAnimationsModule, ChildrenModule],
       providers: [
         DatePipe,
-        {
-          provide: ActivatedRoute,
-          useValue: { paramMap: of({ get: () => "22" }) },
-        },
         { provide: ChildrenService, useValue: mockChildrenService },
         EntityMapperService,
         EntitySchemaService,
@@ -49,6 +44,7 @@ describe("EducationalMaterialComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EducationalMaterialComponent);
     component = fixture.componentInstance;
+    component.child = new Child("22");
     fixture.detectChanges();
   });
 

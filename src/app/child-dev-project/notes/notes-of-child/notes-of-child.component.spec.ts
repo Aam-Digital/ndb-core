@@ -5,31 +5,21 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { ChildrenService } from "../../children/children.service";
 import { DatePipe } from "@angular/common";
 import { Note } from "../model/note";
-import { RouterTestingModule } from "@angular/router/testing";
-import { Observable } from "rxjs";
-import { ActivatedRoute } from "@angular/router";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { MockDatabase } from "../../../core/database/mock-database";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { Database } from "../../../core/database/database";
-import { User } from "../../../core/user/user";
 import { SessionService } from "../../../core/session/session-service/session.service";
+import { Child } from "../../children/model/child";
+import { User } from "../../../core/user/user";
 
-const mockedRoute = {
-  paramMap: Observable.create((observer) =>
-    observer.next({
-      get: () => "1",
-    })
-  ),
-};
+const allChildren: Array<Note> = [];
 
 const mockedSessionService = {
   getCurrentUser(): User {
     return new User("1");
   },
 };
-
-const allChildren: Array<Note> = [];
 
 describe("NotesOfChildComponent", () => {
   let component: NotesOfChildComponent;
@@ -43,7 +33,7 @@ describe("NotesOfChildComponent", () => {
     ]);
 
     TestBed.configureTestingModule({
-      imports: [NotesModule, MatNativeDateModule, RouterTestingModule],
+      imports: [NotesModule, MatNativeDateModule],
       providers: [
         { provide: ChildrenService, useValue: mockChildrenService },
         EntitySchemaService,
@@ -51,7 +41,6 @@ describe("NotesOfChildComponent", () => {
         { provide: SessionService, useValue: mockedSessionService },
         { provide: Database, useClass: MockDatabase },
         { provide: DatePipe, useValue: new DatePipe("medium") },
-        { provide: ActivatedRoute, useValue: mockedRoute },
       ],
     }).compileComponents();
   });
@@ -59,7 +48,8 @@ describe("NotesOfChildComponent", () => {
   beforeEach(async () => {
     fixture = TestBed.createComponent(NotesOfChildComponent);
     component = fixture.componentInstance;
-    component.ngOnInit();
+    component.child = new Child("1");
+    fixture.detectChanges();
   });
 
   it("should create", () => {

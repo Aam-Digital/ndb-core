@@ -42,10 +42,6 @@ describe("HealthCheckupComponent", () => {
         MatSnackBar,
         ConfirmationDialogService,
         MatDialog,
-        {
-          provide: ActivatedRoute,
-          useValue: { paramMap: of({ get: () => "22" }) },
-        },
         { provide: ChildrenService, useValue: mockChildrenService },
         { provide: EntityMapperService, useValue: mockEntityMapper },
         AlertService,
@@ -56,6 +52,7 @@ describe("HealthCheckupComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(HealthCheckupComponent);
     component = fixture.componentInstance;
+    component.child = new Child("22");
     fixture.detectChanges();
   });
 

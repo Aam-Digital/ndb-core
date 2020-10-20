@@ -1,7 +1,6 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ChildAttendanceComponent } from "./child-attendance.component";
-import { ActivatedRoute } from "@angular/router";
 import { Child } from "../../children/model/child";
 import { ChildrenService } from "../../children/children.service";
 import { DatePipe, PercentPipe } from "@angular/common";
@@ -173,9 +172,10 @@ describe("ChildAttendanceComponent", () => {
   let fixture: ComponentFixture<ChildAttendanceComponent>;
 
   const mockChildrenService = {
-    getChild: (id) => of(new Child(id)),
     getAttendances: () => of(ATTENDANCE_ENTITIES),
   };
+
+  const child: Child = new Child("22");
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -183,7 +183,6 @@ describe("ChildAttendanceComponent", () => {
       providers: [
         DatePipe,
         PercentPipe,
-        { provide: ActivatedRoute, useValue: { params: of({ id: "22" }) } },
         { provide: ChildrenService, useValue: mockChildrenService },
         EntityMapperService,
         EntitySchemaService,
@@ -196,6 +195,8 @@ describe("ChildAttendanceComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ChildAttendanceComponent);
     component = fixture.componentInstance;
+    component.child = child;
+    fixture.detectChanges();
   });
 
   it("should create", () => {

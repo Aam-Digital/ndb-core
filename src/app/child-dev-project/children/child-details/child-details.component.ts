@@ -42,7 +42,6 @@ export class ChildDetailsComponent implements OnInit {
 
   validateForm = false;
   form: FormGroup;
-  healthCheckForm: FormGroup;
   creatingNew = false;
   editing = false;
   enablePhotoUpload;
@@ -58,13 +57,7 @@ export class ChildDetailsComponent implements OnInit {
     "not eligible",
     "",
   ];
-  eyeStatusValues = ["Good", "Has Glasses", "Needs Glasses", "Needs Checkup"];
-  vaccinationStatusValues = [
-    "Good",
-    "Vaccination Due",
-    "Needs Checking",
-    "No Card/Information",
-  ];
+
   isAdminUser: boolean;
 
   constructor(
@@ -127,33 +120,6 @@ export class ChildDetailsComponent implements OnInit {
       // rationCard:     [{value: this.child.has_rationCard,     disabled: !this.editing}],
       // bplCard:        [{value: this.child.has_BplCard,        disabled: !this.editing}],
 
-      // health_vaccinationStatus:    [{value: this.child.health_vaccinationStatus,    disabled: !this.editing}],
-      health_bloodGroup: [
-        { value: this.child.health_bloodGroup, disabled: !this.editing },
-      ],
-      health_lastDentalCheckup: [
-        { value: this.child.health_lastDentalCheckup, disabled: !this.editing },
-      ],
-      health_lastEyeCheckup: [
-        { value: this.child.health_lastEyeCheckup, disabled: !this.editing },
-      ],
-      // health_eyeHealthStatus:   [{value: this.child.health_eyeHealthStatus,    disabled: !this.editing}],
-      health_lastENTCheckup: [
-        { value: this.child.health_lastENTCheckup, disabled: !this.editing },
-      ],
-      health_lastVitaminD: [
-        { value: this.child.health_lastVitaminD, disabled: !this.editing },
-      ],
-      health_lastDeworming: [
-        { value: this.child.health_lastDeworming, disabled: !this.editing },
-      ],
-
-      dropoutDate: [{ value: this.child.dropoutDate, disabled: !this.editing }],
-      dropoutType: [{ value: this.child.dropoutType, disabled: !this.editing }],
-      dropoutRemarks: [
-        { value: this.child.dropoutRemarks, disabled: !this.editing },
-      ],
-
       photoFile: [{ value: this.child.photoFile, disabled: !this.editing }],
     });
   }
@@ -177,15 +143,6 @@ export class ChildDetailsComponent implements OnInit {
     this.initForm();
   }
 
-  changedRecordInEntitySubrecord() {
-    this.childrenService
-      .getChild(this.child.getId())
-      .pipe(untilDestroyed(this))
-      .subscribe((child) => {
-        this.child = child;
-      });
-  }
-
   switchEdit() {
     this.editing = !this.editing;
     this.enablePhotoUpload = this.childPhotoService.canSetImage();
@@ -207,7 +164,7 @@ export class ChildDetailsComponent implements OnInit {
             this.router.navigate(["/child", this.child.getId()]);
             this.creatingNew = false;
           }
-          this.alertService.addInfo("Saving Succesfull");
+          this.alertService.addInfo("Saving Successful");
           this.switchEdit();
         })
         .catch((err) =>
