@@ -1,5 +1,3 @@
-import { DashboardWidgetConfig } from "./dashboard-widget-config.interface";
-
 /**
  * Base for any component used as a dashboard widget.
  */

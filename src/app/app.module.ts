@@ -32,7 +32,7 @@ import { NavigationModule } from "./core/navigation/navigation.module";
 import { LatestChangesModule } from "./core/latest-changes/latest-changes.module";
 import { UserModule } from "./core/user/user.module";
 
-import { DashboardModule } from "./child-dev-project/dashboard/dashboard.module";
+import { ProgressDashboardWidgetModule } from "./child-dev-project/progress-dashboard-widget/progress-dashboard-widget.module";
 import { ChildrenModule } from "./child-dev-project/children/children.module";
 import { SchoolsModule } from "./child-dev-project/schools/schools.module";
 import { FlexLayoutModule } from "@angular/flex-layout";
@@ -54,7 +54,7 @@ import { DemoNoteGeneratorService } from "./child-dev-project/notes/demo-data/de
 import { DemoAserGeneratorService } from "./child-dev-project/aser/demo-aser-generator.service";
 import { DemoEducationalMaterialGeneratorService } from "./child-dev-project/educational-material/demo-educational-material-generator.service";
 import { DemoHealthCheckGeneratorService } from "./child-dev-project/health-checkup/demo-data/demo-health-check-generator.service";
-import { DemoWidgetGeneratorService } from "./child-dev-project/dashboard/demo-widget-generator.service";
+import { DemoProgressDashboardWidgetGeneratorService } from "./child-dev-project/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service";
 import { DemoUserGeneratorService } from "./core/user/demo-user-generator.service";
 import { ConfirmationDialogModule } from "./core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "./core/form-dialog/form-dialog.module";
@@ -65,6 +65,7 @@ import { Angulartics2Piwik } from "angulartics2/piwik";
 import { ConfigService } from "./core/config/config.service";
 import { ViewModule } from "./core/view/view.module";
 import { RouterService } from "./core/view/router.service";
+import { DashboardModule } from "./core/dashboard/dashboard.module";
 
 export function configFactory(configService: ConfigService) {
   return (): Promise<any> => configService.loadConfig();
@@ -103,6 +104,7 @@ export function configFactory(configService: ConfigService) {
     NavigationModule,
     UserModule,
     DashboardModule,
+    ProgressDashboardWidgetModule,
     ChildrenModule,
     SchoolsModule,
     AdminModule,
@@ -125,7 +127,7 @@ export function configFactory(configService: ConfigService) {
         maxCount: 8,
       }),
       ...DemoHealthCheckGeneratorService.provider(),
-      ...DemoWidgetGeneratorService.provider(),
+      ...DemoProgressDashboardWidgetGeneratorService.provider(),
       ...DemoUserGeneratorService.provider(),
     ]),
   ],

@@ -4,7 +4,7 @@ import { AttendanceWeekDashboardComponent } from "app/child-dev-project/attendan
 import { ChildrenCountDashboardComponent } from "app/child-dev-project/children/children-count-dashboard/children-count-dashboard.component";
 import { NoRecentNotesDashboardComponent } from "app/child-dev-project/notes/dashboard-widgets/no-recent-notes-dashboard/no-recent-notes-dashboard.component";
 import { RecentNotesDashboardComponent } from "app/child-dev-project/notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component";
-import { ProgressDashboardComponent } from "./progress-dashboard/progress-dashboard.component";
+import { ProgressDashboardComponent } from "../../child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard.component";
 
 export const DASHBOARD_COMPONENT_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],

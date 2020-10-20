@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ChildrenService } from "../../../children/children.service";
 import moment from "moment";
-import { DashboardWidgetComponent } from "app/child-dev-project/dashboard/dashboard-widget.component";
+import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget.component";
 
 /**
  * Dashboard Widget displaying children that have a recently added Note.

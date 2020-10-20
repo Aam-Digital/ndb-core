@@ -17,7 +17,7 @@
 
 import { RouterModule, Routes } from "@angular/router";
 import { ModuleWithProviders } from "@angular/core";
-import { DashboardComponent } from "./child-dev-project/dashboard/dashboard/dashboard.component";
+import { DashboardComponent } from "./core/dashboard/dashboard/dashboard.component";
 import { SchoolsListComponent } from "./child-dev-project/schools/schools-list/schools-list.component";
 import { SchoolDetailsComponent } from "./child-dev-project/schools/school-details/school-details.component";
 import { ChildDetailsComponent } from "./child-dev-project/children/child-details/child-details.component";

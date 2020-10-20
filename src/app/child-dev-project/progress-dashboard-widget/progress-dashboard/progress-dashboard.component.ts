@@ -5,8 +5,7 @@ import {
 } from "./progress-dashboard-config";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { AlertService } from "../../../core/alerts/alert.service";
-import { DashboardWidgetComponent } from "../dashboard-widget.component";
-import { DashboardWidgetConfig } from "../dashboard-widget-config.interface";
+import { DashboardWidgetComponent } from "../../../core/dashboard/dashboard-widget.component";
 
 @Component({
   selector: "app-progress-dashboard",

@@ -12,7 +12,7 @@ import { take } from "rxjs/operators";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatSort } from "@angular/material/sort";
 import { MatPaginator } from "@angular/material/paginator";
-import { DashboardWidgetComponent } from "app/child-dev-project/dashboard/dashboard-widget.component";
+import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget.component";
 
 /**
  * Dashboard Widget displaying children that do not have a recently added Note.

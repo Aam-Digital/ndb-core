@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DashboardComponent } from "./dashboard.component";
 import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject } from "rxjs";
-import { ProgressDashboardComponent } from "../progress-dashboard/progress-dashboard.component";
+import { ProgressDashboardComponent } from "../../../child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard.component";
 
 describe("DashboardComponent", () => {
   let component: DashboardComponent;

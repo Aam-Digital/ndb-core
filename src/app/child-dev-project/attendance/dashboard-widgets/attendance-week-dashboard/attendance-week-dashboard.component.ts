@@ -6,7 +6,7 @@ import { AttendanceDay, AttendanceStatus } from "../../model/attendance-day";
 import { Child } from "../../../children/model/child";
 import { forkJoin } from "rxjs";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { DashboardWidgetComponent } from "app/child-dev-project/dashboard/dashboard-widget.component";
+import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget.component";
 
 @UntilDestroy()
 @Component({

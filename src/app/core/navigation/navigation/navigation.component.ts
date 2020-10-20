@@ -21,6 +21,7 @@ import { AdminGuard } from "../../admin/admin.guard";
 import { ConfigService } from "app/core/config/config.service";
 import { NavigationMenuConfig } from "../navigation-menu-config.interface";
 import { RouterService } from "../../view/router.service";
+import { ViewConfig } from "../../view/view-config.interface";
 
 /**
  * Main app menu listing.
@@ -67,7 +68,7 @@ export class NavigationComponent implements OnInit {
    * Check whether the user has the required rights
    */
   private checkMenuItemPermissions(link: string): boolean {
-    const viewConfig = this.configService.getConfig<any>(
+    const viewConfig = this.configService.getConfig<ViewConfig>(
       RouterService.PREFIX_VIEW_CONFIG + link.replace(/^\//, "")
     );
     return !viewConfig?.requiresAdmin || this.adminGuard.isAdmin();

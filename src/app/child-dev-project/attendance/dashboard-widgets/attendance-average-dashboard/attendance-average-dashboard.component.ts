@@ -3,7 +3,7 @@ import { ChildrenService } from "../../../children/children.service";
 import { Child } from "../../../children/model/child";
 import { Router } from "@angular/router";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { DashboardWidgetComponent } from "app/child-dev-project/dashboard/dashboard-widget.component";
+import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget.component";
 
 @UntilDestroy()
 @Component({
