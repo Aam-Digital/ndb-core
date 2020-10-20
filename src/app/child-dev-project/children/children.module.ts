@@ -82,6 +82,7 @@ import { AttendanceAnalysisComponent } from "../attendance/attendance-analysis/a
 import { GroupedChildAttendanceComponent } from "./child-details/grouped-child-attendance/grouped-child-attendance.component";
 import { HealthFormComponent } from "./child-details/health-form/health-form.component";
 import { DropoutFormComponent } from "./child-details/dropout-form/dropout-form.component";
+import { BasicInfoComponent } from "./child-details/basic-info/basic-info.component";
 
 @NgModule({
   imports: [
@@ -152,6 +153,7 @@ import { DropoutFormComponent } from "./child-details/dropout-form/dropout-form.
     GroupedChildAttendanceComponent,
     HealthFormComponent,
     DropoutFormComponent,
+    BasicInfoComponent,
   ],
   providers: [
     ChildrenService,
