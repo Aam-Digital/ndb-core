@@ -1,40 +1,40 @@
-<div>
-    <mat-form-field>
-        <input
-                matInput
-                [(ngModel)]="child.dropoutDate"
-                placeholder="Dropout Date"
-                [matDatepicker]="dropoutDatepicker"
-                [disabled]="!editing"
-        />
-        <mat-datepicker-toggle
-                matSuffix
-                [for]="dropoutDatepicker"
-        ></mat-datepicker-toggle>
-        <mat-datepicker #dropoutDatepicker></mat-datepicker>
-    </mat-form-field>
+<form [formGroup]="form">
+    <div>
+        <mat-form-field>
+            <input
+                    matInput
+                    formControlName="dropoutDate"
+                    placeholder="Dropout Date"
+                    [matDatepicker]="dropoutDatepicker"
+                    [disabled]="!editing"
+            />
+            <mat-datepicker-toggle
+                    matSuffix
+                    [for]="dropoutDatepicker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #dropoutDatepicker></mat-datepicker>
+        </mat-form-field>
 
-    <mat-form-field>
-        <input
-                matInput
-                [(ngModel)]="child.dropoutType"
-                placeholder="Dropout Type"
-                type="text"
-                [disabled]="!editing"
-        />
-    </mat-form-field>
+        <mat-form-field>
+            <input
+                    matInput
+                    formControlName="dropoutType"
+                    placeholder="Dropout Type"
+                    type="text"
+            />
+        </mat-form-field>
 
-    <mat-form-field>
+        <mat-form-field>
             <textarea
                     matInput
-                    [(ngModel)]="child.dropoutRemarks"
+                    formControlName="dropoutRemarks"
                     placeholder="Dropout Remarks"
                     type="text"
-                    [disabled]="!editing"
             >
             </textarea>
-    </mat-form-field>
-</div>
+        </mat-form-field>
+    </div>
+</form>
 <div>
     <button
             *ngIf="editing"
@@ -49,7 +49,7 @@
             *ngIf="editing"
             mat-stroked-button
             class="edit-button"
-            (click)="cancel()"
+            (click)="switchEdit()"
     >
         Cancel
     </button>
@@ -58,7 +58,7 @@
             *ngIf="!editing"
             mat-stroked-button
             class="edit-button"
-            (click)="edit()"
+            (click)="switchEdit()"
     >
         Edit
     </button>
