@@ -10,7 +10,7 @@ export abstract class FormSubcomponent implements OnChanges {
   form: FormGroup;
   validateForm: boolean = false;
 
-  protected constructor(
+  public constructor(
     private entityMapperService: EntityMapperService,
     private fb: FormBuilder,
     private alertService: AlertService

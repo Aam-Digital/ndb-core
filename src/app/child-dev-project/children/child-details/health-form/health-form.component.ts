@@ -1,13 +1,16 @@
 import { Component, Input } from "@angular/core";
 import { Child } from "../../model/child";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { FormSubcomponent } from "../form-subcomponent";
+import { AbstractControlOptions, FormBuilder } from "@angular/forms";
+import { AlertService } from "../../../../core/alerts/alert.service";
 
 @Component({
   selector: "app-health-form",
   templateUrl: "./health-form.component.html",
   styleUrls: ["./health-form.component.scss"],
 })
-export class HealthFormComponent {
+export class HealthFormComponent extends FormSubcomponent {
   vaccinationStatusValues = [
     "Good",
     "Vaccination Due",
@@ -18,30 +21,51 @@ export class HealthFormComponent {
   @Input() child: Child;
   editing: boolean = false;
 
-  constructor(private entityMapper: EntityMapperService) {}
-
-  save() {
-    this.editing = false;
-    this.entityMapper.save<Child>(this.child);
+  public constructor(
+    entityMapperService: EntityMapperService,
+    fb: FormBuilder,
+    alertService: AlertService
+  ) {
+    super(entityMapperService, fb, alertService);
   }
 
-  edit() {
-    this.editing = true;
-  }
-
-  cancel() {
-    this.editing = false;
-    this.entityMapper
-      .load<Child>(Child, this.child.getId())
-      .then((tmpChild) => {
-        this.child.health_vaccinationStatus = tmpChild.health_vaccinationStatus;
-        this.child.health_eyeHealthStatus = tmpChild.health_eyeHealthStatus;
-        this.child.health_bloodGroup = tmpChild.health_bloodGroup;
-        this.child.health_lastDentalCheckup = tmpChild.health_lastDentalCheckup;
-        this.child.health_lastEyeCheckup = tmpChild.health_lastEyeCheckup;
-        this.child.health_lastENTCheckup = tmpChild.health_lastENTCheckup;
-        this.child.health_lastVitaminD = tmpChild.health_lastVitaminD;
-        this.child.health_lastDeworming = tmpChild.health_lastDeworming;
-      });
+  getFormConfig(): {
+    controlsConfig: { [p: string]: any };
+    options?: AbstractControlOptions | { [p: string]: any } | null;
+  } {
+    return {
+      controlsConfig: {
+        health_vaccinationStatus: [
+          {
+            value: this.child.health_vaccinationStatus,
+            disabled: !this.editing,
+          },
+        ],
+        health_eyeHealthStatus: [
+          { value: this.child.health_eyeHealthStatus, disabled: !this.editing },
+        ],
+        health_bloodGroup: [
+          { value: this.child.health_bloodGroup, disabled: !this.editing },
+        ],
+        health_lastDentalCheckup: [
+          {
+            value: this.child.health_lastDentalCheckup,
+            disabled: !this.editing,
+          },
+        ],
+        health_lastEyeCheckup: [
+          { value: this.child.health_lastEyeCheckup, disabled: !this.editing },
+        ],
+        health_lastENTCheckup: [
+          { value: this.child.health_lastENTCheckup, disabled: !this.editing },
+        ],
+        health_lastVitaminD: [
+          { value: this.child.health_lastVitaminD, disabled: !this.editing },
+        ],
+        health_lastDeworming: [
+          { value: this.child.health_lastDeworming, disabled: !this.editing },
+        ],
+      },
+    };
   }
 }

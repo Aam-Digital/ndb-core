@@ -13,7 +13,7 @@ import { FormSubcomponent } from "../form-subcomponent";
 export class DropoutFormComponent extends FormSubcomponent {
   @Input() child: Child;
 
-  protected constructor(
+  public constructor(
     entityMapperService: EntityMapperService,
     fb: FormBuilder,
     alertService: AlertService
