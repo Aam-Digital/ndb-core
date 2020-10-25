@@ -4,7 +4,6 @@ import {
   OnInit,
   ViewChild,
   ElementRef,
-  HostListener,
 } from "@angular/core";
 import { Child } from "../model/child";
 import { MatSort } from "@angular/material/sort";
@@ -19,7 +18,6 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { User } from "../../../core/user/user";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { floor, min } from "lodash";
 
 export interface ColumnGroup {
   name: string;
@@ -209,9 +207,20 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   onPaginateChange(event: PageEvent) {
     this.paginatorPageSize = event.pageSize;
     this.paginatorPageIndex = event.pageIndex;
-    this.user.paginatorSettingsPageSize.childrenList = this.paginatorPageSize;
+    this.updateUserPaginationSettings();
+  }
+
+  private updateUserPaginationSettings() {
+    const hasChangesToBeSaved =
+      this.paginatorPageSize !==
+      this.user.paginatorSettingsPageSize.childrenList;
+
     this.user.paginatorSettingsPageIndex.childrenList = this.paginatorPageIndex;
-    this.entityMapperService.save<User>(this.user);
+    this.user.paginatorSettingsPageSize.childrenList = this.paginatorPageSize;
+
+    if (hasChangesToBeSaved) {
+      this.entityMapperService.save<User>(this.user);
+    }
   }
 
   private loadData(replaceUrl: boolean = false) {
