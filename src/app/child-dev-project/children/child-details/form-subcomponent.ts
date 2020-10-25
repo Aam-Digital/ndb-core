@@ -34,31 +34,37 @@ export abstract class FormSubcomponent implements OnChanges {
     this.initForm(this.getFormConfig());
   }
 
-  save() {
-    // errors regarding invalid fields wont be displayed unless marked as touched
-    this.form.markAllAsTouched();
-    this.validateForm = true;
+  save(): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      // errors regarding invalid fields wont be displayed unless marked as touched
+      this.form.markAllAsTouched();
+      this.validateForm = true;
 
-    if (this.form.valid) {
-      this.assignFormValuesToChild(this.child, this.form);
+      if (this.form.valid) {
+        this.assignFormValuesToChild(this.child, this.form);
 
-      this.entityMapperService
-        .save<Child>(this.child)
-        .then(() => {
-          this.alertService.addInfo("Saving Successful");
-          this.switchEdit();
-        })
-        .catch((err) =>
-          this.alertService.addDanger(
-            'Could not save Child "' + this.child.name + '": ' + err
-          )
+        this.entityMapperService
+          .save<Child>(this.child)
+          .then(() => {
+            this.alertService.addInfo("Saving Successful");
+            this.switchEdit();
+            resolve();
+          })
+          .catch((err) => {
+              this.alertService.addDanger(
+                'Could not save Child "' + this.child.name + '": ' + err
+              );
+              reject();
+            }
+          );
+      } else {
+        const invalidFields = this.getInvalidFields();
+        this.alertService.addDanger(
+          "Form invalid, required fields (" + invalidFields + ") missing"
         );
-    } else {
-      const invalidFields = this.getInvalidFields();
-      this.alertService.addDanger(
-        "Form invalid, required fields (" + invalidFields + ") missing"
-      );
-    }
+        reject();
+      }
+    })
   }
 
   private assignFormValuesToChild(child: Child, form: FormGroup) {

@@ -175,8 +175,7 @@
                 </mat-label>
                 <mat-select
                         [disabled]="!editing"
-                        [(ngModel)]="child.has_aadhar"
-                        [ngModelOptions]="{ standalone: true }"
+                        formControlName="has_aadhar"
                 >
                     <mat-option *ngFor="let s of documentStatus" [value]="s">{{
                         s
@@ -190,8 +189,7 @@
                 </mat-label>
                 <mat-select
                         [disabled]="!editing"
-                        [(ngModel)]="child.has_kanyashree"
-                        [ngModelOptions]="{ standalone: true }"
+                        formControlName="has_kanyashree"
                 >
                     <mat-option *ngFor="let s of documentStatus" [value]="s">{{
                         s
@@ -205,8 +203,7 @@
                 </mat-label>
                 <mat-select
                         [disabled]="!editing"
-                        [(ngModel)]="child.has_bankAccount"
-                        [ngModelOptions]="{ standalone: true }"
+                        formControlName="has_bankAccount"
                 >
                     <mat-option *ngFor="let s of documentStatus" [value]="s">{{
                         s
@@ -220,8 +217,7 @@
                 </mat-label>
                 <mat-select
                         [disabled]="!editing"
-                        [(ngModel)]="child.has_rationCard"
-                        [ngModelOptions]="{ standalone: true }"
+                        formControlName="has_rationCard"
                 >
                     <mat-option *ngFor="let s of documentStatus" [value]="s">{{
                         s
@@ -235,8 +231,7 @@
                 </mat-label>
                 <mat-select
                         [disabled]="!editing"
-                        [(ngModel)]="child.has_BplCard"
-                        [ngModelOptions]="{ standalone: true }"
+                        formControlName="has_BplCard"
                 >
                     <mat-option *ngFor="let s of documentStatus" [value]="s">{{
                         s
