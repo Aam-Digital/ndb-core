@@ -88,7 +88,7 @@ export class PreviousSchoolsComponent implements OnInit, OnChanges {
       new ColumnDescription(
         "schoolClass",
         "Class",
-        ColumnDescriptionInputType.NUMBER
+        ColumnDescriptionInputType.TEXT
       ),
 
       new ColumnDescription(
