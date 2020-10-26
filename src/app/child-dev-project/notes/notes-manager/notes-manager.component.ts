@@ -13,7 +13,10 @@ import { FormDialogService } from "../../../core/form-dialog/form-dialog.service
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { User } from "app/core/user/user";
 import { ConfigService } from "app/core/config/config.service";
-import { NoteConfig } from "../note-details/note-config.interface";
+import {
+  InteractionType,
+  NoteConfig,
+} from "../note-details/note-config.interface";
 
 @UntilDestroy()
 @Component({
@@ -25,13 +28,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
   /** Name of note config Object in config json file */
   private readonly CONFIG_ID = "notes";
   /** interaction types loaded from config file */
-  interactionTypes: {
-    [key: string]: {
-      name: string;
-      color?: string;
-      isMeeting?: boolean;
-    };
-  };
+  interactionTypes: InteractionType[];
   entityList = new Array<Note>();
   notesDataSource = new MatTableDataSource();
 
@@ -96,9 +93,9 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     // load interactionTypes from config
-    this.interactionTypes = this.interactionTypes = this.configService.getConfig<
-      NoteConfig
-    >(this.CONFIG_ID).InteractionTypes;
+    this.interactionTypes = Object.values(
+      this.configService.getConfig<NoteConfig>(this.CONFIG_ID).InteractionTypes
+    );
     Object.freeze(this.interactionTypes);
 
     this.user = this.sessionService.getCurrentUser();
@@ -153,15 +150,15 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
       { key: "show-all", label: "All Notes", filterFun: () => true },
     ];
 
-    Object.keys(this.interactionTypes).forEach((interaction) => {
+    for (const interaction of this.interactionTypes) {
       this.categoryFS.options.push({
-        key: interaction,
-        label: this.interactionTypes[interaction].name,
+        key: interaction.name,
+        label: interaction.name,
         filterFun: (note: Note) => {
-          return note.category === interaction;
+          return note.category.name === interaction.name;
         },
       });
-    });
+    }
 
     this.applyFilterSelections();
   }
@@ -229,7 +226,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
       return WarningLevelColor(WarningLevel.WARNING);
     }
 
-    const color = this.interactionTypes[entity.category]?.color;
-    return color === undefined ? "" : color;
+    const color = entity.category.color;
+    return color ? "" : color;
   }
 }

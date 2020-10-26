@@ -2,7 +2,9 @@ import { Component, Input, OnInit, ViewChild } from "@angular/core";
 import { Note } from "../model/note";
 import { ShowsEntity } from "../../../core/form-dialog/shows-entity.interface";
 import { ConfigService } from "../../../core/config/config.service";
-import { NoteConfig } from "./note-config.interface";
+import { InteractionType, NoteConfig } from "./note-config.interface";
+import { InteractionSchemaDatatype } from "./interaction-schema-datatype";
+import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 
 @Component({
   selector: "app-note-details",
@@ -17,29 +19,23 @@ export class NoteDetailsComponent implements ShowsEntity, OnInit {
   private readonly CONFIG_ID = "notes";
 
   /** interaction types loaded from config file */
-  interactionTypes: {
-    [key: string]: {
-      name: string;
-      color?: string;
-      isMeeting?: boolean;
-    };
-  };
+  interactionTypes: InteractionType[];
 
-  constructor(private configService: ConfigService) {}
-
-  ngOnInit() {
-    this.interactionTypes = this.configService.getConfig<NoteConfig>(
-      this.CONFIG_ID
-    ).InteractionTypes;
-    Object.freeze(this.interactionTypes);
+  constructor(
+    private configService: ConfigService,
+    private entitySchemaService: EntitySchemaService
+  ) {
+    this.entitySchemaService.registerSchemaDatatype(
+      new InteractionSchemaDatatype(
+        this.configService.getConfig<NoteConfig>(this.CONFIG_ID)
+      )
+    );
   }
 
-  /**
-   * function returns zero; used to circumvent TS error in template
-   * (This function is used to sort the interactionTypes in the keyvalue-pipe.
-   * Since we want to keep the sorting from the config file, we simply return 0 all the time.)
-   */
-  returnZero() {
-    return 0;
+  ngOnInit() {
+    this.interactionTypes = Object.values(
+      this.configService.getConfig<NoteConfig>(this.CONFIG_ID).InteractionTypes
+    );
+    Object.freeze(this.interactionTypes);
   }
 }

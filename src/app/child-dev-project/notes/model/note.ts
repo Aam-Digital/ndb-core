@@ -20,6 +20,7 @@ import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../core/entity/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { WarningLevel, WarningLevelColor } from "../../warning-level";
+import { InteractionType } from "../note-details/note-config.interface";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
@@ -31,7 +32,9 @@ export class Note extends Entity {
   @DatabaseField() subject: string = "";
   @DatabaseField() text: string = "";
   @DatabaseField() author: string = "";
-  @DatabaseField() category: string = "NONE";
+  @DatabaseField({ dataType: "interaction-type" }) category: InteractionType = {
+    name: "NONE",
+  };
   @DatabaseField({ dataType: "string" }) warningLevel: WarningLevel =
     WarningLevel.OK;
 
