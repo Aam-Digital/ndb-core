@@ -1,5 +1,9 @@
-import { Component, Input, SimpleChanges } from "@angular/core";
-import { AbstractControlOptions, FormBuilder, Validators } from "@angular/forms";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import {
+  AbstractControlOptions,
+  FormBuilder,
+  Validators,
+} from "@angular/forms";
 import { Child } from "../../model/child";
 import { Gender } from "../../model/Gender";
 import { ChildPhotoService } from "../../child-photo-service/child-photo.service";
@@ -14,7 +18,7 @@ import { FormSubcomponent } from "../form-subcomponent";
   templateUrl: "./basic-info.component.html",
   styleUrls: ["./basic-info.component.scss"],
 })
-export class BasicInfoComponent extends FormSubcomponent {
+export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
   @Input() child: Child;
 
   documentStatus = [
@@ -80,9 +84,10 @@ export class BasicInfoComponent extends FormSubcomponent {
 
   protected getFormConfig(): {
     controlsConfig: { [p: string]: any };
-    options?: AbstractControlOptions | { [p: string]: any } | null
+    options?: AbstractControlOptions | { [p: string]: any } | null;
   } {
-    return {controlsConfig: {
+    return {
+      controlsConfig: {
         name: [
           { value: this.child.name, disabled: !this.editing },
           Validators.required,
@@ -91,7 +96,9 @@ export class BasicInfoComponent extends FormSubcomponent {
         projectNumber: [
           { value: this.child.projectNumber, disabled: !this.editing },
         ],
-        dateOfBirth: [{ value: this.child.dateOfBirth, disabled: !this.editing }],
+        dateOfBirth: [
+          { value: this.child.dateOfBirth, disabled: !this.editing },
+        ],
         motherTongue: [
           { value: this.child.motherTongue, disabled: !this.editing },
         ],
@@ -117,9 +124,7 @@ export class BasicInfoComponent extends FormSubcomponent {
           },
         ],
         photoFile: [{ value: this.child.photoFile, disabled: !this.editing }],
-        has_aadhar: [
-          { value: this.child.has_aadhar, disabled: !this.editing },
-        ],
+        has_aadhar: [{ value: this.child.has_aadhar, disabled: !this.editing }],
         has_kanyashree: [
           { value: this.child.has_kanyashree, disabled: !this.editing },
         ],
@@ -132,8 +137,7 @@ export class BasicInfoComponent extends FormSubcomponent {
         has_BplCard: [
           { value: this.child.has_BplCard, disabled: !this.editing },
         ],
-      }};
+      },
+    };
   }
-
-
 }

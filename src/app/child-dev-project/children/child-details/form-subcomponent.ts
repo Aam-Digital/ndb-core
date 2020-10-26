@@ -51,12 +51,11 @@ export abstract class FormSubcomponent implements OnChanges {
             resolve();
           })
           .catch((err) => {
-              this.alertService.addDanger(
-                'Could not save Child "' + this.child.name + '": ' + err
-              );
-              reject();
-            }
-          );
+            this.alertService.addDanger(
+              'Could not save Child "' + this.child.name + '": ' + err
+            );
+            reject();
+          });
       } else {
         const invalidFields = this.getInvalidFields();
         this.alertService.addDanger(
@@ -64,7 +63,7 @@ export abstract class FormSubcomponent implements OnChanges {
         );
         reject();
       }
-    })
+    });
   }
 
   private assignFormValuesToChild(child: Child, form: FormGroup) {
