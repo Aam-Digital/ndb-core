@@ -2,7 +2,7 @@
     "navigationMenu": {
         "items": [
             {"name": "Dashboard", "icon": "home", "link": "/dashboard"},
-            {"name": "Players", "icon": "child", "link": "/child"},
+            {"name": "Children", "icon": "child", "link": "/child"},
             {"name": "Schools", "icon": "university", "link": "/school"},
             {"name": "Notes", "icon": "file-text", "link": "/note"},
             {"name": "Attendance Register", "icon": "table", "link": "/attendance"},
@@ -59,7 +59,7 @@
         }
     },
     "view:user": {"component": "UserAccount"},
-    "view:note": {"component": "NotesManager"},
+    "view:note": {"component": "NotesManager", "config": { "title": "Notes & Reports", "icon": "file-text" }},
     "view:admin": {"component": "Admin", "requiresAdmin": true},
     "view:admin/conflicts": {"component": "Admin", "requiresAdmin": true},
     "view:users": {"component": "UserList", "requiresAdmin": true},
@@ -69,7 +69,7 @@
     "view:attendance/add/month": {"component": "AddMonthAttendance"},
     "view:attendance/add/day": {"component": "AddDayAttendance"},
 
-    "view:school": {"component": "SchoolsList"},
+    "view:school": {"component": "SchoolsList", "config": { "title": "Schools List", "icon": "school" } },
     "view:school/:id": {
         "component": "SchoolDetails",
         "config": {
@@ -81,7 +81,7 @@
             ]
         }
     },
-    "view:child": {"component": "ChildrenList", "config": { "title": "Children List" } },
+    "view:child": {"component": "ChildrenList", "config": { "title": "Children List", "icon": "child" } },
     "view:child/:id": {
         "component": "ChildDetails",
         "config": {

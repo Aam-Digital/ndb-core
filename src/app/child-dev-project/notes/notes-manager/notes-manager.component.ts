@@ -6,6 +6,7 @@ import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { InteractionTypes } from "../interaction-types.enum";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
+import { ActivatedRoute, Router } from "@angular/router";
 import { WarningLevel } from "../../warning-level";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FilterSelection } from "../../../core/filter/filter-selection/filter-selection";
@@ -23,6 +24,8 @@ import { User } from "app/core/user/user";
 export class NotesManagerComponent implements OnInit, AfterViewInit {
   entityList = new Array<Note>();
   notesDataSource = new MatTableDataSource();
+
+  listName: String;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -79,10 +82,14 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     private formDialog: FormDialogService,
     private sessionService: SessionService,
     private media: MediaObserver,
-    private entityMapperService: EntityMapperService
+    private entityMapperService: EntityMapperService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
+    this.route.data.subscribe((config) => {
+      this.listName = config.title;
+    });
     this.user = this.sessionService.getCurrentUser();
     this.paginatorPageSize = this.user.paginatorSettingsPageSize.notesList;
     this.paginatorPageIndex = this.user.paginatorSettingsPageIndex.notesList;

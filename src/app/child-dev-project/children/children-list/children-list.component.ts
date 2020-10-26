@@ -19,7 +19,6 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { User } from "../../../core/user/user";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { ConfigService } from "app/core/config/config.service";
 import { floor, min } from "lodash";
 
 export interface ColumnGroup {
@@ -37,8 +36,6 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   childrenList: Child[] = [];
   attendanceList = new Map<string, AttendanceMonth[]>();
   childrenDataSource = new MatTableDataSource();
-  /** name of config array in the config json file */
-  private readonly CONFIG_ID = "navigationMenu";
 
   listName: String;
 
@@ -145,8 +142,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private media: MediaObserver,
     private sessionService: SessionService,
-    private entityMapperService: EntityMapperService,
-    private configService: ConfigService
+    private entityMapperService: EntityMapperService
   ) {}
 
   ngOnInit() {
