@@ -110,9 +110,19 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
   onPaginateChange(event: PageEvent) {
     this.paginatorPageSize = event.pageSize;
     this.paginatorPageIndex = event.pageIndex;
-    this.user.paginatorSettingsPageSize.notesList = this.paginatorPageSize;
+    this.updateUserPaginationSettings();
+  }
+
+  private updateUserPaginationSettings() {
+    const hasChangesToBeSaved =
+      this.paginatorPageSize !== this.user.paginatorSettingsPageSize.notesList;
+
     this.user.paginatorSettingsPageIndex.notesList = this.paginatorPageIndex;
-    this.entityMapperService.save<User>(this.user);
+    this.user.paginatorSettingsPageSize.notesList = this.paginatorPageSize;
+
+    if (hasChangesToBeSaved) {
+      this.entityMapperService.save<User>(this.user);
+    }
   }
 
   private sortAndAdd(newNotes: Note[]) {
