@@ -21,4 +21,13 @@ describe("BasicInfoComponent", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
+
+  // it("should create with edit mode", () => {
+  //   mockChildPhotoService.canSetImage.and.returnValue(true);
+  //   component.switchEdit();
+  //
+  //   fixture.detectChanges();
+  //
+  //   expect(component).toBeTruthy();
+  // });
 });

@@ -1,8 +1,8 @@
 import { Component, Input } from "@angular/core";
-import { Child } from "../../model/child";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { Child } from "../../../model/child";
+import { EntityMapperService } from "../../../../../core/entity/entity-mapper.service";
 import { AbstractControlOptions, FormBuilder } from "@angular/forms";
-import { AlertService } from "../../../../core/alerts/alert.service";
+import { AlertService } from "../../../../../core/alerts/alert.service";
 import { FormSubcomponent } from "../form-subcomponent";
 
 @Component({

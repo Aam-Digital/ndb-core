@@ -1,8 +1,8 @@
 import { OnChanges, SimpleChanges } from "@angular/core";
-import { Child } from "../model/child";
+import { Child } from "../../model/child";
 import { AbstractControlOptions, FormBuilder, FormGroup } from "@angular/forms";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { AlertService } from "../../../core/alerts/alert.service";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { AlertService } from "../../../../core/alerts/alert.service";
 
 export abstract class FormSubcomponent implements OnChanges {
   child: Child = new Child("");
@@ -34,36 +34,32 @@ export abstract class FormSubcomponent implements OnChanges {
     this.initForm(this.getFormConfig());
   }
 
-  save(): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      // errors regarding invalid fields wont be displayed unless marked as touched
-      this.form.markAllAsTouched();
-      this.validateForm = true;
-
-      if (this.form.valid) {
-        this.assignFormValuesToChild(this.child, this.form);
-
-        this.entityMapperService
-          .save<Child>(this.child)
-          .then(() => {
-            this.alertService.addInfo("Saving Successful");
-            this.switchEdit();
-            resolve();
-          })
-          .catch((err) => {
-            this.alertService.addDanger(
-              'Could not save Child "' + this.child.name + '": ' + err
-            );
-            reject();
-          });
-      } else {
-        const invalidFields = this.getInvalidFields();
+  async save(): Promise<any> {
+    // errors regarding invalid fields wont be displayed unless marked as touched
+    this.form.markAllAsTouched();
+    this.validateForm = true;
+    if (this.form.valid) {
+      this.assignFormValuesToChild(this.child, this.form);
+      try {
+        await this.entityMapperService.save<Child>(this.child);
+        this.alertService.addInfo("Saving Successful");
+        this.switchEdit();
+        return this.child;
+      } catch (err) {
         this.alertService.addDanger(
-          "Form invalid, required fields (" + invalidFields + ") missing"
+          'Could not save Child "' + this.child.name + '": ' + err
         );
-        reject();
+        throw new Error(err);
       }
-    });
+    } else {
+      const invalidFields = this.getInvalidFields();
+      this.alertService.addDanger(
+        "Form invalid, required fields (" + invalidFields + ") missing"
+      );
+      throw new Error(
+        "Form invalid, required fields(" + invalidFields + ") missing"
+      );
+    }
   }
 
   private assignFormValuesToChild(child: Child, form: FormGroup) {

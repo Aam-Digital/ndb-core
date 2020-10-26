@@ -1,9 +1,9 @@
 import { Component, Input } from "@angular/core";
-import { Child } from "../../model/child";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { Child } from "../../../model/child";
+import { EntityMapperService } from "../../../../../core/entity/entity-mapper.service";
 import { FormSubcomponent } from "../form-subcomponent";
 import { AbstractControlOptions, FormBuilder } from "@angular/forms";
-import { AlertService } from "../../../../core/alerts/alert.service";
+import { AlertService } from "../../../../../core/alerts/alert.service";
 
 @Component({
   selector: "app-health-form",

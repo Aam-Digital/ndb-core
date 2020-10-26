@@ -80,9 +80,9 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { Angulartics2Module } from "angulartics2";
 import { AttendanceAnalysisComponent } from "../attendance/attendance-analysis/attendance-analysis.component";
 import { GroupedChildAttendanceComponent } from "./child-details/grouped-child-attendance/grouped-child-attendance.component";
-import { HealthFormComponent } from "./child-details/health-form/health-form.component";
-import { DropoutFormComponent } from "./child-details/dropout-form/dropout-form.component";
-import { BasicInfoComponent } from "./child-details/basic-info/basic-info.component";
+import { HealthFormComponent } from "./child-details/form-components/health-form/health-form.component";
+import { DropoutFormComponent } from "./child-details/form-components/dropout-form/dropout-form.component";
+import { BasicInfoComponent } from "./child-details/form-components/basic-info/basic-info.component";
 
 @NgModule({
   imports: [

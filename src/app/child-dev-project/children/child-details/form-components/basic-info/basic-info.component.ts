@@ -4,13 +4,13 @@ import {
   FormBuilder,
   Validators,
 } from "@angular/forms";
-import { Child } from "../../model/child";
-import { Gender } from "../../model/Gender";
-import { ChildPhotoService } from "../../child-photo-service/child-photo.service";
+import { Child } from "../../../model/child";
+import { Gender } from "../../../model/Gender";
+import { ChildPhotoService } from "../../../child-photo-service/child-photo.service";
 import { Router } from "@angular/router";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
-import { AlertService } from "../../../../core/alerts/alert.service";
-import { SessionService } from "../../../../core/session/session-service/session.service";
+import { EntityMapperService } from "../../../../../core/entity/entity-mapper.service";
+import { AlertService } from "../../../../../core/alerts/alert.service";
+import { SessionService } from "../../../../../core/session/session-service/session.service";
 import { FormSubcomponent } from "../form-subcomponent";
 
 @Component({

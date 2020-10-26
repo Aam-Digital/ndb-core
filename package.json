@@ -100,5 +100,8 @@
     "*.{ts,js,css}": [
       "tslint --fix"
     ]
+  },
+  "prettier": {
+    "noShadowedVariable": false
   }
 }
