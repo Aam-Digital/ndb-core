@@ -13,6 +13,10 @@ import { Router } from "@angular/router";
 import { SessionService } from "../../../../../core/session/session-service/session.service";
 import { User } from "../../../../../core/user/user";
 import { EntitySubrecordModule } from "../../../../../core/entity-subrecord/entity-subrecord.module";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { Child } from "../../../model/child";
+import { SafeUrl } from "@angular/platform-browser";
+import { BehaviorSubject } from "rxjs";
 
 describe("BasicInfoComponent", () => {
   let component: BasicInfoComponent;
@@ -20,7 +24,7 @@ describe("BasicInfoComponent", () => {
 
   const mockChildPhotoService: jasmine.SpyObj<ChildPhotoService> = jasmine.createSpyObj(
     "mockChildPhotoService",
-    ["canSetImage", "setImage"]
+    ["canSetImage", "setImage", "getImage"]
   );
 
   const mockRouter: jasmine.SpyObj<Router> = jasmine.createSpyObj(
@@ -36,7 +40,7 @@ describe("BasicInfoComponent", () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [BasicInfoComponent],
-      imports: [MatSnackBarModule, EntitySubrecordModule],
+      imports: [MatSnackBarModule, EntitySubrecordModule, NoopAnimationsModule],
       providers: [
         EntityMapperService,
         EntitySchemaService,
@@ -58,6 +62,52 @@ describe("BasicInfoComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should change the creating state", () => {
+    expect(component.creatingNew).toBe(true);
+    component.ngOnChanges({
+      child: null,
+    });
+    fixture.detectChanges();
+    expect(component.creatingNew).toBe(false);
+  });
+
+  it("changes enablePhotoUpload state", () => {
+    expect(component.enablePhotoUpload).toBe(false);
+    mockChildPhotoService.canSetImage.and.returnValues(true);
+    component.switchEdit();
+    expect(component.enablePhotoUpload).toBe(true);
+  });
+
+  it("calls router once a new child is saved", async () => {
+    spyOnProperty(component.form, "valid").and.returnValue(true);
+    const testChild = new Child("test-child");
+    component.child = testChild;
+    component.creatingNew = true;
+    await component.save();
+    expect(mockRouter.navigate).toHaveBeenCalledWith([
+      "/child",
+      testChild.getId(),
+    ]);
+  });
+
+  it("sets a new child photo", async () => {
+    const filename = "file/name";
+    const testChild = new Child("test-child");
+
+    // This needs to be set in order to create an spy on this property
+    testChild.photo = new BehaviorSubject<SafeUrl>("test");
+
+    mockChildPhotoService.getImage.and.returnValue(Promise.resolve(filename));
+    spyOn(testChild.photo, "next");
+    component.child = testChild;
+    await component.uploadChildPhoto({ target: { files: [filename] } });
+    expect(mockChildPhotoService.setImage).toHaveBeenCalledWith(
+      filename,
+      testChild.entityId
+    );
+    expect(testChild.photo.next).toHaveBeenCalledWith(filename);
   });
 
   // it("should create with edit mode", () => {

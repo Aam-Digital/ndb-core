@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { ChildDetailsComponent } from "./child-details.component";
 import { MockDatabase } from "../../../core/database/mock-database";
 import { ChildPhotoService } from "../child-photo-service/child-photo.service";
-import { Observable } from "rxjs";
+import { Observable, Subscriber } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from "@angular/common";
 import { SessionService } from "../../../core/session/session-service/session.service";
@@ -10,14 +10,20 @@ import { User } from "../../../core/user/user";
 import { MatNativeDateModule } from "@angular/material/core";
 import { ChildrenModule } from "../children.module";
 import { databaseServiceProvider } from "../../../core/database/database.service.provider";
+import { Child } from "../model/child";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { ChildrenService } from "../children.service";
 
 describe("ChildDetailsComponent", () => {
   let component: ChildDetailsComponent;
   let fixture: ComponentFixture<ChildDetailsComponent>;
+
+  let routeObserver: Subscriber<any>;
   const mockedRoute = {
-    paramMap: Observable.create((observer) =>
-      observer.next({ get: () => "new" })
-    ),
+    paramMap: new Observable((observer) => {
+      routeObserver = observer;
+      observer.next({ get: () => "new" });
+    }),
   };
   const mockedRouter = { navigate: () => null };
   const mockedLocation = { back: () => null };
@@ -28,7 +34,7 @@ describe("ChildDetailsComponent", () => {
   };
   const mockChildPhotoService: jasmine.SpyObj<ChildPhotoService> = jasmine.createSpyObj(
     "mockChildPhotoService",
-    ["canSetImage", "setImage"]
+    ["canSetImage", "setImage", "getImageAsyncObservable"]
   );
 
   beforeEach(async(() => {
@@ -53,5 +59,18 @@ describe("ChildDetailsComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should load the correct child on startup", () => {
+    const testChild = new Child("Test-Child");
+    const entityService = fixture.componentRef.injector.get(
+      EntityMapperService
+    );
+    const childrenService = fixture.componentRef.injector.get(ChildrenService);
+    spyOn(childrenService, "getChild");
+    entityService.save<Child>(testChild);
+    routeObserver.next({ get: () => testChild.getId() });
+    fixture.detectChanges();
+    expect(childrenService.getChild).toHaveBeenCalledWith(testChild.getId());
   });
 });

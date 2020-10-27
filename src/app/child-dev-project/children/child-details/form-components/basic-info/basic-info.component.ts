@@ -33,7 +33,7 @@ export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
 
   creatingNew = true;
   isAdminUser: boolean;
-  enablePhotoUpload;
+  enablePhotoUpload = false;
   gender = Gender;
 
   genders = Gender;
