@@ -46,7 +46,7 @@
 </div>
 
 <div style='margin-top:20px;'>
-  <table mat-table [dataSource]="attendanceDataSource" matSort class="mat-elevation-z8 table-list">
+  <table mat-table [dataSource]="attendanceDataSource" matSort class="mat-elevation-z1 table-list">
     <ng-container matColumnDef="student">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Student </th>
       <td mat-cell *matCellDef="let att"> <app-child-block [entityId]='att.student'></app-child-block></td>
