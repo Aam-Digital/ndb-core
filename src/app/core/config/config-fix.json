@@ -69,7 +69,7 @@
     "view:attendance/add/month": {"component": "AddMonthAttendance"},
     "view:attendance/add/day": {"component": "AddDayAttendance"},
 
-    "view:school": {"component": "SchoolsList", "config": { "title": "Schools List", "icon": "school" } },
+    "view:school": {"component": "SchoolsList", "config": { "title": "Schools List"} },
     "view:school/:id": {
         "component": "SchoolDetails",
         "config": {
@@ -78,10 +78,11 @@
                     "name": "Education",
                     "components": ["previousSchools", "aserResults"]
                 }
-            ]
+            ],
+            "icon": "school"
         }
     },
-    "view:child": {"component": "ChildrenList", "config": { "title": "Children List", "icon": "child" } },
+    "view:child": {"component": "ChildrenList", "config": { "title": "Children List"} },
     "view:child/:id": {
         "component": "ChildDetails",
         "config": {
@@ -90,7 +91,8 @@
                     "name": "Education",
                     "components": ["previousSchools", "aserResults"]
                 }
-            ]
+            ],
+            "icon": "child"
         }
     }
 }

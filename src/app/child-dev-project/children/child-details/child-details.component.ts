@@ -40,6 +40,8 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 export class ChildDetailsComponent implements OnInit {
   child: Child = new Child("");
 
+  iconName: String;
+
   validateForm = false;
   form: FormGroup;
   creatingNew = false;
@@ -63,9 +65,9 @@ export class ChildDetailsComponent implements OnInit {
   constructor(
     private entityMapperService: EntityMapperService,
     private childrenService: ChildrenService,
-    private route: ActivatedRoute,
     @Inject(FormBuilder) public fb: FormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private location: Location,
     private snackBar: MatSnackBar,
     private confirmationDialog: ConfirmationDialogService,
@@ -124,7 +126,11 @@ export class ChildDetailsComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.route.data.subscribe((config) => {
+      this.iconName = config.icon;
+    });
+  }
 
   loadChild(id: string) {
     if (id === "new") {
