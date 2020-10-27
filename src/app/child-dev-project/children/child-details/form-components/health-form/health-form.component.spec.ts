@@ -12,7 +12,9 @@ import { Child } from "../../../model/child";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { FormsModule } from "@angular/forms";
+import { FormBuilder, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { AlertService } from "../../../../../core/alerts/alert.service";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
 
 describe("HealthFormComponent", () => {
   let component: HealthFormComponent;
@@ -30,11 +32,15 @@ describe("HealthFormComponent", () => {
         MatOptionModule,
         NoopAnimationsModule,
         FormsModule,
+        MatSnackBarModule,
+        ReactiveFormsModule
       ],
       providers: [
         EntityMapperService,
         EntitySchemaService,
         { provide: Database, useClass: MockDatabase },
+        FormBuilder,
+        AlertService
       ],
     }).compileComponents();
   }));

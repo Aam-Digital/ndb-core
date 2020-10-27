@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { Child } from "../model/child";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -32,7 +32,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   templateUrl: "./child-details.component.html",
   styleUrls: ["./child-details.component.scss"],
 })
-export class ChildDetailsComponent implements OnInit {
+export class ChildDetailsComponent {
   child: Child = new Child("");
   creatingNew = false;
 
@@ -47,8 +47,6 @@ export class ChildDetailsComponent implements OnInit {
   ) {
     this.route.paramMap.subscribe((params) => this.loadChild(params.get("id")));
   }
-
-  ngOnInit() {}
 
   loadChild(id: string) {
     if (id === "new") {

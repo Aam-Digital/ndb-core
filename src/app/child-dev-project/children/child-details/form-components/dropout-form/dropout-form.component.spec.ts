@@ -11,7 +11,9 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { Child } from "../../../model/child";
 import { MatInputModule } from "@angular/material/input";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { FormsModule } from "@angular/forms";
+import { FormBuilder, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { AlertService } from "../../../../../core/alerts/alert.service";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
 
 describe("DropoutFormComponent", () => {
   let component: DropoutFormComponent;
@@ -27,11 +29,15 @@ describe("DropoutFormComponent", () => {
         MatInputModule,
         NoopAnimationsModule,
         FormsModule,
+        MatSnackBarModule,
+        ReactiveFormsModule
       ],
       providers: [
         EntityMapperService,
         EntitySchemaService,
         { provide: Database, useClass: MockDatabase },
+        FormBuilder,
+        AlertService
       ],
     }).compileComponents();
   }));
