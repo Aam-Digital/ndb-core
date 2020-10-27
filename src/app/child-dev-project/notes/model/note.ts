@@ -42,15 +42,27 @@ export class Note extends Entity {
     return this.warningLevel;
   }
 
-  // TODO: What is the purpose of this function?
-  // public getColorForId(entityId: string) {
-  //   if (this.isMeeting() && !this.isPresent(entityId)) {
-  //     // child is absent, highlight the entry
-  //     return WarningLevelColor(WarningLevel.URGENT);
-  //   }
+  // TODO: color logic should not be part of entity/model but rather in the component responsible for displaying it
+  public getColor() {
+    if (this.warningLevel === WarningLevel.URGENT) {
+      return WarningLevelColor(WarningLevel.URGENT);
+    }
+    if (this.warningLevel === WarningLevel.WARNING) {
+      return WarningLevelColor(WarningLevel.WARNING);
+    }
 
-  //   return this.getColor();
-  // }
+    const color = this.category.color;
+    return color ? "" : color;
+  }
+
+  public getColorForId(entityId: string) {
+    if (this.category.isMeeting && !this.isPresent(entityId)) {
+      // child is absent, highlight the entry
+      return WarningLevelColor(WarningLevel.URGENT);
+    }
+
+    return this.getColor();
+  }
 
   /**
    * whether a specific child with given childId is linked to this not
