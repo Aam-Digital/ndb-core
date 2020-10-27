@@ -12,11 +12,8 @@ import { SessionService } from "../../../core/session/session-service/session.se
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { User } from "app/core/user/user";
-import { ConfigService } from "app/core/config/config.service";
-import {
-  InteractionType,
-  NoteConfig,
-} from "../note-details/note-config.interface";
+import { InteractionType } from "../note-details/note-config.interface";
+import { NoteConfigLoaderService } from "../note-config-loader.service";
 
 @UntilDestroy()
 @Component({
@@ -25,8 +22,6 @@ import {
   styleUrls: ["./notes-manager.component.scss"],
 })
 export class NotesManagerComponent implements OnInit, AfterViewInit {
-  /** Name of note config Object in config json file */
-  private readonly CONFIG_ID = "notes";
   /** interaction types loaded from config file */
   interactionTypes: InteractionType[];
   entityList = new Array<Note>();
@@ -88,15 +83,12 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     private sessionService: SessionService,
     private media: MediaObserver,
     private entityMapperService: EntityMapperService,
-    private configService: ConfigService
+    private configLoader: NoteConfigLoaderService
   ) {}
 
   ngOnInit() {
     // load interactionTypes from config
-    this.interactionTypes = Object.values(
-      this.configService.getConfig<NoteConfig>(this.CONFIG_ID).InteractionTypes
-    );
-    Object.freeze(this.interactionTypes);
+    this.interactionTypes = this.configLoader.interactionTypes;
 
     this.user = this.sessionService.getCurrentUser();
     this.paginatorPageSize = this.user.paginatorSettingsPageSize.notesList;
