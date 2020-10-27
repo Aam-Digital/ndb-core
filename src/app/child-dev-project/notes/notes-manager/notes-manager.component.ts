@@ -159,6 +159,8 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
         },
       });
     }
+    // set default to show-all
+    this.categoryFS.selectedOption = this.categoryFS.options[0].key;
 
     this.applyFilterSelections();
   }
