@@ -33,14 +33,14 @@ describe("HealthFormComponent", () => {
         NoopAnimationsModule,
         FormsModule,
         MatSnackBarModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
       ],
       providers: [
         EntityMapperService,
         EntitySchemaService,
         { provide: Database, useClass: MockDatabase },
         FormBuilder,
-        AlertService
+        AlertService,
       ],
     }).compileComponents();
   }));

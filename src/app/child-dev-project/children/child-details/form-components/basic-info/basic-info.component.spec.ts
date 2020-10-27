@@ -18,40 +18,35 @@ describe("BasicInfoComponent", () => {
   let component: BasicInfoComponent;
   let fixture: ComponentFixture<BasicInfoComponent>;
 
-  let mockChildPhotoService: jasmine.SpyObj<ChildPhotoService> = jasmine.createSpyObj(
+  const mockChildPhotoService: jasmine.SpyObj<ChildPhotoService> = jasmine.createSpyObj(
     "mockChildPhotoService",
-    [
-      "canSetImage",
-      "setImage"
-    ]);
+    ["canSetImage", "setImage"]
+  );
 
-  let mockRouter: jasmine.SpyObj<Router> = jasmine.createSpyObj(
+  const mockRouter: jasmine.SpyObj<Router> = jasmine.createSpyObj(
     "mockRouter",
-    [
-      "navigate"
-    ]);
+    ["navigate"]
+  );
 
-  let mockSessionService: jasmine.SpyObj<SessionService> = jasmine.createSpyObj(
-    "mockSessionService", {"getCurrentUser": new User("test-user")}
-    )
+  const mockSessionService: jasmine.SpyObj<SessionService> = jasmine.createSpyObj(
+    "mockSessionService",
+    { getCurrentUser: new User("test-user") }
+  );
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [BasicInfoComponent],
-      imports: [
-        MatSnackBarModule,
-        EntitySubrecordModule
-      ],
+      imports: [MatSnackBarModule, EntitySubrecordModule],
       providers: [
         EntityMapperService,
         EntitySchemaService,
-        {provide: Database, useClass: MockDatabase},
+        { provide: Database, useClass: MockDatabase },
         FormBuilder,
         AlertService,
-        {provide: ChildPhotoService, useValue: mockChildPhotoService},
-        {provide: Router, useValue: mockRouter},
-        {provide: SessionService, useValue: mockSessionService},
-      ]
+        { provide: ChildPhotoService, useValue: mockChildPhotoService },
+        { provide: Router, useValue: mockRouter },
+        { provide: SessionService, useValue: mockSessionService },
+      ],
     }).compileComponents();
   }));
 

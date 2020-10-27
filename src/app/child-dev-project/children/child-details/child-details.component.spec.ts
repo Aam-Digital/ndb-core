@@ -13,7 +13,7 @@ import { databaseServiceProvider } from "../../../core/database/database.service
 
 describe("ChildDetailsComponent", () => {
   let component: ChildDetailsComponent;
-  let fixture: ComponentFixture<ChildDetailsComponent>
+  let fixture: ComponentFixture<ChildDetailsComponent>;
   const mockedRoute = {
     paramMap: Observable.create((observer) =>
       observer.next({ get: () => "new" })
@@ -26,12 +26,10 @@ describe("ChildDetailsComponent", () => {
     getCurrentUser: () => new User("test1"),
     getDatabase: () => mockedDatabase,
   };
-  let mockChildPhotoService: jasmine.SpyObj<ChildPhotoService> = jasmine.createSpyObj(
+  const mockChildPhotoService: jasmine.SpyObj<ChildPhotoService> = jasmine.createSpyObj(
     "mockChildPhotoService",
-    [
-      "canSetImage",
-      "setImage",
-    ]);
+    ["canSetImage", "setImage"]
+  );
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
