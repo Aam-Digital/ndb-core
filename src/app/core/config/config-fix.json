@@ -79,7 +79,7 @@
                     "components": ["previousSchools", "aserResults"]
                 }
             ],
-            "icon": "school"
+            "icon": "university"
         }
     },
     "view:child": {"component": "ChildrenList", "config": { "title": "Children List"} },

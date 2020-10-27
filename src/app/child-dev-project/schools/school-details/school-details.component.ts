@@ -19,6 +19,8 @@ import { Child } from "../../children/model/child";
 export class SchoolDetailsComponent implements OnInit {
   school = new School("");
 
+  classNamesWithIcon: String;
+
   studentDataSource: MatTableDataSource<Child> = new MatTableDataSource();
   displayedColumns = ["id", "name", "schoolClass", "age"];
 
@@ -63,6 +65,9 @@ export class SchoolDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.route.data.subscribe((config) => {
+      this.classNamesWithIcon = "fa fa-" + config.icon + " fa-fw";
+    });
     this.route.paramMap.subscribe((paramMap) => {
       this.loadSchool(paramMap.get("id"));
     });

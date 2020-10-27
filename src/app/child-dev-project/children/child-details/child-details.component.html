@@ -27,7 +27,7 @@
         <mat-icon fontIcon="fa-backward"></mat-icon>
       </button>
 
-      <i [className]="'fa fa-' + iconName + ' fa-fw'"></i>
+      <i [className]="classNamesWithIcon"></i>
       <span *ngIf="!creatingNew"
         >{{ child.name }} [{{ child.projectNumber }}]</span
       >

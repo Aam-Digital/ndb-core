@@ -9,7 +9,7 @@
       <mat-icon fontIcon="fa-backward"></mat-icon>
     </button>
 
-    <i class="fa fa-university fa-fw"></i>
+    <i [className]="classNamesWithIcon"></i>
     <span *ngIf="!creatingNew">{{ school.name }}</span>
     <span *ngIf="creatingNew">Adding new School</span>
   </h1>

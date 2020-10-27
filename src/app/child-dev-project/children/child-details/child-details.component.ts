@@ -40,7 +40,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 export class ChildDetailsComponent implements OnInit {
   child: Child = new Child("");
 
-  iconName: String;
+  classNamesWithIcon: String;
 
   validateForm = false;
   form: FormGroup;
@@ -128,7 +128,7 @@ export class ChildDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.route.data.subscribe((config) => {
-      this.iconName = config.icon;
+      this.classNamesWithIcon = "fa fa-" + config.icon + " fa-fw";
     });
   }
 
