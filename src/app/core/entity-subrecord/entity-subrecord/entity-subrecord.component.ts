@@ -331,6 +331,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
    * If this entityId is set, a <code>getColorForId()</code>-Method must be specified, that accepts this id.
    */
   getColor(record) {
+    // TODO add typing, create interface?
     if (this.entityId !== undefined) {
       return record.getColorForId(this.entityId);
     }

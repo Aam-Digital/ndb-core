@@ -22,7 +22,7 @@ import { Entity } from "../entity";
 /**
  * Interface to be implemented by any Datatype transformer of the Schema system.
  */
-export interface EntitySchemaDatatype<T = any> {
+export interface EntitySchemaDatatype<EntityType = any, DBType = any> {
   /**
    * Key for this datatype that must be specified in the DatabaseField annotation to use this transformation.
    *
@@ -45,11 +45,11 @@ export interface EntitySchemaDatatype<T = any> {
    * @param parent The full entity instance this value is part of (e.g. to allow cross-related transformations)
    */
   transformToDatabaseFormat(
-    value: T,
-    schemaField: EntitySchemaField,
-    schemaService: EntitySchemaService,
-    parent: Entity
-  ): any;
+    value: EntityType,
+    schemaField?: EntitySchemaField,
+    schemaService?: EntitySchemaService,
+    parent?: Entity
+  ): DBType;
 
   /**
    * Transformation function taking a value in the format that is used in database objects and returning the value
@@ -62,9 +62,9 @@ export interface EntitySchemaDatatype<T = any> {
    * @param parent The full entity instance this value is part of (e.g. to allow cross-related transformations)
    */
   transformToObjectFormat(
-    value: any,
-    schemaField: EntitySchemaField,
-    schemaService: EntitySchemaService,
-    parent: any
-  ): T;
+    value: DBType,
+    schemaField?: EntitySchemaField,
+    schemaService?: EntitySchemaService,
+    parent?: any
+  ): EntityType;
 }

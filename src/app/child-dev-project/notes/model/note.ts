@@ -60,7 +60,6 @@ export class Note extends Entity {
       // child is absent, highlight the entry
       return WarningLevelColor(WarningLevel.URGENT);
     }
-
     return this.getColor();
   }
 

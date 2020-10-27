@@ -7,18 +7,18 @@ export class InteractionSchemaDatatype
 
   constructor(private interactionTypesFromConfig: NoteConfig) {}
 
-  public transformToDatabaseFormat(value: InteractionType): string {
+  public transformToDatabaseFormat(value: InteractionType, a, b, c): string {
     return this.getKeyByValue(
       this.interactionTypesFromConfig.InteractionTypes,
       value
     );
   }
 
-  public transformToObjectFormat(value: string): InteractionType {
+  public transformToObjectFormat(value: string, a, b, c): InteractionType {
     if (value) {
-      return this.interactionTypesFromConfig[value];
+      return this.interactionTypesFromConfig.InteractionTypes[value];
     } else {
-      return { name: "" };
+      return { name: null };
     }
   }
 
