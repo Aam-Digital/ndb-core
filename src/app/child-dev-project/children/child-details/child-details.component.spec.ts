@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { ChildDetailsComponent } from "./child-details.component";
 import { MockDatabase } from "../../../core/database/mock-database";
 import { ChildPhotoService } from "../child-photo-service/child-photo.service";
-import { Observable, Subscriber } from "rxjs";
+import { Observable, of, Subscriber } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from "@angular/common";
 import { SessionService } from "../../../core/session/session-service/session.service";
@@ -67,10 +67,11 @@ describe("ChildDetailsComponent", () => {
       EntityMapperService
     );
     const childrenService = fixture.componentRef.injector.get(ChildrenService);
-    spyOn(childrenService, "getChild");
+    spyOn(childrenService, "getChild").and.returnValue(of(testChild));
     entityService.save<Child>(testChild);
     routeObserver.next({ get: () => testChild.getId() });
     fixture.detectChanges();
     expect(childrenService.getChild).toHaveBeenCalledWith(testChild.getId());
+    expect(component.child).toBe(testChild);
   });
 });
