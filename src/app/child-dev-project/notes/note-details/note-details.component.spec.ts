@@ -35,7 +35,11 @@ function generateChildAttendanceModels() {
 function generateTestingData() {
   const n1 = new Note("1");
   n1.children = generateChildAttendanceModels();
-  n1.category = "CHILDREN_MEETING";
+  n1.category = {
+    name: "Children's Meeting",
+    color: "#E1F5FE",
+    isMeeting: true,
+  };
   n1.date = new Date(Date.now());
   // mock an already existing note
   n1._rev = "x";

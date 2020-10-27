@@ -21,7 +21,7 @@ function createTestModel(): Note {
   n1.subject = "Note Subject";
   n1.text = "Note text";
   n1.author = "Max Musterman";
-  n1.category = "DISCUSSION";
+  n1.category = { name: "Discussion/Decision", color: "#E1BEE7" };
   n1.warningLevel = WarningLevel.URGENT;
 
   return n1;
