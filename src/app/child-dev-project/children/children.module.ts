@@ -83,6 +83,7 @@ import { GroupedChildAttendanceComponent } from "./child-details/grouped-child-a
 import { HealthFormComponent } from "./child-details/form-components/health-form/health-form.component";
 import { DropoutFormComponent } from "./child-details/form-components/dropout-form/dropout-form.component";
 import { BasicInfoComponent } from "./child-details/form-components/basic-info/basic-info.component";
+import { ViewModule } from "../../core/view/view.module";
 
 @NgModule({
   imports: [
@@ -122,6 +123,7 @@ import { BasicInfoComponent } from "./child-details/form-components/basic-info/b
     ConfirmationDialogModule,
     FormDialogModule,
     Angulartics2Module,
+    ViewModule,
   ],
   declarations: [
     AttendanceBlockComponent,

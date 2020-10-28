@@ -3,8 +3,10 @@ import { Child } from "../../model/child";
 import { AbstractControlOptions, FormBuilder, FormGroup } from "@angular/forms";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { AlertService } from "../../../../core/alerts/alert.service";
+import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 
-export abstract class FormSubcomponent implements OnChanges {
+export abstract class FormSubcomponent
+  implements OnChanges, OnInitDynamicComponent {
   child: Child = new Child("");
   editing: boolean = false;
   form: FormGroup;
@@ -27,6 +29,11 @@ export abstract class FormSubcomponent implements OnChanges {
     if (changes.hasOwnProperty("child")) {
       this.initForm(this.getFormConfig());
     }
+  }
+
+  onInitFromDynamicConfig(config: any) {
+    this.child = config.child;
+    this.initForm(this.getFormConfig());
   }
 
   switchEdit() {
