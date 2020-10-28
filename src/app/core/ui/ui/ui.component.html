@@ -16,7 +16,7 @@
   -->
 
 <!-- HEADER -->
-<mat-toolbar color="primary" class="app-header mat-elevation-z6 mat-typography">
+<mat-toolbar color="primary" class="app-header mat-elevation-z2 mat-typography">
   <mat-toolbar-row fxLayout="row">
     <span fxFlex *ngIf="isLoggedIn()">
       <button
@@ -79,7 +79,7 @@
     [opened]="sideNavMode == 'side'"
     disableClose
     fixedInViewport="true"
-    class="sidenav-menu mat-elevation-z6"
+    class="sidenav-menu mat-elevation-z1"
   >
     <app-navigation
       (click)="sideNavMode == 'over' && sideNav.close()"

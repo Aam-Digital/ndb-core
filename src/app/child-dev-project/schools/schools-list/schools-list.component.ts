@@ -95,9 +95,20 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   onPaginateChange(event: PageEvent) {
     this.paginatorPageSize = event.pageSize;
     this.paginatorPageIndex = event.pageIndex;
-    this.user.paginatorSettingsPageSize.schoolsList = this.paginatorPageSize;
+    this.updateUserPaginationSettings();
+  }
+
+  private updateUserPaginationSettings() {
+    const hasChangesToBeSaved =
+      this.paginatorPageSize !==
+      this.user.paginatorSettingsPageSize.schoolsList;
+
     this.user.paginatorSettingsPageIndex.schoolsList = this.paginatorPageIndex;
-    this.entityMapperService.save<User>(this.user);
+    this.user.paginatorSettingsPageSize.schoolsList = this.paginatorPageSize;
+
+    if (hasChangesToBeSaved) {
+      this.entityMapperService.save<User>(this.user);
+    }
   }
 
   applyFilter(filterValue: string) {
