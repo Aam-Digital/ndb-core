@@ -19,7 +19,7 @@
 <h1 mat-dialog-title>Latest Changes</h1>
 
 <mat-dialog-content #changelogContainer>
-  <mat-card *ngFor="let changelog of changelogs" class="mat-elevation-z3">
+  <mat-card *ngFor="let changelog of changelogs" class="mat-elevation-z2">
     <mat-card-header>
       <mat-card-title>{{ changelog ? changelog.name : "No Changelog Available" }}</mat-card-title>
       <mat-card-subtitle>
