@@ -68,7 +68,7 @@
     "view:attendance/analysis": {"component": "AttendanceAnalysis"},
     "view:attendance/add/month": {"component": "AddMonthAttendance"},
     "view:attendance/add/day": {"component": "AddDayAttendance"},
-    
+
     "view:school": {"component": "SchoolsList"},
     "view:school/:id": {
         "component": "SchoolDetails",
@@ -85,10 +85,44 @@
     "view:child/:id": {
         "component": "ChildDetails",
         "config": {
-            "submenu": [
+            "panels": [
                 {
-                    "name": "Education",
-                    "components": ["previousSchools", "aserResults"]
+                    "title": "Education",
+                    "components": [
+                        {"title":  "SchoolHistory", "component": "PreviousSchools"},
+                        {"title":  "ASER Results", "component": "Aser"}
+                    ]
+                },
+                {
+                    "title": "Attendance",
+                    "components": [
+                        {"title": "", "component": "GroupedChildAttendance"}
+                    ]
+                },
+                {
+                    "title": "Notes & Reports",
+                    "components": [
+                        {"title": "", "component": "NotesOfChild"}
+                    ]
+                },
+                {
+                    "title": "Health",
+                    "components": [
+                        {"title": "", "component": "HealthForm"},
+                        {"title": "Height & Weight Tracking", "component": "HealthCheckup"}
+                    ]
+                },
+                {
+                    "title": "Educational Materials",
+                    "components": [
+                        {"title": "", "component": "EducationalMaterial"}
+                    ]
+                },
+                {
+                    "title": "Dropout",
+                    "components": [
+                        {"title": "", "component": "DropoutForm"}
+                    ]
                 }
             ]
         }
