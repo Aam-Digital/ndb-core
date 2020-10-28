@@ -31,7 +31,7 @@ export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
     "",
   ];
 
-  creatingNew = true;
+  creatingNew = false;
   isAdminUser: boolean;
   enablePhotoUpload = false;
   gender = Gender;
@@ -51,8 +51,10 @@ export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     super.ngOnChanges(changes);
-    if (changes.hasOwnProperty("child")) {
-      this.creatingNew = false;
+    if (changes.hasOwnProperty("child") && !this.child.name) {
+      // workaround to determine if a new child is being created, otherwise `name` has to be set
+      this.creatingNew = true;
+      this.switchEdit();
     }
   }
 
@@ -65,7 +67,6 @@ export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
     return super.save().then(() => {
       if (this.creatingNew) {
         this.router.navigate(["/child", this.child.getId()]);
-        this.creatingNew = false;
       }
     });
   }

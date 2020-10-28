@@ -20,7 +20,7 @@
                     #fileUpload
             />
             <button
-                    *ngIf="enablePhotoUpload && (creatingNew || editing)"
+                    *ngIf="enablePhotoUpload && editing"
                     class="child-pic-upload"
                     (click)="fileUpload.click()"
             >
@@ -28,7 +28,7 @@
             </button>
 
             <mat-form-field
-                    *ngIf="(creatingNew || editing) && isAdminUser"
+                    *ngIf="editing && isAdminUser"
                     class="child-pic-photofile"
             >
                 <input
@@ -281,7 +281,7 @@
 </form>
 <div>
     <button
-            *ngIf="creatingNew || editing"
+            *ngIf="editing"
             mat-stroked-button
             class="edit-button"
             (click)="save()"
@@ -290,7 +290,7 @@
     </button>
 
     <button
-            *ngIf="creatingNew || editing"
+            *ngIf="editing"
             mat-stroked-button
             class="edit-button"
             (click)="switchEdit()"
