@@ -13,6 +13,7 @@ import { AttendanceMonth } from "../model/attendance-month";
 import { AttendanceStatus } from "../model/attendance-day";
 import { AlertService } from "app/core/alerts/alert.service";
 import { ChildrenModule } from "../../children/children.module";
+import { RouterTestingModule } from "@angular/router/testing";
 
 const ATTENDANCE_ENTITIES: AttendanceMonth[] = (() => {
   const data = [];
@@ -179,7 +180,7 @@ describe("ChildAttendanceComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ChildrenModule],
+      imports: [ChildrenModule, RouterTestingModule],
       providers: [
         DatePipe,
         PercentPipe,

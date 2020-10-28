@@ -13,6 +13,7 @@ import { Database } from "../../../core/database/database";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { AlertService } from "app/core/alerts/alert.service";
 import { ChildrenModule } from "../../children/children.module";
+import { RouterTestingModule } from "@angular/router/testing";
 
 describe("EducationalMaterialComponent", () => {
   let component: EducationalMaterialComponent;
@@ -29,7 +30,12 @@ describe("EducationalMaterialComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [FormsModule, NoopAnimationsModule, ChildrenModule],
+      imports: [
+        FormsModule,
+        NoopAnimationsModule,
+        ChildrenModule,
+        RouterTestingModule,
+      ],
       providers: [
         DatePipe,
         { provide: ChildrenService, useValue: mockChildrenService },

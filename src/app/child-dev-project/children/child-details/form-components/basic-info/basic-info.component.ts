@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import {
   AbstractControlOptions,
   FormBuilder,
@@ -7,7 +7,7 @@ import {
 import { Child } from "../../../model/child";
 import { Gender } from "../../../model/Gender";
 import { ChildPhotoService } from "../../../child-photo-service/child-photo.service";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Router } from "@angular/router";
 import { EntityMapperService } from "../../../../../core/entity/entity-mapper.service";
 import { AlertService } from "../../../../../core/alerts/alert.service";
 import { SessionService } from "../../../../../core/session/session-service/session.service";
@@ -18,7 +18,7 @@ import { FormSubcomponent } from "../form-subcomponent";
   templateUrl: "./basic-info.component.html",
   styleUrls: ["./basic-info.component.scss"],
 })
-export class BasicInfoComponent extends FormSubcomponent {
+export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
   @Input() child: Child;
 
   documentStatus = [
@@ -43,17 +43,19 @@ export class BasicInfoComponent extends FormSubcomponent {
     alertService: AlertService,
     private childPhotoService: ChildPhotoService,
     private router: Router,
-    private route: ActivatedRoute,
     private sessionService: SessionService
   ) {
     super(entityMapperService, fb, alertService);
-    this.route.params.subscribe((params) => {
-      if (params["id"] === "new") {
-        this.creatingNew = true;
-        this.switchEdit();
-      }
-    });
     this.isAdminUser = this.sessionService.getCurrentUser().admin;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    super.ngOnChanges(changes);
+    if (changes.hasOwnProperty("child") && !this.child.name) {
+      // workaround to determine if a new child is being created, otherwise `name` has to be set
+      this.creatingNew = true;
+      this.switchEdit();
+    }
   }
 
   switchEdit() {
