@@ -1,8 +1,11 @@
 import { Component, Input, OnInit, ViewChild } from "@angular/core";
 import { Note } from "../model/note";
 import { ShowsEntity } from "../../../core/form-dialog/shows-entity.interface";
-import { InteractionType, NoteConfig } from "./note-config.interface";
-import { NoteConfigLoaderService } from "../note-config-loader.service";
+import {
+  InteractionType,
+  NoteConfig,
+} from "../note-config-loader/note-config.interface";
+import { NoteConfigLoaderService } from "../note-config-loader/note-config-loader.service";
 
 /**
  * Component responsible for displaying the Note creation/view window

@@ -38,7 +38,7 @@ import { EntitySubrecordModule } from "../../core/entity-subrecord/entity-subrec
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
 import { Angulartics2Module } from "angulartics2";
-import { NoteConfigLoaderService } from "./note-config-loader.service";
+import { NoteConfigLoaderService } from "./note-config-loader/note-config-loader.service";
 
 @NgModule({
   declarations: [

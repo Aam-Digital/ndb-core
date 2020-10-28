@@ -12,8 +12,8 @@ import { SessionService } from "../../../core/session/session-service/session.se
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { User } from "app/core/user/user";
-import { InteractionType } from "../note-details/note-config.interface";
-import { NoteConfigLoaderService } from "../note-config-loader.service";
+import { InteractionType } from "../note-config-loader/note-config.interface";
+import { NoteConfigLoaderService } from "../note-config-loader/note-config-loader.service";
 
 @UntilDestroy()
 @Component({

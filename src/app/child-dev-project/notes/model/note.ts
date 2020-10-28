@@ -20,7 +20,7 @@ import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../core/entity/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { WarningLevel, WarningLevelColor } from "../../warning-level";
-import { InteractionType } from "../note-details/note-config.interface";
+import { InteractionType } from "../note-config-loader/note-config.interface";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
