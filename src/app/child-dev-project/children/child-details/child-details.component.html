@@ -49,10 +49,10 @@
     </mat-expansion-panel-header>
     <app-basic-info [child]="child"></app-basic-info>
   </mat-expansion-panel>
-
   <mat-expansion-panel
+    *ngFor="let panelConfig of panels"
     expanded="false"
-    title="Education"
+    [title]="panelConfig.title"
     [disabled]="creatingNew">
     <mat-expansion-panel-header class="section-header">
       <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew"
@@ -60,81 +60,12 @@
                 matTooltip="Please save before entering further data"
                 [matTooltipDisabled]="!creatingNew">
       </mat-icon>
-      Education
+      {{panelConfig.title}}
     </mat-expansion-panel-header>
-    <h3>School History</h3>
-    <app-previous-schools [child]="child"></app-previous-schools>
-    <br/>
-    <h3>ASER Results</h3>
-    <app-aser [child]="child"></app-aser>
-  </mat-expansion-panel>
-
-  <mat-expansion-panel expanded="false" title="Attendance"
-                       [disabled]="creatingNew">
-    <mat-expansion-panel-header class="section-header">
-      <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew"
-                class="locked-icon"
-                matTooltip="Please save before entering further data"
-                [matTooltipDisabled]="!creatingNew">
-      </mat-icon>
-      Attendance
-    </mat-expansion-panel-header>
-    <app-grouped-child-attendance [child]="child"></app-grouped-child-attendance>
-  </mat-expansion-panel>
-
-  <mat-expansion-panel expanded="false"
-                       [disabled]="creatingNew">
-    <mat-expansion-panel-header class="section-header">
-      <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew"
-                class="locked-icon"
-                matTooltip="Please save before entering further data"
-                [matTooltipDisabled]="!creatingNew">
-      </mat-icon>
-      Notes & Reports
-    </mat-expansion-panel-header>
-    <app-notes-of-child [child]="child"></app-notes-of-child>
-  </mat-expansion-panel>
-
-  <mat-expansion-panel [expanded]="false"
-                       [disabled]="creatingNew">
-    <mat-expansion-panel-header class="section-header">
-      <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew"
-                class="locked-icon"
-                matTooltip="Please save before entering further data"
-                [matTooltipDisabled]="!creatingNew">
-      </mat-icon>
-      Health
-    </mat-expansion-panel-header>
-    <app-health-form [child]="child"></app-health-form>
-    <br/>
-    <h3>Height & Weight Tracking</h3>
-    <app-health-checkup [child]="child"></app-health-checkup>
-  </mat-expansion-panel>
-
-  <mat-expansion-panel [expanded]="false"
-                       [disabled]="creatingNew">
-    <mat-expansion-panel-header class="section-header">
-      <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew"
-                class="locked-icon"
-                matTooltip="Please save before entering further data"
-                [matTooltipDisabled]="!creatingNew">
-      </mat-icon>
-      Educational Materials
-    </mat-expansion-panel-header>
-    <app-educational-material [child]="child"></app-educational-material>
-  </mat-expansion-panel>
-
-  <mat-expansion-panel [expanded]="!child.isActive()"
-                       [disabled]="creatingNew">
-    <mat-expansion-panel-header class="section-header">
-      <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew"
-                class="locked-icon"
-                matTooltip="Please save before entering further data"
-                [matTooltipDisabled]="!creatingNew">
-      </mat-icon>
-      Dropout
-    </mat-expansion-panel-header>
-    <app-dropout-form [child]="child"></app-dropout-form>
+    <div *ngFor="let componentConfig of panelConfig.components">
+      <h3 *ngIf="componentConfig.title !== ''">{{componentConfig.title}}</h3>
+      <ng-template [appDynamicComponent]="componentConfig "></ng-template>
+    </div>
   </mat-expansion-panel>
 </mat-accordion>
 <button

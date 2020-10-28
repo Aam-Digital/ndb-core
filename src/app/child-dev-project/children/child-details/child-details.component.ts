@@ -25,6 +25,7 @@ import { ConfirmationDialogService } from "../../../core/confirmation-dialog/con
 import * as uniqid from "uniqid";
 import { ChildrenService } from "../children.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { DynamicComponentConfig } from "../../../core/view/dynamic-components/dynamic-component-config.interface";
 
 @UntilDestroy()
 @Component({
@@ -35,6 +36,8 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 export class ChildDetailsComponent {
   child: Child = new Child("");
   creatingNew = false;
+
+  panels: any[];
 
   constructor(
     private entityMapperService: EntityMapperService,
@@ -52,14 +55,41 @@ export class ChildDetailsComponent {
     if (id === "new") {
       this.child = new Child(uniqid());
       this.creatingNew = true;
+      this.addChildToConfig();
     } else {
+      this.creatingNew = false;
       this.childrenService
         .getChild(id)
         .pipe(untilDestroyed(this))
         .subscribe((child) => {
           this.child = child;
+          this.addChildToConfig();
         });
     }
+  }
+
+  private addChildToConfig() {
+    this.route.data.subscribe((config) => {
+      this.panels = config.panels.map((p) => {
+        return {
+          title: p.title,
+          components: p.components.map((c) => {
+            return {
+              title: c.title,
+              component: c.component,
+              config: { child: this.child },
+            };
+          }),
+        };
+      });
+    });
+  }
+
+  getConfig(componentConfig: any): DynamicComponentConfig {
+    return {
+      component: componentConfig.component,
+      config: { child: this.child },
+    };
   }
 
   removeChild() {
