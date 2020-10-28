@@ -17,6 +17,7 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Child } from "../../../model/child";
 import { SafeUrl } from "@angular/platform-browser";
 import { BehaviorSubject } from "rxjs";
+import { fail } from "assert";
 
 describe("BasicInfoComponent", () => {
   let component: BasicInfoComponent;
@@ -65,12 +66,13 @@ describe("BasicInfoComponent", () => {
   });
 
   it("should change the creating state", () => {
-    expect(component.creatingNew).toBe(true);
+    expect(component.creatingNew).toBe(false);
+    component.child.name = "";
     component.ngOnChanges({
       child: null,
     });
     fixture.detectChanges();
-    expect(component.creatingNew).toBe(false);
+    expect(component.creatingNew).toBe(true);
   });
 
   it("changes enablePhotoUpload state", () => {
@@ -110,12 +112,17 @@ describe("BasicInfoComponent", () => {
     expect(testChild.photo.next).toHaveBeenCalledWith(filename);
   });
 
-  // it("should create with edit mode", () => {
-  //   mockChildPhotoService.canSetImage.and.returnValue(true);
-  //   component.switchEdit();
-  //
-  //   fixture.detectChanges();
-  //
-  //   expect(component).toBeTruthy();
-  // });
+  it("reports error when form is invalid", (done) => {
+    const alertService = fixture.debugElement.injector.get(AlertService);
+    spyOn(alertService, "addDanger");
+    spyOnProperty(component.form, "valid").and.returnValue(false);
+    component
+      .save()
+      .then(() => fail())
+      .catch((err) => {
+        expect(err).toBeDefined();
+        expect(alertService.addDanger).toHaveBeenCalled();
+        done();
+      });
+  });
 });
