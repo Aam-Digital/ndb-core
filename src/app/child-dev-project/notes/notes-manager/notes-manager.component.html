@@ -135,7 +135,7 @@
 
     <ng-container matColumnDef="category">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Category</th>
-      <td mat-cell *matCellDef="let note">{{ note.category }}</td>
+      <td mat-cell *matCellDef="let note">{{ note.category.name }}</td>
     </ng-container>
 
     <ng-container matColumnDef="author">
@@ -159,7 +159,7 @@
       *matRowDef="let note; columns: columnsToDisplay; let i=index;"
       (click)="showDetails(note)"
       style="cursor: pointer;"
-      [ngStyle]="{ 'background-color': note.getColor() }"
+      [ngStyle]="{ 'background-color': getColor(note) }"
       angulartics2On="click"
       angularticsCategory="Navigation"
       angularticsAction="notes_manager_list_link"

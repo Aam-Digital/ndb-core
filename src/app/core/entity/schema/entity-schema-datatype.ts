@@ -22,13 +22,13 @@ import { Entity } from "../entity";
 /**
  * Interface to be implemented by any Datatype transformer of the Schema system.
  */
-export interface EntitySchemaDatatype {
+export interface EntitySchemaDatatype<EntityType = any, DBType = any> {
   /**
    * Key for this datatype that must be specified in the DatabaseField annotation to use this transformation.
    *
    * for example `@DatabaseField({dataType: 'foo'}) myField` will trigger the datatype implementation with `name` "foo".
    *
-   * If you set the name to an TypeScript type, class properties with this type will automatically use
+   * If you set the name to a TypeScript type, class properties with this type will automatically use
    * that EntitySchemaDatatype without the need to explicitly state the dataType config in the annotation
    * (e.g. `@DatabaseField() myField: string` is triggering the EntitySchemaDatatype with `name` "string".
    */
@@ -45,11 +45,11 @@ export interface EntitySchemaDatatype {
    * @param parent The full entity instance this value is part of (e.g. to allow cross-related transformations)
    */
   transformToDatabaseFormat(
-    value: any,
-    schemaField: EntitySchemaField,
-    schemaService: EntitySchemaService,
-    parent: Entity
-  ): any;
+    value: EntityType,
+    schemaField?: EntitySchemaField,
+    schemaService?: EntitySchemaService,
+    parent?: Entity
+  ): DBType;
 
   /**
    * Transformation function taking a value in the format that is used in database objects and returning the value
@@ -62,9 +62,9 @@ export interface EntitySchemaDatatype {
    * @param parent The full entity instance this value is part of (e.g. to allow cross-related transformations)
    */
   transformToObjectFormat(
-    value: any,
-    schemaField: EntitySchemaField,
-    schemaService: EntitySchemaService,
-    parent: any
-  ): any;
+    value: DBType,
+    schemaField?: EntitySchemaField,
+    schemaService?: EntitySchemaService,
+    parent?: any
+  ): EntityType;
 }
