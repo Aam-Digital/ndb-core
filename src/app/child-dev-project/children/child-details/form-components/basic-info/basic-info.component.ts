@@ -31,6 +31,74 @@ export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
     "",
   ];
 
+  config = {
+    cols: [
+      [{ input: "photo" }],
+      [
+        { input: "text", id: "name", placeholder: "Name" },
+        { input: "text", id: "projectNumber", placeholder: "Project Number" },
+        { input: "text", id: "center", placeholder: "Center" },
+      ],
+      [
+        { input: "age" },
+        {
+          input: "datepicker",
+          id: "dateOfBirth",
+          placeholder: "Date of Birth",
+        },
+        {
+          input: "select",
+          id: "gender",
+          placeholder: "Gender",
+          options: ["M", "F"],
+        },
+        { input: "text", id: "motherTongue", placeholder: "Mother Tongue" },
+        { input: "text", id: "religion", placeholder: "Religion" },
+      ],
+      [
+        {
+          input: "datepicker",
+          id: "admissionDate",
+          placeholder: "Admission Date",
+        },
+        {
+          input: "select",
+          id: "has_aadhar",
+          placeholder: "Aadhar Status",
+          options: this.documentStatus,
+        },
+        {
+          input: "select",
+          id: "has_bankAccount",
+          placeholder: "Bank Account Status",
+          options: this.documentStatus,
+        },
+        {
+          input: "select",
+          id: "has_rationCard",
+          placeholder: "Ration Card Status",
+          options: this.documentStatus,
+        },
+        {
+          input: "select",
+          id: "has_BplCard",
+          placeholder: "BPL Card Status",
+          options: this.documentStatus,
+        },
+      ],
+      [
+        { input: "text", id: "address", placeholder: "Address" },
+        { input: "text", id: "phone", placeholder: "Phone No." },
+        { input: "text", id: "guardianName", placeholder: "Guardians" },
+        {
+          input: "text",
+          id: "preferredTimeForGuardianMeeting",
+          placeholder: "Preferred time for guardians meeting",
+        },
+      ],
+    ],
+  };
+
   creatingNew = false;
   isAdminUser: boolean;
   enablePhotoUpload = false;
@@ -138,6 +206,7 @@ export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
         has_BplCard: [
           { value: this.child.has_BplCard, disabled: !this.editing },
         ],
+        gender: [{ value: this.child.gender, disabled: !this.editing }],
       },
     };
   }
