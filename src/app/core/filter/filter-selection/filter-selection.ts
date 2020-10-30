@@ -25,7 +25,7 @@
  */
 export class FilterSelection<T> {
   /** key of currently selected option */
-  public selectedOption: string = "";
+  public selectedOption: string;
 
   /**
    * Create a FilterSelection with different options to be selected.

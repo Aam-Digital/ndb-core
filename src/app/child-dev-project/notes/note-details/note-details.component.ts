@@ -1,22 +1,31 @@
-import { Component, Input, ViewChild } from "@angular/core";
-import { InteractionTypes } from "../interaction-types.enum";
+import { Component, Input, OnInit, ViewChild } from "@angular/core";
 import { Note } from "../model/note";
 import { ShowsEntity } from "../../../core/form-dialog/shows-entity.interface";
+import {
+  InteractionType,
+  NoteConfig,
+} from "../note-config-loader/note-config.interface";
+import { NoteConfigLoaderService } from "../note-config-loader/note-config-loader.service";
 
+/**
+ * Component responsible for displaying the Note creation/view window
+ */
 @Component({
   selector: "app-note-details",
   templateUrl: "./note-details.component.html",
   styleUrls: ["./note-details.component.scss"],
 })
-export class NoteDetailsComponent implements ShowsEntity {
+export class NoteDetailsComponent implements ShowsEntity, OnInit {
   @Input() entity: Note;
   @ViewChild("dialogForm", { static: true }) formDialogWrapper;
 
-  smallScreen: boolean;
+  /** interaction types loaded from config file */
+  interactionTypes: InteractionType[];
 
-  interactionTypes = Object.values(InteractionTypes);
+  constructor(private configLoader: NoteConfigLoaderService) {}
 
-  constructor() {
-    this.smallScreen = window.innerWidth < 500;
+  ngOnInit() {
+    // get all note categorys from config file
+    this.interactionTypes = this.configLoader.interactionTypes;
   }
 }
