@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, Input, OnChanges } from "@angular/core";
 import {
   AbstractControlOptions,
   FormBuilder,
@@ -33,11 +33,11 @@ export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
 
   config = {
     cols: [
-      [{ input: "photo" }],
+      [{ input: "photo", id: "photoFile", placeholder: "Photo Filename" }],
       [
-        { input: "text", id: "name", placeholder: "Name" },
+        { input: "text", id: "name", placeholder: "Name", required: true },
         { input: "text", id: "projectNumber", placeholder: "Project Number" },
-        { input: "text", id: "center", placeholder: "Center" },
+        { input: "text", id: "center", placeholder: "Center", required: true },
       ],
       [
         { input: "age" },
@@ -65,13 +65,29 @@ export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
           input: "select",
           id: "has_aadhar",
           placeholder: "Aadhar Status",
-          options: this.documentStatus,
+          options: [
+            "OK (copy with us)",
+            "OK (copy needed for us)",
+            "needs correction",
+            "applied",
+            "doesn't have",
+            "not eligible",
+            "",
+          ],
         },
         {
           input: "select",
           id: "has_bankAccount",
           placeholder: "Bank Account Status",
-          options: this.documentStatus,
+          options: [
+            "OK (copy with us)",
+            "OK (copy needed for us)",
+            "needs correction",
+            "applied",
+            "doesn't have",
+            "not eligible",
+            "",
+          ],
         },
         {
           input: "select",
@@ -83,7 +99,15 @@ export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
           input: "select",
           id: "has_BplCard",
           placeholder: "BPL Card Status",
-          options: this.documentStatus,
+          options: [
+            "OK (copy with us)",
+            "OK (copy needed for us)",
+            "needs correction",
+            "applied",
+            "doesn't have",
+            "not eligible",
+            "",
+          ],
         },
       ],
       [
@@ -117,10 +141,9 @@ export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
     this.isAdminUser = this.sessionService.getCurrentUser().admin;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    super.ngOnChanges(changes);
-    if (changes.hasOwnProperty("child") && !this.child.name) {
-      // workaround to determine if a new child is being created, otherwise `name` has to be set
+  onInitFromDynamicConfig(config: any) {
+    super.onInitFromDynamicConfig(config);
+    if (!config.child.name) {
       this.creatingNew = true;
       this.switchEdit();
     }
@@ -157,11 +180,12 @@ export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
   } {
     return {
       controlsConfig: {
+        photoFile: [{ value: this.child.photoFile, disabled: !this.editing }],
         name: [
           { value: this.child.name, disabled: !this.editing },
           Validators.required,
         ],
-        // gender: [{value: this.child.gender}], // reactive forms seem broken for mat-select on enum, using ngModel instead
+        gender: [{ value: this.child.gender, disabled: !this.editing }],
         projectNumber: [
           { value: this.child.projectNumber, disabled: !this.editing },
         ],
@@ -192,7 +216,6 @@ export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
             disabled: !this.editing,
           },
         ],
-        photoFile: [{ value: this.child.photoFile, disabled: !this.editing }],
         has_aadhar: [{ value: this.child.has_aadhar, disabled: !this.editing }],
         has_kanyashree: [
           { value: this.child.has_kanyashree, disabled: !this.editing },
@@ -206,7 +229,6 @@ export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
         has_BplCard: [
           { value: this.child.has_BplCard, disabled: !this.editing },
         ],
-        gender: [{ value: this.child.gender, disabled: !this.editing }],
       },
     };
   }

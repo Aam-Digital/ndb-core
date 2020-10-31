@@ -13,6 +13,7 @@ import { HealthFormComponent } from "../../child-dev-project/children/child-deta
 import { HealthCheckupComponent } from "../../child-dev-project/health-checkup/health-checkup-component/health-checkup.component";
 import { EducationalMaterialComponent } from "../../child-dev-project/educational-material/educational-material-component/educational-material.component";
 import { DropoutFormComponent } from "../../child-dev-project/children/child-details/form-components/dropout-form/dropout-form.component";
+import { BasicInfoComponent } from "../../child-dev-project/children/child-details/form-components/basic-info/basic-info.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -22,6 +23,7 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ProgressDashboard", ProgressDashboardComponent],
   ["AttendanceAverageDashboard", AttendanceAverageDashboardComponent],
   ["AttendanceWarningsDashboard", AttendanceWarningsDashboardComponent],
+  ["BasicInfo", BasicInfoComponent],
   ["PreviousSchools", PreviousSchoolsComponent],
   ["Aser", AserComponent],
   ["GroupedChildAttendance", GroupedChildAttendanceComponent],

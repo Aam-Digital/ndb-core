@@ -109,6 +109,12 @@
         "config": {
             "panels": [
                 {
+                    "title": "Basic Information",
+                    "components": [
+                        {"title": "", "component": "BasicInfo"}
+                    ]
+                },
+                {
                     "title": "Education",
                     "components": [
                         {"title":  "SchoolHistory", "component": "PreviousSchools"},

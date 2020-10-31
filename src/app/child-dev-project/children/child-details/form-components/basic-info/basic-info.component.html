@@ -37,9 +37,9 @@
                             #photoFileInput
                             matTooltip="filename for child photo uploaded by server administrator"
                             matInput
-                            formControlName="photoFile"
-                            placeholder="Photo filename"
-                            title="photoFile"
+                            [formControlName]="row.id"
+                            [placeholder]="row.placeholder"
+                            [title]="row.placeholder"
                             type="text"
                         />
                         <span

@@ -38,24 +38,12 @@
 
 <mat-accordion multi="true">
   <mat-expansion-panel
-    hideToggle="true"
-    [expanded]="child.isActive()"
-    title="Basic Information"
-  >
-    <mat-expansion-panel-header class="section-header">
-      <mat-panel-title>
-        Basic Information
-      </mat-panel-title>
-    </mat-expansion-panel-header>
-    <app-basic-info [child]="child"></app-basic-info>
-  </mat-expansion-panel>
-  <mat-expansion-panel
-    *ngFor="let panelConfig of panels"
-    expanded="false"
+    *ngFor="let panelConfig of panels; let i = index"
+    [expanded]="i == 0"
     [title]="panelConfig.title"
-    [disabled]="creatingNew">
+    [disabled]="creatingNew && i > 0">
     <mat-expansion-panel-header class="section-header">
-      <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew"
+      <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew && i > 0"
                 class="locked-icon"
                 matTooltip="Please save before entering further data"
                 [matTooltipDisabled]="!creatingNew">
