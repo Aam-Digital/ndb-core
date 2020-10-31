@@ -11,6 +11,7 @@ export abstract class FormSubcomponent
   editing: boolean = false;
   form: FormGroup;
   validateForm: boolean = false;
+  config;
 
   public constructor(
     private entityMapperService: EntityMapperService,
@@ -34,6 +35,8 @@ export abstract class FormSubcomponent
   onInitFromDynamicConfig(config: any) {
     this.child = config.child;
     this.initForm(this.getFormConfig());
+    this.config = config.config;
+    console.log("config", config);
   }
 
   switchEdit() {

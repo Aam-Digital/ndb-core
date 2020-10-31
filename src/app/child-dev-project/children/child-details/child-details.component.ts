@@ -77,7 +77,7 @@ export class ChildDetailsComponent {
             return {
               title: c.title,
               component: c.component,
-              config: { child: this.child },
+              config: { child: this.child, config: c.config },
             };
           }),
         };
