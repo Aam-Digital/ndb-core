@@ -3,18 +3,21 @@ import {
   HostListener,
   Input,
   OnChanges,
+  OnInit,
   SimpleChanges,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { School } from "../model/school";
+import { ConfigService } from "app/core/config/config.service";
 
 @Component({
   selector: "app-school-block",
   templateUrl: "./school-block.component.html",
   styleUrls: ["./school-block.component.scss"],
 })
-export class SchoolBlockComponent implements OnChanges {
+export class SchoolBlockComponent implements OnChanges, OnInit {
+  iconName: String;
   @Input() entity: School = new School("");
   @Input() entityId: string;
   @Input() linkDisabled: boolean;
@@ -23,10 +26,23 @@ export class SchoolBlockComponent implements OnChanges {
 
   constructor(
     private router: Router,
-    private entityMapper: EntityMapperService
+    private entityMapper: EntityMapperService,
+    private configService: ConfigService
   ) {}
 
+  ngOnInit() {
+    this.iconName =
+      "fa-" +
+      this.configService.getConfig<Object>("view:school/:id")["config"]["icon"];
+  }
+
   ngOnChanges(changes: SimpleChanges) {
+    // this.route.data.subscribe((config) => {
+    //   console.log(config);
+    //   this.iconName = "fa-" + config.icon;
+    //   console.log(this.iconName);
+    // });
+    // this.iconName = "fa-university";
     if (changes.hasOwnProperty("entityId")) {
       this.initFromEntityId();
     }
