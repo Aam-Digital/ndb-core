@@ -30,6 +30,7 @@ describe("SchoolDetailComponent", () => {
   let fixture: ComponentFixture<SchoolDetailsComponent>;
   const mockedRoute = {
     paramMap: of({ get: () => "new" }),
+    data: of({ icon: "university" }),
   };
   const mockedRouter = { navigate: () => null };
   const mockedLocation = { back: () => null };
