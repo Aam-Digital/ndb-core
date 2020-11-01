@@ -4,6 +4,7 @@ import { MatTableDataSource } from "@angular/material/table";
 import { MatSort } from "@angular/material/sort";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
+import { ActivatedRoute } from "@angular/router";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { WarningLevel, WarningLevelColor } from "../../warning-level";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
@@ -26,6 +27,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
   interactionTypes: InteractionType[];
   entityList = new Array<Note>();
   notesDataSource = new MatTableDataSource();
+  listName: String;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -83,12 +85,18 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     private sessionService: SessionService,
     private media: MediaObserver,
     private entityMapperService: EntityMapperService,
-    private configLoader: NoteConfigLoaderService
+    private configLoader: NoteConfigLoaderService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
     // load interactionTypes from config
     this.interactionTypes = this.configLoader.interactionTypes;
+
+    // load listName from config
+    this.route.data.subscribe((config) => {
+      this.listName = config.title;
+    });
 
     this.user = this.sessionService.getCurrentUser();
     this.paginatorPageSize = this.user.paginatorSettingsPageSize.notesList;
