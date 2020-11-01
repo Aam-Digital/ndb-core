@@ -37,12 +37,6 @@ export class SchoolBlockComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    // this.route.data.subscribe((config) => {
-    //   console.log(config);
-    //   this.iconName = "fa-" + config.icon;
-    //   console.log(this.iconName);
-    // });
-    // this.iconName = "fa-university";
     if (changes.hasOwnProperty("entityId")) {
       this.initFromEntityId();
     }
