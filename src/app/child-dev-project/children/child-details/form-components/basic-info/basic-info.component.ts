@@ -55,7 +55,7 @@ export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
   save(): Promise<any> {
     return super.save().then(() => {
       if (this.creatingNew) {
-        this.router.navigate(["/child", this.child.getId()]);
+        return this.router.navigate(["/child", this.child.getId()]);
       }
     });
   }
@@ -73,61 +73,17 @@ export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
   }
 
   protected getFormConfig(): {
-    controlsConfig: { [p: string]: any };
+    controlsConfig: any;
     options?: AbstractControlOptions | { [p: string]: any } | null;
   } {
-    return {
-      controlsConfig: {
-        photoFile: [{ value: this.child.photoFile, disabled: !this.editing }],
-        name: [
-          { value: this.child.name, disabled: !this.editing },
-          Validators.required,
-        ],
-        gender: [{ value: this.child.gender, disabled: !this.editing }],
-        projectNumber: [
-          { value: this.child.projectNumber, disabled: !this.editing },
-        ],
-        dateOfBirth: [
-          { value: this.child.dateOfBirth, disabled: !this.editing },
-        ],
-        motherTongue: [
-          { value: this.child.motherTongue, disabled: !this.editing },
-        ],
-        religion: [{ value: this.child.religion, disabled: !this.editing }],
-
-        center: [
-          { value: this.child.center, disabled: !this.editing },
-          Validators.required,
-        ],
-        status: [{ value: this.child.status, disabled: !this.editing }],
-        admissionDate: [
-          { value: this.child.admissionDate, disabled: !this.editing },
-        ],
-        address: [{ value: this.child.address, disabled: !this.editing }],
-        phone: [{ value: this.child.phone, disabled: !this.editing }],
-        guardianName: [
-          { value: this.child.guardianName, disabled: !this.editing },
-        ],
-        preferredTimeForGuardianMeeting: [
-          {
-            value: this.child.preferredTimeForGuardianMeeting,
-            disabled: !this.editing,
-          },
-        ],
-        has_aadhar: [{ value: this.child.has_aadhar, disabled: !this.editing }],
-        has_kanyashree: [
-          { value: this.child.has_kanyashree, disabled: !this.editing },
-        ],
-        has_bankAccount: [
-          { value: this.child.has_bankAccount, disabled: !this.editing },
-        ],
-        has_rationCard: [
-          { value: this.child.has_rationCard, disabled: !this.editing },
-        ],
-        has_BplCard: [
-          { value: this.child.has_BplCard, disabled: !this.editing },
-        ],
-      },
-    };
+    // TODO save after first computation
+    const formConfig = {};
+    this.config.cols.flat().forEach((c) => {
+      formConfig[c.id] = [{ value: this.child[c.id], disabled: !this.editing }];
+      if (c.required) {
+        formConfig[c.id].required = Validators.required;
+      }
+    });
+    return { controlsConfig: formConfig };
   }
 }

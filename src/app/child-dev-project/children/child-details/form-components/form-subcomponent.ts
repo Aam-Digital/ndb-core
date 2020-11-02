@@ -17,9 +17,7 @@ export abstract class FormSubcomponent
     private entityMapperService: EntityMapperService,
     private fb: FormBuilder,
     private alertService: AlertService
-  ) {
-    this.initForm(this.getFormConfig());
-  }
+  ) {}
 
   protected abstract getFormConfig(): {
     controlsConfig: { [key: string]: any };
@@ -34,9 +32,8 @@ export abstract class FormSubcomponent
 
   onInitFromDynamicConfig(config: any) {
     this.child = config.child;
-    this.initForm(this.getFormConfig());
     this.config = config.config;
-    console.log("config", config);
+    this.initForm(this.getFormConfig());
   }
 
   switchEdit() {
