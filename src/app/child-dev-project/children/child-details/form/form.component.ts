@@ -42,14 +42,14 @@ export class FormComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("child")) {
-      this.initForm(this.getFormConfig());
+      this.initForm();
     }
   }
 
   onInitFromDynamicConfig(config: any) {
     this.child = config.child;
     this.config = config.config;
-    this.initForm(this.getFormConfig());
+    this.initForm();
     if (!config.child.name) {
       this.creatingNew = true;
       this.switchEdit();
@@ -58,7 +58,7 @@ export class FormComponent implements OnChanges {
 
   switchEdit() {
     this.editing = !this.editing;
-    this.initForm(this.getFormConfig());
+    this.initForm();
     console.log("before", this.enablePhotoUpload);
     this.enablePhotoUpload = this.childPhotoService.canSetImage();
     console.log("after", this.enablePhotoUpload);
@@ -107,7 +107,7 @@ export class FormComponent implements OnChanges {
     this.child.photo.next(await this.childPhotoService.getImage(this.child));
   }
 
-  protected getFormConfig(): {
+  protected buildFormConfig(): {
     controlsConfig: any;
     options?: AbstractControlOptions | { [p: string]: any } | null;
   } {
@@ -142,10 +142,7 @@ export class FormComponent implements OnChanges {
     return invalid;
   }
 
-  private initForm(config: {
-    controlsConfig: { [key: string]: any };
-    options?: AbstractControlOptions | { [key: string]: any } | null;
-  }): void {
-    this.form = this.fb.group(config.controlsConfig, config.options);
+  private initForm(): void {
+    this.form = this.fb.group(this.buildFormConfig());
   }
 }

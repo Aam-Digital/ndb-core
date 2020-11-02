@@ -160,33 +160,5 @@ export const testConfig = {
         placeholder: "Last Dental Check-Up",
       },
     ],
-    [
-      {
-        input: "datepicker",
-        id: "health_lastEyeCheckup",
-        placeholder: "Last Eye Check-Up",
-      },
-    ],
-    [
-      {
-        input: "datepicker",
-        id: "health_lastENTCheckup",
-        placeholder: "Last ENT Check-Up",
-      },
-    ],
-    [
-      {
-        input: "datepicker",
-        id: "health_lastVitaminD",
-        placeholder: "Last Vitamin D",
-      },
-    ],
-    [
-      {
-        input: "datepicker",
-        id: "health_lastDeworming",
-        placeholder: "Last De-Worming",
-      },
-    ],
   ],
 };
