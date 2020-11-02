@@ -112,7 +112,8 @@ export class FormComponent implements OnChanges {
     options?: AbstractControlOptions | { [p: string]: any } | null;
   } {
     const formConfig = {};
-    this.config.cols.flat().forEach((c) => {
+    // Flattening the cols array, array.flat() is not yet available in current browsers
+    [].concat(...this.config.cols).forEach((c) => {
       formConfig[c.id] = [{ value: this.child[c.id], disabled: !this.editing }];
       if (c.required) {
         formConfig[c.id].push(Validators.required);
