@@ -5,7 +5,6 @@ import {
   Validators,
 } from "@angular/forms";
 import { Child } from "../../../model/child";
-import { Gender } from "../../../model/Gender";
 import { ChildPhotoService } from "../../../child-photo-service/child-photo.service";
 import { Router } from "@angular/router";
 import { EntityMapperService } from "../../../../../core/entity/entity-mapper.service";
@@ -24,9 +23,7 @@ export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
   creatingNew = false;
   isAdminUser: boolean;
   enablePhotoUpload = false;
-  gender = Gender;
 
-  genders = Gender;
   constructor(
     fb: FormBuilder,
     entityMapperService: EntityMapperService,

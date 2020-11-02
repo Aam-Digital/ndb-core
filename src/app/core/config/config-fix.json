@@ -235,7 +235,56 @@
                 {
                     "title": "Health",
                     "components": [
-                        {"title": "", "component": "HealthForm"},
+                        {
+                            "title": "",
+                            "component": "BasicInfo",
+                            "config": {
+                                "cols": [
+                                    [{
+                                        "input": "select",
+                                        "id": "health_vaccinationStatus",
+                                        "placeholder": "Peter Status",
+                                        "options": ["Good", "Vaccination Due", "Needs Checking", "No Card/Information"]
+                                    }],
+                                    [{
+                                        "input": "select",
+                                        "id": "health_eyeHealthStatus",
+                                        "placeholder": "Eye Status",
+                                        "options": ["Good", "Has Glasses", "Needs Glasses", "Needs Checkup"]
+                                    }],
+                                    [{
+                                        "input": "text",
+                                        "id": "health_bloodGroup",
+                                        "placeholder": "Blood Group"
+                                    }],
+                                    [{
+                                        "input": "datepicker",
+                                        "id": "health_lastDentalCheckup",
+                                        "placeholder": "Last Dental Check-Up"
+                                    }],
+                                    [{
+                                        "input": "datepicker",
+                                        "id": "health_lastEyeCheckup",
+                                        "placeholder": "Last Eye Check-Up"
+                                    }],
+                                    [{
+                                        "input": "datepicker",
+                                        "id": "health_lastENTCheckup",
+                                        "placeholder": "Last ENT Check-Up"
+                                    }],
+                                    [{
+                                        "input": "datepicker",
+                                        "id": "health_lastVitaminD",
+                                        "placeholder": "Last Vitamin D"
+                                    }],
+                                    [{
+                                        "input": "datepicker",
+                                        "id": "health_lastDeworming",
+                                        "placeholder": "Last De-Worming"
+                                    }]
+                                ]
+                            }
+                        },
                         {"title": "Height & Weight Tracking", "component": "HealthCheckup"}
                     ]
                 },
@@ -248,7 +297,29 @@
                 {
                     "title": "Dropout",
                     "components": [
-                        {"title": "", "component": "DropoutForm"}
+                        {
+                            "title": "",
+                            "component": "BasicInfo",
+                            "config": {
+                                "cols": [
+                                    [{
+                                        "input": "datepicker",
+                                        "id": "dropoutDate",
+                                        "placeholder": "Dropout Date"
+                                    }],
+                                    [{
+                                        "input": "text",
+                                        "id": "dropoutType",
+                                        "placeholder": "Dropout Type"
+                                    }],
+                                    [{
+                                        "input": "text",
+                                        "id": "dropoutRemarks",
+                                        "placeholder": "Dropout Remarks"
+                                    }]
+                                ]
+                            }
+                        }
                     ]
                 }
             ]

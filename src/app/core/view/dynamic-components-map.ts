@@ -9,10 +9,8 @@ import { PreviousSchoolsComponent } from "../../child-dev-project/previous-schoo
 import { AserComponent } from "../../child-dev-project/aser/aser-component/aser.component";
 import { GroupedChildAttendanceComponent } from "../../child-dev-project/children/child-details/grouped-child-attendance/grouped-child-attendance.component";
 import { NotesOfChildComponent } from "../../child-dev-project/notes/notes-of-child/notes-of-child.component";
-import { HealthFormComponent } from "../../child-dev-project/children/child-details/form-components/health-form/health-form.component";
 import { HealthCheckupComponent } from "../../child-dev-project/health-checkup/health-checkup-component/health-checkup.component";
 import { EducationalMaterialComponent } from "../../child-dev-project/educational-material/educational-material-component/educational-material.component";
-import { DropoutFormComponent } from "../../child-dev-project/children/child-details/form-components/dropout-form/dropout-form.component";
 import { BasicInfoComponent } from "../../child-dev-project/children/child-details/form-components/basic-info/basic-info.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
@@ -28,8 +26,6 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["Aser", AserComponent],
   ["GroupedChildAttendance", GroupedChildAttendanceComponent],
   ["NotesOfChild", NotesOfChildComponent],
-  ["HealthForm", HealthFormComponent],
   ["HealthCheckup", HealthCheckupComponent],
   ["EducationalMaterial", EducationalMaterialComponent],
-  ["DropoutForm", DropoutFormComponent],
 ]);
