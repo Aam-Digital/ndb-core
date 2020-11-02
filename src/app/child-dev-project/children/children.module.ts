@@ -80,7 +80,6 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { Angulartics2Module } from "angulartics2";
 import { AttendanceAnalysisComponent } from "../attendance/attendance-analysis/attendance-analysis.component";
 import { GroupedChildAttendanceComponent } from "./child-details/grouped-child-attendance/grouped-child-attendance.component";
-import { BasicInfoComponent } from "./child-details/form-components/basic-info/basic-info.component";
 import { ViewModule } from "../../core/view/view.module";
 import { FormComponent } from "./child-details/form/form.component";
 
@@ -152,7 +151,6 @@ import { FormComponent } from "./child-details/form/form.component";
     HealthCheckupComponent,
     PreviousSchoolsComponent,
     GroupedChildAttendanceComponent,
-    BasicInfoComponent,
     FormComponent,
   ],
   providers: [

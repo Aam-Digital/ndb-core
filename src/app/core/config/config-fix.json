@@ -111,7 +111,7 @@
                 {
                     "title": "Basic Information",
                     "components": [
-                        {"title": "", "component": "BasicInfo",
+                        {"title": "", "component": "Form",
                             "config": {
                                 "cols": [
                                     [{ "input": "photo", "id": "photoFile", "placeholder": "Photo Filename" }],
@@ -237,7 +237,7 @@
                     "components": [
                         {
                             "title": "",
-                            "component": "BasicInfo",
+                            "component": "Form",
                             "config": {
                                 "cols": [
                                     [{
@@ -299,7 +299,7 @@
                     "components": [
                         {
                             "title": "",
-                            "component": "BasicInfo",
+                            "component": "Form",
                             "config": {
                                 "cols": [
                                     [{
