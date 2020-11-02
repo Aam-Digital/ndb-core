@@ -104,6 +104,21 @@
                         </mat-select>
                     </mat-form-field>
                 </div>
+
+                <mat-form-field *ngIf="row.input === 'datepicker'" style="width: 180px">
+                    <input
+                            matInput
+                            [formControlName]="row.id"
+                            [placeholder]="row.placeholder"
+                            [matDatepicker]="datepickerComp"
+                            [disabled]="!editing"
+                    />
+                    <mat-datepicker-toggle
+                            matSuffix
+                            [for]="datepickerComp"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker #datepickerComp></mat-datepicker>
+                </mat-form-field>
             </div>
         </div>
     </div>
