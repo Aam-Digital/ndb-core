@@ -111,7 +111,6 @@ export class FormComponent implements OnChanges {
     controlsConfig: any;
     options?: AbstractControlOptions | { [p: string]: any } | null;
   } {
-    // TODO save after first computation
     const formConfig = {};
     this.config.cols.flat().forEach((c) => {
       formConfig[c.id] = [{ value: this.child[c.id], disabled: !this.editing }];
