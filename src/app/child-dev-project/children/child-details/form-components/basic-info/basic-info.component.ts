@@ -1,7 +1,8 @@
-import { Component, Input, OnChanges } from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import {
   AbstractControlOptions,
   FormBuilder,
+  FormGroup,
   Validators,
 } from "@angular/forms";
 import { Child } from "../../../model/child";
@@ -10,34 +11,45 @@ import { Router } from "@angular/router";
 import { EntityMapperService } from "../../../../../core/entity/entity-mapper.service";
 import { AlertService } from "../../../../../core/alerts/alert.service";
 import { SessionService } from "../../../../../core/session/session-service/session.service";
-import { FormSubcomponent } from "../form-subcomponent";
 
 @Component({
   selector: "app-basic-info",
   templateUrl: "./basic-info.component.html",
   styleUrls: ["./basic-info.component.scss"],
 })
-export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
+export class BasicInfoComponent implements OnChanges {
   @Input() child: Child;
 
   creatingNew = false;
   isAdminUser: boolean;
   enablePhotoUpload = false;
 
+  editing: boolean = false;
+  form: FormGroup;
+  validateForm: boolean = false;
+  config;
+
   constructor(
-    fb: FormBuilder,
-    entityMapperService: EntityMapperService,
-    alertService: AlertService,
+    private fb: FormBuilder,
+    private entityMapperService: EntityMapperService,
+    private alertService: AlertService,
     private childPhotoService: ChildPhotoService,
     private router: Router,
     private sessionService: SessionService
   ) {
-    super(entityMapperService, fb, alertService);
     this.isAdminUser = this.sessionService.getCurrentUser().admin;
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.hasOwnProperty("child")) {
+      this.initForm(this.getFormConfig());
+    }
+  }
+
   onInitFromDynamicConfig(config: any) {
-    super.onInitFromDynamicConfig(config);
+    this.child = config.child;
+    this.config = config.config;
+    this.initForm(this.getFormConfig());
     if (!config.child.name) {
       this.creatingNew = true;
       this.switchEdit();
@@ -45,16 +57,40 @@ export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
   }
 
   switchEdit() {
-    super.switchEdit();
+    this.editing = !this.editing;
+    this.initForm(this.getFormConfig());
     this.enablePhotoUpload = this.childPhotoService.canSetImage();
   }
 
-  save(): Promise<any> {
-    return super.save().then(() => {
-      if (this.creatingNew) {
-        return this.router.navigate(["/child", this.child.getId()]);
+  async save(): Promise<any> {
+    // errors regarding invalid fields wont be displayed unless marked as touched
+    this.form.markAllAsTouched();
+    this.validateForm = true;
+    if (this.form.valid) {
+      this.assignFormValuesToChild(this.child, this.form);
+      try {
+        await this.entityMapperService.save<Child>(this.child);
+        if (this.creatingNew) {
+          return this.router.navigate(["/child", this.child.getId()]);
+        }
+        this.alertService.addInfo("Saving Successful");
+        this.switchEdit();
+        return this.child;
+      } catch (err) {
+        this.alertService.addDanger(
+          'Could not save Child "' + this.child.name + '": ' + err
+        );
+        throw new Error(err);
       }
-    });
+    } else {
+      const invalidFields = this.getInvalidFields();
+      this.alertService.addDanger(
+        "Form invalid, required fields (" + invalidFields + ") missing"
+      );
+      throw new Error(
+        "Form invalid, required fields(" + invalidFields + ") missing"
+      );
+    }
   }
 
   /**
@@ -78,9 +114,36 @@ export class BasicInfoComponent extends FormSubcomponent implements OnChanges {
     this.config.cols.flat().forEach((c) => {
       formConfig[c.id] = [{ value: this.child[c.id], disabled: !this.editing }];
       if (c.required) {
-        formConfig[c.id].required = Validators.required;
+        formConfig[c.id].push(Validators.required);
       }
     });
     return { controlsConfig: formConfig };
+  }
+
+  private assignFormValuesToChild(child: Child, form: FormGroup) {
+    Object.keys(form.controls).forEach((key) => {
+      const value = form.get(key).value;
+      if (value !== null) {
+        child[key] = value;
+      }
+    });
+  }
+
+  private getInvalidFields() {
+    const invalid = [];
+    const controls = this.form.controls;
+    for (const field in controls) {
+      if (controls[field].invalid) {
+        invalid.push(field);
+      }
+    }
+    return invalid;
+  }
+
+  private initForm(config: {
+    controlsConfig: { [key: string]: any };
+    options?: AbstractControlOptions | { [key: string]: any } | null;
+  }): void {
+    this.form = this.fb.group(config.controlsConfig, config.options);
   }
 }

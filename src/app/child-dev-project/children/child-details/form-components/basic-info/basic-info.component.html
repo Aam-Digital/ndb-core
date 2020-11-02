@@ -58,9 +58,9 @@
                             [title]="row.placeholder"
                             type="text"
                     />
-<!--                    <mat-error *ngIf="this.form.get(row.id).invalid && validateForm">-->
-<!--                        {{row.placeholder}} is required-->
-<!--                    </mat-error>-->
+                    <mat-error *ngIf="this.form.get(row.id).invalid && validateForm">
+                        {{row.placeholder}} is required
+                    </mat-error>
                 </mat-form-field>
 
                 <div *ngIf="row.input === 'age'">
