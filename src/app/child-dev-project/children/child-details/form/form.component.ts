@@ -1,23 +1,23 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { Child } from "../../model/child";
 import {
   AbstractControlOptions,
   FormBuilder,
   FormGroup,
   Validators,
 } from "@angular/forms";
-import { Child } from "../../../model/child";
-import { ChildPhotoService } from "../../../child-photo-service/child-photo.service";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { AlertService } from "../../../../core/alerts/alert.service";
+import { ChildPhotoService } from "../../child-photo-service/child-photo.service";
 import { Router } from "@angular/router";
-import { EntityMapperService } from "../../../../../core/entity/entity-mapper.service";
-import { AlertService } from "../../../../../core/alerts/alert.service";
-import { SessionService } from "../../../../../core/session/session-service/session.service";
+import { SessionService } from "../../../../core/session/session-service/session.service";
 
 @Component({
-  selector: "app-basic-info",
-  templateUrl: "./basic-info.component.html",
-  styleUrls: ["./basic-info.component.scss"],
+  selector: "app-form",
+  templateUrl: "./form.component.html",
+  styleUrls: ["./form.component.scss"],
 })
-export class BasicInfoComponent implements OnChanges {
+export class FormComponent implements OnChanges {
   @Input() child: Child;
 
   creatingNew = false;
@@ -59,7 +59,9 @@ export class BasicInfoComponent implements OnChanges {
   switchEdit() {
     this.editing = !this.editing;
     this.initForm(this.getFormConfig());
+    console.log("before", this.enablePhotoUpload);
     this.enablePhotoUpload = this.childPhotoService.canSetImage();
+    console.log("after", this.enablePhotoUpload);
   }
 
   async save(): Promise<any> {
