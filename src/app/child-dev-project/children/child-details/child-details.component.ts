@@ -38,6 +38,7 @@ export class ChildDetailsComponent {
   creatingNew = false;
 
   panels: any[];
+  classNamesWithIcon: String;
 
   constructor(
     private entityMapperService: EntityMapperService,
@@ -49,6 +50,9 @@ export class ChildDetailsComponent {
     private confirmationDialog: ConfirmationDialogService
   ) {
     this.route.paramMap.subscribe((params) => this.loadChild(params.get("id")));
+    this.route.data.subscribe((config) => {
+      this.classNamesWithIcon = "fa fa-" + config.icon + " fa-fw";
+    });
   }
 
   loadChild(id: string) {

@@ -24,7 +24,7 @@ describe("ChildDetailsComponent", () => {
       routeObserver = observer;
       observer.next({ get: () => "new" });
     }),
-    data: of({ panels: [] }),
+    data: of({ panels: [], icon: "child" }),
   };
   const mockedRouter = { navigate: () => null, resetConfig: () => {} };
   const mockedLocation = { back: () => null };
