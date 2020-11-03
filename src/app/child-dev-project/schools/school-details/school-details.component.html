@@ -9,7 +9,7 @@
       <mat-icon fontIcon="fa-backward"></mat-icon>
     </button>
 
-    <i class="fa fa-university fa-fw"></i>
+    <i [className]="classNamesWithIcon"></i>
     <span *ngIf="!creatingNew">{{ school.name }}</span>
     <span *ngIf="creatingNew">Adding new School</span>
   </h1>
@@ -174,7 +174,7 @@
         Students
       </mat-panel-title>
     </mat-expansion-panel-header>
-    <div class="example-container mat-elevation-z8">
+    <div class="example-container mat-elevation-z1">
       <table
         mat-table
         #table

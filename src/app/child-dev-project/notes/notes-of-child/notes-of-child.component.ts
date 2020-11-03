@@ -14,6 +14,7 @@ import { SessionService } from "../../../core/session/session-service/session.se
 import { ColumnDescription } from "../../../core/entity-subrecord/entity-subrecord/column-description";
 import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { Child } from "../../children/model/child";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
@@ -24,8 +25,8 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   templateUrl: "./notes-of-child.component.html",
   styleUrls: ["./notes-of-child.component.scss"],
 })
-export class NotesOfChildComponent implements OnInit, OnChanges {
-  @Input() childId: string;
+export class NotesOfChildComponent implements OnChanges {
+  @Input() child: Child;
   records: Array<Note> = [];
   detailsComponent = NoteDetailsComponent;
 
@@ -82,23 +83,15 @@ export class NotesOfChildComponent implements OnInit, OnChanges {
     private datePipe: DatePipe
   ) {}
 
-  ngOnInit() {
-    this.initNotesOfChild();
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.hasOwnProperty("childId")) {
+    if (changes.hasOwnProperty("child")) {
       this.initNotesOfChild();
     }
   }
 
   private initNotesOfChild() {
-    if (!this.childId || this.childId === "") {
-      return;
-    }
-
     this.childrenService
-      .getNotesOfChild(this.childId)
+      .getNotesOfChild(this.child.getId())
       .pipe(untilDestroyed(this))
       .subscribe((notes: Note[]) => {
         notes.sort((a, b) => {
@@ -117,7 +110,7 @@ export class NotesOfChildComponent implements OnInit, OnChanges {
     const user = this.sessionService.getCurrentUser()
       ? this.sessionService.getCurrentUser().name
       : "";
-    const childId = this.childId;
+    const childId = this.child.getId();
 
     return () => {
       const newNote = new Note(Date.now().toString());
@@ -133,5 +126,5 @@ export class NotesOfChildComponent implements OnInit, OnChanges {
    * returns the color for a note; passed to the entity subrecored component
    * @param note note to get color for
    */
-  getColor = (note: Note) => note?.getColorForId(this.childId);
+  getColor = (note: Note) => note?.getColorForId(this.child.getId());
 }

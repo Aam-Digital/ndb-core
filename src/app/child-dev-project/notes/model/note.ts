@@ -16,14 +16,11 @@
  */
 
 import { MeetingNoteAttendance } from "../meeting-note-attendance";
-import {
-  INTERACTION_TYPE_COLORS,
-  InteractionTypes,
-} from "../interaction-types.enum";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../core/entity/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { WarningLevel, WarningLevelColor } from "../../warning-level";
+import { InteractionType } from "../note-config-loader/note-config.interface";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
@@ -35,7 +32,9 @@ export class Note extends Entity {
   @DatabaseField() subject: string = "";
   @DatabaseField() text: string = "";
   @DatabaseField() author: string = "";
-  @DatabaseField() category: InteractionTypes = InteractionTypes.NONE;
+  @DatabaseField({ dataType: "interaction-type" }) category: InteractionType = {
+    name: "NONE",
+  };
   @DatabaseField({ dataType: "string" }) warningLevel: WarningLevel =
     WarningLevel.OK;
 
@@ -52,16 +51,15 @@ export class Note extends Entity {
       return WarningLevelColor(WarningLevel.WARNING);
     }
 
-    const color = INTERACTION_TYPE_COLORS.get(this.category);
-    return color === undefined ? "" : color;
+    const color = this.category.color;
+    return color ? "" : color;
   }
 
   public getColorForId(entityId: string) {
-    if (this.isMeeting() && !this.isPresent(entityId)) {
+    if (this.category.isMeeting && !this.isPresent(entityId)) {
       // child is absent, highlight the entry
       return WarningLevelColor(WarningLevel.URGENT);
     }
-
     return this.getColor();
   }
 
@@ -71,18 +69,6 @@ export class Note extends Entity {
    */
   isLinkedWithChild(childId: string): boolean {
     return this.children.includes(childId);
-  }
-
-  /**
-   * whether or not this note's contents describe a meeting
-   */
-  isMeeting(): boolean {
-    return (
-      this.category === InteractionTypes.GUARDIAN_MEETING ||
-      this.category === InteractionTypes.CHILDREN_MEETING ||
-      this.category === InteractionTypes.EXCURSION ||
-      this.category === InteractionTypes.RATION_DISTRIBUTION
-    );
   }
 
   /**

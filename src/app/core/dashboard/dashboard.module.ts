@@ -15,30 +15,14 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from "@angular/core";
-import { MenuItem } from "./menu-item";
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { DashboardComponent } from "./dashboard/dashboard.component";
+import { FlexLayoutModule } from "@angular/flex-layout";
+import { ViewModule } from "../view/view.module";
 
-/**
- * Manage menu items to be displayed in the main app menu.
- *
- * Inject this service in your classes to add your own custom menu entries.
- */
-@Injectable()
-export class NavigationItemsService {
-  private menuItems: MenuItem[] = [];
-
-  /**
-   * Get all registered menu items.
-   */
-  public getMenuItems(): MenuItem[] {
-    return this.menuItems;
-  }
-
-  /**
-   * Register a new menu item to be display in the menu.
-   * @param menuItem
-   */
-  public addMenuItem(menuItem: MenuItem) {
-    this.menuItems.push(menuItem);
-  }
-}
+@NgModule({
+  imports: [CommonModule, FlexLayoutModule, ViewModule],
+  declarations: [DashboardComponent],
+})
+export class DashboardModule {}

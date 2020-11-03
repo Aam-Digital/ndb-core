@@ -1,5 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { AttendanceMonth } from "../model/attendance-month";
 import { ChildrenService } from "../../children/children.service";
 import { ColumnDescription } from "../../../core/entity-subrecord/entity-subrecord/column-description";
@@ -7,19 +6,20 @@ import { DatePipe, PercentPipe } from "@angular/common";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
 import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { Child } from "../../children/model/child";
 
 @UntilDestroy()
 @Component({
   selector: "app-child-attendance",
   templateUrl: "./child-attendance.component.html",
 })
-export class ChildAttendanceComponent implements OnInit {
-  childId: string;
-  records: Array<AttendanceMonth>;
-  detailsComponent = AttendanceDetailsComponent;
-
+export class ChildAttendanceComponent implements OnChanges {
   @Input() institution: string;
   @Input() showDailyAttendanceOfLatest = false;
+  @Input() child: Child;
+
+  records: Array<AttendanceMonth>;
+  detailsComponent = AttendanceDetailsComponent;
 
   columns: Array<ColumnDescription> = [
     new ColumnDescription(
@@ -73,17 +73,15 @@ export class ChildAttendanceComponent implements OnInit {
   ];
 
   constructor(
-    private route: ActivatedRoute,
     private childrenService: ChildrenService,
     private datePipe: DatePipe,
     private percentPipe: PercentPipe
   ) {}
 
-  ngOnInit() {
-    this.route.paramMap.subscribe((params) => {
-      this.childId = params.get("id").toString();
-      this.loadData(this.childId);
-    });
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.hasOwnProperty("child")) {
+      this.loadData(this.child.getId());
+    }
   }
 
   loadData(id: string) {
@@ -117,14 +115,17 @@ export class ChildAttendanceComponent implements OnInit {
       this.records[0].month.getMonth() !== now.getMonth()
     ) {
       this.records.unshift(
-        AttendanceMonth.createAttendanceMonth(this.childId, this.institution)
+        AttendanceMonth.createAttendanceMonth(
+          this.child.getId(),
+          this.institution
+        )
       );
     }
   }
 
   generateNewRecordFactory() {
     // define values locally because 'this' is a different scope after passing a function as input to another component
-    const child = this.childId;
+    const child = this.child.getId();
     const institution = this.institution;
 
     return () => {

@@ -4,15 +4,17 @@ import { MatTableDataSource } from "@angular/material/table";
 import { MatSort } from "@angular/material/sort";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
-import { InteractionTypes } from "../interaction-types.enum";
+import { ActivatedRoute } from "@angular/router";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
-import { WarningLevel } from "../../warning-level";
+import { WarningLevel, WarningLevelColor } from "../../warning-level";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FilterSelection } from "../../../core/filter/filter-selection/filter-selection";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { User } from "app/core/user/user";
+import { InteractionType } from "../note-config-loader/note-config.interface";
+import { NoteConfigLoaderService } from "../note-config-loader/note-config-loader.service";
 
 @UntilDestroy()
 @Component({
@@ -21,8 +23,11 @@ import { User } from "app/core/user/user";
   styleUrls: ["./notes-manager.component.scss"],
 })
 export class NotesManagerComponent implements OnInit, AfterViewInit {
+  /** interaction types loaded from config file */
+  interactionTypes: InteractionType[];
   entityList = new Array<Note>();
   notesDataSource = new MatTableDataSource();
+  listName: String;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -79,10 +84,20 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     private formDialog: FormDialogService,
     private sessionService: SessionService,
     private media: MediaObserver,
-    private entityMapperService: EntityMapperService
+    private entityMapperService: EntityMapperService,
+    private configLoader: NoteConfigLoaderService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
+    // load interactionTypes from config
+    this.interactionTypes = this.configLoader.interactionTypes;
+
+    // load listName from config
+    this.route.data.subscribe((config) => {
+      this.listName = config.title;
+    });
+
     this.user = this.sessionService.getCurrentUser();
     this.paginatorPageSize = this.user.paginatorSettingsPageSize.notesList;
     this.paginatorPageIndex = this.user.paginatorSettingsPageIndex.notesList;
@@ -110,9 +125,19 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
   onPaginateChange(event: PageEvent) {
     this.paginatorPageSize = event.pageSize;
     this.paginatorPageIndex = event.pageIndex;
-    this.user.paginatorSettingsPageSize.notesList = this.paginatorPageSize;
+    this.updateUserPaginationSettings();
+  }
+
+  private updateUserPaginationSettings() {
+    const hasChangesToBeSaved =
+      this.paginatorPageSize !== this.user.paginatorSettingsPageSize.notesList;
+
     this.user.paginatorSettingsPageIndex.notesList = this.paginatorPageIndex;
-    this.entityMapperService.save<User>(this.user);
+    this.user.paginatorSettingsPageSize.notesList = this.paginatorPageSize;
+
+    if (hasChangesToBeSaved) {
+      this.entityMapperService.save<User>(this.user);
+    }
   }
 
   private sortAndAdd(newNotes: Note[]) {
@@ -131,19 +156,21 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
   }
 
   private initCategoryFilter() {
-    this.categoryFS.options = [{ key: "", label: "", filterFun: () => true }];
+    this.categoryFS.options = [
+      { key: "show-all", label: "All Notes", filterFun: () => true },
+    ];
 
-    Object.values(InteractionTypes).forEach((interaction) => {
+    for (const interaction of this.interactionTypes) {
       this.categoryFS.options.push({
-        key: interaction,
-        label: interaction,
+        key: interaction.name,
+        label: interaction.name,
         filterFun: (note: Note) => {
-          return interaction === InteractionTypes.NONE
-            ? true
-            : note.category === interaction;
+          return note.category.name === interaction.name;
         },
       });
-    });
+    }
+    // set default to show-all
+    this.categoryFS.selectedOption = this.categoryFS.options[0].key;
 
     this.applyFilterSelections();
   }
@@ -201,5 +228,17 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
 
   showDetails(entity: Note) {
     return this.formDialog.openDialog(NoteDetailsComponent, entity);
+  }
+
+  public getColor(entity: Note): string {
+    if (entity.warningLevel === WarningLevel.URGENT) {
+      return WarningLevelColor(WarningLevel.URGENT);
+    }
+    if (entity.warningLevel === WarningLevel.WARNING) {
+      return WarningLevelColor(WarningLevel.WARNING);
+    }
+
+    const color = entity.category.color;
+    return color ? "" : color;
   }
 }

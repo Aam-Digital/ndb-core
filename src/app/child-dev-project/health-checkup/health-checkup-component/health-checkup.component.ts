@@ -1,11 +1,11 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { HealthCheck } from "../model/health-check";
 import { ColumnDescription } from "../../../core/entity-subrecord/entity-subrecord/column-description";
-import { ActivatedRoute } from "@angular/router";
 import { ChildrenService } from "../../children/children.service";
 import { DatePipe } from "@angular/common";
 import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { Child } from "../../children/model/child";
 
 @UntilDestroy()
 @Component({
@@ -13,7 +13,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   templateUrl: "./health-checkup.component.html",
   styleUrls: ["./health-checkup.component.scss"],
 })
-export class HealthCheckupComponent implements OnInit {
+export class HealthCheckupComponent implements OnChanges {
   records = new Array<HealthCheck>();
   /**
    * Column Description for the SubentityRecordComponent
@@ -50,26 +50,21 @@ export class HealthCheckupComponent implements OnInit {
       (bmi: Number) => bmi.toFixed(2)
     ),
   ];
-  childId: string;
+  @Input() child: Child;
   constructor(
-    private route: ActivatedRoute,
     private childrenService: ChildrenService,
     private datePipe: DatePipe
   ) {}
 
-  ngOnInit() {
-    this.route.paramMap.subscribe((params) => {
-      this.childId = params.get("id").toString();
-      this.loadHealthChecks();
-    });
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.hasOwnProperty("child")) {
+      this.loadData(this.child.getId());
+    }
   }
 
-  /**
-   *
-   */
   generateNewRecordFactory() {
     // define values locally because "this" is a different scope after passing a function as input to another component
-    const childId = this.childId;
+    const childId = this.child.getId();
 
     return () => {
       const newHC = new HealthCheck(Date.now().toString());
@@ -85,9 +80,9 @@ export class HealthCheckupComponent implements OnInit {
   /**
    * implements the health check loading from the children service and is called in the onInit()
    */
-  loadHealthChecks() {
+  loadData(id: string) {
     this.childrenService
-      .getHealthChecksOfChild(this.childId)
+      .getHealthChecksOfChild(id)
       .pipe(untilDestroyed(this))
       .subscribe((results) => {
         this.records = results.sort(

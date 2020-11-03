@@ -19,6 +19,8 @@ import { Child } from "../../children/model/child";
 export class SchoolDetailsComponent implements OnInit {
   school = new School("");
 
+  classNamesWithIcon: String;
+
   studentDataSource: MatTableDataSource<Child> = new MatTableDataSource();
   displayedColumns = ["id", "name", "schoolClass", "age"];
 
@@ -36,7 +38,9 @@ export class SchoolDetailsComponent implements OnInit {
     private snackBar: MatSnackBar,
     private confirmationDialog: ConfirmationDialogService,
     private schoolService: SchoolsService
-  ) {}
+  ) {
+    this.initializeForm();
+  }
 
   initializeForm() {
     this.form = this.fb.group({
@@ -61,16 +65,12 @@ export class SchoolDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-    const id = this.route.snapshot.params["id"];
-    if (id === "new") {
-      this.creatingNew = true;
-      this.editing = true;
-      this.school = new School(uniqid());
-    } else {
-      this.studentDataSource.data = [];
-      this.loadSchool(id);
-    }
-    this.initializeForm();
+    this.route.data.subscribe((config) => {
+      this.classNamesWithIcon = "fa fa-" + config.icon + " fa-fw";
+    });
+    this.route.paramMap.subscribe((paramMap) => {
+      this.loadSchool(paramMap.get("id"));
+    });
   }
 
   switchEdit() {
@@ -78,12 +78,17 @@ export class SchoolDetailsComponent implements OnInit {
     this.initializeForm();
   }
 
-  loadSchool(id: string) {
-    this.entityMapperService
-      .load<School>(School, id)
-      .then((school) => (this.school = school))
-      .then(() => this.initializeForm())
-      .then(() => this.loadStudents());
+  async loadSchool(id: string) {
+    if (id === "new") {
+      this.creatingNew = true;
+      this.editing = true;
+      this.school = new School(uniqid());
+    } else {
+      this.studentDataSource.data = [];
+      this.school = await this.entityMapperService.load<School>(School, id);
+    }
+    this.initializeForm();
+    await this.loadStudents();
   }
 
   async loadStudents() {
@@ -98,11 +103,11 @@ export class SchoolDetailsComponent implements OnInit {
       "Are you sure you want to delete this School?"
     );
 
-    dialogRef.afterClosed().subscribe((confirmed) => {
+    dialogRef.afterClosed().subscribe(async (confirmed) => {
       if (confirmed) {
-        this.entityMapperService
-          .remove<School>(this.school)
-          .then(() => this.router.navigate(["/school"]));
+        await this.entityMapperService.remove<School>(this.school);
+
+        await this.router.navigate(["/school"]);
 
         const snackBarRef = this.snackBar.open(
           'Deleted School "' + this.school.name + '"',

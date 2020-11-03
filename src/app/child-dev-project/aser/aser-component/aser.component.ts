@@ -1,4 +1,10 @@
-import { Component, OnInit } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { DatePipe } from "@angular/common";
 import { Aser } from "../model/aser";
@@ -6,6 +12,7 @@ import { ColumnDescription } from "../../../core/entity-subrecord/entity-subreco
 import { ChildrenService } from "../../children/children.service";
 import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { Child } from "../../children/model/child";
 
 @UntilDestroy()
 @Component({
@@ -14,8 +21,8 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
     '<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="generateNewRecordFactory()">' +
     "</app-entity-subrecord>",
 })
-export class AserComponent implements OnInit {
-  childId: string;
+export class AserComponent implements OnChanges {
+  @Input() child: Child;
   records: Array<Aser>;
 
   columns: Array<ColumnDescription> = [
@@ -78,16 +85,14 @@ export class AserComponent implements OnInit {
   ];
 
   constructor(
-    private route: ActivatedRoute,
     private childrenService: ChildrenService,
     private datePipe: DatePipe
   ) {}
 
-  ngOnInit() {
-    this.route.paramMap.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.childId = params.get("id").toString();
-      this.loadData(this.childId);
-    });
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.hasOwnProperty("child")) {
+      this.loadData(this.child.getId());
+    }
   }
 
   loadData(id: string) {
@@ -104,7 +109,7 @@ export class AserComponent implements OnInit {
 
   generateNewRecordFactory() {
     // define values locally because "this" is a different scope after passing a function as input to another component
-    const child = this.childId;
+    const child = this.child.getId();
 
     return () => {
       const newAtt = new Aser(Date.now().toString());

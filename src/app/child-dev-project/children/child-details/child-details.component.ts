@@ -40,9 +40,10 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 export class ChildDetailsComponent implements OnInit {
   child: Child = new Child("");
 
+  classNamesWithIcon: String;
+
   validateForm = false;
   form: FormGroup;
-  healthCheckForm: FormGroup;
   creatingNew = false;
   editing = false;
   enablePhotoUpload;
@@ -58,21 +59,15 @@ export class ChildDetailsComponent implements OnInit {
     "not eligible",
     "",
   ];
-  eyeStatusValues = ["Good", "Has Glasses", "Needs Glasses", "Needs Checkup"];
-  vaccinationStatusValues = [
-    "Good",
-    "Vaccination Due",
-    "Needs Checking",
-    "No Card/Information",
-  ];
+
   isAdminUser: boolean;
 
   constructor(
     private entityMapperService: EntityMapperService,
     private childrenService: ChildrenService,
-    private route: ActivatedRoute,
     @Inject(FormBuilder) public fb: FormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private location: Location,
     private snackBar: MatSnackBar,
     private confirmationDialog: ConfirmationDialogService,
@@ -127,38 +122,15 @@ export class ChildDetailsComponent implements OnInit {
       // rationCard:     [{value: this.child.has_rationCard,     disabled: !this.editing}],
       // bplCard:        [{value: this.child.has_BplCard,        disabled: !this.editing}],
 
-      // health_vaccinationStatus:    [{value: this.child.health_vaccinationStatus,    disabled: !this.editing}],
-      health_bloodGroup: [
-        { value: this.child.health_bloodGroup, disabled: !this.editing },
-      ],
-      health_lastDentalCheckup: [
-        { value: this.child.health_lastDentalCheckup, disabled: !this.editing },
-      ],
-      health_lastEyeCheckup: [
-        { value: this.child.health_lastEyeCheckup, disabled: !this.editing },
-      ],
-      // health_eyeHealthStatus:   [{value: this.child.health_eyeHealthStatus,    disabled: !this.editing}],
-      health_lastENTCheckup: [
-        { value: this.child.health_lastENTCheckup, disabled: !this.editing },
-      ],
-      health_lastVitaminD: [
-        { value: this.child.health_lastVitaminD, disabled: !this.editing },
-      ],
-      health_lastDeworming: [
-        { value: this.child.health_lastDeworming, disabled: !this.editing },
-      ],
-
-      dropoutDate: [{ value: this.child.dropoutDate, disabled: !this.editing }],
-      dropoutType: [{ value: this.child.dropoutType, disabled: !this.editing }],
-      dropoutRemarks: [
-        { value: this.child.dropoutRemarks, disabled: !this.editing },
-      ],
-
       photoFile: [{ value: this.child.photoFile, disabled: !this.editing }],
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.route.data.subscribe((config) => {
+      this.classNamesWithIcon = "fa fa-" + config.icon + " fa-fw";
+    });
+  }
 
   loadChild(id: string) {
     if (id === "new") {
@@ -175,15 +147,6 @@ export class ChildDetailsComponent implements OnInit {
         });
     }
     this.initForm();
-  }
-
-  changedRecordInEntitySubrecord() {
-    this.childrenService
-      .getChild(this.child.getId())
-      .pipe(untilDestroyed(this))
-      .subscribe((child) => {
-        this.child = child;
-      });
   }
 
   switchEdit() {
@@ -207,7 +170,7 @@ export class ChildDetailsComponent implements OnInit {
             this.router.navigate(["/child", this.child.getId()]);
             this.creatingNew = false;
           }
-          this.alertService.addInfo("Saving Succesfull");
+          this.alertService.addInfo("Saving Successful");
           this.switchEdit();
         })
         .catch((err) =>

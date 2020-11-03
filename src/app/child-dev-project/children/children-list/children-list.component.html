@@ -1,10 +1,10 @@
-<h1>Children List</h1>
+<h1>{{ listName }}</h1>
 
 <mat-expansion-panel
   expanded="true"
   fxLayout="column wrap"
   fxLayoutGap="10px"
-  class="filter-panel"
+  class="filter-panel mat-elevation-z2"
 >
   <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none end">
     <!-- text search -->
@@ -29,7 +29,7 @@
     </div>
     <!-- number of table entries -->
     <div fxFlex="25" fxHide.xs="true" class="align-form-field">
-      (Showing {{ childrenDataSource.filteredData.length }} children)
+      (Showing {{ childrenDataSource.filteredData.length }} entries)
     </div>
     <!-- add new button -->
     <div fxFlex="25" class="align-form-field">
@@ -142,7 +142,7 @@
 
 <!--<mat-divider></mat-divider>-->
 
-<div class="mat-elevation-z8 table-list">
+<div class="mat-elevation-z2 table-list">
   <table mat-table [dataSource]="childrenDataSource" matSort style="width: 100%">
     <ng-container matColumnDef="projectNumber">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>PN</th>

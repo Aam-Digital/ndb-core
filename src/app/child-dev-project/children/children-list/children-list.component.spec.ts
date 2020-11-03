@@ -33,10 +33,14 @@ import { ChildPhotoService } from "../child-photo-service/child-photo.service";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { User } from "app/core/user/user";
+import { of } from "rxjs";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
   let fixture: ComponentFixture<ChildrenListComponent>;
+  const mockedRoute = {
+    data: of({ icon: "child" }),
+  };
 
   beforeEach(async(() => {
     const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);

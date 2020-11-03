@@ -17,6 +17,7 @@
     "lib": [
       "es2016",
       "dom"
-    ]
+    ],
+    "resolveJsonModule": true
   }
 }

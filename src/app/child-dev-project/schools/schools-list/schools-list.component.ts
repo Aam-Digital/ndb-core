@@ -3,7 +3,7 @@ import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { School } from "../model/school";
 import { SchoolsService } from "../schools.service";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { FilterSelection } from "../../../core/filter/filter-selection/filter-selection";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { SessionService } from "../../../core/session/session-service/session.service";
@@ -22,6 +22,8 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   schoolDataSource: MatTableDataSource<School> = new MatTableDataSource<
     School
   >();
+
+  listName: String;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -57,11 +59,15 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   constructor(
     private schoolService: SchoolsService,
     private router: Router,
+    private route: ActivatedRoute,
     private sessionService: SessionService,
     private entityMapperService: EntityMapperService
   ) {}
 
   ngOnInit() {
+    this.route.data.subscribe((config) => {
+      this.listName = config.title;
+    });
     this.user = this.sessionService.getCurrentUser();
     this.paginatorPageSize = this.user.paginatorSettingsPageSize.schoolsList;
     this.paginatorPageIndex = this.user.paginatorSettingsPageIndex.schoolsList;
@@ -95,9 +101,20 @@ export class SchoolsListComponent implements OnInit, AfterViewInit {
   onPaginateChange(event: PageEvent) {
     this.paginatorPageSize = event.pageSize;
     this.paginatorPageIndex = event.pageIndex;
-    this.user.paginatorSettingsPageSize.schoolsList = this.paginatorPageSize;
+    this.updateUserPaginationSettings();
+  }
+
+  private updateUserPaginationSettings() {
+    const hasChangesToBeSaved =
+      this.paginatorPageSize !==
+      this.user.paginatorSettingsPageSize.schoolsList;
+
     this.user.paginatorSettingsPageIndex.schoolsList = this.paginatorPageIndex;
-    this.entityMapperService.save<User>(this.user);
+    this.user.paginatorSettingsPageSize.schoolsList = this.paginatorPageSize;
+
+    if (hasChangesToBeSaved) {
+      this.entityMapperService.save<User>(this.user);
+    }
   }
 
   applyFilter(filterValue: string) {

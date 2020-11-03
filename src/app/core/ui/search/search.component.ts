@@ -9,6 +9,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { LogLevel } from "../../logging/log-level";
 import { AlertService } from "../../alerts/alert.service";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
+import { Router } from "@angular/router";
 
 /**
  * General search box that provides results out of any kind of entities from the system
@@ -36,6 +37,7 @@ export class SearchComponent implements OnInit {
   constructor(
     private dbIndexingService: DatabaseIndexingService,
     private entitySchemaService: EntitySchemaService,
+    private router: Router,
     private loggingService: LoggingService,
     private alertService: AlertService
   ) {}
@@ -46,6 +48,11 @@ export class SearchComponent implements OnInit {
     this.searchStringChanged
       .pipe(debounceTime(this.INPUT_DEBOUNCE_TIME_MS))
       .subscribe((searchString) => {
+        if (typeof searchString !== "string") {
+          // abort if a result object was selected rather than a search term entered
+          return;
+        }
+
         this.searchQuery.next(this.startSearch(searchString));
       });
 
@@ -105,12 +112,15 @@ export class SearchComponent implements OnInit {
     };
   }
 
-  clickOption(optionElement) {
-    // simulate a click on the EntityBlock inside the selected option element
-    optionElement._element.nativeElement.children["0"].children["0"].click();
-    if (this.showSearchToolbar === true) {
-      this.showSearchToolbar = false;
-    }
+  async clickOption(optionElement) {
+    const resultEntity: Entity = optionElement.value;
+    await this.router.navigate([
+      resultEntity.getType().toLowerCase(),
+      resultEntity.getId(),
+    ]);
+
+    this.searchText = "";
+    this.showSearchToolbar = false;
   }
 
   toggleSearchToolbar() {

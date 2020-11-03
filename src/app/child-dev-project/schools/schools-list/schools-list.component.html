@@ -1,10 +1,10 @@
-<h1>Schools List</h1>
+<h1>{{ listName }}</h1>
 
 <mat-expansion-panel
   expanded="true"
   fxLayout="column wrap"
   fxLayoutGap="10px"
-  class="filter-panel"
+  class="filter-panel mat-elevation-z2"
 >
   <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none end">
     <div fxFlex="50">
@@ -28,7 +28,7 @@
     </div>
 
     <div fxFlex="25" class="align-form-field" fxHide.xs="true">
-      (Showing {{ schoolDataSource.filteredData.length }} schools)
+      (Showing {{ schoolDataSource.filteredData.length }} entries)
     </div>
 
     <div fxFlex="25" class="align-form-field">
@@ -99,7 +99,7 @@
 
 <!--<mat-divider></mat-divider>-->
 
-<div *ngIf="schoolDataSource" class="mat-elevation-z8 table-list">
+<div *ngIf="schoolDataSource" class="mat-elevation-z2 table-list">
   <table mat-table [dataSource]="schoolDataSource" matSort width="100%">
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>

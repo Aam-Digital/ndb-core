@@ -1,10 +1,10 @@
-<h1>Notes &amp; Reports</h1>
+<h1>{{ listName }}</h1>
 
 <mat-expansion-panel
   expanded="true"
   fxLayout="column"
   fxLayoutGap="10px"
-  class="filter-panel"
+  class="filter-panel mat-elevation-z2"
 >
   <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none end">
     <div fxFlex="50">
@@ -28,7 +28,7 @@
     </div>
 
     <div class="align-form-field" fxHide.xs="true">
-      (Showing {{ notesDataSource.filteredData.length }} Notes)
+      (Showing {{ notesDataSource.filteredData.length }} entries)
     </div>
 
     <div class="align-form-field">
@@ -119,7 +119,7 @@
 
 <!--<mat-divider></mat-divider>-->
 
-<div class="mat-elevation-z8 table-list">
+<div class="mat-elevation-z2 table-list">
   <table mat-table [dataSource]="notesDataSource" matSort>
     <ng-container matColumnDef="date">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
@@ -135,7 +135,7 @@
 
     <ng-container matColumnDef="category">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Category</th>
-      <td mat-cell *matCellDef="let note">{{ note.category }}</td>
+      <td mat-cell *matCellDef="let note">{{ note.category.name }}</td>
     </ng-container>
 
     <ng-container matColumnDef="author">
@@ -159,7 +159,7 @@
       *matRowDef="let note; columns: columnsToDisplay; let i=index;"
       (click)="showDetails(note)"
       style="cursor: pointer;"
-      [ngStyle]="{ 'background-color': note.getColor() }"
+      [ngStyle]="{ 'background-color': getColor(note) }"
       angulartics2On="click"
       angularticsCategory="Navigation"
       angularticsAction="notes_manager_list_link"

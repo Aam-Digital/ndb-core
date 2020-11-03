@@ -17,7 +17,7 @@
 
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { ErrorHandler, NgModule } from "@angular/core";
+import { APP_INITIALIZER, ErrorHandler, NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 
@@ -32,11 +32,9 @@ import { NavigationModule } from "./core/navigation/navigation.module";
 import { LatestChangesModule } from "./core/latest-changes/latest-changes.module";
 import { UserModule } from "./core/user/user.module";
 
-import { DashboardModule } from "./child-dev-project/dashboard/dashboard.module";
+import { ProgressDashboardWidgetModule } from "./child-dev-project/progress-dashboard-widget/progress-dashboard-widget.module";
 import { ChildrenModule } from "./child-dev-project/children/children.module";
 import { SchoolsModule } from "./child-dev-project/schools/schools.module";
-import { NavigationItemsService } from "./core/navigation/navigation-items.service";
-import { MenuItem } from "./core/navigation/menu-item";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
@@ -56,7 +54,7 @@ import { DemoNoteGeneratorService } from "./child-dev-project/notes/demo-data/de
 import { DemoAserGeneratorService } from "./child-dev-project/aser/demo-aser-generator.service";
 import { DemoEducationalMaterialGeneratorService } from "./child-dev-project/educational-material/demo-educational-material-generator.service";
 import { DemoHealthCheckGeneratorService } from "./child-dev-project/health-checkup/demo-data/demo-health-check-generator.service";
-import { DemoWidgetGeneratorService } from "./child-dev-project/dashboard/demo-widget-generator.service";
+import { DemoProgressDashboardWidgetGeneratorService } from "./child-dev-project/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service";
 import { DemoUserGeneratorService } from "./core/user/demo-user-generator.service";
 import { ConfirmationDialogModule } from "./core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "./core/form-dialog/form-dialog.module";
@@ -64,6 +62,13 @@ import { LoggingService } from "./core/logging/logging.service";
 import { Angulartics2Module } from "angulartics2";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { Angulartics2Piwik } from "angulartics2/piwik";
+import { ConfigService } from "./core/config/config.service";
+import { ViewModule } from "./core/view/view.module";
+import { DashboardModule } from "./core/dashboard/dashboard.module";
+
+export function configFactory(configService: ConfigService) {
+  return (): Promise<any> => configService.loadConfig();
+}
 
 /**
  * Main entry point of the application.
@@ -84,6 +89,7 @@ import { Angulartics2Piwik } from "angulartics2/piwik";
     FlexLayoutModule,
     HttpClientModule,
     routing,
+    ViewModule,
     FormsModule,
     ConfirmationDialogModule,
     FormDialogModule,
@@ -97,6 +103,7 @@ import { Angulartics2Piwik } from "angulartics2/piwik";
     NavigationModule,
     UserModule,
     DashboardModule,
+    ProgressDashboardWidgetModule,
     ChildrenModule,
     SchoolsModule,
     AdminModule,
@@ -119,7 +126,7 @@ import { Angulartics2Piwik } from "angulartics2/piwik";
         maxCount: 8,
       }),
       ...DemoHealthCheckGeneratorService.provider(),
-      ...DemoWidgetGeneratorService.provider(),
+      ...DemoProgressDashboardWidgetGeneratorService.provider(),
       ...DemoUserGeneratorService.provider(),
     ]),
   ],
@@ -129,48 +136,20 @@ import { Angulartics2Piwik } from "angulartics2/piwik";
     CookieService,
     AnalyticsService,
     Angulartics2Piwik,
+    ConfigService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: configFactory,
+      deps: [ConfigService],
+      multi: true,
+    },
   ],
   bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor(
-    private navigationItemsService: NavigationItemsService,
-    public matIconRegistry: MatIconRegistry
-  ) {
+  constructor(public matIconRegistry: MatIconRegistry) {
     matIconRegistry.registerFontClassAlias("fontawesome", "fa");
     matIconRegistry.setDefaultFontSetClass("fa");
-
-    this.initNavigationItems();
-  }
-
-  private initNavigationItems() {
-    this.navigationItemsService.addMenuItem(
-      new MenuItem("Dashboard", "home", ["/dashboard"])
-    );
-    this.navigationItemsService.addMenuItem(
-      new MenuItem("Children", "child", ["/child"])
-    );
-    this.navigationItemsService.addMenuItem(
-      new MenuItem("Schools", "university", ["/school"])
-    );
-    this.navigationItemsService.addMenuItem(
-      new MenuItem("Notes", "file-text", ["/note"])
-    );
-    this.navigationItemsService.addMenuItem(
-      new MenuItem("Attendance Register", "table", ["/attendance"])
-    );
-    this.navigationItemsService.addMenuItem(
-      new MenuItem("Admin", "wrench", ["/admin"], true)
-    );
-    this.navigationItemsService.addMenuItem(
-      new MenuItem("Users", "user", ["/users"], true)
-    );
-    this.navigationItemsService.addMenuItem(
-      new MenuItem("Database Conflicts", "wrench", ["/admin/conflicts"], true)
-    );
-    this.navigationItemsService.addMenuItem(
-      new MenuItem("Help", "question-circle", ["/help"])
-    );
   }
 }
 
