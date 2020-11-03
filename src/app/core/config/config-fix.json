@@ -104,7 +104,36 @@
             "icon": "university"
         }
     },
-    "view:child": {"component": "ChildrenList", "config": { "title": "Children List"} },
+    "view:child": {"component": "ChildrenList", "config": { "title": "Children List",
+      "defaultColumnGroup": "School Info",
+      "columnGroupSmallDisplay": "Mobile",
+      "columnGroups": [
+        {
+          "name": "Basic Info",
+          "columns": ["projectNumber", "name", "age", "gender", "schoolClass", "schoolId", "center", "status"
+          ]
+        },
+        {
+          "name": "School Info",
+          "columns": [ "projectNumber", "name", "age", "schoolClass", "schoolId", "attendance-school", "attendance-coaching", "motherTongue"
+          ]
+        },
+        {
+          "name": "Status",
+          "columns": [ "projectNumber", "name", "center", "status", "admissionDate", "has_aadhar", "has_kanyashree", "has_bankAccount", "has_rationCard", "has_bplCard"
+          ]
+        },
+        {
+          "name": "Health",
+          "columns": [ "projectNumber", "name", "center", "health_vaccinationStatus", "health_bloodGroup", "health_eyeHealthStatus", "health_LastEyeCheckup", "health_LastDentalCheckup", "health_LastENTCheckup", "health_LastVitaminD", "health_LastDeworming", "gender", "age", "dateOfBirth"
+          ]
+        },
+        {
+          "name": "Mobile",
+          "columns": ["projectNumber", "name", "age", "schoolId"]
+        }
+      ]
+      }},
     "view:child/:id": {
         "component": "ChildDetails",
         "config": {

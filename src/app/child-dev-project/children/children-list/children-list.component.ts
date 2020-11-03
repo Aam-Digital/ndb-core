@@ -55,73 +55,10 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  columnGroupSelection = "School Info";
-  columnGroups: ColumnGroup[] = [
-    {
-      name: "Basic Info",
-      columns: [
-        "projectNumber",
-        "name",
-        "age",
-        "gender",
-        "schoolClass",
-        "schoolId",
-        "center",
-        "status",
-      ],
-    },
-    {
-      name: "School Info",
-      columns: [
-        "projectNumber",
-        "name",
-        "age",
-        "schoolClass",
-        "schoolId",
-        "attendance-school",
-        "attendance-coaching",
-        "motherTongue",
-      ],
-    },
-    {
-      name: "Status",
-      columns: [
-        "projectNumber",
-        "name",
-        "center",
-        "status",
-        "admissionDate",
-        "has_aadhar",
-        "has_kanyashree",
-        "has_bankAccount",
-        "has_rationCard",
-        "has_bplCard",
-      ],
-    },
-    {
-      name: "Health",
-      columns: [
-        "projectNumber",
-        "name",
-        "center",
-        "health_vaccinationStatus",
-        "health_bloodGroup",
-        "health_eyeHealthStatus",
-        "health_LastEyeCheckup",
-        "health_LastDentalCheckup",
-        "health_LastENTCheckup",
-        "health_LastVitaminD",
-        "health_LastDeworming",
-        "gender",
-        "age",
-        "dateOfBirth",
-      ],
-    },
-    {
-      name: "Mobile",
-      columns: ["projectNumber", "name", "age", "schoolId"],
-    },
-  ];
+  columnGroupSelection: string;
+  columnGroupSmallDisplay: string;
+  columnGroupSelectionNotSmallDisplay: string;
+  columnGroups: ColumnGroup[];
   columnsToDisplay = ["projectNumber", "name"];
   filterString = "";
 
@@ -146,6 +83,14 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.route.data.subscribe((config) => {
       this.listName = config.title;
+      this.columnGroups = config.columnGroups;
+      if (config.defaultColumnGroup) {
+        this.columnGroupSelection = config.defaultColumnGroup;
+      } else {
+        this.columnGroupSelection = config.columnGroups[0].name;
+      }
+
+      this.columnGroupSmallDisplay = config.columnGroupSmallDisplay;
     });
     this.loadData();
     this.loadUrlParams();
@@ -158,12 +103,14 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
         switch (change.mqAlias) {
           case "xs":
           case "sm": {
-            this.displayColumnGroup("Mobile");
+            if (this.columnGroupSmallDisplay) {
+              this.displayColumnGroup(this.columnGroupSmallDisplay);
+            }
             this.maxAttendanceBlocks = 1;
             break;
           }
           case "md": {
-            this.displayColumnGroup("School Info");
+            this.displayColumnGroup(this.columnGroupSelectionNotSmallDisplay);
             this.maxAttendanceBlocks = 2;
             break;
           }
@@ -288,6 +235,9 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
   displayColumnGroup(columnGroupName: string) {
     this.columnGroupSelection = columnGroupName;
+    if (columnGroupName !== this.columnGroupSmallDisplay) {
+      this.columnGroupSelectionNotSmallDisplay = columnGroupName;
+    }
     let found = false;
     let group: ColumnGroup;
     let i = 0;
