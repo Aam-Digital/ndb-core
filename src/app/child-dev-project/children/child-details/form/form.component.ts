@@ -112,17 +112,6 @@ export class FormComponent implements OnChanges {
     });
   }
 
-  private getInvalidFields() {
-    const invalid = [];
-    const controls = this.form.controls;
-    for (const field in controls) {
-      if (controls[field].invalid) {
-        invalid.push(field);
-      }
-    }
-    return invalid;
-  }
-
   private initForm(): void {
     this.form = this.fb.group(this.buildFormConfig());
   }
@@ -140,5 +129,16 @@ export class FormComponent implements OnChanges {
         "Form invalid, required fields(" + invalidFields + ") missing"
       );
     }
+  }
+
+  private getInvalidFields() {
+    const invalid = [];
+    const controls = this.form.controls;
+    for (const field in controls) {
+      if (controls[field].invalid) {
+        invalid.push(field);
+      }
+    }
+    return invalid;
   }
 }

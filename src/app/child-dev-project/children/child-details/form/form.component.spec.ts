@@ -121,11 +121,35 @@ describe("FormComponent", () => {
         done();
       });
   });
+
+  it("logs error when saving fails", (done) => {
+    spyOnProperty(component.form, "valid").and.returnValue(true);
+    spyOn(
+      fixture.debugElement.injector.get(EntityMapperService),
+      "save"
+    ).and.returnValue(Promise.reject("error"));
+    const alertService = fixture.debugElement.injector.get(AlertService);
+    spyOn(alertService, "addDanger");
+    component
+      .save()
+      .then(() => fail())
+      .catch((err) => {
+        expect(err.message).toEqual("error");
+        expect(alertService.addDanger).toHaveBeenCalled();
+        done();
+      });
+  });
 });
 
 export const testConfig = {
   cols: [
     [
+      {
+        input: "text",
+        id: "name",
+        placeholder: "Name",
+        required: true,
+      },
       {
         input: "select",
         id: "health_vaccinationStatus",
