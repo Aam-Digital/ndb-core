@@ -7,7 +7,7 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { AlertService } from "../../../core/alerts/alert.service";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { DatePipe, Location, PercentPipe } from "@angular/common";
-import { Observable } from "rxjs";
+import { of } from "rxjs";
 import { ChildDetailsComponent } from "./child-details.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { databaseServiceProvider } from "app/core/database/database.service.provider";
@@ -25,30 +25,29 @@ describe("ChildDetailsComponent", () => {
   let component: ChildDetailsComponent;
   let fixture: ComponentFixture<ChildDetailsComponent>;
   const mockedRoute = {
-    paramMap: Observable.create((observer) =>
-      observer.next({ get: () => "new" })
-    ),
+    paramMap: of({ get: () => "new" }),
+    data: of({ icon: "child" }),
   };
   const mockedRouter = { navigate: () => null };
   const mockedLocation = { back: () => null };
   const mockedSnackBar = {
     open: () => {
       return {
-        onAction: () => Observable.create((observer) => observer.next()),
+        onAction: () => of(),
       };
     },
   };
   const mockedConfirmationDialog = {
     openDialog: () => {
       return {
-        afterClosed: () => Observable.create((observer) => observer(false)),
+        afterClosed: () => of(false),
       };
     },
   };
   const mockedDialog = {
     open: () => {
       return {
-        afterClosed: () => Observable.create((observer) => observer(false)),
+        afterClosed: () => of(false),
       };
     },
   };

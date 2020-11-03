@@ -1,4 +1,4 @@
-<h1>Schools List</h1>
+<h1>{{ listName }}</h1>
 
 <mat-expansion-panel
   expanded="true"
@@ -28,7 +28,7 @@
     </div>
 
     <div fxFlex="25" class="align-form-field" fxHide.xs="true">
-      (Showing {{ schoolDataSource.filteredData.length }} schools)
+      (Showing {{ schoolDataSource.filteredData.length }} entries)
     </div>
 
     <div fxFlex="25" class="align-form-field">

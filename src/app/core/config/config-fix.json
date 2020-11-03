@@ -81,7 +81,7 @@
         }
     },
     "view:user": {"component": "UserAccount"},
-    "view:note": {"component": "NotesManager"},
+    "view:note": {"component": "NotesManager", "config": { "title": "Notes & Reports"}},
     "view:admin": {"component": "Admin", "requiresAdmin": true},
     "view:admin/conflicts": {"component": "Admin", "requiresAdmin": true},
     "view:users": {"component": "UserList", "requiresAdmin": true},
@@ -90,8 +90,8 @@
     "view:attendance/analysis": {"component": "AttendanceAnalysis"},
     "view:attendance/add/month": {"component": "AddMonthAttendance"},
     "view:attendance/add/day": {"component": "AddDayAttendance"},
-    
-    "view:school": {"component": "SchoolsList"},
+
+    "view:school": {"component": "SchoolsList", "config": { "title": "Schools List"} },
     "view:school/:id": {
         "component": "SchoolDetails",
         "config": {
@@ -100,10 +100,11 @@
                     "name": "Education",
                     "components": ["previousSchools", "aserResults"]
                 }
-            ]
+            ],
+            "icon": "university"
         }
     },
-    "view:child": {"component": "ChildrenList"},
+    "view:child": {"component": "ChildrenList", "config": { "title": "Children List"} },
     "view:child/:id": {
         "component": "ChildDetails",
         "config": {
@@ -112,7 +113,8 @@
                     "name": "Education",
                     "components": ["previousSchools", "aserResults"]
                 }
-            ]
+            ],
+            "icon": "child"
         }
     }
 }
