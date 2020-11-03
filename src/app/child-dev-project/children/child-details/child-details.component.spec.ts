@@ -24,7 +24,57 @@ describe("ChildDetailsComponent", () => {
       routeObserver = observer;
       observer.next({ get: () => "new" });
     }),
-    data: of({ panels: [], icon: "child" }),
+    data: of({
+      panels: [
+        {
+          title: "Basic Information",
+          components: [
+            { title: "", component: "Form", config: { cols: [[]] } },
+          ],
+        },
+        {
+          title: "Education",
+          components: [
+            { title: "SchoolHistory", component: "PreviousSchools" },
+            { title: "ASER Results", component: "Aser" },
+          ],
+        },
+        {
+          title: "Attendance",
+          components: [{ title: "", component: "GroupedChildAttendance" }],
+        },
+        {
+          title: "Notes & Reports",
+          components: [{ title: "", component: "NotesOfChild" }],
+        },
+        {
+          title: "Health",
+          components: [
+            {
+              title: "",
+              component: "Form",
+              config: { cols: [[]] },
+            },
+            { title: "Height & Weight Tracking", component: "HealthCheckup" },
+          ],
+        },
+        {
+          title: "Educational Materials",
+          components: [{ title: "", component: "EducationalMaterial" }],
+        },
+        {
+          title: "Dropout",
+          components: [
+            {
+              title: "",
+              component: "Form",
+              config: { cols: [[]] },
+            },
+          ],
+        },
+      ],
+      icon: "child",
+    }),
   };
   const mockedRouter = { navigate: () => null, resetConfig: () => {} };
   const mockedLocation = { back: () => null };
