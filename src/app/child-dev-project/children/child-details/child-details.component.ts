@@ -25,7 +25,6 @@ import { ConfirmationDialogService } from "../../../core/confirmation-dialog/con
 import * as uniqid from "uniqid";
 import { ChildrenService } from "../children.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { DynamicComponentConfig } from "../../../core/view/dynamic-components/dynamic-component-config.interface";
 
 @UntilDestroy()
 @Component({
@@ -87,13 +86,6 @@ export class ChildDetailsComponent {
         };
       });
     });
-  }
-
-  getConfig(componentConfig: any): DynamicComponentConfig {
-    return {
-      component: componentConfig.component,
-      config: { child: this.child },
-    };
   }
 
   removeChild() {
