@@ -1,11 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Child } from "../../model/child";
-import {
-  AbstractControlOptions,
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from "@angular/forms";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { AlertService } from "../../../../core/alerts/alert.service";
 import { ChildPhotoService } from "../../child-photo-service/child-photo.service";
@@ -59,39 +54,25 @@ export class FormComponent implements OnChanges {
   switchEdit() {
     this.editing = !this.editing;
     this.initForm();
-    console.log("before", this.enablePhotoUpload);
     this.enablePhotoUpload = this.childPhotoService.canSetImage();
-    console.log("after", this.enablePhotoUpload);
   }
 
-  async save(): Promise<any> {
-    // errors regarding invalid fields wont be displayed unless marked as touched
-    this.form.markAllAsTouched();
-    this.validateForm = true;
-    if (this.form.valid) {
-      this.assignFormValuesToChild(this.child, this.form);
-      try {
-        await this.entityMapperService.save<Child>(this.child);
-        if (this.creatingNew) {
-          return this.router.navigate(["/child", this.child.getId()]);
-        }
-        this.alertService.addInfo("Saving Successful");
-        this.switchEdit();
-        return this.child;
-      } catch (err) {
-        this.alertService.addDanger(
-          'Could not save Child "' + this.child.name + '": ' + err
-        );
-        throw new Error(err);
+  async save(): Promise<Child> {
+    this.checkFormValidity();
+    this.assignFormValuesToChild(this.child, this.form);
+    try {
+      await this.entityMapperService.save<Child>(this.child);
+      if (this.creatingNew) {
+        this.router.navigate(["/child", this.child.getId()]);
       }
-    } else {
-      const invalidFields = this.getInvalidFields();
+      this.alertService.addInfo("Saving Successful");
+      this.switchEdit();
+      return this.child;
+    } catch (err) {
       this.alertService.addDanger(
-        "Form invalid, required fields (" + invalidFields + ") missing"
+        'Could not save Child "' + this.child.name + '": ' + err
       );
-      throw new Error(
-        "Form invalid, required fields(" + invalidFields + ") missing"
-      );
+      throw new Error(err);
     }
   }
 
@@ -107,19 +88,19 @@ export class FormComponent implements OnChanges {
     this.child.photo.next(await this.childPhotoService.getImage(this.child));
   }
 
-  protected buildFormConfig(): {
-    controlsConfig: any;
-    options?: AbstractControlOptions | { [p: string]: any } | null;
-  } {
+  private buildFormConfig() {
     const formConfig = {};
-    // Flattening the cols array, array.flat() is not yet available in current browsers
-    [].concat(...this.config.cols).forEach((c) => {
-      formConfig[c.id] = [{ value: this.child[c.id], disabled: !this.editing }];
-      if (c.required) {
-        formConfig[c.id].push(Validators.required);
-      }
-    });
-    return { controlsConfig: formConfig };
+    this.config.cols.forEach((c) =>
+      c.forEach((r) => {
+        formConfig[r.id] = [
+          { value: this.child[r.id], disabled: !this.editing },
+        ];
+        if (r.required) {
+          formConfig[r.id].push(Validators.required);
+        }
+      })
+    );
+    return formConfig;
   }
 
   private assignFormValuesToChild(child: Child, form: FormGroup) {
@@ -144,5 +125,20 @@ export class FormComponent implements OnChanges {
 
   private initForm(): void {
     this.form = this.fb.group(this.buildFormConfig());
+  }
+
+  private checkFormValidity() {
+    // errors regarding invalid fields wont be displayed unless marked as touched
+    this.form.markAllAsTouched();
+    this.validateForm = true;
+    if (!this.form.valid) {
+      const invalidFields = this.getInvalidFields();
+      this.alertService.addDanger(
+        "Form invalid, required fields (" + invalidFields + ") missing"
+      );
+      throw new Error(
+        "Form invalid, required fields(" + invalidFields + ") missing"
+      );
+    }
   }
 }
