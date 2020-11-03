@@ -130,13 +130,8 @@ export class NotesOfChildComponent implements OnInit, OnChanges {
   }
 
   /**
-   * returns the color for a record.
-   * If this entity id is undefined, this will return the default color. Otherwise it will attempt
-   * to get a specific color for this specific entity id
-   * @param note The record to check for. The record must be an entity that has a <code>getColor()</code>-Method specified.
-   * If this entityId is set, a <code>getColorForId()</code>-Method must be specified, that accepts this id.
+   * returns the color for a note; passed to the entity subrecored component
+   * @param note note to get color for
    */
-  getColor(note) {
-    return note?.getColor();
-  }
+  getColor = (note: Note) => note?.getColorForId(this.childId);
 }
