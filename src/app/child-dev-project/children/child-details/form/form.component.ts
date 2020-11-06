@@ -45,7 +45,7 @@ export class FormComponent implements OnChanges {
     this.child = config.child;
     this.config = config.config;
     this.initForm();
-    if (!config.child.name) {
+    if (config.isCreating) {
       this.creatingNew = true;
       this.switchEdit();
     }
@@ -62,9 +62,9 @@ export class FormComponent implements OnChanges {
     this.assignFormValuesToChild(this.child, this.form);
     try {
       await this.entityMapperService.save<Child>(this.child);
-      if (this.creatingNew) {
-        this.router.navigate(["/child", this.child.getId()]);
-      }
+      // if (this.creatingNew) {
+      this.router.navigate(["/child", this.child.getId()]);
+      // }
       this.alertService.addInfo("Saving Successful");
       this.switchEdit();
       return this.child;

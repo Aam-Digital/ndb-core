@@ -27,49 +27,16 @@ describe("ChildDetailsComponent", () => {
     data: of({
       panels: [
         {
-          title: "Basic Information",
+          title: "One Form",
           components: [
             { title: "", component: "Form", config: { cols: [[]] } },
           ],
         },
         {
-          title: "Education",
+          title: "Two Components",
           components: [
-            { title: "SchoolHistory", component: "PreviousSchools" },
-            { title: "ASER Results", component: "Aser" },
-          ],
-        },
-        {
-          title: "Attendance",
-          components: [{ title: "", component: "GroupedChildAttendance" }],
-        },
-        {
-          title: "Notes & Reports",
-          components: [{ title: "", component: "NotesOfChild" }],
-        },
-        {
-          title: "Health",
-          components: [
-            {
-              title: "",
-              component: "Form",
-              config: { cols: [[]] },
-            },
-            { title: "Height & Weight Tracking", component: "HealthCheckup" },
-          ],
-        },
-        {
-          title: "Educational Materials",
-          components: [{ title: "", component: "EducationalMaterial" }],
-        },
-        {
-          title: "Dropout",
-          components: [
-            {
-              title: "",
-              component: "Form",
-              config: { cols: [[]] },
-            },
+            { title: "First Component", component: "PreviousSchools" },
+            { title: "Second Component", component: "Aser" },
           ],
         },
       ],
@@ -110,6 +77,50 @@ describe("ChildDetailsComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("sets the panels according to the config", () => {
+    const testChild = new Child("Test-Child");
+    const entityService = fixture.componentRef.injector.get(
+      EntityMapperService
+    );
+    const childrenService = fixture.componentRef.injector.get(ChildrenService);
+    spyOn(childrenService, "getChild").and.returnValue(of(testChild));
+    entityService.save<Child>(testChild);
+    component.creatingNew = false;
+    routeObserver.next({ get: () => testChild.getId() });
+    const expectedPanels = [
+      {
+        title: "One Form",
+        components: [
+          {
+            title: "",
+            component: "Form",
+            config: {
+              child: testChild,
+              config: { cols: [] },
+              isCreating: false,
+            },
+          },
+        ],
+      },
+      {
+        title: "Two Components",
+        components: [
+          {
+            title: "First Component",
+            component: "PreviousSchools",
+            config: { child: testChild, config: {}, isCreating: false },
+          },
+          {
+            title: "Second Component",
+            component: "ASER",
+            config: { child: testChild, config: {}, isCreating: false },
+          },
+        ],
+      },
+    ];
+    expect(component.panels).toEqual(expectedPanels);
   });
 
   it("should load the correct child on startup", () => {

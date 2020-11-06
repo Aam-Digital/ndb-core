@@ -245,7 +245,7 @@
                                     [{
                                         "input": "select",
                                         "id": "health_vaccinationStatus",
-                                        "placeholder": "Peter Status",
+                                        "placeholder": "Vaccination Status",
                                         "options": ["Good", "Vaccination Due", "Needs Checking", "No Card/Information"]
                                     }],
                                     [{
