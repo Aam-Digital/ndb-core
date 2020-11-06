@@ -70,8 +70,11 @@ describe("FormComponent", () => {
 
   it("should change the creating state", () => {
     expect(component.creatingNew).toBe(false);
-    testChild.name = "";
-    component.onInitFromDynamicConfig({ child: testChild, config: testConfig });
+    component.onInitFromDynamicConfig({
+      child: testChild,
+      config: testConfig,
+      creatingNew: true,
+    });
     expect(component.creatingNew).toBe(true);
   });
 

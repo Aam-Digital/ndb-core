@@ -83,7 +83,7 @@ export class ChildDetailsComponent {
               config: {
                 child: this.child,
                 config: c.config,
-                isCreating: this.creatingNew,
+                creatingNew: this.creatingNew,
               },
             };
           }),

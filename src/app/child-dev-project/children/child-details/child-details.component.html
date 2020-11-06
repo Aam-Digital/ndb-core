@@ -50,9 +50,10 @@
       </mat-icon>
       {{panelConfig.title}}
     </mat-expansion-panel-header>
-    <div *ngFor="let componentConfig of panelConfig.components">
+    <div *ngFor="let componentConfig of panelConfig.components; let j = index">
       <h3 *ngIf="componentConfig.title !== ''">{{componentConfig.title}}</h3>
       <ng-template [appDynamicComponent]="componentConfig "></ng-template>
+      <br *ngIf="j < panelConfig.components.length - 1"/>
     </div>
   </mat-expansion-panel>
 </mat-accordion>

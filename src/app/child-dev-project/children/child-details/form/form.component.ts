@@ -45,7 +45,7 @@ export class FormComponent implements OnChanges {
     this.child = config.child;
     this.config = config.config;
     this.initForm();
-    if (config.isCreating) {
+    if (config.creatingNew) {
       this.creatingNew = true;
       this.switchEdit();
     }

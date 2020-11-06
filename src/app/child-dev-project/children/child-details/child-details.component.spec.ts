@@ -98,8 +98,8 @@ describe("ChildDetailsComponent", () => {
             component: "Form",
             config: {
               child: testChild,
-              config: { cols: [] },
-              isCreating: false,
+              config: { cols: [[]] },
+              creatingNew: false,
             },
           },
         ],
@@ -110,12 +110,12 @@ describe("ChildDetailsComponent", () => {
           {
             title: "First Component",
             component: "PreviousSchools",
-            config: { child: testChild, config: {}, isCreating: false },
+            config: { child: testChild, config: undefined, creatingNew: false },
           },
           {
             title: "Second Component",
-            component: "ASER",
-            config: { child: testChild, config: {}, isCreating: false },
+            component: "Aser",
+            config: { child: testChild, config: undefined, creatingNew: false },
           },
         ],
       },
