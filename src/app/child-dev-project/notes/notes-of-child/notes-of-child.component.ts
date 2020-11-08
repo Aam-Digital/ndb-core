@@ -15,6 +15,7 @@ import { ColumnDescription } from "../../../core/entity-subrecord/entity-subreco
 import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
+import { NoteConfigLoaderService } from "../note-config-loader/note-config-loader.service";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
@@ -80,7 +81,8 @@ export class NotesOfChildComponent implements OnChanges {
   constructor(
     private childrenService: ChildrenService,
     private sessionService: SessionService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private noteConfigLoaderService: NoteConfigLoaderService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
