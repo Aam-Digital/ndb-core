@@ -52,7 +52,7 @@ export class Note extends Entity {
     }
 
     const color = this.category.color;
-    return color ? "" : color;
+    return color ? color : "";
   }
 
   public getColorForId(entityId: string) {
