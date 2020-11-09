@@ -33,7 +33,7 @@ export class Note extends Entity {
   @DatabaseField() text: string = "";
   @DatabaseField() author: string = "";
   @DatabaseField({ dataType: "interaction-type" }) category: InteractionType = {
-    name: "NONE",
+    name: "",
   };
   @DatabaseField({ dataType: "string" }) warningLevel: WarningLevel =
     WarningLevel.OK;
