@@ -90,4 +90,7 @@ import { NoteConfigLoaderService } from "./note-config-loader/note-config-loader
   ],
   providers: [NoteConfigLoaderService],
 })
-export class NotesModule {}
+export class NotesModule {
+  // ensure that the config loader gets called when using the module
+  constructor(private noteConfigLoaderService: NoteConfigLoaderService) {}
+}

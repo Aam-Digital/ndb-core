@@ -81,8 +81,7 @@ export class NotesOfChildComponent implements OnChanges {
   constructor(
     private childrenService: ChildrenService,
     private sessionService: SessionService,
-    private datePipe: DatePipe,
-    private noteConfigLoaderService: NoteConfigLoaderService
+    private datePipe: DatePipe
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
