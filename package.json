@@ -28,7 +28,7 @@
     "@angular/service-worker": "^9.1.9",
     "@ngneat/until-destroy": "^7.1.6",
     "@sentry/browser": "^5.16.0",
-    "angulartics2": "^10.0.0",
+    "angulartics2": "^9.1.0",
     "crypto-js": "^4.0.0",
     "deep-object-diff": "^1.1.0",
     "faker": "^4.1.0",
