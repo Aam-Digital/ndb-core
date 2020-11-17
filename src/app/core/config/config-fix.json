@@ -132,7 +132,11 @@
           "name": "Mobile",
           "columns": ["projectNumber", "name", "age", "schoolId"]
         }
-      ]
+      ],
+      "statusFilterDefault": "dropout",
+      "statusFilterActive" : "Currently active children",
+      "statusFilterInactive" : "Currently not active children",
+      "statusFilterAll" : "All children"
       }},
     "view:child/:id": {
         "component": "ChildDetails",

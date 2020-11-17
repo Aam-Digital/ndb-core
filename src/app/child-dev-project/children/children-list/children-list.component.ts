@@ -38,20 +38,23 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   listName: String;
 
   centerFS = new FilterSelection("center", []);
-  dropoutFS = new FilterSelection("status", [
-    {
-      key: "active",
-      label: "Current Project Children",
-      filterFun: (c: Child) => c.isActive(),
-    },
-    {
-      key: "dropout",
-      label: "Dropouts",
-      filterFun: (c: Child) => !c.isActive(),
-    },
-    { key: "", label: "All", filterFun: () => true },
-  ]);
-  filterSelections = [this.dropoutFS, this.centerFS];
+  dropoutFS = new FilterSelection("status", []);
+  filterSelections;
+
+  // dropoutFS = new FilterSelection("status", [
+  //   {
+  //     key: "active",
+  //     label: "Current Project Children",
+  //     filterFun: (c: Child) => c.isActive(),
+  //   },
+  //   {
+  //     key: "dropout",
+  //     label: "Dropouts",
+  //     filterFun: (c: Child) => !c.isActive(),
+  //   },
+  //   { key: "", label: "All", filterFun: () => true },
+  // ]);
+  // filterSelections = [this.dropoutFS, this.centerFS];
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -89,10 +92,31 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
       } else {
         this.columnGroupSelection = config.columnGroups[0].name;
       }
-
       this.columnGroupSmallDisplay = config.columnGroupSmallDisplay;
+      this.dropoutFS.options = [
+        {
+          key: "active",
+          label: config.statusFilterActive,
+          filterFun: (c: Child) => c.isActive(),
+        },
+        {
+          key: "dropout",
+          label: config.statusFilterInactive,
+          filterFun: (c: Child) => !c.isActive(),
+        },
+        {
+          key: "",
+          label: config.statusFilterAll,
+          filterFun: () => true,
+        },
+      ];
+      this.dropoutFS.selectedOption = config.statusFilterDefault;
+      console.log(this.dropoutFS.name + ": " + this.dropoutFS.selectedOption);
+      // this.dropoutFS.initOptions(statusses, "status");
+      this.filterSelections = [this.dropoutFS, this.centerFS];
     });
     this.loadData();
+    // this.updateUrl();
     this.loadUrlParams();
     this.user = this.sessionService.getCurrentUser();
     this.paginatorPageSize = this.user.paginatorSettingsPageSize.childrenList;
@@ -134,7 +158,11 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
       this.displayColumnGroup(this.columnGroupSelection);
 
       this.filterSelections.forEach((f) => {
+        console.log(f.name);
+        console.log(f.selectedOption);
         f.selectedOption = params[f.name];
+        console.log(f.name);
+        console.log(f.selectedOption);
         if (f.selectedOption === undefined && f.options.length > 0) {
           f.selectedOption = f.options[0].key;
         }
