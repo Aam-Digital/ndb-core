@@ -10,7 +10,6 @@ import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ChildrenService } from "../children.service";
-import { AttendanceMonth } from "../../attendance/model/attendance-month";
 import { FilterSelection } from "../../../core/filter/filter-selection/filter-selection";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
@@ -32,7 +31,6 @@ export interface ColumnGroup {
 })
 export class ChildrenListComponent implements OnInit, AfterViewInit {
   childrenList: Child[] = [];
-  attendanceList = new Map<string, AttendanceMonth[]>();
   childrenDataSource = new MatTableDataSource();
 
   listName: String;
@@ -130,7 +128,6 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   private user: User;
 
   /** dynamically calculated number of attendance blocks displayed in a column to avoid overlap */
-  maxAttendanceBlocks: number = 3;
   @ViewChild("attendanceSchoolCell") schoolCell: ElementRef;
   @ViewChild("attendanceCoachingCell") coachingCell: ElementRef;
 
@@ -152,27 +149,24 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.user = this.sessionService.getCurrentUser();
     this.paginatorPageSize = this.user.paginatorSettingsPageSize.childrenList;
     this.paginatorPageIndex = this.user.paginatorSettingsPageIndex.childrenList;
-    this.media.media$
+    this.media
+      .asObservable()
       .pipe(untilDestroyed(this))
-      .subscribe((change: MediaChange) => {
-        switch (change.mqAlias) {
+      .subscribe((change: MediaChange[]) => {
+        switch (change[0].mqAlias) {
           case "xs":
           case "sm": {
             this.displayColumnGroup("Mobile");
-            this.maxAttendanceBlocks = 1;
             break;
           }
           case "md": {
             this.displayColumnGroup("School Info");
-            this.maxAttendanceBlocks = 2;
             break;
           }
           case "lg": {
-            this.maxAttendanceBlocks = 3;
             break;
           }
           case "xl": {
-            this.maxAttendanceBlocks = 6;
             break;
           }
         }
@@ -241,10 +235,6 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
         this.applyFilterSelections(replaceUrl);
       });
-    this.childrenService
-      .getAttendances()
-      .pipe(untilDestroyed(this))
-      .subscribe((results) => this.prepareAttendanceData(results));
   }
   /*
   private initCenterFilterOptions(centersWithProbability: string[]) {
@@ -256,29 +246,6 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
     this.centerFS.options = options;
   } */
-
-  prepareAttendanceData(loadedEntities: AttendanceMonth[]) {
-    this.attendanceList = new Map<string, AttendanceMonth[]>();
-    loadedEntities.forEach((x) => {
-      if (!this.attendanceList.has(x.student)) {
-        this.attendanceList.set(x.student, new Array<AttendanceMonth>());
-      }
-      this.attendanceList.get(x.student).push(x);
-    });
-
-    this.attendanceList.forEach((studentsAttendance) => {
-      studentsAttendance.sort((a, b) => {
-        // descending by date
-        if (a.month > b.month) {
-          return -1;
-        }
-        if (a.month < b.month) {
-          return 1;
-        }
-        return 0;
-      });
-    });
-  }
 
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim();

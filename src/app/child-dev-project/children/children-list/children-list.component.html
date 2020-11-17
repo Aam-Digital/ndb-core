@@ -188,28 +188,20 @@
     <ng-container matColumnDef="attendance-school">
       <th mat-header-cell #attendanceSchoolCell *matHeaderCellDef> Attendance (School)</th>
       <td mat-cell class="cell-with-blocks" *matCellDef="let child">
-        <app-attendance-block
-          *ngFor="
-            let att of attendanceList.get(child.getId())
-              | filterBy: {'institution': 'school'}
-              | slice:0:maxAttendanceBlocks
-          "
-          [attendanceData]="att"
-        ></app-attendance-block>
+        <app-list-attendance
+                [child]="child"
+                filterBy="school"
+        ></app-list-attendance>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="attendance-coaching">
       <th mat-header-cell #attendanceCoachingCell *matHeaderCellDef> Attendance (Coaching)</th>
       <td mat-cell class="cell-with-blocks" *matCellDef="let child">
-        <app-attendance-block
-          *ngFor="
-            let att of attendanceList.get(child.getId())
-              | filterBy: {'institution': 'coaching'}
-              | slice:0:maxAttendanceBlocks
-          "
-          [attendanceData]="att"
-        ></app-attendance-block>
+        <app-list-attendance
+                [child]="child"
+                filterBy="coaching"
+        ></app-list-attendance>
       </td>
     </ng-container>
 

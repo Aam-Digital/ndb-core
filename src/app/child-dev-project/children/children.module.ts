@@ -82,6 +82,7 @@ import { AttendanceAnalysisComponent } from "../attendance/attendance-analysis/a
 import { GroupedChildAttendanceComponent } from "./child-details/grouped-child-attendance/grouped-child-attendance.component";
 import { ViewModule } from "../../core/view/view.module";
 import { FormComponent } from "./child-details/form/form.component";
+import { ListAttendanceComponent } from "./children-list/list-attendance/list-attendance.component";
 
 @NgModule({
   imports: [
@@ -152,6 +153,7 @@ import { FormComponent } from "./child-details/form/form.component";
     PreviousSchoolsComponent,
     GroupedChildAttendanceComponent,
     FormComponent,
+    ListAttendanceComponent,
   ],
   providers: [
     ChildrenService,
