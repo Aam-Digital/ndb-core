@@ -131,6 +131,8 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   @ViewChild("attendanceSchoolCell") schoolCell: ElementRef;
   @ViewChild("attendanceCoachingCell") coachingCell: ElementRef;
 
+  private ready = true;
+
   constructor(
     private childrenService: ChildrenService,
     private router: Router,
@@ -252,21 +254,19 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.childrenDataSource.filter = filterValue;
   }
-
   displayColumnGroup(columnGroupName: string) {
-    this.columnGroupSelection = columnGroupName;
-    let found = false;
-    let group: ColumnGroup;
-    let i = 0;
-    while (!found && i < this.columnGroups.length) {
-      if (this.columnGroups[i].name === columnGroupName) {
-        found = true;
-        group = this.columnGroups[i];
-      }
-      i++;
+    // When components, that are used in the list (app-list-attendance), also listen to the mediaObserver, a new
+    // mediaChange is created once this used component is displayed (through column groups change). This may
+    // re-trigger the settings for small screens. Therefore, we only allow a change ever 0.5 seconds to prevent this.
+    if (this.ready) {
+      this.ready = false;
+      setTimeout(() => (this.ready = true), 500);
+      this.columnGroupSelection = columnGroupName;
+      this.columnsToDisplay = this.columnGroups.find(
+        (c) => c.name === columnGroupName
+      ).columns;
+      this.updateUrl();
     }
-    this.columnsToDisplay = group.columns;
-    this.updateUrl();
   }
 
   updateUrl(replaceUrl: boolean = false) {

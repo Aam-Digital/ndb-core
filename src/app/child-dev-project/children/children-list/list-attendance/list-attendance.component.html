@@ -1,6 +1,6 @@
 <app-attendance-block
         *ngFor="
-            let att of attendanceList.get(child?.getId())
+            let att of attendanceList
               | filterBy: {'institution': filterBy}
               | slice:0:maxAttendanceBlocks
           "

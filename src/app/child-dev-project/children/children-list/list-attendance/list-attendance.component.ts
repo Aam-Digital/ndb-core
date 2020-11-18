@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { AttendanceMonth } from "../../../attendance/model/attendance-month";
-import { untilDestroyed } from "@ngneat/until-destroy";
 import { ChildrenService } from "../../children.service";
 import { Child } from "../../model/child";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
@@ -11,7 +10,7 @@ import { MediaChange, MediaObserver } from "@angular/flex-layout";
   styleUrls: ["./list-attendance.component.scss"],
 })
 export class ListAttendanceComponent implements OnInit {
-  attendanceList = new Map<string, AttendanceMonth[]>();
+  attendanceList: AttendanceMonth[] = [];
   maxAttendanceBlocks: number = 3;
 
   @Input() filterBy: string;
@@ -24,8 +23,8 @@ export class ListAttendanceComponent implements OnInit {
 
   ngOnInit(): void {
     this.childrenService
-      .getAttendances()
-      .subscribe((results) => this.prepareAttendanceData(results));
+      .getAttendancesOfChild(this.child.getId())
+      .subscribe((result) => this.prepareAttendanceData(result));
     this.media.asObservable().subscribe((change: MediaChange[]) => {
       switch (change[0].mqAlias) {
         case "xs":
@@ -50,25 +49,16 @@ export class ListAttendanceComponent implements OnInit {
   }
 
   prepareAttendanceData(loadedEntities: AttendanceMonth[]) {
-    this.attendanceList = new Map<string, AttendanceMonth[]>();
-    loadedEntities.forEach((x) => {
-      if (!this.attendanceList.has(x.student)) {
-        this.attendanceList.set(x.student, new Array<AttendanceMonth>());
+    this.attendanceList = loadedEntities.sort((a, b) => {
+      // descending by date
+      if (a.month > b.month) {
+        return -1;
       }
-      this.attendanceList.get(x.student).push(x);
+      if (a.month < b.month) {
+        return 1;
+      }
+      return 0;
     });
-
-    this.attendanceList.forEach((studentsAttendance) => {
-      studentsAttendance.sort((a, b) => {
-        // descending by date
-        if (a.month > b.month) {
-          return -1;
-        }
-        if (a.month < b.month) {
-          return 1;
-        }
-        return 0;
-      });
-    });
+    return;
   }
 }
