@@ -161,16 +161,15 @@
                 [entity]="child"
         ></app-child-block>
 
-        <div *ngIf="col.type === 'list-school'">
-<!--          TODO replace by component without schoolClass attribute and stop using children service -->
-          {{ child.schoolClass }}
-        </div>
+        <app-list-class
+                *ngIf="col.type === 'list-class'"
+                [child]="child"
+        ></app-list-class>
 
-<!--        TODO change so component only needs child and stop using children service-->
-        <app-school-block
-                *ngIf="col.type === 'school-block'"
-                [entityId]="child.schoolId"
-        ></app-school-block>
+        <app-list-school
+                *ngIf="col.type === 'list-school'"
+                [child]="child"
+        ></app-list-school>
 
         <app-list-attendance
                 *ngIf="col.type === 'list-attendance'"
