@@ -144,170 +144,42 @@
 
 <div class="mat-elevation-z2 table-list">
   <table mat-table [dataSource]="childrenDataSource" matSort style="width: 100%">
-    <ng-container matColumnDef="projectNumber">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>PN</th>
-      <td mat-cell *matCellDef="let child">{{ child.projectNumber }}</td>
-    </ng-container>
+    <ng-container *ngFor="let col of columns" [matColumnDef]="col.id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{col.title}}</th>
+      <td *matCellDef="let child">
 
-    <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-      <td mat-cell *matCellDef="let child">
-        <app-child-block [entity]="child"></app-child-block>
-      </td>
-    </ng-container>
+        <div *ngIf="col.type === 'text'">
+          {{ child[col.id] }}
+        </div>
 
-    <ng-container matColumnDef="age">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Age</th>
-      <td mat-cell *matCellDef="let child">{{ child.age }}</td>
-    </ng-container>
+        <div *ngIf="col.type === 'date'">
+          {{ child[col.id] | date: "longDate" }}
+        </div>
 
-    <ng-container matColumnDef="dateOfBirth">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>DoB</th>
-      <td mat-cell *matCellDef="let child">
-        {{ child.dateOfBirth | date: "longDate" }}
-      </td>
-    </ng-container>
+        <app-child-block
+                *ngIf="col.type === 'child-block'"
+                [entity]="child"
+        ></app-child-block>
 
-    <ng-container matColumnDef="gender">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Gender</th>
-      <td mat-cell *matCellDef="let child">{{ child.gender }}</td>
-    </ng-container>
+        <div *ngIf="col.type === 'list-school'">
+<!--          TODO replace by component without schoolClass attribute and stop using children service -->
+          {{ child.schoolClass }}
+        </div>
 
-    <ng-container matColumnDef="schoolClass">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Class</th>
-      <td mat-cell *matCellDef="let child">{{ child.schoolClass }}</td>
-    </ng-container>
+<!--        TODO change so component only needs child and stop using children service-->
+        <app-school-block
+                *ngIf="col.type === 'school-block'"
+                [entityId]="child.schoolId"
+        ></app-school-block>
 
-    <ng-container matColumnDef="schoolId">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>School</th>
-      <td mat-cell *matCellDef="let child">
-        <app-school-block [entityId]="child.schoolId"></app-school-block>
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="attendance-school">
-      <th mat-header-cell #attendanceSchoolCell *matHeaderCellDef> Attendance (School)</th>
-      <td mat-cell class="cell-with-blocks" *matCellDef="let child">
         <app-list-attendance
+                *ngIf="col.type === 'list-attendance'"
                 [child]="child"
-                filterBy="school"
+                [filterBy]="col.id"
         ></app-list-attendance>
+
       </td>
     </ng-container>
-
-    <ng-container matColumnDef="attendance-coaching">
-      <th mat-header-cell #attendanceCoachingCell *matHeaderCellDef> Attendance (Coaching)</th>
-      <td mat-cell class="cell-with-blocks" *matCellDef="let child">
-        <app-list-attendance
-                [child]="child"
-                filterBy="coaching"
-        ></app-list-attendance>
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="center">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Center</th>
-      <td mat-cell *matCellDef="let child">{{ child.center }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
-      <td mat-cell *matCellDef="let child">{{ child.status }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="admissionDate">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Admission</th>
-      <td mat-cell *matCellDef="let child">{{ child.admissionDate }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="motherTongue">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Mother Tongue</th>
-      <td mat-cell *matCellDef="let child">{{ child.motherTongue }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="has_aadhar">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Aadhar</th>
-      <td mat-cell *matCellDef="let child">{{ child.has_aadhar }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="has_bankAccount">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Bank Account</th>
-      <td mat-cell *matCellDef="let child">{{ child.has_bankAccount }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="has_kanyashree">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Kanyashree</th>
-      <td mat-cell *matCellDef="let child">{{ child.has_kanyashree }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="has_rationCard">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Ration Card</th>
-      <td mat-cell *matCellDef="let child">{{ child.has_rationCard }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="has_bplCard">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>BPL Card</th>
-      <td mat-cell *matCellDef="let child">{{ child.has_BplCard }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="health_vaccinationStatus">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>
-        Vaccination Status
-      </th>
-      <td mat-cell *matCellDef="let child">
-        {{ child.health_vaccinationStatus }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="health_bloodGroup">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Blood Group</th>
-      <td mat-cell *matCellDef="let child">{{ child.health_bloodGroup }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="health_eyeHealthStatus">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Eye Status</th>
-      <td mat-cell *matCellDef="let child">
-        {{ child.health_eyeHealthStatus }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="health_LastEyeCheckup">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>
-        Last Eye Check-Up
-      </th>
-      <td mat-cell *matCellDef="let child">
-        {{ child.health_lastEyeCheckup }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="health_LastDentalCheckup">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>
-        Last Dental Check-Ups
-      </th>
-      <td mat-cell *matCellDef="let child">
-        {{ child.health_lastDentalCheckup }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="health_LastENTCheckup">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>
-        Last ENT Check-Up
-      </th>
-      <td mat-cell *matCellDef="let child">
-        {{ child.health_lastENTCheckup }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="health_LastVitaminD">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Vitamin D</th>
-      <td mat-cell *matCellDef="let child">{{ child.health_lastVitaminD }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="health_LastDeworming">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Last De-Worming</th>
-      <td mat-cell *matCellDef="let child">{{ child.health_lastDeworming }}</td>
-    </ng-container>
-
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
     <tr
       mat-row

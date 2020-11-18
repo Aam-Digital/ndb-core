@@ -103,7 +103,40 @@
             "icon": "university"
         }
     },
-    "view:child": {"component": "ChildrenList", "config": { "title": "Children List"} },
+    "view:child": {
+        "component": "ChildrenList",
+        "config": {
+            "title": "Children List",
+            "columns": [
+                {"type": "text", "title": "PN", "id": "projectNumber"},
+                {"type": "child-block", "title": "Name", "id": "name"},
+                {"type": "text", "title": "Age", "id": "age"},
+                {"type": "date", "title": "DoB", "id": "dateOfBirth"},
+                {"type": "text", "title": "Gender", "id": "gender"},
+                {"type": "list-school", "title": "Class", "id": "schoolClass"},
+                {"type": "school-block", "title": "School", "id": "schoolId"},
+                {"type": "list-attendance", "title": "Attendance (School)", "id": "school"},
+                {"type": "list-attendance", "title": "Attendance (Coaching)", "id": "coaching"},
+                {"type": "text", "title": "Center", "id": "center"},
+                {"type": "text", "title": "Status", "id": "status"},
+                {"type": "date", "title": "Admission", "id": "admissionDate"},
+                {"type": "text", "title": "Mother Tongue", "id": "motherTongue"},
+                {"type": "text", "title": "Aadhar", "id": "has_aadhar"},
+                {"type": "text", "title": "Bank Account", "id": "has_bankAccount"},
+                {"type": "text", "title": "Kanyashree", "id": "has_kanyashree"},
+                {"type": "text", "title": "Ration Card", "id": "has_rationCard"},
+                {"type": "text", "title": "BPL Card", "id": "has_BplCard"},
+                {"type": "text", "title": "Vaccination Status", "id": "health_vaccinationStatus"},
+                {"type": "text", "title": "Blood Group", "id": "health_bloodGroup"},
+                {"type": "text", "title": "Eye Status", "id": "health_eyeHealthStatus"},
+                {"type": "date", "title": "Last Eye Check-Up", "id": "health_lastEyeCheckup"},
+                {"type": "date", "title": "Last Dental Check-Up", "id": "health_lastDentalCheckup"},
+                {"type": "date", "title": "Last ENT Check-Up", "id": "health_lastENTCheckup"},
+                {"type": "date", "title": "Last Vitamin D", "id": "health_lastVitaminD"},
+                {"type": "date", "title": "Last De-Worming", "id": "health_lastDeworming"}
+            ]
+        }
+    },
     "view:child/:id": {
         "component": "ChildDetails",
         "config": {
@@ -119,7 +152,9 @@
                                     [
                                         { "input": "text", "id": "name", "placeholder": "Name", "required": true },
                                         { "input": "text", "id": "projectNumber", "placeholder": "Project Number" },
-                                        { "input": "text", "id": "center", "placeholder": "Center", "required": true }                                    ],
+                                        { "input": "text", "id": "center", "placeholder": "Center", "required": true },
+                                        { "input": "text", "id": "status", "placeholder": "Project Status"}
+                                    ],
                                     [
                                         { "input": "age" },
                                         {
@@ -146,6 +181,20 @@
                                             "input": "select",
                                             "id": "has_aadhar",
                                             "placeholder": "Aadhar Status",
+                                            "options": [
+                                                "OK (copy with us)",
+                                                "OK (copy needed for us)",
+                                                "needs correction",
+                                                "applied",
+                                                "doesn't have",
+                                                "not eligible",
+                                                ""
+                                            ]
+                                        },
+                                        {
+                                            "input": "select",
+                                            "id": "has_kanyashree",
+                                            "placeholder": "Kanyashree Status",
                                             "options": [
                                                 "OK (copy with us)",
                                                 "OK (copy needed for us)",

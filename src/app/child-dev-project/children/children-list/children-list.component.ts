@@ -1,10 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  OnInit,
-  ViewChild,
-  ElementRef,
-} from "@angular/core";
+import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
 import { Child } from "../model/child";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
@@ -33,7 +27,8 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   childrenList: Child[] = [];
   childrenDataSource = new MatTableDataSource();
 
-  listName: String;
+  listName: String = "";
+  columns: any[] = [];
 
   centerFS = new FilterSelection("center", []);
   dropoutFS = new FilterSelection("status", [
@@ -76,8 +71,8 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
         "age",
         "schoolClass",
         "schoolId",
-        "attendance-school",
-        "attendance-coaching",
+        "school",
+        "coaching",
         "motherTongue",
       ],
     },
@@ -93,7 +88,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
         "has_kanyashree",
         "has_bankAccount",
         "has_rationCard",
-        "has_bplCard",
+        "has_BplCard",
       ],
     },
     {
@@ -105,11 +100,11 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
         "health_vaccinationStatus",
         "health_bloodGroup",
         "health_eyeHealthStatus",
-        "health_LastEyeCheckup",
-        "health_LastDentalCheckup",
-        "health_LastENTCheckup",
-        "health_LastVitaminD",
-        "health_LastDeworming",
+        "health_lastEyeCheckup",
+        "health_lastDentalCheckup",
+        "health_lastENTCheckup",
+        "health_lastVitaminD",
+        "health_lastDeworming",
         "gender",
         "age",
         "dateOfBirth",
@@ -127,10 +122,6 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   public paginatorPageIndex: number;
   private user: User;
 
-  /** dynamically calculated number of attendance blocks displayed in a column to avoid overlap */
-  @ViewChild("attendanceSchoolCell") schoolCell: ElementRef;
-  @ViewChild("attendanceCoachingCell") coachingCell: ElementRef;
-
   private ready = true;
 
   constructor(
@@ -145,6 +136,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.route.data.subscribe((config) => {
       this.listName = config.title;
+      this.columns = config.columns;
     });
     this.loadData();
     this.loadUrlParams();
@@ -254,6 +246,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.childrenDataSource.filter = filterValue;
   }
+
   displayColumnGroup(columnGroupName: string) {
     // When components, that are used in the list (app-list-attendance), also listen to the mediaObserver, a new
     // mediaChange is created once this used component is displayed (through column groups change). This may
