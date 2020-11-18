@@ -3,7 +3,6 @@ import { Child } from "../model/child";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { ActivatedRoute, Router } from "@angular/router";
-import { ChildrenService } from "../children.service";
 import { FilterSelection } from "../../../core/filter/filter-selection/filter-selection";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
@@ -125,7 +124,6 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   private ready = true;
 
   constructor(
-    private childrenService: ChildrenService,
     private router: Router,
     private route: ActivatedRoute,
     private media: MediaObserver,
@@ -216,20 +214,15 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private loadData(replaceUrl: boolean = false) {
-    this.childrenService
-      .getChildren()
-      .pipe(untilDestroyed(this))
-      .subscribe((children) => {
-        this.childrenList = children;
-        const centers = children
-          .map((c) => c.center)
-          .filter((value, index, arr) => value && arr.indexOf(value) === index);
-        this.centerFS.initOptions(centers, "center");
-
-        this.applyFilterSelections(replaceUrl);
-      });
+  private async loadData(replaceUrl: boolean = false) {
+    this.childrenList = await this.entityMapperService.loadType<Child>(Child);
+    const centers = this.childrenList
+      .map((c) => c.center)
+      .filter((value, index, arr) => value && arr.indexOf(value) === index);
+    this.centerFS.initOptions(centers, "center");
+    this.applyFilterSelections(replaceUrl);
   }
+
   /*
   private initCenterFilterOptions(centersWithProbability: string[]) {
     const options = [{key: '', label: 'All', filterFun: (c: Child) => true}];
