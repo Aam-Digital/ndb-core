@@ -132,7 +132,9 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
+    console.log("route", this.route);
     this.route.data.subscribe((config) => {
+      console.log("loading", config);
       this.listName = config.title;
       this.columns = config.columns;
     });

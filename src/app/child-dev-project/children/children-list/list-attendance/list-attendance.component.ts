@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { AttendanceMonth } from "../../../attendance/model/attendance-month";
 import { ChildrenService } from "../../children.service";
 import { Child } from "../../model/child";
@@ -9,7 +9,7 @@ import { MediaChange, MediaObserver } from "@angular/flex-layout";
   templateUrl: "./list-attendance.component.html",
   styleUrls: ["./list-attendance.component.scss"],
 })
-export class ListAttendanceComponent implements OnInit {
+export class ListAttendanceComponent implements OnChanges {
   attendanceList: AttendanceMonth[] = [];
   maxAttendanceBlocks: number = 3;
 
@@ -19,12 +19,7 @@ export class ListAttendanceComponent implements OnInit {
   constructor(
     private childrenService: ChildrenService,
     private media: MediaObserver
-  ) {}
-
-  ngOnInit(): void {
-    this.childrenService
-      .getAttendancesOfChild(this.child.getId())
-      .subscribe((result) => this.prepareAttendanceData(result));
+  ) {
     this.media.asObservable().subscribe((change: MediaChange[]) => {
       switch (change[0].mqAlias) {
         case "xs":
@@ -46,6 +41,14 @@ export class ListAttendanceComponent implements OnInit {
         }
       }
     });
+  }
+
+  ngOnChanges(change: SimpleChanges): void {
+    if (change.hasOwnProperty("child")) {
+      this.childrenService
+        .getAttendancesOfChild(this.child.getId())
+        .subscribe((result) => this.prepareAttendanceData(result));
+    }
   }
 
   prepareAttendanceData(loadedEntities: AttendanceMonth[]) {
