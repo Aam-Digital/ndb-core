@@ -1,17 +1,17 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { ListSchoolComponent } from "./list-school.component";
+import { ListRelationComponent } from "./list-relation.component";
+import { ChildPhotoService } from "../../child-photo-service/child-photo.service";
 import { Database } from "../../../../core/database/database";
 import { MockDatabase } from "../../../../core/database/mock-database";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { EntitySchemaService } from "../../../../core/entity/schema/entity-schema.service";
 import { ChildrenService } from "../../children.service";
 import { DatabaseIndexingService } from "../../../../core/entity/database-indexing/database-indexing.service";
-import { ChildPhotoService } from "../../child-photo-service/child-photo.service";
 
-describe("ListSchoolComponent", () => {
-  let component: ListSchoolComponent;
-  let fixture: ComponentFixture<ListSchoolComponent>;
+describe("ListRelationComponent", () => {
+  let component: ListRelationComponent;
+  let fixture: ComponentFixture<ListRelationComponent>;
 
   beforeEach(async(() => {
     const photoMock: jasmine.SpyObj<ChildPhotoService> = jasmine.createSpyObj(
@@ -19,7 +19,7 @@ describe("ListSchoolComponent", () => {
       ["getImage"]
     );
     TestBed.configureTestingModule({
-      declarations: [ListSchoolComponent],
+      declarations: [ListRelationComponent],
       providers: [
         { provide: Database, useClass: MockDatabase },
         EntityMapperService,
@@ -32,7 +32,7 @@ describe("ListSchoolComponent", () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ListSchoolComponent);
+    fixture = TestBed.createComponent(ListRelationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

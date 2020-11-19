@@ -161,15 +161,11 @@
                 [entity]="child"
         ></app-child-block>
 
-        <app-list-class
-                *ngIf="col.type === 'list-class'"
+        <app-list-relation
+                *ngIf="col.type === 'list-relation'"
                 [child]="child"
-        ></app-list-class>
-
-        <app-list-school
-                *ngIf="col.type === 'list-school'"
-                [child]="child"
-        ></app-list-school>
+                [id]="col.id"
+        ></app-list-relation>
 
         <app-list-attendance
                 *ngIf="col.type === 'list-attendance'"

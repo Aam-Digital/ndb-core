@@ -4,10 +4,12 @@ import { ChildSchoolRelation } from "../../model/childSchoolRelation";
 import { ChildrenService } from "../../children.service";
 
 @Component({
-  selector: "app-list-class",
-  template: "{{relation?.schoolClass}}",
+  selector: "app-list-relation",
+  templateUrl: "./list-relation.component.html",
+  styleUrls: ["./list-relation.component.scss"],
 })
-export class ListClassComponent implements OnChanges {
+export class ListRelationComponent implements OnChanges {
+  @Input() id: string;
   @Input() child: Child;
   relation: ChildSchoolRelation;
 

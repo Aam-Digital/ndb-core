@@ -107,6 +107,7 @@ describe("ChildrenListComponent", () => {
         AttendanceDayBlockComponent,
         ExportDataComponent,
       ],
+
       imports: [
         CommonModule,
         MatFormFieldModule,
