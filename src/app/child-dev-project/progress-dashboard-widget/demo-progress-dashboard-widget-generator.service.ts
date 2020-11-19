@@ -34,6 +34,7 @@ export class DemoProgressDashboardWidgetGeneratorService extends DemoDataGenerat
     const data = [];
 
     data.push(this.generateDashboardWidgetSurveyStatus());
+    data.push(this.generateDashboardWidgetEvaluation());
 
     return data;
   }
@@ -43,6 +44,26 @@ export class DemoProgressDashboardWidgetGeneratorService extends DemoDataGenerat
     dashboardProgressWidget.title = "Annual Survey";
 
     for (const task of this.DEMO_TASKS) {
+      const targetNumber = faker.random.number({ min: 5, max: 50 });
+      dashboardProgressWidget.parts.push({
+        label: task,
+        currentValue: faker.random.number(targetNumber),
+        targetValue: targetNumber,
+      });
+    }
+    return dashboardProgressWidget;
+  }
+
+  private generateDashboardWidgetEvaluation() {
+    const dashboardProgressWidget = new ProgressDashboardConfig("2");
+    dashboardProgressWidget.title = "Evaluation targets reached";
+    const evaluationEntries = [
+      "Students graduating",
+      "Students enrolled in training",
+      "Students found job",
+    ];
+
+    for (const task of evaluationEntries) {
       const targetNumber = faker.random.number({ min: 5, max: 50 });
       dashboardProgressWidget.parts.push({
         label: task,
