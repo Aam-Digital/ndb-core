@@ -125,7 +125,9 @@ describe("ChildrenListComponent", () => {
         FormsModule,
         FilterPipeModule,
         EntitySubrecordModule,
-        RouterTestingModule,
+        RouterTestingModule.withRoutes([
+          { path: "child", component: ChildrenListComponent },
+        ]),
       ],
       providers: [
         ChildrenService,
