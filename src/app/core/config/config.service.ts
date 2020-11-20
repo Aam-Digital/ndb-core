@@ -10,7 +10,8 @@ export class ConfigService {
   public async loadConfig() {
     return await new Promise((resolve) => {
       setTimeout(() => {
-        console.log("config loaded"), resolve();
+        console.log("config loaded");
+        resolve();
       }, 300);
     });
   }

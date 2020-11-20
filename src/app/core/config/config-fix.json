@@ -89,7 +89,6 @@
     "view:attendance/analysis": {"component": "AttendanceAnalysis"},
     "view:attendance/add/month": {"component": "AddMonthAttendance"},
     "view:attendance/add/day": {"component": "AddDayAttendance"},
-
     "view:school": {"component": "SchoolsList", "config": { "title": "Schools List"} },
     "view:school/:id": {
         "component": "SchoolDetails",
@@ -374,5 +373,11 @@
                 }
             ]
         }
+    },
+
+    "entity:Child": {
+        "attributes": [
+            {"name": "test", "schema": { "dataType": "string" } }
+        ]
     }
 }

@@ -15,6 +15,7 @@ import moment from "moment";
 import * as uniqid from "uniqid";
 import { LoggingService } from "../../core/logging/logging.service";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
+import { EntityConfigService } from "../../core/entity/entity-config.service";
 
 @Injectable()
 export class ChildrenService {
@@ -23,12 +24,14 @@ export class ChildrenService {
     private entitySchemaService: EntitySchemaService,
     private dbIndexing: DatabaseIndexingService,
     childPhotoService: ChildPhotoService,
-    private logger: LoggingService
+    private logger: LoggingService,
+    private entityConfigService: EntityConfigService
   ) {
     this.entitySchemaService.registerSchemaDatatype(
       new LoadChildPhotoEntitySchemaDatatype(childPhotoService)
     );
     this.createDatabaseIndices();
+    this.entityConfigService.addConfigAttributes<Child>(Child);
   }
 
   public createDatabaseIndices() {
