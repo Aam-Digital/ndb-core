@@ -12,8 +12,13 @@ describe("EntityConfigService", () => {
     "mockConfigService",
     ["getConfig"]
   );
+  const testConfig = new EntityConfig();
+  testConfig.attributes = [
+    { name: "testAttribute", schema: { dataType: "string" } },
+  ];
 
   beforeEach(() => {
+    mockConfigService.getConfig.and.returnValue(testConfig);
     TestBed.configureTestingModule({
       providers: [{ provide: ConfigService, useValue: mockConfigService }],
     });
@@ -24,20 +29,20 @@ describe("EntityConfigService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should add attributes to a entity class", () => {
-    @DatabaseEntity("Test")
-    class Test extends Entity {
-      @DatabaseField() name: string;
-    }
-
+  it("should add attributes to a entity class schema", () => {
     expect(Test.schema.has("name")).toBeTrue();
-    const testConfig = new EntityConfig();
-    testConfig.attributes = [
-      { name: "testAttribute", schema: { dataType: "string" } },
-    ];
-    mockConfigService.getConfig.and.returnValue(testConfig);
     service.addConfigAttributes<Test>(Test);
     expect(Test.schema.has("testAttribute")).toBeTrue();
     expect(Test.schema.has("name")).toBeTrue();
   });
+
+  it("should assign the correct schema", () => {
+    service.addConfigAttributes<Test>(Test);
+    expect(Test.schema.get("testAttribute").dataType).toEqual("string");
+  });
 });
+
+@DatabaseEntity("Test")
+class Test extends Entity {
+  @DatabaseField() name: string;
+}
