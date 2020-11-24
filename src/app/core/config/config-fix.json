@@ -132,10 +132,11 @@
           "columns": ["projectNumber", "name", "age", "schoolId"]
         }
       ],
-      "statusFilterDefault": "dropout",
-      "statusFilterActive" : "Currently active children",
-      "statusFilterInactive" : "Currently not active children",
-      "statusFilterAll" : "All children"
+      "filters": [
+        {"id": "status", "default": "dropout", "active": "Active children", "inactive": "Inactive children", "all": "All children"},
+        {"id": "center", "default": "Alipore"},
+        {"id": "gender", "default": "F"}
+      ]
       }},
     "view:child/:id": {
         "component": "ChildDetails",
