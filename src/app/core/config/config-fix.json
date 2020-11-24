@@ -155,12 +155,7 @@
                                         { "input": "text", "id": "status", "placeholder": "Project Status"}
                                     ],
                                     [
-                                        { "input": "age" },
-                                        {
-                                            "input": "datepicker",
-                                            "id": "dateOfBirth",
-                                            "placeholder": "Date of Birth"
-                                        },
+                                        { "input": "age", "id": "dateOfBirth", "placeholder": "dateOfBirth" },
                                         {
                                             "input": "select",
                                             "id": "gender",
@@ -377,7 +372,26 @@
 
     "entity:Child": {
         "attributes": [
-            {"name": "test", "schema": { "dataType": "string" } }
+            {"name": "gender", "schema": { "dataType": "string" } },
+            {"name": "motherTongue", "schema": { "dataType": "string" } },
+            {"name": "religion", "schema": { "dataType": "string" } },
+            {"name": "address", "schema": { "dataType": "string" } },
+            {"name": "phone", "schema": { "dataType": "string" } },
+            {"name": "guardianName", "schema": { "dataType": "string" } },
+            {"name": "preferredTimeForGuardianMeeting", "schema": { "dataType": "string" } },
+            {"name": "has_aadhar", "schema": { "dataType": "string" } },
+            {"name": "has_bankAccount", "schema": { "dataType": "string" } },
+            {"name": "has_kanyashree", "schema": { "dataType": "string" } },
+            {"name": "has_rationCard", "schema": { "dataType": "string" } },
+            {"name": "has_BplCard", "schema": { "dataType": "string" } },
+            {"name": "health_vaccinationStatus", "schema": { "dataType": "string" } },
+            {"name": "health_bloodGroup", "schema": { "dataType": "string" } },
+            {"name": "health_lastDentalCheckup", "schema": { "dataType": "Date" } },
+            {"name": "health_lastEyeCheckup", "schema": { "dataType": "Date" } },
+            {"name": "health_lastENTCheckup", "schema": { "dataType": "Date" } },
+            {"name": "health_eyeHealthStatus", "schema": { "dataType": "string" } },
+            {"name": "health_lastVitaminD", "schema": { "dataType": "Date" } },
+            {"name": "health_lastDeworming", "schema": { "dataType": "Date" } }
         ]
     }
 }
