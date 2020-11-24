@@ -1,6 +1,6 @@
 import { MeetingNoteAttendance } from "../meeting-note-attendance";
 import { Note } from "./note";
-import { WarningLevel } from "../../warning-level";
+import { WarningLevel, WarningLevelColor } from "../../warning-level";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { async } from "@angular/core/testing";
 import { Entity } from "../../../core/entity/entity";
@@ -114,5 +114,13 @@ describe("Note", () => {
     const n6 = createTestModel();
     n6.togglePresence("1");
     expect(n6.attendances[0].present).toBe(false);
+  });
+
+  it("should return colors", function () {
+    const note = new Note("1");
+    note.category = { name: "test", color: "#FFFFFF" };
+    expect(note.getColor()).toBe("#FFFFFF");
+    note.warningLevel = WarningLevel.URGENT;
+    expect(note.getColor()).toBe(WarningLevelColor(WarningLevel.URGENT));
   });
 });
