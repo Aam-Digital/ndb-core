@@ -1,11 +1,8 @@
 import { WarningLevel } from "../../warning-level";
 
-/**
- * Contains demo notes. This data is used to create new Note instances with the provided values which then get saved to the MockDB.
- */
 export const noteIndividualStories = [
   {
-    category: { name: "Home Visit" },
+    category: "HOME_VISIT",
     warningLevel: WarningLevel.WARNING,
     subject: "Mother sick",
     text:
@@ -14,7 +11,7 @@ export const noteIndividualStories = [
       "Told her to see doctor. We should follow up next week.",
   },
   {
-    category: { name: "Talk with Guardians" },
+    category: "GUARDIAN_TALK",
     warningLevel: WarningLevel.WARNING,
     subject: "Discussed school change",
     text:
@@ -23,21 +20,21 @@ export const noteIndividualStories = [
   },
 
   {
-    category: { name: "Phone Call" },
+    category: "PHONE_CALL",
     warningLevel: WarningLevel.OK,
     subject: "Follow up for school absence",
     text:
       "Called to ask for reason about absence. Mother made excuses but promised to send the child tomorrow.",
   },
   {
-    category: { name: "Phone Call" },
+    category: "PHONE_CALL",
     warningLevel: WarningLevel.OK,
     subject: "absent because ill",
     text:
       "Mother has called in the morning. Child cannot come to class because of fever.",
   },
   {
-    category: { name: "Phone Call" },
+    category: "PHONE_CALL",
     warningLevel: WarningLevel.URGENT,
     subject: "Absence without information",
     text:
@@ -46,7 +43,7 @@ export const noteIndividualStories = [
   },
 
   {
-    category: { name: "School/Hostel Visit" },
+    category: "VISIT",
     warningLevel: WarningLevel.OK,
     subject: "School is happy about progress",
     text:
@@ -54,7 +51,7 @@ export const noteIndividualStories = [
       "and behaviour.",
   },
   {
-    category: { name: "Talk with Coaching Teacher" },
+    category: "COACHING_TALK",
     warningLevel: WarningLevel.WARNING,
     subject: "Needs to work more for school",
     text:
@@ -63,7 +60,7 @@ export const noteIndividualStories = [
   },
 
   {
-    category: { name: "Incident" },
+    category: "INCIDENT",
     warningLevel: WarningLevel.URGENT,
     subject: "Fight at school",
     text:
@@ -72,7 +69,7 @@ export const noteIndividualStories = [
   },
 
   {
-    category: { name: "Discussion/Decision", color: "#E1BEE7" },
+    category: "DISCUSSION",
     warningLevel: WarningLevel.OK,
     subject: "Special help for family",
     text:
@@ -80,7 +77,7 @@ export const noteIndividualStories = [
       "After home visits and discussion in our team we decided to refer them to a special support programme.",
   },
   {
-    category: { name: "Discussion/Decision", color: "#E1BEE7" },
+    category: "DISCUSSION",
     warningLevel: WarningLevel.OK,
     subject: "Chance to repeat class",
     text:
@@ -90,7 +87,7 @@ export const noteIndividualStories = [
   },
 
   {
-    category: { name: "Talk with Child" },
+    category: "CHILD_TALK",
     warningLevel: WarningLevel.WARNING,
     subject: "Distracted in class",
     text:
@@ -98,7 +95,7 @@ export const noteIndividualStories = [
       "Discussed with him - there are a lot of problems in the family currently.",
   },
   {
-    category: { name: "Talk with Child" },
+    category: "CHILD_TALK",
     warningLevel: WarningLevel.WARNING,
     subject: "Disturbing class",
     text:
