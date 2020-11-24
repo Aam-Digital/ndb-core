@@ -83,7 +83,6 @@
     "view:user": {"component": "UserAccount"},
     "view:note": {"component": "NotesManager", "config": { "title": "Notes & Reports"}},
     "view:admin": {"component": "Admin", "requiresAdmin": true},
-    "view:admin/conflicts": {"component": "Admin", "requiresAdmin": true},
     "view:users": {"component": "UserList", "requiresAdmin": true},
     "view:help": {"component": "Help"},
     "view:attendance": {"component": "AttendanceManager"},
