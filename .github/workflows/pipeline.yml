@@ -30,7 +30,7 @@ jobs:
         run: |
           npm run lint
       - name: Run and uplooad coverage
-        uses: paambaati/codeclimate-action@v2.2.4
+        uses: paambaati/codeclimate-action@v2.7.4
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
         with:
