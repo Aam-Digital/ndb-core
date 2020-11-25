@@ -26,8 +26,14 @@ jobs:
           node-version: 10
       - run: npm ci
       - run: npm run build --if-present
-      - name: Run tests
+      - name: Run Lint
         run: |
           npm run lint
           npm run test-ci
-# TODO add codeclimate coverage upload https://docs.codeclimate.com/docs/github-actions-test-coverage
+      - name: Run and uplooad coverage
+        uses: paambaati/codeclimate-action@v2.2.4
+        env:
+          CC_TEST_REPORTER_ID: {{ secrets.CODE_CLIMATE_ID }}
+        with:
+          coverageCommand: npm run test-ci
+          debug: true
