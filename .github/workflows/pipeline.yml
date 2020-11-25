@@ -23,7 +23,7 @@ jobs:
       - name: Use Node.js 10
         uses: actions/setup-node@v1
         with:
-          node-version: 10
+          node-version: 15
       - run: npm ci
       - run: npm run build --if-present
       - name: Run Lint
