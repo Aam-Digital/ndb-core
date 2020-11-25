@@ -31,3 +31,5 @@ jobs:
           npm run lint
           npm run test-ci
       - uses: codecov/codecov-action@v1
+        with:
+          fail_ci_if_error: true
