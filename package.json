@@ -10,7 +10,7 @@
     "test-ci": "ng test --browsers ChromeHeadless --watch false --code-coverage",
     "lint": "ng lint ndb-core --type-check",
     "e2e": "ng e2e",
-    "np": "npx compodoc -c doc/compodoc_sources/.compodocrc.json",
+    "compodoc": "npx compodoc -c doc/compodoc_sources/.compodocrc.json",
     "postinstall": "ngcc && node patch-webpack.js"
   },
   "private": true,
