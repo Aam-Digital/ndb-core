@@ -7,9 +7,10 @@
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "test": "ng test",
+    "test-ci": "ng test --browsers ChromeHeadless --watch false --code-coverage",
     "lint": "ng lint ndb-core --type-check",
     "e2e": "ng e2e",
-    "compodoc": "npx compodoc -c doc/compodoc_sources/.compodocrc.json",
+    "np": "npx compodoc -c doc/compodoc_sources/.compodocrc.json",
     "postinstall": "ngcc && node patch-webpack.js"
   },
   "private": true,
