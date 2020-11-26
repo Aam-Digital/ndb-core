@@ -39,6 +39,7 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
         run: |
+          docker container:login
           docker pull ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest
           docker tag ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest registry.heroku.com/${{ github.head_ref }}-1234/web
           docker push registry.heroku.com/${{ github.head_ref }}-1234/web
