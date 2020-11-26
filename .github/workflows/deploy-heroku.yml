@@ -11,6 +11,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_SIMON_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
+      - run: echo ${{ github.head_ref }}
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
@@ -18,7 +19,7 @@ jobs:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_SIMON_USERNAME }}/aam_digital:${{ github.head_ref }}
+          tags: ${{ secrets.DOCKER_SIMON_USERNAME }}/aam_digital_${{ github.head_ref }}:latest
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
 
