@@ -1,7 +1,6 @@
 name: Create heroku app for every opened PR
 on:
-  pull_request:
-    types: [opened]
+  pull_request
 
 jobs:
   create-app:
