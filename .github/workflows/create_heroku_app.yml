@@ -4,7 +4,7 @@ on:
     types: [opened]
 
 jobs:
-  remove-deployment:
+  create-app:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -12,6 +12,4 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
         run: |
-          echo ${{ hash(github.head_ref) }}
-          echo ${{ hash(github.head_ref) }}
-          heroku apps:create ${{ hash(github.head_ref) }}
+          heroku apps:create 1234-${{ github.head_ref }}
