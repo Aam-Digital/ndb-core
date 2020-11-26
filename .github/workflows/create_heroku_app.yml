@@ -12,4 +12,6 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
         run: |
-          heroku apps:create ${{ github.head_ref }}
+          echo ${{ hash(github.head_ref) }}
+          echo ${{ hash(github.head_ref) }}
+          heroku apps:create ${{ hash(github.head_ref) }}
