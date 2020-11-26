@@ -2,6 +2,7 @@ FROM node:15.1.0-alpine3.12 as builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --no-progress
+RUN apt-get update; apt-get install curl
 RUN curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
 RUN chmod +x ./cc-test-reporter
 RUN ./cc-test-reporter before-build
