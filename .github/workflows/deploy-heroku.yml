@@ -39,7 +39,8 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
         run: |
-          heroku container:login
-          heroku container:push -a stark-stream-18827 web
+          docker tag ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest registry.heroku.com/stark-stream-18827/web
+          docker push registry.heroku.com/stark-stream-18827/web
           heroku container:release -a stark-stream-18827 web
+
 
