@@ -35,4 +35,11 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
+      - name: Heroku deployment
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
+        run: |
+          heroku container:login
+          heroku container:push -a stark-stream-18827 web
+          heroku container:release -a stark-stream-18827 web
 
