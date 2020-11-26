@@ -1,5 +1,5 @@
 name: Deploy Docker Image to Heroku
-on: push
+on: pull_request
 
 jobs:
   build-docker-image:
@@ -19,7 +19,7 @@ jobs:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_SIMON_USERNAME }}/aam_digital_${{ github.head_ref }}:latest
+          tags: ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-${{ github.head_ref }}:latest
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
 
