@@ -1,7 +1,6 @@
 name: Delete heroku app when PR is closed
 on:
-  pull_request:
-    types: [closed]
+  pull_request
 
 jobs:
   remove-app:
