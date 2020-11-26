@@ -39,6 +39,11 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
         run: |
+          heroku container:login
+          apps=$(heroku apps --all)
+          if [[ $apps == *"stark-stream-18827"* ]]; then
+            echo "It's there!"
+          fi
           docker tag ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest registry.heroku.com/stark-stream-18827/web
           docker push registry.heroku.com/stark-stream-18827/web
           heroku container:release -a stark-stream-18827 web
