@@ -1,0 +1,15 @@
+name: Create heroku app for every opened PR
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  remove-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create app
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
+        run: |
+          heroku apps:destroy --app ${{ github.head_ref }} --confirm

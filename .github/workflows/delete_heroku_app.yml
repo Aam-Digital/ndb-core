@@ -1,0 +1,15 @@
+name: Delete heroku app when PR is closed
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  remove-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create app
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
+        run: |
+          heroku apps:create ${{ github.head_ref }}
