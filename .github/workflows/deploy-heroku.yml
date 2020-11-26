@@ -19,7 +19,7 @@ jobs:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-${{ github.head_ref }}:latest
+          tags: ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
 
