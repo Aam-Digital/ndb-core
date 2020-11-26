@@ -42,5 +42,5 @@ jobs:
           heroku container:login
           docker pull ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest
           docker tag ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest registry.heroku.com/${{ github.head_ref }}-1234/web
-          docker push registry.heroku.com/1234-${{ github.head_ref }}-1234/web
+          docker push registry.heroku.com/${{ github.head_ref }}-1234/web
           heroku container:release -a ${{ github.head_ref }}-1234 web
