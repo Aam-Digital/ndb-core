@@ -12,4 +12,4 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
         run: |
-          heroku apps:destroy --app 1234-${{ github.head_ref }} --confirm
+          heroku apps:destroy --app ${{ github.head_ref }}-1234 --confirm
