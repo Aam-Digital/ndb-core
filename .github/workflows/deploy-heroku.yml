@@ -29,10 +29,9 @@ jobs:
       - name: Echos
         run: |
           echo ${{ github.event }}
-          echo ${{ github.event.payload }}
-          echo ${{ github.event.payload.pull_request }}
-          echo ${{ github.event.payload.pull_request.head }}
-          echo ${{ github.event.payload.pull_request.head.sha }}
+          echo ${{ github.event.pull_request }}
+          echo ${{ github.event.pull_request.head }}
+          echo ${{ github.event.pull_request.head.sha }}
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
