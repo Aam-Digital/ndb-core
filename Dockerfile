@@ -5,10 +5,15 @@ RUN ls
 RUN npm ci --no-progress
 RUN apk --no-cache add curl chromium
 ENV CHROME_BIN=/usr/bin/chromium-browser
+RUN addgroup -S chromium &&\
+    adduser -S -g chromium chromium &&\
+    chown -R chromium:chromium /app
+# Run everything after as non-privileged user.
 RUN curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
 RUN chmod +x ./cc-test-reporter
 #RUN npm install @angular/cli
 RUN ./cc-test-reporter before-build
+USER chromium
 RUN npm run lint
 RUN npm run test-ci
 RUN ./cc-test-reporter after-build --debug
