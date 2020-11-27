@@ -21,12 +21,14 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_SIMON_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
-      - name: Get current time
-        uses: gerred/actions/current-time@master
-        id: current-time
+      - name: Get time of commit
+        id: commit-time
+        run: |
+          $output=(git log -1 --pretty=format:%ct)
+          echo "::set-output name=time::$output"
       - name: Use current time
         env:
-          TIME: "${{ steps.current-time.outputs.time }}"
+          TIME: "${{ steps.commit-time.outputs.time }}"
         run: echo $TIME
       - name: Build and push
         id: docker_build
@@ -42,7 +44,7 @@ jobs:
           build-args: |
             GIT_COMMIT_SHA=${{ github.sha }}
             GIT_BRANCH=${{ github.head_ref }}
-            GIT_COMMITTED_AT=${{ steps.current-time.outputs.time }}
+            GIT_COMMITTED_AT=${{ steps.commit-time.outputs.time }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
       - name: Heroku deployment
