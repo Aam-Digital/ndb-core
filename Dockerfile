@@ -2,6 +2,7 @@ FROM node:15.1.0-alpine3.12 as builder
 WORKDIR /app
 ARG GIT_COMMIT_SHA
 ARG GIT_BRANCH
+ARG GIT_COMITTED_AT
 RUN echo $GIT_BRANCH
 COPY package*.json ./
 RUN npm ci --no-progress

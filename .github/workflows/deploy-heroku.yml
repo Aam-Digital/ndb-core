@@ -34,7 +34,8 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache
           build-args: |
             GIT_COMMIT_SHA=${{ github.sha }}
-            GIT_BRANCH=${{ github.ref }}
+            GIT_BRANCH=${{ github.head_ref }}
+            GIT_COMMITED_AT= ${{git show -s --format=%ci 825a0072}}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
       - name: Heroku deployment
