@@ -32,7 +32,7 @@ jobs:
         run: echo $TIME
       - name: Test env
         env:
-          NEW_TIME: $TIME
+          NEW_TIME: ${TIME}
         run: echo $NEW_TIME
       - name: Build and push
         id: docker_build
@@ -48,7 +48,7 @@ jobs:
           build-args: |
             GIT_COMMIT_SHA=${{ github.sha }}
             GIT_BRANCH=${{ github.head_ref }}
-            GIT_COMMITTED_AT=$TIME
+            GIT_COMMITTED_AT=${TIME}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
       - name: Heroku deployment
