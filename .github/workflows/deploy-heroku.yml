@@ -28,12 +28,8 @@ jobs:
         run: echo "TIME=$(git log -1 --pretty=format:%ct)" >> $GITHUB_ENV
       - name: Echos
         run: |
-          echo ${{ github.event }}
-          echo ${{ github.event.pull_request }}
-          echo ${{ github.event.pull_request.head }}
           echo ${{ github.event.pull_request.head.sha }}
-          echo ${{ github.event.pull_request.head.commit.author.date }}
-          echo ${{ github.event.pull_request.head.commit.committer.date }}
+          echo ${{ github.event.pull_request.head.repo.updated_at }}
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
