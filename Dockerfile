@@ -1,6 +1,6 @@
 FROM node:15.1.0-alpine3.12 as builder
-WORKDIR /app
-COPY package*.json ./
+WORKDIR ./
+RUN ls
 RUN npm ci --no-progress
 RUN apk --no-cache add curl chromium
 RUN curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
