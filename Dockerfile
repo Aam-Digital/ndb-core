@@ -2,12 +2,13 @@ FROM node:15.1.0-alpine3.12 as builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --no-progress
-RUN apk --no-cache add curl
+RUN apk --no-cache add curl chromium
 RUN curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
 RUN chmod +x ./cc-test-reporter
+#RUN npm install @angular/cli
 RUN ./cc-test-reporter before-build
-RUN ng lint
-RUN ng test --watch=false --code-coverage
+RUN npm lint
+RUN npm test-ci
 RUN ./cc-test-reporter after-build --debug
 COPY patch-webpack.js .
 # postinstall executes ngcc and runs the webpack-patch
