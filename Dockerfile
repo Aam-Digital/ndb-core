@@ -4,6 +4,7 @@ COPY ./ ./
 RUN ls
 RUN npm ci --no-progress
 RUN apk --no-cache add curl chromium
+ENV CHROME_BIN=/usr/bin/chromium-browser
 RUN curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
 RUN chmod +x ./cc-test-reporter
 #RUN npm install @angular/cli
