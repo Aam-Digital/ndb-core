@@ -24,6 +24,7 @@ jobs:
       - name: Get time of commit
         id: commit-time
         run: |
+          git log -1 --pretty=format:%ct
           $output=(git log -1 --pretty=format:%ct)
           echo "::set-output name=time::$output"
       - name: Use current time
