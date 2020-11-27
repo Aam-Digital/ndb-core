@@ -32,6 +32,8 @@ jobs:
           echo ${{ github.event.pull_request }}
           echo ${{ github.event.pull_request.head }}
           echo ${{ github.event.pull_request.head.sha }}
+          echo ${{ github.event.pull_request.head.commit.author.date }}
+          echo ${{ github.event.pull_request.head.commit.committer.date }}
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
