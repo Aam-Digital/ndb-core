@@ -4,6 +4,8 @@ on: pull_request
 jobs:
   build-docker-image:
     runs-on: ubuntu-latest
+    env:
+      TIME: 0
     steps:
       - uses: actions/checkout@v1
       - name: Set up Docker Buildx
@@ -25,11 +27,8 @@ jobs:
         id: commit-time
         run: |
           git log -1 --pretty=format:%ct
-          output=$(git log -1 --pretty=format:%ct)
-          echo "::set-output name=time::$output"
+          TIME=$(git log -1 --pretty=format:%ct)
       - name: Use current time
-        env:
-          TIME: "${{ steps.commit-time.outputs.time }}"
         run: echo $TIME
       - name: Build and push
         id: docker_build
@@ -45,7 +44,7 @@ jobs:
           build-args: |
             GIT_COMMIT_SHA=${{ github.sha }}
             GIT_BRANCH=${{ github.head_ref }}
-            GIT_COMMITTED_AT=${{ steps.commit-time.outputs.time }}
+            GIT_COMMITTED_AT=$TIME
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
       - name: Heroku deployment
