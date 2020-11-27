@@ -32,8 +32,8 @@ jobs:
         run: echo $TIME
       - name: Test env
         env:
-          TIME
-        run: echo $TIME
+          MY_TIME: $(TIME)
+        run: echo $MY_TIME
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
