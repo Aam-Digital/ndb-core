@@ -21,14 +21,13 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_SIMON_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
-      steps:
-        - name: Get current time
-          uses: gerred/actions/current-time@master
-          id: current-time
-        - name: Use current time
-          env:
-            TIME: "${{ steps.current-time.outputs.time }}"
-          run: echo $TIME
+      - name: Get current time
+        uses: gerred/actions/current-time@master
+        id: current-time
+      - name: Use current time
+        env:
+          TIME: "${{ steps.current-time.outputs.time }}"
+        run: echo $TIME
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
