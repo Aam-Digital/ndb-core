@@ -49,6 +49,7 @@ jobs:
             GIT_COMMIT_SHA=${{ github.sha }}
             GIT_BRANCH=${{ github.head_ref }}
             GIT_COMMITTED_AT=${{ env.TIME }}
+            CC_TEST_REPORTER_ID=${{ secrets.CODE_CLIMATE_ID }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
       - name: Heroku deployment
