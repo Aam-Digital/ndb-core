@@ -1,5 +1,7 @@
 FROM node:15.1.0-alpine3.12 as builder
 WORKDIR /app
+ARG GIT_COMMIT_SHA
+ARG GIT_BRANCH
 COPY package*.json ./
 RUN npm ci --no-progress
 RUN apk --no-cache add curl chromium

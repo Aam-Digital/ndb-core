@@ -21,7 +21,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_SIMON_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
-      - run: echo ${{ github.head_ref }}
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
@@ -33,6 +32,9 @@ jobs:
           tags: ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
+          build-args: |
+            GIT_COMMIT_SHA=${{ github.sha }}
+            GIT_BRANCH=${{ github.ref }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
       - name: Heroku deployment
