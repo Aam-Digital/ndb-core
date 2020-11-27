@@ -1,5 +1,6 @@
 FROM node:15.1.0-alpine3.12 as builder
-WORKDIR ./
+WORKDIR /app
+COPY ./ ./
 RUN ls
 RUN npm ci --no-progress
 RUN apk --no-cache add curl chromium
@@ -7,7 +8,6 @@ RUN curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest
 RUN chmod +x ./cc-test-reporter
 #RUN npm install @angular/cli
 RUN ./cc-test-reporter before-build
-RUN ls
 RUN npm run lint
 RUN npm run test-ci
 RUN ./cc-test-reporter after-build --debug
