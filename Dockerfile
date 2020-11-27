@@ -4,14 +4,11 @@ ARG GIT_COMMIT_SHA
 ARG GIT_BRANCH
 ARG GIT_COMMITTED_AT
 ARG CC_TEST_REPORTER_ID
-RUN echo $GIT_BRANCH
 COPY package*.json ./
 RUN npm ci --no-progress
 RUN apk --no-cache add curl chromium git
 ENV CHROME_BIN=/usr/bin/chromium-browser
-RUN curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-RUN chmod +x ./cc-test-reporter
-RUN ./cc-test-reporter before-build
+RUN curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter &&  chmod +x ./cc-test-reporter && ./cc-test-reporter before-build
 COPY patch-webpack.js .
 # postinstall executes ngcc and runs the webpack-patch
 RUN npm run postinstall

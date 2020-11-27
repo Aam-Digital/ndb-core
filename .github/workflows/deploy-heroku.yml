@@ -25,15 +25,7 @@ jobs:
           password: ${{ secrets.DOCKER_TOKEN }}
       - name: Get time of commit
         id: commit-time
-        run: |
-          git log -1 --pretty=format:%ct
-          echo "TIME=$(git log -1 --pretty=format:%ct)" >> $GITHUB_ENV
-      - name: Use current time
-        run: echo $TIME
-      - name: Test env
-        env:
-          MY_TIME: ${{ env.TIME }}
-        run: echo $MY_TIME
+        run: echo "TIME=$(git log -1 --pretty=format:%ct)" >> $GITHUB_ENV
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
@@ -50,8 +42,6 @@ jobs:
             GIT_BRANCH=${{ github.head_ref }}
             GIT_COMMITTED_AT=${{ env.TIME }}
             CC_TEST_REPORTER_ID=${{ secrets.CODE_CLIMATE_ID }}
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
       - name: Heroku deployment
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
