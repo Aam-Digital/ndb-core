@@ -26,6 +26,13 @@ jobs:
       - name: Get time of commit
         id: commit-time
         run: echo "TIME=$(git log -1 --pretty=format:%ct)" >> $GITHUB_ENV
+      - name: Echos
+        run: |
+          echo ${{ github.event }}
+          echo ${{ github.event.payload }}
+          echo ${{ github.event.payload.pull_request }}
+          echo ${{ github.event.payload.pull_request.head }}
+          echo ${{ github.event.payload.pull_request.head.sha }}
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
