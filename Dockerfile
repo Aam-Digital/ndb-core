@@ -5,7 +5,7 @@ ARG GIT_BRANCH
 RUN echo $GIT_BRANCH
 COPY package*.json ./
 RUN npm ci --no-progress
-RUN apk --no-cache add curl chromium
+RUN apk --no-cache add curl chromium git
 ENV CHROME_BIN=/usr/bin/chromium-browser
 RUN curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
 RUN chmod +x ./cc-test-reporter
