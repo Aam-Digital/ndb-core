@@ -30,6 +30,7 @@ jobs:
         run: |
           echo ${{ github.event.pull_request.head.sha }}
           echo ${{ github.event.pull_request.head.repo.updated_at }}
+          echo $(($(date -d ${{ github.event.pull_request.head.repo.updated_at }} +%s%N)/1000000))
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
@@ -42,7 +43,7 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
           build-args: |
-            GIT_COMMIT_SHA=${{ github.sha }}
+            GIT_COMMIT_SHA=${{ github.event.pull_request.head.sha }}
             GIT_BRANCH=${{ github.head_ref }}
             GIT_COMMITTED_AT=${{ env.TIME }}
             CC_TEST_REPORTER_ID=${{ secrets.CODE_CLIMATE_ID }}
