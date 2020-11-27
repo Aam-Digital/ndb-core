@@ -68,6 +68,9 @@ module.exports = function (config) {
       }
     },
     browsers: ['ChromeCustom'],
-    singleRun: true
+    singleRun: true,
+    proxies: {
+      '/assets/': '/base/src/assets/'
+    },
   });
 };

@@ -1,6 +1,6 @@
 FROM node:15.1.0-alpine3.12 as builder
 WORKDIR /app
-COPY ./ ./
+COPY package*.json ./
 RUN npm ci --no-progress
 RUN apk --no-cache add curl chromium
 ENV CHROME_BIN=/usr/bin/chromium-browser
@@ -10,11 +10,11 @@ RUN ./cc-test-reporter before-build
 COPY patch-webpack.js .
 # postinstall executes ngcc and runs the webpack-patch
 RUN npm run postinstall
+RUN $(npm bin)/ng version
+COPY . .
 RUN npm run lint
 RUN npm run test-ci
 RUN ./cc-test-reporter after-build --debug
-RUN $(npm bin)/ng version
-COPY . .
 RUN $(npm bin)/ng build --prod
 
 ### PROD image
