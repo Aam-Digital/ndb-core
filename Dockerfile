@@ -7,8 +7,8 @@ RUN curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest
 RUN chmod +x ./cc-test-reporter
 #RUN npm install @angular/cli
 RUN ./cc-test-reporter before-build
-RUN npm lint
-RUN npm test-ci
+RUN npm run lint
+RUN npm run test-ci
 RUN ./cc-test-reporter after-build --debug
 COPY patch-webpack.js .
 # postinstall executes ngcc and runs the webpack-patch
