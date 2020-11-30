@@ -19,7 +19,14 @@ export class ListRelationComponent implements OnChanges {
     if (changes.hasOwnProperty("child")) {
       this.childrenService
         .queryLatestRelation(this.child.getId())
-        .then((rel) => (this.relation = rel));
+        .then((rel) => {
+          this.relation = rel;
+
+          // Set these values to allow sorting in the children list
+          this.child["schoolClass"] = this.relation.schoolClass;
+          // This will sort by the schoolID, same behavior as on the current master
+          this.child["schoolId"] = this.relation.schoolId;
+        });
     }
   }
 }

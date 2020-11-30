@@ -145,7 +145,12 @@
 <div class="mat-elevation-z2 table-list">
   <table mat-table [dataSource]="childrenDataSource" matSort style="width: 100%">
     <ng-container *ngFor="let col of columns" [matColumnDef]="col.id">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{col.title}}</th>
+      <div *ngIf="col.noSorting">
+        <th mat-header-cell *matHeaderCellDef>{{col.title}}</th>
+      </div>
+      <div *ngIf="!col.noSorting">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{col.title}}</th>
+      </div>
       <td *matCellDef="let child">
 
         <div *ngIf="col.type === 'text'">
