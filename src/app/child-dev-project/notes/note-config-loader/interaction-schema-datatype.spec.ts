@@ -22,6 +22,9 @@ describe("InteractionSchemaDatatype", () => {
     InteractionTypes: {
       NONE: { name: "" },
       TEST_1: { name: "Category 1" },
+      TEST_2: { name: "Category 2", color: "#FFFFFF" },
+      TEST_3: { name: "Category 3", color: "#FFFFFF", isMeeting: true },
+      TEST_4: { name: "Category 4", isMeeting: false },
     },
   };
   const interactionSchemaDatatype: InteractionSchemaDatatype = new InteractionSchemaDatatype(
@@ -44,6 +47,22 @@ describe("InteractionSchemaDatatype", () => {
         interaction
       );
       expect(ret).toBe(key);
+    }
+  });
+
+  it(".transformToDatabaseFormat() should work with identical objects", () => {
+    for (const key of Object.keys(testConfig.InteractionTypes)) {
+      const interaction: InteractionType = testConfig.InteractionTypes[key];
+      const copyInteraction: InteractionType = JSON.parse(
+        JSON.stringify(interaction)
+      );
+      expect(interaction).not.toBe(copyInteraction);
+      expect(interaction).toEqual(copyInteraction);
+      expect(
+        interactionSchemaDatatype.transformToDatabaseFormat(interaction)
+      ).toBe(
+        interactionSchemaDatatype.transformToDatabaseFormat(copyInteraction)
+      );
     }
   });
 });
