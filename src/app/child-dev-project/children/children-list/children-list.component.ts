@@ -155,9 +155,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
             this.displayColumnGroup("School Info");
             break;
           }
-          case "lg": {
-            break;
-          }
+          case "lg":
           case "xl": {
             break;
           }
