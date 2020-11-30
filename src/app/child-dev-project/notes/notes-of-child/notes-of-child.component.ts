@@ -10,6 +10,7 @@ import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entit
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { NoteConfigLoaderService } from "../note-config-loader/note-config-loader.service";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
@@ -122,4 +123,10 @@ export class NotesOfChildComponent
       return newNote;
     };
   }
+
+  /**
+   * returns the color for a note; passed to the entity subrecored component
+   * @param note note to get color for
+   */
+  getColor = (note: Note) => note?.getColorForId(this.child.getId());
 }

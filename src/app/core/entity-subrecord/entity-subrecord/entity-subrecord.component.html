@@ -87,6 +87,6 @@
 
   <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
   <tr mat-row *matRowDef="let rec; columns: columnsToDisplay"
-      [ngStyle]="{'background-color': getColor(rec)}">
+      [ngStyle]="getBackgroundColor && {'background-color': getBackgroundColor(rec)}">
   </tr>
 </table>
