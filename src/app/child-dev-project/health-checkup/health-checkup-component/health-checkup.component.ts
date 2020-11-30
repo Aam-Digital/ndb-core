@@ -6,6 +6,7 @@ import { DatePipe } from "@angular/common";
 import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
+import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 
 @UntilDestroy()
 @Component({
@@ -13,7 +14,8 @@ import { Child } from "../../children/model/child";
   templateUrl: "./health-checkup.component.html",
   styleUrls: ["./health-checkup.component.scss"],
 })
-export class HealthCheckupComponent implements OnChanges {
+export class HealthCheckupComponent
+  implements OnChanges, OnInitDynamicComponent {
   records = new Array<HealthCheck>();
   /**
    * Column Description for the SubentityRecordComponent
@@ -60,6 +62,11 @@ export class HealthCheckupComponent implements OnChanges {
     if (changes.hasOwnProperty("child")) {
       this.loadData(this.child.getId());
     }
+  }
+
+  onInitFromDynamicConfig(config: any) {
+    this.child = config.child;
+    this.loadData(this.child.getId());
   }
 
   generateNewRecordFactory() {

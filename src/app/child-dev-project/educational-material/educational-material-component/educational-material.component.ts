@@ -6,13 +6,15 @@ import { ChildrenService } from "../../children/children.service";
 import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
+import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 
 @UntilDestroy()
 @Component({
   selector: "app-educational-material",
   templateUrl: "./educational-material.component.html",
 })
-export class EducationalMaterialComponent implements OnChanges {
+export class EducationalMaterialComponent
+  implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child;
   records = new Array<EducationalMaterial>();
 
@@ -64,6 +66,11 @@ export class EducationalMaterialComponent implements OnChanges {
     if (changes.hasOwnProperty("child")) {
       this.loadData(this.child.getId());
     }
+  }
+
+  onInitFromDynamicConfig(config: any) {
+    this.child = config.child;
+    this.loadData(this.child.getId());
   }
 
   loadData(id: string) {
