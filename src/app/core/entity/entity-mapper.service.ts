@@ -94,7 +94,7 @@ export class EntityMapperService {
       entity
     );
     const result = await this._db.put(rawData, forceUpdate);
-    if (result.ok) {
+    if (result?.ok) {
       entity._rev = result.rev;
     }
     return result;

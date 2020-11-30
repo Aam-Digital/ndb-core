@@ -10,6 +10,7 @@ import { noteIndividualStories } from "./notes_individual-stories";
 import { noteGroupStories } from "./notes_group-stories";
 import { centersUnique } from "../../children/demo-data-generators/fixtures/centers";
 import { absenceRemarks } from "./remarks";
+import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 
 export class DemoNoteConfig {
   minNotesPerChild: number;
@@ -54,7 +55,8 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
 
   constructor(
     private config: DemoNoteConfig,
-    private demoChildren: DemoChildGenerator
+    private demoChildren: DemoChildGenerator,
+    private schemaService: EntitySchemaService
   ) {
     super();
   }
@@ -85,10 +87,15 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
   }
 
   private generateNoteForChild(child: Child): Note {
-    const note = new Note(faker.random.uuid());
+    let note = new Note(faker.random.uuid());
 
     const selectedStory = faker.random.arrayElement(noteIndividualStories);
     Object.assign(note, selectedStory);
+    // transform to ensure the category object is loaded from the generic config
+    note = this.schemaService.transformDatabaseToEntityFormat(
+      note,
+      Note.schema
+    );
 
     note.addChild(child.getId());
     note.author = faker.random.arrayElement(this.teamMembers);
@@ -102,6 +109,9 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     return note;
   }
 
+  /**
+   * Set all older notes to be "resolved" in order to keep the list of notes needing follow-up limited in the demo.
+   */
   private removeFollowUpMarkerForOldNotes(note: Note) {
     const lastMonths = new Date();
     lastMonths.setMonth(lastMonths.getMonth() - 1);
@@ -111,10 +121,15 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
   }
 
   private generateGroupNote(children: Child[]) {
-    const note = new Note(faker.random.uuid());
+    let note = new Note(faker.random.uuid());
 
     const selectedStory = faker.random.arrayElement(noteGroupStories);
     Object.assign(note, selectedStory);
+    // transform to ensure the category object is loaded from the generic config
+    note = this.schemaService.transformDatabaseToEntityFormat(
+      note,
+      Note.schema
+    );
 
     note.children = children.map((c) => c.getId());
     note.attendances = children.map((child) => {
