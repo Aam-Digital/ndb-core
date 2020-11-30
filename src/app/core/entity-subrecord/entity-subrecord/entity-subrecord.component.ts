@@ -80,6 +80,9 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
   /** id of the parent entity of the records being displayed. May be used for custom display logic. */
   @Input() entityId?: string;
 
+  /** function returns the background color for each entry*/
+  @Input() getBackgroundColor?: (rec: Entity) => string;
+
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource();
   /** columns displayed in the template's table */
@@ -321,20 +324,5 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
       inputType === ColumnDescriptionInputType.FUNCTION ||
       inputType === ColumnDescriptionInputType.READONLY
     );
-  }
-
-  /**
-   * returns the color for a record.
-   * If this entity id is undefined, this will return the default color. Otherwise it will attempt
-   * to get a specific color for this specific entity id
-   * @param record The record to check for. The record must be an entity that has a <code>getColor()</code>-Method specified.
-   * If this entityId is set, a <code>getColorForId()</code>-Method must be specified, that accepts this id.
-   */
-  getColor(record) {
-    // TODO add typing, create interface?
-    if (this.entityId !== undefined) {
-      return record.getColorForId(this.entityId);
-    }
-    return record.getColor();
   }
 }

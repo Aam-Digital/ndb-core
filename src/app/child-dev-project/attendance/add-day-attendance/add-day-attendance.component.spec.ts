@@ -7,6 +7,7 @@ import { MockDatabase } from "../../../core/database/mock-database";
 import { ChildrenModule } from "../../children/children.module";
 import { SchoolsModule } from "../../schools/schools.module";
 import { MatNativeDateModule } from "@angular/material/core";
+import { RouterTestingModule } from "@angular/router/testing";
 
 describe("AddDayAttendanceComponent", () => {
   let component: AddDayAttendanceComponent;
@@ -14,7 +15,12 @@ describe("AddDayAttendanceComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ChildrenModule, SchoolsModule, MatNativeDateModule],
+      imports: [
+        ChildrenModule,
+        SchoolsModule,
+        MatNativeDateModule,
+        RouterTestingModule,
+      ],
       providers: [
         ChildrenService,
         { provide: Database, useClass: MockDatabase },

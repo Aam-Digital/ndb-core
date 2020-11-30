@@ -1,10 +1,4 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Note } from "../model/note";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { DatePipe } from "@angular/common";
@@ -15,6 +9,8 @@ import { ColumnDescription } from "../../../core/entity-subrecord/entity-subreco
 import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
+import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { NoteConfigLoaderService } from "../note-config-loader/note-config-loader.service";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
@@ -25,7 +21,8 @@ import { Child } from "../../children/model/child";
   templateUrl: "./notes-of-child.component.html",
   styleUrls: ["./notes-of-child.component.scss"],
 })
-export class NotesOfChildComponent implements OnChanges {
+export class NotesOfChildComponent
+  implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child;
   records: Array<Note> = [];
   detailsComponent = NoteDetailsComponent;
@@ -89,6 +86,11 @@ export class NotesOfChildComponent implements OnChanges {
     }
   }
 
+  onInitFromDynamicConfig(config: any) {
+    this.child = config.child;
+    this.initNotesOfChild();
+  }
+
   private initNotesOfChild() {
     this.childrenService
       .getNotesOfChild(this.child.getId())
@@ -121,4 +123,10 @@ export class NotesOfChildComponent implements OnChanges {
       return newNote;
     };
   }
+
+  /**
+   * returns the color for a note; passed to the entity subrecored component
+   * @param note note to get color for
+   */
+  getColor = (note: Note) => note?.getColorForId(this.child.getId());
 }

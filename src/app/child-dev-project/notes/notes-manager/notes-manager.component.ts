@@ -239,6 +239,6 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     }
 
     const color = entity.category.color;
-    return color ? "" : color;
+    return color ? color : "";
   }
 }

@@ -141,13 +141,223 @@
     "view:child/:id": {
         "component": "ChildDetails",
         "config": {
-            "submenu": [
+            "icon": "child",
+            "panels": [
                 {
-                    "name": "Education",
-                    "components": ["previousSchools", "aserResults"]
+                    "title": "Basic Information",
+                    "components": [
+                        {"title": "", "component": "Form",
+                            "config": {
+                                "cols": [
+                                    [{ "input": "photo", "id": "photoFile", "placeholder": "Photo Filename" }],
+                                    [
+                                        { "input": "text", "id": "name", "placeholder": "Name", "required": true },
+                                        { "input": "text", "id": "projectNumber", "placeholder": "Project Number" },
+                                        { "input": "text", "id": "center", "placeholder": "Center", "required": true }                                    ],
+                                    [
+                                        { "input": "age" },
+                                        {
+                                            "input": "datepicker",
+                                            "id": "dateOfBirth",
+                                            "placeholder": "Date of Birth"
+                                        },
+                                        {
+                                            "input": "select",
+                                            "id": "gender",
+                                            "placeholder": "Gender",
+                                            "options": ["M", "F"]
+                                        },
+                                        { "input": "text", "id": "motherTongue", "placeholder": "Mother Tongue" },
+                                        { "input": "text", "id": "religion", "placeholder": "Religion" }
+                                    ],
+                                    [
+                                        {
+                                            "input": "datepicker",
+                                            "id": "admissionDate",
+                                            "placeholder": "Admission Date"
+                                        },
+                                        {
+                                            "input": "select",
+                                            "id": "has_aadhar",
+                                            "placeholder": "Aadhar Status",
+                                            "options": [
+                                                "OK (copy with us)",
+                                                "OK (copy needed for us)",
+                                                "needs correction",
+                                                "applied",
+                                                "doesn't have",
+                                                "not eligible",
+                                                ""
+                                            ]
+                                        },
+                                        {
+                                            "input": "select",
+                                            "id": "has_bankAccount",
+                                            "placeholder": "Bank Account Status",
+                                            "options": [
+                                                "OK (copy with us)",
+                                                "OK (copy needed for us)",
+                                                "needs correction",
+                                                "applied",
+                                                "doesn't have",
+                                                "not eligible",
+                                                ""
+                                            ]
+                                        },
+                                        {
+                                            "input": "select",
+                                            "id": "has_rationCard",
+                                            "placeholder": "Ration Card Status",
+                                            "options": [
+                                                "OK (copy with us)",
+                                                "OK (copy needed for us)",
+                                                "needs correction",
+                                                "applied",
+                                                "doesn't have",
+                                                "not eligible",
+                                                ""
+                                            ]
+                                        },
+                                        {
+                                            "input": "select",
+                                            "id": "has_BplCard",
+                                            "placeholder": "BPL Card Status",
+                                            "options": [
+                                                "OK (copy with us)",
+                                                "OK (copy needed for us)",
+                                                "needs correction",
+                                                "applied",
+                                                "doesn't have",
+                                                "not eligible",
+                                                ""
+                                            ]
+                                        }
+                                    ],
+                                    [
+                                        { "input": "text", "id": "address", "placeholder": "Address" },
+                                        { "input": "text", "id": "phone", "placeholder": "Phone No." },
+                                        { "input": "text", "id": "guardianName", "placeholder": "Guardians" },
+                                        {
+                                            "input": "text",
+                                            "id": "preferredTimeForGuardianMeeting",
+                                            "placeholder": "Preferred time for guardians meeting"
+                                        }
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "title": "Education",
+                    "components": [
+                        {"title":  "SchoolHistory", "component": "PreviousSchools"},
+                        {"title":  "ASER Results", "component": "Aser"}
+                    ]
+                },
+                {
+                    "title": "Attendance",
+                    "components": [
+                        {"title": "", "component": "GroupedChildAttendance"}
+                    ]
+                },
+                {
+                    "title": "Notes & Reports",
+                    "components": [
+                        {"title": "", "component": "NotesOfChild"}
+                    ]
+                },
+                {
+                    "title": "Health",
+                    "components": [
+                        {
+                            "title": "",
+                            "component": "Form",
+                            "config": {
+                                "cols": [
+                                    [{
+                                        "input": "select",
+                                        "id": "health_vaccinationStatus",
+                                        "placeholder": "Vaccination Status",
+                                        "options": ["Good", "Vaccination Due", "Needs Checking", "No Card/Information"]
+                                    }],
+                                    [{
+                                        "input": "select",
+                                        "id": "health_eyeHealthStatus",
+                                        "placeholder": "Eye Status",
+                                        "options": ["Good", "Has Glasses", "Needs Glasses", "Needs Checkup"]
+                                    }],
+                                    [{
+                                        "input": "text",
+                                        "id": "health_bloodGroup",
+                                        "placeholder": "Blood Group"
+                                    }],
+                                    [{
+                                        "input": "datepicker",
+                                        "id": "health_lastDentalCheckup",
+                                        "placeholder": "Last Dental Check-Up"
+                                    }],
+                                    [{
+                                        "input": "datepicker",
+                                        "id": "health_lastEyeCheckup",
+                                        "placeholder": "Last Eye Check-Up"
+                                    }],
+                                    [{
+                                        "input": "datepicker",
+                                        "id": "health_lastENTCheckup",
+                                        "placeholder": "Last ENT Check-Up"
+                                    }],
+                                    [{
+                                        "input": "datepicker",
+                                        "id": "health_lastVitaminD",
+                                        "placeholder": "Last Vitamin D"
+                                    }],
+                                    [{
+                                        "input": "datepicker",
+                                        "id": "health_lastDeworming",
+                                        "placeholder": "Last De-Worming"
+                                    }]
+                                ]
+                            }
+                        },
+                        {"title": "Height & Weight Tracking", "component": "HealthCheckup"}
+                    ]
+                },
+                {
+                    "title": "Educational Materials",
+                    "components": [
+                        {"title": "", "component": "EducationalMaterial"}
+                    ]
+                },
+                {
+                    "title": "Dropout",
+                    "components": [
+                        {
+                            "title": "",
+                            "component": "Form",
+                            "config": {
+                                "cols": [
+                                    [{
+                                        "input": "datepicker",
+                                        "id": "dropoutDate",
+                                        "placeholder": "Dropout Date"
+                                    }],
+                                    [{
+                                        "input": "text",
+                                        "id": "dropoutType",
+                                        "placeholder": "Dropout Type"
+                                    }],
+                                    [{
+                                        "input": "text",
+                                        "id": "dropoutRemarks",
+                                        "placeholder": "Dropout Remarks"
+                                    }]
+                                ]
+                            }
+                        }
+                    ]
                 }
-            ],
-            "icon": "child"
+            ]
         }
     }
 }
