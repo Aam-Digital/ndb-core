@@ -13,7 +13,7 @@
         <input
           matInput
           placeholder="Filter"
-          (ngModelChange)="applyFilter($event)"
+          (ngModelChange)="applySearchTerm($event)"
           [(ngModel)]="filterString"
         />
         <button
@@ -21,7 +21,7 @@
           *ngIf="filterString"
           matSuffix
           aria-label="Clear"
-          (click)="filterString = ''; applyFilter('')"
+          (click)="filterString = ''; applySearchTerm('')"
         >
           <mat-icon fontIcon="fa-times"></mat-icon>
         </button>
@@ -107,9 +107,7 @@
       <mat-button-toggle
         *ngFor="let option of filterSelection.options"
         [value]="option.key"
-        (click)="
-          filterSelection.selectedOption = option.key; applyFilterSelections()
-        "
+        (click)="filterClicked(filterSelection, option.key)"
       >
         {{ option.label }}
       </mat-button-toggle>
@@ -260,7 +258,7 @@
 
     <ng-container matColumnDef="health_vaccinationStatus">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
-        Vaccination Status
+        Vaccinatiion Status
       </th>
       <td mat-cell *matCellDef="let child">
         {{ child.health_vaccinationStatus }}

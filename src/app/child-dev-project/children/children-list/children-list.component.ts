@@ -24,6 +24,29 @@ export interface ColumnGroup {
   columns: string[];
 }
 
+/**
+ * 1. Config laden (constructor)
+ * 2. Daten komplett laden (ngOnInit)
+ * 3. dynamische Filter (z.B. aller verfügbarer Center) berechnen
+ * 4. Filter-Auswahl aus URL laden | oder Default-Wert setzen
+ * 5. Daten filtern
+ *
+ * -- User-Interaktion --
+ * 1. Daten filtern
+ * 2. URL anpassen
+ */
+
+/**
+ * 1. Config laden (childlist)
+ * 2.  config an filterComponent als | async
+ * 3. Daten komplett laden (childlist)
+ * 4.  daten an filterComponent als | async
+ *    5. filterComponent filter berechnen/laden
+ *    6. filterComponent triggert output (filterChanged)
+ * 7. URL anpassen (childList?)
+ * 8. change event abonnieren und Daten filtern
+ */
+
 @UntilDestroy()
 @Component({
   selector: "app-children-list",
@@ -66,21 +89,11 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     private media: MediaObserver,
     private sessionService: SessionService,
     private entityMapperService: EntityMapperService
-  ) {}
+  ) {
+    this.loadConfig();
+  }
 
   ngOnInit() {
-    this.route.data.subscribe((config) => {
-      this.listName = config.title;
-      this.columnGroups = config.columnGroups;
-      if (config.defaultColumnGroup) {
-        this.columnGroupSelection = config.defaultColumnGroup;
-      } else {
-        this.columnGroupSelection = config.columnGroups[0].name;
-      }
-      this.columnGroupSmallDisplay = config.columnGroupSmallDisplay;
-    });
-    this.updateUrl();
-    this.loadUrlParams();
     this.loadData();
     this.user = this.sessionService.getCurrentUser();
     this.paginatorPageSize = this.user.paginatorSettingsPageSize.childrenList;
@@ -112,6 +125,19 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
           }
         }
       });
+  }
+
+  private loadConfig() {
+    this.route.data.subscribe((config) => {
+      this.listName = config.title;
+      this.columnGroups = config.columnGroups;
+      if (config.defaultColumnGroup) {
+        this.columnGroupSelection = config.defaultColumnGroup;
+      } else {
+        this.columnGroupSelection = config.columnGroups[0].name;
+      }
+      this.columnGroupSmallDisplay = config.columnGroupSmallDisplay;
+    });
   }
 
   private loadUrlParams(replaceUrl: boolean = false) {
@@ -179,6 +205,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
         this.childrenList = children;
         this.addFilterSelections();
         this.applyFilterSelections(replaceUrl);
+        this.updateUrl();
       });
     this.childrenService
       .getAttendances()
@@ -219,7 +246,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  applyFilter(filterValue: string) {
+  applySearchTerm(filterValue: string) {
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.childrenDataSource.filter = filterValue;
@@ -258,6 +285,12 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     });
   }
 
+  filterClicked(filterSelection, selectedOption: string) {
+    filterSelection.selectedOption = selectedOption;
+    this.applyFilterSelections();
+    this.updateUrl();
+  }
+
   applyFilterSelections(replaceUrl: boolean = false) {
     let filteredData = this.childrenList;
 
@@ -266,8 +299,6 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     });
 
     this.childrenDataSource.data = filteredData;
-
-    this.updateUrl(replaceUrl);
   }
 
   private addFilterSelections() {
