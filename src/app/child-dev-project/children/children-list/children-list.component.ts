@@ -41,22 +41,6 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   filterSelections = [];
   defaultSelectedFilter = {};
 
-  // dropoutFS = new FilterSelection("status", []);
-  // dropoutFS = new FilterSelection("status", [
-  //   {
-  //     key: "active",
-  //     label: "Current Project Children",
-  //     filterFun: (c: Child) => c.isActive(),
-  //   },
-  //   {
-  //     key: "dropout",
-  //     label: "Dropouts",
-  //     filterFun: (c: Child) => !c.isActive(),
-  //   },
-  //   { key: "", label: "All", filterFun: () => true },
-  // ]);
-  // filterSelections = [this.dropoutFS, this.centerFS];
-
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   columnGroupSelection: string;
@@ -140,10 +124,14 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
       this.filterSelections.forEach((f) => {
         f.selectedOption = params[f.name];
         if (f.selectedOption === undefined && f.options.length > 0) {
+          f.selectedOption = f.options[0].key;
           if (this.defaultSelectedFilter.hasOwnProperty(f.name)) {
-            f.selectedOption = this.defaultSelectedFilter[f.name];
-          } else {
-            f.selectedOption = f.options[0].key;
+            const defFilter = this.defaultSelectedFilter[f.name].toLowerCase();
+            for (const filterOption of f.options) {
+              if (filterOption.key === defFilter) {
+                f.selectedOption = defFilter;
+              }
+            }
           }
         }
       });
@@ -290,31 +278,28 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
         if (filter.id === "status") {
           filterSelection.options = [
             {
+              key: "",
+              label: filter.filterEntries.all,
+              filterFun: () => true,
+            },
+            {
               key: "active",
-              label: filter.active,
+              label: filter.filterEntries.active,
               filterFun: (c: Child) => c.isActive(),
             },
             {
               key: "dropout",
-              label: filter.inactive,
+              label: filter.filterEntries.inactive,
               filterFun: (c: Child) => !c.isActive(),
-            },
-            {
-              key: "",
-              label: filter.all,
-              filterFun: () => true,
             },
           ];
           filterSelection.selectedOption = filter.default;
-          this.defaultSelectedFilter[filter.id] = filter.default;
         } else {
-          console.log("children", this.childrenList);
           const options = this.childrenList
             .map((c) => c[filter.id])
             .filter(
               (value, index, arr) => value && arr.indexOf(value) === index
             );
-          console.log("options", options);
           filterSelection.initOptions(options, filter.id);
         }
         if (filter.default) {
@@ -323,7 +308,6 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
           this.defaultSelectedFilter[filter.id] =
             filterSelection.options[0].key;
         }
-        console.log("defaultValues", this.defaultSelectedFilter);
         this.filterSelections.push(filterSelection);
       });
     });

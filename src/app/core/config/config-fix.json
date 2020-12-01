@@ -133,9 +133,14 @@
         }
       ],
       "filters": [
-        {"id": "status", "default": "dropout", "active": "Active children", "inactive": "Inactive children", "all": "All children"},
-        {"id": "center", "default": "Alipore"},
-        {"id": "gender", "default": "F"}
+        {"id": "status",
+          "default": "active",
+          "filterEntries": {
+            "all": "All children", "active": "Active children", "inactive": "Inactive children"
+          }
+        },
+        {"id": "center", "default": "Barabazar"},
+        {"id": "gender", "default": ""}
       ]
       }},
     "view:child/:id": {
