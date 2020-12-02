@@ -47,74 +47,10 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  columnGroupSelection = "School Info";
-  columnGroups: ColumnGroup[] = [
-    {
-      name: "Basic Info",
-      columns: [
-        "projectNumber",
-        "name",
-        "age",
-        "gender",
-        "schoolClass",
-        "schoolId",
-        "center",
-        "status",
-      ],
-    },
-    {
-      name: "School Info",
-      columns: [
-        "projectNumber",
-        "name",
-        "age",
-        "schoolClass",
-        "schoolId",
-        "school",
-        "coaching",
-        "motherTongue",
-      ],
-    },
-    {
-      name: "Status",
-      columns: [
-        "projectNumber",
-        "name",
-        "center",
-        "status",
-        "admissionDate",
-        "has_aadhar",
-        "has_kanyashree",
-        "has_bankAccount",
-        "has_rationCard",
-        "has_BplCard",
-      ],
-    },
-    {
-      name: "Health",
-      columns: [
-        "projectNumber",
-        "name",
-        "center",
-        "health_vaccinationStatus",
-        "health_bloodGroup",
-        "health_eyeHealthStatus",
-        "health_lastEyeCheckup",
-        "health_lastDentalCheckup",
-        "health_lastENTCheckup",
-        "health_lastVitaminD",
-        "health_lastDeworming",
-        "gender",
-        "age",
-        "dateOfBirth",
-      ],
-    },
-    {
-      name: "Mobile",
-      columns: ["projectNumber", "name", "age", "schoolId"],
-    },
-  ];
-  columnsToDisplay = ["projectNumber", "name"];
+  columnGroups: ColumnGroup[] = [];
+  defaultColumnGroup: string;
+  mobileColumnGroup: string;
+  columnsToDisplay = [];
   filterString = "";
 
   public paginatorPageSize: number;
@@ -135,6 +71,10 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.route.data.subscribe((config) => {
       this.listName = config.title;
       this.columns = config.columns;
+      this.columnGroups = config.columnGroups.groups;
+      this.defaultColumnGroup = config.columnGroups.default;
+      this.displayColumnGroup(this.defaultColumnGroup);
+      this.mobileColumnGroup = config.columnGroups.mobile;
     });
     this.loadData();
     this.loadUrlParams();
@@ -148,11 +88,11 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
         switch (change[0].mqAlias) {
           case "xs":
           case "sm": {
-            this.displayColumnGroup("Mobile");
+            this.displayColumnGroup(this.mobileColumnGroup);
             break;
           }
           case "md": {
-            this.displayColumnGroup("School Info");
+            this.displayColumnGroup(this.defaultColumnGroup);
             break;
           }
           case "lg":
@@ -163,12 +103,11 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
       });
   }
 
-  private loadUrlParams(replaceUrl: boolean = false) {
+  private loadUrlParams() {
     this.route.queryParams.subscribe((params) => {
-      this.columnGroupSelection = params["view"]
-        ? params["view"]
-        : this.columnGroupSelection;
-      this.displayColumnGroup(this.columnGroupSelection);
+      if (params["view"]) {
+        this.displayColumnGroup(params["view"]);
+      }
 
       this.filterSelections.forEach((f) => {
         f.selectedOption = params[f.name];
@@ -176,7 +115,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
           f.selectedOption = f.options[0].key;
         }
       });
-      this.applyFilterSelections(replaceUrl);
+      this.applyFilterSelections();
     });
   }
 
@@ -200,6 +139,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   }
 
   private updateUserPaginationSettings() {
+    // The PageSize is stored in the database, the PageList is only in memory
     const hasChangesToBeSaved =
       this.paginatorPageSize !==
       this.user.paginatorSettingsPageSize.childrenList;
@@ -212,30 +152,24 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private async loadData(replaceUrl: boolean = false) {
+  private async loadData() {
     this.childrenList = await this.entityMapperService.loadType<Child>(Child);
     const centers = this.childrenList
       .map((c) => c.center)
       .filter((value, index, arr) => value && arr.indexOf(value) === index);
     this.centerFS.initOptions(centers, "center");
-    this.applyFilterSelections(replaceUrl);
+    this.applyFilterSelections();
   }
-
-  /*
-  private initCenterFilterOptions(centersWithProbability: string[]) {
-    const options = [{key: '', label: 'All', filterFun: (c: Child) => true}];
-
-    centersWithProbability.forEach(center => {
-      options.push({key: center.toLowerCase(), label: center, filterFun: (c: Child) => c.center === center});
-    });
-
-    this.centerFS.options = options;
-  } */
 
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.childrenDataSource.filter = filterValue;
+  }
+
+  columnGroupClick(columnGroupName: string) {
+    this.displayColumnGroup(columnGroupName);
+    this.updateUrl("view", columnGroupName);
   }
 
   displayColumnGroup(columnGroupName: string) {
@@ -245,29 +179,29 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     if (this.ready) {
       this.ready = false;
       setTimeout(() => (this.ready = true), 500);
-      this.columnGroupSelection = columnGroupName;
       this.columnsToDisplay = this.columnGroups.find(
         (c) => c.name === columnGroupName
       ).columns;
-      this.updateUrl();
     }
   }
 
-  updateUrl(replaceUrl: boolean = false) {
+  updateUrl(key: string, value: string) {
     const params = {};
-    this.filterSelections.forEach((f) => {
-      params[f.name] = f.selectedOption;
-    });
-
-    params["view"] = this.columnGroupSelection;
+    params[key] = value;
 
     this.router.navigate(["child"], {
       queryParams: params,
-      replaceUrl: replaceUrl,
+      replaceUrl: false,
     });
   }
 
-  applyFilterSelections(replaceUrl: boolean = false) {
+  filterClick(filter: FilterSelection<any>, selectedOption) {
+    filter.selectedOption = selectedOption;
+    this.applyFilterSelections();
+    this.updateUrl(filter.name, filter.selectedOption);
+  }
+
+  applyFilterSelections() {
     let filteredData = this.childrenList;
 
     this.filterSelections.forEach((f) => {
@@ -275,7 +209,5 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     });
 
     this.childrenDataSource.data = filteredData;
-
-    this.updateUrl(replaceUrl);
   }
 }

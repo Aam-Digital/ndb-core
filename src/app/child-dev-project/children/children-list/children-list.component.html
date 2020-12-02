@@ -87,13 +87,12 @@
   >
     <mat-button-toggle-group
       name="columnSelection"
-      [(value)]="columnGroupSelection"
       fxLayout="row wrap"
     >
       <mat-button-toggle
         *ngFor="let item of columnGroups"
         [value]="item.name"
-        (click)="displayColumnGroup(item.name)"
+        (click)="columnGroupClick(item.name)"
       >
         {{ item.name }}
       </mat-button-toggle>

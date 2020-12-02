@@ -134,6 +134,44 @@
                 {"type": "date", "title": "Last ENT Check-Up", "id": "health_lastENTCheckup"},
                 {"type": "date", "title": "Last Vitamin D", "id": "health_lastVitaminD"},
                 {"type": "date", "title": "Last De-Worming", "id": "health_lastDeworming"}
+            ],
+            "columnGroups":  {
+                "default": "School Info",
+                "mobile": "Mobile",
+                "groups": [
+                    {
+                        "name": "Basic Info",
+                        "columns": ["projectNumber", "name", "age", "gender", "schoolClass", "schoolId", "center", "status"]
+                    },
+                    {
+                        "name": "School Info",
+                        "columns": [ "projectNumber", "name", "age", "schoolClass", "schoolId", "school", "coaching", "motherTongue"]
+                    },
+                    {
+                        "name": "Status",
+                        "columns": [ "projectNumber", "name", "center", "status", "admissionDate", "has_aadhar", "has_kanyashree", "has_bankAccount", "has_rationCard", "has_BplCard"]
+                    },
+                    {
+                        "name": "Health",
+                        "columns": [ "projectNumber", "name", "center", "health_vaccinationStatus", "health_bloodGroup", "health_eyeHealthStatus", "health_lastEyeCheckup", "health_lastDentalCheckup", "health_lastENTCheckup", "health_lastVitaminD", "health_lastDeworming", "gender", "age", "dateOfBirth"]
+                    },
+                    {
+                        "name": "Mobile",
+                        "columns": ["projectNumber", "name", "age", "schoolId"]
+                    }
+                ]
+            },
+            "filter": [
+                {
+                    "id": "isActive",
+                    "type": "boolean",
+                    "true": "Currently active children",
+                    "false": "Currently inactive children",
+                    "all": "All children"
+                },
+                {
+                    "id": "center"
+                }
             ]
         }
     },
