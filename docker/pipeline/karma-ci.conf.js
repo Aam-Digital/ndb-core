@@ -17,10 +17,11 @@
 
 // Karma configuration file, see link for more information
 // https://karma-runner.github.io/0.13/config/configuration-file.html
+// This file karma configuration is used by the pipeline. It uses the chrome headless browser in no-sandbox mode
 
 module.exports = function (config) {
   config.set({
-    basePath: '',
+    basePath: '../..',
     frameworks: ['jasmine', '@angular-devkit/build-angular'],
     plugins: [
       require('karma-jasmine'),

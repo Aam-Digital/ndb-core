@@ -7,7 +7,7 @@
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "test": "ng test",
-    "test-ci": "ng test --code-coverage --karmaConfig=karma-ci.conf.js ",
+    "test-ci": "ng test --code-coverage --karmaConfig=docker/pipeline/karma-ci.conf.js ",
     "lint": "ng lint ndb-core --type-check",
     "e2e": "ng e2e",
     "compodoc": "npx compodoc -c doc/compodoc_sources/.compodocrc.json",
