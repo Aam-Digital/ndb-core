@@ -161,10 +161,11 @@
                     }
                 ]
             },
-            "filter": [
+            "filters": [
                 {
                     "id": "isActive",
                     "type": "boolean",
+                    "default": "true",
                     "true": "Currently active children",
                     "false": "Currently inactive children",
                     "all": "All children"

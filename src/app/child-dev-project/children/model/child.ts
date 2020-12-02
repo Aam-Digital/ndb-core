@@ -98,7 +98,7 @@ export class Child extends Entity {
     return age;
   }
 
-  isActive(): boolean {
+  get isActive(): boolean {
     return this.status !== "Dropout";
   }
 

@@ -28,26 +28,14 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
   listName: String = "";
   columns: any[] = [];
+  filtersConfig: any[] = [];
 
-  centerFS = new FilterSelection("center", []);
-  dropoutFS = new FilterSelection("status", [
-    {
-      key: "active",
-      label: "Current Project Children",
-      filterFun: (c: Child) => c.isActive(),
-    },
-    {
-      key: "dropout",
-      label: "Dropouts",
-      filterFun: (c: Child) => !c.isActive(),
-    },
-    { key: "", label: "All", filterFun: () => true },
-  ]);
-  filterSelections = [this.dropoutFS, this.centerFS];
+  filterSelections: FilterSelection<any>[] = [];
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   columnGroups: ColumnGroup[] = [];
+  selectedColumnGroup: string;
   defaultColumnGroup: string;
   mobileColumnGroup: string;
   columnsToDisplay = [];
@@ -73,8 +61,8 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
       this.columns = config.columns;
       this.columnGroups = config.columnGroups.groups;
       this.defaultColumnGroup = config.columnGroups.default;
-      this.displayColumnGroup(this.defaultColumnGroup);
       this.mobileColumnGroup = config.columnGroups.mobile;
+      this.filtersConfig = config.filters;
     });
     this.loadData();
     this.loadUrlParams();
@@ -154,22 +142,20 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
   private async loadData() {
     this.childrenList = await this.entityMapperService.loadType<Child>(Child);
-    const centers = this.childrenList
-      .map((c) => c.center)
-      .filter((value, index, arr) => value && arr.indexOf(value) === index);
-    this.centerFS.initOptions(centers, "center");
+    this.displayColumnGroup(this.defaultColumnGroup);
+    this.addFilterSelections();
     this.applyFilterSelections();
+  }
+
+  columnGroupClick(columnGroupName: string) {
+    this.displayColumnGroup(columnGroupName);
+    this.updateUrl("view", columnGroupName);
   }
 
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.childrenDataSource.filter = filterValue;
-  }
-
-  columnGroupClick(columnGroupName: string) {
-    this.displayColumnGroup(columnGroupName);
-    this.updateUrl("view", columnGroupName);
   }
 
   displayColumnGroup(columnGroupName: string) {
@@ -182,23 +168,53 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
       this.columnsToDisplay = this.columnGroups.find(
         (c) => c.name === columnGroupName
       ).columns;
+      this.selectedColumnGroup = columnGroupName;
     }
   }
 
   updateUrl(key: string, value: string) {
-    const params = {};
-    params[key] = value;
+    this.route.params.toPromise().then((params) => {
+      params[key] = value;
 
-    this.router.navigate(["child"], {
-      queryParams: params,
-      replaceUrl: false,
+      this.router.navigate(["child"], {
+        queryParams: params,
+        replaceUrl: false,
+      });
+    });
+  }
+
+  addFilterSelections() {
+    this.filterSelections = this.filtersConfig.map((filter) => {
+      const fs = new FilterSelection(filter.id, []);
+      if (filter.type === "boolean") {
+        fs.options = [
+          {
+            key: "true",
+            label: filter.true,
+            filterFun: (c: Child) => c[filter.id],
+          },
+          {
+            key: "false",
+            label: filter.false,
+            filterFun: (c: Child) => !c[filter.id],
+          },
+          { key: "", label: filter.all, filterFun: () => true },
+        ];
+      } else {
+        const options = [
+          ...new Set(this.childrenList.map((c) => c[filter.id])),
+        ];
+        fs.initOptions(options, filter.id);
+      }
+      fs.selectedOption = filter.default || fs.options[0].key;
+      return fs;
     });
   }
 
   filterClick(filter: FilterSelection<any>, selectedOption) {
     filter.selectedOption = selectedOption;
     this.applyFilterSelections();
-    this.updateUrl(filter.name, filter.selectedOption);
+    this.updateUrl(filter.name, selectedOption);
   }
 
   applyFilterSelections() {
