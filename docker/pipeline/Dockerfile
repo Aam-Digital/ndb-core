@@ -21,9 +21,9 @@ COPY package*.json ./
 RUN npm ci --no-progress
 
 # In the pipeline we need to install and set additional dependencies for testing and reporting
+ARG CHROME_BIN=/usr/bin/chromium-browser
 RUN if [ "$PIPELINE_RUN" = true ] ; then \
     apk --no-cache add curl chromium git &&\
-    CHROME_BIN=/usr/bin/chromium-browser &&\
     curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter &&\
     chmod +x ./cc-test-reporter &&\
     ./cc-test-reporter before-build ; fi
