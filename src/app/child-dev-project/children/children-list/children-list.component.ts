@@ -45,7 +45,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   public paginatorPageIndex: number;
   private user: User;
 
-  private ready = true;
+  ready = true;
 
   constructor(
     private router: Router,

@@ -34,63 +34,53 @@ import { SessionService } from "../../../core/session/session-service/session.se
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { User } from "app/core/user/user";
 import { of } from "rxjs";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Route, Router } from "@angular/router";
+import { Child } from "../model/child";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
   let fixture: ComponentFixture<ChildrenListComponent>;
-  const routeMock = {
-    data: of({
-      title: "Children List",
-      columns: [
-        { type: "text", title: "PN", id: "projectNumber" },
-        { type: "child-block", title: "Name", id: "name" },
-        { type: "text", title: "Age", id: "age" },
-        { type: "date", title: "DoB", id: "dateOfBirth" },
-        { type: "text", title: "Gender", id: "gender" },
-        { type: "list-class", title: "Class", id: "schoolClass" },
-        { type: "list-school", title: "School", id: "schoolId" },
-        { type: "list-attendance", title: "Attendance (School)", id: "school" },
+  const routeData = {
+    title: "Children List",
+    columns: [
+      { type: "text", title: "PN", id: "projectNumber" },
+      { type: "child-block", title: "Name", id: "name" },
+      { type: "date", title: "DoB", id: "dateOfBirth" },
+      { type: "text", title: "Gender", id: "gender" },
+      { type: "list-class", title: "Class", id: "schoolClass" },
+      { type: "list-school", title: "School", id: "schoolId" },
+      { type: "list-attendance", title: "Attendance (School)", id: "school" },
+    ],
+    columnGroups: {
+      default: "School Info",
+      mobile: "School Info",
+      groups: [
         {
-          type: "list-attendance",
-          title: "Attendance (Coaching)",
-          id: "coaching",
-        },
-        { type: "text", title: "Center", id: "center" },
-        { type: "text", title: "Status", id: "status" },
-        { type: "date", title: "Admission", id: "admissionDate" },
-        { type: "text", title: "Mother Tongue", id: "motherTongue" },
-        { type: "text", title: "Aadhar", id: "has_aadhar" },
-        { type: "text", title: "Bank Account", id: "has_bankAccount" },
-        { type: "text", title: "Kanyashree", id: "has_kanyashree" },
-        { type: "text", title: "Ration Card", id: "has_rationCard" },
-        { type: "text", title: "BPL Card", id: "has_BplCard" },
-        {
-          type: "text",
-          title: "Vaccination Status",
-          id: "health_vaccinationStatus",
-        },
-        { type: "text", title: "Blood Group", id: "health_bloodGroup" },
-        { type: "text", title: "Eye Status", id: "health_eyeHealthStatus" },
-        {
-          type: "date",
-          title: "Last Eye Check-Up",
-          id: "health_lastEyeCheckup",
+          name: "Basic Info",
+          columns: ["projectNumber", "name", "age"],
         },
         {
-          type: "date",
-          title: "Last Dental Check-Up",
-          id: "health_lastDentalCheckup",
+          name: "School Info",
+          columns: ["name", "schoolClass", "schoolId", "school"],
         },
-        {
-          type: "date",
-          title: "Last ENT Check-Up",
-          id: "health_lastENTCheckup",
-        },
-        { type: "date", title: "Last Vitamin D", id: "health_lastVitaminD" },
-        { type: "date", title: "Last De-Worming", id: "health_lastDeworming" },
       ],
-    }),
+    },
+    filters: [
+      {
+        id: "isActive",
+        type: "boolean",
+        default: "true",
+        true: "Currently active children",
+        false: "Currently inactive children",
+        all: "All children",
+      },
+      {
+        id: "center",
+      },
+    ],
+  };
+  const routeMock = {
+    data: of(routeData),
     queryParams: of({}),
   };
 
@@ -158,5 +148,87 @@ describe("ChildrenListComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should creates columns from config", (done) => {
+    component.ngOnInit();
+    setTimeout(() => {
+      expect(component.columns).toEqual(routeData.columns);
+      done();
+    });
+  });
+
+  it("should create column groups from config and set correct one", (done) => {
+    component.ngOnInit();
+    setTimeout(() => {
+      expect(component.columnGroups).toEqual(routeData.columnGroups.groups);
+      const defaultGroup = routeData.columnGroups.groups.find(
+        (g) => g.name === routeData.columnGroups.default
+      );
+      expect(component.selectedColumnGroup).toEqual(defaultGroup.name);
+      expect(component.columnsToDisplay).toEqual(defaultGroup.columns);
+      done();
+    });
+  });
+
+  it("should create filters from config and set correct ones", (done) => {
+    component.ngOnInit();
+    setTimeout(() => {
+      expect(component.filterSelections.length).toEqual(2);
+      expect(component.filterSelections[0].selectedOption).toEqual(
+        routeData.filters[0].default
+      );
+      expect(component.filterSelections[1].selectedOption).toEqual("");
+      done();
+    });
+  });
+
+  it("should set the clicked column group", (done) => {
+    component.ngOnInit();
+    setTimeout(() => {
+      component.ready = true;
+      const clickedColumnGroup = routeData.columnGroups.groups[0];
+      component.columnGroupClick(clickedColumnGroup.name);
+      expect(component.selectedColumnGroup).toEqual(clickedColumnGroup.name);
+      expect(component.columnsToDisplay).toEqual(clickedColumnGroup.columns);
+      done();
+    });
+  });
+
+  it("should apply the clicked filter", (done) => {
+    component.ngOnInit();
+    setTimeout(() => {
+      const dropoutFs = component.filterSelections[0];
+      const clickedOption = routeData.filters[0].false;
+      component.filterClick(dropoutFs, clickedOption);
+      expect(component.filterSelections[0].selectedOption).toEqual(
+        clickedOption
+      );
+      component.childrenDataSource.data.forEach((child: Child) => {
+        expect(child.isActive).toBeFalse();
+      });
+      done();
+    });
+  });
+
+  it("should navigate to the correct url params when clicking  a filter", (done) => {
+    component.ngOnInit();
+    setTimeout(() => {
+      const router = fixture.debugElement.injector.get(Router);
+      spyOn(router, "navigate");
+      const dropoutFs = component.filterSelections[0];
+      const centerFs = component.filterSelections[1];
+      const clickedOption = routeData.filters[0].false;
+      component.filterClick(dropoutFs, clickedOption);
+      const expectedParams = {};
+      expectedParams[dropoutFs.name] = clickedOption;
+      expectedParams[centerFs.name] = "";
+      expectedParams["view"] = routeData.columnGroups.default;
+      expect(router.navigate).toHaveBeenCalledWith(["child"], {
+        queryParams: expectedParams,
+        replaceUrl: false,
+      });
+      done();
+    });
   });
 });
