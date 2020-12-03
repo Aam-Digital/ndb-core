@@ -64,8 +64,12 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
       this.mobileColumnGroup = config.columnGroups.mobile;
       this.filtersConfig = config.filters;
     });
-    this.loadData();
-    this.loadUrlParams();
+    this.loadData().then(() => {
+      this.displayColumnGroup(this.defaultColumnGroup);
+      this.addFilterSelections();
+      this.applyFilterSelections();
+      this.loadUrlParams();
+    });
     this.user = this.sessionService.getCurrentUser();
     this.paginatorPageSize = this.user.paginatorSettingsPageSize.childrenList;
     this.paginatorPageIndex = this.user.paginatorSettingsPageIndex.childrenList;
@@ -142,14 +146,11 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
 
   private async loadData() {
     this.childrenList = await this.entityMapperService.loadType<Child>(Child);
-    this.displayColumnGroup(this.defaultColumnGroup);
-    this.addFilterSelections();
-    this.applyFilterSelections();
   }
 
   columnGroupClick(columnGroupName: string) {
     this.displayColumnGroup(columnGroupName);
-    this.updateUrl("view", columnGroupName);
+    this.updateUrl();
   }
 
   applyFilter(filterValue: string) {
@@ -158,7 +159,7 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     this.childrenDataSource.filter = filterValue;
   }
 
-  displayColumnGroup(columnGroupName: string) {
+  private displayColumnGroup(columnGroupName: string) {
     // When components, that are used in the list (app-list-attendance), also listen to the mediaObserver, a new
     // mediaChange is created once this used component is displayed (through column groups change). This may
     // re-trigger the settings for small screens. Therefore, we only allow a change ever 0.5 seconds to prevent this.
@@ -172,18 +173,21 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     }
   }
 
-  updateUrl(key: string, value: string) {
-    this.route.params.toPromise().then((params) => {
-      params[key] = value;
+  private updateUrl() {
+    const params = {};
+    this.filterSelections.forEach((f) => {
+      params[f.name] = f.selectedOption;
+    });
 
-      this.router.navigate(["child"], {
-        queryParams: params,
-        replaceUrl: false,
-      });
+    params["view"] = this.selectedColumnGroup;
+
+    this.router.navigate(["child"], {
+      queryParams: params,
+      replaceUrl: false,
     });
   }
 
-  addFilterSelections() {
+  private addFilterSelections() {
     this.filterSelections = this.filtersConfig.map((filter) => {
       const fs = new FilterSelection(filter.id, []);
       if (filter.type === "boolean") {
@@ -214,10 +218,10 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
   filterClick(filter: FilterSelection<any>, selectedOption) {
     filter.selectedOption = selectedOption;
     this.applyFilterSelections();
-    this.updateUrl(filter.name, selectedOption);
+    this.updateUrl();
   }
 
-  applyFilterSelections() {
+  private applyFilterSelections() {
     let filteredData = this.childrenList;
 
     this.filterSelections.forEach((f) => {
