@@ -1,15 +1,22 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { AttendanceMonth } from "../../../attendance/model/attendance-month";
 import { ChildrenService } from "../../children.service";
 import { Child } from "../../model/child";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
+import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 
 @Component({
   selector: "app-list-attendance",
-  templateUrl: "./list-attendance.component.html",
-  styleUrls: ["./list-attendance.component.scss"],
+  template: ` <app-attendance-block
+    *ngFor="
+      let att of attendanceList
+        | filterBy: { institution: filterBy }
+        | slice: 0:maxAttendanceBlocks
+    "
+    [attendanceData]="att"
+  ></app-attendance-block>`,
 })
-export class ListAttendanceComponent implements OnChanges {
+export class ListAttendanceComponent implements OnInitDynamicComponent {
   attendanceList: AttendanceMonth[] = [];
   maxAttendanceBlocks: number = 3;
 
@@ -43,8 +50,10 @@ export class ListAttendanceComponent implements OnChanges {
     });
   }
 
-  ngOnChanges(change: SimpleChanges): void {
-    if (change.hasOwnProperty("child")) {
+  onInitFromDynamicConfig(config: any) {
+    this.filterBy = config.id;
+    if (config.hasOwnProperty("entity")) {
+      this.child = config.entity;
       this.childrenService
         .getAttendancesOfChild(this.child.getId())
         .subscribe((result) => this.prepareAttendanceData(result));

@@ -29,7 +29,7 @@ describe("AttendanceMonth", () => {
     entitySchemaService = new EntitySchemaService();
   }));
 
-  it("has correct _id and entityId and type", function () {
+  it("has correct _id and entity and type", function () {
     const id = "test1";
     const entity = new AttendanceMonth(id);
 

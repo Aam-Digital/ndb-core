@@ -65,7 +65,6 @@ import { Angulartics2Piwik } from "angulartics2/piwik";
 import { ConfigService } from "./core/config/config.service";
 import { ViewModule } from "./core/view/view.module";
 import { DashboardModule } from "./core/dashboard/dashboard.module";
-import { EnitityListComponent } from "./core/enitity-list/enitity-list.component";
 
 export function configFactory(configService: ConfigService) {
   return (): Promise<any> => configService.loadConfig();
@@ -77,7 +76,7 @@ export function configFactory(configService: ConfigService) {
  * Real functionality should be implemented in separate modules and imported here rather than being part of this module.
  */
 @NgModule({
-  declarations: [AppComponent, EnitityListComponent],
+  declarations: [AppComponent],
   imports: [
     ServiceWorkerModule.register("/ngsw-worker.js", {
       enabled: environment.production,

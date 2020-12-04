@@ -83,6 +83,8 @@ import { GroupedChildAttendanceComponent } from "./child-details/grouped-child-a
 import { ViewModule } from "../../core/view/view.module";
 import { FormComponent } from "./child-details/form/form.component";
 import { ListAttendanceComponent } from "./children-list/list-attendance/list-attendance.component";
+import { EntityListModule } from "../../core/entity-list/entity-list.module";
+import { SchoolBlockWrapperComponent } from "./children-list/school-block-wrapper/school-block-wrapper.component";
 
 @NgModule({
   imports: [
@@ -123,6 +125,7 @@ import { ListAttendanceComponent } from "./children-list/list-attendance/list-at
     FormDialogModule,
     Angulartics2Module,
     ViewModule,
+    EntityListModule,
   ],
   declarations: [
     AttendanceBlockComponent,
@@ -154,6 +157,7 @@ import { ListAttendanceComponent } from "./children-list/list-attendance/list-at
     GroupedChildAttendanceComponent,
     FormComponent,
     ListAttendanceComponent,
+    SchoolBlockWrapperComponent,
   ],
   providers: [
     ChildrenService,
@@ -176,6 +180,7 @@ import { ListAttendanceComponent } from "./children-list/list-attendance/list-at
     NoRecentNotesDashboardComponent,
     RecentNotesDashboardComponent,
     AttendanceDaysComponent,
+    ListAttendanceComponent,
   ],
 })
 export class ChildrenModule {}

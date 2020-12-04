@@ -12,6 +12,11 @@ import { NotesOfChildComponent } from "../../child-dev-project/notes/notes-of-ch
 import { HealthCheckupComponent } from "../../child-dev-project/health-checkup/health-checkup-component/health-checkup.component";
 import { EducationalMaterialComponent } from "../../child-dev-project/educational-material/educational-material-component/educational-material.component";
 import { FormComponent } from "../../child-dev-project/children/child-details/form/form.component";
+import { DisplayDateComponent } from "../entity-list/display-date/display-date.component";
+import { DisplayTextComponent } from "../entity-list/display-text/display-text.component";
+import { ChildBlockComponent } from "../../child-dev-project/children/child-block/child-block.component";
+import { ListAttendanceComponent } from "../../child-dev-project/children/children-list/list-attendance/list-attendance.component";
+import { SchoolBlockWrapperComponent } from "../../child-dev-project/children/children-list/school-block-wrapper/school-block-wrapper.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -28,4 +33,9 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["HealthCheckup", HealthCheckupComponent],
   ["EducationalMaterial", EducationalMaterialComponent],
   ["Form", FormComponent],
+  ["DisplayDate", DisplayDateComponent],
+  ["DisplayText", DisplayTextComponent],
+  ["ChildBlock", ChildBlockComponent],
+  ["ListAttendance", ListAttendanceComponent],
+  ["SchoolBlockWrapper", SchoolBlockWrapperComponent],
 ]);

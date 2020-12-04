@@ -6,13 +6,14 @@ import { AlertService } from "../../../../core/alerts/alert.service";
 import { ChildPhotoService } from "../../child-photo-service/child-photo.service";
 import { Router } from "@angular/router";
 import { SessionService } from "../../../../core/session/session-service/session.service";
+import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 
 @Component({
   selector: "app-form",
   templateUrl: "./form.component.html",
   styleUrls: ["./form.component.scss"],
 })
-export class FormComponent implements OnChanges {
+export class FormComponent implements OnInitDynamicComponent, OnChanges {
   @Input() child: Child;
 
   creatingNew = false;

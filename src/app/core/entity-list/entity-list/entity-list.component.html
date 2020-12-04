@@ -1,0 +1,162 @@
+<h1>{{ listName }}</h1>
+
+<mat-expansion-panel
+        expanded="true"
+        fxLayout="column wrap"
+        fxLayoutGap="10px"
+        class="filter-panel mat-elevation-z2"
+>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none end">
+        <!-- text search -->
+        <div fxFlex="50">
+            <mat-form-field style="width: 100%;">
+                <input
+                        matInput
+                        placeholder="Filter"
+                        (ngModelChange)="applyFilter($event)"
+                        [(ngModel)]="filterString"
+                />
+                <button
+                        mat-icon-button
+                        *ngIf="filterString"
+                        matSuffix
+                        aria-label="Clear"
+                        (click)="filterString = ''; applyFilter('')"
+                >
+                    <mat-icon fontIcon="fa-times"></mat-icon>
+                </button>
+            </mat-form-field>
+        </div>
+        <!-- number of table entries -->
+        <div fxFlex="25" fxHide.xs="true" class="align-form-field">
+            (Showing {{ entityDataSource.filteredData.length }} entries)
+        </div>
+        <!-- add new button -->
+        <div fxFlex="25" class="align-form-field">
+            <button
+                    mat-stroked-button
+                    color="accent"
+                    [routerLink]="['/entity', 'new']"
+                    angulartics2On="click"
+                    angularticsCategory="UserAction"
+                    angularticsAction="children_list_add_new"
+            >
+                <mat-icon
+                        class="button-icon"
+                        aria-label="add child"
+                        fontIcon="fa-plus-circle"
+                ></mat-icon>
+                <span fxHide.lt-md="true">
+          Add New
+        </span>
+            </button>
+            <app-export-data
+                    [data]="entityList"
+                    format="csv"
+                    filename="ChildrenList"
+                    angulartics2On="click"
+                    angularticsCategory="UserAction"
+                    angularticsAction="children_list_csv_export"
+            >
+                <mat-icon
+                        class="button-icon"
+                        aria-label="download csv"
+                        fontIcon="fa-download"
+                ></mat-icon>
+                <span fxHide.lt-md="true">
+          Download CSV
+        </span>
+            </app-export-data>
+        </div>
+    </div>
+    <div
+            fxLayout="row wrap"
+            fxLayoutGap="10px"
+            class="filter-button"
+            fxHide.lt-sm
+    >
+        <mat-button-toggle-group
+                name="columnSelection"
+                [(value)]="selectedColumnGroup"
+                fxLayout="row wrap"
+        >
+            <mat-button-toggle
+                    *ngFor="let item of columnGroups"
+                    [value]="item.name"
+                    (click)="columnGroupClick(item.name)"
+            >
+                {{ item.name }}
+            </mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <mat-button-toggle-group
+                *ngFor="let filterSelection of filterSelections"
+                [name]="filterSelection.name"
+                [value]="filterSelection.selectedOption"
+        >
+            <mat-button-toggle
+                    *ngFor="let option of filterSelection.options"
+                    [value]="option.key"
+                    (click)="filterClick(filterSelection, option.key)"
+            >
+                {{ option.label }}
+            </mat-button-toggle>
+        </mat-button-toggle-group>
+    </div>
+    <div fxLayout="row wrap" fxHide.gt-xs>
+        <mat-form-field
+                *ngFor="let filterSelection of filterSelections"
+                style="padding-right: 1%;"
+        >
+            <mat-label>{{ filterSelection.name }}</mat-label>
+            <mat-select
+                    [id]="filterSelection.name"
+                    [value]="filterSelection.selectedOption"
+                    placeholder="filterSelection.name"
+            >
+                <mat-option
+                        *ngFor="let option of filterSelection.options"
+                        [value]="option.key"
+                        (click)="filterClick(filterSelection, option.key)"
+                >
+                    {{ option.label }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+</mat-expansion-panel>
+
+<!--<mat-divider></mat-divider>-->
+
+<div class="mat-elevation-z2 table-list">
+    <table mat-table [dataSource]="entityDataSource" matSort style="width: 100%">
+        <ng-container *ngFor="let col of columns" [matColumnDef]="col.id">
+            <div *ngIf="col.noSorting">
+                <th mat-header-cell *matHeaderCellDef>{{col.title}}</th>
+            </div>
+            <div *ngIf="!col.noSorting">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{col.title}}</th>
+            </div>
+            <td *matCellDef="let entity">
+                <ng-template
+                        [appDynamicComponent]="{component: col.component, config: {id: col.id, entity: entity}} "
+                ></ng-template>
+            </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+        <tr
+                mat-row
+                *matRowDef="let child; columns: columnsToDisplay"
+                [routerLink]="['/child', child.getId()]"
+                style="cursor: pointer;"
+                class="table-list-item"
+        ></tr>
+    </table>
+    <mat-paginator
+            (page)="onPaginateChange($event)"
+            [pageSize]="paginatorPageSize"
+            [pageIndex]="paginatorPageIndex"
+            [pageSizeOptions]="[3, 10, 20, 50]"
+            [showFirstLastButtons]="true"
+    ></mat-paginator>
+</div>
