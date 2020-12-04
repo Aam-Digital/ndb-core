@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { AttendanceStatus } from "../../model/attendance-day";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { Child } from "../../../children/model/child";
 import { AttendanceMonth } from "../../model/attendance-month";
@@ -7,6 +6,7 @@ import { ChildrenService } from "../../../children/children.service";
 import { RollCallRecord } from "./roll-call-record";
 import { animate, style, transition, trigger } from "@angular/animations";
 import { AppConfig } from "../../../../core/app-config/app-config";
+import { AttendanceStatus } from "../../model/attendance-status";
 
 /**
  * Displays the given children one by one to the user to mark the attendance status for the given day and type.

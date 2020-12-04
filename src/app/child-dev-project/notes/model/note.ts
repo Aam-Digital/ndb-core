@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { MeetingNoteAttendance } from "../meeting-note-attendance";
+import { MeetingNoteAttendance } from "./meeting-note-attendance";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../core/entity/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
@@ -26,7 +26,10 @@ import { InteractionType } from "../note-config-loader/note-config.interface";
 export class Note extends Entity {
   /** IDs of Child entities linked with this note */
   @DatabaseField() children: string[] = [];
-  /** An array of triplets containing information about the child and it's attendance */
+  /**
+   * @deprecated use EventNote entity
+   * An array of triplets containing information about the child and it's attendance
+   */
   @DatabaseField() attendances: MeetingNoteAttendance[] = [];
   @DatabaseField() date: Date;
   @DatabaseField() subject: string = "";
@@ -76,6 +79,8 @@ export class Note extends Entity {
   }
 
   /**
+   * @deprecated use EventNote entity
+   *
    * returns the children that were either present or absent
    * @param presence true to get the children that were present, false to get the children that were absent
    */
@@ -86,6 +91,8 @@ export class Note extends Entity {
   }
 
   /**
+   * @deprecated use EventNote entity
+   *
    * whether or not a specific child was present or not.
    * This does not check whether or not this note is a meeting and will not return
    * a sensible value, if this child couldn't be found
@@ -132,6 +139,8 @@ export class Note extends Entity {
   }
 
   /**
+   * @deprecated use EventNote entity
+   *
    * Toggles for a given child it's presence.
    * If the child was absent, the presence-field will be true for that child.
    * If the child was present, the presence-field will be false for that child

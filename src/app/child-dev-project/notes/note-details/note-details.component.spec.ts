@@ -1,6 +1,6 @@
 import { NoteDetailsComponent } from "./note-details.component";
 import { Note } from "../model/note";
-import { MeetingNoteAttendance } from "../meeting-note-attendance";
+import { MeetingNoteAttendance } from "../model/meeting-note-attendance";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { of } from "rxjs";
 import { MatNativeDateModule } from "@angular/material/core";
