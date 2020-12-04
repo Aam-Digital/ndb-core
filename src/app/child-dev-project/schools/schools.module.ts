@@ -27,6 +27,7 @@ import { RouterModule } from "@angular/router";
 import { SchoolsService } from "./schools.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Angulartics2Module } from "angulartics2";
+import { EntityListModule } from "../../core/entity-list/entity-list.module";
 
 @NgModule({
   imports: [
@@ -68,6 +69,7 @@ import { Angulartics2Module } from "angulartics2";
     ReactiveFormsModule,
     MatTooltipModule,
     Angulartics2Module,
+    EntityListModule,
   ],
   declarations: [
     SchoolBlockComponent,

@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Child } from "../model/child";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { ChildrenService } from "../children.service";
 
@@ -10,6 +10,8 @@ import { ChildrenService } from "../children.service";
   template: ` <app-entity-list
     [entityList]="childrenList"
     [listConfig]="listConfig"
+    (elementClick)="routeTo($event.getId())"
+    (addNewClick)="routeTo('new')"
   ></app-entity-list>`,
 })
 export class ChildrenListComponent implements OnInit {
@@ -18,15 +20,18 @@ export class ChildrenListComponent implements OnInit {
 
   constructor(
     private childrenService: ChildrenService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit() {
-    this.route.data.subscribe((config) => {
-      this.listConfig = config;
-    });
-    this.childrenService.getChildren().subscribe((children) => {
-      this.childrenList = children;
-    });
+    this.route.data.subscribe((config) => (this.listConfig = config));
+    this.childrenService
+      .getChildren()
+      .subscribe((children) => (this.childrenList = children));
+  }
+
+  routeTo(route: string) {
+    this.router.navigate([this.route.url, route]);
   }
 }

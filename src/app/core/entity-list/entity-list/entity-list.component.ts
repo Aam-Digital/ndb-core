@@ -33,6 +33,7 @@ export class EntityListComponent implements OnChanges, AfterViewInit {
   @Input() entityList: Entity[] = [];
   @Input() listConfig: any = {};
   @Output() elementClick = new EventEmitter<Entity>();
+  @Output() addNewClick = new EventEmitter();
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -124,7 +125,7 @@ export class EntityListComponent implements OnChanges, AfterViewInit {
 
   columnGroupClick(columnGroupName: string) {
     this.displayColumnGroup(columnGroupName);
-    this.updateUrl();
+    this.updateUrl("view", columnGroupName);
   }
 
   applyFilter(filterValue: string) {
@@ -136,7 +137,7 @@ export class EntityListComponent implements OnChanges, AfterViewInit {
   filterClick(filter: FilterSelection<any>, selectedOption) {
     filter.selectedOption = selectedOption;
     this.applyFilterSelections();
-    this.updateUrl();
+    this.updateUrl(filter.name, selectedOption);
   }
 
   private updateUserPaginationSettings() {
@@ -145,6 +146,7 @@ export class EntityListComponent implements OnChanges, AfterViewInit {
       this.paginatorPageSize !==
       this.user.paginatorSettingsPageSize.childrenList;
 
+    // TODO extend this to save different settings for different usages (maybe dependent on the title)
     this.user.paginatorSettingsPageIndex.childrenList = this.paginatorPageIndex;
     this.user.paginatorSettingsPageSize.childrenList = this.paginatorPageSize;
 
@@ -169,17 +171,13 @@ export class EntityListComponent implements OnChanges, AfterViewInit {
     });
   }
 
-  private updateUrl() {
+  private updateUrl(key: string, value: string) {
     const params = {};
-    this.filterSelections.forEach((f) => {
-      params[f.name] = f.selectedOption;
-    });
-
-    params["view"] = this.selectedColumnGroup;
-
-    this.router.navigate(["child"], {
+    params[key] = value;
+    this.router.navigate([], {
+      relativeTo: this.route,
       queryParams: params,
-      replaceUrl: false,
+      queryParamsHandling: "merge",
     });
   }
 

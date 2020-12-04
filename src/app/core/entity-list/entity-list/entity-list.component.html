@@ -36,14 +36,14 @@
             <button
                     mat-stroked-button
                     color="accent"
-                    [routerLink]="['/entity', 'new']"
+                    (click)="addNewClick.emit()"
                     angulartics2On="click"
                     angularticsCategory="UserAction"
-                    angularticsAction="children_list_add_new"
+                    [angularticsAction]="listName.toLowerCase().replace(' ', '_') + '_add_new'"
             >
                 <mat-icon
                         class="button-icon"
-                        aria-label="add child"
+                        aria-label="add element"
                         fontIcon="fa-plus-circle"
                 ></mat-icon>
                 <span fxHide.lt-md="true">
@@ -53,10 +53,10 @@
             <app-export-data
                     [data]="entityList"
                     format="csv"
-                    filename="ChildrenList"
+                    [filename]="listName.replace(' ','')"
                     angulartics2On="click"
                     angularticsCategory="UserAction"
-                    angularticsAction="children_list_csv_export"
+                    [angularticsAction]="listName.toLowerCase().replace(' ', '_') + '_csv_export'"
             >
                 <mat-icon
                         class="button-icon"
@@ -146,8 +146,8 @@
         <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
         <tr
                 mat-row
-                *matRowDef="let child; columns: columnsToDisplay"
-                [routerLink]="['/child', child.getId()]"
+                *matRowDef="let entity; columns: columnsToDisplay"
+                (click)="elementClick.emit(entity)"
                 style="cursor: pointer;"
                 class="table-list-item"
         ></tr>
