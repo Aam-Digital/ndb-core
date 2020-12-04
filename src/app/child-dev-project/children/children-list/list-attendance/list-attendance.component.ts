@@ -51,7 +51,7 @@ export class ListAttendanceComponent implements OnChanges {
     }
   }
 
-  prepareAttendanceData(loadedEntities: AttendanceMonth[]) {
+  private prepareAttendanceData(loadedEntities: AttendanceMonth[]) {
     this.attendanceList = loadedEntities.sort((a, b) => {
       // descending by date
       if (a.month > b.month) {

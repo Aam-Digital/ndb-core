@@ -34,7 +34,7 @@ import { SessionService } from "../../../core/session/session-service/session.se
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { User } from "app/core/user/user";
 import { of } from "rxjs";
-import { ActivatedRoute, Route, Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { Child } from "../model/child";
 
 describe("ChildrenListComponent", () => {
@@ -230,5 +230,10 @@ describe("ChildrenListComponent", () => {
       });
       done();
     });
+  });
+
+  it("should creat the correct filter string", () => {
+    component.applyFilter("test String    ");
+    expect(component.childrenDataSource.filter).toEqual("test string");
   });
 });
