@@ -10,6 +10,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { User } from "../../../core/user/user";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { ChildrenService } from "../children.service";
 
 export interface ColumnGroup {
   name: string;
@@ -52,7 +53,8 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private media: MediaObserver,
     private sessionService: SessionService,
-    private entityMapperService: EntityMapperService
+    private entityMapperService: EntityMapperService,
+    private childrenService: ChildrenService
   ) {}
 
   ngOnInit() {
@@ -64,7 +66,8 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
       this.mobileColumnGroup = config.columnGroups.mobile;
       this.filtersConfig = config.filters;
     });
-    this.loadData().then(() => {
+    this.childrenService.getChildren().subscribe((children) => {
+      this.childrenList = children;
       this.displayColumnGroup(this.defaultColumnGroup);
       this.addFilterSelections();
       this.applyFilterSelections();
@@ -142,10 +145,6 @@ export class ChildrenListComponent implements OnInit, AfterViewInit {
     if (hasChangesToBeSaved) {
       this.entityMapperService.save<User>(this.user);
     }
-  }
-
-  private async loadData() {
-    this.childrenList = await this.entityMapperService.loadType<Child>(Child);
   }
 
   columnGroupClick(columnGroupName: string) {

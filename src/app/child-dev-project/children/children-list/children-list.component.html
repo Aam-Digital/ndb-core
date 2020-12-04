@@ -152,11 +152,10 @@
                 [entity]="child"
         ></app-child-block>
 
-        <app-latest-csr
-                *ngIf="col.type === 'latest-csr'"
-                [child]="child"
-                [id]="col.id"
-        ></app-latest-csr>
+        <app-school-block
+                *ngIf="col.type === 'school-block'"
+                [entityId]="child[col.id]"
+        ></app-school-block>
 
         <app-list-attendance
                 *ngIf="col.type === 'list-attendance'"
