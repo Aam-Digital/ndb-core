@@ -5,11 +5,12 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { AttendanceDay, AttendanceStatus } from "../model/attendance-day";
+import { AttendanceDay } from "../model/attendance-day";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { AttendanceMonth } from "../model/attendance-month";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { MatSelect } from "@angular/material/select";
+import { AttendanceStatus } from "../model/attendance-status";
 
 @Component({
   selector: "app-attendance-days",

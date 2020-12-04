@@ -1,8 +1,9 @@
 import { TestBed } from "@angular/core/testing";
 import { AttendanceMonthConflictResolutionStrategy } from "./attendance-month-conflict-resolution-strategy";
 import { AttendanceMonth } from "./model/attendance-month";
-import { AttendanceDay, AttendanceStatus } from "./model/attendance-day";
+import { AttendanceDay } from "./model/attendance-day";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
+import { AttendanceStatus } from "./model/attendance-status";
 
 describe("AttendanceMonthConflictResolutionStrategy", () => {
   let service: AttendanceMonthConflictResolutionStrategy;

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { MeetingNoteAttendance } from "../../meeting-note-attendance";
+import { MeetingNoteAttendance } from "../../model/meeting-note-attendance";
 
 @Component({
   selector: "app-child-meeting-note-attendance",

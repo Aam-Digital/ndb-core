@@ -7,9 +7,9 @@ import { ChildrenService } from "../../../children/children.service";
 import { Child } from "../../../children/model/child";
 import { of } from "rxjs";
 import { AttendanceMonth } from "../../model/attendance-month";
-import { AttendanceStatus } from "../../model/attendance-day";
 import { AppConfig } from "../../../../core/app-config/app-config";
 import { RouterTestingModule } from "@angular/router/testing";
+import { AttendanceStatus } from "../../model/attendance-status";
 
 describe("RollCallComponent", () => {
   let component: RollCallComponent;
