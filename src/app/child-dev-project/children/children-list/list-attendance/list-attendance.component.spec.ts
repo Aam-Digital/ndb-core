@@ -12,7 +12,6 @@ import { FilterPipeModule } from "ngx-filter-pipe";
 import { Child } from "../../model/child";
 import { AttendanceMonth } from "../../../attendance/model/attendance-month";
 import { of } from "rxjs";
-import { SimpleChange } from "@angular/core";
 
 describe("ListAttendanceComponent", () => {
   let component: ListAttendanceComponent;
@@ -59,9 +58,8 @@ describe("ListAttendanceComponent", () => {
     spyOn(childrenService, "getAttendancesOfChild").and.returnValue(
       of([month1, month2, month3])
     );
-    component.child = testChild;
-    component.ngOnChanges({
-      child: new SimpleChange(undefined, testChild, false),
+    component.onInitFromDynamicConfig({
+      entity: testChild,
     });
     expect(childrenService.getAttendancesOfChild).toHaveBeenCalledWith(
       testChild.getId()

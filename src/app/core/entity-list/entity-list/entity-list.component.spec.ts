@@ -1,6 +1,5 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { EntityListComponent } from "./entity-list.component";
-import { of } from "rxjs";
 import { User } from "../../user/user";
 import { ExportDataComponent } from "../../admin/export-data/export-data.component";
 import { CommonModule } from "@angular/common";
@@ -19,28 +18,30 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule } from "@angular/forms";
 import { FilterPipeModule } from "ngx-filter-pipe";
-import { EntitySubrecordModule } from "../../entity-subrecord/entity-subrecord.module";
 import { RouterTestingModule } from "@angular/router/testing";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { SessionService } from "../../session/session-service/session.service";
 import { Database } from "../../database/database";
 import { MockDatabase } from "../../database/mock-database";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Router } from "@angular/router";
+import { Child } from "../../../child-dev-project/children/model/child";
+import { SimpleChange } from "@angular/core";
+import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent;
   let fixture: ComponentFixture<EntityListComponent>;
-  const routeData = {
+  const testConfig = {
     title: "Children List",
     columns: [
-      { type: "text", title: "PN", id: "projectNumber" },
-      { type: "child-block", title: "Name", id: "name" },
-      { type: "date", title: "DoB", id: "dateOfBirth" },
-      { type: "text", title: "Gender", id: "gender" },
-      { type: "latest-csr", title: "Class", id: "schoolClass" },
-      { type: "latest-csr", title: "School", id: "schoolId" },
-      { type: "list-attendance", title: "Attendance (School)", id: "school" },
+      { type: "DisplayText", title: "PN", id: "projectNumber" },
+      { type: "ChildBlock", title: "Name", id: "name" },
+      { type: "DisplayDate", title: "DoB", id: "dateOfBirth" },
+      { type: "DisplayText", title: "Gender", id: "gender" },
+      { type: "DisplayText", title: "Class", id: "schoolClass" },
+      { type: "SchoolBlockWrapper", title: "School", id: "schoolId" },
+      { type: "ListAttendance", title: "Attendance (School)", id: "school" },
     ],
     columnGroups: {
       default: "School Info",
@@ -70,24 +71,14 @@ describe("EntityListComponent", () => {
       },
     ],
   };
-  const routeMock = {
-    data: of(routeData),
-    queryParams: of({}),
-  };
+
+  const routerMock = jasmine.createSpyObj("routerMock", ["navigate"]);
 
   beforeEach(async(() => {
     const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
     mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
     TestBed.configureTestingModule({
-      declarations: [
-        ChildBlockComponent,
-        SchoolBlockComponent,
-        AttendanceBlockComponent,
-        AttendanceDaysComponent,
-        AttendanceDayBlockComponent,
-        ExportDataComponent,
-      ],
-
+      declarations: [EntityListComponent, ExportDataComponent],
       imports: [
         CommonModule,
         MatFormFieldModule,
@@ -105,13 +96,11 @@ describe("EntityListComponent", () => {
         NoopAnimationsModule,
         FormsModule,
         FilterPipeModule,
-        EntitySubrecordModule,
         RouterTestingModule.withRoutes([
           { path: "child", component: ChildrenListComponent },
         ]),
       ],
       providers: [
-        ChildrenService,
         EntityMapperService,
         EntitySchemaService,
         {
@@ -119,11 +108,6 @@ describe("EntityListComponent", () => {
           useValue: mockSessionService,
         },
         { provide: Database, useClass: MockDatabase },
-        {
-          provide: ChildPhotoService,
-          useValue: jasmine.createSpyObj(["getImage"]),
-        },
-        { provide: ActivatedRoute, useValue: routeMock },
       ],
     }).compileComponents();
   }));
@@ -131,8 +115,11 @@ describe("EntityListComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EntityListComponent);
     component = fixture.componentInstance;
-    const router = fixture.debugElement.injector.get(Router);
-    fixture.ngZone.run(() => router.initialNavigation());
+    component.listConfig = testConfig;
+    component.ngOnChanges({
+      entityList: new SimpleChange(null, component.entityList, false),
+      listConfig: new SimpleChange(null, component.listConfig, false),
+    });
     fixture.detectChanges();
   });
 
@@ -140,90 +127,87 @@ describe("EntityListComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should creates columns from config", (done) => {
-    component.ngOnInit();
-    setTimeout(() => {
-      expect(component.columns).toEqual(routeData.columns);
-      done();
-    });
+  it("should creates columns from config", () => {
+    expect(component.columns).toEqual(testConfig.columns);
   });
 
-  it("should create column groups from config and set correct one", (done) => {
-    component.ngOnInit();
-    setTimeout(() => {
-      expect(component.columnGroups).toEqual(routeData.columnGroups.groups);
-      const defaultGroup = routeData.columnGroups.groups.find(
-        (g) => g.name === routeData.columnGroups.default
-      );
-      expect(component.selectedColumnGroup).toEqual(defaultGroup.name);
-      expect(component.columnsToDisplay).toEqual(defaultGroup.columns);
-      done();
-    });
+  it("should create column groups from config and set correct one", () => {
+    expect(component.columnGroups).toEqual(testConfig.columnGroups.groups);
+    const defaultGroup = testConfig.columnGroups.groups.find(
+      (g) => g.name === testConfig.columnGroups.default
+    );
+    expect(component.selectedColumnGroup).toEqual(defaultGroup.name);
+    expect(component.columnsToDisplay).toEqual(defaultGroup.columns);
   });
 
-  it("should create filters from config and set correct ones", (done) => {
-    component.ngOnInit();
-    setTimeout(() => {
-      expect(component.filterSelections.length).toEqual(2);
-      expect(component.filterSelections[0].selectedOption).toEqual(
-        routeData.filters[0].default
-      );
-      expect(component.filterSelections[1].selectedOption).toEqual("");
-      done();
-    });
+  it("should create filters from config and set correct ones", () => {
+    expect(component.filterSelections.length).toEqual(2);
+    expect(component.filterSelections[0].selectedOption).toEqual(
+      testConfig.filters[0].default
+    );
+    expect(component.filterSelections[1].selectedOption).toEqual("");
   });
 
-  it("should set the clicked column group", (done) => {
-    component.ngOnInit();
-    setTimeout(() => {
-      component.ready = true;
-      const clickedColumnGroup = routeData.columnGroups.groups[0];
-      component.columnGroupClick(clickedColumnGroup.name);
-      expect(component.selectedColumnGroup).toEqual(clickedColumnGroup.name);
-      expect(component.columnsToDisplay).toEqual(clickedColumnGroup.columns);
-      done();
-    });
+  it("should set the clicked column group", () => {
+    component.ready = true;
+    const clickedColumnGroup = testConfig.columnGroups.groups[0];
+    component.columnGroupClick(clickedColumnGroup.name);
+    expect(component.selectedColumnGroup).toEqual(clickedColumnGroup.name);
+    expect(component.columnsToDisplay).toEqual(clickedColumnGroup.columns);
   });
 
   it("should apply the clicked filter", (done) => {
-    component.ngOnInit();
+    const clickedOption = "false";
+    const child1 = new Child("dropoutId");
+    child1.status = "Dropout";
+    const child2 = new Child("activeId");
+    component.entityList = [child1, child2];
+    component.ngOnChanges({
+      entityList: new SimpleChange(false, component.entityList, false),
+    });
     setTimeout(() => {
-      const dropoutFs = component.filterSelections[0];
-      const clickedOption = routeData.filters[0].false;
-      component.filterClick(dropoutFs, clickedOption);
+      const activeFs = component.filterSelections[0];
+      component.filterClick(activeFs, clickedOption);
       expect(component.filterSelections[0].selectedOption).toEqual(
         clickedOption
       );
-      component.childrenDataSource.data.forEach((child: Child) => {
-        expect(child.isActive).toBeFalse();
-      });
+      expect(component.entityList.length).toEqual(2);
+      expect(component.entityDataSource.data.length).toEqual(1);
+      expect(component.entityDataSource.data[0]).toEqual(child1);
       done();
     });
   });
 
-  it("should navigate to the correct url params when clicking  a filter", (done) => {
-    component.ngOnInit();
+  it("should navigate to the correct url params when clicking  a filter", () => {
+    const router = fixture.debugElement.injector.get(Router);
+    spyOn(router, "navigate");
+    const dropoutFs = component.filterSelections[0];
+    const centerFs = component.filterSelections[1];
+    const clickedOption = testConfig.filters[0].false;
+    component.filterClick(dropoutFs, clickedOption);
+    const expectedParams = {};
+    expectedParams[dropoutFs.name] = clickedOption;
+    expectedParams[centerFs.name] = "";
+    expectedParams["view"] = testConfig.columnGroups.default;
+    expect(router.navigate).toHaveBeenCalledWith(["child"], {
+      queryParams: expectedParams,
+      replaceUrl: false,
+    });
+  });
+
+  it("should filter a list of children", (done) => {
+    const child1 = new Child("something");
+    const child2 = new Child("uniqueString");
+    component.entityList = [child1, child2];
+    component.ngOnChanges({
+      entityList: new SimpleChange(false, component.entityList, false),
+    });
     setTimeout(() => {
-      const router = fixture.debugElement.injector.get(Router);
-      spyOn(router, "navigate");
-      const dropoutFs = component.filterSelections[0];
-      const centerFs = component.filterSelections[1];
-      const clickedOption = routeData.filters[0].false;
-      component.filterClick(dropoutFs, clickedOption);
-      const expectedParams = {};
-      expectedParams[dropoutFs.name] = clickedOption;
-      expectedParams[centerFs.name] = "";
-      expectedParams["view"] = routeData.columnGroups.default;
-      expect(router.navigate).toHaveBeenCalledWith(["child"], {
-        queryParams: expectedParams,
-        replaceUrl: false,
-      });
+      component.applyFilter("     UnIquEString    ");
+      expect(component.entityDataSource.filter).toEqual("uniquestring");
+      expect(component.entityDataSource.filteredData.length).toEqual(1);
+      expect(component.entityDataSource.filteredData[0]).toEqual(child2);
       done();
     });
-  });
-
-  it("should creat the correct filter string", () => {
-    component.applyFilter("test String    ");
-    expect(component.childrenDataSource.filter).toEqual("test string");
   });
 });

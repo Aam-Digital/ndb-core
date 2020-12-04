@@ -7,14 +7,16 @@ import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components
 
 @Component({
   selector: "app-list-attendance",
-  template: ` <app-attendance-block
-    *ngFor="
-      let att of attendanceList
-        | filterBy: { institution: filterBy }
-        | slice: 0:maxAttendanceBlocks
-    "
-    [attendanceData]="att"
-  ></app-attendance-block>`,
+  template: `
+    <app-attendance-block
+      *ngFor="
+        let att of attendanceList
+          | filterBy: { institution: filterBy }
+          | slice: 0:maxAttendanceBlocks
+      "
+      [attendanceData]="att"
+    ></app-attendance-block>
+  `,
 })
 export class ListAttendanceComponent implements OnInitDynamicComponent {
   attendanceList: AttendanceMonth[] = [];
