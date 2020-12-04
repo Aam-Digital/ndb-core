@@ -47,8 +47,8 @@ describe("ChildrenListComponent", () => {
       { type: "child-block", title: "Name", id: "name" },
       { type: "date", title: "DoB", id: "dateOfBirth" },
       { type: "text", title: "Gender", id: "gender" },
-      { type: "list-class", title: "Class", id: "schoolClass" },
-      { type: "list-school", title: "School", id: "schoolId" },
+      { type: "latest-csr", title: "Class", id: "schoolClass" },
+      { type: "latest-csr", title: "School", id: "schoolId" },
       { type: "list-attendance", title: "Attendance (School)", id: "school" },
     ],
     columnGroups: {

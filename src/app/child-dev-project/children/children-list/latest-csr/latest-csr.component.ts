@@ -4,11 +4,11 @@ import { ChildSchoolRelation } from "../../model/childSchoolRelation";
 import { ChildrenService } from "../../children.service";
 
 @Component({
-  selector: "app-list-relation",
-  templateUrl: "./list-relation.component.html",
-  styleUrls: ["./list-relation.component.scss"],
+  selector: "app-latest-csr",
+  templateUrl: "./latest-csr.component.html",
+  styleUrls: ["./latest-csr.component.scss"],
 })
-export class ListRelationComponent implements OnChanges {
+export class LatestCsrComponent implements OnChanges {
   @Input() id: string;
   @Input() child: Child;
   relation: ChildSchoolRelation;

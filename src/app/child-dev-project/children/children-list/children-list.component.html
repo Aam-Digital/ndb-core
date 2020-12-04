@@ -152,11 +152,11 @@
                 [entity]="child"
         ></app-child-block>
 
-        <app-list-relation
-                *ngIf="col.type === 'list-relation'"
+        <app-latest-csr
+                *ngIf="col.type === 'latest-csr'"
                 [child]="child"
                 [id]="col.id"
-        ></app-list-relation>
+        ></app-latest-csr>
 
         <app-list-attendance
                 *ngIf="col.type === 'list-attendance'"

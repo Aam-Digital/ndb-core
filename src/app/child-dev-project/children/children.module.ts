@@ -83,7 +83,7 @@ import { GroupedChildAttendanceComponent } from "./child-details/grouped-child-a
 import { ViewModule } from "../../core/view/view.module";
 import { FormComponent } from "./child-details/form/form.component";
 import { ListAttendanceComponent } from "./children-list/list-attendance/list-attendance.component";
-import { ListRelationComponent } from "./children-list/list-relation/list-relation.component";
+import { LatestCsrComponent } from "./children-list/latest-csr/latest-csr.component";
 
 @NgModule({
   imports: [
@@ -155,7 +155,8 @@ import { ListRelationComponent } from "./children-list/list-relation/list-relati
     GroupedChildAttendanceComponent,
     FormComponent,
     ListAttendanceComponent,
-    ListRelationComponent,
+    LatestCsrComponent,
+    LatestCsrComponent,
   ],
   providers: [
     ChildrenService,
