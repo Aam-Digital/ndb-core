@@ -1,4 +1,4 @@
-import { MeetingNoteAttendance } from "../meeting-note-attendance";
+import { MeetingNoteAttendance } from "./meeting-note-attendance";
 import { Note } from "./note";
 import { WarningLevel, WarningLevelColor } from "../../warning-level";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";

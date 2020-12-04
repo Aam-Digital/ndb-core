@@ -2,11 +2,12 @@ import { Component, Input, OnInit } from "@angular/core";
 import { ChildrenService } from "../../../children/children.service";
 import { Router } from "@angular/router";
 import { AttendanceMonth } from "../../model/attendance-month";
-import { AttendanceDay, AttendanceStatus } from "../../model/attendance-day";
+import { AttendanceDay } from "../../model/attendance-day";
 import { Child } from "../../../children/model/child";
 import { forkJoin } from "rxjs";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { AttendanceStatus } from "../../model/attendance-status";
 
 @UntilDestroy()
 @Component({

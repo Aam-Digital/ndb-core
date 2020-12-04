@@ -15,19 +15,21 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
+import { Entity } from "../../../core/entity/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { AttendanceStatus } from "./attendance-status";
+import { WarningLevel } from "../../warning-level";
+import { EventAttendance } from "./event-attendance";
 
-/**
- * @deprecated Use Event entities instead of the embedded AttendanceDay and AttendanceMonth
- */
-export class AttendanceDay {
-  @DatabaseField({ dataType: "date-only" }) date: Date;
-  @DatabaseField() status: AttendanceStatus;
-  @DatabaseField() remarks: string = "";
+@DatabaseEntity("EventNote")
+export class EventNote extends Entity {
+  @DatabaseField() children: EventAttendance[] = [];
 
-  constructor(date: Date, status: AttendanceStatus = AttendanceStatus.UNKNOWN) {
-    this.date = date;
-    this.status = status;
+  @DatabaseField() date: Date;
+  @DatabaseField() author: string = "";
+  @DatabaseField() activity: string = "";
+
+  getWarningLevel(): WarningLevel {
+    return WarningLevel.NONE;
   }
 }

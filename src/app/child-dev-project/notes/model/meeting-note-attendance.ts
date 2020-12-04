@@ -1,3 +1,6 @@
+/**
+ * @deprecated use Event and its EventAttendance instead
+ */
 export class MeetingNoteAttendance {
   present: boolean = true;
   remarks: string = "";
