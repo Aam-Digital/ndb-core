@@ -17,7 +17,6 @@
 
 import { NgModule } from "@angular/core";
 import { CommonModule, DatePipe, PercentPipe } from "@angular/common";
-import { ChildDetailsComponent } from "./child-details/child-details.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatInputModule } from "@angular/material/input";
@@ -132,7 +131,6 @@ import { SchoolBlockWrapperComponent } from "./children-list/school-block-wrappe
     ChildBlockComponent,
     ChildAttendanceComponent,
     NotesOfChildComponent,
-    ChildDetailsComponent,
     ChildrenListComponent,
     ChildrenCountDashboardComponent,
     AttendanceAverageDashboardComponent,

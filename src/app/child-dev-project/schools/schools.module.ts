@@ -15,7 +15,6 @@ import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatSortModule } from "@angular/material/sort";
 import { MatTableModule } from "@angular/material/table";
-import { SchoolDetailsComponent } from "./school-details/school-details.component";
 import { SchoolBlockComponent } from "./school-block/school-block.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { FlexLayoutModule } from "@angular/flex-layout";
@@ -75,7 +74,6 @@ import { ChildrenOverviewComponent } from "./children-overview/children-overview
   declarations: [
     SchoolBlockComponent,
     SchoolsListComponent,
-    SchoolDetailsComponent,
     ChildrenOverviewComponent,
   ],
   exports: [SchoolBlockComponent],

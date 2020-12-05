@@ -1,31 +1,13 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import { Component } from "@angular/core";
-import { Child } from "../model/child";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { Entity, EntityConstructor } from "../../entity/entity";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { Location } from "@angular/common";
-import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
+import { Child } from "../../../child-dev-project/children/model/child";
+import { School } from "../../../child-dev-project/schools/model/school";
 import * as uniqid from "uniqid";
-import { UntilDestroy } from "@ngneat/until-destroy";
-import { School } from "../../schools/model/school";
-import { Entity, EntityConstructor } from "../../../core/entity/entity";
 
 const ENTITY_MAP: Map<string, any> = new Map<string, EntityConstructor<Entity>>(
   [
@@ -34,13 +16,12 @@ const ENTITY_MAP: Map<string, any> = new Map<string, EntityConstructor<Entity>>(
   ]
 );
 
-@UntilDestroy()
 @Component({
-  selector: "app-child-details",
-  templateUrl: "./child-details.component.html",
-  styleUrls: ["./child-details.component.scss"],
+  selector: "app-entity-details",
+  templateUrl: "./entity-details.component.html",
+  styleUrls: ["./entity-details.component.scss"],
 })
-export class ChildDetailsComponent {
+export class EntityDetailsComponent {
   entity: Entity;
   creatingNew = false;
 

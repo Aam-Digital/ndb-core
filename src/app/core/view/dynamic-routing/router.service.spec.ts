@@ -2,7 +2,6 @@ import { Component } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { Router } from "@angular/router";
 import { RouterTestingModule } from "@angular/router/testing";
-import { ChildDetailsComponent } from "app/child-dev-project/children/child-details/child-details.component";
 import { ChildrenListComponent } from "app/child-dev-project/children/children-list/children-list.component";
 import { AdminGuard } from "../../admin/admin.guard";
 import { AdminComponent } from "../../admin/admin/admin.component";
@@ -10,6 +9,7 @@ import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
 
 import { RouterService } from "./router.service";
+import { EntityDetailsComponent } from "../../entity-list/entity-details/entity-details.component";
 
 class TestComponent extends Component {}
 
@@ -61,7 +61,7 @@ describe("RouterService", () => {
       { path: "child", component: ChildrenListComponent },
       {
         path: "child/:id",
-        component: ChildDetailsComponent,
+        component: EntityDetailsComponent,
         data: testViewConfig,
       },
       { path: "admin", component: AdminComponent, canActivate: [AdminGuard] },

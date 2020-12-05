@@ -1,22 +1,23 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-import { ChildDetailsComponent } from "./child-details.component";
-import { MockDatabase } from "../../../core/database/mock-database";
-import { ChildPhotoService } from "../child-photo-service/child-photo.service";
-import { Observable, of, Subscriber } from "rxjs";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Location } from "@angular/common";
-import { SessionService } from "../../../core/session/session-service/session.service";
-import { User } from "../../../core/user/user";
-import { MatNativeDateModule } from "@angular/material/core";
-import { ChildrenModule } from "../children.module";
-import { databaseServiceProvider } from "../../../core/database/database.service.provider";
-import { Child } from "../model/child";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { ChildrenService } from "../children.service";
 
-describe("ChildDetailsComponent", () => {
-  let component: ChildDetailsComponent;
-  let fixture: ComponentFixture<ChildDetailsComponent>;
+import { EntityDetailsComponent } from "./entity-details.component";
+import { Observable, of, Subscriber } from "rxjs";
+import { MockDatabase } from "../../database/mock-database";
+import { User } from "../../user/user";
+import { ChildPhotoService } from "../../../child-dev-project/children/child-photo-service/child-photo.service";
+import { ChildrenModule } from "../../../child-dev-project/children/children.module";
+import { MatNativeDateModule } from "@angular/material/core";
+import { databaseServiceProvider } from "../../database/database.service.provider";
+import { SessionService } from "../../session/session-service/session.service";
+import { Location } from "@angular/common";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Child } from "../../../child-dev-project/children/model/child";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { ChildrenService } from "../../../child-dev-project/children/children.service";
+
+describe("EntityDetailsComponent", () => {
+  let component: EntityDetailsComponent;
+  let fixture: ComponentFixture<EntityDetailsComponent>;
 
   let routeObserver: Subscriber<any>;
   const mockedRoute = {
@@ -70,7 +71,7 @@ describe("ChildDetailsComponent", () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ChildDetailsComponent);
+    fixture = TestBed.createComponent(EntityDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -134,6 +135,6 @@ describe("ChildDetailsComponent", () => {
     routeObserver.next({ get: () => testChild.getId() });
     fixture.detectChanges();
     expect(childrenService.getChild).toHaveBeenCalledWith(testChild.getId());
-    expect(component.child).toBe(testChild);
+    expect(component.entity).toBe(testChild);
   });
 });

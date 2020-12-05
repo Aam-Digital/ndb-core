@@ -125,7 +125,7 @@
         }
     },
     "view:school/:id": {
-        "component": "ChildDetails",
+        "component": "EntityDetails",
         "config": {
             "entity": "School",
             "panels": [
@@ -234,7 +234,7 @@
         }
     },
     "view:child/:id": {
-        "component": "ChildDetails",
+        "component": "EntityDetails",
         "config": {
             "icon": "child",
             "entity": "Child",

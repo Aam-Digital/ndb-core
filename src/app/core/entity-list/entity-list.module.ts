@@ -21,6 +21,7 @@ import { MatSortModule } from "@angular/material/sort";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { Angulartics2Module } from "angulartics2";
 import { DisplayTickComponent } from "./display-tick/display-tick.component";
+import { EntityDetailsComponent } from "./entity-details/entity-details.component";
 
 @NgModule({
   imports: [
@@ -48,6 +49,7 @@ import { DisplayTickComponent } from "./display-tick/display-tick.component";
     DisplayTextComponent,
     DisplayDateComponent,
     DisplayTickComponent,
+    EntityDetailsComponent,
   ],
   exports: [EntityListComponent],
 })

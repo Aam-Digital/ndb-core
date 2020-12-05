@@ -1,0 +1,67 @@
+<!--
+  ~     This file is part of ndb-core.
+  ~
+  ~     ndb-core is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     (at your option) any later version.
+  ~
+  ~     ndb-core is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<div fxLayout="row" fxLayoutAlign="space-between">
+    <div>
+        <h1 class="page-header section-child">
+            <button
+                    mat-icon-button
+                    (click)="navigateBack()"
+                    matTooltip="Back"
+                    style="vertical-align: middle;"
+            >
+                <mat-icon fontIcon="fa-backward"></mat-icon>
+            </button>
+
+            <i [className]="classNamesWithIcon"></i>
+            <span *ngIf="!creatingNew"
+            >{{ entity["name"] }}</span
+            >
+            <span *ngIf="creatingNew">Adding new {{config.entity}}</span>
+        </h1>
+    </div>
+</div>
+
+<mat-accordion multi="true">
+    <mat-expansion-panel
+            *ngFor="let panelConfig of panels; let i = index"
+            [expanded]="i == 0"
+            [title]="panelConfig.title"
+            [disabled]="creatingNew && i > 0">
+        <mat-expansion-panel-header class="section-header">
+            <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew && i > 0"
+                      class="locked-icon"
+                      matTooltip="Please save before entering further data"
+                      [matTooltipDisabled]="!creatingNew">
+            </mat-icon>
+            {{panelConfig.title}}
+        </mat-expansion-panel-header>
+        <div *ngFor="let componentConfig of panelConfig.components; let j = index">
+            <h3 *ngIf="componentConfig.title !== ''">{{componentConfig.title}}</h3>
+            <ng-template [appDynamicComponent]="componentConfig "></ng-template>
+            <br *ngIf="j < panelConfig.components.length - 1"/>
+        </div>
+    </mat-expansion-panel>
+</mat-accordion>
+<button
+        mat-raised-button
+        color="warn"
+        class="delete-button"
+        (click)="removeEntity()"
+>
+    Delete
+</button>
