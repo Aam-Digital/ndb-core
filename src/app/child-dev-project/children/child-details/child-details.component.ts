@@ -108,10 +108,12 @@ export class ChildDetailsComponent {
     );
 
     dialogRef.afterClosed().subscribe((confirmed) => {
+      const currentUrl = this.router.url;
       if (confirmed) {
         this.entityMapperService
           .remove<Entity>(this.entity)
-          .then(() => this.router.navigate([this.config.entity]));
+          .then(() => this.navigateBack())
+          .catch((err) => console.log("error", err));
 
         const snackBarRef = this.snackBar.open(
           'Deleted Entity "' + this.entity.getId() + '"',
@@ -120,7 +122,7 @@ export class ChildDetailsComponent {
         );
         snackBarRef.onAction().subscribe(() => {
           this.entityMapperService.save(this.entity, true);
-          this.router.navigate([this.config.entity, this.entity.getId()]);
+          this.router.navigate([currentUrl]);
         });
       }
     });

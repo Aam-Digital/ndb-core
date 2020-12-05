@@ -32,6 +32,6 @@ export class ChildrenListComponent implements OnInit {
   }
 
   routeTo(route: string) {
-    this.router.navigate([this.route.url, route]);
+    this.router.navigate(["/child", route]);
   }
 }

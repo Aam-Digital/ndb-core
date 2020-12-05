@@ -34,6 +34,6 @@ export class SchoolsListComponent implements OnInit {
   }
 
   routeTo(route: string) {
-    this.router.navigate([this.router.url, route]);
+    this.router.navigate(["/school", route]);
   }
 }

@@ -58,12 +58,8 @@ export class FormComponent implements OnInitDynamicComponent {
     this.assignFormValuesToEntity(this.entity, this.form);
     try {
       await this.entityMapperService.save<Entity>(this.entity);
-      // if (this.creatingNew) {
-      this.router.navigate([
-        this.entity.getConstructor().ENTITY_TYPE,
-        this.entity.getId(),
-      ]);
-      // }
+      const route = this.entity.getConstructor().ENTITY_TYPE;
+      this.router.navigate(["/" + route.toLowerCase(), this.entity.getId()]);
       this.alertService.addInfo("Saving Successful");
       this.switchEdit();
       return this.entity;
