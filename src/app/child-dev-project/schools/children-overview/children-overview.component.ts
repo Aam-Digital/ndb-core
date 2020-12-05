@@ -2,15 +2,18 @@ import { Component, OnInit } from "@angular/core";
 import { ColumnDescription } from "../../../core/entity-subrecord/entity-subrecord/column-description";
 import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 import { ChildDetailsComponent } from "../../children/child-details/child-details.component";
+import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { SchoolsService } from "../schools.service";
+import { Child } from "../../children/model/child";
+import { MatTableDataSource } from "@angular/material/table";
 
 @Component({
   selector: "app-children-overview",
-  template: ` <app-entity-subrecord
-    [columns]="columns"
-    [detailsComponent]=""
-  ></app-entity-subrecord>`,
+  templateUrl: "./children-overview.component.html",
 })
-export class ChildrenOverviewComponent implements OnInit {
+export class ChildrenOverviewComponent implements OnInitDynamicComponent {
+  // This component can currently not use the EntitySubrecord, because EntitySubrecord does not allow to route to a
+  // different location but only open a popup when a record is clicked.
   columns: ColumnDescription[] = [
     new ColumnDescription(
       "projectNumber",
@@ -26,9 +29,17 @@ export class ChildrenOverviewComponent implements OnInit {
     new ColumnDescription("age", "Age", ColumnDescriptionInputType.TEXT),
   ];
 
-  childDetailsComponent = ChildDetailsComponent;
+  displayedColumns = ["projectNumber", "name", "schoolClass", "age"];
 
-  constructor() {}
+  studentsDataSource: MatTableDataSource<Child> = new MatTableDataSource<
+    Child
+  >();
 
-  ngOnInit(): void {}
+  constructor(private schoolsService: SchoolsService) {}
+
+  onInitFromDynamicConfig(config: any) {
+    this.schoolsService
+      .getChildrenForSchool(config.child.getId())
+      .then((children) => (this.studentsDataSource.data = children));
+  }
 }
