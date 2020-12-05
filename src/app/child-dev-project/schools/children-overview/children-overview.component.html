@@ -5,12 +5,12 @@
         matSort
         style="width: 100%;"
 >
-    <ng-container [matColumnDef]="col.label" *ngFor="let col of columns">
+    <ng-container [matColumnDef]="col.name" *ngFor="let col of columns">
         <mat-header-cell *matHeaderCellDef mat-sort-header>
-            {{col.name}}
+            {{col.label}}
         </mat-header-cell>
         <mat-cell *matCellDef="let student">
-            {{ student[col.label] }}
+            {{ student[col.name] }}
         </mat-cell>
     </ng-container>
 

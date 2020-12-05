@@ -29,9 +29,9 @@
 
       <i [className]="classNamesWithIcon"></i>
       <span *ngIf="!creatingNew"
-        >{{ child.name }} [{{ child.projectNumber }}]</span
+        >{{ entity["name"] }}</span
       >
-      <span *ngIf="creatingNew">Adding new Child</span>
+      <span *ngIf="creatingNew">Adding new {{config.entity}}</span>
     </h1>
   </div>
 </div>
@@ -61,7 +61,7 @@
         mat-raised-button
         color="warn"
         class="delete-button"
-        (click)="removeChild()"
+        (click)="removeEntity()"
 >
   Delete
 </button>

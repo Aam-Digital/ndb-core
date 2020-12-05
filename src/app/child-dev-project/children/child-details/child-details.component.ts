@@ -23,8 +23,16 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { Location } from "@angular/common";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import * as uniqid from "uniqid";
-import { ChildrenService } from "../children.service";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { UntilDestroy } from "@ngneat/until-destroy";
+import { School } from "../../schools/model/school";
+import { Entity, EntityConstructor } from "../../../core/entity/entity";
+
+const ENTITY_MAP: Map<string, any> = new Map<string, EntityConstructor<Entity>>(
+  [
+    ["Child", Child],
+    ["School", School],
+  ]
+);
 
 @UntilDestroy()
 @Component({
@@ -33,85 +41,86 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   styleUrls: ["./child-details.component.scss"],
 })
 export class ChildDetailsComponent {
-  child: Child = new Child("");
+  entity: Entity;
   creatingNew = false;
 
   panels: any[];
   classNamesWithIcon: String;
+  config: any = {};
 
   constructor(
     private entityMapperService: EntityMapperService,
-    private childrenService: ChildrenService,
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
     private snackBar: MatSnackBar,
     private confirmationDialog: ConfirmationDialogService
   ) {
-    this.route.paramMap.subscribe((params) => this.loadChild(params.get("id")));
     this.route.data.subscribe((config) => {
+      this.config = config;
       this.classNamesWithIcon = "fa fa-" + config.icon + " fa-fw";
+      this.route.paramMap.subscribe((params) =>
+        this.loadEntity(params.get("id"))
+      );
     });
   }
 
-  loadChild(id: string) {
+  loadEntity(id: string) {
+    const constr: EntityConstructor<Entity> = ENTITY_MAP.get(
+      this.config.entity
+    );
     if (id === "new") {
-      this.child = new Child(uniqid());
+      this.entity = new constr(uniqid());
       this.creatingNew = true;
-      this.addChildToConfig();
+      this.addEntityToConfig();
     } else {
       this.creatingNew = false;
-      this.childrenService
-        .getChild(id)
-        .pipe(untilDestroyed(this))
-        .subscribe((child) => {
-          this.child = child;
-          this.addChildToConfig();
-        });
+      this.entityMapperService.load<Entity>(constr, id).then((entity) => {
+        this.entity = entity;
+        this.addEntityToConfig();
+      });
     }
   }
 
-  private addChildToConfig() {
-    this.route.data.subscribe((config) => {
-      this.panels = config.panels.map((p) => {
-        return {
-          title: p.title,
-          components: p.components.map((c) => {
-            return {
-              title: c.title,
-              component: c.component,
-              config: {
-                child: this.child,
-                config: c.config,
-                creatingNew: this.creatingNew,
-              },
-            };
-          }),
-        };
-      });
+  private addEntityToConfig() {
+    this.panels = this.config.panels.map((p) => {
+      return {
+        title: p.title,
+        components: p.components.map((c) => {
+          return {
+            title: c.title,
+            component: c.component,
+            config: {
+              entity: this.entity,
+              config: c.config,
+              creatingNew: this.creatingNew,
+            },
+          };
+        }),
+      };
     });
   }
 
-  removeChild() {
+  removeEntity() {
     const dialogRef = this.confirmationDialog.openDialog(
       "Delete?",
-      "Are you sure you want to delete this Child?"
+      "Are you sure you want to delete this " + this.config.entity + " ?"
     );
 
     dialogRef.afterClosed().subscribe((confirmed) => {
       if (confirmed) {
         this.entityMapperService
-          .remove<Child>(this.child)
-          .then(() => this.router.navigate(["/child"]));
+          .remove<Entity>(this.entity)
+          .then(() => this.router.navigate([this.config.entity]));
 
         const snackBarRef = this.snackBar.open(
-          'Deleted Child "' + this.child.name + '"',
+          'Deleted Entity "' + this.entity.getId() + '"',
           "Undo",
           { duration: 8000 }
         );
         snackBarRef.onAction().subscribe(() => {
-          this.entityMapperService.save(this.child, true);
-          this.router.navigate(["/child", this.child.getId()]);
+          this.entityMapperService.save(this.entity, true);
+          this.router.navigate([this.config.entity, this.entity.getId()]);
         });
       }
     });

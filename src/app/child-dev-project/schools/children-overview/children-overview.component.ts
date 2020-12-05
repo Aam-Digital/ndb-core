@@ -1,7 +1,6 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { ColumnDescription } from "../../../core/entity-subrecord/entity-subrecord/column-description";
 import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
-import { ChildDetailsComponent } from "../../children/child-details/child-details.component";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { SchoolsService } from "../schools.service";
 import { Child } from "../../children/model/child";
@@ -39,7 +38,7 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
 
   onInitFromDynamicConfig(config: any) {
     this.schoolsService
-      .getChildrenForSchool(config.child.getId())
+      .getChildrenForSchool(config.entity.getId())
       .then((children) => (this.studentsDataSource.data = children));
   }
 }

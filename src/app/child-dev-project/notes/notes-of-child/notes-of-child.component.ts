@@ -86,7 +86,7 @@ export class NotesOfChildComponent
   }
 
   onInitFromDynamicConfig(config: any) {
-    this.child = config.child;
+    this.child = config.entity;
     this.initNotesOfChild();
   }
 
