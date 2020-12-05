@@ -28,6 +28,7 @@ import { SchoolsService } from "./schools.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Angulartics2Module } from "angulartics2";
 import { EntityListModule } from "../../core/entity-list/entity-list.module";
+import { ChildrenOverviewComponent } from "./children-overview/children-overview.component";
 
 @NgModule({
   imports: [
@@ -75,6 +76,7 @@ import { EntityListModule } from "../../core/entity-list/entity-list.module";
     SchoolBlockComponent,
     SchoolsListComponent,
     SchoolDetailsComponent,
+    ChildrenOverviewComponent,
   ],
   exports: [SchoolBlockComponent],
   providers: [SchoolsService],
