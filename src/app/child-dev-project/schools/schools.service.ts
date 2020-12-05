@@ -6,6 +6,7 @@ import { Database } from "../../core/database/database";
 import { Child } from "../children/model/child";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { ChildrenService } from "../children/children.service";
+import { LoggingService } from "../../core/logging/logging.service";
 
 @Injectable()
 export class SchoolsService {
@@ -13,7 +14,8 @@ export class SchoolsService {
     private entityMapper: EntityMapperService,
     private entitySchemaService: EntitySchemaService,
     private db: Database,
-    private childrenService: ChildrenService
+    private childrenService: ChildrenService,
+    private log: LoggingService
   ) {}
 
   getSchools(): Observable<School[]> {
@@ -27,9 +29,13 @@ export class SchoolsService {
     );
     const children: Child[] = [];
     for (const relation of relations) {
-      children.push(
-        await this.childrenService.getChild(relation.childId).toPromise()
-      );
+      try {
+        children.push(
+          await this.childrenService.getChild(relation.childId).toPromise()
+        );
+      } catch (e) {
+        this.log.warn("Could not find child " + relation.childId);
+      }
     }
     return children;
   }
