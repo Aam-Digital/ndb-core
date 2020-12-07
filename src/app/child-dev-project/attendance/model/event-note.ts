@@ -20,16 +20,30 @@ import { Entity } from "../../../core/entity/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { WarningLevel } from "../../warning-level";
 import { EventAttendance } from "./event-attendance";
+import { v4 as uuid } from "uuid";
 
 @DatabaseEntity("EventNote")
 export class EventNote extends Entity {
-  @DatabaseField() children: EventAttendance[] = [];
+  static create(date: Date, activity: string = "") {
+    const instance = new EventNote(uuid());
 
+    instance.date = date;
+    instance.activity = activity;
+
+    return instance;
+  }
+
+  @DatabaseField() children: EventAttendance[] = [];
   @DatabaseField() date: Date;
-  @DatabaseField() author: string = "";
   @DatabaseField() activity: string = "";
 
   getWarningLevel(): WarningLevel {
     return WarningLevel.NONE;
+  }
+
+  addChildren(newChildIds: string[]) {
+    for (const childId of newChildIds) {
+      this.children.push(new EventAttendance(childId));
+    }
   }
 }
