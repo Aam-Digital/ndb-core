@@ -60,8 +60,8 @@ export class EntityListComponent<T extends Entity>
   entityDataSource = new MatTableDataSource<T>();
 
   user: User;
-  public paginatorPageSize: number = 10;
-  public paginatorPageIndex: number = 0;
+  public paginatorPageSize = 10;
+  public paginatorPageIndex = 0;
 
   filterString = "";
 
@@ -72,18 +72,6 @@ export class EntityListComponent<T extends Entity>
     private route: ActivatedRoute,
     private entityMapperService: EntityMapperService
   ) {
-    this.user = this.sessionService.getCurrentUser();
-    console.log(
-      "const",
-      this.user.paginatorSettingsPageIndex,
-      this.user.paginatorSettingsPageSize
-    );
-    this.paginatorPageSize =
-      this.user.paginatorSettingsPageSize[this.componentName] ||
-      this.paginatorPageSize;
-    this.paginatorPageIndex =
-      this.user.paginatorSettingsPageIndex[this.componentName] ||
-      this.paginatorPageIndex;
     this.media.asObservable().subscribe((change: MediaChange[]) => {
       switch (change[0].mqAlias) {
         case "xs":
@@ -104,6 +92,15 @@ export class EntityListComponent<T extends Entity>
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes.hasOwnProperty("componentName")) {
+      this.user = this.sessionService.getCurrentUser();
+      this.paginatorPageSize =
+        this.user.paginatorSettingsPageSize[this.componentName] ||
+        this.paginatorPageSize;
+      this.paginatorPageIndex =
+        this.user.paginatorSettingsPageIndex[this.componentName] ||
+        this.paginatorPageIndex;
+    }
     if (changes.hasOwnProperty("listConfig")) {
       this.listName = this.listConfig.title;
       this.columns = this.listConfig.columns;
@@ -134,7 +131,6 @@ export class EntityListComponent<T extends Entity>
   }
 
   onPaginateChange(event: PageEvent) {
-    console.log("called", event);
     this.paginatorPageSize = event.pageSize;
     this.paginatorPageIndex = event.pageIndex;
     this.updateUserPaginationSettings();
@@ -169,11 +165,6 @@ export class EntityListComponent<T extends Entity>
     this.user.paginatorSettingsPageSize[
       this.componentName
     ] = this.paginatorPageSize;
-    console.log(
-      "user",
-      this.user.paginatorSettingsPageIndex,
-      this.user.paginatorSettingsPageSize
-    );
 
     if (hasChangesToBeSaved) {
       this.entityMapperService.save<User>(this.user);
