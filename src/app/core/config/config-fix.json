@@ -81,7 +81,38 @@
         }
     },
     "view:user": {"component": "UserAccount"},
-    "view:note": {"component": "NotesManager", "config": { "title": "Notes & Reports"}},
+    "view:note": {
+        "component": "NotesManager",
+        "config": {
+            "title": "Notes & Reports",
+            "columns": [
+                {"component": "DisplayDate", "title": "Date", "id": "date"},
+                {"component": "DisplayText", "title": "Subject", "id": "subject"},
+                {"component": "DisplayText", "title": "Category", "id": "categoryName"},
+                {"component": "DisplayText", "title": "Author", "id": "author"},
+                {"component": "ChildrenList", "title": "Children", "id": "children", "noSorting": true}
+            ],
+            "columnGroups": {
+                "default": "Standard",
+                "mobile": "Mobile",
+                "groups": [
+                    {
+                        "name": "Standard",
+                        "columns": ["date", "subject", "categoryName", "author", "children"]
+                    },
+                    {
+                        "name": "Mobile",
+                        "columns": ["date", "subject", "children"]
+                    }
+                ]
+            },
+            "filters": [
+                { "id": "status", "type": "prebuilt"},
+                { "id": "date", "type": "prebuilt"},
+                { "id": "categoryName", "display": "dropdown"}
+            ]
+        }
+    },
     "view:admin": {"component": "Admin", "requiresAdmin": true},
     "view:users": {"component": "UserList", "requiresAdmin": true},
     "view:help": {"component": "Help"},

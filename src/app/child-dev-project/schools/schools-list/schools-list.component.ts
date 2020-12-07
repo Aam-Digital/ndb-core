@@ -1,8 +1,9 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { School } from "../model/school";
 import { ActivatedRoute, Router } from "@angular/router";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
 
 @UntilDestroy()
 @Component({
@@ -13,10 +14,12 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
       [listConfig]="listConfig"
       (elementClick)="routeTo($event.getId())"
       (addNewClick)="routeTo('new')"
+      #entityList
     ></app-entity-list>
   `,
 })
 export class SchoolsListComponent implements OnInit {
+  @ViewChild("entityList") entityList: EntityListComponent<School>;
   schoolList: School[] = [];
   listConfig: any = {};
 

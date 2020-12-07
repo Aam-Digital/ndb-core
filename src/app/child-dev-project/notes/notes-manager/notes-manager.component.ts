@@ -1,47 +1,40 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { Note } from "../model/note";
-import { MatTableDataSource } from "@angular/material/table";
-import { MatSort } from "@angular/material/sort";
-import { MediaChange, MediaObserver } from "@angular/flex-layout";
+import { MediaObserver } from "@angular/flex-layout";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ActivatedRoute } from "@angular/router";
-import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { WarningLevel, WarningLevelColor } from "../../warning-level";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { FilterSelection } from "../../../core/filter/filter-selection/filter-selection";
+import { FilterSelectionOption } from "../../../core/filter/filter-selection/filter-selection";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { User } from "app/core/user/user";
+import { UntilDestroy } from "@ngneat/until-destroy";
 import { InteractionType } from "../note-config-loader/note-config.interface";
 import { NoteConfigLoaderService } from "../note-config-loader/note-config-loader.service";
+import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
+import { LoggingService } from "../../../core/logging/logging.service";
 
 @UntilDestroy()
 @Component({
   selector: "app-notes-manager",
-  templateUrl: "./notes-manager.component.html",
-  styleUrls: ["./notes-manager.component.scss"],
+  template: `
+    <app-entity-list
+      [entityList]="notes"
+      [listConfig]="config"
+      (elementClick)="showDetails($event)"
+      (addNewClick)="addNoteClick()"
+      #entityList
+    ></app-entity-list>
+  `,
 })
-export class NotesManagerComponent implements OnInit, AfterViewInit {
+export class NotesManagerComponent implements OnInit {
+  @ViewChild("entityList") entityList: EntityListComponent<Note>;
+
   /** interaction types loaded from config file */
   interactionTypes: InteractionType[];
-  entityList = new Array<Note>();
-  notesDataSource = new MatTableDataSource();
-  listName: String;
+  notes: Note[] = [];
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-
-  columnsToDisplay = ["date", "subject", "category", "author", "children"];
-
-  columnGroups = {
-    standard: ["date", "subject", "category", "author", "children"],
-    mobile: ["date", "subject", "children"],
-  };
-
-  filterString = "";
-
-  followUpFS = new FilterSelection<Note>("status", [
+  statusFS: FilterSelectionOption<Note>[] = [
     {
       key: "urgent",
       label: "Urgent",
@@ -55,9 +48,9 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
         n.warningLevel === WarningLevel.URGENT,
     },
     { key: "", label: "All", filterFun: () => true },
-  ]);
+  ];
 
-  dateFS = new FilterSelection<Note>("date", [
+  dateFS: FilterSelectionOption<Note>[] = [
     {
       key: "current-week",
       label: "This Week",
@@ -69,16 +62,9 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
       filterFun: (n: Note) => n.date > this.getPreviousSunday(1),
     },
     { key: "", label: "All", filterFun: () => true },
-  ]);
+  ];
 
-  filterSelections = [this.followUpFS, this.dateFS];
-
-  categoryFS = new FilterSelection<Note>("category", []);
-  filterSelectionsDropdown = [this.categoryFS];
-
-  public paginatorPageSize: number;
-  public paginatorPageIndex: number;
-  private user: User;
+  public config: any = {};
 
   constructor(
     private formDialog: FormDialogService,
@@ -86,7 +72,8 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     private media: MediaObserver,
     private entityMapperService: EntityMapperService,
     private configLoader: NoteConfigLoaderService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private log: LoggingService
   ) {}
 
   ngOnInit() {
@@ -95,96 +82,33 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
 
     // load listName from config
     this.route.data.subscribe((config) => {
-      this.listName = config.title;
+      this.config = config;
+      this.addPrebuiltFilters();
+      console.log("filters", this.config);
     });
-
-    this.user = this.sessionService.getCurrentUser();
-    this.paginatorPageSize = this.user.paginatorSettingsPageSize.notesList;
-    this.paginatorPageIndex = this.user.paginatorSettingsPageIndex.notesList;
-
-    // activate default filter to current week
-    this.dateFS.selectedOption = this.dateFS.options[0].key;
-
     this.entityMapperService.loadType<Note>(Note).then((notes) => {
-      this.sortAndAdd(notes);
+      notes.forEach((note) => (note["color"] = this.getColor(note)));
+      this.notes = notes;
     });
+  }
 
-    this.displayColumnGroup("standard");
-    this.media.media$
-      .pipe(untilDestroyed(this))
-      .subscribe((change: MediaChange) => {
-        if (change.mqAlias === "xs" || change.mqAlias === "sm") {
-          console.log("smaller screen toggled");
-          this.displayColumnGroup("mobile");
+  addPrebuiltFilters() {
+    this.config.filters.forEach((f) => {
+      if (f.type === "prebuilt") {
+        switch (f.id) {
+          case "status":
+            return (f["options"] = this.statusFS);
+          case "date":
+            return (f["options"] = this.dateFS);
+          default: {
+            this.log.warn(
+              "[NoteManagerComponent] No filter options available for prebuilt filter: " +
+                f.id
+            );
+            return (f["options"] = []);
+          }
         }
-      });
-
-    this.initCategoryFilter();
-  }
-
-  onPaginateChange(event: PageEvent) {
-    this.paginatorPageSize = event.pageSize;
-    this.paginatorPageIndex = event.pageIndex;
-    this.updateUserPaginationSettings();
-  }
-
-  private updateUserPaginationSettings() {
-    const hasChangesToBeSaved =
-      this.paginatorPageSize !== this.user.paginatorSettingsPageSize.notesList;
-
-    this.user.paginatorSettingsPageIndex.notesList = this.paginatorPageIndex;
-    this.user.paginatorSettingsPageSize.notesList = this.paginatorPageSize;
-
-    if (hasChangesToBeSaved) {
-      this.entityMapperService.save<User>(this.user);
-    }
-  }
-
-  private sortAndAdd(newNotes: Note[]) {
-    newNotes.forEach((newNote) => {
-      this.entityList.push(newNote);
-    });
-    this.entityList.sort(
-      (a, b) =>
-        (b.date ? b.date.getTime() : 0) - (a.date ? a.date.getTime() : 0)
-    );
-    this.applyFilterSelections();
-  }
-
-  displayColumnGroup(columnGroup: string) {
-    this.columnsToDisplay = this.columnGroups[columnGroup];
-  }
-
-  private initCategoryFilter() {
-    this.categoryFS.options = [
-      { key: "show-all", label: "All Notes", filterFun: () => true },
-    ];
-
-    for (const interaction of this.interactionTypes) {
-      this.categoryFS.options.push({
-        key: interaction.name,
-        label: interaction.name,
-        filterFun: (note: Note) => {
-          return note.category.name === interaction.name;
-        },
-      });
-    }
-    // set default to show-all
-    this.categoryFS.selectedOption = this.categoryFS.options[0].key;
-
-    this.applyFilterSelections();
-  }
-
-  ngAfterViewInit() {
-    this.notesDataSource.sort = this.sort;
-    this.notesDataSource.paginator = this.paginator;
-    setTimeout(() => {
-      this.paginator.pageIndex = this.paginatorPageIndex;
-      this.paginator.page.next({
-        pageIndex: this.paginator.pageIndex,
-        pageSize: this.paginator.pageSize,
-        length: this.paginator.length,
-      });
+      }
     });
   }
 
@@ -195,25 +119,6 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     return new Date(today.setDate(diff));
   }
 
-  applyFilter(filterValue: string) {
-    filterValue = filterValue.trim();
-    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
-    this.notesDataSource.filter = filterValue;
-  }
-
-  applyFilterSelections() {
-    let filteredData = this.entityList;
-
-    this.filterSelections.forEach((f) => {
-      filteredData = filteredData.filter(f.getSelectedFilterFunction());
-    });
-    this.filterSelectionsDropdown.forEach((f) => {
-      filteredData = filteredData.filter(f.getSelectedFilterFunction());
-    });
-
-    this.notesDataSource.data = filteredData;
-  }
-
   addNoteClick() {
     const newNote = new Note(Date.now().toString());
     newNote.date = new Date();
@@ -221,8 +126,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
 
     const noteDialogRef = this.showDetails(newNote);
     noteDialogRef.afterClosed().subscribe((val) => {
-      this.entityList = [val].concat(this.entityList);
-      this.applyFilterSelections();
+      this.notes = [val].concat(this.notes);
     });
   }
 
@@ -230,7 +134,7 @@ export class NotesManagerComponent implements OnInit, AfterViewInit {
     return this.formDialog.openDialog(NoteDetailsComponent, entity);
   }
 
-  public getColor(entity: Note): string {
+  private getColor(entity: Note): string {
     if (entity.warningLevel === WarningLevel.URGENT) {
       return WarningLevelColor(WarningLevel.URGENT);
     }

@@ -12,7 +12,10 @@ import { MatSort } from "@angular/material/sort";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { Entity } from "../../entity/entity";
 import { MatTableDataSource } from "@angular/material/table";
-import { FilterSelection } from "../../filter/filter-selection/filter-selection";
+import {
+  FilterSelection,
+  FilterSelectionOption,
+} from "../../filter/filter-selection/filter-selection";
 import { User } from "../../user/user";
 import { SessionService } from "../../session/session-service/session.service";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
@@ -29,17 +32,18 @@ export interface ColumnGroup {
   templateUrl: "./entity-list.component.html",
   styleUrls: ["./entity-list.component.scss"],
 })
-export class EntityListComponent implements OnChanges, AfterViewInit {
-  @Input() entityList: Entity[] = [];
+export class EntityListComponent<T extends Entity>
+  implements OnChanges, AfterViewInit {
+  @Input() entityList: T[] = [];
   @Input() listConfig: any = {};
-  @Output() elementClick = new EventEmitter<Entity>();
+  @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   listName = "";
-  columns: any[] = [];
+  columns: string[] = [];
   columnGroups: ColumnGroup[] = [];
   defaultColumnGroup = "";
   mobileColumnGroup = "";
@@ -49,8 +53,9 @@ export class EntityListComponent implements OnChanges, AfterViewInit {
   columnsToDisplay: any[] = [];
   selectedColumnGroup: string = "";
 
-  filterSelections: FilterSelection<any>[] = [];
-  entityDataSource = new MatTableDataSource<Entity>();
+  filterSelections: FilterSelection<T>[] = [];
+  filterDropdowns: FilterSelection<T>[] = [];
+  entityDataSource = new MatTableDataSource<T>();
 
   user: User;
   public paginatorPageSize: number;
@@ -187,34 +192,57 @@ export class EntityListComponent implements OnChanges, AfterViewInit {
     this.filterSelections.forEach((f) => {
       filteredData = filteredData.filter(f.getSelectedFilterFunction());
     });
+    this.filterDropdowns.forEach((f) => {
+      filteredData = filteredData.filter(f.getSelectedFilterFunction());
+    });
 
     this.entityDataSource.data = filteredData;
   }
 
   private addFilterSelections() {
-    this.filterSelections = this.filtersConfig.map((filter) => {
+    this.filterSelections = [];
+    this.filterDropdowns = [];
+    this.filtersConfig.forEach((filter) => {
       const fs = new FilterSelection(filter.id, []);
-      if (filter.type === "boolean") {
-        fs.options = [
-          {
-            key: "true",
-            label: filter.true,
-            filterFun: (c: Entity) => c[filter.id],
-          },
-          {
-            key: "false",
-            label: filter.false,
-            filterFun: (c: Entity) => !c[filter.id],
-          },
-          { key: "", label: filter.all, filterFun: () => true },
-        ];
-      } else {
-        const options = [...new Set(this.entityList.map((c) => c[filter.id]))];
-        fs.initOptions(options, filter.id);
-      }
+      this.initFilterOptions(fs, filter);
+      console.log("filter", filter, fs);
       fs.selectedOption = filter.default || fs.options[0].key;
-      return fs;
+      if (filter.display === "dropdown") {
+        this.filterDropdowns.push(fs);
+      } else {
+        this.filterSelections.push(fs);
+      }
     });
+  }
+
+  private initFilterOptions(filter, config): FilterSelectionOption<any>[] {
+    switch (config.type) {
+      case "boolean":
+        return (filter.options = this.createBooleanFilterOptions(config));
+      case "prebuilt":
+        return (filter.options = config.options);
+      default: {
+        const options = [...new Set(this.entityList.map((c) => c[config.id]))];
+        console.log("options", options);
+        filter.initOptions(options, config.id);
+      }
+    }
+  }
+
+  private createBooleanFilterOptions(filter): FilterSelectionOption<any>[] {
+    return [
+      {
+        key: "true",
+        label: filter.true,
+        filterFun: (c: Entity) => c[filter.id],
+      },
+      {
+        key: "false",
+        label: filter.false,
+        filterFun: (c: Entity) => !c[filter.id],
+      },
+      { key: "", label: filter.all, filterFun: () => true },
+    ];
   }
 
   private displayColumnGroup(columnGroupName: string) {

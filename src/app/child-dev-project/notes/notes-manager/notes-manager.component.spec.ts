@@ -78,6 +78,6 @@ describe("NotesManagerComponent", () => {
   it("should load all data after initializing", fakeAsync(() => {
     component.ngOnInit();
     tick();
-    expect(component.entityList.length).toEqual(testNotes.length);
+    expect(component.notes.length).toEqual(testNotes.length);
   }));
 });

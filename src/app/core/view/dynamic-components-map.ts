@@ -19,6 +19,7 @@ import { ListAttendanceComponent } from "../../child-dev-project/children/childr
 import { SchoolBlockWrapperComponent } from "../../child-dev-project/children/children-list/school-block-wrapper/school-block-wrapper.component";
 import { DisplayTickComponent } from "../entity-list/display-tick/display-tick.component";
 import { ChildrenOverviewComponent } from "../../child-dev-project/schools/children-overview/children-overview.component";
+import { ChildrenListComponent } from "../../child-dev-project/notes/notes-manager/children-list/children-list.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -39,6 +40,7 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["DisplayText", DisplayTextComponent],
   ["DisplayTick", DisplayTickComponent],
   ["ChildBlock", ChildBlockComponent],
+  ["ChildrenList", ChildrenListComponent],
   ["ListAttendance", ListAttendanceComponent],
   ["SchoolBlockWrapper", SchoolBlockWrapperComponent],
   ["ChildrenOverview", ChildrenOverviewComponent],

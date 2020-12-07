@@ -76,6 +76,7 @@
             fxHide.lt-sm
     >
         <mat-button-toggle-group
+                *ngIf="columnGroups.length > 1"
                 name="columnSelection"
                 [(value)]="selectedColumnGroup"
                 fxLayout="row wrap"
@@ -103,7 +104,7 @@
             </mat-button-toggle>
         </mat-button-toggle-group>
     </div>
-    <div fxLayout="row wrap" fxHide.gt-xs>
+    <div fxLayout="row wrap" fxHide.gt-xs *ngIf="filterSelections.length > 0">
         <mat-form-field
                 *ngFor="let filterSelection of filterSelections"
                 style="padding-right: 1%;"
@@ -124,9 +125,27 @@
             </mat-select>
         </mat-form-field>
     </div>
+    <div
+            fxLayout="row"
+            fxLayoutGap="10px"
+            style="margin-top: 20px;"
+            *ngIf="filterDropdowns.length > 0"
+    >
+        <mat-form-field *ngFor="let filterSelection of filterDropdowns">
+            <mat-select
+                    [placeholder]="filterSelection.name"
+                    [value]="filterSelection.selectedOption"
+            >
+                <mat-option
+                        *ngFor="let option of filterSelection.options"
+                        [value]="option.key"
+                        (click)="filterClick(filterSelection, option.key)"
+                >{{ option.label }}</mat-option
+                >
+            </mat-select>
+        </mat-form-field>
+    </div>
 </mat-expansion-panel>
-
-<!--<mat-divider></mat-divider>-->
 
 <div class="mat-elevation-z2 table-list">
     <table mat-table [dataSource]="entityDataSource" matSort style="width: 100%">
@@ -145,11 +164,12 @@
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
         <tr
-                mat-row
-                *matRowDef="let entity; columns: columnsToDisplay"
-                (click)="elementClick.emit(entity)"
-                style="cursor: pointer;"
-                class="table-list-item"
+            mat-row
+            *matRowDef="let entity; columns: columnsToDisplay"
+            [ngStyle]="{ 'background-color': entity.color }"
+            (click)="elementClick.emit(entity)"
+            style="cursor: pointer;"
+            class="table-list-item"
         ></tr>
     </table>
     <mat-paginator
