@@ -1,16 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { Child } from "../../../children/model/child";
-import { AttendanceMonth } from "../../model/attendance-month";
-import { ChildrenService } from "../../../children/children.service";
-import { RollCallRecord } from "./roll-call-record";
 import { animate, style, transition, trigger } from "@angular/animations";
-import { AppConfig } from "../../../../core/app-config/app-config";
 import { AttendanceStatus } from "../../model/attendance-status";
+import { EventNote } from "../../model/event-note";
 
 /**
- * Displays the given children one by one to the user to mark the attendance status for the given day and type.
- * This component itself handles the loading and saving of the attendances entities internally.
+ * Displays the participants of the given event one by one to mark attendance status.
  */
 @Component({
   selector: "app-roll-call",
@@ -27,119 +22,34 @@ import { AttendanceStatus } from "../../model/attendance-status";
 })
 export class RollCallComponent implements OnInit {
   /**
-   * The day for which attendance will be recorded
+   * The event to be displayed and edited.
    */
-  @Input() day: Date;
+  @Input() eventEntity: EventNote;
 
   /**
-   * The attendance type to be checked and saved (e.g. 'coaching' or 'school')
+   * A list of Child objects including the ones referenced in the given eventEntity.
+   *
+   * This is required to display details like child's name.
+   * The array is treated as a utility data source and children included here are *not* automatically added to the event.
    */
-  @Input() attendanceType: string;
+  @Input() children: Child[];
 
   /**
-   * The children for whom attendance will be recorded
+   * Emitted when the roll call is finished (or aborted).
    */
-  @Input() students: Child[] = [];
+  @Output() complete = new EventEmitter<EventNote>();
 
-  /**
-   * Event emitted when the roll call is finished (or aborted).
-   */
-  @Output() complete = new EventEmitter();
-
-  isLoading: boolean = true;
   currentIndex: number;
-  rollCallList: RollCallRecord[] = [];
 
+  /** mapped enum to be accessible in template */
   AttStatus = AttendanceStatus;
 
-  showDebug = AppConfig.settings.debug;
-  debugContent: any;
-
-  constructor(
-    private entityMapper: EntityMapperService,
-    private childrenService: ChildrenService
-  ) {}
-
   async ngOnInit() {
-    await this.loadList();
-  }
-
-  private async loadList() {
-    this.isLoading = true;
-
-    this.rollCallList = await this.loadMonthAttendanceRecords(this.students);
-    this.sortRollCallList();
-
     this.goToNextStudent(0);
-
-    this.isLoading = false;
-  }
-
-  private async loadMonthAttendanceRecords(
-    children: Child[]
-  ): Promise<RollCallRecord[]> {
-    const rollCallRecords: RollCallRecord[] = [];
-
-    const attendances = await this.childrenService
-      .getAttendancesOfMonth(this.day)
-      .toPromise();
-    children.forEach((child) => {
-      let attMonth: AttendanceMonth = attendances.find(
-        (a) =>
-          a.student === child.getId() && a.institution === this.attendanceType
-      );
-      if (attMonth === undefined) {
-        attMonth = AttendanceMonth.createAttendanceMonth(
-          child.getId(),
-          this.attendanceType
-        );
-        attMonth.month = new Date(this.day.getTime());
-      }
-
-      const attDay = attMonth.dailyRegister.find(
-        (d) =>
-          d.date.getDate() === this.day.getDate() &&
-          d.date.getMonth() === this.day.getMonth() &&
-          d.date.getFullYear() === this.day.getFullYear()
-      );
-
-      rollCallRecords.push({
-        child: child,
-        attendanceMonth: attMonth,
-        attendanceDay: attDay,
-      });
-    });
-
-    return rollCallRecords;
-  }
-
-  private sortRollCallList() {
-    this.rollCallList.sort((a: RollCallRecord, b: RollCallRecord) => {
-      if (a.child.schoolClass === b.child.schoolClass) {
-        return 0;
-      }
-
-      const diff =
-        parseInt(a.child.schoolClass, 10) - parseInt(b.child.schoolClass, 10);
-      if (!Number.isNaN(diff)) {
-        return diff;
-      }
-
-      if (
-        a.child.schoolClass < b.child.schoolClass ||
-        b.child.schoolClass === undefined
-      ) {
-        return -1;
-      }
-      return 1;
-    });
   }
 
   markAttendance(status: AttendanceStatus) {
-    const rollCallListEntry = this.rollCallList[this.currentIndex];
-    rollCallListEntry.attendanceDay.status = status;
-    this.entityMapper.save(rollCallListEntry.attendanceMonth);
-
+    this.eventEntity.children[this.currentIndex].status = status;
     setTimeout(() => this.goToNextStudent(), 750);
   }
 
@@ -149,24 +59,17 @@ export class RollCallComponent implements OnInit {
     } else {
       this.currentIndex++;
     }
-
-    this.displayRecordForDebugging(this.rollCallList[this.currentIndex]);
   }
 
   endRollCall() {
-    this.complete.emit();
+    this.complete.emit(this.eventEntity);
   }
 
   isFinished(): boolean {
-    return this.currentIndex >= this.rollCallList.length;
+    return this.currentIndex >= this.eventEntity.children.length;
   }
 
-  displayRecordForDebugging(rollCallRecord: RollCallRecord) {
-    if (!rollCallRecord) {
-      return;
-    }
-
-    console.log(rollCallRecord);
-    this.debugContent = JSON.stringify(rollCallRecord.attendanceDay, null, 2);
+  getChildById(childId: string) {
+    return this.children.find((c) => c.getId() === childId);
   }
 }

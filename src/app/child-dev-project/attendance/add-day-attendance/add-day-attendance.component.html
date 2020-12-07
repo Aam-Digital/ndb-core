@@ -36,7 +36,6 @@
 
 
 <div *ngIf='currentStage===2'>
-  <app-roll-call [day]='day' [attendanceType]='attendanceType' [students]='students'
-                 (complete)='finishRollCallState()'>
+  <app-roll-call [eventEntity]='event' [children]='selectedChildren' (complete)='finishRollCallState()'>
   </app-roll-call>
 </div>
