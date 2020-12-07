@@ -36,6 +36,8 @@ export class EntityListComponent<T extends Entity>
   implements OnChanges, AfterViewInit {
   @Input() entityList: T[] = [];
   @Input() listConfig: any = {};
+  // This name is used to store the pagination settings in the user entity
+  @Input() componentName: string = "";
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
 
@@ -58,8 +60,8 @@ export class EntityListComponent<T extends Entity>
   entityDataSource = new MatTableDataSource<T>();
 
   user: User;
-  public paginatorPageSize: number;
-  public paginatorPageIndex: number;
+  public paginatorPageSize: number = 10;
+  public paginatorPageIndex: number = 0;
 
   filterString = "";
 
@@ -71,8 +73,17 @@ export class EntityListComponent<T extends Entity>
     private entityMapperService: EntityMapperService
   ) {
     this.user = this.sessionService.getCurrentUser();
-    this.paginatorPageSize = this.user.paginatorSettingsPageSize.childrenList;
-    this.paginatorPageIndex = this.user.paginatorSettingsPageIndex.childrenList;
+    console.log(
+      "const",
+      this.user.paginatorSettingsPageIndex,
+      this.user.paginatorSettingsPageSize
+    );
+    this.paginatorPageSize =
+      this.user.paginatorSettingsPageSize[this.componentName] ||
+      this.paginatorPageSize;
+    this.paginatorPageIndex =
+      this.user.paginatorSettingsPageIndex[this.componentName] ||
+      this.paginatorPageIndex;
     this.media.asObservable().subscribe((change: MediaChange[]) => {
       switch (change[0].mqAlias) {
         case "xs":
@@ -123,6 +134,7 @@ export class EntityListComponent<T extends Entity>
   }
 
   onPaginateChange(event: PageEvent) {
+    console.log("called", event);
     this.paginatorPageSize = event.pageSize;
     this.paginatorPageIndex = event.pageIndex;
     this.updateUserPaginationSettings();
@@ -149,11 +161,19 @@ export class EntityListComponent<T extends Entity>
     // The PageSize is stored in the database, the PageList is only in memory
     const hasChangesToBeSaved =
       this.paginatorPageSize !==
-      this.user.paginatorSettingsPageSize.childrenList;
+      this.user.paginatorSettingsPageSize[this.componentName];
 
-    // TODO extend this to save different settings for different usages (maybe dependent on the title)
-    this.user.paginatorSettingsPageIndex.childrenList = this.paginatorPageIndex;
-    this.user.paginatorSettingsPageSize.childrenList = this.paginatorPageSize;
+    this.user.paginatorSettingsPageIndex[
+      this.componentName
+    ] = this.paginatorPageIndex;
+    this.user.paginatorSettingsPageSize[
+      this.componentName
+    ] = this.paginatorPageSize;
+    console.log(
+      "user",
+      this.user.paginatorSettingsPageIndex,
+      this.user.paginatorSettingsPageSize
+    );
 
     if (hasChangesToBeSaved) {
       this.entityMapperService.save<User>(this.user);
@@ -165,11 +185,9 @@ export class EntityListComponent<T extends Entity>
       if (params["view"]) {
         this.displayColumnGroup(params["view"]);
       }
-
       this.filterSelections.forEach((f) => {
-        f.selectedOption = params[f.name];
-        if (f.selectedOption === undefined && f.options.length > 0) {
-          f.selectedOption = f.options[0].key;
+        if (params.hasOwnProperty(f.name)) {
+          f.selectedOption = params[f.name];
         }
       });
       this.applyFilterSelections();
@@ -205,8 +223,9 @@ export class EntityListComponent<T extends Entity>
     this.filtersConfig.forEach((filter) => {
       const fs = new FilterSelection(filter.id, []);
       this.initFilterOptions(fs, filter);
-      console.log("filter", filter, fs);
-      fs.selectedOption = filter.default || fs.options[0].key;
+      fs.selectedOption = filter.hasOwnProperty("default")
+        ? filter.default
+        : fs.options[0].key;
       if (filter.display === "dropdown") {
         this.filterDropdowns.push(fs);
       } else {
@@ -215,7 +234,7 @@ export class EntityListComponent<T extends Entity>
     });
   }
 
-  private initFilterOptions(filter, config): FilterSelectionOption<any>[] {
+  private initFilterOptions(filter, config): FilterSelectionOption<T>[] {
     switch (config.type) {
       case "boolean":
         return (filter.options = this.createBooleanFilterOptions(config));
@@ -223,7 +242,6 @@ export class EntityListComponent<T extends Entity>
         return (filter.options = config.options);
       default: {
         const options = [...new Set(this.entityList.map((c) => c[config.id]))];
-        console.log("options", options);
         filter.initOptions(options, config.id);
       }
     }

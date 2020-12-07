@@ -1,6 +1,5 @@
 import { Component } from "@angular/core";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { Child } from "../../../children/model/child";
 
 @Component({
   selector: "app-children-list",

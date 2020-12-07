@@ -21,6 +21,7 @@ import { LoggingService } from "../../../core/logging/logging.service";
     <app-entity-list
       [entityList]="notes"
       [listConfig]="config"
+      [componentName]="componentName"
       (elementClick)="showDetails($event)"
       (addNewClick)="addNoteClick()"
       #entityList
@@ -30,11 +31,11 @@ import { LoggingService } from "../../../core/logging/logging.service";
 export class NotesManagerComponent implements OnInit {
   @ViewChild("entityList") entityList: EntityListComponent<Note>;
 
-  /** interaction types loaded from config file */
-  interactionTypes: InteractionType[];
-  notes: Note[] = [];
+  public config: any = {};
+  public notes: Note[] = [];
+  public componentName = "notesComponent";
 
-  statusFS: FilterSelectionOption<Note>[] = [
+  private statusFS: FilterSelectionOption<Note>[] = [
     {
       key: "urgent",
       label: "Urgent",
@@ -50,7 +51,7 @@ export class NotesManagerComponent implements OnInit {
     { key: "", label: "All", filterFun: () => true },
   ];
 
-  dateFS: FilterSelectionOption<Note>[] = [
+  private dateFS: FilterSelectionOption<Note>[] = [
     {
       key: "current-week",
       label: "This Week",
@@ -64,8 +65,6 @@ export class NotesManagerComponent implements OnInit {
     { key: "", label: "All", filterFun: () => true },
   ];
 
-  public config: any = {};
-
   constructor(
     private formDialog: FormDialogService,
     private sessionService: SessionService,
@@ -77,14 +76,9 @@ export class NotesManagerComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // load interactionTypes from config
-    this.interactionTypes = this.configLoader.interactionTypes;
-
-    // load listName from config
     this.route.data.subscribe((config) => {
       this.config = config;
       this.addPrebuiltFilters();
-      console.log("filters", this.config);
     });
     this.entityMapperService.loadType<Note>(Note).then((notes) => {
       notes.forEach((note) => (note["color"] = this.getColor(note)));
@@ -96,10 +90,16 @@ export class NotesManagerComponent implements OnInit {
     this.config.filters.forEach((f) => {
       if (f.type === "prebuilt") {
         switch (f.id) {
-          case "status":
-            return (f["options"] = this.statusFS);
-          case "date":
-            return (f["options"] = this.dateFS);
+          case "status": {
+            f["options"] = this.statusFS;
+            f["default"] = "";
+            return;
+          }
+          case "date": {
+            f["options"] = this.dateFS;
+            f["default"] = "current-week";
+            return;
+          }
           default: {
             this.log.warn(
               "[NoteManagerComponent] No filter options available for prebuilt filter: " +
