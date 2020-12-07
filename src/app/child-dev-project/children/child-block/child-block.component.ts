@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, Optional } from "@angular/core";
 import { Router } from "@angular/router";
 import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";
@@ -23,8 +23,8 @@ export class ChildBlockComponent implements OnInit {
   tooltipTimeout;
 
   constructor(
-    private router: Router,
-    private childrenService: ChildrenService
+    @Optional() private router: Router,
+    @Optional() private childrenService: ChildrenService
   ) {}
 
   async ngOnInit() {
@@ -58,6 +58,6 @@ export class ChildBlockComponent implements OnInit {
       return;
     }
 
-    this.router.navigate(["/child", this.entity.getId()]);
+    this.router?.navigate(["/child", this.entity.getId()]);
   }
 }

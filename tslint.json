@@ -2,6 +2,11 @@
   "rulesDirectory": [
     "node_modules/codelyzer"
   ],
+  "linterOptions": {
+    "exclude": [
+      "src/storybook-examples/*"
+    ]
+  },
   "rules": {
     "prettier": true,
     "callable-types": true,
@@ -115,5 +120,6 @@
     "component-class-suffix": true,
     "directive-class-suffix": true
   },
+  "jsRules": { "no-empty": true },
   "extends": ["tslint-plugin-prettier", "tslint-config-prettier"]
 }
