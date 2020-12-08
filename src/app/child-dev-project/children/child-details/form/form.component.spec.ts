@@ -60,7 +60,10 @@ describe("FormComponent", () => {
     mockChildPhotoService.canSetImage.and.returnValue(false);
     fixture = TestBed.createComponent(FormComponent);
     component = fixture.componentInstance;
-    component.onInitFromDynamicConfig({ child: testChild, config: testConfig });
+    component.onInitFromDynamicConfig({
+      entity: testChild,
+      config: testConfig,
+    });
     fixture.detectChanges();
   });
 
@@ -71,7 +74,7 @@ describe("FormComponent", () => {
   it("should change the creating state", () => {
     expect(component.creatingNew).toBe(false);
     component.onInitFromDynamicConfig({
-      child: testChild,
+      entity: testChild,
       config: testConfig,
       creatingNew: true,
     });

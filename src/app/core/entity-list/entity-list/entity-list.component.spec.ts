@@ -24,7 +24,7 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { SessionService } from "../../session/session-service/session.service";
 import { Database } from "../../database/database";
 import { MockDatabase } from "../../database/mock-database";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { SimpleChange } from "@angular/core";
 import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
@@ -72,8 +72,6 @@ describe("EntityListComponent", () => {
       },
     ],
   };
-
-  const routerMock = jasmine.createSpyObj("routerMock", ["navigate"]);
 
   beforeEach(async(() => {
     const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
@@ -183,16 +181,15 @@ describe("EntityListComponent", () => {
     const router = fixture.debugElement.injector.get(Router);
     spyOn(router, "navigate");
     const dropoutFs = component.filterSelections[0];
-    const centerFs = component.filterSelections[1];
     const clickedOption = testConfig.filters[0].false;
+    const route = fixture.debugElement.injector.get(ActivatedRoute);
     component.filterClick(dropoutFs, clickedOption);
     const expectedParams = {};
     expectedParams[dropoutFs.name] = clickedOption;
-    expectedParams[centerFs.name] = "";
-    expectedParams["view"] = testConfig.columnGroups.default;
-    expect(router.navigate).toHaveBeenCalledWith(["child"], {
+    expect(router.navigate).toHaveBeenCalledWith([], {
+      relativeTo: route,
       queryParams: expectedParams,
-      replaceUrl: false,
+      queryParamsHandling: "merge",
     });
   });
 

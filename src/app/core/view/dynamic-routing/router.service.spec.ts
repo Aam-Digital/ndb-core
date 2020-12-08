@@ -52,7 +52,7 @@ describe("RouterService", () => {
       { _id: "view:child", component: "ChildrenList" },
       {
         _id: "view:child/:id",
-        component: "ChildDetails",
+        component: "EntityDetails",
         config: testViewConfig,
       },
       { _id: "view:admin", component: "Admin", requiresAdmin: true },
@@ -80,7 +80,7 @@ describe("RouterService", () => {
     const existingRoutes = [{ path: "other", component: TestComponent }];
     const testViewConfigs = [
       { _id: "view:child", component: "ChildrenList" },
-      { _id: "view:other", component: "ChildDetails" },
+      { _id: "view:other", component: "EntityDetails" },
     ];
     const expectedRoutes = [
       { path: "child", component: ChildrenListComponent },
