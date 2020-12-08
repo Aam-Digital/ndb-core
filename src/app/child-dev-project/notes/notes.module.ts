@@ -39,7 +39,6 @@ import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirm
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
 import { Angulartics2Module } from "angulartics2";
 import { NoteConfigLoaderService } from "./note-config-loader/note-config-loader.service";
-import { ChildrenListComponent } from "./notes-manager/children-list/children-list.component";
 import { EntityListModule } from "../../core/entity-list/entity-list.module";
 
 @NgModule({
@@ -48,7 +47,6 @@ import { EntityListModule } from "../../core/entity-list/entity-list.module";
     NotesManagerComponent,
     ChildMeetingNoteAttendanceComponent,
     NotePresenceListComponent,
-    ChildrenListComponent,
   ],
   imports: [
     CommonModule,

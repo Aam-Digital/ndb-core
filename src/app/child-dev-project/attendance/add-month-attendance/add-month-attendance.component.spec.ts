@@ -12,7 +12,6 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatTableModule } from "@angular/material/table";
 import { FormsModule } from "@angular/forms";
 import { SchoolBlockComponent } from "../../schools/school-block/school-block.component";
-import { ChildBlockComponent } from "../../children/child-block/child-block.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { MockDatabase } from "../../../core/database/mock-database";
 import { Database } from "../../../core/database/database";
@@ -22,6 +21,7 @@ import { AlertsModule } from "../../../core/alerts/alerts.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { ChildPhotoService } from "../../children/child-photo-service/child-photo.service";
+import { ChildBlockComponent } from "../../children/child-block-list/child-block/child-block.component";
 
 describe("AddMonthAttendanceComponent", () => {
   let component: AddMonthAttendanceComponent;

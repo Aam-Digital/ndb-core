@@ -2,11 +2,11 @@ import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ChildBlockComponent } from "./child-block.component";
 import { RouterTestingModule } from "@angular/router/testing";
-import { Child } from "../model/child";
-import { SchoolBlockComponent } from "../../schools/school-block/school-block.component";
 import { MatIconModule } from "@angular/material/icon";
-import { ChildrenService } from "../children.service";
 import { of } from "rxjs";
+import { SchoolBlockComponent } from "../../../schools/school-block/school-block.component";
+import { ChildrenService } from "../../children.service";
+import { Child } from "../../model/child";
 
 describe("ChildBlockComponent", () => {
   let component: ChildBlockComponent;

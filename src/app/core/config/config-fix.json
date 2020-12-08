@@ -90,7 +90,7 @@
                 {"component": "DisplayText", "title": "Subject", "id": "subject"},
                 {"component": "DisplayText", "title": "Category", "id": "categoryName"},
                 {"component": "DisplayText", "title": "Author", "id": "author"},
-                {"component": "ChildrenList", "title": "Children", "id": "children", "noSorting": true}
+                {"component": "ChildBlockList", "title": "Children", "id": "children", "noSorting": true}
             ],
             "columnGroups": {
                 "default": "Standard",

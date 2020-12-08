@@ -10,7 +10,6 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { ChildBlockComponent } from "../../children/child-block/child-block.component";
 import { AttendanceBlockComponent } from "../attendance-block/attendance-block.component";
 import { AttendanceDayBlockComponent } from "../attendance-days/attendance-day-block.component";
 import { SchoolBlockComponent } from "../../schools/school-block/school-block.component";
@@ -24,6 +23,7 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatNativeDateModule } from "@angular/material/core";
 import { BehaviorSubject } from "rxjs";
 import { AttendanceAnalysisComponent } from "./attendance-analysis.component";
+import { ChildBlockComponent } from "../../children/child-block-list/child-block/child-block.component";
 
 describe("AttendanceRegisterComponent", () => {
   let component: AttendanceAnalysisComponent;

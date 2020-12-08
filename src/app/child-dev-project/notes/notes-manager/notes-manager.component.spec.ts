@@ -33,7 +33,7 @@ describe("NotesManagerComponent", () => {
     columns: [
       { type: "DisplayDate", title: "Date", id: "date" },
       { type: "DisplayText", title: "Subject", id: "subject" },
-      { type: "ChildrenList", title: "Children", id: "children" },
+      { type: "ChildBlockList", title: "Children", id: "children" },
     ],
     columnGroups: {
       default: "Standard",

@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { ChildrenService } from "../children.service";
-import { Child } from "../model/child";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { Child } from "../../model/child";
+import { ChildrenService } from "../../children.service";
 
 @UntilDestroy()
 @Component({

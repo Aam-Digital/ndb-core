@@ -14,12 +14,12 @@ import { EducationalMaterialComponent } from "../../child-dev-project/educationa
 import { FormComponent } from "../../child-dev-project/children/child-details/form/form.component";
 import { DisplayDateComponent } from "../entity-list/display-date/display-date.component";
 import { DisplayTextComponent } from "../entity-list/display-text/display-text.component";
-import { ChildBlockComponent } from "../../child-dev-project/children/child-block/child-block.component";
 import { ListAttendanceComponent } from "../../child-dev-project/children/children-list/list-attendance/list-attendance.component";
 import { SchoolBlockWrapperComponent } from "../../child-dev-project/children/children-list/school-block-wrapper/school-block-wrapper.component";
 import { DisplayTickComponent } from "../entity-list/display-tick/display-tick.component";
 import { ChildrenOverviewComponent } from "../../child-dev-project/schools/children-overview/children-overview.component";
-import { ChildrenListComponent } from "../../child-dev-project/notes/notes-manager/children-list/children-list.component";
+import { ChildBlockListComponent } from "../../child-dev-project/children/child-block-list/child-block-list.component";
+import { ChildBlockComponent } from "../../child-dev-project/children/child-block-list/child-block/child-block.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -40,7 +40,7 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["DisplayText", DisplayTextComponent],
   ["DisplayTick", DisplayTickComponent],
   ["ChildBlock", ChildBlockComponent],
-  ["ChildrenList", ChildrenListComponent],
+  ["ChildBlockList", ChildBlockListComponent],
   ["ListAttendance", ListAttendanceComponent],
   ["SchoolBlockWrapper", SchoolBlockWrapperComponent],
   ["ChildrenOverview", ChildrenOverviewComponent],
