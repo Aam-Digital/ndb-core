@@ -31,7 +31,7 @@ import { AttendanceManagerComponent } from "./child-dev-project/attendance/atten
 import { HowToComponent } from "./core/help/how-to/how-to.component";
 import { UserListComponent } from "./core/admin/user-list/user-list.component";
 import { AttendanceAnalysisComponent } from "./child-dev-project/attendance/attendance-analysis/attendance-analysis.component";
-import { EntityDetailsComponent } from "./core/entity-list/entity-details/entity-details.component";
+import { EntityDetailsComponent } from "./core/entity-components/entity-details/entity-details.component";
 
 export const COMPONENT_MAP = {
   Dashboard: DashboardComponent,

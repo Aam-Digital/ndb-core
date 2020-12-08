@@ -10,7 +10,7 @@ import { SessionService } from "../../../core/session/session-service/session.se
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { NoteConfigLoaderService } from "../note-config-loader/note-config-loader.service";
-import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
+import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 import { LoggingService } from "../../../core/logging/logging.service";
 
 @UntilDestroy()

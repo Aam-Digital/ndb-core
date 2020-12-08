@@ -9,7 +9,7 @@ import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
 
 import { RouterService } from "./router.service";
-import { EntityDetailsComponent } from "../../entity-list/entity-details/entity-details.component";
+import { EntityDetailsComponent } from "../../entity-components/entity-details/entity-details.component";
 
 class TestComponent extends Component {}
 

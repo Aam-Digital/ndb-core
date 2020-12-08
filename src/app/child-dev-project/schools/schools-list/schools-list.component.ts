@@ -3,7 +3,7 @@ import { School } from "../model/school";
 import { ActivatedRoute, Router } from "@angular/router";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
+import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 
 @UntilDestroy()
 @Component({

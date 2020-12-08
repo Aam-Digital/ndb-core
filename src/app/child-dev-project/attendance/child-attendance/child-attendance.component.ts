@@ -1,12 +1,12 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { AttendanceMonth } from "../model/attendance-month";
 import { ChildrenService } from "../../children/children.service";
-import { ColumnDescription } from "../../../core/entity-subrecord/entity-subrecord/column-description";
 import { DatePipe, PercentPipe } from "@angular/common";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
-import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
+import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
+import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
 
 @UntilDestroy()
 @Component({

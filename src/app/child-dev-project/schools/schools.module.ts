@@ -21,12 +21,11 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatSelectModule } from "@angular/material/select";
-import { EntitySubrecordModule } from "../../core/entity-subrecord/entity-subrecord.module";
 import { RouterModule } from "@angular/router";
 import { SchoolsService } from "./schools.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Angulartics2Module } from "angulartics2";
-import { EntityListModule } from "../../core/entity-list/entity-list.module";
+import { EntityComponentsModule } from "../../core/entity-components/entity-components.module";
 import { ChildrenOverviewComponent } from "./children-overview/children-overview.component";
 
 @NgModule({
@@ -65,11 +64,10 @@ import { ChildrenOverviewComponent } from "./children-overview/children-overview
     MatSnackBarModule,
     MatDialogModule,
     MatAutocompleteModule,
-    EntitySubrecordModule,
     ReactiveFormsModule,
     MatTooltipModule,
     Angulartics2Module,
-    EntityListModule,
+    EntityComponentsModule,
   ],
   declarations: [
     SchoolBlockComponent,

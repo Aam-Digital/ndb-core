@@ -22,6 +22,10 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 import { Angulartics2Module } from "angulartics2";
 import { DisplayTickComponent } from "./display-tick/display-tick.component";
 import { EntityDetailsComponent } from "./entity-details/entity-details.component";
+import { EntitySubrecordComponent } from "./entity-subrecord/entity-subrecord.component";
+import { KeysPipe } from "./keys-pipe/keys.pipe";
+import { ConfirmationDialogModule } from "../confirmation-dialog/confirmation-dialog.module";
+import { FormDialogModule } from "../form-dialog/form-dialog.module";
 
 @NgModule({
   imports: [
@@ -43,6 +47,8 @@ import { EntityDetailsComponent } from "./entity-details/entity-details.componen
     MatSortModule,
     FlexLayoutModule,
     Angulartics2Module,
+    ConfirmationDialogModule,
+    FormDialogModule,
   ],
   declarations: [
     EntityListComponent,
@@ -50,7 +56,9 @@ import { EntityDetailsComponent } from "./entity-details/entity-details.componen
     DisplayDateComponent,
     DisplayTickComponent,
     EntityDetailsComponent,
+    EntitySubrecordComponent,
+    KeysPipe,
   ],
-  exports: [EntityListComponent],
+  exports: [EntityListComponent, EntitySubrecordComponent],
 })
-export class EntityListModule {}
+export class EntityComponentsModule {}

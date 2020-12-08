@@ -6,7 +6,6 @@ import { SessionService } from "../../../../core/session/session-service/session
 import { User } from "../../../../core/user/user";
 import { EntitySchemaService } from "../../../../core/entity/schema/entity-schema.service";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
-import { EntitySubrecordModule } from "../../../../core/entity-subrecord/entity-subrecord.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { Database } from "../../../../core/database/database";
@@ -16,6 +15,8 @@ import { AlertService } from "../../../../core/alerts/alert.service";
 import { Child } from "../../model/child";
 import { BehaviorSubject } from "rxjs";
 import { SafeUrl } from "@angular/platform-browser";
+import { EntityComponentsModule } from "../../../../core/entity-components/entity-components.module";
+import { RouterTestingModule } from "@angular/router/testing";
 
 describe("FormComponent", () => {
   let component: FormComponent;
@@ -24,11 +25,6 @@ describe("FormComponent", () => {
   const mockChildPhotoService: jasmine.SpyObj<ChildPhotoService> = jasmine.createSpyObj(
     "mockChildPhotoService",
     ["canSetImage", "setImage", "getImage"]
-  );
-
-  const mockRouter: jasmine.SpyObj<Router> = jasmine.createSpyObj(
-    "mockRouter",
-    ["navigate"]
   );
 
   const mockSessionService: jasmine.SpyObj<SessionService> = jasmine.createSpyObj(
@@ -41,7 +37,12 @@ describe("FormComponent", () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [FormComponent],
-      imports: [MatSnackBarModule, EntitySubrecordModule, NoopAnimationsModule],
+      imports: [
+        MatSnackBarModule,
+        EntityComponentsModule,
+        NoopAnimationsModule,
+        RouterTestingModule,
+      ],
       providers: [
         EntityMapperService,
         EntitySchemaService,
@@ -49,7 +50,6 @@ describe("FormComponent", () => {
         FormBuilder,
         AlertService,
         { provide: ChildPhotoService, useValue: mockChildPhotoService },
-        { provide: Router, useValue: mockRouter },
         { provide: SessionService, useValue: mockSessionService },
       ],
     }).compileComponents();
@@ -90,12 +90,11 @@ describe("FormComponent", () => {
 
   it("calls router once a new child is saved", async () => {
     spyOnProperty(component.form, "valid").and.returnValue(true);
+    const router = fixture.debugElement.injector.get(Router);
+    spyOn(router, "navigate");
     component.creatingNew = true;
     await component.save();
-    expect(mockRouter.navigate).toHaveBeenCalledWith([
-      "/child",
-      testChild.getId(),
-    ]);
+    expect(router.navigate).toHaveBeenCalledWith(["/child", testChild.getId()]);
   });
 
   it("sets a new child photo", async () => {

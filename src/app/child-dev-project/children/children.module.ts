@@ -40,7 +40,6 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 import { ChildrenService } from "./children.service";
 import { AttendanceBlockComponent } from "../attendance/attendance-block/attendance-block.component";
 import { ChildAttendanceComponent } from "../attendance/child-attendance/child-attendance.component";
-import { EntitySubrecordModule } from "../../core/entity-subrecord/entity-subrecord.module";
 import { ChildrenCountDashboardComponent } from "./children-count-dashboard/children-count-dashboard.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -81,7 +80,7 @@ import { GroupedChildAttendanceComponent } from "./child-details/grouped-child-a
 import { ViewModule } from "../../core/view/view.module";
 import { FormComponent } from "./child-details/form/form.component";
 import { ListAttendanceComponent } from "./children-list/list-attendance/list-attendance.component";
-import { EntityListModule } from "../../core/entity-list/entity-list.module";
+import { EntityComponentsModule } from "../../core/entity-components/entity-components.module";
 import { SchoolBlockWrapperComponent } from "./children-list/school-block-wrapper/school-block-wrapper.component";
 import { ChildBlockListComponent } from "./child-block-list/child-block-list.component";
 import { ChildBlockComponent } from "./child-block-list/child-block/child-block.component";
@@ -113,7 +112,6 @@ import { ChildBlockComponent } from "./child-block-list/child-block/child-block.
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FilterPipeModule,
-    EntitySubrecordModule,
     SchoolsModule,
     ReactiveFormsModule,
     MatDialogModule,
@@ -125,7 +123,7 @@ import { ChildBlockComponent } from "./child-block-list/child-block/child-block.
     FormDialogModule,
     Angulartics2Module,
     ViewModule,
-    EntityListModule,
+    EntityComponentsModule,
   ],
   declarations: [
     AttendanceBlockComponent,

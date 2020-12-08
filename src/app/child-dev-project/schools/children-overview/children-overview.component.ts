@@ -1,10 +1,10 @@
 import { Component } from "@angular/core";
-import { ColumnDescription } from "../../../core/entity-subrecord/entity-subrecord/column-description";
-import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { SchoolsService } from "../schools.service";
 import { Child } from "../../children/model/child";
 import { MatTableDataSource } from "@angular/material/table";
+import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
+import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
 
 @Component({
   selector: "app-children-overview",

@@ -16,12 +16,13 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { MockDatabase } from "../../../core/database/mock-database";
 import { Database } from "../../../core/database/database";
 import { ChildrenService } from "../../children/children.service";
-import { EntitySubrecordModule } from "../../../core/entity-subrecord/entity-subrecord.module";
 import { AlertsModule } from "../../../core/alerts/alerts.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { ChildPhotoService } from "../../children/child-photo-service/child-photo.service";
 import { ChildBlockComponent } from "../../children/child-block-list/child-block/child-block.component";
+import { EntityComponentsModule } from "../../../core/entity-components/entity-components.module";
+import { RouterTestingModule } from "@angular/router/testing";
 
 describe("AddMonthAttendanceComponent", () => {
   let component: AddMonthAttendanceComponent;
@@ -45,9 +46,10 @@ describe("AddMonthAttendanceComponent", () => {
         MatButtonModule,
         MatProgressBarModule,
         FormsModule,
-        EntitySubrecordModule,
+        EntityComponentsModule,
         AlertsModule,
         NoopAnimationsModule,
+        RouterTestingModule,
       ],
       providers: [
         EntityMapperService,
