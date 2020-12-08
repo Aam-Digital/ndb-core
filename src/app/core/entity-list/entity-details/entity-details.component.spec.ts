@@ -15,11 +15,13 @@ import { ChildrenModule } from "../../../child-dev-project/children/children.mod
 import { MatNativeDateModule } from "@angular/material/core";
 import { databaseServiceProvider } from "../../database/database.service.provider";
 import { SessionService } from "../../session/session-service/session.service";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { RouterTestingModule } from "@angular/router/testing";
 import { Database } from "../../database/database";
+import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 describe("EntityDetailsComponent", () => {
   let component: EntityDetailsComponent;
@@ -114,5 +116,31 @@ describe("EntityDetailsComponent", () => {
     tick();
     expect(entityService.load).toHaveBeenCalledWith(Child, testChild.getId());
     expect(component.entity).toBe(testChild);
+  }));
+
+  it("should route back when deleting is undone", fakeAsync(() => {
+    const testChild = new Child("Test-Child");
+    component.entity = testChild;
+    const dialogRef = fixture.debugElement.injector.get(
+      ConfirmationDialogService
+    );
+    const entityMapper = fixture.debugElement.injector.get(EntityMapperService);
+    const snackBar = fixture.debugElement.injector.get(MatSnackBar);
+    const router = fixture.debugElement.injector.get(Router);
+    const dialogReturn: any = { afterClosed: () => of(true) };
+    spyOn(dialogRef, "openDialog").and.returnValue(dialogReturn);
+    spyOn(entityMapper, "remove").and.returnValue(Promise.resolve());
+    spyOn(entityMapper, "save");
+    spyOn(component, "navigateBack");
+    const snackBarReturn: any = { onAction: () => of({}) };
+    spyOn(snackBar, "open").and.returnValue(snackBarReturn);
+    spyOn(router, "navigate");
+    component.removeEntity();
+    tick();
+    expect(dialogRef.openDialog).toHaveBeenCalled();
+    expect(entityMapper.remove).toHaveBeenCalledWith(testChild);
+    expect(snackBar.open).toHaveBeenCalled();
+    expect(entityMapper.save).toHaveBeenCalledWith(testChild, true);
+    expect(router.navigate).toHaveBeenCalled();
   }));
 });

@@ -51,6 +51,10 @@ describe("NotesManagerComponent", () => {
         type: "prebuilt",
       },
       {
+        id: "date",
+        type: "prebuilt",
+      },
+      {
         id: "categoryName",
         type: "dropdown",
       },
@@ -92,9 +96,10 @@ describe("NotesManagerComponent", () => {
   it("should set up prebuilt filters", fakeAsync(() => {
     component.ngOnInit();
     tick();
-    expect(component.config.filters.length).toEqual(2);
+    expect(component.config.filters.length).toEqual(3);
     expect(component.config.filters[0].hasOwnProperty("options")).toBeTrue();
-    expect(component.config.filters[1].hasOwnProperty("options")).toBeFalse();
+    expect(component.config.filters[1].hasOwnProperty("options")).toBeTrue();
+    expect(component.config.filters[2].hasOwnProperty("options")).toBeFalse();
   }));
 
   it("should set the color for the notes", fakeAsync(() => {

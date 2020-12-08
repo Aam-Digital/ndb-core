@@ -1,4 +1,9 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  async,
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+} from "@angular/core/testing";
 import { EntityListComponent } from "./entity-list.component";
 import { User } from "../../user/user";
 import { ExportDataComponent } from "../../admin/export-data/export-data.component";
@@ -69,6 +74,10 @@ describe("EntityListComponent", () => {
       },
       {
         id: "center",
+      },
+      {
+        id: "religion",
+        display: "dropdown",
       },
     ],
   };
@@ -208,4 +217,12 @@ describe("EntityListComponent", () => {
       done();
     });
   });
+
+  it("correctly sets dropdown and selections", fakeAsync(() => {
+    expect(component.filterSelections.length).toEqual(2);
+    expect(component.filterSelections[0].name).toEqual("isActive");
+    expect(component.filterSelections[1].name).toEqual("center");
+    expect(component.filterDropdowns.length).toEqual(1);
+    expect(component.filterDropdowns[0].name).toEqual("religion");
+  }));
 });
