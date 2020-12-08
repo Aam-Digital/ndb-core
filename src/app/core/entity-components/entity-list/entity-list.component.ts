@@ -261,10 +261,14 @@ export class EntityListComponent<T extends Entity>
     if (this.ready) {
       this.ready = false;
       setTimeout(() => (this.ready = true), 500);
-      this.columnsToDisplay = this.columnGroups.find(
+
+      const selectedColumns = this.columnGroups.find(
         (c) => c.name === columnGroupName
-      ).columns;
-      this.selectedColumnGroup = columnGroupName;
+      )?.columns;
+      if (selectedColumns) {
+        this.columnsToDisplay = selectedColumns;
+        this.selectedColumnGroup = columnGroupName;
+      }
     }
   }
 }
