@@ -2,9 +2,7 @@ import { Injectable } from "@angular/core";
 import { School } from "./model/school";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { from, Observable } from "rxjs";
-import { Database } from "../../core/database/database";
 import { Child } from "../children/model/child";
-import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { ChildrenService } from "../children/children.service";
 import { LoggingService } from "../../core/logging/logging.service";
 
@@ -12,8 +10,6 @@ import { LoggingService } from "../../core/logging/logging.service";
 export class SchoolsService {
   constructor(
     private entityMapper: EntityMapperService,
-    private entitySchemaService: EntitySchemaService,
-    private db: Database,
     private childrenService: ChildrenService,
     private log: LoggingService
   ) {}
