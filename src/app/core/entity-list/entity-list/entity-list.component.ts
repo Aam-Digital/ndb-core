@@ -45,7 +45,7 @@ export class EntityListComponent<T extends Entity>
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   listName = "";
-  columns: string[] = [];
+  columns: any[] = [];
   columnGroups: ColumnGroup[] = [];
   defaultColumnGroup = "";
   mobileColumnGroup = "";

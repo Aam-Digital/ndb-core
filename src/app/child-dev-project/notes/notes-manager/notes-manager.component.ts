@@ -9,7 +9,6 @@ import { FilterSelectionOption } from "../../../core/filter/filter-selection/fil
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { UntilDestroy } from "@ngneat/until-destroy";
-import { InteractionType } from "../note-config-loader/note-config.interface";
 import { NoteConfigLoaderService } from "../note-config-loader/note-config-loader.service";
 import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
 import { LoggingService } from "../../../core/logging/logging.service";
@@ -31,9 +30,9 @@ import { LoggingService } from "../../../core/logging/logging.service";
 export class NotesManagerComponent implements OnInit {
   @ViewChild("entityList") entityList: EntityListComponent<Note>;
 
-  public config: any = {};
-  public notes: Note[] = [];
-  public componentName = "notesComponent";
+  config: any = {};
+  notes: Note[] = [];
+  componentName = "notesComponent";
 
   private statusFS: FilterSelectionOption<Note>[] = [
     {
@@ -86,7 +85,7 @@ export class NotesManagerComponent implements OnInit {
     });
   }
 
-  addPrebuiltFilters() {
+  private addPrebuiltFilters() {
     this.config.filters.forEach((f) => {
       if (f.type === "prebuilt") {
         switch (f.id) {

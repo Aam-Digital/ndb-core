@@ -28,10 +28,11 @@ import { Router } from "@angular/router";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { SimpleChange } from "@angular/core";
 import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
+import { Entity } from "../../entity/entity";
 
 describe("EntityListComponent", () => {
-  let component: EntityListComponent;
-  let fixture: ComponentFixture<EntityListComponent>;
+  let component: EntityListComponent<Entity>;
+  let fixture: ComponentFixture<EntityListComponent<Entity>>;
   const testConfig = {
     title: "Children List",
     columns: [
