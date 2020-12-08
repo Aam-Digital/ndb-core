@@ -34,11 +34,11 @@ import { ChildMeetingNoteAttendanceComponent } from "./note-details/child-meetin
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { NotePresenceListComponent } from "./note-details/note-presence-list/note-presence-list.component";
-import { EntitySubrecordModule } from "../../core/entity-subrecord/entity-subrecord.module";
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
 import { Angulartics2Module } from "angulartics2";
 import { NoteConfigLoaderService } from "./note-config-loader/note-config-loader.service";
+import { EntityComponentsModule } from "../../core/entity-components/entity-components.module";
 
 @NgModule({
   declarations: [
@@ -50,7 +50,6 @@ import { NoteConfigLoaderService } from "./note-config-loader/note-config-loader
   imports: [
     CommonModule,
     FormsModule,
-    EntitySubrecordModule,
     ConfirmationDialogModule,
     FlexLayoutModule,
     RouterModule,
@@ -87,7 +86,11 @@ import { NoteConfigLoaderService } from "./note-config-loader/note-config-loader
     MatPaginatorModule,
     FormDialogModule,
     Angulartics2Module,
+    EntityComponentsModule,
   ],
   providers: [NoteConfigLoaderService],
 })
-export class NotesModule {}
+export class NotesModule {
+  // ensure that the config loader gets called when using the module
+  constructor(private noteConfigLoaderService: NoteConfigLoaderService) {}
+}

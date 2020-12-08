@@ -1,143 +1,44 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from "@angular/core";
-import { MatSort } from "@angular/material/sort";
-import { MatTableDataSource } from "@angular/material/table";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { School } from "../model/school";
-import { SchoolsService } from "../schools.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { FilterSelection } from "../../../core/filter/filter-selection/filter-selection";
-import { MatPaginator, PageEvent } from "@angular/material/paginator";
-import { SessionService } from "../../../core/session/session-service/session.service";
-import { User } from "../../../core/user/user";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { UntilDestroy } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 
 @UntilDestroy()
 @Component({
   selector: "app-schools-list",
-  templateUrl: "./schools-list.component.html",
-  styleUrls: ["./schools-list.component.scss"],
+  template: `
+    <app-entity-list
+      [entityList]="schoolList"
+      [listConfig]="listConfig"
+      [componentName]="componentName"
+      (elementClick)="routeTo($event.getId())"
+      (addNewClick)="routeTo('new')"
+      #entityList
+    ></app-entity-list>
+  `,
 })
-export class SchoolsListComponent implements OnInit, AfterViewInit {
-  schoolList: School[];
-  schoolDataSource: MatTableDataSource<School> = new MatTableDataSource<
-    School
-  >();
-
-  listName: String;
-
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  filterString = "";
-  columnsToDisplay: string[] = [
-    "name",
-    "medium",
-    "privateSchool",
-    "academicBoard",
-    "upToClass",
-  ];
-
-  mediumFS = new FilterSelection("medium", []);
-  privateFS = new FilterSelection("private", [
-    {
-      key: "private",
-      label: "Private School",
-      filterFun: (s: School) => s.privateSchool,
-    },
-    {
-      key: "government",
-      label: "Government School",
-      filterFun: (s: School) => !s.privateSchool,
-    },
-    { key: "", label: "All", filterFun: () => true },
-  ]);
-  filterSelections = [this.mediumFS, this.privateFS];
-
-  public paginatorPageSize: number;
-  public paginatorPageIndex: number;
-  private user: User;
+export class SchoolsListComponent implements OnInit {
+  @ViewChild("entityList") entityList: EntityListComponent<School>;
+  schoolList: School[] = [];
+  listConfig: any = {};
+  componentName = "schoolsList";
 
   constructor(
-    private schoolService: SchoolsService,
+    private entityMapper: EntityMapperService,
     private router: Router,
-    private route: ActivatedRoute,
-    private sessionService: SessionService,
-    private entityMapperService: EntityMapperService
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
-    this.route.data.subscribe((config) => {
-      this.listName = config.title;
-    });
-    this.user = this.sessionService.getCurrentUser();
-    this.paginatorPageSize = this.user.paginatorSettingsPageSize.schoolsList;
-    this.paginatorPageIndex = this.user.paginatorSettingsPageIndex.schoolsList;
-    this.schoolService
-      .getSchools()
-      .pipe(untilDestroyed(this))
-      .subscribe((data) => {
-        this.schoolList = data;
-        this.schoolDataSource.data = data;
-
-        const mediums = data
-          .map((s) => s.medium)
-          .filter((value, index, arr) => value && arr.indexOf(value) === index);
-        this.mediumFS.initOptions(mediums, "medium");
-      });
+    this.route.data.subscribe((config) => (this.listConfig = config));
+    this.entityMapper
+      .loadType<School>(School)
+      .then((data) => (this.schoolList = data));
   }
 
-  ngAfterViewInit() {
-    this.schoolDataSource.sort = this.sort;
-    this.schoolDataSource.paginator = this.paginator;
-    setTimeout(() => {
-      this.paginator.pageIndex = this.paginatorPageIndex;
-      this.paginator.page.next({
-        pageIndex: this.paginator.pageIndex,
-        pageSize: this.paginator.pageSize,
-        length: this.paginator.length,
-      });
-    });
-  }
-
-  onPaginateChange(event: PageEvent) {
-    this.paginatorPageSize = event.pageSize;
-    this.paginatorPageIndex = event.pageIndex;
-    this.updateUserPaginationSettings();
-  }
-
-  private updateUserPaginationSettings() {
-    const hasChangesToBeSaved =
-      this.paginatorPageSize !==
-      this.user.paginatorSettingsPageSize.schoolsList;
-
-    this.user.paginatorSettingsPageIndex.schoolsList = this.paginatorPageIndex;
-    this.user.paginatorSettingsPageSize.schoolsList = this.paginatorPageSize;
-
-    if (hasChangesToBeSaved) {
-      this.entityMapperService.save<User>(this.user);
-    }
-  }
-
-  applyFilter(filterValue: string) {
-    filterValue = filterValue.trim();
-    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
-    this.schoolDataSource.filter = filterValue;
-  }
-
-  applyFilterSelections() {
-    let filteredData = this.schoolList;
-
-    this.filterSelections.forEach((f) => {
-      filteredData = filteredData.filter(f.getSelectedFilterFunction());
-    });
-
-    this.schoolDataSource.data = filteredData;
-  }
-
-  addSchoolClick() {
-    this.router.navigate([this.router.url, "new"]);
-  }
-
-  showSchoolDetails(school: School) {
-    this.router.navigate([this.router.url, school.getId()]);
+  routeTo(route: string) {
+    this.router.navigate(["/school", route]);
   }
 }

@@ -82,7 +82,7 @@ export class NoRecentNotesDashboardComponent
     const children = ((await this.childrenService
       .getChildren()
       .pipe(take(1))
-      .toPromise()) as ChildWithRecentNoteInfo[]).filter((c) => c.isActive());
+      .toPromise()) as ChildWithRecentNoteInfo[]).filter((c) => c.isActive);
 
     const lastNoteStats = await this.childrenService.getDaysSinceLastNoteOfEachChild();
 

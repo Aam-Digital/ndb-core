@@ -1,0 +1,21 @@
+<span *ngIf="entity"
+      (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()" (click)="showDetailsPage()"
+      [ngClass]="{ 'inactive': !entity.isActive }">
+  <img [src]="entity?.photo?.value" class="child-pic">
+  {{entity?.name}} <span style="font-size: x-small">({{entity?.projectNumber}})</span>
+</span>
+
+<div style="position:absolute;" *ngIf="tooltipVisible">
+  <div class="mat-elevation-z3 child-tooltip" (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()" fxLayout='row'>
+    <div fxFlex='30'>
+      <img [src]="entity?.photo?.value" class="child-pic-large">
+    </div>
+    <div fxFlex>
+      <h3>{{entity?.name}}</h3>
+      <p><span class='fa fa-phone'></span> {{entity?.phone}}</p>
+      <p><app-school-block [entityId]='entity?.schoolId'></app-school-block>,
+        class {{entity?.schoolClass}}
+      </p>
+    </div>
+  </div>
+</div>

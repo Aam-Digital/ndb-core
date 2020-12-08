@@ -1,19 +1,21 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
-import { Child } from "../../model/child";
+import { Component } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { AlertService } from "../../../../core/alerts/alert.service";
 import { ChildPhotoService } from "../../child-photo-service/child-photo.service";
 import { Router } from "@angular/router";
 import { SessionService } from "../../../../core/session/session-service/session.service";
+import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { Entity } from "../../../../core/entity/entity";
+import { Child } from "../../model/child";
 
 @Component({
   selector: "app-form",
   templateUrl: "./form.component.html",
   styleUrls: ["./form.component.scss"],
 })
-export class FormComponent implements OnChanges {
-  @Input() child: Child;
+export class FormComponent implements OnInitDynamicComponent {
+  entity: Entity;
 
   creatingNew = false;
   isAdminUser: boolean;
@@ -35,14 +37,8 @@ export class FormComponent implements OnChanges {
     this.isAdminUser = this.sessionService.getCurrentUser().admin;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.hasOwnProperty("child")) {
-      this.initForm();
-    }
-  }
-
   onInitFromDynamicConfig(config: any) {
-    this.child = config.child;
+    this.entity = config.entity;
     this.config = config.config;
     this.initForm();
     if (config.creatingNew) {
@@ -57,20 +53,22 @@ export class FormComponent implements OnChanges {
     this.enablePhotoUpload = this.childPhotoService.canSetImage();
   }
 
-  async save(): Promise<Child> {
+  async save(): Promise<Entity> {
     this.checkFormValidity();
-    this.assignFormValuesToChild(this.child, this.form);
+    this.assignFormValuesToEntity(this.entity, this.form);
     try {
-      await this.entityMapperService.save<Child>(this.child);
-      // if (this.creatingNew) {
-      this.router.navigate(["/child", this.child.getId()]);
-      // }
+      await this.entityMapperService.save<Entity>(this.entity);
+      const route = this.entity.getConstructor().ENTITY_TYPE.toLowerCase();
+      this.router.navigate(["/" + route, this.entity.getId()]);
       this.alertService.addInfo("Saving Successful");
       this.switchEdit();
-      return this.child;
+      return this.entity;
     } catch (err) {
       this.alertService.addDanger(
-        'Could not save Child "' + this.child.name + '": ' + err
+        'Could not save "' +
+          this.entity.getConstructor().ENTITY_TYPE +
+          '": ' +
+          err
       );
       throw new Error(err);
     }
@@ -83,9 +81,11 @@ export class FormComponent implements OnChanges {
   async uploadChildPhoto(event) {
     await this.childPhotoService.setImage(
       event.target.files[0],
-      this.child.entityId
+      this.entity.entityId
     );
-    this.child.photo.next(await this.childPhotoService.getImage(this.child));
+    // Photo does so far only work on the child entity
+    const child: Child = this.entity as Child;
+    child.photo.next(await this.childPhotoService.getImage(child));
   }
 
   private buildFormConfig() {
@@ -93,7 +93,7 @@ export class FormComponent implements OnChanges {
     this.config.cols.forEach((c) =>
       c.forEach((r) => {
         formConfig[r.id] = [
-          { value: this.child[r.id], disabled: !this.editing },
+          { value: this.entity[r.id], disabled: !this.editing },
         ];
         if (r.required) {
           formConfig[r.id].push(Validators.required);
@@ -103,11 +103,11 @@ export class FormComponent implements OnChanges {
     return formConfig;
   }
 
-  private assignFormValuesToChild(child: Child, form: FormGroup) {
+  private assignFormValuesToEntity(entity: Entity, form: FormGroup) {
     Object.keys(form.controls).forEach((key) => {
       const value = form.get(key).value;
       if (value !== null) {
-        child[key] = value;
+        entity[key] = value;
       }
     });
   }

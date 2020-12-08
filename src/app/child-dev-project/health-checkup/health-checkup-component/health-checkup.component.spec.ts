@@ -11,8 +11,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "app/core/alerts/alert.service";
-import { ChildrenModule } from "../../children/children.module";
-import { RouterTestingModule } from "@angular/router/testing";
 
 describe("HealthCheckupComponent", () => {
   let component: HealthCheckupComponent;
@@ -36,12 +34,8 @@ describe("HealthCheckupComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        CommonModule,
-        ChildrenModule,
-        NoopAnimationsModule,
-        RouterTestingModule,
-      ],
+      declarations: [HealthCheckupComponent],
+      imports: [CommonModule, NoopAnimationsModule],
       providers: [
         DatePipe,
         MatSnackBar,

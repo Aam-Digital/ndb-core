@@ -33,7 +33,7 @@ export class Note extends Entity {
   @DatabaseField() text: string = "";
   @DatabaseField() author: string = "";
   @DatabaseField({ dataType: "interaction-type" }) category: InteractionType = {
-    name: "NONE",
+    name: "",
   };
   @DatabaseField({ dataType: "string" }) warningLevel: WarningLevel =
     WarningLevel.OK;
@@ -52,7 +52,7 @@ export class Note extends Entity {
     }
 
     const color = this.category.color;
-    return color ? "" : color;
+    return color ? color : "";
   }
 
   public getColorForId(entityId: string) {
@@ -61,6 +61,10 @@ export class Note extends Entity {
       return WarningLevelColor(WarningLevel.URGENT);
     }
     return this.getColor();
+  }
+
+  get categoryName(): string {
+    return this.category.name;
   }
 
   /**

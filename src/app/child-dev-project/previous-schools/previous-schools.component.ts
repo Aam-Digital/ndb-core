@@ -12,12 +12,12 @@ import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { ChildrenService } from "../children/children.service";
 import { SchoolsService } from "../schools/schools.service";
 import * as uniqid from "uniqid";
-import { ColumnDescription } from "../../core/entity-subrecord/entity-subrecord/column-description";
-import { ColumnDescriptionInputType } from "../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 import moment from "moment";
 import { isValidDate } from "../../utils/utils";
 import { Child } from "../children/model/child";
 import { OnInitDynamicComponent } from "../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { ColumnDescription } from "../../core/entity-components/entity-subrecord/column-description";
+import { ColumnDescriptionInputType } from "../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 
 @Component({
   selector: "app-previous-schools",
@@ -64,7 +64,7 @@ export class PreviousSchoolsComponent
   }
 
   onInitFromDynamicConfig(config: any) {
-    this.child = config.child;
+    this.child = config.entity;
     this.loadData(this.child.getId());
   }
 

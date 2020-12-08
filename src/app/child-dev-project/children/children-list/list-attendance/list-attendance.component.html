@@ -1,8 +1,0 @@
-<app-attendance-block
-        *ngFor="
-            let att of attendanceList
-              | filterBy: {'institution': filterBy}
-              | slice:0:maxAttendanceBlocks
-          "
-        [attendanceData]="att"
-></app-attendance-block>

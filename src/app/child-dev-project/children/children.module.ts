@@ -17,7 +17,6 @@
 
 import { NgModule } from "@angular/core";
 import { CommonModule, DatePipe, PercentPipe } from "@angular/common";
-import { ChildDetailsComponent } from "./child-details/child-details.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatInputModule } from "@angular/material/input";
@@ -41,8 +40,6 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 import { ChildrenService } from "./children.service";
 import { AttendanceBlockComponent } from "../attendance/attendance-block/attendance-block.component";
 import { ChildAttendanceComponent } from "../attendance/child-attendance/child-attendance.component";
-import { EntitySubrecordModule } from "../../core/entity-subrecord/entity-subrecord.module";
-import { ChildBlockComponent } from "./child-block/child-block.component";
 import { ChildrenCountDashboardComponent } from "./children-count-dashboard/children-count-dashboard.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -83,7 +80,10 @@ import { GroupedChildAttendanceComponent } from "./child-details/grouped-child-a
 import { ViewModule } from "../../core/view/view.module";
 import { FormComponent } from "./child-details/form/form.component";
 import { ListAttendanceComponent } from "./children-list/list-attendance/list-attendance.component";
-import { ListRelationComponent } from "./children-list/list-relation/list-relation.component";
+import { EntityComponentsModule } from "../../core/entity-components/entity-components.module";
+import { SchoolBlockWrapperComponent } from "./children-list/school-block-wrapper/school-block-wrapper.component";
+import { ChildBlockListComponent } from "./child-block-list/child-block-list.component";
+import { ChildBlockComponent } from "./child-block-list/child-block/child-block.component";
 
 @NgModule({
   imports: [
@@ -112,7 +112,6 @@ import { ListRelationComponent } from "./children-list/list-relation/list-relati
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FilterPipeModule,
-    EntitySubrecordModule,
     SchoolsModule,
     ReactiveFormsModule,
     MatDialogModule,
@@ -124,13 +123,13 @@ import { ListRelationComponent } from "./children-list/list-relation/list-relati
     FormDialogModule,
     Angulartics2Module,
     ViewModule,
+    EntityComponentsModule,
   ],
   declarations: [
     AttendanceBlockComponent,
     ChildBlockComponent,
     ChildAttendanceComponent,
     NotesOfChildComponent,
-    ChildDetailsComponent,
     ChildrenListComponent,
     ChildrenCountDashboardComponent,
     AttendanceAverageDashboardComponent,
@@ -155,7 +154,8 @@ import { ListRelationComponent } from "./children-list/list-relation/list-relati
     GroupedChildAttendanceComponent,
     FormComponent,
     ListAttendanceComponent,
-    ListRelationComponent,
+    SchoolBlockWrapperComponent,
+    ChildBlockListComponent,
   ],
   providers: [
     ChildrenService,
@@ -178,6 +178,7 @@ import { ListRelationComponent } from "./children-list/list-relation/list-relati
     NoRecentNotesDashboardComponent,
     RecentNotesDashboardComponent,
     AttendanceDaysComponent,
+    ListAttendanceComponent,
   ],
 })
 export class ChildrenModule {}

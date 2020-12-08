@@ -15,18 +15,18 @@ import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatSortModule } from "@angular/material/sort";
 import { MatTableModule } from "@angular/material/table";
-import { SchoolDetailsComponent } from "./school-details/school-details.component";
 import { SchoolBlockComponent } from "./school-block/school-block.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatSelectModule } from "@angular/material/select";
-import { EntitySubrecordModule } from "../../core/entity-subrecord/entity-subrecord.module";
 import { RouterModule } from "@angular/router";
 import { SchoolsService } from "./schools.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Angulartics2Module } from "angulartics2";
+import { EntityComponentsModule } from "../../core/entity-components/entity-components.module";
+import { ChildrenOverviewComponent } from "./children-overview/children-overview.component";
 
 @NgModule({
   imports: [
@@ -64,15 +64,15 @@ import { Angulartics2Module } from "angulartics2";
     MatSnackBarModule,
     MatDialogModule,
     MatAutocompleteModule,
-    EntitySubrecordModule,
     ReactiveFormsModule,
     MatTooltipModule,
     Angulartics2Module,
+    EntityComponentsModule,
   ],
   declarations: [
     SchoolBlockComponent,
     SchoolsListComponent,
-    SchoolDetailsComponent,
+    ChildrenOverviewComponent,
   ],
   exports: [SchoolBlockComponent],
   providers: [SchoolsService],

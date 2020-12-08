@@ -9,7 +9,7 @@
             <div *ngFor="let row of col">
                 <div *ngIf="row.input === 'photo'" class="child-pic-container">
                     <img
-                            [src]="child?.photo?.value"
+                            [src]="entity?.photo?.value"
                             class="child-pic"
                             alt="child's photo"
                     />
@@ -63,13 +63,29 @@
                     </mat-error>
                 </mat-form-field>
 
+                <mat-form-field *ngIf="row.input === 'textarea'">
+                    <textarea
+                        matInput
+                        [formControlName]="row.id"
+                        [placeholder]="row.placeholder"
+                        [title]="row.placeholder"
+                    ></textarea>
+                </mat-form-field>
+
+                <mat-checkbox
+                        *ngIf="row.input === 'checkbox'"
+                        [formControlName]="row.id"
+                        [disabled]="!editing"
+                    >{{ row.placeholder }}
+                </mat-checkbox>
+
                 <div *ngIf="row.input === 'age'">
                     <mat-form-field style="width: 50px;">
                         <input
                                 matInput
                                 placeholder="Age"
                                 type="number"
-                                [value]="child?.age"
+                                [value]="entity?.age"
                                 [disabled]="true"
                         />
                     </mat-form-field>

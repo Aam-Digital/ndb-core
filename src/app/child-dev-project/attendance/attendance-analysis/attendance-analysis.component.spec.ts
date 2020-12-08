@@ -10,13 +10,11 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { ChildBlockComponent } from "../../children/child-block/child-block.component";
 import { AttendanceBlockComponent } from "../attendance-block/attendance-block.component";
 import { AttendanceDayBlockComponent } from "../attendance-days/attendance-day-block.component";
 import { SchoolBlockComponent } from "../../schools/school-block/school-block.component";
 import { AttendanceDaysComponent } from "../attendance-days/attendance-days.component";
 import { FormsModule } from "@angular/forms";
-import { EntitySubrecordModule } from "../../../core/entity-subrecord/entity-subrecord.module";
 import { ChildrenService } from "../../children/children.service";
 import { EntityModule } from "../../../core/entity/entity.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -24,6 +22,9 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatNativeDateModule } from "@angular/material/core";
 import { BehaviorSubject } from "rxjs";
 import { AttendanceAnalysisComponent } from "./attendance-analysis.component";
+import { ChildBlockComponent } from "../../children/child-block-list/child-block/child-block.component";
+import { EntityComponentsModule } from "../../../core/entity-components/entity-components.module";
+import { RouterTestingModule } from "@angular/router/testing";
 
 describe("AttendanceRegisterComponent", () => {
   let component: AttendanceAnalysisComponent;
@@ -54,8 +55,9 @@ describe("AttendanceRegisterComponent", () => {
         MatNativeDateModule,
         FormsModule,
         NoopAnimationsModule,
-        EntitySubrecordModule,
+        EntityComponentsModule,
         EntityModule,
+        RouterTestingModule,
       ],
       providers: [
         {
