@@ -150,12 +150,7 @@
 <div class="mat-elevation-z2 table-list">
     <table mat-table [dataSource]="entityDataSource" matSort style="width: 100%">
         <ng-container *ngFor="let col of columns" [matColumnDef]="col.id">
-            <div *ngIf="col.noSorting">
-                <th mat-header-cell *matHeaderCellDef>{{col.title}}</th>
-            </div>
-            <div *ngIf="!col.noSorting">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{col.title}}</th>
-            </div>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="col.noSorting">{{col.title}}</th>
             <td *matCellDef="let entity">
                 <ng-template
                         [appDynamicComponent]="{component: col.component, config: {id: col.id, entity: entity}} "
