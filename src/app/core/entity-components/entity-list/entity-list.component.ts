@@ -212,7 +212,7 @@ export class EntityListComponent<T extends Entity>
     this.filterSelections = [];
     this.filterDropdowns = [];
     this.filtersConfig.forEach((filter) => {
-      const fs = new FilterSelection(filter.id, []);
+      const fs = new FilterSelection(filter.label, []);
       this.initFilterOptions(fs, filter);
       fs.selectedOption = filter.hasOwnProperty("default")
         ? filter.default

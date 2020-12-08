@@ -109,7 +109,7 @@
             "filters": [
                 { "id": "status", "type": "prebuilt"},
                 { "id": "date", "type": "prebuilt"},
-                { "id": "categoryName", "display": "dropdown"}
+                { "id": "categoryName", "label": "Category", "display": "dropdown"}
             ]
         }
     },
@@ -254,9 +254,9 @@
                     "id": "isActive",
                     "type": "boolean",
                     "default": "true",
-                    "true": "Currently active children",
-                    "false": "Currently inactive children",
-                    "all": "All children"
+                    "true": "Active Children",
+                    "false": "Inactive",
+                    "all": "All"
                 },
                 {
                     "id": "center"
