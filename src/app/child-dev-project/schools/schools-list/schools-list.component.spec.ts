@@ -1,68 +1,69 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-
+import {
+  async,
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 import { SchoolsListComponent } from "./schools-list.component";
-import { MatButtonToggleModule } from "@angular/material/button-toggle";
-import { MatExpansionModule } from "@angular/material/expansion";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatIconModule } from "@angular/material/icon";
-import { MatInputModule } from "@angular/material/input";
-import { MatSortModule } from "@angular/material/sort";
-import { MatTableModule } from "@angular/material/table";
-import { MatSelectModule } from "@angular/material/select";
-import { FormsModule } from "@angular/forms";
 import { Database } from "../../../core/database/database";
 import { MockDatabase } from "../../../core/database/mock-database";
-import { SchoolsService } from "../schools.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { ChildrenService } from "app/child-dev-project/children/children.service";
-import { CloudFileService } from "../../../core/webdav/cloud-file-service.service";
 import { SessionService } from "../../../core/session/session-service/session.service";
-import { MatPaginatorModule } from "@angular/material/paginator";
 import { User } from "app/core/user/user";
 import { of } from "rxjs";
+import { SchoolsModule } from "../schools.module";
+import { RouterTestingModule } from "@angular/router/testing";
+import { Angulartics2Module } from "angulartics2";
+import { School } from "../model/school";
 
 describe("SchoolsListComponent", () => {
   let component: SchoolsListComponent;
   let fixture: ComponentFixture<SchoolsListComponent>;
-  const mockedRouter = { navigate: () => null };
-  const mockedRoute = {
-    data: of({ icon: "child" }),
+
+  const routeData = {
+    title: "Schools List",
+    columns: [
+      { type: "DisplayText", title: "Name", id: "name" },
+      { type: "DisplayText", title: "Up to class", id: "upToClass" },
+    ],
+    columnGroups: {
+      default: "School Info",
+      mobile: "School Info",
+      groups: [
+        {
+          name: "School Info",
+          columns: ["name", "upToClass"],
+        },
+      ],
+    },
+    filters: [
+      {
+        id: "upToClass",
+      },
+    ],
+  };
+
+  const routeMock = {
+    data: of(routeData),
+    queryParams: of({}),
   };
 
   beforeEach(async(() => {
     const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
     mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
     TestBed.configureTestingModule({
-      declarations: [SchoolsListComponent],
+      declarations: [],
       imports: [
-        MatTableModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSortModule,
-        MatIconModule,
-        MatButtonToggleModule,
-        MatExpansionModule,
-        FormsModule,
-        MatPaginatorModule,
-        BrowserAnimationsModule,
-        MatSelectModule,
+        SchoolsModule,
+        RouterTestingModule,
+        Angulartics2Module.forRoot(),
       ],
       providers: [
-        SchoolsService,
-        ChildrenService,
         { provide: Database, useClass: MockDatabase },
-        EntityMapperService,
-        EntitySchemaService,
         { provide: SessionService, useValue: mockSessionService },
-        { provide: Router, useValue: mockedRouter },
-        {
-          provide: CloudFileService,
-          useValue: jasmine.createSpyObj(["getImage"]),
-        },
-        { provide: ActivatedRoute, useValue: mockedRoute },
+        { provide: ActivatedRoute, useValue: routeMock },
       ],
     }).compileComponents();
   }));
@@ -73,8 +74,27 @@ describe("SchoolsListComponent", () => {
     fixture.detectChanges();
   });
 
-  // TODO: reactivate component test
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should load the schools", fakeAsync(() => {
+    const entityMapper = fixture.debugElement.injector.get(EntityMapperService);
+    const school1 = new School("s1");
+    const school2 = new School("s2");
+    spyOn(entityMapper, "loadType").and.returnValue(
+      Promise.resolve([school1, school2])
+    );
+    component.ngOnInit();
+    tick();
+    expect(entityMapper.loadType).toHaveBeenCalledWith(School);
+    expect(component.schoolList).toEqual([school1, school2]);
+  }));
+
+  it("should route to id", () => {
+    const router = fixture.debugElement.injector.get(Router);
+    spyOn(router, "navigate");
+    component.routeTo("schoolId");
+    expect(router.navigate).toHaveBeenCalledWith(["/school", "schoolId"]);
   });
 });
