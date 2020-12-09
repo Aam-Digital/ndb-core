@@ -128,7 +128,7 @@
             "columns": [
                 {"component": "DisplayText", "title": "Name", "id": "name"},
                 {"component": "DisplayText", "title": "Medium", "id": "medium"},
-                {"component": "DisplayTick", "title": "Private School", "id": "privateSchool"},
+                {"component": "DisplayCheckmark", "title": "Private School", "id": "privateSchool"},
                 {"component": "DisplayText", "title": "Board", "id": "academicBoard"},
                 {"component": "DisplayText", "title": "Up to class", "id": "upToClass"}
             ],

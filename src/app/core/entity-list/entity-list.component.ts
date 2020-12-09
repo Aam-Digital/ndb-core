@@ -10,23 +10,30 @@ import {
 } from "@angular/core";
 import { MatSort } from "@angular/material/sort";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
-import { Entity } from "../../entity/entity";
 import { MatTableDataSource } from "@angular/material/table";
+import { MediaChange, MediaObserver } from "@angular/flex-layout";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Entity } from "../entity/entity";
 import {
   FilterSelection,
   FilterSelectionOption,
-} from "../../filter/filter-selection/filter-selection";
-import { User } from "../../user/user";
-import { SessionService } from "../../session/session-service/session.service";
-import { MediaChange, MediaObserver } from "@angular/flex-layout";
-import { ActivatedRoute, Router } from "@angular/router";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
+} from "../filter/filter-selection/filter-selection";
+import { EntityMapperService } from "../entity/entity-mapper.service";
+import { SessionService } from "../session/session-service/session.service";
+import { User } from "../user/user";
 
 export interface ColumnGroup {
   name: string;
   columns: string[];
 }
 
+/**
+ * This component allows to create a full blown table with pagination, filtering, searching and grouping.
+ * The filter and grouping settings are written into the URL params to allow going back to the previous view.
+ * The pagination settings are stored for each user.
+ * The columns can be any kind of component.
+ * The column components will be provided with the Entity object, the id for this column, as well as its static config.
+ */
 @Component({
   selector: "app-entity-list",
   templateUrl: "./entity-list.component.html",
@@ -52,7 +59,7 @@ export class EntityListComponent<T extends Entity>
   filtersConfig: any[] = [];
 
   ready = true;
-  columnsToDisplay: any[] = [];
+  columnsToDisplay: string[] = [];
   selectedColumnGroup: string = "";
 
   filterSelections: FilterSelection<T>[] = [];
@@ -255,7 +262,7 @@ export class EntityListComponent<T extends Entity>
   }
 
   private displayColumnGroup(columnGroupName: string) {
-    // When components, that are used in the list (app-list-attendance), also listen to the mediaObserver, a new
+    // When components, that are used in the list (app-recent-attendance-blocks), also listen to the mediaObserver, a new
     // mediaChange is created once this used component is displayed (through column groups change). This may
     // re-trigger the settings for small screens. Therefore, we only allow a change ever 0.5 seconds to prevent this.
     if (this.ready) {

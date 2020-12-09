@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { DisplayTickComponent } from "./display-tick.component";
+import { DisplayCheckmarkComponent } from "./display-checkmark.component";
 
-describe("DisplayTickComponent", () => {
-  let component: DisplayTickComponent;
-  let fixture: ComponentFixture<DisplayTickComponent>;
+describe("DisplayCheckmarkComponent", () => {
+  let component: DisplayCheckmarkComponent;
+  let fixture: ComponentFixture<DisplayCheckmarkComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [DisplayTickComponent],
+      declarations: [DisplayCheckmarkComponent],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DisplayTickComponent);
+    fixture = TestBed.createComponent(DisplayCheckmarkComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,13 +1,14 @@
 import { Component } from "@angular/core";
-import { Entity, EntityConstructor } from "../../entity/entity";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { Entity, EntityConstructor } from "../entity/entity";
+import { School } from "../../child-dev-project/schools/model/school";
+import { EntityMapperService } from "../entity/entity-mapper.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from "@angular/common";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
-import { Child } from "../../../child-dev-project/children/model/child";
-import { School } from "../../../child-dev-project/schools/model/school";
+import { Child } from "../../child-dev-project/children/model/child";
+import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 import * as uniqid from "uniqid";
+import { getUrlWithoutParams } from "../../utils/utils";
 
 const ENTITY_MAP: Map<string, any> = new Map<string, EntityConstructor<Entity>>(
   [
@@ -16,6 +17,12 @@ const ENTITY_MAP: Map<string, any> = new Map<string, EntityConstructor<Entity>>(
   ]
 );
 
+/**
+ * This component can be used to display a entity in more detail.
+ * It groups subcomponents in panels.
+ * Any component can be used as a subcomponent.
+ * The subcomponents will be provided with the Entity object and the creating new status, as well as its static config.
+ */
 @Component({
   selector: "app-entity-details",
   templateUrl: "./entity-details.component.html",
@@ -89,7 +96,7 @@ export class EntityDetailsComponent {
     );
 
     dialogRef.afterClosed().subscribe((confirmed) => {
-      const currentUrl = this.router.url;
+      const currentUrl = getUrlWithoutParams(this.router);
       if (confirmed) {
         this.entityMapperService
           .remove<Entity>(this.entity)

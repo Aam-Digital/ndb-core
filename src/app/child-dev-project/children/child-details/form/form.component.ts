@@ -8,7 +8,12 @@ import { SessionService } from "../../../../core/session/session-service/session
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { Entity } from "../../../../core/entity/entity";
 import { Child } from "../../model/child";
+import { getParentUrl } from "../../../../utils/utils";
 
+/**
+ * This component creates a form based on the passed config.
+ * It creates a flexible layout and includes validation functionality.
+ */
 @Component({
   selector: "app-form",
   templateUrl: "./form.component.html",
@@ -58,8 +63,7 @@ export class FormComponent implements OnInitDynamicComponent {
     this.assignFormValuesToEntity(this.entity, this.form);
     try {
       await this.entityMapperService.save<Entity>(this.entity);
-      const route = this.entity.getConstructor().ENTITY_TYPE.toLowerCase();
-      this.router.navigate(["/" + route, this.entity.getId()]);
+      this.router.navigate([getParentUrl(this.router), this.entity.getId()]);
       this.alertService.addInfo("Saving Successful");
       this.switchEdit();
       return this.entity;

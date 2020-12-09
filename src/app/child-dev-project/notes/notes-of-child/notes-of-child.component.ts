@@ -12,7 +12,7 @@ import { ColumnDescription } from "../../../core/entity-components/entity-subrec
 import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 
 /**
- * The component that is responsible for listing the Notes that are related to a certain entity
+ * The component that is responsible for listing the Notes that are related to a certain child
  */
 @UntilDestroy()
 @Component({

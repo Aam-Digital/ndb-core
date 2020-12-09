@@ -6,6 +6,9 @@ import { MatTableDataSource } from "@angular/material/table";
 import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
 
+/**
+ * This component creates a table containing all children currently attending this school.
+ */
 @Component({
   selector: "app-children-overview",
   templateUrl: "./children-overview.component.html",

@@ -11,6 +11,7 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { School } from "../model/school";
 import { ConfigService } from "app/core/config/config.service";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { getUrlWithoutParams } from "../../../utils/utils";
 
 @Component({
   selector: "app-school-block",
@@ -76,7 +77,10 @@ export class SchoolBlockComponent
 
   showDetailsPage() {
     if (!this.linkDisabled) {
-      this.router.navigate(["/school", this.entity.getId()]);
+      this.router.navigate([
+        getUrlWithoutParams(this.router),
+        this.entity.getId(),
+      ]);
     }
   }
 }

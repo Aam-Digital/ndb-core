@@ -79,11 +79,11 @@ import { AttendanceAnalysisComponent } from "../attendance/attendance-analysis/a
 import { GroupedChildAttendanceComponent } from "./child-details/grouped-child-attendance/grouped-child-attendance.component";
 import { ViewModule } from "../../core/view/view.module";
 import { FormComponent } from "./child-details/form/form.component";
-import { ListAttendanceComponent } from "./children-list/list-attendance/list-attendance.component";
+import { RecentAttendanceBlocksComponent } from "./children-list/recent-attendance-blocks/recent-attendance-blocks.component";
 import { EntityComponentsModule } from "../../core/entity-components/entity-components.module";
 import { SchoolBlockWrapperComponent } from "./children-list/school-block-wrapper/school-block-wrapper.component";
 import { ChildBlockListComponent } from "./child-block-list/child-block-list.component";
-import { ChildBlockComponent } from "./child-block-list/child-block/child-block.component";
+import { ChildBlockComponent } from "./child-block/child-block.component";
 
 @NgModule({
   imports: [
@@ -153,7 +153,7 @@ import { ChildBlockComponent } from "./child-block-list/child-block/child-block.
     PreviousSchoolsComponent,
     GroupedChildAttendanceComponent,
     FormComponent,
-    ListAttendanceComponent,
+    RecentAttendanceBlocksComponent,
     SchoolBlockWrapperComponent,
     ChildBlockListComponent,
   ],
@@ -178,7 +178,7 @@ import { ChildBlockComponent } from "./child-block-list/child-block/child-block.
     NoRecentNotesDashboardComponent,
     RecentNotesDashboardComponent,
     AttendanceDaysComponent,
-    ListAttendanceComponent,
+    RecentAttendanceBlocksComponent,
   ],
 })
 export class ChildrenModule {}

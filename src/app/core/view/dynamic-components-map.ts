@@ -14,12 +14,12 @@ import { EducationalMaterialComponent } from "../../child-dev-project/educationa
 import { FormComponent } from "../../child-dev-project/children/child-details/form/form.component";
 import { DisplayDateComponent } from "../entity-components/display-date/display-date.component";
 import { DisplayTextComponent } from "../entity-components/display-text/display-text.component";
-import { ListAttendanceComponent } from "../../child-dev-project/children/children-list/list-attendance/list-attendance.component";
+import { RecentAttendanceBlocksComponent } from "../../child-dev-project/children/children-list/recent-attendance-blocks/recent-attendance-blocks.component";
 import { SchoolBlockWrapperComponent } from "../../child-dev-project/children/children-list/school-block-wrapper/school-block-wrapper.component";
-import { DisplayTickComponent } from "../entity-components/display-tick/display-tick.component";
+import { DisplayCheckmarkComponent } from "../entity-components/display-checkmark/display-checkmark.component";
 import { ChildrenOverviewComponent } from "../../child-dev-project/schools/children-overview/children-overview.component";
 import { ChildBlockListComponent } from "../../child-dev-project/children/child-block-list/child-block-list.component";
-import { ChildBlockComponent } from "../../child-dev-project/children/child-block-list/child-block/child-block.component";
+import { ChildBlockComponent } from "../../child-dev-project/children/child-block/child-block.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -38,10 +38,10 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["Form", FormComponent],
   ["DisplayDate", DisplayDateComponent],
   ["DisplayText", DisplayTextComponent],
-  ["DisplayTick", DisplayTickComponent],
+  ["DisplayCheckmark", DisplayCheckmarkComponent],
   ["ChildBlock", ChildBlockComponent],
   ["ChildBlockList", ChildBlockListComponent],
-  ["ListAttendance", ListAttendanceComponent],
+  ["ListAttendance", RecentAttendanceBlocksComponent],
   ["SchoolBlockWrapper", SchoolBlockWrapperComponent],
   ["ChildrenOverview", ChildrenOverviewComponent],
 ]);
