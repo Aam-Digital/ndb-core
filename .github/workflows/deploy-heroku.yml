@@ -30,10 +30,12 @@ jobs:
           tags: builder:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
+          outputs: type=local,dest=.
           build-args: |
             RUN_TESTS=${{ true }}
       - name: copy files from container
         run: |
+          ls
           docker images
           id=$(docker create builder:latest)
           docker cp $id:/.coverage ./.coverage
