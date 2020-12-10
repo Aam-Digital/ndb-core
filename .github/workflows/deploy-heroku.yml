@@ -35,11 +35,8 @@ jobs:
             RUN_TESTS=${{ true }}
       - name: copy files from container
         run: |
-          ls
+          ls -a
           docker images
-          id=$(docker create builder:latest)
-          docker cp $id:/.coverage ./.coverage
-          docker rm $id
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v2.7.4
         env:
