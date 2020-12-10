@@ -18,11 +18,6 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_SIMON_USERNAME }}
-          password: ${{ secrets.DOCKER_TOKEN }}
       - name: Get time of commit
         run: echo "TIME=$(git log -1 --pretty=format:%ct)" >> $GITHUB_ENV
       - name: Build dev image
@@ -32,20 +27,26 @@ jobs:
           file: ./docker/pipeline/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           target: builder
-          tags: ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest
+          tags: builder:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
           build-args: |
             RUN_TESTS=${{ true }}
       - name: copy files from container
         run: |
-          id=$(docker create ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest)
+          docker images
+          id=$(docker create builder:latest)
           docker cp $id:/.coverage ./.coverage
           docker rm $id
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v2.7.4
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_SIMON_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
       - name: Build and push prod image
         uses: docker/build-push-action@v2
         with:
