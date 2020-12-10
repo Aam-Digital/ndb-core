@@ -31,7 +31,7 @@ RUN if [ "$RUN_TESTS" = true ] ; then \
 
 RUN $(npm bin)/ng build --prod
 
-RUN ls
+RUN ls -a
 
 ### PROD image
 
