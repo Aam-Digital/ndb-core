@@ -31,7 +31,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           target: builder
           tags: builder
-          output: type=docker
+          output: type=image
           build-args: RUN_TESTS=${{ true }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
