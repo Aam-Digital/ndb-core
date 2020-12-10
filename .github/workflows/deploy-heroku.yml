@@ -32,14 +32,14 @@ jobs:
           file: ./docker/pipeline/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           target: builder
-          tags: builder:latest
+          tags: ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
           build-args: |
             RUN_TESTS=${{ true }}
       - name: copy files from container
         run: |
-          id=$(docker create builder:latest)
+          id=$(docker create ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest)
           docker cp $id:/.coverage ./.coverage
           docker rm $id
       - name: Publish code coverage
