@@ -18,25 +18,33 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
-      - name: Get time of commit
-        run: echo "TIME=$(git log -1 --pretty=format:%ct)" >> $GITHUB_ENV
-      - run: docker build --build-arg RUN_TESTS=true --tag builder:latest --target builder --file ./docker/pipeline/Dockerfile .
-      - name: copy files from container
-        run: |
-          docker images
-          id=$(docker create builder:latest)
-          docker cp $id:/app/coverage/ ./coverage/
-          ls -a
-          docker rm $id
-      - name: Publish code coverage
-        uses: paambaati/codeclimate-action@v2.7.4
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_SIMON_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Build and push prod image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./docker/pipeline/Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          target: builder
+          tags: builder:latest
+          build-args: RUN_TESTS=${{ true }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+      - name: copy files from container
+        run: |
+          docker buildx images
+          id=$(docker buildx create builder:latest)
+          docker buildx cp $id:/app/coverage/ ./coverage/
+          ls -a
+          docker buildx rm $id
+      - name: Publish code coverage
+        uses: paambaati/codeclimate-action@v2.7.4
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
       - name: Build and push prod image
         uses: docker/build-push-action@v2
         with:
