@@ -7,26 +7,16 @@
 FROM node:15.1.0-alpine3.12 as builder
 WORKDIR /app
 
-# Set this to true to run tests and upload the coverage report. When set, the following args need to be provided
-ARG PIPELINE_RUN=false
-
-# These variables need to be provided in the build step of docker when PIPELINE_RUN is set to true
-# >> docker build --build-arg PIPELINE_RUN=true --build-arg GIT_COMMIT_SHA=<COMMIT_SHA> ...
-ARG GIT_COMMIT_SHA
-ARG GIT_BRANCH
-ARG GIT_COMMITTED_AT
-ARG CC_TEST_REPORTER_ID
+# Set this to true to run tests
+ARG RUN_TESTS=false
 
 COPY package*.json ./
 RUN npm ci --no-progress
 
 # In the pipeline we need to install and set additional dependencies for testing and reporting
 ARG CHROME_BIN=/usr/bin/chromium-browser
-RUN if [ "$PIPELINE_RUN" = true ] ; then \
-    apk --no-cache add curl chromium git &&\
-    curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter &&\
-    chmod +x ./cc-test-reporter &&\
-    ./cc-test-reporter before-build ; fi
+RUN if [ "$RUN_TESTS" = true ] ; then \
+    apk --no-cache add chromium ; fi
 
 COPY patch-webpack.js .
 # postinstall executes ngcc and runs the webpack-patch
@@ -35,12 +25,13 @@ RUN $(npm bin)/ng version
 COPY . .
 
 # In the pipeline we run the tests and report the results
-RUN if [ "$PIPELINE_RUN" = true ] ; then \
-    npm run lint &&\
-    npm run test-ci &&\
-    ./cc-test-reporter after-build --debug ; fi
+RUN if [ "$RUN_TESTS" = true ] ; then \
+    npm run test-ci ; fi
+#    npm run lint &&\
 
 RUN $(npm bin)/ng build --prod
+
+RUN ls
 
 ### PROD image
 

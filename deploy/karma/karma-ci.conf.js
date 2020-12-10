@@ -40,7 +40,7 @@ module.exports = function (config) {
       'text/x-typescript': ['ts','tsx']
     },
     coverageIstanbulReporter: {
-      dir: require('path').join(__dirname, '../../coverage'), reports: [ 'lcovonly' ],
+      dir: require('path').join(__dirname, '../../.coverage'), reports: [ 'lcovonly' ],
       fixWebpackSourcePaths: true
     },
     angularCli: {
