@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
-import { OnInitDynamicComponent } from "../../view/dynamic-components/on-init-dynamic-component.interface";
+import { ColumnCellConfig } from "../EntityListConfig";
+import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
 
 /**
  * This component allows to display a boolean attribute of an entity.
@@ -14,7 +15,7 @@ export class DisplayCheckmarkComponent implements OnInitDynamicComponent {
 
   constructor() {}
 
-  onInitFromDynamicConfig(config: any) {
+  onInitFromDynamicConfig(config: ColumnCellConfig) {
     this.boolAtr = config.entity[config.id];
   }
 }

@@ -7,7 +7,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { SchoolBlockComponent } from "../../../schools/school-block/school-block.component";
 import { of } from "rxjs";
 import { Child } from "../../../children/model/child";
-import { ChildBlockComponent } from "../../../children/child-block-list/child-block/child-block.component";
+import { ChildBlockComponent } from "../../../children/child-block/child-block.component";
 
 describe("AttendanceAverageDashboardComponent", () => {
   let component: AttendanceAverageDashboardComponent;

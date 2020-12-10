@@ -19,6 +19,7 @@ import { Note } from "../model/note";
 import { WarningLevel, WarningLevelColor } from "../../warning-level";
 import { Angulartics2Module } from "angulartics2";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
+import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 
 describe("NotesManagerComponent", () => {
   let component: NotesManagerComponent;
@@ -28,14 +29,14 @@ describe("NotesManagerComponent", () => {
     ["openDialog"]
   );
 
-  const routeData = {
-    title: "Children List",
+  const routeData: EntityListConfig = {
+    title: "Notes List",
     columns: [
-      { type: "DisplayDate", title: "Date", id: "date" },
-      { type: "DisplayText", title: "Subject", id: "subject" },
-      { type: "ChildBlockList", title: "Children", id: "children" },
+      { component: "DisplayDate", title: "Date", id: "date" },
+      { component: "DisplayText", title: "Subject", id: "subject" },
+      { component: "ChildBlockList", title: "Children", id: "children" },
     ],
-    columnGroups: {
+    columnGroup: {
       default: "Standard",
       mobile: "Standard",
       groups: [

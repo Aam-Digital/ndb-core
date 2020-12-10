@@ -5,23 +5,23 @@ import {
   TestBed,
   tick,
 } from "@angular/core/testing";
-
 import { EntityDetailsComponent } from "./entity-details.component";
 import { Observable, of, Subscriber } from "rxjs";
-import { MockDatabase } from "../../database/mock-database";
+import { MatNativeDateModule } from "@angular/material/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { RouterTestingModule } from "@angular/router/testing";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { PanelConfig, EntityDetailsConfig } from "./EntityDetailsConfig";
+import { databaseServiceProvider } from "../../database/database.service.provider";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { User } from "../../user/user";
+import { SessionService } from "../../session/session-service/session.service";
 import { ChildPhotoService } from "../../../child-dev-project/children/child-photo-service/child-photo.service";
 import { ChildrenModule } from "../../../child-dev-project/children/children.module";
-import { MatNativeDateModule } from "@angular/material/core";
-import { databaseServiceProvider } from "../../database/database.service.provider";
-import { SessionService } from "../../session/session-service/session.service";
-import { ActivatedRoute, Router } from "@angular/router";
+import { MockDatabase } from "../../database/mock-database";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { RouterTestingModule } from "@angular/router/testing";
-import { Database } from "../../database/database";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
-import { MatSnackBar } from "@angular/material/snack-bar";
+import { Database } from "../../database/database";
 
 describe("EntityDetailsComponent", () => {
   let component: EntityDetailsComponent;
@@ -29,7 +29,7 @@ describe("EntityDetailsComponent", () => {
 
   let routeObserver: Subscriber<any>;
 
-  const routeConfig = {
+  const routeConfig: EntityDetailsConfig = {
     icon: "child",
     entity: "Child",
     panels: [
@@ -53,7 +53,7 @@ describe("EntityDetailsComponent", () => {
     }),
     data: of(routeConfig),
   };
-  // const mockedLocation = { back: () => null };
+
   const mockedDatabase = new MockDatabase();
   const mockedSession = {
     getCurrentUser: () => new User("test1"),
@@ -100,8 +100,9 @@ describe("EntityDetailsComponent", () => {
 
     component.panels.forEach((p) =>
       p.components.forEach((c) => {
-        expect(c.config["entity"]).toEqual(testChild);
-        expect(c.config["creatingNew"]).toBeFalse();
+        const panelConfig = c.config as PanelConfig;
+        expect(panelConfig.entity).toEqual(testChild);
+        expect(panelConfig.creatingNew).toBeFalse();
       })
     );
   }));

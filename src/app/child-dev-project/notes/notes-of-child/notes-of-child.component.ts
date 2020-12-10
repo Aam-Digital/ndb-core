@@ -8,8 +8,9 @@ import { SessionService } from "../../../core/session/session-service/session.se
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
 import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
+import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
+import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
@@ -85,8 +86,8 @@ export class NotesOfChildComponent
     }
   }
 
-  onInitFromDynamicConfig(config: any) {
-    this.child = config.entity;
+  onInitFromDynamicConfig(config: PanelConfig) {
+    this.child = config.entity as Child;
     this.initNotesOfChild();
   }
 

@@ -4,6 +4,7 @@ import { ChildrenService } from "../../children.service";
 import { Child } from "../../model/child";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { ColumnCellConfig } from "../../../../core/entity-components/entity-list/EntityListConfig";
 
 /**
  * This component lists attendance blocks for a child for recent months filtered by institutions.
@@ -57,10 +58,10 @@ export class RecentAttendanceBlocksComponent implements OnInitDynamicComponent {
     });
   }
 
-  onInitFromDynamicConfig(config: any) {
+  onInitFromDynamicConfig(config: ColumnCellConfig) {
     this.filterByInstitution = config.id;
     if (config.hasOwnProperty("entity")) {
-      this.child = config.entity;
+      this.child = config.entity as Child;
       this.childrenService
         .getAttendancesOfChild(this.child.getId())
         .subscribe((result) => this.prepareAttendanceData(result));

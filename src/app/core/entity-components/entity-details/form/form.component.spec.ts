@@ -1,22 +1,19 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormComponent } from "./form.component";
-import { ChildPhotoService } from "../../child-photo-service/child-photo.service";
-import { Router } from "@angular/router";
-import { SessionService } from "../../../../core/session/session-service/session.service";
-import { User } from "../../../../core/user/user";
-import { EntitySchemaService } from "../../../../core/entity/schema/entity-schema.service";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
-import { Database } from "../../../../core/database/database";
-import { MockDatabase } from "../../../../core/database/mock-database";
-import { FormBuilder } from "@angular/forms";
-import { AlertService } from "../../../../core/alerts/alert.service";
-import { Child } from "../../model/child";
 import { BehaviorSubject } from "rxjs";
 import { SafeUrl } from "@angular/platform-browser";
-import { EntityComponentsModule } from "../../../../core/entity-components/entity-components.module";
 import { RouterTestingModule } from "@angular/router/testing";
+import { Router } from "@angular/router";
+import { EntityDetailsModule } from "../entity-details.module";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { SessionService } from "../../../session/session-service/session.service";
+import { User } from "../../../user/user";
+import { ChildPhotoService } from "../../../../child-dev-project/children/child-photo-service/child-photo.service";
+import { AlertService } from "../../../alerts/alert.service";
+import { MockDatabase } from "../../../database/mock-database";
+import { Child } from "../../../../child-dev-project/children/model/child";
+import { Database } from "../../../database/database";
 
 describe("FormComponent", () => {
   let component: FormComponent;
@@ -37,18 +34,9 @@ describe("FormComponent", () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [FormComponent],
-      imports: [
-        MatSnackBarModule,
-        EntityComponentsModule,
-        NoopAnimationsModule,
-        RouterTestingModule,
-      ],
+      imports: [EntityDetailsModule, NoopAnimationsModule, RouterTestingModule],
       providers: [
-        EntityMapperService,
-        EntitySchemaService,
         { provide: Database, useClass: MockDatabase },
-        FormBuilder,
-        AlertService,
         { provide: ChildPhotoService, useValue: mockChildPhotoService },
         { provide: SessionService, useValue: mockSessionService },
       ],
@@ -94,7 +82,7 @@ describe("FormComponent", () => {
     spyOn(router, "navigate");
     component.creatingNew = true;
     await component.save();
-    expect(router.navigate).toHaveBeenCalledWith(["/child", testChild.getId()]);
+    expect(router.navigate).toHaveBeenCalledWith(["", testChild.getId()]);
   });
 
   it("sets a new child photo", async () => {

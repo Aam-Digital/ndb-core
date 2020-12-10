@@ -7,6 +7,7 @@ import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
+import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 
 @UntilDestroy()
 @Component({
@@ -68,8 +69,8 @@ export class EducationalMaterialComponent
     }
   }
 
-  onInitFromDynamicConfig(config: any) {
-    this.child = config.entity;
+  onInitFromDynamicConfig(config: PanelConfig) {
+    this.child = config.entity as Child;
     this.loadData(this.child.getId());
   }
 

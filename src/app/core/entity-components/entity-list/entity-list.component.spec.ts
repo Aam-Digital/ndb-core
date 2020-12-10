@@ -5,8 +5,6 @@ import {
   TestBed,
 } from "@angular/core/testing";
 import { EntityListComponent } from "./entity-list.component";
-import { User } from "../../user/user";
-import { ExportDataComponent } from "../../admin/export-data/export-data.component";
 import { CommonModule } from "@angular/common";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
@@ -24,32 +22,39 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule } from "@angular/forms";
 import { FilterPipeModule } from "ngx-filter-pipe";
 import { RouterTestingModule } from "@angular/router/testing";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { SessionService } from "../../session/session-service/session.service";
-import { Database } from "../../database/database";
-import { MockDatabase } from "../../database/mock-database";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { SimpleChange } from "@angular/core";
-import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
+import { ActivatedRoute, Router } from "@angular/router";
+import { BooleanFilterConfig, EntityListConfig } from "./EntityListConfig";
 import { Entity } from "../../entity/entity";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { User } from "../../user/user";
+import { SessionService } from "../../session/session-service/session.service";
+import { ExportDataComponent } from "../../admin/export-data/export-data.component";
+import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
+import { MockDatabase } from "../../database/mock-database";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { Child } from "../../../child-dev-project/children/model/child";
+import { Database } from "../../database/database";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
   let fixture: ComponentFixture<EntityListComponent<Entity>>;
-  const testConfig = {
+  const testConfig: EntityListConfig = {
     title: "Children List",
     columns: [
-      { type: "DisplayText", title: "PN", id: "projectNumber" },
-      { type: "ChildBlock", title: "Name", id: "name" },
-      { type: "DisplayDate", title: "DoB", id: "dateOfBirth" },
-      { type: "DisplayText", title: "Gender", id: "gender" },
-      { type: "DisplayText", title: "Class", id: "schoolClass" },
-      { type: "SchoolBlockWrapper", title: "School", id: "schoolId" },
-      { type: "ListAttendance", title: "Attendance (School)", id: "school" },
+      { component: "DisplayText", title: "PN", id: "projectNumber" },
+      { component: "ChildBlock", title: "Name", id: "name" },
+      { component: "DisplayDate", title: "DoB", id: "dateOfBirth" },
+      { component: "DisplayText", title: "Gender", id: "gender" },
+      { component: "DisplayText", title: "Class", id: "schoolClass" },
+      { component: "SchoolBlockWrapper", title: "School", id: "schoolId" },
+      {
+        component: "ListAttendance",
+        title: "Attendance (School)",
+        id: "school",
+      },
     ],
-    columnGroups: {
+    columnGroup: {
       default: "School Info",
       mobile: "School Info",
       groups: [
@@ -71,7 +76,7 @@ describe("EntityListComponent", () => {
         true: "Currently active children",
         false: "Currently inactive children",
         all: "All children",
-      },
+      } as BooleanFilterConfig,
       {
         id: "center",
       },
@@ -140,9 +145,9 @@ describe("EntityListComponent", () => {
   });
 
   it("should create column groups from config and set correct one", () => {
-    expect(component.columnGroups).toEqual(testConfig.columnGroups.groups);
-    const defaultGroup = testConfig.columnGroups.groups.find(
-      (g) => g.name === testConfig.columnGroups.default
+    expect(component.columnGroups).toEqual(testConfig.columnGroup.groups);
+    const defaultGroup = testConfig.columnGroup.groups.find(
+      (g) => g.name === testConfig.columnGroup.default
     );
     expect(component.selectedColumnGroup).toEqual(defaultGroup.name);
     expect(component.columnsToDisplay).toEqual(defaultGroup.columns);
@@ -158,7 +163,7 @@ describe("EntityListComponent", () => {
 
   it("should set the clicked column group", () => {
     component.ready = true;
-    const clickedColumnGroup = testConfig.columnGroups.groups[0];
+    const clickedColumnGroup = testConfig.columnGroup.groups[0];
     component.columnGroupClick(clickedColumnGroup.name);
     expect(component.selectedColumnGroup).toEqual(clickedColumnGroup.name);
     expect(component.columnsToDisplay).toEqual(clickedColumnGroup.columns);
@@ -190,7 +195,7 @@ describe("EntityListComponent", () => {
     const router = fixture.debugElement.injector.get(Router);
     spyOn(router, "navigate");
     const dropoutFs = component.filterSelections[0];
-    const clickedOption = testConfig.filters[0].false;
+    const clickedOption = (testConfig.filters[0] as BooleanFilterConfig).false;
     const route = fixture.debugElement.injector.get(ActivatedRoute);
     component.filterClick(dropoutFs, clickedOption);
     const expectedParams = {};

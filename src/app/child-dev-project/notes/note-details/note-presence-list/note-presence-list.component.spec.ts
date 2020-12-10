@@ -16,7 +16,7 @@ import { of } from "rxjs";
 import { Child } from "../../../children/model/child";
 import { MatInputModule } from "@angular/material/input";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { ChildBlockComponent } from "../../../children/child-block-list/child-block/child-block.component";
+import { ChildBlockComponent } from "../../../children/child-block/child-block.component";
 
 describe("NotePresenceListComponent", () => {
   let component: NotePresenceListComponent;

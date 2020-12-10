@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
-import { OnInitDynamicComponent } from "../../view/dynamic-components/on-init-dynamic-component.interface";
+import { ColumnCellConfig } from "../EntityListConfig";
+import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
 
 /**
  * This component displays a text attribute.
@@ -13,7 +14,7 @@ export class DisplayTextComponent implements OnInitDynamicComponent {
 
   constructor() {}
 
-  onInitFromDynamicConfig(config: any) {
+  onInitFromDynamicConfig(config: ColumnCellConfig) {
     this.text = config.entity[config.id];
   }
 }

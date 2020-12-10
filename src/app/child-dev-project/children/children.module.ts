@@ -78,12 +78,12 @@ import { Angulartics2Module } from "angulartics2";
 import { AttendanceAnalysisComponent } from "../attendance/attendance-analysis/attendance-analysis.component";
 import { GroupedChildAttendanceComponent } from "./child-details/grouped-child-attendance/grouped-child-attendance.component";
 import { ViewModule } from "../../core/view/view.module";
-import { FormComponent } from "./child-details/form/form.component";
 import { RecentAttendanceBlocksComponent } from "./children-list/recent-attendance-blocks/recent-attendance-blocks.component";
-import { EntityComponentsModule } from "../../core/entity-components/entity-components.module";
 import { SchoolBlockWrapperComponent } from "./children-list/school-block-wrapper/school-block-wrapper.component";
 import { ChildBlockListComponent } from "./child-block-list/child-block-list.component";
 import { ChildBlockComponent } from "./child-block/child-block.component";
+import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
+import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 
 @NgModule({
   imports: [
@@ -123,7 +123,8 @@ import { ChildBlockComponent } from "./child-block/child-block.component";
     FormDialogModule,
     Angulartics2Module,
     ViewModule,
-    EntityComponentsModule,
+    EntitySubrecordModule,
+    EntityListModule,
   ],
   declarations: [
     AttendanceBlockComponent,
@@ -152,7 +153,6 @@ import { ChildBlockComponent } from "./child-block/child-block.component";
     HealthCheckupComponent,
     PreviousSchoolsComponent,
     GroupedChildAttendanceComponent,
-    FormComponent,
     RecentAttendanceBlocksComponent,
     SchoolBlockWrapperComponent,
     ChildBlockListComponent,

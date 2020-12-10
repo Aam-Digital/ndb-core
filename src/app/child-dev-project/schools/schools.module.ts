@@ -25,8 +25,8 @@ import { RouterModule } from "@angular/router";
 import { SchoolsService } from "./schools.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Angulartics2Module } from "angulartics2";
-import { EntityComponentsModule } from "../../core/entity-components/entity-components.module";
 import { ChildrenOverviewComponent } from "./children-overview/children-overview.component";
+import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 
 @NgModule({
   imports: [
@@ -67,7 +67,7 @@ import { ChildrenOverviewComponent } from "./children-overview/children-overview
     ReactiveFormsModule,
     MatTooltipModule,
     Angulartics2Module,
-    EntityComponentsModule,
+    EntityListModule,
   ],
   declarations: [
     SchoolBlockComponent,

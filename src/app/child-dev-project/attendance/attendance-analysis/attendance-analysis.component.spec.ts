@@ -22,9 +22,9 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatNativeDateModule } from "@angular/material/core";
 import { BehaviorSubject } from "rxjs";
 import { AttendanceAnalysisComponent } from "./attendance-analysis.component";
-import { ChildBlockComponent } from "../../children/child-block-list/child-block/child-block.component";
-import { EntityComponentsModule } from "../../../core/entity-components/entity-components.module";
 import { RouterTestingModule } from "@angular/router/testing";
+import { ChildBlockComponent } from "../../children/child-block/child-block.component";
+import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 
 describe("AttendanceRegisterComponent", () => {
   let component: AttendanceAnalysisComponent;
@@ -55,7 +55,7 @@ describe("AttendanceRegisterComponent", () => {
         MatNativeDateModule,
         FormsModule,
         NoopAnimationsModule,
-        EntityComponentsModule,
+        EntitySubrecordModule,
         EntityModule,
         RouterTestingModule,
       ],

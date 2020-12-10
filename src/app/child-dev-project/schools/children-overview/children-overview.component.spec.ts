@@ -11,6 +11,7 @@ import { School } from "../model/school";
 import { Child } from "../../children/model/child";
 import { SchoolsService } from "../schools.service";
 import { RouterTestingModule } from "@angular/router/testing";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("ChildrenOverviewComponent", () => {
   let component: ChildrenOverviewComponent;
@@ -23,7 +24,7 @@ describe("ChildrenOverviewComponent", () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [],
-      imports: [SchoolsModule, RouterTestingModule],
+      imports: [SchoolsModule, RouterTestingModule, NoopAnimationsModule],
       providers: [{ provide: SchoolsService, useValue: schoolsService }],
     }).compileComponents();
   }));

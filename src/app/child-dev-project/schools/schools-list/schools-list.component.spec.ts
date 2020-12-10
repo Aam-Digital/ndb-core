@@ -17,18 +17,20 @@ import { SchoolsModule } from "../schools.module";
 import { RouterTestingModule } from "@angular/router/testing";
 import { Angulartics2Module } from "angulartics2";
 import { School } from "../model/school";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 
 describe("SchoolsListComponent", () => {
   let component: SchoolsListComponent;
   let fixture: ComponentFixture<SchoolsListComponent>;
 
-  const routeData = {
+  const routeData: EntityListConfig = {
     title: "Schools List",
     columns: [
-      { type: "DisplayText", title: "Name", id: "name" },
-      { type: "DisplayText", title: "Up to class", id: "upToClass" },
+      { component: "DisplayText", title: "Name", id: "name" },
+      { component: "DisplayText", title: "Up to class", id: "upToClass" },
     ],
-    columnGroups: {
+    columnGroup: {
       default: "School Info",
       mobile: "School Info",
       groups: [
@@ -59,6 +61,7 @@ describe("SchoolsListComponent", () => {
         SchoolsModule,
         RouterTestingModule,
         Angulartics2Module.forRoot(),
+        NoopAnimationsModule,
       ],
       providers: [
         { provide: Database, useClass: MockDatabase },

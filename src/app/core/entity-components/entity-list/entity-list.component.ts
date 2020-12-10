@@ -13,14 +13,22 @@ import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Entity } from "../entity/entity";
+import {
+  BooleanFilterConfig,
+  ColumnConfig,
+  EntityListConfig,
+  FilterConfig,
+  PrebuiltFilterConfig,
+} from "./EntityListConfig";
+import { Entity } from "../../entity/entity";
 import {
   FilterSelection,
   FilterSelectionOption,
-} from "../filter/filter-selection/filter-selection";
-import { EntityMapperService } from "../entity/entity-mapper.service";
-import { SessionService } from "../session/session-service/session.service";
-import { User } from "../user/user";
+} from "../../filter/filter-selection/filter-selection";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { SessionService } from "../../session/session-service/session.service";
+import { User } from "../../user/user";
+import { getUrlWithoutParams } from "../../../utils/utils";
 
 export interface ColumnGroup {
   name: string;
@@ -42,9 +50,7 @@ export interface ColumnGroup {
 export class EntityListComponent<T extends Entity>
   implements OnChanges, AfterViewInit {
   @Input() entityList: T[] = [];
-  @Input() listConfig: any = {};
-  // This name is used to store the pagination settings in the user entity
-  @Input() componentName: string = "";
+  @Input() listConfig: EntityListConfig;
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
 
@@ -52,11 +58,11 @@ export class EntityListComponent<T extends Entity>
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   listName = "";
-  columns: any[] = [];
+  columns: ColumnConfig[] = [];
   columnGroups: ColumnGroup[] = [];
   defaultColumnGroup = "";
   mobileColumnGroup = "";
-  filtersConfig: any[] = [];
+  filtersConfig: FilterConfig[] = [];
 
   ready = true;
   columnsToDisplay: string[] = [];
@@ -67,10 +73,13 @@ export class EntityListComponent<T extends Entity>
   entityDataSource = new MatTableDataSource<T>();
 
   user: User;
-  public paginatorPageSize = 10;
-  public paginatorPageIndex = 0;
+  paginatorPageSize = 10;
+  paginatorPageIndex = 0;
 
   filterString = "";
+
+  // This key is used to save the pagination settings on the user entity
+  readonly paginatorKey: string;
 
   constructor(
     private sessionService: SessionService,
@@ -96,30 +105,29 @@ export class EntityListComponent<T extends Entity>
         }
       }
     });
+    this.user = this.sessionService.getCurrentUser();
+    // Use URl as key to save pagination settings
+    this.paginatorKey = getUrlWithoutParams(this.router);
+    this.paginatorPageSize =
+      this.user.paginatorSettingsPageSize[this.paginatorKey] ||
+      this.paginatorPageSize;
+    this.paginatorPageIndex =
+      this.user.paginatorSettingsPageIndex[this.paginatorKey] ||
+      this.paginatorPageIndex;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.hasOwnProperty("componentName")) {
-      this.user = this.sessionService.getCurrentUser();
-      this.paginatorPageSize =
-        this.user.paginatorSettingsPageSize[this.componentName] ||
-        this.paginatorPageSize;
-      this.paginatorPageIndex =
-        this.user.paginatorSettingsPageIndex[this.componentName] ||
-        this.paginatorPageIndex;
-    }
     if (changes.hasOwnProperty("listConfig")) {
       this.listName = this.listConfig.title;
       this.columns = this.listConfig.columns;
-      this.columnGroups = this.listConfig.columnGroups.groups;
-      this.defaultColumnGroup = this.listConfig.columnGroups.default;
-      this.mobileColumnGroup = this.listConfig.columnGroups.mobile;
+      this.columnGroups = this.listConfig.columnGroup.groups;
+      this.defaultColumnGroup = this.listConfig.columnGroup.default;
+      this.mobileColumnGroup = this.listConfig.columnGroup.mobile;
       this.filtersConfig = this.listConfig.filters;
       this.displayColumnGroup(this.defaultColumnGroup);
     }
     if (changes.hasOwnProperty("entityList")) {
       this.addFilterSelections();
-      this.applyFilterSelections();
     }
     this.loadUrlParams();
   }
@@ -152,9 +160,10 @@ export class EntityListComponent<T extends Entity>
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.entityDataSource.filter = filterValue;
+    this.updateUrl("search", filterValue);
   }
 
-  filterClick(filter: FilterSelection<any>, selectedOption) {
+  filterClick(filter: FilterSelection<T>, selectedOption) {
     filter.selectedOption = selectedOption;
     this.applyFilterSelections();
     this.updateUrl(filter.name, selectedOption);
@@ -164,13 +173,13 @@ export class EntityListComponent<T extends Entity>
     // The PageSize is stored in the database, the PageList is only in memory
     const hasChangesToBeSaved =
       this.paginatorPageSize !==
-      this.user.paginatorSettingsPageSize[this.componentName];
+      this.user.paginatorSettingsPageSize[this.paginatorKey];
 
     this.user.paginatorSettingsPageIndex[
-      this.componentName
+      this.paginatorKey
     ] = this.paginatorPageIndex;
     this.user.paginatorSettingsPageSize[
-      this.componentName
+      this.paginatorKey
     ] = this.paginatorPageSize;
 
     if (hasChangesToBeSaved) {
@@ -189,6 +198,9 @@ export class EntityListComponent<T extends Entity>
         }
       });
       this.applyFilterSelections();
+      if (params["search"]) {
+        this.applyFilter(params["search"]);
+      }
     });
   }
 
@@ -219,7 +231,7 @@ export class EntityListComponent<T extends Entity>
     this.filterSelections = [];
     this.filterDropdowns = [];
     this.filtersConfig.forEach((filter) => {
-      const fs = new FilterSelection(filter.label, []);
+      const fs = new FilterSelection(filter.id, []);
       this.initFilterOptions(fs, filter);
       fs.selectedOption = filter.hasOwnProperty("default")
         ? filter.default
@@ -232,12 +244,17 @@ export class EntityListComponent<T extends Entity>
     });
   }
 
-  private initFilterOptions(filter, config): FilterSelectionOption<T>[] {
+  private initFilterOptions(
+    filter: FilterSelection<T>,
+    config: FilterConfig
+  ): FilterSelectionOption<T>[] {
     switch (config.type) {
       case "boolean":
-        return (filter.options = this.createBooleanFilterOptions(config));
+        return (filter.options = this.createBooleanFilterOptions(
+          config as BooleanFilterConfig
+        ));
       case "prebuilt":
-        return (filter.options = config.options);
+        return (filter.options = (config as PrebuiltFilterConfig<T>).options);
       default: {
         const options = [...new Set(this.entityList.map((c) => c[config.id]))];
         filter.initOptions(options, config.id);
@@ -245,7 +262,9 @@ export class EntityListComponent<T extends Entity>
     }
   }
 
-  private createBooleanFilterOptions(filter): FilterSelectionOption<any>[] {
+  private createBooleanFilterOptions(
+    filter: BooleanFilterConfig
+  ): FilterSelectionOption<T>[] {
     return [
       {
         key: "true",

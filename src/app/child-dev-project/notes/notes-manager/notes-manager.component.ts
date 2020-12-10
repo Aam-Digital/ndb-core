@@ -10,8 +10,8 @@ import { SessionService } from "../../../core/session/session-service/session.se
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { NoteConfigLoaderService } from "../note-config-loader/note-config-loader.service";
-import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 import { LoggingService } from "../../../core/logging/logging.service";
+import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 
 @UntilDestroy()
 @Component({
@@ -20,7 +20,6 @@ import { LoggingService } from "../../../core/logging/logging.service";
     <app-entity-list
       [entityList]="notes"
       [listConfig]="config"
-      [componentName]="componentName"
       (elementClick)="showDetails($event)"
       (addNewClick)="addNoteClick()"
       #entityList
@@ -32,7 +31,6 @@ export class NotesManagerComponent implements OnInit {
 
   config: any = {};
   notes: Note[] = [];
-  componentName = "notesComponent";
 
   private statusFS: FilterSelectionOption<Note>[] = [
     {
@@ -125,7 +123,9 @@ export class NotesManagerComponent implements OnInit {
 
     const noteDialogRef = this.showDetails(newNote);
     noteDialogRef.afterClosed().subscribe((val) => {
-      this.notes = [val].concat(this.notes);
+      if (val instanceof Note) {
+        this.notes = [val].concat(this.notes);
+      }
     });
   }
 

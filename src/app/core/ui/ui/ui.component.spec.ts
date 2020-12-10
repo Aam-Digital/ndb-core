@@ -45,7 +45,7 @@ import { CookieService } from "ngx-cookie-service";
 import { SwUpdate } from "@angular/service-worker";
 import { of } from "rxjs";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
-import { EntityComponentsModule } from "../../entity-components/entity-components.module";
+import { EntitySubrecordModule } from "../../entity-components/entity-subrecord/entity-subrecord.module";
 
 describe("UiComponent", () => {
   let component: UiComponent;
@@ -83,6 +83,7 @@ describe("UiComponent", () => {
         MatFormFieldModule,
         NoopAnimationsModule,
         AppConfigModule,
+        EntitySubrecordModule,
         ChildrenModule,
         SchoolsModule,
         SyncStatusModule,
@@ -90,7 +91,6 @@ describe("UiComponent", () => {
         LatestChangesModule,
         SessionModule,
         FlexLayoutModule,
-        EntityComponentsModule,
       ],
       providers: [
         { provide: SessionService, useValue: mockSession },

@@ -8,7 +8,7 @@ import { ChildrenService } from "../../../children/children.service";
 import { SchoolBlockComponent } from "../../../schools/school-block/school-block.component";
 import { of } from "rxjs";
 import { Child } from "../../../children/model/child";
-import { ChildBlockComponent } from "../../../children/child-block-list/child-block/child-block.component";
+import { ChildBlockComponent } from "../../../children/child-block/child-block.component";
 
 describe("AttendanceWarningsDashboardComponent", () => {
   let component: AttendanceWarningsDashboardComponent;
