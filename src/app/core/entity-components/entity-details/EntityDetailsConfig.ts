@@ -17,7 +17,7 @@ export class PanelComponent {
   config?: PanelConfig;
 }
 
-export interface PanelConfig {
+export class PanelConfig {
   entity: Entity;
   creatingNew?: boolean;
   config?: any;

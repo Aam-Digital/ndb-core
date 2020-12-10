@@ -115,6 +115,7 @@
     },
     "view:admin": {"component": "Admin", "requiresAdmin": true},
     "view:users": {"component": "UserList", "requiresAdmin": true},
+    "view:admin/conflicts": {"component": "ConflictResolution", "requiresAdmin": true },
     "view:help": {"component": "Help"},
     "view:attendance": {"component": "AttendanceManager"},
     "view:attendance/analysis": {"component": "AttendanceAnalysis"},

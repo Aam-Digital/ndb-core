@@ -15,7 +15,7 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<app-form-dialog-wrapper #dialogForm [entity]="entity" (onClose)="onClose($event)">
+<app-form-dialog-wrapper #dialogForm [entity]="entity">
   <h1>{{ entity.date?.toLocaleDateString() }}: {{ entity.subject }}</h1>
 
   <form #entityForm="ngForm">

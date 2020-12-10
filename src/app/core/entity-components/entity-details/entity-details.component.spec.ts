@@ -22,6 +22,7 @@ import { MockDatabase } from "../../database/mock-database";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { Database } from "../../database/database";
+import { FormConfig } from "./form/FormConfig";
 
 describe("EntityDetailsComponent", () => {
   let component: EntityDetailsComponent;
@@ -35,7 +36,13 @@ describe("EntityDetailsComponent", () => {
     panels: [
       {
         title: "One Form",
-        components: [{ title: "", component: "Form", config: { cols: [[]] } }],
+        components: [
+          {
+            title: "",
+            component: "Form",
+            config: { cols: [[]] } as FormConfig,
+          },
+        ],
       },
       {
         title: "Two Components",
