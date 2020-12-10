@@ -26,7 +26,7 @@ jobs:
           ls -a
           docker images
           id=$(docker create builder:latest)
-          docker cp $id:/coverage/ ./coverage/
+          docker cp $id:/app/coverage/ ./coverage/
           docker rm $id
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v2.7.4
