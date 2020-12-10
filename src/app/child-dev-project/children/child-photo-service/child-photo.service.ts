@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, Optional } from "@angular/core";
 import { SafeUrl } from "@angular/platform-browser";
 import { CloudFileService } from "../../../core/webdav/cloud-file-service.service";
 import { Child } from "../model/child";
@@ -10,7 +10,7 @@ import { BehaviorSubject } from "rxjs";
 export class ChildPhotoService {
   private basePath = "photos/";
 
-  constructor(private cloudFileService: CloudFileService) {}
+  constructor(@Optional() private cloudFileService: CloudFileService) {}
 
   /**
    * Creates an ArrayBuffer of the photo for that Child or the default image url.
@@ -31,7 +31,7 @@ export class ChildPhotoService {
     entityId: string;
   }): Promise<SafeUrl> {
     let image;
-    if (this.cloudFileService.isConnected()) {
+    if (this.cloudFileService?.isConnected()) {
       const imageType = [".png", ".jpg", ".jpeg", ""];
       for (const ext of imageType) {
         const filepath = this.basePath + child.entityId + ext;
@@ -85,7 +85,7 @@ export class ChildPhotoService {
    * Check if saving/uploading images is supported in the current state.
    */
   public canSetImage(): boolean {
-    return this.cloudFileService.isConnected();
+    return this.cloudFileService?.isConnected();
   }
 
   /**
