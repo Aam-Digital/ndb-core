@@ -31,16 +31,17 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           target: builder
           tags: builder
+          output: type=docker
           build-args: RUN_TESTS=${{ true }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
       - name: copy files from container
         run: |
-          docker buildx ls
-          id=$(docker buildx create builder)
-          docker buildx cp $id:/app/coverage/ ./coverage/
+          docker images
+          id=$(docker create builder)
+          docker cp $id:/app/coverage/ ./coverage/
           ls -a
-          docker buildx rm $id
+          docker rm $id
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v2.7.4
         env:
