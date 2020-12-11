@@ -37,7 +37,7 @@ describe("ChildrenListComponent", () => {
       { component: "DisplayText", title: "Class", id: "schoolClass" },
       { component: "DisplayText", title: "School", id: "schoolId" },
       {
-        component: "ListAttendance",
+        component: "RecentAttendanceBlocks",
         title: "Attendance (School)",
         id: "school",
       },

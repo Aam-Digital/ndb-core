@@ -60,6 +60,8 @@ describe("RecentAttendanceBlocksComponent", () => {
     );
     component.onInitFromDynamicConfig({
       entity: testChild,
+      id: "",
+      config: {},
     });
     expect(childrenService.getAttendancesOfChild).toHaveBeenCalledWith(
       testChild.getId()

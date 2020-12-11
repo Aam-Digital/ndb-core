@@ -204,8 +204,8 @@
                 {"component": "DisplayText", "title": "Gender", "id": "gender"},
                 {"component": "DisplayText", "title": "Class", "id": "schoolClass"},
                 {"component": "SchoolBlockWrapper", "title": "School", "id": "schoolId"},
-                {"component": "ListAttendance", "title": "Attendance (School)", "id": "school", "noSorting": true},
-                {"component": "ListAttendance", "title": "Attendance (Coaching)", "id": "coaching", "noSorting": true},
+                {"component": "RecentAttendanceBlocks", "title": "Attendance (School)", "id": "schoolAttendance", "config": { "filterByInstitution": "school"}, "noSorting": true},
+                {"component": "RecentAttendanceBlocks", "title": "Attendance (Coaching)", "id": "coachingAttendance", "config": { "filterByInstitution": "coaching"}, "noSorting": true},
                 {"component": "DisplayText", "title": "Center", "id": "center"},
                 {"component": "DisplayText", "title": "Status", "id": "status"},
                 {"component": "DisplayDate", "title": "Admission", "id": "admissionDate"},
@@ -234,7 +234,7 @@
                     },
                     {
                         "name": "School Info",
-                        "columns": [ "projectNumber", "name", "age", "schoolClass", "schoolId", "school", "coaching", "motherTongue"]
+                        "columns": [ "projectNumber", "name", "age", "schoolClass", "schoolId", "schoolAttendance", "coachingAttendance", "motherTongue"]
                     },
                     {
                         "name": "Status",

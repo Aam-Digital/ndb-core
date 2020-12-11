@@ -41,7 +41,7 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["DisplayCheckmark", DisplayCheckmarkComponent],
   ["ChildBlock", ChildBlockComponent],
   ["ChildBlockList", ChildBlockListComponent],
-  ["ListAttendance", RecentAttendanceBlocksComponent],
+  ["RecentAttendanceBlocks", RecentAttendanceBlocksComponent],
   ["SchoolBlockWrapper", SchoolBlockWrapperComponent],
   ["ChildrenOverview", ChildrenOverviewComponent],
 ]);

@@ -59,7 +59,7 @@ export class RecentAttendanceBlocksComponent implements OnInitDynamicComponent {
   }
 
   onInitFromDynamicConfig(config: ColumnCellConfig) {
-    this.filterByInstitution = config.id;
+    this.filterByInstitution = config.config.filterByInstitution;
     if (config.hasOwnProperty("entity")) {
       this.child = config.entity as Child;
       this.childrenService

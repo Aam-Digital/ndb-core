@@ -12,6 +12,8 @@ export class ColumnConfig {
   component: string;
   title: string;
   id: string;
+  // This config could be anything that the component later understands to parse
+  config?: any;
   noSorting?: boolean = false;
 }
 
@@ -45,5 +47,6 @@ export class PrebuiltFilterConfig<T> extends FilterConfig {
 
 export class ColumnCellConfig {
   entity: Entity;
-  id?: string;
+  id: string;
+  config?: any;
 }
