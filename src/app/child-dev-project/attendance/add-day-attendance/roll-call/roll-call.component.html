@@ -1,41 +1,41 @@
 <!-- Individual Student's Page -->
-<div *ngFor='let entry of eventEntity.children; let i = index' [ngClass]='{"hidden": (currentIndex!==i)}'>
+<div *ngFor='let entry of entries; let i = index' [ngClass]='{"hidden": (currentIndex!==i)}'>
   <app-child-block [entity]='getChildById(entry.childId)'></app-child-block>
 
   <div fxLayout='column' fxLayoutAlign='space-between stretch' class='options-wrapper'>
     <div class='group-select-option'
          (click)='markAttendance(AttStatus.PRESENT)'
-         [ngClass]="{'attendance-P': entry.status===AttStatus.PRESENT}">
-      <span class='fa fa-check' *ngIf='entry.status===AttStatus.PRESENT'></span>
+         [ngClass]="{'attendance-P': entry.attendance.status===AttStatus.PRESENT}">
+      <span class='fa fa-check' *ngIf='entry.attendance.status===AttStatus.PRESENT'></span>
       Present
     </div>
     <div class='group-select-option'
          (click)='markAttendance(AttStatus.ABSENT)'
-         [ngClass]="{'attendance-A': entry.status===AttStatus.ABSENT}">
-      <span class='fa fa-check' *ngIf='entry.status===AttStatus.ABSENT'></span>
+         [ngClass]="{'attendance-A': entry.attendance.status===AttStatus.ABSENT}">
+      <span class='fa fa-check' *ngIf='entry.attendance.status===AttStatus.ABSENT'></span>
       Absent
     </div>
     <div class='group-select-option'
          (click)='markAttendance(AttStatus.LATE)'
-         [ngClass]="{'attendance-L': entry.status===AttStatus.LATE}">
-      <span class='fa fa-check' *ngIf='entry.status===AttStatus.LATE'></span>
+         [ngClass]="{'attendance-L': entry.attendance.status===AttStatus.LATE}">
+      <span class='fa fa-check' *ngIf='entry.attendance.status===AttStatus.LATE'></span>
       Late
     </div>
     <div class='group-select-option'
          (click)='markAttendance(AttStatus.HOLIDAY)'
-         [ngClass]="{'attendance-H': entry.status===AttStatus.HOLIDAY}">
-      <span class='fa fa-check' *ngIf='entry.status===AttStatus.HOLIDAY'></span>
+         [ngClass]="{'attendance-H': entry.attendance.status===AttStatus.HOLIDAY}">
+      <span class='fa fa-check' *ngIf='entry.attendance.status===AttStatus.HOLIDAY'></span>
       Holiday
     </div>
     <div class='group-select-option'
          (click)='markAttendance(AttStatus.EXCUSED)'
-         [ngClass]="{'attendance-E': entry.status===AttStatus.EXCUSED}">
-      <span class='fa fa-check' *ngIf='entry.status===AttStatus.EXCUSED'></span>
+         [ngClass]="{'attendance-E': entry.attendance.status===AttStatus.EXCUSED}">
+      <span class='fa fa-check' *ngIf='entry.attendance.status===AttStatus.EXCUSED'></span>
       Excused
     </div>
     <div class='group-select-option'
          (click)='markAttendance(AttStatus.UNKNOWN)'
-         [ngClass]="{'attendance-U': entry.status===AttStatus.UNKNOWN}">
+         [ngClass]="{'attendance-U': entry.attendance.status===AttStatus.UNKNOWN}">
       Skip
     </div>
   </div>

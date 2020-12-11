@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { Child } from "../../children/model/child";
-import { EventNote } from "../model/event-note";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { Note } from "../../notes/model/note";
 
 @Component({
   selector: "app-add-day-attendance",
@@ -14,7 +14,7 @@ export class AddDayAttendanceComponent {
   day = new Date();
   attendanceType: string;
   selectedChildren: Child[] = [];
-  event: EventNote;
+  event: Note;
 
   stages = ["Setup Roll Call", "Select Student Group", "Roll Call"];
 
@@ -27,10 +27,10 @@ export class AddDayAttendanceComponent {
   finishStudentSelectionStage(selectedStudents: Child[]) {
     this.selectedChildren = selectedStudents;
 
-    this.event = EventNote.create(this.day, this.attendanceType);
-    this.event.addChildren(
-      selectedStudents.sort(sortByChildClass).map((c) => c.getId())
-    );
+    this.event = Note.create(this.day, this.attendanceType);
+    selectedStudents
+      .sort(sortByChildClass)
+      .forEach((c) => this.event.addChild(c.getId()));
 
     this.currentStage = 2;
   }
@@ -47,14 +47,14 @@ function sortByChildClass(a: Child, b: Child) {
       return 0;
     }
 
-    const diff = parseInt(a.schoolClass, 10) - parseInt(b.schoolClass, 10);
+    const diff = parseInt(b.schoolClass, 10) - parseInt(a.schoolClass, 10);
     if (!Number.isNaN(diff)) {
       return diff;
     }
 
     if (a.schoolClass < b.schoolClass || b.schoolClass === undefined) {
-      return -1;
+      return 1;
     }
-    return 1;
+    return -1;
   }
 }
