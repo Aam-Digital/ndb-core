@@ -44,7 +44,7 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
         with:
-          coverageLocations: /app/coverage/lcov.info:lcov
+          coverageLocations: ${{github.workspace}}/app/coverage/lcov.info:lcov
       - name: Build and push prod image
         uses: docker/build-push-action@v2
         with:
