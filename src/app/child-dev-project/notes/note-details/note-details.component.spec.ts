@@ -103,7 +103,8 @@ describe("NoteDetailsComponent", () => {
   it("should save data", async function () {
     const mockedDatabase = TestBed.inject<Database>(Database);
 
-    component.entity.addChildren("5", "7");
+    component.entity.addChild("5");
+    component.entity.addChild("7");
     await component.formDialogWrapper.save();
     const newNote: Note = await mockedDatabase.get("Note:1");
     expect(newNote.children.length).toBe(5);

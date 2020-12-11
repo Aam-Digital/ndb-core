@@ -1,11 +1,10 @@
 import { AttendanceStatus } from "./attendance-status";
 
 /**
- * Simple relationship object to link a Child with an Event instance including context information.
+ * Simple relationship object to represent an individual child's status at an event including context information.
  */
 export class EventAttendance {
   constructor(
-    public childId: string,
     public status: AttendanceStatus = AttendanceStatus.UNKNOWN,
     public remarks: string = ""
   ) {}
