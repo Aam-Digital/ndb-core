@@ -4,6 +4,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnInit,
   Output,
   SimpleChanges,
   ViewChild,
@@ -48,7 +49,7 @@ export interface ColumnGroup {
   styleUrls: ["./entity-list.component.scss"],
 })
 export class EntityListComponent<T extends Entity>
-  implements OnChanges, AfterViewInit {
+  implements OnChanges, OnInit, AfterViewInit {
   @Input() entityList: T[] = [];
   @Input() listConfig: EntityListConfig;
   @Output() elementClick = new EventEmitter<T>();
@@ -88,6 +89,10 @@ export class EntityListComponent<T extends Entity>
     private route: ActivatedRoute,
     private entityMapperService: EntityMapperService
   ) {
+    this.paginatorKey = getUrlWithoutParams(this.router);
+  }
+
+  ngOnInit() {
     this.media.asObservable().subscribe((change: MediaChange[]) => {
       switch (change[0].mqAlias) {
         case "xs":
@@ -107,7 +112,6 @@ export class EntityListComponent<T extends Entity>
     });
     this.user = this.sessionService.getCurrentUser();
     // Use URl as key to save pagination settings
-    this.paginatorKey = getUrlWithoutParams(this.router);
     this.paginatorPageSize =
       this.user.paginatorSettingsPageSize[this.paginatorKey] ||
       this.paginatorPageSize;
@@ -281,20 +285,16 @@ export class EntityListComponent<T extends Entity>
   }
 
   private displayColumnGroup(columnGroupName: string) {
-    // When components, that are used in the list (app-recent-attendance-blocks), also listen to the mediaObserver, a new
-    // mediaChange is created once this used component is displayed (through column groups change). This may
-    // re-trigger the settings for small screens. Therefore, we only allow a change ever 0.5 seconds to prevent this.
-    if (this.ready) {
-      this.ready = false;
-      setTimeout(() => (this.ready = true), 500);
+    if (columnGroupName === this.selectedColumnGroup) {
+      return;
+    }
 
-      const selectedColumns = this.columnGroups.find(
-        (c) => c.name === columnGroupName
-      )?.columns;
-      if (selectedColumns) {
-        this.columnsToDisplay = selectedColumns;
-        this.selectedColumnGroup = columnGroupName;
-      }
+    const selectedColumns = this.columnGroups.find(
+      (c) => c.name === columnGroupName
+    )?.columns;
+    if (selectedColumns) {
+      this.columnsToDisplay = selectedColumns;
+      this.selectedColumnGroup = columnGroupName;
     }
   }
 }
