@@ -8,6 +8,7 @@ import {
 import { Note } from "../../model/note";
 import { NgForm } from "@angular/forms";
 import { ChildSelectComponent } from "../../../children/child-select/child-select.component";
+import { AttendanceStatus } from "../../../attendance/model/attendance-status";
 
 @Component({
   selector: "app-note-presence-list",
@@ -36,14 +37,17 @@ export class NotePresenceListComponent implements OnChanges {
       return;
     }
 
-    this.entity.attendances.sort((a, b) => {
-      if (a.present === b.present) {
+    this.entity.children.sort((a, b) => {
+      const statusA = this.entity.getAttendance(b).status;
+      const statusB = this.entity.getAttendance(b).status;
+
+      if (statusA === statusB) {
         return 0;
       }
-      if (a.present) {
+      if (statusA === AttendanceStatus.PRESENT) {
         return -1;
       }
-      return 1;
+      return statusA.localeCompare(statusB);
     });
   }
 }

@@ -7,7 +7,9 @@ export interface NoteConfig {
     [key: string]: InteractionType;
   };
 }
-export interface InteractionType {
+export class InteractionType {
+  static NONE = { name: "" };
+
   name: string;
   color?: string;
   isMeeting?: boolean;
