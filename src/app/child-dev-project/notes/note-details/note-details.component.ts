@@ -3,6 +3,8 @@ import { Note } from "../model/note";
 import { ShowsEntity } from "../../../core/form-dialog/shows-entity.interface";
 import { InteractionType } from "../note-config-loader/note-config.interface";
 import { NoteConfigLoaderService } from "../note-config-loader/note-config-loader.service";
+import { MatDialogRef } from "@angular/material/dialog";
+import { Entity } from "../../../core/entity/entity";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -19,10 +21,20 @@ export class NoteDetailsComponent implements ShowsEntity, OnInit {
   /** interaction types loaded from config file */
   interactionTypes: InteractionType[];
 
-  constructor(private configLoader: NoteConfigLoaderService) {}
+  constructor(
+    private configLoader: NoteConfigLoaderService,
+    private matDialogRef: MatDialogRef<NoteDetailsComponent>
+  ) {}
 
   ngOnInit() {
-    // get all note categorys from config file
+    // get all note categories from config file
     this.interactionTypes = this.configLoader.interactionTypes;
+  }
+
+  closeDialog(entity: Entity) {
+    // Return the entity which has been saved
+    this.matDialogRef
+      .beforeClosed()
+      .subscribe(() => this.matDialogRef.close(entity));
   }
 }

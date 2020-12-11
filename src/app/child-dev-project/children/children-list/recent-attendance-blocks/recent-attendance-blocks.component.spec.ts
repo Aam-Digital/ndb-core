@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { ListAttendanceComponent } from "./list-attendance.component";
+import { RecentAttendanceBlocksComponent } from "./recent-attendance-blocks.component";
 import { Database } from "../../../../core/database/database";
 import { MockDatabase } from "../../../../core/database/mock-database";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
@@ -13,9 +13,9 @@ import { Child } from "../../model/child";
 import { AttendanceMonth } from "../../../attendance/model/attendance-month";
 import { of } from "rxjs";
 
-describe("ListAttendanceComponent", () => {
-  let component: ListAttendanceComponent;
-  let fixture: ComponentFixture<ListAttendanceComponent>;
+describe("RecentAttendanceBlocksComponent", () => {
+  let component: RecentAttendanceBlocksComponent;
+  let fixture: ComponentFixture<RecentAttendanceBlocksComponent>;
 
   beforeEach(async(() => {
     const photoMock: jasmine.SpyObj<ChildPhotoService> = jasmine.createSpyObj(
@@ -23,7 +23,7 @@ describe("ListAttendanceComponent", () => {
       ["getImage"]
     );
     TestBed.configureTestingModule({
-      declarations: [ListAttendanceComponent],
+      declarations: [RecentAttendanceBlocksComponent],
       imports: [FilterPipeModule],
       providers: [
         { provide: Database, useClass: MockDatabase },
@@ -37,7 +37,7 @@ describe("ListAttendanceComponent", () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ListAttendanceComponent);
+    fixture = TestBed.createComponent(RecentAttendanceBlocksComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -60,6 +60,8 @@ describe("ListAttendanceComponent", () => {
     );
     component.onInitFromDynamicConfig({
       entity: testChild,
+      id: "",
+      config: {},
     });
     expect(childrenService.getAttendancesOfChild).toHaveBeenCalledWith(
       testChild.getId()

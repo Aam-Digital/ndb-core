@@ -1,13 +1,20 @@
 import { Component } from "@angular/core";
-import { Entity, EntityConstructor } from "../../entity/entity";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from "@angular/common";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
-import { Child } from "../../../child-dev-project/children/model/child";
-import { School } from "../../../child-dev-project/schools/model/school";
 import * as uniqid from "uniqid";
+import {
+  PanelConfig,
+  EntityDetailsConfig,
+  Panel,
+  PanelComponent,
+} from "./EntityDetailsConfig";
+import { Entity, EntityConstructor } from "../../entity/entity";
+import { School } from "../../../child-dev-project/schools/model/school";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { getUrlWithoutParams } from "../../../utils/utils";
+import { Child } from "../../../child-dev-project/children/model/child";
+import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 
 const ENTITY_MAP: Map<string, any> = new Map<string, EntityConstructor<Entity>>(
   [
@@ -16,6 +23,12 @@ const ENTITY_MAP: Map<string, any> = new Map<string, EntityConstructor<Entity>>(
   ]
 );
 
+/**
+ * This component can be used to display a entity in more detail.
+ * It groups subcomponents in panels.
+ * Any component can be used as a subcomponent.
+ * The subcomponents will be provided with the Entity object and the creating new status, as well as its static config.
+ */
 @Component({
   selector: "app-entity-details",
   templateUrl: "./entity-details.component.html",
@@ -25,9 +38,9 @@ export class EntityDetailsComponent {
   entity: Entity;
   creatingNew = false;
 
-  panels: any[];
+  panels: Panel[] = [];
   classNamesWithIcon: String;
-  config: any = {};
+  config: EntityDetailsConfig;
 
   constructor(
     private entityMapperService: EntityMapperService,
@@ -37,7 +50,7 @@ export class EntityDetailsComponent {
     private snackBar: MatSnackBar,
     private confirmationDialog: ConfirmationDialogService
   ) {
-    this.route.data.subscribe((config) => {
+    this.route.data.subscribe((config: EntityDetailsConfig) => {
       this.config = config;
       this.classNamesWithIcon = "fa fa-" + config.icon + " fa-fw";
       this.route.paramMap.subscribe((params) =>
@@ -53,17 +66,17 @@ export class EntityDetailsComponent {
     if (id === "new") {
       this.entity = new constr(uniqid());
       this.creatingNew = true;
-      this.addEntityToConfig();
+      this.setPanelsConfig();
     } else {
       this.creatingNew = false;
       this.entityMapperService.load<Entity>(constr, id).then((entity) => {
         this.entity = entity;
-        this.addEntityToConfig();
+        this.setPanelsConfig();
       });
     }
   }
 
-  private addEntityToConfig() {
+  private setPanelsConfig() {
     this.panels = this.config.panels.map((p) => {
       return {
         title: p.title,
@@ -71,15 +84,19 @@ export class EntityDetailsComponent {
           return {
             title: c.title,
             component: c.component,
-            config: {
-              entity: this.entity,
-              config: c.config,
-              creatingNew: this.creatingNew,
-            },
+            config: this.getPanelConfig(c),
           };
         }),
       };
     });
+  }
+
+  private getPanelConfig(c: PanelComponent): PanelConfig {
+    return {
+      entity: this.entity,
+      config: c.config,
+      creatingNew: this.creatingNew,
+    };
   }
 
   removeEntity() {
@@ -89,7 +106,7 @@ export class EntityDetailsComponent {
     );
 
     dialogRef.afterClosed().subscribe((confirmed) => {
-      const currentUrl = this.router.url;
+      const currentUrl = getUrlWithoutParams(this.router);
       if (confirmed) {
         this.entityMapperService
           .remove<Entity>(this.entity)

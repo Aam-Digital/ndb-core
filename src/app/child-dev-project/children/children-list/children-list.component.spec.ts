@@ -19,22 +19,30 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { ChildrenModule } from "../children.module";
 import { Angulartics2Module } from "angulartics2";
 import { Child } from "../model/child";
+import {
+  BooleanFilterConfig,
+  EntityListConfig,
+} from "../../../core/entity-components/entity-list/EntityListConfig";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
   let fixture: ComponentFixture<ChildrenListComponent>;
-  const routeData = {
+  const routeData: EntityListConfig = {
     title: "Children List",
     columns: [
-      { type: "DisplayText", title: "PN", id: "projectNumber" },
-      { type: "ChildBlock", title: "Name", id: "name" },
-      { type: "DisplayDate", title: "DoB", id: "dateOfBirth" },
-      { type: "DisplayText", title: "Gender", id: "gender" },
-      { type: "DisplayText", title: "Class", id: "schoolClass" },
-      { type: "DisplayText", title: "School", id: "schoolId" },
-      { type: "ListAttendance", title: "Attendance (School)", id: "school" },
+      { component: "DisplayText", title: "PN", id: "projectNumber" },
+      { component: "ChildBlock", title: "Name", id: "name" },
+      { component: "DisplayDate", title: "DoB", id: "dateOfBirth" },
+      { component: "DisplayText", title: "Gender", id: "gender" },
+      { component: "DisplayText", title: "Class", id: "schoolClass" },
+      { component: "DisplayText", title: "School", id: "schoolId" },
+      {
+        component: "RecentAttendanceBlocks",
+        title: "Attendance (School)",
+        id: "school",
+      },
     ],
-    columnGroups: {
+    columnGroup: {
       default: "Basic Info",
       mobile: "School Info",
       groups: [
@@ -56,7 +64,7 @@ describe("ChildrenListComponent", () => {
         true: "Currently active children",
         false: "Currently inactive children",
         all: "All children",
-      },
+      } as BooleanFilterConfig,
       {
         id: "center",
       },

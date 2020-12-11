@@ -13,7 +13,7 @@ import { SchoolBlockComponent } from "../../schools/school-block/school-block.co
 import { of } from "rxjs";
 import { Child } from "../model/child";
 import { RouterTestingModule } from "@angular/router/testing";
-import { ChildBlockComponent } from "../child-block-list/child-block/child-block.component";
+import { ChildBlockComponent } from "../child-block/child-block.component";
 
 function createTestData() {
   const c1 = new Child("1");

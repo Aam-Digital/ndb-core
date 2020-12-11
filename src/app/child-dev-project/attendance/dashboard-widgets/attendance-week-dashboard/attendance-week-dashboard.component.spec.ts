@@ -12,7 +12,7 @@ import { Database } from "../../../../core/database/database";
 import { MockDatabase } from "../../../../core/database/mock-database";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ChildPhotoService } from "../../../children/child-photo-service/child-photo.service";
-import { ChildBlockComponent } from "../../../children/child-block-list/child-block/child-block.component";
+import { ChildBlockComponent } from "../../../children/child-block/child-block.component";
 
 describe("AttendanceWeekDashboardComponent", () => {
   let component: AttendanceWeekDashboardComponent;

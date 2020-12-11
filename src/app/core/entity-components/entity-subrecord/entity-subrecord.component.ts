@@ -11,18 +11,18 @@ import {
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
-import { Entity } from "../../entity/entity";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { ColumnDescription } from "./column-description";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { AlertService } from "app/core/alerts/alert.service";
 import { FormValidationResult } from "./form-validation-result";
-import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { ColumnDescriptionInputType } from "./column-description-input-type.enum";
 import { ComponentType } from "@angular/cdk/overlay";
-import { FormDialogService } from "../../form-dialog/form-dialog.service";
-import { ShowsEntity } from "../../form-dialog/shows-entity.interface";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { Entity } from "../../entity/entity";
+import { ShowsEntity } from "../../form-dialog/shows-entity.interface";
+import { FormDialogService } from "../../form-dialog/form-dialog.service";
+import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 
 /**
  * Generically configurable component to display and edit a list of entities in a compact way

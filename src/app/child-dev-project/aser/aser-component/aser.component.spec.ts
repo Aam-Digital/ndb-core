@@ -13,8 +13,9 @@ import { Database } from "../../../core/database/database";
 import { AlertService } from "app/core/alerts/alert.service";
 import { ConfirmationDialogModule } from "../../../core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
-import { EntityComponentsModule } from "../../../core/entity-components/entity-components.module";
 import { RouterTestingModule } from "@angular/router/testing";
+import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
 
 describe("AserComponent", () => {
   let component: AserComponent;
@@ -35,10 +36,11 @@ describe("AserComponent", () => {
       imports: [
         FormsModule,
         NoopAnimationsModule,
-        EntityComponentsModule,
         ConfirmationDialogModule,
         FormDialogModule,
         RouterTestingModule,
+        EntitySubrecordModule,
+        MatSnackBarModule,
       ],
       providers: [
         DatePipe,

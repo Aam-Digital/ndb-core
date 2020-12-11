@@ -38,7 +38,8 @@ import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirm
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
 import { Angulartics2Module } from "angulartics2";
 import { NoteConfigLoaderService } from "./note-config-loader/note-config-loader.service";
-import { EntityComponentsModule } from "../../core/entity-components/entity-components.module";
+import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
+import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 
 @NgModule({
   declarations: [
@@ -86,7 +87,8 @@ import { EntityComponentsModule } from "../../core/entity-components/entity-comp
     MatPaginatorModule,
     FormDialogModule,
     Angulartics2Module,
-    EntityComponentsModule,
+    EntitySubrecordModule,
+    EntityListModule,
   ],
   providers: [NoteConfigLoaderService],
 })

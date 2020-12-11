@@ -1,14 +1,21 @@
 import { Component } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
-import { AlertService } from "../../../../core/alerts/alert.service";
-import { ChildPhotoService } from "../../child-photo-service/child-photo.service";
 import { Router } from "@angular/router";
-import { SessionService } from "../../../../core/session/session-service/session.service";
-import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { Entity } from "../../../../core/entity/entity";
-import { Child } from "../../model/child";
+import { FormFieldConfig } from "./FormConfig";
+import { PanelConfig } from "../EntityDetailsConfig";
+import { Entity } from "../../../entity/entity";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { SessionService } from "../../../session/session-service/session.service";
+import { ChildPhotoService } from "../../../../child-dev-project/children/child-photo-service/child-photo.service";
+import { AlertService } from "../../../alerts/alert.service";
+import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
+import { getParentUrl } from "../../../../utils/utils";
+import { Child } from "../../../../child-dev-project/children/model/child";
 
+/**
+ * This component creates a form based on the passed config.
+ * It creates a flexible layout and includes validation functionality.
+ */
 @Component({
   selector: "app-form",
   templateUrl: "./form.component.html",
@@ -37,7 +44,7 @@ export class FormComponent implements OnInitDynamicComponent {
     this.isAdminUser = this.sessionService.getCurrentUser().admin;
   }
 
-  onInitFromDynamicConfig(config: any) {
+  onInitFromDynamicConfig(config: PanelConfig) {
     this.entity = config.entity;
     this.config = config.config;
     this.initForm();
@@ -58,8 +65,7 @@ export class FormComponent implements OnInitDynamicComponent {
     this.assignFormValuesToEntity(this.entity, this.form);
     try {
       await this.entityMapperService.save<Entity>(this.entity);
-      const route = this.entity.getConstructor().ENTITY_TYPE.toLowerCase();
-      this.router.navigate(["/" + route, this.entity.getId()]);
+      this.router.navigate([getParentUrl(this.router), this.entity.getId()]);
       this.alertService.addInfo("Saving Successful");
       this.switchEdit();
       return this.entity;
@@ -90,7 +96,7 @@ export class FormComponent implements OnInitDynamicComponent {
 
   private buildFormConfig() {
     const formConfig = {};
-    this.config.cols.forEach((c) =>
+    this.config.cols.forEach((c: FormFieldConfig[]) =>
       c.forEach((r) => {
         formConfig[r.id] = [
           { value: this.entity[r.id], disabled: !this.editing },

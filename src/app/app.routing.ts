@@ -32,6 +32,7 @@ import { HowToComponent } from "./core/help/how-to/how-to.component";
 import { UserListComponent } from "./core/admin/user-list/user-list.component";
 import { AttendanceAnalysisComponent } from "./child-dev-project/attendance/attendance-analysis/attendance-analysis.component";
 import { EntityDetailsComponent } from "./core/entity-components/entity-details/entity-details.component";
+import { ConflictResolutionListComponent } from "./conflict-resolution/conflict-resolution-list/conflict-resolution-list.component";
 
 export const COMPONENT_MAP = {
   Dashboard: DashboardComponent,
@@ -47,6 +48,7 @@ export const COMPONENT_MAP = {
   ChildrenList: ChildrenListComponent,
   ChildAttendance: ChildAttendanceComponent,
   Admin: AdminComponent,
+  ConflictResolution: ConflictResolutionListComponent,
   EntityDetails: EntityDetailsComponent,
 };
 

@@ -7,18 +7,18 @@ import { ChildrenService } from "../children.service";
 @UntilDestroy()
 @Component({
   selector: "app-children-list",
-  template: ` <app-entity-list
-    [entityList]="childrenList"
-    [listConfig]="listConfig"
-    [componentName]="componentName"
-    (elementClick)="routeTo($event.getId())"
-    (addNewClick)="routeTo('new')"
-  ></app-entity-list>`,
+  template: `
+    <app-entity-list
+      [entityList]="childrenList"
+      [listConfig]="listConfig"
+      (elementClick)="routeTo($event.getId())"
+      (addNewClick)="routeTo('new')"
+    ></app-entity-list>
+  `,
 })
 export class ChildrenListComponent implements OnInit {
   childrenList: Child[] = [];
   listConfig: any = {};
-  componentName = "childrenList";
 
   constructor(
     private childrenService: ChildrenService,

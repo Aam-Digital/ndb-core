@@ -5,7 +5,11 @@ import { Child } from "../../children/model/child";
 import { MatTableDataSource } from "@angular/material/table";
 import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
+import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 
+/**
+ * This component creates a table containing all children currently attending this school.
+ */
 @Component({
   selector: "app-children-overview",
   templateUrl: "./children-overview.component.html",
@@ -36,7 +40,7 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
 
   constructor(private schoolsService: SchoolsService) {}
 
-  onInitFromDynamicConfig(config: any) {
+  onInitFromDynamicConfig(config: PanelConfig) {
     this.schoolsService
       .getChildrenForSchool(config.entity.getId())
       .then((children) => (this.studentsDataSource.data = children));

@@ -92,7 +92,7 @@
                 {"component": "DisplayText", "title": "Author", "id": "author"},
                 {"component": "ChildBlockList", "title": "Children", "id": "children", "noSorting": true}
             ],
-            "columnGroups": {
+            "columnGroup": {
                 "default": "Standard",
                 "mobile": "Mobile",
                 "groups": [
@@ -109,12 +109,13 @@
             "filters": [
                 { "id": "status", "type": "prebuilt"},
                 { "id": "date", "type": "prebuilt"},
-                { "id": "categoryName", "display": "dropdown"}
+                { "id": "categoryName", "label": "Category", "display": "dropdown"}
             ]
         }
     },
     "view:admin": {"component": "Admin", "requiresAdmin": true},
     "view:users": {"component": "UserList", "requiresAdmin": true},
+    "view:admin/conflicts": {"component": "ConflictResolution", "requiresAdmin": true },
     "view:help": {"component": "Help"},
     "view:attendance": {"component": "AttendanceManager"},
     "view:attendance/analysis": {"component": "AttendanceAnalysis"},
@@ -128,11 +129,11 @@
             "columns": [
                 {"component": "DisplayText", "title": "Name", "id": "name"},
                 {"component": "DisplayText", "title": "Medium", "id": "medium"},
-                {"component": "DisplayTick", "title": "Private School", "id": "privateSchool"},
+                {"component": "DisplayCheckmark", "title": "Private School", "id": "privateSchool"},
                 {"component": "DisplayText", "title": "Board", "id": "academicBoard"},
                 {"component": "DisplayText", "title": "Up to class", "id": "upToClass"}
             ],
-            "columnGroups": {
+            "columnGroup": {
                 "default": "School Info",
                 "mobile": "School Info",
                 "groups": [
@@ -203,8 +204,8 @@
                 {"component": "DisplayText", "title": "Gender", "id": "gender"},
                 {"component": "DisplayText", "title": "Class", "id": "schoolClass"},
                 {"component": "SchoolBlockWrapper", "title": "School", "id": "schoolId"},
-                {"component": "ListAttendance", "title": "Attendance (School)", "id": "school", "noSorting": true},
-                {"component": "ListAttendance", "title": "Attendance (Coaching)", "id": "coaching", "noSorting": true},
+                {"component": "RecentAttendanceBlocks", "title": "Attendance (School)", "id": "schoolAttendance", "config": { "filterByInstitution": "school"}, "noSorting": true},
+                {"component": "RecentAttendanceBlocks", "title": "Attendance (Coaching)", "id": "coachingAttendance", "config": { "filterByInstitution": "coaching"}, "noSorting": true},
                 {"component": "DisplayText", "title": "Center", "id": "center"},
                 {"component": "DisplayText", "title": "Status", "id": "status"},
                 {"component": "DisplayDate", "title": "Admission", "id": "admissionDate"},
@@ -223,7 +224,7 @@
                 {"component": "DisplayDate", "title": "Last Vitamin D", "id": "health_lastVitaminD"},
                 {"component": "DisplayDate", "title": "Last De-Worming", "id": "health_lastDeworming"}
             ],
-            "columnGroups":  {
+            "columnGroup":  {
                 "default": "School Info",
                 "mobile": "Mobile",
                 "groups": [
@@ -233,7 +234,7 @@
                     },
                     {
                         "name": "School Info",
-                        "columns": [ "projectNumber", "name", "age", "schoolClass", "schoolId", "school", "coaching", "motherTongue"]
+                        "columns": [ "projectNumber", "name", "age", "schoolClass", "schoolId", "schoolAttendance", "coachingAttendance", "motherTongue"]
                     },
                     {
                         "name": "Status",
@@ -254,9 +255,9 @@
                     "id": "isActive",
                     "type": "boolean",
                     "default": "true",
-                    "true": "Currently active children",
-                    "false": "Currently inactive children",
-                    "all": "All children"
+                    "true": "Active Children",
+                    "false": "Inactive",
+                    "all": "All"
                 },
                 {
                     "id": "center"
