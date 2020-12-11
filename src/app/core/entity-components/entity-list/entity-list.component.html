@@ -153,7 +153,7 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="col.noSorting">{{col.title}}</th>
             <td *matCellDef="let entity">
                 <ng-template
-                        [appDynamicComponent]="{component: col.component, config: {id: col.id, entity: entity}} "
+                        [appDynamicComponent]="{component: col.component, config: {id: col.id, entity: entity, config: col.config}} "
                 ></ng-template>
             </td>
         </ng-container>

@@ -33,6 +33,8 @@ export class NoteDetailsComponent implements ShowsEntity, OnInit {
 
   closeDialog(entity: Entity) {
     // Return the entity which has been saved
-    this.matDialogRef.close(entity);
+    this.matDialogRef
+      .beforeClosed()
+      .subscribe(() => this.matDialogRef.close(entity));
   }
 }
