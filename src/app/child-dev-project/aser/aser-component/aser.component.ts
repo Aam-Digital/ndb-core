@@ -1,12 +1,13 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { DatePipe } from "@angular/common";
 import { Aser } from "../model/aser";
-import { ColumnDescription } from "../../../core/entity-subrecord/entity-subrecord/column-description";
 import { ChildrenService } from "../../children/children.service";
-import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
+import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
+import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 
 @UntilDestroy()
 @Component({
@@ -89,8 +90,8 @@ export class AserComponent implements OnChanges, OnInitDynamicComponent {
     }
   }
 
-  onInitFromDynamicConfig(config: any) {
-    this.child = config.child;
+  onInitFromDynamicConfig(config: PanelConfig) {
+    this.child = config.entity as Child;
     this.loadData(this.child.getId());
   }
 

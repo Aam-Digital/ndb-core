@@ -113,6 +113,7 @@ export class SearchComponent implements OnInit {
   }
 
   async clickOption(optionElement) {
+    // TODO this requires to routes to be called similar to the entities, can we ensure this?
     const resultEntity: Entity = optionElement.value;
     await this.router.navigate([
       resultEntity.getType().toLowerCase(),
@@ -234,7 +235,7 @@ export class SearchComponent implements OnInit {
     // special sorting for Child entities
     for (let i = 0; i < 2; i++) {
       if (e[i].getType() === Child.ENTITY_TYPE) {
-        if ((e[i] as Child).isActive()) {
+        if ((e[i] as Child).isActive) {
           // show first
           t[i] = "!" + t[i];
         } else {

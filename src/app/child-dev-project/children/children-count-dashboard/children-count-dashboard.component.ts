@@ -31,7 +31,7 @@ export class ChildrenCountDashboardComponent
 
         const countMap = new Map<string, number>();
         results.forEach((child) => {
-          if (child.isActive()) {
+          if (child.isActive) {
             let count = countMap.get(child.center);
             if (count === undefined) {
               count = 0;

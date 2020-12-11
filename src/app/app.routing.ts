@@ -19,8 +19,6 @@ import { RouterModule, Routes } from "@angular/router";
 import { ModuleWithProviders } from "@angular/core";
 import { DashboardComponent } from "./core/dashboard/dashboard/dashboard.component";
 import { SchoolsListComponent } from "./child-dev-project/schools/schools-list/schools-list.component";
-import { SchoolDetailsComponent } from "./child-dev-project/schools/school-details/school-details.component";
-import { ChildDetailsComponent } from "./child-dev-project/children/child-details/child-details.component";
 import { UserAccountComponent } from "./core/user/user-account/user-account.component";
 import { ChildrenListComponent } from "./child-dev-project/children/children-list/children-list.component";
 import { ChildAttendanceComponent } from "./child-dev-project/attendance/child-attendance/child-attendance.component";
@@ -33,6 +31,8 @@ import { AttendanceManagerComponent } from "./child-dev-project/attendance/atten
 import { HowToComponent } from "./core/help/how-to/how-to.component";
 import { UserListComponent } from "./core/admin/user-list/user-list.component";
 import { AttendanceAnalysisComponent } from "./child-dev-project/attendance/attendance-analysis/attendance-analysis.component";
+import { EntityDetailsComponent } from "./core/entity-components/entity-details/entity-details.component";
+import { ConflictResolutionListComponent } from "./conflict-resolution/conflict-resolution-list/conflict-resolution-list.component";
 
 export const COMPONENT_MAP = {
   Dashboard: DashboardComponent,
@@ -45,11 +45,11 @@ export const COMPONENT_MAP = {
   AddDayAttendance: AddDayAttendanceComponent,
   AttendanceAnalysis: AttendanceAnalysisComponent,
   SchoolsList: SchoolsListComponent,
-  SchoolDetails: SchoolDetailsComponent,
   ChildrenList: ChildrenListComponent,
-  ChildDetails: ChildDetailsComponent,
   ChildAttendance: ChildAttendanceComponent,
   Admin: AdminComponent,
+  ConflictResolution: ConflictResolutionListComponent,
+  EntityDetails: EntityDetailsComponent,
 };
 
 /**

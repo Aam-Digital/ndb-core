@@ -5,7 +5,6 @@ import { Note } from "../../model/note";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { ChildSelectComponent } from "../../../children/child-select/child-select.component";
-import { ChildBlockComponent } from "../../../children/child-block/child-block.component";
 import { ChildrenService } from "../../../children/children.service";
 import { ChildMeetingNoteAttendanceComponent } from "../child-meeting-attendance/child-meeting-note-attendance.component";
 import { FormsModule } from "@angular/forms";
@@ -17,6 +16,7 @@ import { of } from "rxjs";
 import { Child } from "../../../children/model/child";
 import { MatInputModule } from "@angular/material/input";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { ChildBlockComponent } from "../../../children/child-block/child-block.component";
 
 describe("NotePresenceListComponent", () => {
   let component: NotePresenceListComponent;

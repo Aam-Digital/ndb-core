@@ -1,11 +1,9 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-
 import { AdminComponent } from "./admin.component";
 import { AlertsModule } from "../../alerts/alerts.module";
 import { MatButtonModule } from "@angular/material/button";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { BackupService } from "../services/backup.service";
-import { EntitySubrecordModule } from "../../entity-subrecord/entity-subrecord.module";
 import { AppConfig } from "../../app-config/app-config";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
@@ -32,7 +30,6 @@ describe("AdminComponent", () => {
         MatSnackBarModule,
         MatButtonModule,
         HttpClientTestingModule,
-        EntitySubrecordModule,
         AlertsModule,
         ConfirmationDialogModule,
       ],
