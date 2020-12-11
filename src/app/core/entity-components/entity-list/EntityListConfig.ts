@@ -12,7 +12,7 @@ export class ColumnConfig {
   component: string;
   title: string;
   id: string;
-  // This config could be anything that the component understands to parse
+  /** this config can be anything that the component understands to parse */
   config?: any;
   noSorting?: boolean = false;
 }
