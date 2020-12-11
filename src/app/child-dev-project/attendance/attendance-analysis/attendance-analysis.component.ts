@@ -41,12 +41,12 @@ export class AttendanceAnalysisComponent implements OnInit, AfterViewInit {
     {
       key: "active",
       label: "Current Project Children",
-      filterFun: (c: Child) => c.isActive(),
+      filterFun: (c: Child) => c.isActive,
     },
     {
       key: "dropout",
       label: "Dropouts",
-      filterFun: (c: Child) => !c.isActive(),
+      filterFun: (c: Child) => !c.isActive,
     },
     { key: "", label: "All", filterFun: () => true },
   ]);
@@ -69,7 +69,7 @@ export class AttendanceAnalysisComponent implements OnInit, AfterViewInit {
       .getChildren()
       .pipe(untilDestroyed(this))
       .subscribe((data) => {
-        this.childrenAll = data.filter((c) => c.isActive());
+        this.childrenAll = data.filter((c) => c.isActive);
         this.initCenterFilterOptions();
         this.applyFilterSelections();
       });

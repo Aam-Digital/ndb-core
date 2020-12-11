@@ -11,7 +11,15 @@ import { GroupedChildAttendanceComponent } from "../../child-dev-project/childre
 import { NotesOfChildComponent } from "../../child-dev-project/notes/notes-of-child/notes-of-child.component";
 import { HealthCheckupComponent } from "../../child-dev-project/health-checkup/health-checkup-component/health-checkup.component";
 import { EducationalMaterialComponent } from "../../child-dev-project/educational-material/educational-material-component/educational-material.component";
-import { FormComponent } from "../../child-dev-project/children/child-details/form/form.component";
+import { RecentAttendanceBlocksComponent } from "../../child-dev-project/children/children-list/recent-attendance-blocks/recent-attendance-blocks.component";
+import { SchoolBlockWrapperComponent } from "../../child-dev-project/children/children-list/school-block-wrapper/school-block-wrapper.component";
+import { ChildrenOverviewComponent } from "../../child-dev-project/schools/children-overview/children-overview.component";
+import { ChildBlockListComponent } from "../../child-dev-project/children/child-block-list/child-block-list.component";
+import { ChildBlockComponent } from "../../child-dev-project/children/child-block/child-block.component";
+import { FormComponent } from "../entity-components/entity-details/form/form.component";
+import { DisplayTextComponent } from "../entity-components/entity-list/display-text/display-text.component";
+import { DisplayCheckmarkComponent } from "../entity-components/entity-list/display-checkmark/display-checkmark.component";
+import { DisplayDateComponent } from "../entity-components/entity-list/display-date/display-date.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -28,4 +36,12 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["HealthCheckup", HealthCheckupComponent],
   ["EducationalMaterial", EducationalMaterialComponent],
   ["Form", FormComponent],
+  ["DisplayDate", DisplayDateComponent],
+  ["DisplayText", DisplayTextComponent],
+  ["DisplayCheckmark", DisplayCheckmarkComponent],
+  ["ChildBlock", ChildBlockComponent],
+  ["ChildBlockList", ChildBlockListComponent],
+  ["RecentAttendanceBlocks", RecentAttendanceBlocksComponent],
+  ["SchoolBlockWrapper", SchoolBlockWrapperComponent],
+  ["ChildrenOverview", ChildrenOverviewComponent],
 ]);

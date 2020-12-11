@@ -5,7 +5,6 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { BrowserModule } from "@angular/platform-browser";
 import { AlertsModule } from "../alerts/alerts.module";
-import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
 import { AdminGuard } from "./admin.guard";
 import { EntityModule } from "../entity/entity.module";
 import { HttpClientModule } from "@angular/common/http";
@@ -34,7 +33,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatTableModule,
     MatCheckboxModule,
     AlertsModule,
-    EntitySubrecordModule,
     EntityModule,
     HttpClientModule,
     FormsModule,
