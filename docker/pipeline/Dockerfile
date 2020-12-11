@@ -26,12 +26,10 @@ COPY . .
 
 # In the pipeline we run the tests and report the results
 RUN if [ "$RUN_TESTS" = true ] ; then \
+    npm run lint &&\
     npm run test-ci ; fi
-#    npm run lint &&\
 
 RUN $(npm bin)/ng build --prod
-
-RUN ls -a
 
 ### PROD image
 
