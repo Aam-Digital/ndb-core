@@ -1,7 +1,6 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { HealthCheckupComponent } from "./health-checkup.component";
-import { ActivatedRoute } from "@angular/router";
 import { of } from "rxjs";
 import { Child } from "../../children/model/child";
 import { CommonModule, DatePipe } from "@angular/common";
@@ -12,7 +11,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "app/core/alerts/alert.service";
-import { ChildrenModule } from "../../children/children.module";
 
 describe("HealthCheckupComponent", () => {
   let component: HealthCheckupComponent;
@@ -36,7 +34,8 @@ describe("HealthCheckupComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [CommonModule, ChildrenModule, NoopAnimationsModule],
+      declarations: [HealthCheckupComponent],
+      imports: [CommonModule, NoopAnimationsModule],
       providers: [
         DatePipe,
         MatSnackBar,

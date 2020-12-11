@@ -12,6 +12,7 @@ import { Database } from "../../../core/database/database";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { Child } from "../../children/model/child";
 import { User } from "../../../core/user/user";
+import { RouterTestingModule } from "@angular/router/testing";
 
 const allChildren: Array<Note> = [];
 
@@ -33,7 +34,7 @@ describe("NotesOfChildComponent", () => {
     ]);
 
     TestBed.configureTestingModule({
-      imports: [NotesModule, MatNativeDateModule],
+      imports: [NotesModule, MatNativeDateModule, RouterTestingModule],
       providers: [
         { provide: ChildrenService, useValue: mockChildrenService },
         EntitySchemaService,

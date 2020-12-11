@@ -38,9 +38,6 @@ import { of } from "rxjs";
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
   let fixture: ComponentFixture<ChildrenListComponent>;
-  const mockedRoute = {
-    data: of({ icon: "child" }),
-  };
 
   beforeEach(async(() => {
     const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
