@@ -40,10 +40,11 @@ jobs:
           ls -a
           ls /app -a
       - name: Publish code coverage
-        uses: paambaati/codeclimate-action@v2.7.4
+        uses: paambaati/codeclimate-action@v2.7.5
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
-        coverageLocations: /app/coverage/lcov.info:lcov
+        with:
+          coverageLocations: /app/coverage/lcov.info:lcov
       - name: Build and push prod image
         uses: docker/build-push-action@v2
         with:
