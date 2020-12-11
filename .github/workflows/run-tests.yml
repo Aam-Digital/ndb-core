@@ -1,4 +1,4 @@
-name: Deploy Docker Image to Heroku
+name: Run tests
 on: pull_request
 
 jobs:
@@ -21,22 +21,21 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_SIMON_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
-      - name: Build and push prod image
+      - name: Build dev image and save it locally
         uses: docker/build-push-action@v2
         with:
           context: ./
           file: ./docker/pipeline/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
-          push: true
+          target: builder
           tags: ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest
+          outputs: type=local,dest=.
+          build-args: RUN_TESTS=${{ true }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
-      - name: Heroku deployment
+      - name: Publish code coverage
+        uses: paambaati/codeclimate-action@v2.7.5
         env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
-        run: |
-          heroku container:login
-          docker pull ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest
-          docker tag ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest registry.heroku.com/${{ github.head_ref }}-1234/web
-          docker push registry.heroku.com/${{ github.head_ref }}-1234/web
-          heroku container:release -a ${{ github.head_ref }}-1234 web
+          CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
+        with:
+          coverageLocations: ${{github.workspace}}/app/coverage/lcov.info:lcov
