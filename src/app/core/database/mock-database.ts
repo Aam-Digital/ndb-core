@@ -27,6 +27,12 @@ import { ChildSchoolRelation } from "../../child-dev-project/children/model/chil
  * as similar as possible to the PouchDatabase.
  */
 export class MockDatabase extends Database {
+  static createWithData(data: any[]) {
+    const instance = new MockDatabase();
+    instance.data = data;
+    return instance;
+  }
+
   private data = [];
 
   /**

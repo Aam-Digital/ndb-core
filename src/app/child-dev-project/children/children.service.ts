@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, Optional } from "@angular/core";
 import { from, Observable, Subject } from "rxjs";
 import { Child } from "./model/child";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
@@ -22,12 +22,14 @@ export class ChildrenService {
     private entityMapper: EntityMapperService,
     private entitySchemaService: EntitySchemaService,
     private dbIndexing: DatabaseIndexingService,
-    childPhotoService: ChildPhotoService,
-    private logger: LoggingService
+    @Optional() childPhotoService: ChildPhotoService,
+    @Optional() private logger: LoggingService
   ) {
-    this.entitySchemaService.registerSchemaDatatype(
-      new LoadChildPhotoEntitySchemaDatatype(childPhotoService)
-    );
+    if (childPhotoService) {
+      this.entitySchemaService.registerSchemaDatatype(
+        new LoadChildPhotoEntitySchemaDatatype(childPhotoService)
+      );
+    }
     this.createDatabaseIndices();
   }
 
@@ -91,7 +93,7 @@ export class ChildrenService {
       autoMigratedChildSchoolRelation.schoolId = loadedChild.schoolId;
       autoMigratedChildSchoolRelation.schoolClass = loadedChild.schoolClass;
       await this.entityMapper.save(autoMigratedChildSchoolRelation);
-      this.logger.debug(
+      this.logger?.debug(
         "migrated Child entity to new ChildSchoolRelation model " +
           loadedChild._id
       );
