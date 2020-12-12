@@ -5,6 +5,7 @@ import { Child } from "../children/model/child";
 import { faker } from "../../core/demo-data/faker";
 import { AttendanceMonth } from "./model/attendance-month";
 import { AttendanceDay, AttendanceStatus } from "./model/attendance-day";
+import moment from "moment";
 
 interface AttendanceProfile {
   id: number;
@@ -181,7 +182,8 @@ export class DemoAttendanceGenerator extends DemoDataGenerator<
     includeSaturday: boolean,
     attendanceProfile: AttendanceProfile
   ) {
-    if (attendanceDay.date > new Date()) {
+    if (!moment(attendanceDay.date).isBefore(moment(), "days")) {
+      // don't add records for today or future dates
       return;
     }
 
