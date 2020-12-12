@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, Optional } from "@angular/core";
 import { Router } from "@angular/router";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
@@ -24,8 +24,8 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnInit {
   tooltipTimeout;
 
   constructor(
-    private router: Router,
-    private childrenService: ChildrenService
+    @Optional() private router: Router,
+    @Optional() private childrenService: ChildrenService
   ) {}
 
   ngOnInit() {
@@ -69,6 +69,6 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnInit {
       return;
     }
 
-    this.router.navigate(["/child", this.entity.getId()]);
+    this.router?.navigate(["/child", this.entity.getId()]);
   }
 }
