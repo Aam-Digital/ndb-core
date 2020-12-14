@@ -14,6 +14,8 @@ COPY patch-webpack.js .
 # postinstall executes ngcc and runs the webpack-patch
 RUN npm run postinstall
 RUN $(npm bin)/ng version
+
+# TODO coverage repoort should not be copied
 COPY . .
 
 RUN $(npm bin)/ng build --prod
