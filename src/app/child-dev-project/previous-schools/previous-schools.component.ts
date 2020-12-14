@@ -17,12 +17,14 @@ import { ColumnDescriptionInputType } from "../../core/entity-subrecord/entity-s
 import moment from "moment";
 import { isValidDate } from "../../utils/utils";
 import { Child } from "../children/model/child";
+import { OnInitDynamicComponent } from "../../core/view/dynamic-components/on-init-dynamic-component.interface";
 
 @Component({
   selector: "app-previous-schools",
   templateUrl: "./previous-schools.component.html",
 })
-export class PreviousSchoolsComponent implements OnInit, OnChanges {
+export class PreviousSchoolsComponent
+  implements OnInit, OnChanges, OnInitDynamicComponent {
   /**
    * returns a css-compatible color value from green to red using the given
    * input value
@@ -59,6 +61,11 @@ export class PreviousSchoolsComponent implements OnInit, OnChanges {
     if (changes.hasOwnProperty("child")) {
       this.loadData(this.child.getId());
     }
+  }
+
+  onInitFromDynamicConfig(config: any) {
+    this.child = config.child;
+    this.loadData(this.child.getId());
   }
 
   async loadData(id: string) {
