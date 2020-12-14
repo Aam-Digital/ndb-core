@@ -32,7 +32,7 @@ jobs:
           outputs: type=local,dest=.
           build-args: RUN_TESTS=${{ true }}
           cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v2.7.5
         env:
@@ -48,7 +48,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest
           cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
       - name: Heroku deployment
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
