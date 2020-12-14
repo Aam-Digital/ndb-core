@@ -68,6 +68,8 @@ import { DashboardModule } from "./core/dashboard/dashboard.module";
 import { EntityDetailsModule } from "./core/entity-components/entity-details/entity-details.module";
 import { EntitySubrecordModule } from "./core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "./core/entity-components/entity-list/entity-list.module";
+import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
+import { DemoActivityGeneratorService } from "./child-dev-project/attendance/demo-activity-generator.service";
 
 export function configFactory(configService: ConfigService) {
   return (): Promise<any> => configService.loadConfig();
@@ -121,6 +123,7 @@ export function configFactory(configService: ConfigService) {
       ...DemoSchoolGenerator.provider({ count: 8 }),
       ...DemoChildSchoolRelationGenerator.provider(),
       ...DemoAttendanceGenerator.provider(),
+      ...DemoActivityGeneratorService.provider(),
       ...DemoNoteGeneratorService.provider({
         minNotesPerChild: 2,
         maxNotesPerChild: 10,
@@ -135,6 +138,7 @@ export function configFactory(configService: ConfigService) {
       ...DemoProgressDashboardWidgetGeneratorService.provider(),
       ...DemoUserGeneratorService.provider(),
     ]),
+    AttendanceModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },

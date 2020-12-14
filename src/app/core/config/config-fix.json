@@ -17,6 +17,11 @@
         "link": "/school"
       },
       {
+        "name": "Recurring Activities",
+        "icon": "calendar",
+        "link": "/recurring-activity"
+      },
+      {
         "name": "Notes",
         "icon": "file-text",
         "link": "/note"
@@ -1008,6 +1013,102 @@
           ]
         }
       ]
+    }
+  },
+
+  "view:recurring-activity": {
+    "component": "ActivityList",
+    "config": {
+      "title": "Recurring Activities",
+      "columns": [
+        {
+          "component": "DisplayText",
+          "title": "Title",
+          "id": "title"
+        },
+        {
+          "component": "DisplayText",
+          "title": "Type",
+          "id": "type"
+        },
+        {
+          "component": "DisplayText",
+          "title": "Assigned to",
+          "id": "assignedTo"
+        }
+      ],
+      "columnGroup": {
+        "default": "All",
+        "mobile": "All",
+        "groups": [
+          {
+            "name": "All",
+            "columns": [
+              "title",
+              "type",
+              "assignedTo"
+            ]
+          }
+        ]
+      },
+      "filters": [
+        {
+          "id": "type"
+        },
+        {
+          "id": "assignedTo"
+        }
+      ]
+    }
+  },
+  "view:recurring-activity/:id": {
+    "component": "EntityDetails",
+    "config": {
+      "entity": "RecurringActivity",
+      "panels": [
+        {
+          "title": "Activity",
+          "components": [
+            {
+              "component": "Form",
+              "config": {
+                "cols": [
+                  [
+                    {
+                      "input": "text",
+                      "id": "title",
+                      "placeholder": "Title"
+                    }
+                  ],
+                  [
+                    {
+                      "input": "text",
+                      "id": "type",
+                      "placeholder": "Type"
+                    }
+                  ],
+                  [
+                    {
+                      "input": "text",
+                      "id": "assignedTo",
+                      "placeholder": "Assigned to"
+                    }
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "title": "Participants",
+          "components": [
+            {
+              "component": "ActivityParticipantsSection"
+            }
+          ]
+        }
+      ],
+      "icon": "calendar"
     }
   }
 }
