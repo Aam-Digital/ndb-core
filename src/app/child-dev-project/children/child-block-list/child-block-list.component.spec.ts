@@ -30,7 +30,8 @@ describe("ChildBlockListComponent", () => {
     const child1 = new Child("c1");
     const child2 = new Child("c2");
     const note = new Note("n1");
-    note.addChildren(...[child1.getId(), child2.getId()]);
+    note.addChild(child1.getId());
+    note.addChild(child2.getId());
     const config = { entity: note, id: "children" };
     component.onInitFromDynamicConfig(config);
     expect(component.children.sort()).toEqual([child1.getId(), child2.getId()]);
