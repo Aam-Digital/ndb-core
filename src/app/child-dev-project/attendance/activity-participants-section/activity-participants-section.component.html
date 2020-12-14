@@ -1,0 +1,40 @@
+<div>
+  <app-child-select
+    [valueAsIds]="participants"
+    (newIdAdded)="participants.push($event)"
+    (idRemoved)="participants.splice(participants.indexOf($event), 1)"
+    [disabled]="!editing"
+    class="input-medium"
+  >
+  </app-child-select>
+</div>
+
+
+<div>
+  <button
+    *ngIf="editing"
+    mat-stroked-button
+    class="edit-button"
+    (click)="save()"
+  >
+    Save
+  </button>
+
+  <button
+    *ngIf="editing"
+    mat-stroked-button
+    class="edit-button"
+    (click)="switchEdit()"
+  >
+    Cancel
+  </button>
+
+  <button
+    *ngIf="!editing"
+    mat-stroked-button
+    class="edit-button"
+    (click)="switchEdit()"
+  >
+    Edit
+  </button>
+</div>

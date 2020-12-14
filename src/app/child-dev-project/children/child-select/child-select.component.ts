@@ -26,6 +26,7 @@ export class ChildSelectComponent implements OnChanges {
   selectedChildren = new Array<Child>();
 
   @Input() valueAsIds: string[];
+  @Input() disabled: boolean;
   @Output() valueAsIdsChange = new EventEmitter();
   @Output() newIdAdded = new EventEmitter();
   @Output() idRemoved = new EventEmitter();
@@ -110,6 +111,10 @@ export class ChildSelectComponent implements OnChanges {
   }
 
   unselectChild(child: Child) {
+    if (this.disabled) {
+      return;
+    }
+
     const i = this.selectedChildren.findIndex(
       (e) => e.getId() === child.getId()
     );
