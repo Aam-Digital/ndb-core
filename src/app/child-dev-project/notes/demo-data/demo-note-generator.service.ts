@@ -11,7 +11,6 @@ import { centersUnique } from "../../children/demo-data-generators/fixtures/cent
 import { absenceRemarks } from "./remarks";
 import moment from "moment";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { EventAttendance } from "../../attendance/model/event-attendance";
 import { AttendanceStatus } from "../../attendance/model/attendance-status";
 
 export class DemoNoteConfig {
@@ -152,13 +151,12 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
 
     note.children = children.map((c) => c.getId());
     children.forEach((child) => {
-      const attendance = new EventAttendance();
+      const attendance = note.getAttendance(child.getId());
       // get an approximate presence of 85%
       if (faker.random.number(100) <= 15) {
         attendance.status = AttendanceStatus.ABSENT;
         attendance.remarks = faker.random.arrayElement(absenceRemarks);
       }
-      return attendance;
     });
 
     note.author = faker.random.arrayElement(this.teamMembers);
