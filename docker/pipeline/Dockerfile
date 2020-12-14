@@ -7,16 +7,8 @@
 FROM node:15.1.0-alpine3.12 as builder
 WORKDIR /app
 
-# Set this to true to run tests
-ARG RUN_TESTS=false
-
 COPY package*.json ./
 RUN npm ci --no-progress
-
-# In the pipeline we need to install and set additional dependencies for testing and reporting
-ARG CHROME_BIN=/usr/bin/chromium-browser
-RUN if [ "$RUN_TESTS" = true ] ; then \
-    apk --no-cache add chromium ; fi
 
 COPY patch-webpack.js .
 # postinstall executes ngcc and runs the webpack-patch
@@ -24,12 +16,16 @@ RUN npm run postinstall
 RUN $(npm bin)/ng version
 COPY . .
 
+RUN $(npm bin)/ng build --prod
+
+ARG RUN_TESTS=false
+ARG CHROME_BIN=/usr/bin/chromium-browser
 # In the pipeline we run the tests and report the results
 RUN if [ "$RUN_TESTS" = true ] ; then \
+    apk --no-cache add chromium &&\
     npm run lint &&\
     npm run test-ci ; fi
 
-RUN $(npm bin)/ng build --prod
 
 ### PROD image
 
