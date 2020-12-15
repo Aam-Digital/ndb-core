@@ -12,6 +12,7 @@ jobs:
       - name: Create app
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
+        shell: bash
         run: |
           name=${ ${{ github.sha }}:0:30}
           echo ${name}
