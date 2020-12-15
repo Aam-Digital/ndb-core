@@ -14,16 +14,12 @@ jobs:
       - name: Set app name
         shell: bash
         run: |
-          name=${{ github.head_ref }}-${{ github.sha }}
-          short=${name:0:30}
-          echo "APP_NAME=$short" >> $GITHUB_ENV
+          name=${{ github.head_ref }}-test-deploy
+          echo "APP_NAME=${name:0:30}" >> $GITHUB_ENV
       - name: Create app
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
         run: |
-          echo $APP_NAME
-          echo ${APP_NAME}
-          echo ${{ env.APP_NAME }}
           heroku apps:create ${{ env.APP_NAME }}
       - name: Post comment on PR
         env:
