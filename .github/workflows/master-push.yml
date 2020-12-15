@@ -33,9 +33,10 @@ jobs:
         uses: docker/setup-buildx-action@master
       - name: Build and push prod image
         uses: docker/build-push-action@v2
+        env:
+          BUILDKIT_PROGRESS=plain
         with:
           context: ./
-          progress: plain
           file: ./docker/pipeline/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
