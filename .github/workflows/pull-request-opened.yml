@@ -20,8 +20,8 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
         run: |
-          echo ${APP_NAME}
-          heroku apps:create ${APP_NAME}
+          echo $APP_NAME
+          heroku apps:create $APP_NAME
       - name: Post comment on PR
         env:
           PR: ${{ github.ref }}
@@ -32,4 +32,4 @@ jobs:
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/Aam-Digital/ndb-core/issues/$PR/comments \
-          -d '{"body":"Deployed to https://${APP_NAME}.herokuapp.com/"}'
+          -d '{"body":"Deployed to https://$APP_NAME.herokuapp.com/"}'
