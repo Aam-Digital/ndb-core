@@ -31,7 +31,7 @@ export class DemoUserGeneratorService extends DemoDataGenerator<User> {
     demoUser.setNewPassword("pass");
 
     const demoAdmin = new User("demo-admin");
-    demoUser.name = "demo-admin";
+    demoAdmin.name = "demo-admin";
     demoAdmin.admin = true;
     demoAdmin.setNewPassword("pass");
 
