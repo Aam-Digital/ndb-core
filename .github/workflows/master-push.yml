@@ -34,7 +34,7 @@ jobs:
       - name: Build and push prod image
         uses: docker/build-push-action@v2
         env:
-          BUILDKIT_PROGRESS=plain
+          BUILDKIT_PROGRESS: plain
         with:
           context: ./
           file: ./docker/pipeline/Dockerfile
