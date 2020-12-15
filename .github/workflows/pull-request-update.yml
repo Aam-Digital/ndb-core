@@ -1,4 +1,4 @@
-name: Deploy Docker Image to Heroku
+name: Steps that are run when a new push to a pull request happens
 on: pull_request
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
         with:
           coverageLocations: ${{github.workspace}}/img/app/coverage/lcov.info:lcov
-  deploy-image:
+  create-prod-image:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -48,12 +48,17 @@ jobs:
           tags: ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:cache
           cache-to: type=registry,ref=${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:cache,mode=max
+  deploy-to-heroku:
+    runs-on: ubuntu-latest
+    needs: create-prod-image
+    steps:
+      - uses: action/checkout@v1
       - name: Heroku deployment
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
         run: |
           heroku container:login
           docker pull ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest
-          docker tag ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest registry.heroku.com/${{ github.head_ref }}-1234/web
-          docker push registry.heroku.com/${{ github.head_ref }}-1234/web
-          heroku container:release -a ${{ github.head_ref }}-1234 web
+          docker tag ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest registry.heroku.com/${{ github.head_ref }}-test-deployment/web
+          docker push registry.heroku.com/${{ github.head_ref }}-test-deployment/web
+          heroku container:release -a ${{ github.head_ref }}-test-deployment web

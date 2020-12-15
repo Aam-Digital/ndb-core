@@ -1,4 +1,4 @@
-name: Deploy Compodoc to GitHub Pages
+name: Jobs to run when a new push to the master happens
 on:
   push:
     branches:
@@ -19,4 +19,9 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: doc/compodoc
           destination_dir: documentation
-
+  run-semantic-release:
+    - uses: actions/checkout@v2
+    - name: Semantic Release
+      uses: cycjimmy/semantic-release-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

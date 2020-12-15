@@ -1,10 +1,10 @@
-name: Create heroku app for every opened PR
+name: Set up once a pull request is openen
 on:
   pull_request:
     types: [opened]
 
 jobs:
-  create-app:
+  create-heroku-app:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -12,7 +12,7 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
         run: |
-          heroku apps:create ${{ github.head_ref }}-1234
+          heroku apps:create ${{ github.head_ref }}-test-deployment
       - name: Post comment on PR
         env:
           PR: ${{ github.ref }}
@@ -23,4 +23,4 @@ jobs:
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/Aam-Digital/ndb-core/issues/$PR/comments \
-          -d '{"body":"Deployed to https://${{ github.head_ref }}-1234.herokuapp.com/"}'
+          -d '{"body":"Deployed to https://${{ github.head_ref }}-test-deployment.herokuapp.com/"}'
