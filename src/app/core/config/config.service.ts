@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import config from "./config-fix.json";
+import config from "./config-ppi.json";
 
 @Injectable({
   providedIn: "root",
