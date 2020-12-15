@@ -59,7 +59,7 @@
     "view:note": {
         "component": "NotesManager",
         "config": {
-            "title": "Notes & Reports",
+            "title": "Events & Reports",
             "columns": [
                 {"component": "DisplayDate", "title": "Date", "id": "date"},
                 {"component": "DisplayText", "title": "Subject", "id": "subject"},
@@ -100,21 +100,22 @@
     "view:school": {
         "component": "SchoolsList",
         "config": {
-            "title": "Schools List",
+            "title": "All Teams",
             "columns": [
                 {"component": "DisplayText", "title": "Name", "id": "name"},
                 {"component": "DisplayText", "title": "Medium", "id": "medium"},
+                {"component": "DisplayText", "title": "Language", "id": "language"},
                 {"component": "DisplayCheckmark", "title": "Private School", "id": "privateSchool"},
                 {"component": "DisplayText", "title": "Board", "id": "academicBoard"},
                 {"component": "DisplayText", "title": "Up to class", "id": "upToClass"}
             ],
             "columnGroup": {
-                "default": "School Info",
-                "mobile": "School Info",
+                "default": "Team Info",
+                "mobile": "Team Info",
                 "groups": [
                     {
-                        "name": "School Info",
-                        "columns": ["name", "medium", "privateSchool", "academicBoard", "upToClass"]
+                        "name": "Team Info",
+                        "columns": ["name", "medium", "language", "privateSchool", "academicBoard", "upToClass"]
                     }
                 ]
             },
@@ -146,6 +147,7 @@
                                 "cols": [
                                     [{"input": "text", "id": "name", "placeholder": "Name"}],
                                     [{"input": "text", "id": "medium", "placeholder": "Medium"}],
+                                    [{"input": "text", "id": "language", "placeholder": "Language"}],
                                     [{"input": "checkbox", "id": "privateSchool", "placeholder": "Private School"}],
                                     [{"input": "text", "id": "academicBoard", "placeholder": "Board"}],
                                     [{"input": "text", "id": "phone", "placeholder": "Contact Number"}],
@@ -297,6 +299,11 @@
             {"name": "email", "schema": { "dataType": "string" }},
             {"name": "class", "schema": { "dataType": "string" }},
             {"name": "photoConsent", "schema": { "dataType": "boolean" }}
+        ]
+    },
+    "entity:School": {
+        "attributes": [
+            {"name": "language", "schema": { "dataType": "string" }}
         ]
     }
 }

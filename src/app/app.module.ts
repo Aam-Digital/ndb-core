@@ -70,6 +70,7 @@ import { EntitySubrecordModule } from "./core/entity-components/entity-subrecord
 import { EntityListModule } from "./core/entity-components/entity-list/entity-list.module";
 import { Child } from "./child-dev-project/children/model/child";
 import { EntityConfigService } from "./core/entity/entity-config.service";
+import { School } from "./child-dev-project/schools/model/school";
 
 export function configFactory(configService: ConfigService) {
   return (): Promise<any> => configService.loadConfig();
@@ -164,6 +165,7 @@ export class AppModule {
 
     // Add all entities for which the config defines attributes
     this.entityConfigService.addConfigAttributes<Child>(Child);
+    this.entityConfigService.addConfigAttributes<School>(School);
   }
 }
 
