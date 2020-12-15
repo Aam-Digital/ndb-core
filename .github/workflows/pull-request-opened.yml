@@ -14,7 +14,8 @@ jobs:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
         shell: bash
         run: |
-          sha=${{ github.sha }}
+          sha=${{ join([github.head_ref, github.sha], '' }}
+          echo $sha
           name=${sha:0:30}
           echo ${name}
           heroku apps:create ${name}
