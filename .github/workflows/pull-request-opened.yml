@@ -1,8 +1,7 @@
 name: SetUp
-#on:
-#  pull_request:
-#    types: [opened]
-on: pull_request
+on:
+  pull_request:
+    types: [opened]
 
 jobs:
   create-heroku-app:
@@ -11,7 +10,7 @@ jobs:
       APP_NAME: "app-name"
     steps:
       - uses: actions/checkout@v2
-      - name: Set app name
+      - name: Create app name
         shell: bash
         run: |
           name=${{ github.head_ref }}-test-deploy
