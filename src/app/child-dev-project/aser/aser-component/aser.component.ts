@@ -1,18 +1,13 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-} from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { DatePipe } from "@angular/common";
 import { Aser } from "../model/aser";
-import { ColumnDescription } from "../../../core/entity-subrecord/entity-subrecord/column-description";
 import { ChildrenService } from "../../children/children.service";
-import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
+import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
+import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
+import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 
 @UntilDestroy()
 @Component({
@@ -21,7 +16,7 @@ import { Child } from "../../children/model/child";
     '<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="generateNewRecordFactory()">' +
     "</app-entity-subrecord>",
 })
-export class AserComponent implements OnChanges {
+export class AserComponent implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child;
   records: Array<Aser>;
 
@@ -93,6 +88,11 @@ export class AserComponent implements OnChanges {
     if (changes.hasOwnProperty("child")) {
       this.loadData(this.child.getId());
     }
+  }
+
+  onInitFromDynamicConfig(config: PanelConfig) {
+    this.child = config.entity as Child;
+    this.loadData(this.child.getId());
   }
 
   loadData(id: string) {

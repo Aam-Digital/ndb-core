@@ -65,6 +65,9 @@ import { Angulartics2Piwik } from "angulartics2/piwik";
 import { ConfigService } from "./core/config/config.service";
 import { ViewModule } from "./core/view/view.module";
 import { DashboardModule } from "./core/dashboard/dashboard.module";
+import { EntityDetailsModule } from "./core/entity-components/entity-details/entity-details.module";
+import { EntitySubrecordModule } from "./core/entity-components/entity-subrecord/entity-subrecord.module";
+import { EntityListModule } from "./core/entity-components/entity-list/entity-list.module";
 
 export function configFactory(configService: ConfigService) {
   return (): Promise<any> => configService.loadConfig();
@@ -110,6 +113,9 @@ export function configFactory(configService: ConfigService) {
     MatIconModule,
     HelpModule,
     MatNativeDateModule,
+    EntitySubrecordModule,
+    EntityListModule,
+    EntityDetailsModule,
     DemoDataModule.forRoot([
       ...DemoChildGenerator.provider({ count: 150 }),
       ...DemoSchoolGenerator.provider({ count: 8 }),

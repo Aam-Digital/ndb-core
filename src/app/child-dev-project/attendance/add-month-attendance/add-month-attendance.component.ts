@@ -54,7 +54,7 @@ export class AddMonthAttendanceComponent implements OnInit {
       .getChildren()
       .pipe(untilDestroyed(this))
       .subscribe((children) => {
-        this.children = children.filter((c: Child) => c.isActive());
+        this.children = children.filter((c: Child) => c.isActive);
         this.initChildrenLookupTables(this.children);
 
         this.centers = children

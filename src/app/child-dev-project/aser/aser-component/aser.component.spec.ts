@@ -1,7 +1,5 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-
 import { AserComponent } from "./aser.component";
-import { EntitySubrecordModule } from "../../../core/entity-subrecord/entity-subrecord.module";
 import { FormsModule } from "@angular/forms";
 import { ChildrenService } from "../../children/children.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
@@ -15,6 +13,9 @@ import { Database } from "../../../core/database/database";
 import { AlertService } from "app/core/alerts/alert.service";
 import { ConfirmationDialogModule } from "../../../core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
+import { RouterTestingModule } from "@angular/router/testing";
+import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
 
 describe("AserComponent", () => {
   let component: AserComponent;
@@ -35,9 +36,11 @@ describe("AserComponent", () => {
       imports: [
         FormsModule,
         NoopAnimationsModule,
-        EntitySubrecordModule,
         ConfirmationDialogModule,
         FormDialogModule,
+        RouterTestingModule,
+        EntitySubrecordModule,
+        MatSnackBarModule,
       ],
       providers: [
         DatePipe,

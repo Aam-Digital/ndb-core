@@ -2,21 +2,19 @@ import { NoteDetailsComponent } from "./note-details.component";
 import { Note } from "../model/note";
 import { MeetingNoteAttendance } from "../meeting-note-attendance";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { FormBuilder } from "@angular/forms";
 import { of } from "rxjs";
 import { MatNativeDateModule } from "@angular/material/core";
 import { ChildrenService } from "../../children/children.service";
 import { NotesModule } from "../notes.module";
 import { Child } from "../../children/model/child";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { Database } from "../../../core/database/database";
 import { User } from "../../../core/user/user";
-import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { RouterTestingModule } from "@angular/router/testing";
 import { MockDatabase } from "../../../core/database/mock-database";
 import { Angulartics2Module } from "angulartics2";
+import { MatDialogRef } from "@angular/material/dialog";
 
 function generateChildAttendanceModels() {
   const attendances = [];
@@ -61,6 +59,8 @@ describe("NoteDetailsComponent", () => {
     mockChildrenService.getChildren.and.returnValue(of([]));
     mockChildrenService.getChild.and.returnValue(of(new Child("")));
 
+    const dialogRefMock = { beforeClosed: () => of(), close: () => {} };
+
     TestBed.configureTestingModule({
       declarations: [],
       imports: [
@@ -70,16 +70,13 @@ describe("NoteDetailsComponent", () => {
         Angulartics2Module.forRoot(),
       ],
       providers: [
-        EntitySchemaService,
-        EntityMapperService,
-        ConfirmationDialogService,
         { provide: ChildrenService, useValue: mockChildrenService },
         { provide: Database, useClass: MockDatabase },
-        FormBuilder,
         {
           provide: SessionService,
           useValue: { getCurrentUser: () => new User("") },
         },
+        { provide: MatDialogRef, useValue: dialogRefMock },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(NoteDetailsComponent);

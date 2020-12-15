@@ -1,11 +1,13 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { HealthCheck } from "../model/health-check";
-import { ColumnDescription } from "../../../core/entity-subrecord/entity-subrecord/column-description";
 import { ChildrenService } from "../../children/children.service";
 import { DatePipe } from "@angular/common";
-import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
+import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
+import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
+import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 
 @UntilDestroy()
 @Component({
@@ -13,7 +15,8 @@ import { Child } from "../../children/model/child";
   templateUrl: "./health-checkup.component.html",
   styleUrls: ["./health-checkup.component.scss"],
 })
-export class HealthCheckupComponent implements OnChanges {
+export class HealthCheckupComponent
+  implements OnChanges, OnInitDynamicComponent {
   records = new Array<HealthCheck>();
   /**
    * Column Description for the SubentityRecordComponent
@@ -60,6 +63,11 @@ export class HealthCheckupComponent implements OnChanges {
     if (changes.hasOwnProperty("child")) {
       this.loadData(this.child.getId());
     }
+  }
+
+  onInitFromDynamicConfig(config: PanelConfig) {
+    this.child = config.entity as Child;
+    this.loadData(this.child.getId());
   }
 
   generateNewRecordFactory() {

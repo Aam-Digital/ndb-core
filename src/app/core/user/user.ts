@@ -43,16 +43,8 @@ export class User extends Entity {
    * pageSize is stored persistently in the database and
    * pageIndex is saved only temporarily for the session
    */
-  @DatabaseField() paginatorSettingsPageSize: PaginatorSettings = {
-    childrenList: 10,
-    schoolsList: 10,
-    notesList: 10,
-  };
-  public paginatorSettingsPageIndex: PaginatorSettings = {
-    childrenList: 0,
-    schoolsList: 0,
-    notesList: 0,
-  };
+  @DatabaseField() paginatorSettingsPageSize: any = {};
+  public paginatorSettingsPageIndex: any = {};
 
   /** password for webdav account (encrypted with user.password) */
   @DatabaseField() private cloudPasswordEnc: any;
@@ -164,13 +156,4 @@ export class User extends Entity {
   public setAdmin(admin: boolean) {
     this.admin = admin;
   }
-}
-
-/** Interface for the PaginatorSettings for the three components
- * childrenList, schoolsList and notesList.
- */
-export interface PaginatorSettings {
-  childrenList: number;
-  schoolsList: number;
-  notesList: number;
 }

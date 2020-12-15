@@ -1,21 +1,16 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Note } from "../model/note";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { DatePipe } from "@angular/common";
 import { ChildrenService } from "../../children/children.service";
 import moment from "moment";
 import { SessionService } from "../../../core/session/session-service/session.service";
-import { ColumnDescription } from "../../../core/entity-subrecord/entity-subrecord/column-description";
-import { ColumnDescriptionInputType } from "../../../core/entity-subrecord/entity-subrecord/column-description-input-type.enum";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
-import { NoteConfigLoaderService } from "../note-config-loader/note-config-loader.service";
+import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
+import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
+import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
@@ -26,7 +21,8 @@ import { NoteConfigLoaderService } from "../note-config-loader/note-config-loade
   templateUrl: "./notes-of-child.component.html",
   styleUrls: ["./notes-of-child.component.scss"],
 })
-export class NotesOfChildComponent implements OnChanges {
+export class NotesOfChildComponent
+  implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child;
   records: Array<Note> = [];
   detailsComponent = NoteDetailsComponent;
@@ -88,6 +84,11 @@ export class NotesOfChildComponent implements OnChanges {
     if (changes.hasOwnProperty("child")) {
       this.initNotesOfChild();
     }
+  }
+
+  onInitFromDynamicConfig(config: PanelConfig) {
+    this.child = config.entity as Child;
+    this.initNotesOfChild();
   }
 
   private initNotesOfChild() {

@@ -9,6 +9,7 @@ import { of } from "rxjs";
 import { AttendanceMonth } from "../../model/attendance-month";
 import { AttendanceStatus } from "../../model/attendance-day";
 import { AppConfig } from "../../../../core/app-config/app-config";
+import { RouterTestingModule } from "@angular/router/testing";
 
 describe("RollCallComponent", () => {
   let component: RollCallComponent;
@@ -25,7 +26,7 @@ describe("RollCallComponent", () => {
     AppConfig.settings = { debug: true } as any;
 
     TestBed.configureTestingModule({
-      imports: [ChildrenModule],
+      imports: [ChildrenModule, RouterTestingModule],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: ChildrenService, useValue: mockChildrenService },

@@ -27,6 +27,12 @@ import { ChildSchoolRelation } from "../../child-dev-project/children/model/chil
  * as similar as possible to the PouchDatabase.
  */
 export class MockDatabase extends Database {
+  static createWithData(data: any[]) {
+    const instance = new MockDatabase();
+    instance.data = data;
+    return instance;
+  }
+
   private data = [];
 
   /**
@@ -184,7 +190,7 @@ export class MockDatabase extends Database {
         reducerFun = this.getStatsReduceFun(
           (e: AttendanceMonth) => e.student,
           (e: AttendanceMonth) =>
-            e.daysAttended / (e.daysWorking - e.daysExcused)
+            e.daysAttended / (e.daysWorking - (e.daysExcused ?? 0))
         );
         break;
       case "avg_attendance_index/last_month":
@@ -194,7 +200,7 @@ export class MockDatabase extends Database {
         reducerFun = this.getStatsReduceFun(
           (e: AttendanceMonth) => e.student,
           (e: AttendanceMonth) =>
-            e.daysAttended / (e.daysWorking - e.daysExcused)
+            e.daysAttended / (e.daysWorking - (e.daysExcused ?? 0))
         );
         break;
       case "childSchoolRelations_index/by_child":
@@ -224,6 +230,33 @@ export class MockDatabase extends Database {
           options.endkey,
           options.limit
         );
+      case "notes_index/note_date_in_days_for_child":
+        filterFun = (e) => {
+          return (
+            e._id.startsWith(Note.ENTITY_TYPE) &&
+            Array.isArray(e.children) &&
+            e.date
+          );
+        };
+        reducerFun = (prev, curr) => {
+          for (const childId of curr.children) {
+            const newEntry = {
+              key: childId,
+              value: { max: new Date(curr.date).getTime() / 86400000 },
+            };
+
+            const existingEntry = prev.find((e) => e.key === childId);
+            if (!existingEntry) {
+              prev.push(newEntry);
+            } else {
+              if (newEntry.value.max > existingEntry.value.max) {
+                existingEntry.value.max = newEntry.value.max;
+              }
+            }
+          }
+          return prev;
+        };
+        break;
     }
     if (filterFun !== undefined) {
       if (reducerFun !== undefined) {

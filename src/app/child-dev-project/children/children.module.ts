@@ -17,7 +17,6 @@
 
 import { NgModule } from "@angular/core";
 import { CommonModule, DatePipe, PercentPipe } from "@angular/common";
-import { ChildDetailsComponent } from "./child-details/child-details.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatInputModule } from "@angular/material/input";
@@ -41,8 +40,6 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 import { ChildrenService } from "./children.service";
 import { AttendanceBlockComponent } from "../attendance/attendance-block/attendance-block.component";
 import { ChildAttendanceComponent } from "../attendance/child-attendance/child-attendance.component";
-import { EntitySubrecordModule } from "../../core/entity-subrecord/entity-subrecord.module";
-import { ChildBlockComponent } from "./child-block/child-block.component";
 import { ChildrenCountDashboardComponent } from "./children-count-dashboard/children-count-dashboard.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -80,8 +77,13 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { Angulartics2Module } from "angulartics2";
 import { AttendanceAnalysisComponent } from "../attendance/attendance-analysis/attendance-analysis.component";
 import { GroupedChildAttendanceComponent } from "./child-details/grouped-child-attendance/grouped-child-attendance.component";
-import { HealthFormComponent } from "./child-details/health-form/health-form.component";
-import { DropoutFormComponent } from "./child-details/dropout-form/dropout-form.component";
+import { ViewModule } from "../../core/view/view.module";
+import { RecentAttendanceBlocksComponent } from "./children-list/recent-attendance-blocks/recent-attendance-blocks.component";
+import { SchoolBlockWrapperComponent } from "./children-list/school-block-wrapper/school-block-wrapper.component";
+import { ChildBlockListComponent } from "./child-block-list/child-block-list.component";
+import { ChildBlockComponent } from "./child-block/child-block.component";
+import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
+import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 
 @NgModule({
   imports: [
@@ -110,7 +112,6 @@ import { DropoutFormComponent } from "./child-details/dropout-form/dropout-form.
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FilterPipeModule,
-    EntitySubrecordModule,
     SchoolsModule,
     ReactiveFormsModule,
     MatDialogModule,
@@ -121,13 +122,15 @@ import { DropoutFormComponent } from "./child-details/dropout-form/dropout-form.
     ConfirmationDialogModule,
     FormDialogModule,
     Angulartics2Module,
+    ViewModule,
+    EntitySubrecordModule,
+    EntityListModule,
   ],
   declarations: [
     AttendanceBlockComponent,
     ChildBlockComponent,
     ChildAttendanceComponent,
     NotesOfChildComponent,
-    ChildDetailsComponent,
     ChildrenListComponent,
     ChildrenCountDashboardComponent,
     AttendanceAverageDashboardComponent,
@@ -150,8 +153,9 @@ import { DropoutFormComponent } from "./child-details/dropout-form/dropout-form.
     HealthCheckupComponent,
     PreviousSchoolsComponent,
     GroupedChildAttendanceComponent,
-    HealthFormComponent,
-    DropoutFormComponent,
+    RecentAttendanceBlocksComponent,
+    SchoolBlockWrapperComponent,
+    ChildBlockListComponent,
   ],
   providers: [
     ChildrenService,
@@ -174,6 +178,7 @@ import { DropoutFormComponent } from "./child-details/dropout-form/dropout-form.
     NoRecentNotesDashboardComponent,
     RecentNotesDashboardComponent,
     AttendanceDaysComponent,
+    RecentAttendanceBlocksComponent,
   ],
 })
 export class ChildrenModule {}
