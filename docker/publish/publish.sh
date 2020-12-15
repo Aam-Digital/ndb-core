@@ -6,7 +6,7 @@ TAG=$1
 root=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
 
-cd $root/..
+cd $root/../..
 ng build --prod
 cd $root
 rm -r ./dist
