@@ -11,8 +11,6 @@ jobs:
         uses: docker/setup-buildx-action@master
       - name: Build dev image and save it locally
         uses: docker/build-push-action@v2
-        env:
-          BUILDKIT_PROGRESS: plain
         with:
           context: ./
           file: ./docker/pipeline/Dockerfile
@@ -37,8 +35,6 @@ jobs:
         uses: docker/setup-buildx-action@master
       - name: Build prod image
         uses: docker/build-push-action@v2
-        env:
-          BUILDKIT_PROGRESS: plain
         with:
           context: ./
           file: ./docker/pipeline/Dockerfile
