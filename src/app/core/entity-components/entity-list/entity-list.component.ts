@@ -94,7 +94,6 @@ export class EntityListComponent<T extends Entity>
 
   ngOnInit() {
     this.media.asObservable().subscribe((change: MediaChange[]) => {
-      console.log("media", new Date());
       switch (change[0].mqAlias) {
         case "xs":
         case "sm": {
