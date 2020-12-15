@@ -35,6 +35,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./
+          progress: plain
           file: ./docker/pipeline/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
