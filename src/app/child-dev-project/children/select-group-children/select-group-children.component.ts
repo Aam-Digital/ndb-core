@@ -38,7 +38,7 @@ export class SelectGroupChildrenComponent implements OnInit {
       .getChildren()
       .pipe(untilDestroyed(this))
       .subscribe((children) => {
-        this.children = children.filter((c) => c.isActive());
+        this.children = children.filter((c) => c.isActive);
         this.centerFilters.options = this.loadFilterOptionsForProperty(
           this.children,
           "center"

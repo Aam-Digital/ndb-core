@@ -54,11 +54,7 @@ describe("User", () => {
       password: undefined,
       cloudPasswordEnc: undefined,
       cloudBaseFolder: "/aam-digital/",
-      paginatorSettingsPageSize: {
-        childrenList: 10,
-        schoolsList: 10,
-        notesList: 10,
-      },
+      paginatorSettingsPageSize: {},
 
       searchIndices: [],
     };

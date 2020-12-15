@@ -81,15 +81,17 @@ export class FilterSelection<T> {
    *        that is true of a data item's property exactly matches that value.
    * @param attributeName The name of the property of a data item that is compared to the value in the filter function.
    */
-  public initOptions(valuesToMatchAsOptions: any[], attributeName: string) {
+  public initOptions(valuesToMatchAsOptions: string[], attributeName: string) {
     const options = [{ key: "", label: "All", filterFun: (e: T) => true }];
 
     valuesToMatchAsOptions.forEach((k) => {
-      options.push({
-        key: k.toLowerCase(),
-        label: k.toString(),
-        filterFun: (e: T) => e[attributeName] === k,
-      });
+      if (k) {
+        options.push({
+          key: k.toLowerCase(),
+          label: k.toString(),
+          filterFun: (e: T) => e[attributeName] === k,
+        });
+      }
     });
 
     this.options = options;

@@ -1,6 +1,7 @@
 import { Component, Input } from "@angular/core";
 import { Child } from "../../model/child";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { PanelConfig } from "../../../../core/entity-components/entity-details/EntityDetailsConfig";
 
 @Component({
   selector: "app-grouped-child-attendance",
@@ -12,7 +13,7 @@ export class GroupedChildAttendanceComponent implements OnInitDynamicComponent {
 
   constructor() {}
 
-  onInitFromDynamicConfig(config: any) {
-    this.child = config.child;
+  onInitFromDynamicConfig(config: PanelConfig) {
+    this.child = config.entity as Child;
   }
 }
