@@ -1,7 +1,8 @@
 name: SetUp
-on:
-  pull_request:
-    types: [opened]
+#on:
+#  pull_request:
+#    types: [opened]
+on: pull_request
 
 jobs:
   create-heroku-app:
@@ -12,7 +13,9 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
         run: |
-          heroku apps:create ${{ github.head_ref }}-test-deployment
+          name=${ ${{ github.sha }}:0:30}
+          echo ${name}
+          heroku apps:create ${name}
       - name: Post comment on PR
         env:
           PR: ${{ github.ref }}
