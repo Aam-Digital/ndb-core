@@ -39,6 +39,8 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
         with:
           coverageLocations: ${{github.workspace}}/app/coverage/lcov.info:lcov
+      - name: Remove local docker image
+        run: rm -rf ${{github.workspace}}/app
       - name: Build and push prod image
         uses: docker/build-push-action@v2
         with:

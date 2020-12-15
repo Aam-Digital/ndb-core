@@ -15,9 +15,7 @@ COPY patch-webpack.js .
 RUN npm run postinstall
 RUN $(npm bin)/ng version
 
-# TODO coverage repoort should not be copied
 COPY . .
-
 RUN $(npm bin)/ng build --prod
 
 ARG RUN_TESTS=false
