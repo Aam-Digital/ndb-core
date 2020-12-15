@@ -18,6 +18,7 @@ RUN $(npm bin)/ng version
 COPY . .
 RUN $(npm bin)/ng build --prod
 
+# When set to true, chromium is installed an tests are executed
 ARG RUN_TESTS=false
 ARG CHROME_BIN=/usr/bin/chromium-browser
 # In the pipeline we run the tests and report the results
@@ -33,5 +34,5 @@ FROM nginx:1.19.4-alpine
 ENV PORT=80
 COPY ./deploy/nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/dist/ /usr/share/nginx/html
-# sed is needed to insert the $PORT in the Heroku deployment
+# sed is needed to insert the $PORT into the nginx config
 CMD sed -i -e 's/$PORT/'"$PORT"'/g' /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'
