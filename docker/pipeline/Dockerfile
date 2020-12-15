@@ -16,7 +16,6 @@ RUN npm run postinstall
 RUN $(npm bin)/ng version
 
 COPY . .
-RUN ls
 RUN $(npm bin)/ng build --prod
 
 ARG RUN_TESTS=false
