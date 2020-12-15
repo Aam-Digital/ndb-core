@@ -7,18 +7,20 @@ on: pull_request
 jobs:
   create-heroku-app:
     runs-on: ubuntu-latest
+    env: APP_NAME
     steps:
       - uses: actions/checkout@v2
+      - name: Set app name
+        shell: bash
+        run: |
+          name=${{ github.head_ref }}-${{ github.sha }}
+          echo "APP_NAME=${sha:0:30}" >> $GITHUB_ENV
       - name: Create app
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
-        shell: bash
         run: |
-          sha=${{ github.head_ref }}-${{ github.sha }}
-          echo $sha
-          name=${sha:0:30}
-          echo ${name}
-          heroku apps:create ${name}
+          echo ${{ env.APP_NAME }}
+          heroku apps:create ${{ env.APP_NAME }}
       - name: Post comment on PR
         env:
           PR: ${{ github.ref }}
@@ -29,4 +31,4 @@ jobs:
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/Aam-Digital/ndb-core/issues/$PR/comments \
-          -d '{"body":"Deployed to https://${{ github.head_ref }}-test-deployment.herokuapp.com/"}'
+          -d '{"body":"Deployed to https://${{ env.APP_NAME }}.herokuapp.com/"}'
