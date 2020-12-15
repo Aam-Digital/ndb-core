@@ -1,4 +1,4 @@
-name: Cleanup after a pull request has been closed
+name: CleanUp
 on:
   pull_request:
     types: [closed]

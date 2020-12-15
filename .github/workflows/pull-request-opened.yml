@@ -1,4 +1,4 @@
-name: Set up once a pull request is openen
+name: SetUp
 on:
   pull_request:
     types: [opened]
