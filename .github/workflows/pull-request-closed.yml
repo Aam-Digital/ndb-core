@@ -1,0 +1,15 @@
+name: CleanUp
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  remove-heroku-app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Remove app
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
+        run: |
+          heroku apps:destroy --app ${{ github.head_ref }}-test-deployment --confirm ${{ github.head_ref }}-test-deployment
