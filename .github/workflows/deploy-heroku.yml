@@ -49,8 +49,8 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: ${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:latest
-            cache-from: type=registry,ref=${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:cache
-            cache-to: type=registry,ref=${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:cache,mode=max
+          cache-from: type=registry,ref=${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:cache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital-docker-deploy:cache,mode=max
       - name: Heroku deployment
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
