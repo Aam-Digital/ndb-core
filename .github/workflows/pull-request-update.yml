@@ -26,7 +26,7 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
         with:
           coverageLocations: ${{github.workspace}}/img/app/coverage/lcov.info:lcov
-  create-prod-image:
+  deploy-prod-image:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1

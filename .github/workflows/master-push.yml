@@ -19,7 +19,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: doc/compodoc
           destination_dir: documentation
-  upload-prod-image:
+  publish-prod-image:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
