@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: create-prod-image
     steps:
-      - uses: action/checkout@v1
+      - uses: actions/checkout@v1
       - name: Heroku deployment
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
