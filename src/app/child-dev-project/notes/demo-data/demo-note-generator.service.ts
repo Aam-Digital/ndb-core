@@ -10,6 +10,7 @@ import { noteIndividualStories } from "./notes_individual-stories";
 import { noteGroupStories } from "./notes_group-stories";
 import { centersUnique } from "../../children/demo-data-generators/fixtures/centers";
 import { absenceRemarks } from "./remarks";
+import moment from "moment";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 
 export class DemoNoteConfig {
@@ -72,6 +73,19 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
       for (let i = 0; i < numberOfNotes; i++) {
         data.push(this.generateNoteForChild(child));
       }
+
+      // generate a recent note for the last week for some children to have data for dashboard
+      if (faker.random.number(100) < 40) {
+        data.push(
+          this.generateNoteForChild(
+            child,
+            faker.date.between(
+              moment().subtract(6, "days").toDate(),
+              faker.getEarlierDateOrToday(child.dropoutDate)
+            )
+          )
+        );
+      }
     }
 
     for (const center of centersUnique) {
@@ -86,7 +100,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     return data;
   }
 
-  private generateNoteForChild(child: Child): Note {
+  private generateNoteForChild(child: Child, date?: Date): Note {
     let note = new Note(faker.random.uuid());
 
     const selectedStory = faker.random.arrayElement(noteIndividualStories);
@@ -99,10 +113,14 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
 
     note.addChild(child.getId());
     note.author = faker.random.arrayElement(this.teamMembers);
-    note.date = faker.date.between(
-      child.admissionDate,
-      faker.getEarlierDateOrToday(child.dropoutDate)
-    );
+
+    if (!date) {
+      date = faker.date.between(
+        child.admissionDate,
+        faker.getEarlierDateOrToday(child.dropoutDate)
+      );
+    }
+    note.date = date;
 
     this.removeFollowUpMarkerForOldNotes(note);
 

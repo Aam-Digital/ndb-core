@@ -3,11 +3,8 @@ import { SelectGroupChildrenComponent } from "./select-group-children.component"
 import { ChildrenService } from "../children.service";
 import { BehaviorSubject } from "rxjs";
 import { Child } from "../model/child";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatOptionModule } from "@angular/material/core";
-import { SchoolsModule } from "../../schools/schools.module";
-import { MatSelectModule } from "@angular/material/select";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { ChildrenModule } from "../children.module";
+import { RouterTestingModule } from "@angular/router/testing";
 
 describe("SelectGroupChildrenComponent", () => {
   let component: SelectGroupChildrenComponent;
@@ -22,13 +19,7 @@ describe("SelectGroupChildrenComponent", () => {
 
     TestBed.configureTestingModule({
       declarations: [SelectGroupChildrenComponent],
-      imports: [
-        MatFormFieldModule,
-        MatOptionModule,
-        MatSelectModule,
-        NoopAnimationsModule,
-        SchoolsModule,
-      ],
+      imports: [ChildrenModule, RouterTestingModule],
       providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();
   }));

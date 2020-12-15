@@ -1,8 +1,9 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, Optional } from "@angular/core";
 import { Router } from "@angular/router";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 @UntilDestroy()
 @Component({
@@ -10,7 +11,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   templateUrl: "./child-block.component.html",
   styleUrls: ["./child-block.component.scss"],
 })
-export class ChildBlockComponent implements OnInit {
+export class ChildBlockComponent implements OnInitDynamicComponent, OnInit {
   @Input() entity: Child;
   @Input() entityId: string;
 
@@ -23,11 +24,11 @@ export class ChildBlockComponent implements OnInit {
   tooltipTimeout;
 
   constructor(
-    private router: Router,
-    private childrenService: ChildrenService
+    @Optional() private router: Router,
+    @Optional() private childrenService: ChildrenService
   ) {}
 
-  async ngOnInit() {
+  ngOnInit() {
     if (this.entityId) {
       this.childrenService
         .getChild(this.entityId)
@@ -36,6 +37,16 @@ export class ChildBlockComponent implements OnInit {
           this.entity = child;
         });
     }
+  }
+
+  onInitFromDynamicConfig(config: any) {
+    this.entity = config.entity;
+    if (config.hasOwnProperty("entityId")) {
+      this.entityId = config.entityId;
+      this.ngOnInit();
+    }
+    this.linkDisabled = config.linkDisabled;
+    this.tooltipDisabled = config.tooltipDisabled;
   }
 
   showTooltip() {
@@ -58,6 +69,6 @@ export class ChildBlockComponent implements OnInit {
       return;
     }
 
-    this.router.navigate(["/child", this.entity.getId()]);
+    this.router?.navigate(["/child", this.entity.getId()]);
   }
 }

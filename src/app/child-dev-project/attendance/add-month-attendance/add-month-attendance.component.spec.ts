@@ -12,16 +12,18 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatTableModule } from "@angular/material/table";
 import { FormsModule } from "@angular/forms";
 import { SchoolBlockComponent } from "../../schools/school-block/school-block.component";
-import { ChildBlockComponent } from "../../children/child-block/child-block.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { MockDatabase } from "../../../core/database/mock-database";
 import { Database } from "../../../core/database/database";
 import { ChildrenService } from "../../children/children.service";
-import { EntitySubrecordModule } from "../../../core/entity-subrecord/entity-subrecord.module";
 import { AlertsModule } from "../../../core/alerts/alerts.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { ChildPhotoService } from "../../children/child-photo-service/child-photo.service";
+import { RouterTestingModule } from "@angular/router/testing";
+import { ChildBlockComponent } from "../../children/child-block/child-block.component";
+import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
+import { ConfirmationDialogModule } from "../../../core/confirmation-dialog/confirmation-dialog.module";
 
 describe("AddMonthAttendanceComponent", () => {
   let component: AddMonthAttendanceComponent;
@@ -45,9 +47,11 @@ describe("AddMonthAttendanceComponent", () => {
         MatButtonModule,
         MatProgressBarModule,
         FormsModule,
-        EntitySubrecordModule,
         AlertsModule,
         NoopAnimationsModule,
+        RouterTestingModule,
+        EntitySubrecordModule,
+        ConfirmationDialogModule,
       ],
       providers: [
         EntityMapperService,

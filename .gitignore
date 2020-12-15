@@ -4,6 +4,8 @@
 /src/assets/child-photos
 release.sh
 
+documentation.json
+
 # compiled output
 dist
 /tmp

@@ -8,9 +8,10 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FormsModule } from "@angular/forms";
-import { EntitySubrecordModule } from "../../../core/entity-subrecord/entity-subrecord.module";
 import { EntityModule } from "../../../core/entity/entity.module";
 import { AttendanceDayBlockComponent } from "../attendance-days/attendance-day-block.component";
+import { RouterTestingModule } from "@angular/router/testing";
+import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 
 describe("AttendanceBlockComponent", () => {
   let component: AttendanceBlockComponent;
@@ -31,6 +32,7 @@ describe("AttendanceBlockComponent", () => {
         FormsModule,
         EntitySubrecordModule,
         EntityModule,
+        RouterTestingModule,
       ],
     }).compileComponents();
   }));
