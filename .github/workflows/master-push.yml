@@ -43,8 +43,8 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/aam-digital:latest
           build-args: RUN_TESTS=${{ true }}
           outputs: type=local,dest=./img
-          cache-from: type=registry,ref=${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital:cache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_SIMON_USERNAME }}/aam-digital:cache,mode=max
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/aam-digital:cache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/aam-digital:cache,mode=max
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v2.7.5
         env:
