@@ -61,29 +61,10 @@ describe("Child", () => {
       center: "Alpha",
       admissionDate: new Date(),
       status: "Active",
-      address: "Main Street",
-      phone: "0112",
-      guardianName: "Mom",
-      preferredTimeForGuardianMeeting: "5 a.m.",
-
-      has_aadhar: "applied",
-      has_bankAccount: "applied",
-      has_kanyashree: "applied",
-      has_rationCard: "applied",
-      has_BplCard: "applied",
 
       dropoutDate: new Date(),
       dropoutType: "unknown",
       dropoutRemarks: "no idea what happened",
-
-      health_vaccinationStatus: "none",
-      health_bloodGroup: "AB+",
-      health_eyeHealthStatus: "Ok",
-      health_lastDentalCheckup: new Date(),
-      health_lastEyeCheckup: new Date(),
-      health_lastENTCheckup: new Date(),
-      health_lastVitaminD: new Date(),
-      health_lastDeworming: new Date(),
 
       searchIndices: [],
     };
@@ -102,30 +83,10 @@ describe("Child", () => {
     entity.center = expectedData.center;
     entity.admissionDate = expectedData.admissionDate;
     entity.status = expectedData.status;
-    entity.address = expectedData.address;
-    entity.phone = expectedData.phone;
-    entity.guardianName = expectedData.guardianName;
-    entity.preferredTimeForGuardianMeeting =
-      expectedData.preferredTimeForGuardianMeeting;
-
-    entity.has_aadhar = expectedData.has_aadhar;
-    entity.has_bankAccount = expectedData.has_bankAccount;
-    entity.has_kanyashree = expectedData.has_kanyashree;
-    entity.has_rationCard = expectedData.has_rationCard;
-    entity.has_BplCard = expectedData.has_BplCard;
 
     entity.dropoutDate = expectedData.dropoutDate;
     entity.dropoutType = expectedData.dropoutType;
     entity.dropoutRemarks = expectedData.dropoutRemarks;
-
-    entity.health_vaccinationStatus = expectedData.health_vaccinationStatus;
-    entity.health_bloodGroup = expectedData.health_bloodGroup;
-    entity.health_eyeHealthStatus = expectedData.health_eyeHealthStatus;
-    entity.health_lastDentalCheckup = expectedData.health_lastDentalCheckup;
-    entity.health_lastEyeCheckup = expectedData.health_lastEyeCheckup;
-    entity.health_lastENTCheckup = expectedData.health_lastENTCheckup;
-    entity.health_lastVitaminD = expectedData.health_lastVitaminD;
-    entity.health_lastDeworming = expectedData.health_lastDeworming;
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
