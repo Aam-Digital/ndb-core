@@ -507,9 +507,6 @@
 
     "entity:Child": {
         "attributes": [
-            {"name": "gender", "schema": { "dataType": "string" } },
-            {"name": "motherTongue", "schema": { "dataType": "string" } },
-            {"name": "religion", "schema": { "dataType": "string" } },
             {"name": "address", "schema": { "dataType": "string" } },
             {"name": "phone", "schema": { "dataType": "string" } },
             {"name": "guardianName", "schema": { "dataType": "string" } },
