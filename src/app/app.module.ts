@@ -38,7 +38,6 @@ import { SchoolsModule } from "./child-dev-project/schools/schools.module";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
-import { MatIconModule, MatIconRegistry } from "@angular/material/icon";
 import { AdminModule } from "./core/admin/admin.module";
 import { EntityModule } from "./core/entity/entity.module";
 import { CookieService } from "ngx-cookie-service";
@@ -70,6 +69,7 @@ import { EntitySubrecordModule } from "./core/entity-components/entity-subrecord
 import { EntityListModule } from "./core/entity-components/entity-list/entity-list.module";
 import { Child } from "./child-dev-project/children/model/child";
 import { EntityConfigService } from "./core/entity/entity-config.service";
+import { FontAwesomeIconsModule } from "./core/icons/font-awesome-icons.module";
 
 export function configFactory(configService: ConfigService) {
   return (): Promise<any> => configService.loadConfig();
@@ -112,7 +112,7 @@ export function configFactory(configService: ConfigService) {
     ChildrenModule,
     SchoolsModule,
     AdminModule,
-    MatIconModule,
+    FontAwesomeIconsModule,
     HelpModule,
     MatNativeDateModule,
     EntitySubrecordModule,
@@ -140,7 +140,6 @@ export function configFactory(configService: ConfigService) {
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
-    MatIconRegistry,
     CookieService,
     AnalyticsService,
     Angulartics2Piwik,
@@ -155,13 +154,7 @@ export function configFactory(configService: ConfigService) {
   bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor(
-    public matIconRegistry: MatIconRegistry,
-    private entityConfigService: EntityConfigService
-  ) {
-    matIconRegistry.registerFontClassAlias("fontawesome", "fa");
-    matIconRegistry.setDefaultFontSetClass("fa");
-
+  constructor(private entityConfigService: EntityConfigService) {
     // Add all entities for which the config defines attributes
     this.entityConfigService.addConfigAttributes<Child>(Child);
   }
