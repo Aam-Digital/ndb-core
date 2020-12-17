@@ -51,14 +51,9 @@ import { SchoolsModule } from "../schools/schools.module";
 import { EducationalMaterialComponent } from "../educational-material/educational-material-component/educational-material.component";
 import { AserComponent } from "../aser/aser-component/aser.component";
 import { FilterPipeModule } from "ngx-filter-pipe";
-import { AddMonthAttendanceComponent } from "../attendance/add-month-attendance/add-month-attendance.component";
-import { AttendanceDaysComponent } from "../attendance/attendance-days/attendance-days.component";
-import { AttendanceDetailsComponent } from "../attendance/attendance-details/attendance-details.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { AddDayAttendanceComponent } from "../attendance/add-day-attendance/add-day-attendance.component";
 import { AttendanceWeekDashboardComponent } from "../attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component";
 import { NoRecentNotesDashboardComponent } from "../notes/dashboard-widgets/no-recent-notes-dashboard/no-recent-notes-dashboard.component";
-import { AttendanceDayBlockComponent } from "../attendance/attendance-days/attendance-day-block.component";
 import { AttendanceManagerComponent } from "../attendance/attendance-manager/attendance-manager.component";
 import { HealthCheckupComponent } from "../health-checkup/health-checkup-component/health-checkup.component";
 import { MatDatepickerModule } from "@angular/material/datepicker";
@@ -66,7 +61,6 @@ import { PreviousSchoolsComponent } from "../previous-schools/previous-schools.c
 import { WebdavModule } from "app/core/webdav/webdav.module";
 import { AdminModule } from "../../core/admin/admin.module";
 import { SelectGroupChildrenComponent } from "./select-group-children/select-group-children.component";
-import { RollCallComponent } from "../attendance/add-day-attendance/roll-call/roll-call.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { RecentNotesDashboardComponent } from "../notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component";
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
@@ -84,6 +78,7 @@ import { ChildBlockListComponent } from "./child-block-list/child-block-list.com
 import { ChildBlockComponent } from "./child-block/child-block.component";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
+import { EntityDetailsModule } from "../../core/entity-components/entity-details/entity-details.module";
 
 @NgModule({
   imports: [
@@ -125,6 +120,7 @@ import { EntityListModule } from "../../core/entity-components/entity-list/entit
     ViewModule,
     EntitySubrecordModule,
     EntityListModule,
+    EntityDetailsModule,
   ],
   declarations: [
     AttendanceBlockComponent,
@@ -138,12 +134,6 @@ import { EntityListModule } from "../../core/entity-components/entity-list/entit
     ChildSelectComponent,
     EducationalMaterialComponent,
     AserComponent,
-    AddMonthAttendanceComponent,
-    AttendanceDayBlockComponent,
-    AttendanceDaysComponent,
-    AttendanceDetailsComponent,
-    AddDayAttendanceComponent,
-    RollCallComponent,
     SelectGroupChildrenComponent,
     AttendanceWeekDashboardComponent,
     NoRecentNotesDashboardComponent,
@@ -177,7 +167,6 @@ import { EntityListModule } from "../../core/entity-components/entity-list/entit
     AttendanceWeekDashboardComponent,
     NoRecentNotesDashboardComponent,
     RecentNotesDashboardComponent,
-    AttendanceDaysComponent,
     RecentAttendanceBlocksComponent,
   ],
 })

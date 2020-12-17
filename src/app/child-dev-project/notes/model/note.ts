@@ -47,6 +47,12 @@ export class Note extends Entity {
   @DatabaseField() author: string = "";
   @DatabaseField({ dataType: "interaction-type" }) category: InteractionType =
     InteractionType.NONE;
+
+  /**
+   * reference to a different entity (e.g. a recurring activity) this note is related to
+   */
+  relatesTo: Entity; // TODO: DatabaseField !! using an entity loader index  id <-> entity instance
+
   @DatabaseField({ dataType: "string" }) warningLevel: WarningLevel =
     WarningLevel.OK;
 

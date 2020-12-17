@@ -1,0 +1,33 @@
+.overall-container {
+  height: 100%;
+  min-height: 300px;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-bottom: 0;
+}
+
+.bottom-control {
+  margin-top: 16px;
+  margin-left: -16px;
+  margin-right: -16px;
+  padding: 16px;
+}
+
+.confirm-button {
+  height: calc(100px - 2*16px);
+}
+
+.selected-card {
+  max-height: calc(100px - 2*16px);
+  overflow: auto;
+}
+
+.event-card {
+  margin-bottom: 8px;
+  width: 250px;
+}
+
+.flex-scroll-container {
+  min-height: 100px;
+  overflow: auto;
+}
