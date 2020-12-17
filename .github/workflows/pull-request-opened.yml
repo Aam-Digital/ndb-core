@@ -19,7 +19,7 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
         run: |
-          heroku apps:create ${{ env.APP_NAME }}
+          heroku apps:create ${{ env.APP_NAME }} --region=eu
       - name: Post comment on PR
         env:
           PR: ${{ github.ref }}
