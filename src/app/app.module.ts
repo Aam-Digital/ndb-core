@@ -70,6 +70,8 @@ import { EntitySubrecordModule } from "./core/entity-components/entity-subrecord
 import { EntityListModule } from "./core/entity-components/entity-list/entity-list.module";
 import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
 import { DemoActivityGeneratorService } from "./child-dev-project/attendance/demo-activity-generator.service";
+import { Child } from "./child-dev-project/children/model/child";
+import { EntityConfigService } from "./core/entity/entity-config.service";
 
 export function configFactory(configService: ConfigService) {
   return (): Promise<any> => configService.loadConfig();
@@ -157,9 +159,15 @@ export function configFactory(configService: ConfigService) {
   bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor(public matIconRegistry: MatIconRegistry) {
+  constructor(
+    public matIconRegistry: MatIconRegistry,
+    private entityConfigService: EntityConfigService
+  ) {
     matIconRegistry.registerFontClassAlias("fontawesome", "fa");
     matIconRegistry.setDefaultFontSetClass("fa");
+
+    // Add all entities for which the config defines attributes
+    this.entityConfigService.addConfigAttributes<Child>(Child);
   }
 }
 
