@@ -34,43 +34,23 @@ export class Child extends Entity {
 
   @DatabaseField() name: string;
   @DatabaseField() projectNumber: string; // project number
-  @DatabaseField({ dataType: "string" }) gender: Gender; // M or F
   @DatabaseField({ dataType: "date-only" }) dateOfBirth: Date;
   @DatabaseField() motherTongue: string = "";
+  @DatabaseField({ dataType: "string" }) gender: Gender; // M or F
   @DatabaseField() religion: string = "";
 
   @DatabaseField() center: string = "";
   @DatabaseField() admissionDate: Date;
   @DatabaseField() status: string = "";
 
-  /** current school (as determined through the ChildSchoolRelation docs) set during loading through ChildrenService */
-  schoolId: string = "";
-  /** current class (as determined through the ChildSchoolRelation docs) set during loading through ChildrenService */
-  schoolClass: string = "";
-
-  @DatabaseField() address: string = "";
-  @DatabaseField() phone: string = "";
-  @DatabaseField() guardianName: string = "";
-  @DatabaseField() preferredTimeForGuardianMeeting: string = "";
-
-  @DatabaseField() has_aadhar: string = "";
-  @DatabaseField() has_bankAccount: string = "";
-  @DatabaseField() has_kanyashree: string = "";
-  @DatabaseField() has_rationCard: string = "";
-  @DatabaseField() has_BplCard: string = "";
-
   @DatabaseField() dropoutDate: Date;
   @DatabaseField() dropoutType: string;
   @DatabaseField() dropoutRemarks: string;
 
-  @DatabaseField() health_vaccinationStatus: string;
-  @DatabaseField() health_bloodGroup: string;
-  @DatabaseField() health_lastDentalCheckup: Date;
-  @DatabaseField() health_lastEyeCheckup: Date;
-  @DatabaseField() health_lastENTCheckup: Date;
-  @DatabaseField() health_eyeHealthStatus: string;
-  @DatabaseField() health_lastVitaminD: Date;
-  @DatabaseField() health_lastDeworming: Date;
+  /** current school (as determined through the ChildSchoolRelation docs) set during loading through ChildrenService */
+  schoolId: string = "";
+  /** current class (as determined through the ChildSchoolRelation docs) set during loading through ChildrenService */
+  schoolClass: string = "";
 
   /**
    * Url to an image that is displayed for the child

@@ -67,6 +67,8 @@ import { DashboardModule } from "./core/dashboard/dashboard.module";
 import { EntityDetailsModule } from "./core/entity-components/entity-details/entity-details.module";
 import { EntitySubrecordModule } from "./core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "./core/entity-components/entity-list/entity-list.module";
+import { Child } from "./child-dev-project/children/model/child";
+import { EntityConfigService } from "./core/entity/entity-config.service";
 import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
 import { DemoActivityGeneratorService } from "./child-dev-project/attendance/demo-activity-generator.service";
 import { FontAwesomeIconsModule } from "./core/icons/font-awesome-icons.module";
@@ -155,7 +157,12 @@ export function configFactory(configService: ConfigService) {
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private entityConfigService: EntityConfigService) {
+    // Add all entities for which the config defines attributes
+    this.entityConfigService.addConfigAttributes<Child>(Child);
+  }
+}
 
 // Initialize remote logging
 LoggingService.initRemoteLogging({
