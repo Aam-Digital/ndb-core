@@ -10,8 +10,7 @@ import { EntitySchemaField } from "./schema/entity-schema-field";
  */
 export function DatabaseField(propertySchema: EntitySchemaField = {}) {
   return (target, propertyName: string) => {
-    target[propertyName] = undefined; // This ensures that the field is not read only
-
+    // Retrieve datatype from TypeScript type definition
     if (propertySchema.dataType === undefined) {
       propertySchema.dataType = Reflect.getMetadata(
         "design:type",
@@ -19,12 +18,21 @@ export function DatabaseField(propertySchema: EntitySchemaField = {}) {
         propertyName
       ).name.toLowerCase();
     }
-
-    if (Object.getOwnPropertyDescriptor(target.constructor, "schema") == null) {
-      target.constructor.schema = new Map<string, EntitySchemaField>();
-    }
-    target.constructor.schema.set(propertyName, propertySchema);
-
-    return target;
+    addPropertySchema(target, propertyName, propertySchema);
   };
+}
+
+export function addPropertySchema(
+  target,
+  propertyName: string,
+  propertySchema: EntitySchemaField
+) {
+  target[propertyName] = undefined; // This ensures that the field is not read only
+
+  if (Object.getOwnPropertyDescriptor(target.constructor, "schema") == null) {
+    target.constructor.schema = new Map<string, EntitySchemaField>();
+  }
+  target.constructor.schema.set(propertyName, propertySchema);
+
+  return target;
 }
