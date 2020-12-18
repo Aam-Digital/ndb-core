@@ -22,8 +22,14 @@
     </div>
 
     <div fxLayoutGap="8px">
-      <button mat-stroked-button [disabled]="visibleActivities.length === allActivities.length">Show more</button>
-      <button mat-button>My event is not listed ...</button>
+      <button mat-stroked-button
+              (click)="showMore()"
+              [disabled]="visibleActivities.length === allActivities.length">
+        Show more
+      </button>
+      <button mat-button (click)="createOneTimeEvent()">
+        My event is not listed ...
+      </button>
     </div>
   </div>
 

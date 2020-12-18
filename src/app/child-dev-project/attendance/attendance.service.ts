@@ -11,6 +11,8 @@ export class AttendanceService {
 
   async getEventsOnDate(date: Date) {
     const events = await this.entityService.loadType<Note>(Note);
-    return events.filter((e) => moment(e.date).isSame(date, "day"));
+    return events.filter(
+      (e) => e.category.isMeeting && moment(e.date).isSame(date, "day")
+    );
   }
 }

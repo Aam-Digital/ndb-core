@@ -3,6 +3,9 @@ import { AttendanceService } from "../attendance.service";
 import { Note } from "../../notes/model/note";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { RecurringActivity } from "../model/recurring-activity";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { NoteDetailsComponent } from "../../notes/note-details/note-details.component";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 
 @Component({
   selector: "app-activity-setup",
@@ -22,7 +25,9 @@ export class ActivitySetupComponent implements OnInit {
 
   constructor(
     private entityService: EntityMapperService,
-    private attendanceService: AttendanceService
+    private attendanceService: AttendanceService,
+    private sessionService: SessionService,
+    private formDialog: FormDialogService
   ) {}
 
   async ngOnInit() {
@@ -41,15 +46,26 @@ export class ActivitySetupComponent implements OnInit {
     this.allActivities = await this.entityService.loadType<RecurringActivity>(
       RecurringActivity
     );
-    // TODO: smart filters based on assignedTo, date patterns, etc.
-    this.visibleActivities = this.allActivities;
+    this.visibleActivities = this.allActivities.filter(
+      (a) =>
+        a.assignedTo === this.sessionService.getCurrentUser().name ||
+        a.assignedTo === ""
+    );
 
     for (const activity of this.visibleActivities) {
-      if (this.existingEvents.find((e) => e.relatesTo === activity)) {
-        continue; // skip if already exists
-      }
       this.existingEvents.push(this.createEventForActivity(activity));
     }
+  }
+
+  showMore() {
+    const additionalActivities = this.allActivities.filter(
+      (a) => !this.visibleActivities.includes(a)
+    );
+    for (const activity of additionalActivities) {
+      this.existingEvents.push(this.createEventForActivity(activity));
+      this.visibleActivities.push(activity);
+    }
+    this.sortEvents();
   }
 
   async setNewDate(date: Date) {
@@ -63,6 +79,13 @@ export class ActivitySetupComponent implements OnInit {
   }
 
   private createEventForActivity(activity: RecurringActivity): Note {
+    const alreadyCreated = this.existingEvents.find(
+      (e) => e.relatesTo === activity
+    );
+    if (alreadyCreated) {
+      return alreadyCreated;
+    }
+
     const event = Note.create(this.date, activity.title);
     event.children = activity.participants;
     event.relatesTo = activity;
@@ -70,15 +93,40 @@ export class ActivitySetupComponent implements OnInit {
   }
 
   private sortEvents() {
-    this.existingEvents = this.existingEvents.sort(
-      (a, b) => calculateEventPriority(a) - calculateEventPriority(b)
-    );
-
-    function calculateEventPriority(event: Note) {
-      if (event.relatesTo! instanceof RecurringActivity) {
-        return -1;
+    const calculateEventPriority = (event: Note) => {
+      if (!(event.relatesTo! instanceof RecurringActivity)) {
+        return 0;
       }
-      return 1;
-    }
+
+      let score = 1;
+      const activity = event.relatesTo as RecurringActivity;
+      if (activity.assignedTo === this.sessionService.getCurrentUser().name) {
+        score += 1;
+      } else if (activity.assignedTo !== "") {
+        score -= 2;
+      }
+
+      return score;
+    };
+
+    this.existingEvents = this.existingEvents.sort(
+      (a, b) => calculateEventPriority(b) - calculateEventPriority(a)
+    );
+  }
+
+  createOneTimeEvent() {
+    const newNote = new Note(Date.now().toString());
+    newNote.date = new Date();
+    newNote.author = this.sessionService.getCurrentUser().name;
+
+    this.formDialog
+      .openDialog(NoteDetailsComponent, newNote)
+      .afterClosed()
+      .subscribe((createdNote: Note) => {
+        if (createdNote) {
+          this.existingEvents.push(createdNote);
+          this.selectedEvent = createdNote;
+        }
+      });
   }
 }

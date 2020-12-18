@@ -38,7 +38,7 @@ export class RecurringActivity extends Entity {
   @DatabaseField() participants: string[] = [];
 
   /** ID of the user who is responsible for conducting this activity */
-  @DatabaseField() assignedTo: string;
+  @DatabaseField() assignedTo: string = "";
 
   toString(): string {
     return this.title;
