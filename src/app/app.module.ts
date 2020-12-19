@@ -67,8 +67,6 @@ import { DashboardModule } from "./core/dashboard/dashboard.module";
 import { EntityDetailsModule } from "./core/entity-components/entity-details/entity-details.module";
 import { EntitySubrecordModule } from "./core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "./core/entity-components/entity-list/entity-list.module";
-import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
-import { DemoActivityGeneratorService } from "./child-dev-project/attendance/demo-activity-generator.service";
 import { Child } from "./child-dev-project/children/model/child";
 import { EntityConfigService } from "./core/entity/entity-config.service";
 import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
