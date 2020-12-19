@@ -86,6 +86,7 @@ describe("RecurringActivity", () => {
       RecurringActivity.schema
     );
 
+    expect(entity._id).toBe(rawData._id);
     expect(entity.title).toBe(rawData.title);
     expect(entity.type).toBe(rawData.type);
     expect(entity.assignedTo).toBe(rawData.assignedTo);
