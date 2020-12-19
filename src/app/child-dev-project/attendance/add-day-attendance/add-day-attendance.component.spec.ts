@@ -9,6 +9,7 @@ import { ChildrenService } from "../../children/children.service";
 import { of } from "rxjs";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { User } from "../../../core/user/user";
+import { MatNativeDateModule } from "@angular/material/core";
 
 describe("AddDayAttendanceComponent", () => {
   let component: AddDayAttendanceComponent;
@@ -27,7 +28,7 @@ describe("AddDayAttendanceComponent", () => {
     mockChildrenService.getChildren.and.returnValue(of([]));
 
     TestBed.configureTestingModule({
-      imports: [AttendanceModule, RouterTestingModule],
+      imports: [AttendanceModule, RouterTestingModule, MatNativeDateModule],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityService },
         { provide: ChildrenService, useValue: mockChildrenService },

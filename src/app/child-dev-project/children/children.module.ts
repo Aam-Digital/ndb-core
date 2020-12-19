@@ -78,7 +78,6 @@ import { ChildBlockListComponent } from "./child-block-list/child-block-list.com
 import { ChildBlockComponent } from "./child-block/child-block.component";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
-import { EntityDetailsModule } from "../../core/entity-components/entity-details/entity-details.module";
 
 @NgModule({
   imports: [
@@ -120,7 +119,6 @@ import { EntityDetailsModule } from "../../core/entity-components/entity-details
     ViewModule,
     EntitySubrecordModule,
     EntityListModule,
-    EntityDetailsModule,
   ],
   declarations: [
     AttendanceBlockComponent,
