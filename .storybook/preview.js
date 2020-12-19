@@ -6,4 +6,5 @@ setCompodocJson(docJson);
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
+  // layout: 'fullscreen', // remove paddings of storybook container
 }
