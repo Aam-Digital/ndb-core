@@ -27,7 +27,7 @@ import { EntitySchemaService } from "../schema/entity-schema.service";
  * As TypeScript array types are not reliable, you have to explicitly configure the dataType for array items with the annotation.
  * For example:
  *
- * `@DatabaseField({ arrayDataType: 'month' }) dateArr: Date[];`
+ * `@DatabaseField({ innerDataType: 'month' }) dateArr: Date[];`
  * will ensure that in the database this property is saved as an array of "month" date strings
  * using the {@link monthEntitySchemaDatatype} (e.g. resulting in `['2020-01', '2020-04']` in the database).
  */
@@ -49,7 +49,7 @@ export const arrayEntitySchemaDatatype: EntitySchemaDatatype = {
     }
 
     const arrayElementDatatype: EntitySchemaDatatype = schemaService.getDatatypeOrDefault(
-      schemaField.arrayDataType
+      schemaField.innerDataType
     );
     return value.map((el) =>
       arrayElementDatatype.transformToDatabaseFormat(
@@ -76,7 +76,7 @@ export const arrayEntitySchemaDatatype: EntitySchemaDatatype = {
     }
 
     const arrayElementDatatype: EntitySchemaDatatype = schemaService.getDatatypeOrDefault(
-      schemaField.arrayDataType
+      schemaField.innerDataType
     );
 
     return value.map((el) =>
@@ -99,7 +99,7 @@ export const arrayEntitySchemaDatatype: EntitySchemaDatatype = {
  */
 export function generateSubSchemaField(arraySchemaField: EntitySchemaField) {
   const subSchemaField = Object.assign({}, arraySchemaField);
-  subSchemaField.dataType = arraySchemaField.arrayDataType;
-  delete subSchemaField.arrayDataType;
+  subSchemaField.dataType = arraySchemaField.innerDataType;
+  delete subSchemaField.innerDataType;
   return subSchemaField;
 }

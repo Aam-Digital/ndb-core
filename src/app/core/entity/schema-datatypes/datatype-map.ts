@@ -27,7 +27,7 @@ import { generateSubSchemaField } from "./datatype-array";
  *
  * For example:
  *
- * `@DatabaseField({ arrayDataType: 'month' }) dateMap: Map<string, Date>;`
+ * `@DatabaseField({ innerDataType: 'month' }) dateMap: Map<string, Date>;`
  * will ensure that in the database this property is saved as "month" date string for each key
  * using the {@link monthEntitySchemaDatatype} (e.g. resulting in `{'a': '2020-01', 'b': '2020-04'}` in the database).
  */
@@ -49,7 +49,7 @@ export const mapEntitySchemaDatatype: EntitySchemaDatatype = {
     }
 
     const innerElementDatatype: EntitySchemaDatatype = schemaService.getDatatypeOrDefault(
-      schemaField.arrayDataType
+      schemaField.innerDataType
     );
     const result = {};
     value.forEach((item, key) => {
@@ -78,7 +78,7 @@ export const mapEntitySchemaDatatype: EntitySchemaDatatype = {
     }
 
     const innerElementType: EntitySchemaDatatype = schemaService.getDatatypeOrDefault(
-      schemaField.arrayDataType
+      schemaField.innerDataType
     );
 
     const result = new Map();

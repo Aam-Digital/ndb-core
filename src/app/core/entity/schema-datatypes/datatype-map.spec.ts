@@ -22,7 +22,7 @@ import { EntitySchemaService } from "../schema/entity-schema.service";
 
 describe("Schema data type: map", () => {
   class TestEntity extends Entity {
-    @DatabaseField({ arrayDataType: "month" }) dateMap: Map<
+    @DatabaseField({ innerDataType: "month" }) dateMap: Map<
       string,
       Date
     > = new Map();
