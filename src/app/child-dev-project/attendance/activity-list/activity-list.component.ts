@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { RecurringActivity } from "../model/recurring-activity";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 
 @Component({
   selector: "app-activity-list",
@@ -16,7 +17,7 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 })
 export class ActivityListComponent implements OnInit {
   entities: RecurringActivity[] = [];
-  listConfig: any = {};
+  listConfig: EntityListConfig;
 
   constructor(
     private entityService: EntityMapperService,
@@ -25,7 +26,9 @@ export class ActivityListComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.route.data.subscribe((config) => (this.listConfig = config));
+    this.route.data.subscribe(
+      (config: EntityListConfig) => (this.listConfig = config)
+    );
     this.entities = await this.entityService.loadType<RecurringActivity>(
       RecurringActivity
     );

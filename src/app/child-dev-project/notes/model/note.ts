@@ -73,10 +73,10 @@ export class Note extends Entity {
     return color ? color : "";
   }
 
-  public getColorForId(entityId: string) {
+  public getColorForId(childId: string) {
     if (
       this.category.isMeeting &&
-      this.childrenAttendance.get(entityId)?.status === AttendanceStatus.ABSENT
+      this.childrenAttendance.get(childId)?.status === AttendanceStatus.ABSENT
     ) {
       // child is absent, highlight the entry
       return WarningLevelColor(WarningLevel.URGENT);

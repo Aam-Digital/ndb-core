@@ -1,19 +1,27 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { ChildBlockComponent } from "./child-block.component";
 import { Child } from "../model/child";
+import { moduleMetadata } from "@storybook/angular";
+import { FlexLayoutModule } from "@angular/flex-layout";
+import { CommonModule } from "@angular/common";
 import { addDefaultChildPhoto } from "../../../../../.storybook/utils/addDefaultChildPhoto";
 
 export default {
   title: "Child Dev Project/ChildBlock",
   component: ChildBlockComponent,
-  argTypes: {},
+  decorators: [
+    moduleMetadata({
+      imports: [CommonModule, FlexLayoutModule],
+    }),
+  ],
 } as Meta;
 
 const demoChild = new Child("1");
 demoChild.name = "John Doe";
 addDefaultChildPhoto(demoChild);
 demoChild.projectNumber = "99";
-demoChild.phone = "+49 199 1234567";
+// @ts-ignore
+demoChild.phone = "+49 199 1234567"; // @ts-ignore
 demoChild.schoolClass = "5";
 
 const Template: Story<ChildBlockComponent> = (args: ChildBlockComponent) => ({

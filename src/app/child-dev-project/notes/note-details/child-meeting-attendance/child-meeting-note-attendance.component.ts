@@ -17,7 +17,6 @@ export class ChildMeetingNoteAttendanceComponent {
   ATTENDANCE_STATUS = AttendanceStatus;
 
   setStatus(present: boolean) {
-    console.log(present);
     if (present) {
       this.attendance.status = AttendanceStatus.PRESENT;
     } else {

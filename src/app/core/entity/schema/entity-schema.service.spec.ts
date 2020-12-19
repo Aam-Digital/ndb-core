@@ -137,7 +137,7 @@ describe("EntitySchemaService", () => {
 
   it("schema:array converts contained dates to month for saving", function () {
     class TestEntity extends Entity {
-      @DatabaseField({ arrayDataType: "month" }) dateArr: Date[];
+      @DatabaseField({ innerDataType: "month" }) dateArr: Date[];
     }
     const id = "test1";
     const entity = new TestEntity(id);
@@ -150,7 +150,7 @@ describe("EntitySchemaService", () => {
 
   it("schema:array converts contained month strings to dates when loading", function () {
     class TestEntity extends Entity {
-      @DatabaseField({ arrayDataType: "month" }) dateArr: Date[];
+      @DatabaseField({ innerDataType: "month" }) dateArr: Date[];
     }
     const id = "test1";
     const entity = new TestEntity(id);
