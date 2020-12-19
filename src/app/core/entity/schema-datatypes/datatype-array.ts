@@ -97,7 +97,7 @@ export const arrayEntitySchemaDatatype: EntitySchemaDatatype = {
  *
  * @param arraySchemaField The schema field config as received by the array datatype from the annotation
  */
-function generateSubSchemaField(arraySchemaField: EntitySchemaField) {
+export function generateSubSchemaField(arraySchemaField: EntitySchemaField) {
   const subSchemaField = Object.assign({}, arraySchemaField);
   subSchemaField.dataType = arraySchemaField.arrayDataType;
   delete subSchemaField.arrayDataType;
