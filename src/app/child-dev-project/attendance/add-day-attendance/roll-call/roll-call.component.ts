@@ -1,7 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Child } from "../../../children/model/child";
 import { animate, style, transition, trigger } from "@angular/animations";
-import { AttendanceStatus } from "../../model/attendance-status";
+import {
+  AttendanceStatus,
+  AttendanceStatusType,
+} from "../../model/attendance-status";
 import { Note } from "../../../notes/model/note";
 import { EventAttendance } from "../../model/event-attendance";
 
@@ -37,27 +40,72 @@ export class RollCallComponent implements OnInit {
 
   /**
    * Emitted when the roll call is finished (or aborted).
+   *
+   * In case it is aborted `undefined` is passed.
    */
   @Output() complete = new EventEmitter<Note>();
 
   currentIndex: number;
 
-  /** mapped enum to be accessible in template */
-  AttStatus = AttendanceStatus;
+  /** options available for selecting an attendance status */
+  availableStatus: AttendanceStatusType[];
 
-  entries: { childId: string; attendance: EventAttendance }[];
+  entries: { child: Child; attendance: EventAttendance }[];
 
   async ngOnInit() {
+    this.loadAttendanceStatusTypes();
+
     this.entries = this.eventEntity.children.map((childId) => ({
-      childId: childId,
+      child: this.children.find((c) => c.getId() === childId),
       attendance: this.eventEntity.getAttendance(childId),
     }));
     this.goToNextStudent(0);
   }
 
-  markAttendance(status: AttendanceStatus) {
-    const childId = this.eventEntity.children[this.currentIndex];
-    this.eventEntity.getAttendance(childId).status = status;
+  private loadAttendanceStatusTypes() {
+    // TODO: move this into config completely
+    this.availableStatus = [
+      {
+        status: AttendanceStatus.PRESENT,
+        shortName: "P",
+        name: "Present",
+        color: "#C8E6C9",
+      },
+      {
+        status: AttendanceStatus.ABSENT,
+        shortName: "A",
+        name: "Absent",
+        color: "#FF8A65",
+      },
+      {
+        status: AttendanceStatus.LATE,
+        shortName: "L",
+        name: "Late",
+        color: "#FFECB3",
+      },
+      {
+        status: AttendanceStatus.HOLIDAY,
+        shortName: "H",
+        name: "Holiday",
+        color: "#CFD8DC",
+      },
+      {
+        status: AttendanceStatus.EXCUSED,
+        shortName: "E",
+        name: "Excused",
+        color: "#D7CCC8",
+      },
+      {
+        status: AttendanceStatus.UNKNOWN,
+        shortName: "?",
+        name: "Skip",
+        color: "#DDDDDD",
+      },
+    ];
+  }
+
+  markAttendance(child: Child, status: AttendanceStatus) {
+    this.eventEntity.getAttendance(child.getId()).status = status;
     setTimeout(() => this.goToNextStudent(), 750);
   }
 
@@ -69,15 +117,14 @@ export class RollCallComponent implements OnInit {
     }
   }
 
-  endRollCall() {
+  abort() {
+    this.complete.emit(undefined);
+  }
+  finish() {
     this.complete.emit(this.eventEntity);
   }
 
   isFinished(): boolean {
     return this.currentIndex >= this.eventEntity.children.length;
-  }
-
-  getChildById(childId: string) {
-    return this.children.find((c) => c.getId() === childId);
   }
 }
