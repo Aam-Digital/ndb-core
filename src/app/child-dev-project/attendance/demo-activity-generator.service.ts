@@ -73,9 +73,9 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<
       faker.random.alphaNumeric(1).toUpperCase();
     activity.type = type;
     activity.participants = children.map((c) => c.getId());
-    activity.assignedTo = faker.random.arrayElement(
-      this.demoUser.entities
-    ).name;
+    activity.assignedTo = faker.random
+      .arrayElement(this.demoUser.entities)
+      .getId();
 
     return activity;
   }
