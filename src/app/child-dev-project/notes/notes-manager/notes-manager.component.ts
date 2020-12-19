@@ -12,6 +12,7 @@ import { UntilDestroy } from "@ngneat/until-destroy";
 import { NoteConfigLoaderService } from "../note-config-loader/note-config-loader.service";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
+import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 
 @UntilDestroy()
 @Component({
@@ -29,7 +30,7 @@ import { EntityListComponent } from "../../../core/entity-components/entity-list
 export class NotesManagerComponent implements OnInit {
   @ViewChild("entityList") entityList: EntityListComponent<Note>;
 
-  config: any = {};
+  config: EntityListConfig;
   notes: Note[] = [];
 
   private statusFS: FilterSelectionOption<Note>[] = [
@@ -73,7 +74,7 @@ export class NotesManagerComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.route.data.subscribe((config) => {
+    this.route.data.subscribe((config: EntityListConfig) => {
       this.config = config;
       this.addPrebuiltFilters();
     });

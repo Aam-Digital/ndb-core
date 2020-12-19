@@ -3,6 +3,7 @@ import { Child } from "../model/child";
 import { ActivatedRoute, Router } from "@angular/router";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { ChildrenService } from "../children.service";
+import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 
 @UntilDestroy()
 @Component({
@@ -18,7 +19,7 @@ import { ChildrenService } from "../children.service";
 })
 export class ChildrenListComponent implements OnInit {
   childrenList: Child[] = [];
-  listConfig: any = {};
+  listConfig: EntityListConfig;
 
   constructor(
     private childrenService: ChildrenService,
@@ -27,7 +28,9 @@ export class ChildrenListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.route.data.subscribe((config) => (this.listConfig = config));
+    this.route.data.subscribe(
+      (config: EntityListConfig) => (this.listConfig = config)
+    );
     this.childrenService
       .getChildren()
       .subscribe((children) => (this.childrenList = children));
