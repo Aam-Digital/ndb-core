@@ -24,7 +24,7 @@ export class ActivitySetupComponent implements OnInit {
   visibleActivities: RecurringActivity[] = [];
 
   constructor(
-    private entityService: EntityMapperService,
+    private entityMapper: EntityMapperService,
     private attendanceService: AttendanceService,
     private sessionService: SessionService,
     private formDialog: FormDialogService
@@ -43,7 +43,7 @@ export class ActivitySetupComponent implements OnInit {
   }
 
   private async loadActivities() {
-    this.allActivities = await this.entityService.loadType<RecurringActivity>(
+    this.allActivities = await this.entityMapper.loadType<RecurringActivity>(
       RecurringActivity
     );
     this.visibleActivities = this.allActivities.filter(

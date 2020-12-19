@@ -23,7 +23,7 @@ export class AddDayAttendanceComponent implements OnInit {
   stages = ["Select Event", "Record Attendance"];
 
   constructor(
-    private entityService: EntityMapperService,
+    private entityMapper: EntityMapperService,
     private childrenService: ChildrenService
   ) {}
 
@@ -44,7 +44,7 @@ export class AddDayAttendanceComponent implements OnInit {
   }
 
   async finishRollCallState() {
-    await this.entityService.save(this.event);
+    await this.entityMapper.save(this.event);
     this.currentStage = 0;
   }
 }

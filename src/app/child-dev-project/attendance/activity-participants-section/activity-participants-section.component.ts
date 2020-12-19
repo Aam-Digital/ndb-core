@@ -16,7 +16,7 @@ export class ActivityParticipantsSectionComponent
   editing: boolean;
   participants: string[];
 
-  constructor(private entityService: EntityMapperService) {}
+  constructor(private entityMapper: EntityMapperService) {}
 
   onInitFromDynamicConfig(config: PanelConfig) {
     this.entity = config.entity as RecurringActivity;
@@ -30,7 +30,7 @@ export class ActivityParticipantsSectionComponent
 
   async save() {
     this.entity.participants = this.participants;
-    await this.entityService.save<RecurringActivity>(this.entity);
+    await this.entityMapper.save<RecurringActivity>(this.entity);
     this.editing = false;
   }
 }

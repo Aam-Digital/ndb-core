@@ -7,10 +7,10 @@ import { Note } from "../notes/model/note";
   providedIn: "root",
 })
 export class AttendanceService {
-  constructor(private entityService: EntityMapperService) {}
+  constructor(private entityMapper: EntityMapperService) {}
 
   async getEventsOnDate(date: Date) {
-    const events = await this.entityService.loadType<Note>(Note);
+    const events = await this.entityMapper.loadType<Note>(Note);
     return events.filter(
       (e) => e.category.isMeeting && moment(e.date).isSame(date, "day")
     );
