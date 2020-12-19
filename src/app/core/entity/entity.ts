@@ -15,6 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { v4 as uuid } from "uuid";
 import { EntitySchema } from "./schema/entity-schema";
 import { DatabaseField } from "./database-field.decorator";
 import {
@@ -27,7 +28,7 @@ import {
  * It can be used for passing a class from which new objects should be created.
  * For example usage check the {@link EntityMapperService}.
  */
-export type EntityConstructor<T extends Entity> = new (id: string) => T;
+export type EntityConstructor<T extends Entity> = new (id?: string) => T;
 
 /**
  * "Entity" is a base class for all domain model classes.
@@ -115,9 +116,9 @@ export class Entity {
    * Creates an entity object with the given id. This id is final and won't be changeable after this object has been
    * created.
    *
-   * @param id a unique id for this entity
+   * @param id a unique id for this entity; if no id is passed a uuid is generated automatically
    */
-  constructor(id: string) {
+  constructor(id: string = uuid()) {
     this.entityId = id;
   }
 
