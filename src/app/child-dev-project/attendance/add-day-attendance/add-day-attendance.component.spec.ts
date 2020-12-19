@@ -91,7 +91,7 @@ describe("AddDayAttendanceComponent", () => {
     expect(component.event.children).toEqual(
       testStudents.map((c) => c.getId())
     );
-    expect(component.event.subject).toEqual(component.attendanceType);
+    expect(component.event.subject).toEqual("coaching");
   });
 
   it("should save event to db after finishing roll call", () => {

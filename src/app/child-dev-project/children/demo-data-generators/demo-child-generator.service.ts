@@ -41,7 +41,7 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     child.admissionDate = faker.date.past(child.age - 4);
 
     if (faker.random.number(100) > 80) {
-      this.makeChildDropout(child);
+      DemoChildGenerator.makeChildDropout(child);
     }
 
     return child;
