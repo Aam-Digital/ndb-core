@@ -7,6 +7,8 @@ import { AttendanceModule } from "../attendance.module";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ChildrenService } from "../../children/children.service";
 import { of } from "rxjs";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { User } from "../../../core/user/user";
 
 describe("AddDayAttendanceComponent", () => {
   let component: AddDayAttendanceComponent;
@@ -29,6 +31,10 @@ describe("AddDayAttendanceComponent", () => {
       providers: [
         { provide: EntityMapperService, useValue: mockEntityService },
         { provide: ChildrenService, useValue: mockChildrenService },
+        {
+          provide: SessionService,
+          useValue: { getCurrentUser: () => new User("") },
+        },
       ],
     }).compileComponents();
   }));
