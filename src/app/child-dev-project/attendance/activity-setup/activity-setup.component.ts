@@ -48,7 +48,7 @@ export class ActivitySetupComponent implements OnInit {
     );
     this.visibleActivities = this.allActivities.filter(
       (a) =>
-        a.assignedTo === this.sessionService.getCurrentUser().name ||
+        a.assignedTo === this.sessionService.getCurrentUser().getId() ||
         a.assignedTo === ""
     );
 
@@ -100,7 +100,9 @@ export class ActivitySetupComponent implements OnInit {
 
       let score = 1;
       const activity = event.relatesTo as RecurringActivity;
-      if (activity.assignedTo === this.sessionService.getCurrentUser().name) {
+      if (
+        activity.assignedTo === this.sessionService.getCurrentUser().getId()
+      ) {
         score += 1;
       } else if (activity.assignedTo !== "") {
         score -= 2;
