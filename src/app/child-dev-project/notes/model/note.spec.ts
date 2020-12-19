@@ -4,6 +4,8 @@ import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.s
 import { async } from "@angular/core/testing";
 import { Entity } from "../../../core/entity/entity";
 import { AttendanceStatus } from "../../attendance/model/attendance-status";
+import { EventAttendance } from "../../attendance/model/event-attendance";
+import { InteractionSchemaDatatype } from "../note-config-loader/interaction-schema-datatype";
 
 function createTestModel(): Note {
   const n1 = new Note("2");
@@ -25,8 +27,25 @@ describe("Note", () => {
   const ENTITY_TYPE = "Note";
   let entitySchemaService: EntitySchemaService;
 
+  const INTERACTION_TYPES = {
+    NONE: {
+      name: "",
+    },
+    HOME_VISIT: {
+      name: "Home Visit",
+    },
+    GUARDIAN_MEETING: {
+      name: "Guardians' Meeting",
+      color: "#E1F5FE",
+      isMeeting: true,
+    },
+  };
+
   beforeEach(async(() => {
     entitySchemaService = new EntitySchemaService();
+    entitySchemaService.registerSchemaDatatype(
+      new InteractionSchemaDatatype({ InteractionTypes: INTERACTION_TYPES })
+    );
   }));
 
   it("has correct _id and entityId", function () {
@@ -44,19 +63,29 @@ describe("Note", () => {
       _id: ENTITY_TYPE + ":" + id,
 
       children: ["1", "2", "5"],
-      childrenAttendance: [],
+      childrenAttendance: {
+        "5": new EventAttendance(AttendanceStatus.ABSENT, "sick"),
+      },
       date: new Date(),
       subject: "Note Subject",
       text: "Note text",
       author: "Max Musterman",
-      category: "DISCUSSION",
+      category: "HOME_VISIT",
       warningLevel: WarningLevel.URGENT,
 
       searchIndices: [],
     };
 
     const entity = new Note(id);
-    Object.assign(entity, expectedData);
+    entity.children = expectedData.children;
+    entity.date = expectedData.date;
+    entity.subject = expectedData.subject;
+    entity.text = expectedData.text;
+    entity.author = expectedData.author;
+    entity.category = INTERACTION_TYPES.HOME_VISIT;
+    entity.warningLevel = expectedData.warningLevel;
+    entity.getAttendance("5").status = AttendanceStatus.ABSENT;
+    entity.getAttendance("5").remarks = "sick";
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
