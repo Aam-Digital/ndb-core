@@ -69,7 +69,7 @@ describe("Note", () => {
     expect(n3.children.sort()).toEqual(["1", "4", "7"].sort());
   });
 
-  it("should shrink in size after removing", function () {
+  it("should fully remove child including optional attendance details", function () {
     const n4 = createTestModel();
     const previousLength = n4.children.length;
     n4.removeChild("1");
