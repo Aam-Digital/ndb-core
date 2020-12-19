@@ -6,11 +6,12 @@
 </span>
 
 <div style="position:absolute;" *ngIf="tooltipVisible">
-  <div class="mat-elevation-z3 child-tooltip" (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()" fxLayout='row'>
-    <div fxFlex='30'>
+  <div class="mat-elevation-z3 child-tooltip" (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()"
+       fxLayout='row' fxLayoutGap="8px">
+    <div fxFlex>
       <img [src]="entity?.photo?.value" class="child-pic-large">
     </div>
-    <div fxFlex>
+    <div fxFlex="grow">
       <h3>{{entity?.name}}</h3>
       <p><span class='fa fa-phone'></span> {{entity?.phone}}</p>
       <p><app-school-block [entityId]='entity?.schoolId'></app-school-block>,
