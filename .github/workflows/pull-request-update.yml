@@ -17,7 +17,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           target: builder
           tags: test-image
-          load: true
+          outputs: type=local,dest=./img
           build-args: RUN_TESTS=${{ true }}
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/aam-digital:cache
       - name: Publish code coverage
@@ -25,7 +25,7 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
         with:
-          coverageCommand: docker images && docker cp test-image:/coverage .
+          coverageLocations: ${{github.workspace}}/img/app/coverage/lcov.info:lcov
   deploy-prod-image:
     runs-on: ubuntu-latest
     steps:
