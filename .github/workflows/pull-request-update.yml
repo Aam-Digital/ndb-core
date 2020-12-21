@@ -28,8 +28,6 @@ jobs:
           coverageLocations: ${{github.workspace}}/img/app/coverage/lcov.info:lcov
   deploy-prod-image:
     runs-on: ubuntu-latest
-    env:
-      APP_NAME: "app-name"
     steps:
       - uses: actions/checkout@v1
       - name: Set up Docker Buildx
@@ -44,16 +42,14 @@ jobs:
           load: true
           tags: prod/image
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/aam-digital:cache
-      - name: Create app name
-        shell: bash
-        run: |
-          name=${{ github.head_ref }}-test-deploy
-          echo "APP_NAME=${name:0:30}" >> $GITHUB_ENV
       - name: Heroku deployment
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
         run: |
+          name=test-deployment-pr-${{ github.event.number }}
+          echo $name
+          echo ${name}
           heroku container:login
-          docker tag prod/image registry.heroku.com/${{ env.APP_NAME }}/web
-          docker push registry.heroku.com/${{ env.APP_NAME }}/web
-          heroku container:release -a ${{ env.APP_NAME }} web
+          docker tag prod/image registry.heroku.com/${name}/web
+          docker push registry.heroku.com/${name}/web
+          heroku container:release -a ${name} web

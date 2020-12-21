@@ -5,7 +5,7 @@ on:
 
 jobs:
   create-heroku-app:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     env:
       APP_NAME: "app-name"
     steps:
@@ -13,7 +13,8 @@ jobs:
       - name: Create app name
         shell: bash
         run: |
-          name=${{ github.head_ref }}-test-deploy
+          name=test-deployment-pr-${{ github.event.number }}
+          echo $name
           echo "APP_NAME=${name:0:30}" >> $GITHUB_ENV
       - name: Create app
         env:
@@ -21,13 +22,10 @@ jobs:
         run: |
           heroku apps:create ${{ env.APP_NAME }} --region=eu
       - name: Post comment on PR
-        env:
-          PR: ${{ github.ref }}
         run: |
-          PR=${PR#refs/*/}
-          PR=${PR%/*}
+          echo ${{ env.APP_NAME }}
           curl -X POST \
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
-          https://api.github.com/repos/Aam-Digital/ndb-core/issues/$PR/comments \
+          https://api.github.com/repos/Aam-Digital/ndb-core/issues/${{ github.event.number }}/comments \
           -d '{"body":"Deployed to https://${{ env.APP_NAME }}.herokuapp.com/"}'
