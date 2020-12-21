@@ -1,6 +1,6 @@
 {
   "name": "ndb-core",
-  "version": "2.20.2",
+  "version": "2.21.1",
   "license": "GPL-3.0",
   "scripts": {
     "ng": "ng",
@@ -52,7 +52,6 @@
     "reveal": "0.0.4",
     "rxjs": "^6.5.5",
     "tslib": "^1.13.0",
-    "uniqid": "^5.2.0",
     "uuid": "^8.3.2",
     "webdav": "^3.3.0",
     "zone.js": "~0.10.2"
