@@ -1,7 +1,7 @@
 name: SetUp
 on:
   pull_request:
-    types: [opened]
+    types: [opened, reopened]
 
 jobs:
   create-heroku-app:
@@ -11,23 +11,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Create app name
-        shell: bash
-        run: |
-          name=${{ github.head_ref }}-test-deploy
-          echo "APP_NAME=${name:0:30}" >> $GITHUB_ENV
+        run: echo "APP_NAME=test-deployment-pr-${{ github.event.number }}" >> $GITHUB_ENV
       - name: Create app
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
         run: |
-          heroku apps:create ${{ env.APP_NAME }}
+          heroku apps:create ${{ env.APP_NAME }} --region=eu
       - name: Post comment on PR
-        env:
-          PR: ${{ github.ref }}
         run: |
-          PR=${PR#refs/*/}
-          PR=${PR%/*}
           curl -X POST \
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
-          https://api.github.com/repos/Aam-Digital/ndb-core/issues/$PR/comments \
+          https://api.github.com/repos/Aam-Digital/ndb-core/issues/${{ github.event.number }}/comments \
           -d '{"body":"Deployed to https://${{ env.APP_NAME }}.herokuapp.com/"}'
