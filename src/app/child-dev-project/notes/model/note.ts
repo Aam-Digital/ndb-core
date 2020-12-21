@@ -34,7 +34,12 @@ export class Note extends Entity {
 
   /** IDs of Child entities linked with this note */
   @DatabaseField() children: string[] = [];
-  /** optional additional information about attendance at this event for each of the linked children */
+
+  /**
+   * optional additional information about attendance at this event for each of the linked children
+   *
+   * No direct access to change this property. Use the `.getAttendance()` method to have safe access.
+   */
   @DatabaseField() private childrenAttendance: Map<
     string,
     EventAttendance
