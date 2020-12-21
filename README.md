@@ -7,7 +7,7 @@
 
 
 # Aam Digital
-Empowering NGOs' social workers with simple to use (database) software.
+Empowering social workers with simple to use software.
 
 > For more information about the software and a free demo system visit **[www.aam-digital.com](https://www.aam-digital.com)**.
 
