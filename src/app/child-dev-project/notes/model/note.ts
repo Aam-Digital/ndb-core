@@ -15,26 +15,42 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { MeetingNoteAttendance } from "../meeting-note-attendance";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../core/entity/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { WarningLevel, WarningLevelColor } from "../../warning-level";
 import { InteractionType } from "../note-config-loader/note-config.interface";
+import { EventAttendance } from "../../attendance/model/event-attendance";
+import { AttendanceStatus } from "../../attendance/model/attendance-status";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
+  static create(date: Date, subject: string = ""): Note {
+    const instance = new Note();
+    instance.date = date;
+    instance.subject = subject;
+    return instance;
+  }
+
   /** IDs of Child entities linked with this note */
   @DatabaseField() children: string[] = [];
-  /** An array of triplets containing information about the child and it's attendance */
-  @DatabaseField() attendances: MeetingNoteAttendance[] = [];
+
+  /**
+   * optional additional information about attendance at this event for each of the linked children
+   *
+   * No direct access to change this property. Use the `.getAttendance()` method to have safe access.
+   */
+  @DatabaseField() private childrenAttendance: Map<
+    string,
+    EventAttendance
+  > = new Map();
+
   @DatabaseField() date: Date;
   @DatabaseField() subject: string = "";
   @DatabaseField() text: string = "";
   @DatabaseField() author: string = "";
-  @DatabaseField({ dataType: "interaction-type" }) category: InteractionType = {
-    name: "",
-  };
+  @DatabaseField({ dataType: "interaction-type" }) category: InteractionType =
+    InteractionType.NONE;
   @DatabaseField({ dataType: "string" }) warningLevel: WarningLevel =
     WarningLevel.OK;
 
@@ -55,8 +71,11 @@ export class Note extends Entity {
     return color ? color : "";
   }
 
-  public getColorForId(entityId: string) {
-    if (this.category.isMeeting && !this.isPresent(entityId)) {
+  public getColorForId(childId: string) {
+    if (
+      this.category.isMeeting &&
+      this.childrenAttendance.get(childId)?.status === AttendanceStatus.ABSENT
+    ) {
       // child is absent, highlight the entry
       return WarningLevelColor(WarningLevel.URGENT);
     }
@@ -68,50 +87,12 @@ export class Note extends Entity {
   }
 
   /**
-   * whether a specific child with given childId is linked to this not
-   * @param childId The childId to check for
-   */
-  isLinkedWithChild(childId: string): boolean {
-    return this.children.includes(childId);
-  }
-
-  /**
-   * returns the children that were either present or absent
-   * @param presence true to get the children that were present, false to get the children that were absent
-   */
-  childrenWithPresence(presence: boolean): MeetingNoteAttendance[] {
-    return this.attendances.filter(
-      (attendance) => attendance.present === presence
-    );
-  }
-
-  /**
-   * whether or not a specific child was present or not.
-   * This does not check whether or not this note is a meeting and will not return
-   * a sensible value, if this child couldn't be found
-   * @param childId The id of the child to check for
-   */
-  isPresent(childId: string): boolean {
-    const child = this.attendances.find(
-      (attendance) => attendance.childId === childId
-    );
-    if (child !== undefined) {
-      return child.present;
-    }
-  }
-
-  /**
    * removes a specific child from this note
    * @param childId The id of the child to exclude from the notes
    */
   removeChild(childId: string) {
     this.children.splice(this.children.indexOf(childId), 1);
-    this.attendances.splice(
-      this.attendances.findIndex(
-        (attendance) => attendance.childId === childId
-      ),
-      1
-    );
+    this.childrenAttendance.delete(childId);
   }
 
   /**
@@ -119,30 +100,31 @@ export class Note extends Entity {
    * @param childId The id of the child to add to the notes
    */
   addChild(childId: string) {
-    this.children.splice(0, 0, childId);
-    this.attendances.splice(0, 0, new MeetingNoteAttendance(childId));
-  }
-
-  /**
-   * adds multiple children to this note
-   * @param childIds The id's of the children to add
-   */
-  addChildren(...childIds: string[]) {
-    childIds.forEach((child) => this.addChild(child));
-  }
-
-  /**
-   * Toggles for a given child it's presence.
-   * If the child was absent, the presence-field will be true for that child.
-   * If the child was present, the presence-field will be false for that child
-   * @param childId The ID of the child
-   */
-  togglePresence(childId: string) {
-    const child = this.attendances.find(
-      (attendance) => attendance.childId === childId
-    );
-    if (child !== undefined) {
-      child.present = !child.present;
+    if (this.children.includes(childId)) {
+      return;
     }
+
+    this.children.splice(0, 0, childId);
+  }
+
+  /**
+   * Returns the event attendance details for the given child.
+   *
+   * This method returns a default object that can be used and updated even if no attendance has been recorded yet.
+   * Returns undefined if the child is not added to this event/note instance.
+   *
+   * @param childId
+   */
+  getAttendance(childId: string): EventAttendance {
+    if (!this.children.includes(childId)) {
+      return undefined;
+    }
+
+    let attendance = this.childrenAttendance.get(childId);
+    if (!attendance) {
+      attendance = new EventAttendance();
+      this.childrenAttendance.set(childId, attendance);
+    }
+    return attendance;
   }
 }

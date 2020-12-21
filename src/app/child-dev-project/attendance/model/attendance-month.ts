@@ -17,9 +17,10 @@
 
 import { Entity } from "../../../core/entity/entity";
 import { WarningLevel } from "../../warning-level";
-import { AttendanceDay, AttendanceStatus } from "./attendance-day";
+import { AttendanceDay } from "./attendance-day";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
+import { AttendanceStatus } from "./attendance-status";
 
 @DatabaseEntity("AttendanceMonth")
 export class AttendanceMonth extends Entity {

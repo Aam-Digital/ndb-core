@@ -13,19 +13,19 @@
 
   <div fxFlex="125px">
     <mat-button-toggle-group name="present" class="presence-toggle"
-                             [(ngModel)]="noteChildAttendance.present" (change)='change.emit(noteChildAttendance)'>
+                             [value]="attendance.status !== ATTENDANCE_STATUS.ABSENT" (change)='setStatus($event.value)'>
       <mat-button-toggle [value]="true" class="presence-toggle-button"
-                         [ngClass]="{'button-present': noteChildAttendance.present}">
+                         [ngClass]="{'button-present': attendance.status !== ATTENDANCE_STATUS.ABSENT}">
         Present
       </mat-button-toggle>
       <mat-button-toggle [value]="false" class="presence-toggle-button"
-                         [ngClass]="{'button-absent': !noteChildAttendance.present}">
+                         [ngClass]="{'button-absent': attendance.status === ATTENDANCE_STATUS.ABSENT}">
         Absent
       </mat-button-toggle>
     </mat-button-toggle-group>
   </div>
 
-  <app-child-block [entityId]="noteChildAttendance.childId" fxFlex>
+  <app-child-block [entityId]="childId" fxFlex>
   </app-child-block>
 </div>
 

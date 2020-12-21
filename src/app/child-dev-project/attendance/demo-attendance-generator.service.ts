@@ -4,7 +4,8 @@ import { Injectable } from "@angular/core";
 import { Child } from "../children/model/child";
 import { faker } from "../../core/demo-data/faker";
 import { AttendanceMonth } from "./model/attendance-month";
-import { AttendanceDay, AttendanceStatus } from "./model/attendance-day";
+import { AttendanceDay } from "./model/attendance-day";
+import { AttendanceStatus } from "./model/attendance-status";
 import moment from "moment";
 
 interface AttendanceProfile {

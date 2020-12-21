@@ -3,7 +3,6 @@ import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { Child } from "../../children/model/child";
 import { Note } from "../model/note";
-import { MeetingNoteAttendance } from "../meeting-note-attendance";
 import { faker } from "../../../core/demo-data/faker";
 import { WarningLevel } from "../../warning-level";
 import { noteIndividualStories } from "./notes_individual-stories";
@@ -12,6 +11,7 @@ import { centersUnique } from "../../children/demo-data-generators/fixtures/cent
 import { absenceRemarks } from "./remarks";
 import moment from "moment";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import { AttendanceStatus } from "../../attendance/model/attendance-status";
 
 export class DemoNoteConfig {
   minNotesPerChild: number;
@@ -150,14 +150,13 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     );
 
     note.children = children.map((c) => c.getId());
-    note.attendances = children.map((child) => {
-      const attendance = new MeetingNoteAttendance(child.getId());
+    children.forEach((child) => {
+      const attendance = note.getAttendance(child.getId());
       // get an approximate presence of 85%
       if (faker.random.number(100) <= 15) {
-        attendance.present = false;
+        attendance.status = AttendanceStatus.ABSENT;
         attendance.remarks = faker.random.arrayElement(absenceRemarks);
       }
-      return attendance;
     });
 
     note.author = faker.random.arrayElement(this.teamMembers);

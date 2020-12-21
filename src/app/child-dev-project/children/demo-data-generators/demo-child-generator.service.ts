@@ -28,38 +28,41 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     ];
   }
 
+  static generateEntity(id: string) {
+    const child = new Child(id);
+    child.name = faker.name.firstName() + " " + faker.name.lastName();
+    child.projectNumber = id;
+    child.religion = faker.random.arrayElement(religions);
+    child.gender = faker.random.arrayElement([Gender.MALE, Gender.FEMALE]);
+    child.dateOfBirth = faker.dateOfBirth(5, 20);
+    child.motherTongue = faker.random.arrayElement(languages);
+    child.center = faker.random.arrayElement(centersWithProbability);
+
+    child.admissionDate = faker.date.past(child.age - 4);
+
+    if (faker.random.number(100) > 80) {
+      DemoChildGenerator.makeChildDropout(child);
+    }
+
+    return child;
+  }
+
+  private static makeChildDropout(child: Child) {
+    child.dropoutDate = faker.date.between(child.admissionDate, new Date());
+    child.dropoutRemarks = faker.lorem.sentence();
+    child.dropoutType = faker.random.arrayElement(dropoutTypes);
+    child.status = "Dropout";
+  }
+
   constructor(public config: DemoChildConfig) {
     super();
   }
 
   generateEntities(): Child[] {
     const data = [];
-
     for (let i = 1; i <= this.config.count; i++) {
-      const child = new Child(String(i));
-      child.name = faker.name.firstName() + " " + faker.name.lastName();
-      child.projectNumber = String(i);
-      child.religion = faker.random.arrayElement(religions);
-      child.gender = faker.random.arrayElement([Gender.MALE, Gender.FEMALE]);
-      child.dateOfBirth = faker.dateOfBirth(5, 20);
-      child.motherTongue = faker.random.arrayElement(languages);
-      child.center = faker.random.arrayElement(centersWithProbability);
-
-      child.admissionDate = faker.date.past(child.age - 4);
-
-      if (faker.random.number(100) > 80) {
-        this.makeChildDropout(child);
-      }
-
-      data.push(child);
+      data.push(DemoChildGenerator.generateEntity(String(i)));
     }
     return data;
-  }
-
-  private makeChildDropout(child: Child) {
-    child.dropoutDate = faker.date.between(child.admissionDate, new Date());
-    child.dropoutRemarks = faker.lorem.sentence();
-    child.dropoutType = faker.random.arrayElement(dropoutTypes);
-    child.status = "Dropout";
   }
 }

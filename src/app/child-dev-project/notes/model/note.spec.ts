@@ -1,22 +1,18 @@
-import { MeetingNoteAttendance } from "../meeting-note-attendance";
 import { Note } from "./note";
 import { WarningLevel, WarningLevelColor } from "../../warning-level";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { async } from "@angular/core/testing";
 import { Entity } from "../../../core/entity/entity";
-
-function createAttendanceModels(): Array<MeetingNoteAttendance> {
-  const a1 = new MeetingNoteAttendance("1", true, "not empty");
-  const a2 = new MeetingNoteAttendance("4", false, "remark one");
-  const a3 = new MeetingNoteAttendance("7", true, "");
-
-  return [a1, a2, a3];
-}
+import { AttendanceStatus } from "../../attendance/model/attendance-status";
+import { EventAttendance } from "../../attendance/model/event-attendance";
+import { InteractionSchemaDatatype } from "../note-config-loader/interaction-schema-datatype";
 
 function createTestModel(): Note {
   const n1 = new Note("2");
-  n1.attendances = createAttendanceModels();
-  n1.children = n1.attendances.map((a) => a.childId);
+  n1.children = ["1", "4", "7"];
+  n1.getAttendance("1").status = AttendanceStatus.PRESENT;
+  n1.getAttendance("4").status = AttendanceStatus.ABSENT;
+  n1.getAttendance("4").remarks = "has fever";
   n1.date = new Date();
   n1.subject = "Note Subject";
   n1.text = "Note text";
@@ -31,8 +27,25 @@ describe("Note", () => {
   const ENTITY_TYPE = "Note";
   let entitySchemaService: EntitySchemaService;
 
+  const INTERACTION_TYPES = {
+    NONE: {
+      name: "",
+    },
+    HOME_VISIT: {
+      name: "Home Visit",
+    },
+    GUARDIAN_MEETING: {
+      name: "Guardians' Meeting",
+      color: "#E1F5FE",
+      isMeeting: true,
+    },
+  };
+
   beforeEach(async(() => {
     entitySchemaService = new EntitySchemaService();
+    entitySchemaService.registerSchemaDatatype(
+      new InteractionSchemaDatatype({ InteractionTypes: INTERACTION_TYPES })
+    );
   }));
 
   it("has correct _id and entityId", function () {
@@ -50,42 +63,33 @@ describe("Note", () => {
       _id: ENTITY_TYPE + ":" + id,
 
       children: ["1", "2", "5"],
-      attendances: [
-        new MeetingNoteAttendance("1"),
-        new MeetingNoteAttendance("2"),
-        new MeetingNoteAttendance("5"),
-      ],
+      childrenAttendance: {
+        "5": new EventAttendance(AttendanceStatus.ABSENT, "sick"),
+      },
       date: new Date(),
       subject: "Note Subject",
       text: "Note text",
       author: "Max Musterman",
-      category: "DISCUSSION",
+      category: "HOME_VISIT",
       warningLevel: WarningLevel.URGENT,
 
       searchIndices: [],
     };
 
     const entity = new Note(id);
-    Object.assign(entity, expectedData);
+    entity.children = expectedData.children;
+    entity.date = expectedData.date;
+    entity.subject = expectedData.subject;
+    entity.text = expectedData.text;
+    entity.author = expectedData.author;
+    entity.category = INTERACTION_TYPES.HOME_VISIT;
+    entity.warningLevel = expectedData.warningLevel;
+    entity.getAttendance("5").status = AttendanceStatus.ABSENT;
+    entity.getAttendance("5").remarks = "sick";
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
     expect(rawData).toEqual(expectedData);
-  });
-
-  it("should return the correct linked children", function () {
-    const n1 = createTestModel();
-    expect(n1.isLinkedWithChild("1")).toBe(true);
-    expect(n1.isLinkedWithChild("2")).toBe(false);
-  });
-
-  it("should return the correct presence behaviour", function () {
-    const n2 = createTestModel();
-    expect(n2.childrenWithPresence(true).length).toBe(2);
-    expect(n2.childrenWithPresence(false).length).toBe(1);
-
-    expect(n2.isPresent("1")).toBe(true);
-    expect(n2.isPresent("4")).toBe(false);
   });
 
   it("should return the correct childIds", function () {
@@ -94,26 +98,27 @@ describe("Note", () => {
     expect(n3.children.sort()).toEqual(["1", "4", "7"].sort());
   });
 
-  it("should shrink in size after removing", function () {
+  it("should fully remove child including optional attendance details", function () {
     const n4 = createTestModel();
     const previousLength = n4.children.length;
     n4.removeChild("1");
     expect(n4.children.length).toBe(previousLength - 1);
-    expect(n4.attendances.length).toBe(previousLength - 1);
+    expect(n4.getAttendance("1")).toBeUndefined();
   });
 
   it("should increase in size after adding", function () {
     const n5 = createTestModel();
     const previousLength = n5.children.length;
-    n5.addChildren("2", "5");
-    expect(n5.children.length).toBe(previousLength + 2);
-    expect(n5.attendances.length).toBe(previousLength + 2);
+    n5.addChild("2");
+    expect(n5.children.length).toBe(previousLength + 1);
   });
 
-  it("should toggle presence", function () {
-    const n6 = createTestModel();
-    n6.togglePresence("1");
-    expect(n6.attendances[0].present).toBe(false);
+  it("should not add same twice", function () {
+    const n5 = createTestModel();
+    const previousLength = n5.children.length;
+    n5.addChild("2");
+    n5.addChild("2");
+    expect(n5.children.length).toBe(previousLength + 1);
   });
 
   it("should return colors", function () {
