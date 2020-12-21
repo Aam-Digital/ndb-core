@@ -9,7 +9,7 @@ import { DatabaseField } from "../../../core/entity/database-field.decorator";
 export class ChildSchoolRelation extends Entity {
   @DatabaseField() childId: string;
   @DatabaseField() schoolId: string;
-  @DatabaseField() schoolClass: string;
+  @DatabaseField() schoolClass: string = "";
   @DatabaseField({ dataType: "date-only" }) start: Date;
   @DatabaseField({ dataType: "date-only" }) end: Date;
 

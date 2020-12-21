@@ -12,10 +12,10 @@
 }
 
 .child-pic {
-  width: 120px;
+  width: 150px;
   height: 150px;
-  object-fit: contain;
-  border: 1px solid black;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .child-pic-upload{
