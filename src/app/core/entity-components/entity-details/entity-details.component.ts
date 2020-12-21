@@ -2,7 +2,6 @@ import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from "@angular/common";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import * as uniqid from "uniqid";
 import {
   PanelConfig,
   EntityDetailsConfig,
@@ -66,7 +65,7 @@ export class EntityDetailsComponent {
       this.config.entity
     );
     if (id === "new") {
-      this.entity = new constr(uniqid());
+      this.entity = new constr();
       this.creatingNew = true;
       this.setPanelsConfig();
     } else {

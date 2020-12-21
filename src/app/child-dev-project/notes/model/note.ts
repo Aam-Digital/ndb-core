@@ -22,12 +22,11 @@ import { WarningLevel, WarningLevelColor } from "../../warning-level";
 import { InteractionType } from "../note-config-loader/note-config.interface";
 import { EventAttendance } from "../../attendance/model/event-attendance";
 import { AttendanceStatus } from "../../attendance/model/attendance-status";
-import { v4 as uuid } from "uuid";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
   static create(date: Date, subject: string = ""): Note {
-    const instance = new Note(uuid());
+    const instance = new Note();
     instance.date = date;
     instance.subject = subject;
     return instance;
