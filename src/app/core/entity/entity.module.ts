@@ -19,6 +19,7 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { EntityMapperService } from "./entity-mapper.service";
 import { EntitySchemaService } from "./schema/entity-schema.service";
+import { EntityConfigService } from "./entity-config.service";
 
 /**
  * Generic system to manage saving and loading documents with the database
@@ -41,6 +42,6 @@ import { EntitySchemaService } from "./schema/entity-schema.service";
 @NgModule({
   imports: [CommonModule],
   declarations: [],
-  providers: [EntityMapperService, EntitySchemaService],
+  providers: [EntityMapperService, EntitySchemaService, EntityConfigService],
 })
 export class EntityModule {}
