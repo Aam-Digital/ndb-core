@@ -25,7 +25,7 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
         with:
-          coverageCommand: docker cp test-image:app/coverage .
+          coverageCommand: docker cp test-image:/app/coverage .
   deploy-prod-image:
     runs-on: ubuntu-latest
     steps:
@@ -40,7 +40,7 @@ jobs:
           file: ./docker/pipeline/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           load: true
-          tags: prod/image
+          tags: prod-image
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/aam-digital:cache
       - name: Heroku deployment
         env:
@@ -48,6 +48,6 @@ jobs:
         run: |
           name=test-deployment-pr-${{ github.event.number }}
           heroku container:login
-          docker tag prod/image registry.heroku.com/${name}/web
+          docker tag prod-image registry.heroku.com/${name}/web
           docker push registry.heroku.com/${name}/web
           heroku container:release -a ${name} web
