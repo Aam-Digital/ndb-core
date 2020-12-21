@@ -47,8 +47,6 @@ jobs:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
         run: |
           name=test-deployment-pr-${{ github.event.number }}
-          echo $name
-          echo ${name}
           heroku container:login
           docker tag prod/image registry.heroku.com/${name}/web
           docker push registry.heroku.com/${name}/web
