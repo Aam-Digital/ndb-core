@@ -12,7 +12,6 @@ import { EntitySchemaService } from "../../core/entity/schema/entity-schema.serv
 import { ChildPhotoService } from "./child-photo-service/child-photo.service";
 import { LoadChildPhotoEntitySchemaDatatype } from "./child-photo-service/datatype-load-child-photo";
 import moment from "moment";
-import * as uniqid from "uniqid";
 import { LoggingService } from "../../core/logging/logging.service";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 
@@ -88,7 +87,7 @@ export class ChildrenService {
       loadedChild.schoolClass !== childCurrentSchoolInfo.schoolClass
     ) {
       // generate a ChildSchoolRelation entity from the information of the previous data model
-      const autoMigratedChildSchoolRelation = new ChildSchoolRelation(uniqid());
+      const autoMigratedChildSchoolRelation = new ChildSchoolRelation();
       autoMigratedChildSchoolRelation.childId = loadedChild.getId();
       autoMigratedChildSchoolRelation.schoolId = loadedChild.schoolId;
       autoMigratedChildSchoolRelation.schoolClass = loadedChild.schoolClass;
