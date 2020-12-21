@@ -11,7 +11,6 @@ import { DatePipe } from "@angular/common";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { ChildrenService } from "../children/children.service";
 import { SchoolsService } from "../schools/schools.service";
-import * as uniqid from "uniqid";
 import moment from "moment";
 import { isValidDate } from "../../utils/utils";
 import { Child } from "../children/model/child";
@@ -132,7 +131,7 @@ export class PreviousSchoolsComponent
   generateNewRecordFactory() {
     const childId = this.child.getId();
     return () => {
-      const newPreviousSchool = new ChildSchoolRelation(uniqid());
+      const newPreviousSchool = new ChildSchoolRelation();
       newPreviousSchool.childId = childId;
       // last to-date (of first entry in records); if the first entry doesn't have any to-date, lastToDate is set to yesterday
       const lastToDate =

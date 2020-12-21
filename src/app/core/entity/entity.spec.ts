@@ -36,8 +36,7 @@ describe("Entity", () => {
   });
 
   it("has correct type/prefix", function () {
-    const id = "test1";
-    const entity = new Entity(id);
+    const entity = new Entity();
 
     expect(entity.getType()).toBe("Entity");
     expect(Entity.extractTypeFromId(entity._id)).toBe("Entity");
