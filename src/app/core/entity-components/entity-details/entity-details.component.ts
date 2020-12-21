@@ -14,11 +14,13 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
+import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 
 const ENTITY_MAP: Map<string, any> = new Map<string, EntityConstructor<Entity>>(
   [
     ["Child", Child],
     ["School", School],
+    ["RecurringActivity", RecurringActivity],
   ]
 );
 

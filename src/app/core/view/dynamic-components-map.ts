@@ -20,6 +20,7 @@ import { FormComponent } from "../entity-components/entity-details/form/form.com
 import { DisplayTextComponent } from "../entity-components/entity-list/display-text/display-text.component";
 import { DisplayCheckmarkComponent } from "../entity-components/entity-list/display-checkmark/display-checkmark.component";
 import { DisplayDateComponent } from "../entity-components/entity-list/display-date/display-date.component";
+import { ActivityParticipantsSectionComponent } from "../../child-dev-project/attendance/activity-participants-section/activity-participants-section.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -32,6 +33,7 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["PreviousSchools", PreviousSchoolsComponent],
   ["Aser", AserComponent],
   ["GroupedChildAttendance", GroupedChildAttendanceComponent],
+  ["ActivityParticipantsSection", ActivityParticipantsSectionComponent],
   ["NotesOfChild", NotesOfChildComponent],
   ["HealthCheckup", HealthCheckupComponent],
   ["EducationalMaterial", EducationalMaterialComponent],

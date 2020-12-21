@@ -29,7 +29,7 @@
 
             <i [className]="classNamesWithIcon"></i>
             <span *ngIf="!creatingNew"
-            >{{ entity?.name }}</span
+            >{{ entity?.toString() }}</span
             >
             <span *ngIf="creatingNew">Adding new {{config?.entity}}</span>
         </h1>

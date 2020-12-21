@@ -33,6 +33,7 @@ import { UserListComponent } from "./core/admin/user-list/user-list.component";
 import { AttendanceAnalysisComponent } from "./child-dev-project/attendance/attendance-analysis/attendance-analysis.component";
 import { EntityDetailsComponent } from "./core/entity-components/entity-details/entity-details.component";
 import { ConflictResolutionListComponent } from "./conflict-resolution/conflict-resolution-list/conflict-resolution-list.component";
+import { ActivityListComponent } from "./child-dev-project/attendance/activity-list/activity-list.component";
 
 export const COMPONENT_MAP = {
   Dashboard: DashboardComponent,
@@ -46,6 +47,7 @@ export const COMPONENT_MAP = {
   AttendanceAnalysis: AttendanceAnalysisComponent,
   SchoolsList: SchoolsListComponent,
   ChildrenList: ChildrenListComponent,
+  ActivityList: ActivityListComponent,
   ChildAttendance: ChildAttendanceComponent,
   Admin: AdminComponent,
   ConflictResolution: ConflictResolutionListComponent,
