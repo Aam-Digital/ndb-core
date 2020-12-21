@@ -25,7 +25,7 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
         with:
-          coverageCommand: docker cp test-image:/app/coverage .
+          coverageCommand: docker images && docker cp test-image:/coverage .
   deploy-prod-image:
     runs-on: ubuntu-latest
     steps:
