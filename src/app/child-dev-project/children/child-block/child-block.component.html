@@ -2,7 +2,7 @@
       (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()" (click)="showDetailsPage()"
       [ngClass]="{ 'inactive': !entity.isActive }">
   <img [src]="entity?.photo?.value" class="child-pic">
-  {{entity?.name}} <span style="font-size: x-small">({{entity?.projectNumber}})</span>
+  {{entity?.name}} <span style="font-size: x-small" *ngIf="entity?.projectNumber">({{entity?.projectNumber}})</span>
 </span>
 
 <div style="position:absolute;" *ngIf="tooltipVisible">
