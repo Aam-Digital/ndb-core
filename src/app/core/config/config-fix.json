@@ -618,6 +618,18 @@
                       "placeholder": "Admission Date"
                     },
                     {
+                      "input": "select",
+                      "id": "status",
+                      "placeholder": "Status",
+                      "options": [
+                        "Dropout",
+                        "Active",
+                        ""
+                      ]
+                    }
+                  ],
+                  [
+                    {
                       "input": "text",
                       "id": "school",
                       "placeholder": "School"
@@ -626,9 +638,7 @@
                       "input": "text",
                       "id": "class",
                       "placeholder": "Class"
-                    }
-                  ],
-                  [
+                    },
                     {
                       "input": "text",
                       "id": "godfather",
