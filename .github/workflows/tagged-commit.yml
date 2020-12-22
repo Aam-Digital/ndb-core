@@ -6,7 +6,6 @@ on:
     tags:
       - '*'
 
-
 jobs:
   publish-image:
     runs-on: ubuntu-latest
