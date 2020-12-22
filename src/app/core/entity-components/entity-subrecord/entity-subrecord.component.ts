@@ -13,7 +13,6 @@ import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { ColumnDescription } from "./column-description";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
-import { AlertService } from "app/core/alerts/alert.service";
 import { FormValidationResult } from "./form-validation-result";
 import { ColumnDescriptionInputType } from "./column-description-input-type.enum";
 import { ComponentType } from "@angular/cdk/overlay";
@@ -23,6 +22,7 @@ import { Entity } from "../../entity/entity";
 import { ShowsEntity } from "../../form-dialog/shows-entity.interface";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
+import { AlertService } from "../../alerts/alert.service";
 
 /**
  * Generically configurable component to display and edit a list of entities in a compact way

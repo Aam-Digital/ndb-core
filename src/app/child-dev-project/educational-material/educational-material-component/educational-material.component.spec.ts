@@ -11,7 +11,7 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { of } from "rxjs";
 import { Database } from "../../../core/database/database";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { AlertService } from "app/core/alerts/alert.service";
+import { AlertService } from "../../../core/alerts/alert.service";
 
 describe("EducationalMaterialComponent", () => {
   let component: EducationalMaterialComponent;

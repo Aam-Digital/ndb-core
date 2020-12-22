@@ -58,7 +58,6 @@ import { AttendanceManagerComponent } from "../attendance/attendance-manager/att
 import { HealthCheckupComponent } from "../health-checkup/health-checkup-component/health-checkup.component";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { PreviousSchoolsComponent } from "../previous-schools/previous-schools.component";
-import { WebdavModule } from "app/core/webdav/webdav.module";
 import { AdminModule } from "../../core/admin/admin.module";
 import { SelectGroupChildrenComponent } from "./select-group-children/select-group-children.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
@@ -78,6 +77,7 @@ import { ChildBlockListComponent } from "./child-block-list/child-block-list.com
 import { ChildBlockComponent } from "./child-block/child-block.component";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
+import { WebdavModule } from "../../core/webdav/webdav.module";
 
 @NgModule({
   imports: [
