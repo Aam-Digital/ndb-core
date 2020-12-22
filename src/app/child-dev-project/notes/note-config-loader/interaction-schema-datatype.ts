@@ -1,8 +1,5 @@
-import { EntitySchemaDatatype } from "app/core/entity/schema/entity-schema-datatype";
-import {
-  InteractionType,
-  NoteConfig,
-} from "../note-config-loader/note-config.interface";
+import { EntitySchemaDatatype } from "../../../core/entity/schema/entity-schema-datatype";
+import { InteractionType, NoteConfig } from "./note-config.interface";
 
 export class InteractionSchemaDatatype
   implements EntitySchemaDatatype<InteractionType> {
