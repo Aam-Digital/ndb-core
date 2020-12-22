@@ -1,10 +1,10 @@
 <!-- Individual Student's Page -->
 <div *ngIf="!isFinished()">
-  <app-child-block [entity]='entries[currentIndex].child'></app-child-block>
+  <app-child-block [entityId]="entries[currentIndex].childId"></app-child-block>
 
   <div fxLayout='column' fxLayoutAlign='space-between stretch' class='options-wrapper'>
     <div class='group-select-option' *ngFor="let option of availableStatus"
-         (click)='markAttendance(entries[currentIndex].child, option.status)'
+         (click)='markAttendance(entries[currentIndex].childId, option.status)'
          [ngStyle]="{'background-color': entries[currentIndex].attendance.status===option.status ? option.color : ''}">
       <span class='fa fa-check' *ngIf='entries[currentIndex].attendance.status===option.status'></span>
       {{ option.name }}

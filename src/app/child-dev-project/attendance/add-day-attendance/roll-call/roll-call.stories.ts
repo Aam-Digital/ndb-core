@@ -9,6 +9,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { Note } from "../../../notes/model/note";
 import { FlexLayoutModule } from "@angular/flex-layout";
+import { ChildrenService } from "../../../children/children.service";
+import { of } from "rxjs";
 
 export default {
   title: "Child Dev Project/Views/RollCall",
@@ -22,6 +24,14 @@ export default {
         MatButtonModule,
       ],
       declarations: [ChildBlockComponent],
+      providers: [
+        {
+          provide: ChildrenService,
+          useValue: {
+            getChild: (id) => of(demoChildren.find((c) => c.getId() === id)),
+          },
+        },
+      ],
     }),
   ],
 } as Meta;
@@ -43,7 +53,6 @@ const Template: Story<RollCallComponent> = (args: RollCallComponent) => ({
 export const Primary = Template.bind({});
 Primary.args = {
   eventEntity: demoEvent,
-  children: demoChildren,
 };
 
 export const Finished = Template.bind({});

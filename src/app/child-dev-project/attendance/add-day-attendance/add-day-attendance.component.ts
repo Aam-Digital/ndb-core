@@ -1,45 +1,26 @@
-import { Component, OnInit } from "@angular/core";
-import { Child } from "../../children/model/child";
+import { Component } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { Note } from "../../notes/model/note";
-import { ChildrenService } from "../../children/children.service";
 
 @Component({
   selector: "app-add-day-attendance",
   templateUrl: "./add-day-attendance.component.html",
   styleUrls: ["./add-day-attendance.component.scss"],
 })
-export class AddDayAttendanceComponent implements OnInit {
+export class AddDayAttendanceComponent {
   currentStage = 0;
 
   day = new Date();
   attendanceType: string;
 
-  selectedChildren: Child[] = [];
   event: Note;
-
-  allChildren: Child[] = [];
 
   stages = ["Select Event", "Record Attendance"];
 
-  constructor(
-    private entityMapper: EntityMapperService,
-    private childrenService: ChildrenService
-  ) {}
-
-  ngOnInit(): void {
-    this.childrenService
-      .getChildren()
-      .subscribe((children) => (this.allChildren = children));
-  }
+  constructor(private entityMapper: EntityMapperService) {}
 
   async finishBasicInformationStage(event: Note) {
     this.event = event;
-
-    this.selectedChildren = this.allChildren.filter((c) =>
-      event.children.includes(c.getId())
-    );
-
     this.currentStage = 1;
   }
 

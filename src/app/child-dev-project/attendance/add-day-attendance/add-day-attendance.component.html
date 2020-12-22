@@ -9,7 +9,7 @@
     </app-activity-setup>
 
     <app-roll-call *ngIf='currentStage===1'
-                   [eventEntity]='event' [children]='selectedChildren' (complete)='finishRollCallState()'>
+                   [eventEntity]='event' (complete)='finishRollCallState()'>
     </app-roll-call>
   </div>
 </div>
