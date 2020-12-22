@@ -6,17 +6,11 @@ on:
 jobs:
   remove-heroku-app:
     runs-on: ubuntu-latest
-    env:
-      APP_NAME: "app-name"
     steps:
       - uses: actions/checkout@v2
-      - name: Create app name
-        shell: bash
-        run: |
-          name=${{ github.head_ref }}-test-deploy
-          echo "APP_NAME=${name:0:30}" >> $GITHUB_ENV
       - name: Remove app
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
         run: |
-          heroku apps:destroy --app ${{ env.APP_NAME }} --confirm ${{ env.APP_NAME }}
+          name=test-deployment-pr-${{ github.event.number }}
+          heroku apps:destroy --app $name --confirm $name
