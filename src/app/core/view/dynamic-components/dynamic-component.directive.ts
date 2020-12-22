@@ -6,10 +6,10 @@ import {
   SimpleChanges,
   ViewContainerRef,
 } from "@angular/core";
-import { LoggingService } from "app/core/logging/logging.service";
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
 import { OnInitDynamicComponent } from "./on-init-dynamic-component.interface";
 import { DYNAMIC_COMPONENTS_MAP } from "../dynamic-components-map";
+import { LoggingService } from "../../logging/logging.service";
 
 /**
  * Directive to mark a template into which a component that is dynamically injected from config should be loaded

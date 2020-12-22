@@ -13,7 +13,6 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { ExportDataComponent } from "../../../core/admin/export-data/export-data.component";
 import { ChildPhotoService } from "../child-photo-service/child-photo.service";
 import { SessionService } from "../../../core/session/session-service/session.service";
-import { User } from "app/core/user/user";
 import { of } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ChildrenModule } from "../children.module";
@@ -23,6 +22,7 @@ import {
   BooleanFilterConfig,
   EntityListConfig,
 } from "../../../core/entity-components/entity-list/EntityListConfig";
+import { User } from "../../../core/user/user";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
