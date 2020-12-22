@@ -36,35 +36,13 @@ jobs:
           target: builder
           build-args: RUN_TESTS=${{ true }}
           outputs: type=local,dest=./img
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/aam-digital:cache
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/ndb-server:cache
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v2.7.5
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
         with:
           coverageLocations: ${{github.workspace}}/img/app/coverage/lcov.info:lcov
-  publish-prod-image:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@master
-      - name: Build and push prod image
-        uses: docker/build-push-action@v2
-        with:
-          context: ./
-          file: ./docker/pipeline/Dockerfile
-          builder: ${{ steps.buildx.outputs.name }}
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/aam-digital:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/aam-digital:cache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/aam-digital:cache,mode=max
   run-semantic-release:
     runs-on: ubuntu-latest
     steps:
