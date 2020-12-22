@@ -38,8 +38,6 @@ import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { ChildrenService } from "./children.service";
-import { AttendanceBlockComponent } from "../attendance/attendance-block/attendance-block.component";
-import { ChildAttendanceComponent } from "../attendance/child-attendance/child-attendance.component";
 import { ChildrenCountDashboardComponent } from "./children-count-dashboard/children-count-dashboard.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -71,7 +69,6 @@ import { Angulartics2Module } from "angulartics2";
 import { AttendanceAnalysisComponent } from "../attendance/attendance-analysis/attendance-analysis.component";
 import { GroupedChildAttendanceComponent } from "./child-details/grouped-child-attendance/grouped-child-attendance.component";
 import { ViewModule } from "../../core/view/view.module";
-import { RecentAttendanceBlocksComponent } from "./children-list/recent-attendance-blocks/recent-attendance-blocks.component";
 import { SchoolBlockWrapperComponent } from "./children-list/school-block-wrapper/school-block-wrapper.component";
 import { ChildBlockListComponent } from "./child-block-list/child-block-list.component";
 import { ChildBlockComponent } from "./child-block/child-block.component";
@@ -121,9 +118,7 @@ import { WebdavModule } from "../../core/webdav/webdav.module";
     EntityListModule,
   ],
   declarations: [
-    AttendanceBlockComponent,
     ChildBlockComponent,
-    ChildAttendanceComponent,
     NotesOfChildComponent,
     ChildrenListComponent,
     ChildrenCountDashboardComponent,
@@ -141,7 +136,6 @@ import { WebdavModule } from "../../core/webdav/webdav.module";
     HealthCheckupComponent,
     PreviousSchoolsComponent,
     GroupedChildAttendanceComponent,
-    RecentAttendanceBlocksComponent,
     SchoolBlockWrapperComponent,
     ChildBlockListComponent,
   ],
@@ -165,7 +159,6 @@ import { WebdavModule } from "../../core/webdav/webdav.module";
     AttendanceWeekDashboardComponent,
     NoRecentNotesDashboardComponent,
     RecentNotesDashboardComponent,
-    RecentAttendanceBlocksComponent,
   ],
 })
 export class ChildrenModule {}
