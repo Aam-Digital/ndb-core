@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
-import { InteractionSchemaDatatype } from "./interaction-schema-datatype";
-import { InteractionType, NoteConfig } from "./note-config.interface";
 import { ConfigService } from "../../../core/config/config.service";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import { InteractionSchemaDatatype } from "./interaction-schema-datatype";
+import { InteractionType, NoteConfig } from "./note-config.interface";
 
 /**
  * Service loads data from config file regarding notes and registers them with the entity schema service;
