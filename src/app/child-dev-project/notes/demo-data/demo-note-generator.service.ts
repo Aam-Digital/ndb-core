@@ -66,16 +66,13 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     const data = [];
 
     for (const child of this.demoChildren.entities) {
-      const numberOfNotes = faker.random.number({
+      let numberOfNotes = faker.random.number({
         min: this.config.minNotesPerChild,
         max: this.config.maxNotesPerChild,
       });
-      for (let i = 0; i < numberOfNotes; i++) {
-        data.push(this.generateNoteForChild(child));
-      }
 
       // generate a recent note for the last week for some children to have data for dashboard
-      if (faker.random.number(100) < 40) {
+      if (numberOfNotes > 0 && faker.random.number(100) < 40) {
         data.push(
           this.generateNoteForChild(
             child,
@@ -85,6 +82,11 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
             )
           )
         );
+        numberOfNotes--;
+      }
+
+      for (let i = 0; i < numberOfNotes; i++) {
+        data.push(this.generateNoteForChild(child));
       }
     }
 
