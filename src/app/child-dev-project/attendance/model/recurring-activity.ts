@@ -19,6 +19,7 @@ import { Entity } from "../../../core/entity/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { v4 as uuid } from "uuid";
+import { Note } from "../../notes/model/note";
 
 @DatabaseEntity("RecurringActivity")
 export class RecurringActivity extends Entity {
@@ -26,6 +27,14 @@ export class RecurringActivity extends Entity {
     const instance = new RecurringActivity(uuid());
     instance.title = title;
     return instance;
+  }
+
+  /**
+   * Check whether the given note instance represents an event of a recurring activity
+   * @param note
+   */
+  static isActivityEventNote(note: Note) {
+    return (note?.relatesTo ?? "").startsWith(RecurringActivity.ENTITY_TYPE);
   }
 
   /** primary name to identify the activity */

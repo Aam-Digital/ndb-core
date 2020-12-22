@@ -49,7 +49,7 @@ longEvent.category = { name: "Guardians Meeting", isMeeting: true };
 demoChildren.forEach((c) => longEvent.addChild(c.getId()));
 
 const activityEvent = Note.create(new Date(), "Coaching Batch C");
-activityEvent.relatesTo = RecurringActivity.create("Coaching Batch C");
+activityEvent.relatesTo = RecurringActivity.create("Coaching Batch C")._id;
 demoChildren.forEach((c) => activityEvent.addChild(c.getId()));
 
 export const OneTimeEvent = Template.bind({});

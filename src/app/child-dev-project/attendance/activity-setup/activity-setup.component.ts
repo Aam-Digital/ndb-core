@@ -73,14 +73,14 @@ export class ActivitySetupComponent implements OnInit {
 
     await this.initAvailableEvents();
 
-    if (!(this.selectedEvent?.relatesTo instanceof RecurringActivity)) {
+    if (!RecurringActivity.isActivityEventNote(this.selectedEvent)) {
       this.selectedEvent = null;
     }
   }
 
   private createEventForActivity(activity: RecurringActivity): Note {
     const alreadyCreated = this.existingEvents.find(
-      (e) => e.relatesTo === activity
+      (e) => e.relatesTo === activity._id
     );
     if (alreadyCreated) {
       return alreadyCreated;
@@ -88,18 +88,20 @@ export class ActivitySetupComponent implements OnInit {
 
     const event = Note.create(this.date, activity.title);
     event.children = activity.participants;
-    event.relatesTo = activity;
+    event.relatesTo = activity._id;
     return event;
   }
 
   private sortEvents() {
     const calculateEventPriority = (event: Note) => {
-      if (!(event.relatesTo! instanceof RecurringActivity)) {
+      if (!RecurringActivity.isActivityEventNote(event)) {
         return 0;
       }
 
       let score = 1;
-      const activity = event.relatesTo as RecurringActivity;
+      const activity = this.allActivities.find(
+        (a) => a._id === event.relatesTo
+      );
       if (
         activity.assignedTo === this.sessionService.getCurrentUser().getId()
       ) {
