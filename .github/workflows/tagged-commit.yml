@@ -1,5 +1,10 @@
 name: New Tag
-on: push
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '*'
 
 
 jobs:
