@@ -31,6 +31,10 @@ import { ActivityCardComponent } from "../activity-card/activity-card.component"
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeIconsModule } from "../../../core/icons/font-awesome-icons.module";
 import { DemoActivityGeneratorService } from "../demo-activity-generator.service";
+import { NoteConfigLoaderService } from "../../notes/note-config-loader/note-config-loader.service";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { User } from "../../../core/user/user";
+import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
 
 const demoEvents: Note[] = [
   Note.create(new Date(), "Class 5a Parents Meeting"),
@@ -39,8 +43,15 @@ const demoEvents: Note[] = [
   Note.create(moment().subtract(1, "days").toDate(), "Discussion on values"),
   Note.create(new Date(), "Other Discussion"),
 ];
+demoEvents[0].category = { name: "Guardians", isMeeting: true };
+demoEvents[1].category = { name: "Guardians", isMeeting: true };
+demoEvents[2].category = { name: "Guardians", isMeeting: true };
+demoEvents[3].category = { name: "Life Skills", isMeeting: true };
+demoEvents[4].category = { name: "Other", isMeeting: true };
 
 const demoEvent = Note.create(new Date(), "coaching");
+demoEvent.category = { name: "Coaching", isMeeting: true };
+
 const demoChildren = [
   DemoChildGenerator.generateEntity("1"),
   DemoChildGenerator.generateEntity("2"),
@@ -48,10 +59,12 @@ const demoChildren = [
 ];
 demoChildren.forEach((c) => addDefaultChildPhoto(c));
 demoChildren.forEach((c) => demoEvent.addChild(c.getId()));
+
 const demoActivities = [
   DemoActivityGeneratorService.generateActivityForChildren(demoChildren),
   DemoActivityGeneratorService.generateActivityForChildren(demoChildren),
 ];
+demoActivities[0].assignedTo = "demo";
 
 export default {
   title: "Child Dev Project/Views/EventSetup",
@@ -77,6 +90,7 @@ export default {
         ReactiveFormsModule,
         FlexLayoutModule,
         EntityModule,
+        FormDialogModule,
       ],
       declarations: [ActivityCardComponent],
       providers: [
@@ -92,6 +106,14 @@ export default {
         },
         DatabaseIndexingService,
         ChildPhotoService,
+        {
+          provide: SessionService,
+          useValue: { getCurrentUser: () => new User("demo") },
+        },
+        {
+          provide: NoteConfigLoaderService,
+          useValue: { interactionTypes: [] },
+        },
       ],
     }),
   ],
