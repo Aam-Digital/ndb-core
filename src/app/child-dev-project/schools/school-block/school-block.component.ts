@@ -9,9 +9,9 @@ import {
 import { Router } from "@angular/router";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { School } from "../model/school";
-import { ConfigService } from "app/core/config/config.service";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { getUrlWithoutParams } from "../../../utils/utils";
+import { ConfigService } from "../../../core/config/config.service";
 
 @Component({
   selector: "app-school-block",

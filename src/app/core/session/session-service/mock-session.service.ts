@@ -1,12 +1,12 @@
 import { SessionService } from "./session.service";
-import { User } from "app/core/user/user";
 import { StateHandler } from "../session-states/state-handler";
 import { ConnectionState } from "../session-states/connection-state.enum";
 import { LoginState } from "../session-states/login-state.enum";
 import { SyncState } from "../session-states/sync-state.enum";
-import { MockDatabase } from "app/core/database/mock-database";
-import { Database } from "app/core/database/database";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { MockDatabase } from "../../database/mock-database";
+import { User } from "../../user/user";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { Database } from "../../database/database";
 
 /**
  * SessionService implementation for testing and demo purposes.
