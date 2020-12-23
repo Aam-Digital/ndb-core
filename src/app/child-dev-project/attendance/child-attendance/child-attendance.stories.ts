@@ -42,7 +42,10 @@ export default {
           provide: ChildrenService,
           useValue: { getAttendancesOfChild: () => of(attendances) },
         },
-        { provide: EntityMapperService, useValue: { save: () => {} } },
+        {
+          provide: EntityMapperService,
+          useValue: { save: () => Promise.resolve() },
+        },
       ],
     }),
   ],

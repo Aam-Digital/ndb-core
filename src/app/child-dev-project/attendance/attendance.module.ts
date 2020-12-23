@@ -50,6 +50,7 @@ import { ChildAttendanceComponent } from "./child-attendance/child-attendance.co
 import { AttendanceBlockComponent } from "./attendance-block/attendance-block.component";
 import { RecentAttendanceBlocksComponent } from "../children/children-list/recent-attendance-blocks/recent-attendance-blocks.component";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
+import { ActivityAttendanceSectionComponent } from "./activity-attendance-section/activity-attendance-section.component";
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { EntitySubrecordModule } from "../../core/entity-components/entity-subre
     AttendanceBlockComponent,
     RecentAttendanceBlocksComponent,
     ChildAttendanceComponent,
+    ActivityAttendanceSectionComponent,
   ],
   imports: [
     EntityListModule,

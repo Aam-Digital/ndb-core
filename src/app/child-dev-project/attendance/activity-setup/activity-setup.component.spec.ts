@@ -13,7 +13,10 @@ describe("ActivitySetupComponent", () => {
   let mockEntityService: jasmine.SpyObj<EntityMapperService>;
 
   beforeEach(async(() => {
-    mockEntityService = jasmine.createSpyObj("mockEntityService", ["save"]);
+    mockEntityService = jasmine.createSpyObj("mockEntityService", [
+      "save",
+      "loadType",
+    ]);
 
     TestBed.configureTestingModule({
       declarations: [ActivitySetupComponent],
