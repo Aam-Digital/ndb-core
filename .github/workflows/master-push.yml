@@ -32,11 +32,11 @@ jobs:
           context: ./
           file: ./docker/pipeline/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
-          tags: test/img
+          tags: test-image
           target: builder
           build-args: RUN_TESTS=${{ true }}
           outputs: type=local,dest=./img
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/ndb-server:cache
+          cache-from: type=registry,ref=aamdigital/ndb-server:cache
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v2.7.5
         env:

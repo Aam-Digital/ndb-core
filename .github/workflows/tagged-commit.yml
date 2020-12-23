@@ -28,6 +28,6 @@ jobs:
           file: ./docker/pipeline/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/ndb-server:${{ env.TAG }}
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/ndb-server:cache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/ndb-server:cache,mode=max
+          tags: aamdigital/ndb-server:${{ env.TAG }}
+          cache-from: type=registry,ref=aamdigital/ndb-server:cache
+          cache-to: type=registry,ref=aamdigital/ndb-server:cache,mode=max
