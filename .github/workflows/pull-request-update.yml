@@ -41,7 +41,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           load: true
           tags: prod-image
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/aam-digital:cache
+          cache-from: type=registry,ref=aamdigital/ndb-core:cache
       - name: Heroku deployment
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
