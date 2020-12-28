@@ -125,18 +125,20 @@ export class ActivityAttendance extends Entity {
 }
 
 // TODO: remove once EventAttendance contains the full reference to AttendanceStatusType after that was moved into config
-function getAttendanceType(status: AttendanceStatus) {
+export function getAttendanceType(status: AttendanceStatus) {
   return DEFAULT_ATTENDANCE_TYPES.find((t) => t.status === status);
 }
 
 /**
  * Generate a test event with children for the given AttendanceStatus arrray.
  * @param participating Object where keys are string childId and values are its attendance status
+ * @param date (Optional) date of the event; if not given today's date is used
  */
-export function generateEventWithAttendance(participating: {
-  [key: string]: AttendanceStatus;
-}): Note {
-  const event = Note.create(new Date());
+export function generateEventWithAttendance(
+  participating: { [key: string]: AttendanceStatus },
+  date = new Date()
+): Note {
+  const event = Note.create(date);
   for (const childId of Object.keys(participating)) {
     event.addChild(childId);
     event.getAttendance(childId).status = participating[childId];
