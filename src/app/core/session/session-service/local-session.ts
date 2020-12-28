@@ -57,7 +57,6 @@ export class LocalSession {
    * Create a LocalSession and set up the local PouchDB instance based on AppConfig settings.
    * @param _alertService
    * @param _entitySchemaService
-   * @param _analyticsService
    */
   constructor(
     private _alertService: AlertService,

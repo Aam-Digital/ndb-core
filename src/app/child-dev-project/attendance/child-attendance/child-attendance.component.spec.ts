@@ -12,8 +12,8 @@ import { MockDatabase } from "../../../core/database/mock-database";
 import { AttendanceMonth } from "../model/attendance-month";
 import { ChildrenModule } from "../../children/children.module";
 import { RouterTestingModule } from "@angular/router/testing";
-import { AttendanceStatus } from "../model/attendance-status";
 import { AlertService } from "../../../core/alerts/alert.service";
+import { AttendanceStatus } from "../model/attendance-day";
 
 const ATTENDANCE_ENTITIES: AttendanceMonth[] = (() => {
   const data = [];

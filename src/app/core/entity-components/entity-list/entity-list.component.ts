@@ -285,10 +285,6 @@ export class EntityListComponent<T extends Entity>
   }
 
   private displayColumnGroup(columnGroupName: string) {
-    if (columnGroupName === this.selectedColumnGroup) {
-      return;
-    }
-
     const selectedColumns = this.columnGroups.find(
       (c) => c.name === columnGroupName
     )?.columns;
