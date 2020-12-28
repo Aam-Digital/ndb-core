@@ -18,10 +18,10 @@
 import { Component, OnInit } from "@angular/core";
 import { MenuItem } from "../menu-item";
 import { AdminGuard } from "../../admin/admin.guard";
-import { ConfigService } from "app/core/config/config.service";
 import { NavigationMenuConfig } from "../navigation-menu-config.interface";
 import { RouterService } from "../../view/dynamic-routing/router.service";
 import { ViewConfig } from "../../view/dynamic-routing/view-config.interface";
+import { ConfigService } from "../../config/config.service";
 
 /**
  * Main app menu listing.

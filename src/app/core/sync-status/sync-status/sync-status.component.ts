@@ -21,11 +21,11 @@ import { SyncState } from "../../session/session-states/sync-state.enum";
 import { AlertService } from "../../alerts/alert.service";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { InitialSyncDialogComponent } from "./initial-sync-dialog.component";
-import { StateChangedEvent } from "app/core/session/session-states/state-handler";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { BackgroundProcessState } from "../background-process-state.interface";
 import { BehaviorSubject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
+import { StateChangedEvent } from "../../session/session-states/state-handler";
 
 /**
  * A small indicator component that displays an icon when there is currently synchronization

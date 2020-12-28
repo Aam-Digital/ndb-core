@@ -20,8 +20,8 @@ import { AppConfig } from "../app-config/app-config";
 import { MockSessionService } from "./session-service/mock-session.service";
 import { SessionService } from "./session-service/session.service";
 import { AlertService } from "../alerts/alert.service";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { LoggingService } from "../logging/logging.service";
+import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 
 /**
  * Factory method for Angular DI provider of SessionService.

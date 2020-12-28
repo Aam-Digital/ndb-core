@@ -18,8 +18,8 @@
 import { Component, OnInit } from "@angular/core";
 import { User } from "../user";
 import { SessionService } from "../../session/session-service/session.service";
-import { EntityMapperService } from "app/core/entity/entity-mapper.service";
 import { AppConfig } from "../../app-config/app-config";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
 
 /**
  * User account form to allow the user to view and edit information.

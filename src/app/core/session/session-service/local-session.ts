@@ -25,10 +25,10 @@ import { User } from "../../user/user";
 import { SyncState } from "../session-states/sync-state.enum";
 import { LoginState } from "../session-states/login-state.enum";
 import { StateHandler } from "../session-states/state-handler";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
-import { AlertService } from "app/core/alerts/alert.service";
 import { LoggingService } from "../../logging/logging.service";
 import { AnalyticsService } from "../../analytics/analytics.service";
+import { AlertService } from "../../alerts/alert.service";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 /**
  * Responsibilities:
@@ -57,7 +57,6 @@ export class LocalSession {
    * Create a LocalSession and set up the local PouchDB instance based on AppConfig settings.
    * @param _alertService
    * @param _entitySchemaService
-   * @param _analyticsService
    */
   constructor(
     private _alertService: AlertService,

@@ -38,13 +38,13 @@ import { AppConfigModule } from "../../app-config/app-config.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { PrimaryActionComponent } from "../primary-action/primary-action.component";
 import { AppConfig } from "../../app-config/app-config";
-import { SessionService } from "app/core/session/session-service/session.service";
-import { MockSessionService } from "app/core/session/session-service/mock-session.service";
+import { SessionService } from "../../session/session-service/session.service";
+import { MockSessionService } from "../../session/session-service/mock-session.service";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { CookieService } from "ngx-cookie-service";
 import { SwUpdate } from "@angular/service-worker";
 import { of } from "rxjs";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntitySubrecordModule } from "../../entity-components/entity-subrecord/entity-subrecord.module";
 
 describe("UiComponent", () => {

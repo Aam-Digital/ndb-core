@@ -16,14 +16,14 @@
  */
 
 import { SyncedSessionService } from "./synced-session.service";
-import { AlertService } from "app/core/alerts/alert.service";
+import { AlertService } from "../../alerts/alert.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { SyncState } from "../session-states/sync-state.enum";
 import { ConnectionState } from "../session-states/connection-state.enum";
-import { AppConfig } from "app/core/app-config/app-config";
+import { AppConfig } from "../../app-config/app-config";
 import { LocalSession } from "./local-session";
 import { RemoteSession } from "./remote-session";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 describe("SyncedSessionService", () => {
   const snackBarMock = { openFromComponent: () => {} } as any;

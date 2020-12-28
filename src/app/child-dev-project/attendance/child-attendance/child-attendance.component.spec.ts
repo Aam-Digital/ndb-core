@@ -10,9 +10,9 @@ import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.s
 import { Database } from "../../../core/database/database";
 import { MockDatabase } from "../../../core/database/mock-database";
 import { AttendanceMonth } from "../model/attendance-month";
-import { AlertService } from "app/core/alerts/alert.service";
 import { ChildrenModule } from "../../children/children.module";
 import { RouterTestingModule } from "@angular/router/testing";
+import { AlertService } from "../../../core/alerts/alert.service";
 import { AttendanceStatus } from "../model/attendance-status";
 
 const ATTENDANCE_ENTITIES: AttendanceMonth[] = (() => {
