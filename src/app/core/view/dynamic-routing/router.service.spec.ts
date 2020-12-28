@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { Router } from "@angular/router";
 import { RouterTestingModule } from "@angular/router/testing";
-import { ChildrenListComponent } from "app/child-dev-project/children/children-list/children-list.component";
+import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
 import { AdminGuard } from "../../admin/admin.guard";
 import { AdminComponent } from "../../admin/admin/admin.component";
 import { ConfigService } from "../../config/config.service";

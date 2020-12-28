@@ -1,9 +1,9 @@
 import { TestBed } from "@angular/core/testing";
-import { ConfigService } from "app/core/config/config.service";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { InteractionSchemaDatatype } from "./interaction-schema-datatype";
 import { NoteConfigLoaderService } from "./note-config-loader.service";
 import { NoteConfig } from "./note-config.interface";
+import { ConfigService } from "../../../core/config/config.service";
+import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 
 describe("NoteConfigLoaderService", () => {
   let service: NoteConfigLoaderService;
