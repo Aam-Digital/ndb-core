@@ -9,8 +9,8 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirmation-dialog.service";
-import { AlertService } from "app/core/alerts/alert.service";
+import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
+import { AlertService } from "../../../core/alerts/alert.service";
 
 describe("HealthCheckupComponent", () => {
   let component: HealthCheckupComponent;
