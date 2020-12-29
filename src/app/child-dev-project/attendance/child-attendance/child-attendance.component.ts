@@ -47,7 +47,7 @@ export class ChildAttendanceComponent implements OnChanges {
       "xs"
     ),
     new ColumnDescription(
-      "getAttendancePercentage",
+      (entity) => entity.getAttendancePercentage(),
       "Attended",
       ColumnDescriptionInputType.FUNCTION,
       null,

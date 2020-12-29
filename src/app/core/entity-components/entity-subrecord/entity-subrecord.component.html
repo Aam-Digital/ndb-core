@@ -6,7 +6,7 @@
         (click)='showRecord(rec)' [ngClass]="{'table-link': detailsComponent!==undefined}">
 
       <div *ngIf="col.inputType === 'function'" class='table-show-number'>
-        {{ col.formatter( rec[col.name].bind(rec)() ) }}
+        {{ col.formatter( col.valueFunction(rec) ) }}
       </div>
 
       <div *ngIf="col.inputType === 'readonly'" class='table-show-number'>

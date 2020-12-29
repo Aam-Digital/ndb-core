@@ -7,6 +7,7 @@ import { ColumnDescriptionInputType } from "../../../core/entity-components/enti
 import { AttendanceService } from "../attendance.service";
 import { DatePipe, PercentPipe } from "@angular/common";
 import { ActivityAttendance } from "../model/activity-attendance";
+import { Note } from "../../notes/model/note";
 
 @Component({
   selector: "app-activity-attendance-section",
@@ -19,6 +20,7 @@ export class ActivityAttendanceSectionComponent
   @Input() forChild?: string;
 
   records: ActivityAttendance[];
+  displayedEvents: Note[] = [];
 
   detailsComponent = AttendanceDetailsComponent;
   columns: Array<ColumnDescription> = [
@@ -31,28 +33,31 @@ export class ActivityAttendanceSectionComponent
       "xs"
     ),
     new ColumnDescription(
-      "getEventsPresent",
+      (e) => e.getEventsPresent(),
       "Present",
       ColumnDescriptionInputType.FUNCTION,
       null,
       undefined,
-      "xs"
+      "xs",
+      () => ({})
     ),
     new ColumnDescription(
-      "getEventsTotal",
+      (e) => e.getEventsTotal(),
       "Events",
       ColumnDescriptionInputType.FUNCTION,
       null,
       undefined,
-      "xs"
+      "xs",
+      () => ({})
     ),
     new ColumnDescription(
-      "getAttendancePercentage",
+      (e) => e.getAttendancePercentage(),
       "Attended",
       ColumnDescriptionInputType.FUNCTION,
       null,
       (v: number) => this.percentPipe.transform(v, "1.0-0"),
-      "md"
+      "md",
+      () => ({})
     ),
   ];
 
@@ -81,5 +86,9 @@ export class ActivityAttendanceSectionComponent
       this.activity
     );
     this.records.forEach((r) => (r.focusedChild = this.forChild));
+
+    if (this.records?.length > 0) {
+      this.displayedEvents = this.records[0].events;
+    }
   }
 }

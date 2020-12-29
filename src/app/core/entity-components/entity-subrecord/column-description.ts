@@ -29,15 +29,16 @@ export class ColumnDescription {
    * @param selectValues Array of possible values for editing this column; required for inputTypes select and autocomplete
    * @param formatter Function doing a custom transformation of the column's value before it is displayed.
    * @param visibleFrom The minimal screen size the column is shown.
-   *           screen size classes: xs	'screen and (max-width: 599px)'
-   *           sm	'screen and (min-width: 600px) and (max-width: 959px)'
-   *           md	'screen and (min-width: 960px) and (max-width: 1279px)'
-   *           lg	'screen and (min-width: 1280px) and (max-width: 1919px)'
-   *           xl	'screen and (min-width: 1920px) and (max-width: 5000px)'
+   *           screen size classes: xs  'screen and (max-width: 599px)'
+   *           sm  'screen and (min-width: 600px) and (max-width: 959px)'
+   *           md  'screen and (min-width: 960px) and (max-width: 1279px)'
+   *           lg  'screen and (min-width: 1280px) and (max-width: 1919px)'
+   *           xl  'screen and (min-width: 1920px) and (max-width: 5000px)'
    * @param styleBuilder (Optional) function building a ngStyle value, receiving the value as a parameter
+   * @param valueFunction (for inputType === function), a function taking the full object and returning the value for the column
    */
   constructor(
-    public name: string,
+    public name: string | ((any) => any),
     public label: string,
     public inputType: ColumnDescriptionInputType,
 
@@ -49,6 +50,7 @@ export class ColumnDescription {
     public visibleFrom: string = undefined,
     public styleBuilder: (value) => Object = () => {
       return {};
-    }
+    },
+    public valueFunction?: (any) => any
   ) {}
 }
