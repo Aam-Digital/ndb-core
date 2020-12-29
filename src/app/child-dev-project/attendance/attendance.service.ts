@@ -44,4 +44,12 @@ export class AttendanceService {
 
     return Array.from(periods.values());
   }
+
+  async getActivitiesForChild(childId: string): Promise<RecurringActivity[]> {
+    // TODO: index
+    const activities = await this.entityMapper.loadType<RecurringActivity>(
+      RecurringActivity
+    );
+    return activities.filter((a) => a.participants.includes(childId));
+  }
 }

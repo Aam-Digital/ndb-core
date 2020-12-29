@@ -2,42 +2,57 @@ import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AttendanceDetailsComponent } from "./attendance-details.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { Database } from "../../../core/database/database";
-import { MockDatabase } from "../../../core/database/mock-database";
-import { ChildrenService } from "../../children/children.service";
-import { AttendanceMonth } from "../model/attendance-month";
-import { EntityModule } from "../../../core/entity/entity.module";
 import { RouterTestingModule } from "@angular/router/testing";
-import { ChildPhotoService } from "../../children/child-photo-service/child-photo.service";
 import { of } from "rxjs";
-import { ChildrenModule } from "../../children/children.module";
 import { Angulartics2Module } from "angulartics2";
+import {
+  ActivityAttendance,
+  generateEventWithAttendance,
+} from "../model/activity-attendance";
+import { AttendanceStatus } from "../model/attendance-status";
+import { RecurringActivity } from "../model/recurring-activity";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { AttendanceModule } from "../attendance.module";
+import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
+import { MatNativeDateModule } from "@angular/material/core";
 
 describe("AttendanceDetailsComponent", () => {
   let component: AttendanceDetailsComponent;
   let fixture: ComponentFixture<AttendanceDetailsComponent>;
 
   beforeEach(async(() => {
-    const att = new AttendanceMonth("test");
-    att.month = new Date();
+    const entity = ActivityAttendance.create(new Date(), [
+      generateEventWithAttendance(
+        {
+          "1": AttendanceStatus.PRESENT,
+          "2": AttendanceStatus.PRESENT,
+          "3": AttendanceStatus.ABSENT,
+        },
+        new Date("2020-01-01")
+      ),
+      generateEventWithAttendance(
+        {
+          "1": AttendanceStatus.LATE,
+          "2": AttendanceStatus.ABSENT,
+        },
+        new Date("2020-01-02")
+      ),
+    ]);
+    entity.activity = RecurringActivity.create("Test Activity");
 
     TestBed.configureTestingModule({
       imports: [
-        ChildrenModule,
-        EntityModule,
+        AttendanceModule,
+        EntitySubrecordModule,
         RouterTestingModule,
         Angulartics2Module.forRoot(),
         RouterTestingModule,
+        MatNativeDateModule,
       ],
       providers: [
-        { provide: Database, useClass: MockDatabase },
+        { provide: EntityMapperService, useValue: {} },
         { provide: MatDialogRef, useValue: { beforeClosed: () => of({}) } },
-        { provide: MAT_DIALOG_DATA, useValue: { entity: att } },
-        { provide: ChildrenService, useClass: ChildrenService },
-        {
-          provide: ChildPhotoService,
-          useValue: jasmine.createSpyObj(["getImage"]),
-        },
+        { provide: MAT_DIALOG_DATA, useValue: { entity: entity } },
       ],
     }).compileComponents();
   }));

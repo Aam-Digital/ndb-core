@@ -5,7 +5,7 @@
   <div fxLayout='column' fxLayoutAlign='space-between stretch' class='options-wrapper'>
     <div class='group-select-option' *ngFor="let option of availableStatus"
          (click)='markAttendance(entries[currentIndex].childId, option.status)'
-         [ngStyle]="{'background-color': entries[currentIndex].attendance.status===option.status ? option.color : ''}">
+         [ngClass]="entries[currentIndex].attendance.status===option.status ? option.style : ''">
       <span class='fa fa-check' *ngIf='entries[currentIndex].attendance.status===option.status'></span>
       {{ option.name }}
     </div>

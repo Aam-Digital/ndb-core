@@ -24,6 +24,12 @@ import { BehaviorSubject } from "rxjs";
 
 @DatabaseEntity("Child")
 export class Child extends Entity {
+  static create(name: string): Child {
+    const instance = new Child();
+    instance.name = name;
+    return instance;
+  }
+
   /**
    * Returns the full relative filePath to a child photo given a filename, adding the relevant folders to it.
    * @param filename The given filename with file extension.

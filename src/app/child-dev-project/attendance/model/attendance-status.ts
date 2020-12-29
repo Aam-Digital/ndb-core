@@ -12,7 +12,7 @@ export class AttendanceStatusType {
     status: AttendanceStatus.UNKNOWN,
     name: "?",
     shortName: "?",
-    color: "#DDDDDD",
+    style: "attendance-U",
   };
 
   /**
@@ -28,8 +28,8 @@ export class AttendanceStatusType {
   /** a clear, spelled out title of the status */
   name: string;
 
-  /** a color code representing the status */
-  color?: string;
+  /** a css class with styling related to the status */
+  style?: string;
 }
 
 export enum AttendanceCounting {

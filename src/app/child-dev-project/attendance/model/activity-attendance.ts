@@ -5,6 +5,7 @@ import {
   DEFAULT_ATTENDANCE_TYPES,
 } from "./attendance-status";
 import { Entity } from "../../../core/entity/entity";
+import { RecurringActivity } from "./recurring-activity";
 
 export class ActivityAttendance extends Entity {
   static create(from: Date, events: Note[] = []) {
@@ -18,6 +19,8 @@ export class ActivityAttendance extends Entity {
   periodTo: Date;
 
   events: Note[] = [];
+
+  activity: RecurringActivity;
 
   /**
    * childId to be used as default when getting statistics through the instance's methods (e.g. getEventsPresent)

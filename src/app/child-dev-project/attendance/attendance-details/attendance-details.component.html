@@ -17,110 +17,54 @@
 
 <app-form-dialog-wrapper #dialogForm [entity]='entity'>
   <h1>
-    Attendance of <app-child-block [entityId]='entity.student'></app-child-block>
-    for {{entity.month | date:'MM/yyyy' }}
+    {{entity?.activity?.title}}:
+    {{entity.periodFrom | date: "shortDate" }} - {{entity.periodTo | date: "shortDate" }}
   </h1>
 
   <form #entityForm="ngForm">
-    <div fxLayout='row wrap' fxLayoutGap='20px'>
-      <div fxFlex>
-        <mat-form-field>
-          <input matInput placeholder="Month" name="month" type="month"
-                 [valueAsDate]="entity.month" (change)='entity.month=$event.target.valueAsDate;entityForm.form.markAsDirty();'>
-        </mat-form-field>
-      </div>
-      <div fxFlex>
-        <mat-form-field>
-          <mat-label>
-            Type/Institution
-          </mat-label>
-          <mat-select name="institution" [(ngModel)]="entity.institution">
-            <mat-option value="school">School</mat-option>
-            <mat-option value="coaching">Coaching</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-    </div>
 
     <div class="w-{{entity.getWarningLevel()}}">
       <div class='summary'>Attendance: {{entity?.getAttendancePercentage() | percent:'1.0-0'}}</div>
-      <div class='summary'>Late: {{entity?.daysLate / entity?.daysWorking | percent:'1.0-0'}}</div>
     </div>
 
-    <div fxLayout='row wrap' fxLayoutGap='20px' class="w-{{entity.getWarningLevel()}}">
+    <div fxLayout='row wrap' fxLayoutGap='20px'>
       <div fxFlex>
         <mat-form-field>
-          <input matInput type="number" min="0" placeholder='Working Days'
-                 [value]='entity.daysWorking' (change)="entity.daysWorking=$event.target.valueAsNumber;entityForm.form.markAsDirty();">
-          <button mat-button matSuffix mat-icon-button aria-label="Reset" matTooltip='reset and use daily attendance data'
-                  *ngIf="entity.daysWorking_manuallyEntered" (click)="entity.daysWorking_manuallyEntered=undefined">
-            <mat-icon fontIcon='fa-times'></mat-icon>
-          </button>
+          <input matInput type="number" min="0" placeholder='days present'
+                 [value]="entity.getEventsPresent()" readonly>
         </mat-form-field>
-
-        <span>
-        ({{entity.getDaysWorkingFromDailyAttendance()}} days
-        <span class='fa fa-question-circle' matTooltip='according to daily attendance register'></span>)
-      </span>
       </div>
 
       <div fxFlex>
         <mat-form-field>
-          <input matInput type="number" min="0" placeholder='Attended Days'
-                 [value]='entity.daysAttended' (change)="entity.daysAttended=$event.target.valueAsNumber;entityForm.form.markAsDirty();">
-          <button mat-button matSuffix mat-icon-button aria-label="Reset" matTooltip='reset and use daily attendance data'
-                  *ngIf="entity.daysAttended_manuallyEntered" (click)="entity.daysAttended_manuallyEntered=undefined">
-            <mat-icon fontIcon='fa-times'></mat-icon>
-          </button>
+          <input matInput type="number" min="0" placeholder='days absent'
+                 [value]="entity.getEventsAbsent()" readonly>
         </mat-form-field>
-
-        <span>
-        ({{entity.getDaysAttendedFromDailyAttendance()}} days
-        <span class='fa fa-question-circle' matTooltip='according to daily attendance register'></span>)
-      </span>
       </div>
 
       <div fxFlex>
         <mat-form-field>
-          <input matInput type="number" min="0" placeholder='Excused Days'
-                 [value]='entity.daysExcused' (change)="entity.daysExcused=$event.target.valueAsNumber;entityForm.form.markAsDirty();">
-          <button mat-button matSuffix mat-icon-button aria-label="Reset" matTooltip='reset and use daily attendance data'
-                  *ngIf="entity.daysExcused_manuallyEntered" (click)="entity.daysExcused_manuallyEntered=undefined">
-            <mat-icon fontIcon='fa-times'></mat-icon>
-          </button>
+          <input matInput type="number" min="0" placeholder='unknown status'
+                 [value]="entity.getEventsWithStatus(attendanceStatus.UNKNOWN)" readonly>
         </mat-form-field>
-
-        <span>
-        ({{entity.getDaysExcusedFromDailyAttendance()}} days
-        <span class='fa fa-question-circle' matTooltip='according to daily attendance register'></span>)
-      </span>
       </div>
 
       <div fxFlex>
         <mat-form-field>
-          <input matInput type="number" min="0" placeholder='Late Days'
-                 [value]='entity.daysLate' (change)="entity.daysLate=$event.target.valueAsNumber;entityForm.form.markAsDirty();">
-          <button mat-button matSuffix mat-icon-button aria-label="Reset"
-                  *ngIf="entity.daysLate_manuallyEntered" (click)="entity.daysLate_manuallyEntered=undefined">
-            <mat-icon fontIcon='fa-times'></mat-icon>
-          </button>
+          <input matInput type="number" min="0" placeholder='days late'
+                 [value]="entity.getEventsWithStatus(attendanceStatus.LATE)" readonly>
         </mat-form-field>
-
-        <span>
-        ({{entity.getDaysLateFromDailyAttendance()}} days
-        <span class='fa fa-question-circle' matTooltip='according to daily attendance register'></span>)
-      </span>
       </div>
     </div>
 
     <div>
-      <mat-form-field class='input-max'>
-        <textarea matInput placeholder="Remarks" name="remarks" [(ngModel)]="entity.remarks"></textarea>
-      </mat-form-field>
+      <app-entity-subrecord [records]="entity.events" [columns]="eventsColumns"
+                            [detailsComponent]="eventDetailsComponent" [showAddButton]="false" [inlineEditable]="false">
+      </app-entity-subrecord>
     </div>
 
     <div>
-      <app-attendance-days [attendanceMonth]='entity'></app-attendance-days>
+      <app-attendance-calendar [records]="entity.events"></app-attendance-calendar>
     </div>
   </form>
 </app-form-dialog-wrapper>

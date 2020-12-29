@@ -12,19 +12,45 @@ import {
   generateEventWithAttendance,
 } from "../model/activity-attendance";
 import { AttendanceStatus } from "../model/attendance-status";
+import { MatNativeDateModule } from "@angular/material/core";
+import { ChildrenService } from "../../children/children.service";
+import { of } from "rxjs";
+import { Child } from "../../children/model/child";
+import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
+import { Angulartics2Module } from "angulartics2";
 
 const demoActivity = RecurringActivity.create("Coaching Batch C");
 const attendanceRecords = [
   ActivityAttendance.create(new Date("2020-01-01"), [
-    generateEventWithAttendance({
-      "1": AttendanceStatus.PRESENT,
-      "2": AttendanceStatus.PRESENT,
-      "3": AttendanceStatus.ABSENT,
-    }),
-    generateEventWithAttendance({
-      "1": AttendanceStatus.PRESENT,
-      "2": AttendanceStatus.ABSENT,
-    }),
+    generateEventWithAttendance(
+      {
+        "1": AttendanceStatus.PRESENT,
+        "2": AttendanceStatus.PRESENT,
+        "3": AttendanceStatus.ABSENT,
+      },
+      new Date("2020-01-01")
+    ),
+    generateEventWithAttendance(
+      {
+        "1": AttendanceStatus.LATE,
+        "2": AttendanceStatus.ABSENT,
+      },
+      new Date("2020-01-02")
+    ),
+    generateEventWithAttendance(
+      {
+        "1": AttendanceStatus.ABSENT,
+        "2": AttendanceStatus.ABSENT,
+      },
+      new Date("2020-01-03")
+    ),
+    generateEventWithAttendance(
+      {
+        "1": AttendanceStatus.PRESENT,
+        "2": AttendanceStatus.ABSENT,
+      },
+      new Date("2020-01-04")
+    ),
   ]),
 
   ActivityAttendance.create(new Date("2020-02-01"), [
@@ -38,13 +64,21 @@ const attendanceRecords = [
     }),
   ]),
 ];
+attendanceRecords.forEach((a) => (a.activity = demoActivity));
 
 export default {
   title: "Child Dev Project/ActivityAttendanceSection",
   component: ActivityAttendanceSectionComponent,
   decorators: [
     moduleMetadata({
-      imports: [AttendanceModule, FontAwesomeIconsModule, RouterTestingModule],
+      imports: [
+        AttendanceModule,
+        EntitySubrecordModule,
+        FontAwesomeIconsModule,
+        RouterTestingModule,
+        MatNativeDateModule,
+        Angulartics2Module.forRoot(),
+      ],
       declarations: [],
       providers: [
         {
@@ -56,6 +90,10 @@ export default {
           useValue: {
             getActivityAttendances: () => Promise.resolve(attendanceRecords),
           },
+        },
+        {
+          provide: ChildrenService,
+          useValue: { getChild: () => of(Child.create("John Doe")) },
         },
       ],
     }),

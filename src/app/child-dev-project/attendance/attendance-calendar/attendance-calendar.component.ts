@@ -10,15 +10,12 @@ import { MatCalendarCellCssClasses } from "@angular/material/datepicker/calendar
 import moment, { Moment } from "moment";
 import { getAttendanceType } from "../model/activity-attendance";
 import { EventAttendance } from "../model/event-attendance";
-import {
-  AttendanceCounting,
-  AttendanceStatus,
-  AttendanceStatusType,
-} from "../model/attendance-status";
+import { AttendanceStatus } from "../model/attendance-status";
 import { MatCalendar } from "@angular/material/datepicker";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { NoteDetailsComponent } from "../../notes/note-details/note-details.component";
+import { calculateAverageAttendance } from "../model/calculate-average-event-attendance";
 
 @Component({
   selector: "app-attendance-calendar",
@@ -100,9 +97,11 @@ export class AttendanceCalendarComponent implements OnChanges {
     this.minDate = moment.min(dates).startOf("month").toDate();
     this.maxDate = moment.max(dates).endOf("month").toDate();
 
-    // it is only possible to update the active date (i.e. which month is visible)
-    // after minDate is propagated with the next change cycle ...
-    setTimeout(() => (this.calendar.activeDate = this.minDate));
+    if (this.calendar) {
+      // it is only possible to update the active date (i.e. which month is visible)
+      // after minDate is propagated with the next change cycle ...
+      setTimeout(() => (this.calendar.activeDate = this.minDate));
+    }
   }
 
   selectDay(newDate?: Date) {
@@ -152,38 +151,4 @@ export class AttendanceCalendarComponent implements OnChanges {
   showEventDetails(selectedEvent: Note) {
     this.formDialog.openDialog(NoteDetailsComponent, selectedEvent);
   }
-}
-
-function calculateAverageAttendance(
-  event: Note
-): {
-  average: number;
-  unknownStatus: number;
-  statusCounts: Map<AttendanceStatus, number>;
-} {
-  const stats = new Map<AttendanceCounting, number>();
-  stats.set(AttendanceCounting.PRESENT, 0);
-  stats.set(AttendanceCounting.ABSENT, 0);
-  stats.set(AttendanceCounting.IGNORE, 0);
-
-  const statusCounts = new Map<AttendanceStatus, number>();
-
-  for (const childId of event.children) {
-    const status = event.getAttendance(childId).status;
-    const countStatus = statusCounts.get(status) ?? 0;
-    statusCounts.set(status, countStatus + 1);
-
-    const attendanceType = getAttendanceType(status).countAs;
-    const countType = stats.get(attendanceType) ?? 0;
-    stats.set(attendanceType, countType + 1);
-  }
-
-  return {
-    average:
-      stats.get(AttendanceCounting.PRESENT) /
-      (stats.get(AttendanceCounting.PRESENT) +
-        stats.get(AttendanceCounting.ABSENT)),
-    unknownStatus: statusCounts.get(AttendanceStatusType.NONE.status) ?? 0,
-    statusCounts: statusCounts,
-  };
 }

@@ -33,31 +33,34 @@ export class ActivityAttendanceSectionComponent
       "xs"
     ),
     new ColumnDescription(
-      (e) => e.getEventsPresent(),
+      "getEventsPresent",
       "Present",
       ColumnDescriptionInputType.FUNCTION,
       null,
       undefined,
       "xs",
-      () => ({})
+      () => ({}),
+      (e) => e.getEventsPresent()
     ),
     new ColumnDescription(
-      (e) => e.getEventsTotal(),
+      "getEventsTotal",
       "Events",
       ColumnDescriptionInputType.FUNCTION,
       null,
       undefined,
       "xs",
-      () => ({})
+      () => ({}),
+      (e) => e.getEventsTotal()
     ),
     new ColumnDescription(
-      (e) => e.getAttendancePercentage(),
+      "getAttendancePercentage",
       "Attended",
       ColumnDescriptionInputType.FUNCTION,
       null,
       (v: number) => this.percentPipe.transform(v, "1.0-0"),
       "md",
-      () => ({})
+      () => ({}),
+      (e) => e.getAttendancePercentage()
     ),
   ];
 

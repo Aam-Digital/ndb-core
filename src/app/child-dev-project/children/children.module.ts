@@ -67,7 +67,6 @@ import { AttendanceMonthConflictResolutionStrategy } from "../attendance/attenda
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { Angulartics2Module } from "angulartics2";
 import { AttendanceAnalysisComponent } from "../attendance/attendance-analysis/attendance-analysis.component";
-import { GroupedChildAttendanceComponent } from "./child-details/grouped-child-attendance/grouped-child-attendance.component";
 import { ViewModule } from "../../core/view/view.module";
 import { SchoolBlockWrapperComponent } from "./children-list/school-block-wrapper/school-block-wrapper.component";
 import { ChildBlockListComponent } from "./child-block-list/child-block-list.component";
@@ -135,7 +134,6 @@ import { WebdavModule } from "../../core/webdav/webdav.module";
     AttendanceAnalysisComponent,
     HealthCheckupComponent,
     PreviousSchoolsComponent,
-    GroupedChildAttendanceComponent,
     SchoolBlockWrapperComponent,
     ChildBlockListComponent,
   ],
