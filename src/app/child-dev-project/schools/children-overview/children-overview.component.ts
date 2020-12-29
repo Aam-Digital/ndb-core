@@ -32,7 +32,7 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
     new ColumnDescription("age", "Age", ColumnDescriptionInputType.TEXT),
   ];
 
-  displayedColumns = ["projectNumber", "name", "schoolClass", "age"];
+  displayedColumns = ["name", "age"];
 
   studentsDataSource: MatTableDataSource<Child> = new MatTableDataSource<
     Child

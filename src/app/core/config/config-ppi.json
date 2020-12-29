@@ -7,7 +7,7 @@
         "link": "/dashboard"
       },
       {
-        "name": "Children",
+        "name": "Players",
         "icon": "child",
         "link": "/child"
       },
@@ -45,11 +45,6 @@
         "name": "Database Conflicts",
         "icon": "wrench",
         "link": "/admin/conflicts"
-      },
-      {
-        "name": "Help",
-        "icon": "question-circle",
-        "link": "/help"
       }
     ]
   },
@@ -114,7 +109,6 @@
   "view:admin": {"component": "Admin", "requiresAdmin": true},
   "view:users": {"component": "UserList", "requiresAdmin": true},
   "view:admin/conflicts": {"component": "ConflictResolution", "requiresAdmin": true },
-  "view:help": {"component": "Help"},
   "view:attendance": {"component": "AttendanceManager"},
   "view:attendance/analysis": {"component": "AttendanceAnalysis"},
   "view:attendance/add/month": {"component": "AddMonthAttendance"},
@@ -146,7 +140,7 @@
   "view:school/:id": {
     "component": "EntityDetails",
     "config": {
-      "entity": "School",
+      "entity": "Team",
       "panels": [
         {
           "title": "Basic Information",
@@ -227,7 +221,7 @@
     "component": "EntityDetails",
     "config": {
       "icon": "child",
-      "entity": "Child",
+      "entity": "Player",
       "panels": [
         {
           "title": "Basic Information",
