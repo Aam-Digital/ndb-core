@@ -52,7 +52,9 @@ export class ChildAttendanceComponent implements OnChanges {
       ColumnDescriptionInputType.FUNCTION,
       null,
       (v: number) => this.percentPipe.transform(v, "1.0-0"),
-      "md"
+      "md",
+      () => ({}),
+      (entity) => entity.getAttendancePercentage()
     ),
     new ColumnDescription(
       "daysExcused",
