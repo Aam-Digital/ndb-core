@@ -91,12 +91,6 @@ export class PreviousSchoolsComponent
       },
 
       {
-        name: "schoolClass",
-        label: "Class",
-        inputType: ColumnDescriptionInputType.TEXT,
-      },
-
-      {
         name: "start",
         label: "From",
         inputType: ColumnDescriptionInputType.DATE,
@@ -105,16 +99,6 @@ export class PreviousSchoolsComponent
         name: "end",
         label: "To",
         inputType: ColumnDescriptionInputType.DATE,
-      },
-      {
-        name: "result",
-        label: "Result",
-        inputType: ColumnDescriptionInputType.NUMBER,
-        valueFunction: (entity: ChildSchoolRelation) =>
-          entity.result >= 0 && !Number.isNaN(entity.result)
-            ? entity.result + "%"
-            : "N/A",
-        styleBuilder: this.resultColorStyleBuilder,
       },
     ];
   }
