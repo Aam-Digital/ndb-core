@@ -61,6 +61,11 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
   @Input() detailsComponent: ComponentType<ShowsEntity>;
 
   /**
+   * Whether the records can be edited directly in the table.
+   */
+  @Input() inlineEditable: boolean = true;
+
+  /**
    * Whether an "Add" button to create a new entry should be displayed as part of the form.
    * Default is "true".
    */
