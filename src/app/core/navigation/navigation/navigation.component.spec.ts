@@ -21,13 +21,13 @@ import { NavigationComponent } from "./navigation.component";
 import { RouterTestingModule } from "@angular/router/testing";
 import { MockSessionService } from "../../session/session-service/mock-session.service";
 import { MenuItem } from "../menu-item";
-import { SessionService } from "app/core/session/session-service/session.service";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatIconModule } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { RouterService } from "../../view/dynamic-routing/router.service";
-import { ConfigService } from "app/core/config/config.service";
+import { ConfigService } from "../../config/config.service";
+import { SessionService } from "../../session/session-service/session.service";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 describe("NavigationComponent", () => {
   let component: NavigationComponent;
