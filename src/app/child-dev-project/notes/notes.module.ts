@@ -39,6 +39,7 @@ import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
 import { Angulartics2Module } from "angulartics2";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
+import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 
 @NgModule({
   declarations: [
@@ -88,6 +89,7 @@ import { EntityListModule } from "../../core/entity-components/entity-list/entit
     Angulartics2Module,
     EntitySubrecordModule,
     EntityListModule,
+    ConfigurableEnumModule,
   ],
   providers: [],
 })

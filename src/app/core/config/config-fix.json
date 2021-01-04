@@ -51,84 +51,84 @@
   "enum:interaction-type": [
     {
       "id": "",
-      "name": ""
+      "label": ""
     },
     {
       "id": "HOME_VISIT",
-      "name": "Home Visit"
+      "label": "Home Visit"
     },
     {
       "id": "GUARDIAN_TALK",
-      "name": "Talk with Guardians"
+      "label": "Talk with Guardians"
     },
     {
       "id": "CHILD_TALK",
-      "name": "Talk with Child"
+      "label": "Talk with Child"
     },
     {
       "id": "INCIDENT",
-      "name": "Incident"
+      "label": "Incident"
     },
     {
       "id": "DISCUSSION",
-      "name": "Discussion/Decision",
+      "label": "Discussion/Decision",
       "color": "#E1BEE7"
     },
     {
       "id": "VISIT",
-      "name": "School/Hostel Visit"
+      "label": "School/Hostel Visit"
     },
     {
       "id": "PHONE_CALL",
-      "name": "Phone Call"
+      "label": "Phone Call"
     },
     {
       "id": "COACHING_TALK",
-      "name": "Talk with Coaching Teacher"
+      "label": "Talk with Coaching Teacher"
     },
     {
       "id": "PEER_TALK",
-      "name": "Talk with Peer"
+      "label": "Talk with Peer"
     },
     {
       "id": "NEIGHBOUR_TALK",
-      "name": "Talk with Neighbours"
+      "label": "Talk with Neighbours"
     },
     {
       "id": "GUARDIAN_MEETING",
-      "name": "Guardians' Meeting",
+      "label": "Guardians' Meeting",
       "color": "#E1F5FE",
       "isMeeting": true
     },
     {
       "id": "CHILDREN_MEETING",
-      "name": "Children's Meeting",
+      "label": "Children's Meeting",
       "color": "#E1F5FE",
       "isMeeting": true
     },
     {
       "id": "DAILY_ROUTINE",
-      "name": "Daily Routine",
+      "label": "Daily Routine",
       "color": "#F1F8E9"
     },
     {
       "id": "ANNUAL_SURVEY",
-      "name": "Annual Survey",
+      "label": "Annual Survey",
       "color": "#FFFDE7"
     },
     {
       "id": "EXCURSION",
-      "name": "Excursion/Trip",
+      "label": "Excursion/Trip",
       "color": "#E1F5FE",
       "isMeeting": true
     },
     {
       "id": "PARTNER_CONTACT",
-      "name": "Contact with other partners (club/NGO/...)"
+      "label": "Contact with other partners (club/NGO/...)"
     },
     {
       "id": "RATION_DISTRIBUTION",
-      "name": "Ration Distribution",
+      "label": "Ration Distribution",
       "color": "#E1F5FE",
       "isMeeting": true
     }

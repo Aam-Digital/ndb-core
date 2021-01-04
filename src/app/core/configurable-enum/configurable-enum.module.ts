@@ -3,6 +3,7 @@ import { CommonModule } from "@angular/common";
 import { ConfigService } from "../config/config.service";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { ConfigurableEnumDatatype } from "./configurable-enum-datatype/configurable-enum-datatype";
+import { ConfigurableEnumDirective } from "./configurable-enum-directive/configurable-enum.directive";
 
 /**
  * Provides a generic functionality to define enums (collections of selectable options) in the config database
@@ -41,10 +42,14 @@ import { ConfigurableEnumDatatype } from "./configurable-enum-datatype/configura
 
  export const INTERACTION_TYPE_CONFIG_ID = "interaction-type";
 ```
+ *
+ * To iterate over all enum values in a template (e.g. to set up a mat-select dropdown) you can use
+ * {@link ConfigurableEnumDirective} similar to `*ngFor`.
  */
 @NgModule({
-  declarations: [],
+  declarations: [ConfigurableEnumDirective],
   imports: [CommonModule],
+  exports: [ConfigurableEnumDirective],
 })
 export class ConfigurableEnumModule {
   constructor(
