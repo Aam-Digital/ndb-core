@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from "@angular/core";
+import { Component, Input, OnInit, Optional, ViewChild } from "@angular/core";
 import { Note } from "../model/note";
 import { ShowsEntity } from "../../../core/form-dialog/shows-entity.interface";
 import { MatDialogRef } from "@angular/material/dialog";
@@ -27,7 +27,7 @@ export class NoteDetailsComponent implements ShowsEntity, OnInit {
 
   constructor(
     private configService: ConfigService,
-    private matDialogRef: MatDialogRef<NoteDetailsComponent>
+    @Optional() private matDialogRef: MatDialogRef<NoteDetailsComponent>
   ) {}
 
   ngOnInit() {
@@ -37,6 +37,10 @@ export class NoteDetailsComponent implements ShowsEntity, OnInit {
   }
 
   closeDialog(entity: Entity) {
+    if (!this.matDialogRef) {
+      return;
+    }
+
     // Return the entity which has been saved
     this.matDialogRef
       .beforeClosed()
