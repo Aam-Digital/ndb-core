@@ -1,10 +1,14 @@
 import { Component, Input, OnInit, ViewChild } from "@angular/core";
 import { Note } from "../model/note";
 import { ShowsEntity } from "../../../core/form-dialog/shows-entity.interface";
-import { InteractionType } from "../note-config-loader/note-config.interface";
-import { NoteConfigLoaderService } from "../note-config-loader/note-config-loader.service";
 import { MatDialogRef } from "@angular/material/dialog";
 import { Entity } from "../../../core/entity/entity";
+import {
+  INTERACTION_TYPE_CONFIG_ID,
+  InteractionType,
+} from "../model/interaction-type.interface";
+import { ConfigService } from "../../../core/config/config.service";
+import { CONFIGURABLE_ENUM_CONFIG_PREFIX } from "../../../core/configurable-enum/configurable-enum.interface";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -22,13 +26,14 @@ export class NoteDetailsComponent implements ShowsEntity, OnInit {
   interactionTypes: InteractionType[];
 
   constructor(
-    private configLoader: NoteConfigLoaderService,
+    private configService: ConfigService,
     private matDialogRef: MatDialogRef<NoteDetailsComponent>
   ) {}
 
   ngOnInit() {
-    // get all note categories from config file
-    this.interactionTypes = this.configLoader.interactionTypes;
+    this.interactionTypes = this.configService.getConfig(
+      CONFIGURABLE_ENUM_CONFIG_PREFIX + INTERACTION_TYPE_CONFIG_ID
+    );
   }
 
   closeDialog(entity: Entity) {

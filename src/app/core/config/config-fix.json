@@ -48,75 +48,91 @@
       }
     ]
   },
-  "notes": {
-    "InteractionTypes": {
-      "NONE": {
-        "name": ""
-      },
-      "HOME_VISIT": {
-        "name": "Home Visit"
-      },
-      "GUARDIAN_TALK": {
-        "name": "Talk with Guardians"
-      },
-      "CHILD_TALK": {
-        "name": "Talk with Child"
-      },
-      "INCIDENT": {
-        "name": "Incident"
-      },
-      "DISCUSSION": {
-        "name": "Discussion/Decision",
-        "color": "#E1BEE7"
-      },
-      "VISIT": {
-        "name": "School/Hostel Visit"
-      },
-      "PHONE_CALL": {
-        "name": "Phone Call"
-      },
-      "COACHING_TALK": {
-        "name": "Talk with Coaching Teacher"
-      },
-      "PEER_TALK": {
-        "name": "Talk with Peer"
-      },
-      "NEIGHBOUR_TALK": {
-        "name": "Talk with Neighbours"
-      },
-      "GUARDIAN_MEETING": {
-        "name": "Guardians' Meeting",
-        "color": "#E1F5FE",
-        "isMeeting": true
-      },
-      "CHILDREN_MEETING": {
-        "name": "Children's Meeting",
-        "color": "#E1F5FE",
-        "isMeeting": true
-      },
-      "DAILY_ROUTINE": {
-        "name": "Daily Routine",
-        "color": "#F1F8E9"
-      },
-      "ANNUAL_SURVEY": {
-        "name": "Annual Survey",
-        "color": "#FFFDE7"
-      },
-      "EXCURSION": {
-        "name": "Excursion/Trip",
-        "color": "#E1F5FE",
-        "isMeeting": true
-      },
-      "PARTNER_CONTACT": {
-        "name": "Contact with other partners (club/NGO/...)"
-      },
-      "RATION_DISTRIBUTION": {
-        "name": "Ration Distribution",
-        "color": "#E1F5FE",
-        "isMeeting": true
-      }
+  "enum:interaction-type": [
+    {
+      "id": "",
+      "name": ""
+    },
+    {
+      "id": "HOME_VISIT",
+      "name": "Home Visit"
+    },
+    {
+      "id": "GUARDIAN_TALK",
+      "name": "Talk with Guardians"
+    },
+    {
+      "id": "CHILD_TALK",
+      "name": "Talk with Child"
+    },
+    {
+      "id": "INCIDENT",
+      "name": "Incident"
+    },
+    {
+      "id": "DISCUSSION",
+      "name": "Discussion/Decision",
+      "color": "#E1BEE7"
+    },
+    {
+      "id": "VISIT",
+      "name": "School/Hostel Visit"
+    },
+    {
+      "id": "PHONE_CALL",
+      "name": "Phone Call"
+    },
+    {
+      "id": "COACHING_TALK",
+      "name": "Talk with Coaching Teacher"
+    },
+    {
+      "id": "PEER_TALK",
+      "name": "Talk with Peer"
+    },
+    {
+      "id": "NEIGHBOUR_TALK",
+      "name": "Talk with Neighbours"
+    },
+    {
+      "id": "GUARDIAN_MEETING",
+      "name": "Guardians' Meeting",
+      "color": "#E1F5FE",
+      "isMeeting": true
+    },
+    {
+      "id": "CHILDREN_MEETING",
+      "name": "Children's Meeting",
+      "color": "#E1F5FE",
+      "isMeeting": true
+    },
+    {
+      "id": "DAILY_ROUTINE",
+      "name": "Daily Routine",
+      "color": "#F1F8E9"
+    },
+    {
+      "id": "ANNUAL_SURVEY",
+      "name": "Annual Survey",
+      "color": "#FFFDE7"
+    },
+    {
+      "id": "EXCURSION",
+      "name": "Excursion/Trip",
+      "color": "#E1F5FE",
+      "isMeeting": true
+    },
+    {
+      "id": "PARTNER_CONTACT",
+      "name": "Contact with other partners (club/NGO/...)"
+    },
+    {
+      "id": "RATION_DISTRIBUTION",
+      "name": "Ration Distribution",
+      "color": "#E1F5FE",
+      "isMeeting": true
     }
-  },
+  ],
   "view:": {
     "component": "Dashboard",
     "config": {

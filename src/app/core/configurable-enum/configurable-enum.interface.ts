@@ -1,0 +1,35 @@
+/**
+ * Interface specifying overall object representing an enum with all its options
+ * as stored in the config database
+ */
+export type ConfigurableEnum<
+  T extends ConfigurableEnumValue = ConfigurableEnumValue
+> = Array<T>;
+
+/**
+ * Mandatory properties of each option of an configurable enum
+ * the actual object can contain additional properties in the specific context of that enum (e.g. a `color` property)
+ */
+export interface ConfigurableEnumValue {
+  /**
+   * identifier that is unique among all values of the same enum and does not change even when label or other things are edited
+   */
+  id: string;
+
+  /**
+   * human-readable name that is displayed representing the value in the UI
+   */
+  label: string;
+
+  /**
+   * Optionally any number of additional properties specific to a certain enum collection.
+   */
+  [x: string]: any;
+}
+
+/**
+ * The prefix of all enum collection entries in the config database.
+ *
+ * This prefix is concatenated with the individual enum collection's id, resulting in the full config object id.
+ */
+export const CONFIGURABLE_ENUM_CONFIG_PREFIX = "enum:";
