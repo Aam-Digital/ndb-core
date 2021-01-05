@@ -7,12 +7,10 @@ import {
   Output,
   SimpleChanges,
 } from "@angular/core";
-import { DatePipe } from "@angular/common";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { ChildrenService } from "../children/children.service";
 import { SchoolsService } from "../schools/schools.service";
 import moment from "moment";
-import { isValidDate } from "../../utils/utils";
 import { Child } from "../children/model/child";
 import { OnInitDynamicComponent } from "../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { ColumnDescriptionInputType } from "../../core/entity-components/entity-subrecord/column-description-input-type.enum";
@@ -49,8 +47,7 @@ export class PreviousSchoolsComponent
 
   constructor(
     private childrenService: ChildrenService,
-    private schoolsService: SchoolsService,
-    private datePipe: DatePipe
+    private schoolsService: SchoolsService
   ) {}
 
   ngOnInit() {
@@ -102,15 +99,11 @@ export class PreviousSchoolsComponent
         name: "start",
         label: "From",
         inputType: ColumnDescriptionInputType.DATE,
-        formatter: (v: Date) =>
-          isValidDate(v) ? this.datePipe.transform(v, "yyyy-MM-dd") : "",
       },
       {
         name: "end",
         label: "To",
         inputType: ColumnDescriptionInputType.DATE,
-        formatter: (v: Date) =>
-          isValidDate(v) ? this.datePipe.transform(v, "yyyy-MM-dd") : "",
       },
       {
         name: "result",

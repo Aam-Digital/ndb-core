@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { AttendanceMonth } from "../model/attendance-month";
 import { ChildrenService } from "../../children/children.service";
-import { DatePipe, PercentPipe } from "@angular/common";
+import { PercentPipe } from "@angular/common";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
@@ -26,7 +26,6 @@ export class ChildAttendanceComponent implements OnChanges {
       name: "month",
       label: "Month",
       inputType: ColumnDescriptionInputType.MONTH,
-      formatter: (v: Date) => this.datePipe.transform(v, "yyyy-MM"),
       visibleFrom: "xs",
     },
     {
@@ -66,7 +65,6 @@ export class ChildAttendanceComponent implements OnChanges {
 
   constructor(
     private childrenService: ChildrenService,
-    private datePipe: DatePipe,
     private percentPipe: PercentPipe
   ) {}
 

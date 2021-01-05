@@ -1,7 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Note } from "../model/note";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
-import { DatePipe } from "@angular/common";
 import { ChildrenService } from "../../children/children.service";
 import moment from "moment";
 import { SessionService } from "../../../core/session/session-service/session.service";
@@ -32,7 +31,6 @@ export class NotesOfChildComponent
       name: "date",
       label: "Date",
       inputType: ColumnDescriptionInputType.DATE,
-      formatter: (v: Date) => this.datePipe.transform(v, "yyyy-MM-dd"),
       visibleFrom: "xs",
     },
     {
@@ -69,8 +67,7 @@ export class NotesOfChildComponent
 
   constructor(
     private childrenService: ChildrenService,
-    private sessionService: SessionService,
-    private datePipe: DatePipe
+    private sessionService: SessionService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {

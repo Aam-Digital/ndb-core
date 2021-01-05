@@ -12,6 +12,7 @@ import { By } from "@angular/platform-browser";
 import { SimpleChange } from "@angular/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatNativeDateModule } from "@angular/material/core";
+import { DatePipe, PercentPipe } from "@angular/common";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent;
@@ -26,6 +27,8 @@ describe("EntitySubrecordComponent", () => {
         NoopAnimationsModule,
       ],
       providers: [
+        DatePipe,
+        PercentPipe,
         { provide: Database, useClass: MockDatabase },
         {
           provide: ConfirmationDialogService,
@@ -108,5 +111,36 @@ describe("EntitySubrecordComponent", () => {
     const tdColumns = fixture.debugElement.queryAll(By.css("td"));
     expect(tdColumns[0].nativeElement.innerText).toBe("0.9");
     expect(tdColumns[1].nativeElement.innerText).toBe("90%");
+  });
+
+  it("formats MONTH and DATE automatically", () => {
+    component.records = [
+      Object.assign(new Entity(), {
+        month: new Date("2020-01-01"),
+        day: new Date("2020-01-23"),
+      }),
+    ];
+
+    component.columns = [
+      {
+        name: "month",
+        label: "Test month",
+        inputType: ColumnDescriptionInputType.MONTH,
+      },
+      {
+        name: "day",
+        label: "Test day",
+        inputType: ColumnDescriptionInputType.DATE,
+      },
+    ];
+    component.ngOnChanges({
+      records: new SimpleChange(undefined, component.records, true),
+      columns: new SimpleChange(undefined, component.columns, true),
+    });
+    fixture.detectChanges();
+
+    const tdColumns = fixture.debugElement.queryAll(By.css("td"));
+    expect(tdColumns[0].nativeElement.innerText).toBe("2020-01");
+    expect(tdColumns[1].nativeElement.innerText).toBe("2020-01-23");
   });
 });

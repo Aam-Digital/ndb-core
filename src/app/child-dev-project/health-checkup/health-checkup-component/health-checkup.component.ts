@@ -1,7 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { HealthCheck } from "../model/health-check";
 import { ChildrenService } from "../../children/children.service";
-import { DatePipe } from "@angular/common";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
@@ -28,7 +27,6 @@ export class HealthCheckupComponent
       name: "date",
       label: "Date",
       inputType: ColumnDescriptionInputType.DATE,
-      formatter: (v: Date) => this.datePipe.transform(v, "yyyy-MM-dd"),
     },
     {
       name: "height",
@@ -50,10 +48,7 @@ export class HealthCheckupComponent
     },
   ];
   @Input() child: Child;
-  constructor(
-    private childrenService: ChildrenService,
-    private datePipe: DatePipe
-  ) {}
+  constructor(private childrenService: ChildrenService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("child")) {

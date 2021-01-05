@@ -1,5 +1,4 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
-import { DatePipe } from "@angular/common";
 import { EducationalMaterial } from "../model/educational-material";
 import { ChildrenService } from "../../children/children.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -26,7 +25,6 @@ export class EducationalMaterialComponent
       name: "date",
       label: "Date",
       inputType: ColumnDescriptionInputType.DATE,
-      formatter: (v: Date) => this.datePipe.transform(v, "yyyy-MM-dd"),
       visibleFrom: "xs",
     },
     {
@@ -52,10 +50,7 @@ export class EducationalMaterialComponent
     },
   ];
 
-  constructor(
-    private childrenService: ChildrenService,
-    private datePipe: DatePipe
-  ) {}
+  constructor(private childrenService: ChildrenService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("child")) {
