@@ -22,40 +22,34 @@ export class EducationalMaterialComponent
   materialTypes = EducationalMaterial.MATERIAL_ALL;
 
   columns: Array<ColumnDescription> = [
-    new ColumnDescription(
-      "date",
-      "Date",
-      ColumnDescriptionInputType.DATE,
-      null,
-      (v: Date) => this.datePipe.transform(v, "yyyy-MM-dd"),
-      "xs"
-    ),
-    new ColumnDescription(
-      "materialType",
-      "Material",
-      ColumnDescriptionInputType.AUTOCOMPLETE,
-      this.materialTypes.map((t) => {
+    {
+      name: "date",
+      label: "Date",
+      inputType: ColumnDescriptionInputType.DATE,
+      formatter: (v: Date) => this.datePipe.transform(v, "yyyy-MM-dd"),
+      visibleFrom: "xs",
+    },
+    {
+      name: "materialType",
+      label: "Material",
+      inputType: ColumnDescriptionInputType.AUTOCOMPLETE,
+      selectValues: this.materialTypes.map((t) => {
         return { value: t, label: t };
       }),
-      undefined,
-      "xs"
-    ),
-    new ColumnDescription(
-      "materialAmount",
-      "Amount",
-      ColumnDescriptionInputType.NUMBER,
-      null,
-      undefined,
-      "md"
-    ),
-    new ColumnDescription(
-      "description",
-      "Description/Remarks",
-      ColumnDescriptionInputType.TEXT,
-      null,
-      undefined,
-      "md"
-    ),
+      visibleFrom: "xs",
+    },
+    {
+      name: "materialAmount",
+      label: "Amount",
+      inputType: ColumnDescriptionInputType.NUMBER,
+      visibleFrom: "md",
+    },
+    {
+      name: "description",
+      label: "Description/Remarks",
+      inputType: ColumnDescriptionInputType.TEXT,
+      visibleFrom: "md",
+    },
   ];
 
   constructor(

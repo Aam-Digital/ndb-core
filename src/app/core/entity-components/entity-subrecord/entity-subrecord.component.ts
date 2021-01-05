@@ -137,10 +137,26 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
       );
     }
     if (changes["columns"]) {
+      this.columns = this.columns.map((colDef) =>
+        this.applyDefaultDefinitions(colDef)
+      );
       this.columnsToDisplay = this.columns.map((e) => e.name);
       this.columnsToDisplay.push("actions");
       this.setupTable();
     }
+  }
+
+  /**
+   * Set default values for optional properties that are not given.
+   * @param colDef
+   * @private
+   */
+  private applyDefaultDefinitions(
+    colDef: ColumnDescription
+  ): ColumnDescription {
+    colDef.formatter = colDef.formatter ?? ((value) => value);
+    colDef.styleBuilder = colDef.styleBuilder ?? (() => Object);
+    return colDef;
   }
 
   /**

@@ -24,34 +24,30 @@ export class HealthCheckupComponent
    * BMI is rounded to 2 decimal digits
    */
   columns: Array<ColumnDescription> = [
-    new ColumnDescription(
-      "date",
-      "Date",
-      ColumnDescriptionInputType.DATE,
-      null,
-      (v: Date) => this.datePipe.transform(v, "yyyy-MM-dd")
-    ),
-    new ColumnDescription(
-      "height",
-      "Height [cm]",
-      ColumnDescriptionInputType.NUMBER,
-      null,
-      (height: Number) => height + " cm"
-    ),
-    new ColumnDescription(
-      "weight",
-      "Weight [kg]",
-      ColumnDescriptionInputType.NUMBER,
-      null,
-      (weight: Number) => weight + " kg"
-    ),
-    new ColumnDescription(
-      "bmi",
-      "BMI",
-      ColumnDescriptionInputType.READONLY,
-      null,
-      (bmi: Number) => bmi.toFixed(2)
-    ),
+    {
+      name: "date",
+      label: "Date",
+      inputType: ColumnDescriptionInputType.DATE,
+      formatter: (v: Date) => this.datePipe.transform(v, "yyyy-MM-dd"),
+    },
+    {
+      name: "height",
+      label: "Height [cm]",
+      inputType: ColumnDescriptionInputType.NUMBER,
+      formatter: (height: Number) => height + " cm",
+    },
+    {
+      name: "weight",
+      label: "Weight [kg]",
+      inputType: ColumnDescriptionInputType.NUMBER,
+      formatter: (weight: Number) => weight + " kg",
+    },
+    {
+      name: "bmi",
+      label: "BMI",
+      inputType: ColumnDescriptionInputType.READONLY,
+      formatter: (bmi: Number) => bmi.toFixed(2),
+    },
   ];
   @Input() child: Child;
   constructor(

@@ -22,56 +22,46 @@ export class ChildAttendanceComponent implements OnChanges {
   detailsComponent = AttendanceDetailsComponent;
 
   columns: Array<ColumnDescription> = [
-    new ColumnDescription(
-      "month",
-      "Month",
-      ColumnDescriptionInputType.MONTH,
-      null,
-      (v: Date) => this.datePipe.transform(v, "yyyy-MM"),
-      "xs"
-    ),
-    new ColumnDescription(
-      "daysAttended",
-      "Present",
-      ColumnDescriptionInputType.NUMBER,
-      null,
-      undefined,
-      "xs"
-    ),
-    new ColumnDescription(
-      "daysWorking",
-      "Working Days",
-      ColumnDescriptionInputType.NUMBER,
-      null,
-      undefined,
-      "xs"
-    ),
-    new ColumnDescription(
-      "getAttendancePercentage",
-      "Attended",
-      ColumnDescriptionInputType.FUNCTION,
-      null,
-      (v: number) => this.percentPipe.transform(v, "1.0-0"),
-      "md",
-      () => ({}),
-      (entity) => entity.getAttendancePercentage()
-    ),
-    new ColumnDescription(
-      "daysExcused",
-      "Excused",
-      ColumnDescriptionInputType.NUMBER,
-      null,
-      undefined,
-      "md"
-    ),
-    new ColumnDescription(
-      "remarks",
-      "Remarks",
-      ColumnDescriptionInputType.TEXTAREA,
-      null,
-      undefined,
-      "xl"
-    ),
+    {
+      name: "month",
+      label: "Month",
+      inputType: ColumnDescriptionInputType.MONTH,
+      formatter: (v: Date) => this.datePipe.transform(v, "yyyy-MM"),
+      visibleFrom: "xs",
+    },
+    {
+      name: "daysAttended",
+      label: "Present",
+      inputType: ColumnDescriptionInputType.NUMBER,
+      visibleFrom: "xs",
+    },
+    {
+      name: "daysWorking",
+      label: "Working Days",
+      inputType: ColumnDescriptionInputType.NUMBER,
+      visibleFrom: "xs",
+    },
+    {
+      name: "getAttendancePercentage",
+      label: "Attended",
+      inputType: ColumnDescriptionInputType.FUNCTION,
+      formatter: (v: number) => this.percentPipe.transform(v, "1.0-0"),
+      visibleFrom: "md",
+      valueFunction: (entity: AttendanceMonth) =>
+        entity.getAttendancePercentage(),
+    },
+    {
+      name: "daysExcused",
+      label: "Excused",
+      inputType: ColumnDescriptionInputType.NUMBER,
+      visibleFrom: "md",
+    },
+    {
+      name: "remarks",
+      label: "Remarks",
+      inputType: ColumnDescriptionInputType.TEXTAREA,
+      visibleFrom: "xl",
+    },
   ];
 
   constructor(

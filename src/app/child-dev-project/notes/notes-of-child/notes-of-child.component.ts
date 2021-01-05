@@ -28,50 +28,43 @@ export class NotesOfChildComponent
   detailsComponent = NoteDetailsComponent;
 
   columns: Array<ColumnDescription> = [
-    new ColumnDescription(
-      "date",
-      "Date",
-      ColumnDescriptionInputType.DATE,
-      null,
-      (v: Date) => this.datePipe.transform(v, "yyyy-MM-dd"),
-      "xs"
-    ),
-    new ColumnDescription(
-      "subject",
-      "Topic",
-      ColumnDescriptionInputType.TEXT,
-      null,
-      undefined,
-      "xs"
-    ),
-    new ColumnDescription(
-      "text",
-      "Notes",
-      ColumnDescriptionInputType.TEXTAREA,
-      null,
-      undefined,
-      "md"
-    ),
-    new ColumnDescription(
-      "author",
-      "SW",
-      ColumnDescriptionInputType.TEXT,
-      null,
-      undefined,
-      "md"
-    ),
-    new ColumnDescription(
-      "warningLevel",
-      "",
-      ColumnDescriptionInputType.SELECT,
-      [
+    {
+      name: "date",
+      label: "Date",
+      inputType: ColumnDescriptionInputType.DATE,
+      formatter: (v: Date) => this.datePipe.transform(v, "yyyy-MM-dd"),
+      visibleFrom: "xs",
+    },
+    {
+      name: "subject",
+      label: "Topic",
+      inputType: ColumnDescriptionInputType.TEXT,
+      visibleFrom: "xs",
+    },
+    {
+      name: "text",
+      label: "Notes",
+      inputType: ColumnDescriptionInputType.TEXTAREA,
+      visibleFrom: "md",
+    },
+    {
+      name: "author",
+      label: "SW",
+      inputType: ColumnDescriptionInputType.TEXT,
+      visibleFrom: "md",
+    },
+    {
+      name: "warningLevel",
+      label: "",
+      inputType: ColumnDescriptionInputType.SELECT,
+      selectValues: [
         { value: "OK", label: "Solved" },
         { value: "WARNING", label: "Needs Follow-Up" },
         { value: "URGENT", label: "Urgent Follow-Up" },
       ],
-      () => "",
-      "md"
-    ),
+      formatter: () => "",
+      visibleFrom: "md",
+    },
   ];
 
   constructor(
