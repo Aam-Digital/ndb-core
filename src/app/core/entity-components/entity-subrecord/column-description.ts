@@ -37,9 +37,6 @@ export interface ColumnDescription {
   /** Array of possible values for editing this column; required for inputTypes select and autocomplete */
   selectValues?: Array<{ value: any; label: string }>;
 
-  /** function doing a custom transformation of the column's value before it is displayed. */
-  formatter?: (value: any) => any;
-
   /**
    * visibleFrom The minimal screen size the column is shown.
    *           screen size classes: xs  'screen and (max-width: 599px)'

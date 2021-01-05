@@ -6,22 +6,13 @@
     <td mat-cell *matCellDef="let rec"
         (click)='showRecord(rec)' [ngClass]="{'table-link': detailsComponent!==undefined}">
 
-      <div *ngIf="col.inputType === 'function'" class='table-show-number'>
-        {{ col.formatter( col.valueFunction(rec) ) }}
-      </div>
-
-      <div *ngIf="col.inputType === 'readonly'" class='table-show-number'>
-        {{ col.formatter( rec[col.name] ) }}
-      </div>
-
-
-      <div *ngIf="!recordsEditing.get(rec.getId()) && !isReadonlyInputType(col.inputType)"
+      <div *ngIf="isReadonlyInputType(col.inputType) || !recordsEditing.get(rec.getId())"
            [ngStyle]="col.styleBuilder ? col.styleBuilder(rec[col.name]) : {}"
            [ngClass]="{ 'table-show-number': col.inputType==='number' }">
-        {{ col.formatter(rec[col.name]) }}
+        {{ col.valueFunction(rec) }}
       </div>
 
-      <div *ngIf="recordsEditing.get(rec.getId()) &&  !isReadonlyInputType(col.inputType)">
+      <div *ngIf="recordsEditing.get(rec.getId()) && !isReadonlyInputType(col.inputType)">
         <mat-form-field [ngClass]="{
             'table-input-number': col.inputType === 'number',
             'table-input-month': col.inputType === 'month' || col.inputType === 'date'

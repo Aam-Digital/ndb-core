@@ -86,7 +86,8 @@ export class PreviousSchoolsComponent
         selectValues: schools.map((t) => {
           return { value: t.getId(), label: t.name };
         }),
-        formatter: (schoolId) => schoolMap[schoolId],
+        valueFunction: (entity: ChildSchoolRelation) =>
+          schoolMap[entity["schoolId"]],
       },
 
       {
@@ -109,8 +110,10 @@ export class PreviousSchoolsComponent
         name: "result",
         label: "Result",
         inputType: ColumnDescriptionInputType.NUMBER,
-        formatter: (n: number) =>
-          n >= 0 && !Number.isNaN(n) ? n + "%" : "N/A",
+        valueFunction: (entity: ChildSchoolRelation) =>
+          entity.result >= 0 && !Number.isNaN(entity.result)
+            ? entity.result + "%"
+            : "N/A",
         styleBuilder: this.resultColorStyleBuilder,
       },
     ];

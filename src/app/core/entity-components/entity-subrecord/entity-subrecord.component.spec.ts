@@ -99,7 +99,7 @@ describe("EntitySubrecordComponent", () => {
         name: "percent",
         label: "Test formatted",
         inputType: ColumnDescriptionInputType.NUMBER,
-        formatter: (value) => value * 100 + "%",
+        valueFunction: (entity) => entity["percent"] * 100 + "%",
       },
     ];
     component.ngOnChanges({

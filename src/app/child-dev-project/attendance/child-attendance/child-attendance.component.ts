@@ -44,10 +44,9 @@ export class ChildAttendanceComponent implements OnChanges {
       name: "getAttendancePercentage",
       label: "Attended",
       inputType: ColumnDescriptionInputType.FUNCTION,
-      formatter: (v: number) => this.percentPipe.transform(v, "1.0-0"),
       visibleFrom: "md",
       valueFunction: (entity: AttendanceMonth) =>
-        entity.getAttendancePercentage(),
+        this.percentPipe.transform(entity.getAttendancePercentage(), "1.0-0"),
     },
     {
       name: "daysExcused",

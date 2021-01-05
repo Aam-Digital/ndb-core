@@ -32,19 +32,19 @@ export class HealthCheckupComponent
       name: "height",
       label: "Height [cm]",
       inputType: ColumnDescriptionInputType.NUMBER,
-      formatter: (height: Number) => height + " cm",
+      valueFunction: (entity: HealthCheck) => entity.height + " cm",
     },
     {
       name: "weight",
       label: "Weight [kg]",
       inputType: ColumnDescriptionInputType.NUMBER,
-      formatter: (weight: Number) => weight + " kg",
+      valueFunction: (entity: HealthCheck) => entity.weight + " kg",
     },
     {
       name: "bmi",
       label: "BMI",
       inputType: ColumnDescriptionInputType.READONLY,
-      formatter: (bmi: Number) => bmi.toFixed(2),
+      valueFunction: (entity: HealthCheck) => entity.bmi.toFixed(2),
     },
   ];
   @Input() child: Child;

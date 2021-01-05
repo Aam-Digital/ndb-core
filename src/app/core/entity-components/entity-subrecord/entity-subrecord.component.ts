@@ -156,17 +156,18 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
   private applyDefaultColumnDefinitions(
     colDef: ColumnDescription
   ): ColumnDescription {
-    if (!colDef.formatter) {
+    if (!colDef.valueFunction) {
       switch (colDef.inputType) {
         case ColumnDescriptionInputType.DATE:
-          colDef.formatter = (v: Date) =>
-            this.datePipe.transform(v, "yyyy-MM-dd");
+          colDef.valueFunction = (entity) =>
+            this.datePipe.transform(entity[colDef.name], "yyyy-MM-dd");
           break;
         case ColumnDescriptionInputType.MONTH:
-          colDef.formatter = (v: Date) => this.datePipe.transform(v, "yyyy-MM");
+          colDef.valueFunction = (entity) =>
+            this.datePipe.transform(entity[colDef.name], "yyyy-MM");
           break;
         default:
-          colDef.formatter = (value) => value;
+          colDef.valueFunction = (entity) => entity[colDef.name];
       }
     }
     colDef.styleBuilder = colDef.styleBuilder ?? (() => Object);

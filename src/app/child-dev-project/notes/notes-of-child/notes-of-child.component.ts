@@ -60,7 +60,7 @@ export class NotesOfChildComponent
         { value: "WARNING", label: "Needs Follow-Up" },
         { value: "URGENT", label: "Urgent Follow-Up" },
       ],
-      formatter: () => "",
+      valueFunction: () => "",
       visibleFrom: "md",
     },
   ];
