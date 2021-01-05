@@ -1,4 +1,5 @@
-<table mat-table [dataSource]="recordsDataSource" matSort class="mat-elevation-z1 subrecord-table">
+<div class="container">
+  <table mat-table [dataSource]="recordsDataSource" matSort class="mat-elevation-z1 subrecord-table">
 
   <ng-container *ngFor="let col of columns" [matColumnDef]="col.name">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> {{col.label}} </th>
@@ -87,8 +88,9 @@
   </ng-container>
 
 
-  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-  <tr mat-row *matRowDef="let rec; columns: columnsToDisplay"
-      [ngStyle]="getBackgroundColor && {'background-color': getBackgroundColor(rec)}">
-  </tr>
-</table>
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    <tr mat-row *matRowDef="let rec; columns: columnsToDisplay"
+        [ngStyle]="getBackgroundColor && {'background-color': getBackgroundColor(rec)}">
+    </tr>
+  </table>
+</div>
