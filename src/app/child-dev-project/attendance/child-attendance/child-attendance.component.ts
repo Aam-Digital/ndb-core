@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { AttendanceMonth } from "../model/attendance-month";
 import { ChildrenService } from "../../children/children.service";
-import { DatePipe, PercentPipe } from "@angular/common";
+import { PercentPipe } from "@angular/common";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
@@ -22,59 +22,48 @@ export class ChildAttendanceComponent implements OnChanges {
   detailsComponent = AttendanceDetailsComponent;
 
   columns: Array<ColumnDescription> = [
-    new ColumnDescription(
-      "month",
-      "Month",
-      ColumnDescriptionInputType.MONTH,
-      null,
-      (v: Date) => this.datePipe.transform(v, "yyyy-MM"),
-      "xs"
-    ),
-    new ColumnDescription(
-      "daysAttended",
-      "Present",
-      ColumnDescriptionInputType.NUMBER,
-      null,
-      undefined,
-      "xs"
-    ),
-    new ColumnDescription(
-      "daysWorking",
-      "Working Days",
-      ColumnDescriptionInputType.NUMBER,
-      null,
-      undefined,
-      "xs"
-    ),
-    new ColumnDescription(
-      "getAttendancePercentage",
-      "Attended",
-      ColumnDescriptionInputType.FUNCTION,
-      null,
-      (v: number) => this.percentPipe.transform(v, "1.0-0"),
-      "md"
-    ),
-    new ColumnDescription(
-      "daysExcused",
-      "Excused",
-      ColumnDescriptionInputType.NUMBER,
-      null,
-      undefined,
-      "md"
-    ),
-    new ColumnDescription(
-      "remarks",
-      "Remarks",
-      ColumnDescriptionInputType.TEXTAREA,
-      null,
-      undefined,
-      "xl"
-    ),
+    {
+      name: "month",
+      label: "Month",
+      inputType: ColumnDescriptionInputType.MONTH,
+      visibleFrom: "xs",
+    },
+    {
+      name: "daysAttended",
+      label: "Present",
+      inputType: ColumnDescriptionInputType.NUMBER,
+      visibleFrom: "xs",
+    },
+    {
+      name: "daysWorking",
+      label: "Working Days",
+      inputType: ColumnDescriptionInputType.NUMBER,
+      visibleFrom: "xs",
+    },
+    {
+      name: "getAttendancePercentage",
+      label: "Attended",
+      inputType: ColumnDescriptionInputType.FUNCTION,
+      visibleFrom: "md",
+      valueFunction: (entity: AttendanceMonth) =>
+        this.percentPipe.transform(entity.getAttendancePercentage(), "1.0-0"),
+    },
+    {
+      name: "daysExcused",
+      label: "Excused",
+      inputType: ColumnDescriptionInputType.NUMBER,
+      visibleFrom: "md",
+    },
+    {
+      name: "remarks",
+      label: "Remarks",
+      inputType: ColumnDescriptionInputType.TEXTAREA,
+      visibleFrom: "xl",
+    },
   ];
 
   constructor(
     private childrenService: ChildrenService,
-    private datePipe: DatePipe,
     private percentPipe: PercentPipe
   ) {}
 

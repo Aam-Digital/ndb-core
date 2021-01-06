@@ -1,12 +1,12 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
   ViewChild,
-  Output,
-  EventEmitter,
 } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatSort } from "@angular/material/sort";
@@ -23,6 +23,7 @@ import { ShowsEntity } from "../../form-dialog/shows-entity.interface";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../alerts/alert.service";
+import { DatePipe } from "@angular/common";
 
 /**
  * Generically configurable component to display and edit a list of entities in a compact way
@@ -59,6 +60,11 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
    * more information or more comfortable editing of a single record.
    */
   @Input() detailsComponent: ComponentType<ShowsEntity>;
+
+  /**
+   * Whether the records can be edited directly in the table.
+   */
+  @Input() disableEditingInline: boolean;
 
   /**
    * Whether an "Add" button to create a new entry should be displayed as part of the form.
@@ -103,6 +109,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
     private _confirmationDialog: ConfirmationDialogService,
     private formDialog: FormDialogService,
     private alertService: AlertService,
+    private datePipe: DatePipe,
     private media: MediaObserver
   ) {
     this.media.media$
@@ -132,10 +139,39 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
       );
     }
     if (changes["columns"]) {
+      this.columns = this.columns.map((colDef) =>
+        this.applyDefaultColumnDefinitions(colDef)
+      );
       this.columnsToDisplay = this.columns.map((e) => e.name);
       this.columnsToDisplay.push("actions");
       this.setupTable();
     }
+  }
+
+  /**
+   * Set default values for optional properties that are not given.
+   * @param colDef
+   * @private
+   */
+  private applyDefaultColumnDefinitions(
+    colDef: ColumnDescription
+  ): ColumnDescription {
+    if (!colDef.valueFunction) {
+      switch (colDef.inputType) {
+        case ColumnDescriptionInputType.DATE:
+          colDef.valueFunction = (entity) =>
+            this.datePipe.transform(entity[colDef.name], "yyyy-MM-dd");
+          break;
+        case ColumnDescriptionInputType.MONTH:
+          colDef.valueFunction = (entity) =>
+            this.datePipe.transform(entity[colDef.name], "yyyy-MM");
+          break;
+        default:
+          colDef.valueFunction = (entity) => entity[colDef.name];
+      }
+    }
+    colDef.styleBuilder = colDef.styleBuilder ?? (() => Object);
+    return colDef;
   }
 
   /**
