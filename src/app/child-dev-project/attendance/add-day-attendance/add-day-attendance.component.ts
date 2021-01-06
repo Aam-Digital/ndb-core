@@ -24,8 +24,11 @@ export class AddDayAttendanceComponent {
     this.currentStage = 1;
   }
 
-  async finishRollCallState() {
-    await this.entityMapper.save(this.event);
+  finishRollCallState() {
     this.currentStage = 0;
+  }
+
+  async saveRollCallResult(eventNote: Note) {
+    await this.entityMapper.save(eventNote);
   }
 }

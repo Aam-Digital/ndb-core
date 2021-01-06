@@ -30,11 +30,14 @@ export class RollCallComponent implements OnInit {
   @Input() eventEntity: Note;
 
   /**
-   * Emitted when the roll call is finished (or aborted).
-   *
-   * In case it is aborted `undefined` is passed.
+   * Emitted when the roll call is finished and results can be saved.
    */
   @Output() complete = new EventEmitter<Note>();
+
+  /**
+   * Emitted when the user wants to dismiss & leave the roll call view.
+   */
+  @Output() exit = new EventEmitter();
 
   currentIndex: number;
 
@@ -50,7 +53,7 @@ export class RollCallComponent implements OnInit {
       childId: childId,
       attendance: this.eventEntity.getAttendance(childId),
     }));
-    this.goToNextStudent(0);
+    this.goToNextParticipant(0);
   }
 
   private loadAttendanceStatusTypes() {
@@ -97,22 +100,21 @@ export class RollCallComponent implements OnInit {
 
   markAttendance(childId: string, status: AttendanceStatus) {
     this.eventEntity.getAttendance(childId).status = status;
-    setTimeout(() => this.goToNextStudent(), 750);
+
+    // automatically move to next participant after a short delay giving the user visual feedback on the selected status
+    setTimeout(() => this.goToNextParticipant(), 750);
   }
 
-  goToNextStudent(newIndex?: number) {
+  goToNextParticipant(newIndex?: number) {
     if (newIndex !== undefined) {
       this.currentIndex = newIndex;
     } else {
       this.currentIndex++;
     }
-  }
 
-  abort() {
-    this.complete.emit(undefined);
-  }
-  finish() {
-    this.complete.emit(this.eventEntity);
+    if (this.isFinished()) {
+      this.complete.emit(this.eventEntity);
+    }
   }
 
   isFinished(): boolean {
