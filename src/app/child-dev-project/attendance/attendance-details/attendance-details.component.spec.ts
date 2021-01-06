@@ -1,17 +1,15 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AttendanceDetailsComponent } from "./attendance-details.component";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { Database } from "../../../core/database/database";
-import { MockDatabase } from "../../../core/database/mock-database";
 import { ChildrenService } from "../../children/children.service";
 import { AttendanceMonth } from "../model/attendance-month";
 import { EntityModule } from "../../../core/entity/entity.module";
 import { RouterTestingModule } from "@angular/router/testing";
-import { ChildPhotoService } from "../../children/child-photo-service/child-photo.service";
 import { of } from "rxjs";
-import { ChildrenModule } from "../../children/children.module";
 import { Angulartics2Module } from "angulartics2";
+import { AttendanceModule } from "../attendance.module";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { Child } from "../../children/model/child";
 
 describe("AttendanceDetailsComponent", () => {
   let component: AttendanceDetailsComponent;
@@ -23,21 +21,18 @@ describe("AttendanceDetailsComponent", () => {
 
     TestBed.configureTestingModule({
       imports: [
-        ChildrenModule,
+        AttendanceModule,
         EntityModule,
         RouterTestingModule,
         Angulartics2Module.forRoot(),
         RouterTestingModule,
       ],
       providers: [
-        { provide: Database, useClass: MockDatabase },
-        { provide: MatDialogRef, useValue: { beforeClosed: () => of({}) } },
-        { provide: MAT_DIALOG_DATA, useValue: { entity: att } },
-        { provide: ChildrenService, useClass: ChildrenService },
         {
-          provide: ChildPhotoService,
-          useValue: jasmine.createSpyObj(["getImage"]),
+          provide: ChildrenService,
+          useValue: { getChild: () => of(new Child()) },
         },
+        { provide: EntityMapperService, useValue: {} },
       ],
     }).compileComponents();
   }));

@@ -10,6 +10,7 @@ describe("AttendanceService", () => {
 
   beforeEach(() => {
     mockEntityService = jasmine.createSpyObj("mockEntityService", ["loadType"]);
+    mockEntityService.loadType.and.resolveTo([]);
 
     TestBed.configureTestingModule({
       providers: [

@@ -19,8 +19,12 @@ describe("AddDayAttendanceComponent", () => {
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
   beforeEach(async(() => {
-    mockEntityService = jasmine.createSpyObj("mockEntityService", ["save"]);
+    mockEntityService = jasmine.createSpyObj("mockEntityService", [
+      "save",
+      "loadType",
+    ]);
     mockEntityService.save.and.resolveTo();
+    mockEntityService.loadType.and.resolveTo([]);
 
     mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
       "getChildren",
