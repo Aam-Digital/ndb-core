@@ -9,7 +9,6 @@ import { FilterSelectionOption } from "../../../core/filter/filter-selection/fil
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { UntilDestroy } from "@ngneat/until-destroy";
-import { NoteConfigLoaderService } from "../note-config-loader/note-config-loader.service";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 
@@ -67,7 +66,6 @@ export class NotesManagerComponent implements OnInit {
     private sessionService: SessionService,
     private media: MediaObserver,
     private entityMapperService: EntityMapperService,
-    private configLoader: NoteConfigLoaderService,
     private route: ActivatedRoute,
     private log: LoggingService
   ) {}
