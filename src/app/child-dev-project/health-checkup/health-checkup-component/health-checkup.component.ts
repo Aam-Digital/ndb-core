@@ -1,7 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { HealthCheck } from "../model/health-check";
 import { ChildrenService } from "../../children/children.service";
-import { DatePipe } from "@angular/common";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
@@ -24,40 +23,32 @@ export class HealthCheckupComponent
    * BMI is rounded to 2 decimal digits
    */
   columns: Array<ColumnDescription> = [
-    new ColumnDescription(
-      "date",
-      "Date",
-      ColumnDescriptionInputType.DATE,
-      null,
-      (v: Date) => this.datePipe.transform(v, "yyyy-MM-dd")
-    ),
-    new ColumnDescription(
-      "height",
-      "Height [cm]",
-      ColumnDescriptionInputType.NUMBER,
-      null,
-      (height: Number) => height + " cm"
-    ),
-    new ColumnDescription(
-      "weight",
-      "Weight [kg]",
-      ColumnDescriptionInputType.NUMBER,
-      null,
-      (weight: Number) => weight + " kg"
-    ),
-    new ColumnDescription(
-      "bmi",
-      "BMI",
-      ColumnDescriptionInputType.READONLY,
-      null,
-      (bmi: Number) => bmi.toFixed(2)
-    ),
+    {
+      name: "date",
+      label: "Date",
+      inputType: ColumnDescriptionInputType.DATE,
+    },
+    {
+      name: "height",
+      label: "Height [cm]",
+      inputType: ColumnDescriptionInputType.NUMBER,
+      valueFunction: (entity: HealthCheck) => entity.height + " cm",
+    },
+    {
+      name: "weight",
+      label: "Weight [kg]",
+      inputType: ColumnDescriptionInputType.NUMBER,
+      valueFunction: (entity: HealthCheck) => entity.weight + " kg",
+    },
+    {
+      name: "bmi",
+      label: "BMI",
+      inputType: ColumnDescriptionInputType.READONLY,
+      valueFunction: (entity: HealthCheck) => entity.bmi.toFixed(2),
+    },
   ];
   @Input() child: Child;
-  constructor(
-    private childrenService: ChildrenService,
-    private datePipe: DatePipe
-  ) {}
+  constructor(private childrenService: ChildrenService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("child")) {

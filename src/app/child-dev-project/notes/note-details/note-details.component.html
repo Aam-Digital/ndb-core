@@ -61,10 +61,10 @@
               [(ngModel)]="entity.category"
             >
               <mat-option
-                *ngFor="let interaction of interactionTypes"
+                *appConfigurableEnum="let interaction of INTERACTION_TYPE_CONFIG"
                 [value]="interaction"
               >
-                {{ interaction.name }}
+                {{ interaction.label }}
               </mat-option>
             </mat-select>
           </mat-form-field>

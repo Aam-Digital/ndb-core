@@ -7,12 +7,10 @@ import {
   Output,
   SimpleChanges,
 } from "@angular/core";
-import { DatePipe } from "@angular/common";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { ChildrenService } from "../children/children.service";
 import { SchoolsService } from "../schools/schools.service";
 import moment from "moment";
-import { isValidDate } from "../../utils/utils";
 import { Child } from "../children/model/child";
 import { OnInitDynamicComponent } from "../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { ColumnDescriptionInputType } from "../../core/entity-components/entity-subrecord/column-description-input-type.enum";
@@ -49,8 +47,7 @@ export class PreviousSchoolsComponent
 
   constructor(
     private childrenService: ChildrenService,
-    private schoolsService: SchoolsService,
-    private datePipe: DatePipe
+    private schoolsService: SchoolsService
   ) {}
 
   ngOnInit() {
@@ -82,49 +79,43 @@ export class PreviousSchoolsComponent
     schools.forEach((s) => (schoolMap[s.getId()] = s.name));
 
     this.columns = [
-      new ColumnDescription(
-        "schoolId",
-        "School",
-        ColumnDescriptionInputType.SELECT,
-        schools.map((t) => {
+      {
+        name: "schoolId",
+        label: "School",
+        inputType: ColumnDescriptionInputType.SELECT,
+        selectValues: schools.map((t) => {
           return { value: t.getId(), label: t.name };
         }),
-        (schoolId) => schoolMap[schoolId]
-      ),
+        valueFunction: (entity: ChildSchoolRelation) =>
+          schoolMap[entity["schoolId"]],
+      },
 
-      new ColumnDescription(
-        "schoolClass",
-        "Class",
-        ColumnDescriptionInputType.TEXT
-      ),
+      {
+        name: "schoolClass",
+        label: "Class",
+        inputType: ColumnDescriptionInputType.TEXT,
+      },
 
-      new ColumnDescription(
-        "start",
-        "From",
-        ColumnDescriptionInputType.DATE,
-        null,
-        (v: Date) =>
-          isValidDate(v) ? this.datePipe.transform(v, "yyyy-MM-dd") : ""
-      ),
-
-      new ColumnDescription(
-        "end",
-        "To",
-        ColumnDescriptionInputType.DATE,
-        null,
-        (v: Date) =>
-          isValidDate(v) ? this.datePipe.transform(v, "yyyy-MM-dd") : ""
-      ),
-
-      new ColumnDescription(
-        "result",
-        "Result",
-        ColumnDescriptionInputType.NUMBER,
-        null,
-        (n: number) => (n >= 0 && !Number.isNaN(n) ? n + "%" : "N/A"),
-        null,
-        this.resultColorStyleBuilder
-      ),
+      {
+        name: "start",
+        label: "From",
+        inputType: ColumnDescriptionInputType.DATE,
+      },
+      {
+        name: "end",
+        label: "To",
+        inputType: ColumnDescriptionInputType.DATE,
+      },
+      {
+        name: "result",
+        label: "Result",
+        inputType: ColumnDescriptionInputType.NUMBER,
+        valueFunction: (entity: ChildSchoolRelation) =>
+          entity.result >= 0 && !Number.isNaN(entity.result)
+            ? entity.result + "%"
+            : "N/A",
+        styleBuilder: this.resultColorStyleBuilder,
+      },
     ];
   }
 

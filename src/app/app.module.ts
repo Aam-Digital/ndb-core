@@ -72,6 +72,7 @@ import { DemoActivityGeneratorService } from "./child-dev-project/attendance/dem
 import { Child } from "./child-dev-project/children/model/child";
 import { EntityConfigService } from "./core/entity/entity-config.service";
 import { FontAwesomeIconsModule } from "./core/icons/font-awesome-icons.module";
+import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
 
 export function configFactory(configService: ConfigService) {
   return (): Promise<any> => configService.loadConfig();
@@ -120,6 +121,7 @@ export function configFactory(configService: ConfigService) {
     EntitySubrecordModule,
     EntityListModule,
     EntityDetailsModule,
+    ConfigurableEnumModule,
     DemoDataModule.forRoot([
       ...DemoChildGenerator.provider({ count: 150 }),
       ...DemoSchoolGenerator.provider({ count: 8 }),
