@@ -119,8 +119,7 @@ export class ActivitySetupComponent implements OnInit {
   }
 
   createOneTimeEvent() {
-    const newNote = new Note(Date.now().toString());
-    newNote.date = new Date();
+    const newNote = Note.create(new Date());
     newNote.author = this.sessionService.getCurrentUser().name;
 
     this.formDialog
