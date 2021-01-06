@@ -1,4 +1,11 @@
-import { Component, Input, OnInit, Optional } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  Optional,
+  SimpleChange,
+  SimpleChanges,
+} from "@angular/core";
 import { Router } from "@angular/router";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
@@ -11,7 +18,7 @@ import { Child } from "../model/child";
   templateUrl: "./child-block.component.html",
   styleUrls: ["./child-block.component.scss"],
 })
-export class ChildBlockComponent implements OnInitDynamicComponent, OnInit {
+export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
   @Input() entity: Child;
   @Input() entityId: string;
 
@@ -28,8 +35,8 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnInit {
     @Optional() private childrenService: ChildrenService
   ) {}
 
-  ngOnInit() {
-    if (this.entityId) {
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.hasOwnProperty("entityId")) {
       this.childrenService
         .getChild(this.entityId)
         .pipe(untilDestroyed(this))
@@ -43,7 +50,9 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnInit {
     this.entity = config.entity;
     if (config.hasOwnProperty("entityId")) {
       this.entityId = config.entityId;
-      this.ngOnInit();
+      this.ngOnChanges({
+        entityId: new SimpleChange(undefined, config.entityId, true),
+      });
     }
     this.linkDisabled = config.linkDisabled;
     this.tooltipDisabled = config.tooltipDisabled;
