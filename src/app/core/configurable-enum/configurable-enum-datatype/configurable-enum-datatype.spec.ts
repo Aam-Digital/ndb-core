@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 import {
-  ConfigurableEnum,
+  ConfigurableEnumConfig,
   ConfigurableEnumValue,
 } from "../configurable-enum.interface";
 import { Entity } from "../../entity/entity";
@@ -26,7 +26,7 @@ import { ConfigService } from "../../config/config.service";
 import { ConfigurableEnumModule } from "../configurable-enum.module";
 
 describe("ConfigurableEnumDatatype", () => {
-  const TEST_CONFIG: ConfigurableEnum = [
+  const TEST_CONFIG: ConfigurableEnumConfig = [
     { id: "NONE", label: "" },
     { id: "TEST_1", label: "Category 1" },
     { id: "TEST_3", label: "Category 3", color: "#FFFFFF", isMeeting: true },

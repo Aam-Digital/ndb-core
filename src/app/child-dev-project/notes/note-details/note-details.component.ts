@@ -3,6 +3,7 @@ import { Note } from "../model/note";
 import { ShowsEntity } from "../../../core/form-dialog/shows-entity.interface";
 import { MatDialogRef } from "@angular/material/dialog";
 import { Entity } from "../../../core/entity/entity";
+import { INTERACTION_TYPE_CONFIG_ID } from "../model/interaction-type.interface";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -15,6 +16,8 @@ import { Entity } from "../../../core/entity/entity";
 export class NoteDetailsComponent implements ShowsEntity {
   @Input() entity: Note;
   @ViewChild("dialogForm", { static: true }) formDialogWrapper;
+
+  INTERACTION_TYPE_CONFIG = INTERACTION_TYPE_CONFIG_ID;
 
   constructor(
     @Optional() private matDialogRef: MatDialogRef<NoteDetailsComponent>

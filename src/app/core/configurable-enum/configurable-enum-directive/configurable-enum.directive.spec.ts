@@ -3,7 +3,7 @@ import { ConfigService } from "../../config/config.service";
 import { ViewContainerRef } from "@angular/core";
 import {
   CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnum,
+  ConfigurableEnumConfig,
 } from "../configurable-enum.interface";
 
 describe("ConfigurableEnumDirective", () => {
@@ -32,7 +32,7 @@ describe("ConfigurableEnumDirective", () => {
 
   it("creates a view for each enum config value", () => {
     const testEnumConfigId = "test-enum";
-    const testEnumValues: ConfigurableEnum = [
+    const testEnumValues: ConfigurableEnumConfig = [
       { id: "1", label: "A" },
       { id: "2", label: "B" },
     ];

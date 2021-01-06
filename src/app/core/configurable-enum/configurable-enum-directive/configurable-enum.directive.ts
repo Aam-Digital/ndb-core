@@ -1,12 +1,12 @@
 import { Directive, Input, TemplateRef, ViewContainerRef } from "@angular/core";
 import {
   CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnum,
+  ConfigurableEnumConfig,
 } from "../configurable-enum.interface";
 import { ConfigService } from "../../config/config.service";
 
 /**
- * Enumerate over all {@link ConfigurableEnum} value for the given enum config id.
+ * Enumerate over all {@link ConfigurableEnumConfig} values for the given enum config id.
  *
  * Works similar to `*ngFor`:
  * `<div *appConfigurableEnum="let item of 'interaction-type'"></div>`
@@ -21,7 +21,7 @@ export class ConfigurableEnumDirective {
    * @param enumConfigId
    */
   @Input() set appConfigurableEnumOf(enumConfigId: string) {
-    const options = this.configService.getConfig<ConfigurableEnum>(
+    const options = this.configService.getConfig<ConfigurableEnumConfig>(
       CONFIGURABLE_ENUM_CONFIG_PREFIX + enumConfigId
     );
     for (const item of options) {

@@ -61,7 +61,7 @@
               [(ngModel)]="entity.category"
             >
               <mat-option
-                *appConfigurableEnum="let interaction of 'interaction-type'"
+                *appConfigurableEnum="let interaction of INTERACTION_TYPE_CONFIG"
                 [value]="interaction"
               >
                 {{ interaction.label }}

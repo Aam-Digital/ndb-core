@@ -1,7 +1,7 @@
 import { EntitySchemaDatatype } from "../../entity/schema/entity-schema-datatype";
 import {
   CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnum,
+  ConfigurableEnumConfig,
   ConfigurableEnumValue,
 } from "../configurable-enum.interface";
 import { ConfigService } from "../../config/config.service";
@@ -32,7 +32,7 @@ export class ConfigurableEnumDatatype
   ): ConfigurableEnumValue {
     if (value) {
       return this.configService
-        .getConfig<ConfigurableEnum>(
+        .getConfig<ConfigurableEnumConfig>(
           CONFIGURABLE_ENUM_CONFIG_PREFIX + schemaField.innerDataType
         )
         .find((option) => option.id === value);

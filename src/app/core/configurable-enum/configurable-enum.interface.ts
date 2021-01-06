@@ -2,7 +2,7 @@
  * Interface specifying overall object representing an enum with all its options
  * as stored in the config database
  */
-export type ConfigurableEnum<
+export type ConfigurableEnumConfig<
   T extends ConfigurableEnumValue = ConfigurableEnumValue
 > = Array<T>;
 

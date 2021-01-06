@@ -11,7 +11,6 @@ import { FormDialogService } from "../../../core/form-dialog/form-dialog.service
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
-import { ConfigService } from "../../../core/config/config.service";
 
 @UntilDestroy()
 @Component({
@@ -67,7 +66,6 @@ export class NotesManagerComponent implements OnInit {
     private sessionService: SessionService,
     private media: MediaObserver,
     private entityMapperService: EntityMapperService,
-    private configService: ConfigService,
     private route: ActivatedRoute,
     private log: LoggingService
   ) {}
