@@ -22,14 +22,19 @@
         "link": "/recurring-activity"
       },
       {
+        "name": "Record Attendance",
+        "icon": "calendar-check-o",
+        "link": "/attendance/add/day"
+      },
+      {
+        "name": "Manage Attendance",
+        "icon": "table",
+        "link": "/attendance"
+      },
+      {
         "name": "Notes",
         "icon": "file-text",
         "link": "/note"
-      },
-      {
-        "name": "Attendance Register",
-        "icon": "table",
-        "link": "/attendance"
       },
       {
         "name": "Admin",

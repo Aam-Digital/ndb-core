@@ -1,5 +1,4 @@
 import { Component } from "@angular/core";
-import { Child } from "../../children/model/child";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { Note } from "../../notes/model/note";
 
@@ -13,48 +12,23 @@ export class AddDayAttendanceComponent {
 
   day = new Date();
   attendanceType: string;
-  selectedChildren: Child[] = [];
+
   event: Note;
 
-  stages = ["Setup Roll Call", "Select Student Group", "Roll Call"];
+  stages = ["Select Event", "Record Attendance"];
 
-  constructor(private entityService: EntityMapperService) {}
+  constructor(private entityMapper: EntityMapperService) {}
 
-  finishBasicInformationStage() {
+  finishBasicInformationStage(event: Note) {
+    this.event = event;
     this.currentStage = 1;
   }
 
-  finishStudentSelectionStage(selectedStudents: Child[]) {
-    this.selectedChildren = selectedStudents;
-
-    this.event = Note.create(this.day, this.attendanceType);
-    selectedStudents
-      .sort(sortByChildClass)
-      .forEach((c) => this.event.addChild(c.getId()));
-
-    this.currentStage = 2;
-  }
-
-  async finishRollCallState() {
-    await this.entityService.save(this.event);
+  finishRollCallState() {
     this.currentStage = 0;
   }
-}
 
-function sortByChildClass(a: Child, b: Child) {
-  {
-    if (a.schoolClass === b.schoolClass) {
-      return 0;
-    }
-
-    const diff = parseInt(b.schoolClass, 10) - parseInt(a.schoolClass, 10);
-    if (!Number.isNaN(diff)) {
-      return diff;
-    }
-
-    if (a.schoolClass < b.schoolClass || b.schoolClass === undefined) {
-      return 1;
-    }
-    return -1;
+  async saveRollCallResult(eventNote: Note) {
+    await this.entityMapper.save(eventNote);
   }
 }

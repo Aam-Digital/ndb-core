@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { Child } from "../../../children/model/child";
 import { animate, style, transition, trigger } from "@angular/animations";
 import {
   AttendanceStatus,
@@ -31,35 +30,30 @@ export class RollCallComponent implements OnInit {
   @Input() eventEntity: Note;
 
   /**
-   * A list of Child objects including the ones referenced in the given eventEntity.
-   *
-   * This is required to display details like child's name.
-   * The array is treated as a utility data source and children included here are *not* automatically added to the event.
-   */
-  @Input() children: Child[];
-
-  /**
-   * Emitted when the roll call is finished (or aborted).
-   *
-   * In case it is aborted `undefined` is passed.
+   * Emitted when the roll call is finished and results can be saved.
    */
   @Output() complete = new EventEmitter<Note>();
+
+  /**
+   * Emitted when the user wants to dismiss & leave the roll call view.
+   */
+  @Output() exit = new EventEmitter();
 
   currentIndex: number;
 
   /** options available for selecting an attendance status */
   availableStatus: AttendanceStatusType[];
 
-  entries: { child: Child; attendance: EventAttendance }[];
+  entries: { childId: string; attendance: EventAttendance }[];
 
   async ngOnInit() {
     this.loadAttendanceStatusTypes();
 
     this.entries = this.eventEntity.children.map((childId) => ({
-      child: this.children.find((c) => c.getId() === childId),
+      childId: childId,
       attendance: this.eventEntity.getAttendance(childId),
     }));
-    this.goToNextStudent(0);
+    this.goToNextParticipant(0);
   }
 
   private loadAttendanceStatusTypes() {
@@ -104,24 +98,23 @@ export class RollCallComponent implements OnInit {
     ];
   }
 
-  markAttendance(child: Child, status: AttendanceStatus) {
-    this.eventEntity.getAttendance(child.getId()).status = status;
-    setTimeout(() => this.goToNextStudent(), 750);
+  markAttendance(childId: string, status: AttendanceStatus) {
+    this.eventEntity.getAttendance(childId).status = status;
+
+    // automatically move to next participant after a short delay giving the user visual feedback on the selected status
+    setTimeout(() => this.goToNextParticipant(), 750);
   }
 
-  goToNextStudent(newIndex?: number) {
+  goToNextParticipant(newIndex?: number) {
     if (newIndex !== undefined) {
       this.currentIndex = newIndex;
     } else {
       this.currentIndex++;
     }
-  }
 
-  abort() {
-    this.complete.emit(undefined);
-  }
-  finish() {
-    this.complete.emit(this.eventEntity);
+    if (this.isFinished()) {
+      this.complete.emit(this.eventEntity);
+    }
   }
 
   isFinished(): boolean {

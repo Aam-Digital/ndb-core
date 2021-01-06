@@ -5,6 +5,7 @@ import { Child } from "../children/model/child";
 import { faker } from "../../core/demo-data/faker";
 import { RecurringActivity } from "./model/recurring-activity";
 import { DemoUserGeneratorService } from "../../core/user/demo-user-generator.service";
+import { User } from "../../core/user/user";
 
 /**
  * Generate AttendanceMonth entities for the last 15 months
@@ -14,6 +15,37 @@ import { DemoUserGeneratorService } from "../../core/user/demo-user-generator.se
 export class DemoActivityGeneratorService extends DemoDataGenerator<
   RecurringActivity
 > {
+  private static readonly ACTIVITY_TYPES = [
+    "Coaching",
+    "Class",
+    "Training",
+    "Life Skills",
+  ];
+
+  /**
+   * Create a single instance filled with dummy data.
+   * @param children The list of children to be added to the new activity
+   * @param assignedUser (Optional) user to be assigned as responsible for the activity
+   */
+  static generateActivityForChildren(
+    children: Child[],
+    assignedUser?: User
+  ): RecurringActivity {
+    const activity = RecurringActivity.create();
+    const type = faker.random.arrayElement(this.ACTIVITY_TYPES);
+
+    activity.title =
+      type +
+      " " +
+      faker.random.number({ min: 1, max: 9 }) +
+      faker.random.alphaNumeric(1).toUpperCase();
+    activity.type = type;
+    activity.participants = children.map((c) => c.getId());
+    activity.assignedTo = assignedUser?.getId();
+
+    return activity;
+  }
+
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoAttendanceGenerator.provider()]`
@@ -29,13 +61,6 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<
 
   private readonly MIN_PARTICIPANTS = 3;
   private readonly MAX_PARTICIPANTS = 25;
-
-  private readonly ACTIVITY_TYPES = [
-    "Coaching",
-    "Class",
-    "Training",
-    "Life Skills",
-  ];
 
   constructor(
     private demoChildren: DemoChildGenerator,
@@ -55,28 +80,15 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<
         max: this.MAX_PARTICIPANTS,
       });
       const participatingChildren = children.slice(i, i + groupSize);
-      data.push(this.generateActivityForChildren(participatingChildren));
+      data.push(
+        DemoActivityGeneratorService.generateActivityForChildren(
+          participatingChildren,
+          faker.random.arrayElement(this.demoUser.entities)
+        )
+      );
       i += groupSize;
     }
 
     return data;
-  }
-
-  private generateActivityForChildren(children: Child[]): RecurringActivity {
-    const activity = RecurringActivity.create();
-    const type = faker.random.arrayElement(this.ACTIVITY_TYPES);
-
-    activity.title =
-      type +
-      " " +
-      faker.random.number({ min: 1, max: 9 }) +
-      faker.random.alphaNumeric(1).toUpperCase();
-    activity.type = type;
-    activity.participants = children.map((c) => c.getId());
-    activity.assignedTo = faker.random
-      .arrayElement(this.demoUser.entities)
-      .getId();
-
-    return activity;
   }
 }

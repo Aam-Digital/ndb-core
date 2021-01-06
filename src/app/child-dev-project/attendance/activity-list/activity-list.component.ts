@@ -20,7 +20,7 @@ export class ActivityListComponent implements OnInit {
   listConfig: EntityListConfig;
 
   constructor(
-    private entityService: EntityMapperService,
+    private entityMapper: EntityMapperService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
@@ -29,7 +29,7 @@ export class ActivityListComponent implements OnInit {
     this.route.data.subscribe(
       (config: EntityListConfig) => (this.listConfig = config)
     );
-    this.entities = await this.entityService.loadType<RecurringActivity>(
+    this.entities = await this.entityMapper.loadType<RecurringActivity>(
       RecurringActivity
     );
   }

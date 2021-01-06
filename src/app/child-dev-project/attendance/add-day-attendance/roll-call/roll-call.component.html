@@ -1,10 +1,10 @@
 <!-- Individual Student's Page -->
 <div *ngIf="!isFinished()">
-  <app-child-block [entity]='entries[currentIndex].child'></app-child-block>
+  <app-child-block [entityId]="entries[currentIndex].childId"></app-child-block>
 
   <div fxLayout='column' fxLayoutAlign='space-between stretch' class='options-wrapper'>
     <div class='group-select-option' *ngFor="let option of availableStatus"
-         (click)='markAttendance(entries[currentIndex].child, option.status)'
+         (click)='markAttendance(entries[currentIndex].childId, option.status)'
          [ngStyle]="{'background-color': entries[currentIndex].attendance.status===option.status ? option.color : ''}">
       <span class='fa fa-check' *ngIf='entries[currentIndex].attendance.status===option.status'></span>
       {{ option.name }}
@@ -14,8 +14,10 @@
 
 <!-- Completion Page -->
 <div *ngIf='isFinished()' class='roll-call-complete' [@completeRollCall]>
-  <span class='fa fa-check-circle-o roll-call-complete-icon'></span><br>
-  Roll call completed.
+  <span class='fa fa-check-circle-o roll-call-complete-icon'></span>
+  <div>
+    Roll call completed.
+  </div>
 </div>
 
 <!-- Control Buttons -->
@@ -25,11 +27,7 @@
     Back
   </button>
 
-  <button mat-stroked-button *ngIf='!isFinished()' (click)='abort()' class='nav-button' fxFlex>
-    Abort
-  </button>
-
-  <button mat-stroked-button *ngIf='isFinished()' (click)='finish()' class='nav-button' fxFlex>
-    <b>Save</b>
+  <button mat-stroked-button (click)="exit.emit()" class="nav-button" fxFlex>
+    {{ isFinished() ? "Finish" : "Abort" }}
   </button>
 </div>

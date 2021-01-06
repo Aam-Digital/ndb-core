@@ -22,9 +22,66 @@ import { ActivityParticipantsSectionComponent } from "./activity-participants-se
 import { ChildrenModule } from "../children/children.module";
 import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
+import { ActivityCardComponent } from "./activity-card/activity-card.component";
+import { MatCardModule } from "@angular/material/card";
+import { MatIconModule } from "@angular/material/icon";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { ActivitySetupComponent } from "./activity-setup/activity-setup.component";
+import { MatListModule } from "@angular/material/list";
+import { MatInputModule } from "@angular/material/input";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { FormsModule } from "@angular/forms";
+import { FlexModule } from "@angular/flex-layout";
+import { AddMonthAttendanceComponent } from "./add-month-attendance/add-month-attendance.component";
+import { AttendanceDayBlockComponent } from "./attendance-days/attendance-day-block.component";
+import { AttendanceDaysComponent } from "./attendance-days/attendance-days.component";
+import { AttendanceDetailsComponent } from "./attendance-details/attendance-details.component";
+import { AddDayAttendanceComponent } from "./add-day-attendance/add-day-attendance.component";
+import { RollCallComponent } from "./add-day-attendance/roll-call/roll-call.component";
+import { MatTableModule } from "@angular/material/table";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import { MatSelectModule } from "@angular/material/select";
+import { SchoolsModule } from "../schools/schools.module";
+import { MatSortModule } from "@angular/material/sort";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
 
 @NgModule({
-  declarations: [ActivityListComponent, ActivityParticipantsSectionComponent],
-  imports: [EntityListModule, ChildrenModule, MatButtonModule, CommonModule],
+  declarations: [
+    ActivityListComponent,
+    ActivityParticipantsSectionComponent,
+    ActivityCardComponent,
+    ActivitySetupComponent,
+    AddMonthAttendanceComponent,
+    AttendanceDayBlockComponent,
+    AttendanceDaysComponent,
+    AttendanceDetailsComponent,
+    AddDayAttendanceComponent,
+    RollCallComponent,
+  ],
+  imports: [
+    EntityListModule,
+    ChildrenModule,
+    MatButtonModule,
+    CommonModule,
+    MatCardModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatListModule,
+    MatInputModule,
+    MatDatepickerModule,
+    FormsModule,
+    FlexModule,
+    MatTableModule,
+    MatProgressBarModule,
+    MatButtonToggleModule,
+    MatSelectModule,
+    SchoolsModule,
+    MatSortModule,
+    MatCheckboxModule,
+    FormDialogModule,
+  ],
+  exports: [ActivityCardComponent, ActivitySetupComponent],
 })
 export class AttendanceModule {}

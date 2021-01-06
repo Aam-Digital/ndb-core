@@ -99,3 +99,21 @@ export class Child extends Entity {
     return indices;
   }
 }
+
+export function sortByChildClass(a: Child, b: Child) {
+  {
+    if (a.schoolClass === b.schoolClass) {
+      return 0;
+    }
+
+    const diff = parseInt(b.schoolClass, 10) - parseInt(a.schoolClass, 10);
+    if (!Number.isNaN(diff)) {
+      return diff;
+    }
+
+    if (a.schoolClass < b.schoolClass || b.schoolClass === undefined) {
+      return 1;
+    }
+    return -1;
+  }
+}
