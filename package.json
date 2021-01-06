@@ -1,6 +1,6 @@
 {
   "name": "ndb-core",
-  "version": "2.21.5",
+  "version": "2.22.0",
   "license": "GPL-3.0",
   "scripts": {
     "ng": "ng",
