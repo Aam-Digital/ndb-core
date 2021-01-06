@@ -133,7 +133,10 @@ export function getAttendanceType(status: AttendanceStatus) {
 }
 
 /**
- * Generate a test event with children for the given AttendanceStatus arrray.
+ * Generate a event with children for the given AttendanceStatus array.
+ *
+ * This is particularly useful to generate simple data for demo or test purposes.
+ *
  * @param participating Object where keys are string childId and values are its attendance status
  * @param date (Optional) date of the event; if not given today's date is used
  */

@@ -28,8 +28,8 @@ export class AttendanceCalendarComponent implements OnChanges {
 
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
   statusValues = AttendanceStatus;
-  minDate: Date = new Date("2020-12-01");
-  maxDate: Date = new Date("2020-12-31");
+  minDate: Date;
+  maxDate: Date;
 
   selectedDate: moment.Moment;
   selectedEvent: Note;
