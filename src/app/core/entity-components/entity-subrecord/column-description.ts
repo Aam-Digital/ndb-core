@@ -16,39 +16,44 @@
  */
 
 import { ColumnDescriptionInputType } from "./column-description-input-type.enum";
+import { Entity } from "../../entity/entity";
 
 /**
- *  Objects of this class are used to define columns for the {@link EntitySubrecordComponent}.
- *  A ColumnDescription describes a single column to be generated in that generic component.
+ *  A ColumnDescription describes a single column to be generated in the generic {@link EntitySubrecordComponent}.
+ *  .
  */
-export class ColumnDescription {
+export interface ColumnDescription {
   /**
-   * @param name The identifier of the column
-   * @param label The label for the column displayed in the table header
-   * @param inputType How the value of this column is displayed and what kind of form field is provided to edit it
-   * @param selectValues Array of possible values for editing this column; required for inputTypes select and autocomplete
-   * @param formatter Function doing a custom transformation of the column's value before it is displayed.
-   * @param visibleFrom The minimal screen size the column is shown.
-   *           screen size classes: xs	'screen and (max-width: 599px)'
-   *           sm	'screen and (min-width: 600px) and (max-width: 959px)'
-   *           md	'screen and (min-width: 960px) and (max-width: 1279px)'
-   *           lg	'screen and (min-width: 1280px) and (max-width: 1919px)'
-   *           xl	'screen and (min-width: 1920px) and (max-width: 5000px)'
-   * @param styleBuilder (Optional) function building a ngStyle value, receiving the value as a parameter
+   * The identifier of the column and key of the entities' property that is displayed in that column
    */
-  constructor(
-    public name: string,
-    public label: string,
-    public inputType: ColumnDescriptionInputType,
+  name: string;
 
-    public selectValues: Array<{ value: any; label: string }> = [],
+  /** The label for the column displayed in the table header */
+  label: string;
 
-    public formatter = (value) => {
-      return value;
-    },
-    public visibleFrom: string = undefined,
-    public styleBuilder: (value) => Object = () => {
-      return {};
-    }
-  ) {}
+  /** How the value of this column is displayed and what kind of form field is provided to edit it */
+  inputType: ColumnDescriptionInputType;
+
+  /** Array of possible values for editing this column; required for inputTypes select and autocomplete */
+  selectValues?: Array<{ value: any; label: string }>;
+
+  /**
+   * visibleFrom The minimal screen size the column is shown.
+   *           screen size classes: xs  'screen and (max-width: 599px)'
+   *           sm  'screen and (min-width: 600px) and (max-width: 959px)'
+   *           md  'screen and (min-width: 960px) and (max-width: 1279px)'
+   *           lg  'screen and (min-width: 1280px) and (max-width: 1919px)'
+   *           xl  'screen and (min-width: 1920px) and (max-width: 5000px)'
+   */
+  visibleFrom?: string;
+
+  /** (Optional) function building a ngStyle value, receiving the value as a parameter */
+  styleBuilder?: (value) => Object;
+
+  /**
+   * a function taking the full object (Entity instance) and returning the value that is displayed in this column.
+   *
+   * use this function to format a value or calculate a more complex value that is not directly a property of the entity object.
+   */
+  valueFunction?: (entity: Entity) => any;
 }
