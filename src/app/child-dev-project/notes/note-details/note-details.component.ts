@@ -1,10 +1,9 @@
-import { Component, Input, OnInit, ViewChild } from "@angular/core";
+import { Component, Input, Optional, ViewChild } from "@angular/core";
 import { Note } from "../model/note";
 import { ShowsEntity } from "../../../core/form-dialog/shows-entity.interface";
-import { InteractionType } from "../note-config-loader/note-config.interface";
-import { NoteConfigLoaderService } from "../note-config-loader/note-config-loader.service";
 import { MatDialogRef } from "@angular/material/dialog";
 import { Entity } from "../../../core/entity/entity";
+import { INTERACTION_TYPE_CONFIG_ID } from "../model/interaction-type.interface";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -14,24 +13,21 @@ import { Entity } from "../../../core/entity/entity";
   templateUrl: "./note-details.component.html",
   styleUrls: ["./note-details.component.scss"],
 })
-export class NoteDetailsComponent implements ShowsEntity, OnInit {
+export class NoteDetailsComponent implements ShowsEntity {
   @Input() entity: Note;
   @ViewChild("dialogForm", { static: true }) formDialogWrapper;
 
-  /** interaction types loaded from config file */
-  interactionTypes: InteractionType[];
+  INTERACTION_TYPE_CONFIG = INTERACTION_TYPE_CONFIG_ID;
 
   constructor(
-    private configLoader: NoteConfigLoaderService,
-    private matDialogRef: MatDialogRef<NoteDetailsComponent>
+    @Optional() private matDialogRef: MatDialogRef<NoteDetailsComponent>
   ) {}
 
-  ngOnInit() {
-    // get all note categories from config file
-    this.interactionTypes = this.configLoader.interactionTypes;
-  }
-
   closeDialog(entity: Entity) {
+    if (!this.matDialogRef) {
+      return;
+    }
+
     // Return the entity which has been saved
     this.matDialogRef
       .beforeClosed()

@@ -18,11 +18,6 @@
   <div>
     Roll call completed.
   </div>
-  <div>
-    <button mat-raised-button color="primary" class="roll-call-complete-save nav-button" (click)="finish()" fxFlex>
-      <b>Save</b>
-    </button>
-  </div>
 </div>
 
 <!-- Control Buttons -->
@@ -32,7 +27,7 @@
     Back
   </button>
 
-  <button mat-stroked-button (click)='abort()' class='nav-button' fxFlex>
-    Abort
+  <button mat-stroked-button (click)="exit.emit()" class="nav-button" fxFlex>
+    {{ isFinished() ? "Finish" : "Abort" }}
   </button>
 </div>

@@ -18,18 +18,26 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   // This component can currently not use the EntitySubrecord, because EntitySubrecord does not allow to route to a
   // different location but only open a popup when a record is clicked.
   columns: ColumnDescription[] = [
-    new ColumnDescription(
-      "projectNumber",
-      "PN",
-      ColumnDescriptionInputType.TEXT
-    ),
-    new ColumnDescription("name", "Name", ColumnDescriptionInputType.TEXT),
-    new ColumnDescription(
-      "schoolClass",
-      "Class",
-      ColumnDescriptionInputType.TEXT
-    ),
-    new ColumnDescription("age", "Age", ColumnDescriptionInputType.TEXT),
+    {
+      name: "projectNumber",
+      label: "PN",
+      inputType: ColumnDescriptionInputType.TEXT,
+    },
+    {
+      name: "name",
+      label: "Name",
+      inputType: ColumnDescriptionInputType.TEXT,
+    },
+    {
+      name: "schoolClass",
+      label: "Class",
+      inputType: ColumnDescriptionInputType.TEXT,
+    },
+    {
+      name: "age",
+      label: "Age",
+      inputType: ColumnDescriptionInputType.TEXT,
+    },
   ];
 
   displayedColumns = ["projectNumber", "name", "schoolClass", "age"];

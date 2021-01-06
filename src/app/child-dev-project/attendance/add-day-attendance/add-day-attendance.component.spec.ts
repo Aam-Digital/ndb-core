@@ -62,7 +62,7 @@ describe("AddDayAttendanceComponent", () => {
   it("should save event to db after finishing roll call", () => {
     component.event = Note.create(new Date());
 
-    component.finishRollCallState();
+    component.saveRollCallResult(component.event);
 
     expect(mockEntityService.save).toHaveBeenCalledWith(component.event);
   });

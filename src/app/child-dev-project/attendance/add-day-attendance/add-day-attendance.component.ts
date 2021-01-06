@@ -19,13 +19,16 @@ export class AddDayAttendanceComponent {
 
   constructor(private entityMapper: EntityMapperService) {}
 
-  async finishBasicInformationStage(event: Note) {
+  finishBasicInformationStage(event: Note) {
     this.event = event;
     this.currentStage = 1;
   }
 
-  async finishRollCallState() {
-    await this.entityMapper.save(this.event);
+  finishRollCallState() {
     this.currentStage = 0;
+  }
+
+  async saveRollCallResult(eventNote: Note) {
+    await this.entityMapper.save(eventNote);
   }
 }

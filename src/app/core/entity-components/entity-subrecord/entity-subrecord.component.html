@@ -1,33 +1,25 @@
-<table mat-table [dataSource]="recordsDataSource" matSort class="mat-elevation-z1 subrecord-table">
+<div class="container">
+  <table mat-table [dataSource]="recordsDataSource" matSort class="mat-elevation-z1 subrecord-table">
 
   <ng-container *ngFor="let col of columns" [matColumnDef]="col.name">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> {{col.label}} </th>
     <td mat-cell *matCellDef="let rec"
         (click)='showRecord(rec)' [ngClass]="{'table-link': detailsComponent!==undefined}">
 
-      <div *ngIf="col.inputType === 'function'" class='table-show-number'>
-        {{ col.formatter( col.valueFunction(rec) ) }}
-      </div>
-
-      <div *ngIf="col.inputType === 'readonly'" class='table-show-number'>
-        {{ col.formatter( rec[col.name] ) }}
-      </div>
-
-
-      <div *ngIf="!recordsEditing.get(rec.getId()) && !isReadonlyInputType(col.inputType)"
+      <div *ngIf="isReadonlyInputType(col.inputType) || !recordsEditing.get(rec.getId())"
            [ngStyle]="col.styleBuilder ? col.styleBuilder(rec[col.name]) : {}"
            [ngClass]="{ 'table-show-number': col.inputType==='number' }">
-        {{ col.formatter(rec[col.name]) }}
+        {{ col.valueFunction(rec) }}
       </div>
 
-      <div *ngIf="recordsEditing.get(rec.getId()) &&  !isReadonlyInputType(col.inputType)">
+      <div *ngIf="recordsEditing.get(rec.getId()) && !isReadonlyInputType(col.inputType)">
         <mat-form-field [ngClass]="{
             'table-input-number': col.inputType === 'number',
             'table-input-month': col.inputType === 'month' || col.inputType === 'date'
             }">
 
           <input *ngIf="col.inputType === 'text'"
-                 matInput type="text" [title]="col.label" [value]="rec[col.name]" (change)="rec[col.name]=$event.target.value">
+                 matInput type="text" [title]="col.label" [value]="rec[col.name] || ''" (change)="rec[col.name]=$event.target.value">
 
           <input *ngIf="col.inputType === 'number'"
                  matInput type="number" min="0" [title]="col.label" [value]="rec[col.name]" (change)="rec[col.name]=$event.target.valueAsNumber">
@@ -41,7 +33,7 @@
                  matInput type="month" [title]="col.label" [valueAsDate]="rec[col.name]" (change)="rec[col.name]=$event.target.valueAsDate">
 
           <textarea *ngIf="col.inputType === 'textarea'"
-                    matInput [title]="col.label" [value]="rec[col.name]" (change)="rec[col.name]=$event.target.value"></textarea>
+                    matInput [title]="col.label" [value]="rec[col.name] || ''" (change)="rec[col.name]=$event.target.value"></textarea>
 
           <mat-select *ngIf="col.inputType === 'select'" [(value)]="rec[col.name]">
             <mat-option *ngFor='let option of col.selectValues' [value]="option.value">{{option.label}}</mat-option>
@@ -69,7 +61,7 @@
       </button>
     </th>
     <td mat-cell *matCellDef="let rec">
-      <div *ngIf="inlineEditable">
+      <div *ngIf="!disableEditingInline">
         <button mat-icon-button *ngIf="!recordsEditing.get(rec.getId())" (click)="recordsEditing.set(rec.getId(), true)">
           <mat-icon class="table-action-icon" aria-label="edit" fontIcon="fa-pencil"></mat-icon>
         </button>
@@ -87,8 +79,9 @@
   </ng-container>
 
 
-  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-  <tr mat-row *matRowDef="let rec; columns: columnsToDisplay"
-      [ngStyle]="getBackgroundColor && {'background-color': getBackgroundColor(rec)}">
-  </tr>
-</table>
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    <tr mat-row *matRowDef="let rec; columns: columnsToDisplay"
+        [ngStyle]="getBackgroundColor && {'background-color': getBackgroundColor(rec)}">
+    </tr>
+  </table>
+</div>

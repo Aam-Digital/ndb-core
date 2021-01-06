@@ -4,8 +4,8 @@ import { AttendanceDaysComponent } from "./attendance-days.component";
 import { Database } from "../../../core/database/database";
 import { MockDatabase } from "../../../core/database/mock-database";
 import { AttendanceMonth } from "../model/attendance-month";
-import { ChildrenModule } from "../../children/children.module";
 import { RouterTestingModule } from "@angular/router/testing";
+import { AttendanceModule } from "../attendance.module";
 
 describe("AttendanceDaysComponent", () => {
   let component: AttendanceDaysComponent;
@@ -18,7 +18,7 @@ describe("AttendanceDaysComponent", () => {
     attendanceMonth.month = new Date("2018-01-01");
 
     TestBed.configureTestingModule({
-      imports: [ChildrenModule, RouterTestingModule],
+      imports: [AttendanceModule, RouterTestingModule],
       providers: [{ provide: Database, useClass: MockDatabase }],
     }).compileComponents();
   }));

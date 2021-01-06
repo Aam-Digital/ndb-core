@@ -1,9 +1,7 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AttendanceDetailsComponent } from "./attendance-details.component";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { RouterTestingModule } from "@angular/router/testing";
-import { of } from "rxjs";
 import { Angulartics2Module } from "angulartics2";
 import {
   ActivityAttendance,
@@ -49,11 +47,7 @@ describe("AttendanceDetailsComponent", () => {
         RouterTestingModule,
         MatNativeDateModule,
       ],
-      providers: [
-        { provide: EntityMapperService, useValue: {} },
-        { provide: MatDialogRef, useValue: { beforeClosed: () => of({}) } },
-        { provide: MAT_DIALOG_DATA, useValue: { entity: entity } },
-      ],
+      providers: [{ provide: EntityMapperService, useValue: {} }],
     }).compileComponents();
   }));
 

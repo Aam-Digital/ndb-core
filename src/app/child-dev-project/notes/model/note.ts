@@ -19,7 +19,10 @@ import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../core/entity/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { WarningLevel, WarningLevelColor } from "../../warning-level";
-import { InteractionType } from "../note-config-loader/note-config.interface";
+import {
+  INTERACTION_TYPE_CONFIG_ID,
+  InteractionType,
+} from "./interaction-type.interface";
 import { EventAttendance } from "../../attendance/model/event-attendance";
 import { AttendanceStatus } from "../../attendance/model/attendance-status";
 
@@ -49,8 +52,12 @@ export class Note extends Entity {
   @DatabaseField() subject: string = "";
   @DatabaseField() text: string = "";
   @DatabaseField() author: string = "";
-  @DatabaseField({ dataType: "interaction-type" }) category: InteractionType =
-    InteractionType.NONE;
+
+  @DatabaseField({
+    dataType: "configurable-enum",
+    innerDataType: INTERACTION_TYPE_CONFIG_ID,
+  })
+  category: InteractionType = { id: "", label: "" };
 
   /**
    * id referencing a different entity (e.g. a recurring activity) this note is related to
@@ -89,7 +96,7 @@ export class Note extends Entity {
   }
 
   get categoryName(): string {
-    return this.category.name;
+    return this.category.label;
   }
 
   /**
