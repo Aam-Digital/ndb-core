@@ -4,7 +4,6 @@ import { ActivityAttendance } from "../model/activity-attendance";
 import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
 import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 import { NoteDetailsComponent } from "../../notes/note-details/note-details.component";
-import { DatePipe } from "@angular/common";
 import { Note } from "../../notes/model/note";
 import { calculateAverageAttendance } from "../model/calculate-average-event-attendance";
 import { AttendanceStatus } from "../model/attendance-status";
@@ -20,40 +19,30 @@ export class AttendanceDetailsComponent implements ShowsEntity {
 
   eventDetailsComponent = NoteDetailsComponent;
   eventsColumns: Array<ColumnDescription> = [
-    new ColumnDescription(
-      "date",
-      "Date",
-      ColumnDescriptionInputType.DATE,
-      null,
-      (v: Date) => this.datePipe.transform(v, "shortDate"),
-      "xs"
-    ),
-    new ColumnDescription(
-      "subject",
-      "Event",
-      ColumnDescriptionInputType.TEXT,
-      null,
-      undefined,
-      "xs"
-    ),
-    new ColumnDescription(
-      "getAttendance",
-      "Attended",
-      ColumnDescriptionInputType.FUNCTION,
-      null,
-      undefined,
-      "xs",
-      () => ({}),
-      (note: Note) => {
+    {
+      name: "date",
+      label: "Date",
+      inputType: ColumnDescriptionInputType.DATE,
+    },
+    {
+      name: "subject",
+      label: "Event",
+      inputType: ColumnDescriptionInputType.TEXT,
+    },
+    {
+      name: "getAttendance",
+      label: "Attended",
+      inputType: ColumnDescriptionInputType.FUNCTION,
+      valueFunction: (note: Note) => {
         if (this.entity.focusedChild) {
           return note.getAttendance(this.entity.focusedChild).status;
         } else {
           return calculateAverageAttendance(note).average;
         }
-      }
-    ),
+      },
+    },
   ];
   attendanceStatus = AttendanceStatus;
 
-  constructor(private datePipe: DatePipe) {}
+  constructor() {}
 }

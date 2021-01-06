@@ -5,7 +5,7 @@ import { AttendanceDetailsComponent } from "../attendance-details/attendance-det
 import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
 import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 import { AttendanceService } from "../attendance.service";
-import { DatePipe, PercentPipe } from "@angular/common";
+import { PercentPipe } from "@angular/common";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { Note } from "../../notes/model/note";
 
@@ -24,49 +24,34 @@ export class ActivityAttendanceSectionComponent
 
   detailsComponent = AttendanceDetailsComponent;
   columns: Array<ColumnDescription> = [
-    new ColumnDescription(
-      "periodFrom",
-      "Month",
-      ColumnDescriptionInputType.MONTH,
-      null,
-      (v: Date) => this.datePipe.transform(v, "yyyy-MM"),
-      "xs"
-    ),
-    new ColumnDescription(
-      "getEventsPresent",
-      "Present",
-      ColumnDescriptionInputType.FUNCTION,
-      null,
-      undefined,
-      "xs",
-      () => ({}),
-      (e) => e.getEventsPresent()
-    ),
-    new ColumnDescription(
-      "getEventsTotal",
-      "Events",
-      ColumnDescriptionInputType.FUNCTION,
-      null,
-      undefined,
-      "xs",
-      () => ({}),
-      (e) => e.getEventsTotal()
-    ),
-    new ColumnDescription(
-      "getAttendancePercentage",
-      "Attended",
-      ColumnDescriptionInputType.FUNCTION,
-      null,
-      (v: number) => this.percentPipe.transform(v, "1.0-0"),
-      "md",
-      () => ({}),
-      (e) => e.getAttendancePercentage()
-    ),
+    {
+      name: "periodFrom",
+      label: "Month",
+      inputType: ColumnDescriptionInputType.MONTH,
+    },
+    {
+      name: "getEventsPresent",
+      label: "Present",
+      inputType: ColumnDescriptionInputType.FUNCTION,
+      valueFunction: (e: ActivityAttendance) => e.getEventsPresent(),
+    },
+    {
+      name: "getEventsTotal",
+      label: "Events",
+      inputType: ColumnDescriptionInputType.FUNCTION,
+      valueFunction: (e: ActivityAttendance) => e.getEventsTotal(),
+    },
+    {
+      name: "getAttendancePercentage",
+      label: "Attended",
+      inputType: ColumnDescriptionInputType.FUNCTION,
+      valueFunction: (e: ActivityAttendance) =>
+        this.percentPipe.transform(e.getAttendancePercentage(), "1.0-0"),
+    },
   ];
 
   constructor(
     private attendanceService: AttendanceService,
-    private datePipe: DatePipe,
     private percentPipe: PercentPipe
   ) {}
 
