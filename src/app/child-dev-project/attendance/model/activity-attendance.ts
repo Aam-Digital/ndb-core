@@ -84,14 +84,11 @@ export class ActivityAttendance extends Entity {
   }
 
   private countIndividual(childId: string, countingType: AttendanceCounting) {
-    return this.events.reduce(
-      (prev: number, currentEvent: Note) =>
-        getAttendanceType(currentEvent.getAttendance(childId)?.status)
-          ?.countAs === countingType
-          ? prev + 1
-          : prev,
-      0
-    );
+    return this.events.filter(
+      (eventNote) =>
+        getAttendanceType(eventNote.getAttendance(childId)?.status)?.countAs ===
+        countingType
+    ).length;
   }
 
   private countAverage(matchingType: AttendanceCounting) {
