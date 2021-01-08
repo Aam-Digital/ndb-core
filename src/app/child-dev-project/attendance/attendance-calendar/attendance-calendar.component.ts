@@ -59,13 +59,15 @@ export class AttendanceCalendarComponent implements OnChanges {
     const event = this.records.find((e) => cellMoment.isSame(e.date, "day"));
     if (event && this.highlightForChild) {
       // coloring for individual child
+      const eventAttendance = event.getAttendance(this.highlightForChild);
+
       const statusClass = this.getCssClassForAttendanceStatus(
-        event.getAttendance(this.highlightForChild).status
+        eventAttendance.status
       );
       classes[statusClass] = true;
 
       classes["attendance-calendar-date-has-remarks"] =
-        event.getAttendance(this.highlightForChild).remarks !== "";
+        eventAttendance.remarks !== "";
     }
 
     if (event && !this.highlightForChild) {

@@ -13,7 +13,7 @@
 
   <div *ngIf="selectedEvent && highlightForChild">
     <div>
-      <span class="indicator {{getCssClassForAttendanceStatus(this.selectedEventAttendance.status)}}">&nbsp;</span>
+      <span class="indicator {{getCssClassForAttendanceStatus(selectedEventAttendance.status)}}">&nbsp;</span>
       &nbsp;
       <mat-form-field>
         <mat-select [(ngModel)]="selectedEventAttendance.status" (ngModelChange)="save()" #dayStatusSelect>
