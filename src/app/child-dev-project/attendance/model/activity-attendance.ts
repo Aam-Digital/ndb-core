@@ -7,7 +7,16 @@ import {
 import { Entity } from "../../../core/entity/entity";
 import { RecurringActivity } from "./recurring-activity";
 
+/**
+ * Aggregate information about all events for a {@link RecurringActivity} within a given time period.
+ *
+ * This object is not saved in the database but instead generated dynamically from stored Events
+ * to avoid problems keeping all information in sync in the database.
+ */
 export class ActivityAttendance extends Entity {
+  /**
+   * Create an instance with the given initial properties.
+   */
   static create(from: Date, events: Note[] = []) {
     const instance = new ActivityAttendance();
     instance.periodFrom = from;
@@ -15,11 +24,23 @@ export class ActivityAttendance extends Entity {
     return instance;
   }
 
+  /**
+   * Starting date of the period this data refers to
+   */
   periodFrom: Date;
+  /**
+   * End date of the period this data refers to
+   */
   periodTo: Date;
 
+  /**
+   * Events within the period relating to the activity
+   */
   events: Note[] = [];
 
+  /**
+   * The general, recurring activity for which this instance aggregates actual events that took place within a limited time period.
+   */
   activity: RecurringActivity;
 
   /**
@@ -75,11 +96,11 @@ export class ActivityAttendance extends Entity {
     return -1;
   }
 
-  getEventsPresentAverage() {
+  countEventsPresentAverage() {
     return this.countAverage(AttendanceCounting.PRESENT);
   }
 
-  getEventsAbsentAverage() {
+  countEventsAbsentAverage() {
     return this.countAverage(AttendanceCounting.ABSENT);
   }
 

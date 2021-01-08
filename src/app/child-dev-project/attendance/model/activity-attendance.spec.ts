@@ -39,15 +39,15 @@ describe("ActivityAttendance", () => {
   });
 
   it("calculates individual's absent events", () => {
-    expect(testInstance.getEventsAbsent("1")).toBe(0);
-    expect(testInstance.getEventsAbsent("2")).toBe(1);
-    expect(testInstance.getEventsAbsent("3")).toBe(1);
+    expect(testInstance.countEventsAbsent("1")).toBe(0);
+    expect(testInstance.countEventsAbsent("2")).toBe(1);
+    expect(testInstance.countEventsAbsent("3")).toBe(1);
   });
 
   it("calculates individual's present events", () => {
-    expect(testInstance.getEventsPresent("1")).toBe(2);
-    expect(testInstance.getEventsPresent("2")).toBe(1);
-    expect(testInstance.getEventsPresent("3")).toBe(0);
+    expect(testInstance.countEventsPresent("1")).toBe(2);
+    expect(testInstance.countEventsPresent("2")).toBe(1);
+    expect(testInstance.countEventsPresent("3")).toBe(0);
   });
 
   it("calculates average absent", () => {
@@ -65,7 +65,7 @@ describe("ActivityAttendance", () => {
         "2": AttendanceStatus.PRESENT,
       }),
     ]);
-    expect(everyoneInOneEventAbsent.getEventsAbsentAverage()).toBe(1);
+    expect(everyoneInOneEventAbsent.countEventsAbsentAverage()).toBe(1);
 
     const allAbsent = ActivityAttendance.create(new Date(), [
       generateEventWithAttendance({
@@ -78,7 +78,7 @@ describe("ActivityAttendance", () => {
         "2": AttendanceStatus.ABSENT,
       }),
     ]);
-    expect(allAbsent.getEventsAbsentAverage()).toBe(2);
+    expect(allAbsent.countEventsAbsentAverage()).toBe(2);
   });
 
   // TODO: what should be the excepted averaged result here?
@@ -96,7 +96,7 @@ describe("ActivityAttendance", () => {
         "1": AttendanceStatus.PRESENT,
       }),
     ]);
-    expect(presentAct.getEventsPresentAverage()).toBe(2.5);
+    expect(presentAct.countEventsPresentAverage()).toBe(2.5);
 
     const allAbsent = ActivityAttendance.create(new Date(), [
       generateEventWithAttendance({
@@ -109,7 +109,7 @@ describe("ActivityAttendance", () => {
         "2": AttendanceStatus.ABSENT,
       }),
     ]);
-    expect(allAbsent.getEventsPresentAverage()).toBe(0);
+    expect(allAbsent.countEventsPresentAverage()).toBe(0);
   });
 
   it("returns average if not childId is given", () => {

@@ -30,16 +30,16 @@ export class ActivityAttendanceSectionComponent
       inputType: ColumnDescriptionInputType.MONTH,
     },
     {
-      name: "getEventsPresent",
+      name: "countEventsPresent",
       label: "Present",
       inputType: ColumnDescriptionInputType.FUNCTION,
       valueFunction: (e: ActivityAttendance) => e.getEventsPresent(),
     },
     {
-      name: "getEventsTotal",
+      name: "countEventsTotal",
       label: "Events",
       inputType: ColumnDescriptionInputType.FUNCTION,
-      valueFunction: (e: ActivityAttendance) => e.getEventsTotal(),
+      valueFunction: (e: ActivityAttendance) => e.countEventsTotal(),
     },
     {
       name: "getAttendancePercentage",
