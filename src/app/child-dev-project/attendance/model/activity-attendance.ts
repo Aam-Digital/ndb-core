@@ -43,21 +43,13 @@ export class ActivityAttendance extends Entity {
    */
   activity: RecurringActivity;
 
-  /**
-   * childId to be used as default when getting statistics through the instance's methods (e.g. getEventsPresent)
-   *
-   * if `focusedChild` is set and a method like `getEventsPresent()` is called without parameter
-   * the focusedChild is used as parameter implicitly to simplify calling these methods in templates.
-   */
-  focusedChild: string;
-
-  getEventsTotal(): number {
+  countEventsTotal(): number {
     return this.events.length;
   }
 
-  getEventsWithStatus(
+  countEventsWithStatusForChild(
     status: AttendanceStatus,
-    childId: string = this.focusedChild
+    childId: string
   ): number {
     return this.events.reduce(
       (prev: number, currentEvent: Note) =>
@@ -68,25 +60,25 @@ export class ActivityAttendance extends Entity {
     );
   }
 
-  getEventsPresent(childId: string = this.focusedChild): number {
-    if (!childId) {
-      return this.getEventsPresentAverage();
-    }
+  countEventsWithUnknownStatus(): number {
+    return this.events.reduce(
+      (prev: number, currentEvent: Note) =>
+        currentEvent.hasUnknownAttendances() ? prev + 1 : prev,
+      0
+    );
+  }
 
+  countEventsPresent(childId: string): number {
     return this.countIndividual(childId, AttendanceCounting.PRESENT);
   }
 
-  getEventsAbsent(childId: string = this.focusedChild): number {
-    if (!childId) {
-      return this.getEventsAbsentAverage();
-    }
-
+  countEventsAbsent(childId: string): number {
     return this.countIndividual(childId, AttendanceCounting.ABSENT);
   }
 
-  getAttendancePercentage(childId: string = this.focusedChild) {
-    const present = this.getEventsPresent(childId);
-    const absent = this.getEventsAbsent(childId);
+  getAttendancePercentage(childId: string) {
+    const present = this.countEventsPresent(childId);
+    const absent = this.countEventsAbsent(childId);
 
     return present / (present + absent);
   }

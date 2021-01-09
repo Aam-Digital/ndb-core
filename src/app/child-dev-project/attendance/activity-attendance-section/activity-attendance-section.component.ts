@@ -33,7 +33,10 @@ export class ActivityAttendanceSectionComponent
       name: "countEventsPresent",
       label: "Present",
       inputType: ColumnDescriptionInputType.FUNCTION,
-      valueFunction: (e: ActivityAttendance) => e.getEventsPresent(),
+      valueFunction: (e: ActivityAttendance) =>
+        this.forChild
+          ? e.countEventsPresent(this.forChild)
+          : e.countEventsPresentAverage(),
     },
     {
       name: "countEventsTotal",
@@ -46,7 +49,12 @@ export class ActivityAttendanceSectionComponent
       label: "Attended",
       inputType: ColumnDescriptionInputType.FUNCTION,
       valueFunction: (e: ActivityAttendance) =>
-        this.percentPipe.transform(e.getAttendancePercentage(), "1.0-0"),
+        this.percentPipe.transform(
+          this.forChild
+            ? e.getAttendancePercentage(this.forChild)
+            : e.getAttendancePercentageAverage(),
+          "1.0-0"
+        ),
     },
   ];
 
@@ -73,7 +81,6 @@ export class ActivityAttendanceSectionComponent
     this.records = await this.attendanceService.getActivityAttendances(
       this.activity
     );
-    this.records.forEach((r) => (r.focusedChild = this.forChild));
 
     if (this.records?.length > 0) {
       this.displayedEvents = this.records[0].events;

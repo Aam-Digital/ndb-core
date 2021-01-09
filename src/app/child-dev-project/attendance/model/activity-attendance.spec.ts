@@ -111,20 +111,4 @@ describe("ActivityAttendance", () => {
     ]);
     expect(allAbsent.countEventsPresentAverage()).toBe(0);
   });
-
-  it("returns average if not childId is given", () => {
-    expect(testInstance.getEventsAbsent()).toBe(
-      testInstance.getEventsAbsentAverage()
-    );
-    expect(testInstance.getEventsAbsent(undefined)).toBe(
-      testInstance.getEventsAbsentAverage()
-    );
-
-    expect(testInstance.getEventsPresent()).toBe(
-      testInstance.getEventsPresentAverage()
-    );
-    expect(testInstance.getEventsPresent(undefined)).toBe(
-      testInstance.getEventsPresentAverage()
-    );
-  });
 });

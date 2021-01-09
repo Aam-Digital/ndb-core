@@ -24,35 +24,39 @@
   <form #entityForm="ngForm">
 
     <div class="w-{{entity.getWarningLevel()}}">
-      <div class='summary'>Attendance: {{entity?.getAttendancePercentage() | percent:'1.0-0'}}</div>
+      <div class='summary'>
+        Attendance:
+        {{focusedChild ? entity?.getAttendancePercentage(focusedChild) : entity?.getAttendancePercentageAverage() | percent:'1.0-0'}}
+      </div>
     </div>
 
     <div fxLayout='row wrap' fxLayoutGap='20px'>
       <div fxFlex>
         <mat-form-field>
           <input matInput type="number" min="0" placeholder='days present'
-                 [value]="entity.getEventsPresent()" readonly>
+                 [value]="focusedChild ? entity.countEventsPresent(focusedChild) : entity.countEventsPresentAverage()" readonly>
         </mat-form-field>
       </div>
 
       <div fxFlex>
         <mat-form-field>
           <input matInput type="number" min="0" placeholder='days absent'
-                 [value]="entity.getEventsAbsent()" readonly>
+                 [value]="focusedChild ? entity.countEventsAbsent(focusedChild) : entity.countEventsAbsentAverage()" readonly>
         </mat-form-field>
       </div>
 
       <div fxFlex>
         <mat-form-field>
           <input matInput type="number" min="0" placeholder='unknown status'
-                 [value]="entity.getEventsWithStatus(attendanceStatus.UNKNOWN)" readonly>
+                 [value]="focusedChild ? entity.countEventsWithStatusForChild(attendanceStatus.UNKNOWN, focusedChild) : entity.countEventsWithUnknownStatus()"
+                 readonly>
         </mat-form-field>
       </div>
 
-      <div fxFlex>
+      <div fxFlex *ngIf="focusedChild">
         <mat-form-field>
           <input matInput type="number" min="0" placeholder='days late'
-                 [value]="entity.getEventsWithStatus(attendanceStatus.LATE)" readonly>
+                 [value]="entity.countEventsWithStatusForChild(attendanceStatus.LATE, focusedChild)" readonly>
         </mat-form-field>
       </div>
     </div>

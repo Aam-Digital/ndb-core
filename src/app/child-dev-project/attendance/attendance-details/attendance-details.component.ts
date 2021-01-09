@@ -15,6 +15,7 @@ import { AttendanceStatus } from "../model/attendance-status";
 })
 export class AttendanceDetailsComponent implements ShowsEntity {
   @Input() entity: ActivityAttendance = new ActivityAttendance();
+  @Input() focusedChild: string;
   @ViewChild("dialogForm", { static: true }) formDialogWrapper;
 
   eventDetailsComponent = NoteDetailsComponent;
@@ -34,8 +35,8 @@ export class AttendanceDetailsComponent implements ShowsEntity {
       label: "Attended",
       inputType: ColumnDescriptionInputType.FUNCTION,
       valueFunction: (note: Note) => {
-        if (this.entity.focusedChild) {
-          return note.getAttendance(this.entity.focusedChild).status;
+        if (this.focusedChild) {
+          return note.getAttendance(this.focusedChild).status;
         } else {
           return calculateAverageAttendance(note).average;
         }
