@@ -3,6 +3,7 @@ import { animate, style, transition, trigger } from "@angular/animations";
 import {
   AttendanceStatus,
   AttendanceStatusType,
+  DEFAULT_ATTENDANCE_TYPES,
 } from "../../model/attendance-status";
 import { Note } from "../../../notes/model/note";
 import { EventAttendance } from "../../model/event-attendance";
@@ -58,44 +59,7 @@ export class RollCallComponent implements OnInit {
 
   private loadAttendanceStatusTypes() {
     // TODO: move this into config completely
-    this.availableStatus = [
-      {
-        status: AttendanceStatus.PRESENT,
-        shortName: "P",
-        name: "Present",
-        color: "#C8E6C9",
-      },
-      {
-        status: AttendanceStatus.ABSENT,
-        shortName: "A",
-        name: "Absent",
-        color: "#FF8A65",
-      },
-      {
-        status: AttendanceStatus.LATE,
-        shortName: "L",
-        name: "Late",
-        color: "#FFECB3",
-      },
-      {
-        status: AttendanceStatus.HOLIDAY,
-        shortName: "H",
-        name: "Holiday",
-        color: "#CFD8DC",
-      },
-      {
-        status: AttendanceStatus.EXCUSED,
-        shortName: "E",
-        name: "Excused",
-        color: "#D7CCC8",
-      },
-      {
-        status: AttendanceStatus.UNKNOWN,
-        shortName: "?",
-        name: "Skip",
-        color: "#DDDDDD",
-      },
-    ];
+    this.availableStatus = DEFAULT_ATTENDANCE_TYPES;
   }
 
   markAttendance(childId: string, status: AttendanceStatus) {

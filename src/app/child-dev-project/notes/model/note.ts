@@ -140,4 +140,24 @@ export class Note extends Entity {
     }
     return attendance;
   }
+
+  /**
+   * Whether the attendance context information available through `getAttendance` is missing data for some children.
+   *
+   * While getAttendance will always set and return at least a default value `hasUnknownAttendances` can be used
+   * to flag events with incomplete data.
+   */
+  hasUnknownAttendances(): boolean {
+    if (this.childrenAttendance.size < this.children.length) {
+      return true;
+    } else {
+      for (const v of this.childrenAttendance.values()) {
+        if (v.status === AttendanceStatus.UNKNOWN) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
 }

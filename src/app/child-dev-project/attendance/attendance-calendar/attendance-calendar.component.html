@@ -1,0 +1,52 @@
+<mat-calendar (selectedChange)="selectDay($event)"
+              [dateClass]="highlightDate" [minDate]="minDate" [maxDate]="maxDate">
+</mat-calendar>
+
+<div *ngIf="selectedDate" class="form">
+  <h3 class="selected-title">
+    {{ selectedDate | date }}
+  </h3>
+
+  <button mat-icon-button class="form-close" (click)="selectDay()">
+    <span class="fa fa-times"></span>
+  </button>
+
+  <div *ngIf="selectedEvent && highlightForChild">
+    <div>
+      <span class="indicator {{getCssClassForAttendanceStatus(selectedEventAttendance.status)}}">&nbsp;</span>
+      &nbsp;
+      <mat-form-field>
+        <mat-select [(ngModel)]="selectedEventAttendance.status" (ngModelChange)="save()" #dayStatusSelect>
+          <mat-option *ngFor="let s of statusValues | keys" [value]="s.value">
+            <span class="indicator {{getCssClassForAttendanceStatus(s.value)}}">&nbsp;</span>
+            {{s.key}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field style="width: 100%;">
+      <textarea matInput placeholder="Remarks"
+                [(ngModel)]="selectedEventAttendance.remarks"
+                (blur)="save()"></textarea>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div *ngIf="selectedEvent && !highlightForChild">
+    <div>
+      {{ selectedEventStats.average | percent:"1.0-0" }} attended
+      (of {{ selectedEvent.children.length }} participants)
+    </div>
+    <div *ngIf="selectedEventStats.unknownStatus > 0" class="unknown-status-notice">
+      {{selectedEventStats.unknownStatus}} participants without recorded status
+    </div>
+    <button mat-stroked-button (click)="showEventDetails(selectedEvent)">Details</button>
+  </div>
+
+  <div *ngIf="!selectedEvent" class="no-events-notice">
+    no events on this date
+  </div>
+
+</div>

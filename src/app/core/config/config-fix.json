@@ -1127,6 +1127,14 @@
               "component": "ActivityParticipantsSection"
             }
           ]
+        },
+        {
+          "title": "Events & Attendance",
+          "components": [
+            {
+              "component": "ActivityAttendanceSection"
+            }
+          ]
         }
       ],
       "icon": "calendar"

@@ -15,9 +15,9 @@ import { FormDialogService } from "../../../core/form-dialog/form-dialog.service
 export class ActivitySetupComponent implements OnInit {
   date = new Date();
 
-  existingEvents: Note[] = [];
+  existingEvents: NoteForActivitySetup[] = [];
 
-  selectedEvent: Note;
+  selectedEvent: NoteForActivitySetup;
   @Output() eventSelected = new EventEmitter<Note>();
 
   allActivities: RecurringActivity[] = [];
@@ -53,7 +53,10 @@ export class ActivitySetupComponent implements OnInit {
     );
 
     for (const activity of this.visibleActivities) {
-      this.existingEvents.push(this.createEventForActivity(activity));
+      const newEvent = this.createEventForActivity(activity);
+      if (newEvent) {
+        this.existingEvents.push(newEvent);
+      }
     }
   }
 
@@ -62,7 +65,10 @@ export class ActivitySetupComponent implements OnInit {
       (a) => !this.visibleActivities.includes(a)
     );
     for (const activity of additionalActivities) {
-      this.existingEvents.push(this.createEventForActivity(activity));
+      const newEvent = this.createEventForActivity(activity);
+      if (newEvent) {
+        this.existingEvents.push(newEvent);
+      }
       this.visibleActivities.push(activity);
     }
     this.sortEvents();
@@ -78,17 +84,26 @@ export class ActivitySetupComponent implements OnInit {
     }
   }
 
-  private createEventForActivity(activity: RecurringActivity): Note {
-    const alreadyCreated = this.existingEvents.find(
-      (e) => e.relatesTo === activity._id
-    );
-    if (alreadyCreated) {
-      return alreadyCreated;
+  private createEventForActivity(
+    activity: RecurringActivity
+  ): NoteForActivitySetup {
+    if (this.existingEvents.find((e) => e.relatesTo === activity._id)) {
+      return undefined;
     }
 
-    const event = Note.create(this.date, activity.title);
+    const event = Note.create(
+      this.date,
+      activity.title
+    ) as NoteForActivitySetup;
     event.children = activity.participants;
     event.relatesTo = activity._id;
+    event.author = this.sessionService.getCurrentUser().getId();
+    event.category = {
+      isMeeting: true,
+      label: "Event",
+      id: "GUARDIAN_MEETING",
+    }; // TODO: set category from activity
+    event.isNewFromActivity = true;
     return event;
   }
 
@@ -133,3 +148,5 @@ export class ActivitySetupComponent implements OnInit {
       });
   }
 }
+
+type NoteForActivitySetup = Note & { isNewFromActivity?: boolean };

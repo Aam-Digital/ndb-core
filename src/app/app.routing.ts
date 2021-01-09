@@ -21,7 +21,6 @@ import { DashboardComponent } from "./core/dashboard/dashboard/dashboard.compone
 import { SchoolsListComponent } from "./child-dev-project/schools/schools-list/schools-list.component";
 import { UserAccountComponent } from "./core/user/user-account/user-account.component";
 import { ChildrenListComponent } from "./child-dev-project/children/children-list/children-list.component";
-import { ChildAttendanceComponent } from "./child-dev-project/attendance/child-attendance/child-attendance.component";
 import { AdminComponent } from "./core/admin/admin/admin.component";
 import { AdminGuard } from "./core/admin/admin.guard";
 import { NotesManagerComponent } from "./child-dev-project/notes/notes-manager/notes-manager.component";
@@ -48,7 +47,6 @@ export const COMPONENT_MAP = {
   SchoolsList: SchoolsListComponent,
   ChildrenList: ChildrenListComponent,
   ActivityList: ActivityListComponent,
-  ChildAttendance: ChildAttendanceComponent,
   Admin: AdminComponent,
   ConflictResolution: ConflictResolutionListComponent,
   EntityDetails: EntityDetailsComponent,

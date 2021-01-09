@@ -21,6 +21,7 @@ import { DisplayTextComponent } from "../entity-components/entity-list/display-t
 import { DisplayCheckmarkComponent } from "../entity-components/entity-list/display-checkmark/display-checkmark.component";
 import { DisplayDateComponent } from "../entity-components/entity-list/display-date/display-date.component";
 import { ActivityParticipantsSectionComponent } from "../../child-dev-project/attendance/activity-participants-section/activity-participants-section.component";
+import { ActivityAttendanceSectionComponent } from "../../child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -34,6 +35,7 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["Aser", AserComponent],
   ["GroupedChildAttendance", GroupedChildAttendanceComponent],
   ["ActivityParticipantsSection", ActivityParticipantsSectionComponent],
+  ["ActivityAttendanceSection", ActivityAttendanceSectionComponent],
   ["NotesOfChild", NotesOfChildComponent],
   ["HealthCheckup", HealthCheckupComponent],
   ["EducationalMaterial", EducationalMaterialComponent],

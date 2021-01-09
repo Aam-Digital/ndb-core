@@ -46,6 +46,13 @@ import { SchoolsModule } from "../schools/schools.module";
 import { MatSortModule } from "@angular/material/sort";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
+import { AttendanceBlockComponent } from "./attendance-block/attendance-block.component";
+import { RecentAttendanceBlocksComponent } from "../children/children-list/recent-attendance-blocks/recent-attendance-blocks.component";
+import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
+import { ActivityAttendanceSectionComponent } from "./activity-attendance-section/activity-attendance-section.component";
+import { AttendanceCalendarComponent } from "./attendance-calendar/attendance-calendar.component";
+import { GroupedChildAttendanceComponent } from "../children/child-details/grouped-child-attendance/grouped-child-attendance.component";
+import { MatTabsModule } from "@angular/material/tabs";
 
 @NgModule({
   declarations: [
@@ -59,6 +66,11 @@ import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
     AttendanceDetailsComponent,
     AddDayAttendanceComponent,
     RollCallComponent,
+    AttendanceBlockComponent,
+    RecentAttendanceBlocksComponent,
+    ActivityAttendanceSectionComponent,
+    AttendanceCalendarComponent,
+    GroupedChildAttendanceComponent,
   ],
   imports: [
     EntityListModule,
@@ -81,6 +93,8 @@ import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
     MatSortModule,
     MatCheckboxModule,
     FormDialogModule,
+    EntitySubrecordModule,
+    MatTabsModule,
   ],
   exports: [ActivityCardComponent, ActivitySetupComponent],
 })

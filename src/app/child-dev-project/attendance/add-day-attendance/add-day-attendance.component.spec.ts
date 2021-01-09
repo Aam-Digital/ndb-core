@@ -10,6 +10,7 @@ import { of } from "rxjs";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { User } from "../../../core/user/user";
 import { MatNativeDateModule } from "@angular/material/core";
+import { AttendanceService } from "../attendance.service";
 
 describe("AddDayAttendanceComponent", () => {
   let component: AddDayAttendanceComponent;
@@ -39,6 +40,10 @@ describe("AddDayAttendanceComponent", () => {
         {
           provide: SessionService,
           useValue: { getCurrentUser: () => new User("") },
+        },
+        {
+          provide: AttendanceService,
+          useValue: { getEventsOnDate: () => Promise.resolve([]) },
         },
       ],
     }).compileComponents();
