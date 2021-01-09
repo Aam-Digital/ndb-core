@@ -38,7 +38,7 @@ export class AttendanceDetailsComponent implements ShowsEntity {
         if (this.focusedChild) {
           return note.getAttendance(this.focusedChild).status;
         } else {
-          return calculateAverageAttendance(note).average;
+          return Math.round(calculateAverageAttendance(note).average * 10) / 10;
         }
       },
     },

@@ -34,14 +34,14 @@
       <div fxFlex>
         <mat-form-field>
           <input matInput type="number" min="0" placeholder='days present'
-                 [value]="focusedChild ? entity.countEventsPresent(focusedChild) : entity.countEventsPresentAverage()" readonly>
+                 [value]="focusedChild ? entity.countEventsPresent(focusedChild) : entity.countEventsPresentAverage(true)" readonly>
         </mat-form-field>
       </div>
 
       <div fxFlex>
         <mat-form-field>
           <input matInput type="number" min="0" placeholder='days absent'
-                 [value]="focusedChild ? entity.countEventsAbsent(focusedChild) : entity.countEventsAbsentAverage()" readonly>
+                 [value]="focusedChild ? entity.countEventsAbsent(focusedChild) : entity.countEventsAbsentAverage(true)" readonly>
         </mat-form-field>
       </div>
 

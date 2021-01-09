@@ -85,15 +85,15 @@ export class ActivityAttendance extends Entity {
 
   getAttendancePercentageAverage() {
     // TODO calculate overall averaged attendance percentage
-    return -1;
+    return NaN;
   }
 
-  countEventsPresentAverage() {
-    return this.countAverage(AttendanceCounting.PRESENT);
+  countEventsPresentAverage(rounded: boolean = false) {
+    return this.countAverage(AttendanceCounting.PRESENT, rounded);
   }
 
-  countEventsAbsentAverage() {
-    return this.countAverage(AttendanceCounting.ABSENT);
+  countEventsAbsentAverage(rounded: boolean = false) {
+    return this.countAverage(AttendanceCounting.ABSENT, rounded);
   }
 
   private countIndividual(childId: string, countingType: AttendanceCounting) {
@@ -104,7 +104,10 @@ export class ActivityAttendance extends Entity {
     ).length;
   }
 
-  private countAverage(matchingType: AttendanceCounting) {
+  private countAverage(
+    matchingType: AttendanceCounting,
+    rounded: boolean = false
+  ) {
     const calculatedStats = this.events
       .map((event) => {
         const eventStats = {
@@ -131,9 +134,13 @@ export class ActivityAttendance extends Entity {
         { total: 0, matching: 0 }
       );
 
-    return (
-      calculatedStats.matching / (calculatedStats.total / this.events.length)
-    );
+    const result =
+      calculatedStats.matching / (calculatedStats.total / this.events.length);
+    if (rounded) {
+      return Math.round(result * 10) / 10;
+    } else {
+      return result;
+    }
   }
 }
 

@@ -36,7 +36,7 @@ export class ActivityAttendanceSectionComponent
       valueFunction: (e: ActivityAttendance) =>
         this.forChild
           ? e.countEventsPresent(this.forChild)
-          : e.countEventsPresentAverage(),
+          : e.countEventsPresentAverage(true),
     },
     {
       name: "countEventsTotal",

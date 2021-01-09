@@ -27,6 +27,8 @@ export class AttendanceService {
       let attMonth = periods.get(month.getTime());
       if (!attMonth) {
         attMonth = ActivityAttendance.create(month);
+        attMonth.periodTo = moment(month).endOf("month").toDate();
+        attMonth.activity = activity;
         periods.set(month.getTime(), attMonth);
       }
       return attMonth;
