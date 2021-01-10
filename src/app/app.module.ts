@@ -71,9 +71,13 @@ import { Child } from "./child-dev-project/children/model/child";
 import { EntityConfigService } from "./core/entity/entity-config.service";
 import { FontAwesomeIconsModule } from "./core/icons/font-awesome-icons.module";
 import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
+import { EntityMapperService } from "./core/entity/entity-mapper.service";
 
-export function configFactory(configService: ConfigService) {
-  return (): Promise<any> => configService.loadConfig();
+export function configFactory(
+  configService: ConfigService,
+  entityMapper: EntityMapperService
+) {
+  return (): Promise<any> => configService.loadConfig(entityMapper);
 }
 
 /**
@@ -149,7 +153,7 @@ export function configFactory(configService: ConfigService) {
     {
       provide: APP_INITIALIZER,
       useFactory: configFactory,
-      deps: [ConfigService],
+      deps: [ConfigService, EntityMapperService],
       multi: true,
     },
   ],
