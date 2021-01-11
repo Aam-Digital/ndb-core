@@ -8,6 +8,7 @@ import { ConfirmationDialogService } from "../../confirmation-dialog/confirmatio
 import { MatSnackBar } from "@angular/material/snack-bar";
 import PouchDB from "pouchdb-browser";
 import { ChildPhotoUpdateService } from "../services/child-photo-update.service";
+import { ConfigService } from "../../config/config.service";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -32,7 +33,8 @@ export class AdminComponent implements OnInit {
     private backupService: BackupService,
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
-    private childPhotoUpdateService: ChildPhotoUpdateService
+    private childPhotoUpdateService: ChildPhotoUpdateService,
+    private configService: ConfigService
   ) {}
 
   ngOnInit() {
@@ -71,6 +73,19 @@ export class AdminComponent implements OnInit {
       .getCsvExport()
       .then((csv) => this.startDownload(csv, "text/csv", "export.csv"));
   }
+
+  public downloadConfigClick() {
+    const jsonString = this.configService.exportConfig();
+    const anchor = document.createElement("a");
+    anchor.setAttribute(
+      "href",
+      "data:text/plain;charset=utf-8," + encodeURIComponent(jsonString)
+    );
+    anchor.setAttribute("download", "config.json");
+    anchor.click();
+  }
+
+  public uploadConfigClick() {}
 
   private startDownload(data: string, type: string, name: string) {
     const blob = new Blob([data], { type: type });
