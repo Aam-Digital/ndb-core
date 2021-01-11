@@ -154,7 +154,7 @@ describe("EntityListComponent", () => {
   });
 
   it("should create filters from config and set correct ones", () => {
-    expect(component.filterSelections.length).toEqual(2);
+    expect(component.filterSelections.length).toEqual(3);
     expect(component.filterSelections[0].selectedOption).toEqual(
       testConfig.filters[0].default
     );
@@ -180,7 +180,7 @@ describe("EntityListComponent", () => {
     });
     setTimeout(() => {
       const activeFs = component.filterSelections[0];
-      component.filterClick(activeFs, clickedOption);
+      component.onFilterOptionSelected(activeFs, clickedOption);
       expect(component.filterSelections[0].selectedOption).toEqual(
         clickedOption
       );
@@ -197,9 +197,9 @@ describe("EntityListComponent", () => {
     const dropoutFs = component.filterSelections[0];
     const clickedOption = (testConfig.filters[0] as BooleanFilterConfig).false;
     const route = fixture.debugElement.injector.get(ActivatedRoute);
-    component.filterClick(dropoutFs, clickedOption);
+    component.onFilterOptionSelected(dropoutFs, clickedOption);
     const expectedParams = {};
-    expectedParams[dropoutFs.name] = clickedOption;
+    expectedParams[dropoutFs.filterSettings.name] = clickedOption;
     expect(router.navigate).toHaveBeenCalledWith([], {
       relativeTo: route,
       queryParams: expectedParams,
@@ -224,10 +224,16 @@ describe("EntityListComponent", () => {
   });
 
   it("correctly sets dropdown and selections", fakeAsync(() => {
-    expect(component.filterSelections.length).toEqual(2);
-    expect(component.filterSelections[0].name).toEqual("isActive");
-    expect(component.filterSelections[1].name).toEqual("center");
-    expect(component.filterDropdowns.length).toEqual(1);
-    expect(component.filterDropdowns[0].name).toEqual("religion");
+    expect(component.filterSelections.length).toEqual(3);
+    expect(
+      component.filterSelections
+        .filter((e) => e.display !== "dropdown")
+        .map((e) => e.filterSettings.name)
+    ).toEqual(["isActive", "center"]);
+    expect(
+      component.filterSelections
+        .filter((e) => e.display === "dropdown")
+        .map((e) => e.filterSettings.name)
+    ).toEqual(["religion"]);
   }));
 });

@@ -36,6 +36,12 @@ export interface ColumnGroup {
   columns: string[];
 }
 
+interface FilterComponentSettings<T> {
+  filterSettings: FilterSelection<T>;
+  selectedOption?: string;
+  display?: string;
+}
+
 /**
  * This component allows to create a full blown table with pagination, filtering, searching and grouping.
  * The filter and grouping settings are written into the URL params to allow going back to the previous view.
@@ -69,8 +75,7 @@ export class EntityListComponent<T extends Entity>
   columnsToDisplay: string[] = [];
   selectedColumnGroup: string = "";
 
-  filterSelections: FilterSelection<T>[] = [];
-  filterDropdowns: FilterSelection<T>[] = [];
+  filterSelections: FilterComponentSettings<T>[] = [];
   entityDataSource = new MatTableDataSource<T>();
 
   user: User;
@@ -86,7 +91,7 @@ export class EntityListComponent<T extends Entity>
     private sessionService: SessionService,
     private media: MediaObserver,
     private router: Router,
-    private route: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private entityMapperService: EntityMapperService
   ) {
     this.paginatorKey = getUrlWithoutParams(this.router);
@@ -131,7 +136,7 @@ export class EntityListComponent<T extends Entity>
       this.displayColumnGroup(this.defaultColumnGroup);
     }
     if (changes.hasOwnProperty("entityList")) {
-      this.addFilterSelections();
+      this.initFilterSelections();
     }
     this.loadUrlParams();
   }
@@ -164,13 +169,15 @@ export class EntityListComponent<T extends Entity>
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.entityDataSource.filter = filterValue;
-    this.updateUrl("search", filterValue);
   }
 
-  filterClick(filter: FilterSelection<T>, selectedOption) {
+  onFilterOptionSelected(
+    filter: FilterComponentSettings<T>,
+    selectedOption: string
+  ) {
     filter.selectedOption = selectedOption;
     this.applyFilterSelections();
-    this.updateUrl(filter.name, selectedOption);
+    this.updateUrl(filter.filterSettings.name, selectedOption);
   }
 
   private updateUserPaginationSettings() {
@@ -192,13 +199,13 @@ export class EntityListComponent<T extends Entity>
   }
 
   private loadUrlParams() {
-    this.route.queryParams.subscribe((params) => {
+    this.activatedRoute.queryParams.subscribe((params) => {
       if (params["view"]) {
         this.displayColumnGroup(params["view"]);
       }
       this.filterSelections.forEach((f) => {
-        if (params.hasOwnProperty(f.name)) {
-          f.selectedOption = params[f.name];
+        if (params.hasOwnProperty(f.filterSettings.name)) {
+          f.selectedOption = params[f.filterSettings.name];
         }
       });
       this.applyFilterSelections();
@@ -212,7 +219,7 @@ export class EntityListComponent<T extends Entity>
     const params = {};
     params[key] = value;
     this.router.navigate([], {
-      relativeTo: this.route,
+      relativeTo: this.activatedRoute,
       queryParams: params,
       queryParamsHandling: "merge",
     });
@@ -222,30 +229,30 @@ export class EntityListComponent<T extends Entity>
     let filteredData = this.entityList;
 
     this.filterSelections.forEach((f) => {
-      filteredData = filteredData.filter(f.getSelectedFilterFunction());
-    });
-    this.filterDropdowns.forEach((f) => {
-      filteredData = filteredData.filter(f.getSelectedFilterFunction());
+      filteredData = filteredData.filter(
+        f.filterSettings.getFilterFunction(f.selectedOption)
+      );
     });
 
     this.entityDataSource.data = filteredData;
   }
 
-  private addFilterSelections() {
-    this.filterSelections = [];
-    this.filterDropdowns = [];
-    this.filtersConfig.forEach((filter) => {
-      const fs = new FilterSelection(filter.id, []);
-      this.initFilterOptions(fs, filter);
+  private initFilterSelections() {
+    const filterSelections = [];
+
+    for (const filter of this.filtersConfig) {
+      const fs: FilterComponentSettings<T> = {
+        filterSettings: new FilterSelection(filter.id, []),
+        display: filter.display,
+      };
+      this.initFilterOptions(fs.filterSettings, filter);
       fs.selectedOption = filter.hasOwnProperty("default")
         ? filter.default
-        : fs.options[0].key;
-      if (filter.display === "dropdown") {
-        this.filterDropdowns.push(fs);
-      } else {
-        this.filterSelections.push(fs);
-      }
-    });
+        : fs.filterSettings.options[0].key;
+      filterSelections.push(fs);
+    }
+
+    this.filterSelections = filterSelections;
   }
 
   private initFilterOptions(

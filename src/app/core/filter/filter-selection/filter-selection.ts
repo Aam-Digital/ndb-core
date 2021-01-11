@@ -24,9 +24,6 @@
  * an instance of this FilterSelection class can manage all filter selection logic.
  */
 export class FilterSelection<T> {
-  /** key of currently selected option */
-  public selectedOption: string;
-
   /**
    * Create a FilterSelection with different options to be selected.
    * @param name The name or id describing this filter
@@ -48,7 +45,13 @@ export class FilterSelection<T> {
     return this.options.find((option) => option.key === key);
   }
 
-  private getFilterFunction(key: string) {
+  /**
+   * Get the filter function for the given option.
+   * If the given key is undefined or invalid, the returned filter function will keep all items in the result if applied.
+   *
+   * This can be directly used on a data array, e.g. "data.filter(filterSelection.getFilterFunction('a'))"
+   */
+  public getFilterFunction(key: string) {
     const option = this.getOption(key);
 
     if (!option) {
@@ -56,16 +59,6 @@ export class FilterSelection<T> {
     } else {
       return option.filterFun;
     }
-  }
-
-  /**
-   * Get the filter function of the currently selected option.
-   * If no option has been selected yet, the returned filter function will keep all items in the result if applied.
-   *
-   * This can be directly used on a data array, e.g. "data.filter(filterSelection.getFilterFunction('a'))"
-   */
-  public getSelectedFilterFunction() {
-    return this.getFilterFunction(this.selectedOption);
   }
 
   /**

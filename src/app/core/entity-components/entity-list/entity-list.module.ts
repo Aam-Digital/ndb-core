@@ -20,6 +20,7 @@ import { FormsModule } from "@angular/forms";
 import { AdminModule } from "../../admin/admin.module";
 import { ViewModule } from "../../view/view.module";
 import { DisplayConfigurableEnumComponent } from "./display-configurable-enum/display-configurable-enum.component";
+import { ListFilterComponent } from "./list-filter/list-filter.component";
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { DisplayConfigurableEnumComponent } from "./display-configurable-enum/di
     DisplayDateComponent,
     DisplayConfigurableEnumComponent,
     DisplayCheckmarkComponent,
+    ListFilterComponent,
   ],
   imports: [
     CommonModule,
