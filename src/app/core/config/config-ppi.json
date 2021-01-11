@@ -49,13 +49,12 @@
     ]
   },
 
-  "notes": {
-    "InteractionTypes": {
-      "NONE": {"name": ""},
-      "PRACTICE": {"name": "Practice", "isMeeting": true},
-      "MATCH": {"name": "Match", "isMeeting": true, "color": "#E1BEE7"}
-    }
-  },
+  "enum:interaction-type": [
+    { "id": "NONE", "label": ""},
+    { "id": "PRACTICE", "label": "Practice", "isMeeting": true},
+    { "id": "TWINNING", "label": "Twinning", "isMeeting": true, "color": "#BEE7E1" },
+    { "id": "MATCH", "label": "Match", "isMeeting": true, "color": "#E1BEE7"}
+  ],
 
   "view:": {
     "component": "Dashboard",
@@ -373,6 +372,14 @@
           "components": [
             {
               "component": "ActivityParticipantsSection"
+            }
+          ]
+        },
+        {
+          "title": "Events & Attendance",
+          "components": [
+            {
+              "component": "ActivityAttendanceSection"
             }
           ]
         }
