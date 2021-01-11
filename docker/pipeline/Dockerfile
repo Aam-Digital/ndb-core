@@ -33,9 +33,10 @@ RUN if [ "$RUN_TESTS" = true ] ; then \
 FROM nginx:1.19.4-alpine
 COPY ./docker/pipeline/default.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/dist/ /usr/share/nginx/html
+ENV PORT=80
 ENV WEBDAV_URL="http://localhost:4200/"
 # URLs need to be escaped in order to not interfere with sed
-RUN ESCAPED_WEBDAV_URL=$(printf '%s\n' "$WEBDAV_URL" | sed -e 's/[\/&]/\\&/g')
-ENV PORT=80
 # sed is needed to insert the $PORT into the nginx config
-CMD sed -i -e 's/PORT/'"$PORT"'/g' -e 's/WEBDAV_URL/'"$ESCAPED_WEBDAV_URL"'/g' /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'
+CMD ESCAPED_WEBDAV_URL=$(printf '%s\n' "$WEBDAV_URL" | sed -e 's/[\/&]/\\&/g') &&\
+    sed -i -e 's/PORT/'"$PORT"'/g' -e 's/WEBDAV_URL/'"$ESCAPED_WEBDAV_URL"'/g' /etc/nginx/conf.d/default.conf &&\
+    nginx -g 'daemon off;'
