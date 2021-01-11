@@ -65,7 +65,8 @@ export const routes: Routes = [
         (m) => m["ConflictResolutionModule"]
       ),
   },
-  { path: "**", redirectTo: "/" },
+  // Available routes are not known when the application is first loaded
+  { path: "**", component: DashboardComponent },
 ];
 
 /**
