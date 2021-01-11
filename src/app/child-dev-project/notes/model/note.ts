@@ -70,10 +70,6 @@ export class Note extends Entity {
     return this.getColor();
   }
 
-  get categoryName(): string {
-    return this.category.label;
-  }
-
   /**
    * whether a specific child with given childId is linked to this not
    * @param childId The childId to check for

@@ -17,6 +17,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import {
   BooleanFilterConfig,
   ColumnConfig,
+  ConfigurableEnumFilterConfig,
   EntityListConfig,
   FilterConfig,
   PrebuiltFilterConfig,
@@ -30,6 +31,12 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { SessionService } from "../../session/session-service/session.service";
 import { User } from "../../user/user";
 import { getUrlWithoutParams } from "../../../utils/utils";
+import { ConfigService } from "../../config/config.service";
+import {
+  CONFIGURABLE_ENUM_CONFIG_PREFIX,
+  ConfigurableEnumConfig,
+} from "../../configurable-enum/configurable-enum.interface";
+import { LoggingService } from "../../logging/logging.service";
 
 export interface ColumnGroup {
   name: string;
@@ -88,6 +95,8 @@ export class EntityListComponent<T extends Entity>
   readonly paginatorKey: string;
 
   constructor(
+    private configService: ConfigService,
+    private loggingService: LoggingService,
     private sessionService: SessionService,
     private media: MediaObserver,
     private router: Router,
@@ -245,7 +254,7 @@ export class EntityListComponent<T extends Entity>
         filterSettings: new FilterSelection(filter.id, []),
         display: filter.display,
       };
-      this.initFilterOptions(fs.filterSettings, filter);
+      fs.filterSettings.options = this.initFilterOptions(filter);
       fs.selectedOption = filter.hasOwnProperty("default")
         ? filter.default
         : fs.filterSettings.options[0].key;
@@ -255,20 +264,19 @@ export class EntityListComponent<T extends Entity>
     this.filterSelections = filterSelections;
   }
 
-  private initFilterOptions(
-    filter: FilterSelection<T>,
-    config: FilterConfig
-  ): FilterSelectionOption<T>[] {
+  private initFilterOptions(config: FilterConfig): FilterSelectionOption<T>[] {
     switch (config.type) {
       case "boolean":
-        return (filter.options = this.createBooleanFilterOptions(
-          config as BooleanFilterConfig
-        ));
+        return this.createBooleanFilterOptions(config as BooleanFilterConfig);
       case "prebuilt":
-        return (filter.options = (config as PrebuiltFilterConfig<T>).options);
+        return (config as PrebuiltFilterConfig<T>).options;
+      case "configurable-enum":
+        return this.createConfigurableEnumFilterOptions(
+          config as ConfigurableEnumFilterConfig<T>
+        );
       default: {
         const options = [...new Set(this.entityList.map((c) => c[config.id]))];
-        filter.initOptions(options, config.id);
+        return FilterSelection.generateOptions(options, config.id);
       }
     }
   }
@@ -289,6 +297,32 @@ export class EntityListComponent<T extends Entity>
       },
       { key: "", label: filter.all, filterFun: () => true },
     ];
+  }
+
+  private createConfigurableEnumFilterOptions(
+    config: ConfigurableEnumFilterConfig<T>
+  ) {
+    const options = [{ key: "*", label: "All", filterFun: (e: T) => true }];
+
+    const enumValues = this.configService.getConfig<ConfigurableEnumConfig>(
+      CONFIGURABLE_ENUM_CONFIG_PREFIX + config.enumId
+    );
+    if (!enumValues) {
+      this.loggingService.warn(
+        "Could not load enum options for filter from config: " + config.id
+      );
+      return options;
+    }
+
+    for (const enumValue of enumValues) {
+      options.push({
+        key: enumValue.id,
+        label: enumValue.label,
+        filterFun: (entity) => entity[config.id].id === enumValue.id,
+      });
+    }
+
+    return options;
   }
 
   private displayColumnGroup(columnGroupName: string) {

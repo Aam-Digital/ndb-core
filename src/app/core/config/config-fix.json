@@ -248,8 +248,10 @@
           "type": "prebuilt"
         },
         {
-          "id": "categoryName",
+          "id": "category",
           "label": "Category",
+          "type": "configurable-enum",
+          "enumId": "interaction-type",
           "display": "dropdown"
         }
       ]

@@ -10,7 +10,7 @@ describe("FilterSelection", () => {
     const fs = new FilterSelection("", []);
 
     const keys = ["x", "y"];
-    fs.initOptions(keys, "category");
+    fs.options = FilterSelection.generateOptions(keys, "category");
 
     expect(fs.options.length).toBe(keys.length + 1);
 
