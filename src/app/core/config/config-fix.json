@@ -198,9 +198,9 @@
           "id": "subject"
         },
         {
-          "component": "DisplayText",
+          "component": "DisplayConfigurableEnum",
           "title": "Category",
-          "id": "categoryName"
+          "id": "category"
         },
         {
           "component": "DisplayText",
@@ -223,7 +223,7 @@
             "columns": [
               "date",
               "subject",
-              "categoryName",
+              "category",
               "author",
               "children"
             ]

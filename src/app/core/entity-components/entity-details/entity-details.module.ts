@@ -18,6 +18,7 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { ViewModule } from "../../view/view.module";
 import { EntityModule } from "../../entity/entity.module";
 import { AlertsModule } from "../../alerts/alerts.module";
+import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
 
 @NgModule({
   declarations: [EntityDetailsComponent, FormComponent],
@@ -39,6 +40,7 @@ import { AlertsModule } from "../../alerts/alerts.module";
     MatNativeDateModule,
     EntityModule,
     AlertsModule,
+    ConfigurableEnumModule,
   ],
 })
 export class EntityDetailsModule {}
