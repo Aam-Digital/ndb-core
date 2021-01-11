@@ -300,6 +300,11 @@
           "id": "type"
         },
         {
+          "component": "DisplayCheckmark",
+          "title": "bi-communal (mixed)",
+          "id": "isBiCommunal"
+        },
+        {
           "component": "DisplayText",
           "title": "Assigned to",
           "id": "assignedTo"
@@ -314,6 +319,7 @@
             "columns": [
               "title",
               "type",
+              "isBiCommunal",
               "assignedTo"
             ]
           }
@@ -343,22 +349,27 @@
                 "cols": [
                   [
                     {
-                      "input": "text",
                       "id": "title",
+                      "input": "text",
                       "placeholder": "Title"
                     }
                   ],
                   [
                     {
-                      "input": "text",
                       "id": "type",
+                      "input": "text",
                       "placeholder": "Type"
+                    },
+                    {
+                      "id": "isBiCommunal",
+                      "input": "checkbox",
+                      "placeholder": "bi-communal (mixed)"
                     }
                   ],
                   [
                     {
-                      "input": "text",
                       "id": "assignedTo",
+                      "input": "text",
                       "placeholder": "Assigned to"
                     }
                   ]
@@ -404,6 +415,11 @@
   "entity:School": {
     "attributes": [
       {"name": "language", "schema": { "dataType": "string" }}
+    ]
+  },
+  "entity:RecurringActivity": {
+    "attributes": [
+      {"name": "isBiCommunal", "schema": { "dataType": "boolean" }}
     ]
   }
 }
