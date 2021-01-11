@@ -35,4 +35,4 @@ ENV PORT=80
 COPY ./deploy/nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/dist/ /usr/share/nginx/html
 # sed is needed to insert the $PORT into the nginx config
-CMD sed -i -e 's/$PORT/'"$PORT"'/g' /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'
+CMD sed -i -e 's/$PORT/'"$PORT"'/g' -e 's/$WEBDAV_URL/'"$WEBDAV_URL"'/g' /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'
