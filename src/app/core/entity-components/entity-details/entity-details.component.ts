@@ -19,7 +19,7 @@ import { RecurringActivity } from "../../../child-dev-project/attendance/model/r
 const ENTITY_MAP: Map<string, any> = new Map<string, EntityConstructor<Entity>>(
   [
     ["Child", Child],
-    ["Player", Child],
+    ["Participant", Child],
     ["School", School],
     ["Team", School],
     ["RecurringActivity", RecurringActivity],

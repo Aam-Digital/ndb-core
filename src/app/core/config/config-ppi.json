@@ -7,7 +7,7 @@
         "link": "/dashboard"
       },
       {
-        "name": "Players",
+        "name": "Participants",
         "icon": "child",
         "link": "/child"
       },
@@ -159,7 +159,7 @@
           ]
         },
         {
-          "title": "Players",
+          "title": "Participants",
           "components": [{"title": "", "component": "ChildrenOverview"}]}
       ],
       "icon": "university"
@@ -168,7 +168,7 @@
   "view:child": {
     "component": "ChildrenList",
     "config": {
-      "title": "All Players",
+      "title": "All Participants",
       "columns": [
         {"component": "ChildBlock", "title": "Name", "id": "name"},
         {"component": "DisplayText", "title": "Age", "id": "age"},
@@ -221,7 +221,7 @@
     "component": "EntityDetails",
     "config": {
       "icon": "child",
-      "entity": "Player",
+      "entity": "Participant",
       "panels": [
         {
           "title": "Basic Information",
@@ -266,7 +266,7 @@
         {
           "title": "Teams",
           "components": [
-            {"title": "Player History", "component": "PreviousSchools"}
+            {"title": "Participation History", "component": "PreviousSchools"}
           ]
         },
         {
