@@ -119,7 +119,9 @@
       "title": "All Teams",
       "columns": [
         {"component": "DisplayText", "title": "Team", "id": "name"},
-        {"component": "DisplayText", "title": "Category", "id": "category"}
+        {"component": "DisplayText", "title": "Category", "id": "category"},
+        {"component": "DisplayCheckmark", "title": "bi-communal (mixed)", "id": "isBiCommunal"},
+        {"component": "DisplayText", "title": "Location", "id": "location"}
       ],
       "columnGroup": {
         "default": "Team Info",
@@ -127,7 +129,7 @@
         "groups": [
           {
             "name": "Team Info",
-            "columns": ["name", "category"]
+            "columns": ["name", "category", "isBiCommunal", "location"]
           }
         ]
       },
@@ -149,8 +151,14 @@
               "component": "Form",
               "config": {
                 "cols": [
-                  [{"input": "text", "id": "name", "placeholder": "Name"}],
-                  [{"input": "text", "id": "category", "placeholder": "Category"}],
+                  [
+                    {"input": "text", "id": "name", "placeholder": "Name"},
+                    {"input": "text", "id": "location", "placeholder": "Location"}
+                  ],
+                  [
+                    {"input": "text", "id": "category", "placeholder": "Category"},
+                    {"input": "checkbox", "id": "isBiCommunal", "placeholder": "bi-communal (mixed)"}
+                  ],
                   [{"input": "textarea", "id": "remarks", "placeholder": "Remarks"}]
                 ]
               }
@@ -414,7 +422,9 @@
   },
   "entity:School": {
     "attributes": [
-      {"name": "language", "schema": { "dataType": "string" }}
+      {"name": "language", "schema": { "dataType": "string" }},
+      {"name": "isBiCommunal", "schema": { "dataType": "boolean" }},
+      {"name": "location", "schema": { "dataType": "string" }}
     ]
   },
   "entity:RecurringActivity": {
