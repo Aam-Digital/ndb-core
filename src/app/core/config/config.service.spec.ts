@@ -31,7 +31,7 @@ describe("ConfigService", () => {
 
   it("should use the default config when none is loaded", fakeAsync(() => {
     const configBefore = service.getAllConfigs("");
-    entityMapper.load.and.returnValue(Promise.resolve(null));
+    entityMapper.load.and.throwError("No config found");
     service.loadConfig(entityMapper);
     tick();
     const configAfter = service.getAllConfigs("");
@@ -97,5 +97,26 @@ describe("ConfigService", () => {
     tick();
     const result = service.exportConfig();
     expect(result).toEqual(expected);
+  }));
+
+  it("should call a registered function", fakeAsync(() => {
+    const mock = { fun: () => true };
+    spyOn(mock, "fun");
+    service.subscribeConfig(() => mock.fun());
+    entityMapper.load.and.returnValue(Promise.resolve(new Config()));
+    expect(mock.fun).not.toHaveBeenCalled();
+    service.loadConfig(entityMapper);
+    tick();
+    expect(mock.fun).toHaveBeenCalled();
+  }));
+
+  it("should call registered functions when EntityMapper throws an error", fakeAsync(() => {
+    const mock = { fun: () => true };
+    spyOn(mock, "fun");
+    service.subscribeConfig(() => mock.fun());
+    entityMapper.load.and.throwError("No config found");
+    service.loadConfig(entityMapper);
+    tick();
+    expect(mock.fun).toHaveBeenCalled();
   }));
 });

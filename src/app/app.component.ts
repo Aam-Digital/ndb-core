@@ -48,10 +48,12 @@ export class AppComponent implements OnInit {
     // The EntityMapperService needs the SessionServiceProvider which needs the AppConfig to be set up.
     // If the EntityMapperService is requested to early (through DI), the AppConfig is not ready yet.
     // TODO fix this with https://github.com/Aam-Digital/ndb-core/issues/595
-    configService.loadConfig(entityMapper).then(() => {
-      routerService.initRouting();
-      entityConfigService.addConfigAttributes<Child>(Child);
-    });
+    configService.loadConfig(entityMapper);
+    // These functions will be executed whenever a new config is available
+    configService.subscribeConfig(() => routerService.initRouting());
+    configService.subscribeConfig(() =>
+      entityConfigService.addConfigAttributes<Child>(Child)
+    );
     analyticsService.init();
   }
 

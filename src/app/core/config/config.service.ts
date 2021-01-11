@@ -10,6 +10,7 @@ import { LoggingService } from "../logging/logging.service";
 export class ConfigService {
   private static CONFIG_KEY = "CONFIG_ENTITY";
   private config: Config = new Config(ConfigService.CONFIG_KEY);
+  private subscribers: Array<() => any> = [];
 
   constructor(@Optional() private loggingService: LoggingService) {
     this.config.data = defaultConfig;
@@ -17,7 +18,7 @@ export class ConfigService {
 
   public async loadConfig(entityMapper: EntityMapperService): Promise<Config> {
     try {
-      this.config.data = await entityMapper.load<Config>(
+      this.config = await entityMapper.load<Config>(
         Config,
         ConfigService.CONFIG_KEY
       );
@@ -27,7 +28,12 @@ export class ConfigService {
       );
       //  no config found in db, using default one
     }
+    this.subscribers.forEach((f) => f());
     return this.config;
+  }
+
+  public subscribeConfig(fun: () => any) {
+    this.subscribers.push(fun);
   }
 
   public saveConfig(
@@ -48,6 +54,9 @@ export class ConfigService {
 
   public getAllConfigs<T>(prefix: string): T[] {
     const matchingConfigs = [];
+    console.log("prefix", prefix);
+    console.log("config", this.config);
+
     for (const id of Object.keys(this.config.data)) {
       if (id.startsWith(prefix)) {
         this.config.data[id]._id = id;
