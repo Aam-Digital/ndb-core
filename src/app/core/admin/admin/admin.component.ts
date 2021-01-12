@@ -9,6 +9,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import PouchDB from "pouchdb-browser";
 import { ChildPhotoUpdateService } from "../services/child-photo-update.service";
 import { ConfigService } from "../../config/config.service";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -34,7 +35,8 @@ export class AdminComponent implements OnInit {
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
     private childPhotoUpdateService: ChildPhotoUpdateService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private entityMapper: EntityMapperService
   ) {}
 
   ngOnInit() {
@@ -76,16 +78,16 @@ export class AdminComponent implements OnInit {
 
   public downloadConfigClick() {
     const jsonString = this.configService.exportConfig();
-    const anchor = document.createElement("a");
-    anchor.setAttribute(
-      "href",
-      "data:text/plain;charset=utf-8," + encodeURIComponent(jsonString)
-    );
-    anchor.setAttribute("download", "config.json");
-    anchor.click();
+    this.startDownload(jsonString, "text/json", "config.json");
   }
 
-  public uploadConfigClick() {}
+  public uploadConfigFile(file) {
+    this.readFile(file)
+      .then((res) =>
+        this.configService.saveConfig(this.entityMapper, JSON.parse(res))
+      )
+      .then(() => this.configService.loadConfig(this.entityMapper));
+  }
 
   private startDownload(data: string, type: string, name: string) {
     const blob = new Blob([data], { type: type });

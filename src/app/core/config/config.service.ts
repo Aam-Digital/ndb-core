@@ -33,6 +33,8 @@ export class ConfigService {
   }
 
   public subscribeConfig(fun: () => any) {
+    // Execute function once someone registers a function
+    fun();
     this.subscribers.push(fun);
   }
 
@@ -54,16 +56,12 @@ export class ConfigService {
 
   public getAllConfigs<T>(prefix: string): T[] {
     const matchingConfigs = [];
-    console.log("prefix", prefix);
-    console.log("config", this.config);
-
     for (const id of Object.keys(this.config.data)) {
       if (id.startsWith(prefix)) {
         this.config.data[id]._id = id;
         matchingConfigs.push(this.config.data[id]);
       }
     }
-
     return matchingConfigs;
   }
 }
