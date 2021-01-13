@@ -45,6 +45,10 @@ export class PrebuiltFilterConfig<T> extends FilterConfig {
   options: FilterSelectionOption<T>[];
 }
 
+export class ConfigurableEnumFilterConfig<T> extends FilterConfig {
+  enumId: string;
+}
+
 export class ColumnCellConfig {
   entity: Entity;
   id: string;

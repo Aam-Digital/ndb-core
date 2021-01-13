@@ -17,6 +17,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import {
   BooleanFilterConfig,
   ColumnConfig,
+  ConfigurableEnumFilterConfig,
   EntityListConfig,
   FilterConfig,
   PrebuiltFilterConfig,
@@ -30,10 +31,22 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { SessionService } from "../../session/session-service/session.service";
 import { User } from "../../user/user";
 import { getUrlWithoutParams } from "../../../utils/utils";
+import { ConfigService } from "../../config/config.service";
+import {
+  CONFIGURABLE_ENUM_CONFIG_PREFIX,
+  ConfigurableEnumConfig,
+} from "../../configurable-enum/configurable-enum.interface";
+import { LoggingService } from "../../logging/logging.service";
 
 export interface ColumnGroup {
   name: string;
   columns: string[];
+}
+
+interface FilterComponentSettings<T> {
+  filterSettings: FilterSelection<T>;
+  selectedOption?: string;
+  display?: string;
 }
 
 /**
@@ -69,8 +82,7 @@ export class EntityListComponent<T extends Entity>
   columnsToDisplay: string[] = [];
   selectedColumnGroup: string = "";
 
-  filterSelections: FilterSelection<T>[] = [];
-  filterDropdowns: FilterSelection<T>[] = [];
+  filterSelections: FilterComponentSettings<T>[] = [];
   entityDataSource = new MatTableDataSource<T>();
 
   user: User;
@@ -83,10 +95,12 @@ export class EntityListComponent<T extends Entity>
   readonly paginatorKey: string;
 
   constructor(
+    private configService: ConfigService,
+    private loggingService: LoggingService,
     private sessionService: SessionService,
     private media: MediaObserver,
     private router: Router,
-    private route: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private entityMapperService: EntityMapperService
   ) {
     this.paginatorKey = getUrlWithoutParams(this.router);
@@ -131,7 +145,7 @@ export class EntityListComponent<T extends Entity>
       this.displayColumnGroup(this.defaultColumnGroup);
     }
     if (changes.hasOwnProperty("entityList")) {
-      this.addFilterSelections();
+      this.initFilterSelections();
     }
     this.loadUrlParams();
   }
@@ -164,13 +178,15 @@ export class EntityListComponent<T extends Entity>
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.entityDataSource.filter = filterValue;
-    this.updateUrl("search", filterValue);
   }
 
-  filterClick(filter: FilterSelection<T>, selectedOption) {
+  onFilterOptionSelected(
+    filter: FilterComponentSettings<T>,
+    selectedOption: string
+  ) {
     filter.selectedOption = selectedOption;
     this.applyFilterSelections();
-    this.updateUrl(filter.name, selectedOption);
+    this.updateUrl(filter.filterSettings.name, selectedOption);
   }
 
   private updateUserPaginationSettings() {
@@ -192,13 +208,13 @@ export class EntityListComponent<T extends Entity>
   }
 
   private loadUrlParams() {
-    this.route.queryParams.subscribe((params) => {
+    this.activatedRoute.queryParams.subscribe((params) => {
       if (params["view"]) {
         this.displayColumnGroup(params["view"]);
       }
       this.filterSelections.forEach((f) => {
-        if (params.hasOwnProperty(f.name)) {
-          f.selectedOption = params[f.name];
+        if (params.hasOwnProperty(f.filterSettings.name)) {
+          f.selectedOption = params[f.filterSettings.name];
         }
       });
       this.applyFilterSelections();
@@ -212,7 +228,7 @@ export class EntityListComponent<T extends Entity>
     const params = {};
     params[key] = value;
     this.router.navigate([], {
-      relativeTo: this.route,
+      relativeTo: this.activatedRoute,
       queryParams: params,
       queryParamsHandling: "merge",
     });
@@ -222,46 +238,45 @@ export class EntityListComponent<T extends Entity>
     let filteredData = this.entityList;
 
     this.filterSelections.forEach((f) => {
-      filteredData = filteredData.filter(f.getSelectedFilterFunction());
-    });
-    this.filterDropdowns.forEach((f) => {
-      filteredData = filteredData.filter(f.getSelectedFilterFunction());
+      filteredData = filteredData.filter(
+        f.filterSettings.getFilterFunction(f.selectedOption)
+      );
     });
 
     this.entityDataSource.data = filteredData;
   }
 
-  private addFilterSelections() {
-    this.filterSelections = [];
-    this.filterDropdowns = [];
-    this.filtersConfig.forEach((filter) => {
-      const fs = new FilterSelection(filter.id, []);
-      this.initFilterOptions(fs, filter);
+  private initFilterSelections() {
+    const filterSelections = [];
+
+    for (const filter of this.filtersConfig) {
+      const fs: FilterComponentSettings<T> = {
+        filterSettings: new FilterSelection(filter.id, []),
+        display: filter.display,
+      };
+      fs.filterSettings.options = this.initFilterOptions(filter);
       fs.selectedOption = filter.hasOwnProperty("default")
         ? filter.default
-        : fs.options[0].key;
-      if (filter.display === "dropdown") {
-        this.filterDropdowns.push(fs);
-      } else {
-        this.filterSelections.push(fs);
-      }
-    });
+        : fs.filterSettings.options[0].key;
+      filterSelections.push(fs);
+    }
+
+    this.filterSelections = filterSelections;
   }
 
-  private initFilterOptions(
-    filter: FilterSelection<T>,
-    config: FilterConfig
-  ): FilterSelectionOption<T>[] {
+  private initFilterOptions(config: FilterConfig): FilterSelectionOption<T>[] {
     switch (config.type) {
       case "boolean":
-        return (filter.options = this.createBooleanFilterOptions(
-          config as BooleanFilterConfig
-        ));
+        return this.createBooleanFilterOptions(config as BooleanFilterConfig);
       case "prebuilt":
-        return (filter.options = (config as PrebuiltFilterConfig<T>).options);
+        return (config as PrebuiltFilterConfig<T>).options;
+      case "configurable-enum":
+        return this.createConfigurableEnumFilterOptions(
+          config as ConfigurableEnumFilterConfig<T>
+        );
       default: {
         const options = [...new Set(this.entityList.map((c) => c[config.id]))];
-        filter.initOptions(options, config.id);
+        return FilterSelection.generateOptions(options, config.id);
       }
     }
   }
@@ -282,6 +297,32 @@ export class EntityListComponent<T extends Entity>
       },
       { key: "", label: filter.all, filterFun: () => true },
     ];
+  }
+
+  private createConfigurableEnumFilterOptions(
+    config: ConfigurableEnumFilterConfig<T>
+  ) {
+    const options = [{ key: "*", label: "All", filterFun: (e: T) => true }];
+
+    const enumValues = this.configService.getConfig<ConfigurableEnumConfig>(
+      CONFIGURABLE_ENUM_CONFIG_PREFIX + config.enumId
+    );
+    if (!enumValues) {
+      this.loggingService.warn(
+        "Could not load enum options for filter from config: " + config.id
+      );
+      return options;
+    }
+
+    for (const enumValue of enumValues) {
+      options.push({
+        key: enumValue.id,
+        label: enumValue.label,
+        filterFun: (entity) => entity[config.id].id === enumValue.id,
+      });
+    }
+
+    return options;
   }
 
   private displayColumnGroup(columnGroupName: string) {

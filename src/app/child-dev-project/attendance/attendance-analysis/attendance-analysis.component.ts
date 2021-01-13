@@ -95,10 +95,11 @@ export class AttendanceAnalysisComponent implements OnInit, AfterViewInit {
 
   applyFilterSelections() {
     this.loading = 0;
-    let filteredData = this.childrenAll;
+    const filteredData = this.childrenAll;
 
+    // TODO reactive filters or rewrite
     this.filterSelections.forEach((f) => {
-      filteredData = filteredData.filter(f.getSelectedFilterFunction());
+      // filteredData = filteredData.filter(f.getSelectedFilterFunction());
     });
 
     let data = [];
