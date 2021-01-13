@@ -2,8 +2,6 @@
 
 <mat-expansion-panel
         expanded="true"
-        fxLayout="column wrap"
-        fxLayoutGap="10px"
         class="filter-panel mat-elevation-z2"
 >
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none end">
@@ -69,31 +67,20 @@
             </app-export-data>
         </div>
     </div>
-    <div
-            fxLayout="row"
-            fxLayoutGap="10px"
-            style="margin-top: 20px;"
-            *ngIf="filterSelections.length > 0"
-    >
-      <app-list-filter *ngFor="let filter of filterSelections"
-                       [filterConfig]="filter.filterSettings" [(selectedOption)]="filter.selectedOption"
-                       [displayAsToggle]="filter.display !== 'dropdown'"
-                       (selectedOptionChange)="onFilterOptionSelected(filter, $event)">
-      </app-list-filter>
-    </div>
 
-  <div
-    fxLayout="row wrap"
-    fxLayoutGap="10px"
-    class="filter-button"
-    fxHide.lt-sm
-  >
-    <mat-button-toggle-group
-      *ngIf="columnGroups.length > 1"
-      name="columnSelection"
-      [(value)]="selectedColumnGroup"
-      fxLayout="row wrap"
-    >
+  <div *ngIf="filterSelections.length > 0"
+       class="toggle-selection-section"
+       fxLayout="row wrap" fxLayoutGap="10px grid">
+    <app-list-filter *ngFor="let filter of filterSelections"
+                     [filterConfig]="filter.filterSettings" [(selectedOption)]="filter.selectedOption"
+                     [displayAsToggle]="filter.display !== 'dropdown'"
+                     (selectedOptionChange)="onFilterOptionSelected(filter, $event)">
+    </app-list-filter>
+  </div>
+
+  <div *ngIf="columnGroups.length > 1"
+       class="toggle-selection-section" fxHide.lt-sm>
+    <mat-button-toggle-group name="columnSelection" [(value)]="selectedColumnGroup">
       <mat-button-toggle
         *ngFor="let item of columnGroups"
         [value]="item.name"
