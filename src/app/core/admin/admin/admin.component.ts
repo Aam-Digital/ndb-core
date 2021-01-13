@@ -2,7 +2,6 @@ import { Component, OnInit } from "@angular/core";
 import { AppConfig } from "../../app-config/app-config";
 import { AlertService } from "../../alerts/alert.service";
 import { Alert } from "../../alerts/alert";
-import FileSaver from "file-saver";
 import { BackupService } from "../services/backup.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -90,16 +89,20 @@ export class AdminComponent implements OnInit {
   }
 
   private startDownload(data: string, type: string, name: string) {
-    const blob = new Blob([data], { type: type });
-    FileSaver.saveAs(blob, name);
+    const tempLink = document.createElement("a");
+    tempLink.href =
+      "data:" + type + ";charset=utf-8," + encodeURIComponent(data);
+    tempLink.target = "_blank";
+    tempLink.download = name;
+    tempLink.click();
   }
 
   private readFile(file: Blob): Promise<string> {
     return new Promise((resolve) => {
       const fileReader = new FileReader();
-      fileReader.onload = () => {
-        resolve(fileReader.result as string);
-      };
+      fileReader.addEventListener("load", () =>
+        resolve(fileReader.result as string)
+      );
       fileReader.readAsText(file);
     });
   }

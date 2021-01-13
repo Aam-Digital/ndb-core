@@ -2,6 +2,7 @@ import {
   async,
   ComponentFixture,
   fakeAsync,
+  flush,
   TestBed,
   tick,
 } from "@angular/core/testing";
@@ -17,6 +18,7 @@ import { ConfigService } from "../../config/config.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { of } from "rxjs";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { MatDialogRef } from "@angular/material/dialog";
 
 describe("AdminComponent", () => {
   let component: AdminComponent;
@@ -41,6 +43,34 @@ describe("AdminComponent", () => {
     ConfirmationDialogService,
     ["openDialog"]
   );
+
+  const tmplink: any = {
+    href: "",
+    target: "",
+    download: "",
+    click: () => {},
+  };
+
+  function createFileReaderMock(result: string = "") {
+    const mockFileReader: any = {
+      result: result,
+      addEventListener: (str: string, fun: () => any) => fun(),
+      readAsText: () => {},
+    };
+    spyOn(mockFileReader, "readAsText");
+    // mock FileReader constructor
+    spyOn(window, "FileReader").and.returnValue(mockFileReader);
+    return mockFileReader;
+  }
+
+  function createDialogMock(): jasmine.SpyObj<MatDialogRef<any>> {
+    const mockDialogRef: jasmine.SpyObj<MatDialogRef<
+      any
+    >> = jasmine.createSpyObj("mockDialogRef", ["afterClosed"]);
+    mockDialogRef.afterClosed.and.returnValue(of(true));
+    confirmationDialogMock.openDialog.and.returnValue(mockDialogRef);
+    return mockDialogRef;
+  }
 
   beforeEach(async(() => {
     AppConfig.settings = {
@@ -90,57 +120,73 @@ describe("AdminComponent", () => {
   });
 
   it("should call backup service for json export", () => {
+    spyOn(document, "createElement").and.returnValue(tmplink);
     mockBackupService.getJsonExport.and.returnValue(Promise.resolve(""));
     component.saveBackup();
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
   });
 
   it("should call backup service for csv export", () => {
+    spyOn(document, "createElement").and.returnValue(tmplink);
     mockBackupService.getCsvExport.and.returnValue(Promise.resolve(""));
     component.saveCsvExport();
     expect(mockBackupService.getCsvExport).toHaveBeenCalled();
   });
 
   it("should call config service for configuration export", () => {
+    spyOn(document, "createElement").and.returnValue(tmplink);
     component.downloadConfigClick();
     expect(mockConfigService.exportConfig).toHaveBeenCalled();
   });
 
   it("should save and apply new configuration", fakeAsync(() => {
+    const mockFileReader = createFileReaderMock("{}");
     mockConfigService.saveConfig.and.returnValue(Promise.resolve(null));
-    component.uploadConfigFile(new Blob());
+    component.uploadConfigFile(null);
     tick();
+    expect(mockFileReader.readAsText).toHaveBeenCalled();
     expect(mockConfigService.saveConfig).toHaveBeenCalled();
-    tick();
     expect(mockConfigService.loadConfig).toHaveBeenCalled();
   }));
 
-  it("should open dialog and call entity mapper when loading csv", fakeAsync(() => {
-    const mockDialogRef = jasmine.createSpyObj("mockDialogRef", [
-      "afterClosed",
-    ]);
-    mockDialogRef.afterClosed.and.returnValue(of(true));
-    confirmationDialogMock.openDialog.and.returnValue(mockDialogRef);
-    component.loadCsv(new Blob());
+  it("should open dialog and call backup service when loading backup", fakeAsync(() => {
+    const mockFileReader = createFileReaderMock();
+    mockBackupService.getJsonExport.and.returnValue(Promise.resolve(""));
+    createDialogMock();
+
+    component.loadBackup(null);
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
     tick();
+    expect(mockFileReader.readAsText).toHaveBeenCalled();
     expect(confirmationDialogMock.openDialog).toHaveBeenCalled();
+    flush();
+    expect(mockBackupService.clearDatabase).toHaveBeenCalled();
+    expect(mockBackupService.importJson).toHaveBeenCalled();
+  }));
+
+  it("should open dialog and call backup service when loading csv", fakeAsync(() => {
+    const mockFileReader = createFileReaderMock();
+    mockBackupService.getJsonExport.and.returnValue(Promise.resolve(null));
+    createDialogMock();
+
+    component.loadCsv(null);
+    expect(mockBackupService.getJsonExport).toHaveBeenCalled();
     tick();
+    expect(mockFileReader.readAsText).toHaveBeenCalled();
+    expect(confirmationDialogMock.openDialog).toHaveBeenCalled();
+    flush();
     expect(mockBackupService.importCsv).toHaveBeenCalled();
   }));
 
   it("should open dialog when clearing database", fakeAsync(() => {
     mockBackupService.getJsonExport.and.returnValue(Promise.resolve(""));
-    const mockDialogRef = jasmine.createSpyObj("mockDialogRef", [
-      "afterClosed",
-    ]);
-    mockDialogRef.afterClosed.and.returnValue(of(true));
-    confirmationDialogMock.openDialog.and.returnValue(mockDialogRef);
+    createDialogMock();
+
     component.clearDatabase();
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
     tick();
     expect(confirmationDialogMock.openDialog).toHaveBeenCalled();
-    tick();
+    flush();
     expect(mockBackupService.clearDatabase).toHaveBeenCalled();
   }));
 });
