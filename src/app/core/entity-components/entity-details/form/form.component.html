@@ -121,6 +121,22 @@
                     </mat-form-field>
                 </div>
 
+                <div *ngIf="row.input === 'configurable-enum-select'">
+                  <mat-form-field>
+                    <mat-label>
+                      {{row.placeholder}}
+                    </mat-label>
+                    <mat-select
+                      [disabled]="!editing"
+                      [formControlName]="row.id"
+                    >
+                      <mat-option *appConfigurableEnum="let o of row.enumId" [value]="o">
+                        {{o.label}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
                 <mat-form-field *ngIf="row.input === 'datepicker'" style="width: 180px">
                     <input
                             matInput

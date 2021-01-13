@@ -2,8 +2,6 @@
 
 <mat-expansion-panel
         expanded="true"
-        fxLayout="column wrap"
-        fxLayoutGap="10px"
         class="filter-panel mat-elevation-z2"
 >
     <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none end">
@@ -69,82 +67,29 @@
             </app-export-data>
         </div>
     </div>
-    <div
-            fxLayout="row wrap"
-            fxLayoutGap="10px"
-            class="filter-button"
-            fxHide.lt-sm
-    >
-        <mat-button-toggle-group
-                *ngIf="columnGroups.length > 1"
-                name="columnSelection"
-                [(value)]="selectedColumnGroup"
-                fxLayout="row wrap"
-        >
-            <mat-button-toggle
-                    *ngFor="let item of columnGroups"
-                    [value]="item.name"
-                    (click)="columnGroupClick(item.name)"
-            >
-                {{ item.name }}
-            </mat-button-toggle>
-        </mat-button-toggle-group>
 
-        <mat-button-toggle-group
-                *ngFor="let filterSelection of filterSelections"
-                [name]="filterSelection.name"
-                [value]="filterSelection.selectedOption"
-        >
-            <mat-button-toggle
-                    *ngFor="let option of filterSelection.options"
-                    [value]="option.key"
-                    (click)="filterClick(filterSelection, option.key)"
-            >
-                {{ option.label }}
-            </mat-button-toggle>
-        </mat-button-toggle-group>
-    </div>
-    <div fxLayout="row wrap" fxHide.gt-xs *ngIf="filterSelections.length > 0">
-        <mat-form-field
-                *ngFor="let filterSelection of filterSelections"
-                style="padding-right: 1%;"
-        >
-            <mat-label>{{ filterSelection.name }}</mat-label>
-            <mat-select
-                    [id]="filterSelection.name"
-                    [value]="filterSelection.selectedOption"
-                    placeholder="filterSelection.name"
-            >
-                <mat-option
-                        *ngFor="let option of filterSelection.options"
-                        [value]="option.key"
-                        (click)="filterClick(filterSelection, option.key)"
-                >
-                    {{ option.label }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-    </div>
-    <div
-            fxLayout="row"
-            fxLayoutGap="10px"
-            style="margin-top: 20px;"
-            *ngIf="filterDropdowns.length > 0"
-    >
-        <mat-form-field *ngFor="let filterSelection of filterDropdowns">
-            <mat-select
-                    [placeholder]="filterSelection.name"
-                    [value]="filterSelection.selectedOption"
-            >
-                <mat-option
-                        *ngFor="let option of filterSelection.options"
-                        [value]="option.key"
-                        (click)="filterClick(filterSelection, option.key)"
-                >{{ option.label }}</mat-option
-                >
-            </mat-select>
-        </mat-form-field>
-    </div>
+  <div *ngIf="filterSelections.length > 0"
+       class="toggle-selection-section"
+       fxLayout="row wrap" fxLayoutGap="10px grid">
+    <app-list-filter *ngFor="let filter of filterSelections"
+                     [filterConfig]="filter.filterSettings" [(selectedOption)]="filter.selectedOption"
+                     [displayAsToggle]="filter.display !== 'dropdown'"
+                     (selectedOptionChange)="onFilterOptionSelected(filter, $event)">
+    </app-list-filter>
+  </div>
+
+  <div *ngIf="columnGroups.length > 1"
+       class="toggle-selection-section" fxHide.lt-sm>
+    <mat-button-toggle-group name="columnSelection" [(value)]="selectedColumnGroup">
+      <mat-button-toggle
+        *ngFor="let item of columnGroups"
+        [value]="item.name"
+        (click)="columnGroupClick(item.name)"
+      >
+        {{ item.name }}
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
 </mat-expansion-panel>
 
 <div class="mat-elevation-z2 table-list">

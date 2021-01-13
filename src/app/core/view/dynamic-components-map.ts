@@ -20,6 +20,7 @@ import { FormComponent } from "../entity-components/entity-details/form/form.com
 import { DisplayTextComponent } from "../entity-components/entity-list/display-text/display-text.component";
 import { DisplayCheckmarkComponent } from "../entity-components/entity-list/display-checkmark/display-checkmark.component";
 import { DisplayDateComponent } from "../entity-components/entity-list/display-date/display-date.component";
+import { DisplayConfigurableEnumComponent } from "../entity-components/entity-list/display-configurable-enum/display-configurable-enum.component";
 import { ActivityParticipantsSectionComponent } from "../../child-dev-project/attendance/activity-participants-section/activity-participants-section.component";
 import { ActivityAttendanceSectionComponent } from "../../child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component";
 
@@ -42,6 +43,7 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["Form", FormComponent],
   ["DisplayDate", DisplayDateComponent],
   ["DisplayText", DisplayTextComponent],
+  ["DisplayConfigurableEnum", DisplayConfigurableEnumComponent],
   ["DisplayCheckmark", DisplayCheckmarkComponent],
   ["ChildBlock", ChildBlockComponent],
   ["ChildBlockList", ChildBlockListComponent],

@@ -95,10 +95,6 @@ export class Note extends Entity {
     return this.getColor();
   }
 
-  get categoryName(): string {
-    return this.category.label;
-  }
-
   /**
    * removes a specific child from this note
    * @param childId The id of the child to exclude from the notes

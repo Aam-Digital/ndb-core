@@ -97,7 +97,7 @@ export function configFactory(configService: ConfigService) {
     FlexLayoutModule,
     HttpClientModule,
     routing,
-    ViewModule,
+    ViewModule.forRoot(),
     FormsModule,
     ConfirmationDialogModule,
     FormDialogModule,

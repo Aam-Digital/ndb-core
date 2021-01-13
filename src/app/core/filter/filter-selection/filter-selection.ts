@@ -24,8 +24,37 @@
  * an instance of this FilterSelection class can manage all filter selection logic.
  */
 export class FilterSelection<T> {
-  /** key of currently selected option */
-  public selectedOption: string;
+  /**
+   * Generate filter options dynamically from the given value to be matched.
+   *
+   * This is a utility function to make it easier to generate {@link FilterSelectionOption}s for standard cases
+   * if you simply want each option to filter items having the given attribute matching different values.
+   * If you have more sophisticated filtering needs, use the constructor to set {@link FilterSelectionOption}s that
+   * you created yourself.
+   *
+   * @param valuesToMatchAsOptions An array of values to be matched.
+   *        A separate FilterSelectionOption is created for each value with a filter
+   *        that is true of a data item's property exactly matches that value.
+   * @param attributeName The name of the property of a data item that is compared to the value in the filter function.
+   */
+  public static generateOptions<TT>(
+    valuesToMatchAsOptions: string[],
+    attributeName: string
+  ): FilterSelectionOption<TT>[] {
+    const options = [{ key: "", label: "All", filterFun: (e: TT) => true }];
+
+    valuesToMatchAsOptions.forEach((k) => {
+      if (k) {
+        options.push({
+          key: k.toLowerCase(),
+          label: k.toString(),
+          filterFun: (e: TT) => e[attributeName] === k,
+        });
+      }
+    });
+
+    return options;
+  }
 
   /**
    * Create a FilterSelection with different options to be selected.
@@ -48,7 +77,13 @@ export class FilterSelection<T> {
     return this.options.find((option) => option.key === key);
   }
 
-  private getFilterFunction(key: string) {
+  /**
+   * Get the filter function for the given option.
+   * If the given key is undefined or invalid, the returned filter function will keep all items in the result if applied.
+   *
+   * This can be directly used on a data array, e.g. "data.filter(filterSelection.getFilterFunction('a'))"
+   */
+  public getFilterFunction(key: string) {
     const option = this.getOption(key);
 
     if (!option) {
@@ -56,45 +91,6 @@ export class FilterSelection<T> {
     } else {
       return option.filterFun;
     }
-  }
-
-  /**
-   * Get the filter function of the currently selected option.
-   * If no option has been selected yet, the returned filter function will keep all items in the result if applied.
-   *
-   * This can be directly used on a data array, e.g. "data.filter(filterSelection.getFilterFunction('a'))"
-   */
-  public getSelectedFilterFunction() {
-    return this.getFilterFunction(this.selectedOption);
-  }
-
-  /**
-   * Reset the available filter options to the ones dynamically generated from the given value to be matched.
-   *
-   * This is a utility function to make it easier to generate {@link FilterSelectionOption}s for standard cases
-   * if you simply want each option to filter items having the given attribute matching different values.
-   * If you have more sophisticated filtering needs, use the constructor to set {@link FilterSelectionOption}s that
-   * you created yourself.
-   *
-   * @param valuesToMatchAsOptions An array of values to be matched.
-   *        A separate FilterSelectionOption is created for each value with a filter
-   *        that is true of a data item's property exactly matches that value.
-   * @param attributeName The name of the property of a data item that is compared to the value in the filter function.
-   */
-  public initOptions(valuesToMatchAsOptions: string[], attributeName: string) {
-    const options = [{ key: "", label: "All", filterFun: (e: T) => true }];
-
-    valuesToMatchAsOptions.forEach((k) => {
-      if (k) {
-        options.push({
-          key: k.toLowerCase(),
-          label: k.toString(),
-          filterFun: (e: T) => e[attributeName] === k,
-        });
-      }
-    });
-
-    this.options = options;
   }
 }
 

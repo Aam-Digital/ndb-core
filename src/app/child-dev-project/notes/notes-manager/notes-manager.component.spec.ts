@@ -2,6 +2,7 @@ import { NotesManagerComponent } from "./notes-manager.component";
 import {
   ComponentFixture,
   fakeAsync,
+  flush,
   TestBed,
   tick,
 } from "@angular/core/testing";
@@ -19,7 +20,14 @@ import { Note } from "../model/note";
 import { WarningLevel, WarningLevelColor } from "../../warning-level";
 import { Angulartics2Module } from "angulartics2";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
-import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
+import {
+  ConfigurableEnumFilterConfig,
+  EntityListConfig,
+} from "../../../core/entity-components/entity-list/EntityListConfig";
+import { InteractionType } from "../model/interaction-type.interface";
+import { ConfigService } from "../../../core/config/config.service";
+import { By } from "@angular/platform-browser";
+import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 
 describe("NotesManagerComponent", () => {
   let component: NotesManagerComponent;
@@ -56,9 +64,10 @@ describe("NotesManagerComponent", () => {
         type: "prebuilt",
       },
       {
-        id: "categoryName",
-        type: "dropdown",
-      },
+        id: "category",
+        type: "configurable-enum",
+        enumId: "interaction-type",
+      } as ConfigurableEnumFilterConfig<Note>,
     ],
   };
 
@@ -67,7 +76,23 @@ describe("NotesManagerComponent", () => {
     queryParams: of({}),
   };
 
+  const testInteractionTypes: InteractionType[] = [
+    {
+      id: "HOME_VISIT",
+      label: "Home Visit",
+    },
+    {
+      id: "GUARDIAN_TALK",
+      label: "Talk with Guardians",
+    },
+  ];
+
   beforeEach(() => {
+    const mockConfigService = jasmine.createSpyObj("mockConfigService", [
+      "getConfig",
+    ]);
+    mockConfigService.getConfig.and.returnValue(testInteractionTypes);
+
     const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
     mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
     TestBed.configureTestingModule({
@@ -78,6 +103,7 @@ describe("NotesManagerComponent", () => {
         { provide: Database, useClass: MockDatabase },
         { provide: FormDialogService, useValue: dialogMock },
         { provide: ActivatedRoute, useValue: routeMock },
+        { provide: ConfigService, useValue: mockConfigService },
       ],
     }).compileComponents();
   });
@@ -147,5 +173,22 @@ describe("NotesManagerComponent", () => {
     tick();
     expect(component.notes.length).toBe(lengthBefore + 1);
     expect(component.notes.indexOf(newNote)).toBeGreaterThanOrEqual(0);
+  }));
+
+  it("should set up category filter from configurable enum", fakeAsync(() => {
+    component.notes = [
+      Object.assign(new Note(), { category: testInteractionTypes[0] }),
+    ];
+    fixture.detectChanges();
+    flush();
+
+    const list = fixture.debugElement.query(By.css("app-entity-list"));
+    const filterSettings = (list.componentInstance as EntityListComponent<
+      Note
+    >).filterSelections.find((f) => f.filterSettings.name === "category");
+
+    expect(filterSettings.filterSettings.options.length).toEqual(
+      testInteractionTypes.length + 1
+    );
   }));
 });
