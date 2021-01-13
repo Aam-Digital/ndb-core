@@ -81,7 +81,7 @@ export class AdminComponent implements OnInit {
     this.startDownload(jsonString, "text/json", "config.json");
   }
 
-  uploadConfigFile(file) {
+  uploadConfigFile(file: Blob) {
     this.readFile(file)
       .then((res) =>
         this.configService.saveConfig(this.entityMapper, JSON.parse(res))
@@ -94,7 +94,7 @@ export class AdminComponent implements OnInit {
     FileSaver.saveAs(blob, name);
   }
 
-  private readFile(file): Promise<string> {
+  private readFile(file: Blob): Promise<string> {
     return new Promise((resolve) => {
       const fileReader = new FileReader();
       fileReader.onload = () => {
@@ -147,7 +147,7 @@ export class AdminComponent implements OnInit {
    * Add the data from the loaded file to the database, inserting and updating records.
    * @param file The file object of the csv data to be loaded
    */
-  loadCsv(file) {
+  loadCsv(file: Blob) {
     const pRestorePoint = this.backupService.getJsonExport();
     const pLoadedData = this.readFile(file);
     Promise.all([pLoadedData, pRestorePoint]).then((r) => {

@@ -4,7 +4,7 @@
       {
         "name": "Dashboard",
         "icon": "home",
-        "link": "/dashboard"
+        "link": "/"
       },
       {
         "name": "Children",
