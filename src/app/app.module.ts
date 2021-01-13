@@ -89,7 +89,7 @@ import { ConfigModule } from "./core/config/config.module";
     FlexLayoutModule,
     HttpClientModule,
     routing,
-    ViewModule.forRoot(),
+    ViewModule,
     FormsModule,
     ConfirmationDialogModule,
     FormDialogModule,
