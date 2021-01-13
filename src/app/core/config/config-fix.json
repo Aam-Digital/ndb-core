@@ -198,9 +198,9 @@
           "id": "subject"
         },
         {
-          "component": "DisplayText",
+          "component": "DisplayConfigurableEnum",
           "title": "Category",
-          "id": "categoryName"
+          "id": "category"
         },
         {
           "component": "DisplayText",
@@ -223,7 +223,7 @@
             "columns": [
               "date",
               "subject",
-              "categoryName",
+              "category",
               "author",
               "children"
             ]
@@ -248,8 +248,10 @@
           "type": "prebuilt"
         },
         {
-          "id": "categoryName",
+          "id": "category",
           "label": "Category",
+          "type": "configurable-enum",
+          "enumId": "interaction-type",
           "display": "dropdown"
         }
       ]

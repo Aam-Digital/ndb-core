@@ -10,7 +10,7 @@ describe("FilterSelection", () => {
     const fs = new FilterSelection("", []);
 
     const keys = ["x", "y"];
-    fs.initOptions(keys, "category");
+    fs.options = FilterSelection.generateOptions(keys, "category");
 
     expect(fs.options.length).toBe(keys.length + 1);
 
@@ -19,8 +19,9 @@ describe("FilterSelection", () => {
       { id: 2, category: "y" },
     ];
     const selectedCategory = "x";
-    fs.selectedOption = selectedCategory;
-    const filteredData = testData.filter(fs.getSelectedFilterFunction());
+    const filteredData = testData.filter(
+      fs.getFilterFunction(selectedCategory)
+    );
 
     expect(filteredData.length).toBe(1);
     expect(filteredData[0].category).toBe(selectedCategory);

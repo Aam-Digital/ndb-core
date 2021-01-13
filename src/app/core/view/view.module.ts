@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { APP_INITIALIZER, ModuleWithProviders, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { DynamicComponentDirective } from "./dynamic-components/dynamic-component.directive";
 import { RouterService } from "./dynamic-routing/router.service";
@@ -12,7 +12,19 @@ import { RouterService } from "./dynamic-routing/router.service";
   exports: [DynamicComponentDirective],
 })
 export class ViewModule {
-  constructor(private routerService: RouterService) {
-    routerService.initRouting();
+  static forRoot(): ModuleWithProviders<ViewModule> {
+    return {
+      ngModule: ViewModule,
+      providers: [
+        {
+          provide: APP_INITIALIZER,
+          useFactory: (routerService: RouterService) => {
+            return () => routerService.initRouting();
+          },
+          deps: [RouterService],
+          multi: true,
+        },
+      ],
+    };
   }
 }
