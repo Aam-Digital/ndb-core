@@ -104,10 +104,10 @@ describe("ConfigService", () => {
     spyOn(mock, "fun");
     service.subscribeConfig(() => mock.fun());
     entityMapper.load.and.returnValue(Promise.resolve(new Config()));
-    expect(mock.fun).not.toHaveBeenCalled();
+    expect(mock.fun).toHaveBeenCalled();
     service.loadConfig(entityMapper);
     tick();
-    expect(mock.fun).toHaveBeenCalled();
+    expect(mock.fun).toHaveBeenCalledTimes(2);
   }));
 
   it("should call registered functions when EntityMapper throws an error", fakeAsync(() => {

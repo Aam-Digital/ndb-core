@@ -38,7 +38,7 @@ describe("NavigationComponent", () => {
   let mockConfigService: jasmine.SpyObj<ConfigService>;
 
   beforeEach(async(() => {
-    mockConfigService = jasmine.createSpyObj(["getConfig"]);
+    mockConfigService = jasmine.createSpyObj(["getConfig", "subscribeConfig"]);
     mockConfigService.getConfig.and.returnValue({ items: [] });
 
     sessionService = new MockSessionService(new EntitySchemaService());
@@ -76,8 +76,8 @@ describe("NavigationComponent", () => {
       ],
     };
     mockConfigService.getConfig.and.returnValue(testConfig);
-
-    component.ngOnInit();
+    const fun = mockConfigService.subscribeConfig.calls.mostRecent().args[0];
+    fun();
     const items = component.menuItems;
 
     expect(items).toEqual([
@@ -105,7 +105,9 @@ describe("NavigationComponent", () => {
       }
     });
 
-    component.ngOnInit();
+    const fun = mockConfigService.subscribeConfig.calls.mostRecent().args[0];
+    fun();
+
     expect(component.menuItems).toEqual([
       new MenuItem("Children", "child", ["/child"]),
     ]);

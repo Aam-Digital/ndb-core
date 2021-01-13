@@ -76,12 +76,12 @@ export class AdminComponent implements OnInit {
       .then((csv) => this.startDownload(csv, "text/csv", "export.csv"));
   }
 
-  public downloadConfigClick() {
+  downloadConfigClick() {
     const jsonString = this.configService.exportConfig();
     this.startDownload(jsonString, "text/json", "config.json");
   }
 
-  public uploadConfigFile(file) {
+  uploadConfigFile(file) {
     this.readFile(file)
       .then((res) =>
         this.configService.saveConfig(this.entityMapper, JSON.parse(res))
