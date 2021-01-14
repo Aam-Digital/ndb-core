@@ -36,7 +36,6 @@
     "crypto-js": "^4.0.0",
     "deep-object-diff": "^1.1.0",
     "faker": "^4.1.0",
-    "file-saver": "^2.0.2",
     "font-awesome": "^4.7.0",
     "idb": "^5.0.4",
     "lodash": "^4.17.19",
