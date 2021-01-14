@@ -41,7 +41,9 @@ export class NavigationComponent {
     private adminGuard: AdminGuard,
     private configService: ConfigService
   ) {
-    this.configService.subscribeConfig(() => this.initMenuItemsFromConfig());
+    this.configService.configNotifier.subscribe(() =>
+      this.initMenuItemsFromConfig()
+    );
   }
 
   /**

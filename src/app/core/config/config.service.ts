@@ -3,6 +3,7 @@ import defaultConfig from "./config-fix.json";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Config } from "./config";
 import { LoggingService } from "../logging/logging.service";
+import { BehaviorSubject } from "rxjs";
 
 @Injectable({
   providedIn: "root",
@@ -10,10 +11,11 @@ import { LoggingService } from "../logging/logging.service";
 export class ConfigService {
   private static CONFIG_KEY = "CONFIG_ENTITY";
   private config: Config = new Config(ConfigService.CONFIG_KEY);
-  private subscribers: Array<() => any> = [];
+  public configNotifier: BehaviorSubject<Config>;
 
   constructor(@Optional() private loggingService: LoggingService) {
     this.config.data = defaultConfig;
+    this.configNotifier = new BehaviorSubject<Config>(this.config);
   }
 
   public async loadConfig(entityMapper: EntityMapperService): Promise<Config> {
@@ -22,20 +24,14 @@ export class ConfigService {
         Config,
         ConfigService.CONFIG_KEY
       );
+      this.configNotifier.next(this.config);
     } catch (e) {
       this.loggingService.info(
         "No configuration found in the database, using default one"
       );
       //  no config found in db, using default one
     }
-    this.subscribers.forEach((f) => f());
     return this.config;
-  }
-
-  public subscribeConfig(fun: () => any) {
-    // Execute function once someone registers a function
-    fun();
-    this.subscribers.push(fun);
   }
 
   public saveConfig(

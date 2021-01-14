@@ -99,24 +99,12 @@ describe("ConfigService", () => {
     expect(result).toEqual(expected);
   }));
 
-  it("should call a registered function", fakeAsync(() => {
-    const mock = { fun: () => true };
-    spyOn(mock, "fun");
-    service.subscribeConfig(() => mock.fun());
+  it("should emit new value", fakeAsync(() => {
+    spyOn(service.configNotifier, "next");
     entityMapper.load.and.returnValue(Promise.resolve(new Config()));
-    expect(mock.fun).toHaveBeenCalled();
+    expect(service.configNotifier.next).not.toHaveBeenCalled();
     service.loadConfig(entityMapper);
     tick();
-    expect(mock.fun).toHaveBeenCalledTimes(2);
-  }));
-
-  it("should call registered functions when EntityMapper throws an error", fakeAsync(() => {
-    const mock = { fun: () => true };
-    spyOn(mock, "fun");
-    service.subscribeConfig(() => mock.fun());
-    entityMapper.load.and.throwError("No config found");
-    service.loadConfig(entityMapper);
-    tick();
-    expect(mock.fun).toHaveBeenCalled();
+    expect(service.configNotifier.next).toHaveBeenCalled();
   }));
 });
