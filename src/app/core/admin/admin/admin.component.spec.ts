@@ -44,12 +44,11 @@ describe("AdminComponent", () => {
     ["openDialog"]
   );
 
-  const tmplink: any = {
-    href: "",
-    target: "",
-    download: "",
-    click: () => {},
-  };
+  const tmplink: jasmine.SpyObj<HTMLAnchorElement> = jasmine.createSpyObj(
+    "mockLink",
+    ["click"],
+    ["href", "target", "download"]
+  );
 
   function createFileReaderMock(result: string = "") {
     const mockFileReader: any = {
@@ -119,25 +118,31 @@ describe("AdminComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should call backup service for json export", () => {
-    spyOn(document, "createElement").and.returnValue(tmplink);
+  it("should call backup service for json export", fakeAsync(() => {
+    spyOn(document, "createElement").and.callFake(() => tmplink);
     mockBackupService.getJsonExport.and.returnValue(Promise.resolve(""));
     component.saveBackup();
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
-  });
+    tick();
+    expect(tmplink.click).toHaveBeenCalled();
+  }));
 
-  it("should call backup service for csv export", () => {
+  it("should call backup service for csv export", fakeAsync(() => {
     spyOn(document, "createElement").and.returnValue(tmplink);
     mockBackupService.getCsvExport.and.returnValue(Promise.resolve(""));
     component.saveCsvExport();
     expect(mockBackupService.getCsvExport).toHaveBeenCalled();
-  });
+    tick();
+    expect(tmplink.click).toHaveBeenCalled();
+  }));
 
-  it("should call config service for configuration export", () => {
+  it("should call config service for configuration export", fakeAsync(() => {
     spyOn(document, "createElement").and.returnValue(tmplink);
     component.downloadConfigClick();
     expect(mockConfigService.exportConfig).toHaveBeenCalled();
-  });
+    tick();
+    expect(tmplink.click).toHaveBeenCalled();
+  }));
 
   it("should save and apply new configuration", fakeAsync(() => {
     const mockFileReader = createFileReaderMock("{}");
