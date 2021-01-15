@@ -24,9 +24,9 @@ export class FormDialogService {
     private confirmationDialog: ConfirmationDialogService
   ) {}
 
-  openDialog<T extends ShowsEntity>(
+  openDialog<E extends Entity, T extends ShowsEntity<E>>(
     entityDetailsComponent: ComponentType<T>,
-    entity: any
+    entity: E
   ): MatDialogRef<T> {
     const dialogRef = this.dialog.open(entityDetailsComponent, {
       width: "80%",

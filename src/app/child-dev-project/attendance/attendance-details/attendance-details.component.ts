@@ -13,7 +13,8 @@ import { AttendanceStatus } from "../model/attendance-status";
   templateUrl: "./attendance-details.component.html",
   styleUrls: ["./attendance-details.component.scss"],
 })
-export class AttendanceDetailsComponent implements ShowsEntity {
+export class AttendanceDetailsComponent
+  implements ShowsEntity<ActivityAttendance> {
   @Input() entity: ActivityAttendance = new ActivityAttendance();
   @Input() focusedChild: string;
   @ViewChild("dialogForm", { static: true }) formDialogWrapper;
