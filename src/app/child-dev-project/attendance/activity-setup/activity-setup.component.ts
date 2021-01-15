@@ -98,11 +98,7 @@ export class ActivitySetupComponent implements OnInit {
     event.children = activity.participants;
     event.relatesTo = activity._id;
     event.author = this.sessionService.getCurrentUser().getId();
-    event.category = {
-      isMeeting: true,
-      label: "Event",
-      id: "GUARDIAN_MEETING",
-    }; // TODO: set category from activity
+    event.category = activity.type;
     event.isNewFromActivity = true;
     return event;
   }

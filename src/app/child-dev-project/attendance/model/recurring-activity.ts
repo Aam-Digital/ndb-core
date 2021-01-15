@@ -20,6 +20,10 @@ import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { v4 as uuid } from "uuid";
 import { Note } from "../../notes/model/note";
+import {
+  INTERACTION_TYPE_CONFIG_ID,
+  InteractionType,
+} from "../../notes/model/interaction-type.interface";
 
 @DatabaseEntity("RecurringActivity")
 export class RecurringActivity extends Entity {
@@ -40,8 +44,16 @@ export class RecurringActivity extends Entity {
   /** primary name to identify the activity */
   @DatabaseField() title: string = "";
 
-  /** a category to group and filter activities by */
-  @DatabaseField() type: string = "";
+  /**
+   * a category to group and filter activities by.
+   *
+   * This is also assigned to individual events' category generated for this activity.
+   */
+  @DatabaseField({
+    dataType: "configurable-enum",
+    innerDataType: INTERACTION_TYPE_CONFIG_ID,
+  })
+  type: InteractionType = { id: "", label: "" };
 
   /** IDs of children linked to this activity */
   @DatabaseField() participants: string[] = [];

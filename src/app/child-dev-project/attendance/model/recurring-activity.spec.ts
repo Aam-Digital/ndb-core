@@ -19,13 +19,33 @@ import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.s
 import { async } from "@angular/core/testing";
 import { RecurringActivity } from "./recurring-activity";
 import { Entity } from "../../../core/entity/entity";
+import { InteractionType } from "../../notes/model/interaction-type.interface";
+import { ConfigurableEnumDatatype } from "../../../core/configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
 
 describe("RecurringActivity", () => {
   const ENTITY_TYPE = "RecurringActivity";
   let entitySchemaService: EntitySchemaService;
+  const testInteractionTypes: InteractionType[] = [
+    {
+      id: "HOME_VISIT",
+      label: "Home Visit",
+    },
+    {
+      id: "GUARDIAN_TALK",
+      label: "Talk with Guardians",
+    },
+  ];
 
   beforeEach(async(() => {
+    const mockConfigService = jasmine.createSpyObj("mockConfigService", [
+      "getConfig",
+    ]);
+    mockConfigService.getConfig.and.returnValue(testInteractionTypes);
+
     entitySchemaService = new EntitySchemaService();
+    entitySchemaService.registerSchemaDatatype(
+      new ConfigurableEnumDatatype(mockConfigService)
+    );
   }));
 
   it("has correct _id and entityId and type", function () {
@@ -50,7 +70,7 @@ describe("RecurringActivity", () => {
       _id: ENTITY_TYPE + ":" + id,
 
       title: "test activity",
-      type: "coaching",
+      type: "HOME_VISIT",
       assignedTo: "demo",
       participants: ["1", "2"],
 
@@ -59,7 +79,7 @@ describe("RecurringActivity", () => {
 
     const entity = new RecurringActivity(id);
     entity.title = expectedData.title;
-    entity.type = expectedData.type;
+    entity.type = testInteractionTypes.find((e) => e.id === "HOME_VISIT");
     entity.assignedTo = expectedData.assignedTo;
     entity.participants = expectedData.participants;
 
@@ -74,7 +94,7 @@ describe("RecurringActivity", () => {
       _id: ENTITY_TYPE + ":" + id,
 
       title: "test activity",
-      type: "coaching",
+      type: "HOME_VISIT",
       assignedTo: "demo",
       participants: ["1", "2"],
 
@@ -88,7 +108,9 @@ describe("RecurringActivity", () => {
 
     expect(entity._id).toBe(rawData._id);
     expect(entity.title).toBe(rawData.title);
-    expect(entity.type).toBe(rawData.type);
+    expect(entity.type).toEqual(
+      testInteractionTypes.find((e) => e.id === "HOME_VISIT")
+    );
     expect(entity.assignedTo).toBe(rawData.assignedTo);
     expect(entity.participants).toBe(rawData.participants);
   });
