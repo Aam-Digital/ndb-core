@@ -20,6 +20,8 @@ import { User } from "../user";
 import { SessionService } from "../../session/session-service/session.service";
 import { AppConfig } from "../../app-config/app-config";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { UserAccountService } from "./user-account.service";
+import { LoginState } from "../../session/session-states/login-state.enum";
 
 /**
  * User account form to allow the user to view and edit information.
@@ -38,7 +40,8 @@ export class UserAccountComponent implements OnInit {
 
   constructor(
     private entityMapperService: EntityMapperService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private userAccountService: UserAccountService
   ) {}
 
   ngOnInit() {
@@ -48,16 +51,20 @@ export class UserAccountComponent implements OnInit {
   /**
    * Change the user's password.
    *
-   * @todo This is not implemented yet!
-   *
-   * @param pwd New password to be set
-   * @param rpwd Confirmation of new password (second input by the user to prevent typos)
+   * @param oldPwd The current password
+   * @param newPwd New password
+   * @param rePwd Confirmation of the new password
    */
-  changePassword(pwd, rpwd) {
-    if (pwd === rpwd) {
-      // TODO: update the password for this remote database user first and deny the password change if that fails
-      this.user.setNewPassword(pwd);
-      // TODO: Show success message
+  changePassword(oldPwd, newPwd, rePwd) {
+    if (newPwd === rePwd) {
+      this.userAccountService
+        .changePassword(this.user, oldPwd, newPwd)
+        .then((res) => {
+          console.log("done", res);
+          this.sessionService
+            .login(this.user.name, newPwd)
+            .then((newState) => console.log("login", LoginState[newState]));
+        });
     } else {
       // TODO: Show error message
     }

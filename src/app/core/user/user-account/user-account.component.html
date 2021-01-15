@@ -28,11 +28,15 @@
 
         <p>
           <mat-form-field>
-            <input placeholder="New Password" matInput="text" id="password1" type="password" value="pass" #passwordInp disabled>
+            <input placeholder="Old Password" matInput="text" id="passwordOld" type="password" value="pass" #oldPassword >
           </mat-form-field>
           <br>
           <mat-form-field>
-            <input placeholder="Confirm New Password" matInput="text" id="confirm" type="password" value="pass" #confirmationInp disabled>
+            <input placeholder="New Password" matInput="text" id="passwordNew" type="password" value="pass" #passwordInp >
+          </mat-form-field>
+          <br>
+          <mat-form-field>
+            <input placeholder="Confirm New Password" matInput="text" id="passwordConfig" type="password" value="pass" #confirmationInp>
           </mat-form-field>
         </p>
 
@@ -41,7 +45,7 @@
         </p>
 
         <p>
-          <button mat-raised-button (click)="changePassword(passwordInp.value,confirmationInp.value)" disabled>Save</button>
+          <button mat-raised-button (click)="changePassword(oldPassword.value, passwordInp.value,confirmationInp.value)">Save</button>
         </p>
       </div>
     </ng-template>
