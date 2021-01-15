@@ -19,7 +19,7 @@ export class AttendanceDetailsComponent
   @Input() focusedChild: string;
   @ViewChild("dialogForm", { static: true }) formDialogWrapper;
 
-  eventDetailsComponent = NoteDetailsComponent;
+  eventDetailsComponent = { component: NoteDetailsComponent };
   eventsColumns: Array<ColumnDescription> = [
     {
       name: "date",

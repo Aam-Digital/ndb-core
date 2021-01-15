@@ -23,7 +23,7 @@ export class ActivityAttendanceSectionComponent
   displayedEvents: Note[] = [];
 
   // TODO split this if forChild (currently no way to display the individual's calendar instead of averages)
-  detailsComponent = AttendanceDetailsComponent;
+  detailsComponent = { component: AttendanceDetailsComponent };
 
   columns: Array<ColumnDescription> = [
     {
