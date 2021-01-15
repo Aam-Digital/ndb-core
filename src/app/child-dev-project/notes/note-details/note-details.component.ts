@@ -13,7 +13,7 @@ import { INTERACTION_TYPE_CONFIG_ID } from "../model/interaction-type.interface"
   templateUrl: "./note-details.component.html",
   styleUrls: ["./note-details.component.scss"],
 })
-export class NoteDetailsComponent implements ShowsEntity {
+export class NoteDetailsComponent implements ShowsEntity<Note> {
   @Input() entity: Note;
   @ViewChild("dialogForm", { static: true }) formDialogWrapper;
 
