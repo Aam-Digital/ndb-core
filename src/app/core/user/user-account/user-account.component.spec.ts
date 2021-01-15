@@ -30,13 +30,15 @@ import { MockDatabase } from "../../database/mock-database";
 import { WebdavModule } from "../../webdav/webdav.module";
 import { User } from "../user";
 import { AppConfig } from "../../app-config/app-config";
+import { UserAccountService } from "./user-account.service";
 
 describe("UserAccountComponent", () => {
   let component: UserAccountComponent;
   let fixture: ComponentFixture<UserAccountComponent>;
 
-  let mockSessionService;
-  let mockEntityMapper;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockUserAccountService: jasmine.SpyObj<UserAccountService>;
   const testUser = new User("");
 
   beforeEach(async(() => {
@@ -47,6 +49,9 @@ describe("UserAccountComponent", () => {
     ]);
     mockSessionService.getCurrentUser.and.returnValue(testUser);
     mockEntityMapper = jasmine.createSpyObj(["save"]);
+    mockUserAccountService = jasmine.createSpyObj("mockUserAccount", [
+      "changePassword",
+    ]);
 
     TestBed.configureTestingModule({
       declarations: [UserAccountComponent],
@@ -62,6 +67,7 @@ describe("UserAccountComponent", () => {
         { provide: Database, useClass: MockDatabase },
         { provide: SessionService, useValue: mockSessionService },
         { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: UserAccountService, useValue: mockUserAccountService },
       ],
     });
   }));
