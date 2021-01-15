@@ -26,6 +26,22 @@ import { AlertService } from "../../alerts/alert.service";
 import { DatePipe } from "@angular/common";
 
 /**
+ * Settings for the popup details view of a EntitySubrecordComponent.
+ */
+export interface DetailsComponentSettings<T extends Entity> {
+  /**
+   * The component to be used for displaying a single Entity instance's details.
+   */
+  component: ComponentType<ShowsEntity<T>>;
+
+  /**
+   * Optionally include an object to pass any values into the component,
+   * which has to implement the OnInitDynamicComponent interface to receive this config.
+   */
+  componentConfig?: any;
+}
+
+/**
  * Generically configurable component to display and edit a list of entities in a compact way
  * that can especially be used within another entity's details view to display related entities.
  *
@@ -59,14 +75,8 @@ export class EntitySubrecordComponent<T extends Entity>
    * A Component to be used to display a detailed view or form of a single instance of the displayed entities.
    * This is displayed as a modal (hovering) dialog above the active view and allows the user to get
    * more information or more comfortable editing of a single record.
-   *
-   * Optionally this input can include a componentConfig property passing any values into the component,
-   * which has to implement the OnInitDynamicComponent interface to receive this config.
    */
-  @Input() detailsComponent: {
-    component: ComponentType<ShowsEntity<T>>;
-    componentConfig?: any;
-  };
+  @Input() detailsComponent: DetailsComponentSettings<T>;
 
   /**
    * Whether the records can be edited directly in the table.
