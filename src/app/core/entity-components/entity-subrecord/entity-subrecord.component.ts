@@ -59,8 +59,14 @@ export class EntitySubrecordComponent<T extends Entity>
    * A Component to be used to display a detailed view or form of a single instance of the displayed entities.
    * This is displayed as a modal (hovering) dialog above the active view and allows the user to get
    * more information or more comfortable editing of a single record.
+   *
+   * Optionally this input can include a componentConfig property passing any values into the component,
+   * which has to implement the OnInitDynamicComponent interface to receive this config.
    */
-  @Input() detailsComponent: ComponentType<ShowsEntity<T>>;
+  @Input() detailsComponent: {
+    component: ComponentType<ShowsEntity<T>>;
+    componentConfig?: any;
+  };
 
   /**
    * Whether the records can be edited directly in the table.
@@ -288,7 +294,11 @@ export class EntitySubrecordComponent<T extends Entity>
     ) {
       return;
     }
-    this.formDialog.openDialog(this.detailsComponent, record);
+    this.formDialog.openDialog(
+      this.detailsComponent.component,
+      record,
+      this.detailsComponent.componentConfig
+    );
   }
 
   autocompleteSearch(col, input) {
