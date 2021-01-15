@@ -90,15 +90,23 @@ To be able to use it in your template, you have to assign the Component class to
             '</app-entity-subrecord>',
 })
 export class ChildNotesComponent  {
-  detailsComponent = NoteDetailsComponent;
+  detailsComponent = { component: NoteDetailsComponent, config: { displayMode: 1 } };
 ```
 
 The Component used as "detailsComponent" receives the entity to be display as `MAT_DIALOG_DATA` like this:
 ```
-export class NoteDetailsComponent implements OnInit {
-    private note: Note;    
+export class NoteDetailsComponent implements OnInit, OnInitDynamicComponent {
+    private note: Note;
+    displayMode: number;
 
     constructor(@Inject(MAT_DIALOG_DATA) data: any) {
         this.note = data.entity;
     }
+    
+    async onInitFromDynamicConfig(config: any) {
+        this.displayMode = config.displayMode;
+        this.init();
+    }
 ```
+As shown above the (optional) config object is received by implementing the {@link OnInitDynamicComponent} 
+interface's `onInitFromDynamicConfig` method.

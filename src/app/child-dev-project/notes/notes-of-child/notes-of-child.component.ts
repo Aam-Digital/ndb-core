@@ -24,7 +24,7 @@ export class NotesOfChildComponent
   implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child;
   records: Array<Note> = [];
-  detailsComponent = NoteDetailsComponent;
+  detailsComponent = { component: NoteDetailsComponent };
 
   columns: Array<ColumnDescription> = [
     {
