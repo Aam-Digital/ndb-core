@@ -57,20 +57,6 @@ export const DEFAULT_ATTENDANCE_TYPES = [
     countAs: AttendanceCounting.ABSENT,
   },
   {
-    status: AttendanceStatus.LATE,
-    shortName: "L",
-    name: "Late",
-    style: "attendance-L",
-    countAs: AttendanceCounting.PRESENT,
-  },
-  {
-    status: AttendanceStatus.HOLIDAY,
-    shortName: "H",
-    name: "Holiday",
-    style: "attendance-H",
-    countAs: AttendanceCounting.IGNORE,
-  },
-  {
     status: AttendanceStatus.EXCUSED,
     shortName: "E",
     name: "Excused",
