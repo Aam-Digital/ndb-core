@@ -390,11 +390,6 @@
           "id": "type"
         },
         {
-          "component": "DisplayCheckmark",
-          "title": "bi-communal (mixed)",
-          "id": "isBiCommunal"
-        },
-        {
           "component": "DisplayText",
           "title": "Assigned to",
           "id": "assignedTo"
@@ -409,7 +404,6 @@
             "columns": [
               "title",
               "type",
-              "isBiCommunal",
               "assignedTo"
             ]
           }
@@ -447,11 +441,6 @@
                       "input": "configurable-enum-select",
                       "enumId": "interaction-type",
                       "placeholder": "Type"
-                    },
-                    {
-                      "id": "isBiCommunal",
-                      "input": "checkbox",
-                      "placeholder": "bi-communal (mixed)"
                     }
                   ],
                   [
@@ -503,7 +492,6 @@
   "entity:School": {
     "attributes": [
       {"name": "language", "schema": { "dataType": "string" }},
-      {"name": "isBiCommunal", "schema": { "dataType": "boolean" }},
       {"name": "location", "schema": { "dataType": "string" }},
       {"name": "tier", "schema": { "dataType": "configurable-enum", "innerDataType": "tier" }},
       {"name": "program", "schema": { "dataType": "configurable-enum", "innerDataType": "tier-program" }}
@@ -511,7 +499,6 @@
   },
   "entity:RecurringActivity": {
     "attributes": [
-      {"name": "isBiCommunal", "schema": { "dataType": "boolean" }}
     ]
   }
 }
