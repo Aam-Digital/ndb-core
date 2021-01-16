@@ -141,6 +141,24 @@
       "label": "Ration Distribution",
       "color": "#E1F5FE",
       "isMeeting": true
+    },
+    {
+      "id": "COACHING_CLASS",
+      "label": "Coaching Class",
+      "color": "#EEEEEE",
+      "isMeeting": true
+    },
+    {
+      "id": "SCHOOL_CLASS",
+      "label": "School Class",
+      "color": "#EEEEEE",
+      "isMeeting": true
+    },
+    {
+      "id": "LIFE_SKILLS",
+      "label": "Life Skills Workshop",
+      "color": "#E1F5FE",
+      "isMeeting": true
     }
   ],
   "view:": {
@@ -1050,7 +1068,7 @@
           "id": "title"
         },
         {
-          "component": "DisplayText",
+          "component": "DisplayConfigurableEnum",
           "title": "Type",
           "id": "type"
         },
@@ -1075,9 +1093,6 @@
         ]
       },
       "filters": [
-        {
-          "id": "type"
-        },
         {
           "id": "assignedTo"
         }
@@ -1105,8 +1120,9 @@
                   ],
                   [
                     {
-                      "input": "text",
                       "id": "type",
+                      "input": "configurable-enum-select",
+                      "enumId": "interaction-type",
                       "placeholder": "Type"
                     }
                   ],

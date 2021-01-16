@@ -68,7 +68,7 @@ describe("FormDialogService", () => {
   selector: "app-test-component",
   template: "<div></div>",
 })
-class TestComponent implements ShowsEntity {
+class TestComponent implements ShowsEntity<Entity> {
   @Input() entity: Entity;
 
   // @ts-ignore
