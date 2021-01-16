@@ -50,10 +50,72 @@
   },
 
   "enum:interaction-type": [
-    { "id": "NONE", "label": ""},
-    { "id": "PRACTICE", "label": "Practice", "isMeeting": true},
-    { "id": "TWINNING", "label": "Twinning", "isMeeting": true, "color": "#BEE7E1" },
-    { "id": "MATCH", "label": "Match", "isMeeting": true, "color": "#E1BEE7"}
+    { "id": "NONE", "label": "" },
+    { "id": "NOTE", "label": "Note" },
+
+    { "id": "BASKETBALL_SESSION", "label": "Basketball Session", "isBiCommunal": false,
+      "isMeeting": true, "color": "#E2EDFC" },
+    { "id": "PEACE_EDUCATION_MONO", "label": "Peace Education (Mono)", "isBiCommunal": false,
+      "isMeeting": true, "color": "#E2EDFC" },
+    { "id": "PEACE_EDUCATION_BI", "label": "Bi Peace Education (Bi)", "isBiCommunal": true,
+      "isMeeting": true, "color": "#C6DBF9" },
+    { "id": "IT_VIRTUAL_ACTIVITY_MONO", "label": "IT Virtual Activity (Mono)", "isBiCommunal": false,
+      "isMeeting": true, "color": "#E2EDFC" },
+    { "id": "IT_VIRTUAL_ACTIVITY_BI", "label": "IT Virtual Activity (Bi)", "isBiCommunal": true,
+      "isMeeting": true, "color": "#C6DBF9" },
+    { "id": "JOINT_PRACTICE", "label": "Joint Practice", "isBiCommunal": true,
+      "isMeeting": true, "color": "#C6DBF9" },
+    { "id": "TWINNING", "label": "Twinning", "isBiCommunal": true,
+      "isMeeting": true, "color": "#8EB7F4" },
+    { "id": "IT_SPECIAL_EVENT", "label": "IT Special Event", "isBiCommunal": true,
+      "isMeeting": true, "color": "#8EB7F4" },
+    { "id": "PEACE_LEAGUE", "label": "Peace League", "isBiCommunal": true,
+      "isMeeting": true, "color": "#8EB7F4" },
+
+    { "id": "AS_PRACTICE", "label": "All-Stars Practice", "isBiCommunal": true,
+      "isMeeting": true, "color": "#FDF0BE" },
+    { "id": "AS_GAME", "label": "All-Stars Game", "isBiCommunal": true,
+      "isMeeting": true, "color": "#FDF0BE" },
+    { "id": "AS_VIRTUAL_PRACTICE", "label": "All-Stars Virtual Practice", "isBiCommunal": true,
+      "isMeeting": true, "color": "#FDF0BE" },
+    { "id": "AS_VIRTUAL_TEAM_MEETING", "label": "All-Stars Virtual Team Meeting", "isBiCommunal": true,
+      "isMeeting": true, "color": "#FDF0BE" },
+    { "id": "AS_SPECIAL_EVENT", "label": "All-Stars Special Event", "isBiCommunal": true,
+      "isMeeting": true, "color": "#FDF0BE" },
+
+    { "id": "LDP_PRACTICE", "label": "LDP Practice", "isBiCommunal": true,
+      "isMeeting": true, "color": "#C3FFC3" },
+    { "id": "LDP_LEADERSHIP_SESSION", "label": "LDP Leadership Session", "isBiCommunal": true,
+      "isMeeting": true, "color": "#C3FFC3" },
+    { "id": "LDP_RETREAT", "label": "LDP Retreat", "isBiCommunal": true,
+      "isMeeting": true, "color": "#C3FFC3" },
+    { "id": "LDP_SOCIAL_ACTION", "label": "LDP Social Action", "isBiCommunal": true,
+      "isMeeting": true, "color": "#C3FFC3" },
+    { "id": "LDP_SPECIAL_EVENT", "label": "LDP Special Event", "isBiCommunal": true,
+      "isMeeting": true, "color": "#C3FFC3" },
+    { "id": "LDP_VIRTUAL_SESSION", "label": "LDP Virtual Session", "isBiCommunal": true,
+      "isMeeting": true, "color": "#C3FFC3" },
+
+    { "id": "RS_WORKSHOP", "label": "RS Workshop", "isBiCommunal": true,
+      "isMeeting": true, "color": "#F6BAD0" },
+    { "id": "RS_RETREAT", "label": "RS Retreat", "isBiCommunal": true,
+      "isMeeting": true, "color": "#F6BAD0" },
+    { "id": "RS_HANDS_ON_TRAINING", "label": "RS Hands-on-Training", "isBiCommunal": true,
+      "isMeeting": true, "color": "#F6BAD0" },
+    { "id": "RS_VIRTUAL_ACTIVITY", "label": "RS Virtual Activity", "isBiCommunal": true,
+      "isMeeting": true, "color": "#F6BAD0" }
+  ],
+
+  "enum:tier": [
+    { "id": "INTERPERSONAL", "label": "Interpersonal Tier" },
+    { "id": "COMMUNITY", "label": "Community Tier" }
+  ],
+  "enum:tier-program": [
+    { "id": "MONO_COMMUNAL", "label": "Mono Communal" },
+    { "id": "BI_COMMUNAL", "label": "Bi Communal" },
+    { "id": "ALLSTARS", "label": "All-Stars" },
+    { "id": "LDP", "label": "LDP" },
+    { "id": "RISING_STARS", "label": "Rising Stars" }
   ],
 
   "view:": {
@@ -99,9 +161,15 @@
         ]
       },
       "filters": [
-        { "id": "status", "type": "prebuilt"},
         { "id": "date", "type": "prebuilt"},
-        { "id": "categoryName", "label": "Category", "display": "dropdown"}
+        {
+          "id": "category",
+          "label": "Category",
+          "type": "configurable-enum",
+          "enumId": "interaction-type",
+          "display": "dropdown"
+        },
+        { "id": "status", "type": "prebuilt"}
       ]
     }
   },
@@ -119,8 +187,8 @@
       "title": "All Teams",
       "columns": [
         {"component": "DisplayText", "title": "Team", "id": "name"},
-        {"component": "DisplayText", "title": "Category", "id": "category"},
-        {"component": "DisplayCheckmark", "title": "bi-communal (mixed)", "id": "isBiCommunal"},
+        {"component": "DisplayConfigurableEnum", "title": "Tier", "id": "tier"},
+        {"component": "DisplayConfigurableEnum", "title": "Program", "id": "program"},
         {"component": "DisplayText", "title": "Location", "id": "location"}
       ],
       "columnGroup": {
@@ -129,12 +197,24 @@
         "groups": [
           {
             "name": "Team Info",
-            "columns": ["name", "category", "isBiCommunal", "location"]
+            "columns": ["name", "tier", "program", "location"]
           }
         ]
       },
       "filters": [
-        { "id": "category" }
+        {
+          "id": "tier",
+          "label": "Tier",
+          "type": "configurable-enum",
+          "enumId": "tier"
+        },
+        {
+          "id": "program",
+          "label": "Program",
+          "type": "configurable-enum",
+          "enumId": "tier-program",
+          "display": "dropdown"
+        }
       ]
     }
   },
@@ -152,14 +232,16 @@
               "config": {
                 "cols": [
                   [
-                    {"input": "text", "id": "name", "placeholder": "Name"},
-                    {"input": "text", "id": "location", "placeholder": "Location"}
+                    { "id": "name", "input": "text", "placeholder": "Name"},
+                    { "id": "location", "input": "text", "placeholder": "Location"}
                   ],
                   [
-                    {"input": "text", "id": "category", "placeholder": "Category"},
-                    {"input": "checkbox", "id": "isBiCommunal", "placeholder": "bi-communal (mixed)"}
+                    { "id": "tier", "input": "configurable-enum-select", "enumId": "tier", "placeholder": "Tier"},
+                    { "id": "program", "input": "configurable-enum-select", "enumId": "tier-program", "placeholder": "Program"}
                   ],
-                  [{"input": "textarea", "id": "remarks", "placeholder": "Remarks"}]
+                  [
+                    { "id": "remarks", "input": "textarea", "placeholder": "Remarks"}
+                  ]
                 ]
               }
             }
@@ -303,7 +385,7 @@
           "id": "title"
         },
         {
-          "component": "DisplayText",
+          "component": "DisplayConfigurableEnum",
           "title": "Type",
           "id": "type"
         },
@@ -335,9 +417,6 @@
       },
       "filters": [
         {
-          "id": "type"
-        },
-        {
           "id": "assignedTo"
         }
       ]
@@ -365,7 +444,8 @@
                   [
                     {
                       "id": "type",
-                      "input": "text",
+                      "input": "configurable-enum-select",
+                      "enumId": "interaction-type",
                       "placeholder": "Type"
                     },
                     {
@@ -424,7 +504,9 @@
     "attributes": [
       {"name": "language", "schema": { "dataType": "string" }},
       {"name": "isBiCommunal", "schema": { "dataType": "boolean" }},
-      {"name": "location", "schema": { "dataType": "string" }}
+      {"name": "location", "schema": { "dataType": "string" }},
+      {"name": "tier", "schema": { "dataType": "configurable-enum", "innerDataType": "tier" }},
+      {"name": "program", "schema": { "dataType": "configurable-enum", "innerDataType": "tier-program" }}
     ]
   },
   "entity:RecurringActivity": {
