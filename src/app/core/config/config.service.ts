@@ -11,11 +11,15 @@ import { BehaviorSubject } from "rxjs";
 export class ConfigService {
   private static CONFIG_KEY = "CONFIG_ENTITY";
   private config: Config = new Config(ConfigService.CONFIG_KEY);
-  public configNotifier: BehaviorSubject<Config>;
+
+  /**
+   * Subscribe to receive the current config and get notified whenever the config is updated.
+   */
+  public configUpdated: BehaviorSubject<Config>;
 
   constructor(@Optional() private loggingService: LoggingService) {
     this.config.data = defaultConfig;
-    this.configNotifier = new BehaviorSubject<Config>(this.config);
+    this.configUpdated = new BehaviorSubject<Config>(this.config);
   }
 
   public async loadConfig(entityMapper: EntityMapperService): Promise<Config> {
@@ -24,7 +28,7 @@ export class ConfigService {
         Config,
         ConfigService.CONFIG_KEY
       );
-      this.configNotifier.next(this.config);
+      this.configUpdated.next(this.config);
     } catch (e) {
       this.loggingService.info(
         "No configuration found in the database, using default one"

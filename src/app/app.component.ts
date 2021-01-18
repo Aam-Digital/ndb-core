@@ -50,8 +50,8 @@ export class AppComponent implements OnInit {
     // TODO fix this with https://github.com/Aam-Digital/ndb-core/issues/595
     configService.loadConfig(entityMapper);
     // These functions will be executed whenever a new config is available
-    configService.configNotifier.subscribe(() => routerService.initRouting());
-    configService.configNotifier.subscribe(() =>
+    configService.configUpdated.subscribe(() => routerService.initRouting());
+    configService.configUpdated.subscribe(() =>
       entityConfigService.addConfigAttributes(Child)
     );
     analyticsService.init();

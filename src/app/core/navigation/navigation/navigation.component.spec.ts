@@ -38,12 +38,12 @@ describe("NavigationComponent", () => {
   let sessionService: MockSessionService;
 
   let mockConfigService: jasmine.SpyObj<ConfigService>;
-  const mockConfigNotifier = new BehaviorSubject<Config>(null);
+  const mockConfigUpdated = new BehaviorSubject<Config>(null);
 
   beforeEach(async(() => {
     mockConfigService = jasmine.createSpyObj(["getConfig"]);
     mockConfigService.getConfig.and.returnValue({ items: [] });
-    mockConfigService.configNotifier = mockConfigNotifier;
+    mockConfigService.configUpdated = mockConfigUpdated;
     sessionService = new MockSessionService(new EntitySchemaService());
 
     TestBed.configureTestingModule({
@@ -79,7 +79,7 @@ describe("NavigationComponent", () => {
       ],
     };
     mockConfigService.getConfig.and.returnValue(testConfig);
-    mockConfigNotifier.next(null);
+    mockConfigUpdated.next(null);
     const items = component.menuItems;
 
     expect(items).toEqual([
@@ -106,7 +106,7 @@ describe("NavigationComponent", () => {
           return testConfig;
       }
     });
-    mockConfigNotifier.next(null);
+    mockConfigUpdated.next(null);
 
     expect(component.menuItems).toEqual([
       new MenuItem("Children", "child", ["/child"]),
