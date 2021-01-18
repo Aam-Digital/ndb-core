@@ -7,6 +7,8 @@ import { ConfirmationDialogService } from "../../confirmation-dialog/confirmatio
 import { MatSnackBar } from "@angular/material/snack-bar";
 import PouchDB from "pouchdb-browser";
 import { ChildPhotoUpdateService } from "../services/child-photo-update.service";
+import { ConfigService } from "../../config/config.service";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -31,7 +33,9 @@ export class AdminComponent implements OnInit {
     private backupService: BackupService,
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
-    private childPhotoUpdateService: ChildPhotoUpdateService
+    private childPhotoUpdateService: ChildPhotoUpdateService,
+    private configService: ConfigService,
+    private entityMapper: EntityMapperService
   ) {}
 
   ngOnInit() {
@@ -71,6 +75,19 @@ export class AdminComponent implements OnInit {
       .then((csv) => this.startDownload(csv, "text/csv", "export.csv"));
   }
 
+  downloadConfigClick() {
+    const jsonString = this.configService.exportConfig();
+    this.startDownload(jsonString, "text/json", "config.json");
+  }
+
+  uploadConfigFile(file: Blob) {
+    this.readFile(file)
+      .then((res) =>
+        this.configService.saveConfig(this.entityMapper, JSON.parse(res))
+      )
+      .then(() => this.configService.loadConfig(this.entityMapper));
+  }
+
   private startDownload(data: string, type: string, name: string) {
     const tempLink = document.createElement("a");
     tempLink.href =
@@ -80,12 +97,12 @@ export class AdminComponent implements OnInit {
     tempLink.click();
   }
 
-  private readFile(file): Promise<string> {
+  private readFile(file: Blob): Promise<string> {
     return new Promise((resolve) => {
       const fileReader = new FileReader();
-      fileReader.onload = () => {
-        resolve(fileReader.result as string);
-      };
+      fileReader.addEventListener("load", () =>
+        resolve(fileReader.result as string)
+      );
       fileReader.readAsText(file);
     });
   }
@@ -133,7 +150,7 @@ export class AdminComponent implements OnInit {
    * Add the data from the loaded file to the database, inserting and updating records.
    * @param file The file object of the csv data to be loaded
    */
-  loadCsv(file) {
+  loadCsv(file: Blob) {
     const pRestorePoint = this.backupService.getJsonExport();
     const pLoadedData = this.readFile(file);
     Promise.all([pLoadedData, pRestorePoint]).then((r) => {

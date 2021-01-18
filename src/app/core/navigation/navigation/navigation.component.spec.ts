@@ -28,6 +28,8 @@ import { RouterService } from "../../view/dynamic-routing/router.service";
 import { ConfigService } from "../../config/config.service";
 import { SessionService } from "../../session/session-service/session.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { BehaviorSubject } from "rxjs";
+import { Config } from "../../config/config";
 
 describe("NavigationComponent", () => {
   let component: NavigationComponent;
@@ -36,11 +38,12 @@ describe("NavigationComponent", () => {
   let sessionService: MockSessionService;
 
   let mockConfigService: jasmine.SpyObj<ConfigService>;
+  const mockConfigUpdated = new BehaviorSubject<Config>(null);
 
   beforeEach(async(() => {
     mockConfigService = jasmine.createSpyObj(["getConfig"]);
     mockConfigService.getConfig.and.returnValue({ items: [] });
-
+    mockConfigService.configUpdated = mockConfigUpdated;
     sessionService = new MockSessionService(new EntitySchemaService());
 
     TestBed.configureTestingModule({
@@ -76,8 +79,7 @@ describe("NavigationComponent", () => {
       ],
     };
     mockConfigService.getConfig.and.returnValue(testConfig);
-
-    component.ngOnInit();
+    mockConfigUpdated.next(null);
     const items = component.menuItems;
 
     expect(items).toEqual([
@@ -104,8 +106,8 @@ describe("NavigationComponent", () => {
           return testConfig;
       }
     });
+    mockConfigUpdated.next(null);
 
-    component.ngOnInit();
     expect(component.menuItems).toEqual([
       new MenuItem("Children", "child", ["/child"]),
     ]);
