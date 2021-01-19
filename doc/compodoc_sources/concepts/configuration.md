@@ -1,13 +1,15 @@
 # ConfigService and the config-fix.json file
 > THIS DOCUMENT IS STILL WORK IN PROGRESS AND WILL BE CONTINUOUSLY UPDATED AS THE DESIGN OF THE SYSTEM EVOLVES
 
-The config file is a json object containing information about how several components are supposed to be displayed. It is loaded by the `ConfigService` and then distributed to the relevant modules. This document aims to explain how the `ConfigService` interacts with the rest of the application and all options that can be set within the `config-fix.json`(TODO: change name of config file?) file.
+The config file is a json object containing information about how several components are supposed to be displayed. It is loaded by the `ConfigService` and then distributed to the relevant modules. This document aims to explain how the `ConfigService` interacts with the rest of the application and all options that can be set within the `config-fix.json`, located under /src/app/core/config (TODO: change name of config file?) file.
 -----
 <!-- TOC -->
 
 - [Config Service](#config-service)
 - [Config File](#config-file)
+    - [NavigationMenue](#navigationMenu)
     - [Notes](#notes)
+    - [Views](#views)
 - [Example](#example)
 
 <!-- /TOC -->
@@ -21,7 +23,29 @@ The config file is a json object containing information about how several compon
 -----
 ## Config File
 
-The config file is a json object containing information about how several components are supposed to be displayed.
+The config file is a json object containing information about how several components are supposed to be displayed. On the top level of the config file, there are three different kinds of entries:
+
+1. navigationMenu
+1. notes
+1. views
+
+### navigationMenu
+The top level entry `navigationMenu` builds the visible and clickable items for the navigation menu on the left hand side of the app. Right now, the `navigationMenu` has the only subentry `items`. `items` contains an array of objects, each object representing one item within the navigation menu. The order of the entries reflects how the navigation menu items are shown in the app.
+
+Each navigation menu item object has to have the three properties `name`, `icon` and `link`. `name` hold the inscription of the item in the navigation menu in the app, `icon` indicates the little icon picture that is shown before the textual inscription of the item in the navigation menu and `link` contains the URL or view that the user is directed to when clicking on the navigation menu item. For every link given, there necessarily has to be a corresponding view-entry on the top level of the config file.
+
+Example:
+```
+  "navigationMenu": {
+    "items": [
+      {"name": "Dashboard", "icon": "home", "link": "/dashboard"},
+      {"name": "Children", "icon": "child", "link": "/child"},
+      ...
+      {"name": "Help", "icon": "question-circle", "link": "/help"}
+    ]
+  },
+```
+
 
 ### Notes
 
@@ -65,7 +89,7 @@ Now we want to highlight this note type in the note list by adding a background 
 }
 ```
 
-Say we want to add new note type that refers to a group meeting, so we can trach absence/attendance on the note using the optional `"isMeeting"` property.
+Say we want to add new note type that refers to a group meeting, so we can track absence/attendance on the note using the optional `"isMeeting"` property.
 ```
 {
    ...
@@ -78,6 +102,9 @@ Say we want to add new note type that refers to a group meeting, so we can trach
     ...
 }
 ```
+### Views
+
+The largest part of the config file are the views. Each view entry starts with `"view:"`. The part that comes after the colon is what comes after the top level / in the URL of the app. There has to be one view entry with nothing after the colon, thus directing to the root folder of the app. Subfolders are signalized with a "/", eg `"view:admin/conflicts":`
 
 -----
 
