@@ -4,8 +4,8 @@ import {
   ProgressDashboardPart,
 } from "./progress-dashboard-config";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { AlertService } from "../../../core/alerts/alert.service";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { LoggingService } from "../../../core/logging/logging.service";
 
 @Component({
   selector: "app-progress-dashboard",
@@ -20,7 +20,7 @@ export class ProgressDashboardComponent
 
   constructor(
     private entityMapper: EntityMapperService,
-    private alertService: AlertService
+    private loggingService: LoggingService
   ) {}
 
   onInitFromDynamicConfig(config: any) {
@@ -39,12 +39,12 @@ export class ProgressDashboardComponent
       })
       .catch((e) => {
         if (e.status === 404) {
-          this.alertService.addDebug(
+          this.loggingService.debug(
             `ProgressDashboardConfig (${this.dashboardConfigId}) not found. Creating ...`
           );
           this.createDefaultConfig();
         } else {
-          this.alertService.addWarning(
+          this.loggingService.warn(
             `Error loading ProgressDashboardConfig (${this.dashboardConfigId}): ${e.message}`
           );
         }
