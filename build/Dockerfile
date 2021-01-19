@@ -15,7 +15,7 @@ COPY patch-webpack.js .
 RUN npm run postinstall
 RUN $(npm bin)/ng version
 
-COPY pipeline .
+COPY . .
 RUN $(npm bin)/ng build --prod
 
 # When set to true, chromium is installed an tests are executed
