@@ -11,7 +11,6 @@ import { MockDatabase } from "../../../core/database/mock-database";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { SessionService } from "../../../core/session/session-service/session.service";
-import { User } from "app/core/user/user";
 import { of } from "rxjs";
 import { SchoolsModule } from "../schools.module";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -19,6 +18,7 @@ import { Angulartics2Module } from "angulartics2";
 import { School } from "../model/school";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
+import { User } from "../../../core/user/user";
 
 describe("SchoolsListComponent", () => {
   let component: SchoolsListComponent;

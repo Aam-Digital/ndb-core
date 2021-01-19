@@ -17,7 +17,7 @@
 
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { APP_INITIALIZER, ErrorHandler, NgModule } from "@angular/core";
+import { ErrorHandler, NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 
@@ -61,19 +61,14 @@ import { LoggingService } from "./core/logging/logging.service";
 import { Angulartics2Module } from "angulartics2";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { Angulartics2Piwik } from "angulartics2/piwik";
-import { ConfigService } from "./core/config/config.service";
 import { ViewModule } from "./core/view/view.module";
 import { DashboardModule } from "./core/dashboard/dashboard.module";
 import { EntityDetailsModule } from "./core/entity-components/entity-details/entity-details.module";
 import { EntitySubrecordModule } from "./core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "./core/entity-components/entity-list/entity-list.module";
-import { Child } from "./child-dev-project/children/model/child";
-import { EntityConfigService } from "./core/entity/entity-config.service";
 import { FontAwesomeIconsModule } from "./core/icons/font-awesome-icons.module";
-
-export function configFactory(configService: ConfigService) {
-  return (): Promise<any> => configService.loadConfig();
-}
+import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
+import { ConfigModule } from "./core/config/config.module";
 
 /**
  * Main entry point of the application.
@@ -102,6 +97,7 @@ export function configFactory(configService: ConfigService) {
     EntityModule,
     AppConfigModule,
     SessionModule,
+    ConfigModule,
     UiModule,
     SyncStatusModule,
     LatestChangesModule,
@@ -118,6 +114,7 @@ export function configFactory(configService: ConfigService) {
     EntitySubrecordModule,
     EntityListModule,
     EntityDetailsModule,
+    ConfigurableEnumModule,
     DemoDataModule.forRoot([
       ...DemoChildGenerator.provider({ count: 150 }),
       ...DemoSchoolGenerator.provider({ count: 8 }),
@@ -143,22 +140,10 @@ export function configFactory(configService: ConfigService) {
     CookieService,
     AnalyticsService,
     Angulartics2Piwik,
-    ConfigService,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: configFactory,
-      deps: [ConfigService],
-      multi: true,
-    },
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {
-  constructor(private entityConfigService: EntityConfigService) {
-    // Add all entities for which the config defines attributes
-    this.entityConfigService.addConfigAttributes<Child>(Child);
-  }
-}
+export class AppModule {}
 
 // Initialize remote logging
 LoggingService.initRemoteLogging({

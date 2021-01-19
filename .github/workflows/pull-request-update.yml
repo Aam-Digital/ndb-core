@@ -13,13 +13,13 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./
-          file: ./docker/pipeline/Dockerfile
+          file: ./build/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           target: builder
           tags: test-image
           outputs: type=local,dest=./img
           build-args: RUN_TESTS=${{ true }}
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/aam-digital:cache
+          cache-from: type=registry,ref=aamdigital/ndb-server:cache
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v2.7.5
         env:
@@ -37,11 +37,11 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./
-          file: ./docker/pipeline/Dockerfile
+          file: ./build/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           load: true
           tags: prod-image
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/aam-digital:cache
+          cache-from: type=registry,ref=aamdigital/ndb-server:cache
       - name: Heroku deployment
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}

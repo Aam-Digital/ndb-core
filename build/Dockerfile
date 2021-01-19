@@ -1,8 +1,8 @@
 # This docker image can be used to run the application locally.
 # To use it only Docker needs to be installed locally
 # Run the following commands from the root folder to build, run and kill the application
-# >> docker build -f docker/pipeline/Dockerfile -t aam/digital:latest .
-# >> docker run -p=80:80 -t aam/digital:latest aam-digital
+# >> docker build -f build/Dockerfile -t aam/digital:latest .
+# >> docker run -p=80:80 aam/digital:latest aam-digital
 # >> docker kill aam-digital
 FROM node:15.1.0-alpine3.12 as builder
 WORKDIR /app
@@ -31,8 +31,11 @@ RUN if [ "$RUN_TESTS" = true ] ; then \
 ### PROD image
 
 FROM nginx:1.19.4-alpine
-ENV PORT=80
-COPY ./deploy/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY ./build/default.conf /etc/nginx/templates/default.conf
 COPY --from=builder /app/dist/ /usr/share/nginx/html
-# sed is needed to insert the $PORT into the nginx config
-CMD sed -i -e 's/$PORT/'"$PORT"'/g' /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'
+ENV PORT=80
+ENV WEBDAV_URL="http://localhost"
+ENV COUCHDB_URL="http://localhost"
+# variables are inserted into the nginx config
+CMD envsubst '$$PORT $$WEBDAV_URL $$COUCHDB_URL' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
+    nginx -g 'daemon off;'

@@ -4,6 +4,8 @@ import { WarningLevel, WarningLevelColor } from "../../warning-level";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { async } from "@angular/core/testing";
 import { Entity } from "../../../core/entity/entity";
+import { ConfigurableEnumDatatype } from "../../../core/configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
+import { InteractionType } from "./interaction-type.interface";
 
 function createAttendanceModels(): Array<MeetingNoteAttendance> {
   const a1 = new MeetingNoteAttendance("1", true, "not empty");
@@ -21,7 +23,6 @@ function createTestModel(): Note {
   n1.subject = "Note Subject";
   n1.text = "Note text";
   n1.author = "Max Musterman";
-  n1.category = { name: "Discussion/Decision", color: "#E1BEE7" };
   n1.warningLevel = WarningLevel.URGENT;
 
   return n1;
@@ -31,8 +32,31 @@ describe("Note", () => {
   const ENTITY_TYPE = "Note";
   let entitySchemaService: EntitySchemaService;
 
+  const testInteractionTypes: InteractionType[] = [
+    {
+      id: "",
+      label: "",
+    },
+    {
+      id: "HOME_VISIT",
+      label: "Home Visit",
+    },
+    {
+      id: "GUARDIAN_TALK",
+      label: "Talk with Guardians",
+    },
+  ];
+
   beforeEach(async(() => {
+    const mockConfigService = jasmine.createSpyObj("mockConfigService", [
+      "getConfig",
+    ]);
+    mockConfigService.getConfig.and.returnValue(testInteractionTypes);
+
     entitySchemaService = new EntitySchemaService();
+    entitySchemaService.registerSchemaDatatype(
+      new ConfigurableEnumDatatype(mockConfigService)
+    );
   }));
 
   it("has correct _id and entityId", function () {
@@ -59,7 +83,7 @@ describe("Note", () => {
       subject: "Note Subject",
       text: "Note text",
       author: "Max Musterman",
-      category: "DISCUSSION",
+      category: "GUARDIAN_TALK",
       warningLevel: WarningLevel.URGENT,
 
       searchIndices: [],
@@ -67,6 +91,9 @@ describe("Note", () => {
 
     const entity = new Note(id);
     Object.assign(entity, expectedData);
+    entity.category = testInteractionTypes.find(
+      (c) => c.id === "GUARDIAN_TALK"
+    );
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
@@ -118,9 +145,21 @@ describe("Note", () => {
 
   it("should return colors", function () {
     const note = new Note("1");
-    note.category = { name: "test", color: "#FFFFFF" };
+    note.category = { id: "", label: "test", color: "#FFFFFF" };
     expect(note.getColor()).toBe("#FFFFFF");
     note.warningLevel = WarningLevel.URGENT;
     expect(note.getColor()).toBe(WarningLevelColor(WarningLevel.URGENT));
+  });
+
+  it("transforms interactionType from config", function () {
+    const interactionTypeKey = "HOME_VISIT";
+    const entity = new Note();
+    entity.category = testInteractionTypes.find(
+      (c) => c.id === interactionTypeKey
+    );
+
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
+
+    expect(rawData.category).toBe(interactionTypeKey);
   });
 });

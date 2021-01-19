@@ -1,5 +1,4 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
-import { DatePipe } from "@angular/common";
 import { Aser } from "../model/aser";
 import { ChildrenService } from "../../children/children.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -21,68 +20,57 @@ export class AserComponent implements OnChanges, OnInitDynamicComponent {
   records: Array<Aser>;
 
   columns: Array<ColumnDescription> = [
-    new ColumnDescription(
-      "date",
-      "Date",
-      ColumnDescriptionInputType.DATE,
-      null,
-      (v: Date) => this.datePipe.transform(v, "yyyy-MM-dd"),
-      "xs"
-    ),
-    new ColumnDescription(
-      "math",
-      "Math",
-      ColumnDescriptionInputType.SELECT,
-      Aser.MathLevels.map((s) => {
+    {
+      name: "date",
+      label: "Date",
+      inputType: ColumnDescriptionInputType.DATE,
+      visibleFrom: "xs",
+    },
+    {
+      name: "math",
+      label: "Math",
+      inputType: ColumnDescriptionInputType.SELECT,
+      selectValues: Aser.MathLevels.map((s) => {
         return { value: s, label: s };
       }),
-      undefined,
-      "xs"
-    ),
-    new ColumnDescription(
-      "english",
-      "English",
-      ColumnDescriptionInputType.SELECT,
-      Aser.ReadingLevels.map((s) => {
+      visibleFrom: "xs",
+    },
+    {
+      name: "english",
+      label: "English",
+      inputType: ColumnDescriptionInputType.SELECT,
+      selectValues: Aser.ReadingLevels.map((s) => {
         return { value: s, label: s };
       }),
-      undefined,
-      "xs"
-    ),
-    new ColumnDescription(
-      "hindi",
-      "Hindi",
-      ColumnDescriptionInputType.SELECT,
-      Aser.ReadingLevels.map((s) => {
+      visibleFrom: "xs",
+    },
+    {
+      name: "hindi",
+      label: "Hindi",
+      inputType: ColumnDescriptionInputType.SELECT,
+      selectValues: Aser.ReadingLevels.map((s) => {
         return { value: s, label: s };
       }),
-      undefined,
-      "md"
-    ),
-    new ColumnDescription(
-      "bengali",
-      "Bengali",
-      ColumnDescriptionInputType.SELECT,
-      Aser.ReadingLevels.map((s) => {
+      visibleFrom: "md",
+    },
+    {
+      name: "bengali",
+      label: "Bengali",
+      inputType: ColumnDescriptionInputType.SELECT,
+      selectValues: Aser.ReadingLevels.map((s) => {
         return { value: s, label: s };
       }),
-      undefined,
-      "md"
-    ),
-    new ColumnDescription(
-      "remarks",
-      "Remarks",
-      ColumnDescriptionInputType.TEXT,
-      null,
-      undefined,
-      "md"
-    ),
+      visibleFrom: "md",
+    },
+    {
+      name: "remarks",
+      label: "Remarks",
+      inputType: ColumnDescriptionInputType.TEXT,
+      visibleFrom: "md",
+    },
   ];
 
-  constructor(
-    private childrenService: ChildrenService,
-    private datePipe: DatePipe
-  ) {}
+  constructor(private childrenService: ChildrenService) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty("child")) {

@@ -34,7 +34,8 @@ function generateTestingData() {
   const n1 = new Note("1");
   n1.children = generateChildAttendanceModels();
   n1.category = {
-    name: "Children's Meeting",
+    id: "CHILDREN_MEETING",
+    label: "Children's Meeting",
     color: "#E1F5FE",
     isMeeting: true,
   };

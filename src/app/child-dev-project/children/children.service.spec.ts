@@ -7,12 +7,12 @@ import { Gender } from "./model/Gender";
 import { School } from "../schools/model/school";
 import { MockDatabase } from "../../core/database/mock-database";
 import { TestBed } from "@angular/core/testing";
-import { Database } from "app/core/database/database";
 import { ChildPhotoService } from "./child-photo-service/child-photo.service";
 import { CloudFileService } from "../../core/webdav/cloud-file-service.service";
 import moment from "moment";
 import { LoggingService } from "../../core/logging/logging.service";
 import { take } from "rxjs/operators";
+import { Database } from "../../core/database/database";
 
 function generateChildEntities(): Child[] {
   const data = [];

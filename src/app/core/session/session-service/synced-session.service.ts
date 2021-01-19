@@ -27,7 +27,7 @@ import { PouchDatabase } from "../../database/pouch-database";
 import { ConnectionState } from "../session-states/connection-state.enum";
 import { SyncState } from "../session-states/sync-state.enum";
 import { User } from "../../user/user";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { LoggingService } from "../../logging/logging.service";
 
 /**

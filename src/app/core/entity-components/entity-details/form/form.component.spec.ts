@@ -11,9 +11,8 @@ import { SessionService } from "../../../session/session-service/session.service
 import { User } from "../../../user/user";
 import { ChildPhotoService } from "../../../../child-dev-project/children/child-photo-service/child-photo.service";
 import { AlertService } from "../../../alerts/alert.service";
-import { MockDatabase } from "../../../database/mock-database";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { Database } from "../../../database/database";
+import { ConfigService } from "../../../config/config.service";
 
 describe("FormComponent", () => {
   let component: FormComponent;
@@ -28,17 +27,25 @@ describe("FormComponent", () => {
     "mockSessionService",
     { getCurrentUser: new User("test-user") }
   );
+  let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
   const testChild = new Child("Test Name");
 
   beforeEach(async(() => {
+    mockConfigService = jasmine.createSpyObj("mockConfigService", [
+      "getConfig",
+    ]);
+    mockEntityMapper = jasmine.createSpyObj("mockEntityMapper", ["save"]);
+
     TestBed.configureTestingModule({
       declarations: [FormComponent],
       imports: [EntityDetailsModule, NoopAnimationsModule, RouterTestingModule],
       providers: [
-        { provide: Database, useClass: MockDatabase },
+        { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: ChildPhotoService, useValue: mockChildPhotoService },
         { provide: SessionService, useValue: mockSessionService },
+        { provide: ConfigService, useValue: mockConfigService },
       ],
     }).compileComponents();
   }));
@@ -117,10 +124,7 @@ describe("FormComponent", () => {
 
   it("logs error when saving fails", (done) => {
     spyOnProperty(component.form, "valid").and.returnValue(true);
-    spyOn(
-      fixture.debugElement.injector.get(EntityMapperService),
-      "save"
-    ).and.returnValue(Promise.reject("error"));
+    mockEntityMapper.save.and.returnValue(Promise.reject("error"));
     const alertService = fixture.debugElement.injector.get(AlertService);
     spyOn(alertService, "addDanger");
     component

@@ -37,9 +37,9 @@ import { NotePresenceListComponent } from "./note-details/note-presence-list/not
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
 import { Angulartics2Module } from "angulartics2";
-import { NoteConfigLoaderService } from "./note-config-loader/note-config-loader.service";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
+import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 
 @NgModule({
   declarations: [
@@ -89,10 +89,8 @@ import { EntityListModule } from "../../core/entity-components/entity-list/entit
     Angulartics2Module,
     EntitySubrecordModule,
     EntityListModule,
+    ConfigurableEnumModule,
   ],
-  providers: [NoteConfigLoaderService],
+  providers: [],
 })
-export class NotesModule {
-  // ensure that the config loader gets called when using the module
-  constructor(private noteConfigLoaderService: NoteConfigLoaderService) {}
-}
+export class NotesModule {}

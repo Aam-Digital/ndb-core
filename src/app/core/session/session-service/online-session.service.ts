@@ -1,11 +1,11 @@
 import { SessionService } from "./session.service";
-import { User } from "app/core/user/user";
+import { User } from "../../user/user";
 import { StateHandler } from "../session-states/state-handler";
 import { ConnectionState } from "../session-states/connection-state.enum";
 import { LoginState } from "../session-states/login-state.enum";
 import { SyncState } from "../session-states/sync-state.enum";
-import { Database } from "app/core/database/database";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { Database } from "../../database/database";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { RemoteSession } from "./remote-session";
 import { PouchDatabase } from "../../database/pouch-database";
 import { AlertService } from "../../alerts/alert.service";
