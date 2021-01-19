@@ -267,7 +267,8 @@
   },
   "view:admin/conflicts": {
     "component": "ConflictResolution",
-    "requiresAdmin": true
+    "requiresAdmin": true,
+    "lazyLoaded":  true
   },
   "view:help": {
     "component": "Help"
