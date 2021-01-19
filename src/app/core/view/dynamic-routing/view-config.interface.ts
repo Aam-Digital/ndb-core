@@ -17,4 +17,12 @@ export interface ViewConfig {
 
   /** optional object providing any kind of config to be interpreted by the component for this view */
   config?: any;
+
+  /**
+   * indicate that the route is lazy loaded.
+   *
+   * At the moment that means the routing is set in the app.routing.ts and not loaded from the config.
+   * The ViewConfig of a lazy-loaded route is only used for additional flags like `requiresAdmin`.
+   */
+  lazyLoaded?: boolean;
 }
