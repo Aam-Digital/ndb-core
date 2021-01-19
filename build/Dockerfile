@@ -1,7 +1,7 @@
 # This docker image can be used to run the application locally.
 # To use it only Docker needs to be installed locally
 # Run the following commands from the root folder to build, run and kill the application
-# >> docker build -f docker/pipeline/Dockerfile -t aam/digital:latest .
+# >> docker build -f build/Dockerfile -t aam/digital:latest .
 # >> docker run -p=80:80 aam/digital:latest aam-digital
 # >> docker kill aam-digital
 FROM node:15.1.0-alpine3.12 as builder
@@ -15,7 +15,7 @@ COPY patch-webpack.js .
 RUN npm run postinstall
 RUN $(npm bin)/ng version
 
-COPY . .
+COPY pipeline .
 RUN $(npm bin)/ng build --prod
 
 # When set to true, chromium is installed an tests are executed
@@ -31,7 +31,7 @@ RUN if [ "$RUN_TESTS" = true ] ; then \
 ### PROD image
 
 FROM nginx:1.19.4-alpine
-COPY ./docker/pipeline/default.conf /etc/nginx/templates/default.conf
+COPY ./build/default.conf /etc/nginx/templates/default.conf
 COPY --from=builder /app/dist/ /usr/share/nginx/html
 ENV PORT=80
 ENV WEBDAV_URL="http://localhost"
