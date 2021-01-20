@@ -46,10 +46,13 @@ export class RouterService {
       const route = this.generateRouteFromConfig(view);
 
       if (additionalRoutes.find((r) => r.path === route.path)) {
-        this.loggingService.warn(
-          "ignoring route from view config because the path is already defined: " +
-            view._id
-        );
+        if (!view.lazyLoaded) {
+          // if the view is not lazy-loaded we would not expect it to be already present
+          this.loggingService.warn(
+            "ignoring route from view config because the path is already defined: " +
+              view._id
+          );
+        }
       } else {
         routes.push(route);
       }

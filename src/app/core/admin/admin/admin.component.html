@@ -29,6 +29,13 @@
   <input #csvImport type="file" style="display:none" (change)="loadCsv($event.target.files[0])" />
 </p>
 
+<br><hr>
+<h2>Application Configuration</h2>
+<p>
+  <button (click)="downloadConfigClick()" mat-stroked-button>Download configuration</button>&nbsp;
+  <button (click)="configImport.click()" mat-stroked-button>Upload new configuration</button>
+  <input #configImport type="file" style="display:none" (change)="uploadConfigFile($event.target.files[0])" />
+</p>
 
 <br><hr>
 <h2>AppConfig</h2>

@@ -4,7 +4,7 @@
       {
         "name": "Dashboard",
         "icon": "home",
-        "link": "/dashboard"
+        "link": "/"
       },
       {
         "name": "Children",
@@ -295,7 +295,8 @@
   },
   "view:admin/conflicts": {
     "component": "ConflictResolution",
-    "requiresAdmin": true
+    "requiresAdmin": true,
+    "lazyLoaded":  true
   },
   "view:help": {
     "component": "Help"
