@@ -30,7 +30,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./
-          file: ./docker/pipeline/Dockerfile
+          file: ./build/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           tags: test-image
           target: builder
