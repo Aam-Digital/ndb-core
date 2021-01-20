@@ -98,7 +98,6 @@ export class FormComponent implements OnInitDynamicComponent {
     const formConfig = {};
     this.config.cols.forEach((c: FormFieldConfig[]) =>
       c.forEach((r) => {
-        console.log("field", r);
         formConfig[r.id] = [
           { value: this.entity[r.id], disabled: !this.editing },
         ];
