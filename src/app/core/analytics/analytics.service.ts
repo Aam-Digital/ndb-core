@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Angulartics2Piwik } from "angulartics2/piwik";
 import { environment } from "../../../environments/environment";
+import { AppConfig } from "../app-config/app-config";
 
 const md5 = require("md5");
 
@@ -37,6 +38,12 @@ export class AnalyticsService {
     });
   }
 
+  static setOrganization(orgName: string): void {
+    AnalyticsService.angulartics2Piwik.setUserProperties({
+      dimension2: orgName,
+    });
+  }
+
   private static getUserHash(username: string) {
     return md5(username);
   }
@@ -48,5 +55,6 @@ export class AnalyticsService {
   init(): void {
     AnalyticsService.angulartics2Piwik.startTracking();
     AnalyticsService.setVersion();
+    AnalyticsService.setOrganization(AppConfig.settings.site_name);
   }
 }

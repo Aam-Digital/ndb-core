@@ -1,4 +1,10 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  async,
+  ComponentFixture,
+  fakeAsync,
+  flush,
+  TestBed,
+} from "@angular/core/testing";
 
 import { ActivitySetupComponent } from "./activity-setup.component";
 import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
@@ -6,6 +12,8 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { User } from "../../../core/user/user";
 import { AttendanceService } from "../attendance.service";
+import { RecurringActivity } from "../model/recurring-activity";
+import { Note } from "../../notes/model/note";
 
 describe("ActivitySetupComponent", () => {
   let component: ActivitySetupComponent;
@@ -48,4 +56,25 @@ describe("ActivitySetupComponent", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
+
+  it("generates a filled event Note from the RecurringActivity", fakeAsync(() => {
+    const testActivities = [
+      RecurringActivity.create("act 1"),
+      RecurringActivity.create("act 2"),
+    ];
+    const testInteractionType = { id: "interaction1", label: "Interaction" };
+    testActivities[0].type = testInteractionType;
+
+    mockEntityService.loadType.and.resolveTo(testActivities);
+    component.ngOnInit();
+    flush();
+
+    expect(component.existingEvents.length).toBe(2);
+    expect(component.existingEvents[0]).toEqual(
+      jasmine.objectContaining({
+        category: testInteractionType,
+        subject: "act 1",
+      } as Partial<Note>)
+    );
+  }));
 });

@@ -15,8 +15,8 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { DatePipe, PercentPipe } from "@angular/common";
 
 describe("EntitySubrecordComponent", () => {
-  let component: EntitySubrecordComponent;
-  let fixture: ComponentFixture<EntitySubrecordComponent>;
+  let component: EntitySubrecordComponent<Entity>;
+  let fixture: ComponentFixture<EntitySubrecordComponent<Entity>>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

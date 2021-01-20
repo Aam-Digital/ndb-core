@@ -8,6 +8,7 @@ import { AttendanceService } from "../attendance.service";
 import { PercentPipe } from "@angular/common";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { Note } from "../../notes/model/note";
+import { DetailsComponentSettings } from "../../../core/entity-components/entity-subrecord/entity-subrecord.component";
 
 @Component({
   selector: "app-activity-attendance-section",
@@ -22,8 +23,7 @@ export class ActivityAttendanceSectionComponent
   records: ActivityAttendance[];
   displayedEvents: Note[] = [];
 
-  // TODO split this if forChild (currently no way to display the individual's calendar instead of averages)
-  detailsComponent = AttendanceDetailsComponent;
+  detailsComponent: DetailsComponentSettings<ActivityAttendance>;
 
   columns: Array<ColumnDescription> = [
     {
@@ -87,5 +87,10 @@ export class ActivityAttendanceSectionComponent
     if (this.records?.length > 0) {
       this.displayedEvents = this.records[0].events;
     }
+
+    this.detailsComponent = {
+      component: AttendanceDetailsComponent,
+      componentConfig: { forChild: this.forChild },
+    };
   }
 }

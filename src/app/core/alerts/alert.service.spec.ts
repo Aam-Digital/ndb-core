@@ -40,15 +40,7 @@ describe("AlertService", () => {
   beforeEach(() => {
     loggingService = new MockLoggingService();
     snackBarMock = jasmine.createSpyObj(["openFromComponent"]);
-    alertService = new AlertService(snackBarMock, loggingService);
-  });
-
-  it("add debug alert", function () {
-    const message = "debug alert";
-    alertService.addDebug(message);
-
-    expect(alertService.alerts[0].message).toEqual(message);
-    expect(alertService.alerts[0].type).toEqual("debug");
+    alertService = new AlertService(snackBarMock);
   });
 
   it("add info alert", function () {

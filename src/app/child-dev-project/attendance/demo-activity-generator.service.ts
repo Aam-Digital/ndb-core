@@ -16,10 +16,9 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<
   RecurringActivity
 > {
   private static readonly ACTIVITY_TYPES = [
-    "Coaching",
-    "Class",
-    "Training",
-    "Life Skills",
+    { id: "SCHOOL_CLASS", label: "Class" },
+    { id: "COACHING_CLASS", label: "Coaching" },
+    { id: "LIFE_SKILLS", label: "Life Skills" },
   ];
 
   /**
@@ -35,7 +34,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<
     const type = faker.random.arrayElement(this.ACTIVITY_TYPES);
 
     activity.title =
-      type +
+      type.label +
       " " +
       faker.random.number({ min: 1, max: 9 }) +
       faker.random.alphaNumeric(1).toUpperCase();

@@ -6,11 +6,11 @@ import { Entity } from "../entity/entity";
  *
  * see {@link FormDialogService} for details
  */
-export interface ShowsEntity {
+export interface ShowsEntity<T extends Entity> {
   /**
    * Input for the Entity that is being displayed/edited
    */
-  entity: Entity;
+  entity: T;
 
   /**
    * reference to the FormDialogWrapperComponent used in the template.

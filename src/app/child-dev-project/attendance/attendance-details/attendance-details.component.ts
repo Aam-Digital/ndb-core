@@ -7,18 +7,20 @@ import { NoteDetailsComponent } from "../../notes/note-details/note-details.comp
 import { Note } from "../../notes/model/note";
 import { calculateAverageAttendance } from "../model/calculate-average-event-attendance";
 import { AttendanceStatus } from "../model/attendance-status";
+import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 
 @Component({
   selector: "app-attendance-details",
   templateUrl: "./attendance-details.component.html",
   styleUrls: ["./attendance-details.component.scss"],
 })
-export class AttendanceDetailsComponent implements ShowsEntity {
+export class AttendanceDetailsComponent
+  implements ShowsEntity<ActivityAttendance>, OnInitDynamicComponent {
   @Input() entity: ActivityAttendance = new ActivityAttendance();
   @Input() focusedChild: string;
   @ViewChild("dialogForm", { static: true }) formDialogWrapper;
 
-  eventDetailsComponent = NoteDetailsComponent;
+  eventDetailsComponent = { component: NoteDetailsComponent };
   eventsColumns: Array<ColumnDescription> = [
     {
       name: "date",
@@ -46,4 +48,10 @@ export class AttendanceDetailsComponent implements ShowsEntity {
   attendanceStatus = AttendanceStatus;
 
   constructor() {}
+
+  onInitFromDynamicConfig(config?: { forChild?: string }) {
+    if (config?.forChild) {
+      this.focusedChild = config.forChild;
+    }
+  }
 }
