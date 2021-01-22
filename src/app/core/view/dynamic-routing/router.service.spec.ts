@@ -10,6 +10,7 @@ import { LoggingService } from "../../logging/logging.service";
 
 import { RouterService } from "./router.service";
 import { EntityDetailsComponent } from "../../entity-components/entity-details/entity-details.component";
+import { ViewConfig } from "./view-config.interface";
 
 class TestComponent extends Component {}
 
@@ -92,5 +93,30 @@ describe("RouterService", () => {
     service.reloadRouting(testViewConfigs, existingRoutes);
 
     expect(router.resetConfig).toHaveBeenCalledWith(expectedRoutes);
+  });
+
+  it("should update existing routes when config changes", () => {
+    const routeConfigs1: ViewConfig[] = [
+      { _id: "view:child", component: "ChildrenList" },
+      { _id: "view:other", component: "EntityDetails" },
+    ];
+    const routeConfigs2: ViewConfig[] = [
+      { _id: "view:child", component: "ChildrenList", config: { foo: 1 } },
+      { _id: "view:child2", component: "ChildrenList", config: { foo: 2 } },
+    ];
+
+    mockConfigService.getAllConfigs.and.returnValue(routeConfigs1);
+    service.initRouting();
+
+    mockConfigService.getAllConfigs.and.returnValue(routeConfigs2);
+    service.initRouting();
+
+    const router = TestBed.inject<Router>(Router);
+    expect(router.config.find((r) => r.path === "child").data).toEqual({
+      foo: 1,
+    });
+    expect(router.config.find((r) => r.path === "child2").data).toEqual({
+      foo: 2,
+    });
   });
 });
