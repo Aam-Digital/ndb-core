@@ -4,6 +4,8 @@ import { ComponentType } from "@angular/cdk/overlay";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 import { FormDialogWrapperComponent } from "./form-dialog-wrapper/form-dialog-wrapper.component";
 import { ShowsEntity } from "./shows-entity.interface";
+import { OnInitDynamicComponent } from "../view/dynamic-components/on-init-dynamic-component.interface";
+import { Entity } from "../entity/entity";
 
 /**
  * Inject this service instead of MatDialog to display a form or details view as a modal
@@ -24,14 +26,27 @@ export class FormDialogService {
     private confirmationDialog: ConfirmationDialogService
   ) {}
 
-  openDialog<T extends ShowsEntity>(
+  openDialog<
+    E extends Entity,
+    T extends ShowsEntity<E> | (ShowsEntity<E> & OnInitDynamicComponent)
+  >(
     entityDetailsComponent: ComponentType<T>,
-    entity: any
+    entity: E,
+    componentConfig?: any
   ): MatDialogRef<T> {
     const dialogRef = this.dialog.open(entityDetailsComponent, {
       width: "80%",
     });
+
     dialogRef.componentInstance.entity = entity;
+    if (
+      typeof (dialogRef.componentInstance as OnInitDynamicComponent)
+        .onInitFromDynamicConfig === "function"
+    ) {
+      (dialogRef.componentInstance as OnInitDynamicComponent).onInitFromDynamicConfig(
+        componentConfig
+      );
+    }
 
     const dialogWrapper = dialogRef.componentInstance.formDialogWrapper;
     dialogWrapper.onClose.subscribe(() => dialogRef.close(true));

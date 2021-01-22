@@ -16,8 +16,6 @@
  */
 
 import { Database } from "./database";
-import { AlertService } from "../alerts/alert.service";
-import { AlertDisplay } from "../alerts/alert-display";
 import moment from "moment";
 import { LoggingService } from "../logging/logging.service";
 
@@ -32,14 +30,9 @@ export class PouchDatabase extends Database {
   /**
    * Create a PouchDB database manager.
    * @param _pouchDB An (initialized) PouchDB database instance from the PouchDB library.
-   * @param alertService The AlertService instance of the app to be able to display problems to users.
    * @param loggingService The LoggingService instance of the app to log and report problems.
    */
-  constructor(
-    private _pouchDB: any,
-    private alertService: AlertService,
-    private loggingService: LoggingService
-  ) {
+  constructor(private _pouchDB: any, private loggingService: LoggingService) {
     super();
   }
 
@@ -185,19 +178,20 @@ export class PouchDatabase extends Database {
           });
         }
       } catch (err) {
-        this.alertService.addWarning(
-          "failed to trigger query for new index: ",
-          err
-        );
+        this.notifyError({
+          status: "failed to trigger query for new index",
+          details: err,
+        });
       }
     }
   }
 
   private notifyError(err) {
-    this.alertService.addWarning(
-      "PouchDB Error " + err.status + ": " + JSON.stringify(err),
-      AlertDisplay.NONE
-    );
+    this.loggingService.warn({
+      context: "PouchDatabase",
+      message: err.status,
+      details: JSON.stringify(err),
+    });
   }
 
   /**
@@ -214,14 +208,14 @@ export class PouchDatabase extends Database {
     this.get(newObject._id).then((existingObject) => {
       const resolvedObject = this.mergeObjects(existingObject, newObject);
       if (resolvedObject) {
-        this.alertService.addDebug(
+        this.loggingService.debug(
           "resolved document conflict automatically (" +
             resolvedObject._id +
             ")"
         );
         this.put(resolvedObject);
       } else if (overwriteChanges) {
-        this.alertService.addDebug(
+        this.loggingService.debug(
           "overwriting conflicting document version (" + newObject._id + ")"
         );
         newObject._rev = existingObject._rev;

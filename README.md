@@ -48,17 +48,10 @@ _proxy.conf.json_ (for local development):
   }
 ```
 
-_docker/nginx_default.conf_ (for production server):
+_docker-compose.yml_ (for production server):
 ```
-    location /nextcloud {
-        rewrite /nextcloud/(.*) remote.php/webdav/$1 break;
-        proxy_pass https://<your-nextcloud-server>/;
-        proxy_redirect off;
-        proxy_buffering off;
-        proxy_set_header Host $host;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Ssl on;
-    }
+  environment:
+    WEBDAV_URL: https://<your-nextcloud-server>/remote.php/webdav
 ```
 
 -----
@@ -111,12 +104,7 @@ Before running the tests make sure you are serving the app via `ng serve`.
 Deployment on a server can be done through a docker image, our [ndb-setup project](https://github.com/Aam-Digital/ndb-setup) provides tools and a starting point to run the system using docker.
 For more information about Docker, please refer to [their official documentation](https://docs.docker.com/get-started/).
 
-To build a new docker image from the built project files run:
-```
-npx ng build --output-path docker/dist --prod
-cd docker
-docker build -t aamdigital/ndb-server:latest .
-```
+To learn more about the build process, see [/build](./build/README.md).
 
 -----
 

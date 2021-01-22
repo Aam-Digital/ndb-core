@@ -13,7 +13,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./
-          file: ./docker/pipeline/Dockerfile
+          file: ./build/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           target: builder
           tags: test-image
@@ -37,7 +37,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./
-          file: ./docker/pipeline/Dockerfile
+          file: ./build/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           load: true
           tags: prod-image

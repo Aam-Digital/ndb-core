@@ -7,7 +7,8 @@ import { ShowsEntity } from "../../../core/form-dialog/shows-entity.interface";
   templateUrl: "./attendance-details.component.html",
   styleUrls: ["./attendance-details.component.scss"],
 })
-export class AttendanceDetailsComponent implements ShowsEntity {
+export class AttendanceDetailsComponent
+  implements ShowsEntity<AttendanceMonth> {
   @Input() entity: AttendanceMonth = new AttendanceMonth("");
   @ViewChild("dialogForm", { static: true }) formDialogWrapper;
 

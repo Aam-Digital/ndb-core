@@ -41,9 +41,10 @@ import { DatePipe } from "@angular/common";
   templateUrl: "./entity-subrecord.component.html",
   styleUrls: ["./entity-subrecord.component.scss"],
 })
-export class EntitySubrecordComponent implements OnInit, OnChanges {
+export class EntitySubrecordComponent<T extends Entity>
+  implements OnInit, OnChanges {
   /** data to be displayed */
-  @Input() records: Array<Entity>;
+  @Input() records: Array<T>;
 
   /** configuration what kind of columns to be generated for the table */
   @Input() columns: Array<ColumnDescription>;
@@ -52,14 +53,20 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
    * factory method to create a new instance of the displayed Entity type
    * used when the user adds a new entity to the list.
    */
-  @Input() newRecordFactory: () => Entity;
+  @Input() newRecordFactory: () => T;
 
   /**
    * A Component to be used to display a detailed view or form of a single instance of the displayed entities.
    * This is displayed as a modal (hovering) dialog above the active view and allows the user to get
    * more information or more comfortable editing of a single record.
+   *
+   * Optionally this input can include a componentConfig property passing any values into the component,
+   * which has to implement the OnInitDynamicComponent interface to receive this config.
    */
-  @Input() detailsComponent: ComponentType<ShowsEntity>;
+  @Input() detailsComponent: {
+    component: ComponentType<ShowsEntity<T>>;
+    componentConfig?: any;
+  };
 
   /**
    * Whether the records can be edited directly in the table.
@@ -76,7 +83,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
    * Optional function implementing form validation logic that takes an entity instance, checks it and returns
    * a {@link FormValidationResult} that is then handled by the EntitySubrecordComponent.
    */
-  @Input() formValidation?: (record: Entity) => FormValidationResult;
+  @Input() formValidation?: (record: T) => FormValidationResult;
 
   /**
    * Event whenever an entity in this table is changed.
@@ -87,7 +94,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
   @Input() entityId?: string;
 
   /** function returns the background color for each entry*/
-  @Input() getBackgroundColor?: (rec: Entity) => string;
+  @Input() getBackgroundColor?: (rec: T) => string;
 
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource();
@@ -178,7 +185,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
    * Save an edited record to the database (if validation succeeds).
    * @param record The entity to be saved.
    */
-  save(record: Entity) {
+  save(record: T) {
     if (this.formValidation) {
       const formValidationResult = this.formValidation(record);
       if (!formValidationResult.hasPassedValidation) {
@@ -204,7 +211,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
    * Discard any changes to the given entity and reset it to the state before the user started editing.
    * @param record The entity to be reset.
    */
-  resetChanges(record: Entity) {
+  resetChanges(record: T) {
     // reload original record from database
     const index = this.records.findIndex((a) => a.getId() === record.getId());
     if (index > -1) {
@@ -219,7 +226,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
     this.recordsEditing.set(record.getId(), false);
   }
 
-  private removeFromDataTable(record: Entity) {
+  private removeFromDataTable(record: T) {
     const index = this.records.findIndex((a) => a.getId() === record.getId());
     if (index > -1) {
       this.records.splice(index, 1);
@@ -231,7 +238,7 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
    * Delete the given entity from the database (after explicit user confirmation).
    * @param record The entity to be deleted.
    */
-  delete(record: Entity) {
+  delete(record: T) {
     const dialogRef = this._confirmationDialog.openDialog(
       "Delete?",
       "Are you sure you want to delete this record?"
@@ -280,14 +287,18 @@ export class EntitySubrecordComponent implements OnInit, OnChanges {
    * Show one record's details in a modal dialog (if configured).
    * @param record The entity whose details should be displayed.
    */
-  showRecord(record: Entity) {
+  showRecord(record: T) {
     if (
       this.detailsComponent === undefined ||
       this.recordsEditing.get(record.getId())
     ) {
       return;
     }
-    this.formDialog.openDialog(this.detailsComponent, record);
+    this.formDialog.openDialog(
+      this.detailsComponent.component,
+      record,
+      this.detailsComponent.componentConfig
+    );
   }
 
   autocompleteSearch(col, input) {

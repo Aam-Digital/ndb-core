@@ -27,8 +27,7 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 describe("SyncedSessionService", () => {
   const snackBarMock = { openFromComponent: () => {} } as any;
-  const loggingServiceMock = { warn: () => {} } as any;
-  const alertService = new AlertService(snackBarMock, loggingServiceMock);
+  const alertService = new AlertService(snackBarMock);
   const entitySchemaService = new EntitySchemaService();
   let sessionService: SyncedSessionService;
 

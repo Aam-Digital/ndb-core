@@ -1,13 +1,13 @@
 {
   "name": "ndb-core",
-  "version": "2.24.0",
+  "version": "2.27.0",
   "license": "GPL-3.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "test": "ng test",
-    "test-ci": "ng test --code-coverage --karmaConfig=docker/pipeline/karma-ci.conf.js ",
+    "test-ci": "ng test --code-coverage --karmaConfig=build/karma-ci.conf.js ",
     "lint": "ng lint ndb-core --type-check",
     "e2e": "ng e2e",
     "compodoc": "npx compodoc -c doc/compodoc_sources/.compodocrc.json",
