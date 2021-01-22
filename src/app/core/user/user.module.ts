@@ -23,6 +23,8 @@ import { MatInputModule } from "@angular/material/input";
 import { CommonModule } from "@angular/common";
 import { MatTabsModule } from "@angular/material/tabs";
 import { WebdavModule } from "../webdav/webdav.module";
+import { ReactiveFormsModule } from "@angular/forms";
+import { MatListModule } from "@angular/material/list";
 
 /**
  * Provides a User functionality including user account forms.
@@ -35,6 +37,8 @@ import { WebdavModule } from "../webdav/webdav.module";
     MatButtonModule,
     MatTabsModule,
     WebdavModule,
+    ReactiveFormsModule,
+    MatListModule,
   ],
   declarations: [UserAccountComponent],
 })
