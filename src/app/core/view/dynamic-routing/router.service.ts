@@ -28,34 +28,46 @@ export class RouterService {
    * Initialize routes from the config while respecting existing routes.
    */
   initRouting() {
-    this.reloadRouting(this.router.config);
+    this.configService.configUpdated.subscribe(() => {
+      const viewConfigs = this.configService.getAllConfigs<ViewConfig>(
+        RouterService.PREFIX_VIEW_CONFIG
+      );
+      this.reloadRouting(viewConfigs, this.router.config, true);
+    });
   }
 
   /**
    * Reset the routing config and reload it from the global config.
    *
+   * @param viewConfigs The configs loaded from the ConfigService
    * @param additionalRoutes Optional array of routes to keep in addition to the ones loaded from config
+   * @param overwriteExistingRoutes Optionally set to true if config was updated and previously existing routes shall be updated
    */
-  reloadRouting(additionalRoutes: Route[] = []) {
+  reloadRouting(
+    viewConfigs: ViewConfig[],
+    additionalRoutes: Route[] = [],
+    overwriteExistingRoutes = false
+  ) {
     const routes = [];
 
-    const viewConfigs = this.configService.getAllConfigs<ViewConfig>(
-      RouterService.PREFIX_VIEW_CONFIG
-    );
     for (const view of viewConfigs) {
       const route = this.generateRouteFromConfig(view);
 
       if (additionalRoutes.find((r) => r.path === route.path)) {
-        if (!view.lazyLoaded) {
-          // if the view is not lazy-loaded we would not expect it to be already present
+        // special skip and warning rules if the route already exists:
+        if (view.lazyLoaded) {
+          continue;
+        }
+        if (!overwriteExistingRoutes) {
           this.loggingService.warn(
             "ignoring route from view config because the path is already defined: " +
               view._id
           );
+          continue;
         }
-      } else {
-        routes.push(route);
       }
+
+      routes.push(route);
     }
 
     // add routes from other sources (e.g. pre-existing  hard-coded routes)

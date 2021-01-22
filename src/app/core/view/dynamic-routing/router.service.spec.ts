@@ -41,7 +41,7 @@ describe("RouterService", () => {
     const router = TestBed.inject<Router>(Router);
     spyOn(router, "resetConfig");
 
-    service.reloadRouting(testRoutes);
+    service.reloadRouting([], testRoutes);
 
     expect(router.resetConfig).toHaveBeenCalledWith(testRoutes);
   });
@@ -70,8 +70,7 @@ describe("RouterService", () => {
     const router = TestBed.inject<Router>(Router);
     spyOn(router, "resetConfig");
 
-    mockConfigService.getAllConfigs.and.returnValue(testViewConfigs);
-    service.reloadRouting();
+    service.reloadRouting(testViewConfigs);
 
     expect(router.resetConfig).toHaveBeenCalledWith(expectedRoutes);
   });
@@ -90,8 +89,7 @@ describe("RouterService", () => {
     const router = TestBed.inject<Router>(Router);
     spyOn(router, "resetConfig");
 
-    mockConfigService.getAllConfigs.and.returnValue(testViewConfigs);
-    service.reloadRouting(existingRoutes);
+    service.reloadRouting(testViewConfigs, existingRoutes);
 
     expect(router.resetConfig).toHaveBeenCalledWith(expectedRoutes);
   });
