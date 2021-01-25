@@ -8,14 +8,18 @@ import {
 import { Note } from "../../notes/model/note";
 import { MatCalendarCellCssClasses } from "@angular/material/datepicker/calendar-body";
 import moment, { Moment } from "moment";
-import { getAttendanceType } from "../model/activity-attendance";
 import { EventAttendance } from "../model/event-attendance";
-import { AttendanceStatus } from "../model/attendance-status";
+import {
+  ATTENDANCE_STATUS_CONFIG_ID,
+  AttendanceStatusType,
+} from "../model/attendance-status";
 import { MatCalendar } from "@angular/material/datepicker";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { NoteDetailsComponent } from "../../notes/note-details/note-details.component";
 import { calculateAverageAttendance } from "../model/calculate-average-event-attendance";
+import { ConfigService } from "../../../core/config/config.service";
+import { ConfigurableEnumConfig } from "../../../core/configurable-enum/configurable-enum.interface";
 
 @Component({
   selector: "app-attendance-calendar",
@@ -27,7 +31,7 @@ export class AttendanceCalendarComponent implements OnChanges {
   @Input() highlightForChild: string;
 
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
-  statusValues = AttendanceStatus;
+  statusValues: AttendanceStatusType[];
   minDate: Date;
   maxDate: Date;
 
@@ -38,13 +42,19 @@ export class AttendanceCalendarComponent implements OnChanges {
   selectedEventStats: {
     average: number;
     unknownStatus: number;
-    statusCounts: Map<AttendanceStatus, number>;
+    statusCounts: Map<AttendanceStatusType, number>;
   };
 
   constructor(
     private entityMapper: EntityMapperService,
-    private formDialog: FormDialogService
-  ) {}
+    private formDialog: FormDialogService,
+    private configService: ConfigService
+  ) {
+    this.statusValues = this.configService.getConfig<
+      ConfigurableEnumConfig<AttendanceStatusType>
+    >(ATTENDANCE_STATUS_CONFIG_ID);
+  }
+
   highlightDate = (cellDate: Date): MatCalendarCellCssClasses => {
     const cellMoment = moment(cellDate);
     const classes = {};
@@ -61,13 +71,11 @@ export class AttendanceCalendarComponent implements OnChanges {
       // coloring for individual child
       const eventAttendance = event.getAttendance(this.highlightForChild);
 
-      const statusClass = this.getCssClassForAttendanceStatus(
-        eventAttendance.status
-      );
+      const statusClass = eventAttendance.status.style;
       classes[statusClass] = true;
 
       classes["attendance-calendar-date-has-remarks"] =
-        eventAttendance.remarks !== "";
+        eventAttendance.remarks && eventAttendance.remarks !== "";
     }
 
     if (event && !this.highlightForChild) {
@@ -144,10 +152,6 @@ export class AttendanceCalendarComponent implements OnChanges {
     }
 
     await this.entityMapper.save(this.selectedEvent);
-  }
-
-  getCssClassForAttendanceStatus(status: AttendanceStatus) {
-    return getAttendanceType(status).style;
   }
 
   showEventDetails(selectedEvent: Note) {

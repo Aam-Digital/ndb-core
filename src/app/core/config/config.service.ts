@@ -65,3 +65,10 @@ export class ConfigService {
     return matchingConfigs;
   }
 }
+
+export function createTestingConfigService(configsObject: any): ConfigService {
+  const configService = new ConfigService(null);
+  // @ts-ignore
+  configService.config.data = configsObject;
+  return configService;
+}

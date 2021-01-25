@@ -58,6 +58,8 @@
       }
     ]
   },
+
+
   "enum:interaction-type": [
     {
       "id": "",
@@ -161,6 +163,53 @@
       "isMeeting": true
     }
   ],
+
+  "enum:attendance-status": [
+    {
+      "id": "PRESENT",
+      "shortlabel": "P",
+      "label": "Present",
+      "style": "attendance-P",
+      "countAs": "PRESENT"
+    },
+    {
+      "id": "ABSENT",
+      "shortlabel": "A",
+      "label": "Absent",
+      "style": "attendance-A",
+      "countAs": "ABSENT"
+    },
+    {
+      "id": "LATE",
+      "shortlabel": "L",
+      "label": "Late",
+      "style": "attendance-L",
+      "countAs": "PRESENT"
+    },
+    {
+      "id": "HOLIDAY",
+      "shortlabel": "H",
+      "label": "Holiday",
+      "style": "attendance-H",
+      "countAs": "IGNORE"
+    },
+    {
+      "id": "EXCUSED",
+      "shortlabel": "E",
+      "label": "Excused",
+      "style": "attendance-E",
+      "countAs": "IGNORE"
+    },
+    {
+      "id": "UNKNOWN",
+      "shortlabel": "?",
+      "label": "Skip",
+      "style": "attendance-U",
+      "countAs": "IGNORE"
+    }
+  ],
+
+
   "view:": {
     "component": "Dashboard",
     "config": {

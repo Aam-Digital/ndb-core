@@ -1,8 +1,7 @@
 import { Note } from "../../notes/model/note";
 import {
-  AttendanceCounting,
-  AttendanceStatus,
-  DEFAULT_ATTENDANCE_TYPES,
+  AttendanceLogicalStatus,
+  AttendanceStatusType,
 } from "./attendance-status";
 import { Entity } from "../../../core/entity/entity";
 import { RecurringActivity } from "./recurring-activity";
@@ -48,7 +47,7 @@ export class ActivityAttendance extends Entity {
   }
 
   countEventsWithStatusForChild(
-    status: AttendanceStatus,
+    status: AttendanceStatusType,
     childId: string
   ): number {
     return this.events.reduce(
@@ -69,11 +68,11 @@ export class ActivityAttendance extends Entity {
   }
 
   countEventsPresent(childId: string): number {
-    return this.countIndividual(childId, AttendanceCounting.PRESENT);
+    return this.countIndividual(childId, AttendanceLogicalStatus.PRESENT);
   }
 
   countEventsAbsent(childId: string): number {
-    return this.countIndividual(childId, AttendanceCounting.ABSENT);
+    return this.countIndividual(childId, AttendanceLogicalStatus.ABSENT);
   }
 
   getAttendancePercentage(childId: string) {
@@ -89,23 +88,25 @@ export class ActivityAttendance extends Entity {
   }
 
   countEventsPresentAverage(rounded: boolean = false) {
-    return this.countAverage(AttendanceCounting.PRESENT, rounded);
+    return this.countAverage(AttendanceLogicalStatus.PRESENT, rounded);
   }
 
   countEventsAbsentAverage(rounded: boolean = false) {
-    return this.countAverage(AttendanceCounting.ABSENT, rounded);
+    return this.countAverage(AttendanceLogicalStatus.ABSENT, rounded);
   }
 
-  private countIndividual(childId: string, countingType: AttendanceCounting) {
+  private countIndividual(
+    childId: string,
+    countingType: AttendanceLogicalStatus
+  ) {
     return this.events.filter(
       (eventNote) =>
-        getAttendanceType(eventNote.getAttendance(childId)?.status)?.countAs ===
-        countingType
+        eventNote.getAttendance(childId)?.status.countAs === countingType
     ).length;
   }
 
   private countAverage(
-    matchingType: AttendanceCounting,
+    matchingType: AttendanceLogicalStatus,
     rounded: boolean = false
   ) {
     const calculatedStats = this.events
@@ -115,10 +116,10 @@ export class ActivityAttendance extends Entity {
           total: event.children.length,
         };
         for (const childId of event.children) {
-          const att = getAttendanceType(event.getAttendance(childId).status);
+          const att = event.getAttendance(childId).status;
           if (att.countAs === matchingType) {
             eventStats.matching++;
-          } else if (att.countAs === AttendanceCounting.IGNORE) {
+          } else if (att.countAs === AttendanceLogicalStatus.IGNORE) {
             eventStats.total--;
           }
         }
@@ -144,11 +145,7 @@ export class ActivityAttendance extends Entity {
   }
 }
 
-// TODO: remove once EventAttendance contains the full reference to AttendanceStatusType after that was moved into config
-export function getAttendanceType(status: AttendanceStatus) {
-  return DEFAULT_ATTENDANCE_TYPES.find((t) => t.status === status);
-}
-
+let defaultAttendanceTypes: AttendanceStatusType[];
 /**
  * Generate a event with children for the given AttendanceStatus array.
  *
@@ -158,13 +155,35 @@ export function getAttendanceType(status: AttendanceStatus) {
  * @param date (Optional) date of the event; if not given today's date is used
  */
 export function generateEventWithAttendance(
-  participating: { [key: string]: AttendanceStatus },
+  participating: { [key: string]: AttendanceLogicalStatus },
   date = new Date()
 ): Note {
+  if (!defaultAttendanceTypes) {
+    defaultAttendanceTypes = [
+      {
+        id: "PRESENT",
+        label: "Present",
+        countAs: AttendanceLogicalStatus.PRESENT,
+      },
+      {
+        id: "ABSENT",
+        label: "Absent",
+        countAs: AttendanceLogicalStatus.ABSENT,
+      },
+      {
+        id: "SKIP",
+        label: "Skip",
+        countAs: AttendanceLogicalStatus.IGNORE,
+      },
+    ] as AttendanceStatusType[];
+  }
+
   const event = Note.create(date);
   for (const childId of Object.keys(participating)) {
     event.addChild(childId);
-    event.getAttendance(childId).status = participating[childId];
+    event.getAttendance(childId).status = defaultAttendanceTypes.find(
+      (t) => t.countAs === participating[childId]
+    );
   }
   return event;
 }

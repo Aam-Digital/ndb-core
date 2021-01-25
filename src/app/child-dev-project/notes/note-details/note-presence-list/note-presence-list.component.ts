@@ -8,7 +8,7 @@ import {
 import { Note } from "../../model/note";
 import { NgForm } from "@angular/forms";
 import { ChildSelectComponent } from "../../../children/child-select/child-select.component";
-import { AttendanceStatus } from "../../../attendance/model/attendance-status";
+import { AttendanceLogicalStatus } from "../../../attendance/model/attendance-status";
 
 @Component({
   selector: "app-note-presence-list",
@@ -44,7 +44,7 @@ export class NotePresenceListComponent implements OnChanges {
       if (statusA === statusB) {
         return 0;
       }
-      if (statusA === AttendanceStatus.PRESENT) {
+      if (statusA.countAs === AttendanceLogicalStatus.PRESENT) {
         return -1;
       }
       return statusA.localeCompare(statusB);

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { EventAttendance } from "../../../attendance/model/event-attendance";
-import { AttendanceStatus } from "../../../attendance/model/attendance-status";
+import { AttendanceLogicalStatus } from "../../../attendance/model/attendance-status";
 
 @Component({
   selector: "app-child-meeting-note-attendance",
@@ -14,14 +14,10 @@ export class ChildMeetingNoteAttendanceComponent {
   @Output() remove = new EventEmitter();
   showRemarks: boolean = false;
 
-  ATTENDANCE_STATUS = AttendanceStatus;
+  ATTENDANCE_STATUS = AttendanceLogicalStatus;
 
   setStatus(present: boolean) {
-    if (present) {
-      this.attendance.status = AttendanceStatus.PRESENT;
-    } else {
-      this.attendance.status = AttendanceStatus.ABSENT;
-    }
+    // TODO this.attendance.status = AttendanceStatus.ABSENT;
     this.change.emit(this.attendance);
   }
 }
