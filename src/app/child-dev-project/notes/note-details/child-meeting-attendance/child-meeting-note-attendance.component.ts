@@ -1,6 +1,9 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { EventAttendance } from "../../../attendance/model/event-attendance";
 
+/**
+ * Display a single participant's attendance status in a compact row.
+ */
 @Component({
   selector: "app-child-meeting-note-attendance",
   templateUrl: "./child-meeting-note-attendance.component.html",

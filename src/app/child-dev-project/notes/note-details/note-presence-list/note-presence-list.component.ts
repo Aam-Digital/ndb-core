@@ -10,6 +10,9 @@ import { NgForm } from "@angular/forms";
 import { ChildSelectComponent } from "../../../children/child-select/child-select.component";
 import { AttendanceLogicalStatus } from "../../../attendance/model/attendance-status";
 
+/**
+ * Display the participants' of an event in a list allowing each attendance status to be edited.
+ */
 @Component({
   selector: "app-note-presence-list",
   templateUrl: "./note-presence-list.component.html",
