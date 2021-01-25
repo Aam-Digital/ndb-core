@@ -53,6 +53,7 @@ import { ActivityAttendanceSectionComponent } from "./activity-attendance-sectio
 import { AttendanceCalendarComponent } from "./attendance-calendar/attendance-calendar.component";
 import { GroupedChildAttendanceComponent } from "../children/child-details/grouped-child-attendance/grouped-child-attendance.component";
 import { MatTabsModule } from "@angular/material/tabs";
+import { AttendanceStatusSelectComponent } from "./attendance-status-select/attendance-status-select.component";
 
 @NgModule({
   declarations: [
@@ -71,6 +72,7 @@ import { MatTabsModule } from "@angular/material/tabs";
     ActivityAttendanceSectionComponent,
     AttendanceCalendarComponent,
     GroupedChildAttendanceComponent,
+    AttendanceStatusSelectComponent,
   ],
   imports: [
     EntityListModule,
@@ -96,6 +98,10 @@ import { MatTabsModule } from "@angular/material/tabs";
     EntitySubrecordModule,
     MatTabsModule,
   ],
-  exports: [ActivityCardComponent, ActivitySetupComponent],
+  exports: [
+    ActivityCardComponent,
+    ActivitySetupComponent,
+    AttendanceStatusSelectComponent,
+  ],
 })
 export class AttendanceModule {}

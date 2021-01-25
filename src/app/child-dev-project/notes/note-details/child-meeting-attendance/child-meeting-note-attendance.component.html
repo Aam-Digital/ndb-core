@@ -1,6 +1,5 @@
 
-<div fxLayout="col" fxLayoutGap="4px">
-
+<div fxLayout="col" fxLayoutGap="4px" fxLayoutAlign="start baseline">
   <div class="actions" fxFlex="40px">
     <!-- deactivated to keep the UI simple and understandable
     <span class="fa fa-window-maximize" *ngIf="!showRemarks" (click)="showRemarks=true"></span>
@@ -11,18 +10,9 @@
     </button>
   </div>
 
-  <div fxFlex="125px">
-    <mat-button-toggle-group name="present" class="presence-toggle"
-                             [value]="attendance.status.id !== 'ABSENT'" (change)='setStatus($event.value)'>
-      <mat-button-toggle [value]="true" class="presence-toggle-button"
-                         [ngClass]="{'button-present': attendance.status.id !== 'ABSENT'}">
-        Present
-      </mat-button-toggle>
-      <mat-button-toggle [value]="false" class="presence-toggle-button"
-                         [ngClass]="{'button-absent': attendance.status.id === 'ABSENT'}">
-        Absent
-      </mat-button-toggle>
-    </mat-button-toggle-group>
+  <div fxFlex="250px">
+    <app-attendance-status-select [(value)]="attendance.status" (valueChange)="change.emit(attendance)">
+    </app-attendance-status-select>
   </div>
 
   <app-child-block [entityId]="childId" fxFlex>
