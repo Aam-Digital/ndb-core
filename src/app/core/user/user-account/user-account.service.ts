@@ -20,30 +20,37 @@ export class UserAccountService {
    * @param newPassword The new plaintext password of the user
    * @return Promise that resolves once the password is changed in _user and the database
    */
-  public changePassword(
+  public async changePassword(
     user: User,
     oldPassword: string,
     newPassword: string
-  ): Promise<any> {
+  ): Promise<User> {
+    const userUrl = UserAccountService.COUCHDB_USER_ENDPOINT + ":" + user.name;
+
     const headers: HttpHeaders = new HttpHeaders();
     headers.append(
       "Authorization",
       "Basic " + btoa(user.name + ":" + oldPassword)
     );
-    const userUrl = UserAccountService.COUCHDB_USER_ENDPOINT + ":" + user.name;
+    let userResponse;
+    try {
+      userResponse = await this.http.get(userUrl, { headers: headers }).toPromise();
+    } catch (e) {
+      throw "Current password incorrect or server not available";
+    }
 
-    return this.http
-      .get(userUrl, { headers: headers })
-      .toPromise()
-      .then((userResponse) => {
-        userResponse["password"] = newPassword;
-        user.setNewPassword(newPassword);
-        return Promise.all([
-          this.http
-            .put(userUrl, userResponse, { headers: headers })
-            .toPromise(),
-          this.entityMapper.save<User>(user),
-        ]);
-      });
+    userResponse["password"] = newPassword;
+    user.setNewPassword(newPassword);
+
+    try {
+      await Promise.all([
+        this.http.put(userUrl, userResponse, { headers: headers}).toPromise(),
+        this.entityMapper.save<User>(user)
+      ]);
+    } catch (e) {
+      throw "Could not save new password, " +
+        "please contact your system administrator";
+    }
+    return user;
   }
 }

@@ -78,20 +78,16 @@ export class UserAccountComponent implements OnInit {
     this.user = this.sessionService.getCurrentUser();
   }
 
-  /**
-   * Change the user's password.
-   *
-   * @param oldPwd The current password
-   * @param newPwd New password
-   * @param rePwd Confirmation of the new password
-   */
-  changePassword(oldPwd, newPwd, rePwd) {
+  changePassword() {
+    console.log("called")
+    const currentPassword = this.passwordForm.get('currentPassword').value;
+    const newPassword = this.passwordForm.get('newPassword').get('newPassword').value;
     this.userAccountService
-      .changePassword(this.user, oldPwd, newPwd)
+      .changePassword(this.user, currentPassword, newPassword)
       .then((res) => {
         console.log("done", res);
         return this.sessionService
-          .login(this.user.name, newPwd)
+          .login(this.user.name, newPassword)
           .then((newState) => console.log("login", LoginState[newState]));
       })
       .catch((err) => (this.passwordErrorMessage = err));

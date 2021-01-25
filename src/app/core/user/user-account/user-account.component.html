@@ -36,8 +36,8 @@
             </mat-error>
           </mat-form-field>
           <form formGroupName="newPassword">
-            <p>The new Password should have at least 8 characters, one capital letter and one symbol or number</p>
 
+            <p>The new Password should have at least 8 characters, one capital letter and one symbol or number</p>
             <mat-form-field>
               <label>
                 New password
@@ -59,7 +59,7 @@
             </mat-error>
           </form>
           <mat-error *ngIf="passwordErrorMessage">{{passwordErrorMessage}}</mat-error>
-          <button mat-raised-button type="submit" [disabled]="passwordForm.invalid">Change Password</button>
+          <button mat-raised-button type="submit" [disabled]="passwordForm.invalid" (click)="changePassword()" (submit)="changePassword()">Change Password</button>
         </form>
       </div>
     </ng-template>
