@@ -27,6 +27,7 @@ import { EntityConfigService } from "./core/entity/entity-config.service";
 import { Child } from "./child-dev-project/children/model/child";
 import { SessionService } from "./core/session/session-service/session.service";
 import { SyncState } from "./core/session/session-states/sync-state.enum";
+import { ActivatedRoute, Router } from "@angular/router";
 
 /**
  * Component as the main entry point for the app.
@@ -45,7 +46,9 @@ export class AppComponent implements OnInit {
     private entityMapper: EntityMapperService,
     private routerService: RouterService,
     private entityConfigService: EntityConfigService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router
   ) {
     // If loading the config earlier (in a module constructor or through APP_INITIALIZER) a runtime error occurs.
     // The EntityMapperService needs the SessionServiceProvider which needs the AppConfig to be set up.
@@ -56,7 +59,8 @@ export class AppComponent implements OnInit {
     sessionService
       .getSyncState()
       .waitForChangeTo(SyncState.COMPLETED)
-      .then(() => configService.loadConfig(entityMapper));
+      .then(() => configService.loadConfig(entityMapper))
+      .then(() => router.navigate([], { relativeTo: this.activatedRoute }));
     // These functions will be executed whenever a new config is available
     configService.configUpdated.subscribe(() => routerService.initRouting());
     configService.configUpdated.subscribe(() =>
