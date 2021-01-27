@@ -49,9 +49,7 @@ export class UserAccountService {
         this.entityMapper.save<User>(user)
       ]);
     } catch (e) {
-      throw (
-        "Could not save new password, please contact your system administrator"
-      );
+      throw "Could not save new password, please contact your system administrator";
     }
     return user;
   }
