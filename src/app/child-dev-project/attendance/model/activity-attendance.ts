@@ -5,6 +5,8 @@ import {
 } from "./attendance-status";
 import { Entity } from "../../../core/entity/entity";
 import { RecurringActivity } from "./recurring-activity";
+import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
+import { WarningLevel } from "../../warning-level";
 
 /**
  * Aggregate information about all events for a {@link RecurringActivity} within a given time period.
@@ -13,6 +15,9 @@ import { RecurringActivity } from "./recurring-activity";
  * to avoid problems keeping all information in sync in the database.
  */
 export class ActivityAttendance extends Entity {
+  static readonly THRESHOLD_URGENT = 0.6;
+  static readonly THRESHOLD_WARNING = 0.8;
+
   /**
    * Create an instance with the given initial properties.
    */
@@ -35,12 +40,33 @@ export class ActivityAttendance extends Entity {
   /**
    * Events within the period relating to the activity
    */
-  events: Note[] = [];
+  private _events: Note[] = [];
+
+  set events(value: Note[]) {
+    this._events = value;
+    this.recalculateStats();
+  }
+  get events(): Note[] {
+    return this._events;
+  }
 
   /**
    * The general, recurring activity for which this instance aggregates actual events that took place within a limited time period.
    */
   activity: RecurringActivity;
+
+  /**
+   * Mapping child ids to an object with all *logical* status as object keys and their counts as values.
+   */
+  individualLogicalStatusCounts = new Map<
+    string,
+    { [key in AttendanceLogicalStatus]?: number }
+  >();
+
+  /**
+   * Mapping child ids to a map with all status type ids as object keys and their counts as values.
+   */
+  individualStatusTypeCounts = new Map<string, { [key: string]: number }>();
 
   countEventsTotal(): number {
     return this.events.length;
@@ -143,9 +169,53 @@ export class ActivityAttendance extends Entity {
       return result;
     }
   }
+
+  recalculateStats() {
+    this.individualStatusTypeCounts = new Map();
+    this.individualLogicalStatusCounts = new Map();
+
+    for (const event of this.events) {
+      for (const participant of event.children) {
+        let logicalCount = this.individualLogicalStatusCounts.get(participant);
+        if (!logicalCount) {
+          logicalCount = {};
+          this.individualLogicalStatusCounts.set(participant, logicalCount);
+        }
+        let typeCount = this.individualStatusTypeCounts.get(participant);
+        if (!typeCount) {
+          typeCount = {};
+          this.individualStatusTypeCounts.set(participant, typeCount);
+        }
+
+        const att = event.getAttendance(participant);
+        logicalCount[att.status.countAs] =
+          (logicalCount[att.status.countAs] ?? 0) + 1;
+        typeCount[att.status.id] = (typeCount[att.status.id] ?? 0) + 1;
+      }
+    }
+  }
+
+  /**
+   * Custom warning level for attendance thresholds - optionally for a specific child.
+   */
+  public getWarningLevel(forChildId?: string): WarningLevel {
+    let attendancePercentage;
+    if (forChildId) {
+      attendancePercentage = this.getAttendancePercentage(forChildId);
+    } else {
+      attendancePercentage = this.getAttendancePercentageAverage();
+    }
+
+    if (attendancePercentage < ActivityAttendance.THRESHOLD_URGENT) {
+      return WarningLevel.URGENT;
+    } else if (attendancePercentage < ActivityAttendance.THRESHOLD_WARNING) {
+      return WarningLevel.WARNING;
+    } else {
+      return WarningLevel.OK;
+    }
+  }
 }
 
-let defaultAttendanceTypes: AttendanceStatusType[];
 /**
  * Generate a event with children for the given AttendanceStatus array.
  *
@@ -158,30 +228,10 @@ export function generateEventWithAttendance(
   participating: { [key: string]: AttendanceLogicalStatus },
   date = new Date()
 ): Note {
-  if (!defaultAttendanceTypes) {
-    defaultAttendanceTypes = [
-      {
-        id: "PRESENT",
-        label: "Present",
-        countAs: AttendanceLogicalStatus.PRESENT,
-      },
-      {
-        id: "ABSENT",
-        label: "Absent",
-        countAs: AttendanceLogicalStatus.ABSENT,
-      },
-      {
-        id: "SKIP",
-        label: "Skip",
-        countAs: AttendanceLogicalStatus.IGNORE,
-      },
-    ] as AttendanceStatusType[];
-  }
-
   const event = Note.create(date);
   for (const childId of Object.keys(participating)) {
     event.addChild(childId);
-    event.getAttendance(childId).status = defaultAttendanceTypes.find(
+    event.getAttendance(childId).status = defaultAttendanceStatusTypes.find(
       (t) => t.countAs === participating[childId]
     );
   }
