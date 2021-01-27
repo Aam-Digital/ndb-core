@@ -1,5 +1,10 @@
 <span class="mat-elevation-z1 attendance-block w-{{attendanceData.getWarningLevel(forChild)}}" (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()">
-  {{attendanceData.getAttendancePercentage(forChild) | percent:'1.0-0'}}
+  <span *ngIf="attendanceData.getAttendancePercentage(forChild)">
+    {{attendanceData.getAttendancePercentage(forChild) | percent:'1.0-0'}}
+  </span>
+  <span *ngIf="!attendanceData.getAttendancePercentage(forChild)">
+  -
+  </span>
 </span>
 
 <div style="position:absolute;" *ngIf="tooltip">

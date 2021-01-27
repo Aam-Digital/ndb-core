@@ -2,6 +2,9 @@ import { Component, Input, OnChanges } from "@angular/core";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 
+/**
+ * Display attendance details of a single period for a participant as a compact block.
+ */
 @Component({
   selector: "app-attendance-block",
   templateUrl: "./attendance-block.component.html",

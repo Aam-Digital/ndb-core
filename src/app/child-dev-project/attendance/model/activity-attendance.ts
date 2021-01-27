@@ -206,7 +206,9 @@ export class ActivityAttendance extends Entity {
       attendancePercentage = this.getAttendancePercentageAverage();
     }
 
-    if (attendancePercentage < ActivityAttendance.THRESHOLD_URGENT) {
+    if (!attendancePercentage) {
+      return WarningLevel.NONE;
+    } else if (attendancePercentage < ActivityAttendance.THRESHOLD_URGENT) {
       return WarningLevel.URGENT;
     } else if (attendancePercentage < ActivityAttendance.THRESHOLD_WARNING) {
       return WarningLevel.WARNING;

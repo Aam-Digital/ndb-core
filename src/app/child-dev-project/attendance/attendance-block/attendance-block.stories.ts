@@ -61,7 +61,7 @@ const attendanceRecord2 = ActivityAttendance.create(new Date("2021-01-01"), [
     "1": AttendanceLogicalStatus.PRESENT,
   }),
 ]);
-attendanceRecord.activity = RecurringActivity.create("Demo Activity");
+attendanceRecord2.activity = RecurringActivity.create("Demo Activity");
 export const MediocreAttendance = Template.bind({});
 MediocreAttendance.args = {
   attendanceData: attendanceRecord2,
@@ -73,9 +73,20 @@ const attendanceRecord3 = ActivityAttendance.create(new Date("2021-01-01"), [
     "1": AttendanceLogicalStatus.PRESENT,
   }),
 ]);
-attendanceRecord.activity = RecurringActivity.create("Demo Activity");
+attendanceRecord3.activity = RecurringActivity.create("Demo Activity");
 export const GoodAttendance = Template.bind({});
 GoodAttendance.args = {
   attendanceData: attendanceRecord3,
+  forChild: "1",
+};
+
+const attendanceRecordEmpty = ActivityAttendance.create(
+  new Date("2021-01-01"),
+  []
+);
+attendanceRecordEmpty.activity = RecurringActivity.create("Demo Activity");
+export const PeriodWithoutEvents = Template.bind({});
+PeriodWithoutEvents.args = {
+  attendanceData: attendanceRecordEmpty,
   forChild: "1",
 };
