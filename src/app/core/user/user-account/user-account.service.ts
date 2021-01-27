@@ -14,7 +14,7 @@ export class UserAccountService {
   ) {}
 
   /**
-   * Function to change the
+   * Function to change the password of a user
    * @param user The user for which the password should be changed
    * @param oldPassword The current plaintext password of the user
    * @param newPassword The new plaintext password of the user
@@ -25,13 +25,14 @@ export class UserAccountService {
     oldPassword: string,
     newPassword: string
   ): Promise<User> {
-    const userUrl = UserAccountService.COUCHDB_USER_ENDPOINT + ":" + user.name;
+    if (!user.checkPassword(oldPassword)) {
+      throw "Wrong current password";
+    }
 
-    const headers: HttpHeaders = new HttpHeaders();
-    headers.append(
-      "Authorization",
-      "Basic " + btoa(user.name + ":" + oldPassword)
-    );
+    const userUrl = UserAccountService.COUCHDB_USER_ENDPOINT + ":" + user.name;
+    const headers: HttpHeaders = new HttpHeaders({
+      "Authorization": "Basic " + btoa(user.name + ":" + oldPassword)
+    });
     let userResponse;
     try {
       userResponse = await this.http.get(userUrl, { headers: headers }).toPromise();
@@ -48,8 +49,9 @@ export class UserAccountService {
         this.entityMapper.save<User>(user)
       ]);
     } catch (e) {
-      throw "Could not save new password, " +
-        "please contact your system administrator";
+      throw (
+        "Could not save new password, please contact your system administrator"
+      );
     }
     return user;
   }

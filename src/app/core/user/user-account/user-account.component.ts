@@ -21,7 +21,6 @@ import { SessionService } from "../../session/session-service/session.service";
 import { AppConfig } from "../../app-config/app-config";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { UserAccountService } from "./user-account.service";
-import { LoginState } from "../../session/session-states/login-state.enum";
 import {
   FormBuilder,
   FormGroup,
@@ -45,6 +44,7 @@ export class UserAccountComponent implements OnInit {
   webdavEnabled = !!AppConfig.settings.webdav;
 
   passwordChangeDisabled = AppConfig.settings.database.useTemporaryDatabase;
+  // Requires at least 8 letters, one capital letter and one symbol or number
   passwordPattern =
     "^(?=[^A-Z]*[A-Z])(?=[^a-z]*[a-z])(?=\\D*\\d)[A-Za-z\\d!$%@#£€*?&]{8,}$";
   passwordErrorMessage = "";
@@ -55,7 +55,7 @@ export class UserAccountComponent implements OnInit {
       {
         newPassword: [
           "",
-          [Validators.required, Validators.pattern(this.passwordPattern)],
+          [Validators.required],                      // TODO include Validators.pattern(this.passwordPattern)
         ],
         confirmPassword: ["", [Validators.required]],
       },
@@ -79,17 +79,12 @@ export class UserAccountComponent implements OnInit {
   }
 
   changePassword() {
-    console.log("called")
     const currentPassword = this.passwordForm.get('currentPassword').value;
     const newPassword = this.passwordForm.get('newPassword').get('newPassword').value;
     this.userAccountService
       .changePassword(this.user, currentPassword, newPassword)
-      .then((res) => {
-        console.log("done", res);
-        return this.sessionService
-          .login(this.user.name, newPassword)
-          .then((newState) => console.log("login", LoginState[newState]));
-      })
+      .then(() => this.sessionService.login(this.user.name, newPassword))
+      .then(() => this.passwordErrorMessage = "")
       .catch((err) => (this.passwordErrorMessage = err));
   }
 
