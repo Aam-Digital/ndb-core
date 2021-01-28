@@ -3,6 +3,7 @@ import { AppConfig } from "../app-config/app-config";
 import webdav from "webdav";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { SessionService } from "../session/session-service/session.service";
+import { WebdavModule } from "./webdav.module";
 
 /**
  * Connect and access a remote cloud file system like Nextcloud
@@ -37,7 +38,7 @@ export class CloudFileService {
    * @param password Optional webdav password, otherwise the one set in the current user entity is used.
    */
   public async connect(username: string = null, password: string = null) {
-    if (!AppConfig.settings.webdav || !this.sessionService.getCurrentUser()) {
+    if (!WebdavModule.isEnabled || !this.sessionService.getCurrentUser()) {
       return;
     }
 

@@ -18,8 +18,8 @@
 import { Component, OnInit } from "@angular/core";
 import { User } from "../user";
 import { SessionService } from "../../session/session-service/session.service";
-import { AppConfig } from "../../app-config/app-config";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { WebdavModule } from "../../webdav/webdav.module";
 import { UserAccountService } from "./user-account.service";
 import {
   FormBuilder,
@@ -41,7 +41,7 @@ export class UserAccountComponent implements OnInit {
   user: User;
 
   /** whether webdav integration is configured and the cloud settings section should be displayed */
-  webdavEnabled = !!AppConfig.settings.webdav;
+  webdavEnabled = WebdavModule.isEnabled;
 
   passwordChangeDisabled = AppConfig.settings.database.useTemporaryDatabase;
   // Requires at least 8 letters, one capital letter and one symbol or number
