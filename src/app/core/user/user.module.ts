@@ -25,6 +25,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { WebdavModule } from "../webdav/webdav.module";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatListModule } from "@angular/material/list";
+import { FontAwesomeIconsModule } from "../icons/font-awesome-icons.module";
 
 /**
  * Provides a User functionality including user account forms.
@@ -39,6 +40,7 @@ import { MatListModule } from "@angular/material/list";
     WebdavModule,
     ReactiveFormsModule,
     MatListModule,
+    FontAwesomeIconsModule,
   ],
   declarations: [UserAccountComponent],
 })

@@ -44,7 +44,10 @@ export class UserAccountComponent implements OnInit {
   /** whether webdav integration is configured and the cloud settings section should be displayed */
   webdavEnabled = WebdavModule.isEnabled;
 
-  passwordChangeDisabled = AppConfig.settings.database.useTemporaryDatabase;
+  /** whether password change is disallowed because of demo mode */
+  disabledForDemoMode: boolean;
+  disabledForOfflineMode: boolean;
+
   // Requires at least 8 letters, one capital letter and one symbol or number
   passwordPattern =
     "^(?=[^A-Z]*[A-Z])(?=[^a-z]*[a-z])(?=\\D*\\d)[A-Za-z\\d!$%@#£€*?&]{8,}$";
@@ -69,14 +72,25 @@ export class UserAccountComponent implements OnInit {
     private sessionService: SessionService,
     private userAccountService: UserAccountService,
     private fb: FormBuilder
-  ) {
-    if (AppConfig.settings.database.useTemporaryDatabase) {
-      this.passwordForm.disable();
-    }
-  }
+  ) {}
 
   ngOnInit() {
+    this.checkIfPasswordChangeAllowed();
     this.user = this.sessionService.getCurrentUser();
+  }
+
+  checkIfPasswordChangeAllowed() {
+    this.disabledForDemoMode = false;
+    this.disabledForOfflineMode = false;
+    this.passwordForm.enable();
+
+    if (AppConfig.settings.database.useTemporaryDatabase) {
+      this.disabledForDemoMode = true;
+      this.passwordForm.disable();
+    } else if (!navigator.onLine) {
+      this.disabledForOfflineMode = true;
+      this.passwordForm.disable();
+    }
   }
 
   changePassword() {

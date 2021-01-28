@@ -25,7 +25,18 @@
             <input placeholder="Username" matInput="text" id="username" type="text" [value]="user.name" disabled>
           </mat-form-field>
         </p>
-        <form [formGroup]="passwordForm">
+
+        <form [formGroup]="passwordForm" class="form-container">
+          <p *ngIf="disabledForDemoMode" class="info">
+            <mat-icon fontIcon="fa-exclamation-circle"></mat-icon>
+            Password change is not allowed in demo mode.
+          </p>
+          <p *ngIf="disabledForOfflineMode" class="info">
+            <mat-icon fontIcon="fa-exclamation-circle"></mat-icon>
+            Password change is not possible while being offline.
+            <button mat-stroked-button (click)="checkIfPasswordChangeAllowed()">retry</button>
+          </p>
+
           <mat-form-field>
             <label>
               Current Password
@@ -59,7 +70,11 @@
             </mat-error>
           </form>
           <mat-error *ngIf="passwordErrorMessage">{{passwordErrorMessage}}</mat-error>
-          <button mat-raised-button type="submit" [disabled]="passwordForm.invalid" (click)="changePassword()" (submit)="changePassword()">Change Password</button>
+          <button mat-raised-button type="submit"
+                  [disabled]="passwordForm.invalid || passwordForm.disabled"
+                  (click)="changePassword()" (submit)="changePassword()">
+            Change Password
+          </button>
         </form>
       </div>
     </ng-template>
