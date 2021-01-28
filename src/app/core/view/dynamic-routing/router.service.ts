@@ -46,7 +46,7 @@ export class RouterService {
     additionalRoutes: Route[] = [],
     overwriteExistingRoutes = false
   ) {
-    const routes = [];
+    const routes: Route[] = [];
 
     for (const view of viewConfigs) {
       const route = this.generateRouteFromConfig(view);
@@ -70,7 +70,10 @@ export class RouterService {
     }
 
     // add routes from other sources (e.g. pre-existing  hard-coded routes)
-    routes.push(...additionalRoutes);
+    const noDuplicates = additionalRoutes.filter(
+      (r) => !routes.find((o) => o.path === r.path)
+    );
+    routes.push(...noDuplicates);
 
     this.router.resetConfig(routes);
   }
