@@ -29,6 +29,6 @@ import { AppConfig } from "../app-config/app-config";
 })
 export class WebdavModule {
   static get isEnabled(): boolean {
-    return !!AppConfig.settings.webdav?.remote_url;
+    return CloudFileService.WEBDAV_ENABLED;
   }
 }

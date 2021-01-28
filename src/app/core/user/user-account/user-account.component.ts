@@ -27,6 +27,7 @@ import {
   ValidationErrors,
   Validators,
 } from "@angular/forms";
+import { AppConfig } from "../../app-config/app-config";
 
 /**
  * User account form to allow the user to view and edit information.
