@@ -18,19 +18,15 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { UserAccountComponent } from "./user-account.component";
-import { MatButtonModule } from "@angular/material/button";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
 import { SessionService } from "../../session/session-service/session.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { MatTabsModule } from "@angular/material/tabs";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { Database } from "../../database/database";
 import { MockDatabase } from "../../database/mock-database";
-import { WebdavModule } from "../../webdav/webdav.module";
 import { User } from "../user";
 import { AppConfig } from "../../app-config/app-config";
 import { UserAccountService } from "./user-account.service";
+import { UserModule } from "../user.module";
 
 describe("UserAccountComponent", () => {
   let component: UserAccountComponent;
@@ -43,7 +39,7 @@ describe("UserAccountComponent", () => {
 
   beforeEach(async(() => {
     // @ts-ignore
-    AppConfig.settings = {};
+    AppConfig.settings = { database: { useTemporaryDatabase: false } };
     mockSessionService = jasmine.createSpyObj("sessionService", [
       "getCurrentUser",
     ]);
@@ -55,14 +51,7 @@ describe("UserAccountComponent", () => {
 
     TestBed.configureTestingModule({
       declarations: [UserAccountComponent],
-      imports: [
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        NoopAnimationsModule,
-        MatTabsModule,
-        WebdavModule,
-      ],
+      imports: [UserModule, NoopAnimationsModule],
       providers: [
         { provide: Database, useClass: MockDatabase },
         { provide: SessionService, useValue: mockSessionService },

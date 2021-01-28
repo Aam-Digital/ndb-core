@@ -21,13 +21,9 @@ import { SessionService } from "../../session/session-service/session.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { WebdavModule } from "../../webdav/webdav.module";
 import { UserAccountService } from "./user-account.service";
-import {
-  FormBuilder,
-  FormGroup,
-  ValidationErrors,
-  Validators,
-} from "@angular/forms";
+import { FormBuilder, ValidationErrors, Validators } from "@angular/forms";
 import { AppConfig } from "../../app-config/app-config";
+import { LoggingService } from "../../logging/logging.service";
 
 /**
  * User account form to allow the user to view and edit information.
@@ -48,30 +44,33 @@ export class UserAccountComponent implements OnInit {
   disabledForDemoMode: boolean;
   disabledForOfflineMode: boolean;
 
-  // Requires at least 8 letters, one capital letter and one symbol or number
-  passwordPattern =
-    "^(?=[^A-Z]*[A-Z])(?=[^a-z]*[a-z])(?=\\D*\\d)[A-Za-z\\d!$%@#£€*?&]{8,}$";
-  passwordErrorMessage = "";
+  passwordChangeResult: { success: boolean; error?: any };
 
-  passwordForm = this.fb.group({
-    currentPassword: ["", Validators.required],
-    newPassword: this.fb.group(
-      {
-        newPassword: [
-          "",
-          [Validators.required],                      // TODO include Validators.pattern(this.passwordPattern)
+  passwordForm = this.fb.group(
+    {
+      currentPassword: ["", Validators.required],
+      newPassword: [
+        "",
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(/[A-Z]/),
+          Validators.pattern(/[a-z]/),
+          Validators.pattern(/[0-9]/),
+          Validators.pattern(/[^A-Za-z0-9]/),
         ],
-        confirmPassword: ["", [Validators.required]],
-      },
-      { validator: this.passwordMathValidator }
-    ),
-  });
+      ],
+      confirmPassword: ["", [Validators.required]],
+    },
+    { validators: () => this.passwordMatchValidator() }
+  );
 
   constructor(
     private entityMapperService: EntityMapperService,
     private sessionService: SessionService,
     private userAccountService: UserAccountService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private loggingService: LoggingService
   ) {}
 
   ngOnInit() {
@@ -94,20 +93,39 @@ export class UserAccountComponent implements OnInit {
   }
 
   changePassword() {
-    const currentPassword = this.passwordForm.get('currentPassword').value;
-    const newPassword = this.passwordForm.get('newPassword').get('newPassword').value;
+    const currentPassword = this.passwordForm.get("currentPassword").value;
+    if (!this.user.checkPassword(currentPassword)) {
+      this.passwordForm
+        .get("currentPassword")
+        .setErrors({ incorrectPassword: true });
+      return;
+    }
+
+    const newPassword = this.passwordForm.get("newPassword").value;
     this.userAccountService
       .changePassword(this.user, currentPassword, newPassword)
       .then(() => this.sessionService.login(this.user.name, newPassword))
-      .then(() => this.passwordErrorMessage = "")
-      .catch((err) => (this.passwordErrorMessage = err));
+      .then(() => {
+        this.passwordChangeResult = { success: true };
+      })
+      .catch((err) => {
+        this.passwordChangeResult = { success: false, error: err };
+        this.loggingService.warn({
+          error: "password change failed",
+          details: err,
+        });
+      });
   }
 
-  private passwordMathValidator(group: FormGroup): ValidationErrors | null {
-    const newPassword: string = group.get("newPassword").value;
-    const confirmPassword: string = group.get("confirmPassword").value;
+  private passwordMatchValidator(): ValidationErrors | null {
+    const newPassword: string = this?.passwordForm?.get("newPassword")?.value;
+    const confirmPassword: string = this?.passwordForm?.get("confirmPassword")
+      ?.value;
     if (newPassword !== confirmPassword) {
-      return { confirm: true };
+      this.passwordForm
+        .get("confirmPassword")
+        .setErrors({ passwordConfirmationMismatch: true });
+      return { passwordConfirmationMismatch: true };
     }
     return null;
   }

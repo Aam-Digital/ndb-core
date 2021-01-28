@@ -24,6 +24,11 @@
   margin-top: 20px;
 }
 
+.user-form-field {
+  width: 300px;
+  max-width: 100%;
+}
+
 .passwordChange{
     font-size: 30px;
     margin-bottom: 15px;
@@ -34,4 +39,12 @@
   @include mat-elevation(1);
   font-style: italic;
   padding: 8px;
+  margin: 8px;
+}
+
+.success {
+  background-color: #C8E6C9;
+}
+.error {
+  background-color: #FF8A65;
 }

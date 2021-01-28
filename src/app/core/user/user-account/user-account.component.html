@@ -37,39 +37,56 @@
             <button mat-stroked-button (click)="checkIfPasswordChangeAllowed()">retry</button>
           </p>
 
-          <mat-form-field>
+          <mat-form-field class="user-form-field">
             <label>
               Current Password
-              <input matInput type="password" formControlName="currentPassword">
+              <input matInput type="password" formControlName="currentPassword" (focusin)="passwordForm.get('currentPassword').clearValidators()">
             </label>
-            <mat-error *ngIf="!passwordForm.get('currentPassword').valid && passwordForm.get('currentPassword').touched">
-              Current password needs to be provided
+            <mat-error *ngIf="!passwordForm.get('currentPassword').valid">
+              Please provide your correct current password for confirmation.
             </mat-error>
           </mat-form-field>
-          <form formGroupName="newPassword">
+          <br>
 
-            <p>The new Password should have at least 8 characters, one capital letter and one symbol or number</p>
-            <mat-form-field>
-              <label>
-                New password
-                <input matInput type="password" formControlName="newPassword">
-              </label>
-              <mat-error *ngIf="passwordForm.get('newPassword').get('newPassword').invalid && passwordForm.get('newPassword').get('newPassword').touched">
-                Password format incorrect
-              </mat-error>
-            </mat-form-field>
-            <br>
-            <mat-form-field>
-              <label>
-                Confirm Password
-                <input matInput type="password" formControlName="confirmPassword">
-              </label>
-            </mat-form-field>
-            <mat-error *ngIf="passwordForm.get('newPassword').invalid && passwordForm.get('newPassword').get('confirmPassword').touched">
-              Passwords do not match
+
+          <mat-form-field class="user-form-field">
+            <label>
+              New password
+              <input matInput type="password" formControlName="newPassword">
+            </label>
+            <mat-error *ngIf="passwordForm.get('newPassword').invalid">
+              <div *ngIf="passwordForm.get('newPassword').errors.minlength">
+                Must be at least 8 characters long.
+              </div>
+              <div *ngIf="passwordForm.get('newPassword').errors.pattern">
+                Must contain lower case letters, upper case letters, symbols and numbers to be secure.
+              </div>
             </mat-error>
-          </form>
-          <mat-error *ngIf="passwordErrorMessage">{{passwordErrorMessage}}</mat-error>
+          </mat-form-field>
+          <br>
+
+          <mat-form-field class="user-form-field">
+            <label>
+              Confirm new password
+              <input matInput type="password" formControlName="confirmPassword">
+            </label>
+            <mat-error *ngIf="passwordForm.get('confirmPassword').invalid && passwordForm.get('confirmPassword').touched">
+              Confirmation does not match your new password.
+            </mat-error>
+          </mat-form-field>
+          <br>
+
+          <div *ngIf="passwordChangeResult">
+            <div *ngIf="passwordChangeResult.success" class="info success">
+              Password changed successfully.
+            </div>
+            <div *ngIf="!passwordChangeResult.success" class="info error">
+              Failed to change password.<br>
+              Please try again. If the problem persists contact Aam Digital support.
+            </div>
+          </div>
+
+
           <button mat-raised-button type="submit"
                   [disabled]="passwordForm.invalid || passwordForm.disabled"
                   (click)="changePassword()" (submit)="changePassword()">
