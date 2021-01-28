@@ -19,6 +19,10 @@ export class CloudFileService {
   private fileList: string;
   private currentlyGettingList: Promise<boolean>;
 
+  static get WEBDAV_ENABLED(): boolean {
+    return !!AppConfig.settings.webdav?.remote_url;
+  }
+
   /**
    * Construct the service and immediately attempt to connect to the server with the current user.
    * @param domSanitizer
@@ -37,7 +41,10 @@ export class CloudFileService {
    * @param password Optional webdav password, otherwise the one set in the current user entity is used.
    */
   public async connect(username: string = null, password: string = null) {
-    if (!AppConfig.settings.webdav || !this.sessionService.getCurrentUser()) {
+    if (
+      !CloudFileService.WEBDAV_ENABLED ||
+      !this.sessionService.getCurrentUser()
+    ) {
       return;
     }
 
