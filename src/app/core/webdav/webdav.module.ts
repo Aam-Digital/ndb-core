@@ -7,6 +7,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { AppConfig } from "../app-config/app-config";
 
 /**
  * Provides cloud file storage integration with platforms like Nextcloud.
@@ -26,4 +27,8 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
   providers: [CloudFileService],
   exports: [CloudFileServiceUserSettingsComponent],
 })
-export class WebdavModule {}
+export class WebdavModule {
+  static get isEnabled(): boolean {
+    return CloudFileService.WEBDAV_ENABLED;
+  }
+}

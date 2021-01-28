@@ -18,8 +18,8 @@
 import { Component, OnInit } from "@angular/core";
 import { User } from "../user";
 import { SessionService } from "../../session/session-service/session.service";
-import { AppConfig } from "../../app-config/app-config";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { WebdavModule } from "../../webdav/webdav.module";
 
 /**
  * User account form to allow the user to view and edit information.
@@ -34,7 +34,7 @@ export class UserAccountComponent implements OnInit {
   user: User;
 
   /** whether webdav integration is configured and the cloud settings section should be displayed */
-  webdavEnabled = !!AppConfig.settings.webdav;
+  webdavEnabled = WebdavModule.isEnabled;
 
   constructor(
     private entityMapperService: EntityMapperService,
