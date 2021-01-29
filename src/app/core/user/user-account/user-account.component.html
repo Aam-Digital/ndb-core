@@ -40,16 +40,16 @@
           <mat-form-field class="user-form-field">
             <label>
               Current Password
-              <input matInput type="password" formControlName="currentPassword" (focusin)="passwordForm.get('currentPassword').clearValidators()">
+              <input matInput type="password" formControlName="currentPassword" >
             </label>
-            <mat-error *ngIf="!passwordForm.get('currentPassword').valid">
+            <mat-error *ngIf="passwordForm.get('currentPassword').invalid">
               Please provide your correct current password for confirmation.
             </mat-error>
           </mat-form-field>
           <br>
 
 
-          <mat-form-field class="user-form-field">
+          <mat-form-field class="user-form-field" style="height: 80px">
             <label>
               New password
               <input matInput type="password" formControlName="newPassword">
