@@ -27,10 +27,16 @@ describe("UserAccountService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should reject if old password is incorrect", () => {
+  it("should reject if old password is incorrect", (done) => {
     const user = new User("TestUser");
     user.setNewPassword("testPW");
-    expect(() => service.changePassword(user, "wrongPW", "")).toThrowError();
+    service
+      .changePassword(user, "wrongPW", "")
+      .then(() => fail())
+      .catch((err) => {
+        expect(err).toBeDefined();
+        done();
+      });
   });
 
   it("should call report error when CouchDB not available", (done) => {
