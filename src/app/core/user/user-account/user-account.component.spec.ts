@@ -97,7 +97,9 @@ describe("UserAccountComponent", () => {
     user.setNewPassword("testPW");
     component.user = user;
     component.passwordForm.get("currentPassword").setValue("testPW");
-    mockUserAccountService.changePassword.and.rejectWith("pw change error");
+    mockUserAccountService.changePassword.and.rejectWith(
+      new Error("pw change error")
+    );
     component.changePassword();
     tick();
     expect(component.passwordChangeResult.success).toBeFalse();
