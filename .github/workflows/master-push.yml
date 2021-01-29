@@ -48,7 +48,7 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
         with:
-          coverageLocations: ${{github.workspace}}/img/app/coverage/lcov.info:lcov
+          coverageLocations: img/app/coverage/lcov.info:lcov
       - name: Create prod artefact
         uses: actions/upload-artifact@v2
         with:
