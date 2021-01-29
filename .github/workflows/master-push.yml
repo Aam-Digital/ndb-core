@@ -49,12 +49,22 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
         with:
           coverageLocations: ${{github.workspace}}/img/app/coverage/lcov.info:lcov
+      - name: Create prod artefact
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: img/app/dist
   run-semantic-release:
     runs-on: ubuntu-latest
+    needs: run-tests
     steps:
       - uses: actions/checkout@v2
         with:
           persist-credentials: false
+      - name: Download prod artefact
+        uses: actions/download-artifact@v2
+        with:
+          name: dist
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v2
         env:
@@ -62,6 +72,9 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
           extra_plugins: |
+            @semantic-release/exec
             @google/semantic-release-replace-plugin
             @semantic-release/git
+            @semantic-release/exec
+            @semantic-release/github
             semantic-release-slack-bot
