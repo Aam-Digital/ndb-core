@@ -31,11 +31,13 @@ export class UserAccountService {
 
     const userUrl = UserAccountService.COUCHDB_USER_ENDPOINT + ":" + user.name;
     const headers: HttpHeaders = new HttpHeaders({
-      "Authorization": "Basic " + btoa(user.name + ":" + oldPassword)
+      Authorization: "Basic " + btoa(user.name + ":" + oldPassword),
     });
     let userResponse;
     try {
-      userResponse = await this.http.get(userUrl, { headers: headers }).toPromise();
+      userResponse = await this.http
+        .get(userUrl, { headers: headers })
+        .toPromise();
     } catch (e) {
       throw "Current password incorrect or server not available";
     }
@@ -45,8 +47,8 @@ export class UserAccountService {
 
     try {
       await Promise.all([
-        this.http.put(userUrl, userResponse, { headers: headers}).toPromise(),
-        this.entityMapper.save<User>(user)
+        this.http.put(userUrl, userResponse, { headers: headers }).toPromise(),
+        this.entityMapper.save<User>(user),
       ]);
     } catch (e) {
       throw "Could not save new password, please contact your system administrator";
