@@ -72,7 +72,6 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
           extra_plugins: |
-            @semantic-release/exec
             @google/semantic-release-replace-plugin
             @semantic-release/git
             @semantic-release/exec
