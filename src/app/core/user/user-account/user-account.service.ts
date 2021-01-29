@@ -28,7 +28,6 @@ export class UserAccountService {
     if (!user.checkPassword(oldPassword)) {
       throw new Error("Wrong current password");
     }
-
     const userUrl = UserAccountService.COUCHDB_USER_ENDPOINT + ":" + user.name;
     const headers: HttpHeaders = new HttpHeaders({
       Authorization: "Basic " + btoa(user.name + ":" + oldPassword),
@@ -41,10 +40,8 @@ export class UserAccountService {
     } catch (e) {
       throw new Error("Current password incorrect or server not available");
     }
-
     userResponse["password"] = newPassword;
     user.setNewPassword(newPassword);
-
     try {
       await Promise.all([
         this.http.put(userUrl, userResponse, { headers: headers }).toPromise(),
