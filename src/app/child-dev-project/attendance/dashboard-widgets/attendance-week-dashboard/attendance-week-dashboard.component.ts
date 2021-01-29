@@ -24,8 +24,30 @@ interface AttendanceWeekRow {
 })
 export class AttendanceWeekDashboardComponent
   implements OnInitDynamicComponent, OnInit {
+  /**
+   * The offset from the default time period, which is the last complete week.
+   *
+   * For example:
+   * If you set the offset of 0, the widget displays attendance for the last completed week (i.e. ending last Saturday).
+   * If you set the offset to 7 and today is Thursday, the widget displays attendance from the Monday 3 days ago
+   * (i.e. the current running week).
+   */
   @Input() daysOffset: number;
+
+  /**
+   * description displayed to users for the time period this widget is analysing
+   * e.g. "this week" or "previous week"
+   */
   @Input() periodLabel: string;
+
+  /**
+   * Only participants who were absent more then this threshold are counted and shown in the dashboard.
+   *
+   * The default is 1.
+   * That means if someone was absent two or more days within a specific activity in the given week
+   * the person will be counted and displayed as a critical case in this dashboard widget.
+   */
+  @Input() absentWarningThreshold: number = 1;
 
   dashboardRowGroups: AttendanceWeekRow[][];
 
@@ -128,6 +150,6 @@ export class AttendanceWeekDashboardComponent
       (e) => e?.status?.countAs === AttendanceLogicalStatus.ABSENT
     ).length;
 
-    return countAbsences > 1;
+    return countAbsences > this.absentWarningThreshold;
   }
 }
