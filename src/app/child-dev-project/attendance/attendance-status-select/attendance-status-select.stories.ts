@@ -9,7 +9,7 @@ import { AttendanceStatusSelectComponent } from "./attendance-status-select.comp
 import { ConfigService } from "../../../core/config/config.service";
 
 export default {
-  title: "AttendanceModule/AttendanceStatusSelect",
+  title: "Attendance Module/AttendanceStatusSelect",
   component: AttendanceStatusSelectComponent,
   decorators: [
     moduleMetadata({

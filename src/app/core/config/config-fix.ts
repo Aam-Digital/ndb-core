@@ -436,7 +436,7 @@ export const defaultConfig = {
           "title": "Attendance (School)",
           "id": "schoolAttendance",
           "config": {
-            "filterByInstitution": "school"
+            "filterByActivityType": "SCHOOL_CLASS"
           },
           "noSorting": true
         },
@@ -445,7 +445,7 @@ export const defaultConfig = {
           "title": "Attendance (Coaching)",
           "id": "coachingAttendance",
           "config": {
-            "filterByInstitution": "coaching"
+            "filterByActivityType": "COACHING_CLASS"
           },
           "noSorting": true
         },

@@ -47,6 +47,22 @@ export class AttendanceService {
     return Array.from(periods.values());
   }
 
+  async getActivityAttendanceForPeriod(
+    activity: RecurringActivity,
+    from: Date,
+    until: Date
+  ): Promise<ActivityAttendance> {
+    const events = (await this.entityMapper.loadType<Note>(Note)).filter(
+      (e) => e.relatesTo === activity._id && e.date >= from && e.date <= until
+    );
+
+    const record = ActivityAttendance.create(from, events);
+    record.periodTo = until;
+    record.activity = activity;
+
+    return record;
+  }
+
   async getActivitiesForChild(childId: string): Promise<RecurringActivity[]> {
     // TODO: index
     const activities = await this.entityMapper.loadType<RecurringActivity>(

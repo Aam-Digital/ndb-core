@@ -1,7 +1,6 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AttendanceBlockComponent } from "./attendance-block.component";
-import { AttendanceMonth } from "../model/attendance-month";
 import { AttendanceDaysComponent } from "../attendance-days/attendance-days.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -12,6 +11,7 @@ import { EntityModule } from "../../../core/entity/entity.module";
 import { AttendanceDayBlockComponent } from "../attendance-days/attendance-day-block.component";
 import { RouterTestingModule } from "@angular/router/testing";
 import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
+import { ActivityAttendance } from "../model/activity-attendance";
 
 describe("AttendanceBlockComponent", () => {
   let component: AttendanceBlockComponent;
@@ -41,13 +41,7 @@ describe("AttendanceBlockComponent", () => {
     fixture = TestBed.createComponent(AttendanceBlockComponent);
     component = fixture.componentInstance;
 
-    const attendanceRecord = new AttendanceMonth("101");
-    attendanceRecord.student = "22";
-    attendanceRecord.month = new Date("2018-01-01");
-    attendanceRecord.daysAttended = 6;
-    attendanceRecord.daysWorking = 10;
-    attendanceRecord.daysExcused = 2;
-    component.attendanceData = attendanceRecord;
+    component.attendanceData = ActivityAttendance.create(new Date());
 
     fixture.detectChanges();
   });
