@@ -15,7 +15,13 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  async,
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 
 import { UserAccountComponent } from "./user-account.component";
 import { SessionService } from "../../session/session-service/session.service";
@@ -42,6 +48,7 @@ describe("UserAccountComponent", () => {
     AppConfig.settings = { database: { useTemporaryDatabase: false } };
     mockSessionService = jasmine.createSpyObj("sessionService", [
       "getCurrentUser",
+      "login",
     ]);
     mockSessionService.getCurrentUser.and.returnValue(testUser);
     mockEntityMapper = jasmine.createSpyObj(["save"]);
@@ -70,4 +77,43 @@ describe("UserAccountComponent", () => {
   it("should be created", () => {
     expect(component).toBeTruthy();
   });
+
+  it("should enable password form", () => {
+    expect(component.passwordForm.enabled).toBeTrue();
+  });
+
+  it("should set error when password is incorrect", () => {
+    const user = new User("TestUser");
+    user.setNewPassword("testPW");
+    component.user = user;
+    component.passwordForm.get("currentPassword").setValue("wrongPW");
+    expect(component.passwordForm.get("currentPassword").valid).toBeTrue();
+    component.changePassword();
+    expect(component.passwordForm.get("currentPassword").valid).toBeFalse();
+  });
+
+  it("should set error when password change fails", fakeAsync(() => {
+    const user = new User("TestUser");
+    user.setNewPassword("testPW");
+    component.user = user;
+    component.passwordForm.get("currentPassword").setValue("testPW");
+    mockUserAccountService.changePassword.and.rejectWith("pw change error");
+    component.changePassword();
+    tick();
+    expect(component.passwordChangeResult.success).toBeFalse();
+    expect(component.passwordChangeResult.error).toBe("pw change error");
+  }));
+
+  it("should set success when password change worked", fakeAsync(() => {
+    const user = new User("TestUser");
+    user.setNewPassword("testPW");
+    component.user = user;
+    component.passwordForm.get("currentPassword").setValue("testPW");
+    mockUserAccountService.changePassword.and.resolveTo(null);
+    mockSessionService.login.and.resolveTo(null);
+    component.changePassword();
+    tick();
+    tick();
+    expect(component.passwordChangeResult.success).toBeTrue();
+  }));
 });

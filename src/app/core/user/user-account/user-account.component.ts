@@ -109,7 +109,7 @@ export class UserAccountComponent implements OnInit {
         this.passwordChangeResult = { success: true };
       })
       .catch((err: Error) => {
-        this.passwordChangeResult = { success: false, error: err };
+        this.passwordChangeResult = { success: false, error: err.message };
         this.loggingService.warn({
           error: "password change failed",
           details: err.message,
