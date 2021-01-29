@@ -8,7 +8,6 @@ import { Database } from "../../database/database";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { RemoteSession } from "./remote-session";
 import { PouchDatabase } from "../../database/pouch-database";
-import { AlertService } from "../../alerts/alert.service";
 import { LoggingService } from "../../logging/logging.service";
 
 /**
@@ -40,7 +39,6 @@ export class OnlineSessionService extends SessionService {
   private database: PouchDatabase;
 
   constructor(
-    private alertService: AlertService,
     private loggingService: LoggingService,
     private entitySchemaService: EntitySchemaService
   ) {
