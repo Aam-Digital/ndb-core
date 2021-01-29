@@ -8,15 +8,18 @@ import { MockDatabase } from "../../core/database/mock-database";
 import { Note } from "../notes/model/note";
 import { RecurringActivity } from "./model/recurring-activity";
 import moment from "moment";
+import { generateEventWithAttendance } from "./model/activity-attendance";
+import { AttendanceLogicalStatus } from "./model/attendance-status";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
 
   let mockDatabase: MockDatabase;
-  function addEventToDatabase(date: Date, activityIdWithPrefix: string) {
+  function addEventToDatabase(date: Date, activityIdWithPrefix: string): Note {
     const event = Note.create(date, "generated event");
     event.relatesTo = activityIdWithPrefix;
     mockDatabase.put(event);
+    return event;
   }
 
   beforeEach(() => {
@@ -59,5 +62,46 @@ describe("AttendanceService", () => {
         "day"
       )
     ).toBeTrue();
+  });
+
+  it("getAllActivityAttendancesForPeriod", async () => {
+    const activity = RecurringActivity.create("activity 1");
+    const a1 = generateEventWithAttendance(
+      [
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ],
+      new Date("2020-01-01"),
+      activity
+    );
+    const a2 = generateEventWithAttendance(
+      [
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ],
+      new Date("2020-01-02"),
+      activity
+    );
+    const b1 = generateEventWithAttendance(
+      [
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ],
+      new Date("2020-01-01"),
+      RecurringActivity.create("other_activity")
+    );
+
+    await mockDatabase.put(a1);
+    await mockDatabase.put(a2);
+    await mockDatabase.put(b1);
+
+    const actualAttendences = await service.getAllActivityAttendancesForPeriod(
+      new Date("2020-01-01"),
+      new Date("2020-01-05")
+    );
+
+    expect(actualAttendences.length).toBe(2);
+    expect(actualAttendences[0].events).toEqual([a1, a2]);
+    expect(actualAttendences[1].events).toEqual([b1]);
   });
 });

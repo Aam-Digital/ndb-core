@@ -49,7 +49,6 @@ import { EducationalMaterialComponent } from "../educational-material/educationa
 import { AserComponent } from "../aser/aser-component/aser.component";
 import { FilterPipeModule } from "ngx-filter-pipe";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { AttendanceWeekDashboardComponent } from "../attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component";
 import { NoRecentNotesDashboardComponent } from "../notes/dashboard-widgets/no-recent-notes-dashboard/no-recent-notes-dashboard.component";
 import { AttendanceManagerComponent } from "../attendance/attendance-manager/attendance-manager.component";
 import { HealthCheckupComponent } from "../health-checkup/health-checkup-component/health-checkup.component";
@@ -125,7 +124,6 @@ import { WebdavModule } from "../../core/webdav/webdav.module";
     EducationalMaterialComponent,
     AserComponent,
     SelectGroupChildrenComponent,
-    AttendanceWeekDashboardComponent,
     NoRecentNotesDashboardComponent,
     RecentNotesDashboardComponent,
     AttendanceManagerComponent,
@@ -150,8 +148,6 @@ import { WebdavModule } from "../../core/webdav/webdav.module";
     ChildSelectComponent,
     ChildrenCountDashboardComponent,
     AttendanceWarningsDashboardComponent,
-    AttendanceWarningsDashboardComponent,
-    AttendanceWeekDashboardComponent,
     NoRecentNotesDashboardComponent,
     RecentNotesDashboardComponent,
   ],

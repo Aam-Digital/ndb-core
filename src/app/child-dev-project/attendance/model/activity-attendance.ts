@@ -225,6 +225,7 @@ export class ActivityAttendance extends Entity {
  *
  * @param participating Object where keys are string childId and values are its attendance status
  * @param date (Optional) date of the event; if not given today's date is used
+ * @param activity (Optional) reference to the connected activity entity
  */
 export function generateEventWithAttendance(
   participating: [string, AttendanceLogicalStatus][],
