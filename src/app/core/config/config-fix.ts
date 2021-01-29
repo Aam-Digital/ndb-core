@@ -105,9 +105,6 @@ export const defaultConfig = {
           "config": {
             "dashboardConfigId": "1"
           }
-        },
-        {
-          "component": "AttendanceWarningsDashboard"
         }
       ]
     }
