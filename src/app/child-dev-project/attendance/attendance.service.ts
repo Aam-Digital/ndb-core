@@ -15,7 +15,7 @@ export class AttendanceService {
   async getEventsOnDate(date: Date) {
     const events = await this.entityMapper.loadType<Note>(Note);
     return events.filter(
-      (e) => e.category.isMeeting && moment(e.date).isSame(date, "day")
+      (e) => e.category?.isMeeting && moment(e.date).isSame(date, "day")
     );
   }
 
@@ -70,7 +70,12 @@ export class AttendanceService {
   ): Promise<ActivityAttendance[]> {
     const matchingEvents = (
       await this.entityMapper.loadType<Note>(Note)
-    ).filter((e) => e.date >= from && e.date <= until);
+    ).filter(
+      (e) =>
+        e.relatesTo?.startsWith(RecurringActivity.ENTITY_TYPE) &&
+        e.date >= from &&
+        e.date <= until
+    );
 
     const groupedEvents: Map<string, Note[]> = groupBy(
       matchingEvents,
@@ -86,26 +91,6 @@ export class AttendanceService {
         .catch(() => undefined);
 
       records.push(activityRecord);
-    }
-
-    return records;
-  }
-
-  async getActivityAttendanceForPeriodAndType(
-    activityTypeId: string,
-    from: Date,
-    until: Date
-  ): Promise<ActivityAttendance[]> {
-    const records: ActivityAttendance[] = [];
-
-    const activities = (
-      await this.entityMapper.loadType<RecurringActivity>(RecurringActivity)
-    ).filter((a) => a.type.id === activityTypeId);
-
-    for (const activity of activities) {
-      records.push(
-        await this.getActivityAttendanceForPeriod(activity, from, until)
-      );
     }
 
     return records;
