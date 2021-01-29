@@ -68,11 +68,10 @@ import { EntitySubrecordModule } from "./core/entity-components/entity-subrecord
 import { EntityListModule } from "./core/entity-components/entity-list/entity-list.module";
 import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
 import { DemoActivityGeneratorService } from "./child-dev-project/attendance/demo-activity-generator.service";
-import { Child } from "./child-dev-project/children/model/child";
-import { EntityConfigService } from "./core/entity/entity-config.service";
 import { FontAwesomeIconsModule } from "./core/icons/font-awesome-icons.module";
 import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
 import { ConfigModule } from "./core/config/config.module";
+import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-activity-events-generator.service";
 
 /**
  * Main entry point of the application.
@@ -125,6 +124,7 @@ import { ConfigModule } from "./core/config/config.module";
       ...DemoChildSchoolRelationGenerator.provider(),
       ...DemoAttendanceGenerator.provider(),
       ...DemoActivityGeneratorService.provider(),
+      ...DemoActivityEventsGeneratorService.provider({ forNLastYears: 2 }),
       ...DemoNoteGeneratorService.provider({
         minNotesPerChild: 2,
         maxNotesPerChild: 10,

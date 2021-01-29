@@ -46,7 +46,9 @@ export class AttendanceCalendarComponent implements OnChanges {
 
   highlightDate = (cellDate: Date): MatCalendarCellCssClasses => {
     const cellMoment = moment(cellDate);
-    const classes = {};
+    const classes = {
+      "attendance-calendar-date-general": true,
+    };
 
     if (this.selectedDate) {
       classes["attendance-calendar-date-selected"] = cellMoment.isSame(
