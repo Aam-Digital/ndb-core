@@ -24,7 +24,10 @@ import {
   InteractionType,
 } from "./interaction-type.interface";
 import { EventAttendance } from "../../attendance/model/event-attendance";
-import { AttendanceStatus } from "../../attendance/model/attendance-status";
+import {
+  AttendanceLogicalStatus,
+  NullAttendanceStatusType,
+} from "../../attendance/model/attendance-status";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
@@ -43,10 +46,8 @@ export class Note extends Entity {
    *
    * No direct access to change this property. Use the `.getAttendance()` method to have safe access.
    */
-  @DatabaseField() private childrenAttendance: Map<
-    string,
-    EventAttendance
-  > = new Map();
+  @DatabaseField({ innerDataType: "schema-embed", ext: EventAttendance })
+  private childrenAttendance: Map<string, EventAttendance> = new Map();
 
   @DatabaseField() date: Date;
   @DatabaseField() subject: string = "";
@@ -87,7 +88,8 @@ export class Note extends Entity {
   public getColorForId(childId: string) {
     if (
       this.category.isMeeting &&
-      this.childrenAttendance.get(childId)?.status === AttendanceStatus.ABSENT
+      this.childrenAttendance.get(childId)?.status.countAs ===
+        AttendanceLogicalStatus.ABSENT
     ) {
       // child is absent, highlight the entry
       return WarningLevelColor(WarningLevel.URGENT);
@@ -148,7 +150,7 @@ export class Note extends Entity {
       return true;
     } else {
       for (const v of this.childrenAttendance.values()) {
-        if (v.status === AttendanceStatus.UNKNOWN) {
+        if (v.status.id === NullAttendanceStatusType.id) {
           return true;
         }
       }

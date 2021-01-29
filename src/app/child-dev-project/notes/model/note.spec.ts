@@ -3,16 +3,44 @@ import { WarningLevel, WarningLevelColor } from "../../warning-level";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { async } from "@angular/core/testing";
 import { Entity } from "../../../core/entity/entity";
-import { AttendanceStatus } from "../../attendance/model/attendance-status";
-import { EventAttendance } from "../../attendance/model/event-attendance";
+import {
+  ATTENDANCE_STATUS_CONFIG_ID,
+  AttendanceLogicalStatus,
+  AttendanceStatusType,
+} from "../../attendance/model/attendance-status";
 import { ConfigurableEnumDatatype } from "../../../core/configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
-import { InteractionType } from "./interaction-type.interface";
+import {
+  INTERACTION_TYPE_CONFIG_ID,
+  InteractionType,
+} from "./interaction-type.interface";
+import {
+  CONFIGURABLE_ENUM_CONFIG_PREFIX,
+  ConfigurableEnumConfig,
+} from "../../../core/configurable-enum/configurable-enum.interface";
+import { createTestingConfigService } from "../../../core/config/config.service";
+
+const testStatusTypes: ConfigurableEnumConfig<AttendanceStatusType> = [
+  {
+    id: "PRESENT",
+    shortName: "P",
+    label: "Present",
+    style: "attendance-P",
+    countAs: "PRESENT" as AttendanceLogicalStatus,
+  },
+  {
+    id: "ABSENT",
+    shortName: "A",
+    label: "Absent",
+    style: "attendance-A",
+    countAs: "ABSENT" as AttendanceLogicalStatus,
+  },
+];
 
 function createTestModel(): Note {
   const n1 = new Note("2");
   n1.children = ["1", "4", "7"];
-  n1.getAttendance("1").status = AttendanceStatus.PRESENT;
-  n1.getAttendance("4").status = AttendanceStatus.ABSENT;
+  n1.getAttendance("1").status = testStatusTypes[0];
+  n1.getAttendance("4").status = testStatusTypes[1];
   n1.getAttendance("4").remarks = "has fever";
   n1.date = new Date();
   n1.subject = "Note Subject";
@@ -43,14 +71,15 @@ describe("Note", () => {
   ];
 
   beforeEach(async(() => {
-    const mockConfigService = jasmine.createSpyObj("mockConfigService", [
-      "getConfig",
-    ]);
-    mockConfigService.getConfig.and.returnValue(testInteractionTypes);
+    const testConfigs = {};
+    testConfigs[
+      CONFIGURABLE_ENUM_CONFIG_PREFIX + INTERACTION_TYPE_CONFIG_ID
+    ] = testInteractionTypes;
+    testConfigs[ATTENDANCE_STATUS_CONFIG_ID] = testStatusTypes;
 
     entitySchemaService = new EntitySchemaService();
     entitySchemaService.registerSchemaDatatype(
-      new ConfigurableEnumDatatype(mockConfigService)
+      new ConfigurableEnumDatatype(createTestingConfigService(testConfigs))
     );
   }));
 
@@ -69,9 +98,7 @@ describe("Note", () => {
       _id: ENTITY_TYPE + ":" + id,
 
       children: ["1", "2", "5"],
-      childrenAttendance: {
-        "5": new EventAttendance(AttendanceStatus.ABSENT, "sick"),
-      },
+      childrenAttendance: [],
       date: new Date(),
       subject: "Note Subject",
       text: "Note text",
@@ -140,5 +167,22 @@ describe("Note", () => {
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
     expect(rawData.category).toBe(interactionTypeKey);
+  });
+
+  it("saves and loads attendance as configurable-enums", function () {
+    const status = testStatusTypes.find((c) => c.id === "ABSENT");
+    const entity = new Note();
+    entity.addChild("1");
+    entity.getAttendance("1").status = status;
+    entity.getAttendance("1").remarks = "sick";
+
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
+    expect(rawData.childrenAttendance).toEqual([
+      ["1", { status: status.id, remarks: "sick" }],
+    ]);
+
+    const reloadedEntity = new Note();
+    entitySchemaService.loadDataIntoEntity(reloadedEntity, rawData);
+    expect(reloadedEntity.getAttendance("1").status).toEqual(status);
   });
 });

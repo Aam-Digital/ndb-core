@@ -45,7 +45,11 @@ demoChildren.forEach((c) => simpleEvent.addChild(c.getId()));
 const longEvent = Note.create(new Date(), "another meeting");
 longEvent.text =
   "a guardians meeting with all families who are in the neighbourhood";
-longEvent.category = { name: "Guardians Meeting", isMeeting: true };
+longEvent.category = {
+  id: "GUARDIAN_MEETING",
+  label: "Guardians Meeting",
+  isMeeting: true,
+};
 demoChildren.forEach((c) => longEvent.addChild(c.getId()));
 
 const activityEvent = Note.create(new Date(), "Coaching Batch C");

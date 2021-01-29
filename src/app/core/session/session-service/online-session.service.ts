@@ -48,7 +48,6 @@ export class OnlineSessionService extends SessionService {
     this.remoteSession = new RemoteSession();
     this.database = new PouchDatabase(
       this.remoteSession.database,
-      this.alertService,
       this.loggingService
     );
   }

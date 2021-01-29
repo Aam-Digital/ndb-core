@@ -7,6 +7,7 @@ import { Injectable } from "@angular/core";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { faker } from "../../../core/demo-data/faker";
 import { centersWithProbability } from "./fixtures/centers";
+import { addDefaultChildPhoto } from "../../../../../.storybook/utils/addDefaultChildPhoto";
 
 export class DemoChildConfig {
   count: number;
@@ -43,6 +44,9 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     if (faker.random.number(100) > 80) {
       DemoChildGenerator.makeChildDropout(child);
     }
+
+    // add default photo for easier use in storybook stories
+    addDefaultChildPhoto(child);
 
     return child;
   }

@@ -48,15 +48,8 @@
       <div fxFlex>
         <mat-form-field>
           <input matInput type="number" min="0" placeholder='unknown status'
-                 [value]="focusedChild ? entity.countEventsWithStatusForChild(attendanceStatus.UNKNOWN, focusedChild) : entity.countEventsWithUnknownStatus()"
+                 [value]="focusedChild ? entity.countEventsWithStatusForChild(UnknownStatus, focusedChild) : entity.countEventsWithUnknownStatus()"
                  readonly>
-        </mat-form-field>
-      </div>
-
-      <div fxFlex *ngIf="focusedChild">
-        <mat-form-field>
-          <input matInput type="number" min="0" placeholder='days late'
-                 [value]="entity.countEventsWithStatusForChild(attendanceStatus.LATE, focusedChild)" readonly>
         </mat-form-field>
       </div>
     </div>
