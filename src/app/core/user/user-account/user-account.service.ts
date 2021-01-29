@@ -28,23 +28,19 @@ export class UserAccountService {
     if (!user.checkPassword(oldPassword)) {
       throw new Error("Wrong current password");
     }
-    const userUrl = UserAccountService.COUCHDB_USER_ENDPOINT + ":" + user.name;
-    const headers: HttpHeaders = new HttpHeaders({
-      Authorization: "Basic " + btoa(user.name + ":" + oldPassword),
-    });
+
     let userResponse;
     try {
-      userResponse = await this.http
-        .get(userUrl, { headers: headers })
-        .toPromise();
+      userResponse = await this.getCouchDBUser(user, oldPassword);
     } catch (e) {
       throw new Error("Current password incorrect or server not available");
     }
+
     userResponse["password"] = newPassword;
     user.setNewPassword(newPassword);
     try {
       await Promise.all([
-        this.http.put(userUrl, userResponse, { headers: headers }).toPromise(),
+        this.saveNewPasswordToCouchDB(user, oldPassword, userResponse),
         this.entityMapper.save<User>(user),
       ]);
     } catch (e) {
@@ -53,5 +49,25 @@ export class UserAccountService {
       );
     }
     return user;
+  }
+
+  private getCouchDBUser(user: User, password: string): Promise<any> {
+    const userUrl = UserAccountService.COUCHDB_USER_ENDPOINT + ":" + user.name;
+    const headers: HttpHeaders = new HttpHeaders({
+      Authorization: "Basic " + btoa(user.name + ":" + password),
+    });
+    return this.http.get(userUrl, { headers: headers }).toPromise();
+  }
+
+  private saveNewPasswordToCouchDB(
+    user: User,
+    oldPassword: string,
+    userObj
+  ): Promise<any> {
+    const userUrl = UserAccountService.COUCHDB_USER_ENDPOINT + ":" + user.name;
+    const headers: HttpHeaders = new HttpHeaders({
+      Authorization: "Basic " + btoa(user.name + ":" + oldPassword),
+    });
+    return this.http.put(userUrl, userObj, { headers: headers }).toPromise();
   }
 }

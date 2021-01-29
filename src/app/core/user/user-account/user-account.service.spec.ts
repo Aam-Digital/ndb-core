@@ -27,6 +27,12 @@ describe("UserAccountService", () => {
     expect(service).toBeTruthy();
   });
 
+  it("should reject if old password is incorrect", () => {
+    const user = new User("TestUser");
+    user.setNewPassword("testPW");
+    expect(() => service.changePassword(user, "wrongPW", "")).toThrowError();
+  });
+
   it("should call report error when CouchDB not available", (done) => {
     const user = new User("TestUser");
     user.setNewPassword("testPW");
