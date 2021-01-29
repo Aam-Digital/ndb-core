@@ -56,7 +56,7 @@ export class ActivityAttendance extends Entity {
   activity: RecurringActivity;
 
   /**
-   * Mapping child ids to an object with all *logical* status as object keys and their counts as values.
+   * Mapping child ids to a map with all *logical* status as object keys and their counts as values.
    */
   individualLogicalStatusCounts = new Map<
     string,
