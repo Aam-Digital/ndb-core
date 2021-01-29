@@ -597,7 +597,11 @@
           "component": "DisplayDate",
           "title": "Last De-Worming",
           "id": "health_lastDeworming"
-        }
+        },
+        {
+          "component": "BmiBlock",
+          "title": "BMI",
+          "id": "health_BMI"}
       ],
       "columnGroup": {
         "default": "School Info",
@@ -650,6 +654,7 @@
               "projectNumber",
               "name",
               "center",
+              "health_BMI",
               "health_vaccinationStatus",
               "health_bloodGroup",
               "health_eyeHealthStatus",
