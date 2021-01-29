@@ -21,18 +21,18 @@ describe("AttendanceDetailsComponent", () => {
   beforeEach(async(() => {
     const entity = ActivityAttendance.create(new Date(), [
       generateEventWithAttendance(
-        {
-          "1": AttendanceLogicalStatus.PRESENT,
-          "2": AttendanceLogicalStatus.PRESENT,
-          "3": AttendanceLogicalStatus.ABSENT,
-        },
+        [
+          ["1", AttendanceLogicalStatus.PRESENT],
+          ["2", AttendanceLogicalStatus.PRESENT],
+          ["3", AttendanceLogicalStatus.ABSENT],
+        ],
         new Date("2020-01-01")
       ),
       generateEventWithAttendance(
-        {
-          "1": AttendanceLogicalStatus.PRESENT,
-          "2": AttendanceLogicalStatus.ABSENT,
-        },
+        [
+          ["1", AttendanceLogicalStatus.PRESENT],
+          ["2", AttendanceLogicalStatus.ABSENT],
+        ],
         new Date("2020-01-02")
       ),
     ]);

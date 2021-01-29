@@ -227,15 +227,17 @@ export class ActivityAttendance extends Entity {
  * @param date (Optional) date of the event; if not given today's date is used
  */
 export function generateEventWithAttendance(
-  participating: { [key: string]: AttendanceLogicalStatus },
-  date = new Date()
+  participating: [string, AttendanceLogicalStatus][],
+  date = new Date(),
+  activity?: RecurringActivity
 ): Note {
   const event = Note.create(date);
-  for (const childId of Object.keys(participating)) {
-    event.addChild(childId);
-    event.getAttendance(childId).status = defaultAttendanceStatusTypes.find(
-      (t) => t.countAs === participating[childId]
+  for (const att of participating) {
+    event.addChild(att[0]);
+    event.getAttendance(att[0]).status = defaultAttendanceStatusTypes.find(
+      (t) => t.countAs === att[1]
     );
   }
+  event.relatesTo = activity?._id;
   return event;
 }

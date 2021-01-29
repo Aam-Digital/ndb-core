@@ -36,8 +36,8 @@ describe("AttendanceCalendarComponent", () => {
 
   it("sets min and max selectable date based on time range of given records", () => {
     component.records = [
-      generateEventWithAttendance({}, new Date("2020-01-05")),
-      generateEventWithAttendance({}, new Date("2020-01-20")),
+      generateEventWithAttendance([], new Date("2020-01-05")),
+      generateEventWithAttendance([], new Date("2020-01-20")),
     ];
 
     component.ngOnChanges({

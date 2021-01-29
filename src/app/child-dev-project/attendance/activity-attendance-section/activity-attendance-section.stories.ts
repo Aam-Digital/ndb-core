@@ -23,45 +23,45 @@ const demoActivity = RecurringActivity.create("Coaching Batch C");
 const attendanceRecords = [
   ActivityAttendance.create(new Date("2020-01-01"), [
     generateEventWithAttendance(
-      {
-        "1": AttendanceLogicalStatus.PRESENT,
-        "2": AttendanceLogicalStatus.PRESENT,
-        "3": AttendanceLogicalStatus.ABSENT,
-      },
+      [
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+        ["3", AttendanceLogicalStatus.ABSENT],
+      ],
       new Date("2020-01-01")
     ),
     generateEventWithAttendance(
-      {
-        "1": AttendanceLogicalStatus.PRESENT,
-        "2": AttendanceLogicalStatus.ABSENT,
-      },
+      [
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ],
       new Date("2020-01-02")
     ),
     generateEventWithAttendance(
-      {
-        "1": AttendanceLogicalStatus.ABSENT,
-        "2": AttendanceLogicalStatus.ABSENT,
-      },
+      [
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ],
       new Date("2020-01-03")
     ),
     generateEventWithAttendance(
-      {
-        "1": AttendanceLogicalStatus.PRESENT,
-        "2": AttendanceLogicalStatus.ABSENT,
-      },
+      [
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ],
       new Date("2020-01-04")
     ),
   ]),
 
   ActivityAttendance.create(new Date("2020-02-01"), [
-    generateEventWithAttendance({
-      "1": AttendanceLogicalStatus.ABSENT,
-      "2": AttendanceLogicalStatus.ABSENT,
-    }),
-    generateEventWithAttendance({
-      "1": AttendanceLogicalStatus.PRESENT,
-      "2": AttendanceLogicalStatus.ABSENT,
-    }),
+    generateEventWithAttendance([
+      ["1", AttendanceLogicalStatus.ABSENT],
+      ["2", AttendanceLogicalStatus.ABSENT],
+    ]),
+    generateEventWithAttendance([
+      ["1", AttendanceLogicalStatus.PRESENT],
+      ["2", AttendanceLogicalStatus.ABSENT],
+    ]),
   ]),
 ];
 attendanceRecords.forEach((a) => (a.activity = demoActivity));

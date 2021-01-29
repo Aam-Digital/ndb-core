@@ -30,15 +30,15 @@ describe("ActivityAttendance", () => {
 
   beforeEach(() => {
     testInstance = ActivityAttendance.create(new Date(), [
-      generateEventWithAttendance({
-        "1": AttendanceLogicalStatus.PRESENT,
-        "2": AttendanceLogicalStatus.PRESENT,
-        "3": AttendanceLogicalStatus.ABSENT,
-      }),
-      generateEventWithAttendance({
-        "1": AttendanceLogicalStatus.PRESENT,
-        "2": AttendanceLogicalStatus.ABSENT,
-      }),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+        ["3", AttendanceLogicalStatus.ABSENT],
+      ]),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ]),
     ]);
   });
 
@@ -56,31 +56,31 @@ describe("ActivityAttendance", () => {
 
   it("calculates average absent", () => {
     const everyoneInOneEventAbsent = ActivityAttendance.create(new Date(), [
-      generateEventWithAttendance({
-        "1": AttendanceLogicalStatus.PRESENT,
-        "2": AttendanceLogicalStatus.ABSENT,
-      }),
-      generateEventWithAttendance({
-        "1": AttendanceLogicalStatus.ABSENT,
-        "2": AttendanceLogicalStatus.PRESENT,
-      }),
-      generateEventWithAttendance({
-        "1": AttendanceLogicalStatus.PRESENT,
-        "2": AttendanceLogicalStatus.PRESENT,
-      }),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ]),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+      ]),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+      ]),
     ]);
     expect(everyoneInOneEventAbsent.countEventsAbsentAverage()).toBe(1);
 
     const allAbsent = ActivityAttendance.create(new Date(), [
-      generateEventWithAttendance({
-        "1": AttendanceLogicalStatus.ABSENT,
-        "2": AttendanceLogicalStatus.ABSENT,
-        "3": AttendanceLogicalStatus.ABSENT,
-      }),
-      generateEventWithAttendance({
-        "1": AttendanceLogicalStatus.ABSENT,
-        "2": AttendanceLogicalStatus.ABSENT,
-      }),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ]),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ]),
     ]);
     expect(allAbsent.countEventsAbsentAverage()).toBe(2);
   });
@@ -88,48 +88,46 @@ describe("ActivityAttendance", () => {
   // TODO: what should be the excepted averaged result here?
   xit("calculates average present", () => {
     const presentAct = ActivityAttendance.create(new Date(), [
-      generateEventWithAttendance({
-        "1": AttendanceLogicalStatus.PRESENT,
-        "2": AttendanceLogicalStatus.PRESENT,
-      }),
-      generateEventWithAttendance({
-        "1": AttendanceLogicalStatus.PRESENT,
-        "2": AttendanceLogicalStatus.PRESENT,
-      }),
-      generateEventWithAttendance({
-        "1": AttendanceLogicalStatus.PRESENT,
-      }),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+      ]),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+      ]),
+      generateEventWithAttendance([["1", AttendanceLogicalStatus.PRESENT]]),
     ]);
     expect(presentAct.countEventsPresentAverage()).toBe(2.5);
 
     const allAbsent = ActivityAttendance.create(new Date(), [
-      generateEventWithAttendance({
-        "1": AttendanceLogicalStatus.ABSENT,
-        "2": AttendanceLogicalStatus.ABSENT,
-        "3": AttendanceLogicalStatus.ABSENT,
-      }),
-      generateEventWithAttendance({
-        "1": AttendanceLogicalStatus.ABSENT,
-        "2": AttendanceLogicalStatus.ABSENT,
-      }),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+        ["3", AttendanceLogicalStatus.ABSENT],
+      ]),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ]),
     ]);
     expect(allAbsent.countEventsPresentAverage()).toBe(0);
   });
 
   it("calculates logical stats on set of events", () => {
     const record = ActivityAttendance.create(new Date(), [
-      generateEventWithAttendance({
-        "1": AttendanceLogicalStatus.PRESENT,
-        "2": AttendanceLogicalStatus.ABSENT,
-      }),
-      generateEventWithAttendance({
-        "1": AttendanceLogicalStatus.ABSENT,
-        "2": AttendanceLogicalStatus.PRESENT,
-      }),
-      generateEventWithAttendance({
-        "1": AttendanceLogicalStatus.PRESENT,
-        "2": AttendanceLogicalStatus.IGNORE,
-      }),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ]),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+      ]),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.IGNORE],
+      ]),
     ]);
 
     const logicalCount1 = record.individualLogicalStatusCounts.get("1");
@@ -143,18 +141,18 @@ describe("ActivityAttendance", () => {
 
   it("calculates type stats on set of events", () => {
     const record = ActivityAttendance.create(new Date(), [
-      generateEventWithAttendance({
-        "1": AttendanceLogicalStatus.PRESENT,
-        "2": AttendanceLogicalStatus.ABSENT,
-      }),
-      generateEventWithAttendance({
-        "1": AttendanceLogicalStatus.ABSENT,
-        "2": AttendanceLogicalStatus.PRESENT,
-      }),
-      generateEventWithAttendance({
-        "1": AttendanceLogicalStatus.PRESENT,
-        "2": AttendanceLogicalStatus.IGNORE,
-      }),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ]),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+      ]),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.IGNORE],
+      ]),
     ]);
 
     const StatusLate: AttendanceStatusType = defaultAttendanceStatusTypes.find(

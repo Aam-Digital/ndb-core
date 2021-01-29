@@ -14,33 +14,33 @@ import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
 
 const demoEvents: Note[] = [
   generateEventWithAttendance(
-    {
-      "1": AttendanceLogicalStatus.ABSENT,
-      "2": AttendanceLogicalStatus.PRESENT,
-      "3": AttendanceLogicalStatus.ABSENT,
-    },
+    [
+      ["1", AttendanceLogicalStatus.ABSENT],
+      ["2", AttendanceLogicalStatus.PRESENT],
+      ["3", AttendanceLogicalStatus.ABSENT],
+    ],
     new Date()
   ),
   generateEventWithAttendance(
-    {
-      "1": AttendanceLogicalStatus.PRESENT,
-      "2": AttendanceLogicalStatus.ABSENT,
-      "3": AttendanceLogicalStatus.IGNORE,
-    },
+    [
+      ["1", AttendanceLogicalStatus.PRESENT],
+      ["2", AttendanceLogicalStatus.ABSENT],
+      ["3", AttendanceLogicalStatus.IGNORE],
+    ],
     moment().subtract(1, "day").toDate()
   ),
   generateEventWithAttendance(
-    {
-      "1": AttendanceLogicalStatus.IGNORE,
-      "2": AttendanceLogicalStatus.ABSENT,
-    },
+    [
+      ["1", AttendanceLogicalStatus.IGNORE],
+      ["2", AttendanceLogicalStatus.ABSENT],
+    ],
     moment().subtract(2, "day").toDate()
   ),
   generateEventWithAttendance(
-    {
-      "1": AttendanceLogicalStatus.IGNORE,
-      "2": AttendanceLogicalStatus.ABSENT,
-    },
+    [
+      ["1", AttendanceLogicalStatus.IGNORE],
+      ["2", AttendanceLogicalStatus.ABSENT],
+    ],
     moment().subtract(3, "day").toDate()
   ),
 ];

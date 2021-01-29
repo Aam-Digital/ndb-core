@@ -19,32 +19,32 @@ import { EntitySubrecordModule } from "../../../core/entity-components/entity-su
 const demoActivity = RecurringActivity.create("Coaching Batch C");
 const activityAttendance = ActivityAttendance.create(new Date("2020-01-01"), [
   generateEventWithAttendance(
-    {
-      "1": AttendanceLogicalStatus.PRESENT,
-      "2": AttendanceLogicalStatus.PRESENT,
-      "3": AttendanceLogicalStatus.ABSENT,
-    },
+    [
+      ["1", AttendanceLogicalStatus.PRESENT],
+      ["2", AttendanceLogicalStatus.PRESENT],
+      ["3", AttendanceLogicalStatus.ABSENT],
+    ],
     new Date("2020-01-01")
   ),
   generateEventWithAttendance(
-    {
-      "1": AttendanceLogicalStatus.PRESENT,
-      "2": AttendanceLogicalStatus.ABSENT,
-    },
+    [
+      ["1", AttendanceLogicalStatus.PRESENT],
+      ["2", AttendanceLogicalStatus.ABSENT],
+    ],
     new Date("2020-01-02")
   ),
   generateEventWithAttendance(
-    {
-      "1": AttendanceLogicalStatus.ABSENT,
-      "2": AttendanceLogicalStatus.ABSENT,
-    },
+    [
+      ["1", AttendanceLogicalStatus.ABSENT],
+      ["2", AttendanceLogicalStatus.ABSENT],
+    ],
     new Date("2020-01-03")
   ),
   generateEventWithAttendance(
-    {
-      "1": AttendanceLogicalStatus.PRESENT,
-      "2": AttendanceLogicalStatus.ABSENT,
-    },
+    [
+      ["1", AttendanceLogicalStatus.PRESENT],
+      ["2", AttendanceLogicalStatus.ABSENT],
+    ],
     new Date("2020-01-04")
   ),
 ]);
