@@ -41,7 +41,6 @@ import { ChildrenService } from "./children.service";
 import { ChildrenCountDashboardComponent } from "./children-count-dashboard/children-count-dashboard.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { AttendanceAverageDashboardComponent } from "../attendance/dashboard-widgets/attendance-average-dashboard/attendance-average-dashboard.component";
 import { AttendanceWarningsDashboardComponent } from "../attendance/dashboard-widgets/attendance-warnings-dashboard/attendance-warnings-dashboard.component";
 import { NotesOfChildComponent } from "../notes/notes-of-child/notes-of-child.component";
 import { ChildSelectComponent } from "./child-select/child-select.component";
@@ -121,7 +120,6 @@ import { WebdavModule } from "../../core/webdav/webdav.module";
     NotesOfChildComponent,
     ChildrenListComponent,
     ChildrenCountDashboardComponent,
-    AttendanceAverageDashboardComponent,
     AttendanceWarningsDashboardComponent,
     ChildSelectComponent,
     EducationalMaterialComponent,
@@ -151,7 +149,6 @@ import { WebdavModule } from "../../core/webdav/webdav.module";
     ChildBlockComponent,
     ChildSelectComponent,
     ChildrenCountDashboardComponent,
-    AttendanceAverageDashboardComponent,
     AttendanceWarningsDashboardComponent,
     AttendanceWarningsDashboardComponent,
     AttendanceWeekDashboardComponent,

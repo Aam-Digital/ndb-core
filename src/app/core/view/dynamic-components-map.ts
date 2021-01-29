@@ -1,4 +1,3 @@
-import { AttendanceAverageDashboardComponent } from "../../child-dev-project/attendance/dashboard-widgets/attendance-average-dashboard/attendance-average-dashboard.component";
 import { AttendanceWarningsDashboardComponent } from "../../child-dev-project/attendance/dashboard-widgets/attendance-warnings-dashboard/attendance-warnings-dashboard.component";
 import { AttendanceWeekDashboardComponent } from "../../child-dev-project/attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component";
 import { ChildrenCountDashboardComponent } from "../../child-dev-project/children/children-count-dashboard/children-count-dashboard.component";
@@ -30,7 +29,6 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["NoRecentNotesDashboard", NoRecentNotesDashboardComponent],
   ["AttendanceWeekDashboard", AttendanceWeekDashboardComponent],
   ["ProgressDashboard", ProgressDashboardComponent],
-  ["AttendanceAverageDashboard", AttendanceAverageDashboardComponent],
   ["AttendanceWarningsDashboard", AttendanceWarningsDashboardComponent],
   ["PreviousSchools", PreviousSchoolsComponent],
   ["Aser", AserComponent],

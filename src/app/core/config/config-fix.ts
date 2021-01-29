@@ -107,9 +107,6 @@ export const defaultConfig = {
           }
         },
         {
-          "component": "AttendanceAverageDashboard"
-        },
-        {
           "component": "AttendanceWarningsDashboard"
         }
       ]
