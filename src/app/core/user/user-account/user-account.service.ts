@@ -26,7 +26,7 @@ export class UserAccountService {
     newPassword: string
   ): Promise<User> {
     if (!user.checkPassword(oldPassword)) {
-      throw "Wrong current password";
+      throw new Error("Wrong current password");
     }
 
     const userUrl = UserAccountService.COUCHDB_USER_ENDPOINT + ":" + user.name;
@@ -39,7 +39,7 @@ export class UserAccountService {
         .get(userUrl, { headers: headers })
         .toPromise();
     } catch (e) {
-      throw "Current password incorrect or server not available";
+      throw new Error("Current password incorrect or server not available");
     }
 
     userResponse["password"] = newPassword;
@@ -51,7 +51,9 @@ export class UserAccountService {
         this.entityMapper.save<User>(user),
       ]);
     } catch (e) {
-      throw "Could not save new password, please contact your system administrator";
+      throw new Error(
+        "Could not save new password, please contact your system administrator"
+      );
     }
     return user;
   }

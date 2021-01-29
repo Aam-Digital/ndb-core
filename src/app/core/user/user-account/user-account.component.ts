@@ -108,11 +108,11 @@ export class UserAccountComponent implements OnInit {
       .then(() => {
         this.passwordChangeResult = { success: true };
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         this.passwordChangeResult = { success: false, error: err };
         this.loggingService.warn({
           error: "password change failed",
-          details: err,
+          details: err.message,
         });
       });
   }
