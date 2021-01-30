@@ -37,6 +37,13 @@
       "packageName": "ndb-server",
       "notifyOnSuccess": true,
       "notifyOnFail": true
-    }]
+    }],
+    ["@semantic-release/exec", {
+      "publishCmd": "tar -zcf ndb-core_${nextRelease.version}.tar.gz img/app/dist",
+      "successCmd": "rm -r img/app/dist && rm ndb-core_${nextRelease.version}.tar.gz"
+    }],
+    ["@semantic-release/github", {
+      "assets": "ndb-core_${nextRelease.version}.tar.gz"
+    }],
   ]
 }
