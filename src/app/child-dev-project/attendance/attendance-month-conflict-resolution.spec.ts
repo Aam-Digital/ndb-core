@@ -64,4 +64,8 @@ describe("AttendanceMonthConflictResolutionStrategy", () => {
     );
     expect(result).toBe(false);
   });
+
+  it("test ci testing", () => {
+    expect(1 + 1).toBe(2);
+  });
 });
