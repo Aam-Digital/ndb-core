@@ -30,18 +30,18 @@ const Template: Story<AttendanceBlockComponent> = (
 });
 
 const attendanceRecord = ActivityAttendance.create(new Date("2021-01-01"), [
-  generateEventWithAttendance({
-    "1": AttendanceLogicalStatus.ABSENT,
-    "2": AttendanceLogicalStatus.ABSENT,
-  }),
-  generateEventWithAttendance({
-    "1": AttendanceLogicalStatus.PRESENT,
-    "2": AttendanceLogicalStatus.ABSENT,
-  }),
-  generateEventWithAttendance({
-    "1": AttendanceLogicalStatus.IGNORE,
-    "2": AttendanceLogicalStatus.PRESENT,
-  }),
+  generateEventWithAttendance([
+    ["1", AttendanceLogicalStatus.ABSENT],
+    ["2", AttendanceLogicalStatus.ABSENT],
+  ]),
+  generateEventWithAttendance([
+    ["1", AttendanceLogicalStatus.PRESENT],
+    ["2", AttendanceLogicalStatus.ABSENT],
+  ]),
+  generateEventWithAttendance([
+    ["1", AttendanceLogicalStatus.IGNORE],
+    ["2", AttendanceLogicalStatus.PRESENT],
+  ]),
 ]);
 attendanceRecord.activity = RecurringActivity.create("Demo Activity");
 export const CriticalAttendance = Template.bind({});
@@ -51,15 +51,9 @@ CriticalAttendance.args = {
 };
 
 const attendanceRecord2 = ActivityAttendance.create(new Date("2021-01-01"), [
-  generateEventWithAttendance({
-    "1": AttendanceLogicalStatus.PRESENT,
-  }),
-  generateEventWithAttendance({
-    "1": AttendanceLogicalStatus.ABSENT,
-  }),
-  generateEventWithAttendance({
-    "1": AttendanceLogicalStatus.PRESENT,
-  }),
+  generateEventWithAttendance([["1", AttendanceLogicalStatus.PRESENT]]),
+  generateEventWithAttendance([["1", AttendanceLogicalStatus.PRESENT]]),
+  generateEventWithAttendance([["1", AttendanceLogicalStatus.PRESENT]]),
 ]);
 attendanceRecord2.activity = RecurringActivity.create("Demo Activity");
 export const MediocreAttendance = Template.bind({});
@@ -69,9 +63,7 @@ MediocreAttendance.args = {
 };
 
 const attendanceRecord3 = ActivityAttendance.create(new Date("2021-01-01"), [
-  generateEventWithAttendance({
-    "1": AttendanceLogicalStatus.PRESENT,
-  }),
+  generateEventWithAttendance([["1", AttendanceLogicalStatus.PRESENT]]),
 ]);
 attendanceRecord3.activity = RecurringActivity.create("Demo Activity");
 export const GoodAttendance = Template.bind({});

@@ -4,6 +4,7 @@ import moment from "moment";
 import { Note } from "../notes/model/note";
 import { RecurringActivity } from "./model/recurring-activity";
 import { ActivityAttendance } from "./model/activity-attendance";
+import { groupBy } from "../../utils/utils";
 
 @Injectable({
   providedIn: "root",
@@ -14,7 +15,7 @@ export class AttendanceService {
   async getEventsOnDate(date: Date) {
     const events = await this.entityMapper.loadType<Note>(Note);
     return events.filter(
-      (e) => e.category.isMeeting && moment(e.date).isSame(date, "day")
+      (e) => e.category?.isMeeting && moment(e.date).isSame(date, "day")
     );
   }
 
@@ -61,6 +62,38 @@ export class AttendanceService {
     record.activity = activity;
 
     return record;
+  }
+
+  async getAllActivityAttendancesForPeriod(
+    from: Date,
+    until: Date
+  ): Promise<ActivityAttendance[]> {
+    const matchingEvents = (
+      await this.entityMapper.loadType<Note>(Note)
+    ).filter(
+      (e) =>
+        e.relatesTo?.startsWith(RecurringActivity.ENTITY_TYPE) &&
+        e.date >= from &&
+        e.date <= until
+    );
+
+    const groupedEvents: Map<string, Note[]> = groupBy(
+      matchingEvents,
+      "relatesTo"
+    );
+
+    const records = [];
+    for (const [activityId, activityEvents] of groupedEvents) {
+      const activityRecord = ActivityAttendance.create(from, activityEvents);
+      activityRecord.periodTo = until;
+      activityRecord.activity = await this.entityMapper
+        .load<RecurringActivity>(RecurringActivity, activityId)
+        .catch(() => undefined);
+
+      records.push(activityRecord);
+    }
+
+    return records;
   }
 
   async getActivitiesForChild(childId: string): Promise<RecurringActivity[]> {

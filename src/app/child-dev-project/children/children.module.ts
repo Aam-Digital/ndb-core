@@ -41,8 +41,6 @@ import { ChildrenService } from "./children.service";
 import { ChildrenCountDashboardComponent } from "./children-count-dashboard/children-count-dashboard.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { AttendanceAverageDashboardComponent } from "../attendance/dashboard-widgets/attendance-average-dashboard/attendance-average-dashboard.component";
-import { AttendanceWarningsDashboardComponent } from "../attendance/dashboard-widgets/attendance-warnings-dashboard/attendance-warnings-dashboard.component";
 import { NotesOfChildComponent } from "../notes/notes-of-child/notes-of-child.component";
 import { ChildSelectComponent } from "./child-select/child-select.component";
 import { SchoolsModule } from "../schools/schools.module";
@@ -50,7 +48,6 @@ import { EducationalMaterialComponent } from "../educational-material/educationa
 import { AserComponent } from "../aser/aser-component/aser.component";
 import { FilterPipeModule } from "ngx-filter-pipe";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { AttendanceWeekDashboardComponent } from "../attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component";
 import { NoRecentNotesDashboardComponent } from "../notes/dashboard-widgets/no-recent-notes-dashboard/no-recent-notes-dashboard.component";
 import { AttendanceManagerComponent } from "../attendance/attendance-manager/attendance-manager.component";
 import { HealthCheckupComponent } from "../health-checkup/health-checkup-component/health-checkup.component";
@@ -121,13 +118,10 @@ import { WebdavModule } from "../../core/webdav/webdav.module";
     NotesOfChildComponent,
     ChildrenListComponent,
     ChildrenCountDashboardComponent,
-    AttendanceAverageDashboardComponent,
-    AttendanceWarningsDashboardComponent,
     ChildSelectComponent,
     EducationalMaterialComponent,
     AserComponent,
     SelectGroupChildrenComponent,
-    AttendanceWeekDashboardComponent,
     NoRecentNotesDashboardComponent,
     RecentNotesDashboardComponent,
     AttendanceManagerComponent,
@@ -151,10 +145,6 @@ import { WebdavModule } from "../../core/webdav/webdav.module";
     ChildBlockComponent,
     ChildSelectComponent,
     ChildrenCountDashboardComponent,
-    AttendanceAverageDashboardComponent,
-    AttendanceWarningsDashboardComponent,
-    AttendanceWarningsDashboardComponent,
-    AttendanceWeekDashboardComponent,
     NoRecentNotesDashboardComponent,
     RecentNotesDashboardComponent,
   ],
