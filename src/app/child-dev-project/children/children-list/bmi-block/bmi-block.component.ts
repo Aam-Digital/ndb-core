@@ -8,7 +8,7 @@ import { Child } from "../../model/child";
 @UntilDestroy()
 @Component({
   selector: "app-bmi-block",
-  template: `{{ child[fieldId] }}`,
+  template: `{{ child ? child[fieldId] : "" }}`,
 })
 export class BmiBlockComponent implements OnInitDynamicComponent {
   public child: Child;
