@@ -15,53 +15,55 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  async,
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 
 import { UserAccountComponent } from "./user-account.component";
-import { MatButtonModule } from "@angular/material/button";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
 import { SessionService } from "../../session/session-service/session.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { MatTabsModule } from "@angular/material/tabs";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { Database } from "../../database/database";
 import { MockDatabase } from "../../database/mock-database";
-import { WebdavModule } from "../../webdav/webdav.module";
 import { User } from "../user";
 import { AppConfig } from "../../app-config/app-config";
+import { UserAccountService } from "./user-account.service";
+import { UserModule } from "../user.module";
 
 describe("UserAccountComponent", () => {
   let component: UserAccountComponent;
   let fixture: ComponentFixture<UserAccountComponent>;
 
-  let mockSessionService;
-  let mockEntityMapper;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockUserAccountService: jasmine.SpyObj<UserAccountService>;
   const testUser = new User("");
 
   beforeEach(async(() => {
     // @ts-ignore
-    AppConfig.settings = {};
+    AppConfig.settings = { database: { useTemporaryDatabase: false } };
     mockSessionService = jasmine.createSpyObj("sessionService", [
       "getCurrentUser",
+      "login",
     ]);
     mockSessionService.getCurrentUser.and.returnValue(testUser);
     mockEntityMapper = jasmine.createSpyObj(["save"]);
+    mockUserAccountService = jasmine.createSpyObj("mockUserAccount", [
+      "changePassword",
+    ]);
 
     TestBed.configureTestingModule({
       declarations: [UserAccountComponent],
-      imports: [
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        NoopAnimationsModule,
-        MatTabsModule,
-        WebdavModule,
-      ],
+      imports: [UserModule, NoopAnimationsModule],
       providers: [
         { provide: Database, useClass: MockDatabase },
         { provide: SessionService, useValue: mockSessionService },
         { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: UserAccountService, useValue: mockUserAccountService },
       ],
     });
   }));
@@ -75,4 +77,45 @@ describe("UserAccountComponent", () => {
   it("should be created", () => {
     expect(component).toBeTruthy();
   });
+
+  it("should enable password form", () => {
+    expect(component.passwordForm.enabled).toBeTrue();
+  });
+
+  it("should set error when password is incorrect", () => {
+    const user = new User("TestUser");
+    user.setNewPassword("testPW");
+    component.user = user;
+    component.passwordForm.get("currentPassword").setValue("wrongPW");
+    expect(component.passwordForm.get("currentPassword").valid).toBeTrue();
+    component.changePassword();
+    expect(component.passwordForm.get("currentPassword").valid).toBeFalse();
+  });
+
+  it("should set error when password change fails", fakeAsync(() => {
+    const user = new User("TestUser");
+    user.setNewPassword("testPW");
+    component.user = user;
+    component.passwordForm.get("currentPassword").setValue("testPW");
+    mockUserAccountService.changePassword.and.rejectWith(
+      new Error("pw change error")
+    );
+    component.changePassword();
+    tick();
+    expect(component.passwordChangeResult.success).toBeFalse();
+    expect(component.passwordChangeResult.error).toBe("pw change error");
+  }));
+
+  it("should set success when password change worked", fakeAsync(() => {
+    const user = new User("TestUser");
+    user.setNewPassword("testPW");
+    component.user = user;
+    component.passwordForm.get("currentPassword").setValue("testPW");
+    mockUserAccountService.changePassword.and.resolveTo(null);
+    mockSessionService.login.and.resolveTo(null);
+    component.changePassword();
+    tick();
+    tick();
+    expect(component.passwordChangeResult.success).toBeTrue();
+  }));
 });
