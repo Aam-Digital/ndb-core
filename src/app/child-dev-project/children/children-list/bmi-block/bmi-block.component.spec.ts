@@ -1,10 +1,5 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { HealthCheck } from "app/child-dev-project/health-checkup/model/health-check";
-import { Database } from "app/core/database/database";
-import { MockDatabase } from "app/core/database/mock-database";
-import { DatabaseIndexingService } from "app/core/entity/database-indexing/database-indexing.service";
-import { EntityMapperService } from "app/core/entity/entity-mapper.service";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { of } from "rxjs";
 import { ChildrenService } from "../../children.service";
 import { Child } from "../../model/child";
@@ -14,17 +9,15 @@ import { BmiBlockComponent } from "./bmi-block.component";
 describe("BmiBlockComponent", () => {
   let component: BmiBlockComponent;
   let fixture: ComponentFixture<BmiBlockComponent>;
+  const mockChildrenService: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj(
+    "mockChildrenService",
+    ["getHealthChecksOfChild"]
+  );
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [BmiBlockComponent],
-      providers: [
-        { provide: Database, useClass: MockDatabase },
-        EntityMapperService,
-        EntitySchemaService,
-        DatabaseIndexingService,
-        ChildrenService,
-      ],
+      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();
   }));
 
@@ -52,20 +45,19 @@ describe("BmiBlockComponent", () => {
     HealthCheck3.date = new Date("2020-09-30");
     HealthCheck3.height = 1.15;
     HealthCheck3.weight = 50;
-    const childrenService = fixture.debugElement.injector.get(ChildrenService);
-    spyOn(childrenService, "getHealthChecksOfChild").and.returnValue(
+    mockChildrenService.getHealthChecksOfChild.and.returnValue(
       of([HealthCheck1, HealthCheck2, HealthCheck3])
     );
     component.onInitFromDynamicConfig({
       entity: testChild,
-      id: "",
+      id: "bmi",
       config: {},
     });
-    expect(childrenService.getHealthChecksOfChild).toHaveBeenCalledWith(
+    expect(mockChildrenService.getHealthChecksOfChild).toHaveBeenCalledWith(
       testChild.getId()
     );
     setTimeout(() => {
-      expect(component.bmiValue).toEqual(HealthCheck2.bmi.toFixed(2));
+      expect(component.child["bmi"]).toEqual(HealthCheck2.bmi.toFixed(2));
       done();
     });
   });
