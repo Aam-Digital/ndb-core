@@ -79,7 +79,9 @@ export class Child extends Entity {
   }
 
   get isActive(): boolean {
-    return this.status !== "Dropout";
+    return (
+      this.status !== "Dropout" && !this["dropoutDate"] && !this["exit_date"]
+    );
   }
 
   public toString() {
