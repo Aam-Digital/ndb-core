@@ -11,7 +11,7 @@ import { Child } from "../../model/child";
   selector: "app-bmi-block",
   template: `<span
     class="mat-elevation-z1 attendance-block w-{{
-      currentHealthCheck.getWarningLevel()
+      currentHealthCheck?.getWarningLevel()
     }}"
   >
     {{ child ? child[fieldId] : "" }}
