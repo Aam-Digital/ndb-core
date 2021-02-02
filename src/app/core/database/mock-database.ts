@@ -19,6 +19,7 @@ import { Database } from "./database";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { AttendanceMonth } from "../../child-dev-project/attendance/model/attendance-month";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
+import { QueryOptions } from "./query-options";
 
 /**
  * In-Memory database implementation that works as a drop-in replacement of {@link PouchDatabase}
@@ -61,7 +62,7 @@ export class MockDatabase extends Database {
    * see {@link Database}
    * @param options Only 'startkey' is considered by the MockDatabase implementation
    */
-  allDocs(options?: any) {
+  allDocs(options?: QueryOptions) {
     let result = this.data;
 
     // default options provided through getAll(prefix): {include_docs: true, startkey: prefix, endkey: prefix + '\ufff0'}
@@ -148,7 +149,7 @@ export class MockDatabase extends Database {
    * @param fun The name of the previously created index
    * @param options Additional options for the query
    */
-  async query(fun: any, options?: any): Promise<any> {
+  async query(fun: any, options?: QueryOptions): Promise<any> {
     // TODO: implement generic mock query function
     /* SAMPLE INPUT:
       query('notes_index/by_child', {key: childId, include_docs: true});

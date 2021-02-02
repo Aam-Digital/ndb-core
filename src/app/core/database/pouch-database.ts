@@ -18,6 +18,7 @@
 import { Database } from "./database";
 import moment from "moment";
 import { LoggingService } from "../logging/logging.service";
+import { QueryOptions } from "./query-options";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -43,7 +44,11 @@ export class PouchDatabase extends Database {
    * @param options Optional PouchDB options for the request
    * @param returnUndefined (Optional) return undefined instead of throwing error if doc is not found in database
    */
-  get(id: string, options: any = {}, returnUndefined?: boolean): Promise<any> {
+  get(
+    id: string,
+    options: QueryOptions = {},
+    returnUndefined?: boolean
+  ): Promise<any> {
     return this._pouchDB.get(id, options).catch((err) => {
       if (err.status === 404) {
         this.loggingService.debug("Doc not found in database: " + id);
@@ -69,7 +74,7 @@ export class PouchDatabase extends Database {
    *
    * @param options PouchDB options object as in the normal PouchDB library
    */
-  allDocs(options?: any) {
+  allDocs(options?: QueryOptions) {
     return this._pouchDB.allDocs(options).then((result) => {
       const resultArray = [];
       for (const row of result.rows) {
@@ -127,7 +132,7 @@ export class PouchDatabase extends Database {
    */
   query(
     fun: string | ((doc: any, emit: any) => void),
-    options: any
+    options: QueryOptions
   ): Promise<any> {
     return this._pouchDB.query(fun, options);
   }

@@ -15,6 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { QueryOptions } from "./query-options";
+
 /**
  * An implementation of this abstract class provides functions for direct database access.
  * This interface is an extension of the [PouchDB API](https://pouchdb.com/api.html).
@@ -28,7 +30,7 @@ export abstract class Database {
    * @param id The primary key of the document to be loaded
    * @param options Optional options for the database engine (PouchDB)
    */
-  abstract get(id: string, options?: any): Promise<any>;
+  abstract get(id: string, options?: QueryOptions): Promise<any>;
 
   /**
    * Load all documents (matching the given PouchDB options) from the database.
@@ -39,7 +41,7 @@ export abstract class Database {
    *
    * @param options PouchDB options object as in the normal PouchDB library
    */
-  abstract allDocs(options?: any): Promise<any>;
+  abstract allDocs(options?: QueryOptions): Promise<any>;
 
   /**
    * Save a document to the database.
@@ -63,7 +65,7 @@ export abstract class Database {
    * @param fun The name of a previously saved database index
    * @param options Additional options for the query, like a `key`. See the PouchDB docs for details.
    */
-  abstract query(fun: any, options?: any): Promise<any>;
+  abstract query(fun: any, options?: QueryOptions): Promise<any>;
 
   /**
    * Create a database index to `query()` certain data more efficiently in the future.

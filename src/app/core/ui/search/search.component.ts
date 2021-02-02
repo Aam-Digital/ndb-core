@@ -97,7 +97,7 @@ export class SearchComponent implements OnInit {
 
     const searchTerms = searchString.split(" ");
 
-    const queryResults = await this.dbIndexingService.queryIndex(
+    const queryResults = await this.dbIndexingService.queryIndexRaw(
       "search_index/by_name",
       {
         startkey: searchTerms[0],
