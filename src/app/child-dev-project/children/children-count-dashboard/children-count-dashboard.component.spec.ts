@@ -69,15 +69,15 @@ describe("ChildrenCountDashboardComponent", () => {
     ];
     childrenObserver.next(children);
 
-    expect(component.childrenByCenter.length).toBe(
+    expect(component.childrenGroupCounts.length).toBe(
       2,
       "unexpected number of centersWithProbability"
     );
-    const actualCenterAEntry = component.childrenByCenter.filter(
+    const actualCenterAEntry = component.childrenGroupCounts.filter(
       (e) => e[0] === centerA
     )[0];
     expect(actualCenterAEntry[1]).toBe(2, "child count of CenterA not correct");
-    const actualCenterBEntry = component.childrenByCenter.filter(
+    const actualCenterBEntry = component.childrenGroupCounts.filter(
       (e) => e[0] === centerB
     )[0];
     expect(actualCenterBEntry[1]).toBe(1, "child count of CenterB not correct");

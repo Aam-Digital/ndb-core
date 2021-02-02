@@ -8,7 +8,7 @@
   </mat-card-header>
   <mat-card-content>
     <table class="dashboard-table">
-      <tr *ngFor="let entry of childrenByCenter; let i = index;"
+      <tr *ngFor="let entry of childrenGroupCounts; let i = index;"
           class="dashboard-table-row"
           (click)="goToChildrenList(entry[0])"
           style="cursor: pointer;"
