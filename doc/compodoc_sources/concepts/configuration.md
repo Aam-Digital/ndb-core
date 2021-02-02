@@ -8,8 +8,9 @@ The config file is a json object containing information about how several compon
 - [Config Service](#config-service)
 - [Config File](#config-file)
     - [NavigationMenue](#navigationMenu)
-    - [Notes](#notes)
+    - [enum:interaction-type](#enum:interaction-type)
     - [Views](#views)
+    - [Entity](#entity)
 - [Example](#example)
 
 <!-- /TOC -->
@@ -23,11 +24,13 @@ The config file is a json object containing information about how several compon
 -----
 ## Config File
 
-The config file is a json object containing information about how several components are supposed to be displayed. On the top level of the config file, there are three different kinds of entries:
+The config file is a json object containing information about how several components are supposed to be displayed. On the top level of the config file, there are four different kinds of entries:
 
 1. navigationMenu
-1. notes
+1. enum:interaction-type
 1. views
+1. entity
+
 
 ### navigationMenu
 The top level entry `navigationMenu` builds the visible and clickable items for the navigation menu on the left hand side of the app. Right now, the `navigationMenu` has the only subentry `items`. `items` contains an array of objects, each object representing one item within the navigation menu. The order of the entries reflects how the navigation menu items are shown in the app.
@@ -38,73 +41,183 @@ Example:
 ```
   "navigationMenu": {
     "items": [
-      {"name": "Dashboard", "icon": "home", "link": "/dashboard"},
-      {"name": "Children", "icon": "child", "link": "/child"},
-      ...
-      {"name": "Help", "icon": "question-circle", "link": "/help"}
+        {
+            "name": "Dashboard",
+            "icon": "home",
+            "link": "/"
+        },
+        {
+            "name": "Children",
+            "icon": "child",
+            "link": "/child"
+        },
+        ...
+        {
+            "name": "Help",
+            "icon": "question-circle",
+            "link": "/help"
+        }
     ]
   },
 ```
 
 
-### Notes
+### enum:interaction-type
 
-Here we can configure which note types should exist, what background color they have and whether or not they are a meeting.
-This is done by providing and Object under the `"notes"` key with the `"InteractionTypes"` name as follows:
-```
-{
-   ...
-    "notes": {
-        "InteractionTypes": {
-            ...
-        }
-    },
-    ...
-}
-```
-Now let's add a new note type. To do this we ammend a new name/value pair to the `"InteractionTypes"` value:
-```
-{
-   ...
-    "notes": {
-        "InteractionTypes": {
-            "DATABASE_STRING": {"name": "Our new note type"},
-        }
-    },
-    ...
-}
-```
-The key of the new entry, here `"DATABASE_STRING"` is what gets saved to the database, whereas the value `{"name": "Our new note type"}` gets used throughout the application when transforming back from the database (using this config file). If you edit the value (e.g. `{"name": "Our new note type"}` to `{"name": "edited note type"}`) this change will effect all saved notes, since the database only retains `"DATABASE_STRING"` for all corresponding notes.
+Here we can configure different entries for dropdown lists (formerly notes).
 
-Now we want to highlight this note type in the note list by adding a background color. This can be done by simply adding the optional `"color"` property.
-```
-{
-   ...
-    "notes": {
-        "InteractionTypes": {
-            "DATABASE_STRING": {"name": "Our new note type", "color": "#00D8F8"},
-        }
-    },
-    ...
-}
-```
+The two mandatory fields of each interaction type are `"id"` and `"label"`. `"id"` has the be written in uppercase letters and cannot contain spaces (user underscore _ instead). The `"id"` should always stay the same as it is written to the database. `"label"` holds the human readable text for the dropdown entries and gets used throughout the application when transforming back from the database (using this config file). This text may be changed without any negative effect to data consistency and the change will instantly be visible in all saved entries of this type.
 
-Say we want to add new note type that refers to a group meeting, so we can track absence/attendance on the note using the optional `"isMeeting"` property.
+The two optional fields of each interaction type are `"color"`and `"isMeeting"`. `"color"`can contain a background color for the entry in the form of the hexadecimal code, e.g. #E1F5FE. `"isMeeting"` is of the type boolean and tells whether the interactiontype refers to a meeting or not.
+
+Example:
 ```
-{
-   ...
-    "notes": {
-        "InteractionTypes": {
-            "DATABASE_STRING": {"name": "Our new note type", "color": "#00D8F8"},
-            "GROUP_MEETING": {"name": "Group meeting", "isMeeting": true},
-        }
+"enum:interaction-type": [
+    {
+        "id": "",
+        "label": ""
+    },
+    {
+        "id": "HOME_VISIT",
+        "label": "Home Visit"
     },
     ...
+    {
+        "id": "ANNUAL_SURVEY",
+        "label": "Annual Survey",
+        "color": "#FFFDE7"
+    },
+    ...
+    {
+        "id": "RATION_DISTRIBUTION",
+        "label": "Ration Distribution",
+        "color": "#E1F5FE",
+        "isMeeting": true
+    }
 }
 ```
 ### Views
 
-The largest part of the config file are the views. Each view entry starts with `"view:"`. The part that comes after the colon is what comes after the top level / in the URL of the app. There has to be one view entry with nothing after the colon, thus directing to the root folder of the app. Subfolders are signalized with a "/", eg `"view:admin/conflicts":`
+The largest part of the config file are the views. Each view entry starts with `"view:"`. The part that comes after the colon is what comes after the top level / in the URL of the app. There has to be one view entry with nothing after the colon, thus directing to the root folder of the app. Subfolders are signalized with a "/", e.g. "`view:admin/conflicts:"`. If we append `":id"`, then this is read directly from the app, e.g. `"view:child/:id"`.
+
+The only mandatory field for each view is `"component":` telling the app which component to use for the respective view. The component part has to refer to an existing angular component within the app.
+
+The two optional fields of each view are `"config":` and `"requiresAdmin":`. The latter is a boolean telling the app whether the user has to be logged in as an administrator in order to be able the see the component. 
+
+What comes within the `"config":` object depends on the component being used. The Dashboard-Component for example takes as `"widgets:"` an array of subcomponents, where every entry has to have a `"component:"` and may have an own `"config:"` object.
+
+Example:
+
+```
+"view:": {
+    "component": "Dashboard",
+    "config": {
+      "widgets": [
+        {
+            "component": "ChildrenCountDashboard"
+        },
+        {
+            "component": "RecentNotesDashboard"
+        },
+        {
+            "component": "NoRecentNotesDashboard",
+            "config": {
+                "sinceDays": 28,
+                "fromBeginningOfWeek": false
+        }
+        },
+        ...
+```
+#### List components
+List components showing data in a table (such as ChildrenList oder SchoolsList) usually have the four config objects `"title"`, `"columns"`, `"columngroup"`and `"filters"`.
+
+The `"title"` is the text shown in the heading of the component.
+
+`"columns"` contains an array of the columns to be displayed. Each column-entry has the three fields `"component"`, `"title"` and `"id"`.
+
+Example:
+```
+"view:child": {
+    "component": "ChildrenList",
+    "config": {
+        "title": "Children List",
+        "columns": [
+            {
+                "component": "DisplayText",
+                "title": "PN",
+                "id": "projectNumber"
+            },
+            {
+                "component": "ChildBlock",
+                "title": "Name",
+                "id": "name"
+            }
+            ...
+```
+
+The `"column-group"` object hold the three objects `"default"`, `"mobile"` and `"groups"`. `"default"` and `"mobile"` hold the names of the group of columns being display by default of if on an mobile divice. `"groups"` consists of an array of groups of columns, where every entry has a `"name"` and an array of column names within `"columns"`.
+
+Example:
+```
+        "columnGroup": {
+            "default": "School Info",
+            "mobile": "Mobile",
+            "groups": [
+            {
+                "name": "Basic Info",
+                "columns": [
+                    "projectNumber",
+                    "name",
+                    ...
+                    "status"
+                ]
+            },
+            {
+                "name": "School Info",
+                "columns": [
+                    "projectNumber",
+                    "name",
+                    ...
+                ]
+            },
+
+```
+
+The object `"filters"` within the config of a list component is used for filtering the data to be displayed. It holds an array in which every entry has to have an `"id"` and may also have the fields `"type"`, `"default"`, `"true"`, `"false"` and `"all"`.
+
+Example:
+```
+        "filters": [
+                {
+                    "id": "medium"
+                },
+                {
+                    "id": "privateSchool",
+                    "type": "boolean",
+                    "default": "",
+                    "true": "Private School",
+                    "false": "Government School",
+                    "all": "All"
+                }
+        ]
+```
+
+
+## Entity
+The entity object within the config file finally is used to define specifc entity types. The name of the entity types comes after the colon of `"entity:"`, e.g. `"entity:Child"` for an entity type called `Child`. An entity entry has the only field `"attributes:"`, which hols an array of objects of the following type:
+
+Example:
+```
+"entity:Child": {
+    "attributes": [
+        {"name": "address", "schema": { "dataType": "string" } },
+        {"name": "phone", "schema": { "dataType": "string" } },
+        ...
+        {"name": "health_lastDeworming", "schema": { "dataType": "Date" } }
+    ]
+}
+
+```
 
 -----
 
