@@ -149,10 +149,6 @@ export class EntitySchemaService {
       }
     }
 
-    if (entity.generateSearchIndices) {
-      data["searchIndices"] = entity.generateSearchIndices();
-    }
-
     return data;
   }
 }

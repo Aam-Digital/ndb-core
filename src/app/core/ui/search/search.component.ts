@@ -210,7 +210,7 @@ export class SearchComponent implements OnInit {
   }
 
   private containsSecondarySearchTerms(item, searchTerms: string[]) {
-    const itemKey = item.generateSearchIndices().join(" ").toLowerCase();
+    const itemKey = item.searchIndices.join(" ").toLowerCase();
     for (let i = 1; i < searchTerms.length; i++) {
       if (!itemKey.includes(searchTerms[i])) {
         return false;
