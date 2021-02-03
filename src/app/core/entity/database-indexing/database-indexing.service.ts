@@ -16,12 +16,11 @@
  */
 
 import { Injectable } from "@angular/core";
-import { Database } from "../../database/database";
+import { Database, QueryOptions } from "../../database/database";
 import { BehaviorSubject, Observable } from "rxjs";
 import { BackgroundProcessState } from "../../sync-status/background-process-state.interface";
 import { Entity, EntityConstructor } from "../entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
-import { QueryOptions } from "../../database/query-options";
 
 /**
  * Manage database query index creation and use, working as a facade in front of the Database service.

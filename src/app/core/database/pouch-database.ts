@@ -15,10 +15,9 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Database } from "./database";
+import { Database, GetAllOptions, GetOptions, QueryOptions } from "./database";
 import moment from "moment";
 import { LoggingService } from "../logging/logging.service";
-import { QueryOptions } from "./query-options";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -46,7 +45,7 @@ export class PouchDatabase extends Database {
    */
   get(
     id: string,
-    options: QueryOptions = {},
+    options: GetOptions = {},
     returnUndefined?: boolean
   ): Promise<any> {
     return this._pouchDB.get(id, options).catch((err) => {
@@ -74,7 +73,7 @@ export class PouchDatabase extends Database {
    *
    * @param options PouchDB options object as in the normal PouchDB library
    */
-  allDocs(options?: QueryOptions) {
+  allDocs(options?: GetAllOptions) {
     return this._pouchDB.allDocs(options).then((result) => {
       const resultArray = [];
       for (const row of result.rows) {

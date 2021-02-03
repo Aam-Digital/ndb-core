@@ -14,7 +14,7 @@ import { LoadChildPhotoEntitySchemaDatatype } from "./child-photo-service/dataty
 import moment from "moment";
 import { LoggingService } from "../../core/logging/logging.service";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
-import { QueryOptions } from "../../core/database/query-options";
+import { QueryOptions } from "../../core/database/database";
 
 @Injectable()
 export class ChildrenService {
