@@ -1,4 +1,10 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  async,
+  ComponentFixture,
+  fakeAsync,
+  flush,
+  TestBed,
+} from "@angular/core/testing";
 
 import { ChildrenCountDashboardComponent } from "./children-count-dashboard.component";
 import { MatCardModule } from "@angular/material/card";
@@ -7,6 +13,7 @@ import { ChildrenService } from "../children.service";
 import { RouterTestingModule } from "@angular/router/testing";
 import { Child } from "../model/child";
 import { Observable } from "rxjs";
+import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 
 describe("ChildrenCountDashboardComponent", () => {
   let component: ChildrenCountDashboardComponent;
@@ -59,7 +66,7 @@ describe("ChildrenCountDashboardComponent", () => {
     expect(component.totalChildren).toBe(3);
   });
 
-  it("should calculate childrens per center correctly", () => {
+  it("should calculate childrens per center correctly", fakeAsync(() => {
     const centerA = "CenterA";
     const centerB = "CenterB";
     const children = [
@@ -67,19 +74,52 @@ describe("ChildrenCountDashboardComponent", () => {
       createChild(centerB),
       createChild(centerA),
     ];
+
     childrenObserver.next(children);
+    flush();
 
     expect(component.childrenGroupCounts.length).toBe(
       2,
       "unexpected number of centersWithProbability"
     );
     const actualCenterAEntry = component.childrenGroupCounts.filter(
-      (e) => e[0] === centerA
+      (e) => e.label === centerA
     )[0];
-    expect(actualCenterAEntry[1]).toBe(2, "child count of CenterA not correct");
+    expect(actualCenterAEntry.value).toBe(
+      2,
+      "child count of CenterA not correct"
+    );
     const actualCenterBEntry = component.childrenGroupCounts.filter(
-      (e) => e[0] === centerB
+      (e) => e.label === centerB
     )[0];
-    expect(actualCenterBEntry[1]).toBe(1, "child count of CenterB not correct");
-  });
+    expect(actualCenterBEntry.value).toBe(
+      1,
+      "child count of CenterB not correct"
+    );
+  }));
+
+  it("should groupBy enum values and display label", fakeAsync(() => {
+    const testGroupBy = "test";
+    component.groupBy = testGroupBy;
+
+    const children = [new Child(), new Child(), new Child(), new Child()];
+    const c1: ConfigurableEnumValue = { label: "foo", id: "01" };
+    const c2: ConfigurableEnumValue = { label: "bar", id: "02" };
+    children[0][testGroupBy] = c1;
+    children[1][testGroupBy] = c2;
+    children[2][testGroupBy] = c1;
+
+    childrenObserver.next(children);
+    flush();
+
+    expect(component.childrenGroupCounts.length).toBe(3);
+    expect(component.childrenGroupCounts).toContain({
+      label: c1.label,
+      value: 2,
+    });
+    expect(component.childrenGroupCounts).toContain({
+      label: c2.label,
+      value: 1,
+    });
+  }));
 });

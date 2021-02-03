@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { take } from "rxjs/operators";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
+import { Child } from "../model/child";
 
 @Component({
   selector: "app-children-count-dashboard",
@@ -20,7 +21,7 @@ export class ChildrenCountDashboardComponent
   @Input() groupBy: string = "center";
 
   totalChildren: number;
-  childrenGroupCounts = [];
+  childrenGroupCounts: { label: string; value: number }[] = [];
 
   constructor(
     private childrenService: ChildrenService,
@@ -28,7 +29,7 @@ export class ChildrenCountDashboardComponent
   ) {}
 
   onInitFromDynamicConfig(config: any) {
-    if (config?.groupBy && config.groupBy !== this.groupBy) {
+    if (config?.groupBy) {
       this.groupBy = config.groupBy;
     }
   }
@@ -36,25 +37,9 @@ export class ChildrenCountDashboardComponent
   ngOnInit() {
     this.childrenService
       .getChildren()
-      .pipe(take(1))
+      .pipe(take(1)) // only take the initial result, no need for updated details
       .subscribe((results) => {
-        this.totalChildren = 0;
-
-        const countMap = new Map<any, number>();
-        results.forEach((child) => {
-          if (child.isActive) {
-            let count = countMap.get(child[this.groupBy]);
-            if (count === undefined) {
-              count = 0;
-            }
-
-            count++;
-            this.totalChildren++;
-            countMap.set(child[this.groupBy], count);
-          }
-        });
-        this.childrenGroupCounts = Array.from(countMap.entries()) // direct use of Map creates change detection problems
-          .map((entry) => [extractHumanReadableLabel(entry[0]), entry[1]]);
+        this.updateCounts(results);
       });
   }
 
@@ -63,6 +48,30 @@ export class ChildrenCountDashboardComponent
     params[this.groupBy] = filterString.toLocaleLowerCase();
 
     this.router.navigate(["/child"], { queryParams: params });
+  }
+
+  private updateCounts(children: Child[]) {
+    this.totalChildren = 0;
+
+    const countMap = new Map<any, number>();
+    children.forEach((child) => {
+      if (child.isActive) {
+        let count = countMap.get(child[this.groupBy]);
+        if (count === undefined) {
+          count = 0;
+        }
+
+        count++;
+        this.totalChildren++;
+        countMap.set(child[this.groupBy], count);
+      }
+    });
+
+    this.childrenGroupCounts = Array.from(countMap.entries()) // direct use of Map creates change detection problems
+      .map((entry) => ({
+        label: extractHumanReadableLabel(entry[0]),
+        value: entry[1],
+      }));
   }
 }
 
@@ -73,10 +82,13 @@ export class ChildrenCountDashboardComponent
 function extractHumanReadableLabel(
   value: string | ConfigurableEnumValue | any
 ): string {
+  if (value === undefined) {
+    return "";
+  }
   if (typeof value === "string") {
     return value;
   }
-  if (value.label) {
+  if (value?.label) {
     return value.label;
   }
 
