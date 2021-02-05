@@ -246,22 +246,6 @@ export const defaultConfig = {
           "id": "upToClass"
         }
       ],
-      "columnGroup": {
-        "default": "School Info",
-        "mobile": "School Info",
-        "groups": [
-          {
-            "name": "School Info",
-            "columns": [
-              "name",
-              "medium",
-              "privateSchool",
-              "academicBoard",
-              "upToClass"
-            ]
-          }
-        ]
-      },
       "filters": [
         {
           "id": "medium"
