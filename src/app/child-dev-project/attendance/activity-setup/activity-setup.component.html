@@ -39,7 +39,7 @@
       <button mat-raised-button color="primary" class="confirm-button"
               [disabled]="!selectedEvent"
               (click)="eventSelected.emit(selectedEvent)">
-        Start Roll Call
+        Record Attendance
       </button>
 
       <app-activity-card *ngIf="selectedEvent" [event]="selectedEvent"
