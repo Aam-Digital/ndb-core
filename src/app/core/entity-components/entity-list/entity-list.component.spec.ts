@@ -236,4 +236,24 @@ describe("EntityListComponent", () => {
         .map((e) => e.filterSettings.name)
     ).toEqual(["religion"]);
   }));
+
+  it("should create default column groups and filters", () => {
+    component.listConfig = {
+      title: testConfig.title,
+      columns: testConfig.columns,
+    };
+    component.ngOnChanges({
+      listConfig: new SimpleChange(false, component.listConfig, false),
+      entityList: new SimpleChange(false, component.entityList, false),
+    });
+    expect(component.columnGroups).toEqual([
+      { name: "default", columns: testConfig.columns.map((c) => c.id) },
+    ]);
+    expect(component.defaultColumnGroup).toEqual(
+      component.columnGroups[0].name
+    );
+    expect(component.mobileColumnGroup).toEqual(component.columnGroups[0].name);
+    expect(component.filtersConfig).toEqual([]);
+    expect(component.filterSelections).toEqual([]);
+  });
 });
