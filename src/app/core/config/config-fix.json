@@ -133,6 +133,36 @@
       "isMeeting": true
     }
   ],
+  "enum:document-status": [
+    {
+      "id": "",
+      "label": ""
+    },
+    {
+      "id": "OK (copy with us)",
+      "label": "OK (copy with us)"
+    },
+    {
+      "id": "OK (copy needed for us)",
+      "label": "OK (copy needed for us)"
+    },
+    {
+      "id": "needs correction",
+      "label": "needs correction"
+    },
+    {
+      "id": "applied",
+      "label": "applied"
+    },
+    {
+      "id": "doesn't have",
+      "label": "doesn't have"
+    },
+    {
+      "id": "not eligible",
+      "label": "not eligible"
+    }
+  ],
   "view:": {
     "component": "Dashboard",
     "config": {
@@ -770,74 +800,34 @@
                       "placeholder": "Admission Date"
                     },
                     {
-                      "input": "select",
+                      "input": "configurable-enum-select",
                       "id": "has_aadhar",
                       "placeholder": "Aadhar Status",
-                      "options": [
-                        "OK (copy with us)",
-                        "OK (copy needed for us)",
-                        "needs correction",
-                        "applied",
-                        "doesn't have",
-                        "not eligible",
-                        ""
-                      ]
+                      "enumId": "document-status"
                     },
                     {
-                      "input": "select",
+                      "input": "configurable-enum-select",
                       "id": "has_kanyashree",
                       "placeholder": "Kanyashree Status",
-                      "options": [
-                        "OK (copy with us)",
-                        "OK (copy needed for us)",
-                        "needs correction",
-                        "applied",
-                        "doesn't have",
-                        "not eligible",
-                        ""
-                      ]
+                      "enumId": "document-status"
                     },
                     {
-                      "input": "select",
+                      "input": "configurable-enum-select",
                       "id": "has_bankAccount",
                       "placeholder": "Bank Account Status",
-                      "options": [
-                        "OK (copy with us)",
-                        "OK (copy needed for us)",
-                        "needs correction",
-                        "applied",
-                        "doesn't have",
-                        "not eligible",
-                        ""
-                      ]
+                      "enumId": "document-status"
                     },
                     {
-                      "input": "select",
+                      "input": "configurable-enum-select",
                       "id": "has_rationCard",
                       "placeholder": "Ration Card Status",
-                      "options": [
-                        "OK (copy with us)",
-                        "OK (copy needed for us)",
-                        "needs correction",
-                        "applied",
-                        "doesn't have",
-                        "not eligible",
-                        ""
-                      ]
+                      "enumId": "document-status"
                     },
                     {
-                      "input": "select",
+                      "input": "configurable-enum-select",
                       "id": "has_BplCard",
                       "placeholder": "BPL Card Status",
-                      "options": [
-                        "OK (copy with us)",
-                        "OK (copy needed for us)",
-                        "needs correction",
-                        "applied",
-                        "doesn't have",
-                        "not eligible",
-                        ""
-                      ]
+                      "enumId": "document-status"
                     }
                   ],
                   [
