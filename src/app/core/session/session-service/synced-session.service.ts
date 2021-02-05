@@ -264,11 +264,7 @@ export class SyncedSessionService extends SessionService {
    * als see {@link SessionService}
    */
   public getDatabase(): Database {
-    return new PouchDatabase(
-      this._localSession.database,
-      this._alertService,
-      this._loggingService
-    );
+    return new PouchDatabase(this._localSession.database, this._loggingService);
   }
 
   /**

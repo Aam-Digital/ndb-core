@@ -21,6 +21,11 @@ background: linear-gradient(to right, green 0%, green 80%, red 80%, red 100%);
   color: red;
 }
 
+
+::ng-deep .attendance-calendar-date-general {
+  border: 2px solid transparent;
+}
+
 ::ng-deep .attendance-calendar-date-selected {
   font-weight: 900;
   font-size: 115%;
@@ -51,12 +56,4 @@ background: linear-gradient(to right, green 0%, green 80%, red 80%, red 100%);
 
 button {
   margin: 5px;
-}
-
-.indicator {
-  width: 14px;
-  height: 14px;
-  display: inline-block;
-  vertical-align: text-top;
-  border-radius: 50%;
 }

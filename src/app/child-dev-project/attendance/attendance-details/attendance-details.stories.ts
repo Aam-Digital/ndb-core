@@ -5,7 +5,7 @@ import {
   ActivityAttendance,
   generateEventWithAttendance,
 } from "../model/activity-attendance";
-import { AttendanceStatus } from "../model/attendance-status";
+import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceDetailsComponent } from "./attendance-details.component";
 import { AttendanceModule } from "../attendance.module";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -19,32 +19,32 @@ import { EntitySubrecordModule } from "../../../core/entity-components/entity-su
 const demoActivity = RecurringActivity.create("Coaching Batch C");
 const activityAttendance = ActivityAttendance.create(new Date("2020-01-01"), [
   generateEventWithAttendance(
-    {
-      "1": AttendanceStatus.PRESENT,
-      "2": AttendanceStatus.PRESENT,
-      "3": AttendanceStatus.ABSENT,
-    },
+    [
+      ["1", AttendanceLogicalStatus.PRESENT],
+      ["2", AttendanceLogicalStatus.PRESENT],
+      ["3", AttendanceLogicalStatus.ABSENT],
+    ],
     new Date("2020-01-01")
   ),
   generateEventWithAttendance(
-    {
-      "1": AttendanceStatus.LATE,
-      "2": AttendanceStatus.ABSENT,
-    },
+    [
+      ["1", AttendanceLogicalStatus.PRESENT],
+      ["2", AttendanceLogicalStatus.ABSENT],
+    ],
     new Date("2020-01-02")
   ),
   generateEventWithAttendance(
-    {
-      "1": AttendanceStatus.ABSENT,
-      "2": AttendanceStatus.ABSENT,
-    },
+    [
+      ["1", AttendanceLogicalStatus.ABSENT],
+      ["2", AttendanceLogicalStatus.ABSENT],
+    ],
     new Date("2020-01-03")
   ),
   generateEventWithAttendance(
-    {
-      "1": AttendanceStatus.PRESENT,
-      "2": AttendanceStatus.ABSENT,
-    },
+    [
+      ["1", AttendanceLogicalStatus.PRESENT],
+      ["2", AttendanceLogicalStatus.ABSENT],
+    ],
     new Date("2020-01-04")
   ),
 ]);
@@ -88,8 +88,8 @@ const activityAttendanceIndividual = Object.assign(
   new ActivityAttendance(),
   activityAttendance
 );
-activityAttendanceIndividual.focusedChild = "1";
 export const ForIndividualChild = Template.bind({});
 ForIndividualChild.args = {
   entity: activityAttendanceIndividual,
+  focusedChild: "1",
 };

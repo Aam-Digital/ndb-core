@@ -11,7 +11,6 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { AttendanceBlockComponent } from "../attendance-block/attendance-block.component";
-import { AttendanceDayBlockComponent } from "../attendance-days/attendance-day-block.component";
 import { SchoolBlockComponent } from "../../schools/school-block/school-block.component";
 import { AttendanceDaysComponent } from "../attendance-days/attendance-days.component";
 import { FormsModule } from "@angular/forms";
@@ -36,7 +35,6 @@ describe("AttendanceRegisterComponent", () => {
         AttendanceAnalysisComponent,
         ChildBlockComponent,
         AttendanceBlockComponent,
-        AttendanceDayBlockComponent,
         AttendanceDaysComponent,
         SchoolBlockComponent,
       ],

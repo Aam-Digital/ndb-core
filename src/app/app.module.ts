@@ -17,7 +17,7 @@
 
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { APP_INITIALIZER, ErrorHandler, NgModule } from "@angular/core";
+import { ErrorHandler, NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 
@@ -61,7 +61,6 @@ import { LoggingService } from "./core/logging/logging.service";
 import { Angulartics2Module } from "angulartics2";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { Angulartics2Piwik } from "angulartics2/piwik";
-import { ConfigService } from "./core/config/config.service";
 import { ViewModule } from "./core/view/view.module";
 import { DashboardModule } from "./core/dashboard/dashboard.module";
 import { EntityDetailsModule } from "./core/entity-components/entity-details/entity-details.module";
@@ -69,16 +68,10 @@ import { EntitySubrecordModule } from "./core/entity-components/entity-subrecord
 import { EntityListModule } from "./core/entity-components/entity-list/entity-list.module";
 import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
 import { DemoActivityGeneratorService } from "./child-dev-project/attendance/demo-activity-generator.service";
-import { Child } from "./child-dev-project/children/model/child";
-import { EntityConfigService } from "./core/entity/entity-config.service";
 import { FontAwesomeIconsModule } from "./core/icons/font-awesome-icons.module";
 import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
-import { School } from "./child-dev-project/schools/model/school";
-import { RecurringActivity } from "./child-dev-project/attendance/model/recurring-activity";
-
-export function configFactory(configService: ConfigService) {
-  return (): Promise<any> => configService.loadConfig();
-}
+import { ConfigModule } from "./core/config/config.module";
+import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-activity-events-generator.service";
 
 /**
  * Main entry point of the application.
@@ -99,7 +92,7 @@ export function configFactory(configService: ConfigService) {
     FlexLayoutModule,
     HttpClientModule,
     routing,
-    ViewModule.forRoot(),
+    ViewModule,
     FormsModule,
     ConfirmationDialogModule,
     FormDialogModule,
@@ -107,6 +100,7 @@ export function configFactory(configService: ConfigService) {
     EntityModule,
     AppConfigModule,
     SessionModule,
+    ConfigModule,
     UiModule,
     SyncStatusModule,
     LatestChangesModule,
@@ -130,6 +124,7 @@ export function configFactory(configService: ConfigService) {
       ...DemoChildSchoolRelationGenerator.provider(),
       ...DemoAttendanceGenerator.provider(),
       ...DemoActivityGeneratorService.provider(),
+      ...DemoActivityEventsGeneratorService.provider({ forNLastYears: 2 }),
       ...DemoNoteGeneratorService.provider({
         minNotesPerChild: 2,
         maxNotesPerChild: 10,
@@ -151,27 +146,10 @@ export function configFactory(configService: ConfigService) {
     CookieService,
     AnalyticsService,
     Angulartics2Piwik,
-    ConfigService,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: configFactory,
-      deps: [ConfigService],
-      multi: true,
-    },
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {
-  constructor(private entityConfigService: EntityConfigService) {
-    // Add all entities for which the config defines attributes
-    // TODO: load this automatically for any entity defined in the config (#597)
-    this.entityConfigService.addConfigAttributes<Child>(Child);
-    this.entityConfigService.addConfigAttributes<School>(School);
-    this.entityConfigService.addConfigAttributes<RecurringActivity>(
-      RecurringActivity
-    );
-  }
-}
+export class AppModule {}
 
 // Initialize remote logging
 LoggingService.initRemoteLogging({

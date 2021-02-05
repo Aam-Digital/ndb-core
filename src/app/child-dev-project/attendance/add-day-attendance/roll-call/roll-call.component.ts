@@ -1,12 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { animate, style, transition, trigger } from "@angular/animations";
 import {
-  AttendanceStatus,
+  ATTENDANCE_STATUS_CONFIG_ID,
   AttendanceStatusType,
-  DEFAULT_ATTENDANCE_TYPES,
 } from "../../model/attendance-status";
 import { Note } from "../../../notes/model/note";
 import { EventAttendance } from "../../model/event-attendance";
+import { ConfigService } from "../../../../core/config/config.service";
+import { ConfigurableEnumConfig } from "../../../../core/configurable-enum/configurable-enum.interface";
 
 /**
  * Displays the participants of the given event one by one to mark attendance status.
@@ -47,6 +48,8 @@ export class RollCallComponent implements OnInit {
 
   entries: { childId: string; attendance: EventAttendance }[];
 
+  constructor(private configService: ConfigService) {}
+
   async ngOnInit() {
     this.loadAttendanceStatusTypes();
 
@@ -58,11 +61,12 @@ export class RollCallComponent implements OnInit {
   }
 
   private loadAttendanceStatusTypes() {
-    // TODO: move this into config completely
-    this.availableStatus = DEFAULT_ATTENDANCE_TYPES;
+    this.availableStatus = this.configService.getConfig<
+      ConfigurableEnumConfig<AttendanceStatusType>
+    >(ATTENDANCE_STATUS_CONFIG_ID);
   }
 
-  markAttendance(childId: string, status: AttendanceStatus) {
+  markAttendance(childId: string, status: AttendanceStatusType) {
     this.eventEntity.getAttendance(childId).status = status;
 
     // automatically move to next participant after a short delay giving the user visual feedback on the selected status

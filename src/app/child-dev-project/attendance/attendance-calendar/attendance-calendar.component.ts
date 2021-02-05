@@ -8,9 +8,8 @@ import {
 import { Note } from "../../notes/model/note";
 import { MatCalendarCellCssClasses } from "@angular/material/datepicker/calendar-body";
 import moment, { Moment } from "moment";
-import { getAttendanceType } from "../model/activity-attendance";
 import { EventAttendance } from "../model/event-attendance";
-import { AttendanceStatus } from "../model/attendance-status";
+import { AttendanceStatusType } from "../model/attendance-status";
 import { MatCalendar } from "@angular/material/datepicker";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -27,7 +26,6 @@ export class AttendanceCalendarComponent implements OnChanges {
   @Input() highlightForChild: string;
 
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
-  statusValues = AttendanceStatus;
   minDate: Date;
   maxDate: Date;
 
@@ -38,16 +36,19 @@ export class AttendanceCalendarComponent implements OnChanges {
   selectedEventStats: {
     average: number;
     unknownStatus: number;
-    statusCounts: Map<AttendanceStatus, number>;
+    statusCounts: Map<AttendanceStatusType, number>;
   };
 
   constructor(
     private entityMapper: EntityMapperService,
     private formDialog: FormDialogService
   ) {}
+
   highlightDate = (cellDate: Date): MatCalendarCellCssClasses => {
     const cellMoment = moment(cellDate);
-    const classes = {};
+    const classes = {
+      "attendance-calendar-date-general": true,
+    };
 
     if (this.selectedDate) {
       classes["attendance-calendar-date-selected"] = cellMoment.isSame(
@@ -61,13 +62,11 @@ export class AttendanceCalendarComponent implements OnChanges {
       // coloring for individual child
       const eventAttendance = event.getAttendance(this.highlightForChild);
 
-      const statusClass = this.getCssClassForAttendanceStatus(
-        eventAttendance.status
-      );
+      const statusClass = eventAttendance.status.style;
       classes[statusClass] = true;
 
       classes["attendance-calendar-date-has-remarks"] =
-        eventAttendance.remarks !== "";
+        eventAttendance.remarks && eventAttendance.remarks !== "";
     }
 
     if (event && !this.highlightForChild) {
@@ -144,10 +143,6 @@ export class AttendanceCalendarComponent implements OnChanges {
     }
 
     await this.entityMapper.save(this.selectedEvent);
-  }
-
-  getCssClassForAttendanceStatus(status: AttendanceStatus) {
-    return getAttendanceType(status).style;
   }
 
   showEventDetails(selectedEvent: Note) {

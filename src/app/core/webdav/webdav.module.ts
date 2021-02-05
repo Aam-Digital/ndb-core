@@ -26,4 +26,8 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
   providers: [CloudFileService],
   exports: [CloudFileServiceUserSettingsComponent],
 })
-export class WebdavModule {}
+export class WebdavModule {
+  static get isEnabled(): boolean {
+    return CloudFileService.WEBDAV_ENABLED;
+  }
+}

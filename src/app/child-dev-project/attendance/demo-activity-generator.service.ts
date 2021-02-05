@@ -6,6 +6,7 @@ import { faker } from "../../core/demo-data/faker";
 import { RecurringActivity } from "./model/recurring-activity";
 import { DemoUserGeneratorService } from "../../core/user/demo-user-generator.service";
 import { User } from "../../core/user/user";
+import { defaultInteractionTypes } from "../../core/config/default-config/default-interaction-types";
 
 /**
  * Generate AttendanceMonth entities for the last 15 months
@@ -16,9 +17,9 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<
   RecurringActivity
 > {
   private static readonly ACTIVITY_TYPES = [
-    { id: "SCHOOL_CLASS", label: "Class" },
-    { id: "COACHING_CLASS", label: "Coaching" },
-    { id: "LIFE_SKILLS", label: "Life Skills" },
+    defaultInteractionTypes.find((t) => t.id === "SCHOOL_CLASS"),
+    defaultInteractionTypes.find((t) => t.id === "COACHING_CLASS"),
+    defaultInteractionTypes.find((t) => t.id === "LIFE_SKILLS"),
   ];
 
   /**

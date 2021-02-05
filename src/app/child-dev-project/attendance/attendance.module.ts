@@ -33,7 +33,7 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { FormsModule } from "@angular/forms";
 import { FlexModule } from "@angular/flex-layout";
 import { AddMonthAttendanceComponent } from "./add-month-attendance/add-month-attendance.component";
-import { AttendanceDayBlockComponent } from "./attendance-days/attendance-day-block.component";
+import { AttendanceDayBlockComponent } from "./dashboard-widgets/attendance-week-dashboard/attendance-day-block/attendance-day-block.component";
 import { AttendanceDaysComponent } from "./attendance-days/attendance-days.component";
 import { AttendanceDetailsComponent } from "./attendance-details/attendance-details.component";
 import { AddDayAttendanceComponent } from "./add-day-attendance/add-day-attendance.component";
@@ -53,6 +53,10 @@ import { ActivityAttendanceSectionComponent } from "./activity-attendance-sectio
 import { AttendanceCalendarComponent } from "./attendance-calendar/attendance-calendar.component";
 import { GroupedChildAttendanceComponent } from "../children/child-details/grouped-child-attendance/grouped-child-attendance.component";
 import { MatTabsModule } from "@angular/material/tabs";
+import { AttendanceStatusSelectComponent } from "./attendance-status-select/attendance-status-select.component";
+import { AttendanceWeekDashboardComponent } from "./dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component";
+import { RouterModule } from "@angular/router";
+import { Angulartics2Module } from "angulartics2";
 
 @NgModule({
   declarations: [
@@ -71,6 +75,8 @@ import { MatTabsModule } from "@angular/material/tabs";
     ActivityAttendanceSectionComponent,
     AttendanceCalendarComponent,
     GroupedChildAttendanceComponent,
+    AttendanceStatusSelectComponent,
+    AttendanceWeekDashboardComponent,
   ],
   imports: [
     EntityListModule,
@@ -95,7 +101,15 @@ import { MatTabsModule } from "@angular/material/tabs";
     FormDialogModule,
     EntitySubrecordModule,
     MatTabsModule,
+    RouterModule,
+    Angulartics2Module,
   ],
-  exports: [ActivityCardComponent, ActivitySetupComponent],
+  exports: [
+    ActivityCardComponent,
+    ActivitySetupComponent,
+    AttendanceStatusSelectComponent,
+    AttendanceDayBlockComponent,
+    AttendanceWeekDashboardComponent,
+  ],
 })
 export class AttendanceModule {}

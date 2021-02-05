@@ -17,7 +17,6 @@
 
 import { PouchDatabase } from "./pouch-database";
 import PouchDB from "pouchdb-browser";
-import { AlertService } from "../alerts/alert.service";
 import { LoggingService } from "../logging/logging.service";
 
 describe("PouchDatabase tests", () => {
@@ -31,18 +30,10 @@ describe("PouchDatabase tests", () => {
       ["warn", "debug"]
     );
     mockLoggingService.warn.and.callFake((m) => console.warn(m));
-    const mockAlertService: jasmine.SpyObj<AlertService> = jasmine.createSpyObj(
-      "mockAlertService",
-      ["addWarning", "addDebug"]
-    );
     mockLoggingService.warn.and.callFake((m) => console.warn(m));
 
     pouch = new PouchDB("unit-test-db");
-    pouchDatabase = new PouchDatabase(
-      pouch,
-      mockAlertService,
-      mockLoggingService
-    );
+    pouchDatabase = new PouchDatabase(pouch, mockLoggingService);
 
     originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;

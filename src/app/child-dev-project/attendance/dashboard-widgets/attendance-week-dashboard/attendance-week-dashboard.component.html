@@ -3,7 +3,7 @@
     <div mat-card-avatar>
       <mat-icon fontIcon="fa-exclamation-triangle"></mat-icon>
     </div>
-    <mat-card-title>{{ attendanceRecords?.length }}</mat-card-title>
+    <mat-card-title>{{ dashboardRowGroups?.length }}</mat-card-title>
     <mat-card-subtitle
       >Students more than one day absent
       <em>{{ periodLabel }}</em></mat-card-subtitle
@@ -12,9 +12,9 @@
   <mat-card-content>
     <table class="dashboard-table">
       <tr
-        *ngFor="let record of attendanceRecords; trackBy: recordTrackByFunction; let i=index;"
+        *ngFor="let rowGroup of dashboardRowGroups; trackBy: recordTrackByFunction; let i=index;"
         class="dashboard-table-row w-WARNING"
-        (click)="goToChild(record.child.getId())"
+        [routerLink]="['/child', rowGroup[0].childId]"
         style="cursor: pointer;"
         angulartics2On="click"
         angularticsCategory="Navigation"
@@ -22,26 +22,14 @@
         [angularticsLabel]="'list-entry-' + i"
       >
         <td class="dashboard-table-first-cell dashboard-table-cell">
-          <app-child-block [entity]="record.child"></app-child-block>
+          <app-child-block [entityId]="rowGroup[0].childId"></app-child-block>
         </td>
         <td class="dashboard-table-last-cell dashboard-table-cell">
           <table class="attendance-week-table">
-            <tr>
-              <td *ngFor="let day of record.attendanceSchool">
-                <app-attendance-day-block
-                  [entity]="day"
-                  [showDate]="false"
-                  class="day-box"
-                ></app-attendance-day-block>
-              </td>
-            </tr>
-            <tr>
-              <td *ngFor="let day of record.attendanceCoaching">
-                <app-attendance-day-block
-                  [entity]="day"
-                  [showDate]="false"
-                  class="day-box"
-                ></app-attendance-day-block>
+            <tr *ngFor="let activityRecord of rowGroup">
+              <td *ngFor="let day of activityRecord.attendanceDays">
+                <app-attendance-day-block [attendance]="day">
+                </app-attendance-day-block>
               </td>
             </tr>
           </table>

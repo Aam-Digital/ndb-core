@@ -1,7 +1,6 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { RollCallComponent } from "./roll-call.component";
 import { DemoChildGenerator } from "../../../children/demo-data-generators/demo-child-generator.service";
-import { addDefaultChildPhoto } from "../../../../../../.storybook/utils/addDefaultChildPhoto";
 import { moduleMetadata } from "@storybook/angular";
 import { CommonModule } from "@angular/common";
 import { ChildBlockComponent } from "../../../children/child-block/child-block.component";
@@ -42,7 +41,6 @@ const demoChildren = [
   DemoChildGenerator.generateEntity("2"),
   DemoChildGenerator.generateEntity("3"),
 ];
-demoChildren.forEach((c) => addDefaultChildPhoto(c));
 demoChildren.forEach((c) => demoEvent.addChild(c.getId()));
 
 const Template: Story<RollCallComponent> = (args: RollCallComponent) => ({

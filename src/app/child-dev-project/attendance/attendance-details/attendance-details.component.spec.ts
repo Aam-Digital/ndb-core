@@ -7,7 +7,7 @@ import {
   ActivityAttendance,
   generateEventWithAttendance,
 } from "../model/activity-attendance";
-import { AttendanceStatus } from "../model/attendance-status";
+import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { RecurringActivity } from "../model/recurring-activity";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { AttendanceModule } from "../attendance.module";
@@ -21,18 +21,18 @@ describe("AttendanceDetailsComponent", () => {
   beforeEach(async(() => {
     const entity = ActivityAttendance.create(new Date(), [
       generateEventWithAttendance(
-        {
-          "1": AttendanceStatus.PRESENT,
-          "2": AttendanceStatus.PRESENT,
-          "3": AttendanceStatus.ABSENT,
-        },
+        [
+          ["1", AttendanceLogicalStatus.PRESENT],
+          ["2", AttendanceLogicalStatus.PRESENT],
+          ["3", AttendanceLogicalStatus.ABSENT],
+        ],
         new Date("2020-01-01")
       ),
       generateEventWithAttendance(
-        {
-          "1": AttendanceStatus.LATE,
-          "2": AttendanceStatus.ABSENT,
-        },
+        [
+          ["1", AttendanceLogicalStatus.PRESENT],
+          ["2", AttendanceLogicalStatus.ABSENT],
+        ],
         new Date("2020-01-02")
       ),
     ]);

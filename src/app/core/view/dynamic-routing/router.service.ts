@@ -28,35 +28,52 @@ export class RouterService {
    * Initialize routes from the config while respecting existing routes.
    */
   initRouting() {
-    this.reloadRouting(this.router.config);
+    const viewConfigs = this.configService.getAllConfigs<ViewConfig>(
+      RouterService.PREFIX_VIEW_CONFIG
+    );
+    this.reloadRouting(viewConfigs, this.router.config, true);
   }
 
   /**
    * Reset the routing config and reload it from the global config.
    *
+   * @param viewConfigs The configs loaded from the ConfigService
    * @param additionalRoutes Optional array of routes to keep in addition to the ones loaded from config
+   * @param overwriteExistingRoutes Optionally set to true if config was updated and previously existing routes shall be updated
    */
-  reloadRouting(additionalRoutes: Route[] = []) {
-    const routes = [];
+  reloadRouting(
+    viewConfigs: ViewConfig[],
+    additionalRoutes: Route[] = [],
+    overwriteExistingRoutes = false
+  ) {
+    const routes: Route[] = [];
 
-    const viewConfigs = this.configService.getAllConfigs<ViewConfig>(
-      RouterService.PREFIX_VIEW_CONFIG
-    );
     for (const view of viewConfigs) {
       const route = this.generateRouteFromConfig(view);
 
-      if (additionalRoutes.find((r) => r.path === route.path)) {
+      if (view.lazyLoaded) {
+        // lazy-loaded views' routing is still hardcoded in the app.routing
+        continue;
+      }
+      if (
+        !overwriteExistingRoutes &&
+        additionalRoutes.find((r) => r.path === route.path)
+      ) {
         this.loggingService.warn(
           "ignoring route from view config because the path is already defined: " +
             view._id
         );
-      } else {
-        routes.push(route);
+        continue;
       }
+
+      routes.push(route);
     }
 
     // add routes from other sources (e.g. pre-existing  hard-coded routes)
-    routes.push(...additionalRoutes);
+    const noDuplicates = additionalRoutes.filter(
+      (r) => !routes.find((o) => o.path === r.path)
+    );
+    routes.push(...noDuplicates);
 
     this.router.resetConfig(routes);
   }

@@ -29,8 +29,6 @@ export class Alert {
   static WARNING = "warning";
   /** Danger messages inform about errors or critical conditions that the user should not overlook */
   static DANGER = "danger";
-  /** Debug messages are not relevant to the normal user and only needed for developers troubleshooting errors */
-  static DEBUG = "debug";
 
   /** reference to the ui displaying the message */
   public notificationRef: MatSnackBarRef<AlertComponent>;

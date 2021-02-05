@@ -11,7 +11,7 @@ import {
   ActivityAttendance,
   generateEventWithAttendance,
 } from "../model/activity-attendance";
-import { AttendanceStatus } from "../model/attendance-status";
+import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { MatNativeDateModule } from "@angular/material/core";
 import { ChildrenService } from "../../children/children.service";
 import { of } from "rxjs";
@@ -23,45 +23,45 @@ const demoActivity = RecurringActivity.create("Coaching Batch C");
 const attendanceRecords = [
   ActivityAttendance.create(new Date("2020-01-01"), [
     generateEventWithAttendance(
-      {
-        "1": AttendanceStatus.PRESENT,
-        "2": AttendanceStatus.PRESENT,
-        "3": AttendanceStatus.ABSENT,
-      },
+      [
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+        ["3", AttendanceLogicalStatus.ABSENT],
+      ],
       new Date("2020-01-01")
     ),
     generateEventWithAttendance(
-      {
-        "1": AttendanceStatus.LATE,
-        "2": AttendanceStatus.ABSENT,
-      },
+      [
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ],
       new Date("2020-01-02")
     ),
     generateEventWithAttendance(
-      {
-        "1": AttendanceStatus.ABSENT,
-        "2": AttendanceStatus.ABSENT,
-      },
+      [
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ],
       new Date("2020-01-03")
     ),
     generateEventWithAttendance(
-      {
-        "1": AttendanceStatus.PRESENT,
-        "2": AttendanceStatus.ABSENT,
-      },
+      [
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ],
       new Date("2020-01-04")
     ),
   ]),
 
   ActivityAttendance.create(new Date("2020-02-01"), [
-    generateEventWithAttendance({
-      "1": AttendanceStatus.ABSENT,
-      "2": AttendanceStatus.ABSENT,
-    }),
-    generateEventWithAttendance({
-      "1": AttendanceStatus.PRESENT,
-      "2": AttendanceStatus.ABSENT,
-    }),
+    generateEventWithAttendance([
+      ["1", AttendanceLogicalStatus.ABSENT],
+      ["2", AttendanceLogicalStatus.ABSENT],
+    ]),
+    generateEventWithAttendance([
+      ["1", AttendanceLogicalStatus.PRESENT],
+      ["2", AttendanceLogicalStatus.ABSENT],
+    ]),
   ]),
 ];
 attendanceRecords.forEach((a) => (a.activity = demoActivity));

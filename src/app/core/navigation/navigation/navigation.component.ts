@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { MenuItem } from "../menu-item";
 import { AdminGuard } from "../../admin/admin.guard";
 import { NavigationMenuConfig } from "../navigation-menu-config.interface";
@@ -25,15 +25,13 @@ import { ConfigService } from "../../config/config.service";
 
 /**
  * Main app menu listing.
- *
- * To add new entries use {@link NavigationItemsService}.
  */
 @Component({
   selector: "app-navigation",
   templateUrl: "./navigation.component.html",
   styleUrls: ["./navigation.component.scss"],
 })
-export class NavigationComponent implements OnInit {
+export class NavigationComponent {
   /** name of config array in the config json file */
   private readonly CONFIG_ID = "navigationMenu";
   /** all menu items to be displayed */
@@ -42,16 +40,17 @@ export class NavigationComponent implements OnInit {
   constructor(
     private adminGuard: AdminGuard,
     private configService: ConfigService
-  ) {}
-
-  ngOnInit(): void {
-    this.initMenuItemsFromConfig();
+  ) {
+    this.configService.configUpdated.subscribe(() =>
+      this.initMenuItemsFromConfig()
+    );
   }
 
   /**
    * Load menu items from config file
    */
   private initMenuItemsFromConfig() {
+    this.menuItems = [];
     const config: NavigationMenuConfig = this.configService.getConfig<
       NavigationMenuConfig
     >(this.CONFIG_ID);

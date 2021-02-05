@@ -11,7 +11,13 @@ import { centersUnique } from "../../children/demo-data-generators/fixtures/cent
 import { absenceRemarks } from "./remarks";
 import moment from "moment";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { AttendanceStatus } from "../../attendance/model/attendance-status";
+import {
+  ATTENDANCE_STATUS_CONFIG_ID,
+  AttendanceLogicalStatus,
+  AttendanceStatusType,
+} from "../../attendance/model/attendance-status";
+import { ConfigService } from "../../../core/config/config.service";
+import { ConfigurableEnumConfig } from "../../../core/configurable-enum/configurable-enum.interface";
 
 export class DemoNoteConfig {
   minNotesPerChild: number;
@@ -54,12 +60,19 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     return this._teamMembers;
   }
 
+  private availableStatusTypes: AttendanceStatusType[];
+
   constructor(
     private config: DemoNoteConfig,
     private demoChildren: DemoChildGenerator,
-    private schemaService: EntitySchemaService
+    private schemaService: EntitySchemaService,
+    private configService: ConfigService
   ) {
     super();
+
+    this.availableStatusTypes = this.configService.getConfig<
+      ConfigurableEnumConfig<AttendanceStatusType>
+    >(ATTENDANCE_STATUS_CONFIG_ID);
   }
 
   public generateEntities(): Note[] {
@@ -156,7 +169,9 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
       const attendance = note.getAttendance(child.getId());
       // get an approximate presence of 85%
       if (faker.random.number(100) <= 15) {
-        attendance.status = AttendanceStatus.ABSENT;
+        attendance.status = this.availableStatusTypes.find(
+          (t) => t.countAs === AttendanceLogicalStatus.ABSENT
+        );
         attendance.remarks = faker.random.arrayElement(absenceRemarks);
       }
     });

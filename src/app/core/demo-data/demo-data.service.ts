@@ -24,8 +24,7 @@ import {
 } from "@angular/core";
 import { DemoDataGenerator } from "./demo-data-generator";
 import { EntityMapperService } from "../entity/entity-mapper.service";
-import { AlertService } from "../alerts/alert.service";
-import { AlertDisplay } from "../alerts/alert-display";
+import { LoggingService } from "../logging/logging.service";
 
 /**
  * General config object to pass all initially register DemoDataGenerators
@@ -60,7 +59,7 @@ export class DemoDataService {
 
   constructor(
     private entityMapper: EntityMapperService,
-    private alertService: AlertService,
+    private loggingService: LoggingService,
     private injector: Injector,
     private config: DemoDataServiceConfig
   ) {
@@ -92,7 +91,7 @@ export class DemoDataService {
         try {
           await this.entityMapper.save(entity);
         } catch (e) {
-          this.alertService.addWarning(e, AlertDisplay.NONE);
+          this.loggingService.warn(e);
         }
       }
     }

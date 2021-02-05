@@ -31,7 +31,6 @@ import { ActivityCardComponent } from "../activity-card/activity-card.component"
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeIconsModule } from "../../../core/icons/font-awesome-icons.module";
 import { DemoActivityGeneratorService } from "../demo-activity-generator.service";
-import { NoteConfigLoaderService } from "../../notes/note-config-loader/note-config-loader.service";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { User } from "../../../core/user/user";
 import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
@@ -43,14 +42,14 @@ const demoEvents: Note[] = [
   Note.create(moment().subtract(1, "days").toDate(), "Discussion on values"),
   Note.create(new Date(), "Other Discussion"),
 ];
-demoEvents[0].category = { name: "Guardians", isMeeting: true };
-demoEvents[1].category = { name: "Guardians", isMeeting: true };
-demoEvents[2].category = { name: "Guardians", isMeeting: true };
-demoEvents[3].category = { name: "Life Skills", isMeeting: true };
-demoEvents[4].category = { name: "Other", isMeeting: true };
+demoEvents[0].category = { id: "G", label: "Guardians", isMeeting: true };
+demoEvents[1].category = { id: "G", label: "Guardians", isMeeting: true };
+demoEvents[2].category = { id: "G", label: "Guardians", isMeeting: true };
+demoEvents[3].category = { id: "LS", label: "Life Skills", isMeeting: true };
+demoEvents[4].category = { id: "OTHER", label: "Other", isMeeting: true };
 
 const demoEvent = Note.create(new Date(), "coaching");
-demoEvent.category = { name: "Coaching", isMeeting: true };
+demoEvent.category = { id: "COACHING", label: "Coaching", isMeeting: true };
 
 const demoChildren = [
   DemoChildGenerator.generateEntity("1"),
@@ -109,10 +108,6 @@ export default {
         {
           provide: SessionService,
           useValue: { getCurrentUser: () => new User("demo") },
-        },
-        {
-          provide: NoteConfigLoaderService,
-          useValue: { interactionTypes: [] },
         },
       ],
     }),

@@ -6,7 +6,7 @@ import { ColumnDescriptionInputType } from "../../../core/entity-components/enti
 import { NoteDetailsComponent } from "../../notes/note-details/note-details.component";
 import { Note } from "../../notes/model/note";
 import { calculateAverageAttendance } from "../model/calculate-average-event-attendance";
-import { AttendanceStatus } from "../model/attendance-status";
+import { NullAttendanceStatusType } from "../model/attendance-status";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 
 @Component({
@@ -45,7 +45,7 @@ export class AttendanceDetailsComponent
       },
     },
   ];
-  attendanceStatus = AttendanceStatus;
+  UnknownStatus = NullAttendanceStatusType;
 
   constructor() {}
 
