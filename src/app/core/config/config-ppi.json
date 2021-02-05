@@ -111,11 +111,38 @@
     { "id": "COMMUNITY", "label": "Community Tier" }
   ],
   "enum:tier-program": [
-    { "id": "MONO_COMMUNAL", "label": "Mono Communal" },
-    { "id": "BI_COMMUNAL", "label": "Bi Communal" },
     { "id": "ALLSTARS", "label": "All-Stars" },
     { "id": "LDP", "label": "LDP" },
     { "id": "RISING_STARS", "label": "Rising Stars" }
+  ],
+  "enum:area": [
+    { "id": "JERUSALEM", "label": "Jerusalem" },
+    { "id": "NORTH", "label": "North" }
+  ],
+
+  "enum:attendance-status": [
+
+    {
+      "id": "PRESENT",
+      "shortName": "P",
+      "label": "Present",
+      "style": "attendance-P",
+      "countAs": "PRESENT"
+    },
+    {
+      "id": "ABSENT",
+      "shortName": "A",
+      "label": "Absent",
+      "style": "attendance-A",
+      "countAs": "ABSENT"
+    },
+    {
+      "id": "EXCUSED",
+      "shortName": "E",
+      "label": "Excused",
+      "style": "attendance-E",
+      "countAs": "IGNORE"
+    }
   ],
 
   "view:": {
@@ -189,6 +216,7 @@
         {"component": "DisplayText", "title": "Team", "id": "name"},
         {"component": "DisplayConfigurableEnum", "title": "Tier", "id": "tier"},
         {"component": "DisplayConfigurableEnum", "title": "Program", "id": "program"},
+        {"component": "DisplayConfigurableEnum", "title": "Area", "id": "area"},
         {"component": "DisplayText", "title": "Location", "id": "location"}
       ],
       "columnGroup": {
@@ -202,6 +230,12 @@
         ]
       },
       "filters": [
+        {
+          "id": "area",
+          "label": "Area",
+          "type": "configurable-enum",
+          "enumId": "area"
+        },
         {
           "id": "tier",
           "label": "Tier",
@@ -233,6 +267,7 @@
                 "cols": [
                   [
                     { "id": "name", "input": "text", "placeholder": "Name"},
+                    { "id": "area", "input": "configurable-enum-select", "enumId": "area", "placeholder": "Area"},
                     { "id": "location", "input": "text", "placeholder": "Location"}
                   ],
                   [
@@ -492,6 +527,7 @@
   "entity:School": {
     "attributes": [
       {"name": "language", "schema": { "dataType": "string" }},
+      {"name": "area", "schema": { "dataType": "configurable-enum", "innerDataType": "area" }},
       {"name": "location", "schema": { "dataType": "string" }},
       {"name": "tier", "schema": { "dataType": "configurable-enum", "innerDataType": "tier" }},
       {"name": "program", "schema": { "dataType": "configurable-enum", "innerDataType": "tier-program" }}

@@ -3,7 +3,7 @@ import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Config } from "./config";
 import { LoggingService } from "../logging/logging.service";
 import { BehaviorSubject } from "rxjs";
-import { defaultConfig } from "./config-fix";
+import defaultConfig from "./config-ppi.json";
 
 @Injectable({
   providedIn: "root",
