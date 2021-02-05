@@ -4,8 +4,18 @@ import { FilterSelectionOption } from "../../filter/filter-selection/filter-sele
 export class EntityListConfig {
   title: string;
   columns: ColumnConfig[];
-  columnGroup: ColumnGroupConfig;
-  filters: FilterConfig[];
+
+  /**
+   * Optional config for which columns are displayed.
+   * By default all columns are shown
+   */
+  columnGroup?: ColumnGroupConfig;
+
+  /**
+   * Optional config for available filters.
+   * Default is no filters.
+   */
+  filters?: FilterConfig[];
 }
 
 export class ColumnConfig {
@@ -18,9 +28,19 @@ export class ColumnConfig {
 }
 
 export class ColumnGroupConfig {
-  default: string;
-  mobile: string;
   groups: GroupConfig[];
+
+  /**
+   * The name of the group that should be selected by default.
+   * Default is the name of the first group.
+   */
+  default?: string;
+
+  /**
+   * The name of the group group that should be selected by default on a mobile device.
+   * Default is the name of the first group.
+   */
+  mobile?: string;
 }
 
 export class GroupConfig {
