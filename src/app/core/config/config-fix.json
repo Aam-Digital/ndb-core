@@ -564,27 +564,27 @@
           "id": "motherTongue"
         },
         {
-          "component": "DisplayText",
+          "component": "DisplayConfigurableEnum",
           "title": "Aadhar",
           "id": "has_aadhar"
         },
         {
-          "component": "DisplayText",
+          "component": "DisplayConfigurableEnum",
           "title": "Bank Account",
           "id": "has_bankAccount"
         },
         {
-          "component": "DisplayText",
+          "component": "DisplayConfigurableEnum",
           "title": "Kanyashree",
           "id": "has_kanyashree"
         },
         {
-          "component": "DisplayText",
+          "component": "DisplayConfigurableEnum",
           "title": "Ration Card",
           "id": "has_rationCard"
         },
         {
-          "component": "DisplayText",
+          "component": "DisplayConfigurableEnum",
           "title": "BPL Card",
           "id": "has_BplCard"
         },
@@ -1026,11 +1026,11 @@
       {"name": "phone", "schema": { "dataType": "string" } },
       {"name": "guardianName", "schema": { "dataType": "string" } },
       {"name": "preferredTimeForGuardianMeeting", "schema": { "dataType": "string" } },
-      {"name": "has_aadhar", "schema": { "dataType": "string" } },
-      {"name": "has_bankAccount", "schema": { "dataType": "string" } },
-      {"name": "has_kanyashree", "schema": { "dataType": "string" } },
-      {"name": "has_rationCard", "schema": { "dataType": "string" } },
-      {"name": "has_BplCard", "schema": { "dataType": "string" } },
+      {"name": "has_aadhar", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
+      {"name": "has_bankAccount", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
+      {"name": "has_kanyashree", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
+      {"name": "has_rationCard", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
+      {"name": "has_BplCard", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
       {"name": "health_vaccinationStatus", "schema": { "dataType": "string" } },
       {"name": "health_bloodGroup", "schema": { "dataType": "string" } },
       {"name": "health_lastDentalCheckup", "schema": { "dataType": "Date" } },
