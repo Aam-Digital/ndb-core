@@ -19,6 +19,13 @@ COPY . .
 RUN $(npm bin)/ng build --prod
 
 # When set to true, chromium is installed an tests are executed
+ARG UPLOAD_COVERAGE=false
+RUN if [ "$UPLOAD_COVERAGE" = true ] ; then \
+    apk --no-cache add curl git &&\
+    curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter &&\
+    chmod +x ./cc-test-reporter &&\
+    ./cc-test-reporter before-build ; fi
+
 ARG RUN_TESTS=false
 ARG CHROME_BIN=/usr/bin/chromium-browser
 # In the pipeline we run the tests and report the results
@@ -26,6 +33,13 @@ RUN if [ "$RUN_TESTS" = true ] ; then \
     apk --no-cache add chromium &&\
     npm run lint &&\
     npm run test-ci ; fi
+
+
+ARG GIT_COMMIT_SHA
+ARG GIT_BRANCH
+ARG GIT_COMMITTED_AT
+ARG CC_TEST_REPORTER_ID
+RUN if [ "$UPLOAD_COVERAGE" = true ] ; then ./cc-test-reporter after-build --debug ; fi
 
 
 ### PROD image
