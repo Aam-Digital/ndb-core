@@ -31,12 +31,13 @@ export class ConfigurableEnumDatatype
     schemaField: EntitySchemaField
   ): ConfigurableEnumValue {
     if (value) {
-      let configId = schemaField.innerDataType;
-      if (!configId.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)) {
-        configId = CONFIGURABLE_ENUM_CONFIG_PREFIX + configId;
+      let enumId = schemaField.innerDataType;
+      if (!enumId.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)) {
+        enumId = CONFIGURABLE_ENUM_CONFIG_PREFIX + enumId;
       }
+
       return this.configService
-        .getConfig<ConfigurableEnumConfig>(configId)
+        .getConfig<ConfigurableEnumConfig>(enumId)
         ?.find((option) => option.id === value);
     } else {
       return undefined;
