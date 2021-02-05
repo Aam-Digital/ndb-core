@@ -21,6 +21,7 @@ import { DisplayDateComponent } from "../entity-components/entity-list/display-d
 import { DisplayConfigurableEnumComponent } from "../entity-components/entity-list/display-configurable-enum/display-configurable-enum.component";
 import { ActivityParticipantsSectionComponent } from "../../child-dev-project/attendance/activity-participants-section/activity-participants-section.component";
 import { ActivityAttendanceSectionComponent } from "../../child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component";
+import { PreviousTeamsComponent } from "../../child-dev-project/previous-teams/previous-teams.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -29,6 +30,7 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["AttendanceWeekDashboard", AttendanceWeekDashboardComponent],
   ["ProgressDashboard", ProgressDashboardComponent],
   ["PreviousSchools", PreviousSchoolsComponent],
+  ["PreviousTeams", PreviousTeamsComponent],
   ["Aser", AserComponent],
   ["GroupedChildAttendance", GroupedChildAttendanceComponent],
   ["ActivityParticipantsSection", ActivityParticipantsSectionComponent],

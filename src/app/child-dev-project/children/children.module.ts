@@ -71,6 +71,7 @@ import { ChildBlockComponent } from "./child-block/child-block.component";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 import { WebdavModule } from "../../core/webdav/webdav.module";
+import { PreviousTeamsComponent } from "../previous-teams/previous-teams.component";
 
 @NgModule({
   imports: [
@@ -128,6 +129,7 @@ import { WebdavModule } from "../../core/webdav/webdav.module";
     AttendanceAnalysisComponent,
     HealthCheckupComponent,
     PreviousSchoolsComponent,
+    PreviousTeamsComponent,
     SchoolBlockWrapperComponent,
     ChildBlockListComponent,
   ],

@@ -801,7 +801,7 @@ export const defaultConfig = {
           "title": "Education",
           "components": [
             {
-              "title": "SchoolHistory",
+              "title": "School History",
               "component": "PreviousSchools"
             },
             {
