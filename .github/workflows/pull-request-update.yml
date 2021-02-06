@@ -12,7 +12,6 @@ jobs:
         id: buildx
         uses: docker/setup-buildx-action@master
       - name: Get time of commit
-        id: commit-time
         run: echo "TIME=$(git log -1 --pretty=format:%ct)" >> $GITHUB_ENV
       - name: Build dev image and save it locally
         uses: docker/build-push-action@v2
