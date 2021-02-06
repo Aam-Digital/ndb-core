@@ -21,8 +21,6 @@ jobs:
           destination_dir: documentation
   run-tests:
     runs-on: ubuntu-latest
-      env:
-        TIME: 0
     steps:
       - uses: actions/checkout@v1
       - name: Login to DockerHub
