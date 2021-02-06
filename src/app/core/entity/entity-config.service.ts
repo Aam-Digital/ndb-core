@@ -17,9 +17,16 @@ export class EntityConfigService {
       EntityConfigService.PREFIX_ENTITY_CONFIG +
       entityType.prototype.constructor.ENTITY_TYPE;
     const entityConfig = this.configService.getConfig<EntityConfig>(configName);
-    entityConfig.attributes.forEach((attribute) =>
-      addPropertySchema(entityType.prototype, attribute.name, attribute.schema)
-    );
+
+    if (entityConfig?.attributes) {
+      entityConfig.attributes.forEach((attribute) =>
+        addPropertySchema(
+          entityType.prototype,
+          attribute.name,
+          attribute.schema
+        )
+      );
+    }
   }
 }
 
