@@ -21,7 +21,7 @@ RUN $(npm bin)/ng build --prod
 # When set to true, chromium is installed an tests are executed
 ARG UPLOAD_COVERAGE=false
 RUN if [ "$UPLOAD_COVERAGE" = true ] ; then \
-    apk --no-cache add curl git &&\
+    apk --no-cache add curl &&\
     curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter &&\
     chmod +x ./cc-test-reporter &&\
     ./cc-test-reporter before-build ; fi
