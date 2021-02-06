@@ -49,6 +49,10 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   constructor(private schoolsService: SchoolsService) {}
 
   onInitFromDynamicConfig(config: PanelConfig) {
+    if (config?.config?.displayedColumns) {
+      this.displayedColumns = config.config.displayedColumns;
+    }
+
     this.schoolsService
       .getChildrenForSchool(config.entity.getId())
       .then((children) => (this.studentsDataSource.data = children));
