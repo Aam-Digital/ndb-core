@@ -43,7 +43,7 @@ jobs:
           tags: test-image
           build-args: |
             UPLOAD_COVERAGE=${{ true }}
-            GIT_COMMIT_SHA=${{ GITHUB_SHA }}
+            GIT_COMMIT_SHA=$GITHUB_SHA
             GIT_BRANCH=${{ github.head_ref }}
             GIT_COMMITTED_AT=${{ env.TIME }}
             CC_TEST_REPORTER_ID=${{ secrets.CODE_CLIMATE_ID }}
