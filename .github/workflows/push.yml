@@ -1,0 +1,30 @@
+name: Push Debug
+on: push
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: debug
+        run: |
+          echo $GITHUB_REF
+          echo $GITHUB_SHA
+          echo ${{ env.GITHUB_REF }}
+          echo ${{ github.ref }}
+      - name: Run tests and upload coverage
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./build/Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          target: builder
+          tags: test-image
+          build-args: |
+            UPLOAD_COVERAGE=${{ true }}
+            GIT_COMMIT_SHA=${ GITHUB_SHA }
+            GIT_BRANCH=${ GITHUB_REF }
+            GIT_COMMITTED_AT=${{ env.TIME }}
+            CC_TEST_REPORTER_ID=${{ secrets.CODE_CLIMATE_ID }}
+          cache-from: type=registry,ref=aamdigital/ndb-server:cache
+          cache-to: type=registry,ref=aamdigital/ndb-server:cache,mode=max
