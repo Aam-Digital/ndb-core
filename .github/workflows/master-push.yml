@@ -43,8 +43,8 @@ jobs:
           tags: test-image
           build-args: |
             UPLOAD_COVERAGE=${{ true }}
-            GIT_COMMIT_SHA=${{ env.GITHUB_SHA }}
-            GIT_BRANCH=${{ env.GITHUB_REF }}
+            GIT_COMMIT_SHA=${{ github.sha }}
+            GIT_BRANCH=master
             GIT_COMMITTED_AT=${{ env.TIME }}
             CC_TEST_REPORTER_ID=${{ secrets.CODE_CLIMATE_ID }}
           cache-from: type=registry,ref=aamdigital/ndb-server:cache
