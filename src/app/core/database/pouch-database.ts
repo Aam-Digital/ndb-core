@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Database } from "./database";
+import { Database, GetAllOptions, GetOptions, QueryOptions } from "./database";
 import moment from "moment";
 import { LoggingService } from "../logging/logging.service";
 
@@ -43,7 +43,11 @@ export class PouchDatabase extends Database {
    * @param options Optional PouchDB options for the request
    * @param returnUndefined (Optional) return undefined instead of throwing error if doc is not found in database
    */
-  get(id: string, options: any = {}, returnUndefined?: boolean): Promise<any> {
+  get(
+    id: string,
+    options: GetOptions = {},
+    returnUndefined?: boolean
+  ): Promise<any> {
     return this._pouchDB.get(id, options).catch((err) => {
       if (err.status === 404) {
         this.loggingService.debug("Doc not found in database: " + id);
@@ -69,7 +73,7 @@ export class PouchDatabase extends Database {
    *
    * @param options PouchDB options object as in the normal PouchDB library
    */
-  allDocs(options?: any) {
+  allDocs(options?: GetAllOptions) {
     return this._pouchDB.allDocs(options).then((result) => {
       const resultArray = [];
       for (const row of result.rows) {
@@ -127,7 +131,7 @@ export class PouchDatabase extends Database {
    */
   query(
     fun: string | ((doc: any, emit: any) => void),
-    options: any
+    options: QueryOptions
   ): Promise<any> {
     return this._pouchDB.query(fun, options);
   }

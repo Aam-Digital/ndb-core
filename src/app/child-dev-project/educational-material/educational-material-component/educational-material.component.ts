@@ -59,6 +59,12 @@ export class EducationalMaterialComponent
   }
 
   onInitFromDynamicConfig(config: PanelConfig) {
+    if (config?.config?.displayedColumns) {
+      this.columns = this.columns.filter((c) =>
+        config.config.displayedColumns.includes(c.name)
+      );
+    }
+
     this.child = config.entity as Child;
     this.loadData(this.child.getId());
   }

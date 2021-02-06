@@ -9,6 +9,8 @@ jobs:
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@master
+      - name: Get time of commit
+        run: echo "TIME=$(git log -1 --pretty=format:%ct)" >> $GITHUB_ENV
       - name: Build dev image and save it locally
         uses: docker/build-push-action@v2
         with:
@@ -17,15 +19,13 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           target: builder
           tags: test-image
-          outputs: type=local,dest=./img
-          build-args: RUN_TESTS=${{ true }}
+          build-args: |
+            UPLOAD_COVERAGE=${{ true }}
+            GIT_COMMIT_SHA=${{ github.event.pull_request.head.sha }}
+            GIT_BRANCH=${{ github.head_ref }}
+            GIT_COMMITTED_AT=${{ env.TIME }}
+            CC_TEST_REPORTER_ID=${{ secrets.CODE_CLIMATE_ID }}
           cache-from: type=registry,ref=aamdigital/ndb-server:cache
-      - name: Publish code coverage
-        uses: paambaati/codeclimate-action@v2.7.5
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
-        with:
-          coverageLocations: ${{github.workspace}}/img/app/coverage/lcov.info:lcov
   deploy-prod-image:
     runs-on: ubuntu-latest
     steps:

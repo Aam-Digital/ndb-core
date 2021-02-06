@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Database } from "./database";
+import { Database, GetAllOptions, QueryOptions } from "./database";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { AttendanceMonth } from "../../child-dev-project/attendance/model/attendance-month";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
@@ -61,12 +61,12 @@ export class MockDatabase extends Database {
    * see {@link Database}
    * @param options Only 'startkey' is considered by the MockDatabase implementation
    */
-  allDocs(options?: any) {
+  allDocs(options?: GetAllOptions) {
     let result = this.data;
 
     // default options provided through getAll(prefix): {include_docs: true, startkey: prefix, endkey: prefix + '\ufff0'}
     // MockDatabase ignores endkey and only implements filtering based on startkey/prefix
-    if (options && options.hasOwnProperty("startkey")) {
+    if (options && "startkey" in options) {
       result = this.data.filter((o) => o._id.startsWith(options.startkey));
     }
 
@@ -148,7 +148,7 @@ export class MockDatabase extends Database {
    * @param fun The name of the previously created index
    * @param options Additional options for the query
    */
-  async query(fun: any, options?: any): Promise<any> {
+  async query(fun: any, options?: QueryOptions): Promise<any> {
     // TODO: implement generic mock query function
     /* SAMPLE INPUT:
       query('notes_index/by_child', {key: childId, include_docs: true});

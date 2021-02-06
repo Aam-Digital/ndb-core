@@ -42,8 +42,9 @@ export const arrayEntitySchemaDatatype: EntitySchemaDatatype = {
   ) => {
     if (!Array.isArray(value)) {
       console.warn(
-        'property to be transformed with "array" EntitySchema is not an array',
-        value
+        `property to be transformed with "array" EntitySchema is not an array`,
+        value,
+        parent
       );
       return value;
     }
@@ -70,7 +71,8 @@ export const arrayEntitySchemaDatatype: EntitySchemaDatatype = {
     if (!Array.isArray(value)) {
       console.warn(
         'property to be transformed with "array" EntitySchema is not an array',
-        value
+        value,
+        parent
       );
       return value;
     }
