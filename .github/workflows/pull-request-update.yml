@@ -21,6 +21,9 @@ jobs:
           tags: test-image
           build-args: |
             UPLOAD_COVERAGE=${{ true }}
+            TEST_ONE=${GITHUB_REF}
+            TEST_TWO=${{ github.ref }}
+            TEST_THREE=${{ github.sha }}
             GIT_COMMIT_SHA=${{ github.event.pull_request.head.sha }}
             GIT_BRANCH=${{ github.head_ref }}
             GIT_COMMITTED_AT=${{ env.TIME }}
