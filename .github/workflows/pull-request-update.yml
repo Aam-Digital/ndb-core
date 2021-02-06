@@ -23,7 +23,6 @@ jobs:
           target: builder
           tags: test-image
           build-args: |
-            RUN_TESTS=${{ true }}
             UPLOAD_COVERAGE=${{ true }}
             GIT_COMMIT_SHA=${{ github.event.pull_request.head.sha }}
             GIT_BRANCH=${{ github.head_ref }}

@@ -18,7 +18,7 @@ RUN $(npm bin)/ng version
 COPY . .
 RUN $(npm bin)/ng build --prod
 
-# When set to true, chromium is installed an tests are executed
+# When set to true, tests are run and coverage will be uploaded to CodeClimate
 ARG UPLOAD_COVERAGE=false
 RUN if [ "$UPLOAD_COVERAGE" = true ] ; then \
     apk --no-cache add curl &&\
@@ -26,18 +26,23 @@ RUN if [ "$UPLOAD_COVERAGE" = true ] ; then \
     chmod +x ./cc-test-reporter &&\
     ./cc-test-reporter before-build ; fi
 
+# When set to true, chromium is installed an tests are executed
 ARG RUN_TESTS=false
 ARG CHROME_BIN=/usr/bin/chromium-browser
-# In the pipeline we run the tests and report the results
-RUN if [ "$RUN_TESTS" = true ] ; then \
+# Install chromium for karma, lint code and run tests
+RUN if [ "$RUN_TESTS" = true ] || [ "$UPLOAD_COVERAGE" = true ] ; then \
     apk --no-cache add chromium &&\
     npm run lint &&\
     npm run test-ci ; fi
 
-
+# The following arguments need to be provided for the code climate test reporter to work correctly
+# The commit sha
 ARG GIT_COMMIT_SHA
+# The branch
 ARG GIT_BRANCH
+# The time of the commit, can be extracted with `git log -1 --pretty=format:%ct`
 ARG GIT_COMMITTED_AT
+# The ID for the test reporter, can be found on CodeCoverage
 ARG CC_TEST_REPORTER_ID
 RUN if [ "$UPLOAD_COVERAGE" = true ] ; then ./cc-test-reporter after-build --debug ; fi
 
