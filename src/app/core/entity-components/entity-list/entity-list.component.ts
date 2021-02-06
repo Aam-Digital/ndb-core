@@ -328,7 +328,7 @@ export class EntityListComponent<T extends Entity>
       options.push({
         key: enumValue.id,
         label: enumValue.label,
-        filterFun: (entity) => entity[config.id].id === enumValue.id,
+        filterFun: (entity) => entity[config.id]?.id === enumValue.id,
       });
     }
 
