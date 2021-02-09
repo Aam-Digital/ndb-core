@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component } from "@angular/core";
+import { Component, OnInit, HostListener } from "@angular/core";
 import { MenuItem } from "../menu-item";
 import { AdminGuard } from "../../admin/admin.guard";
 import { NavigationMenuConfig } from "../navigation-menu-config.interface";
@@ -31,11 +31,15 @@ import { ConfigService } from "../../config/config.service";
   templateUrl: "./navigation.component.html",
   styleUrls: ["./navigation.component.scss"],
 })
-export class NavigationComponent {
+export class NavigationComponent implements OnInit {
   /** name of config array in the config json file */
   private readonly CONFIG_ID = "navigationMenu";
   /** all menu items to be displayed */
   public menuItems: MenuItem[] = [];
+  /** true if the onbeforeinstallprompt has fired  */
+  public showInstallButton = false;
+  /** stores the installation prompt for later use  */
+  deferredPrompt: any;
 
   constructor(
     private adminGuard: AdminGuard,
@@ -71,5 +75,33 @@ export class NavigationComponent {
       RouterService.PREFIX_VIEW_CONFIG + link.replace(/^\//, "")
     );
     return !viewConfig?.requiresAdmin || this.adminGuard.isAdmin();
+  }
+
+  /**
+   * Listen for the installation prompt
+   */
+  @HostListener("window:beforeinstallprompt", ["$event"])
+  onbeforeinstallprompt(e) {
+    this.showInstallButton = true;
+    e.preventDefault();
+    this.deferredPrompt = e;
+  }
+
+  ngOnInit() {}
+
+  /**
+   * Show the installation prompt when button is clicked
+   */
+  public addToHomeScreen() {
+    this.deferredPrompt.prompt();
+    this.deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === "accepted") {
+        console.log("User accepted the A2HS prompt");
+        this.showInstallButton = false;
+      } else {
+        console.log("User dismissed the A2HS prompt");
+      }
+      this.deferredPrompt = null;
+    });
   }
 }

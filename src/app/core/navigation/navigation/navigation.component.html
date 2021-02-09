@@ -30,4 +30,20 @@
     >
     <mat-divider></mat-divider>
   </mat-list-item>
+  <mat-list-item
+    angulartics2On="click"
+    angularticsCategory="Navigation"
+    angularticsAction="app_navigation_link_click"
+    (click)="addToHomeScreen()"
+    *ngIf="showInstallButton"
+  >
+
+
+    <a>
+      <mat-icon style="font-size: 1em;" class="nav-icon" fontIcon="fa-mobile"></mat-icon>
+      Add to Home Screen
+    </a>
+
+    <mat-divider></mat-divider>
+  </mat-list-item>
 </mat-nav-list>
