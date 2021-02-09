@@ -50,14 +50,13 @@ describe("BmiBlockComponent", () => {
     );
     component.onInitFromDynamicConfig({
       entity: testChild,
-      id: "bmi",
-      config: {},
+      id: "",
     });
     expect(mockChildrenService.getHealthChecksOfChild).toHaveBeenCalledWith(
       testChild.getId()
     );
     setTimeout(() => {
-      expect(component.child["bmi"]).toEqual(HealthCheck2.bmi.toFixed(2));
+      expect(component.currentHealthCheck).toEqual(HealthCheck2);
       done();
     });
   });
