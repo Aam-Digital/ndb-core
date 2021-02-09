@@ -61,7 +61,10 @@ export class FormComponent implements OnInitDynamicComponent {
   }
 
   async save(): Promise<Entity> {
-    this.checkFormValidity();
+    if (!this.checkFormValidity()) {
+      return;
+    }
+
     this.assignFormValuesToEntity(this.entity, this.form);
     try {
       await this.entityMapperService.save<Entity>(this.entity);
@@ -122,7 +125,7 @@ export class FormComponent implements OnInitDynamicComponent {
     this.form = this.fb.group(this.buildFormConfig());
   }
 
-  private checkFormValidity() {
+  private checkFormValidity(): boolean {
     // errors regarding invalid fields wont be displayed unless marked as touched
     this.form.markAllAsTouched();
     this.validateForm = true;
@@ -131,10 +134,10 @@ export class FormComponent implements OnInitDynamicComponent {
       this.alertService.addDanger(
         "Form invalid, required fields (" + invalidFields + ") missing"
       );
-      throw new Error(
-        "Form invalid, required fields(" + invalidFields + ") missing"
-      );
+      return false;
     }
+
+    return true;
   }
 
   private getInvalidFields() {
