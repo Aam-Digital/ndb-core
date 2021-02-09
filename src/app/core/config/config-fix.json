@@ -615,7 +615,8 @@
         {
           "component": "BmiBlock",
           "title": "BMI",
-          "id": "health_BMI"}
+          "id": "health_BMI",
+          "noSorting": true}
       ],
       "columnGroup": {
         "default": "School Info",
