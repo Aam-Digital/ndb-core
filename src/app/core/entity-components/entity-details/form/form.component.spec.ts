@@ -1,4 +1,10 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  async,
+  ComponentFixture,
+  fakeAsync,
+  flush,
+  TestBed,
+} from "@angular/core/testing";
 import { FormComponent } from "./form.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { BehaviorSubject } from "rxjs";
@@ -108,34 +114,34 @@ describe("FormComponent", () => {
     expect(testChild.photo.next).toHaveBeenCalledWith(filename);
   });
 
-  it("reports error when form is invalid", (done) => {
+  it("reports error when form is invalid", fakeAsync(() => {
     const alertService = fixture.debugElement.injector.get(AlertService);
     spyOn(alertService, "addDanger");
-    spyOnProperty(component.form, "valid").and.returnValue(false);
-    component
-      .save()
-      .then(() => fail())
-      .catch((err) => {
-        expect(err).toBeDefined();
-        expect(alertService.addDanger).toHaveBeenCalled();
-        done();
-      });
-  });
 
-  it("logs error when saving fails", (done) => {
+    spyOnProperty(component.form, "valid").and.returnValue(false);
+    component.save();
+    flush();
+
+    expect(alertService.addDanger).toHaveBeenCalled();
+  }));
+
+  it("logs error when saving fails", fakeAsync(() => {
+    const alertService = fixture.debugElement.injector.get(AlertService);
+    spyOn(alertService, "addDanger");
+
     spyOnProperty(component.form, "valid").and.returnValue(true);
     mockEntityMapper.save.and.returnValue(Promise.reject("error"));
-    const alertService = fixture.debugElement.injector.get(AlertService);
-    spyOn(alertService, "addDanger");
+
     component
       .save()
-      .then(() => fail())
+      .then(() => fail("expected error was not thrown"))
       .catch((err) => {
         expect(err.message).toEqual("error");
         expect(alertService.addDanger).toHaveBeenCalled();
-        done();
       });
-  });
+
+    flush();
+  }));
 });
 
 export const testConfig = {
