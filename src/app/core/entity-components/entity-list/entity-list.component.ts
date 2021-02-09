@@ -17,9 +17,11 @@ import { ActivatedRoute, Router } from "@angular/router";
 import {
   BooleanFilterConfig,
   ColumnConfig,
+  ColumnGroupConfig,
   ConfigurableEnumFilterConfig,
   EntityListConfig,
   FilterConfig,
+  GroupConfig,
   PrebuiltFilterConfig,
 } from "./EntityListConfig";
 import { Entity } from "../../entity/entity";
@@ -37,11 +39,6 @@ import {
   ConfigurableEnumConfig,
 } from "../../configurable-enum/configurable-enum.interface";
 import { LoggingService } from "../../logging/logging.service";
-
-export interface ColumnGroup {
-  name: string;
-  columns: string[];
-}
 
 interface FilterComponentSettings<T> {
   filterSettings: FilterSelection<T>;
@@ -73,7 +70,7 @@ export class EntityListComponent<T extends Entity>
 
   listName = "";
   columns: ColumnConfig[] = [];
-  columnGroups: ColumnGroup[] = [];
+  columnGroups: GroupConfig[] = [];
   defaultColumnGroup = "";
   mobileColumnGroup = "";
   filtersConfig: FilterConfig[] = [];
@@ -138,10 +135,8 @@ export class EntityListComponent<T extends Entity>
     if (changes.hasOwnProperty("listConfig")) {
       this.listName = this.listConfig.title;
       this.columns = this.listConfig.columns;
-      this.columnGroups = this.listConfig.columnGroup.groups;
-      this.defaultColumnGroup = this.listConfig.columnGroup.default;
-      this.mobileColumnGroup = this.listConfig.columnGroup.mobile;
-      this.filtersConfig = this.listConfig.filters;
+      this.initColumnGroups(this.listConfig.columnGroup);
+      this.filtersConfig = this.listConfig.filters || [];
       this.displayColumnGroup(this.defaultColumnGroup);
     }
     if (changes.hasOwnProperty("entityList")) {
@@ -187,6 +182,21 @@ export class EntityListComponent<T extends Entity>
     filter.selectedOption = selectedOption;
     this.applyFilterSelections();
     this.updateUrl(filter.filterSettings.name, selectedOption);
+  }
+
+  private initColumnGroups(columnGroup?: ColumnGroupConfig) {
+    if (columnGroup && columnGroup.groups.length > 0) {
+      this.columnGroups = columnGroup.groups;
+      this.defaultColumnGroup =
+        columnGroup.default || columnGroup.groups[0].name;
+      this.mobileColumnGroup = columnGroup.mobile || columnGroup.groups[0].name;
+    } else {
+      this.columnGroups = [
+        { name: "default", columns: this.columns.map((c) => c.id) },
+      ];
+      this.defaultColumnGroup = "default";
+      this.mobileColumnGroup = "default";
+    }
   }
 
   private updateUserPaginationSettings() {
@@ -318,7 +328,7 @@ export class EntityListComponent<T extends Entity>
       options.push({
         key: enumValue.id,
         label: enumValue.label,
-        filterFun: (entity) => entity[config.id].id === enumValue.id,
+        filterFun: (entity) => entity[config.id]?.id === enumValue.id,
       });
     }
 

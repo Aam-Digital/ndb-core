@@ -15,9 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Database } from "./database";
-import { AlertService } from "../alerts/alert.service";
-import { AlertDisplay } from "../alerts/alert-display";
+import { Database, GetAllOptions, GetOptions, QueryOptions } from "./database";
 import moment from "moment";
 import { LoggingService } from "../logging/logging.service";
 
@@ -32,14 +30,9 @@ export class PouchDatabase extends Database {
   /**
    * Create a PouchDB database manager.
    * @param _pouchDB An (initialized) PouchDB database instance from the PouchDB library.
-   * @param alertService The AlertService instance of the app to be able to display problems to users.
    * @param loggingService The LoggingService instance of the app to log and report problems.
    */
-  constructor(
-    private _pouchDB: any,
-    private alertService: AlertService,
-    private loggingService: LoggingService
-  ) {
+  constructor(private _pouchDB: any, private loggingService: LoggingService) {
     super();
   }
 
@@ -50,7 +43,11 @@ export class PouchDatabase extends Database {
    * @param options Optional PouchDB options for the request
    * @param returnUndefined (Optional) return undefined instead of throwing error if doc is not found in database
    */
-  get(id: string, options: any = {}, returnUndefined?: boolean): Promise<any> {
+  get(
+    id: string,
+    options: GetOptions = {},
+    returnUndefined?: boolean
+  ): Promise<any> {
     return this._pouchDB.get(id, options).catch((err) => {
       if (err.status === 404) {
         this.loggingService.debug("Doc not found in database: " + id);
@@ -76,7 +73,7 @@ export class PouchDatabase extends Database {
    *
    * @param options PouchDB options object as in the normal PouchDB library
    */
-  allDocs(options?: any) {
+  allDocs(options?: GetAllOptions) {
     return this._pouchDB.allDocs(options).then((result) => {
       const resultArray = [];
       for (const row of result.rows) {
@@ -134,7 +131,7 @@ export class PouchDatabase extends Database {
    */
   query(
     fun: string | ((doc: any, emit: any) => void),
-    options: any
+    options: QueryOptions
   ): Promise<any> {
     return this._pouchDB.query(fun, options);
   }
@@ -185,19 +182,20 @@ export class PouchDatabase extends Database {
           });
         }
       } catch (err) {
-        this.alertService.addWarning(
-          "failed to trigger query for new index: ",
-          err
-        );
+        this.notifyError({
+          status: "failed to trigger query for new index",
+          details: err,
+        });
       }
     }
   }
 
   private notifyError(err) {
-    this.alertService.addWarning(
-      "PouchDB Error " + err.status + ": " + JSON.stringify(err),
-      AlertDisplay.NONE
-    );
+    this.loggingService.warn({
+      context: "PouchDatabase",
+      message: err.status,
+      details: JSON.stringify(err),
+    });
   }
 
   /**
@@ -214,14 +212,14 @@ export class PouchDatabase extends Database {
     this.get(newObject._id).then((existingObject) => {
       const resolvedObject = this.mergeObjects(existingObject, newObject);
       if (resolvedObject) {
-        this.alertService.addDebug(
+        this.loggingService.debug(
           "resolved document conflict automatically (" +
             resolvedObject._id +
             ")"
         );
         this.put(resolvedObject);
       } else if (overwriteChanges) {
-        this.alertService.addDebug(
+        this.loggingService.debug(
           "overwriting conflicting document version (" + newObject._id + ")"
         );
         newObject._rev = existingObject._rev;

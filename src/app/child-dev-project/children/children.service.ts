@@ -14,6 +14,7 @@ import { LoadChildPhotoEntitySchemaDatatype } from "./child-photo-service/dataty
 import moment from "moment";
 import { LoggingService } from "../../core/logging/logging.service";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
+import { QueryOptions } from "../../core/database/database";
 
 @Injectable()
 export class ChildrenService {
@@ -127,18 +128,11 @@ export class ChildrenService {
   }
 
   getAttendancesOfChild(childId: string): Observable<AttendanceMonth[]> {
-    const promise = this.dbIndexing
-      .queryIndex("attendances_index/by_child", {
-        key: childId,
-        include_docs: true,
-      })
-      .then((loadedEntities) => {
-        return loadedEntities.rows.map((loadedRecord) => {
-          const entity = new AttendanceMonth("");
-          this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
-          return entity;
-        });
-      });
+    const promise = this.dbIndexing.queryIndexDocs(
+      AttendanceMonth,
+      "attendances_index/by_child",
+      childId
+    );
 
     return from(promise);
   }
@@ -146,18 +140,11 @@ export class ChildrenService {
   getAttendancesOfMonth(month: Date): Observable<AttendanceMonth[]> {
     const monthString =
       month.getFullYear().toString() + "-" + (month.getMonth() + 1).toString();
-    const promise = this.dbIndexing
-      .queryIndex("attendances_index/by_month", {
-        key: monthString,
-        include_docs: true,
-      })
-      .then((loadedEntities) => {
-        return loadedEntities.rows.map((loadedRecord) => {
-          const entity = new AttendanceMonth("");
-          this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
-          return entity;
-        });
-      });
+    const promise = this.dbIndexing.queryIndexDocs(
+      AttendanceMonth,
+      "attendances_index/by_month",
+      monthString
+    );
 
     return from(promise);
   }
@@ -232,54 +219,37 @@ export class ChildrenService {
     childId: string,
     limit?: number
   ): Promise<ChildSchoolRelation[]> {
-    const options: any = {
+    const options: QueryOptions = {
       startkey: childId + "_\uffff", //  higher value needs to be startkey
       endkey: childId + "_", //  \uffff is not a character -> only relations staring with childId will be selected
       descending: true,
       include_docs: true,
       limit: limit,
     };
-    return this.dbIndexing
-      .queryIndex("childSchoolRelations_index/by_date", options)
-      .then((loadedEntities) => {
-        return loadedEntities.rows.map((loadedRecord) => {
-          const entity = new ChildSchoolRelation("");
-          this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
-          return entity;
-        });
-      });
+    return this.dbIndexing.queryIndexDocs(
+      ChildSchoolRelation,
+      "childSchoolRelations_index/by_date",
+      options
+    );
   }
 
   queryRelationsOf(
     queryType: "child" | "school",
     id: string
   ): Promise<ChildSchoolRelation[]> {
-    return this.dbIndexing
-      .queryIndex("childSchoolRelations_index/by_" + queryType, {
-        key: id,
-        include_docs: true,
-      })
-      .then((loadedEntities) => {
-        return loadedEntities.rows.map((loadedRecord) => {
-          const entity = new ChildSchoolRelation("");
-          this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
-          return entity;
-        });
-      });
+    return this.dbIndexing.queryIndexDocs(
+      ChildSchoolRelation,
+      "childSchoolRelations_index/by_" + queryType,
+      id
+    );
   }
 
   queryAttendanceLast3Months() {
-    return this.dbIndexing.queryIndex("avg_attendance_index/three_months", {
-      reduce: true,
-      group: true,
-    });
+    return this.dbIndexing.queryIndexStats("avg_attendance_index/three_months");
   }
 
   queryAttendanceLastMonth() {
-    return this.dbIndexing.queryIndex("avg_attendance_index/last_month", {
-      reduce: true,
-      group: true,
-    });
+    return this.dbIndexing.queryIndexStats("avg_attendance_index/last_month");
   }
 
   private createAttendanceAnalysisIndex(): Promise<any> {
@@ -338,15 +308,11 @@ export class ChildrenService {
   }
 
   getNotesOfChild(childId: string): Observable<Note[]> {
-    const promise = this.dbIndexing
-      .queryIndex("notes_index/by_child", { key: childId, include_docs: true })
-      .then((loadedEntities) => {
-        return loadedEntities.rows.map((loadedRecord) => {
-          const entity = new Note("");
-          this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
-          return entity;
-        });
-      });
+    const promise = this.dbIndexing.queryIndexDocs(
+      Note,
+      "notes_index/by_child",
+      childId
+    );
 
     return from(promise);
   }
@@ -359,9 +325,8 @@ export class ChildrenService {
    * @return A map of childIds as key and days since last note as value
    */
   public async getDaysSinceLastNoteOfEachChild(): Promise<Map<string, number>> {
-    const stats = await this.dbIndexing.queryIndex(
-      "notes_index/note_date_in_days_for_child",
-      { reduce: true, group: true }
+    const stats = await this.dbIndexing.queryIndexStats(
+      "notes_index/note_date_in_days_for_child"
     );
 
     const results = new Map();

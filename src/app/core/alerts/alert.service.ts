@@ -20,7 +20,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 
 import { Alert } from "./alert";
 import { AlertComponent } from "./alerts/alert.component";
-import { LoggingService } from "../logging/logging.service";
 import { AlertDisplay } from "./alert-display";
 
 /**
@@ -28,16 +27,16 @@ import { AlertDisplay } from "./alert-display";
  * (Angular Material "SnackBar")
  *
  * Inject this service in your classes to easily trigger alerts in the app consistent style.
+ *
+ * If you want to log technical details and problems, use {@link LoggingService} instead!
+ * This service is for user facing messages.
  */
 @Injectable()
 export class AlertService {
   /** All alerts currently to be displayed */
   alerts: Alert[] = [];
 
-  constructor(
-    public snackBar: MatSnackBar,
-    private loggingService: LoggingService
-  ) {}
+  constructor(public snackBar: MatSnackBar) {}
 
   /**
    * Display the given alert.
@@ -46,7 +45,6 @@ export class AlertService {
   addAlert(alert: Alert) {
     this.alerts.push(alert);
     this.displayAlert(alert);
-    this.logToConsole(alert);
   }
 
   private displayAlert(alert: Alert) {
@@ -71,21 +69,6 @@ export class AlertService {
       AlertComponent,
       snackConfig
     );
-  }
-
-  private logToConsole(alert: Alert) {
-    switch (alert.type) {
-      case Alert.WARNING:
-      case Alert.DANGER:
-        this.loggingService.warn(alert.message);
-        break;
-      case Alert.INFO:
-        this.loggingService.info(alert.message);
-        break;
-      case Alert.DEBUG:
-        this.loggingService.debug(alert.message);
-        break;
-    }
   }
 
   /**
@@ -133,14 +116,5 @@ export class AlertService {
     display: AlertDisplay = AlertDisplay.PERSISTENT
   ) {
     this.addAlert(new Alert(message, Alert.DANGER, display));
-  }
-
-  /**
-   * Display an alert message of "Debug" level, that will not be displayed to the user.
-   * @param message The text to be displayed
-   * @param display Optional override of the display style (e.g. whether the alert has to be actively dismissed by the user)
-   */
-  public addDebug(message: string, display: AlertDisplay = AlertDisplay.NONE) {
-    this.addAlert(new Alert(message, Alert.DEBUG, display));
   }
 }

@@ -37,6 +37,9 @@
       "packageName": "ndb-server",
       "notifyOnSuccess": true,
       "notifyOnFail": true
-    }]
+    }],
+    ["@semantic-release/github", {
+      "assets": []
+    }],
   ]
 }

@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
-import { FormFieldConfig } from "./FormConfig";
+import { FormConfig } from "./FormConfig";
 import { PanelConfig } from "../EntityDetailsConfig";
 import { Entity } from "../../../entity/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
@@ -31,7 +31,7 @@ export class FormComponent implements OnInitDynamicComponent {
   editing: boolean = false;
   form: FormGroup;
   validateForm: boolean = false;
-  config;
+  config: FormConfig;
 
   constructor(
     private fb: FormBuilder,
@@ -96,7 +96,7 @@ export class FormComponent implements OnInitDynamicComponent {
 
   private buildFormConfig() {
     const formConfig = {};
-    this.config.cols.forEach((c: FormFieldConfig[]) =>
+    this.config.cols.forEach((c) =>
       c.forEach((r) => {
         formConfig[r.id] = [
           { value: this.entity[r.id], disabled: !this.editing },

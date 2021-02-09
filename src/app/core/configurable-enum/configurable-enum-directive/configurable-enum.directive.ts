@@ -21,8 +21,12 @@ export class ConfigurableEnumDirective {
    * @param enumConfigId
    */
   @Input() set appConfigurableEnumOf(enumConfigId: string) {
+    if (!enumConfigId.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)) {
+      enumConfigId = CONFIGURABLE_ENUM_CONFIG_PREFIX + enumConfigId;
+    }
+
     const options = this.configService.getConfig<ConfigurableEnumConfig>(
-      CONFIGURABLE_ENUM_CONFIG_PREFIX + enumConfigId
+      enumConfigId
     );
     for (const item of options) {
       this.viewContainerRef.createEmbeddedView(this.templateRef, {

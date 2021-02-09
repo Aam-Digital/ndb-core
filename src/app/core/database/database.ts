@@ -28,7 +28,7 @@ export abstract class Database {
    * @param id The primary key of the document to be loaded
    * @param options Optional options for the database engine (PouchDB)
    */
-  abstract get(id: string, options?: any): Promise<any>;
+  abstract get(id: string, options?: GetOptions): Promise<any>;
 
   /**
    * Load all documents (matching the given PouchDB options) from the database.
@@ -39,7 +39,7 @@ export abstract class Database {
    *
    * @param options PouchDB options object as in the normal PouchDB library
    */
-  abstract allDocs(options?: any): Promise<any>;
+  abstract allDocs(options?: GetAllOptions): Promise<any>;
 
   /**
    * Save a document to the database.
@@ -63,7 +63,7 @@ export abstract class Database {
    * @param fun The name of a previously saved database index
    * @param options Additional options for the query, like a `key`. See the PouchDB docs for details.
    */
-  abstract query(fun: any, options?: any): Promise<any>;
+  abstract query(fun: any, options?: QueryOptions): Promise<any>;
 
   /**
    * Create a database index to `query()` certain data more efficiently in the future.
@@ -86,3 +86,28 @@ export abstract class Database {
     });
   }
 }
+
+/**
+ * Basic query options supported by {@link Database}.
+ *
+ * also see https://pouchdb.com/guides/queries.html
+ */
+export type QueryOptions = PouchDB.Query.Options<any, any>;
+
+/**
+ * Basic database read options supported by {@link Database}.
+ *
+ * also see https://pouchdb.com/api.html#fetch_document
+ */
+export type GetAllOptions =
+  | PouchDB.Core.AllDocsWithKeyOptions
+  | PouchDB.Core.AllDocsWithKeysOptions
+  | PouchDB.Core.AllDocsWithinRangeOptions
+  | PouchDB.Core.AllDocsOptions;
+
+/**
+ * Basic database read options supported by {@link Database}.
+ *
+ * also see https://pouchdb.com/api.html#fetch_document
+ */
+export type GetOptions = PouchDB.Core.GetOptions;
