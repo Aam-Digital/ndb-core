@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   EventEmitter,
   Input,
@@ -10,6 +11,7 @@ import {
 } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatSort } from "@angular/material/sort";
+import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { ColumnDescription } from "./column-description";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
@@ -42,7 +44,7 @@ import { DatePipe } from "@angular/common";
   styleUrls: ["./entity-subrecord.component.scss"],
 })
 export class EntitySubrecordComponent<T extends Entity>
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges, AfterViewInit {
   /** data to be displayed */
   @Input() records: Array<T>;
 
@@ -109,6 +111,10 @@ export class EntitySubrecordComponent<T extends Entity>
   private screenWidth = "";
 
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  paginatorPageSize = 10;
+  paginatorPageIndex = 0;
 
   constructor(
     private _entityMapper: EntityMapperService,
@@ -153,6 +159,25 @@ export class EntitySubrecordComponent<T extends Entity>
       this.columnsToDisplay.push("actions");
       this.setupTable();
     }
+  }
+
+  ngAfterViewInit() {
+    this.recordsDataSource.sort = this.sort;
+    this.recordsDataSource.paginator = this.paginator;
+    setTimeout(() => {
+      this.paginator.pageIndex = this.paginatorPageIndex;
+      this.paginator.page.next({
+        pageIndex: this.paginator.pageIndex,
+        pageSize: this.paginator.pageSize,
+        length: this.paginator.length,
+      });
+    });
+  }
+
+  onPaginateChange(event: PageEvent) {
+    this.paginatorPageSize = event.pageSize;
+    this.paginatorPageIndex = event.pageIndex;
+    // this.updateUserPaginationSettings();
   }
 
   /**
