@@ -56,7 +56,7 @@
         <tr
           mat-row
           *matRowDef="let child; columns: columnsToDisplay; let i = index;"
-          [routerLink]="['/child', child.getId()]"
+          [routerLink]="['/'+child.getType().toLowerCase(), child.getId()]"
           angulartics2On="click"
           angularticsCategory="Navigation"
           angularticsAction="dashboard_no_recent_notes_link"

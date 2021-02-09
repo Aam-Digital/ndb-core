@@ -45,6 +45,7 @@ export class Entity {
   /**
    * The entity's type.
    * In classes extending Entity this is usually overridden by the class annotation `@DatabaseEntity('NewEntity')`.
+   * The type needs to be used as routing path in lower case.
    */
   static ENTITY_TYPE = "Entity";
 
