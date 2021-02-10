@@ -86,12 +86,15 @@ describe("Entity", () => {
     expect(data.otherText).toBeUndefined();
   });
 
-  it("rawData() includes searchIndices", function () {
+  it("rawData() includes searchIndices containing name parts", function () {
     const id = "test1";
     const entity = new Entity(id);
+    entity["name"] = "John Doe";
 
     const data = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
     expect(data.searchIndices).toBeDefined();
+    expect(data.searchIndices).toContain("John");
+    expect(data.searchIndices).toContain("Doe");
   });
 });

@@ -18,6 +18,7 @@
 import { DatabaseIndexingService } from "./database-indexing.service";
 import { Database } from "../../database/database";
 import { take } from "rxjs/operators";
+import { EntitySchemaService } from "../schema/entity-schema.service";
 
 describe("DatabaseIndexingService", () => {
   let service: DatabaseIndexingService;
@@ -25,15 +26,15 @@ describe("DatabaseIndexingService", () => {
 
   beforeEach(() => {
     mockDb = jasmine.createSpyObj("mockDb", ["saveDatabaseIndex", "query"]);
-    service = new DatabaseIndexingService(mockDb);
+    service = new DatabaseIndexingService(mockDb, new EntitySchemaService());
   });
 
-  it("should pass through any query to the database", () => {
+  it("should pass through any query to the database", async () => {
     const testQueryName = "test_index/test";
-    const mockQueryResult = Promise.resolve({ name: "foo" });
-    mockDb.query.and.returnValue(mockQueryResult);
+    const mockQueryResult = { name: "foo" };
+    mockDb.query.and.resolveTo(mockQueryResult);
 
-    const actualResult = service.queryIndex(testQueryName, {});
+    const actualResult = await service.queryIndexRaw(testQueryName, {});
 
     expect(actualResult).toEqual(mockQueryResult);
     expect(mockDb.query).toHaveBeenCalledWith(testQueryName, {});

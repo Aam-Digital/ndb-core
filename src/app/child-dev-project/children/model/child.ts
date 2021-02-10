@@ -79,14 +79,15 @@ export class Child extends Entity {
   }
 
   get isActive(): boolean {
-    return this.status !== "Dropout";
+    return (
+      this.status !== "Dropout" && !this["dropoutDate"] && !this["exit_date"]
+    );
   }
 
-  public toString() {
-    return this.name;
-  }
-
-  public generateSearchIndices(): string[] {
+  /**
+   * @override see {@link Entity}
+   */
+  @DatabaseField() get searchIndices(): string[] {
     let indices = [];
 
     if (this.name !== undefined) {
@@ -97,5 +98,10 @@ export class Child extends Entity {
     }
 
     return indices;
+  }
+  set searchIndices(value) {}
+
+  public toString() {
+    return this.name;
   }
 }

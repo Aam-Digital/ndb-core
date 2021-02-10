@@ -16,9 +16,11 @@
  */
 
 import { Injectable } from "@angular/core";
-import { Database } from "../../database/database";
+import { Database, QueryOptions } from "../../database/database";
 import { BehaviorSubject, Observable } from "rxjs";
 import { BackgroundProcessState } from "../../sync-status/background-process-state.interface";
+import { Entity, EntityConstructor } from "../entity";
+import { EntitySchemaService } from "../schema/entity-schema.service";
 
 /**
  * Manage database query index creation and use, working as a facade in front of the Database service.
@@ -37,7 +39,10 @@ export class DatabaseIndexingService {
     return this._indicesRegistered.asObservable();
   }
 
-  constructor(private db: Database) {}
+  constructor(
+    private db: Database,
+    private entitySchemaService: EntitySchemaService
+  ) {}
 
   /**
    * Register a new database query to be created/updated and indexed.
@@ -73,10 +78,39 @@ export class DatabaseIndexingService {
 
   /**
    * Load data from the Database through the given, previously created index.
+   * @param entityConstructor
    * @param indexName The name of the previously created index to be queried.
-   * @param options Additional query options (see @link{Database})
+   * @param options (Optional) additional query options object or a simple value used as the exact key to retrieve
    */
-  queryIndex(indexName: string, options?: any) {
-    return this.db.query(indexName, options);
+  async queryIndexDocs<T extends Entity>(
+    entityConstructor: EntityConstructor<T>,
+    indexName: string,
+    options: QueryOptions | string = {}
+  ): Promise<T[]> {
+    if (typeof options === "string") {
+      options = { key: options };
+    }
+    options.include_docs = true;
+
+    const rawResults = await this.queryIndexRaw(indexName, options);
+    return rawResults.rows.map((loadedRecord) => {
+      const entity = new entityConstructor("");
+      this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
+      return entity;
+    });
+  }
+
+  async queryIndexStats(
+    indexName: string,
+    options: QueryOptions = {
+      reduce: true,
+      group: true,
+    }
+  ): Promise<any> {
+    return await this.queryIndexRaw(indexName, options);
+  }
+
+  async queryIndexRaw(indexName: string, options: QueryOptions): Promise<any> {
+    return await this.db.query(indexName, options);
   }
 }
