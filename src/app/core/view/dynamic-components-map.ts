@@ -22,6 +22,7 @@ import { DisplayConfigurableEnumComponent } from "../entity-components/entity-li
 import { ActivityParticipantsSectionComponent } from "../../child-dev-project/attendance/activity-participants-section/activity-participants-section.component";
 import { ActivityAttendanceSectionComponent } from "../../child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component";
 import { PreviousTeamsComponent } from "../../child-dev-project/previous-teams/previous-teams.component";
+import { BmiBlockComponent } from "../../child-dev-project/children/children-list/bmi-block/bmi-block.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -48,4 +49,5 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["RecentAttendanceBlocks", RecentAttendanceBlocksComponent],
   ["SchoolBlockWrapper", SchoolBlockWrapperComponent],
   ["ChildrenOverview", ChildrenOverviewComponent],
+  ["BmiBlock", BmiBlockComponent],
 ]);

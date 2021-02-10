@@ -106,9 +106,6 @@ export class EntitySubrecordComponent<T extends Entity>
   /** id of the parent entity of the records being displayed. May be used for custom display logic. */
   @Input() entityId?: string;
 
-  /** function returns the background color for each entry*/
-  @Input() getBackgroundColor?: (rec: T) => string;
-
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource();
   /** columns displayed in the template's table */
@@ -141,6 +138,9 @@ export class EntitySubrecordComponent<T extends Entity>
         }
       });
   }
+
+  /** function returns the background color for each entry*/
+  @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
 
   ngOnInit() {
     this.recordsDataSource.sort = this.sort;

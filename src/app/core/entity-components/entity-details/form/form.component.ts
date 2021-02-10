@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
-import { FormFieldConfig } from "./FormConfig";
+import { FormConfig } from "./FormConfig";
 import { PanelConfig } from "../EntityDetailsConfig";
 import { Entity } from "../../../entity/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
@@ -31,7 +31,7 @@ export class FormComponent implements OnInitDynamicComponent {
   editing: boolean = false;
   form: FormGroup;
   validateForm: boolean = false;
-  config;
+  config: FormConfig;
 
   constructor(
     private fb: FormBuilder,
@@ -61,7 +61,10 @@ export class FormComponent implements OnInitDynamicComponent {
   }
 
   async save(): Promise<Entity> {
-    this.checkFormValidity();
+    if (!this.checkFormValidity()) {
+      return;
+    }
+
     this.assignFormValuesToEntity(this.entity, this.form);
     try {
       await this.entityMapperService.save<Entity>(this.entity);
@@ -96,7 +99,7 @@ export class FormComponent implements OnInitDynamicComponent {
 
   private buildFormConfig() {
     const formConfig = {};
-    this.config.cols.forEach((c: FormFieldConfig[]) =>
+    this.config.cols.forEach((c) =>
       c.forEach((r) => {
         formConfig[r.id] = [
           { value: this.entity[r.id], disabled: !this.editing },
@@ -122,7 +125,7 @@ export class FormComponent implements OnInitDynamicComponent {
     this.form = this.fb.group(this.buildFormConfig());
   }
 
-  private checkFormValidity() {
+  private checkFormValidity(): boolean {
     // errors regarding invalid fields wont be displayed unless marked as touched
     this.form.markAllAsTouched();
     this.validateForm = true;
@@ -131,10 +134,10 @@ export class FormComponent implements OnInitDynamicComponent {
       this.alertService.addDanger(
         "Form invalid, required fields (" + invalidFields + ") missing"
       );
-      throw new Error(
-        "Form invalid, required fields(" + invalidFields + ") missing"
-      );
+      return false;
     }
+
+    return true;
   }
 
   private getInvalidFields() {

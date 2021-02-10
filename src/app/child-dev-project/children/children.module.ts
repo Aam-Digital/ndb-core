@@ -72,6 +72,7 @@ import { EntitySubrecordModule } from "../../core/entity-components/entity-subre
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 import { WebdavModule } from "../../core/webdav/webdav.module";
 import { PreviousTeamsComponent } from "../previous-teams/previous-teams.component";
+import { BmiBlockComponent } from "./children-list/bmi-block/bmi-block.component";
 
 @NgModule({
   imports: [
@@ -132,6 +133,7 @@ import { PreviousTeamsComponent } from "../previous-teams/previous-teams.compone
     PreviousTeamsComponent,
     SchoolBlockWrapperComponent,
     ChildBlockListComponent,
+    BmiBlockComponent,
   ],
   providers: [
     ChildrenService,
@@ -149,6 +151,7 @@ import { PreviousTeamsComponent } from "../previous-teams/previous-teams.compone
     ChildrenCountDashboardComponent,
     NoRecentNotesDashboardComponent,
     RecentNotesDashboardComponent,
+    BmiBlockComponent,
   ],
 })
 export class ChildrenModule {}

@@ -68,6 +68,36 @@ export const defaultConfig = {
 
   "enum:attendance-status": defaultAttendanceStatusTypes,
 
+  "enum:document-status": [
+    {
+      "id": "",
+      "label": ""
+    },
+    {
+      "id": "OK (copy with us)",
+      "label": "OK (copy with us)"
+    },
+    {
+      "id": "OK (copy needed for us)",
+      "label": "OK (copy needed for us)"
+    },
+    {
+      "id": "needs correction",
+      "label": "needs correction"
+    },
+    {
+      "id": "applied",
+      "label": "applied"
+    },
+    {
+      "id": "doesn't have",
+      "label": "doesn't have"
+    },
+    {
+      "id": "not eligible",
+      "label": "not eligible"
+    }
+  ],
 
   "view:": {
     "component": "Dashboard",
@@ -448,27 +478,27 @@ export const defaultConfig = {
           "id": "motherTongue"
         },
         {
-          "component": "DisplayText",
+          "component": "DisplayConfigurableEnum",
           "title": "Aadhar",
           "id": "has_aadhar"
         },
         {
-          "component": "DisplayText",
+          "component": "DisplayConfigurableEnum",
           "title": "Bank Account",
           "id": "has_bankAccount"
         },
         {
-          "component": "DisplayText",
+          "component": "DisplayConfigurableEnum",
           "title": "Kanyashree",
           "id": "has_kanyashree"
         },
         {
-          "component": "DisplayText",
+          "component": "DisplayConfigurableEnum",
           "title": "Ration Card",
           "id": "has_rationCard"
         },
         {
-          "component": "DisplayText",
+          "component": "DisplayConfigurableEnum",
           "title": "BPL Card",
           "id": "has_BplCard"
         },
@@ -511,7 +541,12 @@ export const defaultConfig = {
           "component": "DisplayDate",
           "title": "Last De-Worming",
           "id": "health_lastDeworming"
-        }
+        },
+        {
+          "component": "BmiBlock",
+          "title": "BMI",
+          "id": "health_BMI",
+          "noSorting": true}
       ],
       "columnGroup": {
         "default": "School Info",
@@ -564,6 +599,7 @@ export const defaultConfig = {
               "projectNumber",
               "name",
               "center",
+              "health_BMI",
               "health_vaccinationStatus",
               "health_bloodGroup",
               "health_eyeHealthStatus",
@@ -684,74 +720,34 @@ export const defaultConfig = {
                       "placeholder": "Admission Date"
                     },
                     {
-                      "input": "select",
+                      "input": "configurable-enum-select",
                       "id": "has_aadhar",
                       "placeholder": "Aadhar Status",
-                      "options": [
-                        "OK (copy with us)",
-                        "OK (copy needed for us)",
-                        "needs correction",
-                        "applied",
-                        "doesn't have",
-                        "not eligible",
-                        ""
-                      ]
+                      "enumId": "document-status"
                     },
                     {
-                      "input": "select",
+                      "input": "configurable-enum-select",
                       "id": "has_kanyashree",
                       "placeholder": "Kanyashree Status",
-                      "options": [
-                        "OK (copy with us)",
-                        "OK (copy needed for us)",
-                        "needs correction",
-                        "applied",
-                        "doesn't have",
-                        "not eligible",
-                        ""
-                      ]
+                      "enumId": "document-status"
                     },
                     {
-                      "input": "select",
+                      "input": "configurable-enum-select",
                       "id": "has_bankAccount",
                       "placeholder": "Bank Account Status",
-                      "options": [
-                        "OK (copy with us)",
-                        "OK (copy needed for us)",
-                        "needs correction",
-                        "applied",
-                        "doesn't have",
-                        "not eligible",
-                        ""
-                      ]
+                      "enumId": "document-status"
                     },
                     {
-                      "input": "select",
+                      "input": "configurable-enum-select",
                       "id": "has_rationCard",
                       "placeholder": "Ration Card Status",
-                      "options": [
-                        "OK (copy with us)",
-                        "OK (copy needed for us)",
-                        "needs correction",
-                        "applied",
-                        "doesn't have",
-                        "not eligible",
-                        ""
-                      ]
+                      "enumId": "document-status"
                     },
                     {
-                      "input": "select",
+                      "input": "configurable-enum-select",
                       "id": "has_BplCard",
                       "placeholder": "BPL Card Status",
-                      "options": [
-                        "OK (copy with us)",
-                        "OK (copy needed for us)",
-                        "needs correction",
-                        "applied",
-                        "doesn't have",
-                        "not eligible",
-                        ""
-                      ]
+                      "enumId": "document-status"
                     }
                   ],
                   [
@@ -1052,11 +1048,11 @@ export const defaultConfig = {
       {"name": "phone", "schema": { "dataType": "string" } },
       {"name": "guardianName", "schema": { "dataType": "string" } },
       {"name": "preferredTimeForGuardianMeeting", "schema": { "dataType": "string" } },
-      {"name": "has_aadhar", "schema": { "dataType": "string" } },
-      {"name": "has_bankAccount", "schema": { "dataType": "string" } },
-      {"name": "has_kanyashree", "schema": { "dataType": "string" } },
-      {"name": "has_rationCard", "schema": { "dataType": "string" } },
-      {"name": "has_BplCard", "schema": { "dataType": "string" } },
+      {"name": "has_aadhar", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
+      {"name": "has_bankAccount", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
+      {"name": "has_kanyashree", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
+      {"name": "has_rationCard", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
+      {"name": "has_BplCard", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
       {"name": "health_vaccinationStatus", "schema": { "dataType": "string" } },
       {"name": "health_bloodGroup", "schema": { "dataType": "string" } },
       {"name": "health_lastDentalCheckup", "schema": { "dataType": "Date" } },
