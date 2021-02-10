@@ -23,7 +23,7 @@ describe("RecentAttendanceBlocksComponent", () => {
   beforeEach(async(() => {
     mockAttendanceService = jasmine.createSpyObj("mockAttendanceService", [
       "getActivitiesForChild",
-      "getActivityAttendanceForPeriod",
+      "getAllActivityAttendancesForPeriod",
     ]);
 
     TestBed.configureTestingModule({
@@ -59,11 +59,16 @@ describe("RecentAttendanceBlocksComponent", () => {
       testActivity2,
       testActivity3,
     ]);
-    mockAttendanceService.getActivityAttendanceForPeriod.and.callFake(
-      (activity) => {
-        const record = ActivityAttendance.create(new Date(), []);
-        record.activity = activity;
-        return Promise.resolve(record);
+    mockAttendanceService.getAllActivityAttendancesForPeriod.and.callFake(
+      (from, to) => {
+        const results = [];
+        for (const activity of [testActivity1, testActivity2, testActivity3]) {
+          const record = ActivityAttendance.create(from, []);
+          record.periodTo = to;
+          record.activity = activity;
+          results.push(record);
+        }
+        return Promise.resolve(results);
       }
     );
 

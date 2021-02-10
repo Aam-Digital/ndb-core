@@ -117,7 +117,7 @@ class Timer {
  * Delete all indexedDB databases in the browser matching the given filter.
  * @param filterFun Filter function taking a database name and returning true if this should be deleted.
  */
-async function deleteAllIndexedDB(
+export async function deleteAllIndexedDB(
   filterFun: (dbName: string) => boolean
 ): Promise<void> {
   // @ts-ignore

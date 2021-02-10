@@ -53,7 +53,7 @@ export class RecurringActivity extends Entity {
     dataType: "configurable-enum",
     innerDataType: INTERACTION_TYPE_CONFIG_ID,
   })
-  type: InteractionType = { id: "", label: "" };
+  type: InteractionType;
 
   /** IDs of children linked to this activity */
   @DatabaseField() participants: string[] = [];

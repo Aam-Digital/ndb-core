@@ -80,7 +80,7 @@ export class DatabaseIndexingService {
    * Load data from the Database through the given, previously created index.
    * @param entityConstructor
    * @param indexName The name of the previously created index to be queried.
-   * @param options (Optional) additional query options object or a simple value used as the exact key to retrieve
+   * @param options (Optional) additional query options object or a simple value used as the specific key retrieve
    */
   async queryIndexDocs<T extends Entity>(
     entityConstructor: EntityConstructor<T>,
@@ -97,6 +97,25 @@ export class DatabaseIndexingService {
       const entity = new entityConstructor("");
       this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
       return entity;
+    });
+  }
+
+  /**
+   * Load data from the Database through the given, previously created index for a key range.
+   * @param entityConstructor
+   * @param indexName The name of the previously created index to be queried.
+   * @param startkey
+   * @param endkey
+   */
+  async queryIndexDocsRange<T extends Entity>(
+    entityConstructor: EntityConstructor<T>,
+    indexName: string,
+    startkey: string,
+    endkey: string
+  ): Promise<T[]> {
+    return this.queryIndexDocs(entityConstructor, indexName, {
+      startkey: startkey,
+      endkey: endkey,
     });
   }
 

@@ -4,27 +4,38 @@ import { AttendanceService } from "./attendance.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { Database } from "../../core/database/database";
-import { MockDatabase } from "../../core/database/mock-database";
 import { Note } from "../notes/model/note";
 import { RecurringActivity } from "./model/recurring-activity";
 import moment from "moment";
 import { defaultInteractionTypes } from "../../core/config/default-config/default-interaction-types";
+import { PouchDatabase } from "../../core/database/pouch-database";
+import PouchDB from "pouchdb-browser";
+import { LoggingService } from "../../core/logging/logging.service";
+import { deleteAllIndexedDB } from "../../utils/performance-tests.spec";
+import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
 
-  let mockDatabase: MockDatabase;
+  let entityMapper: EntityMapperService;
+  let rawPouch;
 
-  async function addEventToDatabase(
-    date: Date,
-    activityIdWithPrefix: string
-  ): Promise<Note> {
+  function cleanLoadedData(obj: any | any[]) {
+    if (Array.isArray(obj)) {
+      return obj.map((o) => cleanLoadedData(o));
+    } else {
+      delete obj.searchIndices;
+      return obj;
+    }
+  }
+
+  function createEvent(date: Date, activityIdWithPrefix: string): Note {
     const event = Note.create(date, "generated event");
     event.relatesTo = activityIdWithPrefix;
     event.category = defaultInteractionTypes.find(
       (t) => t.id === "COACHING_CLASS"
     );
-    await mockDatabase.put(event);
+
     return event;
   }
 
@@ -34,30 +45,48 @@ describe("AttendanceService", () => {
   beforeEach(async () => {
     activity1 = RecurringActivity.create("activity 1");
     activity2 = RecurringActivity.create("activity 2");
-    const someUnrelatedNote = Note.create(
-      new Date("2020-01-01"),
-      "report not event"
-    );
-    mockDatabase = MockDatabase.createWithData([
-      activity1,
-      activity2,
-      someUnrelatedNote,
-    ]);
 
-    e1_1 = await addEventToDatabase(new Date("2020-01-01"), activity1._id);
-    e1_2 = await addEventToDatabase(new Date("2020-01-02"), activity1._id);
-    e1_3 = await addEventToDatabase(new Date("2020-03-02"), activity1._id);
-    e2_1 = await addEventToDatabase(new Date("2020-01-01"), activity2._id);
+    // testDB = MockDatabase.createWithData([]);
+    rawPouch = new PouchDB("unit-testing");
+    const testDB = new PouchDatabase(rawPouch, new LoggingService());
+
+    e1_1 = createEvent(new Date("2020-01-01"), activity1._id);
+    e1_2 = createEvent(new Date("2020-01-02"), activity1._id);
+    e1_3 = createEvent(new Date("2020-03-02"), activity1._id);
+    e2_1 = createEvent(new Date("2020-01-01"), activity2._id);
 
     TestBed.configureTestingModule({
+      imports: [ConfigurableEnumModule],
       providers: [
         AttendanceService,
         EntityMapperService,
         EntitySchemaService,
-        { provide: Database, useValue: mockDatabase },
+        { provide: Database, useValue: testDB },
       ],
     });
     service = TestBed.inject(AttendanceService);
+    // @ts-ignore call private method so we can await its completion, avoiding errors if afterEach is called before
+    await service.createIndices();
+
+    entityMapper = TestBed.inject<EntityMapperService>(EntityMapperService);
+
+    await entityMapper.save(activity1);
+    await entityMapper.save(activity2);
+
+    const someUnrelatedNote = Note.create(
+      new Date("2020-01-01"),
+      "report not event"
+    );
+    await entityMapper.save(someUnrelatedNote);
+    await entityMapper.save(e1_1);
+    await entityMapper.save(e1_2);
+    await entityMapper.save(e1_3);
+    await entityMapper.save(e2_1);
+  });
+
+  afterEach(async () => {
+    await rawPouch.close();
+    await deleteAllIndexedDB(() => true);
   });
 
   it("should be created", () => {
@@ -65,8 +94,12 @@ describe("AttendanceService", () => {
   });
 
   it("gets events for a date", async () => {
-    const actualEvents = await service.getEventsOnDate(new Date("2020-01-01"));
-    expect(actualEvents).toEqual([e1_1, e2_1]);
+    let actualEvents = await service.getEventsOnDate(new Date("2020-01-01"));
+    actualEvents = cleanLoadedData(actualEvents);
+
+    expect(actualEvents.length).toBe(2);
+    expect(actualEvents).toContain(e1_1);
+    expect(actualEvents).toContain(e2_1);
   });
 
   it("gets empty array for a date without events", async () => {
@@ -74,7 +107,7 @@ describe("AttendanceService", () => {
     expect(actualEvents).toEqual([]);
   });
 
-  it("creates a ActivityAttendance for each month when there is at least one event", async () => {
+  it("getActivityAttendances creates record for each month when there is at least one event", async () => {
     const actualAttendances = await service.getActivityAttendances(activity1);
 
     expect(actualAttendances.length).toBe(2);
@@ -85,7 +118,9 @@ describe("AttendanceService", () => {
         "day"
       )
     ).toBeTrue();
-    expect(actualAttendances[0].events).toEqual([e1_1, e1_2]);
+    expect(cleanLoadedData(actualAttendances[0].events)).toEqual(
+      jasmine.arrayWithExactContents([e1_1, e1_2])
+    );
     expect(actualAttendances[0].activity).toEqual(activity1);
 
     expect(
@@ -94,21 +129,8 @@ describe("AttendanceService", () => {
         "day"
       )
     ).toBeTrue();
-    expect(actualAttendances[1].events).toEqual([e1_3]);
+    expect(cleanLoadedData(actualAttendances[1].events)).toEqual([e1_3]);
     expect(actualAttendances[1].activity).toEqual(activity1);
-  });
-
-  it("getActivityAttendanceForPeriod creates a single record for the given activity and period", async () => {
-    const actual = await service.getActivityAttendanceForPeriod(
-      activity1,
-      new Date("2020-01-01"),
-      new Date("2020-01-05")
-    );
-
-    expect(actual.events).toEqual([e1_1, e1_2]);
-    expect(actual.activity).toEqual(activity1);
-    expect(actual.periodFrom).toEqual(new Date("2020-01-01"));
-    expect(actual.periodTo).toEqual(new Date("2020-01-05"));
   });
 
   it("getAllActivityAttendancesForPeriod creates records for every activity with events in the given period", async () => {
@@ -119,10 +141,14 @@ describe("AttendanceService", () => {
 
     expect(actualAttendences.length).toBe(2);
     expect(
-      actualAttendences.find((t) => t.activity._id === activity1._id).events
+      cleanLoadedData(
+        actualAttendences.find((t) => t.activity._id === activity1._id).events
+      )
     ).toEqual([e1_1, e1_2]);
     expect(
-      actualAttendences.find((t) => t.activity._id === activity2._id).events
+      cleanLoadedData(
+        actualAttendences.find((t) => t.activity._id === activity2._id).events
+      )
     ).toEqual([e2_1]);
 
     expect(actualAttendences[0].periodFrom).toEqual(new Date("2020-01-01"));
@@ -135,10 +161,11 @@ describe("AttendanceService", () => {
     const testChildId = "c1";
     const testActivity1 = RecurringActivity.create("a1");
     testActivity1.participants.push(testChildId);
-    await mockDatabase.put(testActivity1);
+
+    await entityMapper.save(testActivity1);
 
     const actual = await service.getActivitiesForChild(testChildId);
 
-    expect(actual).toEqual([testActivity1]); // and does not include defaults activity1 or activity2
+    expect(cleanLoadedData(actual)).toEqual([testActivity1]); // and does not include defaults activity1 or activity2
   });
 });

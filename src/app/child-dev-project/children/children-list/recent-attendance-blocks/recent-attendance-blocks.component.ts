@@ -72,13 +72,15 @@ export class RecentAttendanceBlocksComponent implements OnInitDynamicComponent {
       }
 
       this.attendanceList = [];
-      for (const activity of activities) {
-        const attendanceRecord = await this.attendanceService.getActivityAttendanceForPeriod(
-          activity,
-          moment().startOf("month").toDate(),
-          moment().endOf("month").toDate()
-        );
-        this.attendanceList.push(attendanceRecord);
+      const activityRecords = await this.attendanceService.getAllActivityAttendancesForPeriod(
+        moment().startOf("month").toDate(),
+        moment().endOf("month").toDate()
+      );
+
+      for (const record of activityRecords) {
+        if (activities.find((a) => a.getId() === record.activity.getId())) {
+          this.attendanceList.push(record);
+        }
       }
     }
   }
