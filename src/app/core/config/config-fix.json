@@ -1011,6 +1011,9 @@
   },
 
   "entity:Child": {
+    "permissions": {
+      "create": ["admin"]
+    },
     "attributes": [
       {"name": "address", "schema": { "dataType": "string" } },
       {"name": "phone", "schema": { "dataType": "string" } },
