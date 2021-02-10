@@ -5,5 +5,6 @@ import { EntityOperationDirective } from "./entity-operation.directive";
 @NgModule({
   declarations: [EntityOperationDirective],
   imports: [CommonModule],
+  exports: [EntityOperationDirective],
 })
 export class PermissionsModule {}

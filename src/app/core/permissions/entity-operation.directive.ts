@@ -1,24 +1,24 @@
-import { Directive, ElementRef, Input, OnInit } from "@angular/core";
+import { Directive, ElementRef, Input, OnChanges } from "@angular/core";
 import {
   EntityPermissionsService,
   OperationType,
 } from "./entity-permissions.service";
-import { Entity, EntityConstructor } from "../entity/entity";
+import { Entity } from "../entity/entity";
 
 @Directive({
   selector: "[appEntityOperation]",
 })
-export class EntityOperationDirective implements OnInit {
+export class EntityOperationDirective implements OnChanges {
   @Input("appEntityOperation") arguments: {
     operation: OperationType;
-    entity: EntityConstructor<Entity>;
+    entity: typeof Entity;
   };
   constructor(
     private el: ElementRef,
     private entityPermissionService: EntityPermissionsService
   ) {}
 
-  ngOnInit() {
+  ngOnChanges() {
     if (this.arguments?.operation && this.arguments?.entity) {
       this.el.nativeElement.disabled =
         this.el.nativeElement.disabled ||

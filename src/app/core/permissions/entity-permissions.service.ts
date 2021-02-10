@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Entity, EntityConstructor } from "../entity/entity";
+import { Entity } from "../entity/entity";
 import { SessionService } from "../session/session-service/session.service";
 import { EntityConfigService } from "../entity/entity-config.service";
 
@@ -20,7 +20,7 @@ export class EntityPermissionsService {
   ) {}
 
   public userIsPermitted(
-    entity: EntityConstructor<Entity>,
+    entity: typeof Entity,
     operation: OperationType
   ): boolean {
     const entityConfig = this.entityConfigService.getEntityConfig(entity);

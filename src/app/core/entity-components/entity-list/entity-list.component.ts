@@ -39,6 +39,7 @@ import {
   ConfigurableEnumConfig,
 } from "../../configurable-enum/configurable-enum.interface";
 import { LoggingService } from "../../logging/logging.service";
+import { OperationType } from "../../permissions/entity-permissions.service";
 
 interface FilterComponentSettings<T> {
   filterSettings: FilterSelection<T>;
@@ -74,6 +75,9 @@ export class EntityListComponent<T extends Entity>
   defaultColumnGroup = "";
   mobileColumnGroup = "";
   filtersConfig: FilterConfig[] = [];
+
+  entityConstructor: typeof Entity;
+  operationType = OperationType;
 
   ready = true;
   columnsToDisplay: string[] = [];
@@ -140,6 +144,9 @@ export class EntityListComponent<T extends Entity>
       this.displayColumnGroup(this.defaultColumnGroup);
     }
     if (changes.hasOwnProperty("entityList")) {
+      if (this.entityList.length > 0) {
+        this.entityConstructor = this.entityList[0].getConstructor();
+      }
       this.initFilterSelections();
     }
     this.loadUrlParams();

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Entity, EntityConstructor } from "./entity";
+import { Entity } from "./entity";
 import { ConfigService } from "../config/config.service";
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { addPropertySchema } from "./database-field.decorator";
@@ -13,9 +13,7 @@ export class EntityConfigService {
 
   constructor(private configService: ConfigService) {}
 
-  public addConfigAttributes<T extends Entity>(
-    entityType: EntityConstructor<T>
-  ) {
+  public addConfigAttributes<T extends Entity>(entityType: typeof Entity) {
     const entityConfig = this.getEntityConfig(entityType);
     if (entityConfig?.attributes) {
       entityConfig.attributes.forEach((attribute) =>
@@ -28,10 +26,9 @@ export class EntityConfigService {
     }
   }
 
-  public getEntityConfig(entityType: EntityConstructor<Entity>): EntityConfig {
+  public getEntityConfig(entityType: typeof Entity): EntityConfig {
     const configName =
-      EntityConfigService.PREFIX_ENTITY_CONFIG +
-      entityType.prototype.constructor.ENTITY_TYPE;
+      EntityConfigService.PREFIX_ENTITY_CONFIG + entityType.ENTITY_TYPE;
     return this.configService.getConfig<EntityConfig>(configName);
   }
 }
