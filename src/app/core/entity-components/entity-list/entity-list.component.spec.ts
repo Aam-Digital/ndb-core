@@ -256,4 +256,12 @@ describe("EntityListComponent", () => {
     expect(component.filtersConfig).toEqual([]);
     expect(component.filterSelections).toEqual([]);
   });
+
+  it("extracts the constructor of the list objects", () => {
+    component.entityList = [new Child()];
+    component.ngOnChanges({
+      entityList: new SimpleChange(false, component.entityList, false),
+    });
+    expect(component.entityConstructor.ENTITY_TYPE).toEqual(Child.ENTITY_TYPE);
+  });
 });
