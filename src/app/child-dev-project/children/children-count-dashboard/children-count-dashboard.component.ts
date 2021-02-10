@@ -47,7 +47,8 @@ export class ChildrenCountDashboardComponent
     const params = {};
     params[this.groupBy] = filterString.toLocaleLowerCase();
 
-    this.router.navigate(["/child"], { queryParams: params });
+    const path = "/" + Child.ENTITY_TYPE.toLowerCase();
+    this.router.navigate([path], { queryParams: params });
   }
 
   private updateCounts(children: Child[]) {

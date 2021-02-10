@@ -34,6 +34,7 @@ export class ChildrenListComponent implements OnInit {
   }
 
   routeTo(route: string) {
-    this.router.navigate(["/child", route]);
+    const path = "/" + Child.ENTITY_TYPE.toLowerCase();
+    this.router.navigate([path, route]);
   }
 }

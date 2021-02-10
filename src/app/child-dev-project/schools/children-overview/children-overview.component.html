@@ -17,7 +17,7 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row
             *matRowDef="let row; columns: displayedColumns"
-            [routerLink]="['/child', row.getId()]"
+            [routerLink]="[row.getType().toLowerCase(), row.getId()]"
             style="cursor: pointer;"
     ></mat-row>
 </table>
