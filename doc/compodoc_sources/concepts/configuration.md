@@ -31,6 +31,8 @@ It loads the configuration from the database (or the default file if no entry is
 Some core services use the ConfigService to dynamically set up parts of the application on startup.
 For example the [NavigationItemsService](../../injectables/NavigationItemsService.html) creates the menu items as configured
 and the [RouterService](../../injectables/RouterService.html) sets up Angular routing defining what components users see.
+The config service provides a behavior subject which will notify all subscribers when a new configuration was uploaded.
+This can be used for core tasks like setting up the routes or creating the navigation bar.
 
 Top-level "view" components (i.e. components that are used to define a whole page, not just some building block for a part or section)
 receive their config data through the standard Angular router and can access it by injecting `ActivatedRoute`.
@@ -53,6 +55,8 @@ Example:
 }
 ```
 
+Uploading and downloading the configuration can be done by admins inside the admin view.
+
 -----
 ## Config File
 
@@ -62,7 +66,7 @@ On the top level of the config file, there are four different kinds of entries:
 1. The main navigation menu (`navigationMenu`)
 1. Views defining the UI of each page (`view:<path>`)
 1. Lists of select options for dropdown fields (`enum:<category-id>`, including available Note categories, etc.)
-1. Entity schemas defining fields to be saved (`entity:<entity-id>`)
+1. Entity configuration to define [schemas](entity-schema-system.md) or permissions  (`entity:<entity-id>`)
 
 
 ### Navigation Menu
@@ -98,7 +102,7 @@ Example:
 ### Views
 The largest part of the config file are the views. Each view entry starts with `view:`.
 The part that comes after the colon is what comes after the top level / in the URL of the app.
-There has to be one view entry with nothing after the colon, thus directing to the root path that is used as a default one the user opens the app.
+There has to be one view entry with nothing after the colon, thus directing to the root path that is used as a default one when the user opens the app.
 Paths can have multiple parts, e.g. `view:admin/conflicts`.
 If we append `:id`, then this is used as a parameter directly from the app, e.g. `view:child/:id` is the path for the child details view where the app provides the child entity id to be viewed to the component.
 
@@ -164,7 +168,9 @@ Example:
 ```
 
 The `"columnGroup"` object holds the three properties `"default"`, `"mobile"` and `"groups"`.
-`"default"` and `"mobile"` hold the names of the group of columns being display by default or on a mobile device.
+`"default"` and `"mobile"` hold the names of the group of columns being displayed by default or on a mobile device.
+If the `"columnGroup"` property is not defined, all columns will be displayed.
+If `"default"` or `"mobile"` is not defined, the first entry of `"groups"` will be used.
 `"groups"` consists of an array of groups of columns, where every entry has a `"name"` and an array of column names within `"columns"`.
 
 Example:
@@ -193,8 +199,16 @@ Example:
 
 ```
 
-The object `"filters"` within the config of a list component is used for filtering the data to be displayed.
-It holds an array in which every entry has to have an `"id"` and may also have the fields `"type"`, `"default"`, `"true"`, `"false"` and `"all"`.
+The object `"filters"` within the config of a list component can be used to create filter options for the list data.
+Currently, three types of filters exist: default, boolean and prebuilt.
+For default and boolean filters, the `"id"` field refers to an attribute of the entity which is displayed in the list.
+The default filter only requires the field `"id"` and will provide filter options for all possible values of this property.
+A boolean filter can be specified with `"type": "boolean"` and requires the fields `"id"`, `"default"`, `"true"`, `"false"` and `"all"` to be set.
+This will create a filter for boolean values with three buttons (`all`, `true`, `false`).
+The names of these buttons can be specified using the `"true"`, `"false"` and `"all"` option.
+The `"default"` options defines which button should be active on default and has to be `""`, `"true"` or `"false"`.
+The prebuilt option is used to enable or disable filters that contain more logic and are implemented inside the component which is displayed.
+This option requires the fields `"type"` and `"id"`, where `"id"` matched the `id` of a prebuilt filter inside a component.
 
 Example:
 ```
@@ -209,7 +223,11 @@ Example:
                     "true": "Private School",
                     "false": "Government School",
                     "all": "All"
-                }
+                },
+                {
+                  "id": "date",
+                  "type": "prebuilt"
+                },
         ]
 ```
 
@@ -219,11 +237,117 @@ Detail components can show data of a single entity presented in multiple section
 
 You can find details on the config format and its sub-sections from API reference section: [EntityDetailsConfig](../../classes/EntityDetailsConfig.html)
 
+The detail component requires three attributes: `"icon"`, `"entity"` and `"panels"`.
+`"icon"` indicates a little icon that will be rendered on the top of the page.
+`"entity"` expects the name of an entity for which the details page should be created. 
+This has to match exactly the name of the entity defined by the `@DatabaseEntity()` annotation.
+The entity will then be loaded using the entity name and the id which is read from the URL.
+The `"panels"` field expects an array of panel definitions.
+Each panel has a `"title"` and an array of `"components"`.
+The component configuration requires another `"title"`, the `"component"` that should be rendered (the component has to be defined here [OnInitDynamicComponent](../../interfaces/OnInitDynamicComponent.html)) and a configuration (`"config"`) which is passed to this component.
+```
+    "config": {
+      "icon": "child",
+      "entity": "Child",
+      "panels": [
+        {
+          "title": "Basic Information",
+          "components": [
+            {
+              "title": "",
+              "component": "Form",
+              "config": { }
+            }
+          ]
+        },
+        {
+          "title": "Education",
+          "components": [
+            {
+              "title": "SchoolHistory",
+              "component": "PreviousSchools"
+            },
+            {
+              "title": "ASER Results",
+              "component": "Aser"
+            }
+          ]
+        }
+      ]
+    }
+```
+
+#### The Form Component
+The form component is a flexible component that can be used inside the details component.
+It allows to dynamically create a form through configuration.
+The configuration for this component expects a single field, the `"cols"`.
+This field should be a two dimensional array where the first dimension defines what is rendered next to each other (the columns), and the second dimension what is rendered in each column.
+If all fields are the same height, then every field can be defined as a column.
+The inner object can have the following but not always required fields: `"input"`, `"id"`, `"placeholder"`, `"required"`, `"options"` and `"enumId"`.
+`"input"` defines which input type should be used.
+`"id"` defines the entity attribute which should be displayed and modified.
+`"placeholder"` defines a value that is displayed if no value is present.
+`"required"` specifies whether a value is required, default is `false`.
+`"options"` is only required when `"input": "select"` and defines the available select options.
+`"enumId"` is only required when `"input": "configurable-enum-select"` and refers to the config id of the enum that should be used for the select options.
+
+```
+  "config": {
+    "cols": [
+      [
+        {
+          "input": "photo",
+          "id": "photoFile",
+          "placeholder": "Photo Filename"
+        }
+      ],
+      [
+        {
+          "input": "text",
+          "id": "name",
+          "placeholder": "Name",
+          "required": true
+        },
+        {
+          "input": "text",
+          "id": "projectNumber",
+          "placeholder": "Project Number"
+        }
+      ],
+      [
+        {
+          "input": "age"
+        },
+        {
+          "input": "datepicker",
+          "id": "dateOfBirth",
+          "placeholder": "Date of Birth"
+        },
+        {
+          "input": "select",
+          "id": "gender",
+          "placeholder": "Gender",
+          "options": [
+            "M",
+            "F"
+          ],
+        },
+        {
+          "input": "configurable-enum-select",
+          "id": "has_aadhar",
+          "placeholder": "Aadhar Status",
+          "enumId": "document-status"
+        },
+      ]
+    ]
+  }
+```
 
 ### Entity
-The entity object within the config file finally is used to define specific entity types.
-The name of the entity types comes after the colon of prefix `entity:`, e.g. `"entity:Child"` for an entity type called `Child`.
-An entity entry has the only field `"attributes:"`, which hols an array of objects of the following type:
+The entity object within the config file can be used to extend and configure existing entities.
+The name of the entity to which this config refers comes ofter the colon in this case `"child"`.
+The attribute field allows to add attributes to an entity:
+Each attribute requires a `"name"` and a `"schema"` which refers to the entity [schemas](entity-schema-system.md).
 
 Example:
 ```
@@ -269,7 +393,8 @@ Example:
 }
 ```
 
-#### Using configurable enums in forms
+#### Defining configurable enum properties
+
 In order to use such an "enum" in entity fields, you need to set the schema datatype and the form type in the according config objects:
 
 In the entity, set the dataType to "configurable-enum" and the "innerDataType" to the id of the enum config:
@@ -278,6 +403,8 @@ In the entity, set the dataType to "configurable-enum" and the "innerDataType" t
   {"name": "status", "schema": { "dataType": "configurable-enum", "innerDataType": "project-status"  } }
   ...
 ```
+
+#### Display a configurable enum property in the list view
 
 In the List View columns config, use the "DisplayConfigurableEnum" component for the field:
 ```
@@ -290,6 +417,8 @@ In the List View columns config, use the "DisplayConfigurableEnum" component for
   ...
 ]
 ```
+
+#### Display a configurable enum property in the details view
 
 In the Details View config for a "Form" component, use the "configurable-enum-select" input type
 and additionally define the "enumId" of the enum config it refers to:
