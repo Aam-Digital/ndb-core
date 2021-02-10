@@ -14,6 +14,7 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
+import { OperationType } from "../../permissions/entity-permissions.service";
 
 const ENTITY_MAP: Map<string, any> = new Map<string, EntityConstructor<Entity>>(
   [
@@ -36,6 +37,8 @@ const ENTITY_MAP: Map<string, any> = new Map<string, EntityConstructor<Entity>>(
 export class EntityDetailsComponent {
   entity: Entity;
   creatingNew = false;
+
+  operationType = OperationType;
 
   panels: Panel[] = [];
   classNamesWithIcon: String;

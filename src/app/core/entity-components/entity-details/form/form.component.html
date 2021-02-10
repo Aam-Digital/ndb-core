@@ -179,6 +179,7 @@
             mat-stroked-button
             class="edit-button"
             (click)="switchEdit()"
+            [appEntityOperation]="{entity: entity?.getConstructor(), operation: operationType.UPDATE}"
     >
         Edit
     </button>

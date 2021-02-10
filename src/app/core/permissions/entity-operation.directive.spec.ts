@@ -4,7 +4,7 @@ import {
   OperationType,
 } from "./entity-permissions.service";
 import { Component, ElementRef, ViewChild } from "@angular/core";
-import { TestBed } from "@angular/core/testing";
+import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { Entity } from "../entity/entity";
 
 describe("EntityOperationDirective", () => {
@@ -29,23 +29,25 @@ describe("EntityOperationDirective", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should disable an element when operation is not permitted", () => {
+  it("should disable an element when operation is not permitted", fakeAsync(() => {
     mockEntityPermissionService.userIsPermitted.and.returnValue(false);
     const component = TestBed.createComponent(TestComponent);
     component.detectChanges();
+    tick();
     expect(
       component.componentInstance.buttonRef.nativeElement.disabled
     ).toBeTrue();
-  });
+  }));
 
-  it("should enable a component when operation is permitted", () => {
+  it("should enable a component when operation is permitted", fakeAsync(() => {
     mockEntityPermissionService.userIsPermitted.and.returnValue(true);
     const component = TestBed.createComponent(TestComponent);
     component.detectChanges();
+    tick();
     expect(
       component.componentInstance.buttonRef.nativeElement.disabled
     ).toBeFalse();
-  });
+  }));
 });
 
 @Component({

@@ -1012,7 +1012,8 @@
 
   "entity:Child": {
     "permissions": {
-      "create": ["admin"]
+      "create": ["admin"],
+      "delete": ["admin"]
     },
     "attributes": [
       {"name": "address", "schema": { "dataType": "string" } },
@@ -1033,5 +1034,12 @@
       {"name": "health_lastVitaminD", "schema": { "dataType": "Date" } },
       {"name": "health_lastDeworming", "schema": { "dataType": "Date" } }
     ]
+  },
+  "entity:School": {
+    "permissions": {
+      "create": ["admin"],
+      "update": ["admin"],
+      "delete": ["admin"]
+    }
   }
 }
