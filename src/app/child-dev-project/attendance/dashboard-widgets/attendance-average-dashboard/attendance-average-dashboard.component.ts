@@ -74,6 +74,7 @@ export class AttendanceAverageDashboardComponent
   }
 
   goToChild(childId: string) {
-    this.router.navigate(["/child", childId]);
+    const path = "/" + Child.ENTITY_TYPE.toLowerCase();
+    this.router.navigate([path, childId]);
   }
 }
