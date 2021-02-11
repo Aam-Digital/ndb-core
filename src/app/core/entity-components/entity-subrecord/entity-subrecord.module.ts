@@ -4,6 +4,7 @@ import { EntitySubrecordComponent } from "./entity-subrecord.component";
 import { KeysPipe } from "./keys-pipe/keys.pipe";
 import { MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
+import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatInputModule } from "@angular/material/input";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatSelectModule } from "@angular/material/select";
@@ -24,6 +25,7 @@ import { MatButtonModule } from "@angular/material/button";
     FormDialogModule,
     EntityModule,
     MatTableModule,
+    MatPaginatorModule,
     MatSortModule,
     MatInputModule,
     MatDatepickerModule,
