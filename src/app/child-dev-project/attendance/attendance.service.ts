@@ -87,11 +87,10 @@ export class AttendanceService {
    * @param startDate The date (or start date of a range)
    * @param endDate (Optional) end date of the period to be queried; if not given, defaults to the start date
    */
-  async getEventsOnDate(startDate: Date, endDate: Date = startDate): Promise<Note[]> {
-    if (!endDate) {
-      endDate = startDate;
-    }
-
+  async getEventsOnDate(
+    startDate: Date,
+    endDate: Date = startDate
+  ): Promise<Note[]> {
     return await this.dbIndexing.queryIndexDocsRange(
       Note,
       "events_index/by_date",
