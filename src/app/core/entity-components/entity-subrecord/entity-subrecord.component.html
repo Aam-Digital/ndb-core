@@ -84,4 +84,10 @@
         [ngStyle]="getBackgroundColor && {'background-color': getBackgroundColor(rec)}">
     </tr>
   </table>
+  <mat-paginator
+            (page)="onPaginateChange($event)"
+            [pageSize]="paginatorPageSize"
+            [pageSizeOptions]="[3, 10, 20, 50]"
+            [showFirstLastButtons]="true"
+    ></mat-paginator>
 </div>
