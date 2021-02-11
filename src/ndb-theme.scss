@@ -22,3 +22,6 @@ $ndb-app-theme: mat-light-theme($ndb-app-primary, $ndb-app-accent, $ndb-app-warn
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 @include angular-material-theme($ndb-app-theme);
+
+// For Tooltips
+@import '~@angular/cdk/overlay-prebuilt.css';
