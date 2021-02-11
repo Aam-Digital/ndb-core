@@ -80,7 +80,7 @@ export class DatabaseIndexingService {
    * Load data from the Database through the given, previously created index.
    * @param entityConstructor
    * @param indexName The name of the previously created index to be queried.
-   * @param options (Optional) additional query options object or a simple value used as the specific key retrieve
+   * @param options (Optional) additional query options object or a simple value used as the exact key to retrieve
    */
   async queryIndexDocs<T extends Entity>(
     entityConstructor: EntityConstructor<T>,
