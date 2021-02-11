@@ -99,7 +99,11 @@ export class AttendanceService {
     );
   }
 
-  private async getEventsForActivity(activityId: string): Promise<Note[]> {
+  async getEventsForActivity(activityId: string): Promise<Note[]> {
+    if (!activityId.startsWith(RecurringActivity.ENTITY_TYPE)) {
+      activityId = RecurringActivity.ENTITY_TYPE + ":" + activityId;
+    }
+
     return await this.dbIndexing.queryIndexDocs(
       Note,
       "events_index/by_activity",

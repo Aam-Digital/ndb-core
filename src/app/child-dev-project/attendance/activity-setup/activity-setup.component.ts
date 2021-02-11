@@ -91,14 +91,11 @@ export class ActivitySetupComponent implements OnInit {
       return undefined;
     }
 
-    const event = Note.create(
-      this.date,
-      activity.title
+    const event = RecurringActivity.createEventForActivity(
+      activity,
+      this.date
     ) as NoteForActivitySetup;
-    event.children = activity.participants;
-    event.relatesTo = activity._id;
     event.author = this.sessionService.getCurrentUser().getId();
-    event.category = activity.type;
     event.isNewFromActivity = true;
     return event;
   }

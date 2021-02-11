@@ -13,21 +13,13 @@ import PouchDB from "pouchdb-browser";
 import { LoggingService } from "../../core/logging/logging.service";
 import { deleteAllIndexedDB } from "../../utils/performance-tests.spec";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
+import { expectEntitiesToMatch } from "../../utils/expect-entity-data";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
 
   let entityMapper: EntityMapperService;
   let rawPouch;
-
-  function cleanLoadedData(obj: any | any[]) {
-    if (Array.isArray(obj)) {
-      return obj.map((o) => cleanLoadedData(o));
-    } else {
-      delete obj.searchIndices;
-      return obj;
-    }
-  }
 
   function createEvent(date: Date, activityIdWithPrefix: string): Note {
     const event = Note.create(date, "generated event");
@@ -94,17 +86,18 @@ describe("AttendanceService", () => {
   });
 
   it("gets events for a date", async () => {
-    let actualEvents = await service.getEventsOnDate(new Date("2020-01-01"));
-    actualEvents = cleanLoadedData(actualEvents);
-
-    expect(actualEvents.length).toBe(2);
-    expect(actualEvents).toContain(e1_1);
-    expect(actualEvents).toContain(e2_1);
+    const actualEvents = await service.getEventsOnDate(new Date("2020-01-01"));
+    await expectEntitiesToMatch(actualEvents, [e1_1, e2_1]);
   });
 
   it("gets empty array for a date without events", async () => {
     const actualEvents = await service.getEventsOnDate(new Date("2007-01-01"));
     expect(actualEvents).toEqual([]);
+  });
+
+  it("gets events for an activity", async () => {
+    const actualEvents = await service.getEventsForActivity(activity1.getId());
+    await expectEntitiesToMatch(actualEvents, [e1_1, e1_2, e1_3]);
   });
 
   it("getActivityAttendances creates record for each month when there is at least one event", async () => {
@@ -118,9 +111,7 @@ describe("AttendanceService", () => {
         "day"
       )
     ).toBeTrue();
-    expect(cleanLoadedData(actualAttendances[0].events)).toEqual(
-      jasmine.arrayWithExactContents([e1_1, e1_2])
-    );
+    await expectEntitiesToMatch(actualAttendances[0].events, [e1_1, e1_2]);
     expect(actualAttendances[0].activity).toEqual(activity1);
 
     expect(
@@ -129,7 +120,7 @@ describe("AttendanceService", () => {
         "day"
       )
     ).toBeTrue();
-    expect(cleanLoadedData(actualAttendances[1].events)).toEqual([e1_3]);
+    await expectEntitiesToMatch(actualAttendances[1].events, [e1_3]);
     expect(actualAttendances[1].activity).toEqual(activity1);
   });
 
@@ -140,16 +131,14 @@ describe("AttendanceService", () => {
     );
 
     expect(actualAttendences.length).toBe(2);
-    expect(
-      cleanLoadedData(
-        actualAttendences.find((t) => t.activity._id === activity1._id).events
-      )
-    ).toEqual([e1_1, e1_2]);
-    expect(
-      cleanLoadedData(
-        actualAttendences.find((t) => t.activity._id === activity2._id).events
-      )
-    ).toEqual([e2_1]);
+    await expectEntitiesToMatch(
+      actualAttendences.find((t) => t.activity._id === activity1._id).events,
+      [e1_1, e1_2]
+    );
+    await expectEntitiesToMatch(
+      actualAttendences.find((t) => t.activity._id === activity2._id).events,
+      [e2_1]
+    );
 
     expect(actualAttendences[0].periodFrom).toEqual(new Date("2020-01-01"));
     expect(actualAttendences[0].periodTo).toEqual(new Date("2020-01-05"));
@@ -166,6 +155,6 @@ describe("AttendanceService", () => {
 
     const actual = await service.getActivitiesForChild(testChildId);
 
-    expect(cleanLoadedData(actual)).toEqual([testActivity1]); // and does not include defaults activity1 or activity2
+    await expectEntitiesToMatch(actual, [testActivity1]); // and does not include defaults activity1 or activity2
   });
 });
