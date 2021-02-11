@@ -26,6 +26,7 @@ import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../alerts/alert.service";
 import { DatePipe } from "@angular/common";
+import { BehaviorSubject } from "rxjs";
 
 /**
  * Generically configurable component to display and edit a list of entities in a compact way
@@ -48,6 +49,14 @@ import { DatePipe } from "@angular/common";
 })
 export class EntitySubrecordComponent<T extends Entity>
   implements OnInit, OnChanges, AfterViewInit {
+  /**
+   * Global state of pagination size for all entity subrecord components.
+   *
+   * When the user changes page size in one component the page size is automatically changed for other components also.
+   * This ensures a consistent UI e.g. for side-by-side subrecord components of multiple attendance record tables.
+   */
+  static paginatorPageSize = new BehaviorSubject(10);
+
   /** data to be displayed */
   @Input() records: Array<T>;
 
@@ -112,9 +121,7 @@ export class EntitySubrecordComponent<T extends Entity>
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-
-  paginatorPageSize = 10;
-  paginatorPageIndex = 0;
+  paginatorPageSize = EntitySubrecordComponent.paginatorPageSize.value;
 
   constructor(
     private _entityMapper: EntityMapperService,
@@ -138,9 +145,7 @@ export class EntitySubrecordComponent<T extends Entity>
   /** function returns the background color for each entry*/
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
 
-  ngOnInit() {
-    this.recordsDataSource.sort = this.sort;
-  }
+  ngOnInit() {}
 
   /**
    * Update the component if any of the @Input properties were changed from outside.
@@ -167,8 +172,25 @@ export class EntitySubrecordComponent<T extends Entity>
   ngAfterViewInit() {
     this.recordsDataSource.sort = this.sort;
     this.recordsDataSource.paginator = this.paginator;
+    EntitySubrecordComponent.paginatorPageSize.subscribe((newPageSize) =>
+      this.updatePagination(newPageSize)
+    );
+  }
+
+  /**
+   * Set the new page size (if it changed) and trigger an update of the UI.
+   * @param newPageSize
+   * @private
+   */
+  private updatePagination(newPageSize: number) {
+    if (this.paginatorPageSize === newPageSize) {
+      return;
+    }
+
+    this.paginatorPageSize = newPageSize;
+
     setTimeout(() => {
-      this.paginator.pageIndex = this.paginatorPageIndex;
+      this.paginator.pageSize = newPageSize;
       this.paginator.page.next({
         pageIndex: this.paginator.pageIndex,
         pageSize: this.paginator.pageSize,
@@ -177,10 +199,14 @@ export class EntitySubrecordComponent<T extends Entity>
     });
   }
 
+  /**
+   * Propagate the change of page size to all other entity subrecord components.
+   * @param event
+   */
   onPaginateChange(event: PageEvent) {
-    this.paginatorPageSize = event.pageSize;
-    this.paginatorPageIndex = event.pageIndex;
-    // this.updateUserPaginationSettings();  // As to now, the pagination settings are not saved to the user obect
+    if (event.pageSize !== this.paginatorPageSize) {
+      EntitySubrecordComponent.paginatorPageSize.next(event.pageSize);
+    }
   }
 
   /**
