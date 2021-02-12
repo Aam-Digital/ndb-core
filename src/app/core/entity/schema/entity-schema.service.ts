@@ -96,6 +96,16 @@ export class EntitySchemaService {
   public transformDatabaseToEntityFormat(data: any, schema: EntitySchema) {
     for (const key of schema.keys()) {
       const schemaField: EntitySchemaField = schema.get(key);
+
+      if (data[key] === undefined) {
+        if (schemaField.defaultValue !== undefined) {
+          data[key] = schemaField.defaultValue;
+        } else {
+          // skip and keep undefined
+          continue;
+        }
+      }
+
       const newValue = this.getDatatypeOrDefault(
         schemaField.dataType
       ).transformToObjectFormat(data[key], schemaField, this, data);
@@ -140,12 +150,24 @@ export class EntitySchemaService {
     const data = {};
 
     for (const key of schema.keys()) {
+      let value = entity[key];
       const schemaField: EntitySchemaField = schema.get(key);
 
-      if (entity[key] !== undefined) {
-        data[key] = this.getDatatypeOrDefault(
-          schemaField.dataType
-        ).transformToDatabaseFormat(entity[key], schemaField, this, entity);
+      if (value === undefined) {
+        if (schemaField.defaultValue !== undefined) {
+          value = schemaField.defaultValue;
+        } else {
+          // skip and keep undefined
+          continue;
+        }
+      }
+
+      data[key] = this.getDatatypeOrDefault(
+        schemaField.dataType
+      ).transformToDatabaseFormat(value, schemaField, this, entity);
+
+      if (data[key] === undefined) {
+        delete data[key];
       }
     }
 
