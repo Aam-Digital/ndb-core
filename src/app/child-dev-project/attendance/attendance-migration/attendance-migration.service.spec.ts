@@ -62,8 +62,8 @@ describe("AttendanceMigrationService", () => {
       Note.create(old.dailyRegister[7].date, testInstitution),
     ];
     for (const event of expectedNotes) {
-      event.category = service.schoolActivity.type;
-      event.relatesTo = service.schoolActivity._id;
+      event.category = service.activities.school.type;
+      event.relatesTo = service.activities.school._id;
       event.children = [testChild];
     }
     expectedNotes[0].getAttendance(
@@ -105,8 +105,8 @@ describe("AttendanceMigrationService", () => {
       Note.create(old1.dailyRegister[0].date, testInstitution),
     ];
     for (const event of expectedNotes) {
-      event.category = service.schoolActivity.type;
-      event.relatesTo = service.schoolActivity._id;
+      event.category = service.activities.school.type;
+      event.relatesTo = service.activities.school._id;
       event.children = [testChild1, testChild2];
     }
     expectedNotes[0].getAttendance(

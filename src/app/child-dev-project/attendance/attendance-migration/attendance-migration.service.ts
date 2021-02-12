@@ -12,60 +12,80 @@ import moment from "moment";
   providedIn: "root",
 })
 export class AttendanceMigrationService {
-  schoolActivity: RecurringActivity;
-  coachingActivity: RecurringActivity;
+  activities: { [key: string]: RecurringActivity } = {
+    school: Object.assign(new RecurringActivity("school"), {
+      entityId: "school",
+      title: "school",
+      type: defaultInteractionTypes.find((t) => t.id === "SCHOOL_CLASS"),
+    }),
+    coaching: Object.assign(new RecurringActivity("coaching"), {
+      entityId: "coaching",
+      title: "coaching",
+      type: defaultInteractionTypes.find((t) => t.id === "COACHING_CLASS"),
+    }),
+  };
 
   constructor(
     private entityMapper: EntityMapperService,
     private attendanceService: AttendanceService
-  ) {
-    this.schoolActivity = new RecurringActivity("school");
-    this.schoolActivity.title = "school";
-    this.schoolActivity.type = defaultInteractionTypes.find(
-      (t) => t.id === "SCHOOL_CLASS"
-    );
-
-    this.coachingActivity = new RecurringActivity("coaching");
-    this.coachingActivity.title = "coaching";
-    this.coachingActivity.type = defaultInteractionTypes.find(
-      (t) => t.id === "COACHING_CLASS"
-    );
-  }
+  ) {}
 
   async createEventsForAllAttendanceMonths() {
     await this.checkOrCreateActivities();
 
     const months = await this.entityMapper.loadType(AttendanceMonth);
+    console.log("found attendance-month records:" + months.length);
     for (const month of months) {
+      console.log("migrating attendance-month", month);
       await this.createEventsForAttendanceMonth(month);
     }
   }
 
-  private async checkOrCreateActivities() {
-    const existingSchoolAct = await this.entityMapper.load(
-      RecurringActivity,
-      this.schoolActivity.getId()
-    );
-    if (!existingSchoolAct) {
-      await this.entityMapper.save(this.schoolActivity);
+  async addStudentsToActivityForAllAttendanceMonths() {
+    await this.checkOrCreateActivities();
+
+    const months = await this.entityMapper.loadType(AttendanceMonth);
+    for (const month of months) {
+      if (!this.activities.hasOwnProperty(month.institution)) {
+        console.warn(
+          "cannot migrate attendance month because of unknown institution",
+          month
+        );
+        continue;
+      }
+
+      this.activities[month.institution].participants.push(month.student);
     }
 
-    const existingCoachingAct = await this.entityMapper.load(
-      RecurringActivity,
-      this.coachingActivity.getId()
-    );
-    if (!existingCoachingAct) {
-      await this.entityMapper.save(this.coachingActivity);
+    const unique = (value, index, self) => {
+      return self.indexOf(value) === index;
+    };
+    for (const activity of Object.values(this.activities)) {
+      activity.participants = activity.participants.filter(unique);
+      await this.entityMapper.save(activity);
+    }
+  }
+
+  private async checkOrCreateActivities() {
+    for (const key of Object.keys(this.activities)) {
+      this.activities[key] = await this.entityMapper
+        .load(RecurringActivity, this.activities[key].getId())
+        .catch(async (err) => {
+          if (err.status === 404) {
+            await this.entityMapper.save(this.activities[key]);
+            return this.entityMapper.load(
+              RecurringActivity,
+              this.activities[key].getId()
+            );
+          } else {
+            throw err;
+          }
+        });
     }
   }
 
   async createEventsForAttendanceMonth(old: AttendanceMonth) {
-    let masterActivity: RecurringActivity;
-    if (old.institution === "school") {
-      masterActivity = this.schoolActivity;
-    } else if (old.institution === "coaching") {
-      masterActivity = this.coachingActivity;
-    } else {
+    if (!this.activities.hasOwnProperty(old.institution)) {
       console.warn(
         "cannot migrate attendance month because of unknown institution",
         old
@@ -74,7 +94,7 @@ export class AttendanceMigrationService {
     }
 
     const existingActivityEvents = await this.attendanceService.getEventsForActivity(
-      masterActivity._id
+      this.activities[old.institution]._id
     );
     for (const day of old.dailyRegister) {
       if (day.status === AttendanceStatus.UNKNOWN) {
@@ -88,10 +108,11 @@ export class AttendanceMigrationService {
       if (!newEvent) {
         // no Note in the database yet - create a new event
         newEvent = RecurringActivity.createEventForActivity(
-          masterActivity,
+          this.activities[old.institution],
           day.date
         );
         newEvent.children = [];
+        console.log("creating new event");
       }
 
       newEvent.children.push(old.student);
@@ -103,6 +124,7 @@ export class AttendanceMigrationService {
       newEvent.getAttendance(old.student).remarks = day.remarks;
 
       await this.entityMapper.save(newEvent);
+      console.log("wrote event to database");
     }
   }
 }
