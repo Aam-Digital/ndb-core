@@ -6,10 +6,14 @@ import {
 import { Component, ElementRef, ViewChild } from "@angular/core";
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { Entity } from "../entity/entity";
+import { TooltipService } from "../tooltip/tooltip.service";
 
 describe("EntityOperationDirective", () => {
   const mockEntityPermissionService: jasmine.SpyObj<EntityPermissionsService> = jasmine.createSpyObj(
     ["userIsPermitted"]
+  );
+  const mockTooltipService: jasmine.SpyObj<TooltipService> = jasmine.createSpyObj(
+    ["createTooltip", "showTooltip", "hideTooltip"]
   );
 
   beforeEach(() => {
@@ -19,6 +23,10 @@ describe("EntityOperationDirective", () => {
         {
           provide: EntityPermissionsService,
           useValue: mockEntityPermissionService,
+        },
+        {
+          provide: TooltipService,
+          useValue: mockTooltipService,
         },
       ],
     });
@@ -47,6 +55,14 @@ describe("EntityOperationDirective", () => {
     expect(
       component.componentInstance.buttonRef.nativeElement.disabled
     ).toBeFalse();
+  }));
+
+  it("should call create a tooltip when entering with the mouse", fakeAsync(() => {
+    mockEntityPermissionService.userIsPermitted.and.returnValue(true);
+    const component = TestBed.createComponent(TestComponent);
+    component.detectChanges();
+    tick();
+    expect(mockTooltipService.createTooltip).toHaveBeenCalled();
   }));
 });
 
