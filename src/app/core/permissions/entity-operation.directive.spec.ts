@@ -4,7 +4,7 @@ import {
   OperationType,
 } from "./entity-permissions.service";
 import { Component, ElementRef, ViewChild } from "@angular/core";
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { fakeAsync, TestBed, tick, flush } from "@angular/core/testing";
 import { Entity } from "../entity/entity";
 import { TooltipService } from "../tooltip/tooltip.service";
 
@@ -57,12 +57,18 @@ describe("EntityOperationDirective", () => {
     ).toBeFalse();
   }));
 
-  it("should call create a tooltip when entering with the mouse", fakeAsync(() => {
-    mockEntityPermissionService.userIsPermitted.and.returnValue(true);
+  it("should show a tooltip when the mouse enters the disabled field", fakeAsync(() => {
+    mockEntityPermissionService.userIsPermitted.and.returnValue(false);
     const component = TestBed.createComponent(TestComponent);
     component.detectChanges();
     tick();
-    expect(mockTooltipService.createTooltip).toHaveBeenCalled();
+    const mouseEnterEvent = new Event("mouseenter", {});
+    component.componentInstance.buttonRef.nativeElement.dispatchEvent(
+      mouseEnterEvent
+    );
+    expect(mockTooltipService.showTooltip).toHaveBeenCalled();
+    flush();
+    expect(mockTooltipService.hideTooltip).toHaveBeenCalled();
   }));
 });
 
