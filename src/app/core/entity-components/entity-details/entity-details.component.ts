@@ -65,7 +65,7 @@ export class EntityDetailsComponent {
     });
   }
 
-  loadEntity(id: string) {
+  private loadEntity(id: string) {
     const constr: EntityConstructor<Entity> = ENTITY_MAP.get(
       this.config.entity
     );
