@@ -33,9 +33,29 @@ export class AttendanceMigrationService {
   }
 
   async createEventsForAllAttendanceMonths() {
+    await this.checkOrCreateActivities();
+
     const months = await this.entityMapper.loadType(AttendanceMonth);
     for (const month of months) {
       await this.createEventsForAttendanceMonth(month);
+    }
+  }
+
+  private async checkOrCreateActivities() {
+    const existingSchoolAct = await this.entityMapper.load(
+      RecurringActivity,
+      this.schoolActivity.getId()
+    );
+    if (!existingSchoolAct) {
+      await this.entityMapper.save(this.schoolActivity);
+    }
+
+    const existingCoachingAct = await this.entityMapper.load(
+      RecurringActivity,
+      this.coachingActivity.getId()
+    );
+    if (!existingCoachingAct) {
+      await this.entityMapper.save(this.coachingActivity);
     }
   }
 
