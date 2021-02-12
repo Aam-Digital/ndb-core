@@ -33,12 +33,15 @@ describe("EntityPermissionsService", () => {
 
   it("should give permission if nothing is defined", () => {
     mockConfigService.getEntityConfig.and.returnValue(null);
-    let permitted = service.userIsPermitted(Entity, OperationType.CREATE);
+    const permitted = service.userIsPermitted(Entity, OperationType.CREATE);
     expect(permitted).toBeTrue();
+  });
+
+  it("should give permission if operation is not defined", () => {
     mockConfigService.getEntityConfig.and.returnValue({
       permissions: { update: ["admin"] },
     });
-    permitted = service.userIsPermitted(Entity, OperationType.CREATE);
+    const permitted = service.userIsPermitted(Entity, OperationType.CREATE);
     expect(permitted).toBeTrue();
   });
 
