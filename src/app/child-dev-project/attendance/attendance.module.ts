@@ -57,6 +57,7 @@ import { AttendanceStatusSelectComponent } from "./attendance-status-select/atte
 import { AttendanceWeekDashboardComponent } from "./dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component";
 import { RouterModule } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 
 @NgModule({
   declarations: [
@@ -103,6 +104,7 @@ import { Angulartics2Module } from "angulartics2";
     MatTabsModule,
     RouterModule,
     Angulartics2Module,
+    MatSlideToggleModule,
   ],
   exports: [
     ActivityCardComponent,

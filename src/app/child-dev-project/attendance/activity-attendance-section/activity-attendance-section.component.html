@@ -4,3 +4,10 @@
 <app-entity-subrecord [records]="records" [columns]="columns"
                       [detailsComponent]="detailsComponent" [showAddButton]="false" [disableEditingInline]="true">
 </app-entity-subrecord>
+
+<div style="margin-top: 16px;">
+  <mat-slide-toggle (change)="updateDisplayedRecords($event.checked)"
+                    matTooltip="Activate to also show entries for the activity that do not have any events with actual participation of this person">
+    Also show unrelated
+  </mat-slide-toggle>
+</div>
