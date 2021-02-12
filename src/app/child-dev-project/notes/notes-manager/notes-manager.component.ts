@@ -19,6 +19,7 @@ import { EntityListComponent } from "../../../core/entity-components/entity-list
     <app-entity-list
       [entityList]="notes"
       [listConfig]="config"
+      [entityConstructor]="noteConstructor"
       (elementClick)="showDetails($event)"
       (addNewClick)="addNoteClick()"
       #entityList
@@ -29,6 +30,7 @@ export class NotesManagerComponent implements OnInit {
   @ViewChild("entityList") entityList: EntityListComponent<Note>;
 
   config: any = {};
+  noteConstructor = Note;
   notes: Note[] = [];
 
   private statusFS: FilterSelectionOption<Note>[] = [

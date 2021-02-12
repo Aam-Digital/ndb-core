@@ -11,6 +11,7 @@ import { ChildrenService } from "../children.service";
     <app-entity-list
       [entityList]="childrenList"
       [listConfig]="listConfig"
+      [entityConstructor]="childConstructor"
       (elementClick)="routeTo($event.getId())"
       (addNewClick)="routeTo('new')"
     ></app-entity-list>
@@ -19,6 +20,7 @@ import { ChildrenService } from "../children.service";
 export class ChildrenListComponent implements OnInit {
   childrenList: Child[] = [];
   listConfig: any = {};
+  childConstructor = Child;
 
   constructor(
     private childrenService: ChildrenService,

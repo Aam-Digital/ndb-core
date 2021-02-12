@@ -53,6 +53,6 @@ export class EntityOperationDirective implements OnChanges {
   @HostListener("mouseenter")
   show() {
     this.tooltipService.showTooltip(this.tooltipRef, this.text);
-    setTimeout(() => this.tooltipService.hideTooltip(this.tooltipRef), 3000);
+    setTimeout(() => this.tooltipService.hideTooltip(this.tooltipRef), 2000);
   }
 }

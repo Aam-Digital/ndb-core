@@ -63,6 +63,7 @@ export class EntityListComponent<T extends Entity>
   implements OnChanges, OnInit, AfterViewInit {
   @Input() entityList: T[] = [];
   @Input() listConfig: EntityListConfig;
+  @Input() entityConstructor: typeof Entity;
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
 
@@ -76,7 +77,6 @@ export class EntityListComponent<T extends Entity>
   mobileColumnGroup = "";
   filtersConfig: FilterConfig[] = [];
 
-  entityConstructor: typeof Entity;
   operationType = OperationType;
 
   ready = true;
@@ -144,9 +144,6 @@ export class EntityListComponent<T extends Entity>
       this.displayColumnGroup(this.defaultColumnGroup);
     }
     if (changes.hasOwnProperty("entityList")) {
-      if (this.entityList.length > 0) {
-        this.entityConstructor = this.entityList[0].getConstructor();
-      }
       this.initFilterSelections();
     }
     this.loadUrlParams();
