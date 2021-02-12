@@ -38,6 +38,7 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 import { PrimaryActionComponent } from "./primary-action/primary-action.component";
 import { NotesModule } from "../../child-dev-project/notes/notes.module";
 import { Angulartics2Module } from "angulartics2";
+import { PermissionsModule } from "../permissions/permissions.module";
 
 /**
  * The core user interface structure that ties different components together into the overall app layout.
@@ -63,6 +64,7 @@ import { Angulartics2Module } from "angulartics2";
     SchoolsModule,
     NotesModule,
     Angulartics2Module,
+    PermissionsModule,
   ],
   declarations: [SearchComponent, UiComponent, PrimaryActionComponent],
   exports: [UiComponent],
