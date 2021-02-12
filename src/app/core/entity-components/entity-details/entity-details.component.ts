@@ -14,7 +14,10 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
-import { OperationType } from "../../permissions/entity-permissions.service";
+import {
+  EntityPermissionsService,
+  OperationType,
+} from "../../permissions/entity-permissions.service";
 
 const ENTITY_MAP: Map<string, any> = new Map<string, EntityConstructor<Entity>>(
   [
@@ -50,7 +53,8 @@ export class EntityDetailsComponent {
     private router: Router,
     private location: Location,
     private snackBar: MatSnackBar,
-    private confirmationDialog: ConfirmationDialogService
+    private confirmationDialog: ConfirmationDialogService,
+    private permissionService: EntityPermissionsService
   ) {
     this.route.data.subscribe((config: EntityDetailsConfig) => {
       this.config = config;
@@ -67,6 +71,14 @@ export class EntityDetailsComponent {
     );
     if (id === "new") {
       this.entity = new constr();
+      if (
+        !this.permissionService.userIsPermitted(
+          this.entity.getConstructor(),
+          this.operationType.CREATE
+        )
+      ) {
+        this.router.navigate([""]);
+      }
       this.creatingNew = true;
       this.setPanelsConfig();
     } else {
