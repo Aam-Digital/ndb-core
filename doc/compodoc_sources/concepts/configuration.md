@@ -346,6 +346,8 @@ The inner object can have the following but not always required fields: `"input"
 ### Entity
 The entity object within the config file can be used to extend and configure existing entities.
 The name of the entity to which this config refers comes ofter the colon in this case `"child"`.
+
+#### Attributes
 The attribute field allows to add attributes to an entity:
 Each attribute requires a `"name"` and a `"schema"` which refers to the entity [schemas](entity-schema-system.md).
 
@@ -362,6 +364,28 @@ Example:
 
 ```
 
+#### Permissions
+Permissions for interaction on entities can be given or denied using the config.
+This will disable buttons in the app to create, delete or edit entities if the user is not permitted.
+
+The following example will only allow `admin` users to create, edit and delete `School` objects:
+```
+"entity:School": {
+  "permissions": {
+    "create": ["admin"],
+    "update": ["admin"],
+    "delete": ["admin"]
+  }
+}
+```
+Buttons can be marked as part of an interaction using the `appEntityInteraction` directive:
+```
+<button
+  (click)="switchEdit()"
+  [appEntityOperation]="{entity: entity?.getConstructor(), operation: operationType.UPDATE}"
+>Edit</button>
+```
+This will disable the button if the current user is not allowed to perform the update operation on the given entity.
 
 ### Option Lists
 Option lists or `ConfigurableEnumValue`s can provide a pre-set list of options for a field
