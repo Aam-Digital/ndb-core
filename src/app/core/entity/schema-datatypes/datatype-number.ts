@@ -33,14 +33,14 @@ export const numberEntitySchemaDatatype: EntitySchemaDatatype = {
   name: "number",
 
   transformToDatabaseFormat: (value) => {
-    if (!value) {
+    if (value === undefined) {
       return undefined;
     }
     return Number(value);
   },
 
   transformToObjectFormat: (value) => {
-    if (!value) {
+    if (value === undefined) {
       return undefined;
     }
     return Number(value);
