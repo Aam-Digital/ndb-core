@@ -3,6 +3,7 @@ import { Child } from "../model/child";
 import { ActivatedRoute, Router } from "@angular/router";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { ChildrenService } from "../children.service";
+import { FilterSelectionOption } from "../../../core/filter/filter-selection/filter-selection";
 
 @UntilDestroy()
 @Component({
@@ -19,6 +20,8 @@ import { ChildrenService } from "../children.service";
 export class ChildrenListComponent implements OnInit {
   childrenList: Child[] = [];
   listConfig: any = {};
+
+  schoolFS: FilterSelectionOption<Child>[] = [];
 
   constructor(
     private childrenService: ChildrenService,
@@ -37,4 +40,6 @@ export class ChildrenListComponent implements OnInit {
     const path = "/" + Child.ENTITY_TYPE.toLowerCase();
     this.router.navigate([path, route]);
   }
+
+  private buildSchoolFilters() {}
 }
