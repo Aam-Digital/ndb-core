@@ -7,8 +7,6 @@ import {
 } from "@angular/core/testing";
 import { ChildrenListComponent } from "./children-list.component";
 import { ChildrenService } from "../children.service";
-import { MockDatabase } from "../../../core/database/mock-database";
-import { Database } from "../../../core/database/database";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ExportDataComponent } from "../../../core/admin/export-data/export-data.component";
 import { ChildPhotoService } from "../child-photo-service/child-photo.service";
@@ -23,6 +21,7 @@ import {
   EntityListConfig,
 } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { User } from "../../../core/user/user";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
@@ -68,13 +67,22 @@ describe("ChildrenListComponent", () => {
       {
         id: "center",
       },
+      {
+        type: "prebuilt",
+        id: "school",
+      },
     ],
   };
   const routeMock = {
     data: of(routeData),
     queryParams: of({}),
   };
-
+  const mockChildrenService: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj(
+    ["getChildren"]
+  );
+  const mockEntityMapper: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj(
+    ["load"]
+  );
   beforeEach(async(() => {
     const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
     mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
@@ -88,10 +96,17 @@ describe("ChildrenListComponent", () => {
       ],
       providers: [
         {
+          provide: ChildrenService,
+          useValue: mockChildrenService,
+        },
+        {
+          provide: EntityMapperService,
+          useValue: mockEntityMapper,
+        },
+        {
           provide: SessionService,
           useValue: mockSessionService,
         },
-        { provide: Database, useClass: MockDatabase },
         {
           provide: ChildPhotoService,
           useValue: jasmine.createSpyObj(["getImage"]),
