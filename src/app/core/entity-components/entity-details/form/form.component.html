@@ -84,8 +84,8 @@
                         <input
                                 matInput
                                 placeholder="Age"
-                                type="number"
-                                [value]="entity?.age"
+                                type="string"
+                                [value]="calculateAge(dateOfBirth.value)"
                                 [disabled]="true"
                         />
                     </mat-form-field>
@@ -96,6 +96,7 @@
                                 [placeholder]="row.placeholder"
                                 [matDatepicker]="dateOfBirthDatepicker"
                                 [disabled]="!editing"
+                                #dateOfBirth
                         />
                         <mat-datepicker-toggle
                                 matSuffix

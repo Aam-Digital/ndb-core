@@ -62,7 +62,7 @@ export class Child extends Entity {
   photo: BehaviorSubject<SafeUrl>;
 
   get age(): number {
-    let age = -1;
+    let age;
 
     if (this.dateOfBirth) {
       const now = new Date();

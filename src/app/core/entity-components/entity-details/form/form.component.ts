@@ -67,6 +67,24 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
     this.enablePhotoUpload = this.childPhotoService.canSetImage();
   }
 
+  calculateAge(selectedDateOfBirth: Date) {
+    // duplication of get age() in child.ts
+    let age;
+
+    if (selectedDateOfBirth) {
+      const now = new Date();
+      const dateOfBirth = new Date(selectedDateOfBirth);
+
+      age = now.getFullYear() - dateOfBirth.getFullYear();
+      const m = now.getMonth() - dateOfBirth.getMonth();
+      if (m < 0 || (m === 0 && now.getDate() < dateOfBirth.getDate())) {
+        age--;
+      }
+    }
+
+    return age;
+  }
+
   async save(): Promise<Entity> {
     if (!this.checkFormValidity()) {
       return;
