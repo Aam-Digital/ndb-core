@@ -52,7 +52,7 @@
     "rxjs": "^6.5.5",
     "tslib": "^1.13.0",
     "uuid": "^8.3.2",
-    "webdav": "^3.3.0",
+    "webdav": "^3.6.2",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
