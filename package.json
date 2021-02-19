@@ -38,7 +38,7 @@
     "faker": "^4.1.0",
     "font-awesome": "^4.7.0",
     "idb": "^5.0.4",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.20",
     "md5": "^2.3.0",
     "moment": "^2.26.0",
     "ngx-cookie-service": "^3.0.4",
