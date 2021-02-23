@@ -46,6 +46,12 @@ export interface EntitySchemaField {
   generateIndex?: boolean; // TODO: implement index support in EntitySchema
 
   /**
+   * Whether the field should be initialized with a default value if undefined
+   * (which is then run through dataType transformation);
+   */
+  defaultValue?: any;
+
+  /**
    * (Optional) Assign any custom "extension" configuration you need for a specific datatype extension.
    *
    * You can pass any kind of value here to allow complex custom datytypes' transformations

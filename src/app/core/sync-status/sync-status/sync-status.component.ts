@@ -26,6 +26,7 @@ import { BackgroundProcessState } from "../background-process-state.interface";
 import { BehaviorSubject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
 import { StateChangedEvent } from "../../session/session-states/state-handler";
+import { LoggingService } from "../../logging/logging.service";
 
 /**
  * A small indicator component that displays an icon when there is currently synchronization
@@ -57,7 +58,8 @@ export class SyncStatusComponent implements OnInit {
     public dialog: MatDialog,
     private sessionService: SessionService,
     private dbIndexingService: DatabaseIndexingService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private loggingService: LoggingService
   ) {}
 
   ngOnInit(): void {
@@ -91,6 +93,7 @@ export class SyncStatusComponent implements OnInit {
         if (this.dialogRef) {
           this.dialogRef.close();
         }
+        this.loggingService.warn("Database sync failed");
         this.alertService.addWarning("Database sync failed.");
         break;
     }

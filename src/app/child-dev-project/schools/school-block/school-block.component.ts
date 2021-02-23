@@ -12,6 +12,7 @@ import { School } from "../model/school";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { ConfigService } from "../../../core/config/config.service";
+import { ViewConfig } from "../../../core/view/dynamic-routing/view-config.interface";
 
 @Component({
   selector: "app-school-block",
@@ -36,7 +37,7 @@ export class SchoolBlockComponent
   ngOnInit() {
     this.iconName =
       "fa-" +
-      this.configService.getConfig<Object>("view:school/:id")["config"]["icon"];
+      this.configService.getConfig<ViewConfig>("view:school/:id")?.config?.icon;
   }
 
   ngOnChanges(changes: SimpleChanges) {
