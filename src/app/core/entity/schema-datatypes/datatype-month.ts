@@ -30,10 +30,6 @@ export const monthEntitySchemaDatatype: EntitySchemaDatatype = {
   name: "month",
 
   transformToDatabaseFormat: (value) => {
-    if (!value) {
-      return undefined;
-    }
-
     if (!(value instanceof Date)) {
       value = new Date(value);
     }
@@ -45,10 +41,6 @@ export const monthEntitySchemaDatatype: EntitySchemaDatatype = {
   },
 
   transformToObjectFormat: (value) => {
-    if (!value || value === "") {
-      return undefined;
-    }
-
     value = value
       .toString()
       .replace(/-(\d)-/g, "-0$1-")
