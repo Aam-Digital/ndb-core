@@ -80,15 +80,7 @@
                 </mat-checkbox>
 
                 <div *ngIf="row.input === 'age'">
-                    <mat-form-field style="width: 50px;">
-                        <input
-                                matInput
-                                placeholder="Age"
-                                type="string"
-                                [value]="calculateAge(dateOfBirth.value)"
-                                [disabled]="true"
-                        />
-                    </mat-form-field>
+                    
                     <mat-form-field style="width: 120px;">
                         <input
                                 matInput
@@ -103,6 +95,15 @@
                                 [for]="dateOfBirthDatepicker"
                         ></mat-datepicker-toggle>
                         <mat-datepicker #dateOfBirthDatepicker></mat-datepicker>
+                    </mat-form-field>
+                    <mat-form-field style="width: 50px;">
+                        <input
+                                matInput
+                                placeholder="Age"
+                                type="string"
+                                [value]="calculateAge(dateOfBirth.value)"
+                                [disabled]="true"
+                        />
                     </mat-form-field>
                 </div>
 
