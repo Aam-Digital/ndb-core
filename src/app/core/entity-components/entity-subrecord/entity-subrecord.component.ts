@@ -77,10 +77,7 @@ export class EntitySubrecordComponent<T extends Entity>
    * Optionally this input can include a componentConfig property passing any values into the component,
    * which has to implement the OnInitDynamicComponent interface to receive this config.
    */
-  @Input() detailsComponent: {
-    component: ComponentType<ShowsEntity<T>>;
-    componentConfig?: any;
-  };
+  @Input() detailsComponent: ComponentWithConfig<T>;
 
   /**
    * Whether the records can be edited directly in the table.
@@ -426,4 +423,9 @@ export class EntitySubrecordComponent<T extends Entity>
       inputType === ColumnDescriptionInputType.READONLY
     );
   }
+}
+
+export interface ComponentWithConfig<T extends Entity> {
+  component: ComponentType<ShowsEntity<T>>;
+  componentConfig?: any;
 }

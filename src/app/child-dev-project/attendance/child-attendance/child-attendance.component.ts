@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
 import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
+import { ComponentWithConfig } from "../../../core/entity-components/entity-subrecord/entity-subrecord.component";
 
 @UntilDestroy()
 @Component({
@@ -19,7 +20,9 @@ export class ChildAttendanceComponent implements OnChanges {
   @Input() child: Child;
 
   records: Array<AttendanceMonth>;
-  detailsComponent = { component: AttendanceDetailsComponent };
+  detailsComponent: ComponentWithConfig<AttendanceMonth> = {
+    component: AttendanceDetailsComponent,
+  };
 
   columns: Array<ColumnDescription> = [
     {
