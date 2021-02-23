@@ -68,7 +68,7 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   }
 
   calculateAge(selectedDateOfBirth: Date) {
-    // duplication of get age() in child.ts
+    // very similar to get age() in child.ts
     let age;
 
     if (selectedDateOfBirth) {
@@ -80,9 +80,10 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
       if (m < 0 || (m === 0 && now.getDate() < dateOfBirth.getDate())) {
         age--;
       }
+      return age;
+    } else {
+      return "";
     }
-
-    return age;
   }
 
   async save(): Promise<Entity> {

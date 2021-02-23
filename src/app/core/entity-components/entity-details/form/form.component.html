@@ -97,13 +97,18 @@
                         <mat-datepicker #dateOfBirthDatepicker></mat-datepicker>
                     </mat-form-field>
                     <mat-form-field style="width: 50px;">
-                        <input
-                                matInput
-                                placeholder="Age"
-                                type="string"
-                                [value]="calculateAge(dateOfBirth.value)"
-                                [disabled]="true"
-                        />
+                        <div
+                            matTooltip="This field is read-only. Edit Date of Birth to change age. Select Jan 1st if you only know the year of birth."
+                            matTooltipPosition="above"
+                        >
+                            <input
+                                    matInput
+                                    placeholder="Age"
+                                    type="string"
+                                    [value]="calculateAge(dateOfBirth.value)"
+                                    [disabled]="true"
+                            />
+                        </div>
                     </mat-form-field>
                 </div>
 
