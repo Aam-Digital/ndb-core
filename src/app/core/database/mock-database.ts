@@ -48,7 +48,10 @@ export class MockDatabase extends Database {
    */
   get(id: string) {
     if (!this.exists(id)) {
-      return Promise.reject({ status: 404, message: "object not found" });
+      return Promise.reject({
+        status: 404,
+        message: "object with id " + id + " not found",
+      });
     }
 
     const index = this.findIndex(id);

@@ -265,10 +265,12 @@ export class EntityListComponent<T extends Entity>
         display: filter.display,
       };
       fs.filterSettings.options = this.initFilterOptions(filter);
-      fs.selectedOption = filter.hasOwnProperty("default")
-        ? filter.default
-        : fs.filterSettings.options[0].key;
-      filterSelections.push(fs);
+      if (fs.filterSettings.options?.length > 0) {
+        fs.selectedOption = filter.hasOwnProperty("default")
+          ? filter.default
+          : fs.filterSettings.options[0].key;
+        filterSelections.push(fs);
+      }
     }
 
     this.filterSelections = filterSelections;
