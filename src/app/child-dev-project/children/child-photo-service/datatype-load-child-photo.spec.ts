@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { fakeAsync, flush, TestBed } from "@angular/core/testing";
 import { SafeUrl } from "@angular/platform-browser";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
@@ -62,9 +62,8 @@ describe("dataType load-child-photo", () => {
 
   it("schema:load-child-photo is provided through ChildPhotoService on load", fakeAsync(() => {
     class TestEntity extends Entity {
-      @DatabaseField({ dataType: "load-child-photo" }) photo: BehaviorSubject<
-        SafeUrl
-      >;
+      @DatabaseField({ dataType: "load-child-photo", defaultValue: true })
+      photo: BehaviorSubject<SafeUrl>;
     }
     const id = "test1";
     const entity = new TestEntity(id);
@@ -84,7 +83,7 @@ describe("dataType load-child-photo", () => {
 
     mockImgObs.next(mockCloudImg);
     mockImgObs.complete();
-    tick();
+    flush();
     expect(entity.photo.value).toEqual(mockCloudImg);
   }));
 });
