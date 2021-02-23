@@ -40,7 +40,7 @@
     "idb": "^5.0.4",
     "lodash": "^4.17.19",
     "md5": "^2.3.0",
-    "moment": "^2.26.0",
+    "moment": "^2.29.1",
     "ngx-cookie-service": "^3.0.4",
     "ngx-filter-pipe": "^2.1.2",
     "ngx-markdown": "^9.1.1",
