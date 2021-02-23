@@ -69,9 +69,8 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
 
   calculateAge(selectedDateOfBirth: Date) {
     // very similar to get age() in child.ts
-    let age;
-
     if (selectedDateOfBirth) {
+      let age;
       const now = new Date();
       const dateOfBirth = new Date(selectedDateOfBirth);
 
