@@ -382,7 +382,7 @@ Buttons can be marked as part of an interaction using the `appEntityInteraction`
 ```
 <button
   (click)="switchEdit()"
-  [appEntityOperation]="{entity: entity?.getConstructor(), operation: operationType.UPDATE}"
+  *appEntityOperation="{entity: entity?.getConstructor(), operation: operationType.UPDATE}"
 >Edit</button>
 ```
 This will disable the button if the current user is not allowed to perform the update operation on the given entity.

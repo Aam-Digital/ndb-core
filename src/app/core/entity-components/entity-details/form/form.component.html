@@ -176,13 +176,14 @@
         Cancel
     </button>
 
-    <button
-            *ngIf="!editing"
-            mat-stroked-button
-            class="edit-button"
-            (click)="switchEdit()"
-            [appEntityOperation]="{entity: entity?.getConstructor(), operation: operationType.UPDATE}"
-    >
-        Edit
-    </button>
+    <ng-container *ngIf="!editing">
+        <button
+                mat-stroked-button
+                class="edit-button"
+                (click)="switchEdit()"
+                *appEntityOperation="{entity: entity?.getConstructor(), operation: operationType.UPDATE}"
+        >
+            Edit
+        </button>
+    </ng-container>
 </div>

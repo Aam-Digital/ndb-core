@@ -1,58 +1,63 @@
 import {
+  ComponentFactoryResolver,
+  ComponentRef,
   Directive,
-  ElementRef,
-  HostListener,
   Input,
   OnChanges,
-  Renderer2,
+  TemplateRef,
+  ViewContainerRef,
 } from "@angular/core";
 import {
   EntityPermissionsService,
   OperationType,
 } from "./entity-permissions.service";
 import { Entity } from "../entity/entity";
-import { TooltipService } from "../tooltip/tooltip.service";
-import { OverlayRef } from "@angular/cdk/overlay";
+import { DisabledWrapperComponent } from "./disabled-wrapper/disabled-wrapper.component";
 
+/**
+ * This directive can be used to disable a element (e.g. button) based on the current users permissions.
+ * Additionally, a little popup will be shown when the user hovers the disabled element.
+ */
 @Directive({
   selector: "[appEntityOperation]",
 })
 export class EntityOperationDirective implements OnChanges {
+  /**
+   * These arguments are required to check whether the user has permissions to perform the operation.
+   * The operation property defines to what kind of operation a element belongs, e.g. OperationType.CREATE
+   * The entity property defines for which kind of entity the operation will be performed, e.g. Child
+   */
   @Input("appEntityOperation") arguments: {
     operation: OperationType;
     entity: typeof Entity;
   };
 
-  private tooltipRef: OverlayRef;
+  private wrapperComponent: ComponentRef<DisabledWrapperComponent>;
   private text: string = "Operation disabled for current user";
 
   constructor(
-    private el: ElementRef,
-    private entityPermissionService: EntityPermissionsService,
-    private renderer: Renderer2,
-    private tooltipService: TooltipService
+    private templateRef: TemplateRef<HTMLButtonElement>,
+    private viewContainerRef: ViewContainerRef,
+    private componentFactoryResolver: ComponentFactoryResolver,
+    private entityPermissionService: EntityPermissionsService
   ) {}
 
   ngOnChanges() {
+    let permitted = true;
     if (this.arguments?.operation && this.arguments?.entity) {
-      const permitted = this.entityPermissionService.userIsPermitted(
+      permitted = this.entityPermissionService.userIsPermitted(
         this.arguments.entity,
         this.arguments.operation
       );
-      setTimeout(() => {
-        // The timeout is required because the mat-button directive otherwise sets disabled back to false in the
-        // Form component. Other components somehow do not have this problem.
-        if (!permitted) {
-          this.renderer.setAttribute(this.el.nativeElement, "disabled", "true");
-          this.tooltipRef = this.tooltipService.createTooltip(this.el);
-        }
-      });
     }
-  }
-
-  @HostListener("mouseenter")
-  show() {
-    this.tooltipService.showTooltip(this.tooltipRef, this.text);
-    setTimeout(() => this.tooltipService.hideTooltip(this.tooltipRef), 2000);
+    const containerFactory = this.componentFactoryResolver.resolveComponentFactory(
+      DisabledWrapperComponent
+    );
+    this.wrapperComponent = this.viewContainerRef.createComponent(
+      containerFactory
+    );
+    this.wrapperComponent.instance.template = this.templateRef;
+    this.wrapperComponent.instance.text = this.text;
+    this.wrapperComponent.instance.elementDisabled = !permitted;
   }
 }
