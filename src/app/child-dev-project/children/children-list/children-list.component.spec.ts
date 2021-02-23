@@ -19,9 +19,14 @@ import { Child } from "../model/child";
 import {
   BooleanFilterConfig,
   EntityListConfig,
+  PrebuiltFilterConfig,
 } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { User } from "../../../core/user/user";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { School } from "../../schools/model/school";
+import { LoggingService } from "../../../core/logging/logging.service";
+import { MockDatabase } from "../../../core/database/mock-database";
+import { Database } from "../../../core/database/database";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
@@ -80,12 +85,13 @@ describe("ChildrenListComponent", () => {
   const mockChildrenService: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj(
     ["getChildren"]
   );
-  const mockEntityMapper: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj(
-    ["load"]
+  const mockEntityMapper: jasmine.SpyObj<EntityMapperService> = jasmine.createSpyObj(
+    ["load", "save"]
   );
   beforeEach(async(() => {
     const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
     mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
+    mockChildrenService.getChildren.and.returnValue(of([]));
     TestBed.configureTestingModule({
       declarations: [ChildrenListComponent, ExportDataComponent],
 
@@ -95,6 +101,10 @@ describe("ChildrenListComponent", () => {
         Angulartics2Module.forRoot(),
       ],
       providers: [
+        {
+          provide: Database,
+          useClass: MockDatabase,
+        },
         {
           provide: ChildrenService,
           useValue: mockChildrenService,
@@ -112,6 +122,10 @@ describe("ChildrenListComponent", () => {
           useValue: jasmine.createSpyObj(["getImage"]),
         },
         { provide: ActivatedRoute, useValue: routeMock },
+        {
+          provide: LoggingService,
+          useValue: jasmine.createSpyObj(["warn"]),
+        },
       ],
     }).compileComponents();
   }));
@@ -131,11 +145,11 @@ describe("ChildrenListComponent", () => {
   it("should load children on init", fakeAsync(() => {
     const child1 = new Child("c1");
     const child2 = new Child("c2");
-    const childrenService = fixture.debugElement.injector.get(ChildrenService);
-    spyOn(childrenService, "getChildren").and.returnValue(of([child1, child2]));
+    mockChildrenService.getChildren.and.returnValue(of([child1, child2]));
+    mockEntityMapper.load.and.returnValue(Promise.reject());
     component.ngOnInit();
     tick();
-    expect(childrenService.getChildren).toHaveBeenCalled();
+    expect(mockChildrenService.getChildren).toHaveBeenCalled();
     expect(component.childrenList).toEqual([child1, child2]);
   }));
 
@@ -145,4 +159,23 @@ describe("ChildrenListComponent", () => {
     component.routeTo("childId");
     expect(router.navigate).toHaveBeenCalledWith(["/child", "childId"]);
   });
+
+  it("should create a filter with all available schools", fakeAsync(() => {
+    const school = new School("test");
+    school.name = "Test";
+    const child = new Child();
+    child.schoolId = school.getId();
+    mockEntityMapper.load.and.returnValue(Promise.resolve(school));
+    mockChildrenService.getChildren.and.returnValue(of([child]));
+    component.ngOnInit();
+    tick();
+    const schoolFilter = component.listConfig.filters.find(
+      (f) => f.id === "school"
+    ) as PrebuiltFilterConfig<Child>;
+    expect(schoolFilter.options.length).toBe(2);
+    expect(schoolFilter.options[0].key).toBe("test");
+    expect(schoolFilter.options[0].label).toBe("Test");
+    expect(schoolFilter.options[1].key).toBe("");
+    expect(schoolFilter.options[1].label).toBe("All");
+  }));
 });

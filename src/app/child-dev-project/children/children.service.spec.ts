@@ -160,7 +160,7 @@ describe("ChildrenService", () => {
     } catch (err) {
       error = err;
     }
-    expect(error).toEqual({ status: 404, message: "object not found" });
+    expect(error).toBeDefined();
 
     await entityMapper.save<Child>(child);
     const childAfter = await service.getChild(child.getId()).toPromise();

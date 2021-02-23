@@ -84,7 +84,7 @@ export class ChildrenListComponent implements OnInit {
       )
     );
     const filters: FilterSelectionOption<Child>[] = schools
-      .filter((school) => !!school)
+      .filter((school) => !!school) // remove schools which are null or undefined
       .map((school) => {
         return {
           key: school.getId(),
