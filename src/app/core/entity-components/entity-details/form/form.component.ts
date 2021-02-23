@@ -70,11 +70,9 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   calculateAge(selectedDateOfBirth: Date) {
     // very similar to get age() in child.ts
     if (selectedDateOfBirth) {
-      let age;
       const now = new Date();
       const dateOfBirth = new Date(selectedDateOfBirth);
-
-      age = now.getFullYear() - dateOfBirth.getFullYear();
+      let age = now.getFullYear() - dateOfBirth.getFullYear();
       const m = now.getMonth() - dateOfBirth.getMonth();
       if (m < 0 || (m === 0 && now.getDate() < dateOfBirth.getDate())) {
         age--;
