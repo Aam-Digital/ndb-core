@@ -19,7 +19,7 @@ export class ChildAttendanceComponent implements OnChanges {
   @Input() child: Child;
 
   records: Array<AttendanceMonth>;
-  detailsComponent = AttendanceDetailsComponent;
+  detailsComponent = { component: AttendanceDetailsComponent };
 
   columns: Array<ColumnDescription> = [
     {
