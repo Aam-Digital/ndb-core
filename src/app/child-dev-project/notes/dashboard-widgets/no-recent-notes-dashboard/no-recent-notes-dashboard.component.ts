@@ -6,9 +6,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import { ChildrenService } from "../../../children/children.service";
-import { Child } from "../../../children/model/child";
 import moment from "moment";
-import { take } from "rxjs/operators";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatSort } from "@angular/material/sort";
 import { MatPaginator } from "@angular/material/paginator";
@@ -34,11 +32,6 @@ export class NoRecentNotesDashboardComponent
 
   /** Whether an additional offset should be automatically added to include notes from the beginning of the week */
   @Input() fromBeginningOfWeek = true;
-
-  /** The offset in days since beginning of the week (used for "fromBeginningOfWeek" option) */
-  private daysSinceBeginningOfWeek = moment()
-    .startOf("day")
-    .diff(moment().startOf("week"), "days");
 
   /** true while data is not ready/available yet */
   isLoading: boolean;
@@ -79,42 +72,45 @@ export class NoRecentNotesDashboardComponent
   private async loadConcernedChildrenFromIndex() {
     this.isLoading = true;
 
-    const children = ((await this.childrenService
-      .getChildren()
-      .pipe(take(1))
-      .toPromise()) as ChildWithRecentNoteInfo[]).filter((c) => c.isActive);
+    const dayRangeBoundary = -moment()
+      .subtract(this.sinceDays, "days")
+      .startOf("week")
+      .diff(moment(), "days");
+    const queryRange = Math.round((dayRangeBoundary * 3) / 10) * 10; // query longer range to be able to display exact date of last note for recent
 
-    const lastNoteStats = await this.childrenService.getDaysSinceLastNoteOfEachChild();
-
-    const resultChildren = [];
-    for (const child of children) {
-      if (lastNoteStats.has(child.getId())) {
-        child.daysSinceLastNote = lastNoteStats.get(child.getId());
-        if (!this.isWithinDayRange(child.daysSinceLastNote)) {
-          resultChildren.push(child);
+    this.concernedChildren = Array.from(
+      await this.childrenService.getDaysSinceLastNoteOfEachChild(queryRange)
+    )
+      .filter((stat) => stat[1] >= dayRangeBoundary)
+      .map(
+        (stat): ChildWithRecentNoteInfo => {
+          if (stat[1] < Number.POSITIVE_INFINITY) {
+            return {
+              childId: stat[0],
+              daysSinceLastNote: stat[1],
+              moreThanDaysSince: false,
+            };
+          } else {
+            return {
+              childId: stat[0],
+              daysSinceLastNote: queryRange,
+              moreThanDaysSince: true,
+            };
+          }
         }
-      } else {
-        child.daysSinceLastNote = 0;
-        resultChildren.push(child);
-      }
-    }
-
-    this.concernedChildren = resultChildren.sort(
-      (a, b) => b.daysSinceLastNote - a.daysSinceLastNote
-    );
+      )
+      .sort((a, b) => b.daysSinceLastNote - a.daysSinceLastNote);
 
     this.isLoading = false;
   }
-
-  private isWithinDayRange(daysSinceLastNote: number) {
-    if (this.fromBeginningOfWeek) {
-      return (
-        daysSinceLastNote <= this.sinceDays + this.daysSinceBeginningOfWeek
-      );
-    } else {
-      return daysSinceLastNote <= this.sinceDays;
-    }
-  }
 }
 
-type ChildWithRecentNoteInfo = Child & { daysSinceLastNote: number };
+/**
+ * details on child stats to be displayed
+ */
+interface ChildWithRecentNoteInfo {
+  childId: string;
+  daysSinceLastNote: number;
+  /** true when the daysSinceLastNote is not accurate but was cut off for performance optimization */
+  moreThanDaysSince: boolean;
+}

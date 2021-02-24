@@ -21,11 +21,6 @@ export class RecentNotesDashboardComponent
   /** Whether an additional offset should be automatically added to include notes from the beginning of the week */
   @Input() fromBeginningOfWeek = true;
 
-  /** The offset in days since beginning of the week (used for "fromBeginningOfWeek" option) */
-  private daysSinceBeginningOfWeek = moment()
-    .startOf("day")
-    .diff(moment().startOf("week"), "days");
-
   /** true while data is not ready/available yet */
   isLoading: boolean;
 
@@ -50,25 +45,17 @@ export class RecentNotesDashboardComponent
   private async loadConcernedChildrenFromIndex() {
     this.isLoading = true;
 
-    const lastNoteStats = await this.childrenService.getDaysSinceLastNoteOfEachChild();
+    const dayRangeBoundary = -moment()
+      .subtract(this.sinceDays, "days")
+      .startOf("week")
+      .diff(moment(), "days");
 
-    this.count = 0;
-    for (const entry of lastNoteStats.entries()) {
-      if (this.isWithinDayRange(entry[1])) {
-        this.count++;
-      }
-    }
+    this.count = Array.from(
+      await this.childrenService.getDaysSinceLastNoteOfEachChild(
+        dayRangeBoundary
+      )
+    ).filter((stat) => stat[1] <= dayRangeBoundary).length;
 
     this.isLoading = false;
-  }
-
-  private isWithinDayRange(daysSinceLastNote: number) {
-    if (this.fromBeginningOfWeek) {
-      return (
-        daysSinceLastNote <= this.sinceDays + this.daysSinceBeginningOfWeek
-      );
-    } else {
-      return daysSinceLastNote <= this.sinceDays;
-    }
   }
 }
