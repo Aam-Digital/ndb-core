@@ -82,23 +82,7 @@ export class NoRecentNotesDashboardComponent
       await this.childrenService.getDaysSinceLastNoteOfEachChild(queryRange)
     )
       .filter((stat) => stat[1] >= dayRangeBoundary)
-      .map(
-        (stat): ChildWithRecentNoteInfo => {
-          if (stat[1] < Number.POSITIVE_INFINITY) {
-            return {
-              childId: stat[0],
-              daysSinceLastNote: stat[1],
-              moreThanDaysSince: false,
-            };
-          } else {
-            return {
-              childId: stat[0],
-              daysSinceLastNote: queryRange,
-              moreThanDaysSince: true,
-            };
-          }
-        }
-      )
+      .map((stat) => statsToChildWithRecentNoteInfo(stat, queryRange))
       .sort((a, b) => b.daysSinceLastNote - a.daysSinceLastNote);
 
     this.isLoading = false;
@@ -113,4 +97,28 @@ interface ChildWithRecentNoteInfo {
   daysSinceLastNote: number;
   /** true when the daysSinceLastNote is not accurate but was cut off for performance optimization */
   moreThanDaysSince: boolean;
+}
+
+/**
+ * Map a result entry from getDaysSinceLastNoteOfEachChild to the ChildWithRecentNoteInfo interface
+ * @param stat Array of [childId, daysSinceLastNote]
+ * @param queryRange The query range (the maximum of days that exactly calculated)
+ */
+function statsToChildWithRecentNoteInfo(
+  stat: [string, number],
+  queryRange: number
+): ChildWithRecentNoteInfo {
+  if (stat[1] < Number.POSITIVE_INFINITY) {
+    return {
+      childId: stat[0],
+      daysSinceLastNote: stat[1],
+      moreThanDaysSince: false,
+    };
+  } else {
+    return {
+      childId: stat[0],
+      daysSinceLastNote: queryRange,
+      moreThanDaysSince: true,
+    };
+  }
 }
