@@ -30,10 +30,6 @@ export const dateOnlyEntitySchemaDatatype: EntitySchemaDatatype = {
   name: "date-only",
 
   transformToDatabaseFormat: (value: Date) => {
-    if (!value) {
-      return undefined;
-    }
-
     return (
       value.getFullYear() +
       "-" +
@@ -44,10 +40,6 @@ export const dateOnlyEntitySchemaDatatype: EntitySchemaDatatype = {
   },
 
   transformToObjectFormat: (value) => {
-    if (!value) {
-      return undefined;
-    }
-
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) {
       throw new Error("failed to convert data to Date object: " + value);

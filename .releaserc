@@ -34,11 +34,6 @@
       "assets": ["src/environments/environment.ts", "src/environments/environment.prod.ts", "package.json", "package-lock.json"],
       "message": "chore(release): ${nextRelease.version} \n\n${nextRelease.notes}"
     }],
-    ["semantic-release-slack-bot", {
-      "packageName": "ndb-server",
-      "notifyOnSuccess": true,
-      "notifyOnFail": true
-    }],
     ["@semantic-release/github", {
       "assets": []
     }],
