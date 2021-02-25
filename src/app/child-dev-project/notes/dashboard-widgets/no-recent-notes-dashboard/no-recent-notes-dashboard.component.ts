@@ -72,10 +72,10 @@ export class NoRecentNotesDashboardComponent
   private async loadConcernedChildrenFromIndex() {
     this.isLoading = true;
 
-    const dayRangeBoundary = -moment()
-      .subtract(this.sinceDays, "days")
-      .startOf("week")
-      .diff(moment(), "days");
+    let dayRangeBoundary = this.sinceDays;
+    if (this.fromBeginningOfWeek) {
+      dayRangeBoundary += moment().diff(moment().startOf("week"), "days");
+    }
     const queryRange = Math.round((dayRangeBoundary * 3) / 10) * 10; // query longer range to be able to display exact date of last note for recent
 
     this.concernedChildren = Array.from(

@@ -45,10 +45,10 @@ export class RecentNotesDashboardComponent
   private async loadConcernedChildrenFromIndex() {
     this.isLoading = true;
 
-    const dayRangeBoundary = -moment()
-      .subtract(this.sinceDays, "days")
-      .startOf("week")
-      .diff(moment(), "days");
+    let dayRangeBoundary = this.sinceDays;
+    if (this.fromBeginningOfWeek) {
+      dayRangeBoundary += moment().diff(moment().startOf("week"), "days");
+    }
 
     this.count = Array.from(
       await this.childrenService.getDaysSinceLastNoteOfEachChild(
