@@ -93,6 +93,8 @@ export class UserAccountComponent implements OnInit {
   }
 
   changePassword() {
+    this.passwordChangeResult = undefined;
+
     const currentPassword = this.passwordForm.get("currentPassword").value;
     if (!this.user.checkPassword(currentPassword)) {
       this.passwordForm
@@ -110,10 +112,12 @@ export class UserAccountComponent implements OnInit {
       })
       .catch((err: Error) => {
         this.passwordChangeResult = { success: false, error: err.message };
-        this.loggingService.warn({
+        this.loggingService.error({
           error: "password change failed",
           details: err.message,
         });
+        // rethrow to properly report to sentry.io; this exception is not expected, only caught to display in UI
+        throw err;
       });
   }
 

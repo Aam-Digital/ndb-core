@@ -111,7 +111,7 @@ export class DatabaseIndexingService {
     entityConstructor: EntityConstructor<T>,
     indexName: string,
     startkey: string,
-    endkey: string
+    endkey?: string
   ): Promise<T[]> {
     return this.queryIndexDocs(entityConstructor, indexName, {
       startkey: startkey,

@@ -77,7 +77,7 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
     if (this.linkDisabled) {
       return;
     }
-
-    this.router?.navigate(["/child", this.entity.getId()]);
+    const path = "/" + Child.ENTITY_TYPE.toLowerCase();
+    this.router?.navigate([path, this.entity.getId()]);
   }
 }

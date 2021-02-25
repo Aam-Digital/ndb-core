@@ -33,16 +33,10 @@ export const stringEntitySchemaDatatype: EntitySchemaDatatype = {
   name: "string",
 
   transformToDatabaseFormat: (value) => {
-    if (!value) {
-      return undefined;
-    }
     return String(value);
   },
 
   transformToObjectFormat: (value) => {
-    if (!value) {
-      return undefined;
-    }
     return String(value);
   },
 };

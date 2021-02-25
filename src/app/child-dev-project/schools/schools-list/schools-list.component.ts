@@ -40,6 +40,7 @@ export class SchoolsListComponent implements OnInit {
   }
 
   routeTo(route: string) {
-    this.router.navigate(["/school", route]);
+    const path = "/" + School.ENTITY_TYPE.toLowerCase();
+    this.router.navigate([path, route]);
   }
 }
