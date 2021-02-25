@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   EventEmitter,
   Input,
@@ -10,6 +11,7 @@ import {
 } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatSort } from "@angular/material/sort";
+import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { ColumnDescription } from "./column-description";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
@@ -24,22 +26,7 @@ import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../alerts/alert.service";
 import { DatePipe } from "@angular/common";
-
-/**
- * Settings for the popup details view of a EntitySubrecordComponent.
- */
-export interface DetailsComponentSettings<T extends Entity> {
-  /**
-   * The component to be used for displaying a single Entity instance's details.
-   */
-  component: ComponentType<ShowsEntity<T>>;
-
-  /**
-   * Optionally include an object to pass any values into the component,
-   * which has to implement the OnInitDynamicComponent interface to receive this config.
-   */
-  componentConfig?: any;
-}
+import { BehaviorSubject } from "rxjs";
 
 /**
  * Generically configurable component to display and edit a list of entities in a compact way
@@ -47,6 +34,9 @@ export interface DetailsComponentSettings<T extends Entity> {
  *
  * For example, all Notes related to a certain Child are displayed within the Child's detail view
  * with the help of this component.
+ *
+ * Pagination is available, but the values are not stored. That means that every time calling
+ * the component pagination starts with the initial values set in this component.
  *
  * A detailed Guide on how to use this component is available:
  * - [How to display related entities]{@link /additional-documentation/how-to-guides/display-related-entities.html}
@@ -58,7 +48,15 @@ export interface DetailsComponentSettings<T extends Entity> {
   styleUrls: ["./entity-subrecord.component.scss"],
 })
 export class EntitySubrecordComponent<T extends Entity>
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges, AfterViewInit {
+  /**
+   * Global state of pagination size for all entity subrecord components.
+   *
+   * When the user changes page size in one component the page size is automatically changed for other components also.
+   * This ensures a consistent UI e.g. for side-by-side subrecord components of multiple attendance record tables.
+   */
+  static paginatorPageSize = new BehaviorSubject(10);
+
   /** data to be displayed */
   @Input() records: Array<T>;
 
@@ -79,7 +77,7 @@ export class EntitySubrecordComponent<T extends Entity>
    * Optionally this input can include a componentConfig property passing any values into the component,
    * which has to implement the OnInitDynamicComponent interface to receive this config.
    */
-  @Input() detailsComponent: DetailsComponentSettings<T>;
+  @Input() detailsComponent: ComponentWithConfig<T>;
 
   /**
    * Whether the records can be edited directly in the table.
@@ -119,6 +117,8 @@ export class EntitySubrecordComponent<T extends Entity>
   private screenWidth = "";
 
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  paginatorPageSize = EntitySubrecordComponent.paginatorPageSize.value;
 
   constructor(
     private _entityMapper: EntityMapperService,
@@ -142,9 +142,7 @@ export class EntitySubrecordComponent<T extends Entity>
   /** function returns the background color for each entry*/
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
 
-  ngOnInit() {
-    this.recordsDataSource.sort = this.sort;
-  }
+  ngOnInit() {}
 
   /**
    * Update the component if any of the @Input properties were changed from outside.
@@ -165,6 +163,46 @@ export class EntitySubrecordComponent<T extends Entity>
       this.columnsToDisplay = this.columns.map((e) => e.name);
       this.columnsToDisplay.push("actions");
       this.setupTable();
+    }
+  }
+
+  ngAfterViewInit() {
+    this.recordsDataSource.sort = this.sort;
+    this.recordsDataSource.paginator = this.paginator;
+    EntitySubrecordComponent.paginatorPageSize.subscribe((newPageSize) =>
+      this.updatePagination(newPageSize)
+    );
+  }
+
+  /**
+   * Set the new page size (if it changed) and trigger an update of the UI.
+   * @param newPageSize
+   * @private
+   */
+  private updatePagination(newPageSize: number) {
+    if (this.paginatorPageSize === newPageSize) {
+      return;
+    }
+
+    this.paginatorPageSize = newPageSize;
+
+    setTimeout(() => {
+      this.paginator.pageSize = newPageSize;
+      this.paginator.page.next({
+        pageIndex: this.paginator.pageIndex,
+        pageSize: this.paginator.pageSize,
+        length: this.paginator.length,
+      });
+    });
+  }
+
+  /**
+   * Propagate the change of page size to all other entity subrecord components.
+   * @param event
+   */
+  onPaginateChange(event: PageEvent) {
+    if (event.pageSize !== this.paginatorPageSize) {
+      EntitySubrecordComponent.paginatorPageSize.next(event.pageSize);
     }
   }
 
@@ -385,4 +423,20 @@ export class EntitySubrecordComponent<T extends Entity>
       inputType === ColumnDescriptionInputType.READONLY
     );
   }
+}
+
+/**
+ * Settings for the popup details view of a EntitySubrecordComponent.
+ */
+export interface ComponentWithConfig<T extends Entity> {
+  /**
+   * The component to be used for displaying a single Entity instance's details.
+   */
+  component: ComponentType<ShowsEntity<T>>;
+
+  /**
+   * Optionally include an object to pass any values into the component,
+   * which has to implement the OnInitDynamicComponent interface to receive this config.
+   */
+  componentConfig?: any;
 }

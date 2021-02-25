@@ -1,7 +1,9 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ChildrenService } from "../../../children/children.service";
+import { Router } from "@angular/router";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { Child } from "../../../children/model/child";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { AttendanceService } from "../../attendance.service";
 import { EventAttendance } from "../../model/event-attendance";
@@ -53,7 +55,8 @@ export class AttendanceWeekDashboardComponent
 
   constructor(
     private childrenService: ChildrenService,
-    private attendanceService: AttendanceService
+    private attendanceService: AttendanceService,
+    private router: Router
   ) {}
 
   onInitFromDynamicConfig(config: any) {
@@ -151,5 +154,10 @@ export class AttendanceWeekDashboardComponent
     ).length;
 
     return countAbsences > this.absentWarningThreshold;
+  }
+
+  goToChild(childId: string) {
+    const path = "/" + Child.ENTITY_TYPE.toLowerCase();
+    this.router.navigate([path, childId]);
   }
 }

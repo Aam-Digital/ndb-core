@@ -38,10 +38,6 @@ export const dateEntitySchemaDatatype: EntitySchemaDatatype = {
   },
 
   transformToObjectFormat: (value) => {
-    if (!value) {
-      return undefined;
-    }
-
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) {
       throw new Error("failed to convert data to Date object: " + value);

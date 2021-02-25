@@ -100,8 +100,12 @@ describe("UserAccountComponent", () => {
     mockUserAccountService.changePassword.and.rejectWith(
       new Error("pw change error")
     );
-    component.changePassword();
-    tick();
+    try {
+      component.changePassword();
+      tick();
+    } catch (e) {
+      // expected to re-throw the error for upstream reporting
+    }
     expect(component.passwordChangeResult.success).toBeFalse();
     expect(component.passwordChangeResult.error).toBe("pw change error");
   }));
