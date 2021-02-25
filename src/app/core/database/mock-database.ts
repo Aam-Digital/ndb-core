@@ -19,6 +19,7 @@ import { Database, GetAllOptions, QueryOptions } from "./database";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { AttendanceMonth } from "../../child-dev-project/attendance/model/attendance-month";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
+import moment from "moment";
 
 /**
  * In-Memory database implementation that works as a drop-in replacement of {@link PouchDatabase}
@@ -230,30 +231,32 @@ export class MockDatabase extends Database {
           options.endkey,
           options.limit
         );
-      case "notes_index/note_date_in_days_for_child":
+      case "notes_index/note_child_by_date":
+        const startDate = moment(
+          new Date(
+            options.startkey[0],
+            options.startkey[1],
+            options.startkey[2]
+          )
+        );
+
         filterFun = (e) => {
           return (
             e._id.startsWith(Note.ENTITY_TYPE) &&
             Array.isArray(e.children) &&
-            e.date
+            e.date &&
+            startDate.isSameOrBefore(e.date)
           );
         };
         reducerFun = (prev, curr) => {
-          for (const childId of curr.children) {
+          const date = new Date(curr.date);
+          curr.children.forEach((childId) => {
             const newEntry = {
-              key: childId,
-              value: { max: new Date(curr.date).getTime() / 86400000 },
+              key: [date.getFullYear(), date.getMonth(), date.getDate()],
+              value: [childId, curr.relatesTo],
             };
-
-            const existingEntry = prev.find((e) => e.key === childId);
-            if (!existingEntry) {
-              prev.push(newEntry);
-            } else {
-              if (newEntry.value.max > existingEntry.value.max) {
-                existingEntry.value.max = newEntry.value.max;
-              }
-            }
-          }
+            prev.push(newEntry);
+          });
           return prev;
         };
         break;

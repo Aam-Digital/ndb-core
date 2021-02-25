@@ -15,6 +15,7 @@ import moment from "moment";
 import { LoggingService } from "../../core/logging/logging.service";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 import { QueryOptions } from "../../core/database/database";
+import { take } from "rxjs/operators";
 
 @Injectable()
 export class ChildrenService {
@@ -322,19 +323,40 @@ export class ChildrenService {
    *
    * Warning: Children without any notes will be missing from this map.
    *
-   * @return A map of childIds as key and days since last note as value
+   * @param forLastNDays (Optional) cut-off boundary how many days into the past the analysis will be done.
+   * @param excludeActivityEvents Whether events tracking participation in recurring activities should be considered
+   * @return A map of childIds as key and days since last note as value;
+   *         For performance reasons the days since last note are set to infinity when larger then the forLastNDays parameter
    */
-  public async getDaysSinceLastNoteOfEachChild(): Promise<Map<string, number>> {
+  public async getDaysSinceLastNoteOfEachChild(
+    forLastNDays: number = 30
+  ): Promise<Map<string, number>> {
+    const startDay = moment().subtract(forLastNDays, "days");
+
     const stats = await this.dbIndexing.queryIndexStats(
-      "notes_index/note_date_in_days_for_child"
+      "notes_index/note_child_by_date",
+      {
+        startkey: [startDay.year(), startDay.month(), startDay.date()],
+      }
     );
 
     const results = new Map();
+    const children = await this.getChildren().pipe(take(1)).toPromise();
+    children
+      .filter((c) => c.isActive)
+      .forEach((c) => results.set(c.getId(), Number.POSITIVE_INFINITY));
+
     for (const childStats of stats.rows) {
-      const dateOfLatestNoteInDays = childStats.value.max;
-      const todayInDays = new Date().getTime() / 86400000; // ms/day: 1000*60*60*24 = 86400000
-      const daysSinceLastNote = todayInDays - dateOfLatestNoteInDays;
-      results.set(childStats.key, daysSinceLastNote);
+      // TODO: filter notes to only include them if the given child is marked "present"
+
+      const childId = childStats.value[0];
+      const noteDate = moment(childStats.key);
+
+      const daysSinceNote = moment().diff(noteDate, "days");
+      const previousValue = results.get(childId);
+      if (previousValue > daysSinceNote) {
+        results.set(childId, daysSinceNote);
+      }
     }
 
     return results;
@@ -354,16 +376,13 @@ export class ChildrenService {
             "doc.children.forEach(childId => emit(childId)); " +
             "}",
         },
-        note_date_in_days_for_child: {
-          map:
-            "(doc) => { " +
-            'if (!doc._id.startsWith("' +
-            Note.ENTITY_TYPE +
-            '")) return;' +
-            "if (!Array.isArray(doc.children) || !doc.date) return;" +
-            "doc.children.forEach(childId => emit(childId, (new Date(doc.date)).getTime()/86400000)); " + // ms/day: 1000*60*60*24 = 86400000
-            "}",
-          reduce: "_stats",
+        note_child_by_date: {
+          map: `(doc) => {
+            if (!doc._id.startsWith("${Note.ENTITY_TYPE}")) return;
+            if (!Array.isArray(doc.children) || !doc.date) return;
+            var date = new Date(doc.date);
+            doc.children.forEach(childId => emit([date.getFullYear(), date.getMonth(), date.getDate()], [childId, doc.relatesTo]));
+          }`,
         },
       },
     };
