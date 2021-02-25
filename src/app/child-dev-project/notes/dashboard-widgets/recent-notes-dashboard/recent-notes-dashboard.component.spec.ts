@@ -9,10 +9,7 @@ import {
 import { ChildrenService } from "../../../children/children.service";
 import { EntityModule } from "../../../../core/entity/entity.module";
 import { RouterTestingModule } from "@angular/router/testing";
-import { ChildPhotoService } from "../../../children/child-photo-service/child-photo.service";
 import { RecentNotesDashboardComponent } from "./recent-notes-dashboard.component";
-import { of } from "rxjs";
-import { Child } from "../../../children/model/child";
 import { ChildrenModule } from "../../../children/children.module";
 import { Angulartics2Module } from "angulartics2";
 
@@ -24,14 +21,10 @@ describe("RecentNotesDashboardComponent", () => {
 
   beforeEach(async(() => {
     mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
-      "getChildren",
       "getDaysSinceLastNoteOfEachChild",
-      "getChild",
     ]);
-    mockChildrenService.getChildren.and.returnValue(of([]));
-    mockChildrenService.getChild.and.returnValue(of(new Child("")));
-    mockChildrenService.getDaysSinceLastNoteOfEachChild.and.returnValue(
-      Promise.resolve(new Map())
+    mockChildrenService.getDaysSinceLastNoteOfEachChild.and.resolveTo(
+      new Map()
     );
 
     TestBed.configureTestingModule({
@@ -41,13 +34,7 @@ describe("RecentNotesDashboardComponent", () => {
         EntityModule,
         Angulartics2Module.forRoot(),
       ],
-      providers: [
-        { provide: ChildrenService, useValue: mockChildrenService },
-        {
-          provide: ChildPhotoService,
-          useValue: jasmine.createSpyObj(["getImage"]),
-        },
-      ],
+      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();
   }));
 
@@ -62,13 +49,22 @@ describe("RecentNotesDashboardComponent", () => {
     tick();
   }));
 
-  it("should not contain children without note", fakeAsync(() => {
-    const mockChildren = [new Child("1"), new Child("2")];
-    mockChildrenService.getChildren.and.returnValue(of(mockChildren));
+  it("should only count children with recent note", fakeAsync(() => {
+    mockChildrenService.getDaysSinceLastNoteOfEachChild.and.resolveTo(
+      new Map([
+        ["1", 2],
+        ["2", 29],
+        ["3", 30],
+        ["4", 31],
+        ["5", Number.POSITIVE_INFINITY],
+      ])
+    );
 
+    component.sinceDays = 30;
+    component.fromBeginningOfWeek = false;
     component.ngOnInit();
     tick();
 
-    expect(component.count).toBe(0);
+    expect(component.count).toBe(3);
   }));
 });
