@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import { AppConfig } from "../app-config/app-config";
-import webdav from "webdav";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { SessionService } from "../session/session-service/session.service";
+import { WebdavWrapperService } from "./webdav-wrapper.service";
 
 /**
  * Connect and access a remote cloud file system like Nextcloud
@@ -25,12 +25,11 @@ export class CloudFileService {
 
   /**
    * Construct the service and immediately attempt to connect to the server with the current user.
-   * @param domSanitizer
-   * @param sessionService
    */
   constructor(
     private domSanitizer: DomSanitizer,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private webdavWrapper: WebdavWrapperService
   ) {
     this.connect();
   }
@@ -64,7 +63,7 @@ export class CloudFileService {
       return;
     }
 
-    this.client = await webdav.createClient(
+    this.client = await this.webdavWrapper.createClient(
       AppConfig.settings.webdav.remote_url,
       {
         username: username,
@@ -99,10 +98,8 @@ export class CloudFileService {
     const tmpContent = String.fromCharCode.apply(null, new Uint8Array(buffer));
     await this.client.deleteFile(fileName);
 
-    if (tmpContent === "TestString") {
-      return true;
-    }
-    return false;
+    return tmpContent === "TestString";
+
   }
 
   /**
@@ -138,10 +135,7 @@ export class CloudFileService {
     }
     // hacky way of checking if file exists, subject to change
     // TODO fix this
-    if (this.fileList.includes('"basename": "' + name.split("/").pop() + '"')) {
-      return true;
-    }
-    return false;
+    return this.fileList.includes('"basename": "' + name.split("/").pop() + '"');
   }
 
   /**

@@ -317,7 +317,7 @@ describe("SyncedSessionService", () => {
       });
     });
 
-    it("behaves correctly when the sync fails and the local login succeeds", fakeAsync(async () => {
+    it("behaves correctly when the sync fails and the local login succeeds", fakeAsync(() => {
       const localLogin = spyOn(localSession, "login").and.resolveTo(LoginState.LOGGED_IN);
       const remoteLogin = spyOn(remoteSession, "login").and.resolveTo(ConnectionState.CONNECTED);
       const syncSpy = spyOn(sessionService, "sync").and.rejectWith();
@@ -331,10 +331,10 @@ describe("SyncedSessionService", () => {
       expect(syncSpy).toHaveBeenCalled();
       expect(liveSyncSpy).toHaveBeenCalled();
       // result should be correct
-      expect(await result).toEqual(LoginState.LOGGED_IN);
+      return expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);
     }));
 
-    it("behaves correctly when the sync fails and the local login fails", fakeAsync(async () => {
+    it("behaves correctly when the sync fails and the local login fails", fakeAsync(() => {
       const localLogin = spyOn(localSession, "login").and.resolveTo(LoginState.LOGIN_FAILED);
       const remoteLogin = spyOn(remoteSession, "login").and.resolveTo(ConnectionState.CONNECTED);
       const syncSpy = spyOn(sessionService, "sync").and.rejectWith();
@@ -349,7 +349,7 @@ describe("SyncedSessionService", () => {
       expect(syncSpy).toHaveBeenCalled();
       expect(liveSyncSpy).not.toHaveBeenCalled();
       // result should be correct
-      expect(await result).toEqual(LoginState.LOGIN_FAILED);
+      return expectAsync(result).toBeResolvedTo(LoginState.LOGIN_FAILED);
     }));
   });
 });
