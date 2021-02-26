@@ -108,7 +108,7 @@ export class MockSessionService extends SessionService {
     return new Promise((resolve) =>
       setTimeout(() => {
         this.syncState.setState(SyncState.COMPLETED);
-        resolve();
+        resolve(null);
       }, 0)
     );
   }
