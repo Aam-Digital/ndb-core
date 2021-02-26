@@ -45,6 +45,7 @@
     "ngx-filter-pipe": "^2.1.2",
     "ngx-markdown": "^11.1.0",
     "ngx-papaparse": "^5.0.0",
+    "path": "^0.12.7",
     "pouchdb-authentication": "^1.1.3",
     "pouchdb-browser": "^7.2.2",
     "reflect-metadata": "^0.1.13",
@@ -100,6 +101,9 @@
     "tslint-plugin-prettier": "^2.3.0",
     "typescript": "^4.1.5",
     "webpack": "^4.46.0"
+  },
+  "browser": {
+    "crypto": false
   },
   "husky": {
     "hooks": {

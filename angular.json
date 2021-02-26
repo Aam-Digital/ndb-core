@@ -29,6 +29,18 @@
             ],
             "scripts": [
               "node_modules/marked/lib/marked.js"
+            ],
+            "allowedCommonJsDependencies": [
+              "crypto-js",
+              "minimatch",
+              "url-join",
+              "url-parse",
+              "immediate",
+              "faker",
+              "webdav",
+              "deep-object-diff",
+              "papaparse",
+              "lodash"
             ]
           },
           "configurations": {
