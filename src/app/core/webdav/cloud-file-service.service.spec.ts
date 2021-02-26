@@ -134,7 +134,7 @@ describe("CloudFileService", () => {
       cloudFileService,
       // @ts-ignore
       "bufferArrayToBase64"
-    ).and.returnValue("data-url");
+    ).and.returnValue("data-url" as any);
 
     const returnedFile = await cloudFileService.getFile("filepath");
     expect(returnedFile).toEqual("data-url");
