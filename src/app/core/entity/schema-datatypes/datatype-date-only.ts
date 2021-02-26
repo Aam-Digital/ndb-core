@@ -30,6 +30,9 @@ export const dateOnlyEntitySchemaDatatype: EntitySchemaDatatype = {
   name: "date-only",
 
   transformToDatabaseFormat: (value: Date) => {
+    if (value === null) {
+      return null;
+    }
     return (
       value.getFullYear() +
       "-" +

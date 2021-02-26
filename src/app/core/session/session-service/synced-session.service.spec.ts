@@ -24,6 +24,7 @@ import { AppConfig } from "../../app-config/app-config";
 import { LocalSession } from "./local-session";
 import { RemoteSession } from "./remote-session";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { fakeAsync, tick } from "@angular/core/testing";
 
 describe("SyncedSessionService", () => {
   const snackBarMock = { openFromComponent: () => {} } as any;
@@ -316,56 +317,39 @@ describe("SyncedSessionService", () => {
       });
     });
 
-    it("behaves correctly when the sync fails and the local login succeeds", (done) => {
-      const localLogin = spyOn(localSession, "login").and.returnValue(
-        Promise.resolve(LoginState.LOGGED_IN)
-      );
-      const remoteLogin = spyOn(remoteSession, "login").and.returnValue(
-        Promise.resolve(ConnectionState.CONNECTED)
-      );
-      const syncSpy = spyOn(sessionService, "sync").and.returnValue(
-        Promise.reject()
-      );
+    it("behaves correctly when the sync fails and the local login succeeds", fakeAsync(async () => {
+      const localLogin = spyOn(localSession, "login").and.resolveTo(LoginState.LOGGED_IN);
+      const remoteLogin = spyOn(remoteSession, "login").and.resolveTo(ConnectionState.CONNECTED);
+      const syncSpy = spyOn(sessionService, "sync").and.rejectWith();
       const liveSyncSpy = spyOn(sessionService, "liveSyncDeferred");
       const result = sessionService.login("u", "p");
-      setTimeout(async () => {
-        // wait for the next event cycle loop --> all Promise handlers are evaluated before this
-        // login methods should have been called, the local one twice
-        expect(localLogin.calls.allArgs()).toEqual([["u", "p"]]);
-        expect(remoteLogin.calls.allArgs()).toEqual([["u", "p"]]);
-        // sync should have been triggered
-        expect(syncSpy.calls.count()).toEqual(1);
-        expect(liveSyncSpy.calls.count()).toEqual(1);
-        // result should be correct
-        expect(await result).toEqual(LoginState.LOGGED_IN);
-        done();
-      });
-    });
+      tick()
+      // login methods should have been called
+      expect(localLogin).toHaveBeenCalledWith("u", "p");
+      expect(remoteLogin).toHaveBeenCalledWith("u", "p");
+      // sync should have been triggered
+      expect(syncSpy).toHaveBeenCalled();
+      expect(liveSyncSpy).toHaveBeenCalled();
+      // result should be correct
+      expect(await result).toEqual(LoginState.LOGGED_IN);
+    }));
 
-    it("behaves correctly when the sync fails and the local login fails", (done) => {
-      const localLogin = spyOn(localSession, "login").and.returnValue(
-        Promise.resolve(LoginState.LOGIN_FAILED)
-      );
-      const remoteLogin = spyOn(remoteSession, "login").and.returnValue(
-        Promise.resolve(ConnectionState.CONNECTED)
-      );
-      const syncSpy = spyOn(sessionService, "sync").and.returnValue(
-        Promise.reject()
-      );
+    it("behaves correctly when the sync fails and the local login fails", fakeAsync(async () => {
+      const localLogin = spyOn(localSession, "login").and.resolveTo(LoginState.LOGIN_FAILED);
+      const remoteLogin = spyOn(remoteSession, "login").and.resolveTo(ConnectionState.CONNECTED);
+      const syncSpy = spyOn(sessionService, "sync").and.rejectWith();
       const liveSyncSpy = spyOn(sessionService, "liveSyncDeferred");
-      const result = sessionService.login("u", "p");
-      setTimeout(async () => {
-        // wait for the next event cycle loop --> all Promise handlers are evaluated before this
-        // login methods should have been called, the local one twice
-        expect(localLogin.calls.allArgs()).toEqual([["u", "p"]]);
-        expect(remoteLogin.calls.allArgs()).toEqual([["u", "p"]]);
-        // sync should have been triggered
-        expect(syncSpy.calls.count()).toEqual(1);
-        expect(liveSyncSpy.calls.count()).toEqual(0);
-        // result should be correct
-        expect(await result).toEqual(LoginState.LOGIN_FAILED);
-        done();
-      });
-    });
+      const result = sessionService.login("u", "p")
+      tick();
+      // login methods should have been called, the local one twice
+      expect(localLogin).toHaveBeenCalledTimes(2);
+      expect(localLogin).toHaveBeenCalledWith("u", "p");
+      expect(remoteLogin).toHaveBeenCalledWith("u", "p");
+      // sync should have been triggered
+      expect(syncSpy).toHaveBeenCalled();
+      expect(liveSyncSpy).not.toHaveBeenCalled();
+      // result should be correct
+      expect(await result).toEqual(LoginState.LOGIN_FAILED);
+    }));
   });
 });

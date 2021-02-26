@@ -89,48 +89,47 @@ export class SyncedSessionService extends SessionService {
         const syncPromise = this.sync(); // no liveSync() here, as we can't know when that's finished if there are no changes.
 
         // no matter the result of the non-live sync(), start liveSync() once it is done
-        syncPromise.then(
-          // successful -> start liveSync()
-          () => this.liveSyncDeferred(),
-          // not successful -> only start a liveSync() to retry, if we are logged in locally
-          // otherwise the UI is in a fairly unusable state.
-          async () => {
+        syncPromise
+          .then(() => this.liveSyncDeferred())    // successful -> start liveSync()
+          .catch(async () => {
+            // not successful -> only start a liveSync() to retry, if we are logged in locally
+            // otherwise the UI is in a fairly unusable state.
             if ((await localLogin) === LoginState.LOGGED_IN) {
               this.liveSyncDeferred();
             } else {
-              // TODO(lh): Alert the AlertService: Your password was changed recently, but there is an issue with sync. Try again later!
+                // TODO(lh): Alert the AlertService: Your password was changed recently, but there is an issue with sync. Try again later!
             }
-          }
-        );
+          });
 
         // asynchronously check if the local login failed --> this happens, when the password was changed at the remote
         localLogin.then(async (loginState: LoginState) => {
           if (loginState === LoginState.LOGIN_FAILED) {
             // in this case: when the sync is completed, retry the local login after the sync
-            await syncPromise;
+            try {
+              await syncPromise;
+            } catch (e) { }
             return this._localSession.login(username, password);
           }
-        });
+        })
 
         return syncPromise;
       }
 
       // If we are not connected, we must check (asynchronously), whether the local database is initial
-      this._localSession.isInitial().then((isInitial) => {
-        if (isInitial) {
-          // If we were initial, the local session was waiting for a sync.
-          if (connectionState === ConnectionState.REJECTED) {
-            // Explicitly fail the login if the Connection was rejected, so the LocalSession knows what's going on
-            // additionally, fail sync to resolve deadlock
-            this._localSession.loginState.setState(LoginState.LOGIN_FAILED);
-            this._localSession.syncState.setState(SyncState.FAILED);
-          } else {
-            // Explicitly abort the sync to resolve the deadlock
-            this._localSession.syncState.setState(SyncState.ABORTED);
-          }
-        }
-      });
-
+      this._localSession.isInitial()
+        .then((isInitial) => {
+          if (isInitial) {
+            // If we were initial, the local session was waiting for a sync.
+            if (connectionState === ConnectionState.REJECTED) {
+              // Explicitly fail the login if the Connection was rejected, so the LocalSession knows what's going on
+              // additionally, fail sync to resolve deadlock
+              this._localSession.loginState.setState(LoginState.LOGIN_FAILED);
+              this._localSession.syncState.setState(SyncState.FAILED);
+            } else {
+              // Explicitly abort the sync to resolve the deadlock
+              this._localSession.syncState.setState(SyncState.ABORTED);
+            }
+          }});
       // remote rejected but local logged in
       if (connectionState === ConnectionState.REJECTED) {
         if ((await localLogin) === LoginState.LOGGED_IN) {
@@ -149,10 +148,11 @@ export class SyncedSessionService extends SessionService {
         !(await this._localSession.isInitial())
       ) {
         this._offlineRetryLoginScheduleHandle = setTimeout(() => {
-          this.login(username, password);
+          this.login(username, password)
+            .catch(err => console.log("delayed login failed"));
         }, 2000);
       }
-    });
+    }).catch(() => null); // Catching errors in remote login
     return localLogin; // the local login is the Promise that counts
   }
 
