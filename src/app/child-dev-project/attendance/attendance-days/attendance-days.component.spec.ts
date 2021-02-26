@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceDaysComponent } from "./attendance-days.component";
 import { Database } from "../../../core/database/database";
@@ -13,15 +13,17 @@ describe("AttendanceDaysComponent", () => {
 
   let attendanceMonth: AttendanceMonth;
 
-  beforeEach(async(() => {
-    attendanceMonth = new AttendanceMonth("");
-    attendanceMonth.month = new Date("2018-01-01");
+  beforeEach(
+    waitForAsync(() => {
+      attendanceMonth = new AttendanceMonth("");
+      attendanceMonth.month = new Date("2018-01-01");
 
-    TestBed.configureTestingModule({
-      imports: [ChildrenModule, RouterTestingModule],
-      providers: [{ provide: Database, useClass: MockDatabase }],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        imports: [ChildrenModule, RouterTestingModule],
+        providers: [{ provide: Database, useClass: MockDatabase }],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AttendanceDaysComponent);

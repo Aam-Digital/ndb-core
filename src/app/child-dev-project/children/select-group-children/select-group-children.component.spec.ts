@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { SelectGroupChildrenComponent } from "./select-group-children.component";
 import { ChildrenService } from "../children.service";
 import { BehaviorSubject } from "rxjs";
@@ -13,16 +13,20 @@ describe("SelectGroupChildrenComponent", () => {
   let mockChildrenService;
   const mockChildrenObservable = new BehaviorSubject([]);
 
-  beforeEach(async(() => {
-    mockChildrenService = jasmine.createSpyObj(["getChildren"]);
-    mockChildrenService.getChildren.and.returnValue(mockChildrenObservable);
+  beforeEach(
+    waitForAsync(() => {
+      mockChildrenService = jasmine.createSpyObj(["getChildren"]);
+      mockChildrenService.getChildren.and.returnValue(mockChildrenObservable);
 
-    TestBed.configureTestingModule({
-      declarations: [SelectGroupChildrenComponent],
-      imports: [ChildrenModule, RouterTestingModule],
-      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        declarations: [SelectGroupChildrenComponent],
+        imports: [ChildrenModule, RouterTestingModule],
+        providers: [
+          { provide: ChildrenService, useValue: mockChildrenService },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SelectGroupChildrenComponent);

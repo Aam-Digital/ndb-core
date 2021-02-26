@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { ChildBlockListComponent } from "./child-block-list.component";
 import { ChildrenModule } from "../children.module";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -9,12 +9,14 @@ describe("ChildBlockListComponent", () => {
   let component: ChildBlockListComponent;
   let fixture: ComponentFixture<ChildBlockListComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [],
-      imports: [ChildrenModule, RouterTestingModule],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [],
+        imports: [ChildrenModule, RouterTestingModule],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ChildBlockListComponent);

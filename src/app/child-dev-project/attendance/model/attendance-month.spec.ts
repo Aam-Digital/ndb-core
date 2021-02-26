@@ -17,7 +17,7 @@
 
 import { AttendanceMonth, daysInMonth } from "./attendance-month";
 import { WarningLevel } from "../../warning-level";
-import { async } from "@angular/core/testing";
+import { waitForAsync } from "@angular/core/testing";
 import { Entity } from "../../../core/entity/entity";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 
@@ -25,9 +25,11 @@ describe("AttendanceMonth", () => {
   const ENTITY_TYPE = "AttendanceMonth";
   let entitySchemaService: EntitySchemaService;
 
-  beforeEach(async(() => {
-    entitySchemaService = new EntitySchemaService();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      entitySchemaService = new EntitySchemaService();
+    })
+  );
 
   it("has correct _id and entityId and type", function () {
     const id = "test1";

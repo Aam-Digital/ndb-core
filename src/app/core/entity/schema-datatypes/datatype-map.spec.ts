@@ -16,7 +16,7 @@
  */
 
 import { Entity } from "../entity";
-import { async } from "@angular/core/testing";
+import { waitForAsync } from "@angular/core/testing";
 import { DatabaseField } from "../database-field.decorator";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 
@@ -30,9 +30,11 @@ describe("Schema data type: map", () => {
 
   let entitySchemaService: EntitySchemaService;
 
-  beforeEach(async(() => {
-    entitySchemaService = new EntitySchemaService();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      entitySchemaService = new EntitySchemaService();
+    })
+  );
 
   it("converts contained dates to month for saving", () => {
     const id = "test1";

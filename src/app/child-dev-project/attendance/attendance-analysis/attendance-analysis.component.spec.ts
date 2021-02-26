@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { MatButtonModule } from "@angular/material/button";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
@@ -30,46 +30,48 @@ describe("AttendanceRegisterComponent", () => {
   let component: AttendanceAnalysisComponent;
   let fixture: ComponentFixture<AttendanceAnalysisComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [
-        AttendanceAnalysisComponent,
-        ChildBlockComponent,
-        AttendanceBlockComponent,
-        AttendanceDayBlockComponent,
-        AttendanceDaysComponent,
-        SchoolBlockComponent,
-      ],
-      imports: [
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonToggleModule,
-        MatExpansionModule,
-        MatButtonModule,
-        MatTableModule,
-        MatProgressBarModule,
-        MatTooltipModule,
-        MatSelectModule,
-        MatIconModule,
-        MatDatepickerModule,
-        MatNativeDateModule,
-        FormsModule,
-        NoopAnimationsModule,
-        EntitySubrecordModule,
-        EntityModule,
-        RouterTestingModule,
-      ],
-      providers: [
-        {
-          provide: ChildrenService,
-          useValue: {
-            getChildren: () => new BehaviorSubject([]),
-            getAttendancesOfChild: () => new BehaviorSubject([]),
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [
+          AttendanceAnalysisComponent,
+          ChildBlockComponent,
+          AttendanceBlockComponent,
+          AttendanceDayBlockComponent,
+          AttendanceDaysComponent,
+          SchoolBlockComponent,
+        ],
+        imports: [
+          MatFormFieldModule,
+          MatInputModule,
+          MatButtonToggleModule,
+          MatExpansionModule,
+          MatButtonModule,
+          MatTableModule,
+          MatProgressBarModule,
+          MatTooltipModule,
+          MatSelectModule,
+          MatIconModule,
+          MatDatepickerModule,
+          MatNativeDateModule,
+          FormsModule,
+          NoopAnimationsModule,
+          EntitySubrecordModule,
+          EntityModule,
+          RouterTestingModule,
+        ],
+        providers: [
+          {
+            provide: ChildrenService,
+            useValue: {
+              getChildren: () => new BehaviorSubject([]),
+              getAttendancesOfChild: () => new BehaviorSubject([]),
+            },
           },
-        },
-      ],
-    }).compileComponents();
-  }));
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AttendanceAnalysisComponent);

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceManagerComponent } from "./attendance-manager.component";
 import { MatButtonModule } from "@angular/material/button";
@@ -9,12 +9,14 @@ describe("AttendanceManagerComponent", () => {
   let component: AttendanceManagerComponent;
   let fixture: ComponentFixture<AttendanceManagerComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [AttendanceManagerComponent],
-      imports: [MatButtonModule, MatCardModule, RouterTestingModule],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [AttendanceManagerComponent],
+        imports: [MatButtonModule, MatCardModule, RouterTestingModule],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AttendanceManagerComponent);

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceWarningsDashboardComponent } from "./attendance-warnings-dashboard.component";
 import { MatCardModule } from "@angular/material/card";
@@ -22,26 +22,30 @@ describe("AttendanceWarningsDashboardComponent", () => {
     ],
   };
 
-  beforeEach(async(() => {
-    mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
-      "queryAttendanceLastMonth",
-      "getChild",
-    ]);
-    mockChildrenService.queryAttendanceLastMonth.and.returnValue(
-      Promise.resolve(mockAttendanceLastMonth)
-    );
-    mockChildrenService.getChild.and.returnValue(of(new Child("")));
+  beforeEach(
+    waitForAsync(() => {
+      mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
+        "queryAttendanceLastMonth",
+        "getChild",
+      ]);
+      mockChildrenService.queryAttendanceLastMonth.and.returnValue(
+        Promise.resolve(mockAttendanceLastMonth)
+      );
+      mockChildrenService.getChild.and.returnValue(of(new Child("")));
 
-    TestBed.configureTestingModule({
-      declarations: [
-        ChildBlockComponent,
-        SchoolBlockComponent,
-        AttendanceWarningsDashboardComponent,
-      ],
-      imports: [MatIconModule, MatCardModule, RouterTestingModule],
-      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        declarations: [
+          ChildBlockComponent,
+          SchoolBlockComponent,
+          AttendanceWarningsDashboardComponent,
+        ],
+        imports: [MatIconModule, MatCardModule, RouterTestingModule],
+        providers: [
+          { provide: ChildrenService, useValue: mockChildrenService },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AttendanceWarningsDashboardComponent);

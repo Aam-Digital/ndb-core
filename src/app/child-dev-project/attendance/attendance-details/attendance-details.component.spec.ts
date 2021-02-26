@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceDetailsComponent } from "./attendance-details.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
@@ -17,30 +17,32 @@ describe("AttendanceDetailsComponent", () => {
   let component: AttendanceDetailsComponent;
   let fixture: ComponentFixture<AttendanceDetailsComponent>;
 
-  beforeEach(async(() => {
-    const att = new AttendanceMonth("test");
-    att.month = new Date();
+  beforeEach(
+    waitForAsync(() => {
+      const att = new AttendanceMonth("test");
+      att.month = new Date();
 
-    TestBed.configureTestingModule({
-      imports: [
-        ChildrenModule,
-        EntityModule,
-        RouterTestingModule,
-        Angulartics2Module.forRoot(),
-        RouterTestingModule,
-      ],
-      providers: [
-        { provide: Database, useClass: MockDatabase },
-        { provide: MatDialogRef, useValue: { beforeClosed: () => of({}) } },
-        { provide: MAT_DIALOG_DATA, useValue: { entity: att } },
-        { provide: ChildrenService, useClass: ChildrenService },
-        {
-          provide: ChildPhotoService,
-          useValue: jasmine.createSpyObj(["getImage"]),
-        },
-      ],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        imports: [
+          ChildrenModule,
+          EntityModule,
+          RouterTestingModule,
+          Angulartics2Module.forRoot(),
+          RouterTestingModule,
+        ],
+        providers: [
+          { provide: Database, useClass: MockDatabase },
+          { provide: MatDialogRef, useValue: { beforeClosed: () => of({}) } },
+          { provide: MAT_DIALOG_DATA, useValue: { entity: att } },
+          { provide: ChildrenService, useClass: ChildrenService },
+          {
+            provide: ChildPhotoService,
+            useValue: jasmine.createSpyObj(["getImage"]),
+          },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AttendanceDetailsComponent);

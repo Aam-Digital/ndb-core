@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { RollCallComponent } from "./roll-call.component";
 import { ChildrenModule } from "../../../children/children.module";
@@ -18,21 +18,23 @@ describe("RollCallComponent", () => {
   let mockEntityMapper;
   let mockChildrenService;
 
-  beforeEach(async(() => {
-    mockEntityMapper = jasmine.createSpyObj(["save"]);
-    mockChildrenService = jasmine.createSpyObj(["getAttendancesOfMonth"]);
-    mockChildrenService.getAttendancesOfMonth.and.returnValue(of([]));
+  beforeEach(
+    waitForAsync(() => {
+      mockEntityMapper = jasmine.createSpyObj(["save"]);
+      mockChildrenService = jasmine.createSpyObj(["getAttendancesOfMonth"]);
+      mockChildrenService.getAttendancesOfMonth.and.returnValue(of([]));
 
-    AppConfig.settings = { debug: true } as any;
+      AppConfig.settings = { debug: true } as any;
 
-    TestBed.configureTestingModule({
-      imports: [ChildrenModule, RouterTestingModule],
-      providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper },
-        { provide: ChildrenService, useValue: mockChildrenService },
-      ],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        imports: [ChildrenModule, RouterTestingModule],
+        providers: [
+          { provide: EntityMapperService, useValue: mockEntityMapper },
+          { provide: ChildrenService, useValue: mockChildrenService },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RollCallComponent);

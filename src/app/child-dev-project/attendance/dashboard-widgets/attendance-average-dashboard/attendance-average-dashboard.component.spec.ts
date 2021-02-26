@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { AttendanceAverageDashboardComponent } from "./attendance-average-dashboard.component";
 import { MatCardModule } from "@angular/material/card";
 import { MatIconModule } from "@angular/material/icon";
@@ -28,30 +28,34 @@ describe("AttendanceAverageDashboardComponent", () => {
   };
   const testChild = new Child("1");
 
-  beforeEach(async(() => {
-    mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
-      "queryAttendanceLastMonth",
-      "queryAttendanceLast3Months",
-      "getChild",
-    ]);
-    mockChildrenService.queryAttendanceLastMonth.and.returnValue(
-      Promise.resolve(mockAttendanceLastMonth)
-    );
-    mockChildrenService.queryAttendanceLast3Months.and.returnValue(
-      Promise.resolve(mockAttendanceLast3Months)
-    );
-    mockChildrenService.getChild.and.returnValue(of(testChild));
+  beforeEach(
+    waitForAsync(() => {
+      mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
+        "queryAttendanceLastMonth",
+        "queryAttendanceLast3Months",
+        "getChild",
+      ]);
+      mockChildrenService.queryAttendanceLastMonth.and.returnValue(
+        Promise.resolve(mockAttendanceLastMonth)
+      );
+      mockChildrenService.queryAttendanceLast3Months.and.returnValue(
+        Promise.resolve(mockAttendanceLast3Months)
+      );
+      mockChildrenService.getChild.and.returnValue(of(testChild));
 
-    TestBed.configureTestingModule({
-      declarations: [
-        ChildBlockComponent,
-        SchoolBlockComponent,
-        AttendanceAverageDashboardComponent,
-      ],
-      imports: [MatIconModule, MatCardModule, RouterTestingModule],
-      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        declarations: [
+          ChildBlockComponent,
+          SchoolBlockComponent,
+          AttendanceAverageDashboardComponent,
+        ],
+        imports: [MatIconModule, MatCardModule, RouterTestingModule],
+        providers: [
+          { provide: ChildrenService, useValue: mockChildrenService },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AttendanceAverageDashboardComponent);

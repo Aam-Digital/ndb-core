@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AddMonthAttendanceComponent } from "./add-month-attendance.component";
 import { MatButtonModule } from "@angular/material/button";
@@ -29,42 +29,44 @@ describe("AddMonthAttendanceComponent", () => {
   let component: AddMonthAttendanceComponent;
   let fixture: ComponentFixture<AddMonthAttendanceComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [
-        AddMonthAttendanceComponent,
-        SchoolBlockComponent,
-        ChildBlockComponent,
-      ],
-      imports: [
-        MatButtonToggleModule,
-        MatSelectModule,
-        MatFormFieldModule,
-        MatIconModule,
-        MatCheckboxModule,
-        MatInputModule,
-        MatTableModule,
-        MatButtonModule,
-        MatProgressBarModule,
-        FormsModule,
-        AlertsModule,
-        NoopAnimationsModule,
-        RouterTestingModule,
-        EntitySubrecordModule,
-        ConfirmationDialogModule,
-      ],
-      providers: [
-        EntityMapperService,
-        EntitySchemaService,
-        { provide: Database, useClass: MockDatabase },
-        ChildrenService,
-        {
-          provide: ChildPhotoService,
-          useValue: jasmine.createSpyObj(["getImage"]),
-        },
-      ],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [
+          AddMonthAttendanceComponent,
+          SchoolBlockComponent,
+          ChildBlockComponent,
+        ],
+        imports: [
+          MatButtonToggleModule,
+          MatSelectModule,
+          MatFormFieldModule,
+          MatIconModule,
+          MatCheckboxModule,
+          MatInputModule,
+          MatTableModule,
+          MatButtonModule,
+          MatProgressBarModule,
+          FormsModule,
+          AlertsModule,
+          NoopAnimationsModule,
+          RouterTestingModule,
+          EntitySubrecordModule,
+          ConfirmationDialogModule,
+        ],
+        providers: [
+          EntityMapperService,
+          EntitySchemaService,
+          { provide: Database, useClass: MockDatabase },
+          ChildrenService,
+          {
+            provide: ChildPhotoService,
+            useValue: jasmine.createSpyObj(["getImage"]),
+          },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AddMonthAttendanceComponent);

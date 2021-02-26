@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { RecentAttendanceBlocksComponent } from "./recent-attendance-blocks.component";
 import { Database } from "../../../../core/database/database";
@@ -17,24 +17,26 @@ describe("RecentAttendanceBlocksComponent", () => {
   let component: RecentAttendanceBlocksComponent;
   let fixture: ComponentFixture<RecentAttendanceBlocksComponent>;
 
-  beforeEach(async(() => {
-    const photoMock: jasmine.SpyObj<ChildPhotoService> = jasmine.createSpyObj(
-      "photoMock",
-      ["getImage"]
-    );
-    TestBed.configureTestingModule({
-      declarations: [RecentAttendanceBlocksComponent],
-      imports: [FilterPipeModule],
-      providers: [
-        { provide: Database, useClass: MockDatabase },
-        EntityMapperService,
-        EntitySchemaService,
-        ChildrenService,
-        DatabaseIndexingService,
-        { provide: ChildPhotoService, useValue: photoMock },
-      ],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      const photoMock: jasmine.SpyObj<ChildPhotoService> = jasmine.createSpyObj(
+        "photoMock",
+        ["getImage"]
+      );
+      TestBed.configureTestingModule({
+        declarations: [RecentAttendanceBlocksComponent],
+        imports: [FilterPipeModule],
+        providers: [
+          { provide: Database, useClass: MockDatabase },
+          EntityMapperService,
+          EntitySchemaService,
+          ChildrenService,
+          DatabaseIndexingService,
+          { provide: ChildPhotoService, useValue: photoMock },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RecentAttendanceBlocksComponent);

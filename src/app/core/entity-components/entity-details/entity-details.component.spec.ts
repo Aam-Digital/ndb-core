@@ -1,9 +1,9 @@
 import {
-  async,
   ComponentFixture,
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 import { EntityDetailsComponent } from "./entity-details.component";
 import { Observable, of, Subscriber } from "rxjs";
@@ -72,18 +72,20 @@ describe("EntityDetailsComponent", () => {
     ["canSetImage", "setImage", "getImageAsyncObservable"]
   );
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [ChildrenModule, MatNativeDateModule, RouterTestingModule],
-      providers: [
-        databaseServiceProvider,
-        { provide: Database, useValue: mockedDatabase },
-        { provide: SessionService, useValue: mockedSession },
-        { provide: ActivatedRoute, useValue: mockedRoute },
-        { provide: ChildPhotoService, useValue: mockChildPhotoService },
-      ],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        imports: [ChildrenModule, MatNativeDateModule, RouterTestingModule],
+        providers: [
+          databaseServiceProvider,
+          { provide: Database, useValue: mockedDatabase },
+          { provide: SessionService, useValue: mockedSession },
+          { provide: ActivatedRoute, useValue: mockedRoute },
+          { provide: ChildPhotoService, useValue: mockChildPhotoService },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EntityDetailsComponent);

@@ -1,9 +1,9 @@
 import {
-  async,
   ComponentFixture,
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 import { ChildrenListComponent } from "./children-list.component";
 import { ChildrenService } from "../children.service";
@@ -75,31 +75,33 @@ describe("ChildrenListComponent", () => {
     queryParams: of({}),
   };
 
-  beforeEach(async(() => {
-    const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-    mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
-    TestBed.configureTestingModule({
-      declarations: [ChildrenListComponent, ExportDataComponent],
+  beforeEach(
+    waitForAsync(() => {
+      const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+      mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
+      TestBed.configureTestingModule({
+        declarations: [ChildrenListComponent, ExportDataComponent],
 
-      imports: [
-        ChildrenModule,
-        RouterTestingModule,
-        Angulartics2Module.forRoot(),
-      ],
-      providers: [
-        {
-          provide: SessionService,
-          useValue: mockSessionService,
-        },
-        { provide: Database, useClass: MockDatabase },
-        {
-          provide: ChildPhotoService,
-          useValue: jasmine.createSpyObj(["getImage"]),
-        },
-        { provide: ActivatedRoute, useValue: routeMock },
-      ],
-    }).compileComponents();
-  }));
+        imports: [
+          ChildrenModule,
+          RouterTestingModule,
+          Angulartics2Module.forRoot(),
+        ],
+        providers: [
+          {
+            provide: SessionService,
+            useValue: mockSessionService,
+          },
+          { provide: Database, useClass: MockDatabase },
+          {
+            provide: ChildPhotoService,
+            useValue: jasmine.createSpyObj(["getImage"]),
+          },
+          { provide: ActivatedRoute, useValue: routeMock },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ChildrenListComponent);

@@ -1,10 +1,10 @@
 import {
-  async,
   ComponentFixture,
   fakeAsync,
   flush,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 import { AdminComponent } from "./admin.component";
 import { AlertsModule } from "../../alerts/alerts.module";
@@ -63,50 +63,52 @@ describe("AdminComponent", () => {
   }
 
   function createDialogMock(): jasmine.SpyObj<MatDialogRef<any>> {
-    const mockDialogRef: jasmine.SpyObj<MatDialogRef<
-      any
-    >> = jasmine.createSpyObj("mockDialogRef", ["afterClosed"]);
+    const mockDialogRef: jasmine.SpyObj<
+      MatDialogRef<any>
+    > = jasmine.createSpyObj("mockDialogRef", ["afterClosed"]);
     mockDialogRef.afterClosed.and.returnValue(of(true));
     confirmationDialogMock.openDialog.and.returnValue(mockDialogRef);
     return mockDialogRef;
   }
 
-  beforeEach(async(() => {
-    AppConfig.settings = {
-      site_name: "",
-      database: {
-        name: "unit-tests",
-        remote_url: "",
-        timeout: 60000,
-        useTemporaryDatabase: true,
-      },
-      webdav: { remote_url: "" },
-    };
+  beforeEach(
+    waitForAsync(() => {
+      AppConfig.settings = {
+        site_name: "",
+        database: {
+          name: "unit-tests",
+          remote_url: "",
+          timeout: 60000,
+          useTemporaryDatabase: true,
+        },
+        webdav: { remote_url: "" },
+      };
 
-    TestBed.configureTestingModule({
-      imports: [
-        MatSnackBarModule,
-        MatButtonModule,
-        HttpClientTestingModule,
-        AlertsModule,
-        NoopAnimationsModule,
-      ],
-      declarations: [AdminComponent],
-      providers: [
-        { provide: BackupService, useValue: mockBackupService },
-        { provide: AppConfig, useValue: { load: () => {} } },
-        {
-          provide: EntityMapperService,
-          useValue: jasmine.createSpyObj(["loadType", "save"]),
-        },
-        { provide: ConfigService, useValue: mockConfigService },
-        {
-          provide: ConfirmationDialogService,
-          useValue: confirmationDialogMock,
-        },
-      ],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        imports: [
+          MatSnackBarModule,
+          MatButtonModule,
+          HttpClientTestingModule,
+          AlertsModule,
+          NoopAnimationsModule,
+        ],
+        declarations: [AdminComponent],
+        providers: [
+          { provide: BackupService, useValue: mockBackupService },
+          { provide: AppConfig, useValue: { load: () => {} } },
+          {
+            provide: EntityMapperService,
+            useValue: jasmine.createSpyObj(["loadType", "save"]),
+          },
+          { provide: ConfigService, useValue: mockConfigService },
+          {
+            provide: ConfirmationDialogService,
+            useValue: confirmationDialogMock,
+          },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AdminComponent);

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { BackgroundProcessingIndicatorComponent } from "./background-processing-indicator.component";
 import { MatMenuModule } from "@angular/material/menu";
@@ -13,19 +13,21 @@ describe("BackgroundProcessingIndicatorComponent", () => {
   let component: BackgroundProcessingIndicatorComponent;
   let fixture: ComponentFixture<BackgroundProcessingIndicatorComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [
-        MatMenuModule,
-        MatTooltipModule,
-        MatIconModule,
-        MatBadgeModule,
-        MatProgressSpinnerModule,
-        NoopAnimationsModule,
-      ],
-      declarations: [BackgroundProcessingIndicatorComponent],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        imports: [
+          MatMenuModule,
+          MatTooltipModule,
+          MatIconModule,
+          MatBadgeModule,
+          MatProgressSpinnerModule,
+          NoopAnimationsModule,
+        ],
+        declarations: [BackgroundProcessingIndicatorComponent],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(BackgroundProcessingIndicatorComponent);

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AddDayAttendanceComponent } from "./add-day-attendance.component";
 import { ChildrenService } from "../../children/children.service";
@@ -13,20 +13,22 @@ describe("AddDayAttendanceComponent", () => {
   let component: AddDayAttendanceComponent;
   let fixture: ComponentFixture<AddDayAttendanceComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [
-        ChildrenModule,
-        SchoolsModule,
-        MatNativeDateModule,
-        RouterTestingModule,
-      ],
-      providers: [
-        ChildrenService,
-        { provide: Database, useClass: MockDatabase },
-      ],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        imports: [
+          ChildrenModule,
+          SchoolsModule,
+          MatNativeDateModule,
+          RouterTestingModule,
+        ],
+        providers: [
+          ChildrenService,
+          { provide: Database, useClass: MockDatabase },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AddDayAttendanceComponent);

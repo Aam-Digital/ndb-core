@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ChildAttendanceComponent } from "./child-attendance.component";
 import { Child } from "../../children/model/child";
@@ -178,20 +178,22 @@ describe("ChildAttendanceComponent", () => {
 
   const child: Child = new Child("22");
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [ChildrenModule, RouterTestingModule],
-      providers: [
-        DatePipe,
-        PercentPipe,
-        { provide: ChildrenService, useValue: mockChildrenService },
-        EntityMapperService,
-        EntitySchemaService,
-        AlertService,
-        { provide: Database, useClass: MockDatabase },
-      ],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        imports: [ChildrenModule, RouterTestingModule],
+        providers: [
+          DatePipe,
+          PercentPipe,
+          { provide: ChildrenService, useValue: mockChildrenService },
+          EntityMapperService,
+          EntitySchemaService,
+          AlertService,
+          { provide: Database, useClass: MockDatabase },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ChildAttendanceComponent);

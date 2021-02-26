@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceBlockComponent } from "./attendance-block.component";
 import { AttendanceMonth } from "../model/attendance-month";
@@ -17,25 +17,27 @@ describe("AttendanceBlockComponent", () => {
   let component: AttendanceBlockComponent;
   let fixture: ComponentFixture<AttendanceBlockComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [
-        AttendanceBlockComponent,
-        AttendanceDaysComponent,
-        AttendanceDayBlockComponent,
-      ],
-      imports: [
-        MatFormFieldModule,
-        MatInputModule,
-        MatSelectModule,
-        MatTooltipModule,
-        FormsModule,
-        EntitySubrecordModule,
-        EntityModule,
-        RouterTestingModule,
-      ],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [
+          AttendanceBlockComponent,
+          AttendanceDaysComponent,
+          AttendanceDayBlockComponent,
+        ],
+        imports: [
+          MatFormFieldModule,
+          MatInputModule,
+          MatSelectModule,
+          MatTooltipModule,
+          FormsModule,
+          EntitySubrecordModule,
+          EntityModule,
+          RouterTestingModule,
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AttendanceBlockComponent);
