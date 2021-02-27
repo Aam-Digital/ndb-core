@@ -31,7 +31,7 @@ describe("ConfigService", () => {
 
   it("should use the default config when none is loaded", fakeAsync(() => {
     const configBefore = service.getAllConfigs("");
-    entityMapper.load.and.throwError("No config found");
+    entityMapper.load.and.rejectWith();
     service.loadConfig(entityMapper);
     tick();
     const configAfter = service.getAllConfigs("");

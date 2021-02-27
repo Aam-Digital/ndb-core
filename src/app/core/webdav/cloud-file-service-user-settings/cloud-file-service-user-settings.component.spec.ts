@@ -83,7 +83,7 @@ describe("CloudFileServiceUserSettingsComponent", () => {
     component.form.controls.cloudUser.setValue("testUser");
     component.form.controls.cloudPassword.setValue("testPwd");
     component.form.controls.userPassword.setValue("loginPwd");
-    mockCloudFileService.connect.and.throwError(new Error());
+    mockCloudFileService.connect.and.rejectWith();
 
     await component.updateCloudServiceSettings();
     expect(mockEntityMapper.save).not.toHaveBeenCalled();
