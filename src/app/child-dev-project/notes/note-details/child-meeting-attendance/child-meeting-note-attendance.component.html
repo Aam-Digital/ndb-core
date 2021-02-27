@@ -1,25 +1,33 @@
-
 <div fxLayout="col" fxLayoutGap="4px">
-
   <div class="actions" fxFlex="40px">
     <!-- deactivated to keep the UI simple and understandable
     <span class="fa fa-window-maximize" *ngIf="!showRemarks" (click)="showRemarks=true"></span>
     <span class="fa fa-window-minimize" *ngIf="showRemarks" (click)="showRemarks=false"></span>
     -->
-    <button mat-icon-button (click)='remove.emit()'>
+    <button mat-icon-button (click)="remove.emit()">
       <mat-icon fontIcon="fa-times"></mat-icon>
     </button>
   </div>
 
   <div fxFlex="125px">
-    <mat-button-toggle-group name="present" class="presence-toggle"
-                             [(ngModel)]="noteChildAttendance.present" (change)='change.emit(noteChildAttendance)'>
-      <mat-button-toggle [value]="true" class="presence-toggle-button"
-                         [ngClass]="{'button-present': noteChildAttendance.present}">
+    <mat-button-toggle-group
+      name="present"
+      class="presence-toggle"
+      [(ngModel)]="noteChildAttendance.present"
+      (change)="change.emit(noteChildAttendance)"
+    >
+      <mat-button-toggle
+        [value]="true"
+        class="presence-toggle-button"
+        [ngClass]="{ 'button-present': noteChildAttendance.present }"
+      >
         Present
       </mat-button-toggle>
-      <mat-button-toggle [value]="false" class="presence-toggle-button"
-                         [ngClass]="{'button-absent': !noteChildAttendance.present}">
+      <mat-button-toggle
+        [value]="false"
+        class="presence-toggle-button"
+        [ngClass]="{ 'button-absent': !noteChildAttendance.present }"
+      >
         Absent
       </mat-button-toggle>
     </mat-button-toggle-group>

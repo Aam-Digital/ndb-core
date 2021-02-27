@@ -16,52 +16,54 @@
   -->
 
 <div fxLayout="row" fxLayoutAlign="space-between">
-    <div>
-        <h1 class="page-header section-child">
-            <button
-                    mat-icon-button
-                    (click)="navigateBack()"
-                    matTooltip="Back"
-                    style="vertical-align: middle;"
-            >
-                <mat-icon fontIcon="fa-backward"></mat-icon>
-            </button>
+  <div>
+    <h1 class="page-header section-child">
+      <button
+        mat-icon-button
+        (click)="navigateBack()"
+        matTooltip="Back"
+        style="vertical-align: middle"
+      >
+        <mat-icon fontIcon="fa-backward"></mat-icon>
+      </button>
 
-            <i [className]="classNamesWithIcon"></i>
-            <span *ngIf="!creatingNew"
-            >{{ entity?.name }}</span
-            >
-            <span *ngIf="creatingNew">Adding new {{config?.entity}}</span>
-        </h1>
-    </div>
+      <i [className]="classNamesWithIcon"></i>
+      <span *ngIf="!creatingNew">{{ entity?.name }}</span>
+      <span *ngIf="creatingNew">Adding new {{ config?.entity }}</span>
+    </h1>
+  </div>
 </div>
 
 <mat-accordion multi="true">
-    <mat-expansion-panel
-            *ngFor="let panelConfig of panels; let i = index"
-            [expanded]="i == 0"
-            [title]="panelConfig.title"
-            [disabled]="creatingNew && i > 0">
-        <mat-expansion-panel-header class="section-header">
-            <mat-icon fontIcon="fa-exclamation-triangle" *ngIf="creatingNew && i > 0"
-                      class="locked-icon"
-                      matTooltip="Please save before entering further data"
-                      [matTooltipDisabled]="!creatingNew">
-            </mat-icon>
-            {{panelConfig.title}}
-        </mat-expansion-panel-header>
-        <div *ngFor="let componentConfig of panelConfig.components; let j = index">
-            <h3 *ngIf="componentConfig.title !== ''">{{componentConfig.title}}</h3>
-            <ng-template [appDynamicComponent]="componentConfig "></ng-template>
-            <br *ngIf="j < panelConfig.components.length - 1"/>
-        </div>
-    </mat-expansion-panel>
+  <mat-expansion-panel
+    *ngFor="let panelConfig of panels; let i = index"
+    [expanded]="i == 0"
+    [title]="panelConfig.title"
+    [disabled]="creatingNew && i > 0"
+  >
+    <mat-expansion-panel-header class="section-header">
+      <mat-icon
+        fontIcon="fa-exclamation-triangle"
+        *ngIf="creatingNew && i > 0"
+        class="locked-icon"
+        matTooltip="Please save before entering further data"
+        [matTooltipDisabled]="!creatingNew"
+      >
+      </mat-icon>
+      {{ panelConfig.title }}
+    </mat-expansion-panel-header>
+    <div *ngFor="let componentConfig of panelConfig.components; let j = index">
+      <h3 *ngIf="componentConfig.title !== ''">{{ componentConfig.title }}</h3>
+      <ng-template [appDynamicComponent]="componentConfig"></ng-template>
+      <br *ngIf="j < panelConfig.components.length - 1" />
+    </div>
+  </mat-expansion-panel>
 </mat-accordion>
 <button
-        mat-raised-button
-        color="warn"
-        class="delete-button"
-        (click)="removeEntity()"
+  mat-raised-button
+  color="warn"
+  class="delete-button"
+  (click)="removeEntity()"
 >
-    Delete
+  Delete
 </button>

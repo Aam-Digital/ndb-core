@@ -51,9 +51,7 @@ const ATTENDANCE_PROFILES: AttendanceProfile[] = [
  * Builds upon the generated demo Child entities.
  */
 @Injectable()
-export class DemoAttendanceGenerator extends DemoDataGenerator<
-  AttendanceMonth
-> {
+export class DemoAttendanceGenerator extends DemoDataGenerator<AttendanceMonth> {
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoAttendanceGenerator.provider()]`

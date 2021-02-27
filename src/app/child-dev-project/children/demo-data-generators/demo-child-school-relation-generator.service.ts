@@ -13,9 +13,7 @@ import { School } from "../../schools/model/school";
  * generating relations for each Child from the date of admission till dropout or today.
  */
 @Injectable()
-export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<
-  ChildSchoolRelation
-> {
+export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSchoolRelation> {
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoChildSchoolRelationGenerator.provider()]`

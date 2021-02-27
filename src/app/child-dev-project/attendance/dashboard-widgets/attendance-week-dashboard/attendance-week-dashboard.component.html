@@ -12,10 +12,14 @@
   <mat-card-content>
     <table class="dashboard-table">
       <tr
-        *ngFor="let record of attendanceRecords; trackBy: recordTrackByFunction; let i=index;"
+        *ngFor="
+          let record of attendanceRecords;
+          trackBy: recordTrackByFunction;
+          let i = index
+        "
         class="dashboard-table-row w-WARNING"
         (click)="goToChild(record.child.getId())"
-        style="cursor: pointer;"
+        style="cursor: pointer"
         angulartics2On="click"
         angularticsCategory="Navigation"
         angularticsAction="dashboard_attendance_warnings_list_link"

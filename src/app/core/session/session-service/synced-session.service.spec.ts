@@ -318,12 +318,16 @@ describe("SyncedSessionService", () => {
     });
 
     it("behaves correctly when the sync fails and the local login succeeds", fakeAsync(() => {
-      const localLogin = spyOn(localSession, "login").and.resolveTo(LoginState.LOGGED_IN);
-      const remoteLogin = spyOn(remoteSession, "login").and.resolveTo(ConnectionState.CONNECTED);
+      const localLogin = spyOn(localSession, "login").and.resolveTo(
+        LoginState.LOGGED_IN
+      );
+      const remoteLogin = spyOn(remoteSession, "login").and.resolveTo(
+        ConnectionState.CONNECTED
+      );
       const syncSpy = spyOn(sessionService, "sync").and.rejectWith();
       const liveSyncSpy = spyOn(sessionService, "liveSyncDeferred");
       const result = sessionService.login("u", "p");
-      tick()
+      tick();
       // login methods should have been called
       expect(localLogin).toHaveBeenCalledWith("u", "p");
       expect(remoteLogin).toHaveBeenCalledWith("u", "p");
@@ -335,11 +339,15 @@ describe("SyncedSessionService", () => {
     }));
 
     it("behaves correctly when the sync fails and the local login fails", fakeAsync(() => {
-      const localLogin = spyOn(localSession, "login").and.resolveTo(LoginState.LOGIN_FAILED);
-      const remoteLogin = spyOn(remoteSession, "login").and.resolveTo(ConnectionState.CONNECTED);
+      const localLogin = spyOn(localSession, "login").and.resolveTo(
+        LoginState.LOGIN_FAILED
+      );
+      const remoteLogin = spyOn(remoteSession, "login").and.resolveTo(
+        ConnectionState.CONNECTED
+      );
       const syncSpy = spyOn(sessionService, "sync").and.rejectWith();
       const liveSyncSpy = spyOn(sessionService, "liveSyncDeferred");
-      const result = sessionService.login("u", "p")
+      const result = sessionService.login("u", "p");
       tick();
       // login methods should have been called, the local one twice
       expect(localLogin).toHaveBeenCalledTimes(2);

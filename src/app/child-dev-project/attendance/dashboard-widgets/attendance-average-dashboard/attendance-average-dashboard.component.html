@@ -19,10 +19,10 @@
         <th class="dashboard-table-cell"></th>
       </tr>
       <tr
-        *ngFor="let entry of lastMonthsTopAttendence; let i=index;"
+        *ngFor="let entry of lastMonthsTopAttendence; let i = index"
         class="dashboard-table-row w-OK"
         (click)="goToChild(entry[0].getId())"
-        style="cursor: pointer;"
+        style="cursor: pointer"
         angulartics2On="click"
         angularticsCategory="Navigation"
         angularticsAction="dashboard_attendance_average_list_link"
@@ -34,10 +34,10 @@
             [entity]="entry[0]"
           ></app-child-block>
         </td>
-        <td class="dashboard-table-cell" style="text-align: right;">
+        <td class="dashboard-table-cell" style="text-align: right">
           {{ entry[2] | percent: "1.0-0" }}
         </td>
-        <td class="dashboard-table-cell" style="text-align: right;">
+        <td class="dashboard-table-cell" style="text-align: right">
           {{ entry[1] | percent: "1.0-0" }}
         </td>
         <td class="dashboard-table-cell">

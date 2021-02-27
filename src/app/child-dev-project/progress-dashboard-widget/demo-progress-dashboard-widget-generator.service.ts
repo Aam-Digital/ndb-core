@@ -4,9 +4,7 @@ import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
 import { ProgressDashboardConfig } from "./progress-dashboard/progress-dashboard-config";
 
 @Injectable()
-export class DemoProgressDashboardWidgetGeneratorService extends DemoDataGenerator<
-  any
-> {
+export class DemoProgressDashboardWidgetGeneratorService extends DemoDataGenerator<any> {
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoProgressDashboardWidgetGeneratorService.provider()]`

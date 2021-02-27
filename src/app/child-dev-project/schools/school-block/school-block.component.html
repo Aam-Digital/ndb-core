@@ -1,9 +1,15 @@
 <span (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()">
-  <mat-icon class="school-pic" [fontIcon]="iconName"></mat-icon> {{entity?.name}} <span style="font-size: x-small">({{entity?.getId()}})</span>
+  <mat-icon class="school-pic" [fontIcon]="iconName"></mat-icon>
+  {{ entity?.name }}
+  <span style="font-size: x-small">({{ entity?.getId() }})</span>
 </span>
 
-<div style="position:absolute;" *ngIf="tooltip">
-  <div class="mat-elevation-z3 school-tooltip" (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()">
-    <div>{{entity?.medium}}</div>
+<div style="position: absolute" *ngIf="tooltip">
+  <div
+    class="mat-elevation-z3 school-tooltip"
+    (mouseenter)="showTooltip()"
+    (mouseleave)="hideTooltip()"
+  >
+    <div>{{ entity?.medium }}</div>
   </div>
 </div>

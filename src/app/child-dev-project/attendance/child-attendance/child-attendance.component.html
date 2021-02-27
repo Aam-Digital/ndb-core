@@ -1,4 +1,12 @@
-<app-attendance-days [attendanceMonth]='records[0]' *ngIf='showDailyAttendanceOfLatest && records && records.length > 0'></app-attendance-days>
+<app-attendance-days
+  [attendanceMonth]="records[0]"
+  *ngIf="showDailyAttendanceOfLatest && records && records.length > 0"
+></app-attendance-days>
 
-<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="generateNewRecordFactory()" [detailsComponent]="detailsComponent">
+<app-entity-subrecord
+  [records]="records"
+  [columns]="columns"
+  [newRecordFactory]="generateNewRecordFactory()"
+  [detailsComponent]="detailsComponent"
+>
 </app-entity-subrecord>

@@ -42,9 +42,7 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
 
   displayedColumns = ["projectNumber", "name", "schoolClass", "age"];
 
-  studentsDataSource: MatTableDataSource<Child> = new MatTableDataSource<
-    Child
-  >();
+  studentsDataSource: MatTableDataSource<Child> = new MatTableDataSource<Child>();
 
   constructor(private schoolsService: SchoolsService) {}
 

@@ -11,7 +11,7 @@
       Search records
     </button>
   </div>
-  <div fxLayout="row" fxLayoutGap="10px" style="margin-top: 20px;">
+  <div fxLayout="row" fxLayoutGap="10px" style="margin-top: 20px">
     <div>
       <mat-form-field>
         <input
@@ -96,7 +96,7 @@
   <div fxLayout="row wrap" fxHide.gt-xs>
     <mat-form-field
       *ngFor="let filterSelection of filterSelections"
-      style="padding-right: 1%;"
+      style="padding-right: 1%"
     >
       <mat-label>{{ filterSelection.name }}</mat-label>
       <mat-select
@@ -195,7 +195,7 @@
   <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
   <tr
     mat-row
-    *matRowDef="let record; columns: columnsToDisplay; let i = index;"
+    *matRowDef="let record; columns: columnsToDisplay; let i = index"
     class="table-list-item"
     angulartics2On="click"
     angularticsCategory="Navigation"

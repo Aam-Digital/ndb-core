@@ -33,13 +33,13 @@ describe("CloudFileService", () => {
       "putFileContents",
       "deleteFile",
     ]);
-    webdavSpy = jasmine.createSpyObj(["createClient"])
+    webdavSpy = jasmine.createSpyObj(["createClient"]);
 
     TestBed.configureTestingModule({
       providers: [
         CloudFileService,
         { provide: SessionService, useValue: sessionSpy },
-        { provide: WebdavWrapperService, useValue: webdavSpy }
+        { provide: WebdavWrapperService, useValue: webdavSpy },
       ],
     });
 
