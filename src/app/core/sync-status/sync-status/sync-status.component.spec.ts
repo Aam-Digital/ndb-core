@@ -32,6 +32,11 @@ import { DatabaseIndexingService } from "../../entity/database-indexing/database
 import { BehaviorSubject } from "rxjs";
 import { take } from "rxjs/operators";
 import { BackgroundProcessState } from "../background-process-state.interface";
+import { BackgroundProcessingIndicatorComponent } from "../background-processing-indicator/background-processing-indicator.component";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatBadgeModule } from "@angular/material/badge";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 describe("SyncStatusComponent", () => {
   let component: SyncStatusComponent;
@@ -55,13 +60,17 @@ describe("SyncStatusComponent", () => {
       mockIndexingService = { indicesRegistered: new BehaviorSubject([]) };
 
       TestBed.configureTestingModule({
-        declarations: [InitialSyncDialogComponent, SyncStatusComponent],
+        declarations: [InitialSyncDialogComponent, SyncStatusComponent, BackgroundProcessingIndicatorComponent],
         imports: [
           MatIconModule,
           MatDialogModule,
           NoopAnimationsModule,
           MatProgressBarModule,
           AlertsModule,
+          MatMenuModule,
+          MatProgressSpinnerModule,
+          MatBadgeModule,
+          MatTooltipModule
         ],
         providers: [
           { provide: SessionService, useValue: sessionService },
