@@ -60,7 +60,11 @@ describe("SyncStatusComponent", () => {
       mockIndexingService = { indicesRegistered: new BehaviorSubject([]) };
 
       TestBed.configureTestingModule({
-        declarations: [InitialSyncDialogComponent, SyncStatusComponent, BackgroundProcessingIndicatorComponent],
+        declarations: [
+          InitialSyncDialogComponent,
+          SyncStatusComponent,
+          BackgroundProcessingIndicatorComponent,
+        ],
         imports: [
           MatIconModule,
           MatDialogModule,
@@ -70,7 +74,7 @@ describe("SyncStatusComponent", () => {
           MatMenuModule,
           MatProgressSpinnerModule,
           MatBadgeModule,
-          MatTooltipModule
+          MatTooltipModule,
         ],
         providers: [
           { provide: SessionService, useValue: sessionService },
