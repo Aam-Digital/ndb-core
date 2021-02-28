@@ -53,7 +53,9 @@ export class AttendanceService {
         by_activity: {
           map: `(doc) => {
             if (doc._id.startsWith("${EventNote.ENTITY_TYPE}") && doc.relatesTo) {
-              emit(doc.relatesTo);
+              var d = new Date(doc.date || null);
+              var dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
+              emit(doc.relatesTo + "_" + dString);
             }
           }`,
         },
@@ -99,20 +101,46 @@ export class AttendanceService {
     );
   }
 
-  async getEventsForActivity(activityId: string): Promise<EventNote[]> {
+  /**
+   * Load events related to the given recurring activity.
+   * @param activityId The reference activity the events should relate to.
+   * @param sinceDate (Optional) date starting from which events should be considered. Events before this are ignored to improve performance.
+   */
+  async getEventsForActivity(
+    activityId: string,
+    sinceDate?: Date
+  ): Promise<EventNote[]> {
     if (!activityId.startsWith(RecurringActivity.ENTITY_TYPE)) {
       activityId = RecurringActivity.ENTITY_TYPE + ":" + activityId;
     }
 
-    return await this.dbIndexing.queryIndexDocs(
+    let dateLimit = "";
+    if (sinceDate) {
+      dateLimit =
+        "_" +
+        sinceDate.getFullYear() +
+        "-" +
+        String(sinceDate.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(sinceDate.getDate()).padStart(2, "0");
+    }
+
+    return await this.dbIndexing.queryIndexDocsRange(
       EventNote,
       "events_index/by_activity",
+      activityId + dateLimit,
       activityId
     );
   }
 
+  /**
+   * Load and calculate activity attendance records.
+   * @param activity To activity for which records are loaded.
+   * @param sinceDate (Optional) date starting from which events should be considered. Events before this are ignored to improve performance.
+   */
   async getActivityAttendances(
-    activity: RecurringActivity
+    activity: RecurringActivity,
+    sinceDate?: Date
   ): Promise<ActivityAttendance[]> {
     const periods = new Map<number, ActivityAttendance>();
     function getOrCreateAttendancePeriod(event) {
@@ -127,7 +155,7 @@ export class AttendanceService {
       return attMonth;
     }
 
-    const events = await this.getEventsForActivity(activity._id);
+    const events = await this.getEventsForActivity(activity._id, sinceDate);
 
     for (const event of events) {
       const record = getOrCreateAttendancePeriod(event);
