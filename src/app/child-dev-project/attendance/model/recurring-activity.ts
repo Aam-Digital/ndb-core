@@ -33,14 +33,6 @@ export class RecurringActivity extends Entity {
     return instance;
   }
 
-  static createEventForActivity(activity: RecurringActivity, date: Date): Note {
-    const instance = Note.create(date, activity.title);
-    instance.children = activity.participants;
-    instance.relatesTo = activity._id;
-    instance.category = activity.type;
-    return instance;
-  }
-
   /**
    * Check whether the given note instance represents an event of a recurring activity
    * @param note

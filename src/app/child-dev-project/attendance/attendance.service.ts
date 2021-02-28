@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import moment from "moment";
-import { Note } from "../notes/model/note";
 import { RecurringActivity } from "./model/recurring-activity";
 import { ActivityAttendance } from "./model/activity-attendance";
 import { groupBy } from "../../utils/utils";
@@ -11,6 +10,7 @@ import {
   INTERACTION_TYPE_CONFIG_ID,
   InteractionType,
 } from "../notes/model/interaction-type.interface";
+import { EventNote } from "./model/event-note";
 
 @Injectable({
   providedIn: "root",
@@ -39,7 +39,7 @@ export class AttendanceService {
       views: {
         by_date: {
           map: `(doc) => {
-            if (doc._id.startsWith("${Note.ENTITY_TYPE}") &&
+            if (doc._id.startsWith("${EventNote.ENTITY_TYPE}") &&
                 ${JSON.stringify(
                   meetingInteractionTypes
                 )}.includes(doc.category)
@@ -52,7 +52,7 @@ export class AttendanceService {
         },
         by_activity: {
           map: `(doc) => {
-            if (doc._id.startsWith("${Note.ENTITY_TYPE}") && doc.relatesTo) {
+            if (doc._id.startsWith("${EventNote.ENTITY_TYPE}") && doc.relatesTo) {
               emit(doc.relatesTo);
             }
           }`,
@@ -90,22 +90,22 @@ export class AttendanceService {
   async getEventsOnDate(
     startDate: Date,
     endDate: Date = startDate
-  ): Promise<Note[]> {
+  ): Promise<EventNote[]> {
     return await this.dbIndexing.queryIndexDocsRange(
-      Note,
+      EventNote,
       "events_index/by_date",
       startDate.toISOString().substr(0, 10),
       endDate.toISOString().substr(0, 10)
     );
   }
 
-  async getEventsForActivity(activityId: string): Promise<Note[]> {
+  async getEventsForActivity(activityId: string): Promise<EventNote[]> {
     if (!activityId.startsWith(RecurringActivity.ENTITY_TYPE)) {
       activityId = RecurringActivity.ENTITY_TYPE + ":" + activityId;
     }
 
     return await this.dbIndexing.queryIndexDocs(
-      Note,
+      EventNote,
       "events_index/by_activity",
       activityId
     );
@@ -145,7 +145,7 @@ export class AttendanceService {
   ): Promise<ActivityAttendance[]> {
     const matchingEvents = await this.getEventsOnDate(from, until);
 
-    const groupedEvents: Map<string, Note[]> = groupBy(
+    const groupedEvents: Map<string, EventNote[]> = groupBy(
       matchingEvents,
       "relatesTo"
     );

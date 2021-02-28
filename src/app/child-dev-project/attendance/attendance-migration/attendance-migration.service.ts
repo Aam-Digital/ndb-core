@@ -7,6 +7,8 @@ import { AttendanceStatus } from "../model/attendance-status";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { AttendanceService } from "../attendance.service";
 import moment from "moment";
+import { EventNote } from "../model/event-note";
+import { Note } from "../../notes/model/note";
 
 @Injectable({
   providedIn: "root",
@@ -29,6 +31,27 @@ export class AttendanceMigrationService {
     private entityMapper: EntityMapperService,
     private attendanceService: AttendanceService
   ) {}
+
+  async changeNotesToEventNotes() {
+    const oldEventNotes = (await this.entityMapper.loadType(Note)).filter(
+      (n) => n.relatesTo
+    );
+
+    for (const note of oldEventNotes) {
+      const newEvent = new EventNote(note.getId());
+      newEvent.date = note.date;
+      newEvent.subject = note.subject;
+      newEvent.children = note.children;
+      newEvent.relatesTo = note.relatesTo;
+      newEvent.category = note.category;
+      // @ts-ignore
+      newEvent.childrenAttendance = note.childrenAttendance;
+
+      await this.entityMapper.remove(note);
+      await this.entityMapper.save(newEvent);
+      console.log("event-note migrated", newEvent.getId());
+    }
+  }
 
   async createEventsForAllAttendanceMonths() {
     await this.checkOrCreateActivities();
@@ -107,7 +130,7 @@ export class AttendanceMigrationService {
       );
       if (!newEvent) {
         // no Note in the database yet - create a new event
-        newEvent = RecurringActivity.createEventForActivity(
+        newEvent = EventNote.createEventForActivity(
           this.activities[old.institution],
           day.date
         );

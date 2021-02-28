@@ -4,7 +4,6 @@ import { AttendanceService } from "./attendance.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { Database } from "../../core/database/database";
-import { Note } from "../notes/model/note";
 import { RecurringActivity } from "./model/recurring-activity";
 import moment from "moment";
 import { defaultInteractionTypes } from "../../core/config/default-config/default-interaction-types";
@@ -14,6 +13,7 @@ import { LoggingService } from "../../core/logging/logging.service";
 import { deleteAllIndexedDB } from "../../utils/performance-tests.spec";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data";
+import { EventNote } from "./model/event-note";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
@@ -21,8 +21,8 @@ describe("AttendanceService", () => {
   let entityMapper: EntityMapperService;
   let rawPouch;
 
-  function createEvent(date: Date, activityIdWithPrefix: string): Note {
-    const event = Note.create(date, "generated event");
+  function createEvent(date: Date, activityIdWithPrefix: string): EventNote {
+    const event = EventNote.create(date, "generated event");
     event.relatesTo = activityIdWithPrefix;
     event.category = defaultInteractionTypes.find(
       (t) => t.id === "COACHING_CLASS"
@@ -32,7 +32,7 @@ describe("AttendanceService", () => {
   }
 
   let activity1, activity2: RecurringActivity;
-  let e1_1, e1_2, e1_3, e2_1: Note;
+  let e1_1, e1_2, e1_3, e2_1: EventNote;
 
   beforeEach(async () => {
     activity1 = RecurringActivity.create("activity 1");
@@ -65,7 +65,7 @@ describe("AttendanceService", () => {
     await entityMapper.save(activity1);
     await entityMapper.save(activity2);
 
-    const someUnrelatedNote = Note.create(
+    const someUnrelatedNote = EventNote.create(
       new Date("2020-01-01"),
       "report not event"
     );

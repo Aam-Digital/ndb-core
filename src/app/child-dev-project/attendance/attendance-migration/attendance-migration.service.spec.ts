@@ -2,7 +2,6 @@ import { TestBed } from "@angular/core/testing";
 import { AttendanceMigrationService } from "./attendance-migration.service";
 import { AttendanceMonth } from "../model/attendance-month";
 import { AttendanceStatus } from "../model/attendance-status";
-import { Note } from "../../notes/model/note";
 import { Database } from "../../../core/database/database";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
@@ -13,6 +12,7 @@ import { LoggingService } from "../../../core/logging/logging.service";
 import { deleteAllIndexedDB } from "../../../utils/performance-tests.spec";
 import { AttendanceService } from "../attendance.service";
 import { expectEntitiesToBeInDatabase } from "../../../utils/expect-entity-data";
+import { EventNote } from "../model/event-note";
 
 describe("AttendanceMigrationService", () => {
   let service: AttendanceMigrationService;
@@ -56,10 +56,10 @@ describe("AttendanceMigrationService", () => {
     old.dailyRegister[5].status = AttendanceStatus.ABSENT;
     old.dailyRegister[7].status = AttendanceStatus.PRESENT;
 
-    const expectedNotes: Note[] = [
-      Note.create(old.dailyRegister[4].date, testInstitution),
-      Note.create(old.dailyRegister[5].date, testInstitution),
-      Note.create(old.dailyRegister[7].date, testInstitution),
+    const expectedNotes: EventNote[] = [
+      EventNote.create(old.dailyRegister[4].date, testInstitution),
+      EventNote.create(old.dailyRegister[5].date, testInstitution),
+      EventNote.create(old.dailyRegister[7].date, testInstitution),
     ];
     for (const event of expectedNotes) {
       event.category = service.activities.school.type;
@@ -101,8 +101,8 @@ describe("AttendanceMigrationService", () => {
     old2.month = new Date("2020-01-01");
     old2.dailyRegister[0].status = AttendanceStatus.PRESENT;
 
-    const expectedNotes: Note[] = [
-      Note.create(old1.dailyRegister[0].date, testInstitution),
+    const expectedNotes: EventNote[] = [
+      EventNote.create(old1.dailyRegister[0].date, testInstitution),
     ];
     for (const event of expectedNotes) {
       event.category = service.activities.school.type;
