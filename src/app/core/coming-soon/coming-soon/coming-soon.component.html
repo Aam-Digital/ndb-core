@@ -1,0 +1,26 @@
+<div fxLayout="column" fxLayoutAlign="center center">
+  <h1 fxFlex>Coming Soon</h1>
+  <p fxFlex>
+    Sorry, this feature isn't quite ready yet. We are working hard to make this available for you.
+    Let us know below if you need this functionality.
+  </p>
+
+  <div fxFlex fxLayout="row wrap" fxLayoutGap="1rem grid" fxLayoutAlign="center center" class="feedback-section">
+    <div fxFlex="20rem">
+      <button mat-raised-button color="primary" class="feedback-button"
+              (click)="reportFeatureRequest()" [disabled]="requested">
+        <mat-icon *ngIf="requested" aria-label="requested" fontIcon="fa-check" class="requested-icon"></mat-icon>
+        I need this feature
+      </button>
+    </div>
+
+    <div fxFlex="20rem">
+      <a mat-stroked-button class="feedback-button"
+         href="mailto:info@aam-digital.com?subject=Feature-Request%20{{featureId}}">
+        I can tell you about my use case
+      </a>
+    </div>
+  </div>
+
+  <img src="assets/canvas-stand.png" alt="" class="illustration" fxFlex>
+</div>
