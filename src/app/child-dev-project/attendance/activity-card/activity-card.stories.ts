@@ -11,7 +11,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 export default {
-  title: "Child Dev Project/ActivityCard",
+  title: "Attendance/Components/ActivityCard",
   component: ActivityCardComponent,
   decorators: [
     moduleMetadata({

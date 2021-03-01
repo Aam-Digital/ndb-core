@@ -67,7 +67,7 @@ const attendanceRecords = [
 attendanceRecords.forEach((a) => (a.activity = demoActivity));
 
 export default {
-  title: "Child Dev Project/ActivityAttendanceSection",
+  title: "Attendance/Sections/ActivityAttendanceSection",
   component: ActivityAttendanceSectionComponent,
   decorators: [
     moduleMetadata({

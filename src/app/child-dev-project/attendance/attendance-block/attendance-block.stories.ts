@@ -12,7 +12,7 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { RecurringActivity } from "../model/recurring-activity";
 
 export default {
-  title: "Attendance Module/AttendanceBlock",
+  title: "Attendance/Components/AttendanceBlock",
   component: AttendanceBlockComponent,
   decorators: [
     moduleMetadata({

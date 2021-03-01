@@ -53,7 +53,7 @@ activityAttendance.periodTo = new Date("2020-01-31");
 activityAttendance.activity = demoActivity;
 
 export default {
-  title: "Child Dev Project/AttendanceDetails",
+  title: "Attendance/Views/AttendanceDetails",
   component: AttendanceDetailsComponent,
   decorators: [
     moduleMetadata({

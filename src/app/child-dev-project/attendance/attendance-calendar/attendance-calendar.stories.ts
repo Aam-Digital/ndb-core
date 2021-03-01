@@ -48,7 +48,7 @@ const demoEvents: Note[] = [
 demoEvents[0].getAttendance("1").remarks = "cough and cold";
 
 export default {
-  title: "Child Dev Project/AttendanceCalendar",
+  title: "Attendance/Components/AttendanceCalendar",
   component: AttendanceCalendarComponent,
   decorators: [
     moduleMetadata({

@@ -12,7 +12,7 @@ import { ChildrenService } from "../../../children/children.service";
 import { of } from "rxjs";
 
 export default {
-  title: "Child Dev Project/Views/RollCall",
+  title: "Attendance/Views/RollCall",
   component: RollCallComponent,
   decorators: [
     moduleMetadata({

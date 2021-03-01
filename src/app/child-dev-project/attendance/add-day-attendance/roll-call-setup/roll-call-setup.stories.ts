@@ -66,7 +66,7 @@ const demoActivities = [
 demoActivities[0].assignedTo = "demo";
 
 export default {
-  title: "Child Dev Project/Views/EventSetup",
+  title: "Attendance/Views/RollCallSetup",
   component: RollCallSetupComponent,
   decorators: [
     moduleMetadata({

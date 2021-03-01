@@ -50,7 +50,7 @@ const events: Note[] = [
 ];
 
 export default {
-  title: "Attendance Module/AttendanceWeekDashboard",
+  title: "Attendance/Dashboards/AttendanceWeekDashboard",
   component: AttendanceWeekDashboardComponent,
   decorators: [
     moduleMetadata({
