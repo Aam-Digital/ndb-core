@@ -6,18 +6,18 @@ import {
   TestBed,
 } from "@angular/core/testing";
 
-import { ActivitySetupComponent } from "./activity-setup.component";
-import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { SessionService } from "../../../core/session/session-service/session.service";
-import { User } from "../../../core/user/user";
-import { AttendanceService } from "../attendance.service";
-import { RecurringActivity } from "../model/recurring-activity";
-import { Note } from "../../notes/model/note";
+import { RollCallSetupComponent } from "./roll-call-setup.component";
+import { FormDialogModule } from "../../../../core/form-dialog/form-dialog.module";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { SessionService } from "../../../../core/session/session-service/session.service";
+import { User } from "../../../../core/user/user";
+import { AttendanceService } from "../../attendance.service";
+import { RecurringActivity } from "../../model/recurring-activity";
+import { Note } from "../../../notes/model/note";
 
-describe("ActivitySetupComponent", () => {
-  let component: ActivitySetupComponent;
-  let fixture: ComponentFixture<ActivitySetupComponent>;
+describe("RollCallSetupComponent", () => {
+  let component: RollCallSetupComponent;
+  let fixture: ComponentFixture<RollCallSetupComponent>;
 
   let mockEntityService: jasmine.SpyObj<EntityMapperService>;
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
@@ -34,7 +34,7 @@ describe("ActivitySetupComponent", () => {
     mockAttendanceService.getEventsOnDate.and.resolveTo([]);
 
     TestBed.configureTestingModule({
-      declarations: [ActivitySetupComponent],
+      declarations: [RollCallSetupComponent],
       imports: [FormDialogModule],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityService },
@@ -48,7 +48,7 @@ describe("ActivitySetupComponent", () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ActivitySetupComponent);
+    fixture = TestBed.createComponent(RollCallSetupComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

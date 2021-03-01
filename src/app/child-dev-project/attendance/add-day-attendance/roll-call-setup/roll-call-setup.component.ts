@@ -1,19 +1,19 @@
 import { Component, EventEmitter, OnInit, Output } from "@angular/core";
-import { AttendanceService } from "../attendance.service";
-import { Note } from "../../notes/model/note";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { RecurringActivity } from "../model/recurring-activity";
-import { SessionService } from "../../../core/session/session-service/session.service";
-import { NoteDetailsComponent } from "../../notes/note-details/note-details.component";
-import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { EventNote } from "../model/event-note";
+import { AttendanceService } from "../../attendance.service";
+import { Note } from "../../../notes/model/note";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { RecurringActivity } from "../../model/recurring-activity";
+import { SessionService } from "../../../../core/session/session-service/session.service";
+import { NoteDetailsComponent } from "../../../notes/note-details/note-details.component";
+import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
+import { EventNote } from "../../model/event-note";
 
 @Component({
-  selector: "app-activity-setup",
-  templateUrl: "./activity-setup.component.html",
-  styleUrls: ["./activity-setup.component.scss"],
+  selector: "app-roll-call-setup",
+  templateUrl: "./roll-call-setup.component.html",
+  styleUrls: ["./roll-call-setup.component.scss"],
 })
-export class ActivitySetupComponent implements OnInit {
+export class RollCallSetupComponent implements OnInit {
   date = new Date();
 
   existingEvents: NoteForActivitySetup[] = [];

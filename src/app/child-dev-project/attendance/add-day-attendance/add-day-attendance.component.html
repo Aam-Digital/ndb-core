@@ -4,9 +4,9 @@
   </div>
 
   <div fxFlex="grow" class="flex-fill-section">
-    <app-activity-setup *ngIf='currentStage===0'
+    <app-roll-call-setup *ngIf='currentStage===0'
                         (eventSelected)="finishBasicInformationStage($event)">
-    </app-activity-setup>
+    </app-roll-call-setup>
 
     <app-roll-call *ngIf='currentStage===1'
                    [eventEntity]='event' (exit)="finishRollCallState()" (complete)="saveRollCallResult($event)">

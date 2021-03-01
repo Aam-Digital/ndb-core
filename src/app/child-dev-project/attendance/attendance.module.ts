@@ -26,7 +26,7 @@ import { ActivityCardComponent } from "./activity-card/activity-card.component";
 import { MatCardModule } from "@angular/material/card";
 import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { ActivitySetupComponent } from "./activity-setup/activity-setup.component";
+import { RollCallSetupComponent } from "./add-day-attendance/roll-call-setup/roll-call-setup.component";
 import { MatListModule } from "@angular/material/list";
 import { MatInputModule } from "@angular/material/input";
 import { MatDatepickerModule } from "@angular/material/datepicker";
@@ -63,7 +63,7 @@ import { AttendanceManagerComponent } from "./attendance-manager/attendance-mana
     ActivityListComponent,
     ActivityParticipantsSectionComponent,
     ActivityCardComponent,
-    ActivitySetupComponent,
+    RollCallSetupComponent,
     AttendanceDayBlockComponent,
     AttendanceDetailsComponent,
     AddDayAttendanceComponent,
@@ -106,7 +106,7 @@ import { AttendanceManagerComponent } from "./attendance-manager/attendance-mana
   ],
   exports: [
     ActivityCardComponent,
-    ActivitySetupComponent,
+    RollCallSetupComponent,
     AttendanceStatusSelectComponent,
     AttendanceDayBlockComponent,
     AttendanceWeekDashboardComponent,
