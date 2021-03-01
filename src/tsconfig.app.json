@@ -5,14 +5,7 @@
     "baseUrl": "",
     "types": []
   },
-  "files": [
-    "main.ts",
-    "polyfills.ts"
-  ],
-  "include": [
-    "src/**/*.d.ts"
-  ],
-  "exclude": [
-    "**/*.stories.*"
-  ]
+  "files": ["main.ts", "polyfills.ts"],
+  "include": ["src/**/*.d.ts"],
+  "exclude": ["**/*.stories.*"]
 }

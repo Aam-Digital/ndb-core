@@ -31,25 +31,20 @@ body {
   padding: 10px;
 }
 
-
 .table-list-nav {
   padding: 10px;
 }
 
-td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
+td.mat-cell,
+td.mat-footer-cell,
+th.mat-header-cell {
   padding-left: 8px !important;
 }
-
-
 
 .alerts-snackbar {
   background-color: transparent;
   box-shadow: none;
 }
-
-
-
-
 
 .dashboard-widget .mat-card-header {
   padding: 24px;
@@ -80,7 +75,6 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 }
 
 .dashboard-widget .mat-card-avatar {
-
   font-size: 40pt;
 }
 
@@ -101,22 +95,16 @@ mat-card.dashboard-widget {
   padding: 0;
 }
 
-
-
 .dashboard-widget .dashboard-table-cell {
   padding: 10px;
 }
 
-
-
-
-
 .app-child {
-  background-color: #1565C0 !important;
+  background-color: #1565c0 !important;
 }
 
 .app-attendance {
-  background-color: #00838F !important;
+  background-color: #00838f !important;
 }
 
 .app-note {
@@ -124,13 +112,12 @@ mat-card.dashboard-widget {
 }
 
 .app-class {
-  background-color: #2E7D32 !important;
+  background-color: #2e7d32 !important;
 }
 
 .app-school {
-  background-color: #9E9D24 !important;
+  background-color: #9e9d24 !important;
 }
-
 
 .w-OK {
   background-color: #90ee9040 !important;
@@ -142,35 +129,33 @@ mat-card.dashboard-widget {
   background-color: #fd727280 !important;
 }
 
-
 .attendance-P {
-  background-color: #C8E6C9 !important;
+  background-color: #c8e6c9 !important;
 }
 .attendance-H {
-  background-color: #CFD8DC !important;
+  background-color: #cfd8dc !important;
 }
 .attendance-L {
-  background-color: #FFECB3 !important;
+  background-color: #ffecb3 !important;
 }
 .attendance-E {
-  background-color: #D7CCC8 !important;
+  background-color: #d7ccc8 !important;
 }
 .attendance-A {
-  background-color: #FF8A65 !important;
+  background-color: #ff8a65 !important;
 }
 .attendance-U {
-  background-color: #DDDDDD !important;
+  background-color: #dddddd !important;
 }
 
 /* configures the color of the buttons on hover*/
-.filter-button mat-button-toggle:hover{
+.filter-button mat-button-toggle:hover {
   background: #f5f5f5;
 }
 
-.filter-button mat-button-toggle.selected:hover{
+.filter-button mat-button-toggle.selected:hover {
   background: #e0e0e0;
 }
-
 
 /* display disabled form values in black for better readability as we disable forms by default */
 .mat-input-element:disabled {

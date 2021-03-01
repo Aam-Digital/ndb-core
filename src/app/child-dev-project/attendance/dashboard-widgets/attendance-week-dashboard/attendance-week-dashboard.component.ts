@@ -86,7 +86,7 @@ export class AttendanceWeekDashboardComponent
         )
       );
     }
-    forkJoin(o1, o2).subscribe(() => this.filterAbsentees());
+    forkJoin([o1, o2]).subscribe(() => this.filterAbsentees());
   }
 
   private extractRelevantAttendanceDays(

@@ -48,10 +48,11 @@ export class UiComponent implements OnInit {
     mediaObserver: MediaObserver
   ) {
     // watch screen width to change sidenav mode
-    mediaObserver.media$
+    mediaObserver
+      .asObservable()
       .pipe(untilDestroyed(this))
-      .subscribe((change: MediaChange) => {
-        this.sideNavMode = change.mqAlias === ("xs" || "sm") ? "over" : "side";
+      .subscribe((change: MediaChange[]) => {
+        this.sideNavMode = change[0].mqAlias === ("xs" || "sm") ? "over" : "side";
       });
   }
 

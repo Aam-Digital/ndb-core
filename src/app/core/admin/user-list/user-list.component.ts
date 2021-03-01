@@ -26,15 +26,18 @@ export class UserListComponent implements OnInit {
     private sessionService: SessionService
   ) {}
 
-  async ngOnInit() {
-    await this.loadData();
+  ngOnInit() {
+    this.loadData();
   }
 
-  private async loadData() {
-    this.dataSource.data = await this.entityMapperService.loadType<User>(User);
-    this.dataSource.data.forEach((user) =>
-      this.debugDetails.set(user.getId(), JSON.stringify(user))
-    );
+  private loadData() {
+    this.entityMapperService.loadType<User>(User)
+      .then(users => this.dataSource.data = users)
+      .then(() =>
+        this.dataSource.data.forEach((user) =>
+          this.debugDetails.set(user.getId(), JSON.stringify(user))
+        )
+      )
   }
 
   /**
