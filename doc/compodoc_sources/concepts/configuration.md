@@ -378,11 +378,11 @@ The following example will only allow `admin` users to create, edit and delete `
   }
 }
 ```
-Buttons can be marked as part of an interaction using the `appEntityInteraction` directive:
+Buttons can be marked as part of an interaction using the `appDisableEntityInteraction` directive:
 ```
 <button
   (click)="switchEdit()"
-  *appEntityOperation="{entity: entity?.getConstructor(), operation: operationType.UPDATE}"
+  *appDisableEntityOperation="{entity: entity?.getConstructor(), operation: operationType.UPDATE}"
 >Edit</button>
 ```
 This will disable the button if the current user is not allowed to perform the update operation on the given entity.

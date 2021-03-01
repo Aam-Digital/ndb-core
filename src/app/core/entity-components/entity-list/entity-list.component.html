@@ -38,7 +38,7 @@
                     angulartics2On="click"
                     angularticsCategory="UserAction"
                     [angularticsAction]="listName.toLowerCase().replace(' ', '_') + '_add_new'"
-                    *appEntityOperation="{entity: entityConstructor, operation: operationType.CREATE}"
+                    *appDisabledEntityOperation="{entity: entityConstructor, operation: operationType.CREATE}"
             >
                 <mat-icon
                         class="button-icon"

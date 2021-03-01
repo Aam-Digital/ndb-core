@@ -1,4 +1,4 @@
-import { EntityOperationDirective } from "./entity-operation.directive";
+import { DisableEntityOperationDirective } from "./disable-entity-operation.directive";
 import {
   EntityPermissionsService,
   OperationType,
@@ -8,14 +8,14 @@ import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { Entity } from "../entity/entity";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
-describe("EntityOperationDirective", () => {
+describe("DisableEntityOperationDirective", () => {
   const mockEntityPermissionService: jasmine.SpyObj<EntityPermissionsService> = jasmine.createSpyObj(
     ["userIsPermitted"]
   );
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [TestComponent, EntityOperationDirective],
+      declarations: [TestComponent, DisableEntityOperationDirective],
       imports: [MatTooltipModule],
       providers: [
         {
@@ -54,7 +54,7 @@ describe("EntityOperationDirective", () => {
 
 @Component({
   template: `<button
-    *appEntityOperation="{
+    *appDisabledEntityOperation="{
       operation: operationTypes.CREATE,
       entity: entityConstructor
     }"
