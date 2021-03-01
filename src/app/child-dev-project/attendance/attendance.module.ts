@@ -33,7 +33,6 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { FormsModule } from "@angular/forms";
 import { FlexModule } from "@angular/flex-layout";
 import { AttendanceDayBlockComponent } from "./dashboard-widgets/attendance-week-dashboard/attendance-day-block/attendance-day-block.component";
-import { AttendanceDaysComponent } from "./attendance-days/attendance-days.component";
 import { AttendanceDetailsComponent } from "./attendance-details/attendance-details.component";
 import { AddDayAttendanceComponent } from "./add-day-attendance/add-day-attendance.component";
 import { RollCallComponent } from "./add-day-attendance/roll-call/roll-call.component";
@@ -58,8 +57,6 @@ import { RouterModule } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { AttendanceManagerComponent } from "./attendance-manager/attendance-manager.component";
-import { CONFLICT_RESOLUTION_STRATEGY } from "../../conflict-resolution/auto-resolution/conflict-resolution-strategy";
-import { AttendanceMonthConflictResolutionStrategy } from "./attendance-month-conflict-resolution-strategy";
 
 @NgModule({
   declarations: [
@@ -68,7 +65,6 @@ import { AttendanceMonthConflictResolutionStrategy } from "./attendance-month-co
     ActivityCardComponent,
     ActivitySetupComponent,
     AttendanceDayBlockComponent,
-    AttendanceDaysComponent,
     AttendanceDetailsComponent,
     AddDayAttendanceComponent,
     RollCallComponent,
@@ -107,13 +103,6 @@ import { AttendanceMonthConflictResolutionStrategy } from "./attendance-month-co
     RouterModule,
     Angulartics2Module,
     MatSlideToggleModule,
-  ],
-  providers: [
-    {
-      provide: CONFLICT_RESOLUTION_STRATEGY,
-      useClass: AttendanceMonthConflictResolutionStrategy,
-      multi: true,
-    },
   ],
   exports: [
     ActivityCardComponent,

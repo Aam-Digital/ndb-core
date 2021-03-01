@@ -48,7 +48,6 @@ import { LoggingErrorHandler } from "./core/logging/logging-error-handler";
 import { DemoChildGenerator } from "./child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { DemoSchoolGenerator } from "./child-dev-project/schools/demo-school-generator.service";
 import { DemoChildSchoolRelationGenerator } from "./child-dev-project/children/demo-data-generators/demo-child-school-relation-generator.service";
-import { DemoAttendanceGenerator } from "./child-dev-project/attendance/demo-attendance-generator.service";
 import { DemoNoteGeneratorService } from "./child-dev-project/notes/demo-data/demo-note-generator.service";
 import { DemoAserGeneratorService } from "./child-dev-project/aser/demo-aser-generator.service";
 import { DemoEducationalMaterialGeneratorService } from "./child-dev-project/educational-material/demo-educational-material-generator.service";
@@ -122,7 +121,6 @@ import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendan
       ...DemoChildGenerator.provider({ count: 150 }),
       ...DemoSchoolGenerator.provider({ count: 8 }),
       ...DemoChildSchoolRelationGenerator.provider(),
-      ...DemoAttendanceGenerator.provider(),
       ...DemoActivityGeneratorService.provider(),
       ...DemoActivityEventsGeneratorService.provider({ forNLastYears: 2 }),
       ...DemoNoteGeneratorService.provider({
