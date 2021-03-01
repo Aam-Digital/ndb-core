@@ -3,7 +3,7 @@ import { LogLevel } from "./log-level";
 import * as Sentry from "@sentry/browser";
 import { environment } from "../../../environments/environment";
 
-/* tslint:disable:no-console */
+/* eslint-disable no-console */
 
 /**
  * Centrally managed logging to allow log messages to be filtered by level and even sent to a remote logging service
