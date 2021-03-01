@@ -57,6 +57,9 @@ import { AttendanceWeekDashboardComponent } from "./dashboard-widgets/attendance
 import { RouterModule } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { AttendanceManagerComponent } from "./attendance-manager/attendance-manager.component";
+import { CONFLICT_RESOLUTION_STRATEGY } from "../../conflict-resolution/auto-resolution/conflict-resolution-strategy";
+import { AttendanceMonthConflictResolutionStrategy } from "./attendance-month-conflict-resolution-strategy";
 
 @NgModule({
   declarations: [
@@ -76,6 +79,7 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
     GroupedChildAttendanceComponent,
     AttendanceStatusSelectComponent,
     AttendanceWeekDashboardComponent,
+    AttendanceManagerComponent,
   ],
   imports: [
     EntityListModule,
@@ -103,6 +107,13 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
     RouterModule,
     Angulartics2Module,
     MatSlideToggleModule,
+  ],
+  providers: [
+    {
+      provide: CONFLICT_RESOLUTION_STRATEGY,
+      useClass: AttendanceMonthConflictResolutionStrategy,
+      multi: true,
+    },
   ],
   exports: [
     ActivityCardComponent,
