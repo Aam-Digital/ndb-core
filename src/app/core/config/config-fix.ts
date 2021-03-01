@@ -635,6 +635,11 @@ export const defaultConfig = {
         },
         {
           "id": "center"
+        },
+        {
+          "id": "school",
+          "type": "prebuilt",
+          "display": "dropdown"
         }
       ]
     }
