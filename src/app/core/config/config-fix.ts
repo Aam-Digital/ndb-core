@@ -236,12 +236,6 @@ export const defaultConfig = {
   "view:attendance": {
     "component": "AttendanceManager"
   },
-  "view:attendance/analysis": {
-    "component": "AttendanceAnalysis"
-  },
-  "view:attendance/add/month": {
-    "component": "AddMonthAttendance"
-  },
   "view:attendance/add/day": {
     "component": "AddDayAttendance"
   },

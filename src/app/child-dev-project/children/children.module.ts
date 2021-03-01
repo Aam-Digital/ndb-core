@@ -63,7 +63,6 @@ import { CONFLICT_RESOLUTION_STRATEGY } from "../../conflict-resolution/auto-res
 import { AttendanceMonthConflictResolutionStrategy } from "../attendance/attendance-month-conflict-resolution-strategy";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { Angulartics2Module } from "angulartics2";
-import { AttendanceAnalysisComponent } from "../attendance/attendance-analysis/attendance-analysis.component";
 import { ViewModule } from "../../core/view/view.module";
 import { SchoolBlockWrapperComponent } from "./children-list/school-block-wrapper/school-block-wrapper.component";
 import { ChildBlockListComponent } from "./child-block-list/child-block-list.component";
@@ -127,7 +126,6 @@ import { BmiBlockComponent } from "./children-list/bmi-block/bmi-block.component
     NoRecentNotesDashboardComponent,
     RecentNotesDashboardComponent,
     AttendanceManagerComponent,
-    AttendanceAnalysisComponent,
     HealthCheckupComponent,
     PreviousSchoolsComponent,
     PreviousTeamsComponent,

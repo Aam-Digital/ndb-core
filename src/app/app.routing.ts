@@ -24,12 +24,10 @@ import { ChildrenListComponent } from "./child-dev-project/children/children-lis
 import { AdminComponent } from "./core/admin/admin/admin.component";
 import { AdminGuard } from "./core/admin/admin.guard";
 import { NotesManagerComponent } from "./child-dev-project/notes/notes-manager/notes-manager.component";
-import { AddMonthAttendanceComponent } from "./child-dev-project/attendance/add-month-attendance/add-month-attendance.component";
 import { AddDayAttendanceComponent } from "./child-dev-project/attendance/add-day-attendance/add-day-attendance.component";
 import { AttendanceManagerComponent } from "./child-dev-project/attendance/attendance-manager/attendance-manager.component";
 import { HowToComponent } from "./core/help/how-to/how-to.component";
 import { UserListComponent } from "./core/admin/user-list/user-list.component";
-import { AttendanceAnalysisComponent } from "./child-dev-project/attendance/attendance-analysis/attendance-analysis.component";
 import { EntityDetailsComponent } from "./core/entity-components/entity-details/entity-details.component";
 import { ConflictResolutionListComponent } from "./conflict-resolution/conflict-resolution-list/conflict-resolution-list.component";
 import { ActivityListComponent } from "./child-dev-project/attendance/activity-list/activity-list.component";
@@ -41,9 +39,7 @@ export const COMPONENT_MAP = {
   UserList: UserListComponent,
   Help: HowToComponent,
   AttendanceManager: AttendanceManagerComponent,
-  AddMonthAttendance: AddMonthAttendanceComponent,
   AddDayAttendance: AddDayAttendanceComponent,
-  AttendanceAnalysis: AttendanceAnalysisComponent,
   SchoolsList: SchoolsListComponent,
   ChildrenList: ChildrenListComponent,
   ActivityList: ActivityListComponent,
