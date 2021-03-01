@@ -30,7 +30,7 @@ import { Note } from "../../../notes/model/note";
 import { ActivityCardComponent } from "../../activity-card/activity-card.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeIconsModule } from "../../../../core/icons/font-awesome-icons.module";
-import { DemoActivityGeneratorService } from "../../demo-activity-generator.service";
+import { DemoActivityGeneratorService } from "../../demo-data/demo-activity-generator.service";
 import { SessionService } from "../../../../core/session/session-service/session.service";
 import { User } from "../../../../core/user/user";
 import { FormDialogModule } from "../../../../core/form-dialog/form-dialog.module";

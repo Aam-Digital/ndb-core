@@ -1,12 +1,12 @@
-import { DemoChildGenerator } from "../children/demo-data-generators/demo-child-generator.service";
-import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
+import { DemoChildGenerator } from "../../children/demo-data-generators/demo-child-generator.service";
+import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
-import { Child } from "../children/model/child";
-import { faker } from "../../core/demo-data/faker";
-import { RecurringActivity } from "./model/recurring-activity";
-import { DemoUserGeneratorService } from "../../core/user/demo-user-generator.service";
-import { User } from "../../core/user/user";
-import { defaultInteractionTypes } from "../../core/config/default-config/default-interaction-types";
+import { Child } from "../../children/model/child";
+import { faker } from "../../../core/demo-data/faker";
+import { RecurringActivity } from "../model/recurring-activity";
+import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
+import { User } from "../../../core/user/user";
+import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 
 /**
  * Generate AttendanceMonth entities for the last 15 months

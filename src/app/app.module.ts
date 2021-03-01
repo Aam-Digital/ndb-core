@@ -66,11 +66,11 @@ import { EntityDetailsModule } from "./core/entity-components/entity-details/ent
 import { EntitySubrecordModule } from "./core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "./core/entity-components/entity-list/entity-list.module";
 import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
-import { DemoActivityGeneratorService } from "./child-dev-project/attendance/demo-activity-generator.service";
+import { DemoActivityGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-generator.service";
 import { FontAwesomeIconsModule } from "./core/icons/font-awesome-icons.module";
 import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
 import { ConfigModule } from "./core/config/config.module";
-import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-activity-events-generator.service";
+import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
 
 /**
  * Main entry point of the application.

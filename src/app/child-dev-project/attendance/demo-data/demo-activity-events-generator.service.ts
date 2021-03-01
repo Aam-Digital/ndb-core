@@ -1,10 +1,10 @@
-import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
+import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
-import { faker } from "../../core/demo-data/faker";
-import { RecurringActivity } from "./model/recurring-activity";
-import { Note } from "../notes/model/note";
-import { AttendanceLogicalStatus } from "./model/attendance-status";
-import { defaultAttendanceStatusTypes } from "../../core/config/default-config/default-attendance-status-types";
+import { faker } from "../../../core/demo-data/faker";
+import { RecurringActivity } from "../model/recurring-activity";
+import { Note } from "../../notes/model/note";
+import { AttendanceLogicalStatus } from "../model/attendance-status";
+import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { DemoActivityGeneratorService } from "./demo-activity-generator.service";
 import moment from "moment";
 
