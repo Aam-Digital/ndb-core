@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import moment from "moment";
-import { Note } from "../notes/model/note";
 import { RecurringActivity } from "./model/recurring-activity";
 import { ActivityAttendance } from "./model/activity-attendance";
 import { groupBy } from "../../utils/utils";
@@ -11,6 +10,7 @@ import {
   INTERACTION_TYPE_CONFIG_ID,
   InteractionType,
 } from "../notes/model/interaction-type.interface";
+import { EventNote } from "./model/event-note";
 
 @Injectable({
   providedIn: "root",
@@ -39,7 +39,7 @@ export class AttendanceService {
       views: {
         by_date: {
           map: `(doc) => {
-            if (doc._id.startsWith("${Note.ENTITY_TYPE}") &&
+            if (doc._id.startsWith("${EventNote.ENTITY_TYPE}") &&
                 ${JSON.stringify(
                   meetingInteractionTypes
                 )}.includes(doc.category)
@@ -52,8 +52,10 @@ export class AttendanceService {
         },
         by_activity: {
           map: `(doc) => {
-            if (doc._id.startsWith("${Note.ENTITY_TYPE}") && doc.relatesTo) {
-              emit(doc.relatesTo);
+            if (doc._id.startsWith("${EventNote.ENTITY_TYPE}") && doc.relatesTo) {
+              var d = new Date(doc.date || null);
+              var dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
+              emit(doc.relatesTo + "_" + dString);
             }
           }`,
         },
@@ -90,25 +92,55 @@ export class AttendanceService {
   async getEventsOnDate(
     startDate: Date,
     endDate: Date = startDate
-  ): Promise<Note[]> {
+  ): Promise<EventNote[]> {
     return await this.dbIndexing.queryIndexDocsRange(
-      Note,
+      EventNote,
       "events_index/by_date",
       startDate.toISOString().substr(0, 10),
       endDate.toISOString().substr(0, 10)
     );
   }
 
-  private async getEventsForActivity(activityId: string): Promise<Note[]> {
-    return await this.dbIndexing.queryIndexDocs(
-      Note,
+  /**
+   * Load events related to the given recurring activity.
+   * @param activityId The reference activity the events should relate to.
+   * @param sinceDate (Optional) date starting from which events should be considered. Events before this are ignored to improve performance.
+   */
+  async getEventsForActivity(
+    activityId: string,
+    sinceDate?: Date
+  ): Promise<EventNote[]> {
+    if (!activityId.startsWith(RecurringActivity.ENTITY_TYPE)) {
+      activityId = RecurringActivity.ENTITY_TYPE + ":" + activityId;
+    }
+
+    let dateLimit = "";
+    if (sinceDate) {
+      dateLimit =
+        "_" +
+        sinceDate.getFullYear() +
+        "-" +
+        String(sinceDate.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(sinceDate.getDate()).padStart(2, "0");
+    }
+
+    return await this.dbIndexing.queryIndexDocsRange(
+      EventNote,
       "events_index/by_activity",
+      activityId + dateLimit,
       activityId
     );
   }
 
+  /**
+   * Load and calculate activity attendance records.
+   * @param activity To activity for which records are loaded.
+   * @param sinceDate (Optional) date starting from which events should be considered. Events before this are ignored to improve performance.
+   */
   async getActivityAttendances(
-    activity: RecurringActivity
+    activity: RecurringActivity,
+    sinceDate?: Date
   ): Promise<ActivityAttendance[]> {
     const periods = new Map<number, ActivityAttendance>();
     function getOrCreateAttendancePeriod(event) {
@@ -123,7 +155,7 @@ export class AttendanceService {
       return attMonth;
     }
 
-    const events = await this.getEventsForActivity(activity._id);
+    const events = await this.getEventsForActivity(activity._id, sinceDate);
 
     for (const event of events) {
       const record = getOrCreateAttendancePeriod(event);
@@ -141,7 +173,7 @@ export class AttendanceService {
   ): Promise<ActivityAttendance[]> {
     const matchingEvents = await this.getEventsOnDate(from, until);
 
-    const groupedEvents: Map<string, Note[]> = groupBy(
+    const groupedEvents: Map<string, EventNote[]> = groupBy(
       matchingEvents,
       "relatesTo"
     );

@@ -6,6 +6,7 @@ import { RecurringActivity } from "../model/recurring-activity";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { NoteDetailsComponent } from "../../notes/note-details/note-details.component";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { EventNote } from "../model/event-note";
 
 @Component({
   selector: "app-activity-setup",
@@ -91,14 +92,11 @@ export class ActivitySetupComponent implements OnInit {
       return undefined;
     }
 
-    const event = Note.create(
-      this.date,
-      activity.title
+    const event = EventNote.createEventForActivity(
+      activity,
+      this.date
     ) as NoteForActivitySetup;
-    event.children = activity.participants;
-    event.relatesTo = activity._id;
     event.author = this.sessionService.getCurrentUser().getId();
-    event.category = activity.type;
     event.isNewFromActivity = true;
     return event;
   }
