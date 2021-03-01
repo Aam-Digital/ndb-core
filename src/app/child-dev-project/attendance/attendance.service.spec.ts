@@ -12,7 +12,7 @@ import PouchDB from "pouchdb-browser";
 import { LoggingService } from "../../core/logging/logging.service";
 import { deleteAllIndexedDB } from "../../utils/performance-tests.spec";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
-import { expectEntitiesToMatch } from "../../utils/expect-entity-data";
+import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { EventNote } from "./model/event-note";
 
 describe("AttendanceService", () => {

@@ -11,7 +11,7 @@ import { PouchDatabase } from "../../../core/database/pouch-database";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { deleteAllIndexedDB } from "../../../utils/performance-tests.spec";
 import { AttendanceService } from "../attendance.service";
-import { expectEntitiesToBeInDatabase } from "../../../utils/expect-entity-data";
+import { expectEntitiesToBeInDatabase } from "../../../utils/expect-entity-data.spec";
 import { EventNote } from "../model/event-note";
 
 describe("AttendanceMigrationService", () => {
