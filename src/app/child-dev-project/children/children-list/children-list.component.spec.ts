@@ -9,7 +9,6 @@ import { ChildrenListComponent } from "./children-list.component";
 import { ChildrenService } from "../children.service";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ExportDataComponent } from "../../../core/admin/export-data/export-data.component";
-import { ChildPhotoService } from "../child-photo-service/child-photo.service";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { of } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -25,8 +24,7 @@ import { User } from "../../../core/user/user";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { School } from "../../schools/model/school";
 import { LoggingService } from "../../../core/logging/logging.service";
-import { MockDatabase } from "../../../core/database/mock-database";
-import { Database } from "../../../core/database/database";
+import { BackupService } from "../../../core/admin/services/backup.service";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
@@ -102,10 +100,6 @@ describe("ChildrenListComponent", () => {
       ],
       providers: [
         {
-          provide: Database,
-          useClass: MockDatabase,
-        },
-        {
           provide: ChildrenService,
           useValue: mockChildrenService,
         },
@@ -117,15 +111,12 @@ describe("ChildrenListComponent", () => {
           provide: SessionService,
           useValue: mockSessionService,
         },
-        {
-          provide: ChildPhotoService,
-          useValue: jasmine.createSpyObj(["getImage"]),
-        },
         { provide: ActivatedRoute, useValue: routeMock },
         {
           provide: LoggingService,
           useValue: jasmine.createSpyObj(["warn"]),
         },
+        { provide: BackupService, useValue: {} },
       ],
     }).compileComponents();
   }));
