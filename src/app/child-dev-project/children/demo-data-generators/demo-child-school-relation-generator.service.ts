@@ -74,7 +74,7 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<
     }
     if (Math.random() < 0.8) {
       // 80% of the latest records for each child don't have an end date, which means the child currently attends this school.
-      (data[data.length - 1] as ChildSchoolRelation).end = null;
+      delete (data[data.length - 1] as ChildSchoolRelation).end;
     }
 
     this.setChildSchoolAndClassForLegacyUse(child, data[data.length - 1]);
