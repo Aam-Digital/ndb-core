@@ -155,7 +155,10 @@ export class EntityListComponent<T extends Entity>
       data: T,
       sortingHeader: string
     ) => {
-      if ("label" in data[sortingHeader]) {
+      if (
+        typeof data[sortingHeader] === "object" &&
+        "label" in data[sortingHeader]
+      ) {
         return data[sortingHeader].label;
       } else {
         return data[sortingHeader];
