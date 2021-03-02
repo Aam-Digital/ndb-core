@@ -2,11 +2,11 @@ import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { faker } from "../../../core/demo-data/faker";
 import { RecurringActivity } from "../model/recurring-activity";
-import { Note } from "../../notes/model/note";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { DemoActivityGeneratorService } from "./demo-activity-generator.service";
 import moment from "moment";
+import { EventNote } from "../model/event-note";
 
 export class DemoEventsConfig {
   forNLastYears: number;
@@ -17,7 +17,7 @@ export class DemoEventsConfig {
  */
 @Injectable()
 export class DemoActivityEventsGeneratorService extends DemoDataGenerator<
-  Note
+  EventNote
 > {
   /**
    * Create a specific event for a date based on the given activity and fill with random attendance.
@@ -27,8 +27,8 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<
   static generateEventForActivity(
     activity: RecurringActivity,
     date: Date
-  ): Note {
-    const eventNote = Note.create(date, activity.title);
+  ): EventNote {
+    const eventNote = EventNote.create(date, activity.title);
     eventNote.author = activity.assignedTo;
     eventNote.category = activity.type;
     eventNote.relatesTo = activity._id; // relatesTo requires the id including prefix!
@@ -75,7 +75,7 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<
     super();
   }
 
-  generateEntities(): Note[] {
+  generateEntities(): EventNote[] {
     const data = [];
 
     for (const activity of this.demoActivities.entities) {
