@@ -70,16 +70,10 @@
           </mat-form-field>
         </div>
         <div fxFlex>
-          <mat-form-field class="input-medium">
-            <!-- TODO: should be multi-select or auto-complete field of user names? -->
-            <input
-              matInput
-              placeholder="Team Member"
-              name="teammember"
-              type="text"
-              [(ngModel)]="entity.author"
-            />
-          </mat-form-field>
+          <app-user-select
+            [(user)]="entity.author"
+            (userChange)="entityForm.form.markAsDirty()">
+          </app-user-select>
         </div>
       </div>
     </div>

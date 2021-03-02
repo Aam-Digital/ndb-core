@@ -40,6 +40,7 @@ import { Angulartics2Module } from "angulartics2";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
+import { UserModule } from "../../core/user/user.module";
 
 @NgModule({
   declarations: [
@@ -90,6 +91,7 @@ import { ConfigurableEnumModule } from "../../core/configurable-enum/configurabl
     EntitySubrecordModule,
     EntityListModule,
     ConfigurableEnumModule,
+    UserModule,
   ],
   providers: [],
 })
