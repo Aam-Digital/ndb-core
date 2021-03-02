@@ -1038,6 +1038,7 @@
       {"name": "phone", "schema": { "dataType": "string" } },
       {"name": "guardianName", "schema": { "dataType": "string" } },
       {"name": "preferredTimeForGuardianMeeting", "schema": { "dataType": "string" } },
+      {"name": "center", "schema":  { "dataType": "configurable-enum", "innerDataType": "center" }},
       {"name": "has_aadhar", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
       {"name": "has_bankAccount", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
       {"name": "has_kanyashree", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
