@@ -21,7 +21,9 @@ import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { SafeUrl } from "@angular/platform-browser";
 import { BehaviorSubject } from "rxjs";
-import { Center } from "../center";
+import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
+
+export type Center = ConfigurableEnumValue;
 @DatabaseEntity("Child")
 export class Child extends Entity {
   /**
@@ -39,7 +41,8 @@ export class Child extends Entity {
   @DatabaseField({ dataType: "string" }) gender: Gender; // M or F
   @DatabaseField() religion: string = "";
 
-  @DatabaseField({ dataType: "configurable-enum" }) center: Center;
+  @DatabaseField({ dataType: "configurable-enum" })
+  center: Center;
   @DatabaseField() admissionDate: Date;
   @DatabaseField() status: string = "";
 
