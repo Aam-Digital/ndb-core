@@ -41,8 +41,7 @@ export class Child extends Entity {
   @DatabaseField({ dataType: "string" }) gender: Gender; // M or F
   @DatabaseField() religion: string = "";
 
-  @DatabaseField({ dataType: "configurable-enum" })
-  center: Center;
+  @DatabaseField() center: Center;
   @DatabaseField() admissionDate: Date;
   @DatabaseField() status: string = "";
 
