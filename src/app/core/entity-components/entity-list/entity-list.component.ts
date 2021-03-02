@@ -148,6 +148,19 @@ export class EntityListComponent<T extends Entity>
   ngAfterViewInit() {
     this.entityDataSource.sort = this.sort;
     this.entityDataSource.paginator = this.paginator;
+    // sort data according to it's label, if the data has a label
+    // (which it has when using configuration enum types)
+    // otherwise sort by default
+    this.entityDataSource.sortingDataAccessor = (
+      data: T,
+      sortingHeader: string
+    ) => {
+      if ("label" in data[sortingHeader]) {
+        return data[sortingHeader].label;
+      } else {
+        return data[sortingHeader];
+      }
+    };
     setTimeout(() => {
       this.paginator.pageIndex = this.paginatorPageIndex;
       this.paginator.page.next({
