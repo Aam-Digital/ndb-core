@@ -65,6 +65,13 @@ export const routes: Routes = [
         (m) => m["ConflictResolutionModule"]
       ),
   },
+  {
+    path: "coming-soon",
+    loadChildren: () =>
+      import("./core/coming-soon/coming-soon.module").then(
+        (m) => m["ComingSoonModule"]
+      ),
+  },
   { path: "**", redirectTo: "/" },
 ];
 
