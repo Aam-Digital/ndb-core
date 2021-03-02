@@ -1,0 +1,16 @@
+<div>
+  <mat-form-field style='width: 100%'>
+    <input
+      matInput
+      placeholder='User'
+      (input)='onInputChanged()'
+      [matAutocomplete]='autoSuggestions'
+      [(ngModel)]='user'>
+  </mat-form-field>
+
+  <mat-autocomplete #autoSuggestions='matAutocomplete' (optionSelected)="onInputChanged()">
+    <mat-option *ngFor='let res of suggestions' [value]='res'>
+      {{res.name}}
+    </mat-option>
+  </mat-autocomplete>
+</div>
