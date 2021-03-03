@@ -44,6 +44,7 @@ interface FilterComponentSettings<T> {
   filterSettings: FilterSelection<T>;
   selectedOption?: string;
   display?: string;
+  label?: string;
 }
 
 /**
@@ -261,7 +262,7 @@ export class EntityListComponent<T extends Entity>
 
     for (const filter of this.filtersConfig) {
       const fs: FilterComponentSettings<T> = {
-        filterSettings: new FilterSelection(filter.id, []),
+        filterSettings: new FilterSelection(filter.id, [], filter.label),
         display: filter.display,
       };
       fs.filterSettings.options = this.initFilterOptions(filter);
