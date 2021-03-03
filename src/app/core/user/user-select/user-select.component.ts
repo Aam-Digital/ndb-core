@@ -10,7 +10,7 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { User } from "../user";
 import { MatAutocompleteTrigger } from "@angular/material/autocomplete";
 import { AlertService } from "../../alerts/alert.service";
-import { Alert } from "../../alerts/alert";
+import { LoggingService } from "../../logging/logging.service";
 
 @Component({
   selector: "app-user-select",
@@ -28,7 +28,8 @@ export class UserSelectComponent implements OnInit {
 
   constructor(
     private entityMapperService: EntityMapperService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private loggingService: LoggingService
   ) {}
 
   ngOnInit(): void {
@@ -40,8 +41,9 @@ export class UserSelectComponent implements OnInit {
       })
       .catch((reason) => {
         this.alertService.addWarning("Cannot load Users");
-        console.warn(reason);
+        this.loggingService.warn(reason);
         this.users = [];
+        this.suggestions = [];
       });
   }
 
