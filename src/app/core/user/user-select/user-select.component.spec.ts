@@ -7,6 +7,20 @@ import { MockDatabase } from "../../database/mock-database";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { MatAutocomplete } from "@angular/material/autocomplete";
 import { User } from "../user";
+import { AlertService } from "../../alerts/alert.service";
+import { LoggingService } from "../../logging/logging.service";
+
+const mockedAlertService = {
+  addWarning(message?: string, info?: { specName?: string }) {
+    // Do nothing
+  },
+};
+
+const mockedLoggingService = {
+  warn(message: any) {
+    // Do nothing
+  },
+};
 
 describe("UserSelectComponent", () => {
   let component: UserSelectComponent;
@@ -27,6 +41,8 @@ describe("UserSelectComponent", () => {
         EntityMapperService,
         EntitySchemaService,
         { provide: Database, useClass: MockDatabase },
+        { provide: AlertService, useValue: mockedAlertService },
+        { provide: LoggingService, useValue: mockedLoggingService },
       ],
     }).compileComponents();
   }));
@@ -34,7 +50,6 @@ describe("UserSelectComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(UserSelectComponent);
     component = fixture.componentInstance;
-    component.ngOnInit();
     fixture.detectChanges();
   });
 
