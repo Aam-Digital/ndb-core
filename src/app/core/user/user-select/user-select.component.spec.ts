@@ -12,7 +12,7 @@ describe("UserSelectComponent", () => {
   let component: UserSelectComponent;
   let fixture: ComponentFixture<UserSelectComponent>;
 
-  let id: number = 0;
+  let id = 0;
   function _User(name: string): User {
     const user = new User(String(id));
     user.name = name;
