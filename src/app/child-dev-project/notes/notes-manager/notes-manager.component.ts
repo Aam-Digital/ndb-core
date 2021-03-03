@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { Note } from "../model/note";
 import { MediaObserver } from "@angular/flex-layout";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
@@ -11,6 +11,9 @@ import { FormDialogService } from "../../../core/form-dialog/form-dialog.service
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
+import { Subscription } from "rxjs";
+import { map } from "rxjs/operators";
+import { updateEntities } from "../../../core/entity/entity-update";
 
 @UntilDestroy()
 @Component({
@@ -25,7 +28,7 @@ import { EntityListComponent } from "../../../core/entity-components/entity-list
     ></app-entity-list>
   `,
 })
-export class NotesManagerComponent implements OnInit {
+export class NotesManagerComponent implements OnInit, OnDestroy {
   @ViewChild("entityList") entityList: EntityListComponent<Note>;
 
   config: any = {};
@@ -61,6 +64,8 @@ export class NotesManagerComponent implements OnInit {
     { key: "", label: "All", filterFun: () => true },
   ];
 
+  private subscription: Subscription;
+
   constructor(
     private formDialog: FormDialogService,
     private sessionService: SessionService,
@@ -75,10 +80,24 @@ export class NotesManagerComponent implements OnInit {
       this.config = config;
       this.addPrebuiltFilters();
     });
-    this.entityMapperService.loadType<Note>(Note).then((notes) => {
-      notes.forEach((note) => (note["color"] = this.getColor(note)));
-      this.notes = notes;
-    });
+    this.subscription = this.entityMapperService
+      .loadAll<Note>(Note)
+      .pipe(
+        map((note) => {
+          if (note) {
+            note["color"] = this.getColor(note);
+          }
+          return note;
+        }),
+        updateEntities()
+      )
+      .subscribe((update) => {
+        this.notes = update(this.notes);
+      });
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   private addPrebuiltFilters() {
@@ -118,17 +137,11 @@ export class NotesManagerComponent implements OnInit {
     const newNote = new Note(Date.now().toString());
     newNote.date = new Date();
     newNote.author = this.sessionService.getCurrentUser().name;
-
-    const noteDialogRef = this.showDetails(newNote);
-    noteDialogRef.afterClosed().subscribe((val) => {
-      if (val instanceof Note) {
-        this.notes = [val].concat(this.notes);
-      }
-    });
+    this.showDetails(newNote);
   }
 
   showDetails(entity: Note) {
-    return this.formDialog.openDialog(NoteDetailsComponent, entity);
+    this.formDialog.openDialog(NoteDetailsComponent, entity.copy());
   }
 
   private getColor(entity: Note): string {
@@ -139,7 +152,7 @@ export class NotesManagerComponent implements OnInit {
       return WarningLevelColor(WarningLevel.WARNING);
     }
 
-    const color = entity.category.color;
+    const color = entity.category?.color;
     return color ? color : "";
   }
 }

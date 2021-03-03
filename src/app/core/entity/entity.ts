@@ -201,4 +201,10 @@ export class Entity {
   public getWarningLevel(): WarningLevel {
     return WarningLevel.NONE;
   }
+
+  public copy(): Entity {
+    const other = new (this.getConstructor())(this._id);
+    Object.assign(other, this);
+    return other;
+  }
 }
