@@ -1,4 +1,3 @@
-import { Note } from "../../notes/model/note";
 import {
   AttendanceLogicalStatus,
   AttendanceStatusType,
@@ -7,6 +6,7 @@ import { Entity } from "../../../core/entity/entity";
 import { RecurringActivity } from "./recurring-activity";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { WarningLevel } from "../../warning-level";
+import { EventNote } from "./event-note";
 
 /**
  * Aggregate information about all events for a {@link RecurringActivity} within a given time period.
@@ -21,7 +21,7 @@ export class ActivityAttendance extends Entity {
   /**
    * Create an instance with the given initial properties.
    */
-  static create(from: Date, events: Note[] = []) {
+  static create(from: Date, events: EventNote[] = []) {
     const instance = new ActivityAttendance();
     instance.periodFrom = from;
     instance.events = events;
@@ -40,13 +40,13 @@ export class ActivityAttendance extends Entity {
   /**
    * Events within the period relating to the activity
    */
-  private _events: Note[] = [];
+  private _events: EventNote[] = [];
 
-  set events(value: Note[]) {
+  set events(value: EventNote[]) {
     this._events = value;
     this.recalculateStats();
   }
-  get events(): Note[] {
+  get events(): EventNote[] {
     return this._events;
   }
 
@@ -77,7 +77,7 @@ export class ActivityAttendance extends Entity {
     childId: string
   ): number {
     return this.events.reduce(
-      (prev: number, currentEvent: Note) =>
+      (prev: number, currentEvent: EventNote) =>
         currentEvent.getAttendance(childId)?.status === status
           ? prev + 1
           : prev,
@@ -87,7 +87,7 @@ export class ActivityAttendance extends Entity {
 
   countEventsWithUnknownStatus(): number {
     return this.events.reduce(
-      (prev: number, currentEvent: Note) =>
+      (prev: number, currentEvent: EventNote) =>
         currentEvent.hasUnknownAttendances() ? prev + 1 : prev,
       0
     );
@@ -231,8 +231,8 @@ export function generateEventWithAttendance(
   participating: [string, AttendanceLogicalStatus][],
   date = new Date(),
   activity?: RecurringActivity
-): Note {
-  const event = Note.create(date);
+): EventNote {
+  const event = EventNote.create(date);
   for (const att of participating) {
     event.addChild(att[0]);
     event.getAttendance(att[0]).status = defaultAttendanceStatusTypes.find(

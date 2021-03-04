@@ -38,7 +38,7 @@ export class AttendanceDetailsComponent
       inputType: ColumnDescriptionInputType.FUNCTION,
       valueFunction: (note: Note) => {
         if (this.focusedChild) {
-          return note.getAttendance(this.focusedChild).status;
+          return note.getAttendance(this.focusedChild).status.label;
         } else {
           return Math.round(calculateAverageAttendance(note).average * 10) / 10;
         }
