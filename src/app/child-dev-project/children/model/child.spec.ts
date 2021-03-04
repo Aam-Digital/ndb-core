@@ -62,7 +62,7 @@ describe("Child", () => {
       religion: "Hindu",
 
       photoFile: "..",
-      center: "Alpha",
+      center: { id: "alpha", label: "Alpha" },
       admissionDate: new Date(),
       status: "Active",
 

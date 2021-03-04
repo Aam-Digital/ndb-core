@@ -84,8 +84,8 @@ export class AttendanceAnalysisComponent implements OnInit, AfterViewInit {
 
     centers.forEach((center) => {
       options.push({
-        key: center.toLowerCase(),
-        label: center,
+        key: center.id,
+        label: center.label,
         filterFun: (c: Child) => c.center === center,
       });
     });
