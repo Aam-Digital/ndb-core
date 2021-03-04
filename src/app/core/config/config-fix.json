@@ -1034,6 +1034,8 @@
   },
 
   "entity:Child": {
+    "permissions": {
+    },
     "attributes": [
       {"name": "address", "schema": { "dataType": "string" } },
       {"name": "phone", "schema": { "dataType": "string" } },
@@ -1054,5 +1056,9 @@
       {"name": "health_lastVitaminD", "schema": { "dataType": "Date" } },
       {"name": "health_lastDeworming", "schema": { "dataType": "Date" } }
     ]
+  },
+  "entity:School": {
+    "permissions": {
+    }
   }
 }
