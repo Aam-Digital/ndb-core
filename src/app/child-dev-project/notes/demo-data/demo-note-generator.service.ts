@@ -114,7 +114,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     );
 
     note.addChild(child.getId());
-    note.author = faker.random.arrayElement(this.teamMembers);
+    note.authors = [faker.random.arrayElement(this.teamMembers)];
 
     if (!date) {
       date = faker.date.between(
@@ -162,7 +162,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
       return attendance;
     });
 
-    note.author = faker.random.arrayElement(this.teamMembers);
+    note.authors = [faker.random.arrayElement(this.teamMembers)];
     note.date = faker.date.past(1);
 
     this.removeFollowUpMarkerForOldNotes(note);

@@ -71,8 +71,8 @@
         </div>
         <div fxFlex>
           <app-user-select
-            [(user)]="entity.author"
-            (userChange)="entityForm.form.markAsDirty()">
+            [selectedUsers]="noteAuthors"
+            (selectedUserChange)="entityForm.form.markAsDirty()">
           </app-user-select>
         </div>
       </div>

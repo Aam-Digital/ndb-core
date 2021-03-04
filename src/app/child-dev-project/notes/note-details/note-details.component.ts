@@ -4,6 +4,7 @@ import { ShowsEntity } from "../../../core/form-dialog/shows-entity.interface";
 import { MatDialogRef } from "@angular/material/dialog";
 import { Entity } from "../../../core/entity/entity";
 import { INTERACTION_TYPE_CONFIG_ID } from "../model/interaction-type.interface";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -22,6 +23,14 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
   constructor(
     @Optional() private matDialogRef: MatDialogRef<NoteDetailsComponent>
   ) {}
+
+  get noteAuthors(): string[] {
+    return this.entity.authors;
+  }
+
+  set noteAuthors(users: string[]) {
+    this.entity.authors = users;
+  }
 
   closeDialog(entity: Entity) {
     if (!this.matDialogRef) {

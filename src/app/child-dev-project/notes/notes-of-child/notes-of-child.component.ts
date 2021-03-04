@@ -117,7 +117,7 @@ export class NotesOfChildComponent
       const newNote = new Note(Date.now().toString());
       newNote.date = new Date();
       newNote.addChild(childId);
-      newNote.author = user;
+      newNote.authors = [user];
 
       return newNote;
     };
