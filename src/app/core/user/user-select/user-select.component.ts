@@ -9,7 +9,6 @@ import {
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { User } from "../user";
 import { MatAutocompleteTrigger } from "@angular/material/autocomplete";
-import { AlertService } from "../../alerts/alert.service";
 import { LoggingService } from "../../logging/logging.service";
 
 @Component({
@@ -18,18 +17,18 @@ import { LoggingService } from "../../logging/logging.service";
   styleUrls: ["./user-select.component.scss"],
 })
 export class UserSelectComponent implements OnInit {
-  @Input() selectedUsers: User[];
-  @Output() selectedUserChange = new EventEmitter<User[]>();
+  @Input() selectedUsers: User[] = [];
+  @Output() selectedUsersChange = new EventEmitter<User[]>();
 
-  allUsers: User[];
-  suggestedUsers: User[];
+  allUsers: User[] = [];
+  suggestedUsers: User[] = [];
 
   searchText: string = "";
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
+  @ViewChild("inputField", { static: true }) inputField;
 
   constructor(
     private entityMapperService: EntityMapperService,
-    private alertService: AlertService,
     private loggingService: LoggingService
   ) {}
 
@@ -37,21 +36,37 @@ export class UserSelectComponent implements OnInit {
     this.entityMapperService
       .loadType<User>(User)
       .then((users) => {
-        this.allUsers = users;
+        this.allUsers = [...users];
         this.onInputChanged();
       })
       .catch((reason) => {
-        this.alertService.addWarning("Cannot load Users");
         this.loggingService.warn(reason);
-        this.allUsers = [];
-        this.suggestedUsers = [];
       });
   }
 
   selectUser(user: User) {
-    this.selectedUsers.push(user);
-    this.selectedUserChange.emit(this.selectedUsers);
+    this.selectedUsersChange.emit([user].concat(this.selectedUsers));
     this.searchText = "";
+    this.inputField.nativeElement.value = "";
+  }
+
+  selectCurrentSearch() {
+    if (this.searchText.length > 0) {
+      const user = this.allUsers.find((u) => u.name === this.searchText);
+      if (user) {
+        this.selectUser(user);
+      }
+    }
+  }
+
+  unselectUser(user: User) {
+    const index = this.selectedUsers.findIndex(
+      (u) => u.getId() === user.getId()
+    );
+    if (index !== -1) {
+      this.selectedUsers.splice(index, 1);
+      this.selectedUsersChange.emit(this.selectedUsers);
+    }
   }
 
   onInputChanged(): void {
