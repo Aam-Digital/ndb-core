@@ -20,6 +20,7 @@ import { async } from "@angular/core/testing";
 import { Entity } from "../../../core/entity/entity";
 import { Gender } from "./Gender";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import { LoadChildPhotoEntitySchemaDatatype } from "../child-photo-service/datatype-load-child-photo";
 
 describe("Child", () => {
   const ENTITY_TYPE = "Child";
@@ -27,6 +28,9 @@ describe("Child", () => {
 
   beforeEach(async(() => {
     entitySchemaService = new EntitySchemaService();
+    entitySchemaService.registerSchemaDatatype(
+      new LoadChildPhotoEntitySchemaDatatype(null)
+    );
   }));
 
   it("has correct _id and entityId and type", function () {
@@ -58,7 +62,7 @@ describe("Child", () => {
       religion: "Hindu",
 
       photoFile: "..",
-      center: "Alpha",
+      center: { id: "alpha", label: "Alpha" },
       admissionDate: new Date(),
       status: "Active",
 

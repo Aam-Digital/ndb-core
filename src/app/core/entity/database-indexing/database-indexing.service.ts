@@ -100,6 +100,25 @@ export class DatabaseIndexingService {
     });
   }
 
+  /**
+   * Load data from the Database through the given, previously created index for a key range.
+   * @param entityConstructor
+   * @param indexName The name of the previously created index to be queried.
+   * @param startkey
+   * @param endkey
+   */
+  async queryIndexDocsRange<T extends Entity>(
+    entityConstructor: EntityConstructor<T>,
+    indexName: string,
+    startkey: string,
+    endkey?: string
+  ): Promise<T[]> {
+    return this.queryIndexDocs(entityConstructor, indexName, {
+      startkey: startkey,
+      endkey: endkey,
+    });
+  }
+
   async queryIndexStats(
     indexName: string,
     options: QueryOptions = {

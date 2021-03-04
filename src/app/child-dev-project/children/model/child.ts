@@ -21,8 +21,10 @@ import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { SafeUrl } from "@angular/platform-browser";
 import { BehaviorSubject } from "rxjs";
+import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 import { calculateAge } from "../../../utils/utils";
 
+export type Center = ConfigurableEnumValue;
 @DatabaseEntity("Child")
 export class Child extends Entity {
   /**
@@ -40,7 +42,7 @@ export class Child extends Entity {
   @DatabaseField({ dataType: "string" }) gender: Gender; // M or F
   @DatabaseField() religion: string = "";
 
-  @DatabaseField() center: string = "";
+  @DatabaseField() center: Center;
   @DatabaseField() admissionDate: Date;
   @DatabaseField() status: string = "";
 
@@ -59,7 +61,7 @@ export class Child extends Entity {
    */
   @DatabaseField() photoFile: string;
 
-  @DatabaseField({ dataType: "load-child-photo" })
+  @DatabaseField({ dataType: "load-child-photo", defaultValue: true })
   photo: BehaviorSubject<SafeUrl>;
 
   get age(): number {
