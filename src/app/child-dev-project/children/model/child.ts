@@ -21,7 +21,10 @@ import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { SafeUrl } from "@angular/platform-browser";
 import { BehaviorSubject } from "rxjs";
+import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
+import { calculateAge } from "../../../utils/utils";
 
+export type Center = ConfigurableEnumValue;
 @DatabaseEntity("Child")
 export class Child extends Entity {
   static create(name: string): Child {
@@ -45,7 +48,7 @@ export class Child extends Entity {
   @DatabaseField({ dataType: "string" }) gender: Gender; // M or F
   @DatabaseField() religion: string = "";
 
-  @DatabaseField() center: string = "";
+  @DatabaseField() center: Center;
   @DatabaseField() admissionDate: Date;
   @DatabaseField() status: string = "";
 
@@ -68,20 +71,7 @@ export class Child extends Entity {
   photo: BehaviorSubject<SafeUrl>;
 
   get age(): number {
-    let age = -1;
-
-    if (this.dateOfBirth) {
-      const now = new Date();
-      const dateOfBirth = new Date(this.dateOfBirth);
-
-      age = now.getFullYear() - dateOfBirth.getFullYear();
-      const m = now.getMonth() - dateOfBirth.getMonth();
-      if (m < 0 || (m === 0 && now.getDate() < dateOfBirth.getDate())) {
-        age--;
-      }
-    }
-
-    return age;
+    return this.dateOfBirth ? calculateAge(this.dateOfBirth) : null;
   }
 
   get isActive(): boolean {

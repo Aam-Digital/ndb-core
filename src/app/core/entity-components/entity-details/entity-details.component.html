@@ -62,6 +62,7 @@
         color="warn"
         class="delete-button"
         (click)="removeEntity()"
+        *appDisabledEntityOperation="{entity: entity?.getConstructor(), operation: operationType.DELETE}"
 >
     Delete
 </button>

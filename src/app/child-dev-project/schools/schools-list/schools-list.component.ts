@@ -13,6 +13,7 @@ import { EntityListConfig } from "../../../core/entity-components/entity-list/En
     <app-entity-list
       [entityList]="schoolList"
       [listConfig]="listConfig"
+      [entityConstructor]="schoolConstructor"
       (elementClick)="routeTo($event.getId())"
       (addNewClick)="routeTo('new')"
       #entityList
@@ -23,6 +24,7 @@ export class SchoolsListComponent implements OnInit {
   @ViewChild("entityList") entityList: EntityListComponent<School>;
   schoolList: School[] = [];
   listConfig: EntityListConfig;
+  schoolConstructor = School;
 
   constructor(
     private entityMapper: EntityMapperService,

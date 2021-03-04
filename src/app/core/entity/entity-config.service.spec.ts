@@ -12,10 +12,9 @@ describe("EntityConfigService", () => {
     "mockConfigService",
     ["getConfig"]
   );
-  const testConfig = new EntityConfig();
-  testConfig.attributes = [
-    { name: "testAttribute", schema: { dataType: "string" } },
-  ];
+  const testConfig: EntityConfig = {
+    attributes: [{ name: "testAttribute", schema: { dataType: "string" } }],
+  };
 
   beforeEach(() => {
     mockConfigService.getConfig.and.returnValue(testConfig);
@@ -39,6 +38,14 @@ describe("EntityConfigService", () => {
   it("should assign the correct schema", () => {
     service.addConfigAttributes<Test>(Test);
     expect(Test.schema.get("testAttribute").dataType).toEqual("string");
+  });
+
+  it("should load a given EntityType", () => {
+    const config: EntityConfig = { permissions: {}, attributes: [] };
+    mockConfigService.getConfig.and.returnValue(config);
+    const result = service.getEntityConfig(Test);
+    expect(mockConfigService.getConfig).toHaveBeenCalledWith("entity:Test");
+    expect(result).toBe(config);
   });
 });
 

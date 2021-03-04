@@ -39,11 +39,30 @@ export class SelectGroupChildrenComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe((children) => {
         this.children = children.filter((c) => c.isActive);
-        this.centerFilters.options = this.loadFilterOptionsForProperty(
-          this.children,
-          "center"
+        this.centerFilters.options = this.loadCenterFilterOptions(
+          this.children
         );
       });
+  }
+
+  private loadCenterFilterOptions(children: Child[]) {
+    const options = [this.getAllStudentsFilterOption()];
+    children
+      .map((c) => c.center)
+      .forEach((center) => {
+        if (!center) {
+          return;
+        }
+
+        const filterOption = {
+          key: center.id,
+          label: center.label,
+          type: "valueFilter",
+          filterFun: (c: Child) => c.center === center,
+        };
+        options.push(filterOption);
+      });
+    return options;
   }
 
   private loadFilterOptionsForProperty(

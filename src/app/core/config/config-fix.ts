@@ -98,6 +98,20 @@ export const defaultConfig = {
       "label": "not eligible"
     }
   ],
+  "enum:center": [
+    {
+      "id": "alipore",
+      "label": "Alipore"
+    },
+    {
+      "id": "tollygunge",
+      "label": "Tollygunge"
+    },
+    {
+      "id": "barabazar",
+      "label": "Barabazar"
+    }
+  ],
 
   "view:": {
     "component": "Dashboard",
@@ -452,7 +466,7 @@ export const defaultConfig = {
           "noSorting": true
         },
         {
-          "component": "DisplayText",
+          "component": "DisplayConfigurableEnum",
           "title": "Center",
           "id": "center"
         },
@@ -628,7 +642,11 @@ export const defaultConfig = {
           "all": "All"
         },
         {
-          "id": "center"
+          "id": "center",
+          "label": "Center",
+          "type": "configurable-enum",
+          "enumId": "center",
+          "display": "dropdown"
         },
         {
           "id": "school",
@@ -672,10 +690,10 @@ export const defaultConfig = {
                       "placeholder": "Project Number"
                     },
                     {
-                      "input": "text",
+                      "input": "configurable-enum-select",
                       "id": "center",
                       "placeholder": "Center",
-                      "required": true
+                      "enumId": "center"
                     },
                     {
                       "input": "text",
@@ -685,10 +703,7 @@ export const defaultConfig = {
                   ],
                   [
                     {
-                      "input": "age"
-                    },
-                    {
-                      "input": "datepicker",
+                      "input": "age",
                       "id": "dateOfBirth",
                       "placeholder": "Date of Birth"
                     },
@@ -1042,11 +1057,14 @@ export const defaultConfig = {
   },
 
   "entity:Child": {
+    "permissions": {
+    },
     "attributes": [
       {"name": "address", "schema": { "dataType": "string" } },
       {"name": "phone", "schema": { "dataType": "string" } },
       {"name": "guardianName", "schema": { "dataType": "string" } },
       {"name": "preferredTimeForGuardianMeeting", "schema": { "dataType": "string" } },
+      {"name": "center", "schema":  { "dataType": "configurable-enum", "innerDataType": "center" }},
       {"name": "has_aadhar", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
       {"name": "has_bankAccount", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
       {"name": "has_kanyashree", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
@@ -1061,5 +1079,9 @@ export const defaultConfig = {
       {"name": "health_lastVitaminD", "schema": { "dataType": "Date" } },
       {"name": "health_lastDeworming", "schema": { "dataType": "Date" } }
     ]
+  },
+  "entity:School": {
+    "permissions": {
+    }
   }
 }

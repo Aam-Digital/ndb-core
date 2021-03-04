@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { FormConfig } from "./FormConfig";
@@ -9,8 +9,9 @@ import { SessionService } from "../../../session/session-service/session.service
 import { ChildPhotoService } from "../../../../child-dev-project/children/child-photo-service/child-photo.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
-import { getParentUrl } from "../../../../utils/utils";
+import { calculateAge, getParentUrl } from "../../../../utils/utils";
 import { Child } from "../../../../child-dev-project/children/model/child";
+import { OperationType } from "../../../permissions/entity-permissions.service";
 
 /**
  * This component creates a form based on the passed config.
@@ -21,8 +22,10 @@ import { Child } from "../../../../child-dev-project/children/model/child";
   templateUrl: "./form.component.html",
   styleUrls: ["./form.component.scss"],
 })
-export class FormComponent implements OnInitDynamicComponent {
+export class FormComponent implements OnInitDynamicComponent, OnInit {
   entity: Entity;
+
+  operationType = OperationType;
 
   creatingNew = false;
   isAdminUser: boolean;
@@ -44,6 +47,10 @@ export class FormComponent implements OnInitDynamicComponent {
     this.isAdminUser = this.sessionService.getCurrentUser().admin;
   }
 
+  ngOnInit() {
+    this.initForm();
+  }
+
   onInitFromDynamicConfig(config: PanelConfig) {
     this.entity = config.entity;
     this.config = config.config;
@@ -58,6 +65,12 @@ export class FormComponent implements OnInitDynamicComponent {
     this.editing = !this.editing;
     this.initForm();
     this.enablePhotoUpload = this.childPhotoService.canSetImage();
+  }
+
+  calculateAge(selectedDateOfBirth: string) {
+    return selectedDateOfBirth
+      ? calculateAge(new Date(selectedDateOfBirth))
+      : "";
   }
 
   async save(): Promise<Entity> {

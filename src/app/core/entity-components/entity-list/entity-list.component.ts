@@ -39,6 +39,7 @@ import {
   ConfigurableEnumConfig,
 } from "../../configurable-enum/configurable-enum.interface";
 import { LoggingService } from "../../logging/logging.service";
+import { OperationType } from "../../permissions/entity-permissions.service";
 
 interface FilterComponentSettings<T> {
   filterSettings: FilterSelection<T>;
@@ -62,6 +63,7 @@ export class EntityListComponent<T extends Entity>
   implements OnChanges, OnInit, AfterViewInit {
   @Input() entityList: T[] = [];
   @Input() listConfig: EntityListConfig;
+  @Input() entityConstructor: typeof Entity;
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
 
@@ -74,6 +76,8 @@ export class EntityListComponent<T extends Entity>
   defaultColumnGroup = "";
   mobileColumnGroup = "";
   filtersConfig: FilterConfig[] = [];
+
+  operationType = OperationType;
 
   ready = true;
   columnsToDisplay: string[] = [];

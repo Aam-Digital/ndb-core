@@ -19,6 +19,7 @@ import { LoggingService } from "../../../core/logging/logging.service";
     <app-entity-list
       [entityList]="childrenList"
       [listConfig]="listConfig"
+      [entityConstructor]="childConstructor"
       (elementClick)="routeTo($event.getId())"
       (addNewClick)="routeTo('new')"
     ></app-entity-list>
@@ -27,6 +28,7 @@ import { LoggingService } from "../../../core/logging/logging.service";
 export class ChildrenListComponent implements OnInit {
   childrenList: Child[] = [];
   listConfig: EntityListConfig;
+  childConstructor = Child;
 
   schoolFS: FilterSelectionOption<Child>[] = [];
 
