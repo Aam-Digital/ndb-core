@@ -55,7 +55,7 @@ describe("ChildrenOverviewComponent", () => {
     expect(component.studentsDataSource.data).toEqual([child1, child2]);
   }));
 
-  function sortAccordingTo(specifier: string, sortedValues: any[]) {
+  function expectToBeSortedAccordingTo(specifier: string, sortedValues: any[]) {
     let id = 0;
     const ids = [];
     // create an array of children with increasing id's
