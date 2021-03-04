@@ -19,7 +19,6 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<
   private static readonly ACTIVITY_TYPES = [
     defaultInteractionTypes.find((t) => t.id === "SCHOOL_CLASS"),
     defaultInteractionTypes.find((t) => t.id === "COACHING_CLASS"),
-    defaultInteractionTypes.find((t) => t.id === "LIFE_SKILLS"),
   ];
 
   /**
