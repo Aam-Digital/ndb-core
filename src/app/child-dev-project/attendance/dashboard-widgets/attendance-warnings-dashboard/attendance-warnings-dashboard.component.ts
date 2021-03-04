@@ -4,7 +4,7 @@ import { Router } from "@angular/router";
 import { AttendanceMonth } from "../../model/attendance-month";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { Child } from "app/child-dev-project/children/model/child";
+import { Child } from "../../../children/model/child";
 
 @UntilDestroy()
 @Component({
