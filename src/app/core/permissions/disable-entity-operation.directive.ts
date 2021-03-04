@@ -33,7 +33,7 @@ export class DisableEntityOperationDirective implements OnChanges {
   };
 
   private wrapperComponent: ComponentRef<DisabledWrapperComponent>;
-  private text: string = "Operation disabled for current user";
+  private text: string = "Your account does not have the required permission for this action.";
 
   constructor(
     private templateRef: TemplateRef<HTMLButtonElement>,
