@@ -51,7 +51,7 @@ export class RemoteSession {
       {
         ajax: {
           rejectUnauthorized: false,
-          timeout: AppConfig.settings.database.timeout,
+          timeout: 60000,
         },
         // This is a workaround for PouchDB 7.0.0 with pouchdb-authentication 1.1.3:
         // https://github.com/pouchdb-community/pouchdb-authentication/issues/239
