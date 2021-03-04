@@ -18,12 +18,13 @@ import { LoggingService } from "../../logging/logging.service";
   styleUrls: ["./user-select.component.scss"],
 })
 export class UserSelectComponent implements OnInit {
-  @Input() user: string;
-  @Output() userChange = new EventEmitter<string>();
+  @Input() selectedUsers: User[];
+  @Output() selectedUserChange = new EventEmitter<User[]>();
 
-  users: User[];
-  suggestions: User[];
+  allUsers: User[];
+  suggestedUsers: User[];
 
+  searchText: string = "";
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
   constructor(
@@ -36,26 +37,26 @@ export class UserSelectComponent implements OnInit {
     this.entityMapperService
       .loadType<User>(User)
       .then((users) => {
-        this.users = users;
+        this.allUsers = users;
         this.onInputChanged();
       })
       .catch((reason) => {
         this.alertService.addWarning("Cannot load Users");
         this.loggingService.warn(reason);
-        this.users = [];
-        this.suggestions = [];
+        this.allUsers = [];
+        this.suggestedUsers = [];
       });
   }
 
   selectUser(user: User) {
-    this.user = user.name;
-    this.userChange.emit(this.user);
+    this.selectedUsers.push(user);
+    this.selectedUserChange.emit(this.selectedUsers);
+    this.searchText = "";
   }
 
   onInputChanged(): void {
-    this.suggestions = this.users.filter((otherUser) =>
-      otherUser.name.toLowerCase().startsWith(this.user)
+    this.suggestedUsers = this.allUsers.filter((user) =>
+      user.name.toLowerCase().startsWith(this.searchText)
     );
-    this.userChange.emit(this.user);
   }
 }

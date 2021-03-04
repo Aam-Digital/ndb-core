@@ -58,17 +58,17 @@ describe("UserSelectComponent", () => {
   });
 
   it("should reflect changes", (done) => {
-    component.userChange.subscribe((newValue: string) => {
+    component.selectedUserChange.subscribe((newValue: string) => {
       expect(newValue).toEqual("A");
       done();
     });
-    component.users = [];
-    component.user = "A";
+    component.allUsers = [];
+    component.selectedUsers = [_User("A")];
     component.onInputChanged();
   });
 
   it("should select a user and emit the change", (done) => {
-    component.userChange.subscribe((newValue: string) => {
+    component.selectedUserChange.subscribe((newValue: string) => {
       expect(newValue).toEqual("A");
       done();
     });
@@ -76,14 +76,14 @@ describe("UserSelectComponent", () => {
   });
 
   it("should autocomplete existing users", () => {
-    component.users = [_User("AA"), _User("AB"), _User("Z")];
-    component.user = "a";
+    component.allUsers = [_User("AA"), _User("AB"), _User("Z")];
+    component.selectedUsers = [_User("a")];
     component.onInputChanged();
-    let userSuggestionIds = component.suggestions.map((user) => user.name);
+    let userSuggestionIds = component.suggestedUsers.map((user) => user.name);
     expect(userSuggestionIds).toEqual(["AA", "AB"]);
-    component.user = "ab";
+    component.selectedUsers = [_User("ab")];
     component.onInputChanged();
-    userSuggestionIds = component.suggestions.map((user) => user.name);
+    userSuggestionIds = component.suggestedUsers.map((user) => user.name);
     expect(userSuggestionIds).toEqual(["AB"]);
   });
 });

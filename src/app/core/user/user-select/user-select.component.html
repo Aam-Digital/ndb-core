@@ -5,11 +5,14 @@
       placeholder='User'
       (input)='onInputChanged()'
       [matAutocomplete]='autoSuggestions'
-      [(ngModel)]='user'>
+      [(ngModel)]='searchText'>
+    <span *ngFor="let user of selectedUsers">
+      {{user.name}}
+    </span>
   </mat-form-field>
 
-  <mat-autocomplete #autoSuggestions='matAutocomplete' (optionSelected)="onInputChanged()">
-    <mat-option *ngFor='let res of suggestions' [value]='res'>
+  <mat-autocomplete #autoSuggestions='matAutocomplete' (optionSelected)="selectUser($event.option.value)">
+    <mat-option *ngFor='let res of suggestedUsers' [value]='res'>
       {{res.name}}
     </mat-option>
   </mat-autocomplete>
