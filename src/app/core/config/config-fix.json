@@ -1035,8 +1035,6 @@
 
   "entity:Child": {
     "permissions": {
-      "create": ["admin"],
-      "delete": ["admin"]
     },
     "attributes": [
       {"name": "address", "schema": { "dataType": "string" } },
@@ -1061,9 +1059,6 @@
   },
   "entity:School": {
     "permissions": {
-      "create": ["admin"],
-      "update": ["admin"],
-      "delete": ["admin"]
     }
   }
 }
