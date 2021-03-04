@@ -12,6 +12,8 @@ import { centersUnique } from "../../children/demo-data-generators/fixtures/cent
 import { absenceRemarks } from "./remarks";
 import moment from "moment";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import { User } from "../../../core/user/user";
+import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
 
 export class DemoNoteConfig {
   minNotesPerChild: number;
@@ -42,7 +44,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     ];
   }
 
-  private _teamMembers;
+  /*private _teamMembers;
   get teamMembers(): string[] {
     const numberOfTeamMembers = 5;
     if (!this._teamMembers) {
@@ -52,12 +54,13 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     }
 
     return this._teamMembers;
-  }
+  } */
 
   constructor(
     private config: DemoNoteConfig,
     private demoChildren: DemoChildGenerator,
-    private schemaService: EntitySchemaService
+    private schemaService: EntitySchemaService,
+    private demoUsers: DemoUserGeneratorService
   ) {
     super();
   }
@@ -114,7 +117,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     );
 
     note.addChild(child.getId());
-    note.authors = [faker.random.arrayElement(this.teamMembers)];
+    note.authors = [faker.random.arrayElement(this.demoUsers.entities).name];
 
     if (!date) {
       date = faker.date.between(
@@ -162,7 +165,8 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
       return attendance;
     });
 
-    note.authors = [faker.random.arrayElement(this.teamMembers)];
+    note.authors = [faker.random.arrayElement(this.demoUsers.entities).name];
+
     note.date = faker.date.past(1);
 
     this.removeFollowUpMarkerForOldNotes(note);

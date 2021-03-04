@@ -34,7 +34,11 @@ export class Note extends Entity {
   @DatabaseField() date: Date;
   @DatabaseField() subject: string = "";
   @DatabaseField() text: string = "";
-  /** Authors of this note */
+  /** Names of Authors of this note
+   * A Name corresponds to a user
+   */
+  // Using the ID of the user is complicated in the same
+  // way the Child<->School Relation is complicated.
   @DatabaseField() authors: string[] = [];
 
   @DatabaseField({

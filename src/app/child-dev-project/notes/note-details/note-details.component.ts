@@ -1,10 +1,11 @@
-import { Component, Input, Optional, ViewChild } from "@angular/core";
+import { Component, Input, OnInit, Optional, ViewChild } from "@angular/core";
 import { Note } from "../model/note";
 import { ShowsEntity } from "../../../core/form-dialog/shows-entity.interface";
 import { MatDialogRef } from "@angular/material/dialog";
 import { Entity } from "../../../core/entity/entity";
 import { INTERACTION_TYPE_CONFIG_ID } from "../model/interaction-type.interface";
 import { User } from "../../../core/user/user";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -14,26 +15,25 @@ import { User } from "../../../core/user/user";
   templateUrl: "./note-details.component.html",
   styleUrls: ["./note-details.component.scss"],
 })
-export class NoteDetailsComponent implements ShowsEntity<Note> {
+export class NoteDetailsComponent implements ShowsEntity<Note>, OnInit {
   @Input() entity: Note;
+  _noteAuthors: User[] = [];
   @ViewChild("dialogForm", { static: true }) formDialogWrapper;
 
   INTERACTION_TYPE_CONFIG = INTERACTION_TYPE_CONFIG_ID;
 
   constructor(
-    @Optional() private matDialogRef: MatDialogRef<NoteDetailsComponent>
+    @Optional() private matDialogRef: MatDialogRef<NoteDetailsComponent>,
+    private entityMapper: EntityMapperService
   ) {}
 
   get noteAuthors(): User[] {
-    return this.entity.authors.map((author) => {
-      const user = new User();
-      user.name = author;
-      return user;
-    });
+    return this._noteAuthors;
   }
 
   set noteAuthors(users: User[]) {
     this.entity.authors = users.map((user) => user.name);
+    this._noteAuthors = users;
   }
 
   closeDialog(entity: Entity) {
@@ -45,5 +45,13 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
     this.matDialogRef
       .beforeClosed()
       .subscribe(() => this.matDialogRef.close(entity));
+  }
+
+  ngOnInit(): void {
+    this.entityMapper.loadType<User>(User).then((users) => {
+      this._noteAuthors = users.filter((u) =>
+        this.entity.authors.includes(u.name)
+      );
+    });
   }
 }
