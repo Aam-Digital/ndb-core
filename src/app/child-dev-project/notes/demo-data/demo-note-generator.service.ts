@@ -79,6 +79,10 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     const data = [];
 
     for (const child of this.demoChildren.entities) {
+      if (!child.isActive) {
+        continue;
+      }
+
       let numberOfNotes = faker.random.number({
         min: this.config.minNotesPerChild,
         max: this.config.maxNotesPerChild,
@@ -173,6 +177,10 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
           (t) => t.countAs === AttendanceLogicalStatus.ABSENT
         );
         attendance.remarks = faker.random.arrayElement(absenceRemarks);
+      } else {
+        attendance.status = this.availableStatusTypes.find(
+          (t) => t.countAs === AttendanceLogicalStatus.PRESENT
+        );
       }
     });
 

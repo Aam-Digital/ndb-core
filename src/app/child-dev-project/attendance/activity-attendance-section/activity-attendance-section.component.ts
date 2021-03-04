@@ -102,7 +102,7 @@ export class ActivityAttendanceSectionComponent
   }
 
   updateDisplayedRecords(includeRecordsWithoutParticipation: boolean) {
-    if (includeRecordsWithoutParticipation) {
+    if (includeRecordsWithoutParticipation || !this.forChild) {
       this.records = this.allRecords;
     } else {
       this.records = this.allRecords.filter(
