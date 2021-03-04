@@ -18,8 +18,11 @@ describe("Utils", () => {
   });
 
   it("should calculate age correctly", () => {
-    const dob = moment().subtract(9, "years");
-    const age = calculateAge(dob.toDate());
+    let dob = moment().subtract(9, "years");
+    let age = calculateAge(dob.toDate());
     expect(age).toBe(9);
+    dob = dob.add("1", "day");
+    age = calculateAge(dob.toDate());
+    expect(age).toBe(8);
   });
 });
