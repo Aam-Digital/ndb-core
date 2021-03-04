@@ -80,15 +80,7 @@
                 </mat-checkbox>
 
                 <div *ngIf="row.input === 'age'">
-                    <mat-form-field style="width: 50px;">
-                        <input
-                                matInput
-                                placeholder="Age"
-                                type="number"
-                                [value]="entity?.age"
-                                [disabled]="true"
-                        />
-                    </mat-form-field>
+
                     <mat-form-field style="width: 120px;">
                         <input
                                 matInput
@@ -96,12 +88,28 @@
                                 [placeholder]="row.placeholder"
                                 [matDatepicker]="dateOfBirthDatepicker"
                                 [disabled]="!editing"
+                                #dateOfBirth
                         />
                         <mat-datepicker-toggle
                                 matSuffix
                                 [for]="dateOfBirthDatepicker"
                         ></mat-datepicker-toggle>
                         <mat-datepicker #dateOfBirthDatepicker></mat-datepicker>
+                    </mat-form-field>
+                    <mat-form-field style="width: 50px;">
+                        <div
+                            matTooltip="This field is read-only. Edit Date of Birth to change age. Select Jan 1st if you only know the year of birth."
+                            matTooltipPosition="above"
+                            [matTooltipDisabled]="!editing"
+                        >
+                            <input
+                                    matInput
+                                    placeholder="Age"
+                                    type="string"
+                                    [value]="calculateAge(dateOfBirth.value)"
+                                    [disabled]="true"
+                            />
+                        </div>
                     </mat-form-field>
                 </div>
 
@@ -174,12 +182,14 @@
         Cancel
     </button>
 
-    <button
-            *ngIf="!editing"
-            mat-stroked-button
-            class="edit-button"
-            (click)="switchEdit()"
-    >
-        Edit
-    </button>
+    <ng-container *ngIf="!editing">
+        <button
+                mat-stroked-button
+                class="edit-button"
+                (click)="switchEdit()"
+                *appDisabledEntityOperation="{entity: entity?.getConstructor(), operation: operationType.UPDATE}"
+        >
+            Edit
+        </button>
+    </ng-container>
 </div>

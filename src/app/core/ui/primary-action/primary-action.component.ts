@@ -3,6 +3,7 @@ import { Note } from "../../../child-dev-project/notes/model/note";
 import { SessionService } from "../../session/session-service/session.service";
 import { NoteDetailsComponent } from "../../../child-dev-project/notes/note-details/note-details.component";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
+import { OperationType } from "../../permissions/entity-permissions.service";
 
 /**
  * The "Primary Action" is always displayed hovering over the rest of the app as a quick action for the user.
@@ -16,6 +17,9 @@ import { FormDialogService } from "../../form-dialog/form-dialog.service";
   styleUrls: ["./primary-action.component.scss"],
 })
 export class PrimaryActionComponent {
+  noteConstructor = Note;
+  operationType = OperationType;
+
   constructor(
     private sessionService: SessionService,
     private formDialog: FormDialogService
