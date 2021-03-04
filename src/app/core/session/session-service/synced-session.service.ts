@@ -51,10 +51,7 @@ export class SyncedSessionService extends SessionService {
     private _entitySchemaService: EntitySchemaService
   ) {
     super();
-    this._localSession = new LocalSession(
-      this._alertService,
-      this._entitySchemaService
-    );
+    this._localSession = new LocalSession(this._entitySchemaService);
     this._remoteSession = new RemoteSession();
   }
 

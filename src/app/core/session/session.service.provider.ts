@@ -22,6 +22,7 @@ import { SessionService } from "./session-service/session.service";
 import { AlertService } from "../alerts/alert.service";
 import { LoggingService } from "../logging/logging.service";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
+import { LoginState } from "./session-states/login-state.enum";
 
 /**
  * Factory method for Angular DI provider of SessionService.
@@ -37,18 +38,39 @@ export function sessionServiceFactory(
   loggingService: LoggingService,
   entitySchemaService: EntitySchemaService
 ): SessionService {
+  let sessionService: SessionService;
   if (AppConfig.settings.database.useTemporaryDatabase) {
     return new MockSessionService(entitySchemaService);
   } else {
-    return new SyncedSessionService(
+    sessionService = new SyncedSessionService(
       alertService,
       loggingService,
       entitySchemaService
     );
-
-    // TODO: requires a configuration or UI option to select OnlineSession: https://github.com/Aam-Digital/ndb-core/issues/434
-    // return new OnlineSessionService(alertService, entitySchemaService);
   }
+  // TODO: requires a configuration or UI option to select OnlineSession: https://github.com/Aam-Digital/ndb-core/issues/434
+  // return new OnlineSessionService(alertService, entitySchemaService);
+
+  updateLoggingServiceWithUserContext(sessionService);
+
+  return sessionService;
+}
+
+function updateLoggingServiceWithUserContext(sessionService: SessionService) {
+  // update the user context for remote error logging
+  // cannot subscribe within LoggingService itself because of cyclic dependencies, therefore doing this here
+  sessionService
+    .getLoginState()
+    .getStateChangedStream()
+    .subscribe((newState) => {
+      if (newState === LoginState.LOGGED_IN) {
+        LoggingService.setLoggingContextUser(
+          this.sessionService.getCurrentUser().name
+        );
+      } else {
+        LoggingService.setLoggingContextUser(undefined);
+      }
+    });
 }
 
 /**
