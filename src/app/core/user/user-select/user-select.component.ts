@@ -71,7 +71,7 @@ export class UserSelectComponent implements OnInit {
 
   onInputChanged(): void {
     this.suggestedUsers = this.allUsers.filter((user) =>
-      user.name.toLowerCase().startsWith(this.searchText)
+      user.name.toLowerCase().startsWith(this.searchText.toLowerCase())
     );
   }
 }
