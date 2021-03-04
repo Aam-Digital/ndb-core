@@ -23,6 +23,7 @@ import { SessionService } from "./session.service";
 import { Database } from "../../database/database";
 import { User } from "../../user/user";
 import PouchDB from "pouchdb-browser";
+import { SessionType } from "../session-type";
 
 /**
  * Default tests for testing basic functionality of any SessionService implementation.
@@ -49,11 +50,10 @@ export function testSessionServiceImplementation(
 
     AppConfig.settings = {
       site_name: "Aam Digital - DEV",
+      session_type: SessionType.local,
       database: {
         name: dbName,
         remote_url: "https://demo.aam-digital.com/db/",
-        timeout: 60000,
-        useTemporaryDatabase: false,
       },
     };
 

@@ -24,6 +24,7 @@ import { AppConfig } from "../../app-config/app-config";
 import { LocalSession } from "./local-session";
 import { RemoteSession } from "./remote-session";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { SessionType } from "../session-type";
 
 describe("SyncedSessionService", () => {
   const snackBarMock = { openFromComponent: () => {} } as any;
@@ -46,13 +47,11 @@ describe("SyncedSessionService", () => {
     beforeEach(() => {
       AppConfig.settings = {
         site_name: "Aam Digital - DEV",
+        session_type: SessionType.synced,
         database: {
           name: "integration_tests",
           remote_url: "https://demo.aam-digital.com/db/",
-          timeout: 60000,
-          useTemporaryDatabase: false,
         },
-        webdav: { remote_url: "" },
       };
       sessionService = new SyncedSessionService(
         alertService,
@@ -166,11 +165,10 @@ describe("SyncedSessionService", () => {
     beforeEach(() => {
       AppConfig.settings = {
         site_name: "Aam Digital - DEV",
+        session_type: SessionType.mock,
         database: {
           name: "integration_tests",
           remote_url: "https://demo.aam-digital.com/db/",
-          timeout: 60000,
-          useTemporaryDatabase: false,
         },
         webdav: { remote_url: "" },
       };
