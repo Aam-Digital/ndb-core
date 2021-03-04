@@ -30,7 +30,7 @@ export class AnalyticsService {
 
   static setUser(username: string): void {
     AnalyticsService.angulartics2Piwik.setUsername(
-      AnalyticsService.getUserHash(username)
+      AnalyticsService.getUserHash(username ?? "")
     );
   }
 

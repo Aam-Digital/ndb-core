@@ -124,7 +124,7 @@ export class DemoAttendanceGenerator extends DemoDataGenerator<
 
     const month = new Date();
     month.setDate(1);
-    month.setMonth(month.getMonth() - 15);
+    month.setMonth(month.getMonth() - 5);
     if (child.admissionDate > month) {
       month.setMonth(child.admissionDate.getMonth());
       month.setFullYear(child.admissionDate.getFullYear());
