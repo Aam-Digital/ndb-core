@@ -21,6 +21,7 @@ import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { SafeUrl } from "@angular/platform-browser";
 import { BehaviorSubject } from "rxjs";
+import { calculateAge } from "../../../utils/utils";
 
 @DatabaseEntity("Child")
 export class Child extends Entity {
@@ -62,20 +63,7 @@ export class Child extends Entity {
   photo: BehaviorSubject<SafeUrl>;
 
   get age(): number {
-    let age;
-
-    if (this.dateOfBirth) {
-      const now = new Date();
-      const dateOfBirth = new Date(this.dateOfBirth);
-
-      age = now.getFullYear() - dateOfBirth.getFullYear();
-      const m = now.getMonth() - dateOfBirth.getMonth();
-      if (m < 0 || (m === 0 && now.getDate() < dateOfBirth.getDate())) {
-        age--;
-      }
-    }
-
-    return age;
+    return this.dateOfBirth ? calculateAge(this.dateOfBirth) : null;
   }
 
   get isActive(): boolean {

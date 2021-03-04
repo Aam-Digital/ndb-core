@@ -9,7 +9,7 @@ import { SessionService } from "../../../session/session-service/session.service
 import { ChildPhotoService } from "../../../../child-dev-project/children/child-photo-service/child-photo.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
-import { getParentUrl } from "../../../../utils/utils";
+import { calculateAge, getParentUrl } from "../../../../utils/utils";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { OperationType } from "../../../permissions/entity-permissions.service";
 
@@ -67,20 +67,10 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
     this.enablePhotoUpload = this.childPhotoService.canSetImage();
   }
 
-  calculateAge(selectedDateOfBirth: Date) {
-    // very similar to get age() in child.ts
-    if (selectedDateOfBirth) {
-      const now = new Date();
-      const dateOfBirth = new Date(selectedDateOfBirth);
-      let age = now.getFullYear() - dateOfBirth.getFullYear();
-      const m = now.getMonth() - dateOfBirth.getMonth();
-      if (m < 0 || (m === 0 && now.getDate() < dateOfBirth.getDate())) {
-        age--;
-      }
-      return age;
-    } else {
-      return "";
-    }
+  calculateAge(selectedDateOfBirth: string) {
+    return selectedDateOfBirth
+      ? calculateAge(new Date(selectedDateOfBirth))
+      : "";
   }
 
   async save(): Promise<Entity> {
