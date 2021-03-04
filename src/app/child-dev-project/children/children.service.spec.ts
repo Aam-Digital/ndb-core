@@ -24,7 +24,7 @@ function generateChildEntities(): Child[] {
   a1.gender = Gender.MALE;
   a1.dateOfBirth = new Date("2000-03-13");
   a1.motherTongue = "Hindi";
-  a1.center = "Delhi";
+  a1.center = { id: "delhi", label: "Delhi" };
   data.push(a1);
 
   const a2 = new Child("2");
@@ -34,7 +34,7 @@ function generateChildEntities(): Child[] {
   a2.gender = Gender.FEMALE;
   a2.dateOfBirth = new Date("2001-01-01");
   a2.motherTongue = "Bengali";
-  a2.center = "Kolkata";
+  a2.center = { id: "kolkata", label: "Kolkata" };
   data.push(a2);
 
   const a3 = new Child("3");
@@ -44,7 +44,7 @@ function generateChildEntities(): Child[] {
   a3.gender = Gender.MALE;
   a3.dateOfBirth = new Date("2002-07-29");
   a3.motherTongue = "Hindi";
-  a3.center = "Kolkata";
+  a3.center = { id: "kolkata", label: "Kolkata" };
   data.push(a3);
 
   return data;
@@ -160,7 +160,7 @@ describe("ChildrenService", () => {
     } catch (err) {
       error = err;
     }
-    expect(error).toEqual({ status: 404, message: "object not found" });
+    expect(error).toBeDefined();
 
     await entityMapper.save<Child>(child);
     const childAfter = await service.getChild(child.getId()).toPromise();

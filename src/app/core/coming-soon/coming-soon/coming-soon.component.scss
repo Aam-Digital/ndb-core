@@ -1,0 +1,19 @@
+.illustration {
+  width: 70%;
+}
+
+.feedback-button {
+  width: 100%;
+}
+.feedback-button[disabled] {
+  background: #C8E6C9;
+  color: black;
+}
+
+.requested-icon {
+  vertical-align: baseline !important;
+}
+
+.feedback-section {
+  padding: 1rem;
+}

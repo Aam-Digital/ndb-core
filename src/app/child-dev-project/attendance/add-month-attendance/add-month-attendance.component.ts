@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { Child } from "../../children/model/child";
+import { Center, Child } from "../../children/model/child";
 import { MatTableDataSource } from "@angular/material/table";
 import { AttendanceMonth } from "../model/attendance-month";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
@@ -17,11 +17,11 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 })
 export class AddMonthAttendanceComponent implements OnInit {
   schools = new Array<School>();
-  centers = new Array<string>();
+  centers = new Array<Center>();
 
   children = new Array<Child>();
   childrenBySchool = new Map<string, Child[]>();
-  childrenByCenter = new Map<string, Child[]>();
+  childrenByCenter = new Map<Center, Child[]>();
 
   attendanceDataSource = new MatTableDataSource();
   columnsToDisplay = [
@@ -65,7 +65,7 @@ export class AddMonthAttendanceComponent implements OnInit {
 
   private initChildrenLookupTables(children: Child[]) {
     this.childrenBySchool = new Map<string, Child[]>();
-    this.childrenByCenter = new Map<string, Child[]>();
+    this.childrenByCenter = new Map<Center, Child[]>();
 
     children.forEach((c) => {
       let arrS = this.childrenBySchool.get(c.schoolId);
