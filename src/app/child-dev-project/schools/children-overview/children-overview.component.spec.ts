@@ -85,9 +85,9 @@ describe("ChildrenOverviewComponent", () => {
 
   it("should sort the table according to the different column values", () => {
     component.ngAfterViewInit();
-    sortAccordingTo("name", ["AA", "AB", "F", "ZZ"]);
-    sortAccordingTo("projectNumber", [1, 3, 5, 10]);
-    sortAccordingTo("schoolClass", ["AA", "FG", "FH", "I"]);
+    expectToBeSortedAccordingTo("name", ["AA", "AB", "F", "ZZ"]);
+    expectToBeSortedAccordingTo("projectNumber", [1, 3, 5, 10]);
+    expectToBeSortedAccordingTo("schoolClass", ["AA", "FG", "FH", "I"]);
     // cannot test sorting according to age because the setter is inaccessible
   });
 });
