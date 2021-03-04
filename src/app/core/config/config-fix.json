@@ -247,9 +247,9 @@
           "id": "category"
         },
         {
-          "component": "DisplayText",
-          "title": "Author",
-          "id": "author"
+          "component": "DisplayTextArray",
+          "title": "Authors",
+          "id": "authors"
         },
         {
           "component": "ChildBlockList",
@@ -268,7 +268,7 @@
               "date",
               "subject",
               "category",
-              "author",
+              "authors",
               "children"
             ]
           },

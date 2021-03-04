@@ -117,7 +117,7 @@ export class NotesManagerComponent implements OnInit {
   addNoteClick() {
     const newNote = new Note(Date.now().toString());
     newNote.date = new Date();
-    newNote.author = this.sessionService.getCurrentUser().name;
+    newNote.authors = [this.sessionService.getCurrentUser().name];
 
     const noteDialogRef = this.showDetails(newNote);
     noteDialogRef.afterClosed().subscribe((val) => {

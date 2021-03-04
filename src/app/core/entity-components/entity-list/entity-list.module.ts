@@ -21,6 +21,7 @@ import { AdminModule } from "../../admin/admin.module";
 import { ViewModule } from "../../view/view.module";
 import { DisplayConfigurableEnumComponent } from "./display-configurable-enum/display-configurable-enum.component";
 import { ListFilterComponent } from "./list-filter/list-filter.component";
+import { DisplayTextArrayComponent } from "./display-text-array/display-text-array.component";
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { ListFilterComponent } from "./list-filter/list-filter.component";
     DisplayConfigurableEnumComponent,
     DisplayCheckmarkComponent,
     ListFilterComponent,
+    DisplayTextArrayComponent,
   ],
   imports: [
     CommonModule,
