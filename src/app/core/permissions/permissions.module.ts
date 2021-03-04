@@ -7,7 +7,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 @NgModule({
   declarations: [DisableEntityOperationDirective, DisabledWrapperComponent],
   imports: [CommonModule, MatTooltipModule],
-  exports: [DisableEntityOperationDirective, DisabledWrapperComponent],
+  exports: [DisableEntityOperationDirective],
   entryComponents: [DisabledWrapperComponent],
 })
 export class PermissionsModule {}
