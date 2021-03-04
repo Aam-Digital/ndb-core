@@ -138,7 +138,6 @@ export class PreviousSchoolsComponent
       newPreviousSchool.start = new Date(
         lastToDate.setDate(lastToDate.getDate() + 1)
       ); // one day after last to-date
-      newPreviousSchool.end = null; // void date
       newPreviousSchool.result = Number.NaN; // NaN represents no data available
       return newPreviousSchool;
     };
