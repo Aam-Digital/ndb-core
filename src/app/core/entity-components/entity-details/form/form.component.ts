@@ -9,7 +9,7 @@ import { SessionService } from "../../../session/session-service/session.service
 import { ChildPhotoService } from "../../../../child-dev-project/children/child-photo-service/child-photo.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
-import { getParentUrl } from "../../../../utils/utils";
+import { calculateAge, getParentUrl } from "../../../../utils/utils";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { OperationType } from "../../../permissions/entity-permissions.service";
 
@@ -65,6 +65,12 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
     this.editing = !this.editing;
     this.initForm();
     this.enablePhotoUpload = this.childPhotoService.canSetImage();
+  }
+
+  calculateAge(selectedDateOfBirth: string) {
+    return selectedDateOfBirth
+      ? calculateAge(new Date(selectedDateOfBirth))
+      : "";
   }
 
   async save(): Promise<Entity> {

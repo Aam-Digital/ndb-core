@@ -779,10 +779,7 @@
                   ],
                   [
                     {
-                      "input": "age"
-                    },
-                    {
-                      "input": "datepicker",
+                      "input": "age",
                       "id": "dateOfBirth",
                       "placeholder": "Date of Birth"
                     },

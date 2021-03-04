@@ -82,6 +82,13 @@ const testConfig = {
         placeholder: "Last Dental Check-Up",
       },
     ],
+    [
+      {
+        input: "age",
+        id: "dateOfBirth",
+        placeholder: "Date of Birth",
+      },
+    ],
   ],
 };
 
