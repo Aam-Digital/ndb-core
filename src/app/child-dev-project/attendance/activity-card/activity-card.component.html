@@ -1,0 +1,19 @@
+<mat-card [ngClass]="{ 'recurring-container': recurring, 'highlighted-container': highlighted }">
+  <mat-card-title>
+    <mat-icon *ngIf="!recurring"
+              fontIcon="fa-calendar-o"
+              matTooltip="one-time event">
+    </mat-icon>
+    <mat-icon *ngIf="recurring"
+              fontIcon="fa-calendar"
+              matTooltip="recurring activity - record for one day">
+    </mat-icon>
+    {{event?.subject}}
+  </mat-card-title>
+  <mat-card-content>
+    {{event.children.length}} participants
+    <span *ngIf="!recurring">({{ event.date | date:"shortDate" }})</span>
+    ;
+    {{event.category.label}}
+  </mat-card-content>
+</mat-card>
