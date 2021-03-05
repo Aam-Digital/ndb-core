@@ -3,7 +3,7 @@ import {
   ComponentRef,
   Directive,
   Input,
-  OnChanges,
+  OnInit,
   TemplateRef,
   ViewContainerRef,
 } from "@angular/core";
@@ -21,7 +21,7 @@ import { DisabledWrapperComponent } from "./disabled-wrapper/disabled-wrapper.co
 @Directive({
   selector: "[appDisabledEntityOperation]",
 })
-export class DisableEntityOperationDirective implements OnChanges {
+export class DisableEntityOperationDirective implements OnInit {
   /**
    * These arguments are required to check whether the user has permissions to perform the operation.
    * The operation property defines to what kind of operation a element belongs, e.g. OperationType.CREATE
@@ -43,7 +43,7 @@ export class DisableEntityOperationDirective implements OnChanges {
     private entityPermissionService: EntityPermissionsService
   ) {}
 
-  ngOnChanges() {
+  ngOnInit() {
     let permitted = true;
     if (this.arguments?.operation && this.arguments?.entity) {
       permitted = this.entityPermissionService.userIsPermitted(
