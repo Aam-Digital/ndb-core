@@ -20,6 +20,9 @@ import { Note } from "../../child-dev-project/notes/model/note";
 import { AttendanceMonth } from "../../child-dev-project/attendance/model/attendance-month";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import moment from "moment";
+import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
+import { defaultInteractionTypes } from "../config/default-config/default-interaction-types";
+import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 
 /**
  * In-Memory database implementation that works as a drop-in replacement of {@link PouchDatabase}
@@ -234,6 +237,54 @@ export class MockDatabase extends Database {
           options.endkey,
           options.limit
         );
+
+      case "activities_index/by_participant":
+        filterFun = (e) =>
+          e._id.startsWith(RecurringActivity.ENTITY_TYPE) &&
+          e.participants.includes(options.key);
+        break;
+
+      case "events_index/by_date":
+        const meetingInteractionTypes = defaultInteractionTypes
+          .filter((t) => t.isMeeting)
+          .map((t) => t.id);
+
+        filterFun = (e) => {
+          const d = new Date(e.date || null);
+          const dString =
+            d.getFullYear() +
+            "-" +
+            String(d.getMonth() + 1).padStart(2, "0") +
+            "-" +
+            String(d.getDate()).padStart(2, "0");
+          return (
+            e._id.startsWith(EventNote.ENTITY_TYPE) &&
+            meetingInteractionTypes.includes(e.category) &&
+            options.startkey <= dString &&
+            options.endkey >= dString
+          );
+        };
+
+        break;
+
+      case "events_index/by_activity":
+        filterFun = (e) => {
+          const d = new Date(e.date || null);
+          const dStringExtra =
+            "_" +
+            d.getFullYear() +
+            "-" +
+            String(d.getMonth() + 1).padStart(2, "0") +
+            "-" +
+            String(d.getDate()).padStart(2, "0");
+          return (
+            e._id.startsWith(EventNote.ENTITY_TYPE) &&
+            options.startkey <= e.relatesTo + dStringExtra &&
+            options.endkey >= e.relatesTo + dStringExtra
+          );
+        };
+        break;
+
       case "notes_index/note_child_by_date":
         const startDate = moment(
           new Date(

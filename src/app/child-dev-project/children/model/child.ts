@@ -27,6 +27,12 @@ import { calculateAge } from "../../../utils/utils";
 export type Center = ConfigurableEnumValue;
 @DatabaseEntity("Child")
 export class Child extends Entity {
+  static create(name: string): Child {
+    const instance = new Child();
+    instance.name = name;
+    return instance;
+  }
+
   /**
    * Returns the full relative filePath to a child photo given a filename, adding the relevant folders to it.
    * @param filename The given filename with file extension.
@@ -93,5 +99,23 @@ export class Child extends Entity {
 
   public toString() {
     return this.name;
+  }
+}
+
+export function sortByChildClass(a: Child, b: Child) {
+  {
+    if (a.schoolClass === b.schoolClass) {
+      return 0;
+    }
+
+    const diff = parseInt(b.schoolClass, 10) - parseInt(a.schoolClass, 10);
+    if (!Number.isNaN(diff)) {
+      return diff;
+    }
+
+    if (a.schoolClass < b.schoolClass || b.schoolClass === undefined) {
+      return 1;
+    }
+    return -1;
   }
 }

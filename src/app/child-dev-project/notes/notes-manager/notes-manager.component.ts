@@ -11,6 +11,7 @@ import { FormDialogService } from "../../../core/form-dialog/form-dialog.service
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
+import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 
 @UntilDestroy()
 @Component({
@@ -29,7 +30,7 @@ import { EntityListComponent } from "../../../core/entity-components/entity-list
 export class NotesManagerComponent implements OnInit {
   @ViewChild("entityList") entityList: EntityListComponent<Note>;
 
-  config: any = {};
+  config: EntityListConfig;
   noteConstructor = Note;
   notes: Note[] = [];
 
@@ -73,7 +74,7 @@ export class NotesManagerComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.route.data.subscribe((config) => {
+    this.route.data.subscribe((config: EntityListConfig) => {
       this.config = config;
       this.addPrebuiltFilters();
     });

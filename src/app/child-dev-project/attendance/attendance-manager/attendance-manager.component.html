@@ -7,7 +7,7 @@
 <div fxLayout="row wrap">
   <mat-card fxFlex>
     <mat-card-header>
-      <mat-card-title>Roll Call</mat-card-title>
+      <mat-card-title>Record Attendance</mat-card-title>
       <mat-card-subtitle>add a day's attendance</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
@@ -16,12 +16,9 @@
     </mat-card-content>
     <mat-card-actions>
       <button routerLink="/attendance/add/day"
-              angulartics2On="click"
-              angularticsCategory="Navigation"
-              angularticsAction="attendance_manager_add_a_day_attendance_link"
               class="action-button"
               mat-stroked-button>
-        Do Roll Call
+        Record an event's attendance
       </button>
     </mat-card-actions>
   </mat-card>
@@ -37,10 +34,7 @@
       However, as you only enter a monthly total for each child you cannot see attendance in the day-wise calender.
     </mat-card-content>
     <mat-card-actions>
-      <button routerLink="/attendance/add/month"
-              angulartics2On="click"
-              angularticsCategory="Navigation"
-              angularticsAction="attendance_manager_add_a_month_attendance_link"
+      <button routerLink="/coming-soon/monthly-attendance"
               class="action-button"
               mat-stroked-button>
         Enter Attendance
@@ -58,7 +52,7 @@
       To see an individual's attendance history you can open the child's overall details page.
     </mat-card-content>
     <mat-card-actions>
-      <button routerLink="/attendance/analysis"
+      <button routerLink="/coming-soon/attendance-analysis"
               class="action-button"
               mat-stroked-button>
         Analyse Attendance
