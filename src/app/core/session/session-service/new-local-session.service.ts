@@ -33,7 +33,8 @@ import { AppConfig } from "../../app-config/app-config";
 @Injectable()
 export class NewLocalSessionService extends SessionService {
   /** local (IndexedDb) database PouchDB */
-  public database: any;
+  private pouchdb: any;
+  private database: Database;
   public liveSyncHandle: any;
 
   /** StateHandler for login state changes */
@@ -63,7 +64,7 @@ export class NewLocalSessionService extends SessionService {
   ) {
     super();
 
-    this.database = new PouchDB(AppConfig.settings.database.name);
+    this.pouchdb = new PouchDB(AppConfig.settings.database.name);
   }
 
   /** see {@link SessionService} */
@@ -127,7 +128,7 @@ export class NewLocalSessionService extends SessionService {
    */
   private async loadUser(userId: string): Promise<User> {
     const user = new User("");
-    const userData = await this.database.get("User:" + userId);
+    const userData = await this.pouchdb.get("User:" + userId);
     this.entitySchemaService.loadDataIntoEntity(user, userData);
     return user;
   }
@@ -154,7 +155,7 @@ export class NewLocalSessionService extends SessionService {
   public async sync(remoteDatabase?): Promise<any> {
     this.syncState.setState(SyncState.STARTED);
     try {
-      const result = await this.database.sync(remoteDatabase, {
+      const result = await this.pouchdb.sync(remoteDatabase, {
         batch_size: 500,
       });
       this.syncState.setState(SyncState.COMPLETED);
@@ -170,7 +171,10 @@ export class NewLocalSessionService extends SessionService {
    * als see {@link SessionService}
    */
   public getDatabase(): Database {
-    return new PouchDatabase(this.database, this.loggingService);
+    if (!this.database) {
+      this.database = new PouchDatabase(this.pouchdb, this.loggingService);
+    }
+    return this.database;
   }
 
   /**
