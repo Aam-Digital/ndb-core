@@ -21,6 +21,7 @@ import { AdminModule } from "../../admin/admin.module";
 import { ViewModule } from "../../view/view.module";
 import { DisplayConfigurableEnumComponent } from "./display-configurable-enum/display-configurable-enum.component";
 import { ListFilterComponent } from "./list-filter/list-filter.component";
+import { PermissionsModule } from "../../permissions/permissions.module";
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { ListFilterComponent } from "./list-filter/list-filter.component";
     ViewModule,
     MatSortModule,
     MatPaginatorModule,
+    PermissionsModule,
   ],
   exports: [EntityListComponent],
 })

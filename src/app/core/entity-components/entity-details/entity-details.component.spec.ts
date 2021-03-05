@@ -23,6 +23,7 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { Database } from "../../database/database";
 import { FormConfig } from "./form/FormConfig";
+import { EntityPermissionsService } from "../../permissions/entity-permissions.service";
 
 describe("EntityDetailsComponent", () => {
   let component: EntityDetailsComponent;
@@ -72,6 +73,10 @@ describe("EntityDetailsComponent", () => {
     ["canSetImage", "setImage", "getImageAsyncObservable"]
   );
 
+  const mockEntityPermissionsService: jasmine.SpyObj<EntityPermissionsService> = jasmine.createSpyObj(
+    ["userIsPermitted"]
+  );
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ChildrenModule, MatNativeDateModule, RouterTestingModule],
@@ -81,6 +86,10 @@ describe("EntityDetailsComponent", () => {
         { provide: SessionService, useValue: mockedSession },
         { provide: ActivatedRoute, useValue: mockedRoute },
         { provide: ChildPhotoService, useValue: mockChildPhotoService },
+        {
+          provide: EntityPermissionsService,
+          useValue: mockEntityPermissionsService,
+        },
       ],
     }).compileComponents();
   }));
@@ -151,4 +160,12 @@ describe("EntityDetailsComponent", () => {
     expect(entityMapper.save).toHaveBeenCalledWith(testChild, true);
     expect(router.navigate).toHaveBeenCalled();
   }));
+
+  it("should call router when user is not permitted to create entities", () => {
+    mockEntityPermissionsService.userIsPermitted.and.returnValue(false);
+    const router = fixture.debugElement.injector.get(Router);
+    spyOn(router, "navigate");
+    routeObserver.next({ get: () => "new" });
+    expect(router.navigate).toHaveBeenCalled();
+  });
 });

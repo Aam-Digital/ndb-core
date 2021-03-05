@@ -175,7 +175,6 @@ import { BmiBlockComponent } from "./children-list/bmi-block/bmi-block.component
     ChildrenCountDashboardComponent,
     AttendanceAverageDashboardComponent,
     AttendanceWarningsDashboardComponent,
-    AttendanceWarningsDashboardComponent,
     AttendanceWeekDashboardComponent,
     NoRecentNotesDashboardComponent,
     RecentNotesDashboardComponent,
