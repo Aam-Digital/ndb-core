@@ -33,6 +33,8 @@ import { User } from "../user";
 import { AppConfig } from "../../app-config/app-config";
 import { UserAccountService } from "./user-account.service";
 import { UserModule } from "../user.module";
+import { SessionType } from "../../session/session-type";
+import { IAppConfig } from "../../app-config/app-config.model";
 
 describe("UserAccountComponent", () => {
   let component: UserAccountComponent;
@@ -44,8 +46,9 @@ describe("UserAccountComponent", () => {
   const testUser = new User("");
 
   beforeEach(async(() => {
-    // @ts-ignore
-    AppConfig.settings = { database: { useTemporaryDatabase: false } };
+    AppConfig.settings = {
+      session_type: SessionType.synced, // password change only available in synced mode
+    } as IAppConfig;
     mockSessionService = jasmine.createSpyObj("sessionService", [
       "getCurrentUser",
       "login",

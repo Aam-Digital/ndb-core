@@ -24,6 +24,7 @@ import { UserAccountService } from "./user-account.service";
 import { FormBuilder, ValidationErrors, Validators } from "@angular/forms";
 import { AppConfig } from "../../app-config/app-config";
 import { LoggingService } from "../../logging/logging.service";
+import { SessionType } from "../../session/session-type";
 
 /**
  * User account form to allow the user to view and edit information.
@@ -83,7 +84,7 @@ export class UserAccountComponent implements OnInit {
     this.disabledForOfflineMode = false;
     this.passwordForm.enable();
 
-    if (AppConfig.settings.database.useTemporaryDatabase) {
+    if (AppConfig.settings.session_type !== SessionType.synced) {
       this.disabledForDemoMode = true;
       this.passwordForm.disable();
     } else if (!navigator.onLine) {

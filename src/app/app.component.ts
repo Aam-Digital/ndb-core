@@ -81,7 +81,7 @@ export class AppComponent implements OnInit {
 
   // TODO: move loading of demo data to a more suitable place
   private loadDemoData() {
-    if (AppConfig.settings.database.useTemporaryDatabase) {
+    if (AppConfig.settings.demo_mode) {
       DemoDataGeneratingProgressDialogComponent.loadDemoDataWithLoadingDialog(
         this.dialog
       );

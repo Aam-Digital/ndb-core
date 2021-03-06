@@ -16,27 +16,14 @@
  */
 
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { AppConfig } from "../../app-config/app-config";
-import { LocalSession } from "./local-session";
-import { SessionType } from "../session-type";
+import { NewLocalSessionService } from "./new-local-session.service";
+import { testSessionServiceImplementation } from "./session.service.spec";
 
-describe("LocalSessionService", () => {
-  let localSession: LocalSession;
-
-  beforeEach(() => {
-    AppConfig.settings = {
-      site_name: "Aam Digital - DEV",
-      session_type: SessionType.synced,
-      database: {
-        name: "integration_tests",
-        remote_url: "https://demo.aam-digital.com/db/",
-      },
-    };
-
-    localSession = new LocalSession(new EntitySchemaService());
-  });
-
-  it("should be created", async () => {
-    expect(localSession).toBeDefined();
+describe("NewLocalSessionService", async () => {
+  testSessionServiceImplementation(async () => {
+    return new NewLocalSessionService(
+      jasmine.createSpyObj(["warn"]),
+      new EntitySchemaService()
+    );
   });
 });
