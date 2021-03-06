@@ -23,7 +23,6 @@ import moment from "moment";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { defaultInteractionTypes } from "../config/default-config/default-interaction-types";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
-import { throwError } from "rxjs";
 
 /**
  * In-Memory database implementation that works as a drop-in replacement of {@link PouchDatabase}
@@ -53,10 +52,11 @@ export class MockDatabase extends Database {
    */
   async get(id: string): Promise<any> {
     if (!this.exists(id)) {
-      throwError({
+      console.log("throwing", id);
+      throw {
         status: 404,
         message: "object with id " + id + " not found",
-      });
+      };
     }
 
     const index = this.findIndex(id);
@@ -123,9 +123,9 @@ export class MockDatabase extends Database {
    * see {@link Database}
    * @param object The document to be deleted
    */
-  remove(object: any) {
+  async remove(object: any): Promise<boolean> {
     if (!this.exists(object._id)) {
-      return Promise.reject({ status: 404, message: "object not found" });
+      throw { status: 404, message: "object not found" };
     }
 
     const index = this.findIndex(object._id);
@@ -133,7 +133,7 @@ export class MockDatabase extends Database {
       this.data.splice(index, 1);
     }
 
-    return Promise.resolve(true);
+    return true;
   }
 
   private exists(id: string) {
