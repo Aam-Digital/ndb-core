@@ -16,16 +16,11 @@
  */
 
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
+import { AttendanceStatus } from "./attendance-status";
 
-export enum AttendanceStatus {
-  UNKNOWN = "?",
-  HOLIDAY = "H",
-  ABSENT = "A",
-  PRESENT = "P",
-  LATE = "L",
-  EXCUSED = "E",
-}
-
+/**
+ * @deprecated Use Event entities instead of the embedded AttendanceDay and AttendanceMonth
+ */
 export class AttendanceDay {
   @DatabaseField({ dataType: "date-only" }) date: Date;
   @DatabaseField() status: AttendanceStatus;

@@ -1,42 +1,15 @@
-<h1>Add Daily Attendance</h1>
-<h2>{{stages[currentStage]}}</h2>
-
-
-<div *ngIf='currentStage===0' fxLayout='column' fxLayoutAlign='space-around start'>
-  <mat-form-field>
-    <input matInput placeholder="Date" [value]='day' (dateChange)='day=$event.target.value' [matDatepicker]="addDayAttendanceDatepicker">
-    <mat-datepicker-toggle matSuffix [for]="addDayAttendanceDatepicker"></mat-datepicker-toggle>
-    <mat-datepicker #addDayAttendanceDatepicker></mat-datepicker>
-  </mat-form-field>
-
-  <div class='form-field' fxFlex>
-    <mat-button-toggle-group name="attendanceType" [(ngModel)]="attendanceType">
-      <mat-button-toggle value="school">School Attendance</mat-button-toggle>
-      <mat-button-toggle value="coaching">Coaching Attendance</mat-button-toggle>
-    </mat-button-toggle-group>
+<div class="container" fxLayout="column">
+  <div fxFlex>
+    <h1 >Record Attendance: {{stages[currentStage]}}</h1>
   </div>
 
-  <button mat-stroked-button (click)='finishBasicInformationStage()' [disabled]='!attendanceType || !day' fxFlex>
-    Continue
-  </button>
-</div>
+  <div fxFlex="grow" class="flex-fill-section">
+    <app-roll-call-setup *ngIf='currentStage===0'
+                        (eventSelected)="finishBasicInformationStage($event)">
+    </app-roll-call-setup>
 
-
-<div *ngIf='currentStage===1' fxLayout='column'>
-  <app-select-group-children (valueChange)='finishStudentSelectionStage($event)'>
-  </app-select-group-children>
-
-
-  <button mat-stroked-button (click)='currentStage = currentStage - 1' class='nav-button' fxFlex>
-    Back
-  </button>
-</div>
-
-
-
-
-<div *ngIf='currentStage===2'>
-  <app-roll-call [day]='day' [attendanceType]='attendanceType' [students]='students'
-                 (complete)='finishRollCallState()'>
-  </app-roll-call>
+    <app-roll-call *ngIf='currentStage===1'
+                   [eventEntity]='event' (exit)="finishRollCallState()" (complete)="saveRollCallResult($event)">
+    </app-roll-call>
+  </div>
 </div>

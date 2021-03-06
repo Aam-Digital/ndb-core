@@ -37,7 +37,6 @@ import { SessionModule } from "../../session/session.module";
 import { AppConfigModule } from "../../app-config/app-config.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { PrimaryActionComponent } from "../primary-action/primary-action.component";
-import { AppConfig } from "../../app-config/app-config";
 import { SessionService } from "../../session/session-service/session.service";
 import { MockSessionService } from "../../session/session-service/mock-session.service";
 import { FlexLayoutModule } from "@angular/flex-layout";
@@ -52,20 +51,6 @@ describe("UiComponent", () => {
   let fixture: ComponentFixture<UiComponent>;
 
   beforeEach(async(() => {
-    AppConfig.settings = {
-      site_name: "Testing",
-
-      database: {
-        name: "unit-tests",
-        remote_url: "",
-        timeout: 60000,
-        useTemporaryDatabase: true,
-      },
-      webdav: {
-        remote_url: "",
-      },
-    };
-
     const mockSwUpdate = { available: of(), checkForUpdate: () => {} };
     const mockSession = new MockSessionService(new EntitySchemaService());
 

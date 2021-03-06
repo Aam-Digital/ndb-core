@@ -2,6 +2,8 @@ import { Injectable } from "@angular/core";
 import { Angulartics2Piwik } from "angulartics2/piwik";
 import { environment } from "../../../environments/environment";
 import { AppConfig } from "../app-config/app-config";
+import { SessionService } from "../session/session-service/session.service";
+import { LoginState } from "../session/session-states/login-state.enum";
 
 const md5 = require("md5");
 
@@ -28,7 +30,7 @@ export class AnalyticsService {
 
   static setUser(username: string): void {
     AnalyticsService.angulartics2Piwik.setUsername(
-      AnalyticsService.getUserHash(username)
+      AnalyticsService.getUserHash(username ?? "")
     );
   }
 
@@ -48,8 +50,26 @@ export class AnalyticsService {
     return md5(username);
   }
 
-  constructor(private angulartics2Piwik: Angulartics2Piwik) {
+  constructor(
+    private angulartics2Piwik: Angulartics2Piwik,
+    private sessionService: SessionService
+  ) {
     AnalyticsService.angulartics2Piwik = angulartics2Piwik;
+
+    this.subscribeToUserChanges();
+  }
+
+  private subscribeToUserChanges() {
+    this.sessionService
+      .getLoginState()
+      .getStateChangedStream()
+      .subscribe((newState) => {
+        if (newState === LoginState.LOGGED_IN) {
+          AnalyticsService.setUser(this.sessionService.getCurrentUser().name);
+        } else {
+          AnalyticsService.setUser(undefined);
+        }
+      });
   }
 
   init(): void {

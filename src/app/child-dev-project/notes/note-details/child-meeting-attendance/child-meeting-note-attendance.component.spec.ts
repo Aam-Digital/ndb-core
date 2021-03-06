@@ -1,12 +1,13 @@
 import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-note-attendance.component";
-import { MeetingNoteAttendance } from "../../meeting-note-attendance";
+import { EventAttendance } from "../../../attendance/model/event-attendance";
 
 describe("ChildMeetingAttendanceComponent", () => {
   let component: ChildMeetingNoteAttendanceComponent;
 
   beforeEach(() => {
     component = new ChildMeetingNoteAttendanceComponent();
-    component.noteChildAttendance = new MeetingNoteAttendance("child1");
+    component.childId = "child1";
+    component.attendance = new EventAttendance();
   });
 
   it("should create", () => {

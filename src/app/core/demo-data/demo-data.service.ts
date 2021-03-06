@@ -25,6 +25,7 @@ import {
 import { DemoDataGenerator } from "./demo-data-generator";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { LoggingService } from "../logging/logging.service";
+import { User } from "../user/user";
 
 /**
  * General config object to pass all initially register DemoDataGenerators
@@ -80,6 +81,10 @@ export class DemoDataService {
    * and add all the generated entities to the Database.
    */
   async publishDemoData() {
+    if (!(await this.hasEmptyDatabase())) {
+      return;
+    }
+
     // completely generate all data (i.e. call every generator) before starting to save the data
     // to allow generators to delete unwanted entities of other generators before they are saved
     // (e.g. the DropoutChildGenerator should be able to delete Attendance records of the Child after its dropout date)
@@ -95,5 +100,10 @@ export class DemoDataService {
         }
       }
     }
+  }
+
+  async hasEmptyDatabase(): Promise<boolean> {
+    const existingUsers = await this.entityMapper.loadType(User);
+    return existingUsers.length === 0;
   }
 }

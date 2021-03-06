@@ -1,9 +1,9 @@
 import { Injectable, Optional } from "@angular/core";
-import defaultConfig from "./config-fix.json";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Config } from "./config";
 import { LoggingService } from "../logging/logging.service";
 import { BehaviorSubject } from "rxjs";
+import { defaultConfig } from "./config-fix";
 
 @Injectable({
   providedIn: "root",
@@ -64,4 +64,11 @@ export class ConfigService {
     }
     return matchingConfigs;
   }
+}
+
+export function createTestingConfigService(configsObject: any): ConfigService {
+  const configService = new ConfigService(null);
+  // @ts-ignore
+  configService.config.data = configsObject;
+  return configService;
 }

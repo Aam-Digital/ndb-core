@@ -54,4 +54,40 @@ describe("ChildrenOverviewComponent", () => {
     tick();
     expect(component.studentsDataSource.data).toEqual([child1, child2]);
   }));
+
+  function expectToBeSortedAccordingTo(specifier: string, sortedValues: any[]) {
+    let id = 0;
+    const ids = [];
+    // create an array of children with increasing id's
+    let children = sortedValues.map((value) => {
+      ids.push(id);
+      const child = new Child(String(id));
+      id += 1;
+      child[specifier] = value;
+      return child;
+    });
+    // shuffle the array
+    children = children
+      .map((a) => ({ sort: Math.random(), value: a }))
+      .sort((a, b) => a.sort - b.sort)
+      .map((a) => a.value);
+    // and re-sort it
+    component.sort.sort({
+      id: specifier,
+      start: "asc",
+      disableClear: false,
+    });
+    const sortedChildIds = component.studentsDataSource
+      .sortData(children, component.sort)
+      .map((it) => Number(it.getId()));
+    expect(sortedChildIds).toEqual(ids);
+  }
+
+  it("should sort the table according to the different column values", () => {
+    component.ngAfterViewInit();
+    expectToBeSortedAccordingTo("name", ["AA", "AB", "F", "ZZ"]);
+    expectToBeSortedAccordingTo("projectNumber", [1, 3, 5, 10]);
+    expectToBeSortedAccordingTo("schoolClass", ["AA", "FG", "FH", "I"]);
+    // cannot test sorting according to age because the setter is inaccessible
+  });
 });

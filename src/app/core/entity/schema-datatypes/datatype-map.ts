@@ -29,7 +29,7 @@ import { generateSubSchemaField } from "./datatype-array";
  *
  * `@DatabaseField({ innerDataType: 'month' }) dateMap: Map<string, Date>;`
  * will ensure that in the database this property is saved as "month" date string for each key
- * using the {@link monthEntitySchemaDatatype} (e.g. resulting in `{'a': '2020-01', 'b': '2020-04'}` in the database).
+ * using the {@link monthEntitySchemaDatatype} (e.g. resulting in `[['a', '2020-01'], ['b', '2020-04']]` in the database).
  */
 export const mapEntitySchemaDatatype: EntitySchemaDatatype = {
   name: "map",
@@ -42,7 +42,7 @@ export const mapEntitySchemaDatatype: EntitySchemaDatatype = {
   ) => {
     if (!(value instanceof Map)) {
       console.warn(
-        'property to be transformed with "map" EntitySchema is not of expected type',
+        'property to be saved with "map" EntitySchema is not of expected type',
         value
       );
       return value;
@@ -51,14 +51,17 @@ export const mapEntitySchemaDatatype: EntitySchemaDatatype = {
     const innerElementDatatype: EntitySchemaDatatype = schemaService.getDatatypeOrDefault(
       schemaField.innerDataType
     );
-    const result = {};
+    const result = [];
     value.forEach((item, key) => {
-      result[key] = innerElementDatatype.transformToDatabaseFormat(
-        item,
-        generateSubSchemaField(schemaField),
-        schemaService,
-        parent
-      );
+      result.push([
+        key,
+        innerElementDatatype.transformToDatabaseFormat(
+          item,
+          generateSubSchemaField(schemaField),
+          schemaService,
+          parent
+        ),
+      ]);
     });
     return result;
   },
@@ -69,9 +72,13 @@ export const mapEntitySchemaDatatype: EntitySchemaDatatype = {
     schemaService: EntitySchemaService,
     parent
   ) => {
-    if (typeof value !== "object" || value === null) {
+    if (value instanceof Map) {
+      // usually this shouldn't already be a map but in MockDatabase somehow this can happen
+      return value;
+    }
+    if (!Array.isArray(value) || value === null) {
       console.warn(
-        'property to be transformed with "map" EntitySchema is not an object',
+        'property to be loaded with "map" EntitySchema is not valid',
         value
       );
       return value;
@@ -82,14 +89,14 @@ export const mapEntitySchemaDatatype: EntitySchemaDatatype = {
     );
 
     const result = new Map();
-    for (const key of Object.keys(value)) {
+    for (const keyValue of value) {
       const transformedElement = innerElementType.transformToObjectFormat(
-        value[key],
+        keyValue[1],
         generateSubSchemaField(schemaField),
         schemaService,
         parent
       );
-      result.set(key, transformedElement);
+      result.set(keyValue[0], transformedElement);
     }
     return result;
   },

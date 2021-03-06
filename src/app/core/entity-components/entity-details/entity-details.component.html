@@ -29,7 +29,7 @@
 
             <i [className]="classNamesWithIcon"></i>
             <span *ngIf="!creatingNew"
-            >{{ entity?.name }}</span
+            >{{ entity?.toString() }}</span
             >
             <span *ngIf="creatingNew">Adding new {{config?.entity}}</span>
         </h1>
@@ -62,6 +62,7 @@
         color="warn"
         class="delete-button"
         (click)="removeEntity()"
+        *appDisabledEntityOperation="{entity: entity?.getConstructor(), operation: operationType.DELETE}"
 >
     Delete
 </button>
