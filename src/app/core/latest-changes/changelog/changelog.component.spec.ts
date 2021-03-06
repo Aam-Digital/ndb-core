@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ChangelogComponent } from "./changelog.component";
 import {
@@ -39,21 +39,23 @@ describe("ChangelogComponent", () => {
   testChangelog.body = "test changes body";
   testChangelog.published_at = "2018-01-01";
 
-  beforeEach(async(() => {
-    mockLatestChangesService = jasmine.createSpyObj([
-      "getChangelogsBeforeVersion",
-    ]);
+  beforeEach(
+    waitForAsync(() => {
+      mockLatestChangesService = jasmine.createSpyObj([
+        "getChangelogsBeforeVersion",
+      ]);
 
-    TestBed.configureTestingModule({
-      declarations: [ChangelogComponent],
-      imports: [MatDialogModule],
-      providers: [
-        { provide: MatDialogRef, useValue: {} },
-        { provide: MAT_DIALOG_DATA, useValue: of([testChangelog]) },
-        { provide: LatestChangesService, useValue: mockLatestChangesService },
-      ],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        declarations: [ChangelogComponent],
+        imports: [MatDialogModule],
+        providers: [
+          { provide: MatDialogRef, useValue: {} },
+          { provide: MAT_DIALOG_DATA, useValue: of([testChangelog]) },
+          { provide: LatestChangesService, useValue: mockLatestChangesService },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ChangelogComponent);

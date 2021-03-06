@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AddDayAttendanceComponent } from "./add-day-attendance.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
@@ -19,35 +19,37 @@ describe("AddDayAttendanceComponent", () => {
   let mockEntityService: jasmine.SpyObj<EntityMapperService>;
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
-  beforeEach(async(() => {
-    mockEntityService = jasmine.createSpyObj("mockEntityService", [
-      "save",
-      "loadType",
-    ]);
-    mockEntityService.save.and.resolveTo();
-    mockEntityService.loadType.and.resolveTo([]);
+  beforeEach(
+    waitForAsync(() => {
+      mockEntityService = jasmine.createSpyObj("mockEntityService", [
+        "save",
+        "loadType",
+      ]);
+      mockEntityService.save.and.resolveTo();
+      mockEntityService.loadType.and.resolveTo([]);
 
-    mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
-      "getChildren",
-    ]);
-    mockChildrenService.getChildren.and.returnValue(of([]));
+      mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
+        "getChildren",
+      ]);
+      mockChildrenService.getChildren.and.returnValue(of([]));
 
-    TestBed.configureTestingModule({
-      imports: [AttendanceModule, RouterTestingModule, MatNativeDateModule],
-      providers: [
-        { provide: EntityMapperService, useValue: mockEntityService },
-        { provide: ChildrenService, useValue: mockChildrenService },
-        {
-          provide: SessionService,
-          useValue: { getCurrentUser: () => new User("") },
-        },
-        {
-          provide: AttendanceService,
-          useValue: { getEventsOnDate: () => Promise.resolve([]) },
-        },
-      ],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        imports: [AttendanceModule, RouterTestingModule, MatNativeDateModule],
+        providers: [
+          { provide: EntityMapperService, useValue: mockEntityService },
+          { provide: ChildrenService, useValue: mockChildrenService },
+          {
+            provide: SessionService,
+            useValue: { getCurrentUser: () => new User("") },
+          },
+          {
+            provide: AttendanceService,
+            useValue: { getEventsOnDate: () => Promise.resolve([]) },
+          },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AddDayAttendanceComponent);

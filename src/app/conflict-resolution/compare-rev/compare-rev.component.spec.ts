@@ -1,9 +1,9 @@
 import {
-  async,
   ComponentFixture,
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 
 import { CompareRevComponent } from "./compare-rev.component";
@@ -27,43 +27,45 @@ describe("CompareRevComponent", () => {
   const testDoc = { _id: "abc", _rev: "rev-1a", value: 1 };
   const testConflictDoc = { _id: "abc", _rev: "rev-1b", value: 2 };
 
-  beforeEach(async(() => {
-    mockDatabase = jasmine.createSpyObj("mockDatabase", [
-      "get",
-      "remove",
-      "put",
-    ]);
-    mockDatabase.get.and.returnValue(Promise.resolve(testConflictDoc));
+  beforeEach(
+    waitForAsync(() => {
+      mockDatabase = jasmine.createSpyObj("mockDatabase", [
+        "get",
+        "remove",
+        "put",
+      ]);
+      mockDatabase.get.and.returnValue(Promise.resolve(testConflictDoc));
 
-    mockResolutionService = jasmine.createSpyObj("mockResolutionService", [
-      "shouldDeleteConflictingRevision",
-    ]);
-    mockResolutionService.shouldDeleteConflictingRevision.and.returnValue(
-      false
-    );
+      mockResolutionService = jasmine.createSpyObj("mockResolutionService", [
+        "shouldDeleteConflictingRevision",
+      ]);
+      mockResolutionService.shouldDeleteConflictingRevision.and.returnValue(
+        false
+      );
 
-    const confDialogMock = {
-      // by default immediately simulate a confirmed dialog result
-      openDialog: () => ({ afterClosed: () => new BehaviorSubject(true) }),
-    };
-    spyOn(confDialogMock, "openDialog").and.callThrough();
+      const confDialogMock = {
+        // by default immediately simulate a confirmed dialog result
+        openDialog: () => ({ afterClosed: () => new BehaviorSubject(true) }),
+      };
+      spyOn(confDialogMock, "openDialog").and.callThrough();
 
-    TestBed.configureTestingModule({
-      imports: [
-        MatTooltipModule,
-        MatExpansionModule,
-        MatSnackBarModule,
-        FormsModule,
-        NoopAnimationsModule,
-      ],
-      providers: [
-        { provide: ConfirmationDialogService, useValue: confDialogMock },
-        { provide: Database, useValue: mockDatabase },
-        { provide: AutoResolutionService, useValue: mockResolutionService },
-      ],
-      declarations: [CompareRevComponent],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        imports: [
+          MatTooltipModule,
+          MatExpansionModule,
+          MatSnackBarModule,
+          FormsModule,
+          NoopAnimationsModule,
+        ],
+        providers: [
+          { provide: ConfirmationDialogService, useValue: confDialogMock },
+          { provide: Database, useValue: mockDatabase },
+          { provide: AutoResolutionService, useValue: mockResolutionService },
+        ],
+        declarations: [CompareRevComponent],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(CompareRevComponent);

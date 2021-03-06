@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { UiComponent } from "./ui.component";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -50,40 +50,42 @@ describe("UiComponent", () => {
   let component: UiComponent;
   let fixture: ComponentFixture<UiComponent>;
 
-  beforeEach(async(() => {
-    const mockSwUpdate = { available: of(), checkForUpdate: () => {} };
-    const mockSession = new MockSessionService(new EntitySchemaService());
+  beforeEach(
+    waitForAsync(() => {
+      const mockSwUpdate = { available: of(), checkForUpdate: () => {} };
+      const mockSession = new MockSessionService(new EntitySchemaService());
 
-    TestBed.configureTestingModule({
-      declarations: [SearchComponent, PrimaryActionComponent, UiComponent],
-      imports: [
-        RouterTestingModule,
-        CommonModule,
-        FormsModule,
-        MatIconModule,
-        MatToolbarModule,
-        MatSidenavModule,
-        MatAutocompleteModule,
-        MatInputModule,
-        MatFormFieldModule,
-        NoopAnimationsModule,
-        AppConfigModule,
-        EntitySubrecordModule,
-        ChildrenModule,
-        SchoolsModule,
-        SyncStatusModule,
-        NavigationModule,
-        LatestChangesModule,
-        SessionModule,
-        FlexLayoutModule,
-      ],
-      providers: [
-        { provide: SessionService, useValue: mockSession },
-        CookieService,
-        { provide: SwUpdate, useValue: mockSwUpdate },
-      ],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        declarations: [SearchComponent, PrimaryActionComponent, UiComponent],
+        imports: [
+          RouterTestingModule,
+          CommonModule,
+          FormsModule,
+          MatIconModule,
+          MatToolbarModule,
+          MatSidenavModule,
+          MatAutocompleteModule,
+          MatInputModule,
+          MatFormFieldModule,
+          NoopAnimationsModule,
+          AppConfigModule,
+          EntitySubrecordModule,
+          ChildrenModule,
+          SchoolsModule,
+          SyncStatusModule,
+          NavigationModule,
+          LatestChangesModule,
+          SessionModule,
+          FlexLayoutModule,
+        ],
+        providers: [
+          { provide: SessionService, useValue: mockSession },
+          CookieService,
+          { provide: SwUpdate, useValue: mockSwUpdate },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(UiComponent);

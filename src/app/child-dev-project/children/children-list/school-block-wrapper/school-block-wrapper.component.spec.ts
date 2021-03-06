@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { SchoolBlockWrapperComponent } from "./school-block-wrapper.component";
 
@@ -6,11 +6,13 @@ describe("SchoolBlockWrapperComponent", () => {
   let component: SchoolBlockWrapperComponent;
   let fixture: ComponentFixture<SchoolBlockWrapperComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [SchoolBlockWrapperComponent],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [SchoolBlockWrapperComponent],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SchoolBlockWrapperComponent);

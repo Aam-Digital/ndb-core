@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EntitySubrecordComponent } from "./entity-subrecord.component";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -18,25 +18,27 @@ describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
   let fixture: ComponentFixture<EntitySubrecordComponent<Entity>>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [
-        EntitySubrecordModule,
-        RouterTestingModule,
-        MatNativeDateModule,
-        NoopAnimationsModule,
-      ],
-      providers: [
-        DatePipe,
-        PercentPipe,
-        { provide: Database, useClass: MockDatabase },
-        {
-          provide: ConfirmationDialogService,
-          useClass: ConfirmationDialogService,
-        },
-      ],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        imports: [
+          EntitySubrecordModule,
+          RouterTestingModule,
+          MatNativeDateModule,
+          NoopAnimationsModule,
+        ],
+        providers: [
+          DatePipe,
+          PercentPipe,
+          { provide: Database, useClass: MockDatabase },
+          {
+            provide: ConfirmationDialogService,
+            useClass: ConfirmationDialogService,
+          },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EntitySubrecordComponent);

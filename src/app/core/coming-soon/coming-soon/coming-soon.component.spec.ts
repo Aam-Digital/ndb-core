@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ComingSoonComponent } from "./coming-soon.component";
 import { Angulartics2 } from "angulartics2";
@@ -14,25 +14,27 @@ describe("ComingSoonComponent", () => {
   let mockAngulartics;
   let mockActivatedRoute;
 
-  beforeEach(async(() => {
-    mockAngulartics = { eventTrack: new Subject() };
-    mockActivatedRoute = {
-      paramMap: new BehaviorSubject(
-        convertToParamMap({
-          feature: testFeatureId,
-        })
-      ),
-    };
+  beforeEach(
+    waitForAsync(() => {
+      mockAngulartics = { eventTrack: new Subject() };
+      mockActivatedRoute = {
+        paramMap: new BehaviorSubject(
+          convertToParamMap({
+            feature: testFeatureId,
+          })
+        ),
+      };
 
-    TestBed.configureTestingModule({
-      declarations: [ComingSoonComponent],
-      providers: [
-        { provide: Angulartics2, useValue: mockAngulartics },
-        { provide: AlertService, useValue: { addInfo: () => {} } },
-        { provide: ActivatedRoute, useValue: mockActivatedRoute },
-      ],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        declarations: [ComingSoonComponent],
+        providers: [
+          { provide: Angulartics2, useValue: mockAngulartics },
+          { provide: AlertService, useValue: { addInfo: () => {} } },
+          { provide: ActivatedRoute, useValue: mockActivatedRoute },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ComingSoonComponent);

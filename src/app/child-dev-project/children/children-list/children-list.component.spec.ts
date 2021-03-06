@@ -1,9 +1,9 @@
 import {
-  async,
   ComponentFixture,
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 import { ChildrenListComponent } from "./children-list.component";
 import { ChildrenService } from "../children.service";
@@ -86,40 +86,42 @@ describe("ChildrenListComponent", () => {
   const mockEntityMapper: jasmine.SpyObj<EntityMapperService> = jasmine.createSpyObj(
     ["load", "save"]
   );
-  beforeEach(async(() => {
-    const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-    mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
-    mockChildrenService.getChildren.and.returnValue(of([]));
-    TestBed.configureTestingModule({
-      declarations: [ChildrenListComponent, ExportDataComponent],
+  beforeEach(
+    waitForAsync(() => {
+      const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+      mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
+      mockChildrenService.getChildren.and.returnValue(of([]));
+      TestBed.configureTestingModule({
+        declarations: [ChildrenListComponent, ExportDataComponent],
 
-      imports: [
-        ChildrenModule,
-        RouterTestingModule,
-        Angulartics2Module.forRoot(),
-      ],
-      providers: [
-        {
-          provide: ChildrenService,
-          useValue: mockChildrenService,
-        },
-        {
-          provide: EntityMapperService,
-          useValue: mockEntityMapper,
-        },
-        {
-          provide: SessionService,
-          useValue: mockSessionService,
-        },
-        { provide: ActivatedRoute, useValue: routeMock },
-        {
-          provide: LoggingService,
-          useValue: jasmine.createSpyObj(["warn"]),
-        },
-        { provide: BackupService, useValue: {} },
-      ],
-    }).compileComponents();
-  }));
+        imports: [
+          ChildrenModule,
+          RouterTestingModule,
+          Angulartics2Module.forRoot(),
+        ],
+        providers: [
+          {
+            provide: ChildrenService,
+            useValue: mockChildrenService,
+          },
+          {
+            provide: EntityMapperService,
+            useValue: mockEntityMapper,
+          },
+          {
+            provide: SessionService,
+            useValue: mockSessionService,
+          },
+          { provide: ActivatedRoute, useValue: routeMock },
+          {
+            provide: LoggingService,
+            useValue: jasmine.createSpyObj(["warn"]),
+          },
+          { provide: BackupService, useValue: {} },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ChildrenListComponent);

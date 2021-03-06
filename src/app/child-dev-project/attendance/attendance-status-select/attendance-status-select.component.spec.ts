@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceStatusSelectComponent } from "./attendance-status-select.component";
 
@@ -6,11 +6,13 @@ describe("AttendanceStatusSelectComponent", () => {
   let component: AttendanceStatusSelectComponent;
   let fixture: ComponentFixture<AttendanceStatusSelectComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [AttendanceStatusSelectComponent],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [AttendanceStatusSelectComponent],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AttendanceStatusSelectComponent);

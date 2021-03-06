@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceBlockComponent } from "./attendance-block.component";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -9,11 +9,13 @@ describe("AttendanceBlockComponent", () => {
   let component: AttendanceBlockComponent;
   let fixture: ComponentFixture<AttendanceBlockComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [AttendanceModule, RouterTestingModule],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        imports: [AttendanceModule, RouterTestingModule],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AttendanceBlockComponent);

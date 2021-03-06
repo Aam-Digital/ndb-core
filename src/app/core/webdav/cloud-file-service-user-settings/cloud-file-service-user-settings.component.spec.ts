@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { CloudFileServiceUserSettingsComponent } from "./cloud-file-service-user-settings.component";
 import { CloudFileService } from "../cloud-file-service.service";
@@ -17,26 +17,33 @@ describe("CloudFileServiceUserSettingsComponent", () => {
   let mockEntityMapper;
   let testUser;
 
-  beforeEach(async(() => {
-    testUser = new User("user");
-    mockCloudFileService = jasmine.createSpyObj<CloudFileService>("", [
-      "connect",
-      "checkConnection",
-    ]);
-    mockEntityMapper = jasmine.createSpyObj<EntityMapperService>("", ["save"]);
+  beforeEach(
+    waitForAsync(() => {
+      testUser = new User("user");
+      mockCloudFileService = jasmine.createSpyObj<CloudFileService>("", [
+        "connect",
+        "checkConnection",
+      ]);
+      mockEntityMapper = jasmine.createSpyObj<EntityMapperService>("", [
+        "save",
+      ]);
 
-    // @ts-ignore
-    AppConfig.settings = { webdav: { remote_url: "test-url" } };
+      // @ts-ignore
+      AppConfig.settings = { webdav: { remote_url: "test-url" } };
 
-    TestBed.configureTestingModule({
-      imports: [WebdavModule, NoopAnimationsModule],
-      providers: [
-        { provide: CloudFileService, useValue: mockCloudFileService },
-        { provide: EntityMapperService, useValue: mockEntityMapper },
-        { provide: AlertService, useValue: jasmine.createSpyObj(["addInfo"]) },
-      ],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        imports: [WebdavModule, NoopAnimationsModule],
+        providers: [
+          { provide: CloudFileService, useValue: mockCloudFileService },
+          { provide: EntityMapperService, useValue: mockEntityMapper },
+          {
+            provide: AlertService,
+            useValue: jasmine.createSpyObj(["addInfo"]),
+          },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(CloudFileServiceUserSettingsComponent);

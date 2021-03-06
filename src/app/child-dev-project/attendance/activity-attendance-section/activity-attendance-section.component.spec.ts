@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ActivityAttendanceSectionComponent } from "./activity-attendance-section.component";
 import { AttendanceService } from "../attendance.service";
@@ -20,29 +20,31 @@ describe("ActivityAttendanceSectionComponent", () => {
   let testActivity: RecurringActivity;
   let testRecords: ActivityAttendance[];
 
-  beforeEach(async(() => {
-    testActivity = RecurringActivity.create("test act");
-    testRecords = [ActivityAttendance.create(new Date(), [])];
+  beforeEach(
+    waitForAsync(() => {
+      testActivity = RecurringActivity.create("test act");
+      testRecords = [ActivityAttendance.create(new Date(), [])];
 
-    mockAttendanceService = jasmine.createSpyObj("mockAttendanceService", [
-      "getActivityAttendances",
-    ]);
-    mockAttendanceService.getActivityAttendances.and.resolveTo(testRecords);
+      mockAttendanceService = jasmine.createSpyObj("mockAttendanceService", [
+        "getActivityAttendances",
+      ]);
+      mockAttendanceService.getActivityAttendances.and.resolveTo(testRecords);
 
-    TestBed.configureTestingModule({
-      declarations: [ActivityAttendanceSectionComponent],
-      imports: [EntitySubrecordModule, NoopAnimationsModule],
-      providers: [
-        { provide: AttendanceService, useValue: mockAttendanceService },
-        {
-          provide: EntityMapperService,
-          useValue: { save: () => Promise.resolve() },
-        },
-        DatePipe,
-        PercentPipe,
-      ],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        declarations: [ActivityAttendanceSectionComponent],
+        imports: [EntitySubrecordModule, NoopAnimationsModule],
+        providers: [
+          { provide: AttendanceService, useValue: mockAttendanceService },
+          {
+            provide: EntityMapperService,
+            useValue: { save: () => Promise.resolve() },
+          },
+          DatePipe,
+          PercentPipe,
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ActivityAttendanceSectionComponent);

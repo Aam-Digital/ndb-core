@@ -21,7 +21,7 @@ import {
 import { Entity } from "../../entity/entity";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { async, TestBed } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 import { ConfigService } from "../../config/config.service";
 import { ConfigurableEnumModule } from "../configurable-enum.module";
 
@@ -43,22 +43,24 @@ describe("ConfigurableEnumDatatype", () => {
   let entitySchemaService: EntitySchemaService;
   let configService: jasmine.SpyObj<ConfigService>;
 
-  beforeEach(async(() => {
-    configService = jasmine.createSpyObj("configService", ["getConfig"]);
-    configService.getConfig.and.returnValue(TEST_CONFIG);
+  beforeEach(
+    waitForAsync(() => {
+      configService = jasmine.createSpyObj("configService", ["getConfig"]);
+      configService.getConfig.and.returnValue(TEST_CONFIG);
 
-    TestBed.configureTestingModule({
-      imports: [ConfigurableEnumModule],
-      providers: [
-        EntitySchemaService,
-        { provide: ConfigService, useValue: configService },
-      ],
-    });
+      TestBed.configureTestingModule({
+        imports: [ConfigurableEnumModule],
+        providers: [
+          EntitySchemaService,
+          { provide: ConfigService, useValue: configService },
+        ],
+      });
 
-    entitySchemaService = TestBed.inject<EntitySchemaService>(
-      EntitySchemaService
-    );
-  }));
+      entitySchemaService = TestBed.inject<EntitySchemaService>(
+        EntitySchemaService
+      );
+    })
+  );
 
   it("converts objects to keys for database format", () => {
     const testOptionKey = "TEST_1";
