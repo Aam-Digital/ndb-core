@@ -74,9 +74,9 @@ function updateLoggingServiceWithUserContext(sessionService: SessionService) {
     .getLoginState()
     .getStateChangedStream()
     .subscribe((newState) => {
-      if (newState === LoginState.LOGGED_IN) {
+      if (newState.toState === LoginState.LOGGED_IN) {
         LoggingService.setLoggingContextUser(
-          this.sessionService.getCurrentUser().name
+          sessionService.getCurrentUser().name
         );
       } else {
         LoggingService.setLoggingContextUser(undefined);
