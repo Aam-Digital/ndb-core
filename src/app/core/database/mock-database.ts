@@ -23,6 +23,7 @@ import moment from "moment";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { defaultInteractionTypes } from "../config/default-config/default-interaction-types";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
+import { throwError } from "rxjs";
 
 /**
  * In-Memory database implementation that works as a drop-in replacement of {@link PouchDatabase}
@@ -50,18 +51,16 @@ export class MockDatabase extends Database {
    * see {@link Database}
    * @param id The primary id of the document
    */
-  get(id: string) {
+  async get(id: string): Promise<any> {
     if (!this.exists(id)) {
-      return Promise.reject({
+      throwError({
         status: 404,
         message: "object with id " + id + " not found",
       });
     }
 
     const index = this.findIndex(id);
-    const result = this.data[index];
-
-    return Promise.resolve(result);
+    return this.data[index];
   }
 
   /**
