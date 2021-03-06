@@ -1,12 +1,22 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ChildrenService } from "../../../children/children.service";
 import { Router } from "@angular/router";
-import { AttendanceMonth } from "../../model/attendance-month";
-import { AttendanceDay, AttendanceStatus } from "../../model/attendance-day";
-import { Child } from "../../../children/model/child";
-import { forkJoin } from "rxjs";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { UntilDestroy } from "@ngneat/until-destroy";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { Child } from "../../../children/model/child";
+import { AttendanceLogicalStatus } from "../../model/attendance-status";
+import { AttendanceService } from "../../attendance.service";
+import { EventAttendance } from "../../model/event-attendance";
+import { ActivityAttendance } from "../../model/activity-attendance";
+import { RecurringActivity } from "../../model/recurring-activity";
+import moment, { Moment } from "moment";
+import { groupBy } from "../../../../utils/utils";
+
+interface AttendanceWeekRow {
+  childId: string;
+  activity: RecurringActivity;
+  attendanceDays: (EventAttendance | undefined)[];
+}
 
 @UntilDestroy()
 @Component({
@@ -16,24 +26,36 @@ import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components
 })
 export class AttendanceWeekDashboardComponent
   implements OnInitDynamicComponent, OnInit {
+  /**
+   * The offset from the default time period, which is the last complete week.
+   *
+   * For example:
+   * If you set the offset of 0, the widget displays attendance for the last completed week (i.e. ending last Saturday).
+   * If you set the offset to 7 and today is Thursday, the widget displays attendance from the Monday 3 days ago
+   * (i.e. the current running week).
+   */
   @Input() daysOffset: number;
+
+  /**
+   * description displayed to users for the time period this widget is analysing
+   * e.g. "this week" or "previous week"
+   */
   @Input() periodLabel: string;
 
-  attendanceRecordsMap: Map<
-    string,
-    {
-      childId: string;
-      child: Child;
-      attendanceSchool: AttendanceDay[];
-      attendanceCoaching: AttendanceDay[];
-      schoolAbsences?: number;
-      coachingAbsences?: number;
-    }
-  >;
-  attendanceRecords;
+  /**
+   * Only participants who were absent more then this threshold are counted and shown in the dashboard.
+   *
+   * The default is 1.
+   * That means if someone was absent two or more days within a specific activity in the given week
+   * the person will be counted and displayed as a critical case in this dashboard widget.
+   */
+  @Input() absentWarningThreshold: number = 1;
+
+  dashboardRowGroups: AttendanceWeekRow[][];
 
   constructor(
     private childrenService: ChildrenService,
+    private attendanceService: AttendanceService,
     private router: Router
   ) {}
 
@@ -46,15 +68,13 @@ export class AttendanceWeekDashboardComponent
     }
   }
 
-  ngOnInit() {
-    this.loadAttendanceOfAbsentees(this.daysOffset);
+  async ngOnInit() {
+    await this.loadAttendanceOfAbsentees(this.daysOffset);
   }
 
   recordTrackByFunction = (index, item) => item.childId;
 
-  loadAttendanceOfAbsentees(daysOffset = 0) {
-    this.attendanceRecordsMap = new Map();
-
+  async loadAttendanceOfAbsentees(daysOffset = 0) {
     const today = new Date();
     const previousMonday = new Date(
       today.getFullYear(),
@@ -67,89 +87,73 @@ export class AttendanceWeekDashboardComponent
       previousMonday.getDate() + 5
     );
 
-    const o1 = this.childrenService.getAttendancesOfMonth(previousMonday);
-    o1.pipe(untilDestroyed(this)).subscribe((attendances) => {
-      attendances.forEach((a) =>
-        this.extractRelevantAttendanceDays(a, previousMonday, previousSaturday)
-      );
-    });
-    let o2 = o1;
-    if (previousMonday.getMonth() !== previousSaturday.getMonth()) {
-      o2 = this.childrenService.getAttendancesOfMonth(previousSaturday);
-      o2.pipe(untilDestroyed(this)).subscribe((attendances) =>
-        attendances.forEach((a) =>
-          this.extractRelevantAttendanceDays(
-            a,
-            previousMonday,
-            previousSaturday
-          )
-        )
-      );
-    }
-    forkJoin(o1, o2).subscribe(() => this.filterAbsentees());
-  }
-
-  private extractRelevantAttendanceDays(
-    attendanceMonth: AttendanceMonth,
-    startDate: Date,
-    endDate: Date
-  ) {
-    let record = this.attendanceRecordsMap.get(attendanceMonth.student);
-    if (record === undefined) {
-      record = {
-        childId: attendanceMonth.student,
-        child: undefined,
-        attendanceCoaching: [],
-        attendanceSchool: [],
-      };
-      this.childrenService
-        .getChild(attendanceMonth.student)
-        .pipe(untilDestroyed(this))
-        .subscribe((child) => (record.child = child));
-      this.attendanceRecordsMap.set(attendanceMonth.student, record);
-    }
-
-    const relevantDays = attendanceMonth.dailyRegister.filter(
-      (a) =>
-        a.date.getTime() >= startDate.getTime() &&
-        a.date.getTime() <= endDate.getTime()
+    const activityAttendances = await this.attendanceService.getAllActivityAttendancesForPeriod(
+      previousMonday,
+      previousSaturday
     );
 
-    if (attendanceMonth.institution === "coaching") {
-      record.attendanceCoaching = record.attendanceCoaching
-        .concat(relevantDays)
-        .sort(
-          (a, b) =>
-            (a.date ? a.date.getTime() : 0) - (b.date ? b.date.getTime() : 0)
-        );
-    } else if (attendanceMonth.institution === "school") {
-      record.attendanceSchool = record.attendanceSchool
-        .concat(relevantDays)
-        .sort(
-          (a, b) =>
-            (a.date ? a.date.getTime() : 0) - (b.date ? b.date.getTime() : 0)
-        );
+    const lowAttendanceCases = new Set<string>();
+    const records: AttendanceWeekRow[] = [];
+    for (const att of activityAttendances) {
+      const rows = this.generateRowsFromActivityAttendance(
+        att,
+        moment(previousMonday),
+        moment(previousSaturday)
+      );
+      records.push(...rows);
+
+      rows
+        .filter((r) => this.filterLowAttendance(r))
+        .forEach((r) => lowAttendanceCases.add(r.childId));
     }
+
+    const groupedRecords = groupBy(records, "childId");
+    this.dashboardRowGroups = Array.from(
+      lowAttendanceCases.values()
+    ).map((childId) => groupedRecords.get(childId));
   }
 
-  private filterAbsentees() {
-    this.attendanceRecords = [];
+  private generateRowsFromActivityAttendance(
+    att: ActivityAttendance,
+    from: Moment,
+    to: Moment
+  ): AttendanceWeekRow[] {
+    if (!att.activity) {
+      return [];
+    }
 
-    this.attendanceRecordsMap.forEach((record) => {
-      const countAbsencesFun = (acc, v) =>
-        v.status === AttendanceStatus.ABSENT ? acc + 1 : acc;
-      record.schoolAbsences = record.attendanceSchool.reduce(
-        countAbsencesFun,
-        0
-      );
-      record.coachingAbsences = record.attendanceCoaching.reduce(
-        countAbsencesFun,
-        0
-      );
-      if (record.schoolAbsences > 1 || record.coachingAbsences > 1) {
-        this.attendanceRecords.push(record);
+    const results: AttendanceWeekRow[] = [];
+    for (const participant of att.activity.participants) {
+      const eventAttendances = [];
+
+      let day = moment(from);
+      while (day.isSameOrBefore(to, "day")) {
+        const event = att.events.find((e) => day.isSame(e.date, "day"));
+        if (event) {
+          eventAttendances.push(event.getAttendance(participant));
+        } else {
+          // put a "placeholder" into the array for the current day
+          eventAttendances.push(undefined);
+        }
+        day = day.add(1, "day");
       }
-    });
+
+      results.push({
+        childId: participant,
+        activity: att.activity,
+        attendanceDays: eventAttendances,
+      });
+    }
+
+    return results;
+  }
+
+  private filterLowAttendance(row: AttendanceWeekRow): boolean {
+    const countAbsences = row.attendanceDays.filter(
+      (e) => e?.status?.countAs === AttendanceLogicalStatus.ABSENT
+    ).length;
+
+    return countAbsences > this.absentWarningThreshold;
   }
 
   goToChild(childId: string) {

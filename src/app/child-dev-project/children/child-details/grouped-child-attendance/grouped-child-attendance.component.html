@@ -1,18 +1,6 @@
-<div fxLayout="row wrap" fxLayout.lt-lg="column" fxLayoutGap="2em">
-    <div fxFlex="45">
-        <h3>School Attendance</h3>
-        <app-child-attendance
-                [child]="child"
-                institution="school"
-                [showDailyAttendanceOfLatest]="true"
-        ></app-child-attendance>
-    </div>
-    <div fxFlex="45">
-        <h3>Coaching Attendance</h3>
-        <app-child-attendance
-                [child]="child"
-                institution="coaching"
-                [showDailyAttendanceOfLatest]="true"
-        ></app-child-attendance>
-    </div>
-</div>
+<mat-tab-group>
+  <mat-tab *ngFor="let activity of activities" [label]="activity.title">
+    <app-activity-attendance-section [activity]="activity" [forChild]="child.getId()">
+    </app-activity-attendance-section>
+  </mat-tab>
+</mat-tab-group>

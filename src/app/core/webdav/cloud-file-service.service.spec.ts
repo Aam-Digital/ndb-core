@@ -4,6 +4,7 @@ import { SessionService } from "../session/session-service/session.service";
 import { User } from "../user/user";
 import { AppConfig } from "../app-config/app-config";
 import webdav from "webdav";
+import { SessionType } from "../session/session-type";
 
 describe("CloudFileService", () => {
   let cloudFileService: CloudFileService;
@@ -15,11 +16,10 @@ describe("CloudFileService", () => {
   beforeEach(() => {
     AppConfig.settings = {
       site_name: "",
+      session_type: SessionType.mock,
       database: {
         name: "unit-tests",
         remote_url: "",
-        timeout: 60000,
-        useTemporaryDatabase: true,
       },
       webdav: { remote_url: "test-url" },
     };

@@ -19,6 +19,7 @@ import { ConfirmationDialogService } from "../../confirmation-dialog/confirmatio
 import { of } from "rxjs";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatDialogRef } from "@angular/material/dialog";
+import { SessionType } from "../../session/session-type";
 
 describe("AdminComponent", () => {
   let component: AdminComponent;
@@ -74,13 +75,11 @@ describe("AdminComponent", () => {
   beforeEach(async(() => {
     AppConfig.settings = {
       site_name: "",
+      session_type: SessionType.mock,
       database: {
         name: "unit-tests",
         remote_url: "",
-        timeout: 60000,
-        useTemporaryDatabase: true,
       },
-      webdav: { remote_url: "" },
     };
 
     TestBed.configureTestingModule({

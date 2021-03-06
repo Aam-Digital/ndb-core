@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
-import { Child } from "../../children/model/child";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { Note } from "../../notes/model/note";
 
 @Component({
   selector: "app-add-day-attendance",
@@ -11,23 +12,23 @@ export class AddDayAttendanceComponent {
 
   day = new Date();
   attendanceType: string;
-  students: Child[] = [];
 
-  stages = ["Setup Roll Call", "Select Student Group", "Roll Call"];
+  event: Note;
 
-  constructor() {}
+  stages = ["Select Event", "Record Attendance"];
 
-  finishBasicInformationStage() {
+  constructor(private entityMapper: EntityMapperService) {}
+
+  finishBasicInformationStage(event: Note) {
+    this.event = event;
     this.currentStage = 1;
-  }
-
-  finishStudentSelectionStage(selectedStudents: Child[]) {
-    this.students = selectedStudents;
-
-    this.currentStage = 2;
   }
 
   finishRollCallState() {
     this.currentStage = 0;
+  }
+
+  async saveRollCallResult(eventNote: Note) {
+    await this.entityMapper.save(eventNote);
   }
 }

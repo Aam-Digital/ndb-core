@@ -1,0 +1,50 @@
+<div fxLayout="column" class="overall-container">
+  <div fxFlex>
+    <mat-form-field>
+      <mat-label>Record event for</mat-label>
+      <input matInput [(ngModel)]="date" required
+             [matDatepicker]="datePicker"
+             (dateChange)="setNewDate($event.value)"
+      >
+      <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+      <mat-datepicker #datePicker></mat-datepicker>
+    </mat-form-field>
+  </div>
+
+  <div class="flex-scroll-container" fxFlex="grow">
+    <div fxLayout="row wrap" fxLayoutGap="8px">
+      <app-activity-card *ngFor="let event of existingEvents"
+                         [event]="event"
+                         (click)="selectedEvent = event"
+                         [highlighted]="selectedEvent === event"
+                         [recurring]="event.isNewFromActivity"
+                         class="event-card">
+      </app-activity-card>
+    </div>
+
+    <div fxLayoutGap="8px">
+      <button mat-stroked-button
+              (click)="showMore()"
+              [disabled]="visibleActivities.length === allActivities.length">
+        Show more
+      </button>
+      <button mat-button (click)="createOneTimeEvent()">
+        My event is not listed ...
+      </button>
+    </div>
+  </div>
+
+  <div class="mat-elevation-z5 bottom-control" fxFlex="112px">
+    <div fxLayout="row" fxLayoutGap="16px">
+      <button mat-raised-button color="primary" class="confirm-button"
+              [disabled]="!selectedEvent"
+              (click)="eventSelected.emit(selectedEvent)">
+        Record Attendance
+      </button>
+
+      <app-activity-card *ngIf="selectedEvent" [event]="selectedEvent"
+                         class="mat-elevation-z0 selected-card" fxFlex>
+      </app-activity-card>
+    </div>
+  </div>
+</div>

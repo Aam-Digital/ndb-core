@@ -14,11 +14,19 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
+import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
+import {
+  EntityPermissionsService,
+  OperationType,
+} from "../../permissions/entity-permissions.service";
 
 const ENTITY_MAP: Map<string, any> = new Map<string, EntityConstructor<Entity>>(
   [
     ["Child", Child],
+    ["Participant", Child],
     ["School", School],
+    ["Team", School],
+    ["RecurringActivity", RecurringActivity],
   ]
 );
 
@@ -37,6 +45,8 @@ export class EntityDetailsComponent {
   entity: Entity;
   creatingNew = false;
 
+  operationType = OperationType;
+
   panels: Panel[] = [];
   classNamesWithIcon: String;
   config: EntityDetailsConfig;
@@ -47,7 +57,8 @@ export class EntityDetailsComponent {
     private router: Router,
     private location: Location,
     private snackBar: MatSnackBar,
-    private confirmationDialog: ConfirmationDialogService
+    private confirmationDialog: ConfirmationDialogService,
+    private permissionService: EntityPermissionsService
   ) {
     this.route.data.subscribe((config: EntityDetailsConfig) => {
       this.config = config;
@@ -58,12 +69,20 @@ export class EntityDetailsComponent {
     });
   }
 
-  loadEntity(id: string) {
+  private loadEntity(id: string) {
     const constr: EntityConstructor<Entity> = ENTITY_MAP.get(
       this.config.entity
     );
     if (id === "new") {
       this.entity = new constr();
+      if (
+        !this.permissionService.userIsPermitted(
+          this.entity.getConstructor(),
+          this.operationType.CREATE
+        )
+      ) {
+        this.router.navigate([""]);
+      }
       this.creatingNew = true;
       this.setPanelsConfig();
     } else {

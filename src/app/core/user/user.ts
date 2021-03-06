@@ -146,7 +146,7 @@ export class User extends Entity {
    * Check admin rights of the user.
    */
   public isAdmin(): boolean {
-    return this.admin;
+    return this.admin || false;
   }
 
   /**

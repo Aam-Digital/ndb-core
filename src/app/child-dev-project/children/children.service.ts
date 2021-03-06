@@ -150,6 +150,10 @@ export class ChildrenService {
     return from(promise);
   }
 
+  /**
+   * @deprecated use AttendanceService instead. This can be removed after all AttendanceMigrationService tasks are completed.
+   * @private
+   */
   private createAttendancesIndex(): Promise<any> {
     const designDoc = {
       _id: "_design/attendances_index",
@@ -324,7 +328,6 @@ export class ChildrenService {
    * Warning: Children without any notes will be missing from this map.
    *
    * @param forLastNDays (Optional) cut-off boundary how many days into the past the analysis will be done.
-   * @param excludeActivityEvents Whether events tracking participation in recurring activities should be considered
    * @return A map of childIds as key and days since last note as value;
    *         For performance reasons the days since last note are set to infinity when larger then the forLastNDays parameter
    */

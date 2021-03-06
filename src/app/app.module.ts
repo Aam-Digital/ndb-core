@@ -48,7 +48,6 @@ import { LoggingErrorHandler } from "./core/logging/logging-error-handler";
 import { DemoChildGenerator } from "./child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { DemoSchoolGenerator } from "./child-dev-project/schools/demo-school-generator.service";
 import { DemoChildSchoolRelationGenerator } from "./child-dev-project/children/demo-data-generators/demo-child-school-relation-generator.service";
-import { DemoAttendanceGenerator } from "./child-dev-project/attendance/demo-attendance-generator.service";
 import { DemoNoteGeneratorService } from "./child-dev-project/notes/demo-data/demo-note-generator.service";
 import { DemoAserGeneratorService } from "./child-dev-project/aser/demo-aser-generator.service";
 import { DemoEducationalMaterialGeneratorService } from "./child-dev-project/educational-material/demo-educational-material-generator.service";
@@ -66,9 +65,12 @@ import { DashboardModule } from "./core/dashboard/dashboard.module";
 import { EntityDetailsModule } from "./core/entity-components/entity-details/entity-details.module";
 import { EntitySubrecordModule } from "./core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "./core/entity-components/entity-list/entity-list.module";
+import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
+import { DemoActivityGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-generator.service";
 import { FontAwesomeIconsModule } from "./core/icons/font-awesome-icons.module";
 import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
 import { ConfigModule } from "./core/config/config.module";
+import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
 
 /**
  * Main entry point of the application.
@@ -119,7 +121,8 @@ import { ConfigModule } from "./core/config/config.module";
       ...DemoChildGenerator.provider({ count: 150 }),
       ...DemoSchoolGenerator.provider({ count: 8 }),
       ...DemoChildSchoolRelationGenerator.provider(),
-      ...DemoAttendanceGenerator.provider(),
+      ...DemoActivityGeneratorService.provider(),
+      ...DemoActivityEventsGeneratorService.provider({ forNLastYears: 2 }),
       ...DemoNoteGeneratorService.provider({
         minNotesPerChild: 2,
         maxNotesPerChild: 10,
@@ -134,6 +137,7 @@ import { ConfigModule } from "./core/config/config.module";
       ...DemoProgressDashboardWidgetGeneratorService.provider(),
       ...DemoUserGeneratorService.provider(),
     ]),
+    AttendanceModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
