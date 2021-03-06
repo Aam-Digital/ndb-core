@@ -14,7 +14,7 @@ import { AttendanceService } from "../attendance.service";
 import { expectEntitiesToBeInDatabase } from "../../../utils/expect-entity-data.spec";
 import { EventNote } from "../model/event-note";
 
-describe("AttendanceMigrationService", () => {
+xdescribe("AttendanceMigrationService", () => {
   let service: AttendanceMigrationService;
   let entitySchemaService: EntitySchemaService;
   let rawPouch;
