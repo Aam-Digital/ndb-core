@@ -16,9 +16,7 @@ export class DemoEventsConfig {
  * Generate Events with participants' attendance details for all RecurringActivities.
  */
 @Injectable()
-export class DemoActivityEventsGeneratorService extends DemoDataGenerator<
-  EventNote
-> {
+export class DemoActivityEventsGeneratorService extends DemoDataGenerator<EventNote> {
   /**
    * Create a specific event for a date based on the given activity and fill with random attendance.
    * @param activity The activity for which to generate a concrete event instance

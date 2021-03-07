@@ -13,9 +13,7 @@ import { defaultInteractionTypes } from "../../../core/config/default-config/def
  * Builds upon the generated demo Child entities.
  */
 @Injectable()
-export class DemoActivityGeneratorService extends DemoDataGenerator<
-  RecurringActivity
-> {
+export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringActivity> {
   private static readonly ACTIVITY_TYPES = [
     defaultInteractionTypes.find((t) => t.id === "SCHOOL_CLASS"),
     defaultInteractionTypes.find((t) => t.id === "COACHING_CLASS"),

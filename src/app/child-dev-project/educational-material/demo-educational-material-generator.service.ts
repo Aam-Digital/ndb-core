@@ -15,9 +15,7 @@ export class DemoEducationMaterialConfig {
  * Builds upon the generated demo Child entities.
  */
 @Injectable()
-export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<
-  EducationalMaterial
-> {
+export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<EducationalMaterial> {
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoEducationalMaterialGeneratorService.provider()]`

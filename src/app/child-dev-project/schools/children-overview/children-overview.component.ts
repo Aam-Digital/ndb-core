@@ -44,9 +44,7 @@ export class ChildrenOverviewComponent
 
   displayedColumns = ["projectNumber", "name", "schoolClass", "age"];
 
-  studentsDataSource: MatTableDataSource<Child> = new MatTableDataSource<
-    Child
-  >();
+  studentsDataSource: MatTableDataSource<Child> = new MatTableDataSource<Child>();
   @ViewChild(MatSort) sort: MatSort;
 
   constructor(private schoolsService: SchoolsService) {}

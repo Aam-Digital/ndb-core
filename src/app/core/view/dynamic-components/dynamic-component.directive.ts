@@ -51,15 +51,15 @@ export class DynamicComponentDirective implements OnChanges {
       return;
     }
 
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory<
-      OnInitDynamicComponent
-    >(component);
+    const componentFactory = this.componentFactoryResolver.resolveComponentFactory<OnInitDynamicComponent>(
+      component
+    );
 
     this.viewContainerRef.clear();
 
-    const componentRef = this.viewContainerRef.createComponent<
-      OnInitDynamicComponent
-    >(componentFactory);
+    const componentRef = this.viewContainerRef.createComponent<OnInitDynamicComponent>(
+      componentFactory
+    );
     componentRef.instance.onInitFromDynamicConfig(
       this.appDynamicComponent.config
     );

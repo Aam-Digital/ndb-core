@@ -100,7 +100,6 @@ export class CloudFileService {
     await this.client.deleteFile(fileName);
 
     return tmpContent === "TestString";
-
   }
 
   /**
@@ -136,8 +135,9 @@ export class CloudFileService {
     }
     // hacky way of checking if file exists, subject to change
     // TODO fix this
-    return this.fileList.includes('"basename": "' + name.split("/").pop() + '"');
-
+    return this.fileList.includes(
+      '"basename": "' + name.split("/").pop() + '"'
+    );
   }
 
   /**

@@ -64,9 +64,9 @@ describe("AdminComponent", () => {
   }
 
   function createDialogMock(): jasmine.SpyObj<MatDialogRef<any>> {
-    const mockDialogRef: jasmine.SpyObj<MatDialogRef<
-      any
-    >> = jasmine.createSpyObj("mockDialogRef", ["afterClosed"]);
+    const mockDialogRef: jasmine.SpyObj<
+      MatDialogRef<any>
+    > = jasmine.createSpyObj("mockDialogRef", ["afterClosed"]);
     mockDialogRef.afterClosed.and.returnValue(of(true));
     confirmationDialogMock.openDialog.and.returnValue(mockDialogRef);
     return mockDialogRef;
