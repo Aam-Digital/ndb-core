@@ -45,7 +45,7 @@ import { SwUpdate } from "@angular/service-worker";
 import { of } from "rxjs";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntitySubrecordModule } from "../../entity-components/entity-subrecord/entity-subrecord.module";
-import { AppConfig } from "../../app-config/app-config";
+import { ApplicationInitStatus } from "@angular/core";
 
 describe("UiComponent", () => {
   let component: UiComponent;
@@ -55,7 +55,6 @@ describe("UiComponent", () => {
     waitForAsync(() => {
       const mockSwUpdate = { available: of(), checkForUpdate: () => {} };
       const mockSession = new MockSessionService(new EntitySchemaService());
-      AppConfig.settings.site_name = "test app";
       TestBed.configureTestingModule({
         declarations: [SearchComponent, PrimaryActionComponent, UiComponent],
         imports: [
@@ -85,6 +84,7 @@ describe("UiComponent", () => {
           { provide: SwUpdate, useValue: mockSwUpdate },
         ],
       }).compileComponents();
+      TestBed.inject(ApplicationInitStatus); // This ensures that the AppConfig is loaded before test execution
     })
   );
 

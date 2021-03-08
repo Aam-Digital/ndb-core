@@ -36,14 +36,6 @@ module.exports = function (config) {
         random: true,
       },
     },
-    files: [
-      {
-        pattern: "src/assets/**/*.json",
-        watched: true,
-        served: true,
-        included: false,
-      },
-    ],
     mime: {
       "text/x-typescript": ["ts", "tsx"],
     },
@@ -70,8 +62,5 @@ module.exports = function (config) {
     },
     browsers: ["ChromeCustom"],
     singleRun: true,
-    proxies: {
-      "/assets/": "/base/src/assets/",
-    },
   });
 };

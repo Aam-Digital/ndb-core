@@ -36,14 +36,6 @@ module.exports = function (config) {
         random: true,
       },
     },
-    files: [
-      {
-        pattern: "src/assets/**/*.json",
-        watched: true,
-        served: true,
-        included: false,
-      },
-    ],
     preprocessors: {},
     mime: {
       "text/x-typescript": ["ts", "tsx"],
