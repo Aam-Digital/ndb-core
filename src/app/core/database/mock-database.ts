@@ -52,7 +52,6 @@ export class MockDatabase extends Database {
    */
   async get(id: string): Promise<any> {
     if (!this.exists(id)) {
-      console.log("throwing", id);
       throw {
         status: 404,
         message: "object with id " + id + " not found",
