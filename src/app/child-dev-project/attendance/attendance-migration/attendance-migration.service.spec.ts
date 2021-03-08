@@ -36,9 +36,11 @@ describe("AttendanceMigrationService", () => {
 
     // wait for the relevant indices to complete building - otherwise this will clash with teardown in afterEach
     const indexingService = TestBed.inject(DatabaseIndexingService);
-    indexingService.indicesRegistered.subscribe(x => {
-      if (x.find(e => e.details === "events_index")?.pending === false &&
-        x.find(e => e.details === "activities_index")?.pending === false) {
+    indexingService.indicesRegistered.subscribe((x) => {
+      if (
+        x.find((e) => e.details === "events_index")?.pending === false &&
+        x.find((e) => e.details === "activities_index")?.pending === false
+      ) {
         done();
       }
     });
