@@ -40,7 +40,10 @@ export class CloudFileService {
    * @param username Optional webdav username, otherwise the one set in the current user entity is used.
    * @param password Optional webdav password, otherwise the one set in the current user entity is used.
    */
-  public async connect(username: string = null, password: string = null) {
+  public async connect(
+    username: string = null,
+    password: string = null
+  ): Promise<void> {
     if (
       !CloudFileService.WEBDAV_ENABLED ||
       !this.sessionService.getCurrentUser()

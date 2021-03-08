@@ -13,14 +13,14 @@ describe("CloudFileServiceUserSettingsComponent", () => {
   let component: CloudFileServiceUserSettingsComponent;
   let fixture: ComponentFixture<CloudFileServiceUserSettingsComponent>;
 
-  let mockCloudFileService;
-  let mockEntityMapper;
-  let testUser;
+  let mockCloudFileService: jasmine.SpyObj<CloudFileService>;
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let testUser: User;
 
   beforeEach(
     waitForAsync(() => {
       testUser = new User("user");
-      mockCloudFileService = jasmine.createSpyObj<CloudFileService>("", [
+      mockCloudFileService = jasmine.createSpyObj<CloudFileService>([
         "connect",
         "checkConnection",
       ]);
@@ -57,9 +57,9 @@ describe("CloudFileServiceUserSettingsComponent", () => {
   });
 
   it("should update cloud-service credentials and check the connection", async () => {
-    spyOn(testUser, "setCloudPassword");
-    spyOn(testUser, "checkPassword");
-    testUser.checkPassword.and.returnValue(true);
+    const cloudPwSpy = spyOn(testUser, "setCloudPassword");
+    const checkPwSpy = spyOn(testUser, "checkPassword");
+    checkPwSpy.and.returnValue(true);
     component.form.controls.cloudUser.setValue("testUser");
     component.form.controls.cloudPassword.setValue("testPwd");
     component.form.controls.userPassword.setValue("loginPwd");
@@ -67,10 +67,7 @@ describe("CloudFileServiceUserSettingsComponent", () => {
 
     await component.updateCloudServiceSettings();
     expect(testUser.cloudUserName).toBe("testUser");
-    expect(testUser.setCloudPassword).toHaveBeenCalledWith(
-      "testPwd",
-      "loginPwd"
-    );
+    expect(cloudPwSpy).toHaveBeenCalledWith("testPwd", "loginPwd");
     expect(mockCloudFileService.connect).toHaveBeenCalled();
     expect(mockCloudFileService.checkConnection).toHaveBeenCalled();
     expect(mockEntityMapper.save).toHaveBeenCalledWith(testUser);
@@ -78,12 +75,12 @@ describe("CloudFileServiceUserSettingsComponent", () => {
 
   it("should not save user if cloud-service credentials are incorrect", async () => {
     spyOn(testUser, "setCloudPassword");
-    spyOn(testUser, "checkPassword");
-    testUser.checkPassword.and.returnValue(true);
+    const checkPwSpy = spyOn(testUser, "checkPassword");
+    checkPwSpy.and.returnValue(true);
     component.form.controls.cloudUser.setValue("testUser");
     component.form.controls.cloudPassword.setValue("testPwd");
     component.form.controls.userPassword.setValue("loginPwd");
-    mockCloudFileService.connect.and.throwError(new Error());
+    mockCloudFileService.connect.and.rejectWith();
 
     await component.updateCloudServiceSettings();
     expect(mockEntityMapper.save).not.toHaveBeenCalled();
