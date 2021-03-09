@@ -53,7 +53,7 @@ export class AppConfig {
    *
    * If the config file does not exist, uses the default config as a fallback.
    */
-  load() {
+  load(): Promise<void> {
     return this.loadAppConfigJson(this.CONFIG_FILE).then(
       (result) => result,
       () => this.loadAppConfigJson(this.DEFAULT_CONFIG_FILE)
@@ -68,7 +68,7 @@ export class AppConfig {
    *
    * @param jsonFileLocation The file path of the json file to be loaded as config
    */
-  private loadAppConfigJson(jsonFileLocation: string) {
+  private loadAppConfigJson(jsonFileLocation: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.http
         .get<IAppConfig>(jsonFileLocation)

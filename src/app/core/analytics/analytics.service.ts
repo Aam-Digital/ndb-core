@@ -64,7 +64,7 @@ export class AnalyticsService {
       .getLoginState()
       .getStateChangedStream()
       .subscribe((newState) => {
-        if (newState === LoginState.LOGGED_IN) {
+        if (newState.toState === LoginState.LOGGED_IN) {
           AnalyticsService.setUser(this.sessionService.getCurrentUser().name);
         } else {
           AnalyticsService.setUser(undefined);

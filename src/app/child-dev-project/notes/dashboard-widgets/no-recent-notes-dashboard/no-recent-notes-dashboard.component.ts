@@ -42,9 +42,7 @@ export class NoRecentNotesDashboardComponent
   concernedChildren: ChildWithRecentNoteInfo[] = [];
 
   columnsToDisplay: string[] = ["name", "daysSinceLastNote"];
-  childrenWithNoteInfoDataSource: MatTableDataSource<
-    ChildWithRecentNoteInfo
-  > = new MatTableDataSource<ChildWithRecentNoteInfo>();
+  childrenWithNoteInfoDataSource: MatTableDataSource<ChildWithRecentNoteInfo> = new MatTableDataSource<ChildWithRecentNoteInfo>();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 

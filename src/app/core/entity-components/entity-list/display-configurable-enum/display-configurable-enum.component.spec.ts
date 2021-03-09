@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { DisplayConfigurableEnumComponent } from "./display-configurable-enum.component";
 import { ConfigurableEnumValue } from "../../../configurable-enum/configurable-enum.interface";
 import { Entity } from "../../../entity/entity";
@@ -7,11 +7,13 @@ describe("DisplayConfigurableEnumComponent", () => {
   let component: DisplayConfigurableEnumComponent;
   let fixture: ComponentFixture<DisplayConfigurableEnumComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [DisplayConfigurableEnumComponent],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [DisplayConfigurableEnumComponent],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayConfigurableEnumComponent);

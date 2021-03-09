@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceWeekDashboardComponent } from "./attendance-week-dashboard.component";
 import { ChildrenService } from "../../../children/children.service";
@@ -12,19 +12,21 @@ describe("AttendanceWeekDashboardComponent", () => {
   let component: AttendanceWeekDashboardComponent;
   let fixture: ComponentFixture<AttendanceWeekDashboardComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [AttendanceModule, RouterTestingModule.withRoutes([])],
-      providers: [
-        { provide: ChildrenService, useClass: ChildrenService },
-        { provide: Database, useClass: MockDatabase },
-        {
-          provide: ChildPhotoService,
-          useValue: jasmine.createSpyObj(["getImage"]),
-        },
-      ],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        imports: [AttendanceModule, RouterTestingModule.withRoutes([])],
+        providers: [
+          { provide: ChildrenService, useClass: ChildrenService },
+          { provide: Database, useClass: MockDatabase },
+          {
+            provide: ChildPhotoService,
+            useValue: jasmine.createSpyObj(["getImage"]),
+          },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AttendanceWeekDashboardComponent);

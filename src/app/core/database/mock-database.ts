@@ -50,18 +50,16 @@ export class MockDatabase extends Database {
    * see {@link Database}
    * @param id The primary id of the document
    */
-  get(id: string) {
+  async get(id: string): Promise<any> {
     if (!this.exists(id)) {
-      return Promise.reject({
+      throw {
         status: 404,
         message: "object with id " + id + " not found",
-      });
+      };
     }
 
     const index = this.findIndex(id);
-    const result = this.data[index];
-
-    return Promise.resolve(result);
+    return this.data[index];
   }
 
   /**
@@ -124,9 +122,9 @@ export class MockDatabase extends Database {
    * see {@link Database}
    * @param object The document to be deleted
    */
-  remove(object: any) {
+  async remove(object: any): Promise<boolean> {
     if (!this.exists(object._id)) {
-      return Promise.reject({ status: 404, message: "object not found" });
+      throw { status: 404, message: "object not found" };
     }
 
     const index = this.findIndex(object._id);
@@ -134,7 +132,7 @@ export class MockDatabase extends Database {
       this.data.splice(index, 1);
     }
 
-    return Promise.resolve(true);
+    return true;
   }
 
   private exists(id: string) {

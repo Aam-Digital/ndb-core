@@ -14,6 +14,7 @@ import { deleteAllIndexedDB } from "../../utils/performance-tests.spec";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { EventNote } from "./model/event-note";
+import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
@@ -34,7 +35,7 @@ describe("AttendanceService", () => {
   let activity1, activity2: RecurringActivity;
   let e1_1, e1_2, e1_3, e2_1: EventNote;
 
-  beforeEach(async () => {
+  beforeEach(async (done) => {
     activity1 = RecurringActivity.create("activity 1");
     activity2 = RecurringActivity.create("activity 2");
 
@@ -57,8 +58,6 @@ describe("AttendanceService", () => {
       ],
     });
     service = TestBed.inject(AttendanceService);
-    // @ts-ignore call private method so we can await its completion, avoiding errors if afterEach is called before
-    await service.createIndices();
 
     entityMapper = TestBed.inject<EntityMapperService>(EntityMapperService);
 
@@ -74,6 +73,17 @@ describe("AttendanceService", () => {
     await entityMapper.save(e1_2);
     await entityMapper.save(e1_3);
     await entityMapper.save(e2_1);
+
+    // wait for the relevant indices to complete building - otherwise this will clash with teardown in afterEach
+    const indexingService = TestBed.inject(DatabaseIndexingService);
+    indexingService.indicesRegistered.subscribe((x) => {
+      if (
+        x.find((e) => e.details === "events_index")?.pending === false &&
+        x.find((e) => e.details === "activities_index")?.pending === false
+      ) {
+        done();
+      }
+    });
   });
 
   afterEach(async () => {

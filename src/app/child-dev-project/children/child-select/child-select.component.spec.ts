@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ChildSelectComponent } from "./child-select.component";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
@@ -33,26 +33,30 @@ describe("ChildSelectComponent", () => {
     },
   };
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [
-        ChildSelectComponent,
-        ChildBlockComponent,
-        SchoolBlockComponent,
-      ],
-      imports: [
-        MatFormFieldModule,
-        MatInputModule,
-        MatAutocompleteModule,
-        MatIconModule,
-        FormsModule,
-        CommonModule,
-        NoopAnimationsModule,
-        RouterTestingModule,
-      ],
-      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [
+          ChildSelectComponent,
+          ChildBlockComponent,
+          SchoolBlockComponent,
+        ],
+        imports: [
+          MatFormFieldModule,
+          MatInputModule,
+          MatAutocompleteModule,
+          MatIconModule,
+          FormsModule,
+          CommonModule,
+          NoopAnimationsModule,
+          RouterTestingModule,
+        ],
+        providers: [
+          { provide: ChildrenService, useValue: mockChildrenService },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ChildSelectComponent);

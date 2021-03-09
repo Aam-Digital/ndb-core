@@ -93,7 +93,7 @@ export class ChildPhotoService {
    * @param imageFile Image to be stored
    * @param childId Id of child for which one wants to store the image
    */
-  public async setImage(imageFile: any, childId: string): Promise<void> {
+  public async setImage(imageFile: any, childId: string): Promise<boolean> {
     if (!this.canSetImage()) {
       return Promise.reject("CloudFileService not connected.");
     }

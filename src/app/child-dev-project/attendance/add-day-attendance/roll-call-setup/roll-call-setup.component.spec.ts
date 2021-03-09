@@ -1,9 +1,9 @@
 import {
-  async,
   ComponentFixture,
   fakeAsync,
   flush,
   TestBed,
+  waitForAsync,
 } from "@angular/core/testing";
 
 import { RollCallSetupComponent } from "./roll-call-setup.component";
@@ -22,30 +22,32 @@ describe("RollCallSetupComponent", () => {
   let mockEntityService: jasmine.SpyObj<EntityMapperService>;
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
 
-  beforeEach(async(() => {
-    mockEntityService = jasmine.createSpyObj("mockEntityService", [
-      "save",
-      "loadType",
-    ]);
-    mockEntityService.loadType.and.resolveTo([]);
-    mockAttendanceService = jasmine.createSpyObj("mockAttendanceService", [
-      "getEventsOnDate",
-    ]);
-    mockAttendanceService.getEventsOnDate.and.resolveTo([]);
+  beforeEach(
+    waitForAsync(() => {
+      mockEntityService = jasmine.createSpyObj("mockEntityService", [
+        "save",
+        "loadType",
+      ]);
+      mockEntityService.loadType.and.resolveTo([]);
+      mockAttendanceService = jasmine.createSpyObj("mockAttendanceService", [
+        "getEventsOnDate",
+      ]);
+      mockAttendanceService.getEventsOnDate.and.resolveTo([]);
 
-    TestBed.configureTestingModule({
-      declarations: [RollCallSetupComponent],
-      imports: [FormDialogModule],
-      providers: [
-        { provide: EntityMapperService, useValue: mockEntityService },
-        {
-          provide: SessionService,
-          useValue: { getCurrentUser: () => new User("") },
-        },
-        { provide: AttendanceService, useValue: mockAttendanceService },
-      ],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        declarations: [RollCallSetupComponent],
+        imports: [FormDialogModule],
+        providers: [
+          { provide: EntityMapperService, useValue: mockEntityService },
+          {
+            provide: SessionService,
+            useValue: { getCurrentUser: () => new User("") },
+          },
+          { provide: AttendanceService, useValue: mockAttendanceService },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RollCallSetupComponent);

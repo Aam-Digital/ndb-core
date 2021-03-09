@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { BackupService } from "../services/backup.service";
 import { ExportDataComponent } from "./export-data.component";
 import { Database } from "../../database/database";
@@ -8,12 +8,17 @@ describe("ExportDataComponent", () => {
   let component: ExportDataComponent;
   let fixture: ComponentFixture<ExportDataComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ExportDataComponent],
-      providers: [BackupService, { provide: Database, useClass: MockDatabase }],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [ExportDataComponent],
+        providers: [
+          BackupService,
+          { provide: Database, useClass: MockDatabase },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ExportDataComponent);

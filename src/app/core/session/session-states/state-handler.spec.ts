@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { async } from "@angular/core/testing";
+import { waitForAsync } from "@angular/core/testing";
 import { StateHandler } from "./state-handler";
 
 enum TestState {
@@ -44,20 +44,26 @@ describe("StateHandler", () => {
     });
     handler.setState(TestState.test2);
   });
-  it("waits for the state to change to a specific value", async(() => {
-    const handler = new StateHandler<TestState>(TestState.test1);
-    handler.waitForChangeTo(TestState.test2).then(() => {
-      expect(handler.getState()).toEqual(TestState.test2);
-    });
-    handler.setState(TestState.test3);
-    handler.setState(TestState.test2);
-  }));
-  it("fails waiting for the state to change to a specific value if specified", async(() => {
-    const handler = new StateHandler<TestState>(TestState.test1);
-    handler.waitForChangeTo(TestState.test2, [TestState.test3]).catch(() => {
-      expect(handler.getState()).toEqual(TestState.test3);
-    });
-    handler.setState(TestState.test4);
-    handler.setState(TestState.test3);
-  }));
+  it(
+    "waits for the state to change to a specific value",
+    waitForAsync(() => {
+      const handler = new StateHandler<TestState>(TestState.test1);
+      handler.waitForChangeTo(TestState.test2).then(() => {
+        expect(handler.getState()).toEqual(TestState.test2);
+      });
+      handler.setState(TestState.test3);
+      handler.setState(TestState.test2);
+    })
+  );
+  it(
+    "fails waiting for the state to change to a specific value if specified",
+    waitForAsync(() => {
+      const handler = new StateHandler<TestState>(TestState.test1);
+      handler.waitForChangeTo(TestState.test2, [TestState.test3]).catch(() => {
+        expect(handler.getState()).toEqual(TestState.test3);
+      });
+      handler.setState(TestState.test4);
+      handler.setState(TestState.test3);
+    })
+  );
 });

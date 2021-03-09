@@ -7,6 +7,7 @@ import { MockDatabase } from "../../database/mock-database";
 import { User } from "../../user/user";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Database } from "../../database/database";
+import { Injectable } from "@angular/core";
 
 /**
  * SessionService implementation for testing and demo purposes.
@@ -18,15 +19,16 @@ import { Database } from "../../database/database";
  *
  * For an CouchDB/PouchDB sync based session implementation see {@link SyncedSessionService}
  */
+@Injectable()
 export class MockSessionService extends SessionService {
   private database: MockDatabase;
   private currentUser: User;
   private loginState: StateHandler<LoginState> = new StateHandler<LoginState>(
     LoginState.LOGGED_OUT
   );
-  private connectionState: StateHandler<ConnectionState> = new StateHandler<
-    ConnectionState
-  >(ConnectionState.DISCONNECTED);
+  private connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>(
+    ConnectionState.DISCONNECTED
+  );
   private syncState: StateHandler<SyncState> = new StateHandler<SyncState>(
     SyncState.UNSYNCED
   );
@@ -72,10 +74,10 @@ export class MockSessionService extends SessionService {
     try {
       const userEntity = await this.loadUser(username);
       if (userEntity.checkPassword(password)) {
-        this.loginState.setState(LoginState.LOGGED_IN);
-        this.connectionState.setState(ConnectionState.CONNECTED);
         this.currentUser = userEntity;
         this.currentUser.decryptCloudPassword(password);
+        this.loginState.setState(LoginState.LOGGED_IN);
+        this.connectionState.setState(ConnectionState.CONNECTED);
         setTimeout(() => this.sync(), 0);
         return LoginState.LOGGED_IN;
       } else {
@@ -103,7 +105,7 @@ export class MockSessionService extends SessionService {
   /**
    * Dummy implementation, will trigger syncState to quickly switch to SyncState.COMPLETED.
    */
-  public sync(): Promise<any> {
+  public sync(): Promise<void> {
     this.syncState.setState(SyncState.STARTED);
     return new Promise((resolve) =>
       setTimeout(() => {

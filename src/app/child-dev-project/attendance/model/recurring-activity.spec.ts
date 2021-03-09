@@ -16,7 +16,7 @@
  */
 
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { async } from "@angular/core/testing";
+import { waitForAsync } from "@angular/core/testing";
 import { RecurringActivity } from "./recurring-activity";
 import { Entity } from "../../../core/entity/entity";
 import { InteractionType } from "../../notes/model/interaction-type.interface";
@@ -36,17 +36,19 @@ describe("RecurringActivity", () => {
     },
   ];
 
-  beforeEach(async(() => {
-    const mockConfigService = jasmine.createSpyObj("mockConfigService", [
-      "getConfig",
-    ]);
-    mockConfigService.getConfig.and.returnValue(testInteractionTypes);
+  beforeEach(
+    waitForAsync(() => {
+      const mockConfigService = jasmine.createSpyObj("mockConfigService", [
+        "getConfig",
+      ]);
+      mockConfigService.getConfig.and.returnValue(testInteractionTypes);
 
-    entitySchemaService = new EntitySchemaService();
-    entitySchemaService.registerSchemaDatatype(
-      new ConfigurableEnumDatatype(mockConfigService)
-    );
-  }));
+      entitySchemaService = new EntitySchemaService();
+      entitySchemaService.registerSchemaDatatype(
+        new ConfigurableEnumDatatype(mockConfigService)
+      );
+    })
+  );
 
   it("has correct _id and entityId and type", function () {
     const id = "test1";

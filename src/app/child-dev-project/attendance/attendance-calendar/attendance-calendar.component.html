@@ -1,5 +1,9 @@
-<mat-calendar (selectedChange)="selectDay($event)"
-              [dateClass]="highlightDate" [minDate]="minDate" [maxDate]="maxDate">
+<mat-calendar
+  (selectedChange)="selectDay($event)"
+  [dateClass]="highlightDate"
+  [minDate]="minDate"
+  [maxDate]="maxDate"
+>
 </mat-calendar>
 
 <div *ngIf="selectedDate" class="form">
@@ -13,32 +17,43 @@
 
   <div *ngIf="selectedEvent && highlightForChild">
     <div>
-      <app-attendance-status-select [(value)]="selectedEventAttendance.status" (valueChange)="save()">
+      <app-attendance-status-select
+        [(value)]="selectedEventAttendance.status"
+        (valueChange)="save()"
+      >
       </app-attendance-status-select>
     </div>
 
     <div>
-      <mat-form-field style="width: 100%;">
-      <textarea matInput placeholder="Remarks"
-                [(ngModel)]="selectedEventAttendance.remarks"
-                (blur)="save()"></textarea>
+      <mat-form-field style="width: 100%">
+        <textarea
+          matInput
+          placeholder="Remarks"
+          [(ngModel)]="selectedEventAttendance.remarks"
+          (blur)="save()"
+        ></textarea>
       </mat-form-field>
     </div>
   </div>
 
   <div *ngIf="selectedEvent && !highlightForChild">
     <div>
-      {{ selectedEventStats.average | percent:"1.0-0" }} attended
-      (of {{ selectedEvent.children.length }} participants)
+      {{ selectedEventStats.average | percent: "1.0-0" }} attended (of
+      {{ selectedEvent.children.length }} participants)
     </div>
-    <div *ngIf="selectedEventStats.unknownStatus > 0" class="unknown-status-notice">
-      {{selectedEventStats.unknownStatus}} participants without recorded status
+    <div
+      *ngIf="selectedEventStats.unknownStatus > 0"
+      class="unknown-status-notice"
+    >
+      {{ selectedEventStats.unknownStatus }} participants without recorded
+      status
     </div>
-    <button mat-stroked-button (click)="showEventDetails(selectedEvent)">Details</button>
+    <button mat-stroked-button (click)="showEventDetails(selectedEvent)">
+      Details
+    </button>
   </div>
 
   <div *ngIf="!selectedEvent" class="no-events-notice">
     no events on this date
   </div>
-
 </div>

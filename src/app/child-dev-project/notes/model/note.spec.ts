@@ -1,7 +1,7 @@
 import { Note } from "./note";
 import { WarningLevel, WarningLevelColor } from "../../warning-level";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { async } from "@angular/core/testing";
+import { waitForAsync } from "@angular/core/testing";
 import { Entity } from "../../../core/entity/entity";
 import {
   ATTENDANCE_STATUS_CONFIG_ID,
@@ -70,18 +70,20 @@ describe("Note", () => {
     },
   ];
 
-  beforeEach(async(() => {
-    const testConfigs = {};
-    testConfigs[
-      CONFIGURABLE_ENUM_CONFIG_PREFIX + INTERACTION_TYPE_CONFIG_ID
-    ] = testInteractionTypes;
-    testConfigs[ATTENDANCE_STATUS_CONFIG_ID] = testStatusTypes;
+  beforeEach(
+    waitForAsync(() => {
+      const testConfigs = {};
+      testConfigs[
+        CONFIGURABLE_ENUM_CONFIG_PREFIX + INTERACTION_TYPE_CONFIG_ID
+      ] = testInteractionTypes;
+      testConfigs[ATTENDANCE_STATUS_CONFIG_ID] = testStatusTypes;
 
-    entitySchemaService = new EntitySchemaService();
-    entitySchemaService.registerSchemaDatatype(
-      new ConfigurableEnumDatatype(createTestingConfigService(testConfigs))
-    );
-  }));
+      entitySchemaService = new EntitySchemaService();
+      entitySchemaService.registerSchemaDatatype(
+        new ConfigurableEnumDatatype(createTestingConfigService(testConfigs))
+      );
+    })
+  );
 
   it("has correct _id and entityId", function () {
     const id = "test1";

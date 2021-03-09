@@ -15,8 +15,6 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from "@angular/core";
-
 import { LoginState } from "../session-states/login-state.enum";
 import { Database } from "../../database/database";
 import { ConnectionState } from "../session-states/connection-state.enum";
@@ -37,7 +35,6 @@ import { StateHandler } from "../session-states/state-handler";
  * You should still use `SessionService` as the dependency injection key to get access to the functionality.
  * Providers are set up in a way that you will get the correct implementation during runtime.
  */
-@Injectable()
 export abstract class SessionService {
   /**
    * Authenticate a user.

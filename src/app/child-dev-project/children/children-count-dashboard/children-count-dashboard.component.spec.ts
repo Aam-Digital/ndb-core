@@ -1,9 +1,9 @@
 import {
-  async,
   ComponentFixture,
   fakeAsync,
   flush,
   TestBed,
+  waitForAsync,
 } from "@angular/core/testing";
 
 import { ChildrenCountDashboardComponent } from "./children-count-dashboard.component";
@@ -30,20 +30,22 @@ describe("ChildrenCountDashboardComponent", () => {
     return child;
   }
 
-  beforeEach(async(() => {
-    childrenService = jasmine.createSpyObj(["getChildren"]);
-    childrenService.getChildren.and.returnValue(
-      new Observable((observer) => {
-        childrenObserver = observer;
-      })
-    );
+  beforeEach(
+    waitForAsync(() => {
+      childrenService = jasmine.createSpyObj(["getChildren"]);
+      childrenService.getChildren.and.returnValue(
+        new Observable((observer) => {
+          childrenObserver = observer;
+        })
+      );
 
-    TestBed.configureTestingModule({
-      declarations: [ChildrenCountDashboardComponent],
-      imports: [MatIconModule, MatCardModule, RouterTestingModule],
-      providers: [{ provide: ChildrenService, useValue: childrenService }],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        declarations: [ChildrenCountDashboardComponent],
+        imports: [MatIconModule, MatCardModule, RouterTestingModule],
+        providers: [{ provide: ChildrenService, useValue: childrenService }],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ChildrenCountDashboardComponent);

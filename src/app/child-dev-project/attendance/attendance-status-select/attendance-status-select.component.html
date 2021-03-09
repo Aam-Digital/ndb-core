@@ -1,11 +1,11 @@
 <div>
-  <span class="indicator {{value.style}}">&nbsp;</span>
+  <span class="indicator {{ value.style }}">&nbsp;</span>
 
   <mat-form-field class="compact-form-field">
     <mat-select [(ngModel)]="value" (ngModelChange)="valueChange.emit(value)">
       <mat-option *ngFor="let s of statusValues" [value]="s">
-        <span class="indicator {{s.style}}">&nbsp;</span>
-        {{s.label}}
+        <span class="indicator {{ s.style }}">&nbsp;</span>
+        {{ s.label }}
       </mat-option>
     </mat-select>
   </mat-form-field>

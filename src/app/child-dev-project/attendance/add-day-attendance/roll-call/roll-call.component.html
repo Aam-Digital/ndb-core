@@ -2,28 +2,45 @@
 <div *ngIf="!isFinished()">
   <app-child-block [entityId]="entries[currentIndex].childId"></app-child-block>
 
-  <div fxLayout='column' fxLayoutAlign='space-between stretch' class='options-wrapper'>
-    <div class='group-select-option' *ngFor="let option of availableStatus"
-         (click)='markAttendance(entries[currentIndex].childId, option)'
-         [ngClass]="entries[currentIndex].attendance.status.id===option.id ? option.style : ''">
-      <span class='fa fa-check' *ngIf='entries[currentIndex].attendance.status.id===option.id'></span>
+  <div
+    fxLayout="column"
+    fxLayoutAlign="space-between stretch"
+    class="options-wrapper"
+  >
+    <div
+      class="group-select-option"
+      *ngFor="let option of availableStatus"
+      (click)="markAttendance(entries[currentIndex].childId, option)"
+      [ngClass]="
+        entries[currentIndex].attendance.status.id === option.id
+          ? option.style
+          : ''
+      "
+    >
+      <span
+        class="fa fa-check"
+        *ngIf="entries[currentIndex].attendance.status.id === option.id"
+      ></span>
       {{ option.label }}
     </div>
   </div>
 </div>
 
 <!-- Completion Page -->
-<div *ngIf='isFinished()' class='roll-call-complete' [@completeRollCall]>
-  <span class='fa fa-check-circle-o roll-call-complete-icon'></span>
-  <div>
-    Attendance completed.
-  </div>
+<div *ngIf="isFinished()" class="roll-call-complete" [@completeRollCall]>
+  <span class="fa fa-check-circle-o roll-call-complete-icon"></span>
+  <div>Attendance completed.</div>
 </div>
 
 <!-- Control Buttons -->
 <div>
-  <button mat-stroked-button [disabled]='currentIndex < 1' (click)='currentIndex = currentIndex - 1'
-          class='nav-button' fxFlex>
+  <button
+    mat-stroked-button
+    [disabled]="currentIndex < 1"
+    (click)="currentIndex = currentIndex - 1"
+    class="nav-button"
+    fxFlex
+  >
     Back
   </button>
 

@@ -10,9 +10,9 @@ import PouchDB from "pouchdb-browser";
 import { PouchDatabase } from "../../../core/database/pouch-database";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { deleteAllIndexedDB } from "../../../utils/performance-tests.spec";
-import { AttendanceService } from "../attendance.service";
 import { expectEntitiesToBeInDatabase } from "../../../utils/expect-entity-data.spec";
 import { EventNote } from "../model/event-note";
+import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
 
 describe("AttendanceMigrationService", () => {
   let service: AttendanceMigrationService;
@@ -20,7 +20,7 @@ describe("AttendanceMigrationService", () => {
   let rawPouch;
   let testDatabase: Database;
 
-  beforeEach(async () => {
+  beforeEach(async (done) => {
     rawPouch = new PouchDB("unit-testing");
     testDatabase = new PouchDatabase(rawPouch, new LoggingService());
 
@@ -33,8 +33,17 @@ describe("AttendanceMigrationService", () => {
     });
     service = TestBed.inject(AttendanceMigrationService);
     entitySchemaService = TestBed.inject(EntitySchemaService);
-    // @ts-ignore
-    await TestBed.inject(AttendanceService).createIndices();
+
+    // wait for the relevant indices to complete building - otherwise this will clash with teardown in afterEach
+    const indexingService = TestBed.inject(DatabaseIndexingService);
+    indexingService.indicesRegistered.subscribe((x) => {
+      if (
+        x.find((e) => e.details === "events_index")?.pending === false &&
+        x.find((e) => e.details === "activities_index")?.pending === false
+      ) {
+        done();
+      }
+    });
   });
 
   afterEach(async () => {

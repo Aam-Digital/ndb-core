@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { HealthCheck } from "app/child-dev-project/health-checkup/model/health-check";
 import { of } from "rxjs";
 import { ChildrenService } from "../../children.service";
@@ -14,12 +14,16 @@ describe("BmiBlockComponent", () => {
     ["getHealthChecksOfChild"]
   );
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [BmiBlockComponent],
-      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [BmiBlockComponent],
+        providers: [
+          { provide: ChildrenService, useValue: mockChildrenService },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(BmiBlockComponent);

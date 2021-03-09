@@ -1,9 +1,9 @@
 import {
-  async,
   ComponentFixture,
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 
 import { ChildrenService } from "../../../children/children.service";
@@ -19,24 +19,28 @@ describe("NoRecentNotesDashboardComponent", () => {
 
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
-  beforeEach(async(() => {
-    mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
-      "getDaysSinceLastNoteOfEachChild",
-    ]);
-    mockChildrenService.getDaysSinceLastNoteOfEachChild.and.resolveTo(
-      new Map()
-    );
+  beforeEach(
+    waitForAsync(() => {
+      mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
+        "getDaysSinceLastNoteOfEachChild",
+      ]);
+      mockChildrenService.getDaysSinceLastNoteOfEachChild.and.resolveTo(
+        new Map()
+      );
 
-    TestBed.configureTestingModule({
-      imports: [
-        ChildrenModule,
-        RouterTestingModule.withRoutes([]),
-        EntityModule,
-        Angulartics2Module.forRoot(),
-      ],
-      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        imports: [
+          ChildrenModule,
+          RouterTestingModule.withRoutes([]),
+          EntityModule,
+          Angulartics2Module.forRoot(),
+        ],
+        providers: [
+          { provide: ChildrenService, useValue: mockChildrenService },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(NoRecentNotesDashboardComponent);

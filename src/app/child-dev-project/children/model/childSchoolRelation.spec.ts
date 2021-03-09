@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { async } from "@angular/core/testing";
+import { waitForAsync } from "@angular/core/testing";
 import { ChildSchoolRelation } from "./childSchoolRelation";
 import { Entity } from "../../../core/entity/entity";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
@@ -24,9 +24,11 @@ describe("ChildSchoolRelation Entity", () => {
   const ENTITY_TYPE = "ChildSchoolRelation";
   let entitySchemaService: EntitySchemaService;
 
-  beforeEach(async(() => {
-    entitySchemaService = new EntitySchemaService();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      entitySchemaService = new EntitySchemaService();
+    })
+  );
 
   it("has correct _id and entityId and type", function () {
     const id = "test1";

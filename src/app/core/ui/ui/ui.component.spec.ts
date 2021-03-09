@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { UiComponent } from "./ui.component";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -45,45 +45,48 @@ import { SwUpdate } from "@angular/service-worker";
 import { of } from "rxjs";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntitySubrecordModule } from "../../entity-components/entity-subrecord/entity-subrecord.module";
+import { ApplicationInitStatus } from "@angular/core";
 
 describe("UiComponent", () => {
   let component: UiComponent;
   let fixture: ComponentFixture<UiComponent>;
 
-  beforeEach(async(() => {
-    const mockSwUpdate = { available: of(), checkForUpdate: () => {} };
-    const mockSession = new MockSessionService(new EntitySchemaService());
-
-    TestBed.configureTestingModule({
-      declarations: [SearchComponent, PrimaryActionComponent, UiComponent],
-      imports: [
-        RouterTestingModule,
-        CommonModule,
-        FormsModule,
-        MatIconModule,
-        MatToolbarModule,
-        MatSidenavModule,
-        MatAutocompleteModule,
-        MatInputModule,
-        MatFormFieldModule,
-        NoopAnimationsModule,
-        AppConfigModule,
-        EntitySubrecordModule,
-        ChildrenModule,
-        SchoolsModule,
-        SyncStatusModule,
-        NavigationModule,
-        LatestChangesModule,
-        SessionModule,
-        FlexLayoutModule,
-      ],
-      providers: [
-        { provide: SessionService, useValue: mockSession },
-        CookieService,
-        { provide: SwUpdate, useValue: mockSwUpdate },
-      ],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      const mockSwUpdate = { available: of(), checkForUpdate: () => {} };
+      const mockSession = new MockSessionService(new EntitySchemaService());
+      TestBed.configureTestingModule({
+        declarations: [SearchComponent, PrimaryActionComponent, UiComponent],
+        imports: [
+          RouterTestingModule,
+          CommonModule,
+          FormsModule,
+          MatIconModule,
+          MatToolbarModule,
+          MatSidenavModule,
+          MatAutocompleteModule,
+          MatInputModule,
+          MatFormFieldModule,
+          NoopAnimationsModule,
+          AppConfigModule,
+          EntitySubrecordModule,
+          ChildrenModule,
+          SchoolsModule,
+          SyncStatusModule,
+          NavigationModule,
+          LatestChangesModule,
+          SessionModule,
+          FlexLayoutModule,
+        ],
+        providers: [
+          { provide: SessionService, useValue: mockSession },
+          CookieService,
+          { provide: SwUpdate, useValue: mockSwUpdate },
+        ],
+      }).compileComponents();
+      TestBed.inject(ApplicationInitStatus); // This ensures that the AppConfig is loaded before test execution
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(UiComponent);

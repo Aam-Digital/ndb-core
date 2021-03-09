@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceCalendarComponent } from "./attendance-calendar.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
@@ -11,18 +11,20 @@ describe("AttendanceCalendarComponent", () => {
   let component: AttendanceCalendarComponent;
   let fixture: ComponentFixture<AttendanceCalendarComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [FormDialogModule],
-      declarations: [AttendanceCalendarComponent],
-      providers: [
-        {
-          provide: EntityMapperService,
-          useValue: { save: () => Promise.resolve() },
-        },
-      ],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        imports: [FormDialogModule],
+        declarations: [AttendanceCalendarComponent],
+        providers: [
+          {
+            provide: EntityMapperService,
+            useValue: { save: () => Promise.resolve() },
+          },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AttendanceCalendarComponent);
