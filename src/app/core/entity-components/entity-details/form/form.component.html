@@ -112,7 +112,10 @@
           </mat-form-field>
         </div>
 
-        <div *ngIf="row.input === 'select'">
+        <div *ngIf="row.input === 'select'"
+          [matTooltip]="row.tooltip"
+          [matTooltipPosition]="row.tooltipPosition"
+        >
           <mat-form-field>
             <mat-label>
               {{ row.placeholder }}

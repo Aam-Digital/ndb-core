@@ -709,6 +709,8 @@ export const defaultConfig = {
                     },
                     {
                       "input": "select",
+                      "tooltip": "This is a sample toopltip. Please enter the biological sex of the person.",
+                      "tooltipPosition": "above",
                       "id": "gender",
                       "placeholder": "Gender",
                       "options": [
