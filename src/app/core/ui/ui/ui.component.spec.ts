@@ -40,7 +40,6 @@ import { PrimaryActionComponent } from "../primary-action/primary-action.compone
 import { SessionService } from "../../session/session-service/session.service";
 import { MockSessionService } from "../../session/session-service/mock-session.service";
 import { FlexLayoutModule } from "@angular/flex-layout";
-import { CookieService } from "ngx-cookie-service";
 import { SwUpdate } from "@angular/service-worker";
 import { of } from "rxjs";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
@@ -80,7 +79,6 @@ describe("UiComponent", () => {
         ],
         providers: [
           { provide: SessionService, useValue: mockSession },
-          CookieService,
           { provide: SwUpdate, useValue: mockSwUpdate },
         ],
       }).compileComponents();
