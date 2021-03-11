@@ -12,8 +12,8 @@
     "remote_url": null
   },
 
-  "tracking": {
-    "matomo_url": "https://matomo.aam-digital.com/"
+  "usage_analytics": {
+    "url": "https://matomo.aam-digital.com/"
   },
 
   "debug": false

@@ -64,8 +64,15 @@ export interface IAppConfig {
     remote_url: string;
   };
 
-  tracking?: {
-    matomo_url: string;
+  /**
+   * Optional configuration for usage analytics (e.g. Matomo)
+   */
+  usage_analytics?: {
+    /** url of the backend to report usage data to */
+    url: string;
+
+    /** do not set any cookies for analytics */
+    no_cookies?: boolean;
   };
 
   /**

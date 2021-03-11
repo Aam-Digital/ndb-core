@@ -74,8 +74,8 @@ export class AppComponent implements OnInit {
         RecurringActivity
       );
     });
-    if (AppConfig.settings.tracking) {
-      matomo.setUp(AppConfig.settings.tracking.matomo_url);
+    if (AppConfig.settings.usage_analytics) {
+      matomo.setUp(AppConfig.settings.usage_analytics.url);
       this.analyticsService.init();
     }
   }
