@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { AppConfig } from "../app-config/app-config";
 
 /**
  * This class dynamically adds sets up everything for Matomo.
@@ -19,6 +20,9 @@ export class MatomoService {
       "setDocumentTitle",
       document.domain + "/" + document.title,
     ]);
+    if (AppConfig.settings.usage_analytics.no_cookies) {
+      window["_paq"].push(["disableCookies"]);
+    }
     window["_paq"].push(["trackPageView"]);
     window["_paq"].push(["enableLinkTracking"]);
     (() => {
