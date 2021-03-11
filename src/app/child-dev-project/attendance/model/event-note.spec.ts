@@ -17,6 +17,11 @@
 
 import { Entity } from "../../../core/entity/entity";
 import { EventNote } from "./event-note";
+import { ChildrenService } from "../../children/children.service";
+import { School } from "../../schools/model/school";
+import { Child } from "../../children/model/child";
+import { RecurringActivity } from "./recurring-activity";
+import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 
 describe("EventNote", () => {
   const ENTITY_TYPE = "EventNote";
@@ -35,5 +40,73 @@ describe("EventNote", () => {
 
     expect(entity.getType()).toBe(ENTITY_TYPE);
     expect(Entity.extractTypeFromId(entity._id)).toBe(ENTITY_TYPE);
+  });
+
+  it("should add children from a linked school", async () => {
+    const mockChildrenService: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj(
+      ["queryRelationsOf"]
+    );
+
+    const activity = new RecurringActivity();
+    const linkedSchool = new School();
+    activity.linkedGroups.push(linkedSchool.getId());
+
+    const childAttendingSchool = new ChildSchoolRelation();
+    childAttendingSchool.childId = "child attending school";
+    mockChildrenService.queryRelationsOf.and.resolveTo([childAttendingSchool]);
+
+    const directlyAddedChild = new Child();
+    activity.participants.push(directlyAddedChild.getId());
+
+    const event = await EventNote.createEventForActivity(
+      activity,
+      new Date(),
+      mockChildrenService
+    );
+
+    expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
+      "school",
+      linkedSchool.getId()
+    );
+    expect(event.children).toHaveSize(2);
+    expect(event.children).toContain(directlyAddedChild.getId());
+    expect(event.children).toContain(childAttendingSchool.childId);
+  });
+
+  it("should not create duplicate children", async () => {
+    const mockChildrenService: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj(
+      ["queryRelationsOf"]
+    );
+
+    const activity = new RecurringActivity();
+    const linkedSchool = new School();
+    activity.linkedGroups.push(linkedSchool.getId());
+
+    const duplicateChild = new Child();
+    const duplicateChildRelation = new ChildSchoolRelation();
+    duplicateChildRelation.childId = duplicateChild.getId();
+    const anotherRelation = new ChildSchoolRelation();
+    anotherRelation.childId = "another child id";
+    mockChildrenService.queryRelationsOf.and.resolveTo([
+      duplicateChildRelation,
+      anotherRelation,
+    ]);
+
+    const directlyAddedChild = new Child();
+    activity.participants.push(
+      directlyAddedChild.getId(),
+      duplicateChild.getId()
+    );
+
+    const event = await EventNote.createEventForActivity(
+      activity,
+      new Date(),
+      mockChildrenService
+    );
+
+    expect(event.children).toHaveSize(3);
+    expect(event.children).toContain(directlyAddedChild.getId());
+    expect(event.children).toContain(duplicateChild.getId());
+    expect(event.children).toContain(anotherRelation.childId);
   });
 });
