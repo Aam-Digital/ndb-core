@@ -10,7 +10,7 @@ const md5 = require("md5");
 /**
  * Track usage analytics data and report it to a backend server like Matomo.
  *
- * This is automatically disable if the config.json does not specify "usage_analytics" settings.
+ * This is automatically disabled if the config.json does not specify "usage_analytics" settings.
  */
 @Injectable({
   providedIn: "root",
@@ -78,7 +78,7 @@ export class AnalyticsService {
   }
 
   /**
-   * dynamically adds sets up everything for Matomo.
+   * dynamically sets up everything for Matomo.
    *
    * The code is inspired by:
    * https://github.com/Arnaud73/ngx-matomo/blob/master/projects/ngx-matomo/src/lib/matomo-injector.service.ts
