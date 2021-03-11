@@ -64,6 +64,10 @@ export interface IAppConfig {
     remote_url: string;
   };
 
+  tracking?: {
+    matomo_url: string;
+  };
+
   /**
    * Optional flag to activate additional debugging output to troubleshoot problems on a user's device
    */
