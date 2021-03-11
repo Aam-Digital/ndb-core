@@ -71,6 +71,9 @@ export interface IAppConfig {
     /** url of the backend to report usage data to */
     url: string;
 
+    /** the id by which this site is represented in the analytics backend */
+    site_id: string;
+
     /** do not set any cookies for analytics */
     no_cookies?: boolean;
   };

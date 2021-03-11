@@ -47,7 +47,7 @@ export class AnalyticsService {
   }
 
   private static getUserHash(username: string) {
-    return md5(username);
+    return md5(AppConfig.settings.site_name + username);
   }
 
   constructor(
@@ -73,8 +73,54 @@ export class AnalyticsService {
   }
 
   init(): void {
+    if (!AppConfig.settings.usage_analytics) {
+      // do not track
+      return;
+    }
+
+    this.setUpMatomo(
+      AppConfig.settings.usage_analytics.url,
+      AppConfig.settings.usage_analytics.site_id
+    );
+
     AnalyticsService.angulartics2Piwik.startTracking();
     AnalyticsService.setVersion();
     AnalyticsService.setOrganization(AppConfig.settings.site_name);
+  }
+
+  /**
+   * dynamically adds sets up everything for Matomo.
+   *
+   * The code is inspired by:
+   * https://github.com/Arnaud73/ngx-matomo/blob/master/projects/ngx-matomo/src/lib/matomo-injector.service.ts
+   *
+   * @param url The URL of the matomo backend
+   * @param id The id of the Matomo site as which this app will be tracked
+   * @private
+   */
+  private setUpMatomo(url: string, id: string) {
+    window["_paq"] = window["_paq"] || [];
+    window["_paq"].push([
+      "setDocumentTitle",
+      document.domain + "/" + document.title,
+    ]);
+    if (AppConfig.settings.usage_analytics.no_cookies) {
+      window["_paq"].push(["disableCookies"]);
+    }
+    window["_paq"].push(["trackPageView"]);
+    window["_paq"].push(["enableLinkTracking"]);
+    (() => {
+      const u = url;
+      window["_paq"].push(["setTrackerUrl", u + "matomo.php"]);
+      window["_paq"].push(["setSiteId", id]);
+      const d = document;
+      const g = d.createElement("script");
+      const s = d.getElementsByTagName("script")[0];
+      g.type = "text/javascript";
+      g.async = true;
+      g.defer = true;
+      g.src = u + "matomo.js";
+      s.parentNode.insertBefore(g, s);
+    })();
   }
 }

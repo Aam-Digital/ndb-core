@@ -8,13 +8,5 @@
     "remote_url": "http://localhost:4200/db/"
   },
 
-  "webdav": {
-    "remote_url": null
-  },
-
-  "usage_analytics": {
-    "url": "https://matomo.aam-digital.com/"
-  },
-
   "debug": false
 }

@@ -30,7 +30,6 @@ import { SyncState } from "./core/session/session-states/sync-state.enum";
 import { ActivatedRoute, Router } from "@angular/router";
 import { RecurringActivity } from "./child-dev-project/attendance/model/recurring-activity";
 import { School } from "./child-dev-project/schools/model/school";
-import { MatomoService } from "./core/analytics/matomo.service";
 
 /**
  * Component as the main entry point for the app.
@@ -51,8 +50,7 @@ export class AppComponent implements OnInit {
     private entityConfigService: EntityConfigService,
     private sessionService: SessionService,
     private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private matomo: MatomoService
+    private router: Router
   ) {
     // If loading the config earlier (in a module constructor or through APP_INITIALIZER) a runtime error occurs.
     // The EntityMapperService needs the SessionServiceProvider which needs the AppConfig to be set up.
@@ -74,10 +72,7 @@ export class AppComponent implements OnInit {
         RecurringActivity
       );
     });
-    if (AppConfig.settings.usage_analytics) {
-      matomo.setUp(AppConfig.settings.usage_analytics.url);
-      this.analyticsService.init();
-    }
+    this.analyticsService.init();
   }
 
   ngOnInit() {
