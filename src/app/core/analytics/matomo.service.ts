@@ -22,7 +22,7 @@ export class MatomoService {
     window["_paq"].push(["trackPageView"]);
     window["_paq"].push(["enableLinkTracking"]);
     (() => {
-      const u = "//" + url;
+      const u = url;
       window["_paq"].push(["setTrackerUrl", u + "matomo.php"]);
       window["_paq"].push(["setSiteId", id]);
       const d = document;

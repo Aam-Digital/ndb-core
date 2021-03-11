@@ -13,7 +13,7 @@
   },
 
   "tracking": {
-    "matomo_url": "matomo.aam-digital.com/"
+    "matomo_url": "https://matomo.aam-digital.com/"
   },
 
   "debug": false
