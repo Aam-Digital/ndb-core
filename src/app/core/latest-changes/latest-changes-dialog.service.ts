@@ -18,7 +18,6 @@
 import { Injectable } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { ChangelogComponent } from "./changelog/changelog.component";
-import { CookieService } from "ngx-cookie-service";
 import { environment } from "../../../environments/environment";
 import { LatestChangesService } from "./latest-changes.service";
 
@@ -28,11 +27,10 @@ import { LatestChangesService } from "./latest-changes.service";
  */
 @Injectable()
 export class LatestChangesDialogService {
-  private static COOKIE_NAME = "AppVersion";
+  private static STORAGE_KEY = "AppVersion";
 
   constructor(
     private dialog: MatDialog,
-    private cookieService: CookieService,
     private latestChangesService: LatestChangesService
   ) {}
 
@@ -61,16 +59,14 @@ export class LatestChangesDialogService {
    * Display the latest changes info box automatically if the current user has not seen this version before.
    */
   public showLatestChangesIfUpdated() {
-    if (this.cookieService.check(LatestChangesDialogService.COOKIE_NAME)) {
-      const previousVersion = this.cookieService.get(
-        LatestChangesDialogService.COOKIE_NAME
-      );
-      if (this.getCurrentVersion() !== previousVersion) {
-        this.showLatestChanges(previousVersion);
-      }
+    const previousVersion = window.localStorage.getItem(
+      LatestChangesDialogService.STORAGE_KEY
+    );
+    if (previousVersion && this.getCurrentVersion() !== previousVersion) {
+      this.showLatestChanges(previousVersion);
     }
-    this.cookieService.set(
-      LatestChangesDialogService.COOKIE_NAME,
+    window.localStorage.setItem(
+      LatestChangesDialogService.STORAGE_KEY,
       this.getCurrentVersion()
     );
   }
