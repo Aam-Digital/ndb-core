@@ -1,4 +1,10 @@
 <div>
+  <app-school-select
+    [(selectedSchoolIds)]="schools"
+    [disabled]="!editing"
+    class="input-medium"
+  >
+  </app-school-select>
   <app-child-select
     [valueAsIds]="participants"
     (newIdAdded)="participants.push($event)"
