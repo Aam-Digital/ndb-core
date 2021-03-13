@@ -76,8 +76,6 @@ describe("ChildSchoolRelation Entity", () => {
   it("should mark relations without end date as active", () => {
     const relation = new ChildSchoolRelation();
     relation.start = new Date();
-    const newDate = new Date();
-    console.log("start", relation.start, newDate, relation.start < newDate);
     expect(relation.isActive()).toBeTrue();
   });
 
