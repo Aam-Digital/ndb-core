@@ -22,11 +22,11 @@ import { MatAutocompleteTrigger } from "@angular/material/autocomplete";
 export class ChildSelectComponent implements OnChanges {
   searchText = "";
   showOnlyActiveChildren: boolean = true;
-  suggestions = new Array<Child>();
-  allChildren = new Array<Child>();
-  selectedChildren = new Array<Child>();
+  suggestions: Child[] = [];
+  allChildren: Child[] = [];
+  selectedChildren: Child[] = [];
 
-  @Input() selectedChildrenIds: string[];
+  @Input() selectedChildrenIds: string[] = [];
   @Output() selectedChildrenIdsChange = new EventEmitter<string[]>();
   @Input() disabled: boolean;
   @Output() newIdAdded = new EventEmitter<string>();

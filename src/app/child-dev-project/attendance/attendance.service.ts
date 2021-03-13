@@ -222,9 +222,16 @@ export class AttendanceService {
           relation.schoolId
         )
       );
-    return (await promiseByParticipant).concat(
-      ...(await Promise.all(promisesBySchool))
+    const uniqueActivities = await promiseByParticipant;
+    const activitiesBySchool = await Promise.all(promisesBySchool);
+    activitiesBySchool.forEach((activities) =>
+      activities.forEach((activity) =>
+        uniqueActivities.some((a) => a.getId() === activity.getId())
+          ? null
+          : uniqueActivities.push(activity)
+      )
     );
+    return uniqueActivities;
   }
 
   async createEventForActivity(

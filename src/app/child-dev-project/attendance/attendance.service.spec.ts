@@ -232,6 +232,23 @@ describe("AttendanceService", () => {
     );
   });
 
+  it("should not return the same activity multiple times", async () => {
+    const activity = new RecurringActivity();
+    const relation = new ChildSchoolRelation();
+    relation.schoolId = "test school";
+    relation.childId = "test child";
+    relation.start = new Date();
+    activity.linkedGroups.push(relation.schoolId);
+    activity.participants.push(relation.childId);
+
+    mockChildrenService.queryRelationsOf.and.resolveTo([relation]);
+    await entityMapper.save(activity);
+
+    const activities = await service.getActivitiesForChild(relation.childId);
+
+    expectEntitiesToMatch(activities, [activity], false, true);
+  });
+
   it("should add children from a linked school", async () => {
     const activity = new RecurringActivity();
     const linkedSchool = new School();
