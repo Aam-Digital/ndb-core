@@ -23,9 +23,10 @@
             ></app-school-block>
         </mat-option>
     </mat-autocomplete>
-    <span *ngFor="let school of selectedSchools" class="selected-entity-block">
+    <span *ngFor="let school of selectedSchools" style="display: inline-block">
         <span *ngIf="!disabled" class="fa fa-minus-square-o" (click)="unselectSchool(school)"></span>
         <app-school-block
+                style="margin-left: 3px;"
                 [entity]="school"
                 [linkDisabled]="true"
         ></app-school-block>

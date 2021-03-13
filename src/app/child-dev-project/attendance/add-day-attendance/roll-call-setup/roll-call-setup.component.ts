@@ -35,7 +35,9 @@ export class RollCallSetupComponent implements OnInit {
   }
 
   private async initAvailableEvents() {
-    this.existingEvents = await this.attendanceService.getEventsOnDate(this.date);
+    this.existingEvents = await this.attendanceService.getEventsOnDate(
+      this.date
+    );
     await this.loadActivities();
     this.sortEvents();
   }

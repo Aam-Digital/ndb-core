@@ -3,8 +3,9 @@ import {
   ElementRef,
   EventEmitter,
   Input,
-  OnInit,
+  OnChanges,
   Output,
+  SimpleChanges,
   ViewChild,
 } from "@angular/core";
 import { UntilDestroy } from "@ngneat/until-destroy";
@@ -18,7 +19,7 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
   templateUrl: "./school-select.component.html",
   styleUrls: ["./school-select.component.scss"],
 })
-export class SchoolSelectComponent implements OnInit {
+export class SchoolSelectComponent implements OnChanges {
   searchText = "";
   suggestions: School[] = [];
   notSelectedSchools: School[] = [];
@@ -27,7 +28,6 @@ export class SchoolSelectComponent implements OnInit {
   @Output() selectedSchoolIdsChange = new EventEmitter<string[]>();
 
   @Input() disabled: boolean;
-  @Output() valueAsIdsChange = new EventEmitter<string[]>();
 
   @ViewChild("inputField", { static: true })
   inputField: ElementRef<HTMLInputElement>;
@@ -35,16 +35,20 @@ export class SchoolSelectComponent implements OnInit {
 
   constructor(private entityMapper: EntityMapperService) {}
 
-  ngOnInit() {
-    this.entityMapper.loadType<School>(School).then((schools) => {
-      schools.forEach((school) => {
-        (this.selectedSchoolIds.includes(school.getId())
-          ? this.selectedSchools
-          : this.notSelectedSchools
-        ).push(school);
-        this.search();
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.hasOwnProperty("selectedSchoolIds")) {
+      this.entityMapper.loadType<School>(School).then((schools) => {
+        this.notSelectedSchools = [];
+        this.selectedSchools = [];
+        schools.forEach((school) => {
+          (this.selectedSchoolIds.includes(school.getId())
+            ? this.selectedSchools
+            : this.notSelectedSchools
+          ).push(school);
+          this.search();
+        });
       });
-    });
+    }
   }
 
   search() {
@@ -65,8 +69,8 @@ export class SchoolSelectComponent implements OnInit {
 
     this.searchText = "";
     this.inputField.nativeElement.value = "";
-    this.search();
     this.inputField.nativeElement.blur();
+    this.search();
   }
 
   unselectSchool(unselected: School) {

@@ -1,5 +1,6 @@
 import {
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   OnChanges,
@@ -25,50 +26,35 @@ export class ChildSelectComponent implements OnChanges {
   allChildren = new Array<Child>();
   selectedChildren = new Array<Child>();
 
-  @Input() valueAsIds: string[];
+  @Input() selectedChildrenIds: string[];
+  @Output() selectedChildrenIdsChange = new EventEmitter<string[]>();
   @Input() disabled: boolean;
-  @Output() valueAsIdsChange = new EventEmitter();
-  @Output() newIdAdded = new EventEmitter();
-  @Output() idRemoved = new EventEmitter();
+  @Output() newIdAdded = new EventEmitter<string>();
+  @Output() idRemoved = new EventEmitter<string>();
 
-  @ViewChild("inputField", { static: true }) inputField;
+  @ViewChild("inputField", { static: true })
+  inputField: ElementRef<HTMLInputElement>;
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
   constructor(private childrenService: ChildrenService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.hasOwnProperty("valueAsIds")) {
-      this.loadInitial();
+    if (changes.hasOwnProperty("selectedChildrenIds")) {
+      this.childrenService
+        .getChildren()
+        .pipe(untilDestroyed(this))
+        .subscribe((children) => {
+          this.allChildren = [];
+          this.selectedChildren = [];
+          children.forEach((child) => {
+            (this.selectedChildrenIds.includes(child.getId())
+              ? this.selectedChildren
+              : this.allChildren
+            ).push(child);
+            this.search();
+          });
+        });
     }
-  }
-
-  private loadInitial() {
-    this.childrenService
-      .getChildren()
-      .pipe(untilDestroyed(this))
-      .subscribe((children) => {
-        this.allChildren = [...children]; // clone array
-        this.search();
-
-        this.selectInitialSelectedChildren();
-      });
-  }
-
-  private selectInitialSelectedChildren() {
-    if (this.valueAsIds === undefined) {
-      return;
-    }
-
-    this.selectedChildren = [];
-
-    this.valueAsIds.forEach((selectedId) => {
-      const selectedChild: Child = this.allChildren.find(
-        (c) => c.getId() === selectedId
-      );
-      if (selectedChild) {
-        this.selectChild(selectedChild, true);
-      }
-    });
   }
 
   search() {
@@ -89,40 +75,29 @@ export class ChildSelectComponent implements OnChanges {
     setTimeout(() => this.autocomplete.openPanel());
   }
 
-  selectChild(child: Child, suppressChangeEvent = false) {
-    if (
-      this.selectedChildren.findIndex((c) => c.getId() === child.getId()) !== -1
-    ) {
-      // skip if already selected
-      return;
-    }
-
-    this.selectedChildren.push(child);
-    if (!suppressChangeEvent) {
-      this.newIdAdded.emit(child.getId());
-      this.valueAsIdsChange.emit(this.selectedChildren.map((c) => c.getId()));
-    }
-
-    const i = this.allChildren.findIndex((e) => e.getId() === child.getId());
-    this.allChildren.splice(i, 1);
+  selectChild(selected: Child) {
+    this.selectedChildren.push(selected);
+    this.selectedChildrenIds.push(selected.getId());
+    this.selectedChildrenIdsChange.emit(this.selectedChildrenIds);
+    this.newIdAdded.emit(selected.getId());
+    this.allChildren = this.allChildren.filter((child) => child !== selected);
 
     this.searchText = "";
     this.inputField.nativeElement.value = "";
+    this.inputField.nativeElement.blur();
+    this.search();
   }
 
-  unselectChild(child: Child) {
-    if (this.disabled) {
-      return;
-    }
-
-    const i = this.selectedChildren.findIndex(
-      (e) => e.getId() === child.getId()
+  unselectChild(unselected: Child) {
+    this.selectedChildren = this.selectedChildren.filter(
+      (child) => child !== unselected
     );
-    this.selectedChildren.splice(i, 1);
-    this.allChildren.unshift(child);
-
-    this.idRemoved.emit(child.getId());
-    this.valueAsIdsChange.emit(this.selectedChildren.map((c) => c.getId()));
+    this.selectedChildrenIds = this.selectedChildrenIds.filter(
+      (childId) => childId !== unselected.getId()
+    );
+    this.selectedChildrenIdsChange.emit(this.selectedChildrenIds);
+    this.idRemoved.emit(unselected.getId());
+    this.allChildren.unshift(unselected);
   }
 
   unselectChildId(childId: string) {
