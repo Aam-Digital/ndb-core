@@ -19,6 +19,7 @@ import { waitForAsync } from "@angular/core/testing";
 import { ChildSchoolRelation } from "./childSchoolRelation";
 import { Entity } from "../../../core/entity/entity";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import moment from "moment";
 
 describe("ChildSchoolRelation Entity", () => {
   const ENTITY_TYPE = "ChildSchoolRelation";
@@ -70,5 +71,33 @@ describe("ChildSchoolRelation Entity", () => {
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
     expect(rawData).toEqual(expectedData);
+  });
+
+  it("should mark relations without end date as active", () => {
+    const relation = new ChildSchoolRelation();
+    relation.start = new Date();
+    const newDate = new Date();
+    console.log("start", relation.start, newDate, relation.start < newDate);
+    expect(relation.isActive()).toBeTrue();
+  });
+
+  it("should mark relation starting in the future as inactive", () => {
+    const relation = new ChildSchoolRelation();
+    relation.start = moment().add(1, "day").toDate();
+    expect(relation.isActive()).toBeFalse();
+  });
+
+  it("should mark relation with end date in the past as inactive", () => {
+    const relation = new ChildSchoolRelation();
+    relation.start = moment().subtract(1, "week").toDate();
+    relation.end = moment().subtract(1, "day").toDate();
+    expect(relation.isActive()).toBeFalse();
+  });
+
+  it("should mark relation with end date in the future as active", () => {
+    const relation = new ChildSchoolRelation();
+    relation.start = moment().subtract(1, "week").toDate();
+    relation.end = moment().add(1, "day").toDate();
+    expect(relation.isActive()).toBeTrue();
   });
 });
