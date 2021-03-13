@@ -20,13 +20,11 @@ import { TestBed } from "@angular/core/testing";
 import { LatestChangesService } from "./latest-changes.service";
 import { MatDialog } from "@angular/material/dialog";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
-import { CookieService } from "ngx-cookie-service";
 import { environment } from "../../../environments/environment";
 
 describe("LatestChangesDialogService", () => {
   let service: LatestChangesDialogService;
   let mockLatestChangesService: jasmine.SpyObj<LatestChangesService>;
-  let mockCookieService: jasmine.SpyObj<CookieService>;
   let mockDialog: jasmine.SpyObj<MatDialog>;
 
   beforeEach(() => {
@@ -34,18 +32,13 @@ describe("LatestChangesDialogService", () => {
       "getLatestChangesBeforeVersion",
       "getChangelogsBetweenVersions",
     ]);
-    mockCookieService = jasmine.createSpyObj("mockCookieService", [
-      "check",
-      "get",
-      "set",
-    ]);
+
     mockDialog = jasmine.createSpyObj("mockDialog", ["open"]);
 
     TestBed.configureTestingModule({
       providers: [
         LatestChangesDialogService,
         { provide: LatestChangesService, useValue: mockLatestChangesService },
-        { provide: CookieService, useValue: mockCookieService },
         { provide: MatDialog, useValue: mockDialog },
       ],
     });
@@ -59,28 +52,28 @@ describe("LatestChangesDialogService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should not display changes on first visit (no cookie)", () => {
-    mockCookieService.check.and.returnValue(false);
+  it("should not display changes on first visit (no version)", () => {
+    const getSpy = spyOn(Storage.prototype, "getItem").and.returnValue(null);
 
     service.showLatestChangesIfUpdated();
 
     expect(mockDialog.open).not.toHaveBeenCalled();
-    expect(mockCookieService.set).toHaveBeenCalled();
+    expect(getSpy).toHaveBeenCalled();
   });
 
-  it("should display changes if cookie version differs", () => {
-    mockCookieService.check.and.returnValue(true);
-    mockCookieService.get.and.returnValue("1.0-test");
+  it("should display changes if stored version differs", () => {
+    const getSpy = spyOn(Storage.prototype, "getItem").and.returnValue(
+      "1.0-test"
+    );
 
     service.showLatestChangesIfUpdated();
 
     expect(mockDialog.open).toHaveBeenCalled();
-    expect(mockCookieService.set).toHaveBeenCalled();
+    expect(getSpy).toHaveBeenCalled();
   });
 
-  it("should not display changes if cookie version matches", () => {
-    mockCookieService.check.and.returnValue(true);
-    mockCookieService.get.and.returnValue(environment.appVersion);
+  it("should not display changes if stored version matches", () => {
+    spyOn(Storage.prototype, "getItem").and.returnValue(environment.appVersion);
 
     service.showLatestChangesIfUpdated();
 
