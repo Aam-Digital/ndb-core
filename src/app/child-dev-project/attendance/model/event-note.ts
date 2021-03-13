@@ -17,9 +17,6 @@
 
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { Note } from "../../notes/model/note";
-import { RecurringActivity } from "./recurring-activity";
-import { ChildrenService } from "../../children/children.service";
-import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 
 @DatabaseEntity("EventNote")
 export class EventNote extends Note {
@@ -27,32 +24,6 @@ export class EventNote extends Note {
     const instance = new EventNote();
     instance.date = date;
     instance.subject = subject;
-    return instance;
-  }
-
-  static async createEventForActivity(
-    activity: RecurringActivity,
-    date: Date,
-    childrenService?: ChildrenService
-  ): Promise<EventNote> {
-    const instance = new EventNote();
-    const participants = [...activity.participants];
-    if (activity.linkedGroups.length > 0) {
-      if (childrenService) {
-        const relationPromises = activity.linkedGroups.map((groupId) =>
-          childrenService.queryRelationsOf("school", groupId)
-        );
-        const relations: ChildSchoolRelation[] = [].concat(
-          ...(await Promise.all(relationPromises))
-        );
-        participants.push(...relations.map((r) => r.childId));
-      }
-    }
-    instance.date = date;
-    instance.subject = activity.title;
-    instance.children = [...new Set(participants)]; // remove duplicates
-    instance.relatesTo = activity._id;
-    instance.category = activity.type;
     return instance;
   }
 }
