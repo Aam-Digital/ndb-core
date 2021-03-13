@@ -1,16 +1,23 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { SchoolSelectComponent } from './school-select.component';
+import { SchoolSelectComponent } from "./school-select.component";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { SchoolsModule } from "../schools.module";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
-describe('SchoolSelectComponent', () => {
+describe("SchoolSelectComponent", () => {
   let component: SchoolSelectComponent;
   let fixture: ComponentFixture<SchoolSelectComponent>;
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
   beforeEach(async () => {
+    mockEntityMapper = jasmine.createSpyObj(["loadType"]);
+    mockEntityMapper.loadType.and.resolveTo([]);
     await TestBed.configureTestingModule({
-      declarations: [ SchoolSelectComponent ]
-    })
-    .compileComponents();
+      declarations: [SchoolSelectComponent],
+      imports: [SchoolsModule, NoopAnimationsModule],
+      providers: [{ provide: EntityMapperService, useValue: mockEntityMapper }],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +26,7 @@ describe('SchoolSelectComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

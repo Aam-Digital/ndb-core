@@ -241,8 +241,8 @@ export class AttendanceService {
     instance.date = date;
     instance.subject = activity.title;
     instance.children = [
-      ...new Set(activity.participants.concat(...schoolParticipants)),
-    ]; // remove duplicates
+      ...new Set(activity.participants.concat(...schoolParticipants)), //  remove duplicates
+    ];
     instance.relatesTo = activity._id;
     instance.category = activity.type;
     return instance;
