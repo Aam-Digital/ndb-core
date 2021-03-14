@@ -188,7 +188,7 @@ describe("AttendanceService", () => {
     await entityMapper.save(testActivity);
 
     const activities = await service.getActivitiesForChild("test child");
-    expectEntitiesToMatch(activities, [testActivity], false, true);
+    expectEntitiesToMatch(activities, [testActivity]);
   });
 
   it("should only return activities for active schools", async () => {
@@ -224,12 +224,7 @@ describe("AttendanceService", () => {
 
     const activities = await service.getActivitiesForChild("test child");
 
-    expectEntitiesToMatch(
-      activities,
-      [activeActivity1, activeActivity2],
-      false,
-      true
-    );
+    expectEntitiesToMatch(activities, [activeActivity1, activeActivity2]);
   });
 
   it("should not return the same activity multiple times", async () => {
@@ -246,10 +241,10 @@ describe("AttendanceService", () => {
 
     const activities = await service.getActivitiesForChild(relation.childId);
 
-    expectEntitiesToMatch(activities, [activity], false, true);
+    expectEntitiesToMatch(activities, [activity]);
   });
 
-  it("should add children from a linked school", async () => {
+  it("should include children from a linked school for event from activity", async () => {
     const activity = new RecurringActivity();
     const linkedSchool = new School();
     activity.linkedGroups.push(linkedSchool.getId());
@@ -272,7 +267,7 @@ describe("AttendanceService", () => {
     expect(event.children).toContain(childAttendingSchool.childId);
   });
 
-  it("should not create duplicate children", async () => {
+  it("should not include duplicate children for event from activity", async () => {
     const activity = new RecurringActivity();
     const linkedSchool = new School();
     activity.linkedGroups.push(linkedSchool.getId());
