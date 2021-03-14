@@ -55,7 +55,7 @@ export class RollCallSetupComponent implements OnInit {
     for (const activity of this.visibleActivities) {
       const newEvent = await this.createEventForActivity(activity);
       if (newEvent) {
-        this.existingEvents.push(await newEvent);
+        this.existingEvents.push(newEvent);
       }
     }
   }
@@ -65,9 +65,9 @@ export class RollCallSetupComponent implements OnInit {
       (a) => !this.visibleActivities.includes(a)
     );
     for (const activity of additionalActivities) {
-      const newEvent = this.createEventForActivity(activity);
+      const newEvent = await this.createEventForActivity(activity);
       if (newEvent) {
-        this.existingEvents.push(await newEvent);
+        this.existingEvents.push(newEvent);
       }
       this.visibleActivities.push(activity);
     }

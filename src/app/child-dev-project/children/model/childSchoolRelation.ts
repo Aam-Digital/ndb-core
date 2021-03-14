@@ -20,8 +20,8 @@ export class ChildSchoolRelation extends Entity {
   public isActive(): boolean {
     return (
       this.start &&
-      moment(this.start) <= moment() &&
-      (!this.end || moment(this.end) > moment())
+      moment(this.start).isSameOrBefore(moment(), "day") &&
+      (!this.end || moment(this.end).isAfter(moment()))
     );
   }
 }

@@ -214,12 +214,12 @@ export class AttendanceService {
       childId
     );
     const promisesBySchool = visitedSchools
-      .filter((schoolRelation) => schoolRelation.isActive())
-      .map((relation) =>
+      .filter((relation) => relation.isActive())
+      .map((activeRelation) =>
         this.dbIndexing.queryIndexDocs(
           RecurringActivity,
           "activities_index/by_school",
-          relation.schoolId
+          activeRelation.schoolId
         )
       );
     const uniqueActivities = await promiseByParticipant;
