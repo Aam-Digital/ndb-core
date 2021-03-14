@@ -204,34 +204,31 @@ export class AttendanceService {
   }
 
   async getActivitiesForChild(childId: string): Promise<RecurringActivity[]> {
-    const promiseByParticipant = this.dbIndexing.queryIndexDocs(
+    const activities = await this.dbIndexing.queryIndexDocs(
       RecurringActivity,
       "activities_index/by_participant",
       childId
     );
-    const visitedSchools = await this.childrenService.queryRelationsOf(
-      "child",
-      childId
-    );
-    const promisesBySchool = visitedSchools
-      .filter((relation) => relation.isActive())
-      .map((activeRelation) =>
-        this.dbIndexing.queryIndexDocs(
-          RecurringActivity,
-          "activities_index/by_school",
-          activeRelation.schoolId
-        )
+
+    const visitedSchools = (
+      await this.childrenService.queryRelationsOf("child", childId)
+    ).filter((relation) => relation.isActive());
+    for (const currentRelation of visitedSchools) {
+      const activitiesThroughRelation = await this.dbIndexing.queryIndexDocs(
+        RecurringActivity,
+        "activities_index/by_school",
+        currentRelation.schoolId
       );
-    const uniqueActivities = await promiseByParticipant;
-    const activitiesBySchool = await Promise.all(promisesBySchool);
-    activitiesBySchool.forEach((activities) =>
-      activities.forEach((activity) =>
-        uniqueActivities.some((a) => a.getId() === activity.getId())
-          ? null
-          : uniqueActivities.push(activity)
-      )
-    );
-    return uniqueActivities;
+      for (const activityThroughRelation of activitiesThroughRelation) {
+        if (
+          !activities.some((a) => a.getId() === activityThroughRelation.getId())
+        ) {
+          activities.push(activityThroughRelation);
+        }
+      }
+    }
+
+    return activities;
   }
 
   async createEventForActivity(
