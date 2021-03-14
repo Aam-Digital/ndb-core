@@ -241,7 +241,11 @@ export class MockDatabase extends Database {
           e._id.startsWith(RecurringActivity.ENTITY_TYPE) &&
           e.participants.includes(options.key);
         break;
-
+      case "activities_index/by_school":
+        filterFun = (e) =>
+          e._id.startsWith(RecurringActivity.ENTITY_TYPE) &&
+          e.linkedGroups.includes(options.key);
+        break;
       case "events_index/by_date":
         const meetingInteractionTypes = defaultInteractionTypes
           .filter((t) => t.isMeeting)

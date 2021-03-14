@@ -6,7 +6,6 @@ import { RecurringActivity } from "../../model/recurring-activity";
 import { SessionService } from "../../../../core/session/session-service/session.service";
 import { NoteDetailsComponent } from "../../../notes/note-details/note-details.component";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
-import { EventNote } from "../../model/event-note";
 
 @Component({
   selector: "app-roll-call-setup",
@@ -54,19 +53,19 @@ export class RollCallSetupComponent implements OnInit {
     );
 
     for (const activity of this.visibleActivities) {
-      const newEvent = this.createEventForActivity(activity);
+      const newEvent = await this.createEventForActivity(activity);
       if (newEvent) {
         this.existingEvents.push(newEvent);
       }
     }
   }
 
-  showMore() {
+  async showMore() {
     const additionalActivities = this.allActivities.filter(
       (a) => !this.visibleActivities.includes(a)
     );
     for (const activity of additionalActivities) {
-      const newEvent = this.createEventForActivity(activity);
+      const newEvent = await this.createEventForActivity(activity);
       if (newEvent) {
         this.existingEvents.push(newEvent);
       }
@@ -85,17 +84,17 @@ export class RollCallSetupComponent implements OnInit {
     }
   }
 
-  private createEventForActivity(
+  private async createEventForActivity(
     activity: RecurringActivity
-  ): NoteForActivitySetup {
+  ): Promise<NoteForActivitySetup> {
     if (this.existingEvents.find((e) => e.relatesTo === activity._id)) {
       return undefined;
     }
 
-    const event = EventNote.createEventForActivity(
+    const event = (await this.attendanceService.createEventForActivity(
       activity,
       this.date
-    ) as NoteForActivitySetup;
+    )) as NoteForActivitySetup;
     event.author = this.sessionService.getCurrentUser().getId();
     event.isNewFromActivity = true;
     return event;

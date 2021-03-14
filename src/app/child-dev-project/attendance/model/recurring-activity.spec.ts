@@ -75,6 +75,7 @@ describe("RecurringActivity", () => {
       type: "HOME_VISIT",
       assignedTo: "demo",
       participants: ["1", "2"],
+      linkedGroups: ["3"],
 
       searchIndices: [],
     };
@@ -84,6 +85,7 @@ describe("RecurringActivity", () => {
     entity.type = testInteractionTypes.find((e) => e.id === "HOME_VISIT");
     entity.assignedTo = expectedData.assignedTo;
     entity.participants = expectedData.participants;
+    entity.linkedGroups = expectedData.linkedGroups;
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 

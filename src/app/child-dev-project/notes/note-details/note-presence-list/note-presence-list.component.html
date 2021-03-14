@@ -1,6 +1,6 @@
 <app-child-select
   #childSelect
-  [valueAsIds]="entity.children"
+  [selectedChildrenIds]="entity.children"
   (newIdAdded)="entity.addChild($event); recordForm.form.markAsDirty()"
   (idRemoved)="entity.removeChild($event); recordForm.form.markAsDirty()"
   class="input-medium"

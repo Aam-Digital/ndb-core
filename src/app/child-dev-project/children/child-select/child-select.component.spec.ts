@@ -69,12 +69,13 @@ describe("ChildSelectComponent", () => {
   });
 
   it("should increase and shrink after selecting/un-selecting", function () {
+    component.allChildren = [new Child("1")];
     let previousLength = component.selectedChildren.length;
-    component.selectChild(new Child("1"));
+    component.selectChild(component.allChildren[0]);
     expect(component.selectedChildren.length).toBe(previousLength + 1);
 
     previousLength = component.selectedChildren.length;
-    component.unselectChild(new Child("1"));
+    component.unselectChildId("1");
     expect(component.selectedChildren.length).toBe(previousLength - 1);
   });
 });
