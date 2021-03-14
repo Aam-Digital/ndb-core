@@ -15,25 +15,25 @@ export class ActivityParticipantsSectionComponent
 
   editing: boolean;
   participants: string[] = [];
-  schools: string[] = [];
+  participatingGroups: string[] = [];
 
   constructor(private entityMapper: EntityMapperService) {}
 
   onInitFromDynamicConfig(config: PanelConfig) {
     this.entity = config.entity as RecurringActivity;
     this.participants = this.entity.participants;
-    this.schools = this.entity.linkedGroups;
+    this.participatingGroups = this.entity.linkedGroups;
   }
 
   switchEdit() {
     this.editing = !this.editing;
     this.participants = [...this.entity.participants];
-    this.schools = [...this.entity.linkedGroups];
+    this.participatingGroups = [...this.entity.linkedGroups];
   }
 
   async save() {
     this.entity.participants = this.participants;
-    this.entity.linkedGroups = this.schools;
+    this.entity.linkedGroups = this.participatingGroups;
     await this.entityMapper.save<RecurringActivity>(this.entity);
     this.editing = false;
   }
