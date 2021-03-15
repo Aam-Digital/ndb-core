@@ -131,15 +131,17 @@ export class AdminComponent implements OnInit {
 
       dialogRef.afterClosed().subscribe((confirmed) => {
         if (confirmed) {
-          this.backupService.clearDatabase();
-          this.backupService.importJson(newData, true);
+          this.backupService
+            .clearDatabase()
+            .then(() => this.backupService.importJson(newData, true));
 
           const snackBarRef = this.snackBar.open("Backup restored", "Undo", {
             duration: 8000,
           });
           snackBarRef.onAction().subscribe(() => {
-            this.backupService.clearDatabase();
-            this.backupService.importJson(restorePoint, true);
+            this.backupService
+              .clearDatabase()
+              .then(() => this.backupService.importJson(restorePoint, true));
           });
         }
       });
