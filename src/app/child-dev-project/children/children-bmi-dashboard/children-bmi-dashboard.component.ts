@@ -18,9 +18,9 @@ interface bmiRow {
   templateUrl: './children-bmi-dashboard.component.html',
   styleUrls: ['./children-bmi-dashboard.component.scss']
 })
-export class ChildrenBmiDashboardComponent implements OnInit {
+export class ChildrenBmiDashboardComponent implements OnInit, OnInitDynamicComponent {
   public currentHealthCheck: HealthCheck;
-  bmiRows: bmiRow [];
+  bmiRows: bmiRow [] = [];
 
   constructor(
     private childrenService: ChildrenService,
@@ -35,12 +35,16 @@ export class ChildrenBmiDashboardComponent implements OnInit {
       })
   }
 
+  onInitFromDynamicConfig(config: any){
+
+  }
+
   filterBMI(children: Child[]) {
     
     children.forEach((child)=>{
       this.childrenService
         .getHealthChecksOfChild(child.getId())
-        .pipe(untilDestroyed(this))
+        .pipe()
         .subscribe((results) => {
           /** get newest HealtCheck */
           if (results.length > 0) {
@@ -55,4 +59,10 @@ export class ChildrenBmiDashboardComponent implements OnInit {
         });
     })
   }
+  
+  goToChild(childId: string) {
+    const path = "/" + Child.ENTITY_TYPE.toLowerCase();
+    this.router.navigate([path, childId]);
+  }
+
 }

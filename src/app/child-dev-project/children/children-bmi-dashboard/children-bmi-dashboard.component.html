@@ -23,7 +23,7 @@
             <app-child-block [entityId]="row.childId"></app-child-block>
           </td>
           <td class="dashboard-table-last-cell dashboard-table-cell">
-           {{ row.bmi }}
+           {{ row.bmi.toFixed(2) }}
           </td>
         </tr>
       </table>
