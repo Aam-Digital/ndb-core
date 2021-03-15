@@ -1,0 +1,31 @@
+<mat-card class="dashboard-widget">
+    <mat-card-header class="app-attendance">
+      <div mat-card-avatar>
+        <mat-icon fontIcon="fa-exclamation-triangle"></mat-icon>
+      </div>
+      <mat-card-title>{{ bmiRows?.length }}</mat-card-title>
+      <mat-card-subtitle
+        >Students with unhealthy BMI
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <table class="dashboard-table">
+        <tr
+          *ngFor="
+            let row of bmiRows;
+            let i = index
+          "
+          class="dashboard-table-row w-WARNING"
+          (click)="goToChild(row.childId)"
+          style="cursor: pointer"
+        >
+          <td class="dashboard-table-first-cell dashboard-table-cell">
+            <app-child-block [entityId]="row.childId"></app-child-block>
+          </td>
+          <td class="dashboard-table-last-cell dashboard-table-cell">
+           {{ row.bmi }}
+          </td>
+        </tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
