@@ -100,8 +100,11 @@ export class BackupService {
    */
   importJson(json, forceUpdate = false) {
     const promises = [];
-    json.split(BackupService.SEPARATOR_ROW).forEach((record) => {
-      promises.push(this.db.put(JSON.parse(record), forceUpdate));
+    json.split(BackupService.SEPARATOR_ROW).forEach((stringRecord) => {
+      const record = JSON.parse(stringRecord);
+      // Remove _rev so CouchDB treats it as a new rather than a updated document
+      delete record._rev;
+      promises.push(this.db.put(record, forceUpdate));
     });
     return Promise.all(promises);
   }
@@ -125,7 +128,7 @@ export class BackupService {
     parsedCsv.data.forEach((record) => {
       // remove undefined properties
       for (const propertyName in record) {
-        if (record[propertyName] === null) {
+        if (record[propertyName] === null || propertyName === "_rev") {
           delete record[propertyName];
         }
       }
