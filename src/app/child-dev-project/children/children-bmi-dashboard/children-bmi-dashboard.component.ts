@@ -39,6 +39,8 @@ export class ChildrenBmiDashboardComponent implements OnInit, OnInitDynamicCompo
 
   }
 
+  recordTrackByFunction = (index, item) => item.childId;
+
   filterBMI(children: Child[]) {
     
     children.forEach((child)=>{
