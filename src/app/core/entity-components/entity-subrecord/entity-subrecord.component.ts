@@ -129,11 +129,12 @@ export class EntitySubrecordComponent<T extends Entity>
     private datePipe: DatePipe,
     private media: MediaObserver
   ) {
-    this.media.media$
+    this.media
+      .asObservable()
       .pipe(untilDestroyed(this))
-      .subscribe((change: MediaChange) => {
-        if (change.mqAlias !== this.screenWidth) {
-          this.screenWidth = change.mqAlias;
+      .subscribe((change: MediaChange[]) => {
+        if (change[0].mqAlias !== this.screenWidth) {
+          this.screenWidth = change[0].mqAlias;
           this.setupTable();
         }
       });

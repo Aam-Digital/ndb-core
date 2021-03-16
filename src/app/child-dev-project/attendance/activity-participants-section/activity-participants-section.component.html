@@ -1,14 +1,17 @@
 <div>
+  <app-school-select
+    [(selectedSchoolIds)]="participatingGroups"
+    [disabled]="!editing"
+    class="input-medium"
+  >
+  </app-school-select>
   <app-child-select
-    [valueAsIds]="participants"
-    (newIdAdded)="participants.push($event)"
-    (idRemoved)="participants.splice(participants.indexOf($event), 1)"
+    [(selectedChildrenIds)]="participants"
     [disabled]="!editing"
     class="input-medium"
   >
   </app-child-select>
 </div>
-
 
 <div>
   <button

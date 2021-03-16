@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { SchoolBlockComponent } from "./school-block.component";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -14,18 +14,20 @@ describe("SchoolBlockComponent", () => {
   let component: SchoolBlockComponent;
   let fixture: ComponentFixture<SchoolBlockComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [SchoolBlockComponent],
-      imports: [RouterTestingModule, MatIconModule],
-      providers: [
-        EntityMapperService,
-        EntitySchemaService,
-        { provide: Database, useClass: MockDatabase },
-        ChildrenService,
-      ],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [SchoolBlockComponent],
+        imports: [RouterTestingModule, MatIconModule],
+        providers: [
+          EntityMapperService,
+          EntitySchemaService,
+          { provide: Database, useClass: MockDatabase },
+          ChildrenService,
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SchoolBlockComponent);

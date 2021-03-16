@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { SearchComponent } from "./search.component";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
@@ -23,33 +23,35 @@ describe("SearchComponent", () => {
 
   let mockDatabase: jasmine.SpyObj<Database>;
 
-  beforeEach(async(() => {
-    mockDatabase = jasmine.createSpyObj("mockDatabase", [
-      "query",
-      "saveDatabaseIndex",
-    ]);
+  beforeEach(
+    waitForAsync(() => {
+      mockDatabase = jasmine.createSpyObj("mockDatabase", [
+        "query",
+        "saveDatabaseIndex",
+      ]);
 
-    TestBed.configureTestingModule({
-      imports: [
-        MatIconModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatAutocompleteModule,
-        CommonModule,
-        FormsModule,
-        NoopAnimationsModule,
-        ChildrenModule,
-        SchoolsModule,
-        MatToolbarModule,
-        RouterTestingModule,
-      ],
-      providers: [
-        EntitySchemaService,
-        { provide: Database, useValue: mockDatabase },
-      ],
-      declarations: [SearchComponent],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        imports: [
+          MatIconModule,
+          MatFormFieldModule,
+          MatInputModule,
+          MatAutocompleteModule,
+          CommonModule,
+          FormsModule,
+          NoopAnimationsModule,
+          ChildrenModule,
+          SchoolsModule,
+          MatToolbarModule,
+          RouterTestingModule,
+        ],
+        providers: [
+          EntitySchemaService,
+          { provide: Database, useValue: mockDatabase },
+        ],
+        declarations: [SearchComponent],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SearchComponent);

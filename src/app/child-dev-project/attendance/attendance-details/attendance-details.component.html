@@ -15,53 +15,96 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<app-form-dialog-wrapper #dialogForm [entity]='entity'>
+<app-form-dialog-wrapper #dialogForm [entity]="entity">
   <h1>
-    {{entity?.activity?.title}}:
-    {{entity.periodFrom | date: "shortDate" }} - {{entity.periodTo | date: "shortDate" }}
+    {{ entity?.activity?.title }}: {{ entity.periodFrom | date: "shortDate" }} -
+    {{ entity.periodTo | date: "shortDate" }}
   </h1>
 
   <form #entityForm="ngForm">
-
-    <div class="w-{{entity.getWarningLevel()}}">
-      <div class='summary'>
+    <div class="w-{{ entity.getWarningLevel() }}">
+      <div class="summary">
         Attendance:
-        {{focusedChild ? entity?.getAttendancePercentage(focusedChild) : entity?.getAttendancePercentageAverage() | percent:'1.0-0'}}
+        {{
+          focusedChild
+            ? entity?.getAttendancePercentage(focusedChild)
+            : (entity?.getAttendancePercentageAverage() | percent: "1.0-0")
+        }}
       </div>
     </div>
 
-    <div fxLayout='row wrap' fxLayoutGap='20px'>
+    <div fxLayout="row wrap" fxLayoutGap="20px">
       <div fxFlex>
         <mat-form-field>
-          <input matInput type="number" min="0" placeholder='days present'
-                 [value]="focusedChild ? entity.countEventsPresent(focusedChild) : entity.countEventsPresentAverage(true)" readonly>
+          <input
+            matInput
+            type="number"
+            min="0"
+            placeholder="days present"
+            [value]="
+              focusedChild
+                ? entity.countEventsPresent(focusedChild)
+                : entity.countEventsPresentAverage(true)
+            "
+            readonly
+          />
         </mat-form-field>
       </div>
 
       <div fxFlex>
         <mat-form-field>
-          <input matInput type="number" min="0" placeholder='days absent'
-                 [value]="focusedChild ? entity.countEventsAbsent(focusedChild) : entity.countEventsAbsentAverage(true)" readonly>
+          <input
+            matInput
+            type="number"
+            min="0"
+            placeholder="days absent"
+            [value]="
+              focusedChild
+                ? entity.countEventsAbsent(focusedChild)
+                : entity.countEventsAbsentAverage(true)
+            "
+            readonly
+          />
         </mat-form-field>
       </div>
 
       <div fxFlex>
         <mat-form-field>
-          <input matInput type="number" min="0" placeholder='unknown status'
-                 [value]="focusedChild ? entity.countEventsWithStatusForChild(UnknownStatus, focusedChild) : entity.countEventsWithUnknownStatus()"
-                 readonly>
+          <input
+            matInput
+            type="number"
+            min="0"
+            placeholder="unknown status"
+            [value]="
+              focusedChild
+                ? entity.countEventsWithStatusForChild(
+                    UnknownStatus,
+                    focusedChild
+                  )
+                : entity.countEventsWithUnknownStatus()
+            "
+            readonly
+          />
         </mat-form-field>
       </div>
     </div>
 
     <div>
-      <app-entity-subrecord [records]="entity.events" [columns]="eventsColumns"
-                            [detailsComponent]="eventDetailsComponent" [showAddButton]="false" [disableEditingInline]="true">
+      <app-entity-subrecord
+        [records]="entity.events"
+        [columns]="eventsColumns"
+        [detailsComponent]="eventDetailsComponent"
+        [showAddButton]="false"
+        [disableEditingInline]="true"
+      >
       </app-entity-subrecord>
     </div>
 
     <div>
-      <app-attendance-calendar [records]="entity.events" [highlightForChild]="focusedChild"></app-attendance-calendar>
+      <app-attendance-calendar
+        [records]="entity.events"
+        [highlightForChild]="focusedChild"
+      ></app-attendance-calendar>
     </div>
   </form>
 </app-form-dialog-wrapper>

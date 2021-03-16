@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ActivityListComponent } from "./activity-list.component";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -12,25 +12,29 @@ describe("ActivityListComponent", () => {
 
   let mockEntityService: jasmine.SpyObj<EntityMapperService>;
 
-  beforeEach(async(() => {
-    mockEntityService = jasmine.createSpyObj("mockEntityService", ["loadType"]);
-    mockEntityService.loadType.and.resolveTo([]);
+  beforeEach(
+    waitForAsync(() => {
+      mockEntityService = jasmine.createSpyObj("mockEntityService", [
+        "loadType",
+      ]);
+      mockEntityService.loadType.and.resolveTo([]);
 
-    TestBed.configureTestingModule({
-      declarations: [ActivityListComponent],
-      imports: [RouterTestingModule],
-      providers: [
-        { provide: EntityMapperService, useValue: mockEntityService },
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            data: of({}),
-            queryParams: of({}),
+      TestBed.configureTestingModule({
+        declarations: [ActivityListComponent],
+        imports: [RouterTestingModule],
+        providers: [
+          { provide: EntityMapperService, useValue: mockEntityService },
+          {
+            provide: ActivatedRoute,
+            useValue: {
+              data: of({}),
+              queryParams: of({}),
+            },
           },
-        },
-      ],
-    }).compileComponents();
-  }));
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ActivityListComponent);

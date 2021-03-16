@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { SyncStatusComponent } from "./sync-status.component";
 import { MatDialogModule } from "@angular/material/dialog";
@@ -49,27 +49,29 @@ describe("SyncStatusComponent", () => {
     pending: false,
   };
 
-  beforeEach(async(() => {
-    sessionService = new MockSessionService(new EntitySchemaService());
-    mockIndexingService = { indicesRegistered: new BehaviorSubject([]) };
+  beforeEach(
+    waitForAsync(() => {
+      sessionService = new MockSessionService(new EntitySchemaService());
+      mockIndexingService = { indicesRegistered: new BehaviorSubject([]) };
 
-    TestBed.configureTestingModule({
-      declarations: [InitialSyncDialogComponent, SyncStatusComponent],
-      imports: [
-        MatIconModule,
-        MatDialogModule,
-        NoopAnimationsModule,
-        MatProgressBarModule,
-        AlertsModule,
-      ],
-      providers: [
-        { provide: SessionService, useValue: sessionService },
-        { provide: DatabaseIndexingService, useValue: mockIndexingService },
-      ],
-    });
+      TestBed.configureTestingModule({
+        declarations: [InitialSyncDialogComponent, SyncStatusComponent],
+        imports: [
+          MatIconModule,
+          MatDialogModule,
+          NoopAnimationsModule,
+          MatProgressBarModule,
+          AlertsModule,
+        ],
+        providers: [
+          { provide: SessionService, useValue: sessionService },
+          { provide: DatabaseIndexingService, useValue: mockIndexingService },
+        ],
+      });
 
-    TestBed.compileComponents();
-  }));
+      TestBed.compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SyncStatusComponent);

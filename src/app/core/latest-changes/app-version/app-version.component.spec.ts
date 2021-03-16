@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AppVersionComponent } from "./app-version.component";
 import { MatDialogModule } from "@angular/material/dialog";
@@ -29,25 +29,27 @@ describe("AppVersionComponent", () => {
 
   let latestChangesDialogService: jasmine.SpyObj<LatestChangesDialogService>;
 
-  beforeEach(async(() => {
-    latestChangesDialogService = jasmine.createSpyObj([
-      "getCurrentVersion",
-      "showLatestChanges",
-    ]);
+  beforeEach(
+    waitForAsync(() => {
+      latestChangesDialogService = jasmine.createSpyObj([
+        "getCurrentVersion",
+        "showLatestChanges",
+      ]);
 
-    TestBed.configureTestingModule({
-      declarations: [AppVersionComponent, ChangelogComponent],
-      imports: [MatDialogModule, NoopAnimationsModule],
-      providers: [
-        {
-          provide: LatestChangesDialogService,
-          useValue: latestChangesDialogService,
-        },
-      ],
-    });
+      TestBed.configureTestingModule({
+        declarations: [AppVersionComponent, ChangelogComponent],
+        imports: [MatDialogModule, NoopAnimationsModule],
+        providers: [
+          {
+            provide: LatestChangesDialogService,
+            useValue: latestChangesDialogService,
+          },
+        ],
+      });
 
-    TestBed.compileComponents();
-  }));
+      TestBed.compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AppVersionComponent);

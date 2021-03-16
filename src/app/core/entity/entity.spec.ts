@@ -16,16 +16,18 @@
  */
 
 import { Entity } from "./entity";
-import { async } from "@angular/core/testing";
+import { waitForAsync } from "@angular/core/testing";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { DatabaseField } from "./database-field.decorator";
 
 describe("Entity", () => {
   let entitySchemaService: EntitySchemaService;
 
-  beforeEach(async(() => {
-    entitySchemaService = new EntitySchemaService();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      entitySchemaService = new EntitySchemaService();
+    })
+  );
 
   it("has ID and entityId", function () {
     const id = "test1";

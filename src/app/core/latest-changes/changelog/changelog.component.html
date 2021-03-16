@@ -15,16 +15,23 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-
 <h1 mat-dialog-title>Latest Changes</h1>
 
 <mat-dialog-content #changelogContainer>
   <mat-card *ngFor="let changelog of changelogs" class="mat-elevation-z2">
     <mat-card-header>
-      <mat-card-title>{{ changelog ? changelog.name : "No Changelog Available" }}</mat-card-title>
+      <mat-card-title>{{
+        changelog ? changelog.name : "No Changelog Available"
+      }}</mat-card-title>
       <mat-card-subtitle>
-        <span class="meta-info"><mat-icon fontIcon="fa-calendar-o"></mat-icon>{{ changelog?.published_at | date }}</span>
-        <span class="meta-info"><mat-icon fontIcon="fa-tag"></mat-icon>{{ changelog?.tag_name }}</span>
+        <span class="meta-info"
+          ><mat-icon fontIcon="fa-calendar-o"></mat-icon
+          >{{ changelog?.published_at | date }}</span
+        >
+        <span class="meta-info"
+          ><mat-icon fontIcon="fa-tag"></mat-icon
+          >{{ changelog?.tag_name }}</span
+        >
       </mat-card-subtitle>
     </mat-card-header>
 
@@ -33,12 +40,20 @@
     </mat-card-content>
 
     <mat-card-actions *ngIf="showAdvancedDetails">
-      <button mat-stroked-button><a [href]="'https://www.github.com'" target="_blank">More Information</a></button>
+      <button mat-stroked-button>
+        <a [href]="'https://www.github.com'" target="_blank"
+          >More Information</a
+        >
+      </button>
     </mat-card-actions>
   </mat-card>
 </mat-dialog-content>
 
 <mat-dialog-actions class="general-actions">
-  <button mat-raised-button (click)="loadPreviousRelease()">Show previous changes</button>
-  <button mat-raised-button color="accent" [mat-dialog-close]="true">Close</button>
+  <button mat-raised-button (click)="loadPreviousRelease()">
+    Show previous changes
+  </button>
+  <button mat-raised-button color="accent" [mat-dialog-close]="true">
+    Close
+  </button>
 </mat-dialog-actions>

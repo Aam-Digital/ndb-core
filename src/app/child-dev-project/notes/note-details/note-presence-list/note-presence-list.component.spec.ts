@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { NotePresenceListComponent } from "./note-presence-list.component";
 import { Note } from "../../model/note";
@@ -26,34 +26,38 @@ describe("NotePresenceListComponent", () => {
 
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
-  beforeEach(async(() => {
-    testEntity = new Note("test1");
+  beforeEach(
+    waitForAsync(() => {
+      testEntity = new Note("test1");
 
-    mockChildrenService = jasmine.createSpyObj(["getChild", "getChildren"]);
-    mockChildrenService.getChildren.and.returnValue(of([]));
-    mockChildrenService.getChild.and.returnValue(of(new Child("")));
+      mockChildrenService = jasmine.createSpyObj(["getChild", "getChildren"]);
+      mockChildrenService.getChildren.and.returnValue(of([]));
+      mockChildrenService.getChild.and.returnValue(of(new Child("")));
 
-    TestBed.configureTestingModule({
-      declarations: [
-        NotePresenceListComponent,
-        ChildMeetingNoteAttendanceComponent,
-        ChildSelectComponent,
-        ChildBlockComponent,
-        SchoolBlockComponent,
-      ],
-      imports: [
-        FormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatIconModule,
-        MatButtonModule,
-        MatButtonToggleModule,
-        MatAutocompleteModule,
-        NoopAnimationsModule,
-      ],
-      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        declarations: [
+          NotePresenceListComponent,
+          ChildMeetingNoteAttendanceComponent,
+          ChildSelectComponent,
+          ChildBlockComponent,
+          SchoolBlockComponent,
+        ],
+        imports: [
+          FormsModule,
+          MatFormFieldModule,
+          MatInputModule,
+          MatIconModule,
+          MatButtonModule,
+          MatButtonToggleModule,
+          MatAutocompleteModule,
+          NoopAnimationsModule,
+        ],
+        providers: [
+          { provide: ChildrenService, useValue: mockChildrenService },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(NotePresenceListComponent);

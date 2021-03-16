@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { RollCallComponent } from "./roll-call.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -14,18 +14,20 @@ describe("RollCallComponent", () => {
   const testEvent = Note.create(new Date());
   let mockConfigService: jasmine.SpyObj<ConfigService>;
 
-  beforeEach(async(() => {
-    mockConfigService = jasmine.createSpyObj("mockConfigService", [
-      "getConfig",
-    ]);
-    mockConfigService.getConfig.and.returnValue([]);
+  beforeEach(
+    waitForAsync(() => {
+      mockConfigService = jasmine.createSpyObj("mockConfigService", [
+        "getConfig",
+      ]);
+      mockConfigService.getConfig.and.returnValue([]);
 
-    TestBed.configureTestingModule({
-      imports: [NoopAnimationsModule],
-      declarations: [RollCallComponent],
-      providers: [{ provide: ConfigService, useValue: mockConfigService }],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        imports: [NoopAnimationsModule],
+        declarations: [RollCallComponent],
+        providers: [{ provide: ConfigService, useValue: mockConfigService }],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RollCallComponent);

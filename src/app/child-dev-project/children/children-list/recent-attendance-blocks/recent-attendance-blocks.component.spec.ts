@@ -1,9 +1,9 @@
 import {
-  async,
   ComponentFixture,
   fakeAsync,
   flush,
   TestBed,
+  waitForAsync,
 } from "@angular/core/testing";
 
 import { RecentAttendanceBlocksComponent } from "./recent-attendance-blocks.component";
@@ -20,20 +20,22 @@ describe("RecentAttendanceBlocksComponent", () => {
 
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
 
-  beforeEach(async(() => {
-    mockAttendanceService = jasmine.createSpyObj("mockAttendanceService", [
-      "getActivitiesForChild",
-      "getAllActivityAttendancesForPeriod",
-    ]);
+  beforeEach(
+    waitForAsync(() => {
+      mockAttendanceService = jasmine.createSpyObj("mockAttendanceService", [
+        "getActivitiesForChild",
+        "getAllActivityAttendancesForPeriod",
+      ]);
 
-    TestBed.configureTestingModule({
-      declarations: [RecentAttendanceBlocksComponent],
-      imports: [FilterPipeModule],
-      providers: [
-        { provide: AttendanceService, useValue: mockAttendanceService },
-      ],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        declarations: [RecentAttendanceBlocksComponent],
+        imports: [FilterPipeModule],
+        providers: [
+          { provide: AttendanceService, useValue: mockAttendanceService },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RecentAttendanceBlocksComponent);

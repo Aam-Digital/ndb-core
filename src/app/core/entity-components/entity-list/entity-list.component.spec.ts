@@ -1,8 +1,8 @@
 import {
-  async,
   ComponentFixture,
   fakeAsync,
   TestBed,
+  waitForAsync,
 } from "@angular/core/testing";
 import { EntityListComponent } from "./entity-list.component";
 import { CommonModule } from "@angular/common";
@@ -88,43 +88,45 @@ describe("EntityListComponent", () => {
     ],
   };
 
-  beforeEach(async(() => {
-    const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-    mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
-    TestBed.configureTestingModule({
-      declarations: [EntityListComponent, ExportDataComponent],
-      imports: [
-        CommonModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        MatInputModule,
-        MatExpansionModule,
-        MatTableModule,
-        MatSortModule,
-        MatSidenavModule,
-        MatButtonModule,
-        MatButtonToggleModule,
-        MatIconModule,
-        MatTooltipModule,
-        MatPaginatorModule,
-        NoopAnimationsModule,
-        FormsModule,
-        FilterPipeModule,
-        RouterTestingModule.withRoutes([
-          { path: "child", component: ChildrenListComponent },
-        ]),
-      ],
-      providers: [
-        EntityMapperService,
-        EntitySchemaService,
-        {
-          provide: SessionService,
-          useValue: mockSessionService,
-        },
-        { provide: Database, useClass: MockDatabase },
-      ],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+      mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
+      TestBed.configureTestingModule({
+        declarations: [EntityListComponent, ExportDataComponent],
+        imports: [
+          CommonModule,
+          MatFormFieldModule,
+          MatSelectModule,
+          MatInputModule,
+          MatExpansionModule,
+          MatTableModule,
+          MatSortModule,
+          MatSidenavModule,
+          MatButtonModule,
+          MatButtonToggleModule,
+          MatIconModule,
+          MatTooltipModule,
+          MatPaginatorModule,
+          NoopAnimationsModule,
+          FormsModule,
+          FilterPipeModule,
+          RouterTestingModule.withRoutes([
+            { path: "child", component: ChildrenListComponent },
+          ]),
+        ],
+        providers: [
+          EntityMapperService,
+          EntitySchemaService,
+          {
+            provide: SessionService,
+            useValue: mockSessionService,
+          },
+          { provide: Database, useClass: MockDatabase },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EntityListComponent);
@@ -289,7 +291,6 @@ describe("EntityListComponent", () => {
     const sortedIds = component.entityDataSource
       .sortData(notes, component.sort)
       .map((note) => note.getId());
-    console.log(sortedIds);
     expect(sortedIds).toEqual(["0", "3", "1", "2"]);
   });
 });

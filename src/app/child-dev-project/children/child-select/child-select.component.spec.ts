@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ChildSelectComponent } from "./child-select.component";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
@@ -33,26 +33,30 @@ describe("ChildSelectComponent", () => {
     },
   };
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [
-        ChildSelectComponent,
-        ChildBlockComponent,
-        SchoolBlockComponent,
-      ],
-      imports: [
-        MatFormFieldModule,
-        MatInputModule,
-        MatAutocompleteModule,
-        MatIconModule,
-        FormsModule,
-        CommonModule,
-        NoopAnimationsModule,
-        RouterTestingModule,
-      ],
-      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [
+          ChildSelectComponent,
+          ChildBlockComponent,
+          SchoolBlockComponent,
+        ],
+        imports: [
+          MatFormFieldModule,
+          MatInputModule,
+          MatAutocompleteModule,
+          MatIconModule,
+          FormsModule,
+          CommonModule,
+          NoopAnimationsModule,
+          RouterTestingModule,
+        ],
+        providers: [
+          { provide: ChildrenService, useValue: mockChildrenService },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ChildSelectComponent);
@@ -65,12 +69,13 @@ describe("ChildSelectComponent", () => {
   });
 
   it("should increase and shrink after selecting/un-selecting", function () {
+    component.allChildren = [new Child("1")];
     let previousLength = component.selectedChildren.length;
-    component.selectChild(new Child("1"));
+    component.selectChild(component.allChildren[0]);
     expect(component.selectedChildren.length).toBe(previousLength + 1);
 
     previousLength = component.selectedChildren.length;
-    component.unselectChild(new Child("1"));
+    component.unselectChildId("1");
     expect(component.selectedChildren.length).toBe(previousLength - 1);
   });
 });

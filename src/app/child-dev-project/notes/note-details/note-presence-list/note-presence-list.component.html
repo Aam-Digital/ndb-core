@@ -1,14 +1,17 @@
-
-<app-child-select #childSelect [valueAsIds]='entity.children'
-                  (newIdAdded)="entity.addChild($event); recordForm.form.markAsDirty()"
-                  (idRemoved)="entity.removeChild($event); recordForm.form.markAsDirty()"
-                  class='input-medium'>
+<app-child-select
+  #childSelect
+  [selectedChildrenIds]="entity.children"
+  (newIdAdded)="entity.addChild($event); recordForm.form.markAsDirty()"
+  (idRemoved)="entity.removeChild($event); recordForm.form.markAsDirty()"
+  class="input-medium"
+>
 </app-child-select>
 
-
-<app-child-meeting-note-attendance *ngFor="let childId of entity.children"
-                                   [childId]='childId'
-                                   [attendance]="entity.getAttendance(childId)"
-                                   (change)='recordForm.form.markAsDirty();'
-                                   (remove)='childSelectComponent.unselectChildId(childId)'>
+<app-child-meeting-note-attendance
+  *ngFor="let childId of entity.children"
+  [childId]="childId"
+  [attendance]="entity.getAttendance(childId)"
+  (change)="recordForm.form.markAsDirty()"
+  (remove)="childSelectComponent.unselectChildId(childId)"
+>
 </app-child-meeting-note-attendance>

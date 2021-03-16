@@ -1,15 +1,21 @@
 <div class="container" fxLayout="column">
   <div fxFlex>
-    <h1 >Record Attendance: {{stages[currentStage]}}</h1>
+    <h1>Record Attendance: {{ stages[currentStage] }}</h1>
   </div>
 
   <div fxFlex="grow" class="flex-fill-section">
-    <app-roll-call-setup *ngIf='currentStage===0'
-                        (eventSelected)="finishBasicInformationStage($event)">
+    <app-roll-call-setup
+      *ngIf="currentStage === 0"
+      (eventSelected)="finishBasicInformationStage($event)"
+    >
     </app-roll-call-setup>
 
-    <app-roll-call *ngIf='currentStage===1'
-                   [eventEntity]='event' (exit)="finishRollCallState()" (complete)="saveRollCallResult($event)">
+    <app-roll-call
+      *ngIf="currentStage === 1"
+      [eventEntity]="event"
+      (exit)="finishRollCallState()"
+      (complete)="saveRollCallResult($event)"
+    >
     </app-roll-call>
   </div>
 </div>

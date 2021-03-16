@@ -72,7 +72,7 @@ export class AppComponent implements OnInit {
         RecurringActivity
       );
     });
-    analyticsService.init();
+    this.analyticsService.init();
   }
 
   ngOnInit() {

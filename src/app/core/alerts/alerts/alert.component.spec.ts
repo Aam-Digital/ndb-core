@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AlertComponent } from "./alert.component";
 import { AlertService } from "../alert.service";
@@ -29,19 +29,21 @@ describe("AlertComponent", () => {
   let component: AlertComponent;
   let fixture: ComponentFixture<AlertComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [AlertComponent],
-      providers: [
-        AlertService,
-        {
-          provide: MAT_SNACK_BAR_DATA,
-          useValue: new Alert("test", Alert.WARNING, AlertDisplay.PERSISTENT),
-        },
-      ],
-      imports: [MatIconModule, MatButtonModule],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [AlertComponent],
+        providers: [
+          AlertService,
+          {
+            provide: MAT_SNACK_BAR_DATA,
+            useValue: new Alert("test", Alert.WARNING, AlertDisplay.PERSISTENT),
+          },
+        ],
+        imports: [MatIconModule, MatButtonModule],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AlertComponent);

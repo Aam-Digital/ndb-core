@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { AserComponent } from "./aser.component";
 import { FormsModule } from "@angular/forms";
 import { ChildrenService } from "../../children/children.service";
@@ -30,28 +30,30 @@ describe("AserComponent", () => {
     },
   };
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [AserComponent],
-      imports: [
-        FormsModule,
-        NoopAnimationsModule,
-        ConfirmationDialogModule,
-        FormDialogModule,
-        RouterTestingModule,
-        EntitySubrecordModule,
-        MatSnackBarModule,
-      ],
-      providers: [
-        DatePipe,
-        { provide: ChildrenService, useValue: mockChildrenService },
-        EntityMapperService,
-        EntitySchemaService,
-        AlertService,
-        { provide: Database, useClass: MockDatabase },
-      ],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [AserComponent],
+        imports: [
+          FormsModule,
+          NoopAnimationsModule,
+          ConfirmationDialogModule,
+          FormDialogModule,
+          RouterTestingModule,
+          EntitySubrecordModule,
+          MatSnackBarModule,
+        ],
+        providers: [
+          DatePipe,
+          { provide: ChildrenService, useValue: mockChildrenService },
+          EntityMapperService,
+          EntitySchemaService,
+          AlertService,
+          { provide: Database, useClass: MockDatabase },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AserComponent);

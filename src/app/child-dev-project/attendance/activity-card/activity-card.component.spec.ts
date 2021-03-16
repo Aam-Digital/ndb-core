@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ActivityCardComponent } from "./activity-card.component";
 import { MatCardModule } from "@angular/material/card";
@@ -11,17 +11,19 @@ describe("ActivityCardComponent", () => {
   let component: ActivityCardComponent;
   let fixture: ComponentFixture<ActivityCardComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ActivityCardComponent],
-      imports: [
-        MatCardModule,
-        MatTooltipModule,
-        NoopAnimationsModule,
-        FontAwesomeIconsModule,
-      ],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [ActivityCardComponent],
+        imports: [
+          MatCardModule,
+          MatTooltipModule,
+          NoopAnimationsModule,
+          FontAwesomeIconsModule,
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ActivityCardComponent);

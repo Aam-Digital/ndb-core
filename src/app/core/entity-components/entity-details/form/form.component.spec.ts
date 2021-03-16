@@ -1,9 +1,9 @@
 import {
-  async,
   ComponentFixture,
   fakeAsync,
   flush,
   TestBed,
+  waitForAsync,
 } from "@angular/core/testing";
 import { FormComponent } from "./form.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -38,23 +38,29 @@ describe("FormComponent", () => {
 
   const testChild = new Child("Test Name");
 
-  beforeEach(async(() => {
-    mockConfigService = jasmine.createSpyObj("mockConfigService", [
-      "getConfig",
-    ]);
-    mockEntityMapper = jasmine.createSpyObj("mockEntityMapper", ["save"]);
+  beforeEach(
+    waitForAsync(() => {
+      mockConfigService = jasmine.createSpyObj("mockConfigService", [
+        "getConfig",
+      ]);
+      mockEntityMapper = jasmine.createSpyObj("mockEntityMapper", ["save"]);
 
-    TestBed.configureTestingModule({
-      declarations: [FormComponent],
-      imports: [EntityDetailsModule, NoopAnimationsModule, RouterTestingModule],
-      providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper },
-        { provide: ChildPhotoService, useValue: mockChildPhotoService },
-        { provide: SessionService, useValue: mockSessionService },
-        { provide: ConfigService, useValue: mockConfigService },
-      ],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        declarations: [FormComponent],
+        imports: [
+          EntityDetailsModule,
+          NoopAnimationsModule,
+          RouterTestingModule,
+        ],
+        providers: [
+          { provide: EntityMapperService, useValue: mockEntityMapper },
+          { provide: ChildPhotoService, useValue: mockChildPhotoService },
+          { provide: SessionService, useValue: mockSessionService },
+          { provide: ConfigService, useValue: mockConfigService },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     testChild.name = "Test Name";

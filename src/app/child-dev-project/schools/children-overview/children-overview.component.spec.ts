@@ -1,9 +1,9 @@
 import {
-  async,
   ComponentFixture,
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 import { ChildrenOverviewComponent } from "./children-overview.component";
 import { SchoolsModule } from "../schools.module";
@@ -21,13 +21,15 @@ describe("ChildrenOverviewComponent", () => {
     ["getChildrenForSchool"]
   );
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [],
-      imports: [SchoolsModule, RouterTestingModule, NoopAnimationsModule],
-      providers: [{ provide: SchoolsService, useValue: schoolsService }],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [],
+        imports: [SchoolsModule, RouterTestingModule, NoopAnimationsModule],
+        providers: [{ provide: SchoolsService, useValue: schoolsService }],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ChildrenOverviewComponent);

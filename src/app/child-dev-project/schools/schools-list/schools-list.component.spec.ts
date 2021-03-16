@@ -1,9 +1,9 @@
 import {
-  async,
   ComponentFixture,
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 import { SchoolsListComponent } from "./schools-list.component";
 import { Database } from "../../../core/database/database";
@@ -52,24 +52,26 @@ describe("SchoolsListComponent", () => {
     queryParams: of({}),
   };
 
-  beforeEach(async(() => {
-    const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-    mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
-    TestBed.configureTestingModule({
-      declarations: [],
-      imports: [
-        SchoolsModule,
-        RouterTestingModule,
-        Angulartics2Module.forRoot(),
-        NoopAnimationsModule,
-      ],
-      providers: [
-        { provide: Database, useClass: MockDatabase },
-        { provide: SessionService, useValue: mockSessionService },
-        { provide: ActivatedRoute, useValue: routeMock },
-      ],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+      mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
+      TestBed.configureTestingModule({
+        declarations: [],
+        imports: [
+          SchoolsModule,
+          RouterTestingModule,
+          Angulartics2Module.forRoot(),
+          NoopAnimationsModule,
+        ],
+        providers: [
+          { provide: Database, useClass: MockDatabase },
+          { provide: SessionService, useValue: mockSessionService },
+          { provide: ActivatedRoute, useValue: routeMock },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SchoolsListComponent);

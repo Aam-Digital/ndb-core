@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { ActivityParticipantsSectionComponent } from "./activity-participants-section.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 
@@ -8,16 +8,18 @@ describe("ActivityParticipantsSection", () => {
 
   let mockEntityService: jasmine.SpyObj<EntityMapperService>;
 
-  beforeEach(async(() => {
-    mockEntityService = jasmine.createSpyObj("mockEntityService", ["save"]);
+  beforeEach(
+    waitForAsync(() => {
+      mockEntityService = jasmine.createSpyObj("mockEntityService", ["save"]);
 
-    TestBed.configureTestingModule({
-      declarations: [ActivityParticipantsSectionComponent],
-      providers: [
-        { provide: EntityMapperService, useValue: mockEntityService },
-      ],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        declarations: [ActivityParticipantsSectionComponent],
+        providers: [
+          { provide: EntityMapperService, useValue: mockEntityService },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ActivityParticipantsSectionComponent);
