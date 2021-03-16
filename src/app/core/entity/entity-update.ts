@@ -1,31 +1,52 @@
 import { Entity } from "./entity";
-import { OperatorFunction } from "rxjs";
-import { map } from "rxjs/operators";
-
-export type UpdateFn<T> = (what: T[]) => T[];
 
 /**
- * Returns an {@link OperatorFunction} that can be used in a rxjs-pipe
- * to map incoming data to an update-function.
- * This function takes an array of entities and returns a modified version
- * of the same array. This array contains the new element from the observable,
- * either inserted (if an element with the same ID was not seen before),
- * or a new one (if an element with the same ID was seen before and should now be updated)
- * See {@linkplain EntityMapperService.loadAll loadAll} for a use-case example
+ * Interface that conveys an updated entity as well as information
+ * on the update-type
  */
 
-export function updateEntities<T extends Entity>(): OperatorFunction<T, UpdateFn<T>> {
-  return map((next: T) => {
-    return (what: T[]) => {
-      if (next) {
-        const index = what.findIndex((value) => value.getId() === next.getId());
-        if (index !== -1) {
-          what.splice(index, 1);
-        }
-        return [next].concat(what);
-      } else {
-        return [];
+export interface UpdatedEntity<T extends Entity> {
+  /**
+   * The updated entity
+   */
+  entity: T;
+
+  /**
+   * The type of the update, either:
+   * "new" - a new entity was created,
+   * "update" - an existing entity was updated
+   * "remove" - the entity was deleted
+   */
+
+  type: "new" | "update" | "remove";
+}
+
+/**
+ * Updates a list of entities given a certain updated entity as well as a
+ * list of entities that this updated entity could be part of (in the case of
+ * an update or remove)
+ * @param next An entity that should be updated as well as the type of update
+ * @param entities The entities to update
+ * @return An array that is a copy of the given entities with the update applied
+ */
+
+export function update<T extends Entity>(
+  next: UpdatedEntity<T>,
+  entities: T[]
+) {
+  if (next) {
+    if (next.type === "new") {
+      return [next.entity].concat(entities);
+    } else {
+      const index = entities.findIndex(
+        (value) => value.getId() === next.entity.getId()
+      );
+      if (index !== -1) {
+        entities.splice(index, 1);
       }
-    };
-  });
+      return next.type === "remove" ? entities : [next.entity].concat(entities);
+    }
+  } else {
+    return entities;
+  }
 }

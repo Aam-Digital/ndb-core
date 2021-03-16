@@ -12,7 +12,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 import { map } from "rxjs/operators";
-import { updateEntities } from "../../../core/entity/entity-update";
+import { update } from "../../../core/entity/entity-update";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 
 @UntilDestroy()
@@ -81,20 +81,28 @@ export class NotesManagerComponent implements OnInit {
       this.config = config;
       this.addPrebuiltFilters();
     });
+    this.entityMapperService.loadType<Note>(Note).then((notes) => {
+      for (const note of notes) {
+        if (note) {
+          note["color"] = this.getColor(note);
+          this.notes = [note].concat(this.notes);
+        }
+      }
+    });
+
     this.entityMapperService
-      .loadAll<Note>(Note)
+      .receiveUpdates<Note>(Note)
       .pipe(
         untilDestroyed(this),
         map((note) => {
           if (note) {
-            note["color"] = this.getColor(note);
+            note["color"] = this.getColor(note.entity);
           }
           return note;
-        }),
-        updateEntities()
+        })
       )
-      .subscribe((update) => {
-        this.notes = update(this.notes);
+      .subscribe((updatedNote) => {
+        this.notes = update(updatedNote, this.notes);
       });
   }
 

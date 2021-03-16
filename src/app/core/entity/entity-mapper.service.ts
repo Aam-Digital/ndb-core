@@ -20,6 +20,7 @@ import { Database } from "../database/database";
 import { Entity, EntityConstructor } from "./entity";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { BehaviorSubject, Observable } from "rxjs";
+import { UpdatedEntity } from "./entity-update";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -83,63 +84,26 @@ export class EntityMapperService {
   }
 
   /**
-   * returns a publisher (which is a {@link BehaviorSubject}) for a certain
-   * entityType. If this publisher didn't exist previously or this publisher existed
-   * but was unsubscribed from, this method will create a new publisher and add it
-   * to the list of publishers for this entity-type
-   * @param entityType The entity-type to get the publisher for
-   * @private
+   * subscribe to this observable to receive updates whenever the state of
+   * an entity of a certain type changes.
+   * The updated-parameter will return the new entity as well as a field that
+   * describes the type of update (either "new", "update" or "remove").
+   * <br>
+   * This can be used in collaboration with the update(UpdatedEntity, Entities)-function
+   * to update a list of entities
+   * @param entityType the type of the entity
    */
 
-  private getPublisherFor<T extends Entity>(
-    entityType: string
-  ): BehaviorSubject<any> {
-    let publisher = this.publishers[entityType];
+  public receiveUpdates<T extends Entity>(
+    entityType: EntityConstructor<T>
+  ): Observable<UpdatedEntity<T>> {
+    const type = new entityType().getType();
+    let publisher = this.publishers[type];
+    // subject doesn't exist yet or is closed
     if (!publisher || publisher.closed) {
       publisher = new BehaviorSubject<T>(null);
-      this.publishers[entityType] = publisher;
+      this.publishers[type] = publisher;
     }
-    return publisher;
-  }
-
-  /**
-   * Load all entities of a certain type and further on receive updates
-   * when the state of all entities are changing.
-   * These updates are either new entities that have been added or
-   * entities that have been updated.
-   * This can be used in conjunction with {@link updateEntities} to
-   * make sure new entities are added and existing ones are updated.
-   * The updates are published and can be received via the returning observable.
-   * The subscription must be unsubscribed if no more entities should be received.
-   *
-   * ##Example:
-   * Receive new notes and add them to a model to be displayed
-   * in a table
-   * ```ts
-   * ngOnInit() {
-   *   this.subscription = entityMapper
-   *     .loadAll<Note>(Note)
-   *     .pipe(updateEntities())
-   *     .subscripe((update) => {
-   *       this.notes = update(this.notes);
-   *     })
-   * }
-   * ```
-   * @param entityCtor
-   */
-
-  public loadAll<T extends Entity>(
-    entityCtor: EntityConstructor<T>
-  ): Observable<T> {
-    const entityType = new entityCtor("").getType();
-    const publisher = this.getPublisherFor<T>(entityType);
-    this._db.getAll(entityType + ":").then((result) => {
-      for (const record of result) {
-        const entity = new entityCtor("");
-        this.entitySchemaService.loadDataIntoEntity(entity, record);
-        publisher.next(entity);
-      }
-    });
     return publisher.asObservable();
   }
 
@@ -153,13 +117,10 @@ export class EntityMapperService {
     entity: T,
     forceUpdate: boolean = false
   ): Promise<any> {
-    const publisher = this.publishers[entity.getType()];
-    if (publisher && !publisher.closed) {
-      publisher.next(entity);
-    }
     const rawData = this.entitySchemaService.transformEntityToDatabaseFormat(
       entity
     );
+    this.sendUpdate(entity, entity._rev === undefined ? "new" : "remove");
     const result = await this._db.put(rawData, forceUpdate);
     if (result?.ok) {
       entity._rev = result.rev;
@@ -172,6 +133,25 @@ export class EntityMapperService {
    * @param entity The entity to be deleted
    */
   public remove<T extends Entity>(entity: T): Promise<any> {
+    this.sendUpdate(entity, "delete");
     return this._db.remove(entity);
+  }
+
+  /**
+   * publishes a new entity update to all subscribing listeners
+   *
+   * @param entity The entity to update
+   * @param type The type, see {@link UpdatedEntity#type}
+   * @private
+   */
+
+  private sendUpdate<T extends Entity>(
+    entity: T,
+    type: "delete" | "new" | "remove"
+  ) {
+    const publisher = this.publishers[entity.getType()];
+    if (publisher && !publisher.closed) {
+      publisher.next({ entity: entity, type: type });
+    }
   }
 }
