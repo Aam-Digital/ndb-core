@@ -15,8 +15,6 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from "@angular/core";
-
 import { LoginState } from "../session-states/login-state.enum";
 import { Database } from "../../database/database";
 import { ConnectionState } from "../session-states/connection-state.enum";
@@ -31,13 +29,12 @@ import { StateHandler } from "../session-states/state-handler";
  *
  * The SessionService also sets up and provides the Database.
  * To access the database in other classes
- * you should use rather inject the `Database` or the `EntityMapperService` directly, however.
+ * you should rather inject the `Database` or the `EntityMapperService` directly and not the SessionService, however.
  *
  * This SessionService is the abstract base class for the concrete implementations like SyncedSessionService.
- * You should still use `SessionService` as the dependency injection key to get access to the functionality,
- * providers are set up in a way that you will get the correct implementation during runtime.
+ * You should still use `SessionService` as the dependency injection key to get access to the functionality.
+ * Providers are set up in a way that you will get the correct implementation during runtime.
  */
-@Injectable()
 export abstract class SessionService {
   /**
    * Authenticate a user.

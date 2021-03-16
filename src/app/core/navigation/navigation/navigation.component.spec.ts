@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { NavigationComponent } from "./navigation.component";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -40,26 +40,28 @@ describe("NavigationComponent", () => {
   let mockConfigService: jasmine.SpyObj<ConfigService>;
   const mockConfigUpdated = new BehaviorSubject<Config>(null);
 
-  beforeEach(async(() => {
-    mockConfigService = jasmine.createSpyObj(["getConfig"]);
-    mockConfigService.getConfig.and.returnValue({ items: [] });
-    mockConfigService.configUpdated = mockConfigUpdated;
-    sessionService = new MockSessionService(new EntitySchemaService());
+  beforeEach(
+    waitForAsync(() => {
+      mockConfigService = jasmine.createSpyObj(["getConfig"]);
+      mockConfigService.getConfig.and.returnValue({ items: [] });
+      mockConfigService.configUpdated = mockConfigUpdated;
+      sessionService = new MockSessionService(new EntitySchemaService());
 
-    TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule,
-        MatIconModule,
-        MatDividerModule,
-        MatListModule,
-      ],
-      declarations: [NavigationComponent],
-      providers: [
-        { provide: SessionService, useValue: sessionService },
-        { provide: ConfigService, useValue: mockConfigService },
-      ],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        imports: [
+          RouterTestingModule,
+          MatIconModule,
+          MatDividerModule,
+          MatListModule,
+        ],
+        declarations: [NavigationComponent],
+        providers: [
+          { provide: SessionService, useValue: sessionService },
+          { provide: ConfigService, useValue: mockConfigService },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(NavigationComponent);

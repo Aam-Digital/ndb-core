@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { FormDialogWrapperComponent } from "./form-dialog-wrapper.component";
 import { FormDialogModule } from "../form-dialog.module";
@@ -12,18 +12,22 @@ describe("FormDialogWrapperComponent", () => {
 
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
-  beforeEach(async(() => {
-    mockEntityMapper = jasmine.createSpyObj("mockEntityMapper", ["save"]);
+  beforeEach(
+    waitForAsync(() => {
+      mockEntityMapper = jasmine.createSpyObj("mockEntityMapper", ["save"]);
 
-    TestBed.configureTestingModule({
-      imports: [
-        FormDialogModule,
-        Angulartics2Module.forRoot(),
-        RouterTestingModule,
-      ],
-      providers: [{ provide: EntityMapperService, useValue: mockEntityMapper }],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        imports: [
+          FormDialogModule,
+          Angulartics2Module.forRoot(),
+          RouterTestingModule,
+        ],
+        providers: [
+          { provide: EntityMapperService, useValue: mockEntityMapper },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(FormDialogWrapperComponent);

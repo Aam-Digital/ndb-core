@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { async, TestBed } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 import { SessionService } from "../core/session/session-service/session.service";
 import { AppConfig } from "../core/app-config/app-config";
 import { AppModule } from "../app.module";
@@ -42,22 +42,24 @@ customLaunchers:{
 },
  */
 xdescribe("Performance Tests", () => {
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [AppModule],
-    }).compileComponents();
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        imports: [AppModule],
+      }).compileComponents();
 
-    AppConfig.settings = {
-      database: {
-        name: "app",
-        remote_url: TEST_REMOTE_DATABASE_URL,
-        timeout: 60000,
-        useTemporaryDatabase: false,
-      },
-    } as any;
+      AppConfig.settings = {
+        database: {
+          name: "app",
+          remote_url: TEST_REMOTE_DATABASE_URL,
+          timeout: 60000,
+          useTemporaryDatabase: false,
+        },
+      } as any;
 
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 150000;
-  }));
+      jasmine.DEFAULT_TIMEOUT_INTERVAL = 150000;
+    })
+  );
 
   it("sync initial and indexing", async () => {
     // delete previously synced database; uncomment this to start with a clean state and test an initial sync.
@@ -117,7 +119,7 @@ class Timer {
  * Delete all indexedDB databases in the browser matching the given filter.
  * @param filterFun Filter function taking a database name and returning true if this should be deleted.
  */
-async function deleteAllIndexedDB(
+export async function deleteAllIndexedDB(
   filterFun: (dbName: string) => boolean
 ): Promise<void> {
   // @ts-ignore

@@ -1,13 +1,14 @@
 <h1>Attendance Register</h1>
 
 <p class="general-description">
-  Attendance data can be seen and edited in an individual's details as well as here across groups.
+  Attendance data can be seen and edited in an individual's details as well as
+  here across groups.
 </p>
 
 <div fxLayout="row wrap">
   <mat-card fxFlex>
     <mat-card-header>
-      <mat-card-title>Roll Call</mat-card-title>
+      <mat-card-title>Record Attendance</mat-card-title>
       <mat-card-subtitle>add a day's attendance</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
@@ -15,13 +16,12 @@
       This works well on a smartphone to record attendance on site.
     </mat-card-content>
     <mat-card-actions>
-      <button routerLink="/attendance/add/day"
-              angulartics2On="click"
-              angularticsCategory="Navigation"
-              angularticsAction="attendance_manager_add_a_day_attendance_link"
-              class="action-button"
-              mat-stroked-button>
-        Do Roll Call
+      <button
+        routerLink="/attendance/add/day"
+        class="action-button"
+        mat-stroked-button
+      >
+        Record an event's attendance
       </button>
     </mat-card-actions>
   </mat-card>
@@ -32,17 +32,17 @@
       <mat-card-subtitle>add a month's attendance</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      Enter attendance numbers for a whole month in a table format for a group of children.
-      This allows you to quickly record attendance that was collected on paper.
-      However, as you only enter a monthly total for each child you cannot see attendance in the day-wise calender.
+      Enter attendance numbers for a whole month in a table format for a group
+      of children. This allows you to quickly record attendance that was
+      collected on paper. However, as you only enter a monthly total for each
+      child you cannot see attendance in the day-wise calender.
     </mat-card-content>
     <mat-card-actions>
-      <button routerLink="/attendance/add/month"
-              angulartics2On="click"
-              angularticsCategory="Navigation"
-              angularticsAction="attendance_manager_add_a_month_attendance_link"
-              class="action-button"
-              mat-stroked-button>
+      <button
+        routerLink="/coming-soon/monthly-attendance"
+        class="action-button"
+        mat-stroked-button
+      >
         Enter Attendance
       </button>
     </mat-card-actions>
@@ -54,13 +54,15 @@
       <mat-card-subtitle>calculate summaries and averages</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      Analyse and compare attendance for all children.
-      To see an individual's attendance history you can open the child's overall details page.
+      Analyse and compare attendance for all children. To see an individual's
+      attendance history you can open the child's overall details page.
     </mat-card-content>
     <mat-card-actions>
-      <button routerLink="/attendance/analysis"
-              class="action-button"
-              mat-stroked-button>
+      <button
+        routerLink="/coming-soon/attendance-analysis"
+        class="action-button"
+        mat-stroked-button
+      >
         Analyse Attendance
       </button>
     </mat-card-actions>

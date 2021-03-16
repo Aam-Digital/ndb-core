@@ -1,38 +1,40 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ComingSoonComponent } from "./coming-soon.component";
-import { Angulartics2 } from "angulartics2";
-import { BehaviorSubject, Subject } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { AlertService } from "../../alerts/alert.service";
 import { ActivatedRoute, convertToParamMap } from "@angular/router";
+import { AnalyticsService } from "../../analytics/analytics.service";
 
 describe("ComingSoonComponent", () => {
   let component: ComingSoonComponent;
   let fixture: ComponentFixture<ComingSoonComponent>;
 
   const testFeatureId = "test-feature";
-  let mockAngulartics;
+  let mockAnalytics;
   let mockActivatedRoute;
 
-  beforeEach(async(() => {
-    mockAngulartics = { eventTrack: new Subject() };
-    mockActivatedRoute = {
-      paramMap: new BehaviorSubject(
-        convertToParamMap({
-          feature: testFeatureId,
-        })
-      ),
-    };
+  beforeEach(
+    waitForAsync(() => {
+      mockAnalytics = jasmine.createSpyObj("mockAnalytics", ["eventTrack"]);
+      mockActivatedRoute = {
+        paramMap: new BehaviorSubject(
+          convertToParamMap({
+            feature: testFeatureId,
+          })
+        ),
+      };
 
-    TestBed.configureTestingModule({
-      declarations: [ComingSoonComponent],
-      providers: [
-        { provide: Angulartics2, useValue: mockAngulartics },
-        { provide: AlertService, useValue: { addInfo: () => {} } },
-        { provide: ActivatedRoute, useValue: mockActivatedRoute },
-      ],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        declarations: [ComingSoonComponent],
+        providers: [
+          { provide: AnalyticsService, useValue: mockAnalytics },
+          { provide: AlertService, useValue: { addInfo: () => {} } },
+          { provide: ActivatedRoute, useValue: mockActivatedRoute },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ComingSoonComponent);
@@ -42,7 +44,6 @@ describe("ComingSoonComponent", () => {
 
   it("should create and report", () => {
     component.featureId = testFeatureId;
-    spyOn(mockAngulartics.eventTrack, "next");
 
     mockActivatedRoute.paramMap.next(
       convertToParamMap({
@@ -51,27 +52,20 @@ describe("ComingSoonComponent", () => {
     );
 
     expect(component).toBeTruthy();
-    expect(mockAngulartics.eventTrack.next).toHaveBeenCalledWith({
-      action: "visit",
-      properties: {
-        category: "feature_request",
-        label: testFeatureId,
-      },
+    expect(mockAnalytics.eventTrack).toHaveBeenCalledWith("visit", {
+      category: "feature_request",
+      label: testFeatureId,
     });
   });
 
   it("should report on click and lock button", () => {
     component.featureId = testFeatureId;
-    spyOn(mockAngulartics.eventTrack, "next");
 
     component.reportFeatureRequest();
 
-    expect(mockAngulartics.eventTrack.next).toHaveBeenCalledWith({
-      action: "request",
-      properties: {
-        category: "feature_request",
-        label: testFeatureId,
-      },
+    expect(mockAnalytics.eventTrack).toHaveBeenCalledWith("request", {
+      category: "feature_request",
+      label: testFeatureId,
     });
     expect(component.requested).toBeTrue();
   });

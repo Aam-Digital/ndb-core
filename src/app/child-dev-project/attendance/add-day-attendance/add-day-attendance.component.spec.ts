@@ -1,32 +1,55 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AddDayAttendanceComponent } from "./add-day-attendance.component";
-import { ChildrenService } from "../../children/children.service";
-import { Database } from "../../../core/database/database";
-import { MockDatabase } from "../../../core/database/mock-database";
-import { ChildrenModule } from "../../children/children.module";
-import { SchoolsModule } from "../../schools/schools.module";
-import { MatNativeDateModule } from "@angular/material/core";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { Note } from "../../notes/model/note";
+import { AttendanceModule } from "../attendance.module";
 import { RouterTestingModule } from "@angular/router/testing";
+import { ChildrenService } from "../../children/children.service";
+import { of } from "rxjs";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { User } from "../../../core/user/user";
+import { MatNativeDateModule } from "@angular/material/core";
+import { AttendanceService } from "../attendance.service";
 
 describe("AddDayAttendanceComponent", () => {
   let component: AddDayAttendanceComponent;
   let fixture: ComponentFixture<AddDayAttendanceComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [
-        ChildrenModule,
-        SchoolsModule,
-        MatNativeDateModule,
-        RouterTestingModule,
-      ],
-      providers: [
-        ChildrenService,
-        { provide: Database, useClass: MockDatabase },
-      ],
-    }).compileComponents();
-  }));
+  let mockEntityService: jasmine.SpyObj<EntityMapperService>;
+  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+
+  beforeEach(
+    waitForAsync(() => {
+      mockEntityService = jasmine.createSpyObj("mockEntityService", [
+        "save",
+        "loadType",
+      ]);
+      mockEntityService.save.and.resolveTo();
+      mockEntityService.loadType.and.resolveTo([]);
+
+      mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
+        "getChildren",
+      ]);
+      mockChildrenService.getChildren.and.returnValue(of([]));
+
+      TestBed.configureTestingModule({
+        imports: [AttendanceModule, RouterTestingModule, MatNativeDateModule],
+        providers: [
+          { provide: EntityMapperService, useValue: mockEntityService },
+          { provide: ChildrenService, useValue: mockChildrenService },
+          {
+            provide: SessionService,
+            useValue: { getCurrentUser: () => new User("") },
+          },
+          {
+            provide: AttendanceService,
+            useValue: { getEventsOnDate: () => Promise.resolve([]) },
+          },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AddDayAttendanceComponent);
@@ -36,5 +59,13 @@ describe("AddDayAttendanceComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should save event to db after finishing roll call", () => {
+    component.event = Note.create(new Date());
+
+    component.saveRollCallResult(component.event);
+
+    expect(mockEntityService.save).toHaveBeenCalledWith(component.event);
   });
 });

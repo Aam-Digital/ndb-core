@@ -15,11 +15,12 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component } from "@angular/core";
+import { Component, Optional } from "@angular/core";
 import { SyncState } from "../session-states/sync-state.enum";
 import { SessionService } from "../session-service/session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { ConnectionState } from "../session-states/connection-state.enum";
+import { ActivatedRoute, Router } from "@angular/router";
 
 /**
  * Form to allow users to enter their credentials and log in.
@@ -42,7 +43,11 @@ export class LoginComponent {
   /** errorMessage displayed in form */
   errorMessage: string;
 
-  constructor(private _sessionService: SessionService) {}
+  constructor(
+    private _sessionService: SessionService,
+    @Optional() private router: Router,
+    @Optional() private route: ActivatedRoute
+  ) {}
 
   /**
    * Do a login with the SessionService.
@@ -87,6 +92,12 @@ export class LoginComponent {
   }
 
   private onLoginSuccess() {
+    // New routes are added at runtime,
+    if (this.router && this.route) {
+      this.router.navigate([], {
+        relativeTo: this.route,
+      });
+    }
     this.reset();
     // login component is automatically hidden based on _sessionService.isLoggedIn()
   }

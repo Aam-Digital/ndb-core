@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { SelectGroupChildrenComponent } from "./select-group-children.component";
 import { ChildrenService } from "../children.service";
 import { BehaviorSubject } from "rxjs";
@@ -13,16 +13,20 @@ describe("SelectGroupChildrenComponent", () => {
   let mockChildrenService;
   const mockChildrenObservable = new BehaviorSubject([]);
 
-  beforeEach(async(() => {
-    mockChildrenService = jasmine.createSpyObj(["getChildren"]);
-    mockChildrenService.getChildren.and.returnValue(mockChildrenObservable);
+  beforeEach(
+    waitForAsync(() => {
+      mockChildrenService = jasmine.createSpyObj(["getChildren"]);
+      mockChildrenService.getChildren.and.returnValue(mockChildrenObservable);
 
-    TestBed.configureTestingModule({
-      declarations: [SelectGroupChildrenComponent],
-      imports: [ChildrenModule, RouterTestingModule],
-      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        declarations: [SelectGroupChildrenComponent],
+        imports: [ChildrenModule, RouterTestingModule],
+        providers: [
+          { provide: ChildrenService, useValue: mockChildrenService },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SelectGroupChildrenComponent);
@@ -36,8 +40,8 @@ describe("SelectGroupChildrenComponent", () => {
 
   it("should extract all centers", () => {
     const mockChildren = [new Child("0"), new Child("1")];
-    mockChildren[0].center = "Center A";
-    mockChildren[1].center = "Center B";
+    mockChildren[0].center = { id: "a", label: "Center A" };
+    mockChildren[1].center = { id: "b", label: "Center B" };
 
     mockChildrenObservable.next(mockChildren);
 
@@ -45,7 +49,7 @@ describe("SelectGroupChildrenComponent", () => {
   });
 
   it("should extract all schools of selected center", () => {
-    const selectedCenter = "Center A";
+    const selectedCenter = { id: "a", label: "Center A" };
     const mockChildren = [
       new Child("0"),
       new Child("1"),
@@ -56,13 +60,15 @@ describe("SelectGroupChildrenComponent", () => {
     mockChildren[0].schoolId = "School:1";
     mockChildren[1].center = selectedCenter;
     mockChildren[1].schoolId = "School:2";
-    mockChildren[3].center = "other center";
+    mockChildren[3].center = { id: "c", label: "other center" };
     mockChildren[3].schoolId = "School:3";
 
     mockChildrenObservable.next(mockChildren);
 
     component.selectCenterFilter(
-      component.centerFilters.options.find((o) => o.label === selectedCenter)
+      component.centerFilters.options.find(
+        (o) => o.label === selectedCenter.label
+      )
     );
 
     expect(component.schoolFilters.options.length).toBe(3); // includes default option "all schools"
@@ -71,7 +77,7 @@ describe("SelectGroupChildrenComponent", () => {
   });
 
   it("should not list empty filter for undefined schools", () => {
-    const selectedCenter = "Center A";
+    const selectedCenter = { id: "a", label: "Center A" };
     const mockChildren = [new Child("0"), new Child("1")];
     mockChildren[0].center = selectedCenter;
     mockChildren[0].schoolId = "School:1";
@@ -81,7 +87,9 @@ describe("SelectGroupChildrenComponent", () => {
     mockChildrenObservable.next(mockChildren);
 
     component.selectCenterFilter(
-      component.centerFilters.options.find((o) => o.label === selectedCenter)
+      component.centerFilters.options.find(
+        (o) => o.label === selectedCenter.label
+      )
     );
 
     expect(component.schoolFilters.options.length).toBe(2); // includes default option "all schools"
@@ -89,7 +97,7 @@ describe("SelectGroupChildrenComponent", () => {
   });
 
   it("should emit selected children correctly filtered by center and school", () => {
-    const selectedCenter = "Center A";
+    const selectedCenter = { id: "a", label: "Center A" };
     const selectedSchool = "School:1";
 
     const mockChildren = [new Child("0"), new Child("1"), new Child("2")];
@@ -97,7 +105,7 @@ describe("SelectGroupChildrenComponent", () => {
     mockChildren[0].schoolId = selectedSchool;
     mockChildren[1].center = selectedCenter;
     // mockChildren[1].schoolId is not set
-    mockChildren[2].center = "other center";
+    mockChildren[2].center = { id: "c", label: "other center" };
     mockChildren[2].schoolId = selectedSchool;
 
     mockChildrenObservable.next(mockChildren);
@@ -105,7 +113,9 @@ describe("SelectGroupChildrenComponent", () => {
     spyOn(component.valueChange, "emit");
 
     component.selectCenterFilter(
-      component.centerFilters.options.find((o) => o.label === selectedCenter)
+      component.centerFilters.options.find(
+        (o) => o.label === selectedCenter.label
+      )
     );
     component.selectSchoolFilter(
       component.schoolFilters.options.find((o) => o.key === selectedSchool)
@@ -116,14 +126,14 @@ describe("SelectGroupChildrenComponent", () => {
   });
 
   it("should emit all children of center for default filter", () => {
-    const selectedCenter = "Center A";
+    const selectedCenter = { id: "a", label: "Center A" };
 
     const mockChildren = [new Child("0"), new Child("1"), new Child("2")];
     mockChildren[0].center = selectedCenter;
     mockChildren[0].schoolId = "School:1";
     mockChildren[1].center = selectedCenter;
     // mockChildren[1].schoolId is not set
-    mockChildren[2].center = "other center";
+    mockChildren[2].center = { id: "c", label: "other center" };
     mockChildren[2].schoolId = "School:1";
 
     mockChildrenObservable.next(mockChildren);
@@ -131,7 +141,9 @@ describe("SelectGroupChildrenComponent", () => {
     spyOn(component.valueChange, "emit");
 
     component.selectCenterFilter(
-      component.centerFilters.options.find((o) => o.label === selectedCenter)
+      component.centerFilters.options.find(
+        (o) => o.label === selectedCenter.label
+      )
     );
     component.selectSchoolFilter(
       component.schoolFilters.options.find((o) => o.key === "all")

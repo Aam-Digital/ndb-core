@@ -108,7 +108,7 @@ describe("ChildPhotoService", () => {
     const childId = "1";
     const testImg = { name: "test.png", data: "test-img-data" };
     mockCloudFileService.isConnected.and.returnValue(true);
-    mockCloudFileService.uploadFile.and.returnValue(Promise.resolve());
+    mockCloudFileService.uploadFile.and.returnValue(Promise.resolve(true));
 
     await expectAsync(service.setImage(testImg, childId)).toBeResolved();
     expect(mockCloudFileService.uploadFile).toHaveBeenCalledWith(

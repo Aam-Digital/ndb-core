@@ -129,11 +129,12 @@ export class EntitySubrecordComponent<T extends Entity>
     private datePipe: DatePipe,
     private media: MediaObserver
   ) {
-    this.media.media$
+    this.media
+      .asObservable()
       .pipe(untilDestroyed(this))
-      .subscribe((change: MediaChange) => {
-        if (change.mqAlias !== this.screenWidth) {
-          this.screenWidth = change.mqAlias;
+      .subscribe((change: MediaChange[]) => {
+        if (change[0].mqAlias !== this.screenWidth) {
+          this.screenWidth = change[0].mqAlias;
           this.setupTable();
         }
       });
@@ -425,7 +426,18 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 }
 
+/**
+ * Settings for the popup details view of a EntitySubrecordComponent.
+ */
 export interface ComponentWithConfig<T extends Entity> {
+  /**
+   * The component to be used for displaying a single Entity instance's details.
+   */
   component: ComponentType<ShowsEntity<T>>;
+
+  /**
+   * Optionally include an object to pass any values into the component,
+   * which has to implement the OnInitDynamicComponent interface to receive this config.
+   */
   componentConfig?: any;
 }

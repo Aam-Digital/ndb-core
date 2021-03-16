@@ -19,6 +19,7 @@ import { ViewModule } from "../../view/view.module";
 import { EntityModule } from "../../entity/entity.module";
 import { AlertsModule } from "../../alerts/alerts.module";
 import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
+import { PermissionsModule } from "../../permissions/permissions.module";
 
 @NgModule({
   declarations: [EntityDetailsComponent, FormComponent],
@@ -41,6 +42,7 @@ import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enu
     EntityModule,
     AlertsModule,
     ConfigurableEnumModule,
+    PermissionsModule,
   ],
 })
 export class EntityDetailsModule {}

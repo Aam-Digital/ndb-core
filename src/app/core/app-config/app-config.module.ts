@@ -50,6 +50,6 @@ export class AppConfigModule {}
  *
  * @param appConfig The AppConfig service (through dependency injection)
  */
-export function initializeAppConfig(appConfig: AppConfig) {
+export function initializeAppConfig(appConfig: AppConfig): () => Promise<void> {
   return () => appConfig.load();
 }

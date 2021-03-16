@@ -39,11 +39,13 @@ import {
   ConfigurableEnumConfig,
 } from "../../configurable-enum/configurable-enum.interface";
 import { LoggingService } from "../../logging/logging.service";
+import { OperationType } from "../../permissions/entity-permissions.service";
 
 interface FilterComponentSettings<T> {
   filterSettings: FilterSelection<T>;
   selectedOption?: string;
   display?: string;
+  label?: string;
 }
 
 /**
@@ -62,6 +64,7 @@ export class EntityListComponent<T extends Entity>
   implements OnChanges, OnInit, AfterViewInit {
   @Input() entityList: T[] = [];
   @Input() listConfig: EntityListConfig;
+  @Input() entityConstructor: typeof Entity;
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
 
@@ -74,6 +77,8 @@ export class EntityListComponent<T extends Entity>
   defaultColumnGroup = "";
   mobileColumnGroup = "";
   filtersConfig: FilterConfig[] = [];
+
+  operationType = OperationType;
 
   ready = true;
   columnsToDisplay: string[] = [];
@@ -148,6 +153,22 @@ export class EntityListComponent<T extends Entity>
   ngAfterViewInit() {
     this.entityDataSource.sort = this.sort;
     this.entityDataSource.paginator = this.paginator;
+    // sort data according to it's label, if the data has a label
+    // (which it has when using configuration enum types)
+    // otherwise sort by default
+    this.entityDataSource.sortingDataAccessor = (
+      data: T,
+      sortingHeader: string
+    ) => {
+      if (
+        typeof data[sortingHeader] === "object" &&
+        "label" in data[sortingHeader]
+      ) {
+        return data[sortingHeader].label;
+      } else {
+        return data[sortingHeader];
+      }
+    };
     setTimeout(() => {
       this.paginator.pageIndex = this.paginatorPageIndex;
       this.paginator.page.next({
@@ -261,7 +282,7 @@ export class EntityListComponent<T extends Entity>
 
     for (const filter of this.filtersConfig) {
       const fs: FilterComponentSettings<T> = {
-        filterSettings: new FilterSelection(filter.id, []),
+        filterSettings: new FilterSelection(filter.id, [], filter.label),
         display: filter.display,
       };
       fs.filterSettings.options = this.initFilterOptions(filter);

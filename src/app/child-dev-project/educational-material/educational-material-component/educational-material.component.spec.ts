@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EducationalMaterialComponent } from "./educational-material.component";
 import { FormsModule } from "@angular/forms";
@@ -26,20 +26,22 @@ describe("EducationalMaterialComponent", () => {
     },
   };
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [EducationalMaterialComponent],
-      imports: [FormsModule, NoopAnimationsModule],
-      providers: [
-        DatePipe,
-        { provide: ChildrenService, useValue: mockChildrenService },
-        EntityMapperService,
-        EntitySchemaService,
-        { provide: Database, useClass: MockDatabase },
-        AlertService,
-      ],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [EducationalMaterialComponent],
+        imports: [FormsModule, NoopAnimationsModule],
+        providers: [
+          DatePipe,
+          { provide: ChildrenService, useValue: mockChildrenService },
+          EntityMapperService,
+          EntitySchemaService,
+          { provide: Database, useClass: MockDatabase },
+          AlertService,
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EducationalMaterialComponent);

@@ -15,7 +15,11 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<app-form-dialog-wrapper #dialogForm [entity]="entity" (onClose)="closeDialog($event)">
+<app-form-dialog-wrapper
+  #dialogForm
+  [entity]="entity"
+  (onClose)="closeDialog($event)"
+>
   <h1>{{ entity.date?.toLocaleDateString() }}: {{ entity.subject }}</h1>
 
   <form #entityForm="ngForm">
@@ -41,9 +45,7 @@
 
         <div fxFlex>
           <mat-form-field>
-            <mat-label>
-              Status
-            </mat-label>
+            <mat-label> Status </mat-label>
             <mat-select name="followup" [(ngModel)]="entity.warningLevel">
               <mat-option value="OK">Solved</mat-option>
               <mat-option value="WARNING">Needs Follow-Up</mat-option>
@@ -61,7 +63,9 @@
               [(ngModel)]="entity.category"
             >
               <mat-option
-                *appConfigurableEnum="let interaction of INTERACTION_TYPE_CONFIG"
+                *appConfigurableEnum="
+                  let interaction of INTERACTION_TYPE_CONFIG
+                "
                 [value]="interaction"
               >
                 {{ interaction.label }}
@@ -115,9 +119,9 @@
     </div>
 
     <div fxLayout="row wrap" fxLayoutGap="20px">
-      <div fxFlex *ngIf="!(entity.category.isMeeting)">
+      <div fxFlex *ngIf="!entity.category.isMeeting">
         <app-child-select
-          [valueAsIds]="entity.children"
+          [selectedChildrenIds]="entity.children"
           (newIdAdded)="entity.addChild($event); entityForm.form.markAsDirty()"
           (idRemoved)="
             entity.removeChild($event); entityForm.form.markAsDirty()

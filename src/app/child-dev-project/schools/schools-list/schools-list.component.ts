@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
+import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { Subscription } from "rxjs";
 import { updateEntities } from "../../../core/entity/entity-update";
 
@@ -14,6 +15,7 @@ import { updateEntities } from "../../../core/entity/entity-update";
     <app-entity-list
       [entityList]="schoolList"
       [listConfig]="listConfig"
+      [entityConstructor]="schoolConstructor"
       (elementClick)="routeTo($event.getId())"
       (addNewClick)="routeTo('new')"
       #entityList
@@ -23,7 +25,8 @@ import { updateEntities } from "../../../core/entity/entity-update";
 export class SchoolsListComponent implements OnInit, OnDestroy {
   @ViewChild("entityList") entityList: EntityListComponent<School>;
   schoolList: School[] = [];
-  listConfig: any = {};
+  listConfig: EntityListConfig;
+  schoolConstructor = School;
   private subscription: Subscription;
 
   constructor(
@@ -33,7 +36,9 @@ export class SchoolsListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.route.data.subscribe((config) => (this.listConfig = config));
+    this.route.data.subscribe(
+      (config: EntityListConfig) => (this.listConfig = config)
+    );
     this.subscription = this.entityMapper
       .loadAll<School>(School)
       .pipe(updateEntities())

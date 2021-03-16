@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { UserListComponent } from "./user-list.component";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
@@ -14,26 +14,28 @@ describe("UserListComponent", () => {
   let mockSessionService: jasmine.SpyObj<SessionService>;
   let testUsers: User[];
 
-  beforeEach(async(() => {
-    testUsers = [new User("1"), new User("2")];
-    mockEntityMapper = jasmine.createSpyObj("mockEntityMapper", [
-      "loadType",
-      "save",
-    ]);
-    mockEntityMapper.loadType.and.returnValue(Promise.resolve(testUsers));
+  beforeEach(
+    waitForAsync(() => {
+      testUsers = [new User("1"), new User("2")];
+      mockEntityMapper = jasmine.createSpyObj("mockEntityMapper", [
+        "loadType",
+        "save",
+      ]);
+      mockEntityMapper.loadType.and.returnValue(Promise.resolve(testUsers));
 
-    mockSessionService = jasmine.createSpyObj("mockSessionService", [
-      "getCurrentUser",
-    ]);
+      mockSessionService = jasmine.createSpyObj("mockSessionService", [
+        "getCurrentUser",
+      ]);
 
-    TestBed.configureTestingModule({
-      imports: [AdminModule],
-      providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper },
-        { provide: SessionService, useValue: mockSessionService },
-      ],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        imports: [AdminModule],
+        providers: [
+          { provide: EntityMapperService, useValue: mockEntityMapper },
+          { provide: SessionService, useValue: mockSessionService },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(UserListComponent);

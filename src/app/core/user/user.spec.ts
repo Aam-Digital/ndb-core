@@ -16,7 +16,7 @@
  */
 
 import { User } from "./user";
-import { async } from "@angular/core/testing";
+import { waitForAsync } from "@angular/core/testing";
 import { Entity } from "../entity/entity";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 
@@ -24,9 +24,11 @@ describe("User", () => {
   const ENTITY_TYPE = "User";
   let entitySchemaService: EntitySchemaService;
 
-  beforeEach(async(() => {
-    entitySchemaService = new EntitySchemaService();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      entitySchemaService = new EntitySchemaService();
+    })
+  );
 
   it("has correct _id and entityId and type", function () {
     const id = "test1";

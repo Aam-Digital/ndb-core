@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
 import { AppConfig } from "../app-config/app-config";
-import webdav from "webdav";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { SessionService } from "../session/session-service/session.service";
+import { WebdavWrapperService } from "./webdav-wrapper.service";
+import { WebDAVClient } from "webdav";
 
 /**
  * Connect and access a remote cloud file system like Nextcloud
@@ -14,7 +15,7 @@ import { SessionService } from "../session/session-service/session.service";
 @Injectable()
 export class CloudFileService {
   // TODO Check connection/login success?
-  private client: any;
+  private client: WebDAVClient;
   private basePath: string;
   private fileList: string;
   private currentlyGettingList: Promise<boolean>;
@@ -25,12 +26,11 @@ export class CloudFileService {
 
   /**
    * Construct the service and immediately attempt to connect to the server with the current user.
-   * @param domSanitizer
-   * @param sessionService
    */
   constructor(
     private domSanitizer: DomSanitizer,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private webdav: WebdavWrapperService
   ) {
     this.connect();
   }
@@ -40,7 +40,10 @@ export class CloudFileService {
    * @param username Optional webdav username, otherwise the one set in the current user entity is used.
    * @param password Optional webdav password, otherwise the one set in the current user entity is used.
    */
-  public async connect(username: string = null, password: string = null) {
+  public async connect(
+    username: string = null,
+    password: string = null
+  ): Promise<void> {
     if (
       !CloudFileService.WEBDAV_ENABLED ||
       !this.sessionService.getCurrentUser()
@@ -64,7 +67,7 @@ export class CloudFileService {
       return;
     }
 
-    this.client = await webdav.createClient(
+    this.client = await this.webdav.createClient(
       AppConfig.settings.webdav.remote_url,
       {
         username: username,
@@ -95,14 +98,11 @@ export class CloudFileService {
     }
 
     await this.client.putFileContents(fileName, "TestString");
-    const buffer = await this.client.getFileContents(fileName);
+    const buffer = <ArrayBuffer>await this.client.getFileContents(fileName);
     const tmpContent = String.fromCharCode.apply(null, new Uint8Array(buffer));
     await this.client.deleteFile(fileName);
 
-    if (tmpContent === "TestString") {
-      return true;
-    }
-    return false;
+    return tmpContent === "TestString";
   }
 
   /**
@@ -138,10 +138,9 @@ export class CloudFileService {
     }
     // hacky way of checking if file exists, subject to change
     // TODO fix this
-    if (this.fileList.includes('"basename": "' + name.split("/").pop() + '"')) {
-      return true;
-    }
-    return false;
+    return this.fileList.includes(
+      '"basename": "' + name.split("/").pop() + '"'
+    );
   }
 
   /**
@@ -157,7 +156,7 @@ export class CloudFileService {
    * @param file The file to be stored
    * @param filePath the filename and path to which the file will be uploaded, no leading slash
    */
-  public async uploadFile(file: any, filePath: string): Promise<void> {
+  public async uploadFile(file: any, filePath: string): Promise<boolean> {
     return this.client.putFileContents(
       this.basePath + filePath,
       file

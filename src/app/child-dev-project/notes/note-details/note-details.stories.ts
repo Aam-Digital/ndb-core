@@ -9,6 +9,9 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { MatNativeDateModule } from "@angular/material/core";
 import { Angulartics2Module } from "angulartics2";
+import { Child } from "../../children/model/child";
+
+const demoChildren: Child[] = [Child.create("Joe"), Child.create("Jane")];
 
 export default {
   title: "Child Dev Project/NoteDetails",
@@ -36,4 +39,14 @@ const Template: Story<NoteDetailsComponent> = (args: NoteDetailsComponent) => ({
 export const Primary = Template.bind({});
 Primary.args = {
   entity: new Note(),
+};
+
+const eventNote = Note.create(new Date(), "Coaching today");
+eventNote.category = { id: "COACHING", label: "Coaching", isMeeting: true };
+eventNote.addChild(demoChildren[0].getId());
+eventNote.addChild(demoChildren[1].getId());
+
+export const EventWithAttendance = Template.bind({});
+Primary.args = {
+  entity: eventNote,
 };

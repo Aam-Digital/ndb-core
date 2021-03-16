@@ -26,6 +26,7 @@ import { MockDatabase } from "../../database/mock-database";
 import { SessionService } from "../../session/session-service/session.service";
 import { MockSessionService } from "../../session/session-service/mock-session.service";
 import { AppConfig } from "../../app-config/app-config";
+import { SessionType } from "../../session/session-type";
 
 /**
  * Utility module for complex unit test and storybook scenarios.
@@ -48,11 +49,10 @@ export class EntityTestingModule {
   ): ModuleWithProviders<EntityTestingModule> {
     if (!AppConfig.settings) {
       AppConfig.settings = {
+        session_type: SessionType.mock,
         database: {
           name: "",
           remote_url: "",
-          timeout: 0,
-          useTemporaryDatabase: true,
         },
         site_name: "",
       };

@@ -22,3 +22,33 @@ export function getParentUrl(router: Router): string {
   const url = getUrlWithoutParams(router);
   return url.substr(0, url.lastIndexOf("/"));
 }
+
+/**
+ * Group an array by the given property into a map of parts of the array.
+ *
+ * @param array A simple array to be grouped.
+ * @param propertyToGroupBy The key of the property in the elements by whose value the result is grouped.
+ */
+export function groupBy<T>(
+  array: T[],
+  propertyToGroupBy: keyof T
+): Map<string, T[]> {
+  return array.reduce(
+    (entryMap, element) =>
+      entryMap.set(element[propertyToGroupBy], [
+        ...(entryMap.get(element[propertyToGroupBy]) || []),
+        element,
+      ]),
+    new Map()
+  );
+}
+
+export function calculateAge(dateOfBirth: Date): number {
+  const now = new Date();
+  let age = now.getFullYear() - dateOfBirth.getFullYear();
+  const m = now.getMonth() - dateOfBirth.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < dateOfBirth.getDate())) {
+    age--;
+  }
+  return age;
+}

@@ -1,40 +1,41 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  flush,
+  TestBed,
+  waitForAsync,
+} from "@angular/core/testing";
 
 import { RecentAttendanceBlocksComponent } from "./recent-attendance-blocks.component";
-import { Database } from "../../../../core/database/database";
-import { MockDatabase } from "../../../../core/database/mock-database";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
-import { EntitySchemaService } from "../../../../core/entity/schema/entity-schema.service";
-import { ChildrenService } from "../../children.service";
-import { DatabaseIndexingService } from "../../../../core/entity/database-indexing/database-indexing.service";
-import { ChildPhotoService } from "../../child-photo-service/child-photo.service";
 import { FilterPipeModule } from "ngx-filter-pipe";
 import { Child } from "../../model/child";
-import { AttendanceMonth } from "../../../attendance/model/attendance-month";
-import { of } from "rxjs";
+import { AttendanceService } from "../../../attendance/attendance.service";
+import { ActivityAttendance } from "../../../attendance/model/activity-attendance";
+import { RecurringActivity } from "../../../attendance/model/recurring-activity";
+import { defaultInteractionTypes } from "../../../../core/config/default-config/default-interaction-types";
 
 describe("RecentAttendanceBlocksComponent", () => {
   let component: RecentAttendanceBlocksComponent;
   let fixture: ComponentFixture<RecentAttendanceBlocksComponent>;
 
-  beforeEach(async(() => {
-    const photoMock: jasmine.SpyObj<ChildPhotoService> = jasmine.createSpyObj(
-      "photoMock",
-      ["getImage"]
-    );
-    TestBed.configureTestingModule({
-      declarations: [RecentAttendanceBlocksComponent],
-      imports: [FilterPipeModule],
-      providers: [
-        { provide: Database, useClass: MockDatabase },
-        EntityMapperService,
-        EntitySchemaService,
-        ChildrenService,
-        DatabaseIndexingService,
-        { provide: ChildPhotoService, useValue: photoMock },
-      ],
-    }).compileComponents();
-  }));
+  let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
+
+  beforeEach(
+    waitForAsync(() => {
+      mockAttendanceService = jasmine.createSpyObj("mockAttendanceService", [
+        "getActivitiesForChild",
+        "getAllActivityAttendancesForPeriod",
+      ]);
+
+      TestBed.configureTestingModule({
+        declarations: [RecentAttendanceBlocksComponent],
+        imports: [FilterPipeModule],
+        providers: [
+          { provide: AttendanceService, useValue: mockAttendanceService },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RecentAttendanceBlocksComponent);
@@ -46,29 +47,42 @@ describe("RecentAttendanceBlocksComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should load the attendance data for the child", (done) => {
+  it("should display blocks for all activities of the filtered activity type", fakeAsync(() => {
     const testChild = new Child("testID");
-    const month1 = new AttendanceMonth("month1");
-    month1.month = new Date("2020-10-30");
-    const month2 = new AttendanceMonth("month2");
-    month2.month = new Date("2020-11-30");
-    const month3 = new AttendanceMonth("month3");
-    month3.month = new Date("2020-09-30");
-    const childrenService = fixture.debugElement.injector.get(ChildrenService);
-    spyOn(childrenService, "getAttendancesOfChild").and.returnValue(
-      of([month1, month2, month3])
+    const testActivity1 = RecurringActivity.create("test 1");
+    testActivity1.type = defaultInteractionTypes[1];
+    const testActivity2 = RecurringActivity.create("test 2");
+    testActivity2.type = defaultInteractionTypes[1];
+    const testActivity3 = RecurringActivity.create("test 3");
+    testActivity3.type = defaultInteractionTypes[2];
+
+    mockAttendanceService.getActivitiesForChild.and.resolveTo([
+      testActivity1,
+      testActivity2,
+      testActivity3,
+    ]);
+    mockAttendanceService.getAllActivityAttendancesForPeriod.and.callFake(
+      (from, to) => {
+        const results = [];
+        for (const activity of [testActivity1, testActivity2, testActivity3]) {
+          const record = ActivityAttendance.create(from, []);
+          record.periodTo = to;
+          record.activity = activity;
+          results.push(record);
+        }
+        return Promise.resolve(results);
+      }
     );
+
     component.onInitFromDynamicConfig({
       entity: testChild,
       id: "",
-      config: {},
+      config: {
+        filterByActivityType: defaultInteractionTypes[1].id,
+      },
     });
-    expect(childrenService.getAttendancesOfChild).toHaveBeenCalledWith(
-      testChild.getId()
-    );
-    setTimeout(() => {
-      expect(component.attendanceList).toEqual([month2, month1, month3]);
-      done();
-    });
-  });
+    flush();
+
+    expect(component.attendanceList.length).toBe(2);
+  }));
 });

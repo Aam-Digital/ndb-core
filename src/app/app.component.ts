@@ -28,6 +28,8 @@ import { Child } from "./child-dev-project/children/model/child";
 import { SessionService } from "./core/session/session-service/session.service";
 import { SyncState } from "./core/session/session-states/sync-state.enum";
 import { ActivatedRoute, Router } from "@angular/router";
+import { RecurringActivity } from "./child-dev-project/attendance/model/recurring-activity";
+import { School } from "./child-dev-project/schools/model/school";
 
 /**
  * Component as the main entry point for the app.
@@ -63,10 +65,14 @@ export class AppComponent implements OnInit {
       .then(() => router.navigate([], { relativeTo: this.activatedRoute }));
     // These functions will be executed whenever a new config is available
     configService.configUpdated.subscribe(() => routerService.initRouting());
-    configService.configUpdated.subscribe(() =>
-      entityConfigService.addConfigAttributes(Child)
-    );
-    analyticsService.init();
+    configService.configUpdated.subscribe(() => {
+      entityConfigService.addConfigAttributes(Child);
+      entityConfigService.addConfigAttributes<School>(School);
+      entityConfigService.addConfigAttributes<RecurringActivity>(
+        RecurringActivity
+      );
+    });
+    this.analyticsService.init();
   }
 
   ngOnInit() {
@@ -75,7 +81,7 @@ export class AppComponent implements OnInit {
 
   // TODO: move loading of demo data to a more suitable place
   private loadDemoData() {
-    if (AppConfig.settings.database.useTemporaryDatabase) {
+    if (AppConfig.settings.demo_mode) {
       DemoDataGeneratingProgressDialogComponent.loadDemoDataWithLoadingDialog(
         this.dialog
       );

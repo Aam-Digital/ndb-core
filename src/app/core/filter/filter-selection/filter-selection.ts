@@ -60,10 +60,13 @@ export class FilterSelection<T> {
    * Create a FilterSelection with different options to be selected.
    * @param name The name or id describing this filter
    * @param options An array of different filtering variants to chose between
+   * @param label The user-friendly label describing this filter-selection
+   * (optional, defaults to the name of the selection)
    */
   constructor(
     public name: string,
-    public options: FilterSelectionOption<T>[]
+    public options: FilterSelectionOption<T>[],
+    public label: string = name
   ) {}
 
   /** default filter will keep all items in the result */

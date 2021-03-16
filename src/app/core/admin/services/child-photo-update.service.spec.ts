@@ -16,9 +16,9 @@ describe("ChildPhotoUpdateService", () => {
   });
 
   it("should be created", () => {
-    const service: ChildPhotoUpdateService = TestBed.inject<
+    const service: ChildPhotoUpdateService = TestBed.inject<ChildPhotoUpdateService>(
       ChildPhotoUpdateService
-    >(ChildPhotoUpdateService);
+    );
     expect(service).toBeTruthy();
   });
 });

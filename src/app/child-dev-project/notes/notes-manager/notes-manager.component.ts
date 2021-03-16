@@ -14,6 +14,7 @@ import { EntityListComponent } from "../../../core/entity-components/entity-list
 import { Subscription } from "rxjs";
 import { map } from "rxjs/operators";
 import { updateEntities } from "../../../core/entity/entity-update";
+import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 
 @UntilDestroy()
 @Component({
@@ -22,6 +23,7 @@ import { updateEntities } from "../../../core/entity/entity-update";
     <app-entity-list
       [entityList]="notes"
       [listConfig]="config"
+      [entityConstructor]="noteConstructor"
       (elementClick)="showDetails($event)"
       (addNewClick)="addNoteClick()"
       #entityList
@@ -31,7 +33,8 @@ import { updateEntities } from "../../../core/entity/entity-update";
 export class NotesManagerComponent implements OnInit, OnDestroy {
   @ViewChild("entityList") entityList: EntityListComponent<Note>;
 
-  config: any = {};
+  config: EntityListConfig;
+  noteConstructor = Note;
   notes: Note[] = [];
 
   private statusFS: FilterSelectionOption<Note>[] = [
@@ -76,7 +79,7 @@ export class NotesManagerComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.route.data.subscribe((config) => {
+    this.route.data.subscribe((config: EntityListConfig) => {
       this.config = config;
       this.addPrebuiltFilters();
     });

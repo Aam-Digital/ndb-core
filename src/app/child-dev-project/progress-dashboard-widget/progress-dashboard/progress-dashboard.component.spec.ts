@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ProgressDashboardComponent } from "./progress-dashboard.component";
 import { MatButtonModule } from "@angular/material/button";
@@ -16,34 +16,40 @@ describe("ProgressDashboardComponent", () => {
   let component: ProgressDashboardComponent;
   let fixture: ComponentFixture<ProgressDashboardComponent>;
 
-  beforeEach(async(() => {
-    const mockEntityService = jasmine.createSpyObj("mockEntityService", [
-      "load",
-      "save",
-    ]);
-    mockEntityService.load.and.resolveTo({ title: "test", parts: [] });
+  beforeEach(
+    waitForAsync(() => {
+      const mockEntityService = jasmine.createSpyObj("mockEntityService", [
+        "load",
+        "save",
+      ]);
+      mockEntityService.load.and.resolveTo({ title: "test", parts: [] });
 
-    TestBed.configureTestingModule({
-      declarations: [ProgressDashboardComponent],
-      imports: [
-        MatIconModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        MatCardModule,
-        MatProgressBarModule,
-        CommonModule,
-        FormsModule,
-      ],
-      providers: [
-        { provide: EntityMapperService, useValue: mockEntityService },
-        {
-          provide: AlertService,
-          useValue: jasmine.createSpyObj(["addDebug", "addInfo", "addWarning"]),
-        },
-      ],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        declarations: [ProgressDashboardComponent],
+        imports: [
+          MatIconModule,
+          MatFormFieldModule,
+          MatInputModule,
+          MatButtonModule,
+          MatCardModule,
+          MatProgressBarModule,
+          CommonModule,
+          FormsModule,
+        ],
+        providers: [
+          { provide: EntityMapperService, useValue: mockEntityService },
+          {
+            provide: AlertService,
+            useValue: jasmine.createSpyObj([
+              "addDebug",
+              "addInfo",
+              "addWarning",
+            ]),
+          },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ProgressDashboardComponent);

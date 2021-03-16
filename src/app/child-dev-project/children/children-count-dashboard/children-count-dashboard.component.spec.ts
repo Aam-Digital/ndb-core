@@ -1,9 +1,9 @@
 import {
-  async,
   ComponentFixture,
   fakeAsync,
   flush,
   TestBed,
+  waitForAsync,
 } from "@angular/core/testing";
 
 import { ChildrenCountDashboardComponent } from "./children-count-dashboard.component";
@@ -11,7 +11,7 @@ import { MatCardModule } from "@angular/material/card";
 import { MatIconModule } from "@angular/material/icon";
 import { ChildrenService } from "../children.service";
 import { RouterTestingModule } from "@angular/router/testing";
-import { Child } from "../model/child";
+import { Center, Child } from "../model/child";
 import { Observable } from "rxjs";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 
@@ -23,27 +23,29 @@ describe("ChildrenCountDashboardComponent", () => {
   let childrenObserver;
 
   let _lastId = 0;
-  function createChild(center: string) {
+  function createChild(center: Center) {
     _lastId++;
     const child = new Child(_lastId.toString());
     child.center = center;
     return child;
   }
 
-  beforeEach(async(() => {
-    childrenService = jasmine.createSpyObj(["getChildren"]);
-    childrenService.getChildren.and.returnValue(
-      new Observable((observer) => {
-        childrenObserver = observer;
-      })
-    );
+  beforeEach(
+    waitForAsync(() => {
+      childrenService = jasmine.createSpyObj(["getChildren"]);
+      childrenService.getChildren.and.returnValue(
+        new Observable((observer) => {
+          childrenObserver = observer;
+        })
+      );
 
-    TestBed.configureTestingModule({
-      declarations: [ChildrenCountDashboardComponent],
-      imports: [MatIconModule, MatCardModule, RouterTestingModule],
-      providers: [{ provide: ChildrenService, useValue: childrenService }],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        declarations: [ChildrenCountDashboardComponent],
+        imports: [MatIconModule, MatCardModule, RouterTestingModule],
+        providers: [{ provide: ChildrenService, useValue: childrenService }],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ChildrenCountDashboardComponent);
@@ -57,9 +59,9 @@ describe("ChildrenCountDashboardComponent", () => {
 
   it("should calculate totalChildren correctly", () => {
     const children = [
-      createChild("CenterA"),
-      createChild("CenterB"),
-      createChild("CenterA"),
+      createChild({ id: "a", label: "CenterA" }),
+      createChild({ id: "b", label: "CenterB" }),
+      createChild({ id: "a", label: "CenterA" }),
     ];
     childrenObserver.next(children);
 
@@ -67,8 +69,8 @@ describe("ChildrenCountDashboardComponent", () => {
   });
 
   it("should calculate childrens per center correctly", fakeAsync(() => {
-    const centerA = "CenterA";
-    const centerB = "CenterB";
+    const centerA = { id: "a", label: "CenterA" };
+    const centerB = { id: "b", label: "CenterB" };
     const children = [
       createChild(centerA),
       createChild(centerB),
@@ -83,14 +85,14 @@ describe("ChildrenCountDashboardComponent", () => {
       "unexpected number of centersWithProbability"
     );
     const actualCenterAEntry = component.childrenGroupCounts.filter(
-      (e) => e.label === centerA
+      (e) => e.label === centerA.label
     )[0];
     expect(actualCenterAEntry.value).toBe(
       2,
       "child count of CenterA not correct"
     );
     const actualCenterBEntry = component.childrenGroupCounts.filter(
-      (e) => e.label === centerB
+      (e) => e.label === centerB.label
     )[0];
     expect(actualCenterBEntry.value).toBe(
       1,
