@@ -8,10 +8,9 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { FilterSelectionOption } from "../../../core/filter/filter-selection/filter-selection";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { UntilDestroy } from "@ngneat/until-destroy";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
-import { Subscription } from "rxjs";
 import { map } from "rxjs/operators";
 import { updateEntities } from "../../../core/entity/entity-update";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
@@ -30,7 +29,8 @@ import { EntityListConfig } from "../../../core/entity-components/entity-list/En
     ></app-entity-list>
   `,
 })
-export class NotesManagerComponent implements OnInit, OnDestroy {
+@UntilDestroy()
+export class NotesManagerComponent implements OnInit {
   @ViewChild("entityList") entityList: EntityListComponent<Note>;
 
   config: EntityListConfig;
@@ -67,8 +67,6 @@ export class NotesManagerComponent implements OnInit, OnDestroy {
     { key: "", label: "All", filterFun: () => true },
   ];
 
-  private subscription: Subscription;
-
   constructor(
     private formDialog: FormDialogService,
     private sessionService: SessionService,
@@ -83,9 +81,10 @@ export class NotesManagerComponent implements OnInit, OnDestroy {
       this.config = config;
       this.addPrebuiltFilters();
     });
-    this.subscription = this.entityMapperService
+    this.entityMapperService
       .loadAll<Note>(Note)
       .pipe(
+        untilDestroyed(this),
         map((note) => {
           if (note) {
             note["color"] = this.getColor(note);
@@ -97,10 +96,6 @@ export class NotesManagerComponent implements OnInit, OnDestroy {
       .subscribe((update) => {
         this.notes = update(this.notes);
       });
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
   }
 
   private addPrebuiltFilters() {
