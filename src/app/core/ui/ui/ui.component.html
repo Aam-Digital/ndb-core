@@ -21,8 +21,6 @@
     <span fxFlex *ngIf="isLoggedIn() && sideNavMode == 'over'">
       <button
         mat-icon-button
-        fxHide.lt-md="false"
-        fxHide="true"
         (click)="sideNav.toggle()"
       >
         <mat-icon class="header-icon" fontIcon="fa-bars"></mat-icon>
