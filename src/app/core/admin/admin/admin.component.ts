@@ -60,19 +60,17 @@ export class AdminComponent implements OnInit {
   /**
    * Download a full backup of the database as (json) file.
    */
-  saveBackup() {
-    this.backupService
-      .getJsonExport()
-      .then((bac) => this.startDownload(bac, "text/json", "backup.json"));
+  async saveBackup() {
+    const backup = await this.backupService.getJsonExport();
+    this.startDownload(backup, "text/json", "backup.json");
   }
 
   /**
    * Download a full export of the database as csv file.
    */
-  saveCsvExport() {
-    this.backupService
-      .getCsvExport()
-      .then((csv) => this.startDownload(csv, "text/csv", "export.csv"));
+  async saveCsvExport() {
+    const csv = await this.backupService.getCsvExport();
+    this.startDownload(csv, "text/csv", "export.csv");
   }
 
   downloadConfigClick() {
@@ -80,12 +78,13 @@ export class AdminComponent implements OnInit {
     this.startDownload(jsonString, "text/json", "config.json");
   }
 
-  uploadConfigFile(file: Blob) {
-    this.readFile(file)
-      .then((res) =>
-        this.configService.saveConfig(this.entityMapper, JSON.parse(res))
-      )
-      .then(() => this.configService.loadConfig(this.entityMapper));
+  async uploadConfigFile(file: Blob) {
+    const loadedFile = await this.readFile(file);
+    await this.configService.saveConfig(
+      this.entityMapper,
+      JSON.parse(loadedFile)
+    );
+    await this.configService.loadConfig(this.entityMapper);
   }
 
   private startDownload(data: string, type: string, name: string) {
@@ -111,37 +110,35 @@ export class AdminComponent implements OnInit {
    * Reset the database to the state from the loaded backup file.
    * @param file The file object of the backup to be restored
    */
-  loadBackup(file) {
-    const pRestorePoint = this.backupService.getJsonExport();
-    const pLoadedData = this.readFile(file);
-    Promise.all([pLoadedData, pRestorePoint]).then((r) => {
-      const newData = r[0];
-      const restorePoint = r[1];
+  async loadBackup(file) {
+    const restorePoint = await this.backupService.getJsonExport();
+    const newData = await this.readFile(file);
 
-      const dialogRef = this.confirmationDialog.openDialog(
-        "Overwrite complete database?",
-        "Are you sure you want to restore this backup? " +
-          "This will delete all " +
-          restorePoint.split("\n").length +
-          " existing records in the database, " +
-          "restoring " +
-          newData.split("\n").length +
-          " records from the loaded file."
-      );
+    const dialogRef = this.confirmationDialog.openDialog(
+      "Overwrite complete database?",
+      "Are you sure you want to restore this backup? " +
+        "This will delete all " +
+        restorePoint.split("\n").length +
+        " existing records in the database, " +
+        "restoring " +
+        newData.split("\n").length +
+        " records from the loaded file."
+    );
 
-      dialogRef.afterClosed().subscribe((confirmed) => {
-        if (confirmed) {
-          this.backupService.clearDatabase();
-          this.backupService.importJson(newData, true);
+    dialogRef.afterClosed().subscribe(async (confirmed) => {
+      if (!confirmed) {
+        return;
+      }
 
-          const snackBarRef = this.snackBar.open("Backup restored", "Undo", {
-            duration: 8000,
-          });
-          snackBarRef.onAction().subscribe(() => {
-            this.backupService.clearDatabase();
-            this.backupService.importJson(restorePoint, true);
-          });
-        }
+      await this.backupService.clearDatabase();
+      await this.backupService.importJson(newData, true);
+
+      const snackBarRef = this.snackBar.open("Backup restored", "Undo", {
+        duration: 8000,
+      });
+      snackBarRef.onAction().subscribe(async () => {
+        await this.backupService.clearDatabase();
+        await this.backupService.importJson(restorePoint, true);
       });
     });
   }
@@ -150,34 +147,32 @@ export class AdminComponent implements OnInit {
    * Add the data from the loaded file to the database, inserting and updating records.
    * @param file The file object of the csv data to be loaded
    */
-  loadCsv(file: Blob) {
-    const pRestorePoint = this.backupService.getJsonExport();
-    const pLoadedData = this.readFile(file);
-    Promise.all([pLoadedData, pRestorePoint]).then((r) => {
-      const newData = r[0];
-      const restorePoint = r[1];
+  async loadCsv(file: Blob) {
+    const restorePoint = await this.backupService.getJsonExport();
+    const newData = await this.readFile(file);
 
-      const dialogRef = this.confirmationDialog.openDialog(
-        "Import new data?",
-        "Are you sure you want to import this file? " +
-          "This will add or update " +
-          (newData.trim().split("\n").length - 1) +
-          " records from the loaded file. " +
-          'Existing records with same "_id" in the database will be overwritten!'
-      );
+    const dialogRef = this.confirmationDialog.openDialog(
+      "Import new data?",
+      "Are you sure you want to import this file? " +
+        "This will add or update " +
+        (newData.trim().split("\n").length - 1) +
+        " records from the loaded file. " +
+        'Existing records with same "_id" in the database will be overwritten!'
+    );
 
-      dialogRef.afterClosed().subscribe((confirmed) => {
-        if (confirmed) {
-          this.backupService.importCsv(newData, true);
+    dialogRef.afterClosed().subscribe(async (confirmed) => {
+      if (!confirmed) {
+        return;
+      }
 
-          const snackBarRef = this.snackBar.open("Import completed", "Undo", {
-            duration: 8000,
-          });
-          snackBarRef.onAction().subscribe(() => {
-            this.backupService.clearDatabase();
-            this.backupService.importJson(restorePoint, true);
-          });
-        }
+      await this.backupService.importCsv(newData, true);
+
+      const snackBarRef = this.snackBar.open("Import completed", "Undo", {
+        duration: 8000,
+      });
+      snackBarRef.onAction().subscribe(async () => {
+        await this.backupService.clearDatabase();
+        await this.backupService.importJson(restorePoint, true);
       });
     });
   }
@@ -185,27 +180,29 @@ export class AdminComponent implements OnInit {
   /**
    * Reset the database removing all entities except user accounts.
    */
-  clearDatabase() {
-    this.backupService.getJsonExport().then((restorePoint) => {
-      const dialogRef = this.confirmationDialog.openDialog(
-        "Empty complete database?",
-        "Are you sure you want to clear the database? " +
-          "This will delete all " +
-          restorePoint.split("\n").length +
-          " existing records in the database!"
-      );
+  async clearDatabase() {
+    const restorePoint = await this.backupService.getJsonExport();
 
-      dialogRef.afterClosed().subscribe((confirmed) => {
-        if (confirmed) {
-          this.backupService.clearDatabase();
+    const dialogRef = this.confirmationDialog.openDialog(
+      "Empty complete database?",
+      "Are you sure you want to clear the database? " +
+        "This will delete all " +
+        restorePoint.split("\n").length +
+        " existing records in the database!"
+    );
 
-          const snackBarRef = this.snackBar.open("Import completed", "Undo", {
-            duration: 8000,
-          });
-          snackBarRef.onAction().subscribe(() => {
-            this.backupService.importJson(restorePoint, true);
-          });
-        }
+    dialogRef.afterClosed().subscribe(async (confirmed) => {
+      if (!confirmed) {
+        return;
+      }
+
+      await this.backupService.clearDatabase();
+
+      const snackBarRef = this.snackBar.open("Import completed", "Undo", {
+        duration: 8000,
+      });
+      snackBarRef.onAction().subscribe(async () => {
+        await this.backupService.importJson(restorePoint, true);
       });
     });
   }
