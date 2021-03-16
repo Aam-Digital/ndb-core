@@ -21,6 +21,7 @@ import { AppConfig } from "../../app-config/app-config";
 import { Title } from "@angular/platform-browser";
 import { MediaObserver, MediaChange } from "@angular/flex-layout";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { MatDrawerMode } from "@angular/material/sidenav";
 
 /**
  * The main user interface component as root element for the app structure
@@ -35,7 +36,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 })
 export class UiComponent implements OnInit {
   /** display mode for the menu to make it responive and usable on smaller screens */
-  sideNavMode: string;
+  sideNavMode: MatDrawerMode;
   /** reference to sideNav component in template, required for toggling the menu on user actions */
   @ViewChild("sideNav") sideNav;
 
@@ -52,8 +53,11 @@ export class UiComponent implements OnInit {
       .asObservable()
       .pipe(untilDestroyed(this))
       .subscribe((change: MediaChange[]) => {
-        this.sideNavMode =
-          change[0].mqAlias === ("xs" || "sm") ? "over" : "side";
+        if (change[0].mqAlias === "xs" || change[0].mqAlias === "sm") {
+          this.sideNavMode = "over";
+        } else {
+          this.sideNavMode = "side";
+        }
       });
   }
 
