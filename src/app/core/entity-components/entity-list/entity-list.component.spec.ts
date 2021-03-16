@@ -291,7 +291,6 @@ describe("EntityListComponent", () => {
     const sortedIds = component.entityDataSource
       .sortData(notes, component.sort)
       .map((note) => note.getId());
-    console.log(sortedIds);
     expect(sortedIds).toEqual(["0", "3", "1", "2"]);
   });
 });

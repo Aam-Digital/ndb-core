@@ -40,7 +40,6 @@ import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
 import { AdminModule } from "./core/admin/admin.module";
 import { EntityModule } from "./core/entity/entity.module";
-import { CookieService } from "ngx-cookie-service";
 import { HelpModule } from "./core/help/help.module";
 import { DemoDataModule } from "./core/demo-data/demo-data.module";
 import { MatNativeDateModule } from "@angular/material/core";
@@ -141,7 +140,6 @@ import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendan
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
-    CookieService,
     AnalyticsService,
     Angulartics2Piwik,
   ],

@@ -27,6 +27,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { Angulartics2Module } from "angulartics2";
 import { ChildrenOverviewComponent } from "./children-overview/children-overview.component";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
+import { SchoolSelectComponent } from "./school-select/school-select.component";
 
 @NgModule({
   imports: [
@@ -73,8 +74,9 @@ import { EntityListModule } from "../../core/entity-components/entity-list/entit
     SchoolBlockComponent,
     SchoolsListComponent,
     ChildrenOverviewComponent,
+    SchoolSelectComponent,
   ],
-  exports: [SchoolBlockComponent],
+  exports: [SchoolBlockComponent, SchoolSelectComponent],
   providers: [SchoolsService],
 })
 export class SchoolsModule {}

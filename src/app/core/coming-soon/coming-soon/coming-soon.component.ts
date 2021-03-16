@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { AlertService } from "../../alerts/alert.service";
-import { Angulartics2 } from "angulartics2";
 import { ActivatedRoute } from "@angular/router";
+import { AnalyticsService } from "../../analytics/analytics.service";
 
 /**
  * Placeholder page to announce that a feature is not available yet.
@@ -34,7 +34,7 @@ export class ComingSoonComponent implements OnChanges {
 
   constructor(
     private alertService: AlertService,
-    private angulartics2: Angulartics2,
+    private analyticsService: AnalyticsService,
     private activatedRoute: ActivatedRoute
   ) {
     this.activatedRoute.paramMap.subscribe((params) => {
@@ -60,12 +60,9 @@ export class ComingSoonComponent implements OnChanges {
   }
 
   private track(action: string) {
-    this.angulartics2.eventTrack.next({
-      action: action,
-      properties: {
-        category: "feature_request",
-        label: this.featureId,
-      },
+    this.analyticsService.eventTrack(action, {
+      category: "feature_request",
+      label: this.featureId,
     });
   }
 

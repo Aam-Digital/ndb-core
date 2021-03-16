@@ -19,12 +19,7 @@ export async function expectEntitiesToBeInDatabase(
     expectedEntities[0].getConstructor()
   );
 
-  await expectEntitiesToMatch(
-    actualData,
-    expectedEntities,
-    ignoreId,
-    onlyExpected
-  );
+  expectEntitiesToMatch(actualData, expectedEntities, ignoreId, onlyExpected);
 }
 
 /**
@@ -34,7 +29,7 @@ export async function expectEntitiesToBeInDatabase(
  * @param ignoreId do not compare _id of entities, match only based on properties
  * @param onlyExpected (Optional) if set to true, ensure that the expected entities are the only entities of that type in the database
  */
-export async function expectEntitiesToMatch(
+export function expectEntitiesToMatch(
   actualEntities: any[],
   expectedEntities: Entity[],
   ignoreId: boolean = false,

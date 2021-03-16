@@ -1,6 +1,7 @@
 import { Entity } from "../../../core/entity/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
+import moment from "moment";
 
 /**
  * Record of a school year that a Child attended a certain class in a School.
@@ -15,4 +16,12 @@ export class ChildSchoolRelation extends Entity {
 
   /** percentage achieved in the final school exams of that year */
   @DatabaseField() result: number;
+
+  public isActive(): boolean {
+    return (
+      this.start &&
+      moment(this.start).isSameOrBefore(moment(), "day") &&
+      (!this.end || moment(this.end).isAfter(moment()))
+    );
+  }
 }

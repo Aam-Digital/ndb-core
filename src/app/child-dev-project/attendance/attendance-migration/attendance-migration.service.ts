@@ -130,7 +130,7 @@ export class AttendanceMigrationService {
       );
       if (!newEvent) {
         // no Note in the database yet - create a new event
-        newEvent = EventNote.createEventForActivity(
+        newEvent = await this.attendanceService.createEventForActivity(
           this.activities[old.institution],
           day.date
         );
