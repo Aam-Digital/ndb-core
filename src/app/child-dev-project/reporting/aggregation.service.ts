@@ -105,23 +105,26 @@ export class AggregationService {
       if (entity[key] && entityTypes.includes(key)) {
         return this.entitySatisfiesQuery(entity[key], propertyQuery[key]);
       } else if (typeof propertyQuery[key] === "object") {
-        return this.valueSatisfiesComplexChecks(
-          entity[key],
-          propertyQuery[key]
-        );
+        return this.evaluateObjectQuery(entity, key, propertyQuery[key]);
       } else {
         return entity[key] === propertyQuery[key];
       }
     });
   }
 
-  private valueSatisfiesComplexChecks(value: any, checks: any): boolean {
-    return Object.keys(checks).every((check) => {
+  private evaluateObjectQuery(
+    entity: Entity,
+    key: string,
+    query: any
+  ): boolean {
+    return Object.keys(query).every((check) => {
       switch (check) {
         case "gte":
-          return value >= checks[check];
+          return entity[key] >= query[check];
         case "not":
-          return !(value === checks[check]);
+          const notQuery = {};
+          notQuery[key] = query[check];
+          return !this.entitySatisfiesQuery(entity, notQuery);
         default:
           return false;
       }
