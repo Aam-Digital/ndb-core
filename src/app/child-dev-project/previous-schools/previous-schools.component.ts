@@ -16,6 +16,18 @@ import { OnInitDynamicComponent } from "../../core/view/dynamic-components/on-in
 import { ColumnDescriptionInputType } from "../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 import { ColumnDescription } from "../../core/entity-components/entity-subrecord/column-description";
 import { PanelConfig } from "../../core/entity-components/entity-details/EntityDetailsConfig";
+import { School } from "../schools/model/school";
+
+interface PreviousRelationsConfig {
+  single: boolean;
+  columns: {
+    schoolId: string;
+    schoolClass?: string;
+    start: string;
+    end: string;
+    result?: string;
+  };
+}
 
 @Component({
   selector: "app-previous-schools",
@@ -44,6 +56,18 @@ export class PreviousSchoolsComponent
   @Output() changedRecordInEntitySubrecord = new EventEmitter<any>();
   records = new Array<ChildSchoolRelation>();
   columns = new Array<ColumnDescription>();
+  current: ChildSchoolRelation;
+
+  schoolMap: Map<string, School>;
+
+  public config: PreviousRelationsConfig = {
+    single: false,
+    columns: {
+      schoolId: "School",
+      start: "From",
+      end: "End",
+    },
+  };
 
   constructor(
     private childrenService: ChildrenService,
@@ -60,14 +84,14 @@ export class PreviousSchoolsComponent
     }
   }
 
-  onInitFromDynamicConfig(config: PanelConfig) {
-    if (config?.config?.displayedColumns) {
-      this.columns = this.columns.filter((c) =>
-        config.config.displayedColumns.includes(c.name)
-      );
+  onInitFromDynamicConfig(panelConfig: PanelConfig) {
+    if (panelConfig.config?.single) {
+      this.config.single = panelConfig.config.single;
     }
-
-    this.child = config.entity as Child;
+    if (panelConfig.config?.columns) {
+      this.config.columns = panelConfig.config.columns;
+    }
+    this.child = panelConfig.entity as Child;
     this.loadData(this.child.getId());
   }
 
@@ -77,52 +101,58 @@ export class PreviousSchoolsComponent
     }
 
     this.records = await this.childrenService.getSchoolsWithRelations(id);
+    this.current = this.records.find((record) => record.isActive());
   }
 
   private async initColumnDefinitions() {
     const schools = await this.schoolsService.getSchools().toPromise();
-    const schoolMap = {};
-    schools.forEach((s) => (schoolMap[s.getId()] = s.name));
+    this.schoolMap = new Map(schools.map((school) => [school.getId(), school]));
 
     this.columns = [
       {
         name: "schoolId",
-        label: "School",
+        label: this.config.columns.schoolId,
         inputType: ColumnDescriptionInputType.SELECT,
-        selectValues: schools.map((t) => {
-          return { value: t.getId(), label: t.name };
-        }),
+        selectValues: schools
+          .sort((s1, s2) => s1.name.localeCompare(s2.name))
+          .map((t) => {
+            return { value: t.getId(), label: t.name };
+          }),
         valueFunction: (entity: ChildSchoolRelation) =>
-          schoolMap[entity["schoolId"]],
+          this.schoolMap.get(entity["schoolId"]).name,
       },
-
-      {
+    ];
+    if (this.config.columns.schoolClass) {
+      this.columns.push({
         name: "schoolClass",
-        label: "Class",
+        label: this.config.columns.schoolClass,
         inputType: ColumnDescriptionInputType.TEXT,
-      },
-
+      });
+    }
+    this.columns.push(
       {
         name: "start",
-        label: "From",
+        label: this.config.columns.start,
         inputType: ColumnDescriptionInputType.DATE,
       },
       {
         name: "end",
-        label: "To",
+        label: this.config.columns.end,
         inputType: ColumnDescriptionInputType.DATE,
-      },
-      {
+      }
+    );
+    if (this.config.columns.result) {
+      this.columns.push({
         name: "result",
-        label: "Result",
+        label: this.config.columns.result,
         inputType: ColumnDescriptionInputType.NUMBER,
         valueFunction: (entity: ChildSchoolRelation) =>
           entity.result >= 0 && !Number.isNaN(entity.result)
             ? entity.result + "%"
             : "N/A",
         styleBuilder: this.resultColorStyleBuilder,
-      },
-    ];
+      });
+    }
   }
 
   generateNewRecordFactory() {

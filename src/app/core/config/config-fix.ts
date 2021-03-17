@@ -796,7 +796,17 @@ export const defaultConfig = {
           "components": [
             {
               "title": "School History",
-              "component": "PreviousSchools"
+              "component": "PreviousSchools",
+              "config": {
+                "single": true,
+                "columns": {
+                  "schoolId": "School",
+                  "schoolClass": "Class",
+                  "start": "From",
+                  "end": "To",
+                  "result": "Result"
+                }
+              }
             },
             {
               "title": "ASER Results",
