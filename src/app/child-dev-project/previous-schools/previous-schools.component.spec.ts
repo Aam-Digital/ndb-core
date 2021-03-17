@@ -1,4 +1,10 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 
 import { PreviousSchoolsComponent } from "./previous-schools.component";
 import { ChildrenService } from "../children/children.service";
@@ -15,6 +21,7 @@ import { ChildPhotoService } from "../children/child-photo-service/child-photo.s
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
 import { SimpleChange } from "@angular/core";
 import { Child } from "../children/model/child";
+import { PanelConfig } from "../../core/entity-components/entity-details/EntityDetailsConfig";
 
 describe("PreviousSchoolsComponent", () => {
   let component: PreviousSchoolsComponent;
@@ -76,4 +83,40 @@ describe("PreviousSchoolsComponent", () => {
       done();
     });
   });
+
+  it("should only show columns which are defined by the config", fakeAsync(() => {
+    const config: PanelConfig = {
+      entity: new Child(),
+      config: {
+        single: true,
+        columns: {
+          schoolId: "Team",
+          start: "From",
+          end: "To",
+        },
+      },
+    };
+    component.onInitFromDynamicConfig(config);
+    component.ngOnInit();
+    tick();
+    expect(component.columns).toHaveSize(3);
+    let columnNames = component.columns.map((column) => column.label);
+    expect(columnNames).toContain("Team");
+    expect(columnNames).toContain("From");
+    expect(columnNames).toContain("To");
+
+    config.config.columns.result = "Result";
+    config.config.columns.schoolClass = "Class";
+
+    component.onInitFromDynamicConfig(config);
+    component.ngOnInit();
+    tick();
+    expect(component.columns).toHaveSize(5);
+    columnNames = component.columns.map((column) => column.label);
+    expect(columnNames).toContain("Team");
+    expect(columnNames).toContain("From");
+    expect(columnNames).toContain("To");
+    expect(columnNames).toContain("Class");
+    expect(columnNames).toContain("Result");
+  }));
 });
