@@ -1,6 +1,5 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { untilDestroyed } from "@ngneat/until-destroy";
 import { HealthCheck } from "app/child-dev-project/health-checkup/model/health-check";
 import { WarningLevel } from "app/child-dev-project/warning-level";
 import { OnInitDynamicComponent } from "app/core/view/dynamic-components/on-init-dynamic-component.interface";
@@ -8,7 +7,7 @@ import { take } from "rxjs/operators";
 import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";
 
-interface bmiRow {
+interface BmiRow {
   childId: string;
   bmi: number;
 }
@@ -21,7 +20,7 @@ interface bmiRow {
 export class ChildrenBmiDashboardComponent
   implements OnInit, OnInitDynamicComponent {
   public currentHealthCheck: HealthCheck;
-  bmiRows: bmiRow[] = [];
+  bmiRows: BmiRow[] = [];
 
   constructor(
     private childrenService: ChildrenService,

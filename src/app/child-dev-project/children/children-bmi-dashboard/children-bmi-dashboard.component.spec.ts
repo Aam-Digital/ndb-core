@@ -61,12 +61,12 @@ describe("ChildrenBmiDashboardComponent", () => {
       if (childId === "testID") {
         return of([HealthCheck1, HealthCheck2]);
       }
-      if (childId == "testID2") {
+      if (childId === "testID2") {
         return of([HealthCheck3]);
       }
     });
     component.ngOnInit();
-    expect(mockChildrenService.getChildren).toHaveBeenCalled;
+    expect(mockChildrenService.getChildren).toHaveBeenCalled();
     expect(mockChildrenService.getHealthChecksOfChild).toHaveBeenCalledWith(
       testChild.getId()
     );
