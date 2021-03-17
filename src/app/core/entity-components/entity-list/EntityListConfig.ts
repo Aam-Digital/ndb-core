@@ -53,6 +53,7 @@ export class FilterConfig {
   display?: string;
   type?: string;
   default?: string;
+  label?: string;
 }
 
 export class BooleanFilterConfig extends FilterConfig {
