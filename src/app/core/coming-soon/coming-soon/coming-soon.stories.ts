@@ -6,7 +6,8 @@ import { ComingSoonModule } from "../coming-soon.module";
 import { AlertsModule } from "../../alerts/alerts.module";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { Angulartics2RouterlessModule } from "angulartics2/routerlessmodule";
-import { RouterModule } from "@angular/router";
+import { AnalyticsService } from "../../analytics/analytics.service";
+import { RouterTestingModule } from "@angular/router/testing";
 
 export default {
   title: "Core/ComingSoonPage",
@@ -18,9 +19,10 @@ export default {
         AlertsModule,
         FontAwesomeIconsModule,
         BrowserAnimationsModule,
-        RouterModule,
+        RouterTestingModule,
         Angulartics2RouterlessModule.forRoot(),
       ],
+      providers: [{ provide: AnalyticsService, useValue: {} }],
     }),
   ],
 } as Meta;
