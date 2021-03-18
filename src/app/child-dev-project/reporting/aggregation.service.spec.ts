@@ -9,6 +9,7 @@ import { RecurringActivity } from "../attendance/model/recurring-activity";
 import { EventNote } from "../attendance/model/event-note";
 import { Note } from "../notes/model/note";
 import moment from "moment";
+import { defaultAttendanceStatusTypes } from "../../core/config/default-config/default-attendance-status-types";
 
 describe("AggregationService", () => {
   let service: AggregationService;
@@ -196,7 +197,7 @@ describe("AggregationService", () => {
     expect(allEventsLastMonth).toBe(7);
   });
 
-  it("should count participants of events based on timespan, school and activity", async () => {
+  it("should count unique participants of events based on timespan, school and activity", async () => {
     const maleChild = new Child();
     maleChild.gender = Gender.MALE;
     const femaleChild1 = new Child();
@@ -218,7 +219,7 @@ describe("AggregationService", () => {
     twoWeeksAgoPrivateEvent.date = moment().subtract(2, "weeks").toDate();
     twoWeeksAgoPrivateEvent.relatesTo = privateActivity._id;
     twoWeeksAgoPrivateEvent.addChild(maleChild.getId());
-    twoWeeksAgoPrivateEvent.addChild(femaleChild2.getId())
+    twoWeeksAgoPrivateEvent.addChild(femaleChild2.getId());
 
     const threeDaysAgoPrivateEvent = new EventNote();
     threeDaysAgoPrivateEvent.date = moment().subtract(3, "days").toDate();
@@ -234,20 +235,90 @@ describe("AggregationService", () => {
     todayEventWithoutSchool.date = new Date();
     todayEventWithoutSchool.relatesTo = activityWithoutLink._id;
     todayEventWithoutSchool.addChild(femaleChild1.getId());
+    todayEventWithoutSchool.getAttendance(
+      femaleChild1.getId()
+    ).status = defaultAttendanceStatusTypes.find(
+      (status) => status.countAs === "PRESENT"
+    );
     todayEventWithoutSchool.addChild(maleChild.getId());
+    todayEventWithoutSchool.getAttendance(
+      maleChild.getId()
+    ).status = defaultAttendanceStatusTypes.find(
+      (status) => status.countAs === "ABSENT"
+    );
 
     const twoDaysAgoEventWithoutRelation = new EventNote();
     twoDaysAgoEventWithoutRelation.date = moment().subtract(2, "days").toDate();
     twoDaysAgoEventWithoutRelation.addChild(femaleChild1.getId());
+    twoDaysAgoEventWithoutRelation.getAttendance(
+      femaleChild1.getId()
+    ).status = defaultAttendanceStatusTypes.find(
+      (status) => status.countAs === "ABSENT"
+    );
     twoDaysAgoEventWithoutRelation.addChild(femaleChild2.getId());
+    twoDaysAgoEventWithoutRelation.getAttendance(
+      femaleChild2.getId()
+    ).status = defaultAttendanceStatusTypes.find(
+      (status) => status.countAs === "PRESENT"
+    );
 
+    mockEntityMapper.loadType.and.callFake(
+      loadTypeFake(
+        [femaleChild2, maleChild, femaleChild1],
+        [privateSchool, normalSchool],
+        [normalActivity, privateActivity, activityWithoutLink],
+        [
+          threeDaysAgoPrivateEvent,
+          twoWeeksAgoPrivateEvent,
+          twoDaysAgoEventWithoutRelation,
+          todayEventWithoutSchool,
+          twoDaysAgoEventWithoutRelation,
+        ]
+      )
+    );
+    service.loadData();
 
-    mockEntityMapper.loadType.and.callFake(loadTypeFake(
-      [femaleChild2, maleChild, femaleChild1],
-      [privateSchool, normalSchool],
-      [normalActivity, privateActivity, activityWithoutLink],
-      [threeDaysAgoPrivateEvent, twoWeeksAgoPrivateEvent, twoDaysAgoEventWithoutRelation, todayEventWithoutSchool, twoDaysAgoEventWithoutRelation]
-    ));
+    const femalePrivateSchoolLastMonthQuery = {
+      gender: "F",
+      EventNote: {
+        any: {
+          date: { gte: moment().subtract(1, "month").toDate() },
+          Activity: { School: { privateSchool: true } },
+        },
+      },
+    };
+    const femaleParticipantsLastMonthInPrivateSchools = await service.countEntitiesByProperties(
+      Child,
+      femalePrivateSchoolLastMonthQuery
+    );
+    expect(femaleParticipantsLastMonthInPrivateSchools).toBe(1);
 
+    const lastWeekNotPrivateQuery = {
+      EventNote: {
+        any: {
+          date: { gte: moment().subtract(1, "week").toDate() },
+          Activity: { School: { privateSchool: { not: true } } },
+        },
+      },
+    };
+    const participantsLastWeekNotPrivateSchool = await service.countEntitiesByProperties(
+      Child,
+      lastWeekNotPrivateQuery
+    );
+    expect(participantsLastWeekNotPrivateSchool).toBe(1);
+
+    const lastMonthAttendedQuery = {
+      EventNote: {
+        any: {
+          date: { gte: moment().subtract(1, "month") },
+          Attendance: "PRESENT",
+        },
+      },
+    };
+    const femaleParticipantsLastMonth = await service.countEntitiesByProperties(
+      Child,
+      lastMonthAttendedQuery
+    );
+    expect(femaleParticipantsLastMonth).toBe(2);
   });
 });

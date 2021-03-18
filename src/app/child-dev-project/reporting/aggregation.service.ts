@@ -43,18 +43,20 @@ export class AggregationService {
         .get(School)
         .map((school) => [school.getId(), school as School])
     );
-    this.entities
-      .get(RecurringActivity)
-      .forEach((activity: RecurringActivity) =>
-        this.addSchoolToActivity(activity, schoolMap)
-      );
     const activityMap = new Map(
       this.entities
         .get(RecurringActivity)
-        .map((activity) => [activity._id, activity as RecurringActivity])
+        .map((activity: RecurringActivity) => {
+          this.addSchoolToActivity(activity, schoolMap);
+          return [activity._id, activity];
+        })
+    );
+    const childMap = new Map(
+      this.entities.get(Child).map((child) => [child.getId(), child as Child])
     );
     this.entities.get(EventNote).forEach((event: EventNote) => {
       this.addActivityToEvent(event, activityMap);
+      this.addEventToChildren(event, childMap);
     });
   }
 
@@ -78,6 +80,14 @@ export class AggregationService {
     if (event.relatesTo && activityMap.has(event.relatesTo)) {
       event[RecurringActivity.ENTITY_TYPE] = activityMap.get(event.relatesTo);
     }
+  }
+
+  private addEventToChildren(event: EventNote, childMap: Map<string, Child>) {
+    event.children?.forEach((childId) => {
+      const child = childMap.get(childId);
+      child[EventNote.ENTITY_TYPE] = child[EventNote.ENTITY_TYPE] || [];
+      child[EventNote.ENTITY_TYPE].push(event);
+    });
   }
 
   public async countEntitiesByProperties(
@@ -125,7 +135,17 @@ export class AggregationService {
           const notQuery = {};
           notQuery[key] = query[check];
           return !this.entitySatisfiesQuery(entity, notQuery);
+        case "any":
+          if (entity[key] && entity[key].length > 0) {
+            console.log("enitity", entity[key], query[check]);
+            return entity[key].some((e: Entity) =>
+              this.entitySatisfiesQuery(e, query[check])
+            );
+          } else {
+            return false;
+          }
         default:
+          console.log("unsupported case");
           return false;
       }
     });
