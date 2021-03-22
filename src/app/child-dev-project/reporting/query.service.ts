@@ -78,6 +78,10 @@ export class QueryService {
     return new Array(...new Set(data));
   }
 
+  count(data: any[]): number {
+    return data.length;
+  }
+
   /**
    * Turns a list of ids (with the entity prefix) into a list of entities
    * @param ids the array of ids with entity prefix
@@ -167,17 +171,28 @@ export class QueryService {
   }
 
   /**
-   * Query the loaded data using the json-query language (https://github.com/auditassistant/json-query)
+   * Query all the loaded entities using the json-query language (https://github.com/auditassistant/json-query)
    * @param query the query string and optionally additional arguments
    * @returns the results of the query
    */
-  public async queryData(query: string | any[]): Promise<any> {
+  public queryAllData(query: string | any[]): Promise<any> {
+    return this.queryData(query, this.entities);
+  }
+
+  /**
+   * Runs the query on the passed data object
+   * @param query a string or array according to the json-query language (https://github.com/auditassistant/json-query)
+   * @param data the data on which the query should run
+   * @returns the results of the query on the data
+   */
+  public async queryData(query: string | any[], data: any): Promise<any> {
     await this.dataLoaded;
     return jsonQuery(query, {
-      data: this.entities,
+      data: data,
       locals: {
         toArray: this.toArray,
         unique: this.unique,
+        count: this.count,
         addPrefix: this.addPrefix,
         toEntities: this.toEntities.bind(this),
         getRelated: this.getRelated.bind(this),

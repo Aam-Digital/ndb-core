@@ -75,16 +75,18 @@ describe("QueryService", () => {
     service.loadData();
 
     const maleChristianQuery = `${Child.ENTITY_TYPE}:toArray[*gender=M & religion=christian]`;
-    const maleChristians = await service.queryData(maleChristianQuery);
+    const maleChristians = await service.queryAllData(maleChristianQuery);
     expect(maleChristians).toEqual([maleChristianChild]);
 
     const femaleQuery = `${Child.ENTITY_TYPE}:toArray[*gender=F]`;
-    const females = await service.queryData(femaleQuery);
+    const females = await service.queryAllData(femaleQuery);
     expect(females).toEqual(
       jasmine.arrayWithExactContents([femaleChristianChild, femaleMuslimChild])
     );
 
-    const allChildren = await service.queryData(`${Child.ENTITY_TYPE}:toArray`);
+    const allChildren = await service.queryAllData(
+      `${Child.ENTITY_TYPE}:toArray`
+    );
     expect(allChildren).toEqual(
       jasmine.arrayWithExactContents([
         maleChristianChild,
@@ -141,7 +143,7 @@ describe("QueryService", () => {
       :getActive.childId:addPrefix(${Child.ENTITY_TYPE}):unique
       :toEntities[*gender=${Gender.MALE}]`;
 
-    const maleChildrenOnPrivateSchools = await service.queryData(
+    const maleChildrenOnPrivateSchools = await service.queryAllData(
       maleChildrenOnPrivateSchoolsQuery
     );
     expect(maleChildrenOnPrivateSchools).toEqual([maleChild]);
@@ -150,7 +152,7 @@ describe("QueryService", () => {
       ${School.ENTITY_TYPE}:toArray
       :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
       :getActive.childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`;
-    let childrenVisitingAnySchool = await service.queryData(
+    let childrenVisitingAnySchool = await service.queryAllData(
       childrenVisitingAnySchoolQuery
     );
     expect(childrenVisitingAnySchool).toEqual(
@@ -158,10 +160,64 @@ describe("QueryService", () => {
     );
 
     maleChildAttendsPrivateSchool.end = moment().subtract(1, "week").toDate();
-    childrenVisitingAnySchool = await service.queryData(
+    childrenVisitingAnySchool = await service.queryAllData(
       childrenVisitingAnySchoolQuery
     );
     expect(childrenVisitingAnySchool).toEqual([femaleChild]);
+  });
+
+  it("should allow to query data multiple times", async () => {
+    const maleChristianChild = new Child();
+    maleChristianChild.gender = Gender.MALE;
+    maleChristianChild.religion = "christian";
+    const femaleChristianChild = new Child();
+    femaleChristianChild.gender = Gender.FEMALE;
+    femaleChristianChild.religion = "christian";
+    const femaleMuslimChild = new Child();
+    femaleMuslimChild.gender = Gender.FEMALE;
+    femaleMuslimChild.religion = "muslim";
+    const maleChild = new Child();
+    maleChild.gender = Gender.MALE;
+    mockEntityMapper.loadType.and.resolveTo([
+      maleChristianChild,
+      femaleChristianChild,
+      femaleMuslimChild,
+      maleChild,
+    ]);
+    service.loadData();
+
+    const allChildren = await service.queryAllData(
+      `${Child.ENTITY_TYPE}:toArray`
+    );
+    expect(allChildren).toEqual(
+      jasmine.arrayWithExactContents([
+        maleChristianChild,
+        femaleChristianChild,
+        femaleMuslimChild,
+        maleChild,
+      ])
+    );
+
+    const maleChildrenCountQuery = `[*gender=${Gender.MALE}]:count`;
+    const maleChildrenCount = await service.queryData(
+      maleChildrenCountQuery,
+      allChildren
+    );
+    expect(maleChildrenCount).toBe(2);
+
+    const christianCountQuery = `[*religion=christian]:count`;
+    const christianCount = await service.queryData(
+      christianCountQuery,
+      allChildren
+    );
+    expect(christianCount).toBe(2);
+
+    const maleChristiansCountQuery = `[*gender=${Gender.MALE} & religion=christian]:count`;
+    const maleChristiansCount = await service.queryData(
+      maleChristiansCountQuery,
+      allChildren
+    );
+    expect(maleChristiansCount).toBe(1);
   });
 
   it("should return attended children in timespan", async () => {
@@ -237,7 +293,7 @@ describe("QueryService", () => {
       `${EventNote.ENTITY_TYPE}:toArray[*date > ?]`,
       moment().subtract(1, "week").toDate(),
     ];
-    const eventsLastWeek = await service.queryData(eventsLastWeekQuery);
+    const eventsLastWeek = await service.queryAllData(eventsLastWeekQuery);
     expect(eventsLastWeek).toEqual(
       jasmine.arrayWithExactContents([
         threeDaysAgoPrivateEvent,
@@ -251,7 +307,7 @@ describe("QueryService", () => {
       ${EventNote.ENTITY_TYPE}:toArray
       :getParticipantsWithAttendance(PRESENT)
       :addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`;
-    const childrenThatAttendedSomething = await service.queryData(
+    const childrenThatAttendedSomething = await service.queryAllData(
       childrenThatAttendedSomethingQuery
     );
     expect(childrenThatAttendedSomething).toEqual(
@@ -348,7 +404,7 @@ describe("QueryService", () => {
       :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
       :getParticipants:addPrefix(${Child.ENTITY_TYPE}):unique
       :toEntities[*gender=${Gender.FEMALE}]`;
-    const femaleParticipantsInPrivateSchools = await service.queryData(
+    const femaleParticipantsInPrivateSchools = await service.queryAllData(
       femaleParticipantsPrivateSchoolQuery
     );
     expect(femaleParticipantsInPrivateSchools).toEqual([femaleChild2]);
@@ -359,7 +415,7 @@ describe("QueryService", () => {
       :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
       :getParticipants:addPrefix(${Child.ENTITY_TYPE}):unique
       :toEntities`;
-    const participantsNotPrivateSchool = await service.queryData(
+    const participantsNotPrivateSchool = await service.queryAllData(
       participantsNotPrivateSchoolQuery
     );
     expect(participantsNotPrivateSchool).toEqual([femaleChild1]);
@@ -368,7 +424,7 @@ describe("QueryService", () => {
       ${EventNote.ENTITY_TYPE}:toArray
       :getParticipantsWithAttendance(PRESENT):addPrefix(${Child.ENTITY_TYPE}):unique
       :toEntities`;
-    const attendedParticipants = await service.queryData(
+    const attendedParticipants = await service.queryAllData(
       attendedParticipantsQuery
     );
     expect(attendedParticipants).toEqual(
