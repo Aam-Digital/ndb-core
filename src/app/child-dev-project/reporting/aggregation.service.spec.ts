@@ -272,7 +272,7 @@ describe("AggregationService", () => {
           twoWeeksAgoPrivateEvent,
           twoDaysAgoEventWithoutRelation,
           todayEventWithoutSchool,
-          twoDaysAgoEventWithoutRelation,
+          sixDaysAgoNormalEvent,
         ]
       )
     );
