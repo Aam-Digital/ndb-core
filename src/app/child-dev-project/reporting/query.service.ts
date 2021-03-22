@@ -23,10 +23,14 @@ export class QueryService {
     EventNote,
   ];
 
-  private entities: { [key: string]: { [key: string]: Entity } } = {};
+  private entities: { [type: string]: { [id: string]: Entity } } = {};
   private dataLoaded: Promise<any>;
-  constructor(private entityMapper: EntityMapperService) { }
+  constructor(private entityMapper: EntityMapperService) {}
 
+  /**
+   * Loads all data objects of the `QueryService.ENTITY_CLASSES` array.
+   * The method should only be called once and before a query is used.
+   */
   public loadData(): void {
     this.dataLoaded = Promise.all(
       QueryService.ENTITY_CLASSES.map((entityClass) =>
@@ -45,11 +49,10 @@ export class QueryService {
    * Adds the prefix and a colon (":") to each string in a array. Does nothing if the string already starts with the prefix.
    * @param ids a string of ids
    * @param prefix the prefix which should be added to the string
+   * @returns a list where every string has the prefix
    */
   addPrefix(ids: string[], prefix: string): string[] {
-    return ids.map((id) =>
-      id.startsWith(prefix) ? id : prefix + ":" + id
-    );
+    return ids.map((id) => (id.startsWith(prefix) ? id : prefix + ":" + id));
   }
 
   /**
@@ -58,6 +61,7 @@ export class QueryService {
    * This should be used when iterating over all documents of a given entity type because they are stored as
    * `"{entity._id}": {entity}`
    * @param obj the object which should be transformed to an array
+   * @returns the values of the input object as a list
    */
   toArray(obj): any[] {
     return Object.values(obj);
@@ -66,6 +70,7 @@ export class QueryService {
   /**
    * Returns a copy of the input array without duplicates
    * @param data the array where duplicates should be removed
+   * @returns a list without duplicates
    */
   unique(data: any[]): any[] {
     return new Array(...new Set(data));
@@ -74,9 +79,10 @@ export class QueryService {
   /**
    * Turns a list of ids (with the entity prefix) into a list of entities
    * @param ids the array of ids with entity prefix
+   * @returns a list of entity objects
    */
   toEntities(ids: string[]): Entity[] {
-    return  ids.map((id) => {
+    return ids.map((id) => {
       const prefix = id.split(":")[0];
       return this.entities[prefix][id];
     });
@@ -88,6 +94,7 @@ export class QueryService {
    * @param entityType the type of entities where relations should be looked for
    * @param relationKey the name of the attribute that holds the reference.
    *                    The attribute can be a string or a list of strings
+   * @returns a list of the related entities
    */
   getRelated(
     srcEntities: Entity[],
@@ -118,6 +125,7 @@ export class QueryService {
    * Returns the ids of all the participants of the passed events.
    * This list may contain duplicates and the id does not necessarily have the entity prefix
    * @param events the array of events
+   * @returns the ids of children which are listed as participants at the events
    */
   getParticipants(events: EventNote[]): string[] {
     const participants: string[] = [];
@@ -127,11 +135,15 @@ export class QueryService {
 
   /**
    * Return the ids of all the participants of the passed events with the defined attendance status using the `countAs`
-   * attribute
+   * attribute. The list may contain duplicates and the id does not necessarily have the entity prefix.
    * @param events the array of events
    * @param attendanceStatus the status for which should be looked for
+   * @returns the ids of children which have the specified attendance in an event
    */
-  getParticipantsWithAttendance(events: EventNote[], attendanceStatus: string): string[] {
+  getParticipantsWithAttendance(
+    events: EventNote[],
+    attendanceStatus: string
+  ): string[] {
     console.log("events", events);
     const attendedChildren: string[] = [];
     events.forEach((e) =>
@@ -144,7 +156,12 @@ export class QueryService {
     return attendedChildren;
   }
 
-  public async queryData(query: string | any[]): Promise<Entity[]> {
+  /**
+   * Query the loaded data using the json-query language (https://github.com/auditassistant/json-query)
+   * @param query the query string and optionally additional arguments
+   * @returns the results of the query
+   */
+  public async queryData(query: string | any[]): Promise<any> {
     await this.dataLoaded;
     return jsonQuery(query, {
       data: this.entities,
