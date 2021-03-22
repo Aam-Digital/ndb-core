@@ -4,7 +4,7 @@ import { QueryService } from "./query.service";
 
 export interface Disaggregation {
   baseQuery: string;
-  aggregations: { label: string; query: string | any[] }[];
+  aggregations: { label: string; query: string }[];
 }
 
 @Injectable({
@@ -25,22 +25,34 @@ export class ReportingService {
     );
   }
 
-  public async calculateDisaggregations(): Promise<
-    { label: string; result: any }[]
-  > {
+  public async calculateDisaggregations(
+    from?: Date,
+    to?: Date
+  ): Promise<{ label: string; result: any }[]> {
     const results: { label: string; result: any }[] = [];
     for (let disaggregation of this.disaggregations) {
       const base = await this.queryService.queryAllData(
-        disaggregation.baseQuery
+        this.getQueryWithDates(disaggregation.baseQuery, from, to)
       );
       for (let aggregation of disaggregation.aggregations) {
         const value = await this.queryService.queryData(
-          aggregation.query,
+          this.getQueryWithDates(aggregation.query, from, to),
           base
         );
         results.push({ label: aggregation.label, result: value });
       }
     }
     return results;
+  }
+
+  private getQueryWithDates(query: string, from?: Date, to?: Date): any[] {
+    const resultQuery: any[] = [query];
+    if (from) {
+      resultQuery.push(from);
+    }
+    if (to) {
+      resultQuery.push(to);
+    }
+    return resultQuery;
   }
 }

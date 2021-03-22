@@ -4,6 +4,8 @@ import { Disaggregation, ReportingService } from "./reporting.service";
 import { ConfigService } from "../../core/config/config.service";
 import { Child } from "../children/model/child";
 import { QueryService } from "./query.service";
+import { EventNote } from "../attendance/model/event-note";
+import moment from "moment";
 
 describe("ReportingService", () => {
   let service: ReportingService;
@@ -45,21 +47,43 @@ describe("ReportingService", () => {
       ],
     };
     mockConfigService.getConfig.and.returnValue([childDisaggregation]);
-    mockQueryService.queryAllData.and.resolveTo([]);
     mockQueryService.queryData.and.returnValues(
       Promise.resolve(1),
       Promise.resolve(2)
     );
     service.loadDisaggregationsFromConfig();
     const report = await service.calculateDisaggregations();
-    expect(mockQueryService.queryAllData).toHaveBeenCalledWith(baseQuery);
+    expect(mockQueryService.queryAllData).toHaveBeenCalledWith([baseQuery]);
     expect(mockQueryService.queryData.calls.allArgs()).toEqual([
-      [christiansQuery, []],
-      [muslimsQuery, []],
+      [[christiansQuery], undefined],
+      [[muslimsQuery], undefined],
     ]);
     expect(report).toEqual([
       { label: "christians", result: 1 },
       { label: "muslims", result: 2 },
     ]);
+  });
+
+  it("should add the date to each query", async () => {
+    const baseQueryString = `${EventNote.ENTITY_TYPE}:toArray[*date>=? date<?]`;
+    const firstDate = moment().subtract(1, "month").toDate();
+    const secondDate = moment().subtract(1, "week").toDate();
+    const subjectQueryString = `[*subject=test]`;
+    const disaggregation: Disaggregation = {
+      baseQuery: baseQueryString,
+      aggregations: [{ label: "tests", query: subjectQueryString }],
+    };
+    mockConfigService.getConfig.and.returnValue([disaggregation]);
+    service.loadDisaggregationsFromConfig();
+    await service.calculateDisaggregations(firstDate, secondDate);
+    expect(mockQueryService.queryAllData).toHaveBeenCalledWith([
+      baseQueryString,
+      firstDate,
+      secondDate,
+    ]);
+    expect(mockQueryService.queryData).toHaveBeenCalledWith(
+      [subjectQueryString, firstDate, secondDate],
+      undefined
+    );
   });
 });
