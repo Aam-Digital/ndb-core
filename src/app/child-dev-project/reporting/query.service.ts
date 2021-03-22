@@ -6,6 +6,7 @@ import { RecurringActivity } from "../attendance/model/recurring-activity";
 import { Note } from "../notes/model/note";
 import { EventNote } from "../attendance/model/event-note";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 const jsonQuery = require("json-query");
 
 /**
@@ -21,6 +22,7 @@ export class QueryService {
     RecurringActivity,
     Note,
     EventNote,
+    ChildSchoolRelation,
   ];
 
   private entities: { [type: string]: { [id: string]: Entity } } = {};
@@ -156,6 +158,15 @@ export class QueryService {
   }
 
   /**
+   * Returns the active child school relations from the input array
+   * @param relations an array of child school relations
+   * @returns an array of active child school relations
+   */
+  getActive(relations: ChildSchoolRelation[]): ChildSchoolRelation[] {
+    return relations.filter((relation) => relation.isActive());
+  }
+
+  /**
    * Query the loaded data using the json-query language (https://github.com/auditassistant/json-query)
    * @param query the query string and optionally additional arguments
    * @returns the results of the query
@@ -172,6 +183,7 @@ export class QueryService {
         getRelated: this.getRelated.bind(this),
         getParticipants: this.getParticipants,
         getParticipantsWithAttendance: this.getParticipantsWithAttendance,
+        getActive: this.getActive,
       },
     }).value;
   }

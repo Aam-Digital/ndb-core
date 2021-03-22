@@ -10,6 +10,7 @@ import { EventNote } from "../attendance/model/event-note";
 import { Note } from "../notes/model/note";
 import moment from "moment";
 import { defaultAttendanceStatusTypes } from "../../core/config/default-config/default-attendance-status-types";
+import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 
 describe("QueryService", () => {
   let service: QueryService;
@@ -20,7 +21,8 @@ describe("QueryService", () => {
     schools: School[] = [],
     activities: RecurringActivity[] = [],
     eventNotes: EventNote[] = [],
-    notes: Note[] = []
+    notes: Note[] = [],
+    childSchoolRelations: ChildSchoolRelation[] = []
   ) => (entityClass) => {
     switch (entityClass as any) {
       case Child:
@@ -33,6 +35,8 @@ describe("QueryService", () => {
         return Promise.resolve(eventNotes);
       case Note:
         return Promise.resolve(notes);
+      case ChildSchoolRelation:
+        return Promise.resolve(childSchoolRelations);
       default:
         return Promise.resolve([]);
     }
@@ -72,9 +76,7 @@ describe("QueryService", () => {
 
     const maleChristianQuery = `${Child.ENTITY_TYPE}:toArray[*gender=M & religion=christian]`;
     const maleChristians = await service.queryData(maleChristianQuery);
-    expect(maleChristians).toEqual(
-      jasmine.arrayWithExactContents([maleChristianChild])
-    );
+    expect(maleChristians).toEqual([maleChristianChild]);
 
     const femaleQuery = `${Child.ENTITY_TYPE}:toArray[*gender=F]`;
     const females = await service.queryData(femaleQuery);
@@ -91,6 +93,75 @@ describe("QueryService", () => {
         femaleMuslimChild,
       ])
     );
+  });
+
+  it("should return all children attending a school based on attributes", async () => {
+    const femaleChild = new Child("femaleChild");
+    femaleChild.gender = Gender.FEMALE;
+    const maleChild = new Child("maleChild");
+    maleChild.gender = Gender.MALE;
+
+    const privateSchool = new School("privateSchool");
+    privateSchool.privateSchool = true;
+    const normalSchool = new School("normalSchool");
+
+    const maleChildAttendsPrivateSchool = new ChildSchoolRelation(
+      "maleChildAttendsPrivateSchool"
+    );
+    maleChildAttendsPrivateSchool.childId = maleChild.getId();
+    maleChildAttendsPrivateSchool.schoolId = privateSchool.getId();
+    maleChildAttendsPrivateSchool.start = moment()
+      .subtract(1, "month")
+      .toDate();
+
+    const femaleChildAttendsNormalSchool = new ChildSchoolRelation(
+      "femaleChildAttendsNormalSchool"
+    );
+    femaleChildAttendsNormalSchool.childId = femaleChild.getId();
+    femaleChildAttendsNormalSchool.schoolId = normalSchool.getId();
+    femaleChildAttendsNormalSchool.start = moment()
+      .subtract(1, "week")
+      .toDate();
+
+    mockEntityMapper.loadType.and.callFake(
+      loadTypeFake(
+        [femaleChild, maleChild],
+        [privateSchool, normalSchool],
+        [],
+        [],
+        [],
+        [maleChildAttendsPrivateSchool, femaleChildAttendsNormalSchool]
+      )
+    );
+    service.loadData();
+
+    const maleChildrenOnPrivateSchoolsQuery = `
+      ${School.ENTITY_TYPE}:toArray
+      :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
+      :getActive.childId:addPrefix(${Child.ENTITY_TYPE}):unique
+      :toEntities[*gender=${Gender.MALE}]`;
+
+    const maleChildrenOnPrivateSchools = await service.queryData(
+      maleChildrenOnPrivateSchoolsQuery
+    );
+    expect(maleChildrenOnPrivateSchools).toEqual([maleChild]);
+
+    const childrenVisitingAnySchoolQuery = `
+      ${School.ENTITY_TYPE}:toArray
+      :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
+      :getActive.childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`;
+    let childrenVisitingAnySchool = await service.queryData(
+      childrenVisitingAnySchoolQuery
+    );
+    expect(childrenVisitingAnySchool).toEqual(
+      jasmine.arrayWithExactContents([femaleChild, maleChild])
+    );
+
+    maleChildAttendsPrivateSchool.end = moment().subtract(1, "week").toDate();
+    childrenVisitingAnySchool = await service.queryData(
+      childrenVisitingAnySchoolQuery
+    );
+    expect(childrenVisitingAnySchool).toEqual([femaleChild]);
   });
 
   it("should return attended children in timespan", async () => {
@@ -280,9 +351,7 @@ describe("QueryService", () => {
     const femaleParticipantsInPrivateSchools = await service.queryData(
       femaleParticipantsPrivateSchoolQuery
     );
-    expect(femaleParticipantsInPrivateSchools).toEqual(
-      jasmine.arrayWithExactContents([femaleChild2])
-    );
+    expect(femaleParticipantsInPrivateSchools).toEqual([femaleChild2]);
 
     const participantsNotPrivateSchoolQuery = `
       ${School.ENTITY_TYPE}:toArray[*privateSchool!=true]
@@ -293,9 +362,7 @@ describe("QueryService", () => {
     const participantsNotPrivateSchool = await service.queryData(
       participantsNotPrivateSchoolQuery
     );
-    expect(participantsNotPrivateSchool).toEqual(
-      jasmine.arrayWithExactContents([femaleChild1])
-    );
+    expect(participantsNotPrivateSchool).toEqual([femaleChild1]);
 
     const attendedParticipantsQuery = `
       ${EventNote.ENTITY_TYPE}:toArray
