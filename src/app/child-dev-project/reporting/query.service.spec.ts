@@ -50,7 +50,7 @@ describe("QueryService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should count all children with specified attributes", async () => {
+  it("should return all children with specified attributes", async () => {
     const maleChristianChild = new Child();
     maleChristianChild.gender = Gender.MALE;
     maleChristianChild.religion = "christian";
@@ -72,14 +72,25 @@ describe("QueryService", () => {
 
     const maleChristianQuery = `${Child.ENTITY_TYPE}:toArray[*gender=M & religion=christian]`;
     const maleChristians = await service.queryData(maleChristianQuery);
-    expect(maleChristians).toHaveSize(1);
+    expect(maleChristians).toEqual(
+      jasmine.arrayWithExactContents([maleChristianChild])
+    );
 
     const femaleQuery = `${Child.ENTITY_TYPE}:toArray[*gender=F]`;
     const females = await service.queryData(femaleQuery);
-    expect(females).toHaveSize(2);
+    expect(females).toEqual(
+      jasmine.arrayWithExactContents([femaleChristianChild, femaleMuslimChild])
+    );
 
     const allChildren = await service.queryData(`${Child.ENTITY_TYPE}:toArray`);
-    expect(allChildren).toHaveSize(4);
+    expect(allChildren).toEqual(
+      jasmine.arrayWithExactContents([
+        maleChristianChild,
+        maleChild,
+        femaleChristianChild,
+        femaleMuslimChild,
+      ])
+    );
   });
 
   it("should return attended children in timespan", async () => {
@@ -151,12 +162,19 @@ describe("QueryService", () => {
     );
     service.loadData();
 
-    const lastWeekRelationsQuery = [
+    const eventsLastWeekQuery = [
       `${EventNote.ENTITY_TYPE}:toArray[*date > ?]`,
       moment().subtract(1, "week").toDate(),
     ];
-    const lastWeekRelations = await service.queryData(lastWeekRelationsQuery);
-    expect(lastWeekRelations).toHaveSize(4);
+    const eventsLastWeek = await service.queryData(eventsLastWeekQuery);
+    expect(eventsLastWeek).toEqual(
+      jasmine.arrayWithExactContents([
+        threeDaysAgoPrivateEvent,
+        todayEventWithoutSchool,
+        twoDaysAgoEventWithoutRelation,
+        sixDaysAgoNormalEvent,
+      ])
+    );
 
     const childrenThatAttendedSomethingQuery = `
       ${EventNote.ENTITY_TYPE}:toArray
@@ -165,7 +183,9 @@ describe("QueryService", () => {
     const childrenThatAttendedSomething = await service.queryData(
       childrenThatAttendedSomethingQuery
     );
-    expect(childrenThatAttendedSomething).toHaveSize(2);
+    expect(childrenThatAttendedSomething).toEqual(
+      jasmine.arrayWithExactContents([femaleChild1, femaleChild2])
+    );
   });
 
   it("should count unique participants of events based on timespan, school and activity", async () => {
@@ -251,41 +271,41 @@ describe("QueryService", () => {
     );
     service.loadData();
 
-    const femaleParticipantsPrivateSchoolLastMonthQuery = [
-      `${School.ENTITY_TYPE}:toArray[*privateSchool=true]
-        :getRelated(${RecurringActivity.ENTITY_TYPE}, linkedGroups)
-        :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
-        :getParticipants:addPrefix(${Child.ENTITY_TYPE}):unique
-        :toEntities[*gender=${Gender.FEMALE}]`,
-      moment().subtract(1, "month").toDate(),
-    ];
-    const femaleParticipantsLastMonthInPrivateSchools = await service.queryData(
-      femaleParticipantsPrivateSchoolLastMonthQuery
+    const femaleParticipantsPrivateSchoolQuery = `
+      ${School.ENTITY_TYPE}:toArray[*privateSchool=true]
+      :getRelated(${RecurringActivity.ENTITY_TYPE}, linkedGroups)
+      :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
+      :getParticipants:addPrefix(${Child.ENTITY_TYPE}):unique
+      :toEntities[*gender=${Gender.FEMALE}]`;
+    const femaleParticipantsInPrivateSchools = await service.queryData(
+      femaleParticipantsPrivateSchoolQuery
     );
-    expect(femaleParticipantsLastMonthInPrivateSchools).toHaveSize(1);
+    expect(femaleParticipantsInPrivateSchools).toEqual(
+      jasmine.arrayWithExactContents([femaleChild2])
+    );
 
-    const participantsLastWeekNotPrivateSchoolQuery = [
-      `${School.ENTITY_TYPE}:toArray[*privateSchool!=true]
-        :getRelated(${RecurringActivity.ENTITY_TYPE}, linkedGroups)
-        :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
-        :getParticipants:addPrefix(${Child.ENTITY_TYPE}):unique
-        :toEntities`,
-      moment().subtract(1, "week").toDate(),
-    ];
-    const participantsLastWeekNotPrivateSchool = await service.queryData(
-      participantsLastWeekNotPrivateSchoolQuery
+    const participantsNotPrivateSchoolQuery = `
+      ${School.ENTITY_TYPE}:toArray[*privateSchool!=true]
+      :getRelated(${RecurringActivity.ENTITY_TYPE}, linkedGroups)
+      :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
+      :getParticipants:addPrefix(${Child.ENTITY_TYPE}):unique
+      :toEntities`;
+    const participantsNotPrivateSchool = await service.queryData(
+      participantsNotPrivateSchoolQuery
     );
-    expect(participantsLastWeekNotPrivateSchool).toHaveSize(1);
+    expect(participantsNotPrivateSchool).toEqual(
+      jasmine.arrayWithExactContents([femaleChild1])
+    );
 
-    const attendedParticipantsLastMonthQuery = [
-      `${EventNote.ENTITY_TYPE}:toArray
-        :getParticipantsWithAttendance(PRESENT):addPrefix(${Child.ENTITY_TYPE}):unique
-        :toEntities`,
-      moment().subtract(1, "month").toDate(),
-    ];
-    const attendedParticipantsLastMonth = await service.queryData(
-      attendedParticipantsLastMonthQuery
+    const attendedParticipantsQuery = `
+      ${EventNote.ENTITY_TYPE}:toArray
+      :getParticipantsWithAttendance(PRESENT):addPrefix(${Child.ENTITY_TYPE}):unique
+      :toEntities`;
+    const attendedParticipants = await service.queryData(
+      attendedParticipantsQuery
     );
-    expect(attendedParticipantsLastMonth).toHaveSize(2);
+    expect(attendedParticipants).toEqual(
+      jasmine.arrayWithExactContents([femaleChild1, femaleChild2])
+    );
   });
 });
