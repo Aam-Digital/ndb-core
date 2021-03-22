@@ -162,7 +162,9 @@ describe("QueryService", () => {
       ${EventNote.ENTITY_TYPE}:toArray
       :getParticipantsWithAttendance("PRESENT")
       :addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`;
-    const childrenThatAttendedSomething = await service.queryData(childrenThatAttendedSomethingQuery);
+    const childrenThatAttendedSomething = await service.queryData(
+      childrenThatAttendedSomethingQuery
+    );
     expect(childrenThatAttendedSomething).toHaveSize(2);
   });
 
@@ -261,7 +263,6 @@ describe("QueryService", () => {
       femaleParticipantsPrivateSchoolLastMonthQuery
     );
     expect(femaleParticipantsLastMonthInPrivateSchools).toHaveSize(1);
-
 
     const participantsLastWeekNotPrivateSchoolQuery = [
       `${School.ENTITY_TYPE}:toArray[*privateSchool!=true]
