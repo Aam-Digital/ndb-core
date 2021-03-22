@@ -144,7 +144,6 @@ export class QueryService {
     events: EventNote[],
     attendanceStatus: string
   ): string[] {
-    console.log("events", events);
     const attendedChildren: string[] = [];
     events.forEach((e) =>
       e.children.forEach((childId) => {

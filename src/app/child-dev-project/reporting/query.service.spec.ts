@@ -70,15 +70,15 @@ describe("QueryService", () => {
     ]);
     service.loadData();
 
-    const maleChristianQuery = `${Child.ENTITY_TYPE}[*gender=M & religion=christian]`;
+    const maleChristianQuery = `${Child.ENTITY_TYPE}:toArray[*gender=M & religion=christian]`;
     const maleChristians = await service.queryData(maleChristianQuery);
     expect(maleChristians).toHaveSize(1);
 
-    const femaleQuery = `${Child.ENTITY_TYPE}[*gender=F]`;
+    const femaleQuery = `${Child.ENTITY_TYPE}:toArray[*gender=F]`;
     const females = await service.queryData(femaleQuery);
     expect(females).toHaveSize(2);
 
-    const allChildren = await service.queryData(`${Child.ENTITY_TYPE}`);
+    const allChildren = await service.queryData(`${Child.ENTITY_TYPE}:toArray`);
     expect(allChildren).toHaveSize(4);
   });
 
@@ -160,7 +160,7 @@ describe("QueryService", () => {
 
     const childrenThatAttendedSomethingQuery = `
       ${EventNote.ENTITY_TYPE}:toArray
-      :getParticipantsWithAttendance("PRESENT")
+      :getParticipantsWithAttendance(PRESENT)
       :addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`;
     const childrenThatAttendedSomething = await service.queryData(
       childrenThatAttendedSomethingQuery
