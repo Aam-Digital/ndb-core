@@ -121,7 +121,7 @@
     <div fxLayout="row wrap" fxLayoutGap="20px">
       <div fxFlex *ngIf="!entity.category.isMeeting">
         <app-child-select
-          [valueAsIds]="entity.children"
+          [selectedChildrenIds]="entity.children"
           (newIdAdded)="entity.addChild($event); entityForm.form.markAsDirty()"
           (idRemoved)="
             entity.removeChild($event); entityForm.form.markAsDirty()

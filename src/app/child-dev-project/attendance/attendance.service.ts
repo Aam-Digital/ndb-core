@@ -11,6 +11,7 @@ import {
   InteractionType,
 } from "../notes/model/interaction-type.interface";
 import { EventNote } from "./model/event-note";
+import { ChildrenService } from "../children/children.service";
 
 @Injectable({
   providedIn: "root",
@@ -19,7 +20,8 @@ export class AttendanceService {
   constructor(
     private entityMapper: EntityMapperService,
     private dbIndexing: DatabaseIndexingService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private childrenService: ChildrenService
   ) {
     this.createIndices();
   }
@@ -74,6 +76,15 @@ export class AttendanceService {
             if (doc._id.startsWith("${RecurringActivity.ENTITY_TYPE}")) {
               for (var p of (doc.participants || [])) {
                 emit(p);
+              }
+            }
+          }`,
+        },
+        by_school: {
+          map: `(doc) => {
+            if (doc._id.startsWith("${RecurringActivity.ENTITY_TYPE}")) {
+              for (var g of (doc.linkedGroups || [])) {
+                emit(g);
               }
             }
           }`,
@@ -193,10 +204,51 @@ export class AttendanceService {
   }
 
   async getActivitiesForChild(childId: string): Promise<RecurringActivity[]> {
-    return await this.dbIndexing.queryIndexDocs(
+    const activities = await this.dbIndexing.queryIndexDocs(
       RecurringActivity,
       "activities_index/by_participant",
       childId
     );
+
+    const visitedSchools = (
+      await this.childrenService.queryRelationsOf("child", childId)
+    ).filter((relation) => relation.isActive());
+    for (const currentRelation of visitedSchools) {
+      const activitiesThroughRelation = await this.dbIndexing.queryIndexDocs(
+        RecurringActivity,
+        "activities_index/by_school",
+        currentRelation.schoolId
+      );
+      for (const activityThroughRelation of activitiesThroughRelation) {
+        if (
+          !activities.some((a) => a.getId() === activityThroughRelation.getId())
+        ) {
+          activities.push(activityThroughRelation);
+        }
+      }
+    }
+
+    return activities;
+  }
+
+  async createEventForActivity(
+    activity: RecurringActivity,
+    date: Date
+  ): Promise<EventNote> {
+    const instance = new EventNote();
+    const childIdPromises = activity.linkedGroups.map((groupId) =>
+      this.childrenService
+        .queryRelationsOf("school", groupId)
+        .then((relations) => relations.map((r) => r.childId))
+    );
+    const schoolParticipants = await Promise.all(childIdPromises);
+    instance.date = date;
+    instance.subject = activity.title;
+    instance.children = [
+      ...new Set(activity.participants.concat(...schoolParticipants)), //  remove duplicates
+    ];
+    instance.relatesTo = activity._id;
+    instance.category = activity.type;
+    return instance;
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "ndb-core",
-  "version": "2.37.1",
+  "version": "2.39.0",
   "license": "GPL-3.0",
   "scripts": {
     "ng": "ng",
@@ -41,7 +41,6 @@
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "moment": "^2.29.1",
-    "ngx-cookie-service": "^11.0.2",
     "ngx-filter-pipe": "^2.1.2",
     "ngx-markdown": "^11.1.1",
     "ngx-papaparse": "^5.0.0",

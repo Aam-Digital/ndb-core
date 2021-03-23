@@ -13,6 +13,7 @@ import { deleteAllIndexedDB } from "../../../utils/performance-tests.spec";
 import { expectEntitiesToBeInDatabase } from "../../../utils/expect-entity-data.spec";
 import { EventNote } from "../model/event-note";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
+import { ChildrenService } from "../../children/children.service";
 
 describe("AttendanceMigrationService", () => {
   let service: AttendanceMigrationService;
@@ -28,6 +29,10 @@ describe("AttendanceMigrationService", () => {
       imports: [EntityModule],
       providers: [
         AttendanceMigrationService,
+        {
+          provide: ChildrenService,
+          useValue: jasmine.createSpyObj(["queryRelationsOf"]),
+        },
         { provide: Database, useValue: testDatabase },
       ],
     });

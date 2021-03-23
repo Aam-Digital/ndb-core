@@ -17,7 +17,6 @@
 
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { Note } from "../../notes/model/note";
-import { RecurringActivity } from "./recurring-activity";
 
 @DatabaseEntity("EventNote")
 export class EventNote extends Note {
@@ -25,19 +24,6 @@ export class EventNote extends Note {
     const instance = new EventNote();
     instance.date = date;
     instance.subject = subject;
-    return instance;
-  }
-
-  static createEventForActivity(
-    activity: RecurringActivity,
-    date: Date
-  ): EventNote {
-    const instance = new EventNote();
-    instance.date = date;
-    instance.subject = activity.title;
-    instance.children = activity.participants;
-    instance.relatesTo = activity._id;
-    instance.category = activity.type;
     return instance;
   }
 }
