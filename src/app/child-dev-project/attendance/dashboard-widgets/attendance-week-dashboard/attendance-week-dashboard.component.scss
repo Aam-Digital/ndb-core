@@ -1,24 +1,4 @@
-.dashboard-table-row {
-  border-top: 1px solid black;
-}
-
-.dashboard-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-.dashboard-table-first-cell {
-  white-space: nowrap;
-  overflow: hidden;
-}
-.dashboard-table-last-cell {
-  width: 108px;
-  text-align: right;
-}
-.dashboard-table-cell {
-  padding-top: 5px;
-  padding-bottom: 5px;
-}
+@use 'src/app/core/dashboard/dashboard-widget-base';
 
 .attendance-day {
   width: 10px;
