@@ -9,18 +9,33 @@ import { Disaggregation, ReportingService } from "../reporting.service";
 })
 export class ReportingComponent implements OnInit {
   private config: { disaggregations?: Disaggregation[] };
-  public results: { label: string; result: any }[];
+  results: { label: string; result: any }[];
+  displayedColumns = ["label", "result"];
+  step = 0;
+  fromDate: Date;
+  toDate: Date;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private reportingService: ReportingService
-  ) {
+  ) {}
+
+  ngOnInit() {
     this.activatedRoute.data.subscribe((config) => {
-      this.config = config;
+      if (config) {
+        this.config = config;
+        this.step = 2;
+      }
     });
   }
 
-  ngOnInit(): void {}
+  datesSelected() {
+    console.log("called", this.fromDate, this.toDate);
+    if (this.fromDate && this.toDate) {
+      console.log("true");
+      this.step = 2;
+    }
+  }
 
   async calculateResults() {
     this.reportingService.setDisaggregations(this.config.disaggregations);
