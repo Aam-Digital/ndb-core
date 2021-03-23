@@ -704,13 +704,13 @@ export const defaultConfig = {
                   [
                     {
                       "input": "age",
+                      "tooltip": "This field is read-only. Edit Date of Birth to change age. Select Jan 1st if you only know the year of birth.",
                       "id": "dateOfBirth",
                       "placeholder": "Date of Birth"
                     },
                     {
                       "input": "select",
-                      "tooltip": "This is a sample toopltip. Please enter the biological sex of the person.",
-                      "tooltipPosition": "above",
+                      "tooltip": "This is a sample toopltip for a select field. Please select the biological sex of the person.",
                       "id": "gender",
                       "placeholder": "Gender",
                       "options": [
@@ -720,6 +720,7 @@ export const defaultConfig = {
                     },
                     {
                       "input": "text",
+                      "tooltip": "This is a sample toopltip for a textfield. Please enter the native language.",
                       "id": "motherTongue",
                       "placeholder": "Mother Tongue"
                     },
@@ -737,6 +738,7 @@ export const defaultConfig = {
                     },
                     {
                       "input": "configurable-enum-select",
+                      "tooltip": "This is a sample tooltip for a configurable-enum-select-field. Please choose Adahar status.",
                       "id": "has_aadhar",
                       "placeholder": "Aadhar Status",
                       "enumId": "document-status"
