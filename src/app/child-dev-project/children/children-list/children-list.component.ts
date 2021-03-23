@@ -30,8 +30,6 @@ export class ChildrenListComponent implements OnInit {
   listConfig: EntityListConfig;
   childConstructor = Child;
 
-  schoolFS: FilterSelectionOption<Child>[] = [];
-
   constructor(
     private childrenService: ChildrenService,
     private entityMapper: EntityMapperService,

@@ -799,13 +799,13 @@ export const defaultConfig = {
               "component": "PreviousSchools",
               "config": {
                 "single": true,
-                "columns": {
-                  "schoolId": "School",
-                  "schoolClass": "Class",
-                  "start": "From",
-                  "end": "To",
-                  "result": "Result"
-                }
+                "columns": [
+                  { "id": "schoolId", "label": "School", "input": "school" },
+                  { "id": "schoolClass", "label": "Class", "input": "text" },
+                  { "id": "start", "label": "From", "input": "date" },
+                  { "id": "end", "label": "To", "input": "date" },
+                  { "id": "result", "label": "Result", "input": "percentageResult" },
+                ],
               }
             },
             {

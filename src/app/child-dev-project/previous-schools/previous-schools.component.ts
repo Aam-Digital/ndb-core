@@ -20,13 +20,7 @@ import { School } from "../schools/model/school";
 
 interface PreviousRelationsConfig {
   single: boolean;
-  columns: {
-    schoolId: string;
-    schoolClass?: string;
-    start: string;
-    end: string;
-    result?: string;
-  };
+  columns: { id: string; label: string; input: string }[];
 }
 
 @Component({
@@ -62,11 +56,13 @@ export class PreviousSchoolsComponent
 
   public config: PreviousRelationsConfig = {
     single: false,
-    columns: {
-      schoolId: "School",
-      start: "From",
-      end: "End",
-    },
+    columns: [
+      { id: "schoolId", label: "School", input: "school" },
+      { id: "schoolClass", label: "Class", input: "text" },
+      { id: "start", label: "From", input: "date" },
+      { id: "end", label: "To", input: "date" },
+      { id: "result", label: "Result", input: "percentageResult" },
+    ],
   };
 
   constructor(
@@ -107,52 +103,45 @@ export class PreviousSchoolsComponent
   private async initColumnDefinitions() {
     const schools = await this.schoolsService.getSchools().toPromise();
     this.schoolMap = new Map(schools.map((school) => [school.getId(), school]));
+    this.columns = this.config.columns.map((column) =>
+      this.createColumn(column.id, column.label, column.input)
+    );
+  }
 
-    this.columns = [
-      {
-        name: "schoolId",
-        label: this.config.columns.schoolId,
-        inputType: ColumnDescriptionInputType.SELECT,
-        selectValues: schools
+  private createColumn(
+    id: string,
+    label: string,
+    type: string
+  ): ColumnDescription {
+    const column: ColumnDescription = {
+      name: id,
+      label: label,
+      inputType: ColumnDescriptionInputType.TEXT,
+    };
+    switch (type) {
+      case "date":
+        column.inputType = ColumnDescriptionInputType.DATE;
+        break;
+      case "school":
+        column.inputType = ColumnDescriptionInputType.SELECT;
+        column.selectValues = new Array(...this.schoolMap.values())
           .sort((s1, s2) => s1.name.localeCompare(s2.name))
           .map((t) => {
             return { value: t.getId(), label: t.name };
-          }),
-        valueFunction: (entity: ChildSchoolRelation) =>
-          this.schoolMap.get(entity["schoolId"]).name,
-      },
-    ];
-    if (this.config.columns.schoolClass) {
-      this.columns.push({
-        name: "schoolClass",
-        label: this.config.columns.schoolClass,
-        inputType: ColumnDescriptionInputType.TEXT,
-      });
-    }
-    this.columns.push(
-      {
-        name: "start",
-        label: this.config.columns.start,
-        inputType: ColumnDescriptionInputType.DATE,
-      },
-      {
-        name: "end",
-        label: this.config.columns.end,
-        inputType: ColumnDescriptionInputType.DATE,
-      }
-    );
-    if (this.config.columns.result) {
-      this.columns.push({
-        name: "result",
-        label: this.config.columns.result,
-        inputType: ColumnDescriptionInputType.NUMBER,
-        valueFunction: (entity: ChildSchoolRelation) =>
+          });
+        column.valueFunction = (entity: ChildSchoolRelation) =>
+          this.schoolMap.get(entity["schoolId"]).name;
+        break;
+      case "percentageResult":
+        column.inputType = ColumnDescriptionInputType.NUMBER;
+        column.valueFunction = (entity: ChildSchoolRelation) =>
           entity.result >= 0 && !Number.isNaN(entity.result)
             ? entity.result + "%"
-            : "N/A",
-        styleBuilder: this.resultColorStyleBuilder,
-      });
+            : "N/A";
+        column.styleBuilder = this.resultColorStyleBuilder;
+        break;
     }
+    return column;
   }
 
   generateNewRecordFactory() {
