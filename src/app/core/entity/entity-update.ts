@@ -41,10 +41,13 @@ export function update<T extends Entity>(
       const index = entities.findIndex(
         (value) => value.getId() === next.entity.getId()
       );
-      if (index !== -1) {
+      if (next.type === "remove" && index !== -1) {
         entities.splice(index, 1);
+      } else if (next.type === "update" && index !== -1) {
+        entities[index] = next.entity;
+        entities = [].concat(entities);
       }
-      return next.type === "remove" ? entities : [next.entity].concat(entities);
+      return entities;
     }
   } else {
     return entities;

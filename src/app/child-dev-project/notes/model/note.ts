@@ -158,4 +158,10 @@ export class Note extends Entity {
 
     return false;
   }
+
+  copy(): Note {
+    const note: Note = super.copy() as Note;
+    note.children = [...this.children];
+    return note;
+  }
 }

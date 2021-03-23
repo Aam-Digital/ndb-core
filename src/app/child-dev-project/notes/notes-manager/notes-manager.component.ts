@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { Note } from "../model/note";
 import { MediaObserver } from "@angular/flex-layout";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
@@ -11,7 +11,7 @@ import { FormDialogService } from "../../../core/form-dialog/form-dialog.service
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
-import { map } from "rxjs/operators";
+import { filter, map } from "rxjs/operators";
 import { update } from "../../../core/entity/entity-update";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 
@@ -94,10 +94,9 @@ export class NotesManagerComponent implements OnInit {
       .receiveUpdates<Note>(Note)
       .pipe(
         untilDestroyed(this),
+        filter((note) => note !== null && note !== undefined),
         map((note) => {
-          if (note) {
-            note["color"] = this.getColor(note.entity);
-          }
+          note.entity["color"] = this.getColor(note.entity);
           return note;
         })
       )

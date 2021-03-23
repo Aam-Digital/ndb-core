@@ -120,7 +120,7 @@ export class EntityMapperService {
     const rawData = this.entitySchemaService.transformEntityToDatabaseFormat(
       entity
     );
-    this.sendUpdate(entity, entity._rev === undefined ? "new" : "remove");
+    this.sendUpdate(entity, entity._rev === undefined ? "new" : "update");
     const result = await this._db.put(rawData, forceUpdate);
     if (result?.ok) {
       entity._rev = result.rev;
@@ -133,7 +133,7 @@ export class EntityMapperService {
    * @param entity The entity to be deleted
    */
   public remove<T extends Entity>(entity: T): Promise<any> {
-    this.sendUpdate(entity, "delete");
+    this.sendUpdate(entity, "remove");
     return this._db.remove(entity);
   }
 
@@ -147,7 +147,7 @@ export class EntityMapperService {
 
   private sendUpdate<T extends Entity>(
     entity: T,
-    type: "delete" | "new" | "remove"
+    type: "new" | "update" | "remove"
   ) {
     const publisher = this.publishers[entity.getType()];
     if (publisher && !publisher.closed) {
