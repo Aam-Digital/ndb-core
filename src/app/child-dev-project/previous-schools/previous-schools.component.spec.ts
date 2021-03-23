@@ -89,11 +89,11 @@ describe("PreviousSchoolsComponent", () => {
       entity: new Child(),
       config: {
         single: true,
-        columns: {
-          schoolId: "Team",
-          start: "From",
-          end: "To",
-        },
+        columns: [
+          { id: "schoolId", label: "Team", input: "school" },
+          { id: "start", label: "From", input: "date" },
+          { id: "end", label: "To", input: "date" },
+        ],
       },
     };
     component.onInitFromDynamicConfig(config);
@@ -105,8 +105,16 @@ describe("PreviousSchoolsComponent", () => {
     expect(columnNames).toContain("From");
     expect(columnNames).toContain("To");
 
-    config.config.columns.result = "Result";
-    config.config.columns.schoolClass = "Class";
+    config.config.columns.push({
+      id: "schoolClass",
+      label: "Class",
+      input: "text",
+    });
+    config.config.columns.push({
+      id: "result",
+      label: "Result",
+      input: "percentageResult",
+    });
 
     component.onInitFromDynamicConfig(config);
     component.ngOnInit();
