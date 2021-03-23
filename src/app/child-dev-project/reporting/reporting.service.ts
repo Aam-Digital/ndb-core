@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { ConfigService } from "../../core/config/config.service";
 import { QueryService } from "./query.service";
 
 export interface Disaggregation {
@@ -11,21 +10,17 @@ export interface Disaggregation {
   providedIn: "root",
 })
 export class ReportingService {
-  public static DISAGGREGATIONS_CONFIG_KEY = "reporting:DISAGGREGATIONS";
   private disaggregations: Disaggregation[] = [];
 
   constructor(
-    private configService: ConfigService,
     private queryService: QueryService
   ) {}
 
-  public loadDisaggregationsFromConfig() {
-    this.disaggregations = this.configService.getConfig(
-      ReportingService.DISAGGREGATIONS_CONFIG_KEY
-    );
+  public setDisaggregations(disaggregations: Disaggregation[]) {
+    this.disaggregations = disaggregations;
   }
 
-  public async calculateDisaggregations(
+  public async calculateReport(
     from?: Date,
     to?: Date
   ): Promise<{ label: string; result: any }[]> {
