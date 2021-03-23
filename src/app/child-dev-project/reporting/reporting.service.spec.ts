@@ -11,11 +11,13 @@ describe("ReportingService", () => {
   let mockQueryService: jasmine.SpyObj<QueryService>;
 
   beforeEach(() => {
-    mockQueryService = jasmine.createSpyObj(["queryAllData", "queryData"]);
+    mockQueryService = jasmine.createSpyObj([
+      "queryAllData",
+      "queryData",
+      "loadData",
+    ]);
     TestBed.configureTestingModule({
-      providers: [
-        { provide: QueryService, useValue: mockQueryService },
-      ],
+      providers: [{ provide: QueryService, useValue: mockQueryService }],
     });
     service = TestBed.inject(ReportingService);
   });
@@ -43,6 +45,7 @@ describe("ReportingService", () => {
     );
 
     const report = await service.calculateReport();
+    expect(mockQueryService.loadData).toHaveBeenCalled();
     expect(mockQueryService.queryAllData).toHaveBeenCalledWith([baseQuery]);
     expect(mockQueryService.queryData.calls.allArgs()).toEqual([
       [[christiansQuery], undefined],
@@ -66,6 +69,7 @@ describe("ReportingService", () => {
     service.setDisaggregations([disaggregation]);
 
     await service.calculateReport(firstDate, secondDate);
+    expect(mockQueryService.loadData).toHaveBeenCalled();
     expect(mockQueryService.queryAllData).toHaveBeenCalledWith([
       baseQueryString,
       firstDate,

@@ -12,9 +12,7 @@ export interface Disaggregation {
 export class ReportingService {
   private disaggregations: Disaggregation[] = [];
 
-  constructor(
-    private queryService: QueryService
-  ) {}
+  constructor(private queryService: QueryService) {}
 
   public setDisaggregations(disaggregations: Disaggregation[]) {
     this.disaggregations = disaggregations;
@@ -25,6 +23,7 @@ export class ReportingService {
     to?: Date
   ): Promise<{ label: string; result: any }[]> {
     const results: { label: string; result: any }[] = [];
+    this.queryService.loadData();
     for (let disaggregation of this.disaggregations) {
       const base = await this.queryService.queryAllData(
         this.getQueryWithDates(disaggregation.baseQuery, from, to)
