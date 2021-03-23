@@ -31,8 +31,8 @@ export interface UpdatedEntity<T extends Entity> {
  */
 
 export function update<T extends Entity>(
-  next: UpdatedEntity<T>,
-  entities: T[]
+  entities: T[],
+  next: UpdatedEntity<T>
 ) {
   if (next) {
     if (next.type === "new") {

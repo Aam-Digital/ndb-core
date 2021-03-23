@@ -40,18 +40,6 @@ describe("FormDialogWrapperComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should reset entity on cancel", async () => {
-    const testEntity: any = { value: 1 };
-    component.entity = testEntity;
-
-    testEntity.value = 2;
-    // @ts-ignore
-    expect(component.entity.value).toBe(2);
-
-    await component.cancel();
-    expect(testEntity.value).toBe(1);
-  });
-
   it("should save without beforeSave hook", async () => {
     const testEntity: any = { value: 1 };
     component.entity = testEntity;

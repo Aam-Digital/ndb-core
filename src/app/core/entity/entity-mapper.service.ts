@@ -142,7 +142,6 @@ export class EntityMapperService {
    *
    * @param entity The entity to update
    * @param type The type, see {@link UpdatedEntity#type}
-   * @private
    */
 
   private sendUpdate<T extends Entity>(

@@ -85,7 +85,7 @@ export class NotesManagerComponent implements OnInit {
       for (const note of notes) {
         if (note) {
           note["color"] = this.getColor(note);
-          this.notes = [note].concat(this.notes);
+          this.notes.push(note);
         }
       }
     });
@@ -101,7 +101,7 @@ export class NotesManagerComponent implements OnInit {
         })
       )
       .subscribe((updatedNote) => {
-        this.notes = update(updatedNote, this.notes);
+        this.notes = update(this.notes, updatedNote);
       });
   }
 
