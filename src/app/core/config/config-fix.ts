@@ -1,5 +1,9 @@
 import { defaultAttendanceStatusTypes } from "./default-config/default-attendance-status-types";
 import { defaultInteractionTypes } from "./default-config/default-interaction-types";
+import { Child } from "../../child-dev-project/children/model/child";
+import { Gender } from "../../child-dev-project/children/model/Gender";
+import { School } from "../../child-dev-project/schools/model/school";
+import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 
 // prettier-ignore
 export const defaultConfig = {
@@ -49,6 +53,11 @@ export const defaultConfig = {
         "name": "Users",
         "icon": "user",
         "link": "/users"
+      },
+      {
+        "name": "Reports",
+        "icon": "line-chart",
+        "link": "/report"
       },
       {
         "name": "Database Conflicts",
@@ -1053,6 +1062,37 @@ export const defaultConfig = {
         }
       ],
       "icon": "calendar"
+    }
+  },
+  "view:report": {
+    "component": "Reporting",
+    "config": {
+      "disaggregations": [
+        {
+          "baseQuery": `${Child.ENTITY_TYPE}:toArray`,
+          "aggregations": [
+            {"label": "All children", "query": ":count"},
+            {"label": "Male children", "query": `[*gender=${Gender.MALE}]:count`},
+            {"label": "Female children", "query": `[*gender=${Gender.FEMALE}]:count`},
+          ]
+        },
+        {
+          "baseQuery": `${School.ENTITY_TYPE}:toArray`,
+          "aggregations": [
+            {"label": "All schools", "query": `:count`},
+            {"label": "Children attending a school", "query": `:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId):getActive.childId:unique:count`},
+            {"label": "Governmental schools", "query": `[*privateSchool!=true]:count`},
+            {"label": "Children attending a governmental school", "query": `[*privateSchool!=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId):getActive.childId:unique:count`},
+            {"label": "Male children attending a governmental school", "query": `[*privateSchool!=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId):getActive.childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities[*gender=${Gender.MALE}]:count`},
+            {"label": "Female children attending a governmental school", "query": `[*privateSchool!=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId):getActive.childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities[*gender=${Gender.FEMALE}]:count`},
+            {"label": "Private schools", "query": `[*privateSchool=true]:count`},
+            {"label": "Children attending a private school", "query": `[*privateSchool=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId):getActive.childId:unique:count`},
+            {"label": "Male children attending a private school", "query": `[*privateSchool=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId):getActive.childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities[*gender=${Gender.MALE}]:count`},
+            {"label": "Female children attending a public school", "query": `[*privateSchool=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId):getActive.childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities[*gender=${Gender.FEMALE}]:count`},
+          ]
+        },
+
+      ],
     }
   },
 

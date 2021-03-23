@@ -1,0 +1,5 @@
+<button mat-button (click)="calculateResults()">Create Report</button>
+
+<mat-list *ngIf="results?.length > 0">
+    <mat-list-item *ngFor="let result of results">{{result.label}}: {{result.result}}</mat-list-item>
+</mat-list>
