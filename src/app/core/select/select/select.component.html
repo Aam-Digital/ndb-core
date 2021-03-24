@@ -1,0 +1,10 @@
+<mat-form-field>
+  <mat-label>{{label}}</mat-label>
+  <mat-chip-list>
+    <mat-basic-chip
+      *ngFor="let entity of selectedEntities"
+    >
+      {{entity.entityId}}
+    </mat-basic-chip>
+  </mat-chip-list>
+</mat-form-field>

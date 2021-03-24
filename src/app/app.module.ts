@@ -70,6 +70,9 @@ import { FontAwesomeIconsModule } from "./core/icons/font-awesome-icons.module";
 import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
 import { ConfigModule } from "./core/config/config.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
+import { SelectComponent } from "./core/select/select/select.component";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatFormFieldModule } from "@angular/material/form-field";
 
 /**
  * Main entry point of the application.
@@ -77,7 +80,7 @@ import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendan
  * Real functionality should be implemented in separate modules and imported here rather than being part of this module.
  */
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, SelectComponent],
   imports: [
     ServiceWorkerModule.register("/ngsw-worker.js", {
       enabled: environment.production,
@@ -117,11 +120,11 @@ import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendan
     EntityDetailsModule,
     ConfigurableEnumModule,
     DemoDataModule.forRoot([
-      ...DemoChildGenerator.provider({ count: 150 }),
-      ...DemoSchoolGenerator.provider({ count: 8 }),
+      ...DemoChildGenerator.provider({count: 150}),
+      ...DemoSchoolGenerator.provider({count: 8}),
       ...DemoChildSchoolRelationGenerator.provider(),
       ...DemoActivityGeneratorService.provider(),
-      ...DemoActivityEventsGeneratorService.provider({ forNLastYears: 2 }),
+      ...DemoActivityEventsGeneratorService.provider({forNLastYears: 2}),
       ...DemoNoteGeneratorService.provider({
         minNotesPerChild: 2,
         maxNotesPerChild: 10,
@@ -137,6 +140,8 @@ import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendan
       ...DemoUserGeneratorService.provider(),
     ]),
     AttendanceModule,
+    MatChipsModule,
+    MatFormFieldModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
