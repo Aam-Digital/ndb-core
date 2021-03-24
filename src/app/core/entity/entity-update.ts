@@ -22,34 +22,35 @@ export interface UpdatedEntity<T extends Entity> {
 }
 
 /**
- * Updates a list of entities given a certain updated entity as well as a
- * list of entities that this updated entity could be part of (in the case of
- * an update or remove)
- * @param next An entity that should be updated as well as the type of update
- * @param entities The entities to update
- * @return An array that is a copy of the given entities with the update applied
+ * Updates a list of entities given an updated version of the entity. This updated version
+ * can either be a new entity (that should be inserted into the list), or an existing entity
+ * that should be updated or deleted.
+ * The given array will not be mutated but will be returned when the given new entity
+ * or type is illegal
+ * @param next An entity that should be updated as well as the type of update. This, as well as the entity
+ * may be undefined or null. In this event, the entities-array is returned as is.
+ * @param entities The entities to update, must be defined
+ * @return An array of the given entities with the update applied
  */
 
 export function update<T extends Entity>(
   entities: T[],
   next: UpdatedEntity<T>
 ) {
-  if (next) {
-    if (next.type === "new") {
-      return [next.entity].concat(entities);
-    } else {
-      const index = entities.findIndex(
-        (value) => value.getId() === next.entity.getId()
-      );
-      if (next.type === "remove" && index !== -1) {
-        entities.splice(index, 1);
-      } else if (next.type === "update" && index !== -1) {
-        entities[index] = next.entity;
-        entities = [].concat(entities);
-      }
-      return entities;
-    }
-  } else {
+  if (!next || !next.entity) {
     return entities;
+  }
+  switch (next.type) {
+    case "new":
+      return [next.entity].concat(entities);
+    case "update":
+      return entities.map((e) =>
+        e.getId() === next.entity.getId() ? next.entity : e
+      );
+    case "remove":
+      return entities.filter((e) => e.getId() !== next.entity.getId());
+    default:
+      console.log("Illegal operation while updating entities: ", next.type);
+      return entities;
   }
 }
