@@ -175,25 +175,15 @@ describe("EntityMapperService", () => {
 
   it("publishes updates to any listeners", (done) => {
     const testId = "t1";
-    entityMapper.receiveUpdates<Entity>(Entity).subscribe((e) => {
-      if (e) {
-        expect(e.entity.entityId).toBe(testId);
-        done();
-      }
-    });
+    receiveUpdatesAndTestTypeAndId(undefined, testId, done);
+
     const testEntity = new Entity(testId);
     entityMapper.save(testEntity, true);
     entityMapper.remove(testEntity);
   });
 
   it("publishes when an existing entity is updated", async (done) => {
-    entityMapper.receiveUpdates<Entity>(Entity).subscribe((e) => {
-      if (e) {
-        expect(e.type).toBe("update");
-        expect(e.entity.entityId).toBe(existingEntity.entityId);
-        done();
-      }
-    });
+    receiveUpdatesAndTestTypeAndId("update", existingEntity.entityId, done);
 
     const loadedEntity = await entityMapper.load<Entity>(
       Entity,
@@ -203,13 +193,7 @@ describe("EntityMapperService", () => {
   });
 
   it("publishes when an existing entity is deleted", async (done) => {
-    entityMapper.receiveUpdates<Entity>(Entity).subscribe((e) => {
-      if (e) {
-        expect(e.type).toBe("remove");
-        expect(e.entity.entityId).toBe(existingEntity.entityId);
-        done();
-      }
-    });
+    receiveUpdatesAndTestTypeAndId("remove", existingEntity.entityId, done);
 
     const loadedEntity = await entityMapper.load<Entity>(
       Entity,
@@ -220,15 +204,27 @@ describe("EntityMapperService", () => {
 
   it("publishes when a new entity is being saved", (done) => {
     const testId = "t1";
-    entityMapper.receiveUpdates<Entity>(Entity).subscribe((e) => {
-      if (e) {
-        expect(e.type).toBe("new");
-        expect(e.entity.entityId).toBe(testId);
-        done();
-      }
-    });
+    receiveUpdatesAndTestTypeAndId("new", testId, done);
 
     const testEntity = new Entity(testId);
     entityMapper.save(testEntity, true);
   });
+
+  function receiveUpdatesAndTestTypeAndId(
+    type: string | undefined,
+    entityId: string | undefined,
+    done: any
+  ) {
+    entityMapper.receiveUpdates<Entity>(Entity).subscribe((e) => {
+      if (e) {
+        if (type) {
+          expect(e.type).toBe(type);
+        }
+        if (entityId) {
+          expect(e.entity.entityId).toBe(entityId);
+        }
+        done();
+      }
+    });
+  }
 });
