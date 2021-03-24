@@ -36,9 +36,9 @@ export class SchoolsListComponent implements OnInit {
     this.route.data.subscribe(
       (config: EntityListConfig) => (this.listConfig = config)
     );
-    this.entityMapper.loadType<School>(School).then((schools) => {
-      this.schoolList = [...schools];
-    });
+    this.entityMapper
+      .loadType<School>(School)
+      .then((data) => (this.schoolList = data));
   }
 
   routeTo(route: string) {

@@ -82,12 +82,10 @@ export class NotesManagerComponent implements OnInit {
       this.addPrebuiltFilters();
     });
     this.entityMapperService.loadType<Note>(Note).then((notes) => {
-      for (const note of notes) {
-        if (note) {
-          note["color"] = this.getColor(note);
-          this.notes.push(note);
-        }
-      }
+      notes.forEach((note) => (note["color"] = this.getColor(note)));
+      // This prevents edge-cases where updates are received
+      // before this is
+      this.notes = notes.concat(this.notes);
     });
 
     this.entityMapperService

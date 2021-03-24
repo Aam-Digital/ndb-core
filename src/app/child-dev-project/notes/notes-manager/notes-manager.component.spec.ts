@@ -196,7 +196,7 @@ describe("NotesManagerComponent", () => {
     expect(component.notes.length).toBe(oldLength + 1);
   });
 
-  it("will contain an updated note when updated", async() => {
+  it("will contain the updated note when updated", async () => {
     let note = new Note("n1");
     note.author = "A";
     const entityMapper = fixture.debugElement.injector.get(EntityMapperService);

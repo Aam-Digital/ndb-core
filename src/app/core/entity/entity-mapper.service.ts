@@ -91,6 +91,9 @@ export class EntityMapperService {
    * <br>
    * This can be used in collaboration with the update(UpdatedEntity, Entities)-function
    * to update a list of entities
+   * <br>
+   * The first update that one will receive - immediately after subscribing - is <code>null</code>.
+   * The <code>update</code>-function takes this into account.
    * @param entityType the type of the entity
    */
 

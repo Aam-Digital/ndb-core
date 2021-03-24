@@ -30,7 +30,19 @@ import { Entity } from "../../entity/entity";
   styleUrls: ["./form-dialog-wrapper.component.scss"],
 })
 export class FormDialogWrapperComponent {
-  @Input() entity: Entity;
+  /** entity to be edited */
+  @Input() set entity(value: Entity) {
+    this.originalEntity = Object.assign({}, value);
+    this._entity = value;
+  }
+  get entity(): Entity {
+    return this._entity;
+  }
+
+  /** actual reference to the entity to be edited in the form used by the getter/setter */
+  private _entity: Entity;
+  /** clone of the initially given entity as backup for resetting changes */
+  private originalEntity: Entity;
 
   /**
    * (Optional) callback before saving the entity to the database.
@@ -82,6 +94,7 @@ export class FormDialogWrapperComponent {
    * Reset any changes made to the entity in the current form (and trigger an `onClose` event).
    */
   public async cancel() {
+    Object.assign(this._entity, this.originalEntity);
     this.onClose.emit(undefined);
   }
 }

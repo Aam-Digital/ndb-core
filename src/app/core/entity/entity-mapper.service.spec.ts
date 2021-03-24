@@ -20,7 +20,6 @@ import { Entity } from "./entity";
 import { MockDatabase } from "../database/mock-database";
 import { Database } from "../database/database";
 import { EntitySchemaService } from "./schema/entity-schema.service";
-import { bufferCount, filter, map } from "rxjs/operators";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;

@@ -90,12 +90,4 @@ describe("entity-update", () => {
     update<TestEntity>(existingEntities, undefined);
     expect(existingEntities).toEqual(original);
   });
-
-  it("returns the existing entities when an illegal operation is passed", () => {
-    const newEntities = update<TestEntity>(existingEntities, {
-      entity: new TestEntity("n1", 1),
-      type: "illegal",
-    });
-    expect(newEntities).toEqual(existingEntities);
-  });
 });
