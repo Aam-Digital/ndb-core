@@ -18,6 +18,9 @@ import { ReportingService } from "../reporting.service";
 import { MatNativeDateModule } from "@angular/material/core";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeIconsModule } from "../../../core/icons/font-awesome-icons.module";
+import { AdminModule } from "../../../core/admin/admin.module";
+import { Database } from "../../../core/database/database";
+import { MockDatabase } from "../../../core/database/mock-database";
 
 const reportingService = {
   setDisaggregations: () => null,
@@ -54,10 +57,12 @@ export default {
         MatNativeDateModule,
         BrowserAnimationsModule,
         FontAwesomeIconsModule,
+        AdminModule,
       ],
       providers: [
         { provide: ActivatedRoute, useValue: { data: of({}) } },
         { provide: ReportingService, useValue: reportingService },
+        { provide: Database, useClass: MockDatabase },
       ],
     }),
   ],

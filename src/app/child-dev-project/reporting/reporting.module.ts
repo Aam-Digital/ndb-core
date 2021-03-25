@@ -10,6 +10,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormsModule } from "@angular/forms";
+import { AdminModule } from "../../core/admin/admin.module";
 
 @NgModule({
   declarations: [ReportingComponent],
@@ -24,6 +25,7 @@ import { FormsModule } from "@angular/forms";
     MatDatepickerModule,
     MatFormFieldModule,
     FormsModule,
+    AdminModule,
   ],
 })
 export class ReportingModule {}

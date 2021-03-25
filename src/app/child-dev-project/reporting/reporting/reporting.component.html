@@ -21,7 +21,7 @@
 
         <mat-step [completed]="step > 2">
             <ng-template matStepLabel>Calculate report</ng-template>
-            <button mat-button (click)="calculateResults()">Calculate</button>
+            <button mat-stroked-button (click)="calculateResults()">Calculate</button>
         </mat-step>
 
         <ng-template matStepperIcon="edit">
@@ -33,7 +33,15 @@
     </mat-horizontal-stepper>
 </mat-expansion-panel>
 
-<div class="result-panel mat-elevation-z2" *ngIf="results?.length > 0">
+<div class="result-panel mat-elevation-z2" *ngIf="results?.length > 0" style="background-color: white">
+    <app-export-data [data]="this.results" format="csv" filename="report" style="float: right">
+        <mat-icon
+            class="button-icon"
+            aria-label="download csv"
+            fontIcon="fa-download"
+        ></mat-icon>
+        Download report
+    </app-export-data>
     <table mat-table [dataSource]="results" style="width: 100%;">
         <ng-container matColumnDef="label">
             <th mat-header-cell *matHeaderCellDef> Label </th>

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild } from "@angular/core";
+import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Disaggregation, ReportingService } from "../reporting.service";
 import { MatStepper } from "@angular/material/stepper";
@@ -17,7 +17,7 @@ export interface ReportRow {
   templateUrl: "./reporting.component.html",
   styleUrls: ["./reporting.component.scss"],
 })
-export class ReportingComponent implements AfterViewInit {
+export class ReportingComponent implements OnInit, AfterViewInit {
   private config: ReportingComponentConfig;
   results: ReportRow[];
   displayedColumns = ["label", "result"];
@@ -31,16 +31,18 @@ export class ReportingComponent implements AfterViewInit {
     private reportingService: ReportingService
   ) {}
 
-  ngAfterViewInit() {
+  ngOnInit() {
     this.activatedRoute.data.subscribe((config) => {
       if (config) {
         this.config = config;
         this.step = 1;
-        setTimeout(() => {
-          this.stepper.linear = true;
-        });
       }
     });
+  }
+
+  ngAfterViewInit() {
+    // This is set here, because if `linear === true`, the stepper wont listen to changes of the `step` variable
+    this.stepper.linear = true;
   }
 
   datesSelected() {
