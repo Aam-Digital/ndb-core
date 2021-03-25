@@ -3,8 +3,9 @@ import { Meta, Story } from "@storybook/angular/types-6-0";
 import { Entity } from "../../entity/entity";
 import { moduleMetadata } from "@storybook/angular";
 import { CommonModule } from "@angular/common";
+import { ReactiveFormsModule } from "@angular/forms";
 import { MatChipsModule } from "@angular/material/chips";
-import { Angulartics2Module } from "angulartics2";
+import { MatIconModule } from "@angular/material/icon";
 
 export default {
   title: "Core/select-component",
@@ -13,9 +14,10 @@ export default {
     moduleMetadata({
       imports: [
         CommonModule,
+        ReactiveFormsModule,
         MatChipsModule,
-        Angulartics2Module.forRoot(),
-      ]
+        MatIconModule,
+      ],
     }),
   ],
 } as Meta;
@@ -27,10 +29,15 @@ const Template: Story<SelectComponent<Entity>> = (
 ) => ({
   component: SelectComponent,
   props: args,
+  template: `
+    <app-select>
+        <mat-chip>A</mat-chip>
+    </app-select>
+  `,
 });
 
 export const Generic = Template.bind({});
 Generic.args = {
   label: "Generic",
-  entities: genericEntities,
+  removable: true,
 };

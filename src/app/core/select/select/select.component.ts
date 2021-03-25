@@ -9,7 +9,8 @@ import { Entity } from "../../entity/entity";
 export class SelectComponent<T extends Entity> implements OnInit {
   @Input() label: string;
 
-  @Input() selectedEntities: T[] = [];
+  @Input() removable: boolean = true;
+
   constructor() {}
 
   ngOnInit(): void {}
