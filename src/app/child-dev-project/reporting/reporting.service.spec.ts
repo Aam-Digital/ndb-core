@@ -76,7 +76,7 @@ describe("ReportingService", () => {
     ]);
   });
 
-  it("should create queries for nested disaggregations", async () => {
+  it("should create queries for nested aggregations", async () => {
     const baseQuery = `${School.ENTITY_TYPE}:toArray`;
     const nestedBaseQuery = `[*private=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId):getActive`;
     const firstNestedAggregation = `[*schoolClass>3]:count`;

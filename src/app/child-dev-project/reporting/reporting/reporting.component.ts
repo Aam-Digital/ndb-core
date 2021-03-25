@@ -4,7 +4,7 @@ import { Aggregation, ReportingService } from "../reporting.service";
 import { MatStepper } from "@angular/material/stepper";
 
 export interface ReportingComponentConfig {
-  disaggregations?: Aggregation[];
+  aggregationDefinitions?: Aggregation[];
 }
 
 export interface ReportRow {
@@ -58,7 +58,7 @@ export class ReportingComponent implements OnInit, AfterViewInit {
   }
 
   async calculateResults() {
-    this.reportingService.setAggregations(this.config.disaggregations);
+    this.reportingService.setAggregations(this.config.aggregationDefinitions);
     this.results = await this.reportingService.calculateReport();
   }
 }

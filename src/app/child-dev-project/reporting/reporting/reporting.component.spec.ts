@@ -60,7 +60,7 @@ describe("ReportingComponent", () => {
   it("should display the report results", fakeAsync(() => {
     const results: ReportRow[] = [{ label: "test label", result: 1 }];
     mockReportingService.calculateReport.and.resolveTo(results);
-    mockRouteData.next({ disaggregations: null });
+    mockRouteData.next({ aggregationDefinitions: null });
     component.calculateResults();
     tick();
     expect(component.results).toEqual(results);

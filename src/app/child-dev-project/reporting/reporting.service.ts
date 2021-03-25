@@ -18,8 +18,8 @@ export class ReportingService {
 
   constructor(private queryService: QueryService) {}
 
-  public setAggregations(disaggregations: Aggregation[]) {
-    this.aggregations = disaggregations;
+  public setAggregations(aggregations: Aggregation[]) {
+    this.aggregations = aggregations;
   }
 
   public calculateReport(from?: Date, to?: Date): Promise<ReportRow[]> {

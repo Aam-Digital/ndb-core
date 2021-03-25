@@ -1067,7 +1067,7 @@ export const defaultConfig = {
   "view:report": {
     "component": "Reporting",
     "config": {
-      "disaggregations": [
+      "aggregationDefinitions": [
         {
           "query": `${Child.ENTITY_TYPE}:toArray`,
           "aggregations": [

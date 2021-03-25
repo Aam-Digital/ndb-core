@@ -23,7 +23,7 @@ import { Database } from "../../../core/database/database";
 import { MockDatabase } from "../../../core/database/mock-database";
 
 const reportingService = {
-  setDisaggregations: () => null,
+  setAggregations: () => null,
   calculateReport: () => {
     console.log("called");
     return Promise.resolve([
