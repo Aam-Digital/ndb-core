@@ -1,16 +1,43 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 
-import { ReportingComponent } from './reporting.component';
+import { ReportingComponent, ReportRow } from "./reporting.component";
+import { CommonModule } from "@angular/common";
+import { ReportingModule } from "../reporting.module";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { Subject } from "rxjs";
+import { ActivatedRoute } from "@angular/router";
+import { ReportingService } from "../reporting.service";
+import { MatNativeDateModule } from "@angular/material/core";
 
-describe('ReportingComponent', () => {
+describe("ReportingComponent", () => {
   let component: ReportingComponent;
   let fixture: ComponentFixture<ReportingComponent>;
+  const mockRouteData = new Subject();
+  let mockReportingService: jasmine.SpyObj<ReportingService>;
 
   beforeEach(async () => {
+    mockReportingService = jasmine.createSpyObj([
+      "setDisaggregations",
+      "calculateReport",
+    ]);
     await TestBed.configureTestingModule({
-      declarations: [ ReportingComponent ]
-    })
-    .compileComponents();
+      declarations: [ReportingComponent],
+      imports: [
+        CommonModule,
+        ReportingModule,
+        NoopAnimationsModule,
+        MatNativeDateModule,
+      ],
+      providers: [
+        { provide: ActivatedRoute, useValue: { data: mockRouteData } },
+        { provide: ReportingService, useValue: mockReportingService },
+      ],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +46,31 @@ describe('ReportingComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should go to the next step if a config is provided", fakeAsync(() => {
+    expect(component.step).toBe(0);
+    mockRouteData.next({});
+    tick();
+    expect(component.step).toBe(1);
+  }));
+
+  it("should display the report results", fakeAsync(() => {
+    const results: ReportRow[] = [{ label: "test label", result: 1 }];
+    mockReportingService.calculateReport.and.resolveTo(results);
+    mockRouteData.next({ disaggregations: null });
+    component.calculateResults();
+    tick();
+    expect(component.results).toEqual(results);
+  }));
+
+  it("should go to next step when a date is selected", () => {
+    component.step = 1;
+    component.fromDate = new Date();
+    component.toDate = new Date();
+    component.datesSelected();
+    expect(component.step).toBe(2);
   });
 });

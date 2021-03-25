@@ -24,7 +24,7 @@ export class ReportingComponent implements OnInit, AfterViewInit {
   step = 0;
   fromDate: Date;
   toDate: Date;
-  @ViewChild(MatStepper) stepper: MatStepper;
+  @ViewChild(MatStepper) private stepper: MatStepper;
 
   constructor(
     private activatedRoute: ActivatedRoute,
