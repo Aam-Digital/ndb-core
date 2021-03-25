@@ -2,48 +2,65 @@ import { Injectable } from "@angular/core";
 import { QueryService } from "./query.service";
 import { ReportRow } from "./reporting/reporting.component";
 
-export interface Disaggregation {
-  baseQuery: string;
-  aggregations: { label: string; query: string }[];
+export interface Aggregation {
+  query: string;
+  label?: string;
+  aggregations?: Aggregation[];
 }
 
 @Injectable({
   providedIn: "root",
 })
 export class ReportingService {
-  private disaggregations: Disaggregation[] = [];
+  private aggregations: Aggregation[] = [];
+  private fromDate: Date;
+  private toDate: Date;
 
   constructor(private queryService: QueryService) {}
 
-  public setDisaggregations(disaggregations: Disaggregation[]) {
-    this.disaggregations = disaggregations;
+  public setAggregations(disaggregations: Aggregation[]) {
+    this.aggregations = disaggregations;
   }
 
-  public async calculateReport(from?: Date, to?: Date): Promise<ReportRow[]> {
-    const results: ReportRow[] = [];
+  public calculateReport(from?: Date, to?: Date): Promise<ReportRow[]> {
     this.queryService.loadData();
-    for (let disaggregation of this.disaggregations) {
-      const base = await this.queryService.queryAllData(
-        this.getQueryWithDates(disaggregation.baseQuery, from, to)
+    this.fromDate = from;
+    this.toDate = to;
+    return this.calculateAggregations(this.aggregations);
+  }
+
+  private async calculateAggregations(
+    aggregations: Aggregation[],
+    data?: any
+  ): Promise<ReportRow[]> {
+    const results: ReportRow[] = [];
+    for (let aggregation of aggregations) {
+      const result = await this.queryService.queryData(
+        this.getQueryWithDates(aggregation.query),
+        data
       );
-      for (let aggregation of disaggregation.aggregations) {
-        const value = await this.queryService.queryData(
-          this.getQueryWithDates(aggregation.query, from, to),
-          base
+      if (aggregation.label) {
+        results.push({ label: aggregation.label, result: result });
+      }
+      if (aggregation.aggregations) {
+        results.push(
+          ...(await this.calculateAggregations(
+            aggregation.aggregations,
+            result
+          ))
         );
-        results.push({ label: aggregation.label, result: value });
       }
     }
     return results;
   }
 
-  private getQueryWithDates(query: string, from?: Date, to?: Date): any[] {
+  private getQueryWithDates(query: string): any[] {
     const resultQuery: any[] = [query];
-    if (from) {
-      resultQuery.push(from);
+    if (this.fromDate) {
+      resultQuery.push(this.fromDate);
     }
-    if (to) {
-      resultQuery.push(to);
+    if (this.toDate) {
+      resultQuery.push(this.toDate);
     }
     return resultQuery;
   }

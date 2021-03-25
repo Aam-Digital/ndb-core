@@ -22,7 +22,7 @@ describe("ReportingComponent", () => {
 
   beforeEach(async () => {
     mockReportingService = jasmine.createSpyObj([
-      "setDisaggregations",
+      "setAggregations",
       "calculateReport",
     ]);
     await TestBed.configureTestingModule({

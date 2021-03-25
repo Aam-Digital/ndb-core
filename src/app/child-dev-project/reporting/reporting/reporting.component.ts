@@ -1,10 +1,10 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { Disaggregation, ReportingService } from "../reporting.service";
+import { Aggregation, ReportingService } from "../reporting.service";
 import { MatStepper } from "@angular/material/stepper";
 
 export interface ReportingComponentConfig {
-  disaggregations?: Disaggregation[];
+  disaggregations?: Aggregation[];
 }
 
 export interface ReportRow {
@@ -58,7 +58,7 @@ export class ReportingComponent implements OnInit, AfterViewInit {
   }
 
   async calculateResults() {
-    this.reportingService.setDisaggregations(this.config.disaggregations);
+    this.reportingService.setAggregations(this.config.disaggregations);
     this.results = await this.reportingService.calculateReport();
   }
 }

@@ -171,21 +171,15 @@ export class QueryService {
   }
 
   /**
-   * Query all the loaded entities using the json-query language (https://github.com/auditassistant/json-query)
-   * @param query the query string and optionally additional arguments
-   * @returns the results of the query
-   */
-  public queryAllData(query: string | any[]): Promise<any> {
-    return this.queryData(query, this.entities);
-  }
-
-  /**
    * Runs the query on the passed data object
    * @param query a string or array according to the json-query language (https://github.com/auditassistant/json-query)
-   * @param data the data on which the query should run
+   * @param data the data on which the query should run, default is all entities
    * @returns the results of the query on the data
    */
-  public async queryData(query: string | any[], data: any): Promise<any> {
+  public async queryData(
+    query: string | any[],
+    data: any = this.entities
+  ): Promise<any> {
     await this.dataLoaded;
     return jsonQuery(query, {
       data: data,
