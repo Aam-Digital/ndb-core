@@ -1,9 +1,11 @@
 <mat-expansion-panel expanded="true" class="work-panek mat-elevation-z2">
-    <mat-horizontal-stepper [linear]="true" [selectedIndex]="step">
+    <mat-horizontal-stepper [selectedIndex]="step" labelPosition="bottom">
+
         <mat-step [completed]="step > 0">
-            <ng-template matStepLabel>Customize report</ng-template>
-            First
+            <ng-template matStepLabel>Create report</ng-template>
+            <button mat-stroked-button>Ask for a setup call</button>
         </mat-step>
+
         <mat-step label="Fill out your address" [completed]="step > 1">
             <ng-template matStepLabel>Select timespan</ng-template>
             <mat-form-field appearance="fill">
@@ -15,30 +17,29 @@
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-date-range-picker (closed)="datesSelected()" #picker></mat-date-range-picker>
             </mat-form-field>
-
         </mat-step>
+
         <mat-step [completed]="step > 2">
-            <ng-template matStepLabel>Create report</ng-template>
+            <ng-template matStepLabel>Calculate report</ng-template>
             <button mat-button (click)="calculateResults()">Calculate</button>
         </mat-step>
+
         <ng-template matStepperIcon="edit">
             <mat-icon fontIcon="fa-check"></mat-icon>
         </ng-template>
-
         <ng-template matStepperIcon="done">
             <mat-icon fontIcon="fa-check"></mat-icon>
         </ng-template>
     </mat-horizontal-stepper>
 </mat-expansion-panel>
+
 <div class="result-panel mat-elevation-z2" *ngIf="results?.length > 0">
-    <h2>Results</h2>
     <table mat-table [dataSource]="results" style="width: 100%;">
         <ng-container matColumnDef="label">
             <th mat-header-cell *matHeaderCellDef> Label </th>
             <td mat-cell *matCellDef="let result"> {{result.label}} </td>
         </ng-container>
 
-        <!-- Name Column -->
         <ng-container matColumnDef="result">
             <th mat-header-cell *matHeaderCellDef> Result </th>
             <td mat-cell *matCellDef="let result"> {{result.result}} </td>

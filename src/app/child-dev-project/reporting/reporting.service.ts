@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { QueryService } from "./query.service";
+import { ReportRow } from "./reporting/reporting.component";
 
 export interface Disaggregation {
   baseQuery: string;
@@ -18,11 +19,8 @@ export class ReportingService {
     this.disaggregations = disaggregations;
   }
 
-  public async calculateReport(
-    from?: Date,
-    to?: Date
-  ): Promise<{ label: string; result: any }[]> {
-    const results: { label: string; result: any }[] = [];
+  public async calculateReport(from?: Date, to?: Date): Promise<ReportRow[]> {
+    const results: ReportRow[] = [];
     this.queryService.loadData();
     for (let disaggregation of this.disaggregations) {
       const base = await this.queryService.queryAllData(
