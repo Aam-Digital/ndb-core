@@ -22,6 +22,11 @@ import { BackgroundProcessState } from "../../sync-status/background-process-sta
 import { Entity, EntityConstructor } from "../entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 
+export interface DesignDoc {
+  _id: string;
+  views: { [key: string]: { map: string; reduce?: string } };
+}
+
 /**
  * Manage database query index creation and use, working as a facade in front of the Database service.
  * This allows to track pending indexing processes and also show them to users in the UI.

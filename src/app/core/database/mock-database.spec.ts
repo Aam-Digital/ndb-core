@@ -16,12 +16,26 @@
  */
 
 import { MockDatabase } from "./mock-database";
+import { Child } from "../../child-dev-project/children/model/child";
+import { EntityMapperService } from "../entity/entity-mapper.service";
+import { EntitySchemaService } from "../entity/schema/entity-schema.service";
+import { Gender } from "../../child-dev-project/children/model/Gender";
+import {
+  DatabaseIndexingService,
+  DesignDoc,
+} from "../entity/database-indexing/database-indexing.service";
+import { fakeAsync, tick } from "@angular/core/testing";
 
 describe("MockDatabase tests", () => {
   let database: MockDatabase;
+  let entityMapper: EntityMapperService;
+  let dbIndexing: DatabaseIndexingService;
 
   beforeEach(() => {
     database = new MockDatabase();
+    const schemaService = new EntitySchemaService();
+    entityMapper = new EntityMapperService(database, schemaService);
+    dbIndexing = new DatabaseIndexingService(database, schemaService);
   });
 
   it("get object by _id after put into database", async () => {
@@ -93,4 +107,62 @@ describe("MockDatabase tests", () => {
     expect(result.map((el) => el._id)).not.toContain(testData2._id);
     expect(result.length).toBe(1);
   });
+
+  it("should allow to query elements with an index", fakeAsync(async () => {
+    const designDoc: DesignDoc = {
+      _id: "_design/child_index",
+      views: {
+        by_name: {
+          map: `(doc) => { 
+            if (doc._id.startsWith("${Child.ENTITY_TYPE}")) {
+              emit(doc.name);            
+            }
+          }`,
+        },
+        by_gender: {
+          map: `(doc) => { 
+            if (doc._id.startsWith("${Child.ENTITY_TYPE}")) {
+              emit([doc.gender, doc.name]);            
+            }
+          }`,
+        },
+      },
+    };
+
+    const benMale = new Child();
+    benMale.name = "Ben";
+    benMale.gender = Gender.MALE;
+    const lauraFemale = new Child();
+    lauraFemale.name = "Laura";
+    lauraFemale.gender = Gender.FEMALE;
+    const isaFemale = new Child();
+    isaFemale.name = "Isa";
+    isaFemale.gender = Gender.FEMALE;
+    await entityMapper.save(isaFemale);
+    await entityMapper.save(benMale);
+    await entityMapper.save(lauraFemale);
+
+    await dbIndexing.createIndex(designDoc);
+    tick();
+
+    const childrenByName = await dbIndexing.queryIndexDocs<Child>(
+      Child,
+      "child_index/by_name"
+    );
+
+    expect(childrenByName).toHaveSize(3);
+    expect(childrenByName[0].name).toBe(benMale.name);
+    expect(childrenByName[1].name).toBe(isaFemale.name);
+    expect(childrenByName[2].name).toBe(lauraFemale.name);
+
+    const childrenByGender = await dbIndexing.queryIndexDocs<Child>(
+      Child,
+      "child_index/by_gender"
+    );
+
+    expect(childrenByGender).toHaveSize(3);
+    expect(childrenByGender[0].name).toBe(isaFemale.name);
+    expect(childrenByGender[1].name).toBe(lauraFemale.name);
+    expect(childrenByGender[2].name).toBe(benMale.name);
+  }));
 });

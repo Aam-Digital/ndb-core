@@ -16,13 +16,7 @@
  */
 
 import { Database, GetAllOptions, QueryOptions } from "./database";
-import { Note } from "../../child-dev-project/notes/model/note";
-import { AttendanceMonth } from "../../child-dev-project/attendance/model/attendance-month";
-import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
-import moment from "moment";
-import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
-import { defaultInteractionTypes } from "../config/default-config/default-interaction-types";
-import { EventNote } from "../../child-dev-project/attendance/model/event-note";
+import { DesignDoc } from "../entity/database-indexing/database-indexing.service";
 
 /**
  * In-Memory database implementation that works as a drop-in replacement of {@link PouchDatabase}
@@ -37,6 +31,7 @@ export class MockDatabase extends Database {
     return instance;
   }
 
+  private views: { [key: string]: { map: string; reduce?: string } } = {};
   private data = [];
 
   /**
@@ -154,277 +149,29 @@ export class MockDatabase extends Database {
    * @param options Additional options for the query
    */
   async query(fun: any, options?: QueryOptions): Promise<any> {
-    // TODO: implement generic mock query function
-    /* SAMPLE INPUT:
-      query('notes_index/by_child', {key: childId, include_docs: true});
-      query('avg_attendance_index/three_months', {reduce: true, group: true});
-    */
-
-    // mock specific indices
-    let filterFun;
-    let reducerFun;
-    switch (fun) {
-      case "notes_index/by_child":
-        filterFun = (e) =>
-          e._id.startsWith(Note.ENTITY_TYPE) &&
-          e.children.includes(options.key);
-        break;
-      case "attendances_index/by_child":
-        filterFun = (e) =>
-          e._id.startsWith(AttendanceMonth.ENTITY_TYPE) &&
-          e.student === options.key;
-        break;
-      case "attendances_index/by_month":
-        filterFun = (e) => {
-          if (!e._id.startsWith(AttendanceMonth.ENTITY_TYPE)) {
-            return false;
-          }
-          e.month = new Date(e.month);
-          return (
-            e.month.getFullYear().toString() +
-              "-" +
-              (e.month.getMonth() + 1).toString() ===
-            options.key
-          );
-        };
-        break;
-      case "avg_attendance_index/three_months":
-        filterFun = (e) =>
-          e._id.startsWith(AttendanceMonth.ENTITY_TYPE) &&
-          this.isWithinLastMonths(e.month, new Date(), 3);
-        reducerFun = this.getStatsReduceFun(
-          (e: AttendanceMonth) => e.student,
-          (e: AttendanceMonth) =>
-            e.daysAttended / (e.daysWorking - (e.daysExcused ?? 0))
-        );
-        break;
-      case "avg_attendance_index/last_month":
-        filterFun = (e) =>
-          e._id.startsWith(AttendanceMonth.ENTITY_TYPE) &&
-          this.isWithinLastMonths(e.month, new Date(), 1);
-        reducerFun = this.getStatsReduceFun(
-          (e: AttendanceMonth) => e.student,
-          (e: AttendanceMonth) =>
-            e.daysAttended / (e.daysWorking - (e.daysExcused ?? 0))
-        );
-        break;
-      case "childSchoolRelations_index/by_child":
-        filterFun = (e) =>
-          e._id.startsWith(ChildSchoolRelation.ENTITY_TYPE) &&
-          e.childId === options.key;
-        break;
-      case "childSchoolRelations_index/by_school":
-        filterFun = (e) =>
-          e._id.startsWith(ChildSchoolRelation.ENTITY_TYPE) &&
-          ((e.start <= new Date().setHours(0, 0, 0, 0) && !e.end) ||
-            e.end >= new Date().setHours(0, 0, 0, 0)) &&
-          e.schoolId === options.key;
-        break;
-      case "search_index/by_name":
-        filterFun = (e) => {
-          return (
-            e.hasOwnProperty("searchIndices") &&
-            e.searchIndices.some((word) =>
-              word.toString().toLowerCase().includes(options.startkey)
-            )
-          );
-        };
-        break;
-      case "childSchoolRelations_index/by_date":
-        return this.filterForLatestRelationOfChild(
-          options.endkey,
-          options.limit
-        );
-
-      case "activities_index/by_participant":
-        filterFun = (e) =>
-          e._id.startsWith(RecurringActivity.ENTITY_TYPE) &&
-          e.participants.includes(options.key);
-        break;
-      case "activities_index/by_school":
-        filterFun = (e) =>
-          e._id.startsWith(RecurringActivity.ENTITY_TYPE) &&
-          e.linkedGroups.includes(options.key);
-        break;
-      case "events_index/by_date":
-        const meetingInteractionTypes = defaultInteractionTypes
-          .filter((t) => t.isMeeting)
-          .map((t) => t.id);
-
-        filterFun = (e) => {
-          const d = new Date(e.date || null);
-          const dString =
-            d.getFullYear() +
-            "-" +
-            String(d.getMonth() + 1).padStart(2, "0") +
-            "-" +
-            String(d.getDate()).padStart(2, "0");
-          return (
-            e._id.startsWith(EventNote.ENTITY_TYPE) &&
-            meetingInteractionTypes.includes(e.category) &&
-            options.startkey <= dString &&
-            options.endkey >= dString
-          );
-        };
-
-        break;
-
-      case "events_index/by_activity":
-        filterFun = (e) => {
-          const d = new Date(e.date || null);
-          const dStringExtra =
-            "_" +
-            d.getFullYear() +
-            "-" +
-            String(d.getMonth() + 1).padStart(2, "0") +
-            "-" +
-            String(d.getDate()).padStart(2, "0");
-          return (
-            e._id.startsWith(EventNote.ENTITY_TYPE) &&
-            options.startkey <= e.relatesTo + dStringExtra &&
-            options.endkey >= e.relatesTo + dStringExtra
-          );
-        };
-        break;
-
-      case "notes_index/note_child_by_date":
-        const startDate = moment(
-          new Date(
-            options.startkey[0],
-            options.startkey[1],
-            options.startkey[2]
-          )
-        );
-
-        filterFun = (e) => {
-          return (
-            e._id.startsWith(Note.ENTITY_TYPE) &&
-            Array.isArray(e.children) &&
-            e.date &&
-            startDate.isSameOrBefore(e.date)
-          );
-        };
-        reducerFun = (prev, curr) => {
-          const date = new Date(curr.date);
-          curr.children.forEach((childId) => {
-            const newEntry = {
-              key: [date.getFullYear(), date.getMonth(), date.getDate()],
-              value: [childId, curr.relatesTo],
-            };
-            prev.push(newEntry);
-          });
-          return prev;
-        };
-        break;
+    const view = this.views[fun];
+    const documents: { key: any; val: any }[] = [];
+    for (let doc of this.data) {
+      const emit = (key, val = doc) => documents.push({ key: key, val: val });
+      eval(view.map)(doc);
     }
-    if (filterFun !== undefined) {
-      if (reducerFun !== undefined) {
-        const allData = await this.getAll();
-        const filteredResults = allData.filter(filterFun);
-        const reducedResults = filteredResults.reduce(reducerFun, []);
-        return { rows: reducedResults };
+    documents.sort((d1, d2) => {
+      if (d1.key < d2.key) {
+        return -1;
+      } else if (d1.key > d2.key) {
+        return 1;
       } else {
-        const allData = await this.getAll();
-        return {
-          rows: allData.filter(filterFun).map((e) => {
-            return { id: e._id, doc: e };
-          }),
-        };
+        return 0;
       }
-    }
-
-    console.warn('MockDatabase does not implement "query()"');
-    return { rows: [] };
-  }
-
-  private async filterForLatestRelationOfChild(
-    childKey: string,
-    limit: number
-  ): Promise<any> {
-    return new Promise((resolve) => {
-      this.getAll().then((all) => {
-        const relations = all.filter((e) =>
-          e._id.startsWith(ChildSchoolRelation.ENTITY_TYPE)
-        );
-        const sorted = relations.sort((a, b) => {
-          const aValue =
-            a.childId + "_" + this.zeroPad(new Date(a.start).valueOf());
-          const bValue =
-            b.childId + "_" + this.zeroPad(new Date(b.start).valueOf());
-          return aValue < bValue ? 1 : aValue === bValue ? 0 : -1;
-        });
-        const filtered: ChildSchoolRelation[] = sorted.filter(
-          (doc) => doc.childId + "_" === childKey
-        );
-        let results: { doc: ChildSchoolRelation }[] = filtered.map(
-          (relation) => {
-            return { doc: relation };
-          }
-        );
-        if (limit) {
-          results = results.slice(0, limit);
-        }
-        resolve({ rows: results });
-      });
     });
-  }
 
-  /**
-   * This function is useful when comparing numbers on string level.
-   * For example: 123 < 1111 but "123" > "1111"
-   * That is why its being transformed to "0123" and "1111" so "0123" < "1111"
-   * @param str the string that should be padded with zeros
-   * @param length the length to which the string should be padded
-   * @return string of the padded input
-   */
-  private zeroPad(str: string | number, length: number = 14): string {
-    // with ECMAScript 2017 you can do a one-liner: 'return str.toString().padStart(length, '0');'
-    let res = str.toString();
-    while (res.length < length) {
-      res = "0" + res;
-    }
-    return res;
-  }
+    // TODO improve performance
+    // TODO add reduce support
 
-  private isWithinLastMonths(
-    date: Date,
-    now: Date,
-    numberOfMonths: number
-  ): boolean {
-    if (!date) {
-      return false;
-    }
-    date = new Date(date);
-
-    let months;
-    months = (now.getFullYear() - date.getFullYear()) * 12;
-    months -= date.getMonth();
-    months += now.getMonth();
-    if (months < 0) {
-      return false;
-    }
-    return months <= numberOfMonths;
-  }
-
-  private getStatsReduceFun(
-    keyFun: (any) => string,
-    valueFun: (any) => number
-  ) {
-    return (acc, value) => {
-      const stats = {
-        key: keyFun(value),
-        value: { count: 1, sum: valueFun(value) },
-      };
-      const existing = acc.filter((x) => x.key === keyFun(value));
-      if (existing.length > 0) {
-        const v = existing[0].value;
-        v.count++;
-        v.sum = v.sum + stats.value.sum;
-      } else {
-        acc.push(stats);
-      }
-
-      return acc;
+    return {
+      rows: documents.map((doc) => {
+        return { id: doc.val._id, doc: doc.val };
+      }),
     };
   }
 
@@ -435,24 +182,11 @@ export class MockDatabase extends Database {
    *
    * @param designDoc
    */
-  saveDatabaseIndex(designDoc) {
-    // TODO: implement mock query
-    /* SAMPLE INPUT:
-    const designDoc = {
-      _id: '_design/attendance_index',
-      views: {
-        by_name: {
-          map: (doc) => { emit(doc.child); }
-        },
-        by_month: {
-          map: (doc) => { emit(doc.month); }
-        }
-      }
-    };
-     */
-
-    // tslint:disable-next-line:no-console
-    console.debug('MockDatabase does not implement "saveDatabaseIndex()"');
+  saveDatabaseIndex(designDoc: DesignDoc) {
+    for (let view in designDoc.views) {
+      const viewName = designDoc._id.split("/")[1] + "/" + view;
+      this.views[viewName] = designDoc.views[view];
+    }
     return Promise.resolve({});
   }
 }
