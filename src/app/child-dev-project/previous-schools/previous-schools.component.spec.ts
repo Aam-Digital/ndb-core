@@ -22,6 +22,8 @@ import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirm
 import { SimpleChange } from "@angular/core";
 import { Child } from "../children/model/child";
 import { PanelConfig } from "../../core/entity-components/entity-details/EntityDetailsConfig";
+import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
+import moment from "moment";
 
 describe("PreviousSchoolsComponent", () => {
   let component: PreviousSchoolsComponent;
@@ -127,4 +129,25 @@ describe("PreviousSchoolsComponent", () => {
     expect(columnNames).toContain("Class");
     expect(columnNames).toContain("Result");
   }));
+
+  it("should display errors for invalid fields", () => {
+    const entry = new ChildSchoolRelation();
+    let validation = component.formValidation(entry);
+    expect(validation.hasPassedValidation).toBeFalse();
+
+    entry.schoolId = "test school";
+    entry.start = new Date();
+    entry.end = moment().subtract(1, "week").toDate();
+    validation = component.formValidation(entry);
+    expect(validation.hasPassedValidation).toBeFalse();
+
+    entry.end = moment().add(1, "week").toDate();
+    entry.result = 200;
+    validation = component.formValidation(entry);
+    expect(validation.hasPassedValidation).toBeFalse();
+
+    entry.result = 75;
+    validation = component.formValidation(entry);
+    expect(validation.hasPassedValidation).toBeTrue();
+  });
 });

@@ -46,6 +46,8 @@ export class PreviousSchoolsComponent
     return "hsl(" + color + ", 100%, 85%)";
   }
 
+  schoolNaming: string;
+
   @Input() child: Child;
   @Output() changedRecordInEntitySubrecord = new EventEmitter<any>();
   records = new Array<ChildSchoolRelation>();
@@ -55,7 +57,7 @@ export class PreviousSchoolsComponent
   schoolMap: Map<string, School>;
 
   public config: PreviousRelationsConfig = {
-    single: false,
+    single: true,
     columns: [
       { id: "schoolId", label: "School", input: "school" },
       { id: "schoolClass", label: "Class", input: "text" },
@@ -123,6 +125,7 @@ export class PreviousSchoolsComponent
         column.inputType = ColumnDescriptionInputType.DATE;
         break;
       case "school":
+        this.schoolNaming = label;
         column.inputType = ColumnDescriptionInputType.SELECT;
         column.selectValues = new Array(...this.schoolMap.values())
           .sort((s1, s2) => s1.name.localeCompare(s2.name))
@@ -169,14 +172,16 @@ export class PreviousSchoolsComponent
     };
     if (!record.schoolId) {
       validationResult.validationMessage =
-        '"Name" is empty. Please select a school.';
+        '"Name" is empty. Please select a ' + this.schoolNaming;
     } else if (moment(record.start).isAfter(record.end, "days")) {
       validationResult.validationMessage =
         '"To"-date lies before "From"-date. Please enter correct dates.';
-    } else if (record.result > 100) {
-      validationResult.validationMessage = "Result cannot be greater than 100";
-    } else if (record.result < 0) {
-      validationResult.validationMessage = "Result cannot be smaller than 0";
+    } else if (
+      this.config.columns.some((col) => col.input === "percentageResult") &&
+      (record.result > 100 || record.result < 0)
+    ) {
+      validationResult.validationMessage =
+        "Result cannot be smaller than 0 or greater than 100 (percent)";
     } else {
       validationResult.hasPassedValidation = true;
     }
