@@ -4,7 +4,6 @@ import { Entity } from "./entity";
  * Interface that conveys an updated entity as well as information
  * on the update-type
  */
-
 export interface UpdatedEntity<T extends Entity> {
   /**
    * The updated entity
@@ -17,7 +16,6 @@ export interface UpdatedEntity<T extends Entity> {
    * "update" - an existing entity was updated
    * "remove" - the entity was deleted
    */
-
   type: "new" | "update" | "remove";
 }
 
@@ -32,7 +30,6 @@ export interface UpdatedEntity<T extends Entity> {
  * @param entities The entities to update, must be defined
  * @return An array of the given entities with the update applied
  */
-
 export function update<T extends Entity>(
   entities: T[],
   next: UpdatedEntity<T>
@@ -49,8 +46,5 @@ export function update<T extends Entity>(
       );
     case "remove":
       return entities.filter((e) => e.getId() !== next.entity.getId());
-    default:
-      console.log("Illegal operation while updating entities: ", next.type);
-      return entities;
   }
 }

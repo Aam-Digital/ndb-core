@@ -119,6 +119,7 @@ describe("Entity", () => {
 
     const entity: TestEntity = new TestEntity("t1", 2);
     const otherEntity = entity.copy();
+    expect(otherEntity).not.toBe(entity);
     expect(otherEntity).toEqual(entity);
     expect(otherEntity).toBeInstanceOf(TestEntity);
   });

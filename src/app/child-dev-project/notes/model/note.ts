@@ -164,7 +164,6 @@ export class Note extends Entity {
    * (such as the date, author, e.t.c.) as well as copying the
    * child-array
    */
-
   copy(): Note {
     const note: Note = super.copy() as Note;
     note.children = [...this.children];

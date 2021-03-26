@@ -15,7 +15,6 @@ import { filter, map } from "rxjs/operators";
 import { update } from "../../../core/entity/entity-update";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 
-@UntilDestroy()
 @Component({
   selector: "app-notes-manager",
   template: `

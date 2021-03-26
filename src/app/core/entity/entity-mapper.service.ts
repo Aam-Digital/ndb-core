@@ -96,7 +96,6 @@ export class EntityMapperService {
    * The <code>update</code>-function takes this into account.
    * @param entityType the type of the entity
    */
-
   public receiveUpdates<T extends Entity>(
     entityType: EntityConstructor<T>
   ): Observable<UpdatedEntity<T>> {
@@ -146,7 +145,6 @@ export class EntityMapperService {
    * @param entity The entity to update
    * @param type The type, see {@link UpdatedEntity#type}
    */
-
   private sendUpdate<T extends Entity>(
     entity: T,
     type: "new" | "update" | "remove"

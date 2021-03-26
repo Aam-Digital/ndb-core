@@ -175,7 +175,7 @@ describe("EntityMapperService", () => {
 
   it("publishes updates to any listeners", (done) => {
     const testId = "t1";
-    receiveUpdatesAndTestTypeAndId(undefined, testId, done);
+    receiveUpdatesAndTestTypeAndId(done, undefined, testId);
 
     const testEntity = new Entity(testId);
     entityMapper.save(testEntity, true);
@@ -183,7 +183,7 @@ describe("EntityMapperService", () => {
   });
 
   it("publishes when an existing entity is updated", async (done) => {
-    receiveUpdatesAndTestTypeAndId("update", existingEntity.entityId, done);
+    receiveUpdatesAndTestTypeAndId(done, "update", existingEntity.entityId);
 
     const loadedEntity = await entityMapper.load<Entity>(
       Entity,
@@ -193,7 +193,7 @@ describe("EntityMapperService", () => {
   });
 
   it("publishes when an existing entity is deleted", async (done) => {
-    receiveUpdatesAndTestTypeAndId("remove", existingEntity.entityId, done);
+    receiveUpdatesAndTestTypeAndId(done, "remove", existingEntity.entityId);
 
     const loadedEntity = await entityMapper.load<Entity>(
       Entity,
@@ -204,16 +204,16 @@ describe("EntityMapperService", () => {
 
   it("publishes when a new entity is being saved", (done) => {
     const testId = "t1";
-    receiveUpdatesAndTestTypeAndId("new", testId, done);
+    receiveUpdatesAndTestTypeAndId(done, "new", testId);
 
     const testEntity = new Entity(testId);
     entityMapper.save(testEntity, true);
   });
 
   function receiveUpdatesAndTestTypeAndId(
-    type: string | undefined,
-    entityId: string | undefined,
-    done: any
+    done: any,
+    type?: string,
+    entityId?: string
   ) {
     entityMapper.receiveUpdates<Entity>(Entity).subscribe((e) => {
       if (e) {
