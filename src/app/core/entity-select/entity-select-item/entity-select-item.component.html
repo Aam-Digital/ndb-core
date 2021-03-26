@@ -1,0 +1,13 @@
+<mat-basic-chip
+  [removable]="removable"
+  [selectable]="selectable"
+  (removed)="removeEntity()"
+  class="chip"
+>
+  <ng-content></ng-content>
+  <span
+    *ngIf="removable"
+    class="fa fa-minus-square-o"
+    (click)="removeEntity()">
+  </span>
+</mat-basic-chip>

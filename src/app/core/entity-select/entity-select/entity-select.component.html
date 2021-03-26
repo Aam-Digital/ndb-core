@@ -1,0 +1,22 @@
+<mat-form-field style="width: 100%;" floatLabel="always">
+  <mat-label *ngIf="label">{{label}}</mat-label>
+  <mat-chip-list #chipList aria-label="Entity selection">
+    <ng-content select="app-entity-select-item"></ng-content>
+    <input
+      #inputField
+      [disabled]="loading"
+      [placeholder]="loading ? 'loading...' : placeholder"
+      [formControl]="entityCtrl"
+      [matAutocomplete]='autoSuggestions'
+      [matChipInputFor]="chipList"
+      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+      (matChipInputTokenEnd)="add($event)">
+  </mat-chip-list>
+  <mat-autocomplete
+    #autoSuggestions='matAutocomplete'
+    (optionSelected)="selectEntity($event.option.value)">
+    <mat-option *ngFor='let res of filteredEntities | async' [value]='res'>
+      {{accessor(res)}}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

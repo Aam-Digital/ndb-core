@@ -120,15 +120,25 @@
 
     <div fxLayout="row wrap" fxLayoutGap="20px">
       <div fxFlex *ngIf="!entity.category.isMeeting">
-        <app-child-select
-          [selectedChildrenIds]="entity.children"
-          (newIdAdded)="entity.addChild($event); entityForm.form.markAsDirty()"
-          (idRemoved)="
-            entity.removeChild($event); entityForm.form.markAsDirty()
-          "
-          class="input-medium"
-        >
-        </app-child-select>
+
+        <app-entity-select
+          [entityType]="Child"
+          [accessor]="accessor"
+          [(selectedEntities)]="selectedChildren"
+          (onChange)="entityForm.form.markAsDirty()"
+          label="Children"
+          placeholder="Add Child...">
+          <app-entity-select-item
+            *ngFor="let child of selectedChildren"
+            [entity]="child">
+            <app-child-block
+              [entity]="child"
+              [linkDisabled]="true"
+              [tooltipDisabled]="true">
+            </app-child-block>
+          </app-entity-select-item>
+        </app-entity-select>
+
       </div>
       <app-note-presence-list
         *ngIf="entity.category.isMeeting"

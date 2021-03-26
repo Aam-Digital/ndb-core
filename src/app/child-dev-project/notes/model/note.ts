@@ -115,7 +115,7 @@ export class Note extends Entity {
       return;
     }
 
-    this.children.splice(0, 0, childId);
+    this.children = this.children.concat(childId);
   }
 
   /**

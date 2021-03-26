@@ -41,6 +41,7 @@ import { EntitySubrecordModule } from "../../core/entity-components/entity-subre
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import { AttendanceModule } from "../attendance/attendance.module";
+import { EntitySelectModule } from "../../core/entity-select/entity-select.module";
 
 @NgModule({
   declarations: [
@@ -92,6 +93,7 @@ import { AttendanceModule } from "../attendance/attendance.module";
     EntityListModule,
     ConfigurableEnumModule,
     AttendanceModule,
+    EntitySelectModule,
   ],
   providers: [],
 })

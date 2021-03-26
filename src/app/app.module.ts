@@ -70,7 +70,6 @@ import { FontAwesomeIconsModule } from "./core/icons/font-awesome-icons.module";
 import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
 import { ConfigModule } from "./core/config/config.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
-import { SelectComponent } from "./core/select/select/select.component";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatFormFieldModule } from "@angular/material/form-field";
 
@@ -80,7 +79,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
  * Real functionality should be implemented in separate modules and imported here rather than being part of this module.
  */
 @NgModule({
-  declarations: [AppComponent, SelectComponent],
+  declarations: [AppComponent],
   imports: [
     ServiceWorkerModule.register("/ngsw-worker.js", {
       enabled: environment.production,
