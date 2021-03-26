@@ -14,6 +14,7 @@ import { expectEntitiesToBeInDatabase } from "../../../utils/expect-entity-data.
 import { EventNote } from "../model/event-note";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
 import { ChildrenService } from "../../children/children.service";
+import { filter, take } from "rxjs/operators";
 
 describe("AttendanceMigrationService", () => {
   let service: AttendanceMigrationService;
@@ -21,7 +22,7 @@ describe("AttendanceMigrationService", () => {
   let rawPouch;
   let testDatabase: Database;
 
-  beforeEach(async (done) => {
+  beforeEach(async () => {
     rawPouch = new PouchDB("unit-testing");
     testDatabase = new PouchDatabase(rawPouch, new LoggingService());
 
@@ -41,14 +42,16 @@ describe("AttendanceMigrationService", () => {
 
     // wait for the relevant indices to complete building - otherwise this will clash with teardown in afterEach
     const indexingService = TestBed.inject(DatabaseIndexingService);
-    indexingService.indicesRegistered.subscribe((x) => {
-      if (
-        x.find((e) => e.details === "events_index")?.pending === false &&
-        x.find((e) => e.details === "activities_index")?.pending === false
-      ) {
-        done();
-      }
-    });
+    await indexingService.indicesRegistered
+      .pipe(
+        filter(
+          (x) =>
+            x.find((e) => e.details === "events_index")?.pending === false &&
+            x.find((e) => e.details === "activities_index")?.pending === false
+        ),
+        take(1)
+      )
+      .toPromise();
   });
 
   afterEach(async () => {
