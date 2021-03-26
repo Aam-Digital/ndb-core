@@ -34,7 +34,7 @@ export class ReportingService {
     data?: any
   ): Promise<ReportRow[]> {
     const results: ReportRow[] = [];
-    for (let aggregation of aggregations) {
+    for (const aggregation of aggregations) {
       const result = await this.queryService.queryData(
         this.getQueryWithDates(aggregation.query),
         data
