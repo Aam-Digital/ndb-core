@@ -1,4 +1,4 @@
-import * as originalFaker_IND from "faker/locale/en_IND";
+import * as originalFaker from "faker";
 
 /**
  * Extension of faker.js implementing additional data generation methods.
@@ -12,6 +12,7 @@ class CustomFaker {
     // @ts-ignore
     private baseFaker: Faker.FakerStatic
   ) {
+    baseFaker.locale = "en_IND";
     // make baseFaker methods available from instances of this class
     Object.assign(this, baseFaker);
   }
@@ -49,11 +50,11 @@ class CustomFaker {
 /**
  * Typing for faker including extended functionality.
  */
-export type Faker = typeof originalFaker_IND & CustomFaker;
+export type Faker = typeof originalFaker & CustomFaker;
 
-originalFaker_IND.seed(1);
+originalFaker.seed(1);
 
 /**
  * (Extended) faker module
  */
-export const faker = new CustomFaker(originalFaker_IND) as Faker;
+export const faker = new CustomFaker(originalFaker) as Faker;
