@@ -10,9 +10,9 @@ import { ENTER, COMMA } from "@angular/cdk/keycodes";
 import { Entity, EntityConstructor } from "../../entity/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { MatAutocompleteTrigger } from "@angular/material/autocomplete";
-import { Observable } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { FormControl } from "@angular/forms";
-import { filter, map, skipWhile, startWith } from "rxjs/operators";
+import { filter, map } from "rxjs/operators";
 import { MatChipInputEvent } from "@angular/material/chips";
 
 export type accessorFn<T extends Entity> = (T) => string;
@@ -27,19 +27,25 @@ export class EntitySelectComponent<T extends Entity> {
     this.entityMapperService.loadType<T>(type).then((entities) => {
       this.allEntities = entities;
       this.loading = false;
+      this.filteredEntities.next(entities);
     });
   }
   @Input() label: string;
   @Input() placeholder: string;
   loading: boolean = true;
 
-  @Input() selectedEntities: T[] = [];
-  @Output() selectedEntitiesChange = new EventEmitter<T[]>();
+  private _selectedEntities = new Map<string, T>();
+
+  @Input() set selectedEntities(entities: T[]) {
+    this._selectedEntities.clear();
+    entities.forEach((e) => this._selectedEntities.set(e.getId(), e));
+  }
+  @Output() selectedEntityIdsChange = new EventEmitter<string[]>();
 
   @Output() onChange = new EventEmitter<void>();
 
   allEntities: T[] = [];
-  filteredEntities: Observable<T[]>;
+  filteredEntities = new BehaviorSubject<T[]>([]);
 
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
   @ViewChild("inputField") inputField: ElementRef<HTMLInputElement>;
@@ -49,14 +55,20 @@ export class EntitySelectComponent<T extends Entity> {
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
   constructor(private entityMapperService: EntityMapperService) {
-    this.filteredEntities = this.entityCtrl.valueChanges.pipe(
-      startWith(null),
-      filter((value) => typeof value === "string"),
-      map((e?: string) => (e ? this._filter(e) : this.allEntities.slice()))
-    );
-    this.filteredEntities.subscribe((t) => {
-      console.log(t);
-    });
+    this.entityCtrl.valueChanges
+      .pipe(
+        filter((value) => typeof value === "string"),
+        map((entity?: string) =>
+          entity
+            ? this._filter(entity)
+            : this.allEntities.filter(
+                (ent) => !this._selectedEntities.has(ent.getId())
+              )
+        )
+      )
+      .subscribe((t) => {
+        this.filteredEntities.next(t);
+      });
   }
 
   @Input() accessor: accessorFn<T> = (e) => e.getId();
@@ -64,8 +76,8 @@ export class EntitySelectComponent<T extends Entity> {
   selectEntity(entity: T) {
     this.inputField.nativeElement.value = "";
     this.entityCtrl.setValue(null);
-    this.selectedEntities.push(entity);
-    this.selectedEntitiesChange.emit(this.selectedEntities);
+    this._selectedEntities.set(entity.getId(), entity);
+    this.selectedEntityIdsChange.emit([...this._selectedEntities.keys()]);
     this.onChange.emit();
   }
 
@@ -94,18 +106,16 @@ export class EntitySelectComponent<T extends Entity> {
 
   private _filter(value: string): T[] {
     const filterValue = value.toLowerCase();
-    return this.allEntities.filter((entity) =>
-      this.accessor(entity).toLowerCase().startsWith(filterValue)
+    return this.allEntities.filter(
+      (entity) =>
+        !this._selectedEntities.has(entity.getId()) &&
+        this.accessor(entity).toLowerCase().startsWith(filterValue)
     );
   }
 
   removeEntity(entity: T) {
-    const index = this.selectedEntities.findIndex(
-      (e) => e.getId() === entity.getId()
-    );
-    if (index !== -1) {
-      this.selectedEntities.splice(index, 1);
-      this.selectedEntitiesChange.emit(this.selectedEntities);
+    if (this._selectedEntities.delete(entity.getId())) {
+      this.selectedEntityIdsChange.emit([...this._selectedEntities.keys()]);
       this.onChange.emit();
     }
   }
