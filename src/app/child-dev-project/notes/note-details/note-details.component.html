@@ -75,7 +75,6 @@
         </div>
         <div fxFlex>
           <mat-form-field class="input-medium">
-            <!-- TODO: should be multi-select or auto-complete field of user names? -->
             <input
               matInput
               placeholder="Team Member"
@@ -123,21 +122,23 @@
 
         <app-entity-select
           [entityType]="Child"
-          [accessor]="accessor"
-          [(selectedEntities)]="selectedChildren"
-          (onChange)="entityForm.form.markAsDirty()"
+          [entityView]="childBlock"
+          [autocompleteView]="childBlock"
+          [(selection)]="entity.children"
+          (selectionChange)="entityForm.form.markAsDirty()"
           label="Children"
           placeholder="Add Child...">
-          <app-entity-select-item
-            *ngFor="let child of selectedChildren"
-            [entity]="child">
-            <app-child-block
-              [entity]="child"
-              [linkDisabled]="true"
-              [tooltipDisabled]="true">
-            </app-child-block>
-          </app-entity-select-item>
         </app-entity-select>
+
+        <ng-template
+          #childBlock
+          let-entity="entity">
+          <app-child-block
+            [entity]="entity"
+            [linkDisabled]="true"
+            [tooltipDisabled]="true">
+          </app-child-block>
+        </ng-template>
 
       </div>
       <app-note-presence-list

@@ -6,6 +6,7 @@ import { Entity, EntityConstructor } from "../../../core/entity/entity";
 import { INTERACTION_TYPE_CONFIG_ID } from "../model/interaction-type.interface";
 import { accessorFn } from "../../../core/entity-select/entity-select/entity-select.component";
 import { Child } from "../../children/model/child";
+import { User } from "../../../core/user/user";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 
 /**
@@ -18,7 +19,6 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 })
 export class NoteDetailsComponent implements ShowsEntity<Note> {
   @Input() entity: Note;
-  selectedChildren: Child[] = [];
   @ViewChild("dialogForm", { static: true }) formDialogWrapper;
 
   readonly Child: EntityConstructor<Child> = Child;
@@ -26,21 +26,10 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
   INTERACTION_TYPE_CONFIG = INTERACTION_TYPE_CONFIG_ID;
 
   constructor(
-    @Optional() private matDialogRef: MatDialogRef<NoteDetailsComponent>,
-    private entityMapperService: EntityMapperService
-  ) {
-    this.entityMapperService
-      .loadType<Child>(Child)
-      .then((children: Child[]) => {
-        for (const child of children) {
-          if (this.entity.children.find((c) => c === child.getId())) {
-            this.selectedChildren.push(child);
-          }
-        }
-      });
-  }
+    @Optional() private matDialogRef: MatDialogRef<NoteDetailsComponent>
+  ) {}
 
-  readonly accessor: accessorFn<Child> = (c: Child) => c.name;
+  readonly childAccessor: accessorFn<Child> = (c: Child) => c.name;
 
   closeDialog(entity: Entity) {
     if (!this.matDialogRef) {

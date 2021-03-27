@@ -1,22 +1,38 @@
 <mat-form-field style="width: 100%;" floatLabel="always">
   <mat-label *ngIf="label">{{label}}</mat-label>
-  <mat-chip-list #chipList aria-label="Entity selection">
-    <ng-content select="app-entity-select-item"></ng-content>
+
+  <mat-chip-list #chipList>
+    <mat-basic-chip
+      [selectable]="selectable"
+      [removable]="removable"
+      *ngFor="let entity of _selection"
+      class="chip">
+      <!-- This is going to be replaced with the dynamic content -->
+      <ng-container *ngTemplateOutlet="entityView; context: {entity: entity}"></ng-container>
+      <div
+        *ngIf="removable"
+        class="fa fa-minus-square-o"
+        (click)="removeEntity(entity)">
+      </div>
+    </mat-basic-chip>
+
     <input
       #inputField
-      [disabled]="loading"
-      [placeholder]="loading ? 'loading...' : placeholder"
-      [formControl]="entityCtrl"
+      [disabled]="loading.value"
+      [placeholder]="loading.value ? 'loading...' : placeholder"
+      [formControl]="formControl"
       [matAutocomplete]='autoSuggestions'
       [matChipInputFor]="chipList"
       [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
       (matChipInputTokenEnd)="add($event)">
   </mat-chip-list>
+
   <mat-autocomplete
     #autoSuggestions='matAutocomplete'
     (optionSelected)="selectEntity($event.option.value)">
     <mat-option *ngFor='let res of filteredEntities | async' [value]='res'>
-      {{accessor(res)}}
+      <!-- This is going to be replaced with the dynamic content -->
+      <ng-container *ngTemplateOutlet="autocompleteView; context: {entity: res}"></ng-container>
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>

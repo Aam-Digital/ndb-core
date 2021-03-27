@@ -1,7 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { EntitySelectComponent } from "./entity-select/entity-select.component";
-import { EntitySelectItemComponent } from "./entity-select-item/entity-select-item.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatIconModule } from "@angular/material/icon";
@@ -10,7 +9,7 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatInputModule } from "@angular/material/input";
 
 @NgModule({
-  declarations: [EntitySelectComponent, EntitySelectItemComponent],
+  declarations: [EntitySelectComponent],
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -22,6 +21,6 @@ import { MatInputModule } from "@angular/material/input";
     MatInputModule,
     ReactiveFormsModule,
   ],
-  exports: [EntitySelectComponent, EntitySelectItemComponent],
+  exports: [EntitySelectComponent],
 })
 export class EntitySelectModule {}
