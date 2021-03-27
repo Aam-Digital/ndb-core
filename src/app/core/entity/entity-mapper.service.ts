@@ -19,7 +19,7 @@ import { Injectable } from "@angular/core";
 import { Database } from "../database/database";
 import { Entity, EntityConstructor } from "./entity";
 import { EntitySchemaService } from "./schema/entity-schema.service";
-import { BehaviorSubject, Observable } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { UpdatedEntity } from "./entity-update";
 
 /**
@@ -34,7 +34,7 @@ import { UpdatedEntity } from "./entity-update";
  */
 @Injectable()
 export class EntityMapperService {
-  private publishers: Map<string, BehaviorSubject<any>> = new Map();
+  private publishers: Map<string, Subject<any>> = new Map();
   constructor(
     private _db: Database,
     private entitySchemaService: EntitySchemaService
@@ -103,7 +103,7 @@ export class EntityMapperService {
     let publisher = this.publishers[type];
     // subject doesn't exist yet or is closed
     if (!publisher || publisher.closed) {
-      publisher = new BehaviorSubject<T>(null);
+      publisher = new Subject<T>();
       this.publishers[type] = publisher;
     }
     return publisher.asObservable();

@@ -11,7 +11,7 @@ import { FormDialogService } from "../../../core/form-dialog/form-dialog.service
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
-import { filter, map } from "rxjs/operators";
+import { filter, map, tap } from "rxjs/operators";
 import { update } from "../../../core/entity/entity-update";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 
@@ -91,11 +91,7 @@ export class NotesManagerComponent implements OnInit {
       .receiveUpdates<Note>(Note)
       .pipe(
         untilDestroyed(this),
-        filter((note) => note !== null && note !== undefined),
-        map((note) => {
-          note.entity["color"] = this.getColor(note.entity);
-          return note;
-        })
+        tap((note) => (note.entity["color"] = this.getColor(note.entity)))
       )
       .subscribe((updatedNote) => {
         this.notes = update(this.notes, updatedNote);
