@@ -29,7 +29,6 @@ export class ActivityParticipantsSectionComponent
     this.entity = config.entity as RecurringActivity;
     this.participants = this.entity.participants;
     this.participatingGroups = this.entity.linkedGroups;
-    console.log(this.participatingGroups);
   }
 
   switchEdit() {

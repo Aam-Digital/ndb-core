@@ -119,11 +119,11 @@ import { MatFormFieldModule } from "@angular/material/form-field";
     EntityDetailsModule,
     ConfigurableEnumModule,
     DemoDataModule.forRoot([
-      ...DemoChildGenerator.provider({count: 150}),
-      ...DemoSchoolGenerator.provider({count: 8}),
+      ...DemoChildGenerator.provider({ count: 150 }),
+      ...DemoSchoolGenerator.provider({ count: 8 }),
       ...DemoChildSchoolRelationGenerator.provider(),
       ...DemoActivityGeneratorService.provider(),
-      ...DemoActivityEventsGeneratorService.provider({forNLastYears: 2}),
+      ...DemoActivityEventsGeneratorService.provider({ forNLastYears: 2 }),
       ...DemoNoteGeneratorService.provider({
         minNotesPerChild: 2,
         maxNotesPerChild: 10,

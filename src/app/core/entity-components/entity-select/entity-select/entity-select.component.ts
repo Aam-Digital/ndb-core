@@ -162,11 +162,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    */
   selectEntity(entity: E) {
     this._selection.push(entity);
-    if (this.selectionInputType === "id") {
-      this.selectionChange.emit(this._selection.map((e) => e.getId()));
-    } else {
-      this.selectionChange.emit(this._selection);
-    }
+    this._emitChange();
     this.inputField.nativeElement.value = "";
     this.formControl.setValue(null);
   }
@@ -206,13 +202,17 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     );
     if (index !== -1) {
       this._selection.splice(index, 1);
-      if (this.selectionInputType === "id") {
-        this.selectionChange.emit(this._selection.map((e) => e.getId()));
-      } else {
-        this.selectionChange.emit(this._selection);
-      }
+      this._emitChange();
       this.inputField.nativeElement.value = "";
       this.formControl.setValue(null);
+    }
+  }
+
+  private _emitChange() {
+    if (this.selectionInputType === "id") {
+      this.selectionChange.emit(this._selection.map((e) => e.getId()));
+    } else {
+      this.selectionChange.emit(this._selection);
     }
   }
 

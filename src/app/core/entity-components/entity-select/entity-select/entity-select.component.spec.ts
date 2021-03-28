@@ -33,8 +33,8 @@ describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
   let fixture: ComponentFixture<EntitySelectComponent<any>>;
 
-  const mockEntitiesA: Entity[] = ["Abc", "Bcd", "Abd", "Aba"].map(
-    (s) => new TestEntity(s)
+  const mockEntitiesA: Entity[] = ["Abc", "Bcd", "Abd", "Aba"].map((s) =>
+    TestEntity.create(s)
   );
   const mockEntitiesB: Entity[] = [new Entity(), new Entity()];
 
