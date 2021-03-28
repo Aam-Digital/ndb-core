@@ -23,8 +23,9 @@ export class BackupService {
    *
    * @returns Promise<string> a string containing all elements of the database separated by SEPARATOR_ROW
    */
-  getJsonExport(): Promise<string> {
-    return this.db.getAll().then((results) => this.createJson(results));
+  async getJsonExport(): Promise<string> {
+    const results = await this.db.getAll();
+    return this.createJson(results);
   }
 
   /**
@@ -47,8 +48,9 @@ export class BackupService {
    *
    * @returns string a valid CSV string
    */
-  getCsvExport(): Promise<string> {
-    return this.db.getAll().then((results) => this.createCsv(results));
+  async getCsvExport(): Promise<string> {
+    const results = await this.db.getAll();
+    return this.createCsv(results);
   }
 
   /**
@@ -74,19 +76,14 @@ export class BackupService {
    *
    * @returns Promise<any> a promise that resolves after all remove operations are done
    */
-  clearDatabase(): Promise<any> {
-    const userEntityPrefix = new User("").getType() + ":";
-
-    return this.db.getAll().then((allDocs) => {
-      const p = [];
-      allDocs.forEach((row) => {
-        if (!row._id.startsWith(userEntityPrefix)) {
-          // skip User entities in order to not break login!
-          p.push(this.db.remove(row));
-        }
-      });
-      return Promise.all(p);
-    });
+  async clearDatabase(): Promise<void> {
+    const allDocs = await this.db.getAll();
+    for (const row of allDocs) {
+      if (!row._id.startsWith(User.ENTITY_TYPE + ":")) {
+        // skip User entities in order to not break login!
+        await this.db.remove(row);
+      }
+    }
   }
 
   /**
@@ -95,15 +92,14 @@ export class BackupService {
    *
    * @param json An array of entities to be written to the database
    * @param forceUpdate should existing objects be overridden? Default false
-   *
-   * @returns Promise<any> a promise that resolves after all save operations are done
    */
-  importJson(json, forceUpdate = false) {
-    const promises = [];
-    json.split(BackupService.SEPARATOR_ROW).forEach((record) => {
-      promises.push(this.db.put(JSON.parse(record), forceUpdate));
-    });
-    return Promise.all(promises);
+  async importJson(json, forceUpdate = false): Promise<void> {
+    for (const stringRecord of json.split(BackupService.SEPARATOR_ROW)) {
+      const record = JSON.parse(stringRecord);
+      // Remove _rev so CouchDB treats it as a new rather than a updated document
+      delete record._rev;
+      await this.db.put(record, forceUpdate);
+    }
   }
 
   /**
@@ -114,25 +110,22 @@ export class BackupService {
    *
    * @returns Promise<any> a promise that resolves after all save operations are done
    */
-  importCsv(csv, forceUpdate = false): Promise<any> {
-    const promises = [];
-
+  async importCsv(csv, forceUpdate = false): Promise<void> {
     const parsedCsv = this.papa.parse(csv, {
       header: true,
       dynamicTyping: true,
       skipEmptyLines: true,
     });
-    parsedCsv.data.forEach((record) => {
+
+    for (const record of parsedCsv.data) {
       // remove undefined properties
       for (const propertyName in record) {
-        if (record[propertyName] === null) {
+        if (record[propertyName] === null || propertyName === "_rev") {
           delete record[propertyName];
         }
       }
 
-      promises.push(this.db.put(record, forceUpdate));
-    });
-
-    return Promise.all(promises);
+      await this.db.put(record, forceUpdate);
+    }
   }
 }
