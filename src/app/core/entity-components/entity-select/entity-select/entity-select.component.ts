@@ -123,7 +123,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   loading = new BehaviorSubject(true);
   @Input() disabled: boolean = false;
 
-  private allEntities: E[] = [];
+  allEntities: E[] = [];
 
   filteredEntities: Observable<E[]>;
   @ViewChild("inputField") inputField: ElementRef<HTMLInputElement>;
