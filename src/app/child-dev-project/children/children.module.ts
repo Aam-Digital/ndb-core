@@ -69,7 +69,7 @@ import { WebdavModule } from "../../core/webdav/webdav.module";
 import { PreviousTeamsComponent } from "../previous-teams/previous-teams.component";
 import { BmiBlockComponent } from "./children-list/bmi-block/bmi-block.component";
 import { ChildSelectComponent } from "./child-select/child-select.component";
-import { EntitySelectModule } from "../../core/entity-select/entity-select.module";
+import { EntitySelectModule } from "../../core/entity-components/entity-select/entity-select.module";
 
 @NgModule({
   imports: [

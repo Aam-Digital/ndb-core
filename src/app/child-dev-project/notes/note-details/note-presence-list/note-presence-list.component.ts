@@ -1,14 +1,9 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  ViewChild,
-} from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Note } from "../../model/note";
 import { NgForm } from "@angular/forms";
-import { ChildSelectComponent } from "../../../children/child-select/child-select.component";
 import { AttendanceLogicalStatus } from "../../../attendance/model/attendance-status";
+import { EntityConstructor } from "../../../../core/entity/entity";
+import { Child } from "../../../children/model/child";
 
 /**
  * Display the participants' of an event in a list allowing each attendance status to be edited.
@@ -22,8 +17,7 @@ export class NotePresenceListComponent implements OnChanges {
   @Input() entity: Note = new Note("");
   @Input() recordForm: NgForm;
 
-  @ViewChild("childSelect", { static: true })
-  childSelectComponent: ChildSelectComponent;
+  readonly Child: EntityConstructor<Child> = Child;
 
   constructor() {
     this.sortEntries();

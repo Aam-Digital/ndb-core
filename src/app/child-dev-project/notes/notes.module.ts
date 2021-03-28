@@ -41,7 +41,8 @@ import { EntitySubrecordModule } from "../../core/entity-components/entity-subre
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import { AttendanceModule } from "../attendance/attendance.module";
-import { EntitySelectModule } from "../../core/entity-select/entity-select.module";
+import { EntitySelectModule } from "../../core/entity-components/entity-select/entity-select.module";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 
 @NgModule({
   declarations: [
@@ -94,6 +95,7 @@ import { EntitySelectModule } from "../../core/entity-select/entity-select.modul
     ConfigurableEnumModule,
     AttendanceModule,
     EntitySelectModule,
+    MatSlideToggleModule,
   ],
   providers: [],
 })

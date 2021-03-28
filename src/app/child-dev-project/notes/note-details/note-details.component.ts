@@ -4,10 +4,8 @@ import { ShowsEntity } from "../../../core/form-dialog/shows-entity.interface";
 import { MatDialogRef } from "@angular/material/dialog";
 import { Entity, EntityConstructor } from "../../../core/entity/entity";
 import { INTERACTION_TYPE_CONFIG_ID } from "../model/interaction-type.interface";
-import { accessorFn } from "../../../core/entity-select/entity-select/entity-select.component";
+import { accessorFn } from "../../../core/entity-components/entity-select/entity-select/entity-select.component";
 import { Child } from "../../children/model/child";
-import { User } from "../../../core/user/user";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -24,10 +22,21 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
   readonly Child: EntityConstructor<Child> = Child;
 
   INTERACTION_TYPE_CONFIG = INTERACTION_TYPE_CONFIG_ID;
+  includeInactiveChildren: boolean = true;
 
   constructor(
     @Optional() private matDialogRef: MatDialogRef<NoteDetailsComponent>
   ) {}
+
+  toggleIncludeInactiveChildren() {
+    this.includeInactiveChildren = !this.includeInactiveChildren;
+    // This needs to be set so that the filtering can start immediately
+    this.filterInactiveChildren = this.includeInactiveChildren
+      ? (_) => true
+      : (c) => c.isActive;
+  }
+
+  filterInactiveChildren: (Child) => boolean = (_) => true;
 
   readonly childAccessor: accessorFn<Child> = (c: Child) => c.name;
 

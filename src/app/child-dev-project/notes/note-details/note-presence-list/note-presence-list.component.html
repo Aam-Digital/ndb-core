@@ -1,17 +1,29 @@
-<app-child-select
-  #childSelect
-  [selectedChildrenIds]="entity.children"
-  (newIdAdded)="entity.addChild($event); recordForm.form.markAsDirty()"
-  (idRemoved)="entity.removeChild($event); recordForm.form.markAsDirty()"
-  class="input-medium"
->
-</app-child-select>
+<app-entity-select
+  [entityType]="Child"
+  [(selection)]="entity.children"
+  (selectionChange)="recordForm.form.markAsDirty()"
+  [entityView]="childBlock"
+  [autocompleteView]="childBlock"
+  placeholder="Add children..."
+  label="Children"
+></app-entity-select>
+
+<ng-template
+  #childBlock
+  let-entity="entity">
+  <app-child-block
+    [entity]="entity"
+    [linkDisabled]="true"
+    [tooltipDisabled]="true"
+  >
+  </app-child-block>
+</ng-template>
 
 <app-child-meeting-note-attendance
   *ngFor="let childId of entity.children"
   [childId]="childId"
   [attendance]="entity.getAttendance(childId)"
   (change)="recordForm.form.markAsDirty()"
-  (remove)="childSelectComponent.unselectChildId(childId)"
+  (remove)="entity.removeChild(childId)"
 >
 </app-child-meeting-note-attendance>

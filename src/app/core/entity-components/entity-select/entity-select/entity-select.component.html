@@ -1,4 +1,4 @@
-<mat-form-field style="width: 100%;" floatLabel="always">
+<mat-form-field floatLabel="always" style="width: 100%">
   <mat-label *ngIf="label">{{label}}</mat-label>
 
   <mat-chip-list #chipList>
@@ -30,7 +30,9 @@
   <mat-autocomplete
     #autoSuggestions='matAutocomplete'
     (optionSelected)="selectEntity($event.option.value)">
-    <mat-option *ngFor='let res of filteredEntities | async' [value]='res'>
+    <!-- Optional header -->
+    <ng-content select="mat-option"></ng-content>
+    <mat-option *ngFor='let res of filteredEntities | async' [value]="res">
       <!-- This is going to be replaced with the dynamic content -->
       <ng-container *ngTemplateOutlet="autocompleteView; context: {entity: res}"></ng-container>
     </mat-option>

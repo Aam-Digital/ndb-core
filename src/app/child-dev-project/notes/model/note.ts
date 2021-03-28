@@ -102,7 +102,9 @@ export class Note extends Entity {
    * @param childId The id of the child to exclude from the notes
    */
   removeChild(childId: string) {
-    this.children.splice(this.children.indexOf(childId), 1);
+    this.children = [].concat(
+      this.children.splice(this.children.indexOf(childId), 1)
+    ); // TODO: hacky...
     this.childrenAttendance.delete(childId);
   }
 
