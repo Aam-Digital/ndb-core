@@ -30,7 +30,6 @@ import { MatListModule } from "@angular/material/list";
 import { ChildrenModule } from "../children/children.module";
 import { DragDropModule } from "@angular/cdk/drag-drop";
 import { MatTreeModule } from "@angular/material/tree";
-import { ChildMeetingNoteAttendanceComponent } from "./note-details/child-meeting-attendance/child-meeting-note-attendance.component";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
@@ -44,11 +43,7 @@ import { EntitySelectModule } from "../../core/entity-components/entity-select/e
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 
 @NgModule({
-  declarations: [
-    NoteDetailsComponent,
-    NotesManagerComponent,
-    ChildMeetingNoteAttendanceComponent,
-  ],
+  declarations: [NoteDetailsComponent, NotesManagerComponent],
   imports: [
     CommonModule,
     FormsModule,
