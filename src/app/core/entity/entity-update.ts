@@ -30,7 +30,7 @@ export interface UpdatedEntity<T extends Entity> {
  * @param entities The entities to update, must be defined
  * @return An array of the given entities with the update applied
  */
-export function update<T extends Entity>(
+export function applyUpdate<T extends Entity>(
   entities: T[],
   next: UpdatedEntity<T>
 ) {

@@ -207,7 +207,6 @@ export class Entity {
    * The resulting entity will be of the same type as this
    * (taking into account subclassing)
    */
-
   public copy(): Entity {
     const other = new (this.getConstructor())(this._id);
     Object.assign(other, this);

@@ -12,7 +12,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 import { tap } from "rxjs/operators";
-import { update } from "../../../core/entity/entity-update";
+import { applyUpdate } from "../../../core/entity/entity-update";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 
 @Component({
@@ -94,7 +94,7 @@ export class NotesManagerComponent implements OnInit {
         tap((note) => (note.entity["color"] = this.getColor(note.entity)))
       )
       .subscribe((updatedNote) => {
-        this.notes = update(this.notes, updatedNote);
+        this.notes = applyUpdate(this.notes, updatedNote);
       });
   }
 
