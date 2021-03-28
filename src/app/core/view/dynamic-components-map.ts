@@ -24,6 +24,7 @@ import { ActivityAttendanceSectionComponent } from "../../child-dev-project/atte
 import { PreviousTeamsComponent } from "../../child-dev-project/previous-teams/previous-teams.component";
 import { BmiBlockComponent } from "../../child-dev-project/children/children-list/bmi-block/bmi-block.component";
 import { ChildrenBmiDashboardComponent } from "../../child-dev-project/children/children-bmi-dashboard/children-bmi-dashboard.component";
+import { DisplayTextArrayComponent } from "../entity-components/entity-list/display-text-array/display-text-array.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -43,6 +44,7 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["Form", FormComponent],
   ["DisplayDate", DisplayDateComponent],
   ["DisplayText", DisplayTextComponent],
+  ["DisplayTextArray", DisplayTextArrayComponent],
   ["DisplayConfigurableEnum", DisplayConfigurableEnumComponent],
   ["DisplayCheckmark", DisplayCheckmarkComponent],
   ["ChildBlock", ChildBlockComponent],

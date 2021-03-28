@@ -38,6 +38,7 @@ import { Angulartics2Module } from "angulartics2";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
+import { UserModule } from "../../core/user/user.module";
 import { AttendanceModule } from "../attendance/attendance.module";
 import { EntitySelectModule } from "../../core/entity-components/entity-select/entity-select.module";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
@@ -86,6 +87,7 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
     EntitySubrecordModule,
     EntityListModule,
     ConfigurableEnumModule,
+    UserModule,
     AttendanceModule,
     EntitySelectModule,
     MatSlideToggleModule,

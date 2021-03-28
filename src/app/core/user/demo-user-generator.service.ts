@@ -1,6 +1,7 @@
 import { DemoDataGenerator } from "../demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { User } from "./user";
+import { faker } from "../demo-data/faker";
 
 /**
  * Generate demo users for the application with its DemoDataModule.
@@ -31,6 +32,7 @@ export class DemoUserGeneratorService extends DemoDataGenerator<User> {
    * Generate User entities to be loaded by the DemoDataModule.
    */
   public generateEntities(): User[] {
+    const users = [];
     const demoUser = new User(DemoUserGeneratorService.DEFAULT_USERNAME);
     demoUser.name = DemoUserGeneratorService.DEFAULT_USERNAME;
     demoUser.setNewPassword(DemoUserGeneratorService.DEFAULT_PASSWORD);
@@ -40,6 +42,15 @@ export class DemoUserGeneratorService extends DemoDataGenerator<User> {
     demoAdmin.admin = true;
     demoAdmin.setNewPassword(DemoUserGeneratorService.DEFAULT_PASSWORD);
 
-    return [demoUser, demoAdmin];
+    users.push(demoUser, demoAdmin);
+
+    for (let i = 0; i < 10; ++i) {
+      const user = new User(String(i));
+      user.name = faker.name.firstName();
+      users.push(user);
+    }
+    console.log(users);
+
+    return users;
   }
 }

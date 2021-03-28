@@ -95,7 +95,7 @@ export class RollCallSetupComponent implements OnInit {
       activity,
       this.date
     )) as NoteForActivitySetup;
-    event.author = this.sessionService.getCurrentUser().getId();
+    event.authors = [this.sessionService.getCurrentUser().getId()];
     event.isNewFromActivity = true;
     return event;
   }
@@ -128,7 +128,7 @@ export class RollCallSetupComponent implements OnInit {
 
   createOneTimeEvent() {
     const newNote = Note.create(new Date());
-    newNote.author = this.sessionService.getCurrentUser().name;
+    newNote.authors = [this.sessionService.getCurrentUser().getId()];
 
     this.formDialog
       .openDialog(NoteDetailsComponent, newNote)

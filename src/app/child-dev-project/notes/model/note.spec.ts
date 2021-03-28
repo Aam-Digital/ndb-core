@@ -45,7 +45,7 @@ function createTestModel(): Note {
   n1.date = new Date();
   n1.subject = "Note Subject";
   n1.text = "Note text";
-  n1.author = "Max Musterman";
+  n1.authors = ["1"];
   n1.warningLevel = WarningLevel.URGENT;
 
   return n1;

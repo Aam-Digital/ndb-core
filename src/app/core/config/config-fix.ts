@@ -180,9 +180,9 @@ export const defaultConfig = {
           "id": "category"
         },
         {
-          "component": "DisplayText",
-          "title": "Author",
-          "id": "author"
+          "component": "DisplayTextArray",
+          "title": "Authors",
+          "id": "authors"
         },
         {
           "component": "ChildBlockList",
@@ -201,7 +201,7 @@ export const defaultConfig = {
               "date",
               "subject",
               "category",
-              "author",
+              "authors",
               "children"
             ]
           },

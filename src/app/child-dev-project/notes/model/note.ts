@@ -52,7 +52,8 @@ export class Note extends Entity {
   @DatabaseField() date: Date;
   @DatabaseField() subject: string = "";
   @DatabaseField() text: string = "";
-  @DatabaseField() author: string = "";
+  /** IDs of authors of this note */
+  @DatabaseField() authors: string[] = [];
 
   @DatabaseField({
     dataType: "configurable-enum",
