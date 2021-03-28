@@ -16,6 +16,7 @@ import { BehaviorSubject, Observable } from "rxjs";
 import { FormControl } from "@angular/forms";
 import { filter, map, skipWhile } from "rxjs/operators";
 import { MatChipInputEvent } from "@angular/material/chips";
+import { LoggingService } from "../../../logging/logging.service";
 
 export type accessorFn<E extends Entity> = (E) => string;
 
@@ -32,11 +33,17 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * @param type The type of the entity
    */
   @Input() set entityType(type: EntityConstructor<E>) {
-    this.entityMapperService.loadType<E>(type).then((entities) => {
-      this.allEntities = entities;
-      this.loading.next(false);
-      this.formControl.setValue(null);
-    });
+    this.entityMapperService
+      .loadType<E>(type)
+      .then((entities) => {
+        this.allEntities = entities;
+        this.loading.next(false);
+        this.formControl.setValue(null);
+      })
+      .catch((error) => {
+        this.loggingService.warn(error);
+        this.loading.next(false);
+      });
   }
   /**
    * The (initial) selection. Can be used in combination with {@link selectionChange}
@@ -132,7 +139,10 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
-  constructor(private entityMapperService: EntityMapperService) {
+  constructor(
+    private entityMapperService: EntityMapperService,
+    private loggingService: LoggingService
+  ) {
     this.filteredEntities = this.formControl.valueChanges.pipe(
       filter((value) => value === null || typeof value === "string"), // sometimes produces entities
       map((searchText?: string) =>
