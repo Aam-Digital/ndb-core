@@ -108,9 +108,7 @@ export class NotesOfChildComponent
 
   generateNewRecordFactory() {
     // define values locally because "this" is a different scope after passing a function as input to another component
-    const user = this.sessionService.getCurrentUser()
-      ? this.sessionService.getCurrentUser().name
-      : "";
+    const user = this.sessionService.getCurrentUser().getId();
     const childId = this.child.getId();
 
     return () => {

@@ -67,7 +67,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
   constructor(
     private config: DemoNoteConfig,
     private demoChildren: DemoChildGenerator,
-    private demoUsers: DemoUserGeneratorService
+    private demoUsers: DemoUserGeneratorService,
     private schemaService: EntitySchemaService,
     private configService: ConfigService
   ) {
@@ -134,7 +134,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     );
 
     note.addChild(child.getId());
-    note.authors = [faker.random.arrayElement(this.demoUsers.entities).name];
+    note.authors = [faker.random.arrayElement(this.demoUsers.entities).getId()];
 
     if (!date) {
       date = faker.date.between(
@@ -187,7 +187,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
       }
     });
 
-    note.authors = [faker.random.arrayElement(this.demoUsers.entities).name];
+    note.authors = [faker.random.arrayElement(this.demoUsers.entities).getId()];
 
     note.date = faker.date.past(1);
 

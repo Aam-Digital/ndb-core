@@ -27,7 +27,7 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<EventN
     date: Date
   ): EventNote {
     const eventNote = EventNote.create(date, activity.title);
-    eventNote.author = activity.assignedTo;
+    eventNote.authors = [activity.assignedTo];
     eventNote.category = activity.type;
     eventNote.relatesTo = activity._id; // relatesTo requires the id including prefix!
 

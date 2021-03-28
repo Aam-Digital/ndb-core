@@ -32,7 +32,7 @@ export class NoteDetailsComponent implements ShowsEntity<Note>, OnInit {
   }
 
   set noteAuthors(users: User[]) {
-    this.entity.authors = users.map((user) => user.name);
+    this.entity.authors = users.map((user) => user.getId());
     this._noteAuthors = users;
   }
 
@@ -50,7 +50,7 @@ export class NoteDetailsComponent implements ShowsEntity<Note>, OnInit {
   ngOnInit(): void {
     this.entityMapper.loadType<User>(User).then((users) => {
       this._noteAuthors = users.filter((u) =>
-        this.entity.authors.includes(u.name)
+        this.entity.authors.includes(u.getId())
       );
     });
   }
