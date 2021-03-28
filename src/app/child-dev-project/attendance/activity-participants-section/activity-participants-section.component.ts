@@ -3,6 +3,9 @@ import { RecurringActivity } from "../model/recurring-activity";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
+import { Child } from "../../children/model/child";
+import { EntityConstructor } from "../../../core/entity/entity";
+import { School } from "../../schools/model/school";
 
 @Component({
   selector: "app-activity-participants-section",
@@ -17,12 +20,16 @@ export class ActivityParticipantsSectionComponent
   participants: string[] = [];
   participatingGroups: string[] = [];
 
+  readonly Child: EntityConstructor<Child> = Child;
+  readonly School: EntityConstructor<School> = School;
+
   constructor(private entityMapper: EntityMapperService) {}
 
   onInitFromDynamicConfig(config: PanelConfig) {
     this.entity = config.entity as RecurringActivity;
     this.participants = this.entity.participants;
     this.participatingGroups = this.entity.linkedGroups;
+    console.log(this.participatingGroups);
   }
 
   switchEdit() {

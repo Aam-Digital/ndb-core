@@ -33,7 +33,6 @@ import { MatTreeModule } from "@angular/material/tree";
 import { ChildMeetingNoteAttendanceComponent } from "./note-details/child-meeting-attendance/child-meeting-note-attendance.component";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatPaginatorModule } from "@angular/material/paginator";
-import { NotePresenceListComponent } from "./note-details/note-presence-list/note-presence-list.component";
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
 import { Angulartics2Module } from "angulartics2";
@@ -49,7 +48,6 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
     NoteDetailsComponent,
     NotesManagerComponent,
     ChildMeetingNoteAttendanceComponent,
-    NotePresenceListComponent,
   ],
   imports: [
     CommonModule,

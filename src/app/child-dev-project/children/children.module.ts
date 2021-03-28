@@ -68,7 +68,6 @@ import { EntityListModule } from "../../core/entity-components/entity-list/entit
 import { WebdavModule } from "../../core/webdav/webdav.module";
 import { PreviousTeamsComponent } from "../previous-teams/previous-teams.component";
 import { BmiBlockComponent } from "./children-list/bmi-block/bmi-block.component";
-import { ChildSelectComponent } from "./child-select/child-select.component";
 import { EntitySelectModule } from "../../core/entity-components/entity-select/entity-select.module";
 
 @NgModule({
@@ -118,7 +117,6 @@ import { EntitySelectModule } from "../../core/entity-components/entity-select/e
     NotesOfChildComponent,
     ChildrenListComponent,
     ChildrenCountDashboardComponent,
-    ChildSelectComponent,
     EducationalMaterialComponent,
     AserComponent,
     SelectGroupChildrenComponent,
@@ -130,12 +128,10 @@ import { EntitySelectModule } from "../../core/entity-components/entity-select/e
     SchoolBlockWrapperComponent,
     ChildBlockListComponent,
     BmiBlockComponent,
-    ChildSelectComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
     ChildBlockComponent,
-    ChildSelectComponent,
     ChildrenCountDashboardComponent,
     NoRecentNotesDashboardComponent,
     RecentNotesDashboardComponent,

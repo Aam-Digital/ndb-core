@@ -121,6 +121,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * state of this component. Will trigger once loading is done
    */
   loading = new BehaviorSubject(true);
+  @Input() disabled: boolean = false;
 
   private allEntities: E[] = [];
 

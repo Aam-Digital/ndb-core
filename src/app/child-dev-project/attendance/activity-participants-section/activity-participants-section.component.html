@@ -1,16 +1,19 @@
 <div>
-  <app-school-select
-    [(selectedSchoolIds)]="participatingGroups"
+  <app-entity-select
+    [entityType]="School"
+    [(selection)]="participatingGroups"
     [disabled]="!editing"
-    class="input-medium"
+    [entityView]="schoolBlock"
+    [autocompleteView]="schoolBlock"
   >
-  </app-school-select>
-  <app-child-select
-    [(selectedChildrenIds)]="participants"
+  </app-entity-select>
+  <app-entity-select
+    [(selection)]="participants"
     [disabled]="!editing"
-    class="input-medium"
-  >
-  </app-child-select>
+    [entityType]="Child"
+    [entityView]="childBlock"
+    [autocompleteView]="childBlock"
+  ></app-entity-select>
 </div>
 
 <div>
@@ -41,3 +44,23 @@
     Edit
   </button>
 </div>
+
+<ng-template
+  let-entity="entity"
+  #childBlock
+>
+  <app-child-block
+    [entity]="entity"
+    [linkDisabled]="true"
+    [tooltipDisabled]="true">
+  </app-child-block>
+</ng-template>
+
+<ng-template
+  let-entity="entity"
+  #schoolBlock>
+  <app-school-block
+  [entity]="entity"
+  [linkDisabled]="true">
+  </app-school-block>
+</ng-template>

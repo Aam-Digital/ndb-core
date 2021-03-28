@@ -1,16 +1,18 @@
 <mat-form-field floatLabel="always" style="width: 100%">
   <mat-label *ngIf="label">{{label}}</mat-label>
 
-  <mat-chip-list #chipList>
+  <mat-chip-list
+    #chipList
+    [disabled]="disabled || loading.value">
     <mat-basic-chip
-      [selectable]="selectable"
-      [removable]="removable"
+      [selectable]="selectable && !disabled"
+      [removable]="removable && !disabled"
       *ngFor="let entity of _selection"
       class="chip">
       <!-- This is going to be replaced with the dynamic content -->
       <ng-container *ngTemplateOutlet="entityView; context: {entity: entity}"></ng-container>
       <div
-        *ngIf="removable"
+        *ngIf="removable && !disabled"
         class="fa fa-minus-square-o"
         (click)="removeEntity(entity)">
       </div>
@@ -18,7 +20,7 @@
 
     <input
       #inputField
-      [disabled]="loading.value"
+      [disabled]="loading.value || disabled"
       [placeholder]="loading.value ? 'loading...' : placeholder"
       [formControl]="formControl"
       [matAutocomplete]='autoSuggestions'
