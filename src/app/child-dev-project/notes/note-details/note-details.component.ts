@@ -6,6 +6,7 @@ import { Entity, EntityConstructor } from "../../../core/entity/entity";
 import { INTERACTION_TYPE_CONFIG_ID } from "../model/interaction-type.interface";
 import { accessorFn } from "../../../core/entity-components/entity-select/entity-select/entity-select.component";
 import { Child } from "../../children/model/child";
+import { User } from "../../../core/user/user";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -20,6 +21,7 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
   @ViewChild("dialogForm", { static: true }) formDialogWrapper;
 
   readonly Child: EntityConstructor<Child> = Child;
+  readonly User: EntityConstructor<User> = User;
 
   INTERACTION_TYPE_CONFIG = INTERACTION_TYPE_CONFIG_ID;
   includeInactiveChildren: boolean = true;

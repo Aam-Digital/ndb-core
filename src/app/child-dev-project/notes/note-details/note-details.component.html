@@ -73,17 +73,18 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <div fxFlex>
-          <mat-form-field class="input-medium">
-            <input
-              matInput
-              placeholder="Team Member"
-              name="teammember"
-              type="text"
-              [(ngModel)]="entity.author"
-            />
-          </mat-form-field>
-        </div>
+
+        <app-entity-select
+          [entityType]="User"
+          (selectionChange)="entityForm.form.markAsDirty()"
+          [(selection)]="entity.authors"
+          [entityView]="userBlock"
+          [autocompleteView]="userBlock"
+          placeholder="Add Author..."
+          label="Authors"
+        >
+        </app-entity-select>
+
       </div>
     </div>
 
@@ -163,3 +164,8 @@
     [tooltipDisabled]="true">
   </app-child-block>
 </ng-template>
+
+<ng-template
+  #userBlock
+  let-user="entity"
+>{{user.name}}</ng-template>
