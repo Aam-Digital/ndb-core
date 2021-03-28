@@ -11,9 +11,7 @@ import { heightRangeForAge, weightRangeForAge } from "./height-weight";
  * Builds upon the generated demo Child entities.
  */
 @Injectable()
-export class DemoHealthCheckGeneratorService extends DemoDataGenerator<
-  HealthCheck
-> {
+export class DemoHealthCheckGeneratorService extends DemoDataGenerator<HealthCheck> {
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoHealthCheckGeneratorService.provider()]`

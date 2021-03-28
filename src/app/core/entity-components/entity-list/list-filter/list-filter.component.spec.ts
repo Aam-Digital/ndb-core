@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ListFilterComponent } from "./list-filter.component";
 import { FilterSelection } from "../../../filter/filter-selection/filter-selection";
@@ -7,11 +7,13 @@ describe("ListFilterComponent", () => {
   let component: ListFilterComponent<any>;
   let fixture: ComponentFixture<ListFilterComponent<any>>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ListFilterComponent],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [ListFilterComponent],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ListFilterComponent);

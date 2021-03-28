@@ -19,6 +19,7 @@ import { LoggingService } from "../../../core/logging/logging.service";
     <app-entity-list
       [entityList]="childrenList"
       [listConfig]="listConfig"
+      [entityConstructor]="childConstructor"
       (elementClick)="routeTo($event.getId())"
       (addNewClick)="routeTo('new')"
     ></app-entity-list>
@@ -27,6 +28,7 @@ import { LoggingService } from "../../../core/logging/logging.service";
 export class ChildrenListComponent implements OnInit {
   childrenList: Child[] = [];
   listConfig: EntityListConfig;
+  childConstructor = Child;
 
   schoolFS: FilterSelectionOption<Child>[] = [];
 
@@ -59,9 +61,7 @@ export class ChildrenListComponent implements OnInit {
       .forEach(async (filter) => {
         switch (filter.id) {
           case "school": {
-            (filter as PrebuiltFilterConfig<
-              Child
-            >).options = await this.buildSchoolFilter();
+            (filter as PrebuiltFilterConfig<Child>).options = await this.buildSchoolFilter();
             (filter as PrebuiltFilterConfig<Child>).default = "";
             return;
           }

@@ -16,16 +16,18 @@
  */
 
 import { Entity } from "../entity";
-import { async } from "@angular/core/testing";
+import { waitForAsync } from "@angular/core/testing";
 import { EntitySchemaService } from "./entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
 
 describe("EntitySchemaService", () => {
   let entitySchemaService: EntitySchemaService;
 
-  beforeEach(async(() => {
-    entitySchemaService = new EntitySchemaService();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      entitySchemaService = new EntitySchemaService();
+    })
+  );
 
   it("schema:string converts to strings", function () {
     class TestEntity extends Entity {

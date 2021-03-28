@@ -16,16 +16,18 @@
  */
 
 import { AttendanceDay } from "./attendance-day";
-import { async } from "@angular/core/testing";
+import { waitForAsync } from "@angular/core/testing";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { AttendanceMonth } from "./attendance-month";
 
 describe("AttendanceDay", () => {
   let entitySchemaService: EntitySchemaService;
 
-  beforeEach(async(() => {
-    entitySchemaService = new EntitySchemaService();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      entitySchemaService = new EntitySchemaService();
+    })
+  );
 
   it("(AttendanceMonth) saves date values as only YYYY-MM-dd", () => {
     const month = new Date("2018-01-01");

@@ -1,15 +1,11 @@
-  {
+{
   "site_name": "Aam Digital - DEV",
 
+  "session_type": "local",
+  "demo_mode": true,
   "database": {
     "name": "app",
-    "remote_url": "http://localhost:4200/db/",
-    "timeout": 60000,
-    "useTemporaryDatabase": true
-  },
-
-  "webdav": {
-    "remote_url": null
+    "remote_url": "http://localhost:4200/db/"
   },
 
   "debug": false

@@ -119,7 +119,7 @@ To enter the Attendance Register section click on the button in the navigation. 
 
 ### Add daily attendance
 You can record attendance of a class or other group of children for a specific day.
-The app will assist you with a kind of roll call, showing the students one by one.
+The app will assist you with recording a single event's attendance, showing the students one by one.
 This feature is optimized for small screens and you can do this on your smartphone.
 
 1. Click on the "add a day's attendance" button

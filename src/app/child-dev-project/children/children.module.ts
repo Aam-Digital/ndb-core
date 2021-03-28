@@ -38,53 +38,38 @@ import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { ChildrenService } from "./children.service";
-import { AttendanceBlockComponent } from "../attendance/attendance-block/attendance-block.component";
-import { ChildAttendanceComponent } from "../attendance/child-attendance/child-attendance.component";
 import { ChildrenCountDashboardComponent } from "./children-count-dashboard/children-count-dashboard.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { AttendanceAverageDashboardComponent } from "../attendance/dashboard-widgets/attendance-average-dashboard/attendance-average-dashboard.component";
-import { AttendanceWarningsDashboardComponent } from "../attendance/dashboard-widgets/attendance-warnings-dashboard/attendance-warnings-dashboard.component";
 import { NotesOfChildComponent } from "../notes/notes-of-child/notes-of-child.component";
 import { ChildSelectComponent } from "./child-select/child-select.component";
 import { SchoolsModule } from "../schools/schools.module";
 import { EducationalMaterialComponent } from "../educational-material/educational-material-component/educational-material.component";
 import { AserComponent } from "../aser/aser-component/aser.component";
 import { FilterPipeModule } from "ngx-filter-pipe";
-import { AddMonthAttendanceComponent } from "../attendance/add-month-attendance/add-month-attendance.component";
-import { AttendanceDaysComponent } from "../attendance/attendance-days/attendance-days.component";
-import { AttendanceDetailsComponent } from "../attendance/attendance-details/attendance-details.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { AddDayAttendanceComponent } from "../attendance/add-day-attendance/add-day-attendance.component";
-import { AttendanceWeekDashboardComponent } from "../attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component";
 import { NoRecentNotesDashboardComponent } from "../notes/dashboard-widgets/no-recent-notes-dashboard/no-recent-notes-dashboard.component";
-import { AttendanceDayBlockComponent } from "../attendance/attendance-days/attendance-day-block.component";
-import { AttendanceManagerComponent } from "../attendance/attendance-manager/attendance-manager.component";
 import { HealthCheckupComponent } from "../health-checkup/health-checkup-component/health-checkup.component";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { PreviousSchoolsComponent } from "../previous-schools/previous-schools.component";
 import { AdminModule } from "../../core/admin/admin.module";
 import { SelectGroupChildrenComponent } from "./select-group-children/select-group-children.component";
-import { RollCallComponent } from "../attendance/add-day-attendance/roll-call/roll-call.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { RecentNotesDashboardComponent } from "../notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component";
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
-import { CONFLICT_RESOLUTION_STRATEGY } from "../../conflict-resolution/auto-resolution/conflict-resolution-strategy";
-import { AttendanceMonthConflictResolutionStrategy } from "../attendance/attendance-month-conflict-resolution-strategy";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { Angulartics2Module } from "angulartics2";
-import { AttendanceAnalysisComponent } from "../attendance/attendance-analysis/attendance-analysis.component";
-import { GroupedChildAttendanceComponent } from "./child-details/grouped-child-attendance/grouped-child-attendance.component";
 import { ViewModule } from "../../core/view/view.module";
-import { RecentAttendanceBlocksComponent } from "./children-list/recent-attendance-blocks/recent-attendance-blocks.component";
 import { SchoolBlockWrapperComponent } from "./children-list/school-block-wrapper/school-block-wrapper.component";
 import { ChildBlockListComponent } from "./child-block-list/child-block-list.component";
 import { ChildBlockComponent } from "./child-block/child-block.component";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 import { WebdavModule } from "../../core/webdav/webdav.module";
+import { PreviousTeamsComponent } from "../previous-teams/previous-teams.component";
 import { BmiBlockComponent } from "./children-list/bmi-block/bmi-block.component";
+import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard/children-bmi-dashboard.component";
 
 @NgModule({
   imports: [
@@ -128,58 +113,31 @@ import { BmiBlockComponent } from "./children-list/bmi-block/bmi-block.component
     EntityListModule,
   ],
   declarations: [
-    AttendanceBlockComponent,
     ChildBlockComponent,
-    ChildAttendanceComponent,
     NotesOfChildComponent,
     ChildrenListComponent,
     ChildrenCountDashboardComponent,
-    AttendanceAverageDashboardComponent,
-    AttendanceWarningsDashboardComponent,
     ChildSelectComponent,
     EducationalMaterialComponent,
     AserComponent,
-    AddMonthAttendanceComponent,
-    AttendanceDayBlockComponent,
-    AttendanceDaysComponent,
-    AttendanceDetailsComponent,
-    AddDayAttendanceComponent,
-    RollCallComponent,
     SelectGroupChildrenComponent,
-    AttendanceWeekDashboardComponent,
     NoRecentNotesDashboardComponent,
     RecentNotesDashboardComponent,
-    AttendanceManagerComponent,
-    AttendanceAnalysisComponent,
     HealthCheckupComponent,
     PreviousSchoolsComponent,
-    GroupedChildAttendanceComponent,
-    RecentAttendanceBlocksComponent,
+    PreviousTeamsComponent,
     SchoolBlockWrapperComponent,
     ChildBlockListComponent,
     BmiBlockComponent,
+    ChildrenBmiDashboardComponent,
   ],
-  providers: [
-    ChildrenService,
-    DatePipe,
-    PercentPipe,
-    {
-      provide: CONFLICT_RESOLUTION_STRATEGY,
-      useClass: AttendanceMonthConflictResolutionStrategy,
-      multi: true,
-    },
-  ],
+  providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
     ChildBlockComponent,
     ChildSelectComponent,
     ChildrenCountDashboardComponent,
-    AttendanceAverageDashboardComponent,
-    AttendanceWarningsDashboardComponent,
-    AttendanceWeekDashboardComponent,
     NoRecentNotesDashboardComponent,
     RecentNotesDashboardComponent,
-    AttendanceDaysComponent,
-    RecentAttendanceBlocksComponent,
     BmiBlockComponent,
   ],
 })

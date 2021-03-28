@@ -1,8 +1,5 @@
 <div *ngIf="displayAsToggle">
-  <mat-button-toggle-group
-    [name]="filterConfig.name"
-    [value]="selectedOption"
-  >
+  <mat-button-toggle-group [name]="filterConfig.name" [value]="selectedOption">
     <mat-button-toggle
       *ngFor="let option of filterConfig.options"
       [value]="option.key"
@@ -15,7 +12,7 @@
 
 <div *ngIf="!displayAsToggle">
   <mat-form-field>
-    <mat-label>{{ filterConfig.name }}</mat-label>
+    <mat-label>{{filterConfig.label || filterConfig.name }}</mat-label>
     <mat-select
       [id]="filterConfig.name"
       [value]="selectedOption"

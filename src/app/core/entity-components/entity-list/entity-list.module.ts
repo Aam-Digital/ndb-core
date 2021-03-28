@@ -22,6 +22,7 @@ import { ViewModule } from "../../view/view.module";
 import { DisplayConfigurableEnumComponent } from "./display-configurable-enum/display-configurable-enum.component";
 import { ListFilterComponent } from "./list-filter/list-filter.component";
 import { DisplayTextArrayComponent } from "./display-text-array/display-text-array.component";
+import { PermissionsModule } from "../../permissions/permissions.module";
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { DisplayTextArrayComponent } from "./display-text-array/display-text-arr
     ViewModule,
     MatSortModule,
     MatPaginatorModule,
+    PermissionsModule,
   ],
   exports: [EntityListComponent],
 })

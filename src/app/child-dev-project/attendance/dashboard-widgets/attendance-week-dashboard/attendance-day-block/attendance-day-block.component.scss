@@ -1,0 +1,27 @@
+.day-cell {
+  background-color: #f5f5f5;
+  position: relative;
+  text-align: center;
+  vertical-align: middle;
+  display: table-cell;
+  min-width: 16px;
+}
+
+.status {
+  //font-weight: bold;
+  margin-top: 0.5em;
+}
+
+.has-remark {
+  background: linear-gradient(
+    45deg,
+    transparent 0%,
+    transparent 80%,
+    #5f5f5f 80%,
+    #5f5f5f 100%
+  );
+}
+
+.attendance- {
+  background-color: #ffffffaa;
+}

@@ -24,192 +24,73 @@ describe("MockDatabase tests", () => {
     database = new MockDatabase();
   });
 
-  it("get object by _id after put into database", function (done) {
+  it("get object by _id after put into database", async () => {
     const id = "test_id";
     const name = "test";
     const count = 42;
     const testData = { _id: id, name: name, count: count };
-
-    database.put(testData).then(
-      function () {
-        expectIdInDatabase(testData._id, done);
-      },
-      function () {
-        expect(false).toBe(true, "promise of Database.put failed");
-      }
-    );
+    await database.put(testData);
+    const result = await database.get(id);
+    expect(result._id).toBe(id);
   });
 
-  it("put two objects with different _id", function (done) {
+  it("put two objects with different _id", async () => {
     const data1 = { _id: "test_id", name: "test" };
     const data2 = { _id: "other_id", name: "test2" };
-
-    database.put(data1).then(
-      function () {
-        database.put(data2).then(
-          function () {
-            expectIdInDatabase(data1._id, () => {}).then(function () {
-              expectIdInDatabase(data2._id, done);
-            });
-          },
-          function () {
-            expect(false).toBe(true, "promise of Database.put failed");
-          }
-        );
-      },
-      function () {
-        expect(false).toBe(true, "promise of Database.put failed");
-      }
-    );
+    await database.put(data1);
+    await database.put(data2);
+    const result = await database.get(data1._id);
+    expect(result._id).toBe(data1._id);
+    const result2 = await database.get(data2._id);
+    expect(result2._id).toBe(data2._id);
   });
 
-  it("fails to get by not existing _id", function (done) {
-    database.get("some_id").then(
-      function () {
-        expect(true).toBe(
-          false,
-          "retrieved object despite get on non-existing _id"
-        );
-        done();
-      },
-      function (err: any) {
-        expect(err).toBeDefined();
-        done();
-      }
-    );
+  it("fails to get by not existing _id", () => {
+    return expectAsync(database.get("some_id")).toBeRejected();
   });
 
-  it("rejects putting new object with existing _id and no _rev", function (done) {
+  it("rejects putting new object with existing _id and no _rev", async () => {
     const testData = { _id: "test_id", name: "test", count: 42 };
     const duplicateData = { _id: "test_id", name: "duplicate", count: 43 };
-
-    database.put(testData).then(function () {
-      expectIdInDatabase(testData._id, () => {});
-
-      database.put(duplicateData).then(
-        function () {
-          expect(true).toBe(
-            false,
-            "succeeded adding duplicate _id to database"
-          );
-        },
-        function (err) {
-          expect(err).toBeDefined();
-          database.get(testData._id).then(function (result) {
-            expect(result.name).toBe(
-              testData.name,
-              "original record was overwritten"
-            );
-            done();
-          });
-        }
-      );
-    });
+    await database.put(testData);
+    const result = await database.get(testData._id);
+    expect(result._id).toBe(testData._id);
+    await expectAsync(database.put(duplicateData)).toBeRejected();
+    const result2 = await database.get(testData._id);
+    expect(result2.name).toBe(testData.name);
   });
 
-  it("remove object", function (done) {
+  it("remove object", async () => {
     const id = "test_id";
     const name = "test";
     const count = 42;
     const testData = { _id: id, name: name, count: count };
-
-    database.put(testData).then(
-      function () {
-        expectIdInDatabase(testData._id, function () {}).then(function () {
-          database.remove(testData).then(
-            function () {
-              expectIdNotInDatabase(testData._id, done);
-            },
-            function () {
-              expect(false).toBe(true, "promise of Database.remove failed");
-              done();
-            }
-          );
-        });
-      },
-      function () {
-        expect(false).toBe(true, "promise of Database.put failed");
-        done();
-      }
-    );
+    await database.put(testData);
+    await expectAsync(database.get(testData._id)).toBeResolved();
+    await database.remove(testData);
+    await expectAsync(database.get(testData._id)).toBeRejected();
   });
 
-  it("getAll returns all objects", function (done) {
+  it("getAll returns all objects", async () => {
     const testData1 = { _id: "x:test_id", name: "test", count: 42 };
     const testData2 = { _id: "y:two", name: "two" };
-
-    database.put(testData1).then(() => {
-      database.put(testData2).then(() => {
-        database.getAll().then(function (resultData) {
-          expect(
-            resultData.findIndex((o) => o._id === testData1._id)
-          ).toBeGreaterThan(-1, "testData1 not found in getAll result");
-          expect(
-            resultData.findIndex((o) => o._id === testData2._id)
-          ).toBeGreaterThan(-1, "testData2 not found in getAll result");
-          expect(resultData.length).toBe(
-            2,
-            "getAll result has " +
-              resultData.length +
-              " not expected number of objects"
-          );
-          done();
-        });
-      });
-    });
+    await database.put(testData1);
+    await database.put(testData2);
+    const result = await database.getAll();
+    expect(result.map((el) => el._id)).toContain(testData1._id);
+    expect(result.map((el) => el._id)).toContain(testData2._id);
+    expect(result.length).toBe(2);
   });
 
-  it("getAll returns prefixed objects", function (done) {
+  it("getAll returns prefixed objects", async () => {
     const testData1 = { _id: "x:test_id", name: "test", count: 42 };
     const testData2 = { _id: "y:two", name: "two" };
     const prefix = "x";
-
-    // default options for "getAll()": this.allDocs({include_docs: true, startkey: prefix, endkey: prefix + '\ufff0'});
-    database.put(testData1).then(() => {
-      database.put(testData2).then(() => {
-        database.getAll(prefix).then(function (resultData) {
-          expect(
-            resultData.findIndex((o) => o._id === testData1._id)
-          ).toBeGreaterThan(-1, "testData1 not found in getAll result");
-          expect(resultData.findIndex((o) => o._id === testData2._id)).toBe(
-            -1,
-            "testData2 unexpectedly found in getAll result despite other prefix"
-          );
-          expect(resultData.length).toBe(
-            1,
-            "getAll result has " +
-              resultData.length +
-              " not expected number of objects"
-          );
-          done();
-        });
-      });
-    });
+    await database.put(testData1);
+    await database.put(testData2);
+    const result = await database.getAll(prefix);
+    expect(result.map((el) => el._id)).toContain(testData1._id);
+    expect(result.map((el) => el._id)).not.toContain(testData2._id);
+    expect(result.length).toBe(1);
   });
-
-  function expectIdInDatabase(id, done) {
-    return database.get(id).then(
-      function (resultData: any) {
-        expect(resultData._id).toEqual(id);
-        done();
-        return resultData;
-      },
-      function () {
-        expect(false).toBe(true, "promise of Database.get failed");
-        done();
-      }
-    );
-  }
-
-  function expectIdNotInDatabase(id, done) {
-    return database.get(id).then(
-      function () {
-        expect(true).toBe(false, "unexpectedly found object in database");
-        done();
-      },
-      function () {
-        done();
-      }
-    );
-  }
 });

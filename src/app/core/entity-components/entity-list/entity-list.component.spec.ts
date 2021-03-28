@@ -1,8 +1,8 @@
 import {
-  async,
   ComponentFixture,
   fakeAsync,
   TestBed,
+  waitForAsync,
 } from "@angular/core/testing";
 import { EntityListComponent } from "./entity-list.component";
 import { CommonModule } from "@angular/common";
@@ -35,6 +35,7 @@ import { MockDatabase } from "../../database/mock-database";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { Database } from "../../database/database";
+import { Note } from "../../../child-dev-project/notes/model/note";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -87,43 +88,45 @@ describe("EntityListComponent", () => {
     ],
   };
 
-  beforeEach(async(() => {
-    const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-    mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
-    TestBed.configureTestingModule({
-      declarations: [EntityListComponent, ExportDataComponent],
-      imports: [
-        CommonModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        MatInputModule,
-        MatExpansionModule,
-        MatTableModule,
-        MatSortModule,
-        MatSidenavModule,
-        MatButtonModule,
-        MatButtonToggleModule,
-        MatIconModule,
-        MatTooltipModule,
-        MatPaginatorModule,
-        NoopAnimationsModule,
-        FormsModule,
-        FilterPipeModule,
-        RouterTestingModule.withRoutes([
-          { path: "child", component: ChildrenListComponent },
-        ]),
-      ],
-      providers: [
-        EntityMapperService,
-        EntitySchemaService,
-        {
-          provide: SessionService,
-          useValue: mockSessionService,
-        },
-        { provide: Database, useClass: MockDatabase },
-      ],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+      mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
+      TestBed.configureTestingModule({
+        declarations: [EntityListComponent, ExportDataComponent],
+        imports: [
+          CommonModule,
+          MatFormFieldModule,
+          MatSelectModule,
+          MatInputModule,
+          MatExpansionModule,
+          MatTableModule,
+          MatSortModule,
+          MatSidenavModule,
+          MatButtonModule,
+          MatButtonToggleModule,
+          MatIconModule,
+          MatTooltipModule,
+          MatPaginatorModule,
+          NoopAnimationsModule,
+          FormsModule,
+          FilterPipeModule,
+          RouterTestingModule.withRoutes([
+            { path: "child", component: ChildrenListComponent },
+          ]),
+        ],
+        providers: [
+          EntityMapperService,
+          EntitySchemaService,
+          {
+            provide: SessionService,
+            useValue: mockSessionService,
+          },
+          { provide: Database, useClass: MockDatabase },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EntityListComponent);
@@ -255,5 +258,39 @@ describe("EntityListComponent", () => {
     expect(component.mobileColumnGroup).toEqual(component.columnGroups[0].name);
     expect(component.filtersConfig).toEqual([]);
     expect(component.filterSelections).toEqual([]);
+  });
+
+  it("should sort standard objects", () => {
+    const children = [
+      new Child("0"),
+      new Child("1"),
+      new Child("2"),
+      new Child("3"),
+    ];
+    children[0].name = "AA";
+    children[3].name = "AB";
+    children[2].name = "Z";
+    children[1].name = "C";
+    component.entityList = children;
+    component.sort.sort({ id: "name", start: "asc", disableClear: false });
+    const sortedIds = component.entityDataSource
+      .sortData(children, component.sort)
+      .map((value) => value.getId());
+    expect(sortedIds).toEqual(["0", "3", "1", "2"]);
+  });
+
+  it("should sort non-standard objects", () => {
+    const notes = [new Note("0"), new Note("1"), new Note("2"), new Note("3")];
+    notes[0].category = { id: "0", label: "AA" };
+    notes[3].category = { id: "1", label: "AB" };
+    notes[2].category = { id: "2", label: "Z" };
+    notes[1].category = { id: "3", label: "C" };
+    component.ngOnInit();
+    component.entityList = notes;
+    component.sort.sort({ id: "category", start: "asc", disableClear: false });
+    const sortedIds = component.entityDataSource
+      .sortData(notes, component.sort)
+      .map((note) => note.getId());
+    expect(sortedIds).toEqual(["0", "3", "1", "2"]);
   });
 });

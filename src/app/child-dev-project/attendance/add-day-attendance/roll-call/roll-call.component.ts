@@ -1,16 +1,16 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { AttendanceStatus } from "../../model/attendance-day";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
-import { Child } from "../../../children/model/child";
-import { AttendanceMonth } from "../../model/attendance-month";
-import { ChildrenService } from "../../../children/children.service";
-import { RollCallRecord } from "./roll-call-record";
 import { animate, style, transition, trigger } from "@angular/animations";
-import { AppConfig } from "../../../../core/app-config/app-config";
+import {
+  ATTENDANCE_STATUS_CONFIG_ID,
+  AttendanceStatusType,
+} from "../../model/attendance-status";
+import { Note } from "../../../notes/model/note";
+import { EventAttendance } from "../../model/event-attendance";
+import { ConfigService } from "../../../../core/config/config.service";
+import { ConfigurableEnumConfig } from "../../../../core/configurable-enum/configurable-enum.interface";
 
 /**
- * Displays the given children one by one to the user to mark the attendance status for the given day and type.
- * This component itself handles the loading and saving of the attendances entities internally.
+ * Displays the participants of the given event one by one to mark attendance status.
  */
 @Component({
   selector: "app-roll-call",
@@ -27,146 +27,65 @@ import { AppConfig } from "../../../../core/app-config/app-config";
 })
 export class RollCallComponent implements OnInit {
   /**
-   * The day for which attendance will be recorded
+   * The event to be displayed and edited.
    */
-  @Input() day: Date;
+  @Input() eventEntity: Note;
 
   /**
-   * The attendance type to be checked and saved (e.g. 'coaching' or 'school')
+   * Emitted when the roll call is finished and results can be saved.
    */
-  @Input() attendanceType: string;
+  @Output() complete = new EventEmitter<Note>();
 
   /**
-   * The children for whom attendance will be recorded
+   * Emitted when the user wants to dismiss & leave the roll call view.
    */
-  @Input() students: Child[] = [];
+  @Output() exit = new EventEmitter();
 
-  /**
-   * Event emitted when the roll call is finished (or aborted).
-   */
-  @Output() complete = new EventEmitter();
-
-  isLoading: boolean = true;
   currentIndex: number;
-  rollCallList: RollCallRecord[] = [];
 
-  AttStatus = AttendanceStatus;
+  /** options available for selecting an attendance status */
+  availableStatus: AttendanceStatusType[];
 
-  showDebug = AppConfig.settings.debug;
-  debugContent: any;
+  entries: { childId: string; attendance: EventAttendance }[];
 
-  constructor(
-    private entityMapper: EntityMapperService,
-    private childrenService: ChildrenService
-  ) {}
+  constructor(private configService: ConfigService) {}
 
   async ngOnInit() {
-    await this.loadList();
+    this.loadAttendanceStatusTypes();
+
+    this.entries = this.eventEntity.children.map((childId) => ({
+      childId: childId,
+      attendance: this.eventEntity.getAttendance(childId),
+    }));
+    this.goToNextParticipant(0);
   }
 
-  private async loadList() {
-    this.isLoading = true;
-
-    this.rollCallList = await this.loadMonthAttendanceRecords(this.students);
-    this.sortRollCallList();
-
-    this.goToNextStudent(0);
-
-    this.isLoading = false;
+  private loadAttendanceStatusTypes() {
+    this.availableStatus = this.configService.getConfig<
+      ConfigurableEnumConfig<AttendanceStatusType>
+    >(ATTENDANCE_STATUS_CONFIG_ID);
   }
 
-  private async loadMonthAttendanceRecords(
-    children: Child[]
-  ): Promise<RollCallRecord[]> {
-    const rollCallRecords: RollCallRecord[] = [];
+  markAttendance(childId: string, status: AttendanceStatusType) {
+    this.eventEntity.getAttendance(childId).status = status;
 
-    const attendances = await this.childrenService
-      .getAttendancesOfMonth(this.day)
-      .toPromise();
-    children.forEach((child) => {
-      let attMonth: AttendanceMonth = attendances.find(
-        (a) =>
-          a.student === child.getId() && a.institution === this.attendanceType
-      );
-      if (attMonth === undefined) {
-        attMonth = AttendanceMonth.createAttendanceMonth(
-          child.getId(),
-          this.attendanceType
-        );
-        attMonth.month = new Date(this.day.getTime());
-      }
-
-      const attDay = attMonth.dailyRegister.find(
-        (d) =>
-          d.date.getDate() === this.day.getDate() &&
-          d.date.getMonth() === this.day.getMonth() &&
-          d.date.getFullYear() === this.day.getFullYear()
-      );
-
-      rollCallRecords.push({
-        child: child,
-        attendanceMonth: attMonth,
-        attendanceDay: attDay,
-      });
-    });
-
-    return rollCallRecords;
+    // automatically move to next participant after a short delay giving the user visual feedback on the selected status
+    setTimeout(() => this.goToNextParticipant(), 750);
   }
 
-  private sortRollCallList() {
-    this.rollCallList.sort((a: RollCallRecord, b: RollCallRecord) => {
-      if (a.child.schoolClass === b.child.schoolClass) {
-        return 0;
-      }
-
-      const diff =
-        parseInt(a.child.schoolClass, 10) - parseInt(b.child.schoolClass, 10);
-      if (!Number.isNaN(diff)) {
-        return diff;
-      }
-
-      if (
-        a.child.schoolClass < b.child.schoolClass ||
-        b.child.schoolClass === undefined
-      ) {
-        return -1;
-      }
-      return 1;
-    });
-  }
-
-  markAttendance(status: AttendanceStatus) {
-    const rollCallListEntry = this.rollCallList[this.currentIndex];
-    rollCallListEntry.attendanceDay.status = status;
-    this.entityMapper.save(rollCallListEntry.attendanceMonth);
-
-    setTimeout(() => this.goToNextStudent(), 750);
-  }
-
-  goToNextStudent(newIndex?: number) {
+  goToNextParticipant(newIndex?: number) {
     if (newIndex !== undefined) {
       this.currentIndex = newIndex;
     } else {
       this.currentIndex++;
     }
 
-    this.displayRecordForDebugging(this.rollCallList[this.currentIndex]);
-  }
-
-  endRollCall() {
-    this.complete.emit();
+    if (this.isFinished()) {
+      this.complete.emit(this.eventEntity);
+    }
   }
 
   isFinished(): boolean {
-    return this.currentIndex >= this.rollCallList.length;
-  }
-
-  displayRecordForDebugging(rollCallRecord: RollCallRecord) {
-    if (!rollCallRecord) {
-      return;
-    }
-
-    console.log(rollCallRecord);
-    this.debugContent = JSON.stringify(rollCallRecord.attendanceDay, null, 2);
+    return this.currentIndex >= this.eventEntity.children.length;
   }
 }

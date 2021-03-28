@@ -1,5 +1,3 @@
-import { AttendanceAverageDashboardComponent } from "../../child-dev-project/attendance/dashboard-widgets/attendance-average-dashboard/attendance-average-dashboard.component";
-import { AttendanceWarningsDashboardComponent } from "../../child-dev-project/attendance/dashboard-widgets/attendance-warnings-dashboard/attendance-warnings-dashboard.component";
 import { AttendanceWeekDashboardComponent } from "../../child-dev-project/attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component";
 import { ChildrenCountDashboardComponent } from "../../child-dev-project/children/children-count-dashboard/children-count-dashboard.component";
 import { NoRecentNotesDashboardComponent } from "../../child-dev-project/notes/dashboard-widgets/no-recent-notes-dashboard/no-recent-notes-dashboard.component";
@@ -21,7 +19,11 @@ import { DisplayTextComponent } from "../entity-components/entity-list/display-t
 import { DisplayCheckmarkComponent } from "../entity-components/entity-list/display-checkmark/display-checkmark.component";
 import { DisplayDateComponent } from "../entity-components/entity-list/display-date/display-date.component";
 import { DisplayConfigurableEnumComponent } from "../entity-components/entity-list/display-configurable-enum/display-configurable-enum.component";
+import { ActivityParticipantsSectionComponent } from "../../child-dev-project/attendance/activity-participants-section/activity-participants-section.component";
+import { ActivityAttendanceSectionComponent } from "../../child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component";
+import { PreviousTeamsComponent } from "../../child-dev-project/previous-teams/previous-teams.component";
 import { BmiBlockComponent } from "../../child-dev-project/children/children-list/bmi-block/bmi-block.component";
+import { ChildrenBmiDashboardComponent } from "../../child-dev-project/children/children-bmi-dashboard/children-bmi-dashboard.component";
 import { DisplayTextArrayComponent } from "../entity-components/entity-list/display-text-array/display-text-array.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
@@ -30,11 +32,12 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["NoRecentNotesDashboard", NoRecentNotesDashboardComponent],
   ["AttendanceWeekDashboard", AttendanceWeekDashboardComponent],
   ["ProgressDashboard", ProgressDashboardComponent],
-  ["AttendanceAverageDashboard", AttendanceAverageDashboardComponent],
-  ["AttendanceWarningsDashboard", AttendanceWarningsDashboardComponent],
   ["PreviousSchools", PreviousSchoolsComponent],
+  ["PreviousTeams", PreviousTeamsComponent],
   ["Aser", AserComponent],
   ["GroupedChildAttendance", GroupedChildAttendanceComponent],
+  ["ActivityParticipantsSection", ActivityParticipantsSectionComponent],
+  ["ActivityAttendanceSection", ActivityAttendanceSectionComponent],
   ["NotesOfChild", NotesOfChildComponent],
   ["HealthCheckup", HealthCheckupComponent],
   ["EducationalMaterial", EducationalMaterialComponent],
@@ -50,4 +53,5 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["SchoolBlockWrapper", SchoolBlockWrapperComponent],
   ["ChildrenOverview", ChildrenOverviewComponent],
   ["BmiBlock", BmiBlockComponent],
+  ["ChildrenBmiDashboardComponent", ChildrenBmiDashboardComponent],
 ]);

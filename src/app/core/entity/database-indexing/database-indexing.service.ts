@@ -115,7 +115,7 @@ export class DatabaseIndexingService {
   ): Promise<T[]> {
     return this.queryIndexDocs(entityConstructor, indexName, {
       startkey: startkey,
-      endkey: endkey,
+      endkey: endkey + "\ufff0",
     });
   }
 

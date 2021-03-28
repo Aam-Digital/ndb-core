@@ -1,21 +1,44 @@
 <div>
-  <mat-form-field style='width: 100%'>
-    <input #inputField matInput placeholder='Children' (input)='search()' [matAutocomplete]='autoSuggestions'
-           [(ngModel)]='searchText'>
-    <span *ngFor='let child of selectedChildren' class="selected-entity-block">
-        <span class='fa fa-minus-square-o' (click)='unselectChild(child)'></span>
-        <app-child-block [entity]='child' [linkDisabled]='true' [tooltipDisabled]="true"></app-child-block>
-        &nbsp;
-    </span>
+  <mat-form-field style="width: 100%">
+    <input
+      #inputField
+      matInput
+      placeholder="Children"
+      (input)="search()"
+      [matAutocomplete]="autoSuggestions"
+      [(ngModel)]="searchText"
+      [disabled]="disabled"
+    />
   </mat-form-field>
 
-  <mat-autocomplete #autoSuggestions='matAutocomplete' (optionSelected)='selectChild($event.option.value)'>
-    <mat-option *ngFor='let res of suggestions' [value]='res'>
-      <app-child-block [entity]='res' [linkDisabled]='true' [tooltipDisabled]="true"></app-child-block>
+  <mat-autocomplete
+    #autoSuggestions="matAutocomplete"
+    (optionSelected)="selectChild($event.option.value)"
+  >
+    <mat-option *ngFor="let res of suggestions" [value]="res">
+      <app-child-block
+        [entity]="res"
+        [linkDisabled]="true"
+        [tooltipDisabled]="true"
+      ></app-child-block>
     </mat-option>
-    <button mat-button *ngIf="showOnlyActiveChildren" (click)="showAll()"
-            matTooltip="extend the list to also show inactive records">
+    <button
+      mat-button
+      *ngIf="showOnlyActiveChildren"
+      (click)="showAll()"
+      matTooltip="extend the list to also show inactive records"
+    >
       Show Dropouts
     </button>
   </mat-autocomplete>
+  <span *ngFor="let child of selectedChildren" class="selected-entity-block">
+    <span class="fa fa-minus-square-o" (click)="unselectChild(child)"></span>
+    <app-child-block
+      style="margin-left: 3px"
+      [entity]="child"
+      [linkDisabled]="true"
+      [tooltipDisabled]="!disabled"
+    ></app-child-block>
+    &nbsp;
+  </span>
 </div>

@@ -18,11 +18,9 @@
 <!-- HEADER -->
 <mat-toolbar color="primary" class="app-header mat-elevation-z2 mat-typography">
   <mat-toolbar-row fxLayout="row">
-    <span fxFlex *ngIf="isLoggedIn()">
+    <span fxFlex *ngIf="isLoggedIn() && sideNavMode == 'over'">
       <button
         mat-icon-button
-        fxHide.lt-md="false"
-        fxHide="true"
         (click)="sideNav.toggle()"
       >
         <mat-icon class="header-icon" fontIcon="fa-bars"></mat-icon>
@@ -56,11 +54,7 @@
     >
       <mat-icon class="header-icon" fontIcon="fa-user-circle-o"></mat-icon>
     </button>
-    <button
-      mat-icon-button
-      (click)="logout()"
-      *ngIf="isLoggedIn()"
-    >
+    <button mat-icon-button (click)="logout()" *ngIf="isLoggedIn()">
       <mat-icon class="header-icon" fontIcon="fa-sign-out"></mat-icon>
     </button>
   </mat-toolbar-row>
@@ -83,7 +77,7 @@
     <app-navigation
       (click)="sideNavMode == 'over' && sideNav.close()"
     ></app-navigation>
-    <app-version style="position: absolute; bottom: 0;"></app-version>
+    <app-version style="position: absolute; bottom: 0"></app-version>
   </mat-sidenav>
 
   <mat-sidenav-content>

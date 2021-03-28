@@ -1,0 +1,14 @@
+<div
+  class="status day-cell attendance-{{ attendance?.status?.shortName }}"
+  [ngClass]="{ 'has-remark': attendance?.remarks }"
+>
+  <span
+    *ngIf="attendance"
+    [matTooltip]="attendance.remarks"
+    matTooltipPosition="above"
+  >
+    {{ attendance.status.shortName }}
+  </span>
+
+  <span *ngIf="!attendance"> - </span>
+</div>

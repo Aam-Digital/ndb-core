@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ConflictResolutionListComponent } from "./conflict-resolution-list.component";
 import { MatTableModule } from "@angular/material/table";
@@ -16,28 +16,30 @@ describe("ConflictResolutionListComponent", () => {
 
   let mockDatabase: jasmine.SpyObj<Database>;
 
-  beforeEach(async(() => {
-    mockDatabase = jasmine.createSpyObj("mockDatabase", [
-      "saveDatabaseIndex",
-      "query",
-    ]);
-    mockDatabase.query.and.returnValue(
-      Promise.resolve({ total_rows: 0, rows: [] })
-    );
+  beforeEach(
+    waitForAsync(() => {
+      mockDatabase = jasmine.createSpyObj("mockDatabase", [
+        "saveDatabaseIndex",
+        "query",
+      ]);
+      mockDatabase.query.and.returnValue(
+        Promise.resolve({ total_rows: 0, rows: [] })
+      );
 
-    TestBed.configureTestingModule({
-      imports: [
-        MatTableModule,
-        MatPaginatorModule,
-        MatTooltipModule,
-        MatExpansionModule,
-        FormsModule,
-        NoopAnimationsModule,
-      ],
-      providers: [{ provide: Database, useValue: mockDatabase }],
-      declarations: [CompareRevComponent, ConflictResolutionListComponent],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        imports: [
+          MatTableModule,
+          MatPaginatorModule,
+          MatTooltipModule,
+          MatExpansionModule,
+          FormsModule,
+          NoopAnimationsModule,
+        ],
+        providers: [{ provide: Database, useValue: mockDatabase }],
+        declarations: [CompareRevComponent, ConflictResolutionListComponent],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ConflictResolutionListComponent);

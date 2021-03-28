@@ -16,7 +16,7 @@
  */
 
 import { Entity } from "../entity";
-import { async } from "@angular/core/testing";
+import { waitForAsync } from "@angular/core/testing";
 import { DatabaseField } from "../database-field.decorator";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 
@@ -30,9 +30,11 @@ describe("Schema data type: map", () => {
 
   let entitySchemaService: EntitySchemaService;
 
-  beforeEach(async(() => {
-    entitySchemaService = new EntitySchemaService();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      entitySchemaService = new EntitySchemaService();
+    })
+  );
 
   it("converts contained dates to month for saving", () => {
     const id = "test1";
@@ -42,7 +44,10 @@ describe("Schema data type: map", () => {
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
-    expect(rawData.dateMap).toEqual({ a: "2020-01", b: "1999-01" });
+    expect(rawData.dateMap).toEqual([
+      ["a", "2020-01"],
+      ["b", "1999-01"],
+    ]);
   });
 
   it("converts contained month strings to dates when loading", () => {
@@ -51,7 +56,10 @@ describe("Schema data type: map", () => {
 
     const data = {
       _id: "test2",
-      dateMap: { a: "2020-01", b: "1999-01" },
+      dateMap: [
+        ["a", "2020-01"],
+        ["b", "1999-01"],
+      ],
     };
     entitySchemaService.loadDataIntoEntity(entity, data);
 
@@ -84,5 +92,26 @@ describe("Schema data type: map", () => {
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
     expect(rawData.dateMap).toEqual("not a map");
+  });
+
+  it("reproduces the entries after multiple loads", () => {
+    const id = "test1";
+    const originalEntity = new TestEntity(id);
+    originalEntity.dateMap.set("a", new Date("2020-01-01"));
+    originalEntity.dateMap.set("b", new Date("2020-02-02"));
+
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(
+      originalEntity
+    );
+
+    const loadedEntity = new TestEntity();
+    entitySchemaService.loadDataIntoEntity(loadedEntity, rawData);
+
+    expect(loadedEntity.dateMap.size).toEqual(originalEntity.dateMap.size);
+
+    const loadedEntity2 = new TestEntity();
+    entitySchemaService.loadDataIntoEntity(loadedEntity2, rawData);
+
+    expect(loadedEntity2.dateMap.size).toEqual(originalEntity.dateMap.size);
   });
 });

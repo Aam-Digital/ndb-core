@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
-@import '~@angular/material/theming';
+@import "~@angular/material/theming";
 
 .form-container {
   padding: 8px;
@@ -29,10 +29,10 @@
   max-width: 100%;
 }
 
-.passwordChange{
-    font-size: 30px;
-    margin-bottom: 15px;
-    border-bottom: 1px solid #eee;
+.passwordChange {
+  font-size: 30px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
 }
 
 .info {
@@ -43,8 +43,8 @@
 }
 
 .success {
-  background-color: #C8E6C9;
+  background-color: #c8e6c9;
 }
 .error {
-  background-color: #FF8A65;
+  background-color: #ff8a65;
 }

@@ -16,11 +16,11 @@
  */
 
 import {
-  async,
   ComponentFixture,
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 
 import { UserAccountComponent } from "./user-account.component";
@@ -33,6 +33,8 @@ import { User } from "../user";
 import { AppConfig } from "../../app-config/app-config";
 import { UserAccountService } from "./user-account.service";
 import { UserModule } from "../user.module";
+import { SessionType } from "../../session/session-type";
+import { IAppConfig } from "../../app-config/app-config.model";
 
 describe("UserAccountComponent", () => {
   let component: UserAccountComponent;
@@ -43,30 +45,33 @@ describe("UserAccountComponent", () => {
   let mockUserAccountService: jasmine.SpyObj<UserAccountService>;
   const testUser = new User("");
 
-  beforeEach(async(() => {
-    // @ts-ignore
-    AppConfig.settings = { database: { useTemporaryDatabase: false } };
-    mockSessionService = jasmine.createSpyObj("sessionService", [
-      "getCurrentUser",
-      "login",
-    ]);
-    mockSessionService.getCurrentUser.and.returnValue(testUser);
-    mockEntityMapper = jasmine.createSpyObj(["save"]);
-    mockUserAccountService = jasmine.createSpyObj("mockUserAccount", [
-      "changePassword",
-    ]);
+  beforeEach(
+    waitForAsync(() => {
+      AppConfig.settings = {
+        session_type: SessionType.synced, // password change only available in synced mode
+      } as IAppConfig;
+      mockSessionService = jasmine.createSpyObj("sessionService", [
+        "getCurrentUser",
+        "login",
+      ]);
+      mockSessionService.getCurrentUser.and.returnValue(testUser);
+      mockEntityMapper = jasmine.createSpyObj(["save"]);
+      mockUserAccountService = jasmine.createSpyObj("mockUserAccount", [
+        "changePassword",
+      ]);
 
-    TestBed.configureTestingModule({
-      declarations: [UserAccountComponent],
-      imports: [UserModule, NoopAnimationsModule],
-      providers: [
-        { provide: Database, useClass: MockDatabase },
-        { provide: SessionService, useValue: mockSessionService },
-        { provide: EntityMapperService, useValue: mockEntityMapper },
-        { provide: UserAccountService, useValue: mockUserAccountService },
-      ],
-    });
-  }));
+      TestBed.configureTestingModule({
+        declarations: [UserAccountComponent],
+        imports: [UserModule, NoopAnimationsModule],
+        providers: [
+          { provide: Database, useClass: MockDatabase },
+          { provide: SessionService, useValue: mockSessionService },
+          { provide: EntityMapperService, useValue: mockEntityMapper },
+          { provide: UserAccountService, useValue: mockUserAccountService },
+        ],
+      });
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(UserAccountComponent);

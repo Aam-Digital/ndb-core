@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { PreviousSchoolsComponent } from "./previous-schools.component";
 import { ChildrenService } from "../children/children.service";
@@ -23,24 +23,30 @@ describe("PreviousSchoolsComponent", () => {
   const mockedSession = { getCurrentUser: () => "testUser" };
   const testChild = new Child("22");
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [],
-      imports: [RouterTestingModule, ChildrenModule, ConfirmationDialogModule],
-      providers: [
-        { provide: Database, useClass: MockDatabase },
-        { provide: SessionService, useValue: mockedSession },
-        EntityMapperService,
-        EntitySchemaService,
-        AlertService,
-        SchoolsService,
-        {
-          provide: ChildPhotoService,
-          useValue: jasmine.createSpyObj(["getImage"]),
-        },
-      ],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [],
+        imports: [
+          RouterTestingModule,
+          ChildrenModule,
+          ConfirmationDialogModule,
+        ],
+        providers: [
+          { provide: Database, useClass: MockDatabase },
+          { provide: SessionService, useValue: mockedSession },
+          EntityMapperService,
+          EntitySchemaService,
+          AlertService,
+          SchoolsService,
+          {
+            provide: ChildPhotoService,
+            useValue: jasmine.createSpyObj(["getImage"]),
+          },
+        ],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(PreviousSchoolsComponent);
