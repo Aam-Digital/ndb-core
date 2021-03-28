@@ -21,7 +21,7 @@
     <input
       #inputField
       [disabled]="loading.value || disabled"
-      [placeholder]="loading.value ? 'loading...' : placeholder"
+      [placeholder]="loading.value ? 'loading...' : (disabled ? '' : placeholder)"
       [formControl]="formControl"
       [matAutocomplete]='autoSuggestions'
       [matChipInputFor]="chipList"
