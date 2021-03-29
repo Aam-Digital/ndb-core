@@ -11,6 +11,16 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Database } from "../../database/database";
 import { MockDatabase } from "../../database/mock-database";
 import { User } from "../user";
+import { Entity } from "../../entity/entity";
+
+class TestEntity extends Entity {
+  static create(userIds: string[]) {
+    const entity = new TestEntity();
+    entity.userIds = userIds;
+    return entity;
+  }
+  userIds: string[] = [];
+}
 
 describe("UserListComponent", () => {
   let component: UserListComponent;
@@ -55,7 +65,7 @@ describe("UserListComponent", () => {
     expect(component._users).toEqual(testUsers.slice(2, 3));
   }));
 
-  it("should load all users when given as entitis", fakeAsync(() => {
+  it("should load all users when given as entities", fakeAsync(() => {
     component.inputType = "entity";
     component.entities = [...testUsers.slice(2, 3)];
     tick();
@@ -90,4 +100,13 @@ describe("UserListComponent", () => {
       expect(component.authorNames).toEqual(expectedString);
     });
   });
+
+  it("inits from the config", fakeAsync(() => {
+    const testEntity = TestEntity.create(
+      testUsers.slice(0, 2).map((e) => e.getId())
+    );
+    component.onInitFromDynamicConfig({ entity: testEntity, id: "userIds" });
+    tick();
+    expect(component._users).toEqual(testUsers.splice(0, 2));
+  }));
 });
