@@ -180,7 +180,7 @@ export const defaultConfig = {
           "id": "category"
         },
         {
-          "component": "DisplayTextArray",
+          "component": "UserList",
           "title": "Authors",
           "id": "authors"
         },

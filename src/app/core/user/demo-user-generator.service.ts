@@ -49,7 +49,6 @@ export class DemoUserGeneratorService extends DemoDataGenerator<User> {
       user.name = faker.name.firstName();
       users.push(user);
     }
-    console.log(users);
 
     return users;
   }

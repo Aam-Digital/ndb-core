@@ -26,8 +26,8 @@ import { WebdavModule } from "../webdav/webdav.module";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatListModule } from "@angular/material/list";
 import { FontAwesomeIconsModule } from "../icons/font-awesome-icons.module";
-import { UserSelectComponent } from "./user-select/user-select.component";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { UserListComponent } from "./user-list/user-list.component";
 
 /**
  * Provides a User functionality including user account forms.
@@ -46,7 +46,6 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
     MatAutocompleteModule,
     FormsModule,
   ],
-  declarations: [UserAccountComponent, UserSelectComponent],
-  exports: [UserSelectComponent],
+  declarations: [UserAccountComponent, UserListComponent],
 })
 export class UserModule {}

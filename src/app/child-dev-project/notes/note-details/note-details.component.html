@@ -75,6 +75,7 @@
         </div>
 
         <app-entity-select
+          fxFlex
           [entityType]="User"
           (selectionChange)="entityForm.form.markAsDirty()"
           [(selection)]="entity.authors"
