@@ -73,10 +73,10 @@ describe("UserListComponent", () => {
   }));
 
   it("shows all users when less than the threshold is shown", () => {
+    component.inputType = "entity";
+    component.maxUserThreshold = 2;
     [1, 2].forEach((userCount) => {
-      component.inputType = "entity";
-      component.maxUserThreshold = 2;
-      component.entities = [...testUsers.slice(0, userCount)];
+      component.entities = testUsers.slice(0, userCount);
       const expectedString = testUsers
         .slice(0, userCount)
         .map((u) => u.name)
@@ -86,11 +86,11 @@ describe("UserListComponent", () => {
   });
 
   it("shows the a sliced list of all users when more than the threshold is shown", () => {
+    component.inputType = "entity";
+    const threshold = 2;
+    component.maxUserThreshold = threshold;
     [3, 4].forEach((userCount) => {
-      component.inputType = "entity";
-      const threshold = 2;
-      component.maxUserThreshold = threshold;
-      component.entities = [...testUsers.slice(0, userCount)];
+      component.entities = testUsers.slice(0, userCount);
       let expectedString = testUsers
         .slice(0, threshold)
         .map((u) => u.name)
