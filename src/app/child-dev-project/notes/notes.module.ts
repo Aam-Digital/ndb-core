@@ -42,9 +42,14 @@ import { UserModule } from "../../core/user/user.module";
 import { AttendanceModule } from "../attendance/attendance.module";
 import { EntitySelectModule } from "../../core/entity-components/entity-select/entity-select.module";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { ChildMeetingNoteAttendanceComponent } from "./note-details/child-meeting-attendance/child-meeting-note-attendance.component";
 
 @NgModule({
-  declarations: [NoteDetailsComponent, NotesManagerComponent],
+  declarations: [
+    NoteDetailsComponent,
+    NotesManagerComponent,
+    ChildMeetingNoteAttendanceComponent,
+  ],
   imports: [
     CommonModule,
     FormsModule,

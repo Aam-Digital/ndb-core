@@ -1,0 +1,31 @@
+<div fxLayout="col" fxLayoutGap="4px" fxLayoutAlign="start baseline">
+  <div class="actions" fxFlex="40px">
+    <!-- deactivated to keep the UI simple and understandable
+    <span class="fa fa-window-maximize" *ngIf="!showRemarks" (click)="showRemarks=true"></span>
+    <span class="fa fa-window-minimize" *ngIf="showRemarks" (click)="showRemarks=false"></span>
+    -->
+    <button mat-icon-button (click)="remove.emit()">
+      <mat-icon fontIcon="fa-times"></mat-icon>
+    </button>
+  </div>
+
+  <div fxFlex="250px">
+    <app-attendance-status-select
+      [(value)]="attendance.status"
+      (valueChange)="change.emit(attendance)"
+    >
+    </app-attendance-status-select>
+  </div>
+
+  <app-child-block [entityId]="childId" fxFlex> </app-child-block>
+</div>
+
+<!-- deactivated to keep the UI simple and understandable
+<div [ngClass]="{ 'hide-remarks': !showRemarks }">
+  <mat-form-field class="input-max">
+    <input matInput placeholder="Remarks"
+           [(ngModel)]="noteChildAttendance.remarks"
+           [ngModelOptions]="{standalone:true}">
+  </mat-form-field>
+</div>
+-->
