@@ -104,7 +104,7 @@ describe("Note", () => {
       date: new Date(),
       subject: "Note Subject",
       text: "Note text",
-      author: "Max Musterman",
+      authors: ["1"],
       category: "GUARDIAN_TALK",
       warningLevel: WarningLevel.URGENT,
 
