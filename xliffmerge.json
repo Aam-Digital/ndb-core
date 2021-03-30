@@ -16,11 +16,9 @@
     "useSourceAsTarget": true,
     "targetPraefix": "",
     "targetSuffix": "",
-    "beautifyOutput": false,
-    "allowIdChange": false,
+    "beautifyOutput": true,
+    "allowIdChange": true,
     "autotranslate": false,
-    "apikey": "",
-    "apikeyfile": "",
     "verbose": false,
     "quiet": false
   }

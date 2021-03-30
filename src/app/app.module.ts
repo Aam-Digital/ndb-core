@@ -70,6 +70,8 @@ import { FontAwesomeIconsModule } from "./core/icons/font-awesome-icons.module";
 import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
 import { ConfigModule } from "./core/config/config.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
+import { MatPaginatorIntl } from "@angular/material/paginator";
+import { TranslatableMatPaginatorIntl } from "./utils/TranslatableMatPaginatorIntl";
 
 /**
  * Main entry point of the application.
@@ -140,6 +142,7 @@ import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendan
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
+    { provide: MatPaginatorIntl, useValue: TranslatableMatPaginatorIntl() },
     AnalyticsService,
     Angulartics2Piwik,
   ],
