@@ -318,6 +318,7 @@ export class EntityListComponent<T extends Entity>
     filter: BooleanFilterConfig
   ): FilterSelectionOption<T>[] {
     return [
+      { key: "", label: filter.all, filterFun: () => true },
       {
         key: "true",
         label: filter.true,
@@ -328,7 +329,6 @@ export class EntityListComponent<T extends Entity>
         label: filter.false,
         filterFun: (c: Entity) => !c[filter.id],
       },
-      { key: "", label: filter.all, filterFun: () => true },
     ];
   }
 
