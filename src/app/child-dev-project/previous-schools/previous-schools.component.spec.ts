@@ -1,4 +1,10 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 
 import { PreviousSchoolsComponent } from "./previous-schools.component";
 import { ChildrenService } from "../children/children.service";
@@ -15,6 +21,9 @@ import { ChildPhotoService } from "../children/child-photo-service/child-photo.s
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
 import { SimpleChange } from "@angular/core";
 import { Child } from "../children/model/child";
+import { PanelConfig } from "../../core/entity-components/entity-details/EntityDetailsConfig";
+import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
+import moment from "moment";
 
 describe("PreviousSchoolsComponent", () => {
   let component: PreviousSchoolsComponent;
@@ -75,5 +84,70 @@ describe("PreviousSchoolsComponent", () => {
       );
       done();
     });
+  });
+
+  it("should only show columns which are defined by the config", fakeAsync(() => {
+    const config: PanelConfig = {
+      entity: new Child(),
+      config: {
+        single: true,
+        columns: [
+          { id: "schoolId", label: "Team", input: "school" },
+          { id: "start", label: "From", input: "date" },
+          { id: "end", label: "To", input: "date" },
+        ],
+      },
+    };
+    component.onInitFromDynamicConfig(config);
+    component.ngOnInit();
+    tick();
+    expect(component.columns).toHaveSize(3);
+    let columnNames = component.columns.map((column) => column.label);
+    expect(columnNames).toContain("Team");
+    expect(columnNames).toContain("From");
+    expect(columnNames).toContain("To");
+
+    config.config.columns.push({
+      id: "schoolClass",
+      label: "Class",
+      input: "text",
+    });
+    config.config.columns.push({
+      id: "result",
+      label: "Result",
+      input: "percentageResult",
+    });
+
+    component.onInitFromDynamicConfig(config);
+    component.ngOnInit();
+    tick();
+    expect(component.columns).toHaveSize(5);
+    columnNames = component.columns.map((column) => column.label);
+    expect(columnNames).toContain("Team");
+    expect(columnNames).toContain("From");
+    expect(columnNames).toContain("To");
+    expect(columnNames).toContain("Class");
+    expect(columnNames).toContain("Result");
+  }));
+
+  it("should display errors for invalid fields", () => {
+    const entry = new ChildSchoolRelation();
+    let validation = component.formValidation(entry);
+    expect(validation.hasPassedValidation).toBeFalse();
+
+    entry.schoolId = "test school";
+    entry.start = new Date();
+    entry.end = moment().subtract(1, "week").toDate();
+    validation = component.formValidation(entry);
+    expect(validation.hasPassedValidation).toBeFalse();
+
+    entry.end = moment().add(1, "week").toDate();
+    entry.result = 200;
+    validation = component.formValidation(entry);
+    expect(validation.hasPassedValidation).toBeFalse();
+
+    entry.result = 75;
+    validation = component.formValidation(entry);
+    expect(validation.hasPassedValidation).toBeTrue();
   });
 });
