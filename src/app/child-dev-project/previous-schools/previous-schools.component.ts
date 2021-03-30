@@ -87,7 +87,7 @@ export class PreviousSchoolsComponent
     this.columns = [
       {
         name: "schoolId",
-        label: "School",
+        label: $localize`School`,
         inputType: ColumnDescriptionInputType.SELECT,
         selectValues: schools.map((t) => {
           return { value: t.getId(), label: t.name };
@@ -98,28 +98,28 @@ export class PreviousSchoolsComponent
 
       {
         name: "schoolClass",
-        label: "Class",
+        label: $localize`Class`,
         inputType: ColumnDescriptionInputType.TEXT,
       },
 
       {
         name: "start",
-        label: "From",
+        label: $localize`:Date from:From`,
         inputType: ColumnDescriptionInputType.DATE,
       },
       {
         name: "end",
-        label: "To",
+        label: $localize`:Date to:To`,
         inputType: ColumnDescriptionInputType.DATE,
       },
       {
         name: "result",
-        label: "Result",
+        label: $localize`:How good a student performed at a school:Result`,
         inputType: ColumnDescriptionInputType.NUMBER,
         valueFunction: (entity: ChildSchoolRelation) =>
           entity.result >= 0 && !Number.isNaN(entity.result)
             ? entity.result + "%"
-            : "N/A",
+            : $localize`:Not applicable:N/A`,
         styleBuilder: this.resultColorStyleBuilder,
       },
     ];
@@ -149,15 +149,13 @@ export class PreviousSchoolsComponent
       validationMessage: "",
     };
     if (!record.schoolId) {
-      validationResult.validationMessage =
-        '"Name" is empty. Please select a school.';
+      validationResult.validationMessage = $localize`"Name" is empty. Please select a school.`;
     } else if (moment(record.start).isAfter(record.end, "days")) {
-      validationResult.validationMessage =
-        '"To"-date lies before "From"-date. Please enter correct dates.';
+      validationResult.validationMessage = $localize`"To"-date lies before "From"-date. Please enter correct dates.`;
     } else if (record.result > 100) {
-      validationResult.validationMessage = "Result cannot be greater than 100";
+      validationResult.validationMessage = $localize`Result cannot be greater than 100`;
     } else if (record.result < 0) {
-      validationResult.validationMessage = "Result cannot be smaller than 0";
+      validationResult.validationMessage = $localize`Result cannot be smaller than 0`;
     } else {
       validationResult.hasPassedValidation = true;
     }

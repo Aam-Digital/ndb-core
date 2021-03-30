@@ -32,25 +32,25 @@ export class NotesOfChildComponent
   columns: Array<ColumnDescription> = [
     {
       name: "date",
-      label: "Date",
+      label: $localize`Date`,
       inputType: ColumnDescriptionInputType.DATE,
       visibleFrom: "xs",
     },
     {
       name: "subject",
-      label: "Topic",
+      label: $localize`:Topic of a note:Topic`,
       inputType: ColumnDescriptionInputType.TEXT,
       visibleFrom: "xs",
     },
     {
       name: "text",
-      label: "Notes",
+      label: $localize`:Content of a note:Notes`,
       inputType: ColumnDescriptionInputType.TEXTAREA,
       visibleFrom: "md",
     },
     {
       name: "author",
-      label: "SW",
+      label: $localize`:Author|Abbreviation for Social Worker:SW`,
       inputType: ColumnDescriptionInputType.TEXT,
       visibleFrom: "md",
     },
@@ -59,9 +59,9 @@ export class NotesOfChildComponent
       label: "",
       inputType: ColumnDescriptionInputType.SELECT,
       selectValues: [
-        { value: "OK", label: "Solved" },
-        { value: "WARNING", label: "Needs Follow-Up" },
-        { value: "URGENT", label: "Urgent Follow-Up" },
+        { value: "OK", label: $localize`Solved` },
+        { value: "WARNING", label: $localize`Needs Follow-Up` },
+        { value: "URGENT", label: $localize`Urgent Follow-Up` },
       ],
       valueFunction: () => "",
       visibleFrom: "md",

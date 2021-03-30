@@ -24,7 +24,7 @@
       </mat-form-field>
     </div>
     <!-- number of table entries -->
-    <div fxFlex="25" fxHide.xs="true" class="align-form-field">
+    <div fxFlex="25" fxHide.xs="true" class="align-form-field" i18n="The amount of entities that can be seen in a list">
       (Showing {{ entityDataSource.filteredData.length }} entries)
     </div>
     <!-- add new button -->
@@ -48,7 +48,7 @@
           aria-label="add element"
           fontIcon="fa-plus-circle"
         ></mat-icon>
-        <span fxHide.lt-md="true"> Add New </span>
+        <span fxHide.lt-md="true" i18n="Add New Button"> Add New </span>
       </button>
       <app-export-data
         [data]="entityList"

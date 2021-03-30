@@ -23,13 +23,13 @@ export class EducationalMaterialComponent
   columns: Array<ColumnDescription> = [
     {
       name: "date",
-      label: "Date",
+      label: $localize`Date`,
       inputType: ColumnDescriptionInputType.DATE,
       visibleFrom: "xs",
     },
     {
       name: "materialType",
-      label: "Material",
+      label: $localize`:Education material type:Material`,
       inputType: ColumnDescriptionInputType.AUTOCOMPLETE,
       selectValues: this.materialTypes.map((t) => {
         return { value: t, label: t };
@@ -38,13 +38,13 @@ export class EducationalMaterialComponent
     },
     {
       name: "materialAmount",
-      label: "Amount",
+      label: $localize`:Amount of Education material:Amount`,
       inputType: ColumnDescriptionInputType.NUMBER,
       visibleFrom: "md",
     },
     {
       name: "description",
-      label: "Description/Remarks",
+      label: $localize`Description/Remarks`,
       inputType: ColumnDescriptionInputType.TEXT,
       visibleFrom: "md",
     },

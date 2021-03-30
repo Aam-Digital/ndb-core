@@ -25,24 +25,24 @@ export class HealthCheckupComponent
   columns: Array<ColumnDescription> = [
     {
       name: "date",
-      label: "Date",
+      label: $localize`Date`,
       inputType: ColumnDescriptionInputType.DATE,
     },
     {
       name: "height",
-      label: "Height [cm]",
+      label: $localize`Height [cm]`,
       inputType: ColumnDescriptionInputType.NUMBER,
       valueFunction: (entity: HealthCheck) => entity.height + " cm",
     },
     {
       name: "weight",
-      label: "Weight [kg]",
+      label: $localize`Weight [kg]`,
       inputType: ColumnDescriptionInputType.NUMBER,
       valueFunction: (entity: HealthCheck) => entity.weight + " kg",
     },
     {
       name: "bmi",
-      label: "BMI",
+      label: $localize`BMI`,
       inputType: ColumnDescriptionInputType.READONLY,
       valueFunction: (entity: HealthCheck) => entity.bmi.toFixed(2),
     },

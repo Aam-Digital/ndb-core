@@ -39,7 +39,7 @@ export class DemoProgressDashboardWidgetGeneratorService extends DemoDataGenerat
 
   private generateDashboardWidgetSurveyStatus(): ProgressDashboardConfig {
     const dashboardProgressWidget = new ProgressDashboardConfig("1");
-    dashboardProgressWidget.title = "Annual Survey";
+    dashboardProgressWidget.title = $localize`:Widget title:Annual Survey`;
 
     for (const task of this.DEMO_TASKS) {
       const targetNumber = faker.random.number({ min: 5, max: 50 });

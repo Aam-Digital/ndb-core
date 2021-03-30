@@ -134,14 +134,14 @@ export const defaultConfig = {
           "component": "AttendanceWeekDashboard",
           "config": {
             "daysOffset": 0,
-            "periodLabel": "last week"
+            "periodLabel": $localize`:Label showing events since last week:last week`
           }
         },
         {
           "component": "AttendanceWeekDashboard",
           "config": {
             "daysOffset": 7,
-            "periodLabel": "this week"
+            "periodLabel": $localize`:Label showing events since last week:this week`
           }
         },
         {
@@ -192,11 +192,11 @@ export const defaultConfig = {
         }
       ],
       "columnGroup": {
-        "default": "Standard",
-        "mobile": "Mobile",
+        "default": $localize`:Column group|How a column should be displayed - Standard or Mobile:Standard`,
+        "mobile": $localize`:Column group|How a column should be displayed - Standard or Mobile:Mobile`,
         "groups": [
           {
-            "name": "Standard",
+            "name": $localize`Standard`,
             "columns": [
               "date",
               "subject",
@@ -206,7 +206,7 @@ export const defaultConfig = {
             ]
           },
           {
-            "name": "Mobile",
+            "name": $localize`Mobile`,
             "columns": [
               "date",
               "subject",
@@ -226,7 +226,7 @@ export const defaultConfig = {
         },
         {
           "id": "category",
-          "label": "Category",
+          "label": $localize`Category`,
           "type": "configurable-enum",
           "enumId": "interaction-type",
           "display": "dropdown"
@@ -560,8 +560,8 @@ export const defaultConfig = {
           "noSorting": true}
       ],
       "columnGroup": {
-        "default": "School Info",
-        "mobile": "Mobile",
+        "default": $localize`:Column group:School Info`,
+        "mobile": $localize`Mobile`,
         "groups": [
           {
             "name": $localize`:Shows basic infos about children:Basic Info`,
@@ -625,7 +625,7 @@ export const defaultConfig = {
             ]
           },
           {
-            "name": "Mobile",
+            "name": $localize`Mobile`,
             "columns": [
               "projectNumber",
               "name",
@@ -653,6 +653,7 @@ export const defaultConfig = {
         },
         {
           "id": "school",
+          "label": $localize`School`,
           "type": "prebuilt",
           "display": "dropdown"
         }
@@ -979,11 +980,11 @@ export const defaultConfig = {
         }
       ],
       "columnGroup": {
-        "default": "All",
-        "mobile": "All",
+        "default": $localize`:Show all entries of a kind :All`,
+        "mobile": $localize`All`,
         "groups": [
           {
-            "name": "All",
+            "name": $localize`All`,
             "columns": [
               "title",
               "type",

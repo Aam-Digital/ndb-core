@@ -92,7 +92,11 @@ export class ChildrenListComponent implements OnInit {
           filterFun: (c) => c.schoolId === school.getId(),
         };
       });
-    filters.push({ key: "", label: "All", filterFun: () => true });
+    filters.push({
+      key: "",
+      label: $localize`All`,
+      filterFun: () => true,
+    });
     return filters;
   }
 }
