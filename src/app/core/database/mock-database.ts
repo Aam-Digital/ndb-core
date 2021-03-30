@@ -139,8 +139,6 @@ export class MockDatabase extends Database {
   }
 
   /**
-   * A "simulation" of queries as the PouchDatabase implementation would handle them.
-   *
    * This has hard-coded response logic for some individual indices that are used in the app
    * and at the moment cannot handle generic creating and executing real queries.
    * You can add a mock implementation here for your specific query/index if necessary.
@@ -176,8 +174,6 @@ export class MockDatabase extends Database {
   }
 
   /**
-   * Currently not implemented for MockDatabase!
-   *
    * Check (and extend) the `query` method for hard-coded mocks of some specific queries.
    *
    * @param designDoc
