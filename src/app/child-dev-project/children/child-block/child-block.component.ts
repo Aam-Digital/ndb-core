@@ -62,15 +62,17 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
     if (this.tooltipDisabled) {
       return;
     }
-
-    this.tooltipVisible = true;
     if (this.tooltipTimeout) {
       clearTimeout(this.tooltipTimeout);
     }
+    this.tooltipTimeout = setTimeout(() => (this.tooltipVisible = true), 400);
   }
 
   hideTooltip() {
-    this.tooltipTimeout = setTimeout(() => (this.tooltipVisible = false), 250);
+    if (this.tooltipTimeout) {
+      clearTimeout(this.tooltipTimeout);
+    }
+    this.tooltipTimeout = setTimeout(() => (this.tooltipVisible = false), 150);
   }
 
   showDetailsPage() {
