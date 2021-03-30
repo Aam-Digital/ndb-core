@@ -1,6 +1,6 @@
 <div fxLayout="column" fxLayoutAlign="center center">
-  <h1 fxFlex>Coming Soon</h1>
-  <p fxFlex>
+  <h1 fxFlex i18n="Comming Soon header">Coming Soon</h1>
+  <p fxFlex i18n="Comming Soon description">
     Sorry, this feature isn't quite ready yet. We are working hard to make this
     available for you. Let us know below if you need this functionality.
   </p>
@@ -19,6 +19,7 @@
         class="feedback-button"
         (click)="reportFeatureRequest()"
         [disabled]="requested"
+        i18n="Feature Button|Indicates that the user needs this feature and can send a feature-request"
       >
         <mat-icon
           *ngIf="requested"
@@ -32,6 +33,7 @@
 
     <div fxFlex="20rem">
       <a
+        i18n
         mat-stroked-button
         class="feedback-button"
         href="mailto:info@aam-digital.com?subject=Feature-Request%20{{

@@ -23,18 +23,18 @@ import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 @DatabaseEntity("Aser")
 export class Aser extends Entity {
   static ReadingLevels = [
-    "Nothing",
-    "Read Letters",
-    "Read Words",
-    "Read Sentence",
-    "Read Paragraph",
+    $localize`:Reading levels of a child:Nothing`,
+    $localize`:Reading levels of a child:Read Letters`,
+    $localize`:Reading levels of a child:Read Words`,
+    $localize`:Reading levels of a child:Read Sentence`,
+    $localize`:Reading levels of a child:Read Paragraph`,
   ];
   static MathLevels = [
-    "Nothing",
-    "Numbers 1-9",
-    "Numbers 10-99",
-    "Subtraction",
-    "Division",
+    $localize`:Math levels of a child:Nothing`,
+    $localize`:Math levels of a child:Numbers 1-9`,
+    $localize`:Math levels of a child:Numbers 10-99`,
+    $localize`:Math levels of a child:Subtraction`,
+    $localize`:Math levels of a child:Division`,
   ];
 
   static isReadingPassedOrNA(level: string) {

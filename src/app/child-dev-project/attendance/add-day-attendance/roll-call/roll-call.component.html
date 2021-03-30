@@ -29,12 +29,15 @@
 <!-- Completion Page -->
 <div *ngIf="isFinished()" class="roll-call-complete" [@completeRollCall]>
   <span class="fa fa-check-circle-o roll-call-complete-icon"></span>
-  <div>Attendance completed.</div>
+  <div
+    i18n="Attendance completed|shows when the user has registered the attendance of all children">
+    Attendance completed.</div>
 </div>
 
 <!-- Control Buttons -->
 <div>
   <button
+    i18n="Back-button|Button to go to the previous child"
     mat-stroked-button
     [disabled]="currentIndex < 1"
     (click)="currentIndex = currentIndex - 1"
@@ -44,7 +47,10 @@
     Back
   </button>
 
-  <button mat-stroked-button (click)="exit.emit()" class="nav-button" fxFlex>
+  <button
+    i18n="Finish-button|Finish when the user has completed selecting all attendances task, else Abort"
+    mat-stroked-button (click)="exit.emit()"
+    class="nav-button" fxFlex>
     {{ isFinished() ? "Finish" : "Abort" }}
   </button>
 </div>

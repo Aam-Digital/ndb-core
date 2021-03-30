@@ -9,7 +9,8 @@
     <mat-card-subtitle>{{ data.title }}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <p class="dashboard-desc">Status of current processes:</p>
+    <p class="dashboard-desc" i18n="Status description|Informs the user that the following is the status">
+      Status of current processes:</p>
     <table class="dashboard-table">
       <tr *ngFor="let entry of data?.parts" class="dashboard-table-row">
         <td class="dashboard-table-cell">{{ entry.label }}</td>
@@ -71,6 +72,7 @@
               <input
                 matInput
                 type="text"
+                i18n-placeholder="Process Label|The label of a process"
                 placeholder="Label"
                 [value]="entry.label"
                 (input)="entry.label = $event.target.value"
@@ -89,6 +91,7 @@
               <input
                 matInput
                 type="number"
+                i18n-placeholder="Current process|The Current amount of a process"
                 placeholder="Current"
                 [value]="entry.currentValue"
                 (change)="entry.currentValue = $event.target.valueAsNumber"
@@ -99,6 +102,7 @@
               <input
                 matInput
                 type="number"
+                i18n-placeholder="Target process|The target amount of a process"
                 placeholder="Target"
                 [value]="entry.targetValue"
                 (change)="entry.targetValue = $event.target.valueAsNumber"

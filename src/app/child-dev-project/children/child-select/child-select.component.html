@@ -3,6 +3,7 @@
     <input
       #inputField
       matInput
+      i18n-placeholder="Children placeholder|Placeholder that informs the user that this field contains children"
       placeholder="Children"
       (input)="search()"
       [matAutocomplete]="autoSuggestions"
@@ -26,7 +27,9 @@
       mat-button
       *ngIf="showOnlyActiveChildren"
       (click)="showAll()"
+      i18n-matTooltip="Show Dropouts tooltip"
       matTooltip="extend the list to also show inactive records"
+      i18n="Show Dropouts Button|Also show inactive records"
     >
       Show Dropouts
     </button>

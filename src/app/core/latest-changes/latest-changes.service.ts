@@ -125,7 +125,7 @@ export class LatestChangesService {
         ),
         catchError((error) => {
           this.alertService.addWarning(
-            "Could not load latest changes: " + error
+            $localize`Could not load latest changes: ${error}`
           );
           return throwError("Could not load latest changes.");
         })

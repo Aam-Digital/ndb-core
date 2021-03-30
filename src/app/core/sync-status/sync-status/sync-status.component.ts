@@ -86,7 +86,7 @@ export class SyncStatusComponent implements OnInit {
         if (this.dialogRef) {
           this.dialogRef.close();
         }
-        this.alertService.addInfo("Database sync completed.");
+        this.alertService.addInfo($localize`Database sync completed.`);
         break;
       case SyncState.FAILED:
         this.syncInProgress = false;
@@ -94,7 +94,7 @@ export class SyncStatusComponent implements OnInit {
           this.dialogRef.close();
         }
         this.loggingService.warn("Database sync failed");
-        this.alertService.addWarning("Database sync failed.");
+        this.alertService.addWarning($localize`Database sync failed.`);
         break;
     }
     this.updateBackgroundProcessesList();
@@ -112,9 +112,15 @@ export class SyncStatusComponent implements OnInit {
   private updateBackgroundProcessesList() {
     let currentProcesses: BackgroundProcessState[] = [];
     if (this.syncInProgress) {
-      currentProcesses.push({ title: "Synchronizing database", pending: true });
+      currentProcesses.push({
+        title: $localize`Synchronizing database`,
+        pending: true,
+      });
     } else {
-      currentProcesses.push({ title: "Database up-to-date", pending: false });
+      currentProcesses.push({
+        title: $localize`Database up-to-date`,
+        pending: false,
+      });
     }
     currentProcesses = currentProcesses.concat(this.indexingProcesses);
     this._backgroundProcesses.next(currentProcesses);

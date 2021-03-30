@@ -11,6 +11,7 @@
           <img
             [src]="entity?.photo?.value"
             class="child-pic"
+            i18n-alt="Short description of a child's photo"
             alt="child's photo"
           />
 
@@ -35,6 +36,7 @@
           >
             <input
               #photoFileInput
+              i18n-matTooltip="Tooltip when uploading a photo"
               matTooltip="filename for child photo uploaded by server administrator"
               matInput
               [formControlName]="row.id"
@@ -58,7 +60,9 @@
             [title]="row.placeholder"
             type="text"
           />
-          <mat-error *ngIf="this.form.get(row.id).invalid && validateForm">
+          <mat-error
+            *ngIf="this.form.get(row.id).invalid && validateForm"
+            i18n="indicates that a certain value is required"> <!-- TODO: What is the placeholder? Give examples!-->
             {{ row.placeholder }} is required
           </mat-error>
         </mat-form-field>
@@ -97,12 +101,14 @@
           </mat-form-field>
           <mat-form-field style="width: 50px">
             <div
+              i18n-matTooltip
               matTooltip="This field is read-only. Edit Date of Birth to change age. Select Jan 1st if you only know the year of birth."
               matTooltipPosition="above"
               [matTooltipDisabled]="!editing"
             >
               <input
                 matInput
+                i18n-placeholder="Placeholder when no age is set"
                 placeholder="Age"
                 type="string"
                 [value]="calculateAge(dateOfBirth.value)"
@@ -165,6 +171,7 @@
     mat-stroked-button
     class="edit-button"
     (click)="save()"
+    i18n="Generic save button"
   >
     Save
   </button>
@@ -174,6 +181,7 @@
     mat-stroked-button
     class="edit-button"
     (click)="switchEdit()"
+    i18n="Generic cancel button"
   >
     Cancel
   </button>
@@ -187,6 +195,7 @@
         entity: entity?.getConstructor(),
         operation: operationType.UPDATE
       }"
+      i18n="Generic edit button"
     >
       Edit
     </button>

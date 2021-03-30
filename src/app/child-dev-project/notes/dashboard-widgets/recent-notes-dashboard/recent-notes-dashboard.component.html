@@ -13,6 +13,7 @@
       </span>
     </mat-card-title>
     <mat-card-subtitle
+      i18n="Subtitle|Subtitle informing the user that these are the children with recent reports"
       [matTooltip]="
         'includes children with a note ' +
         (fromBeginningOfWeek ? 'since beginning of week ' : '') +
@@ -32,6 +33,7 @@
       angularticsCategory="Navigation"
       angularticsAction="dashboard_recent_notes_link_go_to_notes"
       [angularticsLabel]="'children-with-recent-report-count-' + count"
+      i18n="Go to Notes Link|Link that will take the user to a list of notes"
     >
       Go to Notes <span class="fa fa-external-link-square"></span>
     </div>

@@ -33,8 +33,7 @@ export class DisableEntityOperationDirective implements OnInit {
   };
 
   private wrapperComponent: ComponentRef<DisabledWrapperComponent>;
-  private text: string =
-    "Your account does not have the required permission for this action.";
+  private text: string = $localize`:Missing permission:Your account does not have the required permission for this action.`;
 
   constructor(
     private templateRef: TemplateRef<HTMLButtonElement>,

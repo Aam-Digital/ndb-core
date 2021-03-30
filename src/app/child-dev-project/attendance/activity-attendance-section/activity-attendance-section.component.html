@@ -15,11 +15,16 @@
 
 <div style="margin-top: 16px">
   <mat-slide-toggle
+    i18n="slider|show unrelated attendance-entries for an activity that are not linked to the child of interest"
     (change)="updateDisplayedRecords($event.checked)"
+    i18n-matTooltip="Show unrelated tooltip|Tooltip that will appear when hovered over the show-unrelated button"
     matTooltip="Activate to also show entries for the activity that do not have any events with actual participation of this person"
   >
     Also show unrelated
   </mat-slide-toggle>
   &nbsp;
-  <button mat-stroked-button (click)="init(true)">Load all records</button>
+  <button
+    i18n="load-all button|load all records, not only the ones from the last 6 months"
+    mat-stroked-button
+    (click)="init(true)">Load all records</button>
 </div>

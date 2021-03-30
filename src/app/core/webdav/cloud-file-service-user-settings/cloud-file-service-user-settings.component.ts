@@ -77,7 +77,9 @@ export class CloudFileServiceUserSettingsComponent implements OnInit {
     }
 
     await this.entityMapperService.save<User>(this.user);
-    this.alertService.addInfo("Successfully saved cloud service credentials.");
+    this.alertService.addInfo(
+      $localize`Successfully saved cloud service credentials.`
+    );
     this.processing = false;
   }
 }

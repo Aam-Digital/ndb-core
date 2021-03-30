@@ -22,13 +22,13 @@ export class AserComponent implements OnChanges, OnInitDynamicComponent {
   columns: Array<ColumnDescription> = [
     {
       name: "date",
-      label: "Date",
+      label: $localize`Date`,
       inputType: ColumnDescriptionInputType.DATE,
       visibleFrom: "xs",
     },
     {
       name: "math",
-      label: "Math",
+      label: $localize`:Math as a subject:Math`,
       inputType: ColumnDescriptionInputType.SELECT,
       selectValues: Aser.MathLevels.map((s) => {
         return { value: s, label: s };
@@ -37,7 +37,7 @@ export class AserComponent implements OnChanges, OnInitDynamicComponent {
     },
     {
       name: "english",
-      label: "English",
+      label: $localize`:English as a subject in school:English`,
       inputType: ColumnDescriptionInputType.SELECT,
       selectValues: Aser.ReadingLevels.map((s) => {
         return { value: s, label: s };
@@ -46,7 +46,7 @@ export class AserComponent implements OnChanges, OnInitDynamicComponent {
     },
     {
       name: "hindi",
-      label: "Hindi",
+      label: $localize`:Hindi as a subject in school:Hindi`,
       inputType: ColumnDescriptionInputType.SELECT,
       selectValues: Aser.ReadingLevels.map((s) => {
         return { value: s, label: s };
@@ -55,7 +55,7 @@ export class AserComponent implements OnChanges, OnInitDynamicComponent {
     },
     {
       name: "bengali",
-      label: "Bengali",
+      label: $localize`:Bengali as a subject in school:Bengali`,
       inputType: ColumnDescriptionInputType.SELECT,
       selectValues: Aser.ReadingLevels.map((s) => {
         return { value: s, label: s };
@@ -64,7 +64,7 @@ export class AserComponent implements OnChanges, OnInitDynamicComponent {
     },
     {
       name: "remarks",
-      label: "Remarks",
+      label: $localize`Remarks`,
       inputType: ColumnDescriptionInputType.TEXT,
       visibleFrom: "md",
     },

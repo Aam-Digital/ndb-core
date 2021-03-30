@@ -20,7 +20,7 @@
 <mat-dialog-content #changelogContainer>
   <mat-card *ngFor="let changelog of changelogs" class="mat-elevation-z2">
     <mat-card-header>
-      <mat-card-title>{{
+      <mat-card-title i18n="Changelog, or no changelog (if none is available)">{{
         changelog ? changelog.name : "No Changelog Available"
       }}</mat-card-title>
       <mat-card-subtitle>
@@ -42,6 +42,7 @@
     <mat-card-actions *ngIf="showAdvancedDetails">
       <button mat-stroked-button>
         <a [href]="'https://www.github.com'" target="_blank"
+           i18n="Show more information about a change that was made to the app"
           >More Information</a
         >
       </button>
@@ -50,10 +51,10 @@
 </mat-dialog-content>
 
 <mat-dialog-actions class="general-actions">
-  <button mat-raised-button (click)="loadPreviousRelease()">
+  <button mat-raised-button (click)="loadPreviousRelease()" i18n>
     Show previous changes
   </button>
-  <button mat-raised-button color="accent" [mat-dialog-close]="true">
+  <button mat-raised-button color="accent" [mat-dialog-close]="true" i18n="Generic close button">
     Close
   </button>
 </mat-dialog-actions>

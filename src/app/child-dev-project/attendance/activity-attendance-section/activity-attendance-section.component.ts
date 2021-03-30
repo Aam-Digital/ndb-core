@@ -30,12 +30,12 @@ export class ActivityAttendanceSectionComponent
   columns: Array<ColumnDescription> = [
     {
       name: "periodFrom",
-      label: "Month",
+      label: $localize`:The month something took place:Month`,
       inputType: ColumnDescriptionInputType.MONTH,
     },
     {
       name: "countEventsPresent",
-      label: "Present",
+      label: $localize`:How many children are present at a meeting:Present`,
       inputType: ColumnDescriptionInputType.FUNCTION,
       valueFunction: (e: ActivityAttendance) =>
         this.forChild
@@ -44,13 +44,13 @@ export class ActivityAttendanceSectionComponent
     },
     {
       name: "countEventsTotal",
-      label: "Events",
+      label: $localize`:Events of an attendance:Events`,
       inputType: ColumnDescriptionInputType.FUNCTION,
       valueFunction: (e: ActivityAttendance) => e.countEventsTotal(),
     },
     {
       name: "getAttendancePercentage",
-      label: "Attended",
+      label: $localize`:Percentage of people that attended an event:Attended`,
       inputType: ColumnDescriptionInputType.FUNCTION,
       valueFunction: (e: ActivityAttendance) =>
         this.percentPipe.transform(

@@ -1,7 +1,9 @@
 <div fxLayout="column" class="overall-container">
   <div fxFlex>
     <mat-form-field>
-      <mat-label>Record event for</mat-label>
+      <mat-label
+        i18n="Event-Record label|Record an event for a particular date that is to be inputted"
+      >Record event for</mat-label>
       <input
         matInput
         [(ngModel)]="date"
@@ -32,13 +34,17 @@
 
     <div fxLayoutGap="8px">
       <button
+        i18n="Show more-button|Show more events to record the attendance"
         mat-stroked-button
         (click)="showMore()"
         [disabled]="visibleActivities.length === allActivities.length"
       >
         Show more
       </button>
-      <button mat-button (click)="createOneTimeEvent()">
+      <button
+        i18n="Not listed|Allows to create a new event"
+        mat-button (click)="createOneTimeEvent()"
+      >
         My event is not listed ...
       </button>
     </div>
@@ -47,6 +53,7 @@
   <div class="mat-elevation-z5 bottom-control" fxFlex="112px">
     <div fxLayout="row" fxLayoutGap="16px">
       <button
+        i18n="Record Attendance button|Start recording the attendance of a child at an event"
         mat-raised-button
         color="primary"
         class="confirm-button"

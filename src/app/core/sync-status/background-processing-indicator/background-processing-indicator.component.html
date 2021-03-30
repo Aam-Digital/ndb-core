@@ -14,7 +14,7 @@
 </button>
 
 <mat-menu #taskListDropdown="matMenu" class="details-container">
-  <div class="details-header details-container">
+  <div class="details-header details-container" i18n>
     The following processes are still running in the background. Until these are
     finished some pages may be slow or incomplete.
   </div>
@@ -47,6 +47,7 @@
       mat-stroked-button
       class="details-close"
       (click)="taskListDropdownTrigger.closeMenu()"
+      i18n="Generic close button"
     >
       Close
     </button>

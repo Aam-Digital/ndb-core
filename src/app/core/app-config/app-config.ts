@@ -79,7 +79,7 @@ export class AppConfig {
         })
         .catch((response: any) => {
           reject(
-            `Could not load file '${jsonFileLocation}': ${JSON.stringify(
+            $localize`Could not load file '${jsonFileLocation}': ${JSON.stringify(
               response
             )}`
           );

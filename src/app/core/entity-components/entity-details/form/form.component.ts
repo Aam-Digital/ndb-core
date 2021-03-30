@@ -82,15 +82,14 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
     try {
       await this.entityMapperService.save<Entity>(this.entity);
       this.router.navigate([getParentUrl(this.router), this.entity.getId()]);
-      this.alertService.addInfo("Saving Successful");
+      this.alertService.addInfo($localize`Saving Successful`);
       this.switchEdit();
       return this.entity;
     } catch (err) {
       this.alertService.addDanger(
-        'Could not save "' +
-          this.entity.getConstructor().ENTITY_TYPE +
-          '": ' +
-          err
+        $localize`Could not save "${
+          this.entity.getConstructor().ENTITY_TYPE
+        }": ${err}`
       );
       throw new Error(err);
     }
@@ -145,7 +144,7 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
     if (!this.form.valid) {
       const invalidFields = this.getInvalidFields();
       this.alertService.addDanger(
-        "Form invalid, required fields (" + invalidFields + ") missing"
+        $localize`Form invalid, required fields ("${invalidFields}") missing`
       );
       return false;
     }

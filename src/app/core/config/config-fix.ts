@@ -6,57 +6,57 @@ export const defaultConfig = {
   "navigationMenu": {
     "items": [
       {
-        "name": "Dashboard",
+        "name": $localize`Dashboard`,
         "icon": "home",
         "link": "/"
       },
       {
-        "name": "Children",
+        "name": $localize`Children`,
         "icon": "child",
         "link": "/child"
       },
       {
-        "name": "Schools",
+        "name": $localize`Schools`,
         "icon": "university",
         "link": "/school"
       },
       {
-        "name": "Recurring Activities",
+        "name": $localize`Recurring Activities`,
         "icon": "calendar",
         "link": "/recurring-activity"
       },
       {
-        "name": "Record Attendance",
+        "name": $localize`Record Attendance`,
         "icon": "calendar-check-o",
         "link": "/attendance/add/day"
       },
       {
-        "name": "Manage Attendance",
+        "name": $localize`Manage Attendance`,
         "icon": "table",
         "link": "/attendance"
       },
       {
-        "name": "Notes",
+        "name": $localize`Notes`,
         "icon": "file-text",
         "link": "/note"
       },
       {
-        "name": "Admin",
+        "name": $localize`Admin`,
         "icon": "wrench",
         "link": "/admin"
       },
       {
-        "name": "Users",
+        "name": $localize`Users`,
         "icon": "user",
         "link": "/users"
       },
       {
-        "name": "Database Conflicts",
+        "name": $localize`Database Conflicts`,
         "icon": "wrench",
         "link": "/admin/conflicts"
       },
       {
-        "name": "Help",
+        "name": $localize`Help`,
         "icon": "question-circle",
         "link": "/help"
       }
@@ -75,41 +75,41 @@ export const defaultConfig = {
     },
     {
       "id": "OK (copy with us)",
-      "label": "OK (copy with us)"
+      "label": $localize`:Document status OK|'A copy is with us':OK (copy with us)`
     },
     {
       "id": "OK (copy needed for us)",
-      "label": "OK (copy needed for us)"
+      "label": $localize`:Document status OD|'A copy is needed':OK (copy needed for us)`
     },
     {
       "id": "needs correction",
-      "label": "needs correction"
+      "label": $localize`:Document needs correction:needs correction`
     },
     {
       "id": "applied",
-      "label": "applied"
+      "label": $localize`:Document is applied:applied`
     },
     {
       "id": "doesn't have",
-      "label": "doesn't have"
+      "label": $localize`:Has none|For example doesn't have an Aadhar document:doesn't have`
     },
     {
       "id": "not eligible",
-      "label": "not eligible"
+      "label": $localize`:Document is not eligible:not eligible`
     }
   ],
   "enum:center": [
     {
       "id": "alipore",
-      "label": "Alipore"
+      "label": $localize`Alipore`
     },
     {
       "id": "tollygunge",
-      "label": "Tollygunge"
+      "label": $localize`Tollygunge`
     },
     {
       "id": "barabazar",
-      "label": "Barabazar"
+      "label": $localize`Barabazar`
     }
   ],
 
@@ -162,31 +162,31 @@ export const defaultConfig = {
   "view:note": {
     "component": "NotesManager",
     "config": {
-      "title": "Notes & Reports",
+      "title": $localize`Notes & Reports`,
       "columns": [
         {
           "component": "DisplayDate",
-          "title": "Date",
+          "title": $localize`Date`,
           "id": "date"
         },
         {
           "component": "DisplayText",
-          "title": "Subject",
+          "title": $localize`:Subject of a Note or report:Subject`,
           "id": "subject"
         },
         {
           "component": "DisplayConfigurableEnum",
-          "title": "Category",
+          "title": $localize`:Category of a Note or report:Category`,
           "id": "category"
         },
         {
           "component": "DisplayText",
-          "title": "Author",
+          "title": $localize`:Author of a note or report:Author`,
           "id": "author"
         },
         {
           "component": "ChildBlockList",
-          "title": "Children",
+          "title": $localize`Children`,
           "id": "children",
           "noSorting": true
         }
@@ -259,31 +259,31 @@ export const defaultConfig = {
   "view:school": {
     "component": "SchoolsList",
     "config": {
-      "title": "Schools List",
+      "title": $localize`:List of all schools:Schools List`,
       "columns": [
         {
           "component": "DisplayText",
-          "title": "Name",
+          "title": $localize`:The name of the school:Name`,
           "id": "name"
         },
         {
           "component": "DisplayText",
-          "title": "Medium",
+          "title": $localize`:Medium of Instruction|E.g. English, Hindi, e.t.c:Medium`,
           "id": "medium"
         },
         {
           "component": "DisplayCheckmark",
-          "title": "Private School",
+          "title": $localize`:Indicating that this is a private school:Private School`,
           "id": "privateSchool"
         },
         {
           "component": "DisplayText",
-          "title": "Board",
+          "title": $localize`:The academic board of this school:Board`,
           "id": "academicBoard"
         },
         {
           "component": "DisplayText",
-          "title": "Up to class",
+          "title": $localize`:The class up to where this school goes:Up to class`,
           "id": "upToClass"
         }
       ],
@@ -295,9 +295,9 @@ export const defaultConfig = {
           "id": "privateSchool",
           "type": "boolean",
           "default": "",
-          "true": "Private School",
-          "false": "Government School",
-          "all": "All"
+          "true": $localize`Private School`,
+          "false": $localize`Government School`,
+          "all": $localize`:All schools:All`
         }
       ]
     }
@@ -308,7 +308,7 @@ export const defaultConfig = {
       "entity": "School",
       "panels": [
         {
-          "title": "Basic Information",
+          "title": $localize`:Basic Information of a School:Basic Information`,
           "components": [
             {
               "title": "",
@@ -319,77 +319,77 @@ export const defaultConfig = {
                     {
                       "input": "text",
                       "id": "name",
-                      "placeholder": "Name"
+                      "placeholder": $localize`Name`
                     }
                   ],
                   [
                     {
                       "input": "text",
                       "id": "medium",
-                      "placeholder": "Medium"
+                      "placeholder": $localize`:Medium of Instruction|E.g. English, Hindi, e.t.c:Medium`
                     }
                   ],
                   [
                     {
                       "input": "checkbox",
                       "id": "privateSchool",
-                      "placeholder": "Private School"
+                      "placeholder": $localize`Private School`
                     }
                   ],
                   [
                     {
                       "input": "text",
                       "id": "academicBoard",
-                      "placeholder": "Board"
+                      "placeholder": $localize`:The academic board of this school:Board`
                     }
                   ],
                   [
                     {
                       "input": "text",
                       "id": "phone",
-                      "placeholder": "Contact Number"
+                      "placeholder": $localize`:Contact Number of a school:Contact Number`
                     }
                   ],
                   [
                     {
                       "input": "text",
                       "id": "address",
-                      "placeholder": "Address"
+                      "placeholder": $localize`:Address of a school:Address`
                     }
                   ],
                   [
                     {
                       "input": "text",
                       "id": "website",
-                      "placeholder": "Website"
+                      "placeholder": $localize`:Website of a school:Website`
                     }
                   ],
                   [
                     {
                       "input": "text",
                       "id": "timing",
-                      "placeholder": "School Timing"
+                      "placeholder": $localize`:Times that the school is open:School Timing`
                     }
                   ],
                   [
                     {
                       "input": "text",
                       "id": "workingDays",
-                      "placeholder": "Working Days"
+                      "placeholder": $localize`:Working days of a school|E.g. Mon-Fri:Working Days`
                     }
                   ],
                   [
                     {
                       "input": "text",
                       "id": "upToClass",
-                      "placeholder": "Teaching up to class"
+                      "placeholder": $localize`:Maximum class this school teaches:Teaching up to class`
                     }
                   ],
                   [
                     {
                       "input": "textarea",
                       "id": "remarks",
-                      "placeholder": "Remarks"
+                      "placeholder": $localize`:Additional remarks concerning a school:Remarks`
                     }
                   ]
                 ]
@@ -398,7 +398,7 @@ export const defaultConfig = {
           ]
         },
         {
-          "title": "Students",
+          "title": $localize`:Students section of a school:Students`,
           "components": [
             {
               "title": "",
@@ -413,46 +413,46 @@ export const defaultConfig = {
   "view:child": {
     "component": "ChildrenList",
     "config": {
-      "title": "Children List",
+      "title": $localize`:List of all children managed:Children List`,
       "columns": [
         {
           "component": "DisplayText",
-          "title": "PN",
+          "title": $localize`:Project number of a child:PN`,
           "id": "projectNumber"
         },
         {
           "component": "ChildBlock",
-          "title": "Name",
+          "title": $localize`:Name of a child:Name`,
           "id": "name"
         },
         {
           "component": "DisplayText",
-          "title": "Age",
+          "title": $localize`:Age of a child:Age`,
           "id": "age"
         },
         {
           "component": "DisplayDate",
-          "title": "DoB",
+          "title": $localize`:Date of birth of a child:DoB`,
           "id": "dateOfBirth"
         },
         {
           "component": "DisplayText",
-          "title": "Gender",
+          "title": $localize`:Gender of a child:Gender`,
           "id": "gender"
         },
         {
           "component": "DisplayText",
-          "title": "Class",
+          "title": $localize`:Class a child attends:Class`,
           "id": "schoolClass"
         },
         {
           "component": "SchoolBlockWrapper",
-          "title": "School",
+          "title": $localize`:School a child attends:School`,
           "id": "schoolId"
         },
         {
           "component": "RecentAttendanceBlocks",
-          "title": "Attendance (School)",
+          "title": $localize`:Attendance at school:Attendance (School)`,
           "id": "schoolAttendance",
           "config": {
             "filterByActivityType": "SCHOOL_CLASS"
@@ -461,7 +461,7 @@ export const defaultConfig = {
         },
         {
           "component": "RecentAttendanceBlocks",
-          "title": "Attendance (Coaching)",
+          "title": $localize`:Attendance at coaching lessons:Attendance (Coaching)`,
           "id": "coachingAttendance",
           "config": {
             "filterByActivityType": "COACHING_CLASS"
@@ -470,92 +470,92 @@ export const defaultConfig = {
         },
         {
           "component": "DisplayConfigurableEnum",
-          "title": "Center",
+          "title": $localize`:The center of a child:Center`,
           "id": "center"
         },
         {
           "component": "DisplayText",
-          "title": "Status",
+          "title": $localize`:The status of a child:Status`,
           "id": "status"
         },
         {
           "component": "DisplayDate",
-          "title": "Admission",
+          "title": $localize`:The admission date of a child:Admission`,
           "id": "admissionDate"
         },
         {
           "component": "DisplayText",
-          "title": "Mother Tongue",
+          "title": $localize`:The mother tongue of a child:Mother Tongue`,
           "id": "motherTongue"
         },
         {
           "component": "DisplayConfigurableEnum",
-          "title": "Aadhar",
+          "title": $localize`:Aadhar status of a child:Aadhar`,
           "id": "has_aadhar"
         },
         {
           "component": "DisplayConfigurableEnum",
-          "title": "Bank Account",
+          "title": $localize`:Bank account details of a child:Bank Account`,
           "id": "has_bankAccount"
         },
         {
           "component": "DisplayConfigurableEnum",
-          "title": "Kanyashree",
+          "title": $localize`:Kanyashree status of a child:Kanyashree`,
           "id": "has_kanyashree"
         },
         {
           "component": "DisplayConfigurableEnum",
-          "title": "Ration Card",
+          "title": $localize`:Ration Card status of a child:Ration Card`,
           "id": "has_rationCard"
         },
         {
           "component": "DisplayConfigurableEnum",
-          "title": "BPL Card",
+          "title": $localize`:BPL Card status of a child:BPL Card`,
           "id": "has_BplCard"
         },
         {
           "component": "DisplayText",
-          "title": "Vaccination Status",
+          "title": $localize`:Vaccination status of a child:Vaccination Status`,
           "id": "health_vaccinationStatus"
         },
         {
           "component": "DisplayText",
-          "title": "Blood Group",
+          "title": $localize`:Blood group of a child:Blood Group`,
           "id": "health_bloodGroup"
         },
         {
           "component": "DisplayText",
-          "title": "Eye Status",
+          "title": $localize`:Eye status of a child:Eye Status`,
           "id": "health_eyeHealthStatus"
         },
         {
           "component": "DisplayDate",
-          "title": "Last Eye Check-Up",
+          "title": $localize`:Date of the last eye check-up:Last Eye Check-Up`,
           "id": "health_lastEyeCheckup"
         },
         {
           "component": "DisplayDate",
-          "title": "Last Dental Check-Up",
+          "title": $localize`:Date of the last dental check-up:Last Dental Check-Up`,
           "id": "health_lastDentalCheckup"
         },
         {
           "component": "DisplayDate",
-          "title": "Last ENT Check-Up",
+          "title": $localize`:Date of the last ENT check-up:Last ENT Check-Up`,
           "id": "health_lastENTCheckup"
         },
         {
           "component": "DisplayDate",
-          "title": "Last Vitamin D",
+          "title": $localize`:Dtae of the last vitamin D checking:Last Vitamin D`,
           "id": "health_lastVitaminD"
         },
         {
           "component": "DisplayDate",
-          "title": "Last De-Worming",
+          "title": $localize`:Date of the last de-worming:Last De-Worming`,
           "id": "health_lastDeworming"
         },
         {
           "component": "BmiBlock",
-          "title": "BMI",
+          "title": $localize`:BMI information about a child:BMI`,
           "id": "health_BMI",
           "noSorting": true}
       ],
@@ -564,7 +564,7 @@ export const defaultConfig = {
         "mobile": "Mobile",
         "groups": [
           {
-            "name": "Basic Info",
+            "name": $localize`:Shows basic infos about children:Basic Info`,
             "columns": [
               "projectNumber",
               "name",
@@ -577,7 +577,7 @@ export const defaultConfig = {
             ]
           },
           {
-            "name": "School Info",
+            "name": $localize`:Shows school info about children:School Info`,
             "columns": [
               "projectNumber",
               "name",
@@ -590,7 +590,7 @@ export const defaultConfig = {
             ]
           },
           {
-            "name": "Status",
+            "name": $localize`:Shows info about statuses, such as Aadhar, Bank account, e.t.c of children:Status`,
             "columns": [
               "projectNumber",
               "name",
@@ -605,7 +605,7 @@ export const defaultConfig = {
             ]
           },
           {
-            "name": "Health",
+            "name": $localize`:Shows info about health statuses of children:Health`,
             "columns": [
               "projectNumber",
               "name",
@@ -640,13 +640,13 @@ export const defaultConfig = {
           "id": "isActive",
           "type": "boolean",
           "default": "true",
-          "true": "Active Children",
-          "false": "Inactive",
-          "all": "All"
+          "true": $localize`:show only active children:Active Children`,
+          "false": $localize`:show only inactive children:Inactive`,
+          "all": $localize`:show all children:All`
         },
         {
           "id": "center",
-          "label": "Center",
+          "label": $localize`:The center a child lives in:Center`,
           "type": "configurable-enum",
           "enumId": "center",
           "display": "dropdown"
@@ -666,7 +666,7 @@ export const defaultConfig = {
       "entity": "Child",
       "panels": [
         {
-          "title": "Basic Information",
+          "title": $localize`:Basic information of a child:Basic Information`,
           "components": [
             {
               "title": "",
@@ -677,93 +677,93 @@ export const defaultConfig = {
                     {
                       "input": "photo",
                       "id": "photoFile",
-                      "placeholder": "Photo Filename"
+                      "placeholder": $localize`:Placeholder when a children's photo can't be loaded:Photo Filename`
                     }
                   ],
                   [
                     {
                       "input": "text",
                       "id": "name",
-                      "placeholder": "Name",
+                      "placeholder": $localize`:The name of a child:Name`,
                       "required": true
                     },
                     {
                       "input": "text",
                       "id": "projectNumber",
-                      "placeholder": "Project Number"
+                      "placeholder": $localize`:The project number of a child:Project Number`
                     },
                     {
                       "input": "configurable-enum-select",
                       "id": "center",
-                      "placeholder": "Center",
+                      "placeholder": $localize`:The center a child lives in:Center`,
                       "enumId": "center"
                     },
                     {
                       "input": "text",
                       "id": "status",
-                      "placeholder": "Project Status"
+                      "placeholder": $localize`:The project status of a child:Project Status`
                     }
                   ],
                   [
                     {
                       "input": "age",
                       "id": "dateOfBirth",
-                      "placeholder": "Date of Birth"
+                      "placeholder": $localize`:The date of birth of a child:Date of Birth`
                     },
                     {
                       "input": "select",
                       "id": "gender",
-                      "placeholder": "Gender",
+                      "placeholder": $localize`:The gender of a child:Gender`,
                       "options": [
-                        "M",
-                        "F"
+                        $localize`:gender male (short form):M`,
+                        $localize`:gender female (short form):F`
                       ]
                     },
                     {
                       "input": "text",
                       "id": "motherTongue",
-                      "placeholder": "Mother Tongue"
+                      "placeholder": $localize`:The mother tongue of a child:Mother Tongue`
                     },
                     {
                       "input": "text",
                       "id": "religion",
-                      "placeholder": "Religion"
+                      "placeholder": $localize`:The religion of a child:Religion`
                     }
                   ],
                   [
                     {
                       "input": "datepicker",
                       "id": "admissionDate",
-                      "placeholder": "Admission Date"
+                      "placeholder": $localize`:The admission date of a child:Admission Date`
                     },
                     {
                       "input": "configurable-enum-select",
                       "id": "has_aadhar",
-                      "placeholder": "Aadhar Status",
+                      "placeholder": $localize`:The aadhar status of a child:Aadhar Status`,
                       "enumId": "document-status"
                     },
                     {
                       "input": "configurable-enum-select",
                       "id": "has_kanyashree",
-                      "placeholder": "Kanyashree Status",
+                      "placeholder": $localize`:The kanyashree status of a child:Kanyashree Status`,
                       "enumId": "document-status"
                     },
                     {
                       "input": "configurable-enum-select",
                       "id": "has_bankAccount",
-                      "placeholder": "Bank Account Status",
+                      "placeholder": $localize`:The bank account status of a child:Bank Account Status`,
                       "enumId": "document-status"
                     },
                     {
                       "input": "configurable-enum-select",
                       "id": "has_rationCard",
-                      "placeholder": "Ration Card Status",
+                      "placeholder": $localize`:The ration card status of a child:Ration Card Status`,
                       "enumId": "document-status"
                     },
                     {
                       "input": "configurable-enum-select",
                       "id": "has_BplCard",
-                      "placeholder": "BPL Card Status",
+                      "placeholder": $localize`:The bpl status of a child:BPL Card Status`,
                       "enumId": "document-status"
                     }
                   ],
@@ -771,22 +771,22 @@ export const defaultConfig = {
                     {
                       "input": "text",
                       "id": "address",
-                      "placeholder": "Address"
+                      "placeholder": $localize`:The address of a child:Address`
                     },
                     {
                       "input": "text",
                       "id": "phone",
-                      "placeholder": "Phone No."
+                      "placeholder": $localize`:The phone number of a child:Phone No.`
                     },
                     {
                       "input": "text",
                       "id": "guardianName",
-                      "placeholder": "Guardians"
+                      "placeholder": $localize`:The names of the guardians of a child|School context:Guardians`
                     },
                     {
                       "input": "text",
                       "id": "preferredTimeForGuardianMeeting",
-                      "placeholder": "Preferred time for guardians meeting"
+                      "placeholder": $localize`Preferred time for guardians meeting`
                     }
                   ]
                 ]
@@ -795,20 +795,20 @@ export const defaultConfig = {
           ]
         },
         {
-          "title": "Education",
+          "title": $localize`:Education subsection of a child:Education`,
           "components": [
             {
-              "title": "School History",
+              "title": $localize`:School history of a child:School History`,
               "component": "PreviousSchools"
             },
             {
-              "title": "ASER Results",
+              "title": $localize`:ASER results of a child:ASER Results`,
               "component": "Aser"
             }
           ]
         },
         {
-          "title": "Attendance",
+          "title": $localize`:Information about the attendance of a child:Attendance`,
           "components": [
             {
               "title": "",
@@ -817,7 +817,7 @@ export const defaultConfig = {
           ]
         },
         {
-          "title": "Notes & Reports",
+          "title": $localize`:Notes and reports linked to a child:Notes & Reports`,
           "components": [
             {
               "title": "",
@@ -826,7 +826,7 @@ export const defaultConfig = {
           ]
         },
         {
-          "title": "Health",
+          "title": $localize`:Health information of a child:Health`,
           "components": [
             {
               "title": "",
@@ -837,12 +837,12 @@ export const defaultConfig = {
                     {
                       "input": "select",
                       "id": "health_vaccinationStatus",
-                      "placeholder": "Vaccination Status",
+                      "placeholder": $localize`:The vaccination status of a child:Vaccination Status`,
                       "options": [
-                        "Good",
-                        "Vaccination Due",
-                        "Needs Checking",
-                        "No Card/Information"
+                        $localize`:Vaccination status is good:Good`,
+                        $localize`:Vaccination status is due:Vaccination Due`,
+                        $localize`:Vaccination status needs checking:Needs Checking`,
+                        $localize`:No information about a vaccination status:No Card/Information`
                       ]
                     }
                   ],
@@ -850,12 +850,12 @@ export const defaultConfig = {
                     {
                       "input": "select",
                       "id": "health_eyeHealthStatus",
-                      "placeholder": "Eye Status",
+                      "placeholder": $localize`:Eye-sight status of a child:Eye Status`,
                       "options": [
-                        "Good",
-                        "Has Glasses",
-                        "Needs Glasses",
-                        "Needs Checkup"
+                        $localize`:Eye sight status is good:Good`,
+                        $localize`:Eye sight status indicating child has glasses:Has Glasses`,
+                        $localize`:Eye sight status indicating child needs glasses:Needs Glasses`,
+                        $localize`:Eye sight status indicating child needs check-up:Needs Checkup`
                       ]
                     }
                   ],
@@ -863,55 +863,55 @@ export const defaultConfig = {
                     {
                       "input": "text",
                       "id": "health_bloodGroup",
-                      "placeholder": "Blood Group"
+                      "placeholder": $localize`:The blood-group of a child:Blood Group`
                     }
                   ],
                   [
                     {
                       "input": "datepicker",
                       "id": "health_lastDentalCheckup",
-                      "placeholder": "Last Dental Check-Up"
+                      "placeholder": $localize`:Last dental check-up date:Last Dental Check-Up`
                     }
                   ],
                   [
                     {
                       "input": "datepicker",
                       "id": "health_lastEyeCheckup",
-                      "placeholder": "Last Eye Check-Up"
+                      "placeholder": $localize`:Last Eye Check-up date:Last Eye Check-Up`
                     }
                   ],
                   [
                     {
                       "input": "datepicker",
                       "id": "health_lastENTCheckup",
-                      "placeholder": "Last ENT Check-Up"
+                      "placeholder": $localize`:Last ENT date:Last ENT Check-Up`
                     }
                   ],
                   [
                     {
                       "input": "datepicker",
                       "id": "health_lastVitaminD",
-                      "placeholder": "Last Vitamin D"
+                      "placeholder": $localize`:Last Vitamin-D date:Last Vitamin D`
                     }
                   ],
                   [
                     {
                       "input": "datepicker",
                       "id": "health_lastDeworming",
-                      "placeholder": "Last De-Worming"
+                      "placeholder": $localize`:Last child de-worming date:Last De-Worming`
                     }
                   ]
                 ]
               }
             },
             {
-              "title": "Height & Weight Tracking",
+              "title": $localize`:Height & Weight tracking title:Height & Weight Tracking`,
               "component": "HealthCheckup"
             }
           ]
         },
         {
-          "title": "Educational Materials",
+          "title": $localize`:Education materials of a child title:Educational Materials`,
           "components": [
             {
               "title": "",
@@ -920,7 +920,7 @@ export const defaultConfig = {
           ]
         },
         {
-          "title": "Dropout",
+          "title": $localize`:Drouput information of a child:Dropout`,
           "components": [
             {
               "title": "",
@@ -931,21 +931,21 @@ export const defaultConfig = {
                     {
                       "input": "datepicker",
                       "id": "dropoutDate",
-                      "placeholder": "Dropout Date"
+                      "placeholder": $localize`:The date a child dropped out:Dropout Date`
                     }
                   ],
                   [
                     {
                       "input": "text",
                       "id": "dropoutType",
-                      "placeholder": "Dropout Type"
+                      "placeholder": $localize`:The type of dropout (can be anything):Dropout Type`
                     }
                   ],
                   [
                     {
                       "input": "text",
                       "id": "dropoutRemarks",
-                      "placeholder": "Dropout Remarks"
+                      "placeholder": $localize`:Additional remarks concerning the dropout of a child:Dropout Remarks`
                     }
                   ]
                 ]
@@ -960,21 +960,21 @@ export const defaultConfig = {
   "view:recurring-activity": {
     "component": "ActivityList",
     "config": {
-      "title": "Recurring Activities",
+      "title": $localize`Recurring Activities`,
       "columns": [
         {
           "component": "DisplayText",
-          "title": "Title",
+          "title": $localize`:Title of a recurring activity:Title`,
           "id": "title"
         },
         {
           "component": "DisplayConfigurableEnum",
-          "title": "Type",
+          "title": $localize`:Type of a recurring activity:Type`,
           "id": "type"
         },
         {
           "component": "DisplayText",
-          "title": "Assigned to",
+          "title": $localize`:The person (user) this recurring activity is assigned to:Assigned to`,
           "id": "assignedTo"
         }
       ],
@@ -1005,7 +1005,7 @@ export const defaultConfig = {
       "entity": "RecurringActivity",
       "panels": [
         {
-          "title": "Activity",
+          "title": $localize`:Details of a recurring activity:Activity`,
           "components": [
             {
               "component": "Form",
@@ -1015,7 +1015,7 @@ export const defaultConfig = {
                     {
                       "input": "text",
                       "id": "title",
-                      "placeholder": "Title"
+                      "placeholder": $localize`:The title of a recurring activity:Title`
                     }
                   ],
                   [
@@ -1023,14 +1023,14 @@ export const defaultConfig = {
                       "id": "type",
                       "input": "configurable-enum-select",
                       "enumId": "interaction-type",
-                      "placeholder": "Type"
+                      "placeholder": $localize`:The type of a recurring activity:Type`
                     }
                   ],
                   [
                     {
                       "input": "text",
                       "id": "assignedTo",
-                      "placeholder": "Assigned to"
+                      "placeholder": $localize`:The person a recurring activity is assigned to:Assigned to`
                     }
                   ]
                 ]
@@ -1039,7 +1039,7 @@ export const defaultConfig = {
           ]
         },
         {
-          "title": "Participants",
+          "title": $localize`:The participants of a recurring activity|Schools and Children:Participants`,
           "components": [
             {
               "component": "ActivityParticipantsSection"
@@ -1047,7 +1047,7 @@ export const defaultConfig = {
           ]
         },
         {
-          "title": "Events & Attendance",
+          "title": $localize`:Events and attendance title:Events & Attendance`,
           "components": [
             {
               "component": "ActivityAttendanceSection"

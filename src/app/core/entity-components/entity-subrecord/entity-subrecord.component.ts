@@ -292,8 +292,8 @@ export class EntitySubrecordComponent<T extends Entity>
    */
   delete(record: T) {
     const dialogRef = this._confirmationDialog.openDialog(
-      "Delete?",
-      "Are you sure you want to delete this record?"
+      $localize`:Confirmation dialog delete header:Delete?`,
+      $localize`:Delete confirmation message:Are you sure you want to delete this record?`
     );
 
     dialogRef.afterClosed().subscribe((confirmed) => {
@@ -303,9 +303,13 @@ export class EntitySubrecordComponent<T extends Entity>
         });
         this.removeFromDataTable(record);
 
-        const snackBarRef = this._snackBar.open("Record deleted", "Undo", {
-          duration: 8000,
-        });
+        const snackBarRef = this._snackBar.open(
+          $localize`:Record deleted info:Record deleted`,
+          "Undo",
+          {
+            duration: 8000,
+          }
+        );
         snackBarRef.onAction().subscribe(() => {
           this._entityMapper.save(record, true);
           this.records.unshift(record);

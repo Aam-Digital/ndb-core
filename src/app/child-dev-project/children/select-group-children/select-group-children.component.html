@@ -1,7 +1,7 @@
 <div fxLayout="column">
   <div>
     <mat-form-field fxFlex>
-      <mat-label> Select center </mat-label>
+      <mat-label i18n="Select center-label"> Select center </mat-label>
       <mat-select (valueChange)="selectCenterFilter($event)">
         <mat-option *ngFor="let group of centerFilters.options" [value]="group">
           <span>{{ group.label }}</span>
@@ -12,7 +12,7 @@
 
   <div>
     <mat-form-field fxFlex>
-      <mat-label> Select school </mat-label>
+      <mat-label i18n="Select school-label"> Select school </mat-label>
       <mat-select
         (valueChange)="selectSchoolFilter($event)"
         [disabled]="schoolFilters.options.length === 0"
@@ -31,7 +31,7 @@
 
   <div>
     <mat-form-field fxFlex>
-      <mat-label> Select class </mat-label>
+      <mat-label i18n="Select class-label"> Select class </mat-label>
       <mat-select
         (valueChange)="selectClassFilter($event)"
         [disabled]="schoolFilters.options.length === 0"
@@ -43,13 +43,14 @@
     </mat-form-field>
   </div>
 
-  <div>Total students selected: {{ value.length }}</div>
+  <div i18n>Total students selected: {{ value.length }}</div>
 
   <div>
     <button
       mat-stroked-button
       (click)="confirmSelectedChildren()"
       class="nav-button"
+      i18n="Continue-Button|Confirm that selected children should be chosen"
       fxFlex
     >
       Continue

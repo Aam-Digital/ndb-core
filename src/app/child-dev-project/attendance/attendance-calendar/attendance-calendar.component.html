@@ -28,6 +28,7 @@
       <mat-form-field style="width: 100%">
         <textarea
           matInput
+          i18n-placeholder="Remarks|Placeholder if no remarks for the attendance of a child are given"
           placeholder="Remarks"
           [(ngModel)]="selectedEventAttendance.remarks"
           (blur)="save()"
@@ -37,23 +38,33 @@
   </div>
 
   <div *ngIf="selectedEvent && !highlightForChild">
-    <div>
+    <div
+      i18n="Event participants|How many participants attended at an event (in percent)"
+    >
       {{ selectedEventStats.average | percent: "1.0-0" }} attended (of
-      {{ selectedEvent.children.length }} participants)
+      {{ selectedEvent.children.length }}
+      { selectedEvent.children.length, plural, 1={participant} other {participants} })
     </div>
     <div
       *ngIf="selectedEventStats.unknownStatus > 0"
+      i18n="Unknown status|How many children are without a status"
       class="unknown-status-notice"
     >
-      {{ selectedEventStats.unknownStatus }} participants without recorded
+      {{ selectedEventStats.unknownStatus }} { selectedEventStats.unknownStatus, plural, 1={participant} other {participants} } without recorded
       status
     </div>
-    <button mat-stroked-button (click)="showEventDetails(selectedEvent)">
+    <button
+      i18n="Show Details Button|Allows the user to see details of an event that took place at a particular day"
+      mat-stroked-button
+      (click)="showEventDetails(selectedEvent)">
       Details
     </button>
   </div>
 
-  <div *ngIf="!selectedEvent" class="no-events-notice">
+  <div
+    i18n="No Events|Informs the user that there are no events at a particular date"
+    *ngIf="!selectedEvent"
+    class="no-events-notice">
     no events on this date
   </div>
 </div>

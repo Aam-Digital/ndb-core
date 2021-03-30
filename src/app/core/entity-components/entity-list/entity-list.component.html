@@ -7,6 +7,7 @@
       <mat-form-field style="width: 100%">
         <input
           matInput
+          i18n-placeholder="Filter placeholder|Allows the user to filter through entities"
           placeholder="Filter"
           (ngModelChange)="applyFilter($event)"
           [(ngModel)]="filterString"
@@ -64,7 +65,7 @@
           aria-label="download csv"
           fontIcon="fa-download"
         ></mat-icon>
-        <span fxHide.lt-md="true"> Download CSV </span>
+        <span fxHide.lt-md="true" i18n="Download list contents as CSV"> Download CSV </span>
       </app-export-data>
     </div>
   </div>

@@ -1,6 +1,8 @@
 <h1>Attendance Register</h1>
 
-<p class="general-description">
+<p
+  class="general-description"
+  i18n="General description|A general description-header">
   Attendance data can be seen and edited in an individual's details as well as
   here across groups.
 </p>
@@ -8,10 +10,14 @@
 <div fxLayout="row wrap">
   <mat-card fxFlex>
     <mat-card-header>
-      <mat-card-title>Record Attendance</mat-card-title>
-      <mat-card-subtitle>add a day's attendance</mat-card-subtitle>
+      <mat-card-title
+        i18n="Record attendance title">
+        Record Attendance</mat-card-title>
+      <mat-card-subtitle
+        i18n="Add day attendance subtitle">
+        add a day's attendance</mat-card-subtitle>
     </mat-card-header>
-    <mat-card-content>
+    <mat-card-content i18n="Record attendance content">
       Select a group of children and easily mark their attendance one by one.
       This works well on a smartphone to record attendance on site.
     </mat-card-content>
@@ -20,6 +26,7 @@
         routerLink="/attendance/add/day"
         class="action-button"
         mat-stroked-button
+        i18n="Record attendance button"
       >
         Record an event's attendance
       </button>
@@ -28,10 +35,15 @@
 
   <mat-card fxFlex>
     <mat-card-header>
-      <mat-card-title>Enter Monthly Attendance</mat-card-title>
-      <mat-card-subtitle>add a month's attendance</mat-card-subtitle>
+      <mat-card-title
+        i18n="Monthly attendance title">
+        Enter Monthly Attendance</mat-card-title>
+      <mat-card-subtitle
+        i18n="Monthly attendance subtitle">
+        add a month's attendance</mat-card-subtitle>
     </mat-card-header>
-    <mat-card-content>
+    <mat-card-content
+      i18n="Monthly attendance content">
       Enter attendance numbers for a whole month in a table format for a group
       of children. This allows you to quickly record attendance that was
       collected on paper. However, as you only enter a monthly total for each
@@ -42,6 +54,7 @@
         routerLink="/coming-soon/monthly-attendance"
         class="action-button"
         mat-stroked-button
+        i18n="Enter attendance button"
       >
         Enter Attendance
       </button>
@@ -50,10 +63,16 @@
 
   <mat-card fxFlex>
     <mat-card-header>
-      <mat-card-title>Analyse Attendance</mat-card-title>
-      <mat-card-subtitle>calculate summaries and averages</mat-card-subtitle>
+      <mat-card-title
+        i18n="Analyse attendance title"
+      >Analyse Attendance</mat-card-title>
+      <mat-card-subtitle
+        i18n="Analyze attendance subtitle"
+      >calculate summaries and averages</mat-card-subtitle>
     </mat-card-header>
-    <mat-card-content>
+    <mat-card-content
+      i18n="Analyze attendance content"
+    >
       Analyse and compare attendance for all children. To see an individual's
       attendance history you can open the child's overall details page.
     </mat-card-content>
@@ -62,6 +81,7 @@
         routerLink="/coming-soon/attendance-analysis"
         class="action-button"
         mat-stroked-button
+        i18n="Analyze attendance button"
       >
         Analyse Attendance
       </button>
