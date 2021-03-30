@@ -99,4 +99,28 @@ describe("Entity", () => {
     expect(data.searchIndices).toContain("John");
     expect(data.searchIndices).toContain("Doe");
   });
+
+  it("can perform a shallow copy of itself", () => {
+    const id = "t1";
+    const entity: Entity = new Entity(id);
+    entity["value"] = 1;
+    const otherEntity = entity.copy();
+    expect(otherEntity).toEqual(entity);
+  });
+
+  it("preserves it's type when copying", () => {
+    class TestEntity extends Entity {
+      value: number;
+      constructor(id: string, value: number) {
+        super(id);
+        this.value = value;
+      }
+    }
+
+    const entity: TestEntity = new TestEntity("t1", 2);
+    const otherEntity = entity.copy();
+    expect(otherEntity).not.toBe(entity);
+    expect(otherEntity).toEqual(entity);
+    expect(otherEntity).toBeInstanceOf(TestEntity);
+  });
 });
