@@ -172,7 +172,7 @@ export class PreviousSchoolsComponent
     };
     if (!record.schoolId) {
       validationResult.validationMessage =
-        '"Name" is empty. Please select a ' + this.schoolNaming;
+        "Please select a " + this.schoolNaming;
     } else if (moment(record.start).isAfter(record.end, "days")) {
       validationResult.validationMessage =
         '"To"-date lies before "From"-date. Please enter correct dates.';
