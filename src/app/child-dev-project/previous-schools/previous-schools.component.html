@@ -1,10 +1,9 @@
 <div
-  *ngIf="child.schoolId"
-  matTooltip="To edit the current school or class, please add to the school history below"
+  *ngIf="config.single && current"
 >
-  <em>
-    Currently attending class {{ child.schoolClass }} at
-    <app-school-block [entityId]="child.schoolId"></app-school-block>
+  <em matTooltip="To change the currently attending {{schoolNaming}}, please add a new entry to the history below">
+    Currently attending {{current.schoolClass ? current.schoolClass + " at " : ""}}
+    <app-school-block [entity]="schoolMap.get(current.schoolId)"></app-school-block>
   </em>
 </div>
 
