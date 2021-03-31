@@ -8,12 +8,13 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { FilterSelectionOption } from "../../../core/filter/filter-selection/filter-selection";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { UntilDestroy } from "@ngneat/until-destroy";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
+import { tap } from "rxjs/operators";
+import { applyUpdate } from "../../../core/entity/entity-update";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 
-@UntilDestroy()
 @Component({
   selector: "app-notes-manager",
   template: `
@@ -27,6 +28,7 @@ import { EntityListConfig } from "../../../core/entity-components/entity-list/En
     ></app-entity-list>
   `,
 })
+@UntilDestroy()
 export class NotesManagerComponent implements OnInit {
   @ViewChild("entityList") entityList: EntityListComponent<Note>;
 
@@ -80,8 +82,20 @@ export class NotesManagerComponent implements OnInit {
     });
     this.entityMapperService.loadType<Note>(Note).then((notes) => {
       notes.forEach((note) => (note["color"] = this.getColor(note)));
-      this.notes = notes;
+      // This prevents edge-cases where updates are received
+      // before this is
+      this.notes = notes.concat(this.notes);
     });
+
+    this.entityMapperService
+      .receiveUpdates<Note>(Note)
+      .pipe(
+        untilDestroyed(this),
+        tap((note) => (note.entity["color"] = this.getColor(note.entity)))
+      )
+      .subscribe((updatedNote) => {
+        this.notes = applyUpdate(this.notes, updatedNote);
+      });
   }
 
   private addPrebuiltFilters() {
@@ -121,17 +135,11 @@ export class NotesManagerComponent implements OnInit {
     const newNote = new Note(Date.now().toString());
     newNote.date = new Date();
     newNote.authors = [this.sessionService.getCurrentUser().getId()];
-
-    const noteDialogRef = this.showDetails(newNote);
-    noteDialogRef.afterClosed().subscribe((val) => {
-      if (val instanceof Note) {
-        this.notes = [val].concat(this.notes);
-      }
-    });
+    this.showDetails(newNote);
   }
 
   showDetails(entity: Note) {
-    return this.formDialog.openDialog(NoteDetailsComponent, entity);
+    this.formDialog.openDialog(NoteDetailsComponent, entity.copy());
   }
 
   private getColor(entity: Note): string {
@@ -142,7 +150,7 @@ export class NotesManagerComponent implements OnInit {
       return WarningLevelColor(WarningLevel.WARNING);
     }
 
-    const color = entity.category.color;
+    const color = entity.category?.color;
     return color ? color : "";
   }
 }
