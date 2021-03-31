@@ -6,7 +6,12 @@ import { LoggingService } from "../../logging/logging.service";
 
 @Component({
   selector: "app-user-list",
-  template: `{{ authorNames }}`,
+  template: `
+    {{ authorNames }}
+    <span *ngIf="_users.length > maxUserThreshold">
+      and {{ additionalUsers }} more
+    </span>
+  `,
 })
 export class UserListComponent implements OnInitDynamicComponent {
   _users: User[] = [];
@@ -34,23 +39,15 @@ export class UserListComponent implements OnInitDynamicComponent {
     private loggingService: LoggingService
   ) {}
 
+  get additionalUsers(): number {
+    return this._users.length - this.maxUserThreshold;
+  }
+
   get authorNames(): string {
-    if (this._users.length <= this.maxUserThreshold) {
-      return this._users.map((u) => u.name).join(", ");
-    } else {
-      const additionalUsers: string = String(
-        this._users.length - this.maxUserThreshold
-      );
-      return (
-        this._users
-          .slice(0, this.maxUserThreshold)
-          .map((u) => u.name)
-          .join(", ") +
-        " and " +
-        additionalUsers +
-        " more"
-      );
-    }
+    return this._users
+      .slice(0, this.maxUserThreshold)
+      .map((u) => u.name)
+      .join(", ");
   }
 
   onInitFromDynamicConfig(config: any) {
