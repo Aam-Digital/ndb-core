@@ -26,6 +26,8 @@ describe("UserListComponent", () => {
   let component: UserListComponent;
   let fixture: ComponentFixture<UserListComponent>;
 
+  const commonThreshold = 2;
+
   const testUsers: User[] = ["UserA", "demo", "demoAdmin", "UserB"].map(
     (name) => {
       const user = new User();
@@ -51,6 +53,7 @@ describe("UserListComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(UserListComponent);
     component = fixture.componentInstance;
+    component.maxUserThreshold = commonThreshold;
     fixture.detectChanges();
   });
 
@@ -72,9 +75,8 @@ describe("UserListComponent", () => {
     expect(component._users).toEqual(testUsers.slice(2, 3));
   }));
 
-  it("shows all users when less than the threshold is shown", () => {
+  it("shows all users up to the threshold", () => {
     component.inputType = "entity";
-    component.maxUserThreshold = 2;
     [1, 2].forEach((userCount) => {
       component.entities = testUsers.slice(0, userCount);
       const expectedString = testUsers
@@ -85,19 +87,23 @@ describe("UserListComponent", () => {
     });
   });
 
-  it("shows the a sliced list of all users when more than the threshold is shown", () => {
+  it("only shows the users up to a threshold when more than the threshold are given", () => {
     component.inputType = "entity";
-    const threshold = 2;
-    component.maxUserThreshold = threshold;
     [3, 4].forEach((userCount) => {
-      component.entities = testUsers.slice(0, userCount);
-      let expectedString = testUsers
-        .slice(0, threshold)
+      component._users = testUsers.slice(0, userCount);
+      const expectedString = testUsers
+        .slice(0, commonThreshold)
         .map((u) => u.name)
         .join(", ");
-      expectedString =
-        expectedString + " and " + String(userCount - threshold) + " more";
       expect(component.authorNames).toEqual(expectedString);
+    });
+  });
+
+  it("knows how many remaining users exist if more users than the threshold are given", () => {
+    component.inputType = "entity";
+    [3, 4].forEach((userCount) => {
+      component._users = testUsers.slice(0, userCount);
+      expect(component.additionalUsers).toBe(userCount - commonThreshold);
     });
   });
 
