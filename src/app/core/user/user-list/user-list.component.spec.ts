@@ -69,7 +69,7 @@ describe("UserListComponent", () => {
 
   it("should load all users when given as entities", fakeAsync(() => {
     component.inputType = "entity";
-    component.entities = [...testUsers.slice(2, 3)];
+    component.entities = testUsers.slice(2, 3);
     tick();
     expect(component._users).toEqual(testUsers.slice(2, 3));
   }));
@@ -77,7 +77,7 @@ describe("UserListComponent", () => {
   it("shows all users up to the threshold", () => {
     component.maxUserThreshold = commonThreshold;
     [1, 2].forEach((userCount) => {
-      component._users = [...testUsers.slice(0, userCount)];
+      component._users = testUsers.slice(0, userCount);
       const expectedString = testUsers
         .slice(0, userCount)
         .map((u) => u.name)
@@ -88,7 +88,7 @@ describe("UserListComponent", () => {
 
   it("only shows the users up to a threshold when more than the threshold are given", () => {
     [3, 4].forEach((userCount) => {
-      component._users = [...testUsers.slice(0, userCount)];
+      component._users = testUsers.slice(0, userCount);
       const expectedString = testUsers
         .slice(0, commonThreshold)
         .map((u) => u.name)
@@ -97,13 +97,15 @@ describe("UserListComponent", () => {
     });
   });
 
-  it("knows how many remaining users exist if more users than the threshold are given", () => {
+  it("knows how many remaining users exist if more users than the threshold are given", fakeAsync(() => {
     component.maxUserThreshold = commonThreshold;
     [3, 4].forEach((userCount) => {
-      component._users = [...testUsers.slice(0, userCount)];
+      component._users = testUsers.slice(0, userCount);
+      // not needed but fixes weird test-error
+      tick();
       expect(component.additionalUsers).toBe(userCount - commonThreshold);
     });
-  });
+  }));
 
   it("inits from the config", fakeAsync(() => {
     const testEntity = TestEntity.create(
