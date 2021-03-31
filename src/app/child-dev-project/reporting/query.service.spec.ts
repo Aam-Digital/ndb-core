@@ -7,10 +7,10 @@ import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { School } from "../schools/model/school";
 import { RecurringActivity } from "../attendance/model/recurring-activity";
 import { EventNote } from "../attendance/model/event-note";
-import { Note } from "../notes/model/note";
 import moment from "moment";
 import { defaultAttendanceStatusTypes } from "../../core/config/default-config/default-attendance-status-types";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
+import { defaultInteractionTypes } from "../../core/config/default-config/default-interaction-types";
 
 describe("QueryService", () => {
   let service: QueryService;
@@ -342,6 +342,29 @@ describe("QueryService", () => {
     );
     expect(attendedParticipants).toEqual(
       jasmine.arrayWithExactContents([maleChristianChild, femaleChristianChild])
+    );
+  });
+
+  it("should allow queries on complex attributes", async () => {
+    const schoolClass = defaultInteractionTypes.find(
+      (i) => i.id === "SCHOOL_CLASS"
+    );
+    const lifeSkills = defaultInteractionTypes.find(
+      (i) => i.id === "LIFE_SKILLS"
+    );
+    privateActivity.type = schoolClass;
+    activityWithoutLink.type = lifeSkills;
+
+    const schoolClassActivitiesQuery = `${RecurringActivity.ENTITY_TYPE}:toArray:replaceObjectAttribute(type, id)[*type=SCHOOL_CLASS]`;
+    const schoolClassActivities = await service.queryData(
+      schoolClassActivitiesQuery
+    );
+    expect(schoolClassActivities).toEqual([privateActivity]);
+
+    const otherActivitiesQuery = `${RecurringActivity.ENTITY_TYPE}:toArray:replaceObjectAttribute(type, id)[*type!=SCHOOL_CLASS]`;
+    const otherActivities = await service.queryData(otherActivitiesQuery);
+    expect(otherActivities).toEqual(
+      jasmine.arrayWithExactContents([activityWithoutLink, normalActivity])
     );
   });
 });

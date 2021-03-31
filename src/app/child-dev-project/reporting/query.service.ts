@@ -128,6 +128,25 @@ export class QueryService {
   }
 
   /**
+   * Replaces a complex attribute by a value of this attribute
+   *
+   * This method will also modifies the input array!
+   * If the method has been used before, it will not change anything the second time
+   * @param objs array of objs where the attribute should be exchanged
+   * @param attr the name of the attribute which should be exchanged
+   * @param key a key of the attribute object. The value of this key will replace to current value of the attribute
+   * @returns the modified input array
+   */
+  replaceObjectAttribute(objs: any[], attr: string, key: string): any[] {
+    objs.forEach((obj) => {
+      if (obj.hasOwnProperty(attr) && obj[attr][key] !== undefined) {
+        obj[attr] = obj[attr][key];
+      }
+    });
+    return objs;
+  }
+
+  /**
    * Returns the ids of all the participants of the passed events.
    * This list may contain duplicates and the id does not necessarily have the entity prefix
    * @param events the array of events
@@ -190,6 +209,7 @@ export class QueryService {
         addPrefix: this.addPrefix,
         toEntities: this.toEntities.bind(this),
         getRelated: this.getRelated.bind(this),
+        replaceObjectAttribute: this.replaceObjectAttribute,
         getParticipants: this.getParticipants,
         getParticipantsWithAttendance: this.getParticipantsWithAttendance,
         getActive: this.getActive,
