@@ -16,6 +16,12 @@ import { OnInitDynamicComponent } from "../../core/view/dynamic-components/on-in
 import { ColumnDescriptionInputType } from "../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 import { ColumnDescription } from "../../core/entity-components/entity-subrecord/column-description";
 import { PanelConfig } from "../../core/entity-components/entity-details/EntityDetailsConfig";
+import { School } from "../schools/model/school";
+
+interface PreviousRelationsConfig {
+  single: boolean;
+  columns: { id: string; label: string; input: string }[];
+}
 
 @Component({
   selector: "app-previous-schools",
@@ -40,10 +46,26 @@ export class PreviousSchoolsComponent
     return "hsl(" + color + ", 100%, 85%)";
   }
 
+  schoolNaming: string;
+
   @Input() child: Child;
   @Output() changedRecordInEntitySubrecord = new EventEmitter<any>();
   records = new Array<ChildSchoolRelation>();
   columns = new Array<ColumnDescription>();
+  current: ChildSchoolRelation;
+
+  schoolMap: Map<string, School>;
+
+  public config: PreviousRelationsConfig = {
+    single: true,
+    columns: [
+      { id: "schoolId", label: "School", input: "school" },
+      { id: "schoolClass", label: "Class", input: "text" },
+      { id: "start", label: "From", input: "date" },
+      { id: "end", label: "To", input: "date" },
+      { id: "result", label: "Result", input: "percentageResult" },
+    ],
+  };
 
   constructor(
     private childrenService: ChildrenService,
@@ -60,14 +82,14 @@ export class PreviousSchoolsComponent
     }
   }
 
-  onInitFromDynamicConfig(config: PanelConfig) {
-    if (config?.config?.displayedColumns) {
-      this.columns = this.columns.filter((c) =>
-        config.config.displayedColumns.includes(c.name)
-      );
+  onInitFromDynamicConfig(panelConfig: PanelConfig) {
+    if (panelConfig.config?.single) {
+      this.config.single = panelConfig.config.single;
     }
-
-    this.child = config.entity as Child;
+    if (panelConfig.config?.columns) {
+      this.config.columns = panelConfig.config.columns;
+    }
+    this.child = panelConfig.entity as Child;
     this.loadData(this.child.getId());
   }
 
@@ -77,52 +99,52 @@ export class PreviousSchoolsComponent
     }
 
     this.records = await this.childrenService.getSchoolsWithRelations(id);
+    this.current = this.records.find((record) => record.isActive());
   }
 
   private async initColumnDefinitions() {
     const schools = await this.schoolsService.getSchools().toPromise();
-    const schoolMap = {};
-    schools.forEach((s) => (schoolMap[s.getId()] = s.name));
+    this.schoolMap = new Map(schools.map((school) => [school.getId(), school]));
+    this.columns = this.config.columns.map((column) =>
+      this.createColumn(column.id, column.label, column.input)
+    );
+  }
 
-    this.columns = [
-      {
-        name: "schoolId",
-        label: $localize`School`,
-        inputType: ColumnDescriptionInputType.SELECT,
-        selectValues: schools.map((t) => {
-          return { value: t.getId(), label: t.name };
-        }),
-        valueFunction: (entity: ChildSchoolRelation) =>
-          schoolMap[entity["schoolId"]],
-      },
-
-      {
-        name: "schoolClass",
-        label: $localize`Class`,
-        inputType: ColumnDescriptionInputType.TEXT,
-      },
-
-      {
-        name: "start",
-        label: $localize`:Date from:From`,
-        inputType: ColumnDescriptionInputType.DATE,
-      },
-      {
-        name: "end",
-        label: $localize`:Date to:To`,
-        inputType: ColumnDescriptionInputType.DATE,
-      },
-      {
-        name: "result",
-        label: $localize`:How good a student performed at a school:Result`,
-        inputType: ColumnDescriptionInputType.NUMBER,
-        valueFunction: (entity: ChildSchoolRelation) =>
+  private createColumn(
+    id: string,
+    label: string,
+    type: string
+  ): ColumnDescription {
+    const column: ColumnDescription = {
+      name: id,
+      label: label,
+      inputType: ColumnDescriptionInputType.TEXT,
+    };
+    switch (type) {
+      case "date":
+        column.inputType = ColumnDescriptionInputType.DATE;
+        break;
+      case "school":
+        this.schoolNaming = label;
+        column.inputType = ColumnDescriptionInputType.SELECT;
+        column.selectValues = new Array(...this.schoolMap.values())
+          .sort((s1, s2) => s1.name.localeCompare(s2.name))
+          .map((t) => {
+            return { value: t.getId(), label: t.name };
+          });
+        column.valueFunction = (entity: ChildSchoolRelation) =>
+          this.schoolMap.get(entity["schoolId"]).name;
+        break;
+      case "percentageResult":
+        column.inputType = ColumnDescriptionInputType.NUMBER;
+        column.valueFunction = (entity: ChildSchoolRelation) =>
           entity.result >= 0 && !Number.isNaN(entity.result)
             ? entity.result + "%"
-            : $localize`:Not applicable:N/A`,
-        styleBuilder: this.resultColorStyleBuilder,
-      },
-    ];
+            : $localize`:Not applicable:N/A`;
+        column.styleBuilder = this.resultColorStyleBuilder;
+        break;
+    }
+    return column;
   }
 
   generateNewRecordFactory() {
@@ -149,13 +171,17 @@ export class PreviousSchoolsComponent
       validationMessage: "",
     };
     if (!record.schoolId) {
-      validationResult.validationMessage = $localize`"Name" is empty. Please select a school.`;
+      validationResult.validationMessage =
+        $localize`Please select a ${this.schoolNaming}`;
     } else if (moment(record.start).isAfter(record.end, "days")) {
-      validationResult.validationMessage = $localize`"To"-date lies before "From"-date. Please enter correct dates.`;
-    } else if (record.result > 100) {
-      validationResult.validationMessage = $localize`Result cannot be greater than 100`;
-    } else if (record.result < 0) {
-      validationResult.validationMessage = $localize`Result cannot be smaller than 0`;
+      validationResult.validationMessage =
+        $localize`"To"-date lies before "From"-date. Please enter correct dates.`;
+    } else if (
+      this.config.columns.some((col) => col.input === "percentageResult") &&
+      (record.result > 100 || record.result < 0)
+    ) {
+      validationResult.validationMessage =
+        $localize`Result cannot be smaller than 0 or greater than 100 (percent)`;
     } else {
       validationResult.hasPassedValidation = true;
     }

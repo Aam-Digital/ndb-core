@@ -164,15 +164,11 @@ describe("NotesManagerComponent", () => {
   });
 
   it("should open dialog when add note is clicked", fakeAsync(() => {
-    const lengthBefore = component.notes.length;
     const newNote = new Note("new");
     const returnValue: any = { afterClosed: () => of(newNote) };
     dialogMock.openDialog.and.returnValue(returnValue);
     component.addNoteClick();
     expect(dialogMock.openDialog).toHaveBeenCalled();
-    tick();
-    expect(component.notes.length).toBe(lengthBefore + 1);
-    expect(component.notes.indexOf(newNote)).toBeGreaterThanOrEqual(0);
   }));
 
   it("should set up category filter from configurable enum", fakeAsync(() => {
@@ -191,4 +187,26 @@ describe("NotesManagerComponent", () => {
       testInteractionTypes.length + 1
     );
   }));
+
+  it("will contain a new note when saved by an external component", () => {
+    const newNote = new Note("new");
+    const entityMapper = fixture.debugElement.injector.get(EntityMapperService);
+    const oldLength = component.notes.length;
+    entityMapper.save(newNote);
+    expect(component.notes.length).toBe(oldLength + 1);
+  });
+
+  it("will contain the updated note when updated", async () => {
+    let note = new Note("n1");
+    note.author = "A";
+    const entityMapper = fixture.debugElement.injector.get(EntityMapperService);
+    await entityMapper.save(note);
+    note = await entityMapper.load<Note>(Note, note.getId());
+    expect(component.notes.length).toBe(1);
+    expect(component.notes[0].author).toBe("A");
+    note.author = "B";
+    await entityMapper.save(note);
+    expect(component.notes.length).toBe(1);
+    expect(component.notes[0].author).toBe("B");
+  });
 });

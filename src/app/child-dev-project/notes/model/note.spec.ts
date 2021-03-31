@@ -187,4 +187,17 @@ describe("Note", () => {
     entitySchemaService.loadDataIntoEntity(reloadedEntity, rawData);
     expect(reloadedEntity.getAttendance("1").status).toEqual(status);
   });
+
+  it("performs a deep copy of itself", () => {
+    const note = new Note("n1");
+    note.addChild("4");
+    note.addChild("5");
+    note.addChild("6");
+    note.author = "A";
+    const otherNote = note.copy();
+    expect(otherNote).toEqual(note);
+    expect(otherNote).toBeInstanceOf(Note);
+    otherNote.removeChild("5");
+    expect(otherNote.children.length).toBe(note.children.length - 1);
+  });
 });

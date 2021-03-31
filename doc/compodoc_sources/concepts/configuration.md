@@ -343,6 +343,32 @@ The inner object can have the following but not always required fields: `"input"
   }
 ```
 
+#### The PreviousSchools Component
+This component shows a list of `ChildSchoolRelations` of a child in table.
+It can be configured which attributes of the `ChildSchoolRelation` are shown in the table and how the columns are named.
+Possible configurations are `single` and `columns` which are both optional. 
+`single` is a boolean and if is set to `true` the component will show which (if any) school the child is currently attending.
+This should only be set to  `true`, when the use-case only allows one active school per child.
+`columns` is an object and determines which columns are shown and how the columns are called.
+If `columns` is set, then `schoolId`, `start` and `end` need to be defined. 
+`schoolClass` and `result` are optional.
+The value of a field determines the name of the column, e.g. setting `schoolId: School` will give the column which displays the schools the name `School`.
+If `schoolClass` or `result` is not defined, then the respective column will not be visible.
+
+Example:
+```
+  "config": {
+    "single": true,
+    "columns": {
+      "schoolId": "School",
+      "schoolClass": "Class",
+      "start": "From",
+      "end": "To",
+      "result": "Result"
+    }
+  }
+```
+
 ### Entity
 The entity object within the config file can be used to extend and configure existing entities.
 The name of the entity to which this config refers comes ofter the colon in this case `"child"`.
