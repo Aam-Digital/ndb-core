@@ -53,7 +53,6 @@ describe("UserListComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(UserListComponent);
     component = fixture.componentInstance;
-    component.maxUserThreshold = commonThreshold;
     fixture.detectChanges();
   });
 
@@ -76,9 +75,9 @@ describe("UserListComponent", () => {
   }));
 
   it("shows all users up to the threshold", () => {
-    component.inputType = "entity";
+    component.maxUserThreshold = commonThreshold;
     [1, 2].forEach((userCount) => {
-      component.entities = testUsers.slice(0, userCount);
+      component._users = [...testUsers.slice(0, userCount)];
       const expectedString = testUsers
         .slice(0, userCount)
         .map((u) => u.name)
@@ -88,9 +87,8 @@ describe("UserListComponent", () => {
   });
 
   it("only shows the users up to a threshold when more than the threshold are given", () => {
-    component.inputType = "entity";
     [3, 4].forEach((userCount) => {
-      component._users = testUsers.slice(0, userCount);
+      component._users = [...testUsers.slice(0, userCount)];
       const expectedString = testUsers
         .slice(0, commonThreshold)
         .map((u) => u.name)
@@ -100,9 +98,9 @@ describe("UserListComponent", () => {
   });
 
   it("knows how many remaining users exist if more users than the threshold are given", () => {
-    component.inputType = "entity";
+    component.maxUserThreshold = commonThreshold;
     [3, 4].forEach((userCount) => {
-      component._users = testUsers.slice(0, userCount);
+      component._users = [...testUsers.slice(0, userCount)];
       expect(component.additionalUsers).toBe(userCount - commonThreshold);
     });
   });

@@ -193,7 +193,7 @@ describe("Note", () => {
     note.addChild("4");
     note.addChild("5");
     note.addChild("6");
-    note.author = "A";
+    note.authors = ["A"];
     const otherNote = note.copy();
     expect(otherNote).toEqual(note);
     expect(otherNote).toBeInstanceOf(Note);

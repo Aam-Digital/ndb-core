@@ -198,15 +198,15 @@ describe("NotesManagerComponent", () => {
 
   it("will contain the updated note when updated", async () => {
     let note = new Note("n1");
-    note.author = "A";
+    note.authors = ["A"];
     const entityMapper = fixture.debugElement.injector.get(EntityMapperService);
     await entityMapper.save(note);
     note = await entityMapper.load<Note>(Note, note.getId());
-    expect(component.notes.length).toBe(1);
-    expect(component.notes[0].author).toBe("A");
-    note.author = "B";
+    expect(component.notes).toHaveSize(1);
+    expect(component.notes[0].authors).toEqual(["A"]);
+    note.authors = ["B"];
     await entityMapper.save(note);
-    expect(component.notes.length).toBe(1);
-    expect(component.notes[0].author).toBe("B");
+    expect(component.notes).toHaveSize(1);
+    expect(component.notes[0].authors).toEqual(["B"]);
   });
 });
