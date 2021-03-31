@@ -14,11 +14,7 @@
     </mat-card-title>
     <mat-card-subtitle
       i18n="Subtitle|Subtitle informing the user that these are the children without recent reports"
-      [matTooltip]="
-        'includes children without a note ' +
-        (fromBeginningOfWeek ? 'since beginning of week ' : '') +
-        (sinceDays > 0 ? 'within the last ' + sinceDays + ' days' : '')
-      "
+      [matTooltip]="tootltip()"
     >
       Children
       <span class="subtitle-highlight">without</span>

@@ -1,14 +1,14 @@
 <table mat-table [dataSource]="dataSource" class="user-table mat-elevation-z1">
   <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef>ID</th>
+    <th mat-header-cell *matHeaderCellDef i18n="User-ID">ID</th>
     <td mat-cell *matCellDef="let user">{{ user.getId() }}</td>
   </ng-container>
   <ng-container matColumnDef="name">
-    <th mat-header-cell *matHeaderCellDef>Username</th>
+    <th mat-header-cell *matHeaderCellDef i18n>Username</th>
     <td mat-cell *matCellDef="let user">{{ user.name }}</td>
   </ng-container>
   <ng-container matColumnDef="admin">
-    <th mat-header-cell *matHeaderCellDef>Admin</th>
+    <th mat-header-cell *matHeaderCellDef i18n>Admin</th>
     <td mat-cell *matCellDef="let user">
       <mat-checkbox
         [checked]="user.isAdmin()"
@@ -17,7 +17,7 @@
     </td>
   </ng-container>
   <ng-container matColumnDef="details">
-    <th mat-header-cell *matHeaderCellDef>Details</th>
+    <th mat-header-cell *matHeaderCellDef i18n="Details of a certain User">Details</th>
     <td mat-cell *matCellDef="let user">
       <mat-icon
         fontIcon="fa-info-circle"

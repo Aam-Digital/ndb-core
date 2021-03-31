@@ -950,7 +950,7 @@
       </trans-unit>
       <trans-unit id="87d7cbef04d50a41c0d89df9344e402812bed6ff" datatype="html">
         <source>Empty Database</source>
-        <target>Leere Database</target>
+        <target>Leere Datenbank</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
           <context context-type="linenumber">83,90</context>
@@ -965,6 +965,15 @@
           <context context-type="linenumber">88,91</context>
         </context-group>
         <note priority="1" from="description">Alert log header</note>
+      </trans-unit>
+      <trans-unit id="45cc8ca94b5a50842a9a8ef804a5ab089a38ae5c" datatype="html">
+        <source>ID</source>
+        <target state="new">ID</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/user-list/user-list.component.html</context>
+          <context context-type="linenumber">3,5</context>
+        </context-group>
+        <note priority="1" from="description">User-ID</note>
       </trans-unit>
       <trans-unit id="966753073810376145" datatype="html">
         <source>Could not load file '<x id="PH" equiv-text="jsonFileLocation"/>': <x id="PH_1" equiv-text="JSON.stringify(
@@ -2943,7 +2952,7 @@
       </trans-unit>
       <trans-unit id="ceffc3ad47965a99cc8ce6be09289f1e1a0e6ce6" datatype="html">
         <source> Edit </source>
-        <target state="new"> Edit </target>
+        <target> Bearbeiten </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-participants-section/activity-participants-section.component.html</context>
           <context context-type="linenumber">44,47</context>
@@ -3133,6 +3142,10 @@
         <source>Username</source>
         <target>Benutzername</target>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/user-list/user-list.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
           <context context-type="linenumber">32</context>
         </context-group>
@@ -3140,7 +3153,23 @@
           <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <note priority="1" from="description">Username placeholder</note>
+      </trans-unit>
+      <trans-unit id="408cb6073e60c5d966296a3207fc596adca75e01" datatype="html">
+        <source>Admin</source>
+        <target state="translated">Admin</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/user-list/user-list.component.html</context>
+          <context context-type="linenumber">11,13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4f8b2bb476981727ab34ed40fde1218361f92c45" datatype="html">
+        <source>Details</source>
+        <target state="translated"> Details </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/user-list/user-list.component.html</context>
+          <context context-type="linenumber">20,23</context>
+        </context-group>
+        <note priority="1" from="description">Details of a certain User</note>
       </trans-unit>
       <trans-unit id="c32ef07f8803a223a83ed17024b38e8d82292407" datatype="html">
         <source>Password</source>
@@ -3163,6 +3192,34 @@
           <context context-type="linenumber">68,69</context>
         </context-group>
         <note priority="1" from="description">Login button</note>
+      </trans-unit>
+      <trans-unit id="3076055175431319498" datatype="html">
+        <source>Can't login for the first time when offline. Please try again later.</source>
+        <target>Offline-einloggen ist das erste mal nicht möglich. Bitte später nochmal probieren.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/login/login.component.ts</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5415755772908645343" datatype="html">
+        <source>Username or password incorrect!
+               You might also face this problem because you are currently offline.
+               Please connect to the internet to synchronize the latest user data.</source>
+        <target>Benutzername oder Passwort inkorrekt!
+               Das Problem kann auch auftreten, weil Sie online sind
+               Bitte verbinden Sie sich mit dem Internet, um die neusten Nutzerdaten zu synchronisieren.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/login/login.component.ts</context>
+          <context context-type="linenumber">78,80</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6066047409381381026" datatype="html">
+        <source>Username or password incorrect!</source>
+        <target>Benutzername oder Passwort falsch!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/login/login.component.ts</context>
+          <context context-type="linenumber">83</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="5186434425571914423" datatype="html">
         <source>Your password was changed recently. Please retry with your new password!</source>
@@ -3448,7 +3505,7 @@
         <source>0 in <x id="PH" equiv-text="length"/></source>
         <target>0 von <x id="PH" equiv-text="length"/></target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/utils/TranslatableMatPaginatorIntl.ts</context>
+          <context context-type="sourcefile">src/app/utils/TranslatableMatPaginator.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
       </trans-unit>
@@ -3456,7 +3513,7 @@
         <source><x id="PH" equiv-text="startIndex + 1"/> - <x id="PH_1" equiv-text="endIndex"/> of <x id="PH_2" equiv-text="length"/></source>
         <target><x id="PH" equiv-text="startIndex + 1"/> - <x id="PH_1" equiv-text="endIndex"/> von <x id="PH_2" equiv-text="length"/></target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/utils/TranslatableMatPaginatorIntl.ts</context>
+          <context context-type="sourcefile">src/app/utils/TranslatableMatPaginator.ts</context>
           <context context-type="linenumber">18,20</context>
         </context-group>
       </trans-unit>
@@ -3464,7 +3521,7 @@
         <source>Items per page</source>
         <target>Einträge pro Seite</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/utils/TranslatableMatPaginatorIntl.ts</context>
+          <context context-type="sourcefile">src/app/utils/TranslatableMatPaginator.ts</context>
           <context context-type="linenumber">26</context>
         </context-group>
       </trans-unit>
@@ -3472,7 +3529,7 @@
         <source>Next page</source>
         <target>Nächste Seite</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/utils/TranslatableMatPaginatorIntl.ts</context>
+          <context context-type="sourcefile">src/app/utils/TranslatableMatPaginator.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
       </trans-unit>
@@ -3480,8 +3537,24 @@
         <source>Prev page</source>
         <target>Vorherige Seite</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/utils/TranslatableMatPaginatorIntl.ts</context>
+          <context context-type="sourcefile">src/app/utils/TranslatableMatPaginator.ts</context>
           <context context-type="linenumber">28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="paginator.firstPage" datatype="html">
+        <source>First page</source>
+        <target>Erste Seite</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/utils/TranslatableMatPaginator.ts</context>
+          <context context-type="linenumber">29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="paginator.lastPage" datatype="html">
+        <source>Last page</source>
+        <target>Letzte Seite</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/utils/TranslatableMatPaginator.ts</context>
+          <context context-type="linenumber">30</context>
         </context-group>
       </trans-unit>
     </body>

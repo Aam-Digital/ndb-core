@@ -20,12 +20,14 @@ const matRangeLabelIntl = (page: number, pageSize: number, length: number) => {
   } - ${endIndex} of ${length}`;
 };
 
-export function TranslatableMatPaginatorIntl() {
+export function TranslatableMatPaginator() {
   const paginatorIntl = new MatPaginatorIntl();
 
   paginatorIntl.itemsPerPageLabel = $localize`:@@paginator.displayPerPage:Items per page`;
   paginatorIntl.nextPageLabel = $localize`:@@paginator.nextPage:Next page`;
   paginatorIntl.previousPageLabel = $localize`:@@paginator.prevPage:Prev page`;
+  paginatorIntl.firstPageLabel = $localize`:@@paginator.firstPage:First page`;
+  paginatorIntl.lastPageLabel = $localize`:@@paginator.lastPage:Last page`;
   paginatorIntl.getRangeLabel = matRangeLabelIntl;
 
   return paginatorIntl;

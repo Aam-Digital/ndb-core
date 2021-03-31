@@ -71,7 +71,7 @@ import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-en
 import { ConfigModule } from "./core/config/config.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
 import { MatPaginatorIntl } from "@angular/material/paginator";
-import { TranslatableMatPaginatorIntl } from "./utils/TranslatableMatPaginatorIntl";
+import { TranslatableMatPaginator } from "./utils/TranslatableMatPaginator";
 
 /**
  * Main entry point of the application.
@@ -142,7 +142,7 @@ import { TranslatableMatPaginatorIntl } from "./utils/TranslatableMatPaginatorIn
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
-    { provide: MatPaginatorIntl, useValue: TranslatableMatPaginatorIntl() },
+    { provide: MatPaginatorIntl, useValue: TranslatableMatPaginator() },
     AnalyticsService,
     Angulartics2Piwik,
   ],

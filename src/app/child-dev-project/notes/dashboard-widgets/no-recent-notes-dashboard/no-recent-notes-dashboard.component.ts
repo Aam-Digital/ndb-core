@@ -85,6 +85,14 @@ export class NoRecentNotesDashboardComponent
 
     this.isLoading = false;
   }
+
+  tootltip(): string {
+    return $localize`includes children without a note ${
+      this.fromBeginningOfWeek ? "since beginning of week " : ""
+    } ${
+      this.sinceDays > 0 ? "within the last " + this.sinceDays + "days" : ""
+    }`;
+  }
 }
 
 /**
