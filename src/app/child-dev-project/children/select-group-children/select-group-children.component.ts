@@ -22,13 +22,13 @@ export class SelectGroupChildrenComponent implements OnInit {
 
   children: Child[];
 
-  centerFilters = new FilterSelection<Child>("Centers", []);
+  centerFilters = new FilterSelection<Child>($localize`Center`, []);
   private selectedCenterFilter: FilterSelectionOption<Child>;
 
-  schoolFilters = new FilterSelection<Child>("Schools", []);
+  schoolFilters = new FilterSelection<Child>($localize`Schools`, []);
   private selectedSchoolFilter: FilterSelectionOption<Child>;
 
-  classFilters = new FilterSelection<Child>("Classes", []);
+  classFilters = new FilterSelection<Child>($localize`Classes`, []);
   private selectedClassFilter: FilterSelectionOption<Child>;
 
   constructor(private childrenService: ChildrenService) {}
@@ -92,7 +92,7 @@ export class SelectGroupChildrenComponent implements OnInit {
   private getAllStudentsFilterOption(): FilterSelectionOption<Child> {
     return {
       key: "all",
-      label: "All Students",
+      label: $localize`All Students`,
       filterFun: () => true,
     };
   }

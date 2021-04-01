@@ -26,7 +26,7 @@
     <div fxFlex="grow">
       <h3>{{ entity?.name }}</h3>
       <p><span class="fa fa-phone"></span> {{ entity?.phone }}</p>
-      <p>
+      <p i18n="The school and class an entity is part of|format: '<school>, class <class>'">
         <app-school-block [entityId]="entity?.schoolId"></app-school-block>,
         class {{ entity?.schoolClass }}
       </p>

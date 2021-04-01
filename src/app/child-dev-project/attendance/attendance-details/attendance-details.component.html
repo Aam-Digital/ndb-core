@@ -26,15 +26,10 @@
       <div
         class="summary"
         i18n="Attendance|Attendance of a child (in percent) or the average of the event (in percent)">
-        Attendance:
-        {{
-          focusedChild
-            ? entity?.getAttendancePercentage(focusedChild)
-            : (entity?.getAttendancePercentageAverage() | percent: "1.0-0")
-        }}
+        Attendance: {{attendance}}
       </div>
     </div>
-    
+
     <!-- TODO: plural -->
     <div fxLayout="row wrap" fxLayoutGap="20px">
       <div fxFlex>

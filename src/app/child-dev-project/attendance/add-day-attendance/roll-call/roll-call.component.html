@@ -48,9 +48,9 @@
   </button>
 
   <button
-    i18n="Finish-button|Finish when the user has completed selecting all attendances task, else Abort"
     mat-stroked-button (click)="exit.emit()"
     class="nav-button" fxFlex>
-    {{ isFinished() ? "Finish" : "Abort" }}
+    <span *ngIf="isFinished()" i18n="Finish entering the attendance of a child">Finish</span>
+    <span *ngIf="!isFinished()" i18n="Abort entering the attendance of a child">Abort</span>
   </button>
 </div>

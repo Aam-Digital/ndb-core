@@ -14,7 +14,7 @@
     </mat-card-title>
     <mat-card-subtitle
       i18n="Subtitle|Subtitle informing the user that these are the children without recent reports"
-      [matTooltip]="tootltip()"
+      [matTooltip]="tootltip"
     >
       Children
       <span class="subtitle-highlight">without</span>
@@ -30,7 +30,7 @@
         width="100%"
       >
         <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header i18n="Name of a child">Name</th>
           <td mat-cell *matCellDef="let childNoteInfo">
             <app-child-block
               [entityId]="childNoteInfo.childId"

@@ -67,7 +67,7 @@ export class PreviousTeamsComponent
     this.columns = [
       {
         name: "schoolId",
-        label: "Team",
+        label: $localize`:School-team:Team`,
         inputType: ColumnDescriptionInputType.SELECT,
         selectValues: teams.map((t) => {
           return { value: t.getId(), label: t.name };
@@ -77,12 +77,12 @@ export class PreviousTeamsComponent
       },
       {
         name: "start",
-        label: "From",
+        label: $localize`:Date from:From`,
         inputType: ColumnDescriptionInputType.DATE,
       },
       {
         name: "end",
-        label: "To",
+        label: $localize`:Date to:To`,
         inputType: ColumnDescriptionInputType.DATE,
       },
     ];
@@ -112,11 +112,9 @@ export class PreviousTeamsComponent
       validationMessage: "",
     };
     if (!record.schoolId) {
-      validationResult.validationMessage =
-        '"Name" is empty. Please select a team.';
+      validationResult.validationMessage = $localize`"Name" is empty. Please select a team.`;
     } else if (moment(record.start).isAfter(record.end, "days")) {
-      validationResult.validationMessage =
-        '"To"-date lies before "From"-date. Please enter correct dates.';
+      validationResult.validationMessage = $localize`"To"-date lies before "From"-date. Please enter correct dates.`;
     } else {
       validationResult.hasPassedValidation = true;
     }

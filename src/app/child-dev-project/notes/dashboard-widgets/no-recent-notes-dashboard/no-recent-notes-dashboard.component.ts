@@ -86,12 +86,17 @@ export class NoRecentNotesDashboardComponent
     this.isLoading = false;
   }
 
-  tootltip(): string {
-    return $localize`includes children without a note ${
-      this.fromBeginningOfWeek ? "since beginning of week " : ""
-    } ${
-      this.sinceDays > 0 ? "within the last " + this.sinceDays + "days" : ""
-    }`;
+  get tootltip(): string {
+    // unfortunately the only way this works w/ localization
+    if (this.fromBeginningOfWeek && this.sinceDays > 0) {
+      return $localize`includes children without a note since the beginning of the week within the last ${this.sinceDays} days`;
+    } else if (this.fromBeginningOfWeek && !(this.sinceDays > 0)) {
+      return $localize`includes children without a note since the beginning of the week`;
+    } else if (!this.fromBeginningOfWeek && this.sinceDays > 0) {
+      return $localize`includes children without a note within the last ${this.sinceDays} days`;
+    } else {
+      return $localize`includes children without a note`;
+    }
   }
 }
 

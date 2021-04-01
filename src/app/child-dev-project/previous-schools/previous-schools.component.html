@@ -4,8 +4,8 @@
   <em
     i18n-matTooltip
     matTooltip="To change the currently attending {{schoolNaming}}, please add a new entry to the history below"
-    i18n="The class and school a child is currently attending|Possibly including the school-class">
-    Currently attending {{current.schoolClass}} {{ current.schoolClass ? ' at ' : ''}}
+    i18n="The class and school a child is currently attending|Context 'currently attending class at school'">
+    Currently attending class {{current.schoolClass}} {!!current.schoolClass, select, true {at} false {}}
     <app-school-block [entity]="schoolMap.get(current.schoolId)"></app-school-block>
   </em>
 </div>

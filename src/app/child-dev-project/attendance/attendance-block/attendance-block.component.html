@@ -27,12 +27,7 @@
       class="attendance-tooltip-content"
       i18n="Attended Tooltip|How many attendees were present / how many attendees were absent"
     >
-      attended {{ logicalCount[LStatus.PRESENT] || 0 }} /
-      {{
-        (logicalCount[LStatus.PRESENT] || 0) +
-          (logicalCount[LStatus.ABSENT] || 0)
-      }}
-      events
+      attended {{attendanceDescription}} events
     </div>
 
     <div
