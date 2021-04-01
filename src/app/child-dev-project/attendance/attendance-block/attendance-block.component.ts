@@ -30,7 +30,7 @@ export class AttendanceBlockComponent implements OnChanges {
     if (this.tooltipTimeout) {
       clearTimeout(this.tooltipTimeout);
     }
-    this.tooltipTimeout = setTimeout(() => (this.tooltip = true), 400);
+    this.tooltipTimeout = setTimeout(() => (this.tooltip = true), 1000);
   }
   hideTooltip() {
     if (this.tooltipTimeout) {

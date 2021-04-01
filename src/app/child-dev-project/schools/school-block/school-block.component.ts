@@ -66,7 +66,7 @@ export class SchoolBlockComponent
     if (this.tooltipTimeout) {
       clearTimeout(this.tooltipTimeout);
     }
-    this.tooltipTimeout = setTimeout(() => (this.tooltip = true), 200);
+    this.tooltipTimeout = setTimeout(() => (this.tooltip = true), 1000);
   }
   hideTooltip() {
     if (this.tooltipTimeout) {
