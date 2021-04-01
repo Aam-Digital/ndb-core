@@ -43,14 +43,15 @@
     >
       {{ selectedEventStats.average | percent: "1.0-0" }} attended (of
       {{ selectedEvent.children.length }}
-      { selectedEvent.children.length, plural, 1={participant} other {participants} })
+      { selectedEvent.children.length, plural, one {participant} other {participants} })
     </div>
     <div
       *ngIf="selectedEventStats.unknownStatus > 0"
       i18n="Unknown status|How many children are without a status"
       class="unknown-status-notice"
     >
-      {{ selectedEventStats.unknownStatus }} { selectedEventStats.unknownStatus, plural, 1={participant} other {participants} } without recorded
+      {{ selectedEventStats.unknownStatus }}
+      { selectedEventStats.unknownStatus, plural, one {participant} other {participants} } without recorded
       status
     </div>
     <button

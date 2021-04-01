@@ -22,22 +22,22 @@ export class ChildrenOverviewComponent
   columns: ColumnDescription[] = [
     {
       name: "projectNumber",
-      label: "PN",
+      label: $localize`:Project number of a child:PN`,
       inputType: ColumnDescriptionInputType.TEXT,
     },
     {
       name: "name",
-      label: "Name",
+      label: $localize`Name`,
       inputType: ColumnDescriptionInputType.TEXT,
     },
     {
       name: "schoolClass",
-      label: "Class",
+      label: $localize`:The school-class of a child:Class`,
       inputType: ColumnDescriptionInputType.TEXT,
     },
     {
       name: "age",
-      label: "Age",
+      label: $localize`:The age of a child:Age`,
       inputType: ColumnDescriptionInputType.TEXT,
     },
   ];

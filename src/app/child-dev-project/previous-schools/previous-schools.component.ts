@@ -59,11 +59,23 @@ export class PreviousSchoolsComponent
   public config: PreviousRelationsConfig = {
     single: true,
     columns: [
-      { id: "schoolId", label: "School", input: "school" },
-      { id: "schoolClass", label: "Class", input: "text" },
-      { id: "start", label: "From", input: "date" },
-      { id: "end", label: "To", input: "date" },
-      { id: "result", label: "Result", input: "percentageResult" },
+      {
+        id: "schoolId",
+        label: $localize`:The school of a child:School`,
+        input: "school",
+      },
+      {
+        id: "schoolClass",
+        label: $localize`:A school-class:Class`,
+        input: "text",
+      },
+      { id: "start", label: $localize`:Date from:From`, input: "date" },
+      { id: "end", label: $localize`:Date to:To`, input: "date" },
+      {
+        id: "result",
+        label: $localize`:How good a student performed at a school:Result`,
+        input: "percentageResult",
+      },
     ],
   };
 
@@ -171,17 +183,14 @@ export class PreviousSchoolsComponent
       validationMessage: "",
     };
     if (!record.schoolId) {
-      validationResult.validationMessage =
-        $localize`Please select a ${this.schoolNaming}`;
+      validationResult.validationMessage = $localize`:Please select a school:Please select a ${this.schoolNaming}`;
     } else if (moment(record.start).isAfter(record.end, "days")) {
-      validationResult.validationMessage =
-        $localize`"To"-date lies before "From"-date. Please enter correct dates.`;
+      validationResult.validationMessage = $localize`"To"-date lies before "From"-date. Please enter correct dates.`;
     } else if (
       this.config.columns.some((col) => col.input === "percentageResult") &&
       (record.result > 100 || record.result < 0)
     ) {
-      validationResult.validationMessage =
-        $localize`Result cannot be smaller than 0 or greater than 100 (percent)`;
+      validationResult.validationMessage = $localize`Result cannot be smaller than 0 or greater than 100 (percent)`;
     } else {
       validationResult.hasPassedValidation = true;
     }

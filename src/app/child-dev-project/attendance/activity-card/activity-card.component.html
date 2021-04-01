@@ -21,11 +21,14 @@
     </mat-icon>
     {{ event?.subject }}
   </mat-card-title>
-  <mat-card-content
-    i18n="Participants|Amount of participants of an event">
-    {{ event.children.length }} { event.children.length, plural, =1 {participant} other {participants} }
-    <span *ngIf="!recurring">({{ event.date | date: "shortDate" }})</span>
-    ;
-    {{ event.category?.label }}
+  <mat-card-content>
+    {{ event.children.length }}
+    <span i18n="Participants|Amount of participants of an event">
+      { event.children.length, plural, one {participant} other {participants} }
+    </span>
+    <span *ngIf="!recurring">
+      ({{ event.date | date: "shortDate" }})
+    </span>
+    ; {{ event.category?.label }}
   </mat-card-content>
 </mat-card>
