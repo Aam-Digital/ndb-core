@@ -49,7 +49,7 @@ RUN if [ "$UPLOAD_COVERAGE" = true ] ; then ./cc-test-reporter after-build --deb
 
 ### PROD image
 
-FROM nginx:1.19.4-alpine
+FROM nginx:1.19.9-alpine
 COPY ./build/default.conf /etc/nginx/templates/default.conf
 COPY --from=builder /app/dist/ /usr/share/nginx/html
 ENV PORT=80
