@@ -19,7 +19,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: doc/compodoc
           destination_dir: documentation
-          force_orhpan: true
+          force_orphan: true
   run-tests:
     runs-on: ubuntu-latest
     steps:
