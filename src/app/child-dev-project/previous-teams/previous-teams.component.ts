@@ -17,6 +17,9 @@ import { ColumnDescriptionInputType } from "../../core/entity-components/entity-
 import { ColumnDescription } from "../../core/entity-components/entity-subrecord/column-description";
 import { PanelConfig } from "../../core/entity-components/entity-details/EntityDetailsConfig";
 
+/**
+ * @deprecated Use PreviousSchoolsComponent with its configuration options instead
+ */
 @Component({
   selector: "app-previous-schools",
   templateUrl: "./previous-teams.component.html",
