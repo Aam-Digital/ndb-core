@@ -97,7 +97,7 @@ export class EntitySchemaService {
     for (const key of schema.keys()) {
       const schemaField: EntitySchemaField = schema.get(key);
 
-      if (data[key] === undefined) {
+      if (data[key] === undefined || data[key] === null) {
         if (schemaField.defaultValue !== undefined) {
           data[key] = schemaField.defaultValue;
         } else {
@@ -153,7 +153,7 @@ export class EntitySchemaService {
       let value = entity[key];
       const schemaField: EntitySchemaField = schema.get(key);
 
-      if (value === undefined) {
+      if (value === undefined || value === null) {
         if (schemaField.defaultValue !== undefined) {
           value = schemaField.defaultValue;
         } else {

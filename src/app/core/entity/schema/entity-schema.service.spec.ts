@@ -190,4 +190,31 @@ describe("EntitySchemaService", () => {
     expect(rawData.details.month).toEqual("2020-01");
     expect(rawData.details.otherStuff).toBeUndefined();
   });
+
+  it("should not transform null values", () => {
+    class Test extends Entity {
+      @DatabaseField({ dataType: "date-only" }) normalDate: Date;
+      @DatabaseField({ dataType: "date-only" }) nullDate: Date;
+    }
+    const testObject = new Test();
+    testObject.normalDate = new Date();
+    testObject.nullDate = null;
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(
+      testObject
+    );
+    expect(rawData.normalDate).toBeDefined();
+    expect(rawData.nullDate).toBeUndefined();
+  });
+
+  it("should not load null values", () => {
+    class Test extends Entity {
+      @DatabaseField({ dataType: "date-only" }) normalDate: Date;
+      @DatabaseField({ dataType: "date-only" }) nullDate: Date;
+    }
+    const rawData = { normalDate: "2021-05-04", nullDate: null };
+    const testEntity = new Test();
+    entitySchemaService.loadDataIntoEntity(testEntity, rawData);
+    expect(testEntity.normalDate).toBeDefined();
+    expect(testEntity.nullDate).toBeNull();
+  });
 });
