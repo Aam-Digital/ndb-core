@@ -298,4 +298,19 @@ describe("AttendanceService", () => {
     expect(event.children).toContain(duplicateChild.getId());
     expect(event.children).toContain(anotherRelation.childId);
   });
+
+  it("should load the events which took place today for datepicker date format", async () => {
+    const datePickerDate = new Date(
+      "Mon Apr 05 2021 00:00:00 GMT+0200 (Central European Summer Time)"
+    );
+    const sameDayEvent = EventNote.create(
+      new Date("2021-04-05"),
+      "Same Day Event"
+    );
+    sameDayEvent.category = defaultInteractionTypes.find((it) => it.isMeeting);
+    await entityMapper.save(sameDayEvent);
+    const events = await service.getEventsOnDate(datePickerDate);
+    expect(events).toHaveSize(1);
+    expect(events[0].subject).toBe(sameDayEvent.subject);
+  });
 });
