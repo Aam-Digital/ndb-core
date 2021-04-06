@@ -33,6 +33,11 @@ export class MockDatabase extends PouchDatabase {
     return instance;
   }
 
+  static createWithPouchDB() {
+    PouchDB.plugin(memory);
+    return new MockDatabase(new PouchDB("unit-test", { adapter: "memory" }));
+  }
+
   private data = [];
 
   /**

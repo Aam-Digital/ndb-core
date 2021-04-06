@@ -16,17 +16,12 @@
  */
 
 import { MockDatabase } from "./mock-database";
-import PouchDB from "pouchdb-core";
-import memory from "pouchdb-adapter-memory";
-PouchDB.plugin(memory);
 
 describe("MockDatabase tests", () => {
   let database: MockDatabase;
 
   beforeEach(() => {
-    database = new MockDatabase(
-      new PouchDB("unit-test", { adapter: "memory" })
-    );
+    database = MockDatabase.createWithPouchDB();
   });
 
   afterEach((done) => {
