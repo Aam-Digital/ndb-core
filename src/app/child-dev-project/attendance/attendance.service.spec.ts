@@ -299,7 +299,7 @@ describe("AttendanceService", () => {
     expect(event.children).toContain(anotherRelation.childId);
   });
 
-  it("should load the events which took place today for datepicker date format", async () => {
+  it("should load the events which took place on a date with datepicker format", async () => {
     const datePickerDate = new Date(
       "Mon Apr 05 2021 00:00:00 GMT+0200 (Central European Summer Time)"
     );
