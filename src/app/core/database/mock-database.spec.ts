@@ -16,12 +16,27 @@
  */
 
 import { MockDatabase } from "./mock-database";
+import PouchDB from "pouchdb-core";
+import memory from "pouchdb-adapter-memory";
+import { PouchDatabase } from "./pouch-database";
+import { LoggingService } from "../logging/logging.service";
+PouchDB.plugin(memory);
 
 describe("MockDatabase tests", () => {
-  let database: MockDatabase;
+  let database: PouchDatabase;
 
   beforeEach(() => {
-    database = new MockDatabase();
+    database = new PouchDatabase(
+      new PouchDB("unit-test", { adapter: "memory" }),
+      new LoggingService()
+    );
+  });
+
+  afterEach((done) => {
+    // @ts-ignore
+    database._pouchDB.destroy().then(function () {
+      done();
+    });
   });
 
   it("get object by _id after put into database", async () => {
