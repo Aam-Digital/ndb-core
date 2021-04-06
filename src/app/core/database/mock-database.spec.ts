@@ -18,17 +18,14 @@
 import { MockDatabase } from "./mock-database";
 import PouchDB from "pouchdb-core";
 import memory from "pouchdb-adapter-memory";
-import { PouchDatabase } from "./pouch-database";
-import { LoggingService } from "../logging/logging.service";
 PouchDB.plugin(memory);
 
 describe("MockDatabase tests", () => {
-  let database: PouchDatabase;
+  let database: MockDatabase;
 
   beforeEach(() => {
-    database = new PouchDatabase(
-      new PouchDB("unit-test", { adapter: "memory" }),
-      new LoggingService()
+    database = new MockDatabase(
+      new PouchDB("unit-test", { adapter: "memory" })
     );
   });
 
