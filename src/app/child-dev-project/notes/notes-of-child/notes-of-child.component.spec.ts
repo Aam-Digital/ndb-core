@@ -6,9 +6,6 @@ import { ChildrenService } from "../../children/children.service";
 import { DatePipe } from "@angular/common";
 import { Note } from "../model/note";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { MockDatabase } from "../../../core/database/mock-database";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { Database } from "../../../core/database/database";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { Child } from "../../children/model/child";
 import { User } from "../../../core/user/user";
@@ -32,16 +29,13 @@ describe("NotesOfChildComponent", () => {
     mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
       "getNotesOfChild",
     ]);
-
     TestBed.configureTestingModule({
       imports: [NotesModule, MatNativeDateModule, RouterTestingModule],
       providers: [
         { provide: ChildrenService, useValue: mockChildrenService },
-        EntitySchemaService,
-        EntityMapperService,
         { provide: SessionService, useValue: mockedSessionService },
-        { provide: Database, useClass: MockDatabase },
         { provide: DatePipe, useValue: new DatePipe("medium") },
+        { provide: EntityMapperService, useValue: {} },
       ],
     }).compileComponents();
   });
