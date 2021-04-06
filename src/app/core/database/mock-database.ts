@@ -27,9 +27,9 @@ import { LoggingService } from "../logging/logging.service";
  * as similar as possible to the PouchDatabase.
  */
 export class MockDatabase extends PouchDatabase {
-  static createWithData(data: any[]) {
-    const instance = new MockDatabase();
-    instance.data = data;
+  static async createWithData(data: any[]) {
+    const instance = MockDatabase.createWithPouchDB();
+    await Promise.all(data.map((doc) => instance.put(doc)));
     return instance;
   }
 
@@ -38,12 +38,10 @@ export class MockDatabase extends PouchDatabase {
     return new MockDatabase(new PouchDB("unit-test", { adapter: "memory" }));
   }
 
-  private data = [];
-
   /**
    * Create an in-memory database manager.
    */
-  constructor(pouchDB?) {
+  constructor(public pouchDB?) {
     super(pouchDB, new LoggingService());
   }
 }

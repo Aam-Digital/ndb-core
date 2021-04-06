@@ -15,36 +15,19 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { PouchDatabase } from "./pouch-database";
-import PouchDB from "pouchdb-browser";
-import { LoggingService } from "../logging/logging.service";
+import { MockDatabase } from "./mock-database";
 
 describe("PouchDatabase tests", () => {
-  let pouchDatabase: PouchDatabase;
-  let pouch: any;
-  let originalTimeout;
+  let pouchDatabase: MockDatabase;
 
   beforeEach(() => {
-    const mockLoggingService: jasmine.SpyObj<LoggingService> = jasmine.createSpyObj(
-      "mockLoggingService",
-      ["warn", "debug"]
-    );
-    mockLoggingService.warn.and.callFake((m) => console.warn(m));
-    mockLoggingService.warn.and.callFake((m) => console.warn(m));
-
-    pouch = new PouchDB("unit-test-db");
-    pouchDatabase = new PouchDatabase(pouch, mockLoggingService);
-
-    originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;
+    pouchDatabase = MockDatabase.createWithPouchDB();
   });
 
   afterEach((done) => {
-    pouch.destroy().then(function () {
+    pouchDatabase.pouchDB.destroy().then(function () {
       done();
     });
-
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
   });
 
   it("get object by _id after put into database", function (done) {

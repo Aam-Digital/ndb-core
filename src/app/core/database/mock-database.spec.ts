@@ -25,8 +25,7 @@ describe("MockDatabase tests", () => {
   });
 
   afterEach((done) => {
-    // @ts-ignore
-    database._pouchDB.destroy().then(function () {
+    database.pouchDB.destroy().then(function () {
       done();
     });
   });
