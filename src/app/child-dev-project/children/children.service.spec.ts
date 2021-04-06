@@ -8,29 +8,24 @@ import { School } from "../schools/model/school";
 import { MockDatabase } from "../../core/database/mock-database";
 import { TestBed } from "@angular/core/testing";
 import moment from "moment";
-import { LoggingService } from "../../core/logging/logging.service";
 import { Database } from "../../core/database/database";
-import { PouchDatabase } from "../../core/database/pouch-database";
-import { deleteAllIndexedDB } from "../../utils/performance-tests.spec";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
-import PouchDB from "pouchdb-browser";
 
-describe("ChildrenService", () => {
+describe("ChildrenService with PouchDB", () => {
   let service: ChildrenService;
   let entityMapper: EntityMapperService;
 
-  beforeEach(() => {
+  beforeEach((done) => {
     TestBed.configureTestingModule({
       providers: [
+        ChildrenService,
         EntityMapperService,
         EntitySchemaService,
-        { provide: Database, useClass: MockDatabase },
-        ChildrenService,
+        { provide: Database, useValue: MockDatabase.createWithPouchDB() },
       ],
     });
 
-    entityMapper = TestBed.inject<EntityMapperService>(EntityMapperService);
-
+    entityMapper = TestBed.inject(EntityMapperService);
     generateChildEntities().forEach((c) => entityMapper.save(c));
     generateSchoolEntities().forEach((s) => entityMapper.save(s));
     generateChildSchoolRelationEntities().forEach((cs) =>
@@ -38,6 +33,25 @@ describe("ChildrenService", () => {
     );
 
     service = TestBed.inject<ChildrenService>(ChildrenService);
+
+    // wait for the relevant indices to complete building - otherwise this will clash with teardown in afterEach
+    const indexingService = TestBed.inject(DatabaseIndexingService);
+    indexingService.indicesRegistered.subscribe((x) => {
+      if (
+        x.find((e) => e.details === "childSchoolRelations_index")?.pending ===
+          false &&
+        x.find((e) => e.details === "avg_attendance_index")?.pending ===
+          false &&
+        x.find((e) => e.details === "notes_index")?.pending === false
+      ) {
+        done();
+      }
+    });
+  });
+
+  afterEach(async () => {
+    const mockDB = TestBed.inject(Database) as MockDatabase;
+    await mockDB.pouchDB.destroy();
   });
 
   it("should be created", () => {
@@ -77,75 +91,26 @@ describe("ChildrenService", () => {
 
   // TODO: test getAttendances
 
-  it("should find latest ChildSchoolRelation of a child", async (done: DoneFn) => {
+  it("should find latest ChildSchoolRelation of a child", async () => {
     const children = await service.getChildren().toPromise();
     const promises: Promise<any>[] = [];
     expect(children.length).toBeGreaterThan(0);
     children.forEach((child) =>
       promises.push(verifyLatestChildRelations(child, service))
     );
-    Promise.all(promises).then(() => done());
+    await Promise.all(promises);
   });
 
-  it("should return ChildSchoolRelations of child in correct order", (done: DoneFn) => {
-    service
-      .getChildren()
-      .toPromise()
-      .then((children) => {
-        const promises: Promise<any>[] = [];
-        expect(children.length).toBeGreaterThan(0);
-        children.forEach((child) =>
-          promises.push(verifyChildRelationsOrder(child, service))
-        );
-        Promise.all(promises).then(() => done());
-      });
-  });
-});
+  it("should return ChildSchoolRelations of child in correct order", async () => {
+    const children = await service.getChildren().toPromise();
+    expect(children.length).toBeGreaterThan(0);
 
-describe("ChildrenService with PouchDB", () => {
-  let service: ChildrenService;
-  let entityMapper: EntityMapperService;
-  let rawPouchDB;
-
-  beforeEach((done) => {
-    rawPouchDB = new PouchDB("unit-testing");
-    const testDB = new PouchDatabase(rawPouchDB, new LoggingService());
-    TestBed.configureTestingModule({
-      providers: [
-        ChildrenService,
-        EntityMapperService,
-        EntitySchemaService,
-        { provide: Database, useValue: testDB },
-      ],
-    });
-
-    entityMapper = TestBed.inject(EntityMapperService);
-    generateChildEntities().forEach((c) => entityMapper.save(c));
-    generateSchoolEntities().forEach((s) => entityMapper.save(s));
-    generateChildSchoolRelationEntities().forEach((cs) =>
-      entityMapper.save(cs)
+    const promises: Promise<any>[] = [];
+    children.forEach((child) =>
+      promises.push(verifyChildRelationsOrder(child, service))
     );
 
-    service = TestBed.inject<ChildrenService>(ChildrenService);
-
-    // wait for the relevant indices to complete building - otherwise this will clash with teardown in afterEach
-    const indexingService = TestBed.inject(DatabaseIndexingService);
-    indexingService.indicesRegistered.subscribe((x) => {
-      if (
-        x.find((e) => e.details === "childSchoolRelations_index")?.pending ===
-          false &&
-        x.find((e) => e.details === "avg_attendance_index")?.pending ===
-          false &&
-        x.find((e) => e.details === "notes_index")?.pending === false
-      ) {
-        done();
-      }
-    });
-  });
-
-  afterEach(async () => {
-    await rawPouchDB.close();
-    await deleteAllIndexedDB(() => true);
+    await Promise.all(promises);
   });
 
   it("should set school class and id", async () => {

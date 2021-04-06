@@ -17,6 +17,7 @@
 
 import PouchDB from "pouchdb-core";
 import memory from "pouchdb-adapter-memory";
+import mapreduce from "pouchdb-mapreduce";
 import { PouchDatabase } from "./pouch-database";
 import { LoggingService } from "../logging/logging.service";
 
@@ -34,7 +35,7 @@ export class MockDatabase extends PouchDatabase {
   }
 
   static createWithPouchDB() {
-    PouchDB.plugin(memory);
+    PouchDB.plugin(memory).plugin(mapreduce);
     return new MockDatabase(new PouchDB("unit-test", { adapter: "memory" }));
   }
 
