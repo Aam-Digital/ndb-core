@@ -7,14 +7,12 @@ import {
   tick,
 } from "@angular/core/testing";
 import { NotesModule } from "../notes.module";
-import { Database } from "../../../core/database/database";
-import { MockDatabase } from "../../../core/database/mock-database";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { RouterTestingModule } from "@angular/router/testing";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { of } from "rxjs";
+import { of, Subject } from "rxjs";
 import { User } from "../../../core/user/user";
 import { Note } from "../model/note";
 import { WarningLevel, WarningLevelColor } from "../../warning-level";
@@ -28,10 +26,16 @@ import { InteractionType } from "../model/interaction-type.interface";
 import { ConfigService } from "../../../core/config/config.service";
 import { By } from "@angular/platform-browser";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
+import { BackupService } from "../../../core/admin/services/backup.service";
+import { UpdatedEntity } from "../../../core/entity/entity-update";
 
 describe("NotesManagerComponent", () => {
   let component: NotesManagerComponent;
   let fixture: ComponentFixture<NotesManagerComponent>;
+
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockBackupService: jasmine.SpyObj<BackupService>;
+  let mockUpdateObservable: Subject<UpdatedEntity<Note>>;
   const dialogMock: jasmine.SpyObj<FormDialogService> = jasmine.createSpyObj(
     "dialogMock",
     ["openDialog"]
@@ -93,6 +97,15 @@ describe("NotesManagerComponent", () => {
     ]);
     mockConfigService.getConfig.and.returnValue(testInteractionTypes);
 
+    mockEntityMapper = jasmine.createSpyObj([
+      "loadType",
+      "receiveUpdates",
+      "save",
+    ]);
+    mockEntityMapper.loadType.and.resolveTo([]);
+    mockUpdateObservable = new Subject<UpdatedEntity<Note>>();
+    mockEntityMapper.receiveUpdates.and.returnValue(mockUpdateObservable);
+
     const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
     mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
     TestBed.configureTestingModule({
@@ -100,10 +113,11 @@ describe("NotesManagerComponent", () => {
       imports: [NotesModule, RouterTestingModule, Angulartics2Module.forRoot()],
       providers: [
         { provide: SessionService, useValue: mockSessionService },
-        { provide: Database, useClass: MockDatabase },
+        { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: FormDialogService, useValue: dialogMock },
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: ConfigService, useValue: mockConfigService },
+        { provide: BackupService, useValue: mockBackupService },
       ],
     }).compileComponents();
   });
@@ -137,10 +151,7 @@ describe("NotesManagerComponent", () => {
     note3.category = { id: "TEST", label: "test", color: "CategoryColor" };
     const note4 = new Note("n4");
     note4.warningLevel = WarningLevel.WARNING;
-    const entityMapper = fixture.debugElement.injector.get(EntityMapperService);
-    spyOn(entityMapper, "loadType").and.returnValue(
-      Promise.resolve([note1, note2, note3, note4])
-    );
+    mockEntityMapper.loadType.and.resolveTo([note1, note2, note3, note4]);
     component.ngOnInit();
     tick();
     expect(component.notes.length).toEqual(4);
@@ -190,22 +201,19 @@ describe("NotesManagerComponent", () => {
 
   it("will contain a new note when saved by an external component", () => {
     const newNote = new Note("new");
-    const entityMapper = fixture.debugElement.injector.get(EntityMapperService);
     const oldLength = component.notes.length;
-    entityMapper.save(newNote);
+    mockUpdateObservable.next({ entity: newNote, type: "new" });
     expect(component.notes.length).toBe(oldLength + 1);
   });
 
   it("will contain the updated note when updated", async () => {
     let note = new Note("n1");
     note.author = "A";
-    const entityMapper = fixture.debugElement.injector.get(EntityMapperService);
-    await entityMapper.save(note);
-    note = await entityMapper.load<Note>(Note, note.getId());
+    mockUpdateObservable.next({ entity: note, type: "new" });
     expect(component.notes.length).toBe(1);
     expect(component.notes[0].author).toBe("A");
     note.author = "B";
-    await entityMapper.save(note);
+    mockUpdateObservable.next({ entity: note, type: "update" });
     expect(component.notes.length).toBe(1);
     expect(component.notes[0].author).toBe("B");
   });
