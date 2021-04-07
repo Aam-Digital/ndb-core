@@ -13,13 +13,17 @@ import { SimpleChange } from "@angular/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatNativeDateModule } from "@angular/material/core";
 import { DatePipe, PercentPipe } from "@angular/common";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
   let fixture: ComponentFixture<EntitySubrecordComponent<Entity>>;
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
   beforeEach(
     waitForAsync(() => {
+      mockEntityMapper = jasmine.createSpyObj(["remove", "save"]);
+
       TestBed.configureTestingModule({
         imports: [
           EntitySubrecordModule,
@@ -30,11 +34,12 @@ describe("EntitySubrecordComponent", () => {
         providers: [
           DatePipe,
           PercentPipe,
-          { provide: Database, useClass: MockDatabase },
+          { provide: Database, useValue: MockDatabase.createWithPouchDB() },
           {
             provide: ConfirmationDialogService,
             useClass: ConfirmationDialogService,
           },
+          { provide: EntityMapperService, useValue: mockEntityMapper },
         ],
       }).compileComponents();
     })
