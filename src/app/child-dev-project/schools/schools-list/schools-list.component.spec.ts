@@ -19,6 +19,7 @@ import { School } from "../model/school";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { User } from "../../../core/user/user";
+import { BackupService } from "../../../core/admin/services/backup.service";
 
 describe("SchoolsListComponent", () => {
   let component: SchoolsListComponent;
@@ -51,11 +52,14 @@ describe("SchoolsListComponent", () => {
     data: of(routeData),
     queryParams: of({}),
   };
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
   beforeEach(
     waitForAsync(() => {
       const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
       mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
+      mockEntityMapper = jasmine.createSpyObj(["loadType"]);
+      mockEntityMapper.loadType.and.resolveTo([]);
       TestBed.configureTestingModule({
         declarations: [],
         imports: [
@@ -65,9 +69,10 @@ describe("SchoolsListComponent", () => {
           NoopAnimationsModule,
         ],
         providers: [
-          { provide: Database, useClass: MockDatabase },
-          { provide: SessionService, useValue: mockSessionService },
           { provide: ActivatedRoute, useValue: routeMock },
+          { provide: SessionService, useValue: mockSessionService },
+          { provide: EntityMapperService, useValue: mockEntityMapper },
+          { provide: BackupService, useValue: {} },
         ],
       }).compileComponents();
     })
@@ -84,15 +89,12 @@ describe("SchoolsListComponent", () => {
   });
 
   it("should load the schools", fakeAsync(() => {
-    const entityMapper = fixture.debugElement.injector.get(EntityMapperService);
     const school1 = new School("s1");
     const school2 = new School("s2");
-    spyOn(entityMapper, "loadType").and.returnValue(
-      Promise.resolve([school1, school2])
-    );
+    mockEntityMapper.loadType.and.resolveTo([school1, school2]);
     component.ngOnInit();
     tick();
-    expect(entityMapper.loadType).toHaveBeenCalledWith(School);
+    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(School);
     expect(component.schoolList).toEqual([school1, school2]);
   }));
 
