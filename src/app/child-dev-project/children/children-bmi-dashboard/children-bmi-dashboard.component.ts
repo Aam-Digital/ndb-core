@@ -1,8 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { HealthCheck } from "app/child-dev-project/health-checkup/model/health-check";
-import { WarningLevel } from "app/child-dev-project/warning-level";
-import { OnInitDynamicComponent } from "app/core/view/dynamic-components/on-init-dynamic-component.interface";
+import { HealthCheck } from "../../health-checkup/model/health-check";
+import { WarningLevel } from "../../warning-level";
+import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { take } from "rxjs/operators";
 import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";

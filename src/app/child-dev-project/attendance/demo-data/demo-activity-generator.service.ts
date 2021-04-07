@@ -34,7 +34,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringAct
     activity.title =
       type.label +
       " " +
-      faker.random.number({ min: 1, max: 9 }) +
+      faker.datatype.number({ min: 1, max: 9 }) +
       faker.random.alphaNumeric(1).toUpperCase();
     activity.type = type;
     activity.participants = children.map((c) => c.getId());
@@ -72,7 +72,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringAct
 
     let i = 0;
     while (i < children.length) {
-      const groupSize = faker.random.number({
+      const groupSize = faker.datatype.number({
         min: this.MIN_PARTICIPANTS,
         max: this.MAX_PARTICIPANTS,
       });

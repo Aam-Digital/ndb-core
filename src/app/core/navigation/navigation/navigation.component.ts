@@ -57,7 +57,7 @@ export class NavigationComponent {
     for (const configItem of config.items) {
       if (this.checkMenuItemPermissions(configItem.link)) {
         this.menuItems.push(
-          new MenuItem(configItem.name, configItem.icon, [configItem.link])
+          new MenuItem(configItem.name, configItem.icon, configItem.link)
         );
       }
     }

@@ -195,11 +195,17 @@ export class ChildrenService {
         by_school: {
           map: `(doc) => {
             if ( (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) ||
-                (doc.start && (new Date(doc.start) > new Date().setHours(0, 0, 0, 0))) ||
-                (doc.end && (new Date(doc.end) < new Date().setHours(0, 0, 0, 0))) ) {
+                (doc.start && isAfterToday(new Date(doc.start))) ||
+                (doc.end && !isAfterToday(new Date(doc.end))) ) {
               return;
             }
             emit(doc.schoolId);
+            function isAfterToday(date) {
+              const tomorrow = new Date();
+              tomorrow.setHours(0, 0, 0, 0);
+              tomorrow.setDate(tomorrow.getDate() + 1);
+              return date >= tomorrow;
+            }
             }`,
         },
         by_date: {
