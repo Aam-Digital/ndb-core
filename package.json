@@ -1,6 +1,6 @@
 {
   "name": "ndb-core",
-  "version": "2.39.2",
+  "version": "2.40.1",
   "license": "GPL-3.0",
   "scripts": {
     "ng": "ng",
@@ -35,7 +35,7 @@
     "angulartics2": "^10.0.0",
     "crypto-js": "^4.0.0",
     "deep-object-diff": "^1.1.0",
-    "faker": "^5.4.0",
+    "faker": "^5.5.0",
     "font-awesome": "^4.7.0",
     "idb": "^6.0.0",
     "lodash": "^4.17.21",
@@ -67,7 +67,7 @@
     "@storybook/addon-links": "^6.1.21",
     "@storybook/angular": "^6.1.21",
     "@types/crypto-js": "^4.0.1",
-    "@types/faker": "^5.1.7",
+    "@types/faker": "^5.5.0",
     "@types/file-saver": "^2.0.1",
     "@types/jasmine": "~3.6.4",
     "@types/lodash": "^4.14.168",
