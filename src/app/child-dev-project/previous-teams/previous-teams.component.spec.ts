@@ -16,7 +16,7 @@ import { SimpleChange } from "@angular/core";
 import { Child } from "../children/model/child";
 import { PreviousTeamsComponent } from "./previous-teams.component";
 
-describe("PreviousSchoolsComponent", () => {
+describe("PreviousTeamsComponent", () => {
   let component: PreviousTeamsComponent;
   let fixture: ComponentFixture<PreviousTeamsComponent>;
 
@@ -33,7 +33,7 @@ describe("PreviousSchoolsComponent", () => {
           ConfirmationDialogModule,
         ],
         providers: [
-          { provide: Database, useClass: MockDatabase },
+          { provide: Database, useValue: MockDatabase.createWithPouchDB() },
           { provide: SessionService, useValue: mockedSession },
           EntityMapperService,
           EntitySchemaService,
