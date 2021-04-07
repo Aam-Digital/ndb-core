@@ -58,7 +58,7 @@ describe("SchoolsListComponent", () => {
     waitForAsync(() => {
       const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
       mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
-      mockEntityMapper = jasmine.createSpyObj(["loadType"]);
+      mockEntityMapper = jasmine.createSpyObj(["loadType", "save"]);
       mockEntityMapper.loadType.and.resolveTo([]);
       TestBed.configureTestingModule({
         declarations: [],
