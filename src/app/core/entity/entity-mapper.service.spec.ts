@@ -18,12 +18,11 @@
 import { EntityMapperService } from "./entity-mapper.service";
 import { Entity } from "./entity";
 import { MockDatabase } from "../database/mock-database";
-import { Database } from "../database/database";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
-  let testDatabase: Database;
+  let testDatabase: MockDatabase;
 
   const existingEntity = {
     _id: "Entity:existing-entity",
@@ -38,7 +37,7 @@ describe("EntityMapperService", () => {
   };
 
   beforeEach(() => {
-    testDatabase = new MockDatabase();
+    testDatabase = MockDatabase.createWithPouchDB();
     entityMapper = new EntityMapperService(
       testDatabase,
       new EntitySchemaService()
@@ -48,6 +47,12 @@ describe("EntityMapperService", () => {
       testDatabase.put(existingEntity),
       testDatabase.put(existingEntity2),
     ]);
+  });
+
+  afterEach((done) => {
+    testDatabase.pouchDB.destroy().then(function () {
+      done();
+    });
   });
 
   function expectEntity(actualEntity, expectedEntity) {

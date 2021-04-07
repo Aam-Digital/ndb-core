@@ -5,16 +5,22 @@ import { Database } from "../../database/database";
 import { MockDatabase } from "../../database/mock-database";
 
 describe("BackupService", () => {
-  let db: Database;
+  let db: MockDatabase;
   let service: BackupService;
 
   beforeEach(() => {
-    db = new MockDatabase();
+    db = MockDatabase.createWithPouchDB();
     TestBed.configureTestingModule({
       providers: [BackupService, { provide: Database, useValue: db }],
     });
 
     service = TestBed.inject<BackupService>(BackupService);
+  });
+
+  afterEach((done) => {
+    db.pouchDB.destroy().then(function () {
+      done();
+    });
   });
 
   it("should be created", () => {
