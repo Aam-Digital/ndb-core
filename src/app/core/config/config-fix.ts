@@ -118,6 +118,18 @@ export const defaultConfig = {
     "config": {
       "widgets": [
         {
+          "component": "DashboardShortcutWidget",
+          "config": {
+            "shortcuts": [
+              {
+                "label": "Record Attendance",
+                "icon": "calendar-check-o",
+                "link": "/attendance/add/day",
+              }
+            ]
+          }
+        },
+        {
           "component": "ChildrenCountDashboard"
         },
         {
