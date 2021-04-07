@@ -12,7 +12,7 @@
 
 <div *ngIf="!displayAsToggle">
   <mat-form-field>
-    <mat-label>{{ filterConfig.label || filterConfig.name }}</mat-label>
+    <mat-label>{{filterConfig.label || filterConfig.name }}</mat-label>
     <mat-select
       [id]="filterConfig.name"
       [value]="selectedOption"
