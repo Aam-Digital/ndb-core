@@ -18,7 +18,7 @@
 import { DatabaseIndexingService } from "./database-indexing.service";
 import { Database } from "../../database/database";
 import { take } from "rxjs/operators";
-import { EntitySchemaService } from "../schema/entity-schema.service";
+import { createTestingEntitySchemaService } from "../schema/entity-schema.service";
 
 describe("DatabaseIndexingService", () => {
   let service: DatabaseIndexingService;
@@ -26,7 +26,10 @@ describe("DatabaseIndexingService", () => {
 
   beforeEach(() => {
     mockDb = jasmine.createSpyObj("mockDb", ["saveDatabaseIndex", "query"]);
-    service = new DatabaseIndexingService(mockDb, new EntitySchemaService());
+    service = new DatabaseIndexingService(
+      mockDb,
+      createTestingEntitySchemaService()
+    );
   });
 
   it("should pass through any query to the database", async () => {

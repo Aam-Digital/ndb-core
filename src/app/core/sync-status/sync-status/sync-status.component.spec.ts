@@ -27,7 +27,7 @@ import { InitialSyncDialogComponent } from "./initial-sync-dialog.component";
 import { SessionService } from "../../session/session-service/session.service";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { AlertsModule } from "../../alerts/alerts.module";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { createTestingEntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { BehaviorSubject } from "rxjs";
 import { take } from "rxjs/operators";
@@ -51,7 +51,9 @@ describe("SyncStatusComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
-      sessionService = new MockSessionService(new EntitySchemaService());
+      sessionService = new MockSessionService(
+        createTestingEntitySchemaService()
+      );
       mockIndexingService = { indicesRegistered: new BehaviorSubject([]) };
 
       TestBed.configureTestingModule({

@@ -19,7 +19,7 @@ import { EntityMapperService } from "./entity-mapper.service";
 import { Entity } from "./entity";
 import { MockDatabase } from "../database/mock-database";
 import { Database } from "../database/database";
-import { EntitySchemaService } from "./schema/entity-schema.service";
+import { createTestingEntitySchemaService } from "./schema/entity-schema.service";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -41,7 +41,7 @@ describe("EntityMapperService", () => {
     testDatabase = new MockDatabase();
     entityMapper = new EntityMapperService(
       testDatabase,
-      new EntitySchemaService()
+      createTestingEntitySchemaService()
     );
 
     return Promise.all([

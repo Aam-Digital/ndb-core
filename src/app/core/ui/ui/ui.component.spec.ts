@@ -42,7 +42,7 @@ import { MockSessionService } from "../../session/session-service/mock-session.s
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { SwUpdate } from "@angular/service-worker";
 import { of } from "rxjs";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { createTestingEntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntitySubrecordModule } from "../../entity-components/entity-subrecord/entity-subrecord.module";
 import { ApplicationInitStatus } from "@angular/core";
 
@@ -53,7 +53,9 @@ describe("UiComponent", () => {
   beforeEach(
     waitForAsync(() => {
       const mockSwUpdate = { available: of(), checkForUpdate: () => {} };
-      const mockSession = new MockSessionService(new EntitySchemaService());
+      const mockSession = new MockSessionService(
+        createTestingEntitySchemaService()
+      );
       TestBed.configureTestingModule({
         declarations: [SearchComponent, PrimaryActionComponent, UiComponent],
         imports: [

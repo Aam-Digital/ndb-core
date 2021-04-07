@@ -17,15 +17,20 @@
 
 import { Entity } from "../entity";
 import { waitForAsync } from "@angular/core/testing";
-import { EntitySchemaService } from "./entity-schema.service";
+import {
+  createTestingEntitySchemaService,
+  EntitySchemaService,
+} from "./entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
+import { createTestingConfigService } from "../../config/config.service";
 
 describe("EntitySchemaService", () => {
   let entitySchemaService: EntitySchemaService;
+  const mockConfigService = createTestingConfigService({ id: "value1" });
 
   beforeEach(
     waitForAsync(() => {
-      entitySchemaService = new EntitySchemaService();
+      entitySchemaService = createTestingEntitySchemaService(mockConfigService);
     })
   );
 
@@ -189,5 +194,48 @@ describe("EntitySchemaService", () => {
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
     expect(rawData.details.month).toEqual("2020-01");
     expect(rawData.details.otherStuff).toBeUndefined();
+  });
+
+  function newTestEntity() {
+    class TestEntity extends Entity {
+      @DatabaseField({
+        defaultValueFromConfig: "id",
+      })
+      value: string;
+    }
+    return new TestEntity();
+  }
+
+  it("gets a value from the config if a default config-value is specified", () => {
+    const entity = newTestEntity();
+    const data = {
+      _id: "test",
+      value: undefined,
+    };
+    entitySchemaService.loadDataIntoEntity(entity, data);
+    expect(entity.value).toEqual("value1");
+  });
+
+  it("gives precedence to the config default value if also the default value is specified", () => {
+    class TestEntity extends Entity {
+      @DatabaseField({
+        defaultValueFromConfig: "id",
+        defaultValue: "not value1",
+      })
+      value: string;
+    }
+    const entity = new TestEntity();
+    const data = {
+      _id: "test",
+      value: undefined,
+    };
+    entitySchemaService.loadDataIntoEntity(entity, data);
+    expect(entity.value).toEqual("value1");
+  });
+
+  it("saves a default value from the config if the entity has no value", () => {
+    const entity = newTestEntity();
+    const result = entitySchemaService.transformEntityToDatabaseFormat(entity);
+    expect(result["value"]).toEqual("value1");
   });
 });

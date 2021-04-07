@@ -27,7 +27,7 @@ import { MatListModule } from "@angular/material/list";
 import { RouterService } from "../../view/dynamic-routing/router.service";
 import { ConfigService } from "../../config/config.service";
 import { SessionService } from "../../session/session-service/session.service";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { createTestingEntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { BehaviorSubject } from "rxjs";
 import { Config } from "../../config/config";
 
@@ -45,7 +45,9 @@ describe("NavigationComponent", () => {
       mockConfigService = jasmine.createSpyObj(["getConfig"]);
       mockConfigService.getConfig.and.returnValue({ items: [] });
       mockConfigService.configUpdated = mockConfigUpdated;
-      sessionService = new MockSessionService(new EntitySchemaService());
+      sessionService = new MockSessionService(
+        createTestingEntitySchemaService()
+      );
 
       TestBed.configureTestingModule({
         imports: [

@@ -23,14 +23,14 @@ import { ConnectionState } from "../session-states/connection-state.enum";
 import { AppConfig } from "../../app-config/app-config";
 import { LocalSession } from "./local-session";
 import { RemoteSession } from "./remote-session";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { createTestingEntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { SessionType } from "../session-type";
 import { fakeAsync, tick } from "@angular/core/testing";
 
 describe("SyncedSessionService", () => {
   const snackBarMock = { openFromComponent: () => {} } as any;
   const alertService = new AlertService(snackBarMock);
-  const entitySchemaService = new EntitySchemaService();
+  const entitySchemaService = createTestingEntitySchemaService();
   let sessionService: SyncedSessionService;
 
   xdescribe("Integration Tests", () => {

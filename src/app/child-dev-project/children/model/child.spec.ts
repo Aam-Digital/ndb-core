@@ -19,7 +19,10 @@ import { Child } from "./child";
 import { waitForAsync } from "@angular/core/testing";
 import { Entity } from "../../../core/entity/entity";
 import { Gender } from "./Gender";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import {
+  createTestingEntitySchemaService,
+  EntitySchemaService,
+} from "../../../core/entity/schema/entity-schema.service";
 import { LoadChildPhotoEntitySchemaDatatype } from "../child-photo-service/datatype-load-child-photo";
 
 describe("Child", () => {
@@ -28,7 +31,7 @@ describe("Child", () => {
 
   beforeEach(
     waitForAsync(() => {
-      entitySchemaService = new EntitySchemaService();
+      entitySchemaService = createTestingEntitySchemaService();
       entitySchemaService.registerSchemaDatatype(
         new LoadChildPhotoEntitySchemaDatatype(null)
       );

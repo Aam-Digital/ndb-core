@@ -18,7 +18,10 @@
 import { waitForAsync } from "@angular/core/testing";
 import { Entity } from "../../../core/entity/entity";
 import { HealthCheck } from "./health-check";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import {
+  createTestingEntitySchemaService,
+  EntitySchemaService,
+} from "../../../core/entity/schema/entity-schema.service";
 
 describe("HealthCheck Entity", () => {
   const ENTITY_TYPE = "HealthCheck";
@@ -26,7 +29,7 @@ describe("HealthCheck Entity", () => {
 
   beforeEach(
     waitForAsync(() => {
-      entitySchemaService = new EntitySchemaService();
+      entitySchemaService = createTestingEntitySchemaService();
     })
   );
 

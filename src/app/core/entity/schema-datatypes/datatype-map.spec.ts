@@ -18,7 +18,10 @@
 import { Entity } from "../entity";
 import { waitForAsync } from "@angular/core/testing";
 import { DatabaseField } from "../database-field.decorator";
-import { EntitySchemaService } from "../schema/entity-schema.service";
+import {
+  createTestingEntitySchemaService,
+  EntitySchemaService,
+} from "../schema/entity-schema.service";
 
 describe("Schema data type: map", () => {
   class TestEntity extends Entity {
@@ -32,7 +35,7 @@ describe("Schema data type: map", () => {
 
   beforeEach(
     waitForAsync(() => {
-      entitySchemaService = new EntitySchemaService();
+      entitySchemaService = createTestingEntitySchemaService();
     })
   );
 

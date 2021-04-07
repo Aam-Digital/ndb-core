@@ -1,6 +1,9 @@
 import { Note } from "./note";
 import { WarningLevel, WarningLevelColor } from "../../warning-level";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import {
+  createTestingEntitySchemaService,
+  EntitySchemaService,
+} from "../../../core/entity/schema/entity-schema.service";
 import { waitForAsync } from "@angular/core/testing";
 import { Entity } from "../../../core/entity/entity";
 import {
@@ -78,7 +81,7 @@ describe("Note", () => {
       ] = testInteractionTypes;
       testConfigs[ATTENDANCE_STATUS_CONFIG_ID] = testStatusTypes;
 
-      entitySchemaService = new EntitySchemaService();
+      entitySchemaService = createTestingEntitySchemaService();
       entitySchemaService.registerSchemaDatatype(
         new ConfigurableEnumDatatype(createTestingConfigService(testConfigs))
       );

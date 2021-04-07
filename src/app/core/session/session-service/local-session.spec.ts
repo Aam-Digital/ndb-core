@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { createTestingEntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { AppConfig } from "../../app-config/app-config";
 import { LocalSession } from "./local-session";
 import { SessionType } from "../session-type";
@@ -33,7 +33,7 @@ describe("LocalSessionService", () => {
       },
     };
 
-    localSession = new LocalSession(new EntitySchemaService());
+    localSession = new LocalSession(createTestingEntitySchemaService());
   });
 
   it("should be created", async () => {

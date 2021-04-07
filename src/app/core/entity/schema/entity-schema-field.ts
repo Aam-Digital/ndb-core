@@ -52,6 +52,16 @@ export interface EntitySchemaField {
   defaultValue?: any;
 
   /**
+   * same as {@link defaultValue}, but the default value is defined in the app-config.
+   * In a case where both this value as well as the <code>defaultValue</code> are set,
+   * the "winning" default-value will be the one from the config.
+   * If the config also doesn't contain anything, the regular default-value will be used.
+   * <br>Note that the default value has to be present in the config as the field that it represents.
+   * It will undergo any mapping
+   */
+  defaultValueFromConfig?: string;
+
+  /**
    * (Optional) Assign any custom "extension" configuration you need for a specific datatype extension.
    *
    * You can pass any kind of value here to allow complex custom datytypes' transformations

@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { createTestingEntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { NewLocalSessionService } from "./new-local-session.service";
 import { testSessionServiceImplementation } from "./session.service.spec";
 
@@ -23,7 +23,7 @@ describe("NewLocalSessionService", async () => {
   testSessionServiceImplementation(async () => {
     return new NewLocalSessionService(
       jasmine.createSpyObj(["warn"]),
-      new EntitySchemaService()
+      createTestingEntitySchemaService()
     );
   });
 });

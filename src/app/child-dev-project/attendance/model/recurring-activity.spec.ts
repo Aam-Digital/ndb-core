@@ -15,7 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import {
+  createTestingEntitySchemaService,
+  EntitySchemaService,
+} from "../../../core/entity/schema/entity-schema.service";
 import { waitForAsync } from "@angular/core/testing";
 import { RecurringActivity } from "./recurring-activity";
 import { Entity } from "../../../core/entity/entity";
@@ -43,7 +46,7 @@ describe("RecurringActivity", () => {
       ]);
       mockConfigService.getConfig.and.returnValue(testInteractionTypes);
 
-      entitySchemaService = new EntitySchemaService();
+      entitySchemaService = createTestingEntitySchemaService();
       entitySchemaService.registerSchemaDatatype(
         new ConfigurableEnumDatatype(mockConfigService)
       );

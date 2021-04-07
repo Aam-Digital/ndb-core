@@ -17,7 +17,10 @@
 
 import { AttendanceDay } from "./attendance-day";
 import { waitForAsync } from "@angular/core/testing";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import {
+  createTestingEntitySchemaService,
+  EntitySchemaService,
+} from "../../../core/entity/schema/entity-schema.service";
 import { AttendanceMonth } from "./attendance-month";
 
 describe("AttendanceDay", () => {
@@ -25,7 +28,7 @@ describe("AttendanceDay", () => {
 
   beforeEach(
     waitForAsync(() => {
-      entitySchemaService = new EntitySchemaService();
+      entitySchemaService = createTestingEntitySchemaService();
     })
   );
 

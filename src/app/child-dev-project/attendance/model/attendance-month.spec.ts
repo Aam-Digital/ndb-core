@@ -19,7 +19,10 @@ import { AttendanceMonth, daysInMonth } from "./attendance-month";
 import { WarningLevel } from "../../warning-level";
 import { waitForAsync } from "@angular/core/testing";
 import { Entity } from "../../../core/entity/entity";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import {
+  createTestingEntitySchemaService,
+  EntitySchemaService,
+} from "../../../core/entity/schema/entity-schema.service";
 
 describe("AttendanceMonth", () => {
   const ENTITY_TYPE = "AttendanceMonth";
@@ -27,7 +30,7 @@ describe("AttendanceMonth", () => {
 
   beforeEach(
     waitForAsync(() => {
-      entitySchemaService = new EntitySchemaService();
+      entitySchemaService = createTestingEntitySchemaService();
     })
   );
 

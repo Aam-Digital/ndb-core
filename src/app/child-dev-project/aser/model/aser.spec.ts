@@ -19,11 +19,11 @@ import { Aser } from "./aser";
 import { WarningLevel } from "../../warning-level";
 import { waitForAsync } from "@angular/core/testing";
 import { Entity } from "../../../core/entity/entity";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import { createTestingEntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 
 describe("Aser", () => {
   const ENTITY_TYPE = "Aser";
-  const entitySchemaService = new EntitySchemaService();
+  const entitySchemaService = createTestingEntitySchemaService();
 
   beforeEach(waitForAsync(() => {}));
 

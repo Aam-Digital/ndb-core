@@ -29,6 +29,10 @@ import { arrayEntitySchemaDatatype } from "../schema-datatypes/datatype-array";
 import { schemaEmbedEntitySchemaDatatype } from "../schema-datatypes/datatype-schema-embed";
 import { dateOnlyEntitySchemaDatatype } from "../schema-datatypes/datatype-date-only";
 import { mapEntitySchemaDatatype } from "../schema-datatypes/datatype-map";
+import {
+  ConfigService,
+  createTestingConfigService,
+} from "../../config/config.service";
 
 /**
  * Transform between entity instances and database objects
@@ -50,7 +54,7 @@ export class EntitySchemaService {
    */
   private schemaTypes = new Map<string, EntitySchemaDatatype>();
 
-  constructor() {
+  constructor(private configService: ConfigService) {
     this.registerBasicDatatypes();
   }
 
@@ -98,7 +102,13 @@ export class EntitySchemaService {
       const schemaField: EntitySchemaField = schema.get(key);
 
       if (data[key] === undefined) {
-        if (schemaField.defaultValue !== undefined) {
+        if (schemaField.defaultValueFromConfig !== undefined) {
+          data[key] = this.configService.getConfig(
+            schemaField.defaultValueFromConfig
+          );
+          // objects from the config are already in 'object-format'
+          continue;
+        } else if (schemaField.defaultValue !== undefined) {
           data[key] = schemaField.defaultValue;
         } else {
           // skip and keep undefined
@@ -154,7 +164,11 @@ export class EntitySchemaService {
       const schemaField: EntitySchemaField = schema.get(key);
 
       if (value === undefined) {
-        if (schemaField.defaultValue !== undefined) {
+        if (schemaField.defaultValueFromConfig !== undefined) {
+          value = this.configService.getConfig(
+            schemaField.defaultValueFromConfig
+          );
+        } else if (schemaField.defaultValue !== undefined) {
           value = schemaField.defaultValue;
         } else {
           // skip and keep undefined
@@ -173,4 +187,10 @@ export class EntitySchemaService {
 
     return data;
   }
+}
+
+export function createTestingEntitySchemaService(
+  configService: ConfigService = createTestingConfigService({})
+) {
+  return new EntitySchemaService(configService);
 }
