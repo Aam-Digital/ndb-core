@@ -6,21 +6,7 @@ import {
 } from "@angular/core/testing";
 import { EntityListComponent } from "./entity-list.component";
 import { CommonModule } from "@angular/common";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatSelectModule } from "@angular/material/select";
-import { MatInputModule } from "@angular/material/input";
-import { MatExpansionModule } from "@angular/material/expansion";
-import { MatTableModule } from "@angular/material/table";
-import { MatSortModule } from "@angular/material/sort";
-import { MatSidenavModule } from "@angular/material/sidenav";
-import { MatButtonModule } from "@angular/material/button";
-import { MatButtonToggleModule } from "@angular/material/button-toggle";
-import { MatIconModule } from "@angular/material/icon";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatPaginatorModule } from "@angular/material/paginator";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { FormsModule } from "@angular/forms";
-import { FilterPipeModule } from "ngx-filter-pipe";
 import { RouterTestingModule } from "@angular/router/testing";
 import { SimpleChange } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -36,6 +22,8 @@ import { Note } from "../../../child-dev-project/notes/model/note";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
 import { BackupService } from "../../admin/services/backup.service";
+import { EntityListModule } from "./entity-list.module";
+import { Angulartics2Module } from "angulartics2";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -103,21 +91,9 @@ describe("EntityListComponent", () => {
         declarations: [EntityListComponent, ExportDataComponent],
         imports: [
           CommonModule,
-          MatFormFieldModule,
-          MatSelectModule,
-          MatInputModule,
-          MatExpansionModule,
-          MatTableModule,
-          MatSortModule,
-          MatSidenavModule,
-          MatButtonModule,
-          MatButtonToggleModule,
-          MatIconModule,
-          MatTooltipModule,
-          MatPaginatorModule,
           NoopAnimationsModule,
-          FormsModule,
-          FilterPipeModule,
+          EntityListModule,
+          Angulartics2Module.forRoot(),
           RouterTestingModule.withRoutes([
             { path: "child", component: ChildrenListComponent },
           ]),
