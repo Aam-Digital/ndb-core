@@ -1,14 +1,5 @@
-.dashboard-table-row {
-  border-top: 1px solid black;
-}
-.dashboard-table tr:first-child {
-  border-top: none;
-}
+@use 'src/app/core/dashboard/dashboard-widget-base';
 
-.dashboard-table {
-  width: 100%;
-  border-collapse: collapse;
-}
 .filler {
   width: 100%;
 }
