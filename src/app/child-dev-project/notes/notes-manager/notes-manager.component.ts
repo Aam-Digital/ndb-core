@@ -3,7 +3,7 @@ import { Note } from "../model/note";
 import { MediaObserver } from "@angular/flex-layout";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ActivatedRoute } from "@angular/router";
-import { WarningLevel, WarningLevelColor } from "../../warning-level";
+import { WarningLevel } from "../../warning-level";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FilterSelectionOption } from "../../../core/filter/filter-selection/filter-selection";
 import { SessionService } from "../../../core/session/session-service/session.service";
@@ -11,7 +11,6 @@ import { FormDialogService } from "../../../core/form-dialog/form-dialog.service
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
-import { tap } from "rxjs/operators";
 import { applyUpdate } from "../../../core/entity/entity-update";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 
@@ -81,7 +80,6 @@ export class NotesManagerComponent implements OnInit {
       this.addPrebuiltFilters();
     });
     this.entityMapperService.loadType<Note>(Note).then((notes) => {
-      notes.forEach((note) => (note["color"] = this.getColor(note)));
       // This prevents edge-cases where updates are received
       // before this is
       this.notes = notes.concat(this.notes);
@@ -89,10 +87,7 @@ export class NotesManagerComponent implements OnInit {
 
     this.entityMapperService
       .receiveUpdates<Note>(Note)
-      .pipe(
-        untilDestroyed(this),
-        tap((note) => (note.entity["color"] = this.getColor(note.entity)))
-      )
+      .pipe(untilDestroyed(this))
       .subscribe((updatedNote) => {
         this.notes = applyUpdate(this.notes, updatedNote);
       });
@@ -140,17 +135,5 @@ export class NotesManagerComponent implements OnInit {
 
   showDetails(entity: Note) {
     this.formDialog.openDialog(NoteDetailsComponent, entity.copy());
-  }
-
-  private getColor(entity: Note): string {
-    if (entity.warningLevel === WarningLevel.URGENT) {
-      return WarningLevelColor(WarningLevel.URGENT);
-    }
-    if (entity.warningLevel === WarningLevel.WARNING) {
-      return WarningLevelColor(WarningLevel.WARNING);
-    }
-
-    const color = entity.category?.color;
-    return color ? color : "";
   }
 }
