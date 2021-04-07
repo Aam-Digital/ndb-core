@@ -72,6 +72,7 @@ import { ConfigModule } from "./core/config/config.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/dashboard-shortcut-widget.module";
 
 /**
  * Main entry point of the application.
@@ -141,6 +142,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
     AttendanceModule,
     MatChipsModule,
     MatFormFieldModule,
+    DashboardShortcutWidgetModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },

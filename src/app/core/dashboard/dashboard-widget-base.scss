@@ -1,0 +1,27 @@
+
+.dashboard-table-row {
+  border-top: 1px solid black;
+}
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.dashboard-table tr:first-child {
+  border-top: none;
+}
+
+.dashboard-table-cell {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.dashboard-table-first-cell {
+  white-space: nowrap;
+  overflow: hidden;
+}
+.dashboard-table-last-cell {
+  width: 108px;
+  text-align: right;
+}

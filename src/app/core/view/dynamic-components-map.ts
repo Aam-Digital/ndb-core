@@ -25,6 +25,7 @@ import { PreviousTeamsComponent } from "../../child-dev-project/previous-teams/p
 import { BmiBlockComponent } from "../../child-dev-project/children/children-list/bmi-block/bmi-block.component";
 import { ChildrenBmiDashboardComponent } from "../../child-dev-project/children/children-bmi-dashboard/children-bmi-dashboard.component";
 import { UserListComponent } from "../user/user-list/user-list.component";
+import { DashboardShortcutWidgetComponent } from "../dashboard-shortcut-widget/dashboard-shortcut-widget/dashboard-shortcut-widget.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -54,4 +55,5 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["BmiBlock", BmiBlockComponent],
   ["ChildrenBmiDashboardComponent", ChildrenBmiDashboardComponent],
   ["UserList", UserListComponent],
+  ["DashboardShortcutWidget", DashboardShortcutWidgetComponent],
 ]);
