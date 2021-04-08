@@ -14,7 +14,7 @@
       <div
         *ngIf="removable && !disabled"
         class="fa fa-minus-square-o"
-        (click)="removeEntity(entity)">
+        (click)="unselectEntity(entity)">
       </div>
     </mat-basic-chip>
 
@@ -26,7 +26,7 @@
       [matAutocomplete]='autoSuggestions'
       [matChipInputFor]="chipList"
       [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-      (matChipInputTokenEnd)="add($event)">
+      (matChipInputTokenEnd)="select($event)">
   </mat-chip-list>
 
   <mat-autocomplete
