@@ -35,7 +35,6 @@ describe("NoteDetailsComponent", () => {
 
   let children: Child[];
   let testNote: Note;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
   beforeEach(() => {
     children = [new Child("1"), new Child("2"), new Child("3")];
@@ -60,7 +59,7 @@ describe("NoteDetailsComponent", () => {
       ],
       providers: [
         { provide: MatDialogRef, useValue: dialogRefMock },
-        { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: EntityMapperService, useValue: {} },
         { provide: ChildrenService, useValue: mockChildrenService },
       ],
     }).compileComponents();

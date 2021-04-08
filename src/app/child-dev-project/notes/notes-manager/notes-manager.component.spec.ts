@@ -34,7 +34,6 @@ describe("NotesManagerComponent", () => {
   let fixture: ComponentFixture<NotesManagerComponent>;
 
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
-  let mockBackupService: jasmine.SpyObj<BackupService>;
   let mockUpdateObservable: Subject<UpdatedEntity<Note>>;
   const dialogMock: jasmine.SpyObj<FormDialogService> = jasmine.createSpyObj(
     "dialogMock",
@@ -117,7 +116,7 @@ describe("NotesManagerComponent", () => {
         { provide: FormDialogService, useValue: dialogMock },
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: ConfigService, useValue: mockConfigService },
-        { provide: BackupService, useValue: mockBackupService },
+        { provide: BackupService, useValue: {} },
       ],
     }).compileComponents();
   });
@@ -207,7 +206,7 @@ describe("NotesManagerComponent", () => {
   });
 
   it("will contain the updated note when updated", async () => {
-    let note = new Note("n1");
+    const note = new Note("n1");
     note.author = "A";
     mockUpdateObservable.next({ entity: note, type: "new" });
     expect(component.notes.length).toBe(1);
