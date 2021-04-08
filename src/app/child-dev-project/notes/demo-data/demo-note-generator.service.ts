@@ -18,7 +18,6 @@ import {
 } from "../../attendance/model/attendance-status";
 import { ConfigService } from "../../../core/config/config.service";
 import { ConfigurableEnumConfig } from "../../../core/configurable-enum/configurable-enum.interface";
-import { User } from "../../../core/user/user";
 import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
 
 export class DemoNoteConfig {
@@ -49,18 +48,6 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
       { provide: DemoNoteConfig, useValue: config },
     ];
   }
-
-  /*private _teamMembers;
-  get teamMembers(): string[] {
-    const numberOfTeamMembers = 5;
-    if (!this._teamMembers) {
-      this._teamMembers = Array(numberOfTeamMembers)
-        .fill("")
-        .map(() => faker.name.firstName());
-    }
-
-    return this._teamMembers;
-  } */
 
   private availableStatusTypes: AttendanceStatusType[];
 
