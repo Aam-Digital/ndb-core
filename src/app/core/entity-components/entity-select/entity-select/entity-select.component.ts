@@ -33,6 +33,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * @param type The type of the entity
    */
   @Input() set entityType(type: EntityConstructor<E>) {
+    this.loading.next(true);
     this.entityMapperService
       .loadType<E>(type)
       .then((entities) => {
@@ -49,11 +50,8 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * The (initial) selection. Can be used in combination with {@link selectionChange}
    * to enable two-way binding to either an array of entities or an array of strings
    * corresponding to the id's of the entities.
-   * <br>
-   * <b>Important:</b> If nothing is passed initially, then the type of this will be id's (in other
-   * words, id's will be emitted whenever something changes).
-   * If this behavior is not desired, the {@link selectionInputType} has to be set to "entity" explicitly
-   * These id's have to be legal id's for the given {@link entityType}
+   * The type (id's or entities) will be determined by the setting of the
+   * {@link selectionInputType}
    * @param sel The initial selection
    */
   @Input() set selection(sel: (string | E)[]) {
@@ -81,7 +79,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    */
   @Output() selectionChange = new EventEmitter<(string | E)[]>();
   /**
-   * The label is what is seen above the list, for example when used
+   * The label is what is seen above the list. For example when used
    * in the note-details-view, this is "Children"
    */
   @Input() label: string;
@@ -119,7 +117,8 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   @Input() entityView: TemplateRef<any>;
   /**
    * The view used to render autocomplete-options.
-   * This has the same behavior as {@link entityView}
+   * This has the same behavior as {@link entityView}.
+   * <br>If nothing is set, this will default to the entity-view
    */
   @Input() autocompleteView: TemplateRef<any>;
   /**
@@ -162,9 +161,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * has no name, this filters for the entity's id.
    */
   @Input() accessor: accessorFn<E> = (e) => e["name"] || e.getId();
-  /**
-   * Additional filters
-   */
+
   @Input() additionalFilter: (T) => boolean = (_) => true;
   /**
    * selects a given entity and emits values
@@ -182,7 +179,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * whatever the accessor defines)
    * @param event the event to call this with
    */
-  add(event: MatChipInputEvent) {
+  select(event: MatChipInputEvent) {
     const value = event.value;
 
     if (value) {
@@ -206,14 +203,14 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * removes a given entity from the records (if it exists) and emits changes
    * @param entity The entity to remove
    */
-  removeEntity(entity: E) {
+  unselectEntity(entity: E) {
     const index = this._selection.findIndex(
       (e) => e.getId() === entity.getId()
     );
     if (index !== -1) {
       this._selection.splice(index, 1);
       this._emitChange();
-      this.inputField.nativeElement.value = "";
+      this.inputField.nativeElement.value = ""; // TODO: keep?
       this.formControl.setValue(null);
     }
   }
@@ -227,15 +224,19 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   }
 
   private isSelected(entity: E): boolean {
-    return (
-      this._selection.findIndex((e) => e.getId() === entity.getId()) !== -1
-    );
+    return this._selection.some((e) => e.getId() === entity.getId());
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("additionalFilter")) {
       // update whenever additional filters are being set
       this.formControl.setValue(this.formControl.value);
+    }
+    if (
+      changes.hasOwnProperty("entityView") &&
+      this.autocompleteView === undefined
+    ) {
+      this.autocompleteView = this.entityView;
     }
   }
 }

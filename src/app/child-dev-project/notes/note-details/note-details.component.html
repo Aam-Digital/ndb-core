@@ -80,7 +80,6 @@
           (selectionChange)="entityForm.form.markAsDirty()"
           [(selection)]="entity.authors"
           [entityView]="userBlock"
-          [autocompleteView]="userBlock"
           placeholder="Add Author..."
           label="Authors"
         >
@@ -124,7 +123,6 @@
       <app-entity-select
         [entityType]="Child"
         [entityView]="childBlock"
-        [autocompleteView]="childBlock"
         [(selection)]="entity.children"
         (selectionChange)="entityForm.form.markAsDirty()"
         [additionalFilter]="filterInactiveChildren"
