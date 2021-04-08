@@ -17,10 +17,8 @@ describe("BackupService", () => {
     service = TestBed.inject<BackupService>(BackupService);
   });
 
-  afterEach((done) => {
-    db.pouchDB.destroy().then(function () {
-      done();
-    });
+  afterEach(async () => {
+    await db.destroy();
   });
 
   it("should be created", () => {

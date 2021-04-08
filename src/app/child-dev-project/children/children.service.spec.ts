@@ -51,7 +51,7 @@ describe("ChildrenService with PouchDB", () => {
 
   afterEach(async () => {
     const mockDB = TestBed.inject(Database) as MockDatabase;
-    await mockDB.pouchDB.destroy();
+    await mockDB.destroy();
   });
 
   it("should be created", () => {

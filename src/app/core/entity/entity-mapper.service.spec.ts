@@ -53,7 +53,7 @@ describe("EntityMapperService", () => {
   );
 
   afterEach(async () => {
-    await testDatabase.pouchDB.destroy();
+    await testDatabase.destroy();
   });
 
   function expectEntity(actualEntity, expectedEntity) {

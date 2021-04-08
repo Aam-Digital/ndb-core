@@ -24,10 +24,8 @@ describe("PouchDatabase tests", () => {
     pouchDatabase = MockDatabase.createWithPouchDB();
   });
 
-  afterEach((done) => {
-    pouchDatabase.pouchDB.destroy().then(function () {
-      done();
-    });
+  afterEach(async () => {
+    await pouchDatabase.destroy();
   });
 
   it("get object by _id after put into database", async () => {

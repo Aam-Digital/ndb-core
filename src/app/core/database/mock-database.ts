@@ -42,7 +42,11 @@ export class MockDatabase extends PouchDatabase {
   /**
    * Create an in-memory database manager.
    */
-  constructor(public pouchDB?) {
+  constructor(private pouchDB?) {
     super(pouchDB, new LoggingService());
+  }
+
+  public destroy(): Promise<any> {
+    return this.pouchDB.destroy();
   }
 }
