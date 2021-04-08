@@ -28,13 +28,13 @@ import { LoggingService } from "../logging/logging.service";
  * as similar as possible to the PouchDatabase.
  */
 export class MockDatabase extends PouchDatabase {
-  static async createWithData(data: any[]) {
+  static async createWithData(data: any[]): Promise<MockDatabase> {
     const instance = MockDatabase.createWithPouchDB();
     await Promise.all(data.map((doc) => instance.put(doc)));
     return instance;
   }
 
-  static createWithPouchDB() {
+  static createWithPouchDB(): MockDatabase {
     PouchDB.plugin(memory).plugin(mapreduce);
     return new MockDatabase(
       new PouchDB("in-memory-mock-database", { adapter: "memory" })

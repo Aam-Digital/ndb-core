@@ -10,7 +10,7 @@ import { TestBed } from "@angular/core/testing";
 import moment from "moment";
 import { Database } from "../../core/database/database";
 
-describe("ChildrenService with PouchDB", () => {
+describe("ChildrenService", () => {
   let service: ChildrenService;
   let entityMapper: EntityMapperService;
   let database: MockDatabase;
