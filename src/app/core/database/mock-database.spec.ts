@@ -73,7 +73,8 @@ describe("MockDatabase tests", () => {
     const testData = { _id: id, name: name, count: count };
     await database.put(testData);
     await expectAsync(database.get(testData._id)).toBeResolved();
-    await database.remove(testData);
+    const savedDocument = await database.get(testData._id);
+    await database.remove(savedDocument);
     await expectAsync(database.get(testData._id)).toBeRejected();
   });
 
