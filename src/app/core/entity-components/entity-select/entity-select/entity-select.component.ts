@@ -57,16 +57,16 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   @Input() set selection(sel: (string | E)[]) {
     if (this.selectionInputType === "id") {
       this.loading.pipe(skipWhile((isLoading) => isLoading)).subscribe((_) => {
-        this._selection = this.allEntities.filter((e) =>
+        this.selection_ = this.allEntities.filter((e) =>
           sel.find((s) => s === e.getId())
         );
       });
     } else {
-      this._selection = sel as E[];
+      this.selection_ = sel as E[];
     }
   }
   /** Underlying data-array */
-  _selection: E[] = [];
+  selection_: E[] = [];
   /**
    * The type to publish and receive; either string-id's or entities
    * Defaults to string-id's
@@ -145,7 +145,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     this.filteredEntities = this.formControl.valueChanges.pipe(
       filter((value) => value === null || typeof value === "string"), // sometimes produces entities
       map((searchText?: string) =>
-        searchText ? this._filter(searchText) : this.allEntities
+        searchText ? this.preFilter(searchText) : this.allEntities
       ),
       map((entities: E[]) =>
         entities.filter(
@@ -168,8 +168,8 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * @param entity the entity to select
    */
   selectEntity(entity: E) {
-    this._selection.push(entity);
-    this._emitChange();
+    this.selection_.push(entity);
+    this.emitChange();
     this.inputField.nativeElement.value = "";
     this.formControl.setValue(null);
   }
@@ -192,7 +192,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     }
   }
 
-  private _filter(value: string): E[] {
+  private preFilter(value: string): E[] {
     const filterValue = value.toLowerCase();
     return this.allEntities.filter((entity) =>
       this.accessor(entity).toLowerCase().startsWith(filterValue)
@@ -204,27 +204,27 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * @param entity The entity to remove
    */
   unselectEntity(entity: E) {
-    const index = this._selection.findIndex(
+    const index = this.selection_.findIndex(
       (e) => e.getId() === entity.getId()
     );
     if (index !== -1) {
-      this._selection.splice(index, 1);
-      this._emitChange();
+      this.selection_.splice(index, 1);
+      this.emitChange();
       this.inputField.nativeElement.value = ""; // TODO: keep?
       this.formControl.setValue(null);
     }
   }
 
-  private _emitChange() {
+  private emitChange() {
     if (this.selectionInputType === "id") {
-      this.selectionChange.emit(this._selection.map((e) => e.getId()));
+      this.selectionChange.emit(this.selection_.map((e) => e.getId()));
     } else {
-      this.selectionChange.emit(this._selection);
+      this.selectionChange.emit(this.selection_);
     }
   }
 
   private isSelected(entity: E): boolean {
-    return this._selection.some((e) => e.getId() === entity.getId());
+    return this.selection_.some((e) => e.getId() === entity.getId());
   }
 
   ngOnChanges(changes: SimpleChanges): void {

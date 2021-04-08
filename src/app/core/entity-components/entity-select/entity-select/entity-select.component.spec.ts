@@ -97,7 +97,7 @@ describe("EntitySelectComponent", () => {
     component.selectionInputType = "entity";
     const expectation = mockEntitiesA.slice(2, 3);
     component.selection = expectation;
-    expect(component._selection).toEqual(expectation);
+    expect(component.selection_).toEqual(expectation);
   }));
 
   it("contains the initial selection when passed as id-arguments", fakeAsync(() => {
@@ -106,8 +106,8 @@ describe("EntitySelectComponent", () => {
     const expectation = mockEntitiesA.slice(2, 3).map((child) => child.getId());
     component.selection = expectation;
     tick();
-    expect(component._selection.every((s) => typeof s === "object")).toBeTrue();
-    expect(component._selection.map((s) => s.getId())).toEqual(expectation);
+    expect(component.selection_.every((s) => typeof s === "object")).toBeTrue();
+    expect(component.selection_.map((s) => s.getId())).toEqual(expectation);
   }));
 
   it("emits whenever a new entity is selected", fakeAsync(() => {
@@ -128,7 +128,7 @@ describe("EntitySelectComponent", () => {
 
   it("emits whenever a selected entity is removed", () => {
     spyOn(component.selectionChange, "emit");
-    component._selection = [...mockEntitiesA];
+    component.selection_ = [...mockEntitiesA];
     component.selectionInputType = "id";
     component.unselectEntity(mockEntitiesA[0]);
     const remainingChildren = mockEntitiesA
@@ -142,13 +142,13 @@ describe("EntitySelectComponent", () => {
   it("adds a new entity if it matches a known entity", () => {
     component.allEntities = mockEntitiesA;
     component.select({ input: null, value: mockEntitiesA[0]["name"] });
-    expect(component._selection).toEqual([mockEntitiesA[0]]);
+    expect(component.selection_).toEqual([mockEntitiesA[0]]);
   });
 
   it("does not add anything if a new entity doesn't match", () => {
     component.allEntities = mockEntitiesA;
     component.select({ input: null, value: "ZZ" });
-    expect(component._selection).toEqual([]);
+    expect(component.selection_).toEqual([]);
   });
 
   it("autocompletes with the default accessor", (done) => {

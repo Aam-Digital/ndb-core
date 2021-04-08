@@ -7,7 +7,7 @@
     <mat-basic-chip
       [selectable]="selectable && !disabled"
       [removable]="removable && !disabled"
-      *ngFor="let entity of _selection"
+      *ngFor="let entity of selection_"
       class="chip">
       <!-- This is going to be replaced with the dynamic content -->
       <ng-container *ngTemplateOutlet="entityView; context: {entity: entity}"></ng-container>
