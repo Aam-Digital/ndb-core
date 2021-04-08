@@ -8,20 +8,20 @@ import { LoggingService } from "../../logging/logging.service";
   selector: "app-user-list",
   template: `
     {{ authorNames }}
-    <span *ngIf="_users.length > maxUserThreshold">
+    <span *ngIf="users.length > maxUserThreshold">
       and {{ additionalUsers }} more
     </span>
   `,
 })
 export class UserListComponent implements OnInitDynamicComponent {
-  _users: User[] = [];
+  users: User[] = [];
 
   @Input() set entities(entities: (User | string)[]) {
     if (this.inputType === "id") {
       this.entityMapperService
         .loadType<User>(User)
         .then((users) => {
-          this._users = users.filter((u) =>
+          this.users = users.filter((u) =>
             entities.find((e: string) => e === u.getId())
           );
         })
@@ -29,7 +29,7 @@ export class UserListComponent implements OnInitDynamicComponent {
           this.loggingService.error(error);
         });
     } else {
-      this._users = entities as User[];
+      this.users = entities as User[];
     }
   }
   @Input() inputType: "id" | "entity" = "id";
@@ -40,11 +40,11 @@ export class UserListComponent implements OnInitDynamicComponent {
   ) {}
 
   get additionalUsers(): number {
-    return this._users.length - this.maxUserThreshold;
+    return this.users.length - this.maxUserThreshold;
   }
 
   get authorNames(): string {
-    return this._users
+    return this.users
       .slice(0, this.maxUserThreshold)
       .map((u) => u.name)
       .join(", ");
