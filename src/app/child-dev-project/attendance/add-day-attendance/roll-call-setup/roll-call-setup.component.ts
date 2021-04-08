@@ -52,12 +52,12 @@ export class RollCallSetupComponent implements OnInit {
         a.assignedTo === ""
     );
 
-    for (const activity of this.visibleActivities) {
-      const newEvent = await this.createEventForActivity(activity);
-      if (newEvent) {
-        this.existingEvents.push(newEvent);
-      }
-    }
+    const eventPromises = this.visibleActivities.map((activity) =>
+      this.createEventForActivity(activity)
+    );
+    let events = await Promise.all(eventPromises);
+    events = events.filter((event) => !!event);
+    this.existingEvents.push(...events);
   }
 
   async showMore() {
