@@ -36,23 +36,21 @@ describe("EntityMapperService", () => {
     label: "entity 2 from database",
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     testDatabase = MockDatabase.createWithPouchDB();
     entityMapper = new EntityMapperService(
       testDatabase,
       new EntitySchemaService()
     );
 
-    return Promise.all([
+    await Promise.all([
       testDatabase.put(existingEntity),
       testDatabase.put(existingEntity2),
     ]);
   });
 
-  afterEach((done) => {
-    testDatabase.pouchDB.destroy().then(function () {
-      done();
-    });
+  afterEach(async () => {
+    await testDatabase.pouchDB.destroy();
   });
 
   function expectEntity(actualEntity, expectedEntity) {
@@ -109,16 +107,22 @@ describe("EntityMapperService", () => {
     expectEntity(loadedEntity, entity);
   });
 
-  it("rejects promise when saving new entity with existing entityId", async () => {
+  it("rejects promise when saving new entity with existing entityId", (done) => {
     const duplicateEntity = new Entity(existingEntity.entityId);
 
-    await entityMapper
-      .save<Entity>(duplicateEntity)
+    entityMapper
+      .load(Entity, existingEntity.entityId)
+      .then((res) => {
+        console.log("result", res);
+        return entityMapper.save<Entity>(duplicateEntity);
+      })
       .then(() => {
         fail("unexpectedly succeeded to overwrite existing entity");
+        done();
       })
       .catch(function (error) {
         expect(error).toBeDefined();
+        done();
       });
   });
 
