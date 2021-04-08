@@ -1,16 +1,5 @@
-.dashboard-table-row {
-  border-top: 1px solid black;
-}
+@use 'src/app/core/dashboard/dashboard-widget-base';
 
-.dashboard-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-.dashboard-table-first-cell {
-  white-space: nowrap;
-  overflow: hidden;
-}
 .dashboard-table-additional-info-cell {
   font-size: 0.8em;
 

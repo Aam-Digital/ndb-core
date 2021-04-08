@@ -45,7 +45,7 @@ export class DemoSchoolGenerator extends DemoDataGenerator<School> {
         ]);
       school.address = faker.address.streetAddress();
       school.phone = faker.phone.phoneNumberFormat();
-      school.privateSchool = faker.random.boolean();
+      school.privateSchool = faker.datatype.boolean();
       school.upToClass = faker.random.arrayElement([8, 10, 12]);
       school.academicBoard = faker.random.arrayElement([
         "CBSE",
