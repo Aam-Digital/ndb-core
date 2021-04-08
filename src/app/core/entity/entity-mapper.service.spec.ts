@@ -19,6 +19,7 @@ import { EntityMapperService } from "./entity-mapper.service";
 import { Entity } from "./entity";
 import { MockDatabase } from "../database/mock-database";
 import { EntitySchemaService } from "./schema/entity-schema.service";
+import { waitForAsync } from "@angular/core/testing";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -36,18 +37,20 @@ describe("EntityMapperService", () => {
     label: "entity 2 from database",
   };
 
-  beforeEach(async () => {
-    testDatabase = MockDatabase.createWithPouchDB();
-    entityMapper = new EntityMapperService(
-      testDatabase,
-      new EntitySchemaService()
-    );
+  beforeEach(
+    waitForAsync(() => {
+      testDatabase = MockDatabase.createWithPouchDB();
+      entityMapper = new EntityMapperService(
+        testDatabase,
+        new EntitySchemaService()
+      );
 
-    await Promise.all([
-      testDatabase.put(existingEntity),
-      testDatabase.put(existingEntity2),
-    ]);
-  });
+      return Promise.all([
+        testDatabase.put(existingEntity),
+        testDatabase.put(existingEntity2),
+      ]);
+    })
+  );
 
   afterEach(async () => {
     await testDatabase.pouchDB.destroy();
@@ -107,22 +110,16 @@ describe("EntityMapperService", () => {
     expectEntity(loadedEntity, entity);
   });
 
-  it("rejects promise when saving new entity with existing entityId", (done) => {
+  it("rejects promise when saving new entity with existing entityId", async () => {
     const duplicateEntity = new Entity(existingEntity.entityId);
 
-    entityMapper
-      .load(Entity, existingEntity.entityId)
-      .then((res) => {
-        console.log("result", res);
-        return entityMapper.save<Entity>(duplicateEntity);
-      })
+    await entityMapper
+      .save<Entity>(duplicateEntity)
       .then(() => {
         fail("unexpectedly succeeded to overwrite existing entity");
-        done();
       })
       .catch(function (error) {
         expect(error).toBeDefined();
-        done();
       });
   });
 
@@ -184,8 +181,9 @@ describe("EntityMapperService", () => {
     receiveUpdatesAndTestTypeAndId(done, undefined, testId);
 
     const testEntity = new Entity(testId);
-    entityMapper.save(testEntity, true);
-    entityMapper.remove(testEntity);
+    entityMapper
+      .save(testEntity, true)
+      .then(() => entityMapper.remove(testEntity));
   });
 
   it("publishes when an existing entity is updated", async (done) => {

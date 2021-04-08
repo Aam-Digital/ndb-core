@@ -90,7 +90,7 @@ export class PouchDatabase extends Database {
    * @param object The document to be saved
    * @param forceOverwrite (Optional) Whether conflicts should be ignored and an existing conflicting document forcefully overwritten.
    */
-  put(object: any, forceOverwrite?: boolean) {
+  put(object: any, forceOverwrite?: boolean): Promise<any> {
     const options: any = {};
     // if (forceOverwrite) {
     //   options.force = true;
@@ -98,7 +98,7 @@ export class PouchDatabase extends Database {
 
     return this._pouchDB.put(object, options).catch((err) => {
       if (err.status === 409) {
-        this.resolveConflict(object, forceOverwrite, err);
+        return this.resolveConflict(object, forceOverwrite, err);
       } else {
         this.notifyError(err);
         throw err;
@@ -204,31 +204,28 @@ export class PouchDatabase extends Database {
    * @param overwriteChanges
    * @param existingError
    */
-  private resolveConflict(
+  private async resolveConflict(
     newObject: any,
     overwriteChanges: boolean,
     existingError: any
-  ) {
-    this.get(newObject._id).then((existingObject) => {
-      const resolvedObject = this.mergeObjects(existingObject, newObject);
-      if (resolvedObject) {
-        this.loggingService.debug(
-          "resolved document conflict automatically (" +
-            resolvedObject._id +
-            ")"
-        );
-        this.put(resolvedObject);
-      } else if (overwriteChanges) {
-        this.loggingService.debug(
-          "overwriting conflicting document version (" + newObject._id + ")"
-        );
-        newObject._rev = existingObject._rev;
-        this.put(newObject);
-      } else {
-        existingError.message = existingError.message + " (unable to resolve)";
-        throw existingError;
-      }
-    });
+  ): Promise<any> {
+    const existingObject = await this.get(newObject._id);
+    const resolvedObject = this.mergeObjects(existingObject, newObject);
+    if (resolvedObject) {
+      this.loggingService.debug(
+        "resolved document conflict automatically (" + resolvedObject._id + ")"
+      );
+      return this.put(resolvedObject);
+    } else if (overwriteChanges) {
+      this.loggingService.debug(
+        "overwriting conflicting document version (" + newObject._id + ")"
+      );
+      newObject._rev = existingObject._rev;
+      return this.put(newObject);
+    } else {
+      existingError.message = existingError.message + " (unable to resolve)";
+      throw existingError;
+    }
   }
 
   private mergeObjects(existingObject: any, newObject: any) {
