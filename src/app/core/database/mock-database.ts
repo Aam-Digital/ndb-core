@@ -36,7 +36,9 @@ export class MockDatabase extends PouchDatabase {
 
   static createWithPouchDB() {
     PouchDB.plugin(memory).plugin(mapreduce);
-    return new MockDatabase(new PouchDB("unit-test", { adapter: "memory" }));
+    return new MockDatabase(
+      new PouchDB("in-memory-mock-database", { adapter: "memory" })
+    );
   }
 
   private indexPromises: Promise<any>[] = [];

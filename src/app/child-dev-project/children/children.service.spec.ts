@@ -9,19 +9,20 @@ import { MockDatabase } from "../../core/database/mock-database";
 import { TestBed } from "@angular/core/testing";
 import moment from "moment";
 import { Database } from "../../core/database/database";
-import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 
 describe("ChildrenService with PouchDB", () => {
   let service: ChildrenService;
   let entityMapper: EntityMapperService;
+  let database: MockDatabase;
 
-  beforeEach((done) => {
+  beforeEach(async () => {
+    database = MockDatabase.createWithPouchDB();
     TestBed.configureTestingModule({
       providers: [
         ChildrenService,
         EntityMapperService,
         EntitySchemaService,
-        { provide: Database, useValue: MockDatabase.createWithPouchDB() },
+        { provide: Database, useValue: database },
       ],
     });
 
@@ -34,24 +35,11 @@ describe("ChildrenService with PouchDB", () => {
 
     service = TestBed.inject<ChildrenService>(ChildrenService);
 
-    // wait for the relevant indices to complete building - otherwise this will clash with teardown in afterEach
-    const indexingService = TestBed.inject(DatabaseIndexingService);
-    indexingService.indicesRegistered.subscribe((x) => {
-      if (
-        x.find((e) => e.details === "childSchoolRelations_index")?.pending ===
-          false &&
-        x.find((e) => e.details === "avg_attendance_index")?.pending ===
-          false &&
-        x.find((e) => e.details === "notes_index")?.pending === false
-      ) {
-        done();
-      }
-    });
+    await database.waitForIndexing();
   });
 
   afterEach(async () => {
-    const mockDB = TestBed.inject(Database) as MockDatabase;
-    await mockDB.destroy();
+    await database.destroy();
   });
 
   it("should be created", () => {

@@ -76,7 +76,6 @@ describe("AttendanceService", () => {
     await entityMapper.save(e1_3);
     await entityMapper.save(e2_1);
 
-    // wait for the relevant indices to complete building - otherwise this will clash with teardown in afterEach
     await database.waitForIndexing();
   });
 
