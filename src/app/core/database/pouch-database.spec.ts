@@ -30,150 +30,82 @@ describe("PouchDatabase tests", () => {
     });
   });
 
-  it("get object by _id after put into database", function (done) {
+  it("get object by _id after put into database", async () => {
     const id = "test_id";
     const name = "test";
     const count = 42;
     const testData = { _id: id, name: name, count: count };
-
-    pouchDatabase.put(testData).then(
-      function () {
-        getObjectAndCompare();
-      },
-      function () {
-        expect(false).toBe(true, "promise of pouchDatabase.put failed");
-      }
-    );
-
-    function getObjectAndCompare() {
-      pouchDatabase.get(id).then(
-        function (resultData: any) {
-          expect(resultData._id).toEqual(id);
-          expect(resultData.name).toEqual(name);
-          expect(resultData.count).toEqual(count);
-          done();
-        },
-        function () {
-          expect(false).toBe(true, "promise of pouchDatabase.get failed");
-        }
-      );
-    }
+    await pouchDatabase.put(testData);
+    const resultData = await pouchDatabase.get(id);
+    expect(resultData._id).toEqual(id);
+    expect(resultData.name).toEqual(name);
+    expect(resultData.count).toEqual(count);
   });
 
-  it("fails to get by not existing entityId", function (done) {
-    pouchDatabase.get("some_id").then(
-      function () {
-        expect(true).toBe(
-          false,
-          "retrieved object despite get on non-existing _id"
-        );
-      },
-      function (err: any) {
-        expect(err).toBeDefined();
-        done();
-      }
-    );
+  it("put two objects with different _id", async () => {
+    const data1 = { _id: "test_id", name: "test" };
+    const data2 = { _id: "other_id", name: "test2" };
+    await pouchDatabase.put(data1);
+    await pouchDatabase.put(data2);
+    const result = await pouchDatabase.get(data1._id);
+    expect(result._id).toBe(data1._id);
+    const result2 = await pouchDatabase.get(data2._id);
+    expect(result2._id).toBe(data2._id);
   });
 
-  it("returns undefined on get by not existing entityId with returnUndefined parameter", function (done) {
-    pouchDatabase.get("some_id", {}, true).then(
-      function (result) {
-        expect(result).toBeUndefined();
-        done();
-      },
-      function (err: any) {
-        fail(err);
-        done();
-      }
-    );
+  it("fails to get by not existing _id", () => {
+    return expectAsync(pouchDatabase.get("some_id")).toBeRejected();
   });
 
-  it("getAll returns all objects", function (done) {
+  it("rejects putting new object with existing _id and no _rev", async () => {
+    const testData = { _id: "test_id", name: "test", count: 42 };
+    const duplicateData = { _id: "test_id", name: "duplicate", count: 43 };
+    await pouchDatabase.put(testData);
+    const result = await pouchDatabase.get(testData._id);
+    expect(result._id).toBe(testData._id);
+    await expectAsync(pouchDatabase.put(duplicateData)).toBeRejected();
+    const result2 = await pouchDatabase.get(testData._id);
+    expect(result2.name).toBe(testData.name);
+  });
+
+  it("removes an existing object", async () => {
+    const id = "test_id";
+    const name = "test";
+    const count = 42;
+    const testData = { _id: id, name: name, count: count };
+    await pouchDatabase.put(testData);
+    await expectAsync(pouchDatabase.get(testData._id)).toBeResolved();
+    const savedDocument = await pouchDatabase.get(testData._id);
+    await pouchDatabase.remove(savedDocument);
+    await expectAsync(pouchDatabase.get(testData._id)).toBeRejected();
+  });
+
+  it("returns undefined on get by not existing entityId with returnUndefined parameter", async () => {
+    const result = await pouchDatabase.get("some_id", {}, true);
+    expect(result).toBeUndefined();
+  });
+
+  it("getAll returns all objects", async () => {
     const testData1 = { _id: "x:test_id", name: "test", count: 42 };
     const testData2 = { _id: "y:two", name: "two" };
-
-    pouchDatabase.put(testData1).then(
-      function () {
-        pouchDatabase.put(testData2).then(
-          function () {
-            pouchDatabase.getAll().then(
-              function (resultData) {
-                expect(
-                  resultData.findIndex((o) => o._id === testData1._id)
-                ).toBeGreaterThan(-1, "testData1 not found in getAll result");
-                expect(
-                  resultData.findIndex((o) => o._id === testData2._id)
-                ).toBeGreaterThan(-1, "testData2 not found in getAll result");
-                expect(resultData.length).toBe(
-                  2,
-                  "getAll result has " +
-                    resultData.length +
-                    " not expected number of objects"
-                );
-                done();
-              },
-              function (err) {
-                expect(false).toBe(true, "getAll failed: " + err);
-                done();
-              }
-            );
-          },
-          function (err) {
-            expect(false).toBe(true, "put failed: " + err);
-            done();
-          }
-        );
-      },
-      function (err) {
-        expect(false).toBe(true, "put failed: " + err);
-        done();
-      }
-    );
+    await pouchDatabase.put(testData1);
+    await pouchDatabase.put(testData2);
+    const result = await pouchDatabase.getAll();
+    expect(result.map((el) => el._id)).toContain(testData1._id);
+    expect(result.map((el) => el._id)).toContain(testData2._id);
+    expect(result.length).toBe(2);
   });
 
-  it("getAll returns prefixed objects", function (done) {
+  it("getAll returns prefixed objects", async () => {
     const testData1 = { _id: "x:test_id", name: "test", count: 42 };
     const testData2 = { _id: "y:two", name: "two" };
     const prefix = "x";
-
-    // default options for "getAll()": this.allDocs({include_docs: true, startkey: prefix, endkey: prefix + '\ufff0'});
-    pouchDatabase.put(testData1).then(
-      () => {
-        pouchDatabase.put(testData2).then(
-          () => {
-            pouchDatabase.getAll(prefix).then(
-              function (resultData) {
-                expect(
-                  resultData.findIndex((o) => o._id === testData1._id)
-                ).toBeGreaterThan(-1, "testData1 not found in getAll result");
-                expect(
-                  resultData.findIndex((o) => o._id === testData2._id)
-                ).toBe(
-                  -1,
-                  "testData2 unexpectedly found in getAll result despite other prefix"
-                );
-                expect(resultData.length).toBe(
-                  1,
-                  "getAll result has " +
-                    resultData.length +
-                    " not expected number of objects"
-                );
-                done();
-              },
-              function (err) {
-                expect(false).toBe(true, "getAll failed: " + err);
-              }
-            );
-          },
-          function (err) {
-            expect(false).toBe(true, "put failed: " + err);
-          }
-        );
-      },
-      function (err) {
-        expect(false).toBe(true, "put failed: " + err);
-      }
-    );
+    await pouchDatabase.put(testData1);
+    await pouchDatabase.put(testData2);
+    const result = await pouchDatabase.getAll(prefix);
+    expect(result.length).toBe(1);
+    expect(result.map((el) => el._id)).toContain(testData1._id);
+    expect(result.map((el) => el._id)).not.toContain(testData2._id);
   });
 
   it("saveDatabaseIndex creates new index", async () => {
