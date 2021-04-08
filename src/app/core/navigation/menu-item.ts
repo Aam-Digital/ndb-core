@@ -17,19 +17,13 @@
 
 /**
  * Structure for menu items to be displayed.
- *
- * also see {@link NavigationItemsService}
  */
 export class MenuItem {
   /**
    * Create a menu item.
    * @param label The text to be displayed in the menu.
    * @param icon The icon to be displayed left of the label.
-   * @param routerLinkParameters The Angular routerLink parameters to which the item will route to (e.g. ['/dashboard'])
+   * @param link The url fragment to which the item will route to (e.g. '/dashboard')
    */
-  constructor(
-    public label: string,
-    public icon: string,
-    public routerLinkParameters: any[]
-  ) {}
+  constructor(public label: string, public icon: string, public link: string) {}
 }
