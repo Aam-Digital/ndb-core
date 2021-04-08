@@ -162,7 +162,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    */
   @Input() accessor: accessorFn<E> = (e) => e["name"] || e.getId();
 
-  @Input() additionalFilter: (T) => boolean = (_) => true;
+  @Input() additionalFilter: (e: E) => boolean = (_) => true;
   /**
    * selects a given entity and emits values
    * @param entity the entity to select
@@ -210,8 +210,6 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     if (index !== -1) {
       this.selection_.splice(index, 1);
       this.emitChange();
-      this.inputField.nativeElement.value = ""; // TODO: keep?
-      this.formControl.setValue(null);
     }
   }
 
