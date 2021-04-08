@@ -35,7 +35,7 @@ export class MockSessionService extends SessionService {
 
   constructor(private _entitySchemaService: EntitySchemaService) {
     super();
-    this.database = new MockDatabase();
+    this.database = MockDatabase.createWithPouchDB();
   }
 
   /** see {@link SessionService} */

@@ -43,10 +43,7 @@ export class MockDatabase extends PouchDatabase {
 
   private indexPromises: Promise<any>[] = [];
 
-  /**
-   * Create an in-memory database manager.
-   */
-  constructor(private pouchDB?) {
+  constructor(private pouchDB) {
     super(pouchDB, new LoggingService());
   }
 
