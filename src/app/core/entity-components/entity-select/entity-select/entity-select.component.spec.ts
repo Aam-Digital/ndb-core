@@ -83,7 +83,7 @@ describe("EntitySelectComponent", () => {
     expect(component.loading.value).toBe(false);
   }));
 
-  it("should suggest all entities after an initial load", async (done) => {
+  it("should suggest all entities after an initial load", (done) => {
     component.filteredEntities.subscribe((next) => {
       expect(next.length).toBe(mockEntitiesA.length);
       done();
@@ -110,7 +110,7 @@ describe("EntitySelectComponent", () => {
     expect(component._selection.map((s) => s.getId())).toEqual(expectation);
   }));
 
-  it("emits whenever an entity is added", fakeAsync(() => {
+  it("emits whenever a new entity is selected", fakeAsync(() => {
     spyOn(component.selectionChange, "emit");
     component.entityType = TestEntity;
     tick();
@@ -126,11 +126,11 @@ describe("EntitySelectComponent", () => {
     ]);
   }));
 
-  it("emits whenever an entity is removed", () => {
+  it("emits whenever a selected entity is removed", () => {
     spyOn(component.selectionChange, "emit");
     component._selection = [...mockEntitiesA];
     component.selectionInputType = "id";
-    component.removeEntity(mockEntitiesA[0]);
+    component.unselectEntity(mockEntitiesA[0]);
     const remainingChildren = mockEntitiesA
       .filter((c) => c.getId() !== mockEntitiesA[0].getId())
       .map((c) => c.getId());
@@ -141,13 +141,13 @@ describe("EntitySelectComponent", () => {
 
   it("adds a new entity if it matches a known entity", () => {
     component.allEntities = mockEntitiesA;
-    component.add({ input: null, value: mockEntitiesA[0]["name"] });
+    component.select({ input: null, value: mockEntitiesA[0]["name"] });
     expect(component._selection).toEqual([mockEntitiesA[0]]);
   });
 
   it("does not add anything if a new entity doesn't match", () => {
     component.allEntities = mockEntitiesA;
-    component.add({ input: null, value: "ZZ" });
+    component.select({ input: null, value: "ZZ" });
     expect(component._selection).toEqual([]);
   });
 
