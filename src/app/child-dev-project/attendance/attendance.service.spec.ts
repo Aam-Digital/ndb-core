@@ -7,26 +7,21 @@ import { Database } from "../../core/database/database";
 import { RecurringActivity } from "./model/recurring-activity";
 import moment from "moment";
 import { defaultInteractionTypes } from "../../core/config/default-config/default-interaction-types";
-import { PouchDatabase } from "../../core/database/pouch-database";
-import PouchDB from "pouchdb-browser";
-import { LoggingService } from "../../core/logging/logging.service";
-import { deleteAllIndexedDB } from "../../utils/performance-tests.spec";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { EventNote } from "./model/event-note";
-import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 import { ChildrenService } from "../children/children.service";
 import { School } from "../schools/model/school";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { Child } from "../children/model/child";
-import { filter, take } from "rxjs/operators";
+import { MockDatabase } from "../../core/database/mock-database";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
 
   let entityMapper: EntityMapperService;
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
-  let rawPouch;
+  let database: MockDatabase;
 
   function createEvent(date: Date, activityIdWithPrefix: string): EventNote {
     const event = EventNote.create(date, "generated event");
@@ -45,9 +40,7 @@ describe("AttendanceService", () => {
     activity1 = RecurringActivity.create("activity 1");
     activity2 = RecurringActivity.create("activity 2");
 
-    // testDB = MockDatabase.createWithData([]);
-    rawPouch = new PouchDB("unit-testing");
-    const testDB = new PouchDatabase(rawPouch, new LoggingService());
+    database = MockDatabase.createWithPouchDB();
 
     e1_1 = createEvent(new Date("2020-01-01"), activity1._id);
     e1_2 = createEvent(new Date("2020-01-02"), activity1._id);
@@ -62,7 +55,7 @@ describe("AttendanceService", () => {
         AttendanceService,
         EntityMapperService,
         EntitySchemaService,
-        { provide: Database, useValue: testDB },
+        { provide: Database, useValue: database },
         { provide: ChildrenService, useValue: mockChildrenService },
       ],
     });
@@ -84,22 +77,11 @@ describe("AttendanceService", () => {
     await entityMapper.save(e2_1);
 
     // wait for the relevant indices to complete building - otherwise this will clash with teardown in afterEach
-    const indexingService = TestBed.inject(DatabaseIndexingService);
-    await indexingService.indicesRegistered
-      .pipe(
-        filter(
-          (x) =>
-            x.find((e) => e.details === "events_index")?.pending === false &&
-            x.find((e) => e.details === "activities_index")?.pending === false
-        ),
-        take(1)
-      )
-      .toPromise();
+    await database.waitForIndexing();
   });
 
   afterEach(async () => {
-    await rawPouch.close();
-    await deleteAllIndexedDB(() => true);
+    await database.destroy();
   });
 
   it("should be created", () => {

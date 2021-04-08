@@ -39,11 +39,29 @@ export class MockDatabase extends PouchDatabase {
     return new MockDatabase(new PouchDB("unit-test", { adapter: "memory" }));
   }
 
+  private indexPromises: Promise<any>[] = [];
+
   /**
    * Create an in-memory database manager.
    */
   constructor(private pouchDB?) {
     super(pouchDB, new LoggingService());
+  }
+
+  public saveDatabaseIndex(designDoc: any): Promise<any> {
+    const indexPromise = super.saveDatabaseIndex(designDoc);
+    this.indexPromises.push(indexPromise);
+    return indexPromise;
+  }
+
+  /**
+   * Returns a promise that will resolve, once all indices are built.
+   * This function should be called AFTER saveDatabaseIndex was called for each index.
+   * If a second index is saved after the first one is done and this function is called immediately after saving the
+   * first index, then the promise will not wait for the second index to be done.
+   */
+  public waitForIndexing(): Promise<any> {
+    return Promise.all(this.indexPromises);
   }
 
   public destroy(): Promise<any> {
