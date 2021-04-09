@@ -107,8 +107,8 @@ export class AttendanceService {
     return await this.dbIndexing.queryIndexDocsRange(
       EventNote,
       "events_index/by_date",
-      startDate.toISOString().substr(0, 10),
-      endDate.toISOString().substr(0, 10)
+      moment(startDate).format("YYYY-MM-DD"),
+      moment(endDate).format("YYYY-MM-DD")
     );
   }
 
