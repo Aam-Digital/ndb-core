@@ -34,11 +34,6 @@ describe("EntitySubrecordComponent", () => {
         providers: [
           DatePipe,
           PercentPipe,
-          { provide: Database, useValue: MockDatabase.createWithPouchDB() },
-          {
-            provide: ConfirmationDialogService,
-            useClass: ConfirmationDialogService,
-          },
           { provide: EntityMapperService, useValue: mockEntityMapper },
         ],
       }).compileComponents();
