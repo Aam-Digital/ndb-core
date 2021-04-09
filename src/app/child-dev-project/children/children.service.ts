@@ -345,7 +345,7 @@ export class ChildrenService {
     const stats = await this.dbIndexing.queryIndexStats(
       "notes_index/note_child_by_date",
       {
-        startkey: [startDay.year(), startDay.month(), startDay.date()],
+        startkey: startDay.format("YYYY-MM-DD"),
       }
     );
 
@@ -358,13 +358,14 @@ export class ChildrenService {
     for (const childStats of stats.rows) {
       // TODO: filter notes to only include them if the given child is marked "present"
 
-      const childId = childStats.value[0];
-      const noteDate = moment(childStats.key);
+      for (const childId of childStats.value[0]) {
+        const noteDate = moment(childStats.key);
 
-      const daysSinceNote = moment().diff(noteDate, "days");
-      const previousValue = results.get(childId);
-      if (previousValue > daysSinceNote) {
-        results.set(childId, daysSinceNote);
+        const daysSinceNote = moment().diff(noteDate, "days");
+        const previousValue = results.get(childId);
+        if (previousValue > daysSinceNote) {
+          results.set(childId, daysSinceNote);
+        }
       }
     }
 
@@ -389,8 +390,9 @@ export class ChildrenService {
           map: `(doc) => {
             if (!doc._id.startsWith("${Note.ENTITY_TYPE}")) return;
             if (!Array.isArray(doc.children) || !doc.date) return;
-            var date = new Date(doc.date);
-            doc.children.forEach(childId => emit([date.getFullYear(), date.getMonth(), date.getDate()], [childId, doc.relatesTo]));
+            var d = new Date(doc.date || null);
+            var dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
+            emit(dString, [doc.children, doc.relatesTo]);
           }`,
         },
       },

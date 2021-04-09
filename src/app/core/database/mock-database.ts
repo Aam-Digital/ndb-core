@@ -288,13 +288,7 @@ export class MockDatabase extends Database {
         break;
 
       case "notes_index/note_child_by_date":
-        const startDate = moment(
-          new Date(
-            options.startkey[0],
-            options.startkey[1],
-            options.startkey[2]
-          )
-        );
+        const startDate = moment(options.startkey);
 
         filterFun = (e) => {
           return (
@@ -305,14 +299,11 @@ export class MockDatabase extends Database {
           );
         };
         reducerFun = (prev, curr) => {
-          const date = new Date(curr.date);
-          curr.children.forEach((childId) => {
-            const newEntry = {
-              key: [date.getFullYear(), date.getMonth(), date.getDate()],
-              value: [childId, curr.relatesTo],
-            };
-            prev.push(newEntry);
-          });
+          const newEntry = {
+            key: moment(curr.date).format("YYYY-MM-DD"),
+            value: [curr.children, curr.relatesTo],
+          };
+          prev.push(newEntry);
           return prev;
         };
         break;
