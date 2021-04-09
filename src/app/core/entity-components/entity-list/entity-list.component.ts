@@ -9,7 +9,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { MatSort } from "@angular/material/sort";
+import { MatSort, MatSortable } from "@angular/material/sort";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
@@ -146,8 +146,31 @@ export class EntityListComponent<T extends Entity>
     }
     if (changes.hasOwnProperty("entityList")) {
       this.initFilterSelections();
+      this.initDefaultSort();
     }
     this.loadUrlParams();
+  }
+
+  private initDefaultSort() {
+    if (!this.sort || this.sort.active) {
+      // do not overwrite existing sort
+      return;
+    }
+
+    // initial sorting by first column
+    const sortBy = this.columnsToDisplay[0];
+    let sortDirection = "asc";
+    if (
+      this.columns.find((c) => c.id === sortBy)?.component === "DisplayDate"
+    ) {
+      // flip default sort order for dates (latest first)
+      sortDirection = "desc";
+    }
+
+    this.sort.sort({
+      id: sortBy,
+      start: sortDirection,
+    } as MatSortable);
   }
 
   ngAfterViewInit() {
