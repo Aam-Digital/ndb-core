@@ -34,18 +34,18 @@ export class MockDatabase extends PouchDatabase {
     return instance;
   }
 
-  static createWithPouchDB(): MockDatabase {
+  static createWithPouchDB(
+    dbname: string = "in-memory-mock-database",
+    loggingService: LoggingService = new LoggingService()
+  ): MockDatabase {
     PouchDB.plugin(memory).plugin(mapreduce);
     return new MockDatabase(
-      new PouchDB("in-memory-mock-database", { adapter: "memory" })
+      new PouchDB(dbname, { adapter: "memory" }),
+      loggingService
     );
   }
 
   private indexPromises: Promise<any>[] = [];
-
-  constructor(private pouchDB) {
-    super(pouchDB, new LoggingService());
-  }
 
   public saveDatabaseIndex(designDoc: any): Promise<any> {
     const indexPromise = super.saveDatabaseIndex(designDoc);
@@ -61,9 +61,5 @@ export class MockDatabase extends PouchDatabase {
    */
   public waitForIndexing(): Promise<any> {
     return Promise.all(this.indexPromises);
-  }
-
-  public destroy(): Promise<any> {
-    return this.pouchDB.destroy();
   }
 }

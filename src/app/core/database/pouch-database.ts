@@ -120,6 +120,21 @@ export class PouchDatabase extends Database {
   }
 
   /**
+   * Sync the local database with a remote database.
+   * See {@Link https://pouchdb.com/guides/replication.html}
+   * @param remoteDatabase the PouchDB instance of the remote database
+   */
+  sync(remoteDatabase) {
+    return this._pouchDB.sync(remoteDatabase, {
+      batch_size: 500,
+    });
+  }
+
+  public async destroy(): Promise<any> {
+    return this._pouchDB.destroy();
+  }
+
+  /**
    * Query data from the database based on a more complex, indexed request.
    * (see {@link Database})
    *
