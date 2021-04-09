@@ -83,13 +83,13 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
         continue;
       }
 
-      let numberOfNotes = faker.random.number({
+      let numberOfNotes = faker.datatype.number({
         min: this.config.minNotesPerChild,
         max: this.config.maxNotesPerChild,
       });
 
       // generate a recent note for the last week for some children to have data for dashboard
-      if (numberOfNotes > 0 && faker.random.number(100) < 40) {
+      if (numberOfNotes > 0 && faker.datatype.number(100) < 40) {
         data.push(
           this.generateNoteForChild(
             child,
@@ -120,7 +120,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
   }
 
   private generateNoteForChild(child: Child, date?: Date): Note {
-    let note = new Note(faker.random.uuid());
+    let note = new Note(faker.datatype.uuid());
 
     const selectedStory = faker.random.arrayElement(noteIndividualStories);
     Object.assign(note, selectedStory);
@@ -158,7 +158,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
   }
 
   private generateGroupNote(children: Child[]) {
-    let note = new Note(faker.random.uuid());
+    let note = new Note(faker.datatype.uuid());
 
     const selectedStory = faker.random.arrayElement(noteGroupStories);
     Object.assign(note, selectedStory);
@@ -172,7 +172,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     children.forEach((child) => {
       const attendance = note.getAttendance(child.getId());
       // get an approximate presence of 85%
-      if (faker.random.number(100) <= 15) {
+      if (faker.datatype.number(100) <= 15) {
         attendance.status = this.availableStatusTypes.find(
           (t) => t.countAs === AttendanceLogicalStatus.ABSENT
         );

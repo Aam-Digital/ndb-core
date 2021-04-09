@@ -41,7 +41,7 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
     const data = [];
 
     for (const child of this.demoChildren.entities) {
-      const count = faker.random.number({
+      const count = faker.datatype.number({
         min: this.config.minCount,
         max: this.config.maxCount,
       });
@@ -61,7 +61,7 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
   }
 
   private generateEducationalMaterialEntity(child: Child): EducationalMaterial {
-    const entity = new EducationalMaterial(faker.random.uuid());
+    const entity = new EducationalMaterial(faker.datatype.uuid());
 
     entity.child = child.getId();
     entity.date = faker.date.between(
