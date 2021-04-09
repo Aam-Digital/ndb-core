@@ -77,14 +77,14 @@ describe("ChildrenService", () => {
 
   // TODO: test getAttendances
 
-  it("should find latest ChildSchoolRelation of a child", async (done: DoneFn) => {
+  it("should find latest ChildSchoolRelation of a child", async () => {
     const children = await service.getChildren().toPromise();
     const promises: Promise<any>[] = [];
     expect(children.length).toBeGreaterThan(0);
     children.forEach((child) =>
       promises.push(verifyLatestChildRelations(child, service))
     );
-    Promise.all(promises).then(() => done());
+    await Promise.all(promises);
   });
 
   it("should return ChildSchoolRelations of child in correct order", (done: DoneFn) => {

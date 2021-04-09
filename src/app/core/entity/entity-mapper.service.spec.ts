@@ -179,24 +179,20 @@ describe("EntityMapperService", () => {
     entityMapper.remove(testEntity);
   });
 
-  it("publishes when an existing entity is updated", async (done) => {
+  it("publishes when an existing entity is updated", (done) => {
     receiveUpdatesAndTestTypeAndId(done, "update", existingEntity.entityId);
 
-    const loadedEntity = await entityMapper.load<Entity>(
-      Entity,
-      existingEntity.entityId
-    );
-    await entityMapper.save<Entity>(loadedEntity);
+    entityMapper
+      .load<Entity>(Entity, existingEntity.entityId)
+      .then((loadedEntity) => entityMapper.save<Entity>(loadedEntity));
   });
 
-  it("publishes when an existing entity is deleted", async (done) => {
+  it("publishes when an existing entity is deleted", (done) => {
     receiveUpdatesAndTestTypeAndId(done, "remove", existingEntity.entityId);
 
-    const loadedEntity = await entityMapper.load<Entity>(
-      Entity,
-      existingEntity.entityId
-    );
-    await entityMapper.remove<Entity>(loadedEntity);
+    entityMapper
+      .load<Entity>(Entity, existingEntity.entityId)
+      .then((loadedEntity) => entityMapper.remove<Entity>(loadedEntity));
   });
 
   it("publishes when a new entity is being saved", (done) => {
