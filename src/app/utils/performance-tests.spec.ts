@@ -19,7 +19,6 @@ import { TestBed, waitForAsync } from "@angular/core/testing";
 import { SessionService } from "../core/session/session-service/session.service";
 import { AppModule } from "../app.module";
 import moment from "moment";
-import { ChildrenService } from "../child-dev-project/children/children.service";
 import { MockDatabase } from "../core/database/mock-database";
 import { LoggingService } from "../core/logging/logging.service";
 import { NewLocalSessionService } from "../core/session/session-service/new-local-session.service";
@@ -29,6 +28,8 @@ import { DemoDataService } from "../core/demo-data/demo-data.service";
 import { SchoolsService } from "../child-dev-project/schools/schools.service";
 import { EntityMapperService } from "../core/entity/entity-mapper.service";
 import { School } from "../child-dev-project/schools/model/school";
+import { ChildrenService } from "../child-dev-project/children/children.service";
+import { Child } from "../child-dev-project/children/model/child";
 
 describe("Performance Tests", () => {
   let mockSessionService: SessionService;
@@ -69,10 +70,20 @@ describe("Performance Tests", () => {
   );
 
   it("created the demo data", async () => {
-    await comparePerformance(
-      () => demoDataService.publishDemoData(),
-      () => demoDataService.publishDemoDataImproved(),
-      "Create demo data"
+    const normalTimer = new Timer();
+    await demoDataService.publishDemoData();
+    fail(
+      "<DemoDataService> publish demo data normal took " +
+        normalTimer.getDuration()
+    );
+  });
+
+  it("created the demo data improved", async () => {
+    const normalTimer = new Timer();
+    await demoDataService.publishDemoDataImproved();
+    fail(
+      "<DemoDataService> publish demo data improved took " +
+        normalTimer.getDuration()
     );
   });
 
@@ -89,6 +100,19 @@ describe("Performance Tests", () => {
       (school) => schoolsService.getChildrenForSchoolImproved(school.getId()),
       "Loading children of schools",
       schools
+    );
+  });
+
+  it("load children with school info", async () => {
+    const demoDataService = TestBed.inject(DemoDataService);
+    await demoDataService.publishDemoDataImproved();
+    const mockDatabase = TestBed.inject(Database) as MockDatabase;
+    const childrenService = TestBed.inject(ChildrenService);
+    await mockDatabase.waitForIndexing();
+    await comparePerformance(
+      () => childrenService.getChildren().toPromise(),
+      () => childrenService.getChildrenImproved(),
+      "ChildrenService getChildren"
     );
   });
 });
