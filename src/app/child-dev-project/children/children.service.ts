@@ -106,6 +106,29 @@ export class ChildrenService {
     return from(promise);
   }
 
+  async getChildImproved(id: string): Promise<Child> {
+    const result = await this.dbIndexing.queryIndexRaw(
+      "childSchoolRelations_index/by_child_improved",
+      {
+        startkey: [id],
+        endkey: [id + "\ufff0"],
+        include_docs: true,
+      }
+    );
+    const child = new Child();
+    this.entitySchemaService.loadDataIntoEntity(child, result.rows[0].doc);
+    const relations = result.rows.splice(1) || [];
+    relations.forEach((row) => {
+      const relation = new ChildSchoolRelation();
+      this.entitySchemaService.loadDataIntoEntity(relation, row.doc);
+      if (relation.isActive()) {
+        child.schoolId = relation.schoolId;
+        child.schoolClass = relation.schoolClass;
+      }
+    });
+    return child;
+  }
+
   getAttendances(): Observable<AttendanceMonth[]> {
     return from(this.entityMapper.loadType<AttendanceMonth>(AttendanceMonth));
   }

@@ -115,6 +115,22 @@ describe("Performance Tests", () => {
       "ChildrenService getChildren"
     );
   });
+
+  it("load children one by one", async () => {
+    const demoDataService = TestBed.inject(DemoDataService);
+    await demoDataService.publishDemoDataImproved();
+    const mockDatabase = TestBed.inject(Database) as MockDatabase;
+    const childrenService = TestBed.inject(ChildrenService);
+    await mockDatabase.waitForIndexing();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const children = await entityMapper.loadType(Child);
+    await comparePerformance(
+      (child) => childrenService.getChild(child.getId()).toPromise(),
+      (child) => childrenService.getChildImproved(child.getId()),
+      "ChildrenService getChild",
+      children
+    );
+  });
 });
 
 async function comparePerformance<V, R>(
@@ -150,7 +166,13 @@ async function getExecutionDiff<R>(
   const improvedTimer = new Timer();
   const improvedResult = await improvedFunction();
   const improvedDuration = improvedTimer.getDuration();
-  expect(improvedResult).toEqual(currentResult);
+  expect(improvedResult).toEqual(
+    currentResult,
+    "current " +
+      JSON.stringify(currentResult) +
+      " improved " +
+      JSON.stringify(improvedResult)
+  );
   return currentDuration - improvedDuration;
 }
 
