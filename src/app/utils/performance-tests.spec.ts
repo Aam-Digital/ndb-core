@@ -17,74 +17,120 @@
 
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { SessionService } from "../core/session/session-service/session.service";
-import { AppConfig } from "../core/app-config/app-config";
 import { AppModule } from "../app.module";
-import { SyncState } from "../core/session/session-states/sync-state.enum";
 import moment from "moment";
 import { ChildrenService } from "../child-dev-project/children/children.service";
-import { deleteDB } from "idb";
+import { MockDatabase } from "../core/database/mock-database";
+import { LoggingService } from "../core/logging/logging.service";
+import { NewLocalSessionService } from "../core/session/session-service/new-local-session.service";
+import { EntitySchemaService } from "../core/entity/schema/entity-schema.service";
+import { Database } from "../core/database/database";
+import { DemoDataService } from "../core/demo-data/demo-data.service";
+import { SchoolsService } from "../child-dev-project/schools/schools.service";
+import { EntityMapperService } from "../core/entity/entity-mapper.service";
+import { School } from "../child-dev-project/schools/model/school";
 
-const TEST_REMOTE_DATABASE_URL = "http://dev.aam-digital.com/db/";
-// WARNING - do not check in credentials into public git repository
-const TEST_REMOTE_DATABASE_USER = "[edit before running test]";
-const TEST_REMOTE_DATABASE_PASSWORD = "[edit before running test]";
+describe("Performance Tests", () => {
+  let mockSessionService: SessionService;
+  let mockDatabase: MockDatabase;
+  let demoDataService: DemoDataService;
 
-/**
- * These performance tests are actually integration tests that interact with a remote database.
- *
- * You need to enable CORS for the tests to run by editing karma.conf.js replacing `browsers: ['Chrome'],` with the following:
-browsers: ['Chrome_without_security'],
-customLaunchers:{
-  Chrome_without_security:{
-    base: 'Chrome',
-    flags: ['--disable-web-security']
-  }
-},
- */
-xdescribe("Performance Tests", () => {
   beforeEach(
     waitForAsync(() => {
+      const loggingService = new LoggingService();
+      mockDatabase = MockDatabase.createWithPouchDB(
+        "performance_db",
+        loggingService
+      );
+      const schemaService = new EntitySchemaService();
+      mockSessionService = new NewLocalSessionService(
+        loggingService,
+        schemaService,
+        mockDatabase
+      );
       TestBed.configureTestingModule({
         imports: [AppModule],
+        providers: [
+          { provide: Database, useValue: mockDatabase },
+          { provide: SessionService, useValue: mockSessionService },
+          { provide: EntitySchemaService, useValue: schemaService },
+          { provide: LoggingService, useValue: LoggingService },
+        ],
       }).compileComponents();
-
-      AppConfig.settings = {
-        database: {
-          name: "app",
-          remote_url: TEST_REMOTE_DATABASE_URL,
-          timeout: 60000,
-          useTemporaryDatabase: false,
-        },
-      } as any;
-
       jasmine.DEFAULT_TIMEOUT_INTERVAL = 150000;
+      demoDataService = TestBed.inject(DemoDataService);
     })
   );
 
-  it("sync initial and indexing", async () => {
-    // delete previously synced database; uncomment this to start with a clean state and test an initial sync.
-    // await deleteAllIndexedDB(db => true);
+  afterEach(
+    waitForAsync(() => {
+      return mockDatabase.destroy();
+    })
+  );
 
-    const session = TestBed.inject<SessionService>(SessionService);
-    const syncTimer = new Timer(true);
-    await session.login(
-      TEST_REMOTE_DATABASE_USER,
-      TEST_REMOTE_DATABASE_PASSWORD
-    );
-    await session.getSyncState().waitForChangeTo(SyncState.COMPLETED);
-    syncTimer.stop();
-    console.log("sync time", syncTimer.getDuration());
+  it("created the demo data", async () => {
+    const generateTimer = new Timer();
+    await demoDataService.publishDemoData();
+    expect(generateTimer.getDuration()).toBe(0, "Creating demo data");
+  });
 
-    // delete index views from previous test runs; comment this to test queries on existing indices
-    // await deleteAllIndexedDB(db => db.includes("mrview"));
+  it("should create demo data improved", async () => {
+    const generateTimer = new Timer();
+    await demoDataService.publishDemoDataImproved();
+    expect(generateTimer.getDuration()).toBe(0, "Creating demo data improved");
+  });
 
+  it("children service response times", async () => {
+    await demoDataService.publishDemoDataImproved();
+    const indexTimer = new Timer();
     const childrenService = TestBed.inject<ChildrenService>(ChildrenService);
-    const indexTimer = new Timer(true);
-    await childrenService.createDatabaseIndices();
-    indexTimer.stop();
-    console.log("indexing time", indexTimer.getDuration());
+    await mockDatabase.waitForIndexing();
 
-    expect(indexTimer.getDuration()).toBe(0); // display indexing time as failed assertion; see console for details
+    expect(indexTimer.getDuration()).toBe(0, "Creating indices");
+
+    const allChildrenTimer = new Timer();
+    await childrenService.getChildren().toPromise();
+    expect(allChildrenTimer.getDuration()).toBe(0, "Loading all children");
+  });
+
+  it("school service response times", async () => {
+    await demoDataService.publishDemoDataImproved();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const schools = await entityMapper.loadType(School);
+    const schoolsService = TestBed.inject(SchoolsService);
+    await mockDatabase.waitForIndexing();
+    const times = [];
+    for (const school of schools) {
+      const start = new Timer();
+      await schoolsService
+        .getChildrenForSchool(school.getId())
+        .catch((err) => console.log("not found", err));
+      times.push(start.getDuration());
+    }
+    const avgTime = times.reduce((sum, cur) => sum + cur, 0) / times.length;
+    expect(avgTime).toBe(0, "Loading children avg time");
+  });
+
+  it("school service improved response times", async () => {
+    await demoDataService.publishDemoDataImproved();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const schools = await entityMapper.loadType(School);
+    const schoolsService = TestBed.inject(SchoolsService);
+    await mockDatabase.waitForIndexing();
+    const times = [];
+    for (const school of schools) {
+      const expected = await schoolsService.getChildrenForSchool(
+        school.getId()
+      );
+      const start = new Timer();
+      const actual = await schoolsService
+        .getChildrenForSchoolImproved(school.getId())
+        .catch((err) => console.log("not found", err));
+      times.push(start.getDuration());
+      expect(actual).toEqual(jasmine.arrayWithExactContents(expected));
+    }
+    const avgTime = times.reduce((sum, cur) => sum + cur, 0) / times.length;
+    expect(avgTime).toBe(0, "Loading children improved avg time");
   });
 });
 
@@ -95,7 +141,7 @@ class Timer {
   private startTime;
   private stopTime;
 
-  constructor(start: boolean) {
+  constructor(start: boolean = true) {
     if (start) {
       this.start();
     }
@@ -112,22 +158,5 @@ class Timer {
 
   getDuration() {
     return -this.startTime.diff(this.stopTime ?? moment(), "milliseconds");
-  }
-}
-
-/**
- * Delete all indexedDB databases in the browser matching the given filter.
- * @param filterFun Filter function taking a database name and returning true if this should be deleted.
- */
-export async function deleteAllIndexedDB(
-  filterFun: (dbName: string) => boolean
-): Promise<void> {
-  // @ts-ignore
-  const databases = await indexedDB.databases();
-  for (const db of databases) {
-    if (filterFun(db.name)) {
-      console.log("deleting indexedDB", db.name);
-      await deleteDB(db.name);
-    }
   }
 }
