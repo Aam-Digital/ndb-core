@@ -2,7 +2,6 @@ import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { AttendanceWeekDashboardComponent } from "./attendance-week-dashboard.component";
 import { AttendanceModule } from "../../attendance.module";
-import { EntityTestingModule } from "../../../../core/entity/entity-testing-module/entity-testing.module";
 import { RecurringActivity } from "../../model/recurring-activity";
 import { FontAwesomeIconsModule } from "../../../../core/icons/font-awesome-icons.module";
 import { Child } from "../../../children/model/child";
@@ -12,6 +11,8 @@ import { Note } from "../../../notes/model/note";
 import moment from "moment";
 import { RouterTestingModule } from "@angular/router/testing";
 import { Angulartics2Module } from "angulartics2";
+import { Database } from "../../../../core/database/database";
+import { MockDatabase } from "../../../../core/database/mock-database";
 
 const child1 = Child.create("Jack");
 const child2 = Child.create("Jane");
@@ -56,12 +57,22 @@ export default {
     moduleMetadata({
       imports: [
         AttendanceModule,
-        EntityTestingModule.withData([act1, act2, child1, child2, ...events]),
         FontAwesomeIconsModule,
         RouterTestingModule,
         Angulartics2Module.forRoot(),
       ],
-      providers: [],
+      providers: [
+        {
+          provide: Database,
+          useValue: MockDatabase.createWithData([
+            act1,
+            act2,
+            child1,
+            child2,
+            ...events,
+          ]),
+        },
+      ],
     }),
   ],
 } as Meta;
