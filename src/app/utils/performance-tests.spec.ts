@@ -69,70 +69,66 @@ describe("Performance Tests", () => {
   );
 
   it("created the demo data", async () => {
-    const generateTimer = new Timer();
-    await demoDataService.publishDemoData();
-    expect(generateTimer.getDuration()).toBe(0, "Creating demo data");
+    await comparePerformance(
+      () => demoDataService.publishDemoData(),
+      () => demoDataService.publishDemoDataImproved(),
+      "Create demo data"
+    );
   });
 
-  it("should create demo data improved", async () => {
-    const generateTimer = new Timer();
+  it("school service get children of schools", async () => {
+    const demoDataService = TestBed.inject(DemoDataService);
     await demoDataService.publishDemoDataImproved();
-    expect(generateTimer.getDuration()).toBe(0, "Creating demo data improved");
-  });
-
-  it("children service response times", async () => {
-    await demoDataService.publishDemoDataImproved();
-    const indexTimer = new Timer();
-    const childrenService = TestBed.inject<ChildrenService>(ChildrenService);
-    await mockDatabase.waitForIndexing();
-
-    expect(indexTimer.getDuration()).toBe(0, "Creating indices");
-
-    const allChildrenTimer = new Timer();
-    await childrenService.getChildren().toPromise();
-    expect(allChildrenTimer.getDuration()).toBe(0, "Loading all children");
-  });
-
-  it("school service response times", async () => {
-    await demoDataService.publishDemoDataImproved();
+    const mockDatabase = TestBed.inject(Database) as MockDatabase;
     const entityMapper = TestBed.inject(EntityMapperService);
     const schools = await entityMapper.loadType(School);
     const schoolsService = TestBed.inject(SchoolsService);
     await mockDatabase.waitForIndexing();
-    const times = [];
-    for (const school of schools) {
-      const start = new Timer();
-      await schoolsService
-        .getChildrenForSchool(school.getId())
-        .catch((err) => console.log("not found", err));
-      times.push(start.getDuration());
-    }
-    const avgTime = times.reduce((sum, cur) => sum + cur, 0) / times.length;
-    expect(avgTime).toBe(0, "Loading children avg time");
-  });
-
-  it("school service improved response times", async () => {
-    await demoDataService.publishDemoDataImproved();
-    const entityMapper = TestBed.inject(EntityMapperService);
-    const schools = await entityMapper.loadType(School);
-    const schoolsService = TestBed.inject(SchoolsService);
-    await mockDatabase.waitForIndexing();
-    const times = [];
-    for (const school of schools) {
-      const expected = await schoolsService.getChildrenForSchool(
-        school.getId()
-      );
-      const start = new Timer();
-      const actual = await schoolsService
-        .getChildrenForSchoolImproved(school.getId())
-        .catch((err) => console.log("not found", err));
-      times.push(start.getDuration());
-      expect(actual).toEqual(jasmine.arrayWithExactContents(expected));
-    }
-    const avgTime = times.reduce((sum, cur) => sum + cur, 0) / times.length;
-    expect(avgTime).toBe(0, "Loading children improved avg time");
+    await comparePerformance(
+      (school) => schoolsService.getChildrenForSchool(school.getId()),
+      (school) => schoolsService.getChildrenForSchoolImproved(school.getId()),
+      "Loading children of schools",
+      schools
+    );
   });
 });
+
+async function comparePerformance<V, R>(
+  currentFunction: (val?: V) => Promise<R>,
+  improvedFunction: (val?: V) => Promise<R>,
+  description: string,
+  input?: V[]
+) {
+  const diffs: number[] = [];
+  if (input) {
+    for (const el of input) {
+      const diff = await getExecutionDiff(
+        () => currentFunction(el),
+        () => improvedFunction(el)
+      );
+      diffs.push(diff);
+    }
+    const avgDiff = diffs.reduce((sum, cur) => sum + cur, 0) / diffs.length;
+    fail("<" + description + "> Average improvement: " + avgDiff + "ms");
+  } else {
+    const diff = await getExecutionDiff(currentFunction, improvedFunction);
+    fail("<" + description + "> Execution time improvement " + diff + "ms");
+  }
+}
+
+async function getExecutionDiff<R>(
+  currentFunction: () => Promise<R>,
+  improvedFunction: () => Promise<R>
+): Promise<number> {
+  const currentTimer = new Timer();
+  const currentResult = await currentFunction();
+  const currentDuration = currentTimer.getDuration();
+  const improvedTimer = new Timer();
+  const improvedResult = await improvedFunction();
+  const improvedDuration = improvedTimer.getDuration();
+  expect(improvedResult).toEqual(currentResult);
+  return currentDuration - improvedDuration;
+}
 
 /**
  * Utility class to calculate duration of an action.
