@@ -13,23 +13,32 @@ import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 import { applyUpdate } from "../../../core/entity/entity-update";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
+import { Input } from "@angular/core";
+import { EventNote } from "app/child-dev-project/attendance/model/event-note";
+import { EntityConstructor } from "app/core/entity/entity";
+
+/**
+ * additional config specifically for NotesManagerComponent
+ */
+export interface NotesManagerConfig {
+  /** whether to also load EventNote entities in addition to Note entities */
+  includeEventNotes?: boolean;
+
+  /** whether a toggle control is displayed to users, allowing to change the "includeEventNotes" state */
+  showEventNotesToggle?: boolean;
+}
 
 @Component({
   selector: "app-notes-manager",
-  template: `
-    <app-entity-list
-      [entityList]="notes"
-      [listConfig]="config"
-      [entityConstructor]="noteConstructor"
-      (elementClick)="showDetails($event)"
-      (addNewClick)="addNoteClick()"
-      #entityList
-    ></app-entity-list>
-  `,
+  templateUrl: "./notes-manager.component.html",
+  styleUrls: ["./notes-manager.component.scss"],
 })
 @UntilDestroy()
 export class NotesManagerComponent implements OnInit {
   @ViewChild("entityList") entityList: EntityListComponent<Note>;
+
+  @Input() includeEventNotes: boolean;
+  @Input() showEventNotesToggle: boolean;
 
   config: EntityListConfig;
   noteConstructor = Note;
@@ -74,23 +83,51 @@ export class NotesManagerComponent implements OnInit {
     private log: LoggingService
   ) {}
 
-  ngOnInit() {
-    this.route.data.subscribe((config: EntityListConfig) => {
-      this.config = config;
-      this.addPrebuiltFilters();
-    });
-    this.entityMapperService.loadType<Note>(Note).then((notes) => {
-      // This prevents edge-cases where updates are received
-      // before this is
-      this.notes = notes.concat(this.notes);
-    });
+  async ngOnInit() {
+    this.route.data.subscribe(
+      async (config: EntityListConfig & NotesManagerConfig) => {
+        this.config = config;
+        this.addPrebuiltFilters();
 
+        this.includeEventNotes = config.includeEventNotes;
+        this.showEventNotesToggle = config.showEventNotesToggle;
+        this.notes = await this.loadEntities();
+      }
+    );
+
+    this.subscribeEntityUpdates(Note);
+    this.subscribeEntityUpdates(EventNote);
+  }
+
+  private async loadEntities(): Promise<Note[]> {
+    let notes = await this.entityMapperService.loadType(Note);
+    if (this.includeEventNotes) {
+      const eventNotes = await this.entityMapperService.loadType(EventNote);
+      notes = notes.concat(eventNotes);
+    }
+    return notes;
+  }
+
+  private subscribeEntityUpdates(
+    entityType: EntityConstructor<Note | EventNote>
+  ) {
     this.entityMapperService
-      .receiveUpdates<Note>(Note)
+      .receiveUpdates<Note>(entityType)
       .pipe(untilDestroyed(this))
       .subscribe((updatedNote) => {
+        if (
+          !this.includeEventNotes &&
+          updatedNote?.entity?.getType() === EventNote.ENTITY_TYPE
+        ) {
+          return;
+        }
+
         this.notes = applyUpdate(this.notes, updatedNote);
       });
+  }
+
+  async updateIncludeEvents() {
+    this.notes = await this.loadEntities();
   }
 
   private addPrebuiltFilters() {
