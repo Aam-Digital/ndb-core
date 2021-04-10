@@ -118,6 +118,18 @@ export const defaultConfig = {
     "config": {
       "widgets": [
         {
+          "component": "DashboardShortcutWidget",
+          "config": {
+            "shortcuts": [
+              {
+                "label": "Record Attendance",
+                "icon": "calendar-check-o",
+                "link": "/attendance/add/day",
+              }
+            ]
+          }
+        },
+        {
           "component": "ChildrenCountDashboard"
         },
         {
@@ -149,6 +161,9 @@ export const defaultConfig = {
           "config": {
             "dashboardConfigId": "1"
           }
+        },
+        {
+        "component": "ChildrenBmiDashboardComponent"
         }
       ]
     }
@@ -800,7 +815,17 @@ export const defaultConfig = {
           "components": [
             {
               "title": "School History",
-              "component": "PreviousSchools"
+              "component": "PreviousSchools",
+              "config": {
+                "single": true,
+                "columns": [
+                  { "id": "schoolId", "label": "School", "input": "school" },
+                  { "id": "schoolClass", "label": "Class", "input": "text" },
+                  { "id": "start", "label": "From", "input": "date" },
+                  { "id": "end", "label": "To", "input": "date" },
+                  { "id": "result", "label": "Result", "input": "percentageResult" },
+                ],
+              }
             },
             {
               "title": "ASER Results",

@@ -19,6 +19,7 @@ import { ChildrenService } from "../children/children.service";
 import { School } from "../schools/model/school";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { Child } from "../children/model/child";
+import { filter, take } from "rxjs/operators";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
@@ -40,7 +41,7 @@ describe("AttendanceService", () => {
   let activity1, activity2: RecurringActivity;
   let e1_1, e1_2, e1_3, e2_1: EventNote;
 
-  beforeEach(async (done) => {
+  beforeEach(async () => {
     activity1 = RecurringActivity.create("activity 1");
     activity2 = RecurringActivity.create("activity 2");
 
@@ -84,14 +85,16 @@ describe("AttendanceService", () => {
 
     // wait for the relevant indices to complete building - otherwise this will clash with teardown in afterEach
     const indexingService = TestBed.inject(DatabaseIndexingService);
-    indexingService.indicesRegistered.subscribe((x) => {
-      if (
-        x.find((e) => e.details === "events_index")?.pending === false &&
-        x.find((e) => e.details === "activities_index")?.pending === false
-      ) {
-        done();
-      }
-    });
+    await indexingService.indicesRegistered
+      .pipe(
+        filter(
+          (x) =>
+            x.find((e) => e.details === "events_index")?.pending === false &&
+            x.find((e) => e.details === "activities_index")?.pending === false
+        ),
+        take(1)
+      )
+      .toPromise();
   });
 
   afterEach(async () => {
@@ -294,5 +297,20 @@ describe("AttendanceService", () => {
     expect(event.children).toContain(directlyAddedChild.getId());
     expect(event.children).toContain(duplicateChild.getId());
     expect(event.children).toContain(anotherRelation.childId);
+  });
+
+  it("should load the events for a date with date-picker format", async () => {
+    const datePickerDate = new Date(
+      new Date("2021-04-05").setHours(0, 0, 0, 0)
+    );
+    const sameDayEvent = EventNote.create(
+      new Date("2021-04-05"),
+      "Same Day Event"
+    );
+    sameDayEvent.category = defaultInteractionTypes.find((it) => it.isMeeting);
+    await entityMapper.save(sameDayEvent);
+    const events = await service.getEventsOnDate(datePickerDate);
+    expect(events).toHaveSize(1);
+    expect(events[0].subject).toBe(sameDayEvent.subject);
   });
 });

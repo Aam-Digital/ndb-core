@@ -85,8 +85,8 @@ describe("NavigationComponent", () => {
     const items = component.menuItems;
 
     expect(items).toEqual([
-      new MenuItem("Dashboard", "home", ["/dashboard"]),
-      new MenuItem("Children", "child", ["/child"]),
+      new MenuItem("Dashboard", "home", "/dashboard"),
+      new MenuItem("Children", "child", "/child"),
     ]);
   });
 
@@ -111,7 +111,7 @@ describe("NavigationComponent", () => {
     mockConfigUpdated.next(null);
 
     expect(component.menuItems).toEqual([
-      new MenuItem("Children", "child", ["/child"]),
+      new MenuItem("Children", "child", "/child"),
     ]);
   });
 });

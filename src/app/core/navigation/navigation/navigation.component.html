@@ -22,7 +22,7 @@
     angularticsAction="app_navigation_link_click"
     [angularticsLabel]="item.label"
     *ngFor="let item of menuItems"
-    [routerLink]="item.routerLinkParameters"
+    [routerLink]="[item.link]"
   >
     <a
       ><mat-icon class="nav-icon" fontIcon="fa-{{ item.icon }}"></mat-icon

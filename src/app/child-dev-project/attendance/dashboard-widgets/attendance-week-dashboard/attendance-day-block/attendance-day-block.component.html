@@ -4,6 +4,7 @@
 >
   <span
     *ngIf="attendance"
+    [matTooltipShowDelay]="200"
     [matTooltip]="attendance.remarks"
     matTooltipPosition="above"
   >

@@ -127,19 +127,16 @@ describe("EntityMapperService", () => {
     await entityMapper.save<Entity>(loadedEntity);
   });
 
-  it("removes existing entity", async (done) => {
+  it("removes existing entity", async () => {
     const loadedEntity = await entityMapper.load<Entity>(
       Entity,
       existingEntity.entityId
     );
     await entityMapper.remove<Entity>(loadedEntity);
-    entityMapper
-      .load<Entity>(Entity, existingEntity.entityId)
-      .then(() => fail("unexpectedly resolved promise"))
-      .catch((err) => {
-        expect(err).toBeDefined('"not found" error not defined');
-        done();
-      });
+
+    await expectAsync(
+      entityMapper.load<Entity>(Entity, existingEntity.entityId)
+    ).toBeRejected();
   });
 
   it("rejects promise removing nonexistent entity", () => {
@@ -172,4 +169,55 @@ describe("EntityMapperService", () => {
     expect(loadedByFullId._id).toBe(loadedByEntityId._id);
     expect(loadedByFullId._rev).toBe(loadedByEntityId._rev);
   });
+
+  it("publishes updates to any listeners", (done) => {
+    const testId = "t1";
+    receiveUpdatesAndTestTypeAndId(done, undefined, testId);
+
+    const testEntity = new Entity(testId);
+    entityMapper.save(testEntity, true);
+    entityMapper.remove(testEntity);
+  });
+
+  it("publishes when an existing entity is updated", (done) => {
+    receiveUpdatesAndTestTypeAndId(done, "update", existingEntity.entityId);
+
+    entityMapper
+      .load<Entity>(Entity, existingEntity.entityId)
+      .then((loadedEntity) => entityMapper.save<Entity>(loadedEntity));
+  });
+
+  it("publishes when an existing entity is deleted", (done) => {
+    receiveUpdatesAndTestTypeAndId(done, "remove", existingEntity.entityId);
+
+    entityMapper
+      .load<Entity>(Entity, existingEntity.entityId)
+      .then((loadedEntity) => entityMapper.remove<Entity>(loadedEntity));
+  });
+
+  it("publishes when a new entity is being saved", (done) => {
+    const testId = "t1";
+    receiveUpdatesAndTestTypeAndId(done, "new", testId);
+
+    const testEntity = new Entity(testId);
+    entityMapper.save(testEntity, true);
+  });
+
+  function receiveUpdatesAndTestTypeAndId(
+    done: any,
+    type?: string,
+    entityId?: string
+  ) {
+    entityMapper.receiveUpdates<Entity>(Entity).subscribe((e) => {
+      if (e) {
+        if (type) {
+          expect(e.type).toBe(type);
+        }
+        if (entityId) {
+          expect(e.entity.entityId).toBe(entityId);
+        }
+        done();
+      }
+    });
+  }
 });

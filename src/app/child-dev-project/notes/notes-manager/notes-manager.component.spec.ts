@@ -17,7 +17,6 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { of } from "rxjs";
 import { User } from "../../../core/user/user";
 import { Note } from "../model/note";
-import { WarningLevel, WarningLevelColor } from "../../warning-level";
 import { Angulartics2Module } from "angulartics2";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import {
@@ -129,31 +128,6 @@ describe("NotesManagerComponent", () => {
     expect(component.config.filters[2].hasOwnProperty("options")).toBeFalse();
   }));
 
-  it("should set the color for the notes", fakeAsync(() => {
-    const note1 = new Note("n1");
-    note1.warningLevel = WarningLevel.URGENT;
-    const note2 = new Note("n2");
-    const note3 = new Note("n3");
-    note3.category = { id: "TEST", label: "test", color: "CategoryColor" };
-    const note4 = new Note("n4");
-    note4.warningLevel = WarningLevel.WARNING;
-    const entityMapper = fixture.debugElement.injector.get(EntityMapperService);
-    spyOn(entityMapper, "loadType").and.returnValue(
-      Promise.resolve([note1, note2, note3, note4])
-    );
-    component.ngOnInit();
-    tick();
-    expect(component.notes.length).toEqual(4);
-    expect(component.notes[0]["color"]).toEqual(
-      WarningLevelColor(note1.warningLevel)
-    );
-    expect(component.notes[1]["color"]).toEqual("");
-    expect(component.notes[2]["color"]).toEqual("CategoryColor");
-    expect(component.notes[3]["color"]).toEqual(
-      WarningLevelColor(note4.warningLevel)
-    );
-  }));
-
   it("should open the dialog when clicking details", () => {
     const note = new Note("testNote");
     component.showDetails(note);
@@ -164,15 +138,11 @@ describe("NotesManagerComponent", () => {
   });
 
   it("should open dialog when add note is clicked", fakeAsync(() => {
-    const lengthBefore = component.notes.length;
     const newNote = new Note("new");
     const returnValue: any = { afterClosed: () => of(newNote) };
     dialogMock.openDialog.and.returnValue(returnValue);
     component.addNoteClick();
     expect(dialogMock.openDialog).toHaveBeenCalled();
-    tick();
-    expect(component.notes.length).toBe(lengthBefore + 1);
-    expect(component.notes.indexOf(newNote)).toBeGreaterThanOrEqual(0);
   }));
 
   it("should set up category filter from configurable enum", fakeAsync(() => {
@@ -191,4 +161,26 @@ describe("NotesManagerComponent", () => {
       testInteractionTypes.length + 1
     );
   }));
+
+  it("will contain a new note when saved by an external component", () => {
+    const newNote = new Note("new");
+    const entityMapper = fixture.debugElement.injector.get(EntityMapperService);
+    const oldLength = component.notes.length;
+    entityMapper.save(newNote);
+    expect(component.notes.length).toBe(oldLength + 1);
+  });
+
+  it("will contain the updated note when updated", async () => {
+    let note = new Note("n1");
+    note.author = "A";
+    const entityMapper = fixture.debugElement.injector.get(EntityMapperService);
+    await entityMapper.save(note);
+    note = await entityMapper.load<Note>(Note, note.getId());
+    expect(component.notes.length).toBe(1);
+    expect(component.notes[0].author).toBe("A");
+    note.author = "B";
+    await entityMapper.save(note);
+    expect(component.notes.length).toBe(1);
+    expect(component.notes[0].author).toBe("B");
+  });
 });
