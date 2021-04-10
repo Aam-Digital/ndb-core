@@ -129,7 +129,7 @@
     <tr
       mat-row
       *matRowDef="let entity; columns: columnsToDisplay"
-      [ngStyle]="{ 'background-color': entity.color }"
+      [ngStyle]="{ 'background-color': entity.getColor() }"
       (click)="elementClick.emit(entity)"
       style="cursor: pointer"
       class="table-list-item"
