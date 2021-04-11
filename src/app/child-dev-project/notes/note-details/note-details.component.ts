@@ -37,7 +37,7 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
       : (c) => c.isActive;
   }
 
-  filterInactiveChildren: (Child) => boolean = (_) => true;
+  filterInactiveChildren: (Child) => boolean = (c: Child) => c.isActive;
 
   closeDialog(entity: Entity) {
     if (!this.matDialogRef) {

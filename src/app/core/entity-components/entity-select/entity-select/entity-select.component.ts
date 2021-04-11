@@ -144,14 +144,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   ) {
     this.filteredEntities = this.formControl.valueChanges.pipe(
       filter((value) => value === null || typeof value === "string"), // sometimes produces entities
-      map((searchText?: string) =>
-        searchText ? this.preFilter(searchText) : this.allEntities
-      ),
-      map((entities: E[]) =>
-        entities.filter(
-          (e: E) => !this.isSelected(e) && this.additionalFilter(e)
-        )
-      )
+      map((searchText?: string) => this.filter(searchText))
     );
   }
   /**
@@ -192,11 +185,25 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     }
   }
 
-  private preFilter(value: string): E[] {
-    const filterValue = value.toLowerCase();
-    return this.allEntities.filter((entity) =>
-      this.accessor(entity).toLowerCase().startsWith(filterValue)
+  /**
+   * filters a subset of all entities with a given search-text.
+   * Entities that do not match the {@link additionalFilter}-predicate
+   * or are already included won't be in this subset.
+   * If the search-text is <code>null</code> or <code>undefined</code>,
+   * this will return all entities (with the aforementioned additional filters).
+   * @param value The value to look for in all entities
+   */
+  private filter(value?: string): E[] {
+    let filteredEntities: E[] = this.allEntities.filter(
+      (e) => this.additionalFilter(e) && !this.isSelected(e)
     );
+    if (value) {
+      const filterValue = value.toLowerCase();
+      filteredEntities = filteredEntities.filter((entity) =>
+        this.accessor(entity).toLowerCase().startsWith(filterValue)
+      );
+    }
+    return filteredEntities;
   }
 
   /**
