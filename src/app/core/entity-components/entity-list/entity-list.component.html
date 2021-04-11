@@ -136,10 +136,10 @@
     ></tr>
   </table>
   <mat-paginator
-    (page)="onPaginateChange($event)"
-    [pageSize]="paginatorPageSize"
+    (page)="onPaginateChange($event)" #paginator #paginatorElement
+    [pageSize]="getPaginatorPageSize()"
     [pageIndex]="paginatorPageIndex"
-    [pageSizeOptions]="[3, 10, 20, 50]"
+    [pageSizeOptions]="getPaginatorPageSizeOptions()"
     [showFirstLastButtons]="true"
   ></mat-paginator>
 </div>

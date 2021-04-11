@@ -8,6 +8,7 @@ import {
   Output,
   SimpleChanges,
   ViewChild,
+  ElementRef
 } from "@angular/core";
 import { MatSort, MatSortable } from "@angular/material/sort";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
@@ -70,6 +71,8 @@ export class EntityListComponent<T extends Entity>
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild('paginatorElement', {read: ElementRef})
+  paginatorHtmlElement: ElementRef;
 
   listName = "";
   columns: ColumnConfig[] = [];
@@ -206,6 +209,20 @@ export class EntityListComponent<T extends Entity>
     this.paginatorPageSize = event.pageSize;
     this.paginatorPageIndex = event.pageIndex;
     this.updateUserPaginationSettings();
+    this.paginatorHtmlElement.nativeElement.querySelector('div.mat-select-value > span > span').innerHTML = this.paginator.pageSize == 2147483647? 'All': this.paginator.pageSize;
+  }
+
+  getPaginatorPageSizeOptions(): number[] {
+    const ar = [3, 10, 20, 50].filter((n) => {return n < this.entityDataSource.data.length });
+    ar.push(2147483647);
+    return ar;
+  }
+
+  getPaginatorPageSize(): number {
+    if (this.entityDataSource.data.length && this.paginatorPageSize >= this.entityDataSource.data.length) {
+      this.paginatorPageSize = 2147483647;
+    }
+    return this.paginatorPageSize;
   }
 
   columnGroupClick(columnGroupName: string) {

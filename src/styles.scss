@@ -215,3 +215,17 @@ mat-card.dashboard-widget {
 .mat-select-disabled .mat-select-value {
   color: black;
 }
+
+/* Replace the max java integer in the page size dropdown with the label 'All'  */
+mat-option[ng-reflect-value='2147483647'] > span {
+	display: none;
+}
+
+/* Replace the max java integer in the page size dropdown with the label 'All'  */
+mat-option[ng-reflect-value='2147483647']:last-child:after {
+	content: 'All' !important;
+	visibility: visible !important;
+	display: block !important;
+	position: absolute !important;
+	background-color: transparent !important;
+}
