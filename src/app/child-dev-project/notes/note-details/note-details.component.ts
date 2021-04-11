@@ -23,7 +23,7 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
   readonly User: EntityConstructor<User> = User;
 
   INTERACTION_TYPE_CONFIG = INTERACTION_TYPE_CONFIG_ID;
-  includeInactiveChildren: boolean = true;
+  includeInactiveChildren: boolean = false;
 
   constructor(
     @Optional() private matDialogRef: MatDialogRef<NoteDetailsComponent>
