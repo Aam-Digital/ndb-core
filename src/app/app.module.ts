@@ -70,7 +70,6 @@ import { FontAwesomeIconsModule } from "./core/icons/font-awesome-icons.module";
 import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
 import { ConfigModule } from "./core/config/config.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
-import { MatChipsModule } from "@angular/material/chips";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/dashboard-shortcut-widget.module";
 
@@ -140,7 +139,6 @@ import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/
       ...DemoUserGeneratorService.provider(),
     ]),
     AttendanceModule,
-    MatChipsModule,
     MatFormFieldModule,
     DashboardShortcutWidgetModule,
   ],
