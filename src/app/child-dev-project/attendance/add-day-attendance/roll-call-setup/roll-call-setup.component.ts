@@ -46,11 +46,15 @@ export class RollCallSetupComponent implements OnInit {
     this.allActivities = await this.entityMapper.loadType<RecurringActivity>(
       RecurringActivity
     );
+
     this.visibleActivities = this.allActivities.filter(
-      (a) =>
-        a.assignedTo === this.sessionService.getCurrentUser().getId() ||
-        a.assignedTo === ""
+      (a) => a.assignedTo === this.sessionService.getCurrentUser().getId()
     );
+    if (this.visibleActivities.length === 0) {
+      this.visibleActivities = this.allActivities.filter(
+        (a) => a.assignedTo === ""
+      );
+    }
 
     for (const activity of this.visibleActivities) {
       const newEvent = await this.createEventForActivity(activity);
