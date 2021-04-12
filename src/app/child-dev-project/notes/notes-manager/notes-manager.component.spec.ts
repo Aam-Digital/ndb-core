@@ -15,7 +15,6 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { of, Subject } from "rxjs";
 import { User } from "../../../core/user/user";
 import { Note } from "../model/note";
-import { WarningLevel, WarningLevelColor } from "../../warning-level";
 import { Angulartics2Module } from "angulartics2";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import {
@@ -140,28 +139,6 @@ describe("NotesManagerComponent", () => {
     expect(component.config.filters[0].hasOwnProperty("options")).toBeTrue();
     expect(component.config.filters[1].hasOwnProperty("options")).toBeTrue();
     expect(component.config.filters[2].hasOwnProperty("options")).toBeFalse();
-  }));
-
-  it("should set the color for the notes", fakeAsync(() => {
-    const note1 = new Note("n1");
-    note1.warningLevel = WarningLevel.URGENT;
-    const note2 = new Note("n2");
-    const note3 = new Note("n3");
-    note3.category = { id: "TEST", label: "test", color: "CategoryColor" };
-    const note4 = new Note("n4");
-    note4.warningLevel = WarningLevel.WARNING;
-    mockEntityMapper.loadType.and.resolveTo([note1, note2, note3, note4]);
-    component.ngOnInit();
-    tick();
-    expect(component.notes.length).toEqual(4);
-    expect(component.notes[0]["color"]).toEqual(
-      WarningLevelColor(note1.warningLevel)
-    );
-    expect(component.notes[1]["color"]).toEqual("");
-    expect(component.notes[2]["color"]).toEqual("CategoryColor");
-    expect(component.notes[3]["color"]).toEqual(
-      WarningLevelColor(note4.warningLevel)
-    );
   }));
 
   it("should open the dialog when clicking details", () => {
