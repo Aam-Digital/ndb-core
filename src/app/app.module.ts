@@ -72,6 +72,7 @@ import { ConfigModule } from "./core/config/config.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/dashboard-shortcut-widget.module";
+import { EntityDefDirective } from "./core/entity-components/entity-directives.directive";
 
 /**
  * Main entry point of the application.
@@ -79,7 +80,7 @@ import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/
  * Real functionality should be implemented in separate modules and imported here rather than being part of this module.
  */
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, EntityDefDirective],
   imports: [
     ServiceWorkerModule.register("/ngsw-worker.js", {
       enabled: environment.production,
