@@ -114,19 +114,26 @@ describe("ChildrenService", () => {
     );
 
     const c1 = allChildren[1].getId();
-    await entityMapper.save(
-      Note.create(moment().subtract(20, "days").toDate(), "n0+1-1", [c0, c1])
-    );
-
-    const c2 = allChildren[2].getId();
     // no notes
 
-    const recentNotesMap = await service.getDaysSinceLastNoteOfEachChild(10);
+    const recentNotesMap = await service.getDaysSinceLastNoteOfEachChild();
 
     expect(recentNotesMap).toHaveSize(allChildren.length);
     expect(recentNotesMap.get(c0)).toBe(5);
     expect(recentNotesMap.get(c1)).toBe(Number.POSITIVE_INFINITY);
-    expect(recentNotesMap.get(c2)).toBe(Number.POSITIVE_INFINITY);
+  });
+
+  it("calculates days since last note as infinity if above cut-off period for better performance", async () => {
+    const allChildren = await entityMapper.loadType(Child);
+
+    const c0 = allChildren[0].getId();
+    await entityMapper.save(
+      Note.create(moment().subtract(50, "days").toDate(), "n0-1", [c0])
+    );
+
+    const recentNotesMap = await service.getDaysSinceLastNoteOfEachChild();
+
+    expect(recentNotesMap.get(c0)).toBe(Number.POSITIVE_INFINITY);
   });
 });
 
