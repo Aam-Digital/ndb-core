@@ -24,7 +24,6 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { LoginState } from "./session-states/login-state.enum";
 import { SessionType } from "./session-type";
 import { NewLocalSessionService } from "./session-service/new-local-session.service";
-import PouchDB from "pouchdb-browser";
 import { PouchDatabase } from "../database/pouch-database";
 import { MockDatabase } from "../database/mock-database";
 
@@ -48,8 +47,8 @@ export function sessionServiceFactory(
       sessionService = new NewLocalSessionService(
         loggingService,
         entitySchemaService,
-        new PouchDatabase(
-          new PouchDB(AppConfig.settings.database.name),
+        PouchDatabase.createWithInBrowserDB(
+          AppConfig.settings.database.name,
           loggingService
         )
       );
@@ -65,7 +64,10 @@ export function sessionServiceFactory(
       sessionService = new NewLocalSessionService(
         loggingService,
         entitySchemaService,
-        MockDatabase.createWithPouchDB()
+        MockDatabase.createWithInMemoryDB(
+          AppConfig.settings.database.name,
+          loggingService
+        )
       );
       break;
   }

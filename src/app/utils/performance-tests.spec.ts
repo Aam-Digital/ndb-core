@@ -114,3 +114,20 @@ class Timer {
     return -this.startTime.diff(this.stopTime ?? moment(), "milliseconds");
   }
 }
+
+/**
+ * Delete all indexedDB databases in the browser matching the given filter.
+ * @param filterFun Filter function taking a database name and returning true if this should be deleted.
+ */
+export async function deleteAllIndexedDB(
+  filterFun: (dbName: string) => boolean
+): Promise<void> {
+  // @ts-ignore
+  const databases = await indexedDB.databases();
+  for (const db of databases) {
+    if (filterFun(db.name)) {
+      console.log("deleting indexedDB", db.name);
+      await deleteDB(db.name);
+    }
+  }
+}

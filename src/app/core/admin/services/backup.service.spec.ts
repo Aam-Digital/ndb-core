@@ -9,7 +9,7 @@ describe("BackupService", () => {
   let service: BackupService;
 
   beforeEach(() => {
-    db = MockDatabase.createWithPouchDB();
+    db = MockDatabase.createWithInMemoryDB();
     TestBed.configureTestingModule({
       providers: [BackupService, { provide: Database, useValue: db }],
     });
