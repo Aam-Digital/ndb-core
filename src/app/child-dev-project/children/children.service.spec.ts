@@ -14,6 +14,7 @@ import { PouchDatabase } from "../../core/database/pouch-database";
 import { deleteAllIndexedDB } from "../../utils/performance-tests.spec";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 import PouchDB from "pouchdb-browser";
+import { Note } from "../notes/model/note";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
@@ -99,6 +100,40 @@ describe("ChildrenService", () => {
         );
         Promise.all(promises).then(() => done());
       });
+  });
+
+  it("calculates days since last note for children", async () => {
+    const allChildren = await entityMapper.loadType(Child);
+
+    const c0 = allChildren[0].getId();
+    await entityMapper.save(
+      Note.create(moment().subtract(5, "days").toDate(), "n0-1", [c0])
+    );
+    await entityMapper.save(
+      Note.create(moment().subtract(8, "days").toDate(), "n0-2", [c0])
+    );
+
+    const c1 = allChildren[1].getId();
+    // no notes
+
+    const recentNotesMap = await service.getDaysSinceLastNoteOfEachChild();
+
+    expect(recentNotesMap).toHaveSize(allChildren.length);
+    expect(recentNotesMap.get(c0)).toBe(5);
+    expect(recentNotesMap.get(c1)).toBe(Number.POSITIVE_INFINITY);
+  });
+
+  it("calculates days since last note as infinity if above cut-off period for better performance", async () => {
+    const allChildren = await entityMapper.loadType(Child);
+
+    const c0 = allChildren[0].getId();
+    await entityMapper.save(
+      Note.create(moment().subtract(50, "days").toDate(), "n0-1", [c0])
+    );
+
+    const recentNotesMap = await service.getDaysSinceLastNoteOfEachChild();
+
+    expect(recentNotesMap.get(c0)).toBe(Number.POSITIVE_INFINITY);
   });
 });
 
