@@ -1,0 +1,18 @@
+<mat-slide-toggle
+  *ngIf="showEventNotesToggle"
+  class="event-toggle"
+  ngDefaultControl
+  [(ngModel)]="includeEventNotes"
+  (change)="updateIncludeEvents()"
+>
+  include events
+</mat-slide-toggle>
+
+<app-entity-list
+  [entityList]="notes"
+  [listConfig]="config"
+  [entityConstructor]="noteConstructor"
+  (elementClick)="showDetails($event)"
+  (addNewClick)="addNoteClick()"
+  #entityList
+></app-entity-list>

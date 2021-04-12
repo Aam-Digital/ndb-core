@@ -41,6 +41,7 @@ import { EntitySubrecordModule } from "../../core/entity-components/entity-subre
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import { AttendanceModule } from "../attendance/attendance.module";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 
 @NgModule({
   declarations: [
@@ -74,6 +75,7 @@ import { AttendanceModule } from "../attendance/attendance.module";
     MatAutocompleteModule,
     MatTooltipModule,
     MatTabsModule,
+    MatSlideToggleModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FilterPipeModule,
