@@ -190,7 +190,7 @@ describe("NotesManagerComponent", () => {
     expect(component.notes[0].author).toBe("B");
   });
 
-  it("has toggle for loading EventNotes as well as Notes", async () => {
+  it("displays Notes and Event notes only when toggle is set to true", async () => {
     const entityMapper = TestBed.inject(EntityMapperService);
     const note = Note.create(new Date("2020-01-01"), "test note");
     note.category = testInteractionTypes[0];
