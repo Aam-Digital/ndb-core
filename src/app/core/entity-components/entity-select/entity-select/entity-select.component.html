@@ -18,7 +18,7 @@
       [selectable]="selectable && !disabled"
       [removable]="removable && !disabled"
       *ngFor="let entity of selection_"
-      class="chip">
+      class="chip mat-elevation-z4">
       <!-- This is going to be replaced with the dynamic content -->
       <ng-container *ngTemplateOutlet="entityView; context: {entity: entity}"></ng-container>
       <div
