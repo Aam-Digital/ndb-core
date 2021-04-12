@@ -342,11 +342,10 @@ export class ChildrenService {
   ): Promise<Map<string, number>> {
     const startDay = moment().subtract(forLastNDays, "days");
 
-    const stats = await this.dbIndexing.queryIndexStats(
+    const notes = await this.dbIndexing.queryIndexDocsRange(
+      Note,
       "notes_index/note_child_by_date",
-      {
-        startkey: startDay.format("YYYY-MM-DD"),
-      }
+      startDay.format("YYYY-MM-DD")
     );
 
     const results = new Map();
@@ -355,13 +354,11 @@ export class ChildrenService {
       .filter((c) => c.isActive)
       .forEach((c) => results.set(c.getId(), Number.POSITIVE_INFINITY));
 
-    for (const childStats of stats.rows) {
+    for (const note of notes) {
       // TODO: filter notes to only include them if the given child is marked "present"
 
-      for (const childId of childStats.value[0]) {
-        const noteDate = moment(childStats.key);
-
-        const daysSinceNote = moment().diff(noteDate, "days");
+      for (const childId of note.children) {
+        const daysSinceNote = moment().diff(note.date, "days");
         const previousValue = results.get(childId);
         if (previousValue > daysSinceNote) {
           results.set(childId, daysSinceNote);
@@ -392,7 +389,7 @@ export class ChildrenService {
             if (!Array.isArray(doc.children) || !doc.date) return;
             var d = new Date(doc.date || null);
             var dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
-            emit(dString, [doc.children, doc.relatesTo]);
+            emit(dString);
           }`,
         },
       },

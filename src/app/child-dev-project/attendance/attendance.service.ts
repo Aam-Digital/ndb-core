@@ -115,7 +115,9 @@ export class AttendanceService {
       end.format("YYYY-MM-DD")
     );
 
-    const relevantNormalNotes = this.dbIndexing
+    const relevantNormalNotes: Promise<
+      Note[]
+    > = this.dbIndexing
       .queryIndexDocsRange(
         Note,
         "notes_index/note_child_by_date",

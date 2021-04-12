@@ -298,14 +298,6 @@ export class MockDatabase extends Database {
             startDate.isSameOrBefore(e.date)
           );
         };
-        reducerFun = (prev, curr) => {
-          const newEntry = {
-            key: moment(curr.date).format("YYYY-MM-DD"),
-            value: [curr.children, curr.relatesTo],
-          };
-          prev.push(newEntry);
-          return prev;
-        };
         break;
     }
     if (filterFun !== undefined) {
