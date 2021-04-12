@@ -1,4 +1,7 @@
-import { NotesManagerComponent } from "./notes-manager.component";
+import {
+  NotesManagerComponent,
+  NotesManagerConfig,
+} from "./notes-manager.component";
 import {
   ComponentFixture,
   fakeAsync,
@@ -27,6 +30,8 @@ import { InteractionType } from "../model/interaction-type.interface";
 import { ConfigService } from "../../../core/config/config.service";
 import { By } from "@angular/platform-browser";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
+import { EventNote } from "app/child-dev-project/attendance/model/event-note";
+import { BehaviorSubject } from "rxjs";
 
 describe("NotesManagerComponent", () => {
   let component: NotesManagerComponent;
@@ -71,7 +76,7 @@ describe("NotesManagerComponent", () => {
   };
 
   const routeMock = {
-    data: of(routeData),
+    data: new BehaviorSubject(routeData),
     queryParams: of({}),
   };
 
@@ -107,12 +112,13 @@ describe("NotesManagerComponent", () => {
     }).compileComponents();
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     fixture = TestBed.createComponent(NotesManagerComponent);
     component = fixture.componentInstance;
     const router = fixture.debugElement.injector.get(Router);
     fixture.ngZone.run(() => router.initialNavigation());
     fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {
@@ -183,4 +189,45 @@ describe("NotesManagerComponent", () => {
     expect(component.notes.length).toBe(1);
     expect(component.notes[0].author).toBe("B");
   });
+
+  it("displays Notes and Event notes only when toggle is set to true", async () => {
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const note = Note.create(new Date("2020-01-01"), "test note");
+    note.category = testInteractionTypes[0];
+    await entityMapper.save(note);
+    const eventNote = EventNote.create(new Date("2020-01-01"), "test event");
+    eventNote.category = testInteractionTypes[0];
+    await entityMapper.save(eventNote);
+
+    component.includeEventNotes = true;
+    await component.updateIncludeEvents();
+
+    expect(component.notes).toEqual([note, eventNote]);
+
+    component.includeEventNotes = false;
+    await component.updateIncludeEvents();
+
+    expect(component.notes).toEqual([note]);
+  });
+
+  it("loads initial list including EventNotes if set in config", fakeAsync(async () => {
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const note = Note.create(new Date("2020-01-01"), "test note");
+    note.category = testInteractionTypes[0];
+    await entityMapper.save(note);
+    const eventNote = EventNote.create(new Date("2020-01-01"), "test event");
+    eventNote.category = testInteractionTypes[0];
+    await entityMapper.save(eventNote);
+
+    routeMock.data.next(
+      Object.assign(
+        { includeEventNotes: true } as NotesManagerConfig,
+        routeData
+      )
+    );
+
+    flush();
+
+    expect(component.notes).toEqual([note, eventNote]);
+  }));
 });
