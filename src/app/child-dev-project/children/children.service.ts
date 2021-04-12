@@ -345,7 +345,8 @@ export class ChildrenService {
     const notes = await this.dbIndexing.queryIndexDocsRange(
       Note,
       "notes_index/note_child_by_date",
-      startDay.format("YYYY-MM-DD")
+      startDay.format("YYYY-MM-DD"),
+      moment().format("YYYY-MM-DD")
     );
 
     const results = new Map();
