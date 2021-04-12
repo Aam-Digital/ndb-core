@@ -8,12 +8,7 @@ import { ColumnCellConfig } from "../../../core/entity-components/entity-list/En
  */
 @Component({
   selector: "app-child-block-list",
-  template: `
-    <app-child-block
-      *ngFor="let child of children"
-      [entityId]="child"
-    ></app-child-block>
-  `,
+  templateUrl: "./child-block-list.component.html",
 })
 export class ChildBlockListComponent implements OnInitDynamicComponent {
   public children: string[] = [];
