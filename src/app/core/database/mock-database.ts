@@ -289,13 +289,17 @@ export class MockDatabase extends Database {
 
       case "notes_index/note_child_by_date":
         const startDate = moment(options.startkey);
+        const endDate = moment(
+          options.endkey.substr(0, options.endkey.length - 1)
+        );
 
         filterFun = (e) => {
           return (
             e._id.startsWith(Note.ENTITY_TYPE) &&
             Array.isArray(e.children) &&
             e.date &&
-            startDate.isSameOrBefore(e.date)
+            startDate.isSameOrBefore(e.date, "days") &&
+            endDate.isSameOrAfter(e.date, "days")
           );
         };
         break;
