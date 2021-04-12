@@ -31,10 +31,17 @@ import {
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
-  static create(date: Date, subject: string = ""): Note {
+  static create(
+    date: Date,
+    subject: string = "",
+    children: string[] = []
+  ): Note {
     const instance = new Note();
     instance.date = date;
     instance.subject = subject;
+    for (const child of children) {
+      instance.addChild(child);
+    }
     return instance;
   }
 

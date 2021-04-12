@@ -175,6 +175,8 @@ export const defaultConfig = {
     "component": "NotesManager",
     "config": {
       "title": "Notes & Reports",
+      "includeEventNotes": false,
+      "showEventNotesToggle": true,
       "columns": [
         {
           "component": "DisplayDate",
