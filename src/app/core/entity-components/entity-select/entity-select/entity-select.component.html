@@ -1,6 +1,16 @@
 <mat-form-field floatLabel="always" style="width: 100%">
   <mat-label *ngIf="label">{{label}}</mat-label>
 
+  <input
+    #inputField
+    [disabled]="loading.value || disabled"
+    [placeholder]="loading.value ? 'loading...' : (disabled ? '' : placeholder)"
+    [formControl]="formControl"
+    [matAutocomplete]='autoSuggestions'
+    [matChipInputFor]="chipList"
+    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+    (matChipInputTokenEnd)="select($event)">
+
   <mat-chip-list
     #chipList
     [disabled]="disabled || loading.value">
@@ -18,15 +28,6 @@
       </div>
     </mat-basic-chip>
 
-    <input
-      #inputField
-      [disabled]="loading.value || disabled"
-      [placeholder]="loading.value ? 'loading...' : (disabled ? '' : placeholder)"
-      [formControl]="formControl"
-      [matAutocomplete]='autoSuggestions'
-      [matChipInputFor]="chipList"
-      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-      (matChipInputTokenEnd)="select($event)">
   </mat-chip-list>
 
   <mat-autocomplete
