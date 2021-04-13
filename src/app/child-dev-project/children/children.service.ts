@@ -53,8 +53,8 @@ export class ChildrenService {
         const childCurrentSchoolInfo = await this.getCurrentSchoolInfoForChild(
           loadedChild.getId()
         );
-        loadedChild.schoolClass = childCurrentSchoolInfo.schoolClass;
-        loadedChild.schoolId = childCurrentSchoolInfo.schoolId;
+        loadedChild.schoolClass = childCurrentSchoolInfo.schoolClass || "";
+        loadedChild.schoolId = childCurrentSchoolInfo.schoolId || "";
       }
       results.next(loadedChildren);
       results.complete();

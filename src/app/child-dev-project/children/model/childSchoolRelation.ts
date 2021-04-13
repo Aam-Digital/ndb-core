@@ -9,7 +9,7 @@ import moment from "moment";
 @DatabaseEntity("ChildSchoolRelation")
 export class ChildSchoolRelation extends Entity {
   @DatabaseField() childId: string;
-  @DatabaseField() schoolId: string;
+  @DatabaseField() schoolId: string = "";
   @DatabaseField() schoolClass: string = "";
   @DatabaseField({ dataType: "date-only" }) start: Date;
   @DatabaseField({ dataType: "date-only" }) end: Date;
