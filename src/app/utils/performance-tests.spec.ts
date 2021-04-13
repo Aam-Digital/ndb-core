@@ -30,35 +30,37 @@ import { School } from "../child-dev-project/schools/model/school";
 import { ChildrenService } from "../child-dev-project/children/children.service";
 import { Child } from "../child-dev-project/children/model/child";
 import { InMemoryDatabase } from "../core/database/in-memory-database";
+import { InBrowserDatabase } from "../core/database/in-browser-database";
+import { PouchDatabase } from "../core/database/pouch-database";
+import { DatabaseIndexingService } from "../core/entity/database-indexing/database-indexing.service";
 
 xdescribe("Performance Tests", () => {
-  let mockSessionService: SessionService;
-  let mockDatabase: InMemoryDatabase;
-  let demoDataService: DemoDataService;
+  let mockDatabase: PouchDatabase;
 
-  beforeEach(
-    waitForAsync(() => {
-      const loggingService = new LoggingService();
-      mockDatabase = InMemoryDatabase.create("performance_db", loggingService);
-      const schemaService = new EntitySchemaService();
-      mockSessionService = new NewLocalSessionService(
-        loggingService,
-        schemaService,
-        mockDatabase
-      );
-      TestBed.configureTestingModule({
-        imports: [AppModule],
-        providers: [
-          { provide: Database, useValue: mockDatabase },
-          { provide: SessionService, useValue: mockSessionService },
-          { provide: EntitySchemaService, useValue: schemaService },
-          { provide: LoggingService, useValue: LoggingService },
-        ],
-      }).compileComponents();
-      jasmine.DEFAULT_TIMEOUT_INTERVAL = 150000;
-      demoDataService = TestBed.inject(DemoDataService);
-    })
-  );
+  beforeEach(async () => {
+    const loggingService = new LoggingService();
+    mockDatabase = InMemoryDatabase.create("performance_db", loggingService);
+    const schemaService = new EntitySchemaService();
+    const mockSessionService = new NewLocalSessionService(
+      loggingService,
+      schemaService,
+      mockDatabase
+    );
+    await TestBed.configureTestingModule({
+      imports: [AppModule],
+      providers: [
+        { provide: Database, useValue: mockDatabase },
+        { provide: SessionService, useValue: mockSessionService },
+        { provide: EntitySchemaService, useValue: schemaService },
+        { provide: LoggingService, useValue: LoggingService },
+      ],
+    }).compileComponents();
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 150000;
+    const demoDataService = TestBed.inject(DemoDataService);
+    const setup = new Timer();
+    await demoDataService.publishDemoDataImproved();
+    console.log("finished publishing demo data", setup.getDuration());
+  });
 
   afterEach(
     waitForAsync(() => {
@@ -66,32 +68,29 @@ xdescribe("Performance Tests", () => {
     })
   );
 
-  it("created the demo data", async () => {
-    const normalTimer = new Timer();
-    await demoDataService.publishDemoData();
-    fail(
-      "<DemoDataService> publish demo data normal took " +
-        normalTimer.getDuration()
-    );
-  });
-
-  it("created the demo data improved", async () => {
-    const normalTimer = new Timer();
-    await demoDataService.publishDemoDataImproved();
-    fail(
-      "<DemoDataService> publish demo data improved took " +
-        normalTimer.getDuration()
-    );
-  });
+  // it("created the demo data", async () => {
+  //   const normalTimer = new Timer();
+  //   await demoDataService.publishDemoData();
+  //   fail(
+  //     "<DemoDataService> publish demo data normal took " +
+  //       normalTimer.getDuration()
+  //   );
+  // });
+  //
+  // it("created the demo data improved", async () => {
+  //   const normalTimer = new Timer();
+  //   await demoDataService.publishDemoDataImproved();
+  //   fail(
+  //     "<DemoDataService> publish demo data improved took " +
+  //       normalTimer.getDuration()
+  //   );
+  // });
 
   it("school service get children of schools", async () => {
-    const demoDataService = TestBed.inject(DemoDataService);
-    await demoDataService.publishDemoDataImproved();
-    const mockDatabase = TestBed.inject(Database) as InMemoryDatabase;
     const entityMapper = TestBed.inject(EntityMapperService);
     const schools = await entityMapper.loadType(School);
     const schoolsService = TestBed.inject(SchoolsService);
-    await mockDatabase.waitForIndexing();
+    await TestBed.inject(DatabaseIndexingService).waitForIndexCreation();
     await comparePerformance(
       (school) => schoolsService.getChildrenForSchool(school.getId()),
       (school) => schoolsService.getChildrenForSchoolImproved(school.getId()),
@@ -101,33 +100,29 @@ xdescribe("Performance Tests", () => {
   });
 
   it("load children with school info", async () => {
-    const demoDataService = TestBed.inject(DemoDataService);
-    await demoDataService.publishDemoDataImproved();
-    const mockDatabase = TestBed.inject(Database) as InMemoryDatabase;
     const childrenService = TestBed.inject(ChildrenService);
-    await mockDatabase.waitForIndexing();
+    await TestBed.inject(DatabaseIndexingService).waitForIndexCreation();
     await comparePerformance(
       () => childrenService.getChildren().toPromise(),
       () => childrenService.getChildrenImproved(),
       "ChildrenService getChildren"
     );
   });
-
-  it("load children one by one", async () => {
-    const demoDataService = TestBed.inject(DemoDataService);
-    await demoDataService.publishDemoDataImproved();
-    const mockDatabase = TestBed.inject(Database) as InMemoryDatabase;
-    const childrenService = TestBed.inject(ChildrenService);
-    await mockDatabase.waitForIndexing();
-    const entityMapper = TestBed.inject(EntityMapperService);
-    const children = await entityMapper.loadType(Child);
-    await comparePerformance(
-      (child) => childrenService.getChild(child.getId()).toPromise(),
-      (child) => childrenService.getChildImproved(child.getId()),
-      "ChildrenService getChild",
-      children
-    );
-  });
+  //
+  // it("load children one by one", async () => {
+  //   const demoDataService = TestBed.inject(DemoDataService);
+  //   await demoDataService.publishDemoDataImproved();
+  //   const childrenService = TestBed.inject(ChildrenService);
+  //   await mockDatabase.waitForIndexing();
+  //   const entityMapper = TestBed.inject(EntityMapperService);
+  //   const children = await entityMapper.loadType(Child);
+  //   await comparePerformance(
+  //     (child) => childrenService.getChild(child.getId()).toPromise(),
+  //     (child) => childrenService.getChildImproved(child.getId()),
+  //     "ChildrenService getChild",
+  //     children
+  //   );
+  // });
 });
 
 async function comparePerformance<V, R>(
