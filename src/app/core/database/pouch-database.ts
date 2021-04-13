@@ -18,6 +18,7 @@
 import { Database, GetAllOptions, GetOptions, QueryOptions } from "./database";
 import moment from "moment";
 import { LoggingService } from "../logging/logging.service";
+import PouchDB from "pouchdb-browser";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -27,6 +28,13 @@ import { LoggingService } from "../logging/logging.service";
  * should be implemented in the abstract {@link Database}.
  */
 export class PouchDatabase extends Database {
+  static createWithInBrowserDB(
+    dbname: string = "in-browser-database",
+    loggingService: LoggingService = new LoggingService()
+  ): PouchDatabase {
+    return new PouchDatabase(new PouchDB(dbname), loggingService);
+  }
+
   /**
    * Create a PouchDB database manager.
    * @param _pouchDB An (initialized) PouchDB database instance from the PouchDB library.

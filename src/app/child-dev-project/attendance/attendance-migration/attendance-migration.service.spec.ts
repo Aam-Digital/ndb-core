@@ -17,7 +17,7 @@ describe("AttendanceMigrationService", () => {
   let testDatabase: MockDatabase;
 
   beforeEach(async () => {
-    testDatabase = MockDatabase.createWithPouchDB();
+    testDatabase = MockDatabase.createWithInMemoryDB();
 
     TestBed.configureTestingModule({
       imports: [EntityModule],

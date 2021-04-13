@@ -14,13 +14,13 @@ import { ChildrenService } from "../children/children.service";
 import { School } from "../schools/model/school";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { Child } from "../children/model/child";
+import { Note } from "../notes/model/note";
 import { MockDatabase } from "../../core/database/mock-database";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
 
   let entityMapper: EntityMapperService;
-  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
   let database: MockDatabase;
 
   function createEvent(date: Date, activityIdWithPrefix: string): EventNote {
@@ -40,23 +40,21 @@ describe("AttendanceService", () => {
     activity1 = RecurringActivity.create("activity 1");
     activity2 = RecurringActivity.create("activity 2");
 
-    database = MockDatabase.createWithPouchDB();
+    database = MockDatabase.createWithInMemoryDB();
 
     e1_1 = createEvent(new Date("2020-01-01"), activity1._id);
     e1_2 = createEvent(new Date("2020-01-02"), activity1._id);
     e1_3 = createEvent(new Date("2020-03-02"), activity1._id);
     e2_1 = createEvent(new Date("2020-01-01"), activity2._id);
 
-    mockChildrenService = jasmine.createSpyObj(["queryRelationsOf"]);
-    mockChildrenService.queryRelationsOf.and.resolveTo([]);
     TestBed.configureTestingModule({
       imports: [ConfigurableEnumModule],
       providers: [
         AttendanceService,
         EntityMapperService,
         EntitySchemaService,
+        ChildrenService,
         { provide: Database, useValue: database },
-        { provide: ChildrenService, useValue: mockChildrenService },
       ],
     });
     service = TestBed.inject(AttendanceService);
@@ -90,6 +88,34 @@ describe("AttendanceService", () => {
   it("gets events for a date", async () => {
     const actualEvents = await service.getEventsOnDate(new Date("2020-01-01"));
     expectEntitiesToMatch(actualEvents, [e1_1, e2_1]);
+  });
+
+  it("gets events including Notes for a date", async () => {
+    const note1 = Note.create(new Date("2020-01-01"), "manual event note 1");
+    note1.addChild("1");
+    note1.addChild("2");
+    note1.category = defaultInteractionTypes.find((t) => t.isMeeting);
+    await entityMapper.save(note1);
+
+    const note2 = Note.create(new Date("2020-01-02"), "manual event note 2");
+    note2.addChild("1");
+    note2.category = defaultInteractionTypes.find((t) => t.isMeeting);
+    await entityMapper.save(note2);
+
+    const nonMeetingNote = Note.create(
+      new Date("2020-01-02"),
+      "manual event note 2"
+    );
+    nonMeetingNote.addChild("1");
+    nonMeetingNote.category = defaultInteractionTypes.find((t) => !t.isMeeting);
+    await entityMapper.save(nonMeetingNote);
+
+    const actualEvents = await service.getEventsOnDate(
+      new Date("2020-01-01"),
+      new Date("2020-01-02")
+    );
+
+    expectEntitiesToMatch(actualEvents, [e1_1, e1_2, e2_1, note1, note2]);
   });
 
   it("gets empty array for a date without events", async () => {
@@ -168,7 +194,9 @@ describe("AttendanceService", () => {
     const testActivity = RecurringActivity.create("new activity");
     testActivity.linkedGroups.push("test school");
 
-    mockChildrenService.queryRelationsOf.and.resolveTo([childSchoolRelation]);
+    spyOn(TestBed.inject(ChildrenService), "queryRelationsOf").and.resolveTo([
+      childSchoolRelation,
+    ]);
     await entityMapper.save(testActivity);
 
     const activities = await service.getActivitiesForChild("test child");
@@ -197,7 +225,7 @@ describe("AttendanceService", () => {
     const inactiveActivity = RecurringActivity.create("inactive activity");
     inactiveActivity.linkedGroups.push(inactiveRelation.schoolId);
 
-    mockChildrenService.queryRelationsOf.and.resolveTo([
+    spyOn(TestBed.inject(ChildrenService), "queryRelationsOf").and.resolveTo([
       activeRelation1,
       inactiveRelation,
       activeRelation2,
@@ -220,7 +248,9 @@ describe("AttendanceService", () => {
     activity.linkedGroups.push(relation.schoolId);
     activity.participants.push(relation.childId);
 
-    mockChildrenService.queryRelationsOf.and.resolveTo([relation]);
+    spyOn(TestBed.inject(ChildrenService), "queryRelationsOf").and.resolveTo([
+      relation,
+    ]);
     await entityMapper.save(activity);
 
     const activities = await service.getActivitiesForChild(relation.childId);
@@ -235,14 +265,17 @@ describe("AttendanceService", () => {
 
     const childAttendingSchool = new ChildSchoolRelation();
     childAttendingSchool.childId = "child attending school";
-    mockChildrenService.queryRelationsOf.and.resolveTo([childAttendingSchool]);
+    const mockQueryRelationsOf = spyOn(
+      TestBed.inject(ChildrenService),
+      "queryRelationsOf"
+    ).and.resolveTo([childAttendingSchool]);
 
     const directlyAddedChild = new Child();
     activity.participants.push(directlyAddedChild.getId());
 
     const event = await service.createEventForActivity(activity, new Date());
 
-    expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
+    expect(mockQueryRelationsOf).toHaveBeenCalledWith(
       "school",
       linkedSchool.getId()
     );
@@ -261,7 +294,7 @@ describe("AttendanceService", () => {
     duplicateChildRelation.childId = duplicateChild.getId();
     const anotherRelation = new ChildSchoolRelation();
     anotherRelation.childId = "another child id";
-    mockChildrenService.queryRelationsOf.and.resolveTo([
+    spyOn(TestBed.inject(ChildrenService), "queryRelationsOf").and.resolveTo([
       duplicateChildRelation,
       anotherRelation,
     ]);

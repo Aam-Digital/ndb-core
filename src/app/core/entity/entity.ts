@@ -22,13 +22,16 @@ import {
   WarningLevel,
   WarningLevelColor,
 } from "../../child-dev-project/warning-level";
+import { Note } from "../../child-dev-project/notes/model/note";
 
 /**
  * This represents a static class of type <T>.
  * It can be used for passing a class from which new objects should be created.
+ * It can also be used to check the ENTITY_TYPE of a class
  * For example usage check the {@link EntityMapperService}.
  */
-export type EntityConstructor<T extends Entity> = new (id?: string) => T;
+export type EntityConstructor<T extends Entity> = (new (id?: string) => T) &
+  typeof Entity;
 
 /**
  * "Entity" is a base class for all domain model classes.

@@ -25,7 +25,7 @@ describe("NewLocalSessionService", async () => {
     return new NewLocalSessionService(
       jasmine.createSpyObj(["warn"]),
       new EntitySchemaService(),
-      MockDatabase.createWithPouchDB()
+      MockDatabase.createWithInMemoryDB()
     );
   });
 });

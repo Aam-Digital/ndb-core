@@ -23,7 +23,7 @@ describe("PouchDatabase tests", () => {
   let database: PouchDatabase;
 
   beforeEach(() => {
-    database = MockDatabase.createWithPouchDB();
+    database = MockDatabase.createWithInMemoryDB();
   });
 
   afterEach(async () => {

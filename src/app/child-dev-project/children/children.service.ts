@@ -358,29 +358,28 @@ export class ChildrenService {
   ): Promise<Map<string, number>> {
     const startDay = moment().subtract(forLastNDays, "days");
 
-    const stats = await this.dbIndexing.queryIndexStats(
+    const notes = await this.dbIndexing.queryIndexDocsRange(
+      Note,
       "notes_index/note_child_by_date",
-      {
-        startkey: [startDay.year(), startDay.month(), startDay.date()],
-      }
+      startDay.format("YYYY-MM-DD"),
+      moment().format("YYYY-MM-DD")
     );
 
     const results = new Map();
-    const children = await this.getChildren().pipe(take(1)).toPromise();
+    const children = await this.entityMapper.loadType(Child);
     children
       .filter((c) => c.isActive)
       .forEach((c) => results.set(c.getId(), Number.POSITIVE_INFINITY));
 
-    for (const childStats of stats.rows) {
+    for (const note of notes) {
       // TODO: filter notes to only include them if the given child is marked "present"
 
-      const childId = childStats.value[0];
-      const noteDate = moment(childStats.key);
-
-      const daysSinceNote = moment().diff(noteDate, "days");
-      const previousValue = results.get(childId);
-      if (previousValue > daysSinceNote) {
-        results.set(childId, daysSinceNote);
+      for (const childId of note.children) {
+        const daysSinceNote = moment().diff(note.date, "days");
+        const previousValue = results.get(childId);
+        if (previousValue > daysSinceNote) {
+          results.set(childId, daysSinceNote);
+        }
       }
     }
 
@@ -405,8 +404,9 @@ export class ChildrenService {
           map: `(doc) => {
             if (!doc._id.startsWith("${Note.ENTITY_TYPE}")) return;
             if (!Array.isArray(doc.children) || !doc.date) return;
-            var date = new Date(doc.date);
-            doc.children.forEach(childId => emit([date.getFullYear(), date.getMonth(), date.getDate()], [childId, doc.relatesTo]));
+            var d = new Date(doc.date || null);
+            var dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
+            emit(dString);
           }`,
         },
       },

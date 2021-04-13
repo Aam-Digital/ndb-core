@@ -29,12 +29,12 @@ import { LoggingService } from "../logging/logging.service";
  */
 export class MockDatabase extends PouchDatabase {
   static async createWithData(data: any[]): Promise<MockDatabase> {
-    const instance = MockDatabase.createWithPouchDB();
+    const instance = MockDatabase.createWithInMemoryDB();
     await Promise.all(data.map((doc) => instance.put(doc)));
     return instance;
   }
 
-  static createWithPouchDB(
+  static createWithInMemoryDB(
     dbname: string = "in-memory-mock-database",
     loggingService: LoggingService = new LoggingService()
   ): MockDatabase {

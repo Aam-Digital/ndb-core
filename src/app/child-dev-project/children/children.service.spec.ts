@@ -9,6 +9,8 @@ import { MockDatabase } from "../../core/database/mock-database";
 import { TestBed } from "@angular/core/testing";
 import moment from "moment";
 import { Database } from "../../core/database/database";
+import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
+import { Note } from "../notes/model/note";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
@@ -16,7 +18,7 @@ describe("ChildrenService", () => {
   let database: MockDatabase;
 
   beforeEach(async () => {
-    database = MockDatabase.createWithPouchDB();
+    database = MockDatabase.createWithInMemoryDB();
     TestBed.configureTestingModule({
       providers: [
         ChildrenService,
@@ -89,16 +91,52 @@ describe("ChildrenService", () => {
     await Promise.all(promises);
   });
 
-  it("should return ChildSchoolRelations of child in correct order", async () => {
-    const children = await service.getChildren().toPromise();
-    expect(children.length).toBeGreaterThan(0);
+  it("should return ChildSchoolRelations of child in correct order", (done: DoneFn) => {
+    service
+      .getChildren()
+      .toPromise()
+      .then((children) => {
+        const promises: Promise<any>[] = [];
+        expect(children.length).toBeGreaterThan(0);
+        children.forEach((child) =>
+          promises.push(verifyChildRelationsOrder(child, service))
+        );
+        Promise.all(promises).then(() => done());
+      });
+  });
 
-    const promises: Promise<any>[] = [];
-    children.forEach((child) =>
-      promises.push(verifyChildRelationsOrder(child, service))
+  it("calculates days since last note for children", async () => {
+    const allChildren = await entityMapper.loadType(Child);
+
+    const c0 = allChildren[0].getId();
+    await entityMapper.save(
+      Note.create(moment().subtract(5, "days").toDate(), "n0-1", [c0])
+    );
+    await entityMapper.save(
+      Note.create(moment().subtract(8, "days").toDate(), "n0-2", [c0])
     );
 
-    await Promise.all(promises);
+    const c1 = allChildren[1].getId();
+    // no notes
+
+    const recentNotesMap = await service.getDaysSinceLastNoteOfEachChild();
+
+    expect(recentNotesMap).toHaveSize(allChildren.length);
+    expect(recentNotesMap.get(c0)).toBe(5);
+    expect(recentNotesMap.get(c1)).toBe(Number.POSITIVE_INFINITY);
+  });
+
+  it("calculates days since last note as infinity if above cut-off period for better performance", async () => {
+    const allChildren = await entityMapper.loadType(Child);
+
+    const c0 = allChildren[0].getId();
+    await entityMapper.save(
+      Note.create(moment().subtract(50, "days").toDate(), "n0-1", [c0])
+    );
+
+    const recentNotesMap = await service.getDaysSinceLastNoteOfEachChild(49);
+
+    expect(recentNotesMap.get(c0)).toBe(Number.POSITIVE_INFINITY);
   });
 
   it("should set school class and id", async () => {
