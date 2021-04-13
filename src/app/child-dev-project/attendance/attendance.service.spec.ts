@@ -14,7 +14,6 @@ import { ChildrenService } from "../children/children.service";
 import { School } from "../schools/model/school";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { Child } from "../children/model/child";
-import { filter, take } from "rxjs/operators";
 import { Note } from "../notes/model/note";
 import { MockDatabase } from "../../core/database/mock-database";
 
@@ -22,7 +21,6 @@ describe("AttendanceService", () => {
   let service: AttendanceService;
 
   let entityMapper: EntityMapperService;
-  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
   let database: MockDatabase;
 
   function createEvent(date: Date, activityIdWithPrefix: string): EventNote {
@@ -56,7 +54,7 @@ describe("AttendanceService", () => {
         EntityMapperService,
         EntitySchemaService,
         ChildrenService,
-        { provide: Database, useValue: testDB },
+        { provide: Database, useValue: database },
       ],
     });
     service = TestBed.inject(AttendanceService);
