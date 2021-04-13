@@ -34,6 +34,8 @@ export class DatabaseIndexingService {
     []
   );
 
+  private indexPromises = [];
+
   /** All currently registered indices with their status */
   get indicesRegistered(): Observable<BackgroundProcessState[]> {
     return this._indicesRegistered.asObservable();
@@ -57,23 +59,30 @@ export class DatabaseIndexingService {
       details: designDoc._id.replace(/_design\//, ""),
       pending: true,
     };
-    const indexCreationPromise = this.db.saveDatabaseIndex(designDoc);
+    const indexCreationPromise = this.db
+      .saveDatabaseIndex(designDoc)
+      .then(() => {
+        indexState.pending = false;
+        this._indicesRegistered.next(this._indicesRegistered.value);
+      })
+      .catch((err) => {
+        indexState.pending = false;
+        indexState.error = err;
+        this._indicesRegistered.next(this._indicesRegistered.value);
+        throw err;
+      });
+
     this._indicesRegistered.next([
       ...this._indicesRegistered.value,
       indexState,
     ]);
 
-    try {
-      await indexCreationPromise;
-    } catch (err) {
-      indexState.pending = false;
-      indexState.error = err;
-      this._indicesRegistered.next(this._indicesRegistered.value);
-      throw err;
-    }
+    this.indexPromises.push(indexCreationPromise);
+    return indexCreationPromise;
+  }
 
-    indexState.pending = false;
-    this._indicesRegistered.next(this._indicesRegistered.value);
+  public waitForIndexCreation(): Promise<any> {
+    return Promise.all(this.indexPromises);
   }
 
   /**
