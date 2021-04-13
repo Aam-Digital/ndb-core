@@ -142,6 +142,31 @@ describe("AttendanceService", () => {
     expect(actualEvents).toEqual([]);
   });
 
+  it("gets events and loads additional participants from linked schools", async () => {
+    const linkedSchoolId = "test_school";
+    const childSchool1 = new ChildSchoolRelation();
+    childSchool1.childId = "2";
+    childSchool1.schoolId = linkedSchoolId;
+    childSchool1.start = new Date();
+    const childSchool2 = new ChildSchoolRelation();
+    childSchool2.childId = "3";
+    childSchool2.schoolId = linkedSchoolId;
+    childSchool2.start = new Date();
+    spyOn(TestBed.inject(ChildrenService), "queryRelationsOf").and.resolveTo([
+      childSchool1,
+      childSchool2,
+    ]);
+
+    const testNoteWithSchool = EventNote.create(new Date("2021-01-01"));
+    testNoteWithSchool.children = ["1", "2"];
+    testNoteWithSchool.schools = [linkedSchoolId];
+    await entityMapper.save(testNoteWithSchool);
+
+    const actualEvents = await service.getEventsOnDate(new Date("2021-01-01"));
+    expect(actualEvents.length).toBe(1);
+    expect(actualEvents[0].children).toEqual(["1", "2", "3"]);
+  });
+
   it("gets events for an activity", async () => {
     const actualEvents = await service.getEventsForActivity(activity1.getId());
     expectEntitiesToMatch(actualEvents, [e1_1, e1_2, e1_3]);

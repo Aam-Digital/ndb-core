@@ -118,7 +118,7 @@
       </div>
     </div>
 
-    <div fxLayout="row wrap" fxLayoutGap="20px">
+    <div fxLayout="column" fxLayoutGap="20px">
       <div fxFlex *ngIf="!entity.category.isMeeting">
         <app-child-select
           [selectedChildrenIds]="entity.children"
@@ -137,6 +137,15 @@
         fxFlex
       >
       </app-note-presence-list>
+
+      <div fxFlex>
+        <app-school-select
+          [(selectedSchoolIds)]="entity.schools"
+          (selectedSchoolIdsChange)="entityForm.form.markAsDirty()"
+          class="input-medium"
+        >
+        </app-school-select>
+      </div>
     </div>
   </form>
 </app-form-dialog-wrapper>

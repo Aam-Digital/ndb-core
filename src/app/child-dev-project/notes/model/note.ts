@@ -72,6 +72,8 @@ export class Note extends Entity {
    */
   @DatabaseField() relatesTo: string;
 
+  @DatabaseField() schools: string[] = [];
+
   @DatabaseField({ dataType: "string" }) warningLevel: WarningLevel =
     WarningLevel.OK;
 
