@@ -10,6 +10,7 @@ import { expectEntitiesToBeInDatabase } from "../../../utils/expect-entity-data.
 import { EventNote } from "../model/event-note";
 import { ChildrenService } from "../../children/children.service";
 import { InMemoryDatabase } from "../../../core/database/in-memory-database";
+import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
 
 describe("AttendanceMigrationService", () => {
   let service: AttendanceMigrationService;
@@ -32,8 +33,8 @@ describe("AttendanceMigrationService", () => {
     });
     service = TestBed.inject(AttendanceMigrationService);
     entitySchemaService = TestBed.inject(EntitySchemaService);
-
-    await testDatabase.waitForIndexing();
+    const indexingService = TestBed.inject(DatabaseIndexingService);
+    await indexingService.waitForIndexCreation();
   });
 
   afterEach(async () => {

@@ -16,6 +16,7 @@ import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { Child } from "../children/model/child";
 import { Note } from "../notes/model/note";
 import { InMemoryDatabase } from "../../core/database/in-memory-database";
+import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
@@ -74,7 +75,8 @@ describe("AttendanceService", () => {
     await entityMapper.save(e1_3);
     await entityMapper.save(e2_1);
 
-    await database.waitForIndexing();
+    const indexingService = TestBed.inject(DatabaseIndexingService);
+    await indexingService.waitForIndexCreation();
   });
 
   afterEach(async () => {

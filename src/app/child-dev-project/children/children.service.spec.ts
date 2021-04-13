@@ -10,6 +10,7 @@ import moment from "moment";
 import { Database } from "../../core/database/database";
 import { Note } from "../notes/model/note";
 import { InMemoryDatabase } from "../../core/database/in-memory-database";
+import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
@@ -36,7 +37,8 @@ describe("ChildrenService", () => {
 
     service = TestBed.inject<ChildrenService>(ChildrenService);
 
-    await database.waitForIndexing();
+    const indexingService = TestBed.inject(DatabaseIndexingService);
+    await indexingService.waitForIndexCreation();
   });
 
   afterEach(async () => {
@@ -154,8 +156,8 @@ describe("ChildrenService", () => {
     expect(child1.schoolClass).toBe("2");
     expect(child1.schoolId).toBe("1");
     const child2 = children.find((child) => child.getId() === "2");
-    expect(child2.schoolClass).toBeNull();
-    expect(child2.schoolId).toBeNull();
+    expect(child2.schoolClass).toBe("");
+    expect(child2.schoolId).toBe("");
     const child3 = children.find((child) => child.getId() === "3");
     expect(child3.schoolClass).toBe("2");
     expect(child3.schoolId).toBe("1");
