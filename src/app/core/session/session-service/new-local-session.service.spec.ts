@@ -18,14 +18,14 @@
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { NewLocalSessionService } from "./new-local-session.service";
 import { testSessionServiceImplementation } from "./session.service.spec";
-import { MockDatabase } from "../../database/mock-database";
+import { InMemoryDatabase } from "../../database/in-memory-database";
 
 describe("NewLocalSessionService", async () => {
   testSessionServiceImplementation(async () => {
     return new NewLocalSessionService(
       jasmine.createSpyObj(["warn"]),
       new EntitySchemaService(),
-      MockDatabase.createWithInMemoryDB()
+      InMemoryDatabase.create()
     );
   });
 });

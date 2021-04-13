@@ -27,19 +27,19 @@ import { LoggingService } from "../logging/logging.service";
  * The MockDatabase internally stores all documents in a variable and tries to simulate functionality
  * as similar as possible to the PouchDatabase.
  */
-export class MockDatabase extends PouchDatabase {
-  static async createWithData(data: any[]): Promise<MockDatabase> {
-    const instance = MockDatabase.createWithInMemoryDB();
+export class InMemoryDatabase extends PouchDatabase {
+  static async createWithData(data: any[]): Promise<InMemoryDatabase> {
+    const instance = InMemoryDatabase.create();
     await Promise.all(data.map((doc) => instance.put(doc)));
     return instance;
   }
 
-  static createWithInMemoryDB(
-    dbname: string = "in-memory-mock-database",
+  static create(
+    dbname: string = "in-memory-database",
     loggingService: LoggingService = new LoggingService()
-  ): MockDatabase {
+  ): InMemoryDatabase {
     PouchDB.plugin(memory).plugin(mapreduce);
-    return new MockDatabase(
+    return new InMemoryDatabase(
       new PouchDB(dbname, { adapter: "memory" }),
       loggingService
     );

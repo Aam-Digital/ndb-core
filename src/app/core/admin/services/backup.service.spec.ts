@@ -2,14 +2,14 @@ import { TestBed } from "@angular/core/testing";
 
 import { BackupService } from "./backup.service";
 import { Database } from "../../database/database";
-import { MockDatabase } from "../../database/mock-database";
+import { InMemoryDatabase } from "../../database/in-memory-database";
 
 describe("BackupService", () => {
-  let db: MockDatabase;
+  let db: InMemoryDatabase;
   let service: BackupService;
 
   beforeEach(() => {
-    db = MockDatabase.createWithInMemoryDB();
+    db = InMemoryDatabase.create();
     TestBed.configureTestingModule({
       providers: [BackupService, { provide: Database, useValue: db }],
     });

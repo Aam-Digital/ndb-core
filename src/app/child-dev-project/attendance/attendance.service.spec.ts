@@ -15,13 +15,13 @@ import { School } from "../schools/model/school";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { Child } from "../children/model/child";
 import { Note } from "../notes/model/note";
-import { MockDatabase } from "../../core/database/mock-database";
+import { InMemoryDatabase } from "../../core/database/in-memory-database";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
 
   let entityMapper: EntityMapperService;
-  let database: MockDatabase;
+  let database: InMemoryDatabase;
 
   function createEvent(date: Date, activityIdWithPrefix: string): EventNote {
     const event = EventNote.create(date, "generated event");
@@ -40,7 +40,7 @@ describe("AttendanceService", () => {
     activity1 = RecurringActivity.create("activity 1");
     activity2 = RecurringActivity.create("activity 2");
 
-    database = MockDatabase.createWithInMemoryDB();
+    database = InMemoryDatabase.create();
 
     e1_1 = createEvent(new Date("2020-01-01"), activity1._id);
     e1_2 = createEvent(new Date("2020-01-02"), activity1._id);

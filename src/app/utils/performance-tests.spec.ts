@@ -19,7 +19,6 @@ import { TestBed, waitForAsync } from "@angular/core/testing";
 import { SessionService } from "../core/session/session-service/session.service";
 import { AppModule } from "../app.module";
 import moment from "moment";
-import { MockDatabase } from "../core/database/mock-database";
 import { LoggingService } from "../core/logging/logging.service";
 import { NewLocalSessionService } from "../core/session/session-service/new-local-session.service";
 import { EntitySchemaService } from "../core/entity/schema/entity-schema.service";
@@ -30,19 +29,17 @@ import { EntityMapperService } from "../core/entity/entity-mapper.service";
 import { School } from "../child-dev-project/schools/model/school";
 import { ChildrenService } from "../child-dev-project/children/children.service";
 import { Child } from "../child-dev-project/children/model/child";
+import { InMemoryDatabase } from "../core/database/in-memory-database";
 
-describe("Performance Tests", () => {
+xdescribe("Performance Tests", () => {
   let mockSessionService: SessionService;
-  let mockDatabase: MockDatabase;
+  let mockDatabase: InMemoryDatabase;
   let demoDataService: DemoDataService;
 
   beforeEach(
     waitForAsync(() => {
       const loggingService = new LoggingService();
-      mockDatabase = MockDatabase.createWithPouchDB(
-        "performance_db",
-        loggingService
-      );
+      mockDatabase = InMemoryDatabase.create("performance_db", loggingService);
       const schemaService = new EntitySchemaService();
       mockSessionService = new NewLocalSessionService(
         loggingService,
@@ -90,7 +87,7 @@ describe("Performance Tests", () => {
   it("school service get children of schools", async () => {
     const demoDataService = TestBed.inject(DemoDataService);
     await demoDataService.publishDemoDataImproved();
-    const mockDatabase = TestBed.inject(Database) as MockDatabase;
+    const mockDatabase = TestBed.inject(Database) as InMemoryDatabase;
     const entityMapper = TestBed.inject(EntityMapperService);
     const schools = await entityMapper.loadType(School);
     const schoolsService = TestBed.inject(SchoolsService);
@@ -106,7 +103,7 @@ describe("Performance Tests", () => {
   it("load children with school info", async () => {
     const demoDataService = TestBed.inject(DemoDataService);
     await demoDataService.publishDemoDataImproved();
-    const mockDatabase = TestBed.inject(Database) as MockDatabase;
+    const mockDatabase = TestBed.inject(Database) as InMemoryDatabase;
     const childrenService = TestBed.inject(ChildrenService);
     await mockDatabase.waitForIndexing();
     await comparePerformance(
@@ -119,7 +116,7 @@ describe("Performance Tests", () => {
   it("load children one by one", async () => {
     const demoDataService = TestBed.inject(DemoDataService);
     await demoDataService.publishDemoDataImproved();
-    const mockDatabase = TestBed.inject(Database) as MockDatabase;
+    const mockDatabase = TestBed.inject(Database) as InMemoryDatabase;
     const childrenService = TestBed.inject(ChildrenService);
     await mockDatabase.waitForIndexing();
     const entityMapper = TestBed.inject(EntityMapperService);
