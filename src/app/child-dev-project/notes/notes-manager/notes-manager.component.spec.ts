@@ -38,7 +38,8 @@ describe("NotesManagerComponent", () => {
   let fixture: ComponentFixture<NotesManagerComponent>;
 
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
-  let mockUpdateObservable: Subject<UpdatedEntity<Note>>;
+  let mockNoteObservable: Subject<UpdatedEntity<Note>>;
+  let mockEventNoteObservable: Subject<UpdatedEntity<Note>>;
   const dialogMock: jasmine.SpyObj<FormDialogService> = jasmine.createSpyObj(
     "dialogMock",
     ["openDialog"]
@@ -106,8 +107,13 @@ describe("NotesManagerComponent", () => {
       "save",
     ]);
     mockEntityMapper.loadType.and.resolveTo([]);
-    mockUpdateObservable = new Subject<UpdatedEntity<Note>>();
-    mockEntityMapper.receiveUpdates.and.returnValue(mockUpdateObservable);
+    mockNoteObservable = new Subject<UpdatedEntity<Note>>();
+    mockEventNoteObservable = new Subject<UpdatedEntity<EventNote>>();
+    mockEntityMapper.receiveUpdates.and.callFake((entityType) =>
+      (entityType as any) === Note
+        ? (mockNoteObservable as any)
+        : (mockEventNoteObservable as any)
+    );
 
     const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
     mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
@@ -184,50 +190,49 @@ describe("NotesManagerComponent", () => {
   it("will contain a new note when saved by an external component", () => {
     const newNote = new Note("new");
     const oldLength = component.notes.length;
-    mockUpdateObservable.next({ entity: newNote, type: "new" });
-    expect(component.notes.length).toBe(oldLength + 1);
+    mockNoteObservable.next({ entity: newNote, type: "new" });
+    expect(component.notes).toHaveSize(oldLength + 1);
   });
 
   it("will contain the updated note when updated", async () => {
     const note = new Note("n1");
     note.author = "A";
-    mockUpdateObservable.next({ entity: note, type: "new" });
-    expect(component.notes.length).toBe(1);
+    mockNoteObservable.next({ entity: note, type: "new" });
+    expect(component.notes).toHaveSize(1);
     expect(component.notes[0].author).toBe("A");
     note.author = "B";
-    mockUpdateObservable.next({ entity: note, type: "update" });
-    expect(component.notes.length).toBe(1);
+    mockNoteObservable.next({ entity: note, type: "update" });
+    expect(component.notes).toHaveSize(1);
     expect(component.notes[0].author).toBe("B");
   });
 
   it("displays Notes and Event notes only when toggle is set to true", async () => {
-    const entityMapper = TestBed.inject(EntityMapperService);
     const note = Note.create(new Date("2020-01-01"), "test note");
     note.category = testInteractionTypes[0];
-    await entityMapper.save(note);
     const eventNote = EventNote.create(new Date("2020-01-01"), "test event");
     eventNote.category = testInteractionTypes[0];
-    await entityMapper.save(eventNote);
+    mockEntityMapper.loadType.and.callFake(loadTypeFake([note], [eventNote]));
 
     component.includeEventNotes = true;
     await component.updateIncludeEvents();
 
     expect(component.notes).toEqual([note, eventNote]);
+    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(Note);
+    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(EventNote);
 
     component.includeEventNotes = false;
     await component.updateIncludeEvents();
 
     expect(component.notes).toEqual([note]);
+    expect(mockEntityMapper.loadType.calls.mostRecent().args).toEqual([Note]);
   });
 
   it("loads initial list including EventNotes if set in config", fakeAsync(async () => {
-    const entityMapper = TestBed.inject(EntityMapperService);
     const note = Note.create(new Date("2020-01-01"), "test note");
     note.category = testInteractionTypes[0];
-    await entityMapper.save(note);
     const eventNote = EventNote.create(new Date("2020-01-01"), "test event");
     eventNote.category = testInteractionTypes[0];
-    await entityMapper.save(eventNote);
+    mockEntityMapper.loadType.and.callFake(loadTypeFake([note], [eventNote]));
 
     routeMock.data.next(
       Object.assign(
@@ -239,5 +244,20 @@ describe("NotesManagerComponent", () => {
     flush();
 
     expect(component.notes).toEqual([note, eventNote]);
+    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(Note);
+    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(EventNote);
   }));
 });
+
+function loadTypeFake(notes: Note[], eventNotes: EventNote[]) {
+  return (type) => {
+    switch (type) {
+      case Note:
+        return Promise.resolve(notes);
+      case EventNote:
+        return Promise.resolve(eventNotes);
+      default:
+        return Promise.resolve([]);
+    }
+  };
+}
