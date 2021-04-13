@@ -350,7 +350,7 @@ export class ChildrenService {
     );
 
     const results = new Map();
-    const children = await this.getChildren().pipe(take(1)).toPromise();
+    const children = await this.entityMapper.loadType(Child);
     children
       .filter((c) => c.isActive)
       .forEach((c) => results.set(c.getId(), Number.POSITIVE_INFINITY));

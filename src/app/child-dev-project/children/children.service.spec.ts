@@ -134,7 +134,7 @@ describe("ChildrenService", () => {
       Note.create(moment().subtract(50, "days").toDate(), "n0-1", [c0])
     );
 
-    const recentNotesMap = await service.getDaysSinceLastNoteOfEachChild();
+    const recentNotesMap = await service.getDaysSinceLastNoteOfEachChild(49);
 
     expect(recentNotesMap.get(c0)).toBe(Number.POSITIVE_INFINITY);
   });
