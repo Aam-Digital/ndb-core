@@ -1,4 +1,7 @@
-import { NotesManagerComponent } from "./notes-manager.component";
+import {
+  NotesManagerComponent,
+  NotesManagerConfig,
+} from "./notes-manager.component";
 import {
   ComponentFixture,
   fakeAsync,
@@ -17,7 +20,6 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { of } from "rxjs";
 import { User } from "../../../core/user/user";
 import { Note } from "../model/note";
-import { WarningLevel, WarningLevelColor } from "../../warning-level";
 import { Angulartics2Module } from "angulartics2";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import {
@@ -28,6 +30,8 @@ import { InteractionType } from "../model/interaction-type.interface";
 import { ConfigService } from "../../../core/config/config.service";
 import { By } from "@angular/platform-browser";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
+import { EventNote } from "app/child-dev-project/attendance/model/event-note";
+import { BehaviorSubject } from "rxjs";
 
 describe("NotesManagerComponent", () => {
   let component: NotesManagerComponent;
@@ -72,7 +76,7 @@ describe("NotesManagerComponent", () => {
   };
 
   const routeMock = {
-    data: of(routeData),
+    data: new BehaviorSubject(routeData),
     queryParams: of({}),
   };
 
@@ -108,12 +112,13 @@ describe("NotesManagerComponent", () => {
     }).compileComponents();
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     fixture = TestBed.createComponent(NotesManagerComponent);
     component = fixture.componentInstance;
     const router = fixture.debugElement.injector.get(Router);
     fixture.ngZone.run(() => router.initialNavigation());
     fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {
@@ -127,31 +132,6 @@ describe("NotesManagerComponent", () => {
     expect(component.config.filters[0].hasOwnProperty("options")).toBeTrue();
     expect(component.config.filters[1].hasOwnProperty("options")).toBeTrue();
     expect(component.config.filters[2].hasOwnProperty("options")).toBeFalse();
-  }));
-
-  it("should set the color for the notes", fakeAsync(() => {
-    const note1 = new Note("n1");
-    note1.warningLevel = WarningLevel.URGENT;
-    const note2 = new Note("n2");
-    const note3 = new Note("n3");
-    note3.category = { id: "TEST", label: "test", color: "CategoryColor" };
-    const note4 = new Note("n4");
-    note4.warningLevel = WarningLevel.WARNING;
-    const entityMapper = fixture.debugElement.injector.get(EntityMapperService);
-    spyOn(entityMapper, "loadType").and.returnValue(
-      Promise.resolve([note1, note2, note3, note4])
-    );
-    component.ngOnInit();
-    tick();
-    expect(component.notes.length).toEqual(4);
-    expect(component.notes[0]["color"]).toEqual(
-      WarningLevelColor(note1.warningLevel)
-    );
-    expect(component.notes[1]["color"]).toEqual("");
-    expect(component.notes[2]["color"]).toEqual("CategoryColor");
-    expect(component.notes[3]["color"]).toEqual(
-      WarningLevelColor(note4.warningLevel)
-    );
   }));
 
   it("should open the dialog when clicking details", () => {
@@ -209,4 +189,45 @@ describe("NotesManagerComponent", () => {
     expect(component.notes).toHaveSize(1);
     expect(component.notes[0].authors).toEqual(["B"]);
   });
+
+  it("displays Notes and Event notes only when toggle is set to true", async () => {
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const note = Note.create(new Date("2020-01-01"), "test note");
+    note.category = testInteractionTypes[0];
+    await entityMapper.save(note);
+    const eventNote = EventNote.create(new Date("2020-01-01"), "test event");
+    eventNote.category = testInteractionTypes[0];
+    await entityMapper.save(eventNote);
+
+    component.includeEventNotes = true;
+    await component.updateIncludeEvents();
+
+    expect(component.notes).toEqual([note, eventNote]);
+
+    component.includeEventNotes = false;
+    await component.updateIncludeEvents();
+
+    expect(component.notes).toEqual([note]);
+  });
+
+  it("loads initial list including EventNotes if set in config", fakeAsync(async () => {
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const note = Note.create(new Date("2020-01-01"), "test note");
+    note.category = testInteractionTypes[0];
+    await entityMapper.save(note);
+    const eventNote = EventNote.create(new Date("2020-01-01"), "test event");
+    eventNote.category = testInteractionTypes[0];
+    await entityMapper.save(eventNote);
+
+    routeMock.data.next(
+      Object.assign(
+        { includeEventNotes: true } as NotesManagerConfig,
+        routeData
+      )
+    );
+
+    flush();
+
+    expect(component.notes).toEqual([note, eventNote]);
+  }));
 });

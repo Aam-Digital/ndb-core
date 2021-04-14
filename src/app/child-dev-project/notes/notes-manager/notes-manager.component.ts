@@ -3,7 +3,7 @@ import { Note } from "../model/note";
 import { MediaObserver } from "@angular/flex-layout";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ActivatedRoute } from "@angular/router";
-import { WarningLevel, WarningLevelColor } from "../../warning-level";
+import { WarningLevel } from "../../warning-level";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FilterSelectionOption } from "../../../core/filter/filter-selection/filter-selection";
 import { SessionService } from "../../../core/session/session-service/session.service";
@@ -11,26 +11,34 @@ import { FormDialogService } from "../../../core/form-dialog/form-dialog.service
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
-import { tap } from "rxjs/operators";
 import { applyUpdate } from "../../../core/entity/entity-update";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
+import { Input } from "@angular/core";
+import { EventNote } from "app/child-dev-project/attendance/model/event-note";
+import { EntityConstructor } from "app/core/entity/entity";
+
+/**
+ * additional config specifically for NotesManagerComponent
+ */
+export interface NotesManagerConfig {
+  /** whether to also load EventNote entities in addition to Note entities */
+  includeEventNotes?: boolean;
+
+  /** whether a toggle control is displayed to users, allowing to change the "includeEventNotes" state */
+  showEventNotesToggle?: boolean;
+}
 
 @Component({
   selector: "app-notes-manager",
-  template: `
-    <app-entity-list
-      [entityList]="notes"
-      [listConfig]="config"
-      [entityConstructor]="noteConstructor"
-      (elementClick)="showDetails($event)"
-      (addNewClick)="addNoteClick()"
-      #entityList
-    ></app-entity-list>
-  `,
+  templateUrl: "./notes-manager.component.html",
+  styleUrls: ["./notes-manager.component.scss"],
 })
 @UntilDestroy()
 export class NotesManagerComponent implements OnInit {
   @ViewChild("entityList") entityList: EntityListComponent<Note>;
+
+  @Input() includeEventNotes: boolean;
+  @Input() showEventNotesToggle: boolean;
 
   config: EntityListConfig;
   noteConstructor = Note;
@@ -75,27 +83,51 @@ export class NotesManagerComponent implements OnInit {
     private log: LoggingService
   ) {}
 
-  ngOnInit() {
-    this.route.data.subscribe((config: EntityListConfig) => {
-      this.config = config;
-      this.addPrebuiltFilters();
-    });
-    this.entityMapperService.loadType<Note>(Note).then((notes) => {
-      notes.forEach((note) => (note["color"] = this.getColor(note)));
-      // This prevents edge-cases where updates are received
-      // before this is
-      this.notes = notes.concat(this.notes);
-    });
+  async ngOnInit() {
+    this.route.data.subscribe(
+      async (config: EntityListConfig & NotesManagerConfig) => {
+        this.config = config;
+        this.addPrebuiltFilters();
 
+        this.includeEventNotes = config.includeEventNotes;
+        this.showEventNotesToggle = config.showEventNotesToggle;
+        this.notes = await this.loadEntities();
+      }
+    );
+
+    this.subscribeEntityUpdates(Note);
+    this.subscribeEntityUpdates(EventNote);
+  }
+
+  private async loadEntities(): Promise<Note[]> {
+    let notes = await this.entityMapperService.loadType(Note);
+    if (this.includeEventNotes) {
+      const eventNotes = await this.entityMapperService.loadType(EventNote);
+      notes = notes.concat(eventNotes);
+    }
+    return notes;
+  }
+
+  private subscribeEntityUpdates(
+    entityType: EntityConstructor<Note | EventNote>
+  ) {
     this.entityMapperService
-      .receiveUpdates<Note>(Note)
-      .pipe(
-        untilDestroyed(this),
-        tap((note) => (note.entity["color"] = this.getColor(note.entity)))
-      )
+      .receiveUpdates<Note>(entityType)
+      .pipe(untilDestroyed(this))
       .subscribe((updatedNote) => {
+        if (
+          !this.includeEventNotes &&
+          updatedNote?.entity?.getType() === EventNote.ENTITY_TYPE
+        ) {
+          return;
+        }
+
         this.notes = applyUpdate(this.notes, updatedNote);
       });
+  }
+
+  async updateIncludeEvents() {
+    this.notes = await this.loadEntities();
   }
 
   private addPrebuiltFilters() {
@@ -140,17 +172,5 @@ export class NotesManagerComponent implements OnInit {
 
   showDetails(entity: Note) {
     this.formDialog.openDialog(NoteDetailsComponent, entity.copy());
-  }
-
-  private getColor(entity: Note): string {
-    if (entity.warningLevel === WarningLevel.URGENT) {
-      return WarningLevelColor(WarningLevel.URGENT);
-    }
-    if (entity.warningLevel === WarningLevel.WARNING) {
-      return WarningLevelColor(WarningLevel.WARNING);
-    }
-
-    const color = entity.category?.color;
-    return color ? color : "";
   }
 }

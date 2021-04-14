@@ -42,13 +42,16 @@ export function expectEntitiesToMatch(
   const cleanExpected = comparableEntityData(expectedEntities, ignoreId);
   const cleanActual = comparableEntityData(actualEntities, ignoreId);
 
-  for (const data of cleanExpected) {
-    const passed = expect(cleanActual).toContain(data);
-    if (!passed) {
-      console.warn("expected object not found:");
-      console.log("expected", data);
-      console.log("actual overall", cleanActual);
-    }
+  // write arrays to console for easier debugging of complex mismatching objects
+  console.log("expected objects", cleanExpected);
+  console.log("actual objects", cleanActual);
+
+  for (let i = 0; i < cleanExpected.length; i++) {
+    const data = cleanExpected[i];
+    expect(cleanActual).toContain(
+      data,
+      "expected object not found: index " + i
+    );
   }
 }
 

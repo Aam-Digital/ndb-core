@@ -12,6 +12,7 @@ import {
 } from "../notes/model/interaction-type.interface";
 import { EventNote } from "./model/event-note";
 import { ChildrenService } from "../children/children.service";
+import { Note } from "../notes/model/note";
 
 @Injectable({
   providedIn: "root",
@@ -104,12 +105,29 @@ export class AttendanceService {
     startDate: Date,
     endDate: Date = startDate
   ): Promise<EventNote[]> {
-    return await this.dbIndexing.queryIndexDocsRange(
+    const start = moment(startDate);
+    const end = moment(endDate);
+
+    const eventNotes = this.dbIndexing.queryIndexDocsRange(
       EventNote,
       "events_index/by_date",
-      startDate.toISOString().substr(0, 10),
-      endDate.toISOString().substr(0, 10)
+      start.format("YYYY-MM-DD"),
+      end.format("YYYY-MM-DD")
     );
+
+    const relevantNormalNotes: Promise<
+      Note[]
+    > = this.dbIndexing
+      .queryIndexDocsRange(
+        Note,
+        "notes_index/note_child_by_date",
+        start.format("YYYY-MM-DD"),
+        end.format("YYYY-MM-DD")
+      )
+      .then((notes) => notes.filter((n) => n.category.isMeeting));
+
+    const allResults = await Promise.all([eventNotes, relevantNormalNotes]);
+    return allResults[0].concat(allResults[1]);
   }
 
   /**

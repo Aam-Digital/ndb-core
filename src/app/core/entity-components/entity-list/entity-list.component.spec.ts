@@ -260,6 +260,53 @@ describe("EntityListComponent", () => {
     expect(component.filterSelections).toEqual([]);
   });
 
+  it("should apply default sort on first column", async () => {
+    const children = [Child.create("C"), Child.create("A"), Child.create("B")];
+    component.columnsToDisplay = ["name", "projectNumber"];
+    component.entityList = children;
+
+    // trigger ngOnChanges for manually updated property
+    component.ngOnChanges({
+      entityList: new SimpleChange(undefined, children, true),
+    });
+
+    expect(
+      component.entityDataSource._orderData(children).map((c) => c["name"])
+    ).toEqual(["A", "B", "C"]);
+  });
+
+  it("should apply default sort on first column, ordering dates descending", async () => {
+    const children = [Child.create("0"), Child.create("1"), Child.create("2")];
+    children[0].admissionDate = new Date(2010, 1, 1);
+    children[1].admissionDate = new Date(2011, 1, 1);
+    children[2].admissionDate = new Date(2012, 1, 1);
+
+    component.columnsToDisplay = ["admissionDate", "name"];
+    component.entityList = children;
+    // define the columns to mark "admissionDate" as a Date value
+    component.columns = [
+      {
+        component: "DisplayDate",
+        title: "Admission",
+        id: "admissionDate",
+      },
+      {
+        component: "DisplayText",
+        title: "Name",
+        id: "name",
+      },
+    ];
+
+    // trigger ngOnChanges for manually updated property
+    component.ngOnChanges({
+      entityList: new SimpleChange(undefined, children, true),
+    });
+
+    expect(
+      component.entityDataSource._orderData(children).map((c) => c["name"])
+    ).toEqual(["2", "1", "0"]);
+  });
+
   it("should sort standard objects", () => {
     const children = [
       new Child("0"),
