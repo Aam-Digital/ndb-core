@@ -14,19 +14,21 @@
   <mat-chip-list
     #chipList
     [disabled]="disabled || loading.value">
-    <mat-basic-chip
-      [selectable]="selectable && !disabled"
-      [removable]="removable && !disabled"
-      *ngFor="let entity of selection_"
-      class="chip mat-elevation-z4">
-      <!-- This is going to be replaced with the dynamic content -->
-      <ng-container *ngTemplateOutlet="entityView; context: {entity: entity}"></ng-container>
-      <div
-        *ngIf="removable && !disabled"
-        class="fa fa-minus-square-o"
-        (click)="unselectEntity(entity)">
-      </div>
-    </mat-basic-chip>
+    <ng-container *ngIf="showEntities">
+      <mat-basic-chip
+        [selectable]="selectable && !disabled"
+        [removable]="removable && !disabled"
+        *ngFor="let entity of selection_"
+        class="chip mat-elevation-z4">
+        <!-- This is going to be replaced with the dynamic content -->
+        <ng-container *ngTemplateOutlet="entityView; context: {entity: entity}"></ng-container>
+        <div
+          *ngIf="removable && !disabled"
+          class="fa fa-minus-square-o"
+          (click)="unselectEntity(entity)">
+        </div>
+      </mat-basic-chip>
+    </ng-container>
 
   </mat-chip-list>
 

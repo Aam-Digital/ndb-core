@@ -128,6 +128,13 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    */
   loading = new BehaviorSubject(true);
   @Input() disabled: boolean = false;
+  /**
+   * Whether or not to show entities in the list.
+   * Entities can still be selected using the autocomplete,
+   * and {@link selection} as well as {@link selectionChange} will
+   * still work as expected
+   */
+  @Input() showEntities: boolean = true;
 
   allEntities: E[] = [];
 

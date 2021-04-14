@@ -126,6 +126,7 @@
         [(selection)]="entity.children"
         (selectionChange)="entityForm.form.markAsDirty()"
         [additionalFilter]="filterInactiveChildren"
+        [showEntities]="!entity.category.isMeeting"
         label="Children"
         placeholder="Add Child...">
         <!-- Header for autocomplete -->
@@ -145,9 +146,9 @@
           [attendance]="entity.getAttendance(childId)"
           (change)="entityForm.form.markAsDirty()"
           (remove)="entity.removeChild(childId); entityForm.form.markAsDirty()"
-        >
-        </app-child-meeting-note-attendance>
-      </div>
+          >
+          </app-child-meeting-note-attendance>
+        </div>
 
     </div>
 
