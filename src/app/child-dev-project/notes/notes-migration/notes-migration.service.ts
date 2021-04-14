@@ -23,7 +23,7 @@ export class NotesMigrationService {
       if (user) {
         oldNote.authors = [user.getId()];
       } else {
-
+        this.loggingService.warn("cannot migrate user ");
       }
       oldNote.authors = user ? [user.getId()] : [];
       return oldNote;

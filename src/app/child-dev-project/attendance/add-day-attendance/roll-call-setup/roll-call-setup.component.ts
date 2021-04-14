@@ -108,20 +108,20 @@ export class RollCallSetupComponent implements OnInit {
     const calculateEventPriority = (event: Note) => {
       let score = 0;
 
-      let assignedUser = event.author;
-      const activity = this.allActivities.find(
-        (a) => a._id === event.relatesTo
+      const assignedUsers = event.authors.concat(
+        this.allActivities
+          .filter((a) => a._id === event.relatesTo)
+          .map((a) => a.assignedTo)
       );
-      if (activity) {
-        assignedUser = activity.assignedTo;
-      }
 
       if (!RecurringActivity.isActivityEventNote(event)) {
         // show one-time events first
         score += 1;
       }
 
-      if (assignedUser === this.sessionService.getCurrentUser().getId()) {
+      if (
+        assignedUsers.includes(this.sessionService.getCurrentUser().getId())
+      ) {
         score += 2;
       }
 
