@@ -7,9 +7,6 @@ import {
 
 import { UserListComponent } from "./user-list.component";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { Database } from "../../database/database";
-import { MockDatabase } from "../../database/mock-database";
 import { User } from "../user";
 import { Entity } from "../../entity/entity";
 
@@ -28,23 +25,26 @@ describe("UserListComponent", () => {
 
   const commonThreshold = 2;
 
-  const testUsers: User[] = ["UserA", "demo", "demoAdmin", "UserB"].map(
-    (name) => {
+  let testUsers: User[] = [];
+  const mockEntityMapperService = jasmine.createSpyObj("EntityMapperService", [
+    "loadType",
+  ]);
+
+  beforeEach(async () => {
+    testUsers = ["UserA", "demo", "demoAdmin", "UserB"].map((name) => {
       const user = new User();
       user.name = name;
       return user;
-    }
-  );
-
-  beforeEach(async () => {
+    });
+    mockEntityMapperService.loadType.and.returnValue(
+      Promise.resolve(testUsers)
+    );
     await TestBed.configureTestingModule({
       declarations: [UserListComponent],
       providers: [
-        EntityMapperService,
-        EntitySchemaService,
         {
-          provide: Database,
-          useValue: MockDatabase.createWithData(testUsers),
+          provide: EntityMapperService,
+          useValue: mockEntityMapperService,
         },
       ],
     }).compileComponents();
@@ -97,15 +97,14 @@ describe("UserListComponent", () => {
     });
   });
 
-  it("knows how many remaining users exist if more users than the threshold are given", fakeAsync(() => {
+  it("knows how many remaining users exist if more users than the threshold are given", () => {
     component.maxUserThreshold = commonThreshold;
+    console.log(testUsers);
     [3, 4].forEach((userCount) => {
       component.users = testUsers.slice(0, userCount);
-      // not needed but fixes weird test-error
-      tick();
       expect(component.additionalUsers).toBe(userCount - commonThreshold);
     });
-  }));
+  });
 
   it("inits from the config", fakeAsync(() => {
     const testEntity = TestEntity.create(
