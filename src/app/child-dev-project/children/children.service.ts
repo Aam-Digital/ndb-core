@@ -18,11 +18,6 @@ import { QueryOptions } from "../../core/database/database";
 
 @Injectable()
 export class ChildrenService {
-  private attendanceAnalysisIndexCreation: Promise<void>;
-  private notesIndexCreation: Promise<void>;
-  private attendanceIndexCreation: Promise<void>;
-  private childSchoolRelationIndexCreation: Promise<void>;
-
   constructor(
     private entityMapper: EntityMapperService,
     private entitySchemaService: EntitySchemaService,
@@ -39,10 +34,10 @@ export class ChildrenService {
   }
 
   public createDatabaseIndices() {
-    this.attendanceAnalysisIndexCreation = this.createAttendanceAnalysisIndex();
-    this.notesIndexCreation = this.createNotesIndex();
-    this.attendanceIndexCreation = this.createAttendancesIndex();
-    this.childSchoolRelationIndexCreation = this.createChildSchoolRelationIndex();
+    this.createAttendanceAnalysisIndex();
+    this.createNotesIndex();
+    this.createAttendancesIndex();
+    this.createChildSchoolRelationIndex();
   }
 
   /**
@@ -133,12 +128,10 @@ export class ChildrenService {
   }
 
   getAttendancesOfChild(childId: string): Observable<AttendanceMonth[]> {
-    const promise = this.attendanceIndexCreation.then(() =>
-      this.dbIndexing.queryIndexDocs(
-        AttendanceMonth,
-        "attendances_index/by_child",
-        childId
-      )
+    const promise = this.dbIndexing.queryIndexDocs(
+      AttendanceMonth,
+      "attendances_index/by_child",
+      childId
     );
 
     return from(promise);
@@ -147,12 +140,10 @@ export class ChildrenService {
   getAttendancesOfMonth(month: Date): Observable<AttendanceMonth[]> {
     const monthString =
       month.getFullYear().toString() + "-" + (month.getMonth() + 1).toString();
-    const promise = this.attendanceIndexCreation.then(() =>
-      this.dbIndexing.queryIndexDocs(
-        AttendanceMonth,
-        "attendances_index/by_month",
-        monthString
-      )
+    const promise = this.dbIndexing.queryIndexDocs(
+      AttendanceMonth,
+      "attendances_index/by_month",
+      monthString
     );
 
     return from(promise);
@@ -245,7 +236,6 @@ export class ChildrenService {
       include_docs: true,
       limit: limit,
     };
-    await this.childSchoolRelationIndexCreation;
     return this.dbIndexing.queryIndexDocs(
       ChildSchoolRelation,
       "childSchoolRelations_index/by_date",
@@ -257,7 +247,6 @@ export class ChildrenService {
     queryType: "child" | "school",
     id: string
   ): Promise<ChildSchoolRelation[]> {
-    await this.childSchoolRelationIndexCreation;
     return this.dbIndexing.queryIndexDocs(
       ChildSchoolRelation,
       "childSchoolRelations_index/by_" + queryType,
@@ -266,12 +255,10 @@ export class ChildrenService {
   }
 
   async queryAttendanceLast3Months() {
-    await this.attendanceAnalysisIndexCreation;
     return this.dbIndexing.queryIndexStats("avg_attendance_index/three_months");
   }
 
   async queryAttendanceLastMonth() {
-    await this.attendanceAnalysisIndexCreation;
     return this.dbIndexing.queryIndexStats("avg_attendance_index/last_month");
   }
 
@@ -331,8 +318,10 @@ export class ChildrenService {
   }
 
   getNotesOfChild(childId: string): Observable<Note[]> {
-    const promise = this.notesIndexCreation.then(() =>
-      this.dbIndexing.queryIndexDocs(Note, "notes_index/by_child", childId)
+    const promise = this.dbIndexing.queryIndexDocs(
+      Note,
+      "notes_index/by_child",
+      childId
     );
 
     return from(promise);
@@ -385,7 +374,6 @@ export class ChildrenService {
     startDay: Date | Moment,
     endDay: Date | Moment = moment()
   ): Promise<Note[]> {
-    await this.notesIndexCreation;
     return this.dbIndexing.queryIndexDocsRange(
       Note,
       "notes_index/note_child_by_date",
