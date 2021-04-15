@@ -32,8 +32,6 @@ describe("AttendanceMigrationService", () => {
     });
     service = TestBed.inject(AttendanceMigrationService);
     entitySchemaService = TestBed.inject(EntitySchemaService);
-
-    await testDatabase.waitForIndexing();
   });
 
   afterEach(async () => {

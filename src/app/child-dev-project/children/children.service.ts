@@ -11,7 +11,7 @@ import { HealthCheck } from "../health-checkup/model/health-check";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { ChildPhotoService } from "./child-photo-service/child-photo.service";
 import { LoadChildPhotoEntitySchemaDatatype } from "./child-photo-service/datatype-load-child-photo";
-import moment from "moment";
+import moment, { Moment } from "moment";
 import { LoggingService } from "../../core/logging/logging.service";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 import { QueryOptions } from "../../core/database/database";
@@ -350,15 +350,9 @@ export class ChildrenService {
   public async getDaysSinceLastNoteOfEachChild(
     forLastNDays: number = 30
   ): Promise<Map<string, number>> {
-    await this.notesIndexCreation;
     const startDay = moment().subtract(forLastNDays, "days");
 
-    const notes = await this.dbIndexing.queryIndexDocsRange(
-      Note,
-      "notes_index/note_child_by_date",
-      startDay.format("YYYY-MM-DD"),
-      moment().format("YYYY-MM-DD")
-    );
+    const notes = await this.getNotesInTimespan(startDay);
 
     const results = new Map();
     const children = await this.entityMapper.loadType(Child);
@@ -379,6 +373,25 @@ export class ChildrenService {
     }
 
     return results;
+  }
+
+  /**
+   * Returns all notes in the timespan.
+   * It is only checked if the notes are on the same day als start and end day. The time is not checked.
+   * @param startDay the first day where notes should be included
+   * @param endDay the last day where notes should be included
+   */
+  public async getNotesInTimespan(
+    startDay: Date | Moment,
+    endDay: Date | Moment = moment()
+  ): Promise<Note[]> {
+    await this.notesIndexCreation;
+    return this.dbIndexing.queryIndexDocsRange(
+      Note,
+      "notes_index/note_child_by_date",
+      moment(startDay).format("YYYY-MM-DD"),
+      moment(endDay).format("YYYY-MM-DD")
+    );
   }
 
   private createNotesIndex(): Promise<any> {

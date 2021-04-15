@@ -73,8 +73,6 @@ describe("AttendanceService", () => {
     await entityMapper.save(e1_2);
     await entityMapper.save(e1_3);
     await entityMapper.save(e2_1);
-
-    await database.waitForIndexing();
   });
 
   afterEach(async () => {

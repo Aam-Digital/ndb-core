@@ -62,4 +62,9 @@ export class MockDatabase extends PouchDatabase {
   public waitForIndexing(): Promise<any> {
     return Promise.all(this.indexPromises);
   }
+
+  async destroy(): Promise<any> {
+    await this.waitForIndexing();
+    return super.destroy();
+  }
 }
