@@ -1,9 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { BackupService } from "../services/backup.service";
 import { ExportDataComponent } from "./export-data.component";
-import { Database } from "../../database/database";
-import { MockDatabase } from "../../database/mock-database";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
 
 describe("ExportDataComponent", () => {
   let component: ExportDataComponent;

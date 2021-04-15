@@ -9,15 +9,15 @@ import { EntityModule } from "../../../core/entity/entity.module";
 import { expectEntitiesToBeInDatabase } from "../../../utils/expect-entity-data.spec";
 import { EventNote } from "../model/event-note";
 import { ChildrenService } from "../../children/children.service";
-import { MockDatabase } from "../../../core/database/mock-database";
+import { PouchDatabase } from "../../../core/database/pouch-database";
 
 describe("AttendanceMigrationService", () => {
   let service: AttendanceMigrationService;
   let entitySchemaService: EntitySchemaService;
-  let testDatabase: MockDatabase;
+  let testDatabase: PouchDatabase;
 
   beforeEach(async () => {
-    testDatabase = MockDatabase.createWithInMemoryDB();
+    testDatabase = PouchDatabase.createWithInMemoryDB();
 
     TestBed.configureTestingModule({
       imports: [EntityModule],

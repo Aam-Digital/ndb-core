@@ -27,8 +27,6 @@ import { UserAccountComponent } from "./user-account.component";
 import { SessionService } from "../../session/session-service/session.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { Database } from "../../database/database";
-import { MockDatabase } from "../../database/mock-database";
 import { User } from "../user";
 import { AppConfig } from "../../app-config/app-config";
 import { UserAccountService } from "./user-account.service";

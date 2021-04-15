@@ -15,15 +15,13 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { MockDatabase } from "./mock-database";
 import { PouchDatabase } from "./pouch-database";
-import moment from "moment";
 
 describe("PouchDatabase tests", () => {
   let database: PouchDatabase;
 
   beforeEach(() => {
-    database = MockDatabase.createWithInMemoryDB();
+    database = PouchDatabase.createWithInMemoryDB();
   });
 
   afterEach(async () => {

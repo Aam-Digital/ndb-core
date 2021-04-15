@@ -19,6 +19,7 @@ import { Database, GetAllOptions, GetOptions, QueryOptions } from "./database";
 import moment from "moment";
 import { LoggingService } from "../logging/logging.service";
 import PouchDB from "pouchdb-browser";
+import memory from "pouchdb-adapter-memory";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -28,6 +29,23 @@ import PouchDB from "pouchdb-browser";
  * should be implemented in the abstract {@link Database}.
  */
 export class PouchDatabase extends Database {
+  static async createWithData(data: any[]): Promise<PouchDatabase> {
+    const instance = PouchDatabase.createWithInMemoryDB();
+    await Promise.all(data.map((doc) => instance.put(doc)));
+    return instance;
+  }
+
+  static createWithInMemoryDB(
+    dbname: string = "in-memory-mock-database",
+    loggingService: LoggingService = new LoggingService()
+  ): PouchDatabase {
+    PouchDB.plugin(memory);
+    return new PouchDatabase(
+      new PouchDB(dbname, { adapter: "memory" }),
+      loggingService
+    );
+  }
+
   static createWithInBrowserDB(
     dbname: string = "in-browser-database",
     loggingService: LoggingService = new LoggingService()

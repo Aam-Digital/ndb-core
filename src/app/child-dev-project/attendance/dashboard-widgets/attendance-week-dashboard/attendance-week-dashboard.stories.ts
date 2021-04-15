@@ -12,7 +12,7 @@ import moment from "moment";
 import { RouterTestingModule } from "@angular/router/testing";
 import { Angulartics2Module } from "angulartics2";
 import { Database } from "../../../../core/database/database";
-import { MockDatabase } from "../../../../core/database/mock-database";
+import { PouchDatabase } from "../../../../core/database/pouch-database";
 
 const child1 = Child.create("Jack");
 const child2 = Child.create("Jane");
@@ -64,7 +64,7 @@ export default {
       providers: [
         {
           provide: Database,
-          useValue: MockDatabase.createWithData([
+          useValue: PouchDatabase.createWithData([
             act1,
             act2,
             child1,

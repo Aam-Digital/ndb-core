@@ -25,7 +25,6 @@ import { LoginState } from "./session-states/login-state.enum";
 import { SessionType } from "./session-type";
 import { NewLocalSessionService } from "./session-service/new-local-session.service";
 import { PouchDatabase } from "../database/pouch-database";
-import { MockDatabase } from "../database/mock-database";
 
 /**
  * Factory method for Angular DI provider of SessionService.
@@ -64,7 +63,7 @@ export function sessionServiceFactory(
       sessionService = new NewLocalSessionService(
         loggingService,
         entitySchemaService,
-        MockDatabase.createWithInMemoryDB(
+        PouchDatabase.createWithInMemoryDB(
           AppConfig.settings.database.name,
           loggingService
         )

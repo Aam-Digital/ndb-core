@@ -17,13 +17,13 @@
 
 import { EntityMapperService } from "./entity-mapper.service";
 import { Entity } from "./entity";
-import { MockDatabase } from "../database/mock-database";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { waitForAsync } from "@angular/core/testing";
+import { PouchDatabase } from "../database/pouch-database";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
-  let testDatabase: MockDatabase;
+  let testDatabase: PouchDatabase;
 
   const existingEntity = {
     _id: "Entity:existing-entity",
@@ -39,7 +39,7 @@ describe("EntityMapperService", () => {
 
   beforeEach(
     waitForAsync(() => {
-      testDatabase = MockDatabase.createWithInMemoryDB();
+      testDatabase = PouchDatabase.createWithInMemoryDB();
       entityMapper = new EntityMapperService(
         testDatabase,
         new EntitySchemaService()

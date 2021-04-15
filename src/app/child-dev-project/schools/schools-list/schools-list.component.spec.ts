@@ -6,8 +6,6 @@ import {
   waitForAsync,
 } from "@angular/core/testing";
 import { SchoolsListComponent } from "./schools-list.component";
-import { Database } from "../../../core/database/database";
-import { MockDatabase } from "../../../core/database/mock-database";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { SessionService } from "../../../core/session/session-service/session.service";

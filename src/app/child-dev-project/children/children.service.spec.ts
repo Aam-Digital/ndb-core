@@ -5,19 +5,19 @@ import { Child } from "./model/child";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { Gender } from "./model/Gender";
 import { School } from "../schools/model/school";
-import { MockDatabase } from "../../core/database/mock-database";
 import { TestBed } from "@angular/core/testing";
 import moment from "moment";
 import { Database } from "../../core/database/database";
 import { Note } from "../notes/model/note";
+import { PouchDatabase } from "../../core/database/pouch-database";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
   let entityMapper: EntityMapperService;
-  let database: MockDatabase;
+  let database: PouchDatabase;
 
   beforeEach(async () => {
-    database = MockDatabase.createWithInMemoryDB();
+    database = PouchDatabase.createWithInMemoryDB();
     TestBed.configureTestingModule({
       providers: [
         ChildrenService,
