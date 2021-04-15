@@ -46,7 +46,7 @@ export class PouchDatabase extends Database {
     );
   }
 
-  static createWithInBrowserDB(
+  static createWithIndexedDB(
     dbname: string = "in-browser-database",
     loggingService: LoggingService = new LoggingService()
   ): PouchDatabase {

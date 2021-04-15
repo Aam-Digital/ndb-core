@@ -46,7 +46,7 @@ export function sessionServiceFactory(
       sessionService = new NewLocalSessionService(
         loggingService,
         entitySchemaService,
-        PouchDatabase.createWithInBrowserDB(
+        PouchDatabase.createWithIndexedDB(
           AppConfig.settings.database.name,
           loggingService
         )
