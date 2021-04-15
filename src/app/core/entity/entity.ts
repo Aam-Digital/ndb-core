@@ -22,7 +22,6 @@ import {
   WarningLevel,
   WarningLevelColor,
 } from "../../child-dev-project/warning-level";
-import { Note } from "../../child-dev-project/notes/model/note";
 
 /**
  * This represents a static class of type <T>.
