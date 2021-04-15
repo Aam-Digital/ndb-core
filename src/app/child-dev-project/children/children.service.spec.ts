@@ -9,7 +9,6 @@ import { MockDatabase } from "../../core/database/mock-database";
 import { TestBed } from "@angular/core/testing";
 import moment from "moment";
 import { Database } from "../../core/database/database";
-import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 import { Note } from "../notes/model/note";
 
 describe("ChildrenService", () => {
@@ -36,8 +35,6 @@ describe("ChildrenService", () => {
     );
 
     service = TestBed.inject<ChildrenService>(ChildrenService);
-
-    await database.waitForIndexing();
   });
 
   afterEach(async () => {
