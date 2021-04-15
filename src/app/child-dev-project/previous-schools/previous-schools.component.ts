@@ -9,7 +9,6 @@ import {
 } from "@angular/core";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { ChildrenService } from "../children/children.service";
-import { SchoolsService } from "../schools/schools.service";
 import moment from "moment";
 import { Child } from "../children/model/child";
 import { OnInitDynamicComponent } from "../../core/view/dynamic-components/on-init-dynamic-component.interface";
@@ -17,6 +16,7 @@ import { ColumnDescriptionInputType } from "../../core/entity-components/entity-
 import { ColumnDescription } from "../../core/entity-components/entity-subrecord/column-description";
 import { PanelConfig } from "../../core/entity-components/entity-details/EntityDetailsConfig";
 import { School } from "../schools/model/school";
+import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 
 interface PreviousRelationsConfig {
   single: boolean;
@@ -69,7 +69,7 @@ export class PreviousSchoolsComponent
 
   constructor(
     private childrenService: ChildrenService,
-    private schoolsService: SchoolsService
+    private entityMapperService: EntityMapperService
   ) {}
 
   ngOnInit() {
@@ -103,7 +103,7 @@ export class PreviousSchoolsComponent
   }
 
   private async initColumnDefinitions() {
-    const schools = await this.schoolsService.getSchools().toPromise();
+    const schools = await this.entityMapperService.loadType(School);
     this.schoolMap = new Map(schools.map((school) => [school.getId(), school]));
     this.columns = this.config.columns.map((column) =>
       this.createColumn(column.id, column.label, column.input)

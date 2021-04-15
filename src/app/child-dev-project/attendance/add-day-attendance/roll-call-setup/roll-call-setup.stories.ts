@@ -21,7 +21,6 @@ import { MatListModule } from "@angular/material/list";
 import { AttendanceService } from "../../attendance.service";
 import moment from "moment";
 import { Database } from "../../../../core/database/database";
-import { MockDatabase } from "../../../../core/database/mock-database";
 import { EntityModule } from "../../../../core/entity/entity.module";
 import { DatabaseIndexingService } from "../../../../core/entity/database-indexing/database-indexing.service";
 import { ChildPhotoService } from "../../../children/child-photo-service/child-photo.service";
@@ -34,6 +33,7 @@ import { DemoActivityGeneratorService } from "../../demo-data/demo-activity-gene
 import { SessionService } from "../../../../core/session/session-service/session.service";
 import { User } from "../../../../core/user/user";
 import { FormDialogModule } from "../../../../core/form-dialog/form-dialog.module";
+import { PouchDatabase } from "../../../../core/database/pouch-database";
 
 const demoEvents: Note[] = [
   Note.create(new Date(), "Class 5a Parents Meeting"),
@@ -97,7 +97,7 @@ export default {
         AttendanceService,
         {
           provide: Database,
-          useValue: MockDatabase.createWithData([
+          useValue: PouchDatabase.createWithData([
             ...demoChildren,
             ...demoEvents,
             ...demoActivities,

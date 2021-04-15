@@ -12,12 +12,14 @@ import {
 } from "../notes/model/interaction-type.interface";
 import { EventNote } from "./model/event-note";
 import { ChildrenService } from "../children/children.service";
-import { Note } from "../notes/model/note";
 
 @Injectable({
   providedIn: "root",
 })
 export class AttendanceService {
+  private eventsIndexCreation: Promise<void>;
+  private recurringActivitiesIndexCreation: Promise<any>;
+
   constructor(
     private entityMapper: EntityMapperService,
     private dbIndexing: DatabaseIndexingService,
@@ -27,16 +29,16 @@ export class AttendanceService {
     this.createIndices();
   }
 
-  private async createIndices() {
+  private createIndices() {
     const meetingInteractionTypes = this.configService
       .getConfig<InteractionType[]>(INTERACTION_TYPE_CONFIG_ID)
       .filter((t) => t.isMeeting)
       .map((t) => t.id);
-    await this.createEventsIndex(meetingInteractionTypes);
-    await this.createRecurringActivitiesIndex();
+    this.eventsIndexCreation = this.createEventsIndex(meetingInteractionTypes);
+    this.recurringActivitiesIndexCreation = this.createRecurringActivitiesIndex();
   }
 
-  private createEventsIndex(meetingInteractionTypes: string[]): Promise<any> {
+  private createEventsIndex(meetingInteractionTypes: string[]): Promise<void> {
     const designDoc = {
       _id: "_design/events_index",
       views: {
@@ -68,7 +70,7 @@ export class AttendanceService {
     return this.dbIndexing.createIndex(designDoc);
   }
 
-  private createRecurringActivitiesIndex(): Promise<any> {
+  private createRecurringActivitiesIndex(): Promise<void> {
     const designDoc = {
       _id: "_design/activities_index",
       views: {
@@ -105,9 +107,10 @@ export class AttendanceService {
     startDate: Date,
     endDate: Date = startDate
   ): Promise<EventNote[]> {
+    await this.eventsIndexCreation;
+
     const start = moment(startDate);
     const end = moment(endDate);
-
     const eventNotes = this.dbIndexing.queryIndexDocsRange(
       EventNote,
       "events_index/by_date",
@@ -115,15 +118,8 @@ export class AttendanceService {
       end.format("YYYY-MM-DD")
     );
 
-    const relevantNormalNotes: Promise<
-      Note[]
-    > = this.dbIndexing
-      .queryIndexDocsRange(
-        Note,
-        "notes_index/note_child_by_date",
-        start.format("YYYY-MM-DD"),
-        end.format("YYYY-MM-DD")
-      )
+    const relevantNormalNotes = this.childrenService
+      .getNotesInTimespan(start, end)
       .then((notes) => notes.filter((n) => n.category.isMeeting));
 
     const allResults = await Promise.all([eventNotes, relevantNormalNotes]);
@@ -139,6 +135,8 @@ export class AttendanceService {
     activityId: string,
     sinceDate?: Date
   ): Promise<EventNote[]> {
+    await this.eventsIndexCreation;
+
     if (!activityId.startsWith(RecurringActivity.ENTITY_TYPE)) {
       activityId = RecurringActivity.ENTITY_TYPE + ":" + activityId;
     }
@@ -222,6 +220,8 @@ export class AttendanceService {
   }
 
   async getActivitiesForChild(childId: string): Promise<RecurringActivity[]> {
+    await this.recurringActivitiesIndexCreation;
+
     const activities = await this.dbIndexing.queryIndexDocs(
       RecurringActivity,
       "activities_index/by_participant",

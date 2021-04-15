@@ -19,6 +19,7 @@ import { DatabaseIndexingService } from "./database-indexing.service";
 import { Database } from "../../database/database";
 import { take } from "rxjs/operators";
 import { EntitySchemaService } from "../schema/entity-schema.service";
+import { fakeAsync, tick } from "@angular/core/testing";
 
 describe("DatabaseIndexingService", () => {
   let service: DatabaseIndexingService;
@@ -34,11 +35,32 @@ describe("DatabaseIndexingService", () => {
     const mockQueryResult = { name: "foo" };
     mockDb.query.and.resolveTo(mockQueryResult);
 
-    const actualResult = await service.queryIndexRaw(testQueryName, {});
+    const actualResult = await service.queryIndexRaw(testQueryName, {}, true);
 
     expect(actualResult).toEqual(mockQueryResult);
     expect(mockDb.query).toHaveBeenCalledWith(testQueryName, {});
   });
+
+  it("should wait until index exists before running a query", fakeAsync(() => {
+    const testQueryName = "test_index/test";
+    const testDesignDoc = {
+      _id: "_design/" + testQueryName,
+      views: {},
+    };
+
+    let queryCompleted = false;
+    service
+      .queryIndexRaw(testQueryName, {})
+      .then(() => (queryCompleted = true));
+    tick();
+
+    expect(queryCompleted).toBeFalse();
+
+    service.createIndex(testDesignDoc);
+    tick();
+
+    expect(queryCompleted).toBeTrue();
+  }));
 
   it("should emit new indicesRegistered immediately and then emit update on createIndex", async () => {
     const testIndexName = "test_index";
