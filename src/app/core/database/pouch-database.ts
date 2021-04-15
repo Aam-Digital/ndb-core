@@ -35,6 +35,8 @@ export class PouchDatabase extends Database {
     return new PouchDatabase(new PouchDB(dbname), loggingService);
   }
 
+  private indexPromises: Promise<any>[] = [];
+
   /**
    * Create a PouchDB database manager.
    * @param _pouchDB An (initialized) PouchDB database instance from the PouchDB library.
@@ -139,6 +141,7 @@ export class PouchDatabase extends Database {
   }
 
   public async destroy(): Promise<any> {
+    await Promise.all(this.indexPromises);
     return this._pouchDB.destroy();
   }
 
@@ -167,7 +170,13 @@ export class PouchDatabase extends Database {
    *
    * @param designDoc The PouchDB style design document for the map/reduce query
    */
-  async saveDatabaseIndex(designDoc: any): Promise<any> {
+  saveDatabaseIndex(designDoc: any): Promise<void> {
+    const creationPromise = this.createOrUpdateDesignDoc(designDoc);
+    this.indexPromises.push(creationPromise);
+    return creationPromise;
+  }
+
+  private async createOrUpdateDesignDoc(designDoc): Promise<void> {
     const existingDesignDoc = await this.get(designDoc._id, {}, true);
     if (!existingDesignDoc) {
       this.loggingService.debug("creating new database index");
@@ -187,7 +196,7 @@ export class PouchDatabase extends Database {
     await this.prebuildViewsOfDesignDoc(designDoc);
   }
 
-  private async prebuildViewsOfDesignDoc(designDoc: any) {
+  private async prebuildViewsOfDesignDoc(designDoc: any): Promise<void> {
     for (const viewName of Object.keys(designDoc.views)) {
       try {
         const queryName =

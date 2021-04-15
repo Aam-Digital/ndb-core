@@ -44,27 +44,4 @@ export class MockDatabase extends PouchDatabase {
       loggingService
     );
   }
-
-  private indexPromises: Promise<any>[] = [];
-
-  public saveDatabaseIndex(designDoc: any): Promise<any> {
-    const indexPromise = super.saveDatabaseIndex(designDoc);
-    this.indexPromises.push(indexPromise);
-    return indexPromise;
-  }
-
-  /**
-   * Returns a promise that will resolve, once all indices are built.
-   * This function should be called AFTER saveDatabaseIndex was called for each index.
-   * If a second index is saved after the first one is done and this function is called immediately after saving the
-   * first index, then the promise will not wait for the second index to be done.
-   */
-  public waitForIndexing(): Promise<any> {
-    return Promise.all(this.indexPromises);
-  }
-
-  async destroy(): Promise<any> {
-    await this.waitForIndexing();
-    return super.destroy();
-  }
 }
