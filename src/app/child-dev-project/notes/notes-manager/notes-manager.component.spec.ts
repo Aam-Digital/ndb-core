@@ -10,14 +10,12 @@ import {
   tick,
 } from "@angular/core/testing";
 import { NotesModule } from "../notes.module";
-import { Database } from "../../../core/database/database";
-import { MockDatabase } from "../../../core/database/mock-database";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { RouterTestingModule } from "@angular/router/testing";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { of } from "rxjs";
+import { of, Subject } from "rxjs";
 import { User } from "../../../core/user/user";
 import { Note } from "../model/note";
 import { Angulartics2Module } from "angulartics2";
@@ -32,10 +30,16 @@ import { By } from "@angular/platform-browser";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 import { EventNote } from "app/child-dev-project/attendance/model/event-note";
 import { BehaviorSubject } from "rxjs";
+import { BackupService } from "../../../core/admin/services/backup.service";
+import { UpdatedEntity } from "../../../core/entity/entity-update";
 
 describe("NotesManagerComponent", () => {
   let component: NotesManagerComponent;
   let fixture: ComponentFixture<NotesManagerComponent>;
+
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockNoteObservable: Subject<UpdatedEntity<Note>>;
+  let mockEventNoteObservable: Subject<UpdatedEntity<Note>>;
   const dialogMock: jasmine.SpyObj<FormDialogService> = jasmine.createSpyObj(
     "dialogMock",
     ["openDialog"]
@@ -97,6 +101,20 @@ describe("NotesManagerComponent", () => {
     ]);
     mockConfigService.getConfig.and.returnValue(testInteractionTypes);
 
+    mockEntityMapper = jasmine.createSpyObj([
+      "loadType",
+      "receiveUpdates",
+      "save",
+    ]);
+    mockEntityMapper.loadType.and.resolveTo([]);
+    mockNoteObservable = new Subject<UpdatedEntity<Note>>();
+    mockEventNoteObservable = new Subject<UpdatedEntity<EventNote>>();
+    mockEntityMapper.receiveUpdates.and.callFake((entityType) =>
+      (entityType as any) === Note
+        ? (mockNoteObservable as any)
+        : (mockEventNoteObservable as any)
+    );
+
     const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
     mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
     TestBed.configureTestingModule({
@@ -104,10 +122,11 @@ describe("NotesManagerComponent", () => {
       imports: [NotesModule, RouterTestingModule, Angulartics2Module.forRoot()],
       providers: [
         { provide: SessionService, useValue: mockSessionService },
-        { provide: Database, useClass: MockDatabase },
+        { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: FormDialogService, useValue: dialogMock },
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: ConfigService, useValue: mockConfigService },
+        { provide: BackupService, useValue: {} },
       ],
     }).compileComponents();
   });
@@ -170,54 +189,50 @@ describe("NotesManagerComponent", () => {
 
   it("will contain a new note when saved by an external component", () => {
     const newNote = new Note("new");
-    const entityMapper = fixture.debugElement.injector.get(EntityMapperService);
     const oldLength = component.notes.length;
-    entityMapper.save(newNote);
-    expect(component.notes.length).toBe(oldLength + 1);
+    mockNoteObservable.next({ entity: newNote, type: "new" });
+    expect(component.notes).toHaveSize(oldLength + 1);
   });
 
   it("will contain the updated note when updated", async () => {
-    let note = new Note("n1");
+    const note = new Note("n1");
     note.authors = ["A"];
-    const entityMapper = fixture.debugElement.injector.get(EntityMapperService);
-    await entityMapper.save(note);
-    note = await entityMapper.load<Note>(Note, note.getId());
+    mockNoteObservable.next({ entity: note, type: "new" });
     expect(component.notes).toHaveSize(1);
     expect(component.notes[0].authors).toEqual(["A"]);
     note.authors = ["B"];
-    await entityMapper.save(note);
+    mockNoteObservable.next({ entity: note, type: "update" });
     expect(component.notes).toHaveSize(1);
     expect(component.notes[0].authors).toEqual(["B"]);
   });
 
   it("displays Notes and Event notes only when toggle is set to true", async () => {
-    const entityMapper = TestBed.inject(EntityMapperService);
     const note = Note.create(new Date("2020-01-01"), "test note");
     note.category = testInteractionTypes[0];
-    await entityMapper.save(note);
     const eventNote = EventNote.create(new Date("2020-01-01"), "test event");
     eventNote.category = testInteractionTypes[0];
-    await entityMapper.save(eventNote);
+    mockEntityMapper.loadType.and.callFake(loadTypeFake([note], [eventNote]));
 
     component.includeEventNotes = true;
     await component.updateIncludeEvents();
 
     expect(component.notes).toEqual([note, eventNote]);
+    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(Note);
+    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(EventNote);
 
     component.includeEventNotes = false;
     await component.updateIncludeEvents();
 
     expect(component.notes).toEqual([note]);
+    expect(mockEntityMapper.loadType.calls.mostRecent().args).toEqual([Note]);
   });
 
   it("loads initial list including EventNotes if set in config", fakeAsync(async () => {
-    const entityMapper = TestBed.inject(EntityMapperService);
     const note = Note.create(new Date("2020-01-01"), "test note");
     note.category = testInteractionTypes[0];
-    await entityMapper.save(note);
     const eventNote = EventNote.create(new Date("2020-01-01"), "test event");
     eventNote.category = testInteractionTypes[0];
-    await entityMapper.save(eventNote);
+    mockEntityMapper.loadType.and.callFake(loadTypeFake([note], [eventNote]));
 
     routeMock.data.next(
       Object.assign(
@@ -229,5 +244,20 @@ describe("NotesManagerComponent", () => {
     flush();
 
     expect(component.notes).toEqual([note, eventNote]);
+    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(Note);
+    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(EventNote);
   }));
 });
+
+function loadTypeFake(notes: Note[], eventNotes: EventNote[]) {
+  return (type) => {
+    switch (type) {
+      case Note:
+        return Promise.resolve(notes);
+      case EventNote:
+        return Promise.resolve(eventNotes);
+      default:
+        return Promise.resolve([]);
+    }
+  };
+}

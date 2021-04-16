@@ -119,14 +119,14 @@ import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/
     EntityDetailsModule,
     ConfigurableEnumModule,
     DemoDataModule.forRoot([
-      ...DemoChildGenerator.provider({ count: 150 }),
+      ...DemoChildGenerator.provider({ count: 120 }),
       ...DemoSchoolGenerator.provider({ count: 8 }),
       ...DemoChildSchoolRelationGenerator.provider(),
       ...DemoActivityGeneratorService.provider(),
-      ...DemoActivityEventsGeneratorService.provider({ forNLastYears: 2 }),
+      ...DemoActivityEventsGeneratorService.provider({ forNLastYears: 1 }),
       ...DemoNoteGeneratorService.provider({
         minNotesPerChild: 2,
-        maxNotesPerChild: 10,
+        maxNotesPerChild: 6,
         groupNotes: 3,
       }),
       ...DemoAserGeneratorService.provider(),

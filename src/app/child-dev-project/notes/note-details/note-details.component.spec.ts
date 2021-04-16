@@ -6,14 +6,11 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { ChildrenService } from "../../children/children.service";
 import { NotesModule } from "../notes.module";
 import { Child } from "../../children/model/child";
-import { Database } from "../../../core/database/database";
-import { User } from "../../../core/user/user";
-import { SessionService } from "../../../core/session/session-service/session.service";
 import { RouterTestingModule } from "@angular/router/testing";
-import { MockDatabase } from "../../../core/database/mock-database";
 import { Angulartics2Module } from "angulartics2";
 import { MatDialogRef } from "@angular/material/dialog";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 
 function generateTestNote(forChildren: Child[]) {
   const testNote = Note.create(new Date(), "test note");
@@ -61,13 +58,9 @@ describe("NoteDetailsComponent", () => {
         Angulartics2Module.forRoot(),
       ],
       providers: [
-        { provide: ChildrenService, useValue: mockChildrenService },
-        { provide: Database, useClass: MockDatabase },
-        {
-          provide: SessionService,
-          useValue: { getCurrentUser: () => new User("") },
-        },
         { provide: MatDialogRef, useValue: dialogRefMock },
+        { provide: EntityMapperService, useValue: {} },
+        { provide: ChildrenService, useValue: mockChildrenService },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(NoteDetailsComponent);

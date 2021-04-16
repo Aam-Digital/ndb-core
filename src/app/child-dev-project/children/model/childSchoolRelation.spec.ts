@@ -20,6 +20,7 @@ import { ChildSchoolRelation } from "./childSchoolRelation";
 import { Entity } from "../../../core/entity/entity";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import moment from "moment";
+import { DatabaseField } from "../../../core/entity/database-field.decorator";
 
 describe("ChildSchoolRelation Entity", () => {
   const ENTITY_TYPE = "ChildSchoolRelation";
@@ -97,5 +98,20 @@ describe("ChildSchoolRelation Entity", () => {
     relation.start = moment().subtract(1, "week").toDate();
     relation.end = moment().add(1, "day").toDate();
     expect(relation.isActive()).toBeTrue();
+  });
+
+  it("should not fail on null values", () => {
+    class Test extends Entity {
+      @DatabaseField({ dataType: "date-only" }) normalDate: Date;
+      @DatabaseField({ dataType: "date-only" }) nullDate: Date;
+    }
+    const testObject = new Test();
+    testObject.normalDate = new Date();
+    testObject.nullDate = null;
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(
+      testObject
+    );
+    expect(rawData.normalDate).toBeDefined();
+    expect(rawData.nullDate).toBeUndefined();
   });
 });
