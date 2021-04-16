@@ -59,7 +59,7 @@ export class Note extends Entity {
   @DatabaseField() date: Date;
   @DatabaseField() subject: string = "";
   @DatabaseField() text: string = "";
-  /** IDs of authors of this note */
+  /** IDs of users that authored this note */
   @DatabaseField() authors: string[] = [];
 
   @DatabaseField({
