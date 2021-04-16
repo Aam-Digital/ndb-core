@@ -8,13 +8,13 @@ import { EntitySelectComponent } from "./entity-select.component";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { Database } from "../../../database/database";
-import { MockDatabase } from "../../../database/mock-database";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatChipsModule } from "@angular/material/chips";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Entity } from "../../../entity/entity";
 import { ReactiveFormsModule } from "@angular/forms";
+import { PouchDatabase } from "../../../database/pouch-database";
 
 class TestEntity extends Entity {
   static create(name: string): TestEntity {
@@ -46,7 +46,7 @@ describe("EntitySelectComponent", () => {
         EntitySchemaService,
         {
           provide: Database,
-          useValue: MockDatabase.createWithData(
+          useValue: PouchDatabase.createWithData(
             mockEntitiesA.concat(mockEntitiesB)
           ),
         },
