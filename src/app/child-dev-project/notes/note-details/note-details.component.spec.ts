@@ -11,6 +11,7 @@ import { Angulartics2Module } from "angulartics2";
 import { MatDialogRef } from "@angular/material/dialog";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 
 function generateTestNote(forChildren: Child[]) {
   const testNote = Note.create(new Date(), "test note");
@@ -59,7 +60,7 @@ describe("NoteDetailsComponent", () => {
       ],
       providers: [
         { provide: MatDialogRef, useValue: dialogRefMock },
-        { provide: EntityMapperService, useValue: {} },
+        { provide: EntityMapperService, useValue: mockEntityMapper() },
         { provide: ChildrenService, useValue: mockChildrenService },
       ],
     }).compileComponents();

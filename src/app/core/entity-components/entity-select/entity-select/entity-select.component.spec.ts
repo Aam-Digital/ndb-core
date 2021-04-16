@@ -6,15 +6,13 @@ import {
 } from "@angular/core/testing";
 import { EntitySelectComponent } from "./entity-select.component";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
-import { Database } from "../../../database/database";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatChipsModule } from "@angular/material/chips";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Entity } from "../../../entity/entity";
 import { ReactiveFormsModule } from "@angular/forms";
-import { PouchDatabase } from "../../../database/pouch-database";
+import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 
 class TestEntity extends Entity {
   static create(name: string): TestEntity {
@@ -42,13 +40,9 @@ describe("EntitySelectComponent", () => {
     await TestBed.configureTestingModule({
       declarations: [EntitySelectComponent],
       providers: [
-        EntityMapperService,
-        EntitySchemaService,
         {
-          provide: Database,
-          useValue: PouchDatabase.createWithData(
-            mockEntitiesA.concat(mockEntitiesB)
-          ),
+          provide: EntityMapperService,
+          useValue: mockEntityMapper(mockEntitiesA.concat(mockEntitiesB)),
         },
       ],
       imports: [
@@ -73,6 +67,7 @@ describe("EntitySelectComponent", () => {
 
   it("eventually loads all entity-types when the entity-type is set", fakeAsync(() => {
     component.entityType = TestEntity;
+    fixture.detectChanges();
     tick();
     expect(component.allEntities.length).toBe(mockEntitiesA.length);
   }));
@@ -89,10 +84,12 @@ describe("EntitySelectComponent", () => {
       done();
     });
     component.entityType = TestEntity;
+    fixture.detectChanges();
   });
 
   it("contains the initial selection when passed as entity-arguments", fakeAsync(() => {
     component.entityType = TestEntity;
+    fixture.detectChanges();
     tick();
     component.selectionInputType = "entity";
     const expectation = mockEntitiesA.slice(2, 3);
@@ -105,6 +102,7 @@ describe("EntitySelectComponent", () => {
     component.selectionInputType = "id";
     const expectation = mockEntitiesA.slice(2, 3).map((child) => child.getId());
     component.selection = expectation;
+    fixture.detectChanges();
     tick();
     expect(component.selection_.every((s) => typeof s === "object")).toBeTrue();
     expect(component.selection_.map((s) => s.getId())).toEqual(expectation);
