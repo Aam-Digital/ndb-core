@@ -2,33 +2,86 @@ import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { Note } from "../model/note";
 import { User } from "../../../core/user/user";
-import { LoggingService } from "../../../core/logging/logging.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class NotesMigrationService {
-  constructor(
-    private entityMapperService: EntityMapperService,
-    private loggingService: LoggingService
-  ) {}
+  allUsers: Map<string, User>;
+  constructor(private entityMapperService: EntityMapperService) {}
 
   async migrateToMultiUser() {
-    const allNotes: Note[] = await this.entityMapperService.loadType<Note>(
-      Note
+    this.allUsers = new Map<string, User>(
+      (await this.entityMapperService.loadType(User)).map((u) => [
+        u.name.toLowerCase(),
+        u,
+      ])
     );
-    const users: User[] = await this.entityMapperService.loadType<User>(User);
-    for (const newNote of allNotes.map((oldNote) => {
-      const user = users.find((u) => u.getId() === oldNote["author"]);
-      if (user) {
-        oldNote.authors = [user.getId()];
-      } else {
-        this.loggingService.warn("cannot migrate user ");
-      }
-      oldNote.authors = user ? [user.getId()] : [];
-      return oldNote;
-    })) {
-      await this.entityMapperService.save<Note>(newNote);
+    const allNotes: Note[] = await this.entityMapperService.loadType(Note);
+    for (const note of allNotes) {
+      this.migrateSingleNote(note);
+      await this.entityMapperService.save(note);
     }
+  }
+
+  public migrateSingleNote(note: Note) {
+    const userStr = note["author"];
+    if (userStr === undefined || userStr === null) {
+      // no migration necessary
+      return;
+    }
+    const newUsers = this.findUsers(userStr);
+    note.authors = newUsers.detectedUsers.map((u) => u.getId());
+    delete note["author"];
+    if (newUsers.additional.length > 0) {
+      const additionalText =
+        "Also authored by " + newUsers.additional.join(", ");
+      if (note.text.length === 0) {
+        note.text = additionalText;
+      } else {
+        note.text += "\n" + additionalText;
+      }
+    }
+  }
+
+  /**
+   * finds a user based on the following assumptions:
+   * <li> All leading and trailing whitespaces are ignored
+   * <li> A single user will be matched by his case-insensitive name
+   * <li> When the search string contains a ',' or '&'-character, multiple
+   * users will be matched
+   * <li> If the string to match contains a whitespace, this name will be matched
+   * as well as all 'parts' of that name, meaning every sub-string, split by whitespaces
+   * @param str
+   */
+  public findUsers(
+    str: string
+  ): { detectedUsers: User[]; additional: string[] } {
+    const detectedUsers: User[] = [];
+    const additional: string[] = [];
+    // split on & and ,
+    // remove any non alphabet-characters and non-whitespace-characters
+    const searchStrings = str
+      .trim()
+      .split(/[,&]/)
+      .map((s) => s.replace(/[^a-zA-Z\s]/, "").trim());
+    for (const searchString of searchStrings) {
+      const lowerCaseSearch = searchString.toLowerCase();
+      let user: User;
+      if (lowerCaseSearch.match(/\s/)) {
+        user =
+          this.allUsers.get(lowerCaseSearch) ||
+          lowerCaseSearch
+            .toLowerCase()
+            .split(/\s/)
+            .map((s) => this.allUsers.get(s))
+            .filter((u) => !!u)
+            .pop();
+      } else {
+        user = this.allUsers.get(lowerCaseSearch);
+      }
+      user ? detectedUsers.push(user) : additional.push(searchString);
+    }
+    return { detectedUsers: detectedUsers, additional: additional };
   }
 }
