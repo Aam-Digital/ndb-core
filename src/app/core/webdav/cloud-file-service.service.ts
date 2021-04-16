@@ -21,7 +21,7 @@ export class CloudFileService {
   private currentlyGettingList: Promise<boolean>;
 
   static get WEBDAV_ENABLED(): boolean {
-    return !!AppConfig.settings.webdav?.remote_url;
+    return !!AppConfig.settings?.webdav?.remote_url;
   }
 
   /**

@@ -12,7 +12,6 @@ import {
 } from "../notes/model/interaction-type.interface";
 import { EventNote } from "./model/event-note";
 import { ChildrenService } from "../children/children.service";
-import { Note } from "../notes/model/note";
 
 @Injectable({
   providedIn: "root",
@@ -36,7 +35,7 @@ export class AttendanceService {
     await this.createRecurringActivitiesIndex();
   }
 
-  private createEventsIndex(meetingInteractionTypes: string[]): Promise<any> {
+  private createEventsIndex(meetingInteractionTypes: string[]): Promise<void> {
     const designDoc = {
       _id: "_design/events_index",
       views: {
@@ -68,7 +67,7 @@ export class AttendanceService {
     return this.dbIndexing.createIndex(designDoc);
   }
 
-  private createRecurringActivitiesIndex(): Promise<any> {
+  private createRecurringActivitiesIndex(): Promise<void> {
     const designDoc = {
       _id: "_design/activities_index",
       views: {
@@ -115,13 +114,8 @@ export class AttendanceService {
       end.format("YYYY-MM-DD")
     );
 
-    const relevantNormalNotes = this.dbIndexing
-      .queryIndexDocsRange(
-        Note,
-        "notes_index/note_child_by_date",
-        start.format("YYYY-MM-DD"),
-        end.format("YYYY-MM-DD")
-      )
+    const relevantNormalNotes = this.childrenService
+      .getNotesInTimespan(start, end)
       .then((notes) => notes.filter((n) => n.category.isMeeting));
 
     const allResults = await Promise.all([eventNotes, relevantNormalNotes]);
