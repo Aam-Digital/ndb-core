@@ -23,6 +23,10 @@ describe("AttendanceService", () => {
   let entityMapper: EntityMapperService;
   let database: PouchDatabase;
 
+  const meetingInteractionCategory = defaultInteractionTypes.find(
+    (it) => it.isMeeting
+  );
+
   function createEvent(date: Date, activityIdWithPrefix: string): EventNote {
     const event = EventNote.create(date, "generated event");
     event.relatesTo = activityIdWithPrefix;
@@ -92,12 +96,12 @@ describe("AttendanceService", () => {
     const note1 = Note.create(new Date("2020-01-01"), "manual event note 1");
     note1.addChild("1");
     note1.addChild("2");
-    note1.category = defaultInteractionTypes.find((t) => t.isMeeting);
+    note1.category = meetingInteractionCategory;
     await entityMapper.save(note1);
 
     const note2 = Note.create(new Date("2020-01-02"), "manual event note 2");
     note2.addChild("1");
-    note2.category = defaultInteractionTypes.find((t) => t.isMeeting);
+    note2.category = meetingInteractionCategory;
     await entityMapper.save(note2);
 
     const nonMeetingNote = Note.create(
@@ -136,14 +140,15 @@ describe("AttendanceService", () => {
       childSchool2,
     ]);
 
-    const testNoteWithSchool = EventNote.create(new Date("2021-01-01"));
+    const testNoteWithSchool = Note.create(new Date("2021-01-01"));
     testNoteWithSchool.children = ["1", "2"];
     testNoteWithSchool.schools = [linkedSchoolId];
+    testNoteWithSchool.category = meetingInteractionCategory;
     await entityMapper.save(testNoteWithSchool);
 
     const actualEvents = await service.getEventsOnDate(new Date("2021-01-01"));
     expect(actualEvents.length).toBe(1);
-    expect(actualEvents[0].children).toEqual(["1", "2", "3"]);
+    expect(actualEvents[0].children.sort()).toEqual(["1", "2", "3"].sort());
   });
 
   it("gets events for an activity", async () => {
@@ -213,7 +218,7 @@ describe("AttendanceService", () => {
     const childSchoolRelation = new ChildSchoolRelation();
     childSchoolRelation.childId = "test child";
     childSchoolRelation.schoolId = "test school";
-    childSchoolRelation.start = new Date();
+    childSchoolRelation.start = new Date("2020-01-01");
     const testActivity = RecurringActivity.create("new activity");
     testActivity.linkedGroups.push("test school");
 
@@ -344,7 +349,7 @@ describe("AttendanceService", () => {
       new Date("2021-04-05"),
       "Same Day Event"
     );
-    sameDayEvent.category = defaultInteractionTypes.find((it) => it.isMeeting);
+    sameDayEvent.category = meetingInteractionCategory;
     await entityMapper.save(sameDayEvent);
     const events = await service.getEventsOnDate(datePickerDate);
     expect(events).toHaveSize(1);
