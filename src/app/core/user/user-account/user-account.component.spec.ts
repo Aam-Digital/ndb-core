@@ -27,14 +27,13 @@ import { UserAccountComponent } from "./user-account.component";
 import { SessionService } from "../../session/session-service/session.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { Database } from "../../database/database";
-import { MockDatabase } from "../../database/mock-database";
 import { User } from "../user";
 import { AppConfig } from "../../app-config/app-config";
 import { UserAccountService } from "./user-account.service";
 import { UserModule } from "../user.module";
 import { SessionType } from "../../session/session-type";
 import { IAppConfig } from "../../app-config/app-config.model";
+import { LoggingService } from "../../logging/logging.service";
 
 describe("UserAccountComponent", () => {
   let component: UserAccountComponent;
@@ -43,6 +42,7 @@ describe("UserAccountComponent", () => {
   let mockSessionService: jasmine.SpyObj<SessionService>;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let mockUserAccountService: jasmine.SpyObj<UserAccountService>;
+  let mockLoggingService: jasmine.SpyObj<LoggingService>;
   const testUser = new User("");
 
   beforeEach(
@@ -59,15 +59,16 @@ describe("UserAccountComponent", () => {
       mockUserAccountService = jasmine.createSpyObj("mockUserAccount", [
         "changePassword",
       ]);
+      mockLoggingService = jasmine.createSpyObj(["error"]);
 
       TestBed.configureTestingModule({
         declarations: [UserAccountComponent],
         imports: [UserModule, NoopAnimationsModule],
         providers: [
-          { provide: Database, useClass: MockDatabase },
           { provide: SessionService, useValue: mockSessionService },
           { provide: EntityMapperService, useValue: mockEntityMapper },
           { provide: UserAccountService, useValue: mockUserAccountService },
+          { provide: LoggingService, useValue: mockLoggingService },
         ],
       });
     })

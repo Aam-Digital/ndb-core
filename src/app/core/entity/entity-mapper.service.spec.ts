@@ -17,13 +17,13 @@
 
 import { EntityMapperService } from "./entity-mapper.service";
 import { Entity } from "./entity";
-import { MockDatabase } from "../database/mock-database";
-import { Database } from "../database/database";
 import { EntitySchemaService } from "./schema/entity-schema.service";
+import { waitForAsync } from "@angular/core/testing";
+import { PouchDatabase } from "../database/pouch-database";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
-  let testDatabase: Database;
+  let testDatabase: PouchDatabase;
 
   const existingEntity = {
     _id: "Entity:existing-entity",
@@ -37,17 +37,23 @@ describe("EntityMapperService", () => {
     label: "entity 2 from database",
   };
 
-  beforeEach(() => {
-    testDatabase = new MockDatabase();
-    entityMapper = new EntityMapperService(
-      testDatabase,
-      new EntitySchemaService()
-    );
+  beforeEach(
+    waitForAsync(() => {
+      testDatabase = PouchDatabase.createWithInMemoryDB();
+      entityMapper = new EntityMapperService(
+        testDatabase,
+        new EntitySchemaService()
+      );
 
-    return Promise.all([
-      testDatabase.put(existingEntity),
-      testDatabase.put(existingEntity2),
-    ]);
+      return Promise.all([
+        testDatabase.put(existingEntity),
+        testDatabase.put(existingEntity2),
+      ]);
+    })
+  );
+
+  afterEach(async () => {
+    await testDatabase.destroy();
   });
 
   function expectEntity(actualEntity, expectedEntity) {
@@ -175,8 +181,9 @@ describe("EntityMapperService", () => {
     receiveUpdatesAndTestTypeAndId(done, undefined, testId);
 
     const testEntity = new Entity(testId);
-    entityMapper.save(testEntity, true);
-    entityMapper.remove(testEntity);
+    entityMapper
+      .save(testEntity, true)
+      .then(() => entityMapper.remove(testEntity));
   });
 
   it("publishes when an existing entity is updated", (done) => {

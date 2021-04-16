@@ -18,20 +18,18 @@
 import { TestBed, inject } from "@angular/core/testing";
 
 import { LoggedInGuard } from "./logged-in.guard";
-import { MockSessionService } from "../session-service/mock-session.service";
 import { SessionService } from "../session-service/session.service";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 describe("LoggedInGuard", () => {
-  let sessionService: SessionService;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   beforeEach(() => {
-    sessionService = new MockSessionService(new EntitySchemaService());
+    mockSessionService = jasmine.createSpyObj(["isLoggedIn"]);
 
     TestBed.configureTestingModule({
       providers: [
         LoggedInGuard,
-        { provide: SessionService, useValue: sessionService },
+        { provide: SessionService, useValue: mockSessionService },
       ],
     });
   });
@@ -43,7 +41,7 @@ describe("LoggedInGuard", () => {
   it("should prevent access when logged out", inject(
     [LoggedInGuard],
     (guard: LoggedInGuard) => {
-      spyOn(sessionService, "isLoggedIn").and.returnValue(false);
+      mockSessionService.isLoggedIn.and.returnValue(false);
       expect(guard.canActivate()).toBeFalsy();
     }
   ));
@@ -51,7 +49,7 @@ describe("LoggedInGuard", () => {
   it("should allow access when logged out", inject(
     [LoggedInGuard],
     (guard: LoggedInGuard) => {
-      spyOn(sessionService, "isLoggedIn").and.returnValue(true);
+      mockSessionService.isLoggedIn.and.returnValue(true);
       expect(guard.canActivate()).toBeTruthy();
     }
   ));
