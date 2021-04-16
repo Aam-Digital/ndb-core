@@ -115,9 +115,7 @@ export class AttendanceService {
       end.format("YYYY-MM-DD")
     );
 
-    const relevantNormalNotes: Promise<
-      Note[]
-    > = this.dbIndexing
+    const relevantNormalNotes = this.dbIndexing
       .queryIndexDocsRange(
         Note,
         "notes_index/note_child_by_date",
@@ -130,9 +128,8 @@ export class AttendanceService {
     const existingEvents = allResults[0].concat(allResults[1]);
 
     for (const event of existingEvents) {
-      for (const newParticipant of await this.loadParticipantsOfGroups(
-        event.schools ?? []
-      )) {
+      const participants = await this.loadParticipantsOfGroups(event.schools);
+      for (const newParticipant of participants) {
         event.addChild(newParticipant);
       }
     }

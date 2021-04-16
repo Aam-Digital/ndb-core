@@ -72,6 +72,9 @@ export class Note extends Entity {
    */
   @DatabaseField() relatesTo: string;
 
+  /**
+   * related school ids (e.g. to infer participants for event roll calls)
+   */
   @DatabaseField() schools: string[] = [];
 
   @DatabaseField({ dataType: "string" }) warningLevel: WarningLevel =
