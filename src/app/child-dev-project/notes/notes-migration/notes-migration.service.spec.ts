@@ -5,6 +5,7 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { User } from "../../../core/user/user";
 import { Note } from "../model/note";
 import { Entity, EntityConstructor } from "../../../core/entity/entity";
+import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 
 function legacyNote(author: string) {
   const note = new Note();
@@ -33,12 +34,14 @@ describe("NotesMigrationService", () => {
     return user;
   });
 
+  const entityMapper = mockEntityMapper();
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         {
           provide: EntityMapperService,
-          useValue: {},
+          useValue: entityMapper,
         },
       ],
     });
@@ -112,34 +115,17 @@ describe("NotesMigrationService", () => {
       legacyNote("Peter L, Ursula & Andi"),
       legacyNote("Johannes"),
     ];
-    const migratedNotes: Note[] = [];
-    // @ts-ignore
-    service["entityMapperService"] = {
-      loadType<T extends Entity>(
-        entityType: EntityConstructor<T>
-      ): Promise<T[]> {
-        if (new entityType().getType() === "Note") {
-          return Promise.resolve((notes as unknown) as T[]);
-        } else if (new entityType().getType() === "User") {
-          return Promise.resolve((users as unknown) as T[]);
-        } else {
-          return Promise.resolve([]);
-        }
-      },
-      save<T extends Entity>(entity: T): Promise<any> {
-        if (entity.getType() === "Note") {
-          migratedNotes.push((entity as unknown) as Note);
-        }
-        return Promise.resolve();
-      },
-    };
+    entityMapper.addAll(notes);
+    entityMapper.addAll(users);
     await service.migrateToMultiUser();
     const existingUsers = users.slice(0, 2).map((u) => u.getId());
+    const migratedNotes = entityMapper.getAll<Note>("Note");
     expect(migratedNotes).toHaveSize(4);
     migratedNotes.forEach((note) => {
       expect(note["author"]).not.toBeDefined();
     });
     expect(migratedNotes[0].authors).toHaveSize(0);
+    expect(migratedNotes[0].text).toHaveSize(0);
     expect(migratedNotes[1].authors).toEqual(existingUsers);
     expect(migratedNotes[1].text).toHaveSize(0);
     expect(migratedNotes[2].authors).toEqual(existingUsers);
