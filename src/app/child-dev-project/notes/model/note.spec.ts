@@ -101,6 +101,7 @@ describe("Note", () => {
 
       children: ["1", "2", "5"],
       childrenAttendance: [],
+      schools: [],
       date: new Date(),
       subject: "Note Subject",
       text: "Note text",
