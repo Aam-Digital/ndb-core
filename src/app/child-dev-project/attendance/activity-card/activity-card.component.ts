@@ -1,5 +1,6 @@
 import { Component, Input } from "@angular/core";
 import { Note } from "../../notes/model/note";
+import { RecurringActivity } from "../model/recurring-activity";
 
 @Component({
   selector: "app-activity-card",
@@ -30,7 +31,7 @@ export class ActivityCardComponent {
     if (this._displayAsRecurring !== null) {
       return this._displayAsRecurring;
     } else {
-      return !!this.event?.relatesTo;
+      return RecurringActivity.isActivityEventNote(this.event);
     }
   }
 }

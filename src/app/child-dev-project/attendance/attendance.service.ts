@@ -17,9 +17,6 @@ import { ChildrenService } from "../children/children.service";
   providedIn: "root",
 })
 export class AttendanceService {
-  private eventsIndexCreation: Promise<void>;
-  private recurringActivitiesIndexCreation: Promise<any>;
-
   constructor(
     private entityMapper: EntityMapperService,
     private dbIndexing: DatabaseIndexingService,
@@ -29,13 +26,13 @@ export class AttendanceService {
     this.createIndices();
   }
 
-  private createIndices() {
+  private async createIndices() {
     const meetingInteractionTypes = this.configService
       .getConfig<InteractionType[]>(INTERACTION_TYPE_CONFIG_ID)
       .filter((t) => t.isMeeting)
       .map((t) => t.id);
-    this.eventsIndexCreation = this.createEventsIndex(meetingInteractionTypes);
-    this.recurringActivitiesIndexCreation = this.createRecurringActivitiesIndex();
+    await this.createEventsIndex(meetingInteractionTypes);
+    await this.createRecurringActivitiesIndex();
   }
 
   private createEventsIndex(meetingInteractionTypes: string[]): Promise<void> {
@@ -107,10 +104,9 @@ export class AttendanceService {
     startDate: Date,
     endDate: Date = startDate
   ): Promise<EventNote[]> {
-    await this.eventsIndexCreation;
-
     const start = moment(startDate);
     const end = moment(endDate);
+
     const eventNotes = this.dbIndexing.queryIndexDocsRange(
       EventNote,
       "events_index/by_date",
@@ -123,7 +119,16 @@ export class AttendanceService {
       .then((notes) => notes.filter((n) => n.category.isMeeting));
 
     const allResults = await Promise.all([eventNotes, relevantNormalNotes]);
-    return allResults[0].concat(allResults[1]);
+    const existingEvents = allResults[0].concat(allResults[1]);
+
+    for (const event of existingEvents) {
+      const participants = await this.loadParticipantsOfGroups(event.schools);
+      for (const newParticipant of participants) {
+        event.addChild(newParticipant);
+      }
+    }
+
+    return existingEvents;
   }
 
   /**
@@ -135,8 +140,6 @@ export class AttendanceService {
     activityId: string,
     sinceDate?: Date
   ): Promise<EventNote[]> {
-    await this.eventsIndexCreation;
-
     if (!activityId.startsWith(RecurringActivity.ENTITY_TYPE)) {
       activityId = RecurringActivity.ENTITY_TYPE + ":" + activityId;
     }
@@ -220,8 +223,6 @@ export class AttendanceService {
   }
 
   async getActivitiesForChild(childId: string): Promise<RecurringActivity[]> {
-    await this.recurringActivitiesIndexCreation;
-
     const activities = await this.dbIndexing.queryIndexDocs(
       RecurringActivity,
       "activities_index/by_participant",
@@ -254,19 +255,34 @@ export class AttendanceService {
     date: Date
   ): Promise<EventNote> {
     const instance = new EventNote();
-    const childIdPromises = activity.linkedGroups.map((groupId) =>
-      this.childrenService
-        .queryRelationsOf("school", groupId)
-        .then((relations) => relations.map((r) => r.childId))
+    const schoolParticipants = await this.loadParticipantsOfGroups(
+      activity.linkedGroups
     );
-    const schoolParticipants = await Promise.all(childIdPromises);
     instance.date = date;
     instance.subject = activity.title;
     instance.children = [
       ...new Set(activity.participants.concat(...schoolParticipants)), //  remove duplicates
     ];
+    instance.schools = activity.linkedGroups;
     instance.relatesTo = activity._id;
     instance.category = activity.type;
     return instance;
+  }
+
+  /**
+   * Load all participants' ids for the given list of groups
+   * @param linkedGroups
+   */
+  private async loadParticipantsOfGroups(
+    linkedGroups: string[]
+  ): Promise<string[]> {
+    const childIdPromises = linkedGroups.map((groupId) =>
+      this.childrenService
+        .queryRelationsOf("school", groupId)
+        .then((relations) => relations.map((r) => r.childId))
+    );
+    const allParticipants = await Promise.all(childIdPromises);
+    // flatten and remove duplicates
+    return Array.from(new Set([].concat.apply([], allParticipants)));
   }
 }
