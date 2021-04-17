@@ -4,6 +4,8 @@ import { ChildrenModule } from "../children.module";
 import { RouterTestingModule } from "@angular/router/testing";
 import { Child } from "../model/child";
 import { Note } from "../../notes/model/note";
+import { ChildrenService } from "../children.service";
+import { of } from "rxjs";
 
 describe("ChildBlockListComponent", () => {
   let component: ChildBlockListComponent;
@@ -14,6 +16,12 @@ describe("ChildBlockListComponent", () => {
       TestBed.configureTestingModule({
         declarations: [],
         imports: [ChildrenModule, RouterTestingModule],
+        providers: [
+          {
+            provide: ChildrenService,
+            useValue: { getChild: () => of(new Child()) },
+          },
+        ],
       }).compileComponents();
     })
   );
@@ -35,7 +43,27 @@ describe("ChildBlockListComponent", () => {
     note.addChild(child1.getId());
     note.addChild(child2.getId());
     const config = { entity: note, id: "children" };
+
     component.onInitFromDynamicConfig(config);
+    fixture.detectChanges();
+
     expect(component.children.sort()).toEqual([child1.getId(), child2.getId()]);
+  });
+
+  it("should only display count if larger group of children is linked", () => {
+    const note = new Note("n1");
+    note.addChild("c1");
+    note.addChild("c2");
+    note.addChild("c3");
+    note.addChild("c4");
+    note.addChild("c5");
+    const config = { entity: note, id: "children" };
+
+    component.onInitFromDynamicConfig(config);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.innerText).toEqual(
+      jasmine.stringMatching(/5 /) // starts with count
+    );
   });
 });

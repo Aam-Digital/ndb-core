@@ -41,7 +41,10 @@ export class AttendanceDetailsComponent
         if (this.focusedChild) {
           return note.getAttendance(this.focusedChild).status.label;
         } else {
-          return Math.round(calculateAverageAttendance(note).average * 10) / 10;
+          return (
+            Math.round(calculateAverageAttendance(note).average * 10) / 10 ||
+            "N/A"
+          );
         }
       },
     },

@@ -20,31 +20,17 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { UiComponent } from "./ui.component";
 import { RouterTestingModule } from "@angular/router/testing";
 import { SearchComponent } from "../search/search.component";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatIconModule } from "@angular/material/icon";
-import { MatInputModule } from "@angular/material/input";
-import { MatSidenavModule } from "@angular/material/sidenav";
-import { MatToolbarModule } from "@angular/material/toolbar";
-import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
-import { ChildrenModule } from "../../../child-dev-project/children/children.module";
-import { SchoolsModule } from "../../../child-dev-project/schools/schools.module";
-import { SyncStatusModule } from "../../sync-status/sync-status.module";
-import { NavigationModule } from "../../navigation/navigation.module";
-import { LatestChangesModule } from "../../latest-changes/latest-changes.module";
-import { SessionModule } from "../../session/session.module";
-import { AppConfigModule } from "../../app-config/app-config.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { PrimaryActionComponent } from "../primary-action/primary-action.component";
 import { SessionService } from "../../session/session-service/session.service";
-import { MockSessionService } from "../../session/session-service/mock-session.service";
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { SwUpdate } from "@angular/service-worker";
 import { of } from "rxjs";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { EntitySubrecordModule } from "../../entity-components/entity-subrecord/entity-subrecord.module";
 import { ApplicationInitStatus } from "@angular/core";
+import { UiModule } from "../ui.module";
+import { Angulartics2Module } from "angulartics2";
+import { StateHandler } from "../../session/session-states/state-handler";
+import { SyncState } from "../../session/session-states/sync-state.enum";
 
 describe("UiComponent", () => {
   let component: UiComponent;
@@ -53,29 +39,21 @@ describe("UiComponent", () => {
   beforeEach(
     waitForAsync(() => {
       const mockSwUpdate = { available: of(), checkForUpdate: () => {} };
-      const mockSession = new MockSessionService(new EntitySchemaService());
+      const mockSession: jasmine.SpyObj<SessionService> = jasmine.createSpyObj([
+        "isLoggedIn",
+        "logout",
+        "getDatabase",
+        "getSyncState",
+      ]);
+      mockSession.getSyncState.and.returnValue(new StateHandler<SyncState>());
       TestBed.configureTestingModule({
         declarations: [SearchComponent, PrimaryActionComponent, UiComponent],
         imports: [
           RouterTestingModule,
           CommonModule,
-          FormsModule,
-          MatIconModule,
-          MatToolbarModule,
-          MatSidenavModule,
-          MatAutocompleteModule,
-          MatInputModule,
-          MatFormFieldModule,
+          UiModule,
           NoopAnimationsModule,
-          AppConfigModule,
-          EntitySubrecordModule,
-          ChildrenModule,
-          SchoolsModule,
-          SyncStatusModule,
-          NavigationModule,
-          LatestChangesModule,
-          SessionModule,
-          FlexLayoutModule,
+          Angulartics2Module.forRoot(),
         ],
         providers: [
           { provide: SessionService, useValue: mockSession },

@@ -19,33 +19,31 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { NavigationComponent } from "./navigation.component";
 import { RouterTestingModule } from "@angular/router/testing";
-import { MockSessionService } from "../../session/session-service/mock-session.service";
 import { MenuItem } from "../menu-item";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatIconModule } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
 import { RouterService } from "../../view/dynamic-routing/router.service";
 import { ConfigService } from "../../config/config.service";
-import { SessionService } from "../../session/session-service/session.service";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { BehaviorSubject } from "rxjs";
 import { Config } from "../../config/config";
+import { AdminGuard } from "../../admin/admin.guard";
 
 describe("NavigationComponent", () => {
   let component: NavigationComponent;
   let fixture: ComponentFixture<NavigationComponent>;
 
-  let sessionService: MockSessionService;
-
   let mockConfigService: jasmine.SpyObj<ConfigService>;
   const mockConfigUpdated = new BehaviorSubject<Config>(null);
+  let mockAdminGuard: jasmine.SpyObj<AdminGuard>;
 
   beforeEach(
     waitForAsync(() => {
       mockConfigService = jasmine.createSpyObj(["getConfig"]);
       mockConfigService.getConfig.and.returnValue({ items: [] });
       mockConfigService.configUpdated = mockConfigUpdated;
-      sessionService = new MockSessionService(new EntitySchemaService());
+      mockAdminGuard = jasmine.createSpyObj(["isAdmin"]);
+      mockAdminGuard.isAdmin.and.returnValue(false);
 
       TestBed.configureTestingModule({
         imports: [
@@ -56,7 +54,7 @@ describe("NavigationComponent", () => {
         ],
         declarations: [NavigationComponent],
         providers: [
-          { provide: SessionService, useValue: sessionService },
+          { provide: AdminGuard, useValue: mockAdminGuard },
           { provide: ConfigService, useValue: mockConfigService },
         ],
       }).compileComponents();
@@ -85,8 +83,8 @@ describe("NavigationComponent", () => {
     const items = component.menuItems;
 
     expect(items).toEqual([
-      new MenuItem("Dashboard", "home", ["/dashboard"]),
-      new MenuItem("Children", "child", ["/child"]),
+      new MenuItem("Dashboard", "home", "/dashboard"),
+      new MenuItem("Children", "child", "/child"),
     ]);
   });
 
@@ -111,7 +109,7 @@ describe("NavigationComponent", () => {
     mockConfigUpdated.next(null);
 
     expect(component.menuItems).toEqual([
-      new MenuItem("Children", "child", ["/child"]),
+      new MenuItem("Children", "child", "/child"),
     ]);
   });
 });

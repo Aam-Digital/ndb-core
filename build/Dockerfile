@@ -4,19 +4,17 @@
 # >> docker build -f build/Dockerfile -t aam/digital:latest .
 # >> docker run -p=80:80 aam/digital:latest aam-digital
 # >> docker kill aam-digital
-FROM node:15.1.0-alpine3.12 as builder
+FROM node:15.11.0-alpine3.12 as builder
 WORKDIR /app
 
 COPY package*.json ./
+COPY patch-webpack.js .
 RUN npm ci --no-progress
 
-COPY patch-webpack.js .
-# postinstall executes ngcc and runs the webpack-patch
-RUN npm run postinstall
 RUN $(npm bin)/ng version
 
 COPY . .
-RUN $(npm bin)/ng build --prod
+RUN npm run build
 
 # When set to true, tests are run and coverage will be uploaded to CodeClimate
 ARG UPLOAD_COVERAGE=false
@@ -49,7 +47,7 @@ RUN if [ "$UPLOAD_COVERAGE" = true ] ; then ./cc-test-reporter after-build --deb
 
 ### PROD image
 
-FROM nginx:1.19.4-alpine
+FROM nginx:1.19-alpine
 COPY ./build/default.conf /etc/nginx/templates/default.conf
 COPY --from=builder /app/dist/ /usr/share/nginx/html
 ENV PORT=80

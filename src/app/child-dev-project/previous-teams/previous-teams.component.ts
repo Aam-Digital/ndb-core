@@ -9,13 +9,14 @@ import {
 } from "@angular/core";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { ChildrenService } from "../children/children.service";
-import { SchoolsService } from "../schools/schools.service";
 import moment from "moment";
 import { Child } from "../children/model/child";
 import { OnInitDynamicComponent } from "../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { ColumnDescriptionInputType } from "../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 import { ColumnDescription } from "../../core/entity-components/entity-subrecord/column-description";
 import { PanelConfig } from "../../core/entity-components/entity-details/EntityDetailsConfig";
+import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { School } from "../schools/model/school";
 
 /**
  * @deprecated Use PreviousSchoolsComponent with its configuration options instead
@@ -33,7 +34,7 @@ export class PreviousTeamsComponent
 
   constructor(
     private childrenService: ChildrenService,
-    private schoolsService: SchoolsService
+    private entityMapper: EntityMapperService
   ) {}
 
   ngOnInit() {
@@ -60,7 +61,7 @@ export class PreviousTeamsComponent
   }
 
   private async initColumnDefinitions() {
-    const teams = await this.schoolsService.getSchools().toPromise();
+    const teams = await this.entityMapper.loadType(School);
     const teamsMap = {};
     teams.forEach((s) => (teamsMap[s.getId()] = s.name));
 

@@ -10,7 +10,6 @@ import { Router } from "@angular/router";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { School } from "../model/school";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { getUrlWithoutParams } from "../../../utils/utils";
 import { ConfigService } from "../../../core/config/config.service";
 import { ViewConfig } from "../../../core/view/dynamic-routing/view-config.interface";
 
@@ -63,13 +62,16 @@ export class SchoolBlockComponent
   }
 
   showTooltip() {
-    this.tooltip = true;
     if (this.tooltipTimeout) {
       clearTimeout(this.tooltipTimeout);
     }
+    this.tooltipTimeout = setTimeout(() => (this.tooltip = true), 1000);
   }
   hideTooltip() {
-    this.tooltipTimeout = setTimeout(() => (this.tooltip = false), 250);
+    if (this.tooltipTimeout) {
+      clearTimeout(this.tooltipTimeout);
+    }
+    this.tooltipTimeout = setTimeout(() => (this.tooltip = false), 150);
   }
 
   @HostListener("click") onClick() {
@@ -77,11 +79,10 @@ export class SchoolBlockComponent
   }
 
   showDetailsPage() {
-    if (!this.linkDisabled) {
-      this.router.navigate([
-        getUrlWithoutParams(this.router),
-        this.entity.getId(),
-      ]);
+    if (this.linkDisabled) {
+      return;
     }
+    const path = "/" + School.ENTITY_TYPE.toLowerCase();
+    this.router?.navigate([path, this.entity.getId()]);
   }
 }

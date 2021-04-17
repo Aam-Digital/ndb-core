@@ -62,7 +62,7 @@ export class UiComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.title = AppConfig.settings.site_name;
+    this.title = AppConfig?.settings?.site_name;
     this.titleService.setTitle(this.title);
   }
 

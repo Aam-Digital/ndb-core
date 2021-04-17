@@ -118,6 +118,18 @@ export const defaultConfig = {
     "config": {
       "widgets": [
         {
+          "component": "DashboardShortcutWidget",
+          "config": {
+            "shortcuts": [
+              {
+                "label": $localize`:Record Attendance Button:Record Attendance`,
+                "icon": "calendar-check-o",
+                "link": "/attendance/add/day",
+              }
+            ]
+          }
+        },
+        {
           "component": "ChildrenCountDashboard"
         },
         {
@@ -162,7 +174,9 @@ export const defaultConfig = {
   "view:note": {
     "component": "NotesManager",
     "config": {
-      "title": $localize`Notes & Reports`,
+      "title": $localize`:General notes and reports|mostly regarding some children:Notes & Reports`,
+      "includeEventNotes": false,
+      "showEventNotesToggle": true,
       "columns": [
         {
           "component": "DisplayDate",
@@ -804,11 +818,11 @@ export const defaultConfig = {
               "config": {
                 "single": true,
                 "columns": [
-                  { "id": "schoolId", "label": "School", "input": "school" },
-                  { "id": "schoolClass", "label": "Class", "input": "text" },
-                  { "id": "start", "label": "From", "input": "date" },
-                  { "id": "end", "label": "To", "input": "date" },
-                  { "id": "result", "label": "Result", "input": "percentageResult" },
+                  { "id": "schoolId", "label": $localize`School`, "input": "school" },
+                  { "id": "schoolClass", "label": $localize`Class`, "input": "text" },
+                  { "id": "start", "label": $localize`From`, "input": "date" },
+                  { "id": "end", "label": $localize`To`, "input": "date" },
+                  { "id": "result", "label": $localize`Result`, "input": "percentageResult" },
                 ],
               }
             },

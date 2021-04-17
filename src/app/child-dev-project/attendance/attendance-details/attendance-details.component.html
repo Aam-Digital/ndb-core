@@ -26,7 +26,13 @@
       <div
         class="summary"
         i18n="Attendance|Attendance of a child (in percent) or the average of the event (in percent)">
-        Attendance: {{attendance}}
+        >
+        Attendance:
+        {{
+        (focusedChild
+            ? entity?.getAttendancePercentage(focusedChild)
+            : entity?.getAttendancePercentageAverage()) | percent: "1.0-0"
+        }}
       </div>
     </div>
 

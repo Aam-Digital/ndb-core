@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { ChildrenService } from "../../../children/children.service";
 import { Router } from "@angular/router";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
@@ -54,7 +53,6 @@ export class AttendanceWeekDashboardComponent
   dashboardRowGroups: AttendanceWeekRow[][];
 
   constructor(
-    private childrenService: ChildrenService,
     private attendanceService: AttendanceService,
     private router: Router
   ) {}
