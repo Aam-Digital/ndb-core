@@ -3,7 +3,7 @@
     [entityType]="School"
     [(selection)]="participatingGroups"
     [disabled]="!editing"
-    [entityView]="schoolBlock"
+    [view]="schoolBlock"
     label="Schools"
     placeholder="Add School..."
   >
@@ -12,7 +12,7 @@
     [(selection)]="participants"
     [disabled]="!editing"
     [entityType]="Child"
-    [entityView]="childBlock"
+    [view]="childBlock"
     label="Children"
     placeholder="Add Child..."
   ></app-entity-select>

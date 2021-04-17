@@ -79,7 +79,7 @@
           [entityType]="User"
           (selectionChange)="entityForm.form.markAsDirty()"
           [(selection)]="entity.authors"
-          [entityView]="userBlock"
+          [view]="userBlock"
           placeholder="Add Author..."
           label="Authors"
         >
@@ -118,11 +118,11 @@
       </div>
     </div>
 
-    <div fxLayoutGap="20px">
+    <div fxLayout="column" fxLayoutGap="20px">
 
       <app-entity-select
         [entityType]="Child"
-        [entityView]="childBlock"
+        [view]="childBlock"
         [(selection)]="entity.children"
         (selectionChange)="entityForm.form.markAsDirty()"
         [additionalFilter]="filterInactiveChildren"
@@ -147,8 +147,20 @@
           (change)="entityForm.form.markAsDirty()"
           (remove)="entity.removeChild(childId); entityForm.form.markAsDirty()"
           >
-          </app-child-meeting-note-attendance>
-        </div>
+        </app-child-meeting-note-attendance>
+      </div>
+
+      <div fxFlex>
+        <app-entity-select
+          [entityType]="School"
+          [(selection)]="entity.schools"
+          [view]="schoolBlock"
+          (selectionChange)="entityForm.form.markAsDirty()"
+          label="Schools"
+          placeholder="Add School..."
+        >
+        </app-entity-select>
+      </div>
 
     </div>
 
@@ -157,12 +169,22 @@
 
 <ng-template
   #childBlock
-  let-entity="entity">
+  let-child="entity">
   <app-child-block
-    [entity]="entity"
+    [entity]="child"
     [linkDisabled]="true"
     [tooltipDisabled]="true">
   </app-child-block>
+</ng-template>
+
+<ng-template
+  #schoolBlock
+  let-school="entity">
+  <app-school-block
+    [entity]="school"
+    [linkDisabled]="true"
+  >
+  </app-school-block>
 </ng-template>
 
 <ng-template

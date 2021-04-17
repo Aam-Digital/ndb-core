@@ -116,6 +116,15 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    */
   @Input() entityView: TemplateRef<any>;
   /**
+   * sets a view that will both be used fo autocomplete
+   * as well as the entities view
+   * @param view The view to set
+   */
+  @Input() set view(view: TemplateRef<any>) {
+    this.entityView = view;
+    this.autocompleteView = view;
+  }
+  /**
    * The view used to render autocomplete-options.
    * This has the same behavior as {@link entityView}.
    * <br>If nothing is set, this will default to the entity-view
@@ -243,12 +252,6 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     if (changes.hasOwnProperty("additionalFilter")) {
       // update whenever additional filters are being set
       this.formControl.setValue(this.formControl.value);
-    }
-    if (
-      changes.hasOwnProperty("entityView") &&
-      this.autocompleteView === undefined
-    ) {
-      this.autocompleteView = this.entityView;
     }
   }
 }
