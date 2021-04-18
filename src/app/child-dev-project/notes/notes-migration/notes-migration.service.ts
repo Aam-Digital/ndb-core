@@ -73,11 +73,13 @@ export class NotesMigrationService {
   ): { detectedUsers: User[]; additional: string[] } {
     const detectedUsers: User[] = [];
     const additional: string[] = [];
-    // split on & and ,
+    // split on '&', 'and' and ','
     // remove any non alphabet-characters and non-whitespace-characters
     const searchStrings = str
       .trim()
-      .split(/[,&]/)
+      .replace("&", ",")
+      .replace("and", ",")
+      .split(",")
       .map((s) => s.replace(/[^a-zA-Z\s]/, "").trim());
     for (const searchString of searchStrings) {
       const user = this.findSingleUser(searchString);
@@ -104,7 +106,6 @@ export class NotesMigrationService {
         this.allUsers.get(lowerCaseSearch) ||
         // If none is found, look for a user where any name (in most cases name and surname) matches
         lowerCaseSearch
-          .toLowerCase()
           .split(/\s/)
           .map((s) => this.allUsers.get(s))
           .filter((u) => !!u)

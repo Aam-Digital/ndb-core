@@ -4,7 +4,6 @@ import { NotesMigrationService } from "./notes-migration.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { User } from "../../../core/user/user";
 import { Note } from "../model/note";
-import { Entity, EntityConstructor } from "../../../core/entity/entity";
 import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 
 function legacyNote(author: string) {
@@ -73,12 +72,14 @@ describe("NotesMigrationService", () => {
       "Christian",
       "Agnes, Strack & Zimmermann",
       "Gregor Giselle",
+      "Insalata and mista",
     ];
     const expected = [
       ["Phillip"],
       ["Christian"],
       ["Agnes", "Strack", "Zimmermann"],
       ["Gregor Giselle"],
+      ["Insalata", "mista"],
     ];
     nonMatchedUsers.forEach((userName, index) => {
       const foundUsers = service.findUsers(userName);
