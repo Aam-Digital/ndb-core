@@ -39,9 +39,8 @@
 
   <div *ngIf="selectedEvent && !highlightForChild">
     <div
-      i18n="Event participants|How many participants attended at an event (in percent)"
-    >
-    <div *ngIf="!selectedEventStats.average">
+      *ngIf="!selectedEventStats.average"
+      i18n="Event participants|How many participants attended at an event (in percent)">
       All excused (out of {{selectedEvent.children.length}}
       { selectedEvent.children.length, plural, one {participant} other {participants} })
     </div>
