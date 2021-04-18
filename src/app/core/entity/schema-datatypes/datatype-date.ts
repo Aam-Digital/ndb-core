@@ -37,10 +37,12 @@ export const dateEntitySchemaDatatype: EntitySchemaDatatype = {
     return value;
   },
 
-  transformToObjectFormat: (value) => {
+  transformToObjectFormat: (value, schemaField, schemaService, parent) => {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) {
-      throw new Error("failed to convert data to Date object: " + value);
+      throw new Error(
+        `failed to convert data '${value}' to Date object for ${parent._id}`
+      );
     }
     return date;
   },
