@@ -6,32 +6,27 @@ import { User } from "../../../core/user/user";
 import { Note } from "../model/note";
 import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 
-function legacyNote(author: string) {
+function legacyNote(author: string): Note {
   const note = new Note();
   note["author"] = author;
   return note;
 }
 
+function createUser(name: string): User {
+  const user = new User();
+  user.name = name;
+  return user;
+}
+
 describe("NotesMigrationService", () => {
   let service: NotesMigrationService;
-  const oldAuthors = [
-    "Peter Lustig, Ursula",
-    "Jens & Angela",
-    "Albrecht",
-    "Johanna",
-  ];
-  const users = [
-    "Peter",
-    "Ursula",
-    "Jens",
-    "Angela",
-    "Albrecht",
-    "Johanna",
-  ].map((name) => {
-    const user = new User();
-    user.name = name;
-    return user;
-  });
+  const Peter = createUser("Peter");
+  const Ursula = createUser("Ursula");
+  const Jens = createUser("Jens");
+  const Angela = createUser("Angela");
+  const Albrecht = createUser("Albrecht");
+  const Johanna = createUser("Johanna");
+  const users = [Peter, Ursula, Jens, Angela, Albrecht, Johanna];
 
   const entityMapper = mockEntityMapper();
 
@@ -53,11 +48,19 @@ describe("NotesMigrationService", () => {
   });
 
   it("finds the correct user for different user-names", () => {
+    const oldAuthors = [
+      "Peter Lustig, Ursula",
+      "Jens & Angela",
+      "Albrecht",
+      "Johanna",
+      "Peter, Jens, Albrecht, Johanna",
+    ];
     const expectedUsers = [
-      [users[0], users[1]],
-      [users[2], users[3]],
-      [users[4]],
-      [users[5]],
+      [Peter, Ursula],
+      [Jens, Angela],
+      [Albrecht],
+      [Johanna],
+      [Peter, Jens, Albrecht, Johanna],
     ];
     oldAuthors.forEach((authorName, index) => {
       const foundUsers = service.findUsers(authorName);

@@ -77,8 +77,8 @@ export class NotesMigrationService {
     // remove any non alphabet-characters and non-whitespace-characters
     const searchStrings = str
       .trim()
-      .replace("&", ",")
-      .replace("and", ",")
+      .replace(/&/g, ",")
+      .replace(/and/g, ",")
       .split(",")
       .map((s) => s.replace(/[^a-zA-Z\s]/, "").trim());
     for (const searchString of searchStrings) {
