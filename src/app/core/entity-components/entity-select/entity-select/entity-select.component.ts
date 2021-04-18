@@ -17,6 +17,7 @@ import { FormControl } from "@angular/forms";
 import { filter, map, skipWhile } from "rxjs/operators";
 import { MatChipInputEvent } from "@angular/material/chips";
 import { LoggingService } from "../../../logging/logging.service";
+import { MatAutocomplete, MatAutocompleteTrigger } from "@angular/material/autocomplete";
 
 export type accessorFn<E extends Entity> = (E) => string;
 
@@ -64,6 +65,15 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     } else {
       this.selection_ = sel as E[];
     }
+  }
+  /**
+   * sets a view that will both be used for autocomplete
+   * as well as the entities view
+   * @param view The view to set
+   */
+  @Input() set view(view: TemplateRef<any>) {
+    this.entityView = view;
+    this.autocompleteView = view;
   }
   /** Underlying data-array */
   selection_: E[] = [];
@@ -116,18 +126,8 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    */
   @Input() entityView: TemplateRef<any>;
   /**
-   * sets a view that will both be used fo autocomplete
-   * as well as the entities view
-   * @param view The view to set
-   */
-  @Input() set view(view: TemplateRef<any>) {
-    this.entityView = view;
-    this.autocompleteView = view;
-  }
-  /**
    * The view used to render autocomplete-options.
    * This has the same behavior as {@link entityView}.
-   * <br>If nothing is set, this will default to the entity-view
    */
   @Input() autocompleteView: TemplateRef<any>;
   /**
@@ -153,6 +153,8 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   formControl = new FormControl();
 
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+
+  @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
   constructor(
     private entityMapperService: EntityMapperService,
@@ -181,6 +183,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     this.emitChange();
     this.inputField.nativeElement.value = "";
     this.formControl.setValue(null);
+    setTimeout(() => this.autocomplete.openPanel());
   }
   /**
    * called when a key code from {@link separatorKeysCodes}

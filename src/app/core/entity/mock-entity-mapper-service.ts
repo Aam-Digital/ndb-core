@@ -15,7 +15,6 @@ export function mockEntityMapper(
  * Mocked entity mapper. Can/should only be used whenever some data should be saved
  * and loaded. This is not to be used to mock database/anything related to the Schema-service.
  */
-
 export class MockEntityMapperService extends EntityMapperService {
   private data: Map<string, Map<string, Entity>> = new Map();
   constructor() {
@@ -26,7 +25,6 @@ export class MockEntityMapperService extends EntityMapperService {
    * like {@link save}, but synchronous
    * @param entity The entity to add
    */
-
   public add(entity: Entity) {
     const type = entity.getType();
     if (!this.data.get(type)) {
@@ -39,7 +37,6 @@ export class MockEntityMapperService extends EntityMapperService {
    * returns whether or not the given entity is known
    * @param entity
    */
-
   public contains(entity: Entity): boolean {
     return (
       this.data.has(entity.getType()) &&
@@ -51,7 +48,6 @@ export class MockEntityMapperService extends EntityMapperService {
    * Add a bunch of entities
    * @param entities The entities to add
    */
-
   public addAll(entities: Entity[]) {
     entities.forEach((e) => this.add(e));
   }
@@ -61,7 +57,6 @@ export class MockEntityMapperService extends EntityMapperService {
    * @param entityType
    * @param id
    */
-
   public get(entityType: string, id: string): Entity {
     return this.data.get(entityType)?.get(id);
   }
@@ -70,7 +65,6 @@ export class MockEntityMapperService extends EntityMapperService {
    * like {@link loadType} but synchronous
    * @param entityType
    */
-
   public getAll<T extends Entity>(entityType: string): T[] {
     return ([...this.data.get(entityType).values()] || []) as T[];
   }
@@ -79,7 +73,6 @@ export class MockEntityMapperService extends EntityMapperService {
    * like {@link remove} but synchronous
    * @param entity
    */
-
   public delete(entity: Entity) {
     const entities = this.data.get(entity.getType());
     if (entities) {

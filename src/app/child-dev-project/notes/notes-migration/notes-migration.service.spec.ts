@@ -93,7 +93,7 @@ describe("NotesMigrationService", () => {
 
   it("migrates a note with existing users", () => {
     const note = legacyNote("Peter L, Ursula & Jens");
-    const expectedUsers = users.slice(0, 3).map((u) => u.getId());
+    const expectedUsers = [Peter, Ursula, Jens].map((u) => u.getId());
     service.migrateSingleNote(note);
     expect(note["author"]).not.toBeDefined();
     expect(note.authors).toEqual(expectedUsers);
@@ -103,7 +103,7 @@ describe("NotesMigrationService", () => {
   it("appends a note-text with all non-found users", () => {
     const note = legacyNote("Peter L, Ursula & Andi");
     note.text = "Lorem ipsum";
-    const expectedUsers = users.slice(0, 2).map((u) => u.getId());
+    const expectedUsers = [Peter, Ursula].map((u) => u.getId());
     service.migrateSingleNote(note);
     expect(note.authors).toEqual(expectedUsers);
     const newText = note.text.split("\n");
@@ -122,7 +122,7 @@ describe("NotesMigrationService", () => {
     entityMapper.addAll(notes);
     entityMapper.addAll(users);
     await service.migrateToMultiUser();
-    const existingUsers = users.slice(0, 2).map((u) => u.getId());
+    const existingUsers = [Peter, Ursula].map((u) => u.getId());
     const migratedNotes = entityMapper.getAll<Note>("Note");
     expect(migratedNotes).toHaveSize(4);
     migratedNotes.forEach((note) => {
@@ -140,7 +140,7 @@ describe("NotesMigrationService", () => {
 
   it("does not change an already migrated note", () => {
     const note = new Note();
-    note.authors = users.slice(0, 3).map((u) => u.getId());
+    note.authors = [Peter, Ursula, Jens].map((u) => u.getId());
     note.text = "Lorem ipsum";
     note.date = new Date();
     const copy = note.copy();

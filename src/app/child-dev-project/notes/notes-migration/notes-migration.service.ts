@@ -7,14 +7,6 @@ import { User } from "../../../core/user/user";
   providedIn: "root",
 })
 export class NotesMigrationService {
-  private static updateNoteText(note: Note, additionalUsers: string[]) {
-    const additionalText = "Also authored by " + additionalUsers.join(", ");
-    if (note.text.length === 0) {
-      note.text = additionalText;
-    } else {
-      note.text += "\n" + additionalText;
-    }
-  }
   allUsers: Map<string, User>;
   constructor(private entityMapperService: EntityMapperService) {}
 
@@ -23,7 +15,6 @@ export class NotesMigrationService {
    * <br>This format will include users as an array of string-id's
    * instead of a single field describing the author(s) of the note
    */
-
   async migrateToMultiUser() {
     this.allUsers = new Map<string, User>(
       (await this.entityMapperService.loadType(User)).map((u) => [
@@ -43,7 +34,6 @@ export class NotesMigrationService {
    * The 'author'-field will be deleted after the migration is done
    * @param note The note to migrate
    */
-
   public migrateSingleNote(note: Note) {
     const userStr = note["author"];
     if (userStr === undefined || userStr === null) {
@@ -54,7 +44,16 @@ export class NotesMigrationService {
     note.authors = newUsers.detectedUsers.map((u) => u.getId());
     delete note["author"];
     if (newUsers.additional.length > 0) {
-      NotesMigrationService.updateNoteText(note, newUsers.additional);
+      this.updateNoteText(note, newUsers.additional);
+    }
+  }
+
+  private updateNoteText(note: Note, additionalUsers: string[]) {
+    const additionalText = "Also authored by " + additionalUsers.join(", ");
+    if (note.text.length === 0) {
+      note.text = additionalText;
+    } else {
+      note.text += "\n" + additionalText;
     }
   }
 
@@ -95,9 +94,7 @@ export class NotesMigrationService {
   /**
    * Find a single user based on a search string that should represent a single user
    * @param str The string to look for
-   * @private
    */
-
   private findSingleUser(str: string): User | undefined {
     const lowerCaseSearch = str.toLowerCase();
     if (lowerCaseSearch.match(/\s/)) {

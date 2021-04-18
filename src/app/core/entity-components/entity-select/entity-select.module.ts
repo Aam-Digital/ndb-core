@@ -7,20 +7,22 @@ import { MatIconModule } from "@angular/material/icon";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatInputModule } from "@angular/material/input";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @NgModule({
   declarations: [EntitySelectComponent],
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    FormsModule,
-    MatChipsModule,
-    MatIconModule,
-    ReactiveFormsModule,
-    MatAutocompleteModule,
-    MatInputModule,
-    ReactiveFormsModule,
-  ],
+    imports: [
+        CommonModule,
+        MatFormFieldModule,
+        FormsModule,
+        MatChipsModule,
+        MatIconModule,
+        ReactiveFormsModule,
+        MatAutocompleteModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        MatTooltipModule,
+    ],
   exports: [EntitySelectComponent],
 })
 export class EntitySelectModule {}

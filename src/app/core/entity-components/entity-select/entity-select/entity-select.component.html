@@ -24,6 +24,7 @@
         <ng-container *ngTemplateOutlet="entityView; context: {entity: entity}"></ng-container>
         <div
           *ngIf="removable && !disabled"
+          matTooltip="remove"
           class="fa fa-minus-square-o"
           (click)="unselectEntity(entity)">
         </div>
