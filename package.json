@@ -49,7 +49,7 @@
     "pouchdb-browser": "^7.2.2",
     "reflect-metadata": "^0.1.13",
     "reveal": "0.0.4",
-    "rxjs": "^6.6.6",
+    "rxjs": "^6.6.7",
     "stream": "0.0.2",
     "tslib": "^2.1.0",
     "uuid": "^8.3.2",
