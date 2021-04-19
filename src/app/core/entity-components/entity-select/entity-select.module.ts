@@ -11,18 +11,18 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 
 @NgModule({
   declarations: [EntitySelectComponent],
-    imports: [
-        CommonModule,
-        MatFormFieldModule,
-        FormsModule,
-        MatChipsModule,
-        MatIconModule,
-        ReactiveFormsModule,
-        MatAutocompleteModule,
-        MatInputModule,
-        ReactiveFormsModule,
-        MatTooltipModule,
-    ],
+  imports: [
+    CommonModule,
+    MatFormFieldModule,
+    FormsModule,
+    MatChipsModule,
+    MatIconModule,
+    ReactiveFormsModule,
+    MatAutocompleteModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    MatTooltipModule,
+  ],
   exports: [EntitySelectComponent],
 })
 export class EntitySelectModule {}

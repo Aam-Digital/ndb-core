@@ -1,6 +1,6 @@
 import {
-  ComponentFixture,
-  fakeAsync,
+  ComponentFixture, discardPeriodicTasks,
+  fakeAsync, flush,
   TestBed,
   tick,
 } from "@angular/core/testing";
@@ -122,6 +122,7 @@ describe("EntitySelectComponent", () => {
       mockEntitiesA[0],
       mockEntitiesA[1],
     ]);
+    tick();
   }));
 
   it("emits whenever a selected entity is removed", () => {

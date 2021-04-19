@@ -17,7 +17,7 @@ import { FormControl } from "@angular/forms";
 import { filter, map, skipWhile } from "rxjs/operators";
 import { MatChipInputEvent } from "@angular/material/chips";
 import { LoggingService } from "../../../logging/logging.service";
-import { MatAutocomplete, MatAutocompleteTrigger } from "@angular/material/autocomplete";
+import { MatAutocompleteTrigger } from "@angular/material/autocomplete";
 
 export type accessorFn<E extends Entity> = (E) => string;
 
