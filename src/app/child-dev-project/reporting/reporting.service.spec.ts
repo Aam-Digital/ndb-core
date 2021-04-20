@@ -154,4 +154,33 @@ describe("ReportingService", () => {
       { label: "Total # of children (M)", result: 1 },
     ]);
   });
+
+  it("should run aggregations after a groupBy", async () => {
+    const groupByGenderResult: GroupingResult<Child, "gender">[] = [
+      { values: {}, data: [new Child(), new Child(), new Child()] },
+      { values: { gender: Gender.FEMALE }, data: [new Child(), new Child()] },
+      { values: { gender: Gender.MALE }, data: [new Child()] },
+    ];
+    mockGroupingService.groupBy.and.returnValue(groupByGenderResult);
+    mockQueryService.queryData.and.resolveTo(1);
+    const groupByAggregation: Aggregation = {
+      query: `${Child.ENTITY_TYPE}`,
+      groupBy: "gender",
+      label: "Total # of children",
+      aggregations: [
+        { query: `[*religion=christian]`, label: "Total # of christians" },
+      ],
+    };
+    service.setAggregations([groupByAggregation]);
+    const result = await service.calculateReport();
+
+    expect(result).toEqual([
+      { label: "Total # of children", result: 3 },
+      { label: "Total # of children (F)", result: 2 },
+      { label: "Total # of children (M)", result: 1 },
+      { label: "Total # of christians", result: 1 },
+      { label: "Total # of christians (F)", result: 1 },
+      { label: "Total # of christians (M)", result: 1 },
+    ]);
+  });
 });

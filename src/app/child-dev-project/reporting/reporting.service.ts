@@ -45,7 +45,7 @@ export class ReportingService {
         data
       );
       if (aggregation.groupBy) {
-        results.push(...this.calculateGroupBy(aggregation, result));
+        results.push(...(await this.calculateGroupBy(aggregation, result)));
         continue;
       }
 
@@ -75,19 +75,42 @@ export class ReportingService {
     return resultQuery;
   }
 
-  private calculateGroupBy(aggregation: Aggregation, data: any[]): ReportRow[] {
+  private async calculateGroupBy(
+    aggregation: Aggregation,
+    data: any[]
+  ): Promise<ReportRow[]> {
     const grouping = this.groupingService.groupBy(data, aggregation.groupBy);
     const results: ReportRow[] = [];
-    grouping.forEach((group) => {
-      if (aggregation.label) {
-        let label = aggregation.label;
-        const values = Object.values(group.values);
-        if (values.length > 0) {
-          label = label + " (" + values.join(", ") + ")";
-        }
-        results.push({ label: label, result: group.data.length });
+    if (aggregation.label) {
+      grouping.forEach((group) => {
+        results.push({
+          label: this.createGroupingLabel(aggregation.label, group.values),
+          result: group.data.length,
+        });
+      });
+    }
+    if (aggregation.aggregations) {
+      for (const group of grouping) {
+        const aggregationResults = await this.calculateAggregations(
+          aggregation.aggregations,
+          group.data
+        );
+        aggregationResults.forEach(
+          (res) =>
+            (res.label = this.createGroupingLabel(res.label, group.values))
+        );
+        results.push(...aggregationResults);
       }
-    });
+    }
     return results;
+  }
+
+  private createGroupingLabel(label: string, values: any) {
+    let groupingLabel = label;
+    const valuesArray = Object.values(values);
+    if (valuesArray.length > 0) {
+      groupingLabel = groupingLabel + " (" + valuesArray.join(", ") + ")";
+    }
+    return groupingLabel;
   }
 }
