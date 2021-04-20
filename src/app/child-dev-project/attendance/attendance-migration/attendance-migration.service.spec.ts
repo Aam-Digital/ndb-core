@@ -6,7 +6,7 @@ import { Database } from "../../../core/database/database";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { EntityModule } from "../../../core/entity/entity.module";
-import { expectEntitiesToBeInDatabase } from "../../../utils/expect-entity-data.spec";
+import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { EventNote } from "../model/event-note";
 import { ChildrenService } from "../../children/children.service";
 import { PouchDatabase } from "../../../core/database/pouch-database";
@@ -75,7 +75,7 @@ describe("AttendanceMigrationService", () => {
 
     await service.createEventsForAttendanceMonth(old);
 
-    await expectEntitiesToBeInDatabase(expectedNotes, true);
+    await expectEntitiesToMatch(service.existingEvents, expectedNotes, true);
   });
 
   it("should add to existing event for the same activity and date", async () => {
@@ -115,6 +115,6 @@ describe("AttendanceMigrationService", () => {
     await service.createEventsForAttendanceMonth(old1);
     await service.createEventsForAttendanceMonth(old2);
 
-    await expectEntitiesToBeInDatabase(expectedNotes, true);
+    await expectEntitiesToMatch(service.existingEvents, expectedNotes, true);
   });
 });

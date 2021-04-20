@@ -212,9 +212,11 @@ export class AttendanceService {
     for (const [activityId, activityEvents] of groupedEvents) {
       const activityRecord = ActivityAttendance.create(from, activityEvents);
       activityRecord.periodTo = until;
-      activityRecord.activity = await this.entityMapper
-        .load<RecurringActivity>(RecurringActivity, activityId)
-        .catch(() => undefined);
+      if (activityId) {
+        activityRecord.activity = await this.entityMapper
+          .load<RecurringActivity>(RecurringActivity, activityId)
+          .catch(() => undefined);
+      }
 
       records.push(activityRecord);
     }
