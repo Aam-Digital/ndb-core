@@ -5,7 +5,7 @@ import { GroupingService } from "./grouping.service";
 
 export interface Aggregation {
   query: string;
-  groupBy?: string;
+  groupBy?: string[];
   label?: string;
   aggregations?: Aggregation[];
 }
@@ -79,7 +79,8 @@ export class ReportingService {
     aggregation: Aggregation,
     data: any[]
   ): Promise<ReportRow[]> {
-    const grouping = this.groupingService.groupBy(data, aggregation.groupBy);
+    const grouping = this.groupingService.groupBy(data, ...aggregation.groupBy);
+    console.log("groupings", grouping);
     const results: ReportRow[] = [];
     if (aggregation.label) {
       grouping.forEach((group) => {

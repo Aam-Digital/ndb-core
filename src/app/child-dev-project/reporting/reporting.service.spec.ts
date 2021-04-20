@@ -51,7 +51,6 @@ describe("ReportingService", () => {
 
     const report = await service.calculateReport();
     expect(mockQueryService.loadData).toHaveBeenCalled();
-    console.log("all args", mockQueryService.queryData.calls.allArgs());
     expect(mockQueryService.queryData.calls.allArgs()).toEqual([
       [[baseQuery], undefined],
       [[christiansQuery], baseData],
@@ -142,7 +141,7 @@ describe("ReportingService", () => {
     mockQueryService.queryData.and.resolveTo([]);
     const groupByAggregation: Aggregation = {
       query: `${Child.ENTITY_TYPE}`,
-      groupBy: "gender",
+      groupBy: ["gender"],
       label: "Total # of children",
     };
     service.setAggregations([groupByAggregation]);
@@ -165,7 +164,7 @@ describe("ReportingService", () => {
     mockQueryService.queryData.and.resolveTo(1);
     const groupByAggregation: Aggregation = {
       query: `${Child.ENTITY_TYPE}`,
-      groupBy: "gender",
+      groupBy: ["gender"],
       label: "Total # of children",
       aggregations: [
         { query: `[*religion=christian]`, label: "Total # of christians" },
@@ -181,6 +180,96 @@ describe("ReportingService", () => {
       { label: "Total # of christians", result: 1 },
       { label: "Total # of christians (F)", result: 1 },
       { label: "Total # of christians (M)", result: 1 },
+    ]);
+  });
+
+  it("should support groupBy with an array of values", async () => {
+    const groupByGenderAndReligion: GroupingResult<
+      Child,
+      "gender" | "religion"
+    >[] = [
+      { values: {}, data: [new Child(), new Child(), new Child()] },
+      { values: { gender: Gender.FEMALE }, data: [new Child(), new Child()] },
+      { values: { gender: Gender.MALE }, data: [new Child()] },
+      {
+        values: { gender: Gender.MALE, religion: "christian" },
+        data: [new Child()],
+      },
+      {
+        values: { gender: Gender.FEMALE, religion: "muslim" },
+        data: [new Child()],
+      },
+      {
+        values: { gender: Gender.FEMALE, religion: "christian" },
+        data: [new Child()],
+      },
+    ];
+    mockGroupingService.groupBy.and.returnValue(groupByGenderAndReligion);
+    mockQueryService.queryData.and.resolveTo(1);
+    const groupByAggregation: Aggregation = {
+      query: `${Child.ENTITY_TYPE}`,
+      groupBy: ["gender", "religion"],
+      label: "Total # of children",
+    };
+    service.setAggregations([groupByAggregation]);
+    const result = await service.calculateReport();
+
+    expect(result).toEqual([
+      { label: "Total # of children", result: 3 },
+      { label: "Total # of children (F)", result: 2 },
+      { label: "Total # of children (M)", result: 1 },
+      { label: "Total # of children (M, christian)", result: 1 },
+      { label: "Total # of children (F, muslim)", result: 1 },
+      { label: "Total # of children (F, christian)", result: 1 },
+    ]);
+  });
+
+  it("should allow multiple groupBy's", async () => {
+    const groupByGender: GroupingResult<Child, "gender">[] = [
+      { values: {}, data: [new Child(), new Child(), new Child()] },
+      { values: { gender: Gender.FEMALE }, data: [new Child(), new Child()] },
+      { values: { gender: Gender.MALE }, data: [new Child()] },
+    ];
+    const groupByReligion: GroupingResult<Child, "religion">[] = [
+      { values: {}, data: [new Child(), new Child()] },
+      { values: { religion: "christian" }, data: [new Child()] },
+      { values: { religion: "muslim" }, data: [new Child()] },
+    ];
+    // return the same results for each entry of the first groupBy
+    mockGroupingService.groupBy.and.returnValues(
+      groupByGender,
+      groupByReligion,
+      groupByReligion,
+      groupByReligion
+    );
+    mockQueryService.queryData.and.resolveTo([]);
+
+    const nestedGroupBy: Aggregation = {
+      query: `${Child.ENTITY_TYPE}`,
+      groupBy: ["gender"],
+      label: "Total # of children",
+      aggregations: [
+        {
+          query: `[*age > 13]`,
+          groupBy: ["religion"],
+          label: "Total # of children",
+        },
+      ],
+    };
+    service.setAggregations([nestedGroupBy]);
+    const result = await service.calculateReport();
+    console.log("result", result);
+
+    expect(result).toEqual([
+      { label: "Total # of children", result: 3 },
+      { label: "Total # of children (F)", result: 2 },
+      { label: "Total # of children (M)", result: 1 },
+      { label: "Total # of children (christian)", result: 1 },
+      { label: "Total # of children (muslim)", result: 1 },
+      { label: "Total # of children (F, christian)", result: 1 },
+      { label: "Total # of children (F, muslim)", result: 1 },
+      { label: "Total # of children (M, christian)", result: 1 },
+      { label: "Total # of children (M, muslim)", result: 1 },
     ]);
   });
 });
