@@ -1,6 +1,27 @@
 import { Injectable } from "@angular/core";
 
-export class Grouping<T, K extends keyof T> {
+@Injectable({
+  providedIn: "root",
+})
+export class GroupingService {
+  constructor() {}
+
+  public groupBy<T, K extends keyof T>(
+    data: T[],
+    ...properties: K[]
+  ): GroupingResult<T, K>[] {
+    const propertyGrouping = new Grouping<T, K>(properties);
+    data.forEach((el) => propertyGrouping.add(el));
+    return propertyGrouping.flatten();
+  }
+}
+
+export type GroupingResult<T, K extends keyof T> = {
+  values: { [key in K]?: T[K] };
+  data: T[];
+};
+
+class Grouping<T, K extends keyof T> {
   all: T[] = [];
   groups: { value: T[K]; data: Grouping<T, K> }[] = [];
   readonly currentProperty: K;
@@ -32,34 +53,15 @@ export class Grouping<T, K extends keyof T> {
     }
   }
 
-  public flatten(): { values: { [key in K]?: T[K] }; data: T[] }[] {
-    const flattened: { values: { [key in K]?: T[K] }; data: T[] }[] = [
-      { values: {}, data: this.all },
-    ];
+  public flatten(): GroupingResult<T, K>[] {
+    const flattened: GroupingResult<T, K>[] = [{ values: {}, data: this.all }];
     this.groups.forEach((group) => {
       const flattenedGroup = group.data.flatten();
       flattenedGroup.forEach(
-        ({values}) => (values[this.currentProperty] = group.value)
+        ({ values }) => (values[this.currentProperty] = group.value)
       );
       flattened.push(...flattenedGroup);
     });
-    console.log("flattened", flattened);
     return flattened;
-  }
-}
-
-@Injectable({
-  providedIn: "root",
-})
-export class GroupingService {
-  constructor() {}
-
-  public groupBy<T, K extends keyof T>(
-    data: T[],
-    ...properties: K[]
-  ): Grouping<T, K> {
-    const propertyGrouping = new Grouping<T, K>(properties);
-    data.forEach((el) => propertyGrouping.add(el));
-    return propertyGrouping;
   }
 }

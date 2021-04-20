@@ -3,6 +3,8 @@ import { TestBed } from "@angular/core/testing";
 import { GroupingService } from "./grouping.service";
 import { Gender } from "../children/model/Gender";
 import { Child } from "../children/model/child";
+import { Note } from "../notes/model/note";
+import { defaultInteractionTypes } from "../../core/config/default-config/default-interaction-types";
 
 describe("GroupingService", () => {
   let service: GroupingService;
@@ -41,21 +43,21 @@ describe("GroupingService", () => {
       femaleChristianChild,
     ];
 
-    const grouped = service.groupBy(children, "gender").flatten();
+    const grouping = service.groupBy(children, "gender");
 
-    expect(grouped).toHaveSize(3);
-    expect(grouped).toContain({
+    expect(grouping).toHaveSize(3);
+    expect(grouping).toContain({
       values: {},
       data: jasmine.arrayWithExactContents(children),
     });
-    expect(grouped).toContain({
+    expect(grouping).toContain({
       values: { gender: Gender.MALE },
       data: jasmine.arrayWithExactContents([
         maleChristianChild2,
         maleChristianChild,
       ]),
     });
-    expect(grouped).toContain({
+    expect(grouping).toContain({
       values: { gender: Gender.FEMALE },
       data: jasmine.arrayWithExactContents([
         femaleChristianChild,
@@ -72,41 +74,76 @@ describe("GroupingService", () => {
       femaleMuslimChild,
     ];
 
-    const grouped = service.groupBy(children, "gender", "religion").flatten();
+    const grouping = service.groupBy(children, "gender", "religion");
 
-    expect(grouped).toHaveSize(6);
-    expect(grouped).toContain({
+    expect(grouping).toHaveSize(6);
+    expect(grouping).toContain({
       values: {},
       data: jasmine.arrayWithExactContents(children),
     });
-    expect(grouped).toContain({
+    expect(grouping).toContain({
       values: { gender: Gender.MALE },
       data: jasmine.arrayWithExactContents([
         maleChristianChild,
         maleChristianChild2,
       ]),
     });
-    expect(grouped).toContain({
+    expect(grouping).toContain({
       values: { gender: Gender.FEMALE },
       data: jasmine.arrayWithExactContents([
         femaleMuslimChild,
         femaleChristianChild,
       ]),
     });
-    expect(grouped).toContain({
+    expect(grouping).toContain({
       values: { gender: Gender.MALE, religion: "christian" },
       data: jasmine.arrayWithExactContents([
         maleChristianChild,
         maleChristianChild2,
       ]),
     });
-    expect(grouped).toContain({
+    expect(grouping).toContain({
       values: { gender: Gender.FEMALE, religion: "christian" },
       data: [femaleChristianChild],
     });
-    expect(grouped).toContain({
+    expect(grouping).toContain({
       values: { gender: Gender.FEMALE, religion: "muslim" },
       data: [femaleMuslimChild],
+    });
+  });
+
+  it("should group notes based on category", () => {
+    const meetingCategory = defaultInteractionTypes.find((it) => it.isMeeting);
+    const visitCategory = defaultInteractionTypes.find(
+      (it) => it.id === "VISIT"
+    );
+    const meetingNote = new Note("meetingNote");
+    meetingNote.category = meetingCategory;
+    const visitNote1 = new Note("visitNote1");
+    visitNote1.category = visitCategory;
+    const visitNote2 = new Note("visitNote2");
+    visitNote2.category = visitCategory;
+    const noteWithoutCategory = new Note("noteWithoutCategory");
+    const notes = [visitNote1, meetingNote, noteWithoutCategory, visitNote2];
+
+    const grouping = service.groupBy(notes, "category");
+
+    expect(grouping).toHaveSize(4);
+    expect(grouping).toContain({
+      values: {},
+      data: notes,
+    });
+    expect(grouping).toContain({
+      values: { category: noteWithoutCategory.category }, // a default (empty) category is automatically set
+      data: [noteWithoutCategory],
+    });
+    expect(grouping).toContain({
+      values: { category: meetingCategory },
+      data: [meetingNote],
+    });
+    expect(grouping).toContain({
+      values: { category: visitCategory },
+      data: jasmine.arrayWithExactContents([visitNote1, visitNote2]),
     });
   });
 });
