@@ -11,11 +11,10 @@ import { HealthCheck } from "../health-checkup/model/health-check";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { ChildPhotoService } from "./child-photo-service/child-photo.service";
 import { LoadChildPhotoEntitySchemaDatatype } from "./child-photo-service/datatype-load-child-photo";
-import moment from "moment";
+import moment, { Moment } from "moment";
 import { LoggingService } from "../../core/logging/logging.service";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 import { QueryOptions } from "../../core/database/database";
-import { take } from "rxjs/operators";
 
 @Injectable()
 export class ChildrenService {
@@ -195,11 +194,17 @@ export class ChildrenService {
         by_school: {
           map: `(doc) => {
             if ( (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) ||
-                (doc.start && (new Date(doc.start) > new Date().setHours(0, 0, 0, 0))) ||
-                (doc.end && (new Date(doc.end) < new Date().setHours(0, 0, 0, 0))) ) {
+                (doc.start && isAfterToday(new Date(doc.start))) ||
+                (doc.end && !isAfterToday(new Date(doc.end))) ) {
               return;
             }
             emit(doc.schoolId);
+            function isAfterToday(date) {
+              const tomorrow = new Date();
+              tomorrow.setHours(0, 0, 0, 0);
+              tomorrow.setDate(tomorrow.getDate() + 1);
+              return date >= tomorrow;
+            }
             }`,
         },
         by_date: {
@@ -220,7 +225,7 @@ export class ChildrenService {
     );
   }
 
-  querySortedRelations(
+  async querySortedRelations(
     childId: string,
     limit?: number
   ): Promise<ChildSchoolRelation[]> {
@@ -238,7 +243,7 @@ export class ChildrenService {
     );
   }
 
-  queryRelationsOf(
+  async queryRelationsOf(
     queryType: "child" | "school",
     id: string
   ): Promise<ChildSchoolRelation[]> {
@@ -249,11 +254,11 @@ export class ChildrenService {
     );
   }
 
-  queryAttendanceLast3Months() {
+  async queryAttendanceLast3Months() {
     return this.dbIndexing.queryIndexStats("avg_attendance_index/three_months");
   }
 
-  queryAttendanceLastMonth() {
+  async queryAttendanceLastMonth() {
     return this.dbIndexing.queryIndexStats("avg_attendance_index/last_month");
   }
 
@@ -336,33 +341,45 @@ export class ChildrenService {
   ): Promise<Map<string, number>> {
     const startDay = moment().subtract(forLastNDays, "days");
 
-    const stats = await this.dbIndexing.queryIndexStats(
-      "notes_index/note_child_by_date",
-      {
-        startkey: [startDay.year(), startDay.month(), startDay.date()],
-      }
-    );
+    const notes = await this.getNotesInTimespan(startDay);
 
     const results = new Map();
-    const children = await this.getChildren().pipe(take(1)).toPromise();
+    const children = await this.entityMapper.loadType(Child);
     children
       .filter((c) => c.isActive)
       .forEach((c) => results.set(c.getId(), Number.POSITIVE_INFINITY));
 
-    for (const childStats of stats.rows) {
+    for (const note of notes) {
       // TODO: filter notes to only include them if the given child is marked "present"
 
-      const childId = childStats.value[0];
-      const noteDate = moment(childStats.key);
-
-      const daysSinceNote = moment().diff(noteDate, "days");
-      const previousValue = results.get(childId);
-      if (previousValue > daysSinceNote) {
-        results.set(childId, daysSinceNote);
+      for (const childId of note.children) {
+        const daysSinceNote = moment().diff(note.date, "days");
+        const previousValue = results.get(childId);
+        if (previousValue > daysSinceNote) {
+          results.set(childId, daysSinceNote);
+        }
       }
     }
 
     return results;
+  }
+
+  /**
+   * Returns all notes in the timespan.
+   * It is only checked if the notes are on the same day als start and end day. The time is not checked.
+   * @param startDay the first day where notes should be included
+   * @param endDay the last day where notes should be included
+   */
+  public async getNotesInTimespan(
+    startDay: Date | Moment,
+    endDay: Date | Moment = moment()
+  ): Promise<Note[]> {
+    return this.dbIndexing.queryIndexDocsRange(
+      Note,
+      "notes_index/note_child_by_date",
+      moment(startDay).format("YYYY-MM-DD"),
+      moment(endDay).format("YYYY-MM-DD")
+    );
   }
 
   private createNotesIndex(): Promise<any> {
@@ -383,8 +400,9 @@ export class ChildrenService {
           map: `(doc) => {
             if (!doc._id.startsWith("${Note.ENTITY_TYPE}")) return;
             if (!Array.isArray(doc.children) || !doc.date) return;
-            var date = new Date(doc.date);
-            doc.children.forEach(childId => emit([date.getFullYear(), date.getMonth(), date.getDate()], [childId, doc.relatesTo]));
+            var d = new Date(doc.date || null);
+            var dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
+            emit(dString);
           }`,
         },
       },

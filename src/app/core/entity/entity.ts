@@ -26,9 +26,11 @@ import {
 /**
  * This represents a static class of type <T>.
  * It can be used for passing a class from which new objects should be created.
+ * It can also be used to check the ENTITY_TYPE of a class
  * For example usage check the {@link EntityMapperService}.
  */
-export type EntityConstructor<T extends Entity> = new (id?: string) => T;
+export type EntityConstructor<T extends Entity> = (new (id?: string) => T) &
+  typeof Entity;
 
 /**
  * "Entity" is a base class for all domain model classes.
@@ -200,5 +202,16 @@ export class Entity {
    */
   public getWarningLevel(): WarningLevel {
     return WarningLevel.NONE;
+  }
+
+  /**
+   * Shallow copy of the entity.
+   * The resulting entity will be of the same type as this
+   * (taking into account subclassing)
+   */
+  public copy(): Entity {
+    const other = new (this.getConstructor())(this._id);
+    Object.assign(other, this);
+    return other;
   }
 }

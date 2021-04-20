@@ -19,6 +19,8 @@ import { Injectable } from "@angular/core";
 import { Database } from "../database/database";
 import { Entity, EntityConstructor } from "./entity";
 import { EntitySchemaService } from "./schema/entity-schema.service";
+import { Observable, Subject } from "rxjs";
+import { UpdatedEntity } from "./entity-update";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -32,6 +34,7 @@ import { EntitySchemaService } from "./schema/entity-schema.service";
  */
 @Injectable()
 export class EntityMapperService {
+  private publishers: Map<string, Subject<any>> = new Map();
   constructor(
     private _db: Database,
     private entitySchemaService: EntitySchemaService
@@ -81,6 +84,32 @@ export class EntityMapperService {
   }
 
   /**
+   * subscribe to this observable to receive updates whenever the state of
+   * an entity of a certain type changes.
+   * The updated-parameter will return the new entity as well as a field that
+   * describes the type of update (either "new", "update" or "remove").
+   * <br>
+   * This can be used in collaboration with the update(UpdatedEntity, Entities)-function
+   * to update a list of entities
+   * <br>
+   * The first update that one will receive - immediately after subscribing - is <code>null</code>.
+   * The <code>update</code>-function takes this into account.
+   * @param entityType the type of the entity
+   */
+  public receiveUpdates<T extends Entity>(
+    entityType: EntityConstructor<T>
+  ): Observable<UpdatedEntity<T>> {
+    const type = new entityType().getType();
+    let publisher = this.publishers[type];
+    // subject doesn't exist yet or is closed
+    if (!publisher || publisher.closed) {
+      publisher = new Subject<T>();
+      this.publishers[type] = publisher;
+    }
+    return publisher.asObservable();
+  }
+
+  /**
    * Save an entity to the database after transforming it to its database representation.
    * @param entity The entity to be saved
    * @param forceUpdate Optional flag whether any conflicting version in the database will be quietly overwritten.
@@ -93,6 +122,7 @@ export class EntityMapperService {
     const rawData = this.entitySchemaService.transformEntityToDatabaseFormat(
       entity
     );
+    this.sendUpdate(entity, entity._rev === undefined ? "new" : "update");
     const result = await this._db.put(rawData, forceUpdate);
     if (result?.ok) {
       entity._rev = result.rev;
@@ -105,6 +135,23 @@ export class EntityMapperService {
    * @param entity The entity to be deleted
    */
   public remove<T extends Entity>(entity: T): Promise<any> {
+    this.sendUpdate(entity, "remove");
     return this._db.remove(entity);
+  }
+
+  /**
+   * publishes a new entity update to all subscribing listeners
+   *
+   * @param entity The entity to update
+   * @param type The type, see {@link UpdatedEntity#type}
+   */
+  private sendUpdate<T extends Entity>(
+    entity: T,
+    type: "new" | "update" | "remove"
+  ) {
+    const publisher = this.publishers[entity.getType()];
+    if (publisher && !publisher.closed) {
+      publisher.next({ entity: entity, type: type });
+    }
   }
 }

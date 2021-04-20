@@ -17,7 +17,6 @@
 
 import { SyncedSessionService } from "./session-service/synced-session.service";
 import { AppConfig } from "../app-config/app-config";
-import { MockSessionService } from "./session-service/mock-session.service";
 import { SessionService } from "./session-service/session.service";
 import { AlertService } from "../alerts/alert.service";
 import { LoggingService } from "../logging/logging.service";
@@ -25,6 +24,7 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { LoginState } from "./session-states/login-state.enum";
 import { SessionType } from "./session-type";
 import { NewLocalSessionService } from "./session-service/new-local-session.service";
+import { PouchDatabase } from "../database/pouch-database";
 
 /**
  * Factory method for Angular DI provider of SessionService.
@@ -45,7 +45,11 @@ export function sessionServiceFactory(
     case SessionType.local:
       sessionService = new NewLocalSessionService(
         loggingService,
-        entitySchemaService
+        entitySchemaService,
+        PouchDatabase.createWithIndexedDB(
+          AppConfig.settings.database.name,
+          loggingService
+        )
       );
       break;
     case SessionType.synced:
@@ -56,7 +60,14 @@ export function sessionServiceFactory(
       );
       break;
     default:
-      sessionService = new MockSessionService(entitySchemaService);
+      sessionService = new NewLocalSessionService(
+        loggingService,
+        entitySchemaService,
+        PouchDatabase.createWithInMemoryDB(
+          AppConfig.settings.database.name,
+          loggingService
+        )
+      );
       break;
   }
   // TODO: requires a configuration or UI option to select OnlineSession: https://github.com/Aam-Digital/ndb-core/issues/434

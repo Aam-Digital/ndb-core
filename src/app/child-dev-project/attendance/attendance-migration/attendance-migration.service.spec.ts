@@ -6,24 +6,18 @@ import { Database } from "../../../core/database/database";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { EntityModule } from "../../../core/entity/entity.module";
-import PouchDB from "pouchdb-browser";
-import { PouchDatabase } from "../../../core/database/pouch-database";
-import { LoggingService } from "../../../core/logging/logging.service";
-import { deleteAllIndexedDB } from "../../../utils/performance-tests.spec";
 import { expectEntitiesToBeInDatabase } from "../../../utils/expect-entity-data.spec";
 import { EventNote } from "../model/event-note";
-import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
 import { ChildrenService } from "../../children/children.service";
+import { PouchDatabase } from "../../../core/database/pouch-database";
 
 describe("AttendanceMigrationService", () => {
   let service: AttendanceMigrationService;
   let entitySchemaService: EntitySchemaService;
-  let rawPouch;
-  let testDatabase: Database;
+  let testDatabase: PouchDatabase;
 
-  beforeEach(async (done) => {
-    rawPouch = new PouchDB("unit-testing");
-    testDatabase = new PouchDatabase(rawPouch, new LoggingService());
+  beforeEach(async () => {
+    testDatabase = PouchDatabase.createWithInMemoryDB();
 
     TestBed.configureTestingModule({
       imports: [EntityModule],
@@ -38,22 +32,10 @@ describe("AttendanceMigrationService", () => {
     });
     service = TestBed.inject(AttendanceMigrationService);
     entitySchemaService = TestBed.inject(EntitySchemaService);
-
-    // wait for the relevant indices to complete building - otherwise this will clash with teardown in afterEach
-    const indexingService = TestBed.inject(DatabaseIndexingService);
-    indexingService.indicesRegistered.subscribe((x) => {
-      if (
-        x.find((e) => e.details === "events_index")?.pending === false &&
-        x.find((e) => e.details === "activities_index")?.pending === false
-      ) {
-        done();
-      }
-    });
   });
 
   afterEach(async () => {
-    await rawPouch.close();
-    await deleteAllIndexedDB(() => true);
+    await testDatabase.destroy();
   });
 
   it("should create events for each existing attendance-day in attendance-month", async () => {

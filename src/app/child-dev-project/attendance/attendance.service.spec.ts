@@ -7,25 +7,21 @@ import { Database } from "../../core/database/database";
 import { RecurringActivity } from "./model/recurring-activity";
 import moment from "moment";
 import { defaultInteractionTypes } from "../../core/config/default-config/default-interaction-types";
-import { PouchDatabase } from "../../core/database/pouch-database";
-import PouchDB from "pouchdb-browser";
-import { LoggingService } from "../../core/logging/logging.service";
-import { deleteAllIndexedDB } from "../../utils/performance-tests.spec";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { EventNote } from "./model/event-note";
-import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 import { ChildrenService } from "../children/children.service";
 import { School } from "../schools/model/school";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { Child } from "../children/model/child";
+import { Note } from "../notes/model/note";
+import { PouchDatabase } from "../../core/database/pouch-database";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
 
   let entityMapper: EntityMapperService;
-  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
-  let rawPouch;
+  let database: PouchDatabase;
 
   function createEvent(date: Date, activityIdWithPrefix: string): EventNote {
     const event = EventNote.create(date, "generated event");
@@ -40,29 +36,25 @@ describe("AttendanceService", () => {
   let activity1, activity2: RecurringActivity;
   let e1_1, e1_2, e1_3, e2_1: EventNote;
 
-  beforeEach(async (done) => {
+  beforeEach(async () => {
     activity1 = RecurringActivity.create("activity 1");
     activity2 = RecurringActivity.create("activity 2");
 
-    // testDB = MockDatabase.createWithData([]);
-    rawPouch = new PouchDB("unit-testing");
-    const testDB = new PouchDatabase(rawPouch, new LoggingService());
+    database = PouchDatabase.createWithInMemoryDB();
 
     e1_1 = createEvent(new Date("2020-01-01"), activity1._id);
     e1_2 = createEvent(new Date("2020-01-02"), activity1._id);
     e1_3 = createEvent(new Date("2020-03-02"), activity1._id);
     e2_1 = createEvent(new Date("2020-01-01"), activity2._id);
 
-    mockChildrenService = jasmine.createSpyObj(["queryRelationsOf"]);
-    mockChildrenService.queryRelationsOf.and.resolveTo([]);
     TestBed.configureTestingModule({
       imports: [ConfigurableEnumModule],
       providers: [
         AttendanceService,
         EntityMapperService,
         EntitySchemaService,
-        { provide: Database, useValue: testDB },
-        { provide: ChildrenService, useValue: mockChildrenService },
+        ChildrenService,
+        { provide: Database, useValue: database },
       ],
     });
     service = TestBed.inject(AttendanceService);
@@ -81,22 +73,10 @@ describe("AttendanceService", () => {
     await entityMapper.save(e1_2);
     await entityMapper.save(e1_3);
     await entityMapper.save(e2_1);
-
-    // wait for the relevant indices to complete building - otherwise this will clash with teardown in afterEach
-    const indexingService = TestBed.inject(DatabaseIndexingService);
-    indexingService.indicesRegistered.subscribe((x) => {
-      if (
-        x.find((e) => e.details === "events_index")?.pending === false &&
-        x.find((e) => e.details === "activities_index")?.pending === false
-      ) {
-        done();
-      }
-    });
   });
 
   afterEach(async () => {
-    await rawPouch.close();
-    await deleteAllIndexedDB(() => true);
+    await database.destroy();
   });
 
   it("should be created", () => {
@@ -106,6 +86,34 @@ describe("AttendanceService", () => {
   it("gets events for a date", async () => {
     const actualEvents = await service.getEventsOnDate(new Date("2020-01-01"));
     expectEntitiesToMatch(actualEvents, [e1_1, e2_1]);
+  });
+
+  it("gets events including Notes for a date", async () => {
+    const note1 = Note.create(new Date("2020-01-01"), "manual event note 1");
+    note1.addChild("1");
+    note1.addChild("2");
+    note1.category = defaultInteractionTypes.find((t) => t.isMeeting);
+    await entityMapper.save(note1);
+
+    const note2 = Note.create(new Date("2020-01-02"), "manual event note 2");
+    note2.addChild("1");
+    note2.category = defaultInteractionTypes.find((t) => t.isMeeting);
+    await entityMapper.save(note2);
+
+    const nonMeetingNote = Note.create(
+      new Date("2020-01-02"),
+      "manual event note 2"
+    );
+    nonMeetingNote.addChild("1");
+    nonMeetingNote.category = defaultInteractionTypes.find((t) => !t.isMeeting);
+    await entityMapper.save(nonMeetingNote);
+
+    const actualEvents = await service.getEventsOnDate(
+      new Date("2020-01-01"),
+      new Date("2020-01-02")
+    );
+
+    expectEntitiesToMatch(actualEvents, [e1_1, e1_2, e2_1, note1, note2]);
   });
 
   it("gets empty array for a date without events", async () => {
@@ -184,7 +192,9 @@ describe("AttendanceService", () => {
     const testActivity = RecurringActivity.create("new activity");
     testActivity.linkedGroups.push("test school");
 
-    mockChildrenService.queryRelationsOf.and.resolveTo([childSchoolRelation]);
+    spyOn(TestBed.inject(ChildrenService), "queryRelationsOf").and.resolveTo([
+      childSchoolRelation,
+    ]);
     await entityMapper.save(testActivity);
 
     const activities = await service.getActivitiesForChild("test child");
@@ -213,7 +223,7 @@ describe("AttendanceService", () => {
     const inactiveActivity = RecurringActivity.create("inactive activity");
     inactiveActivity.linkedGroups.push(inactiveRelation.schoolId);
 
-    mockChildrenService.queryRelationsOf.and.resolveTo([
+    spyOn(TestBed.inject(ChildrenService), "queryRelationsOf").and.resolveTo([
       activeRelation1,
       inactiveRelation,
       activeRelation2,
@@ -236,7 +246,9 @@ describe("AttendanceService", () => {
     activity.linkedGroups.push(relation.schoolId);
     activity.participants.push(relation.childId);
 
-    mockChildrenService.queryRelationsOf.and.resolveTo([relation]);
+    spyOn(TestBed.inject(ChildrenService), "queryRelationsOf").and.resolveTo([
+      relation,
+    ]);
     await entityMapper.save(activity);
 
     const activities = await service.getActivitiesForChild(relation.childId);
@@ -251,14 +263,17 @@ describe("AttendanceService", () => {
 
     const childAttendingSchool = new ChildSchoolRelation();
     childAttendingSchool.childId = "child attending school";
-    mockChildrenService.queryRelationsOf.and.resolveTo([childAttendingSchool]);
+    const mockQueryRelationsOf = spyOn(
+      TestBed.inject(ChildrenService),
+      "queryRelationsOf"
+    ).and.resolveTo([childAttendingSchool]);
 
     const directlyAddedChild = new Child();
     activity.participants.push(directlyAddedChild.getId());
 
     const event = await service.createEventForActivity(activity, new Date());
 
-    expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
+    expect(mockQueryRelationsOf).toHaveBeenCalledWith(
       "school",
       linkedSchool.getId()
     );
@@ -277,7 +292,7 @@ describe("AttendanceService", () => {
     duplicateChildRelation.childId = duplicateChild.getId();
     const anotherRelation = new ChildSchoolRelation();
     anotherRelation.childId = "another child id";
-    mockChildrenService.queryRelationsOf.and.resolveTo([
+    spyOn(TestBed.inject(ChildrenService), "queryRelationsOf").and.resolveTo([
       duplicateChildRelation,
       anotherRelation,
     ]);
@@ -294,5 +309,20 @@ describe("AttendanceService", () => {
     expect(event.children).toContain(directlyAddedChild.getId());
     expect(event.children).toContain(duplicateChild.getId());
     expect(event.children).toContain(anotherRelation.childId);
+  });
+
+  it("should load the events for a date with date-picker format", async () => {
+    const datePickerDate = new Date(
+      new Date("2021-04-05").setHours(0, 0, 0, 0)
+    );
+    const sameDayEvent = EventNote.create(
+      new Date("2021-04-05"),
+      "Same Day Event"
+    );
+    sameDayEvent.category = defaultInteractionTypes.find((it) => it.isMeeting);
+    await entityMapper.save(sameDayEvent);
+    const events = await service.getEventsOnDate(datePickerDate);
+    expect(events).toHaveSize(1);
+    expect(events[0].subject).toBe(sameDayEvent.subject);
   });
 });

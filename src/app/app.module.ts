@@ -71,6 +71,7 @@ import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-en
 import { ConfigModule } from "./core/config/config.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
 import { ReportingModule } from "./child-dev-project/reporting/reporting.module";
+import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/dashboard-shortcut-widget.module";
 
 /**
  * Main entry point of the application.
@@ -119,14 +120,14 @@ import { ReportingModule } from "./child-dev-project/reporting/reporting.module"
     ConfigurableEnumModule,
     ReportingModule,
     DemoDataModule.forRoot([
-      ...DemoChildGenerator.provider({ count: 150 }),
+      ...DemoChildGenerator.provider({ count: 120 }),
       ...DemoSchoolGenerator.provider({ count: 8 }),
       ...DemoChildSchoolRelationGenerator.provider(),
       ...DemoActivityGeneratorService.provider(),
-      ...DemoActivityEventsGeneratorService.provider({ forNLastYears: 2 }),
+      ...DemoActivityEventsGeneratorService.provider({ forNLastYears: 1 }),
       ...DemoNoteGeneratorService.provider({
         minNotesPerChild: 2,
-        maxNotesPerChild: 10,
+        maxNotesPerChild: 6,
         groupNotes: 3,
       }),
       ...DemoAserGeneratorService.provider(),
@@ -139,6 +140,7 @@ import { ReportingModule } from "./child-dev-project/reporting/reporting.module"
       ...DemoUserGeneratorService.provider(),
     ]),
     AttendanceModule,
+    DashboardShortcutWidgetModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },

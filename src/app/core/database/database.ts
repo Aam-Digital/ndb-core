@@ -85,6 +85,8 @@ export abstract class Database {
       endkey: prefix + "\ufff0",
     });
   }
+
+  abstract destroy(): Promise<any>;
 }
 
 /**

@@ -31,10 +31,17 @@ import {
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
-  static create(date: Date, subject: string = ""): Note {
+  static create(
+    date: Date,
+    subject: string = "",
+    children: string[] = []
+  ): Note {
     const instance = new Note();
     instance.date = date;
     instance.subject = subject;
+    for (const child of children) {
+      instance.addChild(child);
+    }
     return instance;
   }
 
@@ -157,5 +164,16 @@ export class Note extends Entity {
     }
 
     return false;
+  }
+
+  /**
+   * Performs a deep copy of the note copying all simple data
+   * (such as the date, author, e.t.c.) as well as copying the
+   * child-array
+   */
+  copy(): Note {
+    const note: Note = super.copy() as Note;
+    note.children = [...this.children];
+    return note;
   }
 }

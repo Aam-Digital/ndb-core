@@ -12,18 +12,15 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { RouterTestingModule } from "@angular/router/testing";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { PanelConfig, EntityDetailsConfig } from "./EntityDetailsConfig";
-import { databaseServiceProvider } from "../../database/database.service.provider";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { User } from "../../user/user";
 import { SessionService } from "../../session/session-service/session.service";
-import { ChildPhotoService } from "../../../child-dev-project/children/child-photo-service/child-photo.service";
 import { ChildrenModule } from "../../../child-dev-project/children/children.module";
-import { MockDatabase } from "../../database/mock-database";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
-import { Database } from "../../database/database";
 import { FormConfig } from "./form/FormConfig";
 import { EntityPermissionsService } from "../../permissions/entity-permissions.service";
+import { ChildrenService } from "../../../child-dev-project/children/children.service";
 
 describe("EntityDetailsComponent", () => {
   let component: EntityDetailsComponent;
@@ -62,35 +59,42 @@ describe("EntityDetailsComponent", () => {
     data: of(routeConfig),
   };
 
-  const mockedDatabase = new MockDatabase();
-  const mockedSession = {
-    getCurrentUser: () => new User("test1"),
-    getDatabase: () => mockedDatabase,
-  };
-
-  const mockChildPhotoService: jasmine.SpyObj<ChildPhotoService> = jasmine.createSpyObj(
-    "mockChildPhotoService",
-    ["canSetImage", "setImage", "getImageAsyncObservable"]
-  );
-
   const mockEntityPermissionsService: jasmine.SpyObj<EntityPermissionsService> = jasmine.createSpyObj(
     ["userIsPermitted"]
   );
 
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
+  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+
   beforeEach(
     waitForAsync(() => {
+      mockChildrenService = jasmine.createSpyObj([
+        "getSchoolsWithRelations",
+        "getAserResultsOfChild",
+      ]);
+      mockChildrenService.getSchoolsWithRelations.and.resolveTo([]);
+      mockChildrenService.getAserResultsOfChild.and.returnValue(of([]));
+      mockEntityMapper = jasmine.createSpyObj([
+        "loadType",
+        "load",
+        "remove",
+        "save",
+      ]);
+      mockEntityMapper.loadType.and.resolveTo([]);
+      mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+      mockSessionService.getCurrentUser.and.returnValue(new User("Test-User"));
       TestBed.configureTestingModule({
         imports: [ChildrenModule, MatNativeDateModule, RouterTestingModule],
         providers: [
-          databaseServiceProvider,
-          { provide: Database, useValue: mockedDatabase },
-          { provide: SessionService, useValue: mockedSession },
           { provide: ActivatedRoute, useValue: mockedRoute },
-          { provide: ChildPhotoService, useValue: mockChildPhotoService },
           {
             provide: EntityPermissionsService,
             useValue: mockEntityPermissionsService,
           },
+          { provide: EntityMapperService, useValue: mockEntityMapper },
+          { provide: SessionService, useValue: mockSessionService },
+          { provide: ChildrenService, useValue: mockChildrenService },
         ],
       }).compileComponents();
     })
@@ -108,10 +112,7 @@ describe("EntityDetailsComponent", () => {
 
   it("sets the panels config with child and creating status", fakeAsync(() => {
     const testChild = new Child("Test-Child");
-    const entityService = fixture.componentRef.injector.get(
-      EntityMapperService
-    );
-    spyOn(entityService, "load").and.returnValue(Promise.resolve(testChild));
+    mockEntityMapper.load.and.resolveTo(testChild);
     component.creatingNew = false;
     routeObserver.next({ get: () => testChild.getId() });
     tick();
@@ -127,13 +128,13 @@ describe("EntityDetailsComponent", () => {
 
   it("should load the correct child on startup", fakeAsync(() => {
     const testChild = new Child("Test-Child");
-    const entityService = fixture.componentRef.injector.get(
-      EntityMapperService
-    );
-    spyOn(entityService, "load").and.returnValue(Promise.resolve(testChild));
+    mockEntityMapper.load.and.returnValue(Promise.resolve(testChild));
     routeObserver.next({ get: () => testChild.getId() });
     tick();
-    expect(entityService.load).toHaveBeenCalledWith(Child, testChild.getId());
+    expect(mockEntityMapper.load).toHaveBeenCalledWith(
+      Child,
+      testChild.getId()
+    );
     expect(component.entity).toBe(testChild);
   }));
 
@@ -143,13 +144,11 @@ describe("EntityDetailsComponent", () => {
     const dialogRef = fixture.debugElement.injector.get(
       ConfirmationDialogService
     );
-    const entityMapper = fixture.debugElement.injector.get(EntityMapperService);
     const snackBar = fixture.debugElement.injector.get(MatSnackBar);
     const router = fixture.debugElement.injector.get(Router);
     const dialogReturn: any = { afterClosed: () => of(true) };
     spyOn(dialogRef, "openDialog").and.returnValue(dialogReturn);
-    spyOn(entityMapper, "remove").and.returnValue(Promise.resolve());
-    spyOn(entityMapper, "save");
+    mockEntityMapper.remove.and.returnValue(Promise.resolve());
     spyOn(component, "navigateBack");
     const snackBarReturn: any = { onAction: () => of({}) };
     spyOn(snackBar, "open").and.returnValue(snackBarReturn);
@@ -157,9 +156,9 @@ describe("EntityDetailsComponent", () => {
     component.removeEntity();
     tick();
     expect(dialogRef.openDialog).toHaveBeenCalled();
-    expect(entityMapper.remove).toHaveBeenCalledWith(testChild);
+    expect(mockEntityMapper.remove).toHaveBeenCalledWith(testChild);
     expect(snackBar.open).toHaveBeenCalled();
-    expect(entityMapper.save).toHaveBeenCalledWith(testChild, true);
+    expect(mockEntityMapper.save).toHaveBeenCalledWith(testChild, true);
     expect(router.navigate).toHaveBeenCalled();
   }));
 

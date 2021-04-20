@@ -18,12 +18,9 @@
 import { LoginState } from "../session-states/login-state.enum";
 import { SyncState } from "../session-states/sync-state.enum";
 import { ConnectionState } from "../session-states/connection-state.enum";
-import { AppConfig } from "../../app-config/app-config";
 import { SessionService } from "./session.service";
 import { Database } from "../../database/database";
 import { User } from "../../user/user";
-import PouchDB from "pouchdb-browser";
-import { SessionType } from "../session-type";
 
 /**
  * Default tests for testing basic functionality of any SessionService implementation.
@@ -45,19 +42,12 @@ export function testSessionServiceImplementation(
   const TEST_PASSWORD = "pass";
 
   beforeEach(async () => {
-    const dbName = "session_tests";
-    await resetDatabase(dbName, TEST_USER, TEST_PASSWORD);
-
-    AppConfig.settings = {
-      site_name: "Aam Digital - DEV",
-      session_type: SessionType.local,
-      database: {
-        name: dbName,
-        remote_url: "https://demo.aam-digital.com/db/",
-      },
-    };
-
     sessionService = await sessionSetupFunction();
+    await saveUser(sessionService.getDatabase(), TEST_USER, TEST_PASSWORD);
+  });
+
+  afterEach(async () => {
+    await sessionService.getDatabase().destroy();
   });
 
   it("has the correct initial state", () => {
@@ -113,20 +103,19 @@ export function testSessionServiceImplementation(
  * Destroy and rebuild the PouchDB database of the given name
  * and create a User entity with the given credentials.
  *
- * @param dbName The database name
+ * @param database The database
  * @param testUsername Username of the entity to be set up after resetting the database
  * @param testPassword Password of the new user entity
  */
-async function resetDatabase(dbName, testUsername, testPassword) {
-  const db = new PouchDB(dbName);
-  await db.destroy();
-
-  const newDb = new PouchDB(dbName);
+async function saveUser(
+  database: Database,
+  testUsername: string,
+  testPassword: string
+) {
   const testUser = new User(testUsername);
   testUser.name = testUsername;
   testUser.setNewPassword(testPassword);
-  await newDb.put(testUser);
-  await newDb.close();
+  await database.put(testUser);
 }
 
 /**

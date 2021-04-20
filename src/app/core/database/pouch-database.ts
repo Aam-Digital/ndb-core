@@ -18,6 +18,8 @@
 import { Database, GetAllOptions, GetOptions, QueryOptions } from "./database";
 import moment from "moment";
 import { LoggingService } from "../logging/logging.service";
+import PouchDB from "pouchdb-browser";
+import memory from "pouchdb-adapter-memory";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -27,6 +29,32 @@ import { LoggingService } from "../logging/logging.service";
  * should be implemented in the abstract {@link Database}.
  */
 export class PouchDatabase extends Database {
+  static async createWithData(data: any[]): Promise<PouchDatabase> {
+    const instance = PouchDatabase.createWithInMemoryDB();
+    await Promise.all(data.map((doc) => instance.put(doc)));
+    return instance;
+  }
+
+  static createWithInMemoryDB(
+    dbname: string = "in-memory-mock-database",
+    loggingService: LoggingService = new LoggingService()
+  ): PouchDatabase {
+    PouchDB.plugin(memory);
+    return new PouchDatabase(
+      new PouchDB(dbname, { adapter: "memory" }),
+      loggingService
+    );
+  }
+
+  static createWithIndexedDB(
+    dbname: string = "in-browser-database",
+    loggingService: LoggingService = new LoggingService()
+  ): PouchDatabase {
+    return new PouchDatabase(new PouchDB(dbname), loggingService);
+  }
+
+  private indexPromises: Promise<any>[] = [];
+
   /**
    * Create a PouchDB database manager.
    * @param _pouchDB An (initialized) PouchDB database instance from the PouchDB library.
@@ -90,7 +118,7 @@ export class PouchDatabase extends Database {
    * @param object The document to be saved
    * @param forceOverwrite (Optional) Whether conflicts should be ignored and an existing conflicting document forcefully overwritten.
    */
-  put(object: any, forceOverwrite?: boolean) {
+  put(object: any, forceOverwrite?: boolean): Promise<any> {
     const options: any = {};
     // if (forceOverwrite) {
     //   options.force = true;
@@ -98,7 +126,7 @@ export class PouchDatabase extends Database {
 
     return this._pouchDB.put(object, options).catch((err) => {
       if (err.status === 409) {
-        this.resolveConflict(object, forceOverwrite, err);
+        return this.resolveConflict(object, forceOverwrite, err);
       } else {
         this.notifyError(err);
         throw err;
@@ -117,6 +145,22 @@ export class PouchDatabase extends Database {
       this.notifyError(err);
       throw err;
     });
+  }
+
+  /**
+   * Sync the local database with a remote database.
+   * See {@Link https://pouchdb.com/guides/replication.html}
+   * @param remoteDatabase the PouchDB instance of the remote database
+   */
+  sync(remoteDatabase) {
+    return this._pouchDB.sync(remoteDatabase, {
+      batch_size: 500,
+    });
+  }
+
+  public async destroy(): Promise<any> {
+    await Promise.all(this.indexPromises);
+    return this._pouchDB.destroy();
   }
 
   /**
@@ -144,7 +188,13 @@ export class PouchDatabase extends Database {
    *
    * @param designDoc The PouchDB style design document for the map/reduce query
    */
-  async saveDatabaseIndex(designDoc: any): Promise<any> {
+  saveDatabaseIndex(designDoc: any): Promise<void> {
+    const creationPromise = this.createOrUpdateDesignDoc(designDoc);
+    this.indexPromises.push(creationPromise);
+    return creationPromise;
+  }
+
+  private async createOrUpdateDesignDoc(designDoc): Promise<void> {
     const existingDesignDoc = await this.get(designDoc._id, {}, true);
     if (!existingDesignDoc) {
       this.loggingService.debug("creating new database index");
@@ -164,7 +214,7 @@ export class PouchDatabase extends Database {
     await this.prebuildViewsOfDesignDoc(designDoc);
   }
 
-  private async prebuildViewsOfDesignDoc(designDoc: any) {
+  private async prebuildViewsOfDesignDoc(designDoc: any): Promise<void> {
     for (const viewName of Object.keys(designDoc.views)) {
       try {
         const queryName =
@@ -204,31 +254,28 @@ export class PouchDatabase extends Database {
    * @param overwriteChanges
    * @param existingError
    */
-  private resolveConflict(
+  private async resolveConflict(
     newObject: any,
     overwriteChanges: boolean,
     existingError: any
-  ) {
-    this.get(newObject._id).then((existingObject) => {
-      const resolvedObject = this.mergeObjects(existingObject, newObject);
-      if (resolvedObject) {
-        this.loggingService.debug(
-          "resolved document conflict automatically (" +
-            resolvedObject._id +
-            ")"
-        );
-        this.put(resolvedObject);
-      } else if (overwriteChanges) {
-        this.loggingService.debug(
-          "overwriting conflicting document version (" + newObject._id + ")"
-        );
-        newObject._rev = existingObject._rev;
-        this.put(newObject);
-      } else {
-        existingError.message = existingError.message + " (unable to resolve)";
-        throw existingError;
-      }
-    });
+  ): Promise<any> {
+    const existingObject = await this.get(newObject._id);
+    const resolvedObject = this.mergeObjects(existingObject, newObject);
+    if (resolvedObject) {
+      this.loggingService.debug(
+        "resolved document conflict automatically (" + resolvedObject._id + ")"
+      );
+      return this.put(resolvedObject);
+    } else if (overwriteChanges) {
+      this.loggingService.debug(
+        "overwriting conflicting document version (" + newObject._id + ")"
+      );
+      newObject._rev = existingObject._rev;
+      return this.put(newObject);
+    } else {
+      existingError.message = existingError.message + " (unable to resolve)";
+      throw existingError;
+    }
   }
 
   private mergeObjects(existingObject: any, newObject: any) {
