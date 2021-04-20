@@ -95,21 +95,40 @@ describe("QueryService", () => {
     normalActivity.linkedGroups = [normalSchool.getId()];
     activityWithoutLink = new RecurringActivity("activityWithoutLink");
 
+    const presentAttendanceStatus = defaultAttendanceStatusTypes.find(
+      (status) => status.countAs === "PRESENT"
+    );
+    const absentAttendanceStatus = defaultAttendanceStatusTypes.find(
+      (status) => status.countAs === "ABSENT"
+    );
+
     twoWeeksAgoPrivateEvent = new EventNote("twoWeeksAgoPrivateEvent");
     twoWeeksAgoPrivateEvent.date = moment().subtract(2, "weeks").toDate();
     twoWeeksAgoPrivateEvent.relatesTo = privateActivity._id;
     twoWeeksAgoPrivateEvent.addChild(maleChild.getId());
+    twoWeeksAgoPrivateEvent.getAttendance(
+      maleChild.getId()
+    ).status = absentAttendanceStatus;
     twoWeeksAgoPrivateEvent.addChild(femaleChristianChild.getId());
+    twoWeeksAgoPrivateEvent.getAttendance(
+      femaleChristianChild.getId()
+    ).status = presentAttendanceStatus;
 
     threeDaysAgoPrivateEvent = new EventNote("threeDaysAgoPrivateEvent");
     threeDaysAgoPrivateEvent.date = moment().subtract(3, "days").toDate();
     threeDaysAgoPrivateEvent.relatesTo = privateActivity._id;
     threeDaysAgoPrivateEvent.addChild(maleChild.getId());
+    threeDaysAgoPrivateEvent.getAttendance(
+      maleChild.getId()
+    ).status = absentAttendanceStatus;
 
     sixDaysAgoNormalEvent = new EventNote("sixDaysAgoNormalEvent");
     sixDaysAgoNormalEvent.date = moment().subtract(6, "days").toDate();
     sixDaysAgoNormalEvent.relatesTo = normalActivity._id;
     sixDaysAgoNormalEvent.addChild(femaleMuslimChild.getId());
+    sixDaysAgoNormalEvent.getAttendance(
+      femaleMuslimChild.getId()
+    ).status = presentAttendanceStatus;
 
     todayEventWithoutSchool = new EventNote("todayEventWithoutSchool");
     todayEventWithoutSchool.date = new Date();
@@ -117,15 +136,11 @@ describe("QueryService", () => {
     todayEventWithoutSchool.addChild(femaleChristianChild.getId());
     todayEventWithoutSchool.getAttendance(
       femaleChristianChild.getId()
-    ).status = defaultAttendanceStatusTypes.find(
-      (status) => status.countAs === "PRESENT"
-    );
+    ).status = presentAttendanceStatus;
     todayEventWithoutSchool.addChild(maleChild.getId());
     todayEventWithoutSchool.getAttendance(
       maleChild.getId()
-    ).status = defaultAttendanceStatusTypes.find(
-      (status) => status.countAs === "ABSENT"
-    );
+    ).status = absentAttendanceStatus;
 
     twoDaysAgoEventWithoutRelation = new EventNote(
       "twoDaysAgoEventWithoutRelation"
@@ -134,15 +149,12 @@ describe("QueryService", () => {
     twoDaysAgoEventWithoutRelation.addChild(femaleChristianChild.getId());
     twoDaysAgoEventWithoutRelation.getAttendance(
       femaleChristianChild.getId()
-    ).status = defaultAttendanceStatusTypes.find(
-      (status) => status.countAs === "ABSENT"
-    );
+    ).status = absentAttendanceStatus;
     twoDaysAgoEventWithoutRelation.addChild(maleChristianChild.getId());
     twoDaysAgoEventWithoutRelation.getAttendance(
       maleChristianChild.getId()
-    ).status = defaultAttendanceStatusTypes.find(
-      (status) => status.countAs === "PRESENT"
-    );
+    ).status = presentAttendanceStatus;
+
     mockEntityMapper.loadType.and.callFake((entityClass) => {
       switch (entityClass as any) {
         case Child:
@@ -238,13 +250,6 @@ describe("QueryService", () => {
     childrenVisitingAnySchool = await service.queryData(
       childrenVisitingAnySchoolQuery
     );
-    console.log(
-      "childern",
-      childrenVisitingAnySchool,
-      maleChildAttendsPrivateSchool,
-      maleChristianChildAttendsNormalSchool,
-      femaleChristianChildAttendsNormalSchool
-    );
     expect(childrenVisitingAnySchool).toEqual(
       jasmine.arrayWithExactContents([maleChristianChild, femaleChristianChild])
     );
@@ -306,16 +311,20 @@ describe("QueryService", () => {
       childrenThatAttendedSomethingQuery
     );
     expect(childrenThatAttendedSomething).toEqual(
-      jasmine.arrayWithExactContents([femaleChristianChild, maleChristianChild])
+      jasmine.arrayWithExactContents([
+        femaleChristianChild,
+        maleChristianChild,
+        femaleMuslimChild,
+      ])
     );
   });
 
-  it("should count unique participants of events based on timespan, school and activity", async () => {
+  it("should count unique participants of events based on school and activity", async () => {
     const femaleParticipantsPrivateSchoolQuery = `
       ${School.ENTITY_TYPE}:toArray[*privateSchool=true]
       :getRelated(${RecurringActivity.ENTITY_TYPE}, linkedGroups)
       :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
-      :getParticipants:addPrefix(${Child.ENTITY_TYPE}):unique
+      :getParticipantsWithAttendance(PRESENT):addPrefix(${Child.ENTITY_TYPE}):unique
       :toEntities[*gender=${Gender.FEMALE}]`;
     const femaleParticipantsInPrivateSchools = await service.queryData(
       femaleParticipantsPrivateSchoolQuery
@@ -326,7 +335,7 @@ describe("QueryService", () => {
       ${School.ENTITY_TYPE}:toArray[*privateSchool!=true]
       :getRelated(${RecurringActivity.ENTITY_TYPE}, linkedGroups)
       :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
-      :getParticipants:addPrefix(${Child.ENTITY_TYPE}):unique
+      :getParticipantsWithAttendance(PRESENT):addPrefix(${Child.ENTITY_TYPE}):unique
       :toEntities`;
     const participantsNotPrivateSchool = await service.queryData(
       participantsNotPrivateSchoolQuery
@@ -341,7 +350,11 @@ describe("QueryService", () => {
       attendedParticipantsQuery
     );
     expect(attendedParticipants).toEqual(
-      jasmine.arrayWithExactContents([maleChristianChild, femaleChristianChild])
+      jasmine.arrayWithExactContents([
+        maleChristianChild,
+        femaleChristianChild,
+        femaleMuslimChild,
+      ])
     );
   });
 
@@ -354,14 +367,15 @@ describe("QueryService", () => {
     );
     privateActivity.type = schoolClass;
     activityWithoutLink.type = lifeSkills;
+    normalActivity.type = lifeSkills;
 
-    const schoolClassActivitiesQuery = `${RecurringActivity.ENTITY_TYPE}:toArray:replaceObjectAttribute(type, id)[*type=SCHOOL_CLASS]`;
+    const schoolClassActivitiesQuery = `${RecurringActivity.ENTITY_TYPE}:toArray:filterByObjectAttribute(type, id, SCHOOL_CLASS)`;
     const schoolClassActivities = await service.queryData(
       schoolClassActivitiesQuery
     );
     expect(schoolClassActivities).toEqual([privateActivity]);
 
-    const otherActivitiesQuery = `${RecurringActivity.ENTITY_TYPE}:toArray:replaceObjectAttribute(type, id)[*type!=SCHOOL_CLASS]`;
+    const otherActivitiesQuery = `${RecurringActivity.ENTITY_TYPE}:toArray:filterByObjectAttribute(type, id, LIFE_SKILLS)`;
     const otherActivities = await service.queryData(otherActivitiesQuery);
     expect(otherActivities).toEqual(
       jasmine.arrayWithExactContents([activityWithoutLink, normalActivity])

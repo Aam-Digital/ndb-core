@@ -79,7 +79,7 @@ export class QueryService {
   }
 
   count(data: any[]): number {
-    return data.length;
+    return data ? data.length : 0;
   }
 
   /**
@@ -100,7 +100,7 @@ export class QueryService {
    * @param entityType the type of entities where relations should be looked for
    * @param relationKey the name of the attribute that holds the reference.
    *                    The attribute can be a string or a list of strings
-   * @returns a list of the related entities
+   * @returns a list of the related unique entities
    */
   getRelated(
     srcEntities: Entity[],
@@ -127,35 +127,29 @@ export class QueryService {
     }
   }
 
-  /**
-   * Replaces a complex attribute by a value of this attribute
-   *
-   * This method will also modifies the input array!
-   * If the method has been used before, it will not change anything the second time
-   * @param objs array of objs where the attribute should be exchanged
-   * @param attr the name of the attribute which should be exchanged
-   * @param key a key of the attribute object. The value of this key will replace to current value of the attribute
-   * @returns the modified input array
-   */
-  replaceObjectAttribute(objs: any[], attr: string, key: string): any[] {
-    objs.forEach((obj) => {
-      if (obj.hasOwnProperty(attr) && obj[attr][key] !== undefined) {
-        obj[attr] = obj[attr][key];
+  filterByObjectAttribute(
+    objs: any[],
+    attr: string,
+    key: string,
+    value: string
+  ): any[] {
+    const values = value.replace(new RegExp(" ", "g"), "").split("|");
+    return objs.filter((obj) => {
+      if (obj.hasOwnProperty(attr)) {
+        return values.includes(obj[attr][key]?.toString());
       }
+      return false;
     });
-    return objs;
   }
 
-  /**
-   * Returns the ids of all the participants of the passed events.
-   * This list may contain duplicates and the id does not necessarily have the entity prefix
-   * @param events the array of events
-   * @returns the ids of children which are listed as participants at the events
-   */
-  getParticipants(events: EventNote[]): string[] {
-    const participants: string[] = [];
-    events.forEach((ev) => participants.push(...ev.children));
-    return participants;
+  getIds(objs: any[], key: string): string[] {
+    const ids: string[] = [];
+    objs.forEach((obj) => {
+      if (obj.hasOwnProperty(key)) {
+        ids.push(...obj[key]);
+      }
+    });
+    return ids;
   }
 
   /**
@@ -209,8 +203,8 @@ export class QueryService {
         addPrefix: this.addPrefix,
         toEntities: this.toEntities.bind(this),
         getRelated: this.getRelated.bind(this),
-        replaceObjectAttribute: this.replaceObjectAttribute,
-        getParticipants: this.getParticipants,
+        filterByObjectAttribute: this.filterByObjectAttribute,
+        getIds: this.getIds,
         getParticipantsWithAttendance: this.getParticipantsWithAttendance,
         getActive: this.getActive,
       },
