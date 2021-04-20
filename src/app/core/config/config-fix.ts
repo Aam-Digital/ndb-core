@@ -727,7 +727,6 @@ export const defaultConfig = {
                     },
                     {
                       "input": "select",
-                      "tooltip": "This is a sample toopltip for a select field. Please select the biological sex of the person.",
                       "id": "gender",
                       "placeholder": "Gender",
                       "options": [
