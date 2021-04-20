@@ -13,7 +13,7 @@ export enum SessionType {
   local = "local",
 
   /**
-   * in-memory mock implementation of the database interface
+   * in-memory adapter of pouchdb database - data is lost after leaving the page
    */
   mock = "mock",
 }

@@ -27,14 +27,9 @@ import { User } from "../../user/user";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { LoggingService } from "../../logging/logging.service";
 import { StateHandler } from "../session-states/state-handler";
-import PouchDB from "pouchdb-browser";
-import { AppConfig } from "../../app-config/app-config";
 
 @Injectable()
 export class NewLocalSessionService extends SessionService {
-  /** local (IndexedDb) database PouchDB */
-  private pouchdb: any;
-  private database: Database;
   public liveSyncHandle: any;
 
   /** StateHandler for login state changes */
@@ -53,18 +48,12 @@ export class NewLocalSessionService extends SessionService {
   /** The currently authenticated user entity */
   public currentUser: User;
 
-  /**
-   * Create a LocalSession and set up the local PouchDB instance based on AppConfig settings.
-   * @param loggingService
-   * @param entitySchemaService
-   */
   constructor(
     private loggingService: LoggingService,
-    private entitySchemaService: EntitySchemaService
+    private entitySchemaService: EntitySchemaService,
+    private database: PouchDatabase
   ) {
     super();
-
-    this.pouchdb = new PouchDB(AppConfig.settings.database.name);
   }
 
   /** see {@link SessionService} */
@@ -128,7 +117,7 @@ export class NewLocalSessionService extends SessionService {
    */
   private async loadUser(userId: string): Promise<User> {
     const user = new User("");
-    const userData = await this.pouchdb.get("User:" + userId);
+    const userData = await this.database.get("User:" + userId);
     this.entitySchemaService.loadDataIntoEntity(user, userData);
     return user;
   }
@@ -155,14 +144,12 @@ export class NewLocalSessionService extends SessionService {
   public async sync(remoteDatabase?): Promise<any> {
     this.syncState.setState(SyncState.STARTED);
     try {
-      const result = await this.pouchdb.sync(remoteDatabase, {
-        batch_size: 500,
-      });
+      const result = await this.database.sync(remoteDatabase);
       this.syncState.setState(SyncState.COMPLETED);
       return result;
     } catch (error) {
       this.syncState.setState(SyncState.FAILED);
-      throw error; // rethrow, so later Promise-handling lands in .catch, too
+      throw error;
     }
   }
 
@@ -171,9 +158,6 @@ export class NewLocalSessionService extends SessionService {
    * als see {@link SessionService}
    */
   public getDatabase(): Database {
-    if (!this.database) {
-      this.database = new PouchDatabase(this.pouchdb, this.loggingService);
-    }
     return this.database;
   }
 

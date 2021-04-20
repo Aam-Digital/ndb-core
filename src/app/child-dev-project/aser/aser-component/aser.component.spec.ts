@@ -3,19 +3,15 @@ import { AserComponent } from "./aser.component";
 import { FormsModule } from "@angular/forms";
 import { ChildrenService } from "../../children/children.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { MockDatabase } from "../../../core/database/mock-database";
 import { Child } from "../../children/model/child";
 import { DatePipe } from "@angular/common";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { of } from "rxjs";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { Database } from "../../../core/database/database";
 import { ConfirmationDialogModule } from "../../../core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
 import { RouterTestingModule } from "@angular/router/testing";
 import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
-import { AlertService } from "../../../core/alerts/alert.service";
 
 describe("AserComponent", () => {
   let component: AserComponent;
@@ -29,9 +25,11 @@ describe("AserComponent", () => {
       return of([]);
     },
   };
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
   beforeEach(
     waitForAsync(() => {
+      mockEntityMapper = jasmine.createSpyObj(["save"]);
       TestBed.configureTestingModule({
         declarations: [AserComponent],
         imports: [
@@ -46,10 +44,7 @@ describe("AserComponent", () => {
         providers: [
           DatePipe,
           { provide: ChildrenService, useValue: mockChildrenService },
-          EntityMapperService,
-          EntitySchemaService,
-          AlertService,
-          { provide: Database, useClass: MockDatabase },
+          { provide: EntityMapperService, useValue: mockEntityMapper },
         ],
       }).compileComponents();
     })

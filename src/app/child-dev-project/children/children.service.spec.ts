@@ -5,32 +5,29 @@ import { Child } from "./model/child";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { Gender } from "./model/Gender";
 import { School } from "../schools/model/school";
-import { MockDatabase } from "../../core/database/mock-database";
 import { TestBed } from "@angular/core/testing";
 import moment from "moment";
-import { LoggingService } from "../../core/logging/logging.service";
 import { Database } from "../../core/database/database";
+import { Note } from "../notes/model/note";
 import { PouchDatabase } from "../../core/database/pouch-database";
-import { deleteAllIndexedDB } from "../../utils/performance-tests.spec";
-import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
-import PouchDB from "pouchdb-browser";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
   let entityMapper: EntityMapperService;
+  let database: PouchDatabase;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    database = PouchDatabase.createWithInMemoryDB();
     TestBed.configureTestingModule({
       providers: [
+        ChildrenService,
         EntityMapperService,
         EntitySchemaService,
-        { provide: Database, useClass: MockDatabase },
-        ChildrenService,
+        { provide: Database, useValue: database },
       ],
     });
 
-    entityMapper = TestBed.inject<EntityMapperService>(EntityMapperService);
-
+    entityMapper = TestBed.inject(EntityMapperService);
     generateChildEntities().forEach((c) => entityMapper.save(c));
     generateSchoolEntities().forEach((s) => entityMapper.save(s));
     generateChildSchoolRelationEntities().forEach((cs) =>
@@ -38,6 +35,10 @@ describe("ChildrenService", () => {
     );
 
     service = TestBed.inject<ChildrenService>(ChildrenService);
+  });
+
+  afterEach(async () => {
+    await database.destroy();
   });
 
   it("should be created", () => {
@@ -100,52 +101,39 @@ describe("ChildrenService", () => {
         Promise.all(promises).then(() => done());
       });
   });
-});
 
-describe("ChildrenService with PouchDB", () => {
-  let service: ChildrenService;
-  let entityMapper: EntityMapperService;
-  let rawPouchDB;
+  it("calculates days since last note for children", async () => {
+    const allChildren = await entityMapper.loadType(Child);
 
-  beforeEach((done) => {
-    rawPouchDB = new PouchDB("unit-testing");
-    const testDB = new PouchDatabase(rawPouchDB, new LoggingService());
-    TestBed.configureTestingModule({
-      providers: [
-        ChildrenService,
-        EntityMapperService,
-        EntitySchemaService,
-        { provide: Database, useValue: testDB },
-      ],
-    });
-
-    entityMapper = TestBed.inject(EntityMapperService);
-    generateChildEntities().forEach((c) => entityMapper.save(c));
-    generateSchoolEntities().forEach((s) => entityMapper.save(s));
-    generateChildSchoolRelationEntities().forEach((cs) =>
-      entityMapper.save(cs)
+    const c0 = allChildren[0].getId();
+    await entityMapper.save(
+      Note.create(moment().subtract(5, "days").toDate(), "n0-1", [c0])
+    );
+    await entityMapper.save(
+      Note.create(moment().subtract(8, "days").toDate(), "n0-2", [c0])
     );
 
-    service = TestBed.inject<ChildrenService>(ChildrenService);
+    const c1 = allChildren[1].getId();
+    // no notes
 
-    // wait for the relevant indices to complete building - otherwise this will clash with teardown in afterEach
-    const indexingService = TestBed.inject(DatabaseIndexingService);
-    indexingService.indicesRegistered.subscribe((x) => {
-      if (
-        x.find((e) => e.details === "childSchoolRelations_index")?.pending ===
-          false &&
-        x.find((e) => e.details === "avg_attendance_index")?.pending ===
-          false &&
-        x.find((e) => e.details === "notes_index")?.pending === false
-      ) {
-        done();
-      }
-    });
+    const recentNotesMap = await service.getDaysSinceLastNoteOfEachChild();
+
+    expect(recentNotesMap).toHaveSize(allChildren.length);
+    expect(recentNotesMap.get(c0)).toBe(5);
+    expect(recentNotesMap.get(c1)).toBe(Number.POSITIVE_INFINITY);
   });
 
-  afterEach(async () => {
-    await rawPouchDB.close();
-    await deleteAllIndexedDB(() => true);
+  it("calculates days since last note as infinity if above cut-off period for better performance", async () => {
+    const allChildren = await entityMapper.loadType(Child);
+
+    const c0 = allChildren[0].getId();
+    await entityMapper.save(
+      Note.create(moment().subtract(50, "days").toDate(), "n0-1", [c0])
+    );
+
+    const recentNotesMap = await service.getDaysSinceLastNoteOfEachChild(49);
+
+    expect(recentNotesMap.get(c0)).toBe(Number.POSITIVE_INFINITY);
   });
 
   it("should set school class and id", async () => {

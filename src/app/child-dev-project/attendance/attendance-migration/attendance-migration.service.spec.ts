@@ -6,25 +6,18 @@ import { Database } from "../../../core/database/database";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { EntityModule } from "../../../core/entity/entity.module";
-import PouchDB from "pouchdb-browser";
-import { PouchDatabase } from "../../../core/database/pouch-database";
-import { LoggingService } from "../../../core/logging/logging.service";
-import { deleteAllIndexedDB } from "../../../utils/performance-tests.spec";
-import { expectEntitiesToBeInDatabase } from "../../../utils/expect-entity-data.spec";
+import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { EventNote } from "../model/event-note";
-import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
 import { ChildrenService } from "../../children/children.service";
-import { filter, take } from "rxjs/operators";
+import { PouchDatabase } from "../../../core/database/pouch-database";
 
 describe("AttendanceMigrationService", () => {
   let service: AttendanceMigrationService;
   let entitySchemaService: EntitySchemaService;
-  let rawPouch;
-  let testDatabase: Database;
+  let testDatabase: PouchDatabase;
 
   beforeEach(async () => {
-    rawPouch = new PouchDB("unit-testing");
-    testDatabase = new PouchDatabase(rawPouch, new LoggingService());
+    testDatabase = PouchDatabase.createWithInMemoryDB();
 
     TestBed.configureTestingModule({
       imports: [EntityModule],
@@ -39,24 +32,10 @@ describe("AttendanceMigrationService", () => {
     });
     service = TestBed.inject(AttendanceMigrationService);
     entitySchemaService = TestBed.inject(EntitySchemaService);
-
-    // wait for the relevant indices to complete building - otherwise this will clash with teardown in afterEach
-    const indexingService = TestBed.inject(DatabaseIndexingService);
-    await indexingService.indicesRegistered
-      .pipe(
-        filter(
-          (x) =>
-            x.find((e) => e.details === "events_index")?.pending === false &&
-            x.find((e) => e.details === "activities_index")?.pending === false
-        ),
-        take(1)
-      )
-      .toPromise();
   });
 
   afterEach(async () => {
-    await rawPouch.close();
-    await deleteAllIndexedDB(() => true);
+    await testDatabase.destroy();
   });
 
   it("should create events for each existing attendance-day in attendance-month", async () => {
@@ -96,7 +75,7 @@ describe("AttendanceMigrationService", () => {
 
     await service.createEventsForAttendanceMonth(old);
 
-    await expectEntitiesToBeInDatabase(expectedNotes, true);
+    await expectEntitiesToMatch(service.existingEvents, expectedNotes, true);
   });
 
   it("should add to existing event for the same activity and date", async () => {
@@ -136,6 +115,6 @@ describe("AttendanceMigrationService", () => {
     await service.createEventsForAttendanceMonth(old1);
     await service.createEventsForAttendanceMonth(old2);
 
-    await expectEntitiesToBeInDatabase(expectedNotes, true);
+    await expectEntitiesToMatch(service.existingEvents, expectedNotes, true);
   });
 });

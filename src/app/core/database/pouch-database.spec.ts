@@ -16,190 +16,103 @@
  */
 
 import { PouchDatabase } from "./pouch-database";
-import PouchDB from "pouchdb-browser";
-import { LoggingService } from "../logging/logging.service";
 
 describe("PouchDatabase tests", () => {
-  let pouchDatabase: PouchDatabase;
-  let pouch: any;
-  let originalTimeout;
+  let database: PouchDatabase;
 
   beforeEach(() => {
-    const mockLoggingService: jasmine.SpyObj<LoggingService> = jasmine.createSpyObj(
-      "mockLoggingService",
-      ["warn", "debug"]
-    );
-    mockLoggingService.warn.and.callFake((m) => console.warn(m));
-    mockLoggingService.warn.and.callFake((m) => console.warn(m));
-
-    pouch = new PouchDB("unit-test-db");
-    pouchDatabase = new PouchDatabase(pouch, mockLoggingService);
-
-    originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;
+    database = PouchDatabase.createWithInMemoryDB();
   });
 
-  afterEach((done) => {
-    pouch.destroy().then(function () {
-      done();
-    });
-
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
+  afterEach(async () => {
+    await database.destroy();
   });
 
-  it("get object by _id after put into database", function (done) {
+  it("get object by _id after put into database", async () => {
     const id = "test_id";
     const name = "test";
     const count = 42;
     const testData = { _id: id, name: name, count: count };
-
-    pouchDatabase.put(testData).then(
-      function () {
-        getObjectAndCompare();
-      },
-      function () {
-        expect(false).toBe(true, "promise of pouchDatabase.put failed");
-      }
-    );
-
-    function getObjectAndCompare() {
-      pouchDatabase.get(id).then(
-        function (resultData: any) {
-          expect(resultData._id).toEqual(id);
-          expect(resultData.name).toEqual(name);
-          expect(resultData.count).toEqual(count);
-          done();
-        },
-        function () {
-          expect(false).toBe(true, "promise of pouchDatabase.get failed");
-        }
-      );
-    }
+    await database.put(testData);
+    const resultData = await database.get(id);
+    expect(resultData._id).toEqual(id);
+    expect(resultData.name).toEqual(name);
+    expect(resultData.count).toEqual(count);
   });
 
-  it("fails to get by not existing entityId", function (done) {
-    pouchDatabase.get("some_id").then(
-      function () {
-        expect(true).toBe(
-          false,
-          "retrieved object despite get on non-existing _id"
-        );
-      },
-      function (err: any) {
-        expect(err).toBeDefined();
-        done();
-      }
-    );
+  it("put two objects with different _id", async () => {
+    const data1 = { _id: "test_id", name: "test" };
+    const data2 = { _id: "other_id", name: "test2" };
+    await database.put(data1);
+    await database.put(data2);
+    const result = await database.get(data1._id);
+    expect(result._id).toBe(data1._id);
+    const result2 = await database.get(data2._id);
+    expect(result2._id).toBe(data2._id);
   });
 
-  it("returns undefined on get by not existing entityId with returnUndefined parameter", function (done) {
-    pouchDatabase.get("some_id", {}, true).then(
-      function (result) {
-        expect(result).toBeUndefined();
-        done();
-      },
-      function (err: any) {
-        fail(err);
-        done();
-      }
-    );
+  it("fails to get by not existing _id", () => {
+    return expectAsync(database.get("some_id")).toBeRejected();
   });
 
-  it("getAll returns all objects", function (done) {
+  it("rejects putting new object with existing _id and no _rev", async () => {
+    const testData = { _id: "test_id", name: "test", count: 42 };
+    const duplicateData = { _id: "test_id", name: "duplicate", count: 43 };
+    await database.put(testData);
+    const result = await database.get(testData._id);
+    expect(result._id).toBe(testData._id);
+    await expectAsync(database.put(duplicateData)).toBeRejected();
+    const result2 = await database.get(testData._id);
+    expect(result2.name).toBe(testData.name);
+  });
+
+  it("removes an existing object", async () => {
+    const id = "test_id";
+    const name = "test";
+    const count = 42;
+    const testData = { _id: id, name: name, count: count };
+    await database.put(testData);
+    await expectAsync(database.get(testData._id)).toBeResolved();
+    const savedDocument = await database.get(testData._id);
+    await database.remove(savedDocument);
+    await expectAsync(database.get(testData._id)).toBeRejected();
+  });
+
+  it("returns undefined on get by not existing entityId with returnUndefined parameter", async () => {
+    const result = await database.get("some_id", {}, true);
+    expect(result).toBeUndefined();
+  });
+
+  it("getAll returns all objects", async () => {
     const testData1 = { _id: "x:test_id", name: "test", count: 42 };
     const testData2 = { _id: "y:two", name: "two" };
-
-    pouchDatabase.put(testData1).then(
-      function () {
-        pouchDatabase.put(testData2).then(
-          function () {
-            pouchDatabase.getAll().then(
-              function (resultData) {
-                expect(
-                  resultData.findIndex((o) => o._id === testData1._id)
-                ).toBeGreaterThan(-1, "testData1 not found in getAll result");
-                expect(
-                  resultData.findIndex((o) => o._id === testData2._id)
-                ).toBeGreaterThan(-1, "testData2 not found in getAll result");
-                expect(resultData.length).toBe(
-                  2,
-                  "getAll result has " +
-                    resultData.length +
-                    " not expected number of objects"
-                );
-                done();
-              },
-              function (err) {
-                expect(false).toBe(true, "getAll failed: " + err);
-                done();
-              }
-            );
-          },
-          function (err) {
-            expect(false).toBe(true, "put failed: " + err);
-            done();
-          }
-        );
-      },
-      function (err) {
-        expect(false).toBe(true, "put failed: " + err);
-        done();
-      }
-    );
+    await database.put(testData1);
+    await database.put(testData2);
+    const result = await database.getAll();
+    expect(result.map((el) => el._id)).toContain(testData1._id);
+    expect(result.map((el) => el._id)).toContain(testData2._id);
+    expect(result.length).toBe(2);
   });
 
-  it("getAll returns prefixed objects", function (done) {
+  it("getAll returns prefixed objects", async () => {
     const testData1 = { _id: "x:test_id", name: "test", count: 42 };
     const testData2 = { _id: "y:two", name: "two" };
     const prefix = "x";
-
-    // default options for "getAll()": this.allDocs({include_docs: true, startkey: prefix, endkey: prefix + '\ufff0'});
-    pouchDatabase.put(testData1).then(
-      () => {
-        pouchDatabase.put(testData2).then(
-          () => {
-            pouchDatabase.getAll(prefix).then(
-              function (resultData) {
-                expect(
-                  resultData.findIndex((o) => o._id === testData1._id)
-                ).toBeGreaterThan(-1, "testData1 not found in getAll result");
-                expect(
-                  resultData.findIndex((o) => o._id === testData2._id)
-                ).toBe(
-                  -1,
-                  "testData2 unexpectedly found in getAll result despite other prefix"
-                );
-                expect(resultData.length).toBe(
-                  1,
-                  "getAll result has " +
-                    resultData.length +
-                    " not expected number of objects"
-                );
-                done();
-              },
-              function (err) {
-                expect(false).toBe(true, "getAll failed: " + err);
-              }
-            );
-          },
-          function (err) {
-            expect(false).toBe(true, "put failed: " + err);
-          }
-        );
-      },
-      function (err) {
-        expect(false).toBe(true, "put failed: " + err);
-      }
-    );
+    await database.put(testData1);
+    await database.put(testData2);
+    const result = await database.getAll(prefix);
+    expect(result.length).toBe(1);
+    expect(result.map((el) => el._id)).toContain(testData1._id);
+    expect(result.map((el) => el._id)).not.toContain(testData2._id);
   });
 
   it("saveDatabaseIndex creates new index", async () => {
     const testIndex = { _id: "_design/test_index", views: { a: {}, b: {} } };
-    spyOn(pouchDatabase, "put").and.resolveTo();
-    const spyOnQuery = spyOn(pouchDatabase, "query").and.resolveTo();
+    spyOn(database, "put").and.resolveTo();
+    const spyOnQuery = spyOn(database, "query").and.resolveTo();
 
-    await pouchDatabase.saveDatabaseIndex(testIndex);
-    expect(pouchDatabase.put).toHaveBeenCalledWith(testIndex);
+    await database.saveDatabaseIndex(testIndex);
+    expect(database.put).toHaveBeenCalledWith(testIndex);
 
     // expect all indices to be queried
     expect(spyOnQuery).toHaveBeenCalledTimes(2);
@@ -216,15 +129,14 @@ describe("PouchDatabase tests", () => {
       _rev: "01",
       views: { a: {} },
     };
-    const mockPouchDb = jasmine.createSpyObj("mockPouchDb", ["get", "put"]);
     // @ts-ignore
-    pouchDatabase._pouchDB = mockPouchDb;
-    mockPouchDb.get.and.resolveTo(existingIndex);
-    spyOn(pouchDatabase, "put").and.resolveTo();
-    const spyOnQuery = spyOn(pouchDatabase, "query").and.resolveTo();
+    const pouchDB = database._pouchDB;
+    spyOn(pouchDB, "get").and.resolveTo(existingIndex);
+    spyOn(database, "put").and.resolveTo();
+    const spyOnQuery = spyOn(database, "query").and.resolveTo();
 
-    await pouchDatabase.saveDatabaseIndex(testIndex);
-    expect(pouchDatabase.put).toHaveBeenCalledWith({
+    await database.saveDatabaseIndex(testIndex);
+    expect(database.put).toHaveBeenCalledWith({
       _id: testIndex._id,
       views: testIndex.views,
       _rev: existingIndex._rev,
@@ -236,6 +148,9 @@ describe("PouchDatabase tests", () => {
       ["test_index/a", { key: "1" }],
       ["test_index/b", { key: "1" }],
     ]);
+
+    // reset pouchDB function
+    pouchDB.get.and.callThrough();
   });
 
   it("saveDatabaseIndex does not update unchanged index", async () => {
@@ -245,26 +160,26 @@ describe("PouchDatabase tests", () => {
       _rev: "01",
       views: testIndex.views,
     };
-    const mockPouchDb = jasmine.createSpyObj("mockPouchDb", ["get", "put"]);
     // @ts-ignore
-    pouchDatabase._pouchDB = mockPouchDb;
-    mockPouchDb.get.and.resolveTo(existingIndex);
-    spyOn(pouchDatabase, "put").and.resolveTo();
+    const pouchDB = database._pouchDB;
+    spyOn(pouchDB, "get").and.resolveTo(existingIndex);
+    spyOn(database, "put").and.resolveTo();
 
-    await pouchDatabase.saveDatabaseIndex(testIndex);
-    expect(pouchDatabase.put).not.toHaveBeenCalled();
+    await database.saveDatabaseIndex(testIndex);
+    expect(database.put).not.toHaveBeenCalled();
+
+    // reset pouchDB function
+    pouchDB.get.and.callThrough();
   });
 
   it("query simply calls through to query", async () => {
     const testQuery = "testquery";
     const testQueryResults = { rows: [] };
-    const mockPouchDb = jasmine.createSpyObj("mockPouchDb", ["query"]);
     // @ts-ignore
-    pouchDatabase._pouchDB = mockPouchDb;
-    mockPouchDb.query.and.resolveTo(testQueryResults);
-
-    const result = await pouchDatabase.query(testQuery, {});
+    const pouchDB = database._pouchDB;
+    spyOn(pouchDB, "query").and.resolveTo(testQueryResults);
+    const result = await database.query(testQuery, {});
     expect(result).toEqual(testQueryResults);
-    expect(mockPouchDb.query).toHaveBeenCalledWith(testQuery, {});
+    expect(pouchDB.query).toHaveBeenCalledWith(testQuery, {});
   });
 });

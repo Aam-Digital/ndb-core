@@ -18,12 +18,14 @@
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { NewLocalSessionService } from "./new-local-session.service";
 import { testSessionServiceImplementation } from "./session.service.spec";
+import { PouchDatabase } from "../../database/pouch-database";
 
 describe("NewLocalSessionService", async () => {
   testSessionServiceImplementation(async () => {
     return new NewLocalSessionService(
       jasmine.createSpyObj(["warn"]),
-      new EntitySchemaService()
+      new EntitySchemaService(),
+      PouchDatabase.createWithInMemoryDB()
     );
   });
 });
