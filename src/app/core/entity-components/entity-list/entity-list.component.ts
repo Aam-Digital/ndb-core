@@ -152,6 +152,7 @@ export class EntityListComponent<T extends Entity>
       this.initDefaultSort();
     }
     this.loadUrlParams();
+    this.paginatorHtmlElement.nativeElement.querySelector('div.mat-select-value > span > span').innerHTML = this.paginator.pageSize == 2147483647? 'All': this.paginator.pageSize;
   }
 
   private initDefaultSort() {
