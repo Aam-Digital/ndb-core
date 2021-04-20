@@ -167,7 +167,7 @@ Texts are not the only thing characterizing an international app. Other data
 has a different expression in different cultures. To enable this, several pipes
 can be used to transform that data automatically. For example:
 
-````html
+````angular2html
 <span>It's a nice day {{today | date}}</span>
 ````
 Will transform the date to different locales.
@@ -183,12 +183,12 @@ are two ICU-standards of interest: Pluralization and Selection
 
 #### Pluralization
 Some phrases contain plurals, such as
-```html
+```angular2html
 <span>The game starts in {{minutesTillStart}} minutes</span>
 ```
 This can produce the incorrect result of "The game starts in 1 minutes". To
 improve this, one should use plural forms. These have the following syntax:
-```html
+```angular2html
 { amount, plural, =0 {none} =1 {one} other {other cases} }
 ```
 **amount** is the selector - how much actually exists. Following this,
@@ -204,11 +204,12 @@ values are
 
 `others` matches all amounts that cannot be matched by anything else. So the
 text above could be pluralized like this:
-````html
+````angular2html
 <span>The game starts { minutesTillStart, plural, 
   =0 {right now}
-  one {in one minute},
-  others {in {{minutesTillStart}} minutes} }</span>
+  one {in one minute}
+  others {in {{minutesTillStart}} minutes} }
+</span>
 ````
 
 #### Selection
@@ -229,18 +230,18 @@ and booleans are known to work well.
 
 ### Do's and don'ts
 
-* Try to keep your translatable texts as simple as possible concerning the
-amount of string-interpolation or computation inside the `{{}}`-Blocks. This
+* Try to keep your translatable texts as simple as possible concerning the 
+  amount of string-interpolation or computation inside the `{{}}`-Blocks. This
   makes it easier for translators
-* Selections can also be used to aid 'string-in-string' interpolation like in
-  the following example:
-  ```html
+* It may be tempting sometimes to do a 'string-in string' interpolation like so:
+  ```angular2html
   <div>
   My cat likes milk {{catLikesCheese ? "and cheese" : ""}}
   </div>
   ```
   This **must** not be done. It is hard for translators to understand what's
-  going on inside the interpolation. Instead, either use a custom getter:
+  going on inside the interpolation and the translated text might not
+  be accepted. Instead, either use a custom getter:
   ```typescript
   get catYumyum(): string {
     return $localize`My cat likes milk${andMore}`;
@@ -249,12 +250,26 @@ amount of string-interpolation or computation inside the `{{}}`-Blocks. This
     return catLikesCheese ? " " + $localize`and cheese` : "";
   }
   ```
-  where both parts can be localized and adjusted individually. It is important
-  to provide a good description here, or use ICU selections:
+  ```angular2html
+  <div>{{catYumYum}}</div>
+  ```
+  where both parts can be localized individually. It is important
+  to provide a good description here.
+  
+  Another possibility is to use the ICU selection syntax:
   ```html
   <div>
   My cat likes milk { catLikesCheese, select, true {And Cheese} false {} }
   </div>
   ```
+* Using the `$localize` function, the placeholders can accept id's that 
+  might simplify the translation process:
+  ```typescript
+  $localize`Hello, ${v123}:HELLO_VAR:`;
+  ```
+  In this example, `HELLO_VAR` is the id for the variable-substitution
+  `v123`. A descriptive id might aid in the translation process.
   
+  This is not possible using the `i18n` tag. In this case, the id
+  will implicitly be `INTERPOLATION`
 
