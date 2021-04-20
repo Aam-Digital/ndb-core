@@ -737,7 +737,6 @@ export const defaultConfig = {
                     },
                     {
                       "input": "text",
-                      "tooltip": "This is a sample toopltip for a textfield. Please enter the native language.",
                       "id": "motherTongue",
                       "placeholder": "Mother Tongue"
                     },
@@ -755,7 +754,6 @@ export const defaultConfig = {
                     },
                     {
                       "input": "configurable-enum-select",
-                      "tooltip": "This is a sample tooltip for a configurable-enum-select-field. Please choose Adahar status.",
                       "id": "has_aadhar",
                       "placeholder": "Aadhar Status",
                       "enumId": "document-status"
