@@ -619,11 +619,11 @@
         </context-group>
         <note priority="1" from="description">Dashbord attendance component subtitle</note>
       </trans-unit>
-      <trans-unit id="3c719df8373b1ae75fe28f86a97482b2de86ba01" datatype="html">
-        <source><x id="START_TAG_APP_SCHOOL_BLOCK" ctype="x-app_school_block" equiv-text="&lt;app-school-block [entityId]=&quot;entity?.schoolId&quot;&gt;"/><x id="CLOSE_TAG_APP_SCHOOL_BLOCK" ctype="x-app_school_block" equiv-text="&lt;/app-school-block&gt;"/>, </source>
+      <trans-unit id="f6b2abdf823eecf3d705ed612512b1b556604d4d" datatype="html">
+        <source><x id="START_PARAGRAPH" ctype="x-p" equiv-text="&lt;p&gt;"/><x id="START_TAG_APP_SCHOOL_BLOCK" ctype="x-app_school_block" equiv-text="&lt;app-school-block [entityId]=&quot;entity?.schoolId&quot;&gt;"/><x id="CLOSE_TAG_APP_SCHOOL_BLOCK" ctype="x-app_school_block" equiv-text="&lt;/app-school-block&gt;"/>, <x id="CLOSE_PARAGRAPH" ctype="x-p" equiv-text="&lt;/p&gt;"/><x id="START_PARAGRAPH" ctype="x-p" equiv-text="&lt;p&gt;"/><x id="START_TAG_APP_SCHOOL_BLOCK_1" ctype="x-app_school_block_1" equiv-text="&lt;app-school-block [entityId]=&quot;entity?.schoolId&quot; [linkDisabled]=&quot;true&quot;&gt;"/><x id="CLOSE_TAG_APP_SCHOOL_BLOCK" ctype="x-app_school_block" equiv-text="&lt;/app-school-block&gt;"/>, class <x id="INTERPOLATION" equiv-text="{{ entity?.schoolClass }}"/> <x id="CLOSE_PARAGRAPH" ctype="x-p" equiv-text="&lt;/p&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/child-block/child-block.component.html</context>
-          <context context-type="linenumber">30,31</context>
+          <context context-type="linenumber">30,35</context>
         </context-group>
         <note priority="1" from="description">format: &apos;&lt;school&gt;, class &lt;class&gt;&apos;</note>
         <note priority="1" from="meaning">The school and class an entity is part of</note>
@@ -1120,49 +1120,44 @@
         <note priority="1" from="description">Format like &apos;Days passed &gt; 5 days&apos;</note>
         <note priority="1" from="meaning">Amount of days back</note>
       </trans-unit>
-      <trans-unit id="3174621570884221301" datatype="html">
-        <source>includes children without a note since the beginning of the week within the last <x id="PH" equiv-text="this.sinceDays"/> days</source>
+      <trans-unit id="6659890782198513905" datatype="html">
+        <source>includes children without a note<x id="sinceBeginningOfWeek" equiv-text="this.sinceBeginningOfTheWeek"/><x id="withinTheLastDays" equiv-text="this.withinTheLastNDays"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/no-recent-notes-dashboard/no-recent-notes-dashboard.component.ts</context>
-          <context context-type="linenumber">92</context>
+          <context context-type="linenumber">90</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component.ts</context>
-          <context context-type="linenumber">65</context>
+          <context context-type="linenumber">63</context>
         </context-group>
+        <note priority="1" from="description">Spaces in front of the variables are added automatically</note>
+        <note priority="1" from="meaning">Tooltip</note>
       </trans-unit>
-      <trans-unit id="7586093367475217632" datatype="html">
-        <source>includes children without a note since the beginning of the week</source>
+      <trans-unit id="4192457106372889898" datatype="html">
+        <source>since the beginning of the week</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/no-recent-notes-dashboard/no-recent-notes-dashboard.component.ts</context>
-          <context context-type="linenumber">94</context>
+          <context context-type="linenumber">97,95</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component.ts</context>
-          <context context-type="linenumber">67</context>
+          <context context-type="linenumber">70,68</context>
         </context-group>
+        <note priority="1" from="description">&apos;includes children without a note since the beginning of the week&apos;</note>
+        <note priority="1" from="meaning">Tooltip-part</note>
       </trans-unit>
-      <trans-unit id="772146065364578499" datatype="html">
-        <source>includes children without a note within the last <x id="PH" equiv-text="this.sinceDays"/> days</source>
+      <trans-unit id="285138170519416351" datatype="html">
+        <source>without a note within the last <x id="PH" equiv-text="this.sinceDays"/> days</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/no-recent-notes-dashboard/no-recent-notes-dashboard.component.ts</context>
-          <context context-type="linenumber">96</context>
+          <context context-type="linenumber">106,104</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component.ts</context>
-          <context context-type="linenumber">69</context>
+          <context context-type="linenumber">79,77</context>
         </context-group>
-      </trans-unit>
-      <trans-unit id="4691211512833209870" datatype="html">
-        <source>includes children without a note</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/no-recent-notes-dashboard/no-recent-notes-dashboard.component.ts</context>
-          <context context-type="linenumber">98</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component.ts</context>
-          <context context-type="linenumber">71</context>
-        </context-group>
+        <note priority="1" from="description">&apos;includes children without a note within the last x days&apos;</note>
+        <note priority="1" from="meaning">Tooltip-part</note>
       </trans-unit>
       <trans-unit id="b7f79581b494b3c992f0af5fc0acc6e002d30432" datatype="html">
         <source> Children <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;subtitle-highlight&quot;&gt;"/>with<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/> recent report </source>

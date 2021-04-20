@@ -22,7 +22,7 @@
 
 ## Elaborate Answer
 
-###The i18n-directive
+### The i18n-directive
 
 The `i18n` directive allows up to three optional arguments. The first two -
 meaning and description - are used to aid translators while analyzing the
@@ -58,7 +58,7 @@ The `i18n` directive can also be used to translate tooltips, titles and other
 attributes of the element. This is done by writing `i18n-title`, 
 `i18n-tooltip`, e.t.c. The rules are the same as for the regular directive.
 
-###The localize-function
+### The localize-function
 
 While html-elements can be marked for translation using the `i18n` directive,
 the same is not true for strings in non-html components. To enable localization
@@ -81,7 +81,7 @@ alertService.warn(
 Variables inside the string can be of arbitrary complexity and are escaped using the
 `${}` syntax.
 
-###Generate translation files
+### Generate translation files
 Once content with the process of marking fields as translatable and providing
 good and understandable meaning to these fields, translation-files can be
 generated. This is done using the `extract-i18n`-script (Can be found in the
@@ -127,7 +127,7 @@ german translation):
 
 If the same is done for all source-tags, the translation-process is done!
 
-###The building process
+### The building process
 To build the app for a specific locale, enter that locale inside 
 [angular.json](../../../angular.json) at
 ```json
@@ -146,7 +146,7 @@ Angular will not translate the components on the fly. Instead, it will
 generate a separate app for each and every component provided in the
 `localize` array.
 
-###Updating a localized file
+### Updating a localized file
 Angular does not natively support updating old files. To do this,
 *xliffmerge* is used. This process takes into account old translations and
 merges them with new translations so that the number of items to translate
@@ -161,7 +161,7 @@ file using Google Translate
   
 * **beautifyOutput** - makes the output more human-readable
 
-###Other types of localization
+### Other types of localization
 
 Texts are not the only thing characterizing an international app. Other data
 has a different expression in different cultures. To enable this, several pipes
@@ -177,7 +177,11 @@ Pre-built pipes are
 * `DecimalPipe`: Transforms a number into a decimal string with given accuracy
 * `PercentPipe`: Transforms a number to a percent-string
 
-###Pluralization
+### ICU-Components
+ICU is another standard that Angular uses to localize strings. There
+are two ICU-standards of interest: Pluralization and Selection
+
+#### Pluralization
 Some phrases contain plurals, such as
 ```html
 <span>The game starts in {{minutesTillStart}} minutes</span>
@@ -207,10 +211,50 @@ text above could be pluralized like this:
   others {in {{minutesTillStart}} minutes} }</span>
 ````
 
-###Do's and don'ts
+#### Selection
+Selection selects one option of a set of selections. A suitable example
+for this is the gender of a person:
+```html
+This is {{person}}. {gender, select, male {He} female {She}} is a nice person.
+```
+
+Can be translated to the variants "This is Tom. He is a nice person" as well as
+"This is Nancy. She is a nice person". The syntax is:
+```html
+{variable, select optionA {value_optionA} optionB {value_optionB} ...}
+```
+The variable's type is arbitrary, however the options have to make sense.
+Types that are known to work well are the standard types of strings, numbers
+and booleans are known to work well.
+
+### Do's and don'ts
 
 * Try to keep your translatable texts as simple as possible concerning the
 amount of string-interpolation or computation inside the `{{}}`-Blocks. This
   makes it easier for translators
+* Selections can also be used to aid 'string-in-string' interpolation like in
+  the following example:
+  ```html
+  <div>
+  My cat likes milk {{catLikesCheese ? "and cheese" : ""}}
+  </div>
+  ```
+  This **must** not be done. It is hard for translators to understand what's
+  going on inside the interpolation. Instead, either use a custom getter:
+  ```typescript
+  get catYumyum(): string {
+    return $localize`My cat likes milk${andMore}`;
+  }
+  get andMore(): string {
+    return catLikesCheese ? " " + $localize`and cheese` : "";
+  }
+  ```
+  where both parts can be localized and adjusted individually. It is important
+  to provide a good description here, or use ICU selections:
+  ```html
+  <div>
+  My cat likes milk { catLikesCheese, select, true {And Cheese} false {} }
+  </div>
+  ```
   
 
