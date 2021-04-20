@@ -7,15 +7,21 @@ import { EventNote } from "../attendance/model/event-note";
 import moment from "moment";
 import { School } from "../schools/model/school";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
+import { GroupingResult, GroupingService } from "./grouping.service";
+import { Gender } from "../children/model/Gender";
 
 describe("ReportingService", () => {
   let service: ReportingService;
   let mockQueryService: jasmine.SpyObj<QueryService>;
-
+  let mockGroupingService: jasmine.SpyObj<GroupingService>;
   beforeEach(() => {
     mockQueryService = jasmine.createSpyObj(["queryData", "loadData"]);
+    mockGroupingService = jasmine.createSpyObj(["groupBy"]);
     TestBed.configureTestingModule({
-      providers: [{ provide: QueryService, useValue: mockQueryService }],
+      providers: [
+        { provide: QueryService, useValue: mockQueryService },
+        { provide: GroupingService, useValue: mockGroupingService },
+      ],
     });
     service = TestBed.inject(ReportingService);
   });
@@ -123,6 +129,29 @@ describe("ReportingService", () => {
       [[firstNestedAggregation], nestedData],
       [[secondNestedAggregation], nestedData],
       [[normalAggregation], baseData],
+    ]);
+  });
+
+  it("should correctly parse groupBy results", async () => {
+    const groupByGenderResult: GroupingResult<Child, "gender">[] = [
+      { values: {}, data: [new Child(), new Child(), new Child()] },
+      { values: { gender: Gender.FEMALE }, data: [new Child(), new Child()] },
+      { values: { gender: Gender.MALE }, data: [new Child()] },
+    ];
+    mockGroupingService.groupBy.and.returnValue(groupByGenderResult);
+    mockQueryService.queryData.and.resolveTo([]);
+    const groupByAggregation: Aggregation = {
+      query: `${Child.ENTITY_TYPE}`,
+      groupBy: "gender",
+      label: "Total # of children",
+    };
+    service.setAggregations([groupByAggregation]);
+
+    const result = await service.calculateReport();
+    expect(result).toEqual([
+      { label: "Total # of children", result: 3 },
+      { label: "Total # of children (F)", result: 2 },
+      { label: "Total # of children (M)", result: 1 },
     ]);
   });
 });

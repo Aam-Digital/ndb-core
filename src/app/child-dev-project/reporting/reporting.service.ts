@@ -1,9 +1,11 @@
 import { Injectable } from "@angular/core";
 import { QueryService } from "./query.service";
 import { ReportRow } from "./reporting/reporting.component";
+import { GroupingService } from "./grouping.service";
 
 export interface Aggregation {
   query: string;
+  groupBy?: string;
   label?: string;
   aggregations?: Aggregation[];
 }
@@ -16,7 +18,10 @@ export class ReportingService {
   private fromDate: Date;
   private toDate: Date;
 
-  constructor(private queryService: QueryService) {}
+  constructor(
+    private queryService: QueryService,
+    private groupingService: GroupingService
+  ) {}
 
   public setAggregations(aggregations: Aggregation[]) {
     this.aggregations = aggregations;
@@ -31,7 +36,7 @@ export class ReportingService {
 
   private async calculateAggregations(
     aggregations: Aggregation[],
-    data?: any
+    data?: any[]
   ): Promise<ReportRow[]> {
     const results: ReportRow[] = [];
     for (const aggregation of aggregations) {
@@ -39,6 +44,11 @@ export class ReportingService {
         this.getQueryWithDates(aggregation.query),
         data
       );
+      if (aggregation.groupBy) {
+        results.push(...this.calculateGroupBy(aggregation, result));
+        continue;
+      }
+
       if (aggregation.label) {
         results.push({ label: aggregation.label, result: result });
       }
@@ -63,5 +73,21 @@ export class ReportingService {
       resultQuery.push(this.toDate);
     }
     return resultQuery;
+  }
+
+  private calculateGroupBy(aggregation: Aggregation, data: any[]): ReportRow[] {
+    const grouping = this.groupingService.groupBy(data, aggregation.groupBy);
+    const results: ReportRow[] = [];
+    grouping.forEach((group) => {
+      if (aggregation.label) {
+        let label = aggregation.label;
+        const values = Object.values(group.values);
+        if (values.length > 0) {
+          label = label + " (" + values.join(", ") + ")";
+        }
+        results.push({ label: label, result: group.data.length });
+      }
+    });
+    return results;
   }
 }
