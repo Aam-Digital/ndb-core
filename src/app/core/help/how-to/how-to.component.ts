@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component } from "@angular/core";
+import { Component, Inject, LOCALE_ID } from "@angular/core";
 
 /**
  * Display markdown formatted help that is dynamically loaded from a file in the assets folder.
@@ -26,4 +26,13 @@ import { Component } from "@angular/core";
   templateUrl: "./how-to.component.html",
   styleUrls: ["./how-to.component.scss"],
 })
-export class HowToComponent {}
+export class HowToComponent {
+  constructor(@Inject(LOCALE_ID) public locale: string) {}
+  get src(): string {
+    if (this.locale === "en-US") {
+      return "assets/How_To.md";
+    } else {
+      return `assets/locale/How_To.${this.locale}.md`;
+    }
+  }
+}
