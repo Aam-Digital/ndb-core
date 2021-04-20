@@ -9,15 +9,8 @@ import {
 import { PreviousSchoolsComponent } from "./previous-schools.component";
 import { ChildrenService } from "../children/children.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
-import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
-import { MockDatabase } from "../../core/database/mock-database";
-import { AlertService } from "../../core/alerts/alert.service";
-import { Database } from "../../core/database/database";
 import { ChildrenModule } from "../children/children.module";
 import { RouterTestingModule } from "@angular/router/testing";
-import { SchoolsService } from "../schools/schools.service";
-import { SessionService } from "../../core/session/session-service/session.service";
-import { ChildPhotoService } from "../children/child-photo-service/child-photo.service";
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
 import { SimpleChange } from "@angular/core";
 import { Child } from "../children/model/child";
@@ -29,29 +22,27 @@ describe("PreviousSchoolsComponent", () => {
   let component: PreviousSchoolsComponent;
   let fixture: ComponentFixture<PreviousSchoolsComponent>;
 
-  const mockedSession = { getCurrentUser: () => "testUser" };
+  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+
   const testChild = new Child("22");
 
   beforeEach(
     waitForAsync(() => {
+      mockChildrenService = jasmine.createSpyObj(["getSchoolsWithRelations"]);
+      mockChildrenService.getSchoolsWithRelations.and.resolveTo([]);
+      mockEntityMapper = jasmine.createSpyObj(["loadType"]);
+      mockEntityMapper.loadType.and.resolveTo([]);
       TestBed.configureTestingModule({
-        declarations: [],
+        declarations: [PreviousSchoolsComponent],
         imports: [
           RouterTestingModule,
           ChildrenModule,
           ConfirmationDialogModule,
         ],
         providers: [
-          { provide: Database, useClass: MockDatabase },
-          { provide: SessionService, useValue: mockedSession },
-          EntityMapperService,
-          EntitySchemaService,
-          AlertService,
-          SchoolsService,
-          {
-            provide: ChildPhotoService,
-            useValue: jasmine.createSpyObj(["getImage"]),
-          },
+          { provide: ChildrenService, useValue: mockChildrenService },
+          { provide: EntityMapperService, useValue: mockEntityMapper },
         ],
       }).compileComponents();
     })
@@ -68,23 +59,15 @@ describe("PreviousSchoolsComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("it calls children service with id from passed child", (done) => {
-    const childrenService = fixture.debugElement.injector.get(ChildrenService);
-    spyOn(component, "loadData").and.callThrough();
-    spyOn(childrenService, "getSchoolsWithRelations").and.callThrough();
-
+  it("it calls children service with id from passed child", fakeAsync(() => {
     component.ngOnChanges({
       child: new SimpleChange(undefined, testChild, false),
     });
-
-    fixture.whenStable().then(() => {
-      expect(component.loadData).toHaveBeenCalledWith(testChild.getId());
-      expect(childrenService.getSchoolsWithRelations).toHaveBeenCalledWith(
-        testChild.getId()
-      );
-      done();
-    });
-  });
+    tick();
+    expect(mockChildrenService.getSchoolsWithRelations).toHaveBeenCalledWith(
+      testChild.getId()
+    );
+  }));
 
   it("should only show columns which are defined by the config", fakeAsync(() => {
     const config: PanelConfig = {

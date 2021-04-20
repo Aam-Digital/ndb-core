@@ -31,10 +31,17 @@ import {
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
-  static create(date: Date, subject: string = ""): Note {
+  static create(
+    date: Date,
+    subject: string = "",
+    children: string[] = []
+  ): Note {
     const instance = new Note();
     instance.date = date;
     instance.subject = subject;
+    for (const child of children) {
+      instance.addChild(child);
+    }
     return instance;
   }
 
@@ -64,6 +71,11 @@ export class Note extends Entity {
    * id referencing a different entity (e.g. a recurring activity) this note is related to
    */
   @DatabaseField() relatesTo: string;
+
+  /**
+   * related school ids (e.g. to infer participants for event roll calls)
+   */
+  @DatabaseField() schools: string[] = [];
 
   @DatabaseField({ dataType: "string" }) warningLevel: WarningLevel =
     WarningLevel.OK;
