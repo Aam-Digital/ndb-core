@@ -257,7 +257,7 @@ and booleans are known to work well.
   to provide a good description here.
   
   Another possibility is to use the ICU selection syntax:
-  ```html
+  ```angular2html
   <div>
   My cat likes milk { catLikesCheese, select, true {And Cheese} false {} }
   </div>
@@ -271,5 +271,5 @@ and booleans are known to work well.
   `v123`. A descriptive id might aid in the translation process.
   
   This is not possible using the `i18n` tag. In this case, the id
-  will implicitly be `INTERPOLATION`
+  will implicitly be `INTERPOLATION` and cannot be changed
 
