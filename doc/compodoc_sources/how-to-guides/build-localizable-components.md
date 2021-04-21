@@ -228,7 +228,7 @@ The variable's type is arbitrary, however the options have to make sense.
 Types that are known to work well are the standard types of strings, numbers
 and booleans are known to work well.
 
-### Do's and don'ts
+### Do's and dont's
 
 * Try to keep your translatable texts as simple as possible concerning the 
   amount of string-interpolation or computation inside the `{{}}`-Blocks. This
@@ -240,8 +240,9 @@ and booleans are known to work well.
   </div>
   ```
   This **must** not be done. It is hard for translators to understand what's
-  going on inside the interpolation and the translated text might not
-  be accepted. Instead, either use a custom getter:
+  going on inside the interpolation, and the translated text might not
+  be accepted by Angular's localize-package. Instead, you could use a 
+  custom getter:
   ```typescript
   get catYumyum(): string {
     return $localize`My cat likes milk${andMore}`;
