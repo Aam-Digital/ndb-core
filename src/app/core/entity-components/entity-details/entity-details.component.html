@@ -42,7 +42,6 @@
   <mat-expansion-panel
     *ngFor="let panelConfig of panels; let i = index"
     [expanded]="i == 0"
-    [title]="panelConfig.title"
     [disabled]="creatingNew && i > 0"
   >
     <mat-expansion-panel-header class="section-header">

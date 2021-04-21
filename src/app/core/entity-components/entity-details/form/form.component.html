@@ -53,6 +53,10 @@
         </div>
 
         <mat-form-field *ngIf="row.input === 'text'">
+          <mat-icon *ngIf="editing && row.tooltip" matSuffix
+            fontIcon="fa-question-circle-o"
+            [matTooltip]="row.tooltip"
+          ></mat-icon>
           <input
             matInput
             [formControlName]="row.id"
@@ -68,6 +72,10 @@
         </mat-form-field>
 
         <mat-form-field *ngIf="row.input === 'textarea'">
+          <mat-icon *ngIf="editing && row.tooltip" matSuffix
+            fontIcon="fa-question-circle-o"
+            [matTooltip]="row.tooltip"
+          ></mat-icon>
           <textarea
             matInput
             [formControlName]="row.id"
@@ -100,12 +108,10 @@
             <mat-datepicker #dateOfBirthDatepicker></mat-datepicker>
           </mat-form-field>
           <mat-form-field style="width: 50px">
-            <div
-              i18n-matTooltip
-              matTooltip="This field is read-only. Edit Date of Birth to change age. Select Jan 1st if you only know the year of birth."
-              matTooltipPosition="above"
-              [matTooltipDisabled]="!editing"
-            >
+            <mat-icon *ngIf="editing && row.tooltip" matSuffix
+              fontIcon="fa-question-circle-o"
+              [matTooltip]="row.tooltip"
+            ></mat-icon>
               <input
                 matInput
                 i18n-placeholder="Placeholder when no age is set"
@@ -114,12 +120,15 @@
                 [value]="calculateAge(dateOfBirth.value)"
                 [disabled]="true"
               />
-            </div>
           </mat-form-field>
         </div>
 
         <div *ngIf="row.input === 'select'">
           <mat-form-field>
+            <mat-icon *ngIf="editing && row.tooltip" matSuffix
+              fontIcon="fa-question-circle-o"
+              [matTooltip]="row.tooltip"
+            ></mat-icon>
             <mat-label>
               {{ row.placeholder }}
             </mat-label>
@@ -133,6 +142,10 @@
 
         <div *ngIf="row.input === 'configurable-enum-select'">
           <mat-form-field>
+            <mat-icon *ngIf="editing && row.tooltip" matSuffix
+              fontIcon="fa-question-circle-o"
+              [matTooltip]="row.tooltip"
+            ></mat-icon>
             <mat-label>
               {{ row.placeholder }}
             </mat-label>
