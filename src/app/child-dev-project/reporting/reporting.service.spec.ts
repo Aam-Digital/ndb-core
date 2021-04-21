@@ -9,6 +9,7 @@ import { School } from "../schools/model/school";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { GroupingResult, GroupingService } from "./grouping.service";
 import { Gender } from "../children/model/Gender";
+import { defaultInteractionTypes } from "../../core/config/default-config/default-interaction-types";
 
 describe("ReportingService", () => {
   let service: ReportingService;
@@ -138,7 +139,6 @@ describe("ReportingService", () => {
       { values: { gender: Gender.MALE }, data: [new Child()] },
     ];
     mockGroupingService.groupBy.and.returnValue(groupByGenderResult);
-    mockQueryService.queryData.and.resolveTo([]);
     const groupByAggregation: Aggregation = {
       query: `${Child.ENTITY_TYPE}`,
       groupBy: ["gender"],
@@ -269,6 +269,37 @@ describe("ReportingService", () => {
       { label: "Total # of children (F, muslim)", result: 1 },
       { label: "Total # of children (M, christian)", result: 1 },
       { label: "Total # of children (M, muslim)", result: 1 },
+    ]);
+  });
+
+  it("should display labels when grouping by a configurable enum", async () => {
+    const schoolClass = defaultInteractionTypes.find(
+      (it) => it.id === "SCHOOL_CLASS"
+    );
+    const coachingClass = defaultInteractionTypes.find(
+      (it) => it.id === "COACHING_CLASS"
+    );
+    const groupByCategory: GroupingResult<EventNote, "category">[] = [
+      { values: {}, data: [new EventNote(), new EventNote(), new EventNote()] },
+      { values: { category: schoolClass }, data: [new EventNote()] },
+      {
+        values: { category: coachingClass },
+        data: [new EventNote(), new EventNote()],
+      },
+    ];
+    mockGroupingService.groupBy.and.returnValue(groupByCategory);
+    const groupByAggregation: Aggregation = {
+      query: `${EventNote.ENTITY_TYPE}`,
+      groupBy: ["category"],
+      label: "Total # of events",
+    };
+    service.setAggregations([groupByAggregation]);
+    const result = await service.calculateReport();
+
+    expect(result).toEqual([
+      { label: "Total # of events", result: 3 },
+      { label: `Total # of events (${schoolClass.label})`, result: 1 },
+      { label: `Total # of events (${coachingClass.label})`, result: 2 },
     ]);
   });
 });

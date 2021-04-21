@@ -112,8 +112,12 @@ export class ReportingService {
 
   private createGroupingLabel(label: string, values: any) {
     let groupingLabel = label;
-    const valuesString = Object.values(values).join(", ");
-    if (valuesString) {
+    let valuesArray = Object.values(values);
+    if (valuesArray.length > 0) {
+      if (valuesArray[0].hasOwnProperty("label")) {
+        valuesArray = valuesArray.map((value) => value["label"]);
+      }
+      const valuesString = valuesArray.join(", ");
       if (label.endsWith(")")) {
         const afterBracketPos = label.lastIndexOf("(") + 1;
         const firstPart = label.slice(0, afterBracketPos);
