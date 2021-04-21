@@ -4,6 +4,7 @@ import { Child } from "../../child-dev-project/children/model/child";
 import { Gender } from "../../child-dev-project/children/model/Gender";
 import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
+import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 
 // prettier-ignore
 export const defaultConfig = {
@@ -1128,7 +1129,18 @@ export const defaultConfig = {
             },
           ]
         },
-
+        {
+          "query": `${EventNote.ENTITY_TYPE}:toArray[*date >= ? & date <= ?]`,
+          "groupBy": ["category"],
+          "label": "Total # of events",
+          "aggregations": [
+            {
+              "query": `:getParticipantsWithAttendance(PRESENT):unique:addPrefix(${Child.ENTITY_TYPE}):toEntities`,
+              "groupBy": ["gender", "religion"],
+              "label": "Total # of participants"
+            }
+          ]
+        }
       ],
     }
   },

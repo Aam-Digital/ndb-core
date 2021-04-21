@@ -46,6 +46,7 @@ export class ReportingComponent implements OnInit, AfterViewInit {
   }
 
   datesSelected() {
+    // TODO allow to only select from date
     if (this.fromDate && this.toDate) {
       this.stepper.linear = false;
       if (this.step >= 2) {
@@ -59,6 +60,9 @@ export class ReportingComponent implements OnInit, AfterViewInit {
 
   async calculateResults() {
     this.reportingService.setAggregations(this.config.aggregationDefinitions);
-    this.results = await this.reportingService.calculateReport();
+    this.results = await this.reportingService.calculateReport(
+      this.fromDate,
+      this.toDate
+    );
   }
 }
