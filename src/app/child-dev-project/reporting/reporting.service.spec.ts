@@ -258,7 +258,6 @@ describe("ReportingService", () => {
     };
     service.setAggregations([nestedGroupBy]);
     const result = await service.calculateReport();
-    console.log("result", result);
 
     expect(result).toEqual([
       { label: "Total # of children", result: 3 },

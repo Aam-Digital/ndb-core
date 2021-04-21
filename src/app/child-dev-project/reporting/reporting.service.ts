@@ -80,7 +80,6 @@ export class ReportingService {
     data: any[]
   ): Promise<ReportRow[]> {
     const grouping = this.groupingService.groupBy(data, ...aggregation.groupBy);
-    console.log("groupings", grouping);
     const results: ReportRow[] = [];
     if (aggregation.label) {
       grouping.forEach((group) => {
@@ -100,7 +99,12 @@ export class ReportingService {
           (res) =>
             (res.label = this.createGroupingLabel(res.label, group.values))
         );
-        results.push(...aggregationResults);
+        const newAggregations = aggregationResults.filter(
+          (aggregation) =>
+            !results.some((res) => res.label === aggregation.label)
+        );
+        console.log("pusing", aggregationResults, newAggregations);
+        results.push(...newAggregations);
       }
     }
     return results;
@@ -108,9 +112,16 @@ export class ReportingService {
 
   private createGroupingLabel(label: string, values: any) {
     let groupingLabel = label;
-    const valuesArray = Object.values(values);
-    if (valuesArray.length > 0) {
-      groupingLabel = groupingLabel + " (" + valuesArray.join(", ") + ")";
+    const valuesString = Object.values(values).join(", ");
+    if (valuesString) {
+      if (label.endsWith(")")) {
+        const afterBracketPos = label.lastIndexOf("(") + 1;
+        const firstPart = label.slice(0, afterBracketPos);
+        const secondPart = label.slice(afterBracketPos);
+        groupingLabel = firstPart + valuesString + ", " + secondPart;
+      } else {
+        groupingLabel = groupingLabel + " (" + valuesString + ")";
+      }
     }
     return groupingLabel;
   }
