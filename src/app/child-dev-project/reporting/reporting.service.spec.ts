@@ -302,4 +302,26 @@ describe("ReportingService", () => {
       { label: `Total # of events (${coachingClass.label})`, result: 2 },
     ]);
   });
+
+  it("should display an explanation when a groupBy-group has no value", async () => {
+    const groupByMedium: GroupingResult<School, "medium">[] = [
+      { values: {}, data: [new School(), new School()] },
+      { values: { medium: "Hindi" }, data: [new School()] },
+      { values: { medium: "" }, data: [new School()] },
+    ];
+    mockGroupingService.groupBy.and.returnValue(groupByMedium);
+    const groupByAggregation: Aggregation = {
+      query: `${School.ENTITY_TYPE}`,
+      groupBy: ["medium"],
+      label: "Total # of schools",
+    };
+    service.setAggregations([groupByAggregation]);
+
+    const result = await service.calculateReport();
+    expect(result).toEqual([
+      { label: "Total # of schools", result: 2 },
+      { label: "Total # of schools (Hindi)", result: 1 },
+      { label: "Total # of schools (without medium)", result: 1 },
+    ]);
+  });
 });

@@ -103,7 +103,6 @@ export class ReportingService {
           (aggregation) =>
             !results.some((res) => res.label === aggregation.label)
         );
-        console.log("pusing", aggregationResults, newAggregations);
         results.push(...newAggregations);
       }
     }
@@ -112,12 +111,19 @@ export class ReportingService {
 
   private createGroupingLabel(label: string, values: any) {
     let groupingLabel = label;
-    let valuesArray = Object.values(values);
-    if (valuesArray.length > 0) {
-      if (valuesArray[0].hasOwnProperty("label")) {
-        valuesArray = valuesArray.map((value) => value["label"]);
-      }
-      const valuesString = valuesArray.join(", ");
+    let valuesString = Object.keys(values)
+      .map((key) => {
+        let value = values[key];
+        if (value.hasOwnProperty("label")) {
+          value = value.label;
+        }
+        if (!value) {
+          value = `without ${key}`;
+        }
+        return value;
+      })
+      .join(", ");
+    if (valuesString) {
       if (label.endsWith(")")) {
         const afterBracketPos = label.lastIndexOf("(") + 1;
         const firstPart = label.slice(0, afterBracketPos);
