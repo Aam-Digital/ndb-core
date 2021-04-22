@@ -22,21 +22,24 @@ export type GroupingResult<T, K extends keyof T> = {
 };
 
 class Grouping<T, K extends keyof T> {
-  all: T[] = [];
-  groups: { value: T[K]; data: Grouping<T, K> }[] = [];
-  readonly currentProperty: K;
-  readonly nextProperties: K[];
+  private all: T[] = [];
+  private allGroup: Grouping<T, K>;
+  private groups: { value: T[K]; data: Grouping<T, K> }[] = [];
+  private readonly currentProperty: K;
+  private readonly nextProperties: K[];
 
   constructor(properties: K[]) {
     if (properties.length > 0) {
       this.currentProperty = properties[0];
       this.nextProperties = properties.slice(1);
+      this.allGroup = new Grouping<T, K>(this.nextProperties);
     }
   }
 
   public add(element: T) {
     this.all.push(element);
     if (this.currentProperty) {
+      this.allGroup.add(element);
       const existing = this.groups.find(
         (group) => group.value === element[this.currentProperty]
       );
@@ -54,14 +57,20 @@ class Grouping<T, K extends keyof T> {
   }
 
   public flatten(): GroupingResult<T, K>[] {
-    const flattened: GroupingResult<T, K>[] = [{ values: {}, data: this.all }];
-    this.groups.forEach((group) => {
-      const flattenedGroup = group.data.flatten();
-      flattenedGroup.forEach(
-        ({ values }) => (values[this.currentProperty] = group.value)
-      );
-      flattened.push(...flattenedGroup);
-    });
+    const flattened: GroupingResult<T, K>[] = [];
+    if (this.currentProperty) {
+      flattened.push(...this.allGroup.flatten());
+      this.groups.forEach((group) => {
+        const flattenedGroup = group.data.flatten();
+        flattenedGroup.forEach(
+          ({ values }) => (values[this.currentProperty] = group.value)
+        );
+        flattened.push(...flattenedGroup);
+      });
+    } else {
+      // Only leaf nodes return data
+      flattened.push({ values: {}, data: this.all });
+    }
     return flattened;
   }
 }

@@ -76,7 +76,7 @@ describe("GroupingService", () => {
 
     const grouping = service.groupBy(children, "gender", "religion");
 
-    expect(grouping).toHaveSize(6);
+    expect(grouping).toHaveSize(8);
     expect(grouping).toContain({
       values: {},
       data: jasmine.arrayWithExactContents(children),
@@ -94,6 +94,18 @@ describe("GroupingService", () => {
         femaleMuslimChild,
         femaleChristianChild,
       ]),
+    });
+    expect(grouping).toContain({
+      values: { religion: "christian" },
+      data: jasmine.arrayWithExactContents([
+        maleChristianChild,
+        maleChristianChild2,
+        femaleChristianChild,
+      ]),
+    });
+    expect(grouping).toContain({
+      values: { religion: "muslim" },
+      data: jasmine.arrayWithExactContents([femaleMuslimChild]),
     });
     expect(grouping).toContain({
       values: { gender: Gender.MALE, religion: "christian" },
