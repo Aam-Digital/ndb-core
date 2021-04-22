@@ -9,10 +9,10 @@ export class GroupingService {
   public groupBy<T, K extends keyof T>(
     data: T[],
     ...properties: K[]
-  ): GroupingResult<T, K>[] {
+  ): GroupingResultNode<T, K> {
     const propertyGrouping = new Grouping<T, K>(properties);
     data.forEach((el) => propertyGrouping.add(el));
-    return propertyGrouping.flatten();
+    return propertyGrouping.createGroupingTree();
   }
 }
 
@@ -21,7 +21,15 @@ export type GroupingResult<T, K extends keyof T> = {
   data: T[];
 };
 
-class Grouping<T, K extends keyof T> {
+export type GroupingResultNode<T, K extends keyof T> = {
+  all: T[];
+  subGroups?: {
+    values: { [key in K]?: T[K] };
+    group: GroupingResultNode<T, K>;
+  }[];
+};
+
+export class Grouping<T, K extends keyof T> {
   private all: T[] = [];
   private allGroup: Grouping<T, K>;
   private groups: { value: T[K]; data: Grouping<T, K> }[] = [];
@@ -54,6 +62,20 @@ class Grouping<T, K extends keyof T> {
         newGrouping.add(element);
       }
     }
+  }
+
+  public createGroupingTree(): GroupingResultNode<T, K> {
+    const groupingResult: GroupingResultNode<T, K> = {
+      all: this.all,
+    };
+    const subgroup: {
+      values: { [key in K]?: T[K] };
+      group: GroupingResultNode<T, K>;
+    }[] = [];
+    if (this.allGroup) {
+      subgroup.push(...this.allGroup.createGroupingTree().subGroups);
+    }
+    return null;
   }
 
   public flatten(): GroupingResult<T, K>[] {

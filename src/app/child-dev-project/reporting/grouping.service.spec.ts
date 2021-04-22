@@ -45,24 +45,28 @@ describe("GroupingService", () => {
 
     const grouping = service.groupBy(children, "gender");
 
-    expect(grouping).toHaveSize(3);
-    expect(grouping).toContain({
-      values: {},
-      data: jasmine.arrayWithExactContents(children),
-    });
-    expect(grouping).toContain({
-      values: { gender: Gender.MALE },
-      data: jasmine.arrayWithExactContents([
-        maleChristianChild2,
-        maleChristianChild,
-      ]),
-    });
-    expect(grouping).toContain({
-      values: { gender: Gender.FEMALE },
-      data: jasmine.arrayWithExactContents([
-        femaleChristianChild,
-        femaleMuslimChild,
-      ]),
+    expect(grouping).toEqual({
+      all: jasmine.arrayWithExactContents(children),
+      subGroups: [
+        {
+          values: { gender: Gender.MALE },
+          group: {
+            all: jasmine.arrayWithExactContents([
+              maleChristianChild2,
+              maleChristianChild,
+            ]),
+          },
+        },
+        {
+          values: { gender: Gender.FEMALE },
+          group: {
+            all: jasmine.arrayWithExactContents([
+              maleChristianChild2,
+              maleChristianChild,
+            ]),
+          },
+        },
+      ],
     });
   });
 

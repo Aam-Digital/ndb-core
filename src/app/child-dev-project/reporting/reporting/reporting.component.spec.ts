@@ -5,13 +5,13 @@ import {
   tick,
 } from "@angular/core/testing";
 
-import { ReportingComponent, ReportRow } from "./reporting.component";
+import { ReportingComponent } from "./reporting.component";
 import { CommonModule } from "@angular/common";
 import { ReportingModule } from "../reporting.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Subject } from "rxjs";
 import { ActivatedRoute } from "@angular/router";
-import { ReportingService } from "../reporting.service";
+import { ReportingService, ReportRow } from "../reporting.service";
 import { MatNativeDateModule } from "@angular/material/core";
 
 describe("ReportingComponent", () => {
@@ -58,7 +58,9 @@ describe("ReportingComponent", () => {
   }));
 
   it("should display the report results", fakeAsync(() => {
-    const results: ReportRow[] = [{ label: "test label", result: 1 }];
+    const results: ReportRow[] = [
+      { header: { label: "test label", result: 1 } },
+    ];
     mockReportingService.calculateReport.and.resolveTo(results);
     mockRouteData.next({ aggregationDefinitions: null });
     component.calculateResults();

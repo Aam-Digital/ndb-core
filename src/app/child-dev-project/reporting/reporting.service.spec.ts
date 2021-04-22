@@ -58,8 +58,8 @@ describe("ReportingService", () => {
       [[muslimsQuery], baseData],
     ]);
     expect(report).toEqual([
-      { label: "christians", result: 1 },
-      { label: "muslims", result: 2 },
+      { header: { label: "christians", result: 1 } },
+      { header: { label: "muslims", result: 2 } },
     ]);
   });
 
@@ -118,10 +118,10 @@ describe("ReportingService", () => {
         case nestedBaseQuery:
           return Promise.resolve(nestedData);
         default:
-          return Promise.resolve();
+          return Promise.resolve(1);
       }
     });
-    await service.calculateReport();
+    const result = await service.calculateReport();
     expect(mockQueryService.loadData).toHaveBeenCalled();
     expect(mockQueryService.queryData.calls.allArgs()).toEqual([
       [[baseQuery], undefined],
@@ -130,10 +130,25 @@ describe("ReportingService", () => {
       [[secondNestedAggregation], nestedData],
       [[normalAggregation], baseData],
     ]);
+    expect(result).toEqual([
+      {
+        header: {
+          label: "First nested aggregation",
+          result: 1,
+        },
+      },
+      {
+        header: {
+          label: "Second nested aggregation",
+          result: 1,
+        },
+      },
+      { header: { label: "Normal aggregation", result: 1 } },
+    ]);
   });
 
   it("should correctly parse groupBy results", async () => {
-    const groupByGenderResult: GroupingResult<Child, "gender">[] = [
+    const groupByGenderResult: any = [
       { values: {}, data: [new Child(), new Child(), new Child()] },
       { values: { gender: Gender.FEMALE }, data: [new Child(), new Child()] },
       { values: { gender: Gender.MALE }, data: [new Child()] },
@@ -147,15 +162,20 @@ describe("ReportingService", () => {
     service.setAggregations([groupByAggregation]);
 
     const result = await service.calculateReport();
+    console.log("result", result);
     expect(result).toEqual([
-      { label: "Total # of children", result: 3 },
-      { label: "Total # of children (F)", result: 2 },
-      { label: "Total # of children (M)", result: 1 },
+      {
+        header: { label: "Total # of children", result: 3 },
+        subRows: [
+          { header: { label: "Total # of children (F)", result: 2 } },
+          { header: { label: "Total # of children (M)", result: 1 } },
+        ],
+      },
     ]);
   });
 
   it("should run aggregations after a groupBy", async () => {
-    const groupByGenderResult: GroupingResult<Child, "gender">[] = [
+    const groupByGenderResult: any = [
       { values: {}, data: [new Child(), new Child(), new Child()] },
       { values: { gender: Gender.FEMALE }, data: [new Child(), new Child()] },
       { values: { gender: Gender.MALE }, data: [new Child()] },
@@ -174,20 +194,17 @@ describe("ReportingService", () => {
     const result = await service.calculateReport();
 
     expect(result).toEqual([
-      { label: "Total # of children", result: 3 },
-      { label: "Total # of children (F)", result: 2 },
-      { label: "Total # of children (M)", result: 1 },
-      { label: "Total # of christians", result: 1 },
-      { label: "Total # of christians (F)", result: 1 },
-      { label: "Total # of christians (M)", result: 1 },
+      { header: { label: "Total # of children", result: 3 } },
+      { header: { label: "Total # of children (F)", result: 2 } },
+      { header: { label: "Total # of children (M)", result: 1 } },
+      { header: { label: "Total # of christians", result: 1 } },
+      { header: { label: "Total # of christians (F)", result: 1 } },
+      { header: { label: "Total # of christians (M)", result: 1 } },
     ]);
   });
 
   it("should support groupBy with an array of values", async () => {
-    const groupByGenderAndReligion: GroupingResult<
-      Child,
-      "gender" | "religion"
-    >[] = [
+    const groupByGenderAndReligion: any = [
       { values: {}, data: [new Child(), new Child(), new Child()] },
       { values: { gender: Gender.FEMALE }, data: [new Child(), new Child()] },
       { values: { gender: Gender.MALE }, data: [new Child()] },
@@ -215,22 +232,22 @@ describe("ReportingService", () => {
     const result = await service.calculateReport();
 
     expect(result).toEqual([
-      { label: "Total # of children", result: 3 },
-      { label: "Total # of children (F)", result: 2 },
-      { label: "Total # of children (M)", result: 1 },
-      { label: "Total # of children (M, christian)", result: 1 },
-      { label: "Total # of children (F, muslim)", result: 1 },
-      { label: "Total # of children (F, christian)", result: 1 },
+      { header: { label: "Total # of children", result: 3 } },
+      { header: { label: "Total # of children (F)", result: 2 } },
+      { header: { label: "Total # of children (M)", result: 1 } },
+      { header: { label: "Total # of children (M, christian)", result: 1 } },
+      { header: { label: "Total # of children (F, muslim)", result: 1 } },
+      { header: { label: "Total # of children (F, christian)", result: 1 } },
     ]);
   });
 
   it("should allow multiple groupBy's", async () => {
-    const groupByGender: GroupingResult<Child, "gender">[] = [
+    const groupByGender: any = [
       { values: {}, data: [new Child(), new Child(), new Child()] },
       { values: { gender: Gender.FEMALE }, data: [new Child(), new Child()] },
       { values: { gender: Gender.MALE }, data: [new Child()] },
     ];
-    const groupByReligion: GroupingResult<Child, "religion">[] = [
+    const groupByReligion: any = [
       { values: {}, data: [new Child(), new Child()] },
       { values: { religion: "christian" }, data: [new Child()] },
       { values: { religion: "muslim" }, data: [new Child()] },
@@ -260,15 +277,15 @@ describe("ReportingService", () => {
     const result = await service.calculateReport();
 
     expect(result).toEqual([
-      { label: "Total # of children", result: 3 },
-      { label: "Total # of children (F)", result: 2 },
-      { label: "Total # of children (M)", result: 1 },
-      { label: "Total # of children (christian)", result: 1 },
-      { label: "Total # of children (muslim)", result: 1 },
-      { label: "Total # of children (F, christian)", result: 1 },
-      { label: "Total # of children (F, muslim)", result: 1 },
-      { label: "Total # of children (M, christian)", result: 1 },
-      { label: "Total # of children (M, muslim)", result: 1 },
+      { header: { label: "Total # of children", result: 3 } },
+      { header: { label: "Total # of children (F)", result: 2 } },
+      { header: { label: "Total # of children (M)", result: 1 } },
+      { header: { label: "Total # of children (christian)", result: 1 } },
+      { header: { label: "Total # of children (muslim)", result: 1 } },
+      { header: { label: "Total # of children (F, christian)", result: 1 } },
+      { header: { label: "Total # of children (F, muslim)", result: 1 } },
+      { header: { label: "Total # of children (M, christian)", result: 1 } },
+      { header: { label: "Total # of children (M, muslim)", result: 1 } },
     ]);
   });
 
@@ -279,7 +296,7 @@ describe("ReportingService", () => {
     const coachingClass = defaultInteractionTypes.find(
       (it) => it.id === "COACHING_CLASS"
     );
-    const groupByCategory: GroupingResult<EventNote, "category">[] = [
+    const groupByCategory: any = [
       { values: {}, data: [new EventNote(), new EventNote(), new EventNote()] },
       { values: { category: schoolClass }, data: [new EventNote()] },
       {
@@ -297,14 +314,24 @@ describe("ReportingService", () => {
     const result = await service.calculateReport();
 
     expect(result).toEqual([
-      { label: "Total # of events", result: 3 },
-      { label: `Total # of events (${schoolClass.label})`, result: 1 },
-      { label: `Total # of events (${coachingClass.label})`, result: 2 },
+      { header: { label: "Total # of events", result: 3 } },
+      {
+        header: {
+          label: `Total # of events (${schoolClass.label})`,
+          result: 1,
+        },
+      },
+      {
+        header: {
+          label: `Total # of events (${coachingClass.label})`,
+          result: 2,
+        },
+      },
     ]);
   });
 
   it("should display an explanation when a groupBy-group has no value", async () => {
-    const groupByMedium: GroupingResult<School, "medium">[] = [
+    const groupByMedium: any = [
       { values: {}, data: [new School(), new School()] },
       { values: { medium: "Hindi" }, data: [new School()] },
       { values: { medium: "" }, data: [new School()] },
@@ -319,9 +346,9 @@ describe("ReportingService", () => {
 
     const result = await service.calculateReport();
     expect(result).toEqual([
-      { label: "Total # of schools", result: 2 },
-      { label: "Total # of schools (Hindi)", result: 1 },
-      { label: "Total # of schools (without medium)", result: 1 },
+      { header: { label: "Total # of schools", result: 2 } },
+      { header: { label: "Total # of schools (Hindi)", result: 1 } },
+      { header: { label: "Total # of schools (without medium)", result: 1 } },
     ]);
   });
 });

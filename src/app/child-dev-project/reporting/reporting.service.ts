@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { QueryService } from "./query.service";
-import { ReportRow } from "./reporting/reporting.component";
 import { GroupingService } from "./grouping.service";
 
 export interface Aggregation {
@@ -8,6 +7,11 @@ export interface Aggregation {
   groupBy?: string[];
   label?: string;
   aggregations?: Aggregation[];
+}
+
+export interface ReportRow {
+  header: { label: string; result: any };
+  subRows?: ReportRow[];
 }
 
 @Injectable({
@@ -50,7 +54,7 @@ export class ReportingService {
       }
 
       if (aggregation.label) {
-        results.push({ label: aggregation.label, result: result });
+        results.push({ header: { label: aggregation.label, result: result } });
       }
       if (aggregation.aggregations) {
         results.push(
@@ -79,31 +83,42 @@ export class ReportingService {
     aggregation: Aggregation,
     data: any[]
   ): Promise<ReportRow[]> {
-    const grouping = this.groupingService.groupBy(data, ...aggregation.groupBy);
+    const grouping = this.groupingService.groupBy(
+      data,
+      ...aggregation.groupBy
+    ) as any;
     const results: ReportRow[] = [];
-    if (aggregation.label) {
-      grouping.forEach((group) => {
-        results.push({
-          label: this.createGroupingLabel(aggregation.label, group.values),
-          result: group.data.length,
-        });
-      });
-    }
-    if (aggregation.aggregations) {
-      for (const group of grouping) {
+    for (const group of grouping) {
+      let aggregationSubgroups: ReportRow[];
+      if (aggregation.aggregations) {
         const aggregationResults = await this.calculateAggregations(
           aggregation.aggregations,
           group.data
         );
         aggregationResults.forEach(
           (res) =>
-            (res.label = this.createGroupingLabel(res.label, group.values))
+            (res.header.label = this.createGroupingLabel(
+              res.header.label,
+              group.values
+            ))
         );
-        const newAggregations = aggregationResults.filter(
+        aggregationSubgroups = aggregationResults.filter(
           (aggregation) =>
-            !results.some((res) => res.label === aggregation.label)
+            !results.some(
+              (res) => res.header.label === aggregation.header.label
+            )
         );
-        results.push(...newAggregations);
+      }
+      if (aggregation.label) {
+        results.push({
+          header: {
+            label: this.createGroupingLabel(aggregation.label, group.values),
+            result: group.data.length,
+          },
+          subRows: aggregationSubgroups,
+        });
+      } else {
+        results.push(...aggregationSubgroups);
       }
     }
     return results;
@@ -114,7 +129,7 @@ export class ReportingService {
     let valuesString = Object.keys(values)
       .map((key) => {
         let value = values[key];
-        if (value.hasOwnProperty("label")) {
+        if (value?.hasOwnProperty("label")) {
           value = value.label;
         }
         if (!value) {
@@ -125,6 +140,7 @@ export class ReportingService {
       .join(", ");
     if (valuesString) {
       if (label.endsWith(")")) {
+        // TODO Bug when a bracket is in the label
         const afterBracketPos = label.lastIndexOf("(") + 1;
         const firstPart = label.slice(0, afterBracketPos);
         const secondPart = label.slice(afterBracketPos);

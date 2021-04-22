@@ -1,15 +1,10 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { Aggregation, ReportingService } from "../reporting.service";
+import { Aggregation, ReportingService, ReportRow } from "../reporting.service";
 import { MatStepper } from "@angular/material/stepper";
 
 export interface ReportingComponentConfig {
   aggregationDefinitions?: Aggregation[];
-}
-
-export interface ReportRow {
-  label: string;
-  result: any;
 }
 
 @Component({
