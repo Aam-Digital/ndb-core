@@ -84,7 +84,7 @@ describe("ChildrenListComponent", () => {
     ["getChildren"]
   );
   const mockEntityMapper: jasmine.SpyObj<EntityMapperService> = jasmine.createSpyObj(
-    ["load", "save"]
+    ["loadType", "save"]
   );
   beforeEach(
     waitForAsync(() => {
