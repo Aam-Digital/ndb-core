@@ -240,12 +240,6 @@ export class AttendanceService {
         "activities_index/by_school",
         currentRelation.schoolId
       );
-      // Some debugging code to find the reason why the CI fails sometimes
-      console.log(
-        "loaded activities",
-        JSON.stringify(currentRelation),
-        JSON.stringify(activitiesThroughRelation)
-      );
       for (const activityThroughRelation of activitiesThroughRelation) {
         if (
           !activities.some((a) => a.getId() === activityThroughRelation.getId())

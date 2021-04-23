@@ -214,7 +214,7 @@ describe("AttendanceService", () => {
     expectEntitiesToMatch(actual, [testActivity1]); // and does not include defaults activity1 or activity2
   });
 
-  it("should return activities of a school that the child currently visits", async () => {
+  it("should return activities of a school that the child currently visits", (done) => {
     const childSchoolRelation = new ChildSchoolRelation();
     childSchoolRelation.childId = "test child";
     childSchoolRelation.schoolId = "test school";
@@ -225,13 +225,17 @@ describe("AttendanceService", () => {
     spyOn(TestBed.inject(ChildrenService), "queryRelationsOf").and.resolveTo([
       childSchoolRelation,
     ]);
-    await entityMapper.save(testActivity);
+    entityMapper.save(testActivity);
 
-    const activities = await service.getActivitiesForChild("test child");
-    expectEntitiesToMatch(activities, [testActivity]);
+    setTimeout(() => {
+      service.getActivitiesForChild("test child").then((activities) => {
+        expectEntitiesToMatch(activities, [testActivity]);
+        done();
+      });
+    });
   });
 
-  it("should only return activities for active schools", async () => {
+  it("should only return activities for active schools", (done) => {
     const activeRelation1 = new ChildSchoolRelation();
     activeRelation1.childId = "test child";
     activeRelation1.schoolId = "active school 1";
@@ -258,13 +262,16 @@ describe("AttendanceService", () => {
       inactiveRelation,
       activeRelation2,
     ]);
-    await entityMapper.save(activeActivity1);
-    await entityMapper.save(activeActivity2);
-    await entityMapper.save(inactiveActivity);
+    entityMapper.save(activeActivity1);
+    entityMapper.save(activeActivity2);
+    entityMapper.save(inactiveActivity);
 
-    const activities = await service.getActivitiesForChild("test child");
-
-    expectEntitiesToMatch(activities, [activeActivity1, activeActivity2]);
+    setTimeout(() => {
+      service.getActivitiesForChild("test child").then((activities) => {
+        expectEntitiesToMatch(activities, [activeActivity1, activeActivity2]);
+        done();
+      });
+    });
   });
 
   it("should not return the same activity multiple times", async () => {
