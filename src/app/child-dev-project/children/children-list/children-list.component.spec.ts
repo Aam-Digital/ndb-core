@@ -88,6 +88,7 @@ describe("ChildrenListComponent", () => {
   );
   beforeEach(
     waitForAsync(() => {
+      mockEntityMapper.loadType.and.resolveTo([]);
       const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
       mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
       mockChildrenService.getChildren.and.returnValue(of([]));
@@ -139,7 +140,6 @@ describe("ChildrenListComponent", () => {
     const child1 = new Child("c1");
     const child2 = new Child("c2");
     mockChildrenService.getChildren.and.returnValue(of([child1, child2]));
-    mockEntityMapper.load.and.returnValue(Promise.reject());
     component.ngOnInit();
     tick();
     expect(mockChildrenService.getChildren).toHaveBeenCalled();
@@ -156,19 +156,16 @@ describe("ChildrenListComponent", () => {
   it("should create a filter with all available schools", fakeAsync(() => {
     const school = new School("test");
     school.name = "Test";
-    const child = new Child();
-    child.schoolId = school.getId();
-    mockEntityMapper.load.and.returnValue(Promise.resolve(school));
-    mockChildrenService.getChildren.and.returnValue(of([child]));
+    mockEntityMapper.loadType.and.resolveTo([school]);
     component.ngOnInit();
     tick();
     const schoolFilter = component.listConfig.filters.find(
       (f) => f.id === "school"
     ) as PrebuiltFilterConfig<Child>;
     expect(schoolFilter.options.length).toBe(2);
-    expect(schoolFilter.options[0].key).toBe("test");
-    expect(schoolFilter.options[0].label).toBe("Test");
-    expect(schoolFilter.options[1].key).toBe("");
-    expect(schoolFilter.options[1].label).toBe("All");
+    expect(schoolFilter.options[0].key).toBe("");
+    expect(schoolFilter.options[0].label).toBe("All");
+    expect(schoolFilter.options[1].key).toBe("test");
+    expect(schoolFilter.options[1].label).toBe("Test");
   }));
 });
