@@ -309,6 +309,8 @@ export class EntityListComponent<T extends Entity>
         display: filter.display,
       };
       fs.filterSettings.options = this.initFilterOptions(filter);
+
+      // Filters should only be added, if they have more than one (the default) option
       if (fs.filterSettings.options?.length > 0) {
         fs.selectedOption = filter.hasOwnProperty("default")
           ? filter.default
