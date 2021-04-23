@@ -231,9 +231,11 @@ export class AttendanceService {
       childId
     );
 
-    const visitedSchools = (
-      await this.childrenService.queryRelationsOf("child", childId)
-    ).filter((relation) => relation.isActive());
+    let visitedSchools = await this.childrenService.queryRelationsOf("child", childId);
+    // Some debugging code to find the reason why the CI fails sometimes
+    console.log("visited schools", visitedSchools);
+    visitedSchools = visitedSchools.filter((relation) => relation.isActive());
+    console.log("active schools", visitedSchools)
     for (const currentRelation of visitedSchools) {
       const activitiesThroughRelation = await this.dbIndexing.queryIndexDocs(
         RecurringActivity,
