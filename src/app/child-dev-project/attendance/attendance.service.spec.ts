@@ -216,11 +216,11 @@ describe("AttendanceService", () => {
 
   it("should return activities of a school that the child currently visits", (done) => {
     const childSchoolRelation = new ChildSchoolRelation();
-    childSchoolRelation.childId = "test child";
-    childSchoolRelation.schoolId = "test school";
+    childSchoolRelation.childId = "testChild";
+    childSchoolRelation.schoolId = "testSchool";
     childSchoolRelation.start = new Date("2020-01-01");
     const testActivity = RecurringActivity.create("new activity");
-    testActivity.linkedGroups.push("test school");
+    testActivity.linkedGroups.push("testSchool");
 
     spyOn(TestBed.inject(ChildrenService), "queryRelationsOf").and.resolveTo([
       childSchoolRelation,
@@ -228,7 +228,7 @@ describe("AttendanceService", () => {
     entityMapper.save(testActivity);
 
     setTimeout(() => {
-      service.getActivitiesForChild("test child").then((activities) => {
+      service.getActivitiesForChild("testChild").then((activities) => {
         expectEntitiesToMatch(activities, [testActivity]);
         done();
       });
@@ -237,16 +237,16 @@ describe("AttendanceService", () => {
 
   it("should only return activities for active schools", (done) => {
     const activeRelation1 = new ChildSchoolRelation();
-    activeRelation1.childId = "test child";
-    activeRelation1.schoolId = "active school 1";
+    activeRelation1.childId = "testChild";
+    activeRelation1.schoolId = "activeSchool1";
     activeRelation1.start = moment().subtract(1, "month").toDate();
     const activeRelation2 = new ChildSchoolRelation();
-    activeRelation2.childId = "test child";
-    activeRelation2.schoolId = "active school 2";
+    activeRelation2.childId = "testChild";
+    activeRelation2.schoolId = "activeSchool2";
     activeRelation2.start = new Date();
     const inactiveRelation = new ChildSchoolRelation();
-    inactiveRelation.childId = "test child";
-    inactiveRelation.schoolId = "inactive school";
+    inactiveRelation.childId = "testChild";
+    inactiveRelation.schoolId = "inactiveSchool";
     inactiveRelation.start = moment().subtract(1, "year").toDate();
     inactiveRelation.end = moment().subtract(1, "month").toDate();
 
@@ -267,7 +267,7 @@ describe("AttendanceService", () => {
     entityMapper.save(inactiveActivity);
 
     setTimeout(() => {
-      service.getActivitiesForChild("test child").then((activities) => {
+      service.getActivitiesForChild("testChild").then((activities) => {
         expectEntitiesToMatch(activities, [activeActivity1, activeActivity2]);
         done();
       });

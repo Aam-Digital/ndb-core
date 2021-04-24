@@ -153,19 +153,24 @@ describe("ChildrenListComponent", () => {
     expect(router.navigate).toHaveBeenCalledWith(["/child", "childId"]);
   });
 
-  it("should create a filter with all available schools", fakeAsync(() => {
-    const school = new School("test");
-    school.name = "Test";
-    mockEntityMapper.loadType.and.resolveTo([school]);
+  it("should create a filter with all schools sorted by names", fakeAsync(() => {
+    const firstSchool = new School("a test");
+    firstSchool.name = "A Test";
+    const secondSchool = new School("test");
+    secondSchool.name = "Test";
+
+    mockEntityMapper.loadType.and.resolveTo([secondSchool, firstSchool]);
     component.ngOnInit();
     tick();
     const schoolFilter = component.listConfig.filters.find(
       (f) => f.id === "school"
     ) as PrebuiltFilterConfig<Child>;
-    expect(schoolFilter.options.length).toBe(2);
+    expect(schoolFilter.options.length).toBe(3);
     expect(schoolFilter.options[0].key).toBe("");
     expect(schoolFilter.options[0].label).toBe("All");
-    expect(schoolFilter.options[1].key).toBe("test");
-    expect(schoolFilter.options[1].label).toBe("Test");
+    expect(schoolFilter.options[1].key).toBe("a test");
+    expect(schoolFilter.options[1].label).toBe("A Test");
+    expect(schoolFilter.options[2].key).toBe("test");
+    expect(schoolFilter.options[2].label).toBe("Test");
   }));
 });
