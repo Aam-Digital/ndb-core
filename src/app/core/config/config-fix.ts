@@ -668,6 +668,7 @@ export const defaultConfig = {
         {
           "id": "school",
           "type": "prebuilt",
+          "label": "School",
           "display": "dropdown"
         }
       ]
