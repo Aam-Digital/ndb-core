@@ -1,6 +1,7 @@
 import {
   ComponentFixture,
   fakeAsync,
+  flush,
   TestBed,
   tick,
   waitForAsync,
@@ -15,6 +16,7 @@ import { ConfigurableEnumConfig } from "../../../../core/configurable-enum/confi
 import { Child } from "../../../children/model/child";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { LoggingService } from "../../../../core/logging/logging.service";
+import { defaultAttendanceStatusTypes } from "../../../../core/config/default-config/default-attendance-status-types";
 
 describe("RollCallComponent", () => {
   let component: RollCallComponent;
@@ -106,5 +108,44 @@ describe("RollCallComponent", () => {
 
     expect(component.entries.map((e) => e.child)).toEqual([existingChild]);
     expect(mockLoggingService.warn).toHaveBeenCalled();
+    flush();
+  }));
+
+  it("should correctly assign the attendance", fakeAsync(() => {
+    const attendedStatus = defaultAttendanceStatusTypes.find(
+      (it) => it.countAs === "PRESENT"
+    );
+    const absentStatus = defaultAttendanceStatusTypes.find(
+      (it) => it.countAs === "ABSENT"
+    );
+    const attendedChild = new Child("attendedChild");
+    const absentChild = new Child("absentChild");
+    const note = new Note("noteWithAttendance");
+    note.addChild(attendedChild.getId());
+    note.addChild(absentChild.getId());
+    mockEntityMapper.load.and.returnValues(
+      Promise.resolve(absentChild),
+      Promise.resolve(attendedChild)
+    );
+    component.eventEntity = note;
+    component.ngOnInit();
+    tick();
+
+    const attendedChildAttendance = component.entries.find(
+      ({ child }) => child === attendedChild
+    ).attendance;
+    const absentChildAttendance = component.entries.find(
+      ({ child }) => child === absentChild
+    ).attendance;
+    component.markAttendance(attendedChildAttendance, attendedStatus);
+    component.markAttendance(absentChildAttendance, absentStatus);
+
+    expect(note.getAttendance(attendedChild.getId()).status).toEqual(
+      attendedStatus
+    );
+    expect(note.getAttendance(absentChild.getId()).status).toEqual(
+      absentStatus
+    );
+    flush();
   }));
 });
