@@ -107,6 +107,6 @@ export class RollCallComponent implements OnInit {
   }
 
   isFinished(): boolean {
-    return this.currentIndex >= this.entries.length;
+    return this.currentIndex >= this.entries?.length;
   }
 }

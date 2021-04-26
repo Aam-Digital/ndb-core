@@ -1,5 +1,5 @@
 <!-- Individual Student's Page -->
-<div *ngIf="!isFinished()">
+<div *ngIf="!isFinished() && entries?.length > 0">
   <app-child-block [entity]="entries[currentIndex].child"></app-child-block>
 
   <div
