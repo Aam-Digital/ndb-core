@@ -148,4 +148,27 @@ describe("RollCallComponent", () => {
     );
     flush();
   }));
+
+  it("should mark roll call as done when all existing children are finished", fakeAsync(() => {
+    const existingChild1 = new Child("existingChild1");
+    const existingChild2 = new Child("existingChild2");
+    const note = new Note();
+    note.addChild(existingChild1.getId());
+    note.addChild("notExistingChild");
+    note.addChild(existingChild2.getId());
+    mockEntityMapper.load.and.returnValues(
+      Promise.resolve(existingChild2),
+      Promise.reject(),
+      Promise.resolve(existingChild1)
+    );
+    spyOn(component.complete, "emit");
+    component.eventEntity = note;
+    component.ngOnInit();
+    tick();
+
+    component.goToNextParticipant();
+    component.goToNextParticipant();
+
+    expect(component.complete.emit).toHaveBeenCalledWith(note);
+  }));
 });
