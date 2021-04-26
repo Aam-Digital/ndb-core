@@ -669,6 +669,7 @@ export const defaultConfig = {
           "id": "school",
           "label": $localize`School`,
           "type": "prebuilt",
+          "label": "School",
           "display": "dropdown"
         }
       ]

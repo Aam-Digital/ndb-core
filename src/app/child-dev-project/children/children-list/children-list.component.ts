@@ -75,26 +75,19 @@ export class ChildrenListComponent implements OnInit {
   }
 
   private async buildSchoolFilter(): Promise<FilterSelectionOption<Child>[]> {
-    const schoolIDs = [...new Set(this.childrenList.map((c) => c.schoolId))];
-    const schools: School[] = await Promise.all(
-      schoolIDs.map((id) =>
-        this.entityMapper.load<School>(School, id).catch(() => null)
-      )
-    );
-    const filters: FilterSelectionOption<Child>[] = schools
-      .filter((school) => !!school) // remove schools which are null or undefined
-      .map((school) => {
-        return {
+    const schools: School[] = await this.entityMapper.loadType(School);
+    const filters: FilterSelectionOption<Child>[] = [
+      { key: "", label: $localize`All`, filterFun: () => true },
+    ];
+    schools
+      .sort((s1, s2) => s1.name.localeCompare(s2.name))
+      .forEach((school) =>
+        filters.push({
           key: school.getId(),
           label: school.name,
           filterFun: (c) => c.schoolId === school.getId(),
-        };
-      });
-    filters.push({
-      key: "",
-      label: $localize`All`,
-      filterFun: () => true,
-    });
+        })
+      );
     return filters;
   }
 }
