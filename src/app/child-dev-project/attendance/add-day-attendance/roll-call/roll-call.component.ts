@@ -66,7 +66,7 @@ export class RollCallComponent implements OnInit {
         child = await this.entityMapper.load(Child, childId);
       } catch (e) {
         this.loggingService.warn(
-          "Could not child " +
+          "Could not find child " +
             childId +
             " for event " +
             this.eventEntity.getId()
