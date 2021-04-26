@@ -20,6 +20,7 @@ import moment from "moment";
 import { LoggingService } from "../logging/logging.service";
 import PouchDB from "pouchdb-browser";
 import memory from "pouchdb-adapter-memory";
+import { PerformanceAnalysisLogging } from "app/utils/performance-analysis-logging";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -81,13 +82,9 @@ export class PouchDatabase extends Database {
         this.loggingService.debug("Doc not found in database: " + id);
         if (returnUndefined) {
           return undefined;
-        } else {
-          throw err;
         }
-      } else {
-        this.notifyError(err);
-        throw err;
       }
+      throw err;
     });
   }
 
@@ -128,7 +125,6 @@ export class PouchDatabase extends Database {
       if (err.status === 409) {
         return this.resolveConflict(object, forceOverwrite, err);
       } else {
-        this.notifyError(err);
         throw err;
       }
     });
@@ -142,7 +138,6 @@ export class PouchDatabase extends Database {
    */
   remove(object: any) {
     return this._pouchDB.remove(object).catch((err) => {
-      this.notifyError(err);
       throw err;
     });
   }
@@ -214,38 +209,16 @@ export class PouchDatabase extends Database {
     await this.prebuildViewsOfDesignDoc(designDoc);
   }
 
+  @PerformanceAnalysisLogging
   private async prebuildViewsOfDesignDoc(designDoc: any): Promise<void> {
     for (const viewName of Object.keys(designDoc.views)) {
-      try {
-        const queryName =
-          designDoc._id.replace(/_design\//, "") + "/" + viewName;
-        console.log("start indexing " + queryName);
-        const startTime = moment();
-        await this.query(queryName, { key: "1" });
-        const indexingTime = moment().diff(startTime, "milliseconds");
-        console.log("done indexing " + queryName, indexingTime);
-        if (indexingTime > 1000) {
-          this.loggingService.warn({
-            action: "Indexing for query",
-            query: queryName,
-            duration: indexingTime,
-          });
-        }
-      } catch (err) {
-        this.notifyError({
-          status: "failed to trigger query for new index",
-          details: err,
-        });
-      }
+      const queryName = designDoc._id.replace(/_design\//, "") + "/" + viewName;
+      console.log("start indexing " + queryName);
+      const startTime = moment();
+      await this.query(queryName, { key: "1" });
+      const indexingTime = moment().diff(startTime, "milliseconds");
+      console.log("done indexing " + queryName, indexingTime);
     }
-  }
-
-  private notifyError(err) {
-    this.loggingService.warn({
-      context: "PouchDatabase",
-      message: err.status,
-      details: JSON.stringify(err),
-    });
   }
 
   /**

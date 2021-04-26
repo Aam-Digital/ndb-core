@@ -185,6 +185,7 @@ export class EntityListComponent<T extends Entity>
     ) => {
       if (
         typeof data[sortingHeader] === "object" &&
+        data[sortingHeader] &&
         "label" in data[sortingHeader]
       ) {
         return data[sortingHeader].label;
