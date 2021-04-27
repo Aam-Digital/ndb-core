@@ -101,7 +101,7 @@ export class SyncedSessionService extends SessionService {
                 }
               }
             )
-            .catch(() => null);
+            .catch((err) => this._loggingService.error(err));
 
           // asynchronously check if the local login failed --> this happens, when the password was changed at the remote
           localLogin.then(async (loginState: LoginState) => {
@@ -109,7 +109,9 @@ export class SyncedSessionService extends SessionService {
               // in this case: when the sync is completed, retry the local login after the sync
               try {
                 await syncPromise;
-              } catch (e) {}
+              } catch (err) {
+                this._loggingService.error(err);
+              }
               return this._localSession.login(username, password);
             }
           });
@@ -155,7 +157,7 @@ export class SyncedSessionService extends SessionService {
           }, 2000);
         }
       })
-      .catch(() => null);
+      .catch((err) => this._loggingService.error(err));
     return localLogin; // the local login is the Promise that counts
   }
 
