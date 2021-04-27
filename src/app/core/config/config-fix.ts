@@ -194,7 +194,7 @@ export const defaultConfig = {
           "id": "category"
         },
         {
-          "component": "UserList",
+          "component": "DisplayUsers",
           "title": "Authors",
           "id": "authors"
         },

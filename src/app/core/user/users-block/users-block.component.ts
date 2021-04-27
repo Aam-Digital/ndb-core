@@ -5,7 +5,7 @@ import { OnInitDynamicComponent } from "../../view/dynamic-components/on-init-dy
 import { LoggingService } from "../../logging/logging.service";
 
 @Component({
-  selector: "app-user-list",
+  selector: "app-users-block",
   template: `
     {{ authorNames }}
     <span *ngIf="users.length > maxUserThreshold">
@@ -13,7 +13,7 @@ import { LoggingService } from "../../logging/logging.service";
     </span>
   `,
 })
-export class UserListComponent implements OnInitDynamicComponent {
+export class UsersBlockComponent implements OnInitDynamicComponent {
   users: User[] = [];
 
   @Input() set entities(entities: (User | string)[]) {
