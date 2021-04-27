@@ -47,12 +47,12 @@ export class RollCallSetupComponent implements OnInit {
       RecurringActivity
     );
 
-    this.visibleActivities = this.allActivities.filter(
-      (a) => a.assignedTo === this.sessionService.getCurrentUser().getId()
+    this.visibleActivities = this.allActivities.filter((a) =>
+      a.assignedTo.includes(this.sessionService.getCurrentUser().getId())
     );
     if (this.visibleActivities.length === 0) {
       this.visibleActivities = this.allActivities.filter(
-        (a) => a.assignedTo === ""
+        (a) => a.assignedTo.length === 0
       );
     }
 
@@ -108,11 +108,11 @@ export class RollCallSetupComponent implements OnInit {
     const calculateEventPriority = (event: Note) => {
       let score = 0;
 
-      const assignedUsers = event.authors.concat(
-        this.allActivities
-          .filter((a) => a._id === event.relatesTo)
-          .map((a) => a.assignedTo)
-      );
+      const activityAssignedUsers = this.allActivities.find(
+        (a) => a._id === event.relatesTo
+      )?.assignedTo;
+      // use parent activities' assigned users and only fall back to event if necessary
+      const assignedUsers = activityAssignedUsers ?? event.authors;
 
       if (!RecurringActivity.isActivityEventNote(event)) {
         // show one-time events first

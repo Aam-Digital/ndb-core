@@ -5,10 +5,10 @@ import {
   tick,
 } from "@angular/core/testing";
 
-import { UserListComponent } from "./user-list.component";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { User } from "../user";
 import { Entity } from "../../entity/entity";
+import { UsersBlockComponent } from "./users-block.component";
 
 class TestEntity extends Entity {
   static create(userIds: string[]) {
@@ -19,9 +19,9 @@ class TestEntity extends Entity {
   userIds: string[] = [];
 }
 
-describe("UserListComponent", () => {
-  let component: UserListComponent;
-  let fixture: ComponentFixture<UserListComponent>;
+describe("UsersBlockComponent", () => {
+  let component: UsersBlockComponent;
+  let fixture: ComponentFixture<UsersBlockComponent>;
 
   const commonThreshold = 2;
 
@@ -40,7 +40,7 @@ describe("UserListComponent", () => {
       Promise.resolve(testUsers)
     );
     await TestBed.configureTestingModule({
-      declarations: [UserListComponent],
+      declarations: [UsersBlockComponent],
       providers: [
         {
           provide: EntityMapperService,
@@ -51,7 +51,7 @@ describe("UserListComponent", () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(UserListComponent);
+    fixture = TestBed.createComponent(UsersBlockComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

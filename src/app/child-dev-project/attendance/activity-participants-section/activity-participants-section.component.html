@@ -1,11 +1,20 @@
 <div>
   <app-entity-select
+    [entityType]="User"
+    [(selection)]="assignedUsers"
+    [disabled]="!editing"
+    [view]="userBlock"
+    label="Assigned to"
+    placeholder="Add coordinator ..."
+  >
+  </app-entity-select>
+  <app-entity-select
     [entityType]="School"
     [(selection)]="participatingGroups"
     [disabled]="!editing"
     [view]="schoolBlock"
-    label="Schools"
-    placeholder="Add School..."
+    label="Groups"
+    placeholder="Add group ..."
   >
   </app-entity-select>
   <app-entity-select
@@ -13,8 +22,8 @@
     [disabled]="!editing"
     [entityType]="Child"
     [view]="childBlock"
-    label="Children"
-    placeholder="Add Child..."
+    label="Participants"
+    placeholder="Add participant ..."
   ></app-entity-select>
 </div>
 
@@ -66,3 +75,8 @@
   [linkDisabled]="true">
   </app-school-block>
 </ng-template>
+
+<ng-template
+  #userBlock
+  let-user="entity"
+>{{user.name}}</ng-template>

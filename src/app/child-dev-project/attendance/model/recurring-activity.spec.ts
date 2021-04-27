@@ -73,7 +73,7 @@ describe("RecurringActivity", () => {
 
       title: "test activity",
       type: "HOME_VISIT",
-      assignedTo: "demo",
+      assignedTo: ["demo"],
       participants: ["1", "2"],
       linkedGroups: ["3"],
 
@@ -99,7 +99,7 @@ describe("RecurringActivity", () => {
 
       title: "test activity",
       type: "HOME_VISIT",
-      assignedTo: "demo",
+      assignedTo: ["demo"],
       participants: ["1", "2"],
 
       searchIndices: [],

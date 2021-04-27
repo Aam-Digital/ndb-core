@@ -6,6 +6,7 @@ import { PanelConfig } from "../../../core/entity-components/entity-details/Enti
 import { Child } from "../../children/model/child";
 import { EntityConstructor } from "../../../core/entity/entity";
 import { School } from "../../schools/model/school";
+import { User } from "app/core/user/user";
 
 @Component({
   selector: "app-activity-participants-section",
@@ -19,9 +20,11 @@ export class ActivityParticipantsSectionComponent
   editing: boolean;
   participants: string[] = [];
   participatingGroups: string[] = [];
+  assignedUsers: string[] = [];
 
   readonly Child: EntityConstructor<Child> = Child;
   readonly School: EntityConstructor<School> = School;
+  readonly User: EntityConstructor<User> = User;
 
   constructor(private entityMapper: EntityMapperService) {}
 
@@ -29,17 +32,20 @@ export class ActivityParticipantsSectionComponent
     this.entity = config.entity as RecurringActivity;
     this.participants = this.entity.participants;
     this.participatingGroups = this.entity.linkedGroups;
+    this.assignedUsers = this.entity.assignedTo;
   }
 
   switchEdit() {
     this.editing = !this.editing;
     this.participants = [...this.entity.participants];
     this.participatingGroups = [...this.entity.linkedGroups];
+    this.assignedUsers = [...this.entity.assignedTo];
   }
 
   async save() {
     this.entity.participants = this.participants;
     this.entity.linkedGroups = this.participatingGroups;
+    this.entity.assignedTo = this.assignedUsers;
     await this.entityMapper.save<RecurringActivity>(this.entity);
     this.editing = false;
   }

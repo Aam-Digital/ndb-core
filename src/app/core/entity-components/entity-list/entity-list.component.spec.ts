@@ -137,14 +137,6 @@ describe("EntityListComponent", () => {
     expect(component.columnsToDisplay).toEqual(defaultGroup.columns);
   });
 
-  it("should create filters from config and set correct ones", () => {
-    expect(component.filterSelections.length).toEqual(3);
-    expect(component.filterSelections[0].selectedOption).toEqual(
-      testConfig.filters[0].default
-    );
-    expect(component.filterSelections[1].selectedOption).toEqual("");
-  });
-
   it("should set the clicked column group", () => {
     component.ready = true;
     const clickedColumnGroup = testConfig.columnGroup.groups[0];
@@ -207,13 +199,19 @@ describe("EntityListComponent", () => {
     });
   });
 
-  it("correctly sets dropdown and selections", fakeAsync(() => {
-    expect(component.filterSelections.length).toEqual(3);
+  it("correctly create dropdown and selection filters if values are present", fakeAsync(() => {
+    const child = new Child();
+    child.religion = "muslim";
+    component.entityList = [child];
+    component.ngOnChanges({
+      entityList: new SimpleChange(false, component.entityList, false),
+    });
+    expect(component.filterSelections.length).toEqual(2);
     expect(
       component.filterSelections
         .filter((e) => e.display !== "dropdown")
         .map((e) => e.filterSettings.name)
-    ).toEqual(["isActive", "center"]);
+    ).toEqual(["isActive"]);
     expect(
       component.filterSelections
         .filter((e) => e.display === "dropdown")

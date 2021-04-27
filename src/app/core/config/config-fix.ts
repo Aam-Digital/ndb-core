@@ -194,7 +194,7 @@ export const defaultConfig = {
           "id": "category"
         },
         {
-          "component": "UserList",
+          "component": "DisplayUsers",
           "title": "Authors",
           "id": "authors"
         },
@@ -668,6 +668,7 @@ export const defaultConfig = {
         {
           "id": "school",
           "type": "prebuilt",
+          "label": "School",
           "display": "dropdown"
         }
       ]
@@ -721,6 +722,7 @@ export const defaultConfig = {
                   [
                     {
                       "input": "age",
+                      "tooltip": "This field is read-only. Edit Date of Birth to change age. Select Jan 1st if you only know the year of birth.",
                       "id": "dateOfBirth",
                       "placeholder": "Date of Birth"
                     },
@@ -997,7 +999,7 @@ export const defaultConfig = {
           "id": "type"
         },
         {
-          "component": "DisplayText",
+          "component": "DisplayUsers",
           "title": "Assigned to",
           "id": "assignedTo"
         }
@@ -1017,9 +1019,6 @@ export const defaultConfig = {
         ]
       },
       "filters": [
-        {
-          "id": "assignedTo"
-        }
       ]
     }
   },
@@ -1048,13 +1047,6 @@ export const defaultConfig = {
                       "input": "configurable-enum-select",
                       "enumId": "interaction-type",
                       "placeholder": "Type"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "assignedTo",
-                      "placeholder": "Assigned to"
                     }
                   ]
                 ]
