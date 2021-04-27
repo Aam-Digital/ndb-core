@@ -18,6 +18,16 @@
   </div>
 
   <app-child-block [entityId]="childId" fxFlex> </app-child-block>
+
+  <mat-form-field class="dense-form-field" fxFlex>
+    <input
+      matInput
+      placeholder="Remarks"
+      name="remarks"
+      type="text"
+      [(ngModel)]="attendance.remarks"
+    />
+  </mat-form-field>
 </div>
 
 <!-- deactivated to keep the UI simple and understandable
