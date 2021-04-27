@@ -127,8 +127,8 @@
         (selectionChange)="entityForm.form.markAsDirty()"
         [additionalFilter]="filterInactiveChildren"
         [showEntities]="!entity.category.isMeeting"
-        label="Children"
-        placeholder="Add Child...">
+        label="Participants"
+        placeholder="Add participant ...">
         <!-- Header for autocomplete -->
         <mat-option (click)="toggleIncludeInactiveChildren()">
           <mat-checkbox
@@ -156,8 +156,8 @@
           [(selection)]="entity.schools"
           [view]="schoolBlock"
           (selectionChange)="entityForm.form.markAsDirty()"
-          label="Schools"
-          placeholder="Add School..."
+          label="Groups"
+          placeholder="Add group ..."
         >
         </app-entity-select>
       </div>
