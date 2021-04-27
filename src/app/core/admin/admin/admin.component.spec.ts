@@ -21,6 +21,7 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatDialogRef } from "@angular/material/dialog";
 import { SessionType } from "../../session/session-type";
 import { NotesMigrationService } from "../../../child-dev-project/notes/notes-migration/notes-migration.service";
+import { AttendanceMigrationService } from "../../../child-dev-project/attendance/attendance-migration/attendance-migration.service";
 
 describe("AdminComponent", () => {
   let component: AdminComponent;
@@ -104,6 +105,10 @@ describe("AdminComponent", () => {
           {
             provide: ConfirmationDialogService,
             useValue: confirmationDialogMock,
+          },
+          {
+            provide: AttendanceMigrationService,
+            useValue: {},
           },
           {
             provide: NotesMigrationService,

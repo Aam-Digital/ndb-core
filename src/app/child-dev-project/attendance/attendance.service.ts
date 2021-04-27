@@ -26,13 +26,13 @@ export class AttendanceService {
     this.createIndices();
   }
 
-  private async createIndices() {
+  private createIndices() {
     const meetingInteractionTypes = this.configService
       .getConfig<InteractionType[]>(INTERACTION_TYPE_CONFIG_ID)
       .filter((t) => t.isMeeting)
       .map((t) => t.id);
-    await this.createEventsIndex(meetingInteractionTypes);
-    await this.createRecurringActivitiesIndex();
+    this.createEventsIndex(meetingInteractionTypes);
+    this.createRecurringActivitiesIndex();
   }
 
   private createEventsIndex(meetingInteractionTypes: string[]): Promise<void> {
@@ -212,9 +212,11 @@ export class AttendanceService {
     for (const [activityId, activityEvents] of groupedEvents) {
       const activityRecord = ActivityAttendance.create(from, activityEvents);
       activityRecord.periodTo = until;
-      activityRecord.activity = await this.entityMapper
-        .load<RecurringActivity>(RecurringActivity, activityId)
-        .catch(() => undefined);
+      if (activityId) {
+        activityRecord.activity = await this.entityMapper
+          .load<RecurringActivity>(RecurringActivity, activityId)
+          .catch(() => undefined);
+      }
 
       records.push(activityRecord);
     }

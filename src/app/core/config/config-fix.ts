@@ -668,6 +668,7 @@ export const defaultConfig = {
         {
           "id": "school",
           "type": "prebuilt",
+          "label": "School",
           "display": "dropdown"
         }
       ]
@@ -721,6 +722,7 @@ export const defaultConfig = {
                   [
                     {
                       "input": "age",
+                      "tooltip": "This field is read-only. Edit Date of Birth to change age. Select Jan 1st if you only know the year of birth.",
                       "id": "dateOfBirth",
                       "placeholder": "Date of Birth"
                     },

@@ -8,6 +8,9 @@ import { Note } from "../../../notes/model/note";
 import { EventAttendance } from "../../model/event-attendance";
 import { ConfigService } from "../../../../core/config/config.service";
 import { ConfigurableEnumConfig } from "../../../../core/configurable-enum/configurable-enum.interface";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { Child } from "../../../children/model/child";
+import { LoggingService } from "../../../../core/logging/logging.service";
 
 /**
  * Displays the participants of the given event one by one to mark attendance status.
@@ -46,17 +49,35 @@ export class RollCallComponent implements OnInit {
   /** options available for selecting an attendance status */
   availableStatus: AttendanceStatusType[];
 
-  entries: { childId: string; attendance: EventAttendance }[];
+  entries: { child: Child; attendance: EventAttendance }[];
 
-  constructor(private configService: ConfigService) {}
+  constructor(
+    private configService: ConfigService,
+    private entityMapper: EntityMapperService,
+    private loggingService: LoggingService
+  ) {}
 
   async ngOnInit() {
+    this.entries = [];
     this.loadAttendanceStatusTypes();
-
-    this.entries = this.eventEntity.children.map((childId) => ({
-      childId: childId,
-      attendance: this.eventEntity.getAttendance(childId),
-    }));
+    for (const childId of this.eventEntity.children) {
+      let child;
+      try {
+        child = await this.entityMapper.load(Child, childId);
+      } catch (e) {
+        this.loggingService.warn(
+          "Could not find child " +
+            childId +
+            " for event " +
+            this.eventEntity.getId()
+        );
+        continue;
+      }
+      this.entries.push({
+        child: child,
+        attendance: this.eventEntity.getAttendance(childId),
+      });
+    }
     this.goToNextParticipant(0);
   }
 
@@ -66,8 +87,8 @@ export class RollCallComponent implements OnInit {
     >(ATTENDANCE_STATUS_CONFIG_ID);
   }
 
-  markAttendance(childId: string, status: AttendanceStatusType) {
-    this.eventEntity.getAttendance(childId).status = status;
+  markAttendance(attendance: EventAttendance, status: AttendanceStatusType) {
+    attendance.status = status;
 
     // automatically move to next participant after a short delay giving the user visual feedback on the selected status
     setTimeout(() => this.goToNextParticipant(), 750);
@@ -86,6 +107,6 @@ export class RollCallComponent implements OnInit {
   }
 
   isFinished(): boolean {
-    return this.currentIndex >= this.eventEntity.children.length;
+    return this.currentIndex >= this.entries?.length;
   }
 }

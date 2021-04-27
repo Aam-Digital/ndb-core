@@ -84,10 +84,11 @@ describe("ChildrenListComponent", () => {
     ["getChildren"]
   );
   const mockEntityMapper: jasmine.SpyObj<EntityMapperService> = jasmine.createSpyObj(
-    ["load", "save"]
+    ["loadType", "save"]
   );
   beforeEach(
     waitForAsync(() => {
+      mockEntityMapper.loadType.and.resolveTo([]);
       const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
       mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
       mockChildrenService.getChildren.and.returnValue(of([]));
@@ -139,7 +140,6 @@ describe("ChildrenListComponent", () => {
     const child1 = new Child("c1");
     const child2 = new Child("c2");
     mockChildrenService.getChildren.and.returnValue(of([child1, child2]));
-    mockEntityMapper.load.and.returnValue(Promise.reject());
     component.ngOnInit();
     tick();
     expect(mockChildrenService.getChildren).toHaveBeenCalled();
@@ -153,22 +153,24 @@ describe("ChildrenListComponent", () => {
     expect(router.navigate).toHaveBeenCalledWith(["/child", "childId"]);
   });
 
-  it("should create a filter with all available schools", fakeAsync(() => {
-    const school = new School("test");
-    school.name = "Test";
-    const child = new Child();
-    child.schoolId = school.getId();
-    mockEntityMapper.load.and.returnValue(Promise.resolve(school));
-    mockChildrenService.getChildren.and.returnValue(of([child]));
+  it("should create a filter with all schools sorted by names", fakeAsync(() => {
+    const firstSchool = new School("a test");
+    firstSchool.name = "A Test";
+    const secondSchool = new School("test");
+    secondSchool.name = "Test";
+
+    mockEntityMapper.loadType.and.resolveTo([secondSchool, firstSchool]);
     component.ngOnInit();
     tick();
     const schoolFilter = component.listConfig.filters.find(
       (f) => f.id === "school"
     ) as PrebuiltFilterConfig<Child>;
-    expect(schoolFilter.options.length).toBe(2);
-    expect(schoolFilter.options[0].key).toBe("test");
-    expect(schoolFilter.options[0].label).toBe("Test");
-    expect(schoolFilter.options[1].key).toBe("");
-    expect(schoolFilter.options[1].label).toBe("All");
+    expect(schoolFilter.options.length).toBe(3);
+    expect(schoolFilter.options[0].key).toBe("");
+    expect(schoolFilter.options[0].label).toBe("All");
+    expect(schoolFilter.options[1].key).toBe("a test");
+    expect(schoolFilter.options[1].label).toBe("A Test");
+    expect(schoolFilter.options[2].key).toBe("test");
+    expect(schoolFilter.options[2].label).toBe("Test");
   }));
 });
