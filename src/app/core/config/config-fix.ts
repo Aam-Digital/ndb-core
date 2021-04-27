@@ -997,7 +997,7 @@ export const defaultConfig = {
           "id": "type"
         },
         {
-          "component": "DisplayText",
+          "component": "DisplayUsers",
           "title": "Assigned to",
           "id": "assignedTo"
         }
@@ -1017,9 +1017,6 @@ export const defaultConfig = {
         ]
       },
       "filters": [
-        {
-          "id": "assignedTo"
-        }
       ]
     }
   },
@@ -1048,13 +1045,6 @@ export const defaultConfig = {
                       "input": "configurable-enum-select",
                       "enumId": "interaction-type",
                       "placeholder": "Type"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "assignedTo",
-                      "placeholder": "Assigned to"
                     }
                   ]
                 ]

@@ -47,12 +47,12 @@ export class RollCallSetupComponent implements OnInit {
       RecurringActivity
     );
 
-    this.visibleActivities = this.allActivities.filter(
-      (a) => a.assignedTo === this.sessionService.getCurrentUser().getId()
+    this.visibleActivities = this.allActivities.filter((a) =>
+      a.assignedTo.includes(this.sessionService.getCurrentUser().getId())
     );
     if (this.visibleActivities.length === 0) {
       this.visibleActivities = this.allActivities.filter(
-        (a) => a.assignedTo === ""
+        (a) => a.assignedTo.length === 0
       );
     }
 
