@@ -2,13 +2,19 @@ import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { Note } from "../model/note";
 import { User } from "../../../core/user/user";
+import { AlertService } from "../../../core/alerts/alert.service";
+import { Alert } from "../../../core/alerts/alert";
+import { AlertDisplay } from "../../../core/alerts/alert-display";
 
 @Injectable({
   providedIn: "root",
 })
 export class NotesMigrationService {
   allUsers: Map<string, User>;
-  constructor(private entityMapperService: EntityMapperService) {}
+  constructor(
+    private entityMapperService: EntityMapperService,
+    private alertService: AlertService
+  ) {}
 
   /**
    * migrates all notes in the database to the new format.
@@ -24,11 +30,21 @@ export class NotesMigrationService {
       ])
     );
     const allNotes: Note[] = await this.entityMapperService.loadType(Note);
+    let amountOfMigratedNotes = 0;
     for (const note of allNotes) {
-      this.migrateSingleNote(note);
+      amountOfMigratedNotes += this.migrateSingleNote(note);
       await this.entityMapperService.save(note);
     }
-    console.log("Completed to migrate all Notes' authors");
+    this.alertService.addAlert(
+      new Alert(
+        `Migrated ${amountOfMigratedNotes} note(s) `,
+        Alert.INFO,
+        AlertDisplay.TEMPORARY
+      )
+    );
+    console.log(
+      `Completed to migrate all Notes' authors (${amountOfMigratedNotes} note(s) total)`
+    );
   }
 
   /**
@@ -36,11 +52,11 @@ export class NotesMigrationService {
    * The 'author'-field will be deleted after the migration is done
    * @param note The note to migrate
    */
-  public migrateSingleNote(note: Note) {
+  public migrateSingleNote(note: Note): number {
     const userStr = note["author"];
     if (userStr === undefined || userStr === null) {
       // no migration necessary
-      return;
+      return 0;
     }
     const newUsers = this.findUsers(userStr);
     note.authors = newUsers.detectedUsers.map((u) => u.getId());
@@ -49,6 +65,7 @@ export class NotesMigrationService {
       console.log("could not match all users", note);
       this.updateNoteText(note, newUsers.additional);
     }
+    return 1;
   }
 
   private updateNoteText(note: Note, additionalUsers: string[]) {
