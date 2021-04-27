@@ -10,7 +10,7 @@ export interface Aggregation {
 }
 
 export interface ReportRow {
-  header: { label: string; result: any };
+  header: { label: string; values?: any[]; result: number };
   subRows?: ReportRow[];
 }
 
@@ -39,27 +39,38 @@ export class ReportingService {
   }
 
   private async calculateAggregations(
-    aggregations: Aggregation[],
+    aggregations: Aggregation[] = [],
     data?: any[]
   ): Promise<ReportRow[]> {
     const results: ReportRow[] = [];
+    let currentRow = results;
     for (const aggregation of aggregations) {
       const result = await this.queryService.queryData(
         this.getQueryWithDates(aggregation.query),
         data
       );
-      if (aggregation.groupBy) {
-        results.push(...(await this.calculateGroupBy(aggregation, result)));
-        continue;
-      }
-
       if (aggregation.label) {
-        results.push({ header: { label: aggregation.label, result: result } });
+        const newRow = {
+          header: { label: aggregation.label, result: result?.length },
+          subRows: [],
+        };
+        results.push(newRow);
+        currentRow = newRow.subRows;
       }
       if (aggregation.aggregations) {
-        results.push(
+        currentRow.push(
           ...(await this.calculateAggregations(
             aggregation.aggregations,
+            result
+          ))
+        );
+      }
+      if (aggregation.groupBy) {
+        currentRow.push(
+          ...(await this.suffixGroupBy(
+            aggregation.groupBy,
+            aggregation.aggregations,
+            aggregation.label,
             result
           ))
         );
@@ -79,76 +90,79 @@ export class ReportingService {
     return resultQuery;
   }
 
-  private async calculateGroupBy(
+  private async suffixGroupBy(
+    properties: string[],
+    aggregations: any[],
+    label: string,
+    data: any[]
+  ): Promise<ReportRow[]> {
+    const resultRows: ReportRow[] = [];
+    for (let i = properties.length; i > 0; i--) {
+      const suffix = properties.slice(i);
+      const property = properties[i - 1];
+      const groupingResults = this.groupingService.groupBy(data, property);
+      for (const grouping of groupingResults) {
+        const newRow: ReportRow = {
+          header: {
+            label: label,
+            values: Object.values(grouping.values),
+            result: grouping.data.length,
+          },
+          subRows: [],
+        };
+        newRow.subRows.push(
+          ...(await this.calculateAggregations(aggregations, grouping.data))
+        );
+        const nestedGroupingResults = await this.suffixGroupBy(
+          suffix,
+          aggregations,
+          label,
+          grouping.data
+        );
+        newRow.subRows.push(...nestedGroupingResults);
+        resultRows.push(newRow);
+      }
+    }
+    return resultRows;
+  }
+
+  private async createGroupByResult(
     aggregation: Aggregation,
     data: any[]
   ): Promise<ReportRow[]> {
-    const grouping = this.groupingService.groupBy(
-      data,
-      ...aggregation.groupBy
-    ) as any;
     const results: ReportRow[] = [];
-    for (const group of grouping) {
-      let aggregationSubgroups: ReportRow[];
+    const groupings = (this.groupingService.groupBy(
+      data,
+      aggregation.groupBy[0]
+    ) as unknown) as { values: { [key in string]: any }; data: any[] }[];
+    let currentRow = results;
+    for (const group of groupings) {
+      const groupValues = Object.values(group.values);
+      if (aggregation.label) {
+        const newRow = {
+          header: {
+            label: aggregation.label,
+            values: groupValues,
+            result: group.data.length,
+          },
+          subRows: [],
+        };
+        results.push(newRow);
+        currentRow = newRow.subRows;
+      }
       if (aggregation.aggregations) {
         const aggregationResults = await this.calculateAggregations(
           aggregation.aggregations,
           group.data
         );
-        aggregationResults.forEach(
-          (res) =>
-            (res.header.label = this.createGroupingLabel(
-              res.header.label,
-              group.values
-            ))
+        aggregationResults.forEach((row) =>
+          row.header.values
+            ? row.header.values.push(...groupValues)
+            : (row.header.values = groupValues)
         );
-        aggregationSubgroups = aggregationResults.filter(
-          (aggregation) =>
-            !results.some(
-              (res) => res.header.label === aggregation.header.label
-            )
-        );
-      }
-      if (aggregation.label) {
-        results.push({
-          header: {
-            label: this.createGroupingLabel(aggregation.label, group.values),
-            result: group.data.length,
-          },
-          subRows: aggregationSubgroups,
-        });
-      } else {
-        results.push(...aggregationSubgroups);
+        currentRow.push(...aggregationResults);
       }
     }
     return results;
-  }
-
-  private createGroupingLabel(label: string, values: any) {
-    let groupingLabel = label;
-    let valuesString = Object.keys(values)
-      .map((key) => {
-        let value = values[key];
-        if (value?.hasOwnProperty("label")) {
-          value = value.label;
-        }
-        if (!value) {
-          value = `without ${key}`;
-        }
-        return value;
-      })
-      .join(", ");
-    if (valuesString) {
-      if (label.endsWith(")")) {
-        // TODO Bug when a bracket is in the label
-        const afterBracketPos = label.lastIndexOf("(") + 1;
-        const firstPart = label.slice(0, afterBracketPos);
-        const secondPart = label.slice(afterBracketPos);
-        groupingLabel = firstPart + valuesString + ", " + secondPart;
-      } else {
-        groupingLabel = groupingLabel + " (" + valuesString + ")";
-      }
-    }
-    return groupingLabel;
   }
 }

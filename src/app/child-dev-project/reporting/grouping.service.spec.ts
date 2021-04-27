@@ -43,7 +43,7 @@ describe("GroupingService", () => {
       femaleChristianChild,
     ];
 
-    const grouping = service.groupBy(children, "gender");
+    const grouping = service.groupBy(children, "gender") as any;
 
     expect(grouping).toEqual({
       all: jasmine.arrayWithExactContents(children),
@@ -78,7 +78,7 @@ describe("GroupingService", () => {
       femaleMuslimChild,
     ];
 
-    const grouping = service.groupBy(children, "gender", "religion");
+    const grouping = service.groupBy(children, "gender") as any;
 
     expect(grouping).toHaveSize(8);
     expect(grouping).toContain({

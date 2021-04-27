@@ -7,7 +7,7 @@ import { EventNote } from "../attendance/model/event-note";
 import moment from "moment";
 import { School } from "../schools/model/school";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
-import { GroupingResult, GroupingService } from "./grouping.service";
+import { GroupingService } from "./grouping.service";
 import { Gender } from "../children/model/Gender";
 import { defaultInteractionTypes } from "../../core/config/default-config/default-interaction-types";
 
@@ -85,11 +85,12 @@ describe("ReportingService", () => {
   it("should create queries for nested aggregations", async () => {
     const baseQuery = `${School.ENTITY_TYPE}:toArray`;
     const nestedBaseQuery = `[*private=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId):getActive`;
-    const firstNestedAggregation = `[*schoolClass>3]:count`;
-    const secondNestedAggregation = `[*schoolClass<=3]:count`;
-    const normalAggregation = `:count`;
+    const firstNestedAggregation = `[*schoolClass>3]`;
+    const secondNestedAggregation = `[*schoolClass<=3]`;
+    const normalAggregation = `[*privateSchool=true]`;
     const aggregation: Aggregation = {
       query: baseQuery,
+      label: "Base result",
       aggregations: [
         {
           query: nestedBaseQuery,
@@ -118,7 +119,7 @@ describe("ReportingService", () => {
         case nestedBaseQuery:
           return Promise.resolve(nestedData);
         default:
-          return Promise.resolve(1);
+          return Promise.resolve([new School()]);
       }
     });
     const result = await service.calculateReport();
@@ -133,42 +134,65 @@ describe("ReportingService", () => {
     expect(result).toEqual([
       {
         header: {
-          label: "First nested aggregation",
-          result: 1,
+          label: "Base result",
+          result: 2,
         },
+        subRows: [
+          {
+            header: { label: "First nested aggregation", result: 1 },
+            subRows: [],
+          },
+          {
+            header: { label: "Second nested aggregation", result: 1 },
+            subRows: [],
+          },
+          {
+            header: { label: "Normal aggregation", result: 1 },
+            subRows: [],
+          },
+        ],
       },
-      {
-        header: {
-          label: "Second nested aggregation",
-          result: 1,
-        },
-      },
-      { header: { label: "Normal aggregation", result: 1 } },
     ]);
   });
 
   it("should correctly parse groupBy results", async () => {
     const groupByGenderResult: any = [
-      { values: {}, data: [new Child(), new Child(), new Child()] },
       { values: { gender: Gender.FEMALE }, data: [new Child(), new Child()] },
       { values: { gender: Gender.MALE }, data: [new Child()] },
     ];
     mockGroupingService.groupBy.and.returnValue(groupByGenderResult);
+    mockQueryService.queryData.and.resolveTo([
+      new Child(),
+      new Child(),
+      new Child(),
+    ]);
     const groupByAggregation: Aggregation = {
       query: `${Child.ENTITY_TYPE}`,
       groupBy: ["gender"],
       label: "Total # of children",
     };
-    service.setAggregations([groupByAggregation]);
 
+    service.setAggregations([groupByAggregation]);
     const result = await service.calculateReport();
-    console.log("result", result);
+
     expect(result).toEqual([
       {
         header: { label: "Total # of children", result: 3 },
         subRows: [
-          { header: { label: "Total # of children (F)", result: 2 } },
-          { header: { label: "Total # of children (M)", result: 1 } },
+          {
+            header: {
+              label: "Total # of children",
+              values: [Gender.FEMALE],
+              result: 2,
+            },
+          },
+          {
+            header: {
+              label: "Total # of children",
+              values: [Gender.MALE],
+              result: 1,
+            },
+          },
         ],
       },
     ]);
@@ -176,12 +200,15 @@ describe("ReportingService", () => {
 
   it("should run aggregations after a groupBy", async () => {
     const groupByGenderResult: any = [
-      { values: {}, data: [new Child(), new Child(), new Child()] },
       { values: { gender: Gender.FEMALE }, data: [new Child(), new Child()] },
       { values: { gender: Gender.MALE }, data: [new Child()] },
     ];
     mockGroupingService.groupBy.and.returnValue(groupByGenderResult);
-    mockQueryService.queryData.and.resolveTo(1);
+    mockQueryService.queryData.and.resolveTo([
+      new Child(),
+      new Child(),
+      new Child(),
+    ]);
     const groupByAggregation: Aggregation = {
       query: `${Child.ENTITY_TYPE}`,
       groupBy: ["gender"],
@@ -190,54 +217,327 @@ describe("ReportingService", () => {
         { query: `[*religion=christian]`, label: "Total # of christians" },
       ],
     };
+
     service.setAggregations([groupByAggregation]);
     const result = await service.calculateReport();
 
     expect(result).toEqual([
-      { header: { label: "Total # of children", result: 3 } },
-      { header: { label: "Total # of children (F)", result: 2 } },
-      { header: { label: "Total # of children (M)", result: 1 } },
-      { header: { label: "Total # of christians", result: 1 } },
-      { header: { label: "Total # of christians (F)", result: 1 } },
-      { header: { label: "Total # of christians (M)", result: 1 } },
+      {
+        header: { label: "Total # of children", result: 3 },
+        subRows: [
+          {
+            header: { label: "Total # of christians", result: 3 },
+            subRows: [],
+          },
+          {
+            header: {
+              label: "Total # of children",
+              values: [Gender.FEMALE],
+              result: 2,
+            },
+            subRows: [
+              {
+                header: {
+                  label: "Total # of christians",
+                  values: [Gender.FEMALE],
+                  result: 3,
+                },
+                subRows: [],
+              },
+            ],
+          },
+          {
+            header: {
+              label: "Total # of children",
+              values: [Gender.MALE],
+              result: 1,
+            },
+            subRows: [
+              {
+                header: {
+                  label: "Total # of christians",
+                  values: [Gender.MALE],
+                  result: 3,
+                },
+                subRows: [],
+              },
+            ],
+          },
+        ],
+      },
     ]);
   });
 
   it("should support groupBy with an array of values", async () => {
-    const groupByGenderAndReligion: any = [
-      { values: {}, data: [new Child(), new Child(), new Child()] },
-      { values: { gender: Gender.FEMALE }, data: [new Child(), new Child()] },
-      { values: { gender: Gender.MALE }, data: [new Child()] },
-      {
-        values: { gender: Gender.MALE, religion: "christian" },
-        data: [new Child()],
-      },
-      {
-        values: { gender: Gender.FEMALE, religion: "muslim" },
-        data: [new Child()],
-      },
-      {
-        values: { gender: Gender.FEMALE, religion: "christian" },
-        data: [new Child()],
-      },
-    ];
-    mockGroupingService.groupBy.and.returnValue(groupByGenderAndReligion);
-    mockQueryService.queryData.and.resolveTo(1);
+    mockGroupingService.groupBy.and.callFake((data, property) => {
+      switch (property) {
+        case "gender":
+          return [
+            {
+              values: { gender: Gender.FEMALE },
+              data: [new Child(), new Child()],
+            },
+            { values: { gender: Gender.MALE }, data: [new Child()] },
+          ] as any;
+        case "religion":
+          return [
+            {
+              values: { religion: "christian" },
+              data: [new Child(), new Child()],
+            },
+            { values: { religion: "muslim" }, data: [new Child()] },
+          ] as any;
+        case "center":
+          return [
+            {
+              values: { center: "Alipore" },
+              data: [new Child()],
+            },
+            {
+              values: { center: "Barabazar" },
+              data: [new Child(), new Child(), new Child()],
+            },
+          ] as any;
+        default:
+          return [];
+      }
+    });
+    mockQueryService.queryData.and.resolveTo([
+      new Child(),
+      new Child(),
+      new Child(),
+    ]);
     const groupByAggregation: Aggregation = {
       query: `${Child.ENTITY_TYPE}`,
-      groupBy: ["gender", "religion"],
+      groupBy: ["gender", "religion", "center"],
       label: "Total # of children",
     };
     service.setAggregations([groupByAggregation]);
     const result = await service.calculateReport();
 
+    console.log("result", result);
     expect(result).toEqual([
-      { header: { label: "Total # of children", result: 3 } },
-      { header: { label: "Total # of children (F)", result: 2 } },
-      { header: { label: "Total # of children (M)", result: 1 } },
-      { header: { label: "Total # of children (M, christian)", result: 1 } },
-      { header: { label: "Total # of children (F, muslim)", result: 1 } },
-      { header: { label: "Total # of children (F, christian)", result: 1 } },
+      {
+        header: { label: "Total # of children", result: 3 },
+        subRows: [
+          {
+            header: {
+              label: "Total # of children",
+              values: ["Alipore"],
+              result: 1,
+            },
+            subRows: [],
+          },
+          {
+            header: {
+              label: "Total # of children",
+              values: ["Barabazar"],
+              result: 3,
+            },
+            subRows: [],
+          },
+          {
+            header: {
+              label: "Total # of children",
+              values: ["christian"],
+              result: 2,
+            },
+            subRows: [
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["Alipore"],
+                  result: 1,
+                },
+                subRows: [],
+              },
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["Barabazar"],
+                  result: 3,
+                },
+                subRows: [],
+              },
+            ],
+          },
+          {
+            header: {
+              label: "Total # of children",
+              values: ["muslim"],
+              result: 2,
+            },
+            subRows: [
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["Alipore"],
+                  result: 1,
+                },
+                subRows: [],
+              },
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["Barabazar"],
+                  result: 3,
+                },
+                subRows: [],
+              },
+            ],
+          },
+          {
+            header: {
+              label: "Total # of children",
+              values: [Gender.FEMALE],
+              result: 1,
+            },
+            subRows: [
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["Alipore"],
+                  result: 1,
+                },
+                subRows: [],
+              },
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["Barabazar"],
+                  result: 3,
+                },
+                subRows: [],
+              },
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["christian"],
+                  result: 2,
+                },
+                subRows: [
+                  {
+                    header: {
+                      label: "Total # of children",
+                      values: ["Alipore"],
+                      result: 1,
+                    },
+                    subRows: [],
+                  },
+                  {
+                    header: {
+                      label: "Total # of children",
+                      values: ["Barabazar"],
+                      result: 3,
+                    },
+                    subRows: [],
+                  },
+                ],
+              },
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["muslim"],
+                  result: 1,
+                },
+                subRows: [
+                  {
+                    header: {
+                      label: "Total # of children",
+                      values: ["Alipore"],
+                      result: 1,
+                    },
+                    subRows: [],
+                  },
+                  {
+                    header: {
+                      label: "Total # of children",
+                      values: ["Barabazar"],
+                      result: 3,
+                    },
+                    subRows: [],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            header: {
+              label: "Total # of children",
+              values: [Gender.MALE],
+              result: 1,
+            },
+            subRows: [
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["Alipore"],
+                  result: 1,
+                },
+                subRows: [],
+              },
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["Barabazar"],
+                  result: 3,
+                },
+                subRows: [],
+              },
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["christian"],
+                  result: 2,
+                },
+                subRows: [
+                  {
+                    header: {
+                      label: "Total # of children",
+                      values: ["Alipore"],
+                      result: 1,
+                    },
+                    subRows: [],
+                  },
+                  {
+                    header: {
+                      label: "Total # of children",
+                      values: ["Barabazar"],
+                      result: 3,
+                    },
+                    subRows: [],
+                  },
+                ],
+              },
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["muslim"],
+                  result: 1,
+                },
+                subRows: [
+                  {
+                    header: {
+                      label: "Total # of children",
+                      values: ["Alipore"],
+                      result: 1,
+                    },
+                    subRows: [],
+                  },
+                  {
+                    header: {
+                      label: "Total # of children",
+                      values: ["Barabazar"],
+                      result: 3,
+                    },
+                    subRows: [],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
     ]);
   });
 

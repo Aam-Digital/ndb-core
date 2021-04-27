@@ -8,11 +8,11 @@ export class GroupingService {
 
   public groupBy<T, K extends keyof T>(
     data: T[],
-    ...properties: K[]
-  ): GroupingResultNode<T, K> {
-    const propertyGrouping = new Grouping<T, K>(properties);
+    property: K
+  ): GroupingResult<T, K>[] {
+    const propertyGrouping = new Grouping<T, K>([property]);
     data.forEach((el) => propertyGrouping.add(el));
-    return propertyGrouping.createGroupingTree();
+    return propertyGrouping.flatten();
   }
 }
 
