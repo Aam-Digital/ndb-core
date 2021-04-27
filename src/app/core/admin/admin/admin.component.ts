@@ -9,6 +9,7 @@ import PouchDB from "pouchdb-browser";
 import { ChildPhotoUpdateService } from "../services/child-photo-update.service";
 import { ConfigService } from "../../config/config.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { NotesMigrationService } from "../../../child-dev-project/notes/notes-migration/notes-migration.service";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -35,7 +36,8 @@ export class AdminComponent implements OnInit {
     private snackBar: MatSnackBar,
     private childPhotoUpdateService: ChildPhotoUpdateService,
     private configService: ConfigService,
-    private entityMapper: EntityMapperService
+    private entityMapper: EntityMapperService,
+    public notesMigration: NotesMigrationService
   ) {}
 
   ngOnInit() {

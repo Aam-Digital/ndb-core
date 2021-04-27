@@ -16,6 +16,7 @@ export class NotesMigrationService {
    * instead of a single field describing the author(s) of the note
    */
   async migrateToMultiUser() {
+    console.log("Starting to migrate all Notes' authors");
     this.allUsers = new Map<string, User>(
       (await this.entityMapperService.loadType(User)).map((u) => [
         u.name.toLowerCase(),
@@ -27,6 +28,7 @@ export class NotesMigrationService {
       this.migrateSingleNote(note);
       await this.entityMapperService.save(note);
     }
+    console.log("Completed to migrate all Notes' authors");
   }
 
   /**
@@ -44,6 +46,7 @@ export class NotesMigrationService {
     note.authors = newUsers.detectedUsers.map((u) => u.getId());
     delete note["author"];
     if (newUsers.additional.length > 0) {
+      console.log("could not match all users", note);
       this.updateNoteText(note, newUsers.additional);
     }
   }
