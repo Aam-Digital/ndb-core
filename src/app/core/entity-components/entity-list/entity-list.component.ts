@@ -360,7 +360,7 @@ export class EntityListComponent<T extends Entity>
   private createConfigurableEnumFilterOptions(
     config: ConfigurableEnumFilterConfig<T>
   ) {
-    const options = [{ key: "*", label: "All", filterFun: (e: T) => true }];
+    const options = [{ key: "*", label: $localize`All`, filterFun: (e: T) => true }];
 
     const enumValues = this.configService.getConfig<ConfigurableEnumConfig>(
       CONFIGURABLE_ENUM_CONFIG_PREFIX + config.enumId
