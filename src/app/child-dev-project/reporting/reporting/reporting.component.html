@@ -1,4 +1,4 @@
-<mat-expansion-panel expanded="true" class="work-panek mat-elevation-z2">
+<mat-expansion-panel expanded="true" class="work-panek mat-elevation-z2" style="padding-top: 20px">
     <div *ngIf="!config">
         <button mat-stroked-button>Ask for a setup call</button>
     </div>
@@ -14,7 +14,7 @@
         </mat-form-field>
         <div>
             <button mat-stroked-button [disabled]="!fromDate && !toDate" (click)="calculateResults()">Calculate</button>
-            <app-export-data [disabled]="results?.length === 0" [data]="this.results" format="csv" filename="report" style="float: right">
+            <app-export-data [disabled]="!reportTable" [data]="reportTable" format="csv" filename="report" style="float: right">
                 <mat-icon
                         class="button-icon"
                         aria-label="download csv"

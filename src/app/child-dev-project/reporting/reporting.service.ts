@@ -10,7 +10,7 @@ export interface Aggregation {
 
 export interface ReportRow {
   header: { label: string; values?: any[]; result: number };
-  subRows?: ReportRow[];
+  subRows: ReportRow[];
 }
 
 @Injectable({
@@ -129,7 +129,9 @@ export class ReportingService {
   ): { value: ENTITY[PROPERTY]; data: ENTITY[] }[] {
     return data.reduce((allGroups, currentElement) => {
       const currentValue = currentElement[groupByProperty];
-      let existingGroup = allGroups.find((group) => group.value === currentValue);
+      let existingGroup = allGroups.find(
+        (group) => group.value === currentValue
+      );
       if (!existingGroup) {
         existingGroup = { value: currentValue, data: [] };
         allGroups.push(existingGroup);
