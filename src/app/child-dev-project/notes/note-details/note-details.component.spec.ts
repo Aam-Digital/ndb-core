@@ -59,7 +59,10 @@ describe("NoteDetailsComponent", () => {
       ],
       providers: [
         { provide: MatDialogRef, useValue: dialogRefMock },
-        { provide: EntityMapperService, useValue: {} },
+        {
+          provide: EntityMapperService,
+          useValue: { loadType: () => Promise.resolve([]) },
+        },
         { provide: ChildrenService, useValue: mockChildrenService },
       ],
     }).compileComponents();

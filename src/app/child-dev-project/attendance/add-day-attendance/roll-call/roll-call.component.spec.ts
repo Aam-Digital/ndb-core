@@ -1,4 +1,11 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  flush,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 
 import { RollCallComponent } from "./roll-call.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -6,6 +13,10 @@ import { Note } from "../../../notes/model/note";
 import { By } from "@angular/platform-browser";
 import { ConfigService } from "../../../../core/config/config.service";
 import { ConfigurableEnumConfig } from "../../../../core/configurable-enum/configurable-enum.interface";
+import { Child } from "../../../children/model/child";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { LoggingService } from "../../../../core/logging/logging.service";
+import { defaultAttendanceStatusTypes } from "../../../../core/config/default-config/default-attendance-status-types";
 
 describe("RollCallComponent", () => {
   let component: RollCallComponent;
@@ -13,6 +24,8 @@ describe("RollCallComponent", () => {
 
   const testEvent = Note.create(new Date());
   let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockLoggingService: jasmine.SpyObj<LoggingService>;
 
   beforeEach(
     waitForAsync(() => {
@@ -20,11 +33,18 @@ describe("RollCallComponent", () => {
         "getConfig",
       ]);
       mockConfigService.getConfig.and.returnValue([]);
+      mockEntityMapper = jasmine.createSpyObj(["load"]);
+      mockEntityMapper.load.and.resolveTo();
+      mockLoggingService = jasmine.createSpyObj(["warn"]);
 
       TestBed.configureTestingModule({
         imports: [NoopAnimationsModule],
         declarations: [RollCallComponent],
-        providers: [{ provide: ConfigService, useValue: mockConfigService }],
+        providers: [
+          { provide: ConfigService, useValue: mockConfigService },
+          { provide: EntityMapperService, useValue: mockEntityMapper },
+          { provide: LoggingService, useValue: mockLoggingService },
+        ],
       }).compileComponents();
     })
   );
@@ -69,4 +89,86 @@ describe("RollCallComponent", () => {
     );
     expect(statusOptions.length).toBe(testStatusEnumConfig.length);
   });
+
+  it("should not record attendance if childId does not exist", fakeAsync(() => {
+    const existingChild = new Child("existingChild");
+    const noteWithNonExistingChild = new Note();
+    noteWithNonExistingChild.addChild(existingChild.getId());
+    noteWithNonExistingChild.addChild("notExistingChild");
+    component.eventEntity = noteWithNonExistingChild;
+
+    mockEntityMapper.load.and.callFake((con, id) =>
+      id === existingChild.getId()
+        ? Promise.resolve(existingChild as any)
+        : Promise.reject()
+    );
+
+    component.ngOnInit();
+    tick();
+
+    expect(component.entries.map((e) => e.child)).toEqual([existingChild]);
+    expect(mockLoggingService.warn).toHaveBeenCalled();
+    flush();
+  }));
+
+  it("should correctly assign the attendance", fakeAsync(() => {
+    const attendedStatus = defaultAttendanceStatusTypes.find(
+      (it) => it.countAs === "PRESENT"
+    );
+    const absentStatus = defaultAttendanceStatusTypes.find(
+      (it) => it.countAs === "ABSENT"
+    );
+    const attendedChild = new Child("attendedChild");
+    const absentChild = new Child("absentChild");
+    const note = new Note("noteWithAttendance");
+    note.addChild(attendedChild.getId());
+    note.addChild(absentChild.getId());
+    mockEntityMapper.load.and.returnValues(
+      Promise.resolve(absentChild),
+      Promise.resolve(attendedChild)
+    );
+    component.eventEntity = note;
+    component.ngOnInit();
+    tick();
+
+    const attendedChildAttendance = component.entries.find(
+      ({ child }) => child === attendedChild
+    ).attendance;
+    const absentChildAttendance = component.entries.find(
+      ({ child }) => child === absentChild
+    ).attendance;
+    component.markAttendance(attendedChildAttendance, attendedStatus);
+    component.markAttendance(absentChildAttendance, absentStatus);
+
+    expect(note.getAttendance(attendedChild.getId()).status).toEqual(
+      attendedStatus
+    );
+    expect(note.getAttendance(absentChild.getId()).status).toEqual(
+      absentStatus
+    );
+    flush();
+  }));
+
+  it("should mark roll call as done when all existing children are finished", fakeAsync(() => {
+    const existingChild1 = new Child("existingChild1");
+    const existingChild2 = new Child("existingChild2");
+    const note = new Note();
+    note.addChild(existingChild1.getId());
+    note.addChild("notExistingChild");
+    note.addChild(existingChild2.getId());
+    mockEntityMapper.load.and.returnValues(
+      Promise.resolve(existingChild2),
+      Promise.reject(),
+      Promise.resolve(existingChild1)
+    );
+    spyOn(component.complete, "emit");
+    component.eventEntity = note;
+    component.ngOnInit();
+    tick();
+
+    component.goToNextParticipant();
+    component.goToNextParticipant();
+
+    expect(component.complete.emit).toHaveBeenCalledWith(note);
+  }));
 });

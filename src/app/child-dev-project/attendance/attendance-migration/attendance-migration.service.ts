@@ -27,41 +27,38 @@ export class AttendanceMigrationService {
     }),
   };
 
+  existingEvents: EventNote[] = [];
+
   constructor(
     private entityMapper: EntityMapperService,
     private attendanceService: AttendanceService
   ) {}
 
-  async changeNotesToEventNotes() {
-    const oldEventNotes = (await this.entityMapper.loadType(Note)).filter(
-      (n) => n.relatesTo
-    );
-
-    for (const note of oldEventNotes) {
-      const newEvent = new EventNote(note.getId());
-      newEvent.date = note.date;
-      newEvent.subject = note.subject;
-      newEvent.children = note.children;
-      newEvent.relatesTo = note.relatesTo;
-      newEvent.category = note.category;
-      // @ts-ignore
-      newEvent.childrenAttendance = note.childrenAttendance;
-
-      await this.entityMapper.remove(note);
-      await this.entityMapper.save(newEvent);
-      console.log("event-note migrated", newEvent.getId());
-    }
-  }
-
   async createEventsForAllAttendanceMonths() {
     await this.checkOrCreateActivities();
 
+    this.existingEvents = await this.entityMapper.loadType(EventNote);
+
     const months = await this.entityMapper.loadType(AttendanceMonth);
-    console.log("found attendance-month records:" + months.length);
-    for (const month of months) {
-      console.log("migrating attendance-month", month);
-      await this.createEventsForAttendanceMonth(month);
+    console.log(
+      "starting to migrate attendance-month records:" + months.length
+    );
+    for (let i = 0; i < months.length; i++) {
+      await this.createEventsForAttendanceMonth(months[i]);
+      if (i % 100 === 1) {
+        console.log("finished " + (i + 1));
+      }
     }
+    console.log("parsed all AttendanceMonths");
+
+    for (const e of this.existingEvents) {
+      await this.entityMapper.save(e);
+    }
+    console.log("wrote all events to database");
+
+    console.log("updating activity participants");
+    await this.addStudentsToActivityForAllAttendanceMonths();
+    console.log("DONE");
   }
 
   async addStudentsToActivityForAllAttendanceMonths() {
@@ -106,7 +103,6 @@ export class AttendanceMigrationService {
         });
     }
   }
-
   async createEventsForAttendanceMonth(old: AttendanceMonth) {
     if (!this.activities.hasOwnProperty(old.institution)) {
       console.warn(
@@ -116,9 +112,10 @@ export class AttendanceMigrationService {
       return;
     }
 
-    const existingActivityEvents = await this.attendanceService.getEventsForActivity(
-      this.activities[old.institution]._id
+    const existingActivityEvents = this.existingEvents.filter(
+      (e) => e.relatesTo === this.activities[old.institution]._id
     );
+
     for (const day of old.dailyRegister) {
       if (day.status === AttendanceStatus.UNKNOWN) {
         // skip status without actual information
@@ -135,7 +132,7 @@ export class AttendanceMigrationService {
           day.date
         );
         newEvent.children = [];
-        console.log("creating new event");
+        this.existingEvents.push(newEvent);
       }
 
       newEvent.children.push(old.student);
@@ -145,9 +142,27 @@ export class AttendanceMigrationService {
         (t) => t.shortName === day.status
       );
       newEvent.getAttendance(old.student).remarks = day.remarks;
+    }
+  }
 
+  async changeNotesToEventNotes() {
+    const oldEventNotes = (await this.entityMapper.loadType(Note)).filter(
+      (n) => n.relatesTo
+    );
+
+    for (const note of oldEventNotes) {
+      const newEvent = new EventNote(note.getId());
+      newEvent.date = note.date;
+      newEvent.subject = note.subject;
+      newEvent.children = note.children;
+      newEvent.relatesTo = note.relatesTo;
+      newEvent.category = note.category;
+      // @ts-ignore
+      newEvent.childrenAttendance = note.childrenAttendance;
+
+      await this.entityMapper.remove(note);
       await this.entityMapper.save(newEvent);
-      console.log("wrote event to database");
+      console.log("event-note migrated", newEvent.getId());
     }
   }
 }
