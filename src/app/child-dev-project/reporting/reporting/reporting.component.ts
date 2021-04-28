@@ -33,6 +33,9 @@ export class ReportingComponent implements OnInit {
       this.fromDate,
       this.toDate
     );
+
+    // The ReportRowComponents manipulates the values array of the elements
+    // Using a timeout the calculation waits for this manipulation to be done
     setTimeout(() => (this.reportTable = this.getExportTable()));
   }
 
