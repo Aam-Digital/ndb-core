@@ -59,7 +59,7 @@ describe("AttendanceCalendarComponent", () => {
     ).toBeTrue();
   });
 
-  it("should correctly computes average attendance", () => {
+  it("should correctly compute the average attendance", () => {
     const attendedChild = new Child("attendedChild");
     const attendedChild2 = new Child("attendedChild2");
     const absentChild = new Child("absentChild");
