@@ -5,6 +5,7 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { User } from "../../../core/user/user";
 import { Note } from "../model/note";
 import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
+import { AlertService } from "../../../core/alerts/alert.service";
 
 function legacyNote(author: string): Note {
   const note = new Note();
@@ -37,6 +38,7 @@ describe("NotesMigrationService", () => {
           provide: EntityMapperService,
           useValue: entityMapper,
         },
+        { provide: AlertService, useValue: jasmine.createSpyObj(["addAlert"]) },
       ],
     });
     service = TestBed.inject(NotesMigrationService);
