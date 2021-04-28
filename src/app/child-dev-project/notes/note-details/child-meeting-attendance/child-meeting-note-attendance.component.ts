@@ -14,5 +14,4 @@ export class ChildMeetingNoteAttendanceComponent {
   @Input() attendance: EventAttendance;
   @Output() change = new EventEmitter();
   @Output() remove = new EventEmitter();
-  showRemarks: boolean = false;
 }
