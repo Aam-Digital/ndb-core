@@ -38,41 +38,41 @@ export class ReportingService {
     aggregations: Aggregation[] = [],
     data?: any[]
   ): Promise<ReportRow[]> {
-    const results: ReportRow[] = [];
-    let currentRow = results;
+    const resultRows: ReportRow[] = [];
+    let currentSubRows = resultRows;
     for (const aggregation of aggregations) {
-      const result = await this.queryService.queryData(
+      const queryResult = await this.queryService.queryData(
         this.getQueryWithDates(aggregation.query),
         data
       );
       if (aggregation.label) {
         const newRow = {
-          header: { label: aggregation.label, result: result?.length },
+          header: { label: aggregation.label, result: queryResult?.length },
           subRows: [],
         };
-        results.push(newRow);
-        currentRow = newRow.subRows;
+        resultRows.push(newRow);
+        currentSubRows = newRow.subRows;
       }
       if (aggregation.aggregations) {
-        currentRow.push(
+        currentSubRows.push(
           ...(await this.calculateAggregations(
             aggregation.aggregations,
-            result
+            queryResult
           ))
         );
       }
       if (aggregation.groupBy) {
-        currentRow.push(
-          ...(await this.suffixGroupBy(
+        currentSubRows.push(
+          ...(await this.calculateGroupBy(
             aggregation.groupBy,
             aggregation.aggregations,
             aggregation.label,
-            result
+            queryResult
           ))
         );
       }
     }
-    return results;
+    return resultRows;
   }
 
   private getQueryWithDates(query: string): any[] {
@@ -86,7 +86,7 @@ export class ReportingService {
     return resultQuery;
   }
 
-  private async suffixGroupBy(
+  private async calculateGroupBy(
     properties: string[],
     aggregations: any[],
     label: string,
@@ -94,14 +94,14 @@ export class ReportingService {
   ): Promise<ReportRow[]> {
     const resultRows: ReportRow[] = [];
     for (let i = properties.length; i > 0; i--) {
-      const suffix = properties.slice(i);
-      const property = properties[i - 1];
-      const groupingResults = this.groupBy(data, property);
+      const currentProperty = properties[i - 1];
+      const remainingProperties = properties.slice(i);
+      const groupingResults = this.groupBy(data, currentProperty);
       for (const grouping of groupingResults) {
         const newRow: ReportRow = {
           header: {
             label: label,
-            values: [this.getValueDescription(grouping.value, property)],
+            values: [this.getValueDescription(grouping.value, currentProperty)],
             result: grouping.data.length,
           },
           subRows: [],
@@ -109,33 +109,34 @@ export class ReportingService {
         newRow.subRows.push(
           ...(await this.calculateAggregations(aggregations, grouping.data))
         );
-        const nestedGroupingResults = await this.suffixGroupBy(
-          suffix,
-          aggregations,
-          label,
-          grouping.data
+        newRow.subRows.push(
+          ...(await this.calculateGroupBy(
+            remainingProperties,
+            aggregations,
+            label,
+            grouping.data
+          ))
         );
-        newRow.subRows.push(...nestedGroupingResults);
         resultRows.push(newRow);
       }
     }
     return resultRows;
   }
 
-  private groupBy<T, K extends keyof T>(
-    data: T[],
-    property: K
-  ): { value: T[K]; data: T[] }[] {
-    return data.reduce((groups, element) => {
-      const value = element[property];
-      let existing = groups.find((group) => group.value === value);
-      if (!existing) {
-        existing = { value: value, data: [] };
-        groups.push(existing);
+  private groupBy<ENTITY, PROPERTY extends keyof ENTITY>(
+    data: ENTITY[],
+    groupByProperty: PROPERTY
+  ): { value: ENTITY[PROPERTY]; data: ENTITY[] }[] {
+    return data.reduce((allGroups, currentElement) => {
+      const currentValue = currentElement[groupByProperty];
+      let existingGroup = allGroups.find((group) => group.value === currentValue);
+      if (!existingGroup) {
+        existingGroup = { value: currentValue, data: [] };
+        allGroups.push(existingGroup);
       }
-      existing.data.push(element);
-      return groups;
-    }, new Array<{ value: T[K]; data: T[] }>());
+      existingGroup.data.push(currentElement);
+      return allGroups;
+    }, new Array<{ value: ENTITY[PROPERTY]; data: ENTITY[] }>());
   }
 
   private getValueDescription(value: any, property: string): string {
