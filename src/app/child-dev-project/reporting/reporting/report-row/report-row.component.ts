@@ -8,10 +8,18 @@ import { ReportRow } from "../../reporting.service";
 })
 export class ReportRowComponent implements OnInit {
   @Input() rows: ReportRow[] = [];
+  @Input() values: string[];
 
   constructor() {}
 
   ngOnInit(): void {
-    console.log("rows", this.rows);
+    if (this.values) {
+      this.rows.forEach((row) => {
+        if (!row.header.values) {
+          row.header.values = [];
+        }
+        row.header.values.push(...this.values);
+      });
+    }
   }
 }
