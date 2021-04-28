@@ -1,7 +1,6 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Aggregation, ReportingService, ReportRow } from "../reporting.service";
-import { MatStepper } from "@angular/material/stepper";
 
 export interface ReportingComponentConfig {
   aggregationDefinitions?: Aggregation[];
@@ -12,14 +11,11 @@ export interface ReportingComponentConfig {
   templateUrl: "./reporting.component.html",
   styleUrls: ["./reporting.component.scss"],
 })
-export class ReportingComponent implements OnInit, AfterViewInit {
+export class ReportingComponent implements OnInit {
   config: ReportingComponentConfig;
   results: ReportRow[];
-  displayedColumns = ["label", "result"];
-  step = 0;
   fromDate: Date;
   toDate: Date;
-  @ViewChild(MatStepper) private stepper: MatStepper;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -27,30 +23,7 @@ export class ReportingComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    this.activatedRoute.data.subscribe((config) => {
-      if (config) {
-        this.config = config;
-        this.step = 1;
-      }
-    });
-  }
-
-  ngAfterViewInit() {
-    // This is set here, because if `linear === true`, the stepper wont listen to changes of the `step` variable
-    this.stepper.linear = true;
-  }
-
-  datesSelected() {
-    // TODO allow to only select from date
-    if (this.fromDate && this.toDate) {
-      this.stepper.linear = false;
-      if (this.step >= 2) {
-        this.stepper.next();
-      } else {
-        this.step = 2;
-      }
-      setTimeout(() => (this.stepper.linear = true));
-    }
+    this.activatedRoute.data.subscribe((config) => (this.config = config));
   }
 
   async calculateResults() {
@@ -59,6 +32,5 @@ export class ReportingComponent implements OnInit, AfterViewInit {
       this.fromDate,
       this.toDate
     );
-    console.log("this. results");
   }
 }

@@ -50,13 +50,6 @@ describe("ReportingComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should go to the next step if a config is provided", fakeAsync(() => {
-    expect(component.step).toBe(0);
-    mockRouteData.next({});
-    tick();
-    expect(component.step).toBe(1);
-  }));
-
   it("should display the report results", fakeAsync(() => {
     const results: ReportRow[] = [
       { header: { label: "test label", result: 1 } },
@@ -67,12 +60,4 @@ describe("ReportingComponent", () => {
     tick();
     expect(component.results).toEqual(results);
   }));
-
-  it("should go to next step when a date is selected", () => {
-    component.step = 1;
-    component.fromDate = new Date();
-    component.toDate = new Date();
-    component.datesSelected();
-    expect(component.step).toBe(2);
-  });
 });
