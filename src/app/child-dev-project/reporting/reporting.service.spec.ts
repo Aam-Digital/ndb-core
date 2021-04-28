@@ -365,7 +365,7 @@ describe("ReportingService", () => {
             header: {
               label: "Total # of children",
               values: ["muslim"],
-              result: 2,
+              result: 1,
             },
             subRows: [
               {
@@ -390,7 +390,7 @@ describe("ReportingService", () => {
             header: {
               label: "Total # of children",
               values: [Gender.FEMALE],
-              result: 1,
+              result: 2,
             },
             subRows: [
               {
