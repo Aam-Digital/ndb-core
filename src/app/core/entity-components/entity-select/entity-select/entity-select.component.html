@@ -1,0 +1,46 @@
+<mat-form-field floatLabel="always" style="width: 100%">
+  <mat-label *ngIf="label">{{label}}</mat-label>
+
+  <input
+    #inputField
+    [disabled]="loading.value || disabled"
+    [placeholder]="loading.value ? 'loading...' : (disabled ? '' : placeholder)"
+    [formControl]="formControl"
+    [matAutocomplete]='autoSuggestions'
+    [matChipInputFor]="chipList"
+    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+    (matChipInputTokenEnd)="select($event)">
+
+  <mat-chip-list
+    #chipList
+    [disabled]="disabled || loading.value">
+    <ng-container *ngIf="showEntities">
+      <mat-basic-chip
+        [selectable]="selectable && !disabled"
+        [removable]="removable && !disabled"
+        *ngFor="let entity of selection_"
+        class="chip">
+        <!-- This is going to be replaced with the dynamic content -->
+        <ng-container *ngTemplateOutlet="entityView; context: {entity: entity}"></ng-container>
+        <div
+          *ngIf="removable && !disabled"
+          matTooltip="remove"
+          class="fa fa-minus-square-o"
+          (click)="unselectEntity(entity)">
+        </div>
+      </mat-basic-chip>
+    </ng-container>
+
+  </mat-chip-list>
+
+  <mat-autocomplete
+    #autoSuggestions='matAutocomplete'
+    (optionSelected)="selectEntity($event.option.value)">
+    <!-- Optional header -->
+    <ng-content select="mat-option"></ng-content>
+    <mat-option *ngFor='let res of filteredEntities | async' [value]="res">
+      <!-- This is going to be replaced with the dynamic content -->
+      <ng-container *ngTemplateOutlet="autocompleteView; context: {entity: res}"></ng-container>
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

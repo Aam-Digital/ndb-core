@@ -61,8 +61,8 @@ export class RecurringActivity extends Entity {
   /** IDs of groups (schools, teams) whose (active) members should be included in the activity*/
   @DatabaseField() linkedGroups: string[] = [];
 
-  /** ID of the user who is responsible for conducting this activity */
-  @DatabaseField() assignedTo: string = "";
+  /** IDs of the users who are responsible for conducting this activity */
+  @DatabaseField() assignedTo: string[] = [];
 
   toString(): string {
     return this.title;

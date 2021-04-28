@@ -194,9 +194,9 @@ export const defaultConfig = {
           "id": "category"
         },
         {
-          "component": "DisplayText",
-          "title": "Author",
-          "id": "author"
+          "component": "DisplayUsers",
+          "title": "Authors",
+          "id": "authors"
         },
         {
           "component": "ChildBlockList",
@@ -215,7 +215,7 @@ export const defaultConfig = {
               "date",
               "subject",
               "category",
-              "author",
+              "authors",
               "children"
             ]
           },
@@ -999,7 +999,7 @@ export const defaultConfig = {
           "id": "type"
         },
         {
-          "component": "DisplayText",
+          "component": "DisplayUsers",
           "title": "Assigned to",
           "id": "assignedTo"
         }
@@ -1019,9 +1019,6 @@ export const defaultConfig = {
         ]
       },
       "filters": [
-        {
-          "id": "assignedTo"
-        }
       ]
     }
   },
@@ -1050,13 +1047,6 @@ export const defaultConfig = {
                       "input": "configurable-enum-select",
                       "enumId": "interaction-type",
                       "placeholder": "Type"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "assignedTo",
-                      "placeholder": "Assigned to"
                     }
                   ]
                 ]

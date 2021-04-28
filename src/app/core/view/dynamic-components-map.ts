@@ -25,6 +25,8 @@ import { PreviousTeamsComponent } from "../../child-dev-project/previous-teams/p
 import { BmiBlockComponent } from "../../child-dev-project/children/children-list/bmi-block/bmi-block.component";
 import { ChildrenBmiDashboardComponent } from "../../child-dev-project/children/children-bmi-dashboard/children-bmi-dashboard.component";
 import { DashboardShortcutWidgetComponent } from "../dashboard-shortcut-widget/dashboard-shortcut-widget/dashboard-shortcut-widget.component";
+import { UsersBlockComponent } from "../user/users-block/users-block.component";
+import { UserListComponent } from "../admin/user-list/user-list.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -46,6 +48,7 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["DisplayText", DisplayTextComponent],
   ["DisplayConfigurableEnum", DisplayConfigurableEnumComponent],
   ["DisplayCheckmark", DisplayCheckmarkComponent],
+  ["DisplayUsers", UsersBlockComponent],
   ["ChildBlock", ChildBlockComponent],
   ["ChildBlockList", ChildBlockListComponent],
   ["RecentAttendanceBlocks", RecentAttendanceBlocksComponent],
@@ -53,5 +56,6 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenOverview", ChildrenOverviewComponent],
   ["BmiBlock", BmiBlockComponent],
   ["ChildrenBmiDashboardComponent", ChildrenBmiDashboardComponent],
+  ["UserList", UserListComponent],
   ["DashboardShortcutWidget", DashboardShortcutWidgetComponent],
 ]);

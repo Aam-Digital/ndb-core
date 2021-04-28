@@ -30,10 +30,8 @@ import { MatListModule } from "@angular/material/list";
 import { ChildrenModule } from "../children/children.module";
 import { DragDropModule } from "@angular/cdk/drag-drop";
 import { MatTreeModule } from "@angular/material/tree";
-import { ChildMeetingNoteAttendanceComponent } from "./note-details/child-meeting-attendance/child-meeting-note-attendance.component";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatPaginatorModule } from "@angular/material/paginator";
-import { NotePresenceListComponent } from "./note-details/note-presence-list/note-presence-list.component";
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
 import { Angulartics2Module } from "angulartics2";
@@ -41,14 +39,15 @@ import { EntitySubrecordModule } from "../../core/entity-components/entity-subre
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import { AttendanceModule } from "../attendance/attendance.module";
+import { EntitySelectModule } from "../../core/entity-components/entity-select/entity-select.module";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { ChildMeetingNoteAttendanceComponent } from "./note-details/child-meeting-attendance/child-meeting-note-attendance.component";
 
 @NgModule({
   declarations: [
     NoteDetailsComponent,
     NotesManagerComponent,
     ChildMeetingNoteAttendanceComponent,
-    NotePresenceListComponent,
   ],
   imports: [
     CommonModule,
@@ -94,6 +93,8 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
     EntityListModule,
     ConfigurableEnumModule,
     AttendanceModule,
+    EntitySelectModule,
+    MatSlideToggleModule,
   ],
   providers: [],
 })

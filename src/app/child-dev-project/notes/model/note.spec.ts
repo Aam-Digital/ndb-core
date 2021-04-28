@@ -45,7 +45,7 @@ function createTestModel(): Note {
   n1.date = new Date();
   n1.subject = "Note Subject";
   n1.text = "Note text";
-  n1.author = "Max Musterman";
+  n1.authors = ["1"];
   n1.warningLevel = WarningLevel.URGENT;
 
   return n1;
@@ -105,7 +105,7 @@ describe("Note", () => {
       date: new Date(),
       subject: "Note Subject",
       text: "Note text",
-      author: "Max Musterman",
+      authors: ["1"],
       category: "GUARDIAN_TALK",
       warningLevel: WarningLevel.URGENT,
 
@@ -194,7 +194,7 @@ describe("Note", () => {
     note.addChild("4");
     note.addChild("5");
     note.addChild("6");
-    note.author = "A";
+    note.authors = ["A"];
     const otherNote = note.copy();
     expect(otherNote).toEqual(note);
     expect(otherNote).toBeInstanceOf(Note);
