@@ -1098,33 +1098,33 @@ export const defaultConfig = {
       "aggregationDefinitions": [
         {
           "query": `${Child.ENTITY_TYPE}:toArray`,
+          "label": "All children",
           "aggregations": [
-            {"label": "All children", "query": ":count"},
-            {"label": "Male children", "query": `[*gender=${Gender.MALE}]:count`},
-            {"label": "Female children", "query": `[*gender=${Gender.FEMALE}]:count`},
+            {"label": "Male children", "query": `[*gender=${Gender.MALE}]`},
+            {"label": "Female children", "query": `[*gender=${Gender.FEMALE}]`},
           ]
         },
         {
           "query": `${School.ENTITY_TYPE}:toArray`,
+          "label": "All schools",
           "aggregations": [
-            {"label": "All schools", "query": `:count`},
-            {"label": "Children attending a school", "query": `:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId):getActive.childId:unique:count`},
-            {"label": "Governmental schools", "query": `[*privateSchool!=true]:count`},
+            {"label": "Children attending a school", "query": `:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId):getActive.childId:unique`},
+            {"label": "Governmental schools", "query": `[*privateSchool!=true]`},
             {
               "query": `[*privateSchool!=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId):getActive.childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
+              "label": "Children attending a governmental school",
               "aggregations": [
-                {"label": "Children attending a governmental school", "query": `:count`},
-                {"label": "Male children attending a governmental school", "query": `[*gender=${Gender.MALE}]:count`},
-                {"label": "Female children attending a governmental school", "query": `[*gender=${Gender.FEMALE}]:count`},
+                {"label": "Male children attending a governmental school", "query": `[*gender=${Gender.MALE}]`},
+                {"label": "Female children attending a governmental school", "query": `[*gender=${Gender.FEMALE}]`},
               ]
             },
-            {"label": "Private schools", "query": `[*privateSchool=true]:count`},
+            {"label": "Private schools", "query": `[*privateSchool=true]`},
             {
               "query": `[*privateSchool=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId):getActive.childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
+              "label": "Children attending a private school",
               "aggregations": [
-                {"label": "Children attending a private school", "query": `:count`},
-                {"label": "Male children attending a private school", "query": `[*gender=${Gender.MALE}]:count`},
-                {"label": "Female children attending a private school", "query": `[*gender=${Gender.FEMALE}]:count`},
+                {"label": "Male children attending a private school", "query": `[*gender=${Gender.MALE}]`},
+                {"label": "Female children attending a private school", "query": `[*gender=${Gender.FEMALE}]`},
               ]
             },
           ]

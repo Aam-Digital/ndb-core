@@ -13,7 +13,7 @@ export interface ReportingComponentConfig {
   styleUrls: ["./reporting.component.scss"],
 })
 export class ReportingComponent implements OnInit, AfterViewInit {
-  private config: ReportingComponentConfig;
+  config: ReportingComponentConfig;
   results: ReportRow[];
   displayedColumns = ["label", "result"];
   step = 0;
@@ -33,7 +33,6 @@ export class ReportingComponent implements OnInit, AfterViewInit {
         this.step = 1;
       }
     });
-    this.calculateResults();
   }
 
   ngAfterViewInit() {

@@ -1,28 +1,20 @@
 <mat-expansion-panel expanded="true" class="work-panek mat-elevation-z2">
-    <mat-horizontal-stepper [selectedIndex]="step" labelPosition="bottom">
-
-        <mat-step [completed]="step > 0">
-            <ng-template matStepLabel>Create report</ng-template>
-            <button mat-stroked-button>Ask for a setup call</button>
-        </mat-step>
-
-        <mat-step label="Fill out your address" [completed]="step > 1">
-            <ng-template matStepLabel>Select timespan</ng-template>
-            <mat-form-field appearance="fill">
-                <mat-label>Enter a date range</mat-label>
-                <mat-date-range-input [rangePicker]="picker">
-                    <input [(ngModel)]="fromDate" matStartDate placeholder="Start date">
-                    <input [(ngModel)]="toDate" matEndDate placeholder="End date">
-                </mat-date-range-input>
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-date-range-picker (closed)="datesSelected()" #picker></mat-date-range-picker>
-            </mat-form-field>
-        </mat-step>
-
-        <mat-step [completed]="step > 2">
-            <ng-template matStepLabel>Calculate report</ng-template>
-            <button mat-stroked-button (click)="calculateResults()">Calculate</button>
-            <app-export-data [data]="this.results" format="csv" filename="report" style="float: right">
+    <div *ngIf="!config">
+        <button mat-stroked-button>Ask for a setup call</button>
+    </div>
+    <div *ngIf="config">
+        <mat-form-field appearance="fill">
+            <mat-label>Enter a date range</mat-label>
+            <mat-date-range-input [rangePicker]="picker">
+                <input [(ngModel)]="fromDate" matStartDate placeholder="Start date">
+                <input [(ngModel)]="toDate" matEndDate placeholder="End date">
+            </mat-date-range-input>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker (closed)="datesSelected()" #picker></mat-date-range-picker>
+        </mat-form-field>
+        <div>
+            <button mat-stroked-button [disabled]="!fromDate" (click)="calculateResults()">Calculate</button>
+            <app-export-data [disabled]="results?.length === 0" [data]="this.results" format="csv" filename="report" style="float: right">
                 <mat-icon
                         class="button-icon"
                         aria-label="download csv"
@@ -30,18 +22,9 @@
                 ></mat-icon>
                 Download report
             </app-export-data>
-        </mat-step>
-
-        <ng-template matStepperIcon="edit">
-            <mat-icon fontIcon="fa-check"></mat-icon>
-        </ng-template>
-        <ng-template matStepperIcon="done">
-            <mat-icon fontIcon="fa-check"></mat-icon>
-        </ng-template>
-    </mat-horizontal-stepper>
+        </div>
+    </div>
 </mat-expansion-panel>
 
-<!--<div class="result-panel mat-elevation-z2" *ngIf="results?.length > 0" style="background-color: white">-->
-    <app-report-row [rows]="results"></app-report-row>
-<!--</div>-->
+<app-report-row *ngIf="results?.length > 0" [rows]="results"></app-report-row>
 
