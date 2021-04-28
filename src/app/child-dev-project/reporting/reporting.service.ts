@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { QueryService } from "./query.service";
-import { GroupingService } from "./grouping.service";
 
 export interface Aggregation {
   query: string;
@@ -22,10 +21,7 @@ export class ReportingService {
   private fromDate: Date;
   private toDate: Date;
 
-  constructor(
-    private queryService: QueryService,
-    private groupingService: GroupingService
-  ) {}
+  constructor(private queryService: QueryService) {}
 
   public setAggregations(aggregations: Aggregation[]) {
     this.aggregations = aggregations;
@@ -100,12 +96,12 @@ export class ReportingService {
     for (let i = properties.length; i > 0; i--) {
       const suffix = properties.slice(i);
       const property = properties[i - 1];
-      const groupingResults = this.groupingService.groupBy(data, property);
+      const groupingResults = this.groupBy(data, property);
       for (const grouping of groupingResults) {
         const newRow: ReportRow = {
           header: {
             label: label,
-            values: Object.values(grouping.values),
+            values: [this.getValueDescription(grouping.value, property)],
             result: grouping.data.length,
           },
           subRows: [],
@@ -126,43 +122,29 @@ export class ReportingService {
     return resultRows;
   }
 
-  private async createGroupByResult(
-    aggregation: Aggregation,
-    data: any[]
-  ): Promise<ReportRow[]> {
-    const results: ReportRow[] = [];
-    const groupings = (this.groupingService.groupBy(
-      data,
-      aggregation.groupBy[0]
-    ) as unknown) as { values: { [key in string]: any }; data: any[] }[];
-    let currentRow = results;
-    for (const group of groupings) {
-      const groupValues = Object.values(group.values);
-      if (aggregation.label) {
-        const newRow = {
-          header: {
-            label: aggregation.label,
-            values: groupValues,
-            result: group.data.length,
-          },
-          subRows: [],
-        };
-        results.push(newRow);
-        currentRow = newRow.subRows;
+  private groupBy<T, K extends keyof T>(
+    data: T[],
+    property: K
+  ): { value: T[K]; data: T[] }[] {
+    return data.reduce((groups, element) => {
+      const value = element[property];
+      let existing = groups.find((group) => group.value === value);
+      if (!existing) {
+        existing = { value: value, data: [] };
+        groups.push(existing);
       }
-      if (aggregation.aggregations) {
-        const aggregationResults = await this.calculateAggregations(
-          aggregation.aggregations,
-          group.data
-        );
-        aggregationResults.forEach((row) =>
-          row.header.values
-            ? row.header.values.push(...groupValues)
-            : (row.header.values = groupValues)
-        );
-        currentRow.push(...aggregationResults);
-      }
-    }
-    return results;
+      existing.data.push(element);
+      return groups;
+    }, new Array<{ value: T[K]; data: T[] }>());
+  }
+
+  private getValueDescription(value: any, property: string): string {
+    if (typeof value === "boolean") {
+      return value ? property : "not " + property;
+    } else if (!value) {
+      return "without " + property;
+    } else if (value.hasOwnProperty("label")) {
+      return value.label;
+    } else return value;
   }
 }
