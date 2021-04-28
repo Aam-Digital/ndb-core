@@ -6,6 +6,11 @@ import { generateEventWithAttendance } from "../model/activity-attendance";
 import { SimpleChange } from "@angular/core";
 import moment from "moment";
 import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
+import { Note } from "../../notes/model/note";
+import { Child } from "../../children/model/child";
+import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatNativeDateModule } from "@angular/material/core";
 
 describe("AttendanceCalendarComponent", () => {
   let component: AttendanceCalendarComponent;
@@ -14,7 +19,7 @@ describe("AttendanceCalendarComponent", () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        imports: [FormDialogModule],
+        imports: [FormDialogModule, MatDatepickerModule, MatNativeDateModule],
         declarations: [AttendanceCalendarComponent],
         providers: [
           {
@@ -52,5 +57,33 @@ describe("AttendanceCalendarComponent", () => {
     expect(
       moment(component.maxDate).isSame(moment("2020-01-31"), "day")
     ).toBeTrue();
+  });
+
+  it("should correctly computes average attendance", () => {
+    const attendedChild = new Child("attendedChild");
+    const attendedChild2 = new Child("attendedChild2");
+    const absentChild = new Child("absentChild");
+    const childWithoutAttendance = new Child("childWithoutAttendance");
+    const note = new Note();
+    note.date = new Date();
+    note.addChild(attendedChild.getId());
+    note.addChild(attendedChild2.getId());
+    note.addChild(absentChild.getId());
+    note.addChild(childWithoutAttendance.getId());
+    const presentAttendance = defaultAttendanceStatusTypes.find(
+      (it) => it.id === "PRESENT"
+    );
+    const absentAttendance = defaultAttendanceStatusTypes.find(
+      (it) => it.id === "ABSENT"
+    );
+    note.getAttendance(attendedChild.getId()).status = presentAttendance;
+    note.getAttendance(attendedChild2.getId()).status = presentAttendance;
+    note.getAttendance(absentChild.getId()).status = absentAttendance;
+    component.records = [note];
+
+    component.selectDay(new Date());
+
+    expect(component.selectedEventStats).not.toBeNull();
+    expect(component.selectedEventStats.average).toEqual(0.5);
   });
 });
