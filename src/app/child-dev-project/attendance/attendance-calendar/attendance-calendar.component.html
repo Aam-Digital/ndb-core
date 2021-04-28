@@ -8,7 +8,7 @@
 
 <div *ngIf="selectedDate" class="form">
   <h3 class="selected-title">
-    {{ selectedDate | date }}
+    {{ selectedDate.toDate() | date }}
   </h3>
 
   <button mat-icon-button class="form-close" (click)="selectDay()">
@@ -41,14 +41,14 @@
       All excused (out of {{selectedEvent.children.length}} participants)
     </div>
     <div *ngIf="selectedEventStats.average">
-      {{ selectedEventStats.average | percent: "1.0-0" }} attended (of
-      {{ selectedEvent.children.length }} participants)
+      {{ selectedEventStats.average | percent: "1.0-0" }} attended
+      (of {{ selectedEventStats.counted }} participants)
     </div>
     <div
-      *ngIf="selectedEventStats.unknownStatus > 0"
+      *ngIf="selectedEventStats.excludedUnknown > 0"
       class="unknown-status-notice"
     >
-      {{ selectedEventStats.unknownStatus }} participants without recorded
+      {{ selectedEventStats.excludedUnknown }} participants without recorded
       status
     </div>
     <button mat-stroked-button (click)="showEventDetails(selectedEvent)">
