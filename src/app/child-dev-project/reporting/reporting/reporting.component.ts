@@ -33,6 +33,7 @@ export class ReportingComponent implements OnInit, AfterViewInit {
         this.step = 1;
       }
     });
+    this.calculateResults();
   }
 
   ngAfterViewInit() {
@@ -59,5 +60,6 @@ export class ReportingComponent implements OnInit, AfterViewInit {
       this.fromDate,
       this.toDate
     );
+    console.log("this. results");
   }
 }

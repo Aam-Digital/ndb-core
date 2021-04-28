@@ -22,6 +22,14 @@
         <mat-step [completed]="step > 2">
             <ng-template matStepLabel>Calculate report</ng-template>
             <button mat-stroked-button (click)="calculateResults()">Calculate</button>
+            <app-export-data [data]="this.results" format="csv" filename="report" style="float: right">
+                <mat-icon
+                        class="button-icon"
+                        aria-label="download csv"
+                        fontIcon="fa-download"
+                ></mat-icon>
+                Download report
+            </app-export-data>
         </mat-step>
 
         <ng-template matStepperIcon="edit">
@@ -33,28 +41,7 @@
     </mat-horizontal-stepper>
 </mat-expansion-panel>
 
-<div class="result-panel mat-elevation-z2" *ngIf="results?.length > 0" style="background-color: white">
-    <app-export-data [data]="this.results" format="csv" filename="report" style="float: right">
-        <mat-icon
-            class="button-icon"
-            aria-label="download csv"
-            fontIcon="fa-download"
-        ></mat-icon>
-        Download report
-    </app-export-data>
-    <table mat-table [dataSource]="results" style="width: 100%;">
-        <ng-container matColumnDef="label">
-            <th mat-header-cell *matHeaderCellDef> Label </th>
-            <td mat-cell *matCellDef="let result"> {{result.label}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="result">
-            <th mat-header-cell *matHeaderCellDef> Result </th>
-            <td mat-cell *matCellDef="let result"> {{result.result}} </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="result-panel-item"></tr>
-    </table>
-</div>
+<!--<div class="result-panel mat-elevation-z2" *ngIf="results?.length > 0" style="background-color: white">-->
+    <app-report-row [rows]="results"></app-report-row>
+<!--</div>-->
 

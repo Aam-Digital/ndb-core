@@ -19,18 +19,178 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeIconsModule } from "../../../core/icons/font-awesome-icons.module";
 import { AdminModule } from "../../../core/admin/admin.module";
+import { BackupService } from "../../../core/admin/services/backup.service";
+import { ReportRowComponent } from "./report-row/report-row.component";
+import { Gender } from "../../children/model/Gender";
 
 const reportingService = {
   setAggregations: () => null,
   calculateReport: () => {
-    console.log("called");
     return Promise.resolve([
-      { label: "Schools", result: 10 },
-      { label: "Private Schools", result: 3 },
-      { label: "Government Schools", result: 7 },
-      { label: "Students", result: 120 },
-      { label: "Male Students", result: 54 },
-      { label: "Female Students", result: 76 },
+      {
+        header: { label: "Total # of children", result: 4 },
+        subRows: [
+          {
+            header: {
+              label: "Total # of children",
+              values: ["Alipore"],
+              result: 3,
+            },
+            subRows: [],
+          },
+          {
+            header: {
+              label: "Total # of children",
+              values: ["Barabazar"],
+              result: 1,
+            },
+            subRows: [],
+          },
+          {
+            header: {
+              label: "Total # of children",
+              values: ["christian"],
+              result: 3,
+            },
+            subRows: [
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["Alipore"],
+                  result: 2,
+                },
+                subRows: [],
+              },
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["Barabazar"],
+                  result: 1,
+                },
+                subRows: [],
+              },
+            ],
+          },
+          {
+            header: {
+              label: "Total # of children",
+              values: ["muslim"],
+              result: 1,
+            },
+            subRows: [
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["Alipore"],
+                  result: 1,
+                },
+                subRows: [],
+              },
+            ],
+          },
+          {
+            header: {
+              label: "Total # of children",
+              values: [Gender.FEMALE],
+              result: 2,
+            },
+            subRows: [
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["Alipore"],
+                  result: 1,
+                },
+                subRows: [],
+              },
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["Barabazar"],
+                  result: 1,
+                },
+                subRows: [],
+              },
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["christian"],
+                  result: 2,
+                },
+                subRows: [
+                  {
+                    header: {
+                      label: "Total # of children",
+                      values: ["Alipore"],
+                      result: 1,
+                    },
+                    subRows: [],
+                  },
+                  {
+                    header: {
+                      label: "Total # of children",
+                      values: ["Barabazar"],
+                      result: 1,
+                    },
+                    subRows: [],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            header: {
+              label: "Total # of children",
+              values: [Gender.MALE],
+              result: 2,
+            },
+            subRows: [
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["Alipore"],
+                  result: 2,
+                },
+                subRows: [],
+              },
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["christian"],
+                  result: 1,
+                },
+                subRows: [
+                  {
+                    header: {
+                      label: "Total # of children",
+                      values: ["Alipore"],
+                      result: 1,
+                    },
+                    subRows: [],
+                  },
+                ],
+              },
+              {
+                header: {
+                  label: "Total # of children",
+                  values: ["muslim"],
+                  result: 1,
+                },
+                subRows: [
+                  {
+                    header: {
+                      label: "Total # of children",
+                      values: ["Alipore"],
+                      result: 1,
+                    },
+                    subRows: [],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
     ]);
   },
 };
@@ -60,7 +220,12 @@ export default {
       providers: [
         { provide: ActivatedRoute, useValue: { data: of({}) } },
         { provide: ReportingService, useValue: reportingService },
+        {
+          provide: BackupService,
+          useValue: { createJson: () => {}, createCsv: () => {} },
+        },
       ],
+      declarations: [ReportRowComponent],
     }),
   ],
 } as Meta;

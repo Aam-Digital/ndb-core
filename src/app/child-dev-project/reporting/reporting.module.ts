@@ -11,9 +11,10 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormsModule } from "@angular/forms";
 import { AdminModule } from "../../core/admin/admin.module";
+import { ReportRowComponent } from "./reporting/report-row/report-row.component";
 
 @NgModule({
-  declarations: [ReportingComponent],
+  declarations: [ReportingComponent, ReportRowComponent],
   imports: [
     CommonModule,
     MatButtonModule,
