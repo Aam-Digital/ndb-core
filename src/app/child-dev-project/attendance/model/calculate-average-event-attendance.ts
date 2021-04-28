@@ -32,8 +32,7 @@ export function calculateAverageAttendance(
   return {
     average:
       stats.get(AttendanceLogicalStatus.PRESENT) /
-      (stats.get(AttendanceLogicalStatus.PRESENT) +
-        stats.get(AttendanceLogicalStatus.ABSENT)),
+      event.children.length,
     unknownStatus: statusCounts.get(NullAttendanceStatusType.status) ?? 0,
     statusCounts: statusCounts,
   };
