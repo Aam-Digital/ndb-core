@@ -15,9 +15,10 @@ import { AlertsModule } from "../../alerts/alerts.module";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatButtonModule } from "@angular/material/button";
 import { EntitySubrecordComponent } from "./entity-suprecord/entity-subrecord.component";
+import { ConfigurableEntitySubrecordComponent } from './configurable-entity-subrecord/configurable-entity-subrecord.component';
 
 @NgModule({
-  declarations: [EntitySubrecordComponent, KeysPipe],
+  declarations: [EntitySubrecordComponent, KeysPipe, ConfigurableEntitySubrecordComponent],
   imports: [
     CommonModule,
     AlertsModule,
