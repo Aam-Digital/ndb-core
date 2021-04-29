@@ -2,15 +2,15 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EntitySubrecordComponent } from "./entity-subrecord.component";
 import { RouterTestingModule } from "@angular/router/testing";
-import { EntitySubrecordModule } from "./entity-subrecord.module";
-import { Entity } from "../../entity/entity";
-import { ColumnDescriptionInputType } from "./column-description-input-type.enum";
 import { By } from "@angular/platform-browser";
 import { SimpleChange } from "@angular/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatNativeDateModule } from "@angular/material/core";
 import { DatePipe, PercentPipe } from "@angular/common";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { Entity } from "../../../entity/entity";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { EntitySubrecordModule } from "../entity-subrecord.module";
+import { ColumnDescriptionInputType } from "../column-description-input-type.enum";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
