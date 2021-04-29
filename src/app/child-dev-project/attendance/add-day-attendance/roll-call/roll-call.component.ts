@@ -59,6 +59,7 @@ export class RollCallComponent implements OnInit {
 
   async ngOnInit() {
     this.entries = [];
+    this.goToNextParticipant(0);
     this.loadAttendanceStatusTypes();
     for (const childId of this.eventEntity.children) {
       let child;
@@ -78,7 +79,6 @@ export class RollCallComponent implements OnInit {
         attendance: this.eventEntity.getAttendance(childId),
       });
     }
-    this.goToNextParticipant(0);
   }
 
   private loadAttendanceStatusTypes() {
