@@ -148,6 +148,8 @@ export class ReportingService {
       return "without " + property;
     } else if (value.hasOwnProperty("label")) {
       return value.label;
-    } else return value;
+    } else {
+      return value;
+    }
   }
 }

@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { ReportRowComponent } from './report-row.component';
+import { ReportRowComponent } from "./report-row.component";
 
-describe('ReportRowComponent', () => {
+describe("ReportRowComponent", () => {
   let component: ReportRowComponent;
   let fixture: ComponentFixture<ReportRowComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ReportRowComponent ]
-    })
-    .compileComponents();
+      declarations: [ReportRowComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('ReportRowComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

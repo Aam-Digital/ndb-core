@@ -17,9 +17,7 @@ describe("ReportingService", () => {
   beforeEach(() => {
     mockQueryService = jasmine.createSpyObj(["queryData", "loadData"]);
     TestBed.configureTestingModule({
-      providers: [
-        { provide: QueryService, useValue: mockQueryService },
-      ],
+      providers: [{ provide: QueryService, useValue: mockQueryService }],
     });
     service = TestBed.inject(ReportingService);
   });
