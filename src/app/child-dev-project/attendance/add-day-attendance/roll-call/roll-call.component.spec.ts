@@ -17,6 +17,8 @@ import { Child } from "../../../children/model/child";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { LoggingService } from "../../../../core/logging/logging.service";
 import { defaultAttendanceStatusTypes } from "../../../../core/config/default-config/default-attendance-status-types";
+import { AttendanceModule } from "../../attendance.module";
+import { ChildrenService } from "../../../children/children.service";
 
 describe("RollCallComponent", () => {
   let component: RollCallComponent;
@@ -38,12 +40,12 @@ describe("RollCallComponent", () => {
       mockLoggingService = jasmine.createSpyObj(["warn"]);
 
       TestBed.configureTestingModule({
-        imports: [NoopAnimationsModule],
-        declarations: [RollCallComponent],
+        imports: [AttendanceModule, NoopAnimationsModule],
         providers: [
           { provide: ConfigService, useValue: mockConfigService },
           { provide: EntityMapperService, useValue: mockEntityMapper },
           { provide: LoggingService, useValue: mockLoggingService },
+          { provide: ChildrenService, useValue: {} },
         ],
       }).compileComponents();
     })

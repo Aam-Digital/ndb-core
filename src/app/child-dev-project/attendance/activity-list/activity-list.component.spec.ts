@@ -5,29 +5,42 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { ActivatedRoute } from "@angular/router";
 import { of } from "rxjs";
+import { AttendanceModule } from "../attendance.module";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { BackupService } from "../../../core/admin/services/backup.service";
+import { Angulartics2Module } from "angulartics2";
+import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
+import { User } from "../../../core/user/user";
+import { mockEntityMapper } from "app/core/entity/mock-entity-mapper-service";
 
 describe("ActivityListComponent", () => {
   let component: ActivityListComponent;
   let fixture: ComponentFixture<ActivityListComponent>;
 
-  let mockEntityService: jasmine.SpyObj<EntityMapperService>;
+  const mockConfig: EntityListConfig = {
+    columns: [],
+    title: "",
+  };
 
   beforeEach(
     waitForAsync(() => {
-      mockEntityService = jasmine.createSpyObj("mockEntityService", [
-        "loadType",
-      ]);
-      mockEntityService.loadType.and.resolveTo([]);
-
       TestBed.configureTestingModule({
-        declarations: [ActivityListComponent],
-        imports: [RouterTestingModule],
+        imports: [
+          AttendanceModule,
+          RouterTestingModule,
+          Angulartics2Module.forRoot(),
+        ],
         providers: [
-          { provide: EntityMapperService, useValue: mockEntityService },
+          { provide: EntityMapperService, useValue: mockEntityMapper([]) },
+          {
+            provide: SessionService,
+            useValue: { getCurrentUser: () => new User() },
+          },
+          { provide: BackupService, useValue: {} },
           {
             provide: ActivatedRoute,
             useValue: {
-              data: of({}),
+              data: of(mockConfig),
               queryParams: of({}),
             },
           },

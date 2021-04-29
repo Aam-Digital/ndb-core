@@ -22,8 +22,10 @@ export function PerformanceAnalysisLogging(
 
     const end = new Date().getTime();
     const duration = (end - start) / 1000;
+
+    const paramDetails = args.map((a) => JSON.stringify(a._id ?? a)).join(", ");
     console.log(
-      `duration [s] "${target.constructor.name}.${propertyKey}"`,
+      `duration [s] for ${target.constructor.name}.${propertyKey}(${paramDetails})`,
       duration
     );
 
