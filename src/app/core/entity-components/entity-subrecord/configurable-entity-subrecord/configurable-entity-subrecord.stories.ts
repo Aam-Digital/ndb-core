@@ -7,6 +7,11 @@ import { ConfigurableEntitySubrecordComponent } from "./configurable-entity-subr
 import { EntitySubrecordModule } from "../entity-subrecord.module";
 import { FontAwesomeIconsModule } from "../../../icons/font-awesome-icons.module";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { CommonModule, DatePipe } from "@angular/common";
+import { Entity } from "../../../entity/entity";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { ConfigService } from "../../../config/config.service";
+import { MatFormFieldModule } from "@angular/material/form-field";
 
 export default {
   title: "Core/EntityComponents/ConfigurableEntitySubrecord",
@@ -19,12 +24,20 @@ export default {
         RouterTestingModule,
         MatNativeDateModule,
         Angulartics2Module.forRoot(),
+        CommonModule,
+        NoopAnimationsModule,
+        MatFormFieldModule,
       ],
       declarations: [],
       providers: [
         {
           provide: EntityMapperService,
           useValue: { save: () => Promise.resolve() },
+        },
+        DatePipe,
+        {
+          provide: ConfigService,
+          useValue: { getConfig: () => ratingAnswer },
         },
       ],
     }),
@@ -38,5 +51,51 @@ const Template: Story<ConfigurableEntitySubrecordComponent> = (
   props: args,
 });
 
+const ratingAnswer = [
+  {
+    id: "notTrueAtAll",
+    label: "not true at all",
+  },
+  {
+    id: "rarelyTrue",
+    label: "rarely true",
+  },
+  {
+    id: "usuallyTrue",
+    label: "usually true",
+  },
+  {
+    id: "absolutelyTrue",
+    label: "absolutelyTrue",
+  },
+  {
+    id: "noAnswerPossible",
+    label: "no answer possible",
+  },
+];
+
+class Test extends Entity {
+  nameOfObserver = "My name";
+  firstQuestion = ratingAnswer[0];
+}
+
 export const Primary = Template.bind({});
-Primary.args = {};
+Primary.args = {
+  config: {
+    cols: [
+      {
+        placeholder: "Name of Observer",
+        input: "text",
+        id: "nameOfObserver",
+      },
+      {
+        input: "configurable-enum-select",
+        id: "firstQuestion",
+        placeholder: "1. Question",
+        enumId: "rating-answer",
+        additionalInfo: "Child admit own guilt in conflict situations.",
+      },
+    ],
+  },
+  records: [new Test(), new Test(), new Test()],
+};
