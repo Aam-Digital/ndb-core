@@ -38,7 +38,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringAct
       faker.random.alphaNumeric(1).toUpperCase();
     activity.type = type;
     activity.participants = children.map((c) => c.getId());
-    activity.assignedTo = assignedUser?.getId();
+    activity.assignedTo = [assignedUser?.getId()];
 
     return activity;
   }

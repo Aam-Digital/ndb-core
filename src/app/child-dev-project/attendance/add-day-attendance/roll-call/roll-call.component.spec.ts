@@ -123,10 +123,14 @@ describe("RollCallComponent", () => {
     const note = new Note("noteWithAttendance");
     note.addChild(attendedChild.getId());
     note.addChild(absentChild.getId());
-    mockEntityMapper.load.and.returnValues(
-      Promise.resolve(absentChild),
-      Promise.resolve(attendedChild)
-    );
+    mockEntityMapper.load.and.callFake((t, id) => {
+      if (id === absentChild.getId()) {
+        return Promise.resolve(absentChild) as any;
+      }
+      if (id === attendedChild.getId()) {
+        return Promise.resolve(attendedChild) as any;
+      }
+    });
     component.eventEntity = note;
     component.ngOnInit();
     tick();

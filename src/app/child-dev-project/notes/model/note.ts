@@ -59,7 +59,8 @@ export class Note extends Entity {
   @DatabaseField() date: Date;
   @DatabaseField() subject: string = "";
   @DatabaseField() text: string = "";
-  @DatabaseField() author: string = "";
+  /** IDs of users that authored this note */
+  @DatabaseField() authors: string[] = [];
 
   @DatabaseField({
     dataType: "configurable-enum",
@@ -114,7 +115,7 @@ export class Note extends Entity {
    * @param childId The id of the child to exclude from the notes
    */
   removeChild(childId: string) {
-    this.children.splice(this.children.indexOf(childId), 1);
+    this.children = this.children.filter((c) => c !== childId);
     this.childrenAttendance.delete(childId);
   }
 
@@ -127,7 +128,7 @@ export class Note extends Entity {
       return;
     }
 
-    this.children.splice(0, 0, childId);
+    this.children = this.children.concat(childId);
   }
 
   /**

@@ -1,16 +1,30 @@
 <div>
-  <app-school-select
-    [(selectedSchoolIds)]="participatingGroups"
+  <app-entity-select
+    [entityType]="User"
+    [(selection)]="assignedUsers"
     [disabled]="!editing"
-    class="input-medium"
+    [view]="userBlock"
+    label="Assigned to"
+    placeholder="Add coordinator ..."
   >
-  </app-school-select>
-  <app-child-select
-    [(selectedChildrenIds)]="participants"
+  </app-entity-select>
+  <app-entity-select
+    [entityType]="School"
+    [(selection)]="participatingGroups"
     [disabled]="!editing"
-    class="input-medium"
+    [view]="schoolBlock"
+    label="Groups"
+    placeholder="Add group ..."
   >
-  </app-child-select>
+  </app-entity-select>
+  <app-entity-select
+    [(selection)]="participants"
+    [disabled]="!editing"
+    [entityType]="Child"
+    [view]="childBlock"
+    label="Participants"
+    placeholder="Add participant ..."
+  ></app-entity-select>
 </div>
 
 <div>
@@ -41,3 +55,28 @@
     Edit
   </button>
 </div>
+
+<ng-template
+  let-entity="entity"
+  #childBlock
+>
+  <app-child-block
+    [entity]="entity"
+    [linkDisabled]="true"
+    [tooltipDisabled]="true">
+  </app-child-block>
+</ng-template>
+
+<ng-template
+  let-entity="entity"
+  #schoolBlock>
+  <app-school-block
+  [entity]="entity"
+  [linkDisabled]="true">
+  </app-school-block>
+</ng-template>
+
+<ng-template
+  #userBlock
+  let-user="entity"
+>{{user.name}}</ng-template>

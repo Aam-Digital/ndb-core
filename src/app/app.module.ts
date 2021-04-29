@@ -71,6 +71,7 @@ import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-en
 import { ConfigModule } from "./core/config/config.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
 import { ReportingModule } from "./child-dev-project/reporting/reporting.module";
+import { MatFormFieldModule } from "@angular/material/form-field";
 import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/dashboard-shortcut-widget.module";
 
 /**
@@ -140,6 +141,7 @@ import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/
       ...DemoUserGeneratorService.provider(),
     ]),
     AttendanceModule,
+    MatFormFieldModule,
     DashboardShortcutWidgetModule,
   ],
   providers: [
