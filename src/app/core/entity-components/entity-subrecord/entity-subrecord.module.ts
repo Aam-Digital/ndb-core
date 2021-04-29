@@ -15,10 +15,16 @@ import { AlertsModule } from "../../alerts/alerts.module";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatButtonModule } from "@angular/material/button";
 import { EntitySubrecordComponent } from "./entity-suprecord/entity-subrecord.component";
-import { ConfigurableEntitySubrecordComponent } from './configurable-entity-subrecord/configurable-entity-subrecord.component';
+import { ConfigurableEntitySubrecordComponent } from "./configurable-entity-subrecord/configurable-entity-subrecord.component";
+import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @NgModule({
-  declarations: [EntitySubrecordComponent, KeysPipe, ConfigurableEntitySubrecordComponent],
+  declarations: [
+    EntitySubrecordComponent,
+    KeysPipe,
+    ConfigurableEntitySubrecordComponent,
+  ],
   imports: [
     CommonModule,
     AlertsModule,
@@ -34,6 +40,8 @@ import { ConfigurableEntitySubrecordComponent } from './configurable-entity-subr
     MatAutocompleteModule,
     MatIconModule,
     MatButtonModule,
+    ConfigurableEnumModule,
+    MatTooltipModule,
   ],
   exports: [EntitySubrecordComponent, KeysPipe],
 })

@@ -56,4 +56,8 @@ export interface ColumnDescription {
    * use this function to format a value or calculate a more complex value that is not directly a property of the entity object.
    */
   valueFunction?: (entity: Entity) => any;
+
+  enumId?: string;
+
+  tooltip?: string;
 }
