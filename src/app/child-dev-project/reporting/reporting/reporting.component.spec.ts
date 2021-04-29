@@ -14,7 +14,7 @@ import { ReportingModule } from "../reporting.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Subject } from "rxjs";
 import { ActivatedRoute } from "@angular/router";
-import { Aggregation, ReportingService, ReportRow } from "../reporting.service";
+import { ReportingService, ReportRow } from "../reporting.service";
 import { MatNativeDateModule } from "@angular/material/core";
 
 describe("ReportingComponent", () => {
@@ -86,7 +86,7 @@ describe("ReportingComponent", () => {
     expect(component.results).toEqual(results);
   }));
 
-  it("should create a table that can be exported", () => {
+  it("should create a table that can be exported", fakeAsync(() => {
     mockReportingService.calculateReport.and.resolveTo([
       {
         header: { label: "top level", result: 1 },
@@ -113,6 +113,7 @@ describe("ReportingComponent", () => {
     ]);
 
     component.calculateResults();
+    tick();
 
     expect(component.reportTable).toEqual([
       { label: "top level", result: 1 },
@@ -120,5 +121,5 @@ describe("ReportingComponent", () => {
       { label: "double nested (two, values)", result: 2.5 },
       { label: "second nested", result: 3 },
     ]);
-  });
+  }));
 });
