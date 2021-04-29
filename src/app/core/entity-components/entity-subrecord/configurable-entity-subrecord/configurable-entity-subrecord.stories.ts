@@ -75,14 +75,29 @@ const ratingAnswer = [
 ];
 
 class Test extends Entity {
+  date = new Date();
   nameOfObserver = "My name";
   firstQuestion = ratingAnswer[0];
+  secondQuestion = ratingAnswer[1];
+  thirdQuestion = ratingAnswer[2];
+  fourthQuestion = ratingAnswer[3];
+  fifthQuestion = ratingAnswer[4];
+  sixthQuestion = ratingAnswer[0];
+  seventhQuestion = ratingAnswer[1];
+  eightQuestion = ratingAnswer[2];
+  ninthQuestion = ratingAnswer[3];
+  tenthQuestion = ratingAnswer[4];
 }
 
 export const Primary = Template.bind({});
 Primary.args = {
   config: {
     cols: [
+      {
+        placeholder: "Date",
+        input: "date",
+        id: "date",
+      },
       {
         placeholder: "Name of Observer",
         input: "text",
@@ -93,7 +108,70 @@ Primary.args = {
         id: "firstQuestion",
         placeholder: "1. Question",
         enumId: "rating-answer",
-        additionalInfo: "Child admit own guilt in conflict situations.",
+        additionalInfo: "Child admits sown guilt in conflict situations.",
+      },
+      {
+        input: "configurable-enum-select",
+        id: "secondQuestion",
+        placeholder: "2. Question",
+        enumId: "rating-answer",
+        additionalInfo: "Child admits sown guilt in conflict situations.",
+      },
+      {
+        input: "configurable-enum-select",
+        id: "thirdQuestion",
+        placeholder: "3. Question",
+        enumId: "rating-answer",
+        additionalInfo: "Child admits sown guilt in conflict situations.",
+      },
+      {
+        input: "configurable-enum-select",
+        id: "fourthQuestion",
+        placeholder: "4. Question",
+        enumId: "rating-answer",
+        additionalInfo: "Child admits sown guilt in conflict situations.",
+      },
+      {
+        input: "configurable-enum-select",
+        id: "fifthQuestion",
+        placeholder: "5. Question",
+        enumId: "rating-answer",
+        additionalInfo: "Child admits sown guilt in conflict situations.",
+      },
+      {
+        input: "configurable-enum-select",
+        id: "sixthQuestion",
+        placeholder: "6. Question",
+        enumId: "rating-answer",
+        additionalInfo: "Child admits sown guilt in conflict situations.",
+      },
+      {
+        input: "configurable-enum-select",
+        id: "seventhQuestion",
+        placeholder: "7. Question",
+        enumId: "rating-answer",
+        additionalInfo: "Child admits sown guilt in conflict situations.",
+      },
+      {
+        input: "configurable-enum-select",
+        id: "eightQuestion",
+        placeholder: "8. Question",
+        enumId: "rating-answer",
+        additionalInfo: "Child admits sown guilt in conflict situations.",
+      },
+      {
+        input: "configurable-enum-select",
+        id: "ninthQuestion",
+        placeholder: "9. Question",
+        enumId: "rating-answer",
+        additionalInfo: "Child admits sown guilt in conflict situations.",
+      },
+      {
+        input: "configurable-enum-select",
+        id: "tenthQuestion",
+        placeholder: "10. Question",
+        enumId: "rating-answer",
+        additionalInfo: "Child admits sown guilt in conflict situations.",
       },
     ],
   },

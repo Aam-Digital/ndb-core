@@ -42,6 +42,8 @@ export class ConfigurableEntitySubrecordComponent implements OnInit {
         resultColumn.valueFunction = (entity) => entity[column.id].label;
         resultColumn.enumId = column.enumId;
         break;
+      case "date":
+        resultColumn.inputType = ColumnDescriptionInputType.DATE;
     }
     return resultColumn;
   }
