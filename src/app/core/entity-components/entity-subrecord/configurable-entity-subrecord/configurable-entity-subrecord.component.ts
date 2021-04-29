@@ -18,7 +18,7 @@ export class ConfigurableEntitySubrecordComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.entitySubrecordConfig = this.config.cols.map((col) =>
       this.transformToEntitySubrecordFormat(col)
     );
