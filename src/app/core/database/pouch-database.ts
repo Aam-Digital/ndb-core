@@ -20,7 +20,7 @@ import moment from "moment";
 import { LoggingService } from "../logging/logging.service";
 import PouchDB from "pouchdb-browser";
 import memory from "pouchdb-adapter-memory";
-import { PerformanceAnalysisLogging } from "app/utils/performance-analysis-logging";
+import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-logging";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from

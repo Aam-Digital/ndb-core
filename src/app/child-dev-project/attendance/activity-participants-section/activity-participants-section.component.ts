@@ -6,7 +6,7 @@ import { PanelConfig } from "../../../core/entity-components/entity-details/Enti
 import { Child } from "../../children/model/child";
 import { EntityConstructor } from "../../../core/entity/entity";
 import { School } from "../../schools/model/school";
-import { User } from "app/core/user/user";
+import { User } from "../../../core/user/user";
 
 @Component({
   selector: "app-activity-participants-section",

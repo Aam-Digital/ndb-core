@@ -8,8 +8,8 @@ import { AttendanceService } from "../attendance.service";
 import { PercentPipe } from "@angular/common";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { Note } from "../../notes/model/note";
-import { ComponentWithConfig } from "../../../core/entity-components/entity-subrecord/entity-subrecord.component";
 import moment from "moment";
+import { ComponentWithConfig } from "../../../core/entity-components/entity-subrecord/entity-suprecord/entity-subrecord.component";
 
 @Component({
   selector: "app-activity-attendance-section",
