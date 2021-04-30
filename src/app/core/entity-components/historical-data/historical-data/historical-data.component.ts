@@ -35,7 +35,7 @@ export class HistoricalDataComponent implements OnInitDynamicComponent {
   }
 
   private addMissingFunctions(configColumns: ColumnDescription[] = []) {
-    return configColumns.map((column) => {
+    configColumns.forEach((column) => {
       switch (column.inputType) {
         case ColumnDescriptionInputType.CONFIGURABLE_ENUM:
           column.valueFunction = (entity) => entity[column.name].label;
