@@ -44,28 +44,6 @@ describe("HistoricalDataComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should add mapping function to configurable enum types", () => {
-    const config = {
-      config: [
-        {
-          inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-          name: "configurableEnumSelect",
-          label: "Configurable Enum Select",
-          enumId: "configurableEnumId",
-          tooltip: "A configurable enum select",
-        },
-      ],
-    } as any;
-    component.onInitFromDynamicConfig(config);
-
-    const valueFunction = component.columns[0].valueFunction;
-    expect(valueFunction).toBeDefined();
-    const exampleEntity = {
-      configurableEnumSelect: { label: "Expected value", id: "Wrong value" },
-    } as any;
-    expect(valueFunction(exampleEntity)).toEqual("Expected value");
-  });
-
   it("should filter the historical data", fakeAsync(() => {
     const entity = new Entity();
     const relatedData = new HistoricalEntityData();

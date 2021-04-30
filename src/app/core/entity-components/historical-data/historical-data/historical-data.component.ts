@@ -4,7 +4,6 @@ import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init
 import { HistoricalEntityData } from "../historical-entity-data";
 import { ColumnDescription } from "../../entity-subrecord/column-description";
 import { PanelConfig } from "../../entity-details/EntityDetailsConfig";
-import { ColumnDescriptionInputType } from "../../entity-subrecord/column-description-input-type.enum";
 import { Entity } from "../../../entity/entity";
 import { sortByAttribute } from "../../../../utils/utils";
 
@@ -25,22 +24,11 @@ export class HistoricalDataComponent implements OnInitDynamicComponent {
 
   async onInitFromDynamicConfig(config: PanelConfig) {
     this.entity = config.entity;
-    this.addMissingFunctions(config.config);
     this.columns = config.config;
     const allEntries = await this.entityMapper.loadType(HistoricalEntityData);
     this.entries = allEntries
       .filter((entry) => entry.relatedEntity === this.entity.getId())
       .sort(sortByAttribute("date", "desc"));
-  }
-
-  private addMissingFunctions(configColumns: ColumnDescription[] = []) {
-    configColumns.forEach((column) => {
-      switch (column.inputType) {
-        case ColumnDescriptionInputType.CONFIGURABLE_ENUM:
-          column.valueFunction = (entity) => entity[column.name].label;
-          break;
-      }
-    });
   }
 
   public getNewEntryFunction(): () => HistoricalEntityData {
