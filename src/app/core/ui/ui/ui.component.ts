@@ -43,6 +43,9 @@ export class UiComponent implements OnInit {
   /** title displayed in the app header bar */
   title: string;
 
+  /** path to the image of a logo */
+  logo_path: string;
+
   constructor(
     private _sessionService: SessionService,
     private titleService: Title,
@@ -64,6 +67,7 @@ export class UiComponent implements OnInit {
   ngOnInit(): void {
     this.title = AppConfig?.settings?.site_name;
     this.titleService.setTitle(this.title);
+    this.logo_path = AppConfig?.settings?.logo_path;
   }
 
   /**
