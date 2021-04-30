@@ -30,7 +30,7 @@ import { SyncState } from "./core/session/session-states/sync-state.enum";
 import { ActivatedRoute, Router } from "@angular/router";
 import { RecurringActivity } from "./child-dev-project/attendance/model/recurring-activity";
 import { School } from "./child-dev-project/schools/model/school";
-import { HistoricalEntityData } from "./core/entity-components/historical-data/historical-entity-data";
+import { HistoricalEntityData } from "./features/historical-data/historical-entity-data";
 
 /**
  * Component as the main entry point for the app.

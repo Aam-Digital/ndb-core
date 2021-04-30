@@ -72,7 +72,7 @@ import { ConfigModule } from "./core/config/config.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/dashboard-shortcut-widget.module";
-import { HistoricalDataModule } from "./core/entity-components/historical-data/historical-data.module";
+import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
 
 /**
  * Main entry point of the application.

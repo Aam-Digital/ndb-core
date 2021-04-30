@@ -3,16 +3,16 @@ import { moduleMetadata } from "@storybook/angular";
 import { RouterTestingModule } from "@angular/router/testing";
 import { MatNativeDateModule } from "@angular/material/core";
 import { Angulartics2Module } from "angulartics2";
-import { FontAwesomeIconsModule } from "../../../icons/font-awesome-icons.module";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { FontAwesomeIconsModule } from "../../../core/icons/font-awesome-icons.module";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { CommonModule, DatePipe } from "@angular/common";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { ConfigService } from "../../../config/config.service";
+import { ConfigService } from "../../../core/config/config.service";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { HistoricalEntityData } from "../historical-entity-data";
 import { HistoricalDataComponent } from "./historical-data.component";
 import { HistoricalDataModule } from "../historical-data.module";
-import { ColumnDescriptionInputType } from "../../entity-subrecord/column-description-input-type.enum";
+import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 
 export default {
   title: "Core/EntityComponents/HistoricalDataComponent",

@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { HistoricalDataComponent } from "./historical-data/historical-data.component";
-import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
+import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 
 @NgModule({
   declarations: [HistoricalDataComponent],

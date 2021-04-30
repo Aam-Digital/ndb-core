@@ -7,10 +7,9 @@ import {
 
 import { HistoricalDataComponent } from "./historical-data.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { HistoricalDataModule } from "../historical-data.module";
-import { ColumnDescriptionInputType } from "../../entity-subrecord/column-description-input-type.enum";
-import { Entity } from "../../../entity/entity";
+import { Entity } from "../../../core/entity/entity";
 import { HistoricalEntityData } from "../historical-entity-data";
 import moment from "moment";
 import { DatePipe } from "@angular/common";

@@ -1,11 +1,11 @@
 import { Component } from "@angular/core";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { HistoricalEntityData } from "../historical-entity-data";
-import { ColumnDescription } from "../../entity-subrecord/column-description";
-import { PanelConfig } from "../../entity-details/EntityDetailsConfig";
-import { Entity } from "../../../entity/entity";
-import { sortByAttribute } from "../../../../utils/utils";
+import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
+import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
+import { Entity } from "../../../core/entity/entity";
+import { sortByAttribute } from "../../../utils/utils";
 
 @Component({
   selector: "app-historical-data",
