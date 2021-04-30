@@ -38,7 +38,7 @@ export class ConfigurableEntitySubrecordComponent implements OnInit {
         resultColumn.inputType = ColumnDescriptionInputType.TEXT;
         break;
       case "configurable-enum-select":
-        resultColumn.inputType = ColumnDescriptionInputType.ENUM;
+        resultColumn.inputType = ColumnDescriptionInputType.CONFIGURABLE_ENUM;
         resultColumn.valueFunction = (entity) => entity[column.id].label;
         resultColumn.enumId = column.enumId;
         break;
