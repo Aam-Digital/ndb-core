@@ -149,6 +149,9 @@ export class Note extends Entity {
       attendance = new EventAttendance();
       this.childrenAttendance.set(childId, attendance);
     }
+    if (!(attendance instanceof EventAttendance)) {
+      attendance = Object.assign(new EventAttendance(), attendance);
+    }
     return attendance;
   }
 

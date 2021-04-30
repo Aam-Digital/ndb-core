@@ -7,6 +7,7 @@ import {
   ATTENDANCE_STATUS_CONFIG_ID,
   AttendanceLogicalStatus,
   AttendanceStatusType,
+  NullAttendanceStatusType,
 } from "../../attendance/model/attendance-status";
 import { ConfigurableEnumDatatype } from "../../../core/configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
 import {
@@ -186,6 +187,30 @@ describe("Note", () => {
 
     const reloadedEntity = new Note();
     entitySchemaService.loadDataIntoEntity(reloadedEntity, rawData);
+    expect(reloadedEntity.getAttendance("1").status).toEqual(status);
+  });
+
+  it("sets default NullAttendanceStatusType for attendance entries with invalid value", function () {
+    const status = testStatusTypes.find((c) => c.id === "ABSENT");
+    const rawData = {
+      _id: ENTITY_TYPE + ":" + "test",
+
+      children: ["1", "2", "3"],
+      childrenAttendance: [
+        ["1", { status: status.id, remarks: "" }],
+        ["2", { status: "non-existing-id", remarks: "" }],
+      ],
+    };
+
+    const reloadedEntity = new Note();
+    entitySchemaService.loadDataIntoEntity(reloadedEntity, rawData);
+
+    expect(reloadedEntity.getAttendance("2").status).toEqual(
+      NullAttendanceStatusType
+    );
+    expect(reloadedEntity.getAttendance("3").status).toEqual(
+      NullAttendanceStatusType
+    );
     expect(reloadedEntity.getAttendance("1").status).toEqual(status);
   });
 
