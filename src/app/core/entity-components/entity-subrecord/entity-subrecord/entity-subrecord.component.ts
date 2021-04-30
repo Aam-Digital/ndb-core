@@ -1,3 +1,33 @@
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild,
+} from "@angular/core";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatSort } from "@angular/material/sort";
+import { MatPaginator, PageEvent } from "@angular/material/paginator";
+import { MatTableDataSource } from "@angular/material/table";
+import { ColumnDescription } from "../column-description";
+import { MediaChange, MediaObserver } from "@angular/flex-layout";
+import { FormValidationResult } from "../form-validation-result";
+import { ColumnDescriptionInputType } from "../column-description-input-type.enum";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { Entity } from "../../../entity/entity";
+import { FormDialogService } from "../../../form-dialog/form-dialog.service";
+import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
+import { AlertService } from "../../../alerts/alert.service";
+import { DatePipe } from "@angular/common";
+import { BehaviorSubject } from "rxjs";
+import { ComponentWithConfig } from "../component-with-config";
+import { entityListSortingAccessor } from "../../entity-list/sorting-accessor";
+
 /**
  * Generically configurable component to display and edit a list of entities in a compact way
  * that can especially be used within another entity's details view to display related entities.
@@ -11,36 +41,6 @@
  * A detailed Guide on how to use this component is available:
  * - [How to display related entities]{@link /additional-documentation/how-to-guides/display-related-entities.html}
  */
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import {
-  AfterViewInit,
-  EventEmitter,
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  ViewChild,
-  SimpleChanges,
-} from "@angular/core";
-import { Entity } from "../../../entity/entity";
-import { BehaviorSubject } from "rxjs";
-import { ColumnDescription } from "../column-description";
-import { FormValidationResult } from "../form-validation-result";
-import { MatTableDataSource } from "@angular/material/table";
-import { MatSort } from "@angular/material/sort";
-import { MatPaginator, PageEvent } from "@angular/material/paginator";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { FormDialogService } from "../../../form-dialog/form-dialog.service";
-import { AlertService } from "../../../alerts/alert.service";
-import { DatePipe } from "@angular/common";
-import { MediaChange, MediaObserver } from "@angular/flex-layout";
-import { ColumnDescriptionInputType } from "../column-description-input-type.enum";
-import { ShowsEntity } from "../../../form-dialog/shows-entity.interface";
-import { ComponentType } from "@angular/cdk/overlay";
-
 @UntilDestroy()
 @Component({
   selector: "app-entity-subrecord",
@@ -173,6 +173,7 @@ export class EntitySubrecordComponent<T extends Entity>
     EntitySubrecordComponent.paginatorPageSize.subscribe((newPageSize) =>
       this.updatePagination(newPageSize)
     );
+    this.recordsDataSource.sortingDataAccessor = entityListSortingAccessor;
   }
 
   /**
@@ -224,6 +225,9 @@ export class EntitySubrecordComponent<T extends Entity>
         case ColumnDescriptionInputType.MONTH:
           colDef.valueFunction = (entity) =>
             this.datePipe.transform(entity[colDef.name], "yyyy-MM");
+          break;
+        case ColumnDescriptionInputType.CONFIGURABLE_ENUM:
+          colDef.valueFunction = (entity) => entity[colDef.name]?.label;
           break;
         default:
           colDef.valueFunction = (entity) => entity[colDef.name];
@@ -424,20 +428,4 @@ export class EntitySubrecordComponent<T extends Entity>
       inputType === ColumnDescriptionInputType.READONLY
     );
   }
-}
-
-/**
- * Settings for the popup details view of a EntitySubrecordComponent.
- */
-export interface ComponentWithConfig<T extends Entity> {
-  /**
-   * The component to be used for displaying a single Entity instance's details.
-   */
-  component: ComponentType<ShowsEntity<T>>;
-
-  /**
-   * Optionally include an object to pass any values into the component,
-   * which has to implement the OnInitDynamicComponent interface to receive this config.
-   */
-  componentConfig?: any;
 }

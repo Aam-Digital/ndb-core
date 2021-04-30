@@ -13,4 +13,5 @@ export enum ColumnDescriptionInputType {
   FUNCTION = "function",
   CONFIGURABLE_ENUM = "configurable_enum",
   READONLY = "readonly",
+  CONFIGURABLE_ENUM = "configurable_enum",
 }
