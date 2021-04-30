@@ -13,6 +13,7 @@ import { ColumnDescriptionInputType } from "../../entity-subrecord/column-descri
 import { Entity } from "../../../entity/entity";
 import { HistoricalEntityData } from "../historical-entity-data";
 import moment from "moment";
+import { DatePipe } from "@angular/common";
 
 describe("HistoricalDataComponent", () => {
   let component: HistoricalDataComponent;
@@ -26,7 +27,10 @@ describe("HistoricalDataComponent", () => {
     await TestBed.configureTestingModule({
       declarations: [HistoricalDataComponent],
       imports: [HistoricalDataModule, NoopAnimationsModule],
-      providers: [{ provide: EntityMapperService, useValue: mockEntityMapper }],
+      providers: [
+        { provide: EntityMapperService, useValue: mockEntityMapper },
+        DatePipe,
+      ],
     }).compileComponents();
   });
 
