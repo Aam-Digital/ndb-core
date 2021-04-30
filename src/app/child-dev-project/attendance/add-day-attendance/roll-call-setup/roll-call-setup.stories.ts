@@ -63,7 +63,7 @@ const demoActivities = [
   DemoActivityGeneratorService.generateActivityForChildren(demoChildren),
   DemoActivityGeneratorService.generateActivityForChildren(demoChildren),
 ];
-demoActivities[0].assignedTo = "demo";
+demoActivities[0].assignedTo = ["demo"];
 
 export default {
   title: "Attendance/Views/RollCallSetup",

@@ -1,5 +1,6 @@
 import { defaultAttendanceStatusTypes } from "./default-config/default-attendance-status-types";
 import { defaultInteractionTypes } from "./default-config/default-interaction-types";
+import { ColumnDescriptionInputType } from "../entity-components/entity-subrecord/column-description-input-type.enum";
 
 // prettier-ignore
 export const defaultConfig = {
@@ -111,6 +112,28 @@ export const defaultConfig = {
       "id": "barabazar",
       "label": "Barabazar"
     }
+  ],
+  "enum:rating-answer": [
+    {
+      id: "noAnswerPossible",
+      label: "no answer possible",
+    },
+    {
+      id: "notTrueAtAll",
+      label: "not true at all",
+    },
+    {
+      id: "rarelyTrue",
+      label: "rarely true",
+    },
+    {
+      id: "usuallyTrue",
+      label: "usually true",
+    },
+    {
+      id: "absolutelyTrue",
+      label: "absolutely true",
+    },
   ],
 
   "view:": {
@@ -943,6 +966,92 @@ export const defaultConfig = {
           ]
         },
         {
+          title: "Observations",
+          components: [
+            {
+              title: "",
+              component: "HistoricalDataComponent",
+              config: [
+                {
+                  name: "date",
+                  label: "Date",
+                  inputType: ColumnDescriptionInputType.DATE
+                },
+                {
+                  name: "isMotivatedDuringClass",
+                  label: "Motivated",
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: "The child is motivated during the class."
+                },
+                {
+                  name: "isParticipatingInClass",
+                  label: "Participates",
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: "The child is actively participating in the class."
+                },
+                {
+                  name: "isInteractingWithOthers",
+                  label: "Interacts",
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: "The child interacts with other students during the class."
+                },
+                {
+                  name: "doesHomework",
+                  label: "Homework",
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: "The child does its homework."
+                },
+                {
+                  name: "isOnTime",
+                  label: "On time",
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: "The child is always on time for the class."
+                },
+                {
+                  name: "asksQuestions",
+                  label: "Asks",
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: "The child is asking questions during the class."
+                },
+                {
+                  name: "listens",
+                  label: "Listens",
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: "The child is listening during the class."
+                },
+                {
+                  name: "canWorkOnBoard",
+                  label: "Solves on board",
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: "The child can solve exercises on the board."
+                },
+                {
+                  name: "isConcentrated",
+                  label: "Concentrated",
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: "The child is concentrated during the class."
+                },
+                {
+                  name: "doesNotDisturb",
+                  label: "Not Disturbing",
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: "The child does not disturb the class."
+                },
+              ]
+            }
+          ]
+        },
+        {
           "title": "Dropout",
           "components": [
             {
@@ -1099,5 +1208,19 @@ export const defaultConfig = {
   "entity:School": {
     "permissions": {
     }
+  },
+  "entity:HistoricalEntityData": {
+    "attributes": [
+      {"name": "isMotivatedDuringClass", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "isParticipatingInClass", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "isInteractingWithOthers", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "doesHomework", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "isOnTime", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "asksQuestions", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "listens", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "canWorkOnBoard", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "isConcentrated", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "doesNotDisturb", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+    ]
   }
 }
