@@ -15,7 +15,6 @@ import { sortByAttribute } from "../../../../utils/utils";
     [columns]="columns"
     [newRecordFactory]="getNewEntryFunction()"
   ></app-entity-subrecord>`,
-  styleUrls: ["./historical-data.component.scss"],
 })
 export class HistoricalDataComponent implements OnInitDynamicComponent {
   entries: HistoricalEntityData[] = [];
