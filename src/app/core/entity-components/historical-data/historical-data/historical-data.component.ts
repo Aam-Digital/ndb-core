@@ -6,15 +6,15 @@ import { ColumnDescription } from "../../entity-subrecord/column-description";
 import { PanelConfig } from "../../entity-details/EntityDetailsConfig";
 import { ColumnDescriptionInputType } from "../../entity-subrecord/column-description-input-type.enum";
 import { Entity } from "../../../entity/entity";
+import { sortByAttribute } from "../../../../utils/utils";
 
 @Component({
   selector: "app-historical-data",
-  template: `
-      <app-entity-subrecord
-              [records]="entries"
-              [columns]="columns"
-              [newRecordFactory]="getNewEntryFunction()"
-      ></app-entity-subrecord>`,
+  template: ` <app-entity-subrecord
+    [records]="entries"
+    [columns]="columns"
+    [newRecordFactory]="getNewEntryFunction()"
+  ></app-entity-subrecord>`,
   styleUrls: ["./historical-data.component.scss"],
 })
 export class HistoricalDataComponent implements OnInitDynamicComponent {
@@ -29,9 +29,9 @@ export class HistoricalDataComponent implements OnInitDynamicComponent {
     this.addMissingFunctions(config.config);
     this.columns = config.config;
     const allEntries = await this.entityMapper.loadType(HistoricalEntityData);
-    this.entries = allEntries.filter(
-      (entry) => entry.relatedEntity === this.entity.getId()
-    );
+    this.entries = allEntries
+      .filter((entry) => entry.relatedEntity === this.entity.getId())
+      .sort(sortByAttribute("date", "desc"));
   }
 
   private addMissingFunctions(configColumns: ColumnDescription[] = []) {

@@ -85,4 +85,23 @@ describe("HistoricalDataComponent", () => {
     expect(newEntry.relatedEntity).toBe(entity.getId());
     expect(moment(newEntry.date).isSame(new Date(), "day")).toBeTrue();
   });
+
+  it("should sort the data by date", fakeAsync(() => {
+    const entity = new Entity();
+    const first = new HistoricalEntityData();
+    first.relatedEntity = entity.getId();
+    first.date = new Date();
+    const second = new HistoricalEntityData();
+    second.relatedEntity = entity.getId();
+    second.date = moment().subtract(1, "day").toDate();
+    const third = new HistoricalEntityData();
+    third.relatedEntity = entity.getId();
+    third.date = moment().subtract(10, "days").toDate();
+    mockEntityMapper.loadType.and.resolveTo([second, first, third]);
+
+    component.onInitFromDynamicConfig({ entity: entity });
+    tick();
+
+    expect(component.entries).toEqual([first, second, third]);
+  }));
 });
