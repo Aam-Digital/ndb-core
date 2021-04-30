@@ -58,6 +58,11 @@ export interface ColumnDescription {
   valueFunction?: (entity: Entity) => any;
 
   /**
+   * A string that will be displayed as a tooltip when hovering the column title
+   */
+  tooltip?: string;
+
+  /**
    * In case `inputType === ColumnDescriptionInputType.CONFIGURABLE_ENUM` this required to be set to the id of the enum
    */
   enumId?: string;
