@@ -1,11 +1,10 @@
 import { Component } from "@angular/core";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { HistoricalEntityData } from "../historical-entity-data";
 import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { Entity } from "../../../core/entity/entity";
-import { sortByAttribute } from "../../../utils/utils";
+import { HistoricalDataService } from "../historical-data.service";
 
 /**
  * A general component that can be included on a entity details page through the config.
@@ -25,15 +24,14 @@ export class HistoricalDataComponent implements OnInitDynamicComponent {
   columns: ColumnDescription[] = [];
   private entity: Entity;
 
-  constructor(private entityMapper: EntityMapperService) {}
+  constructor(private historicalDataService: HistoricalDataService) {}
 
   async onInitFromDynamicConfig(config: PanelConfig) {
     this.entity = config.entity;
     this.columns = config.config;
-    const allEntries = await this.entityMapper.loadType(HistoricalEntityData);
-    this.entries = allEntries
-      .filter((entry) => entry.relatedEntity === this.entity.getId())
-      .sort(sortByAttribute("date", "desc"));
+    this.entries = await this.historicalDataService.getHistoricalDataFor(
+      this.entity.getId()
+    );
   }
 
   public getNewEntryFunction(): () => HistoricalEntityData {

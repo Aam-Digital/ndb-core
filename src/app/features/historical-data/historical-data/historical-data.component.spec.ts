@@ -7,27 +7,32 @@ import {
 
 import { HistoricalDataComponent } from "./historical-data.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { HistoricalDataModule } from "../historical-data.module";
 import { Entity } from "../../../core/entity/entity";
 import { HistoricalEntityData } from "../historical-entity-data";
 import moment from "moment";
 import { DatePipe } from "@angular/common";
+import { HistoricalDataService } from "../historical-data.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 
 describe("HistoricalDataComponent", () => {
   let component: HistoricalDataComponent;
   let fixture: ComponentFixture<HistoricalDataComponent>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockHistoricalDataService: jasmine.SpyObj<HistoricalDataService>;
 
   beforeEach(async () => {
-    mockEntityMapper = jasmine.createSpyObj(["loadType"]);
-    mockEntityMapper.loadType.and.resolveTo([]);
+    mockHistoricalDataService = jasmine.createSpyObj(["getHistoricalDataFor"]);
+    mockHistoricalDataService.getHistoricalDataFor.and.resolveTo([]);
 
     await TestBed.configureTestingModule({
       declarations: [HistoricalDataComponent],
       imports: [HistoricalDataModule, NoopAnimationsModule],
       providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: HistoricalDataService, useValue: mockHistoricalDataService },
+        {
+          provide: EntityMapperService,
+          useValue: jasmine.createSpyObj(["save", "remove"]),
+        },
         DatePipe,
       ],
     }).compileComponents();
@@ -43,18 +48,19 @@ describe("HistoricalDataComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should filter the historical data", fakeAsync(() => {
+  it("should load the historical data", fakeAsync(() => {
     const entity = new Entity();
     const relatedData = new HistoricalEntityData();
     relatedData.relatedEntity = entity.getId();
-    const unrelatedData = new HistoricalEntityData();
-    unrelatedData.relatedEntity = "otherId";
-    mockEntityMapper.loadType.and.resolveTo([relatedData, unrelatedData]);
+    mockHistoricalDataService.getHistoricalDataFor.and.resolveTo([relatedData]);
 
     component.onInitFromDynamicConfig({ entity: entity });
     tick();
 
     expect(component.entries).toEqual([relatedData]);
+    expect(mockHistoricalDataService.getHistoricalDataFor).toHaveBeenCalledWith(
+      entity.getId()
+    );
   }));
 
   it("should generate new records with a link to the passed entity", () => {
@@ -66,23 +72,4 @@ describe("HistoricalDataComponent", () => {
     expect(newEntry.relatedEntity).toBe(entity.getId());
     expect(moment(newEntry.date).isSame(new Date(), "day")).toBeTrue();
   });
-
-  it("should sort the data by date", fakeAsync(() => {
-    const entity = new Entity();
-    const first = new HistoricalEntityData();
-    first.relatedEntity = entity.getId();
-    first.date = new Date();
-    const second = new HistoricalEntityData();
-    second.relatedEntity = entity.getId();
-    second.date = moment().subtract(1, "day").toDate();
-    const third = new HistoricalEntityData();
-    third.relatedEntity = entity.getId();
-    third.date = moment().subtract(10, "days").toDate();
-    mockEntityMapper.loadType.and.resolveTo([second, first, third]);
-
-    component.onInitFromDynamicConfig({ entity: entity });
-    tick();
-
-    expect(component.entries).toEqual([first, second, third]);
-  }));
 });
