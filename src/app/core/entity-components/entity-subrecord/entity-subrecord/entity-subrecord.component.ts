@@ -17,16 +17,15 @@ import { ColumnDescription } from "../column-description";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { FormValidationResult } from "../form-validation-result";
 import { ColumnDescriptionInputType } from "../column-description-input-type.enum";
-import { ComponentType } from "@angular/cdk/overlay";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { Entity } from "../../../entity/entity";
-import { ShowsEntity } from "../../../form-dialog/shows-entity.interface";
 import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { DatePipe } from "@angular/common";
 import { BehaviorSubject } from "rxjs";
+import { ComponentWithConfig } from "../component-with-config";
 
 /**
  * Generically configurable component to display and edit a list of entities in a compact way
@@ -445,20 +444,4 @@ export class EntitySubrecordComponent<T extends Entity>
       inputType === ColumnDescriptionInputType.READONLY
     );
   }
-}
-
-/**
- * Settings for the popup details view of a EntitySubrecordComponent.
- */
-export interface ComponentWithConfig<T extends Entity> {
-  /**
-   * The component to be used for displaying a single Entity instance's details.
-   */
-  component: ComponentType<ShowsEntity<T>>;
-
-  /**
-   * Optionally include an object to pass any values into the component,
-   * which has to implement the OnInitDynamicComponent interface to receive this config.
-   */
-  componentConfig?: any;
 }
