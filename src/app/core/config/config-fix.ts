@@ -132,7 +132,7 @@ export const defaultConfig = {
     },
     {
       id: "absolutelyTrue",
-      label: "absolutelyTrue",
+      label: "absolutely true",
     },
   ],
 
@@ -979,70 +979,70 @@ export const defaultConfig = {
                 },
                 {
                   name: "isMotivatedDuringClass",
-                  label: "Question 1",
+                  label: "Motivated",
                   inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
                   enumId: "rating-answer",
                   tooltip: "The child is motivated during the class."
                 },
                 {
                   name: "isParticipatingInClass",
-                  label: "Question 2",
+                  label: "Participates",
                   inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
                   enumId: "rating-answer",
                   tooltip: "The child is actively participating in the class."
                 },
                 {
                   name: "isInteractingWithOthers",
-                  label: "Question 3",
+                  label: "Interacts",
                   inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
                   enumId: "rating-answer",
                   tooltip: "The child interacts with other students during the class."
                 },
                 {
                   name: "doesHomework",
-                  label: "Question 4",
+                  label: "Homework",
                   inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
                   enumId: "rating-answer",
                   tooltip: "The child does its homework."
                 },
                 {
                   name: "isOnTime",
-                  label: "Question 5",
+                  label: "On time",
                   inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
                   enumId: "rating-answer",
                   tooltip: "The child is always on time for the class."
                 },
                 {
                   name: "asksQuestions",
-                  label: "Question 6",
+                  label: "Asks",
                   inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
                   enumId: "rating-answer",
                   tooltip: "The child is asking questions during the class."
                 },
                 {
                   name: "listens",
-                  label: "Question 7",
+                  label: "Listens",
                   inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
                   enumId: "rating-answer",
                   tooltip: "The child is listening during the class."
                 },
                 {
                   name: "canWorkOnBoard",
-                  label: "Question 8",
+                  label: "Solves on board",
                   inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
                   enumId: "rating-answer",
                   tooltip: "The child can solve exercises on the board."
                 },
                 {
                   name: "isConcentrated",
-                  label: "Question 9",
+                  label: "Concentrated",
                   inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
                   enumId: "rating-answer",
                   tooltip: "The child is concentrated during the class."
                 },
                 {
                   name: "doesNotDisturb",
-                  label: "Question 10",
+                  label: "Not Disturbing",
                   inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
                   enumId: "rating-answer",
                   tooltip: "The child does not disturb the class."

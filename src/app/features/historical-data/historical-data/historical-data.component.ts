@@ -7,6 +7,11 @@ import { PanelConfig } from "../../../core/entity-components/entity-details/Enti
 import { Entity } from "../../../core/entity/entity";
 import { sortByAttribute } from "../../../utils/utils";
 
+/**
+ * A general component that can be included on a entity details page through the config.
+ * It loads all historical data related to that entity and displays it in a table.
+ * The columns that are displayed can be configured according to the `ColumnDescription` interface
+ */
 @Component({
   selector: "app-historical-data",
   template: ` <app-entity-subrecord
