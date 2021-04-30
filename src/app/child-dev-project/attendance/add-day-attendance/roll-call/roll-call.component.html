@@ -44,6 +44,17 @@
     Back
   </button>
 
+  <button
+    mat-stroked-button
+    [disabled]="isFinished()"
+    (click)="goToNextParticipant()"
+    class="nav-button"
+    fxFlex
+  >
+    Skip
+  </button>
+</div>
+<div>
   <button mat-stroked-button (click)="exit.emit()" class="nav-button" fxFlex>
     {{ isFinished() ? "Finish" : "Abort" }}
   </button>

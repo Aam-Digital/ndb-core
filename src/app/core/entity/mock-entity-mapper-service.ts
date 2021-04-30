@@ -66,7 +66,7 @@ export class MockEntityMapperService extends EntityMapperService {
    * @param entityType
    */
   public getAll<T extends Entity>(entityType: string): T[] {
-    return ([...this.data.get(entityType).values()] || []) as T[];
+    return [...(this.data.get(entityType)?.values() || [])] as T[];
   }
 
   /**
