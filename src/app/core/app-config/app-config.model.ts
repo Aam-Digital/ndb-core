@@ -28,12 +28,6 @@ export interface IAppConfig {
   site_name: string;
 
   /**
-   * Path to the logo in the assets folder.
-   * If set, the logo will be displayed in the navigation bar above the items
-   */
-  logo_path?: string;
-
-  /**
    * which type of database session to use.
    *
    * see {@link SessionType} for details on available modes
