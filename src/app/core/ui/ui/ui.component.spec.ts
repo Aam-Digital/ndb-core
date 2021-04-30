@@ -31,6 +31,7 @@ import { UiModule } from "../ui.module";
 import { Angulartics2Module } from "angulartics2";
 import { StateHandler } from "../../session/session-states/state-handler";
 import { SyncState } from "../../session/session-states/sync-state.enum";
+import { ConfigService } from "../../config/config.service";
 
 describe("UiComponent", () => {
   let component: UiComponent;
@@ -58,6 +59,10 @@ describe("UiComponent", () => {
         providers: [
           { provide: SessionService, useValue: mockSession },
           { provide: SwUpdate, useValue: mockSwUpdate },
+          {
+            provide: ConfigService,
+            useValue: jasmine.createSpyObj(["getConfig"]),
+          },
         ],
       }).compileComponents();
       TestBed.inject(ApplicationInitStatus); // This ensures that the AppConfig is loaded before test execution
