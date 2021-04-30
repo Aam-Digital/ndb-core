@@ -9,10 +9,12 @@ import { Entity } from "../../../entity/entity";
 
 @Component({
   selector: "app-historical-data",
-  template: `<app-entity-subrecord
-    [records]="entries"
-    [columns]="columns"
-  ></app-entity-subrecord>`,
+  template: `
+      <app-entity-subrecord
+              [records]="entries"
+              [columns]="columns"
+              [newRecordFactory]="getNewEntryFunction()"
+      ></app-entity-subrecord>`,
   styleUrls: ["./historical-data.component.scss"],
 })
 export class HistoricalDataComponent implements OnInitDynamicComponent {
@@ -42,7 +44,12 @@ export class HistoricalDataComponent implements OnInitDynamicComponent {
     });
   }
 
-  public generateNewEntry(): HistoricalEntityData {
-    return null;
+  public getNewEntryFunction(): () => HistoricalEntityData {
+    return () => {
+      const newEntry = new HistoricalEntityData();
+      newEntry.relatedEntity = this.entity.getId();
+      newEntry.date = new Date();
+      return newEntry;
+    };
   }
 }

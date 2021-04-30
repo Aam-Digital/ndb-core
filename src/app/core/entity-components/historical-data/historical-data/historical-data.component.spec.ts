@@ -12,6 +12,7 @@ import { HistoricalDataModule } from "../historical-data.module";
 import { ColumnDescriptionInputType } from "../../entity-subrecord/column-description-input-type.enum";
 import { Entity } from "../../../entity/entity";
 import { HistoricalEntityData } from "../historical-entity-data";
+import moment from "moment";
 
 describe("HistoricalDataComponent", () => {
   let component: HistoricalDataComponent;
@@ -79,6 +80,9 @@ describe("HistoricalDataComponent", () => {
     const entity = new Entity();
     component.onInitFromDynamicConfig({ entity: entity });
 
-    const newEntry = component.generateNewEntry();
+    const newEntry = component.getNewEntryFunction()();
+
+    expect(newEntry.relatedEntity).toBe(entity.getId());
+    expect(moment(newEntry.date).isSame(new Date(), "day")).toBeTrue();
   });
 });
