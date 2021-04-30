@@ -10,7 +10,7 @@ import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on
 import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
-import { ComponentWithConfig } from "../../../core/entity-components/entity-subrecord/entity-suprecord/entity-subrecord.component";
+import { ComponentWithConfig } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain child

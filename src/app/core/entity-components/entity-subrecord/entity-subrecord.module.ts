@@ -14,7 +14,7 @@ import { EntityModule } from "../../entity/entity.module";
 import { AlertsModule } from "../../alerts/alerts.module";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatButtonModule } from "@angular/material/button";
-import { EntitySubrecordComponent } from "./entity-suprecord/entity-subrecord.component";
+import { EntitySubrecordComponent } from "./entity-subrecord/entity-subrecord.component";
 import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
