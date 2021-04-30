@@ -74,4 +74,11 @@ describe("HistoricalDataComponent", () => {
 
     expect(component.entries).toEqual([relatedData]);
   }));
+
+  it("should generate new records with a link to the passed entity", () => {
+    const entity = new Entity();
+    component.onInitFromDynamicConfig({ entity: entity });
+
+    const newEntry = component.generateNewEntry();
+  });
 });

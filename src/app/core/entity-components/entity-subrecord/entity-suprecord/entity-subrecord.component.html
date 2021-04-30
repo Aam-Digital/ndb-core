@@ -120,7 +120,7 @@
                 >
               </mat-autocomplete>
             </span>
-            <mat-select *ngIf="col.inputType === 'enum'" [(value)]="rec[col.name]">
+            <mat-select *ngIf="col.inputType === 'configurable_enum'" [(value)]="rec[col.name]">
               <mat-option
                       *appConfigurableEnum="let o of col.enumId"
                       [value]="o"

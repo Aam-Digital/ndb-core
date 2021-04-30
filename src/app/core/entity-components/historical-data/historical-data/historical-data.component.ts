@@ -5,6 +5,7 @@ import { HistoricalEntityData } from "../historical-entity-data";
 import { ColumnDescription } from "../../entity-subrecord/column-description";
 import { PanelConfig } from "../../entity-details/EntityDetailsConfig";
 import { ColumnDescriptionInputType } from "../../entity-subrecord/column-description-input-type.enum";
+import { Entity } from "../../../entity/entity";
 
 @Component({
   selector: "app-historical-data",
@@ -17,20 +18,18 @@ import { ColumnDescriptionInputType } from "../../entity-subrecord/column-descri
 export class HistoricalDataComponent implements OnInitDynamicComponent {
   entries: HistoricalEntityData[] = [];
   columns: ColumnDescription[] = [];
+  private entity: Entity;
 
   constructor(private entityMapper: EntityMapperService) {}
 
-  onInitFromDynamicConfig(config: PanelConfig) {
-    this.entityMapper
-      .loadType(HistoricalEntityData)
-      .then(
-        (entities) =>
-          (this.entries = entities.filter(
-            (entity) => entity.relatedEntity === config.entity.getId()
-          ))
-      );
+  async onInitFromDynamicConfig(config: PanelConfig) {
+    this.entity = config.entity;
     this.addMissingFunctions(config.config);
     this.columns = config.config;
+    const allEntries = await this.entityMapper.loadType(HistoricalEntityData);
+    this.entries = allEntries.filter(
+      (entry) => entry.relatedEntity === this.entity.getId()
+    );
   }
 
   private addMissingFunctions(configColumns: ColumnDescription[] = []) {
@@ -41,5 +40,9 @@ export class HistoricalDataComponent implements OnInitDynamicComponent {
           break;
       }
     });
+  }
+
+  public generateNewEntry(): HistoricalEntityData {
+    return null;
   }
 }
