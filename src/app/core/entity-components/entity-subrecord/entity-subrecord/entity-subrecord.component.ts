@@ -173,6 +173,24 @@ export class EntitySubrecordComponent<T extends Entity>
     EntitySubrecordComponent.paginatorPageSize.subscribe((newPageSize) =>
       this.updatePagination(newPageSize)
     );
+    this.addDefaultSortingBehavior();
+  }
+
+  private addDefaultSortingBehavior() {
+    this.recordsDataSource.sortingDataAccessor = (
+      data: T,
+      sortingHeader: string
+    ) => {
+      if (
+        typeof data[sortingHeader] === "object" &&
+        data[sortingHeader] &&
+        "label" in data[sortingHeader]
+      ) {
+        return data[sortingHeader].label;
+      } else {
+        return data[sortingHeader];
+      }
+    };
   }
 
   /**
@@ -224,6 +242,9 @@ export class EntitySubrecordComponent<T extends Entity>
         case ColumnDescriptionInputType.MONTH:
           colDef.valueFunction = (entity) =>
             this.datePipe.transform(entity[colDef.name], "yyyy-MM");
+          break;
+        case ColumnDescriptionInputType.CONFIGURABLE_ENUM:
+          colDef.valueFunction = (entity) => entity[colDef.name]?.label;
           break;
         default:
           colDef.valueFunction = (entity) => entity[colDef.name];

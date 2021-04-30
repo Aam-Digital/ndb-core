@@ -56,4 +56,9 @@ export interface ColumnDescription {
    * use this function to format a value or calculate a more complex value that is not directly a property of the entity object.
    */
   valueFunction?: (entity: Entity) => any;
+
+  /**
+   * In case `inputType === ColumnDescriptionInputType.CONFIGURABLE_ENUM` this required to be set to the id of the enum
+   */
+  enumId?: string;
 }
