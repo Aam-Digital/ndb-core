@@ -26,6 +26,7 @@ import { AlertService } from "../../../alerts/alert.service";
 import { DatePipe } from "@angular/common";
 import { BehaviorSubject } from "rxjs";
 import { ComponentWithConfig } from "../component-with-config";
+import { entityListSortingAccessor } from "../../entity-list/sorting-accessor";
 
 /**
  * Generically configurable component to display and edit a list of entities in a compact way
@@ -172,24 +173,7 @@ export class EntitySubrecordComponent<T extends Entity>
     EntitySubrecordComponent.paginatorPageSize.subscribe((newPageSize) =>
       this.updatePagination(newPageSize)
     );
-    this.addDefaultSortingBehavior();
-  }
-
-  private addDefaultSortingBehavior() {
-    this.recordsDataSource.sortingDataAccessor = (
-      data: T,
-      sortingHeader: string
-    ) => {
-      if (
-        typeof data[sortingHeader] === "object" &&
-        data[sortingHeader] &&
-        "label" in data[sortingHeader]
-      ) {
-        return data[sortingHeader].label;
-      } else {
-        return data[sortingHeader];
-      }
-    };
+    this.recordsDataSource.sortingDataAccessor = entityListSortingAccessor;
   }
 
   /**
