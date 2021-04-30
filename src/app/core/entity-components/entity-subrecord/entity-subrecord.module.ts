@@ -1,6 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { EntitySubrecordComponent } from "./entity-subrecord.component";
+import { EntitySubrecordComponent } from "./entity-subrecord/entity-subrecord.component";
 import { KeysPipe } from "./keys-pipe/keys.pipe";
 import { MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
