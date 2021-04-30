@@ -22,6 +22,7 @@ import { AdminModule } from "../../../core/admin/admin.module";
 import { BackupService } from "../../../core/admin/services/backup.service";
 import { ReportRowComponent } from "./report-row/report-row.component";
 import { Gender } from "../../children/model/Gender";
+import { ReportingModule } from "../reporting.module";
 
 const reportingService = {
   setAggregations: () => null,
@@ -201,21 +202,11 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [
-        CommonModule,
+        ReportingModule,
         RouterTestingModule,
-        MatButtonModule,
-        MatListModule,
-        MatTableModule,
-        MatExpansionModule,
-        MatStepperModule,
-        MatIconModule,
-        MatDatepickerModule,
-        MatFormFieldModule,
-        FormsModule,
         MatNativeDateModule,
         BrowserAnimationsModule,
         FontAwesomeIconsModule,
-        AdminModule,
       ],
       providers: [
         { provide: ActivatedRoute, useValue: { data: of({}) } },
@@ -225,7 +216,6 @@ export default {
           useValue: { createJson: () => {}, createCsv: () => {} },
         },
       ],
-      declarations: [ReportRowComponent],
     }),
   ],
 } as Meta;

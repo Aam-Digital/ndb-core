@@ -18,14 +18,13 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ChangelogComponent } from "./changelog.component";
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { LatestChangesService } from "../latest-changes.service";
 import { Changelog } from "../changelog";
 import { of } from "rxjs";
+import { LatestChangesModule } from "../latest-changes.module";
+import { SwUpdate } from "@angular/service-worker";
+import { MarkdownModule } from "ngx-markdown";
 
 describe("ChangelogComponent", () => {
   let component: ChangelogComponent;
@@ -46,12 +45,12 @@ describe("ChangelogComponent", () => {
       ]);
 
       TestBed.configureTestingModule({
-        declarations: [ChangelogComponent],
-        imports: [MatDialogModule],
+        imports: [LatestChangesModule, MarkdownModule.forRoot()],
         providers: [
           { provide: MatDialogRef, useValue: {} },
           { provide: MAT_DIALOG_DATA, useValue: of([testChangelog]) },
           { provide: LatestChangesService, useValue: mockLatestChangesService },
+          { provide: SwUpdate, useValue: {} },
         ],
       }).compileComponents();
     })

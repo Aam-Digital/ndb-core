@@ -5,6 +5,7 @@ import { User } from "../../../core/user/user";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { Alert } from "../../../core/alerts/alert";
 import { AlertDisplay } from "../../../core/alerts/alert-display";
+import { RecurringActivity } from "../../attendance/model/recurring-activity";
 
 @Injectable({
   providedIn: "root",
@@ -45,6 +46,18 @@ export class NotesMigrationService {
     console.log(
       `Completed to migrate all Notes' authors (${amountOfMigratedNotes} note(s) total)`
     );
+
+    this.migrateToMultiAssignedActivities();
+  }
+
+  async migrateToMultiAssignedActivities() {
+    const allActivities: RecurringActivity[] = await this.entityMapperService.loadType(
+      RecurringActivity
+    );
+    for (const act of allActivities) {
+      act.assignedTo = [];
+      await this.entityMapperService.save(act);
+    }
   }
 
   /**

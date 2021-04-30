@@ -16,11 +16,10 @@
  */
 
 import { Database, GetAllOptions, GetOptions, QueryOptions } from "./database";
-import moment from "moment";
 import { LoggingService } from "../logging/logging.service";
 import PouchDB from "pouchdb-browser";
 import memory from "pouchdb-adapter-memory";
-import { PerformanceAnalysisLogging } from "app/utils/performance-analysis-logging";
+import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-logging";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -213,11 +212,7 @@ export class PouchDatabase extends Database {
   private async prebuildViewsOfDesignDoc(designDoc: any): Promise<void> {
     for (const viewName of Object.keys(designDoc.views)) {
       const queryName = designDoc._id.replace(/_design\//, "") + "/" + viewName;
-      console.log("start indexing " + queryName);
-      const startTime = moment();
       await this.query(queryName, { key: "1" });
-      const indexingTime = moment().diff(startTime, "milliseconds");
-      console.log("done indexing " + queryName, indexingTime);
     }
   }
 

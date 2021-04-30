@@ -29,7 +29,7 @@ describe("NotesMigrationService", () => {
   const Johanna = createUser("Johanna");
   const users = [Peter, Ursula, Jens, Angela, Albrecht, Johanna];
 
-  const entityMapper = mockEntityMapper();
+  const entityMapper = mockEntityMapper([]);
 
   beforeEach(() => {
     TestBed.configureTestingModule({

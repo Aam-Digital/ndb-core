@@ -3,14 +3,12 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { HealthCheckupComponent } from "./health-checkup.component";
 import { of } from "rxjs";
 import { Child } from "../../children/model/child";
-import { CommonModule, DatePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { ChildrenService } from "../../children/children.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { MatDialog } from "@angular/material/dialog";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../../core/alerts/alert.service";
+import { ChildrenModule } from "../../children/children.module";
 
 describe("HealthCheckupComponent", () => {
   let component: HealthCheckupComponent;
@@ -35,13 +33,9 @@ describe("HealthCheckupComponent", () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        declarations: [HealthCheckupComponent],
-        imports: [CommonModule, NoopAnimationsModule],
+        imports: [ChildrenModule, NoopAnimationsModule],
         providers: [
           DatePipe,
-          MatSnackBar,
-          ConfirmationDialogService,
-          MatDialog,
           { provide: ChildrenService, useValue: mockChildrenService },
           { provide: EntityMapperService, useValue: mockEntityMapper },
           AlertService,

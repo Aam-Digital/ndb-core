@@ -28,22 +28,13 @@ class TestClass {
     }
     return [this.result, max, other];
   }
+
+  @PerformanceAnalysisLogging
+  other(obj?: any) {}
 }
 
 describe("PerformanceAnalysisLogging Util Tests", () => {
   beforeEach(() => {});
-
-  it("should add performance measurement and log duration", async () => {
-    spyOn(console, "log");
-
-    const instance = new TestClass();
-    await instance.testFun(99);
-
-    expect(console.log).toHaveBeenCalledWith(
-      'duration [s] "TestClass.testFun"',
-      jasmine.any(Number)
-    );
-  });
 
   it("should add performance measurement and correctly pass context and arguments to original method", async () => {
     const testResult = "OK";
@@ -57,5 +48,30 @@ describe("PerformanceAnalysisLogging Util Tests", () => {
     expect(actualResult[0]).toBe(testResult);
     expect(actualResult[1]).toBe(testArg1);
     expect(actualResult[2]).toBe(testArg2);
+  });
+
+  it("should log performance measure including function and params", async () => {
+    const instance = new TestClass();
+    const consoleLogSpy = spyOn(console, "log");
+
+    await instance.testFun(99, 1);
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      "duration [s] for TestClass.testFun(99, 1)",
+      jasmine.any(Number)
+    );
+
+    consoleLogSpy.calls.reset();
+    await instance.other();
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      "duration [s] for TestClass.other()",
+      jasmine.any(Number)
+    );
+
+    consoleLogSpy.calls.reset();
+    await instance.other({ _id: "ID:1", foo: "bar" });
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      'duration [s] for TestClass.other("ID:1")',
+      jasmine.any(Number)
+    );
   });
 });

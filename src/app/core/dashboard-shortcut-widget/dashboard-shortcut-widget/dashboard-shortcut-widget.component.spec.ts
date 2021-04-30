@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DashboardShortcutWidgetComponent } from "./dashboard-shortcut-widget.component";
+import { DashboardShortcutWidgetModule } from "../dashboard-shortcut-widget.module";
 
 describe("ShortcutDashboardWidgetComponent", () => {
   let component: DashboardShortcutWidgetComponent;
@@ -7,7 +8,7 @@ describe("ShortcutDashboardWidgetComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DashboardShortcutWidgetComponent],
+      imports: [DashboardShortcutWidgetModule],
     }).compileComponents();
   });
 

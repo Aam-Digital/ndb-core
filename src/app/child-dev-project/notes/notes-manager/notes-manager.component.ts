@@ -14,8 +14,8 @@ import { EntityListComponent } from "../../../core/entity-components/entity-list
 import { applyUpdate } from "../../../core/entity/entity-update";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { Input } from "@angular/core";
-import { EntityConstructor } from "../../../core/entity/entity";
 import { EventNote } from "../../attendance/model/event-note";
+import { EntityConstructor } from "../../../core/entity/entity";
 
 /**
  * additional config specifically for NotesManagerComponent
