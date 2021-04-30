@@ -1,5 +1,5 @@
 import { NgModule } from "@angular/core";
-import { CommonModule, DatePipe } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { HistoricalDataComponent } from "./historical-data/historical-data.component";
 import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
 
@@ -7,6 +7,5 @@ import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.modu
   declarations: [HistoricalDataComponent],
   imports: [CommonModule, EntitySubrecordModule],
   exports: [HistoricalDataComponent],
-  providers: [DatePipe],
 })
 export class HistoricalDataModule {}

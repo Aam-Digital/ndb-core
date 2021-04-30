@@ -30,6 +30,7 @@ import { SyncState } from "./core/session/session-states/sync-state.enum";
 import { ActivatedRoute, Router } from "@angular/router";
 import { RecurringActivity } from "./child-dev-project/attendance/model/recurring-activity";
 import { School } from "./child-dev-project/schools/model/school";
+import { HistoricalEntityData } from "./core/entity-components/historical-data/historical-entity-data";
 
 /**
  * Component as the main entry point for the app.
@@ -67,10 +68,9 @@ export class AppComponent implements OnInit {
     configService.configUpdated.subscribe(() => routerService.initRouting());
     configService.configUpdated.subscribe(() => {
       entityConfigService.addConfigAttributes(Child);
-      entityConfigService.addConfigAttributes<School>(School);
-      entityConfigService.addConfigAttributes<RecurringActivity>(
-        RecurringActivity
-      );
+      entityConfigService.addConfigAttributes(School);
+      entityConfigService.addConfigAttributes(RecurringActivity);
+      entityConfigService.addConfigAttributes(HistoricalEntityData);
     });
     this.analyticsService.init();
   }
