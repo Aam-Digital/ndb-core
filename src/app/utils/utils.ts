@@ -53,10 +53,10 @@ export function calculateAge(dateOfBirth: Date): number {
   return age;
 }
 
-export function sortByAttribute<T, K extends keyof T>(
-  attribute: K,
+export function sortByAttribute<OBJECT, PROPERTY extends keyof OBJECT>(
+  attribute: PROPERTY,
   order: "asc" | "desc" = "asc"
-): (e1: T, e2: T) => number {
+): (e1: OBJECT, e2: OBJECT) => number {
   return (e1, e2) => {
     const value1 = e1[attribute];
     const value2 = e2[attribute];

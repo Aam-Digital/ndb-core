@@ -6,7 +6,15 @@
     class="mat-elevation-z1 subrecord-table"
   >
     <ng-container *ngFor="let col of columns" [matColumnDef]="col.name">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header [matTooltip]="col.tooltip" [matTooltipDisabled]="!col.tooltip">{{ col.label }}</th>
+      <th
+        mat-header-cell
+        mat-sort-header
+        *matHeaderCellDef
+        [matTooltip]="col.tooltip"
+        [matTooltipDisabled]="!col.tooltip"
+      >
+        {{ col.label }}
+      </th>
       <td
         mat-cell
         *matCellDef="let rec"
