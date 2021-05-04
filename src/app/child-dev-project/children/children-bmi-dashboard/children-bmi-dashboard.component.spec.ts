@@ -4,8 +4,8 @@ import { HealthCheck } from "app/child-dev-project/health-checkup/model/health-c
 import { of } from "rxjs";
 import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";
-
 import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard.component";
+import { ChildrenModule } from "../children.module";
 
 describe("ChildrenBmiDashboardComponent", () => {
   let component: ChildrenBmiDashboardComponent;
@@ -18,8 +18,7 @@ describe("ChildrenBmiDashboardComponent", () => {
   beforeEach(() => {
     mockChildrenService.getChildren.and.returnValue(of([]));
     TestBed.configureTestingModule({
-      declarations: [ChildrenBmiDashboardComponent],
-      imports: [RouterTestingModule.withRoutes([])],
+      imports: [ChildrenModule, RouterTestingModule.withRoutes([])],
       providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();
   });

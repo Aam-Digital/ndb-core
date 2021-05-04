@@ -1,5 +1,6 @@
 import { defaultAttendanceStatusTypes } from "./default-config/default-attendance-status-types";
 import { defaultInteractionTypes } from "./default-config/default-interaction-types";
+import { ColumnDescriptionInputType } from "../entity-components/entity-subrecord/column-description-input-type.enum";
 
 // prettier-ignore
 export const defaultConfig = {
@@ -112,6 +113,28 @@ export const defaultConfig = {
       "label": $localize`Barabazar`
     }
   ],
+  "enum:rating-answer": [
+    {
+      id: "noAnswerPossible",
+      label: $localize`no answer possible`,
+    },
+    {
+      id: "notTrueAtAll",
+      label: $localize`not true at all`,
+    },
+    {
+      id: "rarelyTrue",
+      label: $localize`rarely true`,
+    },
+    {
+      id: "usuallyTrue",
+      label: $localize`usually true`,
+    },
+    {
+      id: "absolutelyTrue",
+      label: $localize`absolutely true`,
+    },
+  ],
 
   "view:": {
     "component": "Dashboard",
@@ -161,9 +184,6 @@ export const defaultConfig = {
           "config": {
             "dashboardConfigId": "1"
           }
-        },
-        {
-        "component": "ChildrenBmiDashboardComponent"
         }
       ]
     }
@@ -194,9 +214,9 @@ export const defaultConfig = {
           "id": "category"
         },
         {
-          "component": "DisplayText",
+          "component": "DisplayUsers",
           "title": $localize`:Author of a note or report:Author`,
-          "id": "author"
+          "id": "authors"
         },
         {
           "component": "ChildBlockList",
@@ -215,7 +235,7 @@ export const defaultConfig = {
               "date",
               "subject",
               "category",
-              "author",
+              "authors",
               "children"
             ]
           },
@@ -946,7 +966,93 @@ export const defaultConfig = {
           ]
         },
         {
-          "title": $localize`:Drouput information of a child:Dropout`,
+          title: "Observations",
+          components: [
+            {
+              title: "",
+              component: "HistoricalDataComponent",
+              config: [
+                {
+                  name: "date",
+                  label: $localize`Date`,
+                  inputType: ColumnDescriptionInputType.DATE
+                },
+                {
+                  name: "isMotivatedDuringClass",
+                  label: $localize`Motivated`,
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: $localize`The child is motivated during the class.`
+                },
+                {
+                  name: "isParticipatingInClass",
+                  label: $localize`Participates`,
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: $localize`The child is actively participating in the class.`
+                },
+                {
+                  name: "isInteractingWithOthers",
+                  label: $localize`Interacts`,
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: $localize`The child interacts with other students during the class.`
+                },
+                {
+                  name: "doesHomework",
+                  label: $localize`Homework`,
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: $localize`The child does its homework.`
+                },
+                {
+                  name: "isOnTime",
+                  label: $localize`On time`,
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: $localize`The child is always on time for the class.`
+                },
+                {
+                  name: "asksQuestions",
+                  label: $localize`Asks`,
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: $localize`The child is asking questions during the class.`
+                },
+                {
+                  name: "listens",
+                  label: $localize`Listens`,
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: $localize`The child is listening during the class.`
+                },
+                {
+                  name: "canWorkOnBoard",
+                  label: $localize`Solves on board`,
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: $localize`The child can solve exercises on the board.`
+                },
+                {
+                  name: "isConcentrated",
+                  label: $localize`Concentrated`,
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: $localize`The child is concentrated during the class.`
+                },
+                {
+                  name: "doesNotDisturb",
+                  label: $localize`Not Disturbing`,
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: $localize`The child does not disturb the class.`
+                },
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Dropout",
           "components": [
             {
               "title": "",
@@ -999,8 +1105,8 @@ export const defaultConfig = {
           "id": "type"
         },
         {
-          "component": "DisplayText",
-          "title": $localize`:The person (user) this recurring activity is assigned to:Assigned to`,
+          "component": "DisplayUsers",
+          "title": $localize`:The people (users) this recurring activity is assigned to:Assigned to`,
           "id": "assignedTo"
         }
       ],
@@ -1019,9 +1125,6 @@ export const defaultConfig = {
         ]
       },
       "filters": [
-        {
-          "id": "assignedTo"
-        }
       ]
     }
   },
@@ -1050,13 +1153,6 @@ export const defaultConfig = {
                       "input": "configurable-enum-select",
                       "enumId": "interaction-type",
                       "placeholder": $localize`:The type of a recurring activity:Type`
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "assignedTo",
-                      "placeholder": $localize`:The person a recurring activity is assigned to:Assigned to`
                     }
                   ]
                 ]
@@ -1112,5 +1208,19 @@ export const defaultConfig = {
   "entity:School": {
     "permissions": {
     }
+  },
+  "entity:HistoricalEntityData": {
+    "attributes": [
+      {"name": "isMotivatedDuringClass", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "isParticipatingInClass", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "isInteractingWithOthers", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "doesHomework", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "isOnTime", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "asksQuestions", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "listens", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "canWorkOnBoard", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "isConcentrated", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "doesNotDisturb", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+    ]
   }
 }

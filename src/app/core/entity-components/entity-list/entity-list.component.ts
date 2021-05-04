@@ -40,6 +40,7 @@ import {
 } from "../../configurable-enum/configurable-enum.interface";
 import { LoggingService } from "../../logging/logging.service";
 import { OperationType } from "../../permissions/entity-permissions.service";
+import { entityListSortingAccessor } from "./sorting-accessor";
 
 interface FilterComponentSettings<T> {
   filterSettings: FilterSelection<T>;
@@ -179,20 +180,7 @@ export class EntityListComponent<T extends Entity>
     // sort data according to it's label, if the data has a label
     // (which it has when using configuration enum types)
     // otherwise sort by default
-    this.entityDataSource.sortingDataAccessor = (
-      data: T,
-      sortingHeader: string
-    ) => {
-      if (
-        typeof data[sortingHeader] === "object" &&
-        data[sortingHeader] &&
-        "label" in data[sortingHeader]
-      ) {
-        return data[sortingHeader].label;
-      } else {
-        return data[sortingHeader];
-      }
-    };
+    this.entityDataSource.sortingDataAccessor = entityListSortingAccessor;
     setTimeout(() => {
       this.paginator.pageIndex = this.paginatorPageIndex;
       this.paginator.page.next({

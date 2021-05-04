@@ -77,7 +77,7 @@ describe("RollCallSetupComponent", () => {
     flush();
 
     expect(component.existingEvents.length).toBe(2);
-    expect(component.existingEvents[0].author).toBe(user.getId());
-    expect(component.existingEvents[1].author).toBe(user.getId());
+    expect(component.existingEvents[0].authors).toEqual([user.getId()]);
+    expect(component.existingEvents[1].authors).toEqual([user.getId()]);
   }));
 });

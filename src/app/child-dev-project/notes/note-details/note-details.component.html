@@ -74,21 +74,20 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <div fxFlex>
-          <!-- REPLACED -->
-          <mat-form-field class="input-medium">
-            <!-- TODO: should be multi-select or auto-complete field of user names? -->
-            <input
-              matInput
-              i18n-placeholder="Author of a Note"
-              placeholder="Team Member"
-              name="teammember"
-              type="text"
-              [(ngModel)]="entity.author"
-            />
-          </mat-form-field>
-          <!-- REPLACED -->
-        </div>
+
+        <app-entity-select
+          fxFlex
+          [entityType]="User"
+          (selectionChange)="entityForm.form.markAsDirty()"
+          [(selection)]="entity.authors"
+          [view]="userBlock"
+          i18n-placeholder="placeholder when adding multiple authors"
+          placeholder="Add Author..."
+          i18n-label="Authors of a note"
+          label="Authors"
+        >
+        </app-entity-select>
+
       </div>
     </div>
 
@@ -125,33 +124,79 @@
     </div>
 
     <div fxLayout="column" fxLayoutGap="20px">
-      <div fxFlex *ngIf="!entity.category.isMeeting">
-        <app-child-select
-          [selectedChildrenIds]="entity.children"
-          (newIdAdded)="entity.addChild($event); entityForm.form.markAsDirty()"
-          (idRemoved)="
-            entity.removeChild($event); entityForm.form.markAsDirty()
-          "
-          class="input-medium"
-        >
-        </app-child-select>
+
+      <app-entity-select
+        [entityType]="Child"
+        [view]="childBlock"
+        [(selection)]="entity.children"
+        (selectionChange)="entityForm.form.markAsDirty()"
+        [additionalFilter]="filterInactiveChildren"
+        [showEntities]="!entity.category.isMeeting"
+        label="Participants"
+        i18n-label="Participants of a note"
+        placeholder="Add participant ..."
+        i18n-placeholder="Add participants of a note">
+        <!-- Header for autocomplete -->
+        <mat-option (click)="toggleIncludeInactiveChildren()">
+          <mat-checkbox
+            labelPosition="before"
+            [checked]="includeInactiveChildren">
+            Include Inactive Children
+          </mat-checkbox>
+        </mat-option>
+      </app-entity-select>
+
+      <div *ngIf="entity.category.isMeeting">
+        <app-child-meeting-note-attendance
+          *ngFor="let childId of entity.children"
+          [childId]="childId"
+          [attendance]="entity.getAttendance(childId)"
+          (change)="entityForm.form.markAsDirty()"
+          (remove)="entity.removeChild(childId); entityForm.form.markAsDirty()"
+          >
+        </app-child-meeting-note-attendance>
       </div>
-      <app-note-presence-list
-        *ngIf="entity.category.isMeeting"
-        [recordForm]="entityForm"
-        [entity]="entity"
-        fxFlex
-      >
-      </app-note-presence-list>
 
       <div fxFlex>
-        <app-school-select
-          [(selectedSchoolIds)]="entity.schools"
-          (selectedSchoolIdsChange)="entityForm.form.markAsDirty()"
-          class="input-medium"
+        <app-entity-select
+          [entityType]="School"
+          [(selection)]="entity.schools"
+          [view]="schoolBlock"
+          (selectionChange)="entityForm.form.markAsDirty()"
+          i18n-label="Groups that belong to a note"
+          label="Groups"
+          i18n-placeholder="Add a group to a note"
+          placeholder="Add group ..."
         >
-        </app-school-select>
+        </app-entity-select>
       </div>
+
     </div>
+
   </form>
 </app-form-dialog-wrapper>
+
+<ng-template
+  #childBlock
+  let-child="entity">
+  <app-child-block
+    [entity]="child"
+    [linkDisabled]="true"
+    [tooltipDisabled]="true">
+  </app-child-block>
+</ng-template>
+
+<ng-template
+  #schoolBlock
+  let-school="entity">
+  <app-school-block
+    [entity]="school"
+    [linkDisabled]="true"
+  >
+  </app-school-block>
+</ng-template>
+
+<ng-template
+  #userBlock
+  let-user="entity"
+>{{user.name}}</ng-template>

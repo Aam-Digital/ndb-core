@@ -2,15 +2,16 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EntitySubrecordComponent } from "./entity-subrecord.component";
 import { RouterTestingModule } from "@angular/router/testing";
-import { EntitySubrecordModule } from "./entity-subrecord.module";
-import { Entity } from "../../entity/entity";
-import { ColumnDescriptionInputType } from "./column-description-input-type.enum";
+import { EntitySubrecordModule } from "../entity-subrecord.module";
+import { Entity } from "../../../entity/entity";
+import { ColumnDescriptionInputType } from "../column-description-input-type.enum";
 import { By } from "@angular/platform-browser";
 import { SimpleChange } from "@angular/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatNativeDateModule } from "@angular/material/core";
 import { DatePipe, PercentPipe } from "@angular/common";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { ConfigurableEnumValue } from "../../../configurable-enum/configurable-enum.interface";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -112,11 +113,12 @@ describe("EntitySubrecordComponent", () => {
     expect(tdColumns[1].nativeElement.innerText).toBe("90%");
   });
 
-  it("formats MONTH and DATE automatically", () => {
+  it("formats MONTH, DATE and CONFIGURABLE_ENUM automatically", () => {
     component.records = [
       Object.assign(new Entity(), {
         month: new Date("2020-01-01"),
         day: new Date("2020-01-23"),
+        configurableEnum: { label: "enum label", id: "enumId" },
       }),
     ];
 
@@ -131,6 +133,11 @@ describe("EntitySubrecordComponent", () => {
         label: "Test day",
         inputType: ColumnDescriptionInputType.DATE,
       },
+      {
+        name: "configurableEnum",
+        label: "Test Configurable Enum",
+        inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+      },
     ];
     component.ngOnChanges({
       records: new SimpleChange(undefined, component.records, true),
@@ -141,5 +148,44 @@ describe("EntitySubrecordComponent", () => {
     const tdColumns = fixture.debugElement.queryAll(By.css("td"));
     expect(tdColumns[0].nativeElement.innerText).toBe("2020-01");
     expect(tdColumns[1].nativeElement.innerText).toBe("2020-01-23");
+    expect(tdColumns[2].nativeElement.innerText).toBe("enum label");
+  });
+
+  it("should sort enums by the label", () => {
+    class Test extends Entity {
+      public enumValue: ConfigurableEnumValue;
+      constructor(label: string, id: string) {
+        super();
+        this.enumValue = { label: label, id: id };
+      }
+    }
+    const first = new Test("aaa", "first");
+    const second = new Test("aab", "second");
+    const third = new Test("c", "third");
+    component.records = [second, first, third];
+    component.columns = [
+      {
+        name: "enumValue",
+        label: "Test Configurable Enum",
+        inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+      },
+    ];
+    component.ngOnChanges({
+      records: new SimpleChange(undefined, component.records, true),
+      columns: new SimpleChange(undefined, component.columns, true),
+    });
+    fixture.detectChanges();
+
+    component.recordsDataSource.sort.sort({
+      id: "enumValue",
+      start: "asc",
+      disableClear: false,
+    });
+
+    const sortedData = component.recordsDataSource.sortData(
+      component.recordsDataSource.data,
+      component.sort
+    );
+    expect(sortedData).toEqual([first, second, third]);
   });
 });

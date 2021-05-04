@@ -5,6 +5,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatDialogModule } from "@angular/material/dialog";
 import { SessionService } from "../../session/session-service/session.service";
 import { FormDialogModule } from "../../form-dialog/form-dialog.module";
+import { PermissionsModule } from "../../permissions/permissions.module";
 
 describe("PrimaryActionComponent", () => {
   let component: PrimaryActionComponent;
@@ -19,7 +20,12 @@ describe("PrimaryActionComponent", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [PrimaryActionComponent],
-      imports: [MatDialogModule, MatButtonModule, FormDialogModule],
+      imports: [
+        MatDialogModule,
+        MatButtonModule,
+        FormDialogModule,
+        PermissionsModule,
+      ],
       providers: [{ provide: SessionService, useValue: mockSessionService }],
     }).compileComponents();
   });

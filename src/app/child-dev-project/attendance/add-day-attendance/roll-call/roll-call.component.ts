@@ -58,8 +58,19 @@ export class RollCallComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.entries = [];
     this.loadAttendanceStatusTypes();
+    await this.loadParticipants();
+  }
+
+  private loadAttendanceStatusTypes() {
+    this.availableStatus = this.configService.getConfig<
+      ConfigurableEnumConfig<AttendanceStatusType>
+    >(ATTENDANCE_STATUS_CONFIG_ID);
+  }
+
+  private async loadParticipants() {
+    this.entries = [];
+    this.currentIndex = 0;
     for (const childId of this.eventEntity.children) {
       let child;
       try {
@@ -78,13 +89,6 @@ export class RollCallComponent implements OnInit {
         attendance: this.eventEntity.getAttendance(childId),
       });
     }
-    this.goToNextParticipant(0);
-  }
-
-  private loadAttendanceStatusTypes() {
-    this.availableStatus = this.configService.getConfig<
-      ConfigurableEnumConfig<AttendanceStatusType>
-    >(ATTENDANCE_STATUS_CONFIG_ID);
   }
 
   markAttendance(attendance: EventAttendance, status: AttendanceStatusType) {

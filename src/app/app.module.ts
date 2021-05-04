@@ -72,7 +72,9 @@ import { ConfigModule } from "./core/config/config.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
 import { MatPaginatorIntl } from "@angular/material/paginator";
 import { TranslatableMatPaginator } from "./utils/TranslatableMatPaginator";
+import { MatFormFieldModule } from "@angular/material/form-field";
 import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/dashboard-shortcut-widget.module";
+import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
 
 /**
  * Main entry point of the application.
@@ -140,7 +142,9 @@ import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/
       ...DemoUserGeneratorService.provider(),
     ]),
     AttendanceModule,
+    MatFormFieldModule,
     DashboardShortcutWidgetModule,
+    HistoricalDataModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },

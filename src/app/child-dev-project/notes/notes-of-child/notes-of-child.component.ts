@@ -10,7 +10,7 @@ import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on
 import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
-import { ComponentWithConfig } from "../../../core/entity-components/entity-subrecord/entity-subrecord.component";
+import { ComponentWithConfig } from "../../../core/entity-components/entity-subrecord/component-with-config";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
@@ -108,16 +108,14 @@ export class NotesOfChildComponent
 
   generateNewRecordFactory() {
     // define values locally because "this" is a different scope after passing a function as input to another component
-    const user = this.sessionService.getCurrentUser()
-      ? this.sessionService.getCurrentUser().name
-      : "";
+    const user = this.sessionService.getCurrentUser().getId();
     const childId = this.child.getId();
 
     return () => {
       const newNote = new Note(Date.now().toString());
       newNote.date = new Date();
       newNote.addChild(childId);
-      newNote.author = user;
+      newNote.authors = [user];
 
       return newNote;
     };
