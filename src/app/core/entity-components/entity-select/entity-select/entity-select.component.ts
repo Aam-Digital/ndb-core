@@ -40,7 +40,6 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
       .then((entities) => {
         this.allEntities = entities;
         this.loading.next(false);
-        console.log(this.loading);
         this.formControl.setValue(null);
       })
       .catch((error) => {
