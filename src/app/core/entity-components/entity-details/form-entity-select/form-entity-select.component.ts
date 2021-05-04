@@ -46,7 +46,6 @@ export class FormEntitySelectComponent<E extends Entity> {
   @Input() configId: string;
   /** see {@link EntitySelectComponent#disabled} */
   @Input() disabled: boolean;
-
   /**
    * the selection, computed via the form
    */
@@ -75,7 +74,7 @@ export class FormEntitySelectComponent<E extends Entity> {
     if (isRegisteredDynamicComponent(type + "Block")) {
       this.entityBlockComponent = type + "Block";
     } else {
-      this.entityBlockComponent = null;
+      this.entityBlockComponent = undefined;
     }
   }
   /**
