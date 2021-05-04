@@ -19,16 +19,19 @@ import {
   EntityPermissionsService,
   OperationType,
 } from "../../permissions/entity-permissions.service";
+import { User } from "../../user/user";
 
-const ENTITY_MAP: Map<string, any> = new Map<string, EntityConstructor<Entity>>(
-  [
-    ["Child", Child],
-    ["Participant", Child],
-    ["School", School],
-    ["Team", School],
-    ["RecurringActivity", RecurringActivity],
-  ]
-);
+export const ENTITY_MAP: Map<string, any> = new Map<
+  string,
+  EntityConstructor<Entity>
+>([
+  ["Child", Child],
+  ["Participant", Child],
+  ["School", School],
+  ["Team", School],
+  ["RecurringActivity", RecurringActivity],
+  ["User", User]
+]);
 
 /**
  * This component can be used to display a entity in more detail.

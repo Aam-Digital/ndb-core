@@ -8,9 +8,11 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { ViewModule } from "../../view/view.module";
+import { ConfigurableEntitySelectComponent } from "./configurable-entity-select/configurable-entity-select.component";
 
 @NgModule({
-  declarations: [EntitySelectComponent],
+  declarations: [EntitySelectComponent, ConfigurableEntitySelectComponent],
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -22,7 +24,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatInputModule,
     ReactiveFormsModule,
     MatTooltipModule,
+    ViewModule,
   ],
-  exports: [EntitySelectComponent],
+  exports: [EntitySelectComponent, ConfigurableEntitySelectComponent],
 })
 export class EntitySelectModule {}

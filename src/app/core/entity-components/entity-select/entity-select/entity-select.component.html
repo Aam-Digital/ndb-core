@@ -3,7 +3,8 @@
 
   <input
     #inputField
-    [disabled]="loading.value || disabled"
+    *ngIf="!disabled"
+    [disabled]="loading.value"
     [placeholder]="loading.value ? 'loading...' : (disabled ? '' : placeholder)"
     [formControl]="formControl"
     [matAutocomplete]='autoSuggestions'
@@ -30,7 +31,6 @@
         </div>
       </mat-basic-chip>
     </ng-container>
-
   </mat-chip-list>
 
   <mat-autocomplete

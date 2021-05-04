@@ -1154,6 +1154,15 @@ export const defaultConfig = {
                       "enumId": "interaction-type",
                       "placeholder": "Type"
                     }
+                  ],
+                  [
+                    {
+                      "input": "entity-select",
+                      "id": "assignedTo",
+                      "entityType": "User",
+                      "placeholder": "Add coordinator...",
+                      "label": "Assigned to"
+                    }
                   ]
                 ]
               }

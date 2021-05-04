@@ -1,0 +1,28 @@
+<app-entity-select
+  [selection]="selection"
+  (selectionChange)="select($event)"
+  [entityType]="entityType"
+  [view]="entityBlockComponent ? blockComponent : defaultComponent"
+  [label]="label"
+  [placeholder]="placeholder"
+  [disabled]="disabled"
+  selectionInputType="id"
+>
+</app-entity-select>
+
+<ng-template
+  #blockComponent
+  let-entity="entity"
+>
+  <ng-container
+    [appDynamicComponent]="getConfigFor(entity)"
+  >
+  </ng-container>
+</ng-template>
+
+<ng-template
+  #defaultComponent
+  let-entity="entity"
+>
+  {{entity["name"] || entity.getId()}}
+</ng-template>
