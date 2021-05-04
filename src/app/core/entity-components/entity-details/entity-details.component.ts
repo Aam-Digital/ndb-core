@@ -30,7 +30,7 @@ export const ENTITY_MAP: Map<string, any> = new Map<
   ["School", School],
   ["Team", School],
   ["RecurringActivity", RecurringActivity],
-  ["User", User]
+  ["User", User],
 ]);
 
 /**

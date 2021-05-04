@@ -21,30 +21,35 @@ import { AlertsModule } from "../../alerts/alerts.module";
 import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
 import { EntitySelectModule } from "../entity-select/entity-select.module";
+import { FormEntitySelectComponent } from "./configurable-entity-select/form-entity-select.component";
 
 @NgModule({
-  declarations: [EntityDetailsComponent, FormComponent],
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        MatIconModule,
-        MatFormFieldModule,
-        MatTooltipModule,
-        MatInputModule,
-        MatCheckboxModule,
-        MatDatepickerModule,
-        MatSelectModule,
-        MatExpansionModule,
-        ViewModule,
-        FlexLayoutModule,
-        MatButtonModule,
-        MatSnackBarModule,
-        MatNativeDateModule,
-        EntityModule,
-        AlertsModule,
-        ConfigurableEnumModule,
-        PermissionsModule,
-        EntitySelectModule,
-    ],
+  declarations: [
+    EntityDetailsComponent,
+    FormComponent,
+    FormEntitySelectComponent,
+  ],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatTooltipModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatDatepickerModule,
+    MatSelectModule,
+    MatExpansionModule,
+    ViewModule,
+    FlexLayoutModule,
+    MatButtonModule,
+    MatSnackBarModule,
+    MatNativeDateModule,
+    EntityModule,
+    AlertsModule,
+    ConfigurableEnumModule,
+    PermissionsModule,
+    EntitySelectModule,
+  ],
 })
 export class EntityDetailsModule {}

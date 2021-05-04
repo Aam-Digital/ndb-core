@@ -9,10 +9,9 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ViewModule } from "../../view/view.module";
-import { ConfigurableEntitySelectComponent } from "./configurable-entity-select/configurable-entity-select.component";
 
 @NgModule({
-  declarations: [EntitySelectComponent, ConfigurableEntitySelectComponent],
+  declarations: [EntitySelectComponent],
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -26,6 +25,6 @@ import { ConfigurableEntitySelectComponent } from "./configurable-entity-select/
     MatTooltipModule,
     ViewModule,
   ],
-  exports: [EntitySelectComponent, ConfigurableEntitySelectComponent],
+  exports: [EntitySelectComponent],
 })
 export class EntitySelectModule {}

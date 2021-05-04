@@ -40,6 +40,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
       .then((entities) => {
         this.allEntities = entities;
         this.loading.next(false);
+        console.log(this.loading);
         this.formControl.setValue(null);
       })
       .catch((error) => {
@@ -56,6 +57,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * @param sel The initial selection
    */
   @Input() set selection(sel: (string | E)[]) {
+    console.log(sel);
     if (this.selectionInputType === "id") {
       this.loading.pipe(skipWhile((isLoading) => isLoading)).subscribe((_) => {
         this.selection_ = this.allEntities.filter((e) =>

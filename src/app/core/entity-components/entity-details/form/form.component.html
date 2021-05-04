@@ -171,15 +171,15 @@
         </mat-form-field>
 
         <div *ngIf="row.input === 'entity-select'">
-          <app-configurable-entity-select
+          <app-form-entity-select
             [standardType]="row.entityType"
-            [source]="entity"
+            [source]="form.controls"
             [configId]="row.id"
             [disabled]="!editing"
             [label]="row.label"
             [placeholder]="row.placeholder"
           >
-          </app-configurable-entity-select>
+          </app-form-entity-select>
         </div>
 
       </div>

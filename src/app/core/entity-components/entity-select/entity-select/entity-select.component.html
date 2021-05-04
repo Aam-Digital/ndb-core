@@ -5,7 +5,7 @@
     #inputField
     *ngIf="!disabled"
     [disabled]="loading.value"
-    [placeholder]="loading.value ? 'loading...' : (disabled ? '' : placeholder)"
+    [placeholder]="loading.value ? 'loading...' : placeholder"
     [formControl]="formControl"
     [matAutocomplete]='autoSuggestions'
     [matChipInputFor]="chipList"
