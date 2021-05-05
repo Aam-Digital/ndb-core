@@ -27,7 +27,7 @@
       </button>
     </span>
 
-    <span fxFlex fxHide.lt-md>
+    <span fxFlex [fxHide.lt-md]="isLoggedIn()">
       <a [routerLink]="['']"
         class="header-title"
         angulartics2On="click"
