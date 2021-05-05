@@ -64,9 +64,11 @@ export class UiComponent implements OnInit {
           this.sideNavMode = "side";
         }
       });
-    this.logo_path = this.configService.getConfig<{ logo_path: string }>(
-      "appConfig"
-    )?.logo_path;
+    this.configService.configUpdated.subscribe(() => {
+      this.logo_path = this.configService.getConfig<{ logo_path: string }>(
+        "appConfig"
+      )?.logo_path;
+    });
   }
 
   ngOnInit(): void {
