@@ -56,7 +56,6 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * @param sel The initial selection
    */
   @Input() set selection(sel: (string | E)[]) {
-    console.log(sel);
     if (this.selectionInputType === "id") {
       this.loading.pipe(skipWhile((isLoading) => isLoading)).subscribe((_) => {
         this.selection_ = this.allEntities.filter((e) =>
