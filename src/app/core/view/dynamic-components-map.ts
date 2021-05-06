@@ -30,10 +30,6 @@ import { UserListComponent } from "../admin/user-list/user-list.component";
 import { HistoricalDataComponent } from "../../features/historical-data/historical-data/historical-data.component";
 import { SchoolBlockComponent } from "../../child-dev-project/schools/school-block/school-block.component";
 
-export function isRegisteredDynamicComponent(dynamicComponent: string) {
-  return DYNAMIC_COMPONENTS_MAP.has(dynamicComponent);
-}
-
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
   ["RecentNotesDashboard", RecentNotesDashboardComponent],

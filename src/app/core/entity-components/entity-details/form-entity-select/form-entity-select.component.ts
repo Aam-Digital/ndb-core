@@ -2,7 +2,7 @@ import { Component, Input } from "@angular/core";
 import { ENTITY_MAP } from "../entity-details.component";
 import { Entity, EntityConstructor } from "../../../entity/entity";
 import { DynamicComponentConfig } from "../../../view/dynamic-components/dynamic-component-config.interface";
-import { isRegisteredDynamicComponent } from "../../../view/dynamic-components-map";
+import { DYNAMIC_COMPONENTS_MAP } from "../../../view/dynamic-components-map";
 import { AbstractControl } from "@angular/forms";
 
 /**
@@ -62,7 +62,7 @@ export class FormEntitySelectComponent<E extends Entity> {
     if (!this.entityType) {
       throw new Error(`Entity-Type ${type} not in EntityMap`);
     }
-    if (isRegisteredDynamicComponent(type + "Block")) {
+    if (DYNAMIC_COMPONENTS_MAP.has(type + "Block")) {
       this.entityBlockComponent = type + "Block";
     } else {
       this.entityBlockComponent = undefined;
