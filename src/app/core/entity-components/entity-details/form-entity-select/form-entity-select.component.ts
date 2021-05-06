@@ -3,7 +3,6 @@ import { ENTITY_MAP } from "../entity-details.component";
 import { Entity, EntityConstructor } from "../../../entity/entity";
 import { DynamicComponentConfig } from "../../../view/dynamic-components/dynamic-component-config.interface";
 import { isRegisteredDynamicComponent } from "../../../view/dynamic-components-map";
-import { EntitySelectComponent } from "../../entity-select/entity-select/entity-select.component";
 import { AbstractControl } from "@angular/forms";
 
 /**
