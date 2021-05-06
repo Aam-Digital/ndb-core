@@ -1,11 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  Input,
-  TemplateRef,
-  ViewChild,
-} from "@angular/core";
-import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
+import { Component, Input } from "@angular/core";
 import { ENTITY_MAP } from "../entity-details.component";
 import { Entity, EntityConstructor } from "../../../entity/entity";
 import { DynamicComponentConfig } from "../../../view/dynamic-components/dynamic-component-config.interface";
@@ -20,7 +13,6 @@ import { AbstractControl } from "@angular/forms";
 @Component({
   selector: "app-form-entity-select",
   templateUrl: "./form-entity-select.component.html",
-  styleUrls: ["./form-entity-select.component.scss"],
 })
 export class FormEntitySelectComponent<E extends Entity> {
   /**
