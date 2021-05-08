@@ -5,7 +5,6 @@ import {
   EventEmitter,
   ViewChild,
   ElementRef,
-  TemplateRef,
   OnChanges,
   SimpleChanges,
 } from "@angular/core";
@@ -18,6 +17,9 @@ import { filter, map, skipWhile } from "rxjs/operators";
 import { MatChipInputEvent } from "@angular/material/chips";
 import { LoggingService } from "../../../logging/logging.service";
 import { MatAutocompleteTrigger } from "@angular/material/autocomplete";
+import { DynamicComponentConfig } from "../../../view/dynamic-components/dynamic-component-config.interface";
+import { ENTITY_MAP } from "../../entity-details/entity-details.component";
+import { DYNAMIC_COMPONENTS_MAP } from "../../../view/dynamic-components-map";
 
 export type accessorFn<E extends Entity> = (E) => string;
 
@@ -28,12 +30,32 @@ export type accessorFn<E extends Entity> = (E) => string;
 })
 export class EntitySelectComponent<E extends Entity> implements OnChanges {
   /**
+   * The standard-type (e.g. 'Child', 'School', e.t.c.) to set.
+   * The standard-type has to be inside {@link ENTITY_MAP}
+   * @param type The type of entities that this will set. This will set the
+   * actual entity-type as well as the block-component
+   * @throws Error when `type` is not in the entity-map
+   */
+  @Input() set standardType(type: string) {
+    const entityType = ENTITY_MAP.get(type);
+    if (!entityType) {
+      throw new Error(`Entity-Type ${type} not in EntityMap`);
+    }
+    this.entityType = entityType;
+    if (DYNAMIC_COMPONENTS_MAP.has(type + "Block")) {
+      this.entityBlockComponent = type + "Block";
+    } else {
+      this.entityBlockComponent = undefined;
+    }
+  }
+  entityBlockComponent?: string;
+  /**
    * The type of entity to load. This is required and will cause all
    * entities of the given type to be available in the selection
    * and auto-complete
    * @param type The type of the entity
    */
-  @Input() set entityType(type: EntityConstructor<E>) {
+  set entityType(type: EntityConstructor<E>) {
     this.loading.next(true);
     this.entityMapperService
       .loadType<E>(type)
@@ -65,15 +87,6 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     } else {
       this.selection_ = sel as E[];
     }
-  }
-  /**
-   * sets a view that will both be used for autocomplete
-   * as well as the entities view
-   * @param view The view to set
-   */
-  @Input() set view(view: TemplateRef<any>) {
-    this.entityView = view;
-    this.autocompleteView = view;
   }
   /** Underlying data-array */
   selection_: E[] = [];
@@ -109,27 +122,6 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * If this is the case, they can be deleted.
    */
   @Input() removable = true;
-  /**
-   * The view used to render single entity-items. When used in a template,
-   * this view is given an entity as context. A template (that can be passed
-   * to this view) could look like this:
-   * <br>
-   * <pre>
-   *   <ng-template
-   *      #myTemplate
-   *      let-entity="entity">
-   *      {{entity.name}}
-   *   </ng-template>
-   * </pre>
-   * this would then be passed via <code>[entityView]="myTemplate"</code>
-   * and would cause all entities that are to be displayed to simply display their names
-   */
-  @Input() entityView: TemplateRef<any>;
-  /**
-   * The view used to render autocomplete-options.
-   * This has the same behavior as {@link entityView}.
-   */
-  @Input() autocompleteView: TemplateRef<any>;
   /**
    * true when this is loading and false when it's ready.
    * This subject's state reflects the actual loading resp. the 'readiness'-
@@ -256,5 +248,20 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
       // update whenever additional filters are being set
       this.formControl.setValue(this.formControl.value);
     }
+  }
+  /**
+   * creates a config for the dynamic component from an entity
+   * @param entity The entity to create the config from in the context
+   * of this component
+   */
+  createConfigFor(entity: any): DynamicComponentConfig {
+    return {
+      component: this.entityBlockComponent,
+      config: {
+        entity: entity,
+        linkDisabled: true,
+        tooltipDisabled: true,
+      },
+    };
   }
 }

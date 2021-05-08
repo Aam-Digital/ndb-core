@@ -1,18 +1,16 @@
 <div>
   <app-entity-select
-    [entityType]="School"
+    [standardType]="'School'"
     [(selection)]="participatingGroups"
     [disabled]="!editing"
-    [view]="schoolBlock"
     label="Groups"
     placeholder="Add group ..."
   >
   </app-entity-select>
   <app-entity-select
+    [standardType]="'School'"
     [(selection)]="participants"
     [disabled]="!editing"
-    [entityType]="Child"
-    [view]="childBlock"
     label="Participants"
     placeholder="Add participant ..."
   ></app-entity-select>
@@ -46,22 +44,3 @@
     Edit
   </button>
 </div>
-
-<ng-template
-  let-entity="entity"
-  #childBlock>
-  <app-child-block
-    [entity]="entity"
-    [linkDisabled]="true"
-    [tooltipDisabled]="true">
-  </app-child-block>
-</ng-template>
-
-<ng-template
-  let-entity="entity"
-  #schoolBlock>
-  <app-school-block
-  [entity]="entity"
-  [linkDisabled]="true">
-  </app-school-block>
-</ng-template>

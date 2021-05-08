@@ -21,14 +21,9 @@ import { AlertsModule } from "../../alerts/alerts.module";
 import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
 import { EntitySelectModule } from "../entity-select/entity-select.module";
-import { FormEntitySelectComponent } from "./form-entity-select/form-entity-select.component";
 
 @NgModule({
-  declarations: [
-    EntityDetailsComponent,
-    FormComponent,
-    FormEntitySelectComponent,
-  ],
+  declarations: [EntityDetailsComponent, FormComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,

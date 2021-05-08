@@ -172,16 +172,16 @@
             <mat-datepicker #datepickerComp></mat-datepicker>
           </mat-form-field>
 
-          <app-form-entity-select
+          <app-entity-select
             *ngSwitchCase="'entity-select'"
             [standardType]="row.entityType"
-            [source]="form.controls"
-            [configId]="row.id"
+            [selection]="form.controls[row.id].value"
+            (selectionChange)="form.controls[row.id].setValue($event)"
             [disabled]="!editing"
             [label]="row.label"
             [placeholder]="row.placeholder"
           >
-          </app-form-entity-select>
+          </app-entity-select>
 
         </ng-container>
 
