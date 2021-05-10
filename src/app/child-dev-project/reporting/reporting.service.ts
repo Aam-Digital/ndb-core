@@ -36,7 +36,8 @@ export class ReportingService {
 
   private async calculateAggregations(
     aggregations: Aggregation[] = [],
-    data?: any[]
+    data?: any[],
+    additionalValues: any[] = []
   ): Promise<ReportRow[]> {
     const resultRows: ReportRow[] = [];
     let currentSubRows = resultRows;
@@ -47,7 +48,11 @@ export class ReportingService {
       );
       if (aggregation.label) {
         const newRow = {
-          header: { label: aggregation.label, result: queryResult?.length },
+          header: {
+            label: aggregation.label,
+            values: additionalValues,
+            result: queryResult?.length,
+          },
           subRows: [],
         };
         resultRows.push(newRow);
@@ -57,7 +62,8 @@ export class ReportingService {
         currentSubRows.push(
           ...(await this.calculateAggregations(
             aggregation.aggregations,
-            queryResult
+            queryResult,
+            additionalValues
           ))
         );
       }
@@ -67,7 +73,8 @@ export class ReportingService {
             aggregation.groupBy,
             aggregation.aggregations,
             aggregation.label,
-            queryResult
+            queryResult,
+            additionalValues
           ))
         );
       }
@@ -90,7 +97,8 @@ export class ReportingService {
     properties: string[],
     aggregations: any[],
     label: string,
-    data: any[]
+    data: any[],
+    additionalValues: any[]
   ): Promise<ReportRow[]> {
     const resultRows: ReportRow[] = [];
     for (let i = properties.length; i > 0; i--) {
@@ -98,23 +106,31 @@ export class ReportingService {
       const remainingProperties = properties.slice(i);
       const groupingResults = this.groupBy(data, currentProperty);
       for (const grouping of groupingResults) {
+        const groupingValues = additionalValues.concat(
+          this.getValueDescription(grouping.value, currentProperty)
+        );
         const newRow: ReportRow = {
           header: {
             label: label,
-            values: [this.getValueDescription(grouping.value, currentProperty)],
+            values: groupingValues,
             result: grouping.data.length,
           },
           subRows: [],
         };
         newRow.subRows.push(
-          ...(await this.calculateAggregations(aggregations, grouping.data))
+          ...(await this.calculateAggregations(
+            aggregations,
+            grouping.data,
+            groupingValues
+          ))
         );
         newRow.subRows.push(
           ...(await this.calculateGroupBy(
             remainingProperties,
             aggregations,
             label,
-            grouping.data
+            grouping.data,
+            groupingValues
           ))
         );
         resultRows.push(newRow);

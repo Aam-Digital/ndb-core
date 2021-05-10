@@ -53,8 +53,8 @@ describe("ReportingService", () => {
       [[muslimsQuery], baseData],
     ]);
     expect(report).toEqual([
-      { header: { label: "christians", result: 1 }, subRows: [] },
-      { header: { label: "muslims", result: 2 }, subRows: [] },
+      { header: { label: "christians", values: [], result: 1 }, subRows: [] },
+      { header: { label: "muslims", values: [], result: 2 }, subRows: [] },
     ]);
   });
 
@@ -130,19 +130,28 @@ describe("ReportingService", () => {
       {
         header: {
           label: "Base result",
+          values: [],
           result: 2,
         },
         subRows: [
           {
-            header: { label: "First nested aggregation", result: 1 },
+            header: {
+              label: "First nested aggregation",
+              values: [],
+              result: 1,
+            },
             subRows: [],
           },
           {
-            header: { label: "Second nested aggregation", result: 1 },
+            header: {
+              label: "Second nested aggregation",
+              values: [],
+              result: 1,
+            },
             subRows: [],
           },
           {
-            header: { label: "Normal aggregation", result: 1 },
+            header: { label: "Normal aggregation", values: [], result: 1 },
             subRows: [],
           },
         ],
@@ -171,7 +180,7 @@ describe("ReportingService", () => {
 
     expect(result).toEqual([
       {
-        header: { label: "Total # of children", result: 3 },
+        header: { label: "Total # of children", values: [], result: 3 },
         subRows: [
           {
             header: {
@@ -218,10 +227,10 @@ describe("ReportingService", () => {
 
     expect(result).toEqual([
       {
-        header: { label: "Total # of children", result: 3 },
+        header: { label: "Total # of children", values: [], result: 3 },
         subRows: [
           {
-            header: { label: "Total # of christians", result: 3 },
+            header: { label: "Total # of christians", values: [], result: 3 },
             subRows: [],
           },
           {
@@ -234,6 +243,7 @@ describe("ReportingService", () => {
               {
                 header: {
                   label: "Total # of christians",
+                  values: [Gender.MALE],
                   result: 3,
                 },
                 subRows: [],
@@ -250,6 +260,7 @@ describe("ReportingService", () => {
               {
                 header: {
                   label: "Total # of christians",
+                  values: [Gender.FEMALE],
                   result: 3,
                 },
                 subRows: [],
@@ -296,7 +307,7 @@ describe("ReportingService", () => {
 
     expect(result).toEqual([
       {
-        header: { label: "Total # of children", result: 4 },
+        header: { label: "Total # of children", values: [], result: 4 },
         subRows: [
           {
             header: {
@@ -324,7 +335,7 @@ describe("ReportingService", () => {
               {
                 header: {
                   label: "Total # of children",
-                  values: ["Alipore"],
+                  values: ["christian", "Alipore"],
                   result: 2,
                 },
                 subRows: [],
@@ -332,7 +343,7 @@ describe("ReportingService", () => {
               {
                 header: {
                   label: "Total # of children",
-                  values: ["Barabazar"],
+                  values: ["christian", "Barabazar"],
                   result: 1,
                 },
                 subRows: [],
@@ -349,7 +360,7 @@ describe("ReportingService", () => {
               {
                 header: {
                   label: "Total # of children",
-                  values: ["Alipore"],
+                  values: ["muslim", "Alipore"],
                   result: 1,
                 },
                 subRows: [],
@@ -366,7 +377,7 @@ describe("ReportingService", () => {
               {
                 header: {
                   label: "Total # of children",
-                  values: ["Alipore"],
+                  values: [Gender.FEMALE, "Alipore"],
                   result: 1,
                 },
                 subRows: [],
@@ -374,7 +385,7 @@ describe("ReportingService", () => {
               {
                 header: {
                   label: "Total # of children",
-                  values: ["Barabazar"],
+                  values: [Gender.FEMALE, "Barabazar"],
                   result: 1,
                 },
                 subRows: [],
@@ -382,14 +393,14 @@ describe("ReportingService", () => {
               {
                 header: {
                   label: "Total # of children",
-                  values: ["christian"],
+                  values: [Gender.FEMALE, "christian"],
                   result: 2,
                 },
                 subRows: [
                   {
                     header: {
                       label: "Total # of children",
-                      values: ["Alipore"],
+                      values: [Gender.FEMALE, "christian", "Alipore"],
                       result: 1,
                     },
                     subRows: [],
@@ -397,7 +408,7 @@ describe("ReportingService", () => {
                   {
                     header: {
                       label: "Total # of children",
-                      values: ["Barabazar"],
+                      values: [Gender.FEMALE, "christian", "Barabazar"],
                       result: 1,
                     },
                     subRows: [],
@@ -416,7 +427,7 @@ describe("ReportingService", () => {
               {
                 header: {
                   label: "Total # of children",
-                  values: ["Alipore"],
+                  values: [Gender.MALE, "Alipore"],
                   result: 2,
                 },
                 subRows: [],
@@ -424,14 +435,14 @@ describe("ReportingService", () => {
               {
                 header: {
                   label: "Total # of children",
-                  values: ["christian"],
+                  values: [Gender.MALE, "christian"],
                   result: 1,
                 },
                 subRows: [
                   {
                     header: {
                       label: "Total # of children",
-                      values: ["Alipore"],
+                      values: [Gender.MALE, "christian", "Alipore"],
                       result: 1,
                     },
                     subRows: [],
@@ -441,14 +452,14 @@ describe("ReportingService", () => {
               {
                 header: {
                   label: "Total # of children",
-                  values: ["muslim"],
+                  values: [Gender.MALE, "muslim"],
                   result: 1,
                 },
                 subRows: [
                   {
                     header: {
                       label: "Total # of children",
-                      values: ["Alipore"],
+                      values: [Gender.MALE, "muslim", "Alipore"],
                       result: 1,
                     },
                     subRows: [],
@@ -497,10 +508,10 @@ describe("ReportingService", () => {
 
     expect(result).toEqual([
       {
-        header: { label: "Total # of children", result: 5 },
+        header: { label: "Total # of children", values: [], result: 5 },
         subRows: [
           {
-            header: { label: "Total # of old children", result: 5 },
+            header: { label: "Total # of old children", values: [], result: 5 },
             subRows: [
               {
                 header: {
@@ -528,12 +539,16 @@ describe("ReportingService", () => {
             },
             subRows: [
               {
-                header: { label: "Total # of old children", result: 5 },
+                header: {
+                  label: "Total # of old children",
+                  values: [Gender.FEMALE],
+                  result: 5,
+                },
                 subRows: [
                   {
                     header: {
                       label: "Total # of old children",
-                      values: ["christian"],
+                      values: [Gender.FEMALE, "christian"],
                       result: 2,
                     },
                     subRows: [],
@@ -541,7 +556,7 @@ describe("ReportingService", () => {
                   {
                     header: {
                       label: "Total # of old children",
-                      values: ["muslim"],
+                      values: [Gender.FEMALE, "muslim"],
                       result: 3,
                     },
                     subRows: [],
@@ -558,12 +573,16 @@ describe("ReportingService", () => {
             },
             subRows: [
               {
-                header: { label: "Total # of old children", result: 5 },
+                header: {
+                  label: "Total # of old children",
+                  values: [Gender.MALE],
+                  result: 5,
+                },
                 subRows: [
                   {
                     header: {
                       label: "Total # of old children",
-                      values: ["christian"],
+                      values: [Gender.MALE, "christian"],
                       result: 2,
                     },
                     subRows: [],
@@ -571,7 +590,7 @@ describe("ReportingService", () => {
                   {
                     header: {
                       label: "Total # of old children",
-                      values: ["muslim"],
+                      values: [Gender.MALE, "muslim"],
                       result: 3,
                     },
                     subRows: [],
@@ -611,7 +630,7 @@ describe("ReportingService", () => {
 
     expect(result).toEqual([
       {
-        header: { label: "Total # of events", result: 3 },
+        header: { label: "Total # of events", values: [], result: 3 },
         subRows: [
           {
             header: {
@@ -653,7 +672,7 @@ describe("ReportingService", () => {
     const result = await service.calculateReport();
     expect(result).toEqual([
       {
-        header: { label: "Total # of schools", result: 3 },
+        header: { label: "Total # of schools", values: [], result: 3 },
         subRows: [
           {
             header: {
@@ -693,7 +712,7 @@ describe("ReportingService", () => {
 
     expect(result).toEqual([
       {
-        header: { label: "Total # of schools", result: 2 },
+        header: { label: "Total # of schools", values: [], result: 2 },
         subRows: [
           {
             header: {
