@@ -58,7 +58,7 @@ xdescribe("Performance Tests", () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 150000;
     const demoDataService = TestBed.inject(DemoDataService);
     const setup = new Timer();
-    await demoDataService.publishDemoDataImproved();
+    await demoDataService.publishDemoData();
     console.log("finished publishing demo data", setup.getDuration());
   });
 
@@ -67,24 +67,6 @@ xdescribe("Performance Tests", () => {
       return mockDatabase.destroy();
     })
   );
-
-  // it("created the demo data", async () => {
-  //   const normalTimer = new Timer();
-  //   await demoDataService.publishDemoData();
-  //   fail(
-  //     "<DemoDataService> publish demo data normal took " +
-  //       normalTimer.getDuration()
-  //   );
-  // });
-  //
-  // it("created the demo data improved", async () => {
-  //   const normalTimer = new Timer();
-  //   await demoDataService.publishDemoDataImproved();
-  //   fail(
-  //     "<DemoDataService> publish demo data improved took " +
-  //       normalTimer.getDuration()
-  //   );
-  // });
 
   it("school service get children of schools", async () => {
     const entityMapper = TestBed.inject(EntityMapperService);
@@ -108,21 +90,6 @@ xdescribe("Performance Tests", () => {
       "ChildrenService getChildren"
     );
   });
-  //
-  // it("load children one by one", async () => {
-  //   const demoDataService = TestBed.inject(DemoDataService);
-  //   await demoDataService.publishDemoDataImproved();
-  //   const childrenService = TestBed.inject(ChildrenService);
-  //   await mockDatabase.waitForIndexing();
-  //   const entityMapper = TestBed.inject(EntityMapperService);
-  //   const children = await entityMapper.loadType(Child);
-  //   await comparePerformance(
-  //     (child) => childrenService.getChild(child.getId()).toPromise(),
-  //     (child) => childrenService.getChildImproved(child.getId()),
-  //     "ChildrenService getChild",
-  //     children
-  //   );
-  // });
 });
 
 async function comparePerformance<V, R>(

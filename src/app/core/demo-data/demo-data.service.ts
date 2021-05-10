@@ -102,27 +102,6 @@ export class DemoDataService {
     }
   }
 
-  async publishDemoDataImproved(): Promise<any> {
-    if (!(await this.hasEmptyDatabase())) {
-      return;
-    }
-
-    this.dataGenerators.forEach((generator) => generator.entities);
-
-    const savePromises = [];
-    for (const generator of this.dataGenerators) {
-      for (const entity of generator.entities) {
-        savePromises.push(
-          this.entityMapper
-            .save(entity)
-            .catch((e) => this.loggingService.warn(e))
-        );
-      }
-    }
-
-    return Promise.all(savePromises);
-  }
-
   async hasEmptyDatabase(): Promise<boolean> {
     const existingUsers = await this.entityMapper.loadType(User);
     return existingUsers.length === 0;
