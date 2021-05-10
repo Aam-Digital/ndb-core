@@ -1,8 +1,0 @@
-:host ::ng-deep app-child-select .selected-entity-block {
-  // hide selected child-blocks in the child-select because they are displayed separately
-  display: none;
-}
-
-app-child-meeting-note-attendance {
-  display: block;
-}

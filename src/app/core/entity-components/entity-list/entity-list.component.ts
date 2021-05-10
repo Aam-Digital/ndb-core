@@ -40,6 +40,7 @@ import {
 } from "../../configurable-enum/configurable-enum.interface";
 import { LoggingService } from "../../logging/logging.service";
 import { OperationType } from "../../permissions/entity-permissions.service";
+import { entityListSortingAccessor } from "./sorting-accessor";
 
 interface FilterComponentSettings<T> {
   filterSettings: FilterSelection<T>;
@@ -179,19 +180,7 @@ export class EntityListComponent<T extends Entity>
     // sort data according to it's label, if the data has a label
     // (which it has when using configuration enum types)
     // otherwise sort by default
-    this.entityDataSource.sortingDataAccessor = (
-      data: T,
-      sortingHeader: string
-    ) => {
-      if (
-        typeof data[sortingHeader] === "object" &&
-        "label" in data[sortingHeader]
-      ) {
-        return data[sortingHeader].label;
-      } else {
-        return data[sortingHeader];
-      }
-    };
+    this.entityDataSource.sortingDataAccessor = entityListSortingAccessor;
     setTimeout(() => {
       this.paginator.pageIndex = this.paginatorPageIndex;
       this.paginator.page.next({
@@ -309,7 +298,9 @@ export class EntityListComponent<T extends Entity>
         display: filter.display,
       };
       fs.filterSettings.options = this.initFilterOptions(filter);
-      if (fs.filterSettings.options?.length > 0) {
+
+      // Filters should only be added, if they have more than one (the default) option
+      if (fs.filterSettings.options?.length > 1) {
         fs.selectedOption = filter.hasOwnProperty("default")
           ? filter.default
           : fs.filterSettings.options[0].key;

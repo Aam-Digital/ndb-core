@@ -15,14 +15,17 @@ import { School } from "../schools/model/school";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { Child } from "../children/model/child";
 import { Note } from "../notes/model/note";
-import { InMemoryDatabase } from "../../core/database/in-memory-database";
-import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
+import { PouchDatabase } from "../../core/database/pouch-database";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
 
   let entityMapper: EntityMapperService;
-  let database: InMemoryDatabase;
+  let database: PouchDatabase;
+
+  const meetingInteractionCategory = defaultInteractionTypes.find(
+    (it) => it.isMeeting
+  );
 
   function createEvent(date: Date, activityIdWithPrefix: string): EventNote {
     const event = EventNote.create(date, "generated event");
@@ -41,7 +44,7 @@ describe("AttendanceService", () => {
     activity1 = RecurringActivity.create("activity 1");
     activity2 = RecurringActivity.create("activity 2");
 
-    database = InMemoryDatabase.create();
+    database = PouchDatabase.createWithInMemoryDB();
 
     e1_1 = createEvent(new Date("2020-01-01"), activity1._id);
     e1_2 = createEvent(new Date("2020-01-02"), activity1._id);
@@ -74,9 +77,6 @@ describe("AttendanceService", () => {
     await entityMapper.save(e1_2);
     await entityMapper.save(e1_3);
     await entityMapper.save(e2_1);
-
-    const indexingService = TestBed.inject(DatabaseIndexingService);
-    await indexingService.waitForIndexCreation();
   });
 
   afterEach(async () => {
@@ -96,12 +96,12 @@ describe("AttendanceService", () => {
     const note1 = Note.create(new Date("2020-01-01"), "manual event note 1");
     note1.addChild("1");
     note1.addChild("2");
-    note1.category = defaultInteractionTypes.find((t) => t.isMeeting);
+    note1.category = meetingInteractionCategory;
     await entityMapper.save(note1);
 
     const note2 = Note.create(new Date("2020-01-02"), "manual event note 2");
     note2.addChild("1");
-    note2.category = defaultInteractionTypes.find((t) => t.isMeeting);
+    note2.category = meetingInteractionCategory;
     await entityMapper.save(note2);
 
     const nonMeetingNote = Note.create(
@@ -123,6 +123,32 @@ describe("AttendanceService", () => {
   it("gets empty array for a date without events", async () => {
     const actualEvents = await service.getEventsOnDate(new Date("2007-01-01"));
     expect(actualEvents).toEqual([]);
+  });
+
+  it("gets events and loads additional participants from linked schools", async () => {
+    const linkedSchoolId = "test_school";
+    const childSchool1 = new ChildSchoolRelation();
+    childSchool1.childId = "2";
+    childSchool1.schoolId = linkedSchoolId;
+    childSchool1.start = new Date();
+    const childSchool2 = new ChildSchoolRelation();
+    childSchool2.childId = "3";
+    childSchool2.schoolId = linkedSchoolId;
+    childSchool2.start = new Date();
+    spyOn(TestBed.inject(ChildrenService), "queryRelationsOf").and.resolveTo([
+      childSchool1,
+      childSchool2,
+    ]);
+
+    const testNoteWithSchool = Note.create(new Date("2021-01-01"));
+    testNoteWithSchool.children = ["1", "2"];
+    testNoteWithSchool.schools = [linkedSchoolId];
+    testNoteWithSchool.category = meetingInteractionCategory;
+    await entityMapper.save(testNoteWithSchool);
+
+    const actualEvents = await service.getEventsOnDate(new Date("2021-01-01"));
+    expect(actualEvents.length).toBe(1);
+    expect(actualEvents[0].children.sort()).toEqual(["1", "2", "3"].sort());
   });
 
   it("gets events for an activity", async () => {
@@ -190,33 +216,33 @@ describe("AttendanceService", () => {
 
   it("should return activities of a school that the child currently visits", async () => {
     const childSchoolRelation = new ChildSchoolRelation();
-    childSchoolRelation.childId = "test child";
-    childSchoolRelation.schoolId = "test school";
-    childSchoolRelation.start = new Date();
+    childSchoolRelation.childId = "testChild";
+    childSchoolRelation.schoolId = "testSchool";
+    childSchoolRelation.start = new Date("2020-01-01");
     const testActivity = RecurringActivity.create("new activity");
-    testActivity.linkedGroups.push("test school");
+    testActivity.linkedGroups.push("testSchool");
 
     spyOn(TestBed.inject(ChildrenService), "queryRelationsOf").and.resolveTo([
       childSchoolRelation,
     ]);
     await entityMapper.save(testActivity);
 
-    const activities = await service.getActivitiesForChild("test child");
+    const activities = await service.getActivitiesForChild("testChild");
     expectEntitiesToMatch(activities, [testActivity]);
   });
 
   it("should only return activities for active schools", async () => {
     const activeRelation1 = new ChildSchoolRelation();
-    activeRelation1.childId = "test child";
-    activeRelation1.schoolId = "active school 1";
+    activeRelation1.childId = "testChild";
+    activeRelation1.schoolId = "activeSchool1";
     activeRelation1.start = moment().subtract(1, "month").toDate();
     const activeRelation2 = new ChildSchoolRelation();
-    activeRelation2.childId = "test child";
-    activeRelation2.schoolId = "active school 2";
+    activeRelation2.childId = "testChild";
+    activeRelation2.schoolId = "activeSchool2";
     activeRelation2.start = new Date();
     const inactiveRelation = new ChildSchoolRelation();
-    inactiveRelation.childId = "test child";
-    inactiveRelation.schoolId = "inactive school";
+    inactiveRelation.childId = "testChild";
+    inactiveRelation.schoolId = "inactiveSchool";
     inactiveRelation.start = moment().subtract(1, "year").toDate();
     inactiveRelation.end = moment().subtract(1, "month").toDate();
 
@@ -236,8 +262,7 @@ describe("AttendanceService", () => {
     await entityMapper.save(activeActivity2);
     await entityMapper.save(inactiveActivity);
 
-    const activities = await service.getActivitiesForChild("test child");
-
+    const activities = await service.getActivitiesForChild("testChild");
     expectEntitiesToMatch(activities, [activeActivity1, activeActivity2]);
   });
 
@@ -323,7 +348,7 @@ describe("AttendanceService", () => {
       new Date("2021-04-05"),
       "Same Day Event"
     );
-    sameDayEvent.category = defaultInteractionTypes.find((it) => it.isMeeting);
+    sameDayEvent.category = meetingInteractionCategory;
     await entityMapper.save(sameDayEvent);
     const events = await service.getEventsOnDate(datePickerDate);
     expect(events).toHaveSize(1);

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceStatusSelectComponent } from "./attendance-status-select.component";
+import { AttendanceModule } from "../attendance.module";
 
 describe("AttendanceStatusSelectComponent", () => {
   let component: AttendanceStatusSelectComponent;
@@ -9,7 +10,7 @@ describe("AttendanceStatusSelectComponent", () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        declarations: [AttendanceStatusSelectComponent],
+        imports: [AttendanceModule],
       }).compileComponents();
     })
   );

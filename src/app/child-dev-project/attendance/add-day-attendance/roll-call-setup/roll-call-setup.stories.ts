@@ -33,7 +33,7 @@ import { DemoActivityGeneratorService } from "../../demo-data/demo-activity-gene
 import { SessionService } from "../../../../core/session/session-service/session.service";
 import { User } from "../../../../core/user/user";
 import { FormDialogModule } from "../../../../core/form-dialog/form-dialog.module";
-import { InMemoryDatabase } from "../../../../core/database/in-memory-database";
+import { PouchDatabase } from "../../../../core/database/pouch-database";
 
 const demoEvents: Note[] = [
   Note.create(new Date(), "Class 5a Parents Meeting"),
@@ -63,7 +63,7 @@ const demoActivities = [
   DemoActivityGeneratorService.generateActivityForChildren(demoChildren),
   DemoActivityGeneratorService.generateActivityForChildren(demoChildren),
 ];
-demoActivities[0].assignedTo = "demo";
+demoActivities[0].assignedTo = ["demo"];
 
 export default {
   title: "Attendance/Views/RollCallSetup",
@@ -97,7 +97,7 @@ export default {
         AttendanceService,
         {
           provide: Database,
-          useValue: InMemoryDatabase.createWithData([
+          useValue: PouchDatabase.createWithData([
             ...demoChildren,
             ...demoEvents,
             ...demoActivities,

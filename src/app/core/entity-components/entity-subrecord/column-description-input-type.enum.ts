@@ -12,4 +12,5 @@ export enum ColumnDescriptionInputType {
   AUTOCOMPLETE = "autocomplete",
   FUNCTION = "function",
   READONLY = "readonly",
+  CONFIGURABLE_ENUM = "configurable_enum",
 }

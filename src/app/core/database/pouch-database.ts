@@ -16,8 +16,10 @@
  */
 
 import { Database, GetAllOptions, GetOptions, QueryOptions } from "./database";
-import moment from "moment";
 import { LoggingService } from "../logging/logging.service";
+import PouchDB from "pouchdb-browser";
+import memory from "pouchdb-adapter-memory";
+import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-logging";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -27,6 +29,32 @@ import { LoggingService } from "../logging/logging.service";
  * should be implemented in the abstract {@link Database}.
  */
 export class PouchDatabase extends Database {
+  static async createWithData(data: any[]): Promise<PouchDatabase> {
+    const instance = PouchDatabase.createWithInMemoryDB();
+    await Promise.all(data.map((doc) => instance.put(doc)));
+    return instance;
+  }
+
+  static createWithInMemoryDB(
+    dbname: string = "in-memory-mock-database",
+    loggingService: LoggingService = new LoggingService()
+  ): PouchDatabase {
+    PouchDB.plugin(memory);
+    return new PouchDatabase(
+      new PouchDB(dbname, { adapter: "memory" }),
+      loggingService
+    );
+  }
+
+  static createWithIndexedDB(
+    dbname: string = "in-browser-database",
+    loggingService: LoggingService = new LoggingService()
+  ): PouchDatabase {
+    return new PouchDatabase(new PouchDB(dbname), loggingService);
+  }
+
+  private indexPromises: Promise<any>[] = [];
+
   /**
    * Create a PouchDB database manager.
    * @param _pouchDB An (initialized) PouchDB database instance from the PouchDB library.
@@ -53,13 +81,9 @@ export class PouchDatabase extends Database {
         this.loggingService.debug("Doc not found in database: " + id);
         if (returnUndefined) {
           return undefined;
-        } else {
-          throw err;
         }
-      } else {
-        this.notifyError(err);
-        throw err;
       }
+      throw err;
     });
   }
 
@@ -100,7 +124,6 @@ export class PouchDatabase extends Database {
       if (err.status === 409) {
         return this.resolveConflict(object, forceOverwrite, err);
       } else {
-        this.notifyError(err);
         throw err;
       }
     });
@@ -114,7 +137,6 @@ export class PouchDatabase extends Database {
    */
   remove(object: any) {
     return this._pouchDB.remove(object).catch((err) => {
-      this.notifyError(err);
       throw err;
     });
   }
@@ -131,6 +153,7 @@ export class PouchDatabase extends Database {
   }
 
   public async destroy(): Promise<any> {
+    await Promise.all(this.indexPromises);
     return this._pouchDB.destroy();
   }
 
@@ -159,7 +182,13 @@ export class PouchDatabase extends Database {
    *
    * @param designDoc The PouchDB style design document for the map/reduce query
    */
-  async saveDatabaseIndex(designDoc: any): Promise<any> {
+  saveDatabaseIndex(designDoc: any): Promise<void> {
+    const creationPromise = this.createOrUpdateDesignDoc(designDoc);
+    this.indexPromises.push(creationPromise);
+    return creationPromise;
+  }
+
+  private async createOrUpdateDesignDoc(designDoc): Promise<void> {
     const existingDesignDoc = await this.get(designDoc._id, {}, true);
     if (!existingDesignDoc) {
       this.loggingService.debug("creating new database index");
@@ -179,38 +208,12 @@ export class PouchDatabase extends Database {
     await this.prebuildViewsOfDesignDoc(designDoc);
   }
 
-  private async prebuildViewsOfDesignDoc(designDoc: any) {
+  @PerformanceAnalysisLogging
+  private async prebuildViewsOfDesignDoc(designDoc: any): Promise<void> {
     for (const viewName of Object.keys(designDoc.views)) {
-      try {
-        const queryName =
-          designDoc._id.replace(/_design\//, "") + "/" + viewName;
-        console.log("start indexing " + queryName);
-        const startTime = moment();
-        await this.query(queryName, { key: "1" });
-        const indexingTime = moment().diff(startTime, "milliseconds");
-        console.log("done indexing " + queryName, indexingTime);
-        if (indexingTime > 1000) {
-          this.loggingService.warn({
-            action: "Indexing for query",
-            query: queryName,
-            duration: indexingTime,
-          });
-        }
-      } catch (err) {
-        this.notifyError({
-          status: "failed to trigger query for new index",
-          details: err,
-        });
-      }
+      const queryName = designDoc._id.replace(/_design\//, "") + "/" + viewName;
+      await this.query(queryName, { key: "1" });
     }
-  }
-
-  private notifyError(err) {
-    this.loggingService.warn({
-      context: "PouchDatabase",
-      message: err.status,
-      details: JSON.stringify(err),
-    });
   }
 
   /**

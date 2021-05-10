@@ -16,13 +16,12 @@
  */
 
 import { PouchDatabase } from "./pouch-database";
-import { InMemoryDatabase } from "./in-memory-database";
 
 describe("PouchDatabase tests", () => {
   let database: PouchDatabase;
 
   beforeEach(() => {
-    database = InMemoryDatabase.create();
+    database = PouchDatabase.createWithInMemoryDB();
   });
 
   afterEach(async () => {

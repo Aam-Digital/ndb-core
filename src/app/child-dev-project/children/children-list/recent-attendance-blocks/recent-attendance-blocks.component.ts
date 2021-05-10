@@ -78,7 +78,7 @@ export class RecentAttendanceBlocksComponent implements OnInitDynamicComponent {
       );
 
       for (const record of activityRecords) {
-        if (activities.find((a) => a.getId() === record.activity.getId())) {
+        if (activities.find((a) => a.getId() === record.activity?.getId())) {
           this.attendanceList.push(record);
         }
       }

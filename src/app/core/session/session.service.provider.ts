@@ -24,8 +24,7 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { LoginState } from "./session-states/login-state.enum";
 import { SessionType } from "./session-type";
 import { NewLocalSessionService } from "./session-service/new-local-session.service";
-import { InMemoryDatabase } from "../database/in-memory-database";
-import { InBrowserDatabase } from "../database/in-browser-database";
+import { PouchDatabase } from "../database/pouch-database";
 
 /**
  * Factory method for Angular DI provider of SessionService.
@@ -47,7 +46,7 @@ export function sessionServiceFactory(
       sessionService = new NewLocalSessionService(
         loggingService,
         entitySchemaService,
-        InBrowserDatabase.create(
+        PouchDatabase.createWithIndexedDB(
           AppConfig.settings.database.name,
           loggingService
         )
@@ -64,7 +63,7 @@ export function sessionServiceFactory(
       sessionService = new NewLocalSessionService(
         loggingService,
         entitySchemaService,
-        InMemoryDatabase.create(
+        PouchDatabase.createWithInMemoryDB(
           AppConfig.settings.database.name,
           loggingService
         )

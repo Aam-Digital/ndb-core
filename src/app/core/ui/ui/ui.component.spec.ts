@@ -25,12 +25,13 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { PrimaryActionComponent } from "../primary-action/primary-action.component";
 import { SessionService } from "../../session/session-service/session.service";
 import { SwUpdate } from "@angular/service-worker";
-import { of } from "rxjs";
+import { BehaviorSubject, of } from "rxjs";
 import { ApplicationInitStatus } from "@angular/core";
 import { UiModule } from "../ui.module";
 import { Angulartics2Module } from "angulartics2";
 import { StateHandler } from "../../session/session-states/state-handler";
 import { SyncState } from "../../session/session-states/sync-state.enum";
+import { ConfigService } from "../../config/config.service";
 
 describe("UiComponent", () => {
   let component: UiComponent;
@@ -46,6 +47,10 @@ describe("UiComponent", () => {
         "getSyncState",
       ]);
       mockSession.getSyncState.and.returnValue(new StateHandler<SyncState>());
+
+      const mockConfig = jasmine.createSpyObj(["getConfig"]);
+      mockConfig.configUpdated = new BehaviorSubject({});
+
       TestBed.configureTestingModule({
         declarations: [SearchComponent, PrimaryActionComponent, UiComponent],
         imports: [
@@ -58,6 +63,10 @@ describe("UiComponent", () => {
         providers: [
           { provide: SessionService, useValue: mockSession },
           { provide: SwUpdate, useValue: mockSwUpdate },
+          {
+            provide: ConfigService,
+            useValue: mockConfig,
+          },
         ],
       }).compileComponents();
       TestBed.inject(ApplicationInitStatus); // This ensures that the AppConfig is loaded before test execution

@@ -196,14 +196,14 @@ describe("NotesManagerComponent", () => {
 
   it("will contain the updated note when updated", async () => {
     const note = new Note("n1");
-    note.author = "A";
+    note.authors = ["A"];
     mockNoteObservable.next({ entity: note, type: "new" });
     expect(component.notes).toHaveSize(1);
-    expect(component.notes[0].author).toBe("A");
-    note.author = "B";
+    expect(component.notes[0].authors).toEqual(["A"]);
+    note.authors = ["B"];
     mockNoteObservable.next({ entity: note, type: "update" });
     expect(component.notes).toHaveSize(1);
-    expect(component.notes[0].author).toBe("B");
+    expect(component.notes[0].authors).toEqual(["B"]);
   });
 
   it("displays Notes and Event notes only when toggle is set to true", async () => {

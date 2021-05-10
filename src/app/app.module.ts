@@ -70,7 +70,9 @@ import { FontAwesomeIconsModule } from "./core/icons/font-awesome-icons.module";
 import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
 import { ConfigModule } from "./core/config/config.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
+import { MatFormFieldModule } from "@angular/material/form-field";
 import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/dashboard-shortcut-widget.module";
+import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
 
 /**
  * Main entry point of the application.
@@ -118,14 +120,14 @@ import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/
     EntityDetailsModule,
     ConfigurableEnumModule,
     DemoDataModule.forRoot([
-      ...DemoChildGenerator.provider({ count: 150 }),
+      ...DemoChildGenerator.provider({ count: 120 }),
       ...DemoSchoolGenerator.provider({ count: 8 }),
       ...DemoChildSchoolRelationGenerator.provider(),
       ...DemoActivityGeneratorService.provider(),
-      ...DemoActivityEventsGeneratorService.provider({ forNLastYears: 2 }),
+      ...DemoActivityEventsGeneratorService.provider({ forNLastYears: 1 }),
       ...DemoNoteGeneratorService.provider({
         minNotesPerChild: 2,
-        maxNotesPerChild: 10,
+        maxNotesPerChild: 6,
         groupNotes: 3,
       }),
       ...DemoAserGeneratorService.provider(),
@@ -138,7 +140,9 @@ import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/
       ...DemoUserGeneratorService.provider(),
     ]),
     AttendanceModule,
+    MatFormFieldModule,
     DashboardShortcutWidgetModule,
+    HistoricalDataModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },

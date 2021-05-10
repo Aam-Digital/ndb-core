@@ -9,12 +9,14 @@ import { Note } from "../../notes/model/note";
 import { MatCalendarCellCssClasses } from "@angular/material/datepicker/calendar-body";
 import moment, { Moment } from "moment";
 import { EventAttendance } from "../model/event-attendance";
-import { AttendanceStatusType } from "../model/attendance-status";
 import { MatCalendar } from "@angular/material/datepicker";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { NoteDetailsComponent } from "../../notes/note-details/note-details.component";
-import { calculateAverageAttendance } from "../model/calculate-average-event-attendance";
+import {
+  AverageAttendanceStats,
+  calculateAverageAttendance,
+} from "../model/calculate-average-event-attendance";
 
 @Component({
   selector: "app-attendance-calendar",
@@ -33,11 +35,7 @@ export class AttendanceCalendarComponent implements OnChanges {
   selectedEvent: Note;
   selectedEventAttendance: EventAttendance;
   selectedEventAttendanceOriginal: EventAttendance;
-  selectedEventStats: {
-    average: number;
-    unknownStatus: number;
-    statusCounts: Map<AttendanceStatusType, number>;
-  };
+  selectedEventStats: AverageAttendanceStats;
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -77,7 +75,7 @@ export class AttendanceCalendarComponent implements OnChanges {
       classes["w-" + percentageSlab] = true;
 
       classes["attendance-calendar-date-has-participants-with-unknown-status"] =
-        stats.unknownStatus > 0;
+        stats.excludedUnknown > 0;
     }
 
     return classes;

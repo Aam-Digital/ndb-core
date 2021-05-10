@@ -6,19 +6,18 @@ import { Database } from "../../../core/database/database";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { EntityModule } from "../../../core/entity/entity.module";
-import { expectEntitiesToBeInDatabase } from "../../../utils/expect-entity-data.spec";
+import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { EventNote } from "../model/event-note";
 import { ChildrenService } from "../../children/children.service";
-import { InMemoryDatabase } from "../../../core/database/in-memory-database";
-import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
+import { PouchDatabase } from "../../../core/database/pouch-database";
 
 describe("AttendanceMigrationService", () => {
   let service: AttendanceMigrationService;
   let entitySchemaService: EntitySchemaService;
-  let testDatabase: InMemoryDatabase;
+  let testDatabase: PouchDatabase;
 
   beforeEach(async () => {
-    testDatabase = InMemoryDatabase.create();
+    testDatabase = PouchDatabase.createWithInMemoryDB();
 
     TestBed.configureTestingModule({
       imports: [EntityModule],
@@ -33,8 +32,6 @@ describe("AttendanceMigrationService", () => {
     });
     service = TestBed.inject(AttendanceMigrationService);
     entitySchemaService = TestBed.inject(EntitySchemaService);
-    const indexingService = TestBed.inject(DatabaseIndexingService);
-    await indexingService.waitForIndexCreation();
   });
 
   afterEach(async () => {
@@ -78,7 +75,7 @@ describe("AttendanceMigrationService", () => {
 
     await service.createEventsForAttendanceMonth(old);
 
-    await expectEntitiesToBeInDatabase(expectedNotes, true);
+    await expectEntitiesToMatch(service.existingEvents, expectedNotes, true);
   });
 
   it("should add to existing event for the same activity and date", async () => {
@@ -118,6 +115,6 @@ describe("AttendanceMigrationService", () => {
     await service.createEventsForAttendanceMonth(old1);
     await service.createEventsForAttendanceMonth(old2);
 
-    await expectEntitiesToBeInDatabase(expectedNotes, true);
+    await expectEntitiesToMatch(service.existingEvents, expectedNotes, true);
   });
 });

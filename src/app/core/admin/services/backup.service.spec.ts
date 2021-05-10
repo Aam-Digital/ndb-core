@@ -2,14 +2,14 @@ import { TestBed } from "@angular/core/testing";
 
 import { BackupService } from "./backup.service";
 import { Database } from "../../database/database";
-import { InMemoryDatabase } from "../../database/in-memory-database";
+import { PouchDatabase } from "../../database/pouch-database";
 
 describe("BackupService", () => {
-  let db: InMemoryDatabase;
+  let db: PouchDatabase;
   let service: BackupService;
 
   beforeEach(() => {
-    db = InMemoryDatabase.create();
+    db = PouchDatabase.createWithInMemoryDB();
     TestBed.configureTestingModule({
       providers: [BackupService, { provide: Database, useValue: db }],
     });
@@ -25,123 +25,75 @@ describe("BackupService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("clearDatabase should remove all records", (done) => {
-    const setup = db
-      .put({ _id: "Test:1", test: 1 })
-      .then(() => db.getAll())
-      .then((res) => expect(res.length).toBe(1));
+  it("clearDatabase should remove all records", async () => {
+    await db.put({ _id: "Test:1", test: 1 });
 
-    setup
-      .then(() => service.clearDatabase())
-      .then(() => db.getAll())
-      .then((res) => expect(res.length).toBe(0))
-      .then(() => done())
-      .catch((err) => {
-        expect(false).toBeTruthy("unexpected error occurred: " + err);
-        done();
-      });
+    const res = await db.getAll();
+    expect(res).toHaveSize(1);
+
+    await service.clearDatabase();
+
+    const resAfter = await db.getAll();
+    expect(resAfter).toHaveSize(0);
   });
 
-  it("getJsonExport should return all records", (done) => {
-    const setup = db
-      .put({ _id: "Test:1", test: 1 })
-      .then(() => db.put({ _id: "Test:2", test: 2 }))
-      .then(() => db.getAll())
-      .then((res) => expect(res.length).toBe(2));
+  it("getJsonExport should return all records", async () => {
+    await db.put({ _id: "Test:1", test: 1 });
+    await db.put({ _id: "Test:2", test: 2 });
 
-    setup
-      .then(() => service.getJsonExport())
-      .then((res) => {
-        expect(res.split(BackupService.SEPARATOR_ROW).length).toBe(2);
-        done();
-      })
-      .catch((err) => {
-        expect(false).toBeTruthy("unexpected error occurred: " + err);
-        done();
-      });
+    const res = await db.getAll();
+    expect(res).toHaveSize(2);
+
+    const jsonExport = await service.getJsonExport();
+
+    expect(jsonExport.split(BackupService.SEPARATOR_ROW)).toHaveSize(2);
   });
 
-  it("getJsonExport | clearDatabase | importJson should restore all records", (done) => {
-    let originalData;
-    let backup;
+  it("getJsonExport | clearDatabase | importJson should restore all records", async () => {
+    await db.put({ _id: "Test:1", test: 1 });
+    await db.put({ _id: "Test:2", test: 2 });
 
-    const setup = db
-      .put({ _id: "Test:1", test: 1 })
-      .then(() => db.put({ _id: "Test:2", test: 2 }))
-      .then(() => db.getAll())
-      .then((res) => {
-        expect(res.length).toBe(2);
-        originalData = res;
-      });
+    const originalData = await db.getAll();
+    expect(originalData).toHaveSize(2);
 
-    const perform = setup
-      .then(() => service.getJsonExport())
-      .then((res) => (backup = res))
-      .then(() => service.clearDatabase())
-      .catch((err) => {
-        expect(false).toBeTruthy("1unexpected error occurred: " + err);
-      })
-      .then(() => service.importJson(backup, true));
+    const backup = await service.getJsonExport();
+    await service.clearDatabase();
+    await service.importJson(backup, true);
 
-    perform
-      .then(() => db.getAll())
-      .then((res) => {
-        expect(res.length).toBe(2, "number of records not matching");
-
-        expect(res.map(ignoreRevProperty)).toEqual(
-          originalData.map(ignoreRevProperty),
-          "restored records not identical to original records (_rev ignored)"
-        );
-
-        done();
-      })
-      .catch((err) => {
-        expect(false).toBeTruthy("unexpected error occurred: " + err);
-        done();
-      });
+    const res = await db.getAll();
+    expect(res).toHaveSize(2);
+    expect(res.map(ignoreRevProperty)).toEqual(
+      originalData.map(ignoreRevProperty),
+      "restored records not identical to original records (_rev ignored)"
+    );
   });
 
-  it("getCsvExport should contain a line for every record", (done) => {
-    const setup = db
-      .put({ _id: "Test:1", test: 1 })
-      .then(() => db.put({ _id: "Test:2", test: 2 }))
-      .then(() => db.getAll())
-      .then((res) => expect(res.length).toBe(2));
+  it("getCsvExport should contain a line for every record", async () => {
+    await db.put({ _id: "Test:1", test: 1 });
+    await db.put({ _id: "Test:2", test: 2 });
 
-    setup
-      .then(() => service.getCsvExport())
-      .then((res) => {
-        expect(res.split(BackupService.SEPARATOR_ROW).length).toBe(2 + 1); // includes 1 header line
-        done();
-      })
-      .catch((err) => {
-        expect(false).toBeTruthy("unexpected error occurred: " + err);
-        done();
-      });
+    const res = await db.getAll();
+    expect(res.length).toBe(2);
+
+    const csvExport = await service.getCsvExport();
+
+    expect(csvExport.split(BackupService.SEPARATOR_ROW)).toHaveSize(2 + 1); // includes 1 header line
   });
 
-  it("getCsvExport should contain a column for every property", (done) => {
-    const setup = db
-      .put({ _id: "Test:1", test: 1 })
-      .then(() => db.put({ _id: "Test:2", other: 2 }))
-      .then(() => db.getAll())
-      .then((res) => expect(res.length).toBe(2));
+  it("getCsvExport should contain a column for every property", async () => {
+    await db.put({ _id: "Test:1", test: 1 });
+    await db.put({ _id: "Test:2", other: 2 });
+    const res = await db.getAll();
+    expect(res).toHaveSize(2);
 
-    setup
-      .then(() => service.getCsvExport())
-      .then((res) => {
-        const rows = res.split(BackupService.SEPARATOR_ROW);
-        expect(rows.length).toBe(2 + 1); // includes 1 header line
-        expect(rows[0].split(BackupService.SEPARATOR_COL).length).toBe(3 + 1); // includes _rev
-        done();
-      })
-      .catch((err) => {
-        expect(false).toBeTruthy("unexpected error occurred: " + err);
-        done();
-      });
+    const csvExport = await service.getCsvExport();
+
+    const rows = csvExport.split(BackupService.SEPARATOR_ROW);
+    expect(rows).toHaveSize(2 + 1); // includes 1 header line
+    expect(rows[0].split(BackupService.SEPARATOR_COL)).toHaveSize(3 + 1); // includes _rev
   });
 
-  it("importCsv should add records", (done) => {
+  it("importCsv should add records", async () => {
     const csv =
       "_id" +
       BackupService.SEPARATOR_COL +
@@ -156,24 +108,17 @@ describe("BackupService", () => {
       "2" +
       BackupService.SEPARATOR_ROW;
 
-    service
-      .importCsv(csv, true)
-      .then(() => db.getAll())
-      .then((res) => {
-        expect(res.length).toBe(2, "number of records not matching");
-        expect(res.map(ignoreRevProperty)).toEqual([
-          { _id: "Test:1", test: 1 },
-          { _id: "Test:2", test: 2 },
-        ]);
-        done();
-      })
-      .catch((err) => {
-        expect(false).toBeTruthy("unexpected error occurred: " + err);
-        done();
-      });
+    await service.importCsv(csv, true);
+
+    const res = await db.getAll();
+    expect(res).toHaveSize(2);
+    expect(res.map(ignoreRevProperty)).toEqual([
+      { _id: "Test:1", test: 1 },
+      { _id: "Test:2", test: 2 },
+    ]);
   });
 
-  it("importCsv should not add empty properties to records", (done) => {
+  it("importCsv should not add empty properties to records", async () => {
     const csv =
       "_id" +
       BackupService.SEPARATOR_COL +
@@ -186,23 +131,12 @@ describe("BackupService", () => {
       BackupService.SEPARATOR_COL +
       "1";
 
-    service
-      .importCsv(csv)
-      .then(() => db.getAll())
-      .then((res) => {
-        expect(res.length).toBe(1, "number of records not matching");
-        expect(res[0].hasOwnProperty("other")).toBeFalsy(
-          "empty property was added anyway"
-        );
-        expect(res.map(ignoreRevProperty)).toEqual([
-          { _id: "Test:1", test: 1 },
-        ]);
-        done();
-      })
-      .catch((err) => {
-        expect(false).toBeTruthy("unexpected error occurred: " + err);
-        done();
-      });
+    await service.importCsv(csv);
+
+    const res = await db.getAll();
+    expect(res).toHaveSize(1);
+    expect(res[0].other).toBeUndefined("empty property was added anyway");
+    expect(res.map(ignoreRevProperty)).toEqual([{ _id: "Test:1", test: 1 }]);
   });
 
   function ignoreRevProperty(x) {

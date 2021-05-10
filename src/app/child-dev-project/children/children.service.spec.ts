@@ -9,16 +9,15 @@ import { TestBed } from "@angular/core/testing";
 import moment from "moment";
 import { Database } from "../../core/database/database";
 import { Note } from "../notes/model/note";
-import { InMemoryDatabase } from "../../core/database/in-memory-database";
-import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
+import { PouchDatabase } from "../../core/database/pouch-database";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
   let entityMapper: EntityMapperService;
-  let database: InMemoryDatabase;
+  let database: PouchDatabase;
 
   beforeEach(async () => {
-    database = InMemoryDatabase.create();
+    database = PouchDatabase.createWithInMemoryDB();
     TestBed.configureTestingModule({
       providers: [
         ChildrenService,
@@ -36,9 +35,6 @@ describe("ChildrenService", () => {
     );
 
     service = TestBed.inject<ChildrenService>(ChildrenService);
-
-    const indexingService = TestBed.inject(DatabaseIndexingService);
-    await indexingService.waitForIndexCreation();
   });
 
   afterEach(async () => {
@@ -156,8 +152,8 @@ describe("ChildrenService", () => {
     expect(child1.schoolClass).toBe("2");
     expect(child1.schoolId).toBe("1");
     const child2 = children.find((child) => child.getId() === "2");
-    expect(child2.schoolClass).toBe("");
-    expect(child2.schoolId).toBe("");
+    expect(child2.schoolClass).toBeNull();
+    expect(child2.schoolId).toBeNull();
     const child3 = children.find((child) => child.getId() === "3");
     expect(child3.schoolClass).toBe("2");
     expect(child3.schoolId).toBe("1");

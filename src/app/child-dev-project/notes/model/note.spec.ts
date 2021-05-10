@@ -7,6 +7,7 @@ import {
   ATTENDANCE_STATUS_CONFIG_ID,
   AttendanceLogicalStatus,
   AttendanceStatusType,
+  NullAttendanceStatusType,
 } from "../../attendance/model/attendance-status";
 import { ConfigurableEnumDatatype } from "../../../core/configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
 import {
@@ -45,7 +46,7 @@ function createTestModel(): Note {
   n1.date = new Date();
   n1.subject = "Note Subject";
   n1.text = "Note text";
-  n1.author = "Max Musterman";
+  n1.authors = ["1"];
   n1.warningLevel = WarningLevel.URGENT;
 
   return n1;
@@ -101,10 +102,11 @@ describe("Note", () => {
 
       children: ["1", "2", "5"],
       childrenAttendance: [],
+      schools: [],
       date: new Date(),
       subject: "Note Subject",
       text: "Note text",
-      author: "Max Musterman",
+      authors: ["1"],
       category: "GUARDIAN_TALK",
       warningLevel: WarningLevel.URGENT,
 
@@ -188,12 +190,36 @@ describe("Note", () => {
     expect(reloadedEntity.getAttendance("1").status).toEqual(status);
   });
 
+  it("sets default NullAttendanceStatusType for attendance entries with invalid value", function () {
+    const status = testStatusTypes.find((c) => c.id === "ABSENT");
+    const rawData = {
+      _id: ENTITY_TYPE + ":" + "test",
+
+      children: ["1", "2", "3"],
+      childrenAttendance: [
+        ["1", { status: status.id, remarks: "" }],
+        ["2", { status: "non-existing-id", remarks: "" }],
+      ],
+    };
+
+    const reloadedEntity = new Note();
+    entitySchemaService.loadDataIntoEntity(reloadedEntity, rawData);
+
+    expect(reloadedEntity.getAttendance("2").status).toEqual(
+      NullAttendanceStatusType
+    );
+    expect(reloadedEntity.getAttendance("3").status).toEqual(
+      NullAttendanceStatusType
+    );
+    expect(reloadedEntity.getAttendance("1").status).toEqual(status);
+  });
+
   it("performs a deep copy of itself", () => {
     const note = new Note("n1");
     note.addChild("4");
     note.addChild("5");
     note.addChild("6");
-    note.author = "A";
+    note.authors = ["A"];
     const otherNote = note.copy();
     expect(otherNote).toEqual(note);
     expect(otherNote).toBeInstanceOf(Note);

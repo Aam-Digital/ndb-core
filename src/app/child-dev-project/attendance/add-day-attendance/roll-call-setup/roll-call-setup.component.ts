@@ -47,12 +47,12 @@ export class RollCallSetupComponent implements OnInit {
       RecurringActivity
     );
 
-    this.visibleActivities = this.allActivities.filter(
-      (a) => a.assignedTo === this.sessionService.getCurrentUser().getId()
+    this.visibleActivities = this.allActivities.filter((a) =>
+      a.assignedTo.includes(this.sessionService.getCurrentUser().getId())
     );
     if (this.visibleActivities.length === 0) {
       this.visibleActivities = this.allActivities.filter(
-        (a) => a.assignedTo === ""
+        (a) => a.assignedTo.length === 0
       );
     }
 
@@ -99,7 +99,7 @@ export class RollCallSetupComponent implements OnInit {
       activity,
       this.date
     )) as NoteForActivitySetup;
-    event.author = this.sessionService.getCurrentUser().getId();
+    event.authors = [this.sessionService.getCurrentUser().getId()];
     event.isNewFromActivity = true;
     return event;
   }
@@ -108,20 +108,20 @@ export class RollCallSetupComponent implements OnInit {
     const calculateEventPriority = (event: Note) => {
       let score = 0;
 
-      let assignedUser = event.author;
-      const activity = this.allActivities.find(
+      const activityAssignedUsers = this.allActivities.find(
         (a) => a._id === event.relatesTo
-      );
-      if (activity) {
-        assignedUser = activity.assignedTo;
-      }
+      )?.assignedTo;
+      // use parent activities' assigned users and only fall back to event if necessary
+      const assignedUsers = activityAssignedUsers ?? event.authors;
 
       if (!RecurringActivity.isActivityEventNote(event)) {
         // show one-time events first
         score += 1;
       }
 
-      if (assignedUser === this.sessionService.getCurrentUser().getId()) {
+      if (
+        assignedUsers.includes(this.sessionService.getCurrentUser().getId())
+      ) {
         score += 2;
       }
 
@@ -135,7 +135,7 @@ export class RollCallSetupComponent implements OnInit {
 
   createOneTimeEvent() {
     const newNote = Note.create(new Date());
-    newNote.author = this.sessionService.getCurrentUser().name;
+    newNote.authors = [this.sessionService.getCurrentUser().getId()];
 
     this.formDialog
       .openDialog(NoteDetailsComponent, newNote)

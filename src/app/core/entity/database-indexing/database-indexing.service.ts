@@ -21,6 +21,7 @@ import { BehaviorSubject, Observable } from "rxjs";
 import { BackgroundProcessState } from "../../sync-status/background-process-state.interface";
 import { Entity, EntityConstructor } from "../entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
+import { first } from "rxjs/operators";
 
 /**
  * Manage database query index creation and use, working as a facade in front of the Database service.
@@ -138,7 +139,50 @@ export class DatabaseIndexingService {
     return await this.queryIndexRaw(indexName, options);
   }
 
-  async queryIndexRaw(indexName: string, options: QueryOptions): Promise<any> {
+  /**
+   * Run a query on the database.
+   * If the required index does not exist (yet) this blocks the request by default
+   * and only runs and returns once the index is available.
+   *
+   * @param indexName key of the database index to be used
+   * @param options additional options for the request
+   * @param doNotWaitForIndexCreation (Optional) flag to *not* block the query if the index doesn't exist yet.
+   *        If no index exists this may result in an error (e.g. 404)
+   */
+  async queryIndexRaw(
+    indexName: string,
+    options: QueryOptions,
+    doNotWaitForIndexCreation?: boolean
+  ): Promise<any> {
+    if (!doNotWaitForIndexCreation) {
+      await this.waitForIndexAvailable(indexName);
+    }
+
     return await this.db.query(indexName, options);
+  }
+
+  /**
+   * If the index is not created yet, wait until it is ready to avoid 404 errors.
+   * Returns immediately if index is already created.
+   * @param indexName
+   * @private
+   */
+  private async waitForIndexAvailable(indexName: string): Promise<void> {
+    function relevantIndexIsReady(processes, requiredIndexName) {
+      const relevantProcess = processes.find(
+        (process) =>
+          process.details === requiredIndexName ||
+          requiredIndexName.startsWith(process.details + "/")
+      );
+      return relevantProcess && !relevantProcess.pending;
+    }
+
+    if (relevantIndexIsReady(this._indicesRegistered.value, indexName)) {
+      return;
+    }
+
+    await this._indicesRegistered
+      .pipe(first((processes) => relevantIndexIsReady(processes, indexName)))
+      .toPromise();
   }
 }
