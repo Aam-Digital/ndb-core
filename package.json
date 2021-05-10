@@ -35,7 +35,7 @@
     "angulartics2": "^10.0.0",
     "crypto-js": "^4.0.0",
     "deep-object-diff": "^1.1.0",
-    "faker": "^5.5.0",
+    "faker": "^5.5.3",
     "font-awesome": "^4.7.0",
     "idb": "^6.0.0",
     "lodash": "^4.17.21",
