@@ -44,8 +44,7 @@ export class SchoolsService {
         })
         .catch(() => null)
     );
-    let children = await Promise.all(childrenPromises);
-    children = children.filter((child) => !!child);
-    return children;
+    const children = await Promise.all(childrenPromises);
+    return children.filter((child) => !!child);
   }
 }

@@ -152,8 +152,8 @@ describe("ChildrenService", () => {
     expect(child1.schoolClass).toBe("2");
     expect(child1.schoolId).toBe("1");
     const child2 = children.find((child) => child.getId() === "2");
-    expect(child2.schoolClass).toBeNull();
-    expect(child2.schoolId).toBeNull();
+    expect(child2.schoolClass).toBe("");
+    expect(child2.schoolId).toBe("");
     const child3 = children.find((child) => child.getId() === "3");
     expect(child3.schoolClass).toBe("2");
     expect(child3.schoolId).toBe("1");

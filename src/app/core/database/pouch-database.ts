@@ -152,8 +152,12 @@ export class PouchDatabase extends Database {
     });
   }
 
-  public async destroy(): Promise<any> {
-    await Promise.all(this.indexPromises);
+  getIndexCreationPromises(): Promise<any> {
+    return Promise.all(this.indexPromises);
+  }
+
+  async destroy(): Promise<any> {
+    await this.getIndexCreationPromises();
     return this._pouchDB.destroy();
   }
 

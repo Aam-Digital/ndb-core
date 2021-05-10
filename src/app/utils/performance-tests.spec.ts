@@ -28,18 +28,19 @@ import { SchoolsService } from "../child-dev-project/schools/schools.service";
 import { EntityMapperService } from "../core/entity/entity-mapper.service";
 import { School } from "../child-dev-project/schools/model/school";
 import { ChildrenService } from "../child-dev-project/children/children.service";
-import { Child } from "../child-dev-project/children/model/child";
-import { InMemoryDatabase } from "../core/database/in-memory-database";
-import { InBrowserDatabase } from "../core/database/in-browser-database";
 import { PouchDatabase } from "../core/database/pouch-database";
-import { DatabaseIndexingService } from "../core/entity/database-indexing/database-indexing.service";
 
-xdescribe("Performance Tests", () => {
+describe("Performance Tests", () => {
   let mockDatabase: PouchDatabase;
 
   beforeEach(async () => {
     const loggingService = new LoggingService();
-    mockDatabase = InMemoryDatabase.create("performance_db", loggingService);
+    // Uncomment this line to run performance tests with the InBrowser database.
+    // mockDatabase = PouchDatabase.createWithIndexedDB(
+    mockDatabase = PouchDatabase.createWithInMemoryDB(
+      "performance_db",
+      loggingService
+    );
     const schemaService = new EntitySchemaService();
     const mockSessionService = new NewLocalSessionService(
       loggingService,
@@ -72,7 +73,7 @@ xdescribe("Performance Tests", () => {
     const entityMapper = TestBed.inject(EntityMapperService);
     const schools = await entityMapper.loadType(School);
     const schoolsService = TestBed.inject(SchoolsService);
-    await TestBed.inject(DatabaseIndexingService).waitForIndexCreation();
+    await mockDatabase.getIndexCreationPromises();
     await comparePerformance(
       (school) => schoolsService.getChildrenForSchool(school.getId()),
       (school) => schoolsService.getChildrenForSchoolImproved(school.getId()),
@@ -83,7 +84,7 @@ xdescribe("Performance Tests", () => {
 
   it("load children with school info", async () => {
     const childrenService = TestBed.inject(ChildrenService);
-    await TestBed.inject(DatabaseIndexingService).waitForIndexCreation();
+    await mockDatabase.getIndexCreationPromises();
     await comparePerformance(
       () => childrenService.getChildren().toPromise(),
       () => childrenService.getChildrenImproved(),
