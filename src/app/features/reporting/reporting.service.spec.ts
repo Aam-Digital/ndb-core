@@ -1,15 +1,15 @@
 import { TestBed } from "@angular/core/testing";
 
 import { Aggregation, ReportingService } from "./reporting.service";
-import { Child } from "../children/model/child";
+import { Child } from "../../child-dev-project/children/model/child";
 import { QueryService } from "./query.service";
-import { EventNote } from "../attendance/model/event-note";
+import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 import moment from "moment";
-import { School } from "../schools/model/school";
-import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
-import { Gender } from "../children/model/Gender";
+import { School } from "../../child-dev-project/schools/model/school";
+import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
+import { Gender } from "../../child-dev-project/children/model/Gender";
 import { defaultInteractionTypes } from "../../core/config/default-config/default-interaction-types";
-import { centersUnique } from "../children/demo-data-generators/fixtures/centers";
+import { centersUnique } from "../../child-dev-project/children/demo-data-generators/fixtures/centers";
 
 describe("ReportingService", () => {
   let service: ReportingService;

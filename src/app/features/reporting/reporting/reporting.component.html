@@ -14,7 +14,7 @@
         </mat-form-field>
         <div>
             <button mat-stroked-button [disabled]="!fromDate && !toDate" (click)="calculateResults()">Calculate</button>
-            <app-export-data [disabled]="!reportTable" [data]="reportTable" format="csv" filename="report" style="float: right">
+            <app-export-data [disabled]="!exportableTable" [data]="exportableTable" format="csv" filename="report" style="float: right">
                 <mat-icon
                         class="button-icon"
                         aria-label="download csv"

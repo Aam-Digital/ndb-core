@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core";
 import { Entity } from "../../core/entity/entity";
-import { Child } from "../children/model/child";
-import { School } from "../schools/model/school";
-import { RecurringActivity } from "../attendance/model/recurring-activity";
-import { Note } from "../notes/model/note";
-import { EventNote } from "../attendance/model/event-note";
+import { Child } from "../../child-dev-project/children/model/child";
+import { School } from "../../child-dev-project/schools/model/school";
+import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
+import { Note } from "../../child-dev-project/notes/model/note";
+import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
-import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
+import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 const jsonQuery = require("json-query");
 
 /**

@@ -1,15 +1,15 @@
 import { TestBed } from "@angular/core/testing";
 
 import { QueryService } from "./query.service";
-import { Child } from "../children/model/child";
-import { Gender } from "../children/model/Gender";
+import { Child } from "../../child-dev-project/children/model/child";
+import { Gender } from "../../child-dev-project/children/model/Gender";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
-import { School } from "../schools/model/school";
-import { RecurringActivity } from "../attendance/model/recurring-activity";
-import { EventNote } from "../attendance/model/event-note";
+import { School } from "../../child-dev-project/schools/model/school";
+import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
+import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 import moment from "moment";
 import { defaultAttendanceStatusTypes } from "../../core/config/default-config/default-attendance-status-types";
-import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
+import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { defaultInteractionTypes } from "../../core/config/default-config/default-interaction-types";
 
 describe("QueryService", () => {

@@ -9,7 +9,7 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeIconsModule } from "../../../core/icons/font-awesome-icons.module";
 import { BackupService } from "../../../core/admin/services/backup.service";
-import { Gender } from "../../children/model/Gender";
+import { Gender } from "../../../child-dev-project/children/model/Gender";
 import { ReportingModule } from "../reporting.module";
 
 const reportingService = {

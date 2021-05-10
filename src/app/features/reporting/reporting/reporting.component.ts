@@ -16,7 +16,7 @@ export class ReportingComponent implements OnInit {
   results: ReportRow[];
   fromDate: Date;
   toDate: Date;
-  reportTable: { label: string; result: any }[];
+  exportableTable: { label: string; result: any }[];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -33,16 +33,16 @@ export class ReportingComponent implements OnInit {
       this.fromDate,
       this.toDate
     );
-    this.reportTable = this.getExportTable();
+    this.exportableTable = this.flattenReportRows();
   }
 
-  private getExportTable(
+  private flattenReportRows(
     rows = this.results
   ): { label: string; result: any }[] {
     const tableRows: { label: string; result: any }[] = [];
     rows.forEach((result) => {
       tableRows.push(this.createExportableRow(result.header));
-      tableRows.push(...this.getExportTable(result.subRows));
+      tableRows.push(...this.flattenReportRows(result.subRows));
     });
     return tableRows;
   }

@@ -1195,7 +1195,7 @@ export const defaultConfig = {
     "config": {
       "aggregationDefinitions": [
         {
-          "query": `${Child.ENTITY_TYPE}:toArray`,
+          "query": `${Child.ENTITY_TYPE}:toArray[*isActive=true]`,
           "label": "All children",
           "aggregations": [
             {"label": "Male children", "query": `[*gender=${Gender.MALE}]`},

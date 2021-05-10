@@ -28,6 +28,7 @@ describe("ReportingComponent", () => {
       "setAggregations",
       "calculateReport",
     ]);
+    mockReportingService.calculateReport.and.resolveTo([]);
     await TestBed.configureTestingModule({
       declarations: [ReportingComponent],
       imports: [
@@ -115,7 +116,7 @@ describe("ReportingComponent", () => {
     component.calculateResults();
     tick();
 
-    expect(component.reportTable).toEqual([
+    expect(component.exportableTable).toEqual([
       { label: "top level", result: 1 },
       { label: "first nested (one value)", result: 2 },
       { label: "double nested (one value, two, values)", result: 2.5 },
