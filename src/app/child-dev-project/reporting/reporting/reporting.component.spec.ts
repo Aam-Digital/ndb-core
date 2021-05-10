@@ -76,7 +76,7 @@ describe("ReportingComponent", () => {
 
   it("should display the report results", fakeAsync(() => {
     const results: ReportRow[] = [
-      { header: { label: "test label", result: 1 }, subRows: [] },
+      { header: { label: "test label", values: [], result: 1 }, subRows: [] },
     ];
     mockReportingService.calculateReport.and.resolveTo(results);
 
@@ -89,7 +89,7 @@ describe("ReportingComponent", () => {
   it("should create a table that can be exported", fakeAsync(() => {
     mockReportingService.calculateReport.and.resolveTo([
       {
-        header: { label: "top level", result: 1 },
+        header: { label: "top level", values: [], result: 1 },
         subRows: [
           {
             header: { label: "first nested", values: ["one value"], result: 2 },
@@ -97,7 +97,7 @@ describe("ReportingComponent", () => {
               {
                 header: {
                   label: "double nested",
-                  values: ["two", "values"],
+                  values: ["one value", "two", "values"],
                   result: 2.5,
                 },
                 subRows: [],
@@ -118,7 +118,7 @@ describe("ReportingComponent", () => {
     expect(component.reportTable).toEqual([
       { label: "top level", result: 1 },
       { label: "first nested (one value)", result: 2 },
-      { label: "double nested (two, values)", result: 2.5 },
+      { label: "double nested (one value, two, values)", result: 2.5 },
       { label: "second nested", result: 3 },
     ]);
   }));

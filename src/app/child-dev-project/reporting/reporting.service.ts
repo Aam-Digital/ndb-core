@@ -9,7 +9,7 @@ export interface Aggregation {
 }
 
 export interface ReportRow {
-  header: { label: string; values?: any[]; result: number };
+  header: { label: string; values: any[]; result: number };
   subRows: ReportRow[];
 }
 

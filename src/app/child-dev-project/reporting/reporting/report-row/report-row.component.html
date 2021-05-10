@@ -1,12 +1,12 @@
 <mat-expansion-panel *ngFor="let row of rows" [hideToggle]="row.subRows.length === 0">
     <mat-expansion-panel-header [ngClass]="row.subRows.length === 0 ? 'disabled-header' : '' ">
         <mat-panel-title>
-            {{row.header.label}} {{row.header.values ? "(" + row.header.values?.join(", ").toString() + ") " : ""}}
+            {{row.header.label}} {{row.header.values?.length > 0 ? "(" + row.header.values?.join(", ").toString() + ") " : ""}}
         </mat-panel-title>
         <mat-panel-description>
             {{row.header.result}}
         </mat-panel-description>
     </mat-expansion-panel-header>
-    <app-report-row [rows]="row.subRows" [values]="row.header.values"></app-report-row>
+    <app-report-row [rows]="row.subRows"></app-report-row>
 </mat-expansion-panel>
 
