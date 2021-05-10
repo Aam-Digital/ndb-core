@@ -15,7 +15,7 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<!-- HEADER -->
+<!-- HEADER TOOLBAR -->
 <mat-toolbar color="primary" class="app-header mat-elevation-z2 mat-typography">
   <mat-toolbar-row fxLayout="row">
     <span fxFlex *ngIf="isLoggedIn() && sideNavMode == 'over'">
@@ -23,24 +23,28 @@
         <mat-icon class="header-icon" fontIcon="fa-bars"></mat-icon>
       </button>
     </span>
-    <span fxFlex=""
-      ><a
+
+    <span fxFlex [fxHide.lt-md]="isLoggedIn()">
+      <a [routerLink]="['']"
         class="header-title"
-        [routerLink]="['']"
         angulartics2On="click"
         angularticsCategory="Navigation"
         angularticsAction="navbar_site_title_link"
-        >{{ title }}</a
-      ></span
-    >
+        >{{ title }}</a>
+    </span>
+
     <span fxFlex="grow">&nbsp;</span>
     <span fxFlex="grow">&nbsp;</span>
+
     <!--top right icons and search-->
+
     <app-search
       *ngIf="isLoggedIn()"
       [fxFlex]="sideNavMode == 'side' ? 'grow' : 'none'"
     ></app-search>
+
     <app-sync-status></app-sync-status>
+
     <button
       mat-icon-button
       [routerLink]="['/user']"
@@ -51,9 +55,11 @@
     >
       <mat-icon class="header-icon" fontIcon="fa-user-circle-o"></mat-icon>
     </button>
+
     <button mat-icon-button (click)="logout()" *ngIf="isLoggedIn()">
       <mat-icon class="header-icon" fontIcon="fa-sign-out"></mat-icon>
     </button>
+
   </mat-toolbar-row>
 </mat-toolbar>
 
@@ -71,6 +77,7 @@
     fixedInViewport="true"
     class="sidenav-menu mat-elevation-z1"
   >
+    <img *ngIf="logo_path" style="width: 180px;" [src]="logo_path"/>
     <app-navigation
       (click)="sideNavMode == 'over' && sideNav.close()"
     ></app-navigation>

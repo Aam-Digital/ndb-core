@@ -22,6 +22,7 @@ import { Title } from "@angular/platform-browser";
 import { MediaObserver, MediaChange } from "@angular/flex-layout";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MatDrawerMode } from "@angular/material/sidenav";
+import { ConfigService } from "../../config/config.service";
 
 /**
  * The main user interface component as root element for the app structure
@@ -43,9 +44,13 @@ export class UiComponent implements OnInit {
   /** title displayed in the app header bar */
   title: string;
 
+  /** path to the image of a logo */
+  logo_path: string;
+
   constructor(
     private _sessionService: SessionService,
     private titleService: Title,
+    private configService: ConfigService,
     mediaObserver: MediaObserver
   ) {
     // watch screen width to change sidenav mode
@@ -59,6 +64,11 @@ export class UiComponent implements OnInit {
           this.sideNavMode = "side";
         }
       });
+    this.configService.configUpdated.subscribe(() => {
+      this.logo_path = this.configService.getConfig<{ logo_path: string }>(
+        "appConfig"
+      )?.logo_path;
+    });
   }
 
   ngOnInit(): void {
