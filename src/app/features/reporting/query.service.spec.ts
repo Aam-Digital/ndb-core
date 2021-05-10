@@ -11,10 +11,14 @@ import moment from "moment";
 import { defaultAttendanceStatusTypes } from "../../core/config/default-config/default-attendance-status-types";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { defaultInteractionTypes } from "../../core/config/default-config/default-interaction-types";
+import { ChildrenService } from "../../child-dev-project/children/children.service";
+import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
 
 describe("QueryService", () => {
   let service: QueryService;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+  let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
 
   let maleChristianChild: Child;
   let femaleChristianChild: Child;
@@ -40,8 +44,13 @@ describe("QueryService", () => {
 
   beforeEach(() => {
     mockEntityMapper = jasmine.createSpyObj(["loadType"]);
+    mockChildrenService = jasmine.createSpyObj(["getNotesInTimespan"]);
     TestBed.configureTestingModule({
-      providers: [{ provide: EntityMapperService, useValue: mockEntityMapper }],
+      providers: [
+        { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: ChildrenService, useValue: mockChildrenService },
+        { provide: AttendanceService, useValue: mockAttendanceService },
+      ],
     });
     service = TestBed.inject(QueryService);
   });
@@ -190,7 +199,6 @@ describe("QueryService", () => {
           return Promise.resolve([]);
       }
     });
-    service.loadData();
   });
 
   it("should be created", () => {
@@ -269,6 +277,8 @@ describe("QueryService", () => {
     const maleChildrenCountQuery = `[*gender=${Gender.MALE}]:count`;
     const maleChildrenCount = await service.queryData(
       maleChildrenCountQuery,
+      null,
+      null,
       allChildren
     );
     expect(maleChildrenCount).toBe(2);
@@ -276,6 +286,8 @@ describe("QueryService", () => {
     const christianCountQuery = `[*religion=christian]:count`;
     const christianCount = await service.queryData(
       christianCountQuery,
+      null,
+      null,
       allChildren
     );
     expect(christianCount).toBe(2);
@@ -283,17 +295,19 @@ describe("QueryService", () => {
     const maleChristiansCountQuery = `[*gender=${Gender.MALE} & religion=christian]:count`;
     const maleChristiansCount = await service.queryData(
       maleChristiansCountQuery,
+      null,
+      null,
       allChildren
     );
     expect(maleChristiansCount).toBe(1);
   });
 
   it("should return attended children in timespan", async () => {
-    const eventsLastWeekQuery = [
-      `${EventNote.ENTITY_TYPE}:toArray[*date > ?]`,
-      moment().subtract(1, "week").toDate(),
-    ];
-    const eventsLastWeek = await service.queryData(eventsLastWeekQuery);
+    const eventsLastWeekQuery = `${EventNote.ENTITY_TYPE}:toArray[*date > ?]`;
+    const eventsLastWeek = await service.queryData(
+      eventsLastWeekQuery,
+      moment().subtract(1, "week").toDate()
+    );
     expect(eventsLastWeek).toEqual(
       jasmine.arrayWithExactContents([
         threeDaysAgoPrivateEvent,
@@ -380,5 +394,9 @@ describe("QueryService", () => {
     expect(otherActivities).toEqual(
       jasmine.arrayWithExactContents([activityWithoutLink, normalActivity])
     );
+  });
+
+  it("only loads the data from a given time", () => {
+
   });
 });

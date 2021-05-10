@@ -28,7 +28,6 @@ export class ReportingService {
   }
 
   public calculateReport(from?: Date, to?: Date): Promise<ReportRow[]> {
-    this.queryService.loadData();
     this.fromDate = from;
     this.toDate = to;
     return this.calculateAggregations(this.aggregations);
@@ -43,7 +42,9 @@ export class ReportingService {
     let currentSubRows = resultRows;
     for (const aggregation of aggregations) {
       const queryResult = await this.queryService.queryData(
-        this.getQueryWithDates(aggregation.query),
+        aggregation.query,
+        this.fromDate,
+        this.toDate,
         data
       );
       if (aggregation.label) {

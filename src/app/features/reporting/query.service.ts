@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Entity } from "../../core/entity/entity";
+import { Entity, EntityConstructor } from "../../core/entity/entity";
 import { Child } from "../../child-dev-project/children/model/child";
 import { School } from "../../child-dev-project/schools/model/school";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
@@ -7,6 +7,8 @@ import { Note } from "../../child-dev-project/notes/model/note";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
+import { ChildrenService } from "../../child-dev-project/children/children.service";
+import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
 const jsonQuery = require("json-query");
 
 /**
@@ -16,49 +18,77 @@ const jsonQuery = require("json-query");
   providedIn: "root",
 })
 export class QueryService {
-  private static readonly ENTITY_CLASSES: typeof Entity[] = [
-    Child,
-    School,
-    RecurringActivity,
-    Note,
-    EventNote,
-    ChildSchoolRelation,
-  ];
-
   private entities: { [type: string]: { [id: string]: Entity } } = {};
   private dataLoaded: Promise<any>;
-  constructor(private entityMapper: EntityMapperService) {}
+  constructor(
+    private entityMapper: EntityMapperService,
+    private childrenService: ChildrenService,
+    private attendanceService: AttendanceService
+  ) {}
 
-  /**
-   * Loads all data objects of the `QueryService.ENTITY_CLASSES` array.
-   * The method should only be called once and before a query is used.
-   */
-  public loadData(): void {
-    this.dataLoaded = Promise.all(
-      QueryService.ENTITY_CLASSES.map((entityClass) =>
-        this.entityMapper.loadType(entityClass).then((loadedEntities) => {
-          this.entities[entityClass.ENTITY_TYPE] = {};
-          loadedEntities.forEach(
-            (entity) =>
-              (this.entities[entityClass.ENTITY_TYPE][entity._id] = entity)
-          );
-        })
+  private loadData(from?: Date): void {
+    const entityClasses: typeof Entity[] = [
+      Child,
+      School,
+      RecurringActivity,
+      ChildSchoolRelation,
+    ];
+    const dataPromises = [];
+    if (from) {
+      dataPromises.push(
+        this.childrenService
+          .getNotesInTimespan(from)
+          .then((notes) => this.setEntities(Note, notes))
+      );
+      dataPromises.push(
+        this.attendanceService
+          .getEventsOnDate(from, new Date())
+          .then((events) => this.setEntities(EventNote, events))
+      );
+    } else {
+      entityClasses.push(EventNote, Note);
+    }
+    dataPromises.push(
+      ...entityClasses.map((entityClass) =>
+        this.entityMapper
+          .loadType(entityClass)
+          .then((loadedEntities) =>
+            this.setEntities(entityClass, loadedEntities)
+          )
       )
+    );
+    this.dataLoaded = Promise.all(dataPromises);
+  }
+
+  private setEntities<T extends Entity>(
+    entityClass: EntityConstructor<T>,
+    entities: T[]
+  ) {
+    this.entities[entityClass.ENTITY_TYPE] = {};
+    entities.forEach(
+      (entity) => (this.entities[entityClass.ENTITY_TYPE][entity._id] = entity)
     );
   }
 
   /**
    * Runs the query on the passed data object
    * @param query a string or array according to the json-query language (https://github.com/auditassistant/json-query)
+   * @param from a date which can be accessed in the query using a ?. This will also affect how much data is loaded.
+   * @param to a date which can be accessed in the query using another ?
    * @param data the data on which the query should run, default is all entities
    * @returns the results of the query on the data
    */
   public async queryData(
-    query: string | any[],
+    query: string,
+    from: Date = null,
+    to: Date = null,
     data: any = this.entities
   ): Promise<any> {
-    await this.dataLoaded;
-    return jsonQuery(query, {
+    if (!this.dataLoaded) {
+      this.loadData();
+      await this.dataLoaded;
+    }
+    return jsonQuery([query, from, to], {
       data: data,
       locals: {
         toArray: this.toArray,

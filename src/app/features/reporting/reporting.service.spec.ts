@@ -15,7 +15,7 @@ describe("ReportingService", () => {
   let service: ReportingService;
   let mockQueryService: jasmine.SpyObj<QueryService>;
   beforeEach(() => {
-    mockQueryService = jasmine.createSpyObj(["queryData", "loadData"]);
+    mockQueryService = jasmine.createSpyObj(["queryData"]);
     TestBed.configureTestingModule({
       providers: [{ provide: QueryService, useValue: mockQueryService }],
     });
@@ -46,11 +46,10 @@ describe("ReportingService", () => {
     );
 
     const report = await service.calculateReport();
-    expect(mockQueryService.loadData).toHaveBeenCalled();
     expect(mockQueryService.queryData.calls.allArgs()).toEqual([
-      [[baseQuery], undefined],
-      [[christiansQuery], baseData],
-      [[muslimsQuery], baseData],
+      [baseQuery, undefined, undefined, undefined],
+      [christiansQuery, undefined, undefined, baseData],
+      [muslimsQuery, undefined, undefined, baseData],
     ]);
     expect(report).toEqual([
       { header: { label: "christians", values: [], result: 1 }, subRows: [] },
@@ -70,10 +69,9 @@ describe("ReportingService", () => {
     service.setAggregations([disaggregation]);
 
     await service.calculateReport(firstDate, secondDate);
-    expect(mockQueryService.loadData).toHaveBeenCalled();
     expect(mockQueryService.queryData.calls.allArgs()).toEqual([
-      [[baseQueryString, firstDate, secondDate], undefined],
-      [[subjectQueryString, firstDate, secondDate], undefined],
+      [baseQueryString, firstDate, secondDate, undefined],
+      [subjectQueryString, firstDate, secondDate, undefined],
     ]);
   });
 
@@ -108,7 +106,7 @@ describe("ReportingService", () => {
     const baseData = [new School(), new School()];
     const nestedData = [new ChildSchoolRelation()];
     mockQueryService.queryData.and.callFake((query) => {
-      switch (query[0]) {
+      switch (query) {
         case baseQuery:
           return Promise.resolve(baseData);
         case nestedBaseQuery:
@@ -118,13 +116,12 @@ describe("ReportingService", () => {
       }
     });
     const result = await service.calculateReport();
-    expect(mockQueryService.loadData).toHaveBeenCalled();
     expect(mockQueryService.queryData.calls.allArgs()).toEqual([
-      [[baseQuery], undefined],
-      [[nestedBaseQuery], baseData],
-      [[firstNestedAggregation], nestedData],
-      [[secondNestedAggregation], nestedData],
-      [[normalAggregation], baseData],
+      [baseQuery, undefined, undefined, undefined],
+      [nestedBaseQuery, undefined, undefined, baseData],
+      [firstNestedAggregation, undefined, undefined, nestedData],
+      [secondNestedAggregation, undefined, undefined, nestedData],
+      [normalAggregation, undefined, undefined, baseData],
     ]);
     expect(result).toEqual([
       {
