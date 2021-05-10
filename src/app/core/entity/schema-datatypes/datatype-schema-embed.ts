@@ -18,6 +18,7 @@
 import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { EntitySchemaService } from "../schema/entity-schema.service";
+import { EntityConstructor } from "../entity";
 
 /**
  * Datatype for the EntitySchemaService transforming values of complex objects recursively.
@@ -53,9 +54,8 @@ export const schemaEmbedEntitySchemaDatatype: EntitySchemaDatatype = {
     schemaField: EntitySchemaField,
     schemaService: EntitySchemaService
   ) => {
-    return schemaService.transformDatabaseToEntityFormat(
-      value,
-      schemaField.ext.schema
-    );
+    const instance = new (schemaField.ext as EntityConstructor<any>)();
+    schemaService.loadDataIntoEntity(instance, value);
+    return instance;
   },
 };

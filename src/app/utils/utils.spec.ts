@@ -1,4 +1,4 @@
-import { calculateAge, isValidDate } from "./utils";
+import { calculateAge, isValidDate, sortByAttribute } from "./utils";
 import moment from "moment";
 
 describe("Utils", () => {
@@ -24,5 +24,24 @@ describe("Utils", () => {
     dob = dob.add("1", "day");
     age = calculateAge(dob.toDate());
     expect(age).toBe(8);
+  });
+
+  it("should sort an array by the passed attribute", () => {
+    const first = { number: 1 };
+    const second = { number: 10 };
+    const third = { number: 10 };
+    const forth = { number: 11 };
+
+    const sorted = [second, first, third, forth].sort(
+      sortByAttribute("number", "asc")
+    );
+
+    expect(sorted).toEqual([first, second, third, forth]);
+
+    const sortedDesc = [forth, first, third, second].sort(
+      sortByAttribute("number", "desc")
+    );
+
+    expect(sortedDesc).toEqual([forth, third, second, first]);
   });
 });
