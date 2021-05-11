@@ -23,19 +23,23 @@ export class ConfigService {
   }
 
   public async loadConfig(entityMapper: EntityMapperService): Promise<Config> {
-    try {
-      this.config = await entityMapper.load<Config>(
-        Config,
-        ConfigService.CONFIG_KEY
-      );
+    const newConfig = await this.getConfigOrDefault(entityMapper);
+    if (newConfig !== this.config) {
+      this.config = newConfig;
       this.configUpdated.next(this.config);
-    } catch (e) {
+    }
+    return this.config;
+  }
+
+  private getConfigOrDefault(
+    entityMapper: EntityMapperService
+  ): Promise<Config> {
+    return entityMapper.load(Config, ConfigService.CONFIG_KEY).catch(() => {
       this.loggingService.info(
         "No configuration found in the database, using default one"
       );
-      //  no config found in db, using default one
-    }
-    return this.config;
+      return this.config;
+    });
   }
 
   public saveConfig(
@@ -46,8 +50,11 @@ export class ConfigService {
     return entityMapper.save<Config>(this.config);
   }
 
-  public exportConfig(): string {
-    return JSON.stringify(this.config.data);
+  public async exportConfig(
+    entityMapper: EntityMapperService
+  ): Promise<string> {
+    let config = await this.getConfigOrDefault(entityMapper);
+    return JSON.stringify(config.data);
   }
 
   public getConfig<T>(id: string): T {
