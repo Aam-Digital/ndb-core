@@ -20,7 +20,9 @@
             "assets": [
               "src/assets",
               "src/favicon.ico",
-              "src/manifest.json"
+              "src/manifest.json",
+              "src/ngsw-worker.js",
+              "src/ngsw.json"
             ],
             "styles": [
               "node_modules/font-awesome/scss/font-awesome.scss",

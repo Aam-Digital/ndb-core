@@ -17,7 +17,7 @@
 
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { ErrorHandler, NgModule } from "@angular/core";
+import { APP_INITIALIZER, ErrorHandler, NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 
@@ -69,12 +69,15 @@ import { EntityListModule } from "./core/entity-components/entity-list/entity-li
 import { FontAwesomeIconsModule } from "./core/icons/font-awesome-icons.module";
 import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
 import { ConfigModule } from "./core/config/config.module";
+import { PwaInstallationService } from "./core/usage-tips/pwa-installation.service";
+import { UsageTipsModule } from "./core/usage-tips/usage-tips.module";
 
 /**
  * Main entry point of the application.
  * Imports required modules and does basic setup.
  * Real functionality should be implemented in separate modules and imported here rather than being part of this module.
  */
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -134,6 +137,7 @@ import { ConfigModule } from "./core/config/config.module";
       ...DemoProgressDashboardWidgetGeneratorService.provider(),
       ...DemoUserGeneratorService.provider(),
     ]),
+    UsageTipsModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
