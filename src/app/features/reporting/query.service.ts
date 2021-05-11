@@ -19,7 +19,6 @@ const jsonQuery = require("json-query");
 })
 export class QueryService {
   private entities: { [type: string]: { [id: string]: Entity } };
-  private dataLoaded: Promise<any>;
   private dataAvailableFrom: Date;
 
   constructor(
@@ -44,8 +43,7 @@ export class QueryService {
     data: any = this.entities
   ): Promise<any> {
     if (!data || (data === this.entities && from < this.dataAvailableFrom)) {
-      this.loadData(from);
-      await this.dataLoaded;
+      await this.loadData(from);
       data = this.entities;
     }
     return jsonQuery([query, from, to], {
@@ -64,7 +62,7 @@ export class QueryService {
     }).value;
   }
 
-  private loadData(from?: Date): void {
+  private async loadData(from?: Date): Promise<void> {
     const entityClasses: typeof Entity[] = [
       Child,
       School,
@@ -97,7 +95,7 @@ export class QueryService {
           )
       )
     );
-    this.dataLoaded = Promise.all(dataPromises);
+    await Promise.all(dataPromises);
   }
 
   private setEntities<T extends Entity>(
