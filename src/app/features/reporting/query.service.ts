@@ -44,6 +44,7 @@ export class QueryService {
   ): Promise<any> {
     if (!data || (data === this.entities && from < this.dataAvailableFrom)) {
       await this.loadData(from);
+      this.dataAvailableFrom = from;
       data = this.entities;
     }
     return jsonQuery([query, from, to], {
@@ -63,38 +64,38 @@ export class QueryService {
   }
 
   private async loadData(from?: Date): Promise<void> {
-    const entityClasses: typeof Entity[] = [
-      Child,
-      School,
-      RecurringActivity,
-      ChildSchoolRelation,
+    const entityClasses: [EntityConstructor<any>, () => Promise<Entity[]>][] = [
+      [Child, () => this.entityMapper.loadType(Child)],
+      [School, () => this.entityMapper.loadType(School)],
+      [RecurringActivity, () => this.entityMapper.loadType(RecurringActivity)],
+      [
+        ChildSchoolRelation,
+        () => this.entityMapper.loadType(ChildSchoolRelation),
+      ],
+      [
+        Note,
+        () => this.childrenService.getNotesInTimespan(from ?? new Date(0)),
+      ],
+      [
+        EventNote,
+        () =>
+          this.attendanceService.getEventsOnDate(
+            from ?? new Date(0),
+            new Date()
+          ),
+      ],
     ];
+
     this.entities = {};
+
     const dataPromises = [];
-    if (from) {
-      this.dataAvailableFrom = from;
-      dataPromises.push(
-        this.childrenService
-          .getNotesInTimespan(from)
-          .then((notes) => this.setEntities(Note, notes))
+    for (const entityLoader of entityClasses) {
+      const promise = entityLoader[1]().then((loadedEntities) =>
+        this.setEntities(entityLoader[0], loadedEntities)
       );
-      dataPromises.push(
-        this.attendanceService
-          .getEventsOnDate(from, new Date())
-          .then((events) => this.setEntities(EventNote, events))
-      );
-    } else {
-      entityClasses.push(EventNote, Note);
+      dataPromises.push(promise);
     }
-    dataPromises.push(
-      ...entityClasses.map((entityClass) =>
-        this.entityMapper
-          .loadType(entityClass)
-          .then((loadedEntities) =>
-            this.setEntities(entityClass, loadedEntities)
-          )
-      )
-    );
+
     await Promise.all(dataPromises);
   }
 
