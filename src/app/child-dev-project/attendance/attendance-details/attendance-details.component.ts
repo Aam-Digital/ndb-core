@@ -25,17 +25,17 @@ export class AttendanceDetailsComponent
   eventsColumns: Array<ColumnDescription> = [
     {
       name: "date",
-      label: "Date",
+      label: $localize`Date`,
       inputType: ColumnDescriptionInputType.DATE,
     },
     {
       name: "subject",
-      label: "Event",
+      label: $localize`Event`,
       inputType: ColumnDescriptionInputType.TEXT,
     },
     {
       name: "getAttendance",
-      label: "Attended",
+      label: $localize`:How a child attended, e.g. too late, in time, excused, e.t.c:Attended`,
       inputType: ColumnDescriptionInputType.FUNCTION,
       valueFunction: (note: Note) => {
         if (this.focusedChild) {

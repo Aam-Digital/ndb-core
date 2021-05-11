@@ -966,7 +966,7 @@ export const defaultConfig = {
           ]
         },
         {
-          title: "Observations",
+          title: $localize`Observations`,
           components: [
             {
               title: "",
@@ -1014,7 +1014,7 @@ export const defaultConfig = {
                 },
                 {
                   name: "asksQuestions",
-                  label: $localize`:Ask questions:A child is asking questions during the class:Asks`,
+                  label: $localize`:Ask questions|A child is asking questions during the class:Asks`,
                   inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
                   enumId: "rating-answer",
                   tooltip: $localize`The child is asking questions during the class.`
