@@ -13,12 +13,17 @@ import { ChildSchoolRelation } from "../../child-dev-project/children/model/chil
 import { defaultInteractionTypes } from "../../core/config/default-config/default-interaction-types";
 import { ChildrenService } from "../../child-dev-project/children/children.service";
 import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
+import { PouchDatabase } from "../../core/database/pouch-database";
+import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
+import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
+import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
+import { Database } from "../../core/database/database";
+import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
+import { Note } from "../../child-dev-project/notes/model/note";
 
 describe("QueryService", () => {
   let service: QueryService;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
-  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
-  let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
+  let database: PouchDatabase;
 
   let maleChristianChild: Child;
   let femaleChristianChild: Child;
@@ -32,9 +37,9 @@ describe("QueryService", () => {
   let maleChristianChildAttendsNormalSchool: ChildSchoolRelation;
   let femaleChristianChildAttendsNormalSchool: ChildSchoolRelation;
 
-  let privateActivity: RecurringActivity;
-  let normalActivity: RecurringActivity;
-  let activityWithoutLink: RecurringActivity;
+  let privateSchoolClassActivity: RecurringActivity;
+  let normalLifeSkillsActivity: RecurringActivity;
+  let lifeSkillsActivityWithoutLink: RecurringActivity;
 
   let twoWeeksAgoPrivateEvent: EventNote;
   let threeDaysAgoPrivateEvent: EventNote;
@@ -43,34 +48,44 @@ describe("QueryService", () => {
   let twoDaysAgoEventWithoutRelation: EventNote;
 
   beforeEach(() => {
-    mockEntityMapper = jasmine.createSpyObj(["loadType"]);
-    mockChildrenService = jasmine.createSpyObj(["getNotesInTimespan"]);
+    database = PouchDatabase.createWithInMemoryDB();
     TestBed.configureTestingModule({
+      imports: [ConfigurableEnumModule],
       providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper },
-        { provide: ChildrenService, useValue: mockChildrenService },
-        { provide: AttendanceService, useValue: mockAttendanceService },
+        EntityMapperService,
+        EntitySchemaService,
+        ChildrenService,
+        AttendanceService,
+        DatabaseIndexingService,
+        { provide: Database, useValue: database },
       ],
     });
     service = TestBed.inject(QueryService);
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    const entityMapper = TestBed.inject(EntityMapperService);
     maleChristianChild = new Child("maleChristianChild");
     maleChristianChild.gender = Gender.MALE;
     maleChristianChild.religion = "christian";
+    await entityMapper.save(maleChristianChild);
     femaleChristianChild = new Child("femaleChristianChild");
     femaleChristianChild.gender = Gender.FEMALE;
     femaleChristianChild.religion = "christian";
+    await entityMapper.save(femaleChristianChild);
     femaleMuslimChild = new Child("femaleMuslimChild");
     femaleMuslimChild.gender = Gender.FEMALE;
     femaleMuslimChild.religion = "muslim";
+    await entityMapper.save(femaleMuslimChild);
     maleChild = new Child("maleChild");
     maleChild.gender = Gender.MALE;
+    await entityMapper.save(maleChild);
 
     privateSchool = new School("privateSchool");
     privateSchool.privateSchool = true;
+    await entityMapper.save(privateSchool);
     normalSchool = new School("normalSchool");
+    await entityMapper.save(normalSchool);
 
     maleChildAttendsPrivateSchool = new ChildSchoolRelation(
       "maleChildAttendsPrivateSchool"
@@ -80,6 +95,8 @@ describe("QueryService", () => {
     maleChildAttendsPrivateSchool.start = moment()
       .subtract(1, "month")
       .toDate();
+    await entityMapper.save(maleChildAttendsPrivateSchool);
+
     maleChristianChildAttendsNormalSchool = new ChildSchoolRelation(
       "maleChristianChildAttendsPrivateSchool"
     );
@@ -88,6 +105,7 @@ describe("QueryService", () => {
     maleChristianChildAttendsNormalSchool.start = moment()
       .subtract(1, "week")
       .toDate();
+    await entityMapper.save(maleChristianChildAttendsNormalSchool);
 
     femaleChristianChildAttendsNormalSchool = new ChildSchoolRelation(
       "femaleChristianChildAttendsNormalSchool"
@@ -97,12 +115,31 @@ describe("QueryService", () => {
     femaleChristianChildAttendsNormalSchool.start = moment()
       .subtract(1, "week")
       .toDate();
+    await entityMapper.save(femaleChristianChildAttendsNormalSchool);
 
-    privateActivity = new RecurringActivity("privateActivity");
-    privateActivity.linkedGroups = [privateSchool.getId()];
-    normalActivity = new RecurringActivity("normalActivity");
-    normalActivity.linkedGroups = [normalSchool.getId()];
-    activityWithoutLink = new RecurringActivity("activityWithoutLink");
+    const schoolClass = defaultInteractionTypes.find(
+      (i) => i.id === "SCHOOL_CLASS"
+    );
+    const lifeSkills = defaultInteractionTypes.find(
+      (i) => i.id === "LIFE_SKILLS"
+    );
+    privateSchoolClassActivity = new RecurringActivity(
+      "privateSchoolClassActivity"
+    );
+    privateSchoolClassActivity.linkedGroups = [privateSchool.getId()];
+    privateSchoolClassActivity.type = schoolClass;
+    await entityMapper.save(privateSchoolClassActivity);
+    normalLifeSkillsActivity = new RecurringActivity(
+      "normalLifeSkillsActivity"
+    );
+    normalLifeSkillsActivity.linkedGroups = [normalSchool.getId()];
+    normalLifeSkillsActivity.type = lifeSkills;
+    await entityMapper.save(normalLifeSkillsActivity);
+    lifeSkillsActivityWithoutLink = new RecurringActivity(
+      "lifeSkillsActivityWithoutLink"
+    );
+    lifeSkillsActivityWithoutLink.type = lifeSkills;
+    await entityMapper.save(lifeSkillsActivityWithoutLink);
 
     const presentAttendanceStatus = defaultAttendanceStatusTypes.find(
       (status) => status.countAs === "PRESENT"
@@ -113,7 +150,8 @@ describe("QueryService", () => {
 
     twoWeeksAgoPrivateEvent = new EventNote("twoWeeksAgoPrivateEvent");
     twoWeeksAgoPrivateEvent.date = moment().subtract(2, "weeks").toDate();
-    twoWeeksAgoPrivateEvent.relatesTo = privateActivity._id;
+    twoWeeksAgoPrivateEvent.relatesTo = privateSchoolClassActivity._id;
+    twoWeeksAgoPrivateEvent.category = schoolClass;
     twoWeeksAgoPrivateEvent.addChild(maleChild.getId());
     twoWeeksAgoPrivateEvent.getAttendance(
       maleChild.getId()
@@ -122,26 +160,32 @@ describe("QueryService", () => {
     twoWeeksAgoPrivateEvent.getAttendance(
       femaleChristianChild.getId()
     ).status = presentAttendanceStatus;
+    await entityMapper.save(twoWeeksAgoPrivateEvent);
 
     threeDaysAgoPrivateEvent = new EventNote("threeDaysAgoPrivateEvent");
     threeDaysAgoPrivateEvent.date = moment().subtract(3, "days").toDate();
-    threeDaysAgoPrivateEvent.relatesTo = privateActivity._id;
+    threeDaysAgoPrivateEvent.relatesTo = privateSchoolClassActivity._id;
+    threeDaysAgoPrivateEvent.category = schoolClass;
     threeDaysAgoPrivateEvent.addChild(maleChild.getId());
     threeDaysAgoPrivateEvent.getAttendance(
       maleChild.getId()
     ).status = absentAttendanceStatus;
+    await entityMapper.save(threeDaysAgoPrivateEvent);
 
     sixDaysAgoNormalEvent = new EventNote("sixDaysAgoNormalEvent");
     sixDaysAgoNormalEvent.date = moment().subtract(6, "days").toDate();
-    sixDaysAgoNormalEvent.relatesTo = normalActivity._id;
+    sixDaysAgoNormalEvent.relatesTo = normalLifeSkillsActivity._id;
+    sixDaysAgoNormalEvent.category = lifeSkills;
     sixDaysAgoNormalEvent.addChild(femaleMuslimChild.getId());
     sixDaysAgoNormalEvent.getAttendance(
       femaleMuslimChild.getId()
     ).status = presentAttendanceStatus;
+    await entityMapper.save(sixDaysAgoNormalEvent);
 
     todayEventWithoutSchool = new EventNote("todayEventWithoutSchool");
     todayEventWithoutSchool.date = new Date();
-    todayEventWithoutSchool.relatesTo = activityWithoutLink._id;
+    todayEventWithoutSchool.relatesTo = lifeSkillsActivityWithoutLink._id;
+    todayEventWithoutSchool.category = lifeSkills;
     todayEventWithoutSchool.addChild(femaleChristianChild.getId());
     todayEventWithoutSchool.getAttendance(
       femaleChristianChild.getId()
@@ -150,11 +194,13 @@ describe("QueryService", () => {
     todayEventWithoutSchool.getAttendance(
       maleChild.getId()
     ).status = absentAttendanceStatus;
+    await entityMapper.save(todayEventWithoutSchool);
 
     twoDaysAgoEventWithoutRelation = new EventNote(
       "twoDaysAgoEventWithoutRelation"
     );
     twoDaysAgoEventWithoutRelation.date = moment().subtract(2, "days").toDate();
+    twoDaysAgoEventWithoutRelation.category = schoolClass;
     twoDaysAgoEventWithoutRelation.addChild(femaleChristianChild.getId());
     twoDaysAgoEventWithoutRelation.getAttendance(
       femaleChristianChild.getId()
@@ -163,42 +209,11 @@ describe("QueryService", () => {
     twoDaysAgoEventWithoutRelation.getAttendance(
       maleChristianChild.getId()
     ).status = presentAttendanceStatus;
+    await entityMapper.save(twoDaysAgoEventWithoutRelation);
+  });
 
-    mockEntityMapper.loadType.and.callFake((entityClass) => {
-      switch (entityClass as any) {
-        case Child:
-          return Promise.resolve([
-            femaleMuslimChild,
-            femaleChristianChild,
-            maleChristianChild,
-            maleChild,
-          ]);
-        case School:
-          return Promise.resolve([privateSchool, normalSchool]);
-        case RecurringActivity:
-          return Promise.resolve([
-            normalActivity,
-            privateActivity,
-            activityWithoutLink,
-          ]);
-        case EventNote:
-          return Promise.resolve([
-            threeDaysAgoPrivateEvent,
-            twoWeeksAgoPrivateEvent,
-            twoDaysAgoEventWithoutRelation,
-            todayEventWithoutSchool,
-            sixDaysAgoNormalEvent,
-          ]);
-        case ChildSchoolRelation:
-          return Promise.resolve([
-            maleChildAttendsPrivateSchool,
-            femaleChristianChildAttendsNormalSchool,
-            maleChristianChildAttendsNormalSchool,
-          ]);
-        default:
-          return Promise.resolve([]);
-      }
-    });
+  afterEach(async () => {
+    await database.destroy();
   });
 
   it("should be created", () => {
@@ -208,23 +223,19 @@ describe("QueryService", () => {
   it("should return all children with specified attributes", async () => {
     const maleChristianQuery = `${Child.ENTITY_TYPE}:toArray[*gender=M & religion=christian]`;
     const maleChristians = await service.queryData(maleChristianQuery);
-    expect(maleChristians).toEqual([maleChristianChild]);
+    expectEntitiesToMatch(maleChristians, [maleChristianChild]);
 
     const femaleQuery = `${Child.ENTITY_TYPE}:toArray[*gender=F]`;
     const females = await service.queryData(femaleQuery);
-    expect(females).toEqual(
-      jasmine.arrayWithExactContents([femaleChristianChild, femaleMuslimChild])
-    );
+    expectEntitiesToMatch(females, [femaleChristianChild, femaleMuslimChild]);
 
     const allChildren = await service.queryData(`${Child.ENTITY_TYPE}:toArray`);
-    expect(allChildren).toEqual(
-      jasmine.arrayWithExactContents([
-        maleChristianChild,
-        maleChild,
-        femaleChristianChild,
-        femaleMuslimChild,
-      ])
-    );
+    expectEntitiesToMatch(allChildren, [
+      maleChristianChild,
+      maleChild,
+      femaleChristianChild,
+      femaleMuslimChild,
+    ]);
   });
 
   it("should return all children attending a school based on attributes", async () => {
@@ -237,7 +248,7 @@ describe("QueryService", () => {
     const maleChildrenOnPrivateSchools = await service.queryData(
       maleChildrenOnPrivateSchoolsQuery
     );
-    expect(maleChildrenOnPrivateSchools).toEqual([maleChild]);
+    expectEntitiesToMatch(maleChildrenOnPrivateSchools, [maleChild]);
 
     const childrenVisitingAnySchoolQuery = `
       ${School.ENTITY_TYPE}:toArray
@@ -246,33 +257,21 @@ describe("QueryService", () => {
     let childrenVisitingAnySchool = await service.queryData(
       childrenVisitingAnySchoolQuery
     );
-    expect(childrenVisitingAnySchool).toEqual(
-      jasmine.arrayWithExactContents([
-        femaleChristianChild,
-        maleChild,
-        maleChristianChild,
-      ])
-    );
-
-    maleChildAttendsPrivateSchool.end = moment().subtract(1, "week").toDate();
-    childrenVisitingAnySchool = await service.queryData(
-      childrenVisitingAnySchoolQuery
-    );
-    expect(childrenVisitingAnySchool).toEqual(
-      jasmine.arrayWithExactContents([maleChristianChild, femaleChristianChild])
-    );
+    expectEntitiesToMatch(childrenVisitingAnySchool, [
+      femaleChristianChild,
+      maleChild,
+      maleChristianChild,
+    ]);
   });
 
   it("should allow to query data multiple times", async () => {
     const allChildren = await service.queryData(`${Child.ENTITY_TYPE}:toArray`);
-    expect(allChildren).toEqual(
-      jasmine.arrayWithExactContents([
-        maleChristianChild,
-        femaleChristianChild,
-        femaleMuslimChild,
-        maleChild,
-      ])
-    );
+    expectEntitiesToMatch(allChildren, [
+      maleChristianChild,
+      femaleChristianChild,
+      femaleMuslimChild,
+      maleChild,
+    ]);
 
     const maleChildrenCountQuery = `[*gender=${Gender.MALE}]:count`;
     const maleChildrenCount = await service.queryData(
@@ -308,14 +307,12 @@ describe("QueryService", () => {
       eventsLastWeekQuery,
       moment().subtract(1, "week").toDate()
     );
-    expect(eventsLastWeek).toEqual(
-      jasmine.arrayWithExactContents([
-        threeDaysAgoPrivateEvent,
-        todayEventWithoutSchool,
-        twoDaysAgoEventWithoutRelation,
-        sixDaysAgoNormalEvent,
-      ])
-    );
+    expectEntitiesToMatch(eventsLastWeek, [
+      threeDaysAgoPrivateEvent,
+      todayEventWithoutSchool,
+      twoDaysAgoEventWithoutRelation,
+      sixDaysAgoNormalEvent,
+    ]);
 
     const childrenThatAttendedSomethingQuery = `
       ${EventNote.ENTITY_TYPE}:toArray
@@ -324,13 +321,11 @@ describe("QueryService", () => {
     const childrenThatAttendedSomething = await service.queryData(
       childrenThatAttendedSomethingQuery
     );
-    expect(childrenThatAttendedSomething).toEqual(
-      jasmine.arrayWithExactContents([
-        femaleChristianChild,
-        maleChristianChild,
-        femaleMuslimChild,
-      ])
-    );
+    expectEntitiesToMatch(childrenThatAttendedSomething, [
+      femaleChristianChild,
+      maleChristianChild,
+      femaleMuslimChild,
+    ]);
   });
 
   it("should count unique participants of events based on school and activity", async () => {
@@ -343,7 +338,9 @@ describe("QueryService", () => {
     const femaleParticipantsInPrivateSchools = await service.queryData(
       femaleParticipantsPrivateSchoolQuery
     );
-    expect(femaleParticipantsInPrivateSchools).toEqual([femaleChristianChild]);
+    expectEntitiesToMatch(femaleParticipantsInPrivateSchools, [
+      femaleChristianChild,
+    ]);
 
     const participantsNotPrivateSchoolQuery = `
       ${School.ENTITY_TYPE}:toArray[*privateSchool!=true]
@@ -354,7 +351,7 @@ describe("QueryService", () => {
     const participantsNotPrivateSchool = await service.queryData(
       participantsNotPrivateSchoolQuery
     );
-    expect(participantsNotPrivateSchool).toEqual([femaleMuslimChild]);
+    expectEntitiesToMatch(participantsNotPrivateSchool, [femaleMuslimChild]);
 
     const attendedParticipantsQuery = `
       ${EventNote.ENTITY_TYPE}:toArray
@@ -363,40 +360,63 @@ describe("QueryService", () => {
     const attendedParticipants = await service.queryData(
       attendedParticipantsQuery
     );
-    expect(attendedParticipants).toEqual(
-      jasmine.arrayWithExactContents([
-        maleChristianChild,
-        femaleChristianChild,
-        femaleMuslimChild,
-      ])
-    );
+    expectEntitiesToMatch(attendedParticipants, [
+      maleChristianChild,
+      femaleChristianChild,
+      femaleMuslimChild,
+    ]);
   });
 
   it("should allow queries on complex attributes", async () => {
-    const schoolClass = defaultInteractionTypes.find(
-      (i) => i.id === "SCHOOL_CLASS"
-    );
-    const lifeSkills = defaultInteractionTypes.find(
-      (i) => i.id === "LIFE_SKILLS"
-    );
-    privateActivity.type = schoolClass;
-    activityWithoutLink.type = lifeSkills;
-    normalActivity.type = lifeSkills;
-
     const schoolClassActivitiesQuery = `${RecurringActivity.ENTITY_TYPE}:toArray:filterByObjectAttribute(type, id, SCHOOL_CLASS)`;
     const schoolClassActivities = await service.queryData(
       schoolClassActivitiesQuery
     );
-    expect(schoolClassActivities).toEqual([privateActivity]);
+    expectEntitiesToMatch(schoolClassActivities, [privateSchoolClassActivity]);
 
     const otherActivitiesQuery = `${RecurringActivity.ENTITY_TYPE}:toArray:filterByObjectAttribute(type, id, LIFE_SKILLS)`;
     const otherActivities = await service.queryData(otherActivitiesQuery);
-    expect(otherActivities).toEqual(
-      jasmine.arrayWithExactContents([activityWithoutLink, normalActivity])
-    );
+    expectEntitiesToMatch(otherActivities, [
+      lifeSkillsActivityWithoutLink,
+      normalLifeSkillsActivity,
+    ]);
   });
 
-  it("only loads the data from a given time", () => {
+  it("should not load all data if a from date is provided", async () => {
+    const eventsQuery = `${EventNote.ENTITY_TYPE}:toArray`;
+    const date = moment().subtract(1, "week").toDate();
 
+    const allEventsLastWeek = await service.queryData(eventsQuery, date);
+    expectEntitiesToMatch(allEventsLastWeek, [
+      threeDaysAgoPrivateEvent,
+      sixDaysAgoNormalEvent,
+      todayEventWithoutSchool,
+      twoDaysAgoEventWithoutRelation,
+    ]);
+  });
+
+  it("should load more notes if a later date is provided", async () => {
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const yesterdayNote = new Note("yesterdayNote");
+    yesterdayNote.date = moment().subtract(1, "day").toDate();
+    await entityMapper.save(yesterdayNote);
+    const sixDaysAgoNote = new Note("sixDaysAgoNote");
+    sixDaysAgoNote.date = moment().subtract(6, "days").toDate();
+    await entityMapper.save(sixDaysAgoNote);
+    const allNotesQuery = `${Note.ENTITY_TYPE}:toArray`;
+
+    const allNotesLastTwoDays = await service.queryData(
+      allNotesQuery,
+      moment().subtract(2, "days").toDate()
+    );
+
+    expectEntitiesToMatch(allNotesLastTwoDays, [yesterdayNote]);
+
+    const allNotesLastWeek = await service.queryData(
+      allNotesQuery,
+      moment().subtract(1, "week").toDate()
+    );
+
+    expectEntitiesToMatch(allNotesLastWeek, [yesterdayNote, sixDaysAgoNote]);
   });
 });

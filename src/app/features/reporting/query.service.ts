@@ -18,8 +18,10 @@ const jsonQuery = require("json-query");
   providedIn: "root",
 })
 export class QueryService {
-  private entities: { [type: string]: { [id: string]: Entity } } = {};
+  private entities: { [type: string]: { [id: string]: Entity } };
   private dataLoaded: Promise<any>;
+  private dataAvailableFrom: Date;
+
   constructor(
     private entityMapper: EntityMapperService,
     private childrenService: ChildrenService,
@@ -33,8 +35,10 @@ export class QueryService {
       RecurringActivity,
       ChildSchoolRelation,
     ];
+    this.entities = {};
     const dataPromises = [];
     if (from) {
+      this.dataAvailableFrom = from;
       dataPromises.push(
         this.childrenService
           .getNotesInTimespan(from)
@@ -73,7 +77,7 @@ export class QueryService {
   /**
    * Runs the query on the passed data object
    * @param query a string or array according to the json-query language (https://github.com/auditassistant/json-query)
-   * @param from a date which can be accessed in the query using a ?. This will also affect how much data is loaded.
+   * @param from a date which can be accessed in the query using a ?. This will also affect the amount of data being loaded.
    * @param to a date which can be accessed in the query using another ?
    * @param data the data on which the query should run, default is all entities
    * @returns the results of the query on the data
@@ -84,9 +88,10 @@ export class QueryService {
     to: Date = null,
     data: any = this.entities
   ): Promise<any> {
-    if (!this.dataLoaded) {
-      this.loadData();
+    if (!data || (data === this.entities && from < this.dataAvailableFrom)) {
+      this.loadData(from);
       await this.dataLoaded;
+      data = this.entities;
     }
     return jsonQuery([query, from, to], {
       data: data,
