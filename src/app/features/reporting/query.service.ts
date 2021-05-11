@@ -28,6 +28,42 @@ export class QueryService {
     private attendanceService: AttendanceService
   ) {}
 
+  /**
+   * Runs the query on the passed data object
+   * @param query a string or array according to the json-query language (https://github.com/auditassistant/json-query)
+   * @param from a date which can be accessed in the query using a ?.
+   *             This will also affect the amount of data being loaded.
+   * @param to a date which can be accessed in the query using another ?
+   * @param data the data on which the query should run, default is all entities
+   * @returns the results of the query on the data
+   */
+  public async queryData(
+    query: string,
+    from: Date = null,
+    to: Date = null,
+    data: any = this.entities
+  ): Promise<any> {
+    if (!data || (data === this.entities && from < this.dataAvailableFrom)) {
+      this.loadData(from);
+      await this.dataLoaded;
+      data = this.entities;
+    }
+    return jsonQuery([query, from, to], {
+      data: data,
+      locals: {
+        toArray: this.toArray,
+        unique: this.unique,
+        count: this.count,
+        addPrefix: this.addPrefix,
+        toEntities: this.toEntities.bind(this),
+        getRelated: this.getRelated.bind(this),
+        filterByObjectAttribute: this.filterByObjectAttribute,
+        getIds: this.getIds,
+        getParticipantsWithAttendance: this.getParticipantsWithAttendance,
+      },
+    }).value;
+  }
+
   private loadData(from?: Date): void {
     const entityClasses: typeof Entity[] = [
       Child,
@@ -75,42 +111,6 @@ export class QueryService {
   }
 
   /**
-   * Runs the query on the passed data object
-   * @param query a string or array according to the json-query language (https://github.com/auditassistant/json-query)
-   * @param from a date which can be accessed in the query using a ?. This will also affect the amount of data being loaded.
-   * @param to a date which can be accessed in the query using another ?
-   * @param data the data on which the query should run, default is all entities
-   * @returns the results of the query on the data
-   */
-  public async queryData(
-    query: string,
-    from: Date = null,
-    to: Date = null,
-    data: any = this.entities
-  ): Promise<any> {
-    if (!data || (data === this.entities && from < this.dataAvailableFrom)) {
-      this.loadData(from);
-      await this.dataLoaded;
-      data = this.entities;
-    }
-    return jsonQuery([query, from, to], {
-      data: data,
-      locals: {
-        toArray: this.toArray,
-        unique: this.unique,
-        count: this.count,
-        addPrefix: this.addPrefix,
-        toEntities: this.toEntities.bind(this),
-        getRelated: this.getRelated.bind(this),
-        filterByObjectAttribute: this.filterByObjectAttribute,
-        getIds: this.getIds,
-        getParticipantsWithAttendance: this.getParticipantsWithAttendance,
-        getActive: this.getActive,
-      },
-    }).value;
-  }
-
-  /**
    * Adds the prefix and a colon (":") to each string in a array. Does nothing if the string already starts with the prefix.
    * @param ids a string of ids
    * @param prefix the prefix which should be added to the string
@@ -141,6 +141,11 @@ export class QueryService {
     return new Array(...new Set(data));
   }
 
+  /**
+   * Get the size of an array
+   * @param data the data for which the length should be returned
+   * @returns the length of the input array or 0 if no array is provided
+   */
   private count(data: any[]): number {
     return data ? data.length : 0;
   }
@@ -190,6 +195,16 @@ export class QueryService {
     }
   }
 
+  /**
+   * Filters the data when the filter value is a object (e.g. configurable enum) rather than a simple value
+   * @param objs the objects to be filtered
+   * @param attr the attribute of the objects which is a object itself
+   * @param key the key of the attribute-object which should be compared
+   * @param value the value which will be compared with `obj[attr][key]` for each obj in objs.
+   *              The value can be a simple value or list of values separated by `|` (e.g. SCHOOL_CLASS|LIFE_SKILLS).
+   *              If it is a list of values, then the object is returned if its value matches any of the given values.
+   * @returns the filtered objects
+   */
   private filterByObjectAttribute(
     objs: any[],
     attr: string,
@@ -205,6 +220,13 @@ export class QueryService {
     });
   }
 
+  /**
+   * Returns a list of IDs held by each object (e.g. the children-IDs held by an array of notes)
+   * @param objs the objects which each holds a list of IDs
+   * @param key the key on which each object holds a list of IDs
+   * @returns a one dimensional string array holding all IDs which are held by the objects.
+   *            This list may contain duplicate IDs. If this is not desired, use `:unique` afterwards.
+   */
   private getIds(objs: any[], key: string): string[] {
     const ids: string[] = [];
     objs.forEach((obj) => {
@@ -235,14 +257,5 @@ export class QueryService {
       })
     );
     return attendedChildren;
-  }
-
-  /**
-   * Returns the active child school relations from the input array
-   * @param relations an array of child school relations
-   * @returns an array of active child school relations
-   */
-  private getActive(relations: ChildSchoolRelation[]): ChildSchoolRelation[] {
-    return relations.filter((relation) => relation.isActive());
   }
 }

@@ -1206,10 +1206,10 @@ export const defaultConfig = {
           "query": `${School.ENTITY_TYPE}:toArray`,
           "label": "All schools",
           "aggregations": [
-            {"label": "Children attending a school", "query": `:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId):getActive.childId:unique`},
+            {"label": "Children attending a school", "query": `:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:unique`},
             {"label": "Governmental schools", "query": `[*privateSchool!=true]`},
             {
-              "query": `[*privateSchool!=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId):getActive.childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
+              "query": `[*privateSchool!=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
               "label": "Children attending a governmental school",
               "aggregations": [
                 {"label": "Male children attending a governmental school", "query": `[*gender=${Gender.MALE}]`},
@@ -1218,7 +1218,7 @@ export const defaultConfig = {
             },
             {"label": "Private schools", "query": `[*privateSchool=true]`},
             {
-              "query": `[*privateSchool=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId):getActive.childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
+              "query": `[*privateSchool=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
               "label": "Children attending a private school",
               "aggregations": [
                 {"label": "Male children attending a private school", "query": `[*gender=${Gender.MALE}]`},

@@ -242,7 +242,7 @@ describe("QueryService", () => {
     const maleChildrenOnPrivateSchoolsQuery = `
       ${School.ENTITY_TYPE}:toArray[*privateSchool=true]
       :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
-      :getActive.childId:addPrefix(${Child.ENTITY_TYPE}):unique
+      [*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique
       :toEntities[*gender=${Gender.MALE}]`;
 
     const maleChildrenOnPrivateSchools = await service.queryData(
@@ -253,7 +253,7 @@ describe("QueryService", () => {
     const childrenVisitingAnySchoolQuery = `
       ${School.ENTITY_TYPE}:toArray
       :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
-      :getActive.childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`;
+      [*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`;
     let childrenVisitingAnySchool = await service.queryData(
       childrenVisitingAnySchoolQuery
     );
