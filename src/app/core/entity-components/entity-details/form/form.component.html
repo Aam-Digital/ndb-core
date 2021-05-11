@@ -1,185 +1,185 @@
 <form [formGroup]="form">
-    <div
-            fxLayout="row wrap"
-            fxLayout.xs="row wrap"
-            fxLayout.md="row wrap"
-            fxLayout.sm="row wrap"
-    >
-        <div *ngFor="let col of config.cols" fxFlex>
-            <div *ngFor="let row of col">
-                <div *ngIf="row.input === 'photo'" class="child-pic-container">
-                    <img
-                            [src]="entity?.photo?.value"
-                            class="child-pic"
-                            alt="child's photo"
-                    />
+  <div
+    fxLayout="row wrap"
+    fxLayout.xs="row wrap"
+    fxLayout.md="row wrap"
+    fxLayout.sm="row wrap"
+  >
+    <div *ngFor="let col of config.cols" fxFlex>
+      <div *ngFor="let row of col">
+        <div *ngIf="row.input === 'photo'" class="child-pic-container">
+          <img
+            [src]="entity?.photo?.value"
+            class="child-pic"
+            alt="child's photo"
+          />
 
-                    <input
-                            style="display: none;"
-                            type="file"
-                            accept=".jpg, .jpeg, .png"
-                            (change)="uploadChildPhoto($event)"
-                            #fileUpload
-                    />
-                    <button
-                            *ngIf="enablePhotoUpload && editing"
-                            class="child-pic-upload"
-                            (click)="fileUpload.click()"
-                    >
-                        <mat-icon class="upload-icon" fontIcon="fa-upload"></mat-icon>
-                    </button>
+          <input
+            style="display: none;"
+            type="file"
+            accept=".jpg, .jpeg, .png"
+            (change)="uploadChildPhoto($event)"
+            #fileUpload
+          />
+          <button
+            *ngIf="enablePhotoUpload && editing"
+            class="child-pic-upload"
+            (click)="fileUpload.click()"
+          >
+            <mat-icon class="upload-icon" fontIcon="fa-upload"></mat-icon>
+          </button>
 
-                    <mat-form-field
-                            *ngIf="editing && isAdminUser"
-                            class="child-pic-photofile"
-                    >
-                        <input
-                            #photoFileInput
-                            matTooltip="filename for child photo uploaded by server administrator"
-                            matInput
-                            [formControlName]="row.id"
-                            [placeholder]="row.placeholder"
-                            [title]="row.placeholder"
-                            type="text"
-                        />
-                        <span
-                                matSuffix
-                                (click)="photoFileInput.value = ''"
-                                class="fa fa-times"
-                        ></span>
-                    </mat-form-field>
-                </div>
-
-                <mat-form-field *ngIf="row.input === 'text'">
-                    <input
-                            matInput
-                            [formControlName]="row.id"
-                            [placeholder]="row.placeholder"
-                            [title]="row.placeholder"
-                            type="text"
-                    />
-                    <mat-error *ngIf="this.form.get(row.id).invalid && validateForm">
-                        {{row.placeholder}} is required
-                    </mat-error>
-                </mat-form-field>
-
-                <mat-form-field *ngIf="row.input === 'textarea'">
-                    <textarea
-                        matInput
-                        [formControlName]="row.id"
-                        [placeholder]="row.placeholder"
-                        [title]="row.placeholder"
-                    ></textarea>
-                </mat-form-field>
-
-                <mat-checkbox
-                        *ngIf="row.input === 'checkbox'"
-                        [formControlName]="row.id"
-                        [disabled]="!editing"
-                    >{{ row.placeholder }}
-                </mat-checkbox>
-
-                <div *ngIf="row.input === 'age'">
-                    <mat-form-field style="width: 50px;">
-                        <input
-                                matInput
-                                placeholder="Age"
-                                type="number"
-                                [value]="entity?.age"
-                                [disabled]="true"
-                        />
-                    </mat-form-field>
-                    <mat-form-field style="width: 120px;">
-                        <input
-                                matInput
-                                [formControlName]="row.id"
-                                [placeholder]="row.placeholder"
-                                [matDatepicker]="dateOfBirthDatepicker"
-                                [disabled]="!editing"
-                        />
-                        <mat-datepicker-toggle
-                                matSuffix
-                                [for]="dateOfBirthDatepicker"
-                        ></mat-datepicker-toggle>
-                        <mat-datepicker #dateOfBirthDatepicker></mat-datepicker>
-                    </mat-form-field>
-                </div>
-
-                <div *ngIf="row.input === 'select'">
-                    <mat-form-field>
-                        <mat-label>
-                            {{row.placeholder}}
-                        </mat-label>
-                        <mat-select
-                                [disabled]="!editing"
-                                [formControlName]="row.id"
-                        >
-                            <mat-option *ngFor="let o of row.options" [value]="o">
-                                {{o}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-
-                <div *ngIf="row.input === 'configurable-enum-select'">
-                  <mat-form-field>
-                    <mat-label>
-                      {{row.placeholder}}
-                    </mat-label>
-                    <mat-select
-                      [disabled]="!editing"
-                      [formControlName]="row.id"
-                    >
-                      <mat-option *appConfigurableEnum="let o of row.enumId" [value]="o">
-                        {{o.label}}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-
-                <mat-form-field *ngIf="row.input === 'datepicker'" style="width: 180px">
-                    <input
-                            matInput
-                            [formControlName]="row.id"
-                            [placeholder]="row.placeholder"
-                            [matDatepicker]="datepickerComp"
-                            [disabled]="!editing"
-                    />
-                    <mat-datepicker-toggle
-                            matSuffix
-                            [for]="datepickerComp"
-                    ></mat-datepicker-toggle>
-                    <mat-datepicker #datepickerComp></mat-datepicker>
-                </mat-form-field>
-            </div>
+          <mat-form-field
+            *ngIf="editing && isAdminUser"
+            class="child-pic-photofile"
+          >
+            <input
+              #photoFileInput
+              matTooltip="filename for child photo uploaded by server administrator"
+              matInput
+              [formControlName]="row.id"
+              [placeholder]="row.placeholder"
+              [title]="row.placeholder"
+              type="text"
+            />
+            <span
+              matSuffix
+              (click)="photoFileInput.value = ''"
+              class="fa fa-times"
+            ></span>
+          </mat-form-field>
         </div>
+
+        <mat-form-field *ngIf="row.input === 'text'">
+          <input
+            matInput
+            [formControlName]="row.id"
+            [placeholder]="row.placeholder"
+            [title]="row.placeholder"
+            type="text"
+          />
+          <mat-error *ngIf="this.form.get(row.id).invalid && validateForm">
+            {{ row.placeholder }} is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="row.input === 'textarea'">
+          <textarea
+            matInput
+            [formControlName]="row.id"
+            [placeholder]="row.placeholder"
+            [title]="row.placeholder"
+          ></textarea>
+        </mat-form-field>
+
+        <mat-checkbox
+          *ngIf="row.input === 'checkbox'"
+          [formControlName]="row.id"
+          [disabled]="!editing"
+          >{{ row.placeholder }}
+        </mat-checkbox>
+
+        <div *ngIf="row.input === 'age'">
+          <mat-form-field style="width: 50px;">
+            <input
+              matInput
+              placeholder="Age"
+              type="number"
+              [value]="entity?.age"
+              [disabled]="true"
+            />
+          </mat-form-field>
+          <mat-form-field style="width: 120px;">
+            <input
+              matInput
+              [formControlName]="row.id"
+              [placeholder]="row.placeholder"
+              [matDatepicker]="dateOfBirthDatepicker"
+              [disabled]="!editing"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="dateOfBirthDatepicker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #dateOfBirthDatepicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <div *ngIf="row.input === 'select'">
+          <mat-form-field>
+            <mat-label>
+              {{ row.placeholder }}
+            </mat-label>
+            <mat-select [disabled]="!editing" [formControlName]="row.id">
+              <mat-option *ngFor="let o of row.options" [value]="o">
+                {{ o }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div *ngIf="row.input === 'configurable-enum-select'">
+          <mat-form-field>
+            <mat-label>
+              {{ row.placeholder }}
+            </mat-label>
+            <mat-select [disabled]="!editing" [formControlName]="row.id">
+              <mat-option
+                *appConfigurableEnum="let o of row.enumId"
+                [value]="o"
+              >
+                {{ o.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field
+          *ngIf="row.input === 'datepicker'"
+          style="width: 180px;"
+        >
+          <input
+            matInput
+            [formControlName]="row.id"
+            [placeholder]="row.placeholder"
+            [matDatepicker]="datepickerComp"
+            [disabled]="!editing"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="datepickerComp"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #datepickerComp></mat-datepicker>
+        </mat-form-field>
+      </div>
     </div>
+  </div>
 </form>
 <div>
-    <button
-            *ngIf="editing"
-            mat-stroked-button
-            class="edit-button"
-            (click)="save()"
-    >
-        Save
-    </button>
+  <button
+    *ngIf="editing"
+    mat-stroked-button
+    class="edit-button"
+    (click)="save()"
+  >
+    Save
+  </button>
 
-    <button
-            *ngIf="editing"
-            mat-stroked-button
-            class="edit-button"
-            (click)="switchEdit()"
-    >
-        Cancel
-    </button>
+  <button
+    *ngIf="editing"
+    mat-stroked-button
+    class="edit-button"
+    (click)="switchEdit()"
+  >
+    Cancel
+  </button>
 
-    <button
-            *ngIf="!editing"
-            mat-stroked-button
-            class="edit-button"
-            (click)="switchEdit()"
-    >
-        Edit
-    </button>
+  <button
+    *ngIf="!editing"
+    mat-stroked-button
+    class="edit-button"
+    (click)="switchEdit()"
+  >
+    Edit
+  </button>
 </div>

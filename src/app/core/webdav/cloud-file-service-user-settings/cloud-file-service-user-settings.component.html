@@ -1,38 +1,65 @@
-<form [formGroup]='form' (ngSubmit)="updateCloudServiceSettings()">
+<form [formGroup]="form" (ngSubmit)="updateCloudServiceSettings()">
   <p>
-    <i>Please enter your username and password for your Nextcloud account. This will be used for photo uploads.</i>
+    <i
+      >Please enter your username and password for your Nextcloud account. This
+      will be used for photo uploads.</i
+    >
   </p>
   <p>
     <mat-form-field>
-      <input matInput required formControlName='cloudUser'
-             placeholder="Cloud Image Service User">
+      <input
+        matInput
+        required
+        formControlName="cloudUser"
+        placeholder="Cloud Image Service User"
+      />
     </mat-form-field>
-    <br>
+    <br />
     <mat-form-field>
-      <input matInput type="password" required formControlName='cloudPassword'
-             placeholder="Cloud Image Service Password">
+      <input
+        matInput
+        type="password"
+        required
+        formControlName="cloudPassword"
+        placeholder="Cloud Image Service Password"
+      />
       <mat-error *ngIf="form.controls.cloudPassword.errors?.connectionFailed">
-        Couldn't connect to the cloud service.
-        Please check your username and password or try again later.
+        Couldn't connect to the cloud service. Please check your username and
+        password or try again later.
       </mat-error>
     </mat-form-field>
-    <br>
+    <br />
   </p>
   <p>
-    <i>Please enter your password for this app, so your cloud service password above will then be encrypted and stored for future uses.</i>
+    <i
+      >Please enter your password for this app, so your cloud service password
+      above will then be encrypted and stored for future uses.</i
+    >
   </p>
   <p>
     <mat-form-field>
-      <input matInput type="password" required formControlName='userPassword'
-             placeholder="Password">
+      <input
+        matInput
+        type="password"
+        required
+        formControlName="userPassword"
+        placeholder="Password"
+      />
       <mat-error *ngIf="form.controls.userPassword.errors?.incorrectPassword">
-        The password you entered is not correct.
-        Please enter your user account password for this app here (not your password for the cloud service above).
+        The password you entered is not correct. Please enter your user account
+        password for this app here (not your password for the cloud service
+        above).
       </mat-error>
     </mat-form-field>
   </p>
-  <p class='p-submit'>
-    <button mat-raised-button type='submit' [disabled]='!form.valid || processing'>Save</button>
-    &nbsp;<mat-spinner diameter='20' *ngIf='processing'></mat-spinner>
+  <p class="p-submit">
+    <button
+      mat-raised-button
+      type="submit"
+      [disabled]="!form.valid || processing"
+    >
+      Save
+    </button>
+    &nbsp;<mat-spinner diameter="20" *ngIf="processing"></mat-spinner>
   </p>
 </form>

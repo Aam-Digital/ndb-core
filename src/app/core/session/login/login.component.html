@@ -20,29 +20,50 @@
     Please Sign In
   </mat-card-title>
 
-
   <mat-card-content>
     <form>
       <p class="login-error">
-        {{errorMessage}}
+        {{ errorMessage }}
       </p>
 
       <p>
         <mat-form-field class="login-field">
-          <input matInput placeholder="Username" type="text" [(ngModel)]="username" (keyup.enter)="login()" required autofocus
-                 name="username" autocomplete="username">
-          <mat-error>{{errorMessage}}</mat-error>
+          <input
+            matInput
+            placeholder="Username"
+            type="text"
+            [(ngModel)]="username"
+            (keyup.enter)="login()"
+            required
+            autofocus
+            name="username"
+            autocomplete="username"
+          />
+          <mat-error>{{ errorMessage }}</mat-error>
         </mat-form-field>
       </p>
       <p>
         <mat-form-field class="login-field">
-          <input matInput placeholder="Password" type="password" [(ngModel)]="password" (keyup.enter)="login()" required
-                 name="password" autocomplete="current-password">
+          <input
+            matInput
+            placeholder="Password"
+            type="password"
+            [(ngModel)]="password"
+            (keyup.enter)="login()"
+            required
+            name="password"
+            autocomplete="current-password"
+          />
         </mat-form-field>
       </p>
 
       <p>
-        <button mat-raised-button type="submit" [disabled]="loginInProgress" (click)="login()">
+        <button
+          mat-raised-button
+          type="submit"
+          [disabled]="loginInProgress"
+          (click)="login()"
+        >
           Login
         </button>
       </p>

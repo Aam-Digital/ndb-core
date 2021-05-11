@@ -220,21 +220,11 @@
         "groups": [
           {
             "name": "Standard",
-            "columns": [
-              "date",
-              "subject",
-              "category",
-              "author",
-              "children"
-            ]
+            "columns": ["date", "subject", "category", "author", "children"]
           },
           {
             "name": "Mobile",
-            "columns": [
-              "date",
-              "subject",
-              "children"
-            ]
+            "columns": ["date", "subject", "children"]
           }
         ]
       },
@@ -268,7 +258,7 @@
   "view:admin/conflicts": {
     "component": "ConflictResolution",
     "requiresAdmin": true,
-    "lazyLoaded":  true
+    "lazyLoaded": true
   },
   "view:help": {
     "component": "Help"
@@ -665,12 +655,7 @@
           },
           {
             "name": "Mobile",
-            "columns": [
-              "projectNumber",
-              "name",
-              "age",
-              "schoolId"
-            ]
+            "columns": ["projectNumber", "name", "age", "schoolId"]
           }
         ]
       },
@@ -747,10 +732,7 @@
                       "input": "select",
                       "id": "gender",
                       "placeholder": "Gender",
-                      "options": [
-                        "M",
-                        "F"
-                      ]
+                      "options": ["M", "F"]
                     },
                     {
                       "input": "text",
@@ -1032,23 +1014,29 @@
 
   "entity:Child": {
     "attributes": [
-      {"name": "address", "schema": { "dataType": "string" } },
-      {"name": "phone", "schema": { "dataType": "string" } },
-      {"name": "guardianName", "schema": { "dataType": "string" } },
-      {"name": "preferredTimeForGuardianMeeting", "schema": { "dataType": "string" } },
-      {"name": "has_aadhar", "schema": { "dataType": "string" } },
-      {"name": "has_bankAccount", "schema": { "dataType": "string" } },
-      {"name": "has_kanyashree", "schema": { "dataType": "string" } },
-      {"name": "has_rationCard", "schema": { "dataType": "string" } },
-      {"name": "has_BplCard", "schema": { "dataType": "string" } },
-      {"name": "health_vaccinationStatus", "schema": { "dataType": "string" } },
-      {"name": "health_bloodGroup", "schema": { "dataType": "string" } },
-      {"name": "health_lastDentalCheckup", "schema": { "dataType": "Date" } },
-      {"name": "health_lastEyeCheckup", "schema": { "dataType": "Date" } },
-      {"name": "health_lastENTCheckup", "schema": { "dataType": "Date" } },
-      {"name": "health_eyeHealthStatus", "schema": { "dataType": "string" } },
-      {"name": "health_lastVitaminD", "schema": { "dataType": "Date" } },
-      {"name": "health_lastDeworming", "schema": { "dataType": "Date" } }
+      { "name": "address", "schema": { "dataType": "string" } },
+      { "name": "phone", "schema": { "dataType": "string" } },
+      { "name": "guardianName", "schema": { "dataType": "string" } },
+      {
+        "name": "preferredTimeForGuardianMeeting",
+        "schema": { "dataType": "string" }
+      },
+      { "name": "has_aadhar", "schema": { "dataType": "string" } },
+      { "name": "has_bankAccount", "schema": { "dataType": "string" } },
+      { "name": "has_kanyashree", "schema": { "dataType": "string" } },
+      { "name": "has_rationCard", "schema": { "dataType": "string" } },
+      { "name": "has_BplCard", "schema": { "dataType": "string" } },
+      {
+        "name": "health_vaccinationStatus",
+        "schema": { "dataType": "string" }
+      },
+      { "name": "health_bloodGroup", "schema": { "dataType": "string" } },
+      { "name": "health_lastDentalCheckup", "schema": { "dataType": "Date" } },
+      { "name": "health_lastEyeCheckup", "schema": { "dataType": "Date" } },
+      { "name": "health_lastENTCheckup", "schema": { "dataType": "Date" } },
+      { "name": "health_eyeHealthStatus", "schema": { "dataType": "string" } },
+      { "name": "health_lastVitaminD", "schema": { "dataType": "Date" } },
+      { "name": "health_lastDeworming", "schema": { "dataType": "Date" } }
     ]
   }
 }
