@@ -13,7 +13,9 @@
     [(selection)]="participatingGroups"
     [disabled]="!editing"
     [view]="schoolBlock"
+    i18n-label="School Groups"
     label="Groups"
+    i18n-placeholder="Add a new school group"
     placeholder="Add group ..."
   >
   </app-entity-select>
@@ -22,7 +24,9 @@
     [disabled]="!editing"
     [entityType]="Child"
     [view]="childBlock"
+    i18n-label="Participants of a school-activity"
     label="Participants"
+    i18n-placeholder="Add a participant of a school-activity"
     placeholder="Add participant ..."
   ></app-entity-select>
 </div>

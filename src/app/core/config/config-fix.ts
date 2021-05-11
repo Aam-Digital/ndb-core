@@ -1014,7 +1014,7 @@ export const defaultConfig = {
                 },
                 {
                   name: "asksQuestions",
-                  label: $localize`Asks`,
+                  label: $localize`:Ask questions:A child is asking questions during the class:Asks`,
                   inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
                   enumId: "rating-answer",
                   tooltip: $localize`The child is asking questions during the class.`
