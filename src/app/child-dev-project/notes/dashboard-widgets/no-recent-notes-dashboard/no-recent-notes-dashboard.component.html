@@ -30,7 +30,7 @@
         width="100%"
       >
         <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header i18n="Name of a child">Name</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header i18n="Name of a child" scope="col">Name</th>
           <td mat-cell *matCellDef="let childNoteInfo">
             <app-child-block
               [entityId]="childNoteInfo.childId"
@@ -40,7 +40,7 @@
         <ng-container
           matColumnDef="daysSinceLastNote"
           i18n="Amount of days back|Format like 'Days passed > 5 days'">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Days passed</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col">Days passed</th>
           <td
             mat-cell
             *matCellDef="let childNoteInfo"

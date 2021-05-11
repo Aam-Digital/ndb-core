@@ -8,7 +8,7 @@ import { Note } from "../../notes/model/note";
 import { calculateAverageAttendance } from "../model/calculate-average-event-attendance";
 import { NullAttendanceStatusType } from "../model/attendance-status";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { formatPercent, PercentPipe } from "@angular/common";
+import { PercentPipe } from "@angular/common";
 
 @Component({
   selector: "app-attendance-details",
