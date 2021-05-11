@@ -254,7 +254,7 @@ describe("QueryService", () => {
       ${School.ENTITY_TYPE}:toArray
       :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
       [*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`;
-    let childrenVisitingAnySchool = await service.queryData(
+    const childrenVisitingAnySchool = await service.queryData(
       childrenVisitingAnySchoolQuery
     );
     expectEntitiesToMatch(childrenVisitingAnySchool, [
