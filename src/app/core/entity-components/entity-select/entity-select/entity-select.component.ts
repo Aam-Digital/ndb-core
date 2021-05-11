@@ -17,7 +17,6 @@ import { filter, map, skipWhile } from "rxjs/operators";
 import { MatChipInputEvent } from "@angular/material/chips";
 import { LoggingService } from "../../../logging/logging.service";
 import { MatAutocompleteTrigger } from "@angular/material/autocomplete";
-import { DynamicComponentConfig } from "../../../view/dynamic-components/dynamic-component-config.interface";
 import { ENTITY_MAP } from "../../entity-details/entity-details.component";
 import { DYNAMIC_COMPONENTS_MAP } from "../../../view/dynamic-components-map";
 
@@ -248,20 +247,5 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
       // update whenever additional filters are being set
       this.formControl.setValue(this.formControl.value);
     }
-  }
-  /**
-   * creates a config for the dynamic component from an entity
-   * @param entity The entity to create the config from in the context
-   * of this component
-   */
-  createConfigFor(entity: any): DynamicComponentConfig {
-    return {
-      component: this.entityBlockComponent,
-      config: {
-        entity: entity,
-        linkDisabled: true,
-        tooltipDisabled: true,
-      },
-    };
   }
 }

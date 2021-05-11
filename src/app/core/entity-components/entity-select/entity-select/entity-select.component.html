@@ -51,7 +51,14 @@
 >
   <ng-container
     *ngIf="entityBlockComponent"
-    [appDynamicComponent]="createConfigFor(entity)">
+    [appDynamicComponent]="{
+      component: entityBlockComponent,
+      config: {
+        entity: entity,
+        linkDisabled: true,
+        tooltipDisabled: true
+      }
+    }">
   </ng-container>
   <ng-container *ngIf="!entityBlockComponent">
     {{entity["name"] || entity.getId()}}
