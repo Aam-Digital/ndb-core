@@ -34,9 +34,11 @@
     angulartics2On="click"
     angularticsCategory="Navigation"
     angularticsAction="app_navigation_link_click"
-    (click)="addToHomeScreen()"
-    *ngIf="showInstallButton"
-  >
+    (click)="addToHomeScreen()">
+<!--
+    *ngIf="installEventFired"
+-->
+
 
 
     <a>
@@ -46,4 +48,6 @@
 
     <mat-divider></mat-divider>
   </mat-list-item>
+
+
 </mat-nav-list>
