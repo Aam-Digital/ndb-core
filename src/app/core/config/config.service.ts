@@ -3,7 +3,7 @@ import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Config } from "./config";
 import { LoggingService } from "../logging/logging.service";
 import { BehaviorSubject } from "rxjs";
-import { defaultConfig } from "./config-fix";
+import { defaultJsonConfig } from "./config-fix";
 
 @Injectable({
   providedIn: "root",
@@ -18,16 +18,13 @@ export class ConfigService {
   public configUpdated: BehaviorSubject<Config>;
 
   constructor(@Optional() private loggingService: LoggingService) {
-    this.config.data = defaultConfig;
+    this.config.data = defaultJsonConfig;
     this.configUpdated = new BehaviorSubject<Config>(this.config);
   }
 
   public async loadConfig(entityMapper: EntityMapperService): Promise<Config> {
-    const newConfig = await this.getConfigOrDefault(entityMapper);
-    if (newConfig !== this.config) {
-      this.config = newConfig;
-      this.configUpdated.next(this.config);
-    }
+    this.config = await this.getConfigOrDefault(entityMapper);
+    this.configUpdated.next(this.config);
     return this.config;
   }
 
@@ -38,7 +35,9 @@ export class ConfigService {
       this.loggingService.info(
         "No configuration found in the database, using default one"
       );
-      return this.config;
+      const defaultConfig = new Config(ConfigService.CONFIG_KEY);
+      defaultConfig.data = defaultJsonConfig;
+      return defaultConfig;
     });
   }
 

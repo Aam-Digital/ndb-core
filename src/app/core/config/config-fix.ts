@@ -3,7 +3,7 @@ import { defaultInteractionTypes } from "./default-config/default-interaction-ty
 import { ColumnDescriptionInputType } from "../entity-components/entity-subrecord/column-description-input-type.enum";
 
 // prettier-ignore
-export const defaultConfig = {
+export const defaultJsonConfig = {
   "navigationMenu": {
     "items": [
       {
