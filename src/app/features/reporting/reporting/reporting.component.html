@@ -5,7 +5,7 @@
     <div *ngIf="config">
         <mat-form-field appearance="fill">
             <mat-label>Enter a date range</mat-label>
-            <mat-date-range-input [rangePicker]="picker">
+            <mat-date-range-input [rangePicker]="picker" [disabled]="loading">
                 <input [(ngModel)]="fromDate" matStartDate placeholder="Start date">
                 <input [(ngModel)]="toDate" matEndDate placeholder="End date">
             </mat-date-range-input>
@@ -13,7 +13,7 @@
             <mat-date-range-picker #picker></mat-date-range-picker>
         </mat-form-field>
         <div>
-            <button mat-stroked-button [disabled]="!fromDate && !toDate" (click)="calculateResults()">Calculate</button>
+            <button mat-stroked-button [disabled]="(!fromDate && !toDate) || loading" (click)="calculateResults()">Calculate</button>
             <app-export-data [disabled]="!exportableTable" [data]="exportableTable" format="csv" filename="report" style="float: right">
                 <mat-icon
                         class="button-icon"
@@ -24,6 +24,7 @@
             </app-export-data>
         </div>
     </div>
+    <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
 </mat-expansion-panel>
 
 <app-report-row *ngIf="results?.length > 0" [rows]="results"></app-report-row>
