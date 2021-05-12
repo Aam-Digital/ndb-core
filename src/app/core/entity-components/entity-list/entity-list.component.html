@@ -136,10 +136,9 @@
     ></tr>
   </table>
   <mat-toolbar>
-    <mat-slide-toggle
-      [(ngModel)]="showAllToggle"
-      (click)="clickShowAllToggle()"
-    >Show All</mat-slide-toggle>
+    <mat-slide-toggle [(ngModel)]="showAllToggle" (click)="clickShowAllToggle()"
+      >Show All</mat-slide-toggle
+    >
     <mat-paginator
       (page)="onPaginateChange($event)"
       [pageSize]="getPaginatorPageSize()"

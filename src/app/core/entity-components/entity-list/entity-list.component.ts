@@ -7,7 +7,7 @@ import {
   OnInit,
   Output,
   SimpleChanges,
-  ViewChild
+  ViewChild,
 } from "@angular/core";
 import { MatSort, MatSortable } from "@angular/material/sort";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
@@ -151,7 +151,10 @@ export class EntityListComponent<T extends Entity>
       this.initDefaultSort();
     }
     this.loadUrlParams();
-    this.showAllToggle = (this.paginatorPageSize >= this.entityDataSource.data.length ? true : false);
+    this.showAllToggle =
+      this.paginatorPageSize >= this.entityDataSource.data.length
+        ? true
+        : false;
   }
 
   private initDefaultSort() {
@@ -209,17 +212,25 @@ export class EntityListComponent<T extends Entity>
     this.paginatorPageSize = event.pageSize;
     this.paginatorPageIndex = event.pageIndex;
     this.updateUserPaginationSettings();
-    this.showAllToggle = (this.paginatorPageSize >= this.entityDataSource.data.length ? true : false);
+    this.showAllToggle =
+      this.paginatorPageSize >= this.entityDataSource.data.length
+        ? true
+        : false;
   }
 
   getPaginatorPageSizeOptions(): number[] {
-    const ar = [3, 10, 20, 50].filter((n) => {return n < this.entityDataSource.data.length });
+    const ar = [3, 10, 20, 50].filter((n) => {
+      return n < this.entityDataSource.data.length;
+    });
     ar.push(this.entityDataSource.data.length);
     return ar;
   }
 
   getPaginatorPageSize(): number {
-    if (this.entityDataSource.data.length && this.paginatorPageSize >= this.entityDataSource.data.length) {
+    if (
+      this.entityDataSource.data.length &&
+      this.paginatorPageSize >= this.entityDataSource.data.length
+    ) {
       this.paginatorPageSize = this.entityDataSource.data.length;
     }
     return this.paginatorPageSize;
@@ -230,12 +241,13 @@ export class EntityListComponent<T extends Entity>
       this.paginatorPageSizeBeforeToggle = this.paginatorPageSize;
       this.paginatorPageSize = this.entityDataSource.data.length;
     } else {
-      if (this.paginatorPageSizeBeforeToggle <= this.entityDataSource.data.length) {
+      if (
+        this.paginatorPageSizeBeforeToggle <= this.entityDataSource.data.length
+      ) {
         this.paginatorPageSize = this.paginatorPageSizeBeforeToggle;
-      }
-      else {
+      } else {
         let po = this.getPaginatorPageSizeOptions();
-        this.paginatorPageSize =  (po.length > 2) ? po[po.length-2] : po[0];
+        this.paginatorPageSize = po.length > 2 ? po[po.length - 2] : po[0];
       }
     }
     this.paginator._changePageSize(this.paginatorPageSize);
