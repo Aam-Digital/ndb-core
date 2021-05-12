@@ -15,7 +15,6 @@ import { BehaviorSubject, Observable } from "rxjs";
 import { FormControl } from "@angular/forms";
 import { filter, map, skipWhile } from "rxjs/operators";
 import { MatChipInputEvent } from "@angular/material/chips";
-import { LoggingService } from "../../../logging/logging.service";
 import { MatAutocompleteTrigger } from "@angular/material/autocomplete";
 import { ENTITY_MAP } from "../../entity-details/entity-details.component";
 import { DYNAMIC_COMPONENTS_MAP } from "../../../view/dynamic-components-map";
@@ -127,10 +126,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
-  constructor(
-    private entityMapperService: EntityMapperService,
-    private loggingService: LoggingService
-  ) {
+  constructor(private entityMapperService: EntityMapperService) {
     this.filteredEntities = this.formControl.valueChanges.pipe(
       filter((value) => value === null || typeof value === "string"), // sometimes produces entities
       map((searchText?: string) => this.filter(searchText))
@@ -151,13 +147,11 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    */
   setEntityType(type: EntityConstructor<E>) {
     this.loading.next(true);
-    this.entityMapperService
-      .loadType<E>(type)
-      .then((entities) => {
-        this.allEntities = entities;
-        this.loading.next(false);
-        this.formControl.setValue(null);
-      });
+    this.entityMapperService.loadType<E>(type).then((entities) => {
+      this.allEntities = entities;
+      this.loading.next(false);
+      this.formControl.setValue(null);
+    });
   }
 
   @Input() additionalFilter: (e: E) => boolean = (_) => true;
