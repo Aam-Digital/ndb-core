@@ -5,7 +5,7 @@
   <a mat-stroked-button href="mailto:info@aam-digital.com?subject=Set up reports">Ask for a setup call</a>
 </div>
 
-<mat-expansion-panel expanded="true" class="work-panel mat-elevation-z2" *ngIf="availableReports">
+<mat-expansion-panel expanded="true" class="work-panel mat-elevation-z2" *ngIf="availableReports?.length > 0">
 
   <div fxLayout="row wrap" fxLayoutGap="1rem">
     <mat-form-field>
