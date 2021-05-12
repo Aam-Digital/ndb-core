@@ -152,9 +152,7 @@ export class EntityListComponent<T extends Entity>
     }
     this.loadUrlParams();
     this.showAllToggle =
-      this.paginatorPageSize >= this.entityDataSource.data.length
-        ? true
-        : false;
+      this.paginatorPageSize >= this.entityDataSource.data.length;
   }
 
   private initDefaultSort() {
@@ -213,9 +211,7 @@ export class EntityListComponent<T extends Entity>
     this.paginatorPageIndex = event.pageIndex;
     this.updateUserPaginationSettings();
     this.showAllToggle =
-      this.paginatorPageSize >= this.entityDataSource.data.length
-        ? true
-        : false;
+      this.paginatorPageSize >= this.entityDataSource.data.length;
   }
 
   getPaginatorPageSizeOptions(): number[] {
