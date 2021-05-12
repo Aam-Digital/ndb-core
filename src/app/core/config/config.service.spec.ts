@@ -31,7 +31,7 @@ describe("ConfigService", () => {
 
   it("should use the default config when none is loaded", fakeAsync(() => {
     const configBefore = service.getAllConfigs("");
-    entityMapper.load.and.throwError("No config found");
+    entityMapper.load.and.rejectWith("No config found");
     service.loadConfig(entityMapper);
     tick();
     const configAfter = service.getAllConfigs("");
@@ -88,16 +88,14 @@ describe("ConfigService", () => {
     );
   }));
 
-  it("should create export config string", fakeAsync(() => {
+  it("should create export config string", async () => {
     const config = new Config();
     config.data = { first: "foo", second: "bar" };
     const expected = JSON.stringify(config.data);
     entityMapper.load.and.returnValue(Promise.resolve(config));
-    service.loadConfig(entityMapper);
-    tick();
-    const result = service.exportConfig();
+    const result = await service.exportConfig(entityMapper);
     expect(result).toEqual(expected);
-  }));
+  });
 
   it("should emit new value", fakeAsync(() => {
     spyOn(service.configUpdated, "next");
