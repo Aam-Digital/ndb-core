@@ -1,5 +1,5 @@
 import { Component, Input } from "@angular/core";
-import { ReportRow } from "../../reporting.service";
+import { getGroupingInformationString, ReportRow } from "../../report-row";
 
 @Component({
   selector: "app-report-row",
@@ -8,4 +8,6 @@ import { ReportRow } from "../../reporting.service";
 })
 export class ReportRowComponent {
   @Input() rows: ReportRow[] = [];
+
+  getGroupedByString = getGroupingInformationString;
 }

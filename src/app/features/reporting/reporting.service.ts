@@ -1,21 +1,12 @@
 import { Injectable } from "@angular/core";
 import { QueryService } from "./query.service";
+import { GroupByDescription, ReportRow } from "./report-row";
 
 export interface Aggregation {
   query: string;
   groupBy?: string[];
   label?: string;
   aggregations?: Aggregation[];
-}
-
-export interface ReportRow {
-  header: { label: string; groupedBy: GroupByDescription[]; result: number };
-  subRows: ReportRow[];
-}
-
-export interface GroupByDescription {
-  property: string;
-  value: any;
 }
 
 @Injectable({
@@ -151,17 +142,5 @@ export class ReportingService {
       existingGroup.data.push(currentElement);
       return allGroups;
     }, new Array<{ value: ENTITY[PROPERTY]; data: ENTITY[] }>());
-  }
-
-  private getValueDescription(value: any, property: string): string {
-    if (typeof value === "boolean") {
-      return value ? property : "not " + property;
-    } else if (!value) {
-      return "without " + property;
-    } else if (value.hasOwnProperty("label")) {
-      return value.label;
-    } else {
-      return value;
-    }
   }
 }

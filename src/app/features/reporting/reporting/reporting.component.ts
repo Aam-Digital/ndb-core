@@ -1,6 +1,11 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { Aggregation, ReportingService, ReportRow } from "../reporting.service";
+import { Aggregation, ReportingService } from "../reporting.service";
+import {
+  getGroupingInformationString,
+  GroupByDescription,
+  ReportRow,
+} from "../report-row";
 
 export interface ReportingComponentConfig {
   aggregationDefinitions?: Aggregation[];
@@ -52,12 +57,13 @@ export class ReportingComponent implements OnInit {
 
   private createExportableRow(header: {
     label: string;
-    values?: string[];
+    groupedBy: GroupByDescription[];
     result: any;
   }): { label: string; result: any } {
     let resultLabel = header.label;
-    if (header.values?.length > 0) {
-      resultLabel += " (" + header.values.join(", ") + ")";
+    const groupByString = getGroupingInformationString(header.groupedBy);
+    if (groupByString) {
+      resultLabel += " " + groupByString;
     }
     return { label: resultLabel, result: header.result };
   }

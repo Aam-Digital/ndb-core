@@ -14,8 +14,10 @@ import { ReportingModule } from "../reporting.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Subject } from "rxjs";
 import { ActivatedRoute } from "@angular/router";
-import { ReportingService, ReportRow } from "../reporting.service";
+import { ReportingService } from "../reporting.service";
 import { MatNativeDateModule } from "@angular/material/core";
+import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
+import { ReportRow } from "../report-row";
 
 describe("ReportingComponent", () => {
   let component: ReportingComponent;
@@ -90,33 +92,73 @@ describe("ReportingComponent", () => {
     expect(component.results).toEqual(results);
   }));
 
-  it("should create a table that can be exported", fakeAsync(() => {
+  it("should creat a table that can be exported", fakeAsync(() => {
+    const schoolClass = defaultInteractionTypes.find(
+      (it) => it.id === "SCHOOL_CLASS"
+    );
+    const coachingClass = defaultInteractionTypes.find(
+      (it) => it.id === "COACHING_CLASS"
+    );
     mockReportingService.calculateReport.and.resolveTo([
       {
-        header: { label: "top level", groupedBy: [], result: 1 },
+        header: { label: "Total # of events", groupedBy: [], result: 3 },
         subRows: [
           {
             header: {
-              label: "first nested",
-              groupedBy: [{ property: "first", value: "first value" }],
-              result: 2,
+              label: "Total # of events",
+              groupedBy: [{ property: "category", value: coachingClass }],
+              result: 1,
             },
-            subRows: [
-              {
-                header: {
-                  label: "double nested",
-                  groupedBy: [
-                    { property: "first", value: "first value" },
-                    { property: "second", value: "second value" },
-                  ],
-                  result: 2.5,
-                },
-                subRows: [],
-              },
-            ],
+            subRows: [],
           },
           {
-            header: { label: "second nested", groupedBy: [], result: 3 },
+            header: {
+              label: "Total # of events",
+              groupedBy: [{ property: "category", value: schoolClass }],
+              result: 2,
+            },
+            subRows: [],
+          },
+        ],
+      },
+      {
+        header: { label: "Total # of schools", groupedBy: [], result: 3 },
+        subRows: [
+          {
+            header: {
+              label: "Total # of schools",
+              groupedBy: [{ property: "medium", value: "" }],
+              result: 2,
+            },
+            subRows: [],
+          },
+          {
+            header: {
+              label: "Total # of schools",
+              groupedBy: [{ property: "medium", value: "Hindi" }],
+              result: 1,
+            },
+            subRows: [],
+          },
+        ],
+      },
+      {
+        header: { label: "Total # of schools", groupedBy: [], result: 2 },
+        subRows: [
+          {
+            header: {
+              label: "Total # of schools",
+              groupedBy: [{ property: "privateSchool", value: true }],
+              result: 1,
+            },
+            subRows: [],
+          },
+          {
+            header: {
+              label: "Total # of schools",
+              groupedBy: [{ property: "privateSchool", value: false }],
+              result: 1,
+            },
             subRows: [],
           },
         ],
@@ -127,10 +169,15 @@ describe("ReportingComponent", () => {
     tick();
 
     expect(component.exportableTable).toEqual([
-      { label: "top level", result: 1 },
-      { label: "first nested (one value)", result: 2 },
-      { label: "double nested (one value, two, values)", result: 2.5 },
-      { label: "second nested", result: 3 },
+      { label: "Total # of events", result: 3 },
+      { label: `Total # of events (${coachingClass.label})`, result: 1 },
+      { label: `Total # of events (${schoolClass.label})`, result: 2 },
+      { label: "Total # of schools", result: 3 },
+      { label: `Total # of schools (without medium)`, result: 2 },
+      { label: `Total # of schools (Hindi)`, result: 1 },
+      { label: "Total # of schools", result: 2 },
+      { label: `Total # of schools (privateSchool)`, result: 1 },
+      { label: `Total # of schools (not privateSchool)`, result: 1 },
     ]);
   }));
 });

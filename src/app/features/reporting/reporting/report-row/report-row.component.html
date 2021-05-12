@@ -1,7 +1,7 @@
 <mat-expansion-panel *ngFor="let row of rows" [hideToggle]="row.subRows.length === 0">
     <mat-expansion-panel-header [ngClass]="row.subRows.length === 0 ? 'disabled-header' : '' ">
         <mat-panel-title>
-            {{row.header.label}} {{row.header.groupedBy?.length > 0 ? "(" + row.header.groupedBy?.join(", ").toString() + ") " : ""}}
+            {{row.header.label}} {{getGroupedByString(row.header.groupedBy)}}
         </mat-panel-title>
         <mat-panel-description>
             {{row.header.result}}
