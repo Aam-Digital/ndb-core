@@ -66,14 +66,14 @@ describe("EntitySelectComponent", () => {
   });
 
   it("eventually loads all entity-types when the entity-type is set", fakeAsync(() => {
-    component.entityType = TestEntity;
+    component.setEntityType(TestEntity);
     fixture.detectChanges();
     tick();
     expect(component.allEntities.length).toBe(mockEntitiesA.length);
   }));
 
   it("should not be in loading-state when all data is received", fakeAsync(() => {
-    component.entityType = TestEntity;
+    component.setEntityType(TestEntity);
     tick();
     expect(component.loading.value).toBe(false);
   }));
@@ -83,12 +83,12 @@ describe("EntitySelectComponent", () => {
       expect(next.length).toBe(mockEntitiesA.length);
       done();
     });
-    component.entityType = TestEntity;
+    component.setEntityType(TestEntity);
     fixture.detectChanges();
   });
 
   it("contains the initial selection when passed as entity-arguments", fakeAsync(() => {
-    component.entityType = TestEntity;
+    component.setEntityType(TestEntity);
     fixture.detectChanges();
     tick();
     component.selectionInputType = "entity";
@@ -98,7 +98,7 @@ describe("EntitySelectComponent", () => {
   }));
 
   it("contains the initial selection when passed as id-arguments", fakeAsync(() => {
-    component.entityType = TestEntity;
+    component.setEntityType(TestEntity);
     component.selectionInputType = "id";
     const expectation = mockEntitiesA.slice(2, 3).map((child) => child.getId());
     component.selection = expectation;
@@ -110,7 +110,7 @@ describe("EntitySelectComponent", () => {
 
   it("emits whenever a new entity is selected", fakeAsync(() => {
     spyOn(component.selectionChange, "emit");
-    component.entityType = TestEntity;
+    component.setEntityType(TestEntity);
     tick();
     component.selectionInputType = "entity";
     component.selectEntity(mockEntitiesA[0]);
