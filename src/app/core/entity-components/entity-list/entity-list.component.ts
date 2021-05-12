@@ -246,7 +246,7 @@ export class EntityListComponent<T extends Entity>
       ) {
         this.paginatorPageSize = this.paginatorPageSizeBeforeToggle;
       } else {
-        let po = this.getPaginatorPageSizeOptions();
+        const po = this.getPaginatorPageSizeOptions();
         this.paginatorPageSize = po.length > 2 ? po[po.length - 2] : po[0];
       }
     }
