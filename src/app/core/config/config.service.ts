@@ -52,7 +52,7 @@ export class ConfigService {
   public async exportConfig(
     entityMapper: EntityMapperService
   ): Promise<string> {
-    let config = await this.getConfigOrDefault(entityMapper);
+    const config = await this.getConfigOrDefault(entityMapper);
     return JSON.stringify(config.data);
   }
 
