@@ -85,7 +85,7 @@ Variables inside the string can be of arbitrary complexity and are escaped using
 Once content with the process of marking fields as translatable and providing
 good and understandable meaning to these fields, translation-files can be
 generated. This is done using the `extract-i18n`-script (Can be found in the
-file [package-lock.json](package-lock.json)). This script will generate one
+file [package.json](package.json)). This script will generate one
 "Base file" and will also generate and update existing translation files
 for all locales given in the script. These will be located in the 
 [locale](../../../src/locale) directory.
@@ -226,7 +226,7 @@ Can be translated to the variants "This is Tom. He is a nice person" as well as
 ```
 The variable's type is arbitrary, however the options have to make sense.
 Types that are known to work well are the standard types of strings, numbers
-and booleans are known to work well.
+and booleans.
 
 ### Do's and dont's
 
