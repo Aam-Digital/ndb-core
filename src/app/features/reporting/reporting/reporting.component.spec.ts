@@ -98,14 +98,17 @@ describe("ReportingComponent", () => {
           {
             header: {
               label: "first nested",
-              groupedBy: ["one value"],
+              groupedBy: [{ property: "first", value: "first value" }],
               result: 2,
             },
             subRows: [
               {
                 header: {
                   label: "double nested",
-                  groupedBy: ["one value", "two", "values"],
+                  groupedBy: [
+                    { property: "first", value: "first value" },
+                    { property: "second", value: "second value" },
+                  ],
                   result: 2.5,
                 },
                 subRows: [],

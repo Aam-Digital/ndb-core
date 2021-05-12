@@ -9,8 +9,13 @@ export interface Aggregation {
 }
 
 export interface ReportRow {
-  header: { label: string; groupedBy: any[]; result: number };
+  header: { label: string; groupedBy: GroupByDescription[]; result: number };
   subRows: ReportRow[];
+}
+
+export interface GroupByDescription {
+  property: string;
+  value: any;
 }
 
 @Injectable({
@@ -36,7 +41,7 @@ export class ReportingService {
   private async calculateAggregations(
     aggregations: Aggregation[] = [],
     data?: any[],
-    additionalValues: any[] = []
+    additionalValues: GroupByDescription[] = []
   ): Promise<ReportRow[]> {
     const resultRows: ReportRow[] = [];
     let currentSubRows = resultRows;
@@ -88,7 +93,7 @@ export class ReportingService {
     aggregations: any[],
     label: string,
     data: any[],
-    additionalValues: any[]
+    additionalValues: GroupByDescription[]
   ): Promise<ReportRow[]> {
     const resultRows: ReportRow[] = [];
     for (let i = properties.length; i > 0; i--) {
@@ -96,9 +101,10 @@ export class ReportingService {
       const remainingProperties = properties.slice(i);
       const groupingResults = this.groupBy(data, currentProperty);
       for (const grouping of groupingResults) {
-        const groupingValues = additionalValues.concat(
-          this.getValueDescription(grouping.value, currentProperty)
-        );
+        const groupingValues = additionalValues.concat({
+          property: currentProperty,
+          value: grouping.value,
+        });
         const newRow: ReportRow = {
           header: {
             label: label,
