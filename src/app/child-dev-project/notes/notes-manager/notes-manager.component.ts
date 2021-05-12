@@ -131,26 +131,26 @@ export class NotesManagerComponent implements OnInit {
   }
 
   private addPrebuiltFilters() {
-    for (const filter of this.config.filters.filter(
+    for (const prebuiltFilter of this.config.filters.filter(
       (filter) => filter.type === "prebuilt"
     )) {
-      switch (filter.id) {
+      switch (prebuiltFilter.id) {
         case "status": {
-          filter["options"] = this.statusFS;
-          filter["default"] = "";
+          prebuiltFilter["options"] = this.statusFS;
+          prebuiltFilter["default"] = "";
           break;
         }
         case "date": {
-          filter["options"] = this.dateFS;
-          filter["default"] = "current-week";
+          prebuiltFilter["options"] = this.dateFS;
+          prebuiltFilter["default"] = "current-week";
           break;
         }
         default: {
           this.log.warn(
             "[NoteManagerComponent] No filter options available for prebuilt filter: " +
-              filter.id
+              prebuiltFilter.id
           );
-          filter["options"] = [];
+          prebuiltFilter["options"] = [];
         }
       }
     }

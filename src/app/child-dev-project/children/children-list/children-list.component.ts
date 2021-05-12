@@ -57,21 +57,21 @@ export class ChildrenListComponent implements OnInit {
   }
 
   private async addPrebuiltFilters() {
-    for (const filter of this.listConfig.filters.filter(
+    for (const prebuiltFilter of this.listConfig.filters.filter(
       (filter) => filter.type === "prebuilt"
     )) {
-      switch (filter.id) {
+      switch (prebuiltFilter.id) {
         case "school": {
-          (filter as PrebuiltFilterConfig<Child>).options = await this.buildSchoolFilter();
-          (filter as PrebuiltFilterConfig<Child>).default = "";
+          (prebuiltFilter as PrebuiltFilterConfig<Child>).options = await this.buildSchoolFilter();
+          (prebuiltFilter as PrebuiltFilterConfig<Child>).default = "";
           break;
         }
         default: {
           this.log.warn(
             "[ChildrenListComponent] No filter options available for prebuilt filter: " +
-              filter.id
+              prebuiltFilter.id
           );
-          (filter as PrebuiltFilterConfig<Child>).options = [];
+          (prebuiltFilter as PrebuiltFilterConfig<Child>).options = [];
         }
       }
     }
