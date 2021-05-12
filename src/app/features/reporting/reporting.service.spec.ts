@@ -52,8 +52,11 @@ describe("ReportingService", () => {
       [muslimsQuery, undefined, undefined, baseData],
     ]);
     expect(report).toEqual([
-      { header: { label: "christians", values: [], result: 1 }, subRows: [] },
-      { header: { label: "muslims", values: [], result: 2 }, subRows: [] },
+      {
+        header: { label: "christians", groupedBy: [], result: 1 },
+        subRows: [],
+      },
+      { header: { label: "muslims", groupedBy: [], result: 2 }, subRows: [] },
     ]);
   });
 
@@ -127,14 +130,14 @@ describe("ReportingService", () => {
       {
         header: {
           label: "Base result",
-          values: [],
+          groupedBy: [],
           result: 2,
         },
         subRows: [
           {
             header: {
               label: "First nested aggregation",
-              values: [],
+              groupedBy: [],
               result: 1,
             },
             subRows: [],
@@ -142,13 +145,13 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Second nested aggregation",
-              values: [],
+              groupedBy: [],
               result: 1,
             },
             subRows: [],
           },
           {
-            header: { label: "Normal aggregation", values: [], result: 1 },
+            header: { label: "Normal aggregation", groupedBy: [], result: 1 },
             subRows: [],
           },
         ],
@@ -177,12 +180,12 @@ describe("ReportingService", () => {
 
     expect(result).toEqual([
       {
-        header: { label: "Total # of children", values: [], result: 3 },
+        header: { label: "Total # of children", groupedBy: [], result: 3 },
         subRows: [
           {
             header: {
               label: "Total # of children",
-              values: [Gender.FEMALE],
+              groupedBy: [Gender.FEMALE],
               result: 1,
             },
             subRows: [],
@@ -190,7 +193,7 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Total # of children",
-              values: [Gender.MALE],
+              groupedBy: [Gender.MALE],
               result: 2,
             },
             subRows: [],
@@ -224,23 +227,27 @@ describe("ReportingService", () => {
 
     expect(result).toEqual([
       {
-        header: { label: "Total # of children", values: [], result: 3 },
+        header: { label: "Total # of children", groupedBy: [], result: 3 },
         subRows: [
           {
-            header: { label: "Total # of christians", values: [], result: 3 },
+            header: {
+              label: "Total # of christians",
+              groupedBy: [],
+              result: 3,
+            },
             subRows: [],
           },
           {
             header: {
               label: "Total # of children",
-              values: [Gender.MALE],
+              groupedBy: [Gender.MALE],
               result: 2,
             },
             subRows: [
               {
                 header: {
                   label: "Total # of christians",
-                  values: [Gender.MALE],
+                  groupedBy: [Gender.MALE],
                   result: 3,
                 },
                 subRows: [],
@@ -250,14 +257,14 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Total # of children",
-              values: [Gender.FEMALE],
+              groupedBy: [Gender.FEMALE],
               result: 1,
             },
             subRows: [
               {
                 header: {
                   label: "Total # of christians",
-                  values: [Gender.FEMALE],
+                  groupedBy: [Gender.FEMALE],
                   result: 3,
                 },
                 subRows: [],
@@ -304,12 +311,12 @@ describe("ReportingService", () => {
 
     expect(result).toEqual([
       {
-        header: { label: "Total # of children", values: [], result: 4 },
+        header: { label: "Total # of children", groupedBy: [], result: 4 },
         subRows: [
           {
             header: {
               label: "Total # of children",
-              values: ["Alipore"],
+              groupedBy: ["Alipore"],
               result: 3,
             },
             subRows: [],
@@ -317,7 +324,7 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Total # of children",
-              values: ["Barabazar"],
+              groupedBy: ["Barabazar"],
               result: 1,
             },
             subRows: [],
@@ -325,14 +332,14 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Total # of children",
-              values: ["christian"],
+              groupedBy: ["christian"],
               result: 3,
             },
             subRows: [
               {
                 header: {
                   label: "Total # of children",
-                  values: ["christian", "Alipore"],
+                  groupedBy: ["christian", "Alipore"],
                   result: 2,
                 },
                 subRows: [],
@@ -340,7 +347,7 @@ describe("ReportingService", () => {
               {
                 header: {
                   label: "Total # of children",
-                  values: ["christian", "Barabazar"],
+                  groupedBy: ["christian", "Barabazar"],
                   result: 1,
                 },
                 subRows: [],
@@ -350,14 +357,14 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Total # of children",
-              values: ["muslim"],
+              groupedBy: ["muslim"],
               result: 1,
             },
             subRows: [
               {
                 header: {
                   label: "Total # of children",
-                  values: ["muslim", "Alipore"],
+                  groupedBy: ["muslim", "Alipore"],
                   result: 1,
                 },
                 subRows: [],
@@ -367,14 +374,14 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Total # of children",
-              values: [Gender.FEMALE],
+              groupedBy: [Gender.FEMALE],
               result: 2,
             },
             subRows: [
               {
                 header: {
                   label: "Total # of children",
-                  values: [Gender.FEMALE, "Alipore"],
+                  groupedBy: [Gender.FEMALE, "Alipore"],
                   result: 1,
                 },
                 subRows: [],
@@ -382,7 +389,7 @@ describe("ReportingService", () => {
               {
                 header: {
                   label: "Total # of children",
-                  values: [Gender.FEMALE, "Barabazar"],
+                  groupedBy: [Gender.FEMALE, "Barabazar"],
                   result: 1,
                 },
                 subRows: [],
@@ -390,14 +397,14 @@ describe("ReportingService", () => {
               {
                 header: {
                   label: "Total # of children",
-                  values: [Gender.FEMALE, "christian"],
+                  groupedBy: [Gender.FEMALE, "christian"],
                   result: 2,
                 },
                 subRows: [
                   {
                     header: {
                       label: "Total # of children",
-                      values: [Gender.FEMALE, "christian", "Alipore"],
+                      groupedBy: [Gender.FEMALE, "christian", "Alipore"],
                       result: 1,
                     },
                     subRows: [],
@@ -405,7 +412,7 @@ describe("ReportingService", () => {
                   {
                     header: {
                       label: "Total # of children",
-                      values: [Gender.FEMALE, "christian", "Barabazar"],
+                      groupedBy: [Gender.FEMALE, "christian", "Barabazar"],
                       result: 1,
                     },
                     subRows: [],
@@ -417,14 +424,14 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Total # of children",
-              values: [Gender.MALE],
+              groupedBy: [Gender.MALE],
               result: 2,
             },
             subRows: [
               {
                 header: {
                   label: "Total # of children",
-                  values: [Gender.MALE, "Alipore"],
+                  groupedBy: [Gender.MALE, "Alipore"],
                   result: 2,
                 },
                 subRows: [],
@@ -432,14 +439,14 @@ describe("ReportingService", () => {
               {
                 header: {
                   label: "Total # of children",
-                  values: [Gender.MALE, "christian"],
+                  groupedBy: [Gender.MALE, "christian"],
                   result: 1,
                 },
                 subRows: [
                   {
                     header: {
                       label: "Total # of children",
-                      values: [Gender.MALE, "christian", "Alipore"],
+                      groupedBy: [Gender.MALE, "christian", "Alipore"],
                       result: 1,
                     },
                     subRows: [],
@@ -449,14 +456,14 @@ describe("ReportingService", () => {
               {
                 header: {
                   label: "Total # of children",
-                  values: [Gender.MALE, "muslim"],
+                  groupedBy: [Gender.MALE, "muslim"],
                   result: 1,
                 },
                 subRows: [
                   {
                     header: {
                       label: "Total # of children",
-                      values: [Gender.MALE, "muslim", "Alipore"],
+                      groupedBy: [Gender.MALE, "muslim", "Alipore"],
                       result: 1,
                     },
                     subRows: [],
@@ -505,15 +512,19 @@ describe("ReportingService", () => {
 
     expect(result).toEqual([
       {
-        header: { label: "Total # of children", values: [], result: 5 },
+        header: { label: "Total # of children", groupedBy: [], result: 5 },
         subRows: [
           {
-            header: { label: "Total # of old children", values: [], result: 5 },
+            header: {
+              label: "Total # of old children",
+              groupedBy: [],
+              result: 5,
+            },
             subRows: [
               {
                 header: {
                   label: "Total # of old children",
-                  values: ["christian"],
+                  groupedBy: ["christian"],
                   result: 2,
                 },
                 subRows: [],
@@ -521,7 +532,7 @@ describe("ReportingService", () => {
               {
                 header: {
                   label: "Total # of old children",
-                  values: ["muslim"],
+                  groupedBy: ["muslim"],
                   result: 3,
                 },
                 subRows: [],
@@ -531,21 +542,21 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Total # of children",
-              values: [Gender.FEMALE],
+              groupedBy: [Gender.FEMALE],
               result: 4,
             },
             subRows: [
               {
                 header: {
                   label: "Total # of old children",
-                  values: [Gender.FEMALE],
+                  groupedBy: [Gender.FEMALE],
                   result: 5,
                 },
                 subRows: [
                   {
                     header: {
                       label: "Total # of old children",
-                      values: [Gender.FEMALE, "christian"],
+                      groupedBy: [Gender.FEMALE, "christian"],
                       result: 2,
                     },
                     subRows: [],
@@ -553,7 +564,7 @@ describe("ReportingService", () => {
                   {
                     header: {
                       label: "Total # of old children",
-                      values: [Gender.FEMALE, "muslim"],
+                      groupedBy: [Gender.FEMALE, "muslim"],
                       result: 3,
                     },
                     subRows: [],
@@ -565,21 +576,21 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Total # of children",
-              values: [Gender.MALE],
+              groupedBy: [Gender.MALE],
               result: 1,
             },
             subRows: [
               {
                 header: {
                   label: "Total # of old children",
-                  values: [Gender.MALE],
+                  groupedBy: [Gender.MALE],
                   result: 5,
                 },
                 subRows: [
                   {
                     header: {
                       label: "Total # of old children",
-                      values: [Gender.MALE, "christian"],
+                      groupedBy: [Gender.MALE, "christian"],
                       result: 2,
                     },
                     subRows: [],
@@ -587,7 +598,7 @@ describe("ReportingService", () => {
                   {
                     header: {
                       label: "Total # of old children",
-                      values: [Gender.MALE, "muslim"],
+                      groupedBy: [Gender.MALE, "muslim"],
                       result: 3,
                     },
                     subRows: [],
@@ -627,12 +638,12 @@ describe("ReportingService", () => {
 
     expect(result).toEqual([
       {
-        header: { label: "Total # of events", values: [], result: 3 },
+        header: { label: "Total # of events", groupedBy: [], result: 3 },
         subRows: [
           {
             header: {
               label: "Total # of events",
-              values: [coachingClass.label],
+              groupedBy: [coachingClass.label],
               result: 1,
             },
             subRows: [],
@@ -640,7 +651,7 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Total # of events",
-              values: [schoolClass.label],
+              groupedBy: [schoolClass.label],
               result: 2,
             },
             subRows: [],
@@ -669,12 +680,12 @@ describe("ReportingService", () => {
     const result = await service.calculateReport();
     expect(result).toEqual([
       {
-        header: { label: "Total # of schools", values: [], result: 3 },
+        header: { label: "Total # of schools", groupedBy: [], result: 3 },
         subRows: [
           {
             header: {
               label: "Total # of schools",
-              values: ["without medium"],
+              groupedBy: ["without medium"],
               result: 2,
             },
             subRows: [],
@@ -682,7 +693,7 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Total # of schools",
-              values: ["Hindi"],
+              groupedBy: ["Hindi"],
               result: 1,
             },
             subRows: [],
@@ -709,12 +720,12 @@ describe("ReportingService", () => {
 
     expect(result).toEqual([
       {
-        header: { label: "Total # of schools", values: [], result: 2 },
+        header: { label: "Total # of schools", groupedBy: [], result: 2 },
         subRows: [
           {
             header: {
               label: "Total # of schools",
-              values: ["privateSchool"],
+              groupedBy: ["privateSchool"],
               result: 1,
             },
             subRows: [],
@@ -722,7 +733,7 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Total # of schools",
-              values: ["not privateSchool"],
+              groupedBy: ["not privateSchool"],
               result: 1,
             },
             subRows: [],

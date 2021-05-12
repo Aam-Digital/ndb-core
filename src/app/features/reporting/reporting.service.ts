@@ -9,7 +9,7 @@ export interface Aggregation {
 }
 
 export interface ReportRow {
-  header: { label: string; values: any[]; result: number };
+  header: { label: string; groupedBy: any[]; result: number };
   subRows: ReportRow[];
 }
 
@@ -51,7 +51,7 @@ export class ReportingService {
         const newRow = {
           header: {
             label: aggregation.label,
-            values: additionalValues,
+            groupedBy: additionalValues,
             result: queryResult?.length,
           },
           subRows: [],
@@ -83,17 +83,6 @@ export class ReportingService {
     return resultRows;
   }
 
-  private getQueryWithDates(query: string): any[] {
-    const resultQuery: any[] = [query];
-    if (this.fromDate) {
-      resultQuery.push(this.fromDate);
-    }
-    if (this.toDate) {
-      resultQuery.push(this.toDate);
-    }
-    return resultQuery;
-  }
-
   private async calculateGroupBy(
     properties: string[],
     aggregations: any[],
@@ -113,7 +102,7 @@ export class ReportingService {
         const newRow: ReportRow = {
           header: {
             label: label,
-            values: groupingValues,
+            groupedBy: groupingValues,
             result: grouping.data.length,
           },
           subRows: [],
