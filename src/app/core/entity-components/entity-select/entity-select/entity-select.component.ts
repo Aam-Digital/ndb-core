@@ -40,7 +40,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     if (!entityType) {
       throw new Error(`Entity-Type ${type} not in EntityMap`);
     }
-    this.entityType = entityType;
+    this.setEntityType(entityType);
     if (DYNAMIC_COMPONENTS_MAP.has(type + "Block")) {
       this.entityBlockComponent = type + "Block";
     } else {
@@ -48,26 +48,6 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     }
   }
   entityBlockComponent?: string;
-  /**
-   * The type of entity to load. This is required and will cause all
-   * entities of the given type to be available in the selection
-   * and auto-complete
-   * @param type The type of the entity
-   */
-  set entityType(type: EntityConstructor<E>) {
-    this.loading.next(true);
-    this.entityMapperService
-      .loadType<E>(type)
-      .then((entities) => {
-        this.allEntities = entities;
-        this.loading.next(false);
-        this.formControl.setValue(null);
-      })
-      .catch((error) => {
-        this.loggingService.warn(error);
-        this.loading.next(false);
-      });
-  }
   /**
    * The (initial) selection. Can be used in combination with {@link selectionChange}
    * to enable two-way binding to either an array of entities or an array of strings
@@ -163,6 +143,26 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * has no name, this filters for the entity's id.
    */
   @Input() accessor: accessorFn<E> = (e) => e["name"] || e.getId();
+  /**
+   * The type of entity to load. This is required and will cause all
+   * entities of the given type to be available in the selection
+   * and auto-complete
+   * @param type The type of the entity
+   */
+  setEntityType(type: EntityConstructor<E>) {
+    this.loading.next(true);
+    this.entityMapperService
+      .loadType<E>(type)
+      .then((entities) => {
+        this.allEntities = entities;
+        this.loading.next(false);
+        this.formControl.setValue(null);
+      })
+      .catch((error) => {
+        this.loggingService.warn(error);
+        this.loading.next(false);
+      });
+  }
 
   @Input() additionalFilter: (e: E) => boolean = (_) => true;
   /**
