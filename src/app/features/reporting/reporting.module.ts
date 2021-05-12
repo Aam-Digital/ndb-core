@@ -12,6 +12,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormsModule } from "@angular/forms";
 import { AdminModule } from "../../core/admin/admin.module";
 import { ReportRowComponent } from "./reporting/report-row/report-row.component";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 @NgModule({
   declarations: [ReportingComponent, ReportRowComponent],
@@ -27,6 +28,7 @@ import { ReportRowComponent } from "./reporting/report-row/report-row.component"
     MatFormFieldModule,
     FormsModule,
     AdminModule,
+    MatProgressSpinnerModule,
   ],
 })
 export class ReportingModule {}
