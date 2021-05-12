@@ -13,6 +13,8 @@ import { FormsModule } from "@angular/forms";
 import { AdminModule } from "../../core/admin/admin.module";
 import { ReportRowComponent } from "./reporting/report-row/report-row.component";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatSelectModule } from "@angular/material/select";
+import { FlexModule } from "@angular/flex-layout";
 
 @NgModule({
   declarations: [ReportingComponent, ReportRowComponent],
@@ -29,6 +31,8 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
     FormsModule,
     AdminModule,
     MatProgressBarModule,
+    MatSelectModule,
+    FlexModule,
   ],
 })
 export class ReportingModule {}

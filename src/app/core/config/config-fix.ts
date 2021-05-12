@@ -1193,53 +1193,63 @@ export const defaultConfig = {
   "view:report": {
     "component": "Reporting",
     "config": {
-      "aggregationDefinitions": [
+      "reports": [
         {
-          "query": `${Child.ENTITY_TYPE}:toArray[*isActive=true]`,
-          "label": "All children",
-          "aggregations": [
-            {"label": "Male children", "query": `[*gender=${Gender.MALE}]`},
-            {"label": "Female children", "query": `[*gender=${Gender.FEMALE}]`},
-          ]
-        },
-        {
-          "query": `${School.ENTITY_TYPE}:toArray`,
-          "label": "All schools",
-          "aggregations": [
-            {"label": "Children attending a school", "query": `:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:unique`},
-            {"label": "Governmental schools", "query": `[*privateSchool!=true]`},
+          "title": "Basic Report",
+          "aggregationDefinitions": [
             {
-              "query": `[*privateSchool!=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
-              "label": "Children attending a governmental school",
+              "query": `${Child.ENTITY_TYPE}:toArray[*isActive=true]`,
+              "label": "All children",
               "aggregations": [
-                {"label": "Male children attending a governmental school", "query": `[*gender=${Gender.MALE}]`},
-                {"label": "Female children attending a governmental school", "query": `[*gender=${Gender.FEMALE}]`},
+                {"label": "Male children", "query": `[*gender=${Gender.MALE}]`},
+                {"label": "Female children", "query": `[*gender=${Gender.FEMALE}]`},
               ]
             },
-            {"label": "Private schools", "query": `[*privateSchool=true]`},
             {
-              "query": `[*privateSchool=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
-              "label": "Children attending a private school",
+              "query": `${School.ENTITY_TYPE}:toArray`,
+              "label": "All schools",
               "aggregations": [
-                {"label": "Male children attending a private school", "query": `[*gender=${Gender.MALE}]`},
-                {"label": "Female children attending a private school", "query": `[*gender=${Gender.FEMALE}]`},
+                {"label": "Children attending a school", "query": `:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:unique`},
+                {"label": "Governmental schools", "query": `[*privateSchool!=true]`},
+                {
+                  "query": `[*privateSchool!=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
+                  "label": "Children attending a governmental school",
+                  "aggregations": [
+                    {"label": "Male children attending a governmental school", "query": `[*gender=${Gender.MALE}]`},
+                    {"label": "Female children attending a governmental school", "query": `[*gender=${Gender.FEMALE}]`},
+                  ]
+                },
+                {"label": "Private schools", "query": `[*privateSchool=true]`},
+                {
+                  "query": `[*privateSchool=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
+                  "label": "Children attending a private school",
+                  "aggregations": [
+                    {"label": "Male children attending a private school", "query": `[*gender=${Gender.MALE}]`},
+                    {"label": "Female children attending a private school", "query": `[*gender=${Gender.FEMALE}]`},
+                  ]
+                },
               ]
-            },
-          ]
-        },
-        {
-          "query": `${EventNote.ENTITY_TYPE}:toArray[*date >= ? & date <= ?]`,
-          "groupBy": ["category"],
-          "label": "Total # of events",
-          "aggregations": [
-            {
-              "query": `:getParticipantsWithAttendance(PRESENT):unique:addPrefix(${Child.ENTITY_TYPE}):toEntities`,
-              "groupBy": ["gender", "religion"],
-              "label": "Total # of participants"
             }
-          ]
+          ],
+        },
+        {
+          "title": "Event Report",
+          "aggregationDefinitions": [
+            {
+              "query": `${EventNote.ENTITY_TYPE}:toArray[*date >= ? & date <= ?]`,
+              "groupBy": ["category"],
+              "label": "Total # of events",
+              "aggregations": [
+                {
+                  "query": `:getParticipantsWithAttendance(PRESENT):unique:addPrefix(${Child.ENTITY_TYPE}):toEntities`,
+                  "groupBy": ["gender", "religion"],
+                  "label": "Total # of participants"
+                }
+              ]
+            }
+          ],
         }
-      ],
+      ]
     }
   },
 

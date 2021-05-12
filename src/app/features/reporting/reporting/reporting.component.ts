@@ -1,15 +1,15 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { Aggregation, ReportingService } from "../reporting.service";
+import { ReportingService } from "../reporting.service";
 import {
   getGroupingInformationString,
   GroupByDescription,
   ReportRow,
 } from "../report-row";
-
-export interface ReportingComponentConfig {
-  aggregationDefinitions?: Aggregation[];
-}
+import {
+  ReportConfig,
+  ReportingComponentConfig,
+} from "./reporting-component-config";
 
 @Component({
   selector: "app-reporting",
@@ -17,7 +17,9 @@ export interface ReportingComponentConfig {
   styleUrls: ["./reporting.component.scss"],
 })
 export class ReportingComponent implements OnInit {
-  config: ReportingComponentConfig;
+  availableReports: ReportConfig[];
+  selectedReport: ReportConfig;
+
   results: ReportRow[];
   fromDate: Date;
   toDate: Date;
@@ -31,13 +33,20 @@ export class ReportingComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.activatedRoute.data.subscribe((config) => (this.config = config));
+    this.activatedRoute.data.subscribe((config: ReportingComponentConfig) => {
+      this.availableReports = config.reports;
+      if (this.availableReports?.length === 1) {
+        this.selectedReport = this.availableReports[0];
+      }
+    });
   }
 
   async calculateResults() {
     this.loading = true;
 
-    this.reportingService.setAggregations(this.config.aggregationDefinitions);
+    this.reportingService.setAggregations(
+      this.selectedReport.aggregationDefinitions
+    );
     this.results = await this.reportingService.calculateReport(
       this.fromDate,
       this.toDate
