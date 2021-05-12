@@ -15,6 +15,7 @@ import moment, { Moment } from "moment";
 import { LoggingService } from "../../core/logging/logging.service";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 import { QueryOptions } from "../../core/database/database";
+import { groupBy } from "../../utils/utils";
 
 @Injectable()
 export class ChildrenService {
@@ -63,27 +64,19 @@ export class ChildrenService {
   }
 
   async getChildrenImproved(): Promise<Child[]> {
-    const result = await this.dbIndexing.queryIndexRaw(
-      "childSchoolRelations_index/by_child_improved",
-      { include_docs: true }
-    );
-    const childMap = new Map<string, Child>();
-    result.rows.forEach((row) => {
-      if (row.doc._id.startsWith(ChildSchoolRelation.ENTITY_TYPE)) {
-        const relation = new ChildSchoolRelation();
-        this.entitySchemaService.loadDataIntoEntity(relation, row.doc);
-        if (relation.isActive()) {
-          const child = childMap.get(relation.childId);
-          child.schoolId = relation.schoolId;
-          child.schoolClass = relation.schoolClass;
-        }
-      } else if (row.doc._id.startsWith(Child.ENTITY_TYPE)) {
-        const child = new Child();
-        this.entitySchemaService.loadDataIntoEntity(child, row.doc);
-        childMap.set(child.getId(), child);
+    const children = await this.entityMapper.loadType(Child);
+    const allRelations = await this.entityMapper.loadType(ChildSchoolRelation);
+    const relationsMap = groupBy(allRelations, "childId");
+    children.forEach((child) => {
+      const activeRelation = relationsMap
+        .get(child.getId())
+        .find((relation) => relation.isActive());
+      if (activeRelation) {
+        child.schoolId = activeRelation.schoolId;
+        child.schoolClass = activeRelation.schoolClass;
       }
     });
-    return new Array(...childMap.values());
+    return children;
   }
 
   /**
@@ -172,17 +165,6 @@ export class ChildrenService {
             if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
             emit(doc.childId);
             }`,
-        },
-        by_child_improved: {
-          map: `(doc) => {
-            if (doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) {
-              emit([doc.childId, (new Date(doc.start || '3000-01-01')).getTime()]);
-            } else if (doc._id.startsWith("${Child.ENTITY_TYPE}")) {
-              const shortId = doc._id.replace("${Child.ENTITY_TYPE}" + ":", "");
-              emit([shortId, 0]);
-            }
-            return;
-          }`,
         },
         by_school: {
           map: `(doc) => {

@@ -29,17 +29,17 @@ export function getParentUrl(router: Router): string {
  * @param array A simple array to be grouped.
  * @param propertyToGroupBy The key of the property in the elements by whose value the result is grouped.
  */
-export function groupBy<T>(
-  array: T[],
-  propertyToGroupBy: keyof T
-): Map<string, T[]> {
+export function groupBy<ENTITY, PROPERTY extends keyof ENTITY>(
+  array: ENTITY[],
+  propertyToGroupBy: PROPERTY
+): Map<ENTITY[PROPERTY], ENTITY[]> {
   return array.reduce(
     (entryMap, element) =>
       entryMap.set(element[propertyToGroupBy], [
         ...(entryMap.get(element[propertyToGroupBy]) || []),
         element,
       ]),
-    new Map()
+    new Map<ENTITY[PROPERTY], ENTITY[]>()
   );
 }
 
