@@ -7,8 +7,7 @@ import {
   OnInit,
   Output,
   SimpleChanges,
-  ViewChild,
-  ElementRef
+  ViewChild
 } from "@angular/core";
 import { MatSort, MatSortable } from "@angular/material/sort";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
@@ -71,8 +70,6 @@ export class EntityListComponent<T extends Entity>
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild('paginatorElement', {read: ElementRef})
-  paginatorHtmlElement: ElementRef;
 
   listName = "";
   columns: ColumnConfig[] = [];
@@ -91,8 +88,10 @@ export class EntityListComponent<T extends Entity>
   entityDataSource = new MatTableDataSource<T>();
 
   user: User;
-  paginatorPageSize = 10;
-  paginatorPageIndex = 0;
+  paginatorPageSize: number = 10;
+  paginatorPageSizeBeforeToggle: number = 10;
+  paginatorPageIndex: number = 0;
+  showAllToggle: boolean = false;
 
   filterString = "";
 
@@ -152,7 +151,7 @@ export class EntityListComponent<T extends Entity>
       this.initDefaultSort();
     }
     this.loadUrlParams();
-    this.paginatorHtmlElement.nativeElement.querySelector('div.mat-select-value > span > span').innerHTML = this.paginator.pageSize == 2147483647? 'All': this.paginator.pageSize;
+    this.showAllToggle = (this.paginatorPageSize >= this.entityDataSource.data.length ? true : false);
   }
 
   private initDefaultSort() {
@@ -210,20 +209,37 @@ export class EntityListComponent<T extends Entity>
     this.paginatorPageSize = event.pageSize;
     this.paginatorPageIndex = event.pageIndex;
     this.updateUserPaginationSettings();
-    this.paginatorHtmlElement.nativeElement.querySelector('div.mat-select-value > span > span').innerHTML = this.paginator.pageSize == 2147483647? 'All': this.paginator.pageSize;
+    this.showAllToggle = (this.paginatorPageSize >= this.entityDataSource.data.length ? true : false);
   }
 
   getPaginatorPageSizeOptions(): number[] {
     const ar = [3, 10, 20, 50].filter((n) => {return n < this.entityDataSource.data.length });
-    ar.push(2147483647);
+    ar.push(this.entityDataSource.data.length);
     return ar;
   }
 
   getPaginatorPageSize(): number {
     if (this.entityDataSource.data.length && this.paginatorPageSize >= this.entityDataSource.data.length) {
-      this.paginatorPageSize = 2147483647;
+      this.paginatorPageSize = this.entityDataSource.data.length;
     }
     return this.paginatorPageSize;
+  }
+
+  clickShowAllToggle() {
+    if (!this.showAllToggle) {
+      this.paginatorPageSizeBeforeToggle = this.paginatorPageSize;
+      this.paginatorPageSize = this.entityDataSource.data.length;
+    } else {
+      if (this.paginatorPageSizeBeforeToggle <= this.entityDataSource.data.length) {
+        this.paginatorPageSize = this.paginatorPageSizeBeforeToggle;
+      }
+      else {
+        let po = this.getPaginatorPageSizeOptions();
+        this.paginatorPageSize =  (po.length > 2) ? po[po.length-2] : po[0];
+      }
+    }
+    this.paginator._changePageSize(this.paginatorPageSize);
+    this.showAllToggle = !this.showAllToggle;
   }
 
   columnGroupClick(columnGroupName: string) {
