@@ -157,10 +157,6 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
         this.allEntities = entities;
         this.loading.next(false);
         this.formControl.setValue(null);
-      })
-      .catch((error) => {
-        this.loggingService.warn(error);
-        this.loading.next(false);
       });
   }
 
