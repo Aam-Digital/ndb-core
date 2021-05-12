@@ -22,7 +22,6 @@ export class ReportingComponent implements OnInit {
   fromDate: Date;
   toDate: Date;
   exportableTable: { label: string; result: any }[];
-  isCalculating = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -34,13 +33,11 @@ export class ReportingComponent implements OnInit {
   }
 
   async calculateResults() {
-    this.isCalculating = true;
     this.reportingService.setAggregations(this.config.aggregationDefinitions);
     this.results = await this.reportingService.calculateReport(
       this.fromDate,
       this.toDate
     );
-    this.isCalculating = false;
     this.exportableTable = this.flattenReportRows();
   }
 
