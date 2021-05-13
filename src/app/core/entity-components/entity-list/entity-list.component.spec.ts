@@ -25,6 +25,7 @@ import { BackupService } from "../../admin/services/backup.service";
 import { EntityListModule } from "./entity-list.module";
 import { Angulartics2Module } from "angulartics2";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { DatabaseField } from "../../entity/database-field.decorator";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -353,6 +354,36 @@ describe("EntityListComponent", () => {
         title: "without defined component",
         id: "withoutDefinedComponent",
         component: "defaultDisplayComponent",
+      },
+    ]);
+  });
+
+  it("should use the label of the attribute schema if not label is present", () => {
+    class Test extends Entity {
+      @DatabaseField({ label: "Test Property" }) testProperty: string;
+    }
+    component.entityConstructor = Test;
+    component.listConfig.columns = [
+      { id: "testProperty", component: "DisplayText" },
+      {
+        id: "anotherProperty",
+        title: "Predefined Title",
+        component: "DisplayText",
+      },
+    ];
+
+    component.ngOnChanges({ listConfig: null });
+
+    expect(component.columns).toEqual([
+      {
+        title: "Test Property",
+        id: "testProperty",
+        component: "DisplayText",
+      },
+      {
+        title: "Predefined Title",
+        id: "anotherProperty",
+        component: "DisplayText",
       },
     ]);
   });

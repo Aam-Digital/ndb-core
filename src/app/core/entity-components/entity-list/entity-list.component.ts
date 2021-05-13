@@ -162,6 +162,9 @@ export class EntityListComponent<T extends Entity>
           column.id
         );
       }
+      if (!column.title) {
+        column.title = this.entityConstructor.schema.get(column.id).label;
+      }
       return column;
     });
   }

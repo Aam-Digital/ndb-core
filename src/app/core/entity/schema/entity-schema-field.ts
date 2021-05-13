@@ -66,4 +66,9 @@ export interface EntitySchemaField {
    * If nothing is defined, the default component for this datatype will be used.
    */
   displayComponent?: string;
+
+  /**
+   * A label which explains this value in a human readable way
+   */
+  label?: string;
 }

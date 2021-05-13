@@ -20,7 +20,7 @@ export class EntityListConfig {
 
 export class ColumnConfig {
   component?: string;
-  title: string;
+  title?: string;
   id: string;
   /** this config can be anything that the component understands to parse */
   config?: any;
