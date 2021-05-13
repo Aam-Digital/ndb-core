@@ -150,8 +150,15 @@ export class Entity {
   /**
    * Get the class (Entity or the actual subclass of the instance) to call static methods on the correct class considering inheritance
    */
-  getConstructor(): typeof Entity {
+  getConstructor(): EntityConstructor<Entity> {
     return <typeof Entity>this.constructor;
+  }
+
+  /**
+   * Get the entity schema of this class
+   */
+  getSchema(): EntitySchema {
+    return this.getConstructor().schema;
   }
 
   /**

@@ -129,7 +129,7 @@ export class EntitySchemaService {
   public loadDataIntoEntity(entity: Entity, data: any) {
     data = this.transformDatabaseToEntityFormat(
       data,
-      (<typeof Entity>entity.constructor).schema
+      entity.getConstructor().schema
     );
     Object.assign(entity, data);
   }
@@ -172,5 +172,23 @@ export class EntitySchemaService {
     }
 
     return data;
+  }
+
+  /**
+   * Get the name of the component that should display this property.
+   * The names will be one of the DYNAMIC_COMPONENT_MAP.
+   *
+   * @param entity The entity on which the property exists
+   * @param property The name of the property
+   * @returns the name of the component which should display this property
+   */
+  getDisplayComponent(entity: Entity, property: string): string {
+    const propertySchema = entity.getSchema().get(property);
+    if (propertySchema.displayComponent) {
+      return propertySchema.displayComponent;
+    } else {
+      return this.getDatatypeOrDefault(propertySchema.dataType)
+        .displayComponent;
+    }
   }
 }

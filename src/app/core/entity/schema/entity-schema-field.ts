@@ -58,4 +58,12 @@ export interface EntitySchemaField {
    * that are not part of the core datatypes and therefore not included in this core interface.
    */
   ext?: any;
+
+  /**
+   * (Optional) Define using which component this property should be displayed in lists and forms.
+   *
+   * The name has to match one of the strings in the DYNAMIC_COMPONENT_MAP.
+   * If nothing is defined, the default component for this datatype will be used.
+   */
+  displayComponent?: string;
 }

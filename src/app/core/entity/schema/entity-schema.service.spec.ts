@@ -19,6 +19,7 @@ import { Entity } from "../entity";
 import { waitForAsync } from "@angular/core/testing";
 import { EntitySchemaService } from "./entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
+import { EntitySchemaDatatype } from "./entity-schema-datatype";
 
 describe("EntitySchemaService", () => {
   let entitySchemaService: EntitySchemaService;
@@ -189,5 +190,39 @@ describe("EntitySchemaService", () => {
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
     expect(rawData.details.month).toEqual("2020-01");
     expect(rawData.details.otherStuff).toBeUndefined();
+  });
+
+  it("should return the directly defined component name for displaying and editing a property", () => {
+    class Test extends Entity {
+      @DatabaseField({ dataType: "month", displayComponent: "DisplayDate" })
+      month: Date;
+    }
+
+    const displayComponent = entitySchemaService.getDisplayComponent(
+      new Test(),
+      "month"
+    );
+
+    expect(displayComponent).toEqual("DisplayDate");
+  });
+
+  it("should return the display component of the datatype if no other is defined", () => {
+    const testDatatype: EntitySchemaDatatype = {
+      name: "test-datatype",
+      displayComponent: "DisplayText",
+      transformToDatabaseFormat: () => null,
+      transformToObjectFormat: () => null,
+    };
+    entitySchemaService.registerSchemaDatatype(testDatatype);
+    class Test extends Entity {
+      @DatabaseField({ dataType: "test-datatype" }) stringProperty: string;
+    }
+
+    const displayComponent = entitySchemaService.getDisplayComponent(
+      new Test(),
+      "stringProperty"
+    );
+
+    expect(displayComponent).toEqual("DisplayText");
   });
 });
