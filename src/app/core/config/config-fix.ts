@@ -450,7 +450,6 @@ export const defaultConfig = {
       "title": "Children List",
       "columns": [
         {
-          "component": "DisplayText",
           "title": "PN",
           "id": "projectNumber"
         },
@@ -465,12 +464,10 @@ export const defaultConfig = {
           "id": "age"
         },
         {
-          "component": "DisplayDate",
           "title": "DoB",
           "id": "dateOfBirth"
         },
         {
-          "component": "DisplayText",
           "title": "Gender",
           "id": "gender"
         },
@@ -508,82 +505,66 @@ export const defaultConfig = {
           "id": "center"
         },
         {
-          "component": "DisplayText",
           "title": "Status",
           "id": "status"
         },
         {
-          "component": "DisplayDate",
           "title": "Admission",
           "id": "admissionDate"
         },
         {
-          "component": "DisplayText",
           "title": "Mother Tongue",
           "id": "motherTongue"
         },
         {
-          "component": "DisplayConfigurableEnum",
           "title": "Aadhar",
           "id": "has_aadhar"
         },
         {
-          "component": "DisplayConfigurableEnum",
           "title": "Bank Account",
           "id": "has_bankAccount"
         },
         {
-          "component": "DisplayConfigurableEnum",
           "title": "Kanyashree",
           "id": "has_kanyashree"
         },
         {
-          "component": "DisplayConfigurableEnum",
           "title": "Ration Card",
           "id": "has_rationCard"
         },
         {
-          "component": "DisplayConfigurableEnum",
           "title": "BPL Card",
           "id": "has_BplCard"
         },
         {
-          "component": "DisplayText",
           "title": "Vaccination Status",
           "id": "health_vaccinationStatus"
         },
         {
-          "component": "DisplayText",
           "title": "Blood Group",
           "id": "health_bloodGroup"
         },
         {
-          "component": "DisplayText",
           "title": "Eye Status",
           "id": "health_eyeHealthStatus"
         },
         {
-          "component": "DisplayDate",
           "title": "Last Eye Check-Up",
           "id": "health_lastEyeCheckup"
         },
         {
-          "component": "DisplayDate",
           "title": "Last Dental Check-Up",
           "id": "health_lastDentalCheckup"
         },
         {
-          "component": "DisplayDate",
           "title": "Last ENT Check-Up",
           "id": "health_lastENTCheckup"
         },
         {
-          "component": "DisplayDate",
           "title": "Last Vitamin D",
           "id": "health_lastVitaminD"
         },
         {
-          "component": "DisplayDate",
           "title": "Last De-Worming",
           "id": "health_lastDeworming"
         },

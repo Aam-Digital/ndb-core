@@ -28,6 +28,7 @@ import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
  */
 export const dateOnlyEntitySchemaDatatype: EntitySchemaDatatype = {
   name: "date-only",
+  displayComponent: "DisplayDate",
 
   transformToDatabaseFormat: (value: Date) => {
     if (!(value instanceof Date)) {

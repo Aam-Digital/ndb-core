@@ -129,7 +129,7 @@ export class EntitySchemaService {
   public loadDataIntoEntity(entity: Entity, data: any) {
     data = this.transformDatabaseToEntityFormat(
       data,
-      entity.getConstructor().schema
+      (<typeof Entity>entity.constructor).schema
     );
     Object.assign(entity, data);
   }
