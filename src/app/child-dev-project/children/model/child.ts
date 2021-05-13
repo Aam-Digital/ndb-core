@@ -42,15 +42,15 @@ export class Child extends Entity {
   }
 
   @DatabaseField() name: string;
-  @DatabaseField() projectNumber: string; // project number
-  @DatabaseField({ dataType: "date-only" }) dateOfBirth: Date;
-  @DatabaseField() motherTongue: string = "";
-  @DatabaseField({ dataType: "string" }) gender: Gender; // M or F
+  @DatabaseField({ label: "PN" }) projectNumber: string; // project number
+  @DatabaseField({ dataType: "date-only", label: "DoB" }) dateOfBirth: Date;
+  @DatabaseField({ label: "Mother Tongue" }) motherTongue: string = "";
+  @DatabaseField({ dataType: "string", label: "Gender" }) gender: Gender; // M or F
   @DatabaseField() religion: string = "";
 
   @DatabaseField() center: Center;
-  @DatabaseField() admissionDate: Date;
-  @DatabaseField() status: string = "";
+  @DatabaseField({ label: "Admission" }) admissionDate: Date;
+  @DatabaseField({ label: "Status" }) status: string = "";
 
   @DatabaseField() dropoutDate: Date;
   @DatabaseField() dropoutType: string;

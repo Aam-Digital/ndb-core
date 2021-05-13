@@ -450,7 +450,6 @@ export const defaultConfig = {
       "title": "Children List",
       "columns": [
         {
-          "title": "PN",
           "id": "projectNumber"
         },
         {
@@ -464,11 +463,9 @@ export const defaultConfig = {
           "id": "age"
         },
         {
-          "title": "DoB",
           "id": "dateOfBirth"
         },
         {
-          "title": "Gender",
           "id": "gender"
         },
         {
@@ -505,67 +502,51 @@ export const defaultConfig = {
           "id": "center"
         },
         {
-          "title": "Status",
           "id": "status"
         },
         {
-          "title": "Admission",
           "id": "admissionDate"
         },
         {
-          "title": "Mother Tongue",
           "id": "motherTongue"
         },
         {
-          "title": "Aadhar",
           "id": "has_aadhar"
         },
         {
-          "title": "Bank Account",
           "id": "has_bankAccount"
         },
         {
-          "title": "Kanyashree",
           "id": "has_kanyashree"
         },
         {
-          "title": "Ration Card",
           "id": "has_rationCard"
         },
         {
-          "title": "BPL Card",
           "id": "has_BplCard"
         },
         {
-          "title": "Vaccination Status",
           "id": "health_vaccinationStatus"
         },
         {
-          "title": "Blood Group",
           "id": "health_bloodGroup"
         },
         {
-          "title": "Eye Status",
           "id": "health_eyeHealthStatus"
         },
         {
-          "title": "Last Eye Check-Up",
           "id": "health_lastEyeCheckup"
         },
         {
-          "title": "Last Dental Check-Up",
           "id": "health_lastDentalCheckup"
         },
         {
-          "title": "Last ENT Check-Up",
           "id": "health_lastENTCheckup"
         },
         {
-          "title": "Last Vitamin D",
           "id": "health_lastVitaminD"
         },
         {
-          "title": "Last De-Worming",
           "id": "health_lastDeworming"
         },
         {
@@ -1171,19 +1152,19 @@ export const defaultConfig = {
       {"name": "guardianName", "schema": { "dataType": "string" } },
       {"name": "preferredTimeForGuardianMeeting", "schema": { "dataType": "string" } },
       {"name": "center", "schema":  { "dataType": "configurable-enum", "innerDataType": "center" }},
-      {"name": "has_aadhar", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
-      {"name": "has_bankAccount", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
-      {"name": "has_kanyashree", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
-      {"name": "has_rationCard", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
-      {"name": "has_BplCard", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
-      {"name": "health_vaccinationStatus", "schema": { "dataType": "string" } },
-      {"name": "health_bloodGroup", "schema": { "dataType": "string" } },
-      {"name": "health_lastDentalCheckup", "schema": { "dataType": "Date" } },
-      {"name": "health_lastEyeCheckup", "schema": { "dataType": "Date" } },
-      {"name": "health_lastENTCheckup", "schema": { "dataType": "Date" } },
-      {"name": "health_eyeHealthStatus", "schema": { "dataType": "string" } },
-      {"name": "health_lastVitaminD", "schema": { "dataType": "Date" } },
-      {"name": "health_lastDeworming", "schema": { "dataType": "Date" } }
+      {"name": "has_aadhar", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Aadhar" } },
+      {"name": "has_bankAccount", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Bank Account" } },
+      {"name": "has_kanyashree", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Kanyashree" } },
+      {"name": "has_rationCard", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Ration Card" } },
+      {"name": "has_BplCard", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "BPL Card" } },
+      {"name": "health_vaccinationStatus", "schema": { "dataType": "string", label: "Vaccination Status" } },
+      {"name": "health_bloodGroup", "schema": { "dataType": "string", label: "Blood Group" } },
+      {"name": "health_lastDentalCheckup", "schema": { "dataType": "Date", label: "Last Dental Check-Up" } },
+      {"name": "health_lastEyeCheckup", "schema": { "dataType": "Date", label: "Last Eye Check-Up" } },
+      {"name": "health_lastENTCheckup", "schema": { "dataType": "Date", label: "Last ENT Check-Up" } },
+      {"name": "health_eyeHealthStatus", "schema": { "dataType": "string", label: "Eye Status" } },
+      {"name": "health_lastVitaminD", "schema": { "dataType": "Date", label: "Last Vitamin D" } },
+      {"name": "health_lastDeworming", "schema": { "dataType": "Date", label: "Last De-Worming" } }
     ]
   },
   "entity:School": {
