@@ -41,6 +41,7 @@ import {
 import { LoggingService } from "../../logging/logging.service";
 import { OperationType } from "../../permissions/entity-permissions.service";
 import { entityListSortingAccessor } from "./sorting-accessor";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 interface FilterComponentSettings<T> {
   filterSettings: FilterSelection<T>;
@@ -104,7 +105,8 @@ export class EntityListComponent<T extends Entity>
     private media: MediaObserver,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private entityMapperService: EntityMapperService
+    private entityMapperService: EntityMapperService,
+    private entitySchemaService: EntitySchemaService
   ) {
     this.paginatorKey = getUrlWithoutParams(this.router);
   }
@@ -140,7 +142,7 @@ export class EntityListComponent<T extends Entity>
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("listConfig")) {
       this.listName = this.listConfig.title;
-      this.columns = this.listConfig.columns;
+      this.initColumns(this.listConfig.columns);
       this.initColumnGroups(this.listConfig.columnGroup);
       this.filtersConfig = this.listConfig.filters || [];
       this.displayColumnGroup(this.defaultColumnGroup);
@@ -150,6 +152,18 @@ export class EntityListComponent<T extends Entity>
       this.initDefaultSort();
     }
     this.loadUrlParams();
+  }
+
+  private initColumns(columns: ColumnConfig[]) {
+    this.columns = columns.map((column) => {
+      if (!column.component) {
+        column.component = this.entitySchemaService.getDisplayComponent(
+          this.entityConstructor,
+          column.id
+        );
+      }
+      return column;
+    });
   }
 
   private initDefaultSort() {

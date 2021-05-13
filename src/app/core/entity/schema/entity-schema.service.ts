@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "../entity";
+import { Entity, EntityConstructor } from "../entity";
 import { EntitySchemaDatatype } from "./entity-schema-datatype";
 import { Injectable } from "@angular/core";
 import { defaultEntitySchemaDatatype } from "../schema-datatypes/datatype-default";
@@ -178,12 +178,15 @@ export class EntitySchemaService {
    * Get the name of the component that should display this property.
    * The names will be one of the DYNAMIC_COMPONENT_MAP.
    *
-   * @param entity The entity on which the property exists
+   * @param entityClass The class of the entity on which the property exists
    * @param property The name of the property
-   * @returns the name of the component which should display this property
+   * @returns string The name of the component which should display this property
    */
-  getDisplayComponent(entity: Entity, property: string): string {
-    const propertySchema = entity.getSchema().get(property);
+  getDisplayComponent(
+    entityClass: EntityConstructor<Entity>,
+    property: string
+  ): string {
+    const propertySchema = entityClass.schema.get(property);
     if (propertySchema.displayComponent) {
       return propertySchema.displayComponent;
     } else {

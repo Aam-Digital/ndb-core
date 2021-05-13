@@ -24,6 +24,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { BackupService } from "../../admin/services/backup.service";
 import { EntityListModule } from "./entity-list.module";
 import { Angulartics2Module } from "angulartics2";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -79,6 +80,7 @@ describe("EntityListComponent", () => {
   let mockLoggingService: jasmine.SpyObj<LoggingService>;
   let mockSessionService: jasmine.SpyObj<SessionService>;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockEntitySchemaService: jasmine.SpyObj<EntitySchemaService>;
 
   beforeEach(
     waitForAsync(() => {
@@ -87,6 +89,8 @@ describe("EntityListComponent", () => {
       mockConfigService = jasmine.createSpyObj(["getConfig"]);
       mockLoggingService = jasmine.createSpyObj(["warn"]);
       mockEntityMapper = jasmine.createSpyObj(["save"]);
+      mockEntitySchemaService = jasmine.createSpyObj(["getDisplayComponent"]);
+
       TestBed.configureTestingModule({
         declarations: [EntityListComponent, ExportDataComponent],
         imports: [
@@ -104,6 +108,7 @@ describe("EntityListComponent", () => {
           { provide: EntityMapperService, useValue: mockEntityMapper },
           { provide: LoggingService, useValue: mockLoggingService },
           { provide: BackupService, useValue: {} },
+          { provide: EntitySchemaService, useValue: mockEntitySchemaService },
         ],
       }).compileComponents();
     })
@@ -318,5 +323,37 @@ describe("EntityListComponent", () => {
       .sortData(notes, component.sort)
       .map((note) => note.getId());
     expect(sortedIds).toEqual(["0", "3", "1", "2"]);
+  });
+
+  it("should init column components with the default display component if none is defined", () => {
+    component.listConfig.columns = [
+      {
+        title: "with defined component",
+        id: "withDefinedComponent",
+        component: "predefinedComponent",
+      },
+      {
+        title: "without defined component",
+        id: "withoutDefinedComponent",
+      },
+    ];
+    mockEntitySchemaService.getDisplayComponent.and.returnValue(
+      "defaultDisplayComponent"
+    );
+
+    component.ngOnChanges({ listConfig: null });
+
+    expect(component.columns).toEqual([
+      {
+        title: "with defined component",
+        id: "withDefinedComponent",
+        component: "predefinedComponent",
+      },
+      {
+        title: "without defined component",
+        id: "withoutDefinedComponent",
+        component: "defaultDisplayComponent",
+      },
+    ]);
   });
 });

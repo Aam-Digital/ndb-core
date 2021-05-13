@@ -199,7 +199,7 @@ describe("EntitySchemaService", () => {
     }
 
     const displayComponent = entitySchemaService.getDisplayComponent(
-      new Test(),
+      Test,
       "month"
     );
 
@@ -219,7 +219,7 @@ describe("EntitySchemaService", () => {
     }
 
     const displayComponent = entitySchemaService.getDisplayComponent(
-      new Test(),
+      Test,
       "stringProperty"
     );
 
