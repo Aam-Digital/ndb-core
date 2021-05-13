@@ -155,10 +155,10 @@ export class EntityListComponent<T extends Entity>
   }
 
   private initColumns() {
-    const columns = this.listConfig.columns;
+    const columns = this.listConfig.columns || [];
 
     const uniqueColumnIds = new Set<string>();
-    this.listConfig.columnGroup.groups.forEach((group) =>
+    this.listConfig?.columnGroup?.groups?.forEach((group) =>
       group.columns.forEach((column) => uniqueColumnIds.add(column))
     );
     uniqueColumnIds.forEach((columnId) => {

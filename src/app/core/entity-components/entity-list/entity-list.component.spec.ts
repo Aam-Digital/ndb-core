@@ -333,18 +333,21 @@ describe("EntityListComponent", () => {
     }
     component.entityConstructor = Test;
     mockEntitySchemaService.getDisplayComponent.and.returnValue("DisplayText");
-    component.listConfig.columns = [
-      {
-        id: "anotherColumn",
-        title: "Predefined Title",
-        component: "DisplayDate",
-      },
-    ];
-    component.listConfig.columnGroup = {
-      groups: [
-        { name: "One", columns: ["anotherColumn"] },
-        { name: "Both", columns: ["testProperty", "anotherColumn"] },
+    component.listConfig = {
+      title: "",
+      columns: [
+        {
+          id: "anotherColumn",
+          title: "Predefined Title",
+          component: "DisplayDate",
+        },
       ],
+      columnGroup: {
+        groups: [
+          { name: "One", columns: ["anotherColumn"] },
+          { name: "Both", columns: ["testProperty", "anotherColumn"] },
+        ],
+      },
     };
 
     component.ngOnChanges({ listConfig: null });
@@ -366,20 +369,23 @@ describe("EntityListComponent", () => {
   });
 
   it("should log an error when the column definition can not be initialized", () => {
-    component.listConfig.columns = [
-      {
-        id: "correctColumn",
-        title: "Predefined Title",
-        component: "DisplayDate",
-      },
-    ];
-    component.listConfig.columnGroup = {
-      groups: [
+    component.listConfig = {
+      title: "",
+      columns: [
         {
-          name: "Invalid Group",
-          columns: ["correctColumn", "notExistentColumn"],
+          id: "correctColumn",
+          title: "Predefined Title",
+          component: "DisplayDate",
         },
       ],
+      columnGroup: {
+        groups: [
+          {
+            name: "Invalid Group",
+            columns: ["correctColumn", "notExistentColumn"],
+          },
+        ],
+      },
     };
 
     expect(() => component.ngOnChanges({ listConfig: null })).toThrowError();
