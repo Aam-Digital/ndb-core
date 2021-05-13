@@ -24,7 +24,7 @@ import {
   GroupConfig,
   PrebuiltFilterConfig,
 } from "./EntityListConfig";
-import { Entity } from "../../entity/entity";
+import { Entity, EntityConstructor } from "../../entity/entity";
 import {
   FilterSelection,
   FilterSelectionOption,
@@ -66,7 +66,7 @@ export class EntityListComponent<T extends Entity>
   implements OnChanges, OnInit, AfterViewInit {
   @Input() entityList: T[] = [];
   @Input() listConfig: EntityListConfig;
-  @Input() entityConstructor: typeof Entity;
+  @Input() entityConstructor: EntityConstructor<T>;
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
 
@@ -142,7 +142,7 @@ export class EntityListComponent<T extends Entity>
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("listConfig")) {
       this.listName = this.listConfig.title;
-      this.initColumns(this.listConfig.columns);
+      this.initColumns();
       this.initColumnGroups(this.listConfig.columnGroup);
       this.filtersConfig = this.listConfig.filters || [];
       this.displayColumnGroup(this.defaultColumnGroup);
@@ -154,19 +154,40 @@ export class EntityListComponent<T extends Entity>
     this.loadUrlParams();
   }
 
-  private initColumns(columns: ColumnConfig[]) {
-    this.columns = columns.map((column) => {
-      if (!column.component) {
-        column.component = this.entitySchemaService.getDisplayComponent(
-          this.entityConstructor,
-          column.id
-        );
+  private initColumns() {
+    const columns = this.listConfig.columns;
+
+    const uniqueColumnIds = new Set<string>();
+    this.listConfig.columnGroup.groups.forEach((group) =>
+      group.columns.forEach((column) => uniqueColumnIds.add(column))
+    );
+    uniqueColumnIds.forEach((columnId) => {
+      if (!columns.some((column) => column.id === columnId)) {
+        columns.push({ id: columnId });
       }
-      if (!column.title) {
-        column.title = this.entityConstructor.schema.get(column.id).label;
-      }
-      return column;
     });
+
+    this.columns = columns.map((column) => {
+      try {
+        return this.createColumnDefinitions(column);
+      } catch (e) {
+        this.loggingService.warn(`Could not initialize column ${column.id}`);
+        throw e;
+      }
+    });
+  }
+
+  private createColumnDefinitions(column: ColumnConfig): ColumnConfig {
+    if (!column.component) {
+      column.component = this.entitySchemaService.getDisplayComponent(
+        this.entityConstructor,
+        column.id
+      );
+    }
+    if (!column.title) {
+      column.title = this.entityConstructor.schema.get(column.id).label;
+    }
+    return column;
   }
 
   private initDefaultSort() {

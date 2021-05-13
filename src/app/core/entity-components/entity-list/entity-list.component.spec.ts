@@ -35,6 +35,7 @@ describe("EntityListComponent", () => {
     columns: [
       { component: "DisplayText", title: "PN", id: "projectNumber" },
       { component: "ChildBlock", title: "Name", id: "name" },
+      { component: "DisplayText", title: "Age", id: "age" },
       { component: "DisplayDate", title: "DoB", id: "dateOfBirth" },
       { component: "DisplayText", title: "Gender", id: "gender" },
       { component: "DisplayText", title: "Class", id: "schoolClass" },
@@ -326,65 +327,62 @@ describe("EntityListComponent", () => {
     expect(sortedIds).toEqual(["0", "3", "1", "2"]);
   });
 
-  it("should init column components with the default display component if none is defined", () => {
-    component.listConfig.columns = [
-      {
-        title: "with defined component",
-        id: "withDefinedComponent",
-        component: "predefinedComponent",
-      },
-      {
-        title: "without defined component",
-        id: "withoutDefinedComponent",
-      },
-    ];
-    mockEntitySchemaService.getDisplayComponent.and.returnValue(
-      "defaultDisplayComponent"
-    );
-
-    component.ngOnChanges({ listConfig: null });
-
-    expect(component.columns).toEqual([
-      {
-        title: "with defined component",
-        id: "withDefinedComponent",
-        component: "predefinedComponent",
-      },
-      {
-        title: "without defined component",
-        id: "withoutDefinedComponent",
-        component: "defaultDisplayComponent",
-      },
-    ]);
-  });
-
-  it("should use the label of the attribute schema if not label is present", () => {
+  it("should add and initialize columns which are only mentioned in the columnGroups", () => {
     class Test extends Entity {
       @DatabaseField({ label: "Test Property" }) testProperty: string;
     }
     component.entityConstructor = Test;
+    mockEntitySchemaService.getDisplayComponent.and.returnValue("DisplayText");
     component.listConfig.columns = [
-      { id: "testProperty", component: "DisplayText" },
       {
-        id: "anotherProperty",
+        id: "anotherColumn",
         title: "Predefined Title",
-        component: "DisplayText",
+        component: "DisplayDate",
       },
     ];
+    component.listConfig.columnGroup = {
+      groups: [
+        { name: "One", columns: ["anotherColumn"] },
+        { name: "Both", columns: ["testProperty", "anotherColumn"] },
+      ],
+    };
 
     component.ngOnChanges({ listConfig: null });
 
-    expect(component.columns).toEqual([
+    expect(component.columns).toEqual(
+      jasmine.arrayWithExactContents([
+        {
+          title: "Test Property",
+          id: "testProperty",
+          component: "DisplayText",
+        },
+        {
+          title: "Predefined Title",
+          id: "anotherColumn",
+          component: "DisplayDate",
+        },
+      ])
+    );
+  });
+
+  it("should log an error when the column definition can not be initialized", () => {
+    component.listConfig.columns = [
       {
-        title: "Test Property",
-        id: "testProperty",
-        component: "DisplayText",
-      },
-      {
+        id: "correctColumn",
         title: "Predefined Title",
-        id: "anotherProperty",
-        component: "DisplayText",
+        component: "DisplayDate",
       },
-    ]);
+    ];
+    component.listConfig.columnGroup = {
+      groups: [
+        {
+          name: "Invalid Group",
+          columns: ["correctColumn", "notExistentColumn"],
+        },
+      ],
+    };
+
+    expect(() => component.ngOnChanges({ listConfig: null })).toThrowError();
+    expect(mockLoggingService.warn).toHaveBeenCalled();
   });
 });
