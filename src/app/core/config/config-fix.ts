@@ -450,9 +450,6 @@ export const defaultConfig = {
       "title": "Children List",
       "columns": [
         {
-          "id": "projectNumber"
-        },
-        {
           "component": "ChildBlock",
           "title": "Name",
           "id": "name"
@@ -461,12 +458,6 @@ export const defaultConfig = {
           "component": "DisplayText",
           "title": "Age",
           "id": "age"
-        },
-        {
-          "id": "dateOfBirth"
-        },
-        {
-          "id": "gender"
         },
         {
           "component": "DisplayText",
@@ -497,63 +488,11 @@ export const defaultConfig = {
           "noSorting": true
         },
         {
-          "component": "DisplayConfigurableEnum",
-          "title": "Center",
-          "id": "center"
-        },
-        {
-          "id": "status"
-        },
-        {
-          "id": "admissionDate"
-        },
-        {
-          "id": "motherTongue"
-        },
-        {
-          "id": "has_aadhar"
-        },
-        {
-          "id": "has_bankAccount"
-        },
-        {
-          "id": "has_kanyashree"
-        },
-        {
-          "id": "has_rationCard"
-        },
-        {
-          "id": "has_BplCard"
-        },
-        {
-          "id": "health_vaccinationStatus"
-        },
-        {
-          "id": "health_bloodGroup"
-        },
-        {
-          "id": "health_eyeHealthStatus"
-        },
-        {
-          "id": "health_lastEyeCheckup"
-        },
-        {
-          "id": "health_lastDentalCheckup"
-        },
-        {
-          "id": "health_lastENTCheckup"
-        },
-        {
-          "id": "health_lastVitaminD"
-        },
-        {
-          "id": "health_lastDeworming"
-        },
-        {
           "component": "BmiBlock",
           "title": "BMI",
           "id": "health_BMI",
-          "noSorting": true}
+          "noSorting": true
+        }
       ],
       "columnGroup": {
         "default": "School Info",
@@ -1151,7 +1090,6 @@ export const defaultConfig = {
       {"name": "phone", "schema": { "dataType": "string" } },
       {"name": "guardianName", "schema": { "dataType": "string" } },
       {"name": "preferredTimeForGuardianMeeting", "schema": { "dataType": "string" } },
-      {"name": "center", "schema":  { "dataType": "configurable-enum", "innerDataType": "center" }},
       {"name": "has_aadhar", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Aadhar" } },
       {"name": "has_bankAccount", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Bank Account" } },
       {"name": "has_kanyashree", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Kanyashree" } },
