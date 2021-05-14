@@ -3,7 +3,7 @@ import { AbstractControl } from "@angular/forms";
 import { FormFieldConfig } from "../FormConfig";
 import { EntitySchemaField } from "../../../../entity/schema/entity-schema-field";
 
-interface EditComponentConfig {
+export interface EditComponentConfig {
   formFieldConfig: FormFieldConfig;
   propertySchema: EntitySchemaField;
   formControl: AbstractControl;
@@ -19,8 +19,7 @@ export abstract class EditComponent implements OnInitDynamicComponent {
   onInitFromDynamicConfig(config: EditComponentConfig) {
     this.formControlName = config.formFieldConfig.id;
     this.formControl = config.formControl;
-    this.tooltip =
-      config.formFieldConfig.tooltip || config.propertySchema?.label;
+    this.tooltip = config.formFieldConfig.tooltip;
     this.placeholder =
       config.formFieldConfig.placeholder || config.propertySchema?.label;
     this.enumId =

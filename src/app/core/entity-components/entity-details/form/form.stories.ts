@@ -65,17 +65,18 @@ const testConfig = {
       //   id: "active",
       //   placeholder: "Is active",
       // },
-      // {
-      //   input: "select",
-      //   id: "health_vaccinationStatus",
-      //   placeholder: "Peter Status",
-      //   options: [
-      //     "Good",
-      //     "Vaccination Due",
-      //     "Needs Checking",
-      //     "No Card/Information",
-      //   ],
-      // },
+      { id: "gender" },
+      {
+        input: "EditSelectable",
+        id: "health_vaccinationStatus",
+        placeholder: "Vaccination Status",
+        options: [
+          "Good",
+          "Vaccination Due",
+          "Needs Checking",
+          "No Card/Information",
+        ],
+      },
       // ],
       // [
       {
@@ -86,7 +87,7 @@ const testConfig = {
       },
       {
         input: "EditDate",
-        id: "admissionDate",
+        id: "admissionDate"
       },
       //   {
       //     input: "age",

@@ -5,9 +5,8 @@
             [placeholder]="placeholder"
             [title]="placeholder"
             type="text"
-            #inputElement
     />
-    <mat-icon *ngIf="inputElement.disabled && tooltip" matSuffix
+    <mat-icon *ngIf="formControl.disabled && tooltip" matSuffix
               fontIcon="fa-question-circle-o"
               [matTooltip]="tooltip"
     ></mat-icon>

@@ -45,7 +45,13 @@ export class Child extends Entity {
   @DatabaseField({ label: "PN" }) projectNumber: string; // project number
   @DatabaseField({ dataType: "date-only", label: "DoB" }) dateOfBirth: Date;
   @DatabaseField({ label: "Mother Tongue" }) motherTongue: string = "";
-  @DatabaseField({ dataType: "string", label: "Gender" }) gender: Gender; // M or F
+  @DatabaseField({
+    dataType: "string",
+    label: "Gender",
+    ext: ["", "M", "F"],
+    editComponent: "EditSelectable",
+  })
+  gender: Gender; // M or F
   @DatabaseField() religion: string = "";
 
   @DatabaseField({

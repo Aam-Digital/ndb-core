@@ -31,6 +31,7 @@ import { HistoricalDataComponent } from "../../features/historical-data/historic
 import { EditTextComponent } from "../entity-components/entity-details/form/edit-components/edit-text/edit-text.component";
 import { EditConfigurableEnumComponent } from "../entity-components/entity-details/form/edit-components/edit-configurable-enum/edit-configurable-enum.component";
 import { EditDateComponent } from "../entity-components/entity-details/form/edit-components/edit-date/edit-date.component";
+import { EditSelectableComponent } from "../entity-components/entity-details/form/edit-components/edit-selectable/edit-selectable.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -66,4 +67,5 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["EditText", EditTextComponent],
   ["EditConfigurableEnum", EditConfigurableEnumComponent],
   ["EditDate", EditDateComponent],
+  ["EditSelectable", EditSelectableComponent],
 ]);
