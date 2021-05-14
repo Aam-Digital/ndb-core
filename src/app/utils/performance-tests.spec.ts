@@ -30,7 +30,7 @@ import { School } from "../child-dev-project/schools/model/school";
 import { ChildrenService } from "../child-dev-project/children/children.service";
 import { PouchDatabase } from "../core/database/pouch-database";
 
-fdescribe("Performance Tests", () => {
+xdescribe("Performance Tests", () => {
   let mockDatabase: PouchDatabase;
 
   beforeEach(async () => {
@@ -39,7 +39,7 @@ fdescribe("Performance Tests", () => {
     const loggingService = new LoggingService();
     // Uncomment this line to run performance tests with the InBrowser database.
     // mockDatabase = PouchDatabase.createWithIndexedDB(
-    mockDatabase = PouchDatabase.createWithIndexedDB(
+    mockDatabase = PouchDatabase.createWithInMemoryDB(
       "performance_db",
       loggingService
     );
