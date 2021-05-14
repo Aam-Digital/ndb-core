@@ -22,8 +22,8 @@ export abstract class EditComponent implements OnInitDynamicComponent {
     this.tooltip =
       config.formFieldConfig.tooltip || config.propertySchema?.label;
     this.placeholder =
-      config.formFieldConfig.placeholder || config.propertySchema.label;
+      config.formFieldConfig.placeholder || config.propertySchema?.label;
     this.enumId =
-      config.formFieldConfig.enumId || config.propertySchema.innerDataType;
+      config.formFieldConfig.enumId || config.propertySchema?.innerDataType;
   }
 }

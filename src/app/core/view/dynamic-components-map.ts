@@ -30,6 +30,7 @@ import { UserListComponent } from "../admin/user-list/user-list.component";
 import { HistoricalDataComponent } from "../../features/historical-data/historical-data/historical-data.component";
 import { EditTextComponent } from "../entity-components/entity-details/form/edit-components/edit-text/edit-text.component";
 import { EditConfigurableEnumComponent } from "../entity-components/entity-details/form/edit-components/edit-configurable-enum/edit-configurable-enum.component";
+import { EditDateComponent } from "../entity-components/entity-details/form/edit-components/edit-date/edit-date.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -64,4 +65,5 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["HistoricalDataComponent", HistoricalDataComponent],
   ["EditText", EditTextComponent],
   ["EditConfigurableEnum", EditConfigurableEnumComponent],
+  ["EditDate", EditDateComponent],
 ]);

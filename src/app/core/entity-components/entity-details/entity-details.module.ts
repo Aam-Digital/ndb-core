@@ -23,6 +23,7 @@ import { PermissionsModule } from "../../permissions/permissions.module";
 import { PhotoComponent } from "./form/edit-components/photo/photo.component";
 import { EditConfigurableEnumComponent } from "./form/edit-components/edit-configurable-enum/edit-configurable-enum.component";
 import { EditTextComponent } from "./form/edit-components/edit-text/edit-text.component";
+import { EditDateComponent } from "./form/edit-components/edit-date/edit-date.component";
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { EditTextComponent } from "./form/edit-components/edit-text/edit-text.co
     PhotoComponent,
     EditConfigurableEnumComponent,
     EditTextComponent,
+    EditDateComponent,
   ],
   imports: [
     CommonModule,
@@ -53,6 +55,10 @@ import { EditTextComponent } from "./form/edit-components/edit-text/edit-text.co
     ConfigurableEnumModule,
     PermissionsModule,
   ],
-  entryComponents: [EditTextComponent, EditConfigurableEnumComponent],
+  entryComponents: [
+    EditTextComponent,
+    EditConfigurableEnumComponent,
+    EditDateComponent,
+  ],
 })
 export class EntityDetailsModule {}

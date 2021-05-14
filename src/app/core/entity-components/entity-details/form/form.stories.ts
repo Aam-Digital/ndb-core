@@ -84,11 +84,10 @@ const testConfig = {
         placeholder: "Ration Card Status",
         enumId: "document-status",
       },
-      //   {
-      //     input: "datepicker",
-      //     id: "health_lastDentalCheckup",
-      //     placeholder: "Last Dental Check-Up",
-      //   },
+      {
+        input: "EditDate",
+        id: "admissionDate",
+      },
       //   {
       //     input: "age",
       //     id: "dateOfBirth",
