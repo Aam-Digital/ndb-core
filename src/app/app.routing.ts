@@ -31,6 +31,7 @@ import { UserListComponent } from "./core/admin/user-list/user-list.component";
 import { EntityDetailsComponent } from "./core/entity-components/entity-details/entity-details.component";
 import { ConflictResolutionListComponent } from "./conflict-resolution/conflict-resolution-list/conflict-resolution-list.component";
 import { ActivityListComponent } from "./child-dev-project/attendance/activity-list/activity-list.component";
+import { ReportingComponent } from "./features/reporting/reporting/reporting.component";
 
 export const COMPONENT_MAP = {
   Dashboard: DashboardComponent,
@@ -46,6 +47,7 @@ export const COMPONENT_MAP = {
   Admin: AdminComponent,
   ConflictResolution: ConflictResolutionListComponent,
   EntityDetails: EntityDetailsComponent,
+  Reporting: ReportingComponent,
 };
 
 /**

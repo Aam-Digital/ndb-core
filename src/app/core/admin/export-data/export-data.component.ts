@@ -19,6 +19,8 @@ export class ExportDataComponent {
   /** filename for the download of the exported data */
   @Input() filename: string = "exportedData";
 
+  @Input() disabled: boolean = false;
+
   constructor(private backupService: BackupService) {}
 
   /**

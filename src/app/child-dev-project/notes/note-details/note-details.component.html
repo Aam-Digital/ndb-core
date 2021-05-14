@@ -76,10 +76,9 @@
 
         <app-entity-select
           fxFlex
-          [entityType]="User"
+          [standardType]="'User'"
           (selectionChange)="entityForm.form.markAsDirty()"
           [(selection)]="entity.authors"
-          [view]="userBlock"
           placeholder="Add Author..."
           label="Authors"
         >
@@ -121,8 +120,7 @@
     <div fxLayout="column" fxLayoutGap="20px">
 
       <app-entity-select
-        [entityType]="Child"
-        [view]="childBlock"
+        [standardType]="'Child'"
         [(selection)]="entity.children"
         (selectionChange)="entityForm.form.markAsDirty()"
         [additionalFilter]="filterInactiveChildren"
@@ -152,9 +150,8 @@
 
       <div fxFlex>
         <app-entity-select
-          [entityType]="School"
+          [standardType]="'School'"
           [(selection)]="entity.schools"
-          [view]="schoolBlock"
           (selectionChange)="entityForm.form.markAsDirty()"
           label="Groups"
           placeholder="Add group ..."
@@ -166,28 +163,3 @@
 
   </form>
 </app-form-dialog-wrapper>
-
-<ng-template
-  #childBlock
-  let-child="entity">
-  <app-child-block
-    [entity]="child"
-    [linkDisabled]="true"
-    [tooltipDisabled]="true">
-  </app-child-block>
-</ng-template>
-
-<ng-template
-  #schoolBlock
-  let-school="entity">
-  <app-school-block
-    [entity]="school"
-    [linkDisabled]="true"
-  >
-  </app-school-block>
-</ng-template>
-
-<ng-template
-  #userBlock
-  let-user="entity"
->{{user.name}}</ng-template>

@@ -61,7 +61,7 @@ export class BackupService {
    */
   createCsv(data): string {
     // create list of row descriptions for the csv string
-    const allFields = ["_id", "_rev"];
+    const allFields = [];
     data.forEach((element) => allFields.push(...Object.keys(element)));
     const uniqueFields = [...new Set(allFields)]; // creates list with unique elements
 

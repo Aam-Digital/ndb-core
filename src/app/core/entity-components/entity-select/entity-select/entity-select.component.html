@@ -3,8 +3,9 @@
 
   <input
     #inputField
-    [disabled]="loading.value || disabled"
-    [placeholder]="loading.value ? 'loading...' : (disabled ? '' : placeholder)"
+    *ngIf="!disabled"
+    [disabled]="loading.value"
+    [placeholder]="loading.value ? 'loading...' : placeholder"
     [formControl]="formControl"
     [matAutocomplete]='autoSuggestions'
     [matChipInputFor]="chipList"
@@ -21,7 +22,7 @@
         *ngFor="let entity of selection_"
         class="chip">
         <!-- This is going to be replaced with the dynamic content -->
-        <ng-container *ngTemplateOutlet="entityView; context: {entity: entity}"></ng-container>
+        <ng-container *ngTemplateOutlet="block; context: {entity: entity}"></ng-container>
         <div
           *ngIf="removable && !disabled"
           matTooltip="remove"
@@ -30,7 +31,6 @@
         </div>
       </mat-basic-chip>
     </ng-container>
-
   </mat-chip-list>
 
   <mat-autocomplete
@@ -40,7 +40,27 @@
     <ng-content select="mat-option"></ng-content>
     <mat-option *ngFor='let res of filteredEntities | async' [value]="res">
       <!-- This is going to be replaced with the dynamic content -->
-      <ng-container *ngTemplateOutlet="autocompleteView; context: {entity: res}"></ng-container>
+      <ng-container *ngTemplateOutlet="block; context: {entity: res}"></ng-container>
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>
+
+<ng-template
+  #block
+  let-entity="entity"
+>
+  <ng-container
+    *ngIf="entityBlockComponent"
+    [appDynamicComponent]="{
+      component: entityBlockComponent,
+      config: {
+        entity: entity,
+        linkDisabled: true,
+        tooltipDisabled: true
+      }
+    }">
+  </ng-container>
+  <ng-container *ngIf="!entityBlockComponent">
+    {{entity["name"] || entity.getId()}}
+  </ng-container>
+</ng-template>
