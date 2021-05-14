@@ -8,7 +8,7 @@ import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 import { ColumnDescriptionInputType } from "../entity-components/entity-subrecord/column-description-input-type.enum";
 
 // prettier-ignore
-export const defaultConfig = {
+export const defaultJsonConfig = {
   "navigationMenu": {
     "items": [
       {
