@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity, EntityConstructor } from "../entity";
+import { Entity } from "../entity";
 import { EntitySchemaDatatype } from "./entity-schema-datatype";
 import { Injectable } from "@angular/core";
 import { defaultEntitySchemaDatatype } from "../schema-datatypes/datatype-default";
@@ -178,24 +178,19 @@ export class EntitySchemaService {
    * Get the name of the component that should display this property.
    * The names will be one of the DYNAMIC_COMPONENT_MAP.
    *
-   * @param entityClass The class of the entity on which the property exists
-   * @param property The name of the property
+   * @param propertySchema The schema definition of the attribute for which a component should be get
    * @param mode (Optional) The mode for which a component is required. Default is "view".
    * @returns string The name of the component which should display this property
    */
   getComponent(
-    entityClass: EntityConstructor<Entity>,
-    property: string,
+    propertySchema: EntitySchemaField,
     mode: "view" | "edit" = "view"
   ): string {
-    const propertySchema = entityClass.schema.get(property);
-    if (propertySchema.viewComponent) {
-      return mode === "view"
-        ? propertySchema.viewComponent
-        : propertySchema.editComponent;
-    } else {
-      const datatype = this.getDatatypeOrDefault(propertySchema.dataType);
-      return mode === "view" ? datatype.viewComponent : datatype.editComponent;
-    }
+    const componentAttribute =
+      mode === "view" ? "viewComponent" : "editComponent";
+    return (
+      propertySchema[componentAttribute] ||
+      this.getDatatypeOrDefault(propertySchema.dataType)[componentAttribute]
+    );
   }
 }

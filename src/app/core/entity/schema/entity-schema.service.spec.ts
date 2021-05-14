@@ -203,13 +203,11 @@ describe("EntitySchemaService", () => {
     }
 
     const viewComponent = entitySchemaService.getComponent(
-      Test,
-      "month",
+      Test.schema.get("month"),
       "view"
     );
     const editComponent = entitySchemaService.getComponent(
-      Test,
-      "month",
+      Test.schema.get("month"),
       "edit"
     );
 
@@ -230,8 +228,8 @@ describe("EntitySchemaService", () => {
     }
 
     const displayComponent = entitySchemaService.getComponent(
-      Test,
-      "stringProperty"
+      Test.schema.get("stringProperty"),
+      "view"
     );
 
     expect(displayComponent).toEqual("DisplayText");

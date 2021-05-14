@@ -117,15 +117,15 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   private initForm(): void {
     this.columns = this.config.cols.map((column) =>
       column.map((row) => {
+        const propertySchema = this.entity.getSchema().get(row.id);
         if (!row.input) {
           row.input = this.entitySchemaService.getComponent(
-            this.entity.getConstructor(),
-            row.id,
+            propertySchema,
             "edit"
           );
         }
         if (!row.placeholder) {
-          row.placeholder = this.entity.getSchema().get(row.id).label;
+          row.placeholder = propertySchema.label;
         }
         return row;
       })

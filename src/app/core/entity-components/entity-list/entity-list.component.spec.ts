@@ -120,6 +120,7 @@ describe("EntityListComponent", () => {
     fixture = TestBed.createComponent(EntityListComponent);
     component = fixture.componentInstance;
     component.listConfig = testConfig;
+    component.entityConstructor = Child;
     component.ngOnChanges({
       entityList: new SimpleChange(null, component.entityList, false),
       listConfig: new SimpleChange(null, component.listConfig, false),

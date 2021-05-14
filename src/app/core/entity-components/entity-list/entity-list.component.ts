@@ -178,14 +178,15 @@ export class EntityListComponent<T extends Entity>
   }
 
   private createColumnDefinitions(column: ColumnConfig): ColumnConfig {
+    const propertySchema = this.entityConstructor.schema.get(column.id);
     if (!column.component) {
       column.component = this.entitySchemaService.getComponent(
-        this.entityConstructor,
-        column.id
+        propertySchema,
+        "view"
       );
     }
     if (!column.title) {
-      column.title = this.entityConstructor.schema.get(column.id).label;
+      column.title = propertySchema.label;
     }
     return column;
   }
