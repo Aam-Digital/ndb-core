@@ -192,24 +192,35 @@ describe("EntitySchemaService", () => {
     expect(rawData.details.otherStuff).toBeUndefined();
   });
 
-  it("should return the directly defined component name for displaying and editing a property", () => {
+  it("should return the directly defined component name for viewing and editing a property", () => {
     class Test extends Entity {
-      @DatabaseField({ dataType: "month", displayComponent: "DisplayDate" })
+      @DatabaseField({
+        dataType: "month",
+        viewComponent: "DisplayDate",
+        editComponent: "EditDate",
+      })
       month: Date;
     }
 
-    const displayComponent = entitySchemaService.getDisplayComponent(
+    const viewComponent = entitySchemaService.getComponent(
       Test,
-      "month"
+      "month",
+      "view"
+    );
+    const editComponent = entitySchemaService.getComponent(
+      Test,
+      "month",
+      "edit"
     );
 
-    expect(displayComponent).toEqual("DisplayDate");
+    expect(viewComponent).toEqual("DisplayDate");
+    expect(editComponent).toEqual("EditDate");
   });
 
   it("should return the display component of the datatype if no other is defined", () => {
     const testDatatype: EntitySchemaDatatype = {
       name: "test-datatype",
-      displayComponent: "DisplayText",
+      viewComponent: "DisplayText",
       transformToDatabaseFormat: () => null,
       transformToObjectFormat: () => null,
     };
@@ -218,7 +229,7 @@ describe("EntitySchemaService", () => {
       @DatabaseField({ dataType: "test-datatype" }) stringProperty: string;
     }
 
-    const displayComponent = entitySchemaService.getDisplayComponent(
+    const displayComponent = entitySchemaService.getComponent(
       Test,
       "stringProperty"
     );

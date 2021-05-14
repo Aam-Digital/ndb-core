@@ -5,7 +5,7 @@
     fxLayout.md="row wrap"
     fxLayout.sm="row wrap"
   >
-    <div *ngFor="let col of config.cols" fxFlex>
+    <div *ngFor="let col of columns" fxFlex>
       <div *ngFor="let row of col">
         <div *ngIf="row.input === 'photo'" class="child-pic-container">
           <img

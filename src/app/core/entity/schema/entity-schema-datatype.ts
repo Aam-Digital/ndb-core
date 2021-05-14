@@ -39,7 +39,9 @@ export interface EntitySchemaDatatype<EntityType = any, DBType = any> {
    *
    * The name has to match one of the strings in the DYNAMIC_COMPONENT_MAP.
    */
-  displayComponent?: string;
+  viewComponent?: string;
+
+  editComponent?: string;
 
   /**
    * Transformation function taking a value in the format that is used in entity instances and returning the value

@@ -179,7 +179,7 @@ export class EntityListComponent<T extends Entity>
 
   private createColumnDefinitions(column: ColumnConfig): ColumnConfig {
     if (!column.component) {
-      column.component = this.entitySchemaService.getDisplayComponent(
+      column.component = this.entitySchemaService.getComponent(
         this.entityConstructor,
         column.id
       );

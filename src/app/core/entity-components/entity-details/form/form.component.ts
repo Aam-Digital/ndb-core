@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
-import { FormConfig } from "./FormConfig";
+import { FormConfig, FormFieldConfig } from "./FormConfig";
 import { PanelConfig } from "../EntityDetailsConfig";
 import { Entity } from "../../../entity/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
@@ -12,6 +12,7 @@ import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init
 import { calculateAge, getParentUrl } from "../../../../utils/utils";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { OperationType } from "../../../permissions/entity-permissions.service";
+import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 
 /**
  * This component creates a form based on the passed config.
@@ -32,9 +33,11 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   enablePhotoUpload = false;
 
   editing: boolean = false;
-  form: FormGroup;
-  validateForm: boolean = false;
   config: FormConfig;
+
+  columns: FormFieldConfig[][];
+  validateForm: boolean = false;
+  form: FormGroup;
 
   constructor(
     private fb: FormBuilder,
@@ -42,7 +45,8 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
     private alertService: AlertService,
     private childPhotoService: ChildPhotoService,
     private router: Router,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private entitySchemaService: EntitySchemaService
   ) {
     this.isAdminUser = this.sessionService.getCurrentUser().admin;
   }
@@ -110,6 +114,11 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
     child.photo.next(await this.childPhotoService.getImage(child));
   }
 
+  private initForm(): void {
+    this.columns = this.config.cols;
+    this.form = this.fb.group(this.buildFormConfig());
+  }
+
   private buildFormConfig() {
     const formConfig = {};
     this.config.cols.forEach((c) =>
@@ -132,10 +141,6 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
         entity[key] = value;
       }
     });
-  }
-
-  private initForm(): void {
-    this.form = this.fb.group(this.buildFormConfig());
   }
 
   private checkFormValidity(): boolean {

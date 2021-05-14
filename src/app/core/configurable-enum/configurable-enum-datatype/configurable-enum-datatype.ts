@@ -10,7 +10,7 @@ import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 export class ConfigurableEnumDatatype
   implements EntitySchemaDatatype<ConfigurableEnumValue> {
   public readonly name = "configurable-enum";
-  public readonly displayComponent = "DisplayConfigurableEnum";
+  public readonly viewComponent = "DisplayConfigurableEnum";
 
   constructor(private configService: ConfigService) {}
 

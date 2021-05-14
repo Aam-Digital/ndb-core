@@ -180,18 +180,22 @@ export class EntitySchemaService {
    *
    * @param entityClass The class of the entity on which the property exists
    * @param property The name of the property
+   * @param mode (Optional) The mode for which a component is required. Default is "view".
    * @returns string The name of the component which should display this property
    */
-  getDisplayComponent(
+  getComponent(
     entityClass: EntityConstructor<Entity>,
-    property: string
+    property: string,
+    mode: "view" | "edit" = "view"
   ): string {
     const propertySchema = entityClass.schema.get(property);
-    if (propertySchema.displayComponent) {
-      return propertySchema.displayComponent;
+    if (propertySchema.viewComponent) {
+      return mode === "view"
+        ? propertySchema.viewComponent
+        : propertySchema.editComponent;
     } else {
-      return this.getDatatypeOrDefault(propertySchema.dataType)
-        .displayComponent;
+      const datatype = this.getDatatypeOrDefault(propertySchema.dataType);
+      return mode === "view" ? datatype.viewComponent : datatype.editComponent;
     }
   }
 }

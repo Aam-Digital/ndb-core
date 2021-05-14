@@ -91,7 +91,7 @@ describe("EntityListComponent", () => {
       mockConfigService = jasmine.createSpyObj(["getConfig"]);
       mockLoggingService = jasmine.createSpyObj(["warn"]);
       mockEntityMapper = jasmine.createSpyObj(["save"]);
-      mockEntitySchemaService = jasmine.createSpyObj(["getDisplayComponent"]);
+      mockEntitySchemaService = jasmine.createSpyObj(["getComponent"]);
 
       TestBed.configureTestingModule({
         declarations: [EntityListComponent, ExportDataComponent],
@@ -332,7 +332,7 @@ describe("EntityListComponent", () => {
       @DatabaseField({ label: "Test Property" }) testProperty: string;
     }
     component.entityConstructor = Test;
-    mockEntitySchemaService.getDisplayComponent.and.returnValue("DisplayText");
+    mockEntitySchemaService.getComponent.and.returnValue("DisplayText");
     component.listConfig = {
       title: "",
       columns: [

@@ -65,7 +65,9 @@ export interface EntitySchemaField {
    * The name has to match one of the strings in the DYNAMIC_COMPONENT_MAP.
    * If nothing is defined, the default component for this datatype will be used.
    */
-  displayComponent?: string;
+  viewComponent?: string;
+
+  editComponent?: string;
 
   /**
    * A label which explains this value in a human readable way
