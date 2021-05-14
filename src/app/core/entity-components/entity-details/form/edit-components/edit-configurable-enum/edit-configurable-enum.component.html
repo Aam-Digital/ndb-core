@@ -1,1 +1,17 @@
-<p>edit-configurable-enum works!</p>
+<mat-form-field [formGroup]="formControl.parent">
+  <mat-icon *ngIf="select.disabled && tooltip" matSuffix
+    fontIcon="fa-question-circle-o"
+    [matTooltip]="tooltip"
+  ></mat-icon>
+  <mat-label>
+    {{ placeholder }}
+  </mat-label>
+  <mat-select [disabled]="formControl.disabled" [formControlName]="formControlName" #select>
+    <mat-option
+      *appConfigurableEnum="let o of enumId"
+      [value]="o"
+    >
+      {{ o.label }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

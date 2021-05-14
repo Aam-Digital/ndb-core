@@ -127,6 +127,9 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
         if (!row.placeholder) {
           row.placeholder = propertySchema.label;
         }
+        if (!row.enumId) {
+          row.enumId = propertySchema.innerDataType;
+        }
         return row;
       })
     );

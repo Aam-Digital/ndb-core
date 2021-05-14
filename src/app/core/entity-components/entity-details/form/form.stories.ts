@@ -78,12 +78,12 @@ const testConfig = {
       // },
       // ],
       // [
-      //   {
-      //     input: "configurable-enum-select",
-      //     id: "has_rationCard",
-      //     placeholder: "Ration Card Status",
-      //     enumId: "document-status",
-      //   },
+      {
+        input: "EditConfigurableEnum",
+        id: "has_rationCard",
+        placeholder: "Ration Card Status",
+        enumId: "document-status",
+      },
       //   {
       //     input: "datepicker",
       //     id: "health_lastDentalCheckup",
