@@ -70,7 +70,7 @@ export class ChildrenService {
     children.forEach((child) => {
       const activeRelation = relationsMap
         .get(child.getId())
-        .find((relation) => relation.isActive());
+        .find((relation) => relation.isActive);
       if (activeRelation) {
         child.schoolId = activeRelation.schoolId;
         child.schoolClass = activeRelation.schoolClass;

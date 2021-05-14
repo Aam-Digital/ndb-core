@@ -30,14 +30,16 @@ import { School } from "../child-dev-project/schools/model/school";
 import { ChildrenService } from "../child-dev-project/children/children.service";
 import { PouchDatabase } from "../core/database/pouch-database";
 
-xdescribe("Performance Tests", () => {
+fdescribe("Performance Tests", () => {
   let mockDatabase: PouchDatabase;
 
   beforeEach(async () => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 150000;
+
     const loggingService = new LoggingService();
     // Uncomment this line to run performance tests with the InBrowser database.
     // mockDatabase = PouchDatabase.createWithIndexedDB(
-    mockDatabase = PouchDatabase.createWithInMemoryDB(
+    mockDatabase = PouchDatabase.createWithIndexedDB(
       "performance_db",
       loggingService
     );
@@ -53,10 +55,9 @@ xdescribe("Performance Tests", () => {
         { provide: Database, useValue: mockDatabase },
         { provide: SessionService, useValue: mockSessionService },
         { provide: EntitySchemaService, useValue: schemaService },
-        { provide: LoggingService, useValue: LoggingService },
+        { provide: LoggingService, useValue: loggingService },
       ],
     }).compileComponents();
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 150000;
     const demoDataService = TestBed.inject(DemoDataService);
     const setup = new Timer();
     await demoDataService.publishDemoData();
