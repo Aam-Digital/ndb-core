@@ -87,13 +87,11 @@ const testConfig = {
       },
       {
         input: "EditDate",
-        id: "admissionDate"
+        id: "admissionDate",
       },
-      //   {
-      //     input: "age",
-      //     id: "dateOfBirth",
-      //     placeholder: "Date of Birth",
-      //   },
+      {
+        id: "dateOfBirth",
+      },
     ],
   ],
 };

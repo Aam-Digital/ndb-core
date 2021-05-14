@@ -1,0 +1,28 @@
+<div [formGroup]="formControl.parent">
+  <mat-form-field style="width: 120px">
+    <input
+      matInput
+      [formControlName]="formControlName"
+      [placeholder]="placeholder"
+      [matDatepicker]="dateOfBirthDatepicker"
+      #dateOfBirth
+    />
+    <mat-datepicker-toggle
+      matSuffix
+      [for]="dateOfBirthDatepicker"
+    ></mat-datepicker-toggle>
+    <mat-datepicker #dateOfBirthDatepicker></mat-datepicker>
+  </mat-form-field>
+  <mat-form-field style="width: 50px">
+    <mat-icon *ngIf="formControl.disabled && tooltip" matSuffix
+      fontIcon="fa-question-circle-o"
+      [matTooltip]="tooltip"
+    ></mat-icon>
+      <input
+        matInput
+        placeholder="Age"
+        [value]="getAge(dateOfBirth.value)"
+        [disabled]="true"
+      />
+  </mat-form-field>
+</div>

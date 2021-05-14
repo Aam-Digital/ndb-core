@@ -81,37 +81,6 @@
 <!--          [disabled]="!editing"-->
 <!--          >{{ row.placeholder }}-->
 <!--        </mat-checkbox>-->
-
-<!--        <div *ngIf="row.input === 'age'">-->
-<!--          <mat-form-field style="width: 120px">-->
-<!--            <input-->
-<!--              matInput-->
-<!--              [formControlName]="row.id"-->
-<!--              [placeholder]="row.placeholder"-->
-<!--              [matDatepicker]="dateOfBirthDatepicker"-->
-<!--              [disabled]="!editing"-->
-<!--              #dateOfBirth-->
-<!--            />-->
-<!--            <mat-datepicker-toggle-->
-<!--              matSuffix-->
-<!--              [for]="dateOfBirthDatepicker"-->
-<!--            ></mat-datepicker-toggle>-->
-<!--            <mat-datepicker #dateOfBirthDatepicker></mat-datepicker>-->
-<!--          </mat-form-field>-->
-<!--          <mat-form-field style="width: 50px">-->
-<!--            <mat-icon *ngIf="editing && row.tooltip" matSuffix-->
-<!--              fontIcon="fa-question-circle-o"-->
-<!--              [matTooltip]="row.tooltip"-->
-<!--            ></mat-icon>-->
-<!--              <input-->
-<!--                matInput-->
-<!--                placeholder="Age"-->
-<!--                type="string"-->
-<!--                [value]="calculateAge(dateOfBirth.value)"-->
-<!--                [disabled]="true"-->
-<!--              />-->
-<!--          </mat-form-field>-->
-<!--        </div>-->
     </div>
   </div>
 </form>

@@ -25,6 +25,7 @@ import { EditConfigurableEnumComponent } from "./form/edit-components/edit-confi
 import { EditTextComponent } from "./form/edit-components/edit-text/edit-text.component";
 import { EditDateComponent } from "./form/edit-components/edit-date/edit-date.component";
 import { EditSelectableComponent } from "./form/edit-components/edit-selectable/edit-selectable.component";
+import { EditAgeComponent } from "./form/edit-components/edit-age/edit-age.component";
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { EditSelectableComponent } from "./form/edit-components/edit-selectable/
     EditTextComponent,
     EditDateComponent,
     EditSelectableComponent,
+    EditAgeComponent,
   ],
   imports: [
     CommonModule,
@@ -62,6 +64,7 @@ import { EditSelectableComponent } from "./form/edit-components/edit-selectable/
     EditConfigurableEnumComponent,
     EditDateComponent,
     EditSelectableComponent,
+    EditAgeComponent,
   ],
 })
 export class EntityDetailsModule {}
