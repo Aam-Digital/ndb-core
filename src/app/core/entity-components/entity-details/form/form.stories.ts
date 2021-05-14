@@ -32,7 +32,7 @@ export default {
         },
         {
           provide: EntityPermissionsService,
-          useValue: { userIsPermitted: () => false },
+          useValue: { userIsPermitted: () => true },
         },
       ],
     }),
@@ -43,10 +43,27 @@ const testConfig = {
   cols: [
     [
       {
+        input: "photo",
+        id: "photoFile",
+        placeholder: "Photo Filename",
+      },
+    ],
+    [
+      {
         input: "text",
         id: "name",
         placeholder: "Name",
         required: true,
+      },
+      {
+        input: "textarea",
+        id: "additionalInfo",
+        placeholder: "Additional information",
+      },
+      {
+        input: "checkbox",
+        id: "active",
+        placeholder: "Is active",
       },
       {
         input: "select",
@@ -62,27 +79,16 @@ const testConfig = {
     ],
     [
       {
-        input: "select",
-        id: "health_eyeHealthStatus",
-        placeholder: "Eye Status",
-        options: ["Good", "Has Glasses", "Needs Glasses", "Needs Checkup"],
+        input: "configurable-enum-select",
+        id: "has_rationCard",
+        placeholder: "Ration Card Status",
+        enumId: "document-status",
       },
-    ],
-    [
-      {
-        input: "text",
-        id: "health_bloodGroup",
-        placeholder: "Blood Group",
-      },
-    ],
-    [
       {
         input: "datepicker",
         id: "health_lastDentalCheckup",
         placeholder: "Last Dental Check-Up",
       },
-    ],
-    [
       {
         input: "age",
         id: "dateOfBirth",
@@ -101,4 +107,5 @@ export const Primary = Template.bind({});
 Primary.args = {
   entity: new Child(),
   config: testConfig,
+  editing: true,
 };
