@@ -117,18 +117,11 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   private initForm(): void {
     this.columns = this.config.cols.map((column) =>
       column.map((row) => {
-        const propertySchema = this.entity.getSchema().get(row.id);
         if (!row.input) {
           row.input = this.entitySchemaService.getComponent(
-            propertySchema,
+            this.entity.getSchema().get(row.id),
             "edit"
           );
-        }
-        if (!row.placeholder) {
-          row.placeholder = propertySchema.label;
-        }
-        if (!row.enumId) {
-          row.enumId = propertySchema.innerDataType;
         }
         return row;
       })

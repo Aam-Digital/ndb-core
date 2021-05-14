@@ -6,18 +6,18 @@
     fxLayout.sm="row wrap"
   >
     <div *ngFor="let col of columns" fxFlex>
-      <ng-template *ngFor="let row of col" [appDynamicComponent]="{
+      <div *ngFor="let row of col">
+        <ng-template [appDynamicComponent]="{
           component: row.input,
           config: {
-            id: row.id,
-            placeholder: row.placeholder,
-            tooltip: row.tooltip,
-            formControl: form.get(row.id),
-            enumId: row.enumId
+            formFieldConfig: row,
+            propertySchema: entity.getSchema().get(row.id),
+            formControl: form.get(row.id)
           }
         }"
-      >
-      </ng-template>
+        >
+        </ng-template>
+      </div>
 <!--      <div *ngFor="let row of col">-->
 <!--        <div *ngIf="row.input === 'photo'" class="child-pic-container">-->
 <!--          <img-->
