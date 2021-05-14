@@ -28,6 +28,7 @@ import { DashboardShortcutWidgetComponent } from "../dashboard-shortcut-widget/d
 import { UsersBlockComponent } from "../user/users-block/users-block.component";
 import { UserListComponent } from "../admin/user-list/user-list.component";
 import { HistoricalDataComponent } from "../../features/historical-data/historical-data/historical-data.component";
+import { TextfieldComponent } from "../entity-components/entity-details/form/edit-components/textfield/textfield.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -60,4 +61,5 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["UserList", UserListComponent],
   ["DashboardShortcutWidget", DashboardShortcutWidgetComponent],
   ["HistoricalDataComponent", HistoricalDataComponent],
+  ["TextfieldComponent", TextfieldComponent],
 ]);

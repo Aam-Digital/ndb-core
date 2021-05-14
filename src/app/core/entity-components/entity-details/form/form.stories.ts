@@ -11,6 +11,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { User } from "../../../user/user";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityPermissionsService } from "../../../permissions/entity-permissions.service";
+import { TextfieldComponent } from "./edit-components/textfield/textfield.component";
 
 export default {
   title: "Core/Form",
@@ -23,8 +24,8 @@ export default {
         BrowserAnimationsModule,
       ],
       providers: [
-        { provide: EntityMapperService, useValue: {} },
-        { provide: AlertService, useValue: {} },
+        { provide: EntityMapperService, useValue: { save: () => null } },
+        { provide: AlertService, useValue: { addDanger: () => null } },
         { provide: ChildPhotoService, useValue: { canSetImage: () => true } },
         {
           provide: SessionService,
@@ -41,59 +42,59 @@ export default {
 
 const testConfig = {
   cols: [
+    // [
+    //   {
+    //     input: "photo",
+    //     id: "photoFile",
+    //     placeholder: "Photo Filename",
+    //   },
+    // ],
     [
       {
-        input: "photo",
-        id: "photoFile",
-        placeholder: "Photo Filename",
-      },
-    ],
-    [
-      {
-        input: "text",
+        input: "TextfieldComponent",
         id: "name",
         placeholder: "Name",
         required: true,
       },
-      {
-        input: "textarea",
-        id: "additionalInfo",
-        placeholder: "Additional information",
-      },
-      {
-        input: "checkbox",
-        id: "active",
-        placeholder: "Is active",
-      },
-      {
-        input: "select",
-        id: "health_vaccinationStatus",
-        placeholder: "Peter Status",
-        options: [
-          "Good",
-          "Vaccination Due",
-          "Needs Checking",
-          "No Card/Information",
-        ],
-      },
-    ],
-    [
-      {
-        input: "configurable-enum-select",
-        id: "has_rationCard",
-        placeholder: "Ration Card Status",
-        enumId: "document-status",
-      },
-      {
-        input: "datepicker",
-        id: "health_lastDentalCheckup",
-        placeholder: "Last Dental Check-Up",
-      },
-      {
-        input: "age",
-        id: "dateOfBirth",
-        placeholder: "Date of Birth",
-      },
+      // {
+      //   input: "textarea",
+      //   id: "additionalInfo",
+      //   placeholder: "Additional information",
+      // },
+      // {
+      //   input: "checkbox",
+      //   id: "active",
+      //   placeholder: "Is active",
+      // },
+      // {
+      //   input: "select",
+      //   id: "health_vaccinationStatus",
+      //   placeholder: "Peter Status",
+      //   options: [
+      //     "Good",
+      //     "Vaccination Due",
+      //     "Needs Checking",
+      //     "No Card/Information",
+      //   ],
+      // },
+      // ],
+      // [
+      //   {
+      //     input: "configurable-enum-select",
+      //     id: "has_rationCard",
+      //     placeholder: "Ration Card Status",
+      //     enumId: "document-status",
+      //   },
+      //   {
+      //     input: "datepicker",
+      //     id: "health_lastDentalCheckup",
+      //     placeholder: "Last Dental Check-Up",
+      //   },
+      //   {
+      //     input: "age",
+      //     id: "dateOfBirth",
+      //     placeholder: "Date of Birth",
+      //   },
     ],
   ],
 };

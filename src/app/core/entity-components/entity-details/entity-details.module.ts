@@ -20,9 +20,16 @@ import { EntityModule } from "../../entity/entity.module";
 import { AlertsModule } from "../../alerts/alerts.module";
 import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
+import { PhotoComponent } from "./form/edit-components/photo/photo.component";
+import { TextfieldComponent } from "./form/edit-components/textfield/textfield.component";
 
 @NgModule({
-  declarations: [EntityDetailsComponent, FormComponent],
+  declarations: [
+    EntityDetailsComponent,
+    FormComponent,
+    PhotoComponent,
+    TextfieldComponent,
+  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -44,5 +51,6 @@ import { PermissionsModule } from "../../permissions/permissions.module";
     ConfigurableEnumModule,
     PermissionsModule,
   ],
+  entryComponents: [TextfieldComponent],
 })
 export class EntityDetailsModule {}

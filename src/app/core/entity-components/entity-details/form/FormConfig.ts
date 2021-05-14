@@ -34,4 +34,6 @@ export interface FormFieldConfig {
    * The id of the enum in case `input="configurable-enum-select" is used.
    */
   enumId?: string;
+
+  tooltip?: string;
 }
