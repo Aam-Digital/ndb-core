@@ -21,14 +21,16 @@ import { AlertsModule } from "../../alerts/alerts.module";
 import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
 import { PhotoComponent } from "./form/edit-components/photo/photo.component";
-import { TextfieldComponent } from "./form/edit-components/textfield/textfield.component";
+import { EditConfigurableEnumComponent } from "./form/edit-components/edit-configurable-enum/edit-configurable-enum.component";
+import { EditTextComponent } from "./form/edit-components/edit-text/edit-text.component";
 
 @NgModule({
   declarations: [
     EntityDetailsComponent,
     FormComponent,
     PhotoComponent,
-    TextfieldComponent,
+    EditConfigurableEnumComponent,
+    EditTextComponent,
   ],
   imports: [
     CommonModule,
@@ -51,6 +53,6 @@ import { TextfieldComponent } from "./form/edit-components/textfield/textfield.c
     ConfigurableEnumModule,
     PermissionsModule,
   ],
-  entryComponents: [TextfieldComponent],
+  entryComponents: [EditTextComponent, EditConfigurableEnumComponent],
 })
 export class EntityDetailsModule {}

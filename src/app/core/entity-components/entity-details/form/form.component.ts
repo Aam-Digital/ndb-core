@@ -82,7 +82,7 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
       return;
     }
 
-    this.assignFormValuesToEntity(this.entity, this.form);
+    this.assignFormValuesToEntity();
     try {
       await this.entityMapperService.save<Entity>(this.entity);
       this.router.navigate([getParentUrl(this.router), this.entity.getId()]);
@@ -148,13 +148,14 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
     return formConfig;
   }
 
-  private assignFormValuesToEntity(entity: Entity, form: FormGroup) {
-    Object.keys(form.controls).forEach((key) => {
-      const value = form.get(key).value;
+  private assignFormValuesToEntity() {
+    Object.keys(this.form.controls).forEach((key) => {
+      const value = this.form.get(key).value;
       if (value !== null) {
-        entity[key] = value;
+        this.entity[key] = value;
       }
     });
+    console.log("entity", this.entity);
   }
 
   private checkFormValidity(): boolean {

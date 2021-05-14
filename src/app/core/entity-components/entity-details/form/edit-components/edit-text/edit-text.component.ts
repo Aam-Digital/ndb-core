@@ -3,11 +3,11 @@ import { OnInitDynamicComponent } from "../../../../../view/dynamic-components/o
 import { AbstractControl } from "@angular/forms";
 
 @Component({
-  selector: "app-textfield",
-  templateUrl: "./textfield.component.html",
-  styleUrls: ["./textfield.component.scss"],
+  selector: "app-edit-text",
+  templateUrl: "./edit-text.component.html",
+  styleUrls: ["./edit-text.component.scss"],
 })
-export class TextfieldComponent implements OnInitDynamicComponent {
+export class EditTextComponent implements OnInitDynamicComponent {
   tooltip: string;
   formControlName: string;
   placeholder: string;

@@ -11,7 +11,6 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { User } from "../../../user/user";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityPermissionsService } from "../../../permissions/entity-permissions.service";
-import { TextfieldComponent } from "./edit-components/textfield/textfield.component";
 
 export default {
   title: "Core/Form",
@@ -51,7 +50,7 @@ const testConfig = {
     // ],
     [
       {
-        input: "TextfieldComponent",
+        input: "EditText",
         id: "name",
         placeholder: "Name",
         required: true,
