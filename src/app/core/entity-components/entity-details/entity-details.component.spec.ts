@@ -11,14 +11,13 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { RouterTestingModule } from "@angular/router/testing";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { PanelConfig, EntityDetailsConfig } from "./EntityDetailsConfig";
+import { PanelConfig } from "./EntityDetailsConfig";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { User } from "../../user/user";
 import { SessionService } from "../../session/session-service/session.service";
 import { ChildrenModule } from "../../../child-dev-project/children/children.module";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
-import { FormConfig } from "./form/FormConfig";
 import { EntityPermissionsService } from "../../permissions/entity-permissions.service";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
 
@@ -28,7 +27,7 @@ describe("EntityDetailsComponent", () => {
 
   let routeObserver: Subscriber<any>;
 
-  const routeConfig: EntityDetailsConfig = {
+  const routeConfig = {
     icon: "child",
     entity: "Child",
     panels: [
@@ -38,7 +37,7 @@ describe("EntityDetailsComponent", () => {
           {
             title: "",
             component: "Form",
-            config: { cols: [[]] } as FormConfig,
+            config: { cols: [[]] },
           },
         ],
       },

@@ -19,31 +19,38 @@ import { ChildPhotoService } from "../../../../child-dev-project/children/child-
 import { AlertService } from "../../../alerts/alert.service";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { ConfigService } from "../../../config/config.service";
+import { Entity } from "../../../entity/entity";
+import { DatabaseField } from "../../../entity/database-field.decorator";
+import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 
 describe("FormComponent", () => {
   let component: FormComponent;
   let fixture: ComponentFixture<FormComponent>;
 
-  const mockChildPhotoService: jasmine.SpyObj<ChildPhotoService> = jasmine.createSpyObj(
-    "mockChildPhotoService",
-    ["canSetImage", "setImage", "getImage"]
-  );
-
-  const mockSessionService: jasmine.SpyObj<SessionService> = jasmine.createSpyObj(
-    "mockSessionService",
-    { getCurrentUser: new User("test-user") }
-  );
+  let mockChildPhotoService: jasmine.SpyObj<ChildPhotoService>;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
   let mockConfigService: jasmine.SpyObj<ConfigService>;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockEntitySchemaService: jasmine.SpyObj<EntitySchemaService>;
 
   const testChild = new Child("Test Name");
 
   beforeEach(
     waitForAsync(() => {
-      mockConfigService = jasmine.createSpyObj("mockConfigService", [
-        "getConfig",
+      mockChildPhotoService = jasmine.createSpyObj([
+        "canSetImage",
+        "setImage",
+        "getImage",
       ]);
-      mockEntityMapper = jasmine.createSpyObj("mockEntityMapper", ["save"]);
+      mockSessionService = jasmine.createSpyObj({
+        getCurrentUser: new User("test-user"),
+      });
+      mockConfigService = jasmine.createSpyObj(["getConfig"]);
+      mockEntityMapper = jasmine.createSpyObj(["save"]);
+      mockEntitySchemaService = jasmine.createSpyObj([
+        "getComponent",
+        "registerSchemaDatatype",
+      ]);
 
       TestBed.configureTestingModule({
         declarations: [FormComponent],
@@ -57,6 +64,7 @@ describe("FormComponent", () => {
           { provide: ChildPhotoService, useValue: mockChildPhotoService },
           { provide: SessionService, useValue: mockSessionService },
           { provide: ConfigService, useValue: mockConfigService },
+          { provide: EntitySchemaService, useValue: mockEntitySchemaService },
         ],
       }).compileComponents();
     })
@@ -148,6 +156,44 @@ describe("FormComponent", () => {
 
     flush();
   }));
+
+  it("should add column definitions from property schema", () => {
+    class Test extends Entity {
+      @DatabaseField({ label: "Predefined label" }) propertyField: string;
+    }
+    mockEntitySchemaService.getComponent.and.returnValue("PredefinedComponent");
+
+    component.onInitFromDynamicConfig({
+      entity: new Test(),
+      config: {
+        cols: [
+          [
+            {
+              id: "fieldWithDefinition",
+              input: "SomeComponent",
+              placeholder: "Field with definition",
+            },
+            { id: "propertyField" },
+          ],
+        ],
+      },
+    });
+
+    expect(component.columns).toEqual([
+      [
+        {
+          id: "fieldWithDefinition",
+          input: "SomeComponent",
+          placeholder: "Field with definition",
+        },
+        {
+          id: "propertyField",
+          input: "PredefinedComponent",
+          placeholder: "Predefined label",
+        },
+      ],
+    ]);
+  });
 });
 
 export const testConfig = {

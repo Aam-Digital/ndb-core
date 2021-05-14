@@ -1,23 +1,23 @@
 import { Entity } from "../../entity/entity";
 
-export class EntityDetailsConfig {
+export interface EntityDetailsConfig {
   icon: string;
   entity: string;
   panels: Panel[];
 }
 
-export class Panel {
+export interface Panel {
   title: string;
   components: PanelComponent[];
 }
 
-export class PanelComponent {
+export interface PanelComponent {
   title: string;
   component: string;
   config?: PanelConfig;
 }
 
-export class PanelConfig {
+export interface PanelConfig {
   entity: Entity;
   creatingNew?: boolean;
   config?: any;

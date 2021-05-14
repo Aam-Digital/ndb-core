@@ -115,7 +115,21 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   }
 
   private initForm(): void {
-    this.columns = this.config.cols;
+    this.columns = this.config.cols.map((column) =>
+      column.map((row) => {
+        if (!row.input) {
+          row.input = this.entitySchemaService.getComponent(
+            this.entity.getConstructor(),
+            row.id,
+            "edit"
+          );
+        }
+        if (!row.placeholder) {
+          row.placeholder = this.entity.getSchema().get(row.id).label;
+        }
+        return row;
+      })
+    );
     this.form = this.fb.group(this.buildFormConfig());
   }
 
