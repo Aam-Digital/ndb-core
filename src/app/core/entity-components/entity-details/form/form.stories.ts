@@ -41,13 +41,13 @@ export default {
 
 const testConfig = {
   cols: [
-    // [
-    //   {
-    //     input: "photo",
-    //     id: "photoFile",
-    //     placeholder: "Photo Filename",
-    //   },
-    // ],
+    [
+      {
+        input: "photo",
+        id: "photoFile",
+        placeholder: "Photo Filename",
+      },
+    ],
     [
       {
         input: "EditText",

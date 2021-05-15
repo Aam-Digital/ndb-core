@@ -1,0 +1,42 @@
+<div [formGroup]="formControl.parent" class="child-pic-container">
+  <img
+    [src]="entity?.photo?.value"
+    class="child-pic"
+    alt="child's photo"
+  />
+
+  <input
+    style="display: none"
+    type="file"
+    accept=".jpg, .jpeg, .png"
+    (change)="uploadChildPhoto($event)"
+    #fileUpload
+  />
+  <button
+    *ngIf="enablePhotoUpload && editing"
+    class="child-pic-upload"
+    (click)="fileUpload.click()"
+  >
+    <mat-icon class="upload-icon" fontIcon="fa-upload"></mat-icon>
+  </button>
+
+  <mat-form-field
+    *ngIf="editing && isAdminUser"
+    class="child-pic-photofile"
+  >
+    <input
+      #photoFileInput
+      matTooltip="filename for child photo uploaded by server administrator"
+      matInput
+      [formControlName]="row.id"
+      [placeholder]="row.placeholder"
+      [title]="row.placeholder"
+      type="text"
+    />
+    <span
+      matSuffix
+      (click)="photoFileInput.value = ''"
+      class="fa fa-times"
+    ></span>
+  </mat-form-field>
+</div>
