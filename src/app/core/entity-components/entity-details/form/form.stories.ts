@@ -60,11 +60,11 @@ const testConfig = {
       //   id: "additionalInfo",
       //   placeholder: "Additional information",
       // },
-      // {
-      //   input: "checkbox",
-      //   id: "active",
-      //   placeholder: "Is active",
-      // },
+      {
+        input: "EditBoolean",
+        id: "active",
+        placeholder: "Is active",
+      },
       { id: "gender" },
       {
         input: "EditSelectable",

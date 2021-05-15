@@ -1,6 +1,6 @@
-<!--        <mat-checkbox-->
-<!--          *ngIf="row.input === 'checkbox'"-->
-<!--          [formControlName]="row.id"-->
-<!--          [disabled]="!editing"-->
-<!--          >{{ row.placeholder }}-->
-<!--        </mat-checkbox>-->
+<div [formGroup]="formControl.parent">
+  <mat-checkbox
+    [formControlName]="formControlName"
+  >{{ placeholder }}
+  </mat-checkbox>
+</div>
