@@ -34,6 +34,7 @@ import { EditDateComponent } from "../entity-components/entity-details/form/edit
 import { EditSelectableComponent } from "../entity-components/entity-details/form/edit-components/edit-selectable/edit-selectable.component";
 import { EditAgeComponent } from "../entity-components/entity-details/form/edit-components/edit-age/edit-age.component";
 import { EditBooleanComponent } from "../entity-components/entity-details/form/edit-components/edit-boolean/edit-boolean.component";
+import { EditLongTextComponent } from "../entity-components/entity-details/form/edit-components/edit-long-text/edit-long-text.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -72,4 +73,5 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["EditSelectable", EditSelectableComponent],
   ["EditAge", EditAgeComponent],
   ["EditBoolean", EditBooleanComponent],
+  ["EditLongText", EditLongTextComponent],
 ]);

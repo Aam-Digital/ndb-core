@@ -55,11 +55,11 @@ const testConfig = {
         placeholder: "Name",
         required: true,
       },
-      // {
-      //   input: "textarea",
-      //   id: "additionalInfo",
-      //   placeholder: "Additional information",
-      // },
+      {
+        input: "EditLongText",
+        id: "additionalInfo",
+        placeholder: "Additional information",
+      },
       {
         input: "EditBoolean",
         id: "active",
