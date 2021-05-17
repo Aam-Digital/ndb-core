@@ -43,8 +43,8 @@ const testConfig = {
   cols: [
     [
       {
-        input: "photo",
-        id: "photoFile",
+        input: "EditPhoto",
+        id: "photo",
         placeholder: "Photo Filename",
       },
     ],

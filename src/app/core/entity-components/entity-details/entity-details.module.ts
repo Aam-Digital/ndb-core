@@ -28,7 +28,7 @@ import { EditSelectableComponent } from "./form/edit-components/edit-selectable/
 import { EditAgeComponent } from "./form/edit-components/edit-age/edit-age.component";
 import { EditBooleanComponent } from "./form/edit-components/edit-boolean/edit-boolean.component";
 import { EditLongTextComponent } from "./form/edit-components/edit-long-text/edit-long-text.component";
-import { EditPhotoComponent } from './form/edit-components/edit-photo/edit-photo.component';
+import { EditPhotoComponent } from "./form/edit-components/edit-photo/edit-photo.component";
 
 @NgModule({
   declarations: [
@@ -73,6 +73,7 @@ import { EditPhotoComponent } from './form/edit-components/edit-photo/edit-photo
     EditAgeComponent,
     EditBooleanComponent,
     EditLongTextComponent,
+    EditPhotoComponent,
   ],
 })
 export class EntityDetailsModule {}
