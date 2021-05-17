@@ -46,7 +46,7 @@ export class PhotoDatatype implements EntitySchemaDatatype {
     schemaService: EntitySchemaService,
     parent: Entity
   ): Photo {
-    // Migration of old photoFile values
+    // Using of old photoFile values
     if (
       parent.hasOwnProperty("photoFile") &&
       parent["photoFile"].trim() !== ""
