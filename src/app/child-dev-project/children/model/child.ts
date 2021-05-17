@@ -22,7 +22,7 @@ import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 import { calculateAge } from "../../../utils/utils";
 import { Photo } from "../child-photo-service/photo";
-import { ChildPhotoService } from "../child-photo-service/child-photo.service";
+import { SafeUrl } from "@angular/platform-browser";
 
 export type Center = ConfigurableEnumValue;
 @DatabaseEntity("Child")
@@ -33,6 +33,10 @@ export class Child extends Entity {
     return instance;
   }
 
+  public static getDefaultImage(): SafeUrl {
+    return "assets/child.png";
+  }
+
   /**
    * Returns the full relative filePath to a child photo given a filename, adding the relevant folders to it.
    * @param filename The given filename with file extension.
@@ -41,7 +45,7 @@ export class Child extends Entity {
     return "assets/child-photos/" + filename;
   }
 
-  @DatabaseField() name: string;
+  @DatabaseField({ label: "Name" }) name: string;
   @DatabaseField({ label: "PN" }) projectNumber: string; // project number
   @DatabaseField({
     dataType: "date-only",
@@ -57,7 +61,7 @@ export class Child extends Entity {
     editComponent: "EditSelectable",
   })
   gender: Gender; // M or F
-  @DatabaseField() religion: string = "";
+  @DatabaseField({ label: "Religion" }) religion: string = "";
 
   @DatabaseField({
     dataType: "configurable-enum",
@@ -68,9 +72,9 @@ export class Child extends Entity {
   @DatabaseField({ label: "Admission" }) admissionDate: Date;
   @DatabaseField({ label: "Status" }) status: string = "";
 
-  @DatabaseField() dropoutDate: Date;
-  @DatabaseField() dropoutType: string;
-  @DatabaseField() dropoutRemarks: string;
+  @DatabaseField({ label: "Dropout Date" }) dropoutDate: Date;
+  @DatabaseField({ label: "Dropout Type" }) dropoutType: string;
+  @DatabaseField({ label: "Dropout remarks" }) dropoutRemarks: string;
 
   /** current school (as determined through the ChildSchoolRelation docs) set during loading through ChildrenService */
   schoolId: string = "";
@@ -79,7 +83,8 @@ export class Child extends Entity {
 
   @DatabaseField({
     dataType: "photo",
-    defaultValue: ChildPhotoService.getDefaultImage(),
+    defaultValue: Child.getDefaultImage(),
+    label: "Photo Filename",
   })
   photo: Photo;
 

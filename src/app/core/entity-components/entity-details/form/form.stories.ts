@@ -43,16 +43,12 @@ const testConfig = {
   cols: [
     [
       {
-        input: "EditPhoto",
         id: "photo",
-        placeholder: "Photo Filename",
       },
     ],
     [
       {
-        input: "EditText",
         id: "name",
-        placeholder: "Name",
         required: true,
       },
       {
@@ -77,8 +73,8 @@ const testConfig = {
           "No Card/Information",
         ],
       },
-      // ],
-      // [
+    ],
+    [
       {
         input: "EditConfigurableEnum",
         id: "has_rationCard",
@@ -86,7 +82,6 @@ const testConfig = {
         enumId: "document-status",
       },
       {
-        input: "EditDate",
         id: "admissionDate",
       },
       {

@@ -11,6 +11,7 @@ export class ConfigurableEnumDatatype
   implements EntitySchemaDatatype<ConfigurableEnumValue> {
   public readonly name = "configurable-enum";
   public readonly viewComponent = "DisplayConfigurableEnum";
+  public readonly editComponent = "EditConfigurableEnum";
 
   constructor(private configService: ConfigService) {}
 

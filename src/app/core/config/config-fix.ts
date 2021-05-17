@@ -619,122 +619,35 @@ export const defaultJsonConfig = {
               "component": "Form",
               "config": {
                 "cols": [
+                  [{ "id": "photo" }],
                   [
-                    {
-                      "input": "photo",
-                      "id": "photo",
-                      "placeholder": "Photo Filename"
-                    }
+                    { "id": "name", "required": true },
+                    { "id": "projectNumber" },
+                    { "id": "center" },
+                    { "id": "status" }
                   ],
                   [
                     {
-                      "input": "text",
-                      "id": "name",
-                      "placeholder": "Name",
-                      "required": true
-                    },
-                    {
-                      "input": "text",
-                      "id": "projectNumber",
-                      "placeholder": "Project Number"
-                    },
-                    {
-                      "input": "configurable-enum-select",
-                      "id": "center",
-                      "placeholder": "Center",
-                      "enumId": "center"
-                    },
-                    {
-                      "input": "text",
-                      "id": "status",
-                      "placeholder": "Project Status"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "age",
                       "tooltip": "This field is read-only. Edit Date of Birth to change age. Select Jan 1st if you only know the year of birth.",
-                      "id": "dateOfBirth",
-                      "placeholder": "Date of Birth"
+                      "id": "dateOfBirth"
                     },
-                    {
-                      "input": "select",
-                      "id": "gender",
-                      "placeholder": "Gender",
-                      "options": [
-                        "M",
-                        "F"
-                      ]
-                    },
-                    {
-                      "input": "text",
-                      "id": "motherTongue",
-                      "placeholder": "Mother Tongue"
-                    },
-                    {
-                      "input": "text",
-                      "id": "religion",
-                      "placeholder": "Religion"
-                    }
+                    { "id": "gender" },
+                    { "id": "motherTongue" },
+                    { "id": "religion" }
                   ],
                   [
-                    {
-                      "input": "datepicker",
-                      "id": "admissionDate",
-                      "placeholder": "Admission Date"
-                    },
-                    {
-                      "input": "configurable-enum-select",
-                      "id": "has_aadhar",
-                      "placeholder": "Aadhar Status",
-                      "enumId": "document-status"
-                    },
-                    {
-                      "input": "configurable-enum-select",
-                      "id": "has_kanyashree",
-                      "placeholder": "Kanyashree Status",
-                      "enumId": "document-status"
-                    },
-                    {
-                      "input": "configurable-enum-select",
-                      "id": "has_bankAccount",
-                      "placeholder": "Bank Account Status",
-                      "enumId": "document-status"
-                    },
-                    {
-                      "input": "configurable-enum-select",
-                      "id": "has_rationCard",
-                      "placeholder": "Ration Card Status",
-                      "enumId": "document-status"
-                    },
-                    {
-                      "input": "configurable-enum-select",
-                      "id": "has_BplCard",
-                      "placeholder": "BPL Card Status",
-                      "enumId": "document-status"
-                    }
+                    { "id": "admissionDate" },
+                    { "id": "has_aadhar" },
+                    { "id": "has_kanyashree" },
+                    { "id": "has_bankAccount" },
+                    { "id": "has_rationCard" },
+                    { "id": "has_BplCard" }
                   ],
                   [
-                    {
-                      "input": "text",
-                      "id": "address",
-                      "placeholder": "Address"
-                    },
-                    {
-                      "input": "text",
-                      "id": "phone",
-                      "placeholder": "Phone No."
-                    },
-                    {
-                      "input": "text",
-                      "id": "guardianName",
-                      "placeholder": "Guardians"
-                    },
-                    {
-                      "input": "text",
-                      "id": "preferredTimeForGuardianMeeting",
-                      "placeholder": "Preferred time for guardians meeting"
-                    }
+                    { "id": "address" },
+                    { "id": "phone" },
+                    { "id": "guardianName" },
+                    { "id": "preferredTimeForGuardianMeeting" }
                   ]
                 ]
               }
@@ -790,74 +703,14 @@ export const defaultJsonConfig = {
               "component": "Form",
               "config": {
                 "cols": [
-                  [
-                    {
-                      "input": "select",
-                      "id": "health_vaccinationStatus",
-                      "placeholder": "Vaccination Status",
-                      "options": [
-                        "Good",
-                        "Vaccination Due",
-                        "Needs Checking",
-                        "No Card/Information"
-                      ]
-                    }
-                  ],
-                  [
-                    {
-                      "input": "select",
-                      "id": "health_eyeHealthStatus",
-                      "placeholder": "Eye Status",
-                      "options": [
-                        "Good",
-                        "Has Glasses",
-                        "Needs Glasses",
-                        "Needs Checkup"
-                      ]
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "health_bloodGroup",
-                      "placeholder": "Blood Group"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "datepicker",
-                      "id": "health_lastDentalCheckup",
-                      "placeholder": "Last Dental Check-Up"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "datepicker",
-                      "id": "health_lastEyeCheckup",
-                      "placeholder": "Last Eye Check-Up"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "datepicker",
-                      "id": "health_lastENTCheckup",
-                      "placeholder": "Last ENT Check-Up"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "datepicker",
-                      "id": "health_lastVitaminD",
-                      "placeholder": "Last Vitamin D"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "datepicker",
-                      "id": "health_lastDeworming",
-                      "placeholder": "Last De-Worming"
-                    }
-                  ]
+                  [{ "id": "health_vaccinationStatus" }],
+                  [{ "id": "health_eyeHealthStatus" }],
+                  [{ "id": "health_bloodGroup" }],
+                  [{ "id": "health_lastDentalCheckup" }],
+                  [{ "id": "health_lastEyeCheckup" }],
+                  [{ "id": "health_lastENTCheckup" }],
+                  [{ "id": "health_lastVitaminD" }],
+                  [{ "id": "health_lastDeworming" }]
                 ]
               }
             },
@@ -970,27 +823,9 @@ export const defaultJsonConfig = {
               "component": "Form",
               "config": {
                 "cols": [
-                  [
-                    {
-                      "input": "datepicker",
-                      "id": "dropoutDate",
-                      "placeholder": "Dropout Date"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "dropoutType",
-                      "placeholder": "Dropout Type"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "dropoutRemarks",
-                      "placeholder": "Dropout Remarks"
-                    }
-                  ]
+                  [{ "id": "dropoutDate" }],
+                  [{ "id": "dropoutType" }],
+                  [{ "id": "dropoutRemarks" }]
                 ]
               }
             }
@@ -1167,19 +1002,19 @@ export const defaultJsonConfig = {
     "permissions": {
     },
     "attributes": [
-      {"name": "address", "schema": { "dataType": "string" } },
-      {"name": "phone", "schema": { "dataType": "string" } },
-      {"name": "guardianName", "schema": { "dataType": "string" } },
-      {"name": "preferredTimeForGuardianMeeting", "schema": { "dataType": "string" } },
+      {"name": "address", "schema": { "dataType": "string", label: "Address" } },
+      {"name": "phone", "schema": { "dataType": "string", label: "Phone No." } },
+      {"name": "guardianName", "schema": { "dataType": "string", label: "Guardians" } },
+      {"name": "preferredTimeForGuardianMeeting", "schema": { "dataType": "string", label: "Preferred time for guardians meeting" } },
       {"name": "has_aadhar", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Aadhar" } },
       {"name": "has_bankAccount", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Bank Account" } },
       {"name": "has_kanyashree", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Kanyashree" } },
       {"name": "has_rationCard", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Ration Card" } },
       {"name": "has_BplCard", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "BPL Card" } },
-      {"name": "health_vaccinationStatus", "schema": { "dataType": "string", label: "Vaccination Status" } },
+      {"name": "health_vaccinationStatus", "schema": { "dataType": "string", label: "Vaccination Status", ext: ["", "Good", "Vaccination Due", "Needs Checking", "No Card/Information"] } },
       {"name": "health_bloodGroup", "schema": { "dataType": "string", label: "Blood Group" } },
       {"name": "health_lastDentalCheckup", "schema": { "dataType": "Date", label: "Last Dental Check-Up" } },
-      {"name": "health_lastEyeCheckup", "schema": { "dataType": "Date", label: "Last Eye Check-Up" } },
+      {"name": "health_lastEyeCheckup", "schema": { "dataType": "Date", label: "Last Eye Check-Up", ext: ["", "Good", "Has Glasses", "Needs Glasses", "Needs Checkup"] } },
       {"name": "health_lastENTCheckup", "schema": { "dataType": "Date", label: "Last ENT Check-Up" } },
       {"name": "health_eyeHealthStatus", "schema": { "dataType": "string", label: "Eye Status" } },
       {"name": "health_lastVitaminD", "schema": { "dataType": "Date", label: "Last Vitamin D" } },

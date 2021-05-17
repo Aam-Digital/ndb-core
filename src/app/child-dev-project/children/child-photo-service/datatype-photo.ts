@@ -29,6 +29,7 @@ import { BehaviorSubject } from "rxjs";
  */
 export class PhotoDatatype implements EntitySchemaDatatype {
   public readonly name = "photo";
+  public readonly editComponent = "EditPhoto";
 
   public transformToDatabaseFormat(value: Photo, schema: EntitySchemaField) {
     if (value.path === schema.defaultValue) {

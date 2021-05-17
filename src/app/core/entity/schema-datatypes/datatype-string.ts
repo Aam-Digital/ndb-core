@@ -32,6 +32,7 @@ import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
 export const stringEntitySchemaDatatype: EntitySchemaDatatype = {
   name: "string",
   viewComponent: "DisplayText",
+  editComponent: "EditText",
 
   transformToDatabaseFormat: (value) => {
     return String(value);
