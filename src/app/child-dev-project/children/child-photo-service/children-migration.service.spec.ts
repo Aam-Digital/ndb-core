@@ -1,7 +1,6 @@
-import { fakeAsync, TestBed } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 
 import { ChildrenMigrationService } from "./children-migration.service";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { Database } from "../../../core/database/database";
 import { PouchDatabase } from "../../../core/database/pouch-database";
 import { Child } from "../model/child";
