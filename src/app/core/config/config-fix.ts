@@ -359,83 +359,17 @@ export const defaultJsonConfig = {
               "component": "Form",
               "config": {
                 "cols": [
-                  [
-                    {
-                      "input": "text",
-                      "id": "name",
-                      "placeholder": "Name"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "medium",
-                      "placeholder": "Medium"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "checkbox",
-                      "id": "privateSchool",
-                      "placeholder": "Private School"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "academicBoard",
-                      "placeholder": "Board"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "phone",
-                      "placeholder": "Contact Number"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "address",
-                      "placeholder": "Address"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "website",
-                      "placeholder": "Website"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "timing",
-                      "placeholder": "School Timing"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "workingDays",
-                      "placeholder": "Working Days"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "upToClass",
-                      "placeholder": "Teaching up to class"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "textarea",
-                      "id": "remarks",
-                      "placeholder": "Remarks"
-                    }
-                  ]
+                  [{ "id": "name" }],
+                  [{ "id": "medium" }],
+                  [{ "id": "privateSchool" }],
+                  [{ "id": "academicBoard" }],
+                  [{ "id": "phone" }],
+                  [{ "id": "address" }],
+                  [{ "id": "website" }],
+                  [{ "id": "timing" }],
+                  [{ "id": "workingDays" }],
+                  [{ "id": "upToClass" }],
+                  [{ "id": "remarks" }]
                 ]
               }
             }
