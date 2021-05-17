@@ -78,4 +78,17 @@ describe("dataType photo", () => {
 
     expect(newFormatChild.specialPhoto.path).toEqual(oldFormatInDb.photoFile);
   });
+
+  it("should not safe the default value", () => {
+    class TestEntity extends Entity {
+      @DatabaseField({ dataType: "photo", defaultValue: "someFile.jpg" })
+      photo: Photo;
+    }
+
+    const entity = new TestEntity();
+    entitySchemaService.loadDataIntoEntity(entity, {});
+    const result = entitySchemaService.transformEntityToDatabaseFormat(entity);
+
+    expect(result.photo).toBeUndefined();
+  });
 });

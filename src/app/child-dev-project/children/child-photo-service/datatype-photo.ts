@@ -32,8 +32,12 @@ export class PhotoDatatype implements EntitySchemaDatatype {
 
   constructor() {}
 
-  public transformToDatabaseFormat(value: Photo) {
-    return value.path;
+  public transformToDatabaseFormat(value: Photo, schema: EntitySchemaField) {
+    if (value.path === schema.defaultValue) {
+      return undefined;
+    } else {
+      return value.path;
+    }
   }
 
   public transformToObjectFormat(
