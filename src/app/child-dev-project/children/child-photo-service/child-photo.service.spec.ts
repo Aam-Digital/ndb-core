@@ -50,15 +50,13 @@ describe("ChildPhotoService", () => {
 
   it("should getFile from assets (old pattern) if it not exists at webdav location", async () => {
     const testChild = new Child("1");
-    testChild.specialPhoto = { path: "test-photo.png", photo: null };
+    testChild.photo = { path: "test-photo.png", photo: null };
     mockCloudFileService.isConnected.and.returnValue(true);
     mockCloudFileService.getFile.and.rejectWith("File not found");
 
     const actualImage = await service.getImage(testChild);
 
-    expect(actualImage).toBe(
-      Child.generatePhotoPath(testChild.specialPhoto.path)
-    );
+    expect(actualImage).toBe(Child.generatePhotoPath(testChild.photo.path));
   });
 
   it("should getFile default if neither webdav nor assets has the file", async () => {

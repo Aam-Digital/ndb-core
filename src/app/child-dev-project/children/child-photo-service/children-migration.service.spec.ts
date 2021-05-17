@@ -37,16 +37,16 @@ describe("ChildrenMigrationService", () => {
     });
     await database.put({
       _id: `${Child.ENTITY_TYPE}:thirdChild`,
-      specialPhoto: "newFormat.jpg",
+      photo: "newFormat.jpg",
     });
 
     await service.migratePhotoFormat();
 
     const firstChild = await database.get(`${Child.ENTITY_TYPE}:firstChild`);
-    expect(firstChild["specialPhoto"]).toEqual("oldFile1.jpg");
+    expect(firstChild["photo"]).toEqual("oldFile1.jpg");
     const secondChild = await database.get(`${Child.ENTITY_TYPE}:secondChild`);
-    expect(secondChild["specialPhoto"]).toEqual("oldFile2.jpg");
+    expect(secondChild["photo"]).toEqual("oldFile2.jpg");
     const thirdChild = await database.get(`${Child.ENTITY_TYPE}:thirdChild`);
-    expect(thirdChild["specialPhoto"]).toEqual("newFormat.jpg");
+    expect(thirdChild["photo"]).toEqual("newFormat.jpg");
   });
 });

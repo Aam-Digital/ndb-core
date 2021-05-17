@@ -107,11 +107,11 @@ describe("FormComponent", () => {
   it("sets a new child photo", async () => {
     const filename = "file/name";
     mockChildPhotoService.getImage.and.resolveTo(filename);
-    testChild.specialPhoto = {
+    testChild.photo = {
       path: "",
       photo: new BehaviorSubject<SafeUrl>("test"),
     };
-    spyOn(testChild.specialPhoto.photo, "next");
+    spyOn(testChild.photo.photo, "next");
 
     await component.uploadChildPhoto({ target: { files: [filename] } });
 
@@ -119,7 +119,7 @@ describe("FormComponent", () => {
       filename,
       testChild.entityId
     );
-    expect(testChild.specialPhoto.photo.next).toHaveBeenCalledWith(filename);
+    expect(testChild.photo.photo.next).toHaveBeenCalledWith(filename);
   });
 
   it("reports error when form is invalid", fakeAsync(() => {

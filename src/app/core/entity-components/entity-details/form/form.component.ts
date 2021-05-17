@@ -109,7 +109,7 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
     );
     // Photo does so far only work on the child entity
     const child: Child = this.entity as Child;
-    child.specialPhoto.photo.next(await this.childPhotoService.getImage(child));
+    child.photo.photo.next(await this.childPhotoService.getImage(child));
   }
 
   changeFilename(path: string, fromGroupID: string) {

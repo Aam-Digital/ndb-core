@@ -33,7 +33,7 @@ export class ChildPhotoUpdateService {
    * @param filename A guess for a likely filename that needs to be checked
    */
   private async updatePhotoIfFileExists(child: Child, filename: string) {
-    if (child.specialPhoto?.path && child.specialPhoto.path !== "") {
+    if (child.photo?.path && child.photo.path !== "") {
       // do not overwrite existing path
       return;
     }
@@ -42,8 +42,8 @@ export class ChildPhotoUpdateService {
       Child.generatePhotoPath(filename)
     );
     if (fileExists) {
-      const currentPhoto = child.specialPhoto;
-      child.specialPhoto = { path: filename, photo: currentPhoto?.photo };
+      const currentPhoto = child.photo;
+      child.photo = { path: filename, photo: currentPhoto?.photo };
       this.entityService.save<Child>(child);
       console.log(
         `set photoFile for Child:${child.getId()} (${
@@ -59,7 +59,6 @@ export class ChildPhotoUpdateService {
       return true;
     } catch (e) {
       return e.status === 200;
-
     }
   }
 }

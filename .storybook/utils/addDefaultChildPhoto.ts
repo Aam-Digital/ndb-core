@@ -3,5 +3,5 @@ import { BehaviorSubject } from "rxjs";
 import { SafeUrl } from "@angular/platform-browser";
 
 export function addDefaultChildPhoto(child: Child) {
-  child.specialPhoto.photo = new BehaviorSubject<SafeUrl>("assets/child.png");
+  child.photo.photo = new BehaviorSubject<SafeUrl>("assets/child.png");
 }

@@ -76,7 +76,7 @@ describe("dataType photo", () => {
     const newFormatChild = new Child();
     entitySchemaService.loadDataIntoEntity(newFormatChild, oldFormatInDb);
 
-    expect(newFormatChild.specialPhoto.path).toEqual(oldFormatInDb.photoFile);
+    expect(newFormatChild.photo.path).toEqual(oldFormatInDb.photoFile);
   });
 
   it("should not safe the default value", () => {

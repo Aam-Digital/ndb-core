@@ -19,7 +19,7 @@ export class ChildPhotoService {
   public async getImage(child: Child): Promise<SafeUrl> {
     let image = await this.getImageFromCloudService(child.entityId);
     if (!image) {
-      image = ChildPhotoService.getImageFromAssets(child.specialPhoto?.path);
+      image = ChildPhotoService.getImageFromAssets(child.photo?.path);
     }
     return image;
   }
@@ -64,7 +64,7 @@ export class ChildPhotoService {
    */
   public getImageAsyncObservable(child: Child): BehaviorSubject<SafeUrl> {
     const resultSubject = new BehaviorSubject(
-      ChildPhotoService.getImageFromAssets(child.specialPhoto?.path)
+      ChildPhotoService.getImageFromAssets(child.photo?.path)
     );
     this.getImageFromCloudService(child.entityId).then((photo) => {
       if (photo && photo !== resultSubject.value) {

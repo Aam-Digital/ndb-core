@@ -17,7 +17,7 @@ export class ChildrenMigrationService {
       ) {
         const photoFile = child["photoFile"];
         delete child.photoFile;
-        child["specialPhoto"] = photoFile;
+        child["photo"] = photoFile;
       }
     });
 

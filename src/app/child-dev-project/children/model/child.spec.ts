@@ -61,7 +61,7 @@ describe("Child", () => {
       motherTongue: "Hindi",
       religion: "Hindu",
 
-      specialPhoto: "..",
+      photo: "..",
       center: { id: "alpha", label: "Alpha" },
       admissionDate: new Date(),
       status: "Active",
@@ -83,7 +83,7 @@ describe("Child", () => {
     entity.motherTongue = expectedData.motherTongue;
     entity.religion = expectedData.religion;
 
-    entity.specialPhoto = { path: expectedData.specialPhoto, photo: null };
+    entity.photo = { path: expectedData.photo, photo: null };
     entity.center = expectedData.center;
     entity.admissionDate = expectedData.admissionDate;
     entity.status = expectedData.status;

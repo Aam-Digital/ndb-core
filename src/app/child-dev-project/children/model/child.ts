@@ -65,7 +65,7 @@ export class Child extends Entity {
     dataType: "photo",
     defaultValue: ChildPhotoService.getDefaultImage(),
   })
-  specialPhoto: Photo;
+  photo: Photo;
 
   get age(): number {
     return this.dateOfBirth ? calculateAge(this.dateOfBirth) : null;

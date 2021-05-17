@@ -41,7 +41,7 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     child.admissionDate = faker.date.past(child.age - 4);
     // child.photoFile = "1.jpg";
 
-    child.specialPhoto = { path: "1.jpg", photo: null };
+    child.photo = { path: "1.jpg", photo: null };
 
     if (faker.datatype.number(100) > 90) {
       DemoChildGenerator.makeChildDropout(child);
