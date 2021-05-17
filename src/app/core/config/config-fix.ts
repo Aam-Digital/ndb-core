@@ -721,7 +721,7 @@ export const defaultJsonConfig = {
                   [
                     {
                       "input": "photo",
-                      "id": "photoFile",
+                      "id": "specialPhoto",
                       "placeholder": "Photo Filename"
                     }
                   ],
