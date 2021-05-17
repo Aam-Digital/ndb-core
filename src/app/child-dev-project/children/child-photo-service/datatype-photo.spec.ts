@@ -24,6 +24,7 @@ import { ChildPhotoService } from "./child-photo.service";
 import { BehaviorSubject } from "rxjs";
 import { PhotoDatatype } from "./datatype-photo";
 import { Photo } from "./photo";
+import { Child } from "../model/child";
 
 describe("dataType photo", () => {
   let entitySchemaService: EntitySchemaService;
@@ -64,5 +65,17 @@ describe("dataType photo", () => {
     entitySchemaService.loadDataIntoEntity(entity, data);
 
     expect(entity.photo.photo.value).toEqual(defaultImg);
+  });
+
+  it("should migrate a child with the old photo format", () => {
+    const oldFormatInDb = entitySchemaService.transformEntityToDatabaseFormat(
+      new Child()
+    );
+    oldFormatInDb["photoFile"] = "oldPhotoFile.jpg";
+
+    const newFormatChild = new Child();
+    entitySchemaService.loadDataIntoEntity(newFormatChild, oldFormatInDb);
+
+    expect(newFormatChild.specialPhoto.path).toEqual(oldFormatInDb.photoFile);
   });
 });
