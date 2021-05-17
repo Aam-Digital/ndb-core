@@ -52,7 +52,7 @@ export class ChildPhotoService {
     return Child.generatePhotoPath(photoFile);
   }
 
-  private static getDefaultImage(): SafeUrl {
+  public static getDefaultImage(): SafeUrl {
     return "assets/child.png";
   }
 
