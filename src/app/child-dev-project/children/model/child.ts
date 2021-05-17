@@ -23,6 +23,7 @@ import { SafeUrl } from "@angular/platform-browser";
 import { BehaviorSubject } from "rxjs";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 import { calculateAge } from "../../../utils/utils";
+import { Photo } from "../child-photo-service/photo";
 
 export type Center = ConfigurableEnumValue;
 @DatabaseEntity("Child")
@@ -66,6 +67,11 @@ export class Child extends Entity {
    * as a fallback option if no CloudFileService file or connection is available.
    */
   @DatabaseField() photoFile: string;
+
+  @DatabaseField({ dataType: "photo" }) specialPhoto: Photo = {
+    path: "1.jpg",
+    photo: null,
+  };
 
   @DatabaseField({ dataType: "load-child-photo", defaultValue: true })
   photo: BehaviorSubject<SafeUrl>;

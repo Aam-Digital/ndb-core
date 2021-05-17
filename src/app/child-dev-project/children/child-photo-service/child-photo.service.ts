@@ -22,7 +22,7 @@ export class ChildPhotoService {
   }): Promise<SafeUrl> {
     let image = await this.getImageFromCloudService(child);
     if (!image) {
-      image = this.getImageFromAssets(child);
+      image = ChildPhotoService.getImageFromAssets(child);
     }
     return image;
   }
@@ -50,14 +50,14 @@ export class ChildPhotoService {
     return image;
   }
 
-  private getImageFromAssets(child: { photoFile?: string }): SafeUrl {
+  public static getImageFromAssets(child: { photoFile?: string }): SafeUrl {
     if (!child.photoFile || child.photoFile.trim() === "") {
       return this.getDefaultImage();
     }
     return Child.generatePhotoPath(child.photoFile);
   }
 
-  private getDefaultImage(): SafeUrl {
+  private static getDefaultImage(): SafeUrl {
     return "assets/child.png";
   }
 
@@ -71,7 +71,9 @@ export class ChildPhotoService {
     entityId: string;
     photoFile?: string;
   }): BehaviorSubject<SafeUrl> {
-    const resultSubject = new BehaviorSubject(this.getImageFromAssets(child));
+    const resultSubject = new BehaviorSubject(
+      ChildPhotoService.getImageFromAssets(child)
+    );
     this.getImageFromCloudService(child).then((photo) => {
       if (photo && photo !== resultSubject.value) {
         resultSubject.next(photo);
