@@ -14,7 +14,6 @@ describe("ChildPhotoService", () => {
     mockCloudFileService = jasmine.createSpyObj("mockCloudFileService", [
       "isConnected",
       "uploadFile",
-      "doesFileExist",
       "getFile",
     ]);
 
@@ -40,8 +39,7 @@ describe("ChildPhotoService", () => {
     const testChild = new Child("1");
     const testImg = "url-encoded-img";
     mockCloudFileService.isConnected.and.returnValue(true);
-    mockCloudFileService.doesFileExist.and.returnValue(Promise.resolve(true));
-    mockCloudFileService.getFile.and.returnValue(Promise.resolve(testImg));
+    mockCloudFileService.getFile.and.resolveTo(testImg);
 
     const actualImage = await service.getImage(testChild);
     expect(actualImage).toBe(testImg);
@@ -52,26 +50,22 @@ describe("ChildPhotoService", () => {
 
   it("should getFile from assets (old pattern) if it not exists at webdav location", async () => {
     const testChild = new Child("1");
-    testChild.photoFile = "test-photo.png";
+    testChild.photo = { path: "test-photo.png", photo: null };
     mockCloudFileService.isConnected.and.returnValue(true);
-    mockCloudFileService.doesFileExist.and.returnValue(Promise.resolve(false));
-    mockCloudFileService.getFile.and.returnValue(
-      Promise.reject("File not found")
-    );
+    mockCloudFileService.getFile.and.rejectWith("File not found");
 
     const actualImage = await service.getImage(testChild);
-    expect(actualImage).toBe(Child.generatePhotoPath(testChild.photoFile));
+
+    expect(actualImage).toBe(Child.generatePhotoPath(testChild.photo.path));
   });
 
   it("should getFile default if neither webdav nor assets has the file", async () => {
     const testChild = new Child("1");
     mockCloudFileService.isConnected.and.returnValue(true);
-    mockCloudFileService.doesFileExist.and.returnValue(Promise.resolve(false));
-    mockCloudFileService.getFile.and.returnValue(
-      Promise.reject("File not found")
-    );
+    mockCloudFileService.getFile.and.rejectWith("File not found");
 
     const actualImage = await service.getImage(testChild);
+
     expect(actualImage).toBe(DEFAULT_IMG);
   });
 
@@ -79,8 +73,7 @@ describe("ChildPhotoService", () => {
     const testChild = new Child("1");
     const testImg = "url-encoded-img";
     mockCloudFileService.isConnected.and.returnValue(true);
-    mockCloudFileService.doesFileExist.and.returnValue(Promise.resolve(true));
-    mockCloudFileService.getFile.and.returnValue(Promise.resolve(testImg));
+    mockCloudFileService.getFile.and.resolveTo(testImg);
 
     const resultSubject = service.getImageAsyncObservable(testChild);
     expect(resultSubject.value).toBe(DEFAULT_IMG);
@@ -108,7 +101,7 @@ describe("ChildPhotoService", () => {
     const childId = "1";
     const testImg = { name: "test.png", data: "test-img-data" };
     mockCloudFileService.isConnected.and.returnValue(true);
-    mockCloudFileService.uploadFile.and.returnValue(Promise.resolve(true));
+    mockCloudFileService.uploadFile.and.resolveTo(true);
 
     await expectAsync(service.setImage(testImg, childId)).toBeResolved();
     expect(mockCloudFileService.uploadFile).toHaveBeenCalledWith(

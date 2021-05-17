@@ -114,18 +114,20 @@ describe("FormComponent", () => {
 
   it("sets a new child photo", async () => {
     const filename = "file/name";
+    mockChildPhotoService.getImage.and.resolveTo(filename);
+    testChild.photo = {
+      path: "",
+      photo: new BehaviorSubject<SafeUrl>("test"),
+    };
+    spyOn(testChild.photo.photo, "next");
 
-    // This needs to be set in order to create an spy on this property
-    testChild.photo = new BehaviorSubject<SafeUrl>("test");
-
-    mockChildPhotoService.getImage.and.returnValue(Promise.resolve(filename));
-    spyOn(testChild.photo, "next");
     await component.uploadChildPhoto({ target: { files: [filename] } });
+
     expect(mockChildPhotoService.setImage).toHaveBeenCalledWith(
       filename,
       testChild.entityId
     );
-    expect(testChild.photo.next).toHaveBeenCalledWith(filename);
+    expect(testChild.photo.photo.next).toHaveBeenCalledWith(filename);
   });
 
   it("reports error when form is invalid", fakeAsync(() => {

@@ -13,6 +13,8 @@ import { calculateAge, getParentUrl } from "../../../../utils/utils";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { OperationType } from "../../../permissions/entity-permissions.service";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
+import { Photo } from "../../../../child-dev-project/children/child-photo-service/photo";
+import { BehaviorSubject } from "rxjs";
 
 /**
  * This component creates a form based on the passed config.
@@ -111,7 +113,15 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
     );
     // Photo does so far only work on the child entity
     const child: Child = this.entity as Child;
-    child.photo.next(await this.childPhotoService.getImage(child));
+    child.photo.photo.next(await this.childPhotoService.getImage(child));
+  }
+
+  changeFilename(path: string, fromGroupID: string) {
+    const newValue: Photo = {
+      path: path,
+      photo: new BehaviorSubject(ChildPhotoService.getImageFromAssets(path)),
+    };
+    this.form.get(fromGroupID).setValue(newValue);
   }
 
   private initForm(): void {

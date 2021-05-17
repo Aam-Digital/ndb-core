@@ -20,31 +20,42 @@ import { ChildPhotoService } from "./child-photo.service";
 import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { Entity } from "../../../core/entity/entity";
+import { Photo } from "./photo";
+import { SafeUrl } from "@angular/platform-browser";
+import { BehaviorSubject } from "rxjs";
 
 /**
  * Dynamically load the child's photo through the ChildPhotoService during Entity loading process.
  */
-export class LoadChildPhotoEntitySchemaDatatype
-  implements EntitySchemaDatatype {
-  public readonly name = "load-child-photo";
+export class PhotoDatatype implements EntitySchemaDatatype {
+  public readonly name = "photo";
 
-  constructor(private childPhotoService: ChildPhotoService) {}
-
-  public transformToDatabaseFormat(value) {
-    return undefined;
+  public transformToDatabaseFormat(value: Photo, schema: EntitySchemaField) {
+    if (value.path === schema.defaultValue) {
+      return undefined;
+    } else {
+      return value.path;
+    }
   }
 
   public transformToObjectFormat(
-    value,
+    value: string,
     schemaField: EntitySchemaField,
     schemaService: EntitySchemaService,
     parent: Entity
-  ) {
-    const childDummy: any = Object.assign({}, parent);
-    if (!childDummy.entityId) {
-      childDummy.entityId = Entity.extractEntityIdFromId(childDummy._id);
+  ): Photo {
+    // Using of old photoFile values
+    if (
+      parent.hasOwnProperty("photoFile") &&
+      parent["photoFile"].trim() !== ""
+    ) {
+      value = parent["photoFile"];
     }
-
-    return this.childPhotoService.getImageAsyncObservable(childDummy);
+    return {
+      path: value,
+      photo: new BehaviorSubject<SafeUrl>(
+        ChildPhotoService.getImageFromAssets(value)
+      ),
+    };
   }
 }
