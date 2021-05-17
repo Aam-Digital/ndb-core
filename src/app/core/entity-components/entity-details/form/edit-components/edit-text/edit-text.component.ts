@@ -6,4 +6,4 @@ import { EditComponent } from "../edit-component";
   templateUrl: "./edit-text.component.html",
   styleUrls: ["./edit-text.component.scss"],
 })
-export class EditTextComponent extends EditComponent {}
+export class EditTextComponent extends EditComponent<string> {}

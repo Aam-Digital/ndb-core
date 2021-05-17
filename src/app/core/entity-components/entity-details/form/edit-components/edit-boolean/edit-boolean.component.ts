@@ -6,4 +6,4 @@ import { EditComponent } from "../edit-component";
   templateUrl: "./edit-boolean.component.html",
   styleUrls: ["./edit-boolean.component.scss"],
 })
-export class EditBooleanComponent extends EditComponent {}
+export class EditBooleanComponent extends EditComponent<boolean> {}

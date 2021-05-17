@@ -6,7 +6,7 @@ import { EditComponent, EditComponentConfig } from "../edit-component";
   templateUrl: "./edit-selectable.component.html",
   styleUrls: ["./edit-selectable.component.scss"],
 })
-export class EditSelectableComponent extends EditComponent {
+export class EditSelectableComponent extends EditComponent<any> {
   options: string[];
   onInitFromDynamicConfig(config: EditComponentConfig) {
     super.onInitFromDynamicConfig(config);

@@ -6,4 +6,4 @@ import { EditComponent } from "../edit-component";
   templateUrl: "./edit-date.component.html",
   styleUrls: ["./edit-date.component.scss"],
 })
-export class EditDateComponent extends EditComponent {}
+export class EditDateComponent extends EditComponent<Date> {}
