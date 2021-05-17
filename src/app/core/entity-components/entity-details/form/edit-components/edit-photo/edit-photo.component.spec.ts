@@ -1,25 +1,33 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EditPhotoComponent } from './edit-photo.component';
+import { EditPhotoComponent } from "./edit-photo.component";
+import { EntityDetailsModule } from "../../../entity-details.module";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { FormControl, FormGroup } from "@angular/forms";
 
-describe('EditPhotoComponent', () => {
+describe("EditPhotoComponent", () => {
   let component: EditPhotoComponent;
   let fixture: ComponentFixture<EditPhotoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EditPhotoComponent ]
-    })
-    .compileComponents();
+      imports: [EntityDetailsModule, NoopAnimationsModule],
+      declarations: [EditPhotoComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EditPhotoComponent);
     component = fixture.componentInstance;
+    const formControl = new FormControl();
+    const formGroup = new FormGroup({});
+    component.formControlName = "testControl";
+    component.formControl = formControl;
+    formGroup.registerControl(component.formControlName, formControl);
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

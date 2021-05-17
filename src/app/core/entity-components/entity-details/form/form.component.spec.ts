@@ -7,8 +7,6 @@ import {
 } from "@angular/core/testing";
 import { FormComponent } from "./form.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { BehaviorSubject } from "rxjs";
-import { SafeUrl } from "@angular/platform-browser";
 import { RouterTestingModule } from "@angular/router/testing";
 import { Router } from "@angular/router";
 import { EntityDetailsModule } from "../entity-details.module";
@@ -96,13 +94,6 @@ describe("FormComponent", () => {
     expect(component.creatingNew).toBe(true);
   });
 
-  it("changes enablePhotoUpload state", () => {
-    expect(component.enablePhotoUpload).toBe(false);
-    mockChildPhotoService.canSetImage.and.returnValues(true);
-    component.switchEdit();
-    expect(component.enablePhotoUpload).toBe(true);
-  });
-
   it("calls router once a new child is saved", async () => {
     spyOnProperty(component.form, "valid").and.returnValue(true);
     const router = fixture.debugElement.injector.get(Router);
@@ -110,24 +101,6 @@ describe("FormComponent", () => {
     component.creatingNew = true;
     await component.save();
     expect(router.navigate).toHaveBeenCalledWith(["", testChild.getId()]);
-  });
-
-  it("sets a new child photo", async () => {
-    const filename = "file/name";
-    mockChildPhotoService.getImage.and.resolveTo(filename);
-    testChild.photo = {
-      path: "",
-      photo: new BehaviorSubject<SafeUrl>("test"),
-    };
-    spyOn(testChild.photo.photo, "next");
-
-    await component.uploadChildPhoto({ target: { files: [filename] } });
-
-    expect(mockChildPhotoService.setImage).toHaveBeenCalledWith(
-      filename,
-      testChild.entityId
-    );
-    expect(testChild.photo.photo.next).toHaveBeenCalledWith(filename);
   });
 
   it("reports error when form is invalid", fakeAsync(() => {
@@ -161,7 +134,7 @@ describe("FormComponent", () => {
 
   it("should add column definitions from property schema", () => {
     class Test extends Entity {
-      @DatabaseField({ label: "Predefined label" }) propertyField: string;
+      @DatabaseField() propertyField: string;
     }
     mockEntitySchemaService.getComponent.and.returnValue("PredefinedComponent");
 
@@ -191,7 +164,6 @@ describe("FormComponent", () => {
         {
           id: "propertyField",
           input: "PredefinedComponent",
-          placeholder: "Predefined label",
         },
       ],
     ]);

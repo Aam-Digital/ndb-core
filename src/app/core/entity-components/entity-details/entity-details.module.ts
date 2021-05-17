@@ -20,7 +20,6 @@ import { EntityModule } from "../../entity/entity.module";
 import { AlertsModule } from "../../alerts/alerts.module";
 import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
-import { PhotoComponent } from "./form/edit-components/photo/photo.component";
 import { EditConfigurableEnumComponent } from "./form/edit-components/edit-configurable-enum/edit-configurable-enum.component";
 import { EditTextComponent } from "./form/edit-components/edit-text/edit-text.component";
 import { EditDateComponent } from "./form/edit-components/edit-date/edit-date.component";
@@ -34,7 +33,6 @@ import { EditPhotoComponent } from "./form/edit-components/edit-photo/edit-photo
   declarations: [
     EntityDetailsComponent,
     FormComponent,
-    PhotoComponent,
     EditConfigurableEnumComponent,
     EditTextComponent,
     EditDateComponent,
