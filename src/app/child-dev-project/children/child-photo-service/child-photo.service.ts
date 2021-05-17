@@ -8,6 +8,17 @@ import { BehaviorSubject } from "rxjs";
   providedIn: "root",
 })
 export class ChildPhotoService {
+  public static getImageFromAssets(photoFile: string): SafeUrl {
+    if (!photoFile || photoFile.trim() === "") {
+      return ChildPhotoService.getDefaultImage();
+    }
+    return Child.generatePhotoPath(photoFile);
+  }
+
+  public static getDefaultImage(): SafeUrl {
+    return "assets/child.png";
+  }
+
   private basePath = "photos/";
 
   constructor(@Optional() private cloudFileService: CloudFileService) {}
@@ -43,17 +54,6 @@ export class ChildPhotoService {
       }
     }
     return image;
-  }
-
-  public static getImageFromAssets(photoFile: string): SafeUrl {
-    if (!photoFile || photoFile.trim() === "") {
-      return this.getDefaultImage();
-    }
-    return Child.generatePhotoPath(photoFile);
-  }
-
-  public static getDefaultImage(): SafeUrl {
-    return "assets/child.png";
   }
 
   /**
