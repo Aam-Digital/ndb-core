@@ -68,12 +68,9 @@ export class Child extends Entity {
    */
   @DatabaseField() photoFile: string;
 
-  @DatabaseField({ dataType: "photo" }) specialPhoto: Photo = {
-    path: "1.jpg",
-    photo: null,
-  };
+  @DatabaseField({ dataType: "photo" }) specialPhoto: Photo;
 
-  @DatabaseField({ dataType: "load-child-photo", defaultValue: true })
+  @DatabaseField({ dataType: "load-child-photo" })
   photo: BehaviorSubject<SafeUrl>;
 
   get age(): number {
