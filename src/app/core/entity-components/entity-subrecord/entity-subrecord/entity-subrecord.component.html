@@ -5,7 +5,7 @@
     matSort
     class="mat-elevation-z1 subrecord-table"
   >
-    <ng-container *ngFor="let col of columns" [matColumnDef]="col.name">
+    <ng-container *ngFor="let col of columns" [matColumnDef]="col.id">
       <th
         mat-header-cell
         mat-sort-header
@@ -13,7 +13,7 @@
         [matTooltip]="col.tooltip"
         [matTooltipDisabled]="!col.tooltip"
       >
-        {{ col.label }}
+        {{ col.placeholder }}
       </th>
       <td
         mat-cell
@@ -23,15 +23,11 @@
 <!--        {{ col.name }} {{ row.record }}-->
         <ng-template
           [appDynamicComponent]="{
-            component: col.component,
+            component: col.input,
             config: {
-              formFieldConfig: {
-                id: col.name,
-                enumId: col.enumId,
-                options: col.selectValues
-              },
-              propertySchema: row.record.getSchema().get(col.name),
-              formControl: row.formGroup.get(col.name)
+              formFieldConfig: col,
+              propertySchema: row.record.getSchema().get(col.id),
+              formControl: row.formGroup.get(col.id)
             }
           }"
         >

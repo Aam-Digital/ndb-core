@@ -12,10 +12,10 @@ import { ConfigService } from "../../../config/config.service";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { DemoChildGenerator } from "../../../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { DemoUserGeneratorService } from "../../../user/demo-user-generator.service";
-import { ColumnDescriptionInputType } from "../column-description-input-type.enum";
 import { ConfigurableEnumDatatype } from "../../../configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
 import { MatNativeDateModule } from "@angular/material/core";
 import { INTERACTION_TYPE_CONFIG_ID } from "../../../../child-dev-project/notes/model/interaction-type.interface";
+import { FormFieldConfig } from "../../entity-details/form/FormConfig";
 
 const configService = new ConfigService();
 const schemaService = new EntitySchemaService();
@@ -65,24 +65,21 @@ const data = new DemoNoteGeneratorService(
 
 export const Primary = Template.bind({});
 Primary.args = {
-  columns: [
+  columns: <FormFieldConfig[]>[
     {
-      component: "EditDate",
-      name: "date",
-      label: "Date",
-      inputType: ColumnDescriptionInputType.DATE,
+      input: "EditDate",
+      id: "date",
+      placeholder: "Date",
     },
     {
-      component: "EditText",
-      name: "subject",
-      label: "Subject",
-      inputType: ColumnDescriptionInputType.TEXT,
+      input: "EditText",
+      id: "subject",
+      placeholder: "Subject",
     },
     {
-      component: "EditConfigurableEnum",
-      name: "category",
-      label: "Category",
-      inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+      input: "EditConfigurableEnum",
+      id: "category",
+      placeholder: "Category",
       enumId: INTERACTION_TYPE_CONFIG_ID,
     },
   ],

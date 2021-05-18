@@ -68,7 +68,7 @@ export class EntitySubrecordComponent<T extends Entity>
   @Input() records: Array<T>;
 
   /** configuration what kind of columns to be generated for the table */
-  @Input() columns: Array<ColumnDescription>;
+  @Input() columns: FormFieldConfig[];
 
   /**
    * factory method to create a new instance of the displayed Entity type
@@ -145,10 +145,7 @@ export class EntitySubrecordComponent<T extends Entity>
    */
   ngOnChanges(changes: SimpleChanges) {
     if (changes["columns"]) {
-      this.columns = this.columns.map((colDef) =>
-        this.applyDefaultColumnDefinitions(colDef)
-      );
-      this.columnsToDisplay = this.columns.map((e) => e.name);
+      this.columnsToDisplay = this.columns.map((e) => e.id);
       this.columnsToDisplay.push("actions");
       this.setupTable();
     }
@@ -165,15 +162,7 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   private buildFormConfig(record: T): FormGroup {
-    const formFields: FormFieldConfig[] = this.columns.map((column) => {
-      return {
-        id: column.name,
-        placeholder: column.label,
-        enumId: column.enumId,
-        options: column.selectValues?.map((option) => option.value),
-      };
-    });
-    const form = this.entityFormService.createFormGroup(formFields, record);
+    const form = this.entityFormService.createFormGroup(this.columns, record);
     form.disable();
     return form;
   }
@@ -217,35 +206,6 @@ export class EntitySubrecordComponent<T extends Entity>
     if (event.pageSize !== this.paginatorPageSize) {
       EntitySubrecordComponent.paginatorPageSize.next(event.pageSize);
     }
-  }
-
-  /**
-   * Set default values for optional properties that are not given.
-   * @param colDef
-   * @private
-   */
-  private applyDefaultColumnDefinitions(
-    colDef: ColumnDescription
-  ): ColumnDescription {
-    if (!colDef.valueFunction) {
-      switch (colDef.inputType) {
-        case ColumnDescriptionInputType.DATE:
-          colDef.valueFunction = (entity) =>
-            this.datePipe.transform(entity[colDef.name], "yyyy-MM-dd");
-          break;
-        case ColumnDescriptionInputType.MONTH:
-          colDef.valueFunction = (entity) =>
-            this.datePipe.transform(entity[colDef.name], "yyyy-MM");
-          break;
-        case ColumnDescriptionInputType.CONFIGURABLE_ENUM:
-          colDef.valueFunction = (entity) => entity[colDef.name]?.label;
-          break;
-        default:
-          colDef.valueFunction = (entity) => entity[colDef.name];
-      }
-    }
-    colDef.styleBuilder = colDef.styleBuilder ?? (() => Object);
-    return colDef;
   }
 
   /**
@@ -360,7 +320,7 @@ export class EntitySubrecordComponent<T extends Entity>
       const entitySubrecordComponent = this;
       this.columns.forEach(function (this, col) {
         if (entitySubrecordComponent.isVisible(col)) {
-          columnsHelpArray.push(col.name);
+          columnsHelpArray.push(col.id);
         }
       });
       this.columnsToDisplay = columnsHelpArray;
