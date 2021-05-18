@@ -282,9 +282,7 @@ export class EntitySubrecordComponent<T extends Entity>
     });
 
     // updated backup copies used for reset
-    const i = this.originalRecords.findIndex(
-      (e) => e.entityId === row.getId()
-    );
+    const i = this.originalRecords.findIndex((e) => e.entityId === row.getId());
     this.originalRecords[i] = Object.assign({}, row);
 
     this.recordsEditing.set(row.getId(), false);
@@ -299,7 +297,9 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   private removeFromDataTable(row: TableRow<T>) {
-    const index = this.records.findIndex((a) => a.getId() === row.record.getId());
+    const index = this.records.findIndex(
+      (a) => a.getId() === row.record.getId()
+    );
     if (index > -1) {
       this.records.splice(index, 1);
       this.initFormGroups();

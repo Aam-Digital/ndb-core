@@ -1,23 +1,23 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EditBooleanComponent } from "./edit-boolean.component";
-import { EntityDetailsModule } from "../../../entity-details.module";
+import { EditAgeComponent } from "./edit-age.component";
+import { EntityDetailsModule } from "../../../entity-details/entity-details.module";
 import { FormControl, FormGroup } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
-describe("EditBooleanComponent", () => {
-  let component: EditBooleanComponent;
-  let fixture: ComponentFixture<EditBooleanComponent>;
+describe("EditAgeComponent", () => {
+  let component: EditAgeComponent;
+  let fixture: ComponentFixture<EditAgeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [EntityDetailsModule, NoopAnimationsModule],
-      declarations: [EditBooleanComponent],
+      declarations: [EditAgeComponent],
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EditBooleanComponent);
+    fixture = TestBed.createComponent(EditAgeComponent);
     component = fixture.componentInstance;
     const formControl = new FormControl();
     const formGroup = new FormGroup({});

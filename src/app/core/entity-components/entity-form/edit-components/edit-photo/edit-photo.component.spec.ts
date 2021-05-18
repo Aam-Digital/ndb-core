@@ -1,23 +1,23 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EditSelectableComponent } from "./edit-selectable.component";
-import { EntityDetailsModule } from "../../../entity-details.module";
+import { EditPhotoComponent } from "./edit-photo.component";
+import { EntityDetailsModule } from "../../../entity-details/entity-details.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FormControl, FormGroup } from "@angular/forms";
 
-describe("EditSelectableComponent", () => {
-  let component: EditSelectableComponent;
-  let fixture: ComponentFixture<EditSelectableComponent>;
+describe("EditPhotoComponent", () => {
+  let component: EditPhotoComponent;
+  let fixture: ComponentFixture<EditPhotoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [EntityDetailsModule, NoopAnimationsModule],
-      declarations: [EditSelectableComponent],
+      declarations: [EditPhotoComponent],
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EditSelectableComponent);
+    fixture = TestBed.createComponent(EditPhotoComponent);
     component = fixture.componentInstance;
     const formControl = new FormControl();
     const formGroup = new FormGroup({});

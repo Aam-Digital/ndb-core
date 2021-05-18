@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditConfigurableEnumComponent } from "./edit-configurable-enum.component";
-import { EntityDetailsModule } from "../../../entity-details.module";
+import { EntityDetailsModule } from "../../../entity-details/entity-details.module";
 import { FormControl, FormGroup } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { ConfigService } from "../../../../../config/config.service";
+import { ConfigService } from "../../../../config/config.service";
 
 describe("EditConfigurableEnumComponent", () => {
   let component: EditConfigurableEnumComponent;

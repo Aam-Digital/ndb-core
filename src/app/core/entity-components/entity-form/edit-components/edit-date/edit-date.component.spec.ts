@@ -1,23 +1,23 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EditTextComponent } from "./edit-text.component";
+import { EditDateComponent } from "./edit-date.component";
+import { EntityDetailsModule } from "../../../entity-details/entity-details.module";
 import { FormControl, FormGroup } from "@angular/forms";
-import { EntityDetailsModule } from "../../../entity-details.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
-describe("EditTextComponent", () => {
-  let component: EditTextComponent;
-  let fixture: ComponentFixture<EditTextComponent>;
+describe("EditDateComponent", () => {
+  let component: EditDateComponent;
+  let fixture: ComponentFixture<EditDateComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [EntityDetailsModule, NoopAnimationsModule],
-      declarations: [EditTextComponent],
+      declarations: [EditDateComponent],
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EditTextComponent);
+    fixture = TestBed.createComponent(EditDateComponent);
     component = fixture.componentInstance;
     const formControl = new FormControl();
     const formGroup = new FormGroup({});

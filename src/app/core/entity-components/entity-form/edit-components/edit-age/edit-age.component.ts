@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { EditComponent } from "../edit-component";
-import { calculateAge } from "../../../../../../utils/utils";
+import { calculateAge } from "../../../../../utils/utils";
 
 @Component({
   selector: "app-edit-age",

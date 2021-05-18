@@ -1,7 +1,7 @@
-import { OnInitDynamicComponent } from "../../../../view/dynamic-components/on-init-dynamic-component.interface";
+import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
 import { AbstractControl, FormControl } from "@angular/forms";
-import { FormFieldConfig } from "../FormConfig";
-import { EntitySchemaField } from "../../../../entity/schema/entity-schema-field";
+import { FormFieldConfig } from "../../entity-details/form/FormConfig";
+import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 
 export interface EditComponentConfig {
   formFieldConfig: FormFieldConfig;

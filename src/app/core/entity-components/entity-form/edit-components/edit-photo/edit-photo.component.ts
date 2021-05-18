@@ -1,8 +1,8 @@
 import { Component } from "@angular/core";
 import { EditComponent } from "../edit-component";
-import { Photo } from "../../../../../../child-dev-project/children/child-photo-service/photo";
+import { Photo } from "../../../../../child-dev-project/children/child-photo-service/photo";
 import { BehaviorSubject } from "rxjs";
-import { ChildPhotoService } from "../../../../../../child-dev-project/children/child-photo-service/child-photo.service";
+import { ChildPhotoService } from "../../../../../child-dev-project/children/child-photo-service/child-photo.service";
 
 @Component({
   selector: "app-edit-photo",
