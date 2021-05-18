@@ -17,7 +17,7 @@ export class ConfigService {
    */
   public configUpdated: BehaviorSubject<Config>;
 
-  constructor(@Optional() private loggingService: LoggingService) {
+  constructor(@Optional() private loggingService?: LoggingService) {
     this.config.data = defaultJsonConfig;
     this.configUpdated = new BehaviorSubject<Config>(this.config);
   }
