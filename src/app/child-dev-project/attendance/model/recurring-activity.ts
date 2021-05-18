@@ -42,7 +42,7 @@ export class RecurringActivity extends Entity {
   }
 
   /** primary name to identify the activity */
-  @DatabaseField() title: string = "";
+  @DatabaseField({ label: "Title" }) title: string = "";
 
   /**
    * a category to group and filter activities by.
@@ -50,6 +50,7 @@ export class RecurringActivity extends Entity {
    * This is also assigned to individual events' category generated for this activity.
    */
   @DatabaseField({
+    label: "Type",
     dataType: "configurable-enum",
     innerDataType: INTERACTION_TYPE_CONFIG_ID,
   })
@@ -62,7 +63,12 @@ export class RecurringActivity extends Entity {
   @DatabaseField() linkedGroups: string[] = [];
 
   /** IDs of the users who are responsible for conducting this activity */
-  @DatabaseField() assignedTo: string[] = [];
+  @DatabaseField({
+    label: "Assigned to",
+    editComponent: "EditSelectableEntity",
+    ext: "User",
+  })
+  assignedTo: string[] = [];
 
   toString(): string {
     return this.title;

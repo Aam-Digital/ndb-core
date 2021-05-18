@@ -820,30 +820,9 @@ export const defaultJsonConfig = {
               "component": "Form",
               "config": {
                 "cols": [
-                  [
-                    {
-                      "input": "text",
-                      "id": "title",
-                      "placeholder": "Title"
-                    }
-                  ],
-                  [
-                    {
-                      "id": "type",
-                      "input": "configurable-enum-select",
-                      "enumId": "interaction-type",
-                      "placeholder": "Type"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "entity-select",
-                      "id": "assignedTo",
-                      "entityType": "User",
-                      "placeholder": "Add coordinator...",
-                      "label": "Assigned to"
-                    }
-                  ]
+                  [{ "id": "title" }],
+                  [{ "id": "type" }],
+                  [{ "id": "assignedTo" }]
                 ]
               }
             }

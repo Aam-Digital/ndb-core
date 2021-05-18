@@ -1,0 +1,9 @@
+<app-entity-select
+  [standardType]="entityName"
+  [selection]="formControl.value"
+  (selectionChange)="formControl.setValue($event)"
+  [disabled]="formControl.disabled"
+  [label]="placeholder"
+  [placeholder]="placeholder"
+>
+</app-entity-select>
