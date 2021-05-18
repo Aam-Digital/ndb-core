@@ -13,7 +13,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatSort } from "@angular/material/sort";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
-import { ColumnDescription } from "../column-description";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { ColumnDescriptionInputType } from "../column-description-input-type.enum";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -292,7 +291,7 @@ export class EntitySubrecordComponent<T extends Entity>
    * @param row The entity whose details should be displayed.
    */
   showRecord(row: TableRow<T>) {
-    if (this.detailsComponent === undefined || row.formGroup.disabled) {
+    if (this.detailsComponent === undefined || row.formGroup.enabled) {
       return;
     }
     this.formDialog.openDialog(

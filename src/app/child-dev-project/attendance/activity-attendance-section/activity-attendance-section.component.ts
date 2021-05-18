@@ -2,14 +2,13 @@ import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { RecurringActivity } from "../model/recurring-activity";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
-import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
-import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 import { AttendanceService } from "../attendance.service";
 import { PercentPipe } from "@angular/common";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { Note } from "../../notes/model/note";
 import moment from "moment";
 import { ComponentWithConfig } from "../../../core/entity-components/entity-subrecord/component-with-config";
+import { FormFieldConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
 
 @Component({
   selector: "app-activity-attendance-section",
@@ -21,38 +20,38 @@ export class ActivityAttendanceSectionComponent
   @Input() activity: RecurringActivity;
   @Input() forChild?: string;
 
-  records: ActivityAttendance[];
-  allRecords: ActivityAttendance[];
+  records: ActivityAttendance[] = [];
+  allRecords: ActivityAttendance[] = [];
   displayedEvents: Note[] = [];
 
   detailsComponent: ComponentWithConfig<ActivityAttendance>;
 
-  columns: Array<ColumnDescription> = [
+  columns: FormFieldConfig[] = [
     {
-      name: "periodFrom",
-      label: "Month",
-      inputType: ColumnDescriptionInputType.MONTH,
+      id: "periodFrom",
+      placeholder: "Month",
+      input: "EditDate",
     },
     {
-      name: "countEventsPresent",
-      label: "Present",
-      inputType: ColumnDescriptionInputType.FUNCTION,
-      valueFunction: (e: ActivityAttendance) =>
+      id: "presentEvents",
+      placeholder: "Present",
+      input: "ReadonlyFunction",
+      displayFunction: (e: ActivityAttendance) =>
         this.forChild
           ? e.countEventsPresent(this.forChild)
           : e.countEventsPresentAverage(true),
     },
     {
-      name: "countEventsTotal",
-      label: "Events",
-      inputType: ColumnDescriptionInputType.FUNCTION,
-      valueFunction: (e: ActivityAttendance) => e.countEventsTotal(),
+      id: "totalEvents",
+      placeholder: "Events",
+      input: "ReadonlyFunction",
+      displayFunction: (e: ActivityAttendance) => e.countEventsTotal(),
     },
     {
-      name: "getAttendancePercentage",
-      label: "Attended",
-      inputType: ColumnDescriptionInputType.FUNCTION,
-      valueFunction: (e: ActivityAttendance) =>
+      id: "attendancePercentage",
+      placeholder: "Attended",
+      input: "ReadonlyFunction",
+      displayFunction: (e: ActivityAttendance) =>
         this.percentPipe.transform(
           this.forChild
             ? e.getAttendancePercentage(this.forChild)

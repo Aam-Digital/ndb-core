@@ -113,5 +113,6 @@ import { EntitySelectModule } from "../../core/entity-components/entity-select/e
     AttendanceDayBlockComponent,
     AttendanceWeekDashboardComponent,
   ],
+  entryComponents: [AttendanceDetailsComponent],
 })
 export class AttendanceModule {}

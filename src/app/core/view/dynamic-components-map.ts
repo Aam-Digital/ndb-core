@@ -28,14 +28,15 @@ import { DashboardShortcutWidgetComponent } from "../dashboard-shortcut-widget/d
 import { UsersBlockComponent } from "../user/users-block/users-block.component";
 import { UserListComponent } from "../admin/user-list/user-list.component";
 import { HistoricalDataComponent } from "../../features/historical-data/historical-data/historical-data.component";
-import { EditTextComponent } from "../entity-components/entity-form/edit-components/edit-text/edit-text.component";
-import { EditConfigurableEnumComponent } from "../entity-components/entity-form/edit-components/edit-configurable-enum/edit-configurable-enum.component";
-import { EditDateComponent } from "../entity-components/entity-form/edit-components/edit-date/edit-date.component";
-import { EditSelectableComponent } from "../entity-components/entity-form/edit-components/edit-selectable/edit-selectable.component";
-import { EditAgeComponent } from "../entity-components/entity-form/edit-components/edit-age/edit-age.component";
-import { EditBooleanComponent } from "../entity-components/entity-form/edit-components/edit-boolean/edit-boolean.component";
-import { EditLongTextComponent } from "../entity-components/entity-form/edit-components/edit-long-text/edit-long-text.component";
-import { EditPhotoComponent } from "../entity-components/entity-form/edit-components/edit-photo/edit-photo.component";
+import { EditTextComponent } from "../entity-components/entity-form/dynamic-form-components/edit-text/edit-text.component";
+import { EditConfigurableEnumComponent } from "../entity-components/entity-form/dynamic-form-components/edit-configurable-enum/edit-configurable-enum.component";
+import { EditDateComponent } from "../entity-components/entity-form/dynamic-form-components/edit-date/edit-date.component";
+import { EditSelectableComponent } from "../entity-components/entity-form/dynamic-form-components/edit-selectable/edit-selectable.component";
+import { EditAgeComponent } from "../entity-components/entity-form/dynamic-form-components/edit-age/edit-age.component";
+import { EditBooleanComponent } from "../entity-components/entity-form/dynamic-form-components/edit-boolean/edit-boolean.component";
+import { EditLongTextComponent } from "../entity-components/entity-form/dynamic-form-components/edit-long-text/edit-long-text.component";
+import { EditPhotoComponent } from "../entity-components/entity-form/dynamic-form-components/edit-photo/edit-photo.component";
+import { ReadonlyFunctionComponent } from "../entity-components/entity-form/dynamic-form-components/readonly-function/readonly-function.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -76,4 +77,5 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["EditBoolean", EditBooleanComponent],
   ["EditLongText", EditLongTextComponent],
   ["EditPhoto", EditPhotoComponent],
+  ["ReadonlyFunction", ReadonlyFunctionComponent],
 ]);

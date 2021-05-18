@@ -36,4 +36,6 @@ export interface FormFieldConfig {
   enumId?: string;
 
   tooltip?: string;
+
+  displayFunction?: (Entity) => any;
 }
