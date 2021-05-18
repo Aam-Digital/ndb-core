@@ -4,9 +4,8 @@ import { ChildrenService } from "../../children/children.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
-import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
+import { FormFieldConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
 
 @UntilDestroy()
 @Component({
@@ -19,55 +18,13 @@ export class AserComponent implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child;
   records: Array<Aser>;
 
-  columns: Array<ColumnDescription> = [
-    {
-      name: "date",
-      label: "Date",
-      inputType: ColumnDescriptionInputType.DATE,
-      visibleFrom: "xs",
-    },
-    {
-      name: "math",
-      label: "Math",
-      inputType: ColumnDescriptionInputType.SELECT,
-      selectValues: Aser.MathLevels.map((s) => {
-        return { value: s, label: s };
-      }),
-      visibleFrom: "xs",
-    },
-    {
-      name: "english",
-      label: "English",
-      inputType: ColumnDescriptionInputType.SELECT,
-      selectValues: Aser.ReadingLevels.map((s) => {
-        return { value: s, label: s };
-      }),
-      visibleFrom: "xs",
-    },
-    {
-      name: "hindi",
-      label: "Hindi",
-      inputType: ColumnDescriptionInputType.SELECT,
-      selectValues: Aser.ReadingLevels.map((s) => {
-        return { value: s, label: s };
-      }),
-      visibleFrom: "md",
-    },
-    {
-      name: "bengali",
-      label: "Bengali",
-      inputType: ColumnDescriptionInputType.SELECT,
-      selectValues: Aser.ReadingLevels.map((s) => {
-        return { value: s, label: s };
-      }),
-      visibleFrom: "md",
-    },
-    {
-      name: "remarks",
-      label: "Remarks",
-      inputType: ColumnDescriptionInputType.TEXT,
-      visibleFrom: "md",
-    },
+  columns: FormFieldConfig[] = [
+    { id: "date" },
+    { id: "math" },
+    { id: "english" },
+    { id: "hindi" },
+    { id: "bengali" },
+    { id: "remarks" },
   ];
 
   constructor(private childrenService: ChildrenService) {}
@@ -81,7 +38,7 @@ export class AserComponent implements OnChanges, OnInitDynamicComponent {
   onInitFromDynamicConfig(config: PanelConfig) {
     if (config?.config?.displayedColumns) {
       this.columns = this.columns.filter((c) =>
-        config.config.displayedColumns.includes(c.name)
+        config.config.displayedColumns.includes(c.id)
       );
     }
 

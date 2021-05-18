@@ -42,34 +42,28 @@ export class Aser extends Entity {
       // not applicable
       return true;
     }
-    if (level === this.ReadingLevels[4]) {
-      // passed highest level
-      return true;
-    }
-    return false;
+    return level === this.ReadingLevels[4];
+
   }
   static isMathPassedOrNA(level: string) {
     if (level === "" || level === undefined) {
       // not applicable
       return true;
     }
-    if (level === this.MathLevels[4]) {
-      // passed highest level
-      return true;
-    }
-    return false;
+    return level === this.MathLevels[4];
+
   }
 
   @DatabaseField() child: string; // id of Child entity
-  @DatabaseField() date: Date = new Date();
-  @DatabaseField() hindi: string = "";
-  @DatabaseField() bengali: string = "";
-  @DatabaseField() english: string = "";
-  @DatabaseField() math: string = "";
-  @DatabaseField() remarks: string = "";
+  @DatabaseField({ label: "Date", ext: Aser.ReadingLevels }) date: Date = new Date();
+  @DatabaseField({ label: "Hindi", editComponent: "EditSelectable", ext: Aser.ReadingLevels }) hindi: string = "";
+  @DatabaseField({ label: "Bengali", editComponent: "EditSelectable", ext: Aser.ReadingLevels }) bengali: string = "";
+  @DatabaseField({ label: "English", editComponent: "EditSelectable", ext: Aser.ReadingLevels }) english: string = "";
+  @DatabaseField({ label: "Math", editComponent: "EditSelectable", ext: Aser.MathLevels }) math: string = "";
+  @DatabaseField({ label: "Remarks" }) remarks: string = "";
 
   getWarningLevel(): WarningLevel {
-    let warningLevel = WarningLevel.NONE;
+    let warningLevel;
 
     if (
       Aser.isReadingPassedOrNA(this.english) &&
