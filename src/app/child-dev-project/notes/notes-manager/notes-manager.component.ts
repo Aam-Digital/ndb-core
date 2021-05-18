@@ -14,8 +14,8 @@ import { EntityListComponent } from "../../../core/entity-components/entity-list
 import { applyUpdate } from "../../../core/entity/entity-update";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { Input } from "@angular/core";
-import { EventNote } from "app/child-dev-project/attendance/model/event-note";
-import { EntityConstructor } from "app/core/entity/entity";
+import { EventNote } from "../../attendance/model/event-note";
+import { EntityConstructor } from "../../../core/entity/entity";
 
 /**
  * additional config specifically for NotesManagerComponent
@@ -131,29 +131,29 @@ export class NotesManagerComponent implements OnInit {
   }
 
   private addPrebuiltFilters() {
-    this.config.filters.forEach((f) => {
-      if (f.type === "prebuilt") {
-        switch (f.id) {
-          case "status": {
-            f["options"] = this.statusFS;
-            f["default"] = "";
-            return;
-          }
-          case "date": {
-            f["options"] = this.dateFS;
-            f["default"] = "current-week";
-            return;
-          }
-          default: {
-            this.log.warn(
-              "[NoteManagerComponent] No filter options available for prebuilt filter: " +
-                f.id
-            );
-            return (f["options"] = []);
-          }
+    for (const prebuiltFilter of this.config.filters.filter(
+      (filter) => filter.type === "prebuilt"
+    )) {
+      switch (prebuiltFilter.id) {
+        case "status": {
+          prebuiltFilter["options"] = this.statusFS;
+          prebuiltFilter["default"] = "";
+          break;
+        }
+        case "date": {
+          prebuiltFilter["options"] = this.dateFS;
+          prebuiltFilter["default"] = "current-week";
+          break;
+        }
+        default: {
+          this.log.warn(
+            "[NoteManagerComponent] No filter options available for prebuilt filter: " +
+              prebuiltFilter.id
+          );
+          prebuiltFilter["options"] = [];
         }
       }
-    });
+    }
   }
 
   private getPreviousSunday(weeksBack: number) {
@@ -166,7 +166,7 @@ export class NotesManagerComponent implements OnInit {
   addNoteClick() {
     const newNote = new Note(Date.now().toString());
     newNote.date = new Date();
-    newNote.author = this.sessionService.getCurrentUser().name;
+    newNote.authors = [this.sessionService.getCurrentUser().getId()];
     this.showDetails(newNote);
   }
 

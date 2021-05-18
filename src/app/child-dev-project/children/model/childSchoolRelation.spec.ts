@@ -77,27 +77,27 @@ describe("ChildSchoolRelation Entity", () => {
   it("should mark relations without end date as active", () => {
     const relation = new ChildSchoolRelation();
     relation.start = new Date();
-    expect(relation.isActive()).toBeTrue();
+    expect(relation.isActive).toBeTrue();
   });
 
   it("should mark relation starting in the future as inactive", () => {
     const relation = new ChildSchoolRelation();
     relation.start = moment().add(1, "day").toDate();
-    expect(relation.isActive()).toBeFalse();
+    expect(relation.isActive).toBeFalse();
   });
 
   it("should mark relation with end date in the past as inactive", () => {
     const relation = new ChildSchoolRelation();
     relation.start = moment().subtract(1, "week").toDate();
     relation.end = moment().subtract(1, "day").toDate();
-    expect(relation.isActive()).toBeFalse();
+    expect(relation.isActive).toBeFalse();
   });
 
   it("should mark relation with end date in the future as active", () => {
     const relation = new ChildSchoolRelation();
     relation.start = moment().subtract(1, "week").toDate();
     relation.end = moment().add(1, "day").toDate();
-    expect(relation.isActive()).toBeTrue();
+    expect(relation.isActive).toBeTrue();
   });
 
   it("should not fail on null values", () => {

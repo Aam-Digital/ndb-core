@@ -18,6 +18,7 @@ import {
 } from "../../attendance/model/attendance-status";
 import { ConfigService } from "../../../core/config/config.service";
 import { ConfigurableEnumConfig } from "../../../core/configurable-enum/configurable-enum.interface";
+import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
 
 export class DemoNoteConfig {
   minNotesPerChild: number;
@@ -48,23 +49,12 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     ];
   }
 
-  private _teamMembers;
-  get teamMembers(): string[] {
-    const numberOfTeamMembers = 5;
-    if (!this._teamMembers) {
-      this._teamMembers = Array(numberOfTeamMembers)
-        .fill("")
-        .map(() => faker.name.firstName());
-    }
-
-    return this._teamMembers;
-  }
-
   private availableStatusTypes: AttendanceStatusType[];
 
   constructor(
     private config: DemoNoteConfig,
     private demoChildren: DemoChildGenerator,
+    private demoUsers: DemoUserGeneratorService,
     private schemaService: EntitySchemaService,
     private configService: ConfigService
   ) {
@@ -131,7 +121,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     );
 
     note.addChild(child.getId());
-    note.author = faker.random.arrayElement(this.teamMembers);
+    note.authors = [faker.random.arrayElement(this.demoUsers.entities).getId()];
 
     if (!date) {
       date = faker.date.between(
@@ -184,7 +174,8 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
       }
     });
 
-    note.author = faker.random.arrayElement(this.teamMembers);
+    note.authors = [faker.random.arrayElement(this.demoUsers.entities).getId()];
+
     note.date = faker.date.past(1);
 
     this.removeFollowUpMarkerForOldNotes(note);

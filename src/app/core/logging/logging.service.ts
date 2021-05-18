@@ -121,7 +121,11 @@ export class LoggingService {
   }
 
   private logToRemoteMonitoring(message: any, logLevel: LogLevel) {
-    Sentry.captureMessage(message, this.translateLogLevel(logLevel));
+    if (logLevel === LogLevel.ERROR) {
+      Sentry.captureException(message);
+    } else {
+      Sentry.captureMessage(message, this.translateLogLevel(logLevel));
+    }
   }
 
   private translateLogLevel(logLevel: LogLevel): Sentry.Severity {

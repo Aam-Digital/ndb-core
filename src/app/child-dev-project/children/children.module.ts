@@ -42,7 +42,6 @@ import { ChildrenCountDashboardComponent } from "./children-count-dashboard/chil
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { NotesOfChildComponent } from "../notes/notes-of-child/notes-of-child.component";
-import { ChildSelectComponent } from "./child-select/child-select.component";
 import { SchoolsModule } from "../schools/schools.module";
 import { EducationalMaterialComponent } from "../educational-material/educational-material-component/educational-material.component";
 import { AserComponent } from "../aser/aser-component/aser.component";
@@ -70,6 +69,7 @@ import { WebdavModule } from "../../core/webdav/webdav.module";
 import { PreviousTeamsComponent } from "../previous-teams/previous-teams.component";
 import { BmiBlockComponent } from "./children-list/bmi-block/bmi-block.component";
 import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard/children-bmi-dashboard.component";
+import { EntitySelectModule } from "../../core/entity-components/entity-select/entity-select.module";
 
 @NgModule({
   imports: [
@@ -111,13 +111,13 @@ import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard/children
     ViewModule,
     EntitySubrecordModule,
     EntityListModule,
+    EntitySelectModule,
   ],
   declarations: [
     ChildBlockComponent,
     NotesOfChildComponent,
     ChildrenListComponent,
     ChildrenCountDashboardComponent,
-    ChildSelectComponent,
     EducationalMaterialComponent,
     AserComponent,
     SelectGroupChildrenComponent,
@@ -134,7 +134,6 @@ import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard/children
   providers: [ChildrenService, DatePipe, PercentPipe],
   exports: [
     ChildBlockComponent,
-    ChildSelectComponent,
     ChildrenCountDashboardComponent,
     NoRecentNotesDashboardComponent,
     RecentNotesDashboardComponent,

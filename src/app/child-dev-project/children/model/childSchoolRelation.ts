@@ -17,11 +17,11 @@ export class ChildSchoolRelation extends Entity {
   /** percentage achieved in the final school exams of that year */
   @DatabaseField() result: number;
 
-  public isActive(): boolean {
+  get isActive(): boolean {
     return (
       this.start &&
       moment(this.start).isSameOrBefore(moment(), "day") &&
-      (!this.end || moment(this.end).isAfter(moment()))
+      (!this.end || moment(this.end).isAfter(moment(), "day"))
     );
   }
 }

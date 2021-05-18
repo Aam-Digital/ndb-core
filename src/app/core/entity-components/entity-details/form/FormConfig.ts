@@ -22,6 +22,11 @@ export class FormFieldConfig {
   placeholder: string;
 
   /**
+   * An additional label
+   */
+  label: string;
+
+  /**
    * If required is set to "true", the form cannot be saved if the field is empty.
    * Default to false
    */
@@ -36,4 +41,9 @@ export class FormFieldConfig {
    * The id of the enum in case `input="configurable-enum-select" is used.
    */
   enumId?: string;
+
+  /**
+   * The id of the entity-type in case `input="entity-select"` is used.
+   */
+  entityType?: string;
 }

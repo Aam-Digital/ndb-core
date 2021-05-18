@@ -18,19 +18,15 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { SyncStatusComponent } from "./sync-status.component";
-import { MatDialogModule } from "@angular/material/dialog";
-import { MatIconModule } from "@angular/material/icon";
-import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { InitialSyncDialogComponent } from "./initial-sync-dialog.component";
 import { SessionService } from "../../session/session-service/session.service";
 import { SyncState } from "../../session/session-states/sync-state.enum";
-import { AlertsModule } from "../../alerts/alerts.module";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { BehaviorSubject } from "rxjs";
 import { take } from "rxjs/operators";
 import { BackgroundProcessState } from "../background-process-state.interface";
 import { StateHandler } from "../../session/session-states/state-handler";
+import { SyncStatusModule } from "../sync-status.module";
 
 describe("SyncStatusComponent", () => {
   let component: SyncStatusComponent;
@@ -57,14 +53,7 @@ describe("SyncStatusComponent", () => {
       mockIndexingService = { indicesRegistered: new BehaviorSubject([]) };
 
       TestBed.configureTestingModule({
-        declarations: [InitialSyncDialogComponent, SyncStatusComponent],
-        imports: [
-          MatIconModule,
-          MatDialogModule,
-          NoopAnimationsModule,
-          MatProgressBarModule,
-          AlertsModule,
-        ],
+        imports: [SyncStatusModule, NoopAnimationsModule],
         providers: [
           { provide: SessionService, useValue: mockSessionService },
           { provide: DatabaseIndexingService, useValue: mockIndexingService },

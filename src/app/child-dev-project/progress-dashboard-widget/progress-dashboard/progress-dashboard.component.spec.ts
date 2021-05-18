@@ -1,16 +1,9 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ProgressDashboardComponent } from "./progress-dashboard.component";
-import { MatButtonModule } from "@angular/material/button";
-import { MatCardModule } from "@angular/material/card";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatIconModule } from "@angular/material/icon";
-import { MatInputModule } from "@angular/material/input";
-import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { AlertService } from "../../../core/alerts/alert.service";
+import { ProgressDashboardWidgetModule } from "../progress-dashboard-widget.module";
 
 describe("ProgressDashboardComponent", () => {
   let component: ProgressDashboardComponent;
@@ -25,17 +18,7 @@ describe("ProgressDashboardComponent", () => {
       mockEntityService.load.and.resolveTo({ title: "test", parts: [] });
 
       TestBed.configureTestingModule({
-        declarations: [ProgressDashboardComponent],
-        imports: [
-          MatIconModule,
-          MatFormFieldModule,
-          MatInputModule,
-          MatButtonModule,
-          MatCardModule,
-          MatProgressBarModule,
-          CommonModule,
-          FormsModule,
-        ],
+        imports: [ProgressDashboardWidgetModule],
         providers: [
           { provide: EntityMapperService, useValue: mockEntityService },
           {

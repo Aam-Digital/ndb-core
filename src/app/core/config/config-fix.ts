@@ -1,8 +1,14 @@
 import { defaultAttendanceStatusTypes } from "./default-config/default-attendance-status-types";
 import { defaultInteractionTypes } from "./default-config/default-interaction-types";
+import { Child } from "../../child-dev-project/children/model/child";
+import { Gender } from "../../child-dev-project/children/model/Gender";
+import { School } from "../../child-dev-project/schools/model/school";
+import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
+import { EventNote } from "../../child-dev-project/attendance/model/event-note";
+import { ColumnDescriptionInputType } from "../entity-components/entity-subrecord/column-description-input-type.enum";
 
 // prettier-ignore
-export const defaultConfig = {
+export const defaultJsonConfig = {
   "navigationMenu": {
     "items": [
       {
@@ -49,6 +55,11 @@ export const defaultConfig = {
         "name": "Users",
         "icon": "user",
         "link": "/users"
+      },
+      {
+        "name": "Reports",
+        "icon": "line-chart",
+        "link": "/report"
       },
       {
         "name": "Database Conflicts",
@@ -112,6 +123,28 @@ export const defaultConfig = {
       "label": "Barabazar"
     }
   ],
+  "enum:rating-answer": [
+    {
+      id: "noAnswerPossible",
+      label: "no answer possible",
+    },
+    {
+      id: "notTrueAtAll",
+      label: "not true at all",
+    },
+    {
+      id: "rarelyTrue",
+      label: "rarely true",
+    },
+    {
+      id: "usuallyTrue",
+      label: "usually true",
+    },
+    {
+      id: "absolutelyTrue",
+      label: "absolutely true",
+    },
+  ],
 
   "view:": {
     "component": "Dashboard",
@@ -161,9 +194,6 @@ export const defaultConfig = {
           "config": {
             "dashboardConfigId": "1"
           }
-        },
-        {
-        "component": "ChildrenBmiDashboardComponent"
         }
       ]
     }
@@ -194,9 +224,9 @@ export const defaultConfig = {
           "id": "category"
         },
         {
-          "component": "DisplayText",
-          "title": "Author",
-          "id": "author"
+          "component": "DisplayUsers",
+          "title": "Authors",
+          "id": "authors"
         },
         {
           "component": "ChildBlockList",
@@ -215,7 +245,7 @@ export const defaultConfig = {
               "date",
               "subject",
               "category",
-              "author",
+              "authors",
               "children"
             ]
           },
@@ -668,6 +698,7 @@ export const defaultConfig = {
         {
           "id": "school",
           "type": "prebuilt",
+          "label": "School",
           "display": "dropdown"
         }
       ]
@@ -721,6 +752,7 @@ export const defaultConfig = {
                   [
                     {
                       "input": "age",
+                      "tooltip": "This field is read-only. Edit Date of Birth to change age. Select Jan 1st if you only know the year of birth.",
                       "id": "dateOfBirth",
                       "placeholder": "Date of Birth"
                     },
@@ -944,6 +976,92 @@ export const defaultConfig = {
           ]
         },
         {
+          title: "Observations",
+          components: [
+            {
+              title: "",
+              component: "HistoricalDataComponent",
+              config: [
+                {
+                  name: "date",
+                  label: "Date",
+                  inputType: ColumnDescriptionInputType.DATE
+                },
+                {
+                  name: "isMotivatedDuringClass",
+                  label: "Motivated",
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: "The child is motivated during the class."
+                },
+                {
+                  name: "isParticipatingInClass",
+                  label: "Participates",
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: "The child is actively participating in the class."
+                },
+                {
+                  name: "isInteractingWithOthers",
+                  label: "Interacts",
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: "The child interacts with other students during the class."
+                },
+                {
+                  name: "doesHomework",
+                  label: "Homework",
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: "The child does its homework."
+                },
+                {
+                  name: "isOnTime",
+                  label: "On time",
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: "The child is always on time for the class."
+                },
+                {
+                  name: "asksQuestions",
+                  label: "Asks",
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: "The child is asking questions during the class."
+                },
+                {
+                  name: "listens",
+                  label: "Listens",
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: "The child is listening during the class."
+                },
+                {
+                  name: "canWorkOnBoard",
+                  label: "Solves on board",
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: "The child can solve exercises on the board."
+                },
+                {
+                  name: "isConcentrated",
+                  label: "Concentrated",
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: "The child is concentrated during the class."
+                },
+                {
+                  name: "doesNotDisturb",
+                  label: "Not Disturbing",
+                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+                  enumId: "rating-answer",
+                  tooltip: "The child does not disturb the class."
+                },
+              ]
+            }
+          ]
+        },
+        {
           "title": "Dropout",
           "components": [
             {
@@ -997,7 +1115,7 @@ export const defaultConfig = {
           "id": "type"
         },
         {
-          "component": "DisplayText",
+          "component": "DisplayUsers",
           "title": "Assigned to",
           "id": "assignedTo"
         }
@@ -1017,9 +1135,6 @@ export const defaultConfig = {
         ]
       },
       "filters": [
-        {
-          "id": "assignedTo"
-        }
       ]
     }
   },
@@ -1052,9 +1167,11 @@ export const defaultConfig = {
                   ],
                   [
                     {
-                      "input": "text",
+                      "input": "entity-select",
                       "id": "assignedTo",
-                      "placeholder": "Assigned to"
+                      "entityType": "User",
+                      "placeholder": "Add coordinator...",
+                      "label": "Assigned to"
                     }
                   ]
                 ]
@@ -1080,6 +1197,68 @@ export const defaultConfig = {
         }
       ],
       "icon": "calendar"
+    }
+  },
+  "view:report": {
+    "component": "Reporting",
+    "config": {
+      "reports": [
+        {
+          "title": "Basic Report",
+          "aggregationDefinitions": [
+            {
+              "query": `${Child.ENTITY_TYPE}:toArray[*isActive=true]`,
+              "label": "All children",
+              "aggregations": [
+                {"label": "Male children", "query": `[*gender=${Gender.MALE}]`},
+                {"label": "Female children", "query": `[*gender=${Gender.FEMALE}]`},
+              ]
+            },
+            {
+              "query": `${School.ENTITY_TYPE}:toArray`,
+              "label": "All schools",
+              "aggregations": [
+                {"label": "Children attending a school", "query": `:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:unique`},
+                {"label": "Governmental schools", "query": `[*privateSchool!=true]`},
+                {
+                  "query": `[*privateSchool!=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
+                  "label": "Children attending a governmental school",
+                  "aggregations": [
+                    {"label": "Male children attending a governmental school", "query": `[*gender=${Gender.MALE}]`},
+                    {"label": "Female children attending a governmental school", "query": `[*gender=${Gender.FEMALE}]`},
+                  ]
+                },
+                {"label": "Private schools", "query": `[*privateSchool=true]`},
+                {
+                  "query": `[*privateSchool=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
+                  "label": "Children attending a private school",
+                  "aggregations": [
+                    {"label": "Male children attending a private school", "query": `[*gender=${Gender.MALE}]`},
+                    {"label": "Female children attending a private school", "query": `[*gender=${Gender.FEMALE}]`},
+                  ]
+                },
+              ]
+            }
+          ],
+        },
+        {
+          "title": "Event Report",
+          "aggregationDefinitions": [
+            {
+              "query": `${EventNote.ENTITY_TYPE}:toArray[*date >= ? & date <= ?]`,
+              "groupBy": ["category"],
+              "label": "Total # of events",
+              "aggregations": [
+                {
+                  "query": `:getParticipantsWithAttendance(PRESENT):unique:addPrefix(${Child.ENTITY_TYPE}):toEntities`,
+                  "groupBy": ["gender", "religion"],
+                  "label": "Total # of participants"
+                }
+              ]
+            }
+          ],
+        }
+      ]
     }
   },
 
@@ -1110,5 +1289,19 @@ export const defaultConfig = {
   "entity:School": {
     "permissions": {
     }
+  },
+  "entity:HistoricalEntityData": {
+    "attributes": [
+      {"name": "isMotivatedDuringClass", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "isParticipatingInClass", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "isInteractingWithOthers", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "doesHomework", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "isOnTime", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "asksQuestions", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "listens", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "canWorkOnBoard", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "isConcentrated", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {"name": "doesNotDisturb", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+    ]
   }
 }

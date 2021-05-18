@@ -9,11 +9,21 @@ import { DatabaseField } from "../../../core/entity/database-field.decorator";
  * Simple relationship object to represent an individual child's status at an event including context information.
  */
 export class EventAttendance {
+  private _status: AttendanceStatusType;
   @DatabaseField({
     dataType: "configurable-enum",
     innerDataType: ATTENDANCE_STATUS_CONFIG_ID,
   })
-  status: AttendanceStatusType;
+  get status(): AttendanceStatusType {
+    return this._status;
+  }
+  set status(value) {
+    if (typeof value === "object") {
+      this._status = value;
+    } else {
+      this._status = NullAttendanceStatusType;
+    }
+  }
 
   @DatabaseField() remarks: string;
 

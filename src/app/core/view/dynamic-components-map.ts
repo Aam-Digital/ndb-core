@@ -25,6 +25,10 @@ import { PreviousTeamsComponent } from "../../child-dev-project/previous-teams/p
 import { BmiBlockComponent } from "../../child-dev-project/children/children-list/bmi-block/bmi-block.component";
 import { ChildrenBmiDashboardComponent } from "../../child-dev-project/children/children-bmi-dashboard/children-bmi-dashboard.component";
 import { DashboardShortcutWidgetComponent } from "../dashboard-shortcut-widget/dashboard-shortcut-widget/dashboard-shortcut-widget.component";
+import { UsersBlockComponent } from "../user/users-block/users-block.component";
+import { UserListComponent } from "../admin/user-list/user-list.component";
+import { HistoricalDataComponent } from "../../features/historical-data/historical-data/historical-data.component";
+import { SchoolBlockComponent } from "../../child-dev-project/schools/school-block/school-block.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -46,12 +50,16 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["DisplayText", DisplayTextComponent],
   ["DisplayConfigurableEnum", DisplayConfigurableEnumComponent],
   ["DisplayCheckmark", DisplayCheckmarkComponent],
-  ["ChildBlock", ChildBlockComponent],
+  ["DisplayUsers", UsersBlockComponent],
   ["ChildBlockList", ChildBlockListComponent],
   ["RecentAttendanceBlocks", RecentAttendanceBlocksComponent],
   ["SchoolBlockWrapper", SchoolBlockWrapperComponent],
   ["ChildrenOverview", ChildrenOverviewComponent],
   ["BmiBlock", BmiBlockComponent],
   ["ChildrenBmiDashboardComponent", ChildrenBmiDashboardComponent],
+  ["UserList", UserListComponent],
   ["DashboardShortcutWidget", DashboardShortcutWidgetComponent],
+  ["HistoricalDataComponent", HistoricalDataComponent],
+  ["ChildBlock", ChildBlockComponent],
+  ["SchoolBlock", SchoolBlockComponent],
 ]);

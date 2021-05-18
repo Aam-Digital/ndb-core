@@ -39,11 +39,4 @@ export const defaultAttendanceStatusTypes: AttendanceStatusType[] = [
     style: "attendance-E",
     countAs: "IGNORE" as AttendanceLogicalStatus,
   },
-  {
-    id: "UNKNOWN",
-    shortName: "?",
-    label: "Skip",
-    style: "attendance-U",
-    countAs: "IGNORE" as AttendanceLogicalStatus,
-  },
 ];

@@ -1,6 +1,6 @@
 <!-- Individual Student's Page -->
-<div *ngIf="!isFinished()">
-  <app-child-block [entityId]="entries[currentIndex].childId"></app-child-block>
+<div *ngIf="!isFinished() && entries?.length > 0">
+  <app-child-block [entity]="entries[currentIndex].child"></app-child-block>
 
   <div
     fxLayout="column"
@@ -10,7 +10,7 @@
     <div
       class="group-select-option"
       *ngFor="let option of availableStatus"
-      (click)="markAttendance(entries[currentIndex].childId, option)"
+      (click)="markAttendance(entries[currentIndex].attendance, option)"
       [ngClass]="
         entries[currentIndex].attendance.status.id === option.id
           ? option.style
@@ -44,6 +44,17 @@
     Back
   </button>
 
+  <button
+    mat-stroked-button
+    [disabled]="isFinished()"
+    (click)="goToNextParticipant()"
+    class="nav-button"
+    fxFlex
+  >
+    Skip
+  </button>
+</div>
+<div>
   <button mat-stroked-button (click)="exit.emit()" class="nav-button" fxFlex>
     {{ isFinished() ? "Finish" : "Abort" }}
   </button>

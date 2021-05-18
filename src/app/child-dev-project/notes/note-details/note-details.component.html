@@ -73,18 +73,17 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <div fxFlex>
-          <mat-form-field class="input-medium">
-            <!-- TODO: should be multi-select or auto-complete field of user names? -->
-            <input
-              matInput
-              placeholder="Team Member"
-              name="teammember"
-              type="text"
-              [(ngModel)]="entity.author"
-            />
-          </mat-form-field>
-        </div>
+
+        <app-entity-select
+          fxFlex
+          [standardType]="'User'"
+          (selectionChange)="entityForm.form.markAsDirty()"
+          [(selection)]="entity.authors"
+          placeholder="Add Author..."
+          label="Authors"
+        >
+        </app-entity-select>
+
       </div>
     </div>
 
@@ -119,33 +118,48 @@
     </div>
 
     <div fxLayout="column" fxLayoutGap="20px">
-      <div fxFlex *ngIf="!entity.category.isMeeting">
-        <app-child-select
-          [selectedChildrenIds]="entity.children"
-          (newIdAdded)="entity.addChild($event); entityForm.form.markAsDirty()"
-          (idRemoved)="
-            entity.removeChild($event); entityForm.form.markAsDirty()
-          "
-          class="input-medium"
-        >
-        </app-child-select>
+
+      <app-entity-select
+        [standardType]="'Child'"
+        [(selection)]="entity.children"
+        (selectionChange)="entityForm.form.markAsDirty()"
+        [additionalFilter]="filterInactiveChildren"
+        [showEntities]="!entity.category.isMeeting"
+        label="Participants"
+        placeholder="Add participant ...">
+        <!-- Header for autocomplete -->
+        <mat-option (click)="toggleIncludeInactiveChildren()">
+          <mat-checkbox
+            labelPosition="before"
+            [checked]="includeInactiveChildren">
+            Include Inactive Children
+          </mat-checkbox>
+        </mat-option>
+      </app-entity-select>
+
+      <div *ngIf="entity.category.isMeeting">
+        <app-child-meeting-note-attendance
+          *ngFor="let childId of entity.children"
+          [childId]="childId"
+          [attendance]="entity.getAttendance(childId)"
+          (change)="entityForm.form.markAsDirty()"
+          (remove)="entity.removeChild(childId); entityForm.form.markAsDirty()"
+          >
+        </app-child-meeting-note-attendance>
       </div>
-      <app-note-presence-list
-        *ngIf="entity.category.isMeeting"
-        [recordForm]="entityForm"
-        [entity]="entity"
-        fxFlex
-      >
-      </app-note-presence-list>
 
       <div fxFlex>
-        <app-school-select
-          [(selectedSchoolIds)]="entity.schools"
-          (selectedSchoolIdsChange)="entityForm.form.markAsDirty()"
-          class="input-medium"
+        <app-entity-select
+          [standardType]="'School'"
+          [(selection)]="entity.schools"
+          (selectionChange)="entityForm.form.markAsDirty()"
+          label="Groups"
+          placeholder="Add group ..."
         >
-        </app-school-select>
+        </app-entity-select>
       </div>
+
     </div>
+
   </form>
 </app-form-dialog-wrapper>

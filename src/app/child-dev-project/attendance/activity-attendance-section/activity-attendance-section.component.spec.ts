@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { ActivityAttendanceSectionComponent } from "./activity-attendance-section.component";
 import { AttendanceService } from "../attendance.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { DatePipe, PercentPipe } from "@angular/common";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { RecurringActivity } from "../model/recurring-activity";
@@ -11,6 +10,8 @@ import { ActivityAttendance } from "../model/activity-attendance";
 import { EventNote } from "../model/event-note";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
+import { AttendanceModule } from "../attendance.module";
+import { MatNativeDateModule } from "@angular/material/core";
 
 describe("ActivityAttendanceSectionComponent", () => {
   let component: ActivityAttendanceSectionComponent;
@@ -31,8 +32,7 @@ describe("ActivityAttendanceSectionComponent", () => {
       mockAttendanceService.getActivityAttendances.and.resolveTo(testRecords);
 
       TestBed.configureTestingModule({
-        declarations: [ActivityAttendanceSectionComponent],
-        imports: [EntitySubrecordModule, NoopAnimationsModule],
+        imports: [AttendanceModule, NoopAnimationsModule, MatNativeDateModule],
         providers: [
           { provide: AttendanceService, useValue: mockAttendanceService },
           {

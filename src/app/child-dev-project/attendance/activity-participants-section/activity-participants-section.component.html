@@ -1,16 +1,19 @@
 <div>
-  <app-school-select
-    [(selectedSchoolIds)]="participatingGroups"
+  <app-entity-select
+    [standardType]="'School'"
+    [(selection)]="participatingGroups"
     [disabled]="!editing"
-    class="input-medium"
+    label="Groups"
+    placeholder="Add group ..."
   >
-  </app-school-select>
-  <app-child-select
-    [(selectedChildrenIds)]="participants"
+  </app-entity-select>
+  <app-entity-select
+    [standardType]="'Child'"
+    [(selection)]="participants"
     [disabled]="!editing"
-    class="input-medium"
-  >
-  </app-child-select>
+    label="Participants"
+    placeholder="Add participant ..."
+  ></app-entity-select>
 </div>
 
 <div>

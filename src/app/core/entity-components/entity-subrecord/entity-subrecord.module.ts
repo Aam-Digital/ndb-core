@@ -1,6 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { EntitySubrecordComponent } from "./entity-subrecord.component";
+import { EntitySubrecordComponent } from "./entity-subrecord/entity-subrecord.component";
 import { KeysPipe } from "./keys-pipe/keys.pipe";
 import { MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
@@ -15,6 +15,8 @@ import { EntityModule } from "../../entity/entity.module";
 import { AlertsModule } from "../../alerts/alerts.module";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatButtonModule } from "@angular/material/button";
+import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @NgModule({
   declarations: [EntitySubrecordComponent, KeysPipe],
@@ -33,6 +35,8 @@ import { MatButtonModule } from "@angular/material/button";
     MatAutocompleteModule,
     MatIconModule,
     MatButtonModule,
+    ConfigurableEnumModule,
+    MatTooltipModule,
   ],
   exports: [EntitySubrecordComponent, KeysPipe],
 })
