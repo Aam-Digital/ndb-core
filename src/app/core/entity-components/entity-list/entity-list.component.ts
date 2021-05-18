@@ -237,6 +237,7 @@ export class EntityListComponent<T extends Entity>
     }
     this.paginator._changePageSize(this.paginatorPageSize);
     this.showAllToggle = !this.showAllToggle;
+    this.updateUserPaginationSettings();
   }
 
   columnGroupClick(columnGroupName: string) {
