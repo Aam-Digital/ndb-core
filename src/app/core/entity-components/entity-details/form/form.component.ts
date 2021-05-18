@@ -11,6 +11,7 @@ import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init
 import { getParentUrl } from "../../../../utils/utils";
 import { OperationType } from "../../../permissions/entity-permissions.service";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
+import { EntityFormService } from "../../entity-form/entity-form.service";
 
 /**
  * This component creates a form based on the passed config.
@@ -37,7 +38,7 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   form: FormGroup;
 
   constructor(
-    private fb: FormBuilder,
+    private entityFormService: EntityFormService,
     private entityMapperService: EntityMapperService,
     private alertService: AlertService,
     private router: Router,
@@ -63,29 +64,18 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
 
   switchEdit() {
     this.editing = !this.editing;
-    this.initForm();
+    this.buildFormConfig();
   }
 
-  async save(): Promise<Entity> {
-    if (!this.checkFormValidity()) {
-      return;
-    }
-
-    this.assignFormValuesToEntity();
+  async save(): Promise<void> {
     try {
-      await this.entityMapperService.save<Entity>(this.entity);
-      this.router.navigate([getParentUrl(this.router), this.entity.getId()]);
-      this.alertService.addInfo("Saving Successful");
+      await this.entityFormService.saveChanges(this.form, this.entity);
       this.switchEdit();
-      return this.entity;
+      if (this.creatingNew) {
+        this.router.navigate([getParentUrl(this.router), this.entity.getId()]);
+      }
     } catch (err) {
-      this.alertService.addDanger(
-        'Could not save "' +
-          this.entity.getConstructor().ENTITY_TYPE +
-          '": ' +
-          err
-      );
-      throw new Error(err);
+      console.log("error", err);
     }
   }
 
@@ -101,57 +91,16 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
         return row;
       })
     );
-    this.form = this.fb.group(this.buildFormConfig());
+    this.buildFormConfig();
   }
 
   private buildFormConfig() {
-    const formConfig = {};
-    this.config.cols.forEach((c) =>
-      c.forEach((r) => {
-        formConfig[r.id] = [
-          { value: this.entity[r.id], disabled: !this.editing },
-        ];
-        if (r.required) {
-          formConfig[r.id].push(Validators.required);
-        }
-      })
+    const flattenedFormFields = new Array<FormFieldConfig>().concat(
+      ...this.columns
     );
-    return formConfig;
-  }
-
-  private assignFormValuesToEntity() {
-    Object.keys(this.form.controls).forEach((key) => {
-      const value = this.form.get(key).value;
-      if (value !== null) {
-        this.entity[key] = value;
-      }
-    });
-    console.log("entity", this.entity);
-  }
-
-  private checkFormValidity(): boolean {
-    // errors regarding invalid fields wont be displayed unless marked as touched
-    this.form.markAllAsTouched();
-    this.validateForm = true;
-    if (!this.form.valid) {
-      const invalidFields = this.getInvalidFields();
-      this.alertService.addDanger(
-        "Form invalid, required fields (" + invalidFields + ") missing"
-      );
-      return false;
-    }
-
-    return true;
-  }
-
-  private getInvalidFields() {
-    const invalid = [];
-    const controls = this.form.controls;
-    for (const field in controls) {
-      if (controls[field].invalid) {
-        invalid.push(field);
-      }
-    }
-    return invalid;
+    this.form = this.entityFormService.createFormGroup(
+      flattenedFormFields,
+      this.entity
+    );
   }
 }

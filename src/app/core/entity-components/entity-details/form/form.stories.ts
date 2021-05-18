@@ -11,6 +11,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { User } from "../../../user/user";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityPermissionsService } from "../../../permissions/entity-permissions.service";
+import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
 
 export default {
   title: "Core/Form",
@@ -21,6 +22,7 @@ export default {
         EntityDetailsModule,
         RouterTestingModule,
         BrowserAnimationsModule,
+        ChildrenModule,
       ],
       providers: [
         { provide: EntityMapperService, useValue: { save: () => null } },
@@ -96,9 +98,11 @@ const Template: Story<FormComponent> = (args: FormComponent) => ({
   props: args,
 });
 
+const child = new Child();
+child.name = "Child Name";
 export const Primary = Template.bind({});
 Primary.args = {
-  entity: new Child(),
+  entity: child,
   config: testConfig,
   editing: true,
 };

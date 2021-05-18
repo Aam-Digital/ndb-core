@@ -18,24 +18,16 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { ViewModule } from "../../view/view.module";
 import { EntityModule } from "../../entity/entity.module";
 import { AlertsModule } from "../../alerts/alerts.module";
-import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
+import { EntityFormModule } from "../entity-form/entity-form.module";
 
 @NgModule({
-  declarations: [
-    EntityDetailsComponent,
-    FormComponent,
-  ],
+  declarations: [EntityDetailsComponent, FormComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     MatIconModule,
-    MatFormFieldModule,
-    MatTooltipModule,
     MatInputModule,
-    MatCheckboxModule,
-    MatDatepickerModule,
-    MatSelectModule,
     MatExpansionModule,
     ViewModule,
     FlexLayoutModule,
@@ -44,8 +36,9 @@ import { PermissionsModule } from "../../permissions/permissions.module";
     MatNativeDateModule,
     EntityModule,
     AlertsModule,
-    ConfigurableEnumModule,
     PermissionsModule,
+    EntityFormModule,
+    MatTooltipModule,
   ],
 })
 export class EntityDetailsModule {}
