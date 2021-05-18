@@ -18,6 +18,7 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatInputModule } from "@angular/material/input";
 import { MatNativeDateModule } from "@angular/material/core";
+import { AlertsModule } from "../../alerts/alerts.module";
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { MatNativeDateModule } from "@angular/material/core";
     MatCheckboxModule,
     MatInputModule,
     MatNativeDateModule,
+    AlertsModule,
   ],
   entryComponents: [
     EditConfigurableEnumComponent,

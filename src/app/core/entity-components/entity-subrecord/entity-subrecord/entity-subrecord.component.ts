@@ -27,7 +27,9 @@ import { DatePipe } from "@angular/common";
 import { BehaviorSubject } from "rxjs";
 import { ComponentWithConfig } from "../component-with-config";
 import { entityListSortingAccessor } from "../../entity-list/sorting-accessor";
-import { FormBuilder, FormGroup } from "@angular/forms";
+import { FormGroup } from "@angular/forms";
+import { FormFieldConfig } from "../../entity-details/form/FormConfig";
+import { EntityFormService } from "../../entity-form/entity-form.service";
 
 interface TableRow<T> {
   record: T;
@@ -134,7 +136,7 @@ export class EntitySubrecordComponent<T extends Entity>
     private alertService: AlertService,
     private datePipe: DatePipe,
     private media: MediaObserver,
-    private fb: FormBuilder
+    private entityFormService: EntityFormService
   ) {
     this.media
       .asObservable()
@@ -185,13 +187,17 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   private buildFormConfig(record: T): FormGroup {
-    const formConfig = {};
-    this.columns.forEach((column) => {
-      formConfig[column.name] = [
-        { value: record[column.name], disabled: true },
-      ];
+    const formFields: FormFieldConfig[] = this.columns.map((column) => {
+      return {
+        id: column.name,
+        placeholder: column.label,
+        enumId: column.enumId,
+        options: column.selectValues?.map((option) => option.value),
+      };
     });
-    return this.fb.group(formConfig);
+    const form = this.entityFormService.createFormGroup(formFields, record);
+    form.disable();
+    return form;
   }
 
   ngAfterViewInit() {
@@ -268,24 +274,9 @@ export class EntitySubrecordComponent<T extends Entity>
    * Save an edited record to the database (if validation succeeds).
    * @param row The entity to be saved.
    */
-  save(row: T) {
-    if (this.formValidation) {
-      const formValidationResult = this.formValidation(row);
-      if (!formValidationResult.hasPassedValidation) {
-        this.alertService.addWarning(formValidationResult.validationMessage);
-        return;
-      }
-    }
-
-    this._entityMapper.save(row).then(() => {
-      this.changedRecordsInEntitySubrecordEvent.emit();
-    });
-
-    // updated backup copies used for reset
-    const i = this.originalRecords.findIndex((e) => e.entityId === row.getId());
-    this.originalRecords[i] = Object.assign({}, row);
-
-    this.recordsEditing.set(row.getId(), false);
+  async save(row: TableRow<T>) {
+    await this.entityFormService.saveChanges(row.formGroup, row.record);
+    row.formGroup.disable();
   }
 
   /**

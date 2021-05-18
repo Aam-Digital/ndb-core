@@ -19,7 +19,7 @@ import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enu
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ViewModule } from "../../view/view.module";
 import { ReactiveFormsModule } from "@angular/forms";
-import { EntityDetailsModule } from "../entity-details/entity-details.module";
+import { EntityFormModule } from "../entity-form/entity-form.module";
 
 @NgModule({
   declarations: [EntitySubrecordComponent, KeysPipe],
@@ -42,7 +42,7 @@ import { EntityDetailsModule } from "../entity-details/entity-details.module";
     MatTooltipModule,
     ViewModule,
     ReactiveFormsModule,
-    EntityDetailsModule,
+    EntityFormModule,
   ],
   exports: [EntitySubrecordComponent, KeysPipe],
 })

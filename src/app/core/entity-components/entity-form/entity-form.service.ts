@@ -15,7 +15,10 @@ export class EntityFormService {
     private alertService: AlertService
   ) {}
 
-  public createFormGroup(formFields: FormFieldConfig[], entity: Entity): any {
+  public createFormGroup(
+    formFields: FormFieldConfig[],
+    entity: Entity
+  ): FormGroup {
     const formConfig = {};
     formFields.forEach((formField) => {
       formConfig[formField.id] = [entity[formField.id]];
