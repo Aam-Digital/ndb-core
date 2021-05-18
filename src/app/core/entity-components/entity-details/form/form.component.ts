@@ -9,7 +9,6 @@ import { AlertService } from "../../../alerts/alert.service";
 import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
 import { getParentUrl } from "../../../../utils/utils";
 import { OperationType } from "../../../permissions/entity-permissions.service";
-import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 
 /**
@@ -37,7 +36,6 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
     private entityMapperService: EntityMapperService,
     private alertService: AlertService,
     private router: Router,
-    private entitySchemaService: EntitySchemaService
   ) {}
 
   ngOnInit() {
@@ -79,17 +77,7 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   }
 
   private initForm(): void {
-    this.columns = this.config.cols.map((column) =>
-      column.map((row) => {
-        if (!row.input) {
-          row.input = this.entitySchemaService.getComponent(
-            this.entity.getSchema().get(row.id),
-            "edit"
-          );
-        }
-        return row;
-      })
-    );
+    this.columns = this.config.cols;
     this.buildFormConfig();
   }
 

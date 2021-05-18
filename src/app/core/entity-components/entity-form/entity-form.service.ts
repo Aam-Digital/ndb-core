@@ -4,6 +4,7 @@ import { FormFieldConfig } from "../entity-details/form/FormConfig";
 import { Entity } from "../../entity/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { AlertService } from "../../alerts/alert.service";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 @Injectable({
   providedIn: "root",
@@ -12,7 +13,8 @@ export class EntityFormService {
   constructor(
     private fb: FormBuilder,
     private entityMapper: EntityMapperService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private entitySchemaService: EntitySchemaService
   ) {}
 
   public createFormGroup(
@@ -21,6 +23,12 @@ export class EntityFormService {
   ): FormGroup {
     const formConfig = {};
     formFields.forEach((formField) => {
+      if (!formField.input) {
+        formField.input = this.entitySchemaService.getComponent(
+          entity.getSchema().get(formField.id),
+          "edit"
+        );
+      }
       formConfig[formField.id] = [entity[formField.id]];
       if (formField.required) {
         formConfig[formField.id].push(Validators.required);
