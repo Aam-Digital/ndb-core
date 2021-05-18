@@ -10,7 +10,6 @@ import {
   ViewChild,
 } from "@angular/core";
 import { MatSort, MatSortable } from "@angular/material/sort";
-import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -70,7 +69,6 @@ export class EntityListComponent<T extends Entity>
   @Output() addNewClick = new EventEmitter();
 
   @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   listName = "";
   columns: ColumnConfig[] = [];
@@ -88,16 +86,8 @@ export class EntityListComponent<T extends Entity>
   filterSelections: FilterComponentSettings<T>[] = [];
   entityDataSource = new MatTableDataSource<T>();
 
-  user: User;
-  paginatorPageSize: number = 10;
-  paginatorPageSizeBeforeToggle: number = 10;
-  paginatorPageIndex: number = 0;
-  showAllToggle: boolean = false;
-
   filterString = "";
 
-  // This key is used to save the pagination settings on the user entity
-  readonly paginatorKey: string;
 
   constructor(
     private configService: ConfigService,
@@ -107,9 +97,7 @@ export class EntityListComponent<T extends Entity>
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private entityMapperService: EntityMapperService
-  ) {
-    this.paginatorKey = getUrlWithoutParams(this.router);
-  }
+  ) { }
 
   ngOnInit() {
     this.media.asObservable().subscribe((change: MediaChange[]) => {
@@ -129,14 +117,6 @@ export class EntityListComponent<T extends Entity>
         }
       }
     });
-    this.user = this.sessionService.getCurrentUser();
-    // Use URl as key to save pagination settings
-    this.paginatorPageSize =
-      this.user.paginatorSettingsPageSize[this.paginatorKey] ||
-      this.paginatorPageSize;
-    this.paginatorPageIndex =
-      this.user.paginatorSettingsPageIndex[this.paginatorKey] ||
-      this.paginatorPageIndex;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -152,8 +132,6 @@ export class EntityListComponent<T extends Entity>
       this.initDefaultSort();
     }
     this.loadUrlParams();
-    this.showAllToggle =
-      this.paginatorPageSize >= this.entityDataSource.data.length;
   }
 
   private initDefaultSort() {
@@ -180,64 +158,10 @@ export class EntityListComponent<T extends Entity>
 
   ngAfterViewInit() {
     this.entityDataSource.sort = this.sort;
-    this.entityDataSource.paginator = this.paginator;
     // sort data according to it's label, if the data has a label
     // (which it has when using configuration enum types)
     // otherwise sort by default
     this.entityDataSource.sortingDataAccessor = entityListSortingAccessor;
-    setTimeout(() => {
-      this.paginator.pageIndex = this.paginatorPageIndex;
-      this.paginator.page.next({
-        pageIndex: this.paginator.pageIndex,
-        pageSize: this.paginator.pageSize,
-        length: this.paginator.length,
-      });
-    });
-  }
-
-  onPaginateChange(event: PageEvent) {
-    this.paginatorPageSize = event.pageSize;
-    this.paginatorPageIndex = event.pageIndex;
-    this.updateUserPaginationSettings();
-    this.showAllToggle =
-      this.paginatorPageSize >= this.entityDataSource.data.length;
-  }
-
-  getPaginatorPageSizeOptions(): number[] {
-    const ar = [3, 10, 20, 50].filter((n) => {
-      return n < this.entityDataSource.data.length;
-    });
-    ar.push(this.entityDataSource.data.length);
-    return ar;
-  }
-
-  getPaginatorPageSize(): number {
-    if (
-      this.entityDataSource.data.length &&
-      this.paginatorPageSize >= this.entityDataSource.data.length
-    ) {
-      this.paginatorPageSize = this.entityDataSource.data.length;
-    }
-    return this.paginatorPageSize;
-  }
-
-  clickShowAllToggle() {
-    if (!this.showAllToggle) {
-      this.paginatorPageSizeBeforeToggle = this.paginatorPageSize;
-      this.paginatorPageSize = this.entityDataSource.data.length;
-    } else {
-      if (
-        this.paginatorPageSizeBeforeToggle <= this.entityDataSource.data.length
-      ) {
-        this.paginatorPageSize = this.paginatorPageSizeBeforeToggle;
-      } else {
-        const po = this.getPaginatorPageSizeOptions();
-        this.paginatorPageSize = po.length > 2 ? po[po.length - 2] : po[0];
-      }
-    }
-    this.paginator._changePageSize(this.paginatorPageSize);
-    this.showAllToggle = !this.showAllToggle;
-    this.updateUserPaginationSettings();
   }
 
   columnGroupClick(columnGroupName: string) {
@@ -272,24 +196,6 @@ export class EntityListComponent<T extends Entity>
       ];
       this.defaultColumnGroup = "default";
       this.mobileColumnGroup = "default";
-    }
-  }
-
-  private updateUserPaginationSettings() {
-    // The PageSize is stored in the database, the PageList is only in memory
-    const hasChangesToBeSaved =
-      this.paginatorPageSize !==
-      this.user.paginatorSettingsPageSize[this.paginatorKey];
-
-    this.user.paginatorSettingsPageIndex[
-      this.paginatorKey
-    ] = this.paginatorPageIndex;
-    this.user.paginatorSettingsPageSize[
-      this.paginatorKey
-    ] = this.paginatorPageSize;
-
-    if (hasChangesToBeSaved) {
-      this.entityMapperService.save<User>(this.user);
     }
   }
 

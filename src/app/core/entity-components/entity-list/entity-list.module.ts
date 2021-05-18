@@ -23,6 +23,7 @@ import { AdminModule } from "../../admin/admin.module";
 import { ViewModule } from "../../view/view.module";
 import { DisplayConfigurableEnumComponent } from "./display-configurable-enum/display-configurable-enum.component";
 import { ListFilterComponent } from "./list-filter/list-filter.component";
+import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import { PermissionsModule } from "../../permissions/permissions.module";
 import { MatSliderModule } from "@angular/material/slider";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
@@ -35,6 +36,7 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
     DisplayConfigurableEnumComponent,
     DisplayCheckmarkComponent,
     ListFilterComponent,
+    ListPaginatorComponent
   ],
   imports: [
     CommonModule,

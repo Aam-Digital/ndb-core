@@ -1,13 +1,13 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
-import { ListFilterComponent } from "./list-filter.component";
+import { ListPaginatorComponent } from "./list-paginator.component";
 import { FilterSelection } from "../../../filter/filter-selection/filter-selection";
 import { EntityListModule } from "../entity-list.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("ListFilterComponent", () => {
-  let component: ListFilterComponent<any>;
-  let fixture: ComponentFixture<ListFilterComponent<any>>;
+  let component: ListPaginatorComponent<any>;
+  let fixture: ComponentFixture<ListPaginatorComponent<any>>;
 
   beforeEach(
     waitForAsync(() => {
@@ -18,9 +18,9 @@ describe("ListFilterComponent", () => {
   );
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ListFilterComponent);
+    fixture = TestBed.createComponent(ListPaginatorComponent);
     component = fixture.componentInstance;
-    component.filterConfig = new FilterSelection<any>("test", []);
+   //  component.filterConfig = new FilterSelection<any>("test", []);
     fixture.detectChanges();
   });
 

@@ -135,19 +135,7 @@
       class="table-list-item"
     ></tr>
   </table>
-  <app-list-paginator>
-    (dataSource)="entityDataSource"
-  </app-list-paginator>
-  <mat-toolbar>
-    <mat-slide-toggle [(ngModel)]="showAllToggle" (click)="clickShowAllToggle()"
-      >Show All</mat-slide-toggle
-    >
-    <mat-paginator
-      (page)="onPaginateChange($event)"
-      [pageSize]="getPaginatorPageSize()"
-      [pageIndex]="paginatorPageIndex"
-      [pageSizeOptions]="getPaginatorPageSizeOptions()"
-      [showFirstLastButtons]="true"
-    ></mat-paginator>
-  </mat-toolbar>
+  <app-list-paginator
+    [dataSource]="entityDataSource"
+  ></app-list-paginator>
 </div>
