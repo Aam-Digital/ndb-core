@@ -32,7 +32,7 @@ export class NotesOfChildComponent
     { id: "date" },
     { id: "subject" },
     { id: "text" },
-    { id: "author" },
+    { id: "authors" },
     { id: "warningLevel" },
   ];
 

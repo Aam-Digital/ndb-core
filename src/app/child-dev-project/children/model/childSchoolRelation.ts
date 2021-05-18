@@ -9,13 +9,13 @@ import moment from "moment";
 @DatabaseEntity("ChildSchoolRelation")
 export class ChildSchoolRelation extends Entity {
   @DatabaseField() childId: string;
-  @DatabaseField() schoolId: string;
-  @DatabaseField() schoolClass: string = "";
-  @DatabaseField({ dataType: "date-only" }) start: Date;
-  @DatabaseField({ dataType: "date-only" }) end: Date;
+  @DatabaseField({ label: "School" }) schoolId: string;
+  @DatabaseField({ label: "Class" }) schoolClass: string = "";
+  @DatabaseField({ dataType: "date-only", label: "From" }) start: Date;
+  @DatabaseField({ dataType: "date-only", label: "To" }) end: Date;
 
   /** percentage achieved in the final school exams of that year */
-  @DatabaseField() result: number;
+  @DatabaseField({ label: "Result" }) result: number;
 
   get isActive(): boolean {
     return (

@@ -64,10 +64,10 @@ export class EntitySubrecordComponent<T extends Entity>
   static paginatorPageSize = new BehaviorSubject(10);
 
   /** data to be displayed */
-  @Input() records: Array<T>;
+  @Input() records: Array<T> = [];
 
   /** configuration what kind of columns to be generated for the table */
-  @Input() columns: FormFieldConfig[];
+  @Input() columns: FormFieldConfig[] = [];
 
   /**
    * factory method to create a new instance of the displayed Entity type
@@ -147,8 +147,10 @@ export class EntitySubrecordComponent<T extends Entity>
       this.columnsToDisplay = this.columns.map((e) => e.id);
       this.columnsToDisplay.push("actions");
       this.setupTable();
+      this.initFormGroups();
+    } else if (changes.hasOwnProperty("records")) {
+      this.initFormGroups();
     }
-    this.initFormGroups();
   }
 
   private initFormGroups() {
@@ -276,7 +278,6 @@ export class EntitySubrecordComponent<T extends Entity>
     };
     this.records.unshift(newRecord);
     this.recordsDataSource.data = [newRow].concat(this.recordsDataSource.data);
-    console.log("called", this.records);
     if (this.detailsComponent === undefined) {
       // edit inline in table
       newRow.formGroup.enable();

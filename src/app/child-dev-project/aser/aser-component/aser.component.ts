@@ -10,13 +10,15 @@ import { FormFieldConfig } from "../../../core/entity-components/entity-details/
 @UntilDestroy()
 @Component({
   selector: "app-aser",
-  template:
-    '<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="generateNewRecordFactory()">' +
-    "</app-entity-subrecord>",
+  template: `<app-entity-subrecord
+    [records]="records"
+    [columns]="columns"
+    [newRecordFactory]="generateNewRecordFactory()"
+  ></app-entity-subrecord>`,
 })
 export class AserComponent implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child;
-  records: Array<Aser>;
+  records: Array<Aser> = [];
 
   columns: FormFieldConfig[] = [
     { id: "date" },

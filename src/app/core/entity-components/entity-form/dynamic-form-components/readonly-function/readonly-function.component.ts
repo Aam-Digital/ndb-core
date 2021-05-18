@@ -10,7 +10,6 @@ export class ReadonlyFunctionComponent extends EditComponent<void> {
   displayFunction: (Entity) => any;
   onInitFromDynamicConfig(config: EditComponentConfig) {
     super.onInitFromDynamicConfig(config);
-    console.log("called", this);
     this.displayFunction = config.formFieldConfig.displayFunction;
   }
 }
