@@ -67,16 +67,19 @@ export const Primary = Template.bind({});
 Primary.args = {
   columns: [
     {
+      component: "EditDate",
       name: "date",
       label: "Date",
       inputType: ColumnDescriptionInputType.DATE,
     },
     {
+      component: "EditText",
       name: "subject",
       label: "Subject",
       inputType: ColumnDescriptionInputType.TEXT,
     },
     {
+      component: "EditConfigurableEnum",
       name: "category",
       label: "Category",
       inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,

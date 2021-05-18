@@ -27,6 +27,12 @@ import { DatePipe } from "@angular/common";
 import { BehaviorSubject } from "rxjs";
 import { ComponentWithConfig } from "../component-with-config";
 import { entityListSortingAccessor } from "../../entity-list/sorting-accessor";
+import { FormBuilder, FormGroup } from "@angular/forms";
+
+interface TableRow<T> {
+  record: T;
+  formGroup: FormGroup;
+}
 
 /**
  * Generically configurable component to display and edit a list of entities in a compact way
@@ -105,7 +111,7 @@ export class EntitySubrecordComponent<T extends Entity>
   @Input() entityId?: string;
 
   /** data displayed in the template's table */
-  recordsDataSource = new MatTableDataSource();
+  recordsDataSource = new MatTableDataSource<TableRow<T>>();
   /** columns displayed in the template's table */
   columnsToDisplay = [];
 
@@ -127,7 +133,8 @@ export class EntitySubrecordComponent<T extends Entity>
     private formDialog: FormDialogService,
     private alertService: AlertService,
     private datePipe: DatePipe,
-    private media: MediaObserver
+    private media: MediaObserver,
+    private fb: FormBuilder
   ) {
     this.media
       .asObservable()
@@ -151,7 +158,7 @@ export class EntitySubrecordComponent<T extends Entity>
    */
   ngOnChanges(changes: SimpleChanges) {
     if (changes["records"] && this.records !== undefined) {
-      this.recordsDataSource.data = this.records;
+      // this.recordsDataSource.data = this.rows;
 
       this.records.forEach((e) =>
         this.originalRecords.push(Object.assign({}, e))
@@ -165,6 +172,26 @@ export class EntitySubrecordComponent<T extends Entity>
       this.columnsToDisplay.push("actions");
       this.setupTable();
     }
+    this.initFormGroups();
+  }
+
+  private initFormGroups() {
+    this.recordsDataSource.data = this.records.map((rec) => {
+      return {
+        record: rec,
+        formGroup: this.buildFormConfig(rec),
+      };
+    });
+  }
+
+  private buildFormConfig(record: T): FormGroup {
+    const formConfig = {};
+    this.columns.forEach((column) => {
+      formConfig[column.name] = [
+        { value: record[column.name], disabled: true },
+      ];
+    });
+    return this.fb.group(formConfig);
   }
 
   ngAfterViewInit() {
@@ -239,62 +266,51 @@ export class EntitySubrecordComponent<T extends Entity>
 
   /**
    * Save an edited record to the database (if validation succeeds).
-   * @param record The entity to be saved.
+   * @param row The entity to be saved.
    */
-  save(record: T) {
+  save(row: T) {
     if (this.formValidation) {
-      const formValidationResult = this.formValidation(record);
+      const formValidationResult = this.formValidation(row);
       if (!formValidationResult.hasPassedValidation) {
         this.alertService.addWarning(formValidationResult.validationMessage);
         return;
       }
     }
 
-    this._entityMapper.save(record).then(() => {
+    this._entityMapper.save(row).then(() => {
       this.changedRecordsInEntitySubrecordEvent.emit();
     });
 
     // updated backup copies used for reset
     const i = this.originalRecords.findIndex(
-      (e) => e.entityId === record.getId()
+      (e) => e.entityId === row.getId()
     );
-    this.originalRecords[i] = Object.assign({}, record);
+    this.originalRecords[i] = Object.assign({}, row);
 
-    this.recordsEditing.set(record.getId(), false);
+    this.recordsEditing.set(row.getId(), false);
   }
 
   /**
    * Discard any changes to the given entity and reset it to the state before the user started editing.
-   * @param record The entity to be reset.
+   * @param row The entity to be reset.
    */
-  resetChanges(record: T) {
-    // reload original record from database
-    const index = this.records.findIndex((a) => a.getId() === record.getId());
-    if (index > -1) {
-      const originalRecord = this.originalRecords.find(
-        (e) => e.entityId === record.getId()
-      );
-      Object.assign(record, originalRecord);
-      this.records[index] = record;
-      this.recordsDataSource.data = this.records;
-    }
-
-    this.recordsEditing.set(record.getId(), false);
+  resetChanges(row: TableRow<T>) {
+    row.formGroup = this.buildFormConfig(row.record);
   }
 
-  private removeFromDataTable(record: T) {
-    const index = this.records.findIndex((a) => a.getId() === record.getId());
+  private removeFromDataTable(row: TableRow<T>) {
+    const index = this.records.findIndex((a) => a.getId() === row.record.getId());
     if (index > -1) {
       this.records.splice(index, 1);
-      this.recordsDataSource.data = this.records;
+      this.initFormGroups();
     }
   }
 
   /**
    * Delete the given entity from the database (after explicit user confirmation).
-   * @param record The entity to be deleted.
+   * @param row The entity to be deleted.
    */
-  delete(record: T) {
+  delete(row: TableRow<T>) {
     const dialogRef = this._confirmationDialog.openDialog(
       "Delete?",
       "Are you sure you want to delete this record?"
@@ -302,18 +318,18 @@ export class EntitySubrecordComponent<T extends Entity>
 
     dialogRef.afterClosed().subscribe((confirmed) => {
       if (confirmed) {
-        this._entityMapper.remove(record).then(() => {
+        this._entityMapper.remove(row.record).then(() => {
           this.changedRecordsInEntitySubrecordEvent.emit();
         });
-        this.removeFromDataTable(record);
+        this.removeFromDataTable(row);
 
         const snackBarRef = this._snackBar.open("Record deleted", "Undo", {
           duration: 8000,
         });
         snackBarRef.onAction().subscribe(() => {
-          this._entityMapper.save(record, true);
-          this.records.unshift(record);
-          this.recordsDataSource.data = this.records;
+          this._entityMapper.save(row.record, true);
+          this.records.unshift(row.record);
+          this.initFormGroups();
         });
       }
     });
@@ -328,7 +344,7 @@ export class EntitySubrecordComponent<T extends Entity>
 
     this.records.unshift(newRecord);
     this.originalRecords.unshift(Object.assign({}, newRecord));
-    this.recordsDataSource.data = this.records;
+    this.initFormGroups();
 
     if (this.detailsComponent === undefined) {
       // edit inline in table

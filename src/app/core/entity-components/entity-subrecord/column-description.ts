@@ -34,6 +34,8 @@ export interface ColumnDescription {
   /** How the value of this column is displayed and what kind of form field is provided to edit it */
   inputType: ColumnDescriptionInputType;
 
+  component?: string;
+
   /** Array of possible values for editing this column; required for inputTypes select and autocomplete */
   selectValues?: Array<{ value: any; label: string }>;
 
