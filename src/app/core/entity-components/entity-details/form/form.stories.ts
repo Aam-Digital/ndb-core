@@ -12,6 +12,7 @@ import { User } from "../../../user/user";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityPermissionsService } from "../../../permissions/entity-permissions.service";
 import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
+import { Router } from "@angular/router";
 
 export default {
   title: "Core/Form",
@@ -26,7 +27,10 @@ export default {
       ],
       providers: [
         { provide: EntityMapperService, useValue: { save: () => null } },
-        { provide: AlertService, useValue: { addDanger: () => null } },
+        {
+          provide: AlertService,
+          useValue: { addDanger: () => null, addInfo: () => null },
+        },
         { provide: ChildPhotoService, useValue: { canSetImage: () => true } },
         {
           provide: SessionService,
@@ -35,6 +39,15 @@ export default {
         {
           provide: EntityPermissionsService,
           useValue: { userIsPermitted: () => true },
+        },
+        {
+          provide: Router,
+          useValue: {
+            navigate: () => null,
+            parseUrl: () => {
+              return {};
+            },
+          },
         },
       ],
     }),
@@ -98,11 +111,9 @@ const Template: Story<FormComponent> = (args: FormComponent) => ({
   props: args,
 });
 
-const child = new Child();
-child.name = "Child Name";
 export const Primary = Template.bind({});
 Primary.args = {
-  entity: child,
+  entity: new Child(),
   config: testConfig,
-  editing: true,
+  creatingNew: true,
 };

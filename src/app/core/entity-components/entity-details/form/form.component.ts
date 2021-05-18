@@ -1,11 +1,10 @@
 import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { FormGroup } from "@angular/forms";
 import { Router } from "@angular/router";
 import { FormConfig, FormFieldConfig } from "./FormConfig";
 import { PanelConfig } from "../EntityDetailsConfig";
 import { Entity } from "../../../entity/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { SessionService } from "../../../session/session-service/session.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
 import { getParentUrl } from "../../../../utils/utils";
@@ -28,13 +27,9 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   operationType = OperationType;
 
   creatingNew = false;
-  isAdminUser: boolean;
-
-  editing: boolean = false;
   config: FormConfig;
 
   columns: FormFieldConfig[][];
-  validateForm: boolean = false;
   form: FormGroup;
 
   constructor(
@@ -42,29 +37,29 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
     private entityMapperService: EntityMapperService,
     private alertService: AlertService,
     private router: Router,
-    private sessionService: SessionService,
     private entitySchemaService: EntitySchemaService
-  ) {
-    this.isAdminUser = this.sessionService.getCurrentUser().admin;
-  }
+  ) {}
 
   ngOnInit() {
     this.initForm();
+    if (this.creatingNew) {
+      this.switchEdit();
+    }
   }
 
   onInitFromDynamicConfig(config: PanelConfig) {
     this.entity = config.entity;
     this.config = config.config;
-    this.initForm();
-    if (config.creatingNew) {
-      this.creatingNew = true;
-      this.switchEdit();
-    }
+    this.creatingNew = config.creatingNew;
+    this.ngOnInit();
   }
 
   switchEdit() {
-    this.editing = !this.editing;
-    this.buildFormConfig();
+    if (this.form.disabled) {
+      this.form.enable();
+    } else {
+      this.form.disable();
+    }
   }
 
   async save(): Promise<void> {
@@ -77,6 +72,10 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
     } catch (err) {
       console.log("error", err);
     }
+  }
+
+  cancel() {
+    this.buildFormConfig();
   }
 
   private initForm(): void {
@@ -102,5 +101,6 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
       flattenedFormFields,
       this.entity
     );
+    this.form.disable();
   }
 }

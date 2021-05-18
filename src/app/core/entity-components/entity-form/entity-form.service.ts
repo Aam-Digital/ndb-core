@@ -15,13 +15,10 @@ export class EntityFormService {
     private alertService: AlertService
   ) {}
 
-  public createFormGroup(
-    formFields: FormFieldConfig[],
-    entity: Entity
-  ): FormGroup {
+  public createFormGroup(formFields: FormFieldConfig[], entity: Entity): any {
     const formConfig = {};
     formFields.forEach((formField) => {
-      formConfig[formField.id] = [{ value: entity[formField.id] }];
+      formConfig[formField.id] = [entity[formField.id]];
       if (formField.required) {
         formConfig[formField.id].push(Validators.required);
       }
@@ -74,10 +71,7 @@ export class EntityFormService {
 
   private assignFormValuesToEntity(form: FormGroup, entity: Entity) {
     Object.keys(form.controls).forEach((key) => {
-      const value = form.get(key).value;
-      if (value !== null) {
-        entity[key] = value;
-      }
+      entity[key] = form.get(key).value;
     });
     console.log("entity", entity);
   }
