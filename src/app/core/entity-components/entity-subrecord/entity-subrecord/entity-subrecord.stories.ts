@@ -87,4 +87,5 @@ Primary.args = {
     },
   ],
   records: data,
+  newRecordFactory: () => new Note(),
 };

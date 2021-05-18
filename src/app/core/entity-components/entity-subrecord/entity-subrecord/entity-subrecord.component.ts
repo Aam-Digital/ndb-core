@@ -15,7 +15,6 @@ import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { ColumnDescription } from "../column-description";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
-import { FormValidationResult } from "../form-validation-result";
 import { ColumnDescriptionInputType } from "../column-description-input-type.enum";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
@@ -99,28 +98,14 @@ export class EntitySubrecordComponent<T extends Entity>
   @Input() showAddButton = true;
 
   /**
-   * Optional function implementing form validation logic that takes an entity instance, checks it and returns
-   * a {@link FormValidationResult} that is then handled by the EntitySubrecordComponent.
-   */
-  @Input() formValidation?: (record: T) => FormValidationResult;
-
-  /**
    * Event whenever an entity in this table is changed.
    */
   @Output() changedRecordsInEntitySubrecordEvent = new EventEmitter<any>();
-
-  /** id of the parent entity of the records being displayed. May be used for custom display logic. */
-  @Input() entityId?: string;
 
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource<TableRow<T>>();
   /** columns displayed in the template's table */
   columnsToDisplay = [];
-
-  /** map of entities' ids and whether this record's table row is currently in edit mode */
-  recordsEditing = new Map<string, boolean>();
-  /** backup copies of the original state of records to allow reset */
-  private originalRecords = [];
 
   private screenWidth = "";
 
@@ -159,13 +144,6 @@ export class EntitySubrecordComponent<T extends Entity>
    * @param changes
    */
   ngOnChanges(changes: SimpleChanges) {
-    if (changes["records"] && this.records !== undefined) {
-      // this.recordsDataSource.data = this.rows;
-
-      this.records.forEach((e) =>
-        this.originalRecords.push(Object.assign({}, e))
-      );
-    }
     if (changes["columns"]) {
       this.columns = this.columns.map((colDef) =>
         this.applyDefaultColumnDefinitions(colDef)
@@ -277,6 +255,7 @@ export class EntitySubrecordComponent<T extends Entity>
   async save(row: TableRow<T>) {
     await this.entityFormService.saveChanges(row.formGroup, row.record);
     row.formGroup.disable();
+    this.changedRecordsInEntitySubrecordEvent.emit();
   }
 
   /**
@@ -332,34 +311,33 @@ export class EntitySubrecordComponent<T extends Entity>
    */
   create() {
     const newRecord = this.newRecordFactory();
-
+    const newRow = {
+      record: newRecord,
+      formGroup: this.buildFormConfig(newRecord),
+    };
     this.records.unshift(newRecord);
-    this.originalRecords.unshift(Object.assign({}, newRecord));
-    this.initFormGroups();
-
+    this.recordsDataSource.data = [newRow].concat(this.recordsDataSource.data);
+    console.log("called", this.records);
     if (this.detailsComponent === undefined) {
       // edit inline in table
-      this.recordsEditing.set(newRecord.getId(), true);
+      newRow.formGroup.enable();
     } else {
       // open in modal for comfortable editing
-      this.showRecord(newRecord);
+      this.showRecord(newRow);
     }
   }
 
   /**
    * Show one record's details in a modal dialog (if configured).
-   * @param record The entity whose details should be displayed.
+   * @param row The entity whose details should be displayed.
    */
-  showRecord(record: T) {
-    if (
-      this.detailsComponent === undefined ||
-      this.recordsEditing.get(record.getId())
-    ) {
+  showRecord(row: TableRow<T>) {
+    if (this.detailsComponent === undefined || row.formGroup.disabled) {
       return;
     }
     this.formDialog.openDialog(
       this.detailsComponent.component,
-      record,
+      row.record,
       this.detailsComponent.componentConfig
     );
   }
