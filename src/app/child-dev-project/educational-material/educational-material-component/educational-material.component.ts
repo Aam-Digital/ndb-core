@@ -4,9 +4,8 @@ import { ChildrenService } from "../../children/children.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
-import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
+import { FormFieldConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
 
 @UntilDestroy()
 @Component({
@@ -20,34 +19,11 @@ export class EducationalMaterialComponent
 
   materialTypes = EducationalMaterial.MATERIAL_ALL;
 
-  columns: Array<ColumnDescription> = [
-    {
-      name: "date",
-      label: "Date",
-      inputType: ColumnDescriptionInputType.DATE,
-      visibleFrom: "xs",
-    },
-    {
-      name: "materialType",
-      label: "Material",
-      inputType: ColumnDescriptionInputType.AUTOCOMPLETE,
-      selectValues: this.materialTypes.map((t) => {
-        return { value: t, label: t };
-      }),
-      visibleFrom: "xs",
-    },
-    {
-      name: "materialAmount",
-      label: "Amount",
-      inputType: ColumnDescriptionInputType.NUMBER,
-      visibleFrom: "md",
-    },
-    {
-      name: "description",
-      label: "Description/Remarks",
-      inputType: ColumnDescriptionInputType.TEXT,
-      visibleFrom: "md",
-    },
+  columns: FormFieldConfig[] = [
+    { id: "date"  },
+    { id: "materialType" },
+    { id: "materialAmount" },
+    { id: "description" },
   ];
 
   constructor(private childrenService: ChildrenService) {}
@@ -61,7 +37,7 @@ export class EducationalMaterialComponent
   onInitFromDynamicConfig(config: PanelConfig) {
     if (config?.config?.displayedColumns) {
       this.columns = this.columns.filter((c) =>
-        config.config.displayedColumns.includes(c.name)
+        config.config.displayedColumns.includes(c.id)
       );
     }
 

@@ -60,10 +60,10 @@ export class EducationalMaterial extends Entity {
   );
 
   @DatabaseField() child: string; // id of Child entity
-  @DatabaseField() date: Date;
-  @DatabaseField() materialType = "";
-  @DatabaseField() materialAmount: number;
-  @DatabaseField() description = "";
+  @DatabaseField({ label: "Date"}) date: Date;
+  @DatabaseField({ label: "Material", editComponent: "EditSelectable", ext: EducationalMaterial.MATERIAL_ALL}) materialType = "";
+  @DatabaseField({ label: "Amount"}) materialAmount: number;
+  @DatabaseField({ label: "Description"}) description = "";
 
   public getColor() {
     if (EducationalMaterial.MATERIAL_STATIONARIES.includes(this.materialType)) {
