@@ -56,11 +56,11 @@ export class Note extends Entity {
   @DatabaseField({ innerDataType: "schema-embed", ext: EventAttendance })
   private childrenAttendance: Map<string, EventAttendance> = new Map();
 
-  @DatabaseField() date: Date;
-  @DatabaseField() subject: string = "";
-  @DatabaseField() text: string = "";
+  @DatabaseField({ label: "Date" }) date: Date;
+  @DatabaseField({ label: "Topic" }) subject: string = "";
+  @DatabaseField({ label: "Notes", editComponent: "EditLongText"}) text: string = "";
   /** IDs of users that authored this note */
-  @DatabaseField() authors: string[] = [];
+  @DatabaseField({ label: "SW", editComponent: "EditText" }) authors: string[] = [];
 
   @DatabaseField({
     dataType: "configurable-enum",
@@ -78,7 +78,7 @@ export class Note extends Entity {
    */
   @DatabaseField() schools: string[] = [];
 
-  @DatabaseField({ dataType: "string" }) warningLevel: WarningLevel =
+  @DatabaseField({ dataType: "string", label: "", editComponent: "EditSelectable", ext: ["OK", "WARNING", "URGENT"] }) warningLevel: WarningLevel =
     WarningLevel.OK;
 
   getWarningLevel(): WarningLevel {
