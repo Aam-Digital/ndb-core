@@ -20,6 +20,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { ViewModule } from "../../view/view.module";
 import { ReactiveFormsModule } from "@angular/forms";
 import { EntityFormModule } from "../entity-form/entity-form.module";
+import { EntityListModule } from "../entity-list/entity-list.module";
 
 @NgModule({
   declarations: [EntitySubrecordComponent, KeysPipe],
@@ -43,6 +44,7 @@ import { EntityFormModule } from "../entity-form/entity-form.module";
     ViewModule,
     ReactiveFormsModule,
     EntityFormModule,
+    EntityListModule,
   ],
   exports: [EntitySubrecordComponent, KeysPipe],
 })

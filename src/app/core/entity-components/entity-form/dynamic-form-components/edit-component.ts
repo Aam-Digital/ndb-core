@@ -32,12 +32,9 @@ export abstract class EditComponent<T> implements OnInitDynamicComponent {
   placeholder: string;
   formControl: TypedFormControl<T>;
   entity: Entity;
-  forTable = false;
 
   onInitFromDynamicConfig(config: EditComponentConfig) {
-    if (config.formFieldConfig.forTable) {
-      this.forTable = true;
-    } else {
+    if (!config.formFieldConfig.forTable) {
       this.placeholder =
         config.formFieldConfig.placeholder || config.propertySchema?.label;
       this.tooltip = config.formFieldConfig.tooltip;

@@ -1,10 +1,4 @@
-<ng-container *ngIf="forTable && formControl.disabled">
-  {{ formControl.value ? "✓" : "" }}
-</ng-container>
-
-<div
-  *ngIf="!forTable || formControl.enabled"
-  [formGroup]="formControl.parent">
+<div [formGroup]="formControl.parent">
   <mat-checkbox
     [formControlName]="formControlName"
   >{{ placeholder }}

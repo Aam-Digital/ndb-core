@@ -104,14 +104,17 @@ Primary.args = {
       placeholder: "Date",
       id: "date",
       input: "EditDate",
+      view: "DisplayDate",
     },
     {
       placeholder: "Name of Observer",
       input: "EditText",
+      view: "DisplayText",
       id: "nameOfObserver",
     },
     {
       input: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
       id: "firstQuestion",
       placeholder: "1. Question",
       additional: "rating-answer",
@@ -119,6 +122,7 @@ Primary.args = {
     },
     {
       input: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
       id: "secondQuestion",
       placeholder: "2. Question",
       additional: "rating-answer",
@@ -126,6 +130,7 @@ Primary.args = {
     },
     {
       input: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
       id: "thirdQuestion",
       placeholder: "3. Question",
       additional: "rating-answer",
@@ -133,6 +138,7 @@ Primary.args = {
     },
     {
       input: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
       id: "fourthQuestion",
       placeholder: "4. Question",
       additional: "rating-answer",
@@ -140,6 +146,7 @@ Primary.args = {
     },
     {
       input: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
       id: "fifthQuestion",
       placeholder: "5. Question",
       additional: "rating-answer",
@@ -147,6 +154,7 @@ Primary.args = {
     },
     {
       input: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
       id: "sixthQuestion",
       placeholder: "6. Question",
       additional: "rating-answer",
@@ -154,6 +162,7 @@ Primary.args = {
     },
     {
       input: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
       id: "seventhQuestion",
       placeholder: "7. Question",
       additional: "rating-answer",
@@ -161,6 +170,7 @@ Primary.args = {
     },
     {
       input: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
       id: "eightQuestion",
       placeholder: "8. Question",
       additional: "rating-answer",
@@ -168,6 +178,7 @@ Primary.args = {
     },
     {
       input: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
       id: "ninthQuestion",
       placeholder: "9. Question",
       additional: "rating-answer",
@@ -175,6 +186,7 @@ Primary.args = {
     },
     {
       input: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
       id: "tenthQuestion",
       placeholder: "10. Question",
       additional: "rating-answer",

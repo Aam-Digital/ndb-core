@@ -1,11 +1,4 @@
-<ng-container *ngIf="forTable && formControl.disabled">
-  {{ getAge(formControl.value.toString()) }}
-</ng-container>
-
-<div
-  *ngIf="!forTable || formControl.enabled"
-  [formGroup]="formControl.parent"
->
+<div [formGroup]="formControl.parent">
   <mat-form-field style="width: 120px">
     <input
       matInput

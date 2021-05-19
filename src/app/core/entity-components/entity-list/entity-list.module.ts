@@ -53,5 +53,11 @@ import { PermissionsModule } from "../../permissions/permissions.module";
     PermissionsModule,
   ],
   exports: [EntityListComponent],
+  entryComponents: [
+    DisplayTextComponent,
+    DisplayDateComponent,
+    DisplayConfigurableEnumComponent,
+    DisplayCheckmarkComponent,
+  ],
 })
 export class EntityListModule {}

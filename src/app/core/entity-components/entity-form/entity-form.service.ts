@@ -31,6 +31,12 @@ export class EntityFormService {
           "edit"
         );
       }
+      if (!formField.view) {
+        formField.view = this.entitySchemaService.getComponent(
+          propertySchema,
+          "view"
+        );
+      }
       if (!formField.placeholder) {
         formField.placeholder = propertySchema?.label;
       }

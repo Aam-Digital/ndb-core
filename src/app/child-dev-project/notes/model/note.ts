@@ -58,11 +58,14 @@ export class Note extends Entity {
 
   @DatabaseField({ label: "Date" }) date: Date;
   @DatabaseField({ label: "Topic" }) subject: string = "";
-  @DatabaseField({ label: "Notes", editComponent: "EditLongText"}) text: string = "";
+  @DatabaseField({ label: "Notes", editComponent: "EditLongText" })
+  text: string = "";
   /** IDs of users that authored this note */
-  @DatabaseField({ label: "SW", editComponent: "EditText" }) authors: string[] = [];
+  @DatabaseField({ label: "SW", editComponent: "EditText" })
+  authors: string[] = [];
 
   @DatabaseField({
+    label: "Category",
     dataType: "configurable-enum",
     innerDataType: INTERACTION_TYPE_CONFIG_ID,
   })
@@ -78,8 +81,13 @@ export class Note extends Entity {
    */
   @DatabaseField() schools: string[] = [];
 
-  @DatabaseField({ dataType: "string", label: "", editComponent: "EditSelectable", ext: ["OK", "WARNING", "URGENT"] }) warningLevel: WarningLevel =
-    WarningLevel.OK;
+  @DatabaseField({
+    dataType: "string",
+    label: "",
+    editComponent: "EditSelectable",
+    ext: ["OK", "WARNING", "URGENT"],
+  })
+  warningLevel: WarningLevel = WarningLevel.OK;
 
   getWarningLevel(): WarningLevel {
     return this.warningLevel;

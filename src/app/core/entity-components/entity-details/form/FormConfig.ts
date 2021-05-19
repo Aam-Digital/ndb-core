@@ -9,6 +9,8 @@ export interface FormFieldConfig {
    */
   input?: string;
 
+  view?: string;
+
   /**
    * The id of the entity which should be accessed
    */

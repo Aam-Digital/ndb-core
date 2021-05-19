@@ -21,6 +21,18 @@
         (click)="showRecord(row)"
       >
         <ng-template
+          *ngIf="row.formGroup.disabled"
+          [appDynamicComponent]="{
+            component: col.view,
+            config: {
+              id: col.id,
+              entity: row.record,
+              config: col.additional
+            }
+          }"
+        ></ng-template>
+        <ng-template
+          *ngIf="row.formGroup.enabled"
           [appDynamicComponent]="{
             component: col.input,
             config: {

@@ -1,12 +1,4 @@
-<ng-container *ngIf="forTable && formControl.disabled">
-  {{ formControl.value | date: "shortDate" }}
-</ng-container>
-
-<mat-form-field
-  *ngIf="!forTable || formControl.enabled"
-  style="width: 180px"
-  [formGroup]="formControl.parent"
->
+<mat-form-field style="width: 180px" [formGroup]="formControl.parent">
   <input
     matInput
     [formControlName]="formControlName"

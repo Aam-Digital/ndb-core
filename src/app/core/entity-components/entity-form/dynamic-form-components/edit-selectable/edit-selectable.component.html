@@ -1,11 +1,4 @@
-<ng-container *ngIf="forTable && formControl.disabled">
-  {{ formControl.value.label ? formControl.value.label : formControl.value }}
-</ng-container>
-
-<mat-form-field
-  *ngIf="!forTable || formControl.enabled"
-  [formGroup]="formControl.parent"
->
+<mat-form-field [formGroup]="formControl.parent">
   <mat-label>
     {{ placeholder }}
   </mat-label>
