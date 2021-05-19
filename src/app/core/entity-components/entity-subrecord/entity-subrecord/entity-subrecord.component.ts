@@ -157,6 +157,7 @@ export class EntitySubrecordComponent<T extends Entity>
         formGroup: this.buildFormConfig(rec),
       };
     });
+    console.log("data", this.recordsDataSource.data);
   }
 
   private buildFormConfig(record: T): FormGroup {
