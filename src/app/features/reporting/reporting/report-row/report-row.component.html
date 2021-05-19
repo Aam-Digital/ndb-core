@@ -1,4 +1,4 @@
-<mat-accordion>
+<mat-accordion [multi]="true">
     <mat-expansion-panel *ngFor="let row of rows" [hideToggle]="row.subRows.length === 0">
         <mat-expansion-panel-header [ngClass]="row.subRows.length === 0 ? 'disabled-header' : '' ">
             <mat-panel-title>
