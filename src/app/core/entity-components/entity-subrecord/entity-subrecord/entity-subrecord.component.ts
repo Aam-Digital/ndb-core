@@ -4,7 +4,6 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnInit,
   Output,
   SimpleChanges,
   ViewChild,
@@ -54,7 +53,7 @@ interface TableRow<T> {
   styleUrls: ["./entity-subrecord.component.scss"],
 })
 export class EntitySubrecordComponent<T extends Entity>
-  implements OnInit, OnChanges, AfterViewInit {
+  implements OnChanges, AfterViewInit {
   /**
    * Global state of pagination size for all entity subrecord components.
    *
@@ -135,8 +134,6 @@ export class EntitySubrecordComponent<T extends Entity>
 
   /** function returns the background color for each entry*/
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
-
-  ngOnInit() {}
 
   /**
    * Update the component if any of the @Input properties were changed from outside.

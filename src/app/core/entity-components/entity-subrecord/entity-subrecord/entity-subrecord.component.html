@@ -20,7 +20,6 @@
         *matCellDef="let row"
         (click)="showRecord(row)"
       >
-<!--        {{ col.name }} {{ row.record }}-->
         <ng-template
           [appDynamicComponent]="{
             component: col.input,
@@ -102,7 +101,10 @@
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
     <tr
       mat-row
-      *matRowDef="let rec; columns: columnsToDisplay"
+      *matRowDef="let row; columns: columnsToDisplay"
+      [ngStyle]="
+        getBackgroundColor && { 'background-color': getBackgroundColor(row.record) }
+      "
     ></tr>
   </table>
   <mat-paginator
