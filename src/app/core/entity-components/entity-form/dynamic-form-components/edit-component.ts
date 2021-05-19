@@ -33,13 +33,18 @@ export abstract class EditComponent<T> implements OnInitDynamicComponent {
   formControl: TypedFormControl<T>;
   enumId: string;
   entity: Entity;
+  forTable = false;
 
   onInitFromDynamicConfig(config: EditComponentConfig) {
+    if (config.formFieldConfig.forTable) {
+      this.forTable = true;
+    } else {
+      this.placeholder =
+        config.formFieldConfig.placeholder || config.propertySchema?.label;
+      this.tooltip = config.formFieldConfig.tooltip;
+    }
     this.formControlName = config.formFieldConfig.id;
     this.formControl = config.formControl as TypedFormControl<T>;
-    this.tooltip = config.formFieldConfig.tooltip;
-    this.placeholder =
-      config.formFieldConfig.placeholder || config.propertySchema?.label;
     this.enumId =
       config.formFieldConfig.enumId || config.propertySchema?.innerDataType;
     this.entity = config.entity;

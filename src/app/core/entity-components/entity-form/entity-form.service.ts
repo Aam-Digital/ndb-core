@@ -19,7 +19,8 @@ export class EntityFormService {
 
   public createFormGroup(
     formFields: FormFieldConfig[],
-    entity: Entity
+    entity: Entity,
+    forTable = false
   ): FormGroup {
     const formConfig = {};
     formFields.forEach((formField) => {
@@ -36,6 +37,9 @@ export class EntityFormService {
       formConfig[formField.id] = [entity[formField.id]];
       if (formField.required) {
         formConfig[formField.id].push(Validators.required);
+      }
+      if (forTable) {
+        formField.forTable = true;
       }
     });
     return this.fb.group(formConfig);

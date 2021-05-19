@@ -163,7 +163,11 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   private buildFormConfig(record: T): FormGroup {
-    const form = this.entityFormService.createFormGroup(this.columns, record);
+    const form = this.entityFormService.createFormGroup(
+      this.columns,
+      record,
+      true
+    );
     form.disable();
     return form;
   }

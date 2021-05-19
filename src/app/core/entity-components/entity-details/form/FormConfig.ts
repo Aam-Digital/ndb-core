@@ -38,4 +38,6 @@ export interface FormFieldConfig {
   tooltip?: string;
 
   displayFunction?: (Entity) => any;
+
+  forTable?: boolean;
 }

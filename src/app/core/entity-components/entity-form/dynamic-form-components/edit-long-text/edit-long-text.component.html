@@ -1,4 +1,11 @@
-<mat-form-field [formGroup]="formControl.parent">
+<ng-container *ngIf="forTable && formControl.disabled">
+  {{ formControl.value }}
+</ng-container>
+
+<mat-form-field
+  *ngIf="!forTable || formControl.enabled"
+  [formGroup]="formControl.parent"
+>
   <mat-icon *ngIf="formControl.disabled && tooltip" matSuffix
     fontIcon="fa-question-circle-o"
     [matTooltip]="tooltip"
