@@ -49,7 +49,7 @@ export class ReportingComponent implements OnInit {
       this.selectedReport.aggregationDefinitions
     );
 
-    //Add one day because to date is exclusive
+    // Add one day because to date is exclusive
     const dayAfterToDate = moment(this.toDate).add(1, "day").toDate();
 
     this.results = await this.reportingService.calculateReport(
