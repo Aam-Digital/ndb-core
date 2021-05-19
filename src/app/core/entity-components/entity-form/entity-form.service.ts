@@ -23,11 +23,15 @@ export class EntityFormService {
   ): FormGroup {
     const formConfig = {};
     formFields.forEach((formField) => {
+      const propertySchema = entity.getSchema().get(formField.id);
       if (!formField.input) {
         formField.input = this.entitySchemaService.getComponent(
-          entity.getSchema().get(formField.id),
+          propertySchema,
           "edit"
         );
+      }
+      if (!formField.placeholder) {
+        formField.placeholder = propertySchema?.label;
       }
       formConfig[formField.id] = [entity[formField.id]];
       if (formField.required) {

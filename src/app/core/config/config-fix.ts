@@ -662,92 +662,58 @@ export const defaultJsonConfig = {
             }
           ]
         },
-        // {
-        //   title: "Observations",
-        //   components: [
-        //     {
-        //       title: "",
-        //       component: "HistoricalDataComponent",
-        //       config: [
-        //         {
-        //           name: "date",
-        //           label: "Date",
-        //           inputType: ColumnDescriptionInputType.DATE
-        //         },
-        //         {
-        //           name: "isMotivatedDuringClass",
-        //           label: "Motivated",
-        //           inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-        //           enumId: "rating-answer",
-        //           tooltip: "The child is motivated during the class."
-        //         },
-        //         {
-        //           name: "isParticipatingInClass",
-        //           label: "Participates",
-        //           inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-        //           enumId: "rating-answer",
-        //           tooltip: "The child is actively participating in the class."
-        //         },
-        //         {
-        //           name: "isInteractingWithOthers",
-        //           label: "Interacts",
-        //           inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-        //           enumId: "rating-answer",
-        //           tooltip: "The child interacts with other students during the class."
-        //         },
-        //         {
-        //           name: "doesHomework",
-        //           label: "Homework",
-        //           inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-        //           enumId: "rating-answer",
-        //           tooltip: "The child does its homework."
-        //         },
-        //         {
-        //           name: "isOnTime",
-        //           label: "On time",
-        //           inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-        //           enumId: "rating-answer",
-        //           tooltip: "The child is always on time for the class."
-        //         },
-        //         {
-        //           name: "asksQuestions",
-        //           label: "Asks",
-        //           inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-        //           enumId: "rating-answer",
-        //           tooltip: "The child is asking questions during the class."
-        //         },
-        //         {
-        //           name: "listens",
-        //           label: "Listens",
-        //           inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-        //           enumId: "rating-answer",
-        //           tooltip: "The child is listening during the class."
-        //         },
-        //         {
-        //           name: "canWorkOnBoard",
-        //           label: "Solves on board",
-        //           inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-        //           enumId: "rating-answer",
-        //           tooltip: "The child can solve exercises on the board."
-        //         },
-        //         {
-        //           name: "isConcentrated",
-        //           label: "Concentrated",
-        //           inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-        //           enumId: "rating-answer",
-        //           tooltip: "The child is concentrated during the class."
-        //         },
-        //         {
-        //           name: "doesNotDisturb",
-        //           label: "Not Disturbing",
-        //           inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-        //           enumId: "rating-answer",
-        //           tooltip: "The child does not disturb the class."
-        //         },
-        //       ]
-        //     }
-        //   ]
-        // },
+        {
+          title: "Observations",
+          components: [
+            {
+              title: "",
+              component: "HistoricalDataComponent",
+              config: [
+                { id: "date" },
+                {
+                  id: "isMotivatedDuringClass" ,
+                  tooltip: "The child is motivated during the class."
+                },
+                {
+                  id: "isParticipatingInClass",
+                  tooltip: "The child is actively participating in the class."
+                },
+                {
+                  id: "isInteractingWithOthers",
+                  tooltip: "The child interacts with other students during the class."
+                },
+                {
+                  id: "doesHomework",
+                  tooltip: "The child does its homework."
+                },
+                {
+                  id: "isOnTime",
+                  tooltip: "The child is always on time for the class."
+                },
+                {
+                  id: "asksQuestions",
+                  tooltip: "The child is asking questions during the class."
+                },
+                {
+                  id: "listens",
+                  tooltip: "The child is listening during the class."
+                },
+                {
+                  id: "canWorkOnBoard",
+                  tooltip: "The child can solve exercises on the board."
+                },
+                {
+                  id: "isConcentrated",
+                  tooltip: "The child is concentrated during the class."
+                },
+                {
+                  id: "doesNotDisturb",
+                  tooltip: "The child does not disturb the class."
+                },
+              ]
+            }
+          ]
+        },
         {
           "title": "Dropout",
           "components": [
@@ -914,23 +880,74 @@ export const defaultJsonConfig = {
     "permissions": {
     },
     "attributes": [
-      {"name": "address", "schema": { "dataType": "string", label: "Address" } },
-      {"name": "phone", "schema": { "dataType": "string", label: "Phone No." } },
-      {"name": "guardianName", "schema": { "dataType": "string", label: "Guardians" } },
-      {"name": "preferredTimeForGuardianMeeting", "schema": { "dataType": "string", label: "Preferred time for guardians meeting" } },
-      {"name": "has_aadhar", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Aadhar" } },
-      {"name": "has_bankAccount", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Bank Account" } },
-      {"name": "has_kanyashree", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Kanyashree" } },
-      {"name": "has_rationCard", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Ration Card" } },
-      {"name": "has_BplCard", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "BPL Card" } },
-      {"name": "health_vaccinationStatus", "schema": { "dataType": "string", label: "Vaccination Status", ext: ["", "Good", "Vaccination Due", "Needs Checking", "No Card/Information"] } },
-      {"name": "health_bloodGroup", "schema": { "dataType": "string", label: "Blood Group" } },
-      {"name": "health_lastDentalCheckup", "schema": { "dataType": "Date", label: "Last Dental Check-Up" } },
-      {"name": "health_lastEyeCheckup", "schema": { "dataType": "Date", label: "Last Eye Check-Up", ext: ["", "Good", "Has Glasses", "Needs Glasses", "Needs Checkup"] } },
-      {"name": "health_lastENTCheckup", "schema": { "dataType": "Date", label: "Last ENT Check-Up" } },
-      {"name": "health_eyeHealthStatus", "schema": { "dataType": "string", label: "Eye Status" } },
-      {"name": "health_lastVitaminD", "schema": { "dataType": "Date", label: "Last Vitamin D" } },
-      {"name": "health_lastDeworming", "schema": { "dataType": "Date", label: "Last De-Worming" } }
+      {
+        "name": "address",
+        "schema": { "dataType": "string", label: "Address" }
+      },
+      {
+        "name": "phone",
+        "schema": { "dataType": "string", label: "Phone No." }
+      },
+      {
+        "name": "guardianName",
+        "schema": { "dataType": "string", label: "Guardians" }
+      },
+      {
+        "name": "preferredTimeForGuardianMeeting",
+        "schema": { "dataType": "string", label: "Preferred time for guardians meeting" }
+      },
+      {
+        "name": "has_aadhar",
+        "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Aadhar" }
+      },
+      {
+        "name": "has_bankAccount",
+        "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Bank Account" }
+      },
+      {
+        "name": "has_kanyashree",
+        "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Kanyashree" }
+      },
+      {
+        "name": "has_rationCard",
+        "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Ration Card" }
+      },
+      {
+        "name": "has_BplCard",
+        "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "BPL Card" }
+      },
+      {
+        "name": "health_vaccinationStatus",
+        "schema": { "dataType": "string", label: "Vaccination Status", ext: ["", "Good", "Vaccination Due", "Needs Checking", "No Card/Information"] }
+      },
+      {
+        "name": "health_bloodGroup",
+        "schema": { "dataType": "string", label: "Blood Group" }
+      },
+      {
+        "name": "health_lastDentalCheckup",
+        "schema": { "dataType": "Date", label: "Last Dental Check-Up" }
+      },
+      {
+        "name": "health_lastEyeCheckup",
+        "schema": { "dataType": "Date", label: "Last Eye Check-Up", ext: ["", "Good", "Has Glasses", "Needs Glasses", "Needs Checkup"] }
+      },
+      {
+        "name": "health_lastENTCheckup",
+        "schema": { "dataType": "Date", label: "Last ENT Check-Up" }
+      },
+      {
+        "name": "health_eyeHealthStatus",
+        "schema": { "dataType": "string", label: "Eye Status" }
+      },
+      {
+        "name": "health_lastVitaminD",
+        "schema": { "dataType": "Date", label: "Last Vitamin D" }
+      },
+      {
+        "name": "health_lastDeworming",
+        "schema": { "dataType": "Date", label: "Last De-Worming" }
+      }
     ]
   },
   "entity:School": {
@@ -939,16 +956,46 @@ export const defaultJsonConfig = {
   },
   "entity:HistoricalEntityData": {
     "attributes": [
-      {"name": "isMotivatedDuringClass", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
-      {"name": "isParticipatingInClass", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
-      {"name": "isInteractingWithOthers", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
-      {"name": "doesHomework", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
-      {"name": "isOnTime", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
-      {"name": "asksQuestions", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
-      {"name": "listens", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
-      {"name": "canWorkOnBoard", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
-      {"name": "isConcentrated", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
-      {"name": "doesNotDisturb", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {
+        "name": "isMotivatedDuringClass",
+        "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer", label: "Motivated"}
+      },
+      {
+        "name": "isParticipatingInClass",
+        "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer", label: "Participates"}
+      },
+      {
+        "name": "isInteractingWithOthers",
+        "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer", label: "Interacts"}
+      },
+      {
+        "name": "doesHomework",
+        "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer", label: "Homework"}
+      },
+      {
+        "name": "isOnTime",
+        "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer", label: "On time"}
+      },
+      {
+        "name": "asksQuestions",
+        "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer", label: "Asks"}
+      },
+      {
+        "name": "listens",
+        "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer", label: "Listens"}
+      },
+      {
+        "name": "canWorkOnBoard",
+        "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer", label: "Solves on board"}
+      },
+      {
+        "name": "isConcentrated",
+        "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer", label: "Concentrated"}
+      },
+      {
+        "name": "doesNotDisturb",
+        "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer", label: "Not disturbing"}
+      },
     ]
   }
 }
