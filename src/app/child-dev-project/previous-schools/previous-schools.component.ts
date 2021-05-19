@@ -14,6 +14,9 @@ import { PanelConfig } from "../../core/entity-components/entity-details/EntityD
 import { School } from "../schools/model/school";
 import { FormFieldConfig } from "../../core/entity-components/entity-details/form/FormConfig";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import moment from "moment";
+import { ColumnDescription } from "../../core/entity-components/entity-subrecord/column-description";
+import { ColumnDescriptionInputType } from "../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 
 @Component({
   selector: "app-previous-schools",
@@ -89,6 +92,43 @@ export class PreviousSchoolsComponent
     this.current = this.records.find((record) => record.isActive);
   }
 
+  private createColumn(
+    id: string,
+    label: string,
+    type: string
+  ): ColumnDescription {
+    const column: ColumnDescription = {
+      name: id,
+      label: label,
+      inputType: ColumnDescriptionInputType.TEXT,
+    };
+    switch (type) {
+      case "date":
+        column.inputType = ColumnDescriptionInputType.DATE;
+        break;
+      case "school":
+        this.schoolNaming = label;
+        column.inputType = ColumnDescriptionInputType.SELECT;
+        column.selectValues = new Array(...this.schoolMap.values())
+          .sort((s1, s2) => s1.name.localeCompare(s2.name))
+          .map((t) => {
+            return { value: t.getId(), label: t.name };
+          });
+        column.valueFunction = (entity: ChildSchoolRelation) =>
+          this.schoolMap.get(entity["schoolId"]).name;
+        break;
+      case "percentageResult":
+        column.inputType = ColumnDescriptionInputType.NUMBER;
+        column.valueFunction = (entity: ChildSchoolRelation) =>
+          entity.result >= 0 && !Number.isNaN(entity.result)
+            ? entity.result + "%"
+            : "N/A";
+        column.styleBuilder = this.resultColorStyleBuilder;
+        break;
+    }
+    return column;
+  }
+
   generateNewRecordFactory() {
     const childId = this.child.getId();
     return () => {
@@ -104,6 +144,38 @@ export class PreviousSchoolsComponent
       ); // one day after last to-date
       newPreviousSchool.result = Number.NaN; // NaN represents no data available
       return newPreviousSchool;
+    };
+  }
+
+  formValidation = (record) => {
+    const validationResult = {
+      hasPassedValidation: false,
+      validationMessage: "",
+    };
+    if (!record.schoolId) {
+      validationResult.validationMessage =
+        "Please select a " + this.schoolNaming;
+    } else if (moment(record.start).isAfter(record.end, "days")) {
+      validationResult.validationMessage =
+        '"To"-date lies before "From"-date. Please enter correct dates.';
+    } else if (
+      this.columns.some((col) => col.input === "percentageResult") &&
+      (record.result > 100 || record.result < 0)
+    ) {
+      validationResult.validationMessage =
+        "Result cannot be smaller than 0 or greater than 100 (percent)";
+    } else {
+      validationResult.hasPassedValidation = true;
+    }
+    return validationResult;
+  };
+
+  resultColorStyleBuilder(value: number) {
+    return {
+      "background-color": PreviousSchoolsComponent.fromPercent(value),
+      "border-radius": "5%",
+      padding: "5px",
+      width: "min-content",
     };
   }
 }

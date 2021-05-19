@@ -7,9 +7,10 @@ import { EditComponent, EditComponentConfig } from "../edit-component";
   styleUrls: ["./edit-selectable.component.scss"],
 })
 export class EditSelectableComponent extends EditComponent<any> {
-  options: string[];
+  options: (string | { label: string; value: string })[];
   onInitFromDynamicConfig(config: EditComponentConfig) {
     super.onInitFromDynamicConfig(config);
-    this.options = config.formFieldConfig.additional || config.propertySchema.ext;
+    this.options =
+      config.formFieldConfig.additional || config.propertySchema.ext;
   }
 }
