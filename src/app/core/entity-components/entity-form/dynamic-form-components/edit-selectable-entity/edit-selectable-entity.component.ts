@@ -13,6 +13,6 @@ export class EditSelectableEntityComponent extends EditComponent<
   entityName: string;
   onInitFromDynamicConfig(config: EditComponentConfig) {
     super.onInitFromDynamicConfig(config);
-    this.entityName = config.propertySchema.ext;
+    this.entityName = config.formFieldConfig.additional || config.propertySchema.ext;
   }
 }

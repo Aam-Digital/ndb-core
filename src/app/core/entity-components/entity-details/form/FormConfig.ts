@@ -25,19 +25,9 @@ export interface FormFieldConfig {
    */
   required?: boolean;
 
-  /**
-   * The options in case `input="select"` is used.
-   */
-  options?: string[];
-
-  /**
-   * The id of the enum in case `input="configurable-enum-select" is used.
-   */
-  enumId?: string;
-
   tooltip?: string;
 
-  displayFunction?: (Entity) => any;
-
   forTable?: boolean;
+
+  additional?: any;
 }

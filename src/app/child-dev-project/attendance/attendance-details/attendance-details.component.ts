@@ -27,7 +27,7 @@ export class AttendanceDetailsComponent
       id: "getAttendance",
       placeholder: "Attended",
       input: "ReadonlyFunction",
-      displayFunction: (note: Note) => {
+      additional: (note: Note) => {
         if (this.focusedChild) {
           return note.getAttendance(this.focusedChild).status.label;
         } else {

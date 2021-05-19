@@ -183,7 +183,7 @@ export const testConfig = {
         input: "select",
         id: "health_vaccinationStatus",
         placeholder: "Peter Status",
-        options: [
+        additional: [
           "Good",
           "Vaccination Due",
           "Needs Checking",
@@ -196,7 +196,7 @@ export const testConfig = {
         input: "select",
         id: "health_eyeHealthStatus",
         placeholder: "Eye Status",
-        options: ["Good", "Has Glasses", "Needs Glasses", "Needs Checkup"],
+        additional: ["Good", "Has Glasses", "Needs Glasses", "Needs Checkup"],
       },
     ],
     [

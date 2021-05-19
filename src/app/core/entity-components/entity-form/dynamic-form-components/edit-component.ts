@@ -31,7 +31,6 @@ export abstract class EditComponent<T> implements OnInitDynamicComponent {
   formControlName: string;
   placeholder: string;
   formControl: TypedFormControl<T>;
-  enumId: string;
   entity: Entity;
   forTable = false;
 
@@ -45,8 +44,6 @@ export abstract class EditComponent<T> implements OnInitDynamicComponent {
     }
     this.formControlName = config.formFieldConfig.id;
     this.formControl = config.formControl as TypedFormControl<T>;
-    this.enumId =
-      config.formFieldConfig.enumId || config.propertySchema?.innerDataType;
     this.entity = config.entity;
   }
 }

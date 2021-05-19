@@ -81,7 +81,7 @@ const testConfig = {
         input: "EditSelectable",
         id: "health_vaccinationStatus",
         placeholder: "Vaccination Status",
-        options: [
+        additional: [
           "Good",
           "Vaccination Due",
           "Needs Checking",
@@ -94,7 +94,7 @@ const testConfig = {
         input: "EditConfigurableEnum",
         id: "has_rationCard",
         placeholder: "Ration Card Status",
-        enumId: "document-status",
+        additional: "document-status",
       },
       {
         id: "admissionDate",

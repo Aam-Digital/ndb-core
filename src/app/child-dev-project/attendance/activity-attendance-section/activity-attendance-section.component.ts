@@ -36,7 +36,7 @@ export class ActivityAttendanceSectionComponent
       id: "presentEvents",
       placeholder: "Present",
       input: "ReadonlyFunction",
-      displayFunction: (e: ActivityAttendance) =>
+      additional: (e: ActivityAttendance) =>
         this.forChild
           ? e.countEventsPresent(this.forChild)
           : e.countEventsPresentAverage(true),
@@ -45,13 +45,13 @@ export class ActivityAttendanceSectionComponent
       id: "totalEvents",
       placeholder: "Events",
       input: "ReadonlyFunction",
-      displayFunction: (e: ActivityAttendance) => e.countEventsTotal(),
+      additional: (e: ActivityAttendance) => e.countEventsTotal(),
     },
     {
       id: "attendancePercentage",
       placeholder: "Attended",
       input: "ReadonlyFunction",
-      displayFunction: (e: ActivityAttendance) =>
+      additional: (e: ActivityAttendance) =>
         this.percentPipe.transform(
           this.forChild
             ? e.getAttendancePercentage(this.forChild)
