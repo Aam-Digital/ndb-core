@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { DisplayConfigurableEnumComponent } from "./display-configurable-enum.component";
-import { ConfigurableEnumValue } from "../../../configurable-enum/configurable-enum.interface";
-import { Entity } from "../../../entity/entity";
+import { ConfigurableEnumValue } from "../../../../configurable-enum/configurable-enum.interface";
+import { Entity } from "../../../../entity/entity";
 
 describe("DisplayConfigurableEnumComponent", () => {
   let component: DisplayConfigurableEnumComponent;

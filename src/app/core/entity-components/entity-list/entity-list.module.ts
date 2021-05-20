@@ -1,9 +1,9 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { EntityListComponent } from "./entity-list.component";
-import { DisplayTextComponent } from "./display-text/display-text.component";
-import { DisplayDateComponent } from "./display-date/display-date.component";
-import { DisplayCheckmarkComponent } from "./display-checkmark/display-checkmark.component";
+import { DisplayTextComponent } from "./view-components/display-text/display-text.component";
+import { DisplayDateComponent } from "./view-components/display-date/display-date.component";
+import { DisplayCheckmarkComponent } from "./view-components/display-checkmark/display-checkmark.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatIconModule } from "@angular/material/icon";
@@ -19,10 +19,10 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { FormsModule } from "@angular/forms";
 import { AdminModule } from "../../admin/admin.module";
 import { ViewModule } from "../../view/view.module";
-import { DisplayConfigurableEnumComponent } from "./display-configurable-enum/display-configurable-enum.component";
+import { DisplayConfigurableEnumComponent } from "./view-components/display-configurable-enum/display-configurable-enum.component";
 import { ListFilterComponent } from "./list-filter/list-filter.component";
 import { PermissionsModule } from "../../permissions/permissions.module";
-import { ReadonlyFunctionComponent } from "./readonly-function/readonly-function.component";
+import { ReadonlyFunctionComponent } from "./view-components/readonly-function/readonly-function.component";
 
 @NgModule({
   declarations: [

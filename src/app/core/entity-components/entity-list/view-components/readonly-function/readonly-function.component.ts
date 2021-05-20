@@ -1,17 +1,16 @@
 import { Component } from "@angular/core";
-import { ColumnCellConfig } from "../EntityListConfig";
-import { Entity } from "../../../entity/entity";
+import { ColumnCellConfig } from "../../EntityListConfig";
+import { ViewComponent } from "../view-component";
 
 @Component({
   selector: "app-readonly-function",
   templateUrl: "./readonly-function.component.html",
   styleUrls: ["./readonly-function.component.scss"],
 })
-export class ReadonlyFunctionComponent {
-  entity: Entity;
+export class ReadonlyFunctionComponent extends ViewComponent {
   displayFunction: (Entity) => any;
   onInitFromDynamicConfig(config: ColumnCellConfig) {
-    this.entity = config.entity;
+    super.onInitFromDynamicConfig(config);
     this.displayFunction = config.config;
   }
 }

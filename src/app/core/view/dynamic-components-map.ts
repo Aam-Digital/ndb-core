@@ -15,10 +15,10 @@ import { ChildrenOverviewComponent } from "../../child-dev-project/schools/child
 import { ChildBlockListComponent } from "../../child-dev-project/children/child-block-list/child-block-list.component";
 import { ChildBlockComponent } from "../../child-dev-project/children/child-block/child-block.component";
 import { FormComponent } from "../entity-components/entity-details/form/form.component";
-import { DisplayTextComponent } from "../entity-components/entity-list/display-text/display-text.component";
-import { DisplayCheckmarkComponent } from "../entity-components/entity-list/display-checkmark/display-checkmark.component";
-import { DisplayDateComponent } from "../entity-components/entity-list/display-date/display-date.component";
-import { DisplayConfigurableEnumComponent } from "../entity-components/entity-list/display-configurable-enum/display-configurable-enum.component";
+import { DisplayTextComponent } from "../entity-components/entity-list/view-components/display-text/display-text.component";
+import { DisplayCheckmarkComponent } from "../entity-components/entity-list/view-components/display-checkmark/display-checkmark.component";
+import { DisplayDateComponent } from "../entity-components/entity-list/view-components/display-date/display-date.component";
+import { DisplayConfigurableEnumComponent } from "../entity-components/entity-list/view-components/display-configurable-enum/display-configurable-enum.component";
 import { ActivityParticipantsSectionComponent } from "../../child-dev-project/attendance/activity-participants-section/activity-participants-section.component";
 import { ActivityAttendanceSectionComponent } from "../../child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component";
 import { PreviousTeamsComponent } from "../../child-dev-project/previous-teams/previous-teams.component";
@@ -36,7 +36,7 @@ import { EditAgeComponent } from "../entity-components/entity-form/dynamic-form-
 import { EditBooleanComponent } from "../entity-components/entity-form/dynamic-form-components/edit-boolean/edit-boolean.component";
 import { EditLongTextComponent } from "../entity-components/entity-form/dynamic-form-components/edit-long-text/edit-long-text.component";
 import { EditPhotoComponent } from "../entity-components/entity-form/dynamic-form-components/edit-photo/edit-photo.component";
-import { ReadonlyFunctionComponent } from "../entity-components/entity-list/readonly-function/readonly-function.component";
+import { ReadonlyFunctionComponent } from "../entity-components/entity-list/view-components/readonly-function/readonly-function.component";
 import { EditEntityArrayComponent } from "../entity-components/entity-form/dynamic-form-components/edit-entity-array/edit-entity-array.component";
 import { SchoolBlockComponent } from "../../child-dev-project/schools/school-block/school-block.component";
 import { DisplayEntityComponent } from "../entity-components/entity-utils/display-entity/display-entity.component";
