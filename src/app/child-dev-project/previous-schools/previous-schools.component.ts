@@ -87,18 +87,9 @@ export class PreviousSchoolsComponent
     }
 
     const schools = await this.entityMapper.loadType(School);
-    const schoolColumn = this.columns.find((col) => col.id === "schoolId");
-    if (schoolColumn) {
-      schoolColumn.input = "EditSelectable";
-      schoolColumn.view = "DisplayConfigurableEnum";
-      schoolColumn.additional = schools.map((school) => {
-        return { value: school.getId(), label: school.name };
-      });
-    }
     this.schoolMap = new Map(schools.map((school) => [school.getId(), school]));
     this.records = await this.childrenService.getSchoolsWithRelations(id);
     this.current = this.records.find((record) => record.isActive);
-    console.log("called", this.records);
   }
 
   private createColumn(

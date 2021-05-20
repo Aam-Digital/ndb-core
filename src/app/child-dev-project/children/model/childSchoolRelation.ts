@@ -2,6 +2,7 @@ import { Entity } from "../../../core/entity/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import moment from "moment";
+import { School } from "../../schools/model/school";
 
 /**
  * Record of a school year that a Child attended a certain class in a School.
@@ -9,7 +10,13 @@ import moment from "moment";
 @DatabaseEntity("ChildSchoolRelation")
 export class ChildSchoolRelation extends Entity {
   @DatabaseField() childId: string;
-  @DatabaseField({ label: "School" }) schoolId: string;
+  @DatabaseField({
+    label: "School",
+    viewComponent: "DisplayEntity",
+    editComponent: "EditSingleEntity",
+    ext: School.ENTITY_TYPE,
+  })
+  schoolId: string;
   @DatabaseField({ label: "Class" }) schoolClass: string = "";
   @DatabaseField({ dataType: "date-only", label: "From" }) start: Date;
   @DatabaseField({ dataType: "date-only", label: "To" }) end: Date;
