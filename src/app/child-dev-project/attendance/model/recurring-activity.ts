@@ -18,7 +18,6 @@
 import { Entity } from "../../../core/entity/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { v4 as uuid } from "uuid";
 import { Note } from "../../notes/model/note";
 import {
   INTERACTION_TYPE_CONFIG_ID,
@@ -28,7 +27,7 @@ import {
 @DatabaseEntity("RecurringActivity")
 export class RecurringActivity extends Entity {
   static create(title: string = ""): RecurringActivity {
-    const instance = new RecurringActivity(uuid());
+    const instance = new RecurringActivity();
     instance.title = title;
     return instance;
   }

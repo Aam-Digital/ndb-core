@@ -110,7 +110,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
   }
 
   private generateNoteForChild(child: Child, date?: Date): Note {
-    let note = new Note(faker.datatype.uuid());
+    let note = new Note();
 
     const selectedStory = faker.random.arrayElement(noteIndividualStories);
     Object.assign(note, selectedStory);
@@ -148,7 +148,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
   }
 
   private generateGroupNote(children: Child[]) {
-    let note = new Note(faker.datatype.uuid());
+    let note = new Note();
 
     const selectedStory = faker.random.arrayElement(noteGroupStories);
     Object.assign(note, selectedStory);

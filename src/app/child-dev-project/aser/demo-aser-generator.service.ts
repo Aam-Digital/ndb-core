@@ -43,7 +43,7 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Aser> {
     let previousResult = new Aser("");
     const firstLanguage = child.motherTongue.toLowerCase();
     do {
-      const aserResult = new Aser(faker.datatype.uuid());
+      const aserResult = new Aser();
       aserResult.child = child.getId();
       aserResult.date = date;
       aserResult.math = this.selectNextSkillLevel(
