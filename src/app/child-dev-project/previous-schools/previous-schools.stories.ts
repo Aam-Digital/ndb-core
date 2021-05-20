@@ -1,7 +1,7 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { RouterTestingModule } from "@angular/router/testing";
-import { CommonModule, DatePipe } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { PreviousSchoolsComponent } from "./previous-schools.component";
@@ -29,34 +29,34 @@ const sessionService = new NewLocalSessionService(
   database
 );
 
-const child = new Child();
-const school1 = new School();
+const child = new Child("testChild");
+const school1 = new School("1");
 school1.name = "School 1";
-const school2 = new School();
+const school2 = new School("2");
 school2.name = "School 2";
-const rel1 = new ChildSchoolRelation();
+const rel1 = new ChildSchoolRelation("1");
 rel1.childId = child.getId();
 rel1.schoolId = school1.getId();
 rel1.schoolClass = "3";
 rel1.start = new Date();
-const rel2 = new ChildSchoolRelation();
+const rel2 = new ChildSchoolRelation("2");
 rel2.childId = child.getId();
 rel2.schoolId = school2.getId();
 rel2.schoolClass = "2";
 rel2.start = new Date();
 rel2.end = new Date();
-const rel3 = new ChildSchoolRelation();
+const rel3 = new ChildSchoolRelation("3");
 rel3.childId = child.getId();
 rel3.schoolId = school1.getId();
 rel3.schoolClass = "1";
 rel3.start = new Date();
 rel3.end = new Date();
 
-entityMapper.save(school1);
-entityMapper.save(school2);
-entityMapper.save(rel1);
-entityMapper.save(rel2);
-entityMapper.save(rel3);
+entityMapper.save(school1, true);
+entityMapper.save(school2, true);
+entityMapper.save(rel1, true);
+entityMapper.save(rel2, true);
+entityMapper.save(rel3, true);
 
 export default {
   title: "child-dev-project/Previous Schools",

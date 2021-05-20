@@ -23,6 +23,7 @@ import { ReadonlyFunctionComponent } from "./dynamic-form-components/readonly-fu
 import { EditEntityArrayComponent } from "./dynamic-form-components/edit-entity-array/edit-entity-array.component";
 import { EntitySelectModule } from "../entity-select/entity-select.module";
 import { EditSingleEntityComponent } from "./dynamic-form-components/edit-single-entity/edit-single-entity.component";
+import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { EditSingleEntityComponent } from "./dynamic-form-components/edit-single
     MatNativeDateModule,
     AlertsModule,
     EntitySelectModule,
+    EntityUtilsModule,
   ],
   entryComponents: [
     EditConfigurableEnumComponent,
@@ -64,6 +66,7 @@ import { EditSingleEntityComponent } from "./dynamic-form-components/edit-single
     EditPhotoComponent,
     ReadonlyFunctionComponent,
     EditEntityArrayComponent,
+    EditSingleEntityComponent,
   ],
 })
 export class EntityFormModule {}

@@ -1,15 +1,36 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from "@angular/core";
+import { EditComponent, EditComponentConfig } from "../edit-component";
+import { ENTITY_MAP } from "../../../entity-details/entity-details.component";
+import { EntityMapperService } from "../../../../entity/entity-mapper.service";
+import { Entity } from "../../../../entity/entity";
 
 @Component({
-  selector: 'app-edit-single-entity',
-  templateUrl: './edit-single-entity.component.html',
-  styleUrls: ['./edit-single-entity.component.scss']
+  selector: "app-edit-single-entity",
+  templateUrl: "./edit-single-entity.component.html",
+  styleUrls: ["./edit-single-entity.component.scss"],
 })
-export class EditSingleEntityComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
+export class EditSingleEntityComponent extends EditComponent<string> {
+  entities: Entity[] = [];
+  constructor(private entityMapper: EntityMapperService) {
+    super();
   }
-
+  async onInitFromDynamicConfig(config: EditComponentConfig) {
+    super.onInitFromDynamicConfig(config);
+    const entityType: string = config.propertySchema.ext;
+    const entityConstructor = ENTITY_MAP.get(entityType);
+    if (!entityConstructor) {
+      throw new Error(`Entity-Type ${entityType} not in EntityMap`);
+    }
+    this.entities = await this.entityMapper
+      .loadType(entityConstructor)
+      .then((entities) =>
+        entities.sort((e1, e2) => {
+          if (e1.hasOwnProperty("name")) {
+            return e1.name.localeCompare(e2.name);
+          } else {
+            return 0;
+          }
+        })
+      );
+  }
 }
