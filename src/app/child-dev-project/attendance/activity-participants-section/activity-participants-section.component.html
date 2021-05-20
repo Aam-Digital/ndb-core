@@ -1,6 +1,6 @@
 <div>
   <app-entity-select
-    [standardType]="'School'"
+    [entityType]="'School'"
     [(selection)]="participatingGroups"
     [disabled]="!editing"
     label="Groups"
@@ -8,7 +8,7 @@
   >
   </app-entity-select>
   <app-entity-select
-    [standardType]="'Child'"
+    [entityType]="'Child'"
     [(selection)]="participants"
     [disabled]="!editing"
     label="Participants"

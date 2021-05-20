@@ -70,19 +70,9 @@ const Template: Story<EntitySelectComponent<Child>> = (
   props: args,
 });
 
-export const enabled = Template.bind({});
-enabled.args = {
-  standardType: Child.ENTITY_TYPE,
+export const primary = Template.bind({});
+primary.args = {
+  entityType: Child.ENTITY_TYPE,
   label: "Attending Children",
   placeholder: "Select Children",
-};
-
-export const disabled = Template.bind({});
-disabled.args = {
-  standardType: Child.ENTITY_TYPE,
-  label: "Attending Children",
-  placeholder: "Select Children",
-  disabled: true,
-  selectionInputType: "entity",
-  selection: [child1, child3],
 };

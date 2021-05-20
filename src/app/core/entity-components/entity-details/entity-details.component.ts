@@ -21,7 +21,7 @@ import {
 } from "../../permissions/entity-permissions.service";
 import { User } from "../../user/user";
 
-export const ENTITY_MAP: Map<string, any> = new Map<
+export const ENTITY_MAP: Map<string, EntityConstructor<any>> = new Map<
   string,
   EntityConstructor<Entity>
 >([

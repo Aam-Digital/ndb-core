@@ -17,7 +17,6 @@ import { filter, map, skipWhile } from "rxjs/operators";
 import { MatChipInputEvent } from "@angular/material/chips";
 import { MatAutocompleteTrigger } from "@angular/material/autocomplete";
 import { ENTITY_MAP } from "../../entity-details/entity-details.component";
-import { DYNAMIC_COMPONENTS_MAP } from "../../../view/dynamic-components-map";
 
 export type accessorFn<E extends Entity> = (E) => string;
 
@@ -28,25 +27,25 @@ export type accessorFn<E extends Entity> = (E) => string;
 })
 export class EntitySelectComponent<E extends Entity> implements OnChanges {
   /**
-   * The standard-type (e.g. 'Child', 'School', e.t.c.) to set.
-   * The standard-type has to be inside {@link ENTITY_MAP}
-   * @param type The type of entities that this will set. This will set the
-   * actual entity-type as well as the block-component
+   * The entity-type (e.g. 'Child', 'School', e.t.c.) to set.
+   * The entity-type has to be inside {@link ENTITY_MAP}
+   * @param type The ENTITY_TYPE of a Entity. This affects the entities which will be loaded and the component
+   *             that displays the entities.
    * @throws Error when `type` is not in the entity-map
    */
-  @Input() set standardType(type: string) {
-    const entityType = ENTITY_MAP.get(type);
-    if (!entityType) {
+  @Input() set entityType(type: string) {
+    const entityConstructor = ENTITY_MAP.get(type) as EntityConstructor<E>;
+    if (!entityConstructor) {
       throw new Error(`Entity-Type ${type} not in EntityMap`);
     }
-    this.setEntityType(entityType);
-    if (DYNAMIC_COMPONENTS_MAP.has(type + "Block")) {
-      this.entityBlockComponent = type + "Block";
-    } else {
-      this.entityBlockComponent = undefined;
-    }
+    this.loading.next(true);
+    this.entityMapperService.loadType(entityConstructor).then((entities) => {
+      this.allEntities = entities;
+      this.loading.next(false);
+      this.formControl.setValue(null);
+    });
   }
-  entityBlockComponent?: string;
+
   /**
    * The (initial) selection. Can be used in combination with {@link selectionChange}
    * to enable two-way binding to either an array of entities or an array of strings
@@ -106,13 +105,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * state of this component. Will trigger once loading is done
    */
   loading = new BehaviorSubject(true);
-  @Input() set disabled(disabled: boolean) {
-    if (disabled) {
-      this.formControl.disable();
-    } else {
-      this.formControl.enable();
-    }
-  }
+
   /**
    * Whether or not to show entities in the list.
    * Entities can still be selected using the autocomplete,
@@ -122,14 +115,20 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   @Input() showEntities: boolean = true;
 
   allEntities: E[] = [];
-
   filteredEntities: Observable<E[]>;
-  @ViewChild("inputField") inputField: ElementRef<HTMLInputElement>;
 
   formControl = new FormControl();
 
+  @Input() set disabled(disabled: boolean) {
+    if (disabled) {
+      this.formControl.disable();
+    } else {
+      this.formControl.enable();
+    }
+  }
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
+  @ViewChild("inputField") inputField: ElementRef<HTMLInputElement>;
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
   constructor(private entityMapperService: EntityMapperService) {
@@ -138,6 +137,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
       map((searchText?: string) => this.filter(searchText))
     );
   }
+
   /**
    * The accessor used for filtering and when selecting a new
    * entity.
@@ -145,26 +145,13 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * has no name, this filters for the entity's id.
    */
   @Input() accessor: accessorFn<E> = (e) => e["name"] || e.getId();
-  /**
-   * The type of entity to load. This is required and will cause all
-   * entities of the given type to be available in the selection
-   * and auto-complete
-   * @param type The type of the entity
-   */
-  setEntityType(type: EntityConstructor<E>) {
-    this.loading.next(true);
-    this.entityMapperService.loadType<E>(type).then((entities) => {
-      this.allEntities = entities;
-      this.loading.next(false);
-      this.formControl.setValue(null);
-    });
-  }
 
   @Input() additionalFilter: (e: E) => boolean = (_) => true;
   /**
    * selects a given entity and emits values
    * @param entity the entity to select
    */
+
   selectEntity(entity: E) {
     this.selection_.push(entity);
     this.emitChange();
@@ -172,6 +159,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     this.formControl.setValue(null);
     setTimeout(() => this.autocomplete.openPanel());
   }
+
   /**
    * called when a key code from {@link separatorKeysCodes}
    * is recorded and the user has entered a new entity-name (resp.
