@@ -13,13 +13,21 @@ import { BehaviorSubject } from "rxjs";
 import { School } from "../../../../child-dev-project/schools/model/school";
 import { RouterTestingModule } from "@angular/router/testing";
 import { User } from "../../../user/user";
+import { SchoolsModule } from "../../../../child-dev-project/schools/schools.module";
+import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
 
 export default {
   title: "Core/EntityComponents/DisplayEntity",
   component: DisplayEntityComponent,
   decorators: [
     moduleMetadata({
-      imports: [EntityUtilsModule, NoopAnimationsModule, RouterTestingModule],
+      imports: [
+        EntityUtilsModule,
+        NoopAnimationsModule,
+        RouterTestingModule,
+        SchoolsModule,
+        ChildrenModule,
+      ],
       declarations: [],
       providers: [
         { provide: BackupService, useValue: {} },

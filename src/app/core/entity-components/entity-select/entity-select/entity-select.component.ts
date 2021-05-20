@@ -106,7 +106,13 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * state of this component. Will trigger once loading is done
    */
   loading = new BehaviorSubject(true);
-  @Input() disabled: boolean = false;
+  @Input() set disabled(disabled: boolean) {
+    if (disabled) {
+      this.formControl.disable();
+    } else {
+      this.formControl.enable();
+    }
+  }
   /**
    * Whether or not to show entities in the list.
    * Entities can still be selected using the autocomplete,
