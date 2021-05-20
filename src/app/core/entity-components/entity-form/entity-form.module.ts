@@ -19,7 +19,6 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatInputModule } from "@angular/material/input";
 import { MatNativeDateModule } from "@angular/material/core";
 import { AlertsModule } from "../../alerts/alerts.module";
-import { ReadonlyFunctionComponent } from "./dynamic-form-components/readonly-function/readonly-function.component";
 import { EditEntityArrayComponent } from "./dynamic-form-components/edit-entity-array/edit-entity-array.component";
 import { EntitySelectModule } from "../entity-select/entity-select.module";
 import { EditSingleEntityComponent } from "./dynamic-form-components/edit-single-entity/edit-single-entity.component";
@@ -35,7 +34,6 @@ import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
     EditBooleanComponent,
     EditLongTextComponent,
     EditPhotoComponent,
-    ReadonlyFunctionComponent,
     EditEntityArrayComponent,
     EditSingleEntityComponent,
   ],
@@ -64,7 +62,6 @@ import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
     EditBooleanComponent,
     EditLongTextComponent,
     EditPhotoComponent,
-    ReadonlyFunctionComponent,
     EditEntityArrayComponent,
     EditSingleEntityComponent,
   ],

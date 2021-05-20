@@ -30,12 +30,13 @@ export class ActivityAttendanceSectionComponent
     {
       id: "periodFrom",
       placeholder: "Month",
-      input: "EditDate",
+      view: "DisplayDate",
+      additional: "MM/YYYY",
     },
     {
       id: "presentEvents",
       placeholder: "Present",
-      input: "ReadonlyFunction",
+      view: "ReadonlyFunction",
       additional: (e: ActivityAttendance) =>
         this.forChild
           ? e.countEventsPresent(this.forChild)
@@ -44,13 +45,13 @@ export class ActivityAttendanceSectionComponent
     {
       id: "totalEvents",
       placeholder: "Events",
-      input: "ReadonlyFunction",
+      view: "ReadonlyFunction",
       additional: (e: ActivityAttendance) => e.countEventsTotal(),
     },
     {
       id: "attendancePercentage",
       placeholder: "Attended",
-      input: "ReadonlyFunction",
+      view: "ReadonlyFunction",
       additional: (e: ActivityAttendance) =>
         this.percentPipe.transform(
           this.forChild

@@ -7,14 +7,18 @@ import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init
  */
 @Component({
   selector: "app-display-date",
-  template: `{{ dateText | date: "shortDate" }}`,
+  template: `{{ dateText | date: format }}`,
 })
 export class DisplayDateComponent implements OnInitDynamicComponent {
+  format = "shortDate";
   public dateText = "";
 
   constructor() {}
 
   onInitFromDynamicConfig(config: ColumnCellConfig) {
     this.dateText = config.entity[config.id];
+    if (config.config && typeof config.config === "string") {
+      this.format = config.config;
+    }
   }
 }

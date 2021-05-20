@@ -36,7 +36,7 @@ import { EditAgeComponent } from "../entity-components/entity-form/dynamic-form-
 import { EditBooleanComponent } from "../entity-components/entity-form/dynamic-form-components/edit-boolean/edit-boolean.component";
 import { EditLongTextComponent } from "../entity-components/entity-form/dynamic-form-components/edit-long-text/edit-long-text.component";
 import { EditPhotoComponent } from "../entity-components/entity-form/dynamic-form-components/edit-photo/edit-photo.component";
-import { ReadonlyFunctionComponent } from "../entity-components/entity-form/dynamic-form-components/readonly-function/readonly-function.component";
+import { ReadonlyFunctionComponent } from "../entity-components/entity-list/readonly-function/readonly-function.component";
 import { EditEntityArrayComponent } from "../entity-components/entity-form/dynamic-form-components/edit-entity-array/edit-entity-array.component";
 import { SchoolBlockComponent } from "../../child-dev-project/schools/school-block/school-block.component";
 import { DisplayEntityComponent } from "../entity-components/entity-utils/display-entity/display-entity.component";

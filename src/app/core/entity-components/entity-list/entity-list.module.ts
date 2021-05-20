@@ -22,6 +22,7 @@ import { ViewModule } from "../../view/view.module";
 import { DisplayConfigurableEnumComponent } from "./display-configurable-enum/display-configurable-enum.component";
 import { ListFilterComponent } from "./list-filter/list-filter.component";
 import { PermissionsModule } from "../../permissions/permissions.module";
+import { ReadonlyFunctionComponent } from "./readonly-function/readonly-function.component";
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { PermissionsModule } from "../../permissions/permissions.module";
     DisplayConfigurableEnumComponent,
     DisplayCheckmarkComponent,
     ListFilterComponent,
+    ReadonlyFunctionComponent,
   ],
   imports: [
     CommonModule,
@@ -58,6 +60,7 @@ import { PermissionsModule } from "../../permissions/permissions.module";
     DisplayDateComponent,
     DisplayConfigurableEnumComponent,
     DisplayCheckmarkComponent,
+    ReadonlyFunctionComponent,
   ],
 })
 export class EntityListModule {}

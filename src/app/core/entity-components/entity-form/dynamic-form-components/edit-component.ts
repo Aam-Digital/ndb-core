@@ -2,13 +2,11 @@ import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init
 import { AbstractControl, FormControl } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-details/form/FormConfig";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
-import { Entity } from "../../../entity/entity";
 
 export interface EditComponentConfig {
   formFieldConfig: FormFieldConfig;
   propertySchema: EntitySchemaField;
   formControl: AbstractControl;
-  entity: Entity;
 }
 
 export class TypedFormControl<T> extends FormControl {
@@ -31,7 +29,6 @@ export abstract class EditComponent<T> implements OnInitDynamicComponent {
   formControlName: string;
   placeholder: string;
   formControl: TypedFormControl<T>;
-  entity: Entity;
 
   onInitFromDynamicConfig(config: EditComponentConfig) {
     if (!config.formFieldConfig.forTable) {
@@ -41,6 +38,5 @@ export abstract class EditComponent<T> implements OnInitDynamicComponent {
     }
     this.formControlName = config.formFieldConfig.id;
     this.formControl = config.formControl as TypedFormControl<T>;
-    this.entity = config.entity;
   }
 }
