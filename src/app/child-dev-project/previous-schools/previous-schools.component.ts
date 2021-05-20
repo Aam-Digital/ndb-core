@@ -1,9 +1,7 @@
 import {
   Component,
-  EventEmitter,
   Input,
   OnChanges,
-  Output,
   SimpleChanges,
 } from "@angular/core";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
@@ -44,7 +42,6 @@ export class PreviousSchoolsComponent
   schoolNaming: string;
 
   @Input() child: Child;
-  @Output() changedRecordInEntitySubrecord = new EventEmitter<any>();
   records = new Array<ChildSchoolRelation>();
   columns: FormFieldConfig[] = [
     { id: "schoolId" },

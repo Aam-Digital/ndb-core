@@ -186,6 +186,9 @@ export class EntitySchemaService {
     propertySchema: EntitySchemaField,
     mode: "view" | "edit" = "view"
   ): string {
+    if (!propertySchema) {
+      return undefined;
+    }
     const componentAttribute =
       mode === "view" ? "viewComponent" : "editComponent";
     return (

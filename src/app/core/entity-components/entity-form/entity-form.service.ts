@@ -17,35 +17,33 @@ export class EntityFormService {
     private entitySchemaService: EntitySchemaService
   ) {}
 
-  public createFormGroup(
+  public extendFormFieldConfig(
     formFields: FormFieldConfig[],
     entity: Entity,
     forTable = false
+  ) {
+    formFields.forEach((formField) => {
+      const propertySchema = entity.getSchema().get(formField.id);
+      formField.input =
+        formField.input ||
+        this.entitySchemaService.getComponent(propertySchema, "edit");
+      formField.view =
+        formField.view ||
+        this.entitySchemaService.getComponent(propertySchema, "view");
+      formField.placeholder = formField.placeholder || propertySchema.label;
+      formField.forTable = forTable;
+    });
+  }
+
+  public createFormGroup(
+    formFields: FormFieldConfig[],
+    entity: Entity
   ): FormGroup {
     const formConfig = {};
     formFields.forEach((formField) => {
-      const propertySchema = entity.getSchema().get(formField.id);
-      if (!formField.input) {
-        formField.input = this.entitySchemaService.getComponent(
-          propertySchema,
-          "edit"
-        );
-      }
-      if (!formField.view) {
-        formField.view = this.entitySchemaService.getComponent(
-          propertySchema,
-          "view"
-        );
-      }
-      if (!formField.placeholder) {
-        formField.placeholder = propertySchema?.label;
-      }
       formConfig[formField.id] = [entity[formField.id]];
       if (formField.required) {
         formConfig[formField.id].push(Validators.required);
-      }
-      if (forTable) {
-        formField.forTable = true;
       }
     });
     return this.fb.group(formConfig);

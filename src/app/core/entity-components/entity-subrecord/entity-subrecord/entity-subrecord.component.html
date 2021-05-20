@@ -21,7 +21,7 @@
         (click)="showRecord(row)"
       >
         <ng-template
-          *ngIf="row.formGroup.disabled"
+          *ngIf="!row.formGroup || row.formGroup.disabled"
           [appDynamicComponent]="{
             component: col.view,
             config: {
@@ -32,7 +32,7 @@
           }"
         ></ng-template>
         <ng-template
-          *ngIf="row.formGroup.enabled"
+          *ngIf="row.formGroup?.enabled"
           [appDynamicComponent]="{
             component: col.input,
             config: {
@@ -68,8 +68,8 @@
         <div *ngIf="!disableEditingInline">
           <button
             mat-icon-button
-            *ngIf="rec.formGroup.disabled"
-            (click)="rec.formGroup.enable()"
+            *ngIf="!rec.formGroup || rec.formGroup.disabled"
+            (click)="edit(rec)"
           >
             <mat-icon
               class="table-action-icon"
@@ -79,7 +79,7 @@
           </button>
           <button
             mat-icon-button
-            *ngIf="rec.formGroup.enabled"
+            *ngIf="rec.formGroup?.enabled"
             (click)="save(rec)"
           >
             <mat-icon
@@ -90,7 +90,7 @@
           </button>
           <button
             mat-icon-button
-            *ngIf="rec.formGroup.enabled"
+            *ngIf="rec.formGroup?.enabled"
             (click)="resetChanges(rec)"
           >
             <mat-icon

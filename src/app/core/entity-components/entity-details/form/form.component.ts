@@ -35,7 +35,7 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
     private entityFormService: EntityFormService,
     private entityMapperService: EntityMapperService,
     private alertService: AlertService,
-    private router: Router,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -84,6 +84,10 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   private buildFormConfig() {
     const flattenedFormFields = new Array<FormFieldConfig>().concat(
       ...this.columns
+    );
+    this.entityFormService.extendFormFieldConfig(
+      flattenedFormFields,
+      this.entity
     );
     this.form = this.entityFormService.createFormGroup(
       flattenedFormFields,

@@ -30,7 +30,7 @@ import { EntityFormService } from "../../entity-form/entity-form.service";
 
 interface TableRow<T> {
   record: T;
-  formGroup: FormGroup;
+  formGroup?: FormGroup;
 }
 
 /**
@@ -140,7 +140,7 @@ export class EntitySubrecordComponent<T extends Entity>
    * @param changes
    */
   ngOnChanges(changes: SimpleChanges) {
-    if (changes["columns"]) {
+    if (changes.hasOwnProperty("columns")) {
       this.columnsToDisplay = this.columns.map((e) => e.id);
       this.columnsToDisplay.push("actions");
       this.setupTable();
@@ -154,19 +154,15 @@ export class EntitySubrecordComponent<T extends Entity>
     this.recordsDataSource.data = this.records.map((rec) => {
       return {
         record: rec,
-        formGroup: this.buildFormConfig(rec),
       };
     });
-  }
-
-  private buildFormConfig(record: T): FormGroup {
-    const form = this.entityFormService.createFormGroup(
-      this.columns,
-      record,
-      true
-    );
-    form.disable();
-    return form;
+    if (this.records.length > 0) {
+      this.entityFormService.extendFormFieldConfig(
+        this.columns,
+        this.records[0],
+        true
+      );
+    }
   }
 
   ngAfterViewInit() {
@@ -210,6 +206,16 @@ export class EntitySubrecordComponent<T extends Entity>
     }
   }
 
+  edit(row: TableRow<T>) {
+    if (!row.formGroup) {
+      row.formGroup = this.entityFormService.createFormGroup(
+        this.columns,
+        row.record
+      );
+    }
+    row.formGroup.enable();
+  }
+
   /**
    * Save an edited record to the database (if validation succeeds).
    * @param row The entity to be saved.
@@ -225,7 +231,7 @@ export class EntitySubrecordComponent<T extends Entity>
    * @param row The entity to be reset.
    */
   resetChanges(row: TableRow<T>) {
-    row.formGroup = this.buildFormConfig(row.record);
+    row.formGroup = null;
   }
 
   private removeFromDataTable(row: TableRow<T>) {
@@ -273,9 +279,12 @@ export class EntitySubrecordComponent<T extends Entity>
    */
   create() {
     const newRecord = this.newRecordFactory();
-    const newRow = {
+    const newRow: TableRow<T> = {
       record: newRecord,
-      formGroup: this.buildFormConfig(newRecord),
+      formGroup: this.entityFormService.createFormGroup(
+        this.columns,
+        newRecord
+      ),
     };
     this.records.unshift(newRecord);
     this.recordsDataSource.data = [newRow].concat(this.recordsDataSource.data);
