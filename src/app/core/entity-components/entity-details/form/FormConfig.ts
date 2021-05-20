@@ -1,8 +1,8 @@
 export interface FormConfig {
-  cols: FormFieldConfig[][];
+  cols: EditPropertyConfig[][];
 }
 
-export interface FormFieldConfig {
+export interface EditPropertyConfig {
   /**
    * The input type for the form.
    * Available options: "photo", "text", "textarea", "checkbox", "age", "select", "configurable-enum-select", "datepicker"

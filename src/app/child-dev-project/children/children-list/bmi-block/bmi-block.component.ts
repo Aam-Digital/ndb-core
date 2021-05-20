@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { HealthCheck } from "app/child-dev-project/health-checkup/model/health-check";
-import { ColumnCellConfig } from "app/core/entity-components/entity-list/EntityListConfig";
+import { ViewPropertyConfig } from "app/core/entity-components/entity-list/EntityListConfig";
 import { OnInitDynamicComponent } from "app/core/view/dynamic-components/on-init-dynamic-component.interface";
 import { ChildrenService } from "../../children.service";
 
@@ -22,7 +22,7 @@ export class BmiBlockComponent implements OnInitDynamicComponent {
 
   constructor(private childrenService: ChildrenService) {}
 
-  onInitFromDynamicConfig(config: ColumnCellConfig) {
+  onInitFromDynamicConfig(config: ViewPropertyConfig) {
     this.childrenService
       .getHealthChecksOfChild(config.entity.getId())
       .pipe(untilDestroyed(this))

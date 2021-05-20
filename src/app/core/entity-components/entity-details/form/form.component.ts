@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { Router } from "@angular/router";
-import { FormConfig, FormFieldConfig } from "./FormConfig";
+import { FormConfig, EditPropertyConfig } from "./FormConfig";
 import { PanelConfig } from "../EntityDetailsConfig";
 import { Entity } from "../../../entity/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
@@ -28,7 +28,7 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   creatingNew = false;
   config: FormConfig;
 
-  columns: FormFieldConfig[][];
+  columns: EditPropertyConfig[][];
   form: FormGroup;
 
   constructor(
@@ -82,7 +82,7 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   }
 
   private buildFormConfig() {
-    const flattenedFormFields = new Array<FormFieldConfig>().concat(
+    const flattenedFormFields = new Array<EditPropertyConfig>().concat(
       ...this.columns
     );
     this.entityFormService.extendFormFieldConfig(

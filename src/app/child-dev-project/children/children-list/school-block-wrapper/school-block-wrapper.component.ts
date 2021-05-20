@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { ColumnCellConfig } from "../../../../core/entity-components/entity-list/EntityListConfig";
+import { ViewPropertyConfig } from "../../../../core/entity-components/entity-list/EntityListConfig";
 
 @Component({
   selector: "app-school-block-wrapper",
@@ -11,7 +11,7 @@ export class SchoolBlockWrapperComponent implements OnInitDynamicComponent {
 
   constructor() {}
 
-  onInitFromDynamicConfig(config: ColumnCellConfig) {
+  onInitFromDynamicConfig(config: ViewPropertyConfig) {
     this.schoolId = config.entity[config.id];
   }
 }

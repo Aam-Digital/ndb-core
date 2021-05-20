@@ -8,7 +8,7 @@ import { ActivityAttendance } from "../model/activity-attendance";
 import { Note } from "../../notes/model/note";
 import moment from "moment";
 import { ComponentWithConfig } from "../../../core/entity-components/entity-subrecord/component-with-config";
-import { FormFieldConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
+import { EditPropertyConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
 
 @Component({
   selector: "app-activity-attendance-section",
@@ -26,7 +26,7 @@ export class ActivityAttendanceSectionComponent
 
   detailsComponent: ComponentWithConfig<ActivityAttendance>;
 
-  columns: FormFieldConfig[] = [
+  columns: EditPropertyConfig[] = [
     {
       id: "periodFrom",
       placeholder: "Month",

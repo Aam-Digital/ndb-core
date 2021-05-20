@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { ColumnCellConfig } from "../../EntityListConfig";
+import { ViewPropertyConfig } from "../../EntityListConfig";
 import { ViewComponent } from "../view-component";
 
 /**
@@ -12,7 +12,7 @@ import { ViewComponent } from "../view-component";
 export class DisplayDateComponent extends ViewComponent{
   format = "shortDate";
 
-  onInitFromDynamicConfig(config: ColumnCellConfig) {
+  onInitFromDynamicConfig(config: ViewPropertyConfig) {
     super.onInitFromDynamicConfig(config);
     if (config.config && typeof config.config === "string") {
       this.format = config.config;

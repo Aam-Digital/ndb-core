@@ -10,7 +10,7 @@ import { Child } from "../children/model/child";
 import { OnInitDynamicComponent } from "../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../core/entity-components/entity-details/EntityDetailsConfig";
 import { School } from "../schools/model/school";
-import { FormFieldConfig } from "../../core/entity-components/entity-details/form/FormConfig";
+import { EditPropertyConfig } from "../../core/entity-components/entity-details/form/FormConfig";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import moment from "moment";
 import { ColumnDescription } from "../../core/entity-components/entity-subrecord/column-description";
@@ -43,7 +43,7 @@ export class PreviousSchoolsComponent
 
   @Input() child: Child;
   records = new Array<ChildSchoolRelation>();
-  columns: FormFieldConfig[] = [
+  columns: EditPropertyConfig[] = [
     { id: "schoolId" },
     { id: "schoolClass" },
     { id: "start" },

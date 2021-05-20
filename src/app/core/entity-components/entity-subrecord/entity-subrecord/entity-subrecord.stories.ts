@@ -14,7 +14,7 @@ import { DemoChildGenerator } from "../../../../child-dev-project/children/demo-
 import { DemoUserGeneratorService } from "../../../user/demo-user-generator.service";
 import { ConfigurableEnumDatatype } from "../../../configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
 import { MatNativeDateModule } from "@angular/material/core";
-import { FormFieldConfig } from "../../entity-details/form/FormConfig";
+import { EditPropertyConfig } from "../../entity-details/form/FormConfig";
 
 const configService = new ConfigService();
 const schemaService = new EntitySchemaService();
@@ -64,7 +64,7 @@ const data = new DemoNoteGeneratorService(
 
 export const Primary = Template.bind({});
 Primary.args = {
-  columns: <FormFieldConfig[]>[
+  columns: <EditPropertyConfig[]>[
     { id: "date" },
     { id: "subject" },
     { id: "category" },

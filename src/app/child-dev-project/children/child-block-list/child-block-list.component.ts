@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { ColumnCellConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
+import { ViewPropertyConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 
 /**
  * A component to display a list of children using the child block component.
@@ -15,7 +15,7 @@ export class ChildBlockListComponent implements OnInitDynamicComponent {
 
   constructor() {}
 
-  onInitFromDynamicConfig(config: ColumnCellConfig) {
+  onInitFromDynamicConfig(config: ViewPropertyConfig) {
     this.children = config.entity[config.id];
   }
 }

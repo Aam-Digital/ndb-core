@@ -1,7 +1,7 @@
 import { Entity } from "../../entity/entity";
 import { FilterSelectionOption } from "../../filter/filter-selection/filter-selection";
 
-export class EntityListConfig {
+export interface EntityListConfig {
   title: string;
   columns: ColumnConfig[];
 
@@ -18,16 +18,16 @@ export class EntityListConfig {
   filters?: FilterConfig[];
 }
 
-export class ColumnConfig {
+export interface ColumnConfig {
   component?: string;
   title?: string;
   id: string;
   /** this config can be anything that the component understands to parse */
   config?: any;
-  noSorting?: boolean = false;
+  noSorting?: boolean;
 }
 
-export class ColumnGroupConfig {
+export interface ColumnGroupConfig {
   groups: GroupConfig[];
 
   /**
@@ -43,12 +43,12 @@ export class ColumnGroupConfig {
   mobile?: string;
 }
 
-export class GroupConfig {
+export interface GroupConfig {
   name: string;
   columns: string[];
 }
 
-export class FilterConfig {
+export interface FilterConfig {
   id: string;
   display?: string;
   type?: string;
@@ -56,21 +56,21 @@ export class FilterConfig {
   label?: string;
 }
 
-export class BooleanFilterConfig extends FilterConfig {
+export interface BooleanFilterConfig extends FilterConfig {
   true: string;
   false: string;
   all: string;
 }
 
-export class PrebuiltFilterConfig<T> extends FilterConfig {
+export interface PrebuiltFilterConfig<T> extends FilterConfig {
   options: FilterSelectionOption<T>[];
 }
 
-export class ConfigurableEnumFilterConfig<T> extends FilterConfig {
+export interface ConfigurableEnumFilterConfig<T> extends FilterConfig {
   enumId: string;
 }
 
-export class ColumnCellConfig {
+export interface ViewPropertyConfig {
   entity: Entity;
   id: string;
   config?: any;

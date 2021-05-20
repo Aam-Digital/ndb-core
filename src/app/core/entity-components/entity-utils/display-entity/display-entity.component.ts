@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from "@angular/core";
 import { Entity } from "../../../entity/entity";
 import { DYNAMIC_COMPONENTS_MAP } from "../../../view/dynamic-components-map";
 import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
-import { ColumnCellConfig } from "../../entity-list/EntityListConfig";
+import { ViewPropertyConfig } from "../../entity-list/EntityListConfig";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { ENTITY_MAP } from "../../entity-details/entity-details.component";
 
@@ -25,7 +25,7 @@ export class DisplayEntityComponent implements OnInit, OnInitDynamicComponent {
     }
   }
 
-  async onInitFromDynamicConfig(config: ColumnCellConfig) {
+  async onInitFromDynamicConfig(config: ViewPropertyConfig) {
     const type = config.entity.getSchema().get(config.id).ext;
     const entityConstructor = ENTITY_MAP.get(type);
     if (!entityConstructor) {

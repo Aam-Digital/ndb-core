@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
-import { FormFieldConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
+import { EditPropertyConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
 
 @UntilDestroy()
 @Component({
@@ -20,7 +20,7 @@ export class AserComponent implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child;
   records: Array<Aser> = [];
 
-  columns: FormFieldConfig[] = [
+  columns: EditPropertyConfig[] = [
     { id: "date" },
     { id: "math" },
     { id: "english" },

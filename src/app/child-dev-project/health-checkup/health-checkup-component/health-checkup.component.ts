@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
-import { FormFieldConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
+import { EditPropertyConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
 
 @UntilDestroy()
 @Component({
@@ -21,7 +21,7 @@ export class HealthCheckupComponent
    * The Date-Column needs to be transformed to apply the MathFormCheck in the SubentityRecordComponent
    * BMI is rounded to 2 decimal digits
    */
-  columns: FormFieldConfig[] = [
+  columns: EditPropertyConfig[] = [
     { id: "date" },
     { id: "height" },
     { id: "weight" },

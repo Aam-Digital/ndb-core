@@ -25,7 +25,7 @@ import { BehaviorSubject } from "rxjs";
 import { ComponentWithConfig } from "../component-with-config";
 import { entityListSortingAccessor } from "../../entity-list/sorting-accessor";
 import { FormGroup } from "@angular/forms";
-import { FormFieldConfig } from "../../entity-details/form/FormConfig";
+import { EditPropertyConfig } from "../../entity-details/form/FormConfig";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 
 interface TableRow<T> {
@@ -66,7 +66,7 @@ export class EntitySubrecordComponent<T extends Entity>
   @Input() records: Array<T> = [];
 
   /** configuration what kind of columns to be generated for the table */
-  @Input() columns: FormFieldConfig[] = [];
+  @Input() columns: EditPropertyConfig[] = [];
 
   /**
    * factory method to create a new instance of the displayed Entity type

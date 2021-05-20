@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { ColumnCellConfig } from "../../EntityListConfig";
+import { ViewPropertyConfig } from "../../EntityListConfig";
 import { ViewComponent } from "../view-component";
 
 @Component({
@@ -9,7 +9,7 @@ import { ViewComponent } from "../view-component";
 })
 export class ReadonlyFunctionComponent extends ViewComponent {
   displayFunction: (Entity) => any;
-  onInitFromDynamicConfig(config: ColumnCellConfig) {
+  onInitFromDynamicConfig(config: ViewPropertyConfig) {
     super.onInitFromDynamicConfig(config);
     this.displayFunction = config.config;
   }
