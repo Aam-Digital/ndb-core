@@ -37,7 +37,7 @@ import { EditBooleanComponent } from "../entity-components/entity-form/dynamic-f
 import { EditLongTextComponent } from "../entity-components/entity-form/dynamic-form-components/edit-long-text/edit-long-text.component";
 import { EditPhotoComponent } from "../entity-components/entity-form/dynamic-form-components/edit-photo/edit-photo.component";
 import { ReadonlyFunctionComponent } from "../entity-components/entity-form/dynamic-form-components/readonly-function/readonly-function.component";
-import { EditSelectableEntityComponent } from "../entity-components/entity-form/dynamic-form-components/edit-selectable-entity/edit-selectable-entity.component";
+import { EditEntityArrayComponent } from "../entity-components/entity-form/dynamic-form-components/edit-entity-array/edit-entity-array.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -74,7 +74,7 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["EditConfigurableEnum", EditConfigurableEnumComponent],
   ["EditDate", EditDateComponent],
   ["EditSelectable", EditSelectableComponent],
-  ["EditSelectableEntity", EditSelectableEntityComponent],
+  ["EditEntityArray", EditEntityArrayComponent],
   ["EditAge", EditAgeComponent],
   ["EditBoolean", EditBooleanComponent],
   ["EditLongText", EditLongTextComponent],

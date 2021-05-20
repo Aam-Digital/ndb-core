@@ -20,8 +20,9 @@ import { MatInputModule } from "@angular/material/input";
 import { MatNativeDateModule } from "@angular/material/core";
 import { AlertsModule } from "../../alerts/alerts.module";
 import { ReadonlyFunctionComponent } from "./dynamic-form-components/readonly-function/readonly-function.component";
-import { EditSelectableEntityComponent } from "./dynamic-form-components/edit-selectable-entity/edit-selectable-entity.component";
+import { EditEntityArrayComponent } from "./dynamic-form-components/edit-entity-array/edit-entity-array.component";
 import { EntitySelectModule } from "../entity-select/entity-select.module";
+import { EditSingleEntityComponent } from "./dynamic-form-components/edit-single-entity/edit-single-entity.component";
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { EntitySelectModule } from "../entity-select/entity-select.module";
     EditLongTextComponent,
     EditPhotoComponent,
     ReadonlyFunctionComponent,
-    EditSelectableEntityComponent,
+    EditEntityArrayComponent,
+    EditSingleEntityComponent,
   ],
   imports: [
     CommonModule,
@@ -61,7 +63,7 @@ import { EntitySelectModule } from "../entity-select/entity-select.module";
     EditLongTextComponent,
     EditPhotoComponent,
     ReadonlyFunctionComponent,
-    EditSelectableEntityComponent,
+    EditEntityArrayComponent,
   ],
 })
 export class EntityFormModule {}

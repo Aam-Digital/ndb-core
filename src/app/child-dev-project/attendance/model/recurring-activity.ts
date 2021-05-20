@@ -65,7 +65,7 @@ export class RecurringActivity extends Entity {
   /** IDs of the users who are responsible for conducting this activity */
   @DatabaseField({
     label: "Assigned to",
-    editComponent: "EditSelectableEntity",
+    editComponent: "EditEntityArray",
     ext: "User",
   })
   assignedTo: string[] = [];

@@ -90,6 +90,7 @@ export class PreviousSchoolsComponent
     const schoolColumn = this.columns.find((col) => col.id === "schoolId");
     if (schoolColumn) {
       schoolColumn.input = "EditSelectable";
+      schoolColumn.view = "DisplayConfigurableEnum";
       schoolColumn.additional = schools.map((school) => {
         return { value: school.getId(), label: school.name };
       });
