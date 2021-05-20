@@ -38,6 +38,7 @@ import { EditLongTextComponent } from "../entity-components/entity-form/dynamic-
 import { EditPhotoComponent } from "../entity-components/entity-form/dynamic-form-components/edit-photo/edit-photo.component";
 import { ReadonlyFunctionComponent } from "../entity-components/entity-form/dynamic-form-components/readonly-function/readonly-function.component";
 import { EditEntityArrayComponent } from "../entity-components/entity-form/dynamic-form-components/edit-entity-array/edit-entity-array.component";
+import { SchoolBlockComponent } from "../../child-dev-project/schools/school-block/school-block.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -61,6 +62,7 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["DisplayCheckmark", DisplayCheckmarkComponent],
   ["DisplayUsers", UsersBlockComponent],
   ["ChildBlock", ChildBlockComponent],
+  ["SchoolBlock", SchoolBlockComponent],
   ["ChildBlockList", ChildBlockListComponent],
   ["RecentAttendanceBlocks", RecentAttendanceBlocksComponent],
   ["SchoolBlockWrapper", SchoolBlockWrapperComponent],

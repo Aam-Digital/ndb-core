@@ -76,5 +76,6 @@ import { EntityListModule } from "../../core/entity-components/entity-list/entit
   ],
   exports: [SchoolBlockComponent],
   providers: [SchoolsService],
+  entryComponents: [SchoolBlockComponent],
 })
 export class SchoolsModule {}
