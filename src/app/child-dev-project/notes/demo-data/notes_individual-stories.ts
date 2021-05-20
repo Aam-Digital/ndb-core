@@ -29,7 +29,7 @@ export const noteIndividualStories = [
   {
     category: "PHONE_CALL",
     warningLevel: WarningLevel.OK,
-    subject: "absent because ill",
+    subject: "Absent because ill",
     text:
       "Mother has called in the morning. Child cannot come to class because of fever.",
   },

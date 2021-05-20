@@ -171,7 +171,10 @@ export class EntitySubrecordComponent<T extends Entity>
     EntitySubrecordComponent.paginatorPageSize.subscribe((newPageSize) =>
       this.updatePagination(newPageSize)
     );
-    this.recordsDataSource.sortingDataAccessor = entityListSortingAccessor;
+    this.recordsDataSource.sortingDataAccessor = (
+      row: TableRow<T>,
+      id: string
+    ) => entityListSortingAccessor(row.record, id);
   }
 
   /**
