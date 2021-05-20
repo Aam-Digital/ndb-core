@@ -15,40 +15,13 @@ import { DemoUserGeneratorService } from "../../../user/demo-user-generator.serv
 import { ConfigurableEnumDatatype } from "../../../configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
 import { MatNativeDateModule } from "@angular/material/core";
 import { EditPropertyConfig } from "../../entity-details/form/FormConfig";
+import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
+import { ChildrenService } from "../../../../child-dev-project/children/children.service";
+import { of } from "rxjs";
+import * as faker from "faker";
 
 const configService = new ConfigService();
 const schemaService = new EntitySchemaService();
-export default {
-  title: "Core/EntitySubrecord",
-  component: EntitySubrecordComponent,
-  decorators: [
-    moduleMetadata({
-      imports: [
-        EntitySubrecordModule,
-        RouterTestingModule,
-        BrowserAnimationsModule,
-        MatNativeDateModule,
-      ],
-      providers: [
-        {
-          provide: EntityMapperService,
-          useValue: { save: () => null, remove: () => null },
-        },
-        { provide: EntitySchemaService, useValue: schemaService },
-        { provide: ConfigService, useValue: configService },
-        DatePipe,
-      ],
-    }),
-  ],
-} as Meta;
-
-const Template: Story<EntitySubrecordComponent<Note>> = (
-  args: EntitySubrecordComponent<Note>
-) => ({
-  component: EntitySubrecordComponent,
-  props: args,
-});
-
 schemaService.registerSchemaDatatype(
   new ConfigurableEnumDatatype(configService)
 );
@@ -62,12 +35,60 @@ const data = new DemoNoteGeneratorService(
   configService
 ).generateEntities();
 
+export default {
+  title: "Core/EntitySubrecord",
+  component: EntitySubrecordComponent,
+  decorators: [
+    moduleMetadata({
+      imports: [
+        EntitySubrecordModule,
+        RouterTestingModule,
+        BrowserAnimationsModule,
+        MatNativeDateModule,
+        ChildrenModule,
+      ],
+      providers: [
+        {
+          provide: EntityMapperService,
+          useValue: {
+            save: () => null,
+            remove: () => null,
+            load: () =>
+              Promise.resolve(
+                faker.random.arrayElement(childGenerator.entities)
+              ),
+            loadType: () => Promise.resolve(childGenerator.entities),
+          },
+        },
+        { provide: EntitySchemaService, useValue: schemaService },
+        { provide: ConfigService, useValue: configService },
+        DatePipe,
+        {
+          provide: ChildrenService,
+          useValue: {
+            getChild: () =>
+              of(faker.random.arrayElement(childGenerator.entities)),
+          },
+        },
+      ],
+    }),
+  ],
+} as Meta;
+
+const Template: Story<EntitySubrecordComponent<Note>> = (
+  args: EntitySubrecordComponent<Note>
+) => ({
+  component: EntitySubrecordComponent,
+  props: args,
+});
+
 export const Primary = Template.bind({});
 Primary.args = {
   columns: <EditPropertyConfig[]>[
     { id: "date" },
     { id: "subject" },
     { id: "category" },
+    { id: "children" },
   ],
   records: data,
   newRecordFactory: () => new Note(),

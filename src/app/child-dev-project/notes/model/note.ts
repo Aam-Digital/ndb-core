@@ -28,6 +28,8 @@ import {
   AttendanceLogicalStatus,
   NullAttendanceStatusType,
 } from "../../attendance/model/attendance-status";
+import { User } from "../../../core/user/user";
+import { Child } from "../../children/model/child";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
@@ -46,7 +48,13 @@ export class Note extends Entity {
   }
 
   /** IDs of Child entities linked with this note */
-  @DatabaseField() children: string[] = [];
+  @DatabaseField({
+    label: "Children",
+    viewComponent: "DisplayEntityArray",
+    editComponent: "EditEntityArray",
+    ext: Child.ENTITY_TYPE,
+  })
+  children: string[] = [];
 
   /**
    * optional additional information about attendance at this event for each of the linked children
@@ -57,11 +65,16 @@ export class Note extends Entity {
   private childrenAttendance: Map<string, EventAttendance> = new Map();
 
   @DatabaseField({ label: "Date" }) date: Date;
-  @DatabaseField({ label: "Topic" }) subject: string = "";
+  @DatabaseField({ label: "Subject" }) subject: string = "";
   @DatabaseField({ label: "Notes", editComponent: "EditLongText" })
   text: string = "";
   /** IDs of users that authored this note */
-  @DatabaseField({ label: "SW", editComponent: "EditText" })
+  @DatabaseField({
+    label: "SW",
+    viewComponent: "DisplayUser",
+    editComponent: "EditEntityArray",
+    ext: User.ENTITY_TYPE,
+  })
   authors: string[] = [];
 
   @DatabaseField({

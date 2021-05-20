@@ -141,7 +141,7 @@ import { PhotoDatatype } from "./child-photo-service/datatype-photo";
     RecentNotesDashboardComponent,
     BmiBlockComponent,
   ],
-  entryComponents: [ChildBlockComponent],
+  entryComponents: [ChildBlockComponent, ChildBlockListComponent],
 })
 export class ChildrenModule {
   constructor(entitySchemaService: EntitySchemaService) {

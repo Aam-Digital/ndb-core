@@ -41,6 +41,7 @@ import { EditEntityArrayComponent } from "../entity-components/entity-form/dynam
 import { SchoolBlockComponent } from "../../child-dev-project/schools/school-block/school-block.component";
 import { DisplayEntityComponent } from "../entity-components/entity-utils/display-entity/display-entity.component";
 import { EditSingleEntityComponent } from "../entity-components/entity-form/dynamic-form-components/edit-single-entity/edit-single-entity.component";
+import { DisplayEntityArrayComponent } from "../entity-components/entity-utils/display-entity-array/display-entity-array.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -86,4 +87,5 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ReadonlyFunction", ReadonlyFunctionComponent],
   ["DisplayEntity", DisplayEntityComponent],
   ["EditSingleEntity", EditSingleEntityComponent],
+  ["DisplayEntityArray", DisplayEntityArrayComponent],
 ]);
