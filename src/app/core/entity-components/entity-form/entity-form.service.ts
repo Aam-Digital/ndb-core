@@ -31,6 +31,8 @@ export class EntityFormService {
       formField.placeholder = formField.placeholder || propertySchema.label;
       if (forTable) {
         formField.forTable = true;
+        formField.placeholder =
+          propertySchema?.labelShort || formField.placeholder;
       }
     });
   }

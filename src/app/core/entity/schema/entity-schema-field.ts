@@ -73,4 +73,6 @@ export interface EntitySchemaField {
    * A label which explains this value in a human readable way
    */
   label?: string;
+
+  labelShort?: string;
 }

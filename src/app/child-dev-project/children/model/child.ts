@@ -46,10 +46,12 @@ export class Child extends Entity {
   }
 
   @DatabaseField({ label: "Name" }) name: string;
-  @DatabaseField({ label: "PN" }) projectNumber: string; // project number
+  @DatabaseField({ label: "Project Number", labelShort: "PN" })
+  projectNumber: string; // project number
   @DatabaseField({
     dataType: "date-only",
-    label: "DoB",
+    label: "Date of birth",
+    labelShort: "DoB",
     editComponent: "EditAge",
   })
   dateOfBirth: Date;

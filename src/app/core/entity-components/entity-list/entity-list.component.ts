@@ -186,7 +186,7 @@ export class EntityListComponent<T extends Entity>
       );
     }
     if (!column.title) {
-      column.title = propertySchema.label;
+      column.title = propertySchema.labelShort || propertySchema.label;
     }
     return column;
   }
