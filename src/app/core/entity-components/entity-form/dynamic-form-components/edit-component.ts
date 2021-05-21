@@ -1,10 +1,10 @@
 import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
 import { AbstractControl, FormControl } from "@angular/forms";
-import { EditPropertyConfig } from "../../entity-details/form/FormConfig";
+import { FormFieldConfig } from "../../entity-details/form/FormConfig";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 
-export interface EditComponentConfig {
-  formFieldConfig: EditPropertyConfig;
+export interface EditPropertyConfig {
+  formFieldConfig: FormFieldConfig;
   propertySchema: EntitySchemaField;
   formControl: AbstractControl;
 }
@@ -30,7 +30,7 @@ export abstract class EditComponent<T> implements OnInitDynamicComponent {
   placeholder: string;
   formControl: TypedFormControl<T>;
 
-  onInitFromDynamicConfig(config: EditComponentConfig) {
+  onInitFromDynamicConfig(config: EditPropertyConfig) {
     if (!config.formFieldConfig.forTable) {
       this.placeholder =
         config.formFieldConfig.placeholder || config.propertySchema?.label;

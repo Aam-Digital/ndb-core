@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
-import { EditPropertyConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
+import { FormFieldConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
 
 @UntilDestroy()
 @Component({
@@ -19,7 +19,7 @@ export class EducationalMaterialComponent
 
   materialTypes = EducationalMaterial.MATERIAL_ALL;
 
-  columns: EditPropertyConfig[] = [
+  columns: FormFieldConfig[] = [
     { id: "date"  },
     { id: "materialType" },
     { id: "materialAmount" },

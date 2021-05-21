@@ -9,7 +9,7 @@ import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { ComponentWithConfig } from "../../../core/entity-components/entity-subrecord/component-with-config";
-import { EditPropertyConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
+import { FormFieldConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
@@ -28,7 +28,7 @@ export class NotesOfChildComponent
     component: NoteDetailsComponent,
   };
 
-  columns: EditPropertyConfig[] = [
+  columns: FormFieldConfig[] = [
     { id: "date" },
     { id: "subject" },
     { id: "text" },

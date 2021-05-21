@@ -14,7 +14,7 @@ import { DemoChildGenerator } from "../../../../child-dev-project/children/demo-
 import { DemoUserGeneratorService } from "../../../user/demo-user-generator.service";
 import { ConfigurableEnumDatatype } from "../../../configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
 import { MatNativeDateModule } from "@angular/material/core";
-import { EditPropertyConfig } from "../../entity-details/form/FormConfig";
+import { FormFieldConfig } from "../../entity-details/form/FormConfig";
 import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
 import { ChildrenService } from "../../../../child-dev-project/children/children.service";
 import { of } from "rxjs";
@@ -84,7 +84,7 @@ const Template: Story<EntitySubrecordComponent<Note>> = (
 
 export const Primary = Template.bind({});
 Primary.args = {
-  columns: <EditPropertyConfig[]>[
+  columns: <FormFieldConfig[]>[
     { id: "date" },
     { id: "subject" },
     { id: "category" },

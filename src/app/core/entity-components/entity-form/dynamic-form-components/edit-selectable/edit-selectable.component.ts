@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { EditComponent, EditComponentConfig } from "../edit-component";
+import { EditComponent, EditPropertyConfig } from "../edit-component";
 
 @Component({
   selector: "app-edit-selectable",
@@ -8,7 +8,7 @@ import { EditComponent, EditComponentConfig } from "../edit-component";
 })
 export class EditSelectableComponent extends EditComponent<any> {
   options: (string | { label: string; value: string })[];
-  onInitFromDynamicConfig(config: EditComponentConfig) {
+  onInitFromDynamicConfig(config: EditPropertyConfig) {
     super.onInitFromDynamicConfig(config);
     this.options =
       config.formFieldConfig.additional || config.propertySchema.ext;

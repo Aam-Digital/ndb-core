@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { EditComponent, EditComponentConfig } from "../edit-component";
+import { EditComponent, EditPropertyConfig } from "../edit-component";
 import { Validators } from "@angular/forms";
 
 @Component({
@@ -8,7 +8,7 @@ import { Validators } from "@angular/forms";
   styleUrls: ["./edit-percentage.component.scss"],
 })
 export class EditPercentageComponent extends EditComponent<number> {
-  onInitFromDynamicConfig(config: EditComponentConfig) {
+  onInitFromDynamicConfig(config: EditPropertyConfig) {
     super.onInitFromDynamicConfig(config);
     const newValidators = [Validators.max(100), Validators.pattern("[0-9]*")];
     if (this.formControl.validator) {

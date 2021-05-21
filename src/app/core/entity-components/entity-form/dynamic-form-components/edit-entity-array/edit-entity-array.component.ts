@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { EditComponent, EditComponentConfig } from "../edit-component";
+import { EditComponent, EditPropertyConfig } from "../edit-component";
 import { Entity } from "../../../../entity/entity";
 
 @Component({
@@ -11,7 +11,7 @@ export class EditEntityArrayComponent extends EditComponent<
   (string | Entity)[]
 > {
   entityName: string;
-  onInitFromDynamicConfig(config: EditComponentConfig) {
+  onInitFromDynamicConfig(config: EditPropertyConfig) {
     super.onInitFromDynamicConfig(config);
     this.entityName =
       config.formFieldConfig.additional || config.propertySchema.ext;

@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { EditPropertyConfig } from "../entity-details/form/FormConfig";
+import { FormFieldConfig } from "../entity-details/form/FormConfig";
 import { Entity } from "../../entity/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
@@ -16,7 +16,7 @@ export class EntityFormService {
   ) {}
 
   public extendFormFieldConfig(
-    formFields: EditPropertyConfig[],
+    formFields: FormFieldConfig[],
     entity: Entity,
     forTable = false
   ) {
@@ -38,7 +38,7 @@ export class EntityFormService {
   }
 
   public createFormGroup(
-    formFields: EditPropertyConfig[],
+    formFields: FormFieldConfig[],
     entity: Entity
   ): FormGroup {
     const formConfig = {};

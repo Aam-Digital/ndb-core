@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { EditComponent, EditComponentConfig } from "../edit-component";
+import { EditComponent, EditPropertyConfig } from "../edit-component";
 import { ENTITY_MAP } from "../../../entity-details/entity-details.component";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { Entity } from "../../../../entity/entity";
@@ -14,7 +14,7 @@ export class EditSingleEntityComponent extends EditComponent<string> {
   constructor(private entityMapper: EntityMapperService) {
     super();
   }
-  async onInitFromDynamicConfig(config: EditComponentConfig) {
+  async onInitFromDynamicConfig(config: EditPropertyConfig) {
     super.onInitFromDynamicConfig(config);
     const entityType: string = config.propertySchema.ext;
     const entityConstructor = ENTITY_MAP.get(entityType);

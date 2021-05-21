@@ -6,7 +6,7 @@ import { Note } from "../../notes/model/note";
 import { calculateAverageAttendance } from "../model/calculate-average-event-attendance";
 import { NullAttendanceStatusType } from "../model/attendance-status";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { EditPropertyConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
+import { FormFieldConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
 
 @Component({
   selector: "app-attendance-details",
@@ -20,7 +20,7 @@ export class AttendanceDetailsComponent
   @ViewChild("dialogForm", { static: true }) formDialogWrapper;
 
   eventDetailsComponent = { component: NoteDetailsComponent };
-  eventsColumns: EditPropertyConfig[] = [
+  eventsColumns: FormFieldConfig[] = [
     { id: "date" },
     { id: "subject", placeholder: "Event" },
     {

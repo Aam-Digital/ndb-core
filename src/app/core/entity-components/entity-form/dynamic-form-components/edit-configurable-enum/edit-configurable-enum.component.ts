@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { EditComponent, EditComponentConfig } from "../edit-component";
+import { EditComponent, EditPropertyConfig } from "../edit-component";
 import { ConfigurableEnumValue } from "../../../../configurable-enum/configurable-enum.interface";
 
 @Component({
@@ -9,7 +9,7 @@ import { ConfigurableEnumValue } from "../../../../configurable-enum/configurabl
 })
 export class EditConfigurableEnumComponent extends EditComponent<ConfigurableEnumValue> {
   enumId: string;
-  onInitFromDynamicConfig(config: EditComponentConfig) {
+  onInitFromDynamicConfig(config: EditPropertyConfig) {
     super.onInitFromDynamicConfig(config);
     this.enumId = config.formFieldConfig.additional || config.propertySchema.innerDataType;
   }
