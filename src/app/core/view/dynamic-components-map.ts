@@ -39,6 +39,7 @@ import { SchoolBlockComponent } from "../../child-dev-project/schools/school-blo
 import { DisplayEntityComponent } from "../entity-components/entity-utils/display-entity/display-entity.component";
 import { EditSingleEntityComponent } from "../entity-components/entity-form/dynamic-form-components/edit-single-entity/edit-single-entity.component";
 import { DisplayEntityArrayComponent } from "../entity-components/entity-utils/display-entity-array/display-entity-array.component";
+import { EditPercentageComponent } from "../entity-components/entity-form/dynamic-form-components/edit-percentage/edit-percentage.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -82,4 +83,5 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["DisplayEntity", DisplayEntityComponent],
   ["EditSingleEntity", EditSingleEntityComponent],
   ["DisplayEntityArray", DisplayEntityArrayComponent],
+  ["EditPercentage", EditPercentageComponent],
 ]);

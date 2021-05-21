@@ -45,12 +45,14 @@ rel2.schoolId = school2.getId();
 rel2.schoolClass = "2";
 rel2.start = new Date();
 rel2.end = new Date();
+rel2.result = 80;
 const rel3 = new ChildSchoolRelation("3");
 rel3.childId = child.getId();
 rel3.schoolId = school1.getId();
 rel3.schoolClass = "1";
 rel3.start = new Date();
 rel3.end = new Date();
+rel3.result = 23;
 
 entityMapper.save(school1, true);
 entityMapper.save(school2, true);

@@ -23,6 +23,7 @@ import { EditEntityArrayComponent } from "./dynamic-form-components/edit-entity-
 import { EntitySelectModule } from "../entity-select/entity-select.module";
 import { EditSingleEntityComponent } from "./dynamic-form-components/edit-single-entity/edit-single-entity.component";
 import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
+import { EditPercentageComponent } from "./dynamic-form-components/edit-percentage/edit-percentage.component";
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
     EditPhotoComponent,
     EditEntityArrayComponent,
     EditSingleEntityComponent,
+    EditPercentageComponent,
   ],
   imports: [
     CommonModule,
@@ -64,6 +66,7 @@ import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
     EditPhotoComponent,
     EditEntityArrayComponent,
     EditSingleEntityComponent,
+    EditPercentageComponent,
   ],
 })
 export class EntityFormModule {}

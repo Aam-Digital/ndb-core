@@ -10,7 +10,7 @@
               fontIcon="fa-question-circle-o"
               [matTooltip]="tooltip"
     ></mat-icon>
-    <mat-error *ngIf="formControl.invalid">
-        {{ placeholder }} is required
+    <mat-error *ngIf="formControl.errors?.required">
+        This field is required
     </mat-error>
 </mat-form-field>
