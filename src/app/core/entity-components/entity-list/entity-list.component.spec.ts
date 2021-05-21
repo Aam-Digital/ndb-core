@@ -39,7 +39,7 @@ describe("EntityListComponent", () => {
       { component: "DisplayDate", title: "DoB", id: "dateOfBirth" },
       { component: "DisplayText", title: "Gender", id: "gender" },
       { component: "DisplayText", title: "Class", id: "schoolClass" },
-      { component: "SchoolBlockWrapper", title: "School", id: "schoolId" },
+      { component: "DisplayEntity", title: "School", id: "schoolId" },
       {
         component: "RecentAttendanceBlocks",
         title: "Attendance (School)",

@@ -10,9 +10,7 @@ import { NotesOfChildComponent } from "../../child-dev-project/notes/notes-of-ch
 import { HealthCheckupComponent } from "../../child-dev-project/health-checkup/health-checkup-component/health-checkup.component";
 import { EducationalMaterialComponent } from "../../child-dev-project/educational-material/educational-material-component/educational-material.component";
 import { RecentAttendanceBlocksComponent } from "../../child-dev-project/children/children-list/recent-attendance-blocks/recent-attendance-blocks.component";
-import { SchoolBlockWrapperComponent } from "../../child-dev-project/children/children-list/school-block-wrapper/school-block-wrapper.component";
 import { ChildrenOverviewComponent } from "../../child-dev-project/schools/children-overview/children-overview.component";
-import { ChildBlockListComponent } from "../../child-dev-project/children/child-block-list/child-block-list.component";
 import { ChildBlockComponent } from "../../child-dev-project/children/child-block/child-block.component";
 import { FormComponent } from "../entity-components/entity-details/form/form.component";
 import { DisplayTextComponent } from "../entity-components/entity-list/view-components/display-text/display-text.component";
@@ -25,7 +23,6 @@ import { PreviousTeamsComponent } from "../../child-dev-project/previous-teams/p
 import { BmiBlockComponent } from "../../child-dev-project/children/children-list/bmi-block/bmi-block.component";
 import { ChildrenBmiDashboardComponent } from "../../child-dev-project/children/children-bmi-dashboard/children-bmi-dashboard.component";
 import { DashboardShortcutWidgetComponent } from "../dashboard-shortcut-widget/dashboard-shortcut-widget/dashboard-shortcut-widget.component";
-import { UsersBlockComponent } from "../user/users-block/users-block.component";
 import { UserListComponent } from "../admin/user-list/user-list.component";
 import { HistoricalDataComponent } from "../../features/historical-data/historical-data/historical-data.component";
 import { EditTextComponent } from "../entity-components/entity-form/dynamic-form-components/edit-text/edit-text.component";
@@ -63,12 +60,9 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["DisplayText", DisplayTextComponent],
   ["DisplayConfigurableEnum", DisplayConfigurableEnumComponent],
   ["DisplayCheckmark", DisplayCheckmarkComponent],
-  ["DisplayUsers", UsersBlockComponent],
   ["ChildBlock", ChildBlockComponent],
   ["SchoolBlock", SchoolBlockComponent],
-  ["ChildBlockList", ChildBlockListComponent],
   ["RecentAttendanceBlocks", RecentAttendanceBlocksComponent],
-  ["SchoolBlockWrapper", SchoolBlockWrapperComponent],
   ["ChildrenOverview", ChildrenOverviewComponent],
   ["BmiBlock", BmiBlockComponent],
   ["ChildrenBmiDashboardComponent", ChildrenBmiDashboardComponent],

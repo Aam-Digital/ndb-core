@@ -60,8 +60,6 @@ import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirm
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { Angulartics2Module } from "angulartics2";
 import { ViewModule } from "../../core/view/view.module";
-import { SchoolBlockWrapperComponent } from "./children-list/school-block-wrapper/school-block-wrapper.component";
-import { ChildBlockListComponent } from "./child-block-list/child-block-list.component";
 import { ChildBlockComponent } from "./child-block/child-block.component";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
@@ -128,8 +126,6 @@ import { PhotoDatatype } from "./child-photo-service/datatype-photo";
     HealthCheckupComponent,
     PreviousSchoolsComponent,
     PreviousTeamsComponent,
-    SchoolBlockWrapperComponent,
-    ChildBlockListComponent,
     BmiBlockComponent,
     ChildrenBmiDashboardComponent,
   ],
@@ -141,7 +137,7 @@ import { PhotoDatatype } from "./child-photo-service/datatype-photo";
     RecentNotesDashboardComponent,
     BmiBlockComponent,
   ],
-  entryComponents: [ChildBlockComponent, ChildBlockListComponent],
+  entryComponents: [ChildBlockComponent],
 })
 export class ChildrenModule {
   constructor(entitySchemaService: EntitySchemaService) {
