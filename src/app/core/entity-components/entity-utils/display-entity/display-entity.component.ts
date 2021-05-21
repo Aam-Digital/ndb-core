@@ -26,7 +26,7 @@ export class DisplayEntityComponent implements OnInit, OnInitDynamicComponent {
   }
 
   async onInitFromDynamicConfig(config: ViewPropertyConfig) {
-    const type = config.entity.getSchema().get(config.id).ext;
+    const type = config.config || config.entity.getSchema().get(config.id).ext;
     const entityConstructor = ENTITY_MAP.get(type);
     if (!entityConstructor) {
       throw new Error(`Could not find type ${type} in ENTITY_MAP`);

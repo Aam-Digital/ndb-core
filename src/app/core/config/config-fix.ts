@@ -208,28 +208,6 @@ export const defaultJsonConfig = {
       "showEventNotesToggle": true,
       "columns": [
         {
-          "component": "DisplayDate",
-          "title": "Date",
-          "id": "date"
-        },
-        {
-          "component": "DisplayText",
-          "title": "Subject",
-          "id": "subject"
-        },
-        {
-          "component": "DisplayConfigurableEnum",
-          "title": "Category",
-          "id": "category"
-        },
-        {
-          "component": "DisplayUsers",
-          "title": "Authors",
-          "id": "authors"
-        },
-        {
-          "component": "ChildBlockList",
-          "title": "Children",
           "id": "children",
           "noSorting": true
         }
@@ -304,31 +282,11 @@ export const defaultJsonConfig = {
     "config": {
       "title": "Schools List",
       "columns": [
-        {
-          "component": "DisplayText",
-          "title": "Name",
-          "id": "name"
-        },
-        {
-          "component": "DisplayText",
-          "title": "Medium",
-          "id": "medium"
-        },
-        {
-          "component": "DisplayCheckmark",
-          "title": "Private School",
-          "id": "privateSchool"
-        },
-        {
-          "component": "DisplayText",
-          "title": "Board",
-          "id": "academicBoard"
-        },
-        {
-          "component": "DisplayText",
-          "title": "Up to class",
-          "id": "upToClass"
-        }
+        { "id": "name" },
+        { "id": "medium" },
+        { "id": "privateSchool" },
+        { "id": "academicBoard" },
+        { "id": "upToClass" }
       ],
       "filters": [
         {
@@ -408,9 +366,11 @@ export const defaultJsonConfig = {
           "id": "schoolClass"
         },
         {
-          "component": "SchoolBlockWrapper",
+          "component": "DisplayEntity",
           "title": "School",
-          "id": "schoolId"
+          "id": "schoolId",
+          "config": `${School.ENTITY_TYPE}`,
+          "noSorting": true
         },
         {
           "component": "RecentAttendanceBlocks",
@@ -738,23 +698,7 @@ export const defaultJsonConfig = {
     "component": "ActivityList",
     "config": {
       "title": "Recurring Activities",
-      "columns": [
-        {
-          "component": "DisplayText",
-          "title": "Title",
-          "id": "title"
-        },
-        {
-          "component": "DisplayConfigurableEnum",
-          "title": "Type",
-          "id": "type"
-        },
-        {
-          "component": "DisplayUsers",
-          "title": "Assigned to",
-          "id": "assignedTo"
-        }
-      ],
+      "columns": [],
       "columnGroup": {
         "default": "All",
         "mobile": "All",

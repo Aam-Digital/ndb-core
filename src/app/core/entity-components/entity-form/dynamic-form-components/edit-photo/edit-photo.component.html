@@ -6,7 +6,7 @@
 />
 <p *ngIf="!formControl.value?.photo">No photo set</p>
 <mat-form-field
-  *ngIf="formControl.enabled"
+  *ngIf="formControl.enabled && user?.isAdmin()"
   class="child-pic-photofile"
 >
   <input

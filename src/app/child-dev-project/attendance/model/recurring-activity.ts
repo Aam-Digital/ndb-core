@@ -23,6 +23,7 @@ import {
   INTERACTION_TYPE_CONFIG_ID,
   InteractionType,
 } from "../../notes/model/interaction-type.interface";
+import { User } from "../../../core/user/user";
 
 @DatabaseEntity("RecurringActivity")
 export class RecurringActivity extends Entity {
@@ -64,8 +65,9 @@ export class RecurringActivity extends Entity {
   /** IDs of the users who are responsible for conducting this activity */
   @DatabaseField({
     label: "Assigned to",
+    viewComponent: "DisplayEntityArray",
     editComponent: "EditEntityArray",
-    ext: "User",
+    ext: User.ENTITY_TYPE,
   })
   assignedTo: string[] = [];
 

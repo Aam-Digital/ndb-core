@@ -6,7 +6,6 @@ import { ViewComponent } from "../view-component";
  */
 @Component({
   selector: "app-display-configurable-enum",
-  template: `{{ entity[property].label }}`,
+  template: `{{ entity[property]?.label }}`,
 })
 export class DisplayConfigurableEnumComponent extends ViewComponent {}
-

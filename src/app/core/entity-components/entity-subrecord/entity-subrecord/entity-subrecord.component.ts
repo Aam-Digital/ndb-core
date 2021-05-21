@@ -282,6 +282,15 @@ export class EntitySubrecordComponent<T extends Entity>
    */
   create() {
     const newRecord = this.newRecordFactory();
+
+    if (this.records.length === 0) {
+      this.entityFormService.extendFormFieldConfig(
+        this.columns,
+        newRecord,
+        true
+      );
+    }
+
     const newRow: TableRow<T> = {
       record: newRecord,
       formGroup: this.entityFormService.createFormGroup(
@@ -291,6 +300,7 @@ export class EntitySubrecordComponent<T extends Entity>
     };
     this.records.unshift(newRecord);
     this.recordsDataSource.data = [newRow].concat(this.recordsDataSource.data);
+
     if (this.detailsComponent === undefined) {
       // edit inline in table
       newRow.formGroup.enable();

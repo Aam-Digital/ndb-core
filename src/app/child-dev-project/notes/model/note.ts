@@ -71,7 +71,7 @@ export class Note extends Entity {
   /** IDs of users that authored this note */
   @DatabaseField({
     label: "SW",
-    viewComponent: "DisplayUser",
+    viewComponent: "DisplayEntityArray",
     editComponent: "EditEntityArray",
     ext: User.ENTITY_TYPE,
   })

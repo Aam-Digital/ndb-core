@@ -14,7 +14,7 @@
     <mat-datepicker #dateOfBirthDatepicker></mat-datepicker>
   </mat-form-field>
   <mat-form-field style="width: 50px">
-    <mat-icon *ngIf="formControl.disabled && tooltip" matSuffix
+    <mat-icon *ngIf="formControl.enabled && tooltip" matSuffix
       fontIcon="fa-question-circle-o"
       [matTooltip]="tooltip"
     ></mat-icon>
