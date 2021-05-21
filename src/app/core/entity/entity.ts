@@ -22,6 +22,7 @@ import {
   WarningLevel,
   WarningLevelColor,
 } from "../../child-dev-project/warning-level";
+import { FormGroup } from "@angular/forms";
 
 /**
  * This represents a static class of type <T>.
@@ -90,6 +91,10 @@ export class Entity {
     } else {
       return id;
     }
+  }
+
+  static validateForm(formGroup: FormGroup) {
+    return;
   }
 
   /**

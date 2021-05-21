@@ -224,9 +224,13 @@ export class EntitySubrecordComponent<T extends Entity>
    * @param row The entity to be saved.
    */
   async save(row: TableRow<T>) {
-    await this.entityFormService.saveChanges(row.formGroup, row.record);
-    row.formGroup.disable();
-    this.changedRecordsInEntitySubrecordEvent.emit();
+    try {
+      await this.entityFormService.saveChanges(row.formGroup, row.record);
+      row.formGroup.disable();
+      this.changedRecordsInEntitySubrecordEvent.emit();
+    } catch (err) {
+      this.alertService.addDanger(err.message);
+    }
   }
 
   /**

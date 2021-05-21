@@ -20,7 +20,7 @@ import { ChildSchoolRelation } from "./childSchoolRelation";
 import { Entity } from "../../../core/entity/entity";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import moment from "moment";
-import { DatabaseField } from "../../../core/entity/database-field.decorator";
+import { FormBuilder } from "@angular/forms";
 
 describe("ChildSchoolRelation Entity", () => {
   const ENTITY_TYPE = "ChildSchoolRelation";
@@ -100,18 +100,37 @@ describe("ChildSchoolRelation Entity", () => {
     expect(relation.isActive).toBeTrue();
   });
 
-  it("should not fail on null values", () => {
-    class Test extends Entity {
-      @DatabaseField({ dataType: "date-only" }) normalDate: Date;
-      @DatabaseField({ dataType: "date-only" }) nullDate: Date;
-    }
-    const testObject = new Test();
-    testObject.normalDate = new Date();
-    testObject.nullDate = null;
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(
-      testObject
-    );
-    expect(rawData.normalDate).toBeDefined();
-    expect(rawData.nullDate).toBeUndefined();
+  it("should fail validation when no school is defined", () => {
+    const formGroup = new FormBuilder().group({ schoolId: null });
+    expect(() => ChildSchoolRelation.validateForm(formGroup)).toThrowError();
+  });
+
+  it("should fail validation when end date but no start date is defined", () => {
+    const formGroup = new FormBuilder().group({
+      schoolId: "someId",
+      end: new Date(),
+      start: null,
+    });
+    expect(() => ChildSchoolRelation.validateForm(formGroup)).toThrowError();
+  });
+
+  it("should fail validation when start date is after end date", () => {
+    const formGroup = new FormBuilder().group({
+      schoolId: "someId",
+      start: moment().add(1, "day"),
+      end: new Date(),
+    });
+    expect(() => ChildSchoolRelation.validateForm(formGroup)).toThrowError();
+  });
+
+  it("does pass validation when the start date is before the end date", () => {
+    const formGroup = new FormBuilder().group({
+      schoolId: "someId",
+      start: moment().subtract(1, "day"),
+      end: new Date(),
+    });
+    expect(() =>
+      ChildSchoolRelation.validateForm(formGroup)
+    ).not.toThrowError();
   });
 });

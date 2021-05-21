@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { EditPropertyConfig } from "../entity-details/form/FormConfig";
 import { Entity } from "../../entity/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { AlertService } from "../../alerts/alert.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 @Injectable({
@@ -13,7 +12,6 @@ export class EntityFormService {
   constructor(
     private fb: FormBuilder,
     private entityMapper: EntityMapperService,
-    private alertService: AlertService,
     private entitySchemaService: EntitySchemaService
   ) {}
 
@@ -51,53 +49,42 @@ export class EntityFormService {
     return this.fb.group(formConfig);
   }
 
-  public async saveChanges(form: FormGroup, entity: Entity): Promise<Entity> {
-    if (this.isInvalid(form)) {
-      throw new Error("Form invalid");
-    }
+  public saveChanges(form: FormGroup, entity: Entity): Promise<Entity> {
+    this.checkFormValidity(form);
+    const entityConstructor = entity.getConstructor();
+    entityConstructor.validateForm(form);
 
     this.assignFormValuesToEntity(form, entity);
-    try {
-      await this.entityMapper.save<Entity>(entity);
-      this.alertService.addInfo("Saving Successful");
-      return entity;
-    } catch (err) {
-      this.alertService.addDanger(
-        `Could not save ${entity.getConstructor().ENTITY_TYPE}: ${err}`
+    return this.entityMapper.save<Entity>(entity).catch((err) => {
+      throw new Error(
+        `Could not save ${entityConstructor.ENTITY_TYPE}: ${err}`
       );
-      throw new Error(err);
-    }
+    });
   }
 
-  private isInvalid(form: FormGroup): boolean {
+  private checkFormValidity(form: FormGroup) {
     // errors regarding invalid fields wont be displayed unless marked as touched
     form.markAllAsTouched();
     if (form.invalid) {
       const invalidFields = this.getInvalidFields(form);
-      this.alertService.addDanger(
-        "Form invalid, required fields (" + invalidFields + ") missing"
-      );
-      return true;
+      throw new Error(`Fields: "${invalidFields}" are invalid`);
     }
-
-    return false;
   }
 
-  private getInvalidFields(form: FormGroup) {
-    const invalid = [];
+  private getInvalidFields(form: FormGroup): string {
+    const invalid: string[] = [];
     const controls = form.controls;
     for (const field in controls) {
       if (controls[field].invalid) {
         invalid.push(field);
       }
     }
-    return invalid;
+    return invalid.join(", ");
   }
 
   private assignFormValuesToEntity(form: FormGroup, entity: Entity) {
     Object.keys(form.controls).forEach((key) => {
       entity[key] = form.get(key).value;
     });
-    console.log("entity", entity);
   }
 }
