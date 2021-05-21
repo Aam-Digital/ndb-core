@@ -10,7 +10,7 @@ import { Validators } from "@angular/forms";
 export class EditPercentageComponent extends EditComponent<number> {
   onInitFromDynamicConfig(config: EditComponentConfig) {
     super.onInitFromDynamicConfig(config);
-    const newValidators = [Validators.max(100), Validators.min(0)];
+    const newValidators = [Validators.max(100), Validators.pattern("[0-9]*")];
     if (this.formControl.validator) {
       newValidators.push(this.formControl.validator);
     }
