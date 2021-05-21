@@ -13,28 +13,19 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Entity } from "../../../entity/entity";
 import { ReactiveFormsModule } from "@angular/forms";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
-
-class TestEntity extends Entity {
-  static create(name: string): TestEntity {
-    const entity = new TestEntity();
-    entity.name = name;
-    return entity;
-  }
-  name: string;
-
-  getType(): string {
-    return "TestEntity";
-  }
-}
+import { User } from "../../../user/user";
+import { Child } from "../../../../child-dev-project/children/model/child";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
   let fixture: ComponentFixture<EntitySelectComponent<any>>;
 
-  const mockEntitiesA: Entity[] = ["Abc", "Bcd", "Abd", "Aba"].map((s) =>
-    TestEntity.create(s)
-  );
-  const mockEntitiesB: Entity[] = [new Entity(), new Entity()];
+  const testUsers: Entity[] = ["Abc", "Bcd", "Abd", "Aba"].map((s) => {
+    const user = new User();
+    user.name = s;
+    return user;
+  });
+  const otherEntities: Entity[] = [new Child(), new Child()];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -42,7 +33,7 @@ describe("EntitySelectComponent", () => {
       providers: [
         {
           provide: EntityMapperService,
-          useValue: mockEntityMapper(mockEntitiesA.concat(mockEntitiesB)),
+          useValue: mockEntityMapper(testUsers.concat(otherEntities)),
         },
       ],
       imports: [
@@ -66,41 +57,41 @@ describe("EntitySelectComponent", () => {
   });
 
   it("eventually loads all entity-types when the entity-type is set", fakeAsync(() => {
-    component.setEntityType(TestEntity);
+    component.entityType = User.ENTITY_TYPE;
     fixture.detectChanges();
     tick();
-    expect(component.allEntities.length).toBe(mockEntitiesA.length);
+    expect(component.allEntities.length).toBe(testUsers.length);
   }));
 
   it("should not be in loading-state when all data is received", fakeAsync(() => {
-    component.setEntityType(TestEntity);
+    component.entityType = User.ENTITY_TYPE;
     tick();
     expect(component.loading.value).toBe(false);
   }));
 
   it("should suggest all entities after an initial load", (done) => {
     component.filteredEntities.subscribe((next) => {
-      expect(next.length).toBe(mockEntitiesA.length);
+      expect(next.length).toBe(testUsers.length);
       done();
     });
-    component.setEntityType(TestEntity);
+    component.entityType = User.ENTITY_TYPE;
     fixture.detectChanges();
   });
 
   it("contains the initial selection when passed as entity-arguments", fakeAsync(() => {
-    component.setEntityType(TestEntity);
+    component.entityType = User.ENTITY_TYPE;
     fixture.detectChanges();
     tick();
     component.selectionInputType = "entity";
-    const expectation = mockEntitiesA.slice(2, 3);
+    const expectation = testUsers.slice(2, 3);
     component.selection = expectation;
     expect(component.selection_).toEqual(expectation);
   }));
 
   it("contains the initial selection when passed as id-arguments", fakeAsync(() => {
-    component.setEntityType(TestEntity);
+    component.entityType = User.ENTITY_TYPE;
     component.selectionInputType = "id";
-    const expectation = mockEntitiesA.slice(2, 3).map((child) => child.getId());
+    const expectation = testUsers.slice(2, 3).map((child) => child.getId());
     component.selection = expectation;
     fixture.detectChanges();
     tick();
@@ -110,28 +101,26 @@ describe("EntitySelectComponent", () => {
 
   it("emits whenever a new entity is selected", fakeAsync(() => {
     spyOn(component.selectionChange, "emit");
-    component.setEntityType(TestEntity);
+    component.entityType = User.ENTITY_TYPE;
     tick();
     component.selectionInputType = "entity";
-    component.selectEntity(mockEntitiesA[0]);
+    component.selectEntity(testUsers[0]);
+    expect(component.selectionChange.emit).toHaveBeenCalledWith([testUsers[0]]);
+    component.selectEntity(testUsers[1]);
     expect(component.selectionChange.emit).toHaveBeenCalledWith([
-      mockEntitiesA[0],
-    ]);
-    component.selectEntity(mockEntitiesA[1]);
-    expect(component.selectionChange.emit).toHaveBeenCalledWith([
-      mockEntitiesA[0],
-      mockEntitiesA[1],
+      testUsers[0],
+      testUsers[1],
     ]);
     tick();
   }));
 
   it("emits whenever a selected entity is removed", () => {
     spyOn(component.selectionChange, "emit");
-    component.selection_ = [...mockEntitiesA];
+    component.selection_ = [...testUsers];
     component.selectionInputType = "id";
-    component.unselectEntity(mockEntitiesA[0]);
-    const remainingChildren = mockEntitiesA
-      .filter((c) => c.getId() !== mockEntitiesA[0].getId())
+    component.unselectEntity(testUsers[0]);
+    const remainingChildren = testUsers
+      .filter((c) => c.getId() !== testUsers[0].getId())
       .map((c) => c.getId());
     expect(component.selectionChange.emit).toHaveBeenCalledWith(
       remainingChildren
@@ -139,19 +128,19 @@ describe("EntitySelectComponent", () => {
   });
 
   it("adds a new entity if it matches a known entity", () => {
-    component.allEntities = mockEntitiesA;
-    component.select({ input: null, value: mockEntitiesA[0]["name"] });
-    expect(component.selection_).toEqual([mockEntitiesA[0]]);
+    component.allEntities = testUsers;
+    component.select({ input: null, value: testUsers[0]["name"] });
+    expect(component.selection_).toEqual([testUsers[0]]);
   });
 
   it("does not add anything if a new entity doesn't match", () => {
-    component.allEntities = mockEntitiesA;
+    component.allEntities = testUsers;
     component.select({ input: null, value: "ZZ" });
     expect(component.selection_).toEqual([]);
   });
 
   it("autocompletes with the default accessor", (done) => {
-    component.allEntities = mockEntitiesA;
+    component.allEntities = testUsers;
     component.loading.next(false);
     let iterations = 0;
     let expectedLength = 4;

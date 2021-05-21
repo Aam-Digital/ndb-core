@@ -1,8 +1,8 @@
 import {
   ComponentFixture,
   fakeAsync,
-  flush,
   TestBed,
+  tick,
   waitForAsync,
 } from "@angular/core/testing";
 import { FormComponent } from "./form.component";
@@ -107,10 +107,10 @@ describe("FormComponent", () => {
     const alertService = fixture.debugElement.injector.get(AlertService);
     spyOn(alertService, "addDanger");
 
-    spyOnProperty(component.form, "valid").and.returnValue(false);
-    component.save();
-    flush();
+    spyOnProperty(component.form, "invalid").and.returnValue(true);
 
+    expectAsync(component.save()).toBeRejected();
+    tick();
     expect(alertService.addDanger).toHaveBeenCalled();
   }));
 
@@ -119,17 +119,11 @@ describe("FormComponent", () => {
     spyOn(alertService, "addDanger");
 
     spyOnProperty(component.form, "valid").and.returnValue(true);
-    mockEntityMapper.save.and.returnValue(Promise.reject("error"));
+    mockEntityMapper.save.and.rejectWith("error");
 
-    component
-      .save()
-      .then(() => fail("expected error was not thrown"))
-      .catch((err) => {
-        expect(err.message).toEqual("error");
-        expect(alertService.addDanger).toHaveBeenCalled();
-      });
-
-    flush();
+    expectAsync(component.save()).toBeRejected();
+    tick();
+    expect(alertService.addDanger).toHaveBeenCalled();
   }));
 
   it("should add column definitions from property schema", () => {
@@ -145,10 +139,11 @@ describe("FormComponent", () => {
           [
             {
               id: "fieldWithDefinition",
-              input: "SomeComponent",
+              input: "InputComponent",
+              view: "DisplayComponent",
               placeholder: "Field with definition",
             },
-            { id: "propertyField" },
+            { id: "propertyField", placeholder: "Property" },
           ],
         ],
       },
@@ -158,12 +153,15 @@ describe("FormComponent", () => {
       [
         {
           id: "fieldWithDefinition",
-          input: "SomeComponent",
+          input: "InputComponent",
+          view: "DisplayComponent",
           placeholder: "Field with definition",
         },
         {
           id: "propertyField",
           input: "PredefinedComponent",
+          view: "PredefinedComponent",
+          placeholder: "Property",
         },
       ],
     ]);

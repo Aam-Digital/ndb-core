@@ -11,6 +11,8 @@ export interface EditPropertyConfig {
 
   view?: string;
 
+  edit?: string;
+
   /**
    * The id of the entity which should be accessed
    */

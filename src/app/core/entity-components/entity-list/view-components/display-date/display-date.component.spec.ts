@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { DisplayDateComponent } from "./display-date.component";
+import { ChildSchoolRelation } from "../../../../../child-dev-project/children/model/childSchoolRelation";
 
 describe("DisplayDateComponent", () => {
   let component: DisplayDateComponent;
@@ -17,6 +18,10 @@ describe("DisplayDateComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayDateComponent);
     component = fixture.componentInstance;
+    component.onInitFromDynamicConfig({
+      entity: new ChildSchoolRelation(),
+      id: "date",
+    });
     fixture.detectChanges();
   });
 

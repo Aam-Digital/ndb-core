@@ -138,6 +138,13 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     );
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.hasOwnProperty("additionalFilter")) {
+      // update whenever additional filters are being set
+      this.formControl.setValue(this.formControl.value);
+    }
+  }
+
   /**
    * The accessor used for filtering and when selecting a new
    * entity.
@@ -224,12 +231,5 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
   private isSelected(entity: E): boolean {
     return this.selection_.some((e) => e.getId() === entity.getId());
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.hasOwnProperty("additionalFilter")) {
-      // update whenever additional filters are being set
-      this.formControl.setValue(this.formControl.value);
-    }
   }
 }

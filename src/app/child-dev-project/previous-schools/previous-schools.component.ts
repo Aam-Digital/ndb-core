@@ -1,9 +1,4 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { ChildrenService } from "../children/children.service";
 import { Child } from "../children/model/child";
@@ -13,8 +8,6 @@ import { School } from "../schools/model/school";
 import { EditPropertyConfig } from "../../core/entity-components/entity-details/form/FormConfig";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import moment from "moment";
-import { ColumnDescription } from "../../core/entity-components/entity-subrecord/column-description";
-import { ColumnDescriptionInputType } from "../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 
 @Component({
   selector: "app-previous-schools",
@@ -87,43 +80,6 @@ export class PreviousSchoolsComponent
     this.schoolMap = new Map(schools.map((school) => [school.getId(), school]));
     this.records = await this.childrenService.getSchoolsWithRelations(id);
     this.current = this.records.find((record) => record.isActive);
-  }
-
-  private createColumn(
-    id: string,
-    label: string,
-    type: string
-  ): ColumnDescription {
-    const column: ColumnDescription = {
-      name: id,
-      label: label,
-      inputType: ColumnDescriptionInputType.TEXT,
-    };
-    switch (type) {
-      case "date":
-        column.inputType = ColumnDescriptionInputType.DATE;
-        break;
-      case "school":
-        this.schoolNaming = label;
-        column.inputType = ColumnDescriptionInputType.SELECT;
-        column.selectValues = new Array(...this.schoolMap.values())
-          .sort((s1, s2) => s1.name.localeCompare(s2.name))
-          .map((t) => {
-            return { value: t.getId(), label: t.name };
-          });
-        column.valueFunction = (entity: ChildSchoolRelation) =>
-          this.schoolMap.get(entity["schoolId"]).name;
-        break;
-      case "percentageResult":
-        column.inputType = ColumnDescriptionInputType.NUMBER;
-        column.valueFunction = (entity: ChildSchoolRelation) =>
-          entity.result >= 0 && !Number.isNaN(entity.result)
-            ? entity.result + "%"
-            : "N/A";
-        column.styleBuilder = this.resultColorStyleBuilder;
-        break;
-    }
-    return column;
   }
 
   generateNewRecordFactory() {

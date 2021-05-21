@@ -48,7 +48,9 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   onInitFromDynamicConfig(config: PanelConfig) {
     this.entity = config.entity;
     this.config = config.config;
-    this.creatingNew = config.creatingNew;
+    if (config.creatingNew) {
+      this.creatingNew = true;
+    }
     this.ngOnInit();
   }
 
@@ -61,14 +63,10 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   }
 
   async save(): Promise<void> {
-    try {
-      await this.entityFormService.saveChanges(this.form, this.entity);
-      this.switchEdit();
-      if (this.creatingNew) {
-        this.router.navigate([getParentUrl(this.router), this.entity.getId()]);
-      }
-    } catch (err) {
-      console.log("error", err);
+    await this.entityFormService.saveChanges(this.form, this.entity);
+    this.switchEdit();
+    if (this.creatingNew) {
+      this.router.navigate([getParentUrl(this.router), this.entity.getId()]);
     }
   }
 

@@ -30,7 +30,9 @@ describe("PreviousSchoolsComponent", () => {
   beforeEach(
     waitForAsync(() => {
       mockChildrenService = jasmine.createSpyObj(["getSchoolsWithRelations"]);
-      mockChildrenService.getSchoolsWithRelations.and.resolveTo([]);
+      mockChildrenService.getSchoolsWithRelations.and.resolveTo([
+        new ChildSchoolRelation(),
+      ]);
       mockEntityMapper = jasmine.createSpyObj(["loadType"]);
       mockEntityMapper.loadType.and.resolveTo([]);
       TestBed.configureTestingModule({
@@ -82,10 +84,9 @@ describe("PreviousSchoolsComponent", () => {
       },
     };
     component.onInitFromDynamicConfig(config);
-    component.ngOnInit();
     tick();
     expect(component.columns).toHaveSize(3);
-    let columnNames = component.columns.map((column) => column.label);
+    let columnNames = component.columns.map((column) => column.placeholder);
     expect(columnNames).toContain("Team");
     expect(columnNames).toContain("From");
     expect(columnNames).toContain("To");
@@ -102,10 +103,9 @@ describe("PreviousSchoolsComponent", () => {
     });
 
     component.onInitFromDynamicConfig(config);
-    component.ngOnInit();
     tick();
     expect(component.columns).toHaveSize(5);
-    columnNames = component.columns.map((column) => column.label);
+    columnNames = component.columns.map((column) => column.placeholder);
     expect(columnNames).toContain("Team");
     expect(columnNames).toContain("From");
     expect(columnNames).toContain("To");

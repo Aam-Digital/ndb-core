@@ -1,11 +1,12 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { DisplayConfigurableEnumComponent } from "./display-configurable-enum.component";
-import { ConfigurableEnumValue } from "../../../../configurable-enum/configurable-enum.interface";
-import { Entity } from "../../../../entity/entity";
+import { Note } from "../../../../../child-dev-project/notes/model/note";
 
 describe("DisplayConfigurableEnumComponent", () => {
   let component: DisplayConfigurableEnumComponent;
   let fixture: ComponentFixture<DisplayConfigurableEnumComponent>;
+  let note = new Note();
+  note.category = { id: "testCategory", label: "Test Category" };
 
   beforeEach(
     waitForAsync(() => {
@@ -18,6 +19,7 @@ describe("DisplayConfigurableEnumComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayConfigurableEnumComponent);
     component = fixture.componentInstance;
+    component.onInitFromDynamicConfig({ entity: note, id: "category" });
     fixture.detectChanges();
   });
 
@@ -26,12 +28,8 @@ describe("DisplayConfigurableEnumComponent", () => {
   });
 
   it("displays value's label", () => {
-    const testEntity = ({
-      enumField: { id: "T1", label: "Test 1" } as ConfigurableEnumValue,
-    } as unknown) as Entity;
-    component.onInitFromDynamicConfig({ entity: testEntity, id: "enumField" });
-    fixture.detectChanges();
-
-    expect(fixture.debugElement.nativeElement.innerHTML).toBe("Test 1");
+    expect(fixture.debugElement.nativeElement.innerHTML).toBe(
+      note.category.label
+    );
   });
 });

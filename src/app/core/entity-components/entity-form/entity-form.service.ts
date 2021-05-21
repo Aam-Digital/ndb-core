@@ -31,7 +31,9 @@ export class EntityFormService {
         formField.view ||
         this.entitySchemaService.getComponent(propertySchema, "view");
       formField.placeholder = formField.placeholder || propertySchema.label;
-      formField.forTable = forTable;
+      if (forTable) {
+        formField.forTable = true;
+      }
     });
   }
 
@@ -61,7 +63,7 @@ export class EntityFormService {
       return entity;
     } catch (err) {
       this.alertService.addDanger(
-        'Could not save "' + entity.getConstructor().ENTITY_TYPE + '": ' + err
+        `Could not save ${entity.getConstructor().ENTITY_TYPE}: ${err}`
       );
       throw new Error(err);
     }

@@ -4,7 +4,6 @@ import { EntitySubrecordComponent } from "./entity-subrecord.component";
 import { RouterTestingModule } from "@angular/router/testing";
 import { EntitySubrecordModule } from "../entity-subrecord.module";
 import { Entity } from "../../../entity/entity";
-import { ColumnDescriptionInputType } from "../column-description-input-type.enum";
 import { By } from "@angular/platform-browser";
 import { SimpleChange } from "@angular/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -56,14 +55,16 @@ describe("EntitySubrecordComponent", () => {
 
     component.columns = [
       {
-        name: "text",
-        label: "Test text",
-        inputType: ColumnDescriptionInputType.TEXT,
+        id: "text",
+        placeholder: "Test text",
+        view: "DisplayText",
+        edit: "EditText",
       },
       {
-        name: "textarea",
-        label: "Test textarea",
-        inputType: ColumnDescriptionInputType.TEXTAREA,
+        id: "textarea",
+        placeholder: "Test textarea",
+        view: "DisplayText",
+        edit: "EditLongText",
       },
     ];
     component.ngOnChanges({
@@ -71,8 +72,8 @@ describe("EntitySubrecordComponent", () => {
       columns: new SimpleChange(undefined, component.columns, true),
     });
 
-    component.recordsEditing.set(component.records[0].getId(), true);
-    component.recordsEditing.set(component.records[1].getId(), true);
+    component.edit(component.recordsDataSource.data[0]);
+    component.edit(component.recordsDataSource.data[1]);
     fixture.detectChanges();
 
     const inputFields = fixture.debugElement.queryAll(By.css("input"));
@@ -91,15 +92,15 @@ describe("EntitySubrecordComponent", () => {
 
     component.columns = [
       {
-        name: "simple",
-        label: "Test simple",
-        inputType: ColumnDescriptionInputType.NUMBER,
+        id: "simple",
+        placeholder: "Test simple",
+        view: "DisplayText",
       },
       {
-        name: "percent",
-        label: "Test formatted",
-        inputType: ColumnDescriptionInputType.NUMBER,
-        valueFunction: (entity) => entity["percent"] * 100 + "%",
+        id: "percent",
+        placeholder: "Test formatted",
+        view: "DisplayText",
+        // valueFunction: (entity) => entity["percent"] * 100 + "%",
       },
     ];
     component.ngOnChanges({
@@ -124,19 +125,21 @@ describe("EntitySubrecordComponent", () => {
 
     component.columns = [
       {
-        name: "month",
-        label: "Test month",
-        inputType: ColumnDescriptionInputType.MONTH,
+        id: "month",
+        placeholder: "Test month",
+        view: "DisplayDate",
+        additional: "YYYY-MM",
       },
       {
-        name: "day",
-        label: "Test day",
-        inputType: ColumnDescriptionInputType.DATE,
+        id: "day",
+        placeholder: "Test day",
+        view: "DisplayDate",
+        additional: "YYYY-MM-dd",
       },
       {
-        name: "configurableEnum",
-        label: "Test Configurable Enum",
-        inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+        id: "configurableEnum",
+        placeholder: "Test Configurable Enum",
+        view: "DisplayConfigurableEnum",
       },
     ];
     component.ngOnChanges({
@@ -165,9 +168,9 @@ describe("EntitySubrecordComponent", () => {
     component.records = [second, first, third];
     component.columns = [
       {
-        name: "enumValue",
-        label: "Test Configurable Enum",
-        inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
+        id: "enumValue",
+        placeholder: "Test Configurable Enum",
+        view: "DisplayConfigurableEnum",
       },
     ];
     component.ngOnChanges({
@@ -182,10 +185,9 @@ describe("EntitySubrecordComponent", () => {
       disableClear: false,
     });
 
-    const sortedData = component.recordsDataSource.sortData(
-      component.recordsDataSource.data,
-      component.sort
-    );
+    const sortedData = component.recordsDataSource
+      .sortData(component.recordsDataSource.data, component.sort)
+      .map((row) => row.record);
     expect(sortedData).toEqual([first, second, third]);
   });
 });
