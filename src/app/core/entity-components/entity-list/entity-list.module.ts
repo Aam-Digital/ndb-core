@@ -23,6 +23,7 @@ import { DisplayConfigurableEnumComponent } from "./view-components/display-conf
 import { ListFilterComponent } from "./list-filter/list-filter.component";
 import { PermissionsModule } from "../../permissions/permissions.module";
 import { ReadonlyFunctionComponent } from "./view-components/readonly-function/readonly-function.component";
+import { DisplayPercentageComponent } from "./view-components/display-percentage/display-percentage.component";
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { ReadonlyFunctionComponent } from "./view-components/readonly-function/r
     DisplayCheckmarkComponent,
     ListFilterComponent,
     ReadonlyFunctionComponent,
+    DisplayPercentageComponent,
   ],
   imports: [
     CommonModule,
@@ -61,6 +63,7 @@ import { ReadonlyFunctionComponent } from "./view-components/readonly-function/r
     DisplayConfigurableEnumComponent,
     DisplayCheckmarkComponent,
     ReadonlyFunctionComponent,
+    DisplayPercentageComponent,
   ],
 })
 export class EntityListModule {}

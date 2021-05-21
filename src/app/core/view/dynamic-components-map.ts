@@ -40,6 +40,7 @@ import { DisplayEntityComponent } from "../entity-components/entity-utils/displa
 import { EditSingleEntityComponent } from "../entity-components/entity-form/dynamic-form-components/edit-single-entity/edit-single-entity.component";
 import { DisplayEntityArrayComponent } from "../entity-components/entity-utils/display-entity-array/display-entity-array.component";
 import { EditPercentageComponent } from "../entity-components/entity-form/dynamic-form-components/edit-percentage/edit-percentage.component";
+import { DisplayPercentageComponent } from "../entity-components/entity-list/view-components/display-percentage/display-percentage.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -84,4 +85,5 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["EditSingleEntity", EditSingleEntityComponent],
   ["DisplayEntityArray", DisplayEntityArrayComponent],
   ["EditPercentage", EditPercentageComponent],
+  ["DisplayPercentage", DisplayPercentageComponent],
 ]);

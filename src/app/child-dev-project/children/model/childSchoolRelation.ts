@@ -43,7 +43,11 @@ export class ChildSchoolRelation extends Entity {
   @DatabaseField({ dataType: "date-only", label: "To" }) end: Date;
 
   /** percentage achieved in the final school exams of that year */
-  @DatabaseField({ label: "Result", editComponent: "EditPercentage" })
+  @DatabaseField({
+    label: "Result",
+    viewComponent: "DisplayPercentage",
+    editComponent: "EditPercentage",
+  })
   result: number;
 
   get isActive(): boolean {
