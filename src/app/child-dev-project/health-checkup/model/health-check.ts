@@ -27,13 +27,23 @@ import { WarningLevel } from "../../warning-level";
 @DatabaseEntity("HealthCheck")
 export class HealthCheck extends Entity {
   @DatabaseField() child: string;
-  @DatabaseField({ label: "Date"}) date: Date;
+  @DatabaseField({ label: "Date" }) date: Date;
 
   /** height measurement in cm **/
-  @DatabaseField({ label: "Height [cm]"}) height: number;
+  @DatabaseField({
+    label: "Height [cm]",
+    viewComponent: "DisplayUnit",
+    ext: "cm",
+  })
+  height: number;
 
   /** weight measurement in kg **/
-  @DatabaseField({ label: "Weight [kg]"}) weight: number;
+  @DatabaseField({
+    label: "Weight [kg]",
+    viewComponent: "DisplayUnit",
+    ext: "kg",
+  })
+  weight: number;
 
   get bmi(): number {
     return this.weight / ((this.height / 100) * (this.height / 100));

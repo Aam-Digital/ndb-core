@@ -26,7 +26,7 @@ export class AttendanceDetailsComponent
     {
       id: "getAttendance",
       placeholder: "Attended",
-      input: "ReadonlyFunction",
+      view: "ReadonlyFunction",
       additional: (note: Note) => {
         if (this.focusedChild) {
           return note.getAttendance(this.focusedChild).status.label;

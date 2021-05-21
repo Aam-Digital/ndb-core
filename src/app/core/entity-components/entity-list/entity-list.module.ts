@@ -24,6 +24,7 @@ import { ListFilterComponent } from "./list-filter/list-filter.component";
 import { PermissionsModule } from "../../permissions/permissions.module";
 import { ReadonlyFunctionComponent } from "./view-components/readonly-function/readonly-function.component";
 import { DisplayPercentageComponent } from "./view-components/display-percentage/display-percentage.component";
+import { DisplayUnitComponent } from "./view-components/display-unit/display-unit.component";
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { DisplayPercentageComponent } from "./view-components/display-percentage
     ListFilterComponent,
     ReadonlyFunctionComponent,
     DisplayPercentageComponent,
+    DisplayUnitComponent,
   ],
   imports: [
     CommonModule,
@@ -64,6 +66,7 @@ import { DisplayPercentageComponent } from "./view-components/display-percentage
     DisplayCheckmarkComponent,
     ReadonlyFunctionComponent,
     DisplayPercentageComponent,
+    DisplayUnitComponent,
   ],
 })
 export class EntityListModule {}

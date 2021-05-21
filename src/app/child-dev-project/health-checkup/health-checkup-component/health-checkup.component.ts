@@ -29,7 +29,6 @@ export class HealthCheckupComponent
       id: "bmi",
       placeholder: "BMI",
       view: "ReadonlyFunction",
-      input: "ReadonlyFunction",
       additional: (entity: HealthCheck) => entity.bmi.toFixed(2),
     },
   ];

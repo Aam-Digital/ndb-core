@@ -21,7 +21,7 @@
         (click)="showRecord(row)"
       >
         <ng-template
-          *ngIf="!row.formGroup || row.formGroup.disabled"
+          *ngIf="!row.formGroup || row.formGroup.disabled || !col.input"
           [appDynamicComponent]="{
             component: col.view,
             config: {
