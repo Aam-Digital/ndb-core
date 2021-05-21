@@ -140,6 +140,7 @@ describe("EntitySelectComponent", () => {
   });
 
   it("autocompletes with the default accessor", (done) => {
+    // TODO sometimes this tests fails with `ObjectUnsubscribedError: object unsubscribed`
     component.allEntities = testUsers;
     component.loading.next(false);
     let iterations = 0;

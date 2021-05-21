@@ -77,9 +77,9 @@ describe("PreviousSchoolsComponent", () => {
       config: {
         single: true,
         columns: [
-          { id: "schoolId", label: "Team", input: "school" },
-          { id: "start", label: "From", input: "date" },
-          { id: "end", label: "To", input: "date" },
+          { id: "schoolId", placeholder: "Team", input: "school" },
+          { id: "start", placeholder: "From", input: "date" },
+          { id: "end", placeholder: "To", input: "date" },
         ],
       },
     };
@@ -93,12 +93,12 @@ describe("PreviousSchoolsComponent", () => {
 
     config.config.columns.push({
       id: "schoolClass",
-      label: "Class",
+      placeholder: "Class",
       input: "text",
     });
     config.config.columns.push({
       id: "result",
-      label: "Result",
+      placeholder: "Result",
       input: "percentageResult",
     });
 
