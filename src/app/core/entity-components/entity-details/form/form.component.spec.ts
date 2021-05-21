@@ -1,8 +1,6 @@
 import {
   ComponentFixture,
-  fakeAsync,
   TestBed,
-  tick,
   waitForAsync,
 } from "@angular/core/testing";
 import { FormComponent } from "./form.component";
@@ -45,6 +43,7 @@ describe("FormComponent", () => {
       });
       mockConfigService = jasmine.createSpyObj(["getConfig"]);
       mockEntityMapper = jasmine.createSpyObj(["save"]);
+      mockEntityMapper.save.and.resolveTo();
       mockEntitySchemaService = jasmine.createSpyObj([
         "getComponent",
         "registerSchemaDatatype",
@@ -75,7 +74,7 @@ describe("FormComponent", () => {
     component = fixture.componentInstance;
     component.onInitFromDynamicConfig({
       entity: testChild,
-      config: testConfig,
+      config: { cols: [] },
     });
     fixture.detectChanges();
   });
@@ -88,7 +87,7 @@ describe("FormComponent", () => {
     expect(component.creatingNew).toBe(false);
     component.onInitFromDynamicConfig({
       entity: testChild,
-      config: testConfig,
+      config: { cols: [] },
       creatingNew: true,
     });
     expect(component.creatingNew).toBe(true);
@@ -103,28 +102,22 @@ describe("FormComponent", () => {
     expect(router.navigate).toHaveBeenCalledWith(["", testChild.getId()]);
   });
 
-  it("reports error when form is invalid", fakeAsync(() => {
+  it("reports error when form is invalid", () => {
     const alertService = fixture.debugElement.injector.get(AlertService);
     spyOn(alertService, "addDanger");
-
     spyOnProperty(component.form, "invalid").and.returnValue(true);
 
-    expectAsync(component.save()).toBeRejected();
-    tick();
-    expect(alertService.addDanger).toHaveBeenCalled();
-  }));
+    return expectAsync(component.save()).toBeRejected();
+  });
 
-  it("logs error when saving fails", fakeAsync(() => {
+  it("logs error when saving fails", () => {
     const alertService = fixture.debugElement.injector.get(AlertService);
     spyOn(alertService, "addDanger");
-
     spyOnProperty(component.form, "valid").and.returnValue(true);
     mockEntityMapper.save.and.rejectWith("error");
 
-    expectAsync(component.save()).toBeRejected();
-    tick();
-    expect(alertService.addDanger).toHaveBeenCalled();
-  }));
+    return expectAsync(component.save()).toBeRejected();
+  });
 
   it("should add column definitions from property schema", () => {
     class Test extends Entity {
@@ -167,49 +160,3 @@ describe("FormComponent", () => {
     ]);
   });
 });
-
-export const testConfig = {
-  cols: [
-    [
-      {
-        input: "text",
-        id: "name",
-        placeholder: "Name",
-        required: true,
-      },
-      {
-        input: "select",
-        id: "health_vaccinationStatus",
-        placeholder: "Peter Status",
-        additional: [
-          "Good",
-          "Vaccination Due",
-          "Needs Checking",
-          "No Card/Information",
-        ],
-      },
-    ],
-    [
-      {
-        input: "select",
-        id: "health_eyeHealthStatus",
-        placeholder: "Eye Status",
-        additional: ["Good", "Has Glasses", "Needs Glasses", "Needs Checkup"],
-      },
-    ],
-    [
-      {
-        input: "text",
-        id: "health_bloodGroup",
-        placeholder: "Blood Group",
-      },
-    ],
-    [
-      {
-        input: "datepicker",
-        id: "health_lastDentalCheckup",
-        placeholder: "Last Dental Check-Up",
-      },
-    ],
-  ],
-};
