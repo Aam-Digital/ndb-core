@@ -5,7 +5,9 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
-    "build": "ng build --prod",
+    "build-i18n:en": "ng build --prod --outputPath=dist/en-US",
+    "build": "npm run build-i18n:en",
+    "postbuild": "build/replace-i18n-files.sh dist",
     "test": "ng test",
     "test-ci": "ng test --code-coverage --karmaConfig=build/karma-ci.conf.js ",
     "lint": "ng lint ndb-core --type-check",

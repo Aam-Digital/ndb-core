@@ -732,14 +732,14 @@
         </context-group>
         <note priority="1" from="description">Dashbord attendance component subtitle</note>
       </trans-unit>
-      <trans-unit id="f6b2abdf823eecf3d705ed612512b1b556604d4d" datatype="html">
-        <source><x id="START_PARAGRAPH" ctype="x-p" equiv-text="&lt;p&gt;"/><x id="START_TAG_APP_SCHOOL_BLOCK" ctype="x-app_school_block" equiv-text="&lt;app-school-block [entityId]=&quot;entity?.schoolId&quot;&gt;"/><x id="CLOSE_TAG_APP_SCHOOL_BLOCK" ctype="x-app_school_block" equiv-text="&lt;/app-school-block&gt;"/>, <x id="CLOSE_PARAGRAPH" ctype="x-p" equiv-text="&lt;/p&gt;"/><x id="START_PARAGRAPH" ctype="x-p" equiv-text="&lt;p&gt;"/><x id="START_TAG_APP_SCHOOL_BLOCK_1" ctype="x-app_school_block_1" equiv-text="&lt;app-school-block [entityId]=&quot;entity?.schoolId&quot; [linkDisabled]=&quot;true&quot;&gt;"/><x id="CLOSE_TAG_APP_SCHOOL_BLOCK" ctype="x-app_school_block" equiv-text="&lt;/app-school-block&gt;"/>, class <x id="INTERPOLATION" equiv-text="{{ entity?.schoolClass }}"/> <x id="CLOSE_PARAGRAPH" ctype="x-p" equiv-text="&lt;/p&gt;"/></source>
+      <trans-unit id="2c2620b14c4290b8f8c0c90abc6b6b17bff06ec6" datatype="html">
+        <source>class <x id="INTERPOLATION" equiv-text="{{ entity?.schoolClass }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/child-block/child-block.component.html</context>
-          <context context-type="linenumber">30,35</context>
+          <context context-type="linenumber">34</context>
         </context-group>
-        <note priority="1" from="description">format: &apos;&lt;school&gt;, class &lt;class&gt;&apos;</note>
-        <note priority="1" from="meaning">The school and class an entity is part of</note>
+        <note priority="1" from="description">e.g. &apos;class 8&apos;</note>
+        <note priority="1" from="meaning">The class a child is attending</note>
       </trans-unit>
       <trans-unit id="60038d632c3d4a51436d604d818ffc03a2c4efcc" datatype="html">
         <source>Students with unhealthy BMI </source>
@@ -793,7 +793,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-list/entity-list.component.ts</context>
-          <context context-type="linenumber">352</context>
+          <context context-type="linenumber">353</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/filter/filter-selection/filter-selection.ts</context>
@@ -1199,7 +1199,7 @@
         <note priority="1" from="description">Name of a child</note>
       </trans-unit>
       <trans-unit id="4089dcfd9f7292b38b4386103ec1a2db9532ff43" datatype="html">
-        <source><x id="START_TABLE_HEADER_CELL" ctype="x-th" equiv-text="&lt;th mat-header-cell *matHeaderCellDef mat-sort-header&gt;"/>Days passed<x id="CLOSE_TABLE_HEADER_CELL" ctype="x-th" equiv-text="&lt;/th&gt;"/><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&lt;td
+        <source><x id="START_TABLE_HEADER_CELL" ctype="x-th" equiv-text="&lt;th mat-header-cell *matHeaderCellDef mat-sort-header scope=&quot;col&quot;&gt;"/>Days passed<x id="CLOSE_TABLE_HEADER_CELL" ctype="x-th" equiv-text="&lt;/th&gt;"/><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&lt;td
             mat-cell
             *matCellDef=&quot;let childNoteInfo&quot;
             class=&quot;dashboard-table-additional-info-cell&quot;
@@ -3472,7 +3472,7 @@
         <source>child&apos;s photo</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-details/form/form.component.html</context>
-          <context context-type="linenumber">15,21</context>
+          <context context-type="linenumber">13,16</context>
         </context-group>
         <note priority="1" from="description">Short description of a child&apos;s photo</note>
       </trans-unit>
@@ -3484,13 +3484,14 @@
         </context-group>
         <note priority="1" from="description">Tooltip when uploading a photo</note>
       </trans-unit>
-      <trans-unit id="b394e841fb4adb261cf54ac72134260dafa4b842" datatype="html">
+      <trans-unit id="84a231ab92166192febac5ebb39fe0e605556fda" datatype="html">
         <source> <x id="INTERPOLATION" equiv-text="{{ row.placeholder }}"/> is required </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-details/form/form.component.html</context>
           <context context-type="linenumber">69,71</context>
         </context-group>
-        <note priority="1" from="description">indicates that a certain value is required</note>
+        <note priority="1" from="description">The value is any sort of form-value e.g. the name or address of a person</note>
+        <note priority="1" from="meaning">indicates that a certain value is required</note>
       </trans-unit>
       <trans-unit id="2e6be334a2152f179a557167f98ce4459ff9a2f9" datatype="html">
         <source>Age</source>

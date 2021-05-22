@@ -4,7 +4,7 @@
 # >> docker build -f build/Dockerfile -t aam/digital:latest .
 # >> docker run -p=80:80 aam/digital:latest aam-digital
 # >> docker kill aam-digital
-FROM node:15.11.0-alpine3.12 as builder
+FROM node:15.11.0-alpine3.13 as builder
 WORKDIR /app
 
 COPY package*.json ./
@@ -14,6 +14,7 @@ RUN npm ci --no-progress
 RUN $(npm bin)/ng version
 
 COPY . .
+RUN npm install -g npm@7.13.0
 RUN npm run build
 
 # When set to true, tests are run and coverage will be uploaded to CodeClimate
@@ -49,7 +50,7 @@ RUN if [ "$UPLOAD_COVERAGE" = true ] ; then ./cc-test-reporter after-build --deb
 
 FROM nginx:1.19-alpine
 COPY ./build/default.conf /etc/nginx/templates/default.conf
-COPY --from=builder /app/dist/ /usr/share/nginx/html
+COPY --from=builder /app/dist/en-US /usr/share/nginx/html
 ENV PORT=80
 ENV WEBDAV_URL="http://localhost"
 ENV COUCHDB_URL="http://localhost"
