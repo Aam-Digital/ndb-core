@@ -19,6 +19,7 @@
         mat-cell
         *matCellDef="let row"
         (click)="showRecord(row)"
+        style="cursor: pointer"
       >
         <ng-template
           *ngIf="!row.formGroup || row.formGroup.disabled || !col.input"

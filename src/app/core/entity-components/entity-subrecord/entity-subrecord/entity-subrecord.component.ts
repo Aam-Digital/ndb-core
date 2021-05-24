@@ -116,11 +116,10 @@ export class EntitySubrecordComponent<T extends Entity>
    */
   ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty("columns")) {
-      this.columnsToDisplay = this.columns.map((e) => e.id);
-      this.columnsToDisplay.push("actions");
-      this.setupTable();
       this.initFormGroups();
+      this.initDefaultSort();
     } else if (changes.hasOwnProperty("records")) {
+      this.initDefaultSort();
       this.initFormGroups();
     }
   }
@@ -142,7 +141,6 @@ export class EntitySubrecordComponent<T extends Entity>
 
   ngAfterViewInit() {
     this.recordsDataSource.sort = this.sort;
-    this.initDefaultSort();
     this.recordsDataSource.paginator = this.paginator;
     EntitySubrecordComponent.paginatorPageSize.subscribe((newPageSize) =>
       this.updatePagination(newPageSize)

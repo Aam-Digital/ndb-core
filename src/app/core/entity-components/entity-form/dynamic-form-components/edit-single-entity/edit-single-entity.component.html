@@ -2,7 +2,7 @@
   <mat-label>{{ placeholder }}</mat-label>
   <mat-select [formControlName]="formControlName">
     <mat-option *ngFor="let entity of entities" [value]="entity.getId()">
-      <app-display-entity [entity]="entity"></app-display-entity>
+      <app-display-entity [entity]="entity" [linkDisabled]="true"></app-display-entity>
     </mat-option>
   </mat-select>
 </mat-form-field>

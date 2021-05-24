@@ -64,7 +64,6 @@ import { ChildBlockComponent } from "./child-block/child-block.component";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 import { WebdavModule } from "../../core/webdav/webdav.module";
-import { PreviousTeamsComponent } from "../previous-teams/previous-teams.component";
 import { BmiBlockComponent } from "./children-list/bmi-block/bmi-block.component";
 import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard/children-bmi-dashboard.component";
 import { EntitySelectModule } from "../../core/entity-components/entity-select/entity-select.module";
@@ -125,7 +124,6 @@ import { PhotoDatatype } from "./child-photo-service/datatype-photo";
     RecentNotesDashboardComponent,
     HealthCheckupComponent,
     PreviousSchoolsComponent,
-    PreviousTeamsComponent,
     BmiBlockComponent,
     ChildrenBmiDashboardComponent,
   ],

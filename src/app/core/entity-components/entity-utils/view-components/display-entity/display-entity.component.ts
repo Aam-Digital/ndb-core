@@ -13,6 +13,7 @@ import { ENTITY_MAP } from "../../../entity-details/entity-details.component";
 })
 export class DisplayEntityComponent implements OnInit, OnInitDynamicComponent {
   @Input() entity: Entity;
+  @Input() linkDisabled: boolean = false;
   entityBlockComponent: string;
   constructor(private entityMapper: EntityMapperService) {}
 

@@ -212,7 +212,7 @@ export const defaultJsonConfig = {
           "noSorting": true
         }
       ],
-      "columnGroup": {
+      "columnGroups": {
         "default": "Standard",
         "mobile": "Mobile",
         "groups": [
@@ -351,53 +351,53 @@ export const defaultJsonConfig = {
       "title": "Children List",
       "columns": [
         {
-          "component": "ChildBlock",
-          "title": "Name",
+          "view": "ChildBlock",
+          "placeholder": "Name",
           "id": "name"
         },
         {
-          "component": "DisplayText",
-          "title": "Age",
+          "view": "DisplayText",
+          "placeholder": "Age",
           "id": "age"
         },
         {
-          "component": "DisplayText",
-          "title": "Class",
+          "view": "DisplayText",
+          "placeholder": "Class",
           "id": "schoolClass"
         },
         {
-          "component": "DisplayEntity",
-          "title": "School",
+          "view": "DisplayEntity",
+          "placeholder": "School",
           "id": "schoolId",
-          "config": `${School.ENTITY_TYPE}`,
+          "additional": `${School.ENTITY_TYPE}`,
           "noSorting": true
         },
         {
-          "component": "RecentAttendanceBlocks",
-          "title": "Attendance (School)",
+          "view": "RecentAttendanceBlocks",
+          "placeholder": "Attendance (School)",
           "id": "schoolAttendance",
-          "config": {
+          "additional": {
             "filterByActivityType": "SCHOOL_CLASS"
           },
           "noSorting": true
         },
         {
-          "component": "RecentAttendanceBlocks",
-          "title": "Attendance (Coaching)",
+          "view": "RecentAttendanceBlocks",
+          "placeholder": "Attendance (Coaching)",
           "id": "coachingAttendance",
-          "config": {
+          "additional": {
             "filterByActivityType": "COACHING_CLASS"
           },
           "noSorting": true
         },
         {
-          "component": "BmiBlock",
-          "title": "BMI",
+          "view": "BmiBlock",
+          "placeholder": "BMI",
           "id": "health_BMI",
           "noSorting": true
         }
       ],
-      "columnGroup": {
+      "columnGroups": {
         "default": "School Info",
         "mobile": "Mobile",
         "groups": [
@@ -699,7 +699,7 @@ export const defaultJsonConfig = {
     "config": {
       "title": "Recurring Activities",
       "columns": [],
-      "columnGroup": {
+      "columnGroups": {
         "default": "All",
         "mobile": "All",
         "groups": [
