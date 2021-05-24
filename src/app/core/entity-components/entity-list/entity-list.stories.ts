@@ -12,6 +12,7 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { Angulartics2Module } from "angulartics2";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
+import { DatePipe } from "@angular/common";
 
 export default {
   title: "Core/Entity List",
@@ -26,6 +27,7 @@ export default {
         ConfigurableEnumModule,
       ],
       providers: [
+        DatePipe,
         {
           provide: SessionService,
           useValue: { getCurrentUser: () => new User() },
@@ -48,7 +50,7 @@ const children = new DemoChildGenerator({ count: 20 }).generateEntities();
 
 export const Primary = Template.bind({});
 Primary.args = {
-  entityList: children,
+  allEntities: children,
   entityConstructor: Child,
   listConfig: {
     title: "Children List",
@@ -74,5 +76,22 @@ Primary.args = {
         },
       ],
     },
+    filters: [
+      {
+        id: "isActive",
+        type: "boolean",
+        default: "true",
+        true: "Active Children",
+        false: "Inactive",
+        all: "All",
+      },
+      {
+        id: "center",
+        label: "Center",
+        type: "configurable-enum",
+        enumId: "center",
+        display: "dropdown",
+      },
+    ],
   },
 };

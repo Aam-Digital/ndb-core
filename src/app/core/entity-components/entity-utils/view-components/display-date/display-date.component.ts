@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { ViewPropertyConfig } from "../../EntityListConfig";
+import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 import { ViewComponent } from "../view-component";
 
 /**
@@ -9,7 +9,7 @@ import { ViewComponent } from "../view-component";
   selector: "app-display-date",
   template: `{{ entity[property] | date: format }}`,
 })
-export class DisplayDateComponent extends ViewComponent{
+export class DisplayDateComponent extends ViewComponent {
   format = "shortDate";
 
   onInitFromDynamicConfig(config: ViewPropertyConfig) {

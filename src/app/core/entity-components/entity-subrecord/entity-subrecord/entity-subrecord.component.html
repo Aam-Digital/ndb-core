@@ -49,7 +49,7 @@
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef>
         <button
-          *ngIf="showAddButton"
+          *ngIf="editable"
           mat-stroked-button
           class="table-action-button"
           color="accent"
@@ -60,11 +60,10 @@
             aria-label="add"
             fontIcon="fa-plus-circle"
           ></mat-icon>
-          <!-- fxHide.md="false">Add New -->
         </button>
       </th>
       <td mat-cell *matCellDef="let rec">
-        <div *ngIf="!disableEditingInline">
+        <div *ngIf="editable">
           <button
             mat-icon-button
             *ngIf="!rec.formGroup || rec.formGroup.disabled"

@@ -11,7 +11,7 @@ import { EntityListConfig } from "../../../core/entity-components/entity-list/En
   selector: "app-schools-list",
   template: `
     <app-entity-list
-      [entityList]="schoolList"
+      [allEntities]="schoolList"
       [listConfig]="listConfig"
       [entityConstructor]="schoolConstructor"
       (elementClick)="routeTo($event.getId())"

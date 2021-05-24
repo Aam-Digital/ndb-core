@@ -8,8 +8,8 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
-import { ComponentWithConfig } from "../../../core/entity-components/entity-subrecord/component-with-config";
 import { FormFieldConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
@@ -24,9 +24,6 @@ export class NotesOfChildComponent
   implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child;
   records: Array<Note> = [];
-  detailsComponent: ComponentWithConfig<Note> = {
-    component: NoteDetailsComponent,
-  };
 
   columns: FormFieldConfig[] = [
     { id: "date" },
@@ -38,7 +35,8 @@ export class NotesOfChildComponent
 
   constructor(
     private childrenService: ChildrenService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private formDialog: FormDialogService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -94,4 +92,8 @@ export class NotesOfChildComponent
    * @param note note to get color for
    */
   getColor = (note: Note) => note?.getColorForId(this.child.getId());
+
+  showNoteDetails(note: Note) {
+    this.formDialog.openDialog(NoteDetailsComponent, note);
+  }
 }

@@ -10,7 +10,6 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatSelectModule } from "@angular/material/select";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatIconModule } from "@angular/material/icon";
-import { FormDialogModule } from "../../form-dialog/form-dialog.module";
 import { EntityModule } from "../../entity/entity.module";
 import { AlertsModule } from "../../alerts/alerts.module";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
@@ -20,7 +19,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { ViewModule } from "../../view/view.module";
 import { ReactiveFormsModule } from "@angular/forms";
 import { EntityFormModule } from "../entity-form/entity-form.module";
-import { EntityListModule } from "../entity-list/entity-list.module";
+import { ConfirmationDialogModule } from "../../confirmation-dialog/confirmation-dialog.module";
 
 @NgModule({
   declarations: [EntitySubrecordComponent, KeysPipe],
@@ -28,7 +27,6 @@ import { EntityListModule } from "../entity-list/entity-list.module";
     CommonModule,
     AlertsModule,
     MatSnackBarModule,
-    FormDialogModule,
     EntityModule,
     MatTableModule,
     MatPaginatorModule,
@@ -44,7 +42,7 @@ import { EntityListModule } from "../entity-list/entity-list.module";
     ViewModule,
     ReactiveFormsModule,
     EntityFormModule,
-    EntityListModule,
+    ConfirmationDialogModule,
   ],
   exports: [EntitySubrecordComponent, KeysPipe],
 })

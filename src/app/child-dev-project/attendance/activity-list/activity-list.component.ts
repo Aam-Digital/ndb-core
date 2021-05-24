@@ -8,7 +8,7 @@ import { EntityListConfig } from "../../../core/entity-components/entity-list/En
   selector: "app-activity-list",
   template: `
     <app-entity-list
-      [entityList]="entities"
+      [allEntities]="entities"
       [listConfig]="listConfig"
       [entityConstructor]="activityConstructor"
       (elementClick)="routeTo($event.getId())"

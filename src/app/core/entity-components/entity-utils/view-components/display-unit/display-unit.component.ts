@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { ViewComponent } from "../view-component";
-import { ViewPropertyConfig } from "../../EntityListConfig";
+import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 
 @Component({
   selector: "app-display-unit",

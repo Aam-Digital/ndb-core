@@ -7,9 +7,8 @@
 <app-entity-subrecord
   [records]="records"
   [columns]="columns"
-  [detailsComponent]="detailsComponent"
-  [showAddButton]="false"
-  [disableEditingInline]="true"
+  (rowClicked)="showDetails($event)"
+  [editable]="false"
 >
 </app-entity-subrecord>
 

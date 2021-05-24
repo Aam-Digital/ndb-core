@@ -122,7 +122,7 @@ describe("EntityListComponent", () => {
     component.listConfig = testConfig;
     component.entityConstructor = Child;
     component.ngOnChanges({
-      entityList: new SimpleChange(null, component.entityList, false),
+      entityList: new SimpleChange(null, component.allEntities, false),
       listConfig: new SimpleChange(null, component.listConfig, false),
     });
     fixture.detectChanges();
@@ -158,9 +158,9 @@ describe("EntityListComponent", () => {
     const child1 = new Child("dropoutId");
     child1.status = "Dropout";
     const child2 = new Child("activeId");
-    component.entityList = [child1, child2];
+    component.allEntities = [child1, child2];
     component.ngOnChanges({
-      entityList: new SimpleChange(false, component.entityList, false),
+      entityList: new SimpleChange(false, component.allEntities, false),
     });
     setTimeout(() => {
       const activeFs = component.filterSelections[0];
@@ -168,7 +168,7 @@ describe("EntityListComponent", () => {
       expect(component.filterSelections[0].selectedOption).toEqual(
         clickedOption
       );
-      expect(component.entityList.length).toEqual(2);
+      expect(component.allEntities.length).toEqual(2);
       expect(component.entityDataSource.data.length).toEqual(1);
       expect(component.entityDataSource.data[0]).toEqual(child1);
       done();
@@ -194,9 +194,9 @@ describe("EntityListComponent", () => {
   it("should filter a list of children", (done) => {
     const child1 = new Child("something");
     const child2 = new Child("uniqueString");
-    component.entityList = [child1, child2];
+    component.allEntities = [child1, child2];
     component.ngOnChanges({
-      entityList: new SimpleChange(false, component.entityList, false),
+      entityList: new SimpleChange(false, component.allEntities, false),
     });
     setTimeout(() => {
       component.applyFilter("     UnIquEString    ");
@@ -210,9 +210,9 @@ describe("EntityListComponent", () => {
   it("correctly create dropdown and selection filters if values are present", fakeAsync(() => {
     const child = new Child();
     child.religion = "muslim";
-    component.entityList = [child];
+    component.allEntities = [child];
     component.ngOnChanges({
-      entityList: new SimpleChange(false, component.entityList, false),
+      entityList: new SimpleChange(false, component.allEntities, false),
     });
     expect(component.filterSelections.length).toEqual(2);
     expect(
@@ -234,7 +234,7 @@ describe("EntityListComponent", () => {
     };
     component.ngOnChanges({
       listConfig: new SimpleChange(false, component.listConfig, false),
-      entityList: new SimpleChange(false, component.entityList, false),
+      entityList: new SimpleChange(false, component.allEntities, false),
     });
     expect(component.columnGroups).toEqual([
       { name: "default", columns: testConfig.columns.map((c) => c.id) },
@@ -250,7 +250,7 @@ describe("EntityListComponent", () => {
   it("should apply default sort on first column", async () => {
     const children = [Child.create("C"), Child.create("A"), Child.create("B")];
     component.columnsToDisplay = ["name", "projectNumber"];
-    component.entityList = children;
+    component.allEntities = children;
 
     // trigger ngOnChanges for manually updated property
     component.ngOnChanges({
@@ -269,7 +269,7 @@ describe("EntityListComponent", () => {
     children[2].admissionDate = new Date(2012, 1, 1);
 
     component.columnsToDisplay = ["admissionDate", "name"];
-    component.entityList = children;
+    component.allEntities = children;
     // define the columns to mark "admissionDate" as a Date value
     component.columns = [
       {
@@ -305,7 +305,7 @@ describe("EntityListComponent", () => {
     children[3].name = "AB";
     children[2].name = "Z";
     children[1].name = "C";
-    component.entityList = children;
+    component.allEntities = children;
     component.sort.sort({ id: "name", start: "asc", disableClear: false });
     const sortedIds = component.entityDataSource
       .sortData(children, component.sort)
@@ -320,7 +320,7 @@ describe("EntityListComponent", () => {
     notes[2].category = { id: "2", label: "Z" };
     notes[1].category = { id: "3", label: "C" };
     component.ngOnInit();
-    component.entityList = notes;
+    component.allEntities = notes;
     component.sort.sort({ id: "category", start: "asc", disableClear: false });
     const sortedIds = component.entityDataSource
       .sortData(notes, component.sort)

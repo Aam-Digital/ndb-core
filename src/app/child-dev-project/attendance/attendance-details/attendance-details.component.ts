@@ -7,6 +7,8 @@ import { calculateAverageAttendance } from "../model/calculate-average-event-att
 import { NullAttendanceStatusType } from "../model/attendance-status";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { FormFieldConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { EventNote } from "../model/event-note";
 
 @Component({
   selector: "app-attendance-details",
@@ -19,7 +21,6 @@ export class AttendanceDetailsComponent
   @Input() focusedChild: string;
   @ViewChild("dialogForm", { static: true }) formDialogWrapper;
 
-  eventDetailsComponent = { component: NoteDetailsComponent };
   eventsColumns: FormFieldConfig[] = [
     { id: "date" },
     { id: "subject", placeholder: "Event" },
@@ -41,11 +42,15 @@ export class AttendanceDetailsComponent
   ];
   UnknownStatus = NullAttendanceStatusType;
 
-  constructor() {}
+  constructor(private formDialog: FormDialogService) {}
 
   onInitFromDynamicConfig(config?: { forChild?: string }) {
     if (config?.forChild) {
       this.focusedChild = config.forChild;
     }
+  }
+
+  showEventDetails(event: EventNote) {
+    this.formDialog.openDialog(NoteDetailsComponent, event);
   }
 }

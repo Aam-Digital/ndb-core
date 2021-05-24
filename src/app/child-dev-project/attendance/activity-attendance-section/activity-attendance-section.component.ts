@@ -7,8 +7,8 @@ import { PercentPipe } from "@angular/common";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { Note } from "../../notes/model/note";
 import moment from "moment";
-import { ComponentWithConfig } from "../../../core/entity-components/entity-subrecord/component-with-config";
 import { FormFieldConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 
 @Component({
   selector: "app-activity-attendance-section",
@@ -23,8 +23,6 @@ export class ActivityAttendanceSectionComponent
   records: ActivityAttendance[] = [];
   allRecords: ActivityAttendance[] = [];
   displayedEvents: Note[] = [];
-
-  detailsComponent: ComponentWithConfig<ActivityAttendance>;
 
   columns: FormFieldConfig[] = [
     {
@@ -64,7 +62,8 @@ export class ActivityAttendanceSectionComponent
 
   constructor(
     private attendanceService: AttendanceService,
-    private percentPipe: PercentPipe
+    private percentPipe: PercentPipe,
+    private formDialog: FormDialogService
   ) {}
 
   async ngOnChanges(changes: SimpleChanges) {
@@ -92,12 +91,6 @@ export class ActivityAttendanceSectionComponent
         moment().startOf("month").subtract(6, "months").toDate()
       );
     }
-
-    this.detailsComponent = {
-      component: AttendanceDetailsComponent,
-      componentConfig: { forChild: this.forChild },
-    };
-
     this.updateDisplayedRecords(false);
   }
 
@@ -119,5 +112,11 @@ export class ActivityAttendanceSectionComponent
       );
       this.displayedEvents = this.records[0].events;
     }
+  }
+
+  showDetails(activity: ActivityAttendance) {
+    this.formDialog.openDialog(AttendanceDetailsComponent, activity, {
+      forChild: this.forChild,
+    });
   }
 }

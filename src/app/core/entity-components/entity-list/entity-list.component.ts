@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   EventEmitter,
   Input,
@@ -9,9 +8,6 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { MatSort, MatSortable } from "@angular/material/sort";
-import { MatPaginator, PageEvent } from "@angular/material/paginator";
-import { MatTableDataSource } from "@angular/material/table";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { ActivatedRoute, Router } from "@angular/router";
 import {
@@ -28,10 +24,7 @@ import {
   FilterSelection,
   FilterSelectionOption,
 } from "../../filter/filter-selection/filter-selection";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { SessionService } from "../../session/session-service/session.service";
-import { User } from "../../user/user";
-import { getUrlWithoutParams } from "../../../utils/utils";
 import { ConfigService } from "../../config/config.service";
 import {
   CONFIGURABLE_ENUM_CONFIG_PREFIX,
@@ -39,9 +32,8 @@ import {
 } from "../../configurable-enum/configurable-enum.interface";
 import { LoggingService } from "../../logging/logging.service";
 import { OperationType } from "../../permissions/entity-permissions.service";
-import { entityListSortingAccessor } from "./sorting-accessor";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { FormFieldConfig } from "../entity-details/form/FormConfig";
+import { EntitySubrecordComponent } from "../entity-subrecord/entity-subrecord/entity-subrecord.component";
 
 interface FilterComponentSettings<T> {
   filterSettings: FilterSelection<T>;
@@ -63,15 +55,15 @@ interface FilterComponentSettings<T> {
   styleUrls: ["./entity-list.component.scss"],
 })
 export class EntityListComponent<T extends Entity>
-  implements OnChanges, OnInit, AfterViewInit {
-  @Input() entityList: T[] = [];
+  implements OnChanges, OnInit {
+  @Input() allEntities: T[] = [];
+  filteredEntities: T[] = [];
   @Input() listConfig: EntityListConfig;
   @Input() entityConstructor: EntityConstructor<T>;
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(EntitySubrecordComponent) entityTable: EntitySubrecordComponent<T>;
 
   listName = "";
   columns: FormFieldConfig[] = [];
@@ -87,16 +79,8 @@ export class EntityListComponent<T extends Entity>
   selectedColumnGroup: string = "";
 
   filterSelections: FilterComponentSettings<T>[] = [];
-  entityDataSource = new MatTableDataSource<T>();
-
-  user: User;
-  paginatorPageSize = 10;
-  paginatorPageIndex = 0;
 
   filterString = "";
-
-  // This key is used to save the pagination settings on the user entity
-  readonly paginatorKey: string;
 
   constructor(
     private configService: ConfigService,
@@ -104,12 +88,8 @@ export class EntityListComponent<T extends Entity>
     private sessionService: SessionService,
     private media: MediaObserver,
     private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private entityMapperService: EntityMapperService,
-    private entitySchemaService: EntitySchemaService
-  ) {
-    this.paginatorKey = getUrlWithoutParams(this.router);
-  }
+    private activatedRoute: ActivatedRoute
+  ) { }
 
   ngOnInit() {
     this.media.asObservable().subscribe((change: MediaChange[]) => {
@@ -123,20 +103,8 @@ export class EntityListComponent<T extends Entity>
           this.displayColumnGroup(this.defaultColumnGroup);
           break;
         }
-        case "lg":
-        case "xl": {
-          break;
-        }
       }
     });
-    this.user = this.sessionService.getCurrentUser();
-    // Use URl as key to save pagination settings
-    this.paginatorPageSize =
-      this.user.paginatorSettingsPageSize[this.paginatorKey] ||
-      this.paginatorPageSize;
-    this.paginatorPageIndex =
-      this.user.paginatorSettingsPageIndex[this.paginatorKey] ||
-      this.paginatorPageIndex;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -147,111 +115,25 @@ export class EntityListComponent<T extends Entity>
       this.filtersConfig = this.listConfig.filters || [];
       this.displayColumnGroup(this.defaultColumnGroup);
     }
-    if (changes.hasOwnProperty("entityList")) {
+    if (changes.hasOwnProperty("allEntities")) {
+      this.filteredEntities = this.allEntities;
       this.initFilterSelections();
-      this.initDefaultSort();
     }
     this.loadUrlParams();
   }
 
   private initColumns() {
-    const columns = this.listConfig.columns || [];
+    this.columns = this.listConfig.columns || [];
 
     const uniqueColumnIds = new Set<string>();
     this.listConfig?.columnGroups?.groups?.forEach((group) =>
       group.columns.forEach((column) => uniqueColumnIds.add(column))
     );
     uniqueColumnIds.forEach((columnId) => {
-      if (!columns.some((column) => column.id === columnId)) {
-        columns.push({ id: columnId });
+      if (!this.columns.some((column) => column.id === columnId)) {
+        this.columns.push({ id: columnId });
       }
     });
-
-    this.columns = columns.map((column) => {
-      try {
-        return this.createColumnDefinitions(column);
-      } catch (e) {
-        this.loggingService.warn(`Could not initialize column ${column.id}`);
-        throw e;
-      }
-    });
-  }
-
-  private createColumnDefinitions(column: FormFieldConfig): FormFieldConfig {
-    const propertySchema = this.entityConstructor.schema.get(column.id);
-    if (!column.view) {
-      column.view = this.entitySchemaService.getComponent(
-        propertySchema,
-        "view"
-      );
-    }
-    if (!column.placeholder) {
-      column.placeholder = propertySchema.labelShort || propertySchema.label;
-    }
-    return column;
-  }
-
-  private initDefaultSort() {
-    if (!this.sort || this.sort.active) {
-      // do not overwrite existing sort
-      return;
-    }
-
-    // initial sorting by first column
-    const sortBy = this.columnsToDisplay[0];
-    let sortDirection = "asc";
-    if (this.columns.find((c) => c.id === sortBy)?.view === "DisplayDate") {
-      // flip default sort order for dates (latest first)
-      sortDirection = "desc";
-    }
-
-    this.sort.sort({
-      id: sortBy,
-      start: sortDirection,
-    } as MatSortable);
-  }
-
-  ngAfterViewInit() {
-    this.entityDataSource.sort = this.sort;
-    this.entityDataSource.paginator = this.paginator;
-    // sort data according to it's label, if the data has a label
-    // (which it has when using configuration enum types)
-    // otherwise sort by default
-    this.entityDataSource.sortingDataAccessor = entityListSortingAccessor;
-    setTimeout(() => {
-      this.paginator.pageIndex = this.paginatorPageIndex;
-      this.paginator.page.next({
-        pageIndex: this.paginator.pageIndex,
-        pageSize: this.paginator.pageSize,
-        length: this.paginator.length,
-      });
-    });
-  }
-
-  onPaginateChange(event: PageEvent) {
-    this.paginatorPageSize = event.pageSize;
-    this.paginatorPageIndex = event.pageIndex;
-    this.updateUserPaginationSettings();
-  }
-
-  columnGroupClick(columnGroupName: string) {
-    this.displayColumnGroup(columnGroupName);
-    this.updateUrl("view", columnGroupName);
-  }
-
-  applyFilter(filterValue: string) {
-    filterValue = filterValue.trim();
-    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
-    this.entityDataSource.filter = filterValue;
-  }
-
-  onFilterOptionSelected(
-    filter: FilterComponentSettings<T>,
-    selectedOption: string
-  ) {
-    filter.selectedOption = selectedOption;
-    this.applyFilterSelections();
-    this.updateUrl(filter.filterSettings.name, selectedOption);
   }
 
   private initColumnGroups(columnGroup?: ColumnGroupsConfig) {
@@ -266,24 +148,6 @@ export class EntityListComponent<T extends Entity>
       ];
       this.defaultColumnGroup = "default";
       this.mobileColumnGroup = "default";
-    }
-  }
-
-  private updateUserPaginationSettings() {
-    // The PageSize is stored in the database, the PageList is only in memory
-    const hasChangesToBeSaved =
-      this.paginatorPageSize !==
-      this.user.paginatorSettingsPageSize[this.paginatorKey];
-
-    this.user.paginatorSettingsPageIndex[
-      this.paginatorKey
-    ] = this.paginatorPageIndex;
-    this.user.paginatorSettingsPageSize[
-      this.paginatorKey
-    ] = this.paginatorPageSize;
-
-    if (hasChangesToBeSaved) {
-      this.entityMapperService.save<User>(this.user);
     }
   }
 
@@ -304,6 +168,38 @@ export class EntityListComponent<T extends Entity>
     });
   }
 
+  columnGroupClick(columnGroupName: string) {
+    this.displayColumnGroup(columnGroupName);
+    this.updateUrl("view", columnGroupName);
+  }
+
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim();
+    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    this.entityTable.recordsDataSource.filter = filterValue;
+  }
+
+  filterOptionSelected(
+    filter: FilterComponentSettings<T>,
+    selectedOption: string
+  ) {
+    filter.selectedOption = selectedOption;
+    this.applyFilterSelections();
+    this.updateUrl(filter.filterSettings.name, selectedOption);
+  }
+
+  private applyFilterSelections() {
+    let filteredData = this.allEntities;
+
+    this.filterSelections.forEach((f) => {
+      filteredData = filteredData.filter(
+        f.filterSettings.getFilterFunction(f.selectedOption)
+      );
+    });
+
+    this.filteredEntities = filteredData;
+  }
+
   private updateUrl(key: string, value: string) {
     const params = {};
     params[key] = value;
@@ -312,18 +208,6 @@ export class EntityListComponent<T extends Entity>
       queryParams: params,
       queryParamsHandling: "merge",
     });
-  }
-
-  private applyFilterSelections() {
-    let filteredData = this.entityList;
-
-    this.filterSelections.forEach((f) => {
-      filteredData = filteredData.filter(
-        f.filterSettings.getFilterFunction(f.selectedOption)
-      );
-    });
-
-    this.entityDataSource.data = filteredData;
   }
 
   private initFilterSelections() {
@@ -359,7 +243,7 @@ export class EntityListComponent<T extends Entity>
           config as ConfigurableEnumFilterConfig<T>
         );
       default: {
-        const options = [...new Set(this.entityList.map((c) => c[config.id]))];
+        const options = [...new Set(this.allEntities.map((c) => c[config.id]))];
         return FilterSelection.generateOptions(options, config.id);
       }
     }
@@ -417,5 +301,9 @@ export class EntityListComponent<T extends Entity>
       this.columnsToDisplay = selectedColumns;
       this.selectedColumnGroup = columnGroupName;
     }
+  }
+
+  getNewRecordFactory(): () => T {
+    return () => new this.entityConstructor();
   }
 }

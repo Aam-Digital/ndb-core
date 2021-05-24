@@ -1,9 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { EntityListComponent } from "./entity-list.component";
-import { DisplayTextComponent } from "./view-components/display-text/display-text.component";
-import { DisplayDateComponent } from "./view-components/display-date/display-date.component";
-import { DisplayCheckmarkComponent } from "./view-components/display-checkmark/display-checkmark.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatIconModule } from "@angular/material/icon";
@@ -19,25 +16,12 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { FormsModule } from "@angular/forms";
 import { AdminModule } from "../../admin/admin.module";
 import { ViewModule } from "../../view/view.module";
-import { DisplayConfigurableEnumComponent } from "./view-components/display-configurable-enum/display-configurable-enum.component";
 import { ListFilterComponent } from "./list-filter/list-filter.component";
 import { PermissionsModule } from "../../permissions/permissions.module";
-import { ReadonlyFunctionComponent } from "./view-components/readonly-function/readonly-function.component";
-import { DisplayPercentageComponent } from "./view-components/display-percentage/display-percentage.component";
-import { DisplayUnitComponent } from "./view-components/display-unit/display-unit.component";
+import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
 
 @NgModule({
-  declarations: [
-    EntityListComponent,
-    DisplayTextComponent,
-    DisplayDateComponent,
-    DisplayConfigurableEnumComponent,
-    DisplayCheckmarkComponent,
-    ListFilterComponent,
-    ReadonlyFunctionComponent,
-    DisplayPercentageComponent,
-    DisplayUnitComponent,
-  ],
+  declarations: [ListFilterComponent, EntityListComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -57,16 +41,9 @@ import { DisplayUnitComponent } from "./view-components/display-unit/display-uni
     MatSortModule,
     MatPaginatorModule,
     PermissionsModule,
+    EntitySubrecordModule,
   ],
   exports: [EntityListComponent],
-  entryComponents: [
-    DisplayTextComponent,
-    DisplayDateComponent,
-    DisplayConfigurableEnumComponent,
-    DisplayCheckmarkComponent,
-    ReadonlyFunctionComponent,
-    DisplayPercentageComponent,
-    DisplayUnitComponent,
-  ],
+  entryComponents: [],
 })
 export class EntityListModule {}

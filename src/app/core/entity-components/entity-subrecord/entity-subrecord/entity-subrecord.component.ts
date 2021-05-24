@@ -9,20 +9,17 @@ import {
   ViewChild,
 } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { MatSort } from "@angular/material/sort";
+import { MatSort, MatSortable } from "@angular/material/sort";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
-import { ColumnDescriptionInputType } from "../column-description-input-type.enum";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { Entity } from "../../../entity/entity";
-import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { DatePipe } from "@angular/common";
 import { BehaviorSubject } from "rxjs";
-import { ComponentWithConfig } from "../component-with-config";
 import { entityListSortingAccessor } from "../../entity-list/sorting-accessor";
 import { FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-details/form/FormConfig";
@@ -74,36 +71,15 @@ export class EntitySubrecordComponent<T extends Entity>
    */
   @Input() newRecordFactory: () => T;
 
-  /**
-   * A Component to be used to display a detailed view or form of a single instance of the displayed entities.
-   * This is displayed as a modal (hovering) dialog above the active view and allows the user to get
-   * more information or more comfortable editing of a single record.
-   *
-   * Optionally this input can include a componentConfig property passing any values into the component,
-   * which has to implement the OnInitDynamicComponent interface to receive this config.
-   */
-  @Input() detailsComponent: ComponentWithConfig<T>;
+  @Input() editable: boolean = true;
 
-  /**
-   * Whether the records can be edited directly in the table.
-   */
-  @Input() disableEditingInline: boolean;
+  /** columns displayed in the template's table */
+  @Input() columnsToDisplay = [];
 
-  /**
-   * Whether an "Add" button to create a new entry should be displayed as part of the form.
-   * Default is "true".
-   */
-  @Input() showAddButton = true;
-
-  /**
-   * Event whenever an entity in this table is changed.
-   */
-  @Output() changedRecordsInEntitySubrecordEvent = new EventEmitter<any>();
+  @Output() rowClicked = new EventEmitter<T>();
 
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource<TableRow<T>>();
-  /** columns displayed in the template's table */
-  columnsToDisplay = [];
 
   private screenWidth = "";
 
@@ -115,7 +91,6 @@ export class EntitySubrecordComponent<T extends Entity>
     private _entityMapper: EntityMapperService,
     private _snackBar: MatSnackBar,
     private _confirmationDialog: ConfirmationDialogService,
-    private formDialog: FormDialogService,
     private alertService: AlertService,
     private datePipe: DatePipe,
     private media: MediaObserver,
@@ -167,6 +142,7 @@ export class EntitySubrecordComponent<T extends Entity>
 
   ngAfterViewInit() {
     this.recordsDataSource.sort = this.sort;
+    this.initDefaultSort();
     this.recordsDataSource.paginator = this.paginator;
     EntitySubrecordComponent.paginatorPageSize.subscribe((newPageSize) =>
       this.updatePagination(newPageSize)
@@ -175,6 +151,26 @@ export class EntitySubrecordComponent<T extends Entity>
       row: TableRow<T>,
       id: string
     ) => entityListSortingAccessor(row.record, id);
+  }
+
+  private initDefaultSort() {
+    if (!this.sort || this.sort.active) {
+      // do not overwrite existing sort
+      return;
+    }
+
+    // initial sorting by first column
+    const sortBy = this.columnsToDisplay[0];
+    let sortDirection = "asc";
+    if (this.columns.find((c) => c.id === sortBy)?.view === "DisplayDate") {
+      // flip default sort order for dates (latest first)
+      sortDirection = "desc";
+    }
+
+    this.sort.sort({
+      id: sortBy,
+      start: sortDirection,
+    } as MatSortable);
   }
 
   /**
@@ -227,7 +223,6 @@ export class EntitySubrecordComponent<T extends Entity>
     try {
       await this.entityFormService.saveChanges(row.formGroup, row.record);
       row.formGroup.disable();
-      this.changedRecordsInEntitySubrecordEvent.emit();
     } catch (err) {
       this.alertService.addDanger(err.message);
     }
@@ -239,16 +234,6 @@ export class EntitySubrecordComponent<T extends Entity>
    */
   resetChanges(row: TableRow<T>) {
     row.formGroup = null;
-  }
-
-  private removeFromDataTable(row: TableRow<T>) {
-    const index = this.records.findIndex(
-      (a) => a.getId() === row.record.getId()
-    );
-    if (index > -1) {
-      this.records.splice(index, 1);
-      this.initFormGroups();
-    }
   }
 
   /**
@@ -263,10 +248,9 @@ export class EntitySubrecordComponent<T extends Entity>
 
     dialogRef.afterClosed().subscribe((confirmed) => {
       if (confirmed) {
-        this._entityMapper.remove(row.record).then(() => {
-          this.changedRecordsInEntitySubrecordEvent.emit();
-        });
-        this.removeFromDataTable(row);
+        this._entityMapper
+          .remove(row.record)
+          .then(() => this.removeFromDataTable(row));
 
         const snackBarRef = this._snackBar.open("Record deleted", "Undo", {
           duration: 8000,
@@ -278,6 +262,16 @@ export class EntitySubrecordComponent<T extends Entity>
         });
       }
     });
+  }
+
+  private removeFromDataTable(row: TableRow<T>) {
+    const index = this.records.findIndex(
+      (a) => a.getId() === row.record.getId()
+    );
+    if (index > -1) {
+      this.records.splice(index, 1);
+      this.initFormGroups();
+    }
   }
 
   /**
@@ -305,13 +299,8 @@ export class EntitySubrecordComponent<T extends Entity>
     this.records.unshift(newRecord);
     this.recordsDataSource.data = [newRow].concat(this.recordsDataSource.data);
 
-    if (this.detailsComponent === undefined) {
-      // edit inline in table
-      newRow.formGroup.enable();
-    } else {
-      // open in modal for comfortable editing
-      this.showRecord(newRow);
-    }
+    newRow.formGroup.enable();
+    this.rowClicked.emit(newRecord);
   }
 
   /**
@@ -319,23 +308,9 @@ export class EntitySubrecordComponent<T extends Entity>
    * @param row The entity whose details should be displayed.
    */
   showRecord(row: TableRow<T>) {
-    if (this.detailsComponent === undefined || row.formGroup.enabled) {
-      return;
+    if (!row.formGroup || row.formGroup.disabled) {
+      this.rowClicked.emit(row.record);
     }
-    this.formDialog.openDialog(
-      this.detailsComponent.component,
-      row.record,
-      this.detailsComponent.componentConfig
-    );
-  }
-
-  autocompleteSearch(col, input) {
-    if (col.allSelectValues === undefined) {
-      col.allSelectValues = col.selectValues;
-    }
-    col.selectValues = col.allSelectValues.filter(
-      (v) => v.value.includes(input) || v.label.includes(input)
-    );
   }
 
   /**
@@ -387,17 +362,5 @@ export class EntitySubrecordComponent<T extends Entity>
       }
     }
     return returnVal;
-  }
-
-  /**
-   * Checks whether the given column configuration's input type is readonly
-   * and therefore not changing its template in edit mode.
-   * @param inputType The input type to be checked.
-   */
-  isReadonlyInputType(inputType: ColumnDescriptionInputType): boolean {
-    return (
-      inputType === ColumnDescriptionInputType.FUNCTION ||
-      inputType === ColumnDescriptionInputType.READONLY
-    );
   }
 }
