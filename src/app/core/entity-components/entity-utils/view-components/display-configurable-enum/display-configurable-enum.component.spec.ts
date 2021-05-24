@@ -5,7 +5,7 @@ import { Note } from "../../../../../child-dev-project/notes/model/note";
 describe("DisplayConfigurableEnumComponent", () => {
   let component: DisplayConfigurableEnumComponent;
   let fixture: ComponentFixture<DisplayConfigurableEnumComponent>;
-  let note = new Note();
+  const note = new Note();
   note.category = { id: "testCategory", label: "Test Category" };
 
   beforeEach(

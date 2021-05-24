@@ -8,4 +8,4 @@ import { ViewComponent } from "../view-component";
   selector: "app-display-text",
   template: `{{ entity[property] }}`,
 })
-export class DisplayTextComponent extends ViewComponent{}
+export class DisplayTextComponent extends ViewComponent {}

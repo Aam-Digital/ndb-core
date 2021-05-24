@@ -20,7 +20,7 @@ export class EducationalMaterialComponent
   materialTypes = EducationalMaterial.MATERIAL_ALL;
 
   columns: FormFieldConfig[] = [
-    { id: "date"  },
+    { id: "date" },
     { id: "materialType" },
     { id: "materialAmount" },
     { id: "description" },

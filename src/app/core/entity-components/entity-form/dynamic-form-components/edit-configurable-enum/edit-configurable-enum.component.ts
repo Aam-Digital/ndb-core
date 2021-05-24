@@ -9,8 +9,10 @@ import { ConfigurableEnumValue } from "../../../../configurable-enum/configurabl
 })
 export class EditConfigurableEnumComponent extends EditComponent<ConfigurableEnumValue> {
   enumId: string;
+
   onInitFromDynamicConfig(config: EditPropertyConfig) {
     super.onInitFromDynamicConfig(config);
-    this.enumId = config.formFieldConfig.additional || config.propertySchema.innerDataType;
+    this.enumId =
+      config.formFieldConfig.additional || config.propertySchema.innerDataType;
   }
 }
