@@ -131,15 +131,21 @@ export class EntitySubrecordComponent<T extends Entity>
       };
     });
     if (this.records.length > 0) {
-      this.entityFormService.extendFormFieldConfig(
-        this.columns,
-        this.records[0],
-        true
-      );
+      try {
+        this.entityFormService.extendFormFieldConfig(
+          this.columns,
+          this.records[0],
+          true
+        );
+      } catch (err) {
+        this.alertService.addWarning(`Error creating form definitions: ${err}`);
+      }
     }
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit() {}
+
+  private initDefaultSort() {
     this.recordsDataSource.sort = this.sort;
     this.recordsDataSource.paginator = this.paginator;
     EntitySubrecordComponent.paginatorPageSize.subscribe((newPageSize) =>
@@ -149,9 +155,6 @@ export class EntitySubrecordComponent<T extends Entity>
       row: TableRow<T>,
       id: string
     ) => entityListSortingAccessor(row.record, id);
-  }
-
-  private initDefaultSort() {
     if (!this.sort || this.sort.active) {
       // do not overwrite existing sort
       return;

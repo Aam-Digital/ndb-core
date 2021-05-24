@@ -12,6 +12,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { ConfigurableEnumValue } from "../../../configurable-enum/configurable-enum.interface";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { Note } from "../../../../child-dev-project/notes/model/note";
+import { AlertService } from "../../../alerts/alert.service";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -129,8 +130,9 @@ describe("EntitySubrecordComponent", () => {
     ];
 
     component.ngOnChanges({
-      entityList: new SimpleChange(undefined, children, true),
+      records: new SimpleChange(undefined, children, true),
     });
+    fixture.detectChanges();
 
     const sortedChildren = component.recordsDataSource
       ._orderData(
@@ -154,7 +156,7 @@ describe("EntitySubrecordComponent", () => {
     children[3].name = "AB";
     children[2].name = "Z";
     children[1].name = "C";
-    component.records = children;
+    component.ngOnChanges({ records: null });
     component.sort.sort({ id: "name", start: "asc", disableClear: false });
 
     const sortedIds = component.recordsDataSource
@@ -175,7 +177,8 @@ describe("EntitySubrecordComponent", () => {
     notes[3].category = { id: "1", label: "AB" };
     notes[2].category = { id: "2", label: "Z" };
     notes[1].category = { id: "3", label: "C" };
-    component.records = notes;
+    component.ngOnChanges({ records: null });
+
     component.sort.sort({ id: "category", start: "asc", disableClear: false });
     const sortedIds = component.recordsDataSource
       .sortData(
@@ -187,5 +190,23 @@ describe("EntitySubrecordComponent", () => {
       .map((note) => note.record.getId());
 
     expect(sortedIds).toEqual(["0", "3", "1", "2"]);
+  });
+
+  it("should log an error when the column definition can not be initialized", () => {
+    const alertService = TestBed.inject(AlertService);
+    spyOn(alertService, "addWarning");
+    component.records = [new Child()];
+    component.columns = [
+      {
+        id: "correctColumn",
+        placeholder: "Predefined Title",
+        view: "DisplayDate",
+      },
+      { id: "notExistentColumn" },
+    ];
+
+    component.ngOnChanges({ columns: null });
+
+    expect(alertService.addWarning).toHaveBeenCalled();
   });
 });

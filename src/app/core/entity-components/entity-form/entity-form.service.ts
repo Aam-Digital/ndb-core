@@ -21,20 +21,32 @@ export class EntityFormService {
     forTable = false
   ) {
     formFields.forEach((formField) => {
-      const propertySchema = entity.getSchema().get(formField.id);
-      formField.input =
-        formField.input ||
-        this.entitySchemaService.getComponent(propertySchema, "edit");
-      formField.view =
-        formField.view ||
-        this.entitySchemaService.getComponent(propertySchema, "view");
-      formField.placeholder = formField.placeholder || propertySchema.label;
-      if (forTable) {
-        formField.forTable = true;
-        formField.placeholder =
-          propertySchema?.labelShort || formField.placeholder;
+      try {
+        this.addFormFields(formField, entity, forTable);
+      } catch (err) {
+        console.log(`Could not create form config for ${formField.id}: ${err}`);
+        throw new Error(
+          `Could not create form config for ${formField.id}: ${err}`
+        );
       }
     });
+  }
+
+  private addFormFields(formField: FormFieldConfig, entity: Entity, forTable) {
+    const propertySchema = entity.getSchema().get(formField.id);
+    formField.input =
+      formField.input ||
+      this.entitySchemaService.getComponent(propertySchema, "edit");
+    formField.view =
+      formField.view ||
+      this.entitySchemaService.getComponent(propertySchema, "view");
+    console.log("form", formField.id);
+    formField.placeholder = formField.placeholder || propertySchema.label;
+    if (forTable) {
+      formField.forTable = true;
+      formField.placeholder =
+        propertySchema?.labelShort || formField.placeholder;
+    }
   }
 
   public createFormGroup(

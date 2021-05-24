@@ -25,6 +25,8 @@ import { EntityListModule } from "./entity-list.module";
 import { Angulartics2Module } from "angulartics2";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DatabaseField } from "../../entity/database-field.decorator";
+import { ReactiveFormsModule } from "@angular/forms";
+import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -32,12 +34,14 @@ describe("EntityListComponent", () => {
   const testConfig: EntityListConfig = {
     title: "Children List",
     columns: [
-      { view: "DisplayText", placeholder: "Class", id: "schoolClass" },
-      { view: "DisplayEntity", placeholder: "School", id: "schoolId" },
+      { view: "DisplayText", placeholder: "Age", id: "age" },
       {
         view: "RecentAttendanceBlocks",
         placeholder: "Attendance (School)",
         id: "school",
+        additional: {
+          filterByActivityType: "SCHOOL_CLASS",
+        },
       },
     ],
     columnGroups: {
@@ -46,11 +50,11 @@ describe("EntityListComponent", () => {
       groups: [
         {
           name: "Basic Info",
-          columns: ["projectNumber", "name", "age"],
+          columns: ["projectNumber", "name", "age", "gender", "religion"],
         },
         {
           name: "School Info",
-          columns: ["name", "schoolClass", "schoolId", "school"],
+          columns: ["name", "age", "school"],
         },
       ],
     },
@@ -77,6 +81,7 @@ describe("EntityListComponent", () => {
   let mockSessionService: jasmine.SpyObj<SessionService>;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let mockEntitySchemaService: jasmine.SpyObj<EntitySchemaService>;
+  let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
 
   beforeEach(
     waitForAsync(() => {
@@ -89,6 +94,14 @@ describe("EntityListComponent", () => {
         "getComponent",
         "registerSchemaDatatype",
       ]);
+      mockAttendanceService = jasmine.createSpyObj([
+        "getActivitiesForChild",
+        "getAllActivityAttendancesForPeriod",
+      ]);
+      mockAttendanceService.getActivitiesForChild.and.resolveTo([]);
+      mockAttendanceService.getAllActivityAttendancesForPeriod.and.resolveTo(
+        []
+      );
 
       TestBed.configureTestingModule({
         declarations: [EntityListComponent, ExportDataComponent],
@@ -97,6 +110,7 @@ describe("EntityListComponent", () => {
           NoopAnimationsModule,
           EntityListModule,
           Angulartics2Module.forRoot(),
+          ReactiveFormsModule,
           RouterTestingModule.withRoutes([
             { path: "child", component: ChildrenListComponent },
           ]),
@@ -109,6 +123,7 @@ describe("EntityListComponent", () => {
           { provide: LoggingService, useValue: mockLoggingService },
           { provide: BackupService, useValue: {} },
           { provide: EntitySchemaService, useValue: mockEntitySchemaService },
+          { provide: AttendanceService, useValue: mockAttendanceService },
         ],
       }).compileComponents();
     })
@@ -120,7 +135,7 @@ describe("EntityListComponent", () => {
     component.listConfig = testConfig;
     component.entityConstructor = Child;
     component.ngOnChanges({
-      entityList: new SimpleChange(null, component.allEntities, false),
+      allEntities: new SimpleChange(null, component.allEntities, false),
       listConfig: new SimpleChange(null, component.listConfig, false),
     });
     fixture.detectChanges();
@@ -157,9 +172,7 @@ describe("EntityListComponent", () => {
     child1.status = "Dropout";
     const child2 = new Child("activeId");
     component.allEntities = [child1, child2];
-    component.ngOnChanges({
-      entityList: new SimpleChange(false, component.allEntities, false),
-    });
+    component.ngOnChanges({ allEntities: null });
     setTimeout(() => {
       const activeFs = component.filterSelections[0];
       component.filterOptionSelected(activeFs, clickedOption);
@@ -174,12 +187,15 @@ describe("EntityListComponent", () => {
   });
 
   it("should navigate to the correct url params when clicking  a filter", () => {
-    const router = fixture.debugElement.injector.get(Router);
+    const router = TestBed.inject(Router);
     spyOn(router, "navigate");
+    console.log("component", component.filterSelections);
     const dropoutFs = component.filterSelections[0];
     const clickedOption = (testConfig.filters[0] as BooleanFilterConfig).false;
-    const route = fixture.debugElement.injector.get(ActivatedRoute);
+    const route = TestBed.inject(ActivatedRoute);
+
     component.filterOptionSelected(dropoutFs, clickedOption);
+
     const expectedParams = {};
     expectedParams[dropoutFs.filterSettings.name] = clickedOption;
     expect(router.navigate).toHaveBeenCalledWith([], {
@@ -189,35 +205,11 @@ describe("EntityListComponent", () => {
     });
   });
 
-  it("should filter a list of children", (done) => {
-    const child1 = new Child("something");
-    const child2 = new Child("uniqueString");
-    component.allEntities = [child1, child2];
-    component.ngOnChanges({
-      entityList: new SimpleChange(false, component.allEntities, false),
-    });
-    setTimeout(() => {
-      component.applyFilter("     UnIquEString    ");
-      expect(component.entityTable.recordsDataSource.filter).toEqual(
-        "uniquestring"
-      );
-      expect(
-        component.entityTable.recordsDataSource.filteredData.length
-      ).toEqual(1);
-      expect(
-        component.entityTable.recordsDataSource.filteredData[0].record
-      ).toEqual(child2);
-      done();
-    });
-  });
-
   it("correctly create dropdown and selection filters if values are present", fakeAsync(() => {
     const child = new Child();
     child.religion = "muslim";
     component.allEntities = [child];
-    component.ngOnChanges({
-      entityList: new SimpleChange(false, component.allEntities, false),
-    });
+    component.ngOnChanges({ allEntities: null });
     expect(component.filterSelections.length).toEqual(2);
     expect(
       component.filterSelections
@@ -238,7 +230,7 @@ describe("EntityListComponent", () => {
     };
     component.ngOnChanges({
       listConfig: new SimpleChange(false, component.listConfig, false),
-      entityList: new SimpleChange(false, component.allEntities, false),
+      allEntities: new SimpleChange(false, component.allEntities, false),
     });
     expect(component.columnGroups).toEqual([
       { name: "default", columns: testConfig.columns.map((c) => c.id) },
@@ -276,43 +268,8 @@ describe("EntityListComponent", () => {
 
     component.ngOnChanges({ listConfig: null });
 
-    expect(component.columns).toEqual(
-      jasmine.arrayWithExactContents([
-        {
-          title: "Test Property",
-          id: "testProperty",
-          view: "DisplayText",
-        },
-        {
-          title: "Predefined Title",
-          id: "anotherColumn",
-          view: "DisplayDate",
-        },
-      ])
+    expect(component.columns.map((col) => col.id)).toEqual(
+      jasmine.arrayWithExactContents(["testProperty", "anotherColumn"])
     );
-  });
-
-  it("should log an error when the column definition can not be initialized", () => {
-    component.listConfig = {
-      title: "",
-      columns: [
-        {
-          id: "correctColumn",
-          placeholder: "Predefined Title",
-          view: "DisplayDate",
-        },
-      ],
-      columnGroups: {
-        groups: [
-          {
-            name: "Invalid Group",
-            columns: ["correctColumn", "notExistentColumn"],
-          },
-        ],
-      },
-    };
-
-    expect(() => component.ngOnChanges({ listConfig: null })).toThrowError();
-    expect(mockLoggingService.warn).toHaveBeenCalled();
   });
 });
