@@ -5,7 +5,7 @@ import {
   waitForAsync,
 } from "@angular/core/testing";
 import { EntityListComponent } from "./entity-list.component";
-import { CommonModule } from "@angular/common";
+import { CommonModule, DatePipe } from "@angular/common";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { RouterTestingModule } from "@angular/router/testing";
 import { SimpleChange } from "@angular/core";
@@ -18,7 +18,6 @@ import { SessionService } from "../../session/session-service/session.service";
 import { ExportDataComponent } from "../../admin/export-data/export-data.component";
 import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { Note } from "../../../child-dev-project/notes/model/note";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
 import { BackupService } from "../../admin/services/backup.service";
@@ -33,16 +32,11 @@ describe("EntityListComponent", () => {
   const testConfig: EntityListConfig = {
     title: "Children List",
     columns: [
-      { component: "DisplayText", title: "PN", id: "projectNumber" },
-      { component: "ChildBlock", title: "Name", id: "name" },
-      { component: "DisplayText", title: "Age", id: "age" },
-      { component: "DisplayDate", title: "DoB", id: "dateOfBirth" },
-      { component: "DisplayText", title: "Gender", id: "gender" },
-      { component: "DisplayText", title: "Class", id: "schoolClass" },
-      { component: "DisplayEntity", title: "School", id: "schoolId" },
+      { view: "DisplayText", placeholder: "Class", id: "schoolClass" },
+      { view: "DisplayEntity", placeholder: "School", id: "schoolId" },
       {
-        component: "RecentAttendanceBlocks",
-        title: "Attendance (School)",
+        view: "RecentAttendanceBlocks",
+        placeholder: "Attendance (School)",
         id: "school",
       },
     ],
@@ -91,7 +85,10 @@ describe("EntityListComponent", () => {
       mockConfigService = jasmine.createSpyObj(["getConfig"]);
       mockLoggingService = jasmine.createSpyObj(["warn"]);
       mockEntityMapper = jasmine.createSpyObj(["save"]);
-      mockEntitySchemaService = jasmine.createSpyObj(["getComponent"]);
+      mockEntitySchemaService = jasmine.createSpyObj([
+        "getComponent",
+        "registerSchemaDatatype",
+      ]);
 
       TestBed.configureTestingModule({
         declarations: [EntityListComponent, ExportDataComponent],
@@ -105,6 +102,7 @@ describe("EntityListComponent", () => {
           ]),
         ],
         providers: [
+          DatePipe,
           { provide: SessionService, useValue: mockSessionService },
           { provide: ConfigService, useValue: mockConfigService },
           { provide: EntityMapperService, useValue: mockEntityMapper },
@@ -164,13 +162,13 @@ describe("EntityListComponent", () => {
     });
     setTimeout(() => {
       const activeFs = component.filterSelections[0];
-      component.onFilterOptionSelected(activeFs, clickedOption);
+      component.filterOptionSelected(activeFs, clickedOption);
       expect(component.filterSelections[0].selectedOption).toEqual(
         clickedOption
       );
       expect(component.allEntities.length).toEqual(2);
-      expect(component.entityDataSource.data.length).toEqual(1);
-      expect(component.entityDataSource.data[0]).toEqual(child1);
+      expect(component.filteredEntities.length).toEqual(1);
+      expect(component.filteredEntities[0]).toEqual(child1);
       done();
     });
   });
@@ -181,7 +179,7 @@ describe("EntityListComponent", () => {
     const dropoutFs = component.filterSelections[0];
     const clickedOption = (testConfig.filters[0] as BooleanFilterConfig).false;
     const route = fixture.debugElement.injector.get(ActivatedRoute);
-    component.onFilterOptionSelected(dropoutFs, clickedOption);
+    component.filterOptionSelected(dropoutFs, clickedOption);
     const expectedParams = {};
     expectedParams[dropoutFs.filterSettings.name] = clickedOption;
     expect(router.navigate).toHaveBeenCalledWith([], {
@@ -200,9 +198,15 @@ describe("EntityListComponent", () => {
     });
     setTimeout(() => {
       component.applyFilter("     UnIquEString    ");
-      expect(component.entityDataSource.filter).toEqual("uniquestring");
-      expect(component.entityDataSource.filteredData.length).toEqual(1);
-      expect(component.entityDataSource.filteredData[0]).toEqual(child2);
+      expect(component.entityTable.recordsDataSource.filter).toEqual(
+        "uniquestring"
+      );
+      expect(
+        component.entityTable.recordsDataSource.filteredData.length
+      ).toEqual(1);
+      expect(
+        component.entityTable.recordsDataSource.filteredData[0].record
+      ).toEqual(child2);
       done();
     });
   });
@@ -247,87 +251,6 @@ describe("EntityListComponent", () => {
     expect(component.filterSelections).toEqual([]);
   });
 
-  it("should apply default sort on first column", async () => {
-    const children = [Child.create("C"), Child.create("A"), Child.create("B")];
-    component.columnsToDisplay = ["name", "projectNumber"];
-    component.allEntities = children;
-
-    // trigger ngOnChanges for manually updated property
-    component.ngOnChanges({
-      entityList: new SimpleChange(undefined, children, true),
-    });
-
-    expect(
-      component.entityDataSource._orderData(children).map((c) => c["name"])
-    ).toEqual(["A", "B", "C"]);
-  });
-
-  it("should apply default sort on first column, ordering dates descending", async () => {
-    const children = [Child.create("0"), Child.create("1"), Child.create("2")];
-    children[0].admissionDate = new Date(2010, 1, 1);
-    children[1].admissionDate = new Date(2011, 1, 1);
-    children[2].admissionDate = new Date(2012, 1, 1);
-
-    component.columnsToDisplay = ["admissionDate", "name"];
-    component.allEntities = children;
-    // define the columns to mark "admissionDate" as a Date value
-    component.columns = [
-      {
-        component: "DisplayDate",
-        title: "Admission",
-        id: "admissionDate",
-      },
-      {
-        component: "DisplayText",
-        title: "Name",
-        id: "name",
-      },
-    ];
-
-    // trigger ngOnChanges for manually updated property
-    component.ngOnChanges({
-      entityList: new SimpleChange(undefined, children, true),
-    });
-
-    expect(
-      component.entityDataSource._orderData(children).map((c) => c["name"])
-    ).toEqual(["2", "1", "0"]);
-  });
-
-  it("should sort standard objects", () => {
-    const children = [
-      new Child("0"),
-      new Child("1"),
-      new Child("2"),
-      new Child("3"),
-    ];
-    children[0].name = "AA";
-    children[3].name = "AB";
-    children[2].name = "Z";
-    children[1].name = "C";
-    component.allEntities = children;
-    component.sort.sort({ id: "name", start: "asc", disableClear: false });
-    const sortedIds = component.entityDataSource
-      .sortData(children, component.sort)
-      .map((value) => value.getId());
-    expect(sortedIds).toEqual(["0", "3", "1", "2"]);
-  });
-
-  it("should sort non-standard objects", () => {
-    const notes = [new Note("0"), new Note("1"), new Note("2"), new Note("3")];
-    notes[0].category = { id: "0", label: "AA" };
-    notes[3].category = { id: "1", label: "AB" };
-    notes[2].category = { id: "2", label: "Z" };
-    notes[1].category = { id: "3", label: "C" };
-    component.ngOnInit();
-    component.allEntities = notes;
-    component.sort.sort({ id: "category", start: "asc", disableClear: false });
-    const sortedIds = component.entityDataSource
-      .sortData(notes, component.sort)
-      .map((note) => note.getId());
-    expect(sortedIds).toEqual(["0", "3", "1", "2"]);
-  });
-
   it("should add and initialize columns which are only mentioned in the columnGroups", () => {
     class Test extends Entity {
       @DatabaseField({ label: "Test Property" }) testProperty: string;
@@ -339,8 +262,8 @@ describe("EntityListComponent", () => {
       columns: [
         {
           id: "anotherColumn",
-          title: "Predefined Title",
-          component: "DisplayDate",
+          placeholder: "Predefined Title",
+          view: "DisplayDate",
         },
       ],
       columnGroups: {
@@ -358,12 +281,12 @@ describe("EntityListComponent", () => {
         {
           title: "Test Property",
           id: "testProperty",
-          component: "DisplayText",
+          view: "DisplayText",
         },
         {
           title: "Predefined Title",
           id: "anotherColumn",
-          component: "DisplayDate",
+          view: "DisplayDate",
         },
       ])
     );
@@ -375,8 +298,8 @@ describe("EntityListComponent", () => {
       columns: [
         {
           id: "correctColumn",
-          title: "Predefined Title",
-          component: "DisplayDate",
+          placeholder: "Predefined Title",
+          view: "DisplayDate",
         },
       ],
       columnGroups: {

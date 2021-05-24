@@ -14,7 +14,6 @@ import { EntityModule } from "../../entity/entity.module";
 import { AlertsModule } from "../../alerts/alerts.module";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatButtonModule } from "@angular/material/button";
-import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ViewModule } from "../../view/view.module";
 import { ReactiveFormsModule } from "@angular/forms";
@@ -37,7 +36,6 @@ import { ConfirmationDialogModule } from "../../confirmation-dialog/confirmation
     MatAutocompleteModule,
     MatIconModule,
     MatButtonModule,
-    ConfigurableEnumModule,
     MatTooltipModule,
     ViewModule,
     ReactiveFormsModule,

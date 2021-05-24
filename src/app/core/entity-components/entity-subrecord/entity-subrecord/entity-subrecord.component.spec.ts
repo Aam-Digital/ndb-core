@@ -4,13 +4,14 @@ import { EntitySubrecordComponent } from "./entity-subrecord.component";
 import { RouterTestingModule } from "@angular/router/testing";
 import { EntitySubrecordModule } from "../entity-subrecord.module";
 import { Entity } from "../../../entity/entity";
-import { By } from "@angular/platform-browser";
 import { SimpleChange } from "@angular/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatNativeDateModule } from "@angular/material/core";
 import { DatePipe, PercentPipe } from "@angular/common";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { ConfigurableEnumValue } from "../../../configurable-enum/configurable-enum.interface";
+import { Child } from "../../../../child-dev-project/children/model/child";
+import { Note } from "../../../../child-dev-project/notes/model/note";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -45,113 +46,6 @@ describe("EntitySubrecordComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
-  });
-
-  it("displays empty text instead of 'undefined' in textbox", () => {
-    component.records = [
-      Object.assign(new Entity(), { text: "foo", textarea: "foo" }),
-      Object.assign(new Entity(), { text: undefined, textarea: undefined }),
-    ];
-
-    component.columns = [
-      {
-        id: "text",
-        placeholder: "Test text",
-        view: "DisplayText",
-        edit: "EditText",
-      },
-      {
-        id: "textarea",
-        placeholder: "Test textarea",
-        view: "DisplayText",
-        edit: "EditLongText",
-      },
-    ];
-    component.ngOnChanges({
-      records: new SimpleChange(undefined, component.records, true),
-      columns: new SimpleChange(undefined, component.columns, true),
-    });
-
-    component.edit(component.recordsDataSource.data[0]);
-    component.edit(component.recordsDataSource.data[1]);
-    fixture.detectChanges();
-
-    const inputFields = fixture.debugElement.queryAll(By.css("input"));
-    expect(inputFields[0].nativeElement.value).toBe("foo");
-    expect(inputFields[1].nativeElement.value).toBe("");
-
-    const textareaFields = fixture.debugElement.queryAll(By.css("textarea"));
-    expect(textareaFields[0].nativeElement.value).toBe("foo");
-    expect(textareaFields[1].nativeElement.value).toBe("");
-  });
-
-  it("apply formatter function to values in read mode if formatter is given", () => {
-    component.records = [
-      Object.assign(new Entity(), { simple: 0.9, percent: 0.9 }),
-    ];
-
-    component.columns = [
-      {
-        id: "simple",
-        placeholder: "Test simple",
-        view: "DisplayText",
-      },
-      {
-        id: "percent",
-        placeholder: "Test formatted",
-        view: "DisplayText",
-        // valueFunction: (entity) => entity["percent"] * 100 + "%",
-      },
-    ];
-    component.ngOnChanges({
-      records: new SimpleChange(undefined, component.records, true),
-      columns: new SimpleChange(undefined, component.columns, true),
-    });
-    fixture.detectChanges();
-
-    const tdColumns = fixture.debugElement.queryAll(By.css("td"));
-    expect(tdColumns[0].nativeElement.innerText).toBe("0.9");
-    expect(tdColumns[1].nativeElement.innerText).toBe("90%");
-  });
-
-  it("formats MONTH, DATE and CONFIGURABLE_ENUM automatically", () => {
-    component.records = [
-      Object.assign(new Entity(), {
-        month: new Date("2020-01-01"),
-        day: new Date("2020-01-23"),
-        configurableEnum: { label: "enum label", id: "enumId" },
-      }),
-    ];
-
-    component.columns = [
-      {
-        id: "month",
-        placeholder: "Test month",
-        view: "DisplayDate",
-        additional: "YYYY-MM",
-      },
-      {
-        id: "day",
-        placeholder: "Test day",
-        view: "DisplayDate",
-        additional: "YYYY-MM-dd",
-      },
-      {
-        id: "configurableEnum",
-        placeholder: "Test Configurable Enum",
-        view: "DisplayConfigurableEnum",
-      },
-    ];
-    component.ngOnChanges({
-      records: new SimpleChange(undefined, component.records, true),
-      columns: new SimpleChange(undefined, component.columns, true),
-    });
-    fixture.detectChanges();
-
-    const tdColumns = fixture.debugElement.queryAll(By.css("td"));
-    expect(tdColumns[0].nativeElement.innerText).toBe("2020-01");
-    expect(tdColumns[1].nativeElement.innerText).toBe("2020-01-23");
-    expect(tdColumns[2].nativeElement.innerText).toBe("enum label");
   });
 
   it("should sort enums by the label", () => {
@@ -189,5 +83,109 @@ describe("EntitySubrecordComponent", () => {
       .sortData(component.recordsDataSource.data, component.sort)
       .map((row) => row.record);
     expect(sortedData).toEqual([first, second, third]);
+  });
+
+  it("should apply default sort on first column", async () => {
+    const children = [Child.create("C"), Child.create("A"), Child.create("B")];
+    component.columnsToDisplay = ["name", "projectNumber"];
+    component.records = children;
+    // trigger ngOnChanges for manually updated property
+    component.ngOnChanges({
+      records: new SimpleChange(undefined, children, true),
+    });
+
+    const sortedChildren = component.recordsDataSource
+      .sortData(
+        children.map((child) => {
+          return { record: child };
+        }),
+        component.sort
+      )
+      .map((c) => c.record["name"]);
+
+    expect(sortedChildren).toEqual(["A", "B", "C"]);
+  });
+
+  it("should apply default sort on first column, ordering dates descending", async () => {
+    const children = [Child.create("0"), Child.create("1"), Child.create("2")];
+    children[0].admissionDate = new Date(2010, 1, 1);
+    children[1].admissionDate = new Date(2011, 1, 1);
+    children[2].admissionDate = new Date(2012, 1, 1);
+
+    component.columnsToDisplay = ["admissionDate", "name"];
+    component.records = children;
+    // define the columns to mark "admissionDate" as a Date value
+    component.columns = [
+      {
+        view: "DisplayDate",
+        placeholder: "Admission",
+        id: "admissionDate",
+      },
+      {
+        view: "DisplayText",
+        placeholder: "Name",
+        id: "name",
+      },
+    ];
+
+    component.ngOnChanges({
+      entityList: new SimpleChange(undefined, children, true),
+    });
+
+    const sortedChildren = component.recordsDataSource
+      ._orderData(
+        children.map((child) => {
+          return { record: child };
+        })
+      )
+      .map((c) => c.record["name"]);
+
+    expect(sortedChildren).toEqual(["2", "1", "0"]);
+  });
+
+  it("should sort standard objects", () => {
+    const children = [
+      new Child("0"),
+      new Child("1"),
+      new Child("2"),
+      new Child("3"),
+    ];
+    children[0].name = "AA";
+    children[3].name = "AB";
+    children[2].name = "Z";
+    children[1].name = "C";
+    component.records = children;
+    component.sort.sort({ id: "name", start: "asc", disableClear: false });
+
+    const sortedIds = component.recordsDataSource
+      .sortData(
+        children.map((child) => {
+          return { record: child };
+        }),
+        component.sort
+      )
+      .map((c) => c.record.getId());
+
+    expect(sortedIds).toEqual(["0", "3", "1", "2"]);
+  });
+
+  it("should sort non-standard objects", () => {
+    const notes = [new Note("0"), new Note("1"), new Note("2"), new Note("3")];
+    notes[0].category = { id: "0", label: "AA" };
+    notes[3].category = { id: "1", label: "AB" };
+    notes[2].category = { id: "2", label: "Z" };
+    notes[1].category = { id: "3", label: "C" };
+    component.records = notes;
+    component.sort.sort({ id: "category", start: "asc", disableClear: false });
+    const sortedIds = component.recordsDataSource
+      .sortData(
+        notes.map((note) => {
+          return { record: note };
+        }),
+        component.sort
+      )
+      .map((note) => note.record.getId());
+
+    expect(sortedIds).toEqual(["0", "3", "1", "2"]);
   });
 });

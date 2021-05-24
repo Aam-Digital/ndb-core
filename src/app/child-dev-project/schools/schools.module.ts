@@ -1,5 +1,5 @@
 import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { CommonModule, DatePipe } from "@angular/common";
 import { SchoolsListComponent } from "./schools-list/schools-list.component";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatButtonModule } from "@angular/material/button";
@@ -75,7 +75,7 @@ import { EntityListModule } from "../../core/entity-components/entity-list/entit
     ChildrenOverviewComponent,
   ],
   exports: [SchoolBlockComponent],
-  providers: [SchoolsService],
+  providers: [SchoolsService, DatePipe],
   entryComponents: [SchoolBlockComponent],
 })
 export class SchoolsModule {}
