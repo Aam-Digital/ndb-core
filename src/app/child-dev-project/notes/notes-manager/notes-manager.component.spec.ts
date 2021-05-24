@@ -48,7 +48,7 @@ describe("NotesManagerComponent", () => {
   const routeData: EntityListConfig = {
     title: "Notes List",
     columns: [],
-    columnGroup: {
+    columnGroups: {
       default: "Standard",
       mobile: "Standard",
       groups: [

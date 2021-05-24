@@ -10,7 +10,7 @@ export interface EntityListConfig {
    * Optional config for which columns are displayed.
    * By default all columns are shown
    */
-  columnGroup?: ColumnGroupsConfig;
+  columnGroups?: ColumnGroupsConfig;
 
   /**
    * Optional config for available filters.

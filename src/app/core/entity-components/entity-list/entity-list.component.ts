@@ -143,7 +143,7 @@ export class EntityListComponent<T extends Entity>
     if (changes.hasOwnProperty("listConfig")) {
       this.listName = this.listConfig.title;
       this.initColumns();
-      this.initColumnGroups(this.listConfig.columnGroup);
+      this.initColumnGroups(this.listConfig.columnGroups);
       this.filtersConfig = this.listConfig.filters || [];
       this.displayColumnGroup(this.defaultColumnGroup);
     }
@@ -158,7 +158,7 @@ export class EntityListComponent<T extends Entity>
     const columns = this.listConfig.columns || [];
 
     const uniqueColumnIds = new Set<string>();
-    this.listConfig?.columnGroup?.groups?.forEach((group) =>
+    this.listConfig?.columnGroups?.groups?.forEach((group) =>
       group.columns.forEach((column) => uniqueColumnIds.add(column))
     );
     uniqueColumnIds.forEach((columnId) => {
@@ -200,9 +200,7 @@ export class EntityListComponent<T extends Entity>
     // initial sorting by first column
     const sortBy = this.columnsToDisplay[0];
     let sortDirection = "asc";
-    if (
-      this.columns.find((c) => c.id === sortBy)?.view === "DisplayDate"
-    ) {
+    if (this.columns.find((c) => c.id === sortBy)?.view === "DisplayDate") {
       // flip default sort order for dates (latest first)
       sortDirection = "desc";
     }

@@ -29,7 +29,7 @@ describe("SchoolsListComponent", () => {
       { component: "DisplayText", title: "Name", id: "name" },
       { component: "DisplayText", title: "Up to class", id: "upToClass" },
     ],
-    columnGroup: {
+    columnGroups: {
       default: "School Info",
       mobile: "School Info",
       groups: [

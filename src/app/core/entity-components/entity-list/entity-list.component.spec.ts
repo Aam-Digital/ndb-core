@@ -46,7 +46,7 @@ describe("EntityListComponent", () => {
         id: "school",
       },
     ],
-    columnGroup: {
+    columnGroups: {
       default: "School Info",
       mobile: "School Info",
       groups: [
@@ -137,9 +137,9 @@ describe("EntityListComponent", () => {
   });
 
   it("should create column groups from config and set correct one", () => {
-    expect(component.columnGroups).toEqual(testConfig.columnGroup.groups);
-    const defaultGroup = testConfig.columnGroup.groups.find(
-      (g) => g.name === testConfig.columnGroup.default
+    expect(component.columnGroups).toEqual(testConfig.columnGroups.groups);
+    const defaultGroup = testConfig.columnGroups.groups.find(
+      (g) => g.name === testConfig.columnGroups.default
     );
     expect(component.selectedColumnGroup).toEqual(defaultGroup.name);
     expect(component.columnsToDisplay).toEqual(defaultGroup.columns);
@@ -147,7 +147,7 @@ describe("EntityListComponent", () => {
 
   it("should set the clicked column group", () => {
     component.ready = true;
-    const clickedColumnGroup = testConfig.columnGroup.groups[0];
+    const clickedColumnGroup = testConfig.columnGroups.groups[0];
     component.columnGroupClick(clickedColumnGroup.name);
     expect(component.selectedColumnGroup).toEqual(clickedColumnGroup.name);
     expect(component.columnsToDisplay).toEqual(clickedColumnGroup.columns);
@@ -343,7 +343,7 @@ describe("EntityListComponent", () => {
           component: "DisplayDate",
         },
       ],
-      columnGroup: {
+      columnGroups: {
         groups: [
           { name: "One", columns: ["anotherColumn"] },
           { name: "Both", columns: ["testProperty", "anotherColumn"] },
@@ -379,7 +379,7 @@ describe("EntityListComponent", () => {
           component: "DisplayDate",
         },
       ],
-      columnGroup: {
+      columnGroups: {
         groups: [
           {
             name: "Invalid Group",

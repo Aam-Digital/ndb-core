@@ -44,7 +44,7 @@ describe("ChildrenListComponent", () => {
         id: "school",
       },
     ],
-    columnGroup: {
+    columnGroups: {
       default: "Basic Info",
       mobile: "School Info",
       groups: [
