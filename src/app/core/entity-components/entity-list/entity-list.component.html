@@ -114,13 +114,13 @@
         mat-sort-header
         [disabled]="col.noSorting"
       >
-        {{ col.title }}
+        {{ col.placeholder }}
       </th>
       <td *matCellDef="let entity">
         <ng-template
           [appDynamicComponent]="{
-            component: col.component,
-            config: { id: col.id, entity: entity, config: col.config }
+            component: col.view,
+            config: { id: col.id, entity: entity, config: col.additional }
           }"
         ></ng-template>
       </td>

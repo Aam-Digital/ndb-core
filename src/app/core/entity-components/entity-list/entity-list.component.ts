@@ -16,8 +16,7 @@ import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { ActivatedRoute, Router } from "@angular/router";
 import {
   BooleanFilterConfig,
-  ColumnConfig,
-  ColumnGroupConfig,
+  ColumnGroupsConfig,
   ConfigurableEnumFilterConfig,
   EntityListConfig,
   FilterConfig,
@@ -42,6 +41,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { OperationType } from "../../permissions/entity-permissions.service";
 import { entityListSortingAccessor } from "./sorting-accessor";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { FormFieldConfig } from "../entity-details/form/FormConfig";
 
 interface FilterComponentSettings<T> {
   filterSettings: FilterSelection<T>;
@@ -74,7 +74,7 @@ export class EntityListComponent<T extends Entity>
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   listName = "";
-  columns: ColumnConfig[] = [];
+  columns: FormFieldConfig[] = [];
   columnGroups: GroupConfig[] = [];
   defaultColumnGroup = "";
   mobileColumnGroup = "";
@@ -177,16 +177,16 @@ export class EntityListComponent<T extends Entity>
     });
   }
 
-  private createColumnDefinitions(column: ColumnConfig): ColumnConfig {
+  private createColumnDefinitions(column: FormFieldConfig): FormFieldConfig {
     const propertySchema = this.entityConstructor.schema.get(column.id);
-    if (!column.component) {
-      column.component = this.entitySchemaService.getComponent(
+    if (!column.view) {
+      column.view = this.entitySchemaService.getComponent(
         propertySchema,
         "view"
       );
     }
-    if (!column.title) {
-      column.title = propertySchema.labelShort || propertySchema.label;
+    if (!column.placeholder) {
+      column.placeholder = propertySchema.labelShort || propertySchema.label;
     }
     return column;
   }
@@ -201,7 +201,7 @@ export class EntityListComponent<T extends Entity>
     const sortBy = this.columnsToDisplay[0];
     let sortDirection = "asc";
     if (
-      this.columns.find((c) => c.id === sortBy)?.component === "DisplayDate"
+      this.columns.find((c) => c.id === sortBy)?.view === "DisplayDate"
     ) {
       // flip default sort order for dates (latest first)
       sortDirection = "desc";
@@ -256,7 +256,7 @@ export class EntityListComponent<T extends Entity>
     this.updateUrl(filter.filterSettings.name, selectedOption);
   }
 
-  private initColumnGroups(columnGroup?: ColumnGroupConfig) {
+  private initColumnGroups(columnGroup?: ColumnGroupsConfig) {
     if (columnGroup && columnGroup.groups.length > 0) {
       this.columnGroups = columnGroup.groups;
       this.defaultColumnGroup =

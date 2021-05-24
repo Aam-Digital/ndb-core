@@ -1,15 +1,16 @@
 import { Entity } from "../../entity/entity";
 import { FilterSelectionOption } from "../../filter/filter-selection/filter-selection";
+import { FormFieldConfig } from "../entity-details/form/FormConfig";
 
 export interface EntityListConfig {
   title: string;
-  columns: ColumnConfig[];
+  columns: FormFieldConfig[];
 
   /**
    * Optional config for which columns are displayed.
    * By default all columns are shown
    */
-  columnGroup?: ColumnGroupConfig;
+  columnGroup?: ColumnGroupsConfig;
 
   /**
    * Optional config for available filters.
@@ -18,16 +19,7 @@ export interface EntityListConfig {
   filters?: FilterConfig[];
 }
 
-export interface ColumnConfig {
-  component?: string;
-  title?: string;
-  id: string;
-  /** this config can be anything that the component understands to parse */
-  config?: any;
-  noSorting?: boolean;
-}
-
-export interface ColumnGroupConfig {
+export interface ColumnGroupsConfig {
   groups: GroupConfig[];
 
   /**

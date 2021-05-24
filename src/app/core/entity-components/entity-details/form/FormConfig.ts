@@ -33,5 +33,7 @@ export interface FormFieldConfig {
 
   forTable?: boolean;
 
+  noSorting?: boolean;
+
   additional?: any;
 }
