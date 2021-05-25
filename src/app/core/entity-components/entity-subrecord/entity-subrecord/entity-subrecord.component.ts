@@ -166,7 +166,7 @@ export class EntitySubrecordComponent<T extends Entity>
     let sortDirection = "asc";
     if (
       sortByColumn?.view === "DisplayDate" ||
-      sortByColumn.edit === "EditDate"
+      sortByColumn?.edit === "EditDate"
     ) {
       // flip default sort order for dates (latest first)
       sortDirection = "desc";

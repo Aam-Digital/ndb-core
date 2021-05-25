@@ -128,7 +128,7 @@ describe("FormComponent", () => {
           [
             {
               id: "fieldWithDefinition",
-              input: "InputComponent",
+              edit: "EditComponent",
               view: "DisplayComponent",
               placeholder: "Field with definition",
             },
@@ -142,13 +142,13 @@ describe("FormComponent", () => {
       [
         {
           id: "fieldWithDefinition",
-          input: "InputComponent",
+          edit: "EditComponent",
           view: "DisplayComponent",
           placeholder: "Field with definition",
         },
         {
           id: "propertyField",
-          input: "PredefinedComponent",
+          edit: "PredefinedComponent",
           view: "PredefinedComponent",
           placeholder: "Property",
         },
