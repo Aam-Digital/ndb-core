@@ -25,7 +25,7 @@ import { FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-details/form/FormConfig";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 
-interface TableRow<T> {
+export interface TableRow<T> {
   record: T;
   formGroup?: FormGroup;
 }
@@ -343,7 +343,7 @@ export class EntitySubrecordComponent<T extends Entity>
    * @param col column that is checked
    * @return returns true if column is visible
    */
-  isVisible(col) {
+  private isVisible(col) {
     let returnVal;
     switch (col.visibleFrom) {
       case "xl": {
