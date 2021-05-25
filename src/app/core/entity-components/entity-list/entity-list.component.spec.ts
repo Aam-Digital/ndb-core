@@ -1,6 +1,5 @@
 import {
   ComponentFixture,
-  fakeAsync,
   TestBed,
   waitForAsync,
 } from "@angular/core/testing";
@@ -9,7 +8,6 @@ import { CommonModule, DatePipe } from "@angular/common";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { RouterTestingModule } from "@angular/router/testing";
 import { SimpleChange } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
 import { BooleanFilterConfig, EntityListConfig } from "./EntityListConfig";
 import { Entity } from "../../entity/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
@@ -184,62 +182,6 @@ describe("EntityListComponent", () => {
       expect(component.filteredEntities[0]).toEqual(child1);
       done();
     });
-  });
-
-  it("should navigate to the correct url params when clicking  a filter", () => {
-    const router = TestBed.inject(Router);
-    spyOn(router, "navigate");
-    const dropoutFs = component.filterSelections[0];
-    const clickedOption = (testConfig.filters[0] as BooleanFilterConfig).false;
-    const route = TestBed.inject(ActivatedRoute);
-
-    component.filterOptionSelected(dropoutFs, clickedOption);
-
-    const expectedParams = {};
-    expectedParams[dropoutFs.filterSettings.name] = clickedOption;
-    expect(router.navigate).toHaveBeenCalledWith([], {
-      relativeTo: route,
-      queryParams: expectedParams,
-      queryParamsHandling: "merge",
-    });
-  });
-
-  it("correctly create dropdown and selection filters if values are present", fakeAsync(() => {
-    const child = new Child();
-    child.religion = "muslim";
-    component.allEntities = [child];
-    component.ngOnChanges({ allEntities: null });
-    expect(component.filterSelections.length).toEqual(2);
-    expect(
-      component.filterSelections
-        .filter((e) => e.display !== "dropdown")
-        .map((e) => e.filterSettings.name)
-    ).toEqual(["isActive"]);
-    expect(
-      component.filterSelections
-        .filter((e) => e.display === "dropdown")
-        .map((e) => e.filterSettings.name)
-    ).toEqual(["religion"]);
-  }));
-
-  it("should create default column groups and filters", () => {
-    component.listConfig = {
-      title: testConfig.title,
-      columns: testConfig.columns,
-    };
-    component.ngOnChanges({
-      listConfig: new SimpleChange(false, component.listConfig, false),
-      allEntities: new SimpleChange(false, component.allEntities, false),
-    });
-    expect(component.columnGroups).toEqual([
-      { name: "default", columns: testConfig.columns.map((c) => c.id) },
-    ]);
-    expect(component.defaultColumnGroup).toEqual(
-      component.columnGroups[0].name
-    );
-    expect(component.mobileColumnGroup).toEqual(component.columnGroups[0].name);
-    expect(component.filtersConfig).toEqual([]);
-    expect(component.filterSelections).toEqual([]);
   });
 
   it("should add and initialize columns which are only mentioned in the columnGroups", () => {
