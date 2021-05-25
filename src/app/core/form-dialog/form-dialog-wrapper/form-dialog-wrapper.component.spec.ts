@@ -5,6 +5,8 @@ import { FormDialogModule } from "../form-dialog.module";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { Angulartics2Module } from "angulartics2";
 import { RouterTestingModule } from "@angular/router/testing";
+import { MatDialogRef } from "@angular/material/dialog";
+import { Subject } from "rxjs";
 
 describe("FormDialogWrapperComponent", () => {
   let component: FormDialogWrapperComponent;
@@ -24,6 +26,7 @@ describe("FormDialogWrapperComponent", () => {
         ],
         providers: [
           { provide: EntityMapperService, useValue: mockEntityMapper },
+          { provide: MatDialogRef, useValue: {} }
         ],
       }).compileComponents();
     })
@@ -32,7 +35,7 @@ describe("FormDialogWrapperComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(FormDialogWrapperComponent);
     component = fixture.componentInstance;
-    component.contentForm = { form: { dirty: false } };
+    component.contentForm = { form: { dirty: false, statusChanges: new Subject() } };
     fixture.detectChanges();
   });
 
