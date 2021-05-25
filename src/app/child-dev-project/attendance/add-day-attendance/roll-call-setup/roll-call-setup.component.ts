@@ -42,7 +42,7 @@ export class RollCallSetupComponent implements OnInit {
     this.sortEvents();
   }
 
-  private async loadActivities() {
+  public async loadActivities() {
     this.allActivities = await this.entityMapper.loadType<RecurringActivity>(
       RecurringActivity
     );
@@ -62,6 +62,22 @@ export class RollCallSetupComponent implements OnInit {
         this.existingEvents.push(newEvent);
       }
     }
+  }
+
+  public async loadActivitiesImproved() {
+    this.allActivities = await this.entityMapper.loadType<RecurringActivity>(
+      RecurringActivity
+    );
+    this.visibleActivities = this.allActivities.filter((a) =>
+      a.assignedTo.includes(this.sessionService.getCurrentUser().getId())
+    );
+
+    const eventPromises = this.visibleActivities.map((activity) =>
+      this.createEventForActivity(activity)
+    );
+    let events = await Promise.all(eventPromises);
+    events = events.filter((event) => !!event);
+    this.existingEvents.push(...events);
   }
 
   async showMore() {

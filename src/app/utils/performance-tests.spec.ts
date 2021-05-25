@@ -29,6 +29,8 @@ import { EntityMapperService } from "../core/entity/entity-mapper.service";
 import { School } from "../child-dev-project/schools/model/school";
 import { ChildrenService } from "../child-dev-project/children/children.service";
 import { PouchDatabase } from "../core/database/pouch-database";
+import { RollCallSetupComponent } from "../child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component";
+import { User } from "../core/user/user";
 
 xdescribe("Performance Tests", () => {
   let mockDatabase: PouchDatabase;
@@ -47,6 +49,8 @@ xdescribe("Performance Tests", () => {
       schemaService,
       mockDatabase
     );
+    mockSessionService.currentUser = new User();
+
     await TestBed.configureTestingModule({
       imports: [AppModule],
       providers: [
@@ -89,6 +93,17 @@ xdescribe("Performance Tests", () => {
       () => childrenService.getChildren().toPromise(),
       () => childrenService.getChildrenImproved(),
       "ChildrenService getChildren"
+    );
+  });
+
+  it("init activities in componentn", async () => {
+    const fixture = TestBed.createComponent(RollCallSetupComponent);
+    const rollCallSetup = fixture.componentInstance;
+    await mockDatabase.getIndexCreationPromises();
+    await comparePerformance(
+      () => rollCallSetup.loadActivities(),
+      () => rollCallSetup.loadActivitiesImproved(),
+      "RollCallSetupComponent loadActivities"
     );
   });
 });
