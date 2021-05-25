@@ -26,7 +26,7 @@ describe("FormDialogWrapperComponent", () => {
         ],
         providers: [
           { provide: EntityMapperService, useValue: mockEntityMapper },
-          { provide: MatDialogRef, useValue: {} }
+          { provide: MatDialogRef, useValue: {} },
         ],
       }).compileComponents();
     })
@@ -35,7 +35,9 @@ describe("FormDialogWrapperComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(FormDialogWrapperComponent);
     component = fixture.componentInstance;
-    component.contentForm = { form: { dirty: false, statusChanges: new Subject() } };
+    component.contentForm = {
+      form: { dirty: false, statusChanges: new Subject() },
+    };
     fixture.detectChanges();
   });
 
