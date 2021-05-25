@@ -31,7 +31,7 @@ import { MatDialogRef } from "@angular/material/dialog";
   templateUrl: "./form-dialog-wrapper.component.html",
   styleUrls: ["./form-dialog-wrapper.component.scss"],
 })
-export class FormDialogWrapperComponent implements AfterViewInit{
+export class FormDialogWrapperComponent implements AfterViewInit {
   /** entity to be edited */
   @Input() set entity(value: Entity) {
     this.originalEntity = Object.assign({}, value);
@@ -67,7 +67,7 @@ export class FormDialogWrapperComponent implements AfterViewInit{
   constructor(
     private entityMapper: EntityMapperService, 
     private matDialogRef: MatDialogRef<any>
-    ) {}
+  ) {}
 
   ngAfterViewInit() {
     this.contentForm.form.statusChanges.subscribe(() => {
