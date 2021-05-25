@@ -34,13 +34,12 @@ export class EntityFormService {
 
   private addFormFields(formField: FormFieldConfig, entity: Entity, forTable) {
     const propertySchema = entity.getSchema().get(formField.id);
-    formField.input =
-      formField.input ||
+    formField.edit =
+      formField.edit ||
       this.entitySchemaService.getComponent(propertySchema, "edit");
     formField.view =
       formField.view ||
       this.entitySchemaService.getComponent(propertySchema, "view");
-    console.log("form", formField.id);
     formField.placeholder = formField.placeholder || propertySchema.label;
     if (forTable) {
       formField.forTable = true;

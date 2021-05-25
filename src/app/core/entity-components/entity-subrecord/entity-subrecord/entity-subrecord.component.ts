@@ -115,12 +115,12 @@ export class EntitySubrecordComponent<T extends Entity>
    * @param changes
    */
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.hasOwnProperty("columns")) {
+    if (
+      changes.hasOwnProperty("columns") ||
+      changes.hasOwnProperty("records")
+    ) {
       this.initFormGroups();
       this.initDefaultSort();
-    } else if (changes.hasOwnProperty("records")) {
-      this.initDefaultSort();
-      this.initFormGroups();
     }
   }
 
@@ -162,8 +162,12 @@ export class EntitySubrecordComponent<T extends Entity>
 
     // initial sorting by first column
     const sortBy = this.columnsToDisplay[0];
+    const sortByColumn = this.columns.find((c) => c.id === sortBy);
     let sortDirection = "asc";
-    if (this.columns.find((c) => c.id === sortBy)?.view === "DisplayDate") {
+    if (
+      sortByColumn?.view === "DisplayDate" ||
+      sortByColumn.edit === "EditDate"
+    ) {
       // flip default sort order for dates (latest first)
       sortDirection = "desc";
     }

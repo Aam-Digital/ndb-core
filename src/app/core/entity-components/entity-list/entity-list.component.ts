@@ -116,7 +116,6 @@ export class EntityListComponent<T extends Entity>
       this.displayColumnGroup(this.defaultColumnGroup);
     }
     if (changes.hasOwnProperty("allEntities")) {
-      console.log("called", this.allEntities);
       this.filteredEntities = this.allEntities;
       this.initFilterSelections();
     }
@@ -175,12 +174,6 @@ export class EntityListComponent<T extends Entity>
   }
 
   applyFilter(filterValue: string) {
-    console.log(
-      "filtering",
-      this.entityTable.records,
-      this.entityTable.columns,
-      this.entityTable.columnsToDisplay
-    );
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.entityTable.recordsDataSource.filter = filterValue;

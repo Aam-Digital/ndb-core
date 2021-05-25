@@ -3,12 +3,6 @@ export interface FormConfig {
 }
 
 export interface FormFieldConfig {
-  /**
-   * The input type for the form.
-   * Available options: "photo", "text", "textarea", "checkbox", "age", "select", "configurable-enum-select", "datepicker"
-   */
-  input?: string;
-
   view?: string;
 
   edit?: string;

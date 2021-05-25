@@ -8,7 +8,7 @@
     <div *ngFor="let col of columns" fxFlex>
       <div *ngFor="let row of col">
         <ng-template [appDynamicComponent]="{
-          component: row.input,
+          component: row.edit,
           config: {
             formFieldConfig: row,
             propertySchema: entity.getSchema().get(row.id),

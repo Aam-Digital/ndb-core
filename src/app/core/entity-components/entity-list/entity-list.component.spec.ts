@@ -189,7 +189,6 @@ describe("EntityListComponent", () => {
   it("should navigate to the correct url params when clicking  a filter", () => {
     const router = TestBed.inject(Router);
     spyOn(router, "navigate");
-    console.log("component", component.filterSelections);
     const dropoutFs = component.filterSelections[0];
     const clickedOption = (testConfig.filters[0] as BooleanFilterConfig).false;
     const route = TestBed.inject(ActivatedRoute);

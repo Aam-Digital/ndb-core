@@ -22,7 +22,7 @@
         style="cursor: pointer"
       >
         <ng-template
-          *ngIf="!row.formGroup || row.formGroup.disabled || !col.input"
+          *ngIf="!row.formGroup || row.formGroup.disabled || !col.edit"
           [appDynamicComponent]="{
             component: col.view,
             config: {
@@ -35,7 +35,7 @@
         <ng-template
           *ngIf="row.formGroup?.enabled"
           [appDynamicComponent]="{
-            component: col.input,
+            component: col.edit,
             config: {
               formFieldConfig: col,
               propertySchema: row.record.getSchema().get(col.id),
