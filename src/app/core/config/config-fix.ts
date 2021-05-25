@@ -247,9 +247,6 @@ export const defaultJsonConfig = {
         },
         {
           "id": "category",
-          "label": "Category",
-          "type": "configurable-enum",
-          "enumId": "interaction-type",
           "display": "dropdown"
         }
       ]
@@ -294,7 +291,6 @@ export const defaultJsonConfig = {
         },
         {
           "id": "privateSchool",
-          "type": "boolean",
           "default": "",
           "true": "Private School",
           "false": "Government School",
@@ -484,14 +480,11 @@ export const defaultJsonConfig = {
         },
         {
           "id": "center",
-          "label": "Center",
-          "type": "configurable-enum",
-          "enumId": "center",
           "display": "dropdown"
         },
         {
-          "id": "school",
-          "type": "prebuilt",
+          "id": "schoolId",
+          "type": "School",
           "label": "School",
           "display": "dropdown"
         }

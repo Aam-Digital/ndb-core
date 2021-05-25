@@ -77,7 +77,9 @@ describe("Note", () => {
       testConfigs[
         CONFIGURABLE_ENUM_CONFIG_PREFIX + INTERACTION_TYPE_CONFIG_ID
       ] = testInteractionTypes;
-      testConfigs[ATTENDANCE_STATUS_CONFIG_ID] = testStatusTypes;
+      testConfigs[
+        CONFIGURABLE_ENUM_CONFIG_PREFIX + ATTENDANCE_STATUS_CONFIG_ID
+      ] = testStatusTypes;
 
       entitySchemaService = new EntitySchemaService();
       entitySchemaService.registerSchemaDatatype(

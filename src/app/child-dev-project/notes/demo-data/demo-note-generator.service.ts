@@ -17,7 +17,10 @@ import {
   AttendanceStatusType,
 } from "../../attendance/model/attendance-status";
 import { ConfigService } from "../../../core/config/config.service";
-import { ConfigurableEnumConfig } from "../../../core/configurable-enum/configurable-enum.interface";
+import {
+  CONFIGURABLE_ENUM_CONFIG_PREFIX,
+  ConfigurableEnumConfig,
+} from "../../../core/configurable-enum/configurable-enum.interface";
 import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
 
 export class DemoNoteConfig {
@@ -62,7 +65,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
 
     this.availableStatusTypes = this.configService.getConfig<
       ConfigurableEnumConfig<AttendanceStatusType>
-    >(ATTENDANCE_STATUS_CONFIG_ID);
+    >(CONFIGURABLE_ENUM_CONFIG_PREFIX + ATTENDANCE_STATUS_CONFIG_ID);
   }
 
   public generateEntities(): Note[] {

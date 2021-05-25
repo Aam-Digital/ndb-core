@@ -11,36 +11,19 @@ import {
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { ActivatedRoute, Router } from "@angular/router";
 import {
-  BooleanFilterConfig,
   ColumnGroupsConfig,
-  ConfigurableEnumFilterConfig,
   EntityListConfig,
   FilterConfig,
   GroupConfig,
-  PrebuiltFilterConfig,
 } from "./EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/entity";
-import {
-  FilterSelection,
-  FilterSelectionOption,
-} from "../../filter/filter-selection/filter-selection";
-import { SessionService } from "../../session/session-service/session.service";
-import { ConfigService } from "../../config/config.service";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumConfig,
-} from "../../configurable-enum/configurable-enum.interface";
-import { LoggingService } from "../../logging/logging.service";
 import { OperationType } from "../../permissions/entity-permissions.service";
 import { FormFieldConfig } from "../entity-details/form/FormConfig";
 import { EntitySubrecordComponent } from "../entity-subrecord/entity-subrecord/entity-subrecord.component";
-
-interface FilterComponentSettings<T> {
-  filterSettings: FilterSelection<T>;
-  selectedOption?: string;
-  display?: string;
-  label?: string;
-}
+import {
+  FilterComponentSettings,
+  FilterGeneratorService,
+} from "./filter-generator.service";
 
 /**
  * This component allows to create a full blown table with pagination, filtering, searching and grouping.
@@ -83,12 +66,10 @@ export class EntityListComponent<T extends Entity>
   filterString = "";
 
   constructor(
-    private configService: ConfigService,
-    private loggingService: LoggingService,
-    private sessionService: SessionService,
     private media: MediaObserver,
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private filterGeneratorService: FilterGeneratorService
   ) {}
 
   ngOnInit() {
@@ -210,87 +191,12 @@ export class EntityListComponent<T extends Entity>
     });
   }
 
-  private initFilterSelections() {
-    const filterSelections = [];
-
-    for (const filter of this.filtersConfig) {
-      const fs: FilterComponentSettings<T> = {
-        filterSettings: new FilterSelection(filter.id, [], filter.label),
-        display: filter.display,
-      };
-      fs.filterSettings.options = this.initFilterOptions(filter);
-
-      // Filters should only be added, if they have more than one (the default) option
-      if (fs.filterSettings.options?.length > 1) {
-        fs.selectedOption = filter.hasOwnProperty("default")
-          ? filter.default
-          : fs.filterSettings.options[0].key;
-        filterSelections.push(fs);
-      }
-    }
-
-    this.filterSelections = filterSelections;
-  }
-
-  private initFilterOptions(config: FilterConfig): FilterSelectionOption<T>[] {
-    switch (config.type) {
-      case "boolean":
-        return this.createBooleanFilterOptions(config as BooleanFilterConfig);
-      case "prebuilt":
-        return (config as PrebuiltFilterConfig<T>).options;
-      case "configurable-enum":
-        return this.createConfigurableEnumFilterOptions(
-          config as ConfigurableEnumFilterConfig<T>
-        );
-      default: {
-        const options = [...new Set(this.allEntities.map((c) => c[config.id]))];
-        return FilterSelection.generateOptions(options, config.id);
-      }
-    }
-  }
-
-  private createBooleanFilterOptions(
-    filter: BooleanFilterConfig
-  ): FilterSelectionOption<T>[] {
-    return [
-      { key: "", label: filter.all, filterFun: () => true },
-      {
-        key: "true",
-        label: filter.true,
-        filterFun: (c: Entity) => c[filter.id],
-      },
-      {
-        key: "false",
-        label: filter.false,
-        filterFun: (c: Entity) => !c[filter.id],
-      },
-    ];
-  }
-
-  private createConfigurableEnumFilterOptions(
-    config: ConfigurableEnumFilterConfig<T>
-  ) {
-    const options = [{ key: "*", label: "All", filterFun: (e: T) => true }];
-
-    const enumValues = this.configService.getConfig<ConfigurableEnumConfig>(
-      CONFIGURABLE_ENUM_CONFIG_PREFIX + config.enumId
+  private async initFilterSelections(): Promise<void> {
+    this.filterSelections = await this.filterGeneratorService.generate(
+      this.filtersConfig,
+      this.entityConstructor,
+      this.allEntities
     );
-    if (!enumValues) {
-      this.loggingService.warn(
-        "Could not load enum options for filter from config: " + config.id
-      );
-      return options;
-    }
-
-    for (const enumValue of enumValues) {
-      options.push({
-        key: enumValue.id,
-        label: enumValue.label,
-        filterFun: (entity) => entity[config.id]?.id === enumValue.id,
-      });
-    }
-
-    return options;
   }
 
   private displayColumnGroup(columnGroupName: string) {

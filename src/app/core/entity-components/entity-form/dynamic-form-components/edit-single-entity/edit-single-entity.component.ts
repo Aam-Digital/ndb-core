@@ -26,7 +26,7 @@ export class EditSingleEntityComponent extends EditComponent<string> {
       .then((entities) =>
         entities.sort((e1, e2) => {
           if (e1.hasOwnProperty("name")) {
-            return e1.name.localeCompare(e2.name);
+            return e1["name"].localeCompare(e2["name"]);
           } else {
             return 0;
           }
