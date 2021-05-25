@@ -213,4 +213,12 @@ describe("EntityListComponent", () => {
       jasmine.arrayWithExactContents(["testProperty", "anotherColumn"])
     );
   });
+
+  it("should create records of the correct entity", () => {
+    component.entityConstructor = Child;
+
+    const res = component.getNewRecordFactory()();
+
+    expect(res.getType()).toEqual(Child.ENTITY_TYPE);
+  });
 });
