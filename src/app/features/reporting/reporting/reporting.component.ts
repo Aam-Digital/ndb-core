@@ -10,6 +10,7 @@ import {
   ReportConfig,
   ReportingComponentConfig,
 } from "./reporting-component-config";
+import moment from "moment";
 
 @Component({
   selector: "app-reporting",
@@ -47,9 +48,13 @@ export class ReportingComponent implements OnInit {
     this.reportingService.setAggregations(
       this.selectedReport.aggregationDefinitions
     );
+
+    // Add one day because to date is exclusive
+    const dayAfterToDate = moment(this.toDate).add(1, "day").toDate();
+
     this.results = await this.reportingService.calculateReport(
       this.fromDate,
-      this.toDate
+      dayAfterToDate
     );
     this.exportableTable = this.flattenReportRows();
 
