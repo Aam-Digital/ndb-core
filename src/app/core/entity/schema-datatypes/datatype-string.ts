@@ -33,7 +33,16 @@ export const stringEntitySchemaDatatype: EntitySchemaDatatype = {
   name: "string",
 
   transformToDatabaseFormat: (value) => {
-    return String(value);
+    const retString: String = String(value);
+    // don't save empty strings
+    if (retString){
+      return retString;
+    }
+    console.warn(
+      `property to be transformed with "string" EntitySchema is empty`,
+      value
+    );
+    return undefined;
   },
 
   transformToObjectFormat: (value) => {
