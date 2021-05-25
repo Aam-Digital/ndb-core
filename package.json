@@ -1,6 +1,6 @@
 {
   "name": "ndb-core",
-  "version": "2.48.5",
+  "version": "2.50.1",
   "license": "GPL-3.0",
   "scripts": {
     "ng": "ng",
@@ -38,6 +38,7 @@
     "faker": "^5.5.3",
     "font-awesome": "^4.7.0",
     "idb": "^6.0.0",
+    "json-query": "^2.2.2",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "moment": "^2.29.1",

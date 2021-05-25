@@ -233,7 +233,7 @@ export class AttendanceService {
 
     const visitedSchools = (
       await this.childrenService.queryRelationsOf("child", childId)
-    ).filter((relation) => relation.isActive());
+    ).filter((relation) => relation.isActive);
     for (const currentRelation of visitedSchools) {
       const activitiesThroughRelation = await this.dbIndexing.queryIndexDocs(
         RecurringActivity,
