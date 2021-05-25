@@ -65,7 +65,7 @@ export class FormDialogWrapperComponent implements AfterViewInit {
   @ContentChild("entityForm", { static: true }) contentForm;
 
   constructor(
-    private entityMapper: EntityMapperService, 
+    private entityMapper: EntityMapperService,
     private matDialogRef: MatDialogRef<any>
   ) {}
 
