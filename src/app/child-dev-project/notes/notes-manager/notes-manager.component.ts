@@ -131,29 +131,29 @@ export class NotesManagerComponent implements OnInit {
   }
 
   private addPrebuiltFilters() {
-    this.config.filters.forEach((f) => {
-      if (f.type === "prebuilt") {
-        switch (f.id) {
-          case "status": {
-            f["options"] = this.statusFS;
-            f["default"] = "";
-            return;
-          }
-          case "date": {
-            f["options"] = this.dateFS;
-            f["default"] = "current-week";
-            return;
-          }
-          default: {
-            this.log.warn(
-              "[NoteManagerComponent] No filter options available for prebuilt filter: " +
-                f.id
-            );
-            return (f["options"] = []);
-          }
+    for (const prebuiltFilter of this.config.filters.filter(
+      (filter) => filter.type === "prebuilt"
+    )) {
+      switch (prebuiltFilter.id) {
+        case "status": {
+          prebuiltFilter["options"] = this.statusFS;
+          prebuiltFilter["default"] = "";
+          break;
+        }
+        case "date": {
+          prebuiltFilter["options"] = this.dateFS;
+          prebuiltFilter["default"] = "current-week";
+          break;
+        }
+        default: {
+          this.log.warn(
+            "[NoteManagerComponent] No filter options available for prebuilt filter: " +
+              prebuiltFilter.id
+          );
+          prebuiltFilter["options"] = [];
         }
       }
-    });
+    }
   }
 
   private getPreviousSunday(weeksBack: number) {

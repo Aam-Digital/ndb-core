@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { Child } from "../model/child";
 import { ActivatedRoute, Router } from "@angular/router";
 import { UntilDestroy } from "@ngneat/until-destroy";
@@ -11,6 +11,7 @@ import {
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { School } from "../../schools/model/school";
 import { LoggingService } from "../../../core/logging/logging.service";
+import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 
 @UntilDestroy()
 @Component({
@@ -29,6 +30,8 @@ export class ChildrenListComponent implements OnInit {
   childrenList: Child[] = [];
   listConfig: EntityListConfig;
   childConstructor = Child;
+  @ViewChild(EntityListComponent)
+  entityListComponent: EntityListComponent<Child>;
 
   constructor(
     private childrenService: ChildrenService,
@@ -53,41 +56,45 @@ export class ChildrenListComponent implements OnInit {
     this.router.navigate([path, route]);
   }
 
-  private addPrebuiltFilters() {
-    this.listConfig.filters
-      .filter((filter) => filter.type === "prebuilt")
-      .forEach(async (filter) => {
-        switch (filter.id) {
-          case "school": {
-            (filter as PrebuiltFilterConfig<Child>).options = await this.buildSchoolFilter();
-            (filter as PrebuiltFilterConfig<Child>).default = "";
-            return;
-          }
-          default: {
-            this.log.warn(
-              "[ChildrenListComponent] No filter options available for prebuilt filter: " +
-                filter.id
-            );
-            (filter as PrebuiltFilterConfig<Child>).options = [];
-          }
+  private async addPrebuiltFilters() {
+    for (const prebuiltFilter of this.listConfig.filters.filter(
+      (filter) => filter.type === "prebuilt"
+    )) {
+      switch (prebuiltFilter.id) {
+        case "school": {
+          (prebuiltFilter as PrebuiltFilterConfig<Child>).options = await this.buildSchoolFilter();
+          (prebuiltFilter as PrebuiltFilterConfig<Child>).default = "";
+          break;
         }
-      });
+        default: {
+          this.log.warn(
+            "[ChildrenListComponent] No filter options available for prebuilt filter: " +
+              prebuiltFilter.id
+          );
+          (prebuiltFilter as PrebuiltFilterConfig<Child>).options = [];
+        }
+      }
+    }
+    // Triggering the initialization of the filter selections
+    this.entityListComponent.ngOnChanges({
+      entityList: null,
+    });
   }
 
   private async buildSchoolFilter(): Promise<FilterSelectionOption<Child>[]> {
     const schools: School[] = await this.entityMapper.loadType(School);
-    const filters: FilterSelectionOption<Child>[] = [
+    const options: FilterSelectionOption<Child>[] = [
       { key: "", label: "All", filterFun: () => true },
     ];
     schools
       .sort((s1, s2) => s1.name.localeCompare(s2.name))
       .forEach((school) =>
-        filters.push({
+        options.push({
           key: school.getId(),
           label: school.name,
           filterFun: (c) => c.schoolId === school.getId(),
         })
       );
-    return filters;
+    return options;
   }
 }
