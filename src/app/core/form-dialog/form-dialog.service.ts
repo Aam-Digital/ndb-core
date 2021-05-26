@@ -49,7 +49,7 @@ export class FormDialogService {
     }
 
     const dialogWrapper = dialogRef.componentInstance.formDialogWrapper;
-    dialogWrapper.onClose.subscribe(() => dialogRef.close(true));
+    dialogWrapper.onClose.subscribe((res) => dialogRef.close(res));
 
     dialogRef.beforeClosed().subscribe((activelyClosed) => {
       if (!activelyClosed && dialogWrapper.isFormDirty) {
