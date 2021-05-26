@@ -1,8 +1,4 @@
-import {
-  ComponentFixture,
-  TestBed,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { EntityListComponent } from "./entity-list.component";
 import { CommonModule, DatePipe } from "@angular/common";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -157,7 +153,6 @@ describe("EntityListComponent", () => {
   });
 
   it("should set the clicked column group", () => {
-    component.ready = true;
     const clickedColumnGroup = testConfig.columnGroups.groups[0];
     component.columnGroupClick(clickedColumnGroup.name);
     expect(component.selectedColumnGroup).toEqual(clickedColumnGroup.name);

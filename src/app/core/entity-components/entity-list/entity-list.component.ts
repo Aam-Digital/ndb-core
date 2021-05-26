@@ -57,12 +57,10 @@ export class EntityListComponent<T extends Entity>
 
   operationType = OperationType;
 
-  ready = true;
   columnsToDisplay: string[] = [];
   selectedColumnGroup: string = "";
 
   filterSelections: FilterComponentSettings<T>[] = [];
-
   filterString = "";
 
   constructor(
