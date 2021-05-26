@@ -51,7 +51,7 @@ describe("AttendanceDetailsComponent", () => {
         ],
         providers: [
           { provide: EntityMapperService, useValue: {} },
-          { provide: MatDialogRef, useValue: {} }
+          { provide: MatDialogRef, useValue: {} },
         ],
       }).compileComponents();
     })
