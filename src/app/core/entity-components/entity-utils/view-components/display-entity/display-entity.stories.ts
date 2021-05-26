@@ -14,7 +14,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { User } from "../../../../user/user";
 import { SchoolsModule } from "../../../../../child-dev-project/schools/schools.module";
 import { ChildrenModule } from "../../../../../child-dev-project/children/children.module";
-import { EntitySubrecordModule } from "../../entity-subrecord.module";
+import { EntitySubrecordModule } from "../../../entity-subrecord/entity-subrecord.module";
 
 export default {
   title: "Core/EntityComponents/DisplayEntity",

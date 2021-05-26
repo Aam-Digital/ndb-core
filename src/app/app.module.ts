@@ -72,6 +72,7 @@ import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendan
 import { ReportingModule } from "./features/reporting/reporting.module";
 import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/dashboard-shortcut-widget.module";
 import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
+import { EntityUtilsModule } from "./core/entity-components/entity-utils/entity-utils.module";
 
 /**
  * Main entry point of the application.
@@ -118,6 +119,7 @@ import { HistoricalDataModule } from "./features/historical-data/historical-data
     EntityDetailsModule,
     ConfigurableEnumModule,
     ReportingModule,
+    EntityUtilsModule,
     DemoDataModule.forRoot([
       ...DemoChildGenerator.provider({ count: 120 }),
       ...DemoSchoolGenerator.provider({ count: 8 }),

@@ -12,7 +12,7 @@ import { SchoolsModule } from "../../../../../child-dev-project/schools/schools.
 import { ChildrenModule } from "../../../../../child-dev-project/children/children.module";
 import { DisplayEntityArrayComponent } from "./display-entity-array.component";
 import { BehaviorSubject } from "rxjs";
-import { EntitySubrecordModule } from "../../entity-subrecord.module";
+import { EntitySubrecordModule } from "../../../entity-subrecord/entity-subrecord.module";
 
 const child1 = new Child();
 child1.name = "Test Name";
