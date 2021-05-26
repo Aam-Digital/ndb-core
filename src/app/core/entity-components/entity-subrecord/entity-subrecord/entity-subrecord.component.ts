@@ -338,7 +338,7 @@ export class EntitySubrecordComponent<T extends Entity>
    * @param col column that is checked
    * @return returns true if column is visible
    */
-  private isVisible(col: FormFieldConfig) {
+  private isVisible(col: FormFieldConfig): boolean {
     let returnVal;
     switch (col.visibleFrom) {
       case "xl": {
