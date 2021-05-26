@@ -29,7 +29,7 @@ export class ActivityAttendanceSectionComponent
       id: "periodFrom",
       placeholder: "Month",
       view: "DisplayDate",
-      additional: "MM/YYYY",
+      additional: "YYYY-MM",
     },
     {
       id: "presentEvents",
