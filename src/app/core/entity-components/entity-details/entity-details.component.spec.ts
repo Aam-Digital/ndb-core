@@ -69,10 +69,10 @@ describe("EntityDetailsComponent", () => {
   beforeEach(
     waitForAsync(() => {
       mockChildrenService = jasmine.createSpyObj([
-        "getSchoolsWithRelations",
+        "getSchoolRelationsFor",
         "getAserResultsOfChild",
       ]);
-      mockChildrenService.getSchoolsWithRelations.and.resolveTo([]);
+      mockChildrenService.getSchoolRelationsFor.and.resolveTo([]);
       mockChildrenService.getAserResultsOfChild.and.returnValue(of([]));
       mockEntityMapper = jasmine.createSpyObj([
         "loadType",

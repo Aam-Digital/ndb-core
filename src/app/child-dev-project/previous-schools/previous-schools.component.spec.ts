@@ -16,6 +16,7 @@ import { SimpleChange } from "@angular/core";
 import { Child } from "../children/model/child";
 import { PanelConfig } from "../../core/entity-components/entity-details/EntityDetailsConfig";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
+import moment from "moment";
 
 describe("PreviousSchoolsComponent", () => {
   let component: PreviousSchoolsComponent;
@@ -28,8 +29,8 @@ describe("PreviousSchoolsComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
-      mockChildrenService = jasmine.createSpyObj(["getSchoolsWithRelations"]);
-      mockChildrenService.getSchoolsWithRelations.and.resolveTo([
+      mockChildrenService = jasmine.createSpyObj(["getSchoolRelationsFor"]);
+      mockChildrenService.getSchoolRelationsFor.and.resolveTo([
         new ChildSchoolRelation(),
       ]);
       mockEntityMapper = jasmine.createSpyObj(["loadType"]);
@@ -65,7 +66,7 @@ describe("PreviousSchoolsComponent", () => {
       child: new SimpleChange(undefined, testChild, false),
     });
     tick();
-    expect(mockChildrenService.getSchoolsWithRelations).toHaveBeenCalledWith(
+    expect(mockChildrenService.getSchoolRelationsFor).toHaveBeenCalledWith(
       testChild.getId()
     );
   }));
@@ -76,9 +77,9 @@ describe("PreviousSchoolsComponent", () => {
       config: {
         single: true,
         columns: [
-          { id: "schoolId", placeholder: "Team", input: "school" },
-          { id: "start", placeholder: "From", input: "date" },
-          { id: "end", placeholder: "To", input: "date" },
+          { id: "schoolId", placeholder: "Team", view: "school" },
+          { id: "start", placeholder: "From", view: "date" },
+          { id: "end", placeholder: "To", view: "date" },
         ],
       },
     };
@@ -111,4 +112,22 @@ describe("PreviousSchoolsComponent", () => {
     expect(columnNames).toContain("Class");
     expect(columnNames).toContain("Result");
   }));
+
+  it("should create new records with preset data", () => {
+    const existingRelation = new ChildSchoolRelation();
+    existingRelation.start = moment().subtract(1, "year").toDate();
+    existingRelation.end = moment().subtract(1, "week").toDate();
+    component.records = [existingRelation];
+    const child = new Child();
+    component.child = child;
+
+    const newRelation = component.generateNewRecordFactory()();
+
+    expect(newRelation.childId).toEqual(child.getId());
+    expect(
+      moment(existingRelation.end)
+        .add(1, "day")
+        .isSame(newRelation.start, "day")
+    ).toBeTrue();
+  });
 });

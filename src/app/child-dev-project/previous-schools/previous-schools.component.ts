@@ -5,6 +5,7 @@ import { Child } from "../children/model/child";
 import { OnInitDynamicComponent } from "../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../core/entity-components/entity-details/EntityDetailsConfig";
 import { FormFieldConfig } from "../../core/entity-components/entity-details/form/FormConfig";
+import moment from "moment";
 
 @Component({
   selector: "app-previous-schools",
@@ -49,7 +50,7 @@ export class PreviousSchoolsComponent
       return;
     }
 
-    this.records = await this.childrenService.getSchoolsWithRelations(id);
+    this.records = await this.childrenService.getSchoolRelationsFor(id);
     this.current = this.records.find((record) => record.isActive);
   }
 
@@ -58,14 +59,11 @@ export class PreviousSchoolsComponent
     return () => {
       const newPreviousSchool = new ChildSchoolRelation();
       newPreviousSchool.childId = childId;
-      // last to-date (of first entry in records); if the first entry doesn't have any to-date, lastToDate is set to yesterday
-      const lastToDate =
+      // start is one after the end date of the last relation or today if no other relation exists
+      newPreviousSchool.start =
         this.records.length && this.records[0].end
-          ? new Date(this.records[0].end)
-          : new Date(new Date().setDate(new Date().getDate() + -1));
-      newPreviousSchool.start = new Date(
-        lastToDate.setDate(lastToDate.getDate() + 1)
-      ); // one day after last to-date
+          ? moment(this.records[0].end).add(1, "day").toDate()
+          : new Date();
       return newPreviousSchool;
     };
   }
