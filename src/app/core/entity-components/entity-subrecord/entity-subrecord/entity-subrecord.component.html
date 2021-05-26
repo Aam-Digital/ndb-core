@@ -12,6 +12,7 @@
         *matHeaderCellDef
         [matTooltip]="col.tooltip"
         [matTooltipDisabled]="!col.tooltip"
+        [disabled]="col.noSorting"
       >
         {{ col.placeholder }}
       </th>
