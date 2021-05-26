@@ -65,9 +65,9 @@ import { EntityListModule } from "../../core/entity-components/entity-list/entit
 import { WebdavModule } from "../../core/webdav/webdav.module";
 import { BmiBlockComponent } from "./children-list/bmi-block/bmi-block.component";
 import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard/children-bmi-dashboard.component";
-import { EntitySelectModule } from "../../core/entity-components/entity-select/entity-select.module";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { PhotoDatatype } from "./child-photo-service/datatype-photo";
+import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
 
 @NgModule({
   imports: [
@@ -109,7 +109,7 @@ import { PhotoDatatype } from "./child-photo-service/datatype-photo";
     ViewModule,
     EntitySubrecordModule,
     EntityListModule,
-    EntitySelectModule,
+    EntityUtilsModule,
   ],
   declarations: [
     ChildBlockComponent,

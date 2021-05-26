@@ -26,11 +26,13 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
 import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { EntitySelectModule } from "../entity-select/entity-select.module";
 import { MatInputModule } from "@angular/material/input";
 import { ViewModule } from "../../view/view.module";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatCheckboxModule } from "@angular/material/checkbox";
+import { EntitySelectComponent } from "./entity-select/entity-select.component";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatChipsModule } from "@angular/material/chips";
 
 @NgModule({
   declarations: [
@@ -54,6 +56,7 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
     ReadonlyFunctionComponent,
     DisplayPercentageComponent,
     DisplayUnitComponent,
+    EntitySelectComponent,
   ],
   imports: [
     CommonModule,
@@ -63,11 +66,12 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
     ConfigurableEnumModule,
     MatIconModule,
     MatTooltipModule,
-    EntitySelectModule,
     MatInputModule,
     ViewModule,
     MatDatepickerModule,
     MatCheckboxModule,
+    MatAutocompleteModule,
+    MatChipsModule,
   ],
   entryComponents: [
     EditConfigurableEnumComponent,
@@ -91,5 +95,6 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
     DisplayPercentageComponent,
     DisplayUnitComponent,
   ],
+  exports: [DisplayEntityComponent, EntitySelectComponent],
 })
 export class EntityUtilsModule {}

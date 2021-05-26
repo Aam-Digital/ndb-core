@@ -1,11 +1,12 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditEntityArrayComponent } from "./edit-entity-array.component";
-import { EntitySelectModule } from "../../../entity-select/entity-select.module";
 import { FormControl } from "@angular/forms";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { Child } from "../../../../../child-dev-project/children/model/child";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { EntityUtilsModule } from "../../entity-utils.module";
+import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
 
 describe("EditEntityArrayComponent", () => {
   let component: EditEntityArrayComponent;
@@ -16,9 +17,12 @@ describe("EditEntityArrayComponent", () => {
     mockEntityMapper = jasmine.createSpyObj(["loadType"]);
     mockEntityMapper.loadType.and.resolveTo([]);
     await TestBed.configureTestingModule({
-      imports: [EntitySelectModule, NoopAnimationsModule],
+      imports: [EntityUtilsModule, NoopAnimationsModule],
       declarations: [EditEntityArrayComponent],
-      providers: [{ provide: EntityMapperService, useValue: mockEntityMapper }],
+      providers: [
+        { provide: EntityMapperService, useValue: mockEntityMapper },
+        EntitySchemaService,
+      ],
     }).compileComponents();
   });
 

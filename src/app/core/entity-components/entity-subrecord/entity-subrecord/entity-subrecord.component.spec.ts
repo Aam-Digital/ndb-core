@@ -25,7 +25,7 @@ import { AlertService } from "../../../alerts/alert.service";
 import { PageEvent } from "@angular/material/paginator";
 import { FormBuilder, FormGroup } from "@angular/forms";
 import { Gender } from "../../../../child-dev-project/children/model/Gender";
-import { EntityFormService } from "../../entity-form/entity-form.service";
+import { EntityFormService } from "../../entity-utils/entity-form.service";
 import { Subject } from "rxjs";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";

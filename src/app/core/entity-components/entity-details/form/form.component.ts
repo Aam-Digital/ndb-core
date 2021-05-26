@@ -9,7 +9,7 @@ import { AlertService } from "../../../alerts/alert.service";
 import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
 import { getParentUrl } from "../../../../utils/utils";
 import { OperationType } from "../../../permissions/entity-permissions.service";
-import { EntityFormService } from "../../entity-form/entity-form.service";
+import { EntityFormService } from "../../entity-utils/entity-form.service";
 
 /**
  * This component creates a form based on the passed config.

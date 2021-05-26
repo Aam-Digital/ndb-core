@@ -19,11 +19,9 @@
         [selectable]="selectable && formControl.enabled"
         [removable]="removable && formControl.enabled"
         *ngFor="let entity of selection_"
-        class="chip">
-        <p>{{entity["name"]}}</p>
-
-        <!-- This is going to be replaced with the dynamic content -->
-<!--        <app-display-entity [entity]="entity"></app-display-entity>-->
+        class="chip"
+      >
+        <app-display-entity [entityToDisplay]="entity"></app-display-entity>
         <div
           *ngIf="removable && formControl.enabled"
           matTooltip="remove"
@@ -40,8 +38,7 @@
     <!-- Optional header -->
     <ng-content select="mat-option"></ng-content>
     <mat-option *ngFor='let res of filteredEntities | async' [value]="res">
-      <p>{{res["name"]}}</p>
-<!--      <app-display-entity [entity]="res"></app-display-entity>-->
+      <app-display-entity [entityToDisplay]="res"></app-display-entity>
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>

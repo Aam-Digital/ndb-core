@@ -4,12 +4,8 @@ import { EntityDetailsComponent } from "./entity-details.component";
 import { FormComponent } from "./form/form.component";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatIconModule } from "@angular/material/icon";
-import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
-import { MatCheckboxModule } from "@angular/material/checkbox";
-import { MatDatepickerModule } from "@angular/material/datepicker";
-import { MatSelectModule } from "@angular/material/select";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { MatButtonModule } from "@angular/material/button";
@@ -19,7 +15,6 @@ import { ViewModule } from "../../view/view.module";
 import { EntityModule } from "../../entity/entity.module";
 import { AlertsModule } from "../../alerts/alerts.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
-import { EntityFormModule } from "../entity-form/entity-form.module";
 
 @NgModule({
   declarations: [EntityDetailsComponent, FormComponent],
@@ -37,7 +32,6 @@ import { EntityFormModule } from "../entity-form/entity-form.module";
     EntityModule,
     AlertsModule,
     PermissionsModule,
-    EntityFormModule,
     MatTooltipModule,
   ],
 })

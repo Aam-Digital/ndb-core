@@ -9,9 +9,9 @@ import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { ChildrenService } from "../../../../child-dev-project/children/children.service";
 import { BehaviorSubject } from "rxjs";
 import { RouterTestingModule } from "@angular/router/testing";
-import { EntitySelectModule } from "../entity-select.module";
 import { EntitySelectComponent } from "./entity-select.component";
 import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
+import { EntityUtilsModule } from "../entity-utils.module";
 
 const child1 = new Child();
 child1.name = "First Child";
@@ -41,7 +41,7 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [
-        EntitySelectModule,
+        EntityUtilsModule,
         NoopAnimationsModule,
         RouterTestingModule,
         ChildrenModule,

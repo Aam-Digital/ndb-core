@@ -56,7 +56,7 @@ import { RouterModule } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { AttendanceManagerComponent } from "./attendance-manager/attendance-manager.component";
-import { EntitySelectModule } from "../../core/entity-components/entity-select/entity-select.module";
+import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
 
 @NgModule({
   declarations: [
@@ -102,7 +102,7 @@ import { EntitySelectModule } from "../../core/entity-components/entity-select/e
     RouterModule,
     Angulartics2Module,
     MatSlideToggleModule,
-    EntitySelectModule,
+    EntityUtilsModule,
   ],
   exports: [
     ActivityCardComponent,

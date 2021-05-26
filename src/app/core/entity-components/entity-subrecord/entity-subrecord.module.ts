@@ -13,7 +13,6 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ViewModule } from "../../view/view.module";
 import { ReactiveFormsModule } from "@angular/forms";
-import { EntityFormModule } from "../entity-form/entity-form.module";
 import { ConfirmationDialogModule } from "../../confirmation-dialog/confirmation-dialog.module";
 
 @NgModule({
@@ -28,7 +27,6 @@ import { ConfirmationDialogModule } from "../../confirmation-dialog/confirmation
     MatSortModule,
     ViewModule,
     ReactiveFormsModule,
-    EntityFormModule,
     ConfirmationDialogModule,
     MatTooltipModule,
     MatButtonModule,

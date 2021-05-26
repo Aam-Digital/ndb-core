@@ -23,7 +23,7 @@ import { BehaviorSubject } from "rxjs";
 import { entityListSortingAccessor } from "../../entity-list/sorting-accessor";
 import { FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-details/form/FormConfig";
-import { EntityFormService } from "../../entity-form/entity-form.service";
+import { EntityFormService } from "../../entity-utils/entity-form.service";
 
 export interface TableRow<T> {
   record: T;

@@ -7,13 +7,13 @@ import {
 
 import { EditSingleEntityComponent } from "./edit-single-entity.component";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
-import { EntityFormModule } from "../../../entity-form/entity-form.module";
 import { FormControl } from "@angular/forms";
 import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
-import { EntityFormService } from "../../../entity-form/entity-form.service";
+import { EntityFormService } from "../../entity-form.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ChildSchoolRelation } from "../../../../../child-dev-project/children/model/childSchoolRelation";
 import { School } from "../../../../../child-dev-project/schools/model/school";
+import { EntityUtilsModule } from "../../entity-utils.module";
 
 describe("EditSingleEntityComponent", () => {
   let component: EditSingleEntityComponent;
@@ -25,7 +25,7 @@ describe("EditSingleEntityComponent", () => {
     mockEntityMapper.loadType.and.resolveTo([]);
 
     await TestBed.configureTestingModule({
-      imports: [EntityFormModule, NoopAnimationsModule],
+      imports: [EntityUtilsModule, NoopAnimationsModule],
       declarations: [EditSingleEntityComponent],
       providers: [
         EntitySchemaService,
