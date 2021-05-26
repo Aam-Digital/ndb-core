@@ -1,14 +1,14 @@
 <ng-container
-  *ngIf="entityBlockComponent && entity"
+  *ngIf="entityBlockComponent && entityToDisplay"
   [appDynamicComponent]="{
       component: entityBlockComponent,
       config: {
-        entity: entity,
+        entity: entityToDisplay,
         linkDisabled: linkDisabled,
         tooltipDisabled: true
       }
     }">
 </ng-container>
-<ng-container *ngIf="!entityBlockComponent && entity">
-  {{entity["name"] || entity.getId()}}
+<ng-container *ngIf="!entityBlockComponent && entityToDisplay">
+  {{entityToDisplay["name"] || entityToDisplay.getId()}}
 </ng-container>
