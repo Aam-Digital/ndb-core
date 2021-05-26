@@ -26,11 +26,11 @@ export class NotesOfChildComponent
   records: Array<Note> = [];
 
   columns: FormFieldConfig[] = [
-    { id: "date" },
-    { id: "subject" },
-    { id: "text" },
-    { id: "authors" },
-    { id: "warningLevel" },
+    { id: "date", visibleFrom: "xs" },
+    { id: "subject", visibleFrom: "xs" },
+    { id: "text", visibleFrom: "md" },
+    { id: "authors", visibleFrom: "md" },
+    { id: "warningLevel", visibleFrom: "md" },
   ];
 
   constructor(

@@ -20,10 +20,10 @@ export class EducationalMaterialComponent
   materialTypes = EducationalMaterial.MATERIAL_ALL;
 
   columns: FormFieldConfig[] = [
-    { id: "date" },
-    { id: "materialType" },
-    { id: "materialAmount" },
-    { id: "description" },
+    { id: "date", visibleFrom: "xs" },
+    { id: "materialType", visibleFrom: "xs" },
+    { id: "materialAmount", visibleFrom: "md" },
+    { id: "description", visibleFrom: "md" },
   ];
 
   constructor(private childrenService: ChildrenService) {}

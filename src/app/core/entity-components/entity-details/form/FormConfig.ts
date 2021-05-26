@@ -30,4 +30,6 @@ export interface FormFieldConfig {
   noSorting?: boolean;
 
   additional?: any;
+
+  visibleFrom?: string;
 }

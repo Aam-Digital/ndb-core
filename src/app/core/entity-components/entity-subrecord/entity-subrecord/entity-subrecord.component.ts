@@ -323,14 +323,9 @@ export class EntitySubrecordComponent<T extends Entity>
    */
   setupTable() {
     if (this.columns !== undefined && this.screenWidth !== "") {
-      const columnsHelpArray = [];
-      const entitySubrecordComponent = this;
-      this.columns.forEach(function (this, col) {
-        if (entitySubrecordComponent.isVisible(col)) {
-          columnsHelpArray.push(col.id);
-        }
-      });
-      this.columnsToDisplay = columnsHelpArray;
+      this.columnsToDisplay = this.columns
+        .filter((col) => this.isVisible(col))
+        .map((col) => col.id);
       if (this.screenWidth !== "xs") {
         this.columnsToDisplay.push("actions");
       }
@@ -343,7 +338,7 @@ export class EntitySubrecordComponent<T extends Entity>
    * @param col column that is checked
    * @return returns true if column is visible
    */
-  private isVisible(col) {
+  private isVisible(col: FormFieldConfig) {
     let returnVal;
     switch (col.visibleFrom) {
       case "xl": {
