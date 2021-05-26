@@ -19,9 +19,30 @@ import { ViewModule } from "../../view/view.module";
 import { ReactiveFormsModule } from "@angular/forms";
 import { EntityFormModule } from "../entity-form/entity-form.module";
 import { ConfirmationDialogModule } from "../../confirmation-dialog/confirmation-dialog.module";
+import { DisplayEntityComponent } from "./view-components/display-entity/display-entity.component";
+import { DisplayEntityArrayComponent } from "./view-components/display-entity-array/display-entity-array.component";
+import { DisplayTextComponent } from "./view-components/display-text/display-text.component";
+import { DisplayDateComponent } from "./view-components/display-date/display-date.component";
+import { DisplayConfigurableEnumComponent } from "./view-components/display-configurable-enum/display-configurable-enum.component";
+import { DisplayCheckmarkComponent } from "./view-components/display-checkmark/display-checkmark.component";
+import { ReadonlyFunctionComponent } from "./view-components/readonly-function/readonly-function.component";
+import { DisplayPercentageComponent } from "./view-components/display-percentage/display-percentage.component";
+import { DisplayUnitComponent } from "./view-components/display-unit/display-unit.component";
 
 @NgModule({
-  declarations: [EntitySubrecordComponent, KeysPipe],
+  declarations: [
+    EntitySubrecordComponent,
+    KeysPipe,
+    DisplayEntityComponent,
+    DisplayEntityArrayComponent,
+    DisplayTextComponent,
+    DisplayDateComponent,
+    DisplayConfigurableEnumComponent,
+    DisplayCheckmarkComponent,
+    ReadonlyFunctionComponent,
+    DisplayPercentageComponent,
+    DisplayUnitComponent,
+  ],
   imports: [
     CommonModule,
     AlertsModule,
@@ -43,5 +64,16 @@ import { ConfirmationDialogModule } from "../../confirmation-dialog/confirmation
     ConfirmationDialogModule,
   ],
   exports: [EntitySubrecordComponent, KeysPipe],
+  entryComponents: [
+    DisplayEntityComponent,
+    DisplayEntityArrayComponent,
+    DisplayTextComponent,
+    DisplayDateComponent,
+    DisplayConfigurableEnumComponent,
+    DisplayCheckmarkComponent,
+    ReadonlyFunctionComponent,
+    DisplayPercentageComponent,
+    DisplayUnitComponent,
+  ],
 })
 export class EntitySubrecordModule {}

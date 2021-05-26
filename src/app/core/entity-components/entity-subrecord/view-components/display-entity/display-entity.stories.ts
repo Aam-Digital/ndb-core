@@ -1,7 +1,6 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { EntityUtilsModule } from "../../entity-utils.module";
 import { DisplayEntityComponent } from "./display-entity.component";
 import { Child } from "../../../../../child-dev-project/children/model/child";
 import { Database } from "../../../../database/database";
@@ -15,6 +14,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { User } from "../../../../user/user";
 import { SchoolsModule } from "../../../../../child-dev-project/schools/schools.module";
 import { ChildrenModule } from "../../../../../child-dev-project/children/children.module";
+import { EntitySubrecordModule } from "../../entity-subrecord.module";
 
 export default {
   title: "Core/EntityComponents/DisplayEntity",
@@ -22,7 +22,7 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [
-        EntityUtilsModule,
+        EntitySubrecordModule,
         NoopAnimationsModule,
         RouterTestingModule,
         SchoolsModule,

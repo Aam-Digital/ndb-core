@@ -1,7 +1,6 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { EntityUtilsModule } from "../../entity-utils.module";
 import { Child } from "../../../../../child-dev-project/children/model/child";
 import { Database } from "../../../../database/database";
 import { BackupService } from "../../../../admin/services/backup.service";
@@ -13,6 +12,7 @@ import { SchoolsModule } from "../../../../../child-dev-project/schools/schools.
 import { ChildrenModule } from "../../../../../child-dev-project/children/children.module";
 import { DisplayEntityArrayComponent } from "./display-entity-array.component";
 import { BehaviorSubject } from "rxjs";
+import { EntitySubrecordModule } from "../../entity-subrecord.module";
 
 const child1 = new Child();
 child1.name = "Test Name";
@@ -56,7 +56,7 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [
-        EntityUtilsModule,
+        EntitySubrecordModule,
         NoopAnimationsModule,
         RouterTestingModule,
         SchoolsModule,

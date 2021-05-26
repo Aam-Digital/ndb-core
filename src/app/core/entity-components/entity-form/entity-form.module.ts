@@ -22,7 +22,6 @@ import { AlertsModule } from "../../alerts/alerts.module";
 import { EditEntityArrayComponent } from "./dynamic-form-components/edit-entity-array/edit-entity-array.component";
 import { EntitySelectModule } from "../entity-select/entity-select.module";
 import { EditSingleEntityComponent } from "./dynamic-form-components/edit-single-entity/edit-single-entity.component";
-import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
 import { EditPercentageComponent } from "./dynamic-form-components/edit-percentage/edit-percentage.component";
 
 @NgModule({
@@ -53,7 +52,6 @@ import { EditPercentageComponent } from "./dynamic-form-components/edit-percenta
     MatNativeDateModule,
     AlertsModule,
     EntitySelectModule,
-    EntityUtilsModule,
   ],
   entryComponents: [
     EditConfigurableEnumComponent,

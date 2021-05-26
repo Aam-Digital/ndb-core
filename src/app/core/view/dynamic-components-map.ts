@@ -13,10 +13,10 @@ import { RecentAttendanceBlocksComponent } from "../../child-dev-project/childre
 import { ChildrenOverviewComponent } from "../../child-dev-project/schools/children-overview/children-overview.component";
 import { ChildBlockComponent } from "../../child-dev-project/children/child-block/child-block.component";
 import { FormComponent } from "../entity-components/entity-details/form/form.component";
-import { DisplayTextComponent } from "../entity-components/entity-utils/view-components/display-text/display-text.component";
-import { DisplayCheckmarkComponent } from "../entity-components/entity-utils/view-components/display-checkmark/display-checkmark.component";
-import { DisplayDateComponent } from "../entity-components/entity-utils/view-components/display-date/display-date.component";
-import { DisplayConfigurableEnumComponent } from "../entity-components/entity-utils/view-components/display-configurable-enum/display-configurable-enum.component";
+import { DisplayTextComponent } from "../entity-components/entity-subrecord/view-components/display-text/display-text.component";
+import { DisplayCheckmarkComponent } from "../entity-components/entity-subrecord/view-components/display-checkmark/display-checkmark.component";
+import { DisplayDateComponent } from "../entity-components/entity-subrecord/view-components/display-date/display-date.component";
+import { DisplayConfigurableEnumComponent } from "../entity-components/entity-subrecord/view-components/display-configurable-enum/display-configurable-enum.component";
 import { ActivityParticipantsSectionComponent } from "../../child-dev-project/attendance/activity-participants-section/activity-participants-section.component";
 import { ActivityAttendanceSectionComponent } from "../../child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component";
 import { BmiBlockComponent } from "../../child-dev-project/children/children-list/bmi-block/bmi-block.component";
@@ -32,15 +32,15 @@ import { EditAgeComponent } from "../entity-components/entity-form/dynamic-form-
 import { EditBooleanComponent } from "../entity-components/entity-form/dynamic-form-components/edit-boolean/edit-boolean.component";
 import { EditLongTextComponent } from "../entity-components/entity-form/dynamic-form-components/edit-long-text/edit-long-text.component";
 import { EditPhotoComponent } from "../entity-components/entity-form/dynamic-form-components/edit-photo/edit-photo.component";
-import { ReadonlyFunctionComponent } from "../entity-components/entity-utils/view-components/readonly-function/readonly-function.component";
+import { ReadonlyFunctionComponent } from "../entity-components/entity-subrecord/view-components/readonly-function/readonly-function.component";
 import { EditEntityArrayComponent } from "../entity-components/entity-form/dynamic-form-components/edit-entity-array/edit-entity-array.component";
 import { SchoolBlockComponent } from "../../child-dev-project/schools/school-block/school-block.component";
-import { DisplayEntityComponent } from "../entity-components/entity-utils/view-components/display-entity/display-entity.component";
+import { DisplayEntityComponent } from "../entity-components/entity-subrecord/view-components/display-entity/display-entity.component";
 import { EditSingleEntityComponent } from "../entity-components/entity-form/dynamic-form-components/edit-single-entity/edit-single-entity.component";
-import { DisplayEntityArrayComponent } from "../entity-components/entity-utils/view-components/display-entity-array/display-entity-array.component";
+import { DisplayEntityArrayComponent } from "../entity-components/entity-subrecord/view-components/display-entity-array/display-entity-array.component";
 import { EditPercentageComponent } from "../entity-components/entity-form/dynamic-form-components/edit-percentage/edit-percentage.component";
-import { DisplayPercentageComponent } from "../entity-components/entity-utils/view-components/display-percentage/display-percentage.component";
-import { DisplayUnitComponent } from "../entity-components/entity-utils/view-components/display-unit/display-unit.component";
+import { DisplayPercentageComponent } from "../entity-components/entity-subrecord/view-components/display-percentage/display-percentage.component";
+import { DisplayUnitComponent } from "../entity-components/entity-subrecord/view-components/display-unit/display-unit.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],

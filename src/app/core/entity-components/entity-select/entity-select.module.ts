@@ -8,7 +8,6 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ViewModule } from "../../view/view.module";
-import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
 
 @NgModule({
   declarations: [EntitySelectComponent],
@@ -21,7 +20,6 @@ import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
     MatInputModule,
     MatTooltipModule,
     ViewModule,
-    EntityUtilsModule,
   ],
   exports: [EntitySelectComponent],
 })
