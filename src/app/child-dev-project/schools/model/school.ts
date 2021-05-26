@@ -4,6 +4,10 @@ import { DatabaseField } from "../../../core/entity/database-field.decorator";
 
 @DatabaseEntity("School")
 export class School extends Entity {
+  static getBlockComponent(): string {
+    return "SchoolBlock";
+  }
+
   @DatabaseField({ label: "Name" }) name: string = "";
   @DatabaseField({ label: "Address" }) address: string = "";
   @DatabaseField({ label: "Medium" }) medium: string = "";

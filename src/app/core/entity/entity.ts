@@ -97,6 +97,10 @@ export class Entity {
     return;
   }
 
+  static getBlockComponent(): string {
+    return;
+  }
+
   /**
    * Internal database id.
    * This is usually combined from the ENTITY_TYPE as a prefix with the entityId field `EntityType:entityId`

@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Entity } from "../../../../entity/entity";
-import { DYNAMIC_COMPONENTS_MAP } from "../../../../view/dynamic-components-map";
 import { OnInitDynamicComponent } from "../../../../view/dynamic-components/on-init-dynamic-component.interface";
 import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
@@ -13,16 +12,15 @@ import { ENTITY_MAP } from "../../../entity-details/entity-details.component";
 })
 export class DisplayEntityComponent implements OnInit, OnInitDynamicComponent {
   @Input() entity: Entity;
-  @Input() linkDisabled: boolean = false;
+  @Input() linkDisabled = false;
   entityBlockComponent: string;
   constructor(private entityMapper: EntityMapperService) {}
 
   ngOnInit(): void {
     if (this.entity) {
-      const blockComponentName = this.entity.getType() + "Block";
-      if (DYNAMIC_COMPONENTS_MAP.has(blockComponentName)) {
-        this.entityBlockComponent = blockComponentName;
-      }
+      this.entityBlockComponent = this.entity
+        .getConstructor()
+        .getBlockComponent();
     }
   }
 

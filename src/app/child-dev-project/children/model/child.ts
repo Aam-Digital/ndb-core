@@ -37,6 +37,10 @@ export class Child extends Entity {
     return "assets/child.png";
   }
 
+  static getBlockComponent(): string {
+    return "ChildBlock";
+  }
+
   /**
    * Returns the full relative filePath to a child photo given a filename, adding the relevant folders to it.
    * @param filename The given filename with file extension.
