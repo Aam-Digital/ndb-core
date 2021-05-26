@@ -722,7 +722,13 @@ export const defaultJsonConfig = {
           "title": "Participants",
           "components": [
             {
-              "component": "ActivityParticipantsSection"
+              "component": "Form",
+              "config": {
+                "cols": [[
+                  { "id": "linkedGroups" },
+                  { "id": "participants" }
+                ]]
+              }
             }
           ]
         },

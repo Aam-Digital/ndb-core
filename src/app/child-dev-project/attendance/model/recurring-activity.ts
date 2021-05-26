@@ -24,6 +24,8 @@ import {
   InteractionType,
 } from "../../notes/model/interaction-type.interface";
 import { User } from "../../../core/user/user";
+import { Child } from "../../children/model/child";
+import { School } from "../../schools/model/school";
 
 @DatabaseEntity("RecurringActivity")
 export class RecurringActivity extends Entity {
@@ -57,10 +59,22 @@ export class RecurringActivity extends Entity {
   type: InteractionType;
 
   /** IDs of children linked to this activity */
-  @DatabaseField() participants: string[] = [];
+  @DatabaseField({
+    label: "Participants",
+    viewComponent: "DisplayEntityArray",
+    editComponent: "EditEntityArray",
+    ext: Child.ENTITY_TYPE,
+  })
+  participants: string[] = [];
 
   /** IDs of groups (schools, teams) whose (active) members should be included in the activity*/
-  @DatabaseField() linkedGroups: string[] = [];
+  @DatabaseField({
+    label: "Schools",
+    viewComponent: "DisplayEntityArray",
+    editComponent: "EditEntityArray",
+    ext: School.ENTITY_TYPE,
+  })
+  linkedGroups: string[] = [];
 
   /** IDs of the users who are responsible for conducting this activity */
   @DatabaseField({
