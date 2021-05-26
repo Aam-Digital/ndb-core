@@ -1,65 +1,45 @@
-import { AfterViewInit, Component, ViewChild } from "@angular/core";
+import { Component } from "@angular/core";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { SchoolsService } from "../schools.service";
 import { Child } from "../../children/model/child";
-import { MatTableDataSource } from "@angular/material/table";
-import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
-import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
-import { MatSort } from "@angular/material/sort";
+import { FormFieldConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
+import { Router } from "@angular/router";
 
 /**
  * This component creates a table containing all children currently attending this school.
  */
 @Component({
   selector: "app-children-overview",
-  templateUrl: "./children-overview.component.html",
+  template: `<app-entity-subrecord
+    [records]="children"
+    [columns]="columns"
+    (rowClicked)="routeToChild($event)"
+    [editable]="false"
+  ></app-entity-subrecord>`,
 })
-export class ChildrenOverviewComponent
-  implements OnInitDynamicComponent, AfterViewInit {
-  // This component can currently not use the EntitySubrecord, because EntitySubrecord does not allow to route to a
-  // different location but only open a popup when a record is clicked.
-  columns: ColumnDescription[] = [
-    {
-      name: "projectNumber",
-      label: "PN",
-      inputType: ColumnDescriptionInputType.TEXT,
-    },
-    {
-      name: "name",
-      label: "Name",
-      inputType: ColumnDescriptionInputType.TEXT,
-    },
-    {
-      name: "schoolClass",
-      label: "Class",
-      inputType: ColumnDescriptionInputType.TEXT,
-    },
-    {
-      name: "age",
-      label: "Age",
-      inputType: ColumnDescriptionInputType.TEXT,
-    },
+export class ChildrenOverviewComponent implements OnInitDynamicComponent {
+  columns: FormFieldConfig[] = [
+    { id: "projectNumber" },
+    { id: "name" },
+    { id: "schoolClass", placeholder: "Class", view: "DisplayText" },
+    { id: "age", placeholder: "Age", view: "DisplayText" },
   ];
 
-  displayedColumns = ["projectNumber", "name", "schoolClass", "age"];
+  children: Child[] = [];
 
-  studentsDataSource: MatTableDataSource<Child> = new MatTableDataSource<Child>();
-  @ViewChild(MatSort) sort: MatSort;
+  constructor(private schoolsService: SchoolsService, private router: Router) {}
 
-  constructor(private schoolsService: SchoolsService) {}
-
-  ngAfterViewInit() {
-    this.studentsDataSource.sort = this.sort;
+  async onInitFromDynamicConfig(config: PanelConfig) {
+    if (config?.config?.displayedColumns) {
+      this.columns = config.config.displayedColumns;
+    }
+    this.children = await this.schoolsService.getChildrenForSchool(
+      config.entity.getId()
+    );
   }
 
-  onInitFromDynamicConfig(config: PanelConfig) {
-    if (config?.config?.displayedColumns) {
-      this.displayedColumns = config.config.displayedColumns;
-    }
-
-    this.schoolsService
-      .getChildrenForSchool(config.entity.getId())
-      .then((children) => (this.studentsDataSource.data = children));
+  routeToChild(child: Child) {
+    this.router.navigate([`/${child.getType().toLowerCase()}`, child.getId()]);
   }
 }

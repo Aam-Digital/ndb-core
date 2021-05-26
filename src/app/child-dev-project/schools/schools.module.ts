@@ -27,6 +27,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { Angulartics2Module } from "angulartics2";
 import { ChildrenOverviewComponent } from "./children-overview/children-overview.component";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
+import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 
 @NgModule({
   imports: [
@@ -68,6 +69,7 @@ import { EntityListModule } from "../../core/entity-components/entity-list/entit
     MatTooltipModule,
     Angulartics2Module,
     EntityListModule,
+    EntitySubrecordModule,
   ],
   declarations: [
     SchoolBlockComponent,
