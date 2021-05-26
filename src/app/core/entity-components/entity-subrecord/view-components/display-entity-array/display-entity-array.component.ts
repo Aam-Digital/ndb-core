@@ -18,7 +18,7 @@ export class DisplayEntityArrayComponent extends ViewComponent {
 
   async onInitFromDynamicConfig(config: ViewPropertyConfig) {
     super.onInitFromDynamicConfig(config);
-    const entityType = config.entity.getSchema().get(this.property).ext;
+    const entityType = this.entity.getSchema().get(this.property).ext;
     const entityConstructor = ENTITY_MAP.get(entityType);
     if (!entityConstructor) {
       throw new Error(`Could not find type ${entityType} in ENTITY_MAP`);

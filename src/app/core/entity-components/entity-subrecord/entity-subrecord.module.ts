@@ -63,7 +63,7 @@ import { DisplayUnitComponent } from "./view-components/display-unit/display-uni
     EntityFormModule,
     ConfirmationDialogModule,
   ],
-  exports: [EntitySubrecordComponent, KeysPipe],
+  exports: [EntitySubrecordComponent, KeysPipe, DisplayEntityComponent],
   entryComponents: [
     DisplayEntityComponent,
     DisplayEntityArrayComponent,

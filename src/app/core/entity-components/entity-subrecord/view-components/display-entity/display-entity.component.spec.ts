@@ -1,8 +1,15 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 
 import { DisplayEntityComponent } from "./display-entity.component";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { Child } from "../../../../../child-dev-project/children/model/child";
+import { ChildSchoolRelation } from "../../../../../child-dev-project/children/model/childSchoolRelation";
+import { School } from "../../../../../child-dev-project/schools/model/school";
 
 describe("DisplayEntityComponent", () => {
   let component: DisplayEntityComponent;
@@ -27,4 +34,17 @@ describe("DisplayEntityComponent", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
+
+  it("should use the block component when available", fakeAsync(() => {
+    const school = new School();
+    mockEntityMapper.load.and.resolveTo(school);
+    component.onInitFromDynamicConfig({
+      entity: new ChildSchoolRelation(),
+      id: "schoolId",
+    });
+    tick();
+
+    expect(component.entityBlockComponent).toEqual(School.getBlockComponent());
+    expect(component.entityToDisplay).toEqual(school);
+  }));
 });

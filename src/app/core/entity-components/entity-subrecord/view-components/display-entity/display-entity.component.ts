@@ -1,37 +1,41 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Entity } from "../../../../entity/entity";
-import { OnInitDynamicComponent } from "../../../../view/dynamic-components/on-init-dynamic-component.interface";
 import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { ENTITY_MAP } from "../../../entity-details/entity-details.component";
+import { ViewComponent } from "../view-component";
 
 @Component({
   selector: "app-display-entity",
   templateUrl: "./display-entity.component.html",
   styleUrls: ["./display-entity.component.scss"],
 })
-export class DisplayEntityComponent implements OnInit, OnInitDynamicComponent {
-  @Input() entity: Entity;
+export class DisplayEntityComponent extends ViewComponent implements OnInit {
+  @Input() entityToDisplay: Entity;
   @Input() linkDisabled = false;
   entityBlockComponent: string;
-  constructor(private entityMapper: EntityMapperService) {}
+  constructor(private entityMapper: EntityMapperService) {
+    super();
+  }
 
   ngOnInit(): void {
-    if (this.entity) {
-      this.entityBlockComponent = this.entity
+    if (this.entityToDisplay) {
+      this.entityBlockComponent = this.entityToDisplay
         .getConstructor()
         .getBlockComponent();
     }
   }
 
   async onInitFromDynamicConfig(config: ViewPropertyConfig) {
-    const type = config.config || config.entity.getSchema().get(config.id).ext;
+    super.onInitFromDynamicConfig(config);
+    const type =
+      config.config || this.entity.getSchema().get(this.property).ext;
     const entityConstructor = ENTITY_MAP.get(type);
     if (!entityConstructor) {
       throw new Error(`Could not find type ${type} in ENTITY_MAP`);
     }
-    this.entity = await this.entityMapper
-      .load(entityConstructor, config.entity[config.id])
+    this.entityToDisplay = await this.entityMapper
+      .load(entityConstructor, this.entity[this.property])
       .catch(() => null);
     this.ngOnInit();
   }
