@@ -17,7 +17,6 @@ import { DisplayTextComponent } from "../entity-components/entity-utils/view-com
 import { DisplayCheckmarkComponent } from "../entity-components/entity-utils/view-components/display-checkmark/display-checkmark.component";
 import { DisplayDateComponent } from "../entity-components/entity-utils/view-components/display-date/display-date.component";
 import { DisplayConfigurableEnumComponent } from "../entity-components/entity-utils/view-components/display-configurable-enum/display-configurable-enum.component";
-import { ActivityParticipantsSectionComponent } from "../../child-dev-project/attendance/activity-participants-section/activity-participants-section.component";
 import { ActivityAttendanceSectionComponent } from "../../child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component";
 import { BmiBlockComponent } from "../../child-dev-project/children/children-list/bmi-block/bmi-block.component";
 import { ChildrenBmiDashboardComponent } from "../../child-dev-project/children/children-bmi-dashboard/children-bmi-dashboard.component";
@@ -51,7 +50,6 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["PreviousSchools", PreviousSchoolsComponent],
   ["Aser", AserComponent],
   ["GroupedChildAttendance", GroupedChildAttendanceComponent],
-  ["ActivityParticipantsSection", ActivityParticipantsSectionComponent],
   ["ActivityAttendanceSection", ActivityAttendanceSectionComponent],
   ["NotesOfChild", NotesOfChildComponent],
   ["HealthCheckup", HealthCheckupComponent],
