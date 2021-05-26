@@ -691,23 +691,11 @@ export const defaultJsonConfig = {
     "component": "ActivityList",
     "config": {
       "title": "Recurring Activities",
-      "columns": [],
-      "columnGroups": {
-        "default": "All",
-        "mobile": "All",
-        "groups": [
-          {
-            "name": "All",
-            "columns": [
-              "title",
-              "type",
-              "assignedTo"
-            ]
-          }
-        ]
-      },
-      "filters": [
-      ]
+      "columns": [
+        { "id": "title" },
+        { "id": "type" },
+        { "id": "assignedTo" }
+      ],
     }
   },
   "view:recurring-activity/:id": {
