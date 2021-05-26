@@ -36,4 +36,10 @@ describe("EditPhotoComponent", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
+
+  it("should correctly update the photo path", () => {
+    component.changeFilename("new_file.name");
+
+    expect(component.formControl.value.path).toBe("new_file.name");
+  });
 });
