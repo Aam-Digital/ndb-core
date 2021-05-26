@@ -13,6 +13,7 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { AttendanceModule } from "../attendance.module";
 import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { MatNativeDateModule } from "@angular/material/core";
+import { MatDialogRef } from "@angular/material/dialog";
 
 describe("AttendanceDetailsComponent", () => {
   let component: AttendanceDetailsComponent;
@@ -48,7 +49,10 @@ describe("AttendanceDetailsComponent", () => {
           RouterTestingModule,
           MatNativeDateModule,
         ],
-        providers: [{ provide: EntityMapperService, useValue: {} }],
+        providers: [
+          { provide: EntityMapperService, useValue: {} },
+          { provide: MatDialogRef, useValue: {} },
+        ],
       }).compileComponents();
     })
   );

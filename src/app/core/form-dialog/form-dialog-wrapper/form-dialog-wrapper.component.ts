@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ContentChild,
   EventEmitter,
@@ -7,6 +8,7 @@ import {
 } from "@angular/core";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { Entity } from "../../entity/entity";
+import { MatDialogRef } from "@angular/material/dialog";
 
 /**
  * Use `<app-form-dialog-wrapper>` in your form templates to handle the saving and resetting of the edited entity.
@@ -29,7 +31,7 @@ import { Entity } from "../../entity/entity";
   templateUrl: "./form-dialog-wrapper.component.html",
   styleUrls: ["./form-dialog-wrapper.component.scss"],
 })
-export class FormDialogWrapperComponent {
+export class FormDialogWrapperComponent implements AfterViewInit {
   /** entity to be edited */
   @Input() set entity(value: Entity) {
     this.originalEntity = Object.assign({}, value);
@@ -62,7 +64,16 @@ export class FormDialogWrapperComponent {
   /** ngForm component of the child component that is set through the ng-content */
   @ContentChild("entityForm", { static: true }) contentForm;
 
-  constructor(private entityMapper: EntityMapperService) {}
+  constructor(
+    private entityMapper: EntityMapperService,
+    private matDialogRef: MatDialogRef<any>
+  ) {}
+
+  ngAfterViewInit() {
+    this.contentForm.form.statusChanges.subscribe(() => {
+      this.matDialogRef.disableClose = this.isFormDirty;
+    });
+  }
 
   /**
    * whether the contained form has been changed
