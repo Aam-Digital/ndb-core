@@ -14,6 +14,7 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 describe("EditPercentageComponent", () => {
   let component: EditPercentageComponent;
   let fixture: ComponentFixture<EditPercentageComponent>;
+  let formGroup: FormGroup;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -31,7 +32,7 @@ describe("EditPercentageComponent", () => {
     fixture = TestBed.createComponent(EditPercentageComponent);
     component = fixture.componentInstance;
     const formControl = new FormControl();
-    new FormGroup({ testProperty: formControl });
+    formGroup = new FormGroup({ testProperty: formControl });
     component.onInitFromDynamicConfig({
       formControl: formControl,
       propertySchema: {},
@@ -46,30 +47,30 @@ describe("EditPercentageComponent", () => {
 
   it("should only allow valid percentage values", () => {
     component.formControl.setValue(101);
-    expect(component.formControl.invalid).toBeTrue();
+    expect(formGroup.invalid).toBeTrue();
 
     component.formControl.setValue(100);
-    expect(component.formControl.valid).toBeTrue();
+    expect(formGroup.valid).toBeTrue();
 
     component.formControl.setValue(10);
-    expect(component.formControl.valid).toBeTrue();
+    expect(formGroup.valid).toBeTrue();
 
     component.formControl.setValue(0);
-    expect(component.formControl.valid).toBeTrue();
+    expect(formGroup.valid).toBeTrue();
 
     component.formControl.setValue(-1);
-    expect(component.formControl.invalid).toBeTrue();
+    expect(formGroup.invalid).toBeTrue();
 
     component.formControl.setValue("one" as any);
-    expect(component.formControl.invalid).toBeTrue();
+    expect(formGroup.invalid).toBeTrue();
   });
 
   it("should keep existing validators", () => {
     component.formControl.setValue(null);
-    expect(component.formControl.valid).toBeTrue();
+    expect(formGroup.valid).toBeTrue();
 
     const control = new FormControl(0, [Validators.required]);
-    new FormGroup({ testProperty: control });
+    formGroup.setControl("testProperty", control);
     component.onInitFromDynamicConfig({
       formControl: control,
       propertySchema: {},
@@ -77,6 +78,6 @@ describe("EditPercentageComponent", () => {
     });
 
     component.formControl.setValue(null);
-    expect(component.formControl.invalid).toBeTrue();
+    expect(formGroup.invalid).toBeTrue();
   });
 });

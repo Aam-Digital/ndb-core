@@ -94,7 +94,7 @@ import { EntityUtilsModule } from "../../core/entity-components/entity-utils/ent
     ConfigurableEnumModule,
     AttendanceModule,
     MatSlideToggleModule,
-    EntityUtilsModule
+    EntityUtilsModule,
   ],
   providers: [],
 })

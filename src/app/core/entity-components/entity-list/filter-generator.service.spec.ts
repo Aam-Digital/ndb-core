@@ -182,16 +182,14 @@ describe("FilterGeneratorService", () => {
     const yesterdayNote = new Note();
     const notes = [todayNote, yesterdayNote];
     yesterdayNote.date = moment().subtract(1, "day").toDate();
-    const allFilter = filter.filterSettings.options.find(
-      (filter) => filter.key === ""
-    );
+    const allFilter = filter.filterSettings.options.find((f) => f.key === "");
     expect(notes.filter(allFilter.filterFun)).toEqual(notes);
     const todayFilter = filter.filterSettings.options.find(
-      (filter) => filter.key === "today"
+      (f) => f.key === "today"
     );
     expect(notes.filter(todayFilter.filterFun)).toEqual([todayNote]);
     const beforeFilter = filter.filterSettings.options.find(
-      (filter) => filter.key === "before"
+      (f) => f.key === "before"
     );
     expect(notes.filter(beforeFilter.filterFun)).toEqual([yesterdayNote]);
   });
