@@ -54,7 +54,7 @@
     "stream": "0.0.2",
     "tslib": "^2.2.0",
     "uuid": "^8.3.2",
-    "webdav": "^4.3.0",
+    "webdav": "^4.4.0",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
