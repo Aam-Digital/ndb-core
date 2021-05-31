@@ -21,12 +21,12 @@ export class AserComponent implements OnChanges, OnInitDynamicComponent {
   records: Array<Aser> = [];
 
   columns: FormFieldConfig[] = [
-    { id: "date" },
-    { id: "math" },
-    { id: "english" },
-    { id: "hindi" },
-    { id: "bengali" },
-    { id: "remarks" },
+    { id: "date", visibleFrom: "xs" },
+    { id: "math", visibleFrom: "xs" },
+    { id: "english", visibleFrom: "xs" },
+    { id: "hindi", visibleFrom: "md" },
+    { id: "bengali", visibleFrom: "md" },
+    { id: "remarks", visibleFrom: "md" },
   ];
 
   constructor(private childrenService: ChildrenService) {}
