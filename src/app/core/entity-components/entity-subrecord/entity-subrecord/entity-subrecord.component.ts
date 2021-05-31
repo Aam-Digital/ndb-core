@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   EventEmitter,
   Input,
@@ -49,8 +48,7 @@ export interface TableRow<T> {
   templateUrl: "./entity-subrecord.component.html",
   styleUrls: ["./entity-subrecord.component.scss"],
 })
-export class EntitySubrecordComponent<T extends Entity>
-  implements OnChanges, AfterViewInit {
+export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   /**
    * Global state of pagination size for all entity subrecord components.
    *
@@ -142,8 +140,6 @@ export class EntitySubrecordComponent<T extends Entity>
       }
     }
   }
-
-  ngAfterViewInit() {}
 
   private initDefaultSort() {
     this.recordsDataSource.sort = this.sort;
