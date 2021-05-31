@@ -17,8 +17,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { Entity } from "../../../entity/entity";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../../alerts/alert.service";
-import { DatePipe } from "@angular/common";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Subscription } from "rxjs";
 import { entityListSortingAccessor } from "../../entity-list/sorting-accessor";
 import { FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-details/form/FormConfig";
@@ -79,6 +78,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource<TableRow<T>>();
 
+  private mediaSubscription: Subscription;
   private screenWidth = "";
 
   @ViewChild(MatSort) sort: MatSort;
@@ -90,11 +90,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     private _snackBar: MatSnackBar,
     private _confirmationDialog: ConfirmationDialogService,
     private alertService: AlertService,
-    private datePipe: DatePipe,
     private media: MediaObserver,
     private entityFormService: EntityFormService
   ) {
-    this.media
+    this.mediaSubscription = this.media
       .asObservable()
       .pipe(untilDestroyed(this))
       .subscribe((change: MediaChange[]) => {
@@ -119,6 +118,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     ) {
       this.initFormGroups();
       this.initDefaultSort();
+    }
+    if (changes.hasOwnProperty("columnsToDisplay")) {
+      this.mediaSubscription.unsubscribe();
     }
   }
 
