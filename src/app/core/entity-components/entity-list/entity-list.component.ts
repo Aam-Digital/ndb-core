@@ -18,7 +18,7 @@ import {
 } from "./EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/entity";
 import { OperationType } from "../../permissions/entity-permissions.service";
-import { FormFieldConfig } from "../entity-details/form/FormConfig";
+import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
 import { EntitySubrecordComponent } from "../entity-subrecord/entity-subrecord/entity-subrecord.component";
 import {
   FilterComponentSettings,

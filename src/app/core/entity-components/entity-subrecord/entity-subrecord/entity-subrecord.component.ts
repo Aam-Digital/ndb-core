@@ -18,10 +18,10 @@ import { AlertService } from "../../../alerts/alert.service";
 import { BehaviorSubject, Subscription } from "rxjs";
 import { entityListSortingAccessor } from "../../entity-list/sorting-accessor";
 import { FormGroup } from "@angular/forms";
-import { FormFieldConfig } from "../../entity-details/form/FormConfig";
-import { EntityFormService } from "../../entity-utils/entity-form.service";
+import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
+import { EntityFormService } from "../../entity-form/entity-form.service";
 import { MatDialog } from "@angular/material/dialog";
-import { FormComponent } from "../../entity-details/form/form.component";
+import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
 
 export interface TableRow<T> {
   record: T;
@@ -321,7 +321,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   }
 
   private showEntityInForm(entity: Entity, creatingNew = false) {
-    const dialogRef = this.dialog.open(FormComponent, {
+    const dialogRef = this.dialog.open(EntityFormComponent, {
       width: "80%",
     });
     const columnsCopy = [];

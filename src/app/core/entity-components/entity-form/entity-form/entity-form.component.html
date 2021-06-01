@@ -23,7 +23,7 @@
 </form>
 <div>
   <button
-    *ngIf="form.enabled"
+    *ngIf="form?.enabled"
     mat-stroked-button
     class="edit-button"
     (click)="save()"
@@ -32,7 +32,7 @@
   </button>
 
   <button
-    *ngIf="form.enabled"
+    *ngIf="form?.enabled"
     mat-stroked-button
     class="edit-button"
     (click)="cancel()"
@@ -40,7 +40,7 @@
     Cancel
   </button>
 
-  <ng-container *ngIf="form.disabled">
+  <ng-container *ngIf="form?.disabled">
     <button
       mat-stroked-button
       class="edit-button"

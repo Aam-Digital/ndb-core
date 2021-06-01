@@ -1,13 +1,11 @@
 import { Injectable } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { FormFieldConfig } from "../entity-details/form/FormConfig";
+import { FormFieldConfig } from "./entity-form/FormConfig";
 import { Entity } from "../../entity/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
-@Injectable({
-  providedIn: "root",
-})
+@Injectable()
 export class EntityFormService {
   constructor(
     private fb: FormBuilder,
@@ -42,7 +40,9 @@ export class EntityFormService {
     if (forTable) {
       formField.forTable = true;
       formField.placeholder =
-        propertySchema?.labelShort || formField.placeholder;
+        formField.placeholder ||
+        propertySchema.labelShort ||
+        propertySchema.label;
     } else {
       formField.forTable = false;
       formField.placeholder = formField.placeholder || propertySchema.label;

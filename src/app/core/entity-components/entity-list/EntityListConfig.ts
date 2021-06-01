@@ -1,6 +1,6 @@
 import { Entity } from "../../entity/entity";
 import { FilterSelectionOption } from "../../filter/filter-selection/filter-selection";
-import { FormFieldConfig } from "../entity-details/form/FormConfig";
+import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
 
 export interface EntityListConfig {
   title: string;

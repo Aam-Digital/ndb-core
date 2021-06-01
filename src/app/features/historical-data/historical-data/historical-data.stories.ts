@@ -16,7 +16,7 @@ import { HistoricalDataService } from "../historical-data.service";
 import { EntityPermissionsService } from "../../../core/permissions/entity-permissions.service";
 
 export default {
-  title: "Core/EntityComponents/HistoricalDataComponent",
+  title: "Features/HistoricalDataComponent",
   component: HistoricalDataComponent,
   decorators: [
     moduleMetadata({

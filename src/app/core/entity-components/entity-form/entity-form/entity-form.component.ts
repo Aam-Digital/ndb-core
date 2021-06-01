@@ -1,33 +1,29 @@
 import { Component, OnInit } from "@angular/core";
-import { FormGroup } from "@angular/forms";
-import { Router } from "@angular/router";
-import { FormFieldConfig } from "./FormConfig";
-import { PanelConfig } from "../EntityDetailsConfig";
+import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
 import { Entity } from "../../../entity/entity";
+import { OperationType } from "../../../permissions/entity-permissions.service";
+import { FormFieldConfig } from "./FormConfig";
+import { FormGroup } from "@angular/forms";
+import { EntityFormService } from "../entity-form.service";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { AlertService } from "../../../alerts/alert.service";
-import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
+import { Router } from "@angular/router";
+import { PanelConfig } from "../../entity-details/EntityDetailsConfig";
 import { getParentUrl } from "../../../../utils/utils";
-import { OperationType } from "../../../permissions/entity-permissions.service";
-import { EntityFormService } from "../../entity-utils/entity-form.service";
 
-/**
- * This component creates a form based on the passed config.
- * It creates a flexible layout and includes validation functionality.
- */
 @Component({
-  selector: "app-form",
-  templateUrl: "./form.component.html",
-  styleUrls: ["./form.component.scss"],
+  selector: "app-entity-form",
+  templateUrl: "./entity-form.component.html",
+  styleUrls: ["./entity-form.component.scss"],
 })
-export class FormComponent implements OnInitDynamicComponent, OnInit {
+export class EntityFormComponent implements OnInitDynamicComponent, OnInit {
   entity: Entity;
 
   operationType = OperationType;
 
   creatingNew = false;
 
-  columns: FormFieldConfig[][];
+  columns: FormFieldConfig[][] = [];
   form: FormGroup;
 
   constructor(

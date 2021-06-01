@@ -4,7 +4,7 @@ import { HistoricalEntityData } from "../historical-entity-data";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { Entity } from "../../../core/entity/entity";
 import { HistoricalDataService } from "../historical-data.service";
-import { FormFieldConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
+import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 
 /**
  * A general component that can be included on a entity details page through the config.

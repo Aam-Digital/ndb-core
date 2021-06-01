@@ -1,7 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { EntityDetailsComponent } from "./entity-details.component";
-import { FormComponent } from "./form/form.component";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -17,7 +16,7 @@ import { AlertsModule } from "../../alerts/alerts.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
 
 @NgModule({
-  declarations: [EntityDetailsComponent, FormComponent],
+  declarations: [EntityDetailsComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -34,6 +33,6 @@ import { PermissionsModule } from "../../permissions/permissions.module";
     PermissionsModule,
     MatTooltipModule,
   ],
-  entryComponents: [FormComponent],
+  entryComponents: [],
 })
 export class EntityDetailsModule {}

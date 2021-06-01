@@ -1,23 +1,24 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
-import { FormComponent } from "./form.component";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { RouterTestingModule } from "@angular/router/testing";
-import { Router } from "@angular/router";
-import { EntityDetailsModule } from "../entity-details.module";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { SessionService } from "../../../session/session-service/session.service";
-import { User } from "../../../user/user";
+
+import { EntityFormComponent } from "./entity-form.component";
 import { ChildPhotoService } from "../../../../child-dev-project/children/child-photo-service/child-photo.service";
-import { AlertService } from "../../../alerts/alert.service";
-import { Child } from "../../../../child-dev-project/children/model/child";
-import { ConfigService } from "../../../config/config.service";
 import { Entity } from "../../../entity/entity";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { User } from "../../../user/user";
+import { EntityDetailsModule } from "../../entity-details/entity-details.module";
+import { Router } from "@angular/router";
+import { RouterTestingModule } from "@angular/router/testing";
+import { SessionService } from "../../../session/session-service/session.service";
+import { ConfigService } from "../../../config/config.service";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { AlertService } from "../../../alerts/alert.service";
 import { DatabaseField } from "../../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
+import { Child } from "../../../../child-dev-project/children/model/child";
 
-describe("FormComponent", () => {
-  let component: FormComponent;
-  let fixture: ComponentFixture<FormComponent>;
+describe("EntityFormComponent", () => {
+  let component: EntityFormComponent;
+  let fixture: ComponentFixture<EntityFormComponent>;
 
   let mockChildPhotoService: jasmine.SpyObj<ChildPhotoService>;
   let mockSessionService: jasmine.SpyObj<SessionService>;
@@ -46,7 +47,7 @@ describe("FormComponent", () => {
       ]);
 
       TestBed.configureTestingModule({
-        declarations: [FormComponent],
+        declarations: [EntityFormComponent],
         imports: [
           EntityDetailsModule,
           NoopAnimationsModule,
@@ -66,7 +67,7 @@ describe("FormComponent", () => {
   beforeEach(() => {
     testChild.name = "Test Name";
     mockChildPhotoService.canSetImage.and.returnValue(false);
-    fixture = TestBed.createComponent(FormComponent);
+    fixture = TestBed.createComponent(EntityFormComponent);
     component = fixture.componentInstance;
     component.onInitFromDynamicConfig({
       entity: testChild,

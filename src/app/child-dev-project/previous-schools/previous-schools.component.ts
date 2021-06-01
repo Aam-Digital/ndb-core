@@ -4,7 +4,7 @@ import { ChildrenService } from "../children/children.service";
 import { Child } from "../children/model/child";
 import { OnInitDynamicComponent } from "../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../core/entity-components/entity-details/EntityDetailsConfig";
-import { FormFieldConfig } from "../../core/entity-components/entity-details/form/FormConfig";
+import { FormFieldConfig } from "../../core/entity-components/entity-form/entity-form/FormConfig";
 import moment from "moment";
 
 @Component({

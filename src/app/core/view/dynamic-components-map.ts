@@ -12,7 +12,6 @@ import { EducationalMaterialComponent } from "../../child-dev-project/educationa
 import { RecentAttendanceBlocksComponent } from "../../child-dev-project/children/children-list/recent-attendance-blocks/recent-attendance-blocks.component";
 import { ChildrenOverviewComponent } from "../../child-dev-project/schools/children-overview/children-overview.component";
 import { ChildBlockComponent } from "../../child-dev-project/children/child-block/child-block.component";
-import { FormComponent } from "../entity-components/entity-details/form/form.component";
 import { DisplayTextComponent } from "../entity-components/entity-utils/view-components/display-text/display-text.component";
 import { DisplayCheckmarkComponent } from "../entity-components/entity-utils/view-components/display-checkmark/display-checkmark.component";
 import { DisplayDateComponent } from "../entity-components/entity-utils/view-components/display-date/display-date.component";
@@ -40,6 +39,7 @@ import { DisplayEntityArrayComponent } from "../entity-components/entity-utils/v
 import { EditPercentageComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-percentage/edit-percentage.component";
 import { DisplayPercentageComponent } from "../entity-components/entity-utils/view-components/display-percentage/display-percentage.component";
 import { DisplayUnitComponent } from "../entity-components/entity-utils/view-components/display-unit/display-unit.component";
+import { EntityFormComponent } from "../entity-components/entity-form/entity-form/entity-form.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -54,7 +54,7 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["NotesOfChild", NotesOfChildComponent],
   ["HealthCheckup", HealthCheckupComponent],
   ["EducationalMaterial", EducationalMaterialComponent],
-  ["Form", FormComponent],
+  ["Form", EntityFormComponent],
   ["DisplayDate", DisplayDateComponent],
   ["DisplayText", DisplayTextComponent],
   ["DisplayConfigurableEnum", DisplayConfigurableEnumComponent],

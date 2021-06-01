@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 
-import { EntityFormService } from "./entity-form.service";
+import { EntityFormService } from "../entity-form/entity-form.service";
 import { FormBuilder } from "@angular/forms";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { AlertService } from "../../alerts/alert.service";

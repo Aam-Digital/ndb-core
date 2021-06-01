@@ -3,7 +3,7 @@ import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on
 import { SchoolsService } from "../schools.service";
 import { Child } from "../../children/model/child";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
-import { FormFieldConfig } from "../../../core/entity-components/entity-details/form/FormConfig";
+import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { Router } from "@angular/router";
 
 /**
