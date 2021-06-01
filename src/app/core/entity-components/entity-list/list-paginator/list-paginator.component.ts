@@ -1,4 +1,4 @@
-import { Component, ViewChild, Input, SimpleChanges } from "@angular/core";
+import { Component, ViewChild, Input } from "@angular/core";
 import { Entity } from "../../../entity/entity";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
@@ -15,15 +15,19 @@ import { Router } from "@angular/router";
 })
 export class ListPaginatorComponent<E extends Entity> {
   @Input() dataSource: MatTableDataSource<E>;
+  
+  // Inputting the data separately from the dataSource is just a workaround to subscribe to the changes in the data
+  // and thus to update the pagination settings at the moment when the data is fully loaded.
+  // There should be a more elegant way to do this.
+  @Input() data: E[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
-
 
   user: User;
   paginatorPageSize: number = 10;
   paginatorPageSizeBeforeToggle: number = 10;
   paginatorPageIndex: number = 0;
-  showAllToggle: boolean = false;
+  allToggle: boolean = false;
 
   // This key is used to save the pagination settings on the user entity
   readonly paginatorKey: string;
@@ -37,7 +41,6 @@ export class ListPaginatorComponent<E extends Entity> {
   }
 
   ngOnInit() {
-    console.log("PaginatorKey: " + this.paginatorKey);
     this.user = this.sessionService.getCurrentUser();
     // Use URl as key to save pagination settings
     this.paginatorPageSize =
@@ -46,13 +49,11 @@ export class ListPaginatorComponent<E extends Entity> {
     this.paginatorPageIndex =
       this.user.paginatorSettingsPageIndex[this.paginatorKey] ||
       this.paginatorPageIndex;
-    console.log("OnInit aufgerufen. Length ist " + this.dataSource.data.length);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.showAllToggle =
+  ngOnChanges(): void {
+    this.allToggle =
       this.paginatorPageSize >= this.dataSource.data.length;
-      console.log("OnChanges aufgerufen. Length ist " + this.dataSource.data.length);
   }
 
   ngAfterViewInit() {
@@ -64,18 +65,15 @@ export class ListPaginatorComponent<E extends Entity> {
         pageSize: this.paginator.pageSize,
         length: this.paginator.length,
       });
-      console.log("AfterViewInit mit Timeout aufgerufen. Length ist " + this.dataSource.data.length);
     });
-    console.log("AfterViewInit aufgerufen. Length ist " + this.dataSource.data.length);
   }
 
   onPaginateChange(event: PageEvent) {
     this.paginatorPageSize = event.pageSize;
     this.paginatorPageIndex = event.pageIndex;
     this.updateUserPaginationSettings();
-    this.showAllToggle =
+    this.allToggle =
       this.paginatorPageSize >= this.dataSource.data.length;
-    console.log("OnPaginateChange aufgerufen. Length ist " + this.dataSource.data.length);
   }
 
   getPaginatorPageSizeOptions(): number[] {
@@ -96,8 +94,8 @@ export class ListPaginatorComponent<E extends Entity> {
     return this.paginatorPageSize;
   }
 
-  clickShowAllToggle() {
-    if (!this.showAllToggle) {
+  clickAllToggle() {
+    if (!this.allToggle) {
       this.paginatorPageSizeBeforeToggle = this.paginatorPageSize;
       this.paginatorPageSize = this.dataSource.data.length;
     } else {
@@ -111,7 +109,7 @@ export class ListPaginatorComponent<E extends Entity> {
       }
     }
     this.paginator._changePageSize(this.paginatorPageSize);
-    this.showAllToggle = !this.showAllToggle;
+    this.allToggle = !this.allToggle;
     this.updateUserPaginationSettings();
   }
 
@@ -129,7 +127,6 @@ export class ListPaginatorComponent<E extends Entity> {
     ] = this.paginatorPageSize;
 
     if (hasChangesToBeSaved) {
-      console.log("Ich speichere im User: PageSize an der Stelle " + this.paginatorKey + " ist " + this.paginatorPageSize);
       this.entityMapperService.save<User>(this.user);
     }
   }

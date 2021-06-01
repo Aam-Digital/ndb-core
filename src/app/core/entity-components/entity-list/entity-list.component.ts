@@ -28,10 +28,7 @@ import {
   FilterSelection,
   FilterSelectionOption,
 } from "../../filter/filter-selection/filter-selection";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { SessionService } from "../../session/session-service/session.service";
-import { User } from "../../user/user";
-import { getUrlWithoutParams } from "../../../utils/utils";
 import { ConfigService } from "../../config/config.service";
 import {
   CONFIGURABLE_ENUM_CONFIG_PREFIX,
@@ -96,7 +93,6 @@ export class EntityListComponent<T extends Entity>
     private media: MediaObserver,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private entityMapperService: EntityMapperService
   ) { }
 
   ngOnInit() {
