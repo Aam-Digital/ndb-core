@@ -11,10 +11,10 @@ import { Router } from "@angular/router";
  */
 @Component({
   selector: "app-children-overview",
-  template: `<app-entity-subrecord
+  template: ` <app-entity-subrecord
     [records]="children"
     [columns]="columns"
-    (rowClicked)="routeToChild($event)"
+    [showEntity]="routeToChild.bind(this)"
     [editable]="false"
   ></app-entity-subrecord>`,
 })

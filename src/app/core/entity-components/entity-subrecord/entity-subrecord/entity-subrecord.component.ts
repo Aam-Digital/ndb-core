@@ -1,9 +1,7 @@
 import {
   Component,
-  EventEmitter,
   Input,
   OnChanges,
-  Output,
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
@@ -75,7 +73,8 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   /** columns displayed in the template's table */
   @Input() columnsToDisplay = [];
 
-  @Output() rowClicked = new EventEmitter<T>();
+  @Input() showEntity = (entity: Entity, creatingNew = false) =>
+    this.showEntityInForm(entity, creatingNew);
 
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource<TableRow<T>>();
@@ -305,29 +304,32 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     this.records.unshift(newRecord);
     this.recordsDataSource.data = [newRow].concat(this.recordsDataSource.data);
 
-    newRow.formGroup.enable();
-    this.rowClicked.emit(newRecord);
+    this.showEntity(newRecord, true);
   }
 
   /**
    * Show one record's details in a modal dialog (if configured).
    * @param row The entity whose details should be displayed.
    */
-  showRecord(row: TableRow<T>) {
+  rowClick(row: TableRow<T>) {
     if (!row.formGroup || row.formGroup.disabled) {
-      this.rowClicked.emit(row.record);
-      const dialogRef = this.dialog.open(FormComponent, {
-        width: "80%",
-      });
-      const columnsCopy = [];
-      this.columns.forEach((col) => {
-        const newCol = {};
-        Object.assign(newCol, col);
-        columnsCopy.push([newCol]);
-      });
-      dialogRef.componentInstance.columns = columnsCopy;
-      dialogRef.componentInstance.entity = row.record;
+      this.showEntity(row.record);
     }
+  }
+
+  private showEntityInForm(entity: Entity, creatingNew = false) {
+    const dialogRef = this.dialog.open(FormComponent, {
+      width: "80%",
+    });
+    const columnsCopy = [];
+    this.columns.forEach((col) => {
+      const newCol = {};
+      Object.assign(newCol, col);
+      columnsCopy.push([newCol]);
+    });
+    dialogRef.componentInstance.columns = columnsCopy;
+    dialogRef.componentInstance.entity = entity;
+    dialogRef.componentInstance.creatingNew = creatingNew;
   }
 
   /**

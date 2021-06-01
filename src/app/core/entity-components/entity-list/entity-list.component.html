@@ -110,7 +110,7 @@
     [records]="filteredEntities"
     [columns]="columns"
     [editable]="false"
-    (rowClicked)="elementClick.emit($event)"
+    [showEntity]="elementClick.emit.bind(elementClick)"
     [columnsToDisplay]="columnsToDisplay"
   ></app-entity-subrecord>
 </div>

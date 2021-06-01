@@ -19,6 +19,7 @@ import { ViewModule } from "../../view/view.module";
 import { ListFilterComponent } from "./list-filter/list-filter.component";
 import { PermissionsModule } from "../../permissions/permissions.module";
 import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
+import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
 
 @NgModule({
   declarations: [ListFilterComponent, EntityListComponent],
@@ -42,6 +43,7 @@ import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.modu
     MatPaginatorModule,
     PermissionsModule,
     EntitySubrecordModule,
+    EntityUtilsModule,
   ],
   exports: [EntityListComponent],
   entryComponents: [],

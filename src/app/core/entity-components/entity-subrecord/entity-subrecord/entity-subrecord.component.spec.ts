@@ -336,11 +336,11 @@ describe("EntitySubrecordComponent", () => {
 
   it("should notify when an entity is clicked", (done) => {
     const child = new Child();
-    component.rowClicked.subscribe((entity) => {
+    component.showEntity = (entity) => {
       expect(entity).toEqual(child);
       done();
-    });
+    };
 
-    component.showRecord({ record: child });
+    component.rowClick({ record: child });
   });
 });

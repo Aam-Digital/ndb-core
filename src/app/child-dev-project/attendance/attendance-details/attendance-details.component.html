@@ -93,7 +93,7 @@
       <app-entity-subrecord
         [records]="entity.events"
         [columns]="eventsColumns"
-        (rowClicked)="showEventDetails($event)"
+        [showEntity]="showEventDetails.bind(this)"
         [editable]="false"
       >
       </app-entity-subrecord>

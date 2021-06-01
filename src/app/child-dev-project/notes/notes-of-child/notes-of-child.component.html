@@ -2,7 +2,7 @@
   [records]="records"
   [columns]="columns"
   [newRecordFactory]="generateNewRecordFactory()"
-  (rowClicked)="showNoteDetails($event)"
+  [showEntity]="showNoteDetails.bind(this)"
   [getBackgroundColor]="getColor"
 >
 </app-entity-subrecord>
