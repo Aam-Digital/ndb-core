@@ -4,9 +4,9 @@
   >
   <mat-paginator
     (page)="onPaginateChange($event)"
-    [pageSize]="getPaginatorPageSize()"
+    [pageSize]="paginatorPageSize"
     [pageIndex]="paginatorPageIndex"
-    [pageSizeOptions]="getPaginatorPageSizeOptions()"
+    [pageSizeOptions]="paginatorPageSizeOptions"
     [showFirstLastButtons]="true"
   ></mat-paginator>
 </mat-toolbar>

@@ -26,6 +26,7 @@ export class ListPaginatorComponent<E extends Entity> {
   user: User;
   paginatorPageSize: number = 10;
   paginatorPageSizeBeforeToggle: number = 10;
+  paginatorPageSizeOptions: Array<number> = [3, 10, 20, 50];
   paginatorPageIndex: number = 0;
   allToggle: boolean = false;
 
@@ -54,6 +55,8 @@ export class ListPaginatorComponent<E extends Entity> {
   ngOnChanges(): void {
     this.allToggle =
       this.paginatorPageSize >= this.dataSource.data.length;
+    this.getPaginatorPageSize();
+    this.getPaginatorPageSizeOptions();
   }
 
   ngAfterViewInit() {
@@ -76,12 +79,13 @@ export class ListPaginatorComponent<E extends Entity> {
       this.paginatorPageSize >= this.dataSource.data.length;
   }
 
-  getPaginatorPageSizeOptions(): number[] {
+  getPaginatorPageSizeOptions() {
     const ar = [3, 10, 20, 50].filter((n) => {
       return n < this.dataSource.data.length;
     });
     ar.push(this.dataSource.data.length);
-    return ar;
+    this.paginatorPageSizeOptions = ar;
+    console.log("Paginator Page Size Options gesetzt.")
   }
 
   getPaginatorPageSize(): number {
@@ -91,6 +95,7 @@ export class ListPaginatorComponent<E extends Entity> {
     ) {
       this.paginatorPageSize = this.dataSource.data.length;
     }
+    console.log("PageSize gesetzt auf: " + this.paginatorPageSize);
     return this.paginatorPageSize;
   }
 
@@ -104,7 +109,7 @@ export class ListPaginatorComponent<E extends Entity> {
       ) {
         this.paginatorPageSize = this.paginatorPageSizeBeforeToggle;
       } else {
-        const po = this.getPaginatorPageSizeOptions();
+        const po = this.paginatorPageSizeOptions;
         this.paginatorPageSize = po.length > 2 ? po[po.length - 2] : po[0];
       }
     }
