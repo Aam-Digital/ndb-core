@@ -24,7 +24,6 @@ export class EntityFormService {
       try {
         this.addFormFields(formField, entity, forTable);
       } catch (err) {
-        console.log(`Could not create form config for ${formField.id}: ${err}`);
         throw new Error(
           `Could not create form config for ${formField.id}: ${err}`
         );
@@ -40,13 +39,13 @@ export class EntityFormService {
     formField.view =
       formField.view ||
       this.entitySchemaService.getComponent(propertySchema, "view");
-    formField.placeholder = formField.placeholder || propertySchema.label;
     if (forTable) {
       formField.forTable = true;
       formField.placeholder =
         propertySchema?.labelShort || formField.placeholder;
     } else {
       formField.forTable = false;
+      formField.placeholder = formField.placeholder || propertySchema.label;
     }
   }
 
