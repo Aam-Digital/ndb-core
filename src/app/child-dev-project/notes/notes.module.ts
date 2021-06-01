@@ -97,5 +97,6 @@ import { EntityUtilsModule } from "../../core/entity-components/entity-utils/ent
     EntityUtilsModule,
   ],
   providers: [],
+  entryComponents: [NoteDetailsComponent],
 })
 export class NotesModule {}

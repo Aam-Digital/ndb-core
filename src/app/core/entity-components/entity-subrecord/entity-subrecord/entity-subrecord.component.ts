@@ -120,6 +120,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     ) {
       this.initFormGroups();
       this.initDefaultSort();
+      if (this.columnsToDisplay.length < 2) {
+        this.setupTable();
+      }
     }
     if (changes.hasOwnProperty("columnsToDisplay")) {
       this.mediaSubscription.unsubscribe();
