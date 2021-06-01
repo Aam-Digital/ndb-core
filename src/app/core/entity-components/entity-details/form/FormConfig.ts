@@ -1,7 +1,3 @@
-export interface FormConfig {
-  cols: FormFieldConfig[][];
-}
-
 export interface FormFieldConfig {
   view?: string;
 

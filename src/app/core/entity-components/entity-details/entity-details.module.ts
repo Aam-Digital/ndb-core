@@ -34,5 +34,6 @@ import { PermissionsModule } from "../../permissions/permissions.module";
     PermissionsModule,
     MatTooltipModule,
   ],
+  entryComponents: [FormComponent],
 })
 export class EntityDetailsModule {}

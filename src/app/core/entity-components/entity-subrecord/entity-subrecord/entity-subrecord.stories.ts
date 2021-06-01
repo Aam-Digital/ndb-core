@@ -19,6 +19,7 @@ import { ChildrenModule } from "../../../../child-dev-project/children/children.
 import { ChildrenService } from "../../../../child-dev-project/children/children.service";
 import { of } from "rxjs";
 import * as faker from "faker";
+import { EntityPermissionsService } from "../../../permissions/entity-permissions.service";
 
 const configService = new ConfigService();
 const schemaService = new EntitySchemaService();
@@ -69,6 +70,10 @@ export default {
             getChild: () =>
               of(faker.random.arrayElement(childGenerator.entities)),
           },
+        },
+        {
+          provide: EntityPermissionsService,
+          useValue: { userIsPermitted: () => true },
         },
       ],
     }),

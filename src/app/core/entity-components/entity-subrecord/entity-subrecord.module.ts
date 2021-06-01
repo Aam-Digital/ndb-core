@@ -14,6 +14,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { ViewModule } from "../../view/view.module";
 import { ReactiveFormsModule } from "@angular/forms";
 import { ConfirmationDialogModule } from "../../confirmation-dialog/confirmation-dialog.module";
+import { EntityDetailsModule } from "../entity-details/entity-details.module";
 
 @NgModule({
   declarations: [EntitySubrecordComponent, KeysPipe],
@@ -31,6 +32,7 @@ import { ConfirmationDialogModule } from "../../confirmation-dialog/confirmation
     MatTooltipModule,
     MatButtonModule,
     MatIconModule,
+    EntityDetailsModule,
   ],
   exports: [EntitySubrecordComponent, KeysPipe],
 })

@@ -22,6 +22,8 @@ import { entityListSortingAccessor } from "../../entity-list/sorting-accessor";
 import { FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-details/form/FormConfig";
 import { EntityFormService } from "../../entity-utils/entity-form.service";
+import { MatDialog } from "@angular/material/dialog";
+import { FormComponent } from "../../entity-details/form/form.component";
 
 export interface TableRow<T> {
   record: T;
@@ -91,7 +93,8 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     private _confirmationDialog: ConfirmationDialogService,
     private alertService: AlertService,
     private media: MediaObserver,
-    private entityFormService: EntityFormService
+    private entityFormService: EntityFormService,
+    private dialog: MatDialog
   ) {
     this.mediaSubscription = this.media
       .asObservable()
@@ -313,6 +316,17 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   showRecord(row: TableRow<T>) {
     if (!row.formGroup || row.formGroup.disabled) {
       this.rowClicked.emit(row.record);
+      const dialogRef = this.dialog.open(FormComponent, {
+        width: "80%",
+      });
+      const columnsCopy = [];
+      this.columns.forEach((col) => {
+        const newCol = {};
+        Object.assign(newCol, col);
+        columnsCopy.push([newCol]);
+      });
+      dialogRef.componentInstance.columns = columnsCopy;
+      dialogRef.componentInstance.entity = row.record;
     }
   }
 

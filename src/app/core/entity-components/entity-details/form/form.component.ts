@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { Router } from "@angular/router";
-import { FormConfig, FormFieldConfig } from "./FormConfig";
+import { FormFieldConfig } from "./FormConfig";
 import { PanelConfig } from "../EntityDetailsConfig";
 import { Entity } from "../../../entity/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
@@ -26,7 +26,6 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   operationType = OperationType;
 
   creatingNew = false;
-  config: FormConfig;
 
   columns: FormFieldConfig[][];
   form: FormGroup;
@@ -39,7 +38,7 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   ) {}
 
   ngOnInit() {
-    this.initForm();
+    this.buildFormConfig();
     if (this.creatingNew) {
       this.switchEdit();
     }
@@ -47,7 +46,7 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
 
   onInitFromDynamicConfig(config: PanelConfig) {
     this.entity = config.entity;
-    this.config = config.config;
+    this.columns = config.config?.cols;
     if (config.creatingNew) {
       this.creatingNew = true;
     }
@@ -71,11 +70,6 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   }
 
   cancel() {
-    this.buildFormConfig();
-  }
-
-  private initForm(): void {
-    this.columns = this.config.cols;
     this.buildFormConfig();
   }
 
