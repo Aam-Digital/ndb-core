@@ -297,17 +297,13 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       );
     }
 
-    const newRow: TableRow<T> = {
-      record: newRecord,
-      formGroup: this.entityFormService.createFormGroup(
-        this.columns,
-        newRecord
-      ),
-    };
     this.records.unshift(newRecord);
-    this.recordsDataSource.data = [newRow].concat(this.recordsDataSource.data);
-
-    this.showEntity(newRecord, true);
+    this.recordsDataSource.data = [{ record: newRecord }].concat(
+      this.recordsDataSource.data
+    );
+    this._entityMapper
+      .save(newRecord)
+      .then(() => this.showEntity(newRecord, true));
   }
 
   /**
@@ -333,12 +329,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     dialogRef.componentInstance.columns = columnsCopy;
     dialogRef.componentInstance.entity = entity;
     dialogRef.componentInstance.creatingNew = creatingNew;
-    dialogRef.componentInstance.onSave.subscribe(() => {
-      dialogRef.close();
-      this.recordsDataSource.data
-        .find((row) => row.record === entity)
-        ?.formGroup.disable();
-    });
+    dialogRef.componentInstance.onSave.subscribe(() => dialogRef.close());
   }
 
   /**
