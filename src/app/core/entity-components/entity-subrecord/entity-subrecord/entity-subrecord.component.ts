@@ -73,9 +73,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   /** columns displayed in the template's table */
   @Input() columnsToDisplay = [];
 
-  @Input() showEntity = (entity: Entity, creatingNew = false) =>
-    this.showEntityInForm(entity, creatingNew);
-
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource<TableRow<T>>();
 
@@ -105,6 +102,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
         }
       });
   }
+
+  @Input() showEntity = (entity: Entity, creatingNew = false) =>
+    this.showEntityInForm(entity, creatingNew);
 
   /** function returns the background color for each entry*/
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
