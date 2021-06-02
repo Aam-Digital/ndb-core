@@ -28,6 +28,7 @@ describe("EditSingleEntityComponent", () => {
       imports: [EntityUtilsModule, NoopAnimationsModule],
       declarations: [EditSingleEntityComponent],
       providers: [
+        EntityFormService,
         EntitySchemaService,
         { provide: EntityMapperService, useValue: mockEntityMapper },
       ],

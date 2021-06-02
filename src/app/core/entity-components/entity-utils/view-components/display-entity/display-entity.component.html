@@ -9,6 +9,6 @@
       }
     }">
 </ng-container>
-<ng-container *ngIf="!entityBlockComponent && entityToDisplay">
-  {{entityToDisplay["name"] || entityToDisplay.getId()}}
+<ng-container *ngIf="!entityBlockComponent">
+  {{ entityToDisplay?.toString() }}
 </ng-container>

@@ -15,6 +15,7 @@ import { ViewModule } from "../../view/view.module";
 import { ReactiveFormsModule } from "@angular/forms";
 import { ConfirmationDialogModule } from "../../confirmation-dialog/confirmation-dialog.module";
 import { EntityDetailsModule } from "../entity-details/entity-details.module";
+import { EntityFormModule } from "../entity-form/entity-form.module";
 
 @NgModule({
   declarations: [EntitySubrecordComponent, KeysPipe],
@@ -33,6 +34,7 @@ import { EntityDetailsModule } from "../entity-details/entity-details.module";
     MatButtonModule,
     MatIconModule,
     EntityDetailsModule,
+    EntityFormModule,
   ],
   exports: [EntitySubrecordComponent, KeysPipe],
 })

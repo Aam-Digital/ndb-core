@@ -12,6 +12,7 @@ import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
 import { RouterTestingModule } from "@angular/router/testing";
 import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { EntityFormService } from "../../../core/entity-components/entity-form/entity-form.service";
 
 describe("AserComponent", () => {
   let component: AserComponent;
@@ -42,6 +43,7 @@ describe("AserComponent", () => {
           MatSnackBarModule,
         ],
         providers: [
+          EntityFormService,
           DatePipe,
           { provide: ChildrenService, useValue: mockChildrenService },
           { provide: EntityMapperService, useValue: mockEntityMapper },

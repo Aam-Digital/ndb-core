@@ -5,7 +5,6 @@ import { ChildPhotoService } from "../../../../child-dev-project/children/child-
 import { Entity } from "../../../entity/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { User } from "../../../user/user";
-import { EntityDetailsModule } from "../../entity-details/entity-details.module";
 import { Router } from "@angular/router";
 import { RouterTestingModule } from "@angular/router/testing";
 import { SessionService } from "../../../session/session-service/session.service";
@@ -15,6 +14,9 @@ import { AlertService } from "../../../alerts/alert.service";
 import { DatabaseField } from "../../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { Child } from "../../../../child-dev-project/children/model/child";
+import { EntityFormModule } from "../entity-form.module";
+import { FormBuilder } from "@angular/forms";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
 
 describe("EntityFormComponent", () => {
   let component: EntityFormComponent;
@@ -49,11 +51,14 @@ describe("EntityFormComponent", () => {
       TestBed.configureTestingModule({
         declarations: [EntityFormComponent],
         imports: [
-          EntityDetailsModule,
+          EntityFormModule,
           NoopAnimationsModule,
           RouterTestingModule,
+          MatSnackBarModule,
         ],
         providers: [
+          FormBuilder,
+          AlertService,
           { provide: EntityMapperService, useValue: mockEntityMapper },
           { provide: ChildPhotoService, useValue: mockChildPhotoService },
           { provide: SessionService, useValue: mockSessionService },
@@ -146,12 +151,14 @@ describe("EntityFormComponent", () => {
           edit: "EditComponent",
           view: "DisplayComponent",
           placeholder: "Field with definition",
+          forTable: false,
         },
         {
           id: "propertyField",
           edit: "PredefinedComponent",
           view: "PredefinedComponent",
           placeholder: "Property",
+          forTable: false,
         },
       ],
     ]);
