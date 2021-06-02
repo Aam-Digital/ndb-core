@@ -514,7 +514,6 @@ export const defaultJsonConfig = {
                   ],
                   [
                     {
-                      "tooltip": "This field is read-only. Edit Date of Birth to change age. Select Jan 1st if you only know the year of birth.",
                       "id": "dateOfBirth"
                     },
                     { "id": "gender" },
@@ -625,43 +624,33 @@ export const defaultJsonConfig = {
                 { id: "date" },
                 {
                   id: "isMotivatedDuringClass" ,
-                  tooltip: "The child is motivated during the class."
                 },
                 {
                   id: "isParticipatingInClass",
-                  tooltip: "The child is actively participating in the class."
                 },
                 {
                   id: "isInteractingWithOthers",
-                  tooltip: "The child interacts with other students during the class."
                 },
                 {
                   id: "doesHomework",
-                  tooltip: "The child does its homework."
                 },
                 {
                   id: "isOnTime",
-                  tooltip: "The child is always on time for the class."
                 },
                 {
                   id: "asksQuestions",
-                  tooltip: "The child is asking questions during the class."
                 },
                 {
                   id: "listens",
-                  tooltip: "The child is listening during the class."
                 },
                 {
                   id: "canWorkOnBoard",
-                  tooltip: "The child can solve exercises on the board."
                 },
                 {
                   id: "isConcentrated",
-                  tooltip: "The child is concentrated during the class."
                 },
                 {
                   id: "doesNotDisturb",
-                  tooltip: "The child does not disturb the class."
                 },
               ]
             }
@@ -889,43 +878,93 @@ export const defaultJsonConfig = {
     "attributes": [
       {
         "name": "isMotivatedDuringClass",
-        "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer", label: "Motivated"}
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: "Motivated",
+          description: "The child is motivated during the class."
+        }
       },
       {
         "name": "isParticipatingInClass",
-        "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer", label: "Participates"}
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: "Participates",
+          description: "The child is actively participating in the class."
+        }
       },
       {
         "name": "isInteractingWithOthers",
-        "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer", label: "Interacts"}
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: "Interacts",
+          description: "The child interacts with other students during the class."
+        }
       },
       {
         "name": "doesHomework",
-        "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer", label: "Homework"}
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: "Homework",
+          description: "The child does its homework."
+        }
       },
       {
         "name": "isOnTime",
-        "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer", label: "On time"}
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: "On time",
+          description: "The child is always on time for the class."
+        }
       },
       {
         "name": "asksQuestions",
-        "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer", label: "Asks"}
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: "Asks",
+          description: "The child is asking questions during the class."
+        }
       },
       {
         "name": "listens",
-        "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer", label: "Listens"}
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: "Listens",
+          description: "The child is listening during the class."
+        }
       },
       {
         "name": "canWorkOnBoard",
-        "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer", label: "Solves on board"}
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: "Solves on board",
+          description: "The child can solve exercises on the board."
+        }
       },
       {
         "name": "isConcentrated",
-        "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer", label: "Concentrated"}
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: "Concentrated",
+          description: "The child is concentrated during the class."
+        }
       },
       {
         "name": "doesNotDisturb",
-        "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer", label: "Not disturbing"}
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: "Not disturbing",
+          description: "The child does not disturb the class."
+        }
       },
     ]
   }

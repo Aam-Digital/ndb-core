@@ -37,6 +37,7 @@ export class EntityFormService {
     formField.view =
       formField.view ||
       this.entitySchemaService.getComponent(propertySchema, "view");
+    formField.tooltip = formField.tooltip || propertySchema?.description;
     if (forTable) {
       formField.forTable = true;
       formField.placeholder =

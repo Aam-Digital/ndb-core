@@ -75,4 +75,8 @@ export interface EntitySchemaField {
   label?: string;
 
   labelShort?: string;
+
+  description?: string;
+
+  required?: boolean;
 }
