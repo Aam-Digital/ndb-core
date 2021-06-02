@@ -333,6 +333,12 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     dialogRef.componentInstance.columns = columnsCopy;
     dialogRef.componentInstance.entity = entity;
     dialogRef.componentInstance.creatingNew = creatingNew;
+    dialogRef.componentInstance.onSave.subscribe(() => {
+      dialogRef.close();
+      this.recordsDataSource.data
+        .find((row) => row.record === entity)
+        ?.formGroup.disable();
+    });
   }
 
   /**

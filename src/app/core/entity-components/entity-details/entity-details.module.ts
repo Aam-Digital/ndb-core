@@ -14,9 +14,11 @@ import { ViewModule } from "../../view/view.module";
 import { EntityModule } from "../../entity/entity.module";
 import { AlertsModule } from "../../alerts/alerts.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
+import { FormComponent } from "./form/form.component";
+import { EntityFormModule } from "../entity-form/entity-form.module";
 
 @NgModule({
-  declarations: [EntityDetailsComponent],
+  declarations: [EntityDetailsComponent, FormComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -32,7 +34,8 @@ import { PermissionsModule } from "../../permissions/permissions.module";
     AlertsModule,
     PermissionsModule,
     MatTooltipModule,
+    EntityFormModule,
   ],
-  entryComponents: [],
+  entryComponents: [FormComponent],
 })
 export class EntityDetailsModule {}
