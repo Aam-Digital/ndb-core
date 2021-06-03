@@ -348,29 +348,29 @@ export const defaultJsonConfig = {
       "columns": [
         {
           "view": "ChildBlock",
-          "placeholder": "Name",
+          "label": "Name",
           "id": "name"
         },
         {
           "view": "DisplayText",
-          "placeholder": "Age",
+          "label": "Age",
           "id": "age"
         },
         {
           "view": "DisplayText",
-          "placeholder": "Class",
+          "label": "Class",
           "id": "schoolClass"
         },
         {
           "view": "DisplayEntity",
-          "placeholder": "School",
+          "label": "School",
           "id": "schoolId",
           "additional": `${School.ENTITY_TYPE}`,
           "noSorting": true
         },
         {
           "view": "RecentAttendanceBlocks",
-          "placeholder": "Attendance (School)",
+          "label": "Attendance (School)",
           "id": "schoolAttendance",
           "additional": {
             "filterByActivityType": "SCHOOL_CLASS"
@@ -379,7 +379,7 @@ export const defaultJsonConfig = {
         },
         {
           "view": "RecentAttendanceBlocks",
-          "placeholder": "Attendance (Coaching)",
+          "label": "Attendance (Coaching)",
           "id": "coachingAttendance",
           "additional": {
             "filterByActivityType": "COACHING_CLASS"
@@ -388,7 +388,7 @@ export const defaultJsonConfig = {
         },
         {
           "view": "BmiBlock",
-          "placeholder": "BMI",
+          "label": "BMI",
           "id": "health_BMI",
           "noSorting": true
         }

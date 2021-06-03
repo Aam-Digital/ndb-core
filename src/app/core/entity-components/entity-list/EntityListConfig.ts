@@ -4,7 +4,7 @@ import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
 
 export interface EntityListConfig {
   title: string;
-  columns: FormFieldConfig[];
+  columns: (FormFieldConfig | string)[];
 
   /**
    * Optional config for which columns are displayed.

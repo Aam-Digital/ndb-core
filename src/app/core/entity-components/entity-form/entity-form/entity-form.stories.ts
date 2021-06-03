@@ -68,18 +68,18 @@ const cols = [
     {
       edit: "EditLongText",
       id: "additionalInfo",
-      placeholder: "Additional information",
+      label: "Additional information",
     },
     {
       edit: "EditBoolean",
       id: "active",
-      placeholder: "Is active",
+      label: "Is active",
     },
     { id: "gender" },
     {
       edit: "EditSelectable",
       id: "health_vaccinationStatus",
-      placeholder: "Vaccination Status",
+      label: "Vaccination Status",
       additional: [
         "Good",
         "Vaccination Due",
@@ -92,7 +92,7 @@ const cols = [
     {
       edit: "EditConfigurableEnum",
       id: "has_rationCard",
-      placeholder: "Ration Card Status",
+      label: "Ration Card Status",
       additional: "document-status",
     },
     {

@@ -40,13 +40,11 @@ export class EntityFormService {
     formField.tooltip = formField.tooltip || propertySchema?.description;
     if (forTable) {
       formField.forTable = true;
-      formField.placeholder =
-        formField.placeholder ||
-        propertySchema.labelShort ||
-        propertySchema.label;
+      formField.label =
+        formField.label || propertySchema.labelShort || propertySchema.label;
     } else {
       formField.forTable = false;
-      formField.placeholder = formField.placeholder || propertySchema.label;
+      formField.label = formField.label || propertySchema.label;
     }
   }
 

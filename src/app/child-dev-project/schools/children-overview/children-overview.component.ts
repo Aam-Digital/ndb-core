@@ -22,8 +22,8 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   columns: FormFieldConfig[] = [
     { id: "projectNumber" },
     { id: "name" },
-    { id: "schoolClass", placeholder: "Class", view: "DisplayText" },
-    { id: "age", placeholder: "Age", view: "DisplayText" },
+    { id: "schoolClass", label: "Class", view: "DisplayText" },
+    { id: "age", label: "Age", view: "DisplayText" },
   ];
 
   children: Child[] = [];

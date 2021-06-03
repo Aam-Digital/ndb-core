@@ -9,9 +9,9 @@ export interface FormFieldConfig {
   id: string;
 
   /**
-   * A placeholder or description of the expected input
+   * A label or description of the expected input
    */
-  placeholder?: string;
+  label?: string;
 
   /**
    * If required is set to "true", the form cannot be saved if the field is empty.

@@ -28,10 +28,10 @@ describe("EntityListComponent", () => {
   const testConfig: EntityListConfig = {
     title: "Children List",
     columns: [
-      { view: "DisplayText", placeholder: "Age", id: "age" },
+      { view: "DisplayText", label: "Age", id: "age" },
       {
         view: "RecentAttendanceBlocks",
-        placeholder: "Attendance (School)",
+        label: "Attendance (School)",
         id: "school",
         additional: {
           filterByActivityType: "SCHOOL_CLASS",
@@ -190,7 +190,7 @@ describe("EntityListComponent", () => {
       columns: [
         {
           id: "anotherColumn",
-          placeholder: "Predefined Title",
+          label: "Predefined Title",
           view: "DisplayDate",
         },
       ],

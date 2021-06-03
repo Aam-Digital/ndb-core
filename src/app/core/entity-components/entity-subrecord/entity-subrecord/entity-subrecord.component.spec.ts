@@ -80,7 +80,7 @@ describe("EntitySubrecordComponent", () => {
     component.columns = [
       {
         id: "enumValue",
-        placeholder: "Test Configurable Enum",
+        label: "Test Configurable Enum",
         view: "DisplayConfigurableEnum",
       },
     ];
@@ -135,12 +135,12 @@ describe("EntitySubrecordComponent", () => {
     component.columns = [
       {
         view: "DisplayDate",
-        placeholder: "Admission",
+        label: "Admission",
         id: "admissionDate",
       },
       {
         view: "DisplayText",
-        placeholder: "Name",
+        label: "Name",
         id: "name",
       },
     ];
@@ -215,7 +215,7 @@ describe("EntitySubrecordComponent", () => {
     component.columns = [
       {
         id: "correctColumn",
-        placeholder: "Predefined Title",
+        label: "Predefined Title",
         view: "DisplayDate",
       },
       { id: "notExistentColumn" },

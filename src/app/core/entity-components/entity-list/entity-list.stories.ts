@@ -54,7 +54,7 @@ Primary.args = {
   entityConstructor: Child,
   listConfig: {
     title: "Children List",
-    columns: [{ id: "age", placeholder: "Age", view: "DisplayText" }],
+    columns: [{ id: "age", label: "Age", view: "DisplayText" }],
     columnGroups: {
       mobile: "Mobile",
       default: "Normal",

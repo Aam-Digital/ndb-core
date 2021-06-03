@@ -49,7 +49,7 @@ export class EntityListComponent<T extends Entity>
   @ViewChild(EntitySubrecordComponent) entityTable: EntitySubrecordComponent<T>;
 
   listName = "";
-  columns: FormFieldConfig[] = [];
+  columns: (FormFieldConfig | string)[] = [];
   columnGroups: GroupConfig[] = [];
   defaultColumnGroup = "";
   mobileColumnGroup = "";
@@ -103,13 +103,18 @@ export class EntityListComponent<T extends Entity>
 
   private initColumns() {
     this.columns = this.listConfig.columns || [];
-
     const uniqueColumnIds = new Set<string>();
     this.listConfig?.columnGroups?.groups?.forEach((group) =>
       group.columns.forEach((column) => uniqueColumnIds.add(column))
     );
     uniqueColumnIds.forEach((columnId) => {
-      if (!this.columns.some((column) => column.id === columnId)) {
+      if (
+        !this.columns.some((column) =>
+          typeof column === "string"
+            ? column === columnId
+            : column.id === columnId
+        )
+      ) {
         this.columns.push({ id: columnId });
       }
     });
@@ -123,7 +128,10 @@ export class EntityListComponent<T extends Entity>
       this.mobileColumnGroup = columnGroup.mobile || columnGroup.groups[0].name;
     } else {
       this.columnGroups = [
-        { name: "default", columns: this.columns.map((c) => c.id) },
+        {
+          name: "default",
+          columns: this.columns.map((c) => (typeof c === "string" ? c : c.id)),
+        },
       ];
       this.defaultColumnGroup = "default";
       this.mobileColumnGroup = "default";
