@@ -5,7 +5,7 @@
     fxLayout.md="row wrap"
     fxLayout.sm="row wrap"
   >
-    <div *ngFor="let col of columns" fxFlex>
+    <div *ngFor="let col of _columns" fxFlex>
       <div *ngFor="let row of col">
         <ng-template [appDynamicComponent]="{
           component: row.edit,

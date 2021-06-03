@@ -60,7 +60,16 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() records: Array<T> = [];
 
   /** configuration what kind of columns to be generated for the table */
-  @Input() columns: FormFieldConfig[] = [];
+  @Input() set columns(columns: (FormFieldConfig | string)[]) {
+    this._columns = columns.map((col) => {
+      if (typeof col === "string") {
+        return { id: col };
+      } else {
+        return col;
+      }
+    });
+  }
+  _columns: FormFieldConfig[] = [];
 
   /**
    * factory method to create a new instance of the displayed Entity type
@@ -130,22 +139,24 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   }
 
   private initFormGroups() {
-    this.recordsDataSource.data = this.records.map((rec) => {
-      return {
-        record: rec,
-      };
-    });
-    if (this.records.length > 0) {
+    if (this.records.length > 0 || this.newRecordFactory) {
+      const entity =
+        this.records.length > 0 ? this.records[0] : this.newRecordFactory();
       try {
         this.entityFormService.extendFormFieldConfig(
-          this.columns,
-          this.records[0],
+          this._columns,
+          entity,
           true
         );
       } catch (err) {
         this.alertService.addWarning(`Error creating form definitions: ${err}`);
       }
     }
+    this.recordsDataSource.data = this.records.map((rec) => {
+      return {
+        record: rec,
+      };
+    });
   }
 
   private initDefaultSort() {
@@ -165,7 +176,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
     // initial sorting by first column
     const sortBy = this.columnsToDisplay[0];
-    const sortByColumn = this.columns.find((c) => c.id === sortBy);
+    const sortByColumn = this._columns.find((c) => c.id === sortBy);
     let sortDirection = "asc";
     if (
       sortByColumn?.view === "DisplayDate" ||
@@ -216,7 +227,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   edit(row: TableRow<T>) {
     if (!row.formGroup) {
       row.formGroup = this.entityFormService.createFormGroup(
-        this.columns,
+        this._columns,
         row.record
       );
     }
@@ -289,14 +300,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   create() {
     const newRecord = this.newRecordFactory();
 
-    if (this.records.length === 0) {
-      this.entityFormService.extendFormFieldConfig(
-        this.columns,
-        newRecord,
-        true
-      );
-    }
-
     this.records.unshift(newRecord);
     this.recordsDataSource.data = [{ record: newRecord }].concat(
       this.recordsDataSource.data
@@ -321,7 +324,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       width: "80%",
     });
     const columnsCopy = [];
-    this.columns.forEach((col) => {
+    this._columns.forEach((col) => {
       const newCol = {};
       Object.assign(newCol, col);
       columnsCopy.push([newCol]);
@@ -336,13 +339,11 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    * resets columnsToDisplay depending on current screensize
    */
   setupTable() {
-    if (this.columns !== undefined && this.screenWidth !== "") {
-      this.columnsToDisplay = this.columns
+    if (this._columns !== undefined && this.screenWidth !== "") {
+      this.columnsToDisplay = this._columns
         .filter((col) => this.isVisible(col))
         .map((col) => col.id);
-      if (this.screenWidth !== "xs") {
-        this.columnsToDisplay.push("actions");
-      }
+      this.columnsToDisplay.push("actions");
     }
   }
 

@@ -13,7 +13,18 @@ import { EntityFormService } from "../entity-form.service";
 export class EntityFormComponent implements OnInit {
   @Input() entity: Entity;
   @Input() creatingNew = false;
-  @Input() columns: FormFieldConfig[][] = [];
+  @Input() set columns(columns: (FormFieldConfig | string)[][]) {
+    this._columns = columns.map((row) =>
+      row.map((field) => {
+        if (typeof field === "string") {
+          return { id: field };
+        } else {
+          return field;
+        }
+      })
+    );
+  }
+  _columns: FormFieldConfig[][] = [];
 
   @Output() onSave = new EventEmitter<Entity>();
 
@@ -49,7 +60,7 @@ export class EntityFormComponent implements OnInit {
 
   private buildFormConfig() {
     const flattenedFormFields = new Array<FormFieldConfig>().concat(
-      ...this.columns
+      ...this._columns
     );
     this.entityFormService.extendFormFieldConfig(
       flattenedFormFields,

@@ -279,11 +279,11 @@ export const defaultJsonConfig = {
     "config": {
       "title": "Schools List",
       "columns": [
-        { "id": "name" },
-        { "id": "medium" },
-        { "id": "privateSchool" },
-        { "id": "academicBoard" },
-        { "id": "upToClass" }
+        "name",
+        "medium",
+        "privateSchool",
+        "academicBoard",
+        "upToClass"
       ],
       "filters": [
         {
@@ -312,17 +312,17 @@ export const defaultJsonConfig = {
               "component": "Form",
               "config": {
                 "cols": [
-                  [{ "id": "name" }],
-                  [{ "id": "medium" }],
-                  [{ "id": "privateSchool" }],
-                  [{ "id": "academicBoard" }],
-                  [{ "id": "phone" }],
-                  [{ "id": "address" }],
-                  [{ "id": "website" }],
-                  [{ "id": "timing" }],
-                  [{ "id": "workingDays" }],
-                  [{ "id": "upToClass" }],
-                  [{ "id": "remarks" }]
+                  ["name"],
+                  ["medium"],
+                  ["privateSchool"],
+                  ["academicBoard"],
+                  ["phone"],
+                  ["address"],
+                  ["website"],
+                  ["timing"],
+                  ["workingDays"],
+                  ["upToClass"],
+                  ["remarks"]
                 ]
               }
             }
@@ -505,34 +505,32 @@ export const defaultJsonConfig = {
               "component": "Form",
               "config": {
                 "cols": [
-                  [{ "id": "photo" }],
+                  ["photo"],
                   [
-                    { "id": "name" },
-                    { "id": "projectNumber" },
-                    { "id": "center" },
-                    { "id": "status" }
+                    "name",
+                    "projectNumber",
+                    "center",
+                    "status"
                   ],
                   [
-                    {
-                      "id": "dateOfBirth"
-                    },
-                    { "id": "gender" },
-                    { "id": "motherTongue" },
-                    { "id": "religion" }
+                    "dateOfBirth",
+                    "gender",
+                    "motherTongue",
+                    "religion"
                   ],
                   [
-                    { "id": "admissionDate" },
-                    { "id": "has_aadhar" },
-                    { "id": "has_kanyashree" },
-                    { "id": "has_bankAccount" },
-                    { "id": "has_rationCard" },
-                    { "id": "has_BplCard" }
+                    "admissionDate",
+                    "has_aadhar",
+                    "has_kanyashree",
+                    "has_bankAccount",
+                    "has_rationCard",
+                    "has_BplCard"
                   ],
                   [
-                    { "id": "address" },
-                    { "id": "phone" },
-                    { "id": "guardianName" },
-                    { "id": "preferredTimeForGuardianMeeting" }
+                    "address",
+                    "phone",
+                    "guardianName",
+                    "preferredTimeForGuardianMeeting"
                   ]
                 ]
               }
@@ -548,11 +546,11 @@ export const defaultJsonConfig = {
               "config": {
                 "single": true,
                 "columns": [
-                  { "id": "schoolId" },
-                  { "id": "schoolClass" },
-                  { "id": "start" },
-                  { "id": "end" },
-                  { "id": "result" },
+                  "schoolId",
+                  "schoolClass",
+                  "start",
+                  "end",
+                  "result",
                 ],
               }
             },
@@ -588,14 +586,14 @@ export const defaultJsonConfig = {
               "component": "Form",
               "config": {
                 "cols": [
-                  [{ "id": "health_vaccinationStatus" }],
-                  [{ "id": "health_eyeHealthStatus" }],
-                  [{ "id": "health_bloodGroup" }],
-                  [{ "id": "health_lastDentalCheckup" }],
-                  [{ "id": "health_lastEyeCheckup" }],
-                  [{ "id": "health_lastENTCheckup" }],
-                  [{ "id": "health_lastVitaminD" }],
-                  [{ "id": "health_lastDeworming" }]
+                  ["health_vaccinationStatus"],
+                  ["health_eyeHealthStatus"],
+                  ["health_bloodGroup"],
+                  ["health_lastDentalCheckup"],
+                  ["health_lastEyeCheckup"],
+                  ["health_lastENTCheckup"],
+                  ["health_lastVitaminD"],
+                  ["health_lastDeworming"]
                 ]
               }
             },
@@ -621,37 +619,17 @@ export const defaultJsonConfig = {
               title: "",
               component: "HistoricalDataComponent",
               config: [
-                { id: "date" },
-                {
-                  id: "isMotivatedDuringClass" ,
-                },
-                {
-                  id: "isParticipatingInClass",
-                },
-                {
-                  id: "isInteractingWithOthers",
-                },
-                {
-                  id: "doesHomework",
-                },
-                {
-                  id: "isOnTime",
-                },
-                {
-                  id: "asksQuestions",
-                },
-                {
-                  id: "listens",
-                },
-                {
-                  id: "canWorkOnBoard",
-                },
-                {
-                  id: "isConcentrated",
-                },
-                {
-                  id: "doesNotDisturb",
-                },
+                "date",
+                "isMotivatedDuringClass" ,
+                "isParticipatingInClass",
+                "isInteractingWithOthers",
+                "doesHomework",
+                "isOnTime",
+                "asksQuestions",
+                "listens",
+                "canWorkOnBoard",
+                "isConcentrated",
+                "doesNotDisturb",
               ]
             }
           ]
@@ -664,9 +642,9 @@ export const defaultJsonConfig = {
               "component": "Form",
               "config": {
                 "cols": [
-                  [{ "id": "dropoutDate" }],
-                  [{ "id": "dropoutType" }],
-                  [{ "id": "dropoutRemarks" }]
+                  ["dropoutDate"],
+                  ["dropoutType"],
+                  ["dropoutRemarks"]
                 ]
               }
             }
@@ -681,9 +659,9 @@ export const defaultJsonConfig = {
     "config": {
       "title": "Recurring Activities",
       "columns": [
-        { "id": "title" },
-        { "id": "type" },
-        { "id": "assignedTo" }
+        "title",
+        "type",
+        "assignedTo"
       ],
     }
   },
@@ -699,9 +677,9 @@ export const defaultJsonConfig = {
               "component": "Form",
               "config": {
                 "cols": [
-                  [{ "id": "title" }],
-                  [{ "id": "type" }],
-                  [{ "id": "assignedTo" }]
+                  ["title"],
+                  ["type"],
+                  ["assignedTo"]
                 ]
               }
             }
@@ -714,8 +692,8 @@ export const defaultJsonConfig = {
               "component": "Form",
               "config": {
                 "cols": [[
-                  { "id": "linkedGroups" },
-                  { "id": "participants" }
+                  "linkedGroups",
+                  "participants"
                 ]]
               }
             }
