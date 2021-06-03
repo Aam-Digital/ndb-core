@@ -74,25 +74,12 @@ describe("EntityFormComponent", () => {
     mockChildPhotoService.canSetImage.and.returnValue(false);
     fixture = TestBed.createComponent(EntityFormComponent);
     component = fixture.componentInstance;
-    component.onInitFromDynamicConfig({
-      entity: testChild,
-      config: { cols: [] },
-    });
+    component.entity = testChild;
     fixture.detectChanges();
   });
 
   it("should create", () => {
     expect(component).toBeTruthy();
-  });
-
-  it("should change the creating state", () => {
-    expect(component.creatingNew).toBe(false);
-    component.onInitFromDynamicConfig({
-      entity: testChild,
-      config: { cols: [] },
-      creatingNew: true,
-    });
-    expect(component.creatingNew).toBe(true);
   });
 
   it("calls router once a new child is saved", async () => {
@@ -126,23 +113,20 @@ describe("EntityFormComponent", () => {
       @DatabaseField() propertyField: string;
     }
     mockEntitySchemaService.getComponent.and.returnValue("PredefinedComponent");
+    component.entity = new Test();
+    component.columns = [
+      [
+        {
+          id: "fieldWithDefinition",
+          edit: "EditComponent",
+          view: "DisplayComponent",
+          label: "Field with definition",
+        },
+        { id: "propertyField", label: "Property" },
+      ],
+    ];
 
-    component.onInitFromDynamicConfig({
-      entity: new Test(),
-      config: {
-        cols: [
-          [
-            {
-              id: "fieldWithDefinition",
-              edit: "EditComponent",
-              view: "DisplayComponent",
-              label: "Field with definition",
-            },
-            { id: "propertyField", label: "Property" },
-          ],
-        ],
-      },
-    });
+    component.ngOnInit();
 
     expect(component.columns).toEqual([
       [

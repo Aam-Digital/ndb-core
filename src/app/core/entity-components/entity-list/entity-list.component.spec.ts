@@ -204,7 +204,9 @@ describe("EntityListComponent", () => {
 
     component.ngOnChanges({ listConfig: null });
 
-    expect(component.columns.map((col) => col.id)).toEqual(
+    expect(
+      component.columns.map((col) => (typeof col === "string" ? col : col.id))
+    ).toEqual(
       jasmine.arrayWithExactContents(["testProperty", "anotherColumn"])
     );
   });
