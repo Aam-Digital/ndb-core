@@ -49,7 +49,7 @@ export class Child extends Entity {
     return "assets/child-photos/" + filename;
   }
 
-  @DatabaseField({ label: "Name" }) name: string;
+  @DatabaseField({ label: "Name", required: true }) name: string;
   @DatabaseField({ label: "Project Number", labelShort: "PN" })
   projectNumber: string; // project number
   @DatabaseField({

@@ -55,9 +55,11 @@ export class EntityFormService {
     entity: Entity
   ): FormGroup {
     const formConfig = {};
+    const entitySchema = entity.getSchema();
     formFields.forEach((formField) => {
+      const propertySchema = entitySchema.get(formField.id);
       formConfig[formField.id] = [entity[formField.id]];
-      if (formField.required) {
+      if (formField.required || propertySchema?.required) {
         formConfig[formField.id].push(Validators.required);
       }
     });

@@ -8,7 +8,7 @@ export class School extends Entity {
     return "SchoolBlock";
   }
 
-  @DatabaseField({ label: "Name" }) name: string = "";
+  @DatabaseField({ label: "Name", required: true }) name: string = "";
   @DatabaseField({ label: "Address" }) address: string = "";
   @DatabaseField({ label: "Medium" }) medium: string = "";
   @DatabaseField({ label: "Remarks" }) remarks: string = "";

@@ -507,7 +507,7 @@ export const defaultJsonConfig = {
                 "cols": [
                   [{ "id": "photo" }],
                   [
-                    { "id": "name", "required": true },
+                    { "id": "name" },
                     { "id": "projectNumber" },
                     { "id": "center" },
                     { "id": "status" }

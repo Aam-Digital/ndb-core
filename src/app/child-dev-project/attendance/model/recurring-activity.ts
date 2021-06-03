@@ -44,7 +44,7 @@ export class RecurringActivity extends Entity {
   }
 
   /** primary name to identify the activity */
-  @DatabaseField({ label: "Title" }) title: string = "";
+  @DatabaseField({ label: "Title", required: true }) title: string = "";
 
   /**
    * a category to group and filter activities by.
