@@ -32,6 +32,7 @@
     "@angular/service-worker": "^11.2.12",
     "@ngneat/until-destroy": "^8.0.4",
     "@sentry/browser": "^6.2.5",
+    "ajv-formats": "^2.1.0",
     "angulartics2": "^10.0.0",
     "crypto-js": "^4.0.0",
     "deep-object-diff": "^1.1.0",
