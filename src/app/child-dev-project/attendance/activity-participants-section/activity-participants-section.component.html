@@ -1,31 +1,18 @@
 <div>
   <app-entity-select
-    [entityType]="User"
-    [(selection)]="assignedUsers"
-    [disabled]="!editing"
-    [view]="userBlock"
-    i18n-label="To whom a school activity is assigned to"
-    label="Assigned to"
-    i18n-placeholder="Add a coordinator to an activity"
-    placeholder="Add coordinator ..."
-  >
-  </app-entity-select>
-  <app-entity-select
-    [entityType]="School"
+    [standardType]="'School'"
     [(selection)]="participatingGroups"
     [disabled]="!editing"
-    [view]="schoolBlock"
-    i18n-label="School Groups"
+    i18n-label="To whom a school activity is assigned to"
     label="Groups"
-    i18n-placeholder="Add a new school group"
+    i18n-placeholder="Add a coordinator to an activity"
     placeholder="Add group ..."
   >
   </app-entity-select>
   <app-entity-select
+    [standardType]="'Child'"
     [(selection)]="participants"
     [disabled]="!editing"
-    [entityType]="Child"
-    [view]="childBlock"
     i18n-label="Participants of a school-activity"
     label="Participants"
     i18n-placeholder="Add a participant of a school-activity"
@@ -64,28 +51,3 @@
     Edit
   </button>
 </div>
-
-<ng-template
-  let-entity="entity"
-  #childBlock
->
-  <app-child-block
-    [entity]="entity"
-    [linkDisabled]="true"
-    [tooltipDisabled]="true">
-  </app-child-block>
-</ng-template>
-
-<ng-template
-  let-entity="entity"
-  #schoolBlock>
-  <app-school-block
-  [entity]="entity"
-  [linkDisabled]="true">
-  </app-school-block>
-</ng-template>
-
-<ng-template
-  #userBlock
-  let-user="entity"
->{{user.name}}</ng-template>

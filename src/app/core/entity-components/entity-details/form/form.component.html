@@ -7,111 +7,114 @@
   >
     <div *ngFor="let col of config.cols" fxFlex>
       <div *ngFor="let row of col">
-        <div *ngIf="row.input === 'photo'" class="child-pic-container">
-          <img
-            [src]="entity?.photo?.value"
-            alt="child's photo"
-            class="child-pic"
-            i18n-alt="Short description of a child's photo"
-          />
 
-          <input
-            style="display: none"
-            type="file"
-            accept=".jpg, .jpeg, .png"
-            (change)="uploadChildPhoto($event)"
-            #fileUpload
-          />
-          <button
-            *ngIf="enablePhotoUpload && editing"
-            class="child-pic-upload"
-            (click)="fileUpload.click()"
-          >
-            <mat-icon class="upload-icon" fontIcon="fa-upload"></mat-icon>
-          </button>
+        <ng-container [ngSwitch]="row.input">
+          <div *ngSwitchCase="'photo'" class="child-pic-container">
+            <img
+              [src]="entity?.photo?.value"
+              class="child-pic"
+              alt="child's photo"
+              i18n-alt="Short description of a child's photo"
+            />
 
-          <mat-form-field
-            *ngIf="editing && isAdminUser"
-            class="child-pic-photofile"
-          >
             <input
-              #photoFileInput
-              i18n-matTooltip="Tooltip when uploading a photo"
-              matTooltip="filename for child photo uploaded by server administrator"
+              style="display: none"
+              type="file"
+              accept=".jpg, .jpeg, .png"
+              (change)="uploadChildPhoto($event)"
+              #fileUpload
+            />
+            <button
+              *ngIf="enablePhotoUpload && editing"
+              class="child-pic-upload"
+              (click)="fileUpload.click()"
+            >
+              <mat-icon class="upload-icon" fontIcon="fa-upload"></mat-icon>
+            </button>
+
+            <mat-form-field
+              *ngIf="editing && isAdminUser"
+              class="child-pic-photofile"
+            >
+              <input
+                #photoFileInput
+                i18n-matTooltip="Tooltip when uploading a photo"
+                matTooltip="filename for child photo uploaded by server administrator"
+                matInput
+                [formControlName]="row.id"
+                [placeholder]="row.placeholder"
+                [title]="row.placeholder"
+                type="text"
+              />
+              <span
+                matSuffix
+                (click)="photoFileInput.value = ''"
+                class="fa fa-times"
+              ></span>
+            </mat-form-field>
+          </div>
+
+          <mat-form-field *ngSwitchCase="'text'">
+            <mat-icon *ngIf="editing && row.tooltip" matSuffix
+                      fontIcon="fa-question-circle-o"
+                      [matTooltip]="row.tooltip"
+            ></mat-icon>
+            <input
               matInput
               [formControlName]="row.id"
               [placeholder]="row.placeholder"
               [title]="row.placeholder"
               type="text"
             />
-            <span
-              matSuffix
-              (click)="photoFileInput.value = ''"
-              class="fa fa-times"
-            ></span>
+            <mat-error
+              *ngIf="this.form.get(row.id).invalid && validateForm"
+              i18n="indicates that a certain value is required|The value is any sort of form-value e.g. the name or address of a person"
+              >
+              {{ row.placeholder }} is required
+            </mat-error>
           </mat-form-field>
-        </div>
 
-        <mat-form-field *ngIf="row.input === 'text'">
-          <mat-icon *ngIf="editing && row.tooltip" matSuffix
-            fontIcon="fa-question-circle-o"
-            [matTooltip]="row.tooltip"
-          ></mat-icon>
-          <input
-            matInput
-            [formControlName]="row.id"
-            [placeholder]="row.placeholder"
-            [title]="row.placeholder"
-            type="text"
-          />
-          <mat-error
-            *ngIf="this.form.get(row.id).invalid && validateForm"
-            i18n="indicates that a certain value is required|The value is any sort of form-value e.g. the name or address of a person">
-            {{ row.placeholder }} is required
-          </mat-error>
-        </mat-form-field>
-
-        <mat-form-field *ngIf="row.input === 'textarea'">
-          <mat-icon *ngIf="editing && row.tooltip" matSuffix
-            fontIcon="fa-question-circle-o"
-            [matTooltip]="row.tooltip"
-          ></mat-icon>
-          <textarea
-            matInput
-            [formControlName]="row.id"
-            [placeholder]="row.placeholder"
-            [title]="row.placeholder"
-          ></textarea>
-        </mat-form-field>
-
-        <mat-checkbox
-          *ngIf="row.input === 'checkbox'"
-          [formControlName]="row.id"
-          [disabled]="!editing"
-          >{{ row.placeholder }}
-        </mat-checkbox>
-
-        <div *ngIf="row.input === 'age'">
-          <mat-form-field style="width: 120px">
-            <input
+          <mat-form-field *ngSwitchCase="'textarea'">
+            <mat-icon *ngIf="editing && row.tooltip" matSuffix
+                      fontIcon="fa-question-circle-o"
+                      [matTooltip]="row.tooltip"
+            ></mat-icon>
+            <textarea
               matInput
               [formControlName]="row.id"
               [placeholder]="row.placeholder"
-              [matDatepicker]="dateOfBirthDatepicker"
-              [disabled]="!editing"
-              #dateOfBirth
-            />
-            <mat-datepicker-toggle
-              matSuffix
-              [for]="dateOfBirthDatepicker"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #dateOfBirthDatepicker></mat-datepicker>
+              [title]="row.placeholder"
+            ></textarea>
           </mat-form-field>
-          <mat-form-field style="width: 50px">
-            <mat-icon *ngIf="editing && row.tooltip" matSuffix
-              fontIcon="fa-question-circle-o"
-              [matTooltip]="row.tooltip"
-            ></mat-icon>
+
+          <mat-checkbox
+            *ngSwitchCase="'checkbox'"
+            [formControlName]="row.id"
+            [disabled]="!editing"
+          >{{ row.placeholder }}
+          </mat-checkbox>
+
+          <div *ngSwitchCase="'age'">
+            <mat-form-field style="width: 120px">
+              <input
+                matInput
+                [formControlName]="row.id"
+                [placeholder]="row.placeholder"
+                [matDatepicker]="dateOfBirthDatepicker"
+                [disabled]="!editing"
+                #dateOfBirth
+              />
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="dateOfBirthDatepicker"
+              ></mat-datepicker-toggle>
+              <mat-datepicker #dateOfBirthDatepicker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field style="width: 50px">
+              <mat-icon *ngIf="editing && row.tooltip" matSuffix
+                        fontIcon="fa-question-circle-o"
+                        [matTooltip]="row.tooltip"
+              ></mat-icon>
               <input
                 matInput
                 i18n-placeholder="Placeholder when no age is set"
@@ -120,60 +123,74 @@
                 [value]="calculateAge(dateOfBirth.value)"
                 [disabled]="true"
               />
-          </mat-form-field>
-        </div>
+            </mat-form-field>
+          </div>
 
-        <div *ngIf="row.input === 'select'">
-          <mat-form-field>
-            <mat-icon *ngIf="editing && row.tooltip" matSuffix
-              fontIcon="fa-question-circle-o"
-              [matTooltip]="row.tooltip"
-            ></mat-icon>
-            <mat-label>
-              {{ row.placeholder }}
-            </mat-label>
-            <mat-select [disabled]="!editing" [formControlName]="row.id">
-              <mat-option *ngFor="let o of row.options" [value]="o">
-                {{ o }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
+          <div *ngSwitchCase="'select'">
+            <mat-form-field>
+              <mat-icon *ngIf="editing && row.tooltip" matSuffix
+                        fontIcon="fa-question-circle-o"
+                        [matTooltip]="row.tooltip"
+              ></mat-icon>
+              <mat-label>
+                {{ row.placeholder }}
+              </mat-label>
+              <mat-select [disabled]="!editing" [formControlName]="row.id">
+                <mat-option *ngFor="let o of row.options" [value]="o">
+                  {{ o }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
 
-        <div *ngIf="row.input === 'configurable-enum-select'">
-          <mat-form-field>
-            <mat-icon *ngIf="editing && row.tooltip" matSuffix
-              fontIcon="fa-question-circle-o"
-              [matTooltip]="row.tooltip"
-            ></mat-icon>
-            <mat-label>
-              {{ row.placeholder }}
-            </mat-label>
-            <mat-select [disabled]="!editing" [formControlName]="row.id">
-              <mat-option
-                *appConfigurableEnum="let o of row.enumId"
-                [value]="o"
-              >
-                {{ o.label }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
+          <div *ngSwitchCase="'configurable-enum-select'">
+            <mat-form-field>
+              <mat-icon *ngIf="editing && row.tooltip" matSuffix
+                        fontIcon="fa-question-circle-o"
+                        [matTooltip]="row.tooltip"
+              ></mat-icon>
+              <mat-label>
+                {{ row.placeholder }}
+              </mat-label>
+              <mat-select [disabled]="!editing" [formControlName]="row.id">
+                <mat-option
+                  *appConfigurableEnum="let o of row.enumId"
+                  [value]="o"
+                >
+                  {{ o.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
 
-        <mat-form-field *ngIf="row.input === 'datepicker'" style="width: 180px">
-          <input
-            matInput
-            [formControlName]="row.id"
-            [placeholder]="row.placeholder"
-            [matDatepicker]="datepickerComp"
+          <mat-form-field *ngSwitchCase="'datepicker'" style="width: 180px">
+            <input
+              matInput
+              [formControlName]="row.id"
+              [placeholder]="row.placeholder"
+              [matDatepicker]="datepickerComp"
+              [disabled]="!editing"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="datepickerComp"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #datepickerComp></mat-datepicker>
+          </mat-form-field>
+
+          <app-entity-select
+            *ngSwitchCase="'entity-select'"
+            [standardType]="row.entityType"
+            [selection]="form.controls[row.id].value"
+            (selectionChange)="form.controls[row.id].setValue($event)"
             [disabled]="!editing"
-          />
-          <mat-datepicker-toggle
-            matSuffix
-            [for]="datepickerComp"
-          ></mat-datepicker-toggle>
-          <mat-datepicker #datepickerComp></mat-datepicker>
-        </mat-form-field>
+            [label]="row.label"
+            [placeholder]="row.placeholder"
+          >
+          </app-entity-select>
+
+        </ng-container>
+
       </div>
     </div>
   </div>

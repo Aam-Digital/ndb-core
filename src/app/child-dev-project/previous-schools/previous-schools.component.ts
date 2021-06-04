@@ -111,7 +111,7 @@ export class PreviousSchoolsComponent
     }
 
     this.records = await this.childrenService.getSchoolsWithRelations(id);
-    this.current = this.records.find((record) => record.isActive());
+    this.current = this.records.find((record) => record.isActive);
   }
 
   private async initColumnDefinitions() {

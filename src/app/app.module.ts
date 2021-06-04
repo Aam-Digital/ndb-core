@@ -72,6 +72,7 @@ import { ConfigModule } from "./core/config/config.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
 import { MatPaginatorIntl } from "@angular/material/paginator";
 import { TranslatableMatPaginator } from "./utils/TranslatableMatPaginator";
+import { ReportingModule } from "./features/reporting/reporting.module";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/dashboard-shortcut-widget.module";
 import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
@@ -121,6 +122,7 @@ import { HistoricalDataModule } from "./features/historical-data/historical-data
     EntityListModule,
     EntityDetailsModule,
     ConfigurableEnumModule,
+    ReportingModule,
     DemoDataModule.forRoot([
       ...DemoChildGenerator.provider({ count: 120 }),
       ...DemoSchoolGenerator.provider({ count: 8 }),

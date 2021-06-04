@@ -3,7 +3,7 @@ import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Config } from "./config";
 import { LoggingService } from "../logging/logging.service";
 import { BehaviorSubject } from "rxjs";
-import { defaultConfig } from "./config-fix";
+import { defaultJsonConfig } from "./config-fix";
 
 @Injectable({
   providedIn: "root",
@@ -18,24 +18,27 @@ export class ConfigService {
   public configUpdated: BehaviorSubject<Config>;
 
   constructor(@Optional() private loggingService: LoggingService) {
-    this.config.data = defaultConfig;
+    this.config.data = defaultJsonConfig;
     this.configUpdated = new BehaviorSubject<Config>(this.config);
   }
 
   public async loadConfig(entityMapper: EntityMapperService): Promise<Config> {
-    try {
-      this.config = await entityMapper.load<Config>(
-        Config,
-        ConfigService.CONFIG_KEY
-      );
-      this.configUpdated.next(this.config);
-    } catch (e) {
+    this.config = await this.getConfigOrDefault(entityMapper);
+    this.configUpdated.next(this.config);
+    return this.config;
+  }
+
+  private getConfigOrDefault(
+    entityMapper: EntityMapperService
+  ): Promise<Config> {
+    return entityMapper.load(Config, ConfigService.CONFIG_KEY).catch(() => {
       this.loggingService.info(
         "No configuration found in the database, using default one"
       );
-      //  no config found in db, using default one
-    }
-    return this.config;
+      const defaultConfig = new Config(ConfigService.CONFIG_KEY);
+      defaultConfig.data = defaultJsonConfig;
+      return defaultConfig;
+    });
   }
 
   public saveConfig(
@@ -46,8 +49,11 @@ export class ConfigService {
     return entityMapper.save<Config>(this.config);
   }
 
-  public exportConfig(): string {
-    return JSON.stringify(this.config.data);
+  public async exportConfig(
+    entityMapper: EntityMapperService
+  ): Promise<string> {
+    const config = await this.getConfigOrDefault(entityMapper);
+    return JSON.stringify(config.data);
   }
 
   public getConfig<T>(id: string): T {
