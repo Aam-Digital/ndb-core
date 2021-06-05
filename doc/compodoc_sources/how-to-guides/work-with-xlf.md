@@ -8,8 +8,21 @@ You create XLF files automatically when you specify a new language. For details 
 this works, have a look at the [Add another Language](add-another-language.md) guide.
 
 ## How to update XLF files
-The `extract-i18n` script automatically updates any files under src/locale. This has 
-several implications:
+Angular does not natively support updating old files. To do this,
+*xliffmerge* is used. This process takes into account old translations and
+merges them with new translations so that the number of items to translate
+stays at a minimum. Various configuration-options can be found at
+[xliffmerge.json](../../../xliffmerge.json) with the most interesting being
+* **allowIdChange** - whether the tool is allowed to merge translation-units
+  with different ID's. This can be desired if two units have the same meaning and
+  text, but differ in - for example - the amount of leading whitespaces.
+
+* **autotranslate** - experimental feature, can automatically translate the english
+  file using Google Translate
+
+* **beautifyOutput** - makes the output more human-readable
+
+Updating language files has several implications:
 - When a message is obsolete (you deleted the message from the code) it gets removed
 - Multiple messages (messages with the same description and meaning) are merged
   automatically

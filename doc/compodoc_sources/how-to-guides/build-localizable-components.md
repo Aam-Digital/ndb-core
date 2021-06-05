@@ -82,6 +82,10 @@ Variables inside the string can be of arbitrary complexity and are escaped using
 `${}` syntax.
 
 ### Generate translation files
+_This is just a quick overiew.For more information, refer to the 
+[How to add another language](add-another-language.md) guide
+and the [How to edit, update and work with XLF files](work-with-xlf.md) guide_.
+
 Once content with the process of marking fields as translatable and providing
 good and understandable meaning to these fields, translation-files can be
 generated. This is done using the `extract-i18n`-script (Can be found in the
@@ -89,7 +93,7 @@ file [package.json](package.json)). This script will generate one
 "Base file" and will also generate and update existing translation files
 for all locales given in the script. These will be located in the 
 [locale](../../../src/locale) directory.
-These files are standardized and can be read using standard tools such as
+XLF files are standardized and can be read using standard tools such as
 the [Online XLIFF Editor](https://xliff.brightec.co.uk)
 
 The translation files are in xml-format. After some preambles, there are 
@@ -104,11 +108,10 @@ characteristic blocks that follow all the same schema; blocks like this:
   <note priority="1" from="description">Change password button</note>
 </trans-unit>
 ```
-The most important section here is the `<source>` section. This is the original
-string that we defined in code or html. If you are not in the `messages.xlf` file
-but in any other `messages.<locale>.xlf` file, you can provide translations. for
-the locale. For a list of common and standardized locales, see the
-[ISO-639-2](https://www.loc.gov/standards/iso639-2/) standard.
+The `<source>` section is this the original string that we defined in code or html. 
+If you are not in the `messages.xlf` file but in any other `messages.<locale>.xlf` file, 
+you can provide translations. for the locale. For a list of common and standardized locales, 
+see the [ISO-639-2](https://www.loc.gov/standards/iso639-2/) standard.
 
 To provide a translation, add the `<target>` tag inside the `<trans-unit>`
 tag (assuming we are inside `messages.de.xlf` and therefore looking for a 
@@ -125,7 +128,7 @@ german translation):
 </trans-unit>
 ```
 
-If the same is done for all source-tags, the translation-process is done!
+If all source tags are processed, the translation-process is done!
 
 ### The building process
 To build the app for a specific locale, enter that locale inside 
@@ -145,21 +148,6 @@ development. The locale must be inside the locale-folder and be of type
 Angular will not translate the components on the fly. Instead, it will 
 generate a separate app for each and every component provided in the
 `localize` array.
-
-### Updating a localized file
-Angular does not natively support updating old files. To do this,
-*xliffmerge* is used. This process takes into account old translations and
-merges them with new translations so that the number of items to translate
-stays at a minimum. Various configuration-options can be found at
-[xliffmerge.json](../../../xliffmerge.json) with the most interesting being
-* **allowIdChange** - whether the tool is allowed to merge translation-units
-with different ID's. This can be desired if two units have the same meaning and
-  text, but differ in - for example - the amount of leading whitespaces.
-  
-* **autotranslate** - experimental feature, can automatically translate the english
-file using Google Translate
-  
-* **beautifyOutput** - makes the output more human-readable
 
 ### Other types of localization
 
@@ -244,7 +232,7 @@ and booleans.
   be accepted by Angular's localize-package. Instead, you could use a 
   custom getter:
   ```typescript
-  get catYumyum(): string {
+  get catYumYum(): string {
     return $localize`My cat likes milk${andMore}`;
   }
   get andMore(): string {

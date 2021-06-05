@@ -11,16 +11,17 @@ and find the code that corresponds to your language (look in the `ISO 639-1 Code
 For example, for _french_, this would be `fm`, for _hindi_, this would be `hi`
 
 In addition to a language code, you might consider specifying a country if the spoken language can
-differ based on where the app should be shipped to. For example, english is spoken differently
-in the US (`en-US`), in Great-Britain (`en-GB`) or in Australia (`en-AU`).
+differ based on where the app should be shipped to. For example, English is spoken differently
+in the US (`en-US`), Great-Britain (`en-GB`) or Australia (`en-AU`).
 A list of available country codes can be found [here](https://www.iso.org/obp/ui/#search/code/).
-Once you have the language and country code, the resulting code is _language-code_-_country-code_.
+Once you have the language and country code, the resulting code is _language code_-_country code_.
 
 ###2) Add the language to the list of known languages
 The file [angular.json](angular.json) contains all available languages. In this file, look for the
 `i18n` section. Add the language code from the last step (possible including the region code) 
-to the `locales` section. For example, if you wanted to translate into French, this is what the 
-`i18n` section should look like:
+as a key to the `locales` section. Specify the path `src/locale/messages.<your locale>.xlf` as 
+the value. Don't create that file yet - this will be done automatically in the next steps. 
+For example, if you wanted to add the French language, this is what the `i18n` section should look like:
 
 ```json
 {
@@ -35,8 +36,6 @@ to the `locales` section. For example, if you wanted to translate into French, t
   ...
 }
 ```
-The path (`src/locale/messages.fr.xlf`) is a path to the translation file. Do not create the file yourself.
-This will be done automatically in the following steps.
 
 ###3) Let xliffmerge know about the new language
 `xliffmerge` is a tool that helps in the translation process. Especially, it is needed to
@@ -54,16 +53,15 @@ Again, for french, this could look like this:
 
 ###4) Create a localization-file
 In order to allow the actual translation process to take place, you need to create a 
-standardized file that translaters can work with. The standard that we use is `xlf`, therefore
-such a file is known as _xlf-file_
+standardized file that translators can work with. The standard that we use is `xlf`.
 
 To generate a file, simply use the script `extract-i18n` located inside the [package.json](package.json)
-file. This will automatically generate a file if none exists
+file. This will automatically generate the needed file if none exists
 
 ###5) [Optional] Update the nginx config for the dockerfile
 We can build the Project using Docker. In order to build the app in every known locale
 (at least for testing purposes) add the following lines to the nginx config inside the
-server section (for example, for french):
+server section. For example, for french:
 ```nginx configuration
 location /fr/ {
     autoindex on;
@@ -72,11 +70,11 @@ location /fr/ {
 ```
 
 ###6) Test your build
-In production, all (or a subset) of available languages are build. However, when testing,
-you can only use one language (to avoid too complex dev builds). You can set the language
-that you would like your map to be inside the [angular.json](angular.json) file at the section
+In production, all (or a subset of all) available languages are build. However, when testing,
+you can only use one language to avoid too complex dev builds. You can set the language
+that you would like to develop in inside the [angular.json](angular.json) file at the section
 `projects/ndb-core/architect/build`. Find the option `localize` and replace the existing language
-with the language that you just created. It should look like this:
+with the language that you just created. It should look like this for French:
 ```json
 ...
 "polyfills": "src/polyfills.ts",
@@ -86,10 +84,10 @@ with the language that you just created. It should look like this:
 Run the app. If you have not added translations, the app will be in english. 
 Try to translate some units. 
 
-In order to do this, go to the
-newly created `src/locale/messages.<locale>.xlf` file. Inside this file, you will find a lot of
-"trans-units". These mark single texts that you can translate. Translate one or more
-of these units by replacing the content of the `target`. For example:
+In order to do this, go to the newly created `src/locale/messages.<locale>.xlf` file. 
+Inside this file, you will find a lot of"trans-units". These mark single texts that 
+you can translate. Translate one or more of these units by replacing the content of 
+the `target`. For example:
 ```xml
 <trans-unit id="08c74dc9762957593b91f6eb5d65efdfc975bf48" datatype="html">
   <source>Username</source>
@@ -112,8 +110,11 @@ You can change the state to "translated" as shown in the picture (but this is no
 Leave everything else as it is and test the app again. Translations should appear for each 
 trans-unit that you have translated.
 
+A more detailed overview can be found in Guide
+[How to edit, update and work with XLF files](work-with-xlf.md).
+
 ###Conclusion
 You have now successfully added the capability to translate the app into the target
-language. You can now take the translation file (`"src/locale/messages.fr.xlf"`) and 
+language. You can now take the translation file (`"src/locale/messages.<your locale>.xlf"`) and 
 send it to a translator to have it translated. Once this process is done, replace the
 preliminary translation file with the one that comes back from a translator.
