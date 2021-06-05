@@ -7,11 +7,12 @@ import {
   ElementRef,
   OnChanges,
   SimpleChanges,
+  OnDestroy,
 } from "@angular/core";
 import { ENTER, COMMA } from "@angular/cdk/keycodes";
 import { Entity, EntityConstructor } from "../../../entity/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject, Observable, Subscription } from "rxjs";
 import { FormControl } from "@angular/forms";
 import { filter, map, skipWhile } from "rxjs/operators";
 import { MatChipInputEvent } from "@angular/material/chips";
@@ -26,7 +27,8 @@ export type accessorFn<E extends Entity> = (E) => string;
   templateUrl: "./entity-select.component.html",
   styleUrls: ["./entity-select.component.scss"],
 })
-export class EntitySelectComponent<E extends Entity> implements OnChanges {
+export class EntitySelectComponent<E extends Entity>
+  implements OnChanges, OnDestroy {
   /**
    * The standard-type (e.g. 'Child', 'School', e.t.c.) to set.
    * The standard-type has to be inside {@link ENTITY_MAP}
@@ -47,6 +49,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     }
   }
   entityBlockComponent?: string;
+  private subscription?: Subscription;
   /**
    * The (initial) selection. Can be used in combination with {@link selectionChange}
    * to enable two-way binding to either an array of entities or an array of strings
@@ -57,11 +60,13 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    */
   @Input() set selection(sel: (string | E)[]) {
     if (this.selectionInputType === "id") {
-      this.loading.pipe(skipWhile((isLoading) => isLoading)).subscribe((_) => {
-        this.selection_ = this.allEntities.filter((e) =>
-          sel.find((s) => s === e.getId())
-        );
-      });
+      this.subscription = this.loading
+        .pipe(skipWhile((isLoading) => isLoading))
+        .subscribe((_) => {
+          this.selection_ = this.allEntities.filter((e) =>
+            sel.find((s) => s === e.getId())
+          );
+        });
     } else {
       this.selection_ = sel as E[];
     }
@@ -237,5 +242,9 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
       // update whenever additional filters are being set
       this.formControl.setValue(this.formControl.value);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
   }
 }
