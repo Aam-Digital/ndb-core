@@ -28,6 +28,9 @@ Updating language files has several implications:
   automatically
 - New messages will be added to the list automatically. These will have the state `new`
 
+> Hint: If you added new texts to translate and used xliffmerge, you can find those by 
+> searching for the string "new"
+
 ## Available Tools
 There are several tools that can be used to translated in a graphically appealing way.
 This is an incomplete list of some of these tools:

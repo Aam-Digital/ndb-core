@@ -29,7 +29,7 @@ import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
  */
 @Component({
   template:
-    "<p>Generating sample data for this demo ...</p>" +
+    "<p i18n>Generating sample data for this demo ...</p>" +
     '<mat-progress-bar mode="indeterminate"></mat-progress-bar>',
 })
 export class DemoDataGeneratingProgressDialogComponent implements OnInit {

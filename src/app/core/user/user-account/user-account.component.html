@@ -35,12 +35,16 @@
 
         <form [formGroup]="passwordForm" class="form-container">
           <p *ngIf="disabledForDemoMode" class="info">
-            <mat-icon fontIcon="fa-exclamation-circle" i18n></mat-icon>
-            Password change is not allowed in demo mode.
+            <mat-icon fontIcon="fa-exclamation-circle"></mat-icon>
+            <ng-container i18n>
+              Password change is not allowed in demo mode.
+            </ng-container>
           </p>
           <p *ngIf="disabledForOfflineMode" class="info">
-            <mat-icon fontIcon="fa-exclamation-circle" i18n></mat-icon>
-            Password change is not possible while being offline.
+            <mat-icon fontIcon="fa-exclamation-circle"></mat-icon>
+            <ng-container i18n>
+              Password change is not possible while being offline.
+            </ng-container>
             <button
               mat-stroked-button
               (click)="checkIfPasswordChangeAllowed()"
