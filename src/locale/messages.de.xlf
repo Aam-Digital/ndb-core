@@ -71,7 +71,7 @@
       </trans-unit>
       <trans-unit id="7e0f04afa6ef0fb574cada5f817e88c7d6a081f8" datatype="html">
         <source> <x id="ICU" equiv-text="{event.children.length, plural, one {participant} other {participants}}"/> </source>
-        <target state="translated"> <x id="ICU" equiv-text="{event.children.length, plural, one {Teilnehmer} other {Teilnehmer}}"/> </target>
+        <target> <x id="ICU" equiv-text="{event.children.length, plural, one {participant} other {participants}}"/> </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-card/activity-card.component.html</context>
           <context context-type="linenumber">27,28</context>
