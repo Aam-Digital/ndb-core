@@ -15,7 +15,7 @@
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
     "storybook": "npm run docs:json && start-storybook -p 6006",
     "build-storybook": "npm run docs:json && build-storybook",
-    "extract-i18n": "ng extract-i18n --output-path ./src/locale/ && xliffmerge --profile xliffmerge.json de"
+    "extract-i18n": "ng extract-i18n --output-path ./src/locale/ && xliffmerge --profile xliffmerge.json"
   },
   "private": true,
   "dependencies": {
