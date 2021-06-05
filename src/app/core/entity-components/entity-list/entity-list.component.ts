@@ -41,6 +41,7 @@ import {
 import { LoggingService } from "../../logging/logging.service";
 import { OperationType } from "../../permissions/entity-permissions.service";
 import { entityListSortingAccessor } from "./sorting-accessor";
+import { sortDataSourceNumerically } from "../../../utils/sorting";
 
 interface FilterComponentSettings<T> {
   filterSettings: FilterSelection<T>;
@@ -148,6 +149,7 @@ export class EntityListComponent<T extends Entity>
     if (changes.hasOwnProperty("entityList")) {
       this.initFilterSelections();
       this.initDefaultSort();
+      sortDataSourceNumerically(this.entityDataSource);
     }
     this.loadUrlParams();
   }
