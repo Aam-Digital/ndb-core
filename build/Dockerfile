@@ -49,8 +49,7 @@ RUN if [ "$UPLOAD_COVERAGE" = true ] ; then ./cc-test-reporter after-build --deb
 
 FROM nginx:1.21-alpine
 COPY ./build/default.conf /etc/nginx/templates/default.conf
-# COPY --from=builder /app/dist/ /usr/share/nginx/html
-COPY /dist/ /usr/share/nginx/html
+COPY --from=builder /app/dist/ /usr/share/nginx/html
 ENV PORT=80
 ENV WEBDAV_URL="http://localhost"
 ENV COUCHDB_URL="http://localhost"
