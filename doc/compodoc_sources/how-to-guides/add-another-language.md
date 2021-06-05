@@ -35,8 +35,8 @@ to the `locales` section. For example, if you wanted to translate into French, t
   ...
 }
 ```
-The path (`src/locale/messages.fr.xlf`) is a path to the translation file that you 
-will create in the next step
+The path (`src/locale/messages.fr.xlf`) is a path to the translation file. Do not create the file yourself.
+This will be done automatically in the following steps.
 
 ###3) Let xliffmerge know about the new language
 `xliffmerge` is a tool that helps in the translation process. Especially, it is needed to
@@ -60,7 +60,7 @@ such a file is known as _xlf-file_
 To generate a file, simply use the script `extract-i18n` located inside the [package.json](package.json)
 file. This will automatically generate a file if none exists
 
-###5) Update the nginx config for the dockerfile
+###5) [Optional] Update the nginx config for the dockerfile
 We can build the Project using Docker. In order to build the app in every known locale
 (at least for testing purposes) add the following lines to the nginx config inside the
 server section (for example, for french):
@@ -91,21 +91,29 @@ newly created `src/locale/messages.<locale>.xlf` file. Inside this file, you wil
 "trans-units". These mark single texts that you can translate. Translate one or more
 of these units by replacing the content of the `target`. For example:
 ```xml
-<trans-unit id="d3233bd79e5ab0f7f5e9600bb5b8ef470bdb4bc6" datatype="html">
-  <source>Add group ...</source>
-  <!--Replace only the target with the translation -->
-  <target state="translated">Ajouter un groupe ...</target>
-  <note priority="1" from="description">Add a new school group</note>
+<trans-unit id="08c74dc9762957593b91f6eb5d65efdfc975bf48" datatype="html">
+  <source>Username</source>
+  <target state="translated">Nom d'utilisateur</target>
   <context-group purpose="location">
-    <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-participants-section/activity-participants-section.component.html</context>
-    <context context-type="linenumber">21</context>
+    <context context-type="sourcefile">src/app/core/admin/user-list/user-list.component.html</context>
+    <context context-type="linenumber">7,8</context>
   </context-group>
   <context-group purpose="location">
-    <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-    <context context-type="linenumber">169</context>
+    <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
+    <context context-type="linenumber">32</context>
+  </context-group>
+  <context-group purpose="location">
+    <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
+    <context context-type="linenumber">26</context>
   </context-group>
 </trans-unit>
 ```
-You can change the state to "translated" (but this is not required). 
+You can change the state to "translated" as shown in the picture (but this is not required). 
 Leave everything else as it is and test the app again. Translations should appear for each 
 trans-unit that you have translated.
+
+###Conclusion
+You have now successfully added the capability to translate the app into the target
+language. You can now take the translation file (`"src/locale/messages.fr.xlf"`) and 
+send it to a translator to have it translated. Once this process is done, replace the
+preliminary translation file with the one that comes back from a translator.
