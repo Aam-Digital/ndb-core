@@ -94,9 +94,9 @@ function printDifferences(name: string, p1: any, p2: any) {
     return;
   }
   if (Array.isArray(p1)) {
-    return printArrayDifferences(name, p1, p2);
+    printArrayDifferences(name, p1, p2);
   } else if (typeof p1 === "object") {
-    return printObjectDifferences(name, p1, p2);
+    printObjectDifferences(name, p1, p2);
   } else {
     printPrimitiveDifferences(name, p1, p2);
   }
