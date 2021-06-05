@@ -15,8 +15,8 @@ function createColumnDescription(
   inputType = ColumnDescriptionInputType.SELECT
 ): ColumnDescription {
   return {
-    name: "bengali",
-    label: $localize`:Bengali as a subject in school:Bengali`,
+    name: name,
+    label: label,
     inputType: inputType,
     selectValues: Aser.ReadingLevels.map((s) => {
       return { value: s, label: s };
@@ -53,7 +53,6 @@ export class AserComponent implements OnChanges, OnInitDynamicComponent {
       $localize`:Bengali as a subject in school:Bengali`,
       "md"
     ),
-    createColumnDescription("math", $localize`:Math as a subject:Math`),
     createColumnDescription(
       "remarks",
       $localize`Remarks`,
