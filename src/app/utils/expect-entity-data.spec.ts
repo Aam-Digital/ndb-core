@@ -45,7 +45,8 @@ export function expectEntitiesToMatch(
   // write arrays to console for easier debugging of complex mismatching objects
   console.log("expected objects", cleanExpected);
   console.log("actual objects", cleanActual);
-  isSame("entities", cleanExpected, cleanActual);
+  console.log("Differences:");
+  printDifferences("entities", cleanExpected, cleanActual);
 
   for (let i = 0; i < cleanExpected.length; i++) {
     const data = cleanExpected[i];
@@ -56,22 +57,56 @@ export function expectEntitiesToMatch(
   }
 }
 
-function isSame(name: string, p1: any, p2: any): boolean {
+/**
+ * Prints the differences between `p1` ands `p2`
+ * These can be anything, recursive checks for objects and arrays
+ * will be made.
+ * <br>
+ * This will <em>only</em> print the differences between the two
+ * elements. If the elements (or contents of the elements) are the same,
+ * this will print nothing. For example considering the two objects:
+ * ```json
+ * {
+ *   "person": {
+ *     "name": "A",
+ *     "age": 23
+ *   }
+ * }
+ * ```
+ * and
+ * ```json
+ * {
+ *   "person": {
+ *     "name": "A",
+ *     "age": 25
+ *   }
+ * }
+ * ```
+ *
+ * this method would print "Attribute object.person.age is not
+ * the same: Expected '23' but got '25'"
+ * @param name The name of the element
+ * @param p1 The first element to check
+ * @param p2 The second element to check
+ */
+function printDifferences(name: string, p1: any, p2: any) {
   if (isNotSameType(name, p1, p2)) {
-    return false;
+    return;
   }
   if (Array.isArray(p1)) {
-    return sameArray(name, p1, p2);
+    return printArrayDifferences(name, p1, p2);
   } else if (typeof p1 === "object") {
-    return sameObject(name, p1, p2);
+    return printObjectDifferences(name, p1, p2);
   } else {
-    const result = p1 === p2;
-    if (!result) {
-      console.error(
-        `Attribute ${name} is not the same: Expected '${p1}' but got '${p2}'`
-      );
-    }
-    return result;
+    printPrimitiveDifferences(name, p1, p2);
+  }
+}
+
+function printPrimitiveDifferences(name: string, p1: any, p2: any) {
+  if (p1 !== p2) {
+    console.error(
+      `Attribute ${name} is not the same: Expected '${p1}' but got '${p2}'`
+    );
   }
 }
 
@@ -81,13 +116,12 @@ function isNotSameType(name: string, p1: any, p2: any): boolean {
       `Expected attribute ${name} to be of type '${typeof p1}', but it is '${typeof p2}'`
     );
     console.error(`Want:${p1}, got: ${p2}`);
-    return true;
+    return false;
   }
-  return false;
+  return true;
 }
 
-function sameObject(name: string, obj1: object, obj2: object): boolean {
-  let same = true;
+function printObjectDifferences(name: string, obj1: object, obj2: object) {
   for (const attr in obj1) {
     if (!obj1.hasOwnProperty(attr)) {
       continue;
@@ -95,27 +129,22 @@ function sameObject(name: string, obj1: object, obj2: object): boolean {
     if (obj2.hasOwnProperty(attr)) {
       const p1 = obj1[attr];
       const p2 = obj2[attr];
-      same = same && isSame(name + "." + attr, p1, p2);
+      printDifferences(name + "." + attr, p1, p2);
     } else {
       console.error(`${name} is missing the property '${attr}'`);
-      same = false;
     }
   }
-  return same;
 }
 
-function sameArray(name: string, a1: Array<any>, a2: Array<any>): boolean {
+function printArrayDifferences(name: string, a1: Array<any>, a2: Array<any>) {
   if (a1.length !== a2.length) {
     console.log(
       `Attribute ${name}: Expected length: ${a1.length} is not ${a2.length}`
     );
-    return false;
   } else {
-    let same = true;
     for (let i = 0; i < a1.length; ++i) {
-      same = same && isSame(`${name}[${i}]`, a1[i], a2[i]);
+      printDifferences(`${name}[${i}]`, a1[i], a2[i]);
     }
-    return same;
   }
 }
 

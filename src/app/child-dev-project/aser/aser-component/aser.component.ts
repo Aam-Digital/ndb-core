@@ -8,6 +8,23 @@ import { ColumnDescription } from "../../../core/entity-components/entity-subrec
 import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 
+function createColumnDescription(
+  name: string,
+  label: string,
+  visibleFrom: "md" | "xs" = "md",
+  inputType = ColumnDescriptionInputType.SELECT
+): ColumnDescription {
+  return {
+    name: "bengali",
+    label: $localize`:Bengali as a subject in school:Bengali`,
+    inputType: inputType,
+    selectValues: Aser.ReadingLevels.map((s) => {
+      return { value: s, label: s };
+    }),
+    visibleFrom: visibleFrom,
+  };
+}
+
 @UntilDestroy()
 @Component({
   selector: "app-aser",
@@ -20,54 +37,29 @@ export class AserComponent implements OnChanges, OnInitDynamicComponent {
   records: Array<Aser>;
 
   columns: Array<ColumnDescription> = [
-    {
-      name: "date",
-      label: $localize`Date`,
-      inputType: ColumnDescriptionInputType.DATE,
-      visibleFrom: "xs",
-    },
-    {
-      name: "math",
-      label: $localize`:Math as a subject:Math`,
-      inputType: ColumnDescriptionInputType.SELECT,
-      selectValues: Aser.MathLevels.map((s) => {
-        return { value: s, label: s };
-      }),
-      visibleFrom: "xs",
-    },
-    {
-      name: "english",
-      label: $localize`:English as a subject in school:English`,
-      inputType: ColumnDescriptionInputType.SELECT,
-      selectValues: Aser.ReadingLevels.map((s) => {
-        return { value: s, label: s };
-      }),
-      visibleFrom: "xs",
-    },
-    {
-      name: "hindi",
-      label: $localize`:Hindi as a subject in school:Hindi`,
-      inputType: ColumnDescriptionInputType.SELECT,
-      selectValues: Aser.ReadingLevels.map((s) => {
-        return { value: s, label: s };
-      }),
-      visibleFrom: "md",
-    },
-    {
-      name: "bengali",
-      label: $localize`:Bengali as a subject in school:Bengali`,
-      inputType: ColumnDescriptionInputType.SELECT,
-      selectValues: Aser.ReadingLevels.map((s) => {
-        return { value: s, label: s };
-      }),
-      visibleFrom: "md",
-    },
-    {
-      name: "remarks",
-      label: $localize`Remarks`,
-      inputType: ColumnDescriptionInputType.TEXT,
-      visibleFrom: "md",
-    },
+    createColumnDescription("name", $localize`Date`),
+    createColumnDescription("math", $localize`:Math as a subject:Math`),
+    createColumnDescription(
+      "english",
+      $localize`:English as a subject in school:English`
+    ),
+    createColumnDescription(
+      "hindi",
+      $localize`:Hindi as a subject in school:Hindi`,
+      "md"
+    ),
+    createColumnDescription(
+      "bengali",
+      $localize`:Bengali as a subject in school:Bengali`,
+      "md"
+    ),
+    createColumnDescription("math", $localize`:Math as a subject:Math`),
+    createColumnDescription(
+      "remarks",
+      $localize`Remarks`,
+      "md",
+      ColumnDescriptionInputType.TEXT
+    ),
   ];
 
   constructor(private childrenService: ChildrenService) {}
