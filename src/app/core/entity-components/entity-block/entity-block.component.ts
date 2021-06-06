@@ -5,7 +5,6 @@ import { DYNAMIC_COMPONENTS_MAP } from "../../view/dynamic-components-map";
 @Component({
   selector: "app-entity-block",
   templateUrl: "./entity-block.component.html",
-  styleUrls: ["./entity-block.component.scss"],
 })
 export class EntityBlockComponent<E extends Entity> implements OnInit {
   blockName?: string;

@@ -1,8 +1,8 @@
 import { Component } from "@angular/core";
 import { Entity, EntityConstructor } from "../../entity/entity";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { concat, Observable } from "rxjs";
-import { concatMap, debounceTime, map, tap } from "rxjs/operators";
+import { Observable } from "rxjs";
+import { concatMap, debounceTime, tap } from "rxjs/operators";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { Router } from "@angular/router";
 import { FormControl } from "@angular/forms";

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EntityBlockComponent } from "./entity-block.component";
+import { Entity } from "../../entity/entity";
 
 describe("EntityBlockComponent", () => {
   let component: EntityBlockComponent<any>;
@@ -15,6 +16,7 @@ describe("EntityBlockComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EntityBlockComponent);
     component = fixture.componentInstance;
+    component.entity = new Entity();
     fixture.detectChanges();
   });
 
