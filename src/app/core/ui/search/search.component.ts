@@ -54,14 +54,13 @@ export class SearchComponent {
     if (typeof next !== "string") {
       return this.ILLEGAL_INPUT;
     }
-    const string = next as string;
-    if (string.length === 0) {
+    if (next.length === 0) {
       return this.NOTHING_ENTERED;
     }
     if (!this.isRelevantSearchInput(next)) {
       return this.ILLEGAL_INPUT;
     }
-    return string.length < this.MIN_CHARACTERS_FOR_SEARCH
+    return next.length < this.MIN_CHARACTERS_FOR_SEARCH
       ? this.TOO_FEW_CHARACTERS
       : this.SEARCH_IN_PROGRESS;
   }
