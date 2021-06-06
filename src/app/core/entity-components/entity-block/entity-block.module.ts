@@ -6,8 +6,6 @@ import { ViewModule } from "../../view/view.module";
 @NgModule({
   declarations: [EntityBlockComponent],
   imports: [CommonModule, ViewModule],
-  exports: [
-    EntityBlockComponent
-  ]
+  exports: [EntityBlockComponent],
 })
 export class EntityBlockModule {}
