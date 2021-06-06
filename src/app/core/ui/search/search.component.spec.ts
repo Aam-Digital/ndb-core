@@ -18,6 +18,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { EntityBlockModule } from "../../entity-components/entity-block/entity-block.module";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { Subscription } from "rxjs";
+import { Entity } from "../../entity/entity";
 
 describe("SearchComponent", () => {
   let component: SearchComponent;
@@ -90,23 +91,36 @@ describe("SearchComponent", () => {
     });
   });
 
-  it("should not search for less than one real character of input", (done) => {
+  function expectResultToBeEmpty(done: DoneFn) {
     subscription = component.results.subscribe((next) => {
       expect(next).toHaveSize(0);
       expect(mockIndexService.queryIndexRaw).not.toHaveBeenCalled();
       done();
     });
+  }
+
+  it("should not search for less than one real character of input", (done) => {
+    expectResultToBeEmpty(done);
     component.formControl.setValue("   ");
   });
 
   it("should reset results if a a null search is performed", (done) => {
-    subscription = component.results.subscribe((next) => {
-      expect(next).toHaveSize(0);
-      expect(mockIndexService.queryIndexRaw).not.toHaveBeenCalled();
-      done();
-    });
+    expectResultToBeEmpty(done);
     component.formControl.setValue(null);
   });
+
+  function expectResultToHave(queryResults: any, result: Entity, done: DoneFn) {
+    mockIndexService.queryIndexRaw.and.returnValue(
+      Promise.resolve(queryResults)
+    );
+
+    subscription = component.results.subscribe((next) => {
+      expect(next).toHaveSize(1);
+      expect(next[0].getId()).toEqual(result.getId());
+      expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
+      done();
+    });
+  }
 
   it("should set results correctly for search input", (done) => {
     const child1 = new Child("1");
@@ -127,16 +141,8 @@ describe("SearchComponent", () => {
         },
       ],
     };
-    mockIndexService.queryIndexRaw.and.returnValue(
-      Promise.resolve(mockQueryResults)
-    );
 
-    subscription = component.results.subscribe((next) => {
-      expect(next).toHaveSize(1);
-      expect(next[0].getId()).toEqual(child1.getId());
-      expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
-      done();
-    });
+    expectResultToHave(mockQueryResults, child1, done);
     component.formControl.setValue("Ada");
   });
 
@@ -150,16 +156,6 @@ describe("SearchComponent", () => {
         { id: child1.getId(), doc: {}, key: "adam" }, // may be returned twice from db if several indexed values match the search
       ],
     };
-    mockIndexService.queryIndexRaw.and.returnValue(
-      Promise.resolve(mockQueryResults)
-    );
-
-    subscription = component.results.subscribe((next) => {
-      expect(next).toHaveSize(1);
-      expect(next[0].getId()).toEqual(child1.getId());
-      expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
-      done();
-    });
-    component.formControl.setValue("Ada");
+    expectResultToHave(mockQueryResults, child1, done);
   });
 });

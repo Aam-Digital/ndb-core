@@ -61,11 +61,9 @@ export class SearchComponent {
     if (!this.isRelevantSearchInput(next)) {
       return this.ILLEGAL_INPUT;
     }
-    if (string.length < this.MIN_CHARACTERS_FOR_SEARCH) {
-      return this.TOO_FEW_CHARACTERS;
-    } else {
-      return this.SEARCH_IN_PROGRESS;
-    }
+    return string.length < this.MIN_CHARACTERS_FOR_SEARCH
+      ? this.TOO_FEW_CHARACTERS
+      : this.SEARCH_IN_PROGRESS;
   }
 
   async searchResults(next: string): Promise<Entity[]> {
