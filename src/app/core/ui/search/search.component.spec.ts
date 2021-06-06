@@ -157,5 +157,6 @@ describe("SearchComponent", () => {
       ],
     };
     expectResultToHave(mockQueryResults, child1, done);
+    component.formControl.setValue("Ada");
   });
 });
