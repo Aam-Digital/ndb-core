@@ -13,6 +13,7 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Entity } from "../../../entity/entity";
 import { ReactiveFormsModule } from "@angular/forms";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
+import { Subscription } from "rxjs";
 
 class TestEntity extends Entity {
   static create(name: string): TestEntity {
@@ -30,6 +31,7 @@ class TestEntity extends Entity {
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
   let fixture: ComponentFixture<EntitySelectComponent<any>>;
+  let subscription: Subscription;
 
   const mockEntitiesA: Entity[] = ["Abc", "Bcd", "Abd", "Aba"].map((s) =>
     TestEntity.create(s)
@@ -61,6 +63,10 @@ describe("EntitySelectComponent", () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    subscription.unsubscribe();
+  });
+
   it("should create", () => {
     expect(component).toBeTruthy();
   });
@@ -79,7 +85,7 @@ describe("EntitySelectComponent", () => {
   }));
 
   it("should suggest all entities after an initial load", (done) => {
-    component.filteredEntities.subscribe((next) => {
+    subscription = component.filteredEntities.subscribe((next) => {
       expect(next.length).toBe(mockEntitiesA.length);
       done();
     });
@@ -155,7 +161,7 @@ describe("EntitySelectComponent", () => {
     component.loading.next(false);
     let iterations = 0;
     let expectedLength = 4;
-    component.filteredEntities.subscribe((next) => {
+    subscription = component.filteredEntities.subscribe((next) => {
       iterations++;
       expect(next.length).toEqual(expectedLength);
       if (iterations === 4) {
