@@ -64,7 +64,7 @@ describe("EntitySelectComponent", () => {
   });
 
   afterEach(() => {
-    subscription.unsubscribe();
+    subscription?.unsubscribe();
   });
 
   it("should create", () => {
