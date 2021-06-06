@@ -128,7 +128,7 @@ export class SearchComponent {
   ): Entity[] {
     return rows
       .filter((e) => e.key.startsWith(searchTerm.toLowerCase()))
-      .map((doc) => this.transformDocToEntity(doc))
+      .map((doc) => this.transformDocToEntity(doc));
   }
 
   private uniquify(entities: Entity[]): Entity[] {
