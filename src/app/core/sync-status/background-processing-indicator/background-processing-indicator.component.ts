@@ -22,7 +22,7 @@ export class BackgroundProcessingIndicatorComponent implements OnChanges {
   @Input() backgroundProcesses: BackgroundProcessState[] = [];
 
   /** whether processes of with the same title shall be summarized into one line */
-  @Input() summarize: boolean = true;
+  @Input() summarize: boolean = false;
 
   /** how many special tasks (e.g. index creations) are currently being processed */
   taskCounter: number;

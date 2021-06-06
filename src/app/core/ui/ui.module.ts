@@ -31,7 +31,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { SearchComponent } from "./search/search.component";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ChildrenModule } from "../../child-dev-project/children/children.module";
 import { SchoolsModule } from "../../child-dev-project/schools/schools.module";
 import { FlexLayoutModule } from "@angular/flex-layout";
@@ -39,6 +39,7 @@ import { PrimaryActionComponent } from "./primary-action/primary-action.componen
 import { NotesModule } from "../../child-dev-project/notes/notes.module";
 import { Angulartics2Module } from "angulartics2";
 import { PermissionsModule } from "../permissions/permissions.module";
+import { EntityBlockModule } from "../entity-components/entity-block/entity-block.module";
 
 /**
  * The core user interface structure that ties different components together into the overall app layout.
@@ -65,6 +66,8 @@ import { PermissionsModule } from "../permissions/permissions.module";
     NotesModule,
     Angulartics2Module,
     PermissionsModule,
+    ReactiveFormsModule,
+    EntityBlockModule,
   ],
   declarations: [SearchComponent, UiComponent, PrimaryActionComponent],
   exports: [UiComponent],

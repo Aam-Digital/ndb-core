@@ -17,6 +17,7 @@
 
 import { ColumnDescriptionInputType } from "./column-description-input-type.enum";
 import { Entity } from "../../entity/entity";
+import { Observable, Subscribable } from "rxjs";
 
 /**
  *  A ColumnDescription describes a single column to be generated in the generic {@link EntitySubrecordComponent}.
@@ -66,4 +67,11 @@ export interface ColumnDescription {
    * In case `inputType === ColumnDescriptionInputType.CONFIGURABLE_ENUM` this required to be set to the id of the enum
    */
   enumId?: string;
+
+  /**
+   * in case `inputType === ColumnDescriptionInputType.ENTITY_SELECT` this is required to set the standard type
+   */
+  asyncValueFunction?: (
+    entity: Entity
+  ) => Observable<any> | Subscribable<any> | Promise<any>;
 }

@@ -216,7 +216,7 @@ export class EntitySubrecordComponent<T extends Entity>
   private applyDefaultColumnDefinitions(
     colDef: ColumnDescription
   ): ColumnDescription {
-    if (!colDef.valueFunction) {
+    if (!colDef.valueFunction && !colDef.asyncValueFunction) {
       switch (colDef.inputType) {
         case ColumnDescriptionInputType.DATE:
           colDef.valueFunction = (entity) =>

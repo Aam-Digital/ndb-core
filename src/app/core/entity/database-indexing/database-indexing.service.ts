@@ -50,7 +50,7 @@ export class DatabaseIndexingService {
    *
    * This also triggers updates to the observable `indicesRegistered`.
    *
-   * @param designDoc The design document (see @link{Database}) describing the query/index.
+   * @param designDoc The design document (see {@link Database}) describing the query/index.
    */
   async createIndex(designDoc: any): Promise<void> {
     const indexState: BackgroundProcessState = {

@@ -11,6 +11,8 @@ import { ColumnDescriptionInputType } from "../../../core/entity-components/enti
 import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { ComponentWithConfig } from "../../../core/entity-components/entity-subrecord/component-with-config";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { User } from "../../../core/user/user";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
@@ -49,9 +51,10 @@ export class NotesOfChildComponent
       visibleFrom: "md",
     },
     {
-      name: "author",
+      name: "authors",
       label: "SW",
-      inputType: ColumnDescriptionInputType.TEXT,
+      inputType: ColumnDescriptionInputType.READONLY,
+      asyncValueFunction: (note: Note) => this.getAuthorNames(note.authors),
       visibleFrom: "md",
     },
     {
@@ -70,7 +73,8 @@ export class NotesOfChildComponent
 
   constructor(
     private childrenService: ChildrenService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private entityMapperService: EntityMapperService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -104,6 +108,13 @@ export class NotesOfChildComponent
         });
         this.records = notes;
       });
+  }
+
+  private async getAuthorNames(authorIds: string[]): Promise<string[]> {
+    const users = await this.entityMapperService.loadType(User);
+    return users
+      .filter((u) => authorIds.includes(u.getId()))
+      .map((u) => u.name);
   }
 
   generateNewRecordFactory() {
