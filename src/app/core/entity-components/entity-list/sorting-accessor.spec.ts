@@ -1,17 +1,23 @@
 import { entityListSortingAccessor } from "./sorting-accessor";
 
-describe("default sorting accessor", () => {
+describe("entityListSortingAccessor", () => {
+  function expectObjectToContain(obj: object, expected: any[], type: string) {
+    let index = 0;
+    // tslint:disable-next-line:forin
+    for (const element in obj) {
+      const accessed = entityListSortingAccessor(obj, element);
+      expect(accessed).toEqual(expected[index]);
+      expect(typeof accessed).toBe(type);
+      index += 1;
+    }
+  }
   it("should return a string for string-objects", () => {
     const obj = {
       a: "ABC",
       b: "B",
-      c: "Hello, World"!,
+      c: "Hello, World!",
     };
-    // tslint:disable-next-line:forin
-    for (const element in obj) {
-      const accessed = entityListSortingAccessor(obj, element);
-      expect(typeof accessed).toBe("string");
-    }
+    expectObjectToContain(obj, ["ABC", "B", "Hello, World!"], "string");
   });
 
   it("should return numbers for a number-objects", () => {
@@ -20,11 +26,18 @@ describe("default sorting accessor", () => {
       b: 2.0,
       c: 10e3,
     };
-    // tslint:disable-next-line:forin
-    for (const element in obj) {
-      const accessed = entityListSortingAccessor(obj, element);
-      expect(typeof accessed).toBe("number");
-    }
+    expectObjectToContain(obj, [1, 2.0, 10e3], "number");
+  });
+
+  it("should return numbers when a string is parsable", () => {
+    const numbers = [1, 2.0, 10e3, 0x1];
+    const obj = {
+      a: "1",
+      b: "2.0",
+      c: "10e3",
+      d: "0x1",
+    };
+    expectObjectToContain(obj, [1, 2.0, 10e3, 0x1], "number");
   });
 
   it("should return the label when the queried object's name is 'label'", () => {
@@ -36,6 +49,7 @@ describe("default sorting accessor", () => {
       },
     };
     const accessed = entityListSortingAccessor(object, "data");
+    expect(typeof accessed).toBe("string");
     expect(accessed).toBe("data label");
   });
 
@@ -47,6 +61,7 @@ describe("default sorting accessor", () => {
       },
     };
     const accessed = entityListSortingAccessor(object, "data");
+    expect(typeof accessed).toBe("object");
     expect(accessed).toEqual({
       value1: 123,
       value2: "hello",
