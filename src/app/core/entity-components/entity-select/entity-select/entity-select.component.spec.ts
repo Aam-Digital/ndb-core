@@ -33,8 +33,8 @@ describe("EntitySelectComponent", () => {
   let fixture: ComponentFixture<EntitySelectComponent<any>>;
   let subscription: Subscription;
 
-  const mockEntitiesA: Entity[] = ["Abc", "Bcd", "Abd", "Aba"].map((s) =>
-    TestEntity.create(s)
+  const mockEntitiesA: Entity[] = ["Abc", "Bcd", "Abd", "Aba"].map(
+    TestEntity.create
   );
   const mockEntitiesB: Entity[] = [new Entity(), new Entity()];
 
@@ -63,10 +63,6 @@ describe("EntitySelectComponent", () => {
     fixture.detectChanges();
   });
 
-  afterEach(() => {
-    subscription?.unsubscribe();
-  });
-
   it("should create", () => {
     expect(component).toBeTruthy();
   });
@@ -88,6 +84,7 @@ describe("EntitySelectComponent", () => {
     subscription = component.filteredEntities.subscribe((next) => {
       expect(next.length).toBe(mockEntitiesA.length);
       done();
+      subscription.unsubscribe();
     });
     component.setEntityType(TestEntity);
     fixture.detectChanges();
@@ -166,6 +163,7 @@ describe("EntitySelectComponent", () => {
       expect(next.length).toEqual(expectedLength);
       if (iterations === 4) {
         done();
+        subscription.unsubscribe();
       }
     });
     expectedLength = 4;

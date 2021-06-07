@@ -52,7 +52,7 @@ describe("SearchComponent", () => {
           ReactiveFormsModule,
         ],
         providers: [
-          { provice: EntitySchemaService, useValue: entitySchemaService },
+          { provide: EntitySchemaService, useValue: entitySchemaService },
           { provide: DatabaseIndexingService, useValue: mockIndexService },
         ],
         declarations: [SearchComponent],
@@ -61,6 +61,7 @@ describe("SearchComponent", () => {
   );
 
   beforeEach(() => {
+    mockIndexService.createIndex.and.returnValue(Promise.resolve());
     fixture = TestBed.createComponent(SearchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -115,6 +116,7 @@ describe("SearchComponent", () => {
     );
 
     subscription = component.results.subscribe((next) => {
+      console.log(next);
       expect(next).toHaveSize(1);
       expect(next[0].getId()).toEqual(result.getId());
       expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
@@ -131,13 +133,23 @@ describe("SearchComponent", () => {
       rows: [
         {
           id: child1._id,
-          doc: {},
-          key: child1.name.toLowerCase(),
+          doc: { name: child1.name },
+          key: "adam",
+        },
+        {
+          id: child1._id,
+          doc: { name: child1.name },
+          key: "x",
         },
         {
           id: school1._id,
-          doc: {},
-          key: school1.name.toLowerCase(),
+          doc: { name: school1.name },
+          key: "anglo",
+        },
+        {
+          id: school1._id,
+          doc: { name: school1.name },
+          key: "primary",
         },
       ],
     };
@@ -152,11 +164,30 @@ describe("SearchComponent", () => {
 
     const mockQueryResults = {
       rows: [
-        { id: child1.getId(), doc: {}, key: "adam" },
-        { id: child1.getId(), doc: {}, key: "adam" }, // may be returned twice from db if several indexed values match the search
+        { id: child1._id, doc: { name: child1.name }, key: "adam" },
+        { id: child1._id, doc: { name: child1.name }, key: "ant" }, // may be returned twice from db if several indexed values match the search
       ],
     };
     expectResultToHave(mockQueryResults, child1, done);
     component.formControl.setValue("Ada");
+  });
+
+  it("should only include results matching all search terms (words)", (done) => {
+    const child1 = new Child("1");
+    child1.name = "Adam X";
+    const school1 = new School("s1");
+    school1.name = "Anglo Primary";
+
+    const mockQueryResults = {
+      rows: [
+        { id: child1._id, doc: { name: child1.name }, key: "adam" },
+        { id: child1._id, doc: { name: child1.name }, key: "x" },
+        { id: school1._id, doc: { name: school1.name }, key: "anglo" },
+        { id: school1._id, doc: { name: school1.name }, key: "primary" },
+      ],
+    };
+
+    expectResultToHave(mockQueryResults, child1, done);
+    component.formControl.setValue("A X");
   });
 });

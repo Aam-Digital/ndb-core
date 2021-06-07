@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { Entity, EntityConstructor } from "../../entity/entity";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Observable } from "rxjs";
-import { concatMap, debounceTime, tap } from "rxjs/operators";
+import { concatMap, debounceTime, skipUntil, tap } from "rxjs/operators";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { Router } from "@angular/router";
 import { FormControl } from "@angular/forms";
@@ -42,9 +42,9 @@ export class SearchComponent {
     private entitySchemaService: EntitySchemaService,
     private router: Router
   ) {
-    this.createSearchIndex();
     this.results = this.formControl.valueChanges.pipe(
       debounceTime(this.INPUT_DEBOUNCE_TIME_MS),
+      skipUntil(this.createSearchIndex()),
       tap((next) => (this.state = this.updateState(next))),
       concatMap((next: string) => this.searchResults(next))
     );
@@ -69,13 +69,16 @@ export class SearchComponent {
     if (this.state !== this.SEARCH_IN_PROGRESS) {
       return [];
     }
+    const searchTerms = next.toLowerCase().split(" ");
     const entities = await this.indexingService.queryIndexRaw(
       "search_index/by_name",
       {
+        startkey: searchTerms[0],
+        endkey: searchTerms[0] + "\ufff0",
         include_docs: true,
       }
     );
-    const filtered = this.prepareResults(entities.rows, next);
+    const filtered = this.prepareResults(entities.rows, searchTerms);
     const uniques = this.uniquify(filtered);
     this.state = uniques.length === 0 ? this.NO_RESULTS : this.SHOW_RESULTS;
     return uniques;
@@ -124,11 +127,21 @@ export class SearchComponent {
 
   private prepareResults(
     rows: [{ key: string; id: string; doc: object }],
-    searchTerm: string
+    searchTerms: string[]
   ): Entity[] {
     return rows
-      .filter((e) => e.key.startsWith(searchTerm.toLowerCase()))
-      .map((doc) => this.transformDocToEntity(doc));
+      .map((doc) => this.transformDocToEntity(doc))
+      .filter((entity) =>
+        this.containsSecondarySearchTerms(entity, searchTerms)
+      );
+  }
+
+  private containsSecondarySearchTerms(
+    entity: Entity,
+    searchTerms: string[]
+  ): boolean {
+    const searchIndices = entity.searchIndices.join(" ").toLowerCase();
+    return searchTerms.every((s) => searchIndices.includes(s));
   }
 
   private uniquify(entities: Entity[]): Entity[] {
