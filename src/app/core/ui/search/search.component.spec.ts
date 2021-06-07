@@ -131,26 +131,10 @@ describe("SearchComponent", () => {
     school1.name = "Anglo Primary";
     const mockQueryResults = {
       rows: [
-        {
-          id: child1._id,
-          doc: { name: child1.name },
-          key: "adam",
-        },
-        {
-          id: child1._id,
-          doc: { name: child1.name },
-          key: "x",
-        },
-        {
-          id: school1._id,
-          doc: { name: school1.name },
-          key: "anglo",
-        },
-        {
-          id: school1._id,
-          doc: { name: school1.name },
-          key: "primary",
-        },
+        { id: child1._id, doc: { name: child1.name }, key: "adam" },
+        { id: child1._id, doc: { name: child1.name }, key: "x" },
+        { id: school1._id, doc: { name: school1.name }, key: "anglo" },
+        { id: school1._id, doc: { name: school1.name }, key: "primary" },
       ],
     };
     return [child1, school1, mockQueryResults];
@@ -164,15 +148,8 @@ describe("SearchComponent", () => {
   });
 
   it("should not include duplicates in results", (done) => {
-    const child1 = new Child("1");
-    child1.name = "Adam Ant";
+    const [child1, , mockQueryResults] = generateDemoData();
 
-    const mockQueryResults = {
-      rows: [
-        { id: child1._id, doc: { name: child1.name }, key: "adam" },
-        { id: child1._id, doc: { name: child1.name }, key: "ant" }, // may be returned twice from db if several indexed values match the search
-      ],
-    };
     expectResultToHave(mockQueryResults, child1, done);
     component.formControl.setValue("Ada");
   });
