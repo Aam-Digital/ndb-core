@@ -52,7 +52,7 @@ export class Note extends Entity {
     label: "Children",
     viewComponent: "DisplayEntityArray",
     editComponent: "EditEntityArray",
-    ext: Child.ENTITY_TYPE,
+    additional: Child.ENTITY_TYPE,
   })
   children: string[] = [];
 
@@ -61,7 +61,7 @@ export class Note extends Entity {
    *
    * No direct access to change this property. Use the `.getAttendance()` method to have safe access.
    */
-  @DatabaseField({ innerDataType: "schema-embed", ext: EventAttendance })
+  @DatabaseField({ innerDataType: "schema-embed", additional: EventAttendance })
   private childrenAttendance: Map<string, EventAttendance> = new Map();
 
   @DatabaseField({ label: "Date" }) date: Date;
@@ -73,7 +73,7 @@ export class Note extends Entity {
     label: "SW",
     viewComponent: "DisplayEntityArray",
     editComponent: "EditEntityArray",
-    ext: User.ENTITY_TYPE,
+    additional: User.ENTITY_TYPE,
   })
   authors: string[] = [];
 
@@ -98,7 +98,7 @@ export class Note extends Entity {
     dataType: "string",
     label: "",
     editComponent: "EditSelectable",
-    ext: ["OK", "WARNING", "URGENT"],
+    additional: ["OK", "WARNING", "URGENT"],
   })
   warningLevel: WarningLevel = WarningLevel.OK;
 

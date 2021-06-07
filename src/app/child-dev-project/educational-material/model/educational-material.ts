@@ -64,7 +64,7 @@ export class EducationalMaterial extends Entity {
   @DatabaseField({
     label: "Material",
     editComponent: "EditSelectable",
-    ext: EducationalMaterial.MATERIAL_ALL,
+    additional: EducationalMaterial.MATERIAL_ALL,
   })
   materialType = "";
   @DatabaseField({ label: "Amount" }) materialAmount: number;

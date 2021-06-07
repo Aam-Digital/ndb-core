@@ -173,7 +173,8 @@ describe("EntitySchemaService", () => {
       otherStuff: string;
     }
     class TestEntity extends Entity {
-      @DatabaseField({ dataType: "schema-embed", ext: Detail }) details: Detail;
+      @DatabaseField({ dataType: "schema-embed", additional: Detail })
+      details: Detail;
     }
     const id = "test1";
     const entity = new TestEntity(id);

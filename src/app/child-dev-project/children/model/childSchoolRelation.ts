@@ -35,7 +35,7 @@ export class ChildSchoolRelation extends Entity {
     label: "School",
     viewComponent: "DisplayEntity",
     editComponent: "EditSingleEntity",
-    ext: School.ENTITY_TYPE,
+    additional: School.ENTITY_TYPE,
   })
   schoolId: string;
   @DatabaseField({ label: "Class" }) schoolClass: string = "";
