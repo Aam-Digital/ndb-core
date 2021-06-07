@@ -5,9 +5,9 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatChipsModule } from "@angular/material/chips";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ViewModule } from "../../view/view.module";
+import { EntityBlockModule } from "../entity-block/entity-block.module";
 
 @NgModule({
   declarations: [EntitySelectComponent],
@@ -17,9 +17,9 @@ import { ViewModule } from "../../view/view.module";
     MatChipsModule,
     ReactiveFormsModule,
     MatAutocompleteModule,
-    MatInputModule,
     MatTooltipModule,
     ViewModule,
+    EntityBlockModule,
   ],
   exports: [EntitySelectComponent],
 })
