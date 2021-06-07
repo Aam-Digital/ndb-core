@@ -1,13 +1,13 @@
 <button
   mat-icon-button
   class="sync-icon"
-  [hidden]="!taskCounter"
+  [hidden]="allTasksFinished | async"
   [matMenuTriggerFor]="taskListDropdown"
 >
   <span
-    [matBadge]="taskCounter"
+    [matBadge]="taskCounterObservable | async"
     matBadgeColor="accent"
-    [matBadgeHidden]="taskCounter <= 1"
+    [matBadgeHidden]="allTasksFinished | async"
   >
     <mat-icon class="header-icon" fontIcon="fa-refresh"></mat-icon>
   </span>
@@ -20,7 +20,7 @@
   </div>
 
   <div
-    *ngFor="let process of backgroundProcesses"
+    *ngFor="let process of filteredProcesses | async"
     class="details-line details-container"
     fxLayout="row"
   >
