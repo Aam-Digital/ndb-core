@@ -3,6 +3,7 @@
   class="sync-icon"
   [hidden]="allTasksFinished | async"
   [matMenuTriggerFor]="taskListDropdown"
+  (menuClosed)="wasClosed = true"
 >
   <span
     [matBadge]="taskCounterObservable | async"

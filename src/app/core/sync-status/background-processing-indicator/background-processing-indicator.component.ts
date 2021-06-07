@@ -23,7 +23,8 @@ export class BackgroundProcessingIndicatorComponent implements OnInit {
   allTasksFinished: Observable<boolean>;
 
   /** whether processes of with the same title shall be summarized into one line */
-  @Input() summarize: boolean = true;
+  @Input() summarize: boolean = false;
+  wasClosed: boolean = false;
 
   /** handle to programmatically open/close the details dropdown */
   @ViewChild(MatMenuTrigger) taskListDropdownTrigger: MatMenuTrigger;
@@ -45,7 +46,9 @@ export class BackgroundProcessingIndicatorComponent implements OnInit {
         if (amount === 0) {
           this.taskListDropdownTrigger.closeMenu();
         } else {
-          this.taskListDropdownTrigger.openMenu();
+          if (!this.wasClosed) {
+            this.taskListDropdownTrigger.openMenu();
+          }
         }
       });
   }
