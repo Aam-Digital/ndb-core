@@ -13,6 +13,10 @@ export function entityListSortingAccessor(data: Object, sortingHeader: string) {
   ) {
     return data[sortingHeader].label;
   } else {
-    return data[sortingHeader];
+    return tryNumber(data[sortingHeader]);
   }
+}
+
+function tryNumber(input?: any): any {
+  return Number(input) ?? input;
 }
