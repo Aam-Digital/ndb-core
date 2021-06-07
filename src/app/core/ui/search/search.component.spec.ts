@@ -153,11 +153,7 @@ describe("SearchComponent", () => {
         },
       ],
     };
-    return [
-      child1,
-      school1,
-      mockQueryResults,
-    ];
+    return [child1, school1, mockQueryResults];
   }
 
   it("should set results correctly for search input", (done) => {
