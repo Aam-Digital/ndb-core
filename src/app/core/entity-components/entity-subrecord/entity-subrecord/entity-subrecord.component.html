@@ -29,12 +29,7 @@
           [ngStyle]="col.styleBuilder ? col.styleBuilder(rec[col.name]) : {}"
           [ngClass]="{ 'table-show-number': col.inputType === 'number' }"
         >
-          <ng-container *ngIf="col.asyncValueFunction && !col.valueFunction">
-            {{col.asyncValueFunction(rec) | async}}
-          </ng-container>
-          <ng-container *ngIf="col.valueFunction">
-            {{ col.valueFunction(rec) }}
-          </ng-container>
+          {{ col.valueFunction(rec) }}
         </div>
 
         <div
@@ -141,7 +136,6 @@
                 {{ o.label }}
               </mat-option>
             </mat-select>
-
           </mat-form-field>
         </div>
       </td>

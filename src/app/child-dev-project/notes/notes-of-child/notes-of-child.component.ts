@@ -51,10 +51,9 @@ export class NotesOfChildComponent
       visibleFrom: "md",
     },
     {
-      name: "authors",
+      name: "author",
       label: "SW",
-      inputType: ColumnDescriptionInputType.READONLY,
-      asyncValueFunction: (note: Note) => this.getAuthorNames(note.authors),
+      inputType: ColumnDescriptionInputType.TEXT,
       visibleFrom: "md",
     },
     {
@@ -73,8 +72,7 @@ export class NotesOfChildComponent
 
   constructor(
     private childrenService: ChildrenService,
-    private sessionService: SessionService,
-    private entityMapperService: EntityMapperService
+    private sessionService: SessionService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -108,13 +106,6 @@ export class NotesOfChildComponent
         });
         this.records = notes;
       });
-  }
-
-  private async getAuthorNames(authorIds: string[]): Promise<string[]> {
-    const users = await this.entityMapperService.loadType(User);
-    return users
-      .filter((u) => authorIds.includes(u.getId()))
-      .map((u) => u.name);
   }
 
   generateNewRecordFactory() {
