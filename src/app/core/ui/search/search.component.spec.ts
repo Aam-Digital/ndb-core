@@ -124,7 +124,7 @@ describe("SearchComponent", () => {
     });
   }
 
-  it("should set results correctly for search input", (done) => {
+  function generateDemoData(): [Child, School, object] {
     const child1 = new Child("1");
     child1.name = "Adam X";
     const school1 = new School("s1");
@@ -153,6 +153,15 @@ describe("SearchComponent", () => {
         },
       ],
     };
+    return [
+      child1,
+      school1,
+      mockQueryResults,
+    ];
+  }
+
+  it("should set results correctly for search input", (done) => {
+    const [child1, , mockQueryResults] = generateDemoData();
 
     expectResultToHave(mockQueryResults, child1, done);
     component.formControl.setValue("Ada");
@@ -173,19 +182,7 @@ describe("SearchComponent", () => {
   });
 
   it("should only include results matching all search terms (words)", (done) => {
-    const child1 = new Child("1");
-    child1.name = "Adam X";
-    const school1 = new School("s1");
-    school1.name = "Anglo Primary";
-
-    const mockQueryResults = {
-      rows: [
-        { id: child1._id, doc: { name: child1.name }, key: "adam" },
-        { id: child1._id, doc: { name: child1.name }, key: "x" },
-        { id: school1._id, doc: { name: school1.name }, key: "anglo" },
-        { id: school1._id, doc: { name: school1.name }, key: "primary" },
-      ],
-    };
+    const [child1, , mockQueryResults] = generateDemoData();
 
     expectResultToHave(mockQueryResults, child1, done);
     component.formControl.setValue("A X");
