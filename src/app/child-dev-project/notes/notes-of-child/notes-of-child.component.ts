@@ -11,8 +11,6 @@ import { ColumnDescriptionInputType } from "../../../core/entity-components/enti
 import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { ComponentWithConfig } from "../../../core/entity-components/entity-subrecord/component-with-config";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { User } from "../../../core/user/user";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
