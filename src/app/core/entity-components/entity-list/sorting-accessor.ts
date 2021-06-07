@@ -18,5 +18,5 @@ export function entityListSortingAccessor(data: Object, sortingHeader: string) {
 }
 
 function tryNumber(input?: any): any {
-  return Number(input) ?? input;
+  return Number(input) || input;
 }
