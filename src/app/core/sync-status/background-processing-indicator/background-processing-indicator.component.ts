@@ -1,81 +1,88 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  ViewChild,
-} from "@angular/core";
+import { Component, Input, OnInit, ViewChild } from "@angular/core";
 import { MatMenuTrigger } from "@angular/material/menu";
 import { BackgroundProcessState } from "../background-process-state.interface";
+import { Observable } from "rxjs";
+import { map, startWith } from "rxjs/operators";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * A dumb component handling presentation of the sync indicator icon
  * and an additional details dropdown listing all currently running background processes.
  */
+@UntilDestroy()
 @Component({
   selector: "app-background-processing-indicator",
   templateUrl: "./background-processing-indicator.component.html",
   styleUrls: ["./background-processing-indicator.component.scss"],
 })
-export class BackgroundProcessingIndicatorComponent implements OnChanges {
+export class BackgroundProcessingIndicatorComponent implements OnInit {
   /** details on current background processes to be displayed to user */
-  @Input() backgroundProcesses: BackgroundProcessState[] = [];
+  @Input() backgroundProcesses: Observable<BackgroundProcessState[]>;
+  filteredProcesses: Observable<BackgroundProcessState[]>;
+  taskCounterObservable: Observable<number>;
+  allTasksFinished: Observable<boolean>;
 
   /** whether processes of with the same title shall be summarized into one line */
-  @Input() summarize: boolean = true;
-
-  /** how many special tasks (e.g. index creations) are currently being processed */
-  taskCounter: number;
+  @Input() summarize: boolean = false;
+  wasClosed: boolean = false;
 
   /** handle to programmatically open/close the details dropdown */
   @ViewChild(MatMenuTrigger) taskListDropdownTrigger: MatMenuTrigger;
 
-  constructor() {}
+  ngOnInit() {
+    this.filteredProcesses = this.backgroundProcesses.pipe(
+      map((processes) => this.summarizeProcesses(processes))
+    );
+    this.taskCounterObservable = this.filteredProcesses.pipe(
+      map((processes) => processes.filter((p) => p.pending).length)
+    );
+    this.allTasksFinished = this.taskCounterObservable.pipe(
+      startWith(0),
+      map((tc) => tc === 0)
+    );
+    this.taskCounterObservable
+      .pipe(untilDestroyed(this))
+      .subscribe((amount) => {
+        if (amount === 0) {
+          this.taskListDropdownTrigger.closeMenu();
+        } else {
+          if (!this.wasClosed) {
+            this.taskListDropdownTrigger.openMenu();
+          }
+        }
+      });
+  }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (!changes.backgroundProcesses) {
-      return;
-    }
-
-    if (this.summarize && this.backgroundProcesses) {
-      this.backgroundProcesses = this.summarizeProcesses(
-        this.backgroundProcesses
-      );
-    }
-
-    this.taskCounter = this.backgroundProcesses?.filter(
-      (s) => s.pending
-    ).length;
-
-    if (this.taskCounter > 1) {
-      if (
-        !(
-          changes.backgroundProcesses.previousValue?.filter((s) => s.pending)
-            .length > 1
-        )
-      ) {
-        // open menu automatically only if it has not been opened previously, to avoid reopening after user closed it
-        this.taskListDropdownTrigger?.openMenu();
-      }
-    } else if (this.taskCounter === 0) {
-      this.taskListDropdownTrigger?.closeMenu();
-    }
+  private combineProcesses(
+    first: BackgroundProcessState,
+    second: BackgroundProcessState
+  ): BackgroundProcessState {
+    return {
+      title: first.title,
+      pending: first.pending || second.pending,
+    };
   }
 
   private summarizeProcesses(
     processes: BackgroundProcessState[]
   ): BackgroundProcessState[] {
-    return processes.reduce((accumulator, currentEntry) => {
-      const summaryEntry = accumulator.find(
-        (i) => i.title === currentEntry.title
+    if (!this.summarize) {
+      return processes;
+    }
+    const accumulator: BackgroundProcessState[] = [];
+    for (const process of processes) {
+      const summaryEntry = accumulator.findIndex(
+        (i) => i.title === process.title
       );
-      if (!summaryEntry) {
-        accumulator.push(currentEntry);
+      if (summaryEntry === -1) {
+        accumulator.push(process);
       } else {
-        delete summaryEntry.details;
-        summaryEntry.pending = summaryEntry.pending || currentEntry.pending;
+        accumulator[summaryEntry] = this.combineProcesses(
+          accumulator[summaryEntry],
+          process
+        );
       }
-      return accumulator;
-    }, []);
+    }
+    return accumulator;
   }
 }
