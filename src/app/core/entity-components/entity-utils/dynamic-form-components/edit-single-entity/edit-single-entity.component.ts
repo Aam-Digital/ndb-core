@@ -16,7 +16,8 @@ export class EditSingleEntityComponent extends EditComponent<string> {
   }
   async onInitFromDynamicConfig(config: EditPropertyConfig) {
     super.onInitFromDynamicConfig(config);
-    const entityType: string = config.propertySchema.ext;
+    const entityType: string =
+      config.formFieldConfig.additional || config.propertySchema.ext;
     const entityConstructor = ENTITY_MAP.get(entityType);
     if (!entityConstructor) {
       throw new Error(`Entity-Type ${entityType} not in EntityMap`);
