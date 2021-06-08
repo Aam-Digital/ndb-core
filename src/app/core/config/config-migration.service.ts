@@ -16,9 +16,13 @@ import {
   EntityConfig,
   EntityConfigService,
 } from "../entity/entity-config.service";
-import { EntityDetailsConfig } from "../entity-components/entity-details/EntityDetailsConfig";
+import {
+  EntityDetailsConfig,
+  PanelComponent,
+} from "../entity-components/entity-details/EntityDetailsConfig";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { HistoricalEntityData } from "../../features/historical-data/historical-entity-data";
+import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 
 @Injectable({
   providedIn: "root",
@@ -176,6 +180,10 @@ export class ConfigMigrationService {
             this.migrateHistoricalDataComponent(panelComp.config as any);
             break;
           }
+          case "ActivityParticipantsSection": {
+            this.migrateActivityParticipantsSection(panelComp);
+            break;
+          }
         }
       });
     });
@@ -306,5 +314,34 @@ export class ConfigMigrationService {
         );
       }
     });
+  }
+
+  private migrateActivityParticipantsSection(config: PanelComponent) {
+    config.component = "Form";
+    config.config = {
+      cols: [
+        [
+          {
+            id: "linkedGroups",
+            label: "Groups",
+            edit: "EditEntityArray",
+            additional: "School",
+          },
+          {
+            id: "participants",
+            label: "Participants",
+            edit: "EditEntityArray",
+            additional: "Child",
+          },
+        ],
+      ],
+    } as any;
+    this.addLabelToEntity("Groups", "linkedGroups", RecurringActivity, "long");
+    this.addLabelToEntity(
+      "Participants",
+      "participants",
+      RecurringActivity,
+      "long"
+    );
   }
 }

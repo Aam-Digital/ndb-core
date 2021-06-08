@@ -516,20 +516,24 @@ const expectedChildDetailsConfig = {
         components: [
           {
             component: "Form",
-            config: [
-              {
-                id: "linkedGroups",
-                label: "Groups",
-                view: "EditEntityArray",
-                additional: "School",
-              },
-              {
-                id: "participants",
-                label: "Participants",
-                view: "EditEntityArray",
-                additional: "Child",
-              },
-            ],
+            config: {
+              cols: [
+                [
+                  {
+                    id: "linkedGroups",
+                    label: "Groups",
+                    edit: "EditEntityArray",
+                    additional: "School",
+                  },
+                  {
+                    id: "participants",
+                    label: "Participants",
+                    edit: "EditEntityArray",
+                    additional: "Child",
+                  },
+                ],
+              ],
+            },
           },
         ],
       },
