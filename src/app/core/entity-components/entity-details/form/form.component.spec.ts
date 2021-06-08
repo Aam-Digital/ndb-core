@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { FormComponent } from "./form.component";
 import { Child } from "../../../../child-dev-project/children/model/child";
+import { Router } from "@angular/router";
+import { RouterTestingModule } from "@angular/router/testing";
 
 describe("FormComponent", () => {
   let component: FormComponent;
@@ -10,6 +12,7 @@ describe("FormComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [FormComponent],
+      imports: [RouterTestingModule],
     }).compileComponents();
   });
 
@@ -33,5 +36,14 @@ describe("FormComponent", () => {
     });
 
     expect(component.creatingNew).toBe(true);
+  });
+
+  it("calls router once a new child is saved", async () => {
+    const testChild = new Child();
+    const router = fixture.debugElement.injector.get(Router);
+    spyOn(router, "navigate");
+    component.creatingNew = true;
+    await component.routeToEntity(testChild);
+    expect(router.navigate).toHaveBeenCalledWith(["", testChild.getId()]);
   });
 });

@@ -38,6 +38,7 @@ describe("EntitySubrecordComponent", () => {
   beforeEach(
     waitForAsync(() => {
       mockEntityMapper = jasmine.createSpyObj(["remove", "save"]);
+      mockEntityMapper.save.and.resolveTo();
 
       TestBed.configureTestingModule({
         imports: [
@@ -320,18 +321,18 @@ describe("EntitySubrecordComponent", () => {
     expect(component.records).toEqual([child]);
   }));
 
-  it("should create new entities and make them editable", fakeAsync(() => {
+  it("should create new entities and call the show entity function", fakeAsync(() => {
     const child = new Child();
     component.newRecordFactory = () => child;
     component.columns = [{ id: "name" }, { id: "projectNumber" }];
+    const showEntitySpy = spyOn(component, "showEntity");
 
     component.create();
+    tick();
 
     expect(component.records).toEqual([child]);
-    const tableRow = component.recordsDataSource.data.find(
-      (row) => row.record === child
-    );
-    expect(tableRow.formGroup.enabled).toBeTrue();
+    expect(component.recordsDataSource.data).toContain({ record: child });
+    expect(showEntitySpy).toHaveBeenCalledWith(child, true);
   }));
 
   it("should notify when an entity is clicked", (done) => {

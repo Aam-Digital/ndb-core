@@ -41,6 +41,11 @@ describe("HistoricalDataComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(HistoricalDataComponent);
     component = fixture.componentInstance;
+
+    component.onInitFromDynamicConfig({
+      entity: new Entity(),
+      config: [],
+    });
     fixture.detectChanges();
   });
 
