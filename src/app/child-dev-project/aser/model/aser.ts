@@ -54,30 +54,30 @@ export class Aser extends Entity {
   }
 
   @DatabaseField() child: string; // id of Child entity
-  @DatabaseField({ label: "Date", ext: Aser.ReadingLevels })
+  @DatabaseField({ label: "Date", additional: Aser.ReadingLevels })
   date: Date = new Date();
   @DatabaseField({
     label: "Hindi",
     editComponent: "EditSelectable",
-    ext: Aser.ReadingLevels,
+    additional: Aser.ReadingLevels,
   })
   hindi: string = "";
   @DatabaseField({
     label: "Bengali",
     editComponent: "EditSelectable",
-    ext: Aser.ReadingLevels,
+    additional: Aser.ReadingLevels,
   })
   bengali: string = "";
   @DatabaseField({
     label: "English",
     editComponent: "EditSelectable",
-    ext: Aser.ReadingLevels,
+    additional: Aser.ReadingLevels,
   })
   english: string = "";
   @DatabaseField({
     label: "Math",
     editComponent: "EditSelectable",
-    ext: Aser.MathLevels,
+    additional: Aser.MathLevels,
   })
   math: string = "";
   @DatabaseField({ label: "Remarks" }) remarks: string = "";

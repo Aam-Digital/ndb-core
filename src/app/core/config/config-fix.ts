@@ -816,7 +816,7 @@ export const defaultJsonConfig = {
       },
       {
         "name": "health_vaccinationStatus",
-        "schema": { "dataType": "string", label: "Vaccination Status", ext: ["", "Good", "Vaccination Due", "Needs Checking", "No Card/Information"] }
+        "schema": { "dataType": "string", label: "Vaccination Status", additional: ["", "Good", "Vaccination Due", "Needs Checking", "No Card/Information"] }
       },
       {
         "name": "health_bloodGroup",
@@ -828,7 +828,7 @@ export const defaultJsonConfig = {
       },
       {
         "name": "health_lastEyeCheckup",
-        "schema": { "dataType": "Date", label: "Last Eye Check-Up", ext: ["", "Good", "Has Glasses", "Needs Glasses", "Needs Checkup"] }
+        "schema": { "dataType": "Date", label: "Last Eye Check-Up", additional: ["", "Good", "Has Glasses", "Needs Glasses", "Needs Checkup"] }
       },
       {
         "name": "health_lastENTCheckup",

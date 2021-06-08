@@ -63,7 +63,7 @@ export class Child extends Entity {
   @DatabaseField({
     dataType: "string",
     label: "Gender",
-    ext: ["", "M", "F"],
+    additional: ["", "M", "F"],
     editComponent: "EditSelectable",
   })
   gender: Gender; // M or F

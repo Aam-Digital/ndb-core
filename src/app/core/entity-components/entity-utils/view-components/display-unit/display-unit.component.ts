@@ -12,6 +12,6 @@ export class DisplayUnitComponent extends ViewComponent {
   onInitFromDynamicConfig(config: ViewPropertyConfig) {
     super.onInitFromDynamicConfig(config);
     this.unit =
-      config.config || config.entity.getSchema().get(this.property).ext;
+      config.config || config.entity.getSchema().get(this.property).additional;
   }
 }

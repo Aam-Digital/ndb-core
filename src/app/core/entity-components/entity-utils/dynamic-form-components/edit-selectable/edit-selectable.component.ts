@@ -11,6 +11,6 @@ export class EditSelectableComponent extends EditComponent<any> {
   onInitFromDynamicConfig(config: EditPropertyConfig) {
     super.onInitFromDynamicConfig(config);
     this.options =
-      config.formFieldConfig.additional || config.propertySchema.ext;
+      config.formFieldConfig.additional || config.propertySchema.additional;
   }
 }

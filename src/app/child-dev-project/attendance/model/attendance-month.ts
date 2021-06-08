@@ -144,7 +144,7 @@ export class AttendanceMonth extends Entity {
     }
     this._dailyRegister = value;
   }
-  @DatabaseField({ innerDataType: "schema-embed", ext: AttendanceDay })
+  @DatabaseField({ innerDataType: "schema-embed", additional: AttendanceDay })
   get dailyRegister(): AttendanceDay[] {
     return this._dailyRegister;
   }
