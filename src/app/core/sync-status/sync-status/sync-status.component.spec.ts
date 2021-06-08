@@ -25,7 +25,6 @@ import { DatabaseIndexingService } from "../../entity/database-indexing/database
 import { BehaviorSubject } from "rxjs";
 import { take } from "rxjs/operators";
 import { BackgroundProcessState } from "../background-process-state.interface";
-import { StateHandler } from "../../session/session-states/state-handler";
 import { SyncStatusModule } from "../sync-status.module";
 
 describe("SyncStatusComponent", () => {
@@ -33,7 +32,7 @@ describe("SyncStatusComponent", () => {
   let fixture: ComponentFixture<SyncStatusComponent>;
 
   let mockSessionService: jasmine.SpyObj<SessionService>;
-  const syncState: StateHandler<SyncState> = new StateHandler<SyncState>();
+  const syncState = new BehaviorSubject<SyncState>(SyncState.UNSYNCED);
   let mockIndexingService;
 
   const DATABASE_SYNCING_STATE: BackgroundProcessState = {
@@ -75,14 +74,14 @@ describe("SyncStatusComponent", () => {
   });
 
   it("should open dialog without error", async () => {
-    syncState.setState(SyncState.STARTED);
+    syncState.next(SyncState.STARTED);
 
     fixture.detectChanges();
     await fixture.whenStable();
     // @ts-ignore
     expect(component.dialogRef).toBeDefined();
 
-    syncState.setState(SyncState.COMPLETED);
+    syncState.next(SyncState.COMPLETED);
     // @ts-ignore
     component.dialogRef.close();
 
@@ -91,7 +90,7 @@ describe("SyncStatusComponent", () => {
   });
 
   it("should update backgroundProcesses details on sync", async () => {
-    syncState.setState(SyncState.STARTED);
+    syncState.next(SyncState.STARTED);
     fixture.detectChanges();
     await fixture.whenStable();
 
@@ -99,7 +98,7 @@ describe("SyncStatusComponent", () => {
       await component.backgroundProcesses.pipe(take(1)).toPromise()
     ).toEqual([DATABASE_SYNCING_STATE]);
 
-    syncState.setState(SyncState.COMPLETED);
+    syncState.next(SyncState.COMPLETED);
     fixture.detectChanges();
     await fixture.whenStable();
 

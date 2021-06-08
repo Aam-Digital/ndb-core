@@ -20,7 +20,7 @@ import { Database } from "../../database/database";
 import { ConnectionState } from "../session-states/connection-state.enum";
 import { SyncState } from "../session-states/sync-state.enum";
 import { User } from "../../user/user";
-import { StateHandler } from "../session-states/state-handler";
+import { BehaviorSubject } from "rxjs";
 
 /**
  * A session manages user authentication and database connection for the app.
@@ -58,20 +58,29 @@ export abstract class SessionService {
    */
   abstract isLoggedIn(): boolean;
 
+  abstract get loginStateStream(): BehaviorSubject<LoginState>;
   /**
    * Get the state of the session.
    */
-  abstract getLoginState(): StateHandler<LoginState>;
+  get loginState(): LoginState {
+    return this.loginStateStream.value;
+  }
 
+  abstract get connectionStateStream(): BehaviorSubject<ConnectionState>;
   /**
    * Get the state of the connection to the remote server.
    */
-  abstract getConnectionState(): StateHandler<ConnectionState>;
+  get connectionState(): ConnectionState {
+    return this.connectionStateStream.value;
+  }
 
+  abstract get syncStateStream(): BehaviorSubject<SyncState>;
   /**
    * Get the state of the synchronization with the remote server.
    */
-  abstract getSyncState(): StateHandler<SyncState>;
+  get syncState(): SyncState {
+    return this.syncStateStream.value;
+  }
 
   /**
    * Start a synchronization process.

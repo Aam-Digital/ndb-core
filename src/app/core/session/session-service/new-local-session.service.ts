@@ -24,24 +24,22 @@ import { PouchDatabase } from "../../database/pouch-database";
 import { ConnectionState } from "../session-states/connection-state.enum";
 import { SyncState } from "../session-states/sync-state.enum";
 import { User } from "../../user/user";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { LoggingService } from "../../logging/logging.service";
-import { StateHandler } from "../session-states/state-handler";
+import { BehaviorSubject, Observable, of } from "rxjs";
+import { fromPromise } from "rxjs/internal-compatibility";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { catchError, map } from "rxjs/operators";
 
 @Injectable()
 export class NewLocalSessionService extends SessionService {
   public liveSyncHandle: any;
 
   /** StateHandler for login state changes */
-  public loginState: StateHandler<LoginState> = new StateHandler<LoginState>(
-    LoginState.LOGGED_OUT
-  );
+  public loginStateStream = new BehaviorSubject(LoginState.LOGGED_OUT);
   /** StateHandler for sync state changes */
-  public syncState: StateHandler<SyncState> = new StateHandler<SyncState>(
-    SyncState.UNSYNCED
-  );
+  public syncStateStream = new BehaviorSubject(SyncState.UNSYNCED);
   /** StateHandler for connection state changes (not relevant for LocalSession) */
-  public connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>(
+  public connectionStateStream = new BehaviorSubject(
     ConnectionState.DISCONNECTED
   );
 
@@ -50,7 +48,7 @@ export class NewLocalSessionService extends SessionService {
 
   constructor(
     private loggingService: LoggingService,
-    private entitySchemaService: EntitySchemaService,
+    private entityMapperService: EntityMapperService,
     private database: PouchDatabase
   ) {
     super();
@@ -58,7 +56,7 @@ export class NewLocalSessionService extends SessionService {
 
   /** see {@link SessionService} */
   public isLoggedIn(): boolean {
-    return this.loginState.getState() === LoginState.LOGGED_IN;
+    return this.loginState === LoginState.LOGGED_IN;
   }
 
   /**
@@ -68,24 +66,19 @@ export class NewLocalSessionService extends SessionService {
    * @param username Username
    * @param password Password
    */
-  public async login(username: string, password: string): Promise<LoginState> {
-    let userEntity: User;
-
-    try {
-      userEntity = await this.loadUser(username);
-    } catch (error) {
-      if (error?.status === 404) {
-        return this.failLogin();
-      } else {
-        throw error;
-      }
-    }
-
-    if (!userEntity.checkPassword(password)) {
-      return this.failLogin();
-    }
-
-    return this.succeedLogin(userEntity, password);
+  public login(username: string, password: string): Promise<LoginState> {
+    return this.loadUser(username)
+      .pipe(
+        map((user) => {
+          if (!user.checkPassword(password)) {
+            return this.failLogin();
+          } else {
+            return this.succeedLogin(user, password);
+          }
+        }),
+        catchError(() => of(this.failLogin()))
+      )
+      .toPromise();
   }
 
   /**
@@ -93,7 +86,7 @@ export class NewLocalSessionService extends SessionService {
    * @private
    */
   private failLogin(): LoginState {
-    this.loginState.setState(LoginState.LOGIN_FAILED);
+    this.loginStateStream.next(LoginState.LOGIN_FAILED);
     return LoginState.LOGIN_FAILED;
   }
 
@@ -106,8 +99,8 @@ export class NewLocalSessionService extends SessionService {
   private succeedLogin(loggedInUser: User, password: string): LoginState {
     this.currentUser = loggedInUser;
     this.currentUser.decryptCloudPassword(password);
-    this.loginState.setState(LoginState.LOGGED_IN);
-    this.connectionState.setState(ConnectionState.OFFLINE);
+    this.loginStateStream.next(LoginState.LOGGED_IN);
+    this.connectionStateStream.next(ConnectionState.OFFLINE);
     return LoginState.LOGGED_IN;
   }
 
@@ -115,11 +108,8 @@ export class NewLocalSessionService extends SessionService {
    * Helper to get a User Entity from the Database without needing the EntityMapperService
    * @param userId Id of the User to be loaded
    */
-  private async loadUser(userId: string): Promise<User> {
-    const user = new User("");
-    const userData = await this.database.get("User:" + userId);
-    this.entitySchemaService.loadDataIntoEntity(user, userData);
-    return user;
+  private loadUser(userId: string): Observable<User> {
+    return fromPromise(this.entityMapperService.load(User, userId));
   }
 
   /** see {@link SessionService} */
@@ -128,27 +118,14 @@ export class NewLocalSessionService extends SessionService {
   }
 
   /** see {@link SessionService} */
-  public getLoginState() {
-    return this.loginState;
-  }
-  /** see {@link SessionService} */
-  public getConnectionState() {
-    return this.connectionState;
-  }
-  /** see {@link SessionService} */
-  public getSyncState() {
-    return this.syncState;
-  }
-
-  /** see {@link SessionService} */
   public async sync(remoteDatabase?): Promise<any> {
-    this.syncState.setState(SyncState.STARTED);
+    this.syncStateStream.next(SyncState.STARTED);
     try {
       const result = await this.database.sync(remoteDatabase);
-      this.syncState.setState(SyncState.COMPLETED);
+      this.syncStateStream.next(SyncState.COMPLETED);
       return result;
     } catch (error) {
-      this.syncState.setState(SyncState.FAILED);
+      this.syncStateStream.next(SyncState.FAILED);
       throw error;
     }
   }
@@ -167,7 +144,7 @@ export class NewLocalSessionService extends SessionService {
    */
   public logout() {
     this.currentUser = undefined;
-    this.loginState.setState(LoginState.LOGGED_OUT);
-    this.connectionState.setState(ConnectionState.DISCONNECTED);
+    this.loginStateStream.next(LoginState.LOGGED_OUT);
+    this.connectionStateStream.next(ConnectionState.DISCONNECTED);
   }
 }

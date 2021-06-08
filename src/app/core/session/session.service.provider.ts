@@ -25,6 +25,7 @@ import { LoginState } from "./session-states/login-state.enum";
 import { SessionType } from "./session-type";
 import { NewLocalSessionService } from "./session-service/new-local-session.service";
 import { PouchDatabase } from "../database/pouch-database";
+import { EntityMapperService } from "../entity/entity-mapper.service";
 
 /**
  * Factory method for Angular DI provider of SessionService.
@@ -41,15 +42,20 @@ export function sessionServiceFactory(
   entitySchemaService: EntitySchemaService
 ): SessionService {
   let sessionService: SessionService;
+  const database = PouchDatabase.createWithIndexedDB(
+    AppConfig.settings.database.name,
+    loggingService
+  );
+  const entityMapperService = new EntityMapperService(
+    database,
+    entitySchemaService
+  );
   switch (AppConfig.settings.session_type) {
     case SessionType.local:
       sessionService = new NewLocalSessionService(
         loggingService,
-        entitySchemaService,
-        PouchDatabase.createWithIndexedDB(
-          AppConfig.settings.database.name,
-          loggingService
-        )
+        entityMapperService,
+        database
       );
       break;
     case SessionType.synced:
@@ -62,11 +68,8 @@ export function sessionServiceFactory(
     default:
       sessionService = new NewLocalSessionService(
         loggingService,
-        entitySchemaService,
-        PouchDatabase.createWithInMemoryDB(
-          AppConfig.settings.database.name,
-          loggingService
-        )
+        entityMapperService,
+        database
       );
       break;
   }
@@ -81,18 +84,15 @@ export function sessionServiceFactory(
 function updateLoggingServiceWithUserContext(sessionService: SessionService) {
   // update the user context for remote error logging
   // cannot subscribe within LoggingService itself because of cyclic dependencies, therefore doing this here
-  sessionService
-    .getLoginState()
-    .getStateChangedStream()
-    .subscribe((newState) => {
-      if (newState.toState === LoginState.LOGGED_IN) {
-        LoggingService.setLoggingContextUser(
-          sessionService.getCurrentUser().name
-        );
-      } else {
-        LoggingService.setLoggingContextUser(undefined);
-      }
-    });
+  sessionService.loginStateStream.subscribe((newState) => {
+    if (newState === LoginState.LOGGED_IN) {
+      LoggingService.setLoggingContextUser(
+        sessionService.getCurrentUser().name
+      );
+    } else {
+      LoggingService.setLoggingContextUser(undefined);
+    }
+  });
 }
 
 /**

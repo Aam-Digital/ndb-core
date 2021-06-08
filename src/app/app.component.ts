@@ -31,6 +31,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { RecurringActivity } from "./child-dev-project/attendance/model/recurring-activity";
 import { School } from "./child-dev-project/schools/model/school";
 import { HistoricalEntityData } from "./features/historical-data/historical-entity-data";
+import { concatMap, skipWhile } from "rxjs/operators";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Component as the main entry point for the app.
@@ -40,6 +42,7 @@ import { HistoricalEntityData } from "./features/historical-data/historical-enti
   selector: "app-root",
   template: "<app-ui></app-ui>",
 })
+@UntilDestroy()
 export class AppComponent implements OnInit {
   constructor(
     private viewContainerRef: ViewContainerRef, // need this small hack in order to catch application root view container ref
@@ -59,14 +62,14 @@ export class AppComponent implements OnInit {
     // TODO fix this with https://github.com/Aam-Digital/ndb-core/issues/595
     configService.loadConfig(entityMapper);
     // Reload config once the database is synced
-    sessionService
-      .getSyncState()
-      .waitForChangeTo(SyncState.COMPLETED)
-      .then(() => configService.loadConfig(entityMapper))
-      .then(() => router.navigate([], { relativeTo: this.activatedRoute }));
+    sessionService.syncStateStream.pipe(
+      untilDestroyed(this),
+      skipWhile((state) => state !== SyncState.COMPLETED)),
+      concatMap(() => configService.loadConfig(entityMapper)),
+      concatMap(() => router.navigate([], { relativeTo: this.activatedRoute }));
     // These functions will be executed whenever a new config is available
-    configService.configUpdated.subscribe(() => routerService.initRouting());
     configService.configUpdated.subscribe(() => {
+      routerService.initRouting();
       entityConfigService.addConfigAttributes(Child);
       entityConfigService.addConfigAttributes(School);
       entityConfigService.addConfigAttributes(RecurringActivity);

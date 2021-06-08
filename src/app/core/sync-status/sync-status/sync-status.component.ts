@@ -25,8 +25,8 @@ import { DatabaseIndexingService } from "../../entity/database-indexing/database
 import { BackgroundProcessState } from "../background-process-state.interface";
 import { BehaviorSubject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
-import { StateChangedEvent } from "../../session/session-states/state-handler";
 import { LoggingService } from "../../logging/logging.service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * A small indicator component that displays an icon when there is currently synchronization
@@ -40,13 +40,14 @@ import { LoggingService } from "../../logging/logging.service";
   templateUrl: "./sync-status.component.html",
   styleUrls: ["./sync-status.component.scss"],
 })
+@UntilDestroy()
 export class SyncStatusComponent implements OnInit {
   private syncInProgress: boolean;
   private indexingProcesses: BackgroundProcessState[];
 
-  private _backgroundProcesses: BehaviorSubject<
-    BackgroundProcessState[]
-  > = new BehaviorSubject([]);
+  private _backgroundProcesses = new BehaviorSubject<BackgroundProcessState[]>(
+    []
+  );
   /** background processes to be displayed to users, with short delay to avoid flickering */
   backgroundProcesses = this._backgroundProcesses
     .asObservable()
@@ -67,14 +68,13 @@ export class SyncStatusComponent implements OnInit {
       this.handleIndexingState(indicesStatus)
     );
 
-    this.sessionService
-      .getSyncState()
-      .getStateChangedStream()
+    this.sessionService.syncStateStream
+      .pipe(untilDestroyed(this))
       .subscribe((state) => this.handleSyncState(state));
   }
 
-  private handleSyncState(state: StateChangedEvent<SyncState>) {
-    switch (state.toState) {
+  private handleSyncState(state: SyncState) {
+    switch (state) {
       case SyncState.STARTED:
         this.syncInProgress = true;
         if (!this.sessionService.isLoggedIn() && !this.dialogRef) {

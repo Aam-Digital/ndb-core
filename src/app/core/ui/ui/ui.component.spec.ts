@@ -29,7 +29,6 @@ import { BehaviorSubject, of } from "rxjs";
 import { ApplicationInitStatus } from "@angular/core";
 import { UiModule } from "../ui.module";
 import { Angulartics2Module } from "angulartics2";
-import { StateHandler } from "../../session/session-states/state-handler";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { ConfigService } from "../../config/config.service";
 
@@ -46,7 +45,10 @@ describe("UiComponent", () => {
         "getDatabase",
         "getSyncState",
       ]);
-      mockSession.getSyncState.and.returnValue(new StateHandler<SyncState>());
+      // @ts-ignore
+      mockSession.syncStateStream.and.returnValue(
+        new BehaviorSubject<SyncState>(SyncState.UNSYNCED)
+      );
 
       const mockConfig = jasmine.createSpyObj(["getConfig"]);
       mockConfig.configUpdated = new BehaviorSubject({});

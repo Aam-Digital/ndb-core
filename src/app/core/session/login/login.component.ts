@@ -62,17 +62,14 @@ export class LoginComponent {
           this.onLoginSuccess();
         } else {
           if (
-            this._sessionService.getSyncState().getState() ===
-              SyncState.ABORTED &&
-            this._sessionService.getConnectionState().getState() ===
-              ConnectionState.OFFLINE
+            this._sessionService.syncState === SyncState.ABORTED &&
+            this._sessionService.connectionState === ConnectionState.OFFLINE
           ) {
             this.onLoginFailure(
               "Can't login for the first time when offline. Please try again later."
             );
           } else if (
-            this._sessionService.getConnectionState().getState() ===
-            ConnectionState.OFFLINE
+            this._sessionService.connectionState === ConnectionState.OFFLINE
           ) {
             this.onLoginFailure(
               "Username or password incorrect!" +

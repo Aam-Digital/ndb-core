@@ -4,6 +4,7 @@ import { environment } from "../../../environments/environment";
 import { AppConfig } from "../app-config/app-config";
 import { SessionService } from "../session/session-service/session.service";
 import { LoginState } from "../session/session-states/login-state.enum";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 const md5 = require("md5");
 
@@ -15,6 +16,7 @@ const md5 = require("md5");
 @Injectable({
   providedIn: "root",
 })
+@UntilDestroy()
 export class AnalyticsService {
   private static getUserHash(username: string) {
     return md5(AppConfig.settings.site_name + username);
@@ -46,11 +48,10 @@ export class AnalyticsService {
   }
 
   private subscribeToUserChanges() {
-    this.sessionService
-      .getLoginState()
-      .getStateChangedStream()
+    this.sessionService.loginStateStream
+      .pipe(untilDestroyed(this))
       .subscribe((newState) => {
-        if (newState.toState === LoginState.LOGGED_IN) {
+        if (newState === LoginState.LOGGED_IN) {
           this.setUser(this.sessionService.getCurrentUser().name);
         } else {
           this.setUser(undefined);

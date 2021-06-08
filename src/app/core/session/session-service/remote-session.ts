@@ -20,8 +20,10 @@ import PouchDBAuthentication from "pouchdb-authentication";
 
 import { AppConfig } from "../../app-config/app-config";
 import { Injectable } from "@angular/core";
-import { StateHandler } from "../session-states/state-handler";
 import { ConnectionState } from "../session-states/connection-state.enum";
+import { BehaviorSubject, Observable, of } from "rxjs";
+import { fromPromise } from "rxjs/internal-compatibility";
+import { catchError, map, tap } from "rxjs/operators";
 
 PouchDB.plugin(PouchDBAuthentication);
 
@@ -37,9 +39,7 @@ export class RemoteSession {
   public database: any;
 
   /** state of the remote connection */
-  public connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>(
-    ConnectionState.DISCONNECTED
-  );
+  public connectionState = new BehaviorSubject(ConnectionState.DISCONNECTED);
 
   /**
    * Create a RemoteSession and set up connection to the remote database CouchDB server configured in AppConfig.
@@ -62,12 +62,10 @@ export class RemoteSession {
           const req = fetch(url, opts);
           req.then((result) => {
             if (
-              thisRemoteSession.connectionState.getState() ===
+              thisRemoteSession.connectionState.value ===
               ConnectionState.OFFLINE
             ) {
-              thisRemoteSession.connectionState.setState(
-                ConnectionState.CONNECTED
-              );
+              thisRemoteSession.connectionState.next(ConnectionState.CONNECTED);
             }
             return result;
           });
@@ -78,12 +76,10 @@ export class RemoteSession {
             // https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Exceptions
             if (
               error.name !== "AbortError" &&
-              thisRemoteSession.connectionState.getState() ===
+              thisRemoteSession.connectionState.value ===
                 ConnectionState.CONNECTED
             ) {
-              thisRemoteSession.connectionState.setState(
-                ConnectionState.OFFLINE
-              );
+              thisRemoteSession.connectionState.next(ConnectionState.OFFLINE);
             }
             throw error;
           });
@@ -113,14 +109,14 @@ export class RemoteSession {
 
     try {
       await this.database.login(username, password, ajaxOpts);
-      this.connectionState.setState(ConnectionState.CONNECTED);
+      this.connectionState.next(ConnectionState.CONNECTED);
       return ConnectionState.CONNECTED;
     } catch (error) {
       if (error.name === "unauthorized" || error.name === "forbidden") {
-        this.connectionState.setState(ConnectionState.REJECTED);
+        this.connectionState.next(ConnectionState.REJECTED);
         return ConnectionState.REJECTED;
       } else {
-        this.connectionState.setState(ConnectionState.OFFLINE);
+        this.connectionState.next(ConnectionState.OFFLINE);
         return ConnectionState.OFFLINE;
       }
     }
@@ -131,6 +127,6 @@ export class RemoteSession {
    */
   public logout(): void {
     this.database.logout();
-    this.connectionState.setState(ConnectionState.DISCONNECTED);
+    this.connectionState.next(ConnectionState.DISCONNECTED);
   }
 }
