@@ -3,6 +3,8 @@ import { TestBed } from "@angular/core/testing";
 import { ConfigMigrationService } from "./config-migration.service";
 import { ConfigService } from "./config.service";
 import { EntityMapperService } from "../entity/entity-mapper.service";
+import { Config } from "./config";
+import { EntityConfig } from "../entity/entity-config.service";
 
 describe("ConfigMigrationService", () => {
   let service: ConfigMigrationService;
@@ -10,8 +12,14 @@ describe("ConfigMigrationService", () => {
 
   beforeEach(() => {
     mockEntityMapper = jasmine.createSpyObj(["load", "save"]);
+    const config = new Config();
+    config.data = testConfig;
+    mockEntityMapper.load.and.resolveTo(config);
     TestBed.configureTestingModule({
-      providers: [ConfigService],
+      providers: [
+        ConfigService,
+        { provide: EntityMapperService, useValue: mockEntityMapper },
+      ],
     });
     service = TestBed.inject(ConfigMigrationService);
   });
@@ -20,7 +28,19 @@ describe("ConfigMigrationService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("");
+  it("should migrate the list configs", async () => {
+    const configService = TestBed.inject(ConfigService);
+
+    await service.migrateConfig();
+
+    const childrenListConfig = configService.getConfig("view:child");
+    expect(childrenListConfig).toEqual(expectedChildrenListConfig);
+    const childConfig = configService.getConfig<EntityConfig>("entity:Child");
+    const centerSchema = childConfig.attributes.find(
+      (attr) => attr.name === "center"
+    );
+    expect(centerSchema.schema).toEqual(expectedCenterSchema);
+  });
 });
 
 const testConfig = {
@@ -107,6 +127,7 @@ const testConfig = {
 
 const expectedChildrenListConfig = {
   component: "ChildrenList",
+  _id: "view:child",
   config: {
     title: "Children List",
     columns: [
@@ -185,5 +206,7 @@ const expectedChildrenListConfig = {
   },
 };
 const expectedCenterSchema = {
-  dataType: "configurable-enum", innerDataType: "center", labelShort: "Center"
+  dataType: "configurable-enum",
+  innerDataType: "center",
+  labelShort: "Center",
 };
