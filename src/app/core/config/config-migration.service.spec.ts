@@ -220,7 +220,7 @@ describe("ConfigMigrationService", () => {
                     {
                       name: "observer",
                       label: "Observer",
-                      inputType: "date",
+                      inputType: "text",
                       tooltip: "Name of the observer",
                     },
                   ],

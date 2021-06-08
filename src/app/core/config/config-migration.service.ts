@@ -18,6 +18,7 @@ import {
 } from "../entity/entity-config.service";
 import { EntityDetailsConfig } from "../entity-components/entity-details/EntityDetailsConfig";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
+import { HistoricalEntityData } from "../../features/historical-data/historical-entity-data";
 
 @Injectable({
   providedIn: "root",
@@ -95,7 +96,7 @@ export class ConfigMigrationService {
         }
         this.addLabelToEntity(column.label, column.id, entity, "short");
       } catch (e) {
-        console.error(`Failed to migrate column ${column.id}: ${e}`);
+        console.warn(`Failed to migrate column ${column.id}: ${e}`);
       }
     });
   }
@@ -133,7 +134,7 @@ export class ConfigMigrationService {
       }
       existing.schema = schema;
     } catch (e) {
-      console.error(
+      console.warn(
         `Failed to set label ${label} to attribute ${attribute} of entity ${entity.ENTITY_TYPE}: ${e}`
       );
     }
@@ -151,7 +152,7 @@ export class ConfigMigrationService {
           filter.id = "schoolId";
         }
       } catch (e) {
-        console.error(`Failed to migrate filter ${filter.id}: ${e}`);
+        console.warn(`Failed to migrate filter ${filter.id}: ${e}`);
       }
     });
   }
@@ -169,6 +170,11 @@ export class ConfigMigrationService {
           }
           case "PreviousSchools": {
             this.migratePreviousSchoolsComponent(panelComp.config["columns"]);
+            break;
+          }
+          case "HistoricalDataComponent": {
+            this.migrateHistoricalDataComponent(panelComp.config as any);
+            break;
           }
         }
       });
@@ -212,7 +218,7 @@ export class ConfigMigrationService {
           delete formField["input"];
           this.addLabelToEntity(formField.label, formField.id, entity, "short");
         } catch (e) {
-          console.error(`Failed to convert form field ${formField.id}: ${e}`);
+          console.warn(`Failed to migrate form field ${formField.id}: ${e}`);
         }
       })
     );
@@ -222,29 +228,7 @@ export class ConfigMigrationService {
     if (columns) {
       columns.forEach((formField) => {
         try {
-          switch (formField["input"]) {
-            case "school": {
-              formField.view = "DisplayEntity";
-              formField.edit = "EditSingleEntity";
-              formField.additional = "School";
-              break;
-            }
-            case "text": {
-              formField.view = "DisplayText";
-              formField.edit = "EditText";
-              break;
-            }
-            case "date": {
-              formField.view = "DisplayDate";
-              formField.edit = "EditDate";
-              break;
-            }
-            case "percentageResult": {
-              formField.view = "DisplayPercentage";
-              formField.edit = "EditPercentage";
-            }
-          }
-          delete formField["input"];
+          this.migrateEntitySubrecordInput(formField, "input");
           this.addLabelToEntity(
             formField.label,
             formField.id,
@@ -252,11 +236,75 @@ export class ConfigMigrationService {
             "long"
           );
         } catch (e) {
-          console.error(
+          console.warn(
             `Filed to migrate previousSchoolsConfig for ${formField.id}: ${e}`
           );
         }
       });
     }
+  }
+
+  private migrateEntitySubrecordInput(
+    formField: FormFieldConfig,
+    inputKey: string
+  ) {
+    switch (formField[inputKey]) {
+      case "school": {
+        formField.view = "DisplayEntity";
+        formField.edit = "EditSingleEntity";
+        formField.additional = "School";
+        break;
+      }
+      case "text": {
+        formField.view = "DisplayText";
+        formField.edit = "EditText";
+        break;
+      }
+      case "date": {
+        formField.view = "DisplayDate";
+        formField.edit = "EditDate";
+        break;
+      }
+      case "percentageResult": {
+        formField.view = "DisplayPercentage";
+        formField.edit = "EditPercentage";
+        break;
+      }
+      case "configurable_enum": {
+        formField.view = "DisplayConfigurableEnum";
+        formField.edit = "EditConfigurableEnum";
+        break;
+      }
+      default: {
+        console.warn(
+          `No migration defined for inputType ${formField[inputKey]} at property ${formField.id}`
+        );
+      }
+    }
+    delete formField[inputKey];
+  }
+
+  private migrateHistoricalDataComponent(columns: FormFieldConfig[]) {
+    columns.forEach((formField) => {
+      try {
+        formField.id = formField["name"];
+        delete formField["name"];
+        if (formField.hasOwnProperty("enumId")) {
+          formField.additional = formField["enumId"];
+          delete formField["enumId"];
+        }
+        this.migrateEntitySubrecordInput(formField, "inputType");
+        this.addLabelToEntity(
+          formField.label,
+          formField.id,
+          HistoricalEntityData,
+          "long"
+        );
+      } catch (e) {
+        console.warn(
+          `Failed to migrate HistoricalDataComponent ${formField.id}: ${e}`
+        );
+      }
+    });
   }
 }
