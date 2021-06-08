@@ -39,6 +39,7 @@ import { PrimaryActionComponent } from "./primary-action/primary-action.componen
 import { NotesModule } from "../../child-dev-project/notes/notes.module";
 import { Angulartics2Module } from "angulartics2";
 import { PermissionsModule } from "../permissions/permissions.module";
+import { LanguageSelectorModule } from "./language-selector/language-selector.module";
 
 /**
  * The core user interface structure that ties different components together into the overall app layout.
@@ -65,6 +66,7 @@ import { PermissionsModule } from "../permissions/permissions.module";
     NotesModule,
     Angulartics2Module,
     PermissionsModule,
+    LanguageSelectorModule,
   ],
   declarations: [SearchComponent, UiComponent, PrimaryActionComponent],
   exports: [UiComponent],

@@ -1,0 +1,12 @@
+<span [class]="'flag-icon flag-icon-' + siteLanguage">
+  <mat-select
+    [value]="null"
+    #language
+    (change)="onChange(language.value)"
+  >
+    <mat-option *ngFor="let lang of languageList" (onSelectionChange)="onChange(lang)">
+      <span [class]="'flag-clip flag-icon flag-icon-' + lang"></span>
+      <span> {{lang}}</span>
+    </mat-option>
+  </mat-select>
+</span>

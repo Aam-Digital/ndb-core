@@ -39,6 +39,7 @@
     "crypto-js": "^4.0.0",
     "deep-object-diff": "^1.1.0",
     "faker": "^5.5.3",
+    "flag-icon-css": "^3.5.0",
     "font-awesome": "^4.7.0",
     "idb": "^6.0.0",
     "json-query": "^2.2.2",
