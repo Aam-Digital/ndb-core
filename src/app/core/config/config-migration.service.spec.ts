@@ -10,10 +10,10 @@ describe("ConfigMigrationService", () => {
   let service: ConfigMigrationService;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let configService: ConfigService;
+  let config: Config;
 
   beforeEach(async () => {
-    mockEntityMapper = jasmine.createSpyObj(["load", "save"]);
-    const config = new Config();
+    config = new Config();
     config.data = {
       "view:child": {
         component: "ChildrenList",
@@ -239,7 +239,9 @@ describe("ConfigMigrationService", () => {
         },
       },
     };
+    mockEntityMapper = jasmine.createSpyObj(["load", "save"]);
     mockEntityMapper.load.and.resolveTo(config);
+    mockEntityMapper.save.and.resolveTo();
     TestBed.configureTestingModule({
       providers: [
         ConfigService,
@@ -253,6 +255,10 @@ describe("ConfigMigrationService", () => {
 
   it("should be created", () => {
     expect(service).toBeTruthy();
+  });
+
+  it("should save the updated config", () => {
+    expect(mockEntityMapper.save).toHaveBeenCalledWith(config);
   });
 
   it("should migrate the list configs", async () => {

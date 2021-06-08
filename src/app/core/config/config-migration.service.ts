@@ -41,7 +41,7 @@ export class ConfigMigrationService {
     private entityMapper: EntityMapperService
   ) {}
 
-  async migrateConfig(): Promise<void> {
+  async migrateConfig(): Promise<Config> {
     this.config = await this.configService.loadConfig(this.entityMapper);
     const viewConfigs = this.configService.getAllConfigs<ViewConfig>(
       RouterService.PREFIX_VIEW_CONFIG
@@ -56,6 +56,7 @@ export class ConfigMigrationService {
       }
     });
     console.log("config", this.config);
+    return this.configService.saveConfig(this.entityMapper, this.config.data);
   }
 
   private getEntity(viewId: string): EntityConstructor<Entity> {
