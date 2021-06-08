@@ -16,6 +16,8 @@ import {
   EntityConfig,
   EntityConfigService,
 } from "../entity/entity-config.service";
+import { EntityDetailsConfig } from "../entity-components/entity-details/EntityDetailsConfig";
+import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 
 @Injectable({
   providedIn: "root",
@@ -43,6 +45,9 @@ export class ConfigMigrationService {
       const entity = this.getEntity(viewConfig._id);
       if (this.entityListComponents.includes(viewConfig.component)) {
         this.migrateEntityListConfig(viewConfig.config, entity);
+      }
+      if (viewConfig.component === "EntityDetails") {
+        this.migrateEntityDetailsConfig(viewConfig.config, entity);
       }
     });
     console.log("config", this.config);
@@ -149,5 +154,109 @@ export class ConfigMigrationService {
         console.error(`Failed to migrate filter ${filter.id}: ${e}`);
       }
     });
+  }
+
+  private migrateEntityDetailsConfig(
+    config: EntityDetailsConfig,
+    entity: EntityConstructor<Entity>
+  ) {
+    config.panels.forEach((panel) => {
+      panel.components.forEach((panelComp) => {
+        switch (panelComp.component) {
+          case "Form": {
+            this.migrateFormComponent(panelComp.config["cols"], entity);
+            break;
+          }
+          case "PreviousSchools": {
+            this.migratePreviousSchoolsComponent(panelComp.config["columns"]);
+          }
+        }
+      });
+    });
+  }
+
+  private migrateFormComponent(
+    columns: FormFieldConfig[][],
+    entity: EntityConstructor<Entity>
+  ) {
+    const editMap = new Map<string, string>([
+      ["text", "EditText"],
+      ["checkbox", "EditBoolean"],
+      ["textarea", "EditLongText"],
+      ["photo", "EditPhoto"],
+      ["configurable-enum-select", "EditConfigurableEnum"],
+      ["age", "EditAge"],
+      ["datepicker", "EditDate"],
+      ["entity-select", "EditEntityArray"],
+      ["select", "EditSelectable"],
+    ]);
+    columns.forEach((row) =>
+      row.forEach((formField) => {
+        try {
+          formField.label = formField.label || formField["placeholder"];
+          delete formField["placeholder"];
+          formField.additional =
+            formField["options"] ||
+            formField["enumId"] ||
+            formField["entityType"];
+          if (formField.additional === undefined) {
+            delete formField.additional;
+          }
+          delete formField["options"];
+          delete formField["enumId"];
+          delete formField["entityType"];
+          if (formField.id === "photoFile") {
+            formField.id = "photo";
+          }
+          formField.edit = editMap.get(formField["input"]);
+          delete formField["input"];
+          this.addLabelToEntity(formField.label, formField.id, entity, "short");
+        } catch (e) {
+          console.error(`Failed to convert form field ${formField.id}: ${e}`);
+        }
+      })
+    );
+  }
+
+  private migratePreviousSchoolsComponent(columns: FormFieldConfig[]) {
+    if (columns) {
+      columns.forEach((formField) => {
+        try {
+          switch (formField["input"]) {
+            case "school": {
+              formField.view = "DisplayEntity";
+              formField.edit = "EditSingleEntity";
+              formField.additional = "School";
+              break;
+            }
+            case "text": {
+              formField.view = "DisplayText";
+              formField.edit = "EditText";
+              break;
+            }
+            case "date": {
+              formField.view = "DisplayDate";
+              formField.edit = "EditDate";
+              break;
+            }
+            case "percentageResult": {
+              formField.view = "DisplayPercentage";
+              formField.edit = "EditPercentage";
+            }
+          }
+          delete formField["input"];
+          this.addLabelToEntity(
+            formField.label,
+            formField.id,
+            ChildSchoolRelation,
+            "long"
+          );
+        } catch (e) {
+          console.error(
+            `Filed to migrate previousSchoolsConfig for ${formField.id}: ${e}`
+          );
+        }
+      });
+    }
   }
 }
