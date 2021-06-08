@@ -60,7 +60,7 @@ export class ConfigService {
     return this.config.data[id];
   }
 
-  public getAllConfigs<T>(prefix: string): (T & { _id: string })[] {
+  public getAllConfigs<T>(prefix: string): T[] {
     const matchingConfigs = [];
     for (const id of Object.keys(this.config.data)) {
       if (id.startsWith(prefix)) {
