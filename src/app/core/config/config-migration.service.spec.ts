@@ -209,4 +209,5 @@ const expectedCenterSchema = {
   dataType: "configurable-enum",
   innerDataType: "center",
   labelShort: "Center",
+  label: "Center",
 };
