@@ -45,6 +45,8 @@
 
     <app-sync-status></app-sync-status>
 
+    <app-language-select></app-language-select>
+
     <button
       mat-icon-button
       [routerLink]="['/user']"
@@ -55,9 +57,6 @@
     >
       <mat-icon class="header-icon" fontIcon="fa-user-circle-o"></mat-icon>
     </button>
-
-    <app-language-select *ngIf="isLoggedIn()">
-    </app-language-select>
 
     <button mat-icon-button (click)="logout()" *ngIf="isLoggedIn()">
       <mat-icon class="header-icon" fontIcon="fa-sign-out"></mat-icon>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { TranslationService } from "../../translation/translation.service";
+import { TranslationService } from "../translation.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { startWith } from "rxjs/operators";
 import { MatDialog } from "@angular/material/dialog";

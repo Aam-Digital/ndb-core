@@ -1,4 +1,4 @@
-import { Inject, Injectable, isDevMode, LOCALE_ID } from "@angular/core";
+import { Inject, Injectable, isDevMode, LOCALE_ID, TRANSLATIONS } from "@angular/core";
 import { AlertService } from "../alerts/alert.service";
 import { AlertDisplay } from "../alerts/alert-display";
 import { extractRegionFromLocale } from "./translation-util";
@@ -18,14 +18,6 @@ export class TranslationService {
     private alertService: AlertService,
     private dialog: MatDialog
   ) {
-    const localesObj: object = global["ng"].common.locales;
-    console.log(localesObj);
-    /*for (const key in localesObj) {
-      if (!localesObj.hasOwnProperty(key)) {
-        continue;
-      }
-      this.availableLocales.push(key);
-    } */
     this.availableLocales = [
       { locale: "de", regionCode: "de" },
       { locale: "en-US", regionCode: "us" },

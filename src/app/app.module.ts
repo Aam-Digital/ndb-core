@@ -71,13 +71,11 @@ import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-en
 import { ConfigModule } from "./core/config/config.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
 import { MatPaginatorIntl } from "@angular/material/paginator";
-import { TranslatableMatPaginator } from "./utils/TranslatableMatPaginator";
 import { ReportingModule } from "./features/reporting/reporting.module";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/dashboard-shortcut-widget.module";
 import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
-import { LanguageChangeProcessDialogComponent } from './core/translation/language-change-process-dialog/language-change-process-dialog.component';
-import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPaginator";
 
 /**
  * Main entry point of the application.
@@ -85,72 +83,71 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
  * Real functionality should be implemented in separate modules and imported here rather than being part of this module.
  */
 @NgModule({
-  declarations: [AppComponent, LanguageChangeProcessDialogComponent],
-    imports: [
-        ServiceWorkerModule.register("/ngsw-worker.js", {
-            enabled: environment.production,
-        }),
-        Angulartics2Module.forRoot({
-            developerMode: !environment.production,
-        }),
-        BrowserModule,
-        BrowserAnimationsModule,
-        FlexLayoutModule,
-        HttpClientModule,
-        routing,
-        ViewModule,
-        FormsModule,
-        ConfirmationDialogModule,
-        FormDialogModule,
-        AlertsModule,
-        EntityModule,
-        AppConfigModule,
-        SessionModule,
-        ConfigModule,
-        UiModule,
-        SyncStatusModule,
-        LatestChangesModule,
-        NavigationModule,
-        UserModule,
-        DashboardModule,
-        ProgressDashboardWidgetModule,
-        ChildrenModule,
-        SchoolsModule,
-        AdminModule,
-        FontAwesomeIconsModule,
-        HelpModule,
-        MatNativeDateModule,
-        EntitySubrecordModule,
-        EntityListModule,
-        EntityDetailsModule,
-        ConfigurableEnumModule,
-        ReportingModule,
-        DemoDataModule.forRoot([
-            ...DemoChildGenerator.provider({count: 120}),
-            ...DemoSchoolGenerator.provider({count: 8}),
-            ...DemoChildSchoolRelationGenerator.provider(),
-            ...DemoActivityGeneratorService.provider(),
-            ...DemoActivityEventsGeneratorService.provider({forNLastYears: 1}),
-            ...DemoNoteGeneratorService.provider({
-                minNotesPerChild: 2,
-                maxNotesPerChild: 6,
-                groupNotes: 3,
-            }),
-            ...DemoAserGeneratorService.provider(),
-            ...DemoEducationalMaterialGeneratorService.provider({
-                minCount: 3,
-                maxCount: 8,
-            }),
-            ...DemoHealthCheckGeneratorService.provider(),
-            ...DemoProgressDashboardWidgetGeneratorService.provider(),
-            ...DemoUserGeneratorService.provider(),
-        ]),
-        AttendanceModule,
-        MatFormFieldModule,
-        DashboardShortcutWidgetModule,
-        HistoricalDataModule,
-        MatProgressBarModule,
-    ],
+  declarations: [AppComponent],
+  imports: [
+    ServiceWorkerModule.register("/ngsw-worker.js", {
+      enabled: environment.production,
+    }),
+    Angulartics2Module.forRoot({
+      developerMode: !environment.production,
+    }),
+    BrowserModule,
+    BrowserAnimationsModule,
+    FlexLayoutModule,
+    HttpClientModule,
+    routing,
+    ViewModule,
+    FormsModule,
+    ConfirmationDialogModule,
+    FormDialogModule,
+    AlertsModule,
+    EntityModule,
+    AppConfigModule,
+    SessionModule,
+    ConfigModule,
+    UiModule,
+    SyncStatusModule,
+    LatestChangesModule,
+    NavigationModule,
+    UserModule,
+    DashboardModule,
+    ProgressDashboardWidgetModule,
+    ChildrenModule,
+    SchoolsModule,
+    AdminModule,
+    FontAwesomeIconsModule,
+    HelpModule,
+    MatNativeDateModule,
+    EntitySubrecordModule,
+    EntityListModule,
+    EntityDetailsModule,
+    ConfigurableEnumModule,
+    ReportingModule,
+    DemoDataModule.forRoot([
+      ...DemoChildGenerator.provider({ count: 120 }),
+      ...DemoSchoolGenerator.provider({ count: 8 }),
+      ...DemoChildSchoolRelationGenerator.provider(),
+      ...DemoActivityGeneratorService.provider(),
+      ...DemoActivityEventsGeneratorService.provider({ forNLastYears: 1 }),
+      ...DemoNoteGeneratorService.provider({
+        minNotesPerChild: 2,
+        maxNotesPerChild: 6,
+        groupNotes: 3,
+      }),
+      ...DemoAserGeneratorService.provider(),
+      ...DemoEducationalMaterialGeneratorService.provider({
+        minCount: 3,
+        maxCount: 8,
+      }),
+      ...DemoHealthCheckGeneratorService.provider(),
+      ...DemoProgressDashboardWidgetGeneratorService.provider(),
+      ...DemoUserGeneratorService.provider(),
+    ]),
+    AttendanceModule,
+    MatFormFieldModule,
+    DashboardShortcutWidgetModule,
+    HistoricalDataModule,
+  ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
     { provide: MatPaginatorIntl, useValue: TranslatableMatPaginator() },
