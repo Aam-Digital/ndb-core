@@ -3,7 +3,7 @@ import { entityListSortingAccessor } from "./sorting-accessor";
 describe("entityListSortingAccessor", () => {
   function expectObjectToContain(obj: object, expected: any[], type: string) {
     let index = 0;
-    for (const key in Object.keys(obj)) {
+    for (const key of Object.keys(obj)) {
       const accessed = entityListSortingAccessor(obj, key);
       expect(accessed).toEqual(expected[index]);
       expect(typeof accessed).toBe(type);
