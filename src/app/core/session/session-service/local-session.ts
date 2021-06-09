@@ -131,7 +131,7 @@ export class LocalSession {
    * Check whether the local database is in an initial state.
    * This check can only be performed async, so this method returns a Promise
    */
-  public get isInitial(): Observable<Boolean> {
+  public get isInitial(): Observable<boolean> {
     // `doc_count === 0 => initial` is a valid assumptions, as documents for users must always be present, even after db-clean
     return fromPromise(this.database.info()).pipe(
       map((result: any) => result.doc_count === 0)

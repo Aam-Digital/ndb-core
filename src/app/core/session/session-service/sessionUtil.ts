@@ -1,5 +1,5 @@
 import { MonoTypeOperatorFunction, of, pipe, throwError } from "rxjs";
-import { filter, first, mergeMap, skipWhile } from "rxjs/operators";
+import { first, mergeMap, skipWhile } from "rxjs/operators";
 
 /**
  * Waits until the state of a source observable is equal to the given
