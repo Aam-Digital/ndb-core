@@ -25,9 +25,9 @@ import { User } from "../../user/user";
 import { SyncState } from "../session-states/sync-state.enum";
 import { LoginState } from "../session-states/login-state.enum";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { BehaviorSubject, Observable, of, throwError } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 import { fromPromise } from "rxjs/internal-compatibility";
-import { concatMap, map, skipWhile } from "rxjs/operators";
+import { map } from "rxjs/operators";
 import { failOnStates, waitForChangeTo } from "./sessionUtil";
 
 /**

@@ -28,7 +28,6 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { LoggingService } from "../../logging/logging.service";
 import { BehaviorSubject, Observable, of } from "rxjs";
 import { fromPromise } from "rxjs/internal-compatibility";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { catchError, map } from "rxjs/operators";
 
 @Injectable()

@@ -10,7 +10,6 @@ import { PouchDatabase } from "../../database/pouch-database";
 import { LoggingService } from "../../logging/logging.service";
 import { BehaviorSubject } from "rxjs";
 import { UntilDestroy } from "@ngneat/until-destroy";
-import { map } from "rxjs/operators";
 
 /**
  * SessionService implementation for use of the app with direct requests to the remote server
