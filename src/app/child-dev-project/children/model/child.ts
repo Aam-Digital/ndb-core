@@ -22,7 +22,6 @@ import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 import { calculateAge } from "../../../utils/utils";
 import { Photo } from "../child-photo-service/photo";
-import { ChildPhotoService } from "../child-photo-service/child-photo.service";
 
 export type Center = ConfigurableEnumValue;
 @DatabaseEntity("Child")
@@ -63,7 +62,7 @@ export class Child extends Entity {
 
   @DatabaseField({
     dataType: "photo",
-    defaultValue: ChildPhotoService.getDefaultImage(),
+    defaultValue: "",
   })
   photo: Photo;
 
