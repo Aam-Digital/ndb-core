@@ -23,7 +23,7 @@ import { SessionService } from "../../session/session-service/session.service";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { BehaviorSubject } from "rxjs";
-import { take } from "rxjs/operators";
+import { first } from "rxjs/operators";
 import { BackgroundProcessState } from "../background-process-state.interface";
 import { SyncStatusModule } from "../sync-status.module";
 
@@ -46,10 +46,13 @@ describe("SyncStatusComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
-      mockSessionService = jasmine.createSpyObj(["getSyncState", "isLoggedIn"]);
+      mockSessionService = jasmine.createSpyObj<SessionService>(
+        ["isLoggedIn"],
+        {
+          syncStateStream: syncState,
+        }
+      );
       mockSessionService.isLoggedIn.and.returnValue(false);
-      // @ts-ignore
-      mockSessionService.syncState.and.returnValue(syncState);
       mockIndexingService = { indicesRegistered: new BehaviorSubject([]) };
 
       TestBed.configureTestingModule({
@@ -96,7 +99,7 @@ describe("SyncStatusComponent", () => {
     await fixture.whenStable();
 
     expect(
-      await component.backgroundProcesses.pipe(take(1)).toPromise()
+      await component.backgroundProcesses.pipe(first()).toPromise()
     ).toEqual([DATABASE_SYNCING_STATE]);
 
     syncState.next(SyncState.COMPLETED);
@@ -104,7 +107,7 @@ describe("SyncStatusComponent", () => {
     await fixture.whenStable();
 
     expect(
-      await component.backgroundProcesses.pipe(take(1)).toPromise()
+      await component.backgroundProcesses.pipe(first()).toPromise()
     ).toEqual([DATABASE_SYNCED_STATE]);
   });
 
@@ -118,7 +121,7 @@ describe("SyncStatusComponent", () => {
     await fixture.whenStable();
 
     expect(
-      await component.backgroundProcesses.pipe(take(1)).toPromise()
+      await component.backgroundProcesses.pipe(first()).toPromise()
     ).toEqual([DATABASE_SYNCED_STATE, testIndexState]);
   });
 });
