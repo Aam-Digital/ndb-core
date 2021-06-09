@@ -26,6 +26,7 @@ import { RemoteSession } from "./remote-session";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { SessionType } from "../session-type";
 import { fakeAsync, tick } from "@angular/core/testing";
+import { failOnStates, waitForChangeTo } from "./sessionUtil";
 
 describe("SyncedSessionService", () => {
   const snackBarMock = { openFromComponent: () => {} } as any;
@@ -62,13 +63,9 @@ describe("SyncedSessionService", () => {
     });
 
     it("has the correct Initial State", () => {
-      expect(sessionService.getLoginState().getState()).toEqual(
-        LoginState.LOGGED_OUT
-      );
-      expect(sessionService.getSyncState().getState()).toEqual(
-        SyncState.UNSYNCED
-      );
-      expect(sessionService.getConnectionState().getState()).toEqual(
+      expect(sessionService.loginState).toEqual(LoginState.LOGGED_OUT);
+      expect(sessionService.syncState).toEqual(SyncState.UNSYNCED);
+      expect(sessionService.connectionState).toEqual(
         ConnectionState.DISCONNECTED
       );
 
@@ -79,17 +76,14 @@ describe("SyncedSessionService", () => {
     it("has the correct state after Login with wrong credentials", async () => {
       const loginState = await sessionService.login("demo", "pass123");
       expect(loginState).toEqual(LoginState.LOGIN_FAILED);
-      expect(sessionService.getLoginState().getState()).toEqual(
-        LoginState.LOGIN_FAILED
-      );
-      expect(sessionService.getSyncState().getState()).toEqual(
-        SyncState.UNSYNCED
-      );
+      expect(sessionService.loginState).toEqual(LoginState.LOGIN_FAILED);
+      expect(sessionService.syncState).toEqual(SyncState.UNSYNCED);
 
       // remote session takes a bit longer than a local login - this throws on successful connection
-      await sessionService
-        .getConnectionState()
-        .waitForChangeTo(ConnectionState.REJECTED, [ConnectionState.CONNECTED]);
+      await sessionService.connectionStateStream.pipe(
+        failOnStates([ConnectionState.CONNECTED]),
+        waitForChangeTo(ConnectionState.REJECTED)
+      );
 
       expect(sessionService.isLoggedIn()).toEqual(false);
       expect(sessionService.getCurrentUser()).not.toBeDefined();
@@ -98,17 +92,14 @@ describe("SyncedSessionService", () => {
     it("has the correct state after Login with non-existing user", async () => {
       const loginState = await sessionService.login("demo123", "pass123");
       expect(loginState).toEqual(LoginState.LOGIN_FAILED);
-      expect(sessionService.getLoginState().getState()).toEqual(
-        LoginState.LOGIN_FAILED
-      );
-      expect(sessionService.getSyncState().getState()).toEqual(
-        SyncState.UNSYNCED
-      );
+      expect(sessionService.loginState).toEqual(LoginState.LOGIN_FAILED);
+      expect(sessionService.syncState).toEqual(SyncState.UNSYNCED);
 
       // remote session takes a bit longer than a local login - this throws on successful connection
-      await sessionService
-        .getConnectionState()
-        .waitForChangeTo(ConnectionState.REJECTED, [ConnectionState.CONNECTED]);
+      await sessionService.connectionStateStream.pipe(
+        failOnStates([ConnectionState.CONNECTED]),
+        waitForChangeTo(ConnectionState.REJECTED)
+      );
 
       expect(sessionService.isLoggedIn()).toEqual(false);
       expect(sessionService.getCurrentUser()).not.toBeDefined();
@@ -117,20 +108,15 @@ describe("SyncedSessionService", () => {
     it("has the correct state after Login with correct credentials", async () => {
       const [loginState] = await Promise.all([
         sessionService.login("demo", "pass"),
-        sessionService
-          .getSyncState()
-          .waitForChangeTo(SyncState.COMPLETED, [SyncState.FAILED]),
+        sessionService.syncStateStream.pipe(
+          failOnStates([SyncState.FAILED]),
+          waitForChangeTo(SyncState.COMPLETED)
+        ),
       ]);
       expect(loginState).toEqual(LoginState.LOGGED_IN);
-      expect(sessionService.getLoginState().getState()).toEqual(
-        LoginState.LOGGED_IN
-      );
-      expect(sessionService.getSyncState().getState()).toEqual(
-        SyncState.COMPLETED
-      );
-      expect(sessionService.getConnectionState().getState()).toEqual(
-        ConnectionState.CONNECTED
-      );
+      expect(sessionService.loginState).toEqual(LoginState.LOGGED_IN);
+      expect(sessionService.syncState).toEqual(SyncState.COMPLETED);
+      expect(sessionService.connectionState).toEqual(ConnectionState.CONNECTED);
 
       expect(sessionService.isLoggedIn()).toEqual(true);
       expect(sessionService.getCurrentUser()).toBeDefined();
@@ -139,16 +125,15 @@ describe("SyncedSessionService", () => {
     it("has the correct state after Logout", async () => {
       await Promise.all([
         sessionService.login("demo", "pass"),
-        sessionService
-          .getSyncState()
-          .waitForChangeTo(SyncState.COMPLETED, [SyncState.FAILED]),
+        sessionService.syncStateStream.pipe(
+          failOnStates([SyncState.FAILED]),
+          waitForChangeTo(SyncState.COMPLETED)
+        ),
       ]);
 
       sessionService.logout();
-      expect(sessionService.getLoginState().getState()).toEqual(
-        LoginState.LOGGED_OUT
-      );
-      expect(sessionService.getConnectionState().getState()).toEqual(
+      expect(sessionService.loginState).toEqual(LoginState.LOGGED_OUT);
+      expect(sessionService.connectionState).toEqual(
         ConnectionState.DISCONNECTED
       );
 
