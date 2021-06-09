@@ -1,8 +1,5 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { TranslationService } from "../translation.service";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { startWith } from "rxjs/operators";
-import { MatDialog } from "@angular/material/dialog";
 
 /**
  * Shows a dropdown-menu of available languages
@@ -12,7 +9,6 @@ import { MatDialog } from "@angular/material/dialog";
   templateUrl: "./language-select.component.html",
   styleUrls: ["./language-select.component.scss"],
 })
-@UntilDestroy()
 export class LanguageSelectComponent {
   /**
    * The region code of the currently selected language/region
