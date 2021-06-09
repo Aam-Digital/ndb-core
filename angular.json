@@ -23,7 +23,6 @@
             "main": "src/main.ts",
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
-            "localize": ["de"],
             "i18nMissingTranslation": "warning",
             "assets": [
               "src/assets",
@@ -42,7 +41,6 @@
           },
           "configurations": {
             "production": {
-              "localize": true,
               "budgets": [
                 {
                   "type": "anyComponentStyle",
@@ -64,6 +62,9 @@
                 }
               ],
               "serviceWorker": true
+            },
+            "de-en": {
+              "localize": ["de", "en-US"]
             }
           }
         },

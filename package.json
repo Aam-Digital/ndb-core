@@ -6,6 +6,7 @@
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build --prod",
+    "build-de": "ng build --prod --localize --configuration=production,de-en",
     "test": "ng test",
     "test-ci": "ng test --code-coverage --karmaConfig=build/karma-ci.conf.js ",
     "lint": "ng lint ndb-core --type-check",
