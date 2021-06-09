@@ -8,6 +8,15 @@ import { AlertsModule } from "../alerts/alerts.module";
 import { MatDialogModule } from "@angular/material/dialog";
 import { TranslationService } from "./translation.service";
 
+/**
+ * Module that aids in the management and choice of translations/languages
+ * <br/>
+ * Use the {@link TranslationService} to get information about the currently
+ * selected language, available languages and methods to change the language
+ * <br/>
+ * The {@link LanguageSelectComponent} is used to graphically offer a way of changing
+ * the current language of the user
+ */
 @NgModule({
   declarations: [LanguageChangeProcessDialogComponent, LanguageSelectComponent],
   imports: [
@@ -18,6 +27,6 @@ import { TranslationService } from "./translation.service";
     MatDialogModule,
   ],
   providers: [TranslationService],
-  exports: [LanguageChangeProcessDialogComponent, LanguageSelectComponent],
+  exports: [LanguageSelectComponent],
 })
 export class TranslationModule {}

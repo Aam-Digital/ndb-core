@@ -1,6 +1,12 @@
 import { Component } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 
+/**
+ * A process dialog that indicates that the language change is under process
+ * This dialog automatically closes if the new language was chosen and therefore doesn't
+ * have to be closed manually. Additionally, it can't be closed by a user
+ * since the site is currently loading the newly chosen language
+ */
 @Component({
   selector: "app-language-change-process-dialog",
   template: `
@@ -10,6 +16,10 @@ import { MatDialog } from "@angular/material/dialog";
   `,
 })
 export class LanguageChangeProcessDialogComponent {
+  /**
+   * shows the dialog
+   * @param dialog The MatDialog to use to show this dialog
+   */
   static show(dialog: MatDialog) {
     dialog.open(LanguageChangeProcessDialogComponent, { disableClose: true });
   }

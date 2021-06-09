@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { LanguageChangeProcessDialogComponent } from './language-change-process-dialog.component';
+import { LanguageChangeProcessDialogComponent } from "./language-change-process-dialog.component";
 
-describe('LanguageChangeProcessDialogComponent', () => {
+describe("LanguageChangeProcessDialogComponent", () => {
   let component: LanguageChangeProcessDialogComponent;
   let fixture: ComponentFixture<LanguageChangeProcessDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LanguageChangeProcessDialogComponent ]
-    })
-    .compileComponents();
+      declarations: [LanguageChangeProcessDialogComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('LanguageChangeProcessDialogComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });
