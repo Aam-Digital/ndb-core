@@ -34,7 +34,7 @@ export class OnlineSessionService extends SessionService {
   );
   public syncStateStream = new BehaviorSubject(SyncState.UNSYNCED);
   private remoteSession: RemoteSession;
-  private database: PouchDatabase;
+  private readonly database: PouchDatabase;
 
   constructor(
     private loggingService: LoggingService,
