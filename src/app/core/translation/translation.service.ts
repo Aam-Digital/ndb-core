@@ -1,40 +1,39 @@
 import { Inject, Injectable, isDevMode, LOCALE_ID } from "@angular/core";
-import { Router } from "@angular/router";
 import { AlertService } from "../alerts/alert.service";
 import { AlertDisplay } from "../alerts/alert-display";
-import { Observable, Subject } from "rxjs";
 import { extractRegionFromLocale } from "./translation-util";
+import { MatDialog } from "@angular/material/dialog";
+import { LanguageChangeProcessDialogComponent } from "./language-change-process-dialog/language-change-process-dialog.component";
 
 @Injectable({
   providedIn: "root",
 })
 export class TranslationService {
-  get onLanguageChange(): Observable<string> {
-    return this.languageChangeSubject.asObservable();
-  }
-
-  /**
-   * A subject that emits whenever the language changes, after navigating to the
-   * new language page
-   */
-  private languageChangeSubject = new Subject<string>();
-
   /**
    * A readonly array of all locales available
    */
-  readonly availableLocales: string[] = [];
+  readonly availableLocales: { locale: string; regionCode: string }[] = [];
   constructor(
     @Inject(LOCALE_ID) private baseLocale: string,
-    private router: Router,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private dialog: MatDialog
   ) {
     const localesObj: object = global["ng"].common.locales;
-    for (const key in localesObj) {
+    console.log(localesObj);
+    /*for (const key in localesObj) {
       if (!localesObj.hasOwnProperty(key)) {
         continue;
       }
       this.availableLocales.push(key);
-    }
+    } */
+    this.availableLocales = [
+      { locale: "de", regionCode: "de" },
+      { locale: "en-US", regionCode: "us" },
+    ];
+  }
+
+  get locales(): string[] {
+    return this.availableLocales.map((l) => l.locale);
   }
 
   /**
@@ -44,12 +43,8 @@ export class TranslationService {
    * @param locale The locale (e.g. 'en-US') or region code (e.g. 'de')
    * to switch to.
    */
-  async switchToLanguage(locale: string) {
-    const languageRegionCode = extractRegionFromLocale(locale);
-    if (
-      this.currentLocale() === languageRegionCode ||
-      !this.availableLocales.includes(languageRegionCode)
-    ) {
+  switchToLanguage(locale: string) {
+    if (this.currentLocale() === locale || !this.locales.includes(locale)) {
       return;
     }
     if (isDevMode()) {
@@ -58,23 +53,21 @@ export class TranslationService {
         AlertDisplay.TEMPORARY
       );
     } else {
-      const url = this.router.url.split("/");
-      if (url.length < 2) {
-        return;
-      } else {
-        url[1] = languageRegionCode;
-        await this.router.navigate(url);
-        this.languageChangeSubject.next(languageRegionCode);
-      }
+      LanguageChangeProcessDialogComponent.show(this.dialog);
+      window.location.pathname = `/${locale}`;
     }
   }
 
   currentLocale(): string {
-    const url = this.router.url.split("/");
-    if (url.length < 2) {
+    const url = window.location.pathname.split("/")[0];
+    if (!this.locales.includes(url)) {
       return this.baseLocale;
     } else {
-      return url[1];
+      return url;
     }
+  }
+
+  currentRegionCode(): string {
+    return extractRegionFromLocale(this.currentLocale());
   }
 }

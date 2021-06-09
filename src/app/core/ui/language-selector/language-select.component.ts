@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { TranslationService } from "../../translation/translation.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { startWith } from "rxjs/operators";
+import { MatDialog } from "@angular/material/dialog";
 
 @Component({
   selector: "app-language-select",
@@ -10,26 +11,21 @@ import { startWith } from "rxjs/operators";
 })
 @UntilDestroy()
 export class LanguageSelectComponent implements OnInit {
-  siteLanguage: string = "us";
+  siteLanguage: string;
 
-  constructor(private translationService: TranslationService) {}
+  constructor(private translationService: TranslationService) {
+    this.siteLanguage = translationService.currentRegionCode();
+  }
 
-  get languageList(): string[] {
+  get languageList(): { locale: string; regionCode: string }[] {
     return this.translationService.availableLocales;
   }
 
-  async onChange(selectedLang: string) {
-    await this.translationService.switchToLanguage(selectedLang);
+  onChange(selectedLang: string) {
+    this.translationService.switchToLanguage(selectedLang);
   }
 
   ngOnInit(): void {
-    this.translationService.onLanguageChange
-      .pipe(
-        startWith(this.translationService.currentLocale()),
-        untilDestroyed(this)
-      )
-      .subscribe((next) => {
-        this.siteLanguage = next;
-      });
+    console.log(this.siteLanguage);
   }
 }

@@ -4,9 +4,10 @@
     #language
     (change)="onChange(language.value)"
   >
-    <mat-option *ngFor="let lang of languageList" (onSelectionChange)="onChange(lang)">
-      <span [class]="'flag-clip flag-icon flag-icon-' + lang"></span>
-      <span> {{lang}}</span>
+    <mat-option class="w-WARNING hint" [disabled]="true" i18n>Warning: Language Change may take a while</mat-option>
+    <mat-option *ngFor="let lang of languageList" (onSelectionChange)="onChange(lang.locale)">
+      <span [class]="'flag-clip flag-icon flag-icon-' + lang.regionCode"></span>
+      <span> {{lang.regionCode}}</span>
     </mat-option>
   </mat-select>
 </span>
