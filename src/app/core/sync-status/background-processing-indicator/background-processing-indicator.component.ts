@@ -23,7 +23,7 @@ export class BackgroundProcessingIndicatorComponent implements OnInit {
   allTasksFinished: Observable<boolean>;
 
   /** whether processes of with the same title shall be summarized into one line */
-  @Input() summarize: boolean = false;
+  @Input() summarize: boolean = true;
   wasClosed: boolean = false;
 
   /** handle to programmatically open/close the details dropdown */
