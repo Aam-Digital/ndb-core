@@ -11,10 +11,9 @@ describe("AnalyticsService", () => {
   let service: AnalyticsService;
 
   beforeEach(() => {
-    const mockSessionService = jasmine.createSpyObj(["getLoginState"]);
-    mockSessionService.getLoginState.and.returnValue(
-      new BehaviorSubject(LoginState.LOGGED_OUT)
-    );
+    const mockSessionService = jasmine.createSpyObj<SessionService>([], {
+      loginStateStream: new BehaviorSubject(LoginState.LOGGED_OUT),
+    });
 
     TestBed.configureTestingModule({
       imports: [Angulartics2Module.forRoot(), RouterTestingModule],
