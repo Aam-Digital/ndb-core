@@ -3,9 +3,8 @@ import { entityListSortingAccessor } from "./sorting-accessor";
 describe("entityListSortingAccessor", () => {
   function expectObjectToContain(obj: object, expected: any[], type: string) {
     let index = 0;
-    // tslint:disable-next-line:forin
-    for (const element in obj) {
-      const accessed = entityListSortingAccessor(obj, element);
+    for (const key in Object.keys(obj)) {
+      const accessed = entityListSortingAccessor(obj, key);
       expect(accessed).toEqual(expected[index]);
       expect(typeof accessed).toBe(type);
       index += 1;
@@ -20,7 +19,7 @@ describe("entityListSortingAccessor", () => {
     expectObjectToContain(obj, ["ABC", "B", "Hello, World!"], "string");
   });
 
-  it("should return numbers for a number-objects", () => {
+  it("should return numbers for number-objects", () => {
     const obj = {
       a: 1,
       b: 2.0,
@@ -30,7 +29,6 @@ describe("entityListSortingAccessor", () => {
   });
 
   it("should return numbers when a string is parsable", () => {
-    const numbers = [1, 2.0, 10e3, 0x1];
     const obj = {
       a: "1",
       b: "2.0",
@@ -40,7 +38,7 @@ describe("entityListSortingAccessor", () => {
     expectObjectToContain(obj, [1, 2.0, 10e3, 0x1], "number");
   });
 
-  it("should return the label when the queried object's name is 'label'", () => {
+  it("should return the label when the queried object has a 'label' key", () => {
     const object = {
       data: {
         label: "data label",
@@ -53,7 +51,7 @@ describe("entityListSortingAccessor", () => {
     expect(accessed).toBe("data label");
   });
 
-  it("should return the object itself it it does not contain a label", () => {
+  it("should return the object itself if it does not contain a label", () => {
     const object = {
       data: {
         value1: 123,
