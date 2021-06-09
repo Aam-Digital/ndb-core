@@ -54,6 +54,12 @@ describe("ConfigMigrationService", () => {
               title: "Center",
               id: "center",
             },
+            {
+              component: "ChildBlockList",
+              title: "Children",
+              id: "children",
+              noSorting: true,
+            },
           ],
           columnGroup: {
             default: "School Info",
@@ -317,6 +323,13 @@ const expectedChildrenListConfig = {
         view: "DisplayConfigurableEnum",
         label: "Center",
         id: "center",
+      },
+      {
+        view: "DisplayEntityArray",
+        title: "Children",
+        id: "children",
+        additional: "Child",
+        noSorting: true,
       },
     ],
     columnGroups: {

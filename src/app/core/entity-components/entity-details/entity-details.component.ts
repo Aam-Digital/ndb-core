@@ -20,6 +20,7 @@ import {
   OperationType,
 } from "../../permissions/entity-permissions.service";
 import { User } from "../../user/user";
+import { Note } from "../../../child-dev-project/notes/model/note";
 
 export const ENTITY_MAP: Map<string, EntityConstructor<Entity>> = new Map<
   string,
@@ -30,6 +31,7 @@ export const ENTITY_MAP: Map<string, EntityConstructor<Entity>> = new Map<
   ["School", School],
   ["Team", School],
   ["RecurringActivity", RecurringActivity],
+  ["Note", Note],
   ["User", User],
 ]);
 

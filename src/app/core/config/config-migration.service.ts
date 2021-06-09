@@ -3,7 +3,6 @@ import { ConfigService } from "./config.service";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Config } from "./config";
 import { ViewConfig } from "../view/dynamic-routing/view-config.interface";
-import { RouterService } from "../view/dynamic-routing/router.service";
 import {
   ConfigurableEnumFilterConfig,
   EntityListConfig,
@@ -43,9 +42,7 @@ export class ConfigMigrationService {
 
   async migrateConfig(): Promise<Config> {
     this.config = await this.configService.loadConfig(this.entityMapper);
-    const viewConfigs = this.configService.getAllConfigs<ViewConfig>(
-      RouterService.PREFIX_VIEW_CONFIG
-    );
+    const viewConfigs = this.configService.getAllConfigs<ViewConfig>("view:");
     viewConfigs.forEach((viewConfig) => {
       const entity = this.getEntity(viewConfig._id);
       if (this.entityListComponents.includes(viewConfig.component)) {
@@ -60,8 +57,13 @@ export class ConfigMigrationService {
   }
 
   private getEntity(viewId: string): EntityConstructor<Entity> {
-    let entityType = viewId.split(":")[1];
-    entityType = entityType[0].toUpperCase() + entityType.slice(1);
+    const entityType = viewId
+      .split(":")[1]
+      .replace("/", "")
+      .split("-")
+      .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+      .join("");
+    console.log("Loading Entity", entityType, viewId);
     return ENTITY_MAP.get(entityType);
   }
 
@@ -69,10 +71,14 @@ export class ConfigMigrationService {
     config: EntityListConfig,
     entity: EntityConstructor<Entity>
   ) {
-    config.columnGroups = config["columnGroup"];
-    delete config["columnGroup"];
+    if (config.hasOwnProperty("columnGroup")) {
+      config.columnGroups = config["columnGroup"];
+      delete config["columnGroup"];
+    }
     this.migrateColumnConfigs(config.columns as FormFieldConfig[], entity);
-    this.migrateFilters(config.filters);
+    if (config.hasOwnProperty("filters")) {
+      this.migrateFilters(config.filters);
+    }
   }
 
   private migrateColumnConfigs(
@@ -97,6 +103,11 @@ export class ConfigMigrationService {
         if (column.view === "DisplayUsers") {
           column.view = "DisplayEntityArray";
           column.additional = "User";
+          column.noSorting = true;
+        }
+        if (column.view === "ChildBlockList") {
+          column.view = "DisplayEntityArray";
+          column.additional = "Child";
           column.noSorting = true;
         }
         this.addLabelToEntity(column.label, column.id, entity, "short");
@@ -174,7 +185,9 @@ export class ConfigMigrationService {
             break;
           }
           case "PreviousSchools": {
-            this.migratePreviousSchoolsComponent(panelComp.config["columns"]);
+            if (panelComp.hasOwnProperty("config")) {
+              this.migratePreviousSchoolsComponent(panelComp.config["columns"]);
+            }
             break;
           }
           case "HistoricalDataComponent": {
