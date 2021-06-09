@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { HttpClient } from "@angular/common/http";
 import { Child } from "../../../child-dev-project/children/model/child";
+import { ChildPhotoService } from "../../../child-dev-project/children/child-photo-service/child-photo.service";
 
 /**
  * Utility service to automatically detect and update filenames for Child entities' photos.
@@ -39,7 +40,7 @@ export class ChildPhotoUpdateService {
     }
 
     const fileExists = await this.checkIfFileExists(
-      Child.generatePhotoPath(filename)
+      ChildPhotoService.generatePhotoPath(filename)
     );
     if (fileExists) {
       const currentPhoto = child.photo;

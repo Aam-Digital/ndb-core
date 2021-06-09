@@ -32,14 +32,6 @@ export class Child extends Entity {
     return instance;
   }
 
-  /**
-   * Returns the full relative filePath to a child photo given a filename, adding the relevant folders to it.
-   * @param filename The given filename with file extension.
-   */
-  public static generatePhotoPath(filename: string): string {
-    return "assets/child-photos/" + filename;
-  }
-
   @DatabaseField() name: string;
   @DatabaseField() projectNumber: string; // project number
   @DatabaseField({ dataType: "date-only" }) dateOfBirth: Date;
