@@ -39,15 +39,9 @@ describe("UiComponent", () => {
   beforeEach(
     waitForAsync(() => {
       const mockSwUpdate = { available: of(), checkForUpdate: () => {} };
-      const mockSession: jasmine.SpyObj<SessionService> = jasmine.createSpyObj([
-        "isLoggedIn",
-        "logout",
-        "getDatabase",
-        "getSyncState",
-      ]);
-      // @ts-ignore
-      mockSession.syncStateStream.and.returnValue(
-        new BehaviorSubject<SyncState>(SyncState.UNSYNCED)
+      const mockSession: jasmine.SpyObj<SessionService> = jasmine.createSpyObj(
+        ["isLoggedIn", "logout", "getDatabase"],
+        { syncStateStream: new BehaviorSubject(SyncState.UNSYNCED) }
       );
 
       const mockConfig = jasmine.createSpyObj(["getConfig"]);
