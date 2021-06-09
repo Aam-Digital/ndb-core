@@ -8,7 +8,7 @@ This guide depicts the workflow one needs to go through to add another language
 You first need the correct ISO-639-2 Language-Code. To find this code for a given
 language, go to their [website](https://www.loc.gov/standards/iso639-2/php/code_list.php)
 and find the code that corresponds to your language (look in the `ISO 639-1 Code` column). 
-For example, for _french_, this would be `fm`, for _hindi_, this would be `hi`
+For example, for _french_, this would be `fr`, for _hindi_, this would be `hi`
 
 In addition to a language code, you might consider specifying a country if the spoken language can
 differ based on where the app should be shipped to. For example, English is spoken differently
