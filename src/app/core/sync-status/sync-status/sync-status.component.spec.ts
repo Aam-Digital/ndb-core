@@ -48,9 +48,7 @@ describe("SyncStatusComponent", () => {
     waitForAsync(() => {
       mockSessionService = jasmine.createSpyObj<SessionService>(
         ["isLoggedIn"],
-        {
-          syncStateStream: syncState,
-        }
+        { syncStateStream: syncState }
       );
       mockSessionService.isLoggedIn.and.returnValue(false);
       mockIndexingService = { indicesRegistered: new BehaviorSubject([]) };
