@@ -46,10 +46,6 @@ Lets talk about state for a second. With an offline-first synced session, there 
 - **ConnectionState**: ConnectionState describes the connection to the remote database. `disconnected` describes that no connection shall be established, i.e. before login and after logout. The remote database may reject a login (i.e. due to wrong credentials), causing state `rejected`. Additionally, the connection state may switch between `offline` and `connected`, when the user's browser goes offline or online after connection was established at least once.
 - **SyncState**: SyncState describes the state of database synchronization. Initially, that state is `unsynced`. The synchronization started after a successful connection to the remote database may change that state.
 
-To keep track of those states, a helper class was implemented. `StateEnum` is the (TypeScript-)Enumeration containing the states that are described by a given `StateHandler`.
-
-![StateHandler Helper](../../images/state_handler.png)
-
 LoginState depends primarily on the local database, as a login must be possible in case the user is offline. ConnectionState depends only on the remote database. While SyncState is conceptually somewhere _between_ the two, it is also associated with the local database, as the local login depends on the synchronization, when there is no database available (i.e. when the application is first started in a fresh browser).
 
 ## Login Flow
