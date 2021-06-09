@@ -22,6 +22,7 @@ import {
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { HistoricalEntityData } from "../../features/historical-data/historical-entity-data";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
+import { HealthCheck } from "../../child-dev-project/health-checkup/model/health-check";
 
 @Injectable({
   providedIn: "root",
@@ -199,6 +200,16 @@ export class ConfigMigrationService {
           }
           case "ActivityParticipantsSection": {
             this.migrateActivityParticipantsSection(panelComp);
+            break;
+          }
+          case "Aser":
+          case "EducationalMaterial":
+          case "HealthCheckup":
+          case "NotesOfChild":
+          case "ChildrenOverview": {
+            if (panelComp.hasOwnProperty("config")) {
+              this.migrateTable(panelComp.config);
+            }
             break;
           }
         }
@@ -391,5 +402,31 @@ export class ConfigMigrationService {
       RecurringActivity,
       "long"
     );
+  }
+
+  private migrateTable(config: any) {
+    const columnConfigs = [
+      { id: "date", visibleFrom: "xs" },
+      { id: "materialType", visibleFrom: "xs" },
+      { id: "materialAmount", visibleFrom: "md" },
+      { id: "description", visibleFrom: "md" },
+      { id: "math", visibleFrom: "xs" },
+      { id: "english", visibleFrom: "xs" },
+      { id: "hindi", visibleFrom: "md" },
+      { id: "bengali", visibleFrom: "md" },
+      { id: "remarks", visibleFrom: "md" },
+      { id: "schoolClass", label: "Class", view: "DisplayText" },
+      { id: "age", label: "Age", view: "DisplayText" },
+      {
+        id: "bmi",
+        label: "BMI",
+        view: "ReadonlyFunction",
+        additional: (entity: HealthCheck) => entity.bmi.toFixed(2),
+      },
+    ];
+    config.columns = config.displayedColumns.map((col: string) => {
+      return columnConfigs.find((cc) => cc.id === col) || col;
+    });
+    delete config.displayedColumns;
   }
 }

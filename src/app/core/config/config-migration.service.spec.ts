@@ -235,6 +235,21 @@ describe("ConfigMigrationService", () => {
                     },
                   ],
                 },
+                {
+                  title: "",
+                  component: "ChildrenOverview",
+                  config: {
+                    displayedColumns: ["name", "schoolClass", "age"],
+                  },
+                },
+
+                {
+                  title: "",
+                  component: "Aser",
+                  config: {
+                    displayedColumns: ["date", "math", "hindi"],
+                  },
+                },
               ],
             },
             {
@@ -559,6 +574,28 @@ const expectedChildDetailsConfig = {
                 tooltip: "Name of the observer",
               },
             ],
+          },
+          {
+            title: "",
+            component: "ChildrenOverview",
+            config: {
+              columns: [
+                "name",
+                { id: "schoolClass", label: "Class", view: "DisplayText" },
+                { id: "age", label: "Age", view: "DisplayText" },
+              ],
+            },
+          },
+          {
+            title: "",
+            component: "Aser",
+            config: {
+              columns: [
+                { id: "date", visibleFrom: "xs" },
+                { id: "math", visibleFrom: "xs" },
+                { id: "hindi", visibleFrom: "md" },
+              ],
+            },
           },
         ],
       },
