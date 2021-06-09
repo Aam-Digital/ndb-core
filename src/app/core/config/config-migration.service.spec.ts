@@ -202,6 +202,10 @@ describe("ConfigMigrationService", () => {
                     ],
                   },
                 },
+                {
+                  title: "Participation History",
+                  component: "PreviousTeams",
+                },
               ],
             },
             {
@@ -326,7 +330,7 @@ const expectedChildrenListConfig = {
       },
       {
         view: "DisplayEntityArray",
-        title: "Children",
+        label: "Children",
         id: "children",
         additional: "Child",
         noSorting: true,
@@ -492,6 +496,34 @@ const expectedChildDetailsConfig = {
                   label: "Result",
                   view: "DisplayPercentage",
                   edit: "EditPercentage",
+                },
+              ],
+            },
+          },
+          {
+            title: "Participation History",
+            component: "PreviousSchools",
+            config: {
+              single: false,
+              columns: [
+                {
+                  id: "schoolId",
+                  label: "Team",
+                  view: "DisplayEntity",
+                  edit: "EditSingleEntity",
+                  additional: "Team",
+                },
+                {
+                  id: "start",
+                  label: "From",
+                  view: "DisplayDate",
+                  edit: "EditDate",
+                },
+                {
+                  id: "end",
+                  label: "To",
+                  view: "DisplayDate",
+                  edit: "EditDate",
                 },
               ],
             },

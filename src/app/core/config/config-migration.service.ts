@@ -134,8 +134,7 @@ export class ConfigMigrationService {
         EntityConfigService.PREFIX_ENTITY_CONFIG + entity.ENTITY_TYPE;
       let configSchema = this.configService.getConfig<EntityConfig>(schemaKey);
       if (!configSchema) {
-        // @ts-ignore
-        this.configService.config.data[schemaKey] = {};
+        this.config.data[schemaKey] = {};
         configSchema = this.configService.getConfig<EntityConfig>(schemaKey);
       }
       if (!configSchema.attributes) {
@@ -188,6 +187,10 @@ export class ConfigMigrationService {
             if (panelComp.hasOwnProperty("config")) {
               this.migratePreviousSchoolsComponent(panelComp.config["columns"]);
             }
+            break;
+          }
+          case "PreviousTeams": {
+            this.migratePreviousTeams(panelComp);
             break;
           }
           case "HistoricalDataComponent": {
@@ -264,6 +267,37 @@ export class ConfigMigrationService {
         }
       });
     }
+  }
+
+  private migratePreviousTeams(config: PanelComponent) {
+    config.component = "PreviousSchools";
+    config.config = {
+      single: false,
+      columns: [
+        {
+          id: "schoolId",
+          label: "Team",
+          view: "DisplayEntity",
+          edit: "EditSingleEntity",
+          additional: "Team",
+        },
+        {
+          id: "start",
+          label: "From",
+          view: "DisplayDate",
+          edit: "EditDate",
+        },
+        {
+          id: "end",
+          label: "To",
+          view: "DisplayDate",
+          edit: "EditDate",
+        },
+      ],
+    } as any;
+    this.addLabelToEntity("Team", "schoolId", ChildSchoolRelation, "long");
+    this.addLabelToEntity("From", "start", ChildSchoolRelation, "long");
+    this.addLabelToEntity("To", "end", ChildSchoolRelation, "long");
   }
 
   private migrateEntitySubrecordInput(
