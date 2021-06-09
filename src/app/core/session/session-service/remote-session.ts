@@ -21,9 +21,7 @@ import PouchDBAuthentication from "pouchdb-authentication";
 import { AppConfig } from "../../app-config/app-config";
 import { Injectable } from "@angular/core";
 import { ConnectionState } from "../session-states/connection-state.enum";
-import { BehaviorSubject, Observable, of } from "rxjs";
-import { fromPromise } from "rxjs/internal-compatibility";
-import { catchError, map, tap } from "rxjs/operators";
+import { BehaviorSubject } from "rxjs";
 
 PouchDB.plugin(PouchDBAuthentication);
 

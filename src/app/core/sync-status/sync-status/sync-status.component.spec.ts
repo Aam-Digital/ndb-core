@@ -48,7 +48,8 @@ describe("SyncStatusComponent", () => {
     waitForAsync(() => {
       mockSessionService = jasmine.createSpyObj(["getSyncState", "isLoggedIn"]);
       mockSessionService.isLoggedIn.and.returnValue(false);
-      mockSessionService.getSyncState.and.returnValue(syncState);
+      // @ts-ignore
+      mockSessionService.syncState.and.returnValue(syncState);
       mockIndexingService = { indicesRegistered: new BehaviorSubject([]) };
 
       TestBed.configureTestingModule({

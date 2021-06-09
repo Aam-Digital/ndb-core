@@ -69,26 +69,21 @@ export class OnlineSessionService extends SessionService {
    *
    * also see {@link SessionService}
    */
-  public async login(username: string, password: string): Promise<LoginState> {
-    const loginState = await this.remoteSession
-      .login(username, password)
-      .pipe(
-        map((connectionState) => {
-          if (connectionState === ConnectionState.CONNECTED) {
-            return LoginState.LOGGED_IN;
-          } else {
-            return LoginState.LOGIN_FAILED;
-          }
-        })
-      )
-      .toPromise();
-    if (loginState === LoginState.LOGGED_IN) {
-      await this.loadUser(username);
+  public async login(username, password): Promise<LoginState> {
+    const connectionState: ConnectionState = await this.remoteSession.login(
+      username,
+      password
+    );
+    if (connectionState === ConnectionState.CONNECTED) {
+      this.currentUser = await this.loadUser(username);
+
       this.loginStateStream.next(LoginState.LOGGED_IN);
       this.connectionStateStream.next(ConnectionState.CONNECTED);
       this.syncStateStream.next(SyncState.COMPLETED);
+
+      return LoginState.LOGGED_IN;
     }
-    return loginState;
+    return LoginState.LOGIN_FAILED;
   }
 
   /** see {@link SessionService} */

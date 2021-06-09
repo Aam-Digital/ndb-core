@@ -28,6 +28,7 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { BehaviorSubject, Observable, of, throwError } from "rxjs";
 import { fromPromise } from "rxjs/internal-compatibility";
 import { concatMap, map, skipWhile } from "rxjs/operators";
+import { failOnStates, waitForChangeTo } from "./sessionUtil";
 
 /**
  * Responsibilities:
@@ -95,7 +96,7 @@ export class LocalSession {
         error.toState &&
         [SyncState.ABORTED, SyncState.FAILED].includes(error.toState)
       ) {
-        if (this.loginStateStream.value === LoginState.LOGIN_FAILED) {
+        if (this.loginState === LoginState.LOGIN_FAILED) {
           // The sync failed because the remote rejected
           return LoginState.LOGIN_FAILED;
         }
@@ -120,12 +121,8 @@ export class LocalSession {
   public async waitForFirstSync(): Promise<void> {
     await this.syncStateStream
       .pipe(
-        concatMap((state) =>
-          state === SyncState.FAILED || state === SyncState.ABORTED
-            ? throwError("")
-            : of(state)
-        ),
-        skipWhile((state) => state !== SyncState.COMPLETED)
+        failOnStates([SyncState.FAILED, SyncState.ABORTED]),
+        waitForChangeTo(SyncState.COMPLETED)
       )
       .toPromise();
   }

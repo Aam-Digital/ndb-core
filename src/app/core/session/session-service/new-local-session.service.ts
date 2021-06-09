@@ -24,6 +24,7 @@ import { PouchDatabase } from "../../database/pouch-database";
 import { ConnectionState } from "../session-states/connection-state.enum";
 import { SyncState } from "../session-states/sync-state.enum";
 import { User } from "../../user/user";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { LoggingService } from "../../logging/logging.service";
 import { BehaviorSubject, Observable, of } from "rxjs";
 import { fromPromise } from "rxjs/internal-compatibility";
@@ -48,7 +49,7 @@ export class NewLocalSessionService extends SessionService {
 
   constructor(
     private loggingService: LoggingService,
-    private entityMapperService: EntityMapperService,
+    private entitySchemaService: EntitySchemaService,
     private database: PouchDatabase
   ) {
     super();
@@ -109,7 +110,13 @@ export class NewLocalSessionService extends SessionService {
    * @param userId Id of the User to be loaded
    */
   private loadUser(userId: string): Observable<User> {
-    return fromPromise(this.entityMapperService.load(User, userId));
+    return fromPromise(this.database.get(`User:${userId}`)).pipe(
+      map((rawData) => {
+        const user = new User();
+        this.entitySchemaService.loadDataIntoEntity(user, rawData);
+        return user;
+      })
+    );
   }
 
   /** see {@link SessionService} */

@@ -25,7 +25,6 @@ import { LoginState } from "./session-states/login-state.enum";
 import { SessionType } from "./session-type";
 import { NewLocalSessionService } from "./session-service/new-local-session.service";
 import { PouchDatabase } from "../database/pouch-database";
-import { EntityMapperService } from "../entity/entity-mapper.service";
 
 /**
  * Factory method for Angular DI provider of SessionService.
@@ -42,20 +41,15 @@ export function sessionServiceFactory(
   entitySchemaService: EntitySchemaService
 ): SessionService {
   let sessionService: SessionService;
-  const database = PouchDatabase.createWithIndexedDB(
-    AppConfig.settings.database.name,
-    loggingService
-  );
-  const entityMapperService = new EntityMapperService(
-    database,
-    entitySchemaService
-  );
   switch (AppConfig.settings.session_type) {
     case SessionType.local:
       sessionService = new NewLocalSessionService(
         loggingService,
-        entityMapperService,
-        database
+        entitySchemaService,
+        PouchDatabase.createWithIndexedDB(
+          AppConfig.settings.database.name,
+          loggingService
+        )
       );
       break;
     case SessionType.synced:
@@ -68,8 +62,11 @@ export function sessionServiceFactory(
     default:
       sessionService = new NewLocalSessionService(
         loggingService,
-        entityMapperService,
-        database
+        entitySchemaService,
+        PouchDatabase.createWithInMemoryDB(
+          AppConfig.settings.database.name,
+          loggingService
+        )
       );
       break;
   }

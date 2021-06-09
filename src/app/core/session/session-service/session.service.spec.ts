@@ -60,13 +60,13 @@ export function testSessionServiceImplementation(
 
     expect(loginResult).toEqual(LoginState.LOGGED_IN);
 
-    expect(sessionService.getLoginState().getState())
+    expect(sessionService.loginState)
       .withContext("unexpected LoginState")
       .toEqual(LoginState.LOGGED_IN);
-    expect(sessionService.getSyncState().getState())
+    expect(sessionService.syncState)
       .withContext("unexpected SyncState")
       .toEqual(SyncState.UNSYNCED);
-    expect(sessionService.getConnectionState().getState())
+    expect(sessionService.connectionState)
       .withContext("unexpected ConnectionState")
       .toEqual(ConnectionState.OFFLINE);
 
@@ -127,13 +127,13 @@ function expectNotToBeLoggedIn(
   session: SessionService,
   expectedLoginState: LoginState.LOGGED_OUT | LoginState.LOGIN_FAILED
 ) {
-  expect(session.getLoginState().getState())
+  expect(session.loginState)
     .withContext("unexpected LoginState")
     .toEqual(expectedLoginState);
-  expect(session.getSyncState().getState())
+  expect(session.syncState)
     .withContext("unexpected SyncState")
     .toEqual(SyncState.UNSYNCED);
-  expect(session.getConnectionState().getState())
+  expect(session.connectionState)
     .withContext("unexpected ConnectionState")
     .toEqual(ConnectionState.DISCONNECTED);
 
