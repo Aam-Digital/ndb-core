@@ -1,4 +1,4 @@
-import { Inject, Injectable, isDevMode, LOCALE_ID, TRANSLATIONS } from "@angular/core";
+import { Inject, Injectable, isDevMode, LOCALE_ID } from "@angular/core";
 import { AlertService } from "../alerts/alert.service";
 import { AlertDisplay } from "../alerts/alert-display";
 import { extractRegionFromLocale } from "./translation-util";
