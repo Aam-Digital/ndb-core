@@ -24,7 +24,7 @@ import { ViewConfig } from "../../view/dynamic-routing/view-config.interface";
 import { ConfigService } from "../../config/config.service";
 import { NavigationEnd, Router } from "@angular/router";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { filter, map, startWith } from "rxjs/operators";
+import { filter, map, startWith, tap } from "rxjs/operators";
 
 /**
  * Main app menu listing.
@@ -52,7 +52,6 @@ export class NavigationComponent {
     );
     this.router.events
       .pipe(
-        untilDestroyed(this),
         startWith(new NavigationEnd(0, this.router.url, "")),
         filter((event) => event instanceof NavigationEnd),
         map((event: NavigationEnd) =>
