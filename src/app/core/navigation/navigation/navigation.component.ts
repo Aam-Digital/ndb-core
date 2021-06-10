@@ -85,13 +85,15 @@ export class NavigationComponent {
     const config = this.configService.getConfig<NavigationMenuConfig>(
       this.CONFIG_ID
     );
-    this.menuItems = config.items.filter((item) => this.hasPermissionFor(item));
+    this.menuItems = config.items.filter((item) =>
+      this.currentUserHasPermissionsFor(item)
+    );
   }
 
   /**
    * Check whether the user has the required rights
    */
-  private hasPermissionFor(item: MenuItem): boolean {
+  private currentUserHasPermissionsFor(item: MenuItem): boolean {
     const viewConfig = this.configService.getConfig<ViewConfig>(
       RouterService.PREFIX_VIEW_CONFIG + item.link.replace(/^\//, "")
     );
