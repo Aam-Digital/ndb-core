@@ -70,8 +70,8 @@ export class NavigationComponent {
           // use the element where the length is bigger. For example:
           // '/attendance' matches both manage attendance ('/attendance') as well as
           // '/attendance/add/day' (add day attendance).
-          // Therefore, we can assume that the link with the smaller length is the
-          // one to choose
+          // If 'attendance/add/day' was the active link, then only this link
+          // would have been filtered
           this.activeElement = items.reduce((i1, i2) =>
             i1.link.length > i2.link.length ? i1 : i2
           ).name;
