@@ -23,8 +23,8 @@ import { RouterService } from "../../view/dynamic-routing/router.service";
 import { ViewConfig } from "../../view/dynamic-routing/view-config.interface";
 import { ConfigService } from "../../config/config.service";
 import { NavigationEnd, Router } from "@angular/router";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { filter, map, startWith, tap } from "rxjs/operators";
+import { UntilDestroy } from "@ngneat/until-destroy";
+import { filter, map, startWith } from "rxjs/operators";
 
 /**
  * Main app menu listing.
