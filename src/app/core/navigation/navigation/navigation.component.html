@@ -20,13 +20,14 @@
     angulartics2On="click"
     angularticsCategory="Navigation"
     angularticsAction="app_navigation_link_click"
-    [angularticsLabel]="item.label"
+    [angularticsLabel]="item.name"
     *ngFor="let item of menuItems"
     [routerLink]="[item.link]"
+    [class]="activeElement === item.name ? 'highlighted' : ''"
   >
     <a
       ><mat-icon class="nav-icon" fontIcon="fa-{{ item.icon }}"></mat-icon
-      >{{ item.label }}</a
+      >{{ item.name }}</a
     >
     <mat-divider></mat-divider>
   </mat-list-item>

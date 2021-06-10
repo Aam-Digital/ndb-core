@@ -18,12 +18,11 @@
 /**
  * Structure for menu items to be displayed.
  */
-export class MenuItem {
-  /**
-   * Create a menu item.
-   * @param label The text to be displayed in the menu.
-   * @param icon The icon to be displayed left of the label.
-   * @param link The url fragment to which the item will route to (e.g. '/dashboard')
-   */
-  constructor(public label: string, public icon: string, public link: string) {}
+export interface MenuItem {
+  /** The text to be displayed in the menu. */
+  name: string;
+  /** The icon to be displayed left of the label. */
+  icon: string;
+  /** The url fragment to which the item will route to (e.g. '/dashboard') */
+  link: string;
 }
