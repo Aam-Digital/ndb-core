@@ -65,12 +65,17 @@ export class NavigationComponent {
         } else if (items.length === 1) {
           this.activeElement = items[0].name;
         } else {
-          // If there are multiple matches (multiple elements start with the give link),
-          // use the element where the length is bigger. For example:
-          // '/attendance' matches both manage attendance ('/attendance') as well as
-          // '/attendance/add/day' (add day attendance).
-          // If 'attendance/add/day' was the active link, then only this link
-          // would have been filtered
+          // If there are multiple matches (A user navigates with a URL that starts with
+          // multiple links from a MenuItem), use the element where the length is bigger.
+          //
+          // For example: Let there be two possible routes: '/attendance' and '/attendance/add/day'.
+          // When a user navigates to the URL '/attendance', only '/attendance' is
+          // a prefix of the possible '/attendance'. The potential other candidate '/attendance/add/day'
+          // is not a prefix of '/attendance' and there is no ambiguity.
+          //
+          // Vice Versa, when navigated to '/attendance/add/day',
+          // both '/attendance' and '/attendance/add/day' are a prefix of '/attendance/add/day'.
+          // In the latter case, the one with the longer URL should match.
           this.activeElement = items.reduce((i1, i2) =>
             i1.link.length > i2.link.length ? i1 : i2
           ).name;
