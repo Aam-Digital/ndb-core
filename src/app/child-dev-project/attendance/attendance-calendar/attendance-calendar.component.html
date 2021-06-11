@@ -37,10 +37,10 @@
   </div>
 
   <div *ngIf="selectedEvent && !highlightForChild">
-    <div *ngIf="!selectedEventStats.average">
+    <div *ngIf="!hasAverage">
       All excused (out of {{selectedEvent.children.length}} participants)
     </div>
-    <div *ngIf="selectedEventStats.average">
+    <div *ngIf="hasAverage">
       {{ selectedEventStats.average | percent: "1.0-0" }} attended
       (of {{ selectedEventStats.counted }} participants)
     </div>
