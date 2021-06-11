@@ -85,7 +85,7 @@
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <div class="sidenav-content">
+    <div class="sidenav-content primary-background">
       <router-outlet *ngIf="isLoggedIn()"></router-outlet>
       <app-login *ngIf="!isLoggedIn()"></app-login>
     </div>

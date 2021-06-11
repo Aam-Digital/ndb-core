@@ -197,7 +197,8 @@ export class EntityListComponent<T extends Entity>
     this.updateUserPaginationSettings();
   }
 
-  columnGroupClick(columnGroupName: string) {
+  columnGroupClick(columnIndex: number) {
+    const columnGroupName = this.columnGroups[columnIndex].name;
     this.displayColumnGroup(columnGroupName);
     this.updateUrl("view", columnGroupName);
   }
@@ -238,12 +239,10 @@ export class EntityListComponent<T extends Entity>
       this.paginatorPageSize !==
       this.user.paginatorSettingsPageSize[this.paginatorKey];
 
-    this.user.paginatorSettingsPageIndex[
-      this.paginatorKey
-    ] = this.paginatorPageIndex;
-    this.user.paginatorSettingsPageSize[
-      this.paginatorKey
-    ] = this.paginatorPageSize;
+    this.user.paginatorSettingsPageIndex[this.paginatorKey] =
+      this.paginatorPageIndex;
+    this.user.paginatorSettingsPageSize[this.paginatorKey] =
+      this.paginatorPageSize;
 
     if (hasChangesToBeSaved) {
       this.entityMapperService.save<User>(this.user);
