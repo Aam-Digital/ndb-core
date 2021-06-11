@@ -31,6 +31,8 @@ describe("ChildrenListComponent", () => {
   let fixture: ComponentFixture<ChildrenListComponent>;
   const routeData: EntityListConfig = {
     title: "Children List",
+    addNew: "Add child",
+    filterPlaceholder: "i.e. Participant name",
     columns: [
       { component: "DisplayText", title: "PN", id: "projectNumber" },
       { component: "ChildBlock", title: "Name", id: "name" },
@@ -80,10 +82,12 @@ describe("ChildrenListComponent", () => {
     data: of(routeData),
     queryParams: of({}),
   };
-  const mockChildrenService: jasmine.SpyObj<ChildrenService> =
-    jasmine.createSpyObj(["getChildren"]);
-  const mockEntityMapper: jasmine.SpyObj<EntityMapperService> =
-    jasmine.createSpyObj(["loadType", "save"]);
+  const mockChildrenService: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj(
+    ["getChildren"]
+  );
+  const mockEntityMapper: jasmine.SpyObj<EntityMapperService> = jasmine.createSpyObj(
+    ["loadType", "save"]
+  );
   beforeEach(
     waitForAsync(() => {
       mockEntityMapper.loadType.and.resolveTo([]);
