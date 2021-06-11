@@ -118,7 +118,7 @@ export class AttendanceCalendarComponent implements OnChanges {
   }
 
   get hasAverage(): boolean {
-    return !isNaN(this.selectedEventStats.average);
+    return !Number.isNaN(this.selectedEventStats.average);
   }
 
   selectDay(newDate?: Date) {
