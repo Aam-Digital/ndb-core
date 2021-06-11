@@ -84,7 +84,6 @@ export class EntityListComponent<T extends Entity>
 
   ready = true;
   columnsToDisplay: string[] = [];
-  selectedColumnGroup: string = "";
 
   filterSelections: FilterComponentSettings<T>[] = [];
   entityDataSource = new MatTableDataSource<T>();
@@ -384,19 +383,5 @@ export class EntityListComponent<T extends Entity>
     if (selectedColumnIndex !== -1) {
       this.selectedColumnGroupIndex = selectedColumnIndex;
     }
-  }
-
-  /*private displayColumnGroup(columnGroupName: string) {
-    const selectedColumns = this.columnGroups.find(
-      (c) => c.name === columnGroupName
-    )?.columns;
-    if (selectedColumns) {
-      this.columnsToDisplay = selectedColumns;
-      this.selectedColumnGroup = columnGroupName;
-    }
-  } */
-
-  private columnGroupIndexForColumnGroupName(name: string): number {
-    return this.columnGroups.findIndex((c) => c.name === name);
   }
 }
