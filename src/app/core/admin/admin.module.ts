@@ -17,9 +17,9 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatIconModule } from "@angular/material/icon";
 import { UserListComponent } from "./user-list/user-list.component";
-import { ExportDataComponent } from "./export-data/export-data.component";
 import { BackupService } from "./services/backup.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { ExportDataDirective } from "./export-data/export-data.directive";
 
 /**
  * GUI for administrative users to manage and maintain background and technical aspects of the app.
@@ -43,13 +43,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatIconModule,
     MatTooltipModule,
   ],
-  declarations: [AdminComponent, UserListComponent, ExportDataComponent],
-  providers: [
-    AdminGuard,
-    ChildPhotoUpdateService,
-    BackupService,
-    ExportDataComponent,
-  ],
-  exports: [ExportDataComponent],
+  declarations: [AdminComponent, UserListComponent, ExportDataDirective],
+  providers: [AdminGuard, ChildPhotoUpdateService, BackupService],
+  exports: [ExportDataDirective],
 })
 export class AdminModule {}

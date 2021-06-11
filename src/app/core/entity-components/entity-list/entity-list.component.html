@@ -47,15 +47,15 @@
 </div>
 
 <mat-menu #additional>
-  <button mat-menu-item>
-    <mat-icon
-      color="accent"
-      class="button-icon"
-      aria-label="download csv"
-      fontIcon="fa-download"
-    ></mat-icon>
-    <span> Download CSV </span>
-  </button>
+    <button mat-menu-item [appExportData]="entityList">
+      <mat-icon
+        color="accent"
+        class="button-icon"
+        aria-label="download csv"
+        fontIcon="fa-download"
+      ></mat-icon>
+      <span> Download CSV </span>
+    </button>
 </mat-menu>
 
 <div

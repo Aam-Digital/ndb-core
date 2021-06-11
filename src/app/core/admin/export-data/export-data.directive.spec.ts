@@ -1,30 +1,24 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import { ExportDataDirective } from "./export-data.directive";
 import { BackupService } from "../services/backup.service";
-import { ExportDataComponent } from "./export-data.component";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 
-describe("ExportDataComponent", () => {
-  let component: ExportDataComponent;
-  let fixture: ComponentFixture<ExportDataComponent>;
+describe("ExportDataDirective", () => {
   let mockBackupService: jasmine.SpyObj<BackupService>;
+  let directive: ExportDataDirective;
 
   beforeEach(
     waitForAsync(() => {
       mockBackupService = jasmine.createSpyObj(["createJson", "createCsv"]);
       TestBed.configureTestingModule({
-        declarations: [ExportDataComponent],
+        declarations: [ExportDataDirective],
         providers: [{ provide: BackupService, useValue: mockBackupService }],
       }).compileComponents();
+      directive = new ExportDataDirective(mockBackupService);
     })
   );
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ExportDataComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it("should create", () => {
-    expect(component).toBeTruthy();
+  it("should create an instance", () => {
+    expect(directive).toBeTruthy();
   });
 
   it("opens download link when pressing button", () => {
@@ -35,11 +29,10 @@ describe("ExportDataComponent", () => {
     document.createElement = jasmine
       .createSpy("HTML Element")
       .and.returnValue(link);
-    const button = fixture.nativeElement.querySelector("button");
 
-    expect(clickSpy.calls.count()).toBe(0);
-    button.click();
-    expect(clickSpy.calls.count()).toBe(1);
+    expect(clickSpy).not.toHaveBeenCalled();
+    directive.click();
+    expect(clickSpy).toHaveBeenCalled();
     // reset createElement otherwise results in: 'an Error was thrown after all'
     document.createElement = oldCreateElement;
   });

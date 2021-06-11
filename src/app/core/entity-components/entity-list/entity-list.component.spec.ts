@@ -15,7 +15,6 @@ import { Entity } from "../../entity/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { User } from "../../user/user";
 import { SessionService } from "../../session/session-service/session.service";
-import { ExportDataComponent } from "../../admin/export-data/export-data.component";
 import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { Note } from "../../../child-dev-project/notes/model/note";
@@ -24,6 +23,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { BackupService } from "../../admin/services/backup.service";
 import { EntityListModule } from "./entity-list.module";
 import { Angulartics2Module } from "angulartics2";
+import { ExportDataDirective } from "../../admin/export-data/export-data.directive";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -88,7 +88,7 @@ describe("EntityListComponent", () => {
       mockLoggingService = jasmine.createSpyObj(["warn"]);
       mockEntityMapper = jasmine.createSpyObj(["save"]);
       TestBed.configureTestingModule({
-        declarations: [EntityListComponent, ExportDataComponent],
+        declarations: [EntityListComponent, ExportDataDirective],
         imports: [
           CommonModule,
           NoopAnimationsModule,
@@ -140,7 +140,7 @@ describe("EntityListComponent", () => {
   it("should set the clicked column group", () => {
     component.ready = true;
     const clickedColumnGroup = testConfig.columnGroup.groups[0];
-    component.columnGroupClick(clickedColumnGroup.name);
+    component.selectedColumnGroupIndex = 0;
     expect(component.selectedColumnGroup).toEqual(clickedColumnGroup.name);
     expect(component.columnsToDisplay).toEqual(clickedColumnGroup.columns);
   });
