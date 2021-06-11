@@ -52,6 +52,12 @@
   color: white;
   border: 0;
   background-color: mat-color($ndb-app-primary);
-  border-radius: 2px;
+  border-radius: 5px;
   cursor: pointer;
+  width: 30px;
+  height: 45px;
+}
+
+.additional-button-icon {
+  font-size: 2em;
 }
