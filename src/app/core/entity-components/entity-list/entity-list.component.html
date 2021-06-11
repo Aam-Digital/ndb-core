@@ -15,7 +15,7 @@
         operation: operationType.CREATE
       }"
   >
-    <span fxHide.lt-md="true" class="fa fa-plus-circle button-icon"> Add Participant </span>
+    <span fxHide.lt-md="true" class="fa fa-plus-circle button-icon"> {{listConfig.addNew}} </span>
   </button>
 
   <div fxFlex="20"></div>
@@ -24,7 +24,7 @@
     <mat-label>Filter</mat-label>
     <input
       matInput
-      placeholder="i.e. Participant name"
+      [placeholder]="listConfig.filterPlaceholder"
       (ngModelChange)="applyFilter($event)"
       [(ngModel)]="filterString"
     />

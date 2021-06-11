@@ -62,8 +62,7 @@ interface FilterComponentSettings<T> {
   styleUrls: ["./entity-list.component.scss"],
 })
 export class EntityListComponent<T extends Entity>
-  implements OnChanges, OnInit, AfterViewInit
-{
+  implements OnChanges, OnInit, AfterViewInit {
   @Input() entityList: T[] = [];
   @Input() listConfig: EntityListConfig;
   @Input() entityConstructor: typeof Entity;
@@ -244,10 +243,12 @@ export class EntityListComponent<T extends Entity>
       this.paginatorPageSize !==
       this.user.paginatorSettingsPageSize[this.paginatorKey];
 
-    this.user.paginatorSettingsPageIndex[this.paginatorKey] =
-      this.paginatorPageIndex;
-    this.user.paginatorSettingsPageSize[this.paginatorKey] =
-      this.paginatorPageSize;
+    this.user.paginatorSettingsPageIndex[
+      this.paginatorKey
+    ] = this.paginatorPageIndex;
+    this.user.paginatorSettingsPageSize[
+      this.paginatorKey
+    ] = this.paginatorPageSize;
 
     if (hasChangesToBeSaved) {
       this.entityMapperService.save<User>(this.user);

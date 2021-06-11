@@ -30,6 +30,8 @@ describe("EntityListComponent", () => {
   let fixture: ComponentFixture<EntityListComponent<Entity>>;
   const testConfig: EntityListConfig = {
     title: "Children List",
+    addNew: "Add participant",
+    filterPlaceholder: "",
     columns: [
       { component: "DisplayText", title: "PN", id: "projectNumber" },
       { component: "ChildBlock", title: "Name", id: "name" },
@@ -224,6 +226,8 @@ describe("EntityListComponent", () => {
     component.listConfig = {
       title: testConfig.title,
       columns: testConfig.columns,
+      addNew: testConfig.addNew,
+      filterPlaceholder: testConfig.filterPlaceholder,
     };
     component.ngOnChanges({
       listConfig: new SimpleChange(false, component.listConfig, false),
