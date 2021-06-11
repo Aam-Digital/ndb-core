@@ -1,6 +1,20 @@
 import { Directive, HostListener, Input } from "@angular/core";
 import { BackupService } from "../services/backup.service";
 
+/**
+ * A directive that can be attached to a html element, commonly a button.
+ * Usage:
+ * ```html
+ *  <button
+ *    mat-stroked-button
+ *    [appExportData]="data"
+ *    format="csv"
+ *  >
+ *    Export CSV
+ *  </button
+ *
+ * ```
+ */
 @Directive({
   selector: "[appExportData]",
 })
