@@ -616,8 +616,7 @@ export const defaultJsonConfig = {
               "gender",
               "schoolClass",
               "schoolId",
-              "center",
-              "status"
+              "center"
             ]
           },
           {
@@ -629,7 +628,6 @@ export const defaultJsonConfig = {
               "schoolClass",
               "schoolId",
               "schoolAttendance",
-              "coachingAttendance",
               "motherTongue"
             ]
           },
@@ -653,6 +651,9 @@ export const defaultJsonConfig = {
             "columns": [
               "projectNumber",
               "name",
+              "gender",
+              "age",
+              "dateOfBirth",
               "center",
               "health_BMI",
               "health_vaccinationStatus",
@@ -662,10 +663,7 @@ export const defaultJsonConfig = {
               "health_lastDentalCheckup",
               "health_lastENTCheckup",
               "health_lastVitaminD",
-              "health_lastDeworming",
-              "gender",
-              "age",
-              "dateOfBirth"
+              "health_lastDeworming"
             ]
           },
           {
