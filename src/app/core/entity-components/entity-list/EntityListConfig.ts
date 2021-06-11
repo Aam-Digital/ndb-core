@@ -51,7 +51,7 @@ export class GroupConfig {
 export class FilterConfig {
   id: string;
   display?: string;
-  type?: string;
+  type?: "boolean" | "prebuilt" | "configurable-enum";
   default?: string;
   label?: string;
 }

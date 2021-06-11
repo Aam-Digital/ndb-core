@@ -380,4 +380,15 @@ export class EntityListComponent<T extends Entity>
       this.selectedColumnGroup = columnGroupName;
     }
   }
+
+  get selectedColumnGroupIndex(): number {
+    return this.columnGroups.findIndex(
+      (group) => group.name === this.selectedColumnGroup
+    );
+  }
+
+  set selectedColumnGroupIndex(newValue: number) {
+    const columnGroupName = this.columnGroups[newValue].name;
+    this.displayColumnGroup(columnGroupName);
+  }
 }

@@ -79,25 +79,11 @@
   class="toggle-selection-section"
   fxHide.lt-sm
 >
-  <mat-tab-group (selectedTabChange)="columnGroupClick($event.index)">
+  <mat-tab-group [(selectedIndex)]="selectedColumnGroupIndex">
     <mat-tab *ngFor="let item of columnGroups"
              [label]="item.name">
     </mat-tab>
   </mat-tab-group>
-  <!--
-  <mat-button-toggle-group
-    name="columnSelection"
-    [(value)]="selectedColumnGroup"
-  >
-    <mat-button-toggle
-      *ngFor="let item of columnGroups"
-      [value]="item.name"
-      (click)="columnGroupClick(item.name)"
-    >
-      {{ item.name }}
-    </mat-button-toggle>
-  </mat-button-toggle-group>
-  -->
 </div>
 
 <div class="mat-elevation-z2 table-list">
