@@ -11,6 +11,8 @@ import { Child } from "../../children/model/child";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatNativeDateModule } from "@angular/material/core";
+import { EMPTY } from "rxjs";
+import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 
 describe("AttendanceCalendarComponent", () => {
   let component: AttendanceCalendarComponent;
@@ -24,7 +26,7 @@ describe("AttendanceCalendarComponent", () => {
         providers: [
           {
             provide: EntityMapperService,
-            useValue: { save: () => Promise.resolve() },
+            useValue: mockEntityMapper(),
           },
         ],
       }).compileComponents();

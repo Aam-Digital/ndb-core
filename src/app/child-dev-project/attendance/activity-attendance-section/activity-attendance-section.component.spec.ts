@@ -12,6 +12,7 @@ import { defaultAttendanceStatusTypes } from "../../../core/config/default-confi
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceModule } from "../attendance.module";
 import { MatNativeDateModule } from "@angular/material/core";
+import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 
 describe("ActivityAttendanceSectionComponent", () => {
   let component: ActivityAttendanceSectionComponent;
@@ -37,7 +38,7 @@ describe("ActivityAttendanceSectionComponent", () => {
           { provide: AttendanceService, useValue: mockAttendanceService },
           {
             provide: EntityMapperService,
-            useValue: { save: () => Promise.resolve() },
+            useValue: mockEntityMapper(),
           },
           DatePipe,
           PercentPipe,
