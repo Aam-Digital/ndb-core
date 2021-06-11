@@ -30,8 +30,6 @@ describe("EntityListComponent", () => {
   let fixture: ComponentFixture<EntityListComponent<Entity>>;
   const testConfig: EntityListConfig = {
     title: "Children List",
-    addNew: "Add participant",
-    filterPlaceholder: "",
     columns: [
       { component: "DisplayText", title: "PN", id: "projectNumber" },
       { component: "ChildBlock", title: "Name", id: "name" },

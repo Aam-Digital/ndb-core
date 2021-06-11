@@ -4,8 +4,8 @@ import { FilterSelectionOption } from "../../filter/filter-selection/filter-sele
 export class EntityListConfig {
   title: string;
   columns: ColumnConfig[];
-  addNew: string = "Add new";
-  filterPlaceholder: string = "";
+  addNew?: string = "Add new";
+  filterPlaceholder?: string = "";
 
   /**
    * Optional config for which columns are displayed.
