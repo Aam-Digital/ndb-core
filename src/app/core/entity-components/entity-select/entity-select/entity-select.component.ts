@@ -61,7 +61,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     if (this.selectionInputType === "id") {
       this.loading
         .pipe(
-          filter((isLoading) => isLoading),
+          filter((isLoading) => !isLoading),
           untilDestroyed(this)
         )
         .subscribe((_) => {
