@@ -62,7 +62,8 @@ interface FilterComponentSettings<T> {
   styleUrls: ["./entity-list.component.scss"],
 })
 export class EntityListComponent<T extends Entity>
-  implements OnChanges, OnInit, AfterViewInit {
+  implements OnChanges, OnInit, AfterViewInit
+{
   @Input() entityList: T[] = [];
   @Input() listConfig: EntityListConfig;
   @Input() entityConstructor: typeof Entity;
@@ -97,6 +98,17 @@ export class EntityListComponent<T extends Entity>
   // This key is used to save the pagination settings on the user entity
   readonly paginatorKey: string;
 
+  get selectedColumnGroupIndex(): number {
+    return this.selectedColumnGroupIndex_;
+  }
+
+  set selectedColumnGroupIndex(newValue: number) {
+    this.selectedColumnGroupIndex_ = newValue;
+    this.columnsToDisplay = this.columnGroups[newValue].columns;
+  }
+
+  selectedColumnGroupIndex_: number = 0;
+
   constructor(
     private configService: ConfigService,
     private loggingService: LoggingService,
@@ -114,11 +126,11 @@ export class EntityListComponent<T extends Entity>
       switch (change[0].mqAlias) {
         case "xs":
         case "sm": {
-          this.displayColumnGroup(this.mobileColumnGroup);
+          this.displayColumnGroupByName(this.mobileColumnGroup);
           break;
         }
         case "md": {
-          this.displayColumnGroup(this.defaultColumnGroup);
+          this.displayColumnGroupByName(this.defaultColumnGroup);
           break;
         }
         case "lg":
@@ -143,7 +155,7 @@ export class EntityListComponent<T extends Entity>
       this.columns = this.listConfig.columns;
       this.initColumnGroups(this.listConfig.columnGroup);
       this.filtersConfig = this.listConfig.filters || [];
-      this.displayColumnGroup(this.defaultColumnGroup);
+      this.displayColumnGroupByName(this.defaultColumnGroup);
     }
     if (changes.hasOwnProperty("entityList")) {
       this.initFilterSelections();
@@ -197,12 +209,6 @@ export class EntityListComponent<T extends Entity>
     this.updateUserPaginationSettings();
   }
 
-  columnGroupClick(columnIndex: number) {
-    const columnGroupName = this.columnGroups[columnIndex].name;
-    this.displayColumnGroup(columnGroupName);
-    this.updateUrl("view", columnGroupName);
-  }
-
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
@@ -252,7 +258,7 @@ export class EntityListComponent<T extends Entity>
   private loadUrlParams() {
     this.activatedRoute.queryParams.subscribe((params) => {
       if (params["view"]) {
-        this.displayColumnGroup(params["view"]);
+        this.displayColumnGroupByName(params["view"]);
       }
       this.filterSelections.forEach((f) => {
         if (params.hasOwnProperty(f.filterSettings.name)) {
@@ -371,7 +377,16 @@ export class EntityListComponent<T extends Entity>
     return options;
   }
 
-  private displayColumnGroup(columnGroupName: string) {
+  private displayColumnGroupByName(columnGroupName: string) {
+    const selectedColumnIndex = this.columnGroups.findIndex(
+      (c) => c.name === columnGroupName
+    );
+    if (selectedColumnIndex !== -1) {
+      this.selectedColumnGroupIndex = selectedColumnIndex;
+    }
+  }
+
+  /*private displayColumnGroup(columnGroupName: string) {
     const selectedColumns = this.columnGroups.find(
       (c) => c.name === columnGroupName
     )?.columns;
@@ -379,16 +394,9 @@ export class EntityListComponent<T extends Entity>
       this.columnsToDisplay = selectedColumns;
       this.selectedColumnGroup = columnGroupName;
     }
-  }
+  } */
 
-  get selectedColumnGroupIndex(): number {
-    return this.columnGroups.findIndex(
-      (group) => group.name === this.selectedColumnGroup
-    );
-  }
-
-  set selectedColumnGroupIndex(newValue: number) {
-    const columnGroupName = this.columnGroups[newValue].name;
-    this.displayColumnGroup(columnGroupName);
+  private columnGroupIndexForColumnGroupName(name: string): number {
+    return this.columnGroups.findIndex((c) => c.name === name);
   }
 }
