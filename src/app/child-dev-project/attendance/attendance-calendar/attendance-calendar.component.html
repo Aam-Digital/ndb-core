@@ -57,6 +57,9 @@
   </div>
 
   <div *ngIf="!selectedEvent" class="no-events-notice">
-    no events on this date
+    <p>no events on this date</p>
+    <button mat-stroked-button (click)="showEventDetails(newNote())">
+      New event here
+    </button>
   </div>
 </div>
