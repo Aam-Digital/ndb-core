@@ -3,7 +3,6 @@ import { BehaviorSubject, Observable } from "rxjs";
 import { MatPaginator } from "@angular/material/paginator";
 import { Entity } from "../entity/entity";
 import { Database } from "./database";
-import { Child } from "../../child-dev-project/children/model/child";
 
 /**
  * Implementation of a datasource that directly queries an index on the {@link Database}
