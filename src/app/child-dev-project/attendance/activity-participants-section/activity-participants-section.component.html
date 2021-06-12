@@ -35,12 +35,9 @@
     Cancel
   </button>
 
-  <button
+  <app-edit-button
     *ngIf="!editing"
-    mat-stroked-button
-    class="edit-button"
-    (click)="switchEdit()"
+    (toggleEditing)="switchEdit()"
   >
-    Edit
-  </button>
+  </app-edit-button>
 </div>

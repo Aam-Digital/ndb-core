@@ -58,6 +58,7 @@ import { Angulartics2Module } from "angulartics2";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { AttendanceManagerComponent } from "./attendance-manager/attendance-manager.component";
 import { EntitySelectModule } from "../../core/entity-components/entity-select/entity-select.module";
+import { AppButtonsModule } from "../../core/app-buttons/app-buttons.module";
 
 @NgModule({
   declarations: [
@@ -105,6 +106,7 @@ import { EntitySelectModule } from "../../core/entity-components/entity-select/e
     Angulartics2Module,
     MatSlideToggleModule,
     EntitySelectModule,
+    AppButtonsModule,
   ],
   exports: [
     ActivityCardComponent,

@@ -3,6 +3,8 @@ import { ActivityParticipantsSectionComponent } from "./activity-participants-se
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { AttendanceModule } from "../attendance.module";
 import { mockEntityMapper } from "app/core/entity/mock-entity-mapper-service";
+import { AppButtonsModule } from "../../../core/app-buttons/app-buttons.module";
+import { EntityPermissionsService } from "../../../core/permissions/entity-permissions.service";
 
 describe("ActivityParticipantsSection", () => {
   let component: ActivityParticipantsSectionComponent;
@@ -11,9 +13,10 @@ describe("ActivityParticipantsSection", () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        imports: [AttendanceModule],
+        imports: [AttendanceModule, AppButtonsModule],
         providers: [
           { provide: EntityMapperService, useValue: mockEntityMapper([]) },
+          { provide: EntityPermissionsService, useValue: {} },
         ],
       }).compileComponents();
     })

@@ -208,17 +208,10 @@
     Cancel
   </button>
 
-  <ng-container *ngIf="!editing">
-    <button
-      mat-stroked-button
-      class="edit-button"
-      (click)="switchEdit()"
-      *appDisabledEntityOperation="{
-        entity: entity?.getConstructor(),
-        operation: operationType.UPDATE
-      }"
-    >
-      Edit
-    </button>
-  </ng-container>
+  <app-edit-button
+    *ngIf="!editing"
+    (toggleEditing)="switchEdit()"
+    [managingEntity]="entity?.getConstructor()"
+  >
+  </app-edit-button>
 </div>
