@@ -10,7 +10,6 @@ import { ChildSchoolRelation } from "./model/childSchoolRelation";
 import { HealthCheck } from "../health-checkup/model/health-check";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { ChildPhotoService } from "./child-photo-service/child-photo.service";
-import { LoadChildPhotoEntitySchemaDatatype } from "./child-photo-service/datatype-load-child-photo";
 import moment, { Moment } from "moment";
 import { LoggingService } from "../../core/logging/logging.service";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
@@ -25,11 +24,6 @@ export class ChildrenService {
     @Optional() childPhotoService: ChildPhotoService,
     @Optional() private logger: LoggingService
   ) {
-    if (childPhotoService) {
-      this.entitySchemaService.registerSchemaDatatype(
-        new LoadChildPhotoEntitySchemaDatatype(childPhotoService)
-      );
-    }
     this.createDatabaseIndices();
   }
 
