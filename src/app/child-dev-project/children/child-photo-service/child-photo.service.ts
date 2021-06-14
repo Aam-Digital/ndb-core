@@ -10,9 +10,17 @@ import { BehaviorSubject } from "rxjs";
 export class ChildPhotoService {
   public static getImageFromAssets(photoFile: string): SafeUrl {
     if (!photoFile || photoFile.trim() === "") {
-      return Child.getDefaultImage();
+      return "assets/child.png";
     }
-    return Child.generatePhotoPath(photoFile);
+    return ChildPhotoService.generatePhotoPath(photoFile);
+  }
+
+  /**
+   * Returns the full relative filePath to a child photo given a filename, adding the relevant folders to it.
+   * @param filename The given filename with file extension.
+   */
+  public static generatePhotoPath(filename: string): string {
+    return "assets/child-photos/" + filename;
   }
 
   private basePath = "photos/";

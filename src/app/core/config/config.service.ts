@@ -18,7 +18,7 @@ export class ConfigService {
   public configUpdated: BehaviorSubject<Config>;
 
   constructor(@Optional() private loggingService?: LoggingService) {
-    this.config.data = defaultJsonConfig;
+    this.config.data = JSON.parse(JSON.stringify(defaultJsonConfig));
     this.configUpdated = new BehaviorSubject<Config>(this.config);
   }
 
@@ -36,7 +36,7 @@ export class ConfigService {
         "No configuration found in the database, using default one"
       );
       const defaultConfig = new Config(ConfigService.CONFIG_KEY);
-      defaultConfig.data = defaultJsonConfig;
+      defaultConfig.data = JSON.parse(JSON.stringify(defaultJsonConfig));
       return defaultConfig;
     });
   }

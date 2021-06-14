@@ -54,7 +54,7 @@ describe("dataType photo", () => {
 
   it("should set the default photo when loading", () => {
     class TestEntity extends Entity {
-      @DatabaseField({ dataType: "photo", defaultValue: true })
+      @DatabaseField({ dataType: "photo", defaultValue: "" })
       photo: Photo;
     }
     const defaultImg = "default-img";
