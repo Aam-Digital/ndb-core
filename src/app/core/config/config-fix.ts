@@ -1247,12 +1247,12 @@ export const defaultJsonConfig = {
             {
               "query": `${EventNote.ENTITY_TYPE}:toArray[*date >= ? & date <= ?]`,
               "groupBy": ["category"],
-              "label": "Total # of events",
+              "label": "Events",
               "aggregations": [
                 {
                   "query": `:getParticipantsWithAttendance(PRESENT):unique:addPrefix(${Child.ENTITY_TYPE}):toEntities`,
                   "groupBy": ["gender", "religion"],
-                  "label": "Total # of participants"
+                  "label": "Participants"
                 }
               ]
             }

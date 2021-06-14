@@ -6,8 +6,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatIconModule } from "@angular/material/icon";
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { SimpleChange } from "@angular/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { EMPTY, of } from "rxjs";
 
 describe("BackgroundProcessingIndicatorComponent", () => {
   let component: BackgroundProcessingIndicatorComponent;
@@ -32,6 +32,7 @@ describe("BackgroundProcessingIndicatorComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(BackgroundProcessingIndicatorComponent);
     component = fixture.componentInstance;
+    component.backgroundProcesses = EMPTY;
 
     fixture.detectChanges();
   });
@@ -41,26 +42,22 @@ describe("BackgroundProcessingIndicatorComponent", () => {
   });
 
   it("should aggregate process states by title if set to summarize", async () => {
+    spyOn(component.taskListDropdownTrigger, "openMenu");
     const p1 = { title: "sync", pending: true };
     const p2a = { title: "indexing", details: "A", pending: false };
     const p2b = { title: "indexing", details: "B", pending: true };
     const p2c = { title: "indexing", details: "C", pending: false };
     const p3 = { title: "completed other stuff", pending: false };
-    component.backgroundProcesses = [p1, p2a, p2b, p2c, p3];
+
+    component.backgroundProcesses = of([p1, p2a, p2b, p2c, p3]);
     component.summarize = true;
-    spyOn(component.taskListDropdownTrigger, "openMenu");
+    component.ngOnInit();
 
-    component.ngOnChanges({
-      backgroundProcesses: new SimpleChange(
-        [],
-        component.backgroundProcesses,
-        false
-      ),
-    });
-    fixture.detectChanges();
+    const taskCounter = await component.taskCounterObservable.toPromise();
+    expect(taskCounter).toBe(2);
 
-    expect(component.taskCounter).toBe(2); // not counting the pending === false
-    expect(component.backgroundProcesses).toEqual([
+    const filteredProcesses = await component.filteredProcesses.toPromise();
+    expect(filteredProcesses).toEqual([
       p1,
       { title: p2a.title, pending: true },
       p3,
@@ -69,41 +66,23 @@ describe("BackgroundProcessingIndicatorComponent", () => {
   });
 
   it("should automatically close details after all processes finished", async () => {
-    component.backgroundProcesses = [{ title: "sync", pending: false }];
+    component.backgroundProcesses = of([{ title: "sync", pending: false }]);
     spyOn(component.taskListDropdownTrigger, "closeMenu");
+    component.ngOnInit();
 
-    component.ngOnChanges({
-      backgroundProcesses: new SimpleChange(
-        [],
-        component.backgroundProcesses,
-        false
-      ),
-    });
-    fixture.detectChanges();
+    const tasks = await component.taskCounterObservable.toPromise();
 
-    expect(component.taskCounter).toBe(0);
+    expect(tasks).toBe(0);
     expect(component.taskListDropdownTrigger.closeMenu).toHaveBeenCalled();
   });
 
   it("should not open details again if they the state before was already pending (and user may have manually closed)", async () => {
-    component.backgroundProcesses = [
+    component.backgroundProcesses = of([
       { title: "sync", pending: true },
       { title: "other", pending: true },
       { title: "yet another", pending: true },
-    ];
+    ]);
     spyOn(component.taskListDropdownTrigger, "openMenu");
-
-    component.ngOnChanges({
-      backgroundProcesses: new SimpleChange(
-        [
-          { title: "sync", pending: true },
-          { title: "other", pending: true },
-        ],
-        component.backgroundProcesses,
-        false
-      ),
-    });
-    fixture.detectChanges();
 
     expect(component.taskListDropdownTrigger.openMenu).not.toHaveBeenCalled();
   });
