@@ -342,9 +342,10 @@ export const defaultJsonConfig = {
         {
           "id": "privateSchool",
           "type": "boolean",
+          "label": "School",
           "default": "",
-          "true": "Private School",
-          "false": "Government School",
+          "true": "Private",
+          "false": "Government",
           "all": "All"
         }
       ]
@@ -685,10 +686,11 @@ export const defaultJsonConfig = {
       },
       "filters": [
         {
+          "label": "Children",
           "id": "isActive",
           "type": "boolean",
           "default": "true",
-          "true": "Active Children",
+          "true": "Active",
           "false": "Inactive",
           "all": "All"
         },
