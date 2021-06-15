@@ -33,6 +33,14 @@ export const numberEntitySchemaDatatype: EntitySchemaDatatype = {
   name: "number",
 
   transformToDatabaseFormat: (value) => {
+    // check if falsy except for 0
+    if(value !== 0 && !value){
+      console.warn(
+        `property to be transformed with "number" EntitySchema is falsy`,
+        value
+      );
+      return undefined;
+    }
     return Number(value);
   },
 

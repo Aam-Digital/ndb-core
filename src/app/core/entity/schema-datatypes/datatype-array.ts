@@ -40,13 +40,13 @@ export const arrayEntitySchemaDatatype: EntitySchemaDatatype = {
     schemaService: EntitySchemaService,
     parent
   ) => {
-    if (!Array.isArray(value)) {
+    if (!Array.isArray(value)  || !value.length) {
       console.warn(
-        `property to be transformed with "array" EntitySchema is not an array`,
+        `property to be transformed with "array" EntitySchema is not an array or empty`,
         value,
         parent
       );
-      return value;
+      return undefined;
     }
 
     const arrayElementDatatype: EntitySchemaDatatype = schemaService.getDatatypeOrDefault(
