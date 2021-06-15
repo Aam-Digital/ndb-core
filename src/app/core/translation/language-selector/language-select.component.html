@@ -1,13 +1,12 @@
-<span [class]="'flag-icon flag-icon-' + siteRegionCode">
-  <mat-select
-    [value]="null"
-    #language
-    (change)="select(language.value)"
-  >
-    <mat-option class="w-WARNING hint" [disabled]="true" i18n>Warning: Language Change may take a while</mat-option>
-    <mat-option *ngFor="let lang of languageList" (onSelectionChange)="select(lang.locale)">
-      <span [class]="'flag-clip flag-icon flag-icon-' + lang.regionCode"></span>
-      <span> {{lang.regionCode}}</span>
-    </mat-option>
-  </mat-select>
-</span>
+<button
+  mat-icon-button
+  [matMenuTriggerFor]="menu">
+  <mat-icon [class]="'flag-icon flag-icon-' + siteRegionCode"></mat-icon>
+</button>
+
+<mat-menu #menu>
+  <button *ngFor="let lang of languageList" (click)="select(lang.locale)" mat-menu-item>
+    <mat-icon [class]="'flag-clip flag-icon flag-icon-' + lang.regionCode"></mat-icon>
+    <span>{{lang.regionCode}}</span>
+  </button>
+</mat-menu>
