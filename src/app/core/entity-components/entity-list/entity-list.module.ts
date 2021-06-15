@@ -62,6 +62,6 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
     MatSliderModule,
     MatSlideToggleModule,
   ],
-  exports: [EntityListComponent],
+  exports: [EntityListComponent, ListPaginatorComponent],
 })
 export class EntityListModule {}

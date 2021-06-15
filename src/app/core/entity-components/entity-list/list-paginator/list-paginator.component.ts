@@ -1,4 +1,4 @@
-import { Component, ViewChild, Input } from "@angular/core";
+import { Component, ViewChild, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Entity } from "../../../entity/entity";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
@@ -8,18 +8,22 @@ import { EntityMapperService } from "app/core/entity/entity-mapper.service";
 import { getUrlWithoutParams } from "app/utils/utils";
 import { Router } from "@angular/router";
 
+
 @Component({
   selector: "app-list-paginator",
   templateUrl: "./list-paginator.component.html",
   styleUrls: ["./list-paginator.component.scss"],
 })
-export class ListPaginatorComponent<E extends Entity> {
+export class ListPaginatorComponent<E extends Entity> 
+  implements OnChanges {
   @Input() dataSource: MatTableDataSource<E>;
   
   // Inputting the data separately from the dataSource is just a workaround to subscribe to the changes in the data
   // and thus to update the pagination settings at the moment when the data is fully loaded.
   // There should be a more elegant way to do this.
   @Input() data: E[] = [];
+
+  @Input() idForSavingPagination?: string; 
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -31,7 +35,7 @@ export class ListPaginatorComponent<E extends Entity> {
   allToggle: boolean = false;
 
   // This key is used to save the pagination settings on the user entity
-  readonly paginatorKey: string;
+  paginatorKey: string;
 
   constructor(
     private sessionService: SessionService,
@@ -44,6 +48,7 @@ export class ListPaginatorComponent<E extends Entity> {
   ngOnInit() {
     this.user = this.sessionService.getCurrentUser();
     // Use URl as key to save pagination settings
+    console.log("Ich benutze als ID: " + this.paginatorKey)
     this.paginatorPageSize =
       this.user.paginatorSettingsPageSize[this.paginatorKey] ||
       this.paginatorPageSize;
@@ -52,11 +57,17 @@ export class ListPaginatorComponent<E extends Entity> {
       this.paginatorPageIndex;
   }
 
-  ngOnChanges(): void {
-    this.allToggle =
-      this.paginatorPageSize >= this.dataSource.data.length;
-    this.getPaginatorPageSize();
-    this.getPaginatorPageSizeOptions();
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes["idForSavingPagination"]) { 
+      this.paginatorKey = this.paginatorKey + "_" + this.idForSavingPagination;
+      console.log("Der paginatorKey ist : " + this.paginatorKey);
+    }
+    else {
+      this.allToggle =
+        this.paginatorPageSize >= this.dataSource.data.length;
+      this.getPaginatorPageSize();
+      this.getPaginatorPageSizeOptions();
+    }
   }
 
   ngAfterViewInit() {
@@ -85,7 +96,6 @@ export class ListPaginatorComponent<E extends Entity> {
     });
     ar.push(this.dataSource.data.length);
     this.paginatorPageSizeOptions = ar;
-    console.log("Paginator Page Size Options gesetzt.")
   }
 
   getPaginatorPageSize(): number {
@@ -95,7 +105,6 @@ export class ListPaginatorComponent<E extends Entity> {
     ) {
       this.paginatorPageSize = this.dataSource.data.length;
     }
-    console.log("PageSize gesetzt auf: " + this.paginatorPageSize);
     return this.paginatorPageSize;
   }
 
