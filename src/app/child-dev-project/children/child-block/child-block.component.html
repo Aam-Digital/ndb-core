@@ -5,7 +5,7 @@
   (click)="showDetailsPage()"
   [ngClass]="{ inactive: !entity.isActive, clickable: !linkDisabled }"
 >
-  <img [src]="entity?.photo?.value" class="child-pic" />
+  <img [src]="entity.photo?.photo?.value" class="child-pic" />
   {{ entity?.name }}
   <span style="font-size: x-small" *ngIf="entity?.projectNumber"
     >({{ entity?.projectNumber }})</span
@@ -21,7 +21,7 @@
     fxLayoutGap="8px"
   >
     <div fxFlex>
-      <img [src]="entity?.photo?.value" class="child-pic-large" />
+      <img [src]="entity?.photo?.photo?.value" class="child-pic-large" />
     </div>
     <div fxFlex="grow">
       <h3>{{ entity?.name }}</h3>

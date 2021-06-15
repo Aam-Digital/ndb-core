@@ -11,7 +11,7 @@
         <ng-container [ngSwitch]="row.input">
           <div *ngSwitchCase="'photo'" class="child-pic-container">
             <img
-              [src]="entity?.photo?.value"
+              [src]="form.get(row.id).value?.photo?.value"
               class="child-pic"
               alt="child's photo"
               i18n-alt="Short description of a child's photo"
@@ -41,14 +41,15 @@
                 i18n-matTooltip="Tooltip when uploading a photo"
                 matTooltip="filename for child photo uploaded by server administrator"
                 matInput
-                [formControlName]="row.id"
+                (change)="changeFilename(photoFileInput.value, row.id)"
+                [value]="form.get(row.id).value?.path"
                 [placeholder]="row.placeholder"
                 [title]="row.placeholder"
                 type="text"
               />
               <span
                 matSuffix
-                (click)="photoFileInput.value = ''"
+                (click)="changeFilename('', row.id)"
                 class="fa fa-times"
               ></span>
             </mat-form-field>
