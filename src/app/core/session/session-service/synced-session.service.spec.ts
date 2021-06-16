@@ -245,7 +245,7 @@ describe("SyncedSessionService", () => {
       return expectAsync(result).toBeResolvedTo(LoginState.LOGIN_FAILED);
     }));
 
-    it("behaves correctly when the local session logs in, but the remote session rejects (password change, old password", fakeAsync(() => {
+    it("behaves correctly when the local session logs in, but the remote session rejects (password change, old password)", fakeAsync(() => {
       const localLogout = spyOn(localSession, "logout");
       resolveSync();
       const result = mockLogin(LoginState.LOGGED_IN, ConnectionState.REJECTED);
