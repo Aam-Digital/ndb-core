@@ -21,6 +21,7 @@ import { EventNote } from "../model/event-note";
 import { RecurringActivity } from "../model/recurring-activity";
 import { applyUpdate } from "../../../core/entity/entity-update";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { AttendanceService } from "../attendance.service";
 
 @Component({
   selector: "app-attendance-calendar",
@@ -45,7 +46,8 @@ export class AttendanceCalendarComponent implements OnChanges {
 
   constructor(
     private entityMapper: EntityMapperService,
-    private formDialog: FormDialogService
+    private formDialog: FormDialogService,
+    private attendanceService: AttendanceService
   ) {
     this.entityMapper
       .receiveUpdates(EventNote)
@@ -165,14 +167,12 @@ export class AttendanceCalendarComponent implements OnChanges {
     await this.entityMapper.save(this.selectedEvent);
   }
 
-  newNote(): EventNote {
-    const note = new EventNote();
-    note.date = this.selectedDate.toDate();
-    note.children = this.activity.participants;
-    note.authors = this.activity.assignedTo;
-    note.category = this.activity.type;
-    note.subject = this.activity.title;
-    return note;
+  createNewEvent() {
+    this.attendanceService
+      .createEventForActivity(this.activity, this.selectedDate.toDate())
+      .then((note) => {
+        this.showEventDetails(note);
+      });
   }
 
   showEventDetails(selectedEvent: Note) {

@@ -15,6 +15,8 @@ import { EntitySubrecordModule } from "../../../core/entity-components/entity-su
 import { MatNativeDateModule } from "@angular/material/core";
 import { MatDialogRef } from "@angular/material/dialog";
 import { EMPTY } from "rxjs";
+import { EventNote } from "../model/event-note";
+import { AttendanceService } from "../attendance.service";
 
 describe("AttendanceDetailsComponent", () => {
   let component: AttendanceDetailsComponent;
@@ -22,6 +24,13 @@ describe("AttendanceDetailsComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
+      const mockAttendanceService = jasmine.createSpyObj([
+        "createEventForActivity",
+      ]);
+      mockAttendanceService.createEventForActivity.and.resolveTo(
+        new EventNote()
+      );
+
       const entity = ActivityAttendance.create(new Date(), [
         generateEventWithAttendance(
           [
@@ -56,6 +65,7 @@ describe("AttendanceDetailsComponent", () => {
         providers: [
           { provide: EntityMapperService, useValue: mockEntityMapperService },
           { provide: MatDialogRef, useValue: {} },
+          { provide: AttendanceService, useValue: mockAttendanceService },
         ],
       }).compileComponents();
     })
