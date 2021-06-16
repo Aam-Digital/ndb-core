@@ -13,7 +13,7 @@ import { HistoricalEntityData } from "../historical-entity-data";
 import { HistoricalDataComponent } from "./historical-data.component";
 import { HistoricalDataModule } from "../historical-data.module";
 import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
-import { ratingAnswers } from "../demo-historical-data-generator";
+import { ratingAnswers } from "../rating-answers";
 
 export default {
   title: "Core/EntityComponents/HistoricalDataComponent",

@@ -6,7 +6,7 @@ import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 import { ColumnDescriptionInputType } from "../entity-components/entity-subrecord/column-description-input-type.enum";
-import { ratingAnswers } from "../../features/historical-data/demo-historical-data-generator";
+import { ratingAnswers } from "../../features/historical-data/rating-answers";
 
 // prettier-ignore
 export const defaultJsonConfig = {
