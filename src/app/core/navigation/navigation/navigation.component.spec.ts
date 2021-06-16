@@ -15,26 +15,33 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 
 import { NavigationComponent } from "./navigation.component";
-import { RouterTestingModule } from "@angular/router/testing";
-import { MenuItem } from "../menu-item";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatIconModule } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
 import { RouterService } from "../../view/dynamic-routing/router.service";
 import { ConfigService } from "../../config/config.service";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import { Config } from "../../config/config";
 import { AdminGuard } from "../../admin/admin.guard";
+import { Event, NavigationEnd, Router } from "@angular/router";
 
 describe("NavigationComponent", () => {
   let component: NavigationComponent;
   let fixture: ComponentFixture<NavigationComponent>;
 
+  const mockRouterEvents = new Subject<Event>();
   let mockConfigService: jasmine.SpyObj<ConfigService>;
   const mockConfigUpdated = new BehaviorSubject<Config>(null);
+  let mockRouter: jasmine.SpyObj<Router>;
   let mockAdminGuard: jasmine.SpyObj<AdminGuard>;
 
   beforeEach(
@@ -44,18 +51,18 @@ describe("NavigationComponent", () => {
       mockConfigService.configUpdated = mockConfigUpdated;
       mockAdminGuard = jasmine.createSpyObj(["isAdmin"]);
       mockAdminGuard.isAdmin.and.returnValue(false);
+      mockRouter = jasmine.createSpyObj("Router", [], {
+        url: "/",
+        events: mockRouterEvents,
+      });
 
       TestBed.configureTestingModule({
-        imports: [
-          RouterTestingModule,
-          MatIconModule,
-          MatDividerModule,
-          MatListModule,
-        ],
+        imports: [MatIconModule, MatDividerModule, MatListModule],
         declarations: [NavigationComponent],
         providers: [
           { provide: AdminGuard, useValue: mockAdminGuard },
           { provide: ConfigService, useValue: mockConfigService },
+          { provide: Router, useValue: mockRouter },
         ],
       }).compileComponents();
     })
@@ -83,8 +90,8 @@ describe("NavigationComponent", () => {
     const items = component.menuItems;
 
     expect(items).toEqual([
-      new MenuItem("Dashboard", "home", "/dashboard"),
-      new MenuItem("Children", "child", "/child"),
+      { name: "Dashboard", icon: "home", link: "/dashboard" },
+      { name: "Children", icon: "child", link: "/child" },
     ]);
   });
 
@@ -109,7 +116,56 @@ describe("NavigationComponent", () => {
     mockConfigUpdated.next(null);
 
     expect(component.menuItems).toEqual([
-      new MenuItem("Children", "child", "/child"),
+      { name: "Children", icon: "child", link: "/child" },
     ]);
   });
+
+  it("marks the correct route for multiple scenarios", fakeAsync(() => {
+    const testConfig = {
+      items: [
+        { name: "Dashboard", icon: "home", link: "/" },
+        { name: "Children", icon: "child", link: "/child" },
+        {
+          name: "Record Attendance",
+          icon: "calendar-check-o",
+          link: "/attendance/add/day",
+        },
+        {
+          name: "Manage Attendance",
+          icon: "table",
+          link: "/attendance",
+        },
+      ],
+    };
+    mockConfigService.getConfig.and.returnValue(testConfig);
+    mockConfigUpdated.next(null);
+    tick();
+    const testScenarios: { url: string; expectedElement: string }[] = [
+      {
+        url: "/",
+        expectedElement: "Dashboard",
+      },
+      {
+        url: "/child",
+        expectedElement: "Children",
+      },
+      {
+        url: "/child/7",
+        expectedElement: "Children",
+      },
+      {
+        url: "/attendance/add/day",
+        expectedElement: "Record Attendance",
+      },
+      {
+        url: "/attendance",
+        expectedElement: "Manage Attendance",
+      },
+    ];
+    testScenarios.forEach(({ url, expectedElement }) => {
+      mockRouterEvents.next(new NavigationEnd(0, url, ""));
+      tick();
+      expect(component.activeElement).toEqual(expectedElement);
+    });
+  }));
 });

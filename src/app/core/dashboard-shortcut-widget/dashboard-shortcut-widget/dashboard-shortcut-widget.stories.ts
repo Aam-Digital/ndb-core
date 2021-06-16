@@ -33,12 +33,12 @@ export const Primary = Template.bind({});
 Primary.args = {
   shortcuts: [
     {
-      label: "Record Attendance",
+      name: "Record Attendance",
       icon: "calendar-check-o",
       link: "/attendance/add/day",
     },
     {
-      label: "All Notes",
+      name: "All Notes",
       icon: "file-text",
       link: "/note",
     },

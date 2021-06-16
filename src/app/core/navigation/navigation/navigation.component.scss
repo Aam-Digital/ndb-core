@@ -14,12 +14,17 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
+@import "../../../../ndb-theme";
 
 .divider {
   background-color: #e5e5e5;
   height: 1px;
   margin: 9px 0;
   overflow: hidden;
+}
+
+.highlighted {
+  background-color: mat-color($ndb-app-primary) !important;
 }
 
 .nav-history {
