@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { HttpClient } from "@angular/common/http";
 import { Child } from "../../../child-dev-project/children/model/child";
+import { ChildPhotoService } from "../../../child-dev-project/children/child-photo-service/child-photo.service";
 
 /**
  * Utility service to automatically detect and update filenames for Child entities' photos.
@@ -33,16 +34,17 @@ export class ChildPhotoUpdateService {
    * @param filename A guess for a likely filename that needs to be checked
    */
   private async updatePhotoIfFileExists(child: Child, filename: string) {
-    if (child.photoFile && child.photoFile !== "") {
+    if (child.photo?.path && child.photo.path !== "") {
       // do not overwrite existing path
       return;
     }
 
     const fileExists = await this.checkIfFileExists(
-      Child.generatePhotoPath(filename)
+      ChildPhotoService.generatePhotoPath(filename)
     );
     if (fileExists) {
-      child.photoFile = filename;
+      const currentPhoto = child.photo;
+      child.photo = { path: filename, photo: currentPhoto?.photo };
       this.entityService.save<Child>(child);
       console.log(
         `set photoFile for Child:${child.getId()} (${
@@ -57,10 +59,7 @@ export class ChildPhotoUpdateService {
       await this.httpClient.get(filename).toPromise();
       return true;
     } catch (e) {
-      if (e.status === 200) {
-        return true;
-      }
-      return false;
+      return e.status === 200;
     }
   }
 }
