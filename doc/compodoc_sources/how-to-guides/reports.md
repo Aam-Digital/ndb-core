@@ -56,6 +56,8 @@ If you are only interested in the names of these children `Child:toArray[* age>1
 array of children into an array of strings.
 
 To navigate between different entities a set of functions extends the query syntax.
+The full documentation for all the available functions can be found and extended in the 
+[QueryService](../../injectables/QueryService.html).
 The first function you already know `:toArray` which creates an object into an array of values of this object.
 The following functions also exist:
 - `:unique` removes all duplicates from an array
