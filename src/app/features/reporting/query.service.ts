@@ -59,6 +59,7 @@ export class QueryService {
         filterByObjectAttribute: this.filterByObjectAttribute,
         getIds: this.getIds,
         getParticipantsWithAttendance: this.getParticipantsWithAttendance,
+        addEntities: this.addEntities.bind(this),
       },
     }).value;
   }
@@ -256,5 +257,15 @@ export class QueryService {
       })
     );
     return attendedChildren;
+  }
+
+  /**
+   * Adds all entities of the given type to the input array
+   * @param entities the array before
+   * @param entityType the type of entities which should be added
+   * @returns the input array concatenated with all entities of the entityType
+   */
+  addEntities(entities: Entity[], entityType: string): Entity[] {
+    return entities.concat(...this.toArray(this.entities[entityType]));
   }
 }

@@ -79,6 +79,8 @@ The following functions also exist:
 - `:getParticipantsWithAttendance(<ATTENDANCE_STATUS>)` only returns the children with the given attendance for a set 
     of notes. The attendance refers to the `countAs` attribute. To get all present children write 
     `Note:toArray:getParticipantsWithAttendance(PRESENT)`
+- `:addEntities(<ENTITY_TYPE>)` can be used to create an array holding multiple entity types.
+    E.g., to create an array holding notes and event notes write `Note:toArray:addEntities(EventNote)`.
     
 
 
