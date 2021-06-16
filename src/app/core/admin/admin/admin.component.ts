@@ -11,6 +11,7 @@ import { ConfigService } from "../../config/config.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { AttendanceMigrationService } from "../../../child-dev-project/attendance/attendance-migration/attendance-migration.service";
 import { NotesMigrationService } from "../../../child-dev-project/notes/notes-migration/notes-migration.service";
+import { ChildrenMigrationService } from "../../../child-dev-project/children/child-photo-service/children-migration.service";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -39,7 +40,8 @@ export class AdminComponent implements OnInit {
     private configService: ConfigService,
     private entityMapper: EntityMapperService,
     public attendanceMigration: AttendanceMigrationService,
-    public notesMigration: NotesMigrationService
+    public notesMigration: NotesMigrationService,
+    public childrenMigrationService: ChildrenMigrationService
   ) {}
 
   ngOnInit() {

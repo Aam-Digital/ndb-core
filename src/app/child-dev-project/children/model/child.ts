@@ -19,10 +19,9 @@ import { Entity } from "../../../core/entity/entity";
 import { Gender } from "./Gender";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { SafeUrl } from "@angular/platform-browser";
-import { BehaviorSubject } from "rxjs";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 import { calculateAge } from "../../../utils/utils";
+import { Photo } from "../child-photo-service/photo";
 
 export type Center = ConfigurableEnumValue;
 @DatabaseEntity("Child")
@@ -31,14 +30,6 @@ export class Child extends Entity {
     const instance = new Child();
     instance.name = name;
     return instance;
-  }
-
-  /**
-   * Returns the full relative filePath to a child photo given a filename, adding the relevant folders to it.
-   * @param filename The given filename with file extension.
-   */
-  public static generatePhotoPath(filename: string): string {
-    return "assets/child-photos/" + filename;
   }
 
   @DatabaseField() name: string;
@@ -61,14 +52,11 @@ export class Child extends Entity {
   /** current class (as determined through the ChildSchoolRelation docs) set during loading through ChildrenService */
   schoolClass: string = "";
 
-  /**
-   * Url to an image that is displayed for the child
-   * as a fallback option if no CloudFileService file or connection is available.
-   */
-  @DatabaseField() photoFile: string;
-
-  @DatabaseField({ dataType: "load-child-photo", defaultValue: true })
-  photo: BehaviorSubject<SafeUrl>;
+  @DatabaseField({
+    dataType: "photo",
+    defaultValue: "",
+  })
+  photo: Photo;
 
   get age(): number {
     return this.dateOfBirth ? calculateAge(this.dateOfBirth) : null;
