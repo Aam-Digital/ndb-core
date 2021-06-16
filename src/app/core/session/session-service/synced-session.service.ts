@@ -29,9 +29,6 @@ import { SyncState } from "../session-states/sync-state.enum";
 import { User } from "../../user/user";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { LoggingService } from "../../logging/logging.service";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { concatMap, retry } from "rxjs/operators";
-import { of, throwError } from "rxjs";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -41,7 +38,6 @@ import { of, throwError } from "rxjs";
  * [Session Handling, Authentication & Synchronisation]{@link /additional-documentation/concepts/session-and-authentication-system.html}
  */
 @Injectable()
-@UntilDestroy()
 export class SyncedSessionService extends SessionService {
   private _localSession: LocalSession;
   private _remoteSession: RemoteSession;
@@ -124,24 +120,20 @@ export class SyncedSessionService extends SessionService {
         }
 
         // If we are not connected, we must check (asynchronously), whether the local database is initial
-        this._localSession.isInitial
-          .pipe(untilDestroyed(this))
-          .subscribe((isInitial) => {
-            if (isInitial) {
-              // If we were initial, the local session was waiting for a sync.
-              if (connectionState === ConnectionState.REJECTED) {
-                // Explicitly fail the login if the Connection was rejected, so the LocalSession knows what's going on
-                // additionally, fail sync to resolve deadlock
-                this._localSession.loginStateStream.next(
-                  LoginState.LOGIN_FAILED
-                );
-                this._localSession.syncStateStream.next(SyncState.FAILED);
-              } else {
-                // Explicitly abort the sync to resolve the deadlock
-                this._localSession.syncStateStream.next(SyncState.ABORTED);
-              }
+        this._localSession.isInitial().then((isInitial) => {
+          if (isInitial) {
+            // If we were initial, the local session was waiting for a sync.
+            if (connectionState === ConnectionState.REJECTED) {
+              // Explicitly fail the login if the Connection was rejected, so the LocalSession knows what's going on
+              // additionally, fail sync to resolve deadlock
+              this._localSession.loginStateStream.next(LoginState.LOGIN_FAILED);
+              this._localSession.syncStateStream.next(SyncState.FAILED);
+            } else {
+              // Explicitly abort the sync to resolve the deadlock
+              this._localSession.syncStateStream.next(SyncState.ABORTED);
             }
-          });
+          }
+        });
 
         // remote rejected but local logged in
         if (connectionState === ConnectionState.REJECTED) {
@@ -155,18 +147,15 @@ export class SyncedSessionService extends SessionService {
           }
         }
 
-        await this._localSession.isInitial
-          .pipe(
-            concatMap((initial) => {
-              if (!initial && connectionState === ConnectionState.OFFLINE) {
-                return throwError("Offline");
-              } else {
-                return of(true);
-              }
-            }),
-            retry(2)
-          )
-          .toPromise();
+        // offline? retry (unless we are in an initial state)! TODO(lh): Backoff
+        if (
+          connectionState === ConnectionState.OFFLINE &&
+          !(await this._localSession.isInitial())
+        ) {
+          this._offlineRetryLoginScheduleHandle = setTimeout(() => {
+            this.login(username, password);
+          }, 2000);
+        }
       })
       .catch((err) => this._loggingService.error(err));
     return localLogin; // the local login is the Promise that counts

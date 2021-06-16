@@ -25,9 +25,7 @@ import { User } from "../../user/user";
 import { SyncState } from "../session-states/sync-state.enum";
 import { LoginState } from "../session-states/login-state.enum";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { BehaviorSubject, Observable } from "rxjs";
-import { fromPromise } from "rxjs/internal-compatibility";
-import { map } from "rxjs/operators";
+import { BehaviorSubject } from "rxjs";
 import { failOnStates, waitForChangeTo } from "./sessionUtil";
 
 /**
@@ -118,24 +116,24 @@ export class LocalSession {
    * Wait for the first sync of the database, returns a Promise.
    * Resolves directly, if the database is not initial, otherwise waits for the first change of the SyncState to completed (or failed)
    */
-  public async waitForFirstSync(): Promise<void> {
-    await this.syncStateStream
-      .pipe(
-        failOnStates([SyncState.FAILED, SyncState.ABORTED]),
-        waitForChangeTo(SyncState.COMPLETED)
-      )
-      .toPromise();
+  public async waitForFirstSync(): Promise<any> {
+    if (await this.isInitial()) {
+      return await this.syncStateStream
+        .pipe(
+          failOnStates([SyncState.FAILED, SyncState.ABORTED]),
+          waitForChangeTo(SyncState.COMPLETED)
+        )
+        .toPromise();
+    }
   }
 
   /**
    * Check whether the local database is in an initial state.
    * This check can only be performed async, so this method returns a Promise
    */
-  public get isInitial(): Observable<boolean> {
+  public isInitial(): Promise<boolean> {
     // `doc_count === 0 => initial` is a valid assumptions, as documents for users must always be present, even after db-clean
-    return fromPromise(this.database.info()).pipe(
-      map((result: any) => result.doc_count === 0)
-    );
+    return this.database.info().then((result) => result.doc_count === 0);
   }
 
   /**

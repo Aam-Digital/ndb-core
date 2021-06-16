@@ -26,9 +26,7 @@ import { SyncState } from "../session-states/sync-state.enum";
 import { User } from "../../user/user";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { LoggingService } from "../../logging/logging.service";
-import { BehaviorSubject, Observable, of } from "rxjs";
-import { fromPromise } from "rxjs/internal-compatibility";
-import { catchError, map } from "rxjs/operators";
+import { BehaviorSubject } from "rxjs";
 
 @Injectable()
 export class NewLocalSessionService extends SessionService {
@@ -66,19 +64,24 @@ export class NewLocalSessionService extends SessionService {
    * @param username Username
    * @param password Password
    */
-  public login(username: string, password: string): Promise<LoginState> {
-    return this.loadUser(username)
-      .pipe(
-        map((user) => {
-          if (!user.checkPassword(password)) {
-            return this.failLogin();
-          } else {
-            return this.succeedLogin(user, password);
-          }
-        }),
-        catchError(() => of(this.failLogin()))
-      )
-      .toPromise();
+  public async login(username: string, password: string): Promise<LoginState> {
+    let userEntity: User;
+
+    try {
+      userEntity = await this.loadUser(username);
+    } catch (error) {
+      if (error?.status === 404) {
+        return this.failLogin();
+      } else {
+        throw error;
+      }
+    }
+
+    if (!userEntity.checkPassword(password)) {
+      return this.failLogin();
+    }
+
+    return this.succeedLogin(userEntity, password);
   }
 
   /**
@@ -108,14 +111,11 @@ export class NewLocalSessionService extends SessionService {
    * Helper to get a User Entity from the Database without needing the EntityMapperService
    * @param userId Id of the User to be loaded
    */
-  private loadUser(userId: string): Observable<User> {
-    return fromPromise(this.database.get(`User:${userId}`)).pipe(
-      map((rawData) => {
-        const user = new User();
-        this.entitySchemaService.loadDataIntoEntity(user, rawData);
-        return user;
-      })
-    );
+  private async loadUser(userId: string): Promise<User> {
+    const user = new User("");
+    const userData = await this.database.get("User:" + userId);
+    this.entitySchemaService.loadDataIntoEntity(user, userData);
+    return user;
   }
 
   /** see {@link SessionService} */
