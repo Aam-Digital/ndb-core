@@ -4,6 +4,8 @@ import { FilterSelectionOption } from "../../filter/filter-selection/filter-sele
 export class EntityListConfig {
   title: string;
   columns: ColumnConfig[];
+  addNew?: string = "Add new";
+  filterPlaceholder?: string = "";
 
   /**
    * Optional config for which columns are displayed.
@@ -51,7 +53,7 @@ export class GroupConfig {
 export class FilterConfig {
   id: string;
   display?: string;
-  type?: string;
+  type?: "boolean" | "prebuilt" | "configurable-enum";
   default?: string;
   label?: string;
 }

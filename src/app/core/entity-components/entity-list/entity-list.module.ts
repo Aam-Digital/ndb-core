@@ -22,6 +22,8 @@ import { ViewModule } from "../../view/view.module";
 import { DisplayConfigurableEnumComponent } from "./display-configurable-enum/display-configurable-enum.component";
 import { ListFilterComponent } from "./list-filter/list-filter.component";
 import { PermissionsModule } from "../../permissions/permissions.module";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatTabsModule } from "@angular/material/tabs";
 
 @NgModule({
   declarations: [
@@ -51,6 +53,8 @@ import { PermissionsModule } from "../../permissions/permissions.module";
     MatSortModule,
     MatPaginatorModule,
     PermissionsModule,
+    MatMenuModule,
+    MatTabsModule,
   ],
   exports: [EntityListComponent],
 })

@@ -29,17 +29,28 @@
   </div>
 
   <div>
-    <button mat-stroked-button [disabled]="!selectedReport || (!fromDate && !toDate) || loading" (click)="calculateResults()">
+    <button
+      mat-stroked-button [disabled]="!selectedReport || (!fromDate && !toDate) || loading"
+      (click)="calculateResults()"
+    >
       Calculate
     </button>
-    <app-export-data [disabled]="!exportableTable" [data]="exportableTable" format="csv" filename="report" style="float: right">
-      <mat-icon
-        class="button-icon"
-        aria-label="download csv"
-        fontIcon="fa-download"
-      ></mat-icon>
-      Download report
-    </app-export-data>
+      <button
+        mat-stroked-button
+        color="accent"
+        [appExportData]="exportableTable"
+        [disabled]="!exportableTable"
+        format="csv"
+        filename="report"
+        style="float: right"
+      >
+        <mat-icon
+          class="button-icon"
+          aria-label="download csv"
+          fontIcon="fa-download"
+        ></mat-icon>
+        Download report
+      </button>
   </div>
 
   <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>

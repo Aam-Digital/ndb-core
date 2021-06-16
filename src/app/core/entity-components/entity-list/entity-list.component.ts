@@ -83,7 +83,6 @@ export class EntityListComponent<T extends Entity>
 
   ready = true;
   columnsToDisplay: string[] = [];
-  selectedColumnGroup: string = "";
 
   filterSelections: FilterComponentSettings<T>[] = [];
   entityDataSource = new MatTableDataSource<T>();
@@ -96,6 +95,17 @@ export class EntityListComponent<T extends Entity>
 
   // This key is used to save the pagination settings on the user entity
   readonly paginatorKey: string;
+
+  get selectedColumnGroupIndex(): number {
+    return this.selectedColumnGroupIndex_;
+  }
+
+  set selectedColumnGroupIndex(newValue: number) {
+    this.selectedColumnGroupIndex_ = newValue;
+    this.columnsToDisplay = this.columnGroups[newValue].columns;
+  }
+
+  selectedColumnGroupIndex_: number = 0;
 
   constructor(
     private configService: ConfigService,
@@ -114,11 +124,11 @@ export class EntityListComponent<T extends Entity>
       switch (change[0].mqAlias) {
         case "xs":
         case "sm": {
-          this.displayColumnGroup(this.mobileColumnGroup);
+          this.displayColumnGroupByName(this.mobileColumnGroup);
           break;
         }
         case "md": {
-          this.displayColumnGroup(this.defaultColumnGroup);
+          this.displayColumnGroupByName(this.defaultColumnGroup);
           break;
         }
         case "lg":
@@ -143,7 +153,7 @@ export class EntityListComponent<T extends Entity>
       this.columns = this.listConfig.columns;
       this.initColumnGroups(this.listConfig.columnGroup);
       this.filtersConfig = this.listConfig.filters || [];
-      this.displayColumnGroup(this.defaultColumnGroup);
+      this.displayColumnGroupByName(this.defaultColumnGroup);
     }
     if (changes.hasOwnProperty("entityList")) {
       this.initFilterSelections();
@@ -197,11 +207,6 @@ export class EntityListComponent<T extends Entity>
     this.updateUserPaginationSettings();
   }
 
-  columnGroupClick(columnGroupName: string) {
-    this.displayColumnGroup(columnGroupName);
-    this.updateUrl("view", columnGroupName);
-  }
-
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
@@ -253,7 +258,7 @@ export class EntityListComponent<T extends Entity>
   private loadUrlParams() {
     this.activatedRoute.queryParams.subscribe((params) => {
       if (params["view"]) {
-        this.displayColumnGroup(params["view"]);
+        this.displayColumnGroupByName(params["view"]);
       }
       this.filterSelections.forEach((f) => {
         if (params.hasOwnProperty(f.filterSettings.name)) {
@@ -372,13 +377,12 @@ export class EntityListComponent<T extends Entity>
     return options;
   }
 
-  private displayColumnGroup(columnGroupName: string) {
-    const selectedColumns = this.columnGroups.find(
+  private displayColumnGroupByName(columnGroupName: string) {
+    const selectedColumnIndex = this.columnGroups.findIndex(
       (c) => c.name === columnGroupName
-    )?.columns;
-    if (selectedColumns) {
-      this.columnsToDisplay = selectedColumns;
-      this.selectedColumnGroup = columnGroupName;
+    );
+    if (selectedColumnIndex !== -1) {
+      this.selectedColumnGroupIndex = selectedColumnIndex;
     }
   }
 }

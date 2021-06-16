@@ -8,7 +8,6 @@ import {
 import { ChildrenListComponent } from "./children-list.component";
 import { ChildrenService } from "../children.service";
 import { RouterTestingModule } from "@angular/router/testing";
-import { ExportDataComponent } from "../../../core/admin/export-data/export-data.component";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { of } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -25,12 +24,15 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { School } from "../../schools/model/school";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { BackupService } from "../../../core/admin/services/backup.service";
+import { ExportDataDirective } from "../../../core/admin/export-data/export-data.directive";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
   let fixture: ComponentFixture<ChildrenListComponent>;
   const routeData: EntityListConfig = {
     title: "Children List",
+    addNew: "Add child",
+    filterPlaceholder: "i.e. Participant name",
     columns: [
       { component: "DisplayText", title: "PN", id: "projectNumber" },
       { component: "ChildBlock", title: "Name", id: "name" },
@@ -93,7 +95,7 @@ describe("ChildrenListComponent", () => {
       mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
       mockChildrenService.getChildren.and.returnValue(of([]));
       TestBed.configureTestingModule({
-        declarations: [ChildrenListComponent, ExportDataComponent],
+        declarations: [ChildrenListComponent, ExportDataDirective],
 
         imports: [
           ChildrenModule,

@@ -1,109 +1,90 @@
-<h1>{{ listName }}</h1>
+<div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="25px" >
 
-<mat-expansion-panel expanded="true" class="filter-panel mat-elevation-z2">
-  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none end">
-    <!-- text search -->
-    <div fxFlex="50">
-      <mat-form-field style="width: 100%">
-        <input
-          matInput
-          placeholder="Filter"
-          (ngModelChange)="applyFilter($event)"
-          [(ngModel)]="filterString"
-        />
-        <button
-          mat-icon-button
-          *ngIf="filterString"
-          matSuffix
-          aria-label="Clear"
-          (click)="filterString = ''; applyFilter('')"
-        >
-          <mat-icon fontIcon="fa-times"></mat-icon>
-        </button>
-      </mat-form-field>
-    </div>
-    <!-- number of table entries -->
-    <div fxFlex="25" fxHide.xs="true" class="align-form-field">
-      (Showing {{ entityDataSource.filteredData.length }} entries)
-    </div>
-    <!-- add new button -->
-    <div fxFlex="25" class="align-form-field">
-      <button
-        mat-stroked-button
+  <h2>{{listName}}</h2>
+
+  <button
+    class="add-entity-button"
+    (click)="addNewClick.emit()"
+    angulartics2On="click"
+    angularticsCategory="UserAction"
+    [angularticsAction]="
+        listName.toLowerCase().replace(' ', '_') + '_add_new'
+      "
+    *appDisabledEntityOperation="{
+        entity: entityConstructor,
+        operation: operationType.CREATE
+      }"
+  >
+    <span fxHide.lt-md="true" class="fa fa-plus-circle button-icon"> {{listConfig.addNew}} </span>
+  </button>
+
+  <div fxFlex="20"></div>
+
+  <mat-form-field class="filter-field" fxFlex>
+    <mat-label>Filter</mat-label>
+    <input
+      matInput
+      [placeholder]="listConfig.filterPlaceholder"
+      (ngModelChange)="applyFilter($event)"
+      [(ngModel)]="filterString"
+    />
+    <button
+      mat-icon-button
+      *ngIf="filterString"
+      matSuffix
+      aria-label="Clear"
+      (click)="filterString = ''; applyFilter('')"
+    >
+      <mat-icon fontIcon="fa-times"></mat-icon>
+    </button>
+  </mat-form-field>
+
+  <button mat-icon-button class="additional-button" [matMenuTriggerFor]="additional">
+     <mat-icon class="fa fa-ellipsis-v additional-button-icon"></mat-icon>
+  </button>
+
+  <div fxFlex="5"></div>
+</div>
+
+<mat-menu #additional>
+    <button mat-menu-item [appExportData]="entityList">
+      <mat-icon
         color="accent"
-        (click)="addNewClick.emit()"
-        angulartics2On="click"
-        angularticsCategory="UserAction"
-        [angularticsAction]="
-          listName.toLowerCase().replace(' ', '_') + '_add_new'
-        "
-        *appDisabledEntityOperation="{
-          entity: entityConstructor,
-          operation: operationType.CREATE
-        }"
-      >
-        <mat-icon
-          class="button-icon"
-          aria-label="add element"
-          fontIcon="fa-plus-circle"
-        ></mat-icon>
-        <span fxHide.lt-md="true"> Add New </span>
-      </button>
-      <app-export-data
-        [data]="entityList"
-        format="csv"
-        [filename]="listName.replace(' ', '')"
-        angulartics2On="click"
-        angularticsCategory="UserAction"
-        [angularticsAction]="
-          listName.toLowerCase().replace(' ', '_') + '_csv_export'
-        "
-      >
-        <mat-icon
-          class="button-icon"
-          aria-label="download csv"
-          fontIcon="fa-download"
-        ></mat-icon>
-        <span fxHide.lt-md="true"> Download CSV </span>
-      </app-export-data>
-    </div>
-  </div>
+        class="button-icon"
+        aria-label="download csv"
+        fontIcon="fa-download"
+      ></mat-icon>
+      <span> Download CSV </span>
+    </button>
+</mat-menu>
 
-  <div
-    *ngIf="filterSelections.length > 0"
-    class="toggle-selection-section"
-    fxLayout="row wrap"
-    fxLayoutGap="10px grid"
+<div
+  *ngIf="filterSelections.length > 0"
+  class="toggle-selection-section"
+  fxLayout="row wrap"
+  fxLayoutGap="10px grid"
+>
+  <app-list-filter
+    *ngFor="let filter of filterSelections"
+    [filterConfig]="filter.filterSettings"
+    [(selectedOption)]="filter.selectedOption"
+    [displayAsToggle]="filter.display !== 'dropdown'"
+    (selectedOptionChange)="onFilterOptionSelected(filter, $event)"
   >
-    <app-list-filter
-      *ngFor="let filter of filterSelections"
-      [filterConfig]="filter.filterSettings"
-      [(selectedOption)]="filter.selectedOption"
-      [displayAsToggle]="filter.display !== 'dropdown'"
-      (selectedOptionChange)="onFilterOptionSelected(filter, $event)"
-    >
-    </app-list-filter>
-  </div>
+  </app-list-filter>
+</div>
 
-  <div
-    *ngIf="columnGroups.length > 1"
-    class="toggle-selection-section"
-    fxHide.lt-sm
-  >
-    <mat-button-toggle-group
-      name="columnSelection"
-      [(value)]="selectedColumnGroup"
-    >
-      <mat-button-toggle
-        *ngFor="let item of columnGroups"
-        [value]="item.name"
-        (click)="columnGroupClick(item.name)"
-      >
-        {{ item.name }}
-      </mat-button-toggle>
-    </mat-button-toggle-group>
-  </div>
-</mat-expansion-panel>
+<div
+  *ngIf="columnGroups.length > 1"
+  class="toggle-selection-section"
+  fxHide.lt-sm
+>
+  <mat-tab-group [(selectedIndex)]="selectedColumnGroupIndex">
+    <mat-tab *ngFor="let item of columnGroups"
+             [label]="item.name">
+    </mat-tab>
+  </mat-tab-group>
+</div>
 
 <div class="mat-elevation-z2 table-list">
   <table mat-table [dataSource]="entityDataSource" matSort style="width: 100%">

@@ -1,17 +1,26 @@
-import { Component, Input } from "@angular/core";
+import { Directive, HostListener, Input } from "@angular/core";
 import { BackupService } from "../services/backup.service";
 
 /**
- * Generic export data button that allows the user to download a file of the given data.
+ * A directive that can be attached to a html element, commonly a button.
+ * Usage:
+ * ```html
+ *  <button
+ *    mat-stroked-button
+ *    [appExportData]="data"
+ *    format="csv"
+ *  >
+ *    Export CSV
+ *  </button
+ *
+ * ```
  */
-@Component({
-  selector: "app-export-data",
-  templateUrl: "./export-data.component.html",
-  styleUrls: ["./export-data.component.scss"],
+@Directive({
+  selector: "[appExportData]",
 })
-export class ExportDataComponent {
+export class ExportDataDirective {
   /** data to be exported */
-  @Input() data: any = [];
+  @Input("appExportData") data: any = [];
 
   /** What kind of data should be export? Currently implemented are 'json', 'csv' */
   @Input() format: string = "csv";
@@ -19,17 +28,17 @@ export class ExportDataComponent {
   /** filename for the download of the exported data */
   @Input() filename: string = "exportedData";
 
-  @Input() disabled: boolean = false;
-
   constructor(private backupService: BackupService) {}
 
-  /**
-   * Trigger the download of the export file.
-   */
   exportData() {
     const blobData = this.getFormattedBlobData();
     const link = this.createDownloadLink(blobData);
     link.click();
+  }
+
+  @HostListener("click")
+  click() {
+    this.exportData();
   }
 
   private createDownloadLink(blobData): HTMLAnchorElement {

@@ -1,3 +1,5 @@
+@import "../../../../ndb-theme";
+
 .filter-panel {
   padding-top: 10px;
   border-radius: 0;
@@ -21,7 +23,16 @@
 
 .button-icon {
   font-size: 1.5em;
-  margin-right: 5px;
+  margin: 5px;
+}
+
+.add-entity-button {
+  color: mat-color($ndb-app-accent);
+  border: 1px solid;
+  background: white;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
 }
 
 .align-form-field {
@@ -31,4 +42,22 @@
 .cell-with-blocks {
   white-space: nowrap;
   overflow: hidden;
+}
+
+.filter-field {
+  color: mat-color($ndb-app-accent);
+}
+
+.additional-button {
+  color: white;
+  border: 0;
+  background-color: mat-color($ndb-app-primary);
+  border-radius: 5px;
+  cursor: pointer;
+  width: 30px;
+  height: 45px;
+}
+
+.additional-button-icon {
+  font-size: 2em;
 }
