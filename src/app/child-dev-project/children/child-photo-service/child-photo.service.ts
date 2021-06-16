@@ -10,7 +10,7 @@ import { BehaviorSubject } from "rxjs";
 export class ChildPhotoService {
   public static getImageFromAssets(photoFile: string): SafeUrl {
     if (!photoFile || photoFile.trim() === "") {
-      return "assets/child.png";
+      return ChildPhotoService.getDefaultImage();
     }
     return ChildPhotoService.generatePhotoPath(photoFile);
   }
@@ -21,6 +21,10 @@ export class ChildPhotoService {
    */
   public static generatePhotoPath(filename: string): string {
     return "assets/child-photos/" + filename;
+  }
+
+  public static getDefaultImage(): SafeUrl {
+    return "assets/child.png";
   }
 
   private basePath = "photos/";
