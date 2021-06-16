@@ -166,13 +166,11 @@ describe("SyncedSessionService", () => {
     });
 
     function resolveSync() {
-      syncSpy = spyOn(sessionService, "sync").and.returnValue(
-        Promise.resolve()
-      );
+      syncSpy = spyOn(sessionService, "sync").and.resolveTo();
     }
 
     function rejectSync() {
-      syncSpy = spyOn(sessionService, "sync").and.returnValue(Promise.reject());
+      syncSpy = spyOn(sessionService, "sync").and.rejectWith();
     }
 
     async function mockLogin(
@@ -181,12 +179,8 @@ describe("SyncedSessionService", () => {
       localLoginCallTimes: number = 1
     ): Promise<LoginState> {
       return mockLoginWithSpies(
-        spyOn(localSession, "login").and.returnValue(
-          Promise.resolve(loginState)
-        ),
-        spyOn(remoteSession, "login").and.returnValue(
-          Promise.resolve(connectionState)
-        ),
+        spyOn(localSession, "login").and.resolveTo(loginState),
+        spyOn(remoteSession, "login").and.resolveTo(connectionState),
         localLoginCallTimes
       );
     }
@@ -240,9 +234,7 @@ describe("SyncedSessionService", () => {
           Promise.resolve(LoginState.LOGIN_FAILED),
           Promise.resolve(LoginState.LOGGED_IN)
         ),
-        spyOn(remoteSession, "login").and.returnValue(
-          Promise.resolve(ConnectionState.CONNECTED)
-        ),
+        spyOn(remoteSession, "login").and.resolveTo(ConnectionState.CONNECTED),
         2
       );
       tick();
