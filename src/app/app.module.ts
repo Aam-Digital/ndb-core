@@ -141,7 +141,10 @@ import { DemoHistoricalDataGenerator } from "./features/historical-data/demo-his
       ...DemoHealthCheckGeneratorService.provider(),
       ...DemoProgressDashboardWidgetGeneratorService.provider(),
       ...DemoUserGeneratorService.provider(),
-      ...DemoHistoricalDataGenerator.provider({ count: 20 }),
+      ...DemoHistoricalDataGenerator.provider({
+        minCountAttributes: 2,
+        maxCountAttributes: 5,
+      }),
     ]),
     AttendanceModule,
     MatFormFieldModule,

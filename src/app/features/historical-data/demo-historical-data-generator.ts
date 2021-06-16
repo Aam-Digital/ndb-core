@@ -34,7 +34,8 @@ export const ratingAnswers = [
 ];
 
 export class DemoHistoricalDataConfig {
-  count: number;
+  minCountAttributes: number;
+  maxCountAttributes: number;
 }
 
 @Injectable()
@@ -64,24 +65,22 @@ export class DemoHistoricalDataGenerator extends DemoDataGenerator<HistoricalEnt
     const ratingAnswer = this.configService.getConfig<ConfigurableEnumConfig>(
       CONFIGURABLE_ENUM_CONFIG_PREFIX + "rating-answer"
     );
-    return [...Array(this.config.count)].map(() => {
-      const historicalData = new HistoricalEntityData();
-      historicalData.date = faker.date.past();
-      historicalData.relatedEntity = faker.random
-        .arrayElement(this.childrenGenerator.entities)
-        .getId();
-      const amountOfAttributes = faker.datatype.number({
-        min: 2,
-        max: attributes.length,
+    const entities: HistoricalEntityData[] = [];
+    for (const child of this.childrenGenerator.entities) {
+      const countOfData =
+        faker.datatype.number(this.config.maxCountAttributes) +
+        this.config.minCountAttributes;
+      const historicalDataOfChild = [...Array(countOfData)].map(() => {
+        const historicalData = new HistoricalEntityData();
+        historicalData.date = faker.date.past();
+        historicalData.relatedEntity = child.getId();
+        for (const attribute of attributes) {
+          historicalData[attribute] = faker.random.arrayElement(ratingAnswer);
+        }
+        return historicalData;
       });
-      const selectedAttributes = faker.random.arrayElements(
-        attributes,
-        amountOfAttributes
-      );
-      for (const attribute of selectedAttributes) {
-        historicalData[attribute] = faker.random.arrayElement(ratingAnswer);
-      }
-      return historicalData;
-    });
+      entities.push(...historicalDataOfChild);
+    }
+    return entities;
   }
 }
