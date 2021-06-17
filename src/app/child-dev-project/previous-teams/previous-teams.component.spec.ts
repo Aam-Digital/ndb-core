@@ -8,6 +8,8 @@ import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirm
 import { SimpleChange } from "@angular/core";
 import { Child } from "../children/model/child";
 import { PreviousTeamsComponent } from "./previous-teams.component";
+import { SessionService } from "../../core/session/session-service/session.service";
+import { User } from "../../core/user/user";
 
 describe("PreviousTeamsComponent", () => {
   let component: PreviousTeamsComponent;
@@ -34,6 +36,10 @@ describe("PreviousTeamsComponent", () => {
         providers: [
           { provide: ChildrenService, useValue: mockChildrenService },
           { provide: EntityMapperService, useValue: mockEntityMapper },
+          {
+            provide: SessionService,
+            useValue: { getCurrentUser: () => new User() },
+          },
         ],
       }).compileComponents();
     })

@@ -12,6 +12,8 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { DatePipe, PercentPipe } from "@angular/common";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { ConfigurableEnumValue } from "../../../configurable-enum/configurable-enum.interface";
+import { SessionService } from "../../../session/session-service/session.service";
+import { User } from "../../../user/user";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -32,6 +34,10 @@ describe("EntitySubrecordComponent", () => {
         providers: [
           DatePipe,
           PercentPipe,
+          {
+            provide: SessionService,
+            useValue: { getCurrentUser: () => new User() },
+          },
           { provide: EntityMapperService, useValue: mockEntityMapper },
         ],
       }).compileComponents();
