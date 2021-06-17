@@ -38,7 +38,7 @@ import { EntityListModule } from "../entity-list/entity-list.module";
     MatButtonModule,
     ConfigurableEnumModule,
     MatTooltipModule,
-    EntityListModule
+    EntityListModule,
   ],
   exports: [EntitySubrecordComponent, KeysPipe],
 })

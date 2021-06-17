@@ -36,7 +36,7 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
     DisplayConfigurableEnumComponent,
     DisplayCheckmarkComponent,
     ListFilterComponent,
-    ListPaginatorComponent
+    ListPaginatorComponent,
   ],
   imports: [
     CommonModule,

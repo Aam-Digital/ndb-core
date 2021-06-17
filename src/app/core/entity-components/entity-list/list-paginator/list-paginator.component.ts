@@ -4,6 +4,7 @@ import {
   Input,
   OnChanges,
   SimpleChanges,
+  AfterViewInit,
 } from "@angular/core";
 import { Entity } from "../../../entity/entity";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
@@ -17,7 +18,8 @@ import { EntityMapperService } from "app/core/entity/entity-mapper.service";
   templateUrl: "./list-paginator.component.html",
   styleUrls: ["./list-paginator.component.scss"],
 })
-export class ListPaginatorComponent<E extends Entity> implements OnChanges {
+export class ListPaginatorComponent<E extends Entity>
+  implements OnChanges, AfterViewInit {
   @Input() dataSource: MatTableDataSource<E>;
 
   @Input() idForSavingPagination: string;
@@ -88,7 +90,9 @@ export class ListPaginatorComponent<E extends Entity> implements OnChanges {
     if (!this.allToggle) {
       this.paginatorPageSizeBeforeToggle = this.paginatorPageSize;
       this.paginatorPageSize = this.dataSource.data.length;
-    } else if (this.paginatorPageSizeBeforeToggle <= this.dataSource.data.length) {
+    } else if (
+      this.paginatorPageSizeBeforeToggle <= this.dataSource.data.length
+    ) {
       this.paginatorPageSize = this.paginatorPageSizeBeforeToggle;
     } else {
       const po = this.paginatorPageSizeOptions;
