@@ -70,6 +70,8 @@ import { PreviousTeamsComponent } from "../previous-teams/previous-teams.compone
 import { BmiBlockComponent } from "./children-list/bmi-block/bmi-block.component";
 import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard/children-bmi-dashboard.component";
 import { EntitySelectModule } from "../../core/entity-components/entity-select/entity-select.module";
+import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
+import { PhotoDatatype } from "./child-photo-service/datatype-photo";
 
 @NgModule({
   imports: [
@@ -140,4 +142,8 @@ import { EntitySelectModule } from "../../core/entity-components/entity-select/e
     BmiBlockComponent,
   ],
 })
-export class ChildrenModule {}
+export class ChildrenModule {
+  constructor(entitySchemaService: EntitySchemaService) {
+    entitySchemaService.registerSchemaDatatype(new PhotoDatatype());
+  }
+}
