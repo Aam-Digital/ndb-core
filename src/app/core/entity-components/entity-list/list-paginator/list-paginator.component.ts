@@ -12,8 +12,9 @@ import { MatTableDataSource } from "@angular/material/table";
 import { User } from "app/core/user/user";
 import { SessionService } from "app/core/session/session-service/session.service";
 import { EntityMapperService } from "app/core/entity/entity-mapper.service";
-import { untilDestroyed } from "@ngneat/until-destroy";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-list-paginator",
   templateUrl: "./list-paginator.component.html",
