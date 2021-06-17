@@ -39,18 +39,8 @@ export class ListPaginatorComponent<E extends Entity> implements OnChanges {
   constructor(
     private sessionService: SessionService,
     private entityMapperService: EntityMapperService
-  ) {}
-
-  ngOnInit() {
+  ) {
     this.user = this.sessionService.getCurrentUser();
-    // Use URl as key to save pagination settings
-    console.log("Ich benutze als ID: " + this.idForSavingPagination);
-    this.paginatorPageSize =
-      this.user.paginatorSettingsPageSize[this.idForSavingPagination] ||
-      this.paginatorPageSize;
-    this.paginatorPageIndex =
-      this.user.paginatorSettingsPageIndex[this.idForSavingPagination] ||
-      this.paginatorPageIndex;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -59,10 +49,21 @@ export class ListPaginatorComponent<E extends Entity> implements OnChanges {
       this.getPaginatorPageSize();
       this.getPaginatorPageSizeOptions();
     }
+    if (changes.hasOwnProperty("idForSavingPagination")) {
+      // Use URl as key to save pagination settings
+      console.log("Ich benutze als ID: " + this.idForSavingPagination);
+      this.paginatorPageSize =
+        this.user.paginatorSettingsPageSize[this.idForSavingPagination] ||
+        this.paginatorPageSize;
+      this.paginatorPageIndex =
+        this.user.paginatorSettingsPageIndex[this.idForSavingPagination] ||
+        this.paginatorPageIndex;
+    }
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.connect().subscribe((res) => console.log("res", res));
   }
 
   onPaginateChange(event: PageEvent) {
