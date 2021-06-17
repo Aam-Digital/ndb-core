@@ -23,7 +23,7 @@
     [angularticsLabel]="item.name"
     *ngFor="let item of menuItems"
     [routerLink]="[item.link]"
-    [class]="activeElement === item.name ? 'highlighted' : ''"
+    [class.primary-background]="activeElement === item.name"
   >
     <a
       ><mat-icon class="nav-icon" fontIcon="fa-{{ item.icon }}"></mat-icon
