@@ -88,13 +88,11 @@ export class ListPaginatorComponent<E extends Entity> implements OnChanges {
     if (!this.allToggle) {
       this.paginatorPageSizeBeforeToggle = this.paginatorPageSize;
       this.paginatorPageSize = this.dataSource.data.length;
+    } else if (this.paginatorPageSizeBeforeToggle <= this.dataSource.data.length) {
+      this.paginatorPageSize = this.paginatorPageSizeBeforeToggle;
     } else {
-      if (this.paginatorPageSizeBeforeToggle <= this.dataSource.data.length) {
-        this.paginatorPageSize = this.paginatorPageSizeBeforeToggle;
-      } else {
-        const po = this.paginatorPageSizeOptions;
-        this.paginatorPageSize = po.length > 2 ? po[po.length - 2] : po[0];
-      }
+      const po = this.paginatorPageSizeOptions;
+      this.paginatorPageSize = po.length > 2 ? po[po.length - 2] : po[0];
     }
     this.paginator._changePageSize(this.paginatorPageSize);
     this.allToggle = !this.allToggle;
