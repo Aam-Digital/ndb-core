@@ -4,7 +4,6 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnInit,
   Output,
   SimpleChanges,
   ViewChild,
@@ -23,10 +22,8 @@ import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { DatePipe } from "@angular/common";
-import { BehaviorSubject } from "rxjs";
 import { ComponentWithConfig } from "../component-with-config";
 import { entityListSortingAccessor } from "../../entity-list/sorting-accessor";
-import _ from "lodash";
 
 /**
  * Generically configurable component to display and edit a list of entities in a compact way
@@ -48,8 +45,7 @@ import _ from "lodash";
   styleUrls: ["./entity-subrecord.component.scss"],
 })
 export class EntitySubrecordComponent<T extends Entity>
-  implements OnInit, OnChanges, AfterViewInit {
-
+  implements OnChanges, AfterViewInit {
   /** data to be displayed */
   @Input() records: Array<T>;
 
@@ -136,8 +132,6 @@ export class EntitySubrecordComponent<T extends Entity>
   /** function returns the background color for each entry*/
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
 
-  ngOnInit() { }
-
   /**
    * Update the component if any of the @Input properties were changed from outside.
    * @param changes
@@ -157,11 +151,7 @@ export class EntitySubrecordComponent<T extends Entity>
       this.columnsToDisplay = this.columns.map((e) => e.name);
       this.columnsToDisplay.push("actions");
       this.setupTable();
-      let id = "";
-      this.columns.forEach(function (this, col) {
-        id =  id + col.name;
-      });
-      this.idForSavingPagination = id;
+      this.idForSavingPagination = this.columns.map((col) => col.name).join("");
     }
   }
 
@@ -390,5 +380,4 @@ export class EntitySubrecordComponent<T extends Entity>
       inputType === ColumnDescriptionInputType.READONLY
     );
   }
-
 }

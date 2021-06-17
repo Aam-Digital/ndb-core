@@ -85,6 +85,7 @@ export class EntityListComponent<T extends Entity>
 
   filterString = "";
 
+  uniqueTableId = "";
 
   constructor(
     private configService: ConfigService,
@@ -92,8 +93,8 @@ export class EntityListComponent<T extends Entity>
     private sessionService: SessionService,
     private media: MediaObserver,
     private router: Router,
-    private activatedRoute: ActivatedRoute,
-  ) { }
+    private activatedRoute: ActivatedRoute
+  ) {}
 
   ngOnInit() {
     this.media.asObservable().subscribe((change: MediaChange[]) => {
@@ -120,6 +121,7 @@ export class EntityListComponent<T extends Entity>
       this.listName = this.listConfig.title;
       this.columns = this.listConfig.columns;
       this.initColumnGroups(this.listConfig.columnGroup);
+      this.uniqueTableId = this.columns.map((col) => col.title).join("");
       this.filtersConfig = this.listConfig.filters || [];
       this.displayColumnGroup(this.defaultColumnGroup);
     }

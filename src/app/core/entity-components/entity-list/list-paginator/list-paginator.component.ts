@@ -20,12 +20,7 @@ import { EntityMapperService } from "app/core/entity/entity-mapper.service";
 export class ListPaginatorComponent<E extends Entity> implements OnChanges {
   @Input() dataSource: MatTableDataSource<E>;
 
-  // Inputting the data separately from the dataSource is just a workaround to subscribe to the changes in the data
-  // and thus to update the pagination settings at the moment when the data is fully loaded.
-  // There should be a more elegant way to do this.
-  @Input() data: E[] = [];
-
-  @Input() idForSavingPagination?: string;
+  @Input() idForSavingPagination: string;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -44,14 +39,7 @@ export class ListPaginatorComponent<E extends Entity> implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.hasOwnProperty("data")) {
-      this.allToggle = this.paginatorPageSize >= this.dataSource.data.length;
-      this.getPaginatorPageSize();
-      this.getPaginatorPageSizeOptions();
-    }
     if (changes.hasOwnProperty("idForSavingPagination")) {
-      // Use URl as key to save pagination settings
-      console.log("Ich benutze als ID: " + this.idForSavingPagination);
       this.paginatorPageSize =
         this.user.paginatorSettingsPageSize[this.idForSavingPagination] ||
         this.paginatorPageSize;
@@ -59,11 +47,34 @@ export class ListPaginatorComponent<E extends Entity> implements OnChanges {
         this.user.paginatorSettingsPageIndex[this.idForSavingPagination] ||
         this.paginatorPageIndex;
     }
+    this.dataSource.connect().subscribe((res) => {
+      this.allToggle = this.paginatorPageSize >= this.dataSource.data.length;
+      if (res.length > 0) {
+        this.paginatorPageSize = Math.min(
+          this.dataSource.data.length,
+          this.paginatorPageSize
+        );
+        this.setPageSizeOptions();
+        this.setPageSize();
+      }
+    });
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
-    this.dataSource.connect().subscribe((res) => console.log("res", res));
+  }
+
+  setPageSizeOptions() {
+    const ar = [3, 10, 20, 50].filter((n) => {
+      return n < this.dataSource.data.length;
+    });
+    this.paginatorPageSizeOptions = ar.concat(this.dataSource.data.length);
+  }
+
+  setPageSize() {
+    if (this.paginatorPageSize >= this.dataSource.data.length) {
+      this.paginatorPageSize = this.dataSource.data.length;
+    }
   }
 
   onPaginateChange(event: PageEvent) {
@@ -71,24 +82,6 @@ export class ListPaginatorComponent<E extends Entity> implements OnChanges {
     this.paginatorPageIndex = event.pageIndex;
     this.updateUserPaginationSettings();
     this.allToggle = this.paginatorPageSize >= this.dataSource.data.length;
-  }
-
-  getPaginatorPageSizeOptions() {
-    const ar = [3, 10, 20, 50].filter((n) => {
-      return n < this.dataSource.data.length;
-    });
-    ar.push(this.dataSource.data.length);
-    this.paginatorPageSizeOptions = ar;
-  }
-
-  getPaginatorPageSize(): number {
-    if (
-      this.dataSource.data.length &&
-      this.paginatorPageSize >= this.dataSource.data.length
-    ) {
-      this.paginatorPageSize = this.dataSource.data.length;
-    }
-    return this.paginatorPageSize;
   }
 
   clickAllToggle() {
