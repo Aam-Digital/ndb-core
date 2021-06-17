@@ -75,4 +75,18 @@ describe("ListPaginatorComponent", () => {
     expect(component.paginatorPageSize).toBe(20);
     expect(component.allToggle).toBeFalse();
   });
+
+  it("should toggle back to second biggest size if no previous size is to big", fakeAsync(() => {
+    component.dataSource.data = new Array(100);
+    component.paginator._changePageSize(100);
+    component.paginatorPageSizeBeforeToggle = 200;
+
+    expect(component.allToggle).toBeTrue();
+    expect(component.paginatorPageSize).toBe(100);
+
+    component.clickAllToggle();
+
+    const po = component.paginatorPageSizeOptions;
+    expect(component.paginatorPageSize).toBe(po[po.length - 2]);
+  }));
 });
