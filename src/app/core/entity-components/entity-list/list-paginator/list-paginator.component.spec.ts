@@ -26,6 +26,7 @@ describe("ListPaginatorComponent", () => {
     waitForAsync(() => {
       mockEntityMapper = jasmine.createSpyObj(["save"]);
       mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+      mockSessionService.getCurrentUser.and.returnValue(new User());
 
       TestBed.configureTestingModule({
         imports: [EntityListModule, NoopAnimationsModule],
@@ -49,7 +50,6 @@ describe("ListPaginatorComponent", () => {
   });
 
   it("should save pagination settings in the user entity", fakeAsync(() => {
-    component.user = new User();
     component.idForSavingPagination = "table-id";
 
     component.onPaginateChange({ pageSize: 20, pageIndex: 1 } as PageEvent);
@@ -59,4 +59,20 @@ describe("ListPaginatorComponent", () => {
     expect(component.user.paginatorSettingsPageSize["table-id"]).toEqual(20);
     expect(component.user.paginatorSettingsPageIndex["table-id"]).toEqual(1);
   }));
+
+  it("should reset the pagination size when clicking the all toggle twice", () => {
+    component.paginatorPageSize = 20;
+    component.dataSource.data = new Array(100);
+    component.allToggle = false;
+
+    component.clickAllToggle();
+
+    expect(component.paginatorPageSize).toBe(100);
+    expect(component.allToggle).toBeTrue();
+
+    component.clickAllToggle();
+
+    expect(component.paginatorPageSize).toBe(20);
+    expect(component.allToggle).toBeFalse();
+  });
 });

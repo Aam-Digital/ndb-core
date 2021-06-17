@@ -12,6 +12,7 @@ import { MatTableDataSource } from "@angular/material/table";
 import { User } from "app/core/user/user";
 import { SessionService } from "app/core/session/session-service/session.service";
 import { EntityMapperService } from "app/core/entity/entity-mapper.service";
+import { untilDestroyed } from "@ngneat/until-destroy";
 
 @Component({
   selector: "app-list-paginator",
@@ -49,17 +50,20 @@ export class ListPaginatorComponent<E extends Entity>
         this.user.paginatorSettingsPageIndex[this.idForSavingPagination] ||
         this.paginatorPageIndex;
     }
-    this.dataSource.connect().subscribe((res) => {
-      this.allToggle = this.paginatorPageSize >= this.dataSource.data.length;
-      if (res.length > 0) {
-        this.paginatorPageSize = Math.min(
-          this.dataSource.data.length,
-          this.paginatorPageSize
-        );
-        this.setPageSizeOptions();
-        this.setPageSize();
-      }
-    });
+    this.dataSource
+      .connect()
+      .pipe(untilDestroyed(this))
+      .subscribe((res) => {
+        this.allToggle = this.paginatorPageSize >= this.dataSource.data.length;
+        if (res.length > 0) {
+          this.paginatorPageSize = Math.min(
+            this.dataSource.data.length,
+            this.paginatorPageSize
+          );
+          this.setPageSizeOptions();
+          this.setPageSize();
+        }
+      });
   }
 
   ngAfterViewInit() {
@@ -99,7 +103,7 @@ export class ListPaginatorComponent<E extends Entity>
       this.paginatorPageSize = po.length > 2 ? po[po.length - 2] : po[0];
     }
     this.paginator._changePageSize(this.paginatorPageSize);
-    this.allToggle = !this.allToggle;
+    this.allToggle = this.paginatorPageSize >= this.dataSource.data.length;
     this.updateUserPaginationSettings();
   }
 
