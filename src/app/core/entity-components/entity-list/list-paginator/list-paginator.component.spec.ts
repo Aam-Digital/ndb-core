@@ -1,4 +1,10 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 
 import { ListPaginatorComponent } from "./list-paginator.component";
 import { EntityListModule } from "../entity-list.module";
@@ -6,6 +12,8 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { SessionService } from "../../../session/session-service/session.service";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { MatTableDataSource } from "@angular/material/table";
+import { User } from "../../../user/user";
+import { PageEvent } from "@angular/material/paginator";
 
 describe("ListPaginatorComponent", () => {
   let component: ListPaginatorComponent<any>;
@@ -39,4 +47,16 @@ describe("ListPaginatorComponent", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
+
+  it("should save pagination settings in the user entity", fakeAsync(() => {
+    component.user = new User();
+    component.idForSavingPagination = "table-id";
+
+    component.onPaginateChange({ pageSize: 20, pageIndex: 1 } as PageEvent);
+    tick();
+
+    expect(mockEntityMapper.save).toHaveBeenCalledWith(component.user);
+    expect(component.user.paginatorSettingsPageSize["table-id"]).toEqual(20);
+    expect(component.user.paginatorSettingsPageIndex["table-id"]).toEqual(1);
+  }));
 });
