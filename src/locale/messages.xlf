@@ -297,7 +297,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-details/form/form.component.html</context>
-          <context context-type="linenumber">206,212</context>
+          <context context-type="linenumber">207,213</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/form-dialog/form-dialog-wrapper/form-dialog-wrapper.component.html</context>
@@ -313,7 +313,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-details/form/form.component.html</context>
-          <context context-type="linenumber">216,222</context>
+          <context context-type="linenumber">217,223</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/form-dialog/form-dialog-wrapper/form-dialog-wrapper.component.html</context>
@@ -684,6 +684,15 @@
         </context-group>
         <note priority="1" from="description">Dashbord attendance component subtitle</note>
       </trans-unit>
+      <trans-unit id="369bdfcb628c9eff208ea45814685bb80551c385" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ children.length }}"/> involved</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/child-block-list/child-block-list.component.html</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+        <note priority="1" from="description">e.g &apos;8 involved&apos;</note>
+        <note priority="1" from="meaning">How many children are involved</note>
+      </trans-unit>
       <trans-unit id="2c2620b14c4290b8f8c0c90abc6b6b17bff06ec6" datatype="html">
         <source>class <x id="INTERPOLATION" equiv-text="{{ entity?.schoolClass }}"/></source>
         <context-group purpose="location">
@@ -699,7 +708,7 @@
           <context context-type="sourcefile">src/app/child-dev-project/children/children-bmi-dashboard/children-bmi-dashboard.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <note priority="1" from="description">Subtitle of the child-bmi dashbord-component</note>
+        <note priority="1" from="description">Subtitle of the child-bmi dashboard-component</note>
       </trans-unit>
       <trans-unit id="80a7795888bbfdf26055b0e1db9b12c6ae67df9d" datatype="html">
         <source>Children</source>
@@ -1490,11 +1499,19 @@
         <note priority="1" from="description">Informs the user that the following is the status</note>
         <note priority="1" from="meaning">Status description</note>
       </trans-unit>
+      <trans-unit id="fdf7cbdc140d0aab0f0b6c06065a0fd448ed6a2e" datatype="html">
+        <source>Title</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
+          <context context-type="linenumber">56,58</context>
+        </context-group>
+        <note priority="1" from="description">Input placeholder</note>
+      </trans-unit>
       <trans-unit id="653f0ceb811625667813c637e7c082de498571f4" datatype="html">
         <source>Label</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
-          <context context-type="linenumber">76,79</context>
+          <context context-type="linenumber">77,80</context>
         </context-group>
         <note priority="1" from="description">The label of a process</note>
         <note priority="1" from="meaning">Process Label</note>
@@ -1503,7 +1520,7 @@
         <source>Current</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
-          <context context-type="linenumber">95,97</context>
+          <context context-type="linenumber">96,98</context>
         </context-group>
         <note priority="1" from="description">The Current amount of a process</note>
         <note priority="1" from="meaning">Current process</note>
@@ -1512,7 +1529,7 @@
         <source>Target</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
-          <context context-type="linenumber">106,108</context>
+          <context context-type="linenumber">107,109</context>
         </context-group>
         <note priority="1" from="description">The target amount of a process</note>
         <note priority="1" from="meaning">Target process</note>
@@ -1523,6 +1540,7 @@
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.ts</context>
           <context context-type="linenumber">55</context>
         </context-group>
+        <note priority="1" from="description">The progress, e.g. of a certain activity</note>
       </trans-unit>
       <trans-unit id="339729126805226016" datatype="html">
         <source>Part</source>
@@ -1530,6 +1548,7 @@
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.ts</context>
           <context context-type="linenumber">63,62</context>
         </context-group>
+        <note priority="1" from="description">Part of a whole</note>
       </trans-unit>
       <trans-unit id="2283054349785348898" datatype="html">
         <source>PN</source>
@@ -1553,6 +1572,44 @@
           <context context-type="linenumber">40</context>
         </context-group>
         <note priority="1" from="description">The age of a child</note>
+      </trans-unit>
+      <trans-unit id="08d6b0d21c40987e2dfbe1532f4840b4b8482b03" datatype="html">
+        <source> Conflicting Entity: </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/conflict-resolution/compare-rev/compare-rev.component.html</context>
+          <context context-type="linenumber">15,20</context>
+        </context-group>
+        <note priority="1" from="description">Signals that there are conflicting database-entities</note>
+      </trans-unit>
+      <trans-unit id="25da376638f08dd9491969337d2154c8f28736db" datatype="html">
+        <source> Choose conflicting version </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/conflict-resolution/compare-rev/compare-rev.component.html</context>
+          <context context-type="linenumber">31,36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="66ae57094aa9216092c68e9ba81b074ad68c0e02" datatype="html">
+        <source> Save manually resolved record </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/conflict-resolution/compare-rev/compare-rev.component.html</context>
+          <context context-type="linenumber">50,56</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2c53ad0540b43201cdce365879b06fd968fb4a0a" datatype="html">
+        <source> Current Entity: </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/conflict-resolution/compare-rev/compare-rev.component.html</context>
+          <context context-type="linenumber">58,63</context>
+        </context-group>
+        <note priority="1" from="description">A currently selected entity</note>
+      </trans-unit>
+      <trans-unit id="0250559f3116cd3b5da330fe283fbf5f66dfa0da" datatype="html">
+        <source> Choose current version </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/conflict-resolution/compare-rev/compare-rev.component.html</context>
+          <context context-type="linenumber">74,83</context>
+        </context-group>
+        <note priority="1" from="description">Choose a current version between several conflicting versions of database entries</note>
       </trans-unit>
       <trans-unit id="6849422565602412116" datatype="html">
         <source>automatically deleted trivial conflict</source>
@@ -1628,6 +1685,14 @@
           <context context-type="linenumber">167</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="eb24700c8ea13217647018eddd861387c601a29d" datatype="html">
+        <source> Data </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/conflict-resolution/conflict-resolution-list/conflict-resolution-list.component.html</context>
+          <context context-type="linenumber">20,24</context>
+        </context-group>
+        <note priority="1" from="description">Raw data, e.g. from a database</note>
+      </trans-unit>
       <trans-unit id="d4957f7e3e410c7da16d6b25e6ce6c403fe1b62d" datatype="html">
         <source>Administration &amp; Configuration</source>
         <context-group purpose="location">
@@ -1661,11 +1726,35 @@
         </context-group>
         <note priority="1" from="description">Auto-Update button</note>
       </trans-unit>
+      <trans-unit id="cc49637ba495376bc6a9f759a9ca26e5d1812ccd" datatype="html">
+        <source> Migration </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
+          <context context-type="linenumber">16,18</context>
+        </context-group>
+        <note priority="1" from="description">Data migration</note>
+      </trans-unit>
+      <trans-unit id="d970d5a7468a47ac3e0912bc051c39c9d97bee15" datatype="html">
+        <source> Migrate Notes to new author users </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
+          <context context-type="linenumber">19,21</context>
+        </context-group>
+        <note priority="1" from="description">Data migration for notes</note>
+      </trans-unit>
+      <trans-unit id="13fa99541f62fe5cc291b4d2bd54b8bde8c00c24" datatype="html">
+        <source> Migrate Children to correct photo format </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
+          <context context-type="linenumber">22,30</context>
+        </context-group>
+        <note priority="1" from="description">Data migration for photos</note>
+      </trans-unit>
       <trans-unit id="0107e5e2f3b56eb32c8d9f796afb7beee60fa214" datatype="html">
         <source>Backup</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
-          <context context-type="linenumber">25,27</context>
+          <context context-type="linenumber">28,30</context>
         </context-group>
         <note priority="1" from="description">Backup header</note>
       </trans-unit>
@@ -1673,7 +1762,7 @@
         <source> Download Backup (.json)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
-          <context context-type="linenumber">28,30</context>
+          <context context-type="linenumber">31,33</context>
         </context-group>
         <note priority="1" from="description">Download-Update button</note>
       </trans-unit>
@@ -1681,7 +1770,7 @@
         <source> Restore Backup (.json) </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
-          <context context-type="linenumber">31,37</context>
+          <context context-type="linenumber">34,40</context>
         </context-group>
         <note priority="1" from="description">Restore-Update button</note>
       </trans-unit>
@@ -1689,7 +1778,7 @@
         <source>Export</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
-          <context context-type="linenumber">43,45</context>
+          <context context-type="linenumber">46,48</context>
         </context-group>
         <note priority="1" from="description">Export header</note>
       </trans-unit>
@@ -1697,7 +1786,7 @@
         <source> Download whole database (.csv)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
-          <context context-type="linenumber">46,48</context>
+          <context context-type="linenumber">49,51</context>
         </context-group>
         <note priority="1" from="description">Download database button</note>
       </trans-unit>
@@ -1705,7 +1794,7 @@
         <source>Import (.csv)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
-          <context context-type="linenumber">48,53</context>
+          <context context-type="linenumber">51,56</context>
         </context-group>
         <note priority="1" from="description">Import database button</note>
       </trans-unit>
@@ -1713,7 +1802,7 @@
         <source>Application Configuration</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
-          <context context-type="linenumber">59,61</context>
+          <context context-type="linenumber">62,64</context>
         </context-group>
         <note priority="1" from="description">Application configuration header</note>
       </trans-unit>
@@ -1721,7 +1810,7 @@
         <source> Download configuration</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
-          <context context-type="linenumber">62,64</context>
+          <context context-type="linenumber">65,67</context>
         </context-group>
         <note priority="1" from="description">Download configuration button</note>
       </trans-unit>
@@ -1729,7 +1818,7 @@
         <source> Upload new configuration </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
-          <context context-type="linenumber">65,71</context>
+          <context context-type="linenumber">68,74</context>
         </context-group>
         <note priority="1" from="description">Upload configuration button</note>
       </trans-unit>
@@ -1737,7 +1826,7 @@
         <source>AppConfig</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
-          <context context-type="linenumber">77,82</context>
+          <context context-type="linenumber">80,85</context>
         </context-group>
         <note priority="1" from="description">App-Config header</note>
       </trans-unit>
@@ -1745,7 +1834,7 @@
         <source>Debug the PouchDB</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
-          <context context-type="linenumber">82,85</context>
+          <context context-type="linenumber">85,88</context>
         </context-group>
         <note priority="1" from="description">Debug PouchDB header</note>
       </trans-unit>
@@ -1753,7 +1842,7 @@
         <source> Send to console.log() </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
-          <context context-type="linenumber">85,89</context>
+          <context context-type="linenumber">88,92</context>
         </context-group>
         <note priority="1" from="description">Log button</note>
       </trans-unit>
@@ -1761,7 +1850,7 @@
         <source>Empty Database</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
-          <context context-type="linenumber">89,96</context>
+          <context context-type="linenumber">92,99</context>
         </context-group>
         <note priority="1" from="description">Empty database button</note>
       </trans-unit>
@@ -1769,7 +1858,7 @@
         <source>Alert Log</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
-          <context context-type="linenumber">94,97</context>
+          <context context-type="linenumber">97,100</context>
         </context-group>
         <note priority="1" from="description">Alert log header</note>
       </trans-unit>
@@ -1777,63 +1866,63 @@
         <source>Overwrite complete database?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.ts</context>
-          <context context-type="linenumber">124,123</context>
+          <context context-type="linenumber">126,125</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4385438832700932287" datatype="html">
         <source>Are you sure you want to restore this backup? This will delete all <x id="PH" equiv-text="restorePoint.split(&quot;\n&quot;).length"/> existing records in the database, restoring <x id="PH_1" equiv-text="newData.split(&quot;\n&quot;).length"/> records from the loaded file.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.ts</context>
-          <context context-type="linenumber">125,123</context>
+          <context context-type="linenumber">127,125</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3685095400036492965" datatype="html">
         <source>Backup restored</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.ts</context>
-          <context context-type="linenumber">141,140</context>
+          <context context-type="linenumber">143,142</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6880068429772311753" datatype="html">
         <source>Import new data?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.ts</context>
-          <context context-type="linenumber">163,162</context>
+          <context context-type="linenumber">165,164</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1485103193965426431" datatype="html">
         <source>Are you sure you want to import this file? This will add or update <x id="PH" equiv-text="newData.trim().split(&quot;\n&quot;).length - 1"/> records from the loaded file. Existing records with same &quot;_id&quot; in the database will be overwritten!</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.ts</context>
-          <context context-type="linenumber">164,162</context>
+          <context context-type="linenumber">166,164</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3334263884133276125" datatype="html">
         <source>Import completed?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.ts</context>
-          <context context-type="linenumber">177,176</context>
+          <context context-type="linenumber">179,178</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8031134143341104236" datatype="html">
         <source>Empty complete database?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.ts</context>
-          <context context-type="linenumber">197,196</context>
+          <context context-type="linenumber">199,198</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3913889938161542084" datatype="html">
         <source>Are you sure you want to clear the database? This will delete all <x id="PH" equiv-text="restorePoint.split(&quot;\n&quot;).length"/> existing records in the database!</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.ts</context>
-          <context context-type="linenumber">198,196</context>
+          <context context-type="linenumber">200,198</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1743146131382446018" datatype="html">
         <source>Import completed</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.ts</context>
-          <context context-type="linenumber">211,210</context>
+          <context context-type="linenumber">213,212</context>
         </context-group>
       </trans-unit>
       <trans-unit id="45cc8ca94b5a50842a9a8ef804a5ab089a38ae5c" datatype="html">
@@ -1889,7 +1978,7 @@
           <context context-type="sourcefile">src/app/core/coming-soon/coming-soon/coming-soon.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <note priority="1" from="description">Comming Soon header</note>
+        <note priority="1" from="description">Coming Soon header</note>
       </trans-unit>
       <trans-unit id="087cf1bfbd3932fe71ae7124caa48b29a9b62b86" datatype="html">
         <source> Sorry, this feature isn&apos;t quite ready yet. We are working hard to make this available for you. Let us know below if you need this functionality. </source>
@@ -1897,7 +1986,7 @@
           <context context-type="sourcefile">src/app/core/coming-soon/coming-soon/coming-soon.component.html</context>
           <context context-type="linenumber">4,6</context>
         </context-group>
-        <note priority="1" from="description">Comming Soon description</note>
+        <note priority="1" from="description">Coming Soon description</note>
       </trans-unit>
       <trans-unit id="4f1ff7e2ea0da1e84aba4c29dddf8ec0ba6e60ce" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon
@@ -1919,6 +2008,14 @@
           <context context-type="sourcefile">src/app/core/coming-soon/coming-soon/coming-soon.component.html</context>
           <context context-type="linenumber">43,44</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="5514520297087734093" datatype="html">
+        <source>Thank you for letting us know.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/coming-soon/coming-soon/coming-soon.component.ts</context>
+          <context context-type="linenumber">78</context>
+        </context-group>
+        <note priority="1" from="description">Sent after the user has sent a feature-request</note>
       </trans-unit>
       <trans-unit id="4220907960737038478" datatype="html">
         <source>Absent</source>
@@ -2216,7 +2313,7 @@
         <source>filename for child photo uploaded by server administrator</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-details/form/form.component.html</context>
-          <context context-type="linenumber">42,45</context>
+          <context context-type="linenumber">42,44</context>
         </context-group>
         <note priority="1" from="description">Tooltip when uploading a photo</note>
       </trans-unit>
@@ -2224,7 +2321,7 @@
         <source> <x id="INTERPOLATION" equiv-text="{{ row.placeholder }}"/> is required </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-details/form/form.component.html</context>
-          <context context-type="linenumber">72,74</context>
+          <context context-type="linenumber">73,75</context>
         </context-group>
         <note priority="1" from="description">The value is any sort of form-value e.g. the name or address of a person</note>
         <note priority="1" from="meaning">indicates that a certain value is required</note>
@@ -2233,15 +2330,15 @@
         <source>Age</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-details/form/form.component.html</context>
-          <context context-type="linenumber">121,124</context>
+          <context context-type="linenumber">122,124</context>
         </context-group>
-        <note priority="1" from="description">Placeholder when no age is set</note>
+        <note priority="1" from="description">The age of a child</note>
       </trans-unit>
       <trans-unit id="c135f4618bd4d3741aa311d61a3c455739f8aa16" datatype="html">
         <source> Edit </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-details/form/form.component.html</context>
-          <context context-type="linenumber">230,234</context>
+          <context context-type="linenumber">231,235</context>
         </context-group>
         <note priority="1" from="description">Generic edit button</note>
       </trans-unit>
@@ -2249,21 +2346,21 @@
         <source>Saving Successful</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-details/form/form.component.ts</context>
-          <context context-type="linenumber">85</context>
+          <context context-type="linenumber">87</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5440503778771005606" datatype="html">
         <source>Could not save &quot;<x id="PH" equiv-text="this.entity.getConstructor().ENTITY_TYPE"/>&quot;: <x id="PH_1" equiv-text="err"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-details/form/form.component.ts</context>
-          <context context-type="linenumber">90,89</context>
+          <context context-type="linenumber">92,91</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7176525273585569177" datatype="html">
         <source>Form invalid, required fields (&quot;<x id="PH" equiv-text="invalidFields"/>&quot;) missing</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-details/form/form.component.ts</context>
-          <context context-type="linenumber">147,146</context>
+          <context context-type="linenumber">157,156</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8455a83025850863b98819ba40214f845a7770c4" datatype="html">
@@ -2338,16 +2435,6 @@
         </context-group>
         <note priority="1" from="description">Save changes message</note>
       </trans-unit>
-      <trans-unit id="17cb2366c06b7bc1e736429e7f95f4fb9a9193a5" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{
-        changelog ? changelog.name : &quot;No Changelog Available&quot;
-      }}"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/latest-changes/changelog/changelog.component.html</context>
-          <context context-type="linenumber">23,25</context>
-        </context-group>
-        <note priority="1" from="description">Changelog, or no changelog (if none is available)</note>
-      </trans-unit>
       <trans-unit id="194c11c19296e5aa8018bc97e5f3d086af5f9248" datatype="html">
         <source>More Information</source>
         <context-group purpose="location">
@@ -2371,12 +2458,34 @@
         </context-group>
         <note priority="1" from="description">Generic close button</note>
       </trans-unit>
+      <trans-unit id="2566001175328025157" datatype="html">
+        <source>No Changelog Available</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/latest-changes/changelog/changelog.component.ts</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="7795087408392131030" datatype="html">
         <source>Could not load latest changes: <x id="PH" equiv-text="error"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/latest-changes/latest-changes.service.ts</context>
           <context context-type="linenumber">128</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="2896181875024748753" datatype="html">
+        <source>A new version of the app is available!</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/latest-changes/update-manager.service.ts</context>
+          <context context-type="linenumber">82,81</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4021752662928002901" datatype="html">
+        <source>Update</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/latest-changes/update-manager.service.ts</context>
+          <context context-type="linenumber">83,81</context>
+        </context-group>
+        <note priority="1" from="description">Action that a user can update the app with</note>
       </trans-unit>
       <trans-unit id="8160928187400055629" datatype="html">
         <source>Your account does not have the required permission for this action.</source>
@@ -2448,14 +2557,14 @@
         <source> The following processes are still running in the background. Until these are finished some pages may be slow or incomplete. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/sync-status/background-processing-indicator/background-processing-indicator.component.html</context>
-          <context context-type="linenumber">18,20</context>
+          <context context-type="linenumber">19,24</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5d49ee389add9351d1a4e56d4c8200eff140b932" datatype="html">
         <source> Close </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/sync-status/background-processing-indicator/background-processing-indicator.component.html</context>
-          <context context-type="linenumber">52,53</context>
+          <context context-type="linenumber">53,57</context>
         </context-group>
         <note priority="1" from="description">Generic close button</note>
       </trans-unit>
@@ -2487,35 +2596,77 @@
         <source>Synchronizing database</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/sync-status/sync-status/sync-status.component.ts</context>
-          <context context-type="linenumber">114,113</context>
+          <context context-type="linenumber">114</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7609250563997703714" datatype="html">
         <source>Database up-to-date</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/sync-status/sync-status/sync-status.component.ts</context>
-          <context context-type="linenumber">119,118</context>
+          <context context-type="linenumber">119</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="paginator.zeroRange" datatype="html">
+        <source>0 in <x id="PH" equiv-text="length"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/translation/TranslatableMatPaginator.ts</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="paginator.rangeOfLabel" datatype="html">
+        <source><x id="PH" equiv-text="startIndex + 1"/> - <x id="PH_1" equiv-text="endIndex"/> of <x id="PH_2" equiv-text="length"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/translation/TranslatableMatPaginator.ts</context>
+          <context context-type="linenumber">18,20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="paginator.displayPerPage" datatype="html">
+        <source>Items per page</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/translation/TranslatableMatPaginator.ts</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="paginator.nextPage" datatype="html">
+        <source>Next page</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/translation/TranslatableMatPaginator.ts</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="paginator.prevPage" datatype="html">
+        <source>Prev page</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/translation/TranslatableMatPaginator.ts</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="paginator.firstPage" datatype="html">
+        <source>First page</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/translation/TranslatableMatPaginator.ts</context>
+          <context context-type="linenumber">29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="paginator.lastPage" datatype="html">
+        <source>Last page</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/translation/TranslatableMatPaginator.ts</context>
+          <context context-type="linenumber">30</context>
         </context-group>
       </trans-unit>
       <trans-unit id="16b588249bc86b732777fae011fb7c18fe88689a" datatype="html">
         <source>Changing your language</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/translation/language-change-process-dialog/language-change-process-dialog.component.ts</context>
-          <context context-type="linenumber">7</context>
+          <context context-type="linenumber">13</context>
         </context-group>
       </trans-unit>
       <trans-unit id="d73db922c757fc732ad1a2fce346ac5348b9c2e8" datatype="html">
         <source>This may take a while...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/translation/language-change-process-dialog/language-change-process-dialog.component.ts</context>
-          <context context-type="linenumber">8</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="ea0902e6e91e6fffc357e93cbabff3c48abae444" datatype="html">
-        <source>Warning: Language Change may take a while</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/ui/language-selector/language-select.component.html</context>
-          <context context-type="linenumber">7</context>
+          <context context-type="linenumber">14</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html">
@@ -2525,6 +2676,37 @@
           <context context-type="linenumber">6,10</context>
         </context-group>
         <note priority="1" from="description">Search label</note>
+      </trans-unit>
+      <trans-unit id="cb7468ce36b53af27bd4a5054691ea29dfca8e43" datatype="html">
+        <source> Insert at least <x id="INTERPOLATION" equiv-text="{{ MIN_CHARACTERS_FOR_SEARCH }}"/> characters </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/ui/search/search.component.html</context>
+          <context context-type="linenumber">28,31</context>
+        </context-group>
+        <note priority="1" from="description">The user has inserted too few characters to start a search</note>
+      </trans-unit>
+      <trans-unit id="50c74414210bc5a67ad76a2ddb19c696baa837f5" datatype="html">
+        <source>There were no results</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/ui/search/search.component.html</context>
+          <context context-type="linenumber">41,45</context>
+        </context-group>
+        <note priority="1" from="description">No search results are available</note>
+      </trans-unit>
+      <trans-unit id="1265dade629b76077f2ee5866dc1ed2f8cf03860" datatype="html">
+        <source>Search in progress...</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/ui/search/search.component.html</context>
+          <context context-type="linenumber">45,49</context>
+        </context-group>
+        <note priority="1" from="description">A search is in progress</note>
+      </trans-unit>
+      <trans-unit id="2296250022373471741" datatype="html">
+        <source>An error has occurred in your search query. Please try again.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/ui/search/search.component.ts</context>
+          <context context-type="linenumber">78,77</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="406df86e338f5992ef27c4bc35dda98e3e651e34" datatype="html">
         <source>User Account</source>
@@ -2639,6 +2821,14 @@
           <context context-type="linenumber">130,131</context>
         </context-group>
         <note priority="1" from="description">Change password button</note>
+      </trans-unit>
+      <trans-unit id="9516b19f9ed936a7689f41f7030e13334150c5b0" datatype="html">
+        <source> and <x id="INTERPOLATION" equiv-text="{{ additionalUsers }}"/> more </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/users-block/users-block.component.ts</context>
+          <context context-type="linenumber">14,16</context>
+        </context-group>
+        <note priority="1" from="description">Name of authors + and ... users more</note>
       </trans-unit>
       <trans-unit id="a0aa334621492b0408578b0747e7b39030f010dd" datatype="html">
         <source>Please enter your username and password for your Nextcloud account. This will be used for photo uploads.</source>
@@ -2774,55 +2964,6 @@
           <context context-type="linenumber">47,52</context>
         </context-group>
         <note priority="1" from="description">Button that allows to download a report</note>
-      </trans-unit>
-      <trans-unit id="paginator.zeroRange" datatype="html">
-        <source>0 in <x id="PH" equiv-text="length"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/utils/TranslatableMatPaginator.ts</context>
-          <context context-type="linenumber">8</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="paginator.rangeOfLabel" datatype="html">
-        <source><x id="PH" equiv-text="startIndex + 1"/> - <x id="PH_1" equiv-text="endIndex"/> of <x id="PH_2" equiv-text="length"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/utils/TranslatableMatPaginator.ts</context>
-          <context context-type="linenumber">18,20</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="paginator.displayPerPage" datatype="html">
-        <source>Items per page</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/utils/TranslatableMatPaginator.ts</context>
-          <context context-type="linenumber">26</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="paginator.nextPage" datatype="html">
-        <source>Next page</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/utils/TranslatableMatPaginator.ts</context>
-          <context context-type="linenumber">27</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="paginator.prevPage" datatype="html">
-        <source>Prev page</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/utils/TranslatableMatPaginator.ts</context>
-          <context context-type="linenumber">28</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="paginator.firstPage" datatype="html">
-        <source>First page</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/utils/TranslatableMatPaginator.ts</context>
-          <context context-type="linenumber">29</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="paginator.lastPage" datatype="html">
-        <source>Last page</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/utils/TranslatableMatPaginator.ts</context>
-          <context context-type="linenumber">30</context>
-        </context-group>
       </trans-unit>
     </body>
   </file>
