@@ -16,6 +16,13 @@
   ></app-entity-select>
 </div>
 
+<app-edit-button
+  *ngIf="!editing"
+  (toggleEditing)="switchEdit()"
+  [onSave]="save"
+>
+</app-edit-button>
+
 <div>
   <button
     *ngIf="editing"
@@ -35,9 +42,5 @@
     Cancel
   </button>
 
-  <app-edit-button
-    *ngIf="!editing"
-    (toggleEditing)="switchEdit()"
-  >
-  </app-edit-button>
+
 </div>

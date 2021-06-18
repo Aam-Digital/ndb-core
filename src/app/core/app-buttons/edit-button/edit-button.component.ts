@@ -4,6 +4,7 @@ import {
   EntityPermissionsService,
   OperationType,
 } from "../../permissions/entity-permissions.service";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
 
 /**
  * A button that has two states; editing or not editing.
@@ -18,34 +19,60 @@ import {
 })
 export class EditButtonComponent {
   /**
-   * Emits, whenever the user clicks on the button
-   */
-  @Output() toggleEditing = new EventEmitter<void>();
-
-  /**
-   * Whether or not this button should be disabled
-   */
-  @Input() disabled: boolean = false;
-
-  /**
    * When setting this entity, this button will automatically be disabled
    * when the user does not have permission to edit the entity.
    * @param entity
    */
-  @Input() set managingEntity(entity: typeof Entity) {
+  @Input() set managingEntity(entity: Entity) {
     if (
       !this.entityPermissionService.userIsPermitted(
-        entity,
+        entity.getConstructor(),
         OperationType.UPDATE
       )
     ) {
       this.disabled = true;
     }
   }
+  /**
+   * Emits, whenever the user clicks on the button
+   */
+  @Output() toggleEditing = new EventEmitter<void>();
 
-  constructor(private entityPermissionService: EntityPermissionsService) {}
+  @Input() saveDisabled: boolean = false;
+
+  @Input() onSave: () => void = this.defaultSave;
+  @Input() onCancel: () => void = this.defaultCancel;
+
+  @Input() editing: boolean = false;
+  @Output() editingChanged = new EventEmitter<boolean>();
+
+  /**
+   * Whether or not this button should be disabled
+   */
+  @Input() disabled: boolean = false;
+
+  constructor(
+    private entityPermissionService: EntityPermissionsService,
+    private entityMapperService: EntityMapperService
+  ) {}
+
+  canEdit(entity: typeof Entity): boolean {
+    return this.entityPermissionService.userIsPermitted(
+      entity,
+      OperationType.UPDATE
+    );
+  }
+
+  private defaultCancel() {
+    this.editing = false;
+  }
+
+  private async defaultSave() {
+    await this.entityMapperService.save(this.managingEntity);
+  }
 
   toggleEdit() {
-    this.toggleEditing.emit();
+    this.editing = !this.editing;
+    this.editingChanged.emit(this.editing);
   }
 }

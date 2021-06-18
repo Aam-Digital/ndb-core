@@ -1,8 +1,32 @@
 <button
+  *ngIf="!editing"
   mat-stroked-button
   (click)="toggleEdit()"
   class="edit-button"
   [disabled]="disabled"
 >
   Edit
+</button>
+
+<button
+  *ngIf="editing"
+  mat-stroked-button
+  [disabled]="saveDisabled"
+  (click)="onSave()"
+  angulartics2On="click"
+  angularticsCategory="UserAction"
+  angularticsAction="form_dialog_save"
+>
+  Save
+</button>
+
+<button
+  *ngIf="editing"
+  mat-stroked-button
+  (click)="onCancel()"
+  angulartics2On="click"
+  angularticsCategory="UserAction"
+  angularticsAction="form_dialog_cancel"
+>
+  Cancel
 </button>
