@@ -25,7 +25,9 @@
         searchInput.value.length < MIN_CHARACTERS_FOR_SEARCH
       "
     >
-      <p>Insert at least {{ MIN_CHARACTERS_FOR_SEARCH }} characters</p>
+      <p i18n="The user has inserted too few characters to start a search">
+        Insert at least {{ MIN_CHARACTERS_FOR_SEARCH }} characters
+      </p>
     </mat-option>
 
     <mat-option
@@ -36,11 +38,11 @@
         !isSearching
       "
     >
-      <p>There were no results</p>
+      <p i18n="No search results are available">There were no results</p>
     </mat-option>
 
     <mat-option class="result-hint" *ngIf="isSearching">
-      <p>Search in progress...</p>
+      <p i18n="A search is in progress">Search in progress...</p>
     </mat-option>
 
     <mat-option *ngFor="let res of results" [value]="res">

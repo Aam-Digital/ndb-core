@@ -20,8 +20,8 @@
 <mat-dialog-content #changelogContainer>
   <mat-card *ngFor="let changelog of changelogs" class="mat-elevation-z2">
     <mat-card-header>
-      <mat-card-title i18n="Changelog, or no changelog (if none is available)">{{
-        changelog ? changelog.name : "No Changelog Available"
+      <mat-card-title>{{
+        changelog ? changelog.name : noChangelogAvailable
       }}</mat-card-title>
       <mat-card-subtitle>
         <span class="meta-info"

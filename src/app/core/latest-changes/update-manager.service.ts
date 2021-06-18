@@ -79,8 +79,8 @@ export class UpdateManagerService {
 
   private showUpdateNotification() {
     this.notificationRef = this.snackBar.open(
-      "A new version of the app is available!",
-      "Update"
+      $localize`A new version of the app is available!`,
+      $localize`:Action that a user can update the app with:Update`
     );
     this.notificationRef.onAction().subscribe(() => {
       location.reload();

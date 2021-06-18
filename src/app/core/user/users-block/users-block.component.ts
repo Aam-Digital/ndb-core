@@ -8,7 +8,10 @@ import { LoggingService } from "../../logging/logging.service";
   selector: "app-users-block",
   template: `
     {{ authorNames }}
-    <span *ngIf="users.length > maxUserThreshold">
+    <span
+      *ngIf="users.length > maxUserThreshold"
+      i18n="Name of authors + and ... users more"
+    >
       and {{ additionalUsers }} more
     </span>
   `,

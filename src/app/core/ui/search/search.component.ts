@@ -75,7 +75,7 @@ export class SearchComponent implements OnInit {
             LogLevel.ERROR
           );
           this.alertService.addWarning(
-            "An error has occurred in your search query. Please try again."
+            $localize`An error has occurred in your search query. Please try again.`
           );
         }
       );

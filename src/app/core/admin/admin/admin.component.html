@@ -12,13 +12,13 @@
   <button (click)="updatePhotoFilenames()" mat-stroked-button i18n="Auto-Update button">
     Auto-Update children's photo filenames
   </button>
-  <button (click)="attendanceMigration.createEventsForAllAttendanceMonths()" mat-stroked-button>
+  <button (click)="attendanceMigration.createEventsForAllAttendanceMonths()" mat-stroked-button i18n="Data migration">
     Migration
   </button>
-  <button (click)="notesMigration.migrateToMultiUser()" mat-stroked-button>
+  <button (click)="notesMigration.migrateToMultiUser()" mat-stroked-button i18n="Data migration for notes">
     Migrate Notes to new author users
   </button>
-  <button (click)="childrenMigrationService.migratePhotoFormat()" mat-stroked-button>
+  <button (click)="childrenMigrationService.migratePhotoFormat()" mat-stroked-button i18n="Data migration for photos">
     Migrate Children to correct photo format
   </button>
 </p>
