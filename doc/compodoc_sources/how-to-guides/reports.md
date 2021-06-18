@@ -1,6 +1,10 @@
-# How to create reports
+# Reports
+The reporting module allows organizations to automatically create reports of aggregated data for a given timespan.
+This can be used to track indicators and export anonymous data.
+
+## Configuration
 The reports can be defined through the config of the reporting component.
-```
+```json
 "view:report": {
   "component": "Reporting",
   "config": {
@@ -18,17 +22,17 @@ The reports can be defined through the config of the reporting component.
 }
 ```
 
-## The aggregation structure
+## Aggregation structure
 Inside the `aggregationDefinitions` an array of aggregations can be added.
 The following example shows the structure of an aggregation.
-```
+```json
 {
   "label": "Events",
-  "query": `${EventNote.ENTITY_TYPE}:toArray[*date >= ? & date <= ?]`,
+  "query": "EventNote:toArray[*date >= ? & date <= ?]",
   "groupBy": ["category"],
   "aggregations": [
     {
-      "query": `:getParticipantsWithAttendance(PRESENT):unique:addPrefix(${Child.ENTITY_TYPE}):toEntities`,
+      "query": ":getParticipantsWithAttendance(PRESENT):unique:addPrefix(Child):toEntities",
       "groupBy": ["gender", "religion"],
       "label": "Participants"
     }
@@ -43,7 +47,7 @@ The following example shows the structure of an aggregation.
 - The `aggregations` array can be filled with further aggregations with the same structure.
     They will be executed on the result of the `query` as well as on each `groupBy` result.
   
-## The `query` syntax
+## `query` syntax
 A full documentation can be found [here](https://github.com/auditassistant/json-query#queries).
 The most top-level aggregation has to start with the entity which should be queried.
 This can be done by selecting the entity type and chaining it with `:toArray`: e.g. `Child:toArray`.
@@ -62,14 +66,14 @@ The first function you already know `:toArray` which creates an object into an a
 The following functions also exist:
 - `:unique` removes all duplicates from an array
 - `:addPrefix(<ENTITY_TYPE>)` adds the prefix `<ENTITY_TYPE>` to all strings in the input array.
-    This is necessary to use the `toEntities` function.
+    This is necessary to use the `:toEntities` function.
     The prefix will only be added if it is not set yet.
 - `:toEntities` transforms an array of entity-ids into an array of entities.
     The IDs need to have the full format e.g. `Child:1234-5678`.
     Therefore `:addPrefix` should always be used to add the correct entity before calling `:toEntities`.
 - `:getRelated(<ENTITY_TYPE>, <PROPERTY_NAME>)` is used to get the entity or entities which are mentioned through ids
     on a property of another entity e.g., to get all children that are part of a set of notes write `Note:toArray:getRelated(Child, children)`
-- `:getIds(<PROPERTY_NAME>)` works similar to `getRelated` but does not transform the ids into entities.
+- `:getIds(<PROPERTY_NAME>)` works similar to `:getRelated` but does not transform the ids into entities.
 - `:filterByObjectAttribute(<PROPERTY_NAME>, <KEY>, <VALUE>)` is used to filter by an attribute which is a complex
     object like a `configurable-enum`. `<PROPERTY_NAME>` refers to the name of the property of the parent attribute,
     `<KEY>` refers to a key of this property and `<VALUE>` refers to the value(s) for which should be filtered.
@@ -77,7 +81,7 @@ The following functions also exist:
     E.g., to get all notes which are home visits or guardian talks write:
     `Note:toArray:filterByObjectAttribute(category, id, HOME_VISIT|GUARDIAN_TALK)`
 - `:getParticipantsWithAttendance(<ATTENDANCE_STATUS>)` only returns the children with the given attendance for a set 
-    of notes. The attendance refers to the `countAs` attribute. To get all present children write 
+    of notes. The attendance refers to the `:countAs` attribute. To get all present children write 
     `Note:toArray:getParticipantsWithAttendance(PRESENT)`
 - `:addEntities(<ENTITY_TYPE>)` can be used to create an array holding multiple entity types.
     E.g., to create an array holding notes and event notes write `Note:toArray:addEntities(EventNote)`.
