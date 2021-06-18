@@ -37,7 +37,7 @@
     "deep-object-diff": "^1.1.0",
     "faker": "^5.5.3",
     "font-awesome": "^4.7.0",
-    "idb": "^6.1.0",
+    "idb": "^6.1.1",
     "json-query": "^2.2.2",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
