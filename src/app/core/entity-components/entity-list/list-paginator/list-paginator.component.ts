@@ -14,6 +14,7 @@ import { SessionService } from "app/core/session/session-service/session.service
 import { EntityMapperService } from "app/core/entity/entity-mapper.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+
 @UntilDestroy()
 @Component({
   selector: "app-list-paginator",
@@ -33,7 +34,8 @@ export class ListPaginatorComponent<E extends Entity>
   paginatorPageSizeBeforeToggle: number = 10;
   paginatorPageSizeOptions: Array<number> = [3, 10, 20, 50];
   paginatorPageIndex: number = 0;
-  allToggle: boolean = false;
+  allToggleState: boolean = false;
+  allToggleDisabled: boolean = false;
 
   constructor(
     private sessionService: SessionService,
@@ -55,7 +57,6 @@ export class ListPaginatorComponent<E extends Entity>
       .connect()
       .pipe(untilDestroyed(this))
       .subscribe((res) => {
-        this.allToggle = this.paginatorPageSize >= this.dataSource.data.length;
         if (res.length > 0) {
           this.paginatorPageSize = Math.min(
             this.dataSource.data.length,
@@ -63,6 +64,8 @@ export class ListPaginatorComponent<E extends Entity>
           );
           this.setPageSizeOptions();
           this.setPageSize();
+          this.allToggleState = this.paginatorPageSize >= this.dataSource.data.length;
+          this.allToggleDisabled = this.dataSource.data.length <= this.paginatorPageSizeOptions[0];
         }
       });
   }
@@ -88,11 +91,10 @@ export class ListPaginatorComponent<E extends Entity>
     this.paginatorPageSize = event.pageSize;
     this.paginatorPageIndex = event.pageIndex;
     this.updateUserPaginationSettings();
-    this.allToggle = this.paginatorPageSize >= this.dataSource.data.length;
   }
 
-  clickAllToggle() {
-    if (!this.allToggle) {
+  changeAllToggle() {
+    if (!this.allToggleState) {
       this.paginatorPageSizeBeforeToggle = this.paginatorPageSize;
       this.paginatorPageSize = this.dataSource.data.length;
     } else if (
@@ -104,7 +106,6 @@ export class ListPaginatorComponent<E extends Entity>
       this.paginatorPageSize = po.length > 2 ? po[po.length - 2] : po[0];
     }
     this.paginator._changePageSize(this.paginatorPageSize);
-    this.allToggle = this.paginatorPageSize >= this.dataSource.data.length;
     this.updateUserPaginationSettings();
   }
 

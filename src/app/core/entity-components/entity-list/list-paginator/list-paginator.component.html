@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <mat-slide-toggle [(ngModel)]="allToggle" (click)="clickAllToggle()"
+  <mat-slide-toggle [disabled]="allToggleDisabled" [checked]="allToggleState" (change)="changeAllToggle()"
     >Show All</mat-slide-toggle
   >
   <mat-paginator
