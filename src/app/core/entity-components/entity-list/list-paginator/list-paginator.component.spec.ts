@@ -73,7 +73,7 @@ describe("ListPaginatorComponent", () => {
     component.dataSource.data = new Array(100);
     component.showingAll = false;
     component.ngOnChanges({ dataSource: null });
-    
+
     component.changeAllToggle();
 
     expect(component.paginatorPageSize).toBe(100);
