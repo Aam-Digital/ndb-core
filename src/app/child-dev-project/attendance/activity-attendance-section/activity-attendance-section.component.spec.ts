@@ -12,6 +12,8 @@ import { defaultAttendanceStatusTypes } from "../../../core/config/default-confi
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceModule } from "../attendance.module";
 import { MatNativeDateModule } from "@angular/material/core";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { User } from "../../../core/user/user";
 import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 
 describe("ActivityAttendanceSectionComponent", () => {
@@ -42,6 +44,10 @@ describe("ActivityAttendanceSectionComponent", () => {
           },
           DatePipe,
           PercentPipe,
+          {
+            provide: SessionService,
+            useValue: { getCurrentUser: () => new User() },
+          },
         ],
       }).compileComponents();
     })

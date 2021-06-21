@@ -17,6 +17,8 @@ import { MatDialogRef } from "@angular/material/dialog";
 import { EMPTY } from "rxjs";
 import { EventNote } from "../model/event-note";
 import { AttendanceService } from "../attendance.service";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { User } from "../../../core/user/user";
 
 describe("AttendanceDetailsComponent", () => {
   let component: AttendanceDetailsComponent;
@@ -66,6 +68,10 @@ describe("AttendanceDetailsComponent", () => {
           { provide: EntityMapperService, useValue: mockEntityMapperService },
           { provide: MatDialogRef, useValue: {} },
           { provide: AttendanceService, useValue: mockAttendanceService },
+          {
+            provide: SessionService,
+            useValue: { getCurrentUser: () => new User() },
+          },
         ],
       }).compileComponents();
     })
