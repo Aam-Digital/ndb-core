@@ -76,6 +76,10 @@
       {
         "title": "Review a Pull Request",
         "file": "how-to-guides/review-pull-request.md"
+      },
+      {
+        "title": "Create a Report",
+        "file": "how-to-guides/reports.md"
       }
     ]
   },

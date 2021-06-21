@@ -11,6 +11,8 @@ import { Angulartics2Module } from "angulartics2";
 import { MatButtonModule } from "@angular/material/button";
 import { ExtendedModule, FlexModule } from "@angular/flex-layout";
 import { MatInputModule } from "@angular/material/input";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatTableModule } from "@angular/material/table";
@@ -21,7 +23,10 @@ import { AdminModule } from "../../admin/admin.module";
 import { ViewModule } from "../../view/view.module";
 import { DisplayConfigurableEnumComponent } from "./display-configurable-enum/display-configurable-enum.component";
 import { ListFilterComponent } from "./list-filter/list-filter.component";
+import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import { PermissionsModule } from "../../permissions/permissions.module";
+import { MatSliderModule } from "@angular/material/slider";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 
 @NgModule({
   declarations: [
@@ -31,6 +36,7 @@ import { PermissionsModule } from "../../permissions/permissions.module";
     DisplayConfigurableEnumComponent,
     DisplayCheckmarkComponent,
     ListFilterComponent,
+    ListPaginatorComponent,
   ],
   imports: [
     CommonModule,
@@ -43,15 +49,19 @@ import { PermissionsModule } from "../../permissions/permissions.module";
     MatButtonModule,
     FlexModule,
     MatInputModule,
+    MatCheckboxModule,
     MatExpansionModule,
     ExtendedModule,
     MatButtonToggleModule,
     MatTableModule,
+    MatToolbarModule,
     ViewModule,
     MatSortModule,
     MatPaginatorModule,
     PermissionsModule,
+    MatSliderModule,
+    MatSlideToggleModule,
   ],
-  exports: [EntityListComponent],
+  exports: [EntityListComponent, ListPaginatorComponent],
 })
 export class EntityListModule {}

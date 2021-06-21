@@ -12,6 +12,8 @@ import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
 import { RouterTestingModule } from "@angular/router/testing";
 import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { User } from "../../../core/user/user";
 
 describe("AserComponent", () => {
   let component: AserComponent;
@@ -45,6 +47,10 @@ describe("AserComponent", () => {
           DatePipe,
           { provide: ChildrenService, useValue: mockChildrenService },
           { provide: EntityMapperService, useValue: mockEntityMapper },
+          {
+            provide: SessionService,
+            useValue: { getCurrentUser: () => new User() },
+          },
         ],
       }).compileComponents();
     })
