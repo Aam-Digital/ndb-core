@@ -26,7 +26,7 @@ import { RemoteSession } from "./remote-session";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { SessionType } from "../session-type";
 import { fakeAsync, tick } from "@angular/core/testing";
-import { failOnStates, waitForChangeTo } from "./sessionUtil";
+import { failOnStates, waitForChangeTo } from "./session-utils";
 
 describe("SyncedSessionService", () => {
   const snackBarMock = { openFromComponent: () => {} } as any;
