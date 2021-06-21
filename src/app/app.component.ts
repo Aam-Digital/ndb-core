@@ -61,7 +61,7 @@ export class AppComponent implements OnInit {
     configService.loadConfig(entityMapper);
     // Reload config once the database is synced
     sessionService.syncStateStream
-      .pipe(waitForChangeTo(SyncState.COMPLETED))
+      .pipe(waitForChangeTo(SyncState.COMPLETED, true))
       .toPromise()
       .then(() => configService.loadConfig(entityMapper))
       .then(() => router.navigate([], { relativeTo: this.activatedRoute }));
