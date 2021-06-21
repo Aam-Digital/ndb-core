@@ -21,7 +21,8 @@ import { filter } from "rxjs/operators";
   templateUrl: "./list-paginator.component.html",
   styleUrls: ["./list-paginator.component.scss"],
 })
-export class ListPaginatorComponent<E extends Entity> implements OnChanges, AfterViewInit {
+export class ListPaginatorComponent<E extends Entity>
+  implements OnChanges, AfterViewInit {
   @Input() dataSource: MatTableDataSource<E>;
   @Input() idForSavingPagination: string;
 

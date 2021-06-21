@@ -60,12 +60,13 @@ describe("ListPaginatorComponent", () => {
     expect(component.user.paginatorSettingsPageIndex["table-id"]).toEqual(1);
   }));
 
-  it("should disable the all-toggle-slider if number of entries is smaller or equal to smallest option for pageSize", fakeAsync(() => {
+  it("should disable the all toggle when too little entries are available", () => {
     component.dataSource.data = new Array(2);
 
     component.ngOnChanges({ dataSource: null });
+
     expect(component.allToggleDisabled).toBeTrue();
-  }));
+  });
 
   it("should reset the pagination size when clicking the all toggle twice", () => {
     component.paginatorPageSize = 20;
