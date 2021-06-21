@@ -13,6 +13,7 @@ import { User } from "app/core/user/user";
 import { SessionService } from "app/core/session/session-service/session.service";
 import { EntityMapperService } from "app/core/entity/entity-mapper.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { filter } from "rxjs/operators";
 
 @UntilDestroy()
 @Component({
@@ -20,9 +21,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   templateUrl: "./list-paginator.component.html",
   styleUrls: ["./list-paginator.component.scss"],
 })
-export class ListPaginatorComponent<E extends Entity>
-  implements OnChanges, AfterViewInit {
-
+export class ListPaginatorComponent<E extends Entity> implements OnChanges, AfterViewInit {
   @Input() dataSource: MatTableDataSource<E>;
   @Input() idForSavingPagination: string;
 
@@ -55,20 +54,21 @@ export class ListPaginatorComponent<E extends Entity>
     if (changes.hasOwnProperty("dataSource")) {
       this.dataSource
         .connect()
-        .pipe(untilDestroyed(this))
-        .subscribe((res) => {
-          if (res.length > 0) {
-            this.paginatorPageSize = Math.min(
-              this.dataSource.data.length,
-              this.paginatorPageSize
-            );
-            this.setPageSizeOptions();
-            this.setPageSize();
-            this.showingAll =
-              this.paginatorPageSize >= this.dataSource.data.length;
-            this.allToggleDisabled =
-              this.dataSource.data.length <= this.paginatorPageSizeOptions[0];
-          }
+        .pipe(
+          untilDestroyed(this),
+          filter((res) => res.length > 0)
+        )
+        .subscribe(() => {
+          this.paginatorPageSize = Math.min(
+            this.dataSource.data.length,
+            this.paginatorPageSize
+          );
+          this.setPageSizeOptions();
+          this.setPageSize();
+          this.showingAll =
+            this.paginatorPageSize >= this.dataSource.data.length;
+          this.allToggleDisabled =
+            this.dataSource.data.length <= this.paginatorPageSizeOptions[0];
         });
     }
   }
