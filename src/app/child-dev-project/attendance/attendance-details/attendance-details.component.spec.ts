@@ -14,6 +14,8 @@ import { AttendanceModule } from "../attendance.module";
 import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { MatNativeDateModule } from "@angular/material/core";
 import { MatDialogRef } from "@angular/material/dialog";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { User } from "../../../core/user/user";
 
 describe("AttendanceDetailsComponent", () => {
   let component: AttendanceDetailsComponent;
@@ -52,6 +54,10 @@ describe("AttendanceDetailsComponent", () => {
         providers: [
           { provide: EntityMapperService, useValue: {} },
           { provide: MatDialogRef, useValue: {} },
+          {
+            provide: SessionService,
+            useValue: { getCurrentUser: () => new User() },
+          },
         ],
       }).compileComponents();
     })

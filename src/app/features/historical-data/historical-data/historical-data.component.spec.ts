@@ -14,6 +14,8 @@ import moment from "moment";
 import { DatePipe } from "@angular/common";
 import { HistoricalDataService } from "../historical-data.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { User } from "../../../core/user/user";
 
 describe("HistoricalDataComponent", () => {
   let component: HistoricalDataComponent;
@@ -34,6 +36,10 @@ describe("HistoricalDataComponent", () => {
           useValue: jasmine.createSpyObj(["save", "remove"]),
         },
         DatePipe,
+        {
+          provide: SessionService,
+          useValue: { getCurrentUser: () => new User() },
+        },
       ],
     }).compileComponents();
   });

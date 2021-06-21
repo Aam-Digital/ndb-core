@@ -4,14 +4,12 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnInit,
   Output,
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatSort } from "@angular/material/sort";
-import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { ColumnDescription } from "../column-description";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
@@ -24,7 +22,6 @@ import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { DatePipe } from "@angular/common";
-import { BehaviorSubject } from "rxjs";
 import { ComponentWithConfig } from "../component-with-config";
 import { entityListSortingAccessor } from "../../entity-list/sorting-accessor";
 
@@ -48,15 +45,7 @@ import { entityListSortingAccessor } from "../../entity-list/sorting-accessor";
   styleUrls: ["./entity-subrecord.component.scss"],
 })
 export class EntitySubrecordComponent<T extends Entity>
-  implements OnInit, OnChanges, AfterViewInit {
-  /**
-   * Global state of pagination size for all entity subrecord components.
-   *
-   * When the user changes page size in one component the page size is automatically changed for other components also.
-   * This ensures a consistent UI e.g. for side-by-side subrecord components of multiple attendance record tables.
-   */
-  static paginatorPageSize = new BehaviorSubject(10);
-
+  implements OnChanges, AfterViewInit {
   /** data to be displayed */
   @Input() records: Array<T>;
 
@@ -116,9 +105,9 @@ export class EntitySubrecordComponent<T extends Entity>
 
   private screenWidth = "";
 
+  public idForSavingPagination = "startWert";
+
   @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  paginatorPageSize = EntitySubrecordComponent.paginatorPageSize.value;
 
   constructor(
     private _entityMapper: EntityMapperService,
@@ -143,8 +132,6 @@ export class EntitySubrecordComponent<T extends Entity>
   /** function returns the background color for each entry*/
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
 
-  ngOnInit() {}
-
   /**
    * Update the component if any of the @Input properties were changed from outside.
    * @param changes
@@ -164,48 +151,13 @@ export class EntitySubrecordComponent<T extends Entity>
       this.columnsToDisplay = this.columns.map((e) => e.name);
       this.columnsToDisplay.push("actions");
       this.setupTable();
+      this.idForSavingPagination = this.columns.map((col) => col.name).join("");
     }
   }
 
   ngAfterViewInit() {
     this.recordsDataSource.sort = this.sort;
-    this.recordsDataSource.paginator = this.paginator;
-    EntitySubrecordComponent.paginatorPageSize.subscribe((newPageSize) =>
-      this.updatePagination(newPageSize)
-    );
     this.recordsDataSource.sortingDataAccessor = entityListSortingAccessor;
-  }
-
-  /**
-   * Set the new page size (if it changed) and trigger an update of the UI.
-   * @param newPageSize
-   * @private
-   */
-  private updatePagination(newPageSize: number) {
-    if (this.paginatorPageSize === newPageSize) {
-      return;
-    }
-
-    this.paginatorPageSize = newPageSize;
-
-    setTimeout(() => {
-      this.paginator.pageSize = newPageSize;
-      this.paginator.page.next({
-        pageIndex: this.paginator.pageIndex,
-        pageSize: this.paginator.pageSize,
-        length: this.paginator.length,
-      });
-    });
-  }
-
-  /**
-   * Propagate the change of page size to all other entity subrecord components.
-   * @param event
-   */
-  onPaginateChange(event: PageEvent) {
-    if (event.pageSize !== this.paginatorPageSize) {
-      EntitySubrecordComponent.paginatorPageSize.next(event.pageSize);
-    }
   }
 
   /**
