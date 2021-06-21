@@ -11,8 +11,8 @@
 <button
   *ngIf="editing"
   mat-stroked-button
-  [disabled]="saveDisabled"
-  (click)="onSave()"
+  [disabled]="disabled"
+  (click)="save()"
   angulartics2On="click"
   angularticsCategory="UserAction"
   angularticsAction="form_dialog_save"
@@ -23,7 +23,8 @@
 <button
   *ngIf="editing"
   mat-stroked-button
-  (click)="onCancel()"
+  [disabled]="disabled"
+  (click)="cancel()"
   angulartics2On="click"
   angularticsCategory="UserAction"
   angularticsAction="form_dialog_cancel"

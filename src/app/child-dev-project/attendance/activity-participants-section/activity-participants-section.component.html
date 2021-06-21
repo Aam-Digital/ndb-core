@@ -17,30 +17,7 @@
 </div>
 
 <app-edit-button
-  *ngIf="!editing"
-  (toggleEditing)="switchEdit()"
+  [(editing)]="editing"
   [onSave]="save"
 >
 </app-edit-button>
-
-<div>
-  <button
-    *ngIf="editing"
-    mat-stroked-button
-    class="edit-button"
-    (click)="save()"
-  >
-    Save
-  </button>
-
-  <button
-    *ngIf="editing"
-    mat-stroked-button
-    class="edit-button"
-    (click)="switchEdit()"
-  >
-    Cancel
-  </button>
-
-
-</div>

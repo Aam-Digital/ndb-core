@@ -15,9 +15,17 @@ import { User } from "../../../core/user/user";
 })
 export class ActivityParticipantsSectionComponent
   implements OnInitDynamicComponent {
+  get editing(): boolean {
+    return this.editing_;
+  }
+  set editing(editing: boolean) {
+    this.editing_ = editing;
+    this.participants = [...this.entity.participants];
+    this.participatingGroups = [...this.entity.linkedGroups];
+    this.assignedUsers = [...this.entity.assignedTo];
+  }
   @Input() entity: RecurringActivity;
 
-  editing: boolean;
   participants: string[] = [];
   participatingGroups: string[] = [];
   assignedUsers: string[] = [];
@@ -25,6 +33,8 @@ export class ActivityParticipantsSectionComponent
   readonly Child: EntityConstructor<Child> = Child;
   readonly School: EntityConstructor<School> = School;
   readonly User: EntityConstructor<User> = User;
+
+  private editing_: boolean = false;
 
   constructor(private entityMapper: EntityMapperService) {}
 
@@ -35,18 +45,11 @@ export class ActivityParticipantsSectionComponent
     this.assignedUsers = this.entity.assignedTo;
   }
 
-  switchEdit() {
-    this.editing = !this.editing;
-    this.participants = [...this.entity.participants];
-    this.participatingGroups = [...this.entity.linkedGroups];
-    this.assignedUsers = [...this.entity.assignedTo];
-  }
-
   async save() {
+    console.log(this.participants);
     this.entity.participants = this.participants;
     this.entity.linkedGroups = this.participatingGroups;
     this.entity.assignedTo = this.assignedUsers;
     await this.entityMapper.save<RecurringActivity>(this.entity);
-    this.editing = false;
   }
 }

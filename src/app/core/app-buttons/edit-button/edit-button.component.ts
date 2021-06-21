@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Entity } from "../../entity/entity";
 import {
   EntityPermissionsService,
@@ -33,18 +33,12 @@ export class EditButtonComponent {
       this.disabled = true;
     }
   }
-  /**
-   * Emits, whenever the user clicks on the button
-   */
-  @Output() toggleEditing = new EventEmitter<void>();
-
-  @Input() saveDisabled: boolean = false;
 
   @Input() onSave: () => void = this.defaultSave;
   @Input() onCancel: () => void = this.defaultCancel;
 
   @Input() editing: boolean = false;
-  @Output() editingChanged = new EventEmitter<boolean>();
+  @Output() editingChange = new EventEmitter<boolean>();
 
   /**
    * Whether or not this button should be disabled
@@ -63,9 +57,22 @@ export class EditButtonComponent {
     );
   }
 
-  private defaultCancel() {
-    this.editing = false;
+  save() {
+    this.onSave();
+    this.setEditing(false);
   }
+
+  cancel() {
+    this.onCancel();
+    this.setEditing(false);
+  }
+
+  private setEditing(editing: boolean) {
+    this.editing = editing;
+    this.editingChange.emit(editing);
+  }
+
+  private defaultCancel() {}
 
   private async defaultSave() {
     await this.entityMapperService.save(this.managingEntity);
@@ -73,6 +80,6 @@ export class EditButtonComponent {
 
   toggleEdit() {
     this.editing = !this.editing;
-    this.editingChanged.emit(this.editing);
+    this.editingChange.emit(this.editing);
   }
 }
