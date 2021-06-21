@@ -17,6 +17,7 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { EntityListModule } from "../entity-list/entity-list.module";
 
 @NgModule({
   declarations: [EntitySubrecordComponent, KeysPipe],
@@ -37,6 +38,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatButtonModule,
     ConfigurableEnumModule,
     MatTooltipModule,
+    EntityListModule,
   ],
   exports: [EntitySubrecordComponent, KeysPipe],
 })

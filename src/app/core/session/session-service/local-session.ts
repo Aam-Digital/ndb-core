@@ -26,7 +26,7 @@ import { SyncState } from "../session-states/sync-state.enum";
 import { LoginState } from "../session-states/login-state.enum";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { BehaviorSubject } from "rxjs";
-import { failOnStates, waitForChangeTo } from "./sessionUtil";
+import { failOnStates, waitForChangeTo } from "./session-utils";
 
 /**
  * Responsibilities:
@@ -116,15 +116,13 @@ export class LocalSession {
    * Wait for the first sync of the database, returns a Promise.
    * Resolves directly, if the database is not initial, otherwise waits for the first change of the SyncState to completed (or failed)
    */
-  public async waitForFirstSync(): Promise<any> {
-    if (await this.isInitial()) {
-      return await this.syncStateStream
-        .pipe(
-          failOnStates([SyncState.FAILED, SyncState.ABORTED]),
-          waitForChangeTo(SyncState.COMPLETED)
-        )
-        .toPromise();
-    }
+  public async waitForFirstSync(): Promise<void> {
+    await this.syncStateStream
+      .pipe(
+        failOnStates([SyncState.FAILED, SyncState.ABORTED]),
+        waitForChangeTo(SyncState.COMPLETED)
+      )
+      .toPromise();
   }
 
   /**

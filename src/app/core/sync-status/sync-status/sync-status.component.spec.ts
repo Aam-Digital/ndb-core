@@ -32,7 +32,7 @@ describe("SyncStatusComponent", () => {
   let fixture: ComponentFixture<SyncStatusComponent>;
 
   let mockSessionService: jasmine.SpyObj<SessionService>;
-  const syncState = new BehaviorSubject<SyncState>(SyncState.UNSYNCED);
+  const syncState = new BehaviorSubject(SyncState.UNSYNCED);
   let mockIndexingService;
 
   const DATABASE_SYNCING_STATE: BackgroundProcessState = {

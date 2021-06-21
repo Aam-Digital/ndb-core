@@ -29,6 +29,7 @@ import { SyncState } from "../session-states/sync-state.enum";
 import { User } from "../../user/user";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { LoggingService } from "../../logging/logging.service";
+import { UntilDestroy } from "@ngneat/until-destroy";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -38,6 +39,7 @@ import { LoggingService } from "../../logging/logging.service";
  * [Session Handling, Authentication & Synchronisation]{@link /additional-documentation/concepts/session-and-authentication-system.html}
  */
 @Injectable()
+@UntilDestroy()
 export class SyncedSessionService extends SessionService {
   private _localSession: LocalSession;
   private _remoteSession: RemoteSession;
