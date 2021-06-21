@@ -72,8 +72,8 @@ describe("ListPaginatorComponent", () => {
     component.paginatorPageSize = 20;
     component.dataSource.data = new Array(100);
     component.showingAll = false;
-
     component.ngOnChanges({ dataSource: null });
+    
     component.changeAllToggle();
 
     expect(component.paginatorPageSize).toBe(100);
@@ -85,7 +85,7 @@ describe("ListPaginatorComponent", () => {
     expect(component.showingAll).toBeFalse();
   });
 
-  it("should toggle back to second biggest size if no previous size is too big", fakeAsync(() => {
+  it("should toggle back to second biggest size if the previous size is too big", fakeAsync(() => {
     component.dataSource.data = new Array(100);
     component.paginator._changePageSize(100);
     component.paginatorPageSizeBeforeToggle = 200;
