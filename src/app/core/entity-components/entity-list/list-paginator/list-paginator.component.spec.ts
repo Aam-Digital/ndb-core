@@ -63,27 +63,25 @@ describe("ListPaginatorComponent", () => {
   it("should disable the all-toggle-slider if number of entries is smaller or equal to smallest option for pageSize", fakeAsync(() => {
     component.dataSource.data = new Array(2);
 
-    component.ngOnChanges({});
+    component.ngOnChanges({ dataSource: null });
     expect(component.allToggleDisabled).toBeTrue();
-
   }));
 
   it("should reset the pagination size when clicking the all toggle twice", () => {
     component.paginatorPageSize = 20;
     component.dataSource.data = new Array(100);
-    component.allToggleState = false;
+    component.showingAll = false;
 
+    component.ngOnChanges({ dataSource: null });
     component.changeAllToggle();
-    component.ngOnChanges({});
 
     expect(component.paginatorPageSize).toBe(100);
-    expect(component.allToggleState).toBeTrue();
+    expect(component.showingAll).toBeTrue();
 
     component.changeAllToggle();
-    component.ngOnChanges({});
 
     expect(component.paginatorPageSize).toBe(20);
-    expect(component.allToggleState).toBeFalse();
+    expect(component.showingAll).toBeFalse();
   });
 
   it("should toggle back to second biggest size if no previous size is too big", fakeAsync(() => {
@@ -91,13 +89,12 @@ describe("ListPaginatorComponent", () => {
     component.paginator._changePageSize(100);
     component.paginatorPageSizeBeforeToggle = 200;
 
-    component.ngOnChanges({});
+    component.ngOnChanges({ dataSource: null });
 
-    expect(component.allToggleState).toBeTrue();
+    expect(component.showingAll).toBeTrue();
     expect(component.paginatorPageSize).toBe(100);
 
     component.changeAllToggle();
-    component.ngOnChanges({});
 
     const po = component.paginatorPageSizeOptions;
     expect(component.paginatorPageSize).toBe(po[po.length - 2]);

@@ -14,7 +14,6 @@ import { SessionService } from "app/core/session/session-service/session.service
 import { EntityMapperService } from "app/core/entity/entity-mapper.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
-
 @UntilDestroy()
 @Component({
   selector: "app-list-paginator",
@@ -23,19 +22,19 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 })
 export class ListPaginatorComponent<E extends Entity>
   implements OnChanges, AfterViewInit {
-  @Input() dataSource: MatTableDataSource<E>;
 
+  @Input() dataSource: MatTableDataSource<E>;
   @Input() idForSavingPagination: string;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   user: User;
-  paginatorPageSize: number = 10;
-  paginatorPageSizeBeforeToggle: number = 10;
-  paginatorPageSizeOptions: Array<number> = [3, 10, 20, 50];
-  paginatorPageIndex: number = 0;
-  allToggleState: boolean = false;
-  allToggleDisabled: boolean = false;
+  paginatorPageSize = 10;
+  paginatorPageSizeBeforeToggle = 10;
+  paginatorPageSizeOptions = [3, 10, 20, 50];
+  paginatorPageIndex = 0;
+  showingAll = false;
+  allToggleDisabled = false;
 
   constructor(
     private sessionService: SessionService,
@@ -53,21 +52,25 @@ export class ListPaginatorComponent<E extends Entity>
         this.user.paginatorSettingsPageIndex[this.idForSavingPagination] ||
         this.paginatorPageIndex;
     }
-    this.dataSource
-      .connect()
-      .pipe(untilDestroyed(this))
-      .subscribe((res) => {
-        if (res.length > 0) {
-          this.paginatorPageSize = Math.min(
-            this.dataSource.data.length,
-            this.paginatorPageSize
-          );
-          this.setPageSizeOptions();
-          this.setPageSize();
-          this.allToggleState = this.paginatorPageSize >= this.dataSource.data.length;
-          this.allToggleDisabled = this.dataSource.data.length <= this.paginatorPageSizeOptions[0];
-        }
-      });
+    if (changes.hasOwnProperty("dataSource")) {
+      this.dataSource
+        .connect()
+        .pipe(untilDestroyed(this))
+        .subscribe((res) => {
+          if (res.length > 0) {
+            this.paginatorPageSize = Math.min(
+              this.dataSource.data.length,
+              this.paginatorPageSize
+            );
+            this.setPageSizeOptions();
+            this.setPageSize();
+            this.showingAll =
+              this.paginatorPageSize >= this.dataSource.data.length;
+            this.allToggleDisabled =
+              this.dataSource.data.length <= this.paginatorPageSizeOptions[0];
+          }
+        });
+    }
   }
 
   ngAfterViewInit() {
@@ -94,7 +97,7 @@ export class ListPaginatorComponent<E extends Entity>
   }
 
   changeAllToggle() {
-    if (!this.allToggleState) {
+    if (!this.showingAll) {
       this.paginatorPageSizeBeforeToggle = this.paginatorPageSize;
       this.paginatorPageSize = this.dataSource.data.length;
     } else if (
