@@ -34,7 +34,7 @@ import { failOnStates, waitForChangeTo } from "./session-utils";
  * - Hold local user
  * - Check credentials against DB
  * - Provide the state of the synchronisation of the local db
- *   - we want to block before the first full sync
+ * - we want to block before the first full sync
  * - Provide an interface to access the data
  */
 @Injectable()
@@ -43,13 +43,11 @@ export class LocalSession {
   public database: any;
   public liveSyncHandle: any;
 
-  /** StateHandler for login state changes */
   public loginStateStream = new BehaviorSubject(LoginState.LOGGED_OUT);
-
   get loginState(): LoginState {
     return this.loginStateStream.value;
   }
-  /** StateHandler for sync state changes */
+
   public syncStateStream = new BehaviorSubject(SyncState.UNSYNCED);
 
   get syncState(): SyncState {
@@ -112,19 +110,18 @@ export class LocalSession {
    * Wait for the first sync of the database, returns a Promise.
    * Resolves directly, if the database is not initial, otherwise waits for the first change of the SyncState to completed (or failed)
    */
-  private waitForFirstSync(): Promise<SyncState> {
-    return this.isInitial().then((initial) => {
-      if (initial) {
-        return this.syncStateStream
-          .pipe(
-            failOnStates([SyncState.FAILED, SyncState.ABORTED]),
-            waitForChangeTo(SyncState.COMPLETED, true)
-          )
-          .toPromise();
-      } else {
-        return SyncState.COMPLETED;
-      }
-    });
+  private async waitForFirstSync(): Promise<SyncState> {
+    const isInitial = await this.isInitial();
+    if (isInitial) {
+      return this.syncStateStream
+        .pipe(
+          failOnStates([SyncState.FAILED, SyncState.ABORTED]),
+          waitForChangeTo(SyncState.COMPLETED, true)
+        )
+        .toPromise();
+    } else {
+      return SyncState.COMPLETED;
+    }
   }
 
   /**
