@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { Database } from "../../database/database";
 import { User } from "../../user/user";
 import { Papa } from "ngx-papaparse";
+import { entityListSortingAccessor } from "app/core/entity-components/entity-list/sorting-accessor";
 
 /**
  * Create and load backups of the database.
@@ -59,14 +60,27 @@ export class BackupService {
    * @param data an array of elements
    * @returns string a valid CSV string of the input data
    */
-  createCsv(data): string {
+  createCsv(data: any[]): string {
     // create list of row descriptions for the csv string
-    const allFields = [];
-    data.forEach((element) => allFields.push(...Object.keys(element)));
-    const uniqueFields = [...new Set(allFields)]; // creates list with unique elements
+    const allFields = new Set();
+    const exportableData = [];
+    
+    data.forEach((element: any) => {
+      const exportableObj = {};
+      Object.keys(element).forEach((key: string) => {
+        let res = entityListSortingAccessor(element, key);
+        
+        if (res.toString().match(/\[object.*\]/) === null) {
+          allFields.add(key)
+          exportableObj[key] = res;
+        }
+      });
+
+      exportableData.push(exportableObj);
+    });
 
     return this.papa.unparse(
-      { data: data, fields: uniqueFields },
+      { data: exportableData, fields: [...new Set(allFields)] },
       { quotes: true, header: true }
     );
   }
