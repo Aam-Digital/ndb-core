@@ -37,7 +37,7 @@ describe("AttendanceCalendarComponent", () => {
           },
           {
             provide: AttendanceService,
-            useValue: mockAttendanceService
+            useValue: mockAttendanceService,
           },
         ],
       }).compileComponents();
