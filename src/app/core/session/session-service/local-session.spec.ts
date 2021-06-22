@@ -27,8 +27,6 @@ import { SyncState } from "../session-states/sync-state.enum";
 
 describe("LocalSessionService", () => {
   let localSession: LocalSession;
-  let schemaService: EntitySchemaService;
-  let user: User;
 
   beforeEach(async () => {
     AppConfig.settings = {
@@ -36,15 +34,15 @@ describe("LocalSessionService", () => {
       session_type: SessionType.synced,
       database: {
         name: "integration_tests",
-        remote_url: "https://demo.aam-digital.com/db/",
+        remote_url: "https://some.url.de/db/",
       },
     };
-    schemaService = new EntitySchemaService();
+    const schemaService = new EntitySchemaService();
     localSession = new LocalSession(schemaService);
     // @ts-ignore
     localSession.database = PouchDatabase.createWithInMemoryDB()._pouchDB;
 
-    user = new User("test");
+    const user = new User("test");
     user.setNewPassword("pass");
     const dbUser = schemaService.transformEntityToDatabaseFormat(user);
     await localSession.database.put(dbUser);
