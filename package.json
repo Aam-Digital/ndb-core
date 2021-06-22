@@ -1,6 +1,6 @@
 {
   "name": "ndb-core",
-  "version": "2.51.0",
+  "version": "2.51.1",
   "license": "GPL-3.0",
   "scripts": {
     "ng": "ng",
@@ -31,7 +31,7 @@
     "@angular/router": "^11.2.12",
     "@angular/service-worker": "^11.2.12",
     "@ngneat/until-destroy": "^8.0.4",
-    "@sentry/browser": "^6.4.1",
+    "@sentry/browser": "^6.5.0",
     "angulartics2": "^10.0.0",
     "crypto-js": "^4.0.0",
     "deep-object-diff": "^1.1.0",

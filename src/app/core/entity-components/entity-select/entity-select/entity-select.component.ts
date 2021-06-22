@@ -13,7 +13,7 @@ import { Entity, EntityConstructor } from "../../../entity/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { BehaviorSubject, Observable } from "rxjs";
 import { FormControl } from "@angular/forms";
-import { filter, map, skipWhile } from "rxjs/operators";
+import { filter, map } from "rxjs/operators";
 import { MatChipInputEvent } from "@angular/material/chips";
 import { MatAutocompleteTrigger } from "@angular/material/autocomplete";
 import { ENTITY_MAP } from "../../entity-details/entity-details.component";
@@ -61,7 +61,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     if (this.selectionInputType === "id") {
       this.loading
         .pipe(
-          skipWhile((isLoading) => isLoading),
+          filter((isLoading) => !isLoading),
           untilDestroyed(this)
         )
         .subscribe((_) => {

@@ -37,10 +37,10 @@
   </div>
 
   <div *ngIf="selectedEvent && !highlightForChild">
-    <div *ngIf="!selectedEventStats.average">
+    <div *ngIf="!hasAverage">
       All excused (out of {{selectedEvent.children.length}} participants)
     </div>
-    <div *ngIf="selectedEventStats.average">
+    <div *ngIf="hasAverage">
       {{ selectedEventStats.average | percent: "1.0-0" }} attended
       (of {{ selectedEventStats.counted }} participants)
     </div>
@@ -57,6 +57,9 @@
   </div>
 
   <div *ngIf="!selectedEvent" class="no-events-notice">
-    no events on this date
+    <p>no events on this date</p>
+    <button mat-stroked-button (click)="createNewEvent()">
+      Add new event
+    </button>
   </div>
 </div>
