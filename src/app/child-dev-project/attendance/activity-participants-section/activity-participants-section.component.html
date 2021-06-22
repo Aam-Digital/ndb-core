@@ -18,6 +18,7 @@
 
 <app-edit-button
   [(editing)]="editing"
-  [onSave]="save"
+  (onSave)="save()"
+  [managingEntity]="entity"
 >
 </app-edit-button>

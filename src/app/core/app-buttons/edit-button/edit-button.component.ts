@@ -1,10 +1,9 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { Entity } from "../../entity/entity";
 import {
   EntityPermissionsService,
   OperationType,
 } from "../../permissions/entity-permissions.service";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
 
 /**
  * A button that has two states; editing or not editing.
@@ -24,18 +23,13 @@ export class EditButtonComponent {
    * @param entity
    */
   @Input() set managingEntity(entity: Entity) {
-    if (
-      !this.entityPermissionService.userIsPermitted(
-        entity.getConstructor(),
-        OperationType.UPDATE
-      )
-    ) {
+    if (!this.canEdit(entity.getConstructor())) {
       this.disabled = true;
     }
   }
 
-  @Input() onSave: () => void = this.defaultSave;
-  @Input() onCancel: () => void = this.defaultCancel;
+  @Output() onSave = new EventEmitter<void>();
+  @Output() onCancel = new EventEmitter<void>();
 
   @Input() editing: boolean = false;
   @Output() editingChange = new EventEmitter<boolean>();
@@ -45,10 +39,7 @@ export class EditButtonComponent {
    */
   @Input() disabled: boolean = false;
 
-  constructor(
-    private entityPermissionService: EntityPermissionsService,
-    private entityMapperService: EntityMapperService
-  ) {}
+  constructor(private entityPermissionService: EntityPermissionsService) {}
 
   canEdit(entity: typeof Entity): boolean {
     return this.entityPermissionService.userIsPermitted(
@@ -58,24 +49,18 @@ export class EditButtonComponent {
   }
 
   save() {
-    this.onSave();
+    this.onSave.emit();
     this.setEditing(false);
   }
 
   cancel() {
-    this.onCancel();
+    this.onCancel.emit();
     this.setEditing(false);
   }
 
   private setEditing(editing: boolean) {
     this.editing = editing;
     this.editingChange.emit(editing);
-  }
-
-  private defaultCancel() {}
-
-  private async defaultSave() {
-    await this.entityMapperService.save(this.managingEntity);
   }
 
   toggleEdit() {

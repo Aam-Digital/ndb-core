@@ -191,36 +191,7 @@
   </div>
 </form>
 <app-edit-button
-  [onSave]="save"
+  (onSave)="save()"
   [(editing)]="editing"
 >
-
-  <!--
 </app-edit-button>
-<div>
-  <button
-    *ngIf="editing"
-    mat-stroked-button
-    class="edit-button"
-    (click)="save()"
-  >
-    Save
-  </button>
-
-  <button
-    *ngIf="editing"
-    mat-stroked-button
-    class="edit-button"
-    (click)="switchEdit()"
-  >
-    Cancel
-  </button>
-
-  <app-edit-button
-    *ngIf="!editing"
-    (toggleEditing)="switchEdit()"
-    [managingEntity]="entity?.getConstructor()"
-  >
-  </app-edit-button>
-</div>
--->

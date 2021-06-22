@@ -46,7 +46,6 @@ export class ActivityParticipantsSectionComponent
   }
 
   async save() {
-    console.log(this.participants);
     this.entity.participants = this.participants;
     this.entity.linkedGroups = this.participatingGroups;
     this.entity.assignedTo = this.assignedUsers;

@@ -78,7 +78,6 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   }
 
   async save(): Promise<Entity> {
-    console.log("Save called");
     if (!this.checkFormValidity()) {
       return;
     }
@@ -86,7 +85,10 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
     this.assignFormValuesToEntity(this.entity, this.form);
     try {
       await this.entityMapperService.save<Entity>(this.entity);
-      this.router.navigate([getParentUrl(this.router), this.entity.getId()]);
+      await this.router.navigate([
+        getParentUrl(this.router),
+        this.entity.getId(),
+      ]);
       this.alertService.addInfo("Saving Successful");
       return this.entity;
     } catch (err) {
