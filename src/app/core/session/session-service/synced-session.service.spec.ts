@@ -79,10 +79,12 @@ describe("SyncedSessionService", () => {
       expect(sessionService.syncState).toEqual(SyncState.UNSYNCED);
 
       // remote session takes a bit longer than a local login - this throws on successful connection
-      await sessionService.connectionStateStream.pipe(
-        failOnStates([ConnectionState.CONNECTED]),
-        waitForChangeTo(ConnectionState.REJECTED)
-      );
+      await sessionService.connectionStateStream
+        .pipe(
+          failOnStates([ConnectionState.CONNECTED]),
+          waitForChangeTo(ConnectionState.REJECTED, true)
+        )
+        .toPromise();
 
       expect(sessionService.isLoggedIn()).toEqual(false);
       expect(sessionService.getCurrentUser()).not.toBeDefined();
@@ -101,10 +103,12 @@ describe("SyncedSessionService", () => {
     it("has the correct state after Login with correct credentials", async () => {
       const [loginState] = await Promise.all([
         sessionService.login("demo", "pass"),
-        sessionService.syncStateStream.pipe(
-          failOnStates([SyncState.FAILED]),
-          waitForChangeTo(SyncState.COMPLETED)
-        ),
+        sessionService.syncStateStream
+          .pipe(
+            failOnStates([SyncState.FAILED]),
+            waitForChangeTo(SyncState.COMPLETED)
+          )
+          .toPromise(),
       ]);
       expect(loginState).toEqual(LoginState.LOGGED_IN);
       expect(sessionService.loginState).toEqual(LoginState.LOGGED_IN);
@@ -118,10 +122,12 @@ describe("SyncedSessionService", () => {
     it("has the correct state after Logout", async () => {
       await Promise.all([
         sessionService.login("demo", "pass"),
-        sessionService.syncStateStream.pipe(
-          failOnStates([SyncState.FAILED]),
-          waitForChangeTo(SyncState.COMPLETED)
-        ),
+        sessionService.syncStateStream
+          .pipe(
+            failOnStates([SyncState.FAILED]),
+            waitForChangeTo(SyncState.COMPLETED)
+          )
+          .toPromise(),
       ]);
 
       sessionService.logout();
