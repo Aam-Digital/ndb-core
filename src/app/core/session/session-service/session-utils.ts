@@ -28,15 +28,13 @@ export function waitForChangeTo<State>(
  * Fails (throws a supplied error) when a given state
  * does not appear
  * @param states
- * @param error
  */
 export function failOnStates<State>(
-  states: State[],
-  error?: any
+  states: State[]
 ): MonoTypeOperatorFunction<State> {
   return mergeMap((nextState) => {
     if (states.includes(nextState)) {
-      return throwError(error);
+      return throwError(nextState);
     } else {
       return of(nextState);
     }

@@ -89,11 +89,7 @@ export class LocalSession {
       }
     } catch (error) {
       // possible error: initial sync failed or aborted
-      if (
-        error &&
-        error.toState &&
-        [SyncState.ABORTED, SyncState.FAILED].includes(error.toState)
-      ) {
+      if ([SyncState.ABORTED, SyncState.FAILED].includes(error)) {
         if (this.loginState === LoginState.LOGIN_FAILED) {
           // The sync failed because the remote rejected
           return LoginState.LOGIN_FAILED;
@@ -117,12 +113,18 @@ export class LocalSession {
    * Resolves directly, if the database is not initial, otherwise waits for the first change of the SyncState to completed (or failed)
    */
   private waitForFirstSync(): Promise<SyncState> {
-    return this.syncStateStream
-      .pipe(
-        failOnStates([SyncState.FAILED, SyncState.ABORTED]),
-        waitForChangeTo(SyncState.COMPLETED, true)
-      )
-      .toPromise();
+    return this.isInitial().then((initial) => {
+      if (initial) {
+        return this.syncStateStream
+          .pipe(
+            failOnStates([SyncState.FAILED, SyncState.ABORTED]),
+            waitForChangeTo(SyncState.COMPLETED, true)
+          )
+          .toPromise();
+      } else {
+        return SyncState.COMPLETED;
+      }
+    });
   }
 
   /**

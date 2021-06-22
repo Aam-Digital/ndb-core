@@ -58,7 +58,8 @@ describe("LocalSessionService", () => {
     expect(localSession).toBeDefined();
   });
 
-  it("should login a user once the initial sync is completed", fakeAsync(() => {
+  it("should login a user after the initial sync if not database is present", fakeAsync(() => {
+    spyOn(localSession.database, "info").and.resolveTo({ doc_count: 0 });
     localSession.login("test", "pass");
     tick();
     expect(localSession.loginState).toBe(LoginState.LOGGED_OUT);
@@ -70,5 +71,17 @@ describe("LocalSessionService", () => {
     localSession.syncStateStream.next(SyncState.COMPLETED);
     tick();
     expect(localSession.loginState).toBe(LoginState.LOGGED_IN);
+  }));
+
+  it("should not wait for sync completion if local database already exists", fakeAsync(() => {
+    spyOn(localSession.database, "info").and.resolveTo({ doc_count: 1 });
+    expect(localSession.loginState).toBe(LoginState.LOGGED_OUT);
+    expect(localSession.syncState).toBe(SyncState.UNSYNCED);
+
+    localSession.login("test", "pass");
+    tick();
+
+    expect(localSession.loginState).toBe(LoginState.LOGGED_IN);
+    expect(localSession.syncState).not.toBe(SyncState.COMPLETED);
   }));
 });
