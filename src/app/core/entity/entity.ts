@@ -32,6 +32,8 @@ import {
 export type EntityConstructor<T extends Entity> = (new (id?: string) => T) &
   typeof Entity;
 
+export const ENTITY_CONFIG_PREFIX = "entity:";
+
 /**
  * "Entity" is a base class for all domain model classes.
  * It implements the basic general properties and methods that are required for all Entity types
