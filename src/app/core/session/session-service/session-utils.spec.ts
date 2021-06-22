@@ -41,10 +41,10 @@ describe("session-utils", () => {
 
   it("(failOnStates) should fail with with a custom error", (done) => {
     const stream = of("A", "B", "Err", "C");
-    stream.pipe(failOnStates(["Err"], "Oh no")).subscribe(
+    stream.pipe(failOnStates(["Err"])).subscribe(
       () => {},
       (error) => {
-        expect(error).toBe("Oh no");
+        expect(error).toBe("Err");
         done();
       }
     );
