@@ -116,11 +116,11 @@ export class LocalSession {
    * Wait for the first sync of the database, returns a Promise.
    * Resolves directly, if the database is not initial, otherwise waits for the first change of the SyncState to completed (or failed)
    */
-  public async waitForFirstSync(): Promise<void> {
-    await this.syncStateStream
+  private waitForFirstSync(): Promise<SyncState> {
+    return this.syncStateStream
       .pipe(
         failOnStates([SyncState.FAILED, SyncState.ABORTED]),
-        waitForChangeTo(SyncState.COMPLETED)
+        waitForChangeTo(SyncState.COMPLETED, true)
       )
       .toPromise();
   }
@@ -146,7 +146,7 @@ export class LocalSession {
    * Helper to get a User Entity from the Database without needing the EntityMapperService
    * @param userId Id of the User to be loaded
    */
-  public async loadUser(userId: string): Promise<User> {
+  private async loadUser(userId: string): Promise<User> {
     const user = new User("");
     const userData = await this.database.get("User:" + userId);
     this._entitySchemaService.loadDataIntoEntity(user, userData);

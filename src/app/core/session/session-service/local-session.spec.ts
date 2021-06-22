@@ -19,11 +19,18 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { AppConfig } from "../../app-config/app-config";
 import { LocalSession } from "./local-session";
 import { SessionType } from "../session-type";
+import { fakeAsync, tick } from "@angular/core/testing";
+import { User } from "../../user/user";
+import { PouchDatabase } from "../../database/pouch-database";
+import { LoginState } from "../session-states/login-state.enum";
+import { SyncState } from "../session-states/sync-state.enum";
 
 describe("LocalSessionService", () => {
   let localSession: LocalSession;
+  let schemaService: EntitySchemaService;
+  let user: User;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     AppConfig.settings = {
       site_name: "Aam Digital - DEV",
       session_type: SessionType.synced,
@@ -32,11 +39,36 @@ describe("LocalSessionService", () => {
         remote_url: "https://demo.aam-digital.com/db/",
       },
     };
+    schemaService = new EntitySchemaService();
+    localSession = new LocalSession(schemaService);
+    // @ts-ignore
+    localSession.database = PouchDatabase.createWithInMemoryDB()._pouchDB;
 
-    localSession = new LocalSession(new EntitySchemaService());
+    user = new User("test");
+    user.setNewPassword("pass");
+    const dbUser = schemaService.transformEntityToDatabaseFormat(user);
+    await localSession.database.put(dbUser);
   });
 
-  it("should be created", async () => {
+  afterEach(async () => {
+    await localSession.database.destroy();
+  });
+
+  it("should be created", () => {
     expect(localSession).toBeDefined();
   });
+
+  it("should login a user once the initial sync is completed", fakeAsync(() => {
+    localSession.login("test", "pass");
+    tick();
+    expect(localSession.loginState).toBe(LoginState.LOGGED_OUT);
+
+    localSession.syncStateStream.next(SyncState.STARTED);
+    tick();
+    expect(localSession.loginState).toBe(LoginState.LOGGED_OUT);
+
+    localSession.syncStateStream.next(SyncState.COMPLETED);
+    tick();
+    expect(localSession.loginState).toBe(LoginState.LOGGED_IN);
+  }));
 });
