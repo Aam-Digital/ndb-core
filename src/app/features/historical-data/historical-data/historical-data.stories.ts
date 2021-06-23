@@ -13,6 +13,7 @@ import { HistoricalEntityData } from "../historical-entity-data";
 import { HistoricalDataComponent } from "./historical-data.component";
 import { HistoricalDataModule } from "../historical-data.module";
 import { HistoricalDataService } from "../historical-data.service";
+import { ratingAnswers } from "../rating-answers";
 
 export default {
   title: "Core/EntityComponents/HistoricalDataComponent",
@@ -38,7 +39,7 @@ export default {
         DatePipe,
         {
           provide: ConfigService,
-          useValue: { getConfig: () => ratingAnswer },
+          useValue: { getConfig: () => ratingAnswers },
         },
         {
           provide: HistoricalDataService,
@@ -59,42 +60,19 @@ const Template: Story<HistoricalDataComponent> = (
   props: args,
 });
 
-const ratingAnswer = [
-  {
-    id: "notTrueAtAll",
-    label: "not true at all",
-  },
-  {
-    id: "rarelyTrue",
-    label: "rarely true",
-  },
-  {
-    id: "usuallyTrue",
-    label: "usually true",
-  },
-  {
-    id: "absolutelyTrue",
-    label: "absolutelyTrue",
-  },
-  {
-    id: "noAnswerPossible",
-    label: "no answer possible",
-  },
-];
-
 class Test extends HistoricalEntityData {
   date = new Date();
   nameOfObserver = "My name";
-  firstQuestion = ratingAnswer[0];
-  secondQuestion = ratingAnswer[1];
-  thirdQuestion = ratingAnswer[2];
-  fourthQuestion = ratingAnswer[3];
-  fifthQuestion = ratingAnswer[4];
-  sixthQuestion = ratingAnswer[0];
-  seventhQuestion = ratingAnswer[1];
-  eightQuestion = ratingAnswer[2];
-  ninthQuestion = ratingAnswer[3];
-  tenthQuestion = ratingAnswer[4];
+  firstQuestion = ratingAnswers[0];
+  secondQuestion = ratingAnswers[1];
+  thirdQuestion = ratingAnswers[2];
+  fourthQuestion = ratingAnswers[3];
+  fifthQuestion = ratingAnswers[4];
+  sixthQuestion = ratingAnswers[0];
+  seventhQuestion = ratingAnswers[1];
+  eightQuestion = ratingAnswers[2];
+  ninthQuestion = ratingAnswers[3];
+  tenthQuestion = ratingAnswers[4];
 }
 
 export const Primary = Template.bind({});

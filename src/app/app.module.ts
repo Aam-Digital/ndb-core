@@ -73,6 +73,7 @@ import { ReportingModule } from "./features/reporting/reporting.module";
 import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/dashboard-shortcut-widget.module";
 import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
 import { EntityUtilsModule } from "./core/entity-components/entity-utils/entity-utils.module";
+import { DemoHistoricalDataGenerator } from "./features/historical-data/demo-historical-data-generator";
 
 /**
  * Main entry point of the application.
@@ -139,6 +140,10 @@ import { EntityUtilsModule } from "./core/entity-components/entity-utils/entity-
       ...DemoHealthCheckGeneratorService.provider(),
       ...DemoProgressDashboardWidgetGeneratorService.provider(),
       ...DemoUserGeneratorService.provider(),
+      ...DemoHistoricalDataGenerator.provider({
+        minCountAttributes: 2,
+        maxCountAttributes: 5,
+      }),
     ]),
     AttendanceModule,
     DashboardShortcutWidgetModule,

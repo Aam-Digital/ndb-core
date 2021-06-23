@@ -9,6 +9,8 @@ import { of } from "rxjs";
 import { ChildrenModule } from "../../children/children.module";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { mockEntityMapper } from "app/core/entity/mock-entity-mapper-service";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { User } from "../../../core/user/user";
 
 describe("EducationalMaterialComponent", () => {
   let component: EducationalMaterialComponent;
@@ -32,6 +34,10 @@ describe("EducationalMaterialComponent", () => {
           DatePipe,
           { provide: ChildrenService, useValue: mockChildrenService },
           { provide: EntityMapperService, useValue: mockEntityMapper([]) },
+          {
+            provide: SessionService,
+            useValue: { getCurrentUser: () => new User() },
+          },
         ],
       }).compileComponents();
     })
