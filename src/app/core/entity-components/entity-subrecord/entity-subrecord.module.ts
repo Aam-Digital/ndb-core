@@ -14,9 +14,12 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { ViewModule } from "../../view/view.module";
 import { ReactiveFormsModule } from "@angular/forms";
 import { ConfirmationDialogModule } from "../../confirmation-dialog/confirmation-dialog.module";
+import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { MatToolbarModule } from "@angular/material/toolbar";
 
 @NgModule({
-  declarations: [EntitySubrecordComponent, KeysPipe],
+  declarations: [EntitySubrecordComponent, KeysPipe, ListPaginatorComponent],
   imports: [
     CommonModule,
     AlertsModule,
@@ -31,6 +34,8 @@ import { ConfirmationDialogModule } from "../../confirmation-dialog/confirmation
     MatTooltipModule,
     MatButtonModule,
     MatIconModule,
+    MatSlideToggleModule,
+    MatToolbarModule,
   ],
   exports: [EntitySubrecordComponent, KeysPipe],
 })

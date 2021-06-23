@@ -7,7 +7,7 @@ import {
 } from "@angular/core/testing";
 
 import { ListPaginatorComponent } from "./list-paginator.component";
-import { EntityListModule } from "../entity-list.module";
+import { EntityListModule } from "../../entity-list/entity-list.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { SessionService } from "../../../session/session-service/session.service";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
