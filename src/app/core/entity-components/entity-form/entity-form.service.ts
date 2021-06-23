@@ -67,14 +67,19 @@ export class EntityFormService {
   public saveChanges(form: FormGroup, entity: Entity): Promise<Entity> {
     this.checkFormValidity(form);
     const entityConstructor = entity.getConstructor();
-    entityConstructor.validateForm(form);
+    const tmpEntity = entity.copy();
 
-    this.assignFormValuesToEntity(form, entity);
-    return this.entityMapper.save<Entity>(entity).catch((err) => {
-      throw new Error(
-        `Could not save ${entityConstructor.ENTITY_TYPE}: ${err}`
-      );
-    });
+    this.assignFormValuesToEntity(form, tmpEntity);
+    entity.assertValid();
+
+    return this.entityMapper
+      .save<Entity>(tmpEntity)
+      .then(() => Object.assign(entity, tmpEntity))
+      .catch((err) => {
+        throw new Error(
+          `Could not save ${entityConstructor.ENTITY_TYPE}: ${err}`
+        );
+      });
   }
 
   private checkFormValidity(form: FormGroup) {
