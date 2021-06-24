@@ -28,6 +28,8 @@ import { EntityFormService } from "../../entity-form/entity-form.service";
 import { Subject } from "rxjs";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { SessionService } from "../../../session/session-service/session.service";
+import { User } from "../../../user/user";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -37,6 +39,10 @@ describe("EntitySubrecordComponent", () => {
   beforeEach(
     waitForAsync(() => {
       mockEntityMapper = jasmine.createSpyObj(["remove", "save"]);
+      const mockSessionService = jasmine.createSpyObj<SessionService>([
+        "getCurrentUser",
+      ]);
+      mockSessionService.getCurrentUser.and.returnValue(new User());
 
       TestBed.configureTestingModule({
         imports: [
@@ -49,6 +55,7 @@ describe("EntitySubrecordComponent", () => {
           DatePipe,
           PercentPipe,
           { provide: EntityMapperService, useValue: mockEntityMapper },
+          { provide: SessionService, useValue: mockSessionService },
         ],
       }).compileComponents();
     })
