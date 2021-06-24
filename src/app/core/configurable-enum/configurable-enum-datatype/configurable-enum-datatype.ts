@@ -39,6 +39,6 @@ export class ConfigurableEnumDatatype
 
     return this.configService
       .getConfig<ConfigurableEnumConfig>(enumId)
-      ?.find((option) => option.id === value);
+      ?.find((option) => option.id === value || option.label === value);
   }
 }

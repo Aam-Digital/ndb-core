@@ -4,8 +4,10 @@ import { Injectable } from "@angular/core";
 import { Child } from "../children/model/child";
 import { faker } from "../../core/demo-data/faker";
 import { WarningLevel } from "../warning-level";
-import { Aser, mathLevels, readingLevels } from "./model/aser";
+import { Aser } from "./model/aser";
 import { ConfigurableEnumValue } from "../../core/configurable-enum/configurable-enum.interface";
+import { mathLevels } from "./model/mathLevels";
+import { readingLevels } from "./model/readingLevels";
 
 /**
  * Generate ASER results every 12 months for each Child until passing.

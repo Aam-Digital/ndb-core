@@ -20,60 +20,8 @@ import { WarningLevel } from "../../warning-level";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
-
-export const readingLevels: ConfigurableEnumValue[] = [
-  {
-    id: "",
-    label: "",
-  },
-  {
-    id: "nothing",
-    label: "Nothing",
-  },
-  {
-    id: "read_letters",
-    label: "Read Letters",
-  },
-  {
-    id: "read_words",
-    label: "Read Words",
-  },
-  {
-    id: "read_sentence",
-    label: "Read Sentence",
-  },
-  {
-    id: "read_paragraph",
-    label: "Read Paragraph",
-  },
-];
-
-export const mathLevels: ConfigurableEnumValue[] = [
-  {
-    id: "",
-    label: "",
-  },
-  {
-    id: "nothing",
-    label: "Nothing",
-  },
-  {
-    id: "numbers1to9",
-    label: "Numbers 1-9",
-  },
-  {
-    id: "numbers10to99",
-    label: "Numbers 10-99",
-  },
-  {
-    id: "subtraction",
-    label: "Subtraction",
-  },
-  {
-    id: "division",
-    label: "Division",
-  },
-];
+import { mathLevels } from "./mathLevels";
+import { readingLevels } from "./readingLevels";
 
 @DatabaseEntity("Aser")
 export class Aser extends Entity {

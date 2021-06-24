@@ -15,11 +15,13 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Aser, mathLevels, readingLevels } from "./aser";
+import { Aser } from "./aser";
 import { WarningLevel } from "../../warning-level";
 import { waitForAsync } from "@angular/core/testing";
 import { Entity } from "../../../core/entity/entity";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import { mathLevels } from "./mathLevels";
+import { readingLevels } from "./readingLevels";
 
 describe("Aser", () => {
   const ENTITY_TYPE = "Aser";

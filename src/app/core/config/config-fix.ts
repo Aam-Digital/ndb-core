@@ -4,12 +4,10 @@ import { Child } from "../../child-dev-project/children/model/child";
 import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
-import {
-  mathLevels,
-  readingLevels,
-} from "../../child-dev-project/aser/model/aser";
 import { genders } from "../../child-dev-project/children/model/genders";
 import { materials } from "../../child-dev-project/educational-material/model/materials";
+import { mathLevels } from "../../child-dev-project/aser/model/mathLevels";
+import { readingLevels } from "../../child-dev-project/aser/model/readingLevels";
 
 // prettier-ignore
 export const defaultJsonConfig = {

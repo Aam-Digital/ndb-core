@@ -19,6 +19,7 @@ import { waitForAsync } from "@angular/core/testing";
 import { EducationalMaterial } from "./educational-material";
 import { Entity } from "../../../core/entity/entity";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import { materials } from "./materials";
 
 describe("EducationalMaterial Entity", () => {
   const ENTITY_TYPE = "EducationalMaterial";
@@ -54,7 +55,7 @@ describe("EducationalMaterial Entity", () => {
 
       child: "1",
       date: new Date(),
-      materialType: "foo",
+      materialType: materials[1],
       materialAmount: 2,
       description: "bar",
 
