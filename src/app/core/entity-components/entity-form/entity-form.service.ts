@@ -70,7 +70,7 @@ export class EntityFormService {
     const tmpEntity = entity.copy();
 
     this.assignFormValuesToEntity(form, tmpEntity);
-    entity.assertValid();
+    tmpEntity.assertValid();
 
     return this.entityMapper
       .save<Entity>(tmpEntity)

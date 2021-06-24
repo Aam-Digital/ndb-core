@@ -1,10 +1,11 @@
-import { TestBed } from "@angular/core/testing";
+import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
 import { EntityFormService } from "./entity-form.service";
 import { FormBuilder } from "@angular/forms";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityFormModule } from "./entity-form.module";
+import { Entity } from "../../entity/entity";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -27,4 +28,25 @@ describe("EntityFormService", () => {
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
+
+  it("should not save invalid entities", () => {
+    const entity = new Entity("initialId");
+    const tmpEntity = new Entity();
+    spyOn(entity, "copy").and.returnValue(tmpEntity);
+    spyOn(tmpEntity, "assertValid").and.throwError(new Error());
+    const formGroup = TestBed.inject(FormBuilder).group({ _id: "newId" });
+
+    expect(() => service.saveChanges(formGroup, entity)).toThrowError();
+    expect(entity.getId()).toBe("initialId");
+  });
+
+  it("should update initial entity if saving is successful", fakeAsync(() => {
+    const entity = new Entity("initialId");
+    const formGroup = TestBed.inject(FormBuilder).group({ _id: "newId" });
+
+    service.saveChanges(formGroup, entity);
+    tick();
+
+    expect(entity.getId()).toBe("newId");
+  }));
 });
