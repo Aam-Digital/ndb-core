@@ -20,7 +20,6 @@ import { ChildSchoolRelation } from "./childSchoolRelation";
 import { Entity } from "../../../core/entity/entity";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import moment from "moment";
-import { FormBuilder } from "@angular/forms";
 
 describe("ChildSchoolRelation Entity", () => {
   const ENTITY_TYPE = "ChildSchoolRelation";
@@ -100,37 +99,26 @@ describe("ChildSchoolRelation Entity", () => {
     expect(relation.isActive).toBeTrue();
   });
 
-  it("should fail validation when no school is defined", () => {
-    const formGroup = new FormBuilder().group({ schoolId: null });
-    expect(() => ChildSchoolRelation.validateForm(formGroup)).toThrowError();
-  });
-
   it("should fail validation when end date but no start date is defined", () => {
-    const formGroup = new FormBuilder().group({
-      schoolId: "someId",
-      end: new Date(),
-      start: null,
-    });
-    expect(() => ChildSchoolRelation.validateForm(formGroup)).toThrowError();
+    const relation = new ChildSchoolRelation();
+    relation.schoolId = "someId";
+    relation.end = new Date();
+    expect(() => relation.assertValid()).toThrowError();
   });
 
   it("should fail validation when start date is after end date", () => {
-    const formGroup = new FormBuilder().group({
-      schoolId: "someId",
-      start: moment().add(1, "day"),
-      end: new Date(),
-    });
-    expect(() => ChildSchoolRelation.validateForm(formGroup)).toThrowError();
+    const relation = new ChildSchoolRelation();
+    relation.schoolId = "someId";
+    relation.start = moment().add(1, "day").toDate();
+    relation.end = new Date();
+    expect(() => relation.assertValid()).toThrowError();
   });
 
   it("does pass validation when the start date is before the end date", () => {
-    const formGroup = new FormBuilder().group({
-      schoolId: "someId",
-      start: moment().subtract(1, "day"),
-      end: new Date(),
-    });
-    expect(() =>
-      ChildSchoolRelation.validateForm(formGroup)
-    ).not.toThrowError();
+    const relation = new ChildSchoolRelation();
+    relation.schoolId = "someId";
+    relation.start = moment().subtract(1, "day").toDate();
+    relation.end = new Date();
+    expect(() => relation.assertValid()).not.toThrowError();
   });
 });

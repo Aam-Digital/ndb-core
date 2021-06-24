@@ -42,6 +42,7 @@ describe("ChangelogComponent", () => {
     waitForAsync(() => {
       mockLatestChangesService = jasmine.createSpyObj([
         "getChangelogsBeforeVersion",
+        "getChangelogsBetweenVersions",
       ]);
 
       TestBed.configureTestingModule({
