@@ -13,10 +13,11 @@ import { Entity, EntityConstructor } from "../../../entity/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { BehaviorSubject, Observable } from "rxjs";
 import { FormControl } from "@angular/forms";
-import { filter, map, skipWhile } from "rxjs/operators";
+import { filter, map } from "rxjs/operators";
 import { MatChipInputEvent } from "@angular/material/chips";
 import { MatAutocompleteTrigger } from "@angular/material/autocomplete";
 import { ENTITY_MAP } from "../../entity-details/entity-details.component";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 export type accessorFn<E extends Entity> = (E) => string;
 
@@ -25,6 +26,7 @@ export type accessorFn<E extends Entity> = (E) => string;
   templateUrl: "./entity-select.component.html",
   styleUrls: ["./entity-select.component.scss"],
 })
+@UntilDestroy()
 export class EntitySelectComponent<E extends Entity> implements OnChanges {
   /**
    * The entity-type (e.g. 'Child', 'School', e.t.c.) to set.
@@ -56,11 +58,16 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    */
   @Input() set selection(sel: (string | E)[]) {
     if (this.selectionInputType === "id") {
-      this.loading.pipe(skipWhile((isLoading) => isLoading)).subscribe((_) => {
-        this.selection_ = this.allEntities.filter((e) =>
-          sel.find((s) => s === e.getId())
-        );
-      });
+      this.loading
+        .pipe(
+          filter((isLoading) => !isLoading),
+          untilDestroyed(this)
+        )
+        .subscribe((_) => {
+          this.selection_ = this.allEntities.filter((e) =>
+            sel.find((s) => s === e.getId())
+          );
+        });
     } else {
       this.selection_ = sel as E[];
     }

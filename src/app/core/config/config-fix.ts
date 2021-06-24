@@ -5,6 +5,7 @@ import { Gender } from "../../child-dev-project/children/model/Gender";
 import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
+import { ratingAnswers } from "../../features/historical-data/rating-answers";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -122,28 +123,7 @@ export const defaultJsonConfig = {
       "label": "Barabazar"
     }
   ],
-  "enum:rating-answer": [
-    {
-      id: "noAnswerPossible",
-      label: "no answer possible",
-    },
-    {
-      id: "notTrueAtAll",
-      label: "not true at all",
-    },
-    {
-      id: "rarelyTrue",
-      label: "rarely true",
-    },
-    {
-      id: "usuallyTrue",
-      label: "usually true",
-    },
-    {
-      id: "absolutelyTrue",
-      label: "absolutely true",
-    },
-  ],
+  "enum:rating-answer": ratingAnswers,
 
   "view:": {
     "component": "Dashboard",

@@ -22,13 +22,14 @@ import { ConfigurableEnumValue } from "../../../configurable-enum/configurable-e
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { Note } from "../../../../child-dev-project/notes/model/note";
 import { AlertService } from "../../../alerts/alert.service";
-import { PageEvent } from "@angular/material/paginator";
 import { FormBuilder, FormGroup } from "@angular/forms";
 import { Gender } from "../../../../child-dev-project/children/model/Gender";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { Subject } from "rxjs";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { SessionService } from "../../../session/session-service/session.service";
+import { User } from "../../../user/user";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -39,6 +40,10 @@ describe("EntitySubrecordComponent", () => {
     waitForAsync(() => {
       mockEntityMapper = jasmine.createSpyObj(["remove", "save"]);
       mockEntityMapper.save.and.resolveTo();
+      const mockSessionService = jasmine.createSpyObj<SessionService>([
+        "getCurrentUser",
+      ]);
+      mockSessionService.getCurrentUser.and.returnValue(new User());
 
       TestBed.configureTestingModule({
         imports: [
@@ -51,6 +56,7 @@ describe("EntitySubrecordComponent", () => {
           DatePipe,
           PercentPipe,
           { provide: EntityMapperService, useValue: mockEntityMapper },
+          { provide: SessionService, useValue: mockSessionService },
         ],
       }).compileComponents();
     })
@@ -226,15 +232,6 @@ describe("EntitySubrecordComponent", () => {
 
     expect(alertService.addWarning).toHaveBeenCalled();
   });
-
-  it("should trigger an update of the paginator when changing the page size", fakeAsync(() => {
-    component.ngOnChanges({ records: null });
-
-    component.onPaginateChange({ pageSize: 20 } as PageEvent);
-    tick();
-
-    expect(component.paginator.pageSize).toEqual(20);
-  }));
 
   it("should create a formGroup when editing a row", () => {
     component.columns = [{ id: "name" }, { id: "projectNumber" }];
